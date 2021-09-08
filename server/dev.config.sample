@@ -1,0 +1,3 @@
+export GCP_BUCKET=exactly-dev-testresults
+export GCP_CREDENTIALS_RELATIVE=./gcp-creds.json
+export STORER_MODE=gcp
