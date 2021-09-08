@@ -21,6 +21,8 @@ interface State {
   startDate: string;
   endDate: string;
   boundingBox: string;
+  source: string;
+  zoom: number;
 }
 
 export default class Map extends Component<Props, State> {
@@ -40,7 +42,9 @@ export default class Map extends Component<Props, State> {
       median: 800,
       startDate: "2021-01-01",
       endDate: "2021-03-18",
-      boundingBox: ""
+      boundingBox: "",
+      source: "us-counties",
+      zoom: 3,
     };
   }
   componentDidMount() {
@@ -80,7 +84,7 @@ export default class Map extends Component<Props, State> {
       
       this.geoJson.addTo(this.map);
     }).then(() => {
-      return this.updateRates();
+      //return this.updateRates();
     }).catch((err) => console.error(err));
   }
 
@@ -91,6 +95,7 @@ export default class Map extends Component<Props, State> {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
+        source: this.state.source,
         direction: this.state.direction,
         startDate: this.state.startDate,
         endDate: this.state.endDate,
@@ -123,16 +128,24 @@ export default class Map extends Component<Props, State> {
   handleNewBoundingBox = () => {
     const bounds = this.map.getBounds();
     this.setState({
-      boundingBox: bounds.toBBoxString()
+      boundingBox: bounds.toBBoxString(),
+      zoom:     this.map.getZoom()
     });
   }
 
-  handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    const value = evt.target.value;
+  handleChange = (name: string, value: string) => {
     this.setState({
       ...this.state,
-      [evt.target.name]: value
+      [name]: value
     });
+  }
+
+  handleInputChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    this.handleChange(evt.target.name, evt.target.value)
+  }
+
+  handleSelectChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
+    this.handleChange(evt.target.name, evt.target.value)
   }
 
   handleUpdate = () => {
@@ -143,21 +156,26 @@ export default class Map extends Component<Props, State> {
     return (
       <div>
         <div>
-          <input type="radio" id="up" name="direction" onChange={this.handleChange} value="up" checked={this.state.direction === 'up'} />
+          <label htmlFor="source">Choose a map:</label>
+          <select name="source" id="source" onChange={this.handleSelectChange} value={this.state.source}>
+            <option value="us-counties">US Counties</option>
+            <option value="us-tribal-tracts">US Tribal Tracts</option>
+          </select><br />
+          <input type="radio" id="up" name="direction" onChange={this.handleInputChange} value="up" checked={this.state.direction === 'up'} />
             <label htmlFor="up">Up
           </label>
-          <input type="radio" id="down" name="direction" onChange={this.handleChange} value="down" checked={this.state.direction === 'down'} />
+          <input type="radio" id="down" name="direction" onChange={this.handleInputChange} value="down" checked={this.state.direction === 'down'} />
             <label htmlFor="down">Down
           </label><br /><br />
 
           <label htmlFor="median">Median KBPS</label>
-          <input type="number" id="median" name="median" onChange={this.handleChange} value={this.state.median} /><br />
+          <input type="number" id="median" name="median" onChange={this.handleInputChange} value={this.state.median} /><br />
 
           <label htmlFor="startDate">Start Date</label>
-          <input type="date" id="startDate" name="startDate" onChange={this.handleChange} value={this.state.startDate} /><br />
+          <input type="date" id="startDate" name="startDate" onChange={this.handleInputChange} value={this.state.startDate} /><br />
 
           <label htmlFor="endDate">End Date</label>
-          <input type="date" id="endDate" name="endDate" onChange={this.handleChange} value={this.state.endDate}  /><br />
+          <input type="date" id="endDate" name="endDate" onChange={this.handleInputChange} value={this.state.endDate}  /><br />
 
           <button onClick={this.handleUpdate}>Update</button>
         </div>
