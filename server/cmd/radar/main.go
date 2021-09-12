@@ -2,12 +2,14 @@ package main
 
 import (
 	"flag"
-	"github.com/exactlylabs/radar/server/pkg/app/web"
 	"log"
 	"math/rand"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/exactlylabs/radar/server/pkg/app/model"
+	"github.com/exactlylabs/radar/server/pkg/app/web"
 )
 
 var addr = flag.String("addr", "localhost:5000", "http service address")
@@ -29,10 +31,12 @@ func main() {
 		}
 	}()
 
+	model.AutoMigrate()
+
 	webService := web.NewWebService()
 	webService.Run(*addr)
 
-	log.Println("We're up and running!")
+	log.Printf("We're up and running at '%v'!\n", *addr)
 
 	<-done
 

@@ -21,4 +21,6 @@ for TAG in $ADDITIONAL_TAGS; do
   docker tag $IMAGE_NAME:$DEFAULT_TAG $IMAGE_NAME:$TAG
 done
 
+env GOOS=linux GOARCH=amd64 go build ./cmd/radar
+
 echo "Build Complete!"

@@ -4,7 +4,10 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 	"sync"
+
+	"github.com/gorilla/handlers"
 )
 
 type WebService struct {
@@ -19,10 +22,18 @@ func NewWebService() *WebService {
 }
 
 func (w *WebService) Run(addr string) {
-	w.srv = &http.Server{Addr: addr}
+	mux := http.NewServeMux()
 
-	http.HandleFunc("/blobs", blobUploadHandler)
-	http.HandleFunc("/blobs/", blobHandler)
+	mux.HandleFunc("/blobs", blobUploadHandler)
+	mux.HandleFunc("/blobs/", blobHandler)
+
+	mux.HandleFunc("/register", registerHandler)
+	mux.HandleFunc("/record", recordHandler)
+
+	w.srv = &http.Server{
+		Addr:    addr,
+		Handler: handlers.LoggingHandler(os.Stdout, handlers.RecoveryHandler()(mux)),
+	}
 
 	w.shutdownWg.Add(1)
 	go func() {
