@@ -2,34 +2,34 @@
 
 set -e
 
-AUTHORIZED_KEYS_PATH=./authorized_keys
-
-CRONTAB_FILE=./clientcrontab
-RUNTESTS_SCRIPT=./runtests.sh
-REMOTETUNNEL_SERVICE=./remotetunnel.service
-FIRSTBOOT_SCRIPT=./firstboot.sh
-
-NDT_URL=https://storage.googleapis.com/exactly-public/ndt7
-
 if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     echo "Must be run as root"
     exit
 fi
 
-curl https://raspi.debian.net/verified/20210823_raspi_4_bullseye.img.xz -O
-xz -d -v 20210823_raspi_4_bullseye.img.xz
+AUTHORIZED_KEYS_PATH=./authorized_keys
 
-# This was discovered via `fdisk -l 20210823_raspi_4_bullseye.img` and
-# looking at the "start" sector of the device "20210823_raspi_4_bullseye.img2"
-# and multiplying by sector size of 512
+CRONTAB_FILE=./clientcrontab
+RUNTESTS_SCRIPT=./runtests.sh
+REMOTETUNNEL_SERVICE=./remotetunnel.service
+TUNNEL_SCRIPT=./tunnel.sh
+
+NDT_URL=https://storage.googleapis.com/exactly-public/ndt7
+
+OUTPUT_FILE=radar.img
+
+apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip
+
+wget https://raspi.debian.net/verified/20210823_raspi_4_bullseye.img.xz
+unxz 20210823_raspi_4_bullseye.img.xz
+
+LOOP_DEV=$(losetup -f -P --show 20210823_raspi_4_bullseye.img)
 
 mkdir -p tmp
-mount -o loop,offset=314572800 20210823_raspi_4_bullseye.img tmp
+mount ${LOOP_DEV}p2 -o rw tmp
+mount ${LOOP_DEV}p1 -o rw tmp/boot
 
-# Setup SSH on first boot
-touch tmp/boot/ssh
-
-# Setup 'radar' user
+# Setup radar user
 echo "radar:x:1000:1000:,,,:/home/radar:/bin/bash" >> tmp/etc/passwd
 echo "radar:x:1000:" >> tmp/etc/group
 echo "radar:*:18862:0:99999:7:::" >> tmp/etc/shadow
@@ -44,12 +44,14 @@ chmod +x tmp/home/radar/ndt7
 # Setup Ookla
 curl -O https://install.speedtest.net/app/cli/ookla-speedtest-1.0.0-arm-linux.tgz
 tar -zxf ookla-speedtest-1.0.0-arm-linux.tgz speedtest
+rm ookla-speedtest-1.0.0-arm-linux.tgz
 mv speedtest tmp/home/radar
 
 # Setup SSH Tunneling
 cp $REMOTETUNNEL_SERVICE tmp/etc/systemd/system/
 
 cp $RUNTESTS_SCRIPT tmp/home/radar
+cp $TUNNEL_SCRIPT tmp/home/radar
 cp $AUTHORIZED_KEYS_PATH tmp/home/radar/.ssh/authorized_keys
 cp $CRONTAB_FILE tmp/var/spool/cron/crontabs/radar
 chmod 600 tmp/var/spool/cron/crontabs/radar
@@ -59,10 +61,18 @@ chown 1000:108 tmp/var/spool/cron/crontabs/radar
 chown -R 1000:1000 tmp/home/radar
 chmod 644 tmp/home/radar/.ssh/authorized_keys
 
-cp $FIRSTBOOT_SCRIPT tmp/root
-echo "@reboot /root/firstboot.sh" > tmp/var/spool/cron/crontabs/root
-chown 0:108 tmp/var/spool/cron/crontabs/root
-chmod 600 tmp/var/spool/cron/crontabs/root
+# Create Chroot
+cp /usr/bin/qemu-aarch64-static tmp/usr/bin
+cp withinnewimage.sh tmp/root
 
+systemd-nspawn -D tmp /root/withinnewimage.sh
+
+rm tmp/usr/bin/qemu-aarch64-static
+rm tmp/root/withinnewimage.sh
+
+umount tmp/boot
 umount tmp
-mv 20210823_raspi_4_bullseye.img $(date --rfc-3339=date)_radar.img
+rm -r tmp
+
+mv 20210823_raspi_4_bullseye.img $OUTPUT_FILE
+zip $OUTPUT_FILE.zip $OUTPUT_FILE

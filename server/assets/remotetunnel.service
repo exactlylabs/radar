@@ -5,7 +5,7 @@ StartLimitIntervalSec=400
 StartLimitBurst=3
 
 [Service]
-ExecStart=/home/radar/radar.sh
+ExecStart=/home/radar/tunnel.sh
 KillMode=process
 Restart=always
 RestartSec=90

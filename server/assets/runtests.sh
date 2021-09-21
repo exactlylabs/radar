@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 
+set -e
+
+ENDPOINT_URL=http://radarapi.exactlylabs.com
+
 cd /home/radar
 
-CLIENT_ID=$(cat radar.config)
+. /home/radar/client.conf
 
 ./speedtest -f json --accept-license > ookla.json
-OOKLA_BLOB_ID=$(curl -XPOST -F 'file=@/home/radar/ookla.json' http://35.225.59.10:5000/blobs | jq -r .id)
-curl -XPOST http://35.225.59.10:5000/record -d "clientId=$CLIENT_ID&measurementBlobId=$OOKLA_BLOB_ID&measurementType=ookla"
+OOKLA_BLOB_ID=$(curl -XPOST -F 'file=@/home/radar/ookla.json' $ENDPOINT_URL/blobs | jq -r .id)
+curl -XPOST $ENDPOINT_URL/record -d "clientId=$CLIENT_ID&clientSecret=$CLIENT_SECRET&measurementBlobId=$OOKLA_BLOB_ID&measurementType=ookla"
 rm ookla.json
 
 ./ndt7 -format json > ndt7.json
-NDT_BLOB_ID=$(curl -XPOST -F 'file=@/home/radar/ndt7.json' http://35.225.59.10:5000/blobs | jq -r .id)
-curl -XPOST http://35.225.59.10:5000/record -d "clientId=$CLIENT_ID&measurementBlobId=$NDT_BLOB_ID&measurementType=ndt7"
+NDT_BLOB_ID=$(curl -XPOST -F 'file=@/home/radar/ndt7.json' $ENDPOINT_URL/blobs | jq -r .id)
+curl -XPOST $ENDPOINT_URL/record -d "clientId=$CLIENT_ID&clientSecret=$CLIENT_SECRET&measurementBlobId=$NDT_BLOB_ID&measurementType=ndt7"
 rm ndt7.json

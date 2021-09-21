@@ -8,6 +8,7 @@ import (
 
 type Client struct {
 	ID                string `gorm:"primaryKey"`
+	SecretHash        string
 	Name              string
 	PublicKey         string
 	EndpointHost      string `gorm:"UNIQUE_INDEX:clientremoteport;type:text;not null"`

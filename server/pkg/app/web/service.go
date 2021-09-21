@@ -28,6 +28,7 @@ func (w *WebService) Run(addr string) {
 	mux.HandleFunc("/blobs/", blobHandler)
 
 	mux.HandleFunc("/register", registerHandler)
+	mux.HandleFunc("/session", sessionHandler)
 	mux.HandleFunc("/record", recordHandler)
 
 	w.srv = &http.Server{
