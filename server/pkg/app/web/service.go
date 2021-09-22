@@ -31,6 +31,8 @@ func (w *WebService) Run(addr string) {
 	mux.HandleFunc("/session", sessionHandler)
 	mux.HandleFunc("/record", recordHandler)
 
+	mux.HandleFunc("/healthcheck", healthcheckHandler)
+
 	w.srv = &http.Server{
 		Addr:    addr,
 		Handler: handlers.LoggingHandler(os.Stdout, handlers.RecoveryHandler()(mux)),
