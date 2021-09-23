@@ -34,6 +34,11 @@ echo "radar:*:18862:0:99999:7:::" >> tmp/etc/shadow
 cp -r tmp/etc/skel/. tmp/home/radar
 mkdir -p tmp/home/radar/.ssh
 
+# Disable root local password login
+tail -n +2 tmp/etc/shadow > tmp/etc/shadow.tmp
+echo 'root:*:18862:0:99999:7:::' | cat - tmp/etc/shadow.tmp > tmp/etc/shadow
+rm tmp/etc/shadow.tmp
+
 # Setup NDT
 curl -O $NDT_URL
 mv ndt7 tmp/home/radar
@@ -62,6 +67,11 @@ cp /usr/bin/qemu-aarch64-static tmp/usr/bin
 cp withinnewimage.sh tmp/root
 
 systemd-nspawn -D tmp /root/withinnewimage.sh
+
+# Allow radar to elevate to root
+echo "radar ALL=(ALL:ALL) NOPASSWD:ALL" > tmp/etc/sudoers.d/radar_sudoers
+chown 0:0 tmp/etc/sudoers.d/radar_sudoers
+chmod 440 tmp/etc/sudoers.d/radar_sudoers
 
 rm tmp/usr/bin/qemu-aarch64-static
 rm tmp/root/withinnewimage.sh
