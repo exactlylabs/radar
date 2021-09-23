@@ -1,7 +1,7 @@
 export GCP_BUCKET=exactly-dev-testresults
 export GCP_CREDENTIALS_RELATIVE=./gcp-creds.json
 export STORER_MODE=gcp
-export ENDPOINT_HOST=radarapi.exactlylabs.com
+export ENDPOINT_HOST=radar-01.exactlylabs.com
 export ENDPOINT_PORT=22
 export REMOTE_PORT_RANGE=33000-38000
 export PG_DSN="dbname=radar_dev"

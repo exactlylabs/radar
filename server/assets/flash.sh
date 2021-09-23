@@ -4,26 +4,39 @@ set -e
 
 IMAGE_LOCATION=./radar.img
 
-ENDPOINT_URL=http://radarapi.exactlylabs.com
+if [[ ! -f "$IMAGE_LOCATION" ]]; then
+    echo "Image not found at '$IMAGE_LOCATION' as expected"
+    exit 1
+fi
+
+API_ENDPOINT_URL=https://radarapi.exactlylabs.com
 
 if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     echo "Must be run as root"
-    exit
+    exit 1
 fi
 
-if [[ "$#" -ne 1 ]]; then
-    echo "Must pass device to flash as only parameter e.g. /dev/sdc"
+if [[ "$#" -ne 2 ]]; then
+    echo "usage: ./flash.sh <AUTHORIZED_KEYS_FILE> <DEVICE>"
+    echo "  Where <AUTHORIZED_KEYS_FILE> is a SSH authorized_keys key file to place on this device"
+    echo "  and <DEVICE> is the block device to write the image to e.g. /dev/sdc"
+    exit 1
 fi
 
 apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip jq
 
-dd if=$IMAGE_LOCATION of=$1 bs=1M status=progress
+dd if=$IMAGE_LOCATION of=$2 bs=1M status=progress
 
 mkdir -p tmp
-mount ${1}2 tmp
-mount ${1}1 tmp/boot
+mount ${2}2 tmp
+mount ${2}1 tmp/boot
 
-CLIENT_AUTH=$(curl -XPOST $ENDPOINT_URL/register)
+cp $1 tmp/home/radar/.ssh/authorized_keys
+# Set owner and group to radar
+chown 1000:1000 tmp/home/radar/.ssh/authorized_keys
+chmod 644 tmp/home/radar/.ssh/authorized_keys
+
+CLIENT_AUTH=$(curl -XPOST $API_ENDPOINT_URL/register)
 
 CLIENT_ID=$(echo $CLIENT_AUTH | jq -r .clientId)
 CLIENT_SECRET=$(echo $CLIENT_AUTH | jq -r .clientSecret)

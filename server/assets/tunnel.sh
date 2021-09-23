@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ENDPOINT_URL=http://radarapi.exactlylabs.com
+API_ENDPOINT_URL=https://radarapi.exactlylabs.com
 
 cd /home/radar
 
@@ -11,7 +11,7 @@ do
   echo "Attempting tunnel startup..."
 
   echo "Fetching tunnel config"
-  TUNNEL_CONFIG=$(curl -XPOST $ENDPOINT_URL/session -d "clientId=$CLIENT_ID&clientSecret=$CLIENT_SECRET")
+  TUNNEL_CONFIG=$(curl -XPOST $API_ENDPOINT_URL/session -d "clientId=$CLIENT_ID&clientSecret=$CLIENT_SECRET")
 
   PRIVATE_KEY=$(echo $TUNNEL_CONFIG | jq -r .privateKey)
   ENDPOINT_HOST=$(echo $TUNNEL_CONFIG | jq -r .endpointHost)

@@ -7,8 +7,6 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     exit
 fi
 
-AUTHORIZED_KEYS_PATH=./authorized_keys
-
 CRONTAB_FILE=./clientcrontab
 RUNTESTS_SCRIPT=./runtests.sh
 REMOTETUNNEL_SERVICE=./remotetunnel.service
@@ -33,8 +31,8 @@ mount ${LOOP_DEV}p1 -o rw tmp/boot
 echo "radar:x:1000:1000:,,,:/home/radar:/bin/bash" >> tmp/etc/passwd
 echo "radar:x:1000:" >> tmp/etc/group
 echo "radar:*:18862:0:99999:7:::" >> tmp/etc/shadow
-mkdir -p tmp/home/radar/.ssh
 cp -r tmp/etc/skel/. tmp/home/radar
+mkdir -p tmp/home/radar/.ssh
 
 # Setup NDT
 curl -O $NDT_URL
@@ -52,14 +50,12 @@ cp $REMOTETUNNEL_SERVICE tmp/etc/systemd/system/
 
 cp $RUNTESTS_SCRIPT tmp/home/radar
 cp $TUNNEL_SCRIPT tmp/home/radar
-cp $AUTHORIZED_KEYS_PATH tmp/home/radar/.ssh/authorized_keys
 cp $CRONTAB_FILE tmp/var/spool/cron/crontabs/radar
 chmod 600 tmp/var/spool/cron/crontabs/radar
 # User 'radar' Group 'crontab'
 chown 1000:108 tmp/var/spool/cron/crontabs/radar
 
 chown -R 1000:1000 tmp/home/radar
-chmod 644 tmp/home/radar/.ssh/authorized_keys
 
 # Create Chroot
 cp /usr/bin/qemu-aarch64-static tmp/usr/bin
