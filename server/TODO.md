@@ -10,3 +10,11 @@ Todo:
 [] Simple map with lat/longs of my beacons
 [] Simple map with lat/longs of all beacons
 [] Parse and store test results
+
+To Verify
+[] User Signup
+[] User Login
+[] Add Beacon
+[] Check Beacon Status
+[] Update Beacon metadata
+[] List my Beacons

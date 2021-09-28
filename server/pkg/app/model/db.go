@@ -20,6 +20,7 @@ func init() {
 }
 
 func AutoMigrate() {
+	DB.AutoMigrate(&User{})
 	DB.AutoMigrate(&Client{})
 	DB.AutoMigrate(&Measurement{})
 }
