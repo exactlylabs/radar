@@ -3,7 +3,6 @@
 set -e
 
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 
 apt-get install -y jq curl unattended-upgrades apt-listchanges sudo
 
