@@ -45,9 +45,9 @@ echo -e "export CLIENT_ID=${CLIENT_ID}\nexport CLIENT_SECRET=${CLIENT_SECRET}" >
 # user radar group radar
 chown 1000:1000 tmp/home/radar/client.conf
 
-umount tmp/boot
-umount tmp
-
 echo ""
 echo "Client ID:     ${CLIENT_ID}"
 echo "Client Secret: ${CLIENT_SECRET}"
+
+umount tmp/boot
+umount tmp
