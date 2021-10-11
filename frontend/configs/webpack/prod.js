@@ -1,4 +1,5 @@
 // production config
+const webpack = require("webpack");
 const { merge } = require("webpack-merge");
 const { resolve } = require("path");
 

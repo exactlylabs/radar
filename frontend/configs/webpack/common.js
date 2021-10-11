@@ -31,7 +31,10 @@ module.exports = {
       },
     ],
   },
-  plugins: [new HtmlWebpackPlugin({ template: "index.html.ejs" })],
+  plugins: [
+    new HtmlWebpackPlugin({ template: "index.html.ejs" }),
+    new HtmlWebpackPlugin({ template: "404.html.ejs", filename: "404.html" }),
+  ],
   externals: {
     react: "React",
     "react-dom": "ReactDOM",
