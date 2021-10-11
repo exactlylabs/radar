@@ -8,9 +8,19 @@ class App extends React.Component<Record<string, unknown>, undefined> {
   public render() {
     return (
       <div className="app">
-        <h1>Hello World!</h1>
-        <p>Foo to the barz</p>
-        <img src={reactLogo.default} height="480" />
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              1
+            </div>
+            <div className="col">
+              2
+            </div>
+            <div className="col">
+              3
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
