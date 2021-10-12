@@ -27,7 +27,7 @@ class BeaconsAdd extends React.Component<RouteComponentProps, BeaconsAddState> {
   handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     await client.addBeacon(this.state.clientId, this.state.clientSecret, this.state.name, this.state.address);
-    this.props.location.push('/beacons');
+    this.props.history.push('/beacons');
   }
 
   render() {

@@ -42,7 +42,7 @@ func (w *WebService) Run(addr string) {
 	mux.HandleFunc("/healthcheck", healthcheckHandler)
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Authorization"})
-	originsOk := handlers.AllowedOrigins([]string{"http://localhost:8080"})
+	originsOk := handlers.AllowedOrigins([]string{os.Getenv("CORS_HOST")})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	w.srv = &http.Server{

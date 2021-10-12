@@ -4,6 +4,12 @@ import client from 'services/client';
 import store from '../..';
 import { fetchBeacons } from '../beacons/actions';
 
+export const signup = async (email, password) => {
+  const token = await client.signup(email, password);
+  window.localStorage.setItem('token', token.token);
+  store.dispatch(action(UserActionTypes.LOGGED_IN, token));
+}
+
 export const login = async (email, password) => {
   const token = await client.authenticate(email, password);
   window.localStorage.setItem('token', token.token);

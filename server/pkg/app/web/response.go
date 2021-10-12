@@ -75,7 +75,7 @@ func respondUserErr(w http.ResponseWriter, reason string, code string, args map[
 		panic(fmt.Errorf("unable to marshal user err response: %w", mErr))
 	}
 
-	w.WriteHeader(http.StatusBadRequest)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusBadRequest)
 	w.Write(responseJson)
 }

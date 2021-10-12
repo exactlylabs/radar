@@ -20,6 +20,8 @@ func init() {
 }
 
 func AutoMigrate() {
+	DB.Exec("create extension if not exists \"uuid-ossp\"")
+
 	DB.AutoMigrate(&User{})
 	DB.AutoMigrate(&Client{})
 	DB.AutoMigrate(&Measurement{})

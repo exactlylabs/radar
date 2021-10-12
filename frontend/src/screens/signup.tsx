@@ -2,6 +2,7 @@ import * as React from "react";
 import { ChangeEvent } from "react";
 import client from "services/client";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import { signup } from "store/reducers/user/actions";
 
 interface SignupState {
   email: string
@@ -24,8 +25,8 @@ class Login extends React.Component<RouteComponentProps, SignupState> {
 
   handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    await client.signup(this.state.email, this.state.password);
-    this.props.location.push('/beacons');
+    await signup(this.state.email, this.state.password);
+    this.props.history.push('/beacons');
   }
 
   render() {
