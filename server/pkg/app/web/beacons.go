@@ -95,7 +95,7 @@ func ListBeaconsHandler(w http.ResponseWriter, r *http.Request) {
 		entries[i].Id = clients[i].ID
 		entries[i].Name = clients[i].Name
 		entries[i].Address = clients[i].Address
-		entries[i].Online = clients[i].PublicKey != ""
+		entries[i].Online = clients[i].RemoteGatewayPort != 0
 	}
 
 	w.WriteHeader(http.StatusOK)
