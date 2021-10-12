@@ -15,9 +15,17 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 		panic("unable to parse http form")
 	}
 
-	if len(r.Form["email"]) != 1 || len(r.Form["password"]) != 1 {
-		w.WriteHeader(400)
-		w.Write([]byte("must have email and password"))
+	if len(r.Form["email"]) != 1 {
+		respondUserErr(w, "email must be set", "", map[string][]string{
+			"email": {"must be set"},
+		})
+		return
+	}
+
+	if len(r.Form["password"]) != 1 {
+		respondUserErr(w, "password must be set", "", map[string][]string{
+			"password": {"must be set"},
+		})
 		return
 	}
 
@@ -43,7 +51,8 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 	token := jwt.IssueToken(user.ID.String())
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
-	w.Write([]byte(fmt.Sprintf(`{"token": "%v"}`, token)))
+	respondOk(w, map[string]string{
+		"token": token,
+	})
 }

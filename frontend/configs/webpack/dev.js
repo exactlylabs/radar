@@ -17,7 +17,7 @@ module.exports = merge(commonConfig, {
   devtool: "cheap-module-source-map",
   plugins: [
     new webpack.DefinePlugin({
-      API_ENDPOINT: JSON.stringify('http://localhost:3000')
+      API_ENDPOINT: JSON.stringify('http://localhost:5000')
     })
   ],
 });

@@ -3,8 +3,17 @@ import { render } from "react-dom";
 
 import { Provider } from 'react-redux'
 
-import App from "./components/App";
+import Master from 'screens/master';
+import store from 'store';
+
+import { continueSession } from "store/reducers/user/actions";
+
+continueSession();
 
 const rootEl = document.getElementById("root");
 
-render(<App />, rootEl);
+render(
+  <Provider store={store}>
+    <Master />
+  </Provider>,
+  rootEl);

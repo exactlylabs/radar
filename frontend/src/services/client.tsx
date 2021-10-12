@@ -1,3 +1,4 @@
+import { url } from "inspector";
 import { builtinModules } from "module";
 
 const endpoint = API_ENDPOINT;
@@ -31,10 +32,11 @@ export interface Beacon {
   id: string;
   name: string;
   address: string;
+  online: boolean;
 }
 
 interface LoginArgs {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -44,6 +46,8 @@ interface Login {
 
 interface AddBeaconArgs {
   beaconSecret: string;
+  name: string;
+  address: string;
 }
 
 interface Empty {}
@@ -54,36 +58,45 @@ function searchParams(params: object) : string {
   }).join('&');
 }
 
-export default class Client {
-  private token?: string;
+export class Client {
+  token?: string;
 
   constructor(token?: string) {
     this.token = token;
   }
 
-  async authenticate(username: string, password: string) {
-    const resp = await this.post<LoginArgs, Login>('/login', { username, password });
+  async authenticate(email: string, password: string): Promise<Login> {
+    const resp = await this.post<LoginArgs, Login>('/login', { email, password });
     this.token = resp.token;
+    return resp;
+  }
+
+  async signup(email: string, password: string): Promise<Login> {
+    const resp = await this.post<LoginArgs, Login>('/signup', { email, password });
+    this.token = resp.token;
+    return resp;
   }
 
   async fetchBeacons() : Promise<Beacon[]> {
     return await this.get<Beacon[]>('/beacons');
   }
 
-  async addBeacon(beaconId: string, beaconSecret: string) {
-    await this.post<AddBeaconArgs, Empty>(`/beacons/${beaconId}/add`, { beaconSecret });
+  async addBeacon(beaconId: string, beaconSecret: string, name: string, address: string) {
+    await this.post<AddBeaconArgs, Empty>(`/beacons/${beaconId}/add`, { beaconSecret, name, address });
     return;
   }
 
   private async get<T>(urlPart: string): Promise<T> {
-    const url = new URL('/beacons', endpoint);
+    const url = new URL(urlPart, endpoint);
 
     const options : RequestInit = {
       method: 'GET'
     };
 
     if (this.token != null) {
-      options.headers['Authorization'] = `Bearer ${this.token}`;
+      options.headers = {
+        Authorization: `Bearer ${this.token}`
+      }
     }
 
     const resp = await fetch(url.toString(), options);
@@ -96,7 +109,7 @@ export default class Client {
   }
 
   private async post<A extends Object, R>(urlPart: string, args: A): Promise<R> {
-    const url = new URL('/beacons', endpoint);
+    const url = new URL(urlPart, endpoint);
     const options : RequestInit = {
       method: 'POST',
       mode: 'cors',
@@ -104,7 +117,7 @@ export default class Client {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: new URLSearchParams(searchParams(args))
+      body: searchParams(args)
     };
 
     if (this.token != null) {
@@ -120,3 +133,6 @@ export default class Client {
     return body.data;
   }
 }
+
+const defaultClient = new Client();
+export default defaultClient;

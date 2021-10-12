@@ -1,12 +1,18 @@
 // shared config (dev and prod)
-const { resolve } = require("path");
+const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
+    alias: {
+      store: path.resolve(__dirname, "../../src/store"),
+      components: path.resolve(__dirname, "../../src/components"),
+      services: path.resolve(__dirname, "../../src/services"),
+      screens: path.resolve(__dirname, "../../src/screens"),
+    }
   },
-  context: resolve(__dirname, "../../src"),
+  context: path.resolve(__dirname, "../../src"),
   module: {
     rules: [
       {
@@ -42,4 +48,7 @@ module.exports = {
   performance: {
     hints: false,
   },
+  output: {
+    publicPath: '/'
+  }
 };
