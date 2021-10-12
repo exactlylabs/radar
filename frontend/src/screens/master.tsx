@@ -26,38 +26,34 @@ class Master extends React.Component<MasterProperties, undefined> {
   public render() {
     const authedRoutes = (
       <>
-        <Switch>
-          <Route path="/beacons/add">
-            <AuthedNavbar />
-            <BeaconsAdd />
-          </Route>
-          <Route path="/beacons/:id/edit">
-            <AuthedNavbar />
-            <BeaconsEdit />
-          </Route>
-          <Route path="/beacons">
-            <AuthedNavbar />
-            <BeaconsList />
-          </Route>
-        </Switch>
+        <Route path="/beacons/add">
+          <AuthedNavbar />
+          <BeaconsAdd />
+        </Route>
+        <Route path="/beacons/:id/edit">
+          <AuthedNavbar />
+          <BeaconsEdit />
+        </Route>
+        <Route path="/beacons">
+          <AuthedNavbar />
+          <BeaconsList />
+        </Route>
       </>
     );
 
     return (
       <Router>
         <div className="app">
-          <Switch>
-            <Route path="/login">
-              <Login />
-            </Route>
-            <Route path="/signup">
-              <Signup />
-            </Route>
-            { this.props.token ? authedRoutes : null }
-            <Route path="/">
-              <Home />
-            </Route>
-          </Switch>
+          <Route exact path="/login">
+            <Login />
+          </Route>
+          <Route exact path="/signup">
+            <Signup />
+          </Route>
+          { this.props.token != null && authedRoutes }
+          <Route exact path="/">
+            <Home />
+          </Route>
         </div>
       </Router>
     );
