@@ -10,4 +10,4 @@ yarn install
 
 yarn run build
 
-gsutil rsync -R dist gs://radar.exactlylabs.com
+gsutil -h "Cache-Control:no-cache, max-age=0" rsync -R dist gs://radar.exactlylabs.com
