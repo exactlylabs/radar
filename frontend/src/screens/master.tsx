@@ -26,18 +26,20 @@ class Master extends React.Component<MasterProperties, undefined> {
   public render() {
     const authedRoutes = (
       <>
-        <Route path="/beacons/add">
-          <AuthedNavbar />
-          <BeaconsAdd />
-        </Route>
-        <Route path="/beacons/:id/edit">
-          <AuthedNavbar />
-          <BeaconsEdit />
-        </Route>
-        <Route path="/beacons">
-          <AuthedNavbar />
-          <BeaconsList />
-        </Route>
+        <Switch>
+          <Route path="/beacons/:id/edit">
+            <AuthedNavbar />
+            <BeaconsEdit />
+          </Route>
+          <Route exact path="/beacons/add">
+            <AuthedNavbar />
+            <BeaconsAdd />
+          </Route>
+          <Route exact path="/beacons">
+            <AuthedNavbar />
+            <BeaconsList />
+          </Route>
+        </Switch>
       </>
     );
 
