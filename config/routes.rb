@@ -5,7 +5,7 @@ Rails.application.routes.draw do
     member do
       post 'claim'
       post 'release'
-      get 'configuration'
+      post 'configuration'
     end
   end
 

@@ -2,5 +2,5 @@
 
 <%= render 'form', client: @client %>
 
-<%= link_to 'Show', @client %> |
+<%= link_to 'Show', client_path(@client.unix_user) %> |
 <%= link_to 'Back', clients_path %>
