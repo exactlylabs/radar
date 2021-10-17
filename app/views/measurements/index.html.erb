@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Measurements</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Style</th>
+      <th>Result</th>
+      <th>Client</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @measurements.each do |measurement| %>
+      <tr>
+        <td><%= measurement.style %></td>
+        <td><%= measurement.result %></td>
+        <td><%= measurement.client_id %></td>
+        <td><%= link_to 'Show', [@client, measurement] %></td>
+        <td><%= link_to 'Edit', edit_client_measurement_path(@client, measurement) %></td>
+        <td><%= link_to 'Destroy', [@client, measurement], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Measurement', new_client_measurement_path(@client) %>

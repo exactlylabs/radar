@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Style:</strong>
+  <%= @measurement.style %>
+</p>
+
+<p>
+  <strong>Result:</strong>
+  <%= link_to @measurement.result.filename, @measurement.result if @measurement.result.attached? %>
+</p>
+
+<p>
+  <strong>Client:</strong>
+  <%= @measurement.client_id %>
+</p>
+
+<%= link_to 'Edit', edit_client_measurement_path(@client, @measurement) %> |
+<%= link_to 'Back', client_measurements_path(@client) %>
