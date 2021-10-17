@@ -3,7 +3,6 @@ class Client < ApplicationRecord
   has_many :measurements
 
   geocoded_by :address
-  
 
   before_create :create_ids
   after_validation :geocode

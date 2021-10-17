@@ -3,9 +3,13 @@ Rails.application.routes.draw do
     resources :measurements
 
     member do
-      post 'claim'
       post 'release'
       post 'configuration'
+    end
+
+    collection do
+      post 'claim'
+      get 'claim', to: 'clients#claim_form'
     end
   end
 

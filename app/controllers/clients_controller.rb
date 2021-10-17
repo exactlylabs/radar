@@ -23,15 +23,25 @@ class ClientsController < ApplicationController
   def edit
   end
 
+  def claim_form
+  end
+
   def claim
-    @client.user = current_user
+    client_id = params[:id]
+    client_secret = params[:secret]
+
+    client = Client.where(unix_user: client_id).first
+
     respond_to do |format|
-      if @client.update(client_params)
-        format.html { redirect_to client_path(@client.unix_user), notice: "Client was successfully updated." }
+      if client && client.authenticate_secret(client_secret)
+        client.user = current_user
+        client.save
+        format.html { redirect_to client_path(client.unix_user), notice: "Client was successfully claimed." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @client.errors, status: :unprocessable_entity }
+        @error = true
+        format.html { render :claim_form, status: :unprocessable_entity }
+        format.json { render json: {}, status: :unprocessable_entity }
       end
     end
   end
@@ -40,8 +50,10 @@ class ClientsController < ApplicationController
   end
 
   def configuration
+
+
     respond_to do |format|
-      format.json { render json: "OK", status: :ok }
+      format.json { render :configuration, status: :ok }
     end
   end
 
@@ -102,8 +114,9 @@ class ClientsController < ApplicationController
       client_id = params[:id]
       client_secret = params[:secret]
 
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts client_id
-      puts client_secret
+      @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
+      if !@client
+        head(403)
+      end
     end
 end

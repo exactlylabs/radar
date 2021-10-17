@@ -1,0 +1,21 @@
+<%= form_with(url: claim_clients_path) do |form| %>
+  <% if @error %>
+    <div id="error_explanation">
+      <h2>Invalid client id or secret</h2>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :id %>
+    <%= form.text_field :id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :secret %>
+    <%= form.text_field :secret %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
