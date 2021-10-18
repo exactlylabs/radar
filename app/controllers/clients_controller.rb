@@ -62,14 +62,43 @@ class ClientsController < ApplicationController
   def configuration
     k = SSHKey.generate
 
-    @client.public_key = k.public_key
+    @client.public_key = k.ssh_public_key
     @private_key = k.private_key
 
     if @client.remote_gateway_port == nil
+      # New client
+      puts "MAKE NEW CLIENT CONFIG"
       @client.claim_remote_port
       @client.endpoint_host = ENV["ENDPOINT_HOST"]
       @client.endpoint_port = ENV["ENDPOINT_PORT"]
+
+      FileUtils.mkdir_p("/etc/ssh/sshd_config.d/")
+      File.open("/etc/ssh/sshd_config.d/radar-#{@client.unix_user}.conf","w") do |f|
+        f.write <<-EOF
+Match User #{@client.unix_user}
+AllowTcpForwarding remote
+AllowStreamLocalForwarding no
+X11Forwarding no
+AllowAgentForwarding no
+ForceCommand /bin/false
+GatewayPorts yes
+PermitListen #{@client.remote_gateway_port}
+EOF
+      end
+      cmd = "adduser --disabled-password --gecos \"\" #{@client.unix_user}"
+      puts cmd
+      system(cmd)
+      system("systemctl reload sshd") if Rails.env.production?
     end
+
+    FileUtils.mkdir_p("/home/#{@client.unix_user}/.ssh")
+    File.open("/home/#{@client.unix_user}/.ssh/authorized_keys","w") do |f|
+      f.write(k.ssh_public_key)
+    end
+    FileUtils.chown @client.unix_user, @client.unix_user, "/home/#{@client.unix_user}/.ssh"
+    FileUtils.chown @client.unix_user, @client.unix_user, "/home/#{@client.unix_user}/.ssh/authorized_keys"
+
+    # Write private key
 
     @client.save
 
