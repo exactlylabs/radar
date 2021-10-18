@@ -1,7 +1,9 @@
+require "sshkey"
+
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create ]
   before_action :authenticate_client!, only: %i[ configuration ]
-  before_action :set_client, only: %i[ claim release show edit update destroy ]
+  before_action :set_client, only: %i[ claim configuration release show edit update destroy ]
   skip_forgery_protection only: %i[ configuration new create ]
 
   # GET /clients or /clients.json
@@ -50,7 +52,18 @@ class ClientsController < ApplicationController
   end
 
   def configuration
+    k = SSHKey.generate
 
+    @client.public_key = k.public_key
+    @private_key = k.private_key
+
+    if @client.remote_gateway_port == nil
+      @client.claim_remote_port
+      @client.endpoint_host = ENV["ENDPOINT_HOST"]
+      @client.endpoint_port = ENV["ENDPOINT_PORT"]
+    end
+
+    @client.save
 
     respond_to do |format|
       format.json { render :configuration, status: :ok }

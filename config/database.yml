@@ -23,7 +23,7 @@ default: &default
 
 development:
   <<: *default
-  database: radar_development
+  url: <%= ENV["DATABASE_URL"] ? ENV["DATABASE_URL"] : "postgres://localhost/radar_development" %>
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
