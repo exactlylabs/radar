@@ -11,8 +11,23 @@
 </p>
 
 <p>
-  <strong>Client:</strong>
-  <%= @measurement.client_id %>
+  <strong>Download:</strong>
+  <%= @measurement.download %>
+</p>
+
+<p>
+  <strong>Upload:</strong>
+  <%= @measurement.upload %>
+</p>
+
+<p>
+  <strong>Latency:</strong>
+  <%= @measurement.latency %>
+</p>
+
+<p>
+  <strong>Jitter:</strong>
+  <%= @measurement.jitter %>
 </p>
 
 <%= link_to 'Edit', edit_client_measurement_path(@client.unix_user, @measurement) %> |

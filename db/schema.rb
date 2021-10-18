@@ -64,6 +64,12 @@ ActiveRecord::Schema.define(version: 2021_10_17_204915) do
   create_table "measurements", force: :cascade do |t|
     t.string "style"
     t.bigint "client_id", null: false
+    t.float "upload"
+    t.float "download"
+    t.float "jitter"
+    t.float "latency"
+    t.boolean "processed"
+    t.datetime "processed_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["client_id"], name: "index_measurements_on_client_id"

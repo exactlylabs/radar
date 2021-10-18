@@ -3,7 +3,7 @@ Rails.application.routes.draw do
     resources :measurements
 
     member do
-      post 'release'
+      delete 'release'
       post 'configuration'
     end
 

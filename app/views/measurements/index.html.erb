@@ -8,6 +8,10 @@
       <th>Style</th>
       <th>Result</th>
       <th>Client</th>
+      <th>Download</th>
+      <th>Upload</th>
+      <th>Latency</th>
+      <th>Jitter</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -18,6 +22,10 @@
         <td><%= measurement.style %></td>
         <td><%= measurement.result %></td>
         <td><%= measurement.client_id %></td>
+        <td><%= measurement.download %></td>
+        <td><%= measurement.upload %></td>
+        <td><%= measurement.latency %></td>
+        <td><%= measurement.jitter %></td>
         <td><%= link_to 'Show', client_measurement_path(@client.unix_user, measurement) %></td>
         <td><%= link_to 'Edit', edit_client_measurement_path(@client.unix_user, measurement) %></td>
         <td><%= link_to 'Destroy', [@client, measurement], method: :delete, data: { confirm: 'Are you sure?' } %></td>

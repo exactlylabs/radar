@@ -18,7 +18,7 @@
         <td><%= client.address %></td>
         <td><%= link_to 'Show', client_path(client.unix_user) %></td>
         <td><%= link_to 'Edit', edit_client_path(client.unix_user) %></td>
-        <td><%= link_to 'Destroy', client, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Release', release_client_path(client.unix_user), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

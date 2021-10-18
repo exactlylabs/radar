@@ -51,6 +51,12 @@ class ClientsController < ApplicationController
   end
 
   def release
+    respond_to do |format|
+      if @client.update(user: nil)
+        format.html { redirect_to clients_path, notice: "Client was successfully released." }
+        format.json { head :no_content }
+      end
+    end
   end
 
   def configuration

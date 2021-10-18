@@ -36,6 +36,8 @@ class MeasurementsController < ApplicationController
 
     respond_to do |format|
       if @measurement.save
+        ProcessMeasurementJob.perform_later @measurement
+
         format.html { redirect_to client_measurements_path(@client.unix_user), notice: "Measurement was successfully created." }
         format.json { render :show, status: :created, location: client_measurement_path(@client.unix_user, @measurement) }
       else
