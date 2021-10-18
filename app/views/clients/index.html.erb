@@ -32,6 +32,11 @@
     :latlng => [39.8097343, -98.5556199],
     :zoom => 3
   },
-  :markers => @clients.where.not(latitude: nil).map{ |c| {latlng: [c.latitude, c.longitude], popup: c.name } }
+  :markers => @clients.where.not(latitude: nil).map do |c| 
+    {
+      latlng: [c.latitude, c.longitude],
+      popup: "<a href=#{client_path(c.unix_user)}>#{c.name}</a><br />Latest Download: #{c.measurements.order(created_at: :desc).first.download} mbps<br />Latest Upload: #{c.measurements.order(created_at: :desc).first.upload} mbps"
+    }
+  end
 )
 %>
