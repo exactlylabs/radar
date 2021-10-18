@@ -2,5 +2,5 @@
 
 <%= render 'form', measurement: @measurement %>
 
-<%= link_to 'Show', [@client, @measurement] %> |
+<%= link_to 'Show', client_measurement_path(@client.unix_user, @measurement) %> |
 <%= link_to 'Back', client_measurements_path(@client) %>

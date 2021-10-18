@@ -18,8 +18,8 @@
         <td><%= measurement.style %></td>
         <td><%= measurement.result %></td>
         <td><%= measurement.client_id %></td>
-        <td><%= link_to 'Show', [@client, measurement] %></td>
-        <td><%= link_to 'Edit', edit_client_measurement_path(@client, measurement) %></td>
+        <td><%= link_to 'Show', client_measurement_path(@client.unix_user, measurement) %></td>
+        <td><%= link_to 'Edit', edit_client_measurement_path(@client.unix_user, measurement) %></td>
         <td><%= link_to 'Destroy', [@client, measurement], method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
@@ -28,4 +28,4 @@
 
 <br>
 
-<%= link_to 'New Measurement', new_client_measurement_path(@client) %>
+<%= link_to 'New Measurement', new_client_measurement_path(@client.unix_user) %>
