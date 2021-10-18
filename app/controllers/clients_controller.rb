@@ -37,6 +37,8 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if client && client.authenticate_secret(client_secret)
         client.user = current_user
+        client.name = params[:name]
+        client.address = params[:address]
         client.save
         format.html { redirect_to client_path(client.unix_user), notice: "Client was successfully claimed." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }

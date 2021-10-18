@@ -1,3 +1,5 @@
+<h1>Add Client</h1>
+
 <%= form_with(url: claim_clients_path) do |form| %>
   <% if @error %>
     <div id="error_explanation">
@@ -13,6 +15,16 @@
   <div class="field">
     <%= form.label :secret %>
     <%= form.text_field :secret %>
+  </div>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :address %>
+    <%= form.text_field :address %>
   </div>
 
   <div class="actions">
