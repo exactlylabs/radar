@@ -8,6 +8,14 @@ class Client < ApplicationRecord
   after_validation :geocode
   has_secure_password :secret, validations: false
 
+  def latest_download
+    latest_measurement ? latest_measurement.download : nil
+  end
+
+  def latest_upload
+    latest_measurement ? latest_measurement.upload : nil
+  end
+
   def claim_remote_port
     # TODO: This is not safe with concurrent clients
     range = ENV["REMOTE_PORT_RANGE"]
@@ -30,5 +38,9 @@ class Client < ApplicationRecord
     string = (0...11).map { o[rand(o.length)] }.join
 
     self.unix_user = "r#{string}"
+  end
+
+  def latest_measurement
+    self.measurements.order(created_at: :desc).first
   end
 end

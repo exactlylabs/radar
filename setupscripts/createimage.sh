@@ -18,7 +18,7 @@ OUTPUT_FILE=radar.img
 
 apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip
 
-wget https://raspi.debian.net/verified/20210823_raspi_4_bullseye.img.xz
+wget https://raspi.debian.net/tested/20210823_raspi_4_bullseye.img.xz
 unxz 20210823_raspi_4_bullseye.img.xz
 
 LOOP_DEV=$(losetup -f -P --show 20210823_raspi_4_bullseye.img)

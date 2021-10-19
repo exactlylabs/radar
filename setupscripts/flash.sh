@@ -9,7 +9,7 @@ if [[ ! -f "$IMAGE_LOCATION" ]]; then
     exit 1
 fi
 
-API_ENDPOINT_URL=https://radarapi.exactlylabs.com
+API_ENDPOINT_URL=https://radar.exactlylabs.com
 
 if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     echo "Must be run as root"

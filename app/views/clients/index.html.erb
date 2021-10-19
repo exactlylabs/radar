@@ -35,7 +35,7 @@
   :markers => @clients.where.not(latitude: nil).map do |c| 
     {
       latlng: [c.latitude, c.longitude],
-      popup: "<a href=#{client_path(c.unix_user)}>#{c.name}</a><br />Latest Download: #{c.measurements.order(created_at: :desc).first.download} mbps<br />Latest Upload: #{c.measurements.order(created_at: :desc).first.upload} mbps"
+      popup: "<a href=#{client_path(c.unix_user)}>#{c.name}</a><br />Latest Download: #{c.latest_download} mbps<br />Latest Upload: #{c.latest_upload} mbps"
     }
   end
 )

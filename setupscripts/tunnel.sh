@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-API_ENDPOINT_URL=https://radarapi.exactlylabs.com
+API_ENDPOINT_URL=https://radar.exactlylabs.com
 
 cd /home/radar
 
