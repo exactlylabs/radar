@@ -67,7 +67,6 @@ class ClientsController < ApplicationController
 
     if @client.remote_gateway_port == nil
       # New client
-      puts "MAKE NEW CLIENT CONFIG"
       @client.claim_remote_port
       @client.endpoint_host = ENV["ENDPOINT_HOST"]
       @client.endpoint_port = ENV["ENDPOINT_PORT"]

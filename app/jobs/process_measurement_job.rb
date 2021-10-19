@@ -3,7 +3,7 @@ class ProcessMeasurementJob < ApplicationJob
 
   def perform(measurement)
     case measurement.style
-    when "NDT"
+    when "NDT7"
       result = JSON.parse(measurement.result.download.split("\n")[-1])
 
       measurement.download = result["Download"]["Value"]

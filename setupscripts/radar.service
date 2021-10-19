@@ -1,0 +1,13 @@
+[Unit]
+Description=Radar Server
+After=network.target auditd.service
+
+[Service]
+ExecStart=/opt/radar/radar
+
+KillMode=process
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
