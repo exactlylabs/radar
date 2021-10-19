@@ -60,3 +60,5 @@ gem 'pundit'
 gem 'geocoder'
 gem 'leaflet-rails'
 gem 'sshkey'
+gem 'google-cloud-storage'
+
