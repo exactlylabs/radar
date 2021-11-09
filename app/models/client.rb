@@ -32,7 +32,7 @@ class Client < ApplicationRecord
   end
 
   def online?
-    self.remote_gateway_port != nil
+    (self.created_at > 1.hour.ago && latest_measurement != nil && latest_measurement.created_at < 1.hour.ago) || (self.created_at <= 1.hour.ago && self.remote_gateway_port != nil)
   end
 
   private
