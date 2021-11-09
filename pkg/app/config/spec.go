@@ -1,17 +1,32 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"reflect"
 	"strings"
 )
 
 type ProcessorConfig struct {
-	EarliestDate string `config:EARLIEST_DATE,default=2019-05-13`
-	SourceBucket string `config:SOURCE_BUCKET,default=archive-measurement-lab`
+	EarliestDate string `config:"EARLIEST_DATE,default=2019-05-13"`
+	Ipv4DBPath   string `config:"IP_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv4.csv"`
+	//Ipv4DBPath string `config:"IP_DB_PATH,default=./input/sample.csv"`
+	Ipv6DBPath string `config:"IP_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
+	//Ipv6DBPath string `config:"IP_DB_PATH,default=./input/sample.csv"`
 }
 
-func NewProcessorConfig() *ProcessorConfig {
+var cachedConfig *ProcessorConfig
+
+func GetConfig() *ProcessorConfig {
+	if cachedConfig == nil {
+		cachedConfig = processConfig()
+	}
+
+	return cachedConfig
+}
+
+func processConfig() *ProcessorConfig {
+	fmt.Println("Processing config...")
 	config := &ProcessorConfig{}
 
 	// Load ENV variables to override config using struct tags and reflection

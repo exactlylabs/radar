@@ -118,26 +118,26 @@ func worker(ctx context.Context, ch chan *FetchedData, workItems chan *workItem,
 	}
 
 	for item := range workItems {
-		rc, err := client.Bucket(ndt7Bucket).Object(item.Path).NewReader(ctx)
+		rc, err := client.Bucket(ndt7Bucket).Object(item.path).NewReader(ctx)
 		if err != nil {
 			panic(fmt.Errorf("ndt7fetcher.worker err: %w", err))
 		}
 
-		ch <- &FetchedData{Path: item.Path, R: rc, Day: item.Day, DayFilesCount: item.DayFilesCount}
+		ch <- &FetchedData{Path: item.path, R: rc, Day: item.day, DayFilesCount: item.dayCount}
 	}
 }
 
-interface workItem struct {
-	day time.Time
+type workItem struct {
+	day      time.Time
 	dayCount int
-	path string
+	path     string
 }
 
 func runFetcher(days []time.Time, parallelization int, ch chan *FetchedData) {
 	wg := &sync.WaitGroup{}
 	wg.Add(parallelization)
 
-	workItems := make(chan workItem, parallelization * 3)
+	workItems := make(chan workItem, parallelization*3)
 
 	for i := 0; i < parallelization; i++ {
 
