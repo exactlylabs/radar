@@ -31,6 +31,10 @@ class Client < ApplicationRecord
     end
   end
 
+  def online?
+    self.remote_gateway_port != nil
+  end
+
   private
 
   def create_ids

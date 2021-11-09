@@ -10,6 +10,11 @@
   <%= @client.address %>
 </p>
 
+<p>
+  <strong>Online:</strong>
+  <%= @client.online?.to_s %>
+</p>
+
 <%= link_to 'Measurements', client_measurements_path(@client.unix_user) %> |
 <%= link_to 'Edit', edit_client_path(@client.unix_user) %> |
 <%= link_to 'Back', clients_path %>
