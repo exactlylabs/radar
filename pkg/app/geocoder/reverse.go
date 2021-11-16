@@ -147,7 +147,7 @@ func ReverseGeocode(startDate, endDate time.Time, rerun bool) {
 	if rerun {
 		dateRange = helpers.DateRange(startDate, endDate)
 	} else {
-		dateRange = storage.Incomplete("reverse", startDate, endDate)
+		dateRange = storage.Incomplete("revgeocode", startDate, endDate)
 	}
 
 	for _, date := range dateRange {
@@ -162,7 +162,7 @@ func ReverseGeocode(startDate, endDate time.Time, rerun bool) {
 
 		pool.Close()
 
-		storage.MarkCompleted("geocode", date)
+		storage.MarkCompleted("revgeocode", date)
 	}
 
 	storage.Close()

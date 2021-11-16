@@ -40,7 +40,7 @@ func init() {
 	for i := int64(0); i < totalRows; i++ {
 		row := make([]JobIndex, 1)
 		rrErr := pr.Read(&row)
-		date := time.Unix(row[0].Date, 0)
+		date := time.Unix(row[0].Date, 0).UTC()
 		fmt.Println("LOADING", row[0].Store+date.Format("2006-01-02"))
 		storeCompleted.Store(row[0].Store+date.Format("2006-01-02"), &row[0])
 		if rrErr != nil {
@@ -66,7 +66,7 @@ func MarkCompleted(store string, date time.Time) {
 
 func dateRange(start, end time.Time) (dates []time.Time) {
 	dates = []time.Time{}
-	for t := start; t.Before(end); t = t.AddDate(0, 0, 1) {
+	for t := start; t.Before(end.AddDate(0, 0, 1)); t = t.AddDate(0, 0, 1) {
 		dates = append(dates, t)
 	}
 	return dates

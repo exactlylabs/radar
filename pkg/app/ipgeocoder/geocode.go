@@ -19,6 +19,11 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/services/storage"
 )
 
+type ipgeocodeWorkItem struct {
+	fetchedResult *models.FetchedResult
+	date          time.Time
+}
+
 func addFileToNetmap(nm *netmap.NetMap, filename string) error {
 	fmt.Println(filename)
 	file, fErr := os.Open(filename)
@@ -77,26 +82,26 @@ var lookupInitialized = false
 
 type geocodingPool struct {
 	wg *sync.WaitGroup
-	ch chan *models.FetchedResult
+	ch chan *ipgeocodeWorkItem
 }
 
-func geocodingWorker(wg *sync.WaitGroup, ch chan *models.FetchedResult) {
+func geocodingWorker(wg *sync.WaitGroup, ch chan *ipgeocodeWorkItem) {
 	defer wg.Done()
 
 	for toProcess := range ch {
 		// Save
-		latlonRaw := lookup.Lookup(net.ParseIP(toProcess.IP))
+		latlonRaw := lookup.Lookup(net.ParseIP(toProcess.fetchedResult.IP))
 
 		if latlonRaw != nil {
 			latlon := latlonRaw.([]float64)
 			lat := latlon[0]
 			lng := latlon[1]
-			storage.PushDatedRow("geocode", time.Unix(toProcess.StartedAt, 0), &models.GeocodedResult{
-				Id:        toProcess.Id,
-				IP:        toProcess.IP,
-				StartedAt: toProcess.StartedAt,
-				Upload:    toProcess.Upload,
-				MBPS:      toProcess.MBPS,
+			storage.PushDatedRow("geocode", toProcess.date, &models.GeocodedResult{
+				Id:        toProcess.fetchedResult.Id,
+				IP:        toProcess.fetchedResult.IP,
+				StartedAt: toProcess.fetchedResult.StartedAt,
+				Upload:    toProcess.fetchedResult.Upload,
+				MBPS:      toProcess.fetchedResult.MBPS,
 				Latitude:  lat,
 				Longitude: lng,
 			})
@@ -105,7 +110,7 @@ func geocodingWorker(wg *sync.WaitGroup, ch chan *models.FetchedResult) {
 }
 
 func newGeocodingPool() *geocodingPool {
-	ch := make(chan *models.FetchedResult)
+	ch := make(chan *ipgeocodeWorkItem)
 	wg := &sync.WaitGroup{}
 
 	for i := 0; i < runtime.NumCPU(); i++ {
@@ -119,8 +124,11 @@ func newGeocodingPool() *geocodingPool {
 	}
 }
 
-func (p *geocodingPool) Queue(toProcess *models.FetchedResult) {
-	p.ch <- toProcess
+func (p *geocodingPool) Queue(toProcess *models.FetchedResult, date time.Time) {
+	p.ch <- &ipgeocodeWorkItem{
+		fetchedResult: toProcess,
+		date:          date,
+	}
 }
 
 func (p *geocodingPool) Close() {
@@ -147,7 +155,7 @@ func Geocode(startDate, endDate time.Time, rerun bool) {
 	if rerun {
 		dateRange = helpers.DateRange(startDate, endDate)
 	} else {
-		dateRange = storage.Incomplete("geocode", startDate, endDate)
+		dateRange = storage.Incomplete("ipgeocode", startDate, endDate)
 	}
 
 	fmt.Println(dateRange)
@@ -158,13 +166,13 @@ func Geocode(startDate, endDate time.Time, rerun bool) {
 		iter := storage.DatedRows("fetched", &models.FetchedResult{}, date)
 		next := iter.Next()
 		for next != nil {
-			pool.Queue(next.(*models.FetchedResult))
+			pool.Queue(next.(*models.FetchedResult), date)
 			next = iter.Next()
 		}
 
 		pool.Close()
 
-		storage.MarkCompleted("geocode", date)
+		storage.MarkCompleted("ipgeocode", date)
 	}
 
 	storage.Close()

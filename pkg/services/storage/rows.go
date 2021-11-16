@@ -134,5 +134,7 @@ func CloseDatedRow(store string, date time.Time) {
 	key := channelKey(store, date)
 	ch := channelWriters[key]
 	delete(channelWriters, key)
-	close(ch)
+	if ch != nil {
+		close(ch)
+	}
 }

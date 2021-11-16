@@ -184,6 +184,7 @@ func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, ch chan *fetchWorkI
 		atomic.AddInt32(item.completedRef, 1)
 		fmt.Println("Completed", *item.completedRef, "of", item.total)
 		if item.total == *item.completedRef {
+			fmt.Println(item.day)
 			storage.CloseDatedRow("fetched", item.day)
 		}
 	}
@@ -235,7 +236,7 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 	if rerun {
 		dateRange = helpers.DateRange(startDate, endDate)
 	} else {
-		dateRange = storage.Incomplete("geocode", startDate, endDate)
+		dateRange = storage.Incomplete("fetch", startDate, endDate)
 	}
 
 	client, err := gcpstorage.NewClient(ctx, option.WithoutAuthentication())
@@ -243,13 +244,14 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 		panic(fmt.Errorf("fetcher.Fetch err: %v", err))
 	}
 
-	pool := newFetchingPool(ctx)
-
 	for _, date := range dateRange {
+		pool := newFetchingPool(ctx)
+
 		total := int32(0)
 		objectPaths := []string{}
 
 		searchPrefixes := searchPrefixes(date)
+		fmt.Println(searchPrefixes)
 		for _, prefix := range searchPrefixes {
 			iter := client.Bucket(ndt7Bucket).Objects(ctx, &gcpstorage.Query{Prefix: prefix})
 			item, iErr := iter.Next()
@@ -272,8 +274,10 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 		for _, path := range objectPaths {
 			pool.queue(date, path, total, &completed)
 		}
-	}
+		pool.close()
+		storage.MarkCompleted("fetch", date)
 
-	pool.close()
-	storage.Close()
+		storage.Close()
+
+	}
 }
