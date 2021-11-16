@@ -198,7 +198,7 @@ export default class Map extends Component<Props, State> {
             <label htmlFor="down">Down
           </label><br /><br />
 
-          <label htmlFor="median">Median KBPS</label>
+          <label htmlFor="median">Median MBPS</label>
           <input type="number" id="median" name="median" onChange={this.handleInputChange} value={this.state.median} /><br />
 
           <label htmlFor="startDate">Start Date</label>
