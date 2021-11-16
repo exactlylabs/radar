@@ -76,7 +76,7 @@ export default class Map extends Component<Props, State> {
 
       this.geoJson.bindPopup((layer) => {
         if(this.latestData[layer["feature"].properties["GEOID"]]) {
-          return `${layer["feature"].properties["NAMELSAD"]}<br />Rate: ${this.latestData[layer["feature"].properties["GEOID"]].rate} KBPS<br />Samples: ${this.latestData[layer["feature"].properties["GEOID"]].samples}`;
+          return `${layer["feature"].properties["NAMELSAD"]}<br />Rate: ${this.latestData[layer["feature"].properties["GEOID"]].rate} MBPS<br />Samples: ${this.latestData[layer["feature"].properties["GEOID"]].samples}`;
         } else {
           return layer["feature"].properties["NAMELSAD"];
         }
@@ -105,7 +105,7 @@ export default class Map extends Component<Props, State> {
 
         this.geoJson.bindPopup((layer) => {
           if(this.latestData[layer["feature"].properties["GEOID"]]) {
-            return `${layer["feature"].properties["NAMELSAD"]}<br />Rate: ${this.latestData[layer["feature"].properties["GEOID"]].rate} KBPS<br />Samples: ${this.latestData[layer["feature"].properties["GEOID"]].samples}`;
+            return `${layer["feature"].properties["NAMELSAD"]}<br />Rate: ${this.latestData[layer["feature"].properties["GEOID"]].rate} MBPS<br />Samples: ${this.latestData[layer["feature"].properties["GEOID"]].samples}`;
           } else {
             return layer["feature"].properties["NAMELSAD"];
           }
