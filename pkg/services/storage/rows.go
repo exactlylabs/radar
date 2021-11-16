@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -27,6 +28,10 @@ type RowIterator struct {
 }
 
 func (i *RowIterator) Next() interface{} {
+	if i.fr == nil {
+		return nil
+	}
+
 	if i.nextIndex >= i.totalRows {
 		i.pr.ReadStop()
 		err := i.fr.Close()
@@ -58,6 +63,16 @@ func (i *RowIterator) Next() interface{} {
 func DatedRows(store string, obj interface{}, date time.Time) *RowIterator {
 	path := fmt.Sprintf("output/%v/%v.parquet", store, date.Format("2006-01-02"))
 
+	if _, err := os.Stat("/path/to/whatever"); errors.Is(err, os.ErrNotExist) {
+		return &RowIterator{
+			fr:        nil,
+			pr:        nil,
+			objType:   reflect.TypeOf(obj),
+			nextIndex: 0,
+			totalRows: 0,
+		}
+	}
+
 	fr, err := local.NewLocalFileReader(path)
 	if err != nil {
 		panic(fmt.Errorf("storage.DatedRows err: %v", err))
@@ -72,7 +87,7 @@ func DatedRows(store string, obj interface{}, date time.Time) *RowIterator {
 		fr:        fr,
 		pr:        pr,
 		objType:   reflect.TypeOf(obj),
-		nextIndex: int64(0),
+		nextIndex: 0,
 		totalRows: pr.GetNumRows(),
 	}
 }
