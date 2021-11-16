@@ -92,11 +92,15 @@ func innerGzipReader(reader io.Reader, day time.Time) error {
 	if m.Download != nil && len(m.Download.ServerMeasurements) > 0 {
 		l := len(m.Download.ServerMeasurements)
 		mbps := 8 * float32(m.Download.ServerMeasurements[l-1].TCPInfo.BytesAcked) / float32(m.Download.ServerMeasurements[l-1].TCPInfo.ElapsedTime)
+		startedAt, tErr := time.Parse(time.RFC3339, m.Download.StartTime)
+		if tErr != nil {
+			return fmt.Errorf("fetcher.innerGzipReader tErr: %v", tErr)
+		}
 		storage.PushDatedRow("fetched", day, &models.FetchedResult{
 			Id:        m.Download.UUID,
-			IPAddress: m.ClientIP,
-			Date:      day.Unix(),
-			Direction: "d",
+			IP:        m.ClientIP,
+			StartedAt: startedAt.Unix(),
+			Upload:    false,
 			MBPS:      mbps,
 		})
 	}
@@ -104,11 +108,15 @@ func innerGzipReader(reader io.Reader, day time.Time) error {
 	if m.Upload != nil && len(m.Upload.ServerMeasurements) > 0 {
 		l := len(m.Upload.ServerMeasurements)
 		mbps := 8 * 8 * float32(m.Upload.ServerMeasurements[l-1].TCPInfo.BytesReceived) / float32(m.Upload.ServerMeasurements[l-1].TCPInfo.ElapsedTime)
+		startedAt, tErr := time.Parse(time.RFC3339, m.Upload.StartTime)
+		if tErr != nil {
+			return fmt.Errorf("fetcher.innerGzipReader tErr: %v", tErr)
+		}
 		storage.PushDatedRow("fetched", day, &models.FetchedResult{
 			Id:        m.Upload.UUID,
-			IPAddress: m.ClientIP,
-			Date:      day.Unix(),
-			Direction: "u",
+			IP:        m.ClientIP,
+			StartedAt: startedAt.Unix(),
+			Upload:    true,
 			MBPS:      mbps,
 		})
 	}
@@ -236,7 +244,6 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 	}
 
 	pool := newFetchingPool(ctx)
-	defer pool.close()
 
 	for _, date := range dateRange {
 		total := int32(0)
@@ -266,4 +273,7 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 			pool.queue(date, path, total, &completed)
 		}
 	}
+
+	pool.close()
+	storage.Close()
 }

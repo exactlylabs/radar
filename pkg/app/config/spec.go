@@ -10,9 +10,8 @@ import (
 type ProcessorConfig struct {
 	EarliestDate string `config:"EARLIEST_DATE,default=2019-05-13"`
 	Ipv4DBPath   string `config:"IP_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv4.csv"`
-	//Ipv4DBPath string `config:"IP_DB_PATH,default=./input/sample.csv"`
-	Ipv6DBPath string `config:"IP_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
-	//Ipv6DBPath string `config:"IP_DB_PATH,default=./input/sample.csv"`
+	Ipv6DBPath   string `config:"IP_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
+	ShapePaths   string `config:"SHAPE_PATHS,default=US_COUNTIES:./input/tl_2021_us_county/tl_2021_us_county.shp;US_TRIBAL_TRACTS:./input/tl_2021_us_ttract/tl_2021_us_ttract.shp"`
 }
 
 var cachedConfig *ProcessorConfig
@@ -23,6 +22,18 @@ func GetConfig() *ProcessorConfig {
 	}
 
 	return cachedConfig
+}
+
+func (c *ProcessorConfig) ShapePathEntries() map[string]string {
+	paths := make(map[string]string)
+	for _, path := range strings.Split(c.ShapePaths, ";") {
+		parts := strings.Split(path, ":")
+		paths[parts[0]] = parts[1]
+	}
+
+	fmt.Println(paths)
+
+	return paths
 }
 
 func processConfig() *ProcessorConfig {

@@ -6,4 +6,6 @@ func Close() {
 	}
 	wg.Wait()
 	persistJobs()
+
+	channelWriters = map[string]chan interface{}{}
 }

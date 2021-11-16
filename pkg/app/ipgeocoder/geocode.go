@@ -73,18 +73,7 @@ func addFileToNetmap(nm *netmap.NetMap, filename string) error {
 }
 
 var lookup = netmap.NewNetMap()
-
-func init() {
-	ipv4Err := addFileToNetmap(lookup, config.GetConfig().Ipv4DBPath)
-	if ipv4Err != nil {
-		log.Fatal(ipv4Err)
-	}
-
-	ipv6Err := addFileToNetmap(lookup, config.GetConfig().Ipv6DBPath)
-	if ipv6Err != nil {
-		log.Fatal(ipv6Err)
-	}
-}
+var lookupInitialized = false
 
 type geocodingPool struct {
 	wg *sync.WaitGroup
@@ -96,17 +85,17 @@ func geocodingWorker(wg *sync.WaitGroup, ch chan *models.FetchedResult) {
 
 	for toProcess := range ch {
 		// Save
-		latlonRaw := lookup.Lookup(net.ParseIP(toProcess.IPAddress))
+		latlonRaw := lookup.Lookup(net.ParseIP(toProcess.IP))
 
 		if latlonRaw != nil {
 			latlon := latlonRaw.([]float64)
 			lat := latlon[0]
 			lng := latlon[1]
-			storage.PushDatedRow("geocode", time.Unix(toProcess.Date, 0), &models.GeocodedResult{
+			storage.PushDatedRow("geocode", time.Unix(toProcess.StartedAt, 0), &models.GeocodedResult{
 				Id:        toProcess.Id,
-				IPAddress: toProcess.IPAddress,
-				Date:      toProcess.Date,
-				Direction: toProcess.Direction,
+				IP:        toProcess.IP,
+				StartedAt: toProcess.StartedAt,
+				Upload:    toProcess.Upload,
 				MBPS:      toProcess.MBPS,
 				Latitude:  lat,
 				Longitude: lng,
@@ -140,6 +129,20 @@ func (p *geocodingPool) Close() {
 }
 
 func Geocode(startDate, endDate time.Time, rerun bool) {
+	if !lookupInitialized {
+		ipv4Err := addFileToNetmap(lookup, config.GetConfig().Ipv4DBPath)
+		if ipv4Err != nil {
+			log.Fatal(ipv4Err)
+		}
+
+		ipv6Err := addFileToNetmap(lookup, config.GetConfig().Ipv6DBPath)
+		if ipv6Err != nil {
+			log.Fatal(ipv6Err)
+		}
+
+		lookupInitialized = true
+	}
+
 	var dateRange []time.Time
 	if rerun {
 		dateRange = helpers.DateRange(startDate, endDate)
@@ -163,4 +166,6 @@ func Geocode(startDate, endDate time.Time, rerun bool) {
 
 		storage.MarkCompleted("geocode", date)
 	}
+
+	storage.Close()
 }
