@@ -63,7 +63,7 @@ func (i *RowIterator) Next() interface{} {
 func DatedRows(store string, obj interface{}, date time.Time) *RowIterator {
 	path := fmt.Sprintf("output/%v/%v.parquet", store, date.Format("2006-01-02"))
 
-	if _, err := os.Stat("/path/to/whatever"); errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
 		return &RowIterator{
 			fr:        nil,
 			pr:        nil,

@@ -17,25 +17,30 @@ import (
 var index *geo.Index
 var indexInitialized bool
 
-type geocodingPool struct {
-	wg *sync.WaitGroup
-	ch chan *models.GeocodedResult
+type geocodeWorkItem struct {
+	geocodedResult *models.GeocodedResult
+	date           time.Time
 }
 
-func geocodingWorker(wg *sync.WaitGroup, ch chan *models.GeocodedResult) {
+type geocodingPool struct {
+	wg *sync.WaitGroup
+	ch chan *geocodeWorkItem
+}
+
+func geocodingWorker(wg *sync.WaitGroup, ch chan *geocodeWorkItem) {
 	defer wg.Done()
 
 	for toProcess := range ch {
 		// Save
 		results := index.ContainingShapeID(&geo.Point{
-			Lat: toProcess.Latitude,
-			Lng: toProcess.Longitude,
+			Lat: toProcess.geocodedResult.Latitude,
+			Lng: toProcess.geocodedResult.Longitude,
 		})
 
 		for _, result := range results {
-			storage.PushDatedRow("reverse", time.Unix(toProcess.StartedAt, 0), &models.RevGeoResult{
+			storage.PushDatedRow("reverse", toProcess.date, &models.RevGeoResult{
 				GeoNamespace: result.Namespace,
-				Id:           toProcess.Id,
+				Id:           toProcess.geocodedResult.Id,
 				GeoId:        result.ExternalId,
 			})
 		}
@@ -43,7 +48,7 @@ func geocodingWorker(wg *sync.WaitGroup, ch chan *models.GeocodedResult) {
 }
 
 func newGeocodingPool() *geocodingPool {
-	ch := make(chan *models.GeocodedResult)
+	ch := make(chan *geocodeWorkItem)
 	wg := &sync.WaitGroup{}
 
 	for i := 0; i < runtime.NumCPU(); i++ {
@@ -57,8 +62,11 @@ func newGeocodingPool() *geocodingPool {
 	}
 }
 
-func (p *geocodingPool) Queue(toProcess *models.GeocodedResult) {
-	p.ch <- toProcess
+func (p *geocodingPool) Queue(date time.Time, toProcess *models.GeocodedResult) {
+	p.ch <- &geocodeWorkItem{
+		geocodedResult: toProcess,
+		date:           date,
+	}
 }
 
 func (p *geocodingPool) Close() {
@@ -156,7 +164,7 @@ func ReverseGeocode(startDate, endDate time.Time, rerun bool) {
 		iter := storage.DatedRows("geocode", &models.GeocodedResult{}, date)
 		next := iter.Next()
 		for next != nil {
-			pool.Queue(next.(*models.GeocodedResult))
+			pool.Queue(date, next.(*models.GeocodedResult))
 			next = iter.Next()
 		}
 
