@@ -17,14 +17,15 @@ import (
 )
 
 type MapRequest struct {
-	BoundingBox string `json:"boundingBox"`
+	GeoNamespace string `json:"geoNamespace"`
 }
 
 type MetricsRequest struct {
-	Direction string  `json:"direction"`
-	StartDate string  `json:"startDate"`
-	EndDate   string  `json:"endDate"`
-	Median    float64 `json:"median"`
+	GeoNamespace string  `json:"geoNamespace"`
+	Direction    string  `json:"direction"`
+	StartDate    string  `json:"startDate"`
+	EndDate      string  `json:"endDate"`
+	Median       float64 `json:"median"`
 }
 
 type Metric struct {
@@ -50,7 +51,13 @@ func MapHandler(w http.ResponseWriter, r *http.Request) {
 
 	// response, _ := json.Marshal(payload)
 
-	dat, err := ioutil.ReadFile("./output.json")
+	if mapRequestParams.GeoNamespace != "US_COUNTIES" && mapRequestParams.GeoNamespace != "US_TRIBAL_TRACTS" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("invalid geo"))
+		return
+	}
+
+	dat, err := ioutil.ReadFile("./geos/" + mapRequestParams.GeoNamespace + ".geojson")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Unable to open file"))
@@ -92,17 +99,19 @@ func MetricsHandler(w http.ResponseWriter, r *http.Request) {
 	endedAtString := endedAt.Add(time.Hour * 24).Format(dateLayout)
 
 	rows, err := conn.Query(`
-	SELECT geoid, quantileExact(0.5)(r) AS rate, count(*) AS samples
+	SELECT geo_id, quantileExact(0.5)(r) AS rate, count(*) AS samples
 	FROM (
-		SELECT geoid, ip, upload, toDate(started_at) as sa, quantileExact(0.5)(rate) as r
+		SELECT geo_namespace, geo_id, ip, upload, quantileExact(0.5)(mbps) as r
 		FROM tests
-		GROUP BY geoid, ip, upload, toDate(started_at)
+		JOIN test_geos ON tests.id = test_geos.id
+		WHERE geo_namespace = ?
+		AND started_at >= ?
+		AND started_at < ?
+		GROUP BY geo_namespace, geo_id, ip, upload
 	)
 	WHERE upload = ?
-	AND sa >= ?
-	AND sa <= ?
-	GROUP BY geoid
-	ORDER BY geoid;`, queryUpload, metricsRequestParams.StartDate, endedAtString)
+	GROUP BY geo_namespace, geo_id
+	ORDER BY geo_id;`, metricsRequestParams.GeoNamespace, metricsRequestParams.StartDate, endedAtString, queryUpload)
 	if err != nil {
 		log.Fatal(err)
 	}

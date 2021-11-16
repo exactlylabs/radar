@@ -21,7 +21,7 @@ interface State {
   startDate: string;
   endDate: string;
   boundingBox: string;
-  source: string;
+  geoNamespace: string;
   zoom: number;
 }
 
@@ -43,7 +43,7 @@ export default class Map extends Component<Props, State> {
       startDate: "2021-01-01",
       endDate: "2021-03-18",
       boundingBox: "",
-      source: "us-counties",
+      geoNamespace: "US_COUNTIES",
       zoom: 3,
     };
   }
@@ -88,6 +88,36 @@ export default class Map extends Component<Props, State> {
     }).catch((err) => console.error(err));
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.geoNamespace !== this.state.geoNamespace) {
+      this.geoJson.remove();
+
+      fetch(`http://${window.location.hostname}:8081/map`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.state)
+      }).then((res) => {
+        return res.json();
+      }).then((j) => {
+        this.geoJson = L.geoJSON(j)
+
+        this.geoJson.bindPopup((layer) => {
+          if(this.latestData[layer["feature"].properties["GEOID"]]) {
+            return `${layer["feature"].properties["NAMELSAD"]}<br />Rate: ${this.latestData[layer["feature"].properties["GEOID"]].rate} KBPS<br />Samples: ${this.latestData[layer["feature"].properties["GEOID"]].samples}`;
+          } else {
+            return layer["feature"].properties["NAMELSAD"];
+          }
+        });
+        
+        this.geoJson.addTo(this.map);
+      }).then(() => {
+        //return this.updateRates();
+      }).catch((err) => console.error(err));
+    }
+  }
+
   updateRates() {
     return fetch(`http://${window.location.hostname}:8081/metrics`, {
       method: "POST",
@@ -95,7 +125,7 @@ export default class Map extends Component<Props, State> {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        source: this.state.source,
+        geoNamespace: this.state.geoNamespace,
         direction: this.state.direction,
         startDate: this.state.startDate,
         endDate: this.state.endDate,
@@ -156,10 +186,10 @@ export default class Map extends Component<Props, State> {
     return (
       <div>
         <div>
-          <label htmlFor="source">Choose a map:</label>
-          <select name="source" id="source" onChange={this.handleSelectChange} value={this.state.source}>
-            <option value="us-counties">US Counties</option>
-            <option value="us-tribal-tracts">US Tribal Tracts</option>
+          <label htmlFor="geoNamespace">Choose a map:</label>
+          <select name="geoNamespace" id="geoNamespace" onChange={this.handleSelectChange} value={this.state.geoNamespace}>
+            <option value="US_COUNTIES">US Counties</option>
+            <option value="US_TRIBAL_TRACTS">US Tribal Tracts</option>
           </select><br />
           <input type="radio" id="up" name="direction" onChange={this.handleInputChange} value="up" checked={this.state.direction === 'up'} />
             <label htmlFor="up">Up
