@@ -107,7 +107,7 @@ func innerGzipReader(reader io.Reader, day time.Time) error {
 
 	if m.Upload != nil && len(m.Upload.ServerMeasurements) > 0 {
 		l := len(m.Upload.ServerMeasurements)
-		mbps := 8 * 8 * float32(m.Upload.ServerMeasurements[l-1].TCPInfo.BytesReceived) / float32(m.Upload.ServerMeasurements[l-1].TCPInfo.ElapsedTime)
+		mbps := 8 * float32(m.Upload.ServerMeasurements[l-1].TCPInfo.BytesReceived) / float32(m.Upload.ServerMeasurements[l-1].TCPInfo.ElapsedTime)
 		startedAt, tErr := time.Parse(time.RFC3339, m.Upload.StartTime)
 		if tErr != nil {
 			return fmt.Errorf("fetcher.innerGzipReader tErr: %v", tErr)
