@@ -1,3 +1,5 @@
+require "csv"
+
 class MeasurementsController < ApplicationController
   before_action :authenticate_user!, except: %i[ new create ]
   before_action :set_client
@@ -7,6 +9,17 @@ class MeasurementsController < ApplicationController
   # GET /measurements or /measurements.json
   def index
     @measurements = @client.measurements
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data @measurements.to_csv, filename: "measurements-#{@client.unix_user}.csv" }
+    end
+  end
+
+  def ndt7_index
+    respond_to do |format|
+      format.csv { send_data @client.measurements.where(style: "NDT7").to_ndt7_csv, filename: "measurements-extended-#{@client.unix_user}.csv" }
+    end
   end
 
   # GET /measurements/1 or /measurements/1.json

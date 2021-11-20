@@ -2,6 +2,9 @@
 
 <h1>Measurements</h1>
 
+<%= link_to 'Download All', client_measurements_path(@client.unix_user, format: 'csv') %>
+<%= link_to 'Download ND7 with Extended Info', ndt7_index_client_measurements_path(@client.unix_user, format: 'csv') %>
+
 <table>
   <thead>
     <tr>
@@ -20,10 +23,10 @@
       <tr>
         <td><%= measurement.created_at %></td>
         <td><%= measurement.style %></td>
-        <td><%= measurement.download %></td>
-        <td><%= measurement.upload %></td>
-        <td><%= measurement.latency %></td>
-        <td><%= measurement.jitter %></td>
+        <td><%= number_with_precision measurement.download, precision: 3 %></td>
+        <td><%= number_with_precision measurement.upload, precision: 3 %></td>
+        <td><%= number_with_precision measurement.latency, precision: 3 %></td>
+        <td><%= number_with_precision measurement.jitter, precision: 3 %></td>
         <td><%= link_to 'Show', client_measurement_path(@client.unix_user, measurement) %></td>
         <td><%= link_to 'Edit', edit_client_measurement_path(@client.unix_user, measurement) %></td>
         <td><%= link_to 'Destroy', [@client, measurement], method: :delete, data: { confirm: 'Are you sure?' } %></td>

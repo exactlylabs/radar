@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   resources :clients do
-    resources :measurements
+    resources :measurements do
+      collection do
+        get 'ndt7_index'
+      end
+    end
 
     member do
       delete 'release'
