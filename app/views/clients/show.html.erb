@@ -1,13 +1,15 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Name:</strong>
-  <%= @client.name %>
+  <strong>Id:</strong>
+  <%= @client.unix_user %>
 </p>
 
 <p>
-  <strong>Address:</strong>
-  <%= @client.address %>
+  <strong>Location:</strong>
+  <% if @client.location != nil %>
+  <%= link_to @client.location.name, location_path(@client.location) %>
+  <% end %>
 </p>
 
 <p>

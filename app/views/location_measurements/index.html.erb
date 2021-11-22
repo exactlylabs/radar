@@ -1,0 +1,41 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Measurements</h1>
+
+<%= link_to 'Download All', location_measurements_path(@location, format: 'csv') %>
+<%= link_to 'Download ND7 with Extended Info', ndt7_index_location_measurements_path(@location, format: 'csv') %>
+
+<table>
+  <thead>
+    <tr>
+      <th>At</th>
+      <th>Style</th>
+      <th>Download</th>
+      <th>Upload</th>
+      <th>Latency</th>
+      <th>Jitter</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @measurements.order(created_at: :desc).each do |measurement| %>
+      <tr>
+        <td><%= measurement.created_at %></td>
+        <td><%= measurement.style %></td>
+        <td><%= number_with_precision measurement.download, precision: 3 %></td>
+        <td><%= number_with_precision measurement.upload, precision: 3 %></td>
+        <td><%= number_with_precision measurement.latency, precision: 3 %></td>
+        <td><%= number_with_precision measurement.jitter, precision: 3 %></td>
+        <td><%= link_to 'Show', location_measurement_path(@location, measurement) %></td>
+        <td><%= link_to 'Edit', edit_location_measurement_path(@location, measurement) %></td>
+        <td><%= link_to 'Destroy', [@location, measurement], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Measurement', new_location_measurement_path(@location) %> |
+<%= link_to 'Back', location_path(@location) %>

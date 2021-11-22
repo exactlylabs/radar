@@ -1,6 +1,4 @@
-require "csv"
-
-class MeasurementsController < ApplicationController
+class ClientMeasurementsController < ApplicationController
   before_action :authenticate_user!, except: %i[ new create ]
   before_action :set_client
   before_action :set_measurement, only: %i[ show edit update destroy ]
@@ -46,6 +44,10 @@ class MeasurementsController < ApplicationController
     end
 
     @measurement = @client.measurements.build(measurement_params)
+
+    if !@client.location.nil?
+      @measurement.location = @client.location
+    end
 
     respond_to do |format|
       if @measurement.save

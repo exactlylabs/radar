@@ -18,13 +18,8 @@
   </div>
 
   <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= form.label :address %>
-    <%= form.text_field :address %>
+    <%= form.label :location_id, "Location" %>
+    <%= form.collection_select :location_id, current_user.locations, :id, :name, { include_blank: "" } %>
   </div>
 
   <div class="actions">

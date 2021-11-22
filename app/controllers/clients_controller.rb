@@ -156,7 +156,7 @@ EOF
 
     # Only allow a list of trusted parameters through.
     def client_params
-      params.require(:client).permit(:name, :address)
+      params.require(:client).permit(:name, :address, :location_id)
     end
 
     def authenticate_client!

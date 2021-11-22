@@ -1,0 +1,48 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Locations</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Address</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>User</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @locations.each do |location| %>
+      <tr>
+        <td><%= location.name %></td>
+        <td><%= location.address %></td>
+        <td><%= location.latitude %></td>
+        <td><%= location.longitude %></td>
+        <td><%= location.user_id %></td>
+        <td><%= link_to 'Show', location %></td>
+        <td><%= link_to 'Edit', edit_location_path(location) %></td>
+        <td><%= link_to 'Destroy', location, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Location', new_location_path %>
+
+<%= map(:center => {
+    :latlng => [39.8097343, -98.5556199],
+    :zoom => 3
+  },
+  :markers => @locations.where.not(latitude: nil).map do |l|
+    {
+      latlng: [l.latitude, l.longitude],
+      popup: "<a href=#{location_path(l)}>#{l.name}</a><br />Latest Download: #{l.latest_download} mbps<br />Latest Upload: #{l.latest_upload} mbps"
+    }
+  end
+)
+%>

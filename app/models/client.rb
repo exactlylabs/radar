@@ -1,5 +1,6 @@
 class Client < ApplicationRecord
   belongs_to :user, optional: true
+  belongs_to :location, optional: true
   has_many :measurements
 
   geocoded_by :address

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_20_173515) do
+ActiveRecord::Schema.define(version: 2021_11_22_192010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,23 +57,32 @@ ActiveRecord::Schema.define(version: 2021_11_20_173515) do
     t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "location_id"
+    t.index ["location_id"], name: "index_clients_on_location_id"
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
     t.index ["user_id"], name: "index_clients_on_user_id"
+  end
+
+  create_table "locations", force: :cascade do |t|
+    t.string "name"
+    t.string "address"
+    t.float "latitude"
+    t.float "longitude"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_locations_on_user_id"
   end
 
   create_table "measurements", force: :cascade do |t|
     t.string "style"
     t.bigint "client_id", null: false
-    t.float "upload"
-    t.float "download"
-    t.float "jitter"
-    t.float "latency"
-    t.boolean "processed"
-    t.datetime "processed_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.jsonb "extended_info"
+    t.bigint "location_id"
     t.index ["client_id"], name: "index_measurements_on_client_id"
+    t.index ["location_id"], name: "index_measurements_on_location_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -90,6 +99,9 @@ ActiveRecord::Schema.define(version: 2021_11_20_173515) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "clients", "locations"
   add_foreign_key "clients", "users"
+  add_foreign_key "locations", "users"
   add_foreign_key "measurements", "clients"
+  add_foreign_key "measurements", "locations"
 end

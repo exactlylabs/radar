@@ -5,8 +5,8 @@
 <table>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Address</th>
+      <th>Id</th>
+      <th>Location</th>
       <th>Online</th>
       <th colspan="3"></th>
     </tr>
@@ -15,8 +15,8 @@
   <tbody>
     <% @clients.each do |client| %>
       <tr>
-        <td><%= client.name %></td>
-        <td><%= client.address %></td>
+        <td><%= client.unix_user %></td>
+        <td><%= client.location != nil ? link_to(client.location.name, location_path(client.location)) : "" %></td>
         <td><%= client.online?.to_s %></td>
         <td><%= link_to 'Show', client_path(client.unix_user) %></td>
         <td><%= link_to 'Edit', edit_client_path(client.unix_user) %></td>
@@ -29,16 +29,3 @@
 <br>
 
 <%= link_to 'Add Client', claim_clients_path %>
-
-<%= map(:center => {
-    :latlng => [39.8097343, -98.5556199],
-    :zoom => 3
-  },
-  :markers => @clients.where.not(latitude: nil).map do |c| 
-    {
-      latlng: [c.latitude, c.longitude],
-      popup: "<a href=#{client_path(c.unix_user)}>#{c.name}</a><br />Latest Download: #{c.latest_download} mbps<br />Latest Upload: #{c.latest_upload} mbps"
-    }
-  end
-)
-%>

@@ -1,6 +1,14 @@
 Rails.application.routes.draw do
+  resources :locations do
+    resources :measurements, controller: 'location_measurements' do
+      collection do
+        get 'ndt7_index'
+      end
+    end
+  end
+
   resources :clients do
-    resources :measurements do
+    resources :measurements, controller: 'client_measurements' do
       collection do
         get 'ndt7_index'
       end
