@@ -5,6 +5,7 @@ class ProcessMeasurementJob < ApplicationJob
     case measurement.style
     when "NDT7"
       data = measurement.result.download.split("\n")
+      extended_info = nil
       data.reverse.each do |line|
         if line.include?("measurement") && line.include?("TCPInfo")
           last_download = JSON.parse(line)
