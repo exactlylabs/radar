@@ -1,4 +1,6 @@
-location.all.each do |l|
+Measurement.update_all(location_id: nil)
+
+Location.all.each do |l|
   l.delete
 end
 
