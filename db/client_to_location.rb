@@ -1,3 +1,7 @@
+location.all.each do |l|
+  l.delete
+end
+
 Client.all.each do |client|
   location = Location.create(
     name: client.name,
@@ -6,6 +10,9 @@ Client.all.each do |client|
     longitude: client.longitude,
     user: client.user
   )
+
+  client.location = location
+  client.save
 
   client.measurements.update_all(location_id: location.id)
 end
