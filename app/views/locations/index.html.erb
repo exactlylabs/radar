@@ -34,15 +34,23 @@
 
 <%= link_to 'New Location', new_location_path %>
 
-<%= map(:center => {
-    :latlng => [39.8097343, -98.5556199],
-    :zoom => 3
-  },
-  :markers => @locations.where.not(latitude: nil).map do |l|
-    {
-      latlng: [l.latitude, l.longitude],
-      popup: "<a href=#{location_path(l)}>#{l.name}</a><br />Latest Download: #{l.latest_download} mbps<br />Latest Upload: #{l.latest_upload} mbps"
-    }
-  end
-)
-%>
+<div id="map"></div>
+<script>
+  var map = L.map("map").setView([51.505, -0.09], 13);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
+
+  var markers = [];
+  <% @locations.each do |l| %>
+    var marker = L.marker([<%= l.latitude %>, <%= l.longitude %>]).addTo(map)
+      .bindPopup('<a href="<%= location_path(l) %>"><%= l.name %></a><br />Latest Download: <%= l.latest_download %> mbps<br />Latest Upload: <%= l.latest_upload %> mbps');
+    markers.push(marker);
+  <% end %>
+
+  var group = new L.featureGroup(markers);
+  map.fitBounds(group.getBounds());
+
+</script>

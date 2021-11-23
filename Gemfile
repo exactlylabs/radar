@@ -58,7 +58,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'devise'
 gem 'pundit'
 gem 'geocoder'
-gem 'leaflet-rails'
 gem 'sshkey'
 gem 'google-cloud-storage'
 
