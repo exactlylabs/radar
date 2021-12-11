@@ -1,11 +1,16 @@
 package storage
 
+import "sync"
+
 func Close() {
-	for _, ch := range channelWriters {
+	channelWriters.Range(func(key, value interface{}) bool {
+		ch := value.(chan interface{})
 		close(ch)
-	}
+		return true
+	})
+
 	wg.Wait()
 	persistJobs()
 
-	channelWriters = map[string]chan interface{}{}
+	channelWriters = sync.Map{}
 }

@@ -16,7 +16,8 @@ import (
 	"github.com/xitongsys/parquet-go/writer"
 )
 
-var channelWriters = map[string]chan interface{}{}
+//var channelWriters = map[string]chan interface{}{}
+var channelWriters = sync.Map{}
 var wg = &sync.WaitGroup{}
 
 type RowIterator struct {
@@ -136,19 +137,24 @@ func writerWorker(filePath string, obj interface{}, ch chan interface{}) {
 
 func PushDatedRow(store string, date time.Time, row interface{}) {
 	key := channelKey(store, date)
-	if _, ok := channelWriters[key]; !ok {
-		channelWriters[key] = make(chan interface{})
+	if _, ok := channelWriters.Load(key); !ok {
+		ch := make(chan interface{})
+		channelWriters.Store(key, ch)
 		wg.Add(1)
-		go writerWorker(fmt.Sprintf("output/%v/%v.parquet", store, date.Format("2006-01-02")), row, channelWriters[key])
+		go writerWorker(fmt.Sprintf("output/%v/%v.parquet", store, date.Format("2006-01-02")), row, ch)
 	}
 
-	channelWriters[key] <- row
+	chRaw, _ := channelWriters.Load(key)
+	ch := chRaw.(chan interface{})
+
+	ch <- row
 }
 
 func CloseDatedRow(store string, date time.Time) {
 	key := channelKey(store, date)
-	ch := channelWriters[key]
-	delete(channelWriters, key)
+	chRaw, _ := channelWriters.Load(key)
+	channelWriters.Delete(key)
+	ch := chRaw.(chan interface{})
 	if ch != nil {
 		close(ch)
 	}
