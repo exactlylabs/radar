@@ -153,6 +153,10 @@ func PushDatedRow(store string, date time.Time, row interface{}) {
 func CloseDatedRow(store string, date time.Time) {
 	key := channelKey(store, date)
 	chRaw, _ := channelWriters.Load(key)
+	if chRaw == nil {
+		return
+	}
+
 	ch := chRaw.(chan interface{})
 	channelWriters.Delete(key)
 	if ch != nil {

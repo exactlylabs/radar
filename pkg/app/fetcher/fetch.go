@@ -184,7 +184,6 @@ func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, ch chan *fetchWorkI
 		atomic.AddInt32(item.completedRef, 1)
 		fmt.Println("Completed", *item.completedRef, "of", item.total)
 		if item.total == *item.completedRef {
-			fmt.Println(item.day)
 			storage.CloseDatedRow("fetched", item.day)
 		}
 	}
