@@ -7,10 +7,12 @@ import (
 )
 
 type ProcessorConfig struct {
-	EarliestDate string `config:"EARLIEST_DATE,default=2019-05-13"`
-	Ipv4DBPath   string `config:"IP_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv4.csv"`
-	Ipv6DBPath   string `config:"IP_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
-	ShapePaths   string `config:"SHAPE_PATHS,default=US_COUNTIES:./input/tl_2021_us_county/tl_2021_us_county.shp;US_TRIBAL_TRACTS:./input/tl_2021_us_ttract/tl_2021_us_ttract.shp"`
+	EarliestDate  string `config:"EARLIEST_DATE,default=2019-05-13"`
+	Ipv4DBPath    string `config:"IPV4_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv4.csv"`
+	Ipv6DBPath    string `config:"IPV6_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
+	AsnIpv4DBPath string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv4.csv"`
+	AsnIpv6DBPath string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv6.csv"`
+	ShapePaths    string `config:"SHAPE_PATHS,default=US_COUNTIES:./input/tl_2021_us_county/tl_2021_us_county.shp;US_TRIBAL_TRACTS:./input/tl_2021_us_ttract/tl_2021_us_ttract.shp"`
 }
 
 var cachedConfig *ProcessorConfig

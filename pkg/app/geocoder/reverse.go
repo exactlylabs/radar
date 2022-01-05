@@ -127,12 +127,6 @@ func initIndex() {
 						}
 					}
 
-					/*if geoid == "06075" {
-						for x := 0; x < len(loopPoints); x++ {
-							fmt.Printf("[%f, %f],\n", loopPoints[x].Lat, loopPoints[x].Lng)
-						}
-					}*/
-
 					geoPoly := geo.NewPolygon(loopPoints)
 
 					index.Add(namespace, geoid, geoPoly)

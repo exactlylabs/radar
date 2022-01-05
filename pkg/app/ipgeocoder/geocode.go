@@ -24,6 +24,66 @@ type ipgeocodeWorkItem struct {
 	date          time.Time
 }
 
+type asnInfo struct {
+	asn int
+	org string
+}
+
+func addAsnFileToNetmap(nm *netmap.NetMap, filename string) error {
+	file, fErr := os.Open(filename)
+	if fErr != nil {
+		return fmt.Errorf("addAsnFileToNetmap fErr: %w", fErr)
+	}
+
+	r := csv.NewReader(file)
+
+	record, err := r.Read()
+	if err != nil {
+		return fmt.Errorf("addAsnFileToNetmap err 1: %w", err)
+	}
+
+	var networkIndex, asnIndex, asnOrgIndex int
+	for index, header := range record {
+		switch header {
+		case "network":
+			networkIndex = index
+		case "autonomous_system_number":
+			asnIndex = index
+		case "autonomous_system_organization":
+			asnOrgIndex = index
+		}
+	}
+
+	count := 0
+
+	for {
+		record, err = r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return fmt.Errorf("addAsnFileToNetmap err 2: %w", err)
+		}
+
+		asn, _ := strconv.Atoi(record[asnIndex])
+		org := record[asnOrgIndex]
+
+		_, network, pErr := net.ParseCIDR(record[networkIndex])
+		if pErr != nil {
+			return fmt.Errorf("addAsnFileToNetmap pErr: %w", pErr)
+		}
+
+		nm.Add(network, &asnInfo{
+			asn: asn,
+			org: org,
+		})
+
+		count += 1
+	}
+
+	return nil
+}
+
 func addFileToNetmap(nm *netmap.NetMap, filename string) error {
 	file, fErr := os.Open(filename)
 	if fErr != nil {
@@ -37,7 +97,7 @@ func addFileToNetmap(nm *netmap.NetMap, filename string) error {
 		return fmt.Errorf("addFileToNetmap err 1: %w", err)
 	}
 
-	var networkIndex, latitudeIndex, longitudeIndex int
+	var networkIndex, latitudeIndex, longitudeIndex, accuracyIndex int
 	for index, header := range record {
 		switch header {
 		case "network":
@@ -46,6 +106,8 @@ func addFileToNetmap(nm *netmap.NetMap, filename string) error {
 			latitudeIndex = index
 		case "longitude":
 			longitudeIndex = index
+		case "accuracy_radius":
+			accuracyIndex = index
 		}
 	}
 
@@ -62,13 +124,14 @@ func addFileToNetmap(nm *netmap.NetMap, filename string) error {
 
 		lat, _ := strconv.ParseFloat(record[latitudeIndex], 64)
 		lon, _ := strconv.ParseFloat(record[longitudeIndex], 64)
+		acc, _ := strconv.ParseFloat(record[accuracyIndex], 64)
 
 		_, network, pErr := net.ParseCIDR(record[networkIndex])
 		if pErr != nil {
 			return fmt.Errorf("addFileToNetmap pErr: %w", pErr)
 		}
 
-		nm.Add(network, []float64{lat, lon})
+		nm.Add(network, []float64{lat, lon, acc})
 
 		count += 1
 	}
@@ -77,6 +140,7 @@ func addFileToNetmap(nm *netmap.NetMap, filename string) error {
 }
 
 var lookup = netmap.NewNetMap()
+var asnLookup = netmap.NewNetMap()
 var lookupInitialized = false
 
 type geocodingPool struct {
@@ -90,21 +154,38 @@ func geocodingWorker(wg *sync.WaitGroup, ch chan *ipgeocodeWorkItem) {
 	for toProcess := range ch {
 		// Save
 		latlonRaw := lookup.Lookup(net.ParseIP(toProcess.fetchedResult.IP))
+		asnInfoRaw := asnLookup.Lookup(net.ParseIP(toProcess.fetchedResult.IP))
 
+		var lat, lng, acc float64
+		var asn int
+		var org string
 		if latlonRaw != nil {
 			latlon := latlonRaw.([]float64)
-			lat := latlon[0]
-			lng := latlon[1]
-			storage.PushDatedRow("geocode", toProcess.date, &models.GeocodedResult{
-				Id:        toProcess.fetchedResult.Id,
-				IP:        toProcess.fetchedResult.IP,
-				StartedAt: toProcess.fetchedResult.StartedAt,
-				Upload:    toProcess.fetchedResult.Upload,
-				MBPS:      toProcess.fetchedResult.MBPS,
-				Latitude:  lat,
-				Longitude: lng,
-			})
+			lat = latlon[0]
+			lng = latlon[1]
+			acc = latlon[2]
 		}
+
+		if asnInfoRaw != nil {
+			asnInfo := asnInfoRaw.(*asnInfo)
+			asn = asnInfo.asn
+			org = asnInfo.org
+		}
+
+		storage.PushDatedRow("geocode", toProcess.date, &models.GeocodedResult{
+			Id:                 toProcess.fetchedResult.Id,
+			IP:                 toProcess.fetchedResult.IP,
+			StartedAt:          toProcess.fetchedResult.StartedAt,
+			Upload:             toProcess.fetchedResult.Upload,
+			MBPS:               toProcess.fetchedResult.MBPS,
+			LossRate:           toProcess.fetchedResult.LossRate,
+			MinRTT:             toProcess.fetchedResult.MinRTT,
+			Latitude:           lat,
+			Longitude:          lng,
+			LocationAccuracyKM: acc,
+			ASN:                asn,
+			ASNOrg:             org,
+		})
 	}
 }
 
@@ -145,6 +226,16 @@ func Geocode(startDate, endDate time.Time, rerun bool) {
 		ipv6Err := addFileToNetmap(lookup, config.GetConfig().Ipv6DBPath)
 		if ipv6Err != nil {
 			log.Fatal(ipv6Err)
+		}
+
+		asnIpv4Err := addAsnFileToNetmap(asnLookup, config.GetConfig().AsnIpv4DBPath)
+		if asnIpv4Err != nil {
+			log.Fatal(asnIpv4Err)
+		}
+
+		asnIpv6Err := addAsnFileToNetmap(asnLookup, config.GetConfig().AsnIpv6DBPath)
+		if asnIpv6Err != nil {
+			log.Fatal(asnIpv6Err)
 		}
 
 		lookupInitialized = true
