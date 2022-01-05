@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/ioutil"
 	"runtime"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -41,16 +42,23 @@ type NDTMeasurementServerMeasurement struct {
 	TCPInfo NDTMeasurementTCPInfo
 }
 
+type NDTClientMetadata struct {
+	Name  string
+	Value string
+}
+
 type NDTMeasurementUpload struct {
 	UUID               string
 	StartTime          string
 	ServerMeasurements []NDTMeasurementServerMeasurement
+	ClientMetadata     []NDTClientMetadata
 }
 
 type NDTMeasurementDownload struct {
 	UUID               string
 	StartTime          string
 	ServerMeasurements []NDTMeasurementServerMeasurement
+	ClientMetadata     []NDTClientMetadata
 }
 
 type NDTMeasurement struct {
@@ -70,6 +78,21 @@ type fetchingPool struct {
 	context context.Context
 	wg      *sync.WaitGroup
 	ch      chan *fetchWorkItem
+}
+
+func accessSigFromClientMetadata(clientMetadata []NDTClientMetadata) string {
+	for _, m := range clientMetadata {
+		if m.Name == "access_token" {
+			parts := strings.Split(".", m.Value)
+			if len(parts) != 3 {
+				return ""
+			}
+
+			return parts[2]
+		}
+	}
+
+	return ""
 }
 
 func innerGzipReader(reader io.Reader, day time.Time) error {
@@ -103,13 +126,14 @@ func innerGzipReader(reader io.Reader, day time.Time) error {
 			return fmt.Errorf("fetcher.innerGzipReader tErr: %v", tErr)
 		}
 		storage.PushDatedRow("fetched", day, &models.FetchedResult{
-			Id:        m.Download.UUID,
-			IP:        m.ClientIP,
-			StartedAt: startedAt.Unix(),
-			Upload:    false,
-			MBPS:      mbps,
-			LossRate:  lossRate,
-			MinRTT:    rtt,
+			Id:             m.Download.UUID,
+			IP:             m.ClientIP,
+			StartedAt:      startedAt.Unix(),
+			Upload:         false,
+			MBPS:           mbps,
+			LossRate:       lossRate,
+			MinRTT:         rtt,
+			AccessTokenSig: accessSigFromClientMetadata(m.Download.ClientMetadata),
 		})
 	}
 
@@ -123,13 +147,14 @@ func innerGzipReader(reader io.Reader, day time.Time) error {
 			return fmt.Errorf("fetcher.innerGzipReader tErr: %v", tErr)
 		}
 		storage.PushDatedRow("fetched", day, &models.FetchedResult{
-			Id:        m.Upload.UUID,
-			IP:        m.ClientIP,
-			StartedAt: startedAt.Unix(),
-			Upload:    true,
-			MBPS:      mbps,
-			LossRate:  0.0, // Not able to calculate loss rate for upload
-			MinRTT:    rtt,
+			Id:             m.Upload.UUID,
+			IP:             m.ClientIP,
+			StartedAt:      startedAt.Unix(),
+			Upload:         true,
+			MBPS:           mbps,
+			LossRate:       0.0, // Not able to calculate loss rate for upload
+			MinRTT:         rtt,
+			AccessTokenSig: accessSigFromClientMetadata(m.Upload.ClientMetadata),
 		})
 	}
 
