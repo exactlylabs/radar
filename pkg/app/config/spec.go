@@ -12,7 +12,7 @@ type ProcessorConfig struct {
 	Ipv6DBPath    string `config:"IPV6_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
 	AsnIpv4DBPath string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv4.csv"`
 	AsnIpv6DBPath string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv6.csv"`
-	ShapePaths    string `config:"SHAPE_PATHS,default=US_COUNTIES:./input/tl_2021_us_county/tl_2021_us_county.shp;US_TRIBAL_TRACTS:./input/tl_2021_us_ttract/tl_2021_us_ttract.shp"`
+	ShapePaths    string `config:"SHAPE_PATHS,default=US_STATES=./input/cb_2018_us_state_5m/cb_2018_us_state_5m.shp;US_COUNTIES:./input/tl_2021_us_county/tl_2021_us_county.shp;US_TRIBAL_TRACTS:./input/tl_2021_us_ttract/tl_2021_us_ttract.shp"`
 }
 
 var cachedConfig *ProcessorConfig
