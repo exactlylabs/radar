@@ -170,7 +170,6 @@ func Geocode(startDate, endDate time.Time, rerun bool) {
 		pool.Close()
 
 		storage.MarkCompleted("ipgeocode", date)
+		storage.Close()
 	}
-
-	storage.Close()
 }

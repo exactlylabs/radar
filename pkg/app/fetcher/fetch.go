@@ -275,6 +275,5 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 		storage.MarkCompleted("fetch", date)
 
 		storage.Close()
-
 	}
 }

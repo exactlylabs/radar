@@ -167,7 +167,6 @@ func ReverseGeocode(startDate, endDate time.Time, rerun bool) {
 		pool.Close()
 
 		storage.MarkCompleted("revgeocode", date)
+		storage.Close()
 	}
-
-	storage.Close()
 }
