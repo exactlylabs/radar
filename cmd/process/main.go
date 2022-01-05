@@ -62,13 +62,4 @@ func main() {
 		usage()
 		os.Exit(1)
 	}
-
-	//commands := args[0]
-	//if commands
-	/*println("Hello, world.")
-	ch, _ := ndt7fetcher.Fetch([]time.Time{time.Now()}, 10)
-	for msg := range ch {
-		fmt.Println(msg.Path)
-		msg.R.Close()
-	}*/
 }

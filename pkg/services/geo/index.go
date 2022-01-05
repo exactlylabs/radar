@@ -1,8 +1,6 @@
 package geo
 
 import (
-	"fmt"
-
 	"github.com/tidwall/rtree"
 )
 
@@ -32,10 +30,6 @@ func (i *Index) Add(namespace, externalId string, p *Polygon) {
 	i.indexIdToPoly[id] = p
 
 	points := p.BoundingBox()
-
-	if externalId == "36047" {
-		fmt.Println(points)
-	}
 
 	i.tree.Insert([2]float64{points[0].Lat, points[0].Lng}, [2]float64{points[1].Lat, points[1].Lng}, id)
 }

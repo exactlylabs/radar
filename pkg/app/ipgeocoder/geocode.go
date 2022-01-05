@@ -25,7 +25,6 @@ type ipgeocodeWorkItem struct {
 }
 
 func addFileToNetmap(nm *netmap.NetMap, filename string) error {
-	fmt.Println(filename)
 	file, fErr := os.Open(filename)
 	if fErr != nil {
 		return fmt.Errorf("addFileToNetmap fErr: %w", fErr)
@@ -157,8 +156,6 @@ func Geocode(startDate, endDate time.Time, rerun bool) {
 	} else {
 		dateRange = storage.Incomplete("ipgeocode", startDate, endDate)
 	}
-
-	fmt.Println(dateRange)
 
 	for _, date := range dateRange {
 		pool := newGeocodingPool()

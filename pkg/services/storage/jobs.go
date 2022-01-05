@@ -14,7 +14,7 @@ import (
 )
 
 type JobIndex struct {
-	Store       string `parquet:"name=id, type=BYTE_ARRAY"`
+	Store       string `parquet:"name=id, type=BYTE_ARRAY, convertedtype=UTF8"`
 	Date        int64  `parquet:"name=date, type=INT64"`
 	CompletedAt int64  `parquet:"name=completed_at, type=INT64"`
 }
@@ -41,7 +41,6 @@ func init() {
 		row := make([]JobIndex, 1)
 		rrErr := pr.Read(&row)
 		date := time.Unix(row[0].Date, 0).UTC()
-		fmt.Println("LOADING", row[0].Store+date.Format("2006-01-02"))
 		storeCompleted.Store(row[0].Store+date.Format("2006-01-02"), &row[0])
 		if rrErr != nil {
 			panic(fmt.Errorf("storage.init rrErr: %v", rrErr))
@@ -56,7 +55,6 @@ func init() {
 }
 
 func MarkCompleted(store string, date time.Time) {
-	fmt.Println("MARKING", store+date.Format("2006-01-02"))
 	storeCompleted.Store(store+date.Format("2006-01-02"), &JobIndex{
 		Store:       store,
 		Date:        date.Unix(),
@@ -78,9 +76,7 @@ func Incomplete(store string, startDate time.Time, endDate time.Time) []time.Tim
 	datesToRun := []time.Time{}
 
 	for _, date := range dateRange {
-		fmt.Println(store + date.Format("2006-01-02"))
 		if _, ok := storeCompleted.Load(store + date.Format("2006-01-02")); !ok {
-			fmt.Println("ADDING", store+date.Format("2006-01-02"))
 			datesToRun = append(datesToRun, date)
 		}
 	}
@@ -108,8 +104,7 @@ func persistJobs() {
 
 	storeCompleted.Range(func(key, value interface{}) bool {
 		jobinfo := value.(*JobIndex)
-		fmt.Println("PERSISTING", jobinfo.Store, time.Unix(jobinfo.Date, 0))
-		pw.Write(value.(*JobIndex))
+		pw.Write(jobinfo)
 		return true
 	})
 

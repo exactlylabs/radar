@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"reflect"
 	"strings"
@@ -31,13 +30,10 @@ func (c *ProcessorConfig) ShapePathEntries() map[string]string {
 		paths[parts[0]] = parts[1]
 	}
 
-	fmt.Println(paths)
-
 	return paths
 }
 
 func processConfig() *ProcessorConfig {
-	fmt.Println("Processing config...")
 	config := &ProcessorConfig{}
 
 	// Load ENV variables to override config using struct tags and reflection

@@ -182,7 +182,6 @@ func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, ch chan *fetchWorkI
 		processReader(object, item.day)
 
 		atomic.AddInt32(item.completedRef, 1)
-		fmt.Println("Completed", *item.completedRef, "of", item.total)
 		if item.total == *item.completedRef {
 			storage.CloseDatedRow("fetched", item.day)
 		}
@@ -250,7 +249,6 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 		objectPaths := []string{}
 
 		searchPrefixes := searchPrefixes(date)
-		fmt.Println(searchPrefixes)
 		for _, prefix := range searchPrefixes {
 			iter := client.Bucket(ndt7Bucket).Objects(ctx, &gcpstorage.Query{Prefix: prefix})
 			item, iErr := iter.Next()

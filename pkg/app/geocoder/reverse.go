@@ -107,10 +107,6 @@ func initIndex() {
 				for i := int32(0); i < poly.NumParts; i++ {
 					var startIndex, endIndex int32
 
-					if geoid == "36047" {
-						fmt.Println(len(poly.Parts))
-					}
-
 					if i == 0 {
 						startIndex = 0
 					} else {
