@@ -5,7 +5,12 @@ CREATE TABLE tests (
   longitude float,
   upload boolean,
   started_at DateTime,
-  mbps float
+  mbps float,
+  loss_rate float,
+  min_rtt float,
+  asn int,
+  asn_org String,
+  access_token_sig String
 )
 ENGINE=MergeTree
 PRIMARY KEY id

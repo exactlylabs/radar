@@ -51,7 +51,7 @@ func MapHandler(w http.ResponseWriter, r *http.Request) {
 
 	// response, _ := json.Marshal(payload)
 
-	if mapRequestParams.GeoNamespace != "US_COUNTIES" && mapRequestParams.GeoNamespace != "US_TRIBAL_TRACTS" {
+	if mapRequestParams.GeoNamespace != "US_COUNTIES" && mapRequestParams.GeoNamespace != "US_TRIBAL_TRACTS" && mapRequestParams.GeoNamespace != "US_STATES" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("invalid geo"))
 		return

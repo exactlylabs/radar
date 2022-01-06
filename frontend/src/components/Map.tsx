@@ -39,9 +39,9 @@ export default class Map extends Component<Props, State> {
     super(props);
     this.state = {
       direction: "up",
-      median: 800,
-      startDate: "2021-01-01",
-      endDate: "2021-03-18",
+      median: 3,
+      startDate: "2021-10-01",
+      endDate: "2021-10-01",
       boundingBox: "",
       geoNamespace: "US_COUNTIES",
       zoom: 3,
@@ -188,6 +188,7 @@ export default class Map extends Component<Props, State> {
         <div>
           <label htmlFor="geoNamespace">Choose a map:</label>
           <select name="geoNamespace" id="geoNamespace" onChange={this.handleSelectChange} value={this.state.geoNamespace}>
+            <option value="US_STATES">US States</option>
             <option value="US_COUNTIES">US Counties</option>
             <option value="US_TRIBAL_TRACTS">US Tribal Tracts</option>
           </select><br />
