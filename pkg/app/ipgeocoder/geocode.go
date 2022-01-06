@@ -174,6 +174,7 @@ func geocodingWorker(wg *sync.WaitGroup, ch chan *ipgeocodeWorkItem) {
 
 		storage.PushDatedRow("geocode", toProcess.date, &models.GeocodedResult{
 			Id:                 toProcess.fetchedResult.Id,
+			TestStyle:          toProcess.fetchedResult.TestStyle,
 			IP:                 toProcess.fetchedResult.IP,
 			StartedAt:          toProcess.fetchedResult.StartedAt,
 			Upload:             toProcess.fetchedResult.Upload,

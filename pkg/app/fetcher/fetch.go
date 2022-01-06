@@ -15,6 +15,9 @@ import (
 	"time"
 
 	gcpstorage "cloud.google.com/go/storage"
+	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/ndt"
+	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/ndt5"
+	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/ndt7"
 	"github.com/exactlylabs/mlab-processor/pkg/app/helpers"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
 	"github.com/exactlylabs/mlab-processor/pkg/services/storage"
@@ -24,52 +27,22 @@ import (
 
 const (
 	preSwitchFormat  = "2006/01/20060102"
-	postSwitchFormat = "2006/01/02/20060102"
+	postSwitchFormat = "2006/01/02"
 	searchSwitchDate = "2020-02-18"
-	ndt7Bucket       = "archive-measurement-lab"
+	mlabBucket       = "archive-measurement-lab"
 )
 
-type NDTMeasurementTCPInfo struct {
-	BytesAcked    int64 // for download rate
-	BytesReceived int64 // for upload rate
-	BytesRetrans  int64
-	BytesSent     int64
-	ElapsedTime   int64
-	MinRTT        int64
-}
+type testType string
 
-type NDTMeasurementServerMeasurement struct {
-	TCPInfo NDTMeasurementTCPInfo
-}
-
-type NDTClientMetadata struct {
-	Name  string
-	Value string
-}
-
-type NDTMeasurementUpload struct {
-	UUID               string
-	StartTime          string
-	ServerMeasurements []NDTMeasurementServerMeasurement
-	ClientMetadata     []NDTClientMetadata
-}
-
-type NDTMeasurementDownload struct {
-	UUID               string
-	StartTime          string
-	ServerMeasurements []NDTMeasurementServerMeasurement
-	ClientMetadata     []NDTClientMetadata
-}
-
-type NDTMeasurement struct {
-	ClientIP string
-	Download *NDTMeasurementDownload
-	Upload   *NDTMeasurementUpload
-}
+const (
+	NDT7TestType testType = "ndt7"
+	NDT5TestType          = "ndt5"
+)
 
 type fetchWorkItem struct {
 	day          time.Time
 	path         string
+	testType     testType
 	total        int32
 	completedRef *int32
 }
@@ -80,39 +53,38 @@ type fetchingPool struct {
 	ch      chan *fetchWorkItem
 }
 
-func accessSigFromClientMetadata(clientMetadata []NDTClientMetadata) string {
+func accessSigFromClientMetadata(clientMetadata []ndt.NameValue) *string {
 	for _, m := range clientMetadata {
 		if m.Name == "access_token" {
 			parts := strings.Split(".", m.Value)
 			if len(parts) != 3 {
-				return ""
+				return nil
 			}
 
-			return parts[2]
+			token := parts[2]
+			return &token
 		}
 	}
 
-	return ""
+	return nil
 }
 
-func innerGzipReader(reader io.Reader, day time.Time) error {
+func innerNdt7GzipReader(reader io.Reader, day time.Time) error {
 	gz, err := gzip.NewReader(reader)
-
 	if err != nil {
-		return fmt.Errorf("fetcher.innerGzipReader err: %v", err)
+		return fmt.Errorf("fetcher.innerNdt7GzipReader err: %v", err)
 	}
-
 	defer gz.Close()
 
 	b, rErr := ioutil.ReadAll(gz)
 	if rErr != nil {
-		return fmt.Errorf("fetcher.innerGzipReader rErr: %v", rErr)
+		return fmt.Errorf("fetcher.innerNdt7GzipReader rErr: %v", rErr)
 	}
 
-	var m NDTMeasurement
+	var m ndt7.NDT7Result
 	jErr := json.Unmarshal(b, &m)
 	if jErr != nil {
-		return fmt.Errorf("fetcher.innerGzipReader jErr: %v", jErr)
+		return fmt.Errorf("fetcher.innerNdt7GzipReader jErr: %v", jErr)
 	}
 
 	if m.Download != nil && len(m.Download.ServerMeasurements) > 0 {
@@ -121,18 +93,16 @@ func innerGzipReader(reader io.Reader, day time.Time) error {
 		lossRate := float32(m.Download.ServerMeasurements[l-1].TCPInfo.BytesRetrans) / float32(m.Download.ServerMeasurements[l-1].TCPInfo.BytesSent)
 		rtt := float32(m.Download.ServerMeasurements[l-1].TCPInfo.MinRTT) / 1000
 
-		startedAt, tErr := time.Parse(time.RFC3339, m.Download.StartTime)
-		if tErr != nil {
-			return fmt.Errorf("fetcher.innerGzipReader tErr: %v", tErr)
-		}
+		startedAt := m.Download.StartTime
 		storage.PushDatedRow("fetched", day, &models.FetchedResult{
 			Id:             m.Download.UUID,
+			TestStyle:      "ndt7",
 			IP:             m.ClientIP,
 			StartedAt:      startedAt.Unix(),
 			Upload:         false,
 			MBPS:           mbps,
-			LossRate:       lossRate,
-			MinRTT:         rtt,
+			LossRate:       &lossRate,
+			MinRTT:         &rtt,
 			AccessTokenSig: accessSigFromClientMetadata(m.Download.ClientMetadata),
 		})
 	}
@@ -142,18 +112,16 @@ func innerGzipReader(reader io.Reader, day time.Time) error {
 		mbps := 8 * float32(m.Upload.ServerMeasurements[l-1].TCPInfo.BytesReceived) / float32(m.Upload.ServerMeasurements[l-1].TCPInfo.ElapsedTime)
 		rtt := float32(m.Upload.ServerMeasurements[l-1].TCPInfo.MinRTT) / 1000
 
-		startedAt, tErr := time.Parse(time.RFC3339, m.Upload.StartTime)
-		if tErr != nil {
-			return fmt.Errorf("fetcher.innerGzipReader tErr: %v", tErr)
-		}
+		startedAt := m.Upload.StartTime
 		storage.PushDatedRow("fetched", day, &models.FetchedResult{
 			Id:             m.Upload.UUID,
+			TestStyle:      "ndt7",
 			IP:             m.ClientIP,
 			StartedAt:      startedAt.Unix(),
 			Upload:         true,
 			MBPS:           mbps,
-			LossRate:       0.0, // Not able to calculate loss rate for upload
-			MinRTT:         rtt,
+			LossRate:       nil, // Not able to calculate loss rate for upload
+			MinRTT:         &rtt,
 			AccessTokenSig: accessSigFromClientMetadata(m.Upload.ClientMetadata),
 		})
 	}
@@ -161,10 +129,10 @@ func innerGzipReader(reader io.Reader, day time.Time) error {
 	return nil
 }
 
-func processReader(r io.ReadCloser, day time.Time) error {
+func processNdt7Reader(r io.Reader, day time.Time) error {
 	gzf, err := gzip.NewReader(r)
 	if err != nil {
-		return fmt.Errorf("fetcher.processReader err: %v", err)
+		return fmt.Errorf("fetcher.processNdt7Reader err: %v", err)
 	}
 
 	tarReader := tar.NewReader(gzf)
@@ -178,7 +146,7 @@ func processReader(r io.ReadCloser, day time.Time) error {
 		}
 
 		if tErr != nil {
-			return fmt.Errorf("fetcher.processReader tErr: %v", tErr)
+			return fmt.Errorf("fetcher.processNdt7Reader tErr: %v", tErr)
 		}
 
 		name := header.Name
@@ -187,12 +155,106 @@ func processReader(r io.ReadCloser, day time.Time) error {
 		case tar.TypeDir:
 			continue
 		case tar.TypeReg:
-			innerErr := innerGzipReader(tarReader, day)
+			innerErr := innerNdt7GzipReader(tarReader, day)
 			if innerErr != nil {
-				return fmt.Errorf("fetcher.processReader innerErr: %v", innerErr)
+				return fmt.Errorf("fetcher.processNdt7Reader innerErr: %v", innerErr)
 			}
 		default:
-			return fmt.Errorf("fetcher.processReader unknown type: %v in file %v", header.Typeflag, name)
+			return fmt.Errorf("fetcher.processNdt7Reader unknown type: %v in file %v", header.Typeflag, name)
+		}
+
+		i++
+	}
+
+	return nil
+}
+
+func innerNdt5Reader(reader io.Reader, day time.Time) error {
+	b, rErr := ioutil.ReadAll(reader)
+	if rErr != nil {
+		return fmt.Errorf("fetcher.innerNdt5Reader rErr: %v", rErr)
+	}
+
+	var m ndt5.NDT5Result
+	jErr := json.Unmarshal(b, &m)
+	if jErr != nil {
+		return fmt.Errorf("fetcher.innerNdt5Reader jErr: %v", jErr)
+	}
+
+	if m.C2S != nil && m.C2S.Error == "" {
+		var ptrMinRTT *float32
+		if m.S2C != nil {
+			minRtt := float32(m.S2C.MinRTT.Milliseconds()) / 1000
+			ptrMinRTT = &minRtt
+		}
+
+		storage.PushDatedRow("fetched", day, &models.FetchedResult{
+			Id:        m.C2S.UUID,
+			TestStyle: "ndt5",
+			IP:        m.ClientIP,
+			StartedAt: m.C2S.StartTime.Unix(),
+			Upload:    true,
+			MBPS:      float32(m.C2S.MeanThroughputMbps),
+			LossRate:  nil, // Not able to calculate loss rate for upload
+			MinRTT:    ptrMinRTT,
+		})
+	}
+
+	if m.S2C != nil && m.S2C.Error == "" {
+		var ptrLossRate *float32
+		if m.S2C.TCPInfo != nil {
+			lossRate := float32(m.S2C.TCPInfo.BytesRetrans) / float32(m.S2C.TCPInfo.BytesSent)
+			ptrLossRate = &lossRate
+		}
+
+		minRtt := float32(m.S2C.MinRTT.Milliseconds()) / 1000
+		storage.PushDatedRow("fetched", day, &models.FetchedResult{
+			Id:        m.S2C.UUID,
+			TestStyle: "ndt5",
+			IP:        m.ClientIP,
+			StartedAt: m.S2C.StartTime.Unix(),
+			Upload:    false,
+			MBPS:      float32(m.S2C.MeanThroughputMbps),
+			LossRate:  ptrLossRate,
+			MinRTT:    &minRtt,
+		})
+	}
+
+	return nil
+}
+
+func processNdt5Reader(r io.Reader, day time.Time) error {
+	gzf, err := gzip.NewReader(r)
+	if err != nil {
+		return fmt.Errorf("fetcher.processNdt5Reader err: %v", err)
+	}
+
+	tarReader := tar.NewReader(gzf)
+
+	i := 0
+	for {
+		header, tErr := tarReader.Next()
+
+		if tErr == io.EOF {
+			break
+		}
+
+		if tErr != nil {
+			return fmt.Errorf("fetcher.processNdt5Reader tErr: %v", tErr)
+		}
+
+		name := header.Name
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			continue
+		case tar.TypeReg:
+			innerErr := innerNdt5Reader(tarReader, day)
+			if innerErr != nil {
+				return fmt.Errorf("fetcher.processNdt5Reader innerErr: %v", innerErr)
+			}
+		default:
+			return fmt.Errorf("fetcher.processNdt5Reader unknown type: %v in file %v", header.Typeflag, name)
 		}
 
 		i++
@@ -210,13 +272,17 @@ func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, ch chan *fetchWorkI
 	}
 
 	for item := range ch {
-		object, fErr := client.Bucket(ndt7Bucket).Object(item.path).NewReader(ctx)
+		object, fErr := client.Bucket(mlabBucket).Object(item.path).NewReader(ctx)
 		if fErr != nil {
 			panic(fmt.Errorf("fetcher.fetchingWorker fErr: %v", fErr))
 		}
 		defer object.Close()
 
-		processReader(object, item.day)
+		if item.testType == NDT7TestType {
+			processNdt7Reader(object, item.day)
+		} else if item.testType == NDT5TestType {
+			processNdt5Reader(object, item.day)
+		}
 
 		atomic.AddInt32(item.completedRef, 1)
 		if item.total == *item.completedRef {
@@ -241,8 +307,8 @@ func newFetchingPool(ctx context.Context) *fetchingPool {
 	}
 }
 
-func (p *fetchingPool) queue(day time.Time, path string, total int32, completedRef *int32) {
-	p.ch <- &fetchWorkItem{day, path, total, completedRef}
+func (p *fetchingPool) queue(day time.Time, path string, tt testType, total int32, completedRef *int32) {
+	p.ch <- &fetchWorkItem{day, path, tt, total, completedRef}
 }
 
 func (p *fetchingPool) close() {
@@ -250,7 +316,7 @@ func (p *fetchingPool) close() {
 	p.wg.Wait()
 }
 
-func searchPrefixes(day time.Time) []string {
+func ndt7SearchPrefixes(day time.Time) []string {
 	switchDate, err := time.Parse("2006-01-02", searchSwitchDate)
 	if err != nil {
 		panic(fmt.Errorf("failed to parse static switch date: %w", err))
@@ -263,6 +329,10 @@ func searchPrefixes(day time.Time) []string {
 	} else {
 		return []string{"ndt/ndt7/" + day.Format(postSwitchFormat)}
 	}
+}
+
+func ndt5SearchPrefix(day time.Time) string {
+	return "ndt/ndt5/" + day.Format(postSwitchFormat)
 }
 
 func Fetch(startDate, endDate time.Time, rerun bool) {
@@ -283,11 +353,31 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 		pool := newFetchingPool(ctx)
 
 		total := int32(0)
-		objectPaths := []string{}
 
-		searchPrefixes := searchPrefixes(date)
+		// Enumerate NDT5 task
+		ndt5ObjectPaths := []string{}
+		ndt5Prefix := ndt5SearchPrefix(date)
+		iter := client.Bucket(mlabBucket).Objects(ctx, &gcpstorage.Query{Prefix: ndt5Prefix})
+		item, iErr := iter.Next()
+
+		if iErr != nil && iErr != iterator.Done {
+			panic(fmt.Errorf("fetcher.Fetch iErr: %v", iErr))
+		}
+		for item != nil {
+			total += 1
+			ndt5ObjectPaths = append(ndt5ObjectPaths, item.Name)
+
+			item, iErr = iter.Next()
+			if iErr != nil && iErr != iterator.Done {
+				panic(fmt.Errorf("fetcher.Fetch iErr: %v", iErr))
+			}
+		}
+
+		// Enumerate NDT7 tasks
+		ndt7ObjectPaths := []string{}
+		searchPrefixes := ndt7SearchPrefixes(date)
 		for _, prefix := range searchPrefixes {
-			iter := client.Bucket(ndt7Bucket).Objects(ctx, &gcpstorage.Query{Prefix: prefix})
+			iter := client.Bucket(mlabBucket).Objects(ctx, &gcpstorage.Query{Prefix: prefix})
 			item, iErr := iter.Next()
 
 			if iErr != nil && iErr != iterator.Done {
@@ -295,7 +385,7 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 			}
 			for item != nil {
 				total += 1
-				objectPaths = append(objectPaths, item.Name)
+				ndt7ObjectPaths = append(ndt7ObjectPaths, item.Name)
 
 				item, iErr = iter.Next()
 				if iErr != nil && iErr != iterator.Done {
@@ -305,9 +395,13 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 		}
 
 		completed := int32(0)
-		for _, path := range objectPaths {
-			pool.queue(date, path, total, &completed)
+		for _, path := range ndt5ObjectPaths {
+			pool.queue(date, path, NDT5TestType, total, &completed)
 		}
+		for _, path := range ndt7ObjectPaths {
+			pool.queue(date, path, NDT7TestType, total, &completed)
+		}
+
 		pool.close()
 		storage.MarkCompleted("fetch", date)
 
