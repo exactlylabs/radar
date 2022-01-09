@@ -56,7 +56,7 @@ type fetchingPool struct {
 func accessSigFromClientMetadata(clientMetadata []ndt.NameValue) *string {
 	for _, m := range clientMetadata {
 		if m.Name == "access_token" {
-			parts := strings.Split(".", m.Value)
+			parts := strings.Split(m.Value, ".")
 			if len(parts) != 3 {
 				return nil
 			}
