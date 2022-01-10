@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   resources :locations do
-    resources :measurements, controller: 'location_measurements' do
+    resources :measurements, controller: 'location_measurements', only: [:index] do
       collection do
         get 'ndt7_index'
       end
@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   end
 
   resources :clients do
-    resources :measurements, controller: 'client_measurements' do
+    resources :measurements, controller: 'client_measurements', only: [:index, :create] do
       collection do
         get 'ndt7_index'
       end
@@ -26,6 +26,8 @@ Rails.application.routes.draw do
   end
 
   devise_for :users
+
+  get 'dashboard', to: 'dashboard#index'
   
   #root to: 'home#home'
   root to: redirect('/users/sign_in')

@@ -24,6 +24,8 @@ class LocationsController < ApplicationController
   def create
     @location = Location.new(location_params)
 
+    @location.user = current_user
+
     respond_to do |format|
       if @location.save
         format.html { redirect_to @location, notice: "Location was successfully created." }
@@ -65,6 +67,6 @@ class LocationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def location_params
-      params.require(:location).permit(:name, :address, :latitude, :longitude, :user_id)
+      params.require(:location).permit(:name, :address, :latitude, :longitude)
     end
 end

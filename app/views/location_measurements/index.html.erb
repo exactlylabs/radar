@@ -1,41 +1,71 @@
-<p id="notice"><%= notice %></p>
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="text-dark fw-bolder my-1 fs-2">Dashboard 
+      <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <!--end::Title-->
+      <!--begin::Breadcrumb-->
+      <ul class="breadcrumb fw-bold fs-base my-1">
+        <li class="breadcrumb-item text-muted">Home</li>
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= locations_path %>" class="text-muted text-hover-primary">Locations</a>
+        </li>
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= location_path(@location) %>" class="text-muted text-hover-primary"><%= @location.name %></a>
+        </li>
+        <li class="breadcrumb-item text-dark">Measurements</li>
+      </ul>
+      <!--end::Breadcrumb-->
+    </div>
+    <!--end::Info-->
+  </div>
+</div>
+<!--end::Toolbar-->
 
-<h1>Measurements</h1>
+<!--begin::Post-->
+<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+  <!--begin::Container-->
+  <div class="container-xxl">
 
-<%= link_to 'Download All', location_measurements_path(@location, format: 'csv') %>
-<%= link_to 'Download ND7 with Extended Info', ndt7_index_location_measurements_path(@location, format: 'csv') %>
+    <p id="notice"><%= notice %></p>
 
-<table>
-  <thead>
-    <tr>
-      <th>At</th>
-      <th>Style</th>
-      <th>Download</th>
-      <th>Upload</th>
-      <th>Latency</th>
-      <th>Jitter</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+    <%= link_to 'Download All', location_measurements_path(@location, format: 'csv') %>
+    <%= link_to 'Download ND7 with Extended Info', ndt7_index_location_measurements_path(@location, format: 'csv') %>
 
-  <tbody>
-    <% @measurements.order(created_at: :desc).each do |measurement| %>
-      <tr>
-        <td><%= measurement.created_at %></td>
-        <td><%= measurement.style %></td>
-        <td><%= number_with_precision measurement.download, precision: 3 %></td>
-        <td><%= number_with_precision measurement.upload, precision: 3 %></td>
-        <td><%= number_with_precision measurement.latency, precision: 3 %></td>
-        <td><%= number_with_precision measurement.jitter, precision: 3 %></td>
-        <td><%= link_to 'Show', location_measurement_path(@location, measurement) %></td>
-        <td><%= link_to 'Edit', edit_location_measurement_path(@location, measurement) %></td>
-        <td><%= link_to 'Destroy', [@location, measurement], method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    <table>
+      <thead>
+        <tr>
+          <th>At</th>
+          <th>Style</th>
+          <th>Download</th>
+          <th>Upload</th>
+          <th>Latency</th>
+          <th>Jitter</th>
+        </tr>
+      </thead>
 
-<br>
+      <tbody>
+        <% @measurements.order(created_at: :desc).each do |measurement| %>
+          <tr>
+            <td><%= measurement.created_at %></td>
+            <td><%= measurement.style %></td>
+            <td><%= number_with_precision measurement.download, precision: 3 %></td>
+            <td><%= number_with_precision measurement.upload, precision: 3 %></td>
+            <td><%= number_with_precision measurement.latency, precision: 3 %></td>
+            <td><%= number_with_precision measurement.jitter, precision: 3 %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
 
-<%= link_to 'New Measurement', new_location_measurement_path(@location) %> |
-<%= link_to 'Back', location_path(@location) %>
+    <br>
+
+    <%= link_to 'Back', location_path(@location) %>
+
+  </div>
+  <!--end::Container-->
+</div>
+<!--end::Post-->

@@ -1,7 +1,6 @@
 class ClientMeasurementsController < ApplicationController
-  before_action :authenticate_user!, except: %i[ new create ]
+  before_action :authenticate_user!, except: %i[ create ]
   before_action :set_client
-  before_action :set_measurement, only: %i[ show edit update destroy ]
   skip_forgery_protection only: %i[ create ]
 
   # GET /measurements or /measurements.json
@@ -18,19 +17,6 @@ class ClientMeasurementsController < ApplicationController
     respond_to do |format|
       format.csv { send_data @client.measurements.where(style: "NDT7").to_ndt7_csv, filename: "measurements-extended-#{@client.unix_user}.csv" }
     end
-  end
-
-  # GET /measurements/1 or /measurements/1.json
-  def show
-  end
-
-  # GET /measurements/new
-  def new
-    @measurement = @client.measurements.build
-  end
-
-  # GET /measurements/1/edit
-  def edit
   end
 
   # EG curl 'http://localhost:3000/clients/rXwPeMerHymM/measurements' \
@@ -62,34 +48,8 @@ class ClientMeasurementsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /measurements/1 or /measurements/1.json
-  def update
-    respond_to do |format|
-      if @measurement.update(measurement_params)
-        format.html { redirect_to client_measurement_path(@client.unix_user, @measurement), notice: "Measurement was successfully updated." }
-        format.json { render :show, status: :ok, location: @measurement }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @measurement.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /measurements/1 or /measurements/1.json
-  def destroy
-    @measurement.destroy
-    respond_to do |format|
-      format.html { redirect_to client_measurements_path(@client), notice: "Measurement was successfully destroyed." }
-      format.json { head :no_content }
-    end
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_measurement
-      @measurement = @client.measurements.find(params[:id])
-    end
-
     def set_client
       if user_signed_in?
         @client = current_user.clients.find_by_unix_user(params[:client_id])
