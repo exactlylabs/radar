@@ -103,7 +103,8 @@ func innerNdt7GzipReader(reader io.Reader, day time.Time) error {
 			MBPS:           mbps,
 			LossRate:       &lossRate,
 			MinRTT:         &rtt,
-			AccessTokenSig: accessSigFromClientMetadata(m.Download.ClientMetadata),
+			HasAccessToken: accessSigFromClientMetadata(m.Download.ClientMetadata) != nil,
+			// Commented given large resulting size: AccessTokenSig: accessSigFromClientMetadata(m.Download.ClientMetadata),
 		})
 	}
 
@@ -122,7 +123,8 @@ func innerNdt7GzipReader(reader io.Reader, day time.Time) error {
 			MBPS:           mbps,
 			LossRate:       nil, // Not able to calculate loss rate for upload
 			MinRTT:         &rtt,
-			AccessTokenSig: accessSigFromClientMetadata(m.Upload.ClientMetadata),
+			HasAccessToken: accessSigFromClientMetadata(m.Upload.ClientMetadata) != nil,
+			// Commented given large resulting size: AccessTokenSig: accessSigFromClientMetadata(m.Upload.ClientMetadata),
 		})
 	}
 
@@ -189,14 +191,16 @@ func innerNdt5Reader(reader io.Reader, day time.Time) error {
 		}
 
 		storage.PushDatedRow("fetched", day, &models.FetchedResult{
-			Id:        m.C2S.UUID,
-			TestStyle: "ndt5",
-			IP:        m.ClientIP,
-			StartedAt: m.C2S.StartTime.Unix(),
-			Upload:    true,
-			MBPS:      float32(m.C2S.MeanThroughputMbps),
-			LossRate:  nil, // Not able to calculate loss rate for upload
-			MinRTT:    ptrMinRTT,
+			Id:             m.C2S.UUID,
+			TestStyle:      "ndt5",
+			IP:             m.ClientIP,
+			StartedAt:      m.C2S.StartTime.Unix(),
+			Upload:         true,
+			MBPS:           float32(m.C2S.MeanThroughputMbps),
+			LossRate:       nil, // Not able to calculate loss rate for upload
+			MinRTT:         ptrMinRTT,
+			HasAccessToken: false,
+			AccessTokenSig: nil,
 		})
 	}
 
@@ -209,14 +213,16 @@ func innerNdt5Reader(reader io.Reader, day time.Time) error {
 
 		minRtt := float32(m.S2C.MinRTT.Milliseconds()) / 1000
 		storage.PushDatedRow("fetched", day, &models.FetchedResult{
-			Id:        m.S2C.UUID,
-			TestStyle: "ndt5",
-			IP:        m.ClientIP,
-			StartedAt: m.S2C.StartTime.Unix(),
-			Upload:    false,
-			MBPS:      float32(m.S2C.MeanThroughputMbps),
-			LossRate:  ptrLossRate,
-			MinRTT:    &minRtt,
+			Id:             m.S2C.UUID,
+			TestStyle:      "ndt5",
+			IP:             m.ClientIP,
+			StartedAt:      m.S2C.StartTime.Unix(),
+			Upload:         false,
+			MBPS:           float32(m.S2C.MeanThroughputMbps),
+			LossRate:       ptrLossRate,
+			MinRTT:         &minRtt,
+			HasAccessToken: false,
+			AccessTokenSig: nil,
 		})
 	}
 

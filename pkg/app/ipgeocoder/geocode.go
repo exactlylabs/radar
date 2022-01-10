@@ -186,6 +186,8 @@ func geocodingWorker(wg *sync.WaitGroup, ch chan *ipgeocodeWorkItem) {
 			LocationAccuracyKM: acc,
 			ASN:                asn,
 			ASNOrg:             org,
+			HasAccessToken:     toProcess.fetchedResult.HasAccessToken,
+			AccessTokenSig:     toProcess.fetchedResult.AccessTokenSig,
 		})
 	}
 }

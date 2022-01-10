@@ -17,5 +17,6 @@ type GeocodedResult struct {
 	ASN    int    `parquet:"name=asn, type=INT32"`
 	ASNOrg string `parquet:"name=asn_org, type=BYTE_ARRAY, convertedtype=UTF8"`
 
+	HasAccessToken bool    `parquet:"name=has_access_token, type=BOOLEAN"`
 	AccessTokenSig *string `parquet:"name=access_token_sig, type=BYTE_ARRAY, convertedtype=UTF8"`
 }

@@ -9,5 +9,6 @@ type FetchedResult struct {
 	MBPS           float32  `parquet:"name=mbps, type=FLOAT"`
 	LossRate       *float32 `parquet:"name=loss_rate, type=FLOAT"`
 	MinRTT         *float32 `parquet:"name=min_rtt, type=FLOAT"`
+	HasAccessToken bool     `parquet:"name=has_access_token, type=BOOLEAN"`
 	AccessTokenSig *string  `parquet:"name=access_token_sig, type=BYTE_ARRAY, convertedtype=UTF8"`
 }
