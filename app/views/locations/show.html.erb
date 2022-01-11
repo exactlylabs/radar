@@ -22,33 +22,40 @@
 </div>
 <!--end::Toolbar-->
 
-<p id="notice"><%= notice %></p>
-
-<p>
-  <strong>Name:</strong>
-  <%= @location.name %>
-</p>
-
-<p>
-  <strong>Address:</strong>
-  <%= @location.address %>
-</p>
-
-<p>
-  <strong>Latitude:</strong>
-  <%= @location.latitude %>
-</p>
-
-<p>
-  <strong>Longitude:</strong>
-  <%= @location.longitude %>
-</p>
-
-<p>
-  <strong>User:</strong>
-  <%= @location.user_id %>
-</p>
-
-<%= link_to 'Measurements', location_measurements_path(@location) %> |
-<%= link_to 'Edit', edit_location_path(@location) %> |
-<%= link_to 'Back', locations_path %>
+<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+  <!--begin::Container-->
+  <div class="container-xxl">
+  
+    <% if notice %>
+    <p id="notice"><%= notice %></p>
+    <% end %>
+    <!--begin::Card-->
+    <div class="card">
+      <!--begin::Card header-->
+      <div class="card-header border-0">
+        <!--begin::Card title-->
+        <div class="card-title">
+          <h2 class="fw-bolder mb-0"><%= @location.name %></h2>
+        </div>
+        <!--end::Card title-->
+        <div class="card-toolbar">
+          <a href="<%= edit_location_path(@location) %>" class="btn btn-light me-3">Edit</a>
+					<a href="<%= location_measurements_path(@location) %>" class="btn btn-primary">View Measurements</a>
+        </div>
+      </div>
+      <!--end::Card header-->
+      <!--begin::Card body-->
+      <div class="card-body pt-0">
+        <div class="fw-bolder mt-5">Address</div>
+        <div class="text-gray-600"><%= @location.address %></div>
+        <div class="fw-bolder mt-5">Latitude</div>
+        <div class="text-gray-600"><%= @location.latitude %></div>
+        <div class="fw-bolder mt-5">Longitude</div>
+        <div class="text-gray-600"><%= @location.longitude %></div>
+      </div>
+      <!--end::Card body-->
+    </div>
+    <!--end::Card-->
+  </div>
+  <!--end::Container-->
+</div>
