@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  devise_for :users, controllers: { registrations: 'users/registrations' }
+
   resources :locations do
     resources :measurements, controller: 'location_measurements', only: [:index] do
       collection do
@@ -24,8 +26,6 @@ Rails.application.routes.draw do
       get 'claim', to: 'clients#claim_form'
     end
   end
-
-  devise_for :users
 
   get 'dashboard', to: 'dashboard#index'
   
