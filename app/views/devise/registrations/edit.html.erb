@@ -1,31 +1,3 @@
-<%= turbo_frame_tag "change_email" do %>
-<div id="kt_signin_email_edit" class="flex-row-fluid d-none">
-  <!--begin::Form-->
-  <form id="kt_signin_change_email" class="form fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate">
-    <div class="row mb-6">
-      <div class="col-lg-6 mb-4 mb-lg-0">
-        <div class="fv-row mb-0 fv-plugins-icon-container">
-          <label for="emailaddress" class="form-label fs-6 fw-bolder mb-3">Enter New Email Address</label>
-          <input type="email" class="form-control form-control-lg form-control-solid fw-bold fs-6" id="emailaddress" placeholder="Email Address" name="emailaddress" value="support@keenthemes.com">
-        <div class="fv-plugins-message-container invalid-feedback"></div></div>
-      </div>
-      <div class="col-lg-6">
-        <div class="fv-row mb-0 fv-plugins-icon-container">
-          <label for="confirmemailpassword" class="form-label fs-6 fw-bolder mb-3">Confirm Password</label>
-          <input type="password" class="form-control form-control-lg form-control-solid fw-bold fs-6" name="confirmemailpassword" id="confirmemailpassword">
-        <div class="fv-plugins-message-container invalid-feedback"></div></div>
-      </div>
-    </div>
-    <div class="d-flex">
-      <button id="kt_signin_submit" type="button" class="btn btn-primary me-2 px-6">Update Email</button>
-      <button id="kt_signin_cancel" type="button" class="btn btn-color-gray-400 btn-active-light-primary px-6">Cancel</button>
-    </div>
-  <div></div></form>
-  <!--end::Form-->
-</div>
-<% end %>
-
-
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar">
   <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
@@ -77,14 +49,6 @@
                   <span class="menu-title">Basic Information</span>
                 </a>
               </li>
-              <li class="menu-item px-3 pt-0">
-                <a href="#kt_account_settings_deactivate" data-kt-scroll-toggle="true" class="menu-link px-3 nav-link">
-                  <span class="menu-bullet">
-                    <span class="bullet bullet-vertical"></span>
-                  </span>
-                  <span class="menu-title">Deactivate Account</span>
-                </a>
-              </li>
             </ul>
             <!--end::Menu-->
           </div>
@@ -113,56 +77,27 @@
               <div class="d-flex flex-wrap align-items-center mb-8">
                 <div id="kt_signin_email">
                   <div class="fs-4 fw-boldest mb-1">Email Address</div>
-                  <div class="fs-6 fw-bold text-gray-600">support@keenthemes.com</div>
+                  <div class="fs-6 fw-bold text-gray-600"><%= current_user.email %></div>
                 </div>
                 
                 <div id="kt_signin_email_button" class="ms-auto">
-                  <button class="btn btn-light fw-boldest px-6">Change Email</button>
+                  <%= link_to "Change Email", edit_user_email_path, class: "btn btn-light fw-boldest px-6" %>
                 </div>
               </div>
               <% end %>
               <!--end::Email Address-->
               <!--begin::Password-->
+              <%= turbo_frame_tag "change_password" do %>
               <div class="d-flex flex-wrap align-items-center mb-8">
                 <div id="kt_signin_password">
                   <div class="fs-4 fw-boldest mb-1">Password</div>
                   <div class="fs-6 fw-bold text-gray-600">************</div>
                 </div>
-                <div id="kt_signin_password_edit" class="flex-row-fluid d-none">
-                  <div class="fs-6 fw-bold text-gray-600 mb-4">Password must be at least 8 character and contain symbols</div>
-                  <!--begin::Form-->
-                  <form id="kt_signin_change_password" class="form fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate">
-                    <div class="row mb-6">
-                      <div class="col-lg-4">
-                        <div class="fv-row mb-0 fv-plugins-icon-container">
-                          <label for="currentpassword" class="form-label fs-6 fw-bolder mb-3">Current Password</label>
-                          <input type="password" class="form-control form-control-lg form-control-solid fw-bold fs-6" name="currentpassword" id="currentpassword">
-                        <div class="fv-plugins-message-container invalid-feedback"></div></div>
-                      </div>
-                      <div class="col-lg-4">
-                        <div class="fv-row mb-0 fv-plugins-icon-container">
-                          <label for="newpassword" class="form-label fs-6 fw-bolder mb-3">New Password</label>
-                          <input type="password" class="form-control form-control-lg form-control-solid fw-bold fs-6" name="newpassword" id="newpassword">
-                        <div class="fv-plugins-message-container invalid-feedback"></div></div>
-                      </div>
-                      <div class="col-lg-4">
-                        <div class="fv-row mb-0 fv-plugins-icon-container">
-                          <label for="confirmpassword" class="form-label fs-6 fw-bolder mb-3">Confirm New Password</label>
-                          <input type="password" class="form-control form-control-lg form-control-solid fw-bold fs-6" name="confirmpassword" id="confirmpassword">
-                        <div class="fv-plugins-message-container invalid-feedback"></div></div>
-                      </div>
-                    </div>
-                    <div class="d-flex">
-                      <button id="kt_password_submit" type="button" class="btn btn-primary me-2 px-6">Update Password</button>
-                      <button id="kt_password_cancel" type="button" class="btn btn-color-gray-400 btn-active-light-primary px-6">Cancel</button>
-                    </div>
-                  <div></div></form>
-                  <!--end::Form-->
-                </div>
                 <div id="kt_signin_password_button" class="ms-auto">
-                  <button class="btn btn-light fw-boldest">Reset Password</button>
+                  <a href="<%= edit_authed_user_password_path %>" class="btn btn-light fw-boldest">Change Password</a>
                 </div>
               </div>
+              <% end %>
               <!--end::Password-->
             </div>
             <!--end::Card body-->
@@ -226,67 +161,6 @@
           <!--end::Content-->
         </div>
         <!--end::Basic info-->
-        <!--begin::Deactivate Account-->
-        <div class="card" id="kt_account_settings_deactivate" data-kt-scroll-offset="{default: 100, md: 125}">
-          <!--begin::Card header-->
-          <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_account_deactivate" aria-expanded="true" aria-controls="kt_account_deactivate">
-            <div class="card-title m-0">
-              <h3 class="fw-boldest m-0">Deactivate Account</h3>
-            </div>
-          </div>
-          <!--end::Card header-->
-          <!--begin::Content-->
-          <div id="kt_account_deactivate" class="collapse show">
-            <!--begin::Form-->
-            <form id="kt_account_deactivate_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate">
-              <!--begin::Card body-->
-              <div class="card-body border-top p-9">
-                <!--begin::Notice-->
-                <div class="notice d-flex bg-light-warning rounded border-warning border border-dashed mb-9 p-6">
-                  <!--begin::Icon-->
-                  <!--begin::Svg Icon | path: icons/duotune/general/gen044.svg-->
-                  <span class="svg-icon svg-icon-2tx svg-icon-warning me-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="black"></rect>
-                      <rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)" fill="black"></rect>
-                      <rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)" fill="black"></rect>
-                    </svg>
-                  </span>
-                  <!--end::Svg Icon-->
-                  <!--end::Icon-->
-                  <!--begin::Wrapper-->
-                  <div class="d-flex flex-stack flex-grow-1">
-                    <!--begin::Content-->
-                    <div class="fw-bold">
-                      <h4 class="text-gray-900 fw-bolder">You Are Deactivating Your Account</h4>
-                      <div class="fs-6 text-gray-700">For extra security, this requires you to confirm your email or phone number when you reset yousignr password.
-                      <br>
-                      <a href="#">Learn more</a></div>
-                    </div>
-                    <!--end::Content-->
-                  </div>
-                  <!--end::Wrapper-->
-                </div>
-                <!--end::Notice-->
-                <!--begin::Form input row-->
-                <div class="form-check form-check-solid fv-row fv-plugins-icon-container">
-                  <input name="deactivate" class="form-check-input" type="checkbox" value="" id="deactivate">
-                  <label class="form-check-label fw-bold ps-2 fs-6" for="deactivate">Confirm Account Deactivation</label>
-                <div class="fv-plugins-message-container invalid-feedback"></div></div>
-                <!--end::Form input row-->
-              </div>
-              <!--end::Card body-->
-              <!--begin::Card footer-->
-              <div class="card-footer d-flex justify-content-end py-6 px-9">
-                <button id="kt_account_deactivate_account_submit" type="submit" class="btn btn-danger fw-bold">Deactivate Account</button>
-              </div>
-              <!--end::Card footer-->
-            <input type="hidden"><div></div></form>
-            <!--end::Form-->
-          </div>
-          <!--end::Content-->
-        </div>
-        <!--end::Deactivate Account-->
       </div>
       <!--end::Layout-->
     </div>

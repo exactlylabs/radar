@@ -1,6 +1,14 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: 'users/registrations' }
 
+  devise_scope :user do
+    get 'users/edit_email' => 'devise/registrations#edit_email', as: :edit_user_email
+    put 'users/edit_email' => 'users/registrations#update_email', as: :update_user_email
+
+    get 'users/edit_password' => 'devise/registrations#edit_password', as: :edit_authed_user_password
+    put 'users/edit_password' => 'users/registrations#update_password', as: :update_authed_user_password
+  end
+
   resources :locations do
     resources :measurements, controller: 'location_measurements', only: [:index] do
       collection do

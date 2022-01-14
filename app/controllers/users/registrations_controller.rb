@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  prepend_before_action :authenticate_scope!, only: [:edit, :edit_email, :update, :update_email, :destroy]
+  prepend_before_action :set_minimum_password_length, only: [:new, :edit, :edit_email]
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
@@ -17,6 +19,54 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # GET /resource/edit
   def edit
     super
+  end
+
+  def edit_password
+    @resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
+    edit
+  end
+
+  def update_password
+    self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
+    @resource = resource
+    prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
+
+    resource_updated = update_resource(resource, account_update_params)
+    yield resource if block_given?
+    if resource_updated
+      set_flash_message_for_update(resource, prev_unconfirmed_email)
+      bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
+
+      respond_with resource, location: edit_user_registration_path
+    else
+      clean_up_passwords resource
+      set_minimum_password_length
+      render action: 'edit_password'
+    end
+  end
+
+  def edit_email
+    @resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
+    edit
+  end
+
+  def update_email
+    self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
+    @resource = resource
+    prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
+
+    resource_updated = update_resource(resource, account_update_params)
+    yield resource if block_given?
+    if resource_updated
+      set_flash_message_for_update(resource, prev_unconfirmed_email)
+      bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
+
+      respond_with resource, location: edit_user_registration_path
+    else
+      clean_up_passwords resource
+      set_minimum_password_length
+      render action: 'edit_email'
+    end
   end
 
   # PUT /resource
