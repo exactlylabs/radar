@@ -17,8 +17,22 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # GET /resource/edit
-  def edit
-    super
+  #def edit
+  #  super
+  #end
+
+  def update_name
+    user_params = params.require(:user).permit(:first_name, :last_name)
+
+    respond_to do |format|
+      if current_user.update(user_params)
+        format.html { redirect_to edit_user_registration_path, notice: "Name was successfully updated." }
+        format.json { render :edit, status: :ok }
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: current_user.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   def edit_password

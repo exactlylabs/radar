@@ -11,4 +11,4 @@ function initialize() {
 }
 
 document.addEventListener("DOMContentLoaded", initialize);
-document.addEventListener("turbolinks:load", initialize);
+document.addEventListener("turbo:load", initialize);

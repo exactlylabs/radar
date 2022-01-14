@@ -119,6 +119,7 @@
           <!--begin::Content-->
           <div id="kt_account_basic_info" class="collapse show">
             <!--begin::Form-->
+            <%= form_for(current_user, url: update_authed_user_name_path) do |f| %>
             <form id="kt_account_basic_info_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate">
               <!--begin::Card body-->
               <div class="card-body border-top p-9">
@@ -133,13 +134,19 @@
                     <div class="row">
                       <!--begin::Col-->
                       <div class="col-lg-6 fv-row fv-plugins-icon-container">
-                        <input type="text" name="fname" class="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="First name" value="Brad">
-                      <div class="fv-plugins-message-container invalid-feedback"></div></div>
+                        <%= f.text_field "first_name", class: "form-control form-control-lg form-control-solid mb-3 mb-lg-0", placeholder: "First name" %>
+                      <% if current_user.errors[:first_name] %>
+                      <div class="fv-plugins-message-container invalid-feedback"><%= current_user.errors[:first_name].join(", ") %></div>
+                      <% end %>
+                      </div>
                       <!--end::Col-->
                       <!--begin::Col-->
                       <div class="col-lg-6 fv-row fv-plugins-icon-container">
-                        <input type="text" name="lname" class="form-control form-control-lg form-control-solid" placeholder="Last name" value="Dennis">
-                      <div class="fv-plugins-message-container invalid-feedback"></div></div>
+                        <%= f.text_field "last_name", class: "form-control form-control-lg form-control-solid mb-3 mb-lg-0", placeholder: "Last name" %>
+                      <% if current_user.errors[:last_name] %>
+                      <div class="fv-plugins-message-container invalid-feedback"><%= current_user.errors[:last_name].join(", ") %></div>
+                      <% end %>
+                      </div>
                       <!--end::Col-->
                     </div>
                     <!--end::Row-->
@@ -155,7 +162,8 @@
                 <button type="submit" class="btn btn-primary" id="kt_account_basic_info_submit">Save Changes</button>
               </div>
               <!--end::Actions-->
-            <input type="hidden"><div></div></form>
+            <input type="hidden"><div></div>
+            <% end %>
             <!--end::Form-->
           </div>
           <!--end::Content-->
@@ -167,59 +175,3 @@
   </div>
   <!--end::Container-->
 </div>
-
-
-
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
-
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <div class="field">
-    <%= f.label :first_name %><br />
-    <%= f.text_field :first_name, autofocus: true, autocomplete: "none" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :last_name %><br />
-    <%= f.text_field :last_name, autofocus: true, autocomplete: "none" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
-
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
-    <% end %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p>
-
-<%= link_to "Back", :back %>
