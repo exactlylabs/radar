@@ -1,4 +1,105 @@
-<h1>Add Client</h1>
+<%= turbo_frame_tag "add_pod_modal" do %>
+<%= form_with(url: claim_clients_path) do |form| %>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Pod</h5>
+
+        <!--begin::Close-->
+        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+          <span class="svg-icon svg-icon-2x"></span>
+        </div>
+        <!--end::Close-->
+      </div>
+
+      <div class="modal-body">
+        <div class="fv-row mb-7 fv-plugins-icon-container">
+          <!--begin::Label-->
+          <label class="required fs-6 fw-bold mb-2">ID</label>
+          <!--end::Label-->
+          <!--begin::Input-->
+          <%= form.text_field :id, class: "form-control form-control-solid" %>
+          <!--end::Input-->
+          <div class="fv-plugins-message-container invalid-feedback"></div>
+        </div>
+
+        <div class="fv-row mb-7 fv-plugins-icon-container">
+          <!--begin::Label-->
+          <label class="required fs-6 fw-bold mb-2">Secret</label>
+          <!--end::Label-->
+          <!--begin::Input-->
+          <%= form.text_field :secret, class: "form-control form-control-solid" %>
+          <!--end::Input-->
+          <div class="fv-plugins-message-container invalid-feedback"></div>
+        </div>
+        <div class="fv-row mb-7 fv-plugins-icon-container">
+          <label class="required fs-6 fw-bold mb-2">Location</label>
+          <%= form.collection_select :location_id, current_user.locations, :id, :name, { include_blank: "" }, { class: "form-select", data: { control: "select2", placeholder: "Select a Location" } } %>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <%= form.submit "Add Pod", class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+<% end %>
+<% end %>
+
+
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="text-dark fw-bolder my-1 fs-2">New Pod  
+      <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <!--end::Title-->
+      <!--begin::Breadcrumb-->
+      <ul class="breadcrumb fw-bold fs-base my-1">
+        <li class="breadcrumb-item text-muted">Home
+          <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
+        </li>
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= clients_path %>" class="text-muted text-hover-primary">Pods</a>
+        </li>
+        <li class="breadcrumb-item text-dark">New</li>
+      </ul>
+      <!--end::Breadcrumb-->
+    </div>
+    <!--end::Info-->
+  </div>
+</div>
+<!--end::Toolbar-->
+
+<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+  <!--begin::Container-->
+  <div class="container-xxl">
+    <%= form_with(url: claim_clients_path) do |form| %>
+      <div class="fv-row mb-7 fv-plugins-icon-container">
+        <div class="card">
+          <div class="card-body">
+            <!--begin::Label-->
+            <label class="required fs-6 fw-bold mb-2">ID</label>
+            <!--end::Label-->
+            <!--begin::Input-->
+            <%= form.text_field :id, class: "form-control form-control-solid" %>
+            <!--end::Input-->
+            <div class="fv-plugins-message-container invalid-feedback"></div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <!--end::Container-->
+</div>
+
+          </div>
+
+
+<h2 class="fw-bolder">Add Pod</h2>
 
 <%= form_with(url: claim_clients_path) do |form| %>
   <% if @error %>

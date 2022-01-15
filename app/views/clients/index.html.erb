@@ -18,7 +18,8 @@
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-      <a href="<%= claim_clients_path %>" class="btn btn-primary">Add Pod</a>
+      <!--<a href="<%= claim_clients_path %>" class="btn btn-primary">Add Pod</a>-->
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_pod_modal">Add Pod</button>
     </div>
   </div>
 </div>
@@ -114,4 +115,10 @@
     <!--end::Card-->
   </div>
   <!--end::Container-->
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="add_pod_modal">
+  <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path do %>
+  <% end %>
 </div>
