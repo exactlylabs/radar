@@ -17,7 +17,7 @@
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled aside-fixed aside-default-enabled">
+  <body class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled aside-fixed aside-default-enabled" data-kt-aside-minimize="on">
     <% if content_for?(:content) %>
     <%= yield(:content) %>
     <% elsif user_signed_in? %>
