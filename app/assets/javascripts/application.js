@@ -27,6 +27,10 @@ function initialize() {
   initSelect2();
 }
 
+function frameInit() {
+  initSelect2();
+}
+
 document.addEventListener("DOMContentLoaded", initialize);
 document.addEventListener("turbo:load", initialize);
-document.addEventListener("turbo:frame-load", initialize);
+document.addEventListener("turbo:frame-load", frameInit);

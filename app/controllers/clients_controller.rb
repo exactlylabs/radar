@@ -85,7 +85,6 @@ PermitListen #{@client.remote_gateway_port}
 EOF
       end
       cmd = "adduser --disabled-password --gecos \"\" #{@client.unix_user}"
-      puts cmd
       system(cmd)
       system("systemctl reload sshd") if Rails.env.production?
     end

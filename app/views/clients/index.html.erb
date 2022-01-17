@@ -70,7 +70,6 @@
                 <span class="badge badge-light-danger">Offline</span>
                 <% end %>
               </td>
-              <!--begin::Action=-->
               <td class="text-end">
                 <a href="#" class="btn btn-sm btn-light btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
                 <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
@@ -94,7 +93,7 @@
                   <!--end::Menu item-->
                   <!--begin::Menu item-->
                   <div class="menu-item px-3">
-                    <%= link_to 'Release', release_client_path(client.unix_user), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link px-3" %>
+                    <%= link_to 'Delete', release_client_path(client.unix_user), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link px-3" %>
                   </div>
                   <!--end::Menu item-->
                 </div>
