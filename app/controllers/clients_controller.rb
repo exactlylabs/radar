@@ -116,7 +116,7 @@ EOF
 
     respond_to do |format|
       if @client.save
-        format.html { redirect_to client_path(@client.unix_user), notice: "Client was successfully created." }
+        format.html { redirect_to clients_path, notice: "Client was successfully created." }
         format.json { render :show, status: :created, location: client_path(@client.unix_user) }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -129,7 +129,7 @@ EOF
   def update
     respond_to do |format|
       if @client.update(client_params)
-        format.html { redirect_to client_path(@client.unix_user), notice: "Client was successfully updated." }
+        format.html { redirect_to clients_path, notice: "Client was successfully updated." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }

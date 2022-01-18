@@ -18,7 +18,7 @@
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-      <a href="<%= new_location_path %>" class="btn btn-primary">Add Location</a>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new_location_modal">Add Location</button>
     </div>
   </div>
 </div>
@@ -74,7 +74,7 @@
                   <!--end::Menu item-->
                   <!--begin::Menu item-->
                   <div class="menu-item px-3">
-                    <a href="<%= edit_location_path(location) %>" class="menu-link px-3">Edit</a>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#edit_location_modal_<%= location.id %>" class="menu-link px-3">Edit</a>
                   </div>
                   <!--end::Menu item-->
                   <!--begin::Menu item-->
@@ -84,6 +84,11 @@
                   <!--end::Menu item-->
                 </div>
                 <!--end::Menu-->
+                <div class="modal fade" tabindex="-1" id="edit_location_modal_<%= location.id %>">
+                  <%= turbo_frame_tag "edit_location_modal", src: edit_location_path(location) do %>
+                  <% end %>
+                </div>
+
               </td>
             </tr>
           <% end %>
@@ -100,4 +105,9 @@
     <!--end::Card-->
   </div>
   <!--end::Container-->
+</div>
+
+<div class="modal fade" tabindex="-1" id="new_location_modal">
+  <%= turbo_frame_tag "new_location_modal", src: new_location_path do %>
+  <% end %>
 </div>

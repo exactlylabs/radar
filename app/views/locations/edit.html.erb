@@ -1,6 +1,17 @@
-<h1>Editing Location</h1>
+<%= turbo_frame_tag "edit_location_modal" do %>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Location</h5>
 
-<%= render 'form', location: @location %>
+        <!--begin::Close-->
+        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+          <span class="svg-icon svg-icon-2x"></span>
+        </div>
+        <!--end::Close-->
+      </div>
 
-<%= link_to 'Show', @location %> |
-<%= link_to 'Back', locations_path %>
+      <%= render 'form', location: @location, submit_name: "Update" %>
+    </div>
+  </div>
+<% end %>
