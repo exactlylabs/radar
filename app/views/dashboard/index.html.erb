@@ -40,7 +40,7 @@
   var markers = [];
   <% @locations.each do |l| %>
     var marker = L.marker([<%= l.latitude %>, <%= l.longitude %>]).addTo(map)
-      .bindPopup('<a href="<%= location_path(l) %>"><%= l.name %></a><br />Latest Download: <%= l.latest_download %> mbps<br />Latest Upload: <%= l.latest_upload %> mbps');
+      .bindPopup('<a href="<%= location_path(l) %>"><%= l.name %></a><br />Latest Download: <%= number_with_precision l.latest_download, precision: 3 %> mbps<br />Latest Upload: <%= number_with_precision l.latest_upload, precision: 3 %> mbps');
     markers.push(marker);
   <% end %>
 
