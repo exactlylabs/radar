@@ -89,6 +89,11 @@ EOF
       system("systemctl reload sshd") if Rails.env.production?
     end
 
+    if @client.remote_gateway_port == 33001
+      # TODO: remove this once all clients have been updated
+      @client.claim_remote_port
+    end
+
     FileUtils.mkdir_p("/home/#{@client.unix_user}/.ssh")
     File.open("/home/#{@client.unix_user}/.ssh/authorized_keys","w") do |f|
       f.write(k.ssh_public_key)

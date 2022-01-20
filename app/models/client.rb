@@ -21,12 +21,12 @@ class Client < ApplicationRecord
     # TODO: This is not safe with concurrent clients
     range = ENV["REMOTE_PORT_RANGE"]
     start_port, end_port = range.split("-").map{|i| i.to_i}
-    current_min = Client.minimum(:remote_gateway_port)
+    current_max = Client.maximum(:remote_gateway_port)
     
-    if current_min == nil
+    if current_max == nil
       self.remote_gateway_port = start_port
-    elsif current_min < end_port
-      self.remote_gateway_port = current_min + 1
+    elsif current_max < end_port
+      self.remote_gateway_port = current_max + 1
     else
       raise "No more available server ports"
     end
