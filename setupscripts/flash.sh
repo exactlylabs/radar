@@ -36,6 +36,9 @@ cp $1 tmp/home/radar/.ssh/authorized_keys
 chown 1000:1000 tmp/home/radar/.ssh/authorized_keys
 chmod 644 tmp/home/radar/.ssh/authorized_keys
 
+# Set random minute to run tests
+echo "$(($RANDOM % 60)) */1 * * * /home/radar/runtests.sh" > tmp/var/spool/cron/crontabs/radar
+
 CLIENT_AUTH=$(curl -H "Accept: application/json" -XPOST $API_ENDPOINT_URL/clients)
 
 CLIENT_ID=$(echo $CLIENT_AUTH | jq -r .unix_user)
