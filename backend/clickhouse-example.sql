@@ -6,11 +6,12 @@ CREATE TABLE tests (
   upload boolean,
   started_at DateTime,
   mbps float,
-  loss_rate float,
-  min_rtt float,
+  loss_rate Nullable(float),
+  min_rtt Nullable(float),
   asn int,
   asn_org String,
-  access_token_sig String
+  has_access_token boolean,
+  access_token_sig Nullable(String)
 )
 ENGINE=MergeTree
 PRIMARY KEY id
