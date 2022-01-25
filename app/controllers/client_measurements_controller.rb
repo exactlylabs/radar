@@ -35,6 +35,10 @@ class ClientMeasurementsController < ApplicationController
       @measurement.location = @client.location
     end
 
+    if !@client.user.nil?
+      @measurement.user = @client.user
+    end
+
     respond_to do |format|
       if @measurement.save
         ProcessMeasurementJob.perform_later @measurement

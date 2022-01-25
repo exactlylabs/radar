@@ -9,4 +9,5 @@ class User < ApplicationRecord
 
   has_many :clients
   has_many :locations
+  has_many :measurements
 end

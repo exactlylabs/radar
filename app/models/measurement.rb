@@ -3,6 +3,7 @@ require "csv"
 class Measurement < ApplicationRecord
   belongs_to :client
   belongs_to :location
+  belongs_to :user
   has_one_attached :result
 
   def self.to_ndt7_csv
@@ -22,7 +23,7 @@ class Measurement < ApplicationRecord
   end
 
   def self.to_csv
-    attributes = %w{id style upload download jitter latency created_at}
+    attributes = %w{id location_id client_id style upload download jitter latency created_at}
 
     CSV.generate(headers: true) do |csv|
       csv << attributes
