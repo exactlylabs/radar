@@ -1,3 +1,77 @@
+set max_bytes_before_external_group_by = 5000000000;
+set join_algorithm = 'partial_merge';
+
+SELECT geo_id,
+geo_namespace,
+countIf(r < 3.0 AND upload = 1) / countIf(upload = 1) as upload_less_than_3,
+countIf(r >= 3.0 AND r < 20.0 AND upload = 1) / countIf(upload = 1) as upload_more_than_3_less_than_20,
+countIf(r >= 20.0 AND upload = 1) / countIf(upload = 1) as upload_more_than_20,
+countIf(r < 25.0 AND upload = 0) / countIf(upload = 0) as download_less_than_25,
+countIf(r >= 25.0 AND r < 100.0 AND upload = 0) / countIf(upload = 0) as download_more_than_25_less_than_100,
+countIf(r >= 100.0 AND upload = 0) / countIf(upload = 0) as download_more_than_100,
+countIf(upload = 0) AS total_samples_down,
+countIf(upload = 1) AS total_samples_up,
+year
+FROM (
+  SELECT geo_namespace, geo_id, ip, upload, quantileExact(0.5)(mbps) AS r, YEAR(started_at) AS year
+  FROM tests_with_geos
+  GROUP BY geo_namespace, geo_id, ip, upload, YEAR(started_at)
+)
+GROUP BY geo_namespace, geo_id, year
+ORDER BY geo_id
+INTO OUTFILE 'county_speeds.csv' FORMAT CSV;
+
+----
+
+SELECT geo_id, countIf(r > 3.0) / count(*) as over_threadhold, count(*) AS samples, year
+FROM (
+  SELECT geo_namespace, geo_id, ip, upload, quantileExact(0.5)(mbps) AS r, YEAR(started_at) AS year
+  FROM tests_with_geos
+  GROUP BY geo_namespace, geo_id, ip, upload, YEAR(started_at)
+)
+WHERE upload = 1
+GROUP BY geo_namespace, geo_id, year
+ORDER BY geo_id;
+
+----
+
+CREATE MATERIALIZED VIEW tests_with_geos_by_year
+ENGINE=MergeTree
+ORDER BY (ip, upload, year)
+POPULATE
+AS
+SELECT geo_namespace, geo_id, ip, upload, quantileExact(0.5)(mbps) AS mbps, YEAR(started_at) AS year
+FROM tests_with_geos
+GROUP BY geo_namespace, geo_id, ip, upload, YEAR(started_at)
+
+CREATE MATERIALIZED VIEW tests_with_geos
+ENGINE=MergeTree
+PRIMARY KEY id
+ORDER BY (id, started_at)
+POPULATE
+AS
+SELECT
+  tests.id,
+  ip,
+  latitude,
+  longitude,
+  upload,
+  started_at,
+  mbps,
+  loss_rate,
+  min_rtt,
+  asn,
+  asn_org,
+  has_access_token,
+  access_token_sig,
+  geo_namespace,
+  geo_id
+FROM tests
+JOIN test_geos ON tests.id = test_geos.id;
+
+
+----
+
 CREATE TABLE tests (
   id FixedString(37),
   ip String,
