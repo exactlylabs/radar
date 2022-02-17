@@ -11,7 +11,12 @@ Rails.application.routes.draw do
     patch 'users/edit_name' => 'users/registrations#update_name', as: :update_authed_user_name
   end
 
-  resources :measurements, only: [:index]
+  resources :measurements, only: [:index] do
+    collection do
+      get 'full_index'
+      get 'full_ndt7_index'
+    end
+  end
 
   resources :locations do
     resources :measurements, controller: 'location_measurements', only: [:index] do
