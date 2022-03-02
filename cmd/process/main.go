@@ -9,6 +9,7 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher"
 	"github.com/exactlylabs/mlab-processor/pkg/app/geocoder"
 	"github.com/exactlylabs/mlab-processor/pkg/app/ipgeocoder"
+	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 )
 
 func usage() {
@@ -62,4 +63,5 @@ func main() {
 		usage()
 		os.Exit(1)
 	}
+	timer.PrintAll()
 }
