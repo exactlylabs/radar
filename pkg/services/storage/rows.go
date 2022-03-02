@@ -3,17 +3,21 @@ package storage
 import (
 	"errors"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"reflect"
 	"sync"
 	"time"
 
+	"github.com/exactlylabs/mlab-processor/pkg/app/models"
 	"github.com/xitongsys/parquet-go-source/local"
 	"github.com/xitongsys/parquet-go/parquet"
-	"github.com/xitongsys/parquet-go/reader"
-	"github.com/xitongsys/parquet-go/source"
 	"github.com/xitongsys/parquet-go/writer"
+
+	"github.com/hamba/avro"
+	"github.com/hamba/avro/ocf"
 )
 
 //var channelWriters = map[string]chan interface{}{}
@@ -21,34 +25,39 @@ var channelWriters = sync.Map{}
 var wg = &sync.WaitGroup{}
 
 type RowIterator struct {
-	fr        source.ParquetFile
-	pr        *reader.ParquetReader
+	// fr        source.ParquetFile
+	// pr        *reader.ParquetReader
+	decoder   *ocf.Decoder
 	objType   reflect.Type
 	nextIndex int64
-	totalRows int64
+	// totalRows int64
+
 }
 
 func (i *RowIterator) Next() interface{} {
-	if i.fr == nil {
+	if i.decoder == nil || !i.decoder.HasNext() {
 		return nil
 	}
 
-	if i.nextIndex >= i.totalRows {
-		i.pr.ReadStop()
-		err := i.fr.Close()
-		if err != nil {
-			panic(fmt.Errorf("RowIterator#Next err: %v", err))
-		}
+	// if i.nextIndex >= i.totalRows {
+	// 	i.pr.ReadStop()
+	// 	err := i.fr.Close()
+	// 	if err != nil {
+	// 		panic(fmt.Errorf("RowIterator#Next err: %v", err))
+	// 	}
 
-		return nil
-	}
+	// 	return nil
+	// }
 
 	sliceType := reflect.SliceOf(i.objType.Elem())
 	slicePtr := reflect.New(sliceType)
 	slice := reflect.MakeSlice(sliceType, 1, 1)
 	slicePtr.Elem().Set(slice)
-	slicePtrInterface := slicePtr.Interface()
-	rErr := i.pr.Read(slicePtrInterface)
+
+	// slicePtrInterface := slicePtr.Interface()
+	slicePtrInterface := &models.FetchedResult{}
+
+	rErr := i.decoder.Decode(slicePtrInterface)
 	if rErr != nil {
 		panic(fmt.Errorf("RowIterator#Next rErr: %v", rErr))
 	}
@@ -62,34 +71,31 @@ func (i *RowIterator) Next() interface{} {
 }
 
 func DatedRows(store string, obj interface{}, date time.Time) *RowIterator {
-	path := fmt.Sprintf("output/%v/%v.parquet", store, date.Format("2006-01-02"))
+	// path := fmt.Sprintf("output/%v/%v.parquet", store, date.Format("2006-01-02"))
+	path := fmt.Sprintf("output/%v/%v.avro", store, date.Format("2006-01-02"))
 
 	if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
 		return &RowIterator{
-			fr:        nil,
-			pr:        nil,
+			decoder:   nil,
 			objType:   reflect.TypeOf(obj),
 			nextIndex: 0,
-			totalRows: 0,
 		}
 	}
 
-	fr, err := local.NewLocalFileReader(path)
+	f, err := os.Open(path)
 	if err != nil {
 		panic(fmt.Errorf("storage.DatedRows err: %v", err))
 	}
 
-	pr, rErr := reader.NewParquetReader(fr, obj, 4)
-	if rErr != nil {
-		panic(fmt.Errorf("storage.DatedRows rErr: %v", rErr))
+	decoder, err := ocf.NewDecoder(f)
+	if err != nil {
+		log.Panicf("storage.DatedRows new decoder err: %v", err)
 	}
 
 	return &RowIterator{
-		fr:        fr,
-		pr:        pr,
+		decoder:   decoder,
 		objType:   reflect.TypeOf(obj),
 		nextIndex: 0,
-		totalRows: pr.GetNumRows(),
 	}
 }
 
@@ -135,13 +141,89 @@ func writerWorker(filePath string, obj interface{}, ch chan interface{}) {
 	}
 }
 
+func writeAvroWorker(filePath string, schema avro.Schema, ch chan interface{}) {
+	defer wg.Done()
+
+	dir := filepath.Dir(filePath)
+	mdErr := os.MkdirAll(dir, 0755)
+	if mdErr != nil {
+		panic(fmt.Errorf("storage.writerWorker mdErr: %v", mdErr))
+	}
+
+	f, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0660)
+	if err != nil {
+		panic(fmt.Errorf("storage.writerWorker Open err: %v", err))
+	}
+
+	encoder, err := ocf.NewEncoder(
+		schema.String(), f,
+		ocf.WithCodec(ocf.Snappy),
+	)
+	if err != nil {
+		log.Panicf("storage.writeWorker New Encoder e rr: %v", err)
+	}
+
+	total := 0
+	for item := range ch {
+		wErr := encoder.Encode(item)
+		// wErr := pw.Write(item)
+		if wErr != nil {
+			panic(fmt.Errorf("storage.writerWorker wErr: %v", wErr))
+		}
+		if err := encoder.Flush(); err != nil {
+			log.Panicf("storage.writeWorker flush err: %v", err)
+		}
+		total++
+	}
+
+	if err := f.Sync(); err != nil {
+		log.Panicf("storage.writeWorker sync err: %v", err)
+	}
+	cErr := f.Close()
+	if cErr != nil {
+		panic(fmt.Errorf("storage.writerWorker cErr: %v", cErr))
+	}
+}
+
+func getStoreSchema(store string) avro.Schema {
+	var schema string
+
+	switch store {
+	case "fetched":
+		schema = "pkg/app/models/fetchedresult.avsc"
+	case "geocode":
+		schema = "pkg/app/models/geocodedresult.avsc"
+	case "reverse":
+		schema = "pkg/app/models/revgeoresult.avsc"
+	default:
+		schema = ""
+	}
+
+	if schema != "" {
+		file, err := os.Open(schema)
+		if err != nil {
+			log.Panicf("storage.getStoreSchema openErr: %v", err)
+		}
+		data, err := io.ReadAll(file)
+		if err != nil {
+			log.Panicf("storage.getStoreSchema readErr: %v", err)
+		}
+		return avro.MustParse(string(data))
+	}
+	panic(fmt.Errorf("storage.getStoreSchema err: Avro schema not found for %v", store))
+}
+
+// PushDatedRow send a row to the worker responsible of writing it in a parquet file of a specific date
+// in case the worker/file doesn't exist yet, it starts a new goroutine to handle the writing.
 func PushDatedRow(store string, date time.Time, row interface{}) {
 	key := channelKey(store, date)
 	if _, ok := channelWriters.Load(key); !ok {
 		ch := make(chan interface{})
 		channelWriters.Store(key, ch)
 		wg.Add(1)
-		go writerWorker(fmt.Sprintf("output/%v/%v.parquet", store, date.Format("2006-01-02")), row, ch)
+		schema := getStoreSchema(store)
+		go writeAvroWorker(fmt.Sprintf("output/%v/%v.avro", store, date.Format("2006-01-02")), schema, ch)
+		// go writerWorker(fmt.Sprintf("output/%v/%v.parquet", store, date.Format("2006-01-02")), row, ch)
 	}
 
 	chRaw, _ := channelWriters.Load(key)
