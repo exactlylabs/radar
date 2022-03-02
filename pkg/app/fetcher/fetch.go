@@ -171,6 +171,8 @@ func processNdt7Reader(r io.Reader, day time.Time) error {
 	return nil
 }
 
+// innerNdt5Reader parses the NDT5 format and pushes two rows into the storage
+// one for upload and another for download data
 func innerNdt5Reader(reader io.Reader, day time.Time) error {
 	b, rErr := ioutil.ReadAll(reader)
 	if rErr != nil {
@@ -183,9 +185,11 @@ func innerNdt5Reader(reader io.Reader, day time.Time) error {
 		return fmt.Errorf("fetcher.innerNdt5Reader jErr: %v", jErr)
 	}
 
+	// Check if Upload Data is recorded
 	if m.C2S != nil && m.C2S.Error == "" {
 		var ptrMinRTT *float32
 		if m.S2C != nil {
+			// C2S doesn't have RTT information. We use S2C instead
 			minRtt := float32(m.S2C.MinRTT.Milliseconds()) / 1000
 			ptrMinRTT = &minRtt
 		}
@@ -204,6 +208,7 @@ func innerNdt5Reader(reader io.Reader, day time.Time) error {
 		})
 	}
 
+	// Check if Download Data is recorded
 	if m.S2C != nil && m.S2C.Error == "" {
 		var ptrLossRate *float32
 		if m.S2C.TCPInfo != nil {
@@ -282,7 +287,6 @@ func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, ch chan *fetchWorkI
 		if fErr != nil {
 			panic(fmt.Errorf("fetcher.fetchingWorker fErr: %v", fErr))
 		}
-		defer object.Close()
 
 		if item.testType == NDT7TestType {
 			processNdt7Reader(object, item.day)
@@ -294,6 +298,8 @@ func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, ch chan *fetchWorkI
 		if item.total == *item.completedRef {
 			storage.CloseDatedRow("fetched", item.day)
 		}
+		// Close object after each iteration
+		object.Close()
 	}
 }
 

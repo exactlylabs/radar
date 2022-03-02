@@ -1,0 +1,22 @@
+{
+    "type": "record",
+    "name": "geocode",
+    "namespace": "exactlylabs",
+    "fields" : [
+        {"name": "id", "type": "string"},
+        {"name": "test_style", "type": "string"},
+        {"name": "ip", "type": "string"},
+        {"name": "started_at", "type": "long"},
+        {"name": "upload", "type": "boolean"},
+        {"name": "mbps", "type": "float"},
+        {"name": "loss_rate", "type": ["null", "float"], "default": null},
+        {"name": "min_rtt", "type": ["null", "float"], "default": null},
+        {"name": "latitude", "type": "double"},
+        {"name": "longitude", "type": "double"},
+        {"name": "location_accuracy_km", "type": "double"},
+        {"name": "asn", "type": "int"},
+        {"name": "asn_org", "type": "string"},
+        {"name": "has_access_token", "type": "boolean"},
+        {"name": "access_token_sig", "type": ["null", "string"], "default": null}
+    ]
+}

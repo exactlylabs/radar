@@ -17,6 +17,7 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
 	"github.com/exactlylabs/mlab-processor/pkg/services/netmap"
 	"github.com/exactlylabs/mlab-processor/pkg/services/storage"
+	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 )
 
 type ipgeocodeWorkItem struct {
@@ -148,47 +149,58 @@ type geocodingPool struct {
 	ch chan *ipgeocodeWorkItem
 }
 
+func processItem(toProcess *ipgeocodeWorkItem) *models.GeocodedResult {
+	defer timer.TimeIt(time.Now(), "GeocodeProcessRow")
+
+	// Save
+	latlonRaw := lookup.Lookup(net.ParseIP(toProcess.fetchedResult.IP))
+	asnInfoRaw := asnLookup.Lookup(net.ParseIP(toProcess.fetchedResult.IP))
+
+	var lat, lng, acc float64
+	var asn int
+	var org string
+	if latlonRaw != nil {
+		latlon := latlonRaw.([]float64)
+		lat = latlon[0]
+		lng = latlon[1]
+		acc = latlon[2]
+	}
+
+	if asnInfoRaw != nil {
+		asnInfo := asnInfoRaw.(*asnInfo)
+		asn = asnInfo.asn
+		org = asnInfo.org
+	}
+	return &models.GeocodedResult{
+		Id:                 toProcess.fetchedResult.Id,
+		TestStyle:          toProcess.fetchedResult.TestStyle,
+		IP:                 toProcess.fetchedResult.IP,
+		StartedAt:          toProcess.fetchedResult.StartedAt,
+		Upload:             toProcess.fetchedResult.Upload,
+		MBPS:               toProcess.fetchedResult.MBPS,
+		LossRate:           toProcess.fetchedResult.LossRate,
+		MinRTT:             toProcess.fetchedResult.MinRTT,
+		Latitude:           lat,
+		Longitude:          lng,
+		LocationAccuracyKM: acc,
+		ASN:                asn,
+		ASNOrg:             org,
+		HasAccessToken:     toProcess.fetchedResult.HasAccessToken,
+		AccessTokenSig:     toProcess.fetchedResult.AccessTokenSig,
+	}
+}
+
+func storeGeocodedResult(date time.Time, result *models.GeocodedResult) {
+	defer timer.TimeIt(time.Now(), "GeocodeWriteRow")
+	storage.PushDatedRow("geocode", date, result)
+}
+
 func geocodingWorker(wg *sync.WaitGroup, ch chan *ipgeocodeWorkItem) {
 	defer wg.Done()
 
 	for toProcess := range ch {
-		// Save
-		latlonRaw := lookup.Lookup(net.ParseIP(toProcess.fetchedResult.IP))
-		asnInfoRaw := asnLookup.Lookup(net.ParseIP(toProcess.fetchedResult.IP))
-
-		var lat, lng, acc float64
-		var asn int
-		var org string
-		if latlonRaw != nil {
-			latlon := latlonRaw.([]float64)
-			lat = latlon[0]
-			lng = latlon[1]
-			acc = latlon[2]
-		}
-
-		if asnInfoRaw != nil {
-			asnInfo := asnInfoRaw.(*asnInfo)
-			asn = asnInfo.asn
-			org = asnInfo.org
-		}
-
-		storage.PushDatedRow("geocode", toProcess.date, &models.GeocodedResult{
-			Id:                 toProcess.fetchedResult.Id,
-			TestStyle:          toProcess.fetchedResult.TestStyle,
-			IP:                 toProcess.fetchedResult.IP,
-			StartedAt:          toProcess.fetchedResult.StartedAt,
-			Upload:             toProcess.fetchedResult.Upload,
-			MBPS:               toProcess.fetchedResult.MBPS,
-			LossRate:           toProcess.fetchedResult.LossRate,
-			MinRTT:             toProcess.fetchedResult.MinRTT,
-			Latitude:           lat,
-			Longitude:          lng,
-			LocationAccuracyKM: acc,
-			ASN:                asn,
-			ASNOrg:             org,
-			HasAccessToken:     toProcess.fetchedResult.HasAccessToken,
-			AccessTokenSig:     toProcess.fetchedResult.AccessTokenSig,
-		})
+		result := processItem(toProcess)
+		storeGeocodedResult(toProcess.date, result)
 	}
 }
 
@@ -220,6 +232,7 @@ func (p *geocodingPool) Close() {
 }
 
 func Geocode(startDate, endDate time.Time, rerun bool) {
+	defer timer.TimeIt(time.Now(), "Geocode")
 	if !lookupInitialized {
 		ipv4Err := addFileToNetmap(lookup, config.GetConfig().Ipv4DBPath)
 		if ipv4Err != nil {
@@ -253,14 +266,17 @@ func Geocode(startDate, endDate time.Time, rerun bool) {
 
 	for _, date := range dateRange {
 		pool := newGeocodingPool()
-
+		fmt.Printf("Getting Rows for %v\n", date)
 		iter := storage.DatedRows("fetched", &models.FetchedResult{}, date)
 		next := iter.Next()
 		for next != nil {
 			pool.Queue(next.(*models.FetchedResult), date)
-			next = iter.Next()
-		}
 
+			next = func() interface{} {
+				defer timer.TimeIt(time.Now(), "GeocodeReadRow")
+				return iter.Next()
+			}()
+		}
 		pool.Close()
 
 		storage.MarkCompleted("ipgeocode", date)
