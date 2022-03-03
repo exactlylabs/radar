@@ -207,8 +207,9 @@ func geocodingWorker(wg *sync.WaitGroup, ch chan *ipgeocodeWorkItem) {
 func newGeocodingPool() *geocodingPool {
 	ch := make(chan *ipgeocodeWorkItem)
 	wg := &sync.WaitGroup{}
-
-	for i := 0; i < runtime.NumCPU(); i++ {
+	// It appears to be consuming 50% of the CPUs with a pool of only NumCPU. With the double we get ~80%
+	// Does this apply to any machine? Or just mine?
+	for i := 0; i < runtime.NumCPU()*2; i++ {
 		wg.Add(1)
 		go geocodingWorker(wg, ch)
 	}
