@@ -26,6 +26,7 @@ func main() {
 	startPtr := flag.String("start", "2019-05-13", "First date to run pipeline from")
 	endPtr := flag.String("end", yesterday.Format("2006-01-02"), "Last date to run pipeline from (inclusive). If empty, set to yesterday")
 	rerunPtr := flag.Bool("rerun", false, "Ignore previously collected data and force reprocessing")
+	debug := flag.Bool("debug", false, "Print some debugging information")
 
 	flag.Parse()
 	args := flag.Args()
@@ -63,5 +64,8 @@ func main() {
 		usage()
 		os.Exit(1)
 	}
-	timer.PrintAll()
+	if *debug {
+		timer.PrintAll()
+	}
+
 }
