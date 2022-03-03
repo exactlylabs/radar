@@ -11,6 +11,7 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
 	"github.com/exactlylabs/mlab-processor/pkg/services/geo"
 	"github.com/exactlylabs/mlab-processor/pkg/services/storage"
+	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 	shp "github.com/jonas-p/go-shp"
 )
 
@@ -139,6 +140,7 @@ func initIndex() {
 }
 
 func ReverseGeocode(startDate, endDate time.Time, rerun bool) {
+	defer timer.TimeIt(time.Now(), "ReverseGeocode")
 	initIndex()
 
 	var dateRange []time.Time

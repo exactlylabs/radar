@@ -21,6 +21,7 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/helpers"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
 	"github.com/exactlylabs/mlab-processor/pkg/services/storage"
+	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 )
@@ -348,6 +349,7 @@ func ndt5SearchPrefix(day time.Time) string {
 }
 
 func Fetch(startDate, endDate time.Time, rerun bool) {
+	defer timer.TimeIt(time.Now(), "Fetch")
 	ctx := context.Background()
 	var dateRange []time.Time
 	if rerun {
