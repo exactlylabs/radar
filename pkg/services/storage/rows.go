@@ -12,9 +12,6 @@ import (
 	"time"
 
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
-	"github.com/xitongsys/parquet-go-source/local"
-	"github.com/xitongsys/parquet-go/parquet"
-	"github.com/xitongsys/parquet-go/writer"
 
 	"github.com/hamba/avro"
 	"github.com/hamba/avro/ocf"
@@ -79,45 +76,7 @@ func channelKey(store string, date time.Time) string {
 	return fmt.Sprintf("%s-%s", store, date.Format("2006-01-02"))
 }
 
-func writeParquetWorker(filePath string, obj interface{}, ch chan interface{}) {
-	defer wg.Done()
-
-	dir := filepath.Dir(filePath)
-	mdErr := os.MkdirAll(dir, 0755)
-	if mdErr != nil {
-		panic(fmt.Errorf("storage.writerWorker mdErr: %v", mdErr))
-	}
-
-	fw, lErr := local.NewLocalFileWriter(filePath)
-	if lErr != nil {
-		panic(fmt.Errorf("storage.writerWorker lErr: %v", lErr))
-	}
-
-	pw, err := writer.NewParquetWriter(fw, obj, 4)
-	if err != nil {
-		panic(fmt.Errorf("storage.writerWorker err: %v", err))
-	}
-
-	pw.CompressionType = parquet.CompressionCodec_SNAPPY
-
-	for item := range ch {
-		wErr := pw.Write(item)
-		if wErr != nil {
-			panic(fmt.Errorf("storage.writerWorker wErr: %v", wErr))
-		}
-	}
-
-	if sErr := pw.WriteStop(); sErr != nil {
-		panic(fmt.Errorf("storage.writerWorker sErr: %v", sErr))
-	}
-
-	cErr := fw.Close()
-	if cErr != nil {
-		panic(fmt.Errorf("storage.writerWorker cErr: %v", cErr))
-	}
-}
-
-func writeAvroWorker(filePath string, schema avro.Schema, ch chan interface{}) {
+func writerWorker(filePath string, schema avro.Schema, ch chan interface{}) {
 	defer wg.Done()
 
 	dir := filepath.Dir(filePath)
@@ -191,7 +150,7 @@ func getStoreSchema(store string) avro.Schema {
 	panic(fmt.Errorf("storage.getStoreSchema err: Avro schema not found for %v", store))
 }
 
-// PushDatedRow send a row to the worker responsible of writing it in a parquet file of a specific date
+// PushDatedRow send a row to the worker responsible of writing it in a avro file of a specific date
 // in case the worker/file doesn't exist yet, it starts a new goroutine to handle the writing.
 func PushDatedRow(store string, date time.Time, row interface{}) {
 	key := channelKey(store, date)
@@ -200,7 +159,7 @@ func PushDatedRow(store string, date time.Time, row interface{}) {
 		channelWriters.Store(key, ch)
 		wg.Add(1)
 		schema := getStoreSchema(store)
-		go writeAvroWorker(fmt.Sprintf("output/%v/%v.avro", store, date.Format("2006-01-02")), schema, ch)
+		go writerWorker(fmt.Sprintf("output/%v/%v.avro", store, date.Format("2006-01-02")), schema, ch)
 	}
 
 	chRaw, _ := channelWriters.Load(key)
