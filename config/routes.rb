@@ -36,6 +36,8 @@ Rails.application.routes.draw do
     member do
       delete 'release'
       post 'configuration'
+      post 'status'
+      post 'run_test'
     end
 
     collection do

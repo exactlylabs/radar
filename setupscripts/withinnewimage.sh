@@ -11,3 +11,4 @@ echo "APT::Periodic::Update-Package-Lists \"1\";" > /etc/apt/apt.conf.d/20auto-u
 echo "APT::Periodic::Unattended-Upgrade \"1\";" >> /etc/apt/apt.conf.d/20auto-upgrades
 
 systemctl enable remotetunnel
+systemctl enable radarping

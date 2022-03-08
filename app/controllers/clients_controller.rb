@@ -1,10 +1,10 @@
 require "sshkey"
 
 class ClientsController < ApplicationController
-  before_action :authenticate_user!, except: %i[ configuration new create ]
-  before_action :authenticate_client!, only: %i[ configuration ]
-  before_action :set_client, only: %i[ claim release show edit update destroy ]
-  skip_forgery_protection only: %i[ configuration new create ]
+  before_action :authenticate_user!, except: %i[ run_test configuration new create status ]
+  before_action :authenticate_client!, only: %i[ configuration status ]
+  before_action :set_client, only: %i[ run_test claim release show edit update destroy ]
+  skip_forgery_protection only: %i[ status configuration new create ]
 
   # GET /clients or /clients.json
   def index
@@ -26,6 +26,18 @@ class ClientsController < ApplicationController
   end
 
   def claim_form
+  end
+
+  def run_test
+    respond_to do |format|
+      if @client.update(test_requested: true)
+        format.html { redirect_to request.env['HTTP_REFERER'], notice: "Client test requested." }
+        format.json { render :show, status: :ok, location: clients_path(@client.unix_user) }
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   def claim
@@ -107,6 +119,15 @@ EOF
 
     respond_to do |format|
       format.json { render :configuration, status: :ok }
+    end
+  end
+
+  def status
+    @client.pinged_at = Time.now
+    @client.save
+
+    respond_to do |format|
+      format.json { render :status, status: :ok }
     end
   end
 

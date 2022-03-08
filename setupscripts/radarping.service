@@ -1,0 +1,16 @@
+[Unit]
+Description=Ping service for Radar
+After=sshd.service
+StartLimitIntervalSec=400
+StartLimitBurst=3
+
+[Service]
+ExecStart=/home/radar/ping.sh
+KillMode=process
+Restart=always
+RestartSec=90
+User=radar
+Group=radar
+
+[Install]
+WantedBy=multi-user.target

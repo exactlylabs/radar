@@ -25,6 +25,7 @@ function initialize() {
   KTMenu.init();
   KTToggle.init();
   initSelect2();
+  KTApp.initBootstrapTooltips();
 }
 
 function frameInit() {

@@ -39,12 +39,17 @@ class ClientMeasurementsController < ApplicationController
       @measurement.user = @client.user
     end
 
+    if @client.test_requested
+      @client.test_requested = false
+      @client.save
+    end
+
     respond_to do |format|
       if @measurement.save
         ProcessMeasurementJob.perform_later @measurement
 
         format.html { redirect_to client_measurements_path(@client.unix_user), notice: "Measurement was successfully created." }
-        format.json { render :show, status: :created, location: client_measurement_path(@client.unix_user, @measurement) }
+        format.json { render :show, status: :created, location: client_measurements_path(@client.unix_user, @measurement) }
       else
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @measurement.errors, status: :unprocessable_entity }

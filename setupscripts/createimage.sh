@@ -9,7 +9,9 @@ fi
 
 CRONTAB_FILE=./clientcrontab
 RUNTESTS_SCRIPT=./runtests.sh
+PING_SCRIPT=./ping.sh
 REMOTETUNNEL_SERVICE=./remotetunnel.service
+PING_SERVICE=./radarping.service
 TUNNEL_SCRIPT=./tunnel.sh
 
 NDT_URL=https://storage.googleapis.com/exactly-public/ndt7
@@ -52,8 +54,10 @@ mv speedtest tmp/home/radar
 
 # Setup SSH Tunneling
 cp $REMOTETUNNEL_SERVICE tmp/etc/systemd/system/
+cp $PING_SERVICE tmp/etc/systemd/system/
 
 cp $RUNTESTS_SCRIPT tmp/home/radar
+cp $PING_SCRIPT tmp/home/radar
 cp $TUNNEL_SCRIPT tmp/home/radar
 cp $CRONTAB_FILE tmp/var/spool/cron/crontabs/radar
 chmod 600 tmp/var/spool/cron/crontabs/radar

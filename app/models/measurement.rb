@@ -2,7 +2,7 @@ require "csv"
 
 class Measurement < ApplicationRecord
   belongs_to :client
-  belongs_to :location
+  belongs_to :location, optional: true
   belongs_to :user
   has_one_attached :result
 
