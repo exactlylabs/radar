@@ -41,6 +41,8 @@ Rails.application.routes.draw do
     end
 
     collection do
+      get 'status', to: 'clients#public_status'
+      post 'status', to: 'clients#check_public_status'
       post 'claim'
       get 'claim', to: 'clients#claim_form'
     end

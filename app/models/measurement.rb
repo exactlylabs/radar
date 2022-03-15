@@ -3,7 +3,7 @@ require "csv"
 class Measurement < ApplicationRecord
   belongs_to :client
   belongs_to :location, optional: true
-  belongs_to :user
+  belongs_to :user, optional: true
   has_one_attached :result
 
   def self.to_ndt7_csv
