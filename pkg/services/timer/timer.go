@@ -22,33 +22,26 @@ func (td *TimerData) TotalDuration() time.Duration {
 	return time.Nanosecond * time.Duration(*td.sum)
 }
 
-var timers map[string]*TimerData
-var lock = sync.Mutex{}
+var timers sync.Map
 
 func init() {
-	timers = make(map[string]*TimerData)
+	timers = sync.Map{}
 }
 
 // TimeIt will register the duration for a specific function name. It should be called as
 // defer TimeIt(time.Now(), "My Function")
 func TimeIt(start time.Time, name string) {
-	lock.Lock()
-
-	if _, exists := timers[name]; !exists {
-		sum := int64(0)
-		count := int64(0)
-		timers[name] = &TimerData{sum: &sum, count: &count}
-	}
-	*timers[name].sum = *timers[name].sum + time.Since(start).Nanoseconds()
-	*timers[name].count = *timers[name].count + 1
-	lock.Unlock()
+	dataInterface, _ := timers.LoadOrStore(name, &TimerData{sum: new(int64), count: new(int64)})
+	data := dataInterface.(*TimerData)
+	*data.sum += time.Since(start).Nanoseconds()
+	*data.count++
 }
 
 // GetTimer will return a TimerData instance registered for the given name
 // Returns nil in case nothing is found
 func GetTimer(name string) *TimerData {
-	if t, exists := timers[name]; exists {
-		return t
+	if t, exists := timers.Load(name); exists {
+		return t.(*TimerData)
 	}
 	return nil
 }
@@ -59,8 +52,9 @@ func PrintTimer(name string, data *TimerData) {
 
 func PrintAll() {
 	fmt.Println("--------- Timer Data ------------")
-	for name, data := range timers {
-		PrintTimer(name, data)
-	}
+	timers.Range(func(key, value interface{}) bool {
+		PrintTimer(key.(string), value.(*TimerData))
+		return true
+	})
 	fmt.Println("---------------------------------")
 }
