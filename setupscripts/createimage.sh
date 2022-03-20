@@ -20,10 +20,11 @@ OUTPUT_FILE=radar.img
 
 apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip
 
-wget https://raspi.debian.net/tested/20210823_raspi_4_bullseye.img.xz
-unxz 20210823_raspi_4_bullseye.img.xz
+VERSION=20220121_raspi_4_bullseye.img
+wget https://raspi.debian.net/tested/$VERSION.xz
+unxz $VERSION.xz
 
-LOOP_DEV=$(losetup -f -P --show 20210823_raspi_4_bullseye.img)
+LOOP_DEV=$(losetup -f -P --show $VERSION)
 
 mkdir -p tmp
 mount ${LOOP_DEV}p2 -o rw tmp
@@ -84,5 +85,5 @@ umount tmp/boot
 umount tmp
 rm -r tmp
 
-mv 20210823_raspi_4_bullseye.img $OUTPUT_FILE
+mv $VERSION $OUTPUT_FILE
 zip $OUTPUT_FILE.zip $OUTPUT_FILE

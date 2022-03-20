@@ -37,6 +37,7 @@ chown 1000:1000 tmp/home/radar/.ssh/authorized_keys
 chmod 644 tmp/home/radar/.ssh/authorized_keys
 
 # Set random minute to run tests
+rm tmp/var/spool/cron/crontabs/radar
 echo "$(($RANDOM % 60)) */1 * * * /home/radar/runtests.sh" > tmp/var/spool/cron/crontabs/radar
 chmod 600 tmp/var/spool/cron/crontabs/radar
 # User 'radar' Group 'crontab'
