@@ -70,4 +70,4 @@ do
   echo
 done
 
-echo All Done :)
+echo "All Done!"
