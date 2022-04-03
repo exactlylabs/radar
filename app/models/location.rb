@@ -17,4 +17,8 @@ class Location < ApplicationRecord
   def latest_measurement
     self.measurements.order(created_at: :desc).first
   end
+
+  def online?
+    clients.where("pinged_at > ?", 1.minute.ago).any?
+  end
 end
