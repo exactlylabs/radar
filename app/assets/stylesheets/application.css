@@ -15,3 +15,12 @@
  *= require plugins.bundle
  *= require style.bundle
  */
+
+ .location--online path {
+    fill: #00d42e;
+ }
+
+ .location--offline path {
+    fill: #d42e00;
+ }
+ 
