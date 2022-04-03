@@ -22,7 +22,7 @@
 </div>
 <!--end::Toolbar-->
 
-<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+<div class="post fs-6 d-flex flex-column-fluid mb-9" id="kt_post">
   <!--begin::Container-->
   <div class="container-xxl">
   
@@ -55,7 +55,67 @@
       </div>
       <!--end::Card body-->
     </div>
-    <!--end::Card-->
+  </div>
+  <!--end::Card-->
+</div>
+<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+  <div class="container-xxl">
+    <div class="card">
+      <% if @location.clients.length == 0 %>
+      <div class="card-header border-0">
+        <!--begin::Card title-->
+        <div class="card-title">
+          <h2 class="fw-bolder mb-0">No Pods at Location</h2>
+        </div>
+        <!--end::Card title-->
+      </div>
+      <% else %>
+      <div class="card-header border-0">
+        <!--begin::Card title-->
+        <div class="card-title">
+          <h2 class="fw-bolder mb-0">Pods</h2>
+        </div>
+        <!--end::Card title-->
+      </div>
+      <div class="card-body pt-0 pb-5">
+        <!--begin::Table-->
+        <div class="dataTables_wrapper dt-bootstrap4 no-footer">
+          <div class="table-responsive">
+            <table class="table align-middle table-row-dashed gy-5 no-footer">
+              <!--begin::Table head-->
+              <thead class="border-bottom border-gray-200 fs-7 fw-bolder">
+                <!--begin::Table row-->
+                <tr class="text-start text-muted text-uppercase gs-0">
+                  <th tabindex="0">Pod ID</th>
+                  <th>Status</th>
+                </tr>
+              <!--end::Table row-->
+              </thead>
+              <!--end::Table head-->
+              <!--begin::Table body-->
+              <tbody class="fs-6 fw-bold text-gray-600">
+                <!--begin::Table row-->
+                <% @location.clients.each do |client| %>
+                <tr>
+                  <td><%= link_to client.unix_user, client_url(client.unix_user) %></td>
+                  <td>
+                    <% if client.online? %>
+                    <span class="badge badge-light-success">Online</span>
+                    <% else %>
+                    <span class="badge badge-light-danger">Offline</span>
+                    <% end %>
+                  </td>
+                </tr>
+                <% end %>
+              </tbody>
+              <!--end::Table body-->
+            </table>
+          </div>
+        </div>
+        <!--end::Table-->
+      </div>
+      <% end %>
+    </div>
   </div>
   <!--end::Container-->
 </div>
