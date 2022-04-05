@@ -22,7 +22,7 @@ var initSelect2 = function () {
 }
 
 function initialize() {
-  KTMenu.init();
+  KTMenu.initGlobalHandlers();
   KTToggle.init();
   initSelect2();
   KTApp.initBootstrapTooltips();

@@ -63,6 +63,7 @@ class ClientsController < ApplicationController
         client.name = params[:name]
         client.address = params[:address]
         client.save
+        format.turbo_stream { render turbo_stream: turbo_stream.append('clients', partial: 'clients/client', locals: {client: client}) }
         format.html { redirect_to client_path(client.unix_user), notice: "Client was successfully claimed." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
@@ -76,6 +77,7 @@ class ClientsController < ApplicationController
   def release
     respond_to do |format|
       if @client.update(user: nil)
+        format.turbo_stream { render turbo_stream: turbo_stream.remove(@client) }
         format.html { redirect_to clients_path, notice: "Client was successfully released." }
         format.json { head :no_content }
       end
@@ -176,6 +178,7 @@ EOF
   def update
     respond_to do |format|
       if @client.update(client_params)
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(@client, partial: 'clients/client', locals: {client: @client}) }
         format.html { redirect_to clients_path, notice: "Client was successfully updated." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
