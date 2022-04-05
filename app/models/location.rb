@@ -1,4 +1,6 @@
 class Location < ApplicationRecord
+  validates :name, :address, presence: true
+
   belongs_to :user
   has_many :measurements
   has_many :clients
