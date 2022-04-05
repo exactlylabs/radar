@@ -28,6 +28,7 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
+        format.turbo_stream { render turbo_stream: turbo_stream.append('locations', partial: 'locations/location', locals: {location: @location}) }
         format.html { redirect_to locations_path, notice: "Location was successfully created." }
         format.json { render :show, status: :created, location: @location }
       else
@@ -41,6 +42,7 @@ class LocationsController < ApplicationController
   def update
     respond_to do |format|
       if @location.update(location_params)
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(@location, partial: 'locations/location', locals: {location: @location}) }
         format.html { redirect_to locations_path, notice: "Location was successfully updated." }
         format.json { render :show, status: :ok, location: @location }
       else
@@ -54,6 +56,7 @@ class LocationsController < ApplicationController
   def destroy
     @location.destroy
     respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@location) }
       format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }
       format.json { head :no_content }
     end
@@ -67,6 +70,6 @@ class LocationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def location_params
-      params.require(:location).permit(:name, :address, :latitude, :longitude)
+      params.require(:location).permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude)
     end
 end

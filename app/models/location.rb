@@ -1,4 +1,6 @@
 class Location < ApplicationRecord
+  validates :name, :address, presence: true
+
   belongs_to :user
   has_many :measurements
   has_many :clients
@@ -16,5 +18,9 @@ class Location < ApplicationRecord
 
   def latest_measurement
     self.measurements.order(created_at: :desc).first
+  end
+
+  def online?
+    clients.where("pinged_at > ?", 1.minute.ago).any?
   end
 end

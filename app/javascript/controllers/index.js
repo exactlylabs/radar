@@ -9,3 +9,12 @@ application.register("clients", ClientsController)
 
 import HelloController from "./hello_controller.js"
 application.register("hello", HelloController)
+
+import ModalController from "./modal_controller.js"
+application.register("modal", ModalController)
+
+import MenuController from "./menu_controller.js"
+application.register("menu", MenuController)
+
+import PasswordController from "./password_controller.js"
+application.register("password", PasswordController)
