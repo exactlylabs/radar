@@ -15,3 +15,6 @@ application.register("modal", ModalController)
 
 import MenuController from "./menu_controller.js"
 application.register("menu", MenuController)
+
+import PasswordController from "./password_controller.js"
+application.register("password", PasswordController)
