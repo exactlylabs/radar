@@ -8,7 +8,8 @@
     <!--end::Card title-->
     <div class="card-toolbar">
       <a href="#" data-bs-toggle="modal" data-bs-target="#edit_location_modal_<%= location.id %>" class="btn btn-light me-3">Edit</a>
-      <a href="<%= location_measurements_path(location) %>" class="btn btn-primary">View Measurements</a>
+      <a href="<%= location_measurements_path(@location) %>" class="btn btn-light me-3">View Measurements</a>
+      <%= link_to "Run Test", run_test_client_path(@location), method: :post, class: "btn btn-primary #{@location.test_requested? || @location.clients.length == 0 ? "disabled" : ""}" %>
     </div>
   </div>
   <!--end::Card header-->
