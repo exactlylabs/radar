@@ -18,3 +18,9 @@ application.register("menu", MenuController)
 
 import PasswordController from "./password_controller.js"
 application.register("password", PasswordController)
+
+import LocationController from "./location_controller.js"
+application.register("location", LocationController)
+
+import LocationFormController from "./location_form_controller.js"
+application.register("location-form", LocationFormController)

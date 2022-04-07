@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "add_pod_modal" do %>
-<%= form_with(url: claim_clients_path, data: {"turbo-frame" => "_top"}) do |form| %>
+<%= form_with(url: claim_clients_path) do |form| %>
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -13,6 +13,8 @@
       </div>
 
       <div class="modal-body">
+
+
         <div class="fv-row mb-7 fv-plugins-icon-container">
           <!--begin::Label-->
           <label class="required fs-6 fw-bold mb-2">ID</label>

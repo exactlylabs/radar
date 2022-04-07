@@ -48,6 +48,7 @@ Rails.application.routes.draw do
     end
   end
 
+  post 'geocode', to: 'geocode#code'
   get 'dashboard', to: 'dashboard#index'
   
   #root to: 'home#home'
