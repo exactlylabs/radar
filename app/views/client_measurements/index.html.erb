@@ -70,7 +70,7 @@
           <thead>
             <!--begin::Table row-->
             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 132.146px;">Time</th>
+              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 132.146px;">Time (<span data-controller="timezone"></span>)</th>
               <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Style</th>
               <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Download</th>
               <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Upload</th>
@@ -83,7 +83,7 @@
           <tbody class="fw-bold text-gray-600">
           <% @measurements.order(created_at: :desc).each do |measurement| %>
             <tr>
-              <td><%= measurement.created_at %></td>
+              <td data-controller="localtime"><%= measurement.created_at %></td>
               <td><%= measurement.style %></td>
               <td><%= number_with_precision measurement.download, precision: 3 %></td>
               <td><%= number_with_precision measurement.upload, precision: 3 %></td>
