@@ -154,16 +154,14 @@ func getStoreSchema(store string) avro.Schema {
 // in case the worker/file doesn't exist yet, it starts a new goroutine to handle the writing.
 func PushDatedRow(store string, date time.Time, row interface{}) {
 	key := channelKey(store, date)
-	if _, ok := channelWriters.Load(key); !ok {
-		ch := make(chan interface{})
-		channelWriters.Store(key, ch)
-		wg.Add(1)
+	chRaw, loaded := channelWriters.LoadOrStore(key, make(chan interface{}))
+	ch := chRaw.(chan interface{})
+
+	if !loaded {
 		schema := getStoreSchema(store)
+		wg.Add(1)
 		go writerWorker(fmt.Sprintf("output/%v/%v.avro", store, date.Format("2006-01-02")), schema, ch)
 	}
-
-	chRaw, _ := channelWriters.Load(key)
-	ch := chRaw.(chan interface{})
 
 	ch <- row
 }
