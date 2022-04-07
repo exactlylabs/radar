@@ -99,7 +99,7 @@
               <!--begin::Table body-->
               <tbody class="fs-6 fw-bold text-gray-600">
                 <!--begin::Table row-->
-                <% @location.clients.each do |client| %>
+                <% @location.clients.order("LOWER(unix_user)").each do |client| %>
                 <tr>
                   <td><%= link_to client.unix_user, client_url(client.unix_user) %></td>
                   <td>

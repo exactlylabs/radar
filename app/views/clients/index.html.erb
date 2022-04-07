@@ -51,7 +51,7 @@
           <!--end::Table head-->
           <!--begin::Table body-->
           <tbody class="fw-bold text-gray-600" id="clients">
-          <% @clients.each do |client| %>
+          <% @clients.order("LOWER(unix_user)").each do |client| %>
             <%= render "client", client: client %>
           <% end %>
           </tbody>

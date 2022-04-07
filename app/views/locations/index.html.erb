@@ -49,7 +49,7 @@
           <!--end::Table head-->
           <!--begin::Table body-->
           <tbody class="fw-bold text-gray-600" id="locations">
-          <% @locations.each do |location| %>
+          <% @locations.order("LOWER(name)").each do |location| %>
             <%= render "location", location: location %>
           <% end %>
           </tbody>
