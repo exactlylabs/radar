@@ -7,8 +7,8 @@ class Measurement < ApplicationRecord
   has_one_attached :result
 
   def self.to_ndt7_csv
-    info_attributes = %w{location_name client_name user}
-    attributes = %w{id style upload download jitter latency created_at}
+    info_attributes = %w{id client_id user location_name latitude longitude address loss_rate}
+    attributes = %w{style upload download jitter latency created_at}
     extended_attributes = %w{State CAState Retransmits Probes Backoff Options WScale AppLimited RTO ATO SndMSS RcvMSS Unacked Sacked Lost Retrans Fackets LastDataSent LastAckSent LastDataRecv LastAckRecv PMTU RcvSsThresh RTT RTTVar SndSsThresh SndCwnd AdvMSS Reordering RcvRTT RcvSpace TotalRetrans PacingRate MaxPacingRate BytesAcked BytesReceived SegsOut SegsIn NotsentBytes MinRTT DataSegsIn DataSegsOut DeliveryRate BusyTime RWndLimited SndBufLimited Delivered DeliveredCE BytesSent BytesRetrans DSackDups ReordSeen RcvOooPack SndWnd ElapsedTime}
 
     CSV.generate(headers: true) do |csv|
@@ -16,12 +16,25 @@ class Measurement < ApplicationRecord
 
       includes(:location, :client, :user).each do |measurement|
         info = [
-          measurement.location ? measurement.location.name : "",
-          measurement.client ? measurement.client.name : "",
+          measurement.id,
+          measurement.client ? measurement.client.unix_user : "",
           measurement.user ? measurement.user.email : "",
+          measurement.location ? measurement.location.name : "",
+          measurement.location ? measurement.location.latitude : "",
+          measurement.location ? measurement.location.longitude : "",
+          measurement.location ? measurement.location.address : "",
+          measurement.extended_info ? measurement.extended_info["BytesRetrans"].to_f / measurement.extended_info["BytesSent"].to_f : "",
         ]
 
-        values = attributes.map{ |attr| measurement.send(attr) }
+        values = attributes.map do |attr|
+          if attr == 'created_at'
+            measurement.created_at.strftime("%d/%m/%Y %H:%M:%S")
+          else 
+            measurement.send(attr)
+          end
+        end
+        
+
         extended_values = extended_attributes.map{ |attr| measurement.extended_info ? measurement.extended_info[attr] : "" }
 
         csv << info + values + extended_values
@@ -31,20 +44,23 @@ class Measurement < ApplicationRecord
 
   def self.to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w{id location_name client_name user style upload download jitter latency created_at}
+      csv << %w{id client_id user location_name latitude longitude address style upload download jitter latency created_at}
 
       includes(:location, :client, :user).each do |measurement|
         csv << [
           measurement.id,
-          measurement.location ? measurement.location.name : "",
-          measurement.client ? measurement.client.name : "",
+          measurement.client ? measurement.client.unix_user : "",
           measurement.user ? measurement.user.email : "",
+          measurement.location ? measurement.location.name : "",
+          measurement.location ? measurement.location.latitude : "",
+          measurement.location ? measurement.location.longitude : "",
+          measurement.location ? measurement.location.address : "",
           measurement.style,
           measurement.upload,
           measurement.download,
           measurement.jitter,
           measurement.latency,
-          measurement.created_at
+          measurement.created_at.strftime("%d/%m/%Y %H:%M:%S"),
         ]
       end
     end
