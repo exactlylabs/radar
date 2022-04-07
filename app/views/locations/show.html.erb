@@ -30,35 +30,7 @@
     <p id="notice"><%= notice %></p>
     <% end %>
     <!--begin::Card-->
-    <div class="card">
-      <!--begin::Card header-->
-      <div class="card-header border-0">
-        <!--begin::Card title-->
-        <div class="card-title">
-          <h2 class="fw-bolder mb-0"><%= @location.name %></h2>
-        </div>
-        <!--end::Card title-->
-        <div class="card-toolbar">
-          <a href="<%= edit_location_path(@location) %>" class="btn btn-light me-3">Edit</a>
-					<a href="<%= location_measurements_path(@location) %>" class="btn btn-primary">View Measurements</a>
-        </div>
-      </div>
-      <!--end::Card header-->
-      <!--begin::Card body-->
-      <div class="card-body pt-0">
-        <div class="fw-bolder mt-5">Address</div>
-        <div class="text-gray-600"><%= @location.address %></div>
-        <div class="fw-bolder mt-5">Expected MBPS Upload</div>
-        <div class="text-gray-600"><%= @location.expected_mbps_up %></div>
-        <div class="fw-bolder mt-5">Expected MBPS Download</div>
-        <div class="text-gray-600"><%= @location.expected_mbps_down %></div>
-        <div class="fw-bolder mt-5">Latitude</div>
-        <div class="text-gray-600"><%= @location.latitude %></div>
-        <div class="fw-bolder mt-5">Longitude</div>
-        <div class="text-gray-600"><%= @location.longitude %></div>
-      </div>
-      <!--end::Card body-->
-    </div>
+    <%= render partial: "location_details", locals: { location: @location } %>
   </div>
   <!--end::Card-->
 </div>
@@ -122,4 +94,8 @@
     </div>
   </div>
   <!--end::Container-->
+</div>
+<div class="modal fade" tabindex="-1" id="edit_location_modal_<%= @location.id %>" data-controller="modal" data-action="turbo:submit-end->modal#submit">
+  <%= turbo_frame_tag "edit_location_modal", src: edit_location_path(@location) do %>
+  <% end %>
 </div>
