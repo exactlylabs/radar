@@ -18,3 +18,9 @@ application.register("menu", MenuController)
 
 import PasswordController from "./password_controller.js"
 application.register("password", PasswordController)
+
+import LocaltimeController from "./localtime_controller.js"
+application.register("localtime", LocaltimeController)
+
+import TimezoneController from "./timezone_controller.js"
+application.register("timezone", TimezoneController)
