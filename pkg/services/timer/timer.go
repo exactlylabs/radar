@@ -7,19 +7,19 @@ import (
 )
 
 type TimerData struct {
-	sum   *int64
-	count *int64
+	sum   int64
+	count int64
 }
 
 // AvgDuration returns the average duration of the timer
 func (td *TimerData) AvgDuration() time.Duration {
-	avg := *td.sum / *td.count
+	avg := td.sum / td.count
 	return time.Nanosecond * time.Duration(avg)
 }
 
 // TotalDuration returns the duration that this timer has been triggered
 func (td *TimerData) TotalDuration() time.Duration {
-	return time.Nanosecond * time.Duration(*td.sum)
+	return time.Nanosecond * time.Duration(td.sum)
 }
 
 var timers sync.Map
@@ -31,10 +31,10 @@ func init() {
 // TimeIt will register the duration for a specific function name. It should be called as
 // defer TimeIt(time.Now(), "My Function")
 func TimeIt(start time.Time, name string) {
-	dataInterface, _ := timers.LoadOrStore(name, &TimerData{sum: new(int64), count: new(int64)})
+	dataInterface, _ := timers.LoadOrStore(name, &TimerData{sum: 0, count: 0})
 	data := dataInterface.(*TimerData)
-	*data.sum += time.Since(start).Nanoseconds()
-	*data.count++
+	data.sum += time.Since(start).Nanoseconds()
+	data.count++
 }
 
 // GetTimer will return a TimerData instance registered for the given name
@@ -47,7 +47,7 @@ func GetTimer(name string) *TimerData {
 }
 
 func PrintTimer(name string, data *TimerData) {
-	fmt.Printf("%s :\n\t Avg: %v \n\tCount: %v\n\tSum: %v\n", name, data.AvgDuration(), *data.count, time.Duration(*data.sum))
+	fmt.Printf("%s :\n\t Avg: %v \n\tCount: %v\n\tSum: %v\n", name, data.AvgDuration(), data.count, time.Duration(data.sum))
 }
 
 func PrintAll() {
