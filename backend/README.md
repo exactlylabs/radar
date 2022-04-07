@@ -36,6 +36,7 @@ Make sure you have configured the following settings:
 > Note that these commands are session-wise
 
 ```sql
+set max_memory_usage=16000000000;
 set max_bytes_before_external_group_by = 5000000000;
 set join_algorithm = 'partial_merge';
 ```
