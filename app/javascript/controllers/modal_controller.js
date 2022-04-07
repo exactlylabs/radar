@@ -8,6 +8,10 @@ export default class extends Controller {
     $(this.element).modal('hide');
   }
 
+  showModal() {
+    $(this.element).modal('show');
+  }
+
   submit(e) {
     if (e.detail.success) {
       this.hideModal();

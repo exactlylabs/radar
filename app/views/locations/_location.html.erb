@@ -32,7 +32,8 @@
       <!--end::Menu item-->
       <!--begin::Menu item-->
       <div class="menu-item px-3">
-        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_location_modal_<%= location.id %>" class="menu-link px-3">Edit</a>
+        <!--<a href="#" data-bs-toggle="modal" data-bs-target="#edit_location_modal_<%= location.id %>" class="menu-link px-3">Edit</a>-->
+        <a href="<%= edit_location_path(location) %>" data-turbo-frame="edit_location_modal" class="menu-link px-3">Edit</a>
       </div>
       <!--end::Menu item-->
       <!--begin::Menu item-->
@@ -42,10 +43,6 @@
       <!--end::Menu item-->
     </div>
     <!--end::Menu-->
-    <div class="modal fade" tabindex="-1" id="edit_location_modal_<%= location.id %>" data-controller="modal" data-action="turbo:submit-end->modal#submit">
-      <%= turbo_frame_tag "edit_location_modal", src: edit_location_path(location) do %>
-      <% end %>
-    </div>
 
   </td>
 </tr>
