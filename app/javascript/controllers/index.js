@@ -18,3 +18,6 @@ application.register("menu", MenuController)
 
 import PasswordController from "./password_controller.js"
 application.register("password", PasswordController)
+
+import DrawerController from "./drawer_controller.js"
+application.register("drawer", DrawerController)
