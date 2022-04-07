@@ -15,7 +15,7 @@
           <a href="<%= clients_path %>" class="text-muted text-hover-primary">Pods</a>
         </li>
         <li class="breadcrumb-item text-muted">
-          <a href="<%= client_path(@client.unix_user) %>" class="text-muted text-hover-primary"><%= @client.name %></a>
+          <a href="<%= client_path(@client.unix_user) %>" class="text-muted text-hover-primary"><%= @client.unix_user %></a>
         </li>
         <li class="breadcrumb-item text-dark">Measurements</li>
       </ul>
