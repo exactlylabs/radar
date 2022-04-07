@@ -39,7 +39,7 @@ class Client < ApplicationRecord
   private
 
   def create_ids
-    o = [('a'..'z'), (0..9)].map(&:to_a).flatten
+    o = [('a'..'z'), (0..9)].map(&:to_a).flatten - [0, "i", "o", "l"]
     string = (0...11).map { o[rand(o.length)] }.join
 
     self.unix_user = "r#{string}"

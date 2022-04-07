@@ -24,3 +24,12 @@ application.register("location", LocationController)
 
 import LocationFormController from "./location_form_controller.js"
 application.register("location-form", LocationFormController)
+
+import DrawerController from "./drawer_controller.js"
+application.register("drawer", DrawerController)
+
+import LocaltimeController from "./localtime_controller.js"
+application.register("localtime", LocaltimeController)
+
+import TimezoneController from "./timezone_controller.js"
+application.register("timezone", TimezoneController)

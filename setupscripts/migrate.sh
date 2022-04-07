@@ -3,6 +3,7 @@
 set -e
 
 PORTS=$(psql -A -t $DATABASE_URL -c "select remote_gateway_port from clients where remote_gateway_port is not null")
+#PORTS=33021
 
 for PORT in $PORTS
 do
