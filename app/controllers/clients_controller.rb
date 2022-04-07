@@ -178,7 +178,7 @@ EOF
   def update
     respond_to do |format|
       if @client.update(client_params)
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(@client, partial: 'clients/client', locals: {client: @client}) }
+        format.turbo_stream
         format.html { redirect_to clients_path, notice: "Client was successfully updated." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
