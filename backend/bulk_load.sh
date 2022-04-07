@@ -47,27 +47,30 @@ fi
 database=${database:-default}
 
 FILES=$(find $filespath/geocode/*.avro  -printf "%f\n")
+echo "Starting Bulk Load for database ${database}"
 
-clickhouse-client  --database $database --query="alter table tests DELETE WHERE id is not null"
+clickhouse-client  --database $database --query="TRUNCATE TABLE tests"
 
-for file in $FILES
+for i in {1..10}
 do
-  echo -ne "Inserting geocode/$file... "
-  cat $filespath/geocode/$file | clickhouse-client --database $database --query="INSERT INTO tests FORMAT Avro"
-  echo -ne "\033[0;32mOK\033[0m"
-  echo
+  for file in $FILES
+  do
+    echo -ne "Inserting geocode/$file... "
+    cat $filespath/geocode/$file | clickhouse-client --max_memory_usage=16000000000 --database $database --query="INSERT INTO tests FORMAT Avro"
+    echo -ne "\033[0;32mOK\033[0m"
+    echo
+  done
+
+  FILES=$(find $filespath/reverse/*.avro  -printf "%f\n")
+
+  clickhouse-client --database $database --query="TRUNCATE TABLE test_geos"
+
+  for file in $FILES
+  do
+    echo -ne "Inserting reverse/$file... "
+    cat $filespath/reverse/$file | clickhouse-client --max_memory_usage=16000000000 --database $database --query="INSERT INTO test_geos FORMAT Avro"
+    echo -ne "\033[0;32mOK\033[0m"
+    echo
+  done
 done
-
-FILES=$(find $filespath/reverse/*.avro  -printf "%f\n")
-
-clickhouse-client --database $database --query="alter table test_geos DELETE WHERE id is not null"
-
-for file in $FILES
-do
-  echo -ne "Inserting reverse/$file... "
-  cat $filespath/reverse/$file | clickhouse-client --database $database --query="INSERT INTO test_geos FORMAT Avro"
-  echo -ne "\033[0;32mOK\033[0m"
-  echo
-done
-
 echo "All Done!"
