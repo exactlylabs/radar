@@ -18,6 +18,7 @@
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
+      <% if @onboard_step < 0 %>
       <a href="<%= measurements_path(format: 'csv') %>" class="btn bg-body btn-color-gray-700 btn-active-primary me-4">
         <span class="svg-icon svg-icon-2">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -50,6 +51,7 @@
         Export NDT7 Extended
       </a>
       <% end %>
+      <% end %>
     </div>
   </div>
 </div>
@@ -57,8 +59,11 @@
 <!--begin::Post-->
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
   <!--begin::Container-->
-  <div class="container-xxl">
-    <div id="map"></div>
+  <div class="container-xxl" data-controller="onboard" data-onboard-step-value="<%= @onboard_step %>">
+    <div data-onboard-target="wizard" class="<%= @onboard_step < 0 ? "d-none" : "" %>">
+      <%= render partial: "onboard", locals: { step: @onboard_step } %>
+    </div>
+    <div data-onboard-target="map"  id="map" class="<%= @onboard_step > 0 ? "d-none" : "" %>"></div>
   </div>
   <!--end::Container-->
 </div>
@@ -96,5 +101,15 @@
 
   var group = new L.featureGroup(markers);
   map.fitBounds(group.getBounds());
+
+  this.observer = new ResizeObserver((entries) => {
+    if (entries.length > 0 &&
+        entries[0].contentRect.width > 0 &&
+        entries[0].contentRect.height > 0) {
+      map.fitBounds(group.getBounds());
+    }
+  });
+
+  this.observer.observe(document.querySelector('#map'));
 
 </script>

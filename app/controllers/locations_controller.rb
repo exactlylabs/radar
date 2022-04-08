@@ -26,6 +26,11 @@ class LocationsController < ApplicationController
 
     @location.user = current_user
 
+    # TODO: Is there a better UX for this?
+    if policy_scope(Client).all.length == 1
+      @location.clients << policy_scope(Client).first
+    end
+
     respond_to do |format|
       if @location.save
         format.turbo_stream { render turbo_stream: turbo_stream.append('locations', partial: 'locations/location', locals: {location: @location}) }

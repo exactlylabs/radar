@@ -33,3 +33,6 @@ application.register("localtime", LocaltimeController)
 
 import TimezoneController from "./timezone_controller.js"
 application.register("timezone", TimezoneController)
+
+import OnboardController from "./onboard_controller.js"
+application.register("onboard", OnboardController)

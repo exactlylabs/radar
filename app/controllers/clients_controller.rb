@@ -79,7 +79,7 @@ class ClientsController < ApplicationController
 
   def release
     respond_to do |format|
-      if @client.update(user: nil)
+      if @client.update(user: nil, location: nil)
         format.turbo_stream { render turbo_stream: turbo_stream.remove(@client) }
         format.html { redirect_to clients_path, notice: "Client was successfully released." }
         format.json { head :no_content }
