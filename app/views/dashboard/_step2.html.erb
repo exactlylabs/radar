@@ -1,0 +1,33 @@
+<div data-kt-stepper-element="content" data-onboard-target="step2">
+  <!--begin::Wrapper-->
+  <div class="w-100 text-center">
+    <!--begin::Heading-->
+    <div class="pb-10 pb-lg-15">
+      <!--begin::Title-->
+      <h2 class="fs-2x fw-bolder mb-0">Do you have a Pod with you?</h2>
+      <!--end::Title-->
+      <!--begin::Notice-->
+      <p class="text-gray-400 fs-4 fw-bold py-7">Pods keep connected to your Internet network and perform various tests throughout the day or at your request.</p>
+      <!--end::Notice-->
+    </div>
+    <!--end::Heading-->
+    <!--begin::Input group-->
+    <div class="fv-row fv-plugins-icon-container">
+      <!--begin::Row-->
+      <div class="row">
+        <div class="col-12">
+          <a href="#" class="btn btn-light me-3" data-action="onboard#goto3">No</a>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_pod_modal">Yes, add now</button>
+        </div>
+      </div>
+      <!--end::Row-->
+    </div>
+    <!--end::Input group-->
+  </div>
+  <!--end::Wrapper-->
+</div>
+
+<div class="modal fade" tabindex="-1" id="add_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:submit-end->onboard#ifSuccessGoto3">
+  <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path do %>
+  <% end %>
+</div>
