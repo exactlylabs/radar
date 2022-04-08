@@ -36,6 +36,30 @@ class Client < ApplicationRecord
     self.pinged_at && self.pinged_at > 1.minute.ago
   end
 
+  def status
+    if self.online?
+      if test_requested
+        "Test running"
+      else
+        "Active"
+      end
+    else
+      "Offline"
+    end
+  end
+
+  def status_style
+    if self.online?
+      if test_requested
+        "badge-light-primary"
+      else
+        "badge-light-success"
+      end
+    else
+      "badge-light-danger"
+    end
+  end
+
   private
 
   def create_ids

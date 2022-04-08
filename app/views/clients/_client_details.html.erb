@@ -27,11 +27,7 @@
     </div>
     <div class="fw-bolder mt-5">Status</div>
     <div class="text-gray-600">
-    <% if client.online? %>
-      <span class="badge badge-light-success">Online</span>
-    <% else %>
-      <span class="badge badge-light-danger">Offline</span>
-    <% end %>
+    <span class="badge <%= client.status_style %>"><%= client.status %></span>
     </div>
   </div>
   <!--end::Card body-->

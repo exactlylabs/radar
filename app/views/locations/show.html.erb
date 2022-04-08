@@ -75,11 +75,7 @@
                 <tr>
                   <td><%= link_to client.unix_user, client_url(client.unix_user) %></td>
                   <td>
-                    <% if client.online? %>
-                    <span class="badge badge-light-success">Online</span>
-                    <% else %>
-                    <span class="badge badge-light-danger">Offline</span>
-                    <% end %>
+                    <span class="badge <%= client.status_style %>"><%= client.status %></span>
                   </td>
                 </tr>
                 <% end %>
