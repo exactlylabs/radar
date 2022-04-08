@@ -28,7 +28,7 @@ class Measurement < ApplicationRecord
 
         values = attributes.map do |attr|
           if attr == 'created_at'
-            measurement.created_at.strftime("%d/%m/%Y %H:%M:%S")
+            measurement.created_at.strftime("%m/%d/%Y %H:%M:%S")
           else 
             measurement.send(attr)
           end
@@ -60,7 +60,7 @@ class Measurement < ApplicationRecord
           measurement.download,
           measurement.jitter,
           measurement.latency,
-          measurement.created_at.strftime("%d/%m/%Y %H:%M:%S"),
+          measurement.created_at.strftime("%m/%d/%Y %H:%M:%S"),
         ]
       end
     end
