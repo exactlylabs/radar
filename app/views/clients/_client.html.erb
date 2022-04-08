@@ -10,11 +10,7 @@
     <% end %>
   </td>
   <td>
-    <% if client.online? %>
-    <span class="badge badge-light-success">Online</span>
-    <% else %>
-    <span class="badge badge-light-danger">Offline</span>
-    <% end %>
+    <span class="badge <%= client.status_style %>"><%= client.status %></span>
   </td>
   <td class="text-end">
     <a href="#" class="btn btn-sm btn-light btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
