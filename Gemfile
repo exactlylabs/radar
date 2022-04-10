@@ -65,4 +65,5 @@ gem 'google-cloud-storage'
 
 gem 'sentry-ruby'
 gem 'sentry-rails'
+gem 'logdna'
 
