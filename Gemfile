@@ -63,3 +63,6 @@ gem 'geocoder'
 gem 'sshkey'
 gem 'google-cloud-storage'
 
+gem 'sentry-ruby'
+gem 'sentry-rails'
+
