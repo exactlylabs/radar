@@ -36,3 +36,6 @@ application.register("timezone", TimezoneController)
 
 import OnboardController from "./onboard_controller.js"
 application.register("onboard", OnboardController)
+
+import Select2Controller from "./select2_controller.js"
+application.register("select2", Select2Controller)

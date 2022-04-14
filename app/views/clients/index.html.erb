@@ -73,3 +73,8 @@
   <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path do %>
   <% end %>
 </div>
+
+<div class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
+  <%= turbo_frame_tag "edit_client_modal" do %>
+  <% end %>
+</div>
