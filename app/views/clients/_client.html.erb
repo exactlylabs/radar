@@ -38,7 +38,7 @@
       <!--end::Menu item-->
       <!--begin::Menu item-->
       <div class="menu-item px-3">
-        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_client_modal_<%= client.unix_user %>" class="menu-link px-3">Edit</a>
+        <%= link_to "Edit", edit_client_path(client.unix_user), { class: "menu-link px-3", data: { "turbo-frame" => "edit_client_modal" } } %>
       </div>
       <!--end::Menu item-->
       <!--begin::Menu item-->
@@ -48,10 +48,5 @@
       <!--end::Menu item-->
     </div>
     <!--end::Menu-->
-
-    <div class="modal fade" tabindex="-1" id="edit_client_modal_<%= client.unix_user %>" data-controller="modal" data-action="turbo:submit-end->modal#submit">
-      <%= turbo_frame_tag "edit_client_modal", src: edit_client_path(client.unix_user) do %>
-      <% end %>
-    </div>
   </td>
 </tr>
