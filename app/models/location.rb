@@ -23,8 +23,4 @@ class Location < ApplicationRecord
   def online?
     clients.where("pinged_at > ?", 1.minute.ago).any?
   end
-
-  def test_requested?
-    clients.where(test_requested: true).any?
-  end
 end

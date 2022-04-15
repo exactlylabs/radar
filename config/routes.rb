@@ -19,6 +19,10 @@ Rails.application.routes.draw do
   end
 
   resources :locations do
+    member do
+      post 'request_test'
+    end
+
     resources :measurements, controller: 'location_measurements', only: [:index] do
       collection do
         get 'ndt7_index'

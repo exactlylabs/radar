@@ -1,6 +1,6 @@
 class LocationsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_location, only: %i[ show edit update destroy ]
+  before_action :set_location, only: %i[ show edit update destroy request_test ]
 
   # GET /locations or /locations.json
   def index
@@ -43,11 +43,18 @@ class LocationsController < ApplicationController
     end
   end
 
+  def request_test
+    @location.test_requested = true
+    @location.save
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
   # PATCH/PUT /locations/1 or /locations/1.json
   def update
     respond_to do |format|
       if @location.update(location_params)
-        #format.turbo_stream { render turbo_stream: turbo_stream.replace(@location, partial: 'locations/location', locals: {location: @location}) }
         format.turbo_stream
         format.html { redirect_to locations_path, notice: "Location was successfully updated." }
         format.json { render :show, status: :ok, location: @location }
