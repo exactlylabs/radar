@@ -44,6 +44,12 @@ class ClientMeasurementsController < ApplicationController
       @client.save
     end
 
+    location = @client.location
+    if location && location.test_requested
+      location.test_requested = false
+      location.save
+    end
+
     respond_to do |format|
       if @measurement.save
         ProcessMeasurementJob.perform_later @measurement

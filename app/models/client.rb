@@ -36,6 +36,10 @@ class Client < ApplicationRecord
     self.pinged_at && self.pinged_at > 1.minute.ago
   end
 
+  def test_requested?
+    self.test_requested || (self.location && self.location.test_requested)
+  end
+
   def status
     if self.online?
       if test_requested
