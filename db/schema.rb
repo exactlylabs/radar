@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_15_033953) do
+ActiveRecord::Schema.define(version: 2022_04_16_044328) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,8 @@ ActiveRecord::Schema.define(version: 2022_04_15_033953) do
     t.decimal "expected_mbps_up"
     t.decimal "expected_mbps_down"
     t.boolean "test_requested", default: false
+    t.string "state"
+    t.string "county"
     t.index ["user_id"], name: "index_locations_on_user_id"
   end
 
