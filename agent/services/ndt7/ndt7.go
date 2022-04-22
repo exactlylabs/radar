@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strings"
+	"time"
 
 	"github.com/exactlylabs/radar/agent/agent"
 	"github.com/m-lab/ndt7-client-go"
@@ -34,14 +36,11 @@ type summary struct {
 }
 
 type ndt7Runner struct {
-	client *ndt7.Client
 }
 
 // New ND7 speedtest runner
 func New() agent.Runner {
-	return &ndt7Runner{
-		client: ndt7.NewClient(clientName, clientVersion),
-	}
+	return &ndt7Runner{}
 }
 
 func (r *ndt7Runner) runTest(ctx context.Context, w io.Writer, testFn func(context.Context) (<-chan spec.Measurement, error)) error {
@@ -61,9 +60,9 @@ func (r *ndt7Runner) runTest(ctx context.Context, w io.Writer, testFn func(conte
 	return nil
 }
 
-func (r *ndt7Runner) writeSummary(w io.Writer) error {
+func (r *ndt7Runner) writeSummary(w io.Writer, client *ndt7.Client) error {
 	s := summary{}
-	results := r.client.Results()
+	results := client.Results()
 	if dl, ok := results[spec.TestDownload]; ok {
 		if dl.Client.AppInfo != nil && dl.Client.AppInfo.ElapsedTime > 0 {
 			elapsed := float64(dl.Client.AppInfo.ElapsedTime) / 1e06
@@ -104,17 +103,36 @@ func (r *ndt7Runner) Type() string {
 func (r *ndt7Runner) Run(ctx context.Context) (res []byte, err error) {
 	log.Println("NDT7 - Starting Speed Test")
 	log.Println("NDT7 - Starting Download Test")
+	client := ndt7.NewClient(clientName, clientVersion)
 	b := &bytes.Buffer{}
-	err = r.runTest(ctx, b, r.client.StartDownload)
+	err = r.runTest(ctx, b, client.StartDownload)
 	if err != nil {
-		return nil, fmt.Errorf("speedtest.ndt7Runner#Run download error: %w", err)
+		if strings.Contains(err.Error(), "bad handshake") {
+			// Try one more time
+			log.Println("NDT7 - failed with bad handshake. Trying again in 5 seconds")
+			time.Sleep(time.Second * 5)
+			err = r.runTest(ctx, b, client.StartDownload)
+		}
+		if err != nil {
+			// There is still an error. return the error
+			return nil, fmt.Errorf("speedtest.ndt7Runner#Run download error: %w", err)
+		}
+
 	}
 	log.Println("NDT7 - Starting Upload Test")
-	err = r.runTest(ctx, b, r.client.StartUpload)
+	err = r.runTest(ctx, b, client.StartUpload)
 	if err != nil {
-		return nil, fmt.Errorf("speedtest.ndt7Runner#Run upload error: %w", err)
+		if strings.Contains(err.Error(), "bad handshake") {
+			// Try one more time
+			log.Println("NDT7 - failed with bad handshake. Trying again in 5 seconds")
+			time.Sleep(time.Second * 5)
+			err = r.runTest(ctx, b, client.StartUpload)
+		}
+		if err != nil {
+			return nil, fmt.Errorf("speedtest.ndt7Runner#Run upload error: %w", err)
+		}
 	}
-	r.writeSummary(b)
+	r.writeSummary(b, client)
 	log.Println("NDT7 - Speed Test Finished")
 	res, err = io.ReadAll(b)
 	if err != nil {
