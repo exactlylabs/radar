@@ -28,5 +28,6 @@ func (r *ooklaRunner) Run(ctx context.Context) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("speedtest.ooklaRunner#Run error executing the binary: %w", err)
 	}
+	log.Println("Ookla - Finished Speed Test")
 	return res, nil
 }
