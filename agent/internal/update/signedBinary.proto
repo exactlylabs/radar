@@ -1,0 +1,8 @@
+syntax = "proto3";
+option go_package = "internal/update";
+
+message SignedBinary {
+    bytes signature = 1;
+    bytes certificate = 2;
+    bytes binary = 3;
+}
