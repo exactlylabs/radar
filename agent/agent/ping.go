@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/exactlylabs/radar/agent/internal/info"
 )
 
 func startPingLoop(ctx context.Context, respCh chan<- *PingResponse, pinger Pinger, pingFreq time.Duration, cliId, secret string) {
@@ -15,7 +17,7 @@ func startPingLoop(ctx context.Context, respCh chan<- *PingResponse, pinger Ping
 			return
 		case <-pingTimer.C:
 			log.Println("Pinging server...")
-			resp, err := pinger.Ping(cliId, secret)
+			resp, err := pinger.Ping(info.BuildInfo().Version, cliId, secret)
 			if err != nil {
 				panic(fmt.Errorf("pod.StartLoop ping error: %w", err))
 			}
