@@ -1,6 +1,6 @@
 //go:build armhf
 
-package ooklabinaries
+package ookla
 
 import (
 	_ "embed"
