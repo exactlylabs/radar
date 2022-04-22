@@ -2,12 +2,17 @@ package agent
 
 import "context"
 
+type BinaryUpdate struct {
+	Version   string
+	BinaryUrl string
+}
 type PingResponse struct {
 	TestRequested bool
+	Update        *BinaryUpdate
 }
 
 type Pinger interface {
-	Ping(clientId, secret string) (*PingResponse, error)
+	Ping(version, clientId, secret string) (*PingResponse, error)
 }
 
 type RegisteredPod struct {
