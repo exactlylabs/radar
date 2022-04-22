@@ -2,7 +2,10 @@ module github.com/exactlylabs/radar/agent
 
 go 1.18
 
-require github.com/m-lab/ndt7-client-go v0.5.0
+require (
+	github.com/m-lab/ndt7-client-go v0.5.0
+	google.golang.org/protobuf v1.25.0
+)
 
 require (
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1 // indirect
