@@ -3,3 +3,9 @@ services/ookla/ookla_armhf
 services/ookla/ookla_armel
 services/ookla/ookla_arm
 config.conf
+dist/
+*.crt
+*.csr
+*.key
+*.pem
+*.srl
