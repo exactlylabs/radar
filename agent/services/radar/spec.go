@@ -13,10 +13,16 @@ type Pod struct {
 	PublicKey *string `json:"public_key"`
 }
 
+type Update struct {
+	Version string `json:"version"`
+	Url     string `json:"url"`
+}
+
 // PodConfigs is the response from the Ping method
 type PodConfigs struct {
 	Pod
-	TestRequested bool `json:"test_requested"`
+	TestRequested bool    `json:"test_requested"`
+	Update        *Update `json:"update"`
 }
 
 type RadarRequester interface {

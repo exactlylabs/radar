@@ -35,10 +35,13 @@ func (c *radarClient) NewRequest(method, url string, body io.Reader) (*http.Requ
 	return req, nil
 }
 
-func (c *radarClient) Ping(clientId, secret string) (*agent.PingResponse, error) {
+func (c *radarClient) Ping(version, clientId, secret string) (*agent.PingResponse, error) {
 	apiUrl := fmt.Sprintf("%s/clients/%s/status", c.serverUrl, clientId)
 	form := url.Values{}
 	form.Add("secret", secret)
+	if version != "Dev" {
+		form.Add("version", version)
+	}
 	req, err := c.NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err
@@ -60,9 +63,16 @@ func (c *radarClient) Ping(clientId, secret string) (*agent.PingResponse, error)
 	if err := json.Unmarshal(body, podConfig); err != nil {
 		return nil, fmt.Errorf("radarClient#Ping error unmarshalling: %w", err)
 	}
-	return &agent.PingResponse{
+	res := &agent.PingResponse{
 		TestRequested: podConfig.TestRequested,
-	}, nil
+	}
+	if podConfig.Update != nil {
+		res.Update = &agent.BinaryUpdate{
+			Version:   podConfig.Update.Version,
+			BinaryUrl: fmt.Sprintf("%s/%s", c.serverUrl, podConfig.Update.Url),
+		}
+	}
+	return res, nil
 }
 
 func (c *radarClient) Register() (*agent.RegisteredPod, error) {
