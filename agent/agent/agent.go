@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"sync"
 	"time"
 
 	"github.com/exactlylabs/radar/agent/config"
+	"github.com/exactlylabs/radar/agent/internal/update"
 )
 
 type Agent struct {
@@ -79,6 +81,15 @@ func (a *Agent) Start(ctx context.Context, c *config.Config) {
 		case pingResp := <-a.pingRespCh:
 			if pingResp.TestRequested {
 				maybeSendChannel(a.runTestCh)
+			}
+			if pingResp.Update != nil {
+				log.Printf("An Update for version %v is Available\n", pingResp.Update.Version)
+				err := update.SelfUpdate(pingResp.Update.BinaryUrl)
+				if err != nil {
+					panic(err)
+				}
+				log.Println("Successfully Updated the Binary. Exiting current version.")
+				os.Exit(1)
 			}
 		case <-speedTestTimer.C:
 			maybeSendChannel(a.runTestCh)
