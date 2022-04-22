@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -9,6 +11,7 @@ import (
 
 	"github.com/exactlylabs/radar/agent/agent"
 	"github.com/exactlylabs/radar/agent/config"
+	"github.com/exactlylabs/radar/agent/internal/info"
 	ndt7speedtest "github.com/exactlylabs/radar/agent/services/ndt7"
 	"github.com/exactlylabs/radar/agent/services/ookla"
 	"github.com/exactlylabs/radar/agent/services/radar"
@@ -20,6 +23,14 @@ var runners = []agent.Runner{
 }
 
 func main() {
+	version := flag.Bool("v", false, "Show Agent Version")
+	flag.Parse()
+
+	if *version {
+		fmt.Println(info.BuildInfo())
+		os.Exit(0)
+	}
+
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT)
 	ctx, cancel := context.WithCancel(context.Background())
