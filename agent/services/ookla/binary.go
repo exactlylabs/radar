@@ -1,10 +1,8 @@
-//go:build amd64
-
 package ookla
 
 import (
 	_ "embed"
 )
 
-//go:embed ookla_amd64
+//go:embed ookla
 var ooklaBinary []byte

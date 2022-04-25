@@ -171,3 +171,25 @@ If you modify the .proto file, you can generate the new .go file by calling at t
 ```sh
 protoc -I=. --go_out=. ./internal/update/signedBinary.proto
 ```
+
+Since the signed binary is not an actual executable, the script also creates a binary to internal usage/tests.
+
+At the end, you should have the following files:
+
+- dist/
+    - agent
+    - agent_signed
+
+Running the agent binary is as simple as: `./dist/agent` or `ENVIRONMENT=DEV ./dist/agent` if you wish to run in development mode.
+
+
+#### Validating the Binary
+
+In case you wish to validate the binary, to make sure it's correctly working, use the cmd cli for that:
+
+```sh
+go run cmd/validate/main.go -bin dist/agent_signed -o dist/unsigned_agent
+```
+It will check and if the binary is a valid one, it generates the `usigned_agent`, that will work just like the original `agent` binary.
+
+
