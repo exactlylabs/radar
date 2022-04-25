@@ -7,6 +7,44 @@ The agent service will function as a service that continually communicates with 
 
 Additionally, it schedules automatic tests and has the ability to do a self update, validating with a signed binary.
 
+### Setup
+
+> Make sure you are at agent directory to follow the instructions bellow
+
+#### Ookla Binary
+
+To setup the project, you need to download an ookla binary for you current OS/Architecture (Or the one you are targeting your build) and move the binary to: `services/ookla/ookla`. You can find the available binaries [here](https://www.speedtest.net/pt/apps/cli).
+
+Example using the latest linux version at the time of writing this:
+```sh
+mkdir ooklaSpeedTest
+cd ooklaSpeedTest
+wget https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1-linux-x86_64.tgz
+tar -xvf ookla-speedtest-1.1.1-linux-x86_64.tgz
+mv speedtest ../services/ookla/ookla
+cd ..
+rm ooklaSpeedTest -r
+```
+
+
+At the end, you should have something simillar to this:
+
+* services/
+    - ookla/
+        - binary.go
+        - ookla
+        - ookla.go
+        ...
+
+#### Developer Environment
+
+To run in development mode, make sure to set the environment variable `ENVIRONMENT=DEV` before executing the binary
+
+This way, the application will generate a configuration file with Development configurations
+
+> To run just as a developer, you just need to complete the ROOT Certificate (CA) step bellow.
+
+
 ### Build
 
 Bellow are the steps to build the Agent
@@ -18,18 +56,66 @@ We use a CA Certificate to ensure that any incomming binary update is safe to re
 
 Before building the agent, you must first add a `rootCA.pem` CA certificate at `./internal/update/rootCA.pem`. 
 
->You can create a certificate Authority by calling `./scripts/gen_root_ca.sh`
+>You can create a certificate Authority by calling `./scripts/gen_root_ca.sh`. It will automatically copy the certificate to the correct path. **Make sure to store this in a safe location for production**
+
+#### Provider Certificate
+
+For the binary distribution, we need a new certificate, generated through our newly created CA. This is the certificate we will use to sign our binaries and the one that the application checks agains the rootCA embedded on it to make sure it's signed by that CA.
+
+> You can create a provider certificate by calling `./scripts/gen_cert.sh`. It will automatically generate a binCert.crt (the certificate) and a binKey.key (private key). Again, make sure to store it in a safe place.
+
+
 
 #### Build and Sign
 
-After all required steps are done, call `./scripts/build_and_sign.sh`
+After all required steps are done, we can build and sign the binary through `build_and_sign.sh`
 
-Example: (call `./scripts/build_and_sign.sh -h` for more information)
+
+It defaults to create a binary for amd64 and linux OS. In case you want a different configuration, just add `--arch` and/or `--os` flags, givin the value you want.
+
+Available architectures / operational system can be found through
+
+```sh
+go tool dist list
+```
+
+> It's important to remember that the ookla binary build should be for the target OS/Architecture
+
+Run this code to see the usage
+```
+./scripts/build_and_sign -h
+```
+
+If you followed the steps above, this example should create the binary and signed binary:
 
 ```sh
 ./scripts/build_and_sign.sh \
     -o dist/agent \
     1.0.0\
-    cmd/signing/binCert.crt\
-    cmd/signing/binKey.key
+    dist/certs/binCert.crt\
+    dist/certs/binKey.key
+
+ls dist/
 ```
+
+Since the signed binary is not an actual executable, the script also creates a binary to internal usage/tests.
+
+At the end, you should have the following files:
+
+- dist/
+    - agent
+    - agent_signed
+
+Running the agent binary is as simple as: `./dist/agent` or `ENVIRONMENT=DEV ./dist/agent` if you wish to run in development mode.
+
+
+#### Validating the Binary
+
+In case you wish to validate the binary, to make sure it's correctly working, use the cmd cli for that:
+
+```sh
+go run cmd/validate/main.go -bin dist/agent_signed -o dist/unsigned_agent
+```
+It will check and if the binary is a valid one, it generates the `usigned_agent`, that will work just like the original `agent` binary.
+
+

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -24,11 +23,11 @@ type Agent struct {
 	started    bool
 }
 
-func NewAgent(pinger Pinger, registerer Registerer, reporter MeasurementReporter, runners []Runner) *Agent {
+func NewAgent(client ServerClient, runners []Runner) *Agent {
 	return &Agent{
-		pinger:     pinger,
-		registerer: registerer,
-		reporter:   reporter,
+		pinger:     client.(Pinger),
+		registerer: client.(Registerer),
+		reporter:   client.(MeasurementReporter),
 		runners:    runners,
 		runTestCh:  make(chan bool),
 		pingRespCh: make(chan *PingResponse),
@@ -54,28 +53,28 @@ func (a *Agent) setup(c *config.Config) {
 
 // Start the Agent, blocking the current goroutine
 func (a *Agent) Start(ctx context.Context, c *config.Config) {
+	agentCtx, cancel := context.WithCancel(ctx)
 	a.setup(c)
 
 	// Start the workers
 	a.wg.Add(2)
 	go func() {
 		defer a.wg.Done()
-		startSpeedTestRunner(ctx, c, a.runTestCh, a.runners, a.reporter)
+		startSpeedTestRunner(agentCtx, c, a.runTestCh, a.runners, a.reporter)
 	}()
 	go func() {
 		defer a.wg.Done()
-		startPingLoop(ctx, a.pingRespCh, a.pinger, pingFrequency(c), c.ClientId, c.Secret)
+		startPingLoop(agentCtx, a.pingRespCh, a.pinger, pingFrequency(c), c.ClientId, c.Secret)
 	}()
 
 	// Main Loop will listen to the responses and schedule Speed Tests
 	speedTestTimer := time.NewTicker(speedTestFrequency(c))
 	for {
 		select {
-		case <-ctx.Done():
-			log.Println("Stopping Agent tasks")
+		case <-agentCtx.Done():
 			a.Stop()
+			cancel()
 			a.wg.Wait()
-			log.Println("Agent tasks finished")
 			return
 
 		case pingResp := <-a.pingRespCh:
@@ -89,7 +88,7 @@ func (a *Agent) Start(ctx context.Context, c *config.Config) {
 					panic(err)
 				}
 				log.Println("Successfully Updated the Binary. Exiting current version.")
-				os.Exit(1)
+				cancel()
 			}
 		case <-speedTestTimer.C:
 			maybeSendChannel(a.runTestCh)
