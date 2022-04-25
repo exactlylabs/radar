@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_03_033946) do
+ActiveRecord::Schema.define(version: 2022_04_22_001006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +43,13 @@ ActiveRecord::Schema.define(version: 2022_04_03_033946) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "client_versions", force: :cascade do |t|
+    t.string "version"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["version"], name: "index_client_versions_on_version", unique: true
+  end
+
   create_table "clients", force: :cascade do |t|
     t.string "unix_user", null: false
     t.string "secret_digest"
@@ -60,8 +67,13 @@ ActiveRecord::Schema.define(version: 2022_04_03_033946) do
     t.bigint "location_id"
     t.datetime "pinged_at"
     t.boolean "test_requested", default: false
+    t.bigint "client_version_id"
+    t.bigint "update_group_id"
+    t.boolean "shipped"
+    t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
+    t.index ["update_group_id"], name: "index_clients_on_update_group_id"
     t.index ["user_id"], name: "index_clients_on_user_id"
   end
 
@@ -97,6 +109,14 @@ ActiveRecord::Schema.define(version: 2022_04_03_033946) do
     t.index ["user_id"], name: "index_measurements_on_user_id"
   end
 
+  create_table "update_groups", force: :cascade do |t|
+    t.string "name"
+    t.bigint "client_version_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["client_version_id"], name: "index_update_groups_on_client_version_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -115,10 +135,13 @@ ActiveRecord::Schema.define(version: 2022_04_03_033946) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "clients", "client_versions"
   add_foreign_key "clients", "locations"
+  add_foreign_key "clients", "update_groups"
   add_foreign_key "clients", "users"
   add_foreign_key "locations", "users"
   add_foreign_key "measurements", "clients"
   add_foreign_key "measurements", "locations"
   add_foreign_key "measurements", "users"
+  add_foreign_key "update_groups", "client_versions"
 end
