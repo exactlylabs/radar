@@ -1,6 +1,6 @@
-server_url=http://127.0.0.1:3001
-client_id=rqawx4bpye8q
-secret=vLrei2BHoNA
+server_url=http://127.0.0.1:3000
+client_id=
+secret=
 test_freq=600
 ping_freq=1
 last_tested=

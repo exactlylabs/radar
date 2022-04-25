@@ -1,7 +1,4 @@
-services/ookla/ookla_amd64
-services/ookla/ookla_armhf
-services/ookla/ookla_armel
-services/ookla/ookla_arm
+services/ookla/ookla
 config.conf
 dist/
 *.crt

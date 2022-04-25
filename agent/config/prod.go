@@ -1,6 +1,7 @@
 package config
 
 var ProdConfig = &Config{
-	PingFreq: "15",
-	TestFreq: "3600",
+	ServerURL: "https://radar.exactlylabs.com",
+	PingFreq:  "15",
+	TestFreq:  "3600",
 }

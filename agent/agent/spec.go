@@ -28,6 +28,12 @@ type MeasurementReporter interface {
 	ReportMeasurement(clientId, secret, style string, measurement []byte) error
 }
 
+type ServerClient interface {
+	Pinger
+	Registerer
+	MeasurementReporter
+}
+
 type Runner interface {
 	Run(ctx context.Context) ([]byte, error)
 	Type() string
