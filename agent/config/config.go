@@ -2,7 +2,9 @@ package config
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"reflect"
 	"strings"
@@ -47,32 +49,34 @@ func LoadConfig() *Config {
 	case "PROD":
 		config = ProdConfig
 	default:
-		config = DevConfig
+		config = ProdConfig
 	}
 
 	configValues := mapConfigs(config)
+	// var scanner bufio.Scanner
 	f, err := os.Open(filePath())
-	if err != nil {
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		panic(fmt.Errorf("config.LoadConfig error: %w", err))
-	}
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		line := strings.Trim(strings.Trim(scanner.Text(), " "), "\t")
-		if len(line) == 0 || line[0] == '#' {
-			continue
-		}
-		confLine := strings.Split(line, "=")
-		if len(confLine) != 2 || confLine[1] == "" {
-			continue
-		}
-		if value, exists := configValues[confLine[0]]; exists {
-			if value.Kind() == reflect.Ptr {
-				strVal := reflect.ValueOf(&confLine[1])
-				value.Set(strVal)
-			} else {
-				value.Set(reflect.ValueOf(confLine[1]))
+	} else if err == nil {
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			line := strings.Trim(strings.Trim(scanner.Text(), " "), "\t")
+			if len(line) == 0 || line[0] == '#' {
+				continue
 			}
+			confLine := strings.Split(line, "=")
+			if len(confLine) != 2 || confLine[1] == "" {
+				continue
+			}
+			if value, exists := configValues[confLine[0]]; exists {
+				if value.Kind() == reflect.Ptr {
+					strVal := reflect.ValueOf(&confLine[1])
+					value.Set(strVal)
+				} else {
+					value.Set(reflect.ValueOf(confLine[1]))
+				}
 
+			}
 		}
 	}
 	return config
