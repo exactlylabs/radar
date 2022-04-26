@@ -164,3 +164,10 @@ The application does that by going to the specified URL and downloading the sign
 This functionality only works when the application Version **is not Dev**. This is also intended to be used in a builted binary, not through `go run ...`, as it's expected to replace the current application file.
 
 If you wish to learn more about how to configure the running pod to be upgraded, check out the Server README for more.
+
+### Signed Binary Protobuf File
+
+If you modify the .proto file, you can generate the new .go file by calling at the same directory as the `go.mod` file is
+```sh
+protoc -I=. --go_out=. ./internal/update/signedBinary.proto
+```
