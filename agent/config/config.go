@@ -15,6 +15,7 @@ type Config struct {
 	ClientId   string `config:"client_id"`
 	Secret     string `config:"secret"`
 	TestFreq   string `config:"test_freq"`
+	TestMinute string `config:"test_minute"`
 	PingFreq   string `config:"ping_freq"`
 	LastTested string `config:"last_tested"`
 }
