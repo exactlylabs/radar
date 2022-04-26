@@ -155,3 +155,12 @@ go run cmd/validate/main.go -bin dist/agent_signed -o dist/unsigned_agent
 It will check and if the binary is a valid one, it generates the `usigned_agent`, that will work just like the original `agent` binary.
 
 
+### Upgrading the Binary
+
+At every status notification (Ping), the server might return to the application a new version to be upgraded
+
+The application does that by going to the specified URL and downloading the signed binary, then validating it and if everything is valid, it replaces the current binary with the new one.
+
+This functionality only works when the application Version **is not Dev**. This is also intended to be used in a builted binary, not through `go run ...`, as it's expected to replace the current application file.
+
+If you wish to learn more about how to configure the running pod to be upgraded, check out the Server README for more.
