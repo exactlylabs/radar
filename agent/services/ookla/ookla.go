@@ -23,7 +23,7 @@ func (r *ooklaRunner) Type() string {
 
 func (r *ooklaRunner) Run(ctx context.Context) ([]byte, error) {
 	log.Println("Ookla - Starting Speed Test")
-	cmd := exec.CommandContext(ctx, binaryPath, "--accept-license", "--accept-gdpr", "--format", "json")
+	cmd := exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json")
 	res, err := cmd.Output()
 	if err != nil {
 		return nil, fmt.Errorf("speedtest.ooklaRunner#Run error executing the binary: %w", err)
