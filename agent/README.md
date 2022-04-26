@@ -13,20 +13,18 @@ Additionally, it schedules automatic tests and has the ability to do a self upda
 
 #### Ookla Binary
 
-To setup the project, you need to download an ookla binary for you current OS/Architecture (Or the one you are targeting your build) and move the binary to: `services/ookla/ookla`. You can find the available binaries [here](https://www.speedtest.net/pt/apps/cli).
+To setup the project, you need to download an ookla binary for you current OS/Architecture (Or the one you are targeting your build) by calling `./scripts/make_ookla.sh`. You can also find the available binaries [here](https://www.speedtest.net/pt/apps/cli).
 
-Example using the latest linux version at the time of writing this:
+To use it, just call:
+
 ```sh
-mkdir ooklaSpeedTest
-cd ooklaSpeedTest
-wget https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1-linux-x86_64.tgz
-tar -xvf ookla-speedtest-1.1.1-linux-x86_64.tgz
-mv speedtest ../services/ookla/ookla
-cd ..
-rm ooklaSpeedTest -r
+./scripts/make_ookla.sh
 ```
 
-
+If you need to compile for another target OS and/or Architecture, call
+```
+./scripts/make_ookla.sh --os <GOOS VALUE> --arch <GOARCH VALUE> --arm <GOARM VALUE (optional)>
+```
 At the end, you should have something simillar to this:
 
 * services/
