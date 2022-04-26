@@ -1,5 +1,3 @@
-//go:build !windows
-
 package ookla
 
 import (
@@ -8,11 +6,11 @@ import (
 	"os"
 )
 
-//go:embed ookla
+//go:embed ookla.exe
 var ooklaBinary []byte
 
 const (
-	binaryPath = "./ookla"
+	binaryPath = "./ookla.exe"
 )
 
 // createOoklaBinary generates the embeded
