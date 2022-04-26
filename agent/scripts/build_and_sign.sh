@@ -13,8 +13,8 @@ set -e
 
 BUILD_PROJECT=cmd/start_agent/main.go
 OUTPUT_FILE="./dist/radar_agent"
-GOARCH="amd64"
-GOOS="linux"
+GOARCH=$(go env GOARCH)
+GOOS=$(go env GOOS)
 
 
 function help() {
@@ -89,7 +89,7 @@ echo "Commit: $COMMIT"
 
 LDFLAGS="-s -X 'github.com/exactlylabs/radar/agent/internal/info.version=$VERSION' -X 'github.com/exactlylabs/radar/agent/internal/info.commit=$COMMIT' -X 'github.com/exactlylabs/radar/agent/internal/info.builtAt=$BUILT'"
 
-go build -o $OUTPUT_FILE -ldflags="$LDFLAGS" $BUILD_PROJECT
+GOOS=$GOOS GOARCH=$GOARCH go build -o $OUTPUT_FILE -ldflags="$LDFLAGS" $BUILD_PROJECT
 
 echo "------"
 echo ""
