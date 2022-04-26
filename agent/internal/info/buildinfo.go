@@ -73,3 +73,7 @@ func (i *Info) Minor() int {
 func (i *Info) Patch() int {
 	return i.getVersionCategory("patch")
 }
+
+func IsDev() bool {
+	return version == "Dev"
+}
