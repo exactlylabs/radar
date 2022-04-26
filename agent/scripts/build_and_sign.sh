@@ -15,6 +15,7 @@ BUILD_PROJECT=cmd/start_agent/main.go
 OUTPUT_FILE="./dist/radar_agent"
 GOARCH=$(go env GOARCH)
 GOOS=$(go env GOOS)
+GOARM=""
 
 
 function help() {
@@ -28,6 +29,7 @@ Optional Arguments:
     -o | --output   Where to output the binary. Defaults:  "$OUTPUT_FILE"
     -a | --arch     Target Architecture to build. Default: "$ARCHITECTURE"
     -s | --os       Target Operational System. Default: "$OS"
+    -r | --arm      Arm Version, according to https://github.com/golang/go/wiki/GoArm. Default: ""
     -p | --project  Target to the Go Project we are building. Default: $BUILD_PROJECT
 """
 }
@@ -53,6 +55,11 @@ while :; do
         -a|--arch)
             required $1 $2
             GOARCH=$2
+            shift
+        ;;
+        -r|--arm)
+            required $1 $2
+            GOARM=$2
             shift
         ;;
         -s|--os)
@@ -89,12 +96,12 @@ echo "Commit: $COMMIT"
 
 LDFLAGS="-s -X 'github.com/exactlylabs/radar/agent/internal/info.version=$VERSION' -X 'github.com/exactlylabs/radar/agent/internal/info.commit=$COMMIT' -X 'github.com/exactlylabs/radar/agent/internal/info.builtAt=$BUILT'"
 
-GOOS=$GOOS GOARCH=$GOARCH go build -o $OUTPUT_FILE -ldflags="$LDFLAGS" $BUILD_PROJECT
+GOARM=$GOARM GOOS=$GOOS GOARCH=$GOARCH go build -o $OUTPUT_FILE -ldflags="$LDFLAGS" $BUILD_PROJECT
 
 echo "------"
 echo ""
 echo "Finished Build of $BUILD_PROJECT"
-echo "Architecture: $GOARCH"
+echo "Architecture: $GOARCH $GOARM"
 echo "OS: $GOOS"
 echo "Version: $1"
 echo "Commit: $COMMIT"
