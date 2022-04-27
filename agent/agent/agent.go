@@ -39,13 +39,17 @@ func NewAgent(client ServerClient, runners []Runner) *Agent {
 
 func (a *Agent) setup(c *config.Config) {
 	if c.ClientId == "" {
+		log.Println("No Client ID found for this agent. Registering to the server.")
 		pod, err := a.registerer.Register()
 		if err != nil {
 			panic(err)
 		}
 		c.ClientId = pod.ClientId
 		c.Secret = pod.Secret
-
+		log.Println("Agent Registered to the Server!")
+		log.Println("Client ID =", c.ClientId)
+		log.Println("Secret =", c.Secret)
+		log.Println("You can find these values in the config file located at", config.Join("config.conf"))
 	}
 	if c.TestMinute == "" {
 		s := rand.NewSource(time.Now().UnixNano())
