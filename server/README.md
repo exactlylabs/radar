@@ -1,24 +1,20 @@
-# README
+# Radar Server
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
 
-Things you may want to cover:
+## Objective
 
-* Ruby version
+The Radar server is a ruby on rails application. It handles both frontend and backend, specially the backend where the golang agent will connect to.
 
-* System dependencies
+On this application it's possible to manage pods as well as upgrade them
 
-* Configuration
 
-* Database creation
+### Setup
 
-* Database initialization
+First, make sure to you have ruby (We recommend using rvm) installed.
 
-* How to run the test suite
+Then run:
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```
+bundle install
+rails db:create db:migrate
+```
