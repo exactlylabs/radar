@@ -7,5 +7,6 @@ class CreateClientVersions < ActiveRecord::Migration[6.1]
     end
 
     add_reference :clients, :client_version, foreign_key: true
+    add_column :clients, :raw_version, :string, null: true, default: nil
   end
 end
