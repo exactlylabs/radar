@@ -1,6 +1,6 @@
 class ClientVersion < ApplicationRecord
     has_many :clients, dependent: :nullify
-    has_many :update_groups, dependent: :destroy
+    has_many :update_groups, dependent: :restrict_with_exception
     
     has_one_attached :signed_binary
 

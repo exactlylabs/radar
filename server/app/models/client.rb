@@ -67,6 +67,13 @@ class Client < ApplicationRecord
     end
   end
 
+  def has_update?
+    if !self.update_group.nil? 
+      return self.update_group.version.version != self.raw_version
+    end
+    return false
+  end
+
   private
 
   def create_ids
