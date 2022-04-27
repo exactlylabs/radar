@@ -13,7 +13,7 @@
 
   <div class="field">
     <%= form.label :location_id, "Location" %>
-    <%= form.collection_select :location_id, current_user.locations, :id, :name, { include_blank: "" } %>
+    <%= form.collection_select :location_id, current_user.locations, :id, :name, { include_blank: "" }, { data: { controller: "select2", "select2-blanks-value" => true, placeholder: "Select a Location" } } %>
   </div>
 
   <div class="actions">

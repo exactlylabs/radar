@@ -39,9 +39,7 @@ func (c *radarClient) Ping(version, clientId, secret string) (*agent.PingRespons
 	apiUrl := fmt.Sprintf("%s/clients/%s/status", c.serverUrl, clientId)
 	form := url.Values{}
 	form.Add("secret", secret)
-	if version != "Dev" {
-		form.Add("version", version)
-	}
+	form.Add("version", version)
 	req, err := c.NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err

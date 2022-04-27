@@ -13,20 +13,18 @@ Additionally, it schedules automatic tests and has the ability to do a self upda
 
 #### Ookla Binary
 
-To setup the project, you need to download an ookla binary for you current OS/Architecture (Or the one you are targeting your build) and move the binary to: `services/ookla/ookla`. You can find the available binaries [here](https://www.speedtest.net/pt/apps/cli).
+To setup the project, you need to download an ookla binary for you current OS/Architecture (Or the one you are targeting your build) by calling `./scripts/make_ookla.sh`. You can also find the available binaries [here](https://www.speedtest.net/pt/apps/cli).
 
-Example using the latest linux version at the time of writing this:
+To use it, just call:
+
 ```sh
-mkdir ooklaSpeedTest
-cd ooklaSpeedTest
-wget https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1-linux-x86_64.tgz
-tar -xvf ookla-speedtest-1.1.1-linux-x86_64.tgz
-mv speedtest ../services/ookla/ookla
-cd ..
-rm ooklaSpeedTest -r
+./scripts/make_ookla.sh
 ```
 
-
+If you need to compile for another target OS and/or Architecture, call
+```
+./scripts/make_ookla.sh --os <GOOS VALUE> --arch <GOARCH VALUE> --arm <GOARM VALUE (optional)>
+```
 At the end, you should have something simillar to this:
 
 * services/
@@ -119,3 +117,19 @@ go run cmd/validate/main.go -bin dist/agent_signed -o dist/unsigned_agent
 It will check and if the binary is a valid one, it generates the `usigned_agent`, that will work just like the original `agent` binary.
 
 
+### Upgrading the Binary
+
+At every status notification (Ping), the server might return to the application a new version to be upgraded
+
+The application does that by going to the specified URL and downloading the signed binary, then validating it and if everything is valid, it replaces the current binary with the new one.
+
+This functionality only works when the application Version **is not Dev**. This is also intended to be used in a builted binary, not through `go run ...`, as it's expected to replace the current application file.
+
+If you wish to learn more about how to configure the running pod to be upgraded, check out the Server README for more.
+
+### Signed Binary Protobuf File
+
+If you modify the .proto file, you can generate the new .go file by calling at the same directory as the `go.mod` file is
+```sh
+protoc -I=. --go_out=. ./internal/update/signedBinary.proto
+```

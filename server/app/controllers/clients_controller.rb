@@ -53,7 +53,6 @@ class ClientsController < ApplicationController
   end
 
   def claim
-
     @client_id = params[:id]
     @client_secret = params[:secret]
     @location_id = params[:location_id]

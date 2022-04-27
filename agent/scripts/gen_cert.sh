@@ -2,7 +2,7 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-mkdir $SCRIPT_DIR/../dist/certs/ -p
+mkdir -p $SCRIPT_DIR/../dist/certs/
 
 # Create Private Key
 openssl genrsa -out $SCRIPT_DIR/../dist/certs/binKey.key 2048

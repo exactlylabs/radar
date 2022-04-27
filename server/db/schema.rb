@@ -87,6 +87,9 @@ ActiveRecord::Schema.define(version: 2022_04_22_001006) do
     t.datetime "updated_at", precision: 6, null: false
     t.decimal "expected_mbps_up"
     t.decimal "expected_mbps_down"
+    t.boolean "test_requested", default: false
+    t.string "state"
+    t.string "county"
     t.index ["user_id"], name: "index_locations_on_user_id"
   end
 
@@ -129,6 +132,9 @@ ActiveRecord::Schema.define(version: 2022_04_22_001006) do
     t.string "last_name"
     t.boolean "terms"
     t.boolean "superuser", default: false
+    t.integer "failed_attempts", default: 0
+    t.string "unlock_token"
+    t.datetime "locked_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

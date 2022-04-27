@@ -1,4 +1,5 @@
 services/ookla/ookla
+services/ookla/ookla.exe
 config.conf
 dist/
 *.crt

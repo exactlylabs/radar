@@ -5,7 +5,20 @@ class Location < ApplicationRecord
   has_many :measurements
   has_many :clients
 
-  geocoded_by :address
+  geocoded_by :address do |obj, results|
+    if geo = results.first
+      obj.latitude = geo.latitude
+      obj.longitude = geo.longitude
+      #obj.city = geo.city
+      #obj.country = geo.country
+      #obj.country_code = geo.country_code
+      #obj.postal_code = geo.postal_code
+      obj.state = geo.state
+      obj.county = geo.county
+      #obj.state_code = geo.state_code
+      #obj.street_address = geo.street_address
+    end
+  end
   after_validation :geocode, if: :will_save_change_to_address?
 
   def latest_download
@@ -22,9 +35,5 @@ class Location < ApplicationRecord
 
   def online?
     clients.where("pinged_at > ?", 1.minute.ago).any?
-  end
-
-  def test_requested?
-    clients.where(test_requested: true).any?
   end
 end

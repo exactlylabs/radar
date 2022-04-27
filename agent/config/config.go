@@ -4,10 +4,15 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
+	"log"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
+
+	"github.com/exactlylabs/radar/agent/internal/info"
 )
 
 type Config struct {
@@ -15,6 +20,7 @@ type Config struct {
 	ClientId   string `config:"client_id"`
 	Secret     string `config:"secret"`
 	TestFreq   string `config:"test_freq"`
+	TestMinute string `config:"test_minute"`
 	PingFreq   string `config:"ping_freq"`
 	LastTested string `config:"last_tested"`
 }
@@ -31,30 +37,66 @@ func mapConfigs(config *Config) map[string]reflect.Value {
 	return configs
 }
 
-func filePath() string {
-	configPath := os.Getenv("CONF_FILE_PATH")
-	if configPath == "" {
-		configPath = "config.conf"
+func basePath() string {
+	if info.IsDev() {
+		basePath, err := os.Getwd()
+		if err != nil {
+			panic(fmt.Errorf("config.basePath error: %w", err))
+		}
+		return basePath
 	}
-	return configPath
+	basePath, err := os.UserConfigDir()
+	if err != nil {
+		basePath, err = os.Getwd()
+		if err != nil {
+			panic(fmt.Errorf("config.basePath error: %w", err))
+		}
+	}
+	return filepath.Join(basePath, "radar")
+}
+
+// Join will join the config base directory with
+// given paths
+func Join(elements ...string) string {
+	return filepath.Join(basePath(), filepath.Join(elements...))
+}
+
+// OpenFile returns a io.Writer interface that writes to the
+// filename at the application configuration directory
+func OpenFile(filename string, flag int, perm fs.FileMode) (*os.File, error) {
+	path := Join(filename)
+	err := os.MkdirAll(filepath.Dir(path), 0755)
+	if err != nil {
+		return nil, err
+	}
+	f, err := os.OpenFile(path, flag, perm)
+	if err != nil {
+		return nil, err
+	}
+	return f, nil
+}
+
+// NewFileLoader returns an io.Reader interface that loads the filename
+// from the application configuration directory
+func NewFileLoader(filename string) (io.Reader, error) {
+	f, err := os.Open(filepath.Join(basePath(), filename))
+	if err != nil {
+		return nil, err
+	}
+	return f, nil
 }
 
 // LoadConfig from a .conf file
 func LoadConfig() *Config {
-	environment := os.Getenv("ENVIRONMENT")
-	var config *Config
-	switch environment {
-	case "DEV":
+
+	config := ProdConfig
+	if info.IsDev() {
 		config = DevConfig
-	case "PROD":
-		config = ProdConfig
-	default:
-		config = ProdConfig
 	}
 
 	configValues := mapConfigs(config)
-	// var scanner bufio.Scanner
-	f, err := os.Open(filePath())
+	log.Printf("Loading config file at %v", Join("config.conf"))
+	f, err := NewFileLoader("config.conf")
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		panic(fmt.Errorf("config.LoadConfig error: %w", err))
 	} else if err == nil {
@@ -84,7 +126,7 @@ func LoadConfig() *Config {
 
 // Save will store the current configuration into the .ini file
 func Save(conf *Config) error {
-	f, err := os.OpenFile(filePath(), os.O_WRONLY|os.O_CREATE, 0660)
+	f, err := OpenFile("config.conf", os.O_WRONLY|os.O_CREATE, 0660)
 	if err != nil {
 		return fmt.Errorf("config.Save error opening file: %w", err)
 	}
