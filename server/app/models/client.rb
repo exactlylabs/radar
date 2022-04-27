@@ -68,8 +68,8 @@ class Client < ApplicationRecord
   end
 
   def has_update?
-    if !self.update_group.nil? 
-      return self.update_group.version.version != self.raw_version
+    if !self.update_group.nil? && !self.update_group.client_version.nil?
+      return self.update_group.client_version != self.client_version
     end
     return false
   end
