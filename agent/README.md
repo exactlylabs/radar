@@ -69,7 +69,7 @@ For the binary distribution, we need a new certificate, generated through our ne
 After all required steps are done, we can build and sign the binary through `build_and_sign.sh`
 
 
-It defaults to create a binary for amd64 and linux OS. In case you want a different configuration, just add `--arch` and/or `--os` flags, givin the value you want.
+It defaults to create a binary for your current system. In case you want a different configuration, just add `--arch` and/or `--os` flags, giving the value you want.
 
 Available architectures / operational system can be found through
 
