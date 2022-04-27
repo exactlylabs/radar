@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -94,7 +95,7 @@ func LoadConfig() *Config {
 	}
 
 	configValues := mapConfigs(config)
-
+	log.Printf("Loading config file at %v", Join("config.conf"))
 	f, err := NewFileLoader("config.conf")
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		panic(fmt.Errorf("config.LoadConfig error: %w", err))
