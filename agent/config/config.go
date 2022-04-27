@@ -47,13 +47,21 @@ func basePath() string {
 	return filepath.Join(basePath, "radar")
 }
 
+// Join will join the config base directory with
+// given paths
+func Join(elements ...string) string {
+	return filepath.Join(basePath(), filepath.Join(elements...))
+}
+
 // OpenFile returns a io.Writer interface that writes to the
 // filename at the application configuration directory
 func OpenFile(filename string, flag int, perm fs.FileMode) (*os.File, error) {
-	f, err := os.OpenFile(
-		filepath.Join(basePath(), filename),
-		flag, perm,
-	)
+	path := Join(filename)
+	err := os.MkdirAll(filepath.Dir(path), 0755)
+	if err != nil {
+		return nil, err
+	}
+	f, err := os.OpenFile(path, flag, perm)
 	if err != nil {
 		return nil, err
 	}
