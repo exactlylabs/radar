@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(version: 2022_04_22_001006) do
     t.datetime "pinged_at"
     t.boolean "test_requested", default: false
     t.bigint "client_version_id"
+    t.string "raw_version"
     t.bigint "update_group_id"
     t.boolean "shipped"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
