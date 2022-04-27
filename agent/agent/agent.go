@@ -132,6 +132,8 @@ func newSpeedTestTicker(c *config.Config) *time.Ticker {
 	minutesMissing := minute - (time.Now().Minute())
 	if minutesMissing < 0 {
 		minutesMissing = 60 - minutesMissing
+	} else if minutesMissing == 0 {
+		return time.NewTicker(time.Second)
 	}
 	return time.NewTicker(time.Minute * time.Duration(minutesMissing))
 }

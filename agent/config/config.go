@@ -38,11 +38,18 @@ func mapConfigs(config *Config) map[string]reflect.Value {
 
 func basePath() string {
 	if info.IsDev() {
-		return ""
+		basePath, err := os.Getwd()
+		if err != nil {
+			panic(fmt.Errorf("config.basePath error: %w", err))
+		}
+		return basePath
 	}
 	basePath, err := os.UserConfigDir()
 	if err != nil {
-		basePath = ""
+		basePath, err = os.Getwd()
+		if err != nil {
+			panic(fmt.Errorf("config.basePath error: %w", err))
+		}
 	}
 	return filepath.Join(basePath, "radar")
 }
