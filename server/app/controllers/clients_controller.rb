@@ -149,7 +149,8 @@ EOF
 
   def status
     @client.pinged_at = Time.now
-    
+    @client.raw_version = params[:raw_version]
+
     if !params[:version].nil?
       # Check client Version
       version = ClientVersion.where version: params[:version]
@@ -160,12 +161,6 @@ EOF
         version = version[0]
       end
       @client.client_version = version
-
-      # Check if client belongs to an update group and if it does,
-      # see if it needs to be updated or not
-      if !@client.update_group.nil? && @client.update_group.client_version.is_higher?(version)
-        @update_version = @client.update_group.client_version
-      end
     end
 
     @client.save
