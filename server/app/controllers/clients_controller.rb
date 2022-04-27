@@ -149,7 +149,7 @@ EOF
 
   def status
     @client.pinged_at = Time.now
-    @client.raw_version = params[:raw_version]
+    @client.raw_version = params[:version]
 
     if !params[:version].nil?
       # Check client Version
@@ -178,7 +178,10 @@ EOF
     o = [('a'..'z'), ('A'..'Z'), (0..9)].map(&:to_a).flatten
     @secret = (0...11).map { o[rand(o.length)] }.join
     @client.secret = @secret
-
+    ug = UpdateGroup.where(name: "Default Group").first
+    if !ug.nil?
+      @client.update_group = ug
+    end
     respond_to do |format|
       if @client.save
         format.html { redirect_to clients_path, notice: "Client was successfully created." }
