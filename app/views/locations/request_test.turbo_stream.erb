@@ -1,7 +1,0 @@
-<%= turbo_stream.replace @location do %>
-  <%= render partial: 'locations/location', locals: {location: @location} %>
-<% end %>
-
-<%= turbo_stream.replace "location-details" do %>
-  <%= render partial: 'locations/location_details', locals: {location: @location} %>
-<% end %>
