@@ -16,7 +16,7 @@ Then run:
 
 ```
 bundle install
-rails db:create db:migrate
+rails db:create db:migrate db:seed
 ```
 
 ### Running
@@ -39,9 +39,9 @@ Currently there is no interface to handle the versions, to create and store a si
 Here, we create a version called "1.0.0" and the attach a binary we have locally there
 
 ```ruby
-v = ClientVersion.create version: "1.0.0"
-v.signed_binary.attach
+v = ClientVersion.new version: "1.0.0"
 v.signed_binary.attach({io: File.open("/path/to/radar_agent_signed"), filename: "radar_agent_signed"})
+v.save
 ```
 
 #### Managing Update Groups
