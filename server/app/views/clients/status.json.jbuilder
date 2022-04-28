@@ -2,7 +2,7 @@ json.extract! @client, :id, :unix_user, :name, :address, :public_key, :endpoint_
 json.url client_url(@client.unix_user, format: :json)
 if @client.has_update?
     json.update do
-        json.version @client.update_group.client_version.version
-        json.url url_for(@client.update_group.client_version.signed_binary)
+        json.version @client.update_group_version
+        json.url url_for(@client.update_group_binary)
     end
 end
