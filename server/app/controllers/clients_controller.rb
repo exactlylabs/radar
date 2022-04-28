@@ -178,7 +178,7 @@ EOF
     o = [('a'..'z'), ('A'..'Z'), (0..9)].map(&:to_a).flatten
     @secret = (0...11).map { o[rand(o.length)] }.join
     @client.secret = @secret
-    ug = UpdateGroup.where(name: "Default Group").first
+    ug = UpdateGroup.default_group
     if !ug.nil?
       @client.update_group = ug
     end
