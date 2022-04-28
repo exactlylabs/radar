@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  client_id: MyString
+  secret_hash: MyString
+  name: MyString
+  address: MyString
+  public_key: MyString
+  endpoint_host: MyString
+  endpoint_port: 1
+  remote_gateway_port: 1
+  user: one
+
+two:
+  client_id: MyString
+  secret_hash: MyString
+  name: MyString
+  address: MyString
+  public_key: MyString
+  endpoint_host: MyString
+  endpoint_port: 1
+  remote_gateway_port: 1
+  user: two

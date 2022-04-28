@@ -1,0 +1,20 @@
+<%= turbo_frame_tag "status" do %>
+<% if @client %>
+  <% if @client.test_requested %>
+    Pending test request.<br />
+  <% else %>
+    <%= form_with(url: run_test_client_path(@client.unix_user)) do |form| %>
+      <%= hidden_field_tag "secret", @secret %>
+      <%= form.submit "Run Test", class: "btn btn-primary" %>
+    <% end %>
+  <% end %>
+
+  <span class="badge <%= @client.status_style %>"><%= @client.status %></span>
+  Last Seen: <%= @client.pinged_at %>
+  <br />
+  Last test download:
+  <%= @client.measurements.length > 0 ? @client.measurements.last.download : "" %>
+<% else %>
+Client not found.
+<% end %>
+<% end %>

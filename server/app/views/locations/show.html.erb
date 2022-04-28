@@ -1,0 +1,97 @@
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="text-dark fw-bolder my-1 fs-2">Dashboard 
+      <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <!--end::Title-->
+      <!--begin::Breadcrumb-->
+      <ul class="breadcrumb fw-bold fs-base my-1">
+        <li class="breadcrumb-item text-muted">Home</li>
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= locations_path %>" class="text-muted text-hover-primary">Locations</a>
+        </li>
+        <li class="breadcrumb-item text-dark"><%= @location.name %></li>
+      </ul>
+      <!--end::Breadcrumb-->
+    </div>
+    <!--end::Info-->
+  </div>
+</div>
+<!--end::Toolbar-->
+
+<div class="post fs-6 d-flex flex-column-fluid mb-9" id="kt_post">
+  <!--begin::Container-->
+  <div class="container-xxl">
+  
+    <% if notice %>
+    <p id="notice"><%= notice %></p>
+    <% end %>
+    <!--begin::Card-->
+    <%= render partial: "location_details", locals: { location: @location } %>
+  </div>
+  <!--end::Card-->
+</div>
+<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+  <div class="container-xxl">
+    <div class="card">
+      <% if @location.clients.length == 0 %>
+      <div class="card-header border-0">
+        <!--begin::Card title-->
+        <div class="card-title">
+          <h2 class="fw-bolder mb-0">No Pods at Location</h2>
+        </div>
+        <!--end::Card title-->
+      </div>
+      <% else %>
+      <div class="card-header border-0">
+        <!--begin::Card title-->
+        <div class="card-title">
+          <h2 class="fw-bolder mb-0">Pods</h2>
+        </div>
+        <!--end::Card title-->
+      </div>
+      <div class="card-body pt-0 pb-5">
+        <!--begin::Table-->
+        <div class="dataTables_wrapper dt-bootstrap4 no-footer">
+          <div class="table-responsive">
+            <table class="table align-middle table-row-dashed gy-5 no-footer">
+              <!--begin::Table head-->
+              <thead class="border-bottom border-gray-200 fs-7 fw-bolder">
+                <!--begin::Table row-->
+                <tr class="text-start text-muted text-uppercase gs-0">
+                  <th tabindex="0">Pod ID</th>
+                  <th>Status</th>
+                </tr>
+              <!--end::Table row-->
+              </thead>
+              <!--end::Table head-->
+              <!--begin::Table body-->
+              <tbody class="fs-6 fw-bold text-gray-600">
+                <!--begin::Table row-->
+                <% @location.clients.order("LOWER(unix_user)").each do |client| %>
+                <tr>
+                  <td><%= link_to client.unix_user, client_url(client.unix_user) %></td>
+                  <td>
+                    <span class="badge <%= client.status_style %>"><%= client.status %></span>
+                  </td>
+                </tr>
+                <% end %>
+              </tbody>
+              <!--end::Table body-->
+            </table>
+          </div>
+        </div>
+        <!--end::Table-->
+      </div>
+      <% end %>
+    </div>
+  </div>
+  <!--end::Container-->
+</div>
+<div class="modal fade" tabindex="-1" id="edit_location_modal_<%= @location.id %>" data-controller="modal" data-action="turbo:submit-end->modal#submit">
+  <%= turbo_frame_tag "edit_location_modal", src: edit_location_path(@location) do %>
+  <% end %>
+</div>
