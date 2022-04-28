@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: radar_development
+      POSTGRES_PASSWORD: password
+  web:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db/radar_development
+      ENDPOINT_HOST: radar-01.exactlylabs.com
+      ENDPOINT_PORT: 22
+      REMOTE_PORT_RANGE: 33000-38000
+    depends_on:
+      - db

@@ -1,0 +1,22 @@
+<%= form_with(model: client, url: client.unix_user ? client_path(client.unix_user) : clients_path) do |form| %>
+  <% if client.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(client.errors.count, "error") %> prohibited this client from being saved:</h2>
+
+      <ul>
+        <% client.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :location_id, "Location" %>
+    <%= form.collection_select :location_id, current_user.locations, :id, :name, { include_blank: "" }, { data: { controller: "select2", "select2-blanks-value" => true, placeholder: "Select a Location" } } %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,52 @@
+<tr id="<%= dom_id(client) %>">
+  <td>
+    <a class="text-gray-800 text-hover-primary mb-1" href="<%= client_path(client.unix_user)%>"><%= client.unix_user %><a/>
+  </td>
+  <td>
+    <% if client.location %>
+    <a class="text-gray-800 text-hover-primary mb-1" href="<%= location_path(client.location)%>"><%= client.location.name %><a/>
+    <% else %>
+    None
+    <% end %>
+  </td>
+  <td>
+    <span class="badge <%= client.status_style %>"><%= client.status %></span>
+  </td>
+  <td class="text-end">
+    <a href="#" class="btn btn-sm btn-light btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
+    <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
+    <span class="svg-icon svg-icon-5 m-0">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+      </svg>
+    </span>
+    <!--end::Svg Icon--></a>
+    <!--begin::Menu-->
+    <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true" data-controller="menu">
+      <div class="menu-item px-3">
+        <%= link_to run_test_client_path(client.unix_user), method: :post, class: "menu-link flex-stack px-3" do %>Run Test 
+        <% if client.test_requested %>
+          <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="" data-bs-original-title="Test request is currently pending" aria-label="Test request is currently pending"></i>
+        <% end %>
+        <% end %>
+        </a>
+      </div>
+      <!--begin::Menu item-->
+      <div class="menu-item px-3">
+        <a href="<%= client_path(client.unix_user) %>" class="menu-link px-3">View</a>
+      </div>
+      <!--end::Menu item-->
+      <!--begin::Menu item-->
+      <div class="menu-item px-3">
+        <%= link_to "Edit", edit_client_path(client.unix_user), { class: "menu-link px-3", data: { "turbo-frame" => "edit_client_modal" } } %>
+      </div>
+      <!--end::Menu item-->
+      <!--begin::Menu item-->
+      <div class="menu-item px-3">
+        <%= link_to 'Delete', release_client_path(client.unix_user), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link px-3" %>
+      </div>
+      <!--end::Menu item-->
+    </div>
+    <!--end::Menu-->
+  </td>
+</tr>
