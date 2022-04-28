@@ -74,6 +74,18 @@ class Client < ApplicationRecord
     return false
   end
 
+  def update_group_version
+    if has_update?
+      return self.update_group.client_version.version
+    end
+  end
+
+  def update_group_binary
+    if has_update?
+      return self.update_group.client_version.signed_binary
+    end
+  end
+
   private
 
   def create_ids
