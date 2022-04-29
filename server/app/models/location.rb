@@ -2,8 +2,8 @@ class Location < ApplicationRecord
   validates :name, :address, presence: true
 
   belongs_to :user
-  has_many :measurements
-  has_many :clients
+  has_many :measurements, dependent: :nullify
+  has_many :clients, dependent: :nullify
 
   geocoded_by :address do |obj, results|
     if geo = results.first
