@@ -175,7 +175,7 @@ EOF
     @client = Client.new
     @client.user = current_user
 
-    o = [('a'..'z'), ('A'..'Z'), (0..9)].map(&:to_a).flatten
+    o = [('a'..'z'), ('A'..'Z'), (0..9)].map(&:to_a).flatten - [0, 1, "o", "l", "I", "O"]
     @secret = (0...11).map { o[rand(o.length)] }.join
     @client.secret = @secret
     ug = UpdateGroup.default_group
