@@ -73,9 +73,11 @@ func (c *radarClient) Ping(version, clientId, secret string) (*agent.PingRespons
 	return res, nil
 }
 
-func (c *radarClient) Register() (*agent.RegisteredPod, error) {
-	url := fmt.Sprintf("%s/clients", c.serverUrl)
-	req, err := http.NewRequest("POST", url, nil)
+func (c *radarClient) Register(isShippedPod bool) (*agent.RegisteredPod, error) {
+	apiUrl := fmt.Sprintf("%s/clients", c.serverUrl)
+	form := url.Values{}
+	form.Add("is_shipped_pod", fmt.Sprintf("%t", isShippedPod))
+	req, err := http.NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, fmt.Errorf("radarCLient#Register error creating request: %w", err)
 	}
