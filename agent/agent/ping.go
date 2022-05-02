@@ -2,7 +2,6 @@ package agent
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -19,7 +18,8 @@ func startPingLoop(ctx context.Context, respCh chan<- *PingResponse, pinger Ping
 			log.Println("Pinging server...")
 			resp, err := pinger.Ping(info.BuildInfo().Version, cliId, secret)
 			if err != nil {
-				panic(fmt.Errorf("pod.StartLoop ping error: %w", err))
+				log.Println(err)
+				continue
 			}
 			respCh <- resp
 		}
