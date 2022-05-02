@@ -21,7 +21,7 @@ type RegisteredPod struct {
 }
 
 type Registerer interface {
-	Register() (*RegisteredPod, error)
+	Register(isShippedPod bool) (*RegisteredPod, error)
 }
 
 type MeasurementReporter interface {
