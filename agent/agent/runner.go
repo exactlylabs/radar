@@ -17,7 +17,8 @@ func startSpeedTestRunner(ctx context.Context, c *config.Config, runTestCh <-cha
 			}
 			err = reporter.ReportMeasurement(c.ClientId, c.Secret, runner.Type(), result)
 			if err != nil {
-				panic(err)
+				log.Println(err)
+				continue
 			}
 		}
 	}
