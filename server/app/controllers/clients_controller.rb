@@ -178,6 +178,8 @@ EOF
     o = [('a'..'z'), ('A'..'Z'), (0..9)].map(&:to_a).flatten - [0, 1, "o", "l", "I", "O"]
     @secret = (0...11).map { o[rand(o.length)] }.join
     @client.secret = @secret
+    @client.is_shipped_pod = params.fetch(:is_shipped_pod, false)
+    @client.shipped = false
     ug = UpdateGroup.default_group
     if !ug.nil?
       @client.update_group = ug
