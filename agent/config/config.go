@@ -16,14 +16,15 @@ import (
 )
 
 type Config struct {
-	ServerURL  string `config:"server_url"`
-	ClientId   string `config:"client_id"`
-	Secret     string `config:"secret"`
-	TestFreq   string `config:"test_freq"`
-	TestMinute string `config:"test_minute"`
-	PingFreq   string `config:"ping_freq"`
-	LastTested string `config:"last_tested"`
-	SentryDsn  string
+	ServerURL    string `config:"server_url"`
+	ClientId     string `config:"client_id"`
+	Secret       string `config:"secret"`
+	TestFreq     string `config:"test_freq"`
+	TestMinute   string `config:"test_minute"`
+	PingFreq     string `config:"ping_freq"`
+	LastTested   string `config:"last_tested"`
+	SentryDsn    string
+	IsShippedPod *string `config:"is_shipped_pod"`
 }
 
 var config *Config
@@ -143,6 +144,7 @@ func Save(conf *Config) error {
 		if key == "" {
 			continue
 		}
+
 		if val.Kind() == reflect.Ptr && val.Elem().IsValid() {
 			f.WriteString(fmt.Sprintf("%s=%v\n", key, val.Elem().Interface()))
 		} else if val.Kind() != reflect.Ptr {
