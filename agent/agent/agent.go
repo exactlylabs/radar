@@ -38,12 +38,44 @@ func NewAgent(client ServerClient, runners []Runner) *Agent {
 	}
 }
 
-func (a *Agent) setup(c *config.Config) {
-	if c.ClientId == "" {
-		log.Println("No Client ID found for this agent. Registering to the server.")
-		pod, err := a.registerer.Register()
+// registerAgent tries to register the agent to the server and retries
+// every 10 seconds in case of error until it succeeds or the context is cancelled
+func (a *Agent) registerAgent(ctx context.Context, c *config.Config) *RegisteredPod {
+	retryPeriod := 10 * time.Second
+	isShippedPod := false
+	var err error
+	if c.IsShippedPod != nil {
+		isShippedPod, err = strconv.ParseBool(*c.IsShippedPod)
 		if err != nil {
-			panic(err)
+			panic(fmt.Errorf("agent.registerAgent error parsing isShippedPod: %w", err))
+		}
+	}
+	for {
+		log.Println("Registering the pod to the server")
+		pod, err := a.registerer.Register(isShippedPod)
+		if err != nil {
+			log.Println(err)
+			log.Printf("Waiting %v before retrying\n", retryPeriod)
+		}
+		if pod != nil {
+			return pod
+		}
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-time.NewTimer(retryPeriod).C:
+		}
+	}
+}
+
+func (a *Agent) setup(ctx context.Context, c *config.Config) {
+	if c.ClientId == "" {
+		log.Println("No Client ID found for this agent.")
+
+		pod := a.registerAgent(ctx, c)
+		if pod == nil {
+			// Context was cancelled, skip all rest
+			return
 		}
 		c.ClientId = pod.ClientId
 		c.Secret = pod.Secret
@@ -66,7 +98,7 @@ func (a *Agent) setup(c *config.Config) {
 // Start the Agent, blocking the current goroutine
 func (a *Agent) Start(ctx context.Context, c *config.Config) {
 	agentCtx, cancel := context.WithCancel(ctx)
-	a.setup(c)
+	a.setup(ctx, c)
 
 	// Start the workers
 	a.wg.Add(2)
