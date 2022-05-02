@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_20_232112) do
+ActiveRecord::Schema.define(version: 2022_05_02_215955) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,8 @@ ActiveRecord::Schema.define(version: 2022_04_20_232112) do
     t.bigint "client_version_id"
     t.string "raw_version"
     t.bigint "update_group_id"
+    t.boolean "is_shipped_pod"
+    t.boolean "shipped"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
