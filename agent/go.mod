@@ -3,6 +3,7 @@ module github.com/exactlylabs/radar/agent
 go 1.18
 
 require (
+	github.com/getsentry/sentry-go v0.13.0
 	github.com/m-lab/ndt7-client-go v0.5.0
 	google.golang.org/protobuf v1.25.0
 )
@@ -14,4 +15,5 @@ require (
 	github.com/m-lab/locate v0.4.1 // indirect
 	github.com/m-lab/ndt-server v0.20.2 // indirect
 	github.com/m-lab/tcp-info v1.5.2 // indirect
+	golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect
 )
