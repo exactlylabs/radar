@@ -23,7 +23,10 @@ type Config struct {
 	TestMinute string `config:"test_minute"`
 	PingFreq   string `config:"ping_freq"`
 	LastTested string `config:"last_tested"`
+	SentryDsn  string
 }
+
+var config *Config
 
 func mapConfigs(config *Config) map[string]reflect.Value {
 	configs := make(map[string]reflect.Value)
@@ -88,8 +91,10 @@ func NewFileLoader(filename string) (io.Reader, error) {
 
 // LoadConfig from a .conf file
 func LoadConfig() *Config {
-
-	config := ProdConfig
+	if config != nil {
+		return config
+	}
+	config = ProdConfig
 	if info.IsDev() {
 		config = DevConfig
 	}
