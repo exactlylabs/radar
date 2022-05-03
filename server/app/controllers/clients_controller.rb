@@ -2,8 +2,9 @@ require "sshkey"
 
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status public_status check_public_status run_test ]
-  before_action :authenticate_client!, only: %i[ configuration status ]
+  before_action :authenticate_client!, only: %i[ configuration status ], if: :json_request?
   before_action :set_client, only: %i[ claim release show edit update destroy ]
+  before_action :authenticate_token!, only: %i[ create ]
   skip_forgery_protection only: %i[ status configuration new create ]
 
   # GET /clients or /clients.json
@@ -178,12 +179,20 @@ EOF
     o = [('a'..'z'), ('A'..'Z'), (0..9)].map(&:to_a).flatten - [0, 1, "o", "l", "I", "O"]
     @secret = (0...11).map { o[rand(o.length)] }.join
     @client.secret = @secret
-    @client.is_shipped_pod = params.fetch(:is_shipped_pod, false)
-    @client.shipped = false
     ug = UpdateGroup.default_group
     if !ug.nil?
       @client.update_group = ug
     end
+
+    # If there is an user
+    if @user
+      if @user.superuser?
+        @client.staging = true
+      end
+      # TODO: For future releases, it's interesting
+      # if we could auto-claim the pod if it's already authenticated.
+    end
+
     respond_to do |format|
       if @client.save
         format.html { redirect_to clients_path, notice: "Client was successfully created." }
@@ -238,4 +247,17 @@ EOF
         head(403)
       end
     end
+
+    def authenticate_token!
+      if !request.headers["Authorization"].nil?
+        token = request.headers["Authorization"].split(" ")
+        if token.size == 2
+          @user = User.where({"token": token[1]}).first
+        end
+      end
+    end
+    
+      def json_request?
+        request.format.symbol == :json
+      end
 end
