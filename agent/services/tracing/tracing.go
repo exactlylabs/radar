@@ -60,11 +60,10 @@ func NotifyPanic() {
 	}
 }
 
-func init() {
-	c := config.LoadConfig()
+func Setup(c *config.Config, build *info.Info) {
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn:     c.SentryDsn,
-		Release: info.BuildInfo().Version,
+		Release: build.Version,
 	})
 	if err != nil {
 		panic(err)
