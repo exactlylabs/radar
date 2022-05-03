@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_02_215955) do
+ActiveRecord::Schema.define(version: 2022_05_03_213003) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,8 +70,7 @@ ActiveRecord::Schema.define(version: 2022_05_02_215955) do
     t.bigint "client_version_id"
     t.string "raw_version"
     t.bigint "update_group_id"
-    t.boolean "is_shipped_pod"
-    t.boolean "shipped"
+    t.boolean "staging"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
@@ -137,8 +136,10 @@ ActiveRecord::Schema.define(version: 2022_05_02_215955) do
     t.integer "failed_attempts", default: 0
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.string "token"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["token"], name: "index_users_on_token", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
