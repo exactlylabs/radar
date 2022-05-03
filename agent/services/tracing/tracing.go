@@ -68,4 +68,7 @@ func Setup(c *config.Config, build *info.Info) {
 	if err != nil {
 		panic(err)
 	}
+	sentry.ConfigureScope(func(scope *sentry.Scope) {
+		scope.SetUser(sentry.User{ID: c.ClientId})
+	})
 }
