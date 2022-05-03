@@ -36,11 +36,12 @@ At the end, you should have something simillar to this:
 
 #### Developer Environment
 
-To run in development mode, make sure to set the environment variable `ENVIRONMENT=DEV` before executing the binary
+By default, the application will run in development mode if you are running through `go run ...`.
+In case you want to generate a binary in development mode, go to the **Build** section and use "Dev" as the version number.
 
-This way, the application will generate a configuration file with Development configurations
+When in development mode, the application will generate a configuration file with Development configurations locatet at `config/dev.go`
 
-> To run just as a developer, you just need to complete the ROOT Certificate (CA) step bellow.
+> To run just as a developer, without building, you just need to complete the ROOT Certificate (CA) step bellow.
 
 
 ### Build
