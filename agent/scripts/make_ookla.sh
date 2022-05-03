@@ -97,4 +97,4 @@ fi
 mv $BIN_NAME ../services/ookla/$TARGET_NAME
 
 cd ..
-rm ooklaSpeedTest -r
+rm -r ooklaSpeedTest
