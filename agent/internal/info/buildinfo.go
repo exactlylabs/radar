@@ -41,7 +41,7 @@ func BuildInfo() *Info {
 }
 
 func (i *Info) String() string {
-	return fmt.Sprintf(`Radar Agent
+	return fmt.Sprintf(`Build Information:
 * Version: %v
 * Commit: %v
 * BuildTime: %v`, i.Version, i.Commit, i.BuildTime.Time())
