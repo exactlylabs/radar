@@ -15,6 +15,7 @@ import (
 	ndt7speedtest "github.com/exactlylabs/radar/agent/services/ndt7"
 	"github.com/exactlylabs/radar/agent/services/ookla"
 	"github.com/exactlylabs/radar/agent/services/radar"
+	"github.com/exactlylabs/radar/agent/services/tracing"
 )
 
 var runners = []agent.Runner{
@@ -30,6 +31,11 @@ func main() {
 		fmt.Println(info.BuildInfo())
 		os.Exit(0)
 	}
+	log.Println("Starting Radar Agent")
+	log.Println(info.BuildInfo())
+	c := config.LoadConfig()
+	tracing.Setup(c, info.BuildInfo())
+	defer tracing.NotifyPanic()
 
 	sigs := make(chan os.Signal)
 	signal.Notify(sigs, syscall.SIGINT)
@@ -37,7 +43,6 @@ func main() {
 	interrupts := 0
 	go func() {
 		for range sigs {
-
 			if interrupts == 0 {
 				log.Println("Received Interrupt signal. Stopping all contexts...")
 				log.Println("Send another signal in case you wish to force shutdown")
@@ -49,8 +54,6 @@ func main() {
 			}
 		}
 	}()
-	log.Println("Starting Pod...")
-	c := config.LoadConfig()
 
 	// RadarClient implements all three required interfaces
 	cli := radar.NewClient(c.ServerURL)
