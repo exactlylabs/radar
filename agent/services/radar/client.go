@@ -73,15 +73,16 @@ func (c *radarClient) Ping(version, clientId, secret string) (*agent.PingRespons
 	return res, nil
 }
 
-func (c *radarClient) Register(isShippedPod bool) (*agent.RegisteredPod, error) {
+func (c *radarClient) Register(registrationToken *string) (*agent.RegisteredPod, error) {
 	apiUrl := fmt.Sprintf("%s/clients", c.serverUrl)
-	form := url.Values{}
-	form.Add("is_shipped_pod", fmt.Sprintf("%t", isShippedPod))
-	req, err := http.NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
+	req, err := http.NewRequest("POST", apiUrl, nil)
 	if err != nil {
 		return nil, fmt.Errorf("radarCLient#Register error creating request: %w", err)
 	}
 	req.Header.Add("Accept", "application/json")
+	if registrationToken != nil {
+		req.Header.Add("Authorization", fmt.Sprintf("Token %s", *registrationToken))
+	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("radarClient#Register request error: %w", err)

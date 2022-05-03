@@ -21,7 +21,9 @@ type RegisteredPod struct {
 }
 
 type Registerer interface {
-	Register(isShippedPod bool) (*RegisteredPod, error)
+	// Register the pod on the server.
+	// If registrationToken is given, it uses it so the server knows who installed this pod
+	Register(registrationToken *string) (*RegisteredPod, error)
 }
 
 type MeasurementReporter interface {
