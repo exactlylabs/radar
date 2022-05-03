@@ -11,6 +11,7 @@ import (
 
 	"github.com/exactlylabs/radar/agent/config"
 	"github.com/exactlylabs/radar/agent/internal/update"
+	"github.com/exactlylabs/radar/agent/services/tracing"
 )
 
 type Agent struct {
@@ -71,10 +72,12 @@ func (a *Agent) Start(ctx context.Context, c *config.Config) {
 	a.wg.Add(2)
 	go func() {
 		defer a.wg.Done()
+		defer tracing.NotifyPanic() // always add this to each new goroutine
 		startSpeedTestRunner(agentCtx, c, a.runTestCh, a.runners, a.reporter)
 	}()
 	go func() {
 		defer a.wg.Done()
+		defer tracing.NotifyPanic() // always add this to each new goroutine
 		startPingLoop(agentCtx, a.pingRespCh, a.pinger, pingFrequency(c), c.ClientId, c.Secret)
 	}()
 
