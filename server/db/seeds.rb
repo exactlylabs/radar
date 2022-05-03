@@ -13,3 +13,10 @@ UpdateGroup.where(:name => "Default Group").first_or_create do |group|
         client.save
     end
 end
+
+# Generate a token to all users that doesn't have one
+User.all.each do |user|
+    if user.token.nil?
+        user.regenerate_token
+    end
+end
