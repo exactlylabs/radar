@@ -16,15 +16,15 @@ import (
 )
 
 type Config struct {
-	ServerURL    string `config:"server_url"`
-	ClientId     string `config:"client_id"`
-	Secret       string `config:"secret"`
-	TestFreq     string `config:"test_freq"`
-	TestMinute   string `config:"test_minute"`
-	PingFreq     string `config:"ping_freq"`
-	LastTested   string `config:"last_tested"`
-	SentryDsn    string
-	IsShippedPod *string `config:"is_shipped_pod"`
+	ServerURL         string `config:"server_url"`
+	ClientId          string `config:"client_id"`
+	Secret            string `config:"secret"`
+	TestFreq          string `config:"test_freq"`
+	TestMinute        string `config:"test_minute"`
+	PingFreq          string `config:"ping_freq"`
+	LastTested        string `config:"last_tested"`
+	SentryDsn         string
+	RegistrationToken *string `config:"registration_token"`
 }
 
 var config *Config

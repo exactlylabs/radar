@@ -42,17 +42,9 @@ func NewAgent(client ServerClient, runners []Runner) *Agent {
 // every 10 seconds in case of error until it succeeds or the context is cancelled
 func (a *Agent) registerAgent(ctx context.Context, c *config.Config) *RegisteredPod {
 	retryPeriod := 10 * time.Second
-	isShippedPod := false
-	var err error
-	if c.IsShippedPod != nil {
-		isShippedPod, err = strconv.ParseBool(*c.IsShippedPod)
-		if err != nil {
-			panic(fmt.Errorf("agent.registerAgent error parsing isShippedPod: %w", err))
-		}
-	}
 	for {
 		log.Println("Registering the pod to the server")
-		pod, err := a.registerer.Register(isShippedPod)
+		pod, err := a.registerer.Register(c.RegistrationToken)
 		if err != nil {
 			log.Println(err)
 			log.Printf("Waiting %v before retrying\n", retryPeriod)
