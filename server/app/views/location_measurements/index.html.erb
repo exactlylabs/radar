@@ -24,17 +24,14 @@
   </div>
 </div>
 <!--end::Toolbar-->
-
-
-<p id="notice"><%= notice %></p>
-
-
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+  <!--begin::OptionsCard-->
+    <%= render partial: "options_card", locals: { location: @location } %>
+  <!--end::OptionsCard-->
   <!--begin::Container-->
   <div class="container-xxl">
-  
     <% if notice %>
-    <p id="notice"><%= notice %></p>
+     <p id="notice"><%= notice %></p>
     <% end %>
     <!--begin::Card-->
     <div class="card">
