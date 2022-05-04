@@ -151,7 +151,9 @@ EOF
   def status
     @client.pinged_at = Time.now
     @client.raw_version = params[:version]
-
+    
+    @client.build_str = params[:build]
+    
     if !params[:version].nil?
       # Check client Version
       version = ClientVersion.where version: params[:version]
@@ -163,7 +165,6 @@ EOF
       end
       @client.client_version = version
     end
-
     @client.save
 
     respond_to do |format|
