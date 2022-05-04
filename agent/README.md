@@ -105,7 +105,7 @@ At the end, you should have the following files:
     - agent
     - agent_signed
 
-Running the agent binary is as simple as: `./dist/agent` or `ENVIRONMENT=DEV ./dist/agent` if you wish to run in development mode.
+Running the agent binary is as simple as: `./dist/agent`
 
 
 #### Validating the Binary
