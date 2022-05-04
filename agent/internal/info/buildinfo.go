@@ -27,22 +27,22 @@ var commit = "Dev"
 
 // ${GOOS}-${GOARCH}
 // In case of $GOARM is set: ${GOOS}-${GOARCH}v${GOARM}
-var build = "Dev"
+var distribution = "Dev"
 
 type Info struct {
-	Version   string    `json:"version"`
-	Commit    string    `json:"commit"`
-	BuildTime buildTime `json:"build_time"`
-	Build     string    `json:"build"`
+	Version      string    `json:"version"`
+	Commit       string    `json:"commit"`
+	BuildTime    buildTime `json:"build_time"`
+	Distribution string    `json:"distribution"`
 }
 
 // BuildInfo returns the App build information
 func BuildInfo() *Info {
 	return &Info{
-		Version:   version,
-		Commit:    commit,
-		BuildTime: buildTime(builtAt),
-		Build:     build,
+		Version:      version,
+		Commit:       commit,
+		BuildTime:    buildTime(builtAt),
+		Distribution: distribution,
 	}
 }
 
@@ -51,7 +51,7 @@ func (i *Info) String() string {
 * Version: %v
 * Commit: %v
 * BuildTime: %v
-* Build: %v`, i.Version, i.Commit, i.BuildTime.Time(), i.Build)
+* Distribution: %v`, i.Version, i.Commit, i.BuildTime.Time(), i.Distribution)
 }
 
 func (i *Info) getVersionCategory(cat string) int {
