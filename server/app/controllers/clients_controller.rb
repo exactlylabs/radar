@@ -151,8 +151,7 @@ EOF
   def status
     @client.pinged_at = Time.now
     @client.raw_version = params[:version]
-    
-    @client.build_str = params[:build]
+    @client.distribution_name = params[:distribution]
     
     if !params[:version].nil?
       # Check client Version
