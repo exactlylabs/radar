@@ -12,7 +12,7 @@ type PingResponse struct {
 }
 
 type Pinger interface {
-	Ping(build, version, clientId, secret string) (*PingResponse, error)
+	Ping(distribution, version, clientId, secret string) (*PingResponse, error)
 }
 
 type RegisteredPod struct {
