@@ -25,10 +25,15 @@ var version = "Dev"
 var builtAt = "Dev"
 var commit = "Dev"
 
+// ${GOOS}-${GOARCH}
+// In case of $GOARM is set: ${GOOS}-${GOARCH}v${GOARM}
+var build = "Dev"
+
 type Info struct {
 	Version   string    `json:"version"`
 	Commit    string    `json:"commit"`
 	BuildTime buildTime `json:"build_time"`
+	Build     string    `json:"build"`
 }
 
 // BuildInfo returns the App build information
@@ -37,6 +42,7 @@ func BuildInfo() *Info {
 		Version:   version,
 		Commit:    commit,
 		BuildTime: buildTime(builtAt),
+		Build:     build,
 	}
 }
 
@@ -44,7 +50,8 @@ func (i *Info) String() string {
 	return fmt.Sprintf(`Build Information:
 * Version: %v
 * Commit: %v
-* BuildTime: %v`, i.Version, i.Commit, i.BuildTime.Time())
+* BuildTime: %v
+* Build: %v`, i.Version, i.Commit, i.BuildTime.Time(), i.Build)
 }
 
 func (i *Info) getVersionCategory(cat string) int {
