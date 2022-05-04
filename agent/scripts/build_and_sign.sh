@@ -89,13 +89,13 @@ KEY_PATH=$3
 COMMIT=$(git rev-list -1 HEAD)
 BUILT_AT=$(date +"%Y%m%d%H%M")
 
-BUILD="$GOOS-$GOARCH"
+DISTRIBUTION="$GOOS-$GOARCH"
 
 if [ $GOARCH = "arm" ]; then
-    BUILD="${BUILD}v${GOARM}"
+    DISTRIBUTION="${BUILD}v${GOARM}"
 fi
 
-echo "Building $OUTPUT_FILE for $BUILD "
+echo "Building $OUTPUT_FILE for $DISTRIBUTION "
 echo "Version: $1"
 echo "Commit: $COMMIT"
 
@@ -103,7 +103,7 @@ echo "Commit: $COMMIT"
 LDFLAGS="-s -X 'github.com/exactlylabs/radar/agent/internal/info.version=$VERSION' 
 -X 'github.com/exactlylabs/radar/agent/internal/info.commit=$COMMIT' 
 -X 'github.com/exactlylabs/radar/agent/internal/info.builtAt=$BUILT_AT'
--X 'github.com/exactlylabs/radar/agent/internal/info.build=$BUILD'"
+-X 'github.com/exactlylabs/radar/agent/internal/info.distribution=$DISTRIBUTION'"
 
 GOARM=$GOARM GOOS=$GOOS GOARCH=$GOARCH go build -o $OUTPUT_FILE -ldflags="$LDFLAGS" $BUILD_PROJECT
 
@@ -114,8 +114,8 @@ echo "Architecture: $GOARCH $GOARM"
 echo "OS: $GOOS"
 echo "Version: $1"
 echo "Commit: $COMMIT"
-echo "BUILT_AT: $BUILT_AT"
-echo "BUILD: $BUILD"
+echo "Build At: $BUILT_AT"
+echo "Distribution: $DISTRIBUTION"
 echo "Output: $OUTPUT_FILE"
 echo ""
 echo "------"
