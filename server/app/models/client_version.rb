@@ -1,7 +1,7 @@
 class ClientVersion < ApplicationRecord
     has_many :clients, dependent: :nullify
     has_many :update_groups, dependent: :restrict_with_exception
-    has_many :builds, dependent: :restrict_with_exception
+    has_many :distributions, dependent: :restrict_with_exception
 
     has_one_attached :signed_binary
 
@@ -9,7 +9,8 @@ class ClientVersion < ApplicationRecord
         other.version.gsub(".", "").to_i < self.version.gsub(".", "").to_i
     end
 
-    def get_build(build_str)
-        self.builds.find_by(build_str: build_str)
+    def distribution_by_name(name)
+        self.distributions.find_by(name: name)
     end
+
 end

@@ -67,36 +67,37 @@ class Client < ApplicationRecord
     end
   end
 
+  def to_update_version
+    if self.raw_version != "Dev" &&
+      !self.update_group.nil?
+      self.update_group.client_version
+    end
+  end
+
+  def to_update_distribution
+    update_version = self.to_update_version
+    if !update_version.nil?
+      update_version.distribution_by_name(self.distribution_name)
+    end
+  end
+  
+  def to_update_signed_binary
+    dist = self.to_update_distribution
+    if !dist.nil?
+      dist.signed_binary
+    end
+  end
+
+  def to_update_binary
+    dist = self.to_update_distribution
+    if !dist.nil?
+      dist.binary
+    end
+  end
+
   def has_update?
-    self.raw_version != "Dev" && 
-      !self.update_group.nil? && 
-      !self.update_group.client_version.nil? && 
-      !self.update_group.client_version.get_build(self.build_str).nil? &&
-      self.update_group.client_version != self.client_version
-  end
-
-  def update_group_version
-    if has_update?
-      return self.update_group.client_version.version
-    end
-  end
-
-  def update_group_signed_binary
-    if has_update?
-      build = self.update_group.client_version.get_build(self.build_str)
-      if !build.nil?
-        build.signed_binary
-      end
-    end
-  end
-
-  def update_group_binary
-    if has_update?
-      build = self.update_group.client_version.get_build(self.build_str)
-      if !build.nil?
-        build.signed_binary
-      end
-    end
+    dist = self.to_update_distribution
+    !dist.nil? && dist.client_version.version != self.raw_version
   end
 
   private
