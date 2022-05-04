@@ -17,7 +17,7 @@ func startPingLoop(ctx context.Context, respCh chan<- *PingResponse, pinger Ping
 			return
 		case <-pingTimer.C:
 			log.Println("Pinging server...")
-			resp, err := pinger.Ping(buildInfo.Build, buildInfo.Version, cliId, secret)
+			resp, err := pinger.Ping(buildInfo.Distribution, buildInfo.Version, cliId, secret)
 			if err != nil {
 				log.Println(err)
 				continue
