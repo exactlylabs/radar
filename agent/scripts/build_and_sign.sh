@@ -87,14 +87,23 @@ CERT_PATH=$2
 KEY_PATH=$3
 
 COMMIT=$(git rev-list -1 HEAD)
-BUILT=$(date +"%Y%m%d%H%M")
+BUILT_AT=$(date +"%Y%m%d%H%M")
 
-echo "Building $OUTPUT_FILE for $GOOS - $GOARCH "
+BUILD="$GOOS-$GOARCH"
+
+if [ $GOARCH = "arm" ]; then
+    BUILD="${BUILD}v${GOARM}"
+fi
+
+echo "Building $OUTPUT_FILE for $BUILD "
 echo "Version: $1"
 echo "Commit: $COMMIT"
 
 
-LDFLAGS="-s -X 'github.com/exactlylabs/radar/agent/internal/info.version=$VERSION' -X 'github.com/exactlylabs/radar/agent/internal/info.commit=$COMMIT' -X 'github.com/exactlylabs/radar/agent/internal/info.builtAt=$BUILT'"
+LDFLAGS="-s -X 'github.com/exactlylabs/radar/agent/internal/info.version=$VERSION' 
+-X 'github.com/exactlylabs/radar/agent/internal/info.commit=$COMMIT' 
+-X 'github.com/exactlylabs/radar/agent/internal/info.builtAt=$BUILT_AT'
+-X 'github.com/exactlylabs/radar/agent/internal/info.build=$BUILD'"
 
 GOARM=$GOARM GOOS=$GOOS GOARCH=$GOARCH go build -o $OUTPUT_FILE -ldflags="$LDFLAGS" $BUILD_PROJECT
 
@@ -105,7 +114,8 @@ echo "Architecture: $GOARCH $GOARM"
 echo "OS: $GOOS"
 echo "Version: $1"
 echo "Commit: $COMMIT"
-echo "BUILT: $BUILT"
+echo "BUILT_AT: $BUILT_AT"
+echo "BUILD: $BUILD"
 echo "Output: $OUTPUT_FILE"
 echo ""
 echo "------"
