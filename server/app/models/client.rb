@@ -68,10 +68,11 @@ class Client < ApplicationRecord
   end
 
   def has_update?
-    if self.raw_version != "Dev" && !self.update_group.nil? && !self.update_group.client_version.nil?
-      return self.update_group.client_version != self.client_version
-    end
-    return false
+    self.raw_version != "Dev" && 
+      !self.update_group.nil? && 
+      !self.update_group.client_version.nil? && 
+      !self.update_group.client_version.get_build(self.build_str).nil? &&
+      self.update_group.client_version != self.client_version
   end
 
   def update_group_version
@@ -80,9 +81,21 @@ class Client < ApplicationRecord
     end
   end
 
+  def update_group_signed_binary
+    if has_update?
+      build = self.update_group.client_version.get_build(self.build_str)
+      if !build.nil?
+        build.signed_binary
+      end
+    end
+  end
+
   def update_group_binary
     if has_update?
-      return self.update_group.client_version.signed_binary
+      build = self.update_group.client_version.get_build(self.build_str)
+      if !build.nil?
+        build.signed_binary
+      end
     end
   end
 

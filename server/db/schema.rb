@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_03_213003) do
+ActiveRecord::Schema.define(version: 2022_05_04_160454) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +43,15 @@ ActiveRecord::Schema.define(version: 2022_05_03_213003) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "builds", force: :cascade do |t|
+    t.string "build_str"
+    t.bigint "client_version_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["build_str", "client_version_id"], name: "index_builds_on_build_str_and_client_version_id", unique: true
+    t.index ["client_version_id"], name: "index_builds_on_client_version_id"
+  end
+
   create_table "client_versions", force: :cascade do |t|
     t.string "version"
     t.datetime "created_at", precision: 6, null: false
@@ -71,6 +80,7 @@ ActiveRecord::Schema.define(version: 2022_05_03_213003) do
     t.string "raw_version"
     t.bigint "update_group_id"
     t.boolean "staging"
+    t.string "build_str"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
@@ -144,6 +154,7 @@ ActiveRecord::Schema.define(version: 2022_05_03_213003) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "builds", "client_versions"
   add_foreign_key "clients", "client_versions"
   add_foreign_key "clients", "locations"
   add_foreign_key "clients", "update_groups"
