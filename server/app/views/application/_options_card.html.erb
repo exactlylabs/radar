@@ -5,7 +5,7 @@
         <a href="<%= location_path(location) %>"
           class="btn btn-active-light btn-active-color-primary
                   btn-active-icon-primary w-100 text-start ps-3
-                  <%= active_path?(location_path(location)) ? 'active' : ''%>">
+                  <%= exact_path?(location_path(location)) %>">
           <span class="svg-icon svg-icon-2x">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path opacity="0.3" d="M18.0624 15.3453L13.1624 20.7453C12.5624 21.4453 11.5624 21.4453 10.9624 20.7453L6.06242 15.3453C4.56242 13.6453 3.76242 11.4453 4.06242 8.94534C4.56242 5.34534 7.46242 2.44534 11.0624 2.04534C15.8624 1.54534 19.9624 5.24534 19.9624 9.94534C20.0624 12.0453 19.2624 13.9453 18.0624 15.3453Z" fill="black"/>
@@ -19,7 +19,7 @@
         <a href="<%= client_path(location) %>" 
           class="btn btn-active-light btn-active-color-primary 
                   btn-active-icon-primary w-100 text-start p-3
-                  <%= active_path?(client_path(location)) ? 'active' : ''%>">
+                  <%= exact_path?(client_path(location)) %>">
           <span class="svg-icon svg-icon-2">
             <!--begin::Svg Icon | path: assets/media/icons/duotune/electronics/elc007.svg-->    
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">          
@@ -37,7 +37,7 @@
         <a href="<%= location_measurements_path(location) %>"
           class="btn btn-active-light btn-active-color-primary 
                   btn-active-icon-primary w-100 text-start p-3
-                  <%= active_path?(location_measurements_path(location)) ? 'active' : ''%>">
+                  <%= exact_path?(location_measurements_path(location)) %>">
           <!--begin::Svg Icon | path: assets/media/icons/duotune/general/gen032.svg-->
           <span class="svg-icon svg-icon-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
