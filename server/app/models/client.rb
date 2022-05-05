@@ -9,6 +9,7 @@ class Client < ApplicationRecord
   geocoded_by :address
 
   before_create :create_ids
+  before_update :unstage_client
   after_validation :geocode
   has_secure_password :secret, validations: false
 
@@ -105,11 +106,18 @@ class Client < ApplicationRecord
   def create_ids
     o = [('a'..'z'), (0..9)].map(&:to_a).flatten - [0, 1, "o", "l"]
     string = (0...11).map { o[rand(o.length)] }.join
-
     self.unix_user = "r#{string}"
   end
 
   def latest_measurement
     self.measurements.order(created_at: :desc).first
   end
+
+  def unstage_client
+    if self.staging_was && !self.staging
+      # Staging Changed from True to False
+      self.secret = self.secret_digest
+    end
+  end
+
 end
