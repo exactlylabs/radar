@@ -4,6 +4,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status ], if: :json_request?
   before_action :set_client, only: %i[ claim release show edit update destroy ]
+  before_action :set_staging_client, only: %i[ unstage ]
   before_action :authenticate_token!, only: %i[ create ]
   skip_forgery_protection only: %i[ status configuration new create ]
 
@@ -185,10 +186,10 @@ EOF
     end
 
     # If there is an user
-    if @user
-      if @user.superuser?
+    if @user && @user.superuser?
         @client.staging = true
-      end
+        # This field should be encrypted after staging is done
+        @client.secret_digest = @secret
       # TODO: For future releases, it's interesting
       # if we could auto-claim the pod if it's already authenticated.
     end
@@ -227,10 +228,34 @@ EOF
     end
   end
 
+  # GET /staging-clients
+  def staging_clients
+    if !current_user.superuser
+      head(403)
+    end
+
+    @clients = Client.where(staging: true)
+  end
+
+  # POST /clients/id/unstage
+  def unstage
+    if !current_user.superuser
+      head(403)
+    end
+
+    @client.staging = false
+    @client.save
+    redirect_to request.env['HTTP_REFERER'], notice: "Client Unstaged."
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_client
       @client = policy_scope(Client).find_by_unix_user(params[:id])
+    end
+
+    def set_staging_client
+      @client = Client.find_by_unix_user(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
@@ -241,8 +266,13 @@ EOF
     def authenticate_client!
       client_id = params[:id]
       client_secret = params[:secret]
-
-      @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
+      client = Client.find_by_unix_user(client_id)
+      if client&.staging && client_secret == client.secret_digest
+        # Allow pods marked as staging to ping
+        @client = client
+      else
+        @client = client&.authenticate_secret(client_secret)
+      end
       if !@client
         head(403)
       end
