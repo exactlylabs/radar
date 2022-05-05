@@ -1,0 +1,42 @@
+<tr id="<%= dom_id(location) %>">
+  <td style="padding-left: 30px">
+    <div class="d-flex flex-row align-items-center">
+      <div class="d-flex align-items-center justify-content-center me-5" 
+           style="border-radius:50%; background-color:#f1faff; min-width: 36px; width: 36px; min-height: 36px; height: 36px">
+        <span class="svg-icon svg-icon-2 svg-icon-primary" style="position: relative;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path opacity="0.3" d="M18.0624 15.3453L13.1624 20.7453C12.5624 21.4453 11.5624 21.4453 10.9624 20.7453L6.06242 15.3453C4.56242 13.6453 3.76242 11.4453 4.06242 8.94534C4.56242 5.34534 7.46242 2.44534 11.0624 2.04534C15.8624 1.54534 19.9624 5.24534 19.9624 9.94534C20.0624 12.0453 19.2624 13.9453 18.0624 15.3453Z" fill="black"/>
+            <path d="M12.0624 13.0453C13.7193 13.0453 15.0624 11.7022 15.0624 10.0453C15.0624 8.38849 13.7193 7.04535 12.0624 7.04535C10.4056 7.04535 9.06241 8.38849 9.06241 10.0453C9.06241 11.7022 10.4056 13.0453 12.0624 13.0453Z" fill="black"/>
+          </svg>
+        </span>
+      </div>
+      <a class="text-gray-800 text-hover-primary fw-bolder"
+         style="font-size:15px;"
+         href="<%= location_path(location)%>" data-turbo-frame="_top">
+          <%= location.name %>
+      </a>
+    </div>
+  </td>
+  <td class="text-gray-600 mb-1 fw-bolder"
+      style="font-size:15px;">
+    <%= location.address %>
+  </td>
+  <td class="text-gray-600 mb-1 fw-bolder"
+      style="font-size:15px;">
+    <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} mbps" : 'N/A' %>
+  </td>
+  <td class="text-gray-600 mb-1 fw-bolder"
+      style="font-size:15px;">
+    <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_up} mbps": 'N/A' %>
+  </td>
+  <td class="text-gray-600 mb-1 fw-bolder"
+      style="font-size:15px;">
+    <%= location.clients.size %>
+  </td>
+  <td class="text-end" style="padding-right: 30px">
+    <a href="<%= location_path(location) %>" 
+       class="btn btn-primary d-flex align-items-center justify-content-center px-0"
+       style="height: 35px; width:90%;"
+       data-turbo-frame="_top">View Details</a>
+  </td>
+</tr>

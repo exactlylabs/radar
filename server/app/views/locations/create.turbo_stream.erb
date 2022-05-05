@@ -1,0 +1,7 @@
+<%= turbo_stream.append 'locations_table' do %>
+  <%= render partial: 'locations_table_row', locals: {location: @location} %>
+<% end %>
+
+<%= turbo_stream.append 'locations_grid' do %>
+  <%= render partial: 'locations_grid_card', locals: {location: @location} %>
+<% end %>
