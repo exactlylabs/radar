@@ -33,9 +33,7 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
-        format.turbo_stream { 
-          render turbo_stream: turbo_stream.replace('location_container_dynamic', partial: 'locations_list', locals: {locations: policy_scope(Location)}) 
-        }
+        format.turbo_stream
         format.html { redirect_to locations_path, notice: "Location was successfully created." }
         format.json { render :show, status: :created, location: @location }
       else

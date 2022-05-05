@@ -1,0 +1,46 @@
+<div class="card card-flush col-sm-6 col-xs-12 mb-10 w-100 mw-400px min-w-325px">
+    <div class="card-header d-flex flex-column py-3">
+        <div class="card-title fs-1">
+            <%= location.name %>
+        </div>
+        <h5 class="card-subtitle" style="color: #b5b5c3; font-size: 14px;">
+            <%= location.address %>
+        </h5>
+    </div>
+    <div class="card-body pt-3">
+        <div class="list-group">
+            <div class="list-group-item border-top-0 border-end-0 border-start-0 
+                        border-bottom-dashed border-gray-400 ps-0 
+                        d-flex flex-row justify-content-between">
+                <div class="list-group-item-label fw-bold">
+                    Avg. Download Speed
+                </div>
+                <div class="list-group-item-value fw-bolder">
+                    <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} mbps" + ' mbps' : 'N/A' %>
+                </div>
+            </div>
+            <div class="list-group-item border-top-0 border-end-0 border-start-0 
+                        border-bottom-dashed border-gray-400 ps-0
+                        d-flex flex-row justify-content-between">
+                <div class="list-group-item-label fw-bold">
+                    Avg. Upload Speed
+                </div>
+                <div class="list-group-item-value fw-bolder">
+                    <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up} mbps" : 'N/A' %>
+                </div>
+            </div>
+            <div class="list-group-item border-0 ps-0
+                        d-flex flex-row justify-content-between">
+                <div class="list-group-item-label fw-bold">
+                    Current Pods
+                </div>
+                <div class="list-group-item-value fw-bolder">
+                    <%= location.clients.size %>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-end px-0 pb-3">
+            <a href="<%= location_path(location) %>" class="btn btn-primary" data-turbo-frame="_top">View Details</a>
+        </div>
+    </div>
+</div>
