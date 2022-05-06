@@ -23,11 +23,11 @@
 <!--end::Toolbar-->
 
 <div class="post fs-6 d-flex flex-row-fluid mb-9" id="kt_post">
-  <!--begin::OptionsCard-->
-    <%= render partial: "options_card", locals: { location: @location } %>
-  <!--end::OptionsCard-->
   <!--begin::Container-->
-    <div class="container-xxl">
+    <div class="container-xxl d-flex flex-row justify-content-between" style="max-width: none;">
+      <!--begin::OptionsCard-->
+        <%= render partial: "options_card", locals: { location: @location } %>
+      <!--end::OptionsCard-->
       <% if notice %>
       <p id="notice"><%= notice %></p>
       <% end %>
