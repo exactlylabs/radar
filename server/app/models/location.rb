@@ -41,4 +41,43 @@ class Location < ApplicationRecord
     end
   end
 
+  def download_avg
+    if self.measurements.length == 0
+      return nil
+    end
+    avg = 0
+    self.measurements.each do |measurement|
+      avg += measurement.download
+    end
+    (avg / self.measurements.length).round(5) # Should we set a better precision?
+  end
+
+  def upload_avg
+    if self.measurements.length == 0
+      return nil
+    end
+    avg = 0
+    self.measurements.each do |measurement|
+      avg += measurement.upload
+    end
+    (avg / self.measurements.length).round(5) # Should we set a better precision?
+  end
+
+  def download_diff
+    avg = self.download_avg
+    if avg.nil? || self.expected_mbps_down.nil?
+      return nil
+    end
+    diff = avg - self.expected_mbps_down
+    "#{diff > 0 ? '+' : ''}#{((diff / self.expected_mbps_up) * 100).round(2)}%"
+  end
+
+  def upload_diff
+    avg = self.upload_avg
+    if avg.nil? || self.expected_mbps_up.nil?
+      return nil
+    end
+    diff = avg - self.expected_mbps_up
+    "#{diff > 0 ? '+' : ''}#{((diff / self.expected_mbps_up) * 100).round(2)}%"
+  end
 end

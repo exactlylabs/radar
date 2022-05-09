@@ -1,32 +1,65 @@
-<div class="card card-flush col-sm-6 col-xs-12 mb-10 w-100 mw-400px min-w-325px">
-    <div class="card-header d-flex flex-column py-3">
-        <div class="card-title fs-1">
-            <%= location.name %>
+<div class="card card-flush col-md-4 col-sm-6 col-xs-12 mb-10 w-100 mw-375px min-w-325px">
+    <div class="card-header d-flex flex-row align-items-center py-3">
+        <div class="d-flex flex-column" style="width: 75%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+            <div class="card-title fs-1">
+                <%= location.name %>
+            </div>
+            <h5 class="card-subtitle" style="color: #b5b5c3; font-size: 14px;">
+                <%= location.address %>
+            </h5>
         </div>
-        <h5 class="card-subtitle" style="color: #b5b5c3; font-size: 14px;">
-            <%= location.address %>
-        </h5>
+        <div class="d-flex align-items-center justify-content-center" 
+           style="border-radius:50%; background-color:#f1faff; min-width: 50px; width: 50px; min-height: 50px; height: 50px">
+            <span class="svg-icon svg-icon-2x svg-icon-primary" style="position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path opacity="0.3" d="M18.0624 15.3453L13.1624 20.7453C12.5624 21.4453 11.5624 21.4453 10.9624 20.7453L6.06242 15.3453C4.56242 13.6453 3.76242 11.4453 4.06242 8.94534C4.56242 5.34534 7.46242 2.44534 11.0624 2.04534C15.8624 1.54534 19.9624 5.24534 19.9624 9.94534C20.0624 12.0453 19.2624 13.9453 18.0624 15.3453Z" fill="black"/>
+                <path d="M12.0624 13.0453C13.7193 13.0453 15.0624 11.7022 15.0624 10.0453C15.0624 8.38849 13.7193 7.04535 12.0624 7.04535C10.4056 7.04535 9.06241 8.38849 9.06241 10.0453C9.06241 11.7022 10.4056 13.0453 12.0624 13.0453Z" fill="black"/>
+            </svg>
+            </span>
+        </div>
     </div>
     <div class="card-body pt-3">
         <div class="list-group">
             <div class="list-group-item border-top-0 border-end-0 border-start-0 
                         border-bottom-dashed border-gray-400 ps-0 
-                        d-flex flex-row justify-content-between">
-                <div class="list-group-item-label fw-bold">
-                    Avg. Download Speed
+                        d-flex flex-column">
+                <div class="d-flex flex-row justify-content-between">
+                    <div class="list-group-item-label fw-bold">
+                        Avg. Download Speed
+                    </div>
+                    <div class="list-group-item-value fw-bolder" style="color: <%= location.download_avg.present? ? "#181c33" : '#b5b5c3' %>; font-size: 14px;">
+                        <%= location.download_avg.present? ? "#{location.download_avg} Mbps" : 'Not available' %>
+                    </div>
                 </div>
-                <div class="list-group-item-value fw-bolder">
-                    <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} mbps" + ' mbps' : 'N/A' %>
+                <div class="d-flex flex-row justify-content-between">
+                    <div class="list-group-item-label" style="color: #b5b5c3; font-size: 13px;">
+                        Expected: <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} Mbps" : 'Not available' %>
+                    </div>
+                    <div class="list-group-item-value" 
+                         style="color: <%= location.download_diff.present? ? location.download_diff.start_with?('+') ? '#50cd89' : '#f1416c' : '#b5b5c3' %>;">
+                        <%= location.download_diff.present? ? location.download_diff : '-' %>
+                    </div>
                 </div>
             </div>
             <div class="list-group-item border-top-0 border-end-0 border-start-0 
                         border-bottom-dashed border-gray-400 ps-0
-                        d-flex flex-row justify-content-between">
-                <div class="list-group-item-label fw-bold">
-                    Avg. Upload Speed
+                        d-flex flex-column">
+                <div class="d-flex flex-row justify-content-between">
+                    <div class="list-group-item-label fw-bold">
+                        Avg. Upload Speed
+                    </div>
+                    <div class="list-group-item-value fw-bolder" style="color: <%= location.upload_avg.present? ? '#181c33' : '#b5b5c3' %>; font-size: 14px;">
+                        <%= location.upload_avg.present? ? "#{location.upload_avg} Mbps" : 'Not available' %>
+                    </div>
                 </div>
-                <div class="list-group-item-value fw-bolder">
-                    <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up} mbps" : 'N/A' %>
+                <div class="d-flex flex-row justify-content-between">
+                    <div class="list-group-item-label" style="color: #b5b5c3; font-size: 13px;">
+                        Expected: <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up} Mbps" : 'Not available' %>
+                    </div>
+                    <div class="list-group-item-value" 
+                         style="color: <%= location.upload_diff.present? ? location.upload_diff.start_with?('+') ? '#50cd89' : '#f1416c' : '#b5b5c3' %>;">
+                        <%= location.upload_diff.present? ? location.upload_diff : '-' %>
+                    </div>
                 </div>
             </div>
             <div class="list-group-item border-0 ps-0
@@ -39,7 +72,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer d-flex justify-content-end px-0 pb-3">
+        <div class="card-footer d-flex justify-content-end px-0 pb-3 border-0">
             <a href="<%= location_path(location) %>" class="btn btn-primary" data-turbo-frame="_top">View Details</a>
         </div>
     </div>
