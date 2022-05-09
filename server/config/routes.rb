@@ -42,7 +42,6 @@ Rails.application.routes.draw do
       post 'configuration'
       post 'status'
       post 'run_test'
-      post 'unstage'
     end
 
     collection do
@@ -50,7 +49,12 @@ Rails.application.routes.draw do
       post 'status', to: 'clients#check_public_status'
       post 'claim'
       get 'claim', to: 'clients#claim_form'
-      get 'staging', to: 'clients#staging_clients'
+    end
+  end
+
+  resources :staging_clients do
+    member do
+      post 'publish'
     end
   end
 
