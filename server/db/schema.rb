@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_04_160454) do
+ActiveRecord::Schema.define(version: 2022_05_09_224105) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,8 @@ ActiveRecord::Schema.define(version: 2022_05_04_160454) do
     t.string "version"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "is_stable"
+    t.index ["is_stable"], name: "index_client_versions_on_is_stable", unique: true
     t.index ["version"], name: "index_client_versions_on_version", unique: true
   end
 
@@ -72,6 +74,7 @@ ActiveRecord::Schema.define(version: 2022_05_04_160454) do
     t.bigint "update_group_id"
     t.boolean "staging"
     t.string "distribution_name"
+    t.string "raw_secret"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
