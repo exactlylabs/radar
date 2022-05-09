@@ -9,7 +9,6 @@ class Client < ApplicationRecord
   geocoded_by :address
 
   before_create :create_ids
-  before_update :unstage_client
   after_validation :geocode
   has_secure_password :secret, validations: false
 
@@ -111,13 +110,6 @@ class Client < ApplicationRecord
 
   def latest_measurement
     self.measurements.order(created_at: :desc).first
-  end
-
-  def unstage_client
-    if self.staging_was && !self.staging
-      # Staging Changed from True to False
-      self.secret = self.secret_digest
-    end
   end
 
 end
