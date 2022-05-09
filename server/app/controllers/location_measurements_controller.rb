@@ -1,14 +1,16 @@
 class LocationMeasurementsController < ApplicationController
+  include Pagination
   before_action :authenticate_user!
   before_action :set_location
   skip_forgery_protection only: %i[ create ]
 
   # GET /measurements or /measurements.json
   def index
-    @measurements = @location.measurements
-
+    @measurements = @location.measurements.order(created_at: :desc).then(&paginate)
+    @total = @location.measurements.length
+    puts @total
     respond_to do |format|
-      format.html
+      format.html { render "index", locals: { measurements: @measurements, total: @total } }
       format.csv { send_data @measurements.to_csv, filename: "measurements-#{@location.id}.csv" }
     end
   end
