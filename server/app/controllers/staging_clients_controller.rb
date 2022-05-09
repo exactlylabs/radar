@@ -6,7 +6,7 @@ class StagingClientsController < ApplicationController
         @clients = Client.where(staging: true)
     end
 
-    # POST /clients/id/publish
+    # POST /staging-clients/id/publish
     # Unset the staging flag
     def publish
         if !current_user.superuser
