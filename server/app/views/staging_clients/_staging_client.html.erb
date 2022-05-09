@@ -1,29 +1,29 @@
 <tr id="<%= dom_id(client) %>">
-  <td style="position:relative;" data-controller="clients">
+  <td style="position:relative;" data-controller="staging-clients">
     <span class="text-gray-800 mb-1" ><%= client.unix_user %></span>
     <button 
       class="btn svg-icon svg-icon-5 p-0"
-      data-action="clients#handleClipboardClick" 
-      data-clients-value-param="<%= client.unix_user %>">
+      data-action="staging-clients#handleClipboardClick" 
+      data-staging-clients-value-param="<%= client.unix_user %>">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 384 512" fill="none">
         <path d="M336 64h-53.88C268.9 26.8 233.7 0 192 0S115.1 26.8 101.9 64H48C21.5 64 0 85.48 0 112v352C0 490.5 21.5 512 48 512h288c26.5 0 48-21.48 48-48v-352C384 85.48 362.5 64 336 64zM192 64c17.67 0 32 14.33 32 32c0 17.67-14.33 32-32 32S160 113.7 160 96C160 78.33 174.3 64 192 64zM272 224h-160C103.2 224 96 216.8 96 208C96 199.2 103.2 192 112 192h160C280.8 192 288 199.2 288 208S280.8 224 272 224z" fill="black"/>
       </svg>
     </button>
     <div
-      data-clients-target="message"
+      data-staging-clients-target="message"
       style="position:absolute;" class="shadow-sm p-3 mb-5 bg-white rounded">
       <span class="text-primary">Text Copied!</span>
     </div>
   </td>
-  <td data-controller="clients">
+  <td data-controller="staging-clients">
     <input type="password" disabled class="text-gray-800 mb-1" value="<%= client.raw_secret %>">
     <button class="btn svg-icon svg-icon-5 p-0"
-     data-action="clients#handleClipboardClick" data-clients-value-param="<%= client.raw_secret %>">
+     data-action="staging-clients#handleClipboardClick" data-staging-clients-value-param="<%= client.raw_secret %>">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 384 512" fill="none">
         <path d="M336 64h-53.88C268.9 26.8 233.7 0 192 0S115.1 26.8 101.9 64H48C21.5 64 0 85.48 0 112v352C0 490.5 21.5 512 48 512h288c26.5 0 48-21.48 48-48v-352C384 85.48 362.5 64 336 64zM192 64c17.67 0 32 14.33 32 32c0 17.67-14.33 32-32 32S160 113.7 160 96C160 78.33 174.3 64 192 64zM272 224h-160C103.2 224 96 216.8 96 208C96 199.2 103.2 192 112 192h160C280.8 192 288 199.2 288 208S280.8 224 272 224z" fill="black"/>
       </svg>
     </button>
-    <div data-clients-target="message"
+    <div data-staging-clients-target="message"
       style="position:absolute;" class="shadow-sm p-3 mb-5 bg-white rounded">
       <span class="text-primary">Text Copied!</span>
     </div>
@@ -40,7 +40,7 @@
     <!--begin::Menu-->
     <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true" data-controller="menu">
       <div class="menu-item px-3">
-        <%= link_to unstage_client_path(client.unix_user), method: :post, class: "menu-link flex-stack px-3" do %>Unstage Pod
+        <%= link_to publish_staging_client_path(client.unix_user), method: :post, class: "menu-link flex-stack px-3" do %>Unstage Pod
         <% end %>
         </a>
       </div>
