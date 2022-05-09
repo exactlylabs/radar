@@ -2,27 +2,3 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
 
-.fade-out {
-    visibility: visible!important;
-    animation: fade 2s;
-    -webkit-animation: fade 2s;
-    -moz-animation: fade 2s;
-  }
- 
-  .clipboard-message {
-    visibility: hidden;
-  }
- 
-  /* Animate opacity */
-  @keyframes fade {
-    from { opacity: 1 }
-    to { opacity: 0 }
-  }
-  @-moz-keyframes fade {
-    from { opacity: 1 }
-    to { opacity: 0 }
-  }
-  @-webkit-keyframes fade {
-    from { opacity: 1 }
-    to { opacity: 0 }
-  }
