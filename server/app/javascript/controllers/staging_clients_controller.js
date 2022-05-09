@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
-// Connects to data-controller="clients"
+
+// Connects to data-controller="staging-clients"
 export default class extends Controller {
   static targets = [ "message" ]
   
