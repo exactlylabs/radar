@@ -11,26 +11,44 @@
         </span>
       </div>
       <a class="text-gray-800 text-hover-primary fw-bolder"
-         style="font-size:15px;"
+         style="font-size:15px; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
          href="<%= location_path(location)%>" data-turbo-frame="_top">
           <%= location.name %>
       </a>
     </div>
   </td>
-  <td class="text-gray-600 mb-1 fw-bolder"
-      style="font-size:15px;">
-    <%= location.address %>
+  <td class="text-gray-600 mb-1"
+      style="font-size:14px; color: #b5b5c3; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+      <%= location.address %>
   </td>
-  <td class="text-gray-600 mb-1 fw-bolder"
-      style="font-size:15px;">
-    <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} mbps" : 'N/A' %>
+  <td class="text-gray-600 mb-1"
+      style="font-size:14px; color: #b5b5c3;">
+      <span>
+        <%= location.download_avg.present? ? "#{location.download_avg} Mbps / " : 'Not available / ' %>
+      </span>
+      <span>
+        <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} Mbps" : 'Not available' %>
+      </span>
+      <span class="ms-2"
+            style="color: <%= location.download_diff.present? && location.download_diff.start_with?('+') ? "#50cd89" : "#f1416c" %>">
+        <%= location.download_diff.present? ? location.download_diff : '' %>
+      </span>
   </td>
-  <td class="text-gray-600 mb-1 fw-bolder"
-      style="font-size:15px;">
-    <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_up} mbps": 'N/A' %>
+  <td class="text-gray-600 mb-1"
+      style="font-size:14px; color: #b5b5c3;">
+    <span>
+        <%= location.upload_avg.present? ?  "#{location.upload_avg} Mbps / " : 'Not available / '%>
+      </span>
+      <span>
+        <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up} Mbps" : 'Not available' %>
+      </span>
+      <span class="ms-2"
+            style="color: <%= location.upload_diff.present? && location.upload_diff.start_with?('+') ? "#50cd89" : "#f1416c" %>">
+        <%= location.upload_diff.present? ? location.upload_diff : '' %>
+      </span>
   </td>
-  <td class="text-gray-600 mb-1 fw-bolder"
-      style="font-size:15px;">
+  <td class="text-gray-600 mb-1"
+      style="font-size:14px; color: #7e8299">
     <%= location.clients.size %>
   </td>
   <td class="text-end" style="padding-right: 30px">
