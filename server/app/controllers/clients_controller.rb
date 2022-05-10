@@ -66,6 +66,7 @@ class ClientsController < ApplicationController
         @client.user = current_user
         @client.location = location
         @client.save
+        format.turbo_stream { render turbo_stream: turbo_stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)}) }
         format.turbo_stream { render turbo_stream: turbo_stream.append('clients', partial: 'clients/client', locals: {client: @client}) }
         format.html { redirect_to client_path(@client.unix_user), notice: "Client was successfully claimed." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
@@ -80,6 +81,7 @@ class ClientsController < ApplicationController
   def release
     respond_to do |format|
       if @client.update(user: nil, location: nil)
+        format.turbo_stream { render turbo_stream: turbo_stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)}) }
         format.turbo_stream { render turbo_stream: turbo_stream.remove(@client) }
         format.html { redirect_to clients_path, notice: "Client was successfully released." }
         format.json { head :no_content }
@@ -192,9 +194,12 @@ EOF
       # TODO: For future releases, it's interesting
       # if we could auto-claim the pod if it's already authenticated.
     end
-
+    puts policy_scope(Client)
     respond_to do |format|
       if @client.save
+        format.turbo_stream {
+          render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)})
+        }
         format.html { redirect_to clients_path, notice: "Client was successfully created." }
         format.json { render :show, status: :created, location: client_path(@client.unix_user) }
       else
@@ -222,6 +227,9 @@ EOF
   def destroy
     @client.destroy
     respond_to do |format|
+      format.turbo_stream {
+        render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)})
+      }
       format.html { redirect_to clients_url, notice: "Client was successfully destroyed." }
       format.json { head :no_content }
     end
