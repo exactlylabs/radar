@@ -1,30 +1,107 @@
-<div class="card" id="location-details">
+<div class="card" style="width: 90%; margin-left: 20px; max-width: 1250px" id="location-details">
   <!--begin::Card header-->
-  <div class="card-header border-0">
-    <!--begin::Card title-->
-    <div class="card-title">
-      <h2 class="fw-bolder mb-0"><%= location.name %></h2>
+    <div class="card-header align-items-center" style="height: 65px">
+      <h2 class="fw-bolder mb-0">Overview</h2>
     </div>
-    <!--end::Card title-->
-    <div class="card-toolbar">
-      <a href="#" data-bs-toggle="modal" data-bs-target="#edit_location_modal_<%= location.id %>" class="btn btn-light me-3">Edit</a>
-      <a href="<%= location_measurements_path(location) %>" class="btn btn-light me-3">View Measurements</a>
-      <%= link_to "Run Test", request_test_location_path(location), method: :post, class: "btn btn-primary #{@location.test_requested || @location.clients.length == 0 ? "disabled" : ""}" %>
-    </div>
-  </div>
   <!--end::Card header-->
   <!--begin::Card body-->
-  <div class="card-body pt-0">
-    <div class="fw-bolder mt-5">Address</div>
-    <div class="text-gray-600"><%= location.address %></div>
-    <div class="fw-bolder mt-5">Expected MBPS Upload</div>
-    <div class="text-gray-600"><%= location.expected_mbps_up %></div>
-    <div class="fw-bolder mt-5">Expected MBPS Download</div>
-    <div class="text-gray-600"><%= location.expected_mbps_down %></div>
-    <div class="fw-bolder mt-5">Latitude</div>
-    <div class="text-gray-600"><%= location.latitude %></div>
-    <div class="fw-bolder mt-5">Longitude</div>
-    <div class="text-gray-600"><%= location.longitude %></div>
-  </div>
+    <!--begin::Card title-->
+      <div class="card-title-container d-flex flex-row justify-content-between align-items-center"
+           style="height: 90px;padding-left: 30px;padding-right: 30px;margin-top: 20px;margin-bottom: 50px;">
+        <div class="card-title--wrapper d-flex flow-row align-items-center">
+          <div class="card-title--icon d-flex align-items-center justify-content-center" 
+               style="height: 90px; width: 90px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
+            <span class="svg-icon svg-icon-4x svg-icon-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path opacity="0.3" d="M18.0624 15.3453L13.1624 20.7453C12.5624 21.4453 11.5624 21.4453 10.9624 20.7453L6.06242 15.3453C4.56242 13.6453 3.76242 11.4453 4.06242 8.94534C4.56242 5.34534 7.46242 2.44534 11.0624 2.04534C15.8624 1.54534 19.9624 5.24534 19.9624 9.94534C20.0624 12.0453 19.2624 13.9453 18.0624 15.3453Z" fill="black"/>
+              <path d="M12.0624 13.0453C13.7193 13.0453 15.0624 11.7022 15.0624 10.0453C15.0624 8.38849 13.7193 7.04535 12.0624 7.04535C10.4056 7.04535 9.06241 8.38849 9.06241 10.0453C9.06241 11.7022 10.4056 13.0453 12.0624 13.0453Z" fill="black"/>
+            </svg>
+          </span>
+          </div>
+          <div class="card-title--title-content">
+            <div class="fw-bolder mb-0" style="font-size: 19px;">
+              <%= location.name %>
+            </div>
+            <div style="color: #b5b5c3;font-size: 14px;">
+              <%= location.address %>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-row flex-wrap justify-content-evenly">
+          <div class="actions-menu d-lg-block d-xl-none" style="width:max-content">
+            <a href="#" class="btn btn-light btn-active-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+              Actions
+              <span class="svg-icon svg-icon-5 m-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+                </svg>
+              </span>
+            </a>
+            <div class="menu menu-sub menu-sub-dropdown menu-rounded menu-gray-600 menu-state-bg-light-primary" 
+                 style="width: inherit"
+                 data-kt-menu="true" 
+                 data-controller="menu">
+              <div class="menu-item">
+                <a class="menu-link p-5" href="<%= location_path(location) %>" data-bs-toggle="modal" data-bs-target="#add_pod_modal">Add Pod</a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link p-5" href="<%= location_path(location) %>" data-bs-toggle="modal" data-bs-target="#edit_location_modal_<%= location.id %>">Edit Location</a>
+              </div>
+            </div>
+          </div>
+          <a href="#" class="btn btn-light me-3 d-lg-none d-xl-block" data-bs-toggle="modal" data-bs-target="#add_pod_modal">Add Pod</button>
+          <a href="#" class="btn btn-light me-3 d-lg-none d-xl-block" data-bs-toggle="modal" data-bs-target="#edit_location_modal_<%= location.id %>">Edit Location</a>
+          <a href="<%= location_measurements_path(location) %>" class="btn btn-primary me-3">View Measurements</a>
+        </div>
+      </div>
+    <!--end::Card title-->
+    <div class="card-body pt-0 d-flex flex-row justify-content-between">
+      <div class="location-data" style="width: 40%;">
+        <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+          <div class="fw-bolder w-50" style="min-width: 130px;">Avg./Exp. Download</div>
+          <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
+            <div class="text-start fw-bolder" style="color: #5e6278; font-size: 14px; min-width: max-content">
+              <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} Mbps" : 'N/A'%>
+            </div>
+            <div class="text-start" style="color: #b5b5c3; font-size: 14px; margin-left: 3px; min-width: max-content">
+              <%= location.expected_mbps_down.present? ? " / #{location.expected_mbps_down} Mbps" : ''%>
+            </div>
+            <div class="text-start" style="color: #50cd89; font-size: 13px; margin-left: 8px;">
+              <%= location.expected_mbps_down.present? ? "+0.7%" : ''%>
+            </div>
+          </div>
+        </div>
+        <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+          <div class="fw-bolder w-50" style="min-width: 130px;">Avg./Exp. Upload</div>
+          <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
+            <div class="text-start fw-bolder" style="color: #5e6278; font-size: 14px; min-width: max-content">
+              <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up} Mbps" : 'N/A'%>
+            </div>
+            <div class="text-start" style="color: #b5b5c3; font-size: 14px; margin-left: 3px; min-width: max-content">
+              <%= location.expected_mbps_up.present? ? " / #{location.expected_mbps_up} Mbps" : ''%>
+            </div>
+            <div class="text-start" style="color: #50cd89; font-size: 13px; margin-left: 8px;">
+              <%= location.expected_mbps_up.present? ? "+2.55%" : ''%>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="location-data--row mt-6 mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+          <div class="fw-bolder w-50" style="min-width: 130px;">Latitude</div>
+          <div class="text-start w-100 w-xl-50 fw-bolder" style="color: #5e6278; font-size: 14px;"><%= location.latitude %></div>
+        </div>
+        <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+          <div class="fw-bolder w-50" style="min-width: 130px;">Longitude</div>
+          <div class="text-start w-100 w-xl-50 fw-bolder" style="color: #5e6278; font-size: 14px;"><%= location.longitude %></div>
+        </div>
+        <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+          <div class="fw-bolder w-50" style="min-width: 130px;">Current Pods</div>
+          <div class="text-start w-100 w-xl-50 fw-bolder" style="color: #5e6278; font-size: 14px;"><%= location.clients.length %></div>
+        </div>
+      </div>
+      <div class="map-container" style="width: 50%; height: inherit;">
+        <div style="height:100%; min-height: 260px" data-location-form-target="map" data-action="modal:shown->location#display" data-controller="location" data-location-latitude-value="<%= location.latitude %>" data-location-longitude-value="<%= location.longitude %>"></div>
+      </div>
+    </div>
   <!--end::Card body-->
 </div>
