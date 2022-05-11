@@ -186,7 +186,7 @@ EOF
 
     # If it's registered with a superuser token
     # set the pod as a staging pod
-    if current_user && current_user.superuser?
+    if @user && @user.superuser?
         @client.staging = true
         @client.raw_secret = @secret
       
