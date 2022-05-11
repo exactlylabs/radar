@@ -186,7 +186,7 @@ EOF
 
     # If it's registered with a superuser token
     # set the pod as a staging pod
-    if @user && @user.superuser?
+    if current_user && current_user.superuser?
         @client.staging = true
         @client.raw_secret = @secret
       
@@ -241,14 +241,8 @@ EOF
 
     def authenticate_client!
       client_id = params[:id]
-      client_secret = params[:secret]
-      client = Client.find_by_unix_user(client_id)
-      if client&.staging && client_secret == client.secret_digest
-        # Allow pods marked as staging to ping
-        @client = client
-      else
-        @client = client&.authenticate_secret(client_secret)
-      end
+      client_secret = params[:secret]      
+      @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
       if !@client
         head(403)
       end
