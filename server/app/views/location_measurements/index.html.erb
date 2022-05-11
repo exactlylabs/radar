@@ -24,17 +24,17 @@
   </div>
 </div>
 <!--end::Toolbar-->
-<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
-  <!--begin::OptionsCard-->
-    <%= render partial: "options_card", locals: { location: @location } %>
-  <!--end::OptionsCard-->
+<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-  <div class="container-xxl">
+  <div class="container-xxl w-100 d-flex" style="max-width: none;">
     <% if notice %>
      <p id="notice"><%= notice %></p>
     <% end %>
+    <!--begin::OptionsCard-->
+      <%= render partial: "options_card", locals: { location: @location } %>
+    <!--end::OptionsCard-->
     <!--begin::Card-->
-    <div class="card">
+    <div class="card" style="width: 80%">
       <div class="card-header border-0 pt-6">
         <div class="card-title"></div>
         <!--begin::Card toolbar-->
@@ -62,17 +62,19 @@
       <!--begin::Card body-->
       <div class="card-body pt-0">
         <!--begin::Table-->
-        <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer"><div class="table-responsive"><table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
+        <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+          <div class="table-responsive">
+            <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
           <!--begin::Table head-->
           <thead>
             <!--begin::Table row-->
             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 132.146px;">Time (<span data-controller="timezone"></span>)</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Style</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Download</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Upload</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Latency</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Jitter</th>
+              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1">Time (<span data-controller="timezone"></span>)</th>
+              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1">Style</th>
+              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1">Download</th>
+              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1">Upload</th>
+              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1">Latency</th>
+              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1">Jitter</th>
             <!--end::Table row-->
           </thead>
           <!--end::Table head-->
