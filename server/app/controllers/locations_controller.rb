@@ -53,6 +53,7 @@ class LocationsController < ApplicationController
 
   # PATCH/PUT /locations/1 or /locations/1.json
   def update
+    puts location_params
     respond_to do |format|
       if @location.update(location_params)
         format.turbo_stream
@@ -84,6 +85,6 @@ class LocationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def location_params
-      params.require(:location).permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude)
+      params.require(:location).permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude, :manual_lat_long)
     end
 end
