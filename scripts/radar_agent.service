@@ -1,0 +1,16 @@
+[Unit]
+Description=Radar Agent
+After=network.target auditd.service
+
+[Service]
+ExecStart=${AGENT_BINARY_PATH}
+StandardOutput=append:/var/log/radar/radar.log
+StandardError=append:/var/log/radar/radar_error.log
+KillMode=process
+Restart=always
+RestartSec=5
+User=radar
+Group=radar
+
+[Install]
+WantedBy=multi-user.target
