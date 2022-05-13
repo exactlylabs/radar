@@ -7,9 +7,40 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     exit
 fi
 
-if [[ "$#" -ne 1 ]]; then
-    echo "usage: ./create_master_image.sh <SUPERUSER_TOKEN>"
-    echo "  Where <SUPERUSER_TOKEN> is a token provided to you from radar server administrators"
+function usage() {
+echo """
+Usage: ./create_master_image.sh [OPTIONS] <SUPERUSER_TOKEN>
+
+Required Arguments:
+
+  SUPERUSER_TOKEN: is a token provided to you from radar server administrators
+
+Optional Arguments:
+
+  -s or --enable-ssh : Enables SSH server. [default: Not Enabled]
+"""
+}
+
+ENABLE_SSH=0
+
+while :; do
+    case $1 in
+        -h|--help)
+            usage
+            exit 0
+        ;;
+        -s|--enable-ssh)             
+            ENABLE_SSH=1
+        ;;
+        *) break
+    esac
+    shift
+done
+
+
+if [ -z "$1" ]; then
+    echo "Error: missing SUPERUSER_TOKEN argument"
+    usage
     exit 1
 fi
 
@@ -30,9 +61,9 @@ curl --output $BINARY_NAME $RADAR_AGENT_BIN_URL
 
 
 # Decompress the .xz file
-VERSION=20220121_raspi_4_bullseye.img
+VERSION=2022-04-04-raspios-bullseye-arm64-lite.img
 if [ ! -f $VERSION.xz ]; then
-curl -L --output $VERSION.xz https://raspi.debian.net/tested/$VERSION.xz 
+curl -L --output $VERSION.xz https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-04-07/$VERSION.xz 
 fi
 unxz $VERSION.xz
 
@@ -91,6 +122,10 @@ systemd-nspawn -D tmp /root/withinnewimage.sh
 echo "radar ALL=(ALL:ALL) NOPASSWD:ALL" > tmp/etc/sudoers.d/radar_sudoers
 chown 0:0 tmp/etc/sudoers.d/radar_sudoers
 chmod 440 tmp/etc/sudoers.d/radar_sudoers
+
+if [[ $ENABLE_SSH -eq 1 ]]; then
+    touch tmp/boot/ssh
+fi
 
 rm tmp/usr/bin/qemu-aarch64-static
 rm tmp/root/withinnewimage.sh
