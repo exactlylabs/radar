@@ -7,26 +7,35 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     exit
 fi
 
+if [[ "$#" -ne 1 ]]; then
+    echo "usage: ./create_master_image.sh <SUPERUSER_TOKEN>"
+    echo "  Where <SUPERUSER_TOKEN> is a token provided to you from radar server administrators"
+    exit 1
+fi
+
+RADAR_SERVER_URL="http://127.0.0.1:3001"
+
 AGENT_SERVICE="radar_agent.service"
-RADAR_AGENT_BIN_URL="https://radar.exactlylabs.com/client-versions/stable/distributions/linux-arm64/download"
+RADAR_AGENT_BIN_URL="$RADAR_SERVER_URL/client_versions/stable/distributions/linux-arm64/download"
 PROJECT_DIR="opt/radar"
 BINARY_NAME="radar_agent"
 IMAGE_FILENAME="radar.img"
-SUPERUSER_TOKEN="DQCMwRbMddaxLFQ2mJU6rgaL"
+SUPERUSER_TOKEN="$1"
 
 ## Start ##
 
 apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip
 
-# TODO: UNCOMMENT THIS WHEN THE SERVER HAS THE ENDPOINT IMPLEMENTED
 curl --output $BINARY_NAME $RADAR_AGENT_BIN_URL
 
-cp ../agent/dist/radar_agent .
 
 # Decompress the .xz file
 VERSION=20220121_raspi_4_bullseye.img
-curl --output $VERSION.xz https://raspi.debian.net/tested/$VERSION.xz 
+if [ ! -f $VERSION.xz ]; then
+curl -L --output $VERSION.xz https://raspi.debian.net/tested/$VERSION.xz 
+fi
 unxz $VERSION.xz
+
 
 # Mount the .img in an available loop (/dev/loop) device
 # This makes plain files accessible as block devices 
