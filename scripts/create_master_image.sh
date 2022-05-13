@@ -13,7 +13,7 @@ if [[ "$#" -ne 1 ]]; then
     exit 1
 fi
 
-RADAR_SERVER_URL="http://127.0.0.1:3001"
+RADAR_SERVER_URL="https://radar.exactlylabs.com"
 
 AGENT_SERVICE="radar_agent.service"
 RADAR_AGENT_BIN_URL="$RADAR_SERVER_URL/client_versions/stable/distributions/linux-arm64/download"
