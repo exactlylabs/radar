@@ -126,3 +126,12 @@ echo "Signing Binary"
 go run cmd/signing/main.go -bin $OUTPUT_FILE -key $KEY_PATH -cert $CERT_PATH -o "$OUTPUT_FILE"_signed
 
 echo "Signed File generated at "$OUTPUT_FILE"_signed"
+
+echo "Validating signed binary"
+
+go run cmd/validate/main.go -bin "$OUTPUT_FILE"_signed -o "$OUTPUT_FILE"_parsed
+rm "$OUTPUT_FILE"_parsed
+
+echo "Signed Binary Validated"
+
+echo "Finished Build and Sign"
