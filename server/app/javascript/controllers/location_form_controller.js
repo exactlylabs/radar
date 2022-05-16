@@ -1,7 +1,7 @@
 import { add, Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "address", "map", "latitude", "longitude", "manually_lat_long" ];
+  static targets = [ "address", "map", "latitude", "longitude", "manual_lat_long" ];
 
   connect() {
   }
@@ -27,12 +27,12 @@ export default class extends Controller {
   }
 
   onAddressChange(e) {
-    /*const manualSwitchElements = document.querySelectorAll('[id=location_manual_lat_long]');
+    const manualSwitchElements = document.querySelectorAll('[id=location_manual_lat_long]');
     let isSwitchOn = undefined;
-    for(let i = 0 ; isSwitchOn !== undefined && i < manualSwitchElements.length ; i++) {
+    for(let i = 0 ; isSwitchOn === undefined && i < manualSwitchElements.length ; i++) {
       if(manualSwitchElements[i].offsetParent) isSwitchOn = manualSwitchElements[i].checked;
     }
-    if(isSwitchOn) return; // If switch is on, prevent geo searching */
+    if(isSwitchOn) return; // If switch is on, prevent geo searching
     this.fetchGeoData(e.target.value);
   }
 

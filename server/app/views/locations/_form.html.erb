@@ -36,7 +36,7 @@
 
         <div class="fv-row mb-7 fv-plugins-icon-container">
           <div class="form-check form-switch form-check-custom form-check-solid">
-            <%= form.check_box :manual_lat_long, class: "form-check-input h-30px w-50px", data: { "location-form-target" => "manually", action: "input->location-form#onManuallyChange" } %>
+            <%= form.check_box :manual_lat_long, class: "form-check-input h-30px w-50px", data: { "location-form-target" => "manual_lat_long", action: "input->location-form#onManuallyChange" } %>
             <label class="form-check-label text-muted fw-bold" for="flexSwitchDefault">
                 Adjust coordinates manually
             </label>
@@ -103,6 +103,6 @@
 
   <div class="modal-footer">
     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-    <%= form.submit submit_name + " Location", class: "btn btn-primary" %>
+    <%= form.submit submit_name, class: "btn btn-primary" %>
   </div>
 <% end %>
