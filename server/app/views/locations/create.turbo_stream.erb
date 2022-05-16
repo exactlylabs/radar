@@ -1,0 +1,7 @@
+<%= turbo_stream.append @location do %>
+  <%= render partial: 'locations/location', locals: {location: @location} %>
+<% end %>
+
+<%= turbo_stream.update "locations_container" do %>
+    <%= render partial: 'location/locations_list', locals: {empty: @empty} %>
+<% end %>
