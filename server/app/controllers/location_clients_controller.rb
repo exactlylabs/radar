@@ -4,7 +4,6 @@ class LocationClientsController < ApplicationController
 
     # GET /clients
     def index
-        puts @location.clients
         @clients = @location.clients
 
         respond_to do |format|
