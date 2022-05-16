@@ -61,7 +61,7 @@
           <div class="fw-bolder w-50" style="min-width: 130px;">Avg./Exp. Download</div>
           <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
             <div class="text-start fw-bolder" style="color: #5e6278; font-size: 14px; min-width: max-content">
-              <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} Mbps" : 'N/A'%>
+              <%= location.download_avg.present? ? "#{location.download_avg} Mbps" : 'N/A'%>
             </div>
             <div class="text-start" style="color: #b5b5c3; font-size: 14px; margin-left: 3px; min-width: max-content">
               <%= location.expected_mbps_down.present? ? " / #{location.expected_mbps_down} Mbps" : ''%>
@@ -75,7 +75,7 @@
           <div class="fw-bolder w-50" style="min-width: 130px;">Avg./Exp. Upload</div>
           <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
             <div class="text-start fw-bolder" style="color: #5e6278; font-size: 14px; min-width: max-content">
-              <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up} Mbps" : 'N/A'%>
+              <%= location.upload_avg.present? ? "#{location.upload_avg} Mbps" : 'N/A'%>
             </div>
             <div class="text-start" style="color: #b5b5c3; font-size: 14px; margin-left: 3px; min-width: max-content">
               <%= location.expected_mbps_up.present? ? " / #{location.expected_mbps_up} Mbps" : ''%>
