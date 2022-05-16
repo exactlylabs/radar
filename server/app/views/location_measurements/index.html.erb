@@ -24,17 +24,17 @@
   </div>
 </div>
 <!--end::Toolbar-->
-<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
-  <!--begin::OptionsCard-->
-    <%= render partial: "options_card", locals: { location: @location } %>
-  <!--end::OptionsCard-->
+<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-  <div class="container-xxl">
+  <div class="container-xxl w-100 d-flex" style="max-width: none;">
     <% if notice %>
      <p id="notice"><%= notice %></p>
     <% end %>
+    <!--begin::OptionsCard-->
+      <%= render partial: "options_card", locals: { location: @location } %>
+    <!--end::OptionsCard-->
     <!--begin::Card-->
-    <div class="card">
+    <div class="card" style="width: 80%; height: max-content">
       <div class="card-header py-5 d-flex align-items-center">
         <div class="card-title" style="font-size: 20px; color: #3f4254">
           Measurements
@@ -154,7 +154,9 @@
           <!--end::Toolbar-->
         </div>
         <!--begin::Table-->
-        <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer"><div class="table-responsive"><table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
+        <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+          <div class="table-responsive">
+            <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
           <!--begin::Table head-->
           <thead>
             <!--begin::Table row-->

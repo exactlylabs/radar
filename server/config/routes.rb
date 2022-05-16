@@ -28,6 +28,8 @@ Rails.application.routes.draw do
         get 'ndt7_index'
       end
     end
+
+    resources :clients, controller: 'location_clients', only: [:index]
   end
 
   resources :clients do

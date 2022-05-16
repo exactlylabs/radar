@@ -1,0 +1,67 @@
+<div class="modal-dialog" style="position: relative; top: 20%; max-width: 620px">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" style="font-size: 20px">Add Pod to <%= location.name %></h5>
+        <!--begin::Close-->
+        <a href="#">
+            <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
+                    <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
+                    <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
+                </svg>
+            </span>
+        </a>
+        <!--end::Close-->
+    </div>
+
+    <div class="modal-body text-center d-flex flex-column justify-content-center align-items-center">
+        <div class="fw-bolder" style="font-size: 20px; color: #181c32">
+            What would you like to do?
+        </div>
+        <div class="modal-body--options-container d-flex flex-column align-items-center justify-content-center w-75">
+            <div id="old-pod-option"
+                 class="option d-flex flex-row justify-content-start mb-5 mt-10 align-items-center" 
+                 style="border: dashed 1px #b5b5c3; height: 100px; width: 500px; border-radius: 6px;"
+                 onclick="querySelector('#old-pod-option').classlist.toggle('clicked');">
+                <div class="d-flex justify-content-center align-items-center" 
+                     style="border-radius: 50%; background-color: #e4f2fc; margin-left: 25px; margin-right: 20px; height: 40px; width: 40px;">
+                    <span class="svg-icon svg-icon-primary svg-icon-2x">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M17.4 7H4C3.4 7 3 7.4 3 8C3 8.6 3.4 9 4 9H17.4V7ZM6.60001 15H20C20.6 15 21 15.4 21 16C21 16.6 20.6 17 20 17H6.60001V15Z" fill="black"/>
+                            <path opacity="0.3" d="M17.4 3V13L21.7 8.70001C22.1 8.30001 22.1 7.69999 21.7 7.29999L17.4 3ZM6.6 11V21L2.3 16.7C1.9 16.3 1.9 15.7 2.3 15.3L6.6 11Z" fill="black"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="text-start">
+                    <div class="fw-bolder" style="color: #181c32; font-size: 18px;">Move an existing Pod to this location</div>
+                    <div class="" style="color: #b5b5c3; font-size: 14px;">Choose an existing Pod to add to this location</div>
+                </div>
+            </div>
+            <div id="new-pod-option"
+                 class="option d-flex flex-row justify-content-start mb-10 align-items-center" 
+                 style="border: dashed 1px #b5b5c3; height: 100px; width: 500px; border-radius: 6px;"
+                 onclick="">
+                <div class="d-flex justify-content-center align-items-center" 
+                     style="border-radius: 50%; background-color: #e4f2fc; margin-left: 25px; margin-right: 20px; height: 40px; width: 40px;">
+                    <span class="svg-icon svg-icon-primary svg-icon-2x">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <rect x="10.8891" y="17.8033" width="12" height="2" rx="1" transform="rotate(-90 10.8891 17.8033)" fill="black"/>
+                            <rect x="6.01041" y="10.9247" width="12" height="2" rx="1" fill="black"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="text-start">
+                    <div class="fw-bolder" style="color: #181c32; font-size: 18px;">Set up a new Pod</div>
+                    <div class="" style="color: #b5b5c3; font-size: 14px;">Configure a new Pod to add to this location</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-bs-target="#add_pod_modal_step_1_existing">Continue</button>
+    </div>
+    </div>
+</div>

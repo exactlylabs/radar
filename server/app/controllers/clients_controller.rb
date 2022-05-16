@@ -28,6 +28,7 @@ class ClientsController < ApplicationController
 
   def claim_form
     @client = Client.new
+    @location_id = params[:location_id] || nil
   end
 
   def run_test
@@ -57,6 +58,7 @@ class ClientsController < ApplicationController
     @client_id = params[:id]
     @client_secret = params[:secret]
     @location_id = params[:location_id]
+    @client_name = params[:name]
 
     location = policy_scope(Location).where(id: @location_id).first
     @client = Client.where(unix_user: @client_id).first
@@ -65,7 +67,9 @@ class ClientsController < ApplicationController
       if @client && @client.authenticate_secret(@client_secret)
         @client.user = current_user
         @client.location = location
+        @client.name = @client_name
         @client.save
+        format.turbo_stream { render turbo_stream: turbo_stream.append('location_clients_table', partial: 'location_clients/location_clients_table_row', locals: {client: @client}) }
         format.turbo_stream { render turbo_stream: turbo_stream.append('clients', partial: 'clients/client', locals: {client: @client}) }
         format.html { redirect_to client_path(@client.unix_user), notice: "Client was successfully claimed." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
