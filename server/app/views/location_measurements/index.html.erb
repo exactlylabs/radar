@@ -51,43 +51,106 @@
           <!--begin::Toolbar-->
           <div class="d-flex justify-content-between" data-kt-customer-table-toolbar="base">
             <div class="dropdown-container">
-              <a href="#" class="btn btn-sm btn-light btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-              Last week
-                <span class="svg-icon svg-icon-5 m-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
-                  </svg>
-                </span>
-              </a>
-              <a href="#" class="btn btn-sm btn-light btn-active-light-primary ms-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-              All test styles
-                <span class="svg-icon svg-icon-5 m-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
-                  </svg>
-                </span>
-              </a>
-              <!--begin::Menu-->
-              <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true" data-controller="menu">
-                <div class="menu-item px-3">
-                  Option 1
+                <div class="btn-group">
+                  <a href="#" 
+                    class="btn btn-sm <%= params[:range] ? 'btn-light-primary' : 'btn-light' %> btn-active-light-primary px-2" 
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style="border-radius: 6px"
+                    id="schedule-button">
+                    <%= params[:range] ? parse_param(params[:range]) : 'All time ranges' %>
+                    <span class="svg-icon svg-icon-5 m-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+                      </svg>
+                    </span>
+                  </a>
+                  <!--begin::Menu-->
+                  <div class="dropdown-menu fw-bold fs-7 py-4"
+                      aria-labelledby="schedule-button">
+                    <a href="<%= determine_range_url(@location, 'last-week') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:range] == 'last-week' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                      Last week
+                    </a>
+                    <!--begin::Menu item-->
+                    <a href="<%= determine_range_url(@location, 'last-month') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:range] == 'last-month' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                      Last month
+                    </a>
+                    <!--end::Menu item-->
+                    <!--begin::Menu item-->
+                    <a href="<%= determine_range_url(@location, 'last-6-months') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:range] == 'last-6-months' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                      Last 6 months
+                    </a>
+                    <!--end::Menu item-->
+                    <!--begin::Menu item-->
+                    <a href="<%= determine_range_url(@location, 'last-year') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:range] == 'last-year' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                      Last year
+                    </a>
+                    <!--end::Menu item-->
+                    <!--begin::Menu item-->
+                    <a href="<%= determine_range_url(@location, 'all-time') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:range] == 'all-time' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                      All time
+                    </a>
+                    <!--end::Menu item-->
+                  </div>
                 </div>
-                <!--begin::Menu item-->
-                <div class="menu-item px-3">
-                  Option 2
+                <!--end::Menu-->
+                <div class="btn-group">
+                  <a href="#" 
+                    class="btn btn-sm <%= params[:style] ? 'btn-light-primary' : 'btn-light' %> btn-active-light-primary ms-5 px-2" 
+                    style="border-radius: 6px"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    id="style-button">
+                      <%= params[:style] ? parse_param(params[:style]) : 'All test styles' %>
+                      <span class="svg-icon svg-icon-5 m-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+                        </svg>
+                      </span>
+                  </a>
+                  <!--begin::Menu-->
+                  <div class="dropdown-menu dropup fw-bold fs-7 py-4"
+                      aria-labelledby="style-button">
+                    <a href="<%= determine_style_url(@location, 'NDT7') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:style] == 'NDT7' ? 'text-primary' : 'text-gray-700' %> p-3">
+                      NDT
+                    </a>
+                    <!--begin::Menu item-->
+                    <a href="<%= determine_style_url(@location, 'OOKLA') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:style] == 'OOKLA' ? 'text-primary' : 'text-gray-700' %> p-3">
+                      Ookla
+                    </a>
+                    <!--end::Menu item-->
+                  </div>
                 </div>
-                <!--end::Menu item-->
-                <!--begin::Menu item-->
-                <div class="menu-item px-3">
-                  Option 3
-                </div>
-                <!--end::Menu item-->
-              </div>
-              <!--end::Menu-->
+                <!--end::Menu-->
+              <% if params[:style] or params[:range] %>
+                <a class="btn btn-sm btn-light btn-active-light-primary ms-3 px-2" 
+                   href="<%= location_measurements_path(@location) %>"
+                   style="height: max-content">
+                    <span class="svg-icon svg-icon-light svg-icon-4" style="margin-right: 3px">
+                      <svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
+                        <g transform="translate(2 2)" fill="none" fill-rule="evenodd">
+                            <circle stroke="#B5B5C3" stroke-width="1.5" cx="5" cy="5" r="5.75"/>
+                            <g transform="rotate(45 2.44 6.06)" fill="#B5B5C3">
+                                <rect x="2.75" width="1.5" height="7" rx=".75"/>
+                                <rect transform="rotate(90 3.5 3.5)" x="2.75" width="1.5" height="7" rx=".75"/>
+                            </g>
+                        </g>
+                      </svg>
+                    </span>
+                  Clear filters
+                </a>
+              <% end %>
             </div>
             <div class="export-container">
               <!--begin::Export-->
-              <a href="<%= location_measurements_path(@location, format: 'csv') %>" class="btn btn-primary me-3">Export Measurements</a>
+              <a href="<%= location_measurements_path(@location, style: params[:style], range: params[:range], format: 'csv') %>" class="btn btn-primary me-3">Export Measurements</a>
               <!--end::Export-->
             </div>
           </div>
@@ -101,8 +164,24 @@
             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
               <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 132.146px;">Time</th>
               <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Style</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Download</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Upload</th>
+              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">
+                <svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 2px">
+                  <g transform="translate(2 2)" stroke="#B5B5C3" stroke-width="1.5" fill="none" fill-rule="evenodd">
+                      <circle cx="5" cy="5" r="5.75"/>
+                      <path d="M5 2v5M2.654 5 5 7.346 7.346 5"/>
+                  </g>
+                </svg>
+                Download
+              </th>
+              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">
+                <svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 2px">
+                  <g transform="translate(2 2)" stroke="#B5B5C3" stroke-width="1.5" fill="none" fill-rule="evenodd">
+                    <circle cx="5" cy="5" r="5.75"/>
+                    <path d="M5 8.046v-5M2.654 5.046 5 2.7l2.346 2.346"/>
+                  </g>
+                </svg>
+                Upload
+              </th>
               <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Latency</th>
               <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Jitter</th>
             <!--end::Table row-->
@@ -152,13 +231,13 @@
                 </li>
               <% end %>
             <% end %>
-            <li class="page-item next <%= params[:page].present? && pages == params[:page].to_i ? 'disabled' : ''%>">
+            <li class="page-item next <%= (pages == 0 || pages == 1) || (params[:page].present? && pages == params[:page].to_i) ? 'disabled' : ''%>">
               <% if pages > 1 %>
                 <a href="<%= location_measurements_path(page: (params[:page].present? ? params[:page].to_i + 1 : 2)) %>" class="page-link">
                   <i class="next"></i>
                 </a>
               <% else %>
-                <a href="#" class="page-link disabled">
+                <a href="#" class="page-link">
                   <i class="next"></i>
                 </a>
               <% end %>
