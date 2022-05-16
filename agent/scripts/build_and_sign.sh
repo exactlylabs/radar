@@ -11,6 +11,7 @@
 
 set -e
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BUILD_PROJECT=cmd/start_agent/main.go
 OUTPUT_FILE="./dist/radar_agent"
 GOARCH=$(go env GOARCH)
@@ -99,6 +100,8 @@ echo "Building $OUTPUT_FILE for $DISTRIBUTION "
 echo "Version: $1"
 echo "Commit: $COMMIT"
 
+echo "Building Ookla binary"
+$SCRIPT_DIR/make_ookla.sh -s $GOOS -a $GOARCH
 
 LDFLAGS="-s -X 'github.com/exactlylabs/radar/agent/internal/info.version=$VERSION' 
 -X 'github.com/exactlylabs/radar/agent/internal/info.commit=$COMMIT' 
