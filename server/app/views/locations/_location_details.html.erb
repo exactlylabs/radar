@@ -1,7 +1,7 @@
-<div class="card" style="width: 80%" id="location-details">
+<div class="card" style="width: 90%" id="location-details">
   <!--begin::Card header-->
     <div class="card-header align-items-center" style="height: 65px">
-      <h2 class="fw-bolder mb-0">Overview</h2>
+      <div class="fw-bolder mb-0" style="font-size: 20px; color: #3f4254">Overview</div>
     </div>
   <!--end::Card header-->
   <!--begin::Card body-->
@@ -66,8 +66,8 @@
             <div class="text-start" style="color: #b5b5c3; font-size: 14px; margin-left: 3px; min-width: max-content">
               <%= location.expected_mbps_down.present? ? " / #{location.expected_mbps_down} Mbps" : ''%>
             </div>
-            <div class="text-start" style="color: #50cd89; font-size: 13px; margin-left: 8px;">
-              <%= location.expected_mbps_down.present? ? "+0.7%" : ''%>
+            <div class="text-start" style="color: <%= location.download_diff.present? ? location.download_diff.start_with?('+') ? '#50cd89' : '#f1416c' : '#b5b5c3' %>; font-size: 13px; margin-left: 8px;">
+              <%= location.expected_mbps_down.present? ? location.download_diff : ''%>
             </div>
           </div>
         </div>
@@ -80,8 +80,8 @@
             <div class="text-start" style="color: #b5b5c3; font-size: 14px; margin-left: 3px; min-width: max-content">
               <%= location.expected_mbps_up.present? ? " / #{location.expected_mbps_up} Mbps" : ''%>
             </div>
-            <div class="text-start" style="color: #50cd89; font-size: 13px; margin-left: 8px;">
-              <%= location.expected_mbps_up.present? ? "+2.55%" : ''%>
+            <div class="text-start" style="color: <%= location.download_diff.present? ? location.download_diff.start_with?('+') ? '#50cd89' : '#f1416c' : '#b5b5c3' %>; font-size: 13px; margin-left: 8px;">
+              <%= location.expected_mbps_up.present? ? location.upload_diff : ''%>
             </div>
           </div>
         </div>

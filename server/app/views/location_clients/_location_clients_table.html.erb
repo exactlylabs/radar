@@ -1,4 +1,4 @@
-<div class="card" style="width: 80%; height:max-content">
+<div class="card" style="width: 90%; height:max-content">
         <!--begin::Card body-->
         <div class="card-body pt-0 px-0">
             <!--begin::Table-->
@@ -9,13 +9,13 @@
                         <!--begin::Table head-->
                         <thead>
                             <tr class="text-start fs-1 fw-bolder">
-                                <th class="py-7 ps-10 d-flex flex-column" style="font-size: 20px;">
+                                <th class="py-7 ps-10 d-flex flex-column" style="font-size: 20px; color: #3f4254">
                                     Pods
                                     <span style="font-size: 14px; color: #b5b5c3"><%= clients.length %> total pods</span>
                                 </th>
                                 <th></th>
                                 <th class="text-center" style="display: table-cell; vertical-align: middle">
-                                    <button type="button" class="btn btn-primary w-75" data-bs-toggle="modal" data-bs-target="#add_pod_step_1_existing">Add Pod</button>
+                                    <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#add_pod_step_1_existing">Add Pod</button>
                                 </th>
                             </tr>
                             <!--begin::Table row-->
@@ -32,8 +32,10 @@
                         <!--end::Table head-->
                         <!--begin::Table body-->
                         <tbody class="fw-bold text-gray-600" id="location_clients_table">
+                            <% counter = 1 %>
                             <% clients.order("LOWER(name)").each do |client| %>
-                                <%= render "location_clients_table_row", client: client %>
+                                <%= render partial: "location_clients_table_row", locals: { client: client, index: counter }%>
+                                <% counter += 1 %>
                             <% end %>
                         </tbody>
                         <!--end::Table body-->

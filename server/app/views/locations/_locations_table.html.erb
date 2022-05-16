@@ -1,24 +1,51 @@
-<div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-    <div class="table-responsive">
-        <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
-        <!--begin::Table head-->
-        <thead>
-            <!--begin::Table row-->
-            <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-            <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" aria-label="Location Name" style="width: 132.146px;">Name</th>
-            <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" aria-label="Address" style="width: 149.958px;">Address</th>
-            <th class="text-end min-w-70px sorting_disabled" rowspan="1" colspan="1" aria-label="Actions" style="width: 98.0417px;">Actions</th></tr>
-            <!--end::Table row-->
-        </thead>
-        <!--end::Table head-->
-        <!--begin::Table body-->
-        <tbody class="fw-bold text-gray-600" id="locations_table">
-        <% locations.order("LOWER(name)").each do |location| %>
-            <%= render "location", location: location %>
-        <% end %>
-        </tbody>
-            <!--end::Action=-->
-        <!--end::Table body-->
-        </table>
+<div class="card">
+    <!--begin::Card body-->
+    <div class="card-body pt-0 px-0">
+    <!--begin::Table-->
+    <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+        <div class="table-responsive">
+            <table class="table table-row-bordered align-middle fs-6 gy-5 dataTable 
+                          no-footer table-rounded" id="kt_customers_table">
+                <!--begin::Table head-->
+                <thead>
+                    <tr class="text-start fs-1 fw-bolder">
+                        <th class="py-7 ps-10" style="font-size: 20px;"><%= locations.size %> Locations</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <!--begin::Table row-->
+                    <tr class="text-start fw-bolder gs-0" 
+                        style="background-color: rgba(245, 248, 250, 0.6);font-size: 15px;">
+                        <th class="sorting ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                            rowspan="1" colspan="1" aria-label="Location Name">Name</th>
+                        <th class="sorting" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                            rowspan="1" colspan="1" aria-label="Address">Address</th>
+                        <th class="sorting_disabled" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                            rowspan="1" colspan="1" aria-label="Avg. Download Speed">Avg./Exp. Download</th>
+                        <th class="sorting_disabled" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                            rowspan="1" colspan="1" aria-label="Avg. Upload Speed">Avg./Exp. Upload</th>
+                        <th class="sorting_disabled" style="width: 8vw" tabindex="0" aria-controls="kt_customers_table" 
+                            rowspan="1" colspan="1" aria-label="Current Pods">Pods</th>
+                        <th class="text-end sorting_disabled" style="width: 8vw" rowspan="1" 
+                            colspan="1" aria-label="Actions"></th>
+                    </tr>
+                    <!--end::Table row-->
+                </thead>
+                <!--end::Table head-->
+                <!--begin::Table body-->
+                <tbody class="fw-bold text-gray-600" id="locations_table">
+                    <% locations.order("LOWER(name)").each do |location| %>
+                        <%= render "locations_table_row", location: location %>
+                    <% end %>
+                </tbody>
+                <!--end::Table body-->
+            </table>
+        </div>
     </div>
+    <!--end::Table-->
+    </div>
+    <!--end::Card body-->
 </div>
