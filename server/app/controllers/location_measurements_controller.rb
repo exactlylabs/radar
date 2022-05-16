@@ -8,17 +8,9 @@ class LocationMeasurementsController < ApplicationController
   def index
     @style = params[:style]
     @range = get_date_range(params[:range])
-    if @style.present? and @range.present?
-      @measurements = @location.measurements.where(style: @style).where(created_at: @range[0]..@range[1]).order(created_at: :desc).then(&paginate)
-    elsif @range.present?
-      @measurements = @location.measurements.where(created_at: @range[0]..@range[1]).order(created_at: :desc).then(&paginate)
-    elsif @style.present?
-      @measurements = @location.measurements.where(style: @style).order(created_at: :desc).then(&paginate)
-    else
-      @measurements = @location.measurements.order(created_at: :desc).then(&paginate)
-    end
+    @measurements = get_measurements(@location, @style, @range)
     @total = @measurements.length
-    puts @total
+    
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements, total: @total } }
       format.csv { send_data @measurements.to_csv, filename: "measurements-#{@location.id}.csv" }
@@ -48,6 +40,19 @@ class LocationMeasurementsController < ApplicationController
         [Time.now - 365.day, Time.now]
       else
         [Date.today]
+      end
+    end
+
+    def get_measurements(location, style, range)
+      if style.present? && range.present?
+        location.measurements.where(style: style).where(created_at: range[0]..range[1])
+                .order(created_at: :desc).then(&paginate)
+      elsif range.present?
+        location.measurements.where(created_at: range[0]..range[1]).order(created_at: :desc).then(&paginate)
+      elsif style.present?
+        location.measurements.where(style: style).order(created_at: :desc).then(&paginate)
+      else
+        location.measurements.order(created_at: :desc).then(&paginate)
       end
     end
 end
