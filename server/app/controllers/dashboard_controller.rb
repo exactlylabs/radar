@@ -6,7 +6,7 @@ class DashboardController < ApplicationController
     @clients = policy_scope(Client)
     @locations = get_filtered_locations(policy_scope(Location), params[:filter])
     
-    if @locations.length > 0
+    if @locations.length > 0 || params[:filter].present?
       @onboard_step = -1
     elsif @clients.length > 0
       @onboard_step = 3
@@ -16,12 +16,12 @@ class DashboardController < ApplicationController
   end
 
   private
-  def get_filtered_locations(locations, filter)
-    if filter.nil? || filter == 'all'
-      return locations
-    end
 
-    if filter == 'active'
+  def get_filtered_locations(locations, filter)
+    case filter
+    when nil, 'all'
+      locations
+    when 'active'
       locations.select { |location| location.online? }
     else
       locations.reject { |location| location.online? }

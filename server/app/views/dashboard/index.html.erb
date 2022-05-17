@@ -64,9 +64,9 @@
       <%= render partial: "onboard", locals: { step: @onboard_step } %>
     </div>
     <div class="row h-100 w-100">
-      <div class="col-3 h-100 pe-6">
+      <div class="col-4 h-100 pe-6">
         <div class="" style="max-height: 100%; overflow: scroll">
-          <div class="card">
+          <div class="card" style="min-height: 200px;">
             <div class="card-header">
               <div class="my-6 d-flex justify-content-between align-items-center w-100">
                 <div class="d-flex flex-column">
@@ -91,18 +91,18 @@
                     </a>
                     <div class="dropdown-menu fw-bold fs-7 py-4"
                       aria-labelledby="schedule-button">
-                      <a href="<%= determine_filter_url('all') %>" 
+                      <a href="<%= params[:filter] == 'all' ? dashboard_path : dashboard_path(filter: 'all') %>" 
                         class="menu-item text-hover-gray-500 <%= params[:filter].nil? || params[:filter] == 'all' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                         All locations
                       </a>
                       <!--begin::Menu item-->
-                      <a href="<%= determine_filter_url('active') %>" 
+                      <a href="<%= params[:filter] == 'active' ? dashboard_path : dashboard_path(filter: 'active') %>" 
                         class="menu-item text-hover-gray-500 <%= params[:filter] == 'active' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                         Active locations
                       </a>
                       <!--end::Menu item-->
                       <!--begin::Menu item-->
-                      <a href="<%= determine_filter_url('inactive') %>" 
+                      <a href="<%= params[:filter] == 'inactive' ? dashboard_path : dashboard_path(filter: 'inactive') %>" 
                         class="menu-item text-hover-gray-500 <%= params[:filter] == 'inactive' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                         Inactive locations
                       </a>
@@ -121,7 +121,7 @@
           </div>
         </div>
       </div>
-      <div class="col-9 h-100 position-relative">
+      <div class="col-8 h-100 position-relative">
         <div class="position-absolute top-0 bottom-0 start-0 end-0 <%= @onboard_step > 0 ? "d-none" : "" %>" data-onboard-target="map"  id="map"></div>
       </div>
     </div>
