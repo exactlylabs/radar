@@ -54,6 +54,20 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :staging_clients do
+    member do
+      post 'publish'
+    end
+  end
+
+  resources :client_versions do
+    resources :distributions do
+      member do
+        get 'download'
+      end
+    end
+  end
+
   post 'geocode', to: 'geocode#code'
   get 'dashboard', to: 'dashboard#index'
   

@@ -13,4 +13,8 @@ class ClientVersion < ApplicationRecord
         self.distributions.find_by(name: name)
     end
 
+    def self.stable
+        self.find_by_is_stable(true)
+    end
+
 end

@@ -4,26 +4,21 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="text-dark fw-bolder my-1 fs-2">Pods 
+      <h1 class="text-dark fw-bolder my-1 fs-2">Staging Pods 
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Home
+        <a href="<%= dashboard_path %>" class="breadcrumb-item text-muted text-hover-primary">Home
           <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
-        </li>
-        <li class="breadcrumb-item text-dark">Pods</li>
+        </a>
+        <a href="<%= clients_path %>" class="breadcrumb-item text-muted text-hover-primary">Pods</a>
+        <li class="breadcrumb-item text-dark">Staging Pods</li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
-    <% if current_user.superuser %>
-      <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-        <!--<a href="<%= claim_clients_path %>" class="btn btn-primary">Add Pod</a>-->
-        <a href="<%= staging_clients_path %>" class="btn btn-secondary mx-5">Staging Pods</a>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_pod_modal">Add Pod</button>
-      </div>
-    <% end %>
+    
   </div>
 </div>
 <!--end::Toolbar-->
@@ -40,14 +35,13 @@
       <!--begin::Card body-->
       <div class="card-body pt-0">
         <!--begin::Table-->
-        <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer"><div class="table-responsive"><table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
+        <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer pb-1"><div class="table-responsive pb-5"><table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
           <!--begin::Table head-->
           <thead>
             <!--begin::Table row-->
             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
               <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" aria-label="Pod ID" style="width: 132.146px;">Pod ID</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" aria-label="Location" style="width: 149.958px;">Location</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" aria-label="Status" style="width: 149.958px;">Status</th>
+              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" aria-label="Location" style="width: 149.958px;">Pod Secret</th>
               <th class="text-end min-w-70px sorting_disabled" rowspan="1" colspan="1" aria-label="Actions" style="width: 98.0417px;">Actions</th></tr>
             <!--end::Table row-->
           </thead>
@@ -55,7 +49,7 @@
           <!--begin::Table body-->
           <tbody class="fw-bold text-gray-600" id="clients">
           <% @clients.order("LOWER(unix_user)").each do |client| %>
-            <%= render "client", client: client %>
+            <%= render "staging_client", client: client %>
           <% end %>
           </tbody>
               <!--end::Action=-->
