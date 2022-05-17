@@ -9,7 +9,6 @@ class LocationMeasurementsController < ApplicationController
     @style = params[:style]
     @range = get_date_range(params[:range])
     @measurements = get_measurements(@location, @style, @range)
-    @total = @measurements.length
     
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements, total: @total } }
@@ -39,20 +38,21 @@ class LocationMeasurementsController < ApplicationController
       when 'last-year'
         [Time.now - 365.day, Time.now]
       else
-        [Date.today]
+        [nil, Time.now]
       end
     end
 
     def get_measurements(location, style, range)
       if style.present? && range.present?
-        location.measurements.where(style: style).where(created_at: range[0]..range[1])
-                .order(created_at: :desc).then(&paginate)
+        elements = location.measurements.where(style: style).where(created_at: range[0]..range[1])
       elsif range.present?
-        location.measurements.where(created_at: range[0]..range[1]).order(created_at: :desc).then(&paginate)
+        elements = location.measurements.where(created_at: range[0]..range[1])
       elsif style.present?
-        location.measurements.where(style: style).order(created_at: :desc).then(&paginate)
+        elements = location.measurements.where(style: style)
       else
-        location.measurements.order(created_at: :desc).then(&paginate)
+        elements = location.measurements
       end
+      @total = elements.length
+      elements.order(created_at: :desc).then(&paginate)
     end
 end
