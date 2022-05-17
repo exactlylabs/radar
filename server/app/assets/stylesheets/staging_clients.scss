@@ -1,0 +1,29 @@
+// Place all the styles related to the StagingClients controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: https://sass-lang.com/
+
+
+.clipboard-message {
+  display: none;
+}
+
+.fade-out {
+    display: block;
+    animation: fade 2s;
+    -webkit-animation: fade 2s;
+    -moz-animation: fade 2s;
+  }
+ 
+  /* Animate opacity */
+  @keyframes fade {
+    from { opacity: 1 }
+    to { opacity: 0 }
+  }
+  @-moz-keyframes fade {
+    from { opacity: 1 }
+    to { opacity: 0 }
+  }
+  @-webkit-keyframes fade {
+    from { opacity: 1 }
+    to { opacity: 0 }
+  }

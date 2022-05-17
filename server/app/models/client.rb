@@ -12,6 +12,8 @@ class Client < ApplicationRecord
   after_validation :geocode
   has_secure_password :secret, validations: false
 
+  scope :where_online, -> { where("pinged_at > ?", 1.minute.ago)}
+
   def latest_download
     latest_measurement ? latest_measurement.download : nil
   end
@@ -105,11 +107,11 @@ class Client < ApplicationRecord
   def create_ids
     o = [('a'..'z'), (0..9)].map(&:to_a).flatten - [0, 1, "o", "l"]
     string = (0...11).map { o[rand(o.length)] }.join
-
     self.unix_user = "r#{string}"
   end
 
   def latest_measurement
     self.measurements.order(created_at: :desc).first
   end
+
 end

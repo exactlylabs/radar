@@ -186,12 +186,13 @@ EOF
       @client.update_group = ug
     end
 
-    # If there is an user
-    if @user
-      if @user.superuser?
+    # If it's registered with a superuser token
+    # set the pod as a staging pod
+    if @user && @user.superuser?
         @client.staging = true
-      end
-      # TODO: For future releases, it's interesting
+        @client.raw_secret = @secret
+      
+        # TODO: For future releases, it's interesting
       # if we could auto-claim the pod if it's already authenticated.
     end
     puts policy_scope(Client)
@@ -248,8 +249,7 @@ EOF
 
     def authenticate_client!
       client_id = params[:id]
-      client_secret = params[:secret]
-
+      client_secret = params[:secret]      
       @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
       if !@client
         head(403)
