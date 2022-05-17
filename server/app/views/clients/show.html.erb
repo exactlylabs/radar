@@ -15,7 +15,7 @@
         <li class="breadcrumb-item text-muted">
           <a href="<%= clients_path %>" class="text-muted text-hover-primary">Pods</a>
         </li>
-        <li class="breadcrumb-item text-dark"><%= @client.unix_user %></li>
+        <li class="breadcrumb-item text-dark"><%= @client.name || 'Unnamed Pod' %></li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
@@ -24,15 +24,16 @@
 </div>
 <!--end::Toolbar-->
 
-<p id="notice"><%= notice %></p>
-
-<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-  <div class="container-xxl">
+  <div class="container-xxl w-100 d-flex" style="max-width: none;">
   
     <% if notice %>
-    <p id="notice"><%= notice %></p>
+      <p id="notice"><%= notice %></p>
     <% end %>
+    <!--begin::OptionsCard-->
+    <%= render partial: "options_card", locals: { client: @client, location: nil, style: 'clients' } %>
+    <!--end::OptionsCard-->
     <!--begin::Card-->
     <%= render partial: "client_details", locals: { client: @client } %>
     <!--end::Card-->

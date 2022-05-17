@@ -1,14 +1,18 @@
 class ClientMeasurementsController < ApplicationController
+  include Pagination
   before_action :authenticate_user!, except: %i[ create ]
   before_action :set_client
   skip_forgery_protection only: %i[ create ]
 
   # GET /measurements or /measurements.json
   def index
-    @measurements = @client.measurements
+    @style = params[:style]
+    @range = get_date_range(params[:range])
+    # @total = @client.measurements.length
+    @measurements = get_measurements(@client, @style, @range)
 
     respond_to do |format|
-      format.html
+      format.html { render "index", locals: { measurements: @measurements, total: @total } }
       format.csv { send_data @measurements.to_csv, filename: "measurements-#{@client.unix_user}.csv" }
     end
   end
@@ -83,5 +87,34 @@ class ClientMeasurementsController < ApplicationController
 
     def client_signed_in?
       Client.find_by_unix_user(params[:client_id])&.authenticate_secret(params[:client_secret]) != false
+    end
+
+    def get_date_range(range)
+      case range
+      when 'last-week'
+        [Time.now - 7.day, Time.now]
+      when 'last-month'
+        [Time.now - 30.day, Time.now]
+      when 'last-six-months'
+        [Time.now - 180.day, Time.now]
+      when 'last-year'
+        [Time.now - 365.day, Time.now]
+      else
+        [nil, Time.now]
+      end
+    end
+
+    def get_measurements(client, style, range)
+      if style.present? && range.present?
+        elements = client.measurements.where(style: style).where(created_at: range[0]..range[1])
+      elsif range.present?
+        elements = client.measurements.where(created_at: range[0]..range[1])
+      elsif style.present?
+        elements = client.measurements.where(style: style)
+      else
+        elements = client.measurements
+      end
+      @total = elements.length
+      elements.order(created_at: :desc).then(&paginate)
     end
 end
