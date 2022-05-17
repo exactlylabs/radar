@@ -7,8 +7,7 @@ class ClientMeasurementsController < ApplicationController
   # GET /measurements or /measurements.json
   def index
     @style = params[:style]
-    @range = get_date_range(params[:range])
-    # @total = @client.measurements.length
+    @range = get_date_range(params[:range]) 
     @measurements = get_measurements(@client, @style, @range)
 
     respond_to do |format|
