@@ -86,7 +86,7 @@ fi
 mkdir ooklaSpeedTest
 cd ooklaSpeedTest
 
-wget $URL
+curl -L --output $TARNAME $URL
 
 if [ $(echo "${TARNAME##*.}") = "zip" ]; then
     unzip $TARNAME
