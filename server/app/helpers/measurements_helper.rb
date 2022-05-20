@@ -1,6 +1,6 @@
 module MeasurementsHelper
 
-  def determine_style_url(entity, type, style)
+  def determine_measurements_style_path(entity, type, style)
     if params[:style] == style
       case type
       when 'clients'

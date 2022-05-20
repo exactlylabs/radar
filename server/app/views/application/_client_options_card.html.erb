@@ -3,7 +3,7 @@
       class="btn btn-active-light btn-active-color-primary
             btn-active-icon-primary text-start px-3 w-100
             d-flex justify-content-start align-items-center flex-row
-            <%= exact_path?(client_path(@client.unix_user)) %>">
+            <%= active_full_path?(client_path(@client.unix_user)) %>">
     <span class="svg-icon mx-0" style="height: 14px; width: 14px;">
       <svg width="14px" height="14px" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" fill="none">
         <rect id="Rectangle" opacity="0.3" x="1" y="6" width="12" height="2" rx="1" fill="black"/>
@@ -19,7 +19,7 @@
       class="btn btn-active-light btn-active-color-primary 
             btn-active-icon-primary text-start px-3 w-100
             d-flex justify-content-start align-items-center flex-row
-            <%= exact_path?(client_measurements_path(@client.unix_user)) %>">
+            <%= active_full_path?(client_measurements_path(@client.unix_user)) %>">
     <!--begin::Svg Icon | path: assets/media/icons/duotune/general/gen032.svg-->
     <span class="svg-icon mx-0" style="height: 14px; width: 14px;">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

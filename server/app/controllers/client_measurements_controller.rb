@@ -8,7 +8,7 @@ class ClientMeasurementsController < ApplicationController
   def index
     @style = params[:style]
     @range = get_date_range(params[:range]) 
-    @measurements = get_measurements(@client, @style, @range)
+    @measurements = get_filtered_measurements(@client, @style, @range)
 
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements, total: @total } }
@@ -103,7 +103,7 @@ class ClientMeasurementsController < ApplicationController
       end
     end
 
-    def get_measurements(client, style, range)
+    def get_filtered_measurements(client, style, range)
       if style.present? && range.present?
         elements = client.measurements.where(style: style).where(created_at: range[0]..range[1])
       elsif range.present?
