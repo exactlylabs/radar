@@ -42,25 +42,11 @@ class Location < ApplicationRecord
   end
 
   def download_avg
-    if self.measurements.length == 0
-      return nil
-    end
-    avg = 0
-    self.measurements.each do |measurement|
-      avg += measurement.download
-    end
-    (avg / self.measurements.length).round(5) # Should we set a better precision?
+    self.measurements.average(:download).round(5)
   end
 
   def upload_avg
-    if self.measurements.length == 0
-      return nil
-    end
-    avg = 0
-    self.measurements.each do |measurement|
-      avg += measurement.upload
-    end
-    (avg / self.measurements.length).round(5) # Should we set a better precision?
+    self.measurements.average(:upload).round(5)
   end
 
   def download_diff
