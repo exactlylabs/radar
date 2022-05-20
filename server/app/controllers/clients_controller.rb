@@ -69,8 +69,7 @@ class ClientsController < ApplicationController
         @client.location = location
         @client.name = @client_name
         @client.save
-        format.turbo_stream { render turbo_stream: turbo_stream.append('location_clients_table', partial: 'location_clients/location_clients_table_row', locals: {client: @client}) }
-        format.turbo_stream { render turbo_stream: turbo_stream.append('clients', partial: 'clients/client', locals: {client: @client}) }
+        format.turbo_stream
         format.html { redirect_to client_path(@client.unix_user), notice: "Client was successfully claimed." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
