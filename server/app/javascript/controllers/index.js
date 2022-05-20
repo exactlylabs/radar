@@ -39,3 +39,6 @@ application.register("onboard", OnboardController)
 
 import Select2Controller from "./select2_controller.js"
 application.register("select2", Select2Controller)
+
+import AddPodController from "./add_pod_controller.js"
+application.register("add-pod", AddPodController);

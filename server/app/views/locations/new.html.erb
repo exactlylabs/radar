@@ -2,23 +2,23 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">New Location</h5>
-
+        <h5 class="modal-title" style="font-size: 20px">Add Location</h5>
         <!--begin::Close-->
         <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
           <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-          <span class="svg-icon svg-icon-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="black"></rect>
-              <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="black"></rect>
-            </svg>
+          <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
+                  <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
+                  <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
+              </svg>
           </span>
           <!--end::Svg Icon-->
         </div>
         <!--end::Close-->
       </div>
 
-      <%= render 'form', location: @location, submit_name: "Add" %>
+      <%= render 'form', location: @location, submit_name: "Create", data_target: params[:data_target] %>
     </div>
   </div>
 <% end %>

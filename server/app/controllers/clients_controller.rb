@@ -24,10 +24,19 @@ class ClientsController < ApplicationController
 
   # GET /clients/1/edit
   def edit
+    
   end
 
   def claim_form
     @client = Client.new
+  end
+
+  def validate_id_and_secret
+    @client_id = params[:id]
+    @client_secret = params[:secret]
+    puts "#{@client_id} <> #{@client_secret}"
+    @client = Client.where(unix_user: @client_id).first
+    @client&.authenticate_secret(@client_secret)
   end
 
   def run_test
@@ -236,7 +245,7 @@ EOF
 
     # Only allow a list of trusted parameters through.
     def client_params
-      params.require(:client).permit(:name, :address, :location_id)
+      params.require(:client).permit(:name, :address, :location_id, :data_target)
     end
 
     def authenticate_client!

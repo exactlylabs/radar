@@ -17,7 +17,7 @@
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
-    <% if current_user.superuser %>
+    <% if !current_user.superuser %>
       <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
         <!--<a href="<%= claim_clients_path %>" class="btn btn-primary">Add Pod</a>-->
         <a href="<%= staging_clients_path %>" class="btn btn-secondary mx-5">Staging Pods</a>
@@ -77,7 +77,12 @@
   <% end %>
 </div>
 
-<div class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
+<div class="modal fade" tabindex="-1" id="edit_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
   <%= turbo_frame_tag "edit_client_modal" do %>
+  <% end %>
+</div>
+
+<div class="modal fade" tabindex="-1" id="new_location_modal" data-controller="modal" data-action="turbo:submit-end->modal#handleNewLocationFromClientModal">
+  <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "create-pod-modal")  do %>
   <% end %>
 </div>

@@ -44,3 +44,8 @@
   <%= turbo_frame_tag "edit_client_modal", src: edit_client_path(@client.unix_user) do %>
   <% end %>
 </div>
+
+<div class="modal fade" tabindex="-1" id="new_location_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit">
+  <%= turbo_frame_tag "new_location_modal", src: new_location_path do %>
+  <% end %>
+</div>

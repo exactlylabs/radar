@@ -17,4 +17,12 @@ export default class extends Controller {
       this.hideModal();
     }
   }
+
+  handleNewLocationFromClientModal(e) {
+    if(e.detail.success) {
+      this.hideModal();
+      $('#edit_pod_modal').modal('show');
+      document.querySelector('#location-created-snackbar').classList.remove('d-none');
+    }
+  }
 }
