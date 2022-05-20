@@ -1,5 +1,5 @@
 module DashboardHelper
-  def parse_filter_param(param)
+  def location_filter_name_to_human(param)
     case param
     when 'active'
       'Active locations'
