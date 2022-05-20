@@ -17,7 +17,7 @@
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
-    <% if current_user.superuser %>
+    <% if !current_user.superuser %>
       <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
         <!--<a href="<%= claim_clients_path %>" class="btn btn-primary">Add Pod</a>-->
         <a href="<%= staging_clients_path %>" class="btn btn-secondary mx-5">Staging Pods</a>
