@@ -8,7 +8,7 @@ class DistributionsController < ApplicationController
       head(404)
     else
       response.headers["Content-Type"] = @dist.binary.content_type
-      response.headers["Content-Disposition"] = "attachment; #{@dist.binary.filename}"
+      response.headers["Content-Disposition"] = "attachment; filename=#{@dist.binary.filename}"
       
       @dist.binary.download do |chunk|
         response.stream.write(chunk)

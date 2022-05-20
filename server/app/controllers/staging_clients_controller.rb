@@ -3,7 +3,7 @@ class StagingClientsController < ApplicationController
     if !current_user.superuser
       head(403)
     end
-    @clients = Client.where(staging: true)
+    @clients = Client.where(staging: true).where_online
   end
   
   # POST /staging-clients/id/publish

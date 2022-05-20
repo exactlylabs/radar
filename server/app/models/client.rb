@@ -12,6 +12,8 @@ class Client < ApplicationRecord
   after_validation :geocode
   has_secure_password :secret, validations: false
 
+  scope :where_online, -> { where("pinged_at > ?", 1.minute.ago)}
+
   def latest_download
     latest_measurement ? latest_measurement.download : nil
   end
