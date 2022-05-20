@@ -28,8 +28,8 @@ export default class extends Controller {
 
   onAddressChange(e) {
     const manualSwitchElements = document.querySelectorAll('[id=location_manual_lat_long]');
-    let isSwitchOn = undefined;
-    for(let i = 0 ; isSwitchOn === undefined && i < manualSwitchElements.length ; i++) {
+    let isSwitchOn = null;
+    for(let i = 0 ; isSwitchOn === null && i < manualSwitchElements.length ; i++) {
       if(manualSwitchElements[i].offsetParent) isSwitchOn = manualSwitchElements[i].checked;
     }
     if(isSwitchOn) return; // If switch is on, prevent geo searching
@@ -48,7 +48,7 @@ export default class extends Controller {
     }
   }
 
-  onManuallyChange(e) {
+  onManualChange(e) {
     const conditionalClassElements = document.getElementsByClassName('conditional');
     const isReadOnly = !e.target.checked;
     conditionalClassElements.forEach(element => {

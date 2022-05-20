@@ -244,7 +244,7 @@ EOF
 
     def authenticate_client!
       client_id = params[:id]
-      client_secret = params[:secret]      
+      client_secret = params[:secret]
       @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
       if !@client
         head(403)

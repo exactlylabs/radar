@@ -15,7 +15,7 @@
       <div class="pod-name--container">
         <a class="text-gray-800 text-hover-primary fw-bolder"
             style="font-size:15px; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
-            href="<%= client_path(client)%>" data-turbo-frame="_top">
+            href="<%= client_path(client.unix_user)%>" data-turbo-frame="_top">
             <%= client.name.present? ? client.name : "Unnamed Pod #{index}" %>
         </a>
         <div class="pod-name--subtitle">
