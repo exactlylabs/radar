@@ -13,6 +13,7 @@ import (
 	"github.com/exactlylabs/radar/agent/agent"
 	"github.com/m-lab/ndt7-client-go"
 	"github.com/m-lab/ndt7-client-go/spec"
+	"golang.org/x/sys/cpu"
 )
 
 const (
@@ -79,10 +80,10 @@ func (r *ndt7Runner) writeSummary(w io.Writer, client *ndt7.Client) error {
 	}
 	// Upload comes from the client-side Measurement during the upload test.
 	if ul, ok := results[spec.TestUpload]; ok {
-		if ul.Client.AppInfo != nil && ul.Client.AppInfo.ElapsedTime > 0 {
-			elapsed := float64(ul.Client.AppInfo.ElapsedTime) / 1e06
+		if ul.Server.TCPInfo != nil && ul.Server.TCPInfo.BytesReceived > 0 {
+			elapsed := float64(ul.Server.TCPInfo.ElapsedTime) / 1e06
 			s.Upload = value{
-				Value: (8.0 * float64(ul.Client.AppInfo.NumBytes)) /
+				Value: (8.0 * float64(ul.Server.TCPInfo.BytesReceived)) /
 					elapsed / (1000.0 * 1000.0),
 			}
 		}
@@ -104,6 +105,7 @@ func (r *ndt7Runner) Run(ctx context.Context) (res []byte, err error) {
 	log.Println("NDT7 - Starting Speed Test")
 	log.Println("NDT7 - Starting Download Test")
 	client := ndt7.NewClient(clientName, clientVersion)
+	client.Scheme = defaultSchemeForArch()
 	b := &bytes.Buffer{}
 	err = r.runTest(ctx, b, client.StartDownload)
 	if err != nil {
@@ -139,4 +141,15 @@ func (r *ndt7Runner) Run(ctx context.Context) (res []byte, err error) {
 		return nil, fmt.Errorf("speedtest.ndt7Runner#Run failed reading buffer: %w", err)
 	}
 	return res, nil
+}
+
+// defaultSchemeForArch returns the default WebSocket scheme to use, depending
+// on the architecture we are running on. A CPU without native AES instructions
+// will perform poorly if TLS is enabled.
+// Took from https://github.com/m-lab/ndt7-client-go/blob/master/cmd/ndt7-client/main.go#L194
+func defaultSchemeForArch() string {
+	if cpu.ARM64.HasAES || cpu.ARM.HasAES || cpu.X86.HasAES {
+		return "wss"
+	}
+	return "ws"
 }

@@ -33,7 +33,9 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
-        format.turbo_stream { render turbo_stream: turbo_stream.append('locations', partial: 'locations/location', locals: {location: @location}) }
+        format.turbo_stream { 
+          render turbo_stream: turbo_stream.replace('location_container_dynamic', partial: 'locations_list', locals: {locations: policy_scope(Location)}) 
+        }
         format.html { redirect_to locations_path, notice: "Location was successfully created." }
         format.json { render :show, status: :created, location: @location }
       else
@@ -69,6 +71,7 @@ class LocationsController < ApplicationController
   def destroy
     @location.destroy
     respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.replace('location_container_dynamic', partial: 'locations_list', locals: {locations: policy_scope(Location)}) }
       format.turbo_stream { render turbo_stream: turbo_stream.remove(@location) }
       format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }
       format.json { head :no_content }
