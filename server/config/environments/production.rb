@@ -138,4 +138,6 @@ Rails.application.configure do
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
   config.secret_key_base = ENV["SECRET_KEY_BASE"]
+
+  config.fips_geocoder_url = ENV["FIPS_GEOCODER_URL"]
 end
