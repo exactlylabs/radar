@@ -4,9 +4,10 @@ class Location < ApplicationRecord
   belongs_to :user
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
-
-  geocoded_by :address do |obj, results|
+  
+  geocoded_by :address do |obj, results|    
     if geo = results.first
+      obj.state_fips, obj.county_fips = fips_codes geo.latitude, geo.longitude
       obj.latitude = geo.latitude
       obj.longitude = geo.longitude
       #obj.city = geo.city
@@ -36,4 +37,23 @@ class Location < ApplicationRecord
   def online?
     clients.where("pinged_at > ?", 1.minute.ago).any?
   end
+
+  def self.fips_codes(lat, long)
+    uri = URI("#{Rails.configuration.fips_geocoder_url}/api/v1/fips")
+    params = {"latitude": lat, "longitude": long}
+    uri.query = URI.encode_www_form(params)
+    begin
+      res = Net::HTTP.get_response(uri)
+    rescue
+      return nil, nil
+    end
+    if res.is_a?(Net::HTTPSuccess)
+      data = JSON.parse(res.body)
+      state_fips = data["state_fips"] != "" ? data["state_fips"] : nil
+      county_fips = data["county_fips"] != "" ? data["county_fips"] : nil
+      return state_fips, county_fips
+    end
+    return nil, nil
+  end
+
 end
