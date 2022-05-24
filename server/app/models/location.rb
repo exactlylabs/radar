@@ -1,4 +1,4 @@
-require "#{Rails.root}/lib/fips/fips_geocoder.rb"
+require_relative "../../lib/fips/fips_geocoder.rb"
 
 class Location < ApplicationRecord
   validates :name, :address, presence: true
