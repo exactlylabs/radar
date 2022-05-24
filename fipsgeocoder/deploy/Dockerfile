@@ -25,8 +25,8 @@ FROM alpine:3.14.0
 WORKDIR /app
 
 # Copy the binary and default shape files
-COPY --from=builder /go/src/github.com/exactlylabs/radar/fipsgeocoder/start_server ./
 COPY --from=builder /go/src/github.com/exactlylabs/radar/fipsgeocoder/shapes/ ./shapes/
+COPY --from=builder /go/src/github.com/exactlylabs/radar/fipsgeocoder/start_server ./
 
 # Create user to run as non root
 RUN adduser -D appuser
