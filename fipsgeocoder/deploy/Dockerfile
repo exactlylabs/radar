@@ -28,13 +28,5 @@ WORKDIR /app
 COPY --from=builder /go/src/github.com/exactlylabs/radar/fipsgeocoder/shapes/ ./shapes/
 COPY --from=builder /go/src/github.com/exactlylabs/radar/fipsgeocoder/start_server ./
 
-# Create user to run as non root
-RUN adduser -D appuser
-
-# Change permission to non root user
-RUN chown -R appuser .
-
-# Don't run as root
-USER appuser
 EXPOSE 5000
 CMD ["./start_server"]
