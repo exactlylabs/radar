@@ -75,9 +75,4 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
-  if ENV["FIPS_GEOCODER_URL"].present?
-    config.fips_geocoder_url = ENV["FIPS_GEOCODER_URL"]
-  else
-    config.fips_geocoder_url = "http://127.0.0.1:5000"
-  end
 end
