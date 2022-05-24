@@ -2,6 +2,7 @@ class ClientVersion < ApplicationRecord
     has_many :clients, dependent: :nullify
     has_many :update_groups, dependent: :restrict_with_exception
     has_many :distributions, dependent: :restrict_with_exception
+    validates :version, uniqueness: true
 
     has_one_attached :signed_binary
 
