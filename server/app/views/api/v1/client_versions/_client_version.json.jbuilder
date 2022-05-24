@@ -1,0 +1,1 @@
+json.extract! client_version, :id, :version, :is_stable, :created_at, :updated_at

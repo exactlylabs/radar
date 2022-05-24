@@ -1,0 +1,1 @@
+json.partial! "api/v1/client_versions/client_version", client_version: @client_version
