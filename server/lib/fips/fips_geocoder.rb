@@ -1,6 +1,4 @@
 module FipsGeocoderCli
-  @base_url = "http://127.0.0.1:5000"
-
   def self.base_url=(url)
     @base_url = url
   end
