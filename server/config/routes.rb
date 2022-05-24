@@ -69,6 +69,14 @@ Rails.application.routes.draw do
   post 'geocode', to: 'geocode#code'
   get 'dashboard', to: 'dashboard#index'
   
+  namespace 'api' do
+    namespace 'v1' do
+      resources :client_versions do
+        resources :distributions
+      end
+    end
+  end
+
   #root to: 'home#home'
   root to: redirect('/users/sign_in')
 end
