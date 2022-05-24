@@ -1,0 +1,55 @@
+<div class="card w-100" style="height:max-content; margin: 20px auto;">
+        <!--begin::Card body-->
+        <div class="card-body pt-0 px-0">
+            <!--begin::Table-->
+            <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                <div class="table-responsive">
+                    <table class="table table-row-bordered align-middle fs-6 gy-5 dataTable 
+                            no-footer table-rounded" id="kt_customers_table">
+                        <!--begin::Table head-->
+                        <thead>
+                            <tr class="text-start fs-1 fw-bolder">
+                                <th class="py-7 ps-10 d-flex flex-column" style="font-size: 20px; color: #3f4254">
+                                    <%= location %>
+                                    <span style="font-size: 14px; color: #b5b5c3"><%= @clients.length %> total pods</span>
+                                </th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="text-center" style="display: table-cell; vertical-align: middle">
+                                  <a class="btn btn-light-primary w-45 px-5" style="margin-right: 20px"href="<%= location_path(@clients[0].location) %>">View Details</button>
+                                  <a class="btn btn-primary w-45 px-5" href="<%= run_test_on_every_client(@clients) %>">Run test</button>
+                                </th>
+                            </tr>
+                            <!--begin::Table row-->
+                            <tr class="text-start fw-bolder gs-0" 
+                                style="background-color: rgba(245, 248, 250, 0.6);font-size: 15px;">
+                                <th class="sorting ps-10" style="width: 20vw" tabindex="0" aria-controls="kt_customers_table" 
+                                    aria-label="Pod Name">Pod Name</th>
+                                <th class="sorting" style="width: 23vw" tabindex="0" aria-controls="kt_customers_table" 
+                                    aria-label="Status">Status</th>
+                                <th class="sorting" style="width: 23vw" tabindex="0" aria-controls="kt_customers_table" 
+                                    aria-label="Status">Added</th>
+                                <th class="sorting" style="width: 11vw" tabindex="0" aria-controls="kt_customers_table" 
+                                    aria-label="Status">Total tests</th>
+                                <th class="text-end sorting_disabled" style="width: 23vw" aria-label="Actions"></th>
+                            </tr>
+                            <!--end::Table row-->
+                        </thead>
+                        <!--end::Table head-->
+                        <!--begin::Table body-->
+                        <tbody class="fw-bold text-gray-600" id="location_clients_table">
+                            <% @clients.order("LOWER(name)").each do |client| %>
+                                <%= render partial: "clients_table_row", locals: { client: client }%>
+                            <% end %>
+                        </tbody>
+                        <!--end::Table body-->
+                    </table>
+
+                </div>
+            </div>
+            <!--end::Table-->
+        </div>
+        <!--end::Card body-->
+    </div>  
+    <!--end::Card--> 

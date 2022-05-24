@@ -1,4 +1,4 @@
-<div class="modal-body" style="width: max-content;" id="podSecretModalBody">
+<div class="modal-body" style="width: max-content;" id="podErrorModalBody">
   <div class="d-flex flex-column align-items-center justify-content-center" style="margin: 0 40px">
     <span class="svg-icon svg-icon-5x svg-icon-primary" style="margin-bottom: 30px">
       <svg width="70" height="70" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div class="modal-footer" data-controller="add-pod" id="podSecretModalFooter">
+<div class="modal-footer" data-controller="add-pod" id="podErrorModalFooter">
   <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-  <button id="finalButton" type="button" class="btn btn-primary" data-action="click->add-pod#savePodSecretAndContinue">Try Again</button>
+  <%= link_to "Try Again", claim_clients_path, class: "btn btn-primary" %>
 </div>

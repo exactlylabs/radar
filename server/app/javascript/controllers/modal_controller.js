@@ -10,6 +10,7 @@ export default class extends Controller {
 
   showModal() {
     $(this.element).modal('show');
+    this.focusInputIfPresent();
   }
 
   submit(e) {
@@ -24,5 +25,10 @@ export default class extends Controller {
       $('#edit_pod_modal').modal('show');
       document.querySelector('#location-created-snackbar').classList.remove('d-none');
     }
+  }
+
+  focusInputIfPresent() {
+    const element = document.querySelector('.podIdInput');
+    element && element.focus();
   }
 }

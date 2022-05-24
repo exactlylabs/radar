@@ -10,7 +10,19 @@ class ClientsController < ApplicationController
   # GET /clients or /clients.json
   def index
     #@clients = Client.where(user: current_user)
+    @status = params[:status]
+    @location = params[:location]
     @clients = policy_scope(Client)
+    
+    # New designs index clients by location
+    @indexed_clients = {}
+    @clients.each do |client|
+      if @indexed_clients[client.location.name].nil?
+        @indexed_clients[client.location.name] = [client]
+      else
+        @indexed_clients[client.location.name].append(client)
+      end
+    end
   end
 
   # GET /clients/1 or /clients/1.json
@@ -29,14 +41,6 @@ class ClientsController < ApplicationController
 
   def claim_form
     @client = Client.new
-  end
-
-  def validate_id_and_secret
-    @client_id = params[:id]
-    @client_secret = params[:secret]
-    puts "#{@client_id} <> #{@client_secret}"
-    @client = Client.where(unix_user: @client_id).first
-    @client&.authenticate_secret(@client_secret)
   end
 
   def run_test
@@ -58,6 +62,24 @@ class ClientsController < ApplicationController
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @client.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def check_claim
+    @client_id = params[:id]
+    @client_secret = params[:secret]
+    @client = Client.where(unix_user: @client_id).first
+    respond_to do |format|
+      if @client && @client.authenticate_secret(@client_secret)
+        @client.user = current_user
+        format.turbo_stream { render turbo_stream: turbo_stream.append('clients', partial: 'clients/client', locals: {client: @client}) }
+        format.html { redirect_to client_path(@client.unix_user), notice: "Client data is OK."}
+        format.json { render status: :ok, json: @client.to_json }
+      else
+        @error = true
+        format.html { render :claim_form, status: :unprocessable_entity }
+        format.json { render json: {}, status: :unprocessable_entity }
       end
     end
   end
