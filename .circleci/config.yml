@@ -10,7 +10,7 @@ jobs:
     docker:
       - image: cimg/base:2022.05
     steps:
-      - run: AUTH="Basic $(echo $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
+      - run: AUTH="Basic $(echo -n $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
       - run: |
           STATUS_CODE=$(curl -s -X POST \
             -H 'Accept: application/json' \
@@ -73,7 +73,7 @@ jobs:
         type: string
     
     steps:   
-      - run: AUTH="Basic $(echo $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
+      - run: AUTH="Basic $(echo -n $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
       - run: |
           curl -XPOST \
             -H 'Accept: application/json' \
