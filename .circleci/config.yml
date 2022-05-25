@@ -34,15 +34,7 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
-      - run: cd agent
-      - run: echo $PROVIDER_SIGNING_CERT > binCert.crt
-      - run: echo $PROVIDER_SIGNING_KEY > binKey.key
-      - run: |
-          ./agent/scripts/build_and_sign.sh \
-            --os <<parameters.os>> \
-            --arch <<parameters.arch>> \
-            -o dist/<<parameters.binName>> \
-            $VERSION binCert.crt binKey.key
+      - run: OS=<<parameters.os>> ARCH=<<parameters.arch>> BIN_NAME=<<parameters.binName>> ./ci_scripts/build.sh
 
   upload:
     environment:
@@ -69,8 +61,8 @@ jobs:
           curl -XPOST \
             -H 'Accept: application/json' \
             -H 'Authorization: '"$AUTH"'' \
-            -F distribution[binary]=@dist/<<parameters.binName>> \
-            -F distribution[signed_binary]=@dist/<<parameters.binName>>_signed \
+            -F distribution[binary]=@agent/dist/<<parameters.binName>> \
+            -F distribution[signed_binary]=@agent/dist/<<parameters.binName>>_signed \
             -F distribution[name]=<<parameters.os>>-<<parameters.arch>> \
             $RADAR_URL/api/v1/client_versions/$VERSION/distributions
       
