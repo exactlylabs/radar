@@ -1,0 +1,88 @@
+version: 2.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  create_version:
+    docker:
+      - image: cimg/base
+    steps:
+      - run: |
+          STATUS_CODE=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{"version": "$CIRCLE_TAG"}' -H 'Authorization: $AUTH' --output /dev/stderr --write-out '%{http_code}' $RADAR_URL/api/v1/client_versions)
+
+      - run: |
+          if [[ $STATUS_CODE -ne 201 && $STATUS_CODE -ne 303 ]]; then
+            exit 1
+          fi
+
+  build_and_upload:
+    working_directory: ~/repo
+    docker:
+      # Available Images: https://circleci.com/developer/images/image/cimg/go
+      - image: cimg/go:1.18.2
+    parameters:
+      os:
+        default: "linux"
+        type: string
+      arch:
+        default: "amd64"
+        type: string
+      binName:
+        default: "radar_agent"
+        type: string
+    
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - checkout   
+      - run: VERSION_ID=$(cat workspace/versionId)
+      - run: AUTH="Basic $(echo $RADAR_USER:$RADAR_PASSWORD | base64)"
+      - run: echo $PROVIDER_SIGNING_CERT > binCert.crt
+      - run: echo $PROVIDER_SIGNING_KEY > binKey.key
+      - run: |
+          ./agent/scripts/build_and_sign.sh \
+            --os <<parameters.os>> \
+            --arch <<parameters.arch>> \
+            -o dist/<<parameters.binName>> \
+            $CIRCLE_TAG binCert.crt binKey.key
+      - run: |
+          curl -XPOST \
+            -F distribution[binary]=@dist/<<parameters.binName>> \
+            -F distribution[signed_binary]=@dist/<<parameters.binName>>_signed \
+            -F distribution[name]=<<parameters.os>>-<<parameters.arch>> \
+            $RADAR_URL/api/v1/client_versions/$VERSION_ID/distributions
+
+      
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:  
+  build_linux_amd64:
+    jobs:
+      - create_version
+      - build_and_upload:
+          os: linux
+          arch: "amd64"
+  
+  build_linux_arm64:
+    jobs:
+      - create_version
+      - build_and_upload:
+          os: linux
+          arch: "arm64"
+  
+  build_darwin_amd64:
+    jobs:
+      - create_version
+      - build_and_upload:
+          os: darwin
+          arch: "amd64"
+        
+  build_windows_amd64:
+    jobs:
+      - create_version
+      - build_and_upload:
+          os: windows
+          arch: "amd64"
+          binName: "radar_agent.exe"
+      
