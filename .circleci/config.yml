@@ -63,15 +63,7 @@ jobs:
       - attach_workspace:
           at: /tmp/dist
         
-      - run: |
-          AUTH="Basic $(echo -n $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
-          curl -XPOST \
-            -H 'Accept: application/json' \
-            -H 'Authorization: '"$AUTH"'' \
-            -F distribution[binary]=@/tmp/dist/<<parameters.binName>> \
-            -F distribution[signed_binary]=@/tmp/dist/<<parameters.binName>>_signed \
-            -F distribution[name]=<<parameters.os>>-<<parameters.arch>> \
-            $RADAR_URL/api/v1/client_versions/$VERSION/distributions
+      - run: BIN_NAME=<<parameters.binName>> DIST_NAME=<<parameters.os>>-<<parameters.arch>> ./ci_scripts/upload.sh
       
 
 # Invoke jobs via workflows
