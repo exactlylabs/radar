@@ -9,7 +9,7 @@ jobs:
     docker:
       - image: cimg/base:2022.05
     steps:
-      - run: checkout
+      - checkout
       - run: ./ci_scripts/create_version.sh
 
   build:
@@ -33,6 +33,7 @@ jobs:
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
+      - checkout
       - run: echo $PROVIDER_SIGNING_CERT > binCert.crt
       - run: echo $PROVIDER_SIGNING_KEY > binKey.key
       - run: |
