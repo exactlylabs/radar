@@ -78,10 +78,16 @@ workflows:
 
       - build:
           requires: [ create_version ]
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
           os: "linux"
           arch: "amd64"
       - upload:
           requires: [ build ]
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
           os: "linux"
           arch: "amd64"
   
@@ -93,10 +99,16 @@ workflows:
               only: /^(?:\d+\.){2}\d+$/
       - build:
           requires: [ create_version ]
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
           os: "linux"
           arch: "arm64"
       - upload:
           requires: [ build ]
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
           os: "linux"
           arch: "arm64"
       
@@ -108,10 +120,16 @@ workflows:
               only: /^(?:\d+\.){2}\d+$/
       - build:
           requires: [ create_version ]
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
           os: darwin
           arch: "amd64"
       - upload:
           requires: [ build ]
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
           os: darwin
           arch: "amd64"
       
@@ -123,11 +141,17 @@ workflows:
               only: /^(?:\d+\.){2}\d+$/
       - build:
           requires: [ create_version ]
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
           os: windows
           arch: "amd64"
           binName: "radar_agent.exe"
       - upload:
           requires: [ build ]
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
           os: windows
           arch: "amd64"
           binName: "radar_agent.exe"
