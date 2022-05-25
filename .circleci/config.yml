@@ -8,14 +8,21 @@ jobs:
       - image: cimg/base:2022.05
     steps:
       - run: |
-          STATUS_CODE=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{"version": "$CIRCLE_TAG"}' -H 'Authorization: $AUTH' --output /dev/stderr --write-out '%{http_code}' $RADAR_URL/api/v1/client_versions)
+          STATUS_CODE=$(curl -s -X POST \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -d '{"version": "$CIRCLE_TAG"}' \
+            -H 'Authorization: $AUTH' \
+            --output /dev/stdout \
+            --write-out '%{http_code}' \
+            $RADAR_URL/api/v1/client_versions)
 
       - run: |
           if [[ $STATUS_CODE -ne 201 && $STATUS_CODE -ne 303 ]]; then
             exit 1
           fi
 
-  build_and_upload:
+  build:
     working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
@@ -35,8 +42,6 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout   
-      - run: VERSION_ID=$(cat workspace/versionId)
-      - run: AUTH="Basic $(echo $RADAR_USER:$RADAR_PASSWORD | base64)"
       - run: echo $PROVIDER_SIGNING_CERT > binCert.crt
       - run: echo $PROVIDER_SIGNING_KEY > binKey.key
       - run: |
@@ -45,13 +50,31 @@ jobs:
             --arch <<parameters.arch>> \
             -o dist/<<parameters.binName>> \
             $CIRCLE_TAG binCert.crt binKey.key
+
+  upload:
+    working_directory: ~/repo
+    docker:
+      # Available Images: https://circleci.com/developer/images/image/cimg/go
+      - image: cimg/base:2022.05
+    parameters:
+      os:
+        default: "linux"
+        type: string
+      arch:
+        default: "amd64"
+        type: string
+      binName:
+        default: "radar_agent"
+        type: string
+    
+    steps:   
+      - run: AUTH="Basic $(echo $RADAR_USER:$RADAR_PASSWORD | base64)"
       - run: |
           curl -XPOST \
             -F distribution[binary]=@dist/<<parameters.binName>> \
             -F distribution[signed_binary]=@dist/<<parameters.binName>>_signed \
             -F distribution[name]=<<parameters.os>>-<<parameters.arch>> \
-            $RADAR_URL/api/v1/client_versions/$VERSION_ID/distributions
-
+            $RADAR_URL/api/v1/client_versions/$CIRCLE_TAG/distributions
       
 
 # Invoke jobs via workflows
@@ -60,29 +83,41 @@ workflows:
   build_linux_amd64:
     jobs:
       - create_version
-      - build_and_upload:
-          os: linux
+      - build:
+          os: "linux"
+          arch: "amd64"
+      - upload:
+          os: "linux"
           arch: "amd64"
   
   build_linux_arm64:
     jobs:
       - create_version
-      - build_and_upload:
-          os: linux
+      - build:
+          os: "linux"
           arch: "arm64"
-  
+      - upload:
+          os: "linux"
+          arch: "arm64"
+      
   build_darwin_amd64:
     jobs:
       - create_version
-      - build_and_upload:
+      - build:
           os: darwin
           arch: "amd64"
-        
+      - upload:
+          os: darwin
+          arch: "amd64"
+      
   build_windows_amd64:
     jobs:
       - create_version
-      - build_and_upload:
+      - build:
           os: windows
           arch: "amd64"
           binName: "radar_agent.exe"
-      
+      - upload:
+          os: windows
+          arch: "amd64"
+          binName: "radar_agent.exe"
