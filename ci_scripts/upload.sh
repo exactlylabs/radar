@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 AUTH="Basic $(echo -n $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
-STATUS_CODE=$(curl -XPOST \
+STATUS_CODE=$(curl -s -XPOST \
   -H 'Accept: application/json' \
   -H 'Authorization: '"$AUTH"'' \
   -F distribution[binary]=@/tmp/dist/$BIN_NAME \
   -F distribution[signed_binary]=@/tmp/dist/${BIN_NAME}_signed \
-  -F distribution[name]=$DIST_NAME \
+  -F distribution[name]=$DIST_NAME \  
   --output /dev/stderr \
   --write-out '%{http_code}' \
   $RADAR_URL/api/v1/client_versions/$VERSION/distributions)
