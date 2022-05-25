@@ -15,7 +15,7 @@ jobs:
   build:
     environment:
       VERSION=1.0.1
-    working_directory: ~/repo
+    working_directory: ~/repo/agent
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
       - image: cimg/go:1.18.2
@@ -46,7 +46,7 @@ jobs:
   upload:
     environment:
       VERSION=1.0.1
-    working_directory: ~/repo
+    working_directory: ~/repo/agent
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
       - image: cimg/base:2022.05
