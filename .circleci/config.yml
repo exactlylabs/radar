@@ -1,7 +1,7 @@
 version: 2.1
 
 environment:
-  VERSION=$CIRCLE_TAG
+  VERSION=1.0.1
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
