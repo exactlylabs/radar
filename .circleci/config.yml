@@ -1,5 +1,8 @@
 version: 2.1
 
+environment:
+  VERSION=$CIRCLE_TAG
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -7,12 +10,13 @@ jobs:
     docker:
       - image: cimg/base:2022.05
     steps:
+      - run: AUTH="Basic $(echo $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
       - run: |
           STATUS_CODE=$(curl -s -X POST \
             -H 'Accept: application/json' \
             -H 'Content-Type: application/json' \
-            -d '{"version": "$CIRCLE_TAG"}' \
-            -H 'Authorization: $AUTH' \
+            -H 'Authorization: '"$AUTH"'' \
+            -d '{"version": "'"$VERSION"'"}' \
             --output /dev/stderr \
             --write-out '%{http_code}' \
             $RADAR_URL/api/v1/client_versions)
@@ -50,7 +54,7 @@ jobs:
             --os <<parameters.os>> \
             --arch <<parameters.arch>> \
             -o dist/<<parameters.binName>> \
-            $CIRCLE_TAG binCert.crt binKey.key
+            $VERSION binCert.crt binKey.key
 
   upload:
     working_directory: ~/repo
@@ -69,13 +73,15 @@ jobs:
         type: string
     
     steps:   
-      - run: AUTH="Basic $(echo $RADAR_USER:$RADAR_PASSWORD | base64)"
+      - run: AUTH="Basic $(echo $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
       - run: |
           curl -XPOST \
+            -H 'Accept: application/json' \
+            -H 'Authorization: '"$AUTH"'' \
             -F distribution[binary]=@dist/<<parameters.binName>> \
             -F distribution[signed_binary]=@dist/<<parameters.binName>>_signed \
             -F distribution[name]=<<parameters.os>>-<<parameters.arch>> \
-            $RADAR_URL/api/v1/client_versions/$CIRCLE_TAG/distributions
+            $RADAR_URL/api/v1/client_versions/$VERSION/distributions
       
 
 # Invoke jobs via workflows
