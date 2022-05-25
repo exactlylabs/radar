@@ -87,7 +87,10 @@ workflows:
   
   build_linux_arm64:
     jobs:
-      - create_version
+      - create_version:
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
       - build:
           requires: [ create_version ]
           os: "linux"
@@ -99,7 +102,10 @@ workflows:
       
   build_darwin_amd64:
     jobs:
-      - create_version
+      - create_version:
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
       - build:
           requires: [ create_version ]
           os: darwin
@@ -111,7 +117,10 @@ workflows:
       
   build_windows_amd64:
     jobs:
-      - create_version
+      - create_version:
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
       - build:
           requires: [ create_version ]
           os: windows
