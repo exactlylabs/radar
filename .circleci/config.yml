@@ -15,7 +15,7 @@ jobs:
   build:
     environment:
       VERSION=1.0.1
-    working_directory: ~/repo/agent
+    working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
       - image: cimg/go:1.18.2
@@ -34,6 +34,7 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
+      - run: cd agent
       - run: echo $PROVIDER_SIGNING_CERT > binCert.crt
       - run: echo $PROVIDER_SIGNING_KEY > binKey.key
       - run: |
@@ -46,7 +47,7 @@ jobs:
   upload:
     environment:
       VERSION=1.0.1
-    working_directory: ~/repo/agent
+    working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
       - image: cimg/base:2022.05
@@ -62,6 +63,7 @@ jobs:
         type: string
     
     steps:
+      - run: cd agent
       - run: |
           AUTH="Basic $(echo -n $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
           curl -XPOST \
