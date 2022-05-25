@@ -5,7 +5,7 @@ version: 2.1
 jobs:
   create_version:
     docker:
-      - image: cimg/base
+      - image: cimg/base:2022.05
     steps:
       - run: |
           STATUS_CODE=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{"version": "$CIRCLE_TAG"}' -H 'Authorization: $AUTH' --output /dev/stderr --write-out '%{http_code}' $RADAR_URL/api/v1/client_versions)
