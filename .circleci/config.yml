@@ -5,7 +5,7 @@ version: 2.1
 jobs:
   create_version:
     environment:
-      VERSION=1.0.14
+      VERSION=1.0.15
     docker:
       - image: cimg/base:2022.05
     steps:
