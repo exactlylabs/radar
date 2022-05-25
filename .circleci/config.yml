@@ -35,6 +35,11 @@ jobs:
     steps:
       - checkout
       - run: OS=<<parameters.os>> ARCH=<<parameters.arch>> BIN_NAME=<<parameters.binName>> ./ci_scripts/build.sh
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - agent/dist/<<parameters.binName>>
+            - agent/dist/<<parameters.binName>>_signed
 
   upload:
     environment:
@@ -54,15 +59,17 @@ jobs:
         default: "radar_agent"
         type: string
     
-    steps:
-      - run: cd agent
+    steps:      
+      - attach_workspace:
+          at: /tmp/workspace
+        
       - run: |
           AUTH="Basic $(echo -n $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
           curl -XPOST \
             -H 'Accept: application/json' \
             -H 'Authorization: '"$AUTH"'' \
-            -F distribution[binary]=@agent/dist/<<parameters.binName>> \
-            -F distribution[signed_binary]=@agent/dist/<<parameters.binName>>_signed \
+            -F distribution[binary]=@/tmp/workspace/<<parameters.binName>> \
+            -F distribution[signed_binary]=@/tmp/workspace/<<parameters.binName>>_signed \
             -F distribution[name]=<<parameters.os>>-<<parameters.arch>> \
             $RADAR_URL/api/v1/client_versions/$VERSION/distributions
       
