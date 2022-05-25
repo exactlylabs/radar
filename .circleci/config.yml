@@ -60,9 +60,9 @@ jobs:
         type: string
     
     steps:      
+      - checkout
       - attach_workspace:
           at: /tmp/dist
-        
       - run: BIN_NAME=<<parameters.binName>> DIST_NAME=<<parameters.os>>-<<parameters.arch>> ./ci_scripts/upload.sh
       
 
