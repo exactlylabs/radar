@@ -19,6 +19,7 @@ jobs:
 
       - run: |
           if [[ $STATUS_CODE -ne 201 && $STATUS_CODE -ne 303 ]]; then
+            echo "request failed with status: $STATUS_CODE"
             exit 1
           fi
 
