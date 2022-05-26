@@ -232,7 +232,6 @@ EOF
     # Use callbacks to share common setup or constraints between actions.
     def set_client
       @client = policy_scope(Client).find_by_unix_user(params[:id])
-      puts "client ---> #{@client || "NULO"}"
     end
 
     # Only allow a list of trusted parameters through.
