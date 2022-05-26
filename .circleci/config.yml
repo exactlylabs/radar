@@ -8,7 +8,7 @@ jobs:
       - image: cimg/base:2022.05
     steps:
       - checkout
-      - run: VERSION=$CIRCLE_TAG ./ci_scripts/create_version.sh
+      - run: make client_version VERSION=$CIRCLE_TAG
 
   build_and_upload:
     working_directory: ~/repo
@@ -30,8 +30,17 @@ jobs:
     
     steps:
       - checkout
-      - run: VERSION=<<parameters.version>> OS=<<parameters.os>> ARCH=<<parameters.arch>> BIN_NAME=<<parameters.binName>> ./ci_scripts/build.sh
-      - run: VERSION=<<parameters.version>> BIN_NAME=<<parameters.binName>> DIST_NAME=<<parameters.os>>-<<parameters.arch>> ./ci_scripts/upload.sh
+      - run: echo -n $PROVIDER_SIGNING_CERT | base64 -d > binCert.crt
+      - run: echo -n $PROVIDER_SIGNING_KEY | base64 -d > binKey.key
+      - run: echo -n $ROOT_CA | base64 -d > internal/update/rootCA.pem
+      - run: |
+          make agent_distribution \
+            VERSION=<<parameters.version>> \
+            OS=<<parameters.os>> \
+            ARCH=<<parameters.arch>> \
+            BIN_NAME=<<parameters.binName>> \
+            PROVIDER_SIGNING_CERT_PATH=./binCert.crt \
+            PROVIDER_SIGNING_CERT_KEY_PATH=./binKey.key
 
 
 # Invoke jobs via workflows
