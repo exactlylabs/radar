@@ -2,6 +2,8 @@ module Api
   module V1
     class DistributionsController < ApiController
       before_action :set_version!
+      before_action :is_superuser
+      
       def index
         if @version
           @distributions = @version.distributions
