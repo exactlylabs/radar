@@ -1,1 +1,6 @@
 go.work
+go.work.sum
+dist/
+*.zip
+*.img
+*.log
