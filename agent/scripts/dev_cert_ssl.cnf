@@ -1,0 +1,22 @@
+FQDN = dev.org
+ORGNAME = Development
+ALTNAMES = DNS:$FQDN   # , DNS:bar.example.org , DNS:www.foo.example.org
+
+[ req ]
+default_bits = 2048
+default_md = sha256
+distinguished_name = subject
+req_extensions = req_ext
+x509_extensions = req_ext
+string_mask = utf8only
+prompt = no
+
+[ req_ext ]
+subjectAltName = $ALTNAMES
+
+[ subject ]
+countryName = DV
+stateOrProvinceName = Dev
+localityName = DevLand
+organizationName = Dev
+commonName = Dev
