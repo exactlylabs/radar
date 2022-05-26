@@ -8,7 +8,11 @@ mkdir -p $SCRIPT_DIR/../dist/certs/
 openssl genrsa -out $SCRIPT_DIR/../dist/certs/binKey.key 2048
 
 # Create Certification Signing Request
-openssl req -new -key $SCRIPT_DIR/../dist/certs/binKey.key -out $SCRIPT_DIR/../dist/certs/binCert.csr
+if [ -z $CERT_CONFIG ]; then
+    openssl req -new -key $SCRIPT_DIR/../dist/certs/binKey.key -out $SCRIPT_DIR/../dist/certs/binCert.csr
+else
+    openssl req -new -config $CERT_CONFIG -key $SCRIPT_DIR/../dist/certs/binKey.key -out $SCRIPT_DIR/../dist/certs/binCert.csr
+fi
 
 # Now, we create the certificate, using the CSR and the Root CA private key and the Root CA
 openssl x509 -req -in $SCRIPT_DIR/../dist/certs/binCert.csr -CA $SCRIPT_DIR/../dist/certs/rootCA.pem -CAkey $SCRIPT_DIR/../dist/certs/rootCA.key \
