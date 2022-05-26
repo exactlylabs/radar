@@ -22,9 +22,9 @@ class DashboardController < ApplicationController
     when nil, 'all'
       locations
     when 'active'
-      locations.select { |location| location.online? }
+      locations.where_online
     else
-      locations.reject { |location| location.online? }
+      locations.where_offline
     end
   end
 end
