@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-AUTH="Basic $(echo -n $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
+AUTH="Basic $(echo -n $RADAR_USER:$RADAR_PASSWORD | base64)"
 STATUS_CODE=$(curl -s -X POST \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
