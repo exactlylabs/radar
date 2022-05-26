@@ -4,17 +4,13 @@ version: 2.1
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   create_version:
-    environment:
-      VERSION=$CIRCLE_TAG
     docker:
       - image: cimg/base:2022.05
     steps:
       - checkout
-      - run: ./ci_scripts/create_version.sh
+      - run: VERSION=$CIRCLE_TAG ./ci_scripts/create_version.sh
 
   build:
-    environment:
-      VERSION=$CIRCLE_TAG
     working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
@@ -34,7 +30,7 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
-      - run: OS=<<parameters.os>> ARCH=<<parameters.arch>> BIN_NAME=<<parameters.binName>> ./ci_scripts/build.sh
+      - run: VERSION=$CIRCLE_TAG OS=<<parameters.os>> ARCH=<<parameters.arch>> BIN_NAME=<<parameters.binName>> ./ci_scripts/build.sh
       - persist_to_workspace:
           root: agent/dist
           paths:
@@ -42,8 +38,6 @@ jobs:
             - <<parameters.binName>>_signed
 
   upload:
-    environment:
-      VERSION=$CIRCLE_TAG
     working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
@@ -63,7 +57,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/dist
-      - run: BIN_NAME=<<parameters.binName>> DIST_NAME=<<parameters.os>>-<<parameters.arch>> ./ci_scripts/upload.sh
+      - run: VERSION=$CIRCLE_TAG BIN_NAME=<<parameters.binName>> DIST_NAME=<<parameters.os>>-<<parameters.arch>> ./ci_scripts/upload.sh
       
 
 # Invoke jobs via workflows
