@@ -9,3 +9,6 @@ The project contains two sub-projects:
     * Ruby on Rails webservice with backend/frontend of the radar project
 
 
+## Run
+
+To run all projects, just call `make run` inside the root directory or, in case you want to run them separatedly, call make run inside each project's directory
