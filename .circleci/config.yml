@@ -10,12 +10,14 @@ jobs:
       - checkout
       - run: VERSION=$CIRCLE_TAG ./ci_scripts/create_version.sh
 
-  build:
+  build_and_upload:
     working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
       - image: cimg/go:1.18.2
     parameters:
+      version:
+        type: string
       os:
         default: "linux"
         type: string
@@ -26,44 +28,16 @@ jobs:
         default: "radar_agent"
         type: string
     
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
-      - run: VERSION=$CIRCLE_TAG OS=<<parameters.os>> ARCH=<<parameters.arch>> BIN_NAME=<<parameters.binName>> ./ci_scripts/build.sh
-      - persist_to_workspace:
-          root: agent/dist
-          paths:
-            - <<parameters.binName>>
-            - <<parameters.binName>>_signed
+      - run: VERSION=<<parameters.version>> OS=<<parameters.os>> ARCH=<<parameters.arch>> BIN_NAME=<<parameters.binName>> ./ci_scripts/build.sh
+      - run: VERSION=<<parameters.version>> BIN_NAME=<<parameters.binName>> DIST_NAME=<<parameters.os>>-<<parameters.arch>> ./ci_scripts/upload.sh
 
-  upload:
-    working_directory: ~/repo
-    docker:
-      # Available Images: https://circleci.com/developer/images/image/cimg/go
-      - image: cimg/base:2022.05
-    parameters:
-      os:
-        default: "linux"
-        type: string
-      arch:
-        default: "amd64"
-        type: string
-      binName:
-        default: "radar_agent"
-        type: string
-    
-    steps:      
-      - checkout
-      - attach_workspace:
-          at: /tmp/dist
-      - run: VERSION=$CIRCLE_TAG BIN_NAME=<<parameters.binName>> DIST_NAME=<<parameters.os>>-<<parameters.arch>> ./ci_scripts/upload.sh
-      
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:  
-  build_linux_amd64:
+  build:
     jobs:
       - create_version:
           filters:
@@ -71,108 +45,21 @@ workflows:
               only: /^(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
-      - build:
+            
+      - build_and_upload:
           requires: [ create_version ]
-          os: "linux"
-          arch: "amd64"
+          version: $CIRCLE_TAG
           filters:
             tags:
               only: /^(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
+          matrix:
+            parameters:
+              os: ["linux", "darwin", "windows"]
+              arch: ["amd64", "arm64"]
+            exclude:
+              - os: "windows"
+                arch: "arm64"
 
-      - upload:
-          requires: [ build ]
-          filters:
-            tags:
-              only: /^(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-          os: "linux"
-          arch: "amd64"
-  
-  build_linux_arm64:
-    jobs:
-      - create_version:
-          filters:
-            tags:
-              only: /^(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-
-      - build:
-          requires: [ create_version ]
-          filters:
-            tags:
-              only: /^(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-          os: "linux"
-          arch: "arm64"
-      - upload:
-          requires: [ build ]
-          filters:
-            tags:
-              only: /^(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-          os: "linux"
-          arch: "arm64"
-      
-  build_darwin_amd64:
-    jobs:
-      - create_version:
-          filters:
-            tags:
-              only: /^(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-
-      - build:
-          requires: [ create_version ]
-          filters:
-            tags:
-              only: /^(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-          os: darwin
-          arch: "amd64"
-      - upload:
-          requires: [ build ]
-          filters:
-            tags:
-              only: /^(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-          os: darwin
-          arch: "amd64"
-      
-  build_windows_amd64:
-    jobs:
-      - create_version:
-          filters:
-            tags:
-              only: /^(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-
-      - build:
-          requires: [ create_version ]
-          filters:
-            tags:
-              only: /^(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-          os: windows
-          arch: "amd64"
-          binName: "radar_agent.exe"
-      - upload:
-          requires: [ build ]
-          filters:
-            tags:
-              only: /^(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-          os: windows
-          arch: "amd64"
-          binName: "radar_agent.exe"
+          
