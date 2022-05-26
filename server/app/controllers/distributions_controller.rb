@@ -25,7 +25,7 @@ class DistributionsController < ApplicationController
     if params[:client_version_id] == "stable"
       @version = ClientVersion.stable
     else
-      @version = ClientVersion.find(params[:client_version_id])
+      @version = ClientVersion.find_by_version(params[:client_version_id])
     end
   end
 end
