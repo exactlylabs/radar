@@ -36,7 +36,7 @@ module MeasurementsHelper
     end
   end
 
-  def parse_param(param)
+  def parse_param_to_human(param)
     case param
     when 'NDT7'
       'Ndt7'
