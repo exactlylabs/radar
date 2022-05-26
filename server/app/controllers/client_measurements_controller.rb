@@ -7,8 +7,12 @@ class ClientMeasurementsController < ApplicationController
   # GET /measurements or /measurements.json
   def index
     @style = params[:style]
-    @range = get_date_range(params[:range]) 
-    @measurements = get_filtered_measurements(@client, @style, @range)
+    @range = get_date_range(params[:range])
+    @measurements = @client.measurements
+    @measurements = @measurements.where(style: @style) if @style.present?
+    @measurements = @measurements.where(created_at: @range[0]..@range[1]) if @range.present?
+    @total = @measurements.length
+    @measurements = @measurements.then(&paginate)
 
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements, total: @total } }
@@ -101,19 +105,5 @@ class ClientMeasurementsController < ApplicationController
       else
         [nil, Time.now]
       end
-    end
-
-    def get_filtered_measurements(client, style, range)
-      if style.present? && range.present?
-        elements = client.measurements.where(style: style).where(created_at: range[0]..range[1])
-      elsif range.present?
-        elements = client.measurements.where(created_at: range[0]..range[1])
-      elsif style.present?
-        elements = client.measurements.where(style: style)
-      else
-        elements = client.measurements
-      end
-      @total = elements.length
-      elements.order(created_at: :desc).then(&paginate)
     end
 end

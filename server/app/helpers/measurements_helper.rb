@@ -18,7 +18,7 @@ module MeasurementsHelper
     end
   end
 
-  def determine_range_url(entity, type, range)
+  def determine_measurements_range_path(entity, type, range)
     if params[:range] == range
       case type
       when 'clients'

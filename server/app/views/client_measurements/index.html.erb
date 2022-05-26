@@ -70,30 +70,30 @@
                   <!--begin::Menu-->
                   <div class="dropdown-menu fw-bold fs-7 py-4"
                       aria-labelledby="schedule-button">
-                    <a href="<%= determine_range_url(@client.unix_user, 'clients', 'last-week') %>" 
+                    <a href="<%= determine_measurements_range_path(@client.unix_user, 'clients', 'last-week') %>" 
                       class="menu-item text-hover-gray-500 <%= params[:range] == 'last-week' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                       Last week
                     </a>
                     <!--begin::Menu item-->
-                    <a href="<%= determine_range_url(@client.unix_user, 'clients', 'last-month') %>" 
+                    <a href="<%= determine_measurements_range_path(@client.unix_user, 'clients', 'last-month') %>" 
                       class="menu-item text-hover-gray-500 <%= params[:range] == 'last-month' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                       Last month
                     </a>
                     <!--end::Menu item-->
                     <!--begin::Menu item-->
-                    <a href="<%= determine_range_url(@client.unix_user, 'clients', 'last-6-months') %>" 
+                    <a href="<%= determine_measurements_range_path(@client.unix_user, 'clients', 'last-6-months') %>" 
                       class="menu-item text-hover-gray-500 <%= params[:range] == 'last-6-months' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                       Last 6 months
                     </a>
                     <!--end::Menu item-->
                     <!--begin::Menu item-->
-                    <a href="<%= determine_range_url(@client.unix_user, 'clients', 'last-year') %>" 
+                    <a href="<%= determine_measurements_range_path(@client.unix_user, 'clients', 'last-year') %>" 
                       class="menu-item text-hover-gray-500 <%= params[:range] == 'last-year' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                       Last year
                     </a>
                     <!--end::Menu item-->
                     <!--begin::Menu item-->
-                    <a href="<%= determine_range_url(@client.unix_user, 'clients', 'all-time') %>" 
+                    <a href="<%= determine_measurements_range_path(@client.unix_user, 'clients', 'all-time') %>" 
                       class="menu-item text-hover-gray-500 <%= params[:range] == 'all-time' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                       All time
                     </a>
@@ -118,12 +118,12 @@
                   <!--begin::Menu-->
                   <div class="dropdown-menu dropup fw-bold fs-7 py-4"
                       aria-labelledby="style-button">
-                    <a href="<%= determine_style_url(@client.unix_user, 'clients', 'NDT7') %>" 
+                    <a href="<%= determine_measurements_style_path(@client.unix_user, 'clients', 'NDT7') %>" 
                       class="menu-item text-hover-gray-500 <%= params[:style] == 'NDT7' ? 'text-primary' : 'text-gray-700' %> p-3">
                       NDT
                     </a>
                     <!--begin::Menu item-->
-                    <a href="<%= determine_style_url(@client.unix_user, 'clients', 'OOKLA') %>" 
+                    <a href="<%= determine_measurements_style_path(@client.unix_user, 'clients', 'OOKLA') %>" 
                       class="menu-item text-hover-gray-500 <%= params[:style] == 'OOKLA' ? 'text-primary' : 'text-gray-700' %> p-3">
                       Ookla
                     </a>
@@ -211,7 +211,7 @@
         </div></div>
         <!--end::Table-->
         <div class="pagination-container d-flex justify-content-between align-items-center mt-5">
-          <%= render "pagination_footer", locals: {measurements: @measurements} %>
+          <%= paginate @measurements, @total %>
         </div>
       </div>
       <!--end::Card body-->
