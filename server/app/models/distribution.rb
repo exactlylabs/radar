@@ -5,5 +5,5 @@ class Distribution < ApplicationRecord
 
     validates :binary, presence: true
     validates :signed_binary, presence: true
-    validates :name, uniqueness: {scope: :client_version}
+    validates :name, uniqueness: {scope: :client_version_id}
 end
