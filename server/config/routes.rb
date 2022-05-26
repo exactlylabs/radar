@@ -58,7 +58,10 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :client_versions do
+  # Creating two resources, due to the constraint {id: ... } being inherited by the distributions to it's own id
+  # see: https://stackoverflow.com/questions/7620321/rails-3-nested-resource-routes-inherits-parent-constraints-how-to-avoid-it
+  resources :client_versions, constraints: {id: /stable|(?:\d+\.){2}\d+/}
+  resources :client_versions, only: [], constraints: {client_version_id: /stable|(?:\d+\.){2}\d+/} do
     resources :distributions do
       member do
         get 'download'
@@ -71,7 +74,10 @@ Rails.application.routes.draw do
   
   namespace 'api' do
     namespace 'v1' do
-      resources :client_versions do
+      # Creating two resources, due to the constraint {id: ... } being inherited by the distributions to it's own id
+      # see: https://stackoverflow.com/questions/7620321/rails-3-nested-resource-routes-inherits-parent-constraints-how-to-avoid-it
+      resources :client_versions, constraints: {id: /stable|(?:\d+\.){2}\d+/}
+      resources :client_versions, only:[], constraints: {client_version_id: /stable|(?:\d+\.){2}\d+/} do
         resources :distributions
       end
     end
