@@ -28,6 +28,9 @@ module Api
             head :unauthorized
           end
         end
+        if @current_user.nil?
+          head :unauthorized
+        end
       end
 
       def current_user
