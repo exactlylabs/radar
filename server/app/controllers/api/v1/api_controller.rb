@@ -37,7 +37,7 @@ module Api
         @current_user
       end
 
-      def is_superuser
+      def ensure_superuser!
         if !@current_user.superuser?
           render json: {error: "you must be a superuser to use this endpoint"}, status: :forbidden
         end
