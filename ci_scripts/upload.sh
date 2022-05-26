@@ -6,7 +6,7 @@ STATUS_CODE=$(curl -s -XPOST \
   -H 'Authorization: '"$AUTH"'' \
   -F distribution[binary]=@/tmp/dist/$BIN_NAME \
   -F distribution[signed_binary]=@/tmp/dist/${BIN_NAME}_signed \
-  -F distribution[name]=$DIST_NAME \  
+  -F distribution[name]=$DIST_NAME \
   --output /dev/stderr \
   --write-out '%{http_code}' \
   $RADAR_URL/api/v1/client_versions/$VERSION/distributions)
