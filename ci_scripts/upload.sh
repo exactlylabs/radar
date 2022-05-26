@@ -6,7 +6,7 @@ if [[ "$DIST_NAME" == windows-* ]]; then
   fi
 fi
 
-AUTH="Basic $(echo -n $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
+AUTH="Basic $(echo -n $RADAR_USER:$RADAR_PASSWORD | base64)"
 STATUS_CODE=$(curl -s -XPOST \
   -H 'Accept: application/json' \
   -H 'Authorization: '"$AUTH"'' \
