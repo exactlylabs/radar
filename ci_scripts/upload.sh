@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
+if [[ "$DIST_NAME" == windows-* ]]; then
+  if [[ ! "$BIN_NAME" == *.exe ]]; then
+    BIN_NAME="${BIN_NAME}.exe"
+  fi
+fi
+
 AUTH="Basic $(echo -n $RADAR_TEST_USER:$RADAR_TEST_PASSWORD | base64)"
 STATUS_CODE=$(curl -s -XPOST \
   -H 'Accept: application/json' \
   -H 'Authorization: '"$AUTH"'' \
-  -F distribution[binary]=@/tmp/dist/$BIN_NAME \
-  -F distribution[signed_binary]=@/tmp/dist/${BIN_NAME}_signed \
+  -F distribution[binary]=@dist/$BIN_NAME \
+  -F distribution[signed_binary]=@dist/${BIN_NAME}_signed \
   -F distribution[name]=$DIST_NAME \
   --output /dev/stderr \
   --write-out '%{http_code}' \
