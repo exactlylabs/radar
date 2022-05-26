@@ -20,7 +20,7 @@
     <% if !current_user.superuser %> <!-- TODO: REMOVE !!! -->
       <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
         <a href="<%= staging_clients_path %>" class="btn btn-secondary mx-5">Staging Pods</a>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_pod_modal">Add Pod</button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard">Add Pod</button>
       </div>
     <% end %>
   </div>
@@ -42,13 +42,15 @@
   <!--end::Container-->
 </div>
 
-<div class="modal fade" tabindex="-1" id="add_pod_modal" data-controller="add-pod" data-action="turbo:submit-end->add-pod#submit">
-  <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path do %>
+<div class="modal fade" tabindex="-1" id="add_pod_modal_wizard" data-controller="add-pod" data-action="turbo:submit-end->add-pod#submit">
+  <%= turbo_frame_tag "add_pod_modal_wizard", src: check_claim_clients_path do %>
+  <% end %>
+  <%= turbo_frame_tag "add_pod_modal_wizard", src: claim_clients_path do %>
   <% end %>
 </div>
 
 <div class="modal fade" tabindex="-1" id="edit_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
-  <%= turbo_frame_tag "edit_client_modal" do %>
+  <%= turbo_frame_tag "edit_client_modal", target: "add_pod_step_2" do %>
   <% end %>
 </div>
 

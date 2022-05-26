@@ -3,7 +3,7 @@ require "sshkey"
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status ], if: :json_request?
-  before_action :set_client, only: %i[ claim release show edit update destroy ]
+  before_action :set_client, only: %i[ claim_form claim release show edit update destroy ]
   before_action :authenticate_token!, only: %i[ create ]
   skip_forgery_protection only: %i[ status configuration new create ]
 
@@ -36,7 +36,11 @@ class ClientsController < ApplicationController
 
   # GET /clients/1/edit
   def edit
-    
+
+  end
+
+  def check_claim_form
+    @client = Client.new
   end
 
   def claim_form
@@ -73,12 +77,12 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client && @client.authenticate_secret(@client_secret)
         @client.user = current_user
-        format.turbo_stream { render turbo_stream: turbo_stream.append('clients', partial: 'clients/client', locals: {client: @client}) }
-        format.html { redirect_to client_path(@client.unix_user), notice: "Client data is OK."}
+        # format.turbo_stream { render turbo_stream: turbo_stream.update('client_form_div', partial: 'clients/test', locals: {client: @client}) }
+        format.html { redirect_to clients_path, notice: "Client data is OK."}
         format.json { render status: :ok, json: @client.to_json }
       else
         @error = true
-        format.html { render :claim_form, status: :unprocessable_entity }
+        format.html { render :check_claim_form, status: :unprocessable_entity }
         format.json { render json: {}, status: :unprocessable_entity }
       end
     end

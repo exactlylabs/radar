@@ -98,7 +98,6 @@ export default class extends Controller {
   }
 
   submit(e) {
-    console.log(e);
     if (e.detail.success) {
       this.gotoLocationModal();
     }
@@ -116,5 +115,6 @@ export default class extends Controller {
     document.querySelector('#podLocationModalFooter').style.display = 'flex';
     document.querySelector('#podSecretModalBody').style.display = 'none';
     document.querySelector('#podSecretModalFooter').style.display = 'none';
+    document.querySelector('#clientIdInput').innerText = document.querySelector('#podId').innerText;
   }
 }

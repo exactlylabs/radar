@@ -37,9 +37,9 @@
       <%= client.measurements.length %>
   </td>
   <td class="text-end" style="padding-right: 30px">
-    <div class="btn-group">
+    <div class="dropdown">
       <a href="#" 
-         class="btn btn-sm btn-light btn-active-light-primary" 
+         class="btn btn-sm btn-light btn-active-light-primary dropwdown-toggle" 
          data-bs-toggle="dropdown"
          aria-expanded="false"
          style="border-radius: 6px"   
@@ -52,20 +52,20 @@
           </svg>
         </span>
       </a>
-    </div> 
-    <div class="dropdown-menu fw-bold fs-7 w-125px py-4" 
-         aria-labelledby="options-button">
-      <%= link_to run_test_client_path(client.unix_user), method: :post, class: "menu-link flex-stack px-3" do %>Run Test 
-      <% end %>
-      <!--begin::Menu item-->
-      <a class="menu-item px-3" href="<%= client_path(client.unix_user) %>">View</a>
-      <!--end::Menu item-->
-      <!--begin::Menu item-->
-      <%= link_to "Edit", edit_client_path(client.unix_user), { class: "menu-link px-3", data: { "turbo-frame" => "edit_client_modal" } } %>
-      <!--end::Menu item-->
-      <!--begin::Menu item-->
-      <%= link_to 'Delete', release_client_path(client.unix_user), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link px-3" %>
-      <!--end::Menu item-->
+      <div class="dropdown-menu fw-bold fs-7 w-125px py-4 dropdown-menu-end dropdown-menu-lg-start" 
+          aria-labelledby="options-button">
+        <%= link_to run_test_client_path(client.unix_user), method: :post, class: "menu-link text-hover-gray-500 flex-stack px-3" do %>Run Test 
+        <% end %>
+        <!--begin::Menu item-->
+        <a class="menu-item text-hover-gray-500 px-3" href="<%= client_path(client.unix_user) %>">View</a>
+        <!--end::Menu item-->
+        <!--begin::Menu item-->
+        <%= link_to "Edit", edit_client_path(client.unix_user), { class: "menu-link text-hover-gray-500 px-3", data: { "turbo-frame" => "edit_client_modal" } } %>
+        <!--end::Menu item-->
+        <!--begin::Menu item-->
+        <%= link_to 'Delete', release_client_path(client.unix_user), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link px-3" %>
+        <!--end::Menu item-->
+      </div>
     </div>
   </td>
 </tr> 

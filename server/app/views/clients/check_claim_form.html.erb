@@ -21,8 +21,9 @@
       <% if @error %>
         <%= render partial: "add_pod_error" %>
       <% else %>
-        <%= form_with(url: claim_clients_path) do |form| %>
-          <%= render partial: "add_pod_step_2", locals: { form: form }%>
+        <%= render partial: "add_pod_step_0" %>
+        <%= form_with(url: check_claim_clients_path) do |form| %>
+          <%= render partial: "add_pod_step_1", locals: { form: form }%>
         <% end %>
       <% end %>
     </div>
