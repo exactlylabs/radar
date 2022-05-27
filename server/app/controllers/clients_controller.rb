@@ -12,17 +12,9 @@ class ClientsController < ApplicationController
     #@clients = Client.where(user: current_user)
     @status = params[:status]
     @location = params[:location]
-    @clients = policy_scope(Client)
-    
+    @all_locations = policy_scope(Location)
     # New designs index clients by location
-    @indexed_clients = {}
-    @clients.each do |client|
-      if @indexed_clients[client.location.name].nil?
-        @indexed_clients[client.location.name] = [client]
-      else
-        @indexed_clients[client.location.name].append(client)
-      end
-    end
+    get_indexed_clients
   end
 
   # GET /clients/1 or /clients/1.json
@@ -45,6 +37,27 @@ class ClientsController < ApplicationController
 
   def claim_form
     @client = Client.new
+  end
+
+  def run_bulk_test
+    @location = params[:location_id].to_i
+    @clients = @location == -1 ? policy_scope(Client).where_no_location : policy_scope(Client).where(location: @location)
+    @error = false
+    @clients.each do |client|
+      unless client.update(test_requested: true)
+        @error = true
+        break
+      end
+    end
+    respond_to do |format|
+      if @error == false
+        format.html { redirect_to request.env['HTTP_REFERER'], notice: "Client tests requested." }
+        format.json { render :show, status: :ok, location: clients_path }
+      else
+        format.html { render clients_path, status: :unprocessable_entity }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   def run_test
@@ -89,20 +102,15 @@ class ClientsController < ApplicationController
   end
 
   def claim
-    @client_id = params[:id]
-    @client_secret = params[:secret]
-    @location_id = params[:location_id]
-
-    location = policy_scope(Location).where(id: @location_id).first
+    location = policy_scope(Location).find(params[:location_id]) if params[:location_id].present?
+    @client_id = params[:id_final]
+    @client_secret = params[:secret_final]
     @client = Client.where(unix_user: @client_id).first
-
     respond_to do |format|
-      if @client && @client.authenticate_secret(@client_secret)
-        @client.user = current_user
-        @client.location = location
-        @client.save
-        format.turbo_stream { render turbo_stream: turbo_stream.append('clients', partial: 'clients/client', locals: {client: @client}) }
-        format.html { redirect_to client_path(@client.unix_user), notice: "Client was successfully claimed." }
+      if @client&.authenticate_secret(@client_secret) &&
+         @client&.update(user: current_user, location: location, name: params[:name])
+        # format.turbo_stream { render turbo_stream: turbo_stream.append('clients', partial: 'clients/client', locals: {indexed_clients: get_indexed_clients}) }
+        format.html { redirect_to client_path(@client.unix_user) }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
         @error = true
@@ -291,8 +299,28 @@ EOF
         end
       end
     end
-    
-      def json_request?
-        request.format.symbol == :json
+
+    def json_request?
+      request.format.symbol == :json
+    end
+
+    def get_indexed_clients
+      @clients = policy_scope(Client)
+      @clients = @clients.where(location: @location) if @location.present? && @location.to_i != -1
+      @clients = @clients.where_no_location if @location.present? && @location.to_i == -1
+      if @status.present? && @status != "all"
+        @clients = @clients.where_online if @status == "online"
+        @clients = @clients.where_offline if @status == "offline"
       end
+      @indexed_clients = {}
+      @clients.each do |client|
+        if client.location
+          @indexed_clients[client.location] = [] if @indexed_clients[client.location].nil?
+          @indexed_clients[client.location].append(client)
+        else
+          @indexed_clients[{name: 'No location'}] = [] if @indexed_clients[{name:'No location'}].nil?
+          @indexed_clients[{name: 'No location'}].append(client)
+        end
+      end
+    end
 end

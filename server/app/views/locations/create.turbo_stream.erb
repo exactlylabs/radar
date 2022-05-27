@@ -1,0 +1,7 @@
+<%= turbo_stream.append 'locations' do %>
+  <%= render partial: "locations/location", locals: { location: @location } %>
+<% end %>
+
+<%= turbo_stream.append 'client-locations-dropdown' do %>
+  <%= render partial: "clients/client_locations", locals: { location: @location } %>
+<% end %>

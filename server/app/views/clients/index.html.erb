@@ -34,8 +34,8 @@
     <% if notice %>
     <p id="notice"><%= notice %></p>
     <% end %>
-    <%= render partial: "clients_table_filters", locals: { locations: @indexed_clients.keys } %>
-    <% @indexed_clients.sort_by{|location, clients| location}.each do |location, clients| %>
+    <%= render partial: "clients_table_filters", locals: { locations: @all_locations, hasUnindexed: @indexed_clients[{name: 'No location'}].present? } %>
+    <% @indexed_clients.sort_by{|location, clients| location[:name]}.each do |location, clients| %>
       <%= render partial: "clients_table_per_location", locals: { clients: clients, location: location } %>
     <% end %>
   </div>
@@ -45,8 +45,9 @@
 <div class="modal fade" tabindex="-1" id="add_pod_modal_wizard" data-controller="add-pod" data-action="turbo:submit-end->add-pod#submit">
   <%= turbo_frame_tag "add_pod_modal_wizard", src: check_claim_clients_path do %>
   <% end %>
-  <%= turbo_frame_tag "add_pod_modal_wizard", src: claim_clients_path do %>
-  <% end %>
+  <%= render partial: "add_pod_step_2" %>
+  <!--%= turbo_frame_tag "add_pod_modal_wizard_final", src: claim_clients_path do %-->
+  <!--% end %-->
 </div>
 
 <div class="modal fade" tabindex="-1" id="edit_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">

@@ -35,7 +35,7 @@
           </span>
         </div>
         <div class="modal-body--id-date d-flex flex-column align-items-start justify-content-center">
-          <div class="client-id fw-bold" style="font-size: 16px; color: #7e8299; margin-bottom: 2px">
+          <div class="client-id fw-bold" style="font-size: 16px; color: #3f4254; margin-bottom: 2px">
             <%= @client.unix_user %>
           </div>
           <div class="client-date" style="font-size: 13px; color: #b5b5c3;">
@@ -45,19 +45,16 @@
       </div>
 
       <div class="fv-row mb-7 fv-plugins-icon-container">
-          <!--begin::Label-->
-          <label class="required fs-6 fw-bold mb-2">Name</label>
-          <!--end::Label-->
-          <!--begin::Input-->
-          <%= form.text_field :name, class: "form-control form-control-solid", value: @client.name %>
-          <!--end::Input-->
-          <div class="fv-plugins-message-container invalid-feedback"></div>
-        </div>
-
-      <div class="fv-row mb-7 fv-plugins-icon-container">
-        <label class="required fs-6 fw-bold mb-2">Location</label>
-        <%= form.collection_select :location_id, current_user.locations, :id, :name, { include_blank: "" }, {class: "form-select", data: { controller: "select2", "select2-blanks-value" => true, placeholder: "Select a Location" } } %>
+        <!--begin::Label-->
+        <label class="required fs-6 fw-bold mb-2">Name</label>
+        <!--end::Label-->
+        <!--begin::Input-->
+        <%= form.text_field :name, class: "form-control form-control-solid", value: @client.name %>
+        <!--end::Input-->
+        <div class="fv-plugins-message-container invalid-feedback"></div>
       </div>
+
+      <%= render partial: "client_locations", locals: { form: form, locations: current_user.locations } %>
 
       <div id="location-created-snackbar" class="d-none w-100 d-flex flex-row align-items-center justify-content-start fw-bold" 
            style="display: none; background-color: #f1faff; height: 45px; color: #00a3ff; font-size: 14px; border-radius: 6px; margin-top: 15px; margin-bottom: 15px">

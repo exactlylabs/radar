@@ -37,11 +37,10 @@
       <%= client.measurements.length %>
   </td>
   <td class="text-end" style="padding-right: 30px">
-    <div class="dropdown">
-      <a href="#" 
+      <button type="button"
          class="btn btn-sm btn-light btn-active-light-primary dropwdown-toggle" 
-         data-bs-toggle="dropdown"
-         aria-expanded="false"
+         data-kt-menu-trigger="click"
+         data-kt-menu-placement="bottom-end"
          style="border-radius: 6px"   
          id="options-button"
       >
@@ -51,21 +50,27 @@
             <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
           </svg>
         </span>
-      </a>
-      <div class="dropdown-menu fw-bold fs-7 w-125px py-4 dropdown-menu-end dropdown-menu-lg-start" 
-          aria-labelledby="options-button">
-        <%= link_to run_test_client_path(client.unix_user), method: :post, class: "menu-link text-hover-gray-500 flex-stack px-3" do %>Run Test 
-        <% end %>
+      </button>
+      <div class="menu menu-sub menu-sub-dropdown menu-column fw-bold fs-7 w-125px py-4" 
+          data-kt-menu="true">
+        <div class="menu-item">
+          <%= link_to "Run Test", run_test_client_path(client.unix_user), method: :post, class: "menu-link text-hover-gray-500 text-gray-700 px-3" %>
+        </div>
         <!--begin::Menu item-->
-        <a class="menu-item text-hover-gray-500 px-3" href="<%= client_path(client.unix_user) %>">View</a>
+        <div class="menu-item">
+          <%= link_to "View", client_path(client.unix_user), { class: "menu-link text-hover-gray-500 text-gray-700 px-3" } %>
+        </div>
         <!--end::Menu item-->
         <!--begin::Menu item-->
-        <%= link_to "Edit", edit_client_path(client.unix_user), { class: "menu-link text-hover-gray-500 px-3", data: { "turbo-frame" => "edit_client_modal" } } %>
+        <div class="menu-item">
+          <%= link_to "Edit", edit_client_path(client.unix_user), { class: "menu-link text-hover-gray-500 text-gray-700 px-3", data: { "turbo-frame" => "edit_client_modal" } } %>
+        </div>
         <!--end::Menu item-->
         <!--begin::Menu item-->
-        <%= link_to 'Delete', release_client_path(client.unix_user), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link px-3" %>
+        <div class="menu-item">
+          <%= link_to 'Delete', release_client_path(client.unix_user), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link text-hover-gray-500 text-gray-700 px-3" %>
+        </div>
         <!--end::Menu item-->
       </div>
-    </div>
   </td>
 </tr> 

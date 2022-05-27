@@ -98,8 +98,12 @@ export default class extends Controller {
   }
 
   submit(e) {
-    if (e.detail.success) {
-      this.gotoLocationModal();
+    const postPath = e.srcElement.attributes[0].nodeValue;
+    if (e.detail.success ) {
+      if (postPath === '/clients/check_claim')
+        this.gotoLocationModal();
+      else
+        this.hideModal();
     }
   }
 
@@ -116,5 +120,7 @@ export default class extends Controller {
     document.querySelector('#podSecretModalBody').style.display = 'none';
     document.querySelector('#podSecretModalFooter').style.display = 'none';
     document.querySelector('#clientIdInput').innerText = document.querySelector('#podId').innerText;
+    document.querySelector('#id_final').value = document.querySelector('#id').value;
+    document.querySelector('#secret_final').value = document.querySelector('#secret').value;
   }
 }
