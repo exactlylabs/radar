@@ -70,6 +70,7 @@ class LocationsController < ApplicationController
   def destroy
     @location.destroy
     respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.replace('location_container_dynamic', partial: 'locations_list', locals: {locations: policy_scope(Location)}) }
       format.turbo_stream { render turbo_stream: turbo_stream.remove(@location) }
       format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }
       format.json { head :no_content }

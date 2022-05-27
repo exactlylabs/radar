@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_11_184653) do
+ActiveRecord::Schema.define(version: 2022_05_23_162659) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,8 @@ ActiveRecord::Schema.define(version: 2022_05_11_184653) do
     t.string "state"
     t.string "county"
     t.boolean "manual_lat_long", default: false
+    t.string "state_fips"
+    t.string "county_fips"
     t.index ["user_id"], name: "index_locations_on_user_id"
   end
 
