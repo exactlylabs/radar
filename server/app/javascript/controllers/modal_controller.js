@@ -19,14 +19,6 @@ export default class extends Controller {
     }
   }
 
-  handleNewLocationFromClientModal(e) {
-    if(e.detail.success) {
-      this.hideModal();
-      $('#edit_pod_modal').modal('show');
-      document.querySelector('#location-created-snackbar').classList.remove('d-none');
-    }
-  }
-
   focusInputIfPresent() {
     const element = document.querySelector('.podIdInput');
     element && element.focus();

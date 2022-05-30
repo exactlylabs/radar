@@ -58,7 +58,12 @@
 
           <div class="fv-row mb-7 fv-plugins-icon-container">
             <label class="required fs-6 fw-bold mb-2">Location</label>
-            <%= form.collection_select :location_id, current_user.locations, :id, :name, { include_blank: "" }, {class: "form-select", data: { controller: "select2", "select2-blanks-value" => true, placeholder: "Select a Location" } } %>
+            <select class="form-select" data-controller="select2" data-select2-blanks-value="true" id="client-locations-dropdown"
+            data-placeholder="Select a location" name="location_id" data-select2-id="select2-data-location_id" tabindex="-1">
+              <% current_user.locations.each_with_index do |location, index|%>
+                <%= render partial: "client_location", locals: { location: location, selected: false} %>
+              <% end %> 
+            </select>
           </div>
 
           <div id="location-created-snackbar" class="d-none w-100 d-flex flex-row align-items-center justify-content-start fw-bold" 
@@ -73,6 +78,11 @@
               </g>
             </svg>
             Your new location has been created.
+          </div>
+
+          <div id="loading-container" class="d-none d-flex align-items-center mb-5">
+            <div class="spinner-border text-primary me-3" role="status"></div>
+            <div style="font-size: 13px; color: #b5b5c3;">Creating new location...</div>
           </div>
 
           <a class="d-flex align-items-center fw-bold" 

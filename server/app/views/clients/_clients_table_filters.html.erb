@@ -16,9 +16,9 @@
     </a>
     <div class="dropdown-menu fw-bold fs-7 py-4"
       aria-labelledby="schedule-button">
-      <a href="<%= params[:status] == 'all' ? clients_path : clients_path(status: 'all', location: params[:location]) %>" 
+      <a href="<%= clients_path(location: params[:location]) %>" 
         style="padding-left: 11px"
-        class="menu-item text-hover-gray-500 <%= params[:status].nil? || params[:status] == 'all' ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
+        class="menu-item text-hover-gray-500 <%= params[:status].nil? ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
         All Pods
       </a>
       <!--begin::Menu item-->
@@ -73,4 +73,22 @@
       <% end %>
     </div>
   </div>
+  <% if params[:status] or params[:location] %>
+    <a class="btn btn-sm btn-light btn-active-light-primary ms-3 px-2" 
+        href="<%= clients_path %>"
+        style="height: max-content">
+        <span class="svg-icon svg-icon-light svg-icon-4" style="margin-right: 3px">
+          <svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(2 2)" fill="none" fill-rule="evenodd">
+                <circle stroke="#B5B5C3" stroke-width="1.5" cx="5" cy="5" r="5.75"/>
+                <g transform="rotate(45 2.44 6.06)" fill="#B5B5C3">
+                    <rect x="2.75" width="1.5" height="7" rx=".75"/>
+                    <rect transform="rotate(90 3.5 3.5)" x="2.75" width="1.5" height="7" rx=".75"/>
+                </g>
+            </g>
+          </svg>
+        </span>
+      Clear filters
+    </a>
+  <% end %>
 </div>

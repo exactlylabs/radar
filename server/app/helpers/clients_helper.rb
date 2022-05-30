@@ -1,7 +1,7 @@
 module ClientsHelper
   def client_status_to_human(param)
     case param
-    when nil, 'all'
+    when nil
       'All Pods'
     when 'online'
       'Online'

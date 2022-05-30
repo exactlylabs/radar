@@ -37,12 +37,13 @@
       <%= client.measurements.length %>
   </td>
   <td class="text-end" style="padding-right: 30px">
+    <div class="btn-group">
       <button type="button"
-         class="btn btn-sm btn-light btn-active-light-primary dropwdown-toggle" 
-         data-kt-menu-trigger="click"
-         data-kt-menu-placement="bottom-end"
+         class="btn btn-sm btn-light btn-active-light-primary dropwdown-toggle"
+         data-bs-toggle="dropdown"
+         aria-expanded="false"
          style="border-radius: 6px"   
-         id="options-button"
+         id="<%= "options-button-#{client.id}" %>"
       >
         Options
         <span class="svg-icon svg-icon-5 m-0">
@@ -51,8 +52,8 @@
           </svg>
         </span>
       </button>
-      <div class="menu menu-sub menu-sub-dropdown menu-column fw-bold fs-7 w-125px py-4" 
-          data-kt-menu="true">
+      <div class="dropdown-menu fw-bold fs-7 w-125px py-4" 
+          aria-labelledby="<%= "options-button-#{client.id}" %>">
         <div class="menu-item">
           <%= link_to "Run Test", run_test_client_path(client.unix_user), method: :post, class: "menu-link text-hover-gray-500 text-gray-700 px-3" %>
         </div>
@@ -72,5 +73,6 @@
         </div>
         <!--end::Menu item-->
       </div>
+    </div>
   </td>
 </tr> 

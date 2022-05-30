@@ -12,7 +12,7 @@ class ClientsController < ApplicationController
     #@clients = Client.where(user: current_user)
     @status = params[:status]
     @location = params[:location]
-    @all_locations = policy_scope(Location)
+    @all_locations = policy_scope(Location).where_has_client_associated.uniq
     # New designs index clients by location
     get_indexed_clients
   end
@@ -111,7 +111,7 @@ class ClientsController < ApplicationController
          @client&.update(user: current_user, location: location, name: params[:name])
         # format.turbo_stream { render turbo_stream: turbo_stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)}) }
         # format.turbo_stream { render turbo_stream: turbo_stream.append('clients', partial: 'clients/client', locals: {indexed_clients: get_indexed_clients}) }
-        format.html { redirect_to client_path(@client.unix_user) }
+        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully created." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
         @error = true
@@ -124,9 +124,9 @@ class ClientsController < ApplicationController
   def release
     respond_to do |format|
       if @client.update(user: nil, location: nil)
-        format.turbo_stream { render turbo_stream: turbo_stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)}) }
-        format.turbo_stream { render turbo_stream: turbo_stream.remove(@client) }
-        format.html { redirect_to clients_path, notice: "Client was successfully released." }
+        #format.turbo_stream { render turbo_stream: turbo_stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)}) }
+        #format.turbo_stream { render turbo_stream: turbo_stream.remove(@client) }
+        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully released." }
         format.json { head :no_content }
       end
     end
@@ -241,10 +241,8 @@ EOF
 
     respond_to do |format|
       if @client.save
-        format.turbo_stream {
-          render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)})
-        }
-        format.html { redirect_to clients_path, notice: "Client was successfully created." }
+        #format.turbo_stream { render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)})}
+        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully created." }
         format.json { render :show, status: :created, location: client_path(@client.unix_user) }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -255,10 +253,12 @@ EOF
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
+    puts request.path
+    puts request.url
     respond_to do |format|
       if @client.update(client_params)
-        format.turbo_stream
-        format.html { redirect_to clients_path, notice: "Client was successfully updated." }
+        #format.turbo_stream
+        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -271,10 +271,8 @@ EOF
   def destroy
     @client.destroy
     respond_to do |format|
-      format.turbo_stream {
-        render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)})
-      }
-      format.html { redirect_to clients_url, notice: "Client was successfully destroyed." }
+      # format.turbo_stream {render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)})}
+      format.html { redirect_back fallback_location: root_path, notice: "Client was successfully destroyed." }
       format.json { head :no_content }
     end
   end

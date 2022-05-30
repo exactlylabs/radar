@@ -41,8 +41,10 @@
 					<!--end::Table head-->
 					<!--begin::Table body-->
 					<tbody class="fw-bold text-gray-600">
-						<% clients.each do |client| %>
-								<%= render partial: "clients_table_row", locals: { client: client }%>
+						<% clients.each_with_index do |client, index| %>
+								<% if index < 5 %>
+									<%= render partial: "clients_table_row", locals: { client: client }%>
+								<% end %>
 						<% end %>
 					</tbody>
 					<!--end::Table body-->
@@ -50,6 +52,9 @@
 
 			</div>
 		</div>
+		<% if clients.length > 5 && clients[0].location.present? %> <!-- missing automatic redirect to /locations/id/pods -->
+			<%= link_to "View more", location_path(clients[0].location), style: "padding-left: 2.5rem" %>
+		<% end %>
 		<!--end::Table-->
 	</div>
 	<!--end::Card body-->

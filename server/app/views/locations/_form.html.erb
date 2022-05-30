@@ -50,9 +50,9 @@
             <!--end::Label-->
             <!--begin::Input-->
             <%= form.text_field :latitude, 
-                  class: "conditional form-control form-control-solid #{@location.manual_lat_long ? '' : 'text-muted'}", 
-                  readonly: !@location.manual_lat_long, 
-                  data: { "location-form-target" => "latitude", action: "input->location-form#onLatitudeChange" } 
+                class: "conditional form-control form-control-solid #{@location.manual_lat_long ? '' : 'text-muted'}", 
+                readonly: !@location.manual_lat_long, 
+                data: { "location-form-target" => "latitude", action: "input->location-form#onLatitudeChange" } 
             %>
             <!--end::Input-->
             <div class="fv-plugins-message-container invalid-feedback"></div>
@@ -104,7 +104,7 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
     <% if data_target.present? %>
-      <%= form.submit submit_name, class: "btn btn-primary", 'data-target' => "modal.#{data_target}", 'data-action' => 'onsubmit->modal#handleNewLocationFromClientModal'%>
+      <%= form.submit submit_name, class: "btn btn-primary", 'data-target' => "modal.#{data_target}", "data-bs-toggle" => "modal", "data-bs-target" => "#add_pod_modal_wizard" %>
     <% else %>
       <%= form.submit submit_name, class: "btn btn-primary" %>
     <% end %>

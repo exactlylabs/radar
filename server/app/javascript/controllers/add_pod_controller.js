@@ -123,4 +123,18 @@ export default class extends Controller {
     document.querySelector('#id_final').value = document.querySelector('#id').value;
     document.querySelector('#secret_final').value = document.querySelector('#secret').value;
   }
+
+  handleSubmitStart(e) {
+    console.log(e);
+    this.hideModal();
+    $('#add_pod_modal_wizard').modal('show');
+    document.querySelector('#loading-container').classList.remove('d-none');
+  }
+
+  handleNewLocationFromClientModal(e) {
+    if(e.detail.success) {
+      document.querySelector('#loading-container').classList.add('d-none');
+      document.querySelector('#location-created-snackbar').classList.remove('d-none');
+    }
+  }
 }
