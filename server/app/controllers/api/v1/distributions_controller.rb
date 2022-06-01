@@ -2,7 +2,7 @@ module Api
   module V1
     class DistributionsController < ApiController
       before_action :set_version!
-      before_action :ensure_superuser
+      before_action :ensure_superuser!
       
       def index
         if @version
@@ -11,7 +11,7 @@ module Api
       end
 
       def show
-        @distribution = Distribution.find(params[:id])
+        @distribution = Distribution.find_by_name(params[:id])
       end
 
       def create
@@ -25,7 +25,7 @@ module Api
       end
 
       def update
-        @distribution = Distribution.find(params[:id])
+        @distribution = Distribution.find_by_name(params[:id])
         if @distribution.update distribution_params
           render :show, status: :ok
         else

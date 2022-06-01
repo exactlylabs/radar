@@ -1,7 +1,7 @@
 module Api
   module V1
     class ClientVersionsController < ApiController
-      before_action :ensure_superuser
+      before_action :ensure_superuser!
 
       def index
         @client_versions = ClientVersion.order('created_at DESC')
