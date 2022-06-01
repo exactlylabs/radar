@@ -1,4 +1,11 @@
-<div class="d-flex flex-stack mb-6">
+<div class="d-flex flex-stack mb-6 location-row" 
+      data-location-id="<%= location.id %>"
+      data-location-name="<%= location.name %>"
+      data-location-download="<%= location.latest_download %>"
+      data-location-upload="<%= location.latest_upload %>"
+      data-location-online="<%= location.online? %>"
+      data-location-latitude="<%= location.latitude %>"
+      data-location-longitude="<%= location.longitude %>">
   <div class="d-flex">
     <div class="card-title--icon d-flex align-items-center justify-content-center" 
                style="height: 36px; width: 36px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
