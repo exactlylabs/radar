@@ -1,6 +1,6 @@
-<%= turbo_frame_tag "add_pod_modal" do %>
-<%= form_with(url: claim_clients_path) do |form| %>
-<div class="modal-dialog" style="position: relative; top: 20%; max-width: 620px">
+<%= turbo_frame_tag "add_pod_modal" , style: "position: relative; top: 20%;" do %>
+<%= form_with(url: move_clients_path) do |form| %>
+<div class="modal-dialog" style="max-width: 620px">
     <div class="modal-content">
     <div class="modal-header">
         <h5 class="modal-title" style="font-size: 20px">Add Pod to <%= location.name %></h5>
@@ -25,13 +25,15 @@
         <% end %>
         <div class="fv-row mb-7 fv-plugins-icon-container">
             <label class="required fs-6 fw-bold mb-1">Would you like to update your Pod name?</label>
-            <%= form.text_field :id, class: "form-control form-control-solid", placeholder: 'Insert new Pod name', value: @clients.present? && @clients.length > 0 ?@clients[0].name : nil%>
+            <input type="hidden" name="id" id="client-id" value=""/>
+            <input type="hidden" name="location_id" id="location-id" value=""/>
+            <input name="name" id="client-name" type="text" class="form-control form-control-solid" placeholder="Insert new Pod name" value="" data-client-id=""/>
         </div>
     </div>
 
-    <div class="modal-footer">
+    <div class="modal-footer" data-controller="add-client-to-location">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-        <%= form.submit "Add Pod", class: "btn btn-primary" %>
+        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Done</button>
     </div>
     </div>
 </div>

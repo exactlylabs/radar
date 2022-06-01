@@ -1,9 +1,8 @@
 <%= turbo_frame_tag "add_pod_modal" do %>
-<%= form_with(url: claim_clients_path) do |form| %>
 <div class="modal-dialog" style="position: relative; top: 20%; max-width: 620px">
     <div class="modal-content">
     <div class="modal-header">
-        <h5 class="modal-title" style="font-size: 20px">Add Pod to <%= location.name %></h5>
+        <h5 class="modal-title" style="font-size: 20px" id="add-pod-title">Add Pod to <%= location.name %></h5>
         <!--begin::Close-->
         <a href="#">
             <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
@@ -25,32 +24,38 @@
         <% end %>
         <div class="fv-row mb-7 fv-plugins-icon-container">
             <label class="required fs-6 fw-bold mb-1">Choose an existing Pod</label>
-            <%= form.collection_select :client_id, clients, :id, :name, { include_blank: "" }, { class: "form-select", data: { controller: "select2", "select2-blanks-value" => true, placeholder: "Choose a Pod" } } %>
-            <% if true %>
-                <div class="d-flex flex-row justify-content-start mt-5 align-items-center"
-                     style="border: dashed 1px #f89c47; height: 65px; width: 100%; border-radius: 6px; background-color: #fff9f4">
-                    <div style="width: 24px; height: 24px; margin-left: 15px; margin-right: 15px;">
-                        <span class="svg-icon svg-icon-warning svg-icon-2x">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="black"/>
-                                <rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)" fill="black"/>
-                                <rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)" fill="black"/>
-                            </svg>
-                        </span>
-                    </div>
-                    <div class="fw-bold" style="font-size: 14px;">
-                        This Pod belongs to Downtown Office. If you continue, it will be moved to Exactly Labs Office.
-                    </div>
+            <select id="client_id" class="form-select select2-hidden-accessible" data-controller="select2" data-select2-blanks-value="true"
+                    data-placeholder="Choose a Pod" data-action="change->select2#checkClientLocation" tabindex="-1" data-client2-id="select2-data-client_id">
+                    <option value=""></option>
+                <% current_user.clients.each do |client| %>
+                    <!-- using 'picked' attribute instead of reserved word 'selected' to prevent defaulting a value -->
+                    <option value="<%= client.unix_user %>" picked="false" data-location-name="<%= client.location.name %>" data-location-id="<%= client.location.id %>">
+                        <%= client.name %>
+                    </option>
+                <% end %>
+            </select>
+            <div class="d-none d-flex flex-row justify-content-start mt-5 align-items-center"
+                 id="warning-client-location"
+                    style="border: dashed 1px #f89c47; height: 65px; width: 100%; border-radius: 6px; background-color: #fff9f4; padding-right: 15px">
+                <div style="width: 24px; height: 24px; margin-left: 15px; margin-right: 15px;">
+                    <span class="svg-icon svg-icon-warning svg-icon-2x">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="black"/>
+                            <rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)" fill="black"/>
+                            <rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)" fill="black"/>
+                        </svg>
+                    </span>
                 </div>
-            <% end %> 
+                <div class="fw-bold" style="font-size: 14px;" id="warning-text">
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="modal-footer">
+    <div class="modal-footer" data-controller="add-client-to-location">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-        <%= form.submit "Add Pod", class: "btn btn-primary" %>
+        <button id="change-name-button" class="btn btn-primary disabled" data-action="click->add-client-to-location#continueToChangeName">Move Pod</button>
     </div>
     </div>
 </div>
-<% end %>
 <% end %>

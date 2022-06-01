@@ -3,7 +3,7 @@ require "sshkey"
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status ], if: :json_request?
-  before_action :set_client, only: %i[ claim release show edit update destroy ]
+  before_action :set_client, only: %i[ claim release show edit update destroy move ]
   before_action :authenticate_token!, only: %i[ create ]
   skip_forgery_protection only: %i[ status configuration new create ]
 
@@ -218,6 +218,22 @@ EOF
       if @client.update(client_params)
         format.turbo_stream
         format.html { redirect_to clients_path, notice: "Client was successfully updated." }
+        format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # POST /clients/move
+  def move
+    location_id = params[:location_id]
+    location = policy_scope(Location).find_by_id(location_id)
+    respond_to do |format|
+      if @client.update(name: params[:name], location: location)
+        format.turbo_stream
+        format.html { redirect_back fallback_location: location_clients_path(location), notice: "Client was successfully moved." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }

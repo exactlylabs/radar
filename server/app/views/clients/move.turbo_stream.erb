@@ -1,0 +1,3 @@
+<%= turbo_stream.append 'location_clients_table' do %>
+  <%= render partial: 'location_clients/location_clients_table_row', locals: {client: @client} %>
+<% end %>

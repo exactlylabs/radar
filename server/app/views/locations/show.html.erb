@@ -49,3 +49,15 @@
   <% end %>
 </div>
 <!--end::AddPodModal-->
+
+<div class="modal fade" tabindex="-1" id="add_pod_modal_step_0" data-controller="add-client-to-location">
+    <%= render partial: 'location_clients/add_pod_step_0', locals: { location: @location } %>
+</div>
+
+<div class="modal fade" tabindex="-1" id="add_pod_step_1_existing">
+    <%= render partial: 'location_clients/add_pod_step_1_existing', locals: { location: @location } %>
+</div>
+
+<div class="modal fade" tabindex="-1" id="add_pod_step_2_existing">
+    <%= render partial: 'location_clients/add_pod_step_2_existing', locals: { location: @location } %>
+</div>

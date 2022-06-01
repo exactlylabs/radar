@@ -42,11 +42,11 @@ class Location < ApplicationRecord
   end
 
   def download_avg
-    self.measurements.average(:download).round(5)
+    self.measurements.average(:download).round(5) if self.measurements.length.positive?
   end
 
   def upload_avg
-    self.measurements.average(:upload).round(5)
+    self.measurements.average(:upload).round(5) if self.measurements.length.positive?
   end
 
   def download_diff
