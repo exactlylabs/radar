@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/bash
 set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-# We need to source rvm again, because it's not automatically configuring the correct ruby for the project
-source ~/.rvm/scripts/rvm
+# If using RVM, we need to source in the script, due to it not working when running through a script.
+[[ -s $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm
 
 cd $SCRIPT_DIR/../server
 
