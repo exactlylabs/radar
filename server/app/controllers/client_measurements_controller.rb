@@ -1,21 +1,13 @@
 class ClientMeasurementsController < ApplicationController
-  include Pagination
   before_action :authenticate_user!, except: %i[ create ]
   before_action :set_client
   skip_forgery_protection only: %i[ create ]
 
   # GET /measurements or /measurements.json
   def index
-    @style = params[:style]
-    @range = get_date_range(params[:range])
     @measurements = @client.measurements
-    @measurements = @measurements.where(style: @style) if @style.present?
-    @measurements = @measurements.where(created_at: @range[0]..@range[1]) if @range.present?
-    @total = @measurements.length
-    @measurements = @measurements.then(&paginate)
-
     respond_to do |format|
-      format.html { render "index", locals: { measurements: @measurements, total: @total } }
+      format.html { render "index", locals: { measurements: @measurements } }
       format.csv { send_data @measurements.to_csv, filename: "measurements-#{@client.unix_user}.csv" }
     end
   end
@@ -90,20 +82,5 @@ class ClientMeasurementsController < ApplicationController
 
     def client_signed_in?
       Client.find_by_unix_user(params[:client_id])&.authenticate_secret(params[:client_secret]) != false
-    end
-
-    def get_date_range(range)
-      case range
-      when 'last-week'
-        [Time.now - 7.day, Time.now]
-      when 'last-month'
-        [Time.now - 30.day, Time.now]
-      when 'last-six-months'
-        [Time.now - 180.day, Time.now]
-      when 'last-year'
-        [Time.now - 365.day, Time.now]
-      else
-        [nil, Time.now]
-      end
     end
 end

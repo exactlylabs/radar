@@ -1,6 +1,7 @@
 <div>
   <% page_elements = total == 10 ? items.length * params[:page].to_i : params[:page].to_i * 10 - 10 + items.length %>
-  Showing <%= params[:page].nil? ? '1' : params[:page].to_i * 10 - 9 %> to <%= params[:page].nil? ? items.length : page_elements %> of <%= total %> records
+  <% initial_element = items.length === 0 ? "0" : "1" %>
+  Showing <%= params[:page].nil? ? initial_element : params[:page].to_i * 10 - 9 %> to <%= params[:page].nil? ? items.length : page_elements %> of <%= total %> records
 </div>
 <ul class="pagination">
   <li class="page-item previous <%= params[:page].nil? || (params[:page].present? && 1 == params[:page].to_i) ? 'disabled' : ''%>">

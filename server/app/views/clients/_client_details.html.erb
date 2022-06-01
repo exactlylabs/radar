@@ -71,7 +71,7 @@
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder w-50" style="min-width: 130px">Last test</div>
         <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
-          <%= pretty_print_date(client.latest_measurement.created_at) %>
+          <%= client.latest_measurement.present? ? pretty_print_date(client.latest_measurement.created_at) : "N/A" %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">

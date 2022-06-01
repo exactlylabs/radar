@@ -193,7 +193,7 @@
           <!--end::Table head-->
           <!--begin::Table body-->
           <tbody class="fw-bold text-gray-600">
-          <% @measurements.each do |measurement| %>
+          <% paginate_elements(@measurements, [:range, :style]).each do |measurement| %>
             <tr>
               <td data-controller="localtime" style="color: #5e6278"><%= measurement.created_at %></td>
               <td style="color: #5e6278"><%= measurement.style %></td>
@@ -211,7 +211,7 @@
         </div></div>
         <!--end::Table-->
         <div class="pagination-container d-flex justify-content-between align-items-center mt-5">
-          <%= paginate @measurements, @total %>
+          <%= pagination_footer %>
         </div>
       </div>
       <!--end::Card body-->
