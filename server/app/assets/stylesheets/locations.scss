@@ -3,9 +3,15 @@
 // You can use Sass (SCSS) here: https://sass-lang.com/
 .option {
     background-color: rgba(245, 248, 250, 0.4);
+    border: dashed 1px #b5b5c3;
 }
 
 .option:hover {
     cursor: pointer;
     background-color: #f1faff;
+}
+
+.clicked {
+    background-color: #f1faff;
+    border: dashed 1px #00a3ff;
 }

@@ -19,11 +19,11 @@
         <div class="fw-bolder" style="font-size: 20px; color: #181c32">
             What would you like to do?
         </div>
-        <div class="modal-body--options-container d-flex flex-column align-items-center justify-content-center w-75">
+        <div class="modal-body--options-container d-flex flex-column align-items-center justify-content-center w-75" data-controller="add-client-to-location">
             <div id="old-pod-option"
                  class="option d-flex flex-row justify-content-start mb-5 mt-10 align-items-center" 
-                 style="border: dashed 1px #b5b5c3; height: 100px; width: 500px; border-radius: 6px;"
-                 onclick="querySelector('#old-pod-option').classlist.toggle('clicked');">
+                 style="height: 100px; width: 500px; border-radius: 6px;"
+                 data-action="click->add-client-to-location#chooseMoveOption">
                 <div class="d-flex justify-content-center align-items-center" 
                      style="border-radius: 50%; background-color: #e4f2fc; margin-left: 25px; margin-right: 20px; height: 40px; width: 40px;">
                     <span class="svg-icon svg-icon-primary svg-icon-2x">
@@ -40,8 +40,8 @@
             </div>
             <div id="new-pod-option"
                  class="option d-flex flex-row justify-content-start mb-10 align-items-center" 
-                 style="border: dashed 1px #b5b5c3; height: 100px; width: 500px; border-radius: 6px;"
-                 onclick="">
+                 style="height: 100px; width: 500px; border-radius: 6px;"
+                 data-action="click->add-client-to-location#chooseNewOption">
                 <div class="d-flex justify-content-center align-items-center" 
                      style="border-radius: 50%; background-color: #e4f2fc; margin-left: 25px; margin-right: 20px; height: 40px; width: 40px;">
                     <span class="svg-icon svg-icon-primary svg-icon-2x">
@@ -59,9 +59,9 @@
         </div>
     </div>
 
-    <div class="modal-footer">
+    <div class="modal-footer" data-controller="add-client-to-location">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" data-bs-target="#add_pod_modal_step_1_existing">Continue</button>
+        <button id="continue-button" type="button" class="btn btn-primary disabled" data-action="click->add-client-to-location#continueToNextStep">Continue</button>
     </div>
     </div>
 </div>

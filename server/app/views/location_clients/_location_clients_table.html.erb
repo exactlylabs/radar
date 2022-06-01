@@ -15,7 +15,7 @@
                                 </th>
                                 <th></th>
                                 <th class="text-center" style="display: table-cell; vertical-align: middle">
-                                    <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#add_pod_step_1_existing">Add Pod</button>
+                                    <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#add_pod_modal_step_0">Add Pod</button>
                                 </th>
                             </tr>
                             <!--begin::Table row-->
@@ -32,10 +32,8 @@
                         <!--end::Table head-->
                         <!--begin::Table body-->
                         <tbody class="fw-bold text-gray-600" id="location_clients_table">
-                            <% counter = 1 %>
                             <% clients.order("LOWER(name)").each do |client| %>
-                                <%= render partial: "location_clients_table_row", locals: { client: client, index: counter }%>
-                                <% counter += 1 %>
+                                <%= render partial: "location_clients_table_row", locals: { client: client }%>
                             <% end %>
                         </tbody>
                         <!--end::Table body-->
