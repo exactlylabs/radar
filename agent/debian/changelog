@@ -1,0 +1,6 @@
+radar-agent (1.0.0-1) stretch; urgency=medium
+
+  * Initial packaging work with dpkg-buildpackage.
+
+ -- Rafael Mendes P. Bachiega <rafael@exactlylabs.com>  Thu, 01 Jun 2022 20:25:00 +0000
+ 
