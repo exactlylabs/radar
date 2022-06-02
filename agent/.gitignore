@@ -7,3 +7,11 @@ dist/
 *.key
 *.pem
 *.srl
+
+# Whitelist for Debian package, since it creates a lot of files
+debian/*
+!debian/changelog
+!debian/compat
+!debian/control
+!debian/radar-agent.service
+!debian/rules
