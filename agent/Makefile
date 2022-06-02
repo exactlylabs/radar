@@ -5,6 +5,7 @@ BIN_NAME?=radar_agent
 PROVIDER_SIGNING_CERT_PATH?=./dist/certs/binCert.crt
 PROVIDER_SIGNING_KEY_PATH?=./dist/certs/binKey.key
 VERSION?=DEV
+INSTALL_DIR?=/usr/local/bin
 
 # Get Absolute Path of Signing files
 CERT_PATH=$(abspath ${PROVIDER_SIGNING_CERT_PATH})
@@ -49,8 +50,13 @@ dev: ookla_bin
 	CERT_CONFIG=scripts/dev_root_ca.cnf ./scripts/gen_root_ca.sh
 	CERT_CONFIG=scripts/dev_cert_ssl.cnf ./scripts/gen_cert.sh
 
+install:
+	mkdir -p ${INSTALL_DIR}
+	cp ${OUTPUT_PATH} ${INSTALL_DIR}/radar-agent
+
+
 all: build sign validate
 
 clean:
-	rm ${OUTPUT_PATH}
-	rm ${OUTPUT_PATH}_signed
+	rm -f ${OUTPUT_PATH}
+	rm -f ${OUTPUT_PATH}_signed
