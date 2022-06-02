@@ -4,7 +4,7 @@ OUTPUT_DIR?=./dist
 BIN_NAME?=radar_agent
 PROVIDER_SIGNING_CERT_PATH?=./dist/certs/binCert.crt
 PROVIDER_SIGNING_KEY_PATH?=./dist/certs/binKey.key
-VERSION?=DEV
+export VERSION?=DEV
 INSTALL_DIR?=/usr/local/bin
 
 # Get Absolute Path of Signing files
@@ -54,6 +54,9 @@ install:
 	mkdir -p ${INSTALL_DIR}
 	cp ${OUTPUT_PATH} ${INSTALL_DIR}/radar-agent
 
+
+deb:
+	dpkg-buildpackage -b --no-sign --target-arch ${ARCH}
 
 all: build sign validate
 
