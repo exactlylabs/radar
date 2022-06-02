@@ -1,16 +1,19 @@
 <div>
-  <% page_elements = @measurements.length == 10 ? @measurements.length * params[:page].to_i : params[:page].to_i * 10 - 10 + @measurements.length %>
-  Showing <%= params[:page].nil? ? '1' : params[:page].to_i * 10 - 9 %> to <%= params[:page].nil? ? @measurements.length : page_elements %> of <%= @total %> records
+  <% page_elements = total == 10 ? items.length * params[:page].to_i : params[:page].to_i * 10 - 10 + items.length %>
+  <% initial_element = items.length === 0 ? "0" : "1" %>
+  Showing <%= params[:page].nil? ? initial_element : params[:page].to_i * 10 - 9 %> to <%= params[:page].nil? ? items.length : page_elements %> of <%= total %> records
 </div>
 <ul class="pagination">
   <li class="page-item previous <%= params[:page].nil? || (params[:page].present? && 1 == params[:page].to_i) ? 'disabled' : ''%>">
     <% if params[:page].present? && params[:page].to_i > 1 %>
-      <a href="<%= client_measurements_path(style: params[:style], range: params[:range], page: params[:page].to_i - 1) %>" class="page-link"><i class="previous"></i></a>
+      <%= link_to(request.query_parameters.merge({ page: params[:page].to_i - 1 }), { class: "page-link" }) do%>
+        <i class="previous"></i>
+      <% end %>  
     <% else %>
       <a href="#" class="page-link"><i class="previous"></i></a>
     <% end %>
   </li>
-  <% pages = (@total/10.0).ceil %>
+  <% pages = (total/10.0).ceil %>
   <% if pages > 6 %>
     <% initialPage = params[:page].present? ? params[:page].to_i : 1 %>
     <% secondBatchInitialPage = pages - 2 %>
@@ -20,11 +23,11 @@
     <% for page in initialPage..(initialPage+2) do %>
       <% if params[:page].nil? %>
         <li class="page-item <%= page == 1 ? 'active' : ''%>">
-          <a href="<%= client_measurements_path(style: params[:style], range: params[:range], page: page) %>" class="page-link"><%= page %></a>
+          <%= link_to(page, request.query_parameters.merge({ page: page }), { class: "page-link" })%>
         </li>
       <% else %>
         <li class="page-item <%= page == params[:page].to_i ? 'active' : ''%>">
-          <a href="<%= client_measurements_path(style: params[:style], range: params[:range], page: page) %>" class="page-link"><%= page %></a>
+          <%= link_to(page, request.query_parameters.merge({ page: page }), { class: "page-link" })%>
         </li>
       <% end %>
     <% end %>
@@ -32,11 +35,11 @@
     <% for page in secondBatchInitialPage..(pages) do %>
       <% if params[:page].nil? %>
         <li class="page-item <%= page == 1 ? 'active' : ''%>">
-          <a href="<%= client_measurements_path(style: params[:style], range: params[:range], page: page) %>" class="page-link"><%= page %></a>
+          <%= link_to(page, request.query_parameters.merge({ page: page }), { class: "page-link" })%>
         </li>
       <% else %>
         <li class="page-item <%= page == params[:page].to_i ? 'active' : ''%>">
-          <a href="<%= client_measurements_path(style: params[:style], range: params[:range], page: page) %>" class="page-link"><%= page %></a>
+          <%= link_to(page, request.query_parameters.merge({ page: page }), { class: "page-link" })%>
         </li>
       <% end %>
     <% end %>
@@ -44,24 +47,24 @@
     <% for page in 1..pages do %>
     <% if params[:page].nil? %>
       <li class="page-item <%= page == 1 ? 'active' : ''%>">
-        <a href="<%= client_measurements_path(page: page) %>" class="page-link"><%= page %></a>
+        <%= link_to(page, request.query_parameters.merge({ page: page }), { class: "page-link" })%>
       </li>
     <% else %>
       <li class="page-item <%= page == params[:page].to_i ? 'active' : ''%>">
-        <a href="<%= client_measurements_path(page: page) %>" class="page-link"><%= page %></a>
+        <%= link_to(page, request.query_parameters.merge({ page: page }), { class: "page-link"})%>
       </li>
     <% end %>
   <% end %>
   <% end %>
   <li class="page-item next <%= (pages == 0 || pages == 1) || (params[:page].present? && pages == params[:page].to_i) ? 'disabled' : ''%>">
     <% if pages > 1 %>
-      <a href="<%= client_measurements_path(style: params[:style], range: params[:range], page: (params[:page].present? ? params[:page].to_i + 1 : 2)) %>" class="page-link">
+      <%= link_to(request.query_parameters.merge({ page: params[:page].to_i + 1 }), { class: "page-link" }) do%>
         <i class="next"></i>
-      </a>
+      <% end %>
     <% else %>
       <a href="#" class="page-link">
         <i class="next"></i>
       </a>
     <% end %>
   </li>
-</ul> 
+</ul>

@@ -6,9 +6,8 @@ class ClientMeasurementsController < ApplicationController
   # GET /measurements or /measurements.json
   def index
     @measurements = @client.measurements
-
     respond_to do |format|
-      format.html
+      format.html { render "index", locals: { measurements: @measurements } }
       format.csv { send_data @measurements.to_csv, filename: "measurements-#{@client.unix_user}.csv" }
     end
   end

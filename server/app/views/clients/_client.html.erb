@@ -24,10 +24,15 @@
     <!--begin::Menu-->
     <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true" data-controller="menu">
       <div class="menu-item px-3">
-        <%= link_to run_test_client_path(client.unix_user), method: :post, class: "menu-link flex-stack px-3" do %>Run Test 
-        <% if client.test_requested %>
-          <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="" data-bs-original-title="Test request is currently pending" aria-label="Test request is currently pending"></i>
-        <% end %>
+        <% if !client.test_requested %>
+          <%= link_to run_test_client_path(client.unix_user), method: :post, class: "menu-link flex-stack px-3 #{client.test_requested ? 'disabled' : ''}" do%>
+            Run Test 
+          <% end %>
+        <% else %>
+          <a href="#" class="menu-link flex-stack px-3" style="cursor: not-allowed">
+            Run Test
+            <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="" data-bs-original-title="Test request is currently pending" aria-label="Test request is currently pending"></i>
+          </a>
         <% end %>
         </a>
       </div>
