@@ -9,6 +9,9 @@ class Location < ApplicationRecord
 
   after_validation :custom_geocode, if: :will_save_change_to_address?
 
+  scope :where_online, -> { joins(:clients).where("clients.pinged_at > ?", 1.minute.ago) }
+  scope :where_offline, -> { joins(:clients).where("clients.pinged_at <= ? OR clients.pinged_at IS NULL", 1.minute.ago) }
+
   def latest_download
     latest_measurement ? latest_measurement.download : nil
   end

@@ -16,11 +16,8 @@
  *= require style.bundle
  */
 
- .location--online path {
-    fill: #00d42e;
- }
-
+ .location--online path, 
  .location--offline path {
-    fill: #d42e00;
+    fill: #fff;
  }
  

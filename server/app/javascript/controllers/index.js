@@ -39,3 +39,6 @@ application.register("onboard", OnboardController)
 
 import Select2Controller from "./select2_controller.js"
 application.register("select2", Select2Controller)
+
+import MapController from "./map_controller.js"
+application.register("map", MapController);
