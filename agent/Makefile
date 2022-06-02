@@ -1,5 +1,5 @@
-OS?=linux
-ARCH?=amd64
+export OS?=linux
+export ARCH?=amd64
 OUTPUT_DIR?=./dist
 BIN_NAME?=radar_agent
 PROVIDER_SIGNING_CERT_PATH?=./dist/certs/binCert.crt
@@ -56,7 +56,10 @@ install:
 
 
 deb:
-	dpkg-buildpackage -b --no-sign --target-arch ${ARCH}
+# Need to change the changelog version due dpkg-buildpackage looking at it for creating the version
+# TODO: In the future it might be interesting to autocreate changelogs when tagged.
+	sed -i 's/radar-agent (.*)/radar-agent \(${VERSION}-1\)/' packaging/debian/changelog
+	cd packaging && ARCH=${ARCH} dpkg-buildpackage -b --no-sign -a${ARCH}
 
 all: build sign validate
 
