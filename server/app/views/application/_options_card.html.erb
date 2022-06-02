@@ -1,0 +1,11 @@
+<div class="card card-flush" style="height: max-content; max-width: 15%; margin-right: 30px">
+  <div class="card-body p-5">
+    <ul class="list-group list-group-flush w-max-content">
+      <% if style == 'clients' %>
+        <%= render "client_options_card", locals: {client: client} %>
+      <% else %>
+        <%= render "location_options_card", locals: {location: location} %>
+      <% end>%>
+    </ul>
+  </div>
+</div>

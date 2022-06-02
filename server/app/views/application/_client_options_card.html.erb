@@ -1,0 +1,35 @@
+<li class="list-group-item border-0 mb-5 p-0 d-flex justify-content-start">
+  <a href="<%= client_path(@client.unix_user) %>"
+      class="btn btn-active-light btn-active-color-primary
+            btn-active-icon-primary text-start px-3 w-100
+            d-flex justify-content-start align-items-center flex-row
+            <%= active_full_path?(client_path(@client.unix_user)) %>">
+    <span class="svg-icon mx-0" style="height: 14px; width: 14px;">
+      <svg width="14px" height="14px" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <rect id="Rectangle" opacity="0.3" x="1" y="6" width="12" height="2" rx="1" fill="black"/>
+        <rect id="Rectangle" opacity="0.3" x="1" y="10" width="6" height="2" rx="1" fill="black"/>
+        <rect id="Rectangle" x="1" y="2" width="12" height="2" rx="1" fill="black"/>
+    </svg>
+    </span>
+    <div class="d-md-none d-xl-block ms-3">Overview</div>
+  </a>
+</li>
+<li class="list-group-item border-0 p-0 d-flex justify-content-start">
+  <a href="<%= client_measurements_path(@client.unix_user) %>"
+      class="btn btn-active-light btn-active-color-primary 
+            btn-active-icon-primary text-start px-3 w-100
+            d-flex justify-content-start align-items-center flex-row
+            <%= active_full_path?(client_measurements_path(@client.unix_user)) %>">
+    <!--begin::Svg Icon | path: assets/media/icons/duotune/general/gen032.svg-->
+    <span class="svg-icon mx-0" style="height: 14px; width: 14px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <rect x="8" y="9" width="3" height="10" rx="1.5" fill="black"/>
+        <rect opacity="0.5" x="13" y="5" width="3" height="14" rx="1.5" fill="black"/>
+        <rect x="18" y="11" width="3" height="8" rx="1.5" fill="black"/>
+        <rect x="3" y="13" width="3" height="6" rx="1.5" fill="black"/>
+      </svg>
+    </span>
+    <!--end::Svg Icon-->
+    <div class="d-md-none d-xl-block ms-3 me-5">Measurements</div>
+  </a>
+</li>

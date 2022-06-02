@@ -102,16 +102,16 @@ class Client < ApplicationRecord
     !dist.nil? && dist.client_version.version != self.raw_version
   end
 
+  def latest_measurement
+    self.measurements.order(created_at: :desc).first
+  end
+
   private
 
   def create_ids
     o = [('a'..'z'), (0..9)].map(&:to_a).flatten - [0, 1, "o", "l"]
     string = (0...11).map { o[rand(o.length)] }.join
     self.unix_user = "r#{string}"
-  end
-
-  def latest_measurement
-    self.measurements.order(created_at: :desc).first
   end
 
 end
