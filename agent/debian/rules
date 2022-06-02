@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+	dh $@ --builddirectory=_build
+
+# clean:
+# 	dh clean
+
+
+# build:
+# 	dh build
+
+
+# binary:
+# 	dh binary
+	# # make install DESTDIR=debian/hello
+	# mkdir -p debian/radar_agent/usr/bin
+	# cp dist/radar_agent debian/radar_agent/usr/bin/radar_agent
+	# strip --strip-all debian/radar_agent/usr/bin/radar_agent
+	# dh_makeshlibs
+	# dh_gencontrol
+	# dh_builddeb
