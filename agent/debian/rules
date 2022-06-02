@@ -14,3 +14,7 @@ override_dh_auto_build:
 override_dh_auto_install:
 	mkdir -p debian/radar-agent/usr/bin
 	make install INSTALL_DIR=debian/radar-agent/usr/bin
+
+override_dh_gencontrol:
+	dh_gencontrol
+	sed -i 's/Version: .*/Version: ${VERSION}-1/' debian/radar-agent/DEBIAN/control
