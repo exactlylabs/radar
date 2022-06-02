@@ -9,9 +9,9 @@ dist/
 *.srl
 
 # Whitelist for Debian package, since it creates a lot of files
-debian/*
-!debian/changelog
-!debian/compat
-!debian/control
-!debian/radar-agent.service
-!debian/rules
+packaging/debian/*
+!packaging/debian/changelog
+!packaging/debian/compat
+!packaging/debian/control
+!packaging/debian/radar-agent.service
+!packaging/debian/rules
