@@ -16,7 +16,7 @@ fi
 cp -r $SCRIPT_DIR/../packaging/rpmbuild ~
 
 VERSION=$VERSION \
-envsubst < packaging/rpmbuild/SPECS/radar-agent.spec > ~/rpmbuild/SPECS/radar-agent.spec
+envsubst < $SCRIPT_DIR/../packaging/rpmbuild/SPECS/radar-agent.spec > ~/rpmbuild/SPECS/radar-agent.spec
 
 
 # Call build for the specified package from the environment variables
@@ -25,8 +25,15 @@ make build BIN_NAME=radar-agent OUTPUT_DIR=~/rpmbuild/SOURCES/radar-agent-${VERS
 cp ~/rpmbuild/SOURCES/radar-agent.service ~/rpmbuild/SOURCES/radar-agent-${VERSION}
 
 # create a tarball
-tar -czvf ~/rpmbuild/SOURCES/radar-agent-${VERSION}.tar.gz ~/rpmbuild/SOURCES/radar-agent-${VERSION}
+cd ~/rpmbuild/SOURCES/
+tar -czvf radar-agent-${VERSION}.tar.gz radar-agent-${VERSION}
 
 # Now build the RPM package
+TARGET=${ARCH}
+if [ $TARGET == "arm64" ]; then
+  TARGET="aarch64"
+elif [ $TARGET == "amd64" ]; then
+  TARGET="x86_64"
+fi
 
-rpmbuild -ba ~/rpmbuild/SPECS/radar-agent.spec
+rpmbuild -ba --target=${TARGET} ~/rpmbuild/SPECS/radar-agent.spec
