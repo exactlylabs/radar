@@ -70,7 +70,7 @@ jobs:
             ARCH=<<parameters.arch>> \
             BIN_NAME=radar-agent
       - store_artifacts:
-          path: ~/repo/radar-agent_<<parameters.version>>-1_<<parameters.arch>>.deb
+          path: ~/repo/agent/radar-agent_<<parameters.version>>-1_<<parameters.arch>>.deb
 
   rpm_package:
     working_directory: ~/repo
