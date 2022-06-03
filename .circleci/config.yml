@@ -69,9 +69,8 @@ jobs:
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
             BIN_NAME=radar-agent
-
       - store_artifacts:
-          - path: ~/repo/radar-agent_<<parameters.version>>-1_<<parameters.arch>>.deb
+          path: ~/repo/radar-agent_<<parameters.version>>-1_<<parameters.arch>>.deb
 
   rpm_package:
     working_directory: ~/repo
@@ -96,7 +95,7 @@ jobs:
             ARCH=<<parameters.arch>> \
             BIN_NAME=radar-agent
       - store_artifacts:
-          - path: ~/rpmbuild/RPMS/
+          path: ~/rpmbuild/RPMS/
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -130,11 +129,6 @@ workflows:
     jobs:
       - deb_package:
           version: 1.0.3
-          # filters:
-          #   tags:
-          #     only: /^(?:\d+\.){2}\d+$/
-          #   branches:
-          #     ignore: "/.*/"
           matrix:
             parameters:
               arch: ["amd64", "arm64"]
