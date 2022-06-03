@@ -62,6 +62,7 @@ jobs:
     steps:
       - checkout
       - build_config
+      - apt update && apt install dh-systemd
       - run: |
           cd agent
           make deb \
@@ -85,7 +86,7 @@ jobs:
       - checkout
       - build_config
       - run: curl https://go.dev/dl/go1.18.3.linux-amd64.tar.gz --output go1.18.3.linux-amd64.tar.gz
-      - run: rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz
+      - run: rm -rf /usr/local/go && tar -C /usr/local -xf go1.18.3.linux-amd64.tar.gz
       - run: |
           cd agent
           make rpm \
