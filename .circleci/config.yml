@@ -80,9 +80,9 @@ jobs:
         type: string
     steps:
       - build_config
-      - dnf install -y rpmdevtools rpmlint
-      - curl https://go.dev/dl/go1.18.3.linux-amd64.tar.gz --output go1.18.3.linux-amd64.tar.gz
-      - rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz
+      - run: dnf install -y rpmdevtools rpmlint
+      - run: curl https://go.dev/dl/go1.18.3.linux-amd64.tar.gz --output go1.18.3.linux-amd64.tar.gz
+      - run: rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz
       - run: |
           make rpm \
             VERSION=<<parameters.version>> \
