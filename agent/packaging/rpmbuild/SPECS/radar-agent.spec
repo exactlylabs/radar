@@ -2,7 +2,6 @@ Name:           radar-agent
 Version:        ${VERSION}
 Release:        1%{?dist}
 Summary:        Installs a service that runs speed tests continually
-# BuildArch:      amd64
 License:        GPL
 URL:            radar.exactlylabs.com
 Source0:        %{name}-%{version}.tar.gz
