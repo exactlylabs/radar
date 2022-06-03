@@ -10,6 +10,9 @@ if [ -z $(command -v rpmbuild) ]; then
   exit 1
 fi
 
+VERSION=$VERSION \
+envsubst < packaging/rpmbuild/SPECS/radar-agent.spec > packaging/rpmbuild/SPECS/radar-agent.spec
+
 # Copy rpmbuild package to home (this appears to be necessary)
 # TODO: Search for how to use packaging dir instead
 
