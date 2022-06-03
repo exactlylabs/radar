@@ -62,7 +62,7 @@ jobs:
     steps:
       - checkout
       - build_config
-      - apt update && apt install dh-systemd
+      - run: apt update && apt install dh-systemd
       - run: |
           cd agent
           make deb \
