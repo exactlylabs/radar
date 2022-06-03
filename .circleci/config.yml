@@ -82,11 +82,9 @@ jobs:
         default: "amd64"
         type: string
     steps:
-      - run: dnf install -y rpmdevtools rpmlint git wget make systemd-rpm-macros gettext
       - checkout
       - build_config
-      - run: wget https://go.dev/dl/go1.18.3.linux-amd64.tar.gz
-      - run: rm -rf /usr/local/go && tar -C /usr/local -xf go1.18.3.linux-amd64.tar.gz
+      - run: ./agent/scripts/setup_rpm.sh
       - run: |
           export PATH=$PATH:/usr/local/go/bin
           cd agent
