@@ -60,6 +60,7 @@ jobs:
         type: string
 
     steps:
+      - checkout
       - build_config
       - run: |
           make deb \
@@ -79,8 +80,9 @@ jobs:
         default: "amd64"
         type: string
     steps:
+      - run: dnf install -y rpmdevtools rpmlint git
+      - checkout
       - build_config
-      - run: dnf install -y rpmdevtools rpmlint
       - run: curl https://go.dev/dl/go1.18.3.linux-amd64.tar.gz --output go1.18.3.linux-amd64.tar.gz
       - run: rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz
       - run: |
