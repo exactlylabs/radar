@@ -5,7 +5,7 @@ BIN_NAME?=radar_agent
 PROVIDER_SIGNING_CERT_PATH?=./dist/certs/binCert.crt
 PROVIDER_SIGNING_KEY_PATH?=./dist/certs/binKey.key
 export VERSION?=DEV
-INSTALL_DIR?=/usr/local/bin
+INSTALL_DIR?=/usr/bin
 
 # Get Absolute Path of Signing files
 CERT_PATH=$(abspath ${PROVIDER_SIGNING_CERT_PATH})
@@ -51,8 +51,8 @@ dev: ookla_bin
 	CERT_CONFIG=scripts/dev_cert_ssl.cnf ./scripts/gen_cert.sh
 
 install:
-	mkdir -p ${INSTALL_DIR}
-	cp ${OUTPUT_PATH} ${INSTALL_DIR}/radar-agent
+	mkdir -p ${DESTDIR}${INSTALL_DIR}
+	cp ${OUTPUT_PATH} ${DESTDIR}${INSTALL_DIR}/radar-agent
 
 
 deb:
@@ -60,6 +60,9 @@ deb:
 # TODO: In the future it might be interesting to autocreate changelogs when tagged.
 	sed -i 's/radar-agent (.*)/radar-agent \(${VERSION}-1\)/' packaging/debian/changelog
 	cd packaging && ARCH=${ARCH} dpkg-buildpackage -b --no-sign -a${ARCH}
+
+rpm:
+	./scripts/build_rpm.sh
 
 all: build sign validate
 
