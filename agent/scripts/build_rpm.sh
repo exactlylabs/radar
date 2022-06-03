@@ -10,13 +10,14 @@ if [ -z $(command -v rpmbuild) ]; then
   exit 1
 fi
 
-VERSION=$VERSION \
-envsubst < packaging/rpmbuild/SPECS/radar-agent.spec > packaging/rpmbuild/SPECS/radar-agent.spec
-
 # Copy rpmbuild package to home (this appears to be necessary)
 # TODO: Search for how to use packaging dir instead
 
 cp -r $SCRIPT_DIR/../packaging/rpmbuild ~
+
+VERSION=$VERSION \
+envsubst < packaging/rpmbuild/SPECS/radar-agent.spec > ~/rpmbuild/SPECS/radar-agent.spec
+
 
 # Call build for the specified package from the environment variables
 make build BIN_NAME=radar-agent OUTPUT_DIR=~/rpmbuild/SOURCES/radar-agent-${VERSION}
