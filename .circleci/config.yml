@@ -6,7 +6,7 @@ commands:
       - checkout
       - run: echo -n $PROVIDER_SIGNING_CERT | base64 -d > binCert.crt
       - run: echo -n $PROVIDER_SIGNING_KEY | base64 -d > binKey.key
-      - run: echo -n $ROOT_CA | base64 -d > internal/update/rootCA.pem
+      - run: echo -n $ROOT_CA | base64 -d > agent/internal/update/rootCA.pem
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -63,6 +63,7 @@ jobs:
       - checkout
       - build_config
       - run: |
+          cd agent
           make deb \
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
@@ -86,6 +87,7 @@ jobs:
       - run: curl https://go.dev/dl/go1.18.3.linux-amd64.tar.gz --output go1.18.3.linux-amd64.tar.gz
       - run: rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz
       - run: |
+          cd agent
           make rpm \
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
