@@ -1,0 +1,12 @@
+[Unit]
+Description = Radar Agent
+After = network-online.target
+Wants = network-online.target
+
+[Service]
+ExecStart = /usr/bin/radar-agent
+Restart = on-failure
+RestartSec = 10s
+
+[Install]
+WantedBy = multi-user.target
