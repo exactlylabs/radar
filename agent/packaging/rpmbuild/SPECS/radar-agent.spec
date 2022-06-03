@@ -1,5 +1,5 @@
 Name:           radar-agent
-Version:        1.0.0
+Version:        ${VERSION}
 Release:        1%{?dist}
 Summary:        Installs a service that runs speed tests continually
 # BuildArch:      amd64
