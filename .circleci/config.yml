@@ -82,10 +82,10 @@ jobs:
         default: "amd64"
         type: string
     steps:
-      - run: dnf install -y rpmdevtools rpmlint git
+      - run: dnf install -y rpmdevtools rpmlint git wget
       - checkout
       - build_config
-      - run: curl https://go.dev/dl/go1.18.3.linux-amd64.tar.gz --output go1.18.3.linux-amd64.tar.gz
+      - run: wget https://go.dev/dl/go1.18.3.linux-amd64.tar.gz
       - run: rm -rf /usr/local/go && tar -C /usr/local -xf go1.18.3.linux-amd64.tar.gz
       - run: |
           cd agent
