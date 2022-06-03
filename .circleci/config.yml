@@ -128,13 +128,23 @@ workflows:
   package:
     jobs:
       - deb_package:
-          version: 1.0.3
+          version: $CIRCLE_TAG
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
           matrix:
             parameters:
               arch: ["amd64", "arm64"]
       
       - rpm_package:
-          version: 1.0.3
+          version: $CIRCLE_TAG
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
           matrix:
             parameters:
               arch: ["amd64", "arm64"]
