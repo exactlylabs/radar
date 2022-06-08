@@ -1,5 +1,5 @@
-export OS?=linux
-export ARCH?=amd64
+export OS?=$(shell go env GOOS)
+export ARCH?=$(shell go env GOARCH)
 OUTPUT_DIR?=./dist
 BIN_NAME?=radar_agent
 PROVIDER_SIGNING_CERT_PATH?=./dist/certs/binCert.crt
@@ -63,6 +63,9 @@ deb:
 
 rpm:
 	./scripts/build_rpm.sh
+
+pkg:
+	./scripts/build_pkg.sh
 
 all: build sign validate
 
