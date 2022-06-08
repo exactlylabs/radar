@@ -7,29 +7,18 @@
         <key>ServiceDescription</key>
         <string>Service that runs speed tests continually, communicating with radar.exactlylabs.com</string>
         <key>Program</key>
-        <string>/Users/mendes/radar-agent</string>
-        <!-- <key>ProcessType</key>
-        <string>Interactive</string> -->
-        <key>LimitLoadToSessionType</key>
+        <string>/usr/local/bin/radar-agent</string>
+        <key>ProcessType</key>
         <string>Background</string>
         <key>UserName</key>
-        <string>mendes</string>
+        <string>${USER}</string>
         <key>StandardOutPath</key>
-        <string>/var/log/radar-agent.log</string>
+        <string>/Users/${USER}/Library/Logs/radar-agent.log</string>
         <key>StandardErrorPath</key>
-        <string>/var/log/radar-agent.log</string>
-        <key>Debug</key>
-        <true/>
+        <string>/Users/${USER}/Library/Logs/radar-agent.log</string>
         <key>RunAtLoad</key>
         <true/>
         <key>KeepAlive</key>
-        <dict>
-                <key>SuccessfulExit</key>
-                <false/>
-                <key>NetworkState></key>
-                <false/>
-        </dict>
-        <key>Disabled</key>
-        <false/>
+        <true/>
 </dict>
 </plist>

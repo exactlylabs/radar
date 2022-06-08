@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<installer-gui-script minSpecVersion="1">
+    <title>Radar Agent</title>
+    <organization>com.exactlylabs</organization>
+    <domains enable_localSystem="true"/>
+    <options customize="never" require-scripts="true" rootVolumeOnly="true" />
+    <!-- Define documents displayed at various steps -->
+    <conclusion file="conclusion.html" mime-type="text/html" />
+    <!-- List all component packages -->
+    <pkg-ref id="com.exactlylabs.radar.agent"
+             version="${VERSION}"
+             auth="root">agent_pkg.pkg</pkg-ref>
+    <!-- List them again here. They can now be organized
+         as a hierarchy if you want. -->
+    <choices-outline>
+        <line choice="com.exactlylabs.radar.agent"/>
+    </choices-outline>
+    <!-- Define each choice above -->
+    <choice
+        id="com.exactlylabs.radar.agent"
+        visible="false"
+        title="Radar Agent"
+        description="Package containing the Radar Agent that runs speed tests"
+        start_selected="true">
+      <pkg-ref id="com.exactlylabs.radar.agent"/>
+    </choice>
+</installer-gui-script>

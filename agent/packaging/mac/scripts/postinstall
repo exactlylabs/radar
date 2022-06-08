@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+
+echo "#######################################"
+echo "# Starting PostInstall of Radar Agent #"
+echo "#######################################"
+
+# Obtain the user that is installing this
+USER=$(stat -f '%Su' $HOME)
+
+echo "Installing for user $USER"
+
+# set user as owner of the binary
+chown $USER:admin /usr/local/bin/radar-agent
+
+# Replace the user that we will configure to run the agent as
+sed -i '' -e 's/${USER}/'$USER'/' "/Library/LaunchDaemons/com.exactlylabs.radar.agent.plist"
+
+# Now load the launchctl file
+/bin/launchctl enable user/$(id -u $USER)/com.exactlylabs.radar.agent
+/bin/launchctl enable system/com.exactlylabs.radar.agent
+/bin/launchctl load "/Library/LaunchDaemons/com.exactlylabs.radar.agent.plist"

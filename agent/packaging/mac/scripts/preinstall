@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -e
+if /bin/launchctl list "com.exactlylabs.radar.agent" &> /dev/null; then
+    /bin/launchctl unload "/Library/LaunchDaemons/com.exactlylabs.radar.agent.plist"
+fi
