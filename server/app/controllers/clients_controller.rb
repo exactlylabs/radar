@@ -253,10 +253,10 @@ EOF
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
-    puts request.path
-    puts request.url
+    location = policy_scope(Location).find(params[:location_id]) if params[:location_id]
+    client = params[:client]
     respond_to do |format|
-      if @client.update(client_params)
+      if @client.update(name: client[:name], location: location)
         #format.turbo_stream
         format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
@@ -285,7 +285,7 @@ EOF
 
     # Only allow a list of trusted parameters through.
     def client_params
-      params.require(:client).permit(:name, :address, :location_id, :data_target)
+      params.require(:client).permit(:name, :address, :location_id)
     end
 
     def authenticate_client!

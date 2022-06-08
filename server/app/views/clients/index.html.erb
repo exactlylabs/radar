@@ -52,16 +52,19 @@
   <%= turbo_frame_tag "add_pod_modal_wizard", src: check_claim_clients_path do %>
   <% end %>
   <%= render partial: "add_pod_step_2" %>
-  <!--%= turbo_frame_tag "add_pod_modal_wizard_final", src: claim_clients_path do %-->
-  <!--% end %-->
 </div>
 
 <div class="modal fade" tabindex="-1" id="edit_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
-  <%= turbo_frame_tag "edit_client_modal", target: "add_pod_step_2" do %>
+  <%= turbo_frame_tag "edit_client_modal", target: "add_pod_step_2", modal_target: "new_location_modal-edit" do %>
   <% end %>
 </div>
 
 <div class="modal fade" tabindex="-1" id="new_location_modal" data-controller="add-pod" data-action="turbo:submit-start->add-pod#handleSubmitStart turbo:submit-end->add-pod#handleNewLocationFromClientModal">
-  <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "create-pod-modal")  do %>
+  <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "create-pod-modal", modal_target: "add_pod_modal_wizard")  do %>
+  <% end %>
+</div>
+
+<div class="modal fade" tabindex="-1" id="new_location_modal-edit" data-controller="edit-pod" data-action="turbo:submit-start->edit-pod#handleSubmitStart turbo:submit-end->edit-pod#handleNewLocationFromClientModal">
+  <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "edit-pod-modal", modal_target: "edit_pod_modal") do %>
   <% end %>
 </div>

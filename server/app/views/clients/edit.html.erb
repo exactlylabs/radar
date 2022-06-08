@@ -1,5 +1,4 @@
 <%= turbo_frame_tag "edit_client_modal" do %>
-
 <%= form_with(model: @client, url: client_path(@client.unix_user), data: {"turbo-frame" => "_top"}) do |form| %>
 <div class="modal-dialog">
   <div class="modal-content">
@@ -56,15 +55,15 @@
 
       <div class="fv-row mb-7 fv-plugins-icon-container">
             <label class="required fs-6 fw-bold mb-2">Location</label>
-            <select class="form-select" data-controller="select2" data-select2-blanks-value="true" id="client-locations-dropdown"
+            <select class="form-select" data-controller="select2" data-select2-blanks-value="true" id="client-locations-dropdown-edit"
             data-placeholder="Select a location" name="location_id" data-select2-id="select2-data-location_id" tabindex="-1">
               <% current_user.locations.each_with_index do |location, index|%>
-                <%= render partial: "client_location", locals: { location: location, selected: location == @client.location } %>
+                <%= render partial: "clients/client_location", locals: { location: location, selected: location == @client.location } %>
               <% end %> 
             </select>
           </div>
 
-      <div id="location-created-snackbar" class="d-none w-100 d-flex flex-row align-items-center justify-content-start fw-bold" 
+      <div id="location-created-snackbar-edit" class="d-none w-100 d-flex flex-row align-items-center justify-content-start fw-bold" 
            style="display: none; background-color: #f1faff; height: 45px; color: #00a3ff; font-size: 14px; border-radius: 6px; margin-top: 15px; margin-bottom: 15px">
         <svg style="margin: 0 8px 0 12px" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
           <g fill="none" fill-rule="evenodd">
@@ -78,10 +77,17 @@
         Your new location has been created.
       </div>
 
+      <div id="loading-container-edit" class="d-none d-flex align-items-center mb-5">
+        <div class="spinner-border text-primary me-3" role="status"></div>
+        <div style="font-size: 13px; color: #b5b5c3;">Creating new location...</div>
+      </div>
+
+
       <a class="d-flex align-items-center fw-bold" 
           href="#"
           style="color: #00a3ff; font-size: 12px"
-          data-bs-toggle="modal" data-bs-target="#new_location_modal">
+          data-bs-toggle="modal" 
+          data-bs-target="#new_location_modal-edit">
         Add new location
         <span class="svg-icon svg-icon-primary">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

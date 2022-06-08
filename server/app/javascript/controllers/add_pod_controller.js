@@ -16,8 +16,8 @@ export default class extends Controller {
     return className === 'podIdInput' ? 'nextButton' : 'finalButton';
   }
 
-  insertFromPaste(e) {
-    const data = e.data;
+  async insertFromPaste(e) {
+    const data = await e.clipboardData.getData('text');
     const className = e.srcElement.className;
     const inputs = document.querySelectorAll(`.${className}`);
     let i;
@@ -27,10 +27,11 @@ export default class extends Controller {
     }
     inputs[i - 1].focus();
     this.toggleButtonState(className);
+    return;
   }
 
   checkBackspace(e) {
-    const element = e.explicitOriginalTarget;
+    const element = e.srcElement;
     if(e.key === 'Backspace' && element.value.length === 0) {
       element.previousElementSibling && element.previousElementSibling.focus();
       return;
@@ -38,10 +39,10 @@ export default class extends Controller {
   }
 
   switchInput(e) {
-    if(e.inputType === 'deleteContentBackward') return;
-    if(e.inputType === 'insertFromPaste') return this.insertFromPaste(e);
-    const element = e.originalTarget;
-    if (element.value.length == e.originalTarget.maxLength) {
+    if(e.inputType === 'deleteContentBackward' || e.inputType === 'insertFromPaste') return;
+    if(e.type === 'paste') return this.insertFromPaste(e);
+    const element = e.srcElement;
+    if (e.data.length == element.maxLength) {
       element.nextElementSibling && element.nextElementSibling.focus();
     }
     const desiredLength = this.getDesiredLength(element.className);
@@ -125,7 +126,6 @@ export default class extends Controller {
   }
 
   handleSubmitStart(e) {
-    console.log(e);
     this.hideModal();
     $('#add_pod_modal_wizard').modal('show');
     document.querySelector('#loading-container').classList.remove('d-none');

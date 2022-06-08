@@ -61,7 +61,7 @@
             <select class="form-select" data-controller="select2" data-select2-blanks-value="true" id="client-locations-dropdown"
             data-placeholder="Select a location" name="location_id" data-select2-id="select2-data-location_id" tabindex="-1">
               <% current_user.locations.each_with_index do |location, index|%>
-                <%= render partial: "client_location", locals: { location: location, selected: false} %>
+                <%= render partial: "clients/client_location", locals: { location: location, selected: false} %>
               <% end %> 
             </select>
           </div>
@@ -88,7 +88,8 @@
           <a class="d-flex align-items-center fw-bold" 
               href="#"
               style="color: #00a3ff; font-size: 12px"
-              data-bs-toggle="modal" data-bs-target="#new_location_modal">
+              data-bs-toggle="modal" 
+              data-bs-target="#new_location_modal">
             Add new location
             <span class="svg-icon svg-icon-primary">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

@@ -43,5 +43,8 @@ application.register("select2", Select2Controller)
 import AddPodController from "./add_pod_controller.js"
 application.register("add-pod", AddPodController);
 
+import EditPodController from "./edit_pod_controller.js"
+application.register("edit-pod", EditPodController);
+
 import MapController from "./map_controller.js"
 application.register("map", MapController);

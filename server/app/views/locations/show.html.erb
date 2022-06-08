@@ -91,7 +91,7 @@
   </div>
   <!--end::Container-->
 </div>
-<div class="modal fade" tabindex="-1" id="edit_location_modal_<%= @location.id %>" data-controller="modal" data-action="turbo:submit-end->modal#submit">
+<div class="modal fade" tabindex="-1" id="edit_location_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit">
   <%= turbo_frame_tag "edit_location_modal", src: edit_location_path(@location) do %>
   <% end %>
 </div>
