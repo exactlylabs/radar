@@ -70,6 +70,7 @@ Rails.application.routes.draw do
   end
 
   post 'geocode', to: 'geocode#code'
+  post 'reverse_geocode', to: 'geocode#reverse_code'
   get 'dashboard', to: 'dashboard#index'
   
   #root to: 'home#home'

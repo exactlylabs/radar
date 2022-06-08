@@ -4,6 +4,34 @@ export default class extends Controller {
   static targets = [ "address", "map", "latitude", "longitude", "manual_lat_long", "geoIcon", "spinner" ];
 
   connect() {
+    const lat = geoplugin_latitude();
+    const long = geoplugin_longitude();
+    console.log('data => ', lat, long);
+    this.mapTarget.setAttribute('data-location-latitude-value', lat);
+    this.mapTarget.setAttribute('data-location-longitude-value', long);
+    this.spinnerTarget.classList.add("d-none");
+    this.geoIconTarget.classList.remove("d-none");
+  }
+
+  autofillAddress(lat, lon) {
+    let that = this;
+    clearTimeout(this.addressTimeout);
+    this.addressTimeout = setTimeout(function() {
+      let formData = new FormData();
+      formData.append("query", `[${lat}, ${lon}]`);
+      fetch('/reverse_geocode', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        that.addressTarget.value = `${data[1]}, ${data[0]}`;
+      })
+      .finally(() => {
+        this.spinnerTarget.classList.add("d-none");
+        this.geoIconTarget.classList.remove("d-none");
+      });
+    }.bind(this), 1000)
   }
 
   autofillGeoData() {
@@ -12,14 +40,13 @@ export default class extends Controller {
     if('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         position => {
-          this.spinnerTarget.classList.add("d-none");
-          this.geoIconTarget.classList.remove("d-none");
           const userGeoLatitude = position.coords.latitude;
           const userGeoLongitude = position.coords.longitude;
           this.latitudeTarget.value = userGeoLatitude;
           this.longitudeTarget.value = userGeoLongitude;
           this.mapTarget.setAttribute('data-location-latitude-value', userGeoLatitude);
           this.mapTarget.setAttribute('data-location-longitude-value', userGeoLongitude);
+          this.autofillAddress(userGeoLatitude, userGeoLongitude);
         }
       )
     }
