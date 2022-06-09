@@ -22,8 +22,7 @@ class DashboardController < ApplicationController
     when nil, 'all'
       locations
     when 'active'
-      online_locations = locations.where_online
-      offline_locations = locations.where_offline
+      locations.where_online
     else
       locations.where_offline
     end
