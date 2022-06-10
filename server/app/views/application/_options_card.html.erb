@@ -2,9 +2,9 @@
   <div class="card-body p-5">
     <ul class="list-group list-group-flush w-max-content">
       <% if style == 'clients' %>
-        <%= render partial: "client_options_card", locals: {client: client} %>
+        <%= render "client_options_card", locals: {client: client} %>
       <% else %>
-        <%= render partial: "location_options_card", locals: {location: location} %>
+        <%= render "location_options_card", locals: {location: location} %>
       <% end>%>
     </ul>
   </div>
