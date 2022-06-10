@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_23_162659) do
+ActiveRecord::Schema.define(version: 2022_06_10_175318) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,6 +123,8 @@ ActiveRecord::Schema.define(version: 2022_05_23_162659) do
     t.jsonb "extended_info"
     t.bigint "location_id"
     t.bigint "user_id"
+    t.string "client_version"
+    t.string "client_distribution"
     t.index ["client_id"], name: "index_measurements_on_client_id"
     t.index ["location_id"], name: "index_measurements_on_location_id"
     t.index ["user_id"], name: "index_measurements_on_user_id"
