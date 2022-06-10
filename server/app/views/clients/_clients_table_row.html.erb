@@ -2,8 +2,8 @@
   <td style="padding-left: 30px">
     <div class="d-flex flex-row align-items-center">
       <div class="d-flex align-items-center justify-content-center me-5" 
-           style="border-radius:50%; background-color:#f1faff; min-width: 36px; width: 36px; min-height: 36px; height: 36px">
-        <span class="svg-icon svg-icon-2 svg-icon-primary" style="position: relative;">
+           style="border-radius:50%; background-color:<%= client.status == 'Active' ? '#f1faff' : '#f8f8f8' %>; min-width: 36px; width: 36px; min-height: 36px; height: 36px">
+        <span class="svg-icon svg-icon-2 <%= client.status == 'Active' ? 'svg-icon-primary' : 'svg-icon-muted' %>" style="position: relative;">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">          
               <path d="M12.4409 22C13.5455 22 14.4409 21.1046 14.4409 20C14.4409 18.8954 13.5455 18 12.4409 18C11.3364 18 10.4409 18.8954 10.4409 20C10.4409 21.1046 11.3364 22 12.4409 22Z" fill="black"/>
               <path opacity="0.3" d="M9.04095 14.8L9.94095 16.1C10.6409 15.6 11.5409 15.3 12.4409 15.3C13.3409 15.3 14.2409 15.6 14.9409 16.1L15.8409 14.8C16.1409 14.3 16.0409 13.6 15.4409 13.4C14.5409 13 13.5409 12.7 12.4409 12.7C11.3409 12.7 10.3409 12.9 9.44095 13.4C8.84095 13.6 8.74095 14.3 9.04095 14.8Z" fill="black"/>

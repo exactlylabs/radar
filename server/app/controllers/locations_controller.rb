@@ -25,7 +25,7 @@ class LocationsController < ApplicationController
     @location = Location.new(location_params)
 
     @location.user = current_user
-
+    debugger
     # TODO: Is there a better UX for this?
     if policy_scope(Client).all.length == 1
       @location.clients << policy_scope(Client).first

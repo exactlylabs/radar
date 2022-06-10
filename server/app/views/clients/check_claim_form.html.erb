@@ -18,13 +18,10 @@
         </div>
         <!--end::Close-->
       </div>
-      <% if @error %>
-        <%= render partial: "add_pod_error" %>
-      <% else %>
-        <%= render partial: "add_pod_step_0" %>
-        <%= form_with(url: check_claim_clients_path) do |form| %>
-          <%= render partial: "add_pod_step_1", locals: { form: form }%>
-        <% end %>
+      <%= render partial: "add_pod_error", locals: {error: @error} %>
+      <%= render partial: "add_pod_step_0", locals: {error: @error} %>
+      <%= form_with(url: check_claim_clients_path) do |form| %>
+        <%= render partial: "add_pod_step_1", locals: { form: form, error: @error }%>
       <% end %>
     </div>
   </div>

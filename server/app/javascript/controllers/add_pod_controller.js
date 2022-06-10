@@ -4,7 +4,10 @@ const POD_ID_LENGTH = 12;
 const POD_SECRET_LENGTH = 11;
 
 export default class extends Controller {
-  static targets = ['create-pod-modal', 'podIdInput', 'podSecretInput', 'podSecretModalBody'];
+  static targets = ['podId', 'step0', 'step0Footer', 
+  'step1', 'step1Footer', 'step1IdInputHidden', 'step1SecretInputHidden',
+  'step2', 'step2Footer', 'step2IdInput', 'step2IdInputHidden', 'step2SecretInputHidden',
+  'stepError', 'stepErrorFooter'];
 
   connect() {}
 
@@ -72,19 +75,13 @@ export default class extends Controller {
   }
 
   savePodIdAndContinue() {
-    /*
-    if(this.hasPodIdInputTarget) {
-      console.log('has');
-    } else {
-      console.log('does not have')
-    }*/ // DIDNT WORK WITH TARGETS
-    document.querySelector('#podSecretModalBody').style.display = 'block';
-    document.querySelector('#podSecretModalFooter').style.display = 'flex';
-    document.querySelector('#podIdModalBody').style.display = 'none';
-    document.querySelector('#podIdModalFooter').style.display = 'none';
-    document.querySelector('.podSecretInput').focus();
+    this.step1Target.style.display = 'block';
+    this.step1FooterTarget.style.display = 'flex';
+    this.step0Target.style.display = 'none';
+    this.step0FooterTarget.style.display = 'none';
+    document.querySelector('.podSecretInput').focus(); // I get the first one on the DOM
     this.fillHiddenInput('podIdInput');
-    document.querySelector('#podId').innerText = document.querySelector('#id').value;
+    this.podIdTarget.innerText = this.step1IdInputHiddenTarget.value;
   }
 
   fillHiddenInput(className) {
@@ -109,20 +106,20 @@ export default class extends Controller {
   }
 
   restart() {
-    document.querySelector('#podIdModalBody').style.display = 'block';
-    document.querySelector('#podIdModalFooter').style.display = 'flex';
-    document.querySelector('#podErrorModalBody').style.display = 'none';
-    document.querySelector('#podErrorModalFooter').style.display = 'none';
+    this.step0Target.style.display = 'block';
+    this.step0FooterTarget.style.display = 'flex';
+    this.stepErrorTarget.style.display = 'none';
+    this.stepErrorFooterTarget.style.display = 'none';
   }
 
   gotoLocationModal() {
-    document.querySelector('#podLocationModalBody').style.display = 'block';
-    document.querySelector('#podLocationModalFooter').style.display = 'flex';
-    document.querySelector('#podSecretModalBody').style.display = 'none';
-    document.querySelector('#podSecretModalFooter').style.display = 'none';
-    document.querySelector('#clientIdInput').innerText = document.querySelector('#podId').innerText;
-    document.querySelector('#id_final').value = document.querySelector('#id').value;
-    document.querySelector('#secret_final').value = document.querySelector('#secret').value;
+    this.step2IdInputTarget.innerText = this.podIdTarget.innerText;
+    this.step2IdInputHiddenTarget.value = this.step1IdInputHiddenTarget.value;
+    this.step2SecretInputHiddenTarget.value = this.step1SecretInputHiddenTarget.value;
+    this.step2Target.style.display = 'flex';
+    this.step2FooterTarget.style.display = 'flex';
+    this.step1Target.style.display = 'none';
+    this.step1FooterTarget.style.display = 'none';
   }
 
   handleSubmitStart(e) {

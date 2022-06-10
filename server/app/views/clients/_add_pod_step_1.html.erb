@@ -1,4 +1,4 @@
-<div class="modal-body" style="width: max-content; display: none;" id="podSecretModalBody">
+<div class="modal-body <%= error ? 'd-none' : '' %>" style="width: max-content; display: none;" data-add-pod-target="step1">
   <div class="d-flex flex-column align-items-center justify-content-center">
     <div class="modal-body--icon d-flex align-items-center justify-content-center" 
               style="height: 70px; width: 70px; background-color: #f1faff; border-radius: 50%; margin-bottom: 20px">
@@ -12,12 +12,12 @@
       </span>
     </div>
     <!-- Cannot do hidden="true" because value is immutable otherwise -->
-    <%= form.text_field :id, class: "form-control form-control-solid", value: @client_id, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;"%>
-    <%= form.text_field :secret, class: "form-control form-control-solid", value: @client_secret, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;"%>
-    <div id="podId" style="font-size: 18px; color: #7e8299; margin-bottom: 30px"></div>
+    <%= form.text_field :id, class: "form-control form-control-solid", value: @client_id, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step1IdInputHidden" }%>
+    <%= form.text_field :secret, class: "form-control form-control-solid", value: @client_secret, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step1SecretInputHidden" }%>
+    <div data-add-pod-target="podId" style="font-size: 18px; color: #7e8299; margin-bottom: 30px"></div>
     <div class="fw-bolder" style="font-size: 20px; color: #181c32; margin-bottom: 15px;">Enter your Pod's secret key.</div>
     <div class="fw-bold" style="font-size: 14px; color: #b5b5c3; margin-bottom: 15px">You can find the 11-digit Pod ID printed on your Pod.</div>
-    <div class="d-flex" data-controller="add-pod" data-modal-target="podSecretInput" style="margin-bottom: 25px;">
+    <div class="d-flex" data-modal-target="podSecretInput" style="margin-bottom: 25px;">
       <input class="podSecretInput" data-action="input->add-pod#switchInput paste->add-pod#switchInput" maxlength="1" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" style="width: 40px; height: 50px; margin-right: 5px; border-radius: 6px; border: none; background-color: #f5f8fa; font-size: 28px; color: #7e8299; text-align: center;"/>
       <input class="podSecretInput" data-action="input->add-pod#switchInput paste->add-pod#switchInput" maxlength="1" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" style="width: 40px; height: 50px; margin-right: 5px; border-radius: 6px; border: none; background-color: #f5f8fa; font-size: 28px; color: #7e8299; text-align: center;"/>
       <input class="podSecretInput" data-action="input->add-pod#switchInput paste->add-pod#switchInput" maxlength="1" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" style="width: 40px; height: 50px; margin-right: 5px; border-radius: 6px; border: none; background-color: #f5f8fa; font-size: 28px; color: #7e8299; text-align: center;"/>
@@ -34,7 +34,7 @@
   </div>
 </div>
 
-<div class="modal-footer" data-controller="add-pod" style="display: none;" id="podSecretModalFooter">
+<div class="modal-footer <%= error ? 'd-none' : '' %>" style="display: none;" data-add-pod-target="step1Footer">
   <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
   <%= form.submit "Continue", class: "btn btn-primary disabled", id: "finalButton" %>
 </div>

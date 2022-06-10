@@ -1,5 +1,5 @@
 <%= form_with(url: claim_clients_path) do |form| %>
-<div class="modal-dialog" style="display:none; width: max-content; max-width: none;" id="podLocationModalBody">
+<div class="modal-dialog" style="display:none; width: max-content; max-width: none;" data-add-pod-target="step2">
     <div class="modal-content" style="width: max-content">
       <div class="modal-header">
         <h5 class="modal-title" style="font-size: 20px; color: #191c31;">Add a Pod</h5>
@@ -35,7 +35,7 @@
               </span>
             </div>
             <div class="modal-body--id-date d-flex flex-column align-items-start justify-content-center">
-              <div id="clientIdInput" class="client-id fw-bold" style="font-size: 16px; color: #3f4254; margin-bottom: 2px">
+              <div data-add-pod-target="step2IdInput" class="client-id fw-bold" style="font-size: 16px; color: #3f4254; margin-bottom: 2px">
                 
               </div>
               <div class="client-date" style="font-size: 13px; color: #b5b5c3;">
@@ -45,8 +45,8 @@
           </div>
 
           <div class="fv-row mb-7 fv-plugins-icon-container">
-            <%= form.text_field :id_final, class: "form-control form-control-solid", value: @client_id, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;"%>
-            <%= form.text_field :secret_final, class: "form-control form-control-solid", value: @client_secret, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;"%>
+            <%= form.text_field :id_final, class: "form-control form-control-solid", value: @client_id, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step2IdInputHidden"}%>
+            <%= form.text_field :secret_final, class: "form-control form-control-solid", value: @client_secret, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step2SecretInputHidden"}%>
             <!--begin::Label-->
             <label class="required fs-6 fw-bold mb-2">Name</label>
             <!--end::Label-->
@@ -100,7 +100,7 @@
           </a>
         </div>
 
-        <div class="modal-footer" style="display:none" id="podLocationModalFooter">
+        <div class="modal-footer" style="display:none" data-add-pod-target="step2Footer">
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
           <%= form.submit "Add Pod", class: "btn btn-primary" %>
         </div>

@@ -25,10 +25,6 @@
 <div class="post fs-6 d-flex flex-column-fluid mb-9" id="kt_post">
   <!--begin::Container-->
   <div class="container-xxl">
-  
-    <% if notice %>
-    <p id="notice"><%= notice %></p>
-    <% end %>
     <!--begin::Card-->
     <%= render partial: "location_details", locals: { location: @location } %>
   </div>

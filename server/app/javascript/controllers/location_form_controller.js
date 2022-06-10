@@ -1,12 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "address", "map", "latitude", "longitude", "manual_lat_long", "geoIcon", "spinner" ];
+  static targets = [ "name", "address", "map", "latitude", "longitude", "manualLatLong", "expectedDownload", "expectedUpload", "geoIcon", "spinner" ];
 
   connect() {
-    const lat = geoplugin_latitude();
-    const long = geoplugin_longitude();
-    console.log('data => ', lat, long);
+    const lat = this.latitudeTarget.value ?? geoplugin_latitude();
+    const long = this.longitudeTarget.value ?? geoplugin_longitude();
     this.mapTarget.setAttribute('data-location-latitude-value', lat);
     this.mapTarget.setAttribute('data-location-longitude-value', long);
     this.spinnerTarget.classList.add("d-none");
@@ -113,5 +112,17 @@ export default class extends Controller {
         element.removeAttribute('readonly');
       }
     });
+  }
+
+  clearLocationModalAndClose() {
+    console.log(this.manualLatLongTarget.checked);
+    this.nameTarget.value = null;
+    this.addressTarget.value = null;
+    this.latitudeTarget.value = null;
+    this.longitudeTarget.value = null;
+    this.manualLatLongTarget.checked = false;
+    this.expectedUploadTarget.value = null;
+    this.expectedDownloadTarget.value = null;
+    $('#new_location_modal').modal('hide');
   }
 }

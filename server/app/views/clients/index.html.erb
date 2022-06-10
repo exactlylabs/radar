@@ -30,10 +30,6 @@
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
   <!--begin::Container-->
   <div class="container-xxl d-flex flex-column" style="max-width: none;">
-  
-    <% if notice %>
-    <p id="notice"><%= notice %></p>
-    <% end %>
     <% if !params.empty? %>
       <%= render partial: "clients_table_filters", locals: { locations: @all_locations, hasUnindexed: @indexed_clients[{name: 'No location'}].present? } %>
     <% end %>
