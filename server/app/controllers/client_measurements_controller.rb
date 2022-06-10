@@ -29,6 +29,8 @@ class ClientMeasurementsController < ApplicationController
     end
 
     @measurement = @client.measurements.build(measurement_params)
+    @measurement.client_version = @client.raw_version
+    @measurement.client_distribution = @client.distribution_name
 
     if !@client.location.nil?
       @measurement.location = @client.location
