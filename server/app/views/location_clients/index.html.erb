@@ -31,7 +31,7 @@
      <p id="notice"><%= notice %></p>
     <% end %>
     <!--begin::OptionsCard-->
-    <%= render partial: "options_card", locals: { location: @location } %>
+    <%= render partial: "options_card", locals: { location: @location, style: 'locations' } %>
     <!--end::OptionsCard-->
     <!--begin::Card-->
     <%= render partial: "location_clients_table", locals: { clients: @clients } %>

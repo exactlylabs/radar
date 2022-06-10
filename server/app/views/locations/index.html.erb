@@ -55,9 +55,6 @@
       <!--end::DisplaySwitcher-->
       <!--begin::Container-->
         <div class="container-auto px-5">
-          <% if notice %>
-            <p id="notice"><%= notice %></p>
-          <% end %>
           <!--begin::Card-->
           <% if params[:display] == 'table' %>
             <%= render partial: 'locations_table', locals: { locations: @locations } %>
