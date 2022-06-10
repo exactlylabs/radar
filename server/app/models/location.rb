@@ -28,19 +28,6 @@ class Location < ApplicationRecord
     clients.where("pinged_at > ?", 1.minute.ago).any?
   end
 
-  private
-
-  def custom_geocode
-    results = Geocoder.search(self.address)
-    if geo = results.first
-      self.state_fips, self.county_fips = FipsGeocoderCli::get_fips_codes geo.latitude, geo.longitude
-      self.latitude = geo.latitude
-      self.longitude = geo.longitude
-      self.state = geo.state
-      self.county = geo.county
-    end
-  end
-
   def download_avg
     self.measurements.average(:download).round(5) if self.measurements.length.positive?
   end
@@ -66,4 +53,18 @@ class Location < ApplicationRecord
     diff = avg - self.expected_mbps_up
     "#{diff > 0 ? '+' : ''}#{((diff / self.expected_mbps_up) * 100).round(2)}%"
   end
+
+  private
+
+  def custom_geocode
+    results = Geocoder.search(self.address)
+    if geo = results.first
+      self.state_fips, self.county_fips = FipsGeocoderCli::get_fips_codes geo.latitude, geo.longitude
+      self.latitude = geo.latitude
+      self.longitude = geo.longitude
+      self.state = geo.state
+      self.county = geo.county
+    end
+  end
+
 end

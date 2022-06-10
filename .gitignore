@@ -4,3 +4,4 @@ dist/
 *.zip
 *.img
 *.log
+client_app
