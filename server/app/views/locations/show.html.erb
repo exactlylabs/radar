@@ -26,7 +26,7 @@
   <!--begin::Container-->
     <div class="container-xxl w-100 d-flex" style="max-width: none;">
       <!--begin::OptionsCard-->
-        <%= render partial: "options_card", locals: { location: @location } %>
+        <%= render partial: "options_card", locals: { location: @location, style: 'locations' } %>
       <!--end::OptionsCard-->
       <% if notice %>
       <p id="notice"><%= notice %></p>
