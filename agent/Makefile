@@ -60,6 +60,7 @@ deb:
 # TODO: In the future it might be interesting to autocreate changelogs when tagged.
 	sed -i 's/radar-agent (.*)/radar-agent \(${VERSION}-1\)/' packaging/debian/changelog
 	cd packaging && ARCH=${ARCH} dpkg-buildpackage -b --no-sign -a${ARCH}
+	mv radar-agent_${VERSION}-1_${ARCH}.deb ${DIST_DIR}/
 
 rpm:
 	./scripts/build_rpm.sh
