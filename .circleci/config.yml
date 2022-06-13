@@ -126,8 +126,11 @@ jobs:
 
       - store_artifacts:
           path: ~/repo/dist/
+
       - persist_to_workspace:
           root: ~/repo/dist
+          paths:
+            - /
 
   notarize_pkg:
     working_directory: ~/repo
@@ -136,7 +139,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          - at: /tmp/workspace
+          at: /tmp/workspace
       - run: cd agent && PKG_PATH=$(ls /tmp/workspace/*.pkg | head -1) ./scripts/notarize_pkg.sh
 
   msi_package:
