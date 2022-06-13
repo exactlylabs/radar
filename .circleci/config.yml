@@ -137,7 +137,7 @@ jobs:
         type: string
     steps:
       - build_config
-      - run: apt update && apt install -y msitools wixl
+      - run: sudo apt update && sudo apt install -y msitools wixl
       - run: make msi VERSION=<<parameters.version>> ARCH=amd64 OUTPUT_DIR=~/repo/dist
       - store_artifacts:
           path: ~/repo/dist/
