@@ -9,7 +9,6 @@ class ClientsController < ApplicationController
 
   # GET /clients or /clients.json
   def index
-    #@clients = Client.where(user: current_user)
     @status = params[:status]
     @location = params[:location]
     @all_locations = policy_scope(Location).where_has_client_associated.uniq
@@ -90,7 +89,6 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client && @client.authenticate_secret(@client_secret)
         @client.user = current_user
-        # format.turbo_stream { render turbo_stream: turbo_stream.update('client_form_div', partial: 'clients/test', locals: {client: @client}) }
         format.html { redirect_to clients_path, notice: "Client data is OK."}
         format.json { render status: :ok, json: @client.to_json }
       else
@@ -109,8 +107,6 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client&.authenticate_secret(@client_secret) &&
          @client&.update(user: current_user, location: location, name: params[:name])
-        # format.turbo_stream { render turbo_stream: turbo_stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)}) }
-        # format.turbo_stream { render turbo_stream: turbo_stream.append('clients', partial: 'clients/client', locals: {indexed_clients: get_indexed_clients}) }
         format.html { redirect_back fallback_location: root_path, notice: "Client was successfully created." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
@@ -124,8 +120,6 @@ class ClientsController < ApplicationController
   def release
     respond_to do |format|
       if @client.update(user: nil, location: nil)
-        #format.turbo_stream { render turbo_stream: turbo_stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)}) }
-        #format.turbo_stream { render turbo_stream: turbo_stream.remove(@client) }
         format.html { redirect_back fallback_location: root_path, notice: "Client was successfully released." }
         format.json { head :no_content }
       end
@@ -241,7 +235,6 @@ EOF
 
     respond_to do |format|
       if @client.save
-        #format.turbo_stream { render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)})}
         format.html { redirect_back fallback_location: root_path, notice: "Client was successfully created." }
         format.json { render :show, status: :created, location: client_path(@client.unix_user) }
       else
@@ -257,7 +250,6 @@ EOF
     client = params[:client]
     respond_to do |format|
       if @client.update(name: client[:name], location: location)
-        #format.turbo_stream
         format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
@@ -271,7 +263,6 @@ EOF
   def destroy
     @client.destroy
     respond_to do |format|
-      # format.turbo_stream {render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)})}
       format.html { redirect_back fallback_location: root_path, notice: "Client was successfully destroyed." }
       format.json { head :no_content }
     end

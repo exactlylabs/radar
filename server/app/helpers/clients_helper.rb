@@ -9,10 +9,4 @@ module ClientsHelper
       'Offline'
     end
   end
-
-  def run_test_on_every_client(clients)
-    clients.each do |client|
-      # Trigger run tests from each client ?? bulk post?
-    end
-  end
 end

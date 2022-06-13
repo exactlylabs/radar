@@ -116,7 +116,6 @@ export default class extends Controller {
   }
 
   clearLocationModalAndClose() {
-    console.log(this.manualLatLongTarget.checked);
     this.nameTarget.value = null;
     this.addressTarget.value = null;
     this.latitudeTarget.value = null;
