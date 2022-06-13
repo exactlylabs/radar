@@ -14,9 +14,13 @@ OUTPUT_DIR=$SCRIPT_DIR/..
 rm -rf $DESTDIR
 
 mkdir -p $DESTDIR
+mkdir -p $DESTDIR/pkg/usr/local/bin/
 
-# Call build for the specified package from the environment variables
-make build BIN_NAME=radar-agent OUTPUT_DIR=$DESTDIR/pkg/usr/local/bin
+# Build binary for both amd64 and arm64, then create an universal binary
+make build ARCH=amd64 BIN_NAME=radar-agent_amd64 OUTPUT_DIR=$DESTDIR
+make build ARCH=arm64 BIN_NAME=radar-agent_arm64 OUTPUT_DIR=$DESTDIR
+
+lipo -create -output $DESTDIR/pkg/usr/local/bin/radar-agent $DESTDIR/radar-agent_amd64 $DESTDIR/radar-agent_arm64
 
 # TODO: This might not be needed for the CI?
 #       but locally, it fails if not unlocked at every session.
