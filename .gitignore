@@ -5,3 +5,4 @@ dist/
 *.img
 *.log
 client_app
+.env
