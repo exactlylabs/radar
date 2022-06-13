@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "name", "address", "map", "latitude", "longitude", "manualLatLong", "expectedDownload", "expectedUpload", "geoIcon", "spinner" ];
+  static targets = [ "name", "address", "map", "latitude", "longitude", "manualLatLong", "automaticLocation", "expectedDownload", "expectedUpload", "geoIcon", "spinner" ];
 
   connect() {
     const lat = this.latitudeTarget.value ?? geoplugin_latitude();
@@ -46,6 +46,7 @@ export default class extends Controller {
           this.mapTarget.setAttribute('data-location-latitude-value', userGeoLatitude);
           this.mapTarget.setAttribute('data-location-longitude-value', userGeoLongitude);
           this.autofillAddress(userGeoLatitude, userGeoLongitude);
+          this.automaticLocationTarget.value = true;
         }
       )
     }
@@ -77,7 +78,7 @@ export default class extends Controller {
     for(let i = 0 ; isSwitchOn === undefined && i < manualSwitchElements.length ; i++) {
       if(manualSwitchElements[i].offsetParent) isSwitchOn = manualSwitchElements[i].checked;
     }
-    if(isSwitchOn) return; // If switch is on, prevent geo searching
+    if(isSwitchOn || this.automaticLocationTarget.value === 'true') return; // If switch is on, prevent geo searching
     this.fetchGeoData(e.target.value);
   }
 
