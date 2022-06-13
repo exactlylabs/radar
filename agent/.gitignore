@@ -7,7 +7,13 @@ dist/
 *.key
 *.pem
 *.srl
-
+*.deb
+*.pkg
+*.rpm
+*.changes
+*.buildinfo
+ookla
+radar-agent
 # Whitelist for Debian package, since it creates a lot of files
 packaging/debian/*
 !packaging/debian/changelog
