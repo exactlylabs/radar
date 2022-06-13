@@ -74,8 +74,7 @@ class ClientMeasurementsController < ApplicationController
         end
       end
       if !@client
-        head(404)
-        return
+        raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:client_id]}", Client.name, params[:client_id])
       end
     end
 

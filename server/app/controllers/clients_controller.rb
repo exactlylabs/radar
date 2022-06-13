@@ -239,10 +239,8 @@ EOF
     # Use callbacks to share common setup or constraints between actions.
     def set_client
       @client = policy_scope(Client).find_by_unix_user(params[:id])
-      debugger
       if !@client
-        head(404)
-        return
+        raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])
       end
     end
 
