@@ -69,6 +69,9 @@ jobs:
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
             BIN_NAME=radar-agent
+      - run: |
+          ./scripts/notarize_pkg.sh --wait
+      
       - store_artifacts:
           path: ~/repo/agent/radar-agent_<<parameters.version>>-1_<<parameters.arch>>.deb
 
@@ -97,6 +100,31 @@ jobs:
       - store_artifacts:
           path: ~/rpmbuild/RPMS/
 
+  pkg_package:
+    working_directory: ~/repo
+    macos:
+      xcode: 13.4.1
+    parameters:
+      version:
+        type: string
+    steps:
+      - checkout
+      - run: echo $APP_P12_FILE > ~/repo/application.p12
+      - run: echo $INSTALLER_P12_FILE > ~/repo/installer.p12
+      - run: echo $APP_CERT_FILE > ~/repo/application.cer
+      - run: echo $INSTALLER_CERT_FILE > ~/repo/installer.cer
+      - run: |
+          cd agent
+          make pkg VERSION=<<parameters.version>> \
+            OUTPUT_DIR=~/repo/dist \
+            INSTALLER_CERT_FILE_PATH=~/repo/installer.cer \
+            APP_CERT_FILE_PATH=~/repo/application.cer \
+            INSTALLER_P12_FILE_PATH=~/repo/installer.p12 \
+            APP_P12_FILE_PATH=~/repo/application.p12
+
+      - store_artifacts:
+          path: ~/repo/dist/
+  
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:  
@@ -148,3 +176,11 @@ workflows:
           matrix:
             parameters:
               arch: ["amd64", "arm64"]
+
+      - pkg_package:
+          version: 1.0.0
+          # filters:
+          #   tags:
+          #     only: /^(?:\d+\.){2}\d+$/
+          #   branches:
+          #     ignore: "/.*/"
