@@ -108,11 +108,13 @@ jobs:
       version:
         type: string
     steps:
-      - checkout
-      - run: echo $APP_P12_FILE > ~/repo/application.p12
-      - run: echo $INSTALLER_P12_FILE > ~/repo/installer.p12
-      - run: echo $APP_CERT_FILE > ~/repo/application.cer
-      - run: echo $INSTALLER_CERT_FILE > ~/repo/installer.cer
+      - build_config
+      - run: curl -L https://go.dev/dl/go1.18.3.darwin-amd64.pkg --output go1.18.3.darwin-amd64.pkg
+      - run: installer -pkg go1.18.3.darwin-amd64.pkg -target /
+      - run: echo $APP_P12_FILE | base64 -d > ~/repo/application.p12
+      - run: echo $INSTALLER_P12_FILE | base64 -d > ~/repo/installer.p12
+      - run: echo $APP_CERT_FILE | base64 -d > ~/repo/application.cer
+      - run: echo $INSTALLER_CERT_FILE | base64 -d > ~/repo/installer.cer
       - run: |
           cd agent
           make pkg VERSION=<<parameters.version>> \
