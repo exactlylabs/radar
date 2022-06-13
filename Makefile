@@ -7,7 +7,7 @@ export OUTPUT_DIR?=./dist
 export BIN_NAME?=radar_agent
 
 # Non Exported Variables
-RADAR_URL?=http://127.0.0.1:3000
+export RADAR_URL?=http://127.0.0.1:3000
 OUTPUT_DIR:=$(abspath ${OUTPUT_DIR})
 DIST_NAME=$(OS)-$(ARCH)
 OUTPUT_PATH=${OUTPUT_DIR}/${BIN_NAME}
