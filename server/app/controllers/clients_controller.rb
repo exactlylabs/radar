@@ -3,7 +3,7 @@ require "sshkey"
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status ], if: :json_request?
-  before_action :set_client, only: %i[ claim release show edit update destroy ]
+  before_action :set_client, only: %i[ release show edit update destroy ]
   before_action :authenticate_token!, only: %i[ create ]
   skip_forgery_protection only: %i[ status configuration new create ]
 
@@ -239,6 +239,11 @@ EOF
     # Use callbacks to share common setup or constraints between actions.
     def set_client
       @client = policy_scope(Client).find_by_unix_user(params[:id])
+      debugger
+      if !@client
+        head(404)
+        return
+      end
     end
 
     # Only allow a list of trusted parameters through.

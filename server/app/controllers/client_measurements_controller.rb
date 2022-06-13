@@ -73,6 +73,10 @@ class ClientMeasurementsController < ApplicationController
           @client = client
         end
       end
+      if !@client
+        head(404)
+        return
+      end
     end
 
     # Only allow a list of trusted parameters through.

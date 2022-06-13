@@ -24,7 +24,9 @@ class DashboardController < ApplicationController
     when 'active'
       locations.where_online
     else
-      locations.where_offline
+      with_no_clients = locations.where_no_clients # need to also query for locations without clients associated
+      offline = locations.where_offline
+      with_no_clients + offline # return one list with both results
     end
   end
 end

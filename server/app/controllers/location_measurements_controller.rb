@@ -22,5 +22,9 @@ class LocationMeasurementsController < ApplicationController
   private
     def set_location
       @location = current_user.locations.find(params[:location_id])
+      if !@location
+        head(404)
+        return
+      end
     end
 end
