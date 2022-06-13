@@ -61,7 +61,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :client_versions do
+  resources :client_versions, constraints: {id: /[^\/]+/} do
     resources :distributions do
       member do
         get 'download'
@@ -73,6 +73,14 @@ Rails.application.routes.draw do
   post 'reverse_geocode', to: 'geocode#reverse_code'
   get 'dashboard', to: 'dashboard#index'
   
+  namespace 'api' do
+    namespace 'v1' do
+      resources :client_versions, constraints: {id: /[^\/]+/} do
+        resources :distributions
+      end
+    end
+  end
+
   #root to: 'home#home'
   root to: redirect('/users/sign_in')
 end

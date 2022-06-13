@@ -11,9 +11,12 @@ Additionally, it schedules automatic tests and has the ability to do a self upda
 
 > Make sure you are at agent directory to follow the instructions bellow
 
+> If you wish to setup a **developer** environment, just run `make dev` and it will make all setup steps bellow.
+
+
 #### Ookla Binary
 
-To setup the project, you need to download an ookla binary for you current OS/Architecture (Or the one you are targeting your build) by calling `./scripts/make_ookla.sh`. You can also find the available binaries [here](https://www.speedtest.net/pt/apps/cli).
+To setup the project, you need to download an ookla binary for your current OS/Architecture (Or the one you are targeting your build) by calling `./scripts/make_ookla.sh`. You can also find the available binaries [here](https://www.speedtest.net/pt/apps/cli).
 
 To use it, just call:
 
@@ -35,7 +38,7 @@ At the end, you should have something simillar to this:
 
 #### Developer Environment
 
-By default, the application will run in development mode if you are running through `go run ...`.
+By default, the application will run in development mode if you are running through `make run`.
 In case you want to generate a binary in development mode, go to the **Build** section and use "Dev" as the version number.
 
 When in development mode, the application will generate a configuration file with Development configurations located at `config/dev.go`
@@ -66,10 +69,11 @@ For the binary distribution, we need a new certificate, generated through our ne
 
 #### Build and Sign
 
-After all required steps are done, we can build and sign the binary through `build_and_sign.sh`
+After all required steps are done, we can build and sign the binary through `make all [OPTIONS]`
 
+It defaults to create a binary for your current system, in **DEV** mode. In case you want a different configuration, just set the env variables `ARCH` and/or `OS`, giving the value you want.
 
-It defaults to create a binary for your current system. In case you want a different configuration, just add `--arch` and/or `--os` flags, giving the value you want.
+eg: `make all VERSION=1.0.0 OS=linux ARCH=amd64`
 
 Available architectures / operational system can be found through
 
@@ -79,36 +83,7 @@ go tool dist list
 
 > It's important to remember that the ookla binary build should be for the target OS/Architecture
 
-Run this code to see the usage
-```
-./scripts/build_and_sign -h
-```
-
-If you followed the steps above, this example should create the binary and signed binary:
-
-```sh
-./scripts/build_and_sign.sh \
-    -o dist/agent \
-    1.0.0\
-    dist/certs/binCert.crt\
-    dist/certs/binKey.key
-
-ls dist/
-```
-
-OR if you want it to be in a development mode:
-
-```sh
-./scripts/build_and_sign.sh \
-    -o dist/agent \
-    Dev\
-    dist/certs/binCert.crt\
-    dist/certs/binKey.key
-
-ls dist/
-```
-
-Since the signed binary is not an actual executable, the script also creates a binary to internal usage/tests.
+If you followed the steps above running `make all` should create the binary and signed binary at `dist/` directory:
 
 At the end, you should have the following files:
 

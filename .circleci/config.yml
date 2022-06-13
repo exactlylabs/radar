@@ -1,0 +1,74 @@
+version: 2.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  create_version:
+    docker:
+      - image: cimg/base:2022.05
+    steps:
+      - checkout
+      - run: make client_version VERSION=$CIRCLE_TAG
+
+  build_and_upload:
+    working_directory: ~/repo
+    docker:
+      # Available Images: https://circleci.com/developer/images/image/cimg/go
+      - image: cimg/go:1.18.2
+    parameters:
+      version:
+        type: string
+      os:
+        default: "linux"
+        type: string
+      arch:
+        default: "amd64"
+        type: string
+      binName:
+        default: "radar_agent"
+        type: string
+    
+    steps:
+      - checkout
+      - run: echo -n $PROVIDER_SIGNING_CERT | base64 -d > binCert.crt
+      - run: echo -n $PROVIDER_SIGNING_KEY | base64 -d > binKey.key
+      - run: echo -n $ROOT_CA | base64 -d > internal/update/rootCA.pem
+      - run: |
+          make agent_distribution \
+            VERSION=<<parameters.version>> \
+            OS=<<parameters.os>> \
+            ARCH=<<parameters.arch>> \
+            BIN_NAME=<<parameters.binName>> \
+            PROVIDER_SIGNING_CERT_PATH=./binCert.crt \
+            PROVIDER_SIGNING_CERT_KEY_PATH=./binKey.key
+
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:  
+  build:
+    jobs:
+      - create_version:
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+            
+      - build_and_upload:
+          requires: [ create_version ]
+          version: $CIRCLE_TAG
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+          matrix:
+            parameters:
+              os: ["linux", "darwin", "windows"]
+              arch: ["amd64", "arm64"]
+            exclude:
+              - os: "windows"
+                arch: "arm64"
+
+          

@@ -94,7 +94,7 @@ else
     tar -xvf $TARNAME
 fi
 
-mv $BIN_NAME ../services/ookla/$TARGET_NAME
+mv $BIN_NAME $SCRIPT_DIR/../services/ookla/$TARGET_NAME
 
 cd ..
 rm -r ooklaSpeedTest

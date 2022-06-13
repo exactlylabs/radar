@@ -21,10 +21,10 @@ User.all.each do |user|
     end
 end
 
-if Rails.env.development?
+if Rails.env.production?
     # Update US locations with missing fips codes
     Location.where("county is NOT NULL AND latitude IS NOT NULL AND longitude IS NOT NULL AND county_fips IS NULL AND state_fips IS NULL").each do |loc|
-        loc.state_fips, loc.county_fips = Location.fips_codes loc.latitude, loc.longitude
+        loc.state_fips, loc.county_fips = FipsGeocoderCli::get_fips_codes loc.latitude, loc.longitude
         loc.save
     end
 end
