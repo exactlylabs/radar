@@ -8,7 +8,9 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PACKAGE_DIR=$SCRIPT_DIR/../packaging/windows
 DESTDIR=$PACKAGE_DIR/_build
-OUTPUT_DIR=$SCRIPT_DIR/..
+if [ -z OUTPUT_DIR ]; then
+  OUTPUT_DIR=$SCRIPT_DIR/..
+fi
 
 if [ -z $VERSION ]; then
   VERSION="1.0.0"

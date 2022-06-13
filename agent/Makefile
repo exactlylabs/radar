@@ -67,6 +67,9 @@ rpm:
 pkg:
 	OUTPUT_DIR=${DIST_DIR} ./scripts/build_pkg.sh
 
+msi:
+	OUTPUT_DIR=${DIST_DIR} ./scripts/build_msi.sh
+
 all: build
 
 clean:
