@@ -123,10 +123,21 @@ jobs:
             APP_CERT_FILE_PATH=~/repo/application.cer \
             INSTALLER_P12_FILE_PATH=~/repo/installer.p12 \
             APP_P12_FILE_PATH=~/repo/application.p12
-      - run: PKG_PATH=~/repo/dist/radar-agent_<<parameters.version>>.pkg ./agent/scripts/notarize_pkg.sh
 
       - store_artifacts:
           path: ~/repo/dist/
+      - persist_to_workspace:
+          root: ~/repo/dist
+
+  notarize_pkg:
+    working_directory: ~/repo
+    macos:
+      xcode: 13.4.1
+    steps:
+      - checkout
+      - attach_workspace:
+          - at: /tmp/workspace
+      - run: cd agent && PKG_PATH=$(ls /tmp/workspace/*.pkg | head -1) ./scripts/notarize_pkg.sh
 
   msi_package:
     working_directory: ~/repo
@@ -197,17 +208,26 @@ workflows:
               arch: ["amd64", "arm64"]
 
       - pkg_package:
-          version: 1.0.0
+          version: $CIRCLE_TAG
           filters:
             tags:
               only: /^(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
 
+      - notarize_pkg:
+          requires:
+            - pkg_package
+
+      - wait_notarization:
+          type: approval
+          requires:
+            - notarize_pkg
+
       - msi_package:
-          version: 1.0.0
-          # filters:
-          #   tags:
-          #     only: /^(?:\d+\.){2}\d+$/
-          #   branches:
-          #     ignore: "/.*/"
+          version: $CIRCLE_TAG
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
