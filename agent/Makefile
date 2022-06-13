@@ -65,9 +65,9 @@ rpm:
 	./scripts/build_rpm.sh
 
 pkg:
-	./scripts/build_pkg.sh
+	OUTPUT_DIR=${DIST_DIR} ./scripts/build_pkg.sh
 
-all: build sign validate
+all: build
 
 clean:
 	rm -f ${OUTPUT_PATH}
