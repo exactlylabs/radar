@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+  <Product Name='RadarAgent' Id='4A89C26F-78D2-4F5F-8410-477D636E51AF' UpgradeCode='F9A36E92-65D1-422B-B412-435F30B26740'
+    Language='1033' Codepage='1252' Version='${VERSION}' Manufacturer='Exactlylabs, Inc.'>
+
+    <Package Id='0833A3BE-E492-422E-85A1-ED1CE9017BC1' Keywords='Installer' Description="Radar's Agent to run speedtests"
+      Comments='' Manufacturer='Exactlylabs, Inc.'
+      InstallerVersion='200' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+
+    <Media Id='1' Cabinet='RadarAgent.cab' EmbedCab='yes' DiskPrompt="CD-ROM #1" />
+    <Property Id='DiskPrompt' Value="RadarAgent Installation [1]" />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='Exactlylabs' Name='Exactlylabs'>
+          <Directory Id='INSTALLDIR' Name='Radar'>
+            <Component Id='MainExecutable' Guid='F22EF775-A3BC-4C1B-8C0F-A19E508D5A57'>
+              <File Id='AgentEXE' Name='radarAgent.exe' DiskId='1' Source='radar-agent.exe' KeyPath='yes'/>
+            </Component>
+
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id='Complete' Level='1'>
+      <ComponentRef Id='MainExecutable' />
+    </Feature>
+     <Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable" />
+    <CustomAction Id='InstallService' FileKey='AgentEXE' Execute="deferred" ExeCommand='-service install'/>
+    <CustomAction Id='StartService' FileKey='AgentEXE' Execute="deferred" ExeCommand='-service start'/>
+
+    <CustomAction Id='UninstallService' FileKey='AgentEXE' Execute="deferred" Return="ignore" ExeCommand='-service uninstall'/>
+    <CustomAction Id='StopService' FileKey='AgentEXE' Execute="deferred" Return="ignore" ExeCommand='-service stop'/>
+
+    <InstallExecuteSequence>
+      <Custom Action='InstallService' After='InstallFiles' >NOT REMOVE</Custom>
+      <Custom Action='StartService' After='InstallService' >NOT REMOVE</Custom>
+    </InstallExecuteSequence>
+
+    <InstallExecuteSequence>
+      <Custom Action='StopService' Before='RemoveFiles' >Installed</Custom>
+      <Custom Action='UninstallService' After='StopService' Before='RemoveFiles' >Installed</Custom>
+    </InstallExecuteSequence>
+
+  </Product>
+</Wix>
