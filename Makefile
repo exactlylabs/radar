@@ -34,6 +34,9 @@ agent:
 upload_distribution:
 	./scripts/upload_distribution.sh
 
+upload_package:
+	./scripts/upload_package.sh ${VERSION} ${FILE_PATH} ${OS} ${ARCH}
+
 agent_distribution: agent upload_distribution
 
 run:
