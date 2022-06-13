@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 
 	"github.com/exactlylabs/radar/agent/internal/info"
@@ -49,13 +50,23 @@ func basePath() string {
 		}
 		return basePath
 	}
-	basePath, err := os.UserConfigDir()
-	if err != nil {
-		basePath, err = os.Getwd()
+	var basePath string
+	var err error
+	// For Windows, it is best to always store on AppData,
+	// since if running as a service, it will be sent to a system32 directory
+	switch runtime.GOOS {
+	case "windows":
+		basePath = os.Getenv("ProgramData")
+	default:
+		basePath, err = os.UserConfigDir()
 		if err != nil {
-			panic(fmt.Errorf("config.basePath error: %w", err))
+			basePath, err = os.Getwd()
+			if err != nil {
+				panic(fmt.Errorf("config.basePath error: %w", err))
+			}
 		}
 	}
+
 	return filepath.Join(basePath, "radar")
 }
 
