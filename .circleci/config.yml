@@ -110,7 +110,7 @@ jobs:
     steps:
       - build_config
       - run: curl -L https://go.dev/dl/go1.18.3.darwin-amd64.pkg --output go1.18.3.darwin-amd64.pkg
-      - run: installer -pkg go1.18.3.darwin-amd64.pkg -target /
+      - run: sudo installer -pkg go1.18.3.darwin-amd64.pkg -target /
       - run: echo $APP_P12_FILE | base64 -d > ~/repo/application.p12
       - run: echo $INSTALLER_P12_FILE | base64 -d > ~/repo/installer.p12
       - run: echo $APP_CERT_FILE | base64 -d > ~/repo/application.cer
