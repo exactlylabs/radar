@@ -21,6 +21,8 @@ make build ARCH=amd64 BIN_NAME=radar-agent_amd64 OUTPUT_DIR=$DESTDIR
 make build ARCH=arm64 BIN_NAME=radar-agent_arm64 OUTPUT_DIR=$DESTDIR
 
 lipo -create -output $DESTDIR/pkg/usr/local/bin/radar-agent $DESTDIR/radar-agent_amd64 $DESTDIR/radar-agent_arm64
+rm $DESTDIR/radar-agent_amd64
+rm $DESTDIR/radar-agent_arm64
 
 # TODO: This might not be needed for the CI?
 #       but locally, it fails if not unlocked at every session.
@@ -30,7 +32,7 @@ echo $DESTDIR/pkg/usr/local/bin/radar-agent
 # Sign the binary
 
 codesign \
-    -s ${APPLICATION_CERT_ID} \
+    -s "$APPLICATION_CERT_ID" \
     -fv \
     --options runtime \
     --timestamp \
