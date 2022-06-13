@@ -28,3 +28,5 @@ sed -i 's/${VERSION}/'$VERSION'/g' $DESTDIR/RadarAgent.wxs
 wixl -a x64 -o $OUTPUT_DIR/RadarAgent.msi $DESTDIR/RadarAgent.wxs
 
 echo "Generated msi file at $OUTPUT_DIR/RadarAgent.msi"
+
+rm $DESTDIR

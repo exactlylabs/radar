@@ -10,6 +10,7 @@ dist/
 *.deb
 *.pkg
 *.rpm
+*.msi
 *.changes
 *.buildinfo
 ookla
