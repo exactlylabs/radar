@@ -42,7 +42,7 @@ module.exports = {
   },
   // https://webpack.js.org/configuration/dev-server/
   devServer: {
-    static: { directory: path.resolve(__dirname, '../dist') },
+    static: { directory: path.join(__dirname, '/') },
     hot: true,
     compress: true,
     port: 9999,
