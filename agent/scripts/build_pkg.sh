@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-# Commands and files took from: https://vincent.bernat.ch/en/blog/2013-autoconf-osx-packaging
-
 set -e
 
-# Builds MacOS .pkg file
+###### BUILD BINARY STEPS ######
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PACKAGE_DIR=$SCRIPT_DIR/../packaging/mac
@@ -24,13 +22,31 @@ lipo -create -output $DESTDIR/pkg/usr/local/bin/radar-agent $DESTDIR/radar-agent
 rm $DESTDIR/radar-agent_amd64
 rm $DESTDIR/radar-agent_arm64
 
-# TODO: This might not be needed for the CI?
-#       but locally, it fails if not unlocked at every session.
-security unlock-keychain login.keychain
 
-echo $DESTDIR/pkg/usr/local/bin/radar-agent
+###### SIGNING + PKG CREATION STEPS ######
+
+#### Setup KeyChain ####
+# Code took from: https://stackoverflow.com/questions/16550594/jenkins-xcode-build-works-codesign-fails
+
+MY_KEYCHAIN="RadarKeyChain.keychain"
+security create-keychain -p "" "$MY_KEYCHAIN"
+security list-keychains -d user -s "$MY_KEYCHAIN" $(security list-keychains -d user | sed s/\"//g)
+security set-keychain-settings "$MY_KEYCHAIN"
+security unlock-keychain -p "" "$MY_KEYCHAIN"
+
+security import $APP_P12_FILE_PATH -k "$MY_KEYCHAIN" -P "" -T "/usr/bin/codesign" -T "/usr/bin/productbuild"
+security import $APP_CERT_FILE_PATH -k "$MY_KEYCHAIN" -P "" -T "/usr/bin/codesign" -T "/usr/bin/productbuild"
+
+security import $INSTALLER_P12_FILE_PATH -k "$MY_KEYCHAIN" -P "" -T "/usr/bin/codesign" -T "/usr/bin/productbuild"
+security import $INSTALLER_CERT_FILE_PATH -k "$MY_KEYCHAIN" -P "" -T "/usr/bin/codesign" -T "/usr/bin/productbuild"
+
+
+security set-key-partition-list -S apple-tool:,apple: -s -k "" $MY_KEYCHAIN
+
+#### Creating the PKG ####
+# Commands and files took from: https://vincent.bernat.ch/en/blog/2013-autoconf-osx-packaging
+
 # Sign the binary
-
 codesign \
     -s "$APPLICATION_CERT_ID" \
     -fv \
@@ -57,7 +73,6 @@ pkgbuild \
     $DESTDIR/agent_pkg.pkg 
 
 
-
 # Now, build the product, with build scripts + resources, as the final .pkg file
 productbuild \
     --distribution $DESTDIR/distribution.xml \
@@ -68,3 +83,6 @@ productbuild \
     $OUTPUT_DIR/radar-agent_${VERSION}.pkg
 
 rm -rf $DESTDIR
+
+# Finish deleting the keychain that was created
+security delete-keychain "$MY_KEYCHAIN"
