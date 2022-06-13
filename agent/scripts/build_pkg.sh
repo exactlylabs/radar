@@ -74,6 +74,7 @@ pkgbuild \
     --scripts $DESTDIR/scripts \
     $DESTDIR/agent_pkg.pkg 
 
+mkdir -p $OUTPUT_DIR
 
 # Now, build the product, with build scripts + resources, as the final .pkg file
 productbuild \
