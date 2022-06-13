@@ -186,10 +186,10 @@ jobs:
           at: /tmp/workspace
       - run: | 
           make upload_package \
-            <<parameters.version>> \
-            /tmp/workspace/<<parameters.workspace_file_name>> \
-            <<parameters.os>> \
-            <<parameters.arch>> RADAR_URL=${RADAR_TEST_URL} RADAR_USER=${RADAR_TEST_USER} RADAR_PASSWORD=${RADAR_TEST_PASSWORD}
+            VERSION=<<parameters.version>> \
+            FILE_PATH=/tmp/workspace/<<parameters.workspace_file_name>> \
+            OS=<<parameters.os>> \
+            ARCH=<<parameters.arch>> RADAR_URL=${RADAR_TEST_URL} RADAR_USER=${RADAR_TEST_USER} RADAR_PASSWORD=${RADAR_TEST_PASSWORD}
             
 
 # Invoke jobs via workflows
