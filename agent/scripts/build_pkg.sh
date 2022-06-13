@@ -7,7 +7,9 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PACKAGE_DIR=$SCRIPT_DIR/../packaging/mac
 DESTDIR=$PACKAGE_DIR/_build
-OUTPUT_DIR=$SCRIPT_DIR/..
+if [ -z $OUTPUT_DIR ]; then
+    OUTPUT_DIR=$SCRIPT_DIR/..
+fi
 
 rm -rf $DESTDIR
 
