@@ -73,6 +73,7 @@ Rails.application.routes.draw do
     namespace 'v1' do
       resources :client_versions, constraints: {id: /[^\/]+/} do
         resources :distributions
+        resources :packages
       end
     end
   end
