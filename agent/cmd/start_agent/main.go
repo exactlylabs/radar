@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path"
+	"runtime"
 	"syscall"
 
 	"github.com/exactlylabs/radar/agent/agent"
@@ -17,6 +19,7 @@ import (
 	"github.com/exactlylabs/radar/agent/services/radar"
 	"github.com/exactlylabs/radar/agent/services/tracing"
 	"github.com/kardianos/service"
+	"github.com/natefinch/lumberjack"
 )
 
 var svcFlag = flag.String("service", "", "Control the system service.")
@@ -32,6 +35,11 @@ func makeService(agent *agent.Agent, c *config.Config, ctx context.Context, canc
 		Name:        "radar-agent",
 		DisplayName: "Radar Agent",
 		Description: "Daemon service responsible for running speedtests",
+		Option: map[string]interface{}{
+			// Windows configurations
+			"OnFailure":              "restart",
+			"OnFailureDelayDuration": "10s",
+		},
 	}
 	s, err := service.New(svc, conf)
 	if err != nil {
@@ -39,7 +47,9 @@ func makeService(agent *agent.Agent, c *config.Config, ctx context.Context, canc
 	}
 	if len(*svcFlag) != 0 {
 		err := service.Control(s, *svcFlag)
-		if err != nil {
+		if err != nil && err == service.ErrNotInstalled {
+			os.Exit(0)
+		} else if err != nil {
 			log.Printf("Valid actions: %q\n", service.ControlAction)
 			log.Fatal(err)
 		}
@@ -56,7 +66,7 @@ type agentSvc struct {
 }
 
 func (svc *agentSvc) Start(s service.Service) error {
-	svc.agent.Start(svc.ctx, svc.c)
+	go svc.agent.Start(svc.ctx, svc.c)
 	return nil
 }
 
@@ -74,6 +84,15 @@ func main() {
 		fmt.Println(info.BuildInfo())
 		os.Exit(0)
 	}
+	f := setupWindowsLogging()
+	defer f.Close()
+
+	// Before starting, make sure we enable logging for windows
+	if !service.Interactive() && runtime.GOOS == "windows" {
+		f := setupWindowsLogging()
+		defer f.Close()
+	}
+
 	log.Println("Starting Radar Agent")
 	log.Println(info.BuildInfo())
 	c := config.LoadConfig()
@@ -117,4 +136,18 @@ func main() {
 		}
 	}
 
+}
+
+func setupWindowsLogging() *os.File {
+	p := path.Join(os.Getenv("ProgramData"), "radar", "logs.txt")
+	f, err := os.OpenFile(p, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	log.SetOutput(&lumberjack.Logger{
+		Filename:   p,
+		MaxSize:    1,
+		MaxBackups: 3,
+	})
+	return f
 }
