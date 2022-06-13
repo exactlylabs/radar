@@ -123,6 +123,7 @@ jobs:
             APP_CERT_FILE_PATH=~/repo/application.cer \
             INSTALLER_P12_FILE_PATH=~/repo/installer.p12 \
             APP_P12_FILE_PATH=~/repo/application.p12
+      - run: PKG_PATH=~/repo/dist/radar-agent_<<parameters.version>>.pkg ./agent/scripts/notarize_pkg.sh
 
       - store_artifacts:
           path: ~/repo/dist/
