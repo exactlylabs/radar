@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_10_175318) do
+ActiveRecord::Schema.define(version: 2022_06_13_213715) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -130,6 +130,15 @@ ActiveRecord::Schema.define(version: 2022_06_10_175318) do
     t.index ["user_id"], name: "index_measurements_on_user_id"
   end
 
+  create_table "packages", force: :cascade do |t|
+    t.string "name"
+    t.string "os"
+    t.bigint "client_version_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["client_version_id"], name: "index_packages_on_client_version_id"
+  end
+
   create_table "update_groups", force: :cascade do |t|
     t.string "name"
     t.bigint "client_version_id"
@@ -170,5 +179,6 @@ ActiveRecord::Schema.define(version: 2022_06_10_175318) do
   add_foreign_key "measurements", "clients"
   add_foreign_key "measurements", "locations"
   add_foreign_key "measurements", "users"
+  add_foreign_key "packages", "client_versions"
   add_foreign_key "update_groups", "client_versions"
 end

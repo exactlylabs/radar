@@ -1,35 +1,35 @@
 module Api
   module V1
-    class DistributionsController < ApiController
+    class PackagesController < ApiController
       before_action :set_version!
       before_action :ensure_superuser!
       
       def index
         if @version
-          @distributions = @version.distributions
+          @packages = @version.packages
         end
       end
 
       def show
-        @distribution = @version.distributions.find_by_name(params[:id])
+        @package = @version.packages.find_by_name(params[:id])
       end
 
       def create
-        @distribution = Distribution.new distribution_params
-        @distribution.client_version = @version
-        if @distribution.save
+        @package = Package.new package_params
+        @package.client_version = @version
+        if @package.save
           render :show, status: :created
         else
-          render_error_for @distribution
+          render_error_for @package
         end
       end
 
       def update
-        @distribution = @version.distributions.find_by_name(params[:id])
-        if @distribution.update distribution_params
+        @package = @version.packages.find_by_name(params[:id])
+        if @package.update package_params
           render :show, status: :ok
         else
-          render_error_for @distribution
+          render_error_for @package
         end
       end
 
@@ -43,8 +43,8 @@ module Api
         end
       end
 
-      def distribution_params
-        params.require(:distribution).permit(:name, :binary, :signed_binary)
+      def package_params
+        params.require(:package).permit(:name, :file, :os)
       end
 
     end
