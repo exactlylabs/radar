@@ -17,7 +17,7 @@ set -e
 xcrun altool \
     -type osx \
     --notarize-app \
-    --primary-bundle-id "${BUNDLE_ID}" \
+    --primary-bundle-id "${APPLE_BUNDLE_ID}" \
     --username "${APPLEID_USERNAME}" \
     --password "${APPLEID_PWD}" \
     --file "${PKG_PATH}"
