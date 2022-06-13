@@ -18,6 +18,21 @@ mkdir -p $DESTDIR
 # Call build for the specified package from the environment variables
 make build BIN_NAME=radar-agent OUTPUT_DIR=$DESTDIR/pkg/usr/local/bin
 
+# TODO: This might not be needed for the CI?
+#       but locally, it fails if not unlocked at every session.
+security unlock-keychain login.keychain
+
+echo $DESTDIR/pkg/usr/local/bin/radar-agent
+# Sign the binary
+
+codesign \
+    -s ${APPLICATION_CERT_ID} \
+    -fv \
+    --options runtime \
+    --timestamp \
+    $DESTDIR/pkg/usr/local/bin/radar-agent
+
+
 # Copy launchd file
 mkdir -p $DESTDIR/pkg/Library/LaunchDaemons/
 cp $PACKAGE_DIR/com.exactlylabs.radar.agent.plist $DESTDIR/pkg/Library/LaunchDaemons/
@@ -38,12 +53,12 @@ pkgbuild \
 
 
 # Now, build the product, with build scripts + resources, as the final .pkg file
-
 productbuild \
     --distribution $DESTDIR/distribution.xml \
     --resources $DESTDIR/resources \
     --package-path $DESTDIR \
     --version ${VERSION} \
+    --sign "${INSTALLER_CERT_ID}" \
     $OUTPUT_DIR/radar-agent_${VERSION}.pkg
 
 rm -rf $DESTDIR
