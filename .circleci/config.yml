@@ -76,13 +76,13 @@ jobs:
       - persist_to_workspace:
           root: ~/repo/agent/
           paths:
-            - radar-agent_<<parameters.version>>-1_<<parameters.arch>>.deb
+            - radar-agent_<<parameters.version>>-*.deb
 
   rpm_package:
     working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
-      - image: fedora
+      - image: fedora:36
     parameters:
       version:
         type: string
@@ -105,7 +105,7 @@ jobs:
       - persist_to_workspace:
           root: ~/rpmbuild/RPMS/
           paths:
-            - radar-agent-<<parameters.version>>.<<parameters.arch>>.rpm
+            - radar-agent-<<parameters.version>>.*.rpm
 
   pkg_package:
     working_directory: ~/repo
@@ -135,7 +135,7 @@ jobs:
       - persist_to_workspace:
           root: ~/repo/dist/
           paths:
-            - radar-agent_<<parameters.version>>.pkg
+            - radar-agent*.pkg
 
   notarize_pkg:
     working_directory: ~/repo
@@ -238,7 +238,7 @@ workflows:
           version: $CIRCLE_TAG
           os: linux
           arch: amd64
-          workspace_file_name: radar-agent_${CIRCLE_TAG}-1_amd64.deb
+          workspace_file_name: radar-agent_*_amd64.deb
           filters:
             tags:
               only: /^(?:\d+\.){2}\d+$/
@@ -249,7 +249,7 @@ workflows:
           <<: *upload_anchor
           name: upload_debian_arm64
           arch: arm64
-          workspace_file_name: radar-agent_${CIRCLE_TAG}-1_arm64.deb
+          workspace_file_name: radar-agent_*_arm64.deb
           requires: [deb_package-arm64]
 
       - rpm_package:
@@ -266,13 +266,13 @@ workflows:
           <<: *upload_anchor
           name: upload_rpm_arm64
           arch: arm64
-          workspace_file_name: radar-agent-${CIRCLE_TAG}.arm64.rpm
+          workspace_file_name: radar-agent-*.arm64.rpm
           requires: [rpm_package-arm64]
       - upload_package:
           <<: *upload_anchor
           name: upload_rpm_amd64
           arch: amd64
-          workspace_file_name: radar-agent-${CIRCLE_TAG}.amd64.rpm
+          workspace_file_name: radar-agent-*.amd64.rpm
           requires: [rpm_package-amd64]
 
       - pkg_package:
@@ -301,7 +301,7 @@ workflows:
           name: upload_darwin_arm64
           os: darwin
           arch: arm64
-          workspace_file_name: radar-agent-${CIRCLE_TAG}.pkg
+          workspace_file_name: radar-agent-*.pkg
           requires: [wait_notarization]
 
       - msi_package:
