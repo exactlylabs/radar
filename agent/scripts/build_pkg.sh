@@ -48,7 +48,7 @@ security set-key-partition-list -S apple-tool:,apple: -s -k "" $MY_KEYCHAIN
 
 # Sign the binary
 codesign \
-    -s "$APPLICATION_CERT_ID" \
+    -s "Developer ID Application: Exactly Labs, Inc. (MQYTP6VS48)" \
     -fv \
     --options runtime \
     --timestamp \
@@ -79,7 +79,7 @@ productbuild \
     --resources $DESTDIR/resources \
     --package-path $DESTDIR \
     --version ${VERSION} \
-    --sign "${INSTALLER_CERT_ID}" \
+    --sign "Developer ID Installer: Exactly Labs, Inc. (MQYTP6VS48)" \
     $OUTPUT_DIR/radar-agent_${VERSION}.pkg
 
 rm -rf $DESTDIR
