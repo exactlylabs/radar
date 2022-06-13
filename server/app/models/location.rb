@@ -16,6 +16,7 @@ class Location < ApplicationRecord
   ## include locations with 0 clients associated, when it should
   scope :where_offline, -> { joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) = 0") }
 
+  # Do we need to check for policy_scope(Client)? If so, how can we do it here?
   scope :where_no_clients, -> { where.not(id: Client.select(:location_id).where.not(location_id: nil)) }
 
   def latest_download
