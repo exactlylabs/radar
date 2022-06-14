@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------- #
 # Name: Build Debian Package
 #
-# Usage: ./build_deb.sh VERSION PKG_FILE_PATH ARCH
+# Usage: ./build_deb.sh VERSION
 #
 # Description: 
 #   Builds DEB package for Radar Agent
@@ -53,7 +53,7 @@ while :; do
         ;;
         -o|--output-path) 
             required $1 $2
-            DIST_DIR=$2
+            OUTPUT_PATH=$2
             shift
         ;;
         -p|--pkg-revision) 
