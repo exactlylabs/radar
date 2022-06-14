@@ -27,7 +27,7 @@ client_version:
 	./scripts/create_version.sh
 
 agent:
-	$(MAKE) -C agent
+	$(MAKE) -C agent all
 	$(MAKE) -C agent sign
 	$(MAKE) -C agent validate
 
