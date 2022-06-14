@@ -70,9 +70,9 @@ jobs:
             ARCH=<<parameters.arch>> \
             BIN_NAME=radar-agent
       - store_artifacts:
-          path: ~/repo/agent/radar-agent_<<parameters.version>>-1_<<parameters.arch>>.deb
+          path: ~/repo/agent/dist/radar-agent*.deb
       - persist_to_workspace:
-          root: ~/repo/agent/
+          root: ~/repo/agent/dist
           paths:
             - radar-agent*.deb
 
@@ -103,7 +103,7 @@ jobs:
       - persist_to_workspace:
           root: ~/rpmbuild/RPMS/
           paths:
-            - radar-agent*.rpm
+            - "*"
 
   pkg_package:
     working_directory: ~/repo
@@ -264,13 +264,13 @@ workflows:
           <<: *upload_anchor
           name: upload_rpm_arm64
           arch: arm64
-          workspace_file_name: radar-agent*arm64*.rpm
+          workspace_file_name: aarch64/radar-agent*arm64*.rpm
           requires: [rpm_package-arm64]
       - upload_package:
           <<: *upload_anchor
           name: upload_rpm_amd64
           arch: amd64
-          workspace_file_name: radar-agent*amd64*.rpm
+          workspace_file_name: x86_64/radar-agent*amd64*.rpm
           requires: [rpm_package-amd64]
 
       - pkg_package:
@@ -281,9 +281,17 @@ workflows:
             branches:
               ignore: "/.*/"
       - notarize_pkg:
+          tags:
+            only: /^(?:\d+\.){2}\d+$/
+          branches:
+            ignore: "/.*/"
           requires: [pkg_package]
       - wait_notarization:
           type: approval
+          tags:
+            only: /^(?:\d+\.){2}\d+$/
+          branches:
+            ignore: "/.*/"
           requires: [notarize_pkg]
       - upload_package:
           <<: *upload_anchor
