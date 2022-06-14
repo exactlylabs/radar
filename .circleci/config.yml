@@ -69,14 +69,12 @@ jobs:
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
             BIN_NAME=radar-agent
-      - run: |
-          ./scripts/notarize_pkg.sh --wait
       - store_artifacts:
           path: ~/repo/agent/radar-agent_<<parameters.version>>-1_<<parameters.arch>>.deb
       - persist_to_workspace:
           root: ~/repo/agent/
           paths:
-            - radar-agent_<<parameters.version>>-*.deb
+            - radar-agent*.deb
 
   rpm_package:
     working_directory: ~/repo
@@ -105,7 +103,7 @@ jobs:
       - persist_to_workspace:
           root: ~/rpmbuild/RPMS/
           paths:
-            - radar-agent-<<parameters.version>>.*.rpm
+            - radar-agent*.rpm
 
   pkg_package:
     working_directory: ~/repo
@@ -145,7 +143,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: cd agent && PKG_PATH=$(ls /tmp/workspace/*.pkg | head -1) ./scripts/notarize_pkg.sh
+      - run: PKG_PATH=$(ls /tmp/workspace/*.pkg | head -1) agent/scripts/notarize_pkg.sh
 
   msi_package:
     working_directory: ~/repo
@@ -238,7 +236,7 @@ workflows:
           version: $CIRCLE_TAG
           os: linux
           arch: amd64
-          workspace_file_name: radar-agent_*_amd64.deb
+          workspace_file_name: radar-agent*amd64*.deb
           filters:
             tags:
               only: /^(?:\d+\.){2}\d+$/
@@ -249,7 +247,7 @@ workflows:
           <<: *upload_anchor
           name: upload_debian_arm64
           arch: arm64
-          workspace_file_name: radar-agent_*_arm64.deb
+          workspace_file_name: radar-agent*arm64*.deb
           requires: [deb_package-arm64]
 
       - rpm_package:
@@ -266,13 +264,13 @@ workflows:
           <<: *upload_anchor
           name: upload_rpm_arm64
           arch: arm64
-          workspace_file_name: radar-agent-*.arm64.rpm
+          workspace_file_name: radar-agent*arm64*.rpm
           requires: [rpm_package-arm64]
       - upload_package:
           <<: *upload_anchor
           name: upload_rpm_amd64
           arch: amd64
-          workspace_file_name: radar-agent-*.amd64.rpm
+          workspace_file_name: radar-agent*amd64*.rpm
           requires: [rpm_package-amd64]
 
       - pkg_package:
@@ -283,25 +281,23 @@ workflows:
             branches:
               ignore: "/.*/"
       - notarize_pkg:
-          requires:
-            - pkg_package
+          requires: [pkg_package]
       - wait_notarization:
           type: approval
-          requires:
-            - notarize_pkg
+          requires: [notarize_pkg]
       - upload_package:
           <<: *upload_anchor
           name: upload_darwin_amd64
           os: darwin
           arch: amd64
-          workspace_file_name: radar-agent-${CIRCLE_TAG}.pkg
+          workspace_file_name: radar-agent*.pkg
           requires: [wait_notarization]
       - upload_package:
           <<: *upload_anchor
           name: upload_darwin_arm64
           os: darwin
           arch: arm64
-          workspace_file_name: radar-agent-*.pkg
+          workspace_file_name: radar-agent*.pkg
           requires: [wait_notarization]
 
       - msi_package:
