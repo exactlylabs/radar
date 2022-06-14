@@ -281,17 +281,19 @@ workflows:
             branches:
               ignore: "/.*/"
       - notarize_pkg:
-          tags:
-            only: /^(?:\d+\.){2}\d+$/
-          branches:
-            ignore: "/.*/"
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
           requires: [pkg_package]
       - wait_notarization:
           type: approval
-          tags:
-            only: /^(?:\d+\.){2}\d+$/
-          branches:
-            ignore: "/.*/"
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
           requires: [notarize_pkg]
       - upload_package:
           <<: *upload_anchor
