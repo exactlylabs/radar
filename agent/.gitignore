@@ -15,10 +15,3 @@ dist/
 *.buildinfo
 ookla
 radar-agent
-# Whitelist for Debian package, since it creates a lot of files
-packaging/debian/*
-!packaging/debian/changelog
-!packaging/debian/compat
-!packaging/debian/control
-!packaging/debian/radar-agent.service
-!packaging/debian/rules

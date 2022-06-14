@@ -5,7 +5,7 @@ BIN_NAME?=radar_agent
 PROVIDER_SIGNING_CERT_PATH?=./dist/certs/binCert.crt
 PROVIDER_SIGNING_KEY_PATH?=./dist/certs/binKey.key
 export VERSION?=DEV
-INSTALL_DIR?=/usr/bin
+INSTALL_DIR?=/usr/local/bin
 
 # Get Absolute Path of Signing files
 CERT_PATH=$(abspath ${PROVIDER_SIGNING_CERT_PATH})
@@ -56,11 +56,7 @@ install:
 
 
 deb:
-# Need to change the changelog version due dpkg-buildpackage looking at it for creating the version
-# TODO: In the future it might be interesting to autocreate changelogs when tagged.
-	sed -i 's/radar-agent (.*)/radar-agent \(${VERSION}-1\)/' packaging/debian/changelog
-	cd packaging && ARCH=${ARCH} dpkg-buildpackage -b --no-sign -a${ARCH}
-	mv radar-agent_${VERSION}-1_${ARCH}.deb ${DIST_DIR}/
+	OUTPUT_DIR=${DIST_DIR} ./scripts/build_deb.sh
 
 rpm:
 	./scripts/build_rpm.sh
