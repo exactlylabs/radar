@@ -10,7 +10,6 @@ export BIN_NAME?=radar_agent
 export RADAR_URL?=http://127.0.0.1:3000
 OUTPUT_DIR:=$(abspath ${OUTPUT_DIR})
 DIST_NAME=$(OS)-$(ARCH)
-OUTPUT_PATH=${OUTPUT_DIR}/${BIN_NAME}
 
 # Validations
 
@@ -32,7 +31,7 @@ agent:
 	$(MAKE) -C agent validate
 
 upload_distribution:
-	./scripts/upload_distribution.sh
+	./scripts/upload_distribution.sh ${VERSION} ${OUTPUT_DIR}/${BIN_NAME} ${DIST_NAME}
 
 upload_package:
 	./scripts/upload_package.sh ${VERSION} ${FILE_PATH} ${OS} ${ARCH}
