@@ -3,19 +3,32 @@
 # ----------------------------------------------------------------------- #
 # Name: Upload Distribution
 #
+# Usage: ./upload_distribution.sh VERSION BINARY_FILE_PATH DIST_NAME
+#  * Note that the BINARY_FILE_PATH should be the path to the non-signed binary
+#
 # Description: 
 #   Uploads the generated binary and signed binary 
-#     as a distribution on the radar server
+#     as a distribution to the radar server
 #
 # Variables:
-#  * VERSION: The version to create (format: <major>.<minor>.<patch>)
-#  * DIST_NAME: Name of this distribution (format: <os>-<arch>)
-#  * OUTPUT_PATH: Path to the agent binary
 #  * RADAR_URL: URL for Radar Server
 #  * RADAR_USER: Username to log in on Radar Server
 #  * RADAR_PASSWORD: Password to log in on Radar Server
 #
 # ----------------------------------------------------------------------- #
+
+if [ $# -lt 3 ]; then
+  echo "Error: missing variables"
+  exit 1
+fi
+
+if [ -z "${RADAR_URL}" ]; then
+  RADAR_URL=http://127.0.0.1:3000
+fi
+
+VERSION=$1
+FILE_PATH=$2
+DIST_NAME=$3
 
 AUTH="Basic $(echo -n $RADAR_USER:$RADAR_PASSWORD | base64)"
 STATUS_CODE=$(curl -s -XPOST \
