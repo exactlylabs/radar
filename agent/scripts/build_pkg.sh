@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+#
+# ----------------------------------------------------------------------- #
+# Name: Build MacOS PKG Package
+#
+# Usage: ./build_pkg.sh VERSION
+#
+# Description: 
+#   Builds .pkg package for Radar Agent
+#
+#
+# ----------------------------------------------------------------------- #
 
 set -e
 
@@ -7,9 +18,49 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 PACKAGE_DIR=$SCRIPT_DIR/../packaging/mac
 DESTDIR=$PACKAGE_DIR/_build
-if [ -z $OUTPUT_DIR ]; then
-    OUTPUT_DIR=$SCRIPT_DIR/..
+OUTPUT_PATH=$SCRIPT_DIR/..
+
+function help() {
+    echo """
+Build MacOS PKG Package
+
+Usage: ./build_pkg.sh [options] <VERSION>
+
+Optional Arguments:
+    -h | --help         Show this help message
+    -o | --output-path  Directory to output the .deb package <default: ${OUTPUT_PATH}>
+"""
+}
+
+function required() {
+    if [ -z $2 ]; then
+        echo "ERROR: $1 requires a non-empty option argument"
+        exit 1
+    fi
+}
+
+while :; do
+    case $1 in
+        -h|--help)
+            help
+            exit 0
+        ;;
+        -o|--output-path) 
+            required $1 $2
+            OUTPUT_PATH=$2
+            shift
+        ;;
+        *) break
+    esac
+    shift
+done
+
+if [ $# -lt 1 ]; then
+  echo "Error: missing paramenters"
+  exit 1
 fi
+VERSION=$1
+
 
 rm -rf $DESTDIR
 
@@ -74,7 +125,7 @@ pkgbuild \
     --scripts $DESTDIR/scripts \
     $DESTDIR/agent_pkg.pkg 
 
-mkdir -p $OUTPUT_DIR
+mkdir -p $OUTPUT_PATH
 
 # Now, build the product, with build scripts + resources, as the final .pkg file
 productbuild \
@@ -83,7 +134,7 @@ productbuild \
     --package-path $DESTDIR \
     --version ${VERSION} \
     --sign "Developer ID Installer: Exactly Labs, Inc. (MQYTP6VS48)" \
-    $OUTPUT_DIR/radar-agent_${VERSION}.pkg
+    $OUTPUT_PATH/radar-agent_${VERSION}.pkg
 
 rm -rf $DESTDIR
 
