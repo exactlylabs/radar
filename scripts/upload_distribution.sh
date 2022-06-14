@@ -34,8 +34,8 @@ AUTH="Basic $(echo -n $RADAR_USER:$RADAR_PASSWORD | base64)"
 STATUS_CODE=$(curl -s -XPOST \
   -H 'Accept: application/json' \
   -H 'Authorization: '"$AUTH"'' \
-  -F distribution[binary]=@${OUTPUT_PATH} \
-  -F distribution[signed_binary]=@${OUTPUT_PATH}_signed \
+  -F distribution[binary]=@${FILE_PATH} \
+  -F distribution[signed_binary]=@${FILE_PATH}_signed \
   -F distribution[name]=$DIST_NAME \
   --output /dev/stderr \
   --write-out '%{http_code}' \
