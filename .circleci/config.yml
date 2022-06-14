@@ -68,7 +68,9 @@ jobs:
           make deb \
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
-            BIN_NAME=radar-agent
+            BIN_NAME=radar-agent \
+            OUTPUT_DIR=~/repo/agent/dist
+
       - store_artifacts:
           path: ~/repo/agent/dist/radar-agent*.deb
       - persist_to_workspace:
@@ -97,11 +99,13 @@ jobs:
           make rpm \
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
-            BIN_NAME=radar-agent
+            BIN_NAME=radar-agent \
+            OUTPUT_DIR=~/repo/agent/dist
+            
       - store_artifacts:
-          path: ~/rpmbuild/RPMS/
+          path: ~/repo/agent/dist
       - persist_to_workspace:
-          root: ~/rpmbuild/RPMS/
+          root: ~/repo/agent/dist/
           paths:
             - "*"
 

@@ -56,21 +56,16 @@ install:
 
 
 deb:
-	./scripts/build_deb.sh ${VERSION} \
-		-o ${DIST_DIR} \
-		-a ${ARCH}
+	./scripts/build_deb.sh -o ${DIST_DIR} -a ${ARCH} ${VERSION} 
 
 rpm:
-	./scripts/build_rpm.sh ${VERSION} \
-		-o ${DIST_DIR} \
-		-a ${ARCH}
+	./scripts/build_rpm.sh -o ${DIST_DIR} -a ${ARCH} ${VERSION} 
 
 pkg:
-	./scripts/build_pkg.sh ${VERSION} \
-		-o ${DIST_DIR}
+	./scripts/build_pkg.sh -o ${DIST_DIR} ${VERSION} 
 
 msi:
-	./scripts/build_msi.sh ${VERSION} -o ${DIST_DIR}
+	./scripts/build_msi.sh -o ${DIST_DIR} ${VERSION} 
 
 all: build
 
