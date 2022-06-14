@@ -1,14 +1,8 @@
-Source: radar-agent
+Package: radar-agent
+Version: ${VERSION}-${PKG_REVISION}
+Architecture: ${ARCH}
+Maintainer: Exactly Labs Inc. <info@exactlylabs.com>
 Section: misc
 Priority: optional
-Maintainer: Exactly Labs Inc. <info@exactlylabs.com>
-Rules-Requires-Root: no
-Build-Depends: debhelper (>= 10),
-               dh-systemd (>= 1.5),
-               
-Package: radar-agent
-# Version: 1.0.0
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Architecture: any
 Description: Radar Agent Package
  Installs the agent that runs speed tests continually
