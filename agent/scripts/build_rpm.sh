@@ -75,8 +75,9 @@ cp -r ${PKG_DIR} ~
 VERSION=$VERSION \
 envsubst < ${PKG_DIR}/SPECS/radar-agent.spec > ~/rpmbuild/SPECS/radar-agent.spec
 
+mkdir -p ~/rpmbuild/SOURCES/radar-agent-${VERSION}
 # Call build for the specified package from the environment variables
-make -C ${SCRIPT_DIR}/.. OUTPUT_DIR=~/rpmbuild/SOURCES/radar-agent-${VERSION}
+make -C ${SCRIPT_DIR}/.. build BIN_NAME=radar-agent OUTPUT_DIR=~/rpmbuild/SOURCES/radar-agent-${VERSION}
 
 # Move the .service to the final package directory
 cp ~/rpmbuild/SOURCES/radar-agent.service ~/rpmbuild/SOURCES/radar-agent-${VERSION}
@@ -95,4 +96,5 @@ fi
 
 rpmbuild -ba --target=${TARGET} ~/rpmbuild/SPECS/radar-agent.spec
 
+mkdir -p ${OUTPUT_PATH}
 mv ~/rpmbuild/RPMS/${TARGET}/*.rpm ${OUTPUT_PATH}
