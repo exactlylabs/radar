@@ -38,27 +38,6 @@ class ClientsController < ApplicationController
     @client = Client.new
   end
 
-  def run_bulk_test
-    @location = params[:location_id].to_i
-    @clients = @location == -1 ? policy_scope(Client).where_no_location : policy_scope(Client).where(location: @location)
-    @error = false
-    @clients.each do |client|
-      unless client.update(test_requested: true)
-        @error = true
-        break
-      end
-    end
-    respond_to do |format|
-      if @error == false
-        format.html { redirect_to request.env['HTTP_REFERER'], notice: "Client tests requested." }
-        format.json { render :show, status: :ok, location: clients_path }
-      else
-        format.html { render clients_path, status: :unprocessable_entity }
-        format.json { render json: @client.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
   def run_test
     # Allow without a logged in user to request a test if id / secret is known
     client_id = params[:id]

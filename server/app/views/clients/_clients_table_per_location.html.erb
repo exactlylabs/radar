@@ -20,7 +20,7 @@
 								<% if clients[0].location.present? %>
 									<a class="btn btn-light-primary w-45 px-5" style="margin-right: 20px" href="<%= location_path(clients[0].location) %>">View Details</button>
 								<% end %>
-								<%= link_to "Run test", run_bulk_test_clients_path(location_id: location[:name] != "No location" ? clients[0].location[:id] : -1), method: :post, class: "btn btn-primary" %>
+								<%= link_to "Run test", request_test_location_path(location), method: :post, class: "btn btn-primary #{location.test_requested || location.clients.length == 0 ? "disabled" : ""}" %>
 							</th>
 						</tr>
 						<!--begin::Table row-->
