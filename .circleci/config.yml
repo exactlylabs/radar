@@ -218,109 +218,109 @@ workflows:
               - os: "windows"
                 arch: "arm64"
 
-  # build_packages:
-  #   jobs:
-  #     - deb_package:
-  #         version: $CIRCLE_TAG
-  #         filters:
-  #           tags:
-  #             only: /^(?:\d+\.){2}\d+$/
-  #           branches:
-  #             ignore: "/.*/"
-  #         matrix:
-  #           parameters:
-  #             arch: ["amd64", "arm64"]
+  build_packages:
+    jobs:
+      - deb_package:
+          version: $CIRCLE_TAG
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+          matrix:
+            parameters:
+              arch: ["amd64", "arm64"]
 
-  #     - upload_package: &upload_anchor
-  #         name: upload_debian_amd64
-  #         version: $CIRCLE_TAG
-  #         os: linux
-  #         arch: amd64
-  #         workspace_file_name: radar-agent*amd64*.deb
-  #         filters:
-  #           tags:
-  #             only: /^(?:\d+\.){2}\d+$/
-  #           branches:
-  #             ignore: "/.*/"
-  #         requires: [deb_package-amd64]
-  #     - upload_package:
-  #         <<: *upload_anchor
-  #         name: upload_debian_arm64
-  #         arch: arm64
-  #         workspace_file_name: radar-agent*arm64*.deb
-  #         requires: [deb_package-arm64]
+      - upload_package: &upload_anchor
+          name: upload_debian_amd64
+          version: $CIRCLE_TAG
+          os: linux
+          arch: amd64
+          workspace_file_name: radar-agent*amd64*.deb
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+          requires: [deb_package-amd64]
+      - upload_package:
+          <<: *upload_anchor
+          name: upload_debian_arm64
+          arch: arm64
+          workspace_file_name: radar-agent*arm64*.deb
+          requires: [deb_package-arm64]
 
-  #     - rpm_package:
-  #         version: $CIRCLE_TAG
-  #         filters:
-  #           tags:
-  #             only: /^(?:\d+\.){2}\d+$/
-  #           branches:
-  #             ignore: "/.*/"
-  #         matrix:
-  #           parameters:
-  #             arch: ["amd64", "arm64"]
-  #     - upload_package:
-  #         <<: *upload_anchor
-  #         name: upload_rpm_arm64
-  #         arch: arm64
-  #         workspace_file_name: aarch64/radar-agent*aarch64*.rpm
-  #         requires: [rpm_package-arm64]
-  #     - upload_package:
-  #         <<: *upload_anchor
-  #         name: upload_rpm_amd64
-  #         arch: amd64
-  #         workspace_file_name: x86_64/radar-agent*x86_64*.rpm
-  #         requires: [rpm_package-amd64]
+      - rpm_package:
+          version: $CIRCLE_TAG
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+          matrix:
+            parameters:
+              arch: ["amd64", "arm64"]
+      - upload_package:
+          <<: *upload_anchor
+          name: upload_rpm_arm64
+          arch: arm64
+          workspace_file_name: aarch64/radar-agent*aarch64*.rpm
+          requires: [rpm_package-arm64]
+      - upload_package:
+          <<: *upload_anchor
+          name: upload_rpm_amd64
+          arch: amd64
+          workspace_file_name: x86_64/radar-agent*x86_64*.rpm
+          requires: [rpm_package-amd64]
 
-  #     - pkg_package:
-  #         version: $CIRCLE_TAG
-  #         filters:
-  #           tags:
-  #             only: /^(?:\d+\.){2}\d+$/
-  #           branches:
-  #             ignore: "/.*/"
-  #     - notarize_pkg:
-  #         filters:
-  #           tags:
-  #             only: /^(?:\d+\.){2}\d+$/
-  #           branches:
-  #             ignore: "/.*/"
-  #         requires: [pkg_package]
-  #     - wait_notarization:
-  #         type: approval
-  #         filters:
-  #           tags:
-  #             only: /^(?:\d+\.){2}\d+$/
-  #           branches:
-  #             ignore: "/.*/"
-  #         requires: [notarize_pkg]
-  #     - upload_package:
-  #         <<: *upload_anchor
-  #         name: upload_darwin_amd64
-  #         os: darwin
-  #         arch: amd64
-  #         workspace_file_name: radar-agent*.pkg
-  #         requires: [wait_notarization]
-  #     - upload_package:
-  #         <<: *upload_anchor
-  #         name: upload_darwin_arm64
-  #         os: darwin
-  #         arch: arm64
-  #         workspace_file_name: radar-agent*.pkg
-  #         requires: [wait_notarization]
+      - pkg_package:
+          version: $CIRCLE_TAG
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+      - notarize_pkg:
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+          requires: [pkg_package]
+      - wait_notarization:
+          type: approval
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+          requires: [notarize_pkg]
+      - upload_package:
+          <<: *upload_anchor
+          name: upload_darwin_amd64
+          os: darwin
+          arch: amd64
+          workspace_file_name: radar-agent*.pkg
+          requires: [wait_notarization]
+      - upload_package:
+          <<: *upload_anchor
+          name: upload_darwin_arm64
+          os: darwin
+          arch: arm64
+          workspace_file_name: radar-agent*.pkg
+          requires: [wait_notarization]
 
-  #     - msi_package:
-  #         version: $CIRCLE_TAG
-  #         filters:
-  #           tags:
-  #             only: /^(?:\d+\.){2}\d+$/
-  #           branches:
-  #             ignore: "/.*/"
-  #     - upload_package:
-  #         <<: *upload_anchor
-  #         name: upload_windows_amd64
-  #         os: windows
-  #         arch: amd64
-  #         workspace_file_name: RadarAgent.msi
-  #         requires: [msi_package]
+      - msi_package:
+          version: $CIRCLE_TAG
+          filters:
+            tags:
+              only: /^(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+      - upload_package:
+          <<: *upload_anchor
+          name: upload_windows_amd64
+          os: windows
+          arch: amd64
+          workspace_file_name: RadarAgent.msi
+          requires: [msi_package]
