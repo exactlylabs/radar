@@ -7,8 +7,8 @@ const HistoricalValuesTable = ({
   <Container>
     {
       values &&
-      <TableContainer component={Paper} style={{marginTop: 20}}>
-        <Table sx={{minWidth: 500}}>
+      <TableContainer component={Paper} style={{marginTop: 20, maxHeight: 500}}>
+        <Table sx={{minWidth: 400}}>
           <TableHead>
             <TableRow>
               <TableCell>Timestamp</TableCell>

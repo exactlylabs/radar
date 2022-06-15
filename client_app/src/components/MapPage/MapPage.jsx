@@ -7,8 +7,21 @@ import * as ndt7 from '@m-lab/ndt7/src/ndt7';
 import {CircularProgress, Container} from "@mui/material";
 import HistoricalValuesTable from "./HistoricalValuesTable";
 import {API_URL, LOCAL_STORAGE_KEY} from "../../constants";
+import {MyTitle} from "../common/MyTitle";
 
-const MapPage = ({ manualAddress }) => {
+const tableWrapperStyle = {
+  textAlign: 'center',
+  margin: '20px auto 10px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '25%',
+  maxWidth: 975,
+  minWidth: 300
+};
+
+const MapPage = ({ manualAddress, setStep, maxHeight }) => {
 
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,6 +42,7 @@ const MapPage = ({ manualAddress }) => {
   let rawData = [];
   let dclientCount = 0;
   let uclientCount = 0;
+  let startTimestamp = '';
 
   const customMarker = new L.icon({
     iconUrl: "https://unpkg.com/leaflet@1.5.1/dist/images/marker-icon.png",
@@ -41,9 +55,8 @@ const MapPage = ({ manualAddress }) => {
     if(manualAddress) {
       const formData = new FormData();
       formData.append('address', manualAddress);
-      fetch(`${API_URL}/geocode/`, {
+      fetch(`${API_URL}/geocode`, {
         method: 'POST',
-        headers: { 'Access-Control-Allow-Origin': '*' },
         body: formData,
       })
         .then(res => res.json())
@@ -119,7 +132,7 @@ const MapPage = ({ manualAddress }) => {
   const storeRunData = () => {
     const currentValue = window.localStorage.getItem(LOCAL_STORAGE_KEY);
     const newMeasurement = {
-      timestamp: new Date().toISOString(),
+      timestamp: startTimestamp,
       download: downloadAvg,
       upload: uploadAvg,
       lat: location[0],
@@ -139,18 +152,22 @@ const MapPage = ({ manualAddress }) => {
   }
 
   const sendRawData = () => {
-    /*fetch(`${API_URL}/raw`, {
+    fetch(`${API_URL}/raw`, {
       method: 'POST',
-      body: rawData
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        raw: rawData,
+        location: location,
+        timestamp: startTimestamp
+      })
     })
       .then(res => console.log('raw data sent!'))
-      .catch(err => console.error(err));*/
+      .catch(err => console.error(err));
     console.log('Send >> ', rawData);
   }
 
   const finishTestRun = (exitCode) => {
     setRunningTest(false);
-    console.log(dclientCount, uclientCount);
     if(exitCode === 0) {
       storeRunData();
       sendRawData();
@@ -159,13 +176,17 @@ const MapPage = ({ manualAddress }) => {
     }
   }
 
+  const downloadMin = `const workerMain=function(e){"use strict";const n=e.data["///ndt/v7/download"],t=new WebSocket(n,"net.measurementlab.ndt.v7");let o;o="undefined"!=typeof performance&&"function"==typeof performance.now?()=>performance.now():()=>Date.now(),downloadTest(t,postMessage,o)},downloadTest=function(e,n,t){e.onclose=function(){n({MsgType:"complete"})},e.onerror=function(e){n({MsgType:"error",Error:e.type})};let o=t(),s=o,a=0;e.onopen=function(){o=t(),s=o,a=0,n({MsgType:"start",Data:{ClientStartTime:o}})},e.onmessage=function(e){a+=void 0!==e.data.size?e.data.size:e.data.length;const r=t();r-s>250&&(n({MsgType:"measurement",ClientData:{ElapsedTime:(r-o)/1e3,NumBytes:a,MeanClientMbps:a/(r-o)*.008},Source:"client"}),s=r),"string"==typeof e.data&&n({MsgType:"measurement",ServerMessage:e.data,Source:"server"})}};"undefined"!=typeof self?self.onmessage=workerMain:void 0!==this?this.onmessage=workerMain:"undefined"!=typeof onmessage&&(onmessage=workerMain);`
+  const uploadMin = `const workerMain=function(e){const n=e.data["///ndt/v7/upload"],t=new WebSocket(n,"net.measurementlab.ndt.v7");let o;o="undefined"!=typeof performance&&"function"==typeof performance.now?()=>performance.now():()=>Date.now(),uploadTest(t,postMessage,o)},uploadTest=function(e,n,t){let o=!1;function r(n,a,u,i,f){if(o)return;const c=t();if(c>=u)return e.close(),void s(f,e.bufferedAmount,a);const d=n.length>=8388608?1/0:16*n.length;f-e.bufferedAmount>=d&&(n=new Uint8Array(2*n.length));const m=7*n.length;e.bufferedAmount<m&&(e.send(n),f+=n.length),c>=i+250&&(s(f,e.bufferedAmount,a),i=c),setTimeout((()=>r(n,a,u,i,f)),0)}function s(e,o,r){const s=e-o,a=(t()-r)/1e3;n({MsgType:"measurement",ClientData:{ElapsedTime:a,NumBytes:s,MeanClientMbps:8*s/1e6/a},Source:"client",Test:"upload"})}e.onclose=function(){o||(o=!0,n({MsgType:"complete"}))},e.onerror=function(e){n({MsgType:"error",Error:e.type})},e.onmessage=function(e){void 0!==e.data&&n({MsgType:"measurement",Source:"server",ServerMessage:e.data})},e.onopen=function(){const e=new Uint8Array(8192),o=t(),s=o+1e4;n({MsgType:"start",Data:{StartTime:o/1e3,ExpectedEndTime:s/1e3}}),r(e,o,s,o,0)}};"undefined"!=typeof self?self.onmessage=workerMain:void 0!==this?this.onmessage=workerMain:"undefined"!=typeof onmessage&&(onmessage=workerMain);`
+
   const runSpeedTest = () => {
+    startTimestamp = new Date().toISOString();
     if(runningTest) return;
     clearValues();
     const config = {
       userAcceptedDataPolicy: true,
-      downloadWorkerFile: '@m-lab/ndt7/src/ndt7-download-worker.js',
-      uploadWorkerFile: '@m-lab/ndt7/src/ndt7-upload-worker.js',
+      downloadWorkerFile: downloadMin,
+      uploadWorkerFile: uploadMin,
       metadata: { client_name: 'ndt7-client' }
     };
     ndt7
@@ -180,13 +201,17 @@ const MapPage = ({ manualAddress }) => {
   }
 
   return (
-    <div>
-      { loading && <div style={{fontSize: 50, textAlign: "center"}}>Loading...</div>}
-      { !loading && !location && <div style={{fontSize: 30, textAlign: "center"}}>Error!</div> }
+    <div style={{margin: 10, textAlign: 'center'}}>
+      { loading && <MyTitle text={'Loading...'}/> }
+      { !loading && !location && <MyTitle text={'Error!'}/> }
       {
         !loading && location !== null &&
-        <div style={{display: 'flex', flexDirection: 'row'}}>
-          <MapContainer center={location} zoom={20} scrollWheelZoom style={{height: 500, width: 500, margin: 'auto'}}>
+        <div style={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', maxHeight: maxHeight - 75, overflowY: 'auto'}}>
+          <MapContainer
+            center={location}
+            zoom={20}
+            scrollWheelZoom
+            style={{height: maxHeight - 200, minWidth: 450, maxWidth: 800, margin: '20px auto'}}>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -196,21 +221,23 @@ const MapPage = ({ manualAddress }) => {
                 A pretty CSS3 popup. <br /> Easily customizable.
               </Popup>
             </Marker>
-          </MapContainer>
-          <Container style={{textAlign: 'center', marginTop: 20, display: 'flex', flexDirection: 'column'}}>
+          </MapContainer
+          >
+          <div style={tableWrapperStyle}>
             {
               !runningTest &&
               <MyButton
                 text={'Run speed test'}
                 onClick={runSpeedTest}
                 disabled={runningTest}
+                style={{width: '50%', margin: '10px auto'}}
               />
             }
             {
               runningTest &&
               <div>
                 <CircularProgress variant="determinate" size={100} value={progress}/>
-                <div style={{position: 'relative', display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly'}}>
+                <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', width: '80%'}}>
                   {downloadValue !== null && uploadValue === null && <p>{`Download: ${downloadValue.toFixed(3)} mbps`}</p>}
                   {uploadValue !== null && <p>{`Upload: ${uploadValue.toFixed(3)} mbps`}</p>}
                 </div>
@@ -218,13 +245,13 @@ const MapPage = ({ manualAddress }) => {
             }
             {
               !runningTest && downloadAvgState !== null && uploadAvgState !== null &&
-              <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly'}}>
+              <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                 <p>{`Download avg: ${downloadAvgState.toFixed(3)} mbps`}</p>
                 <p>{`Upload avg: ${uploadAvgState.toFixed(3)} mbps`}</p>
               </div>
             }
             <HistoricalValuesTable values={historicalValues}/>
-          </Container>
+          </div>
         </div>
       }
     </div>
