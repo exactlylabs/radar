@@ -33,9 +33,7 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
-        format.turbo_stream { 
-          render turbo_stream: turbo_stream.replace('location_container_dynamic', partial: 'locations_list', locals: {locations: policy_scope(Location)}) 
-        }
+        format.turbo_stream
         format.html { redirect_to locations_path, notice: "Location was successfully created." }
         format.json { render :show, status: :created, location: @location }
       else
@@ -86,6 +84,6 @@ class LocationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def location_params
-      params.require(:location).permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude)
+      params.require(:location).permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude, :manual_lat_long)
     end
 end

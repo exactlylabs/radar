@@ -4,7 +4,7 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="text-dark fw-bolder my-1 fs-2">Measurements 
+      <h1 class="text-dark fw-bolder my-1 fs-2">Locations 
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
@@ -24,78 +24,190 @@
   </div>
 </div>
 <!--end::Toolbar-->
-
-
-<p id="notice"><%= notice %></p>
-
-
-<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-  <div class="container-xxl">
-  
+  <div class="container-xxl w-100 d-flex" style="max-width: none;">
     <% if notice %>
-    <p id="notice"><%= notice %></p>
+     <p id="notice"><%= notice %></p>
     <% end %>
+    <!--begin::OptionsCard-->
+      <%= render partial: "options_card", locals: { location: @location, style: 'locations' } %>
+    <!--end::OptionsCard-->
     <!--begin::Card-->
-    <div class="card">
-      <div class="card-header border-0 pt-6">
-        <div class="card-title"></div>
-        <!--begin::Card toolbar-->
-        <div class="card-toolbar">
-          <!--begin::Toolbar-->
-          <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-            
-            <!--begin::Export-->
-            <a href="<%= location_measurements_path(@location, format: 'csv') %>" class="btn btn-light-primary me-3">
-            <!--begin::Svg Icon | path: icons/duotune/arrows/arr078.svg-->
-            <span class="svg-icon svg-icon-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <rect opacity="0.3" x="12.75" y="4.25" width="12" height="2" rx="1" transform="rotate(90 12.75 4.25)" fill="black"></rect>
-                <path d="M12.0573 6.11875L13.5203 7.87435C13.9121 8.34457 14.6232 8.37683 15.056 7.94401C15.4457 7.5543 15.4641 6.92836 15.0979 6.51643L12.4974 3.59084C12.0996 3.14332 11.4004 3.14332 11.0026 3.59084L8.40206 6.51643C8.0359 6.92836 8.0543 7.5543 8.44401 7.94401C8.87683 8.37683 9.58785 8.34458 9.9797 7.87435L11.4427 6.11875C11.6026 5.92684 11.8974 5.92684 12.0573 6.11875Z" fill="black"></path>
-                <path d="M18.75 8.25H17.75C17.1977 8.25 16.75 8.69772 16.75 9.25C16.75 9.80228 17.1977 10.25 17.75 10.25C18.3023 10.25 18.75 10.6977 18.75 11.25V18.25C18.75 18.8023 18.3023 19.25 17.75 19.25H5.75C5.19772 19.25 4.75 18.8023 4.75 18.25V11.25C4.75 10.6977 5.19771 10.25 5.75 10.25C6.30229 10.25 6.75 9.80228 6.75 9.25C6.75 8.69772 6.30229 8.25 5.75 8.25H4.75C3.64543 8.25 2.75 9.14543 2.75 10.25V19.25C2.75 20.3546 3.64543 21.25 4.75 21.25H18.75C19.8546 21.25 20.75 20.3546 20.75 19.25V10.25C20.75 9.14543 19.8546 8.25 18.75 8.25Z" fill="#C4C4C4"></path>
-              </svg>
-            </span>
-            <!--end::Svg Icon-->Export</a>
-            <!--end::Export-->
-          </div>
-          <!--end::Toolbar-->
+    <div class="card" style="width: 90%; height: max-content">
+      <div class="card-header d-flex align-items-center" style="height: 65px">
+        <div class="card-title fw-bolder" style="font-size: 20px; color: #3f4254">
+          Measurements
         </div>
       </div>
       <!--end::Card toolbar-->
       <!--begin::Card body-->
       <div class="card-body pt-0">
+        <!--begin::Card toolbar-->
+        <div class="card-toolbar my-8">
+          <!--begin::Toolbar-->
+          <div class="d-flex justify-content-between" data-kt-customer-table-toolbar="base">
+            <div class="dropdown-container">
+                <div class="btn-group">
+                  <a href="#" 
+                    class="btn btn-sm <%= params[:range] ? 'btn-light-primary' : 'btn-light' %> btn-active-light-primary px-2" 
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style="border-radius: 6px"
+                    id="schedule-button">
+                    <%= params[:range] ? parse_param_to_human(params[:range]) : 'All time ranges' %>
+                    <span class="svg-icon svg-icon-5 m-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+                      </svg>
+                    </span>
+                  </a>
+                  <!--begin::Menu-->
+                  <div class="dropdown-menu fw-bold fs-7 py-4"
+                      aria-labelledby="schedule-button">
+                    <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-week') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:range] == 'last-week' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                      Last week
+                    </a>
+                    <!--begin::Menu item-->
+                    <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-month') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:range] == 'last-month' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                      Last month
+                    </a>
+                    <!--end::Menu item-->
+                    <!--begin::Menu item-->
+                    <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-6-months') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:range] == 'last-6-months' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                      Last 6 months
+                    </a>
+                    <!--end::Menu item-->
+                    <!--begin::Menu item-->
+                    <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-year') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:range] == 'last-year' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                      Last year
+                    </a>
+                    <!--end::Menu item-->
+                    <!--begin::Menu item-->
+                    <a href="<%= location_measurements_path(@location, style: params[:style], range: 'all-time') %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:range] == 'all-time' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                      All time
+                    </a>
+                    <!--end::Menu item-->
+                  </div>
+                </div>
+                <!--end::Menu-->
+                <div class="btn-group">
+                  <a href="#" 
+                    class="btn btn-sm <%= params[:style] ? 'btn-light-primary' : 'btn-light' %> btn-active-light-primary ms-5 px-2" 
+                    style="border-radius: 6px"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    id="style-button">
+                      <%= params[:style] ? parse_param_to_human(params[:style]) : 'All test styles' %>
+                      <span class="svg-icon svg-icon-5 m-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+                        </svg>
+                      </span>
+                  </a>
+                  <!--begin::Menu-->
+                  <div class="dropdown-menu dropup fw-bold fs-7 py-4"
+                      aria-labelledby="style-button">
+                    <a href="<%= location_measurements_path(@location, style: 'NDT7', range: params[:range]) %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:style] == 'NDT7' ? 'text-primary' : 'text-gray-700' %> p-3">
+                      NDT
+                    </a>
+                    <!--begin::Menu item-->
+                    <a href="<%= location_measurements_path(@location, style: 'OOKLA', range: params[:range]) %>" 
+                      class="menu-item text-hover-gray-500 <%= params[:style] == 'OOKLA' ? 'text-primary' : 'text-gray-700' %> p-3">
+                      Ookla
+                    </a>
+                    <!--end::Menu item-->
+                  </div>
+                </div>
+                <!--end::Menu-->
+              <% if params[:style] or params[:range] %>
+                <a class="btn btn-sm btn-light btn-active-light-primary ms-3 px-2" 
+                   href="<%= location_measurements_path(@location) %>"
+                   style="height: max-content">
+                    <span class="svg-icon svg-icon-light svg-icon-4" style="margin-right: 3px">
+                      <svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
+                        <g transform="translate(2 2)" fill="none" fill-rule="evenodd">
+                            <circle stroke="#B5B5C3" stroke-width="1.5" cx="5" cy="5" r="5.75"/>
+                            <g transform="rotate(45 2.44 6.06)" fill="#B5B5C3">
+                                <rect x="2.75" width="1.5" height="7" rx=".75"/>
+                                <rect transform="rotate(90 3.5 3.5)" x="2.75" width="1.5" height="7" rx=".75"/>
+                            </g>
+                        </g>
+                      </svg>
+                    </span>
+                  Clear filters
+                </a>
+              <% end %>
+            </div>
+            <div class="export-container">
+              <!--begin::Export-->
+              <a href="<%= location_measurements_path(@location, style: params[:style], range: params[:range], format: 'csv') %>" class="btn btn-primary me-3">Export Measurements</a>
+              <!--end::Export-->
+            </div>
+          </div>
+          <!--end::Toolbar-->
+        </div>
         <!--begin::Table-->
-        <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer"><div class="table-responsive"><table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
+        <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+          <div class="table-responsive">
+            <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
           <!--begin::Table head-->
           <thead>
             <!--begin::Table row-->
             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 132.146px;">Time (<span data-controller="timezone"></span>)</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Style</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Download</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Upload</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Latency</th>
-              <th class="min-w-125px sorting" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 149.958px;">Jitter</th>
+              <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 30%">Time</th>
+              <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Style</th>
+              <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
+                <svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 2px">
+                  <g transform="translate(2 2)" stroke="#B5B5C3" stroke-width="1.5" fill="none" fill-rule="evenodd">
+                      <circle cx="5" cy="5" r="5.75"/>
+                      <path d="M5 2v5M2.654 5 5 7.346 7.346 5"/>
+                  </g>
+                </svg>
+                Download
+              </th>
+              <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
+                <svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 2px">
+                  <g transform="translate(2 2)" stroke="#B5B5C3" stroke-width="1.5" fill="none" fill-rule="evenodd">
+                    <circle cx="5" cy="5" r="5.75"/>
+                    <path d="M5 8.046v-5M2.654 5.046 5 2.7l2.346 2.346"/>
+                  </g>
+                </svg>
+                Upload
+              </th>
+              <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Latency</th>
+              <th class="min-w-125px sorting pe-0" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 10%">Jitter</th>
             <!--end::Table row-->
           </thead>
           <!--end::Table head-->
           <!--begin::Table body-->
           <tbody class="fw-bold text-gray-600">
-          <% @measurements.order(created_at: :desc).each do |measurement| %>
+          <% paginate_elements(@measurements, [:range, :style]).each do |measurement| %>
             <tr>
-              <td data-controller="localtime"><%= measurement.created_at %></td>
-              <td><%= measurement.style %></td>
-              <td><%= number_with_precision measurement.download, precision: 3 %></td>
-              <td><%= number_with_precision measurement.upload, precision: 3 %></td>
-              <td><%= number_with_precision measurement.latency, precision: 3 %></td>
-              <td><%= number_with_precision measurement.jitter, precision: 3 %></td>
+              <td data-controller="localtime" style="color: #5e6278"><%= measurement.created_at %></td>
+              <td style="color: #5e6278"><%= measurement.style %></td>
+              <td style="color: #5e6278"><%= number_with_precision measurement.download, precision: 3 %></td>
+              <td style="color: #5e6278"><%= number_with_precision measurement.upload, precision: 3 %></td>
+              <td style="color: #5e6278"><%= number_with_precision measurement.latency, precision: 3 %></td>
+              <td style="color: #5e6278"><%= number_with_precision measurement.jitter, precision: 3 %></td>
             </tr>
           <% end %>
           </tbody>
           <!--end::Table body-->
+          <!--begin::Pagination-->
+          <!--end::Pagination-->
         </table>
         </div></div>
         <!--end::Table-->
+        <div class="pagination-container d-flex justify-content-between align-items-center mt-5">
+          <%= pagination_footer %>
+        </div>
       </div>
       <!--end::Card body-->
     </div>

@@ -106,6 +106,7 @@ ActiveRecord::Schema.define(version: 2022_05_23_162659) do
     t.string "county"
     t.string "state_fips"
     t.string "county_fips"
+    t.boolean "manual_lat_long", default: false
     t.index ["user_id"], name: "index_locations_on_user_id"
   end
 

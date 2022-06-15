@@ -28,6 +28,8 @@ Rails.application.routes.draw do
         get 'ndt7_index'
       end
     end
+
+    resources :clients, controller: 'location_clients', only: [:index]
   end
 
   resources :clients do
@@ -49,6 +51,7 @@ Rails.application.routes.draw do
       post 'status', to: 'clients#check_public_status'
       post 'claim'
       get 'claim', to: 'clients#claim_form'
+      post 'move', to: 'clients#move'
     end
   end
 

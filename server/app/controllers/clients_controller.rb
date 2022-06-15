@@ -28,6 +28,7 @@ class ClientsController < ApplicationController
 
   def claim_form
     @client = Client.new
+    @location_id = params[:location_id] || nil
   end
 
   def run_test
@@ -57,6 +58,7 @@ class ClientsController < ApplicationController
     @client_id = params[:id]
     @client_secret = params[:secret]
     @location_id = params[:location_id]
+    @client_name = params[:name]
 
     location = policy_scope(Location).where(id: @location_id).first
     @client = Client.where(unix_user: @client_id).first
@@ -65,8 +67,9 @@ class ClientsController < ApplicationController
       if @client && @client.authenticate_secret(@client_secret)
         @client.user = current_user
         @client.location = location
+        @client.name = @client_name
         @client.save
-        format.turbo_stream { render turbo_stream: turbo_stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)}) }
+        format.turbo_stream
         format.html { redirect_to client_path(@client.unix_user), notice: "Client was successfully claimed." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
@@ -223,6 +226,22 @@ EOF
     end
   end
 
+  # POST /clients/move
+  def move
+    @client = policy_scope(Client).find_by_unix_user(params[:id])
+    location = policy_scope(Location).find_by_id(params[:location_id])
+    respond_to do |format|
+      if @client.update(name: params[:name], location: location)
+        format.turbo_stream
+        format.html { redirect_back fallback_location: location_clients_path(params[:location_id]), notice: "Client was successfully moved." }
+        format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   # DELETE /clients/1 or /clients/1.json
   def destroy
     @client.destroy
@@ -251,7 +270,7 @@ EOF
 
     def authenticate_client!
       client_id = params[:id]
-      client_secret = params[:secret]      
+      client_secret = params[:secret]
       @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
       if !@client
         head(403)
