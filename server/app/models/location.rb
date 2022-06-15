@@ -7,7 +7,7 @@ class Location < ApplicationRecord
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
 
-  scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL") }
+  scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
 
   geocoded_by :address do |obj, results|
     if geo = results.first

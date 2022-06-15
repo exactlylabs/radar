@@ -11,7 +11,7 @@ class ClientsController < ApplicationController
   def index
     @status = params[:status]
     @location = params[:location]
-    @all_locations = policy_scope(Location).where_has_client_associated.uniq
+    @all_locations = policy_scope(Location).where_has_client_associated
     # New designs index clients by location
     get_indexed_clients
   end
@@ -282,20 +282,20 @@ EOF
 
     def get_indexed_clients
       @clients = policy_scope(Client)
-      @clients = @clients.where(location: @location) if @location.present? && @location.to_i != -1
-      @clients = @clients.where_no_location if @location.present? && @location.to_i == -1
-      if @status.present? && @status != "all"
-        @clients = @clients.where_online if @status == "online"
-        @clients = @clients.where_offline if @status == "offline"
+      if @location.present?
+        @clients = @clients.where(location: @location) if @location.to_i != -1
+        @clients = @clients.where_no_location if @location.to_i == -1
       end
+      @clients = @clients.where_online if @status == "online"
+      @clients = @clients.where_offline if @status == "offline"
       @indexed_clients = {}
       @clients.each do |client|
         if client.location
           @indexed_clients[client.location] = [] if @indexed_clients[client.location].nil?
           @indexed_clients[client.location].append(client)
         else
-          @indexed_clients[{name: 'No location'}] = [] if @indexed_clients[{name:'No location'}].nil?
-          @indexed_clients[{name: 'No location'}].append(client)
+          @clients_with_no_location = [] if @clients_with_no_location.nil?
+          @clients_with_no_location.append(client)
         end
       end
     end

@@ -3,6 +3,9 @@ class GeocodeController < ApplicationController
 
   def code
     results = Geocoder.search(params["address"])
+    if !results.first.present?
+      return render json: []
+    end
     render json: results.first.coordinates
   end
 

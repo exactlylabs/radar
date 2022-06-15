@@ -44,7 +44,7 @@
         style="border-radius: 6px"
         id="filters-button"
     >
-      <%= locations.detect {|e| e.id == params[:location].to_i}[:name] if params[:location].present? && params[:location].to_i != -1 %>
+      <%= locations.find(params[:location].to_i)[:name] if params[:location].present? && params[:location].to_i != -1 %>
       <%= 'No location' if params[:location].present? && params[:location].to_i == -1 %>
       <%= 'All locations' if params[:location].nil? %>
       <span class="svg-icon svg-icon-5 m-0">

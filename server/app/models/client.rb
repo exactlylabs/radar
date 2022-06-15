@@ -44,12 +44,12 @@ class Client < ApplicationRecord
   end
 
   def test_requested?
-    self.test_requested || (self.location && self.location.test_requested)
+    self.test_requested || self.location&.test_requested
   end
 
   def status
     if self.online?
-      if test_requested
+      if test_requested?
         "Test running"
       else
         "Active"
@@ -61,7 +61,7 @@ class Client < ApplicationRecord
 
   def status_style
     if self.online?
-      if test_requested
+      if test_requested?
         "badge-light-primary"
       else
         "badge-light-success"

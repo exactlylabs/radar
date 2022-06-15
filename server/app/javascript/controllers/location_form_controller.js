@@ -4,12 +4,35 @@ export default class extends Controller {
   static targets = [ "name", "address", "map", "latitude", "longitude", "manualLatLong", "automaticLocation", "expectedDownload", "expectedUpload", "geoIcon", "spinner" ];
 
   connect() {
-    const lat = this.latitudeTarget.value ?? geoplugin_latitude();
-    const long = this.longitudeTarget.value ?? geoplugin_longitude();
-    this.mapTarget.setAttribute('data-location-latitude-value', lat);
-    this.mapTarget.setAttribute('data-location-longitude-value', long);
-    this.spinnerTarget.classList.add("d-none");
-    this.geoIconTarget.classList.remove("d-none");
+    let lat = 0, long = 0;
+    if(this.latitudeTarget.value && this.longitudeTarget.value) {
+      lat = this.latitudeTarget.value;
+      long = this.longitudeTarget.value;
+      this.spinnerTarget.classList.add("d-none");
+      this.geoIconTarget.classList.remove("d-none");
+    } else {
+      const data = new FormData();
+      data.append('address', '181.28.229.215');
+      fetch('/geocode', {
+        method: 'POST',
+        body: data
+      })
+      .then(response => response.json())
+      .then(data => {
+        lat = data[0];
+        long = data[1];
+      })
+      .catch(err => {
+        // TODO: Integrate Sentry reporting!
+        console.error(err);
+      })
+      .finally(() => {
+        this.mapTarget.setAttribute('data-location-latitude-value', lat);
+        this.mapTarget.setAttribute('data-location-longitude-value', long);
+        this.spinnerTarget.classList.add("d-none");
+        this.geoIconTarget.classList.remove("d-none");    
+      })
+    }
   }
 
   autofillAddress(lat, lon) {
@@ -23,8 +46,10 @@ export default class extends Controller {
         body: formData
       })
       .then(response => response.json())
-      .then(data => {
-        that.addressTarget.value = `${data[1]}, ${data[0]}`;
+      .then(data => that.addressTarget.value = `${data[1]}, ${data[0]}`)
+      .catch(err => {
+        // TODO: Integrate Sentry reporting!
+        console.error(err);
       })
       .finally(() => {
         this.spinnerTarget.classList.add("d-none");
@@ -68,7 +93,11 @@ export default class extends Controller {
         that.mapTarget.setAttribute('data-location-longitude-value', data[1]);
         this.latitudeTarget.value = data[0];
         this.longitudeTarget.value = data[1];
-      });
+      })
+      .catch(err => {
+        // TODO: Integrate Sentry reporting!
+        console.error(err);
+      })
     }.bind(this), 1000);
   }
 

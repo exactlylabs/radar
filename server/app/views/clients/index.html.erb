@@ -31,13 +31,16 @@
   <!--begin::Container-->
   <div class="container-xxl d-flex flex-column" style="max-width: none;">
     <% if !params.empty? %>
-      <%= render partial: "clients_table_filters", locals: { locations: @all_locations, hasUnindexed: @indexed_clients[{name: 'No location'}].present? } %>
+      <%= render partial: "clients_table_filters", locals: { locations: @all_locations, hasUnindexed: @clients_with_no_location.present? } %>
     <% end %>
     <% if @indexed_clients.empty? %>
       <%= render partial: "empty_pods_view" %>
     <% else %>
       <% @indexed_clients.sort_by{|location, clients| location[:name]}.each do |location, clients| %>
         <%= render partial: "clients_table_per_location", locals: { clients: clients, location: location } %>
+      <% end %>
+      <% if @clients_with_no_location.present? %>
+        <%= render partial: "clients_table_per_location", locals: { clients: @clients_with_no_location, location: {name: 'No location'} } %>
       <% end %>
     <% end %>
   </div>

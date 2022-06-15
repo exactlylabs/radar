@@ -64,7 +64,6 @@ export default class extends Controller {
 
   toggleButtonState(className) {
     const buttonId = this.getButtonId(className);
-    const desiredLength = this.getDesiredLength(className);
     const nextButtonClassList = document.querySelector(`#${buttonId}`).classList;
     if(this.isComplete(className)) {
       className !== 'podIdInput' && this.fillHiddenInput(className);
