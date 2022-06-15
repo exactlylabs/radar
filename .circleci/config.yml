@@ -268,13 +268,13 @@ workflows:
           <<: *upload_anchor
           name: upload_rpm_arm64
           arch: arm64
-          workspace_file_name: aarch64/radar-agent*aarch64*.rpm
+          workspace_file_name: radar-agent*aarch64*.rpm
           requires: [rpm_package-arm64]
       - upload_package:
           <<: *upload_anchor
           name: upload_rpm_amd64
           arch: amd64
-          workspace_file_name: x86_64/radar-agent*x86_64*.rpm
+          workspace_file_name: radar-agent*x86_64*.rpm
           requires: [rpm_package-amd64]
 
       - pkg_package:
