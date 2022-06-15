@@ -1,70 +1,70 @@
-# Getting Started with Create React App
+# Client facing app
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Internal Usage
 
-## Available Scripts
+#### Prerequisites
 
-In the project directory, you can run:
+For this project to be built correctly both locally and for production, 
+you need to create both the `.env.development` and `.env.production` files at root level, with
+the corresponding `NODE_ENV`.
 
-### `npm start`
+#### Local build
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+In order to run the app locally, run the following commands on the root directory:
+```
+$ npm i
+$ npm run start
+```
+This will execute the app on port 9999 by default, so you can access through any web browser at http://localhost:9999.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+#### Production build
 
-### `npm test`
+In order to create a production ready bundle, run the following command on the root directory:
+```
+$ npm run build
+```
+This will output all files to the `/dist` directory. For the widget to be distributable, we need to
+share or deploy the following files:
+```
+widget.js
+widget.css
+ndt7-download-worker.js
+ndt7-upload-worker.js
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### External usage
 
-### `npm run build`
+For this app to work as an embeddable widget, other developers need to add some lines to their desired
+HTML view.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+For example, in an `index.html` file:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+<html>
+    <head>
+        ...
+        <script type="text/javascript" src="path/to/widget.js"></script>
+        <link rel="stylesheet" href="path/to/widget.css"/>
+    </head>
+    <body>
+        ...
+        <div id="my-widget-wrapper"></div>
+        ...
+    </body>
+    <script>
+        SpeedTest.config({
+            elementId: 'my-widget-wrapper',
+            ...config
+        });
+        SpeedTest.new().mount();
+    </script>
+</html>
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Where the `config` given can have the following attributes:
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+| key        | type   | description                                                                                                | required |
+|------------|--------|------------------------------------------------------------------------------------------------------------|----------|
+| elementId  | string | DOM element id that should contain the widget                                                              | true     |
+| frameStyle | object | JSON object with custom style for the main frame of the widget.  The style is based on "CSS-in-JS" format. | false    |
+| clientId   | string | Developer id to identify the client using the widget                                                       | true     |

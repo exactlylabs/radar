@@ -4,7 +4,8 @@ import {MyButton} from "../common/MyButton";
 import {MyTitle} from "../common/MyTitle";
 
 const FormPage = ({
-  goToNextStep
+  goToNextStep,
+  setStep
 }) => {
 
   const [formData, setFormData] = useState({name: null, number: null});

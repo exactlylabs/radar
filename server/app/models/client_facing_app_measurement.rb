@@ -1,0 +1,3 @@
+class ClientFacingAppMeasurement < ApplicationRecord
+  
+end

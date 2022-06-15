@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 const publicPath = '/';
 module.exports = {
@@ -27,6 +28,10 @@ module.exports = {
         test: /\.html$/i,
         loader: "html-loader",
       },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: "asset/resource",
+      }
     ]
   },
   // https://webpack.js.org/configuration/output/
@@ -45,18 +50,22 @@ module.exports = {
     static: { directory: path.join(__dirname, '/') },
     hot: true,
     compress: true,
-    port: 9999,
+    port: 9999
   },
   // https://webpack.js.org/configuration/plugins/
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "../public/index.html"),
+      scriptLoading: 'blocking', // need to specify this to prevent defer attribute on the bundled js -> mainly for dev reasons
     }),
     new MiniCssExtractPlugin({
       filename: "widget.css",
       chunkFilename: "widget.css"
     }),
+    new CopyPlugin({
+      patterns: [{from: path.resolve(__dirname, "../src/ndt7"), to: './'}]
+    })
   ],
   // https://webpack.js.org/configuration/optimization/
   optimization: {

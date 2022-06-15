@@ -14,9 +14,15 @@
 </body>
 <script>
   SpeedTest.config({
+    clientId: 'local',
     elementId: 'root-embedded',
-    backgroundColor: 'red',
+    frameStyle: {
+      backgroundColor: 'turquoise',
+      width: '75%',
+      height: 500,
+      margin: '20px auto'
+    },
   });
-  SpeedTest.widgets.myWidget.new().render();
+  SpeedTest.new().mount();
 </script>
 </html>
