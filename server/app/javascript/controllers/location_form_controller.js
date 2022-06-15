@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "name", "address", "map", "latitude", "longitude", "manualLatLong", "automaticLocation", "expectedDownload", "expectedUpload", "geoIcon", "spinner" ];
+  static targets = [ "name", "address", "map", "latitude", "longitude", "manualLatLong", "automaticLocation", "expectedDownload", "expectedUpload", "geoIcon", "spinner", "conditional" ];
 
   connect() {
     const lat = this.latitudeTarget.value ? this.latitudeTarget.value : geoplugin_latitude();
@@ -79,11 +79,7 @@ export default class extends Controller {
   }
 
   onAddressChange(e) {
-    const manualSwitchElements = document.querySelectorAll('[id=location_manual_lat_long]');
-    let isSwitchOn = undefined;
-    for(let i = 0 ; isSwitchOn === undefined && i < manualSwitchElements.length ; i++) {
-      if(manualSwitchElements[i].offsetParent) isSwitchOn = manualSwitchElements[i].checked;
-    }
+    const isSwitchOn = this.manualLatLongTarget.checked;
     if(isSwitchOn || this.automaticLocationTarget.value === 'true') return; // If switch is on, prevent geo searching
     this.fetchGeoData(e.target.value);
   }
@@ -101,14 +97,18 @@ export default class extends Controller {
   }
 
   onManuallyChange(e) {
-    const conditionalClassElements = document.getElementsByClassName('conditional');
+    const conditionalClassElements = [
+      ...this.conditionalTargets,
+      this.latitudeTarget,
+      this.longitudeTarget
+    ];
     const isReadOnly = !e.target.checked;
     conditionalClassElements.forEach(element => {
       element.classList.toggle('text-muted');
       if(isReadOnly) {
         element.setAttribute('readonly', isReadOnly);
         // we might have more than one (hidden modals for creation/edition)
-        const locationAddressElements = document.querySelectorAll('[id=location_address]');
+        const locationAddressElements = this.addressTargets;
         let currentAddressElementValue;
         for(let i = 0 ; !currentAddressElementValue && i < locationAddressElements.length ; i++) {
           if(locationAddressElements[i].offsetParent) currentAddressElementValue = locationAddressElements[i].value;

@@ -60,7 +60,7 @@
         <div class="row mb-7">
           <div class="col-6 fv-plugins-icon-container">
             <!--begin::Label-->
-            <label class="conditional fs-6 fw-bold mb-2 <%= @location.manual_lat_long ? '' : 'text-muted'%>">Latitude</label>
+            <label data-location-form-target="conditional" class="fs-6 fw-bold mb-2 <%= @location.manual_lat_long ? '' : 'text-muted'%>">Latitude</label>
             <!--end::Label-->
             <!--begin::Input-->
             <%= form.text_field :latitude, 
@@ -74,7 +74,7 @@
 
           <div class="col-6 fv-plugins-icon-container">
             <!--begin::Label-->
-            <label class="conditional fs-6 fw-bold mb-2 <%= @location.manual_lat_long ? '' : 'text-muted' %>">Longitude</label>
+            <label data-location-form-target="conditional" class="fs-6 fw-bold mb-2 <%= @location.manual_lat_long ? '' : 'text-muted' %>">Longitude</label>
             <!--end::Label-->
             <!--begin::Input-->
             <%= form.text_field :longitude, 
