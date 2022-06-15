@@ -16,7 +16,7 @@ jobs:
       - image: cimg/base:2022.05
     steps:
       - checkout
-      - run: make client_version VERSION=$CIRCLE_TAG RADAR_URL=${RADAR_TEST_URL} RADAR_USER=${RADAR_TEST_USER} RADAR_PASSWORD=${RADAR_TEST_PASSWORD}
+      - run: make client_version VERSION=$CIRCLE_TAG RADAR_URL=${RADAR_URL} RADAR_USER=${RADAR_USER} RADAR_PASSWORD=${RADAR_PASSWORD}
 
   build_and_upload:
     working_directory: ~/repo
@@ -45,7 +45,7 @@ jobs:
             ARCH=<<parameters.arch>> \
             BIN_NAME=<<parameters.binName>> \
             PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
-            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key RADAR_URL=${RADAR_TEST_URL} RADAR_USER=${RADAR_TEST_USER} RADAR_PASSWORD=${RADAR_TEST_PASSWORD}
+            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key RADAR_URL=${RADAR_URL} RADAR_USER=${RADAR_USER} RADAR_PASSWORD=${RADAR_PASSWORD}
   
   deb_package:
     working_directory: ~/repo
@@ -191,7 +191,7 @@ jobs:
             VERSION=<<parameters.version>> \
             FILE_PATH=/tmp/workspace/<<parameters.workspace_file_name>> \
             OS=<<parameters.os>> \
-            ARCH=<<parameters.arch>> RADAR_URL=${RADAR_TEST_URL} RADAR_USER=${RADAR_TEST_USER} RADAR_PASSWORD=${RADAR_TEST_PASSWORD}
+            ARCH=<<parameters.arch>> RADAR_URL=${RADAR_URL} RADAR_USER=${RADAR_USER} RADAR_PASSWORD=${RADAR_PASSWORD}
             
 
 # Invoke jobs via workflows
