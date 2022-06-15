@@ -30,7 +30,7 @@
                 <% current_user.clients.each do |client| %>
                     <!-- using 'picked' attribute instead of reserved word 'selected' to prevent defaulting a value -->
                     <option value="<%= client.unix_user %>" picked="false" data-location-name="<%= client.location&.name %>" data-location-id="<%= client.location&.id %>">
-                        <%= client.name %>
+                        <%= client.name || "Unnamed Pod" %>
                     </option>
                 <% end %>
             </select>

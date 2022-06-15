@@ -4,10 +4,6 @@ module ApplicationHelper
     'active' if request.path.starts_with?(path)
   end
 
-  def exact_path?(path)
-    'active' if active_path?(path) && request.path == path
-  end
-
   def active_full_path?(path)
     "active" if active_path?(path) && request.path == path
   end

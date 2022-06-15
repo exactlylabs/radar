@@ -19,8 +19,9 @@
         <div class="fw-bolder" style="font-size: 20px; color: #181c32">
             What would you like to do?
         </div>
-        <div class="modal-body--options-container d-flex flex-column align-items-center justify-content-center w-75" data-controller="add-client-to-location">
+        <div class="modal-body--options-container d-flex flex-column align-items-center justify-content-center w-75">
             <div id="old-pod-option"
+                 data-add-client-to-location-target="oldPodOption"
                  class="option d-flex flex-row justify-content-start mb-5 mt-10 align-items-center" 
                  style="height: 100px; width: 500px; border-radius: 6px;"
                  data-action="click->add-client-to-location#chooseMoveOption">
@@ -39,6 +40,7 @@
                 </div>
             </div>
             <div id="new-pod-option"
+                 data-add-client-to-location-target="newPodOption"
                  class="option d-flex flex-row justify-content-start mb-10 align-items-center" 
                  style="height: 100px; width: 500px; border-radius: 6px;"
                  data-action="click->add-client-to-location#chooseNewOption">
@@ -59,9 +61,9 @@
         </div>
     </div>
 
-    <div class="modal-footer" data-controller="add-client-to-location">
+    <div class="modal-footer">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-        <button id="continue-button" type="button" class="btn btn-primary disabled" data-action="click->add-client-to-location#continueToNextStep">Continue</button>
+        <button data-add-client-to-location-target="continueButton" id="continue-button" type="button" class="btn btn-primary disabled" data-action="click->add-client-to-location#continueToNextStep">Continue</button>
     </div>
     </div>
 </div>
