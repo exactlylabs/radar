@@ -9,21 +9,6 @@ class Location < ApplicationRecord
 
   scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
 
-  geocoded_by :address do |obj, results|
-    if geo = results.first
-      obj.latitude = geo.latitude
-      obj.longitude = geo.longitude
-      #obj.city = geo.city
-      #obj.country = geo.country
-      #obj.country_code = geo.country_code
-      #obj.postal_code = geo.postal_code
-      obj.state = geo.state
-      obj.county = geo.county
-      #obj.state_code = geo.state_code
-      #obj.street_address = geo.street_address
-    end
-  end
-  after_validation :geocode, if: :will_save_change_to_address?
   after_validation :custom_geocode, if: :will_save_change_to_address?
 
   scope :where_online, -> { joins(:clients).where("clients.pinged_at > ?", 1.minute.ago) }
@@ -50,7 +35,7 @@ class Location < ApplicationRecord
   def custom_geocode
     # if user manually set lat/long or clicked on the auto-locate
     # then we should use those values of lat/long for fips location
-    # instead of the address (cause that value could have been overriden 
+    # instead of the address (cause that value could have been overriden
     # with some other value on purpose)
     if !self.manual_lat_long && !self.automatic_location
       results = Geocoder.search(self.address)
