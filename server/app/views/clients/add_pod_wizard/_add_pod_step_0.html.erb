@@ -1,4 +1,4 @@
-<div class="modal-body <%= error ? 'd-none' : '' %>" style="width: max-content" data-add-pod-target="step0">
+<div class="modal-body" style="width: max-content" data-add-pod-target="step0">
   <div class="d-flex flex-column align-items-center justify-content-center">
     <div class="modal-body--icon d-flex align-items-center justify-content-center" 
               style="height: 70px; width: 70px; background-color: #f1faff; border-radius: 50%; margin-bottom: 20px">
@@ -30,7 +30,7 @@
   </div>
 </div>
 
-<div class="modal-footer <%= error ? 'd-none' : '' %>" id="podIdModalFooter" data-add-pod-target="step0Footer">
+<div class="modal-footer" id="podIdModalFooter" data-add-pod-target="step0Footer">
   <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
   <button id="nextButton" type="button" class="btn btn-primary disabled" data-action="click->add-pod#savePodIdAndContinue">Continue</button>
 </div>

@@ -1,0 +1,85 @@
+<%= form_with(url: claim_clients_path) do |form| %>
+  <div class="modal-body" style="display: none; min-width: 450px" data-add-pod-target="step2">
+    <div class="modal-body--icon-client-id d-flex" style="margin-bottom: 30px">
+      <div class="modal-body--icon d-flex align-items-center justify-content-center" 
+          style="height: 60px; width: 60px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
+        <span class="svg-icon svg-icon-3x svg-icon-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12.4409 22C13.5455 22 14.4409 21.1046 14.4409 20C14.4409 18.8954 13.5455 18 12.4409 18C11.3364 18 10.4409 18.8954 10.4409 20C10.4409 21.1046 11.3364 22 12.4409 22Z" fill="black"/>
+            <path opacity="0.3" d="M9.04095 14.8L9.94095 16.1C10.6409 15.6 11.5409 15.3 12.4409 15.3C13.3409 15.3 14.2409 15.6 14.9409 16.1L15.8409 14.8C16.1409 14.3 16.0409 13.6 15.4409 13.4C14.5409 13 13.5409 12.7 12.4409 12.7C11.3409 12.7 10.3409 12.9 9.44095 13.4C8.84095 13.6 8.74095 14.3 9.04095 14.8Z" fill="black"/>
+            <path opacity="0.3" d="M3.14096 5.80005L4.04095 7.19995C6.44095 5.59995 9.34094 4.69995 12.4409 4.69995C15.5409 4.69995 18.4409 5.59995 20.8409 7.19995L21.7409 5.80005C22.0409 5.30005 21.8409 4.70002 21.3409 4.40002C18.7409 2.90002 15.6409 2 12.4409 2C9.24094 2 6.14095 2.90002 3.54095 4.40002C3.04095 4.70002 2.84096 5.30005 3.14096 5.80005Z" fill="black"/>
+            <path opacity="0.3" d="M6.14097 10.3L7.04096 11.7C8.64096 10.7 10.441 10.1 12.541 10.1C14.641 10.1 16.441 10.7 18.041 11.7L18.941 10.3C19.241 9.80005 19.141 9.10002 18.541 8.90002C16.741 7.90002 14.741 7.40002 12.541 7.40002C10.341 7.40002 8.34096 7.90002 6.54096 8.90002C5.94096 9.10002 5.74097 9.80005 6.14097 10.3Z" fill="black"/>
+          </svg>
+        </span>
+      </div>
+      <div class="modal-body--id-date d-flex flex-column align-items-start justify-content-center">
+        <div data-add-pod-target="step2IdInput" class="client-id fw-bold" style="font-size: 16px; color: #3f4254; margin-bottom: 2px">
+          
+        </div>
+        <div class="client-date" style="font-size: 13px; color: #b5b5c3;">
+          <%= "Added on #{pretty_print_date(Time.now)}" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="fv-row mb-7 fv-plugins-icon-container">
+      <%= form.text_field :id_final, class: "form-control form-control-solid", value: @client_id, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step2IdInputHidden"}%>
+      <%= form.text_field :secret_final, class: "form-control form-control-solid", value: @client_secret, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step2SecretInputHidden"}%>
+      <!--begin::Label-->
+      <label class="required fs-6 fw-bold mb-2">Name</label>
+      <!--end::Label-->
+      <!--begin::Input-->
+      <%= form.text_field :name, class: "form-control form-control-solid" %>
+      <!--end::Input-->
+      <div class="fv-plugins-message-container invalid-feedback"></div>
+    </div>
+
+    <div class="fv-row mb-7 fv-plugins-icon-container">
+      <label class="required fs-6 fw-bold mb-2">Location</label>
+      <select class="form-select" data-controller="select2" data-select2-blanks-value="true" id="client-locations-dropdown"
+      data-placeholder="Select a location" name="location_id" data-select2-id="select2-data-location_id" tabindex="-1">
+        <% current_user.locations.each_with_index do |location, index|%>
+          <%= render partial: "clients/client_location", locals: { location: location, selected: false} %>
+        <% end %> 
+      </select>
+    </div>
+
+    <div id="location-created-snackbar" class="d-none w-100 d-flex flex-row align-items-center justify-content-start fw-bold" 
+          style="display: none; background-color: #f1faff; height: 45px; color: #00a3ff; font-size: 14px; border-radius: 6px; margin-top: 15px; margin-bottom: 15px">
+      <svg style="margin: 0 8px 0 12px" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" fill-rule="evenodd">
+            <path d="M0 0h20v20H0z"/>
+            <g fill="#00A3FF">
+                <path d="M11.39 19.455c-.623.727-1.66.727-2.284 0l-5.085-5.604c-1.557-1.765-2.387-4.048-2.076-6.643C2.465 3.472 5.474.462 9.21.048c4.982-.52 9.237 3.32 9.237 8.198.104 2.18-.726 4.152-1.972 5.605l-5.085 5.604z" fill-rule="nonzero" opacity=".3"/>
+                <path d="M10.248 11.464a3.114 3.114 0 1 1 0-6.228 3.114 3.114 0 0 1 0 6.228z"/>
+            </g>
+        </g>
+      </svg>
+      Your new location has been created.
+    </div>
+
+    <div id="loading-container" class="d-none d-flex align-items-center mb-5">
+      <div class="spinner-border text-primary me-3" role="status"></div>
+      <div style="font-size: 13px; color: #b5b5c3;">Creating new location...</div>
+    </div>
+
+    <a class="d-flex align-items-center fw-bold" 
+        href="#"
+        style="color: #00a3ff; font-size: 12px"
+        data-bs-toggle="modal" 
+        data-bs-target="#new_location_modal">
+      Add new location
+      <span class="svg-icon svg-icon-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect opacity="0.5" x="18" y="13" width="13" height="2" rx="1" transform="rotate(-180 18 13)" fill="black"/>
+          <path d="M15.4343 12.5657L11.25 16.75C10.8358 17.1642 10.8358 17.8358 11.25 18.25C11.6642 18.6642 12.3358 18.6642 12.75 18.25L18.2929 12.7071C18.6834 12.3166 18.6834 11.6834 18.2929 11.2929L12.75 5.75C12.3358 5.33579 11.6642 5.33579 11.25 5.75C10.8358 6.16421 10.8358 6.83579 11.25 7.25L15.4343 11.4343C15.7467 11.7467 15.7467 12.2533 15.4343 12.5657Z" fill="black"/>
+        </svg>
+      </span>
+    </a>
+  </div>
+
+  <div class="modal-footer" style="display:none" data-add-pod-target="step2Footer">
+    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+    <%= form.submit "Add Pod", class: "btn btn-primary" %>
+  </div>
+<% end %>

@@ -12,6 +12,11 @@ module ApplicationHelper
     date.strftime('%b %d, %Y')
   end
 
+  def empty_search_params?
+    # controller & action
+    params.values.length == 2
+  end
+
   ##### PAGINATION METHODS #####
 
   def get_date_range(range)

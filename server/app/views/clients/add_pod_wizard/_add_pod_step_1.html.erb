@@ -1,4 +1,4 @@
-<div class="modal-body <%= error ? 'd-none' : '' %>" style="width: max-content; display: none;" data-add-pod-target="step1">
+<div class="modal-body" style="width: max-content; display: none;" data-add-pod-target="step1">
   <div class="d-flex flex-column align-items-center justify-content-center">
     <div class="modal-body--icon d-flex align-items-center justify-content-center" 
               style="height: 70px; width: 70px; background-color: #f1faff; border-radius: 50%; margin-bottom: 20px">
@@ -12,8 +12,8 @@
       </span>
     </div>
     <!-- Cannot do hidden="true" because value is immutable otherwise -->
-    <%= form.text_field :id, class: "form-control form-control-solid", value: @client_id, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step1IdInputHidden" }%>
-    <%= form.text_field :secret, class: "form-control form-control-solid", value: @client_secret, style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step1SecretInputHidden" }%>
+    <input id="id" type="hidden" name="id" value="<%= @client_id %>" data-add-pod-target="step1IdInputHidden" />
+    <input id="secret" type="hidden" name="secret" value="<%= @client_secret %>" data-add-pod-target="step1SecretInputHidden" />
     <div data-add-pod-target="podId" style="font-size: 18px; color: #7e8299; margin-bottom: 30px"></div>
     <div class="fw-bolder" style="font-size: 20px; color: #181c32; margin-bottom: 15px;">Enter your Pod's secret key.</div>
     <div class="fw-bold" style="font-size: 14px; color: #b5b5c3; margin-bottom: 15px">You can find the 11-digit Pod ID printed on your Pod.</div>
@@ -34,7 +34,7 @@
   </div>
 </div>
 
-<div class="modal-footer <%= error ? 'd-none' : '' %>" style="display: none;" data-add-pod-target="step1Footer">
+<div class="modal-footer" style="display: none;" data-add-pod-target="step1Footer">
   <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-  <%= form.submit "Continue", class: "btn btn-primary disabled", id: "finalButton" %>
+  <buttom id="finalButton" type="button" class="btn btn-primary disabled" data-add-pod-target="finalButton" data-action="click->add-pod#submitClaimCheck">Continue</buttom>
 </div>

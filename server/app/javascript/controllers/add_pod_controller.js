@@ -115,8 +115,15 @@ export default class extends Controller {
     this.step2IdInputTarget.innerText = this.podIdTarget.innerText;
     this.step2IdInputHiddenTarget.value = this.step1IdInputHiddenTarget.value;
     this.step2SecretInputHiddenTarget.value = this.step1SecretInputHiddenTarget.value;
-    this.step2Target.style.display = 'flex';
+    this.step2Target.style.display = 'block';
     this.step2FooterTarget.style.display = 'flex';
+    this.step1Target.style.display = 'none';
+    this.step1FooterTarget.style.display = 'none';
+  }
+
+  goToErrorModal() {
+    this.stepErrorTarget.style.display = 'flex';
+    this.stepErrorFooterTarget.style.display = 'flex';
     this.step1Target.style.display = 'none';
     this.step1FooterTarget.style.display = 'none';
   }
@@ -132,5 +139,31 @@ export default class extends Controller {
       document.querySelector('#loading-container').classList.add('d-none');
       document.querySelector('#location-created-snackbar').classList.remove('d-none');
     }
+  }
+
+  submitClaimCheck(e) {
+    const podId = this.step1IdInputHiddenTarget.value;
+    const podSecret = this.step1SecretInputHiddenTarget.value;
+    const token = document.getElementsByName('csrf-token')[0].content;
+    const formData = new FormData();
+    formData.append('id', podId);
+    formData.append('secret', podSecret);
+    fetch('/clients/check_claim', {
+      method: 'POST',
+      headers: { 'X-CSRF-Token': token },
+      body: formData
+    })
+    .then((res) => {
+      if(res.status.toString().startsWith('4')) {
+        this.goToErrorModal();
+        return;
+      }
+      this.gotoLocationModal();
+    })
+    .catch(err => {
+      // TODO: Integrate Sentry!
+      this.goToErrorModal();
+      console.error(err);
+    });
   }
 }

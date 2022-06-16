@@ -30,10 +30,6 @@ class ClientsController < ApplicationController
 
   end
 
-  def check_claim_form
-    @client = Client.new
-  end
-
   def claim_form
     @client = Client.new
   end
@@ -68,11 +64,9 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client && @client.authenticate_secret(@client_secret)
         @client.user = current_user
-        format.html { redirect_to clients_path, notice: "Client data is OK."}
         format.json { render status: :ok, json: @client.to_json }
       else
         @error = true
-        format.html { render :check_claim_form, status: :unprocessable_entity }
         format.json { render json: {}, status: :unprocessable_entity }
       end
     end
@@ -263,7 +257,7 @@ EOF
 
     def authenticate_client!
       client_id = params[:id]
-      client_secret = params[:secret]      
+      client_secret = params[:secret]
       @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
       if !@client
         head(403)
