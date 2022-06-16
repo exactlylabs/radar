@@ -64,6 +64,11 @@ Rails.application.routes.draw do
         get 'download'
       end
     end
+    resources :packages do
+      member do
+        get 'download'
+      end
+    end
   end
 
   post 'geocode', to: 'geocode#code'
