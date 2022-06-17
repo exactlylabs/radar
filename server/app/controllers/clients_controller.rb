@@ -226,22 +226,6 @@ EOF
     end
   end
 
-  # POST /clients/move
-  def move
-    @client = policy_scope(Client).find_by_unix_user(params[:id])
-    location = policy_scope(Location).find_by_id(params[:location_id])
-    respond_to do |format|
-      if @client.update(name: params[:name], location: location)
-        format.turbo_stream
-        format.html { redirect_back fallback_location: location_clients_path(params[:location_id]), notice: "Client was successfully moved." }
-        format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @client.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
   # DELETE /clients/1 or /clients/1.json
   def destroy
     @client.destroy

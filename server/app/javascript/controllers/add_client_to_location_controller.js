@@ -2,9 +2,13 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
 
-  static targets = ["oldPodOption", "newPodOption", "continueButton"]
+  static targets = ["oldPodOption", "newPodOption", "continueButton", "clientIdInput", "locationIdInput", "clientNameInput"]
 
   connect() {
+    $('#client_id').on('select2:select', function () {
+      let event = new Event('change', { bubbles: true }) // fire a native event
+      this.dispatchEvent(event);
+    });
   }
 
   hideModal() {
@@ -66,5 +70,65 @@ export default class extends Controller {
     if (e.detail.success) {
       this.hideModal();
     }
+  }
+
+  moveClient() {
+    const clientId = this.clientIdInputTarget.value;
+    const locationId = this.locationIdInputTarget.value;
+    const clientName = this.clientNameInputTarget.value;
+    const token = document.getElementsByName('csrf-token')[0].content;
+    fetch(`/clients/${clientId}`, {
+      method: 'PUT',
+      headers: {
+        'X-CSRF-Token': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        location_id: locationId,
+        name: clientName,
+      })
+    })
+    .then(res => {
+      if(res.status.toString().startsWith('4')) {
+        console.error(res);
+        return;
+      }
+      window.location.reload()
+    })
+    .catch(err => {
+      // TODO: integrate Sentry!
+      console.error(err);
+    });
+  }
+
+  toggleSelectedOption(currentSelectedOption) {
+    const previousSelectedOption = document.querySelector(`[picked="true"]`);
+    if(previousSelectedOption) { // there could be none selected atm
+      previousSelectedOption.setAttribute('picked', 'false');
+    }
+    currentSelectedOption.setAttribute('picked', 'true');
+  }
+
+  checkClientLocation(e) {
+    const currentClientSelectedId = e.target.value;
+    if(!currentClientSelectedId) {
+      document.querySelector('#change-name-button').classList.add('disabled');
+      return;
+    }
+    const optionSelected = document.querySelector(`[value="${currentClientSelectedId}"]`);
+    this.toggleSelectedOption(optionSelected);
+    const optionLocationName = optionSelected.getAttribute('data-location-name');
+    const optionLocationId = optionSelected.getAttribute('data-location-id');
+    const currentLocationId = window.location.pathname.split('/locations/')[1].split('/')[0];
+    const warningElement = document.querySelector('#warning-client-location');
+    if(currentLocationId !== optionLocationId) {
+      const currentLocationName = document.querySelector('#add-pod-title').innerText.split('Add Pod to ')[1];
+      const warningText = document.querySelector('#warning-text');
+      warningElement.classList.remove('d-none');
+      warningText.innerText = `This Pod belongs to ${optionLocationName}. If you continue, it will be moved to ${currentLocationName}.`
+    } else {
+      warningElement.classList.add('d-none');
+    }
+    document.querySelector('#change-name-button').classList.remove('disabled');
   }
 }
