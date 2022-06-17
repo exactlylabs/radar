@@ -1,17 +1,20 @@
 // Place all the styles related to the Locations controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
-.option {
+#old-pod-option.option,
+#new-pod-option.option {
   background-color: rgba(245, 248, 250, 0.4);
   border: dashed 1px #b5b5c3;
 }
 
-.option:hover {
+#old-pod-option.option:hover,
+#new-pod-option.option:hover {
   cursor: pointer;
   background-color: #f1faff;
 }
 
-.clicked {
+#old-pod-option.clicked,
+#new-pod-option.clicked {
   background-color: #f1faff;
   border: dashed 1px #00a3ff;
 }
