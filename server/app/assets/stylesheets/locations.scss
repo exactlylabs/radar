@@ -1,3 +1,17 @@
 // Place all the styles related to the Locations controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
+.option {
+  background-color: rgba(245, 248, 250, 0.4);
+  border: dashed 1px #b5b5c3;
+}
+
+.option:hover {
+  cursor: pointer;
+  background-color: #f1faff;
+}
+
+.clicked {
+  background-color: #f1faff;
+  border: dashed 1px #00a3ff;
+}
