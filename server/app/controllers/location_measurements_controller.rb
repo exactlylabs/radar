@@ -6,9 +6,9 @@ class LocationMeasurementsController < ApplicationController
   # GET /measurements or /measurements.json
   def index
     @measurements = @location.measurements
-
+    
     respond_to do |format|
-      format.html
+      format.html { render "index", locals: { measurements: @measurements } }
       format.csv { send_data @measurements.to_csv, filename: "measurements-#{@location.id}.csv" }
     end
   end
@@ -21,6 +21,6 @@ class LocationMeasurementsController < ApplicationController
 
   private
     def set_location
-      @location = current_user.locations.find(params[:location_id])
+      @location = policy_scope(Location).all.find(params[:location_id])
     end
 end

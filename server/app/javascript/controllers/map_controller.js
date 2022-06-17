@@ -11,7 +11,6 @@ export default class extends Controller {
 
     var markers = [];
     const locations = document.querySelectorAll('.location-row');
-    console.log(locations);
     locations.forEach(l => {
       const online = l.getAttribute('data-location-online') === 'true';
       const latitude = l.getAttribute('data-location-latitude');

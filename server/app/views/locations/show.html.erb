@@ -4,7 +4,7 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="text-dark fw-bolder my-1 fs-2">Dashboard 
+      <h1 class="text-dark fw-bolder my-1 fs-2">Locations
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
@@ -22,76 +22,42 @@
 </div>
 <!--end::Toolbar-->
 
-<div class="post fs-6 d-flex flex-column-fluid mb-9" id="kt_post">
+<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-  <div class="container-xxl">
-  
-    <% if notice %>
-    <p id="notice"><%= notice %></p>
-    <% end %>
-    <!--begin::Card-->
-    <%= render partial: "location_details", locals: { location: @location } %>
-  </div>
-  <!--end::Card-->
-</div>
-<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
-  <div class="container-xxl">
-    <div class="card">
-      <% if @location.clients.length == 0 %>
-      <div class="card-header border-0">
-        <!--begin::Card title-->
-        <div class="card-title">
-          <h2 class="fw-bolder mb-0">No Pods at Location</h2>
-        </div>
-        <!--end::Card title-->
-      </div>
-      <% else %>
-      <div class="card-header border-0">
-        <!--begin::Card title-->
-        <div class="card-title">
-          <h2 class="fw-bolder mb-0">Pods</h2>
-        </div>
-        <!--end::Card title-->
-      </div>
-      <div class="card-body pt-0 pb-5">
-        <!--begin::Table-->
-        <div class="dataTables_wrapper dt-bootstrap4 no-footer">
-          <div class="table-responsive">
-            <table class="table align-middle table-row-dashed gy-5 no-footer">
-              <!--begin::Table head-->
-              <thead class="border-bottom border-gray-200 fs-7 fw-bolder">
-                <!--begin::Table row-->
-                <tr class="text-start text-muted text-uppercase gs-0">
-                  <th tabindex="0">Pod ID</th>
-                  <th>Status</th>
-                </tr>
-              <!--end::Table row-->
-              </thead>
-              <!--end::Table head-->
-              <!--begin::Table body-->
-              <tbody class="fs-6 fw-bold text-gray-600">
-                <!--begin::Table row-->
-                <% @location.clients.order("LOWER(unix_user)").each do |client| %>
-                <tr>
-                  <td><%= link_to client.unix_user, client_url(client.unix_user) %></td>
-                  <td>
-                    <span class="badge <%= client.status_style %>"><%= client.status %></span>
-                  </td>
-                </tr>
-                <% end %>
-              </tbody>
-              <!--end::Table body-->
-            </table>
-          </div>
-        </div>
-        <!--end::Table-->
-      </div>
+    <div class="container-xxl w-100 d-flex" style="max-width: none;">
+      <!--begin::OptionsCard-->
+        <%= render partial: "options_card", locals: { location: @location, style: 'locations' } %>
+      <!--end::OptionsCard-->
+      <% if notice %>
+      <p id="notice"><%= notice %></p>
       <% end %>
+      <!--begin::LocationCard-->
+        <%= render partial: "location_details", locals: { location: @location } %>
+      <!--end::LocationCard-->
     </div>
-  </div>
-  <!--end::Container-->
+  <!--end:Container-->
 </div>
+<!--begin::LocationModal-->
 <div class="modal fade" tabindex="-1" id="edit_location_modal_<%= @location.id %>" data-controller="modal" data-action="turbo:submit-end->modal#submit">
   <%= turbo_frame_tag "edit_location_modal", src: edit_location_path(@location) do %>
   <% end %>
+</div>
+<!--end::LocationModal-->
+<!--begin::AddPodModal-->
+<div class="modal fade" tabindex="-1" id="add_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit">
+  <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path(location_id: @location.id) do %>
+  <% end %>
+</div>
+<!--end::AddPodModal-->
+
+<div class="modal fade" tabindex="-1" id="add_pod_modal_step_0" data-controller="add-client-to-location">
+    <%= render partial: 'location_clients/add_pod_step_0', locals: { location: @location } %>
+</div>
+
+<div class="modal fade" tabindex="-1" id="add_pod_step_1_existing">
+    <%= render partial: 'location_clients/add_pod_step_1_existing', locals: { location: @location } %>
+</div>
+
+<div class="modal fade" tabindex="-1" id="add_pod_step_2_existing">
+    <%= render partial: 'location_clients/add_pod_step_2_existing', locals: { location: @location } %>
 </div>

@@ -42,3 +42,6 @@ application.register("select2", Select2Controller)
 
 import MapController from "./map_controller.js"
 application.register("map", MapController);
+
+import AddClientToLocation from "./add_client_to_location.controller.js"
+application.register("add-client-to-location", AddClientToLocation)
