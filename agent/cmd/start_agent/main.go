@@ -84,8 +84,6 @@ func main() {
 		fmt.Println(info.BuildInfo())
 		os.Exit(0)
 	}
-	f := setupWindowsLogging()
-	defer f.Close()
 
 	// Before starting, make sure we enable logging for windows
 	if !service.Interactive() && runtime.GOOS == "windows" {
