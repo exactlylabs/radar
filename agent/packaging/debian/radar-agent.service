@@ -4,6 +4,7 @@ After = network-online.target
 Wants = network-online.target
 
 [Service]
+User=root
 ExecStart = /usr/local/bin/radar-agent
 Restart = on-failure
 RestartSec = 10s
