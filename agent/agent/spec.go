@@ -11,8 +11,14 @@ type PingResponse struct {
 	Update        *BinaryUpdate
 }
 
+type ClientMeta struct {
+	Version       string
+	Distribution  string
+	NetInterfaces string // eg: ensp0:ff:ff:ff:ff:ff,wlan0:...
+}
+
 type Pinger interface {
-	Ping(distribution, version, clientId, secret string) (*PingResponse, error)
+	Ping(clientId, secret string, meta *ClientMeta) (*PingResponse, error)
 }
 
 type RegisteredPod struct {
