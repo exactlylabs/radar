@@ -73,7 +73,10 @@ func Setup(c *config.Config, build *info.Info) {
 	})
 }
 
-func NotifyError(err error) {
+func NotifyError(err error, context map[string]interface{}) {
 	hub := sentry.CurrentHub().Clone()
+	hub.ConfigureScope(func(scope *sentry.Scope) {
+		scope.SetContexts(context)
+	})
 	hub.CaptureException(err)
 }

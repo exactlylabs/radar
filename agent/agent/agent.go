@@ -126,14 +126,13 @@ func (a *Agent) Start(ctx context.Context, c *config.Config) {
 				log.Printf("An Update for version %v is Available\n", pingResp.Update.Version)
 				err := update.SelfUpdate(pingResp.Update.BinaryUrl)
 				if err != nil && (errors.Is(err, update.ErrInvalidCertificate) || errors.Is(err, update.ErrInvalidSignature)) {
-					err = fmt.Errorf(
-						"update %v from %v is invalid: %w",
-						pingResp.Update.Version,
-						pingResp.Update.BinaryUrl,
-						err,
-					)
-					log.Println(err)
-					tracing.NotifyError(err)
+					log.Printf("Existent update is invalid: %v\n", err)
+					tracing.NotifyError(err, map[string]interface{}{
+						"Update Data": map[string]string{
+							"version": pingResp.Update.Version,
+							"url":     pingResp.Update.BinaryUrl,
+						},
+					})
 				} else if err != nil {
 					panic(err)
 				} else {
