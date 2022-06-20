@@ -35,12 +35,13 @@ func (c *radarClient) NewRequest(method, url string, body io.Reader) (*http.Requ
 	return req, nil
 }
 
-func (c *radarClient) Ping(distribution, version, clientId, secret string) (*agent.PingResponse, error) {
+func (c *radarClient) Ping(clientId, secret string, meta *agent.ClientMeta) (*agent.PingResponse, error) {
 	apiUrl := fmt.Sprintf("%s/clients/%s/status", c.serverUrl, clientId)
 	form := url.Values{}
 	form.Add("secret", secret)
-	form.Add("version", version)
-	form.Add("distribution", distribution)
+	form.Add("version", meta.Version)
+	form.Add("distribution", meta.Distribution)
+	form.Add("network_interfaces", meta.NetInterfaces)
 	req, err := c.NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err
