@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -124,12 +125,15 @@ func (a *Agent) Start(ctx context.Context, c *config.Config) {
 			if pingResp.Update != nil {
 				log.Printf("An Update for version %v is Available\n", pingResp.Update.Version)
 				err := update.SelfUpdate(pingResp.Update.BinaryUrl)
-				if err != nil {
+				if err != nil && (errors.Is(err, update.ErrInvalidCertificate) || errors.Is(err, update.ErrInvalidSignature)) {
+					log.Printf("Existent update is invalid: %v\n", err)
+				} else if err != nil {
 					panic(err)
+				} else {
+					log.Println("Successfully Updated the Binary. Exiting current version.")
+					cancel()
+					os.Exit(1)
 				}
-				log.Println("Successfully Updated the Binary. Exiting current version.")
-				cancel()
-				os.Exit(1)
 			}
 		case <-speedTestTimer.C:
 			if firstRun {
