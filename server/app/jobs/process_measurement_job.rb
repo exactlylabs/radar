@@ -6,8 +6,6 @@ class ProcessMeasurementJob < ApplicationJob
     when "NDT7"
       data = measurement.result.download.split("\n")
       extended_info = nil
-      download_total_bytes = 0
-      upload_total_bytes = 0
 
       data.reverse.each do |line|
         if line.include?("measurement") && line.include?("TCPInfo")
