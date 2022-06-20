@@ -6,11 +6,17 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 
 	"google.golang.org/protobuf/proto"
+)
+
+var (
+	ErrInvalidCertificate error = errors.New("certificate is not valid")
+	ErrInvalidSignature   error = errors.New("signature is not valid")
 )
 
 // ParseUpdateFile will read from the reader and then validate the contents of it,
@@ -31,12 +37,12 @@ func ParseUpdateFile(r io.Reader) ([]byte, error) {
 	}
 	// Check if it's signed by our trusted CA
 	if err := verifyCertificate(cert, rootCert); err != nil {
-		return nil, fmt.Errorf("certificate is not valid")
+		return nil, ErrInvalidCertificate
 	}
 
 	// Validate the binary was not tampered
 	if err := verifySignature(cert, sb.GetBinary(), sb.GetSignature()); err != nil {
-		return nil, fmt.Errorf("signature is not valid")
+		return nil, ErrInvalidSignature
 	}
 
 	return sb.GetBinary(), nil
