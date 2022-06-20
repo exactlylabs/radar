@@ -31,7 +31,7 @@ class ClientMeasurementsController < ApplicationController
     @measurement = @client.measurements.build(measurement_params)
     @measurement.client_version = @client.raw_version
     @measurement.client_distribution = @client.distribution_name
-
+    @measurement.network_interfaces = @client.network_interfaces
     if !@client.location.nil?
       @measurement.location = @client.location
     end
