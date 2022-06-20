@@ -72,3 +72,8 @@ func Setup(c *config.Config, build *info.Info) {
 		scope.SetUser(sentry.User{ID: c.ClientId})
 	})
 }
+
+func NotifyError(err error) {
+	hub := sentry.CurrentHub().Clone()
+	hub.CaptureException(err)
+}
