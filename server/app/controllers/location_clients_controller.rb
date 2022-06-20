@@ -4,7 +4,7 @@ class LocationClientsController < ApplicationController
 
 	# GET /clients
 	def index
-		@clients = @location.clients
+    @clients = @location.clients
 		respond_to do |format|
 			format.turbo_stream { render turbo_stream: turbo_stream.update(@clients) }
 			format.html
