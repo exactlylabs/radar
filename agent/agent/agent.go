@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -128,6 +129,7 @@ func (a *Agent) Start(ctx context.Context, c *config.Config) {
 				}
 				log.Println("Successfully Updated the Binary. Exiting current version.")
 				cancel()
+				os.Exit(1)
 			}
 		case <-speedTestTimer.C:
 			if firstRun {
