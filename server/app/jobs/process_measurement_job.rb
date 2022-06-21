@@ -8,15 +8,13 @@ class ProcessMeasurementJob < ApplicationJob
       extended_info = nil
 
       data.reverse.each do |line|
-        if line.include?("measurement") && line.include?("TCPInfo")
-          last_download = JSON.parse(line)
-          extended_info = last_download["Value"]["TCPInfo"]
-        elsif line.include?("measurement") && line.include?("download") && line.include?("NumBytes") && measurement.download_total_bytes.nil?
-          last_download = JSON.parse(line)
-          measurement.download_total_bytes = last_download["Value"]["AppInfo"]["NumBytes"]
-        elsif line.include?("measurement") && line.include?("upload") && line.include?("NumBytes") && measurement.upload_total_bytes.nil?
-          last_upload = JSON.parse(line)
-          measurement.upload_total_bytes = last_upload["Value"]["AppInfo"]["NumBytes"]
+        row = JSON.parse(line)
+        if row["Key"] == "measurement" && row["Value"]["TCPInfo"] && extended_info.nil?
+          extended_info = row["Value"]["TCPInfo"]
+        elsif row["Key"] == "measurement" && row["Value"]["Test"] == "upload" && row["Value"]["AppInfo"] && measurement.upload_total_bytes.nil?
+          measurement.upload_total_bytes = row["Value"]["AppInfo"]["NumBytes"] 
+        elsif row["Key"] == "measurement" && row["Value"]["Test"] == "download" && row["Value"]["AppInfo"] && measurement.download_total_bytes.nil?
+          measurement.download_total_bytes = row["Value"]["AppInfo"]["NumBytes"] 
         end
       end
 

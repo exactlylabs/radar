@@ -156,7 +156,7 @@ EOF
     @client.pinged_at = Time.now
     @client.raw_version = params[:version]
     @client.distribution_name = params[:distribution]
-    @client.network_interfaces = params[:network_interfaces]
+    @client.network_interfaces = JSON.parse(params[:network_interfaces])
     
     if !params[:version].nil?
       # Check client Version
