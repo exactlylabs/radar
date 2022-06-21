@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(version: 2022_06_20_214159) do
     t.boolean "staging"
     t.string "distribution_name"
     t.string "raw_secret"
-    t.string "network_interfaces"
+    t.jsonb "network_interfaces"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
@@ -127,7 +127,7 @@ ActiveRecord::Schema.define(version: 2022_06_20_214159) do
     t.bigint "user_id"
     t.string "client_version"
     t.string "client_distribution"
-    t.string "network_interfaces"
+    t.jsonb "network_interfaces"
     t.bigint "download_total_bytes"
     t.bigint "upload_total_bytes"
     t.index ["client_id"], name: "index_measurements_on_client_id"
