@@ -41,7 +41,11 @@ func (c *radarClient) Ping(clientId, secret string, meta *agent.ClientMeta) (*ag
 	form.Add("secret", secret)
 	form.Add("version", meta.Version)
 	form.Add("distribution", meta.Distribution)
-	form.Add("network_interfaces", meta.NetInterfaces)
+	ifaces, err := json.Marshal(meta.NetInterfaces)
+	if err != nil {
+		return nil, fmt.Errorf("radarClient#Ping error marshalling NetInterfaces: %w", err)
+	}
+	form.Add("network_interfaces", string(ifaces))
 	req, err := c.NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err

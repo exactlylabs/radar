@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"strings"
 	"time"
 
 	"github.com/exactlylabs/radar/agent/internal/info"
@@ -36,16 +35,16 @@ func startPingLoop(ctx context.Context, respCh chan<- *PingResponse, pinger Ping
 	}
 }
 
-func macAddresses() string {
+func macAddresses() []NetInterfaces {
 	ifaces, err := net.Interfaces()
 	if err != nil {
 		panic(fmt.Errorf("agent.macAddresses error: %w", err))
 	}
-	addresses := make([]string, 0)
+	addresses := make([]NetInterfaces, 0)
 	for _, iface := range ifaces {
 		if iface.Flags&net.FlagLoopback == 0 {
-			addresses = append(addresses, fmt.Sprintf("%s:%s", iface.Name, iface.HardwareAddr.String()))
+			addresses = append(addresses, NetInterfaces{Name: iface.Name, MAC: iface.HardwareAddr.String()})
 		}
 	}
-	return strings.Join(addresses, ",")
+	return addresses
 }
