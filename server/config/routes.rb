@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
     get 'users/edit_password' => 'devise/registrations#edit_password', as: :edit_authed_user_password
     put 'users/edit_password' => 'users/registrations#update_password', as: :update_authed_user_password
-    
+
     patch 'users/edit_name' => 'users/registrations#update_name', as: :update_authed_user_name
   end
 
@@ -91,6 +91,16 @@ Rails.application.routes.draw do
         resources :distributions
         resources :packages
       end
+    end
+  end
+
+  namespace 'client_api' do
+    namespace 'v1' do
+      options 'geocode', to: 'geolocation#code'
+      post 'geocode', to: 'geolocation#code'
+      options 'raw', to: 'raw_data#raw'
+      post 'raw', to: 'raw_data#raw'
+      get 'raw', to: 'raw_data#get_raw'
     end
   end
 

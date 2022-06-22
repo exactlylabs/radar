@@ -1,5 +1,6 @@
 import React from 'react';
 import {Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import { prettyPrintDate } from '../../utils/dates';
 
 const HistoricalValuesTable = ({
   values
@@ -7,7 +8,7 @@ const HistoricalValuesTable = ({
   <Container>
     {
       values &&
-      <TableContainer component={Paper} style={{marginTop: 20, maxHeight: 500}}>
+      <TableContainer component={Paper} style={{marginTop: 20, maxHeight: 575}}>
         <Table sx={{minWidth: 400}}>
           <TableHead>
             <TableRow>
@@ -22,11 +23,11 @@ const HistoricalValuesTable = ({
             {
               values.map((value, index) => (
                 <TableRow key={index}>
-                  <TableCell>{value.timestamp}</TableCell>
-                  <TableCell>{value.download.toFixed(3)}</TableCell>
-                  <TableCell>{value.upload.toFixed(3)}</TableCell>
-                  <TableCell>{value.latency.toFixed(0)}</TableCell>
-                  <TableCell>{value.loss.toFixed(2)}</TableCell>
+                  <TableCell>{prettyPrintDate(value.timestamp)}</TableCell>
+                  <TableCell align={'center'}>{value.download.toFixed(3)}</TableCell>
+                  <TableCell align={'center'}>{value.upload.toFixed(3)}</TableCell>
+                  <TableCell align={'center'}>{value.latency.toFixed(0)}</TableCell>
+                  <TableCell align={'center'}>{value.loss.toFixed(2)}</TableCell>
                 </TableRow>
               ))
             }
