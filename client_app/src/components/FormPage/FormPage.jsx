@@ -1,12 +1,9 @@
 import React, {useState} from 'react';
-import {Container, FormControl, TextField} from "@mui/material";
+import {FormControl, TextField} from "@mui/material";
 import {MyButton} from "../common/MyButton";
 import {MyTitle} from "../common/MyTitle";
 
-const FormPage = ({
-  goToNextStep,
-  setStep
-}) => {
+const FormPage = ({ goToNextStep }) => {
 
   const [formData, setFormData] = useState({name: null, number: null});
 
@@ -14,16 +11,15 @@ const FormPage = ({
     const value = e.target.value;
     const input = e.target.name;
     const values = {...formData};
-    if(input === 'name') values.name = value;
-    else values.number = value;
+    values[input] = value;
     setFormData(values);
   }
 
   return (
-    <Container style={{textAlign: 'center'}}>
+    <div style={{textAlign: 'center', width: '80%', margin: '10px auto'}}>
       <MyTitle text={'Address information'}/>
       <FormControl fullWidth style={{textAlign: 'center', margin: "auto"}}>
-        <div style={{display: 'flex', flexDirection: 'row'}}>
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap'}}>
           <TextField
             required
             label={'Street name'}
@@ -32,7 +28,8 @@ const FormPage = ({
             name={'name'}
             onChange={handleInputChange}
             margin={'normal'}
-            style={{width: '75%'}}
+            style={{width: '50%', minWidth: 200, maxWidth: 500, marginRight: 20}}
+            variant={'standard'}
           />
           <TextField
             required
@@ -42,16 +39,18 @@ const FormPage = ({
             name={'number'}
             onChange={handleInputChange}
             margin={'normal'}
+            variant={'standard'}
+            style={{maxWidth: 150}}
           />
         </div>
         <MyButton
-          style={{width: '50%'}}
+          style={{width: '25%', margin: '20px auto'}}
           text={'Submit'}
           onClick={() => goToNextStep(formData)}
           disabled={!formData.name || !formData.number}
         />
       </FormControl>
-    </Container>
+    </div>
   );
 }
 

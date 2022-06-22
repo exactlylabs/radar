@@ -4,10 +4,15 @@ import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import {MyButton} from "../common/MyButton";
 import * as ndt7 from '@m-lab/ndt7/src/ndt7';
-import {CircularProgress, Container} from "@mui/material";
+import {CircularProgress, Grid, Paper} from "@mui/material";
 import HistoricalValuesTable from "./HistoricalValuesTable";
 import {API_URL, LOCAL_STORAGE_KEY} from "../../constants";
 import {MyTitle} from "../common/MyTitle";
+import { NetworkCheck } from '@mui/icons-material';
+import { Box } from '@mui/system';
+import RunningTest from './RunningTest';
+import TestAverages from './TestAverages';
+import './MapPage.css';
 
 const tableWrapperStyle = {
   textAlign: 'center',
@@ -21,7 +26,7 @@ const tableWrapperStyle = {
   minWidth: 300
 };
 
-const MapPage = ({ manualAddress, setStep, maxHeight }) => {
+const MapPage = ({ manualAddress, maxHeight }) => {
 
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -202,57 +207,57 @@ const MapPage = ({ manualAddress, setStep, maxHeight }) => {
 
   return (
     <div style={{margin: 10, textAlign: 'center'}}>
-      { loading && <MyTitle text={'Loading...'}/> }
+      { loading && 
+        <div>
+          <MyTitle text={'Loading location data...'}/>
+          <CircularProgress text={'Loading...'}/> 
+        </div>
+      }
       { !loading && !location && <MyTitle text={'Error!'}/> }
       {
         !loading && location !== null &&
-        <div style={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', maxHeight: maxHeight - 75, overflowY: 'auto'}}>
-          <MapContainer
-            center={location}
-            zoom={20}
-            scrollWheelZoom
-            style={{height: maxHeight - 200, minWidth: 450, maxWidth: 800, margin: '20px auto'}}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={location} icon={customMarker}>
-              <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
-              </Popup>
-            </Marker>
-          </MapContainer
-          >
-          <div style={tableWrapperStyle}>
+        <Grid container spacing={2}>
+          <Grid item md={12} lg={6} style={{marginLeft: 'auto', marginRight: 'auto'}}>
+            <Box component={Paper} style={{padding: 10}}>
+              <MapContainer
+                center={location}
+                zoom={20}
+                scrollWheelZoom
+                style={{height: maxHeight - 200, minWidth: 450, maxWidth: 800, margin: '20px auto'}}>
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <Marker position={location} icon={customMarker}>
+                  <Popup>
+                    A pretty CSS3 popup. <br /> Easily customizable.
+                  </Popup>
+                </Marker>
+              </MapContainer
+              >
+            </Box>
+          </Grid>
+          <Grid item md={12} lg={6}>
             {
               !runningTest &&
               <MyButton
-                text={'Run speed test'}
+                text={<>
+                  <NetworkCheck style={{marginRight: 3}}/>
+                  <span>Run speed test</span>
+                </>}
                 onClick={runSpeedTest}
                 disabled={runningTest}
-                style={{width: '50%', margin: '10px auto'}}
+                style={{width: '30%', margin: '10px auto'}}
               />
             }
+            { runningTest && <RunningTest downloadValue={downloadValue} uploadValue={uploadValue} progress={progress}/> }
             {
-              runningTest &&
-              <div>
-                <CircularProgress variant="determinate" size={100} value={progress}/>
-                <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', width: '80%'}}>
-                  {downloadValue !== null && uploadValue === null && <p>{`Download: ${downloadValue.toFixed(3)} mbps`}</p>}
-                  {uploadValue !== null && <p>{`Upload: ${uploadValue.toFixed(3)} mbps`}</p>}
-                </div>
-              </div>
-            }
-            {
-              !runningTest && downloadAvgState !== null && uploadAvgState !== null &&
-              <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-                <p>{`Download avg: ${downloadAvgState.toFixed(3)} mbps`}</p>
-                <p>{`Upload avg: ${uploadAvgState.toFixed(3)} mbps`}</p>
-              </div>
+              !runningTest && uploadAvgState !== null && downloadAvgState !== null &&
+              <TestAverages uploadAvg={uploadAvgState} downloadAvg={downloadAvgState}/>
             }
             <HistoricalValuesTable values={historicalValues}/>
-          </div>
-        </div>
+          </Grid>
+        </Grid>
       }
     </div>
   );
