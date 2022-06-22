@@ -12,6 +12,7 @@ require (
 require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
+	github.com/hectane/go-acl v0.0.0-20190604041725-da78bae5fc95 // indirect
 	github.com/kardianos/service v1.2.1 // indirect
 	github.com/m-lab/go v0.1.47 // indirect
 	github.com/m-lab/locate v0.8.3 // indirect
