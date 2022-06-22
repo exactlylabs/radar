@@ -68,7 +68,7 @@ func BasePath() string {
 	}
 
 	p := filepath.Join(basePath, "radar")
-	os.Mkdir(p, 0755)
+	os.Mkdir(p, 0775)
 	return p
 }
 
