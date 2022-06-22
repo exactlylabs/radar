@@ -33,9 +33,8 @@ func SelfUpdate(binaryUrl string) error {
 	if err != nil {
 		return fmt.Errorf("update.SelfUpdate error evaluating symlink: %w", err)
 	}
-	log.Println(binPath)
+
 	tmpFile := fmt.Sprintf("%s_tmp", binPath)
-	log.Println(tmpFile)
 	f, err := os.Create(tmpFile)
 	if err != nil {
 		return fmt.Errorf("update.SelfUpdate error creating tmp file: %w", err)
