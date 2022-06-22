@@ -42,11 +42,11 @@ func mapConfigs(config *Config) map[string]reflect.Value {
 	return configs
 }
 
-func basePath() string {
+func BasePath() string {
 	if info.IsDev() {
 		basePath, err := os.Getwd()
 		if err != nil {
-			panic(fmt.Errorf("config.basePath error: %w", err))
+			panic(fmt.Errorf("config.BasePath error: %w", err))
 		}
 		return basePath
 	}
@@ -62,18 +62,20 @@ func basePath() string {
 		if err != nil {
 			basePath, err = os.Getwd()
 			if err != nil {
-				panic(fmt.Errorf("config.basePath error: %w", err))
+				panic(fmt.Errorf("config.BasePath error: %w", err))
 			}
 		}
 	}
 
-	return filepath.Join(basePath, "radar")
+	p := filepath.Join(basePath, "radar")
+	os.Mkdir(p, 0755)
+	return p
 }
 
 // Join will join the config base directory with
 // given paths
 func Join(elements ...string) string {
-	return filepath.Join(basePath(), filepath.Join(elements...))
+	return filepath.Join(BasePath(), filepath.Join(elements...))
 }
 
 // OpenFile returns a io.Writer interface that writes to the
@@ -94,7 +96,7 @@ func OpenFile(filename string, flag int, perm fs.FileMode) (*os.File, error) {
 // NewFileLoader returns an io.Reader interface that loads the filename
 // from the application configuration directory
 func NewFileLoader(filename string) (io.Reader, error) {
-	f, err := os.Open(filepath.Join(basePath(), filename))
+	f, err := os.Open(filepath.Join(BasePath(), filename))
 	if err != nil {
 		return nil, err
 	}
