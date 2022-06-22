@@ -7,76 +7,24 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"path"
-	"runtime"
 	"syscall"
 
 	"github.com/exactlylabs/radar/agent/agent"
+	"github.com/exactlylabs/radar/agent/cmd/start_agent/internal/service"
 	"github.com/exactlylabs/radar/agent/config"
 	"github.com/exactlylabs/radar/agent/internal/info"
 	ndt7speedtest "github.com/exactlylabs/radar/agent/services/ndt7"
 	"github.com/exactlylabs/radar/agent/services/ookla"
 	"github.com/exactlylabs/radar/agent/services/radar"
 	"github.com/exactlylabs/radar/agent/services/tracing"
-	"github.com/kardianos/service"
-	"github.com/natefinch/lumberjack"
 )
-
-var svcFlag = flag.String("service", "", "Control the system service.")
 
 var runners = []agent.Runner{
 	ndt7speedtest.New(),
 	ookla.New(),
 }
 
-func makeService(agent *agent.Agent, c *config.Config, ctx context.Context, cancel context.CancelFunc) service.Service {
-	svc := &agentSvc{agent, ctx, c, cancel}
-	conf := &service.Config{
-		Name:        "radar-agent",
-		DisplayName: "Radar Agent",
-		Description: "Daemon service responsible for running speedtests",
-		Option: map[string]interface{}{
-			// Windows configurations
-			"OnFailure":              "restart",
-			"OnFailureDelayDuration": "10s",
-		},
-	}
-	s, err := service.New(svc, conf)
-	if err != nil {
-		panic(err)
-	}
-	if len(*svcFlag) != 0 {
-		err := service.Control(s, *svcFlag)
-		if err != nil && err == service.ErrNotInstalled {
-			os.Exit(0)
-		} else if err != nil {
-			log.Printf("Valid actions: %q\n", service.ControlAction)
-			log.Fatal(err)
-		}
-		os.Exit(0)
-	}
-	return s
-}
-
-type agentSvc struct {
-	agent  *agent.Agent
-	ctx    context.Context
-	c      *config.Config
-	cancel context.CancelFunc
-}
-
-func (svc *agentSvc) Start(s service.Service) error {
-	go svc.agent.Start(svc.ctx, svc.c)
-	return nil
-}
-
-func (svc *agentSvc) Stop(s service.Service) error {
-	svc.cancel()
-	return nil
-}
-
 func main() {
-
 	version := flag.Bool("v", false, "Show Agent Version")
 	flag.Parse()
 
@@ -84,12 +32,8 @@ func main() {
 		fmt.Println(info.BuildInfo())
 		os.Exit(0)
 	}
-
-	// Before starting, make sure we enable logging for windows
-	if !service.Interactive() && runtime.GOOS == "windows" {
-		f := setupWindowsLogging()
-		defer f.Close()
-	}
+	// Setup this executable's Service (if running as one or a command was sent for it)
+	service.Setup()
 
 	log.Println("Starting Radar Agent")
 	log.Println(info.BuildInfo())
@@ -121,7 +65,7 @@ func main() {
 	// Initiate the agent, passing the requested interfaces and runners
 	agent := agent.NewAgent(cli, runners)
 
-	svc := makeService(agent, c, ctx, cancel)
+	svc := service.MakeService(agent, c, ctx, cancel)
 	if service.Interactive() {
 		agent.Start(ctx, c)
 		log.Println("Bye :)")
@@ -134,18 +78,4 @@ func main() {
 		}
 	}
 
-}
-
-func setupWindowsLogging() *os.File {
-	p := path.Join(os.Getenv("ProgramData"), "radar", "logs.txt")
-	f, err := os.OpenFile(p, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
-	}
-	log.SetOutput(&lumberjack.Logger{
-		Filename:   p,
-		MaxSize:    1,
-		MaxBackups: 3,
-	})
-	return f
 }
