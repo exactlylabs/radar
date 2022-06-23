@@ -55,18 +55,24 @@ SUPERUSER_TOKEN="$1"
 
 ## Start ##
 
-apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip
+apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip unzip
 
 curl --output $BINARY_NAME $RADAR_AGENT_BIN_URL
 
 
+#### NOTE: Images after 2022-01-28 appear to use .xz and before use .zip
 # Decompress the .xz file
-VERSION=2022-04-04-raspios-bullseye-arm64-lite.img
-if [ ! -f $VERSION.xz ]; then
-curl -L --output $VERSION.xz https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-04-07/$VERSION.xz 
-fi
-unxz $VERSION.xz
+#VERSION=2022-04-04-raspios-bullseye-arm64-lite.img
+# if [ ! -f $VERSION.xz ]; then
+# curl -L --output $VERSION.xz https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-04-07/$VERSION.xz 
+# fi
+# unxz $VERSION.xz
 
+VERSION=2022-01-28-raspios-bullseye-arm64-lite.img
+if [ ! -f $VERSION.zip ]; then
+curl -L --output $VERSION.zip https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-01-28/2022-01-28-raspios-bullseye-arm64-lite.zip
+fi
+unzip $VERSION.zip
 
 # Mount the .img in an available loop (/dev/loop) device
 # This makes plain files accessible as block devices 
@@ -126,6 +132,10 @@ chmod 440 tmp/etc/sudoers.d/radar_sudoers
 if [[ $ENABLE_SSH -eq 1 ]]; then
     touch tmp/boot/ssh
 fi
+
+# copy firstrun.sh to boot
+echo "$(echo -n $(cat tmp/boot/cmdline.txt)) systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target" > tmp/boot/cmdline.txt
+cp firstrun.sh tmp/boot/firstrun.sh
 
 rm tmp/usr/bin/qemu-aarch64-static
 rm tmp/root/withinnewimage.sh
