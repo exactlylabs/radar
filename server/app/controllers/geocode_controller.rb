@@ -3,10 +3,7 @@ class GeocodeController < ApplicationController
 
   def code
     if params["address"].nil?
-      ip = request.ip == "::1" ? "181.167.194.106" : request.ip
-      results = `geocode #{ip}`
-      results = results.split
-      return render json: [results[1].to_f, results[3].to_f]
+      results = Geocoder.search(request.ip)
     else
       results = Geocoder.search(params["address"])
     end

@@ -27,7 +27,12 @@
       <!--begin::Row-->
       <div class="row">
         <div class="col-12">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new_location_modal">Add a Location</button>
+          <a 
+            type="button" 
+            class="btn btn-primary" 
+            href="<%= new_location_path %>"
+            data-turbo-frame="new_location_modal"
+          >Add a Location</a>
         </div>
       </div>
       <!--end::Row-->
@@ -37,7 +42,7 @@
   <!--end::Wrapper-->
 </div>
 
-<div class="modal fade" tabindex="-1" id="new_location_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:submit-end->onboard#ifSuccessGoto4">
-  <%= turbo_frame_tag "new_location_modal", src: new_location_path do %>
+<div class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:frame-render->modal#showModal turbo:submit-end->modal#submit turbo:submit-end->onboard#ifSuccessGoto4">
+  <%= turbo_frame_tag "new_location_modal" do %>
   <% end %>
 </div>
