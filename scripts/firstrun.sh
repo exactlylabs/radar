@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# this script was taken from using raspi-imager application with some configurations set
+# and modified to disable the password for the pi user
 set +e
 
 FIRSTUSER=`getent passwd 1000 | cut -d: -f1`
