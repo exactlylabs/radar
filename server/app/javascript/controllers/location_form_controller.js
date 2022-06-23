@@ -4,12 +4,18 @@ export default class extends Controller {
   static targets = [ "name", "address", "map", "latitude", "longitude", "manualLatLong", "automaticLocation", "expectedDownload", "expectedUpload", "geoIcon", "spinner", "conditional" ];
 
   connect() {
-    const lat = this.latitudeTarget.value ? this.latitudeTarget.value : geoplugin_latitude();
-    const long = this.longitudeTarget.value ? this.longitudeTarget.value : geoplugin_longitude();
-    this.mapTarget.setAttribute('data-location-latitude-value', lat);
-    this.mapTarget.setAttribute('data-location-longitude-value', long);
-    this.spinnerTarget.classList.add("d-none");
-    this.geoIconTarget.classList.remove("d-none");
+    fetch('/geocode', { method: 'POST' })
+    .then(res => res.json())
+    .then(res => {
+      this.mapTarget.setAttribute('data-location-latitude-value', res[0]);
+      this.mapTarget.setAttribute('data-location-longitude-value', res[1]);
+      this.spinnerTarget.classList.add("d-none");
+      this.geoIconTarget.classList.remove("d-none");
+    })
+    .catch(err => {
+      // TODO: Integrate Sentry!
+      console.error(err)
+    });
   }
 
   autofillAddress(lat, lon) {

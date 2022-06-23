@@ -1,11 +1,11 @@
-<%= form_with(model: @location, data: {controller: "location-form"}) do |form| %>
+<%= form_with model: @location, data: {controller: "location-form"} do |form| %>
   <div class="modal-body">
-    <% if location.errors.any? %>
+    <% if @location&.errors.present? %>
       <div id="error_explanation">
         <h2><%= pluralize(location.errors.count, "error") %> prohibited this location from being saved:</h2>
 
         <ul>
-          <% location.errors.each do |error| %>
+          <% @location&.errors.each do |error| %>
             <li><%= error.full_message %></li>
           <% end %>
         </ul>
@@ -19,7 +19,7 @@
           <label class="required fs-6 fw-bold mb-2">Name</label>
           <!--end::Label-->
           <!--begin::Input-->
-          <%= form.text_field :name, class: "form-control form-control-solid", placeholder: 'Your location name', data: { "location-form-target" => "name" } %>
+          <%= form.text_field :name, name: "location[name]" ,class: "form-control form-control-solid", placeholder: 'Your location name', data: { "location-form-target" => "name" } %>
           <!--end::Input-->
           <div class="fv-plugins-message-container invalid-feedback"></div>
         </div>
@@ -30,7 +30,7 @@
           <!--end::Label-->
           <!--begin::Input-->
           <div class="input-group">
-            <input class="form-control form-control-solid" placeholder="Your location address" data-location-form-target="address" data-action="input->location-form#onAddressChange" type="text" name="location[address]" id="location_address" value="<%= @location.address %>">
+            <input class="form-control form-control-solid" placeholder="Your location address" data-location-form-target="address" data-action="input->location-form#onAddressChange" type="text" name="location[address]" id="location_address" value="<%= @location&.address %>">
             <div class="d-none input-group-text" style="border: none; border-radius: 6px" data-location-form-target="spinner">
               <div class="spinner-border text-primary" role="status"></div>
             </div>
@@ -48,24 +48,25 @@
 
         <div class="fv-row mb-7 fv-plugins-icon-container">
           <div class="form-check form-switch form-check-custom form-check-solid">
-            <%= form.check_box :manual_lat_long, class: "form-check-input h-30px w-50px", data: { "location-form-target" => "manualLatLong", action: "input->location-form#onManuallyChange" } %>
+            <%= form.check_box :manual_lat_long, name: "location[manual_lat_long]",class: "form-check-input h-30px w-50px", data: { "location-form-target" => "manualLatLong", action: "input->location-form#onManuallyChange" } %>
             <label class="form-check-label text-muted fw-bold" for="flexSwitchDefault">
                 Adjust coordinates manually
             </label>
           </div>
         </div>
 
-        <input id="automatic_location" name="location[automatic_location]" data-location-form-target="automaticLocation" style="display:none" value="<%= @location.automatic_location || false %>"/>
+        <input id="automatic_location" name="location[automatic_location]" data-location-form-target="automaticLocation" style="display:none" value="<%= @location&.automatic_location || false %>"/>
 
         <div class="row mb-7">
           <div class="col-6 fv-plugins-icon-container">
             <!--begin::Label-->
-            <label data-location-form-target="conditional" class="fs-6 fw-bold mb-2 <%= @location.manual_lat_long ? '' : 'text-muted'%>">Latitude</label>
+            <label data-location-form-target="conditional" class="fs-6 fw-bold mb-2 <%= @location&.manual_lat_long ? '' : 'text-muted'%>">Latitude</label>
             <!--end::Label-->
             <!--begin::Input-->
-            <%= form.text_field :latitude, 
-                class: "conditional form-control form-control-solid #{@location.manual_lat_long ? '' : 'text-muted'}", 
-                readonly: !@location.manual_lat_long, 
+            <%= form.text_field :latitude,
+                name: "location[latitude]", 
+                class: "conditional form-control form-control-solid #{@location&.manual_lat_long ? '' : 'text-muted'}", 
+                readonly: !@location&.manual_lat_long, 
                 data: { "location-form-target" => "latitude", action: "input->location-form#onLatitudeChange" } 
             %>
             <!--end::Input-->
@@ -74,13 +75,14 @@
 
           <div class="col-6 fv-plugins-icon-container">
             <!--begin::Label-->
-            <label data-location-form-target="conditional" class="fs-6 fw-bold mb-2 <%= @location.manual_lat_long ? '' : 'text-muted' %>">Longitude</label>
+            <label data-location-form-target="conditional" class="fs-6 fw-bold mb-2 <%= @location&.manual_lat_long ? '' : 'text-muted' %>">Longitude</label>
             <!--end::Label-->
             <!--begin::Input-->
             <%= form.text_field :longitude, 
-                  class: "conditional form-control form-control-solid #{@location.manual_lat_long ? '' : 'text-muted'}", 
-                  readonly: !@location.manual_lat_long, 
-                  data: { "location-form-target" => "longitude", action: "input->location-form#onLongitudeChange" } 
+                name: "location[longitude]",
+                class: "conditional form-control form-control-solid #{@location&.manual_lat_long ? '' : 'text-muted'}", 
+                readonly: !@location&.manual_lat_long, 
+                data: { "location-form-target" => "longitude", action: "input->location-form#onLongitudeChange" } 
             %>
             <!--end::Input-->
             <div class="fv-plugins-message-container invalid-feedback"></div>
@@ -93,7 +95,7 @@
             <label class="fs-6 fw-bold mb-2 required">Expected Mbps Up</label>
             <!--end::Label-->
             <!--begin::Input-->
-            <%= form.text_field :expected_mbps_up, class: "form-control form-control-solid", data: { "location-form-target" => "expectedUpload" } %>
+            <%= form.text_field :expected_mbps_up, name: "location[expected_mbps_up]", class: "form-control form-control-solid", data: { "location-form-target" => "expectedUpload" } %>
             <!--end::Input-->
             <div class="fv-plugins-message-container invalid-feedback"></div>
           </div>
@@ -103,14 +105,14 @@
             <label class="fs-6 fw-bold mb-2 required">Expected Mbps Down</label>
             <!--end::Label-->
             <!--begin::Input-->
-            <%= form.text_field :expected_mbps_down, class: "form-control form-control-solid", data: { "location-form-target" => "expectedDownload" }%>
+            <%= form.text_field :expected_mbps_down, name: "location[expected_mbps_down]", class: "form-control form-control-solid", data: { "location-form-target" => "expectedDownload" }%>
             <!--end::Input-->
             <div class="fv-plugins-message-container invalid-feedback"></div>
           </div>
         </div>
       </div>
       <div class="col-lg-6 mb-10 mb-lg-0">
-        <div style="height: 300px;" data-location-form-target="map" data-action="modal:shown->location#display" data-controller="location" data-location-latitude-value="<%= @location.latitude %>" data-location-longitude-value="<%= @location.longitude %>"></div>
+        <div style="height: 300px;" data-location-form-target="map" data-action="modal:shown->location#display" data-controller="location" data-location-latitude-value="<%= @location&.latitude %>" data-location-longitude-value="<%= @location&.longitude %>"></div>
       </div>
     </div>
   </div>
