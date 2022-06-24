@@ -166,9 +166,7 @@ const MapPage = ({ manualAddress, maxHeight }) => {
         timestamp: startTimestamp
       })
     })
-      .then(res => console.log('raw data sent!'))
-      .catch(err => console.error(err));
-    console.log('Send >> ', rawData);
+    .catch(err => console.error(err));
   }
 
   const finishTestRun = (exitCode) => {
