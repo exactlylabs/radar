@@ -17,29 +17,51 @@
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
-    <% if current_user.superuser %>
-      <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-        <!--<a href="<%= claim_clients_path %>" class="btn btn-primary">Add Pod</a>-->
+    <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
+      <% if current_user.superuser %>
         <a href="<%= staging_clients_path %>" class="btn btn-secondary mx-5">Staging Pods</a>
-      </div>
-    <% end %>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_pod_modal">Add Pod</button>
+      <% end %>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard">Add Pod</button>
+    </div>
   </div>
 </div>
 <!--end::Toolbar-->
 
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
   <!--begin::Container-->
-  <%= render 'clients_list', clients: @clients %>
+  <div class="container-xxl d-flex flex-column" style="max-width: none;">
+    <% if !params.empty? %>
+      <%= render partial: "clients_table_filters", locals: { locations: @all_locations, hasUnindexed: @clients_with_no_location.present? } %>
+    <% end %>
+    <% if @indexed_clients.empty? %>
+      <%= render partial: "empty_pods_view" %>
+    <% else %>
+      <% @indexed_clients.sort_by{|location, clients| location[:name]}.each do |location, clients| %>
+        <%= render partial: "clients_table_per_location", locals: { clients: clients, location: location } %>
+      <% end %>
+      <% if @clients_with_no_location.present? %>
+        <%= render partial: "clients_table_per_location", locals: { clients: @clients_with_no_location, location: {name: 'No location'} } %>
+      <% end %>
+    <% end %>
+  </div>
   <!--end::Container-->
 </div>
 
-<div class="modal fade" tabindex="-1" id="add_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit">
-  <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path do %>
+<div class="modal fade" tabindex="-1" id="add_pod_modal_wizard" data-controller="add-pod">
+  <%= render partial: "clients/add_pod_wizard/add_pod_modal_wizard" %>
+</div>
+
+<div class="modal fade" tabindex="-1" id="edit_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
+  <%= turbo_frame_tag "edit_client_modal", target: "add_pod_step_2", modal_target: "new_location_modal-edit" do %>
   <% end %>
 </div>
 
-<div class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
-  <%= turbo_frame_tag "edit_client_modal" do %>
+<div class="modal fade" tabindex="-1" id="new_location_modal" data-controller="add-pod" data-action="turbo:submit-start->add-pod#handleSubmitStart turbo:submit-end->add-pod#handleNewLocationFromClientModal">
+  <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "create-pod-modal", modal_target: "add_pod_modal_wizard")  do %>
+  <% end %>
+</div>
+
+<div class="modal fade" tabindex="-1" id="new_location_modal-edit" data-controller="edit-pod" data-action="turbo:submit-start->edit-pod#handleSubmitStart turbo:submit-end->edit-pod#handleNewLocationFromClientModal">
+  <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "edit-pod-modal", modal_target: "edit_pod_modal") do %>
   <% end %>
 </div>

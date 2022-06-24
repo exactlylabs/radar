@@ -9,8 +9,11 @@ class ClientsController < ApplicationController
 
   # GET /clients or /clients.json
   def index
-    #@clients = Client.where(user: current_user)
-    @clients = policy_scope(Client)
+    @status = params[:status]
+    @location = params[:location]
+    @all_locations = policy_scope(Location).where_has_client_associated
+    # New designs index clients by location
+    get_indexed_clients
   end
 
   # GET /clients/1 or /clients/1.json
@@ -54,13 +57,28 @@ class ClientsController < ApplicationController
     end
   end
 
+  def check_claim
+    @client_id = params[:id]
+    @client_secret = params[:secret]
+    @client = Client.where(unix_user: @client_id).first
+    respond_to do |format|
+      if @client && @client.authenticate_secret(@client_secret)
+        @client.user = current_user
+        format.json { render status: :ok, json: @client.to_json }
+      else
+        @error = true
+        format.json { render json: {}, status: :unprocessable_entity }
+      end
+    end
+  end
+
   def claim
     @client_id = params[:id]
     @client_secret = params[:secret]
     @location_id = params[:location_id]
     @client_name = params[:name]
 
-    location = policy_scope(Location).where(id: @location_id).first
+    location = policy_scope(Location).where(id: @location_id).first if @location_id.present?
     @client = Client.where(unix_user: @client_id).first
 
     respond_to do |format|
@@ -69,10 +87,7 @@ class ClientsController < ApplicationController
         @client.location = location
         @client.name = @client_name
         @client.save
-        format.turbo_stream {
-          render turbo_stream: turbo_stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)})
-        }
-        format.html { redirect_to clients_url, notice: "Client was successfully claimed." }
+        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully created." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
         @error = true
@@ -85,9 +100,7 @@ class ClientsController < ApplicationController
   def release
     respond_to do |format|
       if @client.update(user: nil, location: nil)
-        format.turbo_stream { render turbo_stream: turbo_stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)}) }
-        format.turbo_stream { render turbo_stream: turbo_stream.remove(@client) }
-        format.html { redirect_to clients_path, notice: "Client was successfully released." }
+        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully released." }
         format.json { head :no_content }
       end
     end
@@ -217,10 +230,11 @@ EOF
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
+    location = policy_scope(Location).find(params[:location_id]) if params[:location_id]
+    client = params[:client]
     respond_to do |format|
-      if @client.update(client_params)
-        format.turbo_stream
-        format.html { redirect_to clients_path, notice: "Client was successfully updated." }
+      if @client.update(name: client[:name], location: location)
+        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -233,10 +247,7 @@ EOF
   def destroy
     @client.destroy
     respond_to do |format|
-      format.turbo_stream {
-        render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: policy_scope(Client)})
-      }
-      format.html { redirect_to clients_url, notice: "Client was successfully destroyed." }
+      format.html { redirect_back fallback_location: root_path, notice: "Client was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -273,7 +284,27 @@ EOF
       end
     end
     
-      def json_request?
-        request.format.symbol == :json
+    def json_request?
+      request.format.symbol == :json
+    end
+
+    def get_indexed_clients
+      @clients = policy_scope(Client)
+      if @location.present?
+        @clients = @clients.where(location: @location) if @location.to_i != -1
+        @clients = @clients.where_no_location if @location.to_i == -1
       end
+      @clients = @clients.where_online if @status == "online"
+      @clients = @clients.where_offline if @status == "offline"
+      @indexed_clients = {}
+      @clients.each do |client|
+        if client.location
+          @indexed_clients[client.location] = [] if @indexed_clients[client.location].nil?
+          @indexed_clients[client.location].append(client)
+        else
+          @clients_with_no_location = [] if @clients_with_no_location.nil?
+          @clients_with_no_location.append(client)
+        end
+      end
+    end
 end

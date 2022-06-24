@@ -18,7 +18,12 @@
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#new_location_modal">Add Location</button>
+      <a 
+        type="button" 
+        class="btn btn-primary" 
+        href="<%= new_location_path %>" 
+        data-turbo-frame="new_location_modal"
+      >Add Location</a>
     </div>
   </div>
 </div>
@@ -71,8 +76,8 @@
   </div>
 <% end %>
 
-<div class="modal fade" tabindex="-1" id="new_location_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit">
-  <%= turbo_frame_tag "new_location_modal", src: new_location_path do %>
+<div class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
+  <%= turbo_frame_tag "new_location_modal" do %>
   <% end %>
 </div>
 

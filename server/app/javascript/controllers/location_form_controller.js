@@ -1,9 +1,63 @@
 import { add, Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "address", "map", "latitude", "longitude", "manualLatLong", "conditional" ];
+  static targets = [ "name", "address", "map", "latitude", "longitude", "manualLatLong", "automaticLocation", "expectedDownload", "expectedUpload", "geoIcon", "spinner", "conditional" ];
 
   connect() {
+    fetch('/geocode', { method: 'POST' })
+    .then(res => res.json())
+    .then(res => {
+      this.mapTarget.setAttribute('data-location-latitude-value', res[0]);
+      this.mapTarget.setAttribute('data-location-longitude-value', res[1]);
+      this.spinnerTarget.classList.add("d-none");
+      this.geoIconTarget.classList.remove("d-none");
+    })
+    .catch(err => {
+      // TODO: Integrate Sentry!
+      console.error(err)
+    });
+  }
+
+  autofillAddress(lat, lon) {
+    let that = this;
+    clearTimeout(this.addressTimeout);
+    this.addressTimeout = setTimeout(function() {
+      let formData = new FormData();
+      formData.append("query", `[${lat}, ${lon}]`);
+      fetch('/reverse_geocode', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => that.addressTarget.value = `${data[1]}, ${data[0]}`)
+      .catch(err => {
+        // TODO: Integrate Sentry reporting!
+        console.error(err);
+      })
+      .finally(() => {
+        this.spinnerTarget.classList.add("d-none");
+        this.geoIconTarget.classList.remove("d-none");
+      });
+    }.bind(this), 1000)
+  }
+
+  autofillGeoData() {
+    this.spinnerTarget.classList.remove("d-none");
+    this.geoIconTarget.classList.add("d-none");
+    if('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const userGeoLatitude = position.coords.latitude;
+          const userGeoLongitude = position.coords.longitude;
+          this.latitudeTarget.value = userGeoLatitude;
+          this.longitudeTarget.value = userGeoLongitude;
+          this.mapTarget.setAttribute('data-location-latitude-value', userGeoLatitude);
+          this.mapTarget.setAttribute('data-location-longitude-value', userGeoLongitude);
+          this.autofillAddress(userGeoLatitude, userGeoLongitude);
+          this.automaticLocationTarget.value = true;
+        }
+      )
+    }
   }
 
   fetchGeoData(address) {
@@ -32,7 +86,7 @@ export default class extends Controller {
 
   onAddressChange(e) {
     const isSwitchOn = this.manualLatLongTarget.checked;
-    if(isSwitchOn) return; // If switch is on, prevent geo searching
+    if(isSwitchOn || this.automaticLocationTarget.value === 'true') return; // If switch is on, prevent geo searching
     this.fetchGeoData(e.target.value);
   }
 
@@ -71,5 +125,16 @@ export default class extends Controller {
         element.removeAttribute('readonly');
       }
     });
+  }
+
+  clearLocationModalAndClose() {
+    this.nameTarget.value = null;
+    this.addressTarget.value = null;
+    this.latitudeTarget.value = null;
+    this.longitudeTarget.value = null;
+    this.manualLatLongTarget.checked = false;
+    this.expectedUploadTarget.value = null;
+    this.expectedDownloadTarget.value = null;
+    $('#new_location_modal').modal('hide');
   }
 }

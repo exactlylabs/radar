@@ -43,6 +43,22 @@ ActiveRecord::Schema.define(version: 2022_06_20_214159) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "client_facing_app_measurements", force: :cascade do |t|
+    t.datetime "tested_at"
+    t.float "latitude"
+    t.float "longitude"
+    t.float "download_avg"
+    t.float "upload_avg"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "ip"
+    t.string "token"
+    t.string "download_id"
+    t.string "upload_id"
+    t.float "latency"
+    t.float "loss"
+  end
+
   create_table "client_versions", force: :cascade do |t|
     t.string "version"
     t.datetime "created_at", precision: 6, null: false
@@ -105,9 +121,10 @@ ActiveRecord::Schema.define(version: 2022_06_20_214159) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
+    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
-    t.boolean "manual_lat_long", default: false
+    t.boolean "automatic_location", default: false
     t.index ["user_id"], name: "index_locations_on_user_id"
   end
 

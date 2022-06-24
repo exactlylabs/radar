@@ -3,7 +3,6 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" style="font-size: 20px">Add Location</h5>
-
         <!--begin::Close-->
         <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
           <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
@@ -19,7 +18,7 @@
         <!--end::Close-->
       </div>
 
-      <%= render 'form', location: @location, submit_name: "Create" %>
+      <%= render 'form', location: @location, submit_name: "Create", data_target: params[:data_target], modal_target: params[:modal_target] %>
     </div>
   </div>
 <% end %>
