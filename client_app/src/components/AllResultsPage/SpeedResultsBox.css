@@ -1,0 +1,19 @@
+.my-list {
+  height: 'max-content';
+}
+
+.filter-list-item {
+  display: flex;
+  align-items: center;
+  margin: 5px 0px;
+  padding: 0px 5px;
+}
+
+.filter-list-item:hover {
+  cursor: pointer;
+  background-color: rgba(245, 245, 245, 1);
+}
+
+.bolder > span {
+  font-weight: bold;
+}
