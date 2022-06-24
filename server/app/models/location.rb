@@ -13,6 +13,8 @@ class Location < ApplicationRecord
 
   scope :where_offline, -> { left_joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) = 0") }
 
+  scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
+
   def latest_download
     latest_measurement ? latest_measurement.download : nil
   end
@@ -64,10 +66,14 @@ class Location < ApplicationRecord
   private
 
   def custom_geocode
-    if self.manual_lat_long
-      results = Geocoder.search([self.latitude, self.longitude])
-    else
+    # if user manually set lat/long or clicked on the auto-locate
+    # then we should use those values of lat/long for fips location
+    # instead of the address (cause that value could have been overriden
+    # with some other value on purpose)
+    if !self.manual_lat_long && !self.automatic_location
       results = Geocoder.search(self.address)
+    else
+      results = Geocoder.search([self.latitude, self.longitude])
     end
     if geo = results.first
       self.state_fips, self.county_fips = FipsGeocoderCli::get_fips_codes geo.latitude, geo.longitude

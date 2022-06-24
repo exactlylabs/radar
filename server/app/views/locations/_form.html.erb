@@ -1,11 +1,11 @@
-<%= form_with(model: @location, data: {controller: "location-form"}) do |form| %>
+<%= form_with model: @location, data: {controller: "location-form"} do |form| %>
   <div class="modal-body">
-    <% if location.errors.any? %>
+    <% if @location&.errors.present? %>
       <div id="error_explanation">
         <h2><%= pluralize(location.errors.count, "error") %> prohibited this location from being saved:</h2>
 
         <ul>
-          <% location.errors.each do |error| %>
+          <% @location&.errors.each do |error| %>
             <li><%= error.full_message %></li>
           <% end %>
         </ul>
@@ -19,7 +19,7 @@
           <label class="required fs-6 fw-bold mb-2">Name</label>
           <!--end::Label-->
           <!--begin::Input-->
-          <%= form.text_field :name, class: "form-control form-control-solid", placeholder: 'Your location name' %>
+          <%= form.text_field :name, name: "location[name]" ,class: "form-control form-control-solid", placeholder: 'Your location name', data: { "location-form-target" => "name" } %>
           <!--end::Input-->
           <div class="fv-plugins-message-container invalid-feedback"></div>
         </div>
@@ -29,30 +29,44 @@
           <label class="required fs-6 fw-bold mb-2">Address</label>
           <!--end::Label-->
           <!--begin::Input-->
-          <%= form.text_field :address, class: "form-control form-control-solid", placeholder: 'Your location address', data: { "location-form-target" => "address", action: "input->location-form#onAddressChange" } %>
+          <div class="input-group">
+            <input class="form-control form-control-solid" placeholder="Your location address" data-location-form-target="address" data-action="input->location-form#onAddressChange" type="text" name="location[address]" id="location_address" value="<%= @location&.address %>">
+            <div class="d-none input-group-text" style="border: none; border-radius: 6px" data-location-form-target="spinner">
+              <div class="spinner-border text-primary" role="status"></div>
+            </div>
+            <span class="input-group-text svg-icon svg-icon-primary svg-icon-2x" style="border: none; cursor: pointer;" data-action="click->location-form#autofillGeoData" data-location-form-target="geoIcon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path opacity="0.3" d="M21 11H18.9C18.5 7.9 16 5.49998 13 5.09998V3C13 2.4 12.6 2 12 2C11.4 2 11 2.4 11 3V5.09998C7.9 5.49998 5.50001 8 5.10001 11H3C2.4 11 2 11.4 2 12C2 12.6 2.4 13 3 13H5.10001C5.50001 16.1 8 18.4999 11 18.8999V21C11 21.6 11.4 22 12 22C12.6 22 13 21.6 13 21V18.8999C16.1 18.4999 18.5 16 18.9 13H21C21.6 13 22 12.6 22 12C22 11.4 21.6 11 21 11ZM12 17C9.2 17 7 14.8 7 12C7 9.2 9.2 7 12 7C14.8 7 17 9.2 17 12C17 14.8 14.8 17 12 17Z" fill="black"/>
+                <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" fill="black"/>
+              </svg>
+            </span>
+          </div>
           <!--end::Input-->
           <div class="fv-plugins-message-container invalid-feedback"></div>
         </div>
 
         <div class="fv-row mb-7 fv-plugins-icon-container">
           <div class="form-check form-switch form-check-custom form-check-solid">
-            <%= form.check_box :manual_lat_long, class: "form-check-input h-30px w-50px", data: { "location-form-target" => "manualLatLong", action: "input->location-form#onManualChange" } %>
+            <%= form.check_box :manual_lat_long, name: "location[manual_lat_long]",class: "form-check-input h-30px w-50px", data: { "location-form-target" => "manualLatLong", action: "input->location-form#onManuallyChange" } %>
             <label class="form-check-label text-muted fw-bold" for="flexSwitchDefault">
                 Adjust coordinates manually
             </label>
           </div>
         </div>
 
+        <input id="automatic_location" name="location[automatic_location]" data-location-form-target="automaticLocation" style="display:none" value="<%= @location&.automatic_location || false %>"/>
+
         <div class="row mb-7">
           <div class="col-6 fv-plugins-icon-container">
             <!--begin::Label-->
-            <label class="conditional fs-6 fw-bold mb-2 <%= @location.manual_lat_long ? '' : 'text-muted'%>" data-location-form-target="conditional">Latitude</label>
+            <label data-location-form-target="conditional" class="fs-6 fw-bold mb-2 <%= @location&.manual_lat_long ? '' : 'text-muted'%>">Latitude</label>
             <!--end::Label-->
             <!--begin::Input-->
-            <%= form.text_field :latitude, 
-                  class: "form-control form-control-solid #{@location.manual_lat_long ? '' : 'text-muted'}", 
-                  readonly: !@location.manual_lat_long, 
-                  data: { "location-form-target" => "latitude", action: "input->location-form#onLatitudeChange" } 
+            <%= form.text_field :latitude,
+                name: "location[latitude]", 
+                class: "conditional form-control form-control-solid #{@location&.manual_lat_long ? '' : 'text-muted'}", 
+                readonly: !@location&.manual_lat_long, 
+                data: { "location-form-target" => "latitude", action: "input->location-form#onLatitudeChange" } 
             %>
             <!--end::Input-->
             <div class="fv-plugins-message-container invalid-feedback"></div>
@@ -60,13 +74,14 @@
 
           <div class="col-6 fv-plugins-icon-container">
             <!--begin::Label-->
-            <label class="fs-6 fw-bold mb-2 <%= @location.manual_lat_long ? '' : 'text-muted' %>" data-location-form-target="conditional">Longitude</label>
+            <label data-location-form-target="conditional" class="fs-6 fw-bold mb-2 <%= @location&.manual_lat_long ? '' : 'text-muted' %>">Longitude</label>
             <!--end::Label-->
             <!--begin::Input-->
             <%= form.text_field :longitude, 
-                  class: "form-control form-control-solid #{@location.manual_lat_long ? '' : 'text-muted'}", 
-                  readonly: !@location.manual_lat_long, 
-                  data: { "location-form-target" => "longitude", action: "input->location-form#onLongitudeChange" } 
+                name: "location[longitude]",
+                class: "conditional form-control form-control-solid #{@location&.manual_lat_long ? '' : 'text-muted'}", 
+                readonly: !@location&.manual_lat_long, 
+                data: { "location-form-target" => "longitude", action: "input->location-form#onLongitudeChange" } 
             %>
             <!--end::Input-->
             <div class="fv-plugins-message-container invalid-feedback"></div>
@@ -79,7 +94,7 @@
             <label class="fs-6 fw-bold mb-2 required">Expected Mbps Up</label>
             <!--end::Label-->
             <!--begin::Input-->
-            <%= form.text_field :expected_mbps_up, class: "form-control form-control-solid" %>
+            <%= form.text_field :expected_mbps_up, name: "location[expected_mbps_up]", class: "form-control form-control-solid", data: { "location-form-target" => "expectedUpload" } %>
             <!--end::Input-->
             <div class="fv-plugins-message-container invalid-feedback"></div>
           </div>
@@ -89,20 +104,24 @@
             <label class="fs-6 fw-bold mb-2 required">Expected Mbps Down</label>
             <!--end::Label-->
             <!--begin::Input-->
-            <%= form.text_field :expected_mbps_down, class: "form-control form-control-solid" %>
+            <%= form.text_field :expected_mbps_down, name: "location[expected_mbps_down]", class: "form-control form-control-solid", data: { "location-form-target" => "expectedDownload" }%>
             <!--end::Input-->
             <div class="fv-plugins-message-container invalid-feedback"></div>
           </div>
         </div>
       </div>
       <div class="col-lg-6 mb-10 mb-lg-0">
-        <div style="height: 300px;" data-location-form-target="map" data-action="modal:shown->location#display" data-controller="location" data-location-latitude-value="<%= @location.latitude %>" data-location-longitude-value="<%= @location.longitude %>"></div>
+        <div style="height: 300px;" data-location-form-target="map" data-action="modal:shown->location#display" data-controller="location" data-location-latitude-value="<%= @location&.latitude %>" data-location-longitude-value="<%= @location&.longitude %>"></div>
       </div>
     </div>
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-    <%= form.submit submit_name, class: "btn btn-primary" %>
+    <button type="button" class="btn btn-light" data-bs-dismiss="modal" data-action="click->location-form#clearLocationModalAndClose">Cancel</button>
+    <% if data_target.present? %>
+      <%= form.submit submit_name, class: "btn btn-primary", data: { "target": "modal.#{data_target}", "bs-toggle" => "modal", "bs-target" => modal_target } %>
+    <% else %>
+      <%= form.submit submit_name, class: "btn btn-primary" %>
+    <% end %>
   </div>
 <% end %>

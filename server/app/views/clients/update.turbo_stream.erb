@@ -5,3 +5,7 @@
 <%= turbo_stream.replace "client-details" do %>
   <%= render partial: 'clients/client_details', locals: {client: @client} %>
 <% end %>
+
+<%= turbo_stream.replace @client do %>
+  <%= render partial: "clients_table_row", locals: { client: @client }%>
+<% end %>

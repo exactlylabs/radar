@@ -60,9 +60,10 @@
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post" style="max-height: 68vh">
   <!--begin::Container-->
   <div class="container-xxl w-100 mw-100" data-controller="onboard" data-onboard-step-value="<%= @onboard_step %>">
-    <div data-onboard-target="wizard" class="<%= @onboard_step < 0 ? "d-none" : "" %>">
+    <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
       <%= render partial: "onboard", locals: { step: @onboard_step } %>
     </div>
+    <% if @locations.length > 0 || params[:filter].present? %>
     <div class="row h-100 w-100">
       <div class="col-4 h-100 pe-6">
         <div class="" style="max-height: 100%; overflow: scroll">
@@ -125,6 +126,7 @@
         <div class="position-absolute top-0 bottom-0 start-0 end-0 <%= @onboard_step > 0 ? "d-none" : "" %>" data-onboard-target="map"  id="map"></div>
       </div>
     </div>
+    <% end %>
   </div>
   <!--end::Container-->
 </div>

@@ -45,3 +45,9 @@ application.register("map", MapController);
 
 import AddClientToLocation from "./add_client_to_location_controller.js"
 application.register("add-client-to-location", AddClientToLocation)
+
+import AddPodController from "./add_pod_controller.js"
+application.register("add-pod", AddPodController);
+
+import EditPodController from "./edit_pod_controller.js"
+application.register("edit-pod", EditPodController);

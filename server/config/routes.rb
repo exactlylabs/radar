@@ -51,6 +51,8 @@ Rails.application.routes.draw do
       post 'status', to: 'clients#check_public_status'
       post 'claim'
       get 'claim', to: 'clients#claim_form'
+      get 'check_claim', to: 'clients#check_claim_form'
+      post 'check_claim', to: 'clients#check_claim'
     end
   end
 
@@ -74,6 +76,7 @@ Rails.application.routes.draw do
   end
 
   post 'geocode', to: 'geocode#code'
+  post 'reverse_geocode', to: 'geocode#reverse_code'
   get 'dashboard', to: 'dashboard#index'
   
   namespace 'api' do

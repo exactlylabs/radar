@@ -13,6 +13,8 @@ class Client < ApplicationRecord
   has_secure_password :secret, validations: false
 
   scope :where_online, -> { where("pinged_at > ?", 1.minute.ago)}
+  scope :where_offline, -> { where("pinged_at <= ? OR pinged_at IS NULL", 1.minute.ago) }
+  scope :where_no_location, -> { where("location_id IS NULL") }
 
   def latest_download
     latest_measurement ? latest_measurement.download : nil
@@ -42,12 +44,12 @@ class Client < ApplicationRecord
   end
 
   def test_requested?
-    self.test_requested || (self.location && self.location.test_requested)
+    self.test_requested || self.location&.test_requested
   end
 
   def status
     if self.online?
-      if test_requested
+      if test_requested?
         "Test running"
       else
         "Active"
@@ -59,7 +61,7 @@ class Client < ApplicationRecord
 
   def status_style
     if self.online?
-      if test_requested
+      if test_requested?
         "badge-light-primary"
       else
         "badge-light-success"
