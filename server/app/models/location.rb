@@ -1,4 +1,5 @@
 require "#{Rails.root}/lib/fips/fips_geocoder.rb"
+require "csv"
 
 class Location < ApplicationRecord
   validates :name, :address, presence: true
@@ -61,6 +62,32 @@ class Location < ApplicationRecord
     end
     diff = avg - self.expected_mbps_up
     diff_to_human(diff, self.expected_mbps_up)
+  end
+
+  def self.to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << %w{id name address latitude longitude user_id created_at expected_mbps_up expected_mbps_down state county manual_lat_long state_fips county_fips automatic_location}
+
+      includes(:user).each do |location|
+        csv << [
+          location.id,
+          location.name,
+          location.address,
+          location.latitude,
+          location.longitude,
+          location.user ? location.user.id : "",
+          location.created_at.strftime("%m/%d/%Y %H:%M:%S"),
+          location.expected_mbps_up,
+          location.expected_mbps_down,
+          location.state,
+          location.county,
+          location.manual_lat_long,
+          location.state_fips,
+          location.county_fips,
+          location.automatic_location
+        ]
+      end
+    end
   end
 
   private
