@@ -79,6 +79,14 @@ Rails.application.routes.draw do
   post 'reverse_geocode', to: 'geocode#reverse_code'
   get 'dashboard', to: 'dashboard#index'
   
+  resources :exports do
+    collection do
+      get 'all'
+      get 'locations'
+      get 'clients'
+    end
+  end
+
   namespace 'api' do
     namespace 'v1' do
       resources :client_versions, constraints: {id: /[^\/]+/} do

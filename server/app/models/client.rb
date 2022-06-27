@@ -108,6 +108,27 @@ class Client < ApplicationRecord
     self.measurements.order(created_at: :desc).first
   end
 
+  def self.to_csv
+    CSV.generate(headers: true) do |csv|
+      csv << %w{id client_id user_id location_id name address latitude longitude pinged_at created_at}
+
+      includes(:location, :user).each do |client|
+        csv << [
+          client.id,
+          client.unix_user,
+          client.user ? measurement.user.id : "",
+          client.location ? measurement.location.id : "",
+          client.name,
+          client.address,
+          client.latitude,
+          client.longitude,
+          client.pinged_at ? client.pinged_at.strftime("%m/%d/%Y %H:%M:%S") : "",
+          client.created_at.strftime("%m/%d/%Y %H:%M:%S")
+        ]
+      end
+    end
+  end
+
   private
 
   def create_ids
