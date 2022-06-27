@@ -44,10 +44,4 @@ class ExportsController < ApplicationController
       head(403)
     end
   end
-
-  def write_data(file, data)
-    data.split('\n').each do |line|
-      file.write(line)
-    end
-  end
 end
