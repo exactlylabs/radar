@@ -10,7 +10,7 @@ class MeasurementsController < ApplicationController
   end
 
   def full_index
-    if !current_user.superuser
+    if !current_user.superuser && !current_user.exportuser
       render nothing: true, status: :unauthorized
     end
 
@@ -20,7 +20,7 @@ class MeasurementsController < ApplicationController
   end
 
   def full_ndt7_index
-    if !current_user.superuser
+    if !current_user.superuser && !current_user.exportuser
       render nothing: true, status: :unauthorized
     end
 

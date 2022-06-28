@@ -1,40 +1,32 @@
 require "zip"
 
 class ExportsController < ApplicationController
+  before_action :authenticate_user!
+  before_action :authenticate_token!
   before_action :ensure_exportuser!
 
   # GET /exports/all
   def all
-    @locations = Location.all.to_csv
-    @clients = Client.all.to_csv
-    @all_measurements = Measurement.all.to_csv
-    @all_ndt7_measurements = Measurement.where(style: "NDT7").to_csv
-    # Do we want ookla on its own as well?
-    # @all_ookla_measurements = Measurement.where(style: "OOKLA").to_csv
+    @locations = Location.all.to_csv_file
+    @clients = Client.all.to_csv_file
+    @all_measurements = Measurement.all.to_csv_file
+    @all_ndt7_measurements = Measurement.where(style: "NDT7").to_ndt7_csv_file
 
-    begin
-      Zip::File.open("tmp.zip", create: true) do |zip|
-        zip.get_output_stream("locations.csv") { |f| f.puts(@locations) }
-        zip.get_output_stream("clients.csv") { |f| f.puts(@clients) }
-        zip.get_output_stream("all_measurements.csv") { |f| f.puts(@all_measurements) }
-        zip.get_output_stream("all_ndt7_measurements.csv") { |f| f.puts(@all_ndt7_measurements) }
-      end
+    file_stream = Zip::OutputStream.write_buffer do |zos|
+      zos.put_next_entry "locations.csv"
+      zos << IO.read(@locations)
+      zos.put_next_entry "clients.csv"
+      zos << IO.read(@clients)
+      zos.put_next_entry "all_measurements.csv"
+      zos << IO.read(@all_measurements)
+      zos.put_next_entry "all_ndt7_measurements.csv"
+      zos << IO.read(@all_ndt7_measurements)
     end
-    zip_data = File.read("tmp.zip")
-    respond_to do |format|
-      format.zip { send_data zip_data, filename: "data.zip" }
-    end
-  end
 
-  def locations
-    respond_to do |format|
-      format.csv { send_data Location.all.to_csv, filename: "locations.csv" }
-    end
-  end
+    file_stream.rewind
 
-  def clients
     respond_to do |format|
-      format.csv { send_data Client.all.to_csv, filename: "clients.csv" }
+      format.zip { send_data file_stream.read, type: :zip, disposition: :attachment, filename: "data-#{Time.now.to_i}.zip" }
     end
   end
 
@@ -42,6 +34,15 @@ class ExportsController < ApplicationController
   def ensure_exportuser!
     if !current_user.exportuser
       head(403)
+    end
+  end
+
+  def authenticate_token!
+    if !request.headers["Authorization"].nil?
+      token = request.headers["Authorization"].split(" ")
+      if token.size == 2
+        @user = User.where({"token": token[1]}).first
+      end
     end
   end
 end

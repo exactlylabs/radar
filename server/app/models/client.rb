@@ -108,12 +108,11 @@ class Client < ApplicationRecord
     self.measurements.order(created_at: :desc).first
   end
 
-  def self.to_csv
-    CSV.generate(headers: true) do |csv|
-      csv << %w{id client_id user_id location_id name address latitude longitude pinged_at created_at}
-
-      includes(:location, :user).each do |client|
-        csv << [
+  def self.to_csv_enumerator
+    @enumerator = Enumerator.new do |yielder|
+      yielder << CSV.generate_line(%w{id client_id user_id location_id name address latitude longitude pinged_at created_at})
+      includes(:location, :user).find_each do |client|
+        yielder << CSV.generate_line([
           client.id,
           client.unix_user,
           client.user ? measurement.user.id : "",
@@ -124,9 +123,19 @@ class Client < ApplicationRecord
           client.longitude,
           client.pinged_at ? client.pinged_at.strftime("%m/%d/%Y %H:%M:%S") : "",
           client.created_at.strftime("%m/%d/%Y %H:%M:%S")
-        ]
+        ])
       end
     end
+  end
+
+  def self.to_csv_file
+    tmp_file = Tempfile.new("clients.csv")
+    File.open(tmp_file.path, 'w') do |file|
+      to_csv_enumerator.each do |line|
+        file.write(line)
+      end
+    end
+    tmp_file
   end
 
   private
