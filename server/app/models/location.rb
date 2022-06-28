@@ -64,12 +64,11 @@ class Location < ApplicationRecord
     diff_to_human(diff, self.expected_mbps_up)
   end
 
-  def self.to_csv
-    CSV.generate(headers: true) do |csv|
-      csv << %w{id name address latitude longitude user_id created_at expected_mbps_up expected_mbps_down state county manual_lat_long state_fips county_fips automatic_location}
-
-      includes(:user).each do |location|
-        csv << [
+  def self.to_csv_enumerator
+    @enumerator = Enumerator.new do |yielder|
+      yielder << CSV.generate_line(%w{id name address latitude longitude user_id created_at expected_mbps_up expected_mbps_down state county manual_lat_long state_fips county_fips automatic_location})
+      includes(:user).find_each do |location|
+        yielder << CSV.generate_line([
           location.id,
           location.name,
           location.address,
@@ -85,9 +84,19 @@ class Location < ApplicationRecord
           location.state_fips,
           location.county_fips,
           location.automatic_location
-        ]
+        ])
       end
     end
+  end
+
+  def self.to_csv_file
+    tmp_file = Tempfile.new("locations.csv")
+    File.open(tmp_file.path, 'w') do |file|
+      to_csv_enumerator.each do |line|
+        file.write(line)
+      end
+    end
+    tmp_file
   end
 
   private
