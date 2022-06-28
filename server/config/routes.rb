@@ -82,8 +82,6 @@ Rails.application.routes.draw do
   resources :exports do
     collection do
       get 'all'
-      get 'locations'
-      get 'clients'
     end
   end
 
