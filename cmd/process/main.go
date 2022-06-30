@@ -6,9 +6,11 @@ import (
 	"os"
 	"time"
 
+	"github.com/exactlylabs/mlab-processor/pkg/app/config"
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher"
 	"github.com/exactlylabs/mlab-processor/pkg/app/geocoder"
 	"github.com/exactlylabs/mlab-processor/pkg/app/ipgeocoder"
+	"github.com/exactlylabs/mlab-processor/pkg/services/storage"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 )
 
@@ -27,6 +29,7 @@ func main() {
 	endPtr := flag.String("end", yesterday.Format("2006-01-02"), "Last date to run pipeline from (inclusive). If empty, set to yesterday")
 	rerunPtr := flag.Bool("rerun", false, "Ignore previously collected data and force reprocessing")
 	debug := flag.Bool("debug", false, "Print some debugging information")
+	upload := flag.Bool("upload", false, "Set to upload generated files to cloud storage")
 
 	flag.Parse()
 	args := flag.Args()
@@ -49,21 +52,37 @@ func main() {
 		os.Exit(1)
 	}
 
-	switch args[0] {
-	case "fetch":
-		fetcher.Fetch(start, end, *rerunPtr)
-	case "geoip":
-		ipgeocoder.Geocode(start, end, *rerunPtr)
-	case "geocode":
-		geocoder.ReverseGeocode(start, end, *rerunPtr)
-	case "all":
-		fetcher.Fetch(start, end, *rerunPtr)
-		ipgeocoder.Geocode(start, end, *rerunPtr)
-		geocoder.ReverseGeocode(start, end, *rerunPtr)
-	default:
-		usage()
-		os.Exit(1)
+	if *upload {
+		storage.ConfigureUpload(
+			map[string]string{
+				"geocode": config.GetConfig().UploadBucketName,
+				"reverse": config.GetConfig().UploadBucketName,
+			},
+			// Any authentication config here...
+		)
 	}
+	for _, arg := range args {
+		switch arg {
+		case "fetch":
+			fetcher.Fetch(start, end, *rerunPtr)
+		case "geoip":
+			ipgeocoder.Geocode(start, end, *rerunPtr)
+			ipgeocoder.Clear()
+		case "geocode":
+			geocoder.ReverseGeocode(start, end, *rerunPtr)
+			geocoder.Clear()
+		case "all":
+			fetcher.Fetch(start, end, *rerunPtr)
+			ipgeocoder.Geocode(start, end, *rerunPtr)
+			ipgeocoder.Clear()
+			geocoder.ReverseGeocode(start, end, *rerunPtr)
+			geocoder.Clear()
+		default:
+			usage()
+			os.Exit(1)
+		}
+	}
+
 	if *debug {
 		timer.PrintAll()
 	}
