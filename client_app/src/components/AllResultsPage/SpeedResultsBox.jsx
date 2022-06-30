@@ -1,84 +1,83 @@
-import React, { useState } from 'react';
-import { Box, List, ListItem, ListItemIcon, ListItemText, Paper } from '@mui/material';
+import React from 'react';
+import {Box, List, ListItem, ListItemIcon, ListItemText, Paper} from '@mui/material';
 import { Adjust, CheckCircle } from '@mui/icons-material';
-import { SPEED_FILTERS } from "../../constants";
+import { DOWNLOAD_SPEED_LIMIT, SPEED_FILTERS } from "../../utils/speeds";
 import './SpeedResultsBox.css';
 
-const SpeedResultsBox = ({ setFilter }) => {
+const SpeedResultsBox = ({ selectedFilter, setSelectedFilter }) => {
 
-  const [selectedFilter, setSelectedFilter] = useState(null);
-
-  const selectFilter = filter => {
-    if(selectedFilter === filter) {
-      setSelectedFilter(null);
-      setFilter(null);  
-    } else {
-      setSelectedFilter(filter);
-      setFilter(filter);
-    }
+  const handleFilterClick = (e) => {
+    e.preventDefault();
+    const target = e.target.offsetParent ?? e.target;
+    const filterName = target.getAttribute('name');
+    setSelectedFilter(selectedFilter === filterName ? null : filterName);
   }
 
   return (
     <Box component={Paper}>
       <List
-        className={'my-list'}
+        className={'speed-results-box--my-list'}
         dense={false}
       >
         <ListItem
-          className={'filter-list-item'}
-          onClick={() => selectFilter(SPEED_FILTERS.HIGH)} 
+          className={'speed-results-box--filter-list-item'}
+          onClick={handleFilterClick}
+          name={SPEED_FILTERS.HIGH}
           style={{ cursor: 'pointer', backgroundColor: selectedFilter === SPEED_FILTERS.HIGH ? 'rgba(245, 245, 245)' : ''}}
         >
-          <ListItemIcon style={{minWidth: 'min-content', width: 'min-content'}}>
+          <ListItemIcon style={{minWidth: 'min-content', width: 'min-content'}} name={SPEED_FILTERS.HIGH}>
             {
               selectedFilter === SPEED_FILTERS.HIGH ?
-              <CheckCircle style={{color: 'green'}}/> :
-              <Adjust style={{color: 'green'}}/>
+              <CheckCircle style={{color: 'green'}} name={SPEED_FILTERS.HIGH}/> :
+              <Adjust style={{color: 'green'}} name={SPEED_FILTERS.HIGH}/>
             }
           </ListItemIcon>
           <ListItemText
-            className={`my-list-item-text ${selectedFilter === SPEED_FILTERS.HIGH ? 'bolder' : ''}`}
+            className={`speed-results-box--my-list-item-text ${selectedFilter === SPEED_FILTERS.HIGH ? 'bolder' : ''}`}
+            name={SPEED_FILTERS.HIGH}
             style={{width: 'min-content', textAlign: 'left', marginLeft: 10}}
             primary={'High speed'}
-            secondary={'> 50 mbps'}
+            secondary={`> ${DOWNLOAD_SPEED_LIMIT.HIGH} mbps`}
           />
         </ListItem>
         <ListItem 
-          className={'filter-list-item'}
-          onClick={() => selectFilter(SPEED_FILTERS.MID)}
+          className={'speed-results-box--filter-list-item'}
+          onClick={handleFilterClick}
+          name={SPEED_FILTERS.MID}
           style={{ backgroundColor: selectedFilter === SPEED_FILTERS.MID ? 'rgba(245, 245, 245)' : ''}}
         >
           <ListItemIcon style={{minWidth: 'min-content', width: 'min-content'}}>
             {
               selectedFilter === SPEED_FILTERS.MID ?
-              <CheckCircle style={{color: '#e2e22d'}}/> :
-              <Adjust style={{color: '#e2e22d'}}/>
+              <CheckCircle style={{color: '#e2e22d'}} name={SPEED_FILTERS.MID}/> :
+              <Adjust style={{color: '#e2e22d'}} name={SPEED_FILTERS.MID}/>
             }
           </ListItemIcon>
           <ListItemText
-            className={`my-list-item-text ${selectedFilter === SPEED_FILTERS.MID ? 'bolder' : ''}`}
+            className={`speed-results-box--my-list-item-text ${selectedFilter === SPEED_FILTERS.MID ? 'bolder' : ''}`}
             style={{width: 'min-content', textAlign: 'left', marginLeft: 10}}
             primary={'Mid speed'}
-            secondary={'< 30 mbps'}
+            secondary={`< ${DOWNLOAD_SPEED_LIMIT.HIGH} mbps`}
           />
         </ListItem>
-        <ListItem 
-          className={'filter-list-item'}
-          onClick={() => selectFilter(SPEED_FILTERS.LOW)} 
+        <ListItem
+          className={'speed-results-box--filter-list-item'}
+          name={SPEED_FILTERS.LOW}
+          onClick={handleFilterClick}
           style={{ cursor: 'pointer', backgroundColor: selectedFilter === SPEED_FILTERS.LOW ? 'rgba(245, 245, 245)' : ''}}
         >
           <ListItemIcon style={{minWidth: 'min-content', width: 'min-content'}}>
             {
               selectedFilter === SPEED_FILTERS.LOW ?
-              <CheckCircle style={{color: 'red'}}/> :
-              <Adjust style={{color: 'red'}}/>
+              <CheckCircle style={{color: 'red'}} name={SPEED_FILTERS.LOW}/> :
+              <Adjust style={{color: 'red'}} name={SPEED_FILTERS.LOW}/>
             }
           </ListItemIcon>
           <ListItemText 
-            className={`my-list-item-text ${selectedFilter === SPEED_FILTERS.LOW ? 'bolder' : ''}`}
+            className={`speed-results-box--my-list-item-text ${selectedFilter === SPEED_FILTERS.LOW ? 'bolder' : ''}`}
             style={{width: 'min-content', textAlign: 'left', marginLeft: 10}}
             primary={'Low speed'}
-            secondary={'< 15 mbps'}
+            secondary={`< ${DOWNLOAD_SPEED_LIMIT.MID} mbps`}
           />
         </ListItem>
       </List>

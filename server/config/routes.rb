@@ -96,11 +96,8 @@ Rails.application.routes.draw do
 
   namespace 'client_api' do
     namespace 'v1' do
-      options 'geocode', to: 'geolocation#code'
+      resources :speed_tests, controller: 'speed_tests', only: [:index, :create]
       post 'geocode', to: 'geolocation#code'
-      options 'raw', to: 'raw_data#raw'
-      post 'raw', to: 'raw_data#raw'
-      get 'raw', to: 'raw_data#get_raw'
     end
   end
 

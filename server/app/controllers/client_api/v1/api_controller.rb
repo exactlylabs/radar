@@ -1,7 +1,9 @@
 module ClientApi
   module V1
     class ApiController < ActionController::Base
-      
+      before_action :rate_limit
+      skip_forgery_protection
+
       protected
 
       def rate_limit
@@ -23,17 +25,6 @@ module ClientApi
         REDIS.incr(key)
         true
       end
-
-      def cors_preflight_check
-        head(:no_content) if request.request_method == "OPTIONS"
-      end
-
-      def set_cors_access_control_headers
-        response.headers["Access-Control-Allow-Origin"] = Rails.env.development? ? 'http://localhost:9999' : '*' # TODO change to deployed URL
-        response.headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, PATCH, DELETE, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-      end
-
     end
   end
 end

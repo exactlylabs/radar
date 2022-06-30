@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from "./App";
+import {notifyError} from "./utils/errors";
 
 let init = null;
 let error = null;
@@ -35,7 +36,7 @@ export default {
     return {
       mount: () => {
         if(!init) {
-          console.error(`Initial config object missing. Reason(s): ${error}`);
+          notifyError(new Error(`Initial config object missing. Reason(s): ${error}`));
           return;
         }
         const root = ReactDOM.createRoot(document.getElementById(init.elementId));
