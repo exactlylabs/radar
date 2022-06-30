@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"runtime"
 	"strings"
 	"sync"
@@ -291,8 +292,14 @@ func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, ch chan *fetchWorkI
 
 		if item.testType == NDT7TestType {
 			processNdt7Reader(object, item.day)
+			// if err != nil {
+			// 	panic(fmt.Errorf("fetch.fetchingWorker err processing ndt7 obj: %w", err))
+			// }
 		} else if item.testType == NDT5TestType {
 			processNdt5Reader(object, item.day)
+			// if err != nil {
+			// 	panic(fmt.Errorf("fetch.fetchingWorker err processing ndt5 obj: %w", err))
+			// }
 		}
 
 		atomic.AddInt32(item.completedRef, 1)
@@ -367,7 +374,7 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 		pool := newFetchingPool(ctx)
 
 		total := int32(0)
-
+		fmt.Println("Fetch - Enumerating files")
 		// Enumerate NDT5 task
 		ndt5ObjectPaths := []string{}
 		ndt5Prefix := ndt5SearchPrefix(date)
@@ -407,7 +414,7 @@ func Fetch(startDate, endDate time.Time, rerun bool) {
 				}
 			}
 		}
-
+		log.Printf("Fetch - finished enumerating, starting to fetch %d files", total)
 		completed := int32(0)
 		for _, path := range ndt5ObjectPaths {
 			pool.queue(date, path, NDT5TestType, total, &completed)
