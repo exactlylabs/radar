@@ -1,19 +1,19 @@
-.my-list {
-  height: 'max-content';
+.speed-results-box--my-list {
+  height: max-content;
 }
 
-.filter-list-item {
+.speed-results-box--filter-list-item {
   display: flex;
   align-items: center;
-  margin: 5px 0px;
-  padding: 0px 5px;
+  margin: 5px 0;
+  padding: 0 5px;
 }
 
-.filter-list-item:hover {
+.speed-results-box--filter-list-item:hover {
   cursor: pointer;
   background-color: rgba(245, 245, 245, 1);
 }
 
-.bolder > span {
+.speed-results-box--my-list-item-text.bolder > span {
   font-weight: bold;
 }

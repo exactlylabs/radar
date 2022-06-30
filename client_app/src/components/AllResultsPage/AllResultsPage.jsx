@@ -3,9 +3,12 @@ import {MyTitle} from "../common/MyTitle";
 import {CircularProgress, Grid, Paper} from "@mui/material";
 import {MyButton} from "../common/MyButton";
 import {CircleMarker, MapContainer, Popup, TileLayer} from "react-leaflet";
-import {API_URL, SPEED_FILTERS, STEPS} from "../../constants";
+import {API_URL, STEPS} from "../../constants";
 import SpeedResultsBox from './SpeedResultsBox';
 import { Box } from '@mui/system';
+import {DOWNLOAD_SPEED_LIMIT, SPEED_FILTERS} from "../../utils/speeds";
+import {mapTileAttribution, mapTileUrl} from "../../utils/map";
+import {getAllSpeedTests} from "../../utils/apiRequests";
 
 const AllResultsPage = ({
   setStep,
@@ -14,44 +17,35 @@ const AllResultsPage = ({
 
   const [results, setResults] = useState(null);
   const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [filteredResults, setFilteredResults] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState(null);
 
   useEffect(() => {
-    // FETCH ALL RESULTS FROM BACKEND
-    setLoading(true);
-    fetch(`${API_URL}/raw`)
-    .then(res => res.json())
-    .then(res => {
-      setResults(res); setFilteredResults(res);
-    })
-    .catch(err => setError(err))
-    .finally(() => setLoading(false));
+    getAllSpeedTests(setResults, setFilteredResults, setError, setLoading);
   }, []);
 
   const getColor = measurement => {
     const { download_avg } = measurement;
-    if(download_avg < 15) return {color: 'red', fillColor: 'red'}
-    else if(download_avg >= 15 && download_avg < 30) return {color: '#e2e22d', fillColor: '#e2e22d'}
+    if(download_avg < DOWNLOAD_SPEED_LIMIT.MID) return {color: 'red', fillColor: 'red'}
+    else if(download_avg >= DOWNLOAD_SPEED_LIMIT.MID && download_avg < DOWNLOAD_SPEED_LIMIT.HIGH) return {color: '#e2e22d', fillColor: '#e2e22d'}
     else return {color: 'green', fillColor: 'green'}
   }
 
   const getLimitBasedOnFilter = filter => {
     switch(filter) {
-      case SPEED_FILTERS.LOW: return [0, 15];
-      case SPEED_FILTERS.MID: return [15, 30];
-      case SPEED_FILTERS.HIGH: return [30, Number.MAX_VALUE];
+      case SPEED_FILTERS.LOW: return [0, DOWNLOAD_SPEED_LIMIT.MID];
+      case SPEED_FILTERS.MID: return [DOWNLOAD_SPEED_LIMIT.MID, DOWNLOAD_SPEED_LIMIT.HIGH];
+      case SPEED_FILTERS.HIGH: return [DOWNLOAD_SPEED_LIMIT.HIGH, Number.MAX_VALUE];
     }
   }
 
   const setFilter = (filter) => {
-    if(!filter || filter === selectedFilter) {
-      setSelectedFilter(null);
+    setSelectedFilter(filter);
+    if(!filter) {
       setFilteredResults(results);
       return;
     }
-    setSelectedFilter(filter);
     const limit = getLimitBasedOnFilter(filter);
     setFilteredResults(results.filter(r => r.download_avg >= limit[0] && r.download_avg < limit[1]))
   }
@@ -63,6 +57,7 @@ const AllResultsPage = ({
         loading && <CircularProgress size={25} />
       }
       {
+        // TODO: REPORT ERROR TO SENTRY
         !loading && error && <p>Error fetching results! Try again later.</p>
       }
       {
@@ -84,8 +79,8 @@ const AllResultsPage = ({
                 style={{height: maxHeight - 150, margin: 'auto'}}
               >
                 <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution={mapTileAttribution}
+                  url={mapTileUrl}
                 />
                 {
                   filteredResults.map(measurement => (
@@ -100,13 +95,14 @@ const AllResultsPage = ({
                         <p>{`Download: ${measurement.download_avg.toFixed(3)} Mbps`}</p>
                         <p>{`Loss: ${measurement.loss}%`}</p>
                       </Popup>
-                    </CircleMarker>))
+                    </CircleMarker>
+                  ))
                 }
               </MapContainer>
             </Box>
           </Grid>
           <Grid item xs={12} md={2}>
-            <SpeedResultsBox setFilter={setFilter} />
+            <SpeedResultsBox selectedFilter={selectedFilter} setSelectedFilter={setFilter} />
           </Grid>
         </Grid>
       }
