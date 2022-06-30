@@ -1,18 +1,24 @@
 package config
 
 import (
+	"fmt"
+	"io/fs"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 )
 
 type ProcessorConfig struct {
-	EarliestDate  string `config:"EARLIEST_DATE,default=2019-05-13"`
-	Ipv4DBPath    string `config:"IPV4_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv4.csv"`
-	Ipv6DBPath    string `config:"IPV6_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
-	AsnIpv4DBPath string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv4.csv"`
-	AsnIpv6DBPath string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv6.csv"`
-	ShapePaths    string `config:"SHAPE_PATHS,default=US_STATES:./input/cb_2018_us_state_5m/cb_2018_us_state_5m.shp;US_COUNTIES:./input/tl_2021_us_county/tl_2021_us_county.shp;US_TRIBAL_TRACTS:./input/tl_2021_us_ttract/tl_2021_us_ttract.shp"`
+	EarliestDate     string `config:"EARLIEST_DATE,default=2019-05-13"`
+	Ipv4DBPath       string `config:"IPV4_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv4.csv"`
+	Ipv6DBPath       string `config:"IPV6_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
+	AsnIpv4DBPath    string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv4.csv"`
+	AsnIpv6DBPath    string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv6.csv"`
+	Asn2OrgDBPath    string `config:"ASN2ORG_DB_PATH,default=./input/as2org/datasets/as-organizations/20220401.as-org2info.jsonl"`
+	ShapePaths       string `config:"SHAPE_PATHS,default=US_STATES:./input/cb_2018_us_state_5m/cb_2018_us_state_5m.shp;US_COUNTIES:./input/tl_2021_us_county/tl_2021_us_county.shp;US_TRIBAL_TRACTS:./input/tl_2021_us_ttract/tl_2021_us_ttract.shp;ZIP_CODES:./input/tl_2021_us_zcta520.zip"`
+	TractsShapeDir   string `config:"TRACTS_SHAPE_DIR,default=./input/tracts"`
+	UploadBucketName string `config:"UPLOAD_BUCKET_NAME,default=mlab-processed-data"`
 }
 
 var cachedConfig *ProcessorConfig
@@ -32,6 +38,32 @@ func (c *ProcessorConfig) ShapePathEntries() map[string]string {
 		paths[parts[0]] = parts[1]
 	}
 
+	return paths
+}
+
+func (c *ProcessorConfig) TractShapesByStateId() map[string]string {
+	paths := make(map[string]string)
+
+	err := filepath.WalkDir(c.TractsShapeDir, func(path string, d fs.DirEntry, err error) error {
+		if d.IsDir() {
+			return nil
+		}
+		if matched, err := filepath.Match("*.zip", filepath.Base(path)); err != nil {
+			return err
+		} else if matched {
+			filename := d.Name()
+			substrs := strings.Split(filename, "_")
+			if len(substrs) != 4 {
+				return fmt.Errorf("tracts file format is wrong. expected: tl_[year]_[state_fips]_tract.zip")
+			}
+			paths[substrs[2]] = path
+		}
+		return nil
+	})
+
+	if err != nil {
+		panic(fmt.Errorf("config.TractShapesByStateId failed finding shape files: %w", err))
+	}
 	return paths
 }
 
