@@ -77,8 +77,6 @@ func channelKey(store string, date time.Time) string {
 }
 
 func writerWorker(filePath string, schema avro.Schema, ch chan interface{}) {
-	defer wg.Done()
-
 	dir := filepath.Dir(filePath)
 	mdErr := os.MkdirAll(dir, 0755)
 	if mdErr != nil {
@@ -150,6 +148,27 @@ func getStoreSchema(store string) avro.Schema {
 	panic(fmt.Errorf("storage.getStoreSchema err: Avro schema not found for %v", store))
 }
 
+func startWriterWorker(store string, date time.Time, ch chan interface{}) {
+	schema := getStoreSchema(store)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		// Writing pipeline consists of:
+		// 1. Generate the avro file
+		// 2. Upload it to the Storage (if enabled)
+		writerWorker(fmt.Sprintf("output/%v/%v.avro", store, date.Format("2006-01-02")), schema, ch)
+		if buckets != nil {
+			src := fmt.Sprintf("output/%v/%v.avro", store, date.Format("2006-01-02"))
+			log.Printf("Uploading %s\n", src)
+			UploadProcessedFile(
+				store,
+				src,
+				fmt.Sprintf("%v/%v.avro", store, date.Format("2006-01-02")),
+			)
+		}
+	}()
+}
+
 // PushDatedRow send a row to the worker responsible of writing it in a avro file of a specific date
 // in case the worker/file doesn't exist yet, it starts a new goroutine to handle the writing.
 func PushDatedRow(store string, date time.Time, row interface{}) {
@@ -158,9 +177,7 @@ func PushDatedRow(store string, date time.Time, row interface{}) {
 	ch := chRaw.(chan interface{})
 
 	if !loaded {
-		schema := getStoreSchema(store)
-		wg.Add(1)
-		go writerWorker(fmt.Sprintf("output/%v/%v.avro", store, date.Format("2006-01-02")), schema, ch)
+		startWriterWorker(store, date, ch)
 	}
 
 	ch <- row
