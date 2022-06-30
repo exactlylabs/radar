@@ -1,6 +1,7 @@
 package ipgeocoder
 
 import (
+	"encoding/ascii85"
 	"encoding/csv"
 	"fmt"
 	"io"
@@ -15,6 +16,7 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/config"
 	"github.com/exactlylabs/mlab-processor/pkg/app/helpers"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
+	"github.com/exactlylabs/mlab-processor/pkg/services/asnmap"
 	"github.com/exactlylabs/mlab-processor/pkg/services/netmap"
 	"github.com/exactlylabs/mlab-processor/pkg/services/storage"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
@@ -169,7 +171,13 @@ func processItem(toProcess *ipgeocodeWorkItem) *models.GeocodedResult {
 	if asnInfoRaw != nil {
 		asnInfo := asnInfoRaw.(*asnInfo)
 		asn = asnInfo.asn
-		org = asnInfo.org
+		asnObj, err := asnmap.Lookup(fmt.Sprintf("%d", asn))
+		if err != nil {
+			org = asnInfo.org
+		} else {
+			org = asnObj.Organization.Name
+		}
+
 	}
 	return &models.GeocodedResult{
 		Id:                 toProcess.fetchedResult.Id,
@@ -255,6 +263,16 @@ func Geocode(startDate, endDate time.Time, rerun bool) {
 			log.Fatal(asnIpv6Err)
 		}
 
+		f, err := os.Open(config.GetConfig().Asn2OrgDBPath)
+		if err != nil {
+			log.Fatal(fmt.Errorf("ipgeocoder.Geocode error opening db file: %w", err))
+		}
+		defer f.Close()
+		asnmapErr := asnmap.LoadCAIDAJsonl(ascii85.NewDecoder(f))
+		if asnmapErr != nil {
+			log.Fatal(asnmapErr)
+		}
+
 		lookupInitialized = true
 	}
 
@@ -283,4 +301,12 @@ func Geocode(startDate, endDate time.Time, rerun bool) {
 		storage.MarkCompleted("ipgeocode", date)
 		storage.Close()
 	}
+}
+
+// Clear index variables to allow them to be garbage collected
+// this is to try to release memory for next steps without having it allocated for unused stuff
+func Clear() {
+	lookup = nil
+	asnLookup = nil
+	lookupInitialized = false
 }
