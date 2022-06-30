@@ -7,10 +7,10 @@ class GeocodeController < ApplicationController
     else
       results = Geocoder.search(params["address"])
     end
-    if !results.first.present?
-      return render json: []
+    if results.first.present?
+      return render json: results.first.coordinates
     end
-    render json: results.first.coordinates
+    render json: []
   end
 
   def reverse_code
