@@ -3,6 +3,7 @@ package geocoder
 import (
 	"fmt"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -75,63 +76,89 @@ func (p *geocodingPool) Close() {
 	p.wg.Wait()
 }
 
+func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
+	dotPaths := strings.Split(shpPath, ".")
+	if len(dotPaths) == 0 || (dotPaths[len(dotPaths)-1] != "zip" && dotPaths[len(dotPaths)-1] != "shp") {
+		return fmt.Errorf("%s must have a .shp or .zip extension", shpPath)
+	}
+	// open a shapefile for reading
+	var shape shp.SequentialReader
+	var err error
+	if dotPaths[len(dotPaths)-1] == "shp" {
+		shape, err = shp.Open(shpPath)
+	} else {
+		shape, err = shp.OpenZip(shpPath)
+	}
+
+	if err != nil {
+		return fmt.Errorf("geocoder.initIndex err: %w", err)
+	}
+	defer shape.Close()
+
+	// fields from the attribute table (DBF)
+	fields := shape.Fields()
+
+	// loop through all features in the shapefile
+	for shape.Next() {
+		_, p := shape.Shape()
+
+		poly := p.(*shp.Polygon)
+
+		var geoid string
+		for k, f := range fields {
+			if f.String() == "GEOID" || f.String() == "GEOID20" {
+				geoid = shape.Attribute(k)
+				break
+			}
+		}
+
+		for i := int32(0); i < poly.NumParts; i++ {
+			var startIndex, endIndex int32
+
+			if i == 0 {
+				startIndex = 0
+			} else {
+				startIndex = poly.Parts[i]
+			}
+
+			if i == poly.NumParts {
+				endIndex = poly.Parts[i+1]
+			} else {
+				endIndex = int32(len(poly.Points))
+			}
+
+			loopPoints := make([]*geo.Point, endIndex-startIndex)
+			for li := startIndex; li < endIndex; li++ {
+				loopPoints[li-startIndex] = &geo.Point{
+					Lat: poly.Points[li].Y,
+					Lng: poly.Points[li].X,
+				}
+			}
+
+			geoPoly := geo.NewPolygon(loopPoints)
+
+			index.Add(namespace, geoid, geoPoly)
+		}
+	}
+	return nil
+}
+
 func initIndex() {
 	if !indexInitialized {
 		index = geo.NewIndex()
 
 		files := config.GetConfig().ShapePathEntries()
 		for namespace, path := range files {
-			// open a shapefile for reading
-			shape, err := shp.Open(path)
+			err := addShapeToIndex(index, namespace, path)
 			if err != nil {
-				panic(fmt.Errorf("geocoder.initIndex err: %w", err))
+				panic(err)
 			}
-			defer shape.Close()
+		}
 
-			// fields from the attribute table (DBF)
-			fields := shape.Fields()
-
-			// loop through all features in the shapefile
-			for shape.Next() {
-				n, p := shape.Shape()
-
-				poly := p.(*shp.Polygon)
-
-				var geoid string
-				for k, f := range fields {
-					if f.String() == "GEOID" {
-						geoid = shape.ReadAttribute(n, k)
-						break
-					}
-				}
-
-				for i := int32(0); i < poly.NumParts; i++ {
-					var startIndex, endIndex int32
-
-					if i == 0 {
-						startIndex = 0
-					} else {
-						startIndex = poly.Parts[i]
-					}
-
-					if i == poly.NumParts {
-						endIndex = poly.Parts[i+1]
-					} else {
-						endIndex = int32(len(poly.Points))
-					}
-
-					loopPoints := make([]*geo.Point, endIndex-startIndex)
-					for li := startIndex; li < endIndex; li++ {
-						loopPoints[li-startIndex] = &geo.Point{
-							Lat: poly.Points[li].Y,
-							Lng: poly.Points[li].X,
-						}
-					}
-
-					geoPoly := geo.NewPolygon(loopPoints)
-
-					index.Add(namespace, geoid, geoPoly)
-				}
+		for _, path := range config.GetConfig().TractShapesByStateId() {
+			err := addShapeToIndex(index, "CENSUS_TRACTS", path)
+			if err != nil {
+				panic(err)
 			}
 		}
 
@@ -165,4 +192,11 @@ func ReverseGeocode(startDate, endDate time.Time, rerun bool) {
 		storage.MarkCompleted("revgeocode", date)
 		storage.Close()
 	}
+}
+
+// Clear index variables to allow them to be garbage collected
+// this is to try to release memory for next steps without having it allocated for unused stuff
+func Clear() {
+	index = nil
+	indexInitialized = false
 }
