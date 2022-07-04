@@ -19,7 +19,7 @@
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
       <% if @onboard_step < 0 %>
-        <% if current_user.exportuser %>
+        <% if policy(:export).all? %>
           <a href="<%= all_exports_path(format: 'zip') %>" class="btn bg-body btn-color-gray-700 btn-active-primary me-4">
             <span class="svg-icon svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -41,7 +41,7 @@
           </span>
           Export Measurements
         </a>
-        <% if current_user.superuser || current_user.exportuser %>
+        <% if policy(:measurement).full_index? %>
           <a href="<%= full_index_measurements_path(format: 'csv') %>" class="btn bg-body btn-color-gray-700 btn-active-primary me-4">
             <span class="svg-icon svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -52,6 +52,8 @@
             </span>
             Export All Measurements
           </a>
+        <% end %>
+        <% if policy(:measurement).full_ndt7_index? %>
           <a href="<%= full_ndt7_index_measurements_path(format: 'csv') %>" class="btn bg-body btn-color-gray-700 btn-active-primary me-4">
             <span class="svg-icon svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
