@@ -1,6 +1,6 @@
-class CreateClientFacingAppMeasurements < ActiveRecord::Migration[6.1]
+class CreateClientSpeedTests < ActiveRecord::Migration[6.1]
   def change
-    create_table :client_facing_app_measurements do |t|
+    create_table :client_speed_tests do |t|
       t.timestamp :tested_at
       t.float :latitude
       t.float :longitude
