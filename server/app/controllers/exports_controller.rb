@@ -11,21 +11,17 @@ class ExportsController < ApplicationController
     @all_measurements = Measurement.all.to_csv_file
     @all_ndt7_measurements = Measurement.where(style: "NDT7").to_ndt7_csv_file
     authorize @locations, policy_class: ExportPolicy
-    file_stream = Zip::OutputStream.write_buffer do |zos|
-      zos.put_next_entry "locations.csv"
-      zos << IO.read(@locations)
-      zos.put_next_entry "clients.csv"
-      zos << IO.read(@clients)
-      zos.put_next_entry "all_measurements.csv"
-      zos << IO.read(@all_measurements)
-      zos.put_next_entry "all_ndt7_measurements.csv"
-      zos << IO.read(@all_ndt7_measurements)
+    filename = "data-#{Time.now.to_i}.zip"
+    zip_tmp_file = Tempfile.new(filename)
+    Zip::File.open(zip_tmp_file.path, create: true) do |zip|
+      zip.add("locations.csv", @locations)
+      zip.add("clients.csv", @clients)
+      zip.add("all_measurements.csv", @all_measurements)
+      zip.add("all_ndt7_measurements.csv", @all_ndt7_measurements)
     end
 
-    file_stream.rewind
-
     respond_to do |format|
-      format.zip { send_data file_stream.read, type: :zip, disposition: :attachment, filename: "data-#{Time.now.to_i}.zip" }
+      format.zip { send_file zip_tmp_file, type: :zip, disposition: :attachment, filename: filename }
     end
   end
 
