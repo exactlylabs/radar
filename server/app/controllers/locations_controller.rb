@@ -47,7 +47,7 @@ class LocationsController < ApplicationController
     @location.test_requested = true
     @location.save
     respond_to do |format|
-      format.turbo_stream
+      format.html { redirect_back fallback_location: root_path, notice: "Test was requested successfully on location." }
     end
   end
 

@@ -18,7 +18,7 @@
 							<th></th>
 							<th class="text-end" style="display: table-cell; vertical-align: middle">
 								<% if clients[0].location.present? %>
-									<a class="btn btn-light-primary w-45 px-5" style="margin-right: 20px" href="<%= location_path(clients[0].location) %>">View Details</button>
+									<a class="btn btn-light-primary w-45 px-5" style="margin-right: 20px" href="<%= location_path(clients[0].location) %>">View Details</a>
 									<%= link_to "Run test", request_test_location_path(location), method: :post, class: "btn btn-primary #{location.test_requested ? "disabled" : ""}" %>
 								<% end %>
 							</th>
