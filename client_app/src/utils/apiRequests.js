@@ -6,7 +6,7 @@ export const sendRawData = (rawData, location, startTimestamp) => {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
-      raw: rawData,
+      result: { raw: rawData },
       location: location,
       timestamp: startTimestamp
     })
