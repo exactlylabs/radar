@@ -115,8 +115,8 @@ class Client < ApplicationRecord
         yielder << CSV.generate_line([
           client.id,
           client.unix_user,
-          client.user ? measurement.user.id : "",
-          client.location ? measurement.location.id : "",
+          client.user ? client.user.id : "",
+          client.location ? client.location.id : "",
           client.name,
           client.address,
           client.latitude,

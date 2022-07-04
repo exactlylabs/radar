@@ -1,14 +1,9 @@
-class MeasurementPolicy < ApplicationPolicy
-  class Scope < Scope
-    def initialize
-      super
-    end
+# Headless policy
+# https://www.rubydoc.info/gems/pundit#:~:text=edit_post_path(%40post)%20%25%3E%0A%3C%25%20end%20%25%3E-,Headless%20policies,-Given%20there%20is
+class MeasurementPolicy
 
-    def resolve
-      if user.superuser || user.exportuser
-        scope.all
-      end
-    end
+  def initialize(user, _record)
+    @user = user
   end
 
   def index?
@@ -16,10 +11,10 @@ class MeasurementPolicy < ApplicationPolicy
   end
 
   def full_index?
-    user.superuser || user.exportuser
+    @user.superuser || @user.exportuser
   end
 
   def full_ndt7_index?
-    user.superuser || user.exportuser
+    @user.superuser || @user.exportuser
   end
 end

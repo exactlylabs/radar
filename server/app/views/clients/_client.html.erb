@@ -1,10 +1,10 @@
 <tr id="<%= dom_id(client) %>">
   <td>
-    <a class="text-gray-800 text-hover-primary mb-1" href="<%= client_path(client.unix_user)%>"><%= client.unix_user %><a/>
+    <a class="text-gray-800 text-hover-primary mb-1" href="<%= client_path(client.unix_user)%>"><%= client.unix_user %></a>
   </td>
   <td>
     <% if client.location %>
-    <a class="text-gray-800 text-hover-primary mb-1" href="<%= location_path(client.location)%>"><%= client.location.name %><a/>
+    <a class="text-gray-800 text-hover-primary mb-1" href="<%= location_path(client.location)%>"><%= client.location.name %></a>
     <% else %>
     None
     <% end %>
