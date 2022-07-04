@@ -3,7 +3,6 @@ require "zip"
 class ExportsController < ApplicationController
   before_action :authenticate_user!
   before_action :authenticate_token!
-  before_action :ensure_exportuser!
 
   # GET /exports/all
   def all
@@ -11,7 +10,7 @@ class ExportsController < ApplicationController
     @clients = Client.all.to_csv_file
     @all_measurements = Measurement.all.to_csv_file
     @all_ndt7_measurements = Measurement.where(style: "NDT7").to_ndt7_csv_file
-
+    authorize @locations, policy_class: ExportPolicy
     file_stream = Zip::OutputStream.write_buffer do |zos|
       zos.put_next_entry "locations.csv"
       zos << IO.read(@locations)
@@ -31,14 +30,9 @@ class ExportsController < ApplicationController
   end
 
   private
-  def ensure_exportuser!
-    if !current_user.exportuser
-      head(403)
-    end
-  end
 
   def authenticate_token!
-    if !request.headers["Authorization"].nil?
+    if request.headers["Authorization"].present?
       token = request.headers["Authorization"].split(" ")
       if token.size == 2
         @user = User.where({"token": token[1]}).first
