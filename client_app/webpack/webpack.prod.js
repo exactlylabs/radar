@@ -6,4 +6,4 @@ module.exports = {
   // It adds a reference comment to the bundle so development tools know where to find it.
   devtool: 'source-map',
   plugins: [ new Dotenv({ path: './.env.production' }) ],
-}
+};

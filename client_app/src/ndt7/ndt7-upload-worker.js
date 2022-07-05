@@ -1,12 +1,11 @@
 /* eslint-env es6, browser, node, worker */
 
 // WebWorker that runs the ndt7 upload test
-const workerMain = function(ev) {
+const workerMain = function (ev) {
   const url = ev.data['///ndt/v7/upload'];
   const sock = new WebSocket(url, 'net.measurementlab.ndt.v7');
   let now;
-  if (typeof performance !== 'undefined' &&
-      typeof performance.now === 'function') {
+  if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
     now = () => performance.now();
   } else {
     now = () => Date.now();
@@ -14,9 +13,9 @@ const workerMain = function(ev) {
   uploadTest(sock, postMessage, now);
 };
 
-const uploadTest = function(sock, postMessage, now) {
+const uploadTest = function (sock, postMessage, now) {
   let closed = false;
-  sock.onclose = function() {
+  sock.onclose = function () {
     if (!closed) {
       closed = true;
       postMessage({
@@ -25,14 +24,14 @@ const uploadTest = function(sock, postMessage, now) {
     }
   };
 
-  sock.onerror = function(ev) {
+  sock.onerror = function (ev) {
     postMessage({
       MsgType: 'error',
       Error: ev.type,
     });
   };
 
-  sock.onmessage = function(ev) {
+  sock.onmessage = function (ev) {
     if (typeof ev.data !== 'undefined') {
       postMessage({
         MsgType: 'measurement',
@@ -89,9 +88,8 @@ const uploadTest = function(sock, postMessage, now) {
 
     // Message size is doubled after the first 16 messages, and subsequently
     // every 8, up to maxMessageSize.
-    const nextSizeIncrement =
-        (data.length >= maxMessageSize) ? Infinity : 16 * data.length;
-    if ((total - sock.bufferedAmount) >= nextSizeIncrement) {
+    const nextSizeIncrement = data.length >= maxMessageSize ? Infinity : 16 * data.length;
+    if (total - sock.bufferedAmount >= nextSizeIncrement) {
       data = new Uint8Array(data.length * 2);
     }
 
@@ -124,7 +122,7 @@ const uploadTest = function(sock, postMessage, now) {
     // ms / 1000 = seconds
     const elapsedTime = (now() - start) / 1000;
     // bytes * bits/byte * megabits/bit * 1/seconds = Mbps
-    const meanMbps = numBytes * 8 / 1000000 / elapsedTime;
+    const meanMbps = (numBytes * 8) / 1000000 / elapsedTime;
     postMessage({
       MsgType: 'measurement',
       ClientData: {
@@ -137,7 +135,7 @@ const uploadTest = function(sock, postMessage, now) {
     });
   }
 
-  sock.onopen = function() {
+  sock.onopen = function () {
     const initialMessageSize = 8192; /* (1<<13) = 8kBytes */
     // TODO(bassosimone): fill this message - see above comment
     const data = new Uint8Array(initialMessageSize);

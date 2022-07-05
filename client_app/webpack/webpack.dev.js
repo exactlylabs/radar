@@ -9,4 +9,4 @@ module.exports = {
   // It yields the best quality SourceMaps for development.
   devtool: 'eval-source-map',
   plugins: [new Dotenv({ path: './.env.development' })],
-}
+};

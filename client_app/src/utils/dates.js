@@ -5,7 +5,7 @@ const localeStringOptions = {
   hour12: true,
   hour: 'numeric',
   minute: 'numeric',
-  second: undefined
+  second: undefined,
 };
 
 //  Parse ISO dates to human-readable: mm/dd/YYYY, hh:mm {AM|PM}
