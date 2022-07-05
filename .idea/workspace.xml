@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1389e07f-9b7c-453e-89ea-4321335af2b7" name="Changes" comment="method callback handling">
-      <change beforePath="$PROJECT_DIR$/.idea/modules/server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/server.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_app/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/.eslintrc.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/.eslintrc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/webpack/webpack.common.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/webpack/webpack.common.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +80,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="npm.Client">
     <configuration name="Server" type="RailsRunConfigurationType" factoryName="Rails">
       <module name="server" />
       <predefined_log_file enabled="true" id="RUBY_RAILS_SERVER" />
@@ -130,6 +129,23 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Client" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/client_app/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="$USER_HOME$/.nvm/versions/node/v16.15.0/bin/node" />
+      <package-manager value="npm" />
+      <envs />
+      <method v="2">
+        <option name="LaunchBrowser.Before.Run" url="http://localhost:9999" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="npm.Client" />
+      <item itemvalue="Rails.Server" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="true" RAKE_SPRING_PRE_LOADER_OPTION="true" RAILS_SPRING_PRE_LOADER_OPTION="true" />
