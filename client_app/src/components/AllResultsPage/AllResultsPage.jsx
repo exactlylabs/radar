@@ -50,6 +50,8 @@ const AllResultsPage = ({
     setFilteredResults(results.filter(r => r.download_avg >= limit[0] && r.download_avg < limit[1]))
   }
 
+  const goToMap = () => setStep(STEPS.MAP)
+
   return (
     <div style={{textAlign: 'center'}}>
       <MyTitle text={'All results'}/>
@@ -64,7 +66,7 @@ const AllResultsPage = ({
         !loading && results !== null && results.length === 0 &&
         <div>
           <p>No measurements taken so far!</p>
-          <MyButton text={'Test'} onClick={() => setStep(STEPS.MAP)}/>
+          <MyButton text={'Test'} onClick={goToMap}/>
         </div>
       }
       {

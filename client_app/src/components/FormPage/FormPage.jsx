@@ -15,6 +15,8 @@ const FormPage = ({ goToNextStep }) => {
     setFormData(values);
   }
 
+  const handleSubmit = () => goToNextStep(formData);
+
   return (
     <div style={{textAlign: 'center', width: '80%', margin: '10px auto'}}>
       <MyTitle text={'Address information'}/>
@@ -46,7 +48,7 @@ const FormPage = ({ goToNextStep }) => {
         <MyButton
           style={{width: '25%', margin: '20px auto'}}
           text={'Submit'}
-          onClick={() => goToNextStep(formData)}
+          onClick={handleSubmit}
           disabled={!formData.name || !formData.number}
         />
       </FormControl>

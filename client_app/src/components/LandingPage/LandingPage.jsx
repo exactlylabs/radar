@@ -24,6 +24,12 @@ export const LandingPage = ({
 
   const [selectedOption, setSelectedOption] = useState(STEPS.FORM);
 
+  const handleSelect = e => setSelectedOption(e.target.value);
+
+  const handleContinue = () => setStep(selectedOption);
+
+  const handleSeeAll = () => setStep(STEPS.ALL_RESULTS);
+
   return (
     <div style={landingPageStyle}>
       <MyTitle text={'Test your internet speed'}/>
@@ -34,16 +40,16 @@ export const LandingPage = ({
             control={<Radio/>}
             label={'Manually'}
             value={STEPS.FORM}
-            onChange={e => setSelectedOption(e.target.value)}/>
+            onChange={handleSelect}/>
           <FormControlLabel
             control={<Radio/>}
             label={'Automatic based on location'}
             value={STEPS.MAP}
-            onChange={e => setSelectedOption(e.target.value)}/>
+            onChange={handleSelect}/>
         </RadioGroup>
       </FormControl>
-      <MyButton text={'Continue'} onClick={() => setStep(selectedOption)} style={{marginTop: 10}}/>
-      <MyButton text={'See all measurements'} onClick={() => setStep(STEPS.ALL_RESULTS)} style={{marginTop: 50}}/>
+      <MyButton text={'Continue'} onClick={handleContinue} style={{marginTop: 10}}/>
+      <MyButton text={'See all measurements'} onClick={handleSeeAll} style={{marginTop: 50}}/>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import {MyButton} from "../common/MyButton";
+import {STEPS} from "../../constants";
 
 const Frame = ({
   config,
@@ -8,12 +9,14 @@ const Frame = ({
   setStep
 }) => {
 
+  const handleBack = () => setStep(STEPS.LANDING);
+
   return (
     <div style={{...config.frameStyle}}>
       <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', margin: 10}}>
       {
         step !== 'landing' &&
-        <MyButton text={'< Back'} onClick={() => setStep('landing')} style={{marginTop: 10}}/>
+        <MyButton text={'< Back'} onClick={handleBack} style={{marginTop: 10}}/>
       }
       </div>
       {children}
