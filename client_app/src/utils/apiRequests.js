@@ -36,6 +36,9 @@ export const getAllSpeedTests = (setResults, setFilteredResults, setError, setLo
       setResults(res);
       setFilteredResults(res);
     })
-    .catch(err => setError(err))
+    .catch(err => {
+      setError(err);
+      notifyError(err);
+    })
     .finally(() => setLoading(false));
 };
