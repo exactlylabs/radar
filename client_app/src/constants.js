@@ -4,5 +4,5 @@ export const STEPS = {
   LANDING: 'landing',
   FORM: 'form',
   MAP: 'map',
-  ALL_RESULTS: 'allResults'
+  ALL_RESULTS: 'allResults',
 };

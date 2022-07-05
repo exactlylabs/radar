@@ -1,13 +1,12 @@
 /* eslint-env browser, node, worker */
 
 // workerMain is the WebWorker function that runs the ndt7 download test.
-const workerMain = function(ev) {
+const workerMain = function (ev) {
   'use strict';
   const url = ev.data['///ndt/v7/download'];
   const sock = new WebSocket(url, 'net.measurementlab.ndt.v7');
   let now;
-  if (typeof performance !== 'undefined' &&
-      typeof performance.now === 'function') {
+  if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
     now = () => performance.now();
   } else {
     now = () => Date.now();
@@ -24,14 +23,14 @@ const workerMain = function(ev) {
  * @param {function} postMessage - A function for messages to the main thread.
  * @param {function} now - A function returning a time in milliseconds.
  */
-const downloadTest = function(sock, postMessage, now) {
-  sock.onclose = function() {
+const downloadTest = function (sock, postMessage, now) {
+  sock.onclose = function () {
     postMessage({
       MsgType: 'complete',
     });
   };
 
-  sock.onerror = function(ev) {
+  sock.onerror = function (ev) {
     postMessage({
       MsgType: 'error',
       Error: ev.type,
@@ -42,7 +41,7 @@ const downloadTest = function(sock, postMessage, now) {
   let previous = start;
   let total = 0;
 
-  sock.onopen = function() {
+  sock.onopen = function () {
     start = now();
     previous = start;
     total = 0;
@@ -54,9 +53,8 @@ const downloadTest = function(sock, postMessage, now) {
     });
   };
 
-  sock.onmessage = function(ev) {
-    total +=
-        (typeof ev.data.size !== 'undefined') ? ev.data.size : ev.data.length;
+  sock.onmessage = function (ev) {
+    total += typeof ev.data.size !== 'undefined' ? ev.data.size : ev.data.length;
     // Perform a client-side measurement 4 times per second.
     const t = now();
     const every = 250; // ms
