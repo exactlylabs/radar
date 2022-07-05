@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1389e07f-9b7c-453e-89ea-4321335af2b7" name="Changes" comment="integrated husky + eslint + prettier">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_app/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
