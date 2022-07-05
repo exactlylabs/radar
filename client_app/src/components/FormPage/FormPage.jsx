@@ -1,27 +1,26 @@
-import React, {useState} from 'react';
-import {FormControl, TextField} from "@mui/material";
-import {MyButton} from "../common/MyButton";
-import {MyTitle} from "../common/MyTitle";
+import React, { useState } from 'react';
+import { FormControl, TextField } from '@mui/material';
+import { MyButton } from '../common/MyButton';
+import { MyTitle } from '../common/MyTitle';
 
 const FormPage = ({ goToNextStep }) => {
-
-  const [formData, setFormData] = useState({name: null, number: null});
+  const [formData, setFormData] = useState({ name: null, number: null });
 
   const handleInputChange = e => {
     const value = e.target.value;
     const input = e.target.name;
-    const values = {...formData};
+    const values = { ...formData };
     values[input] = value;
     setFormData(values);
-  }
+  };
 
   const handleSubmit = () => goToNextStep(formData);
 
   return (
-    <div style={{textAlign: 'center', width: '80%', margin: '10px auto'}}>
-      <MyTitle text={'Address information'}/>
-      <FormControl fullWidth style={{textAlign: 'center', margin: "auto"}}>
-        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap'}}>
+    <div style={{ textAlign: 'center', width: '80%', margin: '10px auto' }}>
+      <MyTitle text={'Address information'} />
+      <FormControl fullWidth style={{ textAlign: 'center', margin: 'auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
           <TextField
             required
             label={'Street name'}
@@ -30,7 +29,7 @@ const FormPage = ({ goToNextStep }) => {
             name={'name'}
             onChange={handleInputChange}
             margin={'normal'}
-            style={{width: '50%', minWidth: 200, maxWidth: 500, marginRight: 20}}
+            style={{ width: '50%', minWidth: 200, maxWidth: 500, marginRight: 20 }}
             variant={'standard'}
           />
           <TextField
@@ -42,11 +41,11 @@ const FormPage = ({ goToNextStep }) => {
             onChange={handleInputChange}
             margin={'normal'}
             variant={'standard'}
-            style={{maxWidth: 150}}
+            style={{ maxWidth: 150 }}
           />
         </div>
         <MyButton
-          style={{width: '25%', margin: '20px auto'}}
+          style={{ width: '25%', margin: '20px auto' }}
           text={'Submit'}
           onClick={handleSubmit}
           disabled={!formData.name || !formData.number}
@@ -54,6 +53,6 @@ const FormPage = ({ goToNextStep }) => {
       </FormControl>
     </div>
   );
-}
+};
 
 export default FormPage;
