@@ -29,7 +29,8 @@
     "start": "webpack-dev-server --config webpack/webpack.config.js --env env=dev",
     "build": "webpack --config webpack/webpack.config.js --env env=prod",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "cd .. && husky install client_app/.husky"
   },
   "eslintConfig": {
     "extends": [
@@ -57,7 +58,13 @@
     "babel-loader": "^8.2.5",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.30.1",
     "html-loader": "^3.1.0",
+    "husky": "^8.0.1",
+    "prettier": "^2.7.1",
     "scss-loader": "^0.0.1",
     "style-loader": "^3.3.1",
     "webpack": "^5.73.0",
