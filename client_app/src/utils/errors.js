@@ -1,2 +1,3 @@
-// TODO: Notify via Sentry once it is integrated
-export const notifyError = err => console.error(err);
+import * as Sentry from '@sentry/react';
+
+export const notifyError = err => Sentry.captureException(err);
