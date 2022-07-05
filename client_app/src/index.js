@@ -3,18 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { notifyError } from './utils/errors';
-import * as Sentry from "@sentry/react";
-import {BrowserTracing} from "@sentry/tracing";
+import * as Sentry from '@sentry/react';
+import { BrowserTracing } from '@sentry/tracing';
 
 Sentry.init({
-  dsn: "https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151",
+  dsn: 'https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151',
   integrations: [new BrowserTracing()],
   environment: 'production',
 });
 
 let init = null;
 let error = null;
-
 
 const checkConfig = config => {
   const { elementId, clientId } = config;
@@ -40,7 +39,7 @@ export default {
     else init = null;
   },
   new: () => {
-    Sentry.setUser({id: init.clientId})
+    Sentry.setUser({ id: init.clientId });
     return {
       mount: () => {
         if (!init) {

@@ -1,8 +1,8 @@
-import {FormControl, FormControlLabel, FormLabel, Radio, RadioGroup} from "@mui/material";
-import {useState} from "react";
-import {MyTitle} from "../common/MyTitle";
-import {MyButton} from "../common/MyButton";
-import {STEPS} from "../../constants";
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
+import { useState } from 'react';
+import { MyTitle } from '../common/MyTitle';
+import { MyButton } from '../common/MyButton';
+import { STEPS } from '../../constants';
 
 const landingPageStyle = {
   textAlign: 'center',
@@ -16,12 +16,9 @@ const landingPageStyle = {
   maxWidth: 500,
   marginLeft: 'auto',
   marginRight: 'auto',
-}
+};
 
-export const LandingPage = ({
-  setStep
-}) => {
-
+export const LandingPage = ({ setStep }) => {
   const [selectedOption, setSelectedOption] = useState(STEPS.FORM);
 
   const handleSelect = e => setSelectedOption(e.target.value);
@@ -32,24 +29,21 @@ export const LandingPage = ({
 
   return (
     <div style={landingPageStyle}>
-      <MyTitle text={'Test your internet speed'}/>
-      <FormControl style={{width: '80%'}}>
+      <MyTitle text={'Test your internet speed'} />
+      <FormControl style={{ width: '80%' }}>
         <FormLabel>Insert your address</FormLabel>
         <RadioGroup defaultValue={STEPS.FORM}>
+          <FormControlLabel control={<Radio />} label={'Manually'} value={STEPS.FORM} onChange={handleSelect} />
           <FormControlLabel
-            control={<Radio/>}
-            label={'Manually'}
-            value={STEPS.FORM}
-            onChange={handleSelect}/>
-          <FormControlLabel
-            control={<Radio/>}
+            control={<Radio />}
             label={'Automatic based on location'}
             value={STEPS.MAP}
-            onChange={handleSelect}/>
+            onChange={handleSelect}
+          />
         </RadioGroup>
       </FormControl>
-      <MyButton text={'Continue'} onClick={handleContinue} style={{marginTop: 10}}/>
-      <MyButton text={'See all measurements'} onClick={handleSeeAll} style={{marginTop: 50}}/>
+      <MyButton text={'Continue'} onClick={handleContinue} style={{ marginTop: 10 }} />
+      <MyButton text={'See all measurements'} onClick={handleSeeAll} style={{ marginTop: 50 }} />
     </div>
   );
-}
+};

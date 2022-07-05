@@ -3,3 +3,4 @@
 cd client_app
 npx eslint . --fix
 npx pretty-quick --staged
+npm run prettier --write ./**/*.{js,jsx}
