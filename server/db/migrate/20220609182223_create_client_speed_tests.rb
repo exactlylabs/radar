@@ -12,6 +12,7 @@ class CreateClientSpeedTests < ActiveRecord::Migration[6.1]
       t.string :upload_id
       t.float :latency
       t.float :loss
+      t.timestamp :processed_at
       t.timestamps
     end
   end

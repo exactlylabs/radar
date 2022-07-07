@@ -2,7 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1389e07f-9b7c-453e-89ea-4321335af2b7" name="Changes" comment="integrated husky + eslint + prettier">
+      <change beforePath="$PROJECT_DIR$/.idea/modules/server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/server.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/src/components/AllResultsPage/AllResultsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/components/AllResultsPage/AllResultsPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/src/components/MapPage/MapPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/components/MapPage/MapPage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/src/components/MapPage/MapPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/components/MapPage/MapPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/src/utils/errors.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/utils/errors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/webpack/webpack.dev.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/webpack/webpack.dev.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/webpack/webpack.prod.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/webpack/webpack.prod.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/jobs/process_speed_test_job.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/jobs/process_speed_test_job.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/config/initializers/client_api_rate_limiter.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/config/initializers/client_api_rate_limiter.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220609182223_create_client_speed_tests.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/db/migrate/20220609182223_create_client_speed_tests.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,21 +70,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/iuke/Documents/Exactly/radar",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Artifacts",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "ruby.rails.projectView.checked": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/iuke/Documents/Exactly/radar&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;ruby.rails.projectView.checked&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RubyModuleManagerSettings">
     <option name="blackListedRootsPaths">
       <list>
@@ -79,7 +92,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="npm.Client">
+  <component name="RunManager" selected="Rails.Server">
     <configuration name="Server" type="RailsRunConfigurationType" factoryName="Rails">
       <module name="server" />
       <predefined_log_file enabled="true" id="RUBY_RAILS_SERVER" />
@@ -101,27 +114,6 @@
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="IP" VALUE="0.0.0.0" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="DUMMY_APP" VALUE="test/dummy" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RAILS_SERVER_TYPE" VALUE="default" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ENVIRONMENT_TYPE" VALUE="development" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="LAUNCH_JS" VALUE="false" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="RailsRunConfigurationType" factoryName="Rails">
-      <predefined_log_file enabled="true" id="RUBY_RAILS_SERVER" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <EXTENSION ID="BundlerRunConfigurationExtension" BUNDLE_MODE="AUTO" bundleExecEnabled="true" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <EXTENSION ID="org.jetbrains.plugins.ruby.rails.run.RailsRunConfigurationExtension" SCRATCH_USE_RAILS_RUNNER="false" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="SCRIPT_ARGS" VALUE="" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="PORT" VALUE="3000" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="IP" VALUE="0.0.0.0" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="DUMMY_APP" VALUE="test/dummy" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RAILS_SERVER_TYPE" VALUE="Default" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ENVIRONMENT_TYPE" VALUE="development" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="LAUNCH_JS" VALUE="false" />
       <method v="2">
@@ -194,6 +186,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="integrated husky + eslint + prettier" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/radar@Server.rcov" NAME="Server Coverage Results" MODIFIED="1657022779171" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" MODULE_NAME="server" />
+    <SUITE FILE_PATH="coverage/radar@Server.rcov" NAME="Server Coverage Results" MODIFIED="1657204824158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" MODULE_NAME="server" />
   </component>
 </project>

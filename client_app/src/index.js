@@ -4,13 +4,13 @@ import './index.css';
 import App from './App';
 import { notifyError } from './utils/errors';
 import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
 
-Sentry.init({
-  dsn: 'https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151',
-  integrations: [new BrowserTracing()],
-  environment: 'production',
-});
+if (process.env.NODE_ENV === 'production') {
+  Sentry.init({
+    dsn: process.env.REACT_APP_SENTRY_DSN,
+    environment: 'production',
+  });
+}
 
 let init = null;
 let error = null;
