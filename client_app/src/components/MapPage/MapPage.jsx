@@ -139,14 +139,19 @@ const MapPage = ({ manualAddress, maxHeight }) => {
     }
   };
 
+  const downloadWorkerMinJs =
+    'const workerMain=function(e){"use strict";const n=e.data["///ndt/v7/download"],t=new WebSocket(n,"net.measurementlab.ndt.v7");let o;o="undefined"!=typeof performance&&"function"==typeof performance.now?()=>performance.now():()=>Date.now(),downloadTest(t,postMessage,o)},downloadTest=function(e,n,t){e.onclose=function(){n({MsgType:"complete"})},e.onerror=function(e){n({MsgType:"error",Error:e.type})};let o=t(),s=o,a=0;e.onopen=function(){o=t(),s=o,a=0,n({MsgType:"start",Data:{ClientStartTime:o}})},e.onmessage=function(e){a+=void 0!==e.data.size?e.data.size:e.data.length;const r=t();r-s>250&&(n({MsgType:"measurement",ClientData:{ElapsedTime:(r-o)/1e3,NumBytes:a,MeanClientMbps:a/(r-o)*.008},Source:"client"}),s=r),"string"==typeof e.data&&n({MsgType:"measurement",ServerMessage:e.data,Source:"server"})}};"undefined"!=typeof self?self.onmessage=workerMain:void 0!==this?this.onmessage=workerMain:"undefined"!=typeof onmessage&&(onmessage=workerMain);\n';
+  const uploadWorkerMinJs =
+    'const workerMain=function(e){const n=e.data["///ndt/v7/upload"],t=new WebSocket(n,"net.measurementlab.ndt.v7");let o;o="undefined"!=typeof performance&&"function"==typeof performance.now?()=>performance.now():()=>Date.now(),uploadTest(t,postMessage,o)},uploadTest=function(e,n,t){let o=!1;function r(n,a,u,i,f){if(o)return;const c=t();if(c>=u)return e.close(),void s(f,e.bufferedAmount,a);const d=n.length>=8388608?1/0:16*n.length;f-e.bufferedAmount>=d&&(n=new Uint8Array(2*n.length));const m=7*n.length;e.bufferedAmount<m&&(e.send(n),f+=n.length),c>=i+250&&(s(f,e.bufferedAmount,a),i=c),setTimeout((()=>r(n,a,u,i,f)),0)}function s(e,o,r){const s=e-o,a=(t()-r)/1e3;n({MsgType:"measurement",ClientData:{ElapsedTime:a,NumBytes:s,MeanClientMbps:8*s/1e6/a},Source:"client",Test:"upload"})}e.onclose=function(){o||(o=!0,n({MsgType:"complete"}))},e.onerror=function(e){n({MsgType:"error",Error:e.type})},e.onmessage=function(e){void 0!==e.data&&n({MsgType:"measurement",Source:"server",ServerMessage:e.data})},e.onopen=function(){const e=new Uint8Array(8192),o=t(),s=o+1e4;n({MsgType:"start",Data:{StartTime:o/1e3,ExpectedEndTime:s/1e3}}),r(e,o,s,o,0)}};"undefined"!=typeof self?self.onmessage=workerMain:void 0!==this?this.onmessage=workerMain:"undefined"!=typeof onmessage&&(onmessage=workerMain);\n';
+
   const runSpeedTest = () => {
     setStartTimestamp(new Date().toISOString());
     if (runningTest) return;
     clearValues();
     const config = {
       userAcceptedDataPolicy: true,
-      downloadWorkerFile: '../../ndt7/ndt7-download-worker.js',
-      uploadWorkerFile: '../../ndt7/ndt7-upload-worker.js',
+      downloadWorkerFile: downloadWorkerMinJs,
+      uploadWorkerFile: uploadWorkerMinJs,
       metadata: { client_name: 'ndt7-client' },
     };
     ndt7.test(config, {

@@ -5,7 +5,6 @@ class ProcessSpeedTestJob < ApplicationJob
     if measurement.result.attached?
       json = JSON.parse(measurement.result.download)
       json["raw"].each do |result_measurement|
-        puts result_measurement
         if result_measurement["LastClientMeasurement"].present? && result_measurement["type"] == 'download'
           measurement.download_avg = result_measurement["LastClientMeasurement"]["MeanClientMbps"]
           measurement.ip = result_measurement["LastServerMeasurement"]["ConnectionInfo"]["Client"].split(':')[0] # only extract ip
@@ -17,6 +16,7 @@ class ProcessSpeedTestJob < ApplicationJob
           measurement.upload_id = result_measurement["LastServerMeasurement"]["ConnectionInfo"]["UUID"]
         end
       end
+      measurement.processed_at = Time.now
       measurement.save
     end
   end

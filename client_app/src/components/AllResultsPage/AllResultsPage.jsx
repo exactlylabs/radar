@@ -56,10 +56,7 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
     <div style={{ textAlign: 'center' }}>
       <MyTitle text={'All results'} />
       {loading && <CircularProgress size={25} />}
-      {
-        // TODO: REPORT ERROR TO SENTRY
-        !loading && error && <p>Error fetching results! Try again later.</p>
-      }
+      {!loading && error && <p>Error fetching results! Try again later.</p>}
       {!loading && results !== null && results.length === 0 && (
         <div>
           <p>No measurements taken so far!</p>
