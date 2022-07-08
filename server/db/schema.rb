@@ -167,7 +167,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_141346) do
     t.datetime "updated_at", precision: 6, null: false
     t.jsonb "extended_info"
     t.bigint "location_id"
-    t.bigint "user_id"
+    t.bigint "measured_by_id"
     t.string "client_version"
     t.string "client_distribution"
     t.jsonb "network_interfaces"
@@ -176,7 +176,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_141346) do
     t.integer "account_id"
     t.index ["client_id"], name: "index_measurements_on_client_id"
     t.index ["location_id"], name: "index_measurements_on_location_id"
-    t.index ["user_id"], name: "index_measurements_on_user_id"
+    t.index ["measured_by_id"], name: "index_measurements_on_measured_by_id"
   end
 
   create_table "packages", force: :cascade do |t|
@@ -243,7 +243,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_141346) do
   add_foreign_key "measurements", "accounts"
   add_foreign_key "measurements", "clients"
   add_foreign_key "measurements", "locations"
-  add_foreign_key "measurements", "users"
+  add_foreign_key "measurements", "users", column: "measured_by_id"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "update_groups", "client_versions"
   add_foreign_key "users_accounts", "accounts"

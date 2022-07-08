@@ -1,5 +1,5 @@
 class Client < ApplicationRecord
-  belongs_to :user, optional: true
+  belongs_to :user, optional: true, foreign_key: 'claimed_by_id'
   belongs_to :location, optional: true
   belongs_to :client_version, optional: true
   belongs_to :update_group, optional: true

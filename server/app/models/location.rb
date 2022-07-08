@@ -4,7 +4,7 @@ require "csv"
 class Location < ApplicationRecord
   validates :name, :address, presence: true
 
-  belongs_to :user
+  belongs_to :user, foreign_key: 'created_by_id'
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
 
