@@ -3,10 +3,10 @@ import { MyTitle } from '../common/MyTitle';
 import { CircularProgress, Grid, Paper } from '@mui/material';
 import { MyButton } from '../common/MyButton';
 import { CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet';
-import { API_URL, STEPS } from '../../constants';
+import { STEPS } from '../../constants';
 import SpeedResultsBox from './SpeedResultsBox';
 import { Box } from '@mui/system';
-import { DOWNLOAD_SPEED_LIMIT, SPEED_FILTERS } from '../../utils/speeds';
+import { DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD, SPEED_FILTERS } from '../../utils/speeds';
 import { mapTileAttribution, mapTileUrl } from '../../utils/map';
 import { getAllSpeedTests } from '../../utils/apiRequests';
 
@@ -23,8 +23,11 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
 
   const getColor = measurement => {
     const { download_avg } = measurement;
-    if (download_avg < DOWNLOAD_SPEED_LIMIT.MID) return { color: 'red', fillColor: 'red' };
-    else if (download_avg >= DOWNLOAD_SPEED_LIMIT.MID && download_avg < DOWNLOAD_SPEED_LIMIT.HIGH)
+    if (download_avg < DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.MID) return { color: 'red', fillColor: 'red' };
+    else if (
+      download_avg >= DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.MID &&
+      download_avg < DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.HIGH
+    )
       return { color: '#e2e22d', fillColor: '#e2e22d' };
     else return { color: 'green', fillColor: 'green' };
   };
@@ -32,11 +35,11 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
   const getLimitBasedOnFilter = filter => {
     switch (filter) {
       case SPEED_FILTERS.LOW:
-        return [0, DOWNLOAD_SPEED_LIMIT.MID];
+        return [0, DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.MID];
       case SPEED_FILTERS.MID:
-        return [DOWNLOAD_SPEED_LIMIT.MID, DOWNLOAD_SPEED_LIMIT.HIGH];
+        return [DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.MID, DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.HIGH];
       case SPEED_FILTERS.HIGH:
-        return [DOWNLOAD_SPEED_LIMIT.HIGH, Number.MAX_VALUE];
+        return [DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.HIGH, Number.MAX_VALUE];
     }
   };
 

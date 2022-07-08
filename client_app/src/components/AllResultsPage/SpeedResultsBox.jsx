@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, List, ListItem, ListItemIcon, ListItemText, Paper } from '@mui/material';
 import { Adjust, CheckCircle } from '@mui/icons-material';
-import { DOWNLOAD_SPEED_LIMIT, SPEED_FILTERS } from '../../utils/speeds';
+import { DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD, SPEED_FILTERS } from '../../utils/speeds';
 import './SpeedResultsBox.css';
 
 const SpeedResultsBox = ({ selectedFilter, setSelectedFilter }) => {
@@ -36,7 +36,7 @@ const SpeedResultsBox = ({ selectedFilter, setSelectedFilter }) => {
             name={SPEED_FILTERS.HIGH}
             style={{ width: 'min-content', textAlign: 'left', marginLeft: 10 }}
             primary={'High speed'}
-            secondary={`> ${DOWNLOAD_SPEED_LIMIT.HIGH} mbps`}
+            secondary={`> ${DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.HIGH} mbps`}
           />
         </ListItem>
         <ListItem
@@ -56,7 +56,7 @@ const SpeedResultsBox = ({ selectedFilter, setSelectedFilter }) => {
             className={`speed-results-box--my-list-item-text ${selectedFilter === SPEED_FILTERS.MID ? 'bolder' : ''}`}
             style={{ width: 'min-content', textAlign: 'left', marginLeft: 10 }}
             primary={'Mid speed'}
-            secondary={`< ${DOWNLOAD_SPEED_LIMIT.HIGH} mbps`}
+            secondary={`< ${DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.HIGH} mbps`}
           />
         </ListItem>
         <ListItem
@@ -79,7 +79,7 @@ const SpeedResultsBox = ({ selectedFilter, setSelectedFilter }) => {
             className={`speed-results-box--my-list-item-text ${selectedFilter === SPEED_FILTERS.LOW ? 'bolder' : ''}`}
             style={{ width: 'min-content', textAlign: 'left', marginLeft: 10 }}
             primary={'Low speed'}
-            secondary={`< ${DOWNLOAD_SPEED_LIMIT.MID} mbps`}
+            secondary={`< ${DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD.MID} mbps`}
           />
         </ListItem>
       </List>
