@@ -15,6 +15,15 @@ ActiveRecord::Schema.define(version: 2022_07_08_141346) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "accounts", force: :cascade do |t|
+    t.integer "account_type", default: 0, null: false
+    t.string "name", null: false
+    t.boolean "superaccount", default: false
+    t.boolean "exportaccount", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -80,7 +89,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_141346) do
     t.string "address"
     t.float "latitude"
     t.float "longitude"
-    t.bigint "user_id"
+    t.bigint "claimed_by_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "location_id"
@@ -93,11 +102,12 @@ ActiveRecord::Schema.define(version: 2022_07_08_141346) do
     t.string "distribution_name"
     t.string "raw_secret"
     t.jsonb "network_interfaces"
+    t.integer "account_id"
+    t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
     t.index ["update_group_id"], name: "index_clients_on_update_group_id"
-    t.index ["user_id"], name: "index_clients_on_user_id"
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -109,12 +119,26 @@ ActiveRecord::Schema.define(version: 2022_07_08_141346) do
     t.index ["name", "client_version_id"], name: "index_distributions_on_name_and_client_version_id", unique: true
   end
 
+  create_table "invites", force: :cascade do |t|
+    t.boolean "is_active", default: false
+    t.string "user_first_name", null: false
+    t.string "user_last_name", null: false
+    t.string "user_email", null: false
+    t.datetime "sent_at", null: false
+    t.bigint "account_id", null: false
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_invites_on_account_id"
+    t.index ["user_id"], name: "index_invites_on_user_id"
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.string "address"
     t.float "latitude"
     t.float "longitude"
-    t.bigint "user_id", null: false
+    t.bigint "created_by_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.decimal "expected_mbps_up"
@@ -126,7 +150,8 @@ ActiveRecord::Schema.define(version: 2022_07_08_141346) do
     t.string "state_fips"
     t.string "county_fips"
     t.boolean "automatic_location", default: false
-    t.index ["user_id"], name: "index_locations_on_user_id"
+    t.integer "account_id"
+    t.index ["created_by_id"], name: "index_locations_on_created_by_id"
   end
 
   create_table "measurements", force: :cascade do |t|
@@ -148,6 +173,7 @@ ActiveRecord::Schema.define(version: 2022_07_08_141346) do
     t.jsonb "network_interfaces"
     t.bigint "download_total_bytes"
     t.bigint "upload_total_bytes"
+    t.integer "account_id"
     t.index ["client_id"], name: "index_measurements_on_client_id"
     t.index ["location_id"], name: "index_measurements_on_location_id"
     t.index ["user_id"], name: "index_measurements_on_user_id"
@@ -192,17 +218,34 @@ ActiveRecord::Schema.define(version: 2022_07_08_141346) do
     t.index ["token"], name: "index_users_on_token", unique: true
   end
 
+  create_table "users_accounts", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "joined_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_users_accounts_on_account_id"
+    t.index ["user_id"], name: "index_users_accounts_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "clients", "accounts"
   add_foreign_key "clients", "client_versions"
   add_foreign_key "clients", "locations"
   add_foreign_key "clients", "update_groups"
-  add_foreign_key "clients", "users"
+  add_foreign_key "clients", "users", column: "claimed_by_id"
   add_foreign_key "distributions", "client_versions"
-  add_foreign_key "locations", "users"
+  add_foreign_key "invites", "accounts"
+  add_foreign_key "invites", "users"
+  add_foreign_key "locations", "accounts"
+  add_foreign_key "locations", "users", column: "created_by_id"
+  add_foreign_key "measurements", "accounts"
   add_foreign_key "measurements", "clients"
   add_foreign_key "measurements", "locations"
   add_foreign_key "measurements", "users"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "update_groups", "client_versions"
+  add_foreign_key "users_accounts", "accounts"
+  add_foreign_key "users_accounts", "users"
 end
