@@ -1,9 +1,9 @@
-export const DOWNLOAD_SPEED_LIMIT = {
+export const DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD = {
   HIGH: 100,
   MID: 25,
 };
 
-export const UPLOAD_SPEED_LIMIT = {
+export const UPLOAD_SPEED_LOW_TO_MID_THRESHOLD = {
   HIGH: 20,
   MID: 3,
 };

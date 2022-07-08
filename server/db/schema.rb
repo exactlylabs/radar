@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_01_115510) do
+ActiveRecord::Schema.define(version: 2022_07_08_141346) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 2022_07_01_115510) do
     t.string "upload_id"
     t.float "latency"
     t.float "loss"
+    t.datetime "processed_at"
   end
 
   create_table "client_versions", force: :cascade do |t|
