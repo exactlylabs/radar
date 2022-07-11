@@ -11,10 +11,16 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   super
   # end
 
-  # POST /resource
-  # def create
-  #   super
-  # end
+  # POST /register
+  def create
+    puts params
+    # First create a user
+    #@account = Account.new
+    #@account.account_type = params[:accountType] == 'personal' ? 0 : 1
+    #@account.name = params[:accountName]
+    #@account.save
+    # super
+  end
 
   # GET /resource/edit
   #def edit

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: 'users/registrations' }
 
   devise_scope :user do
+    post 'register' => 'devise/registrations#create'
     get 'users/edit_email' => 'devise/registrations#edit_email', as: :edit_user_email
     put 'users/edit_email' => 'users/registrations#update_email', as: :update_user_email
 

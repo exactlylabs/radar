@@ -1,0 +1,19 @@
+// Place all the styles related to the Locations controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: https://sass-lang.com/
+
+.sign-up--account-type-box {
+  border: dashed #b5b5c3 1px;
+  background-color: rgba(245, 248, 250, 0.4);
+}
+
+.sign-up--account-type-box:hover {
+  cursor: pointer;
+  border: dashed #00a3ff 1px;
+  background-color: #f1faff;
+}
+
+.sign-up--account-type-box.selected {
+  border: dashed #00a3ff 1px;
+  background-color: #f1faff;
+}
