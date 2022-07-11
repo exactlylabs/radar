@@ -1,0 +1,44 @@
+<div class="mb-10 text-center flex-column justify-content-center align-items-center"
+     data-registration-target="step3Wrapper"
+     style="display: none; width: max-content; margin: 0 auto"
+>
+  <!--begin::Title-->
+  <h1 class="text-dark mb-3" data-registration-target="accountNameTitle"></h1>
+  <!--end::Title-->
+  <!--begin::Subtitle-->
+  <div class="text-gray-400 fw-bold fs-4" style="margin-bottom: 40px" data-registration-target="accountNameSubtitle"></div>
+  <!--end::Subtitle-->
+  <!--begin::Input group-->
+  <div class="fv-row mb-7 fv-plugins-icon-container text-start" style="width: 100%">
+    <label class="form-label fw-bolder text-dark fs-6 required" data-registration-target="accountNameLabel">Name</label>
+    <input type="text"
+           id="account_name"
+           name="account_name"
+           autocomplete="off"
+           class="form-control form-control-lg form-control-solid"
+           data-action="input->registration#handleAccountNameChange"
+           data-registration-target="accountNameInput"
+           style="width: 100%"
+      />
+  </div>
+  <!--end::Input group-->
+  <!--begin::ButtonsContainer-->
+  <div class="d-flex flex-row justify-content-between" style="width: 100%; margin: 0 auto">
+    <!--begin::LaterButton-->
+    <button type="button"
+            class="btn btn-secondary"
+            data-action="click->registration#backToStep2"
+            style="height: 48px;"
+    >Back</button>
+    <!--end::LaterButton-->
+    <!--begin::ContinueButton-->
+    <button type="button"
+            class="btn btn-primary disabled"
+            data-action="click->registration#finishRegistration"
+            style="height: 48px; width: 172px;"
+            data-registration-target="finishButton"
+    >Finish</button>
+    <!--end::ContinueButton-->
+  </div>
+  <!--end::ButtonsContainer-->
+</div>
