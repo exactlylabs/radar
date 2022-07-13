@@ -9,11 +9,37 @@
     Let's just add a picture to you profile
   </div>
   <!--end::Subtitle-->
+  <!--begin::HiddenInput-->
+  <input type="file"
+         hidden="true"
+         id="profile_picture"
+         name="profile_picture"
+         data-registration-target="userAvatarInput"
+         data-action="input->registration#handleFileUpload"
+    />
+  <!--begin::HiddenInput-->
   <!--begin::AccountTypeContainer-->
-  <div class="sign-up--custom-input" style="width: 160px; height: 160px; border: dashed 1px #00a3ff; background-color: #f1faff; border-radius: 12px; margin-bottom: 20px"></div>
+  <div class="sign-up--custom-input d-flex justify-content-center align-items-center"
+       style="width: 160px; height: 160px; border: dashed 1px #00a3ff; background-color: #f1faff; border-radius: 12px; margin-bottom: 20px"
+       data-action="click->registration#handleFileZoneClicked"
+       data-registration-target="dropzone"
+  >
+    <img src=""
+         width="158"
+         height="158"
+         data-registration-target="avatarPreview"
+         style="display: none; margin: auto; border-radius: inherit"
+      />
+    <span class="svg-icon svg-icon-primary svg-icon-2hx" data-registration-target="plusIcon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M21 13H3C2.4 13 2 12.6 2 12C2 11.4 2.4 11 3 11H21C21.6 11 22 11.4 22 12C22 12.6 21.6 13 21 13Z" fill="black"/>
+        <path d="M12 22C11.4 22 11 21.6 11 21V3C11 2.4 11.4 2 12 2C12.6 2 13 2.4 13 3V21C13 21.6 12.6 22 12 22Z" fill="black"/>
+      </svg>
+    </span>
+  </div>
   <!--end::AccountTypeContainer-->
   <!--begin::AvatarInputLabel-->
-  <div class="text-primary fw-bolder fs-4" style="margin-bottom: 40px">Upload a picture or drag a file</div>
+  <div class="text-primary fw-bolder fs-4" style="margin-bottom: 40px">Upload a picture</div>
   <!--end::AvatarInputLabel-->
   <!--begin::ButtonsContainer-->
   <div style="width: 100%; margin: 0 auto; display: flex; justify-content: space-between">
@@ -26,7 +52,8 @@
     <!--end::LaterButton-->
     <!--begin::ContinueButton-->
     <button type="button"
-            class="btn btn-primary"
+            class="btn btn-primary disabled"
+            data-registration-target="avatarContinueButton"
             data-action="click->registration#saveAvatarAndContinue"
             style="height: 48px; width: 172px;"
     >Continue</button>

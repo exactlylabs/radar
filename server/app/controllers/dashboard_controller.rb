@@ -5,7 +5,7 @@ class DashboardController < ApplicationController
   def index
     @clients = policy_scope(Client)
     @locations = get_filtered_locations(policy_scope(Location), params[:filter])
-    
+    @accounts = current_user.accounts
     if @locations.length > 0 || params[:filter].present?
       @onboard_step = -1
     elsif @clients.length > 0

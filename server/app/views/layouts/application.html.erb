@@ -30,7 +30,7 @@
           <div class="aside-logo flex-column-auto pt-9 pb-5" id="kt_aside_logo">
             <!--begin::Logo-->
             <a href="<%= dashboard_path %>">
-              <img alt="Logo" src="<%= image_url('logo@3x.png') %>" width="90" class="max-h-50px logo-default">
+              <img alt="Logo" src="<%= image_url('logo-with-phrase@3x.png') %>" width="90" class="max-h-50px logo-default">
               <img alt="Logo" src="<%= image_url('favico@3x.png') %>" width="32" class="max-h-50px logo-minimize">
             </a>
             <!--end::Logo-->
@@ -42,9 +42,30 @@
             <!--begin::Menu-->
             <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-bold fs-5 my-5 mt-lg-2 mb-lg-0" id="kt_aside_menu" data-kt-menu="true" data-controller="menu">
               <div class="menu-fit hover-scroll-y me-lg-n5 pe-lg-5" id="kt_aside_menu_wrapper" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto" data-kt-scroll-wrappers="#kt_aside_menu" data-kt-scroll-offset="20px" data-kt-scroll-dependencies="#kt_aside_logo, #kt_aside_footer">
-              
-                
-                <div class="menu-item mb-5">
+                <button class="btn d-flex flex-row justify-content-center align-items-center"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#accounts-collapse"
+                        type="button"
+                        aria-expanded="false"
+                        aria-controls="accounts-collapse"
+                        style="padding-left: 0"
+                        onclick="this.classList.toggle('accounts-collapse-open')"
+                >
+                  <!--begin::AccountIcon-->
+                  <div class="d-flex justify-content-center align-items-center fw-bolder"
+                       style="width: 40px; height: 40px; background-color: #dbf2ff; color: #00a3ff; font-size: 20px; border-radius: 8px">
+                    <%= @current_account.name[0] %>
+                  </div>
+                  <!--end::AccountIcon-->
+                  <span class="menu-title text-muted text-gray-700" style="margin-left: 15px;"><%= @current_account.name %></span>
+                </button>
+                <div id="accounts-collapse" class="collapse">
+                  <% @accounts.each do |account| %>
+                    <p><%= account.name %></p>
+                  <% end %>
+                </div>
+                <div class="mb-5" style="height: 1px; width: 40px; background-color: #edf0f4"></div>
+                <div class="menu-item mb-5 ms-2">
                   <a class="menu-link <%= active_path?(dashboard_path) %>" href="<%= dashboard_path %>">
                     <span class="menu-icon">
                       <!--begin::Svg Icon | path: /icons/duotune/general/gen002.svg-->
@@ -59,7 +80,7 @@
                     <span class="menu-title">Dashboard</span>
                   </a>
                 </div>
-                <div class="menu-item mb-5">
+                <div class="menu-item mb-5 ms-2">
                   <a class="menu-link <%= active_path?(clients_path) %>" href="<%= clients_path %>">
                     <span class="menu-icon">
                       <span class="svg-icon svg-icon-2x">
@@ -76,7 +97,7 @@
                     <span class="menu-title">Pods</span>
                   </a>
                 </div>
-                <div class="menu-item mb-5">
+                <div class="menu-item mb-5 ms-2">
                   <a class="menu-link <%= active_path?(locations_path) %>" href="<%= locations_path %>">
                     <span class="menu-icon">
                       <!--begin::Svg Icon | path: assets/media/icons/duotune/general/gen018.svg-->
@@ -156,7 +177,11 @@
                   <div class="d-flex align-items-center ms-1 ms-lg-3" id="kt_header_user_menu_toggle">
                     <!--begin::Menu wrapper-->
                     <div class="cursor-pointer symbol symbol-35px symbol-lg-35px" data-kt-menu-trigger="click" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
-                      <%= image_tag "blank.png" %>
+                      <% if current_user.avatar.attached? %>
+                        <%= image_tag current_user.avatar %>
+                      <% else %>
+                        <%= image_tag "blank.png" %>
+                      <% end %>
                     </div>
                     <!--begin::Menu-->
                     <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-primary fw-bold py-4 fs-6 w-275px" data-kt-menu="true" data-controller="menu">
@@ -165,7 +190,11 @@
                         <div class="menu-content d-flex align-items-center px-3">
                           <!--begin::Avatar-->
                           <div class="symbol symbol-50px me-5">
-                            <img alt="Logo" src="<%= image_url('blank.png')%>">
+                            <% if current_user.avatar.attached? %>
+                              <%= image_tag current_user.avatar %>
+                            <% else %>
+                              <%= image_tag "blank.png" %>
+                            <% end %>
                           </div>
                           <!--end::Avatar-->
                           <!--begin::Username-->
