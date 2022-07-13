@@ -14,13 +14,15 @@ import (
 	"time"
 
 	"github.com/exactlylabs/mlab-processor/pkg/app/config"
-	"github.com/exactlylabs/mlab-processor/pkg/app/helpers"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
+	"github.com/exactlylabs/mlab-processor/pkg/app/writer"
 	"github.com/exactlylabs/mlab-processor/pkg/services/asnmap"
+	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/netmap"
-	"github.com/exactlylabs/mlab-processor/pkg/services/storage"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 )
+
+const StepName string = "ipgeocode"
 
 type ipgeocodeWorkItem struct {
 	fetchedResult *models.FetchedResult
@@ -198,28 +200,28 @@ func processItem(toProcess *ipgeocodeWorkItem) *models.GeocodedResult {
 	}
 }
 
-func storeGeocodedResult(date time.Time, result *models.GeocodedResult) {
+func storeGeocodedResult(writer *writer.DataStoreWriter, result *models.GeocodedResult) {
 	defer timer.TimeIt(time.Now(), "GeocodeWriteRow")
-	storage.PushDatedRow("geocode", date, result)
+	writer.WriteItem(result)
 }
 
-func geocodingWorker(wg *sync.WaitGroup, ch chan *ipgeocodeWorkItem) {
+func geocodingWorker(wg *sync.WaitGroup, writer *writer.DataStoreWriter, ch chan *ipgeocodeWorkItem) {
 	defer wg.Done()
 
 	for toProcess := range ch {
 		result := processItem(toProcess)
-		storeGeocodedResult(toProcess.date, result)
+		storeGeocodedResult(writer, result)
 	}
 }
 
-func newGeocodingPool() *geocodingPool {
+func newGeocodingPool(writer *writer.DataStoreWriter) *geocodingPool {
 	ch := make(chan *ipgeocodeWorkItem)
 	wg := &sync.WaitGroup{}
 	// It appears to be consuming 50% of the CPUs with a pool of only NumCPU. With the double we get ~80%
 	// Does this apply to any machine? Or just mine?
 	for i := 0; i < runtime.NumCPU()*2; i++ {
 		wg.Add(1)
-		go geocodingWorker(wg, ch)
+		go geocodingWorker(wg, writer, ch)
 	}
 
 	return &geocodingPool{
@@ -240,73 +242,73 @@ func (p *geocodingPool) Close() {
 	p.wg.Wait()
 }
 
-func Geocode(startDate, endDate time.Time, rerun bool) {
-	defer timer.TimeIt(time.Now(), "Geocode")
-	if !lookupInitialized {
-		ipv4Err := addFileToNetmap(lookup, config.GetConfig().Ipv4DBPath)
-		if ipv4Err != nil {
-			log.Fatal(ipv4Err)
-		}
-
-		ipv6Err := addFileToNetmap(lookup, config.GetConfig().Ipv6DBPath)
-		if ipv6Err != nil {
-			log.Fatal(ipv6Err)
-		}
-
-		asnIpv4Err := addAsnFileToNetmap(asnLookup, config.GetConfig().AsnIpv4DBPath)
-		if asnIpv4Err != nil {
-			log.Fatal(asnIpv4Err)
-		}
-
-		asnIpv6Err := addAsnFileToNetmap(asnLookup, config.GetConfig().AsnIpv6DBPath)
-		if asnIpv6Err != nil {
-			log.Fatal(asnIpv6Err)
-		}
-
-		f, err := os.Open(config.GetConfig().Asn2OrgDBPath)
-		if err != nil {
-			log.Fatal(fmt.Errorf("ipgeocoder.Geocode error opening db file: %w", err))
-		}
-		defer f.Close()
-		asnmapErr := asnmap.LoadCAIDAJsonl(ascii85.NewDecoder(f))
-		if asnmapErr != nil {
-			log.Fatal(asnmapErr)
-		}
-
-		lookupInitialized = true
+func initializeNetMaps() {
+	ipv4Err := addFileToNetmap(lookup, config.GetConfig().Ipv4DBPath)
+	if ipv4Err != nil {
+		log.Fatal(ipv4Err)
 	}
 
-	var dateRange []time.Time
-	if rerun {
-		dateRange = helpers.DateRange(startDate, endDate)
-	} else {
-		dateRange = storage.Incomplete("ipgeocode", startDate, endDate)
+	ipv6Err := addFileToNetmap(lookup, config.GetConfig().Ipv6DBPath)
+	if ipv6Err != nil {
+		log.Fatal(ipv6Err)
 	}
 
-	for _, date := range dateRange {
-		pool := newGeocodingPool()
-		fmt.Printf("Getting Rows for %v\n", date)
-		iter := storage.DatedRows("fetched", &models.FetchedResult{}, date)
-		next := iter.Next()
-		for next != nil {
-			pool.Queue(next.(*models.FetchedResult), date)
+	asnIpv4Err := addAsnFileToNetmap(asnLookup, config.GetConfig().AsnIpv4DBPath)
+	if asnIpv4Err != nil {
+		log.Fatal(asnIpv4Err)
+	}
 
-			next = func() interface{} {
-				defer timer.TimeIt(time.Now(), "GeocodeReadRow")
-				return iter.Next()
-			}()
-		}
-		pool.Close()
+	asnIpv6Err := addAsnFileToNetmap(asnLookup, config.GetConfig().AsnIpv6DBPath)
+	if asnIpv6Err != nil {
+		log.Fatal(asnIpv6Err)
+	}
 
-		storage.MarkCompleted("ipgeocode", date)
-		storage.Close()
+	f, err := os.Open(config.GetConfig().Asn2OrgDBPath)
+	if err != nil {
+		log.Fatal(fmt.Errorf("ipgeocoder.Geocode error opening db file: %w", err))
+	}
+	defer f.Close()
+	asnmapErr := asnmap.LoadCAIDAJsonl(ascii85.NewDecoder(f))
+	if asnmapErr != nil {
+		log.Fatal(asnmapErr)
 	}
 }
 
-// Clear index variables to allow them to be garbage collected
-// this is to try to release memory for next steps without having it allocated for unused stuff
-func Clear() {
-	lookup = nil
-	asnLookup = nil
-	lookupInitialized = false
+func processDate(ds datastore.DataStore, fetchDS datastore.DataStore, date time.Time) error {
+	writer := writer.NewWriter(ds)
+	defer writer.Close()
+	pool := newGeocodingPool(writer)
+	fmt.Printf("Getting Rows for %v\n", date)
+	iter, err := fetchDS.ItemsReader()
+	if err != nil {
+		return fmt.Errorf("ipgeocoder.processDate fetchDS.Read error: %w", err)
+	}
+
+	for iter.Next() {
+		next, err := func() (any, error) {
+			defer timer.TimeIt(time.Now(), "GeocodeReadRow")
+			return iter.GetRow()
+		}()
+		if err != nil {
+			return fmt.Errorf("ipgeocoder.processDate iter.Next error: %w", err)
+		}
+		pool.Queue(next.(*models.FetchedResult), date)
+
+	}
+
+	pool.Close() // Wait until all jobs are done
+
+	return nil
+}
+
+func Geocode(ds datastore.DataStore, fetchDS datastore.DataStore, date time.Time) {
+	defer timer.TimeIt(time.Now(), "Geocode")
+	if !lookupInitialized {
+		initializeNetMaps()
+		lookupInitialized = true
+	}
+
+	if err := processDate(ds, fetchDS, date); err != nil {
+		panic(err)
+	}
 }
