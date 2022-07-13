@@ -15,6 +15,7 @@ class Client < ApplicationRecord
   scope :where_online, -> { where("pinged_at > ?", 1.minute.ago)}
   scope :where_offline, -> { where("pinged_at <= ? OR pinged_at IS NULL", 1.minute.ago) }
   scope :where_no_location, -> { where("location_id IS NULL") }
+  scope :for_current_account, ->(account_id) { where(account_id: account_id) }
 
   def latest_download
     latest_measurement ? latest_measurement.download : nil

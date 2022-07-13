@@ -25,7 +25,17 @@
       <!--begin::Page-->
       <div class="page d-flex flex-row flex-column-fluid">
         <!--begin::Aside-->
-        <div id="kt_aside" class="aside aside-default aside-hoverable" data-kt-drawer="true" data-kt-drawer-name="aside" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_aside_toggle" data-controller="drawer">
+        <div id="kt_aside" class="aside aside-default aside-hoverable"
+             data-kt-drawer="true"
+             data-kt-drawer-name="aside"
+             data-kt-drawer-activate="{default: true, lg: false}"
+             data-kt-drawer-overlay="true"
+             data-kt-drawer-width="{default:'200px', '300px': '250px'}"
+             data-kt-drawer-direction="start"
+             data-kt-drawer-toggle="#kt_aside_toggle"
+             data-controller="drawer"
+             data-action="mouseenter->drawer#handleMouseEnter mouseleave->drawer#handleMouseLeave"
+        >
           <!--begin::Brand-->
           <div class="aside-logo flex-column-auto pt-9 pb-5" id="kt_aside_logo">
             <!--begin::Logo-->
@@ -41,7 +51,15 @@
             <!--begin::Aside Menu-->
             <!--begin::Menu-->
             <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-bold fs-5 my-5 mt-lg-2 mb-lg-0" id="kt_aside_menu" data-kt-menu="true" data-controller="menu">
-              <div class="menu-fit hover-scroll-y me-lg-n5 pe-lg-5" id="kt_aside_menu_wrapper" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto" data-kt-scroll-wrappers="#kt_aside_menu" data-kt-scroll-offset="20px" data-kt-scroll-dependencies="#kt_aside_logo, #kt_aside_footer">
+              <div class="menu-fit hover-scroll-y me-lg-n5 pe-lg-5"
+                   id="kt_aside_menu_wrapper"
+                   data-kt-scroll="true"
+                   data-kt-scroll-activate="{default: false, lg: true}"
+                   data-kt-scroll-height="auto"
+                   data-kt-scroll-wrappers="#kt_aside_menu"
+                   data-kt-scroll-offset="20px"
+                   data-kt-scroll-dependencies="#kt_aside_logo, #kt_aside_footer"
+              >
                 <button class="btn d-flex flex-row justify-content-center align-items-center"
                         data-bs-toggle="collapse"
                         data-bs-target="#accounts-collapse"
@@ -49,22 +67,42 @@
                         aria-expanded="false"
                         aria-controls="accounts-collapse"
                         style="padding-left: 0"
-                        onclick="this.classList.toggle('accounts-collapse-open')"
+                        data-drawer-target="accountsMenuButton"
+                        data-action="click->drawer#toggleMenu"
                 >
                   <!--begin::AccountIcon-->
                   <div class="d-flex justify-content-center align-items-center fw-bolder"
                        style="width: 40px; height: 40px; background-color: #dbf2ff; color: #00a3ff; font-size: 20px; border-radius: 8px">
-                    <%= @current_account.name[0] %>
+                    <%= @current_account.name[0].upcase %>
                   </div>
                   <!--end::AccountIcon-->
-                  <span class="menu-title text-muted text-gray-700" style="margin-left: 15px;"><%= @current_account.name %></span>
+                  <span class="menu-title sidebar--account-selected-title" style="margin-left: 15px;"><%= @current_account.name %></span>
+                  <i class="fas fa-angle-right" data-drawer-target="rightAngle"></i>
+                  <i class="fas fa-angle-down" style="display: none; color: #00a3ff;" data-drawer-target="downAngle"></i>
                 </button>
                 <div id="accounts-collapse" class="collapse">
-                  <% @accounts.each do |account| %>
-                    <p><%= account.name %></p>
+                  <% @accounts.order("LOWER(name)").each do |account| %>
+                    <%= render partial: "accounts/sidebar_account_item", locals: { account: account } %>
                   <% end %>
+                  <!-- TODO: INCLUDE ONCE ADDING ACCOUNTS IS SUPPORTED -->
+                  <!--div class="sidebar--add-account-row text-primary d-flex flex-row">
+                    <span class="svg-icon svg-icon-primary svg-icon-1x sidebar--account-add-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="black"/>
+                        <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="black"/>
+                      </svg>
+                    </span>
+                    <p>Add new account</p>
+                  </div-->
                 </div>
-                <div class="mb-5" style="height: 1px; width: 40px; background-color: #edf0f4"></div>
+                <div class="mb-5"
+                     style="height: 1px; width: 40px; background-color: #edf0f4"
+                     data-drawer-target="smallDivider"
+                ></div>
+                <div class="mb-5"
+                     style="height: 1px; width: 190px; background-color: #edf0f4; display: none"
+                     data-drawer-target="fullSizeDivider"
+                ></div>
                 <div class="menu-item mb-5 ms-2">
                   <a class="menu-link <%= active_path?(dashboard_path) %>" href="<%= dashboard_path %>">
                     <span class="menu-icon">

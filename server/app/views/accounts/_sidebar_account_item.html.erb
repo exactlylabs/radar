@@ -1,0 +1,6 @@
+<div id="sidebar--account-container@<%= account.id %>"
+     class="sidebar--account-row <%= is_current_active_account?(account) ? 'active' : 'text-gray-600' %>"
+     data-action="click->drawer#selectAccount">
+  <div id="sidebar--account-market@<%= account.id %>"class="sidebar--circular-marker"></div>
+  <p id="sidebar--account-name@<%= account.id %>"><%= account.name %></p>
+</div>

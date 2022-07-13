@@ -16,6 +16,8 @@ class Location < ApplicationRecord
 
   scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
 
+  scope :for_current_account, ->(account_id) { where(account_id: account_id) }
+
   def latest_download
     latest_measurement ? latest_measurement.download : nil
   end
