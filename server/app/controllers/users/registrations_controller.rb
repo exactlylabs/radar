@@ -13,13 +13,25 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /register
   def create
-    puts params
-    # First create a user
-    #@account = Account.new
-    #@account.account_type = params[:accountType] == 'personal' ? 0 : 1
-    #@account.name = params[:accountName]
-    #@account.save
-    # super
+    @user = User.create user_params
+    @account = Account.create account_params
+    if params[:avatar]
+      filename = "#{@user.id}-avatar.#{get_type}"
+      decoded_data = Base64.decode64(params[:avatar].split(',')[1])
+      @user.avatar.attach(io: StringIO.new(decoded_data), filename: filename, content_type: params[:avatar_type])
+    end
+    @user.save!
+    @account.save!
+    # Link account and new user together
+    @user_account = UsersAccount.create(user_id: @user.id, account_id: @account.id, joined_at: Time.now)
+    respond_to do |format|
+      if @user_account.save
+        sign_in @user
+        format.html { redirect_to dashboard_path, notice: "Registered successfully" }
+      else
+        format.html { render :create, status: :unprocessable_entity }
+      end
+    end
   end
 
   # GET /resource/edit
@@ -92,6 +104,20 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # PUT /resource
   def update
     super
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:first_name, :last_name, :email, :password, :terms)
+  end
+
+  def account_params
+    params.require(:account).permit(:name, :account_type)
+  end
+
+  def get_type
+    params[:avatar_type].split('/')[1]
   end
 
   # DELETE /resource

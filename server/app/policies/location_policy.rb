@@ -1,7 +1,7 @@
 class LocationPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      scope.where(user: user)
+      scope.where(created_by_id: user)
     end
 
     private

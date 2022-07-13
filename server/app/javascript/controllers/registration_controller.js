@@ -2,22 +2,27 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["firstNameInput", "lastNameInput", "emailInput", "passwordInput",
-    "passwordCheckInput", "termsInput", "continueButton",
+    "passwordCheckInput", "termsInput", "continueButton", "userAvatarInput", "dropzone",
+    "avatarPreview", "plusIcon", "avatarContinueButton",
     "personalBox", "organizationBox", "continueToNameButton",
-    "accountNameInput", "finishButton", "accountNameTitle", "accountNameSubtitle", "accountNameLabel",
+    "accountNameInput", "finishButton", "accountNameTitle", "accountNameSubtitle",
+    "accountNameLabel", "finishButtonLoading",
     "step0Wrapper", "step1Wrapper", "step2Wrapper", "step3Wrapper"]
 
   connect() {}
 
   initialize() {
+    // Using underscore to comply with Ruby style
     this.registrationData = {
-      firstName: null,
-      lastName: null,
+      first_name: null,
+      last_name: null,
       email: null,
       password: null,
-      accountName: null,
-      accountType: null,
+      terms: 'off',
+      account_name: null,
+      account_type: null,
       avatar: null,
+      avatar_type: null,
     };
   }
 
@@ -52,48 +57,84 @@ export default class extends Controller {
   handleContinue() {
     this.registrationData = {
       ...this.registrationData,
-      firstName: this.firstNameInputTarget.value,
-      lastName: this.lastNameInputTarget.value,
+      first_name: this.firstNameInputTarget.value,
+      last_name: this.lastNameInputTarget.value,
       email: this.emailInputTarget.value,
       password: this.passwordInputTarget.value,
+      terms: 'on',
     }
-    // TODO: once avatars are supported, change to goToStep1
-    this.goToStep2();
+    this.goToStep1();
+  }
+
+  handleFileZoneClicked() {
+    this.userAvatarInputTarget.click();
+  }
+
+  handleFileUpload(e) {
+    const avatar = this.userAvatarInputTarget.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(avatar);
+    reader.onloadend = (e) => {
+      if(reader.readyState === reader.DONE) {
+        this.registrationData = {
+          ...this.registrationData,
+          avatar: reader.result,
+          avatar_type: avatar.type,
+        }
+      }
+    }
+    const url = URL.createObjectURL(avatar);
+    this.avatarPreviewTarget.src = url;
+    this.avatarPreviewTarget.style.display = 'block';
+    this.plusIconTarget.style.display = 'none';
+    this.avatarContinueButtonTarget.classList.remove('disabled');
   }
 
   finishRegistration() {
     const token = document.getElementsByName('csrf-token')[0].content;
     const accountName = this.accountNameInputTarget.value;
-    this.registrationData = {
-      ...this.registrationData,
-      accountName,
-    };
-    fetch('/register', {
+    const formData = new FormData();
+    formData.append('user[first_name]', this.registrationData.first_name);
+    formData.append('user[last_name]', this.registrationData.last_name);
+    formData.append('user[email]', this.registrationData.email);
+    formData.append('user[terms]', this.registrationData.terms);
+    formData.append('user[password]', this.registrationData.password);
+    formData.append('avatar', this.registrationData.avatar);
+    formData.append('avatar_type', this.registrationData.avatar_type);
+    formData.append('account[name]', accountName);
+    formData.append('account[account_type]', this.registrationData.account_type);
+    this.finishButtonTarget.style.display = 'none';
+    this.finishButtonLoadingTarget.style.display = 'block';
+    fetch('/users/register', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': token,
-      },
-      body: JSON.stringify(this.registrationData)
+      redirect: 'follow',
+      headers: { 'X-CSRF-Token': token },
+      body: formData
     })
-      .then(res => console.log(res))
-      .catch(err => console.error(err));
+      .then(res => {
+        if(res.redirected) {
+          window.location.href = res.url;
+        }
+      })
+      .catch(err => console.error(err))
+      .finally(() => {
+        this.finishButtonTarget.style.display = 'block';
+        this.finishButtonLoadingTarget.style.display = 'none';
+      });
   }
 
   saveAvatarAndContinue() {
-    // TODO: process image saving
-    // process()
     this.goToStep2();
   }
 
   saveAccountTypeAndContinue() {
-    this.goToStep3(this.registrationData.accountType);
+    this.goToStep3(this.registrationData.account_type);
   }
 
   selectType(type) {
     this.registrationData = {
       ...this.registrationData,
-      accountType: type,
+      account_type: type,
     }
   }
 
@@ -146,8 +187,7 @@ export default class extends Controller {
   }
 
   goToStep2() {
-    // TODO: once avatars are supported, change to step1WrapperTarget
-    this.step0WrapperTarget.style.display = 'none';
+    this.step1WrapperTarget.style.display = 'none';
     this.step2WrapperTarget.style.display = 'flex';
     this.clearTypes();
   }
@@ -169,10 +209,9 @@ export default class extends Controller {
     }
   }
 
-  // TODO: once avatars are supported change to step1
   backToStep0() {
     this.step0WrapperTarget.style.display = 'block';
-    this.step2WrapperTarget.style.display = 'none';
+    this.step1WrapperTarget.style.display = 'none';
   }
 
   backToStep1() {

@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_sentry_user
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :set_account_cookie
 
   def after_sign_in_path_for(resource)
     dashboard_path
@@ -16,5 +17,23 @@ class ApplicationController < ActionController::Base
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(:first_name, :last_name, :email, :password, :password_confirmation, :terms)}
     devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(:first_name, :last_name, :email, :password, :password_confirmation, :current_password)}
+  end
+
+  def set_account_cookie
+    return if !current_user
+    current_saved_account_id = cookies[:radar_current_account_id]
+    # Check if current set account id is ok with current user
+    if current_saved_account_id && policy_scope(UsersAccount).where(account_id: current_saved_account_id.to_i).count == 1
+      @current_account = Account.find(current_saved_account_id.to_i)
+    else
+      current_account_id = UsersAccount.where(user_id: current_user.id).first.account_id
+      @current_account = Account.find(current_account_id)
+      cookies[:radar_current_account_id] = @current_account.id
+    end
+    @current_account
+  end
+
+  def current_account
+    @current_account
   end
 end
