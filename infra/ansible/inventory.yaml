@@ -1,0 +1,8 @@
+all:
+  hosts:
+    processor:
+  vars:
+    ansible_connection: "ssh"
+    ansible_ssh_user: "{{ user }}"
+    ansible_ssh_private_key: "{{ priv_key_path }}"
+    ansible_host: "{{ processor_ip }}"

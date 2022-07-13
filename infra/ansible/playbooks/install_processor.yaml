@@ -1,0 +1,41 @@
+- name: Install Mlab Processor
+  hosts: processor
+
+  tasks:
+    - name: Copy binary to host
+      become: yes
+      ansible.builtin.copy:
+        src: ../../../mlab-processor
+        dest: /usr/local/bin/mlab-processor
+        mode: '0655'
+    - name: Copy systemd service file to host
+      become: yes
+      ansible.builtin.copy:
+        src: ./mlab-processor.service
+        dest: /etc/systemd/system/mlab-processor.service
+        mode: '0644'
+    - name: Create var directory
+      become: yes
+      ansible.builtin.file:
+        path: /var/mlab-processor
+        state: directory
+        mode: '0655'
+    - name: Run download_asn_maps.sh
+      become: yes
+      ansible.builtin.script:
+        chdir: /var/mlab-processor
+        cmd: ../../../scripts/download_asn_maps.sh
+      environment:
+        MAXMIND_KEY: "{{ lookup('env', 'MAXMIND_KEY') }}"
+    - name: Run download_shapes.sh
+      become: yes
+      ansible.builtin.script:
+        chdir: /var/mlab-processor
+        cmd: ../../../scripts/download_shapes.sh   
+    - name: Reload Systemd
+      become: yes
+      ansible.builtin.systemd:
+        daemon_reload: true
+        enabled: true
+        name: mlab-processor
+        state: started
