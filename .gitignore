@@ -1,2 +1,7 @@
 output
 input
+*.json
+*.gz
+analysis/
+.vscode
+mlab-processor
