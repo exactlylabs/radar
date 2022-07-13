@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="52615d7d-e0f3-4b35-b42d-cfbc57926895" name="Changes" comment="wip: cold sign up new flow">
+    <list default="true" id="52615d7d-e0f3-4b35-b42d-cfbc57926895" name="Changes" comment="cold sign up flow with avatars + basic first approach to organization showing up in landing dashboard page">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/assets/stylesheets/registration.scss" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/assets/stylesheets/registration.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/assets/stylesheets/dashboard.scss" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/assets/stylesheets/dashboard.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/application_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/clients_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/clients_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/controllers/dashboard_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/dashboard_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/controllers/users/registrations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/users/registrations_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/javascript/controllers/registration_controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/javascript/controllers/registration_controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/models/UsersAccount.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/users_account.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/models/account.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/account.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/models/user.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/user.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/policies/client_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/policies/client_policy.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/policies/location_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/policies/location_policy.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/location_measurements_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/location_measurements_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/locations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/locations_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/javascript/controllers/drawer_controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/javascript/controllers/drawer_controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/models/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/client.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/models/location.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/location.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/views/clients/add_pod_wizard/_add_pod_step_2.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/clients/add_pod_wizard/_add_pod_step_2.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/views/devise/registrations/edit.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/devise/registrations/edit.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/views/devise/registrations/new.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/devise/registrations/new.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/views/devise/registrations/steps/_account_name_step.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/devise/registrations/steps/_account_name_step.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/views/devise/registrations/steps/_profile_picture_step.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/devise/registrations/steps/_profile_picture_step.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/clients/edit.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/clients/edit.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/clients/index.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/clients/index.html.erb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/views/layouts/application.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/layouts/application.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/config/routes.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -291,7 +287,7 @@
       <option name="presentableId" value="Default" />
       <updated>1657218497452</updated>
       <workItem from="1657218499064" duration="3461000" />
-      <workItem from="1657623303159" duration="17490000" />
+      <workItem from="1657623303159" duration="31993000" />
     </task>
     <task id="LOCAL-00001" summary="created new accounts/invites entites + seed files for creating default accounts for already present users on DB">
       <created>1657307249511</created>
@@ -307,7 +303,14 @@
       <option name="project" value="LOCAL" />
       <updated>1657549118665</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="cold sign up flow with avatars + basic first approach to organization showing up in landing dashboard page">
+      <created>1657715230546</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1657715230546</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -327,7 +330,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="created new accounts/invites entites + seed files for creating default accounts for already present users on DB" />
     <MESSAGE value="wip: cold sign up new flow" />
-    <option name="LAST_COMMIT_MESSAGE" value="wip: cold sign up new flow" />
+    <MESSAGE value="cold sign up flow with avatars + basic first approach to organization showing up in landing dashboard page" />
+    <option name="LAST_COMMIT_MESSAGE" value="cold sign up flow with avatars + basic first approach to organization showing up in landing dashboard page" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/radar@Server.rcov" NAME="Server Coverage Results" MODIFIED="1657204824158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" MODULE_NAME="server" />

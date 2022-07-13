@@ -4,7 +4,7 @@ class LocationsController < ApplicationController
 
   # GET /locations or /locations.json
   def index
-    @locations = policy_scope(Location)
+    @locations = Location.for_current_account(cookies[:radar_current_account_id])
   end
 
   # GET /locations/1 or /locations/1.json
@@ -27,8 +27,8 @@ class LocationsController < ApplicationController
     @location.user = current_user
 
     # TODO: Is there a better UX for this?
-    if policy_scope(Client).all.length == 1
-      @location.clients << policy_scope(Client).first
+    if Client.for_current_account(cookies[:radar_current_account_id]).count == 1
+      @location.clients << Client.for_current_account(cookies[:radar_current_account_id]).first
     end
 
     respond_to do |format|
@@ -69,7 +69,7 @@ class LocationsController < ApplicationController
   def destroy
     @location.destroy
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.replace('location_container_dynamic', partial: 'locations_list', locals: {locations: policy_scope(Location)}) }
+      format.turbo_stream { render turbo_stream: turbo_stream.replace('location_container_dynamic', partial: 'locations_list', locals: {locations: Location.for_current_account(cookies[:radar_current_account_id])}) }
       format.turbo_stream { render turbo_stream: turbo_stream.remove(@location) }
       format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }
       format.json { head :no_content }
