@@ -35,5 +35,5 @@ do
     if [ $state_fips -lt 10 ]; then
         state_fips="0${state_fips}"
     fi
-    curl -s -f "${URL}tl_2021_${state_fips}_tract.zip" -o "${TARGET_DIR}/tracts/tl_2021_${state_fips}_tract.zip"
+    curl -sf "${URL}tl_2021_${state_fips}_tract.zip" -o "${TARGET_DIR}/tracts/tl_2021_${state_fips}_tract.zip" || true
 done
