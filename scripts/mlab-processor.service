@@ -1,0 +1,13 @@
+[Unit]
+Description = Mlab Processor
+After = network-online.target
+Wants = network-online.target
+
+[Service]
+User=root
+ExecStart = /usr/local/bin/mlab-processor
+Restart = on-failure
+RestartSec = 10s
+
+[Install]
+WantedBy = multi-user.target
