@@ -10,6 +10,7 @@ import (
 )
 
 type ProcessorConfig struct {
+	FileFormat       string `config:"FILE_FORMAT,default=avro"` // Accepts avro or parquet
 	EarliestDate     string `config:"EARLIEST_DATE,default=2019-05-13"`
 	Ipv4DBPath       string `config:"IPV4_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv4.csv"`
 	Ipv6DBPath       string `config:"IPV6_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
