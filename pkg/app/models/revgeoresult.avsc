@@ -5,6 +5,7 @@
     "fields" : [
         {"name": "geo_namespace", "type": "string"},
         {"name": "id", "type": "string"},
-        {"name": "geo_id", "type": "string"}
+        {"name": "geo_id", "type": "string"},
+        {"name": "started_at", "type": "long"}
     ]
 }

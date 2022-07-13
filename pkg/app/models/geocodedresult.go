@@ -1,5 +1,12 @@
 package models
 
+import (
+	_ "embed"
+)
+
+//go:embed geocodedresult.avsc
+var GeocodedResultSchema string
+
 type GeocodedResult struct {
 	Id        string   `parquet:"name=id, type=BYTE_ARRAY, convertedtype=UTF8" avro:"id"`
 	TestStyle string   `parquet:"name=test_style, type=BYTE_ARRAY, convertedtype=UTF8" avro:"test_style"`

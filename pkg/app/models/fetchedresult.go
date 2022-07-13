@@ -1,5 +1,12 @@
 package models
 
+import (
+	_ "embed"
+)
+
+//go:embed fetchedresult.avsc
+var FetchedResultSchema string
+
 type FetchedResult struct {
 	Id             string   `parquet:"name=id, type=BYTE_ARRAY, convertedtype=UTF8" avro:"id"`
 	TestStyle      string   `parquet:"name=test_style, type=BYTE_ARRAY, convertedtype=UTF8" avro:"test_style"`
