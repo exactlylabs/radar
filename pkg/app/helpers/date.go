@@ -10,6 +10,5 @@ func DateRange(start, end time.Time) (dates []time.Time) {
 	for t := start; t.Before(end.AddDate(0, 0, 1)); t = t.AddDate(0, 0, 1) {
 		dates = append(dates, t)
 	}
-
 	return dates
 }
