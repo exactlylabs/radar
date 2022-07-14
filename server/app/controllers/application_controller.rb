@@ -31,7 +31,13 @@ class ApplicationController < ActionController::Base
     if current_saved_account_id && policy_scope(UsersAccount).where(account_id: current_saved_account_id.to_i).count == 1
       @current_account = Account.find(current_saved_account_id.to_i)
     else
-      current_account_id = UsersAccount.where(user_id: current_user.id).first.account_id
+      # break out to check for nil (no account associated)
+      first_account_for_user = UsersAccount.where(user_id: current_user.id).first
+      if !first_account_for_user
+        cookies[:radar_current_account_id] = nil
+        return nil
+      end
+      current_account_id = first_account_for_user.account_id
       @current_account = Account.find(current_account_id)
       cookies[:radar_current_account_id] = @current_account.id
     end

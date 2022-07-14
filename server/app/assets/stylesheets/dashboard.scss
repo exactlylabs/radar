@@ -8,6 +8,12 @@
   margin-right: 34px;
 }
 
+.sidebar--account-empty-title {
+  font-size: 15px;
+  color: #00a3ff;
+  margin-right: 34px;
+}
+
 .accounts-collapse-open {
   span {
     color: #00a3ff;
@@ -78,5 +84,15 @@
 }
 
 .sidebar--add-account-row:hover {
-  background-color: #d4f0fe;
+  font-weight: bold;
+}
+
+.sidebar--caret {
+  position: absolute;
+  right: 45px;
+}
+
+.sidebar--account-add-button {
+  background: transparent;
+  border: none;
 }

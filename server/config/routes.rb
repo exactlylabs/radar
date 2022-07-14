@@ -86,6 +86,9 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :accounts do
+  end
+
   namespace 'api' do
     namespace 'v1' do
       resources :client_versions, constraints: {id: /[^\/]+/} do

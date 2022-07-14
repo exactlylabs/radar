@@ -45,4 +45,10 @@ export default class extends Controller {
     document.cookie = `radar_current_account_id=${selectedAccountId}`;
     window.location.reload();
   }
+
+
+  //TODO: Add once Edit/Delete are supported
+  handleAccountHover(e) {
+
+  }
 }
