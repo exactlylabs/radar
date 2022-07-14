@@ -14,7 +14,8 @@ export default class extends Controller {
   }
 
   handleMouseLeave() {
-    if(this.accountsMenuButtonTarget.classList.contains('accounts-collapse-open')) {
+    if(this.hasAccountsMenuButtonTarget &&
+      this.accountsMenuButtonTarget.classList.contains('accounts-collapse-open')) {
       this.accountsMenuButtonTarget.click();
     }
     this.smallDividerTarget.style.display = 'block';

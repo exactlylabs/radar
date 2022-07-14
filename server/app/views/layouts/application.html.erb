@@ -60,27 +60,28 @@
                    data-kt-scroll-offset="20px"
                    data-kt-scroll-dependencies="#kt_aside_logo, #kt_aside_footer"
               >
-                <button class="btn d-flex flex-row justify-content-center align-items-center"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#accounts-collapse"
-                        type="button"
-                        aria-expanded="false"
-                        aria-controls="accounts-collapse"
-                        style="padding-left: 0"
-                        data-drawer-target="accountsMenuButton"
-                        data-action="click->drawer#toggleMenu"
-                >
-                  <!--begin::AccountIcon-->
-                  <div class="d-flex justify-content-center align-items-center fw-bolder"
-                       style="width: 40px; height: 40px; background-color: #dbf2ff; color: #00a3ff; font-size: 20px; border-radius: 8px">
-                    <%= @current_account.name[0].upcase %>
-                  </div>
-                  <!--end::AccountIcon-->
-                  <span class="menu-title sidebar--account-selected-title" style="margin-left: 15px;"><%= @current_account.name %></span>
-                  <i class="fas fa-angle-right" data-drawer-target="rightAngle"></i>
-                  <i class="fas fa-angle-down" style="display: none; color: #00a3ff;" data-drawer-target="downAngle"></i>
-                </button>
-                <div id="accounts-collapse" class="collapse">
+                <% if @current_account.present? %>
+                  <button class="btn d-flex flex-row justify-content-center align-items-center"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#accounts-collapse"
+                          type="button"
+                          aria-expanded="false"
+                          aria-controls="accounts-collapse"
+                          style="padding-left: 0"
+                          data-drawer-target="accountsMenuButton"
+                          data-action="click->drawer#toggleMenu"
+                  >
+                    <!--begin::AccountIcon-->
+                    <div class="d-flex justify-content-center align-items-center fw-bolder"
+                         style="width: 40px; height: 40px; background-color: #dbf2ff; color: #00a3ff; font-size: 20px; border-radius: 8px">
+                      <%= @current_account.name[0].upcase %>
+                    </div>
+                    <!--end::AccountIcon-->
+                    <span class="menu-title sidebar--account-selected-title" style="margin-left: 15px;"><%= @current_account.name %></span>
+                    <i class="fas fa-angle-right" data-drawer-target="rightAngle"></i>
+                    <i class="fas fa-angle-down" style="display: none; color: #00a3ff;" data-drawer-target="downAngle"></i>
+                  </button>
+                  <div id="accounts-collapse" class="collapse">
                   <% @accounts.order("LOWER(name)").each do |account| %>
                     <%= render partial: "accounts/sidebar_account_item", locals: { account: account } %>
                   <% end %>
@@ -100,6 +101,25 @@
                     </div>
                   </button>
                 </div>
+                <% else %>
+                  <button class="btn d-flex flex-row justify-content-center align-items-center"
+                          type="button"
+                          style="padding-left: 0"
+                          data-bs-toggle="modal"
+                          data-bs-target="#add_account_wizard"
+                  >
+                    <div class="d-flex justify-content-center align-items-center fw-bolder"
+                         style="width: 40px; height: 40px; background-color: #dbf2ff; color: #00a3ff; font-size: 20px; border-radius: 8px; border: 1px dashed rgba(0, 163, 255, 0.5)">
+                      <span class="svg-icon svg-icon-primary svg-icon-2x" style="margin-right: 0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="black"/>
+                          <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="black"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <span class="menu-title sidebar--account-empty-title text-nowrap" style="margin-left: 15px;">Add new account</span>
+                  </button>
+                <% end %>
                 <div class="mb-5"
                      style="height: 1px; width: 40px; background-color: #edf0f4"
                      data-drawer-target="smallDivider"
