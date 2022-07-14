@@ -52,5 +52,8 @@ application.register("add-pod", AddPodController);
 import EditPodController from "./edit_pod_controller.js"
 application.register("edit-pod", EditPodController);
 
-import RegistrationController from "./registration_controller"
+import RegistrationController from "./registration_controller.js"
 application.register("registration", RegistrationController);
+
+import AddAccountController from "./add_account_controller.js"
+application.register("add-account", AddAccountController);

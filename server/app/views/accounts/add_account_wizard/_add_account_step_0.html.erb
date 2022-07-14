@@ -1,0 +1,72 @@
+<div class="modal-body" style="width: max-content; padding-left: 60px; padding-right: 60px" data-add-account-target="step0">
+  <div class="d-flex flex-column align-items-center justify-content-center">
+    <!--begin::Title-->
+    <h1 class="text-dark mb-10">How do you want to use Radar?</h1>
+    <!--end::Title-->
+    <!--begin::TypePicker-->
+    <div class="sign-up--account-type-container"
+         style="display: flex; flex-direction: column"
+    >
+      <div class="sign-up--account-type-box d-flex flex-row justify-content-start align-items-center"
+           style="width: 500px; height: 100px; border-radius: 9px; padding: 25px; margin-bottom: 20px"
+           data-action="click->add-account#selectPersonal"
+           data-add-account-target="personalBox">
+        <div class="d-flex justify-content-center align-items-center"
+             style="border-radius: 50%; background-color: #d2edfe; width: 40px; height: 40px; margin-right: 20px;">
+        <span class="svg-icon svg-icon-primary svg-icon-2x">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M6.28548 15.0861C7.34369 13.1814 9.35142 12 11.5304 12H12.4696C14.6486 12 16.6563 13.1814 17.7145 15.0861L19.3493 18.0287C20.0899 19.3618 19.1259 21 17.601 21H6.39903C4.87406 21 3.91012 19.3618 4.65071 18.0287L6.28548 15.0861Z" fill="black"/>
+            <rect opacity="0.3" x="8" y="3" width="8" height="8" rx="4" fill="black"/>
+          </svg>
+        </span>
+        </div>
+        <div>
+          <div class="fw-bolder fs-4 text-start">Personal use</div>
+          <div class="text-gray-400 fw-bold fs-6 text-start">Use Radar at your home or a similar place.</div>
+        </div>
+      </div>
+      <div class="sign-up--account-type-box d-flex flex-row justify-content-start align-items-center"
+           style="width: 500px; height: 100px; border-radius: 9px; padding: 25px; margin-bottom: 30px"
+           data-action="click->add-account#selectOrganization"
+           data-add-account-target="organizationBox">
+        <div class="d-flex justify-content-center align-items-center"
+             style="border-radius: 50%; background-color: #d2edfe; width: 40px; height: 40px; margin-right: 20px;">
+          <span class="svg-icon svg-icon-primary svg-icon-2x">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M3 2H10C10.6 2 11 2.4 11 3V10C11 10.6 10.6 11 10 11H3C2.4 11 2 10.6 2 10V3C2 2.4 2.4 2 3 2Z" fill="black"/>
+              <path opacity="0.3" d="M14 2H21C21.6 2 22 2.4 22 3V10C22 10.6 21.6 11 21 11H14C13.4 11 13 10.6 13 10V3C13 2.4 13.4 2 14 2Z" fill="black"/>
+              <path opacity="0.3" d="M3 13H10C10.6 13 11 13.4 11 14V21C11 21.6 10.6 22 10 22H3C2.4 22 2 21.6 2 21V14C2 13.4 2.4 13 3 13Z" fill="black"/>
+              <path opacity="0.3" d="M14 13H21C21.6 13 22 13.4 22 14V21C22 21.6 21.6 22 21 22H14C13.4 22 13 21.6 13 21V14C13 13.4 13.4 13 14 13Z" fill="black"/>
+            </svg>
+          </span>
+        </div>
+        <div>
+          <div class="fw-bolder fs-4 text-start">Use for an organization</div>
+          <div class="text-gray-400 fw-bold fs-6 text-start">Use Radar at your company or organization.</div>
+        </div>
+      </div>
+    </div>
+    <!--end::TypePicker-->
+    <!--begin::ButtonsContainer-->
+  </div>
+</div>
+<div class="modal-footer flex-row justify-content-end"
+     data-add-account-target="step0Footer"
+     style="display: flex"
+>
+  <!--begin::LaterButton-->
+  <button type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+          style="height: 48px;"
+  >Cancel</button>
+  <!--end::LaterButton-->
+  <!--begin::ContinueButton-->
+  <button type="button"
+          class="btn btn-primary disabled"
+          data-action="click->add-account#saveAccountTypeAndContinue"
+          data-add-account-target="continueToNameButton"
+          style="height: 48px;"
+  >Continue</button>
+  <!--end::ContinueButton-->
+</div>

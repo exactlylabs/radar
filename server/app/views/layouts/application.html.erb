@@ -84,16 +84,21 @@
                   <% @accounts.order("LOWER(name)").each do |account| %>
                     <%= render partial: "accounts/sidebar_account_item", locals: { account: account } %>
                   <% end %>
-                  <!-- TODO: INCLUDE ONCE ADDING ACCOUNTS IS SUPPORTED -->
-                  <!--div class="sidebar--add-account-row text-primary d-flex flex-row">
-                    <span class="svg-icon svg-icon-primary svg-icon-1x sidebar--account-add-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="black"/>
-                        <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="black"/>
-                      </svg>
-                    </span>
-                    <p>Add new account</p>
-                  </div-->
+                  <button type="button"
+                          class="sidebar--account-add-button"
+                          data-bs-toggle="modal"
+                          data-bs-target="#add_account_wizard"
+                  >
+                    <div class="sidebar--add-account-row text-primary d-flex flex-row">
+                      <span class="svg-icon svg-icon-primary svg-icon-1x sidebar--account-add-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="black"/>
+                          <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="black"/>
+                        </svg>
+                      </span>
+                      <p>Add new account</p>
+                    </div>
+                  </button>
                 </div>
                 <div class="mb-5"
                      style="height: 1px; width: 40px; background-color: #edf0f4"
@@ -308,5 +313,10 @@
       <!--end::Page-->
     </div>
   <% end %>
+
+  <div class="modal fade" tabindex="-1" id="add_account_wizard" data-controller="add-account">
+    <%= render partial: "accounts/add_account_wizard/add_account_wizard" %>
+  </div>
+
   </body>
 </html>
