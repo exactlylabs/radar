@@ -9,11 +9,7 @@ module.exports = {
   // It yields the best quality SourceMaps for development.
   devtool: 'eval-source-map',
   plugins: [new webpack.DefinePlugin({
-    process: {
-      env: {
-        NODE_ENV: JSON.stringify('development'),
-        REACT_APP_API_BASE_URL: JSON.stringify('http://localhost:3000')
-      }
-    }
+    REACT_APP_ENV: JSON.stringify('development'),
+    REACT_APP_API_BASE_URL: JSON.stringify('http://localhost:3000')
   })]
 };

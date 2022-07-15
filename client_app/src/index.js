@@ -5,9 +5,9 @@ import App from './App';
 import { notifyError } from './utils/errors';
 import * as Sentry from '@sentry/react';
 
-if (process.env.NODE_ENV === 'production') {
+if (REACT_APP_ENV === 'production') {
   Sentry.init({
-    dsn: process.env.REACT_APP_SENTRY_DSN,
+    dsn: REACT_APP_SENTRY_DSN,
     environment: 'production',
   });
 }
