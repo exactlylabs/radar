@@ -9,3 +9,5 @@ export const customMarker = new L.icon({
   iconAnchor: [10, 41],
   popupAnchor: [2, -40],
 });
+
+export const SMALL_SCREEN_MAP_HEIGHT = 400;

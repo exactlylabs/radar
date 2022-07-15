@@ -1,0 +1,1 @@
+export const RESIZING_WIDTH_PX_LIMIT = 796;
