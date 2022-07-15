@@ -61,5 +61,11 @@ application.register("add-account", AddAccountController);
 import SwitchAccountController from "./switch_account_controller.js";
 application.register("switch-account", SwitchAccountController);
 
+import AddUserController from "./add_user_controller.js";
+application.register("add-user", AddUserController);
+
+import SignInController from "./sign_in_controller.js";
+application.register("sign-in", SignInController);
+
 import AccountsDrawerMenuController from "./accounts_drawer_menu_controller.js";
 application.register("accounts-drawer-menu", AccountsDrawerMenuController);

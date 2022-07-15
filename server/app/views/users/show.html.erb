@@ -1,0 +1,52 @@
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="text-dark fw-bolder my-1 fs-2">Dashboard
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <!--end::Title-->
+      <!--begin::Breadcrumb-->
+      <ul class="breadcrumb fw-bold fs-base my-1">
+        <li class="breadcrumb-item text-muted">Users
+          <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
+        </li>
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= users_account_index_path %>" class="text-muted text-hover-primary"><%= current_account.name %></a>
+        </li>
+        <li class="breadcrumb-item text-dark"><%= "#{user.first_name} #{user.last_name}" %></li>
+      </ul>
+      <!--end::Breadcrumb-->
+    </div>
+    <!--end::Info-->
+  </div>
+</div>
+<!--end::Toolbar-->
+
+<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
+  <!--begin::Container-->
+  <div class="container-xxl w-100 d-flex flex-column" style="max-width: none;">
+
+    <% if notice %>
+      <p id="notice"><%= notice %></p>
+    <% end %>
+    <!--begin::OptionsCard-->
+    <!-- TODO: add when more options are available? -->
+    <!--end::OptionsCard-->
+    <!--begin::Card-->
+    <%= render partial: "users/user_details", locals: { user: user } %>
+    <!--end::Card-->
+  </div>
+  <!--end::Container-->
+</div>
+
+<div class="modal fade" tabindex="-1" id="edit_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
+  <%= turbo_frame_tag "edit_client_modal", target: "add_pod_step_2", modal_target: "new_location_modal-edit" do %>
+  <% end %>
+</div>
+
+<div class="modal fade" tabindex="-1" id="new_location_modal-edit" data-controller="edit-pod" data-action="turbo:submit-start->edit-pod#handleSubmitStart turbo:submit-end->edit-pod#handleNewLocationFromClientModal">
+  <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "edit-pod-modal", modal_target: "edit_pod_modal") do %>
+  <% end %>
+</div>

@@ -15,4 +15,12 @@ class User < ApplicationRecord
   has_many :users_accounts
   has_many :accounts, through: :users_accounts
 
+  def status_to_human
+    "Active"
+  end
+
+  def get_badge_style
+    "badge-light-success"
+  end
+
 end
