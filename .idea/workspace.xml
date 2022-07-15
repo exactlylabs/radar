@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1389e07f-9b7c-453e-89ea-4321335af2b7" name="Changes" comment="added soft delete account modal">
+    <list default="true" id="1389e07f-9b7c-453e-89ea-4321335af2b7" name="Changes" comment="changed webpack env variables definition">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/src/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/constants.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/src/utils/errors.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/utils/errors.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_app/webpack/webpack.dev.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/webpack/webpack.dev.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/config/webpack/development.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/config/webpack/development.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/config/webpack/production.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/config/webpack/production.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220708141346_add_processed_at_to_client_speed_tests.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/webpack/webpack.prod.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/webpack/webpack.prod.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +29,7 @@
                 <list>
                   <RecentBranch>
                     <option name="branchName" value="eugenio/ttac-227" />
-                    <option name="lastUsedInstant" value="1657894742" />
+                    <option name="lastUsedInstant" value="1657906536" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="master" />
@@ -347,7 +345,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fix on exception for running test on location" />
     <MESSAGE value="integrated husky + eslint + prettier" />
-    <option name="LAST_COMMIT_MESSAGE" value="integrated husky + eslint + prettier" />
+    <MESSAGE value="changed webpack env variables definition" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed webpack env variables definition" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/radar@Server.rcov" NAME="Server Coverage Results" MODIFIED="1657204824158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" MODULE_NAME="server" />
