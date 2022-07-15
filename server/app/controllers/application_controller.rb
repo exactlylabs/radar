@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_accounts
-    @accounts = current_user.accounts.not_deleted
+    @accounts = current_user.accounts.not_deleted if current_user
   end
 
   def set_account_cookie_and_return_account
@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
     current_saved_account_id = cookies[:radar_current_account_id]
     # Check if current set account id is ok with current user
     if current_saved_account_id && policy_scope(UsersAccount).where(account_id: current_saved_account_id.to_i).count == 1
-      @current_account = Account.where(id: current_saved_account_id.to_i).not_deleted
+      @current_account = Account.where(id: current_saved_account_id.to_i).not_deleted.first
     else
       # break out to check for nil (no account associated)
       first_account_for_user = UsersAccount.where(user_id: current_user.id).first

@@ -1,14 +1,10 @@
 <div class="d-flex flex-center flex-column flex-column-fluid">
   <!--begin::Wrapper-->
   <div class="w-lg-600px p-10 p-lg-15 mx-auto" data-controller="registration">
-    <!-- TODO: add form to wrap all steps -->
-    <%= form_with url: "register", method: :post do |form| %>
-      <%= render partial: "devise/registrations/steps/initial_step" %>
-      <%= render partial: "devise/registrations/steps/profile_picture_step" %>
-      <%= render partial: "devise/registrations/steps/account_type_step" %>
-      <%= render partial: "devise/registrations/steps/account_name_step" %>
-    <% end %>
-    <!--end::Form-->
+    <%= render partial: "devise/registrations/steps/initial_step" %>
+    <%= render partial: "devise/registrations/steps/profile_picture_step" %>
+    <%= render partial: "devise/registrations/steps/account_type_step" %>
+    <%= render partial: "devise/registrations/steps/account_name_step" %>
   </div>
   <!--end::Wrapper-->
 </div>
