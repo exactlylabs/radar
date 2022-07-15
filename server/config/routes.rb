@@ -87,6 +87,9 @@ Rails.application.routes.draw do
   end
 
   resources :accounts do
+    member do
+      post :edit
+    end
   end
 
   namespace 'api' do
