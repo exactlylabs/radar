@@ -34,6 +34,10 @@ export default class extends Controller {
   }
 
   selectAccount(e) {
+    // prevent <i> or <a> from switching account on click
+    if(e.target.localName === 'i' || e.target.localName === 'a') {
+      return false;
+    }
     const selectedAccountId = e.target.id.split('@')[1];
     const cookieArray = document.cookie.split(';');
     let currentAccount;
@@ -43,7 +47,7 @@ export default class extends Controller {
       }
     });
     if(currentAccount && currentAccount === selectedAccountId) return;
-    document.cookie = `radar_current_account_id=${selectedAccountId}`;
+    document.cookie = `radar_current_account_id=${selectedAccountId}; path=/`;
     window.location.reload();
   }
 
