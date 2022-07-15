@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1389e07f-9b7c-453e-89ea-4321335af2b7" name="Changes" comment="changed webpack env variables definition">
+    <list default="true" id="1389e07f-9b7c-453e-89ea-4321335af2b7" name="Changes" comment="wip: users new page">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_app/src/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/constants.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_app/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_app/src/utils/errors.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/utils/errors.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_app/webpack/webpack.dev.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/webpack/webpack.dev.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_app/webpack/webpack.prod.js" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/webpack/webpack.prod.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_app/src/components/MapPage/MapPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client_app/src/components/MapPage/MapPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +25,7 @@
                 <list>
                   <RecentBranch>
                     <option name="branchName" value="eugenio/ttac-227" />
-                    <option name="lastUsedInstant" value="1657906536" />
+                    <option name="lastUsedInstant" value="1657913193" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="master" />

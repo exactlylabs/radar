@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MyButton } from '../common/MyButton';
 import * as ndt7 from '@m-lab/ndt7/src/ndt7';
@@ -11,11 +11,11 @@ import { NetworkCheck } from '@mui/icons-material';
 import { Box } from '@mui/system';
 import RunningTest from './RunningTest';
 import TestAverages from './TestAverages';
-import './MapPage.css';
 import { notifyError } from '../../utils/errors';
 import { storeRunData } from '../../utils/storage';
 import { getGeocodedAddress, sendRawData } from '../../utils/apiRequests';
-import { customMarker, mapTileAttribution, mapTileUrl } from '../../utils/map';
+import { customMarker, mapTileAttribution, mapTileUrl, SMALL_SCREEN_MAP_HEIGHT } from '../../utils/map';
+import { RESIZING_WIDTH_PX_LIMIT } from '../../utils/screenDimensions';
 
 const MapPage = ({ manualAddress, maxHeight }) => {
   const [error, setError] = useState(null);
@@ -32,10 +32,14 @@ const MapPage = ({ manualAddress, maxHeight }) => {
   const [loss, setLoss] = useState(0);
   const [latency, setLatency] = useState(0);
   const [startTimestamp, setStartTimestamp] = useState('');
+  const [mapScreenHeight, setMapScreenHeight] = useState(maxHeight - 200);
 
   let counter = 0;
+  let observer;
 
   useEffect(() => {
+    updateMapDimensions();
+    window.addEventListener('resize', updateMapDimensions);
     if (manualAddress) {
       const formData = new FormData();
       formData.append('address', manualAddress);
@@ -50,6 +54,10 @@ const MapPage = ({ manualAddress, maxHeight }) => {
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
     }
+
+    return () => {
+      window.removeEventListener('resize', updateMapDimensions);
+    };
   }, []);
 
   useEffect(() => {
@@ -58,6 +66,11 @@ const MapPage = ({ manualAddress, maxHeight }) => {
       finishTestRun(error ? -1 : 0, error);
     }
   }, [loading, runningTest, startTimestamp]);
+
+  const updateMapDimensions = () => {
+    const height = window.innerWidth >= RESIZING_WIDTH_PX_LIMIT ? maxHeight - 200 : SMALL_SCREEN_MAP_HEIGHT;
+    setMapScreenHeight(height);
+  };
 
   const saveDownloadValue = (data, rawData) => {
     if (data.Source === 'client') {
@@ -157,7 +170,6 @@ const MapPage = ({ manualAddress, maxHeight }) => {
     )
   );
 
-  console.log(uploadWorkerUrl);
   const runSpeedTest = () => {
     setStartTimestamp(new Date().toISOString());
     if (runningTest) return;
@@ -194,15 +206,17 @@ const MapPage = ({ manualAddress, maxHeight }) => {
         <Grid container spacing={2}>
           <Grid item md={12} lg={6} style={{ marginLeft: 'auto', marginRight: 'auto' }}>
             <Box component={Paper} style={{ padding: 10 }}>
-              <MapContainer
-                center={location}
-                zoom={20}
-                scrollWheelZoom
-                style={{ height: maxHeight - 200, minWidth: 450, maxWidth: 800, margin: '20px auto' }}
-              >
-                <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
-                <Marker position={location} icon={customMarker} />
-              </MapContainer>
+              <div style={{ height: mapScreenHeight }}>
+                <MapContainer
+                  center={location}
+                  zoom={20}
+                  scrollWheelZoom
+                  style={{ height: '100%', minWidth: 450, maxWidth: 800, margin: '20px auto' }}
+                >
+                  <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
+                  <Marker position={location} icon={customMarker} />
+                </MapContainer>
+              </div>
             </Box>
           </Grid>
           <Grid item md={12} lg={6}>
