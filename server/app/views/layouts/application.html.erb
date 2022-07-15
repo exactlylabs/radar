@@ -352,5 +352,15 @@
     <%= yield %>
   </div>
 
+  <div class="modal fade"
+       tabindex="-1"
+       id="delete_account_modal"
+       aria-hidden="true"
+       data-controller="modal"
+       data-action="turbo:frame-render->modal#showModal"
+  >
+    <%= yield %>
+  </div>
+
   </body>
 </html>

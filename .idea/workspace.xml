@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="52615d7d-e0f3-4b35-b42d-cfbc57926895" name="Changes" comment="added empty organization state on sidebar">
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+    <list default="true" id="52615d7d-e0f3-4b35-b42d-cfbc57926895" name="Changes" comment="added edit account modal">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/controllers/accounts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/accounts_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/controllers/location_clients_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/location_clients_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/controllers/locations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/locations_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/javascript/controllers/drawer_controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/javascript/controllers/drawer_controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/javascript/controllers/modal_controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/javascript/controllers/modal_controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/application_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/models/account.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/account.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/models/users_account.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/users_account.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/views/accounts/_sidebar_account_item.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/accounts/_sidebar_account_item.html.erb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/views/layouts/application.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/layouts/application.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/views/location_clients/_add_pod_step_1_existing.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/location_clients/_add_pod_step_1_existing.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/views/locations/_location_details.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/locations/_location_details.html.erb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/config/routes.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/db/schema.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -288,7 +282,7 @@
       <updated>1657218497452</updated>
       <workItem from="1657218499064" duration="3461000" />
       <workItem from="1657623303159" duration="51453000" />
-      <workItem from="1657884462244" duration="4863000" />
+      <workItem from="1657884462244" duration="8354000" />
     </task>
     <task id="LOCAL-00001" summary="created new accounts/invites entites + seed files for creating default accounts for already present users on DB">
       <created>1657307249511</created>
@@ -332,7 +326,14 @@
       <option name="project" value="LOCAL" />
       <updated>1657807295804</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="added edit account modal">
+      <created>1657889633085</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1657889633085</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -356,7 +357,8 @@
     <MESSAGE value="accounts display on dashboard sidebar + account switching on demand + locations/clients updating on account swap" />
     <MESSAGE value="added add account wizard" />
     <MESSAGE value="added empty organization state on sidebar" />
-    <option name="LAST_COMMIT_MESSAGE" value="added empty organization state on sidebar" />
+    <MESSAGE value="added edit account modal" />
+    <option name="LAST_COMMIT_MESSAGE" value="added edit account modal" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/radar@Server.rcov" NAME="Server Coverage Results" MODIFIED="1657204824158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" MODULE_NAME="server" />

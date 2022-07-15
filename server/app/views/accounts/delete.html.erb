@@ -1,0 +1,39 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" style="font-size: 20px">Delete account</h5>
+
+      <!--begin::Close-->
+      <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+        <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+        <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
+                  <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
+                  <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
+              </svg>
+            </span>
+        <!--end::Svg Icon-->
+      </div>
+      <!--end::Close-->
+    </div>
+
+    <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+      <svg width="70" height="70" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" fill-rule="evenodd">
+          <path d="M35 0c19.33 0 35 15.67 35 35S54.33 70 35 70 0 54.33 0 35 15.67 0 35 0z" fill="#FFF5F8"/>
+          <g fill="#F1416C" fill-rule="nonzero">
+            <path d="M26 30.667c0-.706.576-1.278 1.286-1.278h15.428c.71 0 1.286.572 1.286 1.278v11.5C44 44.284 42.273 46 40.143 46H29.857C27.727 46 26 44.284 26 42.167v-11.5z"/>
+            <path d="M26 25.556c0-.706.576-1.278 1.286-1.278h15.428c.71 0 1.286.572 1.286 1.278 0 .705-.576 1.277-1.286 1.277H27.286c-.71 0-1.286-.572-1.286-1.277zM31.143 24.278c0-.706.575-1.278 1.286-1.278h5.142c.71 0 1.286.572 1.286 1.278h-7.714z" opacity=".5"/>
+          </g>
+        </g>
+      </svg>
+      <div class="text-dark fs-2 fw-bolder" style="margin-top: 30px">Are you sure you want to delete Exactly Labs?</div>
+      <div class="text-gray-400 fs-6 fw-bold" style="margin-top: 10px">Your Pods, locations and users will also be deleted.</div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+      <%= button_to "Yes, delete", account_path(@account), method: :delete, class: "btn btn-danger" %>
+    </div>
+  </div>
+</div>

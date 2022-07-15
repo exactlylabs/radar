@@ -13,6 +13,29 @@ class AccountsController < ApplicationController
     end
   end
 
+  def delete
+    @account = Account.find(params[:id])
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update('delete_account_modal', template: "accounts/delete", locals: { account: @account })
+      end
+      format.html
+    end
+  end
+
+  def destroy
+    @account = Account.find(params[:id])
+    # Soft delete everything?
+    @users_accounts = UsersAccount.where(account_id: params[:id])
+    respond_to do |format|
+      if @account.update(deleted_at: Time.now) && @users_accounts.delete_all
+        format.html { redirect_back fallback_location: root_path, notice: "Account was successfully deleted." }
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+      end
+    end
+  end
+
   def edit
     @account = Account.find(params[:id])
     respond_to do |format|
