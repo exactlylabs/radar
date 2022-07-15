@@ -9,7 +9,6 @@ export default class extends Controller {
   }
 
   showModal() {
-    console.log('SHOW MODAL');
     $(this.element).modal('show');
   }
 
