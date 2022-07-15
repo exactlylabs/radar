@@ -8,7 +8,6 @@ module.exports = {
   // since it gets mapped to the original code.
   // It yields the best quality SourceMaps for development.
   devtool: 'eval-source-map',
-  //plugins: [new Dotenv({ path: './.env.development' })],
   plugins: [new webpack.DefinePlugin({
     process: {
       env: {
