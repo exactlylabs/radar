@@ -5,7 +5,8 @@ class AccountsController < ApplicationController
   def create
     @account = Account.create account_params
     @account.save!
-    @user_account = UsersAccount.create(user_id: current_user.id, account_id: @account.id, joined_at: Time.now)
+    now = Time.now
+    @user_account = UsersAccount.create(user_id: current_user.id, account_id: @account.id, joined_at: now, invited_at: now)
     if @user_account.save
       set_cookie(:radar_current_account_id, @account.id)
       render json: { status: :ok }

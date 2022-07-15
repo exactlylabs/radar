@@ -37,11 +37,17 @@ class ApplicationController < ActionController::Base
     begin
       if account_id
         @current_user_account = current_user.users_accounts.find_by_account_id(account_id)
-        @current_account = policy_scope(Account).find(account_id)
-      else
+        @current_account = current_user.accounts.find(account_id)
+      elsif current_user.users_accounts.length > 0
         @current_user_account = current_user.users_accounts.first
-        @current_account = policy_scope(Account).find(@current_user_account&.account_id)
-        set_cookie(:radar_current_account_id, @current_user_account&.account_id)
+        @current_account = current_user.accounts.find(@current_user_account.account_id)
+        set_cookie(:radar_current_account_id, @current_user_account.account_id)
+      else
+        # We fall into this case if the current_user has no record
+        # of a user_account association in the DB (empty account state).
+        @current_user_account = nil
+        @current_account = nil
+        set_cookie(:radar_current_account_id, nil)
       end
     rescue ActiveRecord::RecordNotFound
       @current_user_account = nil
@@ -51,7 +57,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pundit_user
-    return unless current_user
+    return nil unless current_user
     return @current_user_account if @current_user_account
     get_or_set_account_from_cookie
     @current_user_account

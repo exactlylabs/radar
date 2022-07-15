@@ -3,6 +3,7 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   prepend_before_action :authenticate_scope!, only: [:edit, :edit_email, :update, :update_email, :destroy]
   prepend_before_action :set_minimum_password_length, only: [:new, :edit, :edit_email]
+  before_action :set_invite, only: [:render_invite_sign_up, :render_invite_sign_in, :sign_from_invite, :create_from_invite]
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
@@ -24,13 +25,73 @@ class Users::RegistrationsController < Devise::RegistrationsController
       @account.save
     end
     # Link account and new user together
-    @user_account = UsersAccount.create(user_id: @user.id, account_id: @account.id, joined_at: Time.now)
+    now = Time.now
+    @user_account = UsersAccount.create(user_id: @user.id, account_id: @account.id, joined_at: now, invited_at: now)
     respond_to do |format|
       if @user_account.save
         sign_in @user
         format.html { redirect_to dashboard_path, notice: "Registered successfully" }
       else
         format.html { render :create, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # POST /register_from_invite
+  def create_from_invite
+    error = false
+    begin
+      User.transaction do
+        @user = User.create! user_params
+        @user.save
+        # Link account and new user together
+        @user_account = UsersAccount.create!(user_id: @user.id, account_id: @invite[:account_id], joined_at: Time.now, invited_at: @invite[:sent_at])
+        @user_account.save!
+        @invite.destroy!
+      end
+    rescue ActiveRecord::RecordInvalid => invalid
+      error = invalid.record.errors
+    rescue ActiveRecord::RecordNotDestroyed => invalid
+      error = invalid.record.errors
+    end
+    respond_to do |format|
+      if !error
+        sign_in @user
+        format.html { redirect_to dashboard_path(invite: true), notice: "Registered successfully" }
+      else
+        format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # POST /sign_in_from_invite
+  def sign_from_invite
+    error = false
+    begin
+      User.transaction do
+        @user = User.find_by_email(params[:user][:email])
+        if @user.valid_password?(params[:user][:password])
+          @user_account = UsersAccount.create!(user_id: @user.id, account_id: @invite[:account_id], joined_at: Time.now, invited_at: @invite[:sent_at])
+        else
+          error = "Invalid email or password."
+        end
+
+        unless error
+          @user_account.save!
+          @invite.destroy!
+        end
+      end
+    rescue ActiveRecord::RecordInvalid => invalid
+      error = invalid.record.errors
+    rescue ActiveRecord::RecordNotDestroyed => invalid
+      error = invalid.record.errors
+    end
+    respond_to do |format|
+      if !error
+        sign_in @user
+        format.html { redirect_to dashboard_path(invite: true), notice: "Registered successfully" }
+      else
+        format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity, error: error }
       end
     end
   end
@@ -107,6 +168,23 @@ class Users::RegistrationsController < Devise::RegistrationsController
     super
   end
 
+  # GET /users/invite_sign_up
+  def render_invite_sign_up
+    account = Account.find(@invite.account_id)
+    first_name = @invite.first_name
+    last_name = @invite.last_name
+    email = @invite.email
+    render template: "devise/registrations/invite/new", locals: { account: account, first_name: first_name, last_name: last_name, email: email }
+  end
+
+  def render_invite_sign_in
+    account = Account.find(@invite.account_id)
+    first_name = @invite.first_name
+    last_name = @invite.last_name
+    email = @invite.email
+    render template: "devise/sessions/invite/new", locals: { account: account, first_name: first_name, last_name: last_name, email: email }
+  end
+
   private
 
   def user_params
@@ -115,6 +193,16 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def account_params
     params.require(:account).permit(:name, :account_type)
+  end
+
+  def set_invite
+    token = params[:token]
+    invite_id = token[0..-17]
+    invite_secret = token[-16..-1]
+    @invite = Invite.find(invite_id).authenticate_token(invite_secret)
+    if !@invite
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Invite", Invite.name)
+    end
   end
 
   # DELETE /resource

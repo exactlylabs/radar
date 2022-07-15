@@ -83,9 +83,10 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client && @client.authenticate_secret(@client_secret)
-        @client.user = current_user
+        @client.claimed_by_id = current_user.id
         @client.location = location
         @client.name = @client_name
+        @client.account = current_account
         @client.save
         format.html { redirect_back fallback_location: root_path, notice: "Client was successfully created." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }

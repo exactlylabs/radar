@@ -25,6 +25,7 @@ class LocationsController < ApplicationController
     @location = Location.new(location_params)
 
     @location.user = current_user
+    @location.account_id = current_account.id
 
     # TODO: Is there a better UX for this?
     current_clients = policy_scope(Client)

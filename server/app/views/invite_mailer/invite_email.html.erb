@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style>
+      @import url(http://fonts.googleapis.com/css?family=Roboto);
+      * { font-family: Roboto, serif; }
+    </style>
+  </head>
+  <body>
+    <div style="width: 60%; text-align: center; padding: 45px; margin-left: auto; margin-right: auto;">
+      <img src="<%= attachments["logo-with-phrase@3x.png"].url %>" alt="Radar-logo" style="width: 17%; height: auto; margin-right: auto; margin-left: auto;"/>
+      <div style="height: 2px; width: 100%; margin-bottom: 45px; margin-top: 30px; background-color: #f6f8fa;"></div>
+      <div style="font-size: 24px; font-weight: bold; margin-bottom: 30px;"><%= @invite.first_name %> you have been invited to join <%= @account.name %></div>
+      <img src="<%= attachments["illustration@3x.png"].url %>" alt="People-working-image" style="width: 45%; height: auto;"/>
+      <div style="font-size: 16px; font-weight: bold; text-align: left; margin-top: 45px; margin-bottom: 15px;">Hi <%= @invite.first_name %>,</div>
+      <div style="font-size: 16px; text-align: left; margin-bottom: 45px">You have been invited to join <%= @account.name %> in Radar.
+        With Radar, you can analyze your internet connection, get insights on its reliability and speed and learn more about your community’s access to broadband.
+        To set up your new account, click the button below and complete your sign up process.</div>
+      <button type="button" style="background-color: #00a3ff; color: white; font-size: 16px; border-radius: 6px; width: 170px; height: 45px; border: none; margin-bottom: 25px">
+        <%= link_to 'Join now', users_invite_sign_up_url(token: @token), style: 'text-decoration: none; color: white; font-size: 16px; font-weight: bold' %>
+      </button>
+      <div style="font-size: 14px; color: #7f8299; margin-bottom: 55px;">Alternatively, you can paste this link into your browser:
+        <%= link_to "#{users_invite_sign_up_url(token: @token)}", users_invite_sign_up_url(token: @token) %>
+      </div>
+      <div style="font-size: 16px;">If you experience difficulties setting up your account, please contact support@exactlylabs.com.</div>
+      <div style="height: 2px; width: 100%; margin-bottom: 40px; margin-top: 30px; background-color: #f6f8fa;"></div>
+      <div style="color: #b5b5c3; text-align: center; font-size: 14px">© 2022 National Telehealth Technology Assessment Resource Center</div>
+    </div>
+  </body>
+</html>

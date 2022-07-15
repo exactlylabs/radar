@@ -10,6 +10,11 @@ Rails.application.routes.draw do
     put 'users/edit_password' => 'users/registrations#update_password', as: :update_authed_user_password
 
     patch 'users/edit_name' => 'users/registrations#update_name', as: :update_authed_user_name
+
+    get 'users/invite_sign_up' => 'users/registrations#render_invite_sign_up'
+    post 'users/register_from_invite' => 'users/registrations#create_from_invite'
+    get 'users/invite_sign_in' => 'users/registrations#render_invite_sign_in'
+    post 'users/sign_in_from_invite' => 'users/registrations#sign_from_invite'
   end
 
   resources :measurements, only: [:index] do
@@ -93,6 +98,15 @@ Rails.application.routes.draw do
     member do
       post :edit
       post :delete, to: "accounts#delete"
+    end
+  end
+
+  resources :users_account do
+  end
+
+  resources :invites do
+    collection do
+      post 'resend', to: 'invites#resend'
     end
   end
 
