@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="52615d7d-e0f3-4b35-b42d-cfbc57926895" name="Changes" comment="added edit account modal">
+    <list default="true" id="52615d7d-e0f3-4b35-b42d-cfbc57926895" name="Changes" comment="removed debug msg">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/controllers/accounts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/accounts_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/application_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/models/account.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/account.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/views/accounts/_sidebar_account_item.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/accounts/_sidebar_account_item.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/views/layouts/application.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/layouts/application.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/config/routes.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/db/schema.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/devise/registrations/new.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/devise/registrations/new.html.erb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +34,7 @@
                 <list>
                   <RecentBranch>
                     <option name="branchName" value="eugenio/ttac-284" />
-                    <option name="lastUsedInstant" value="1657290265" />
+                    <option name="lastUsedInstant" value="1657897170" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="master" />
@@ -333,7 +328,14 @@
       <option name="project" value="LOCAL" />
       <updated>1657889633085</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="removed debug msg">
+      <created>1657897599509</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1657897599509</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -358,7 +360,8 @@
     <MESSAGE value="added add account wizard" />
     <MESSAGE value="added empty organization state on sidebar" />
     <MESSAGE value="added edit account modal" />
-    <option name="LAST_COMMIT_MESSAGE" value="added edit account modal" />
+    <MESSAGE value="removed debug msg" />
+    <option name="LAST_COMMIT_MESSAGE" value="removed debug msg" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/radar@Server.rcov" NAME="Server Coverage Results" MODIFIED="1657204824158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" MODULE_NAME="server" />
