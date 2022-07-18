@@ -1,11 +1,11 @@
 class ClientPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      scope.where(claimed_by_id: user)
+      scope.where(account_id: account)
     end
 
     private
 
-    attr_reader :user, :client
+    attr_reader :account, :client
   end
 end

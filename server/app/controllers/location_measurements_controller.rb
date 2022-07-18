@@ -21,6 +21,7 @@ class LocationMeasurementsController < ApplicationController
 
   private
     def set_location
-      @location = Location.for_current_account(cookies[:radar_current_account_id]).find(params[:location_id])
+      @location = LocationPolicy::Scope.new(current_account, Location).resolve.find(params[:location_id])
+      #@location = Location.for_current_account(cookies[:radar_current_account_id]).find(params[:location_id])
     end
 end

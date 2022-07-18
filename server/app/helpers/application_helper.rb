@@ -1,5 +1,9 @@
 module ApplicationHelper
 
+  def current_account
+    @current_account
+  end
+
   def active_path?(path)
     "active" if request.path.starts_with?(path)
   end

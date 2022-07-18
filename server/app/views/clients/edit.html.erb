@@ -57,7 +57,7 @@
             <label class="required fs-6 fw-bold mb-2">Location</label>
             <select class="form-select" data-controller="select2" data-select2-blanks-value="true" id="client-locations-dropdown-edit"
             data-placeholder="Select a location" name="location_id" data-select2-id="select2-data-location_id" tabindex="-1">
-              <% Location.for_current_account(cookies[:radar_current_account_id]).each do |location|%>
+              <% LocationPolicy::Scope.new(current_account, Location).resolve.each do |location|%>
                 <%= render partial: "clients/client_location", locals: { location: location, selected: location == @client.location } %>
               <% end %> 
             </select>
