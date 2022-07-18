@@ -3,12 +3,34 @@ class ApplicationController < ActionController::Base
 
   before_action :set_sentry_user
   before_action :configure_permitted_parameters, if: :devise_controller?
-  before_action :set_account_cookie_and_return_account
-  before_action :set_accounts
+  before_action :accounts
 
   def after_sign_in_path_for(resource)
     dashboard_path
   end
+
+  def current_account
+    return unless cookies[:radar_current_account_id] && current_user
+    account_policy_instance = AccountPolicy::Scope.new(current_user, Account, cookies[:radar_current_account_id])
+    @current_account = account_policy_instance.resolve
+    # If cookie account id was invalid for user,
+    # overriding it with a valid one, and replacing cookie value
+    if @current_account.nil?
+      @current_account = account_policy_instance.get_default_account
+      if @current_account
+        cookies[:radar_current_account_id] = @current_account.id
+      else
+        # Maybe the user has no current accounts associated
+        cookies[:radar_current_account_id] = nil
+      end
+    end
+    @current_account
+  end
+
+  def accounts
+    @accounts ||= current_user.accounts.not_deleted if current_user
+  end
+
   protected
 
   def set_sentry_user
@@ -18,29 +40,5 @@ class ApplicationController < ActionController::Base
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(:first_name, :last_name, :email, :password, :password_confirmation, :terms)}
     devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(:first_name, :last_name, :email, :password, :password_confirmation, :current_password)}
-  end
-
-  def set_accounts
-    @accounts = current_user.accounts.not_deleted if current_user
-  end
-
-  def set_account_cookie_and_return_account
-    return if !current_user
-    current_saved_account_id = cookies[:radar_current_account_id]
-    # Check if current set account id is ok with current user
-    if current_saved_account_id && policy_scope(UsersAccount).where(account_id: current_saved_account_id.to_i).count == 1
-      @current_account = Account.where(id: current_saved_account_id.to_i).not_deleted.first
-    else
-      # break out to check for nil (no account associated)
-      first_account_for_user = UsersAccount.where(user_id: current_user.id).first
-      if !first_account_for_user
-        cookies[:radar_current_account_id] = nil
-        return nil
-      end
-      current_account_id = first_account_for_user.account_id
-      @current_account = Account.find(current_account_id)
-      cookies[:radar_current_account_id] = @current_account.id
-    end
-    @current_account
   end
 end

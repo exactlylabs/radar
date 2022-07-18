@@ -1,11 +1,11 @@
 class LocationPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      scope.where(created_by_id: user)
+      scope.where(account_id: account)
     end
 
     private
 
-    attr_reader :user, :location
+    attr_reader :account, :location
   end
 end

@@ -72,17 +72,7 @@ export default class extends Controller {
 
   handleFileUpload(e) {
     const avatar = this.userAvatarInputTarget.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(avatar);
-    reader.onloadend = (e) => {
-      if(reader.readyState === reader.DONE) {
-        this.registrationData = {
-          ...this.registrationData,
-          avatar: reader.result,
-          avatar_type: avatar.type,
-        }
-      }
-    }
+    this.registrationData.avatar = avatar;
     const url = URL.createObjectURL(avatar);
     this.avatarPreviewTarget.src = url;
     this.avatarPreviewTarget.style.display = 'block';
@@ -99,8 +89,8 @@ export default class extends Controller {
     formData.append('user[email]', this.registrationData.email);
     formData.append('user[terms]', this.registrationData.terms);
     formData.append('user[password]', this.registrationData.password);
-    formData.append('avatar', this.registrationData.avatar);
-    formData.append('avatar_type', this.registrationData.avatar_type);
+    formData.append('user[avatar]', this.registrationData.avatar);
+    //formData.append('avatar_type', this.registrationData.avatar_type);
     formData.append('account[name]', accountName);
     formData.append('account[account_type]', this.registrationData.account_type);
     this.finishButtonTarget.style.display = 'none';

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_15_134501) do
+ActiveRecord::Schema.define(version: 2022_07_18_115005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,9 +122,9 @@ ActiveRecord::Schema.define(version: 2022_07_15_134501) do
 
   create_table "invites", force: :cascade do |t|
     t.boolean "is_active", default: false
-    t.string "user_first_name", null: false
-    t.string "user_last_name", null: false
-    t.string "user_email", null: false
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.string "email", null: false
     t.datetime "sent_at", null: false
     t.bigint "account_id", null: false
     t.bigint "user_id"
@@ -225,6 +225,8 @@ ActiveRecord::Schema.define(version: 2022_07_15_134501) do
     t.datetime "joined_at", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "invited_at"
+    t.datetime "deleted_at"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end

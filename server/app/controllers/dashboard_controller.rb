@@ -3,8 +3,11 @@ class DashboardController < ApplicationController
 
   # GET /dashboard or /dashboard.json
   def index
-    @clients = Client.for_current_account(cookies[:radar_current_account_id])
-    @locations = get_filtered_locations(Location.for_current_account(cookies[:radar_current_account_id]), params[:filter])
+    @clients = ClientPolicy::Scope.new(current_account, Location).resolve
+    #@clients = Client.for_current_account(cookies[:radar_current_account_id])
+    #locations_to_filter = Location.for_current_account(cookies[:radar_current_account_id])
+    locations_to_filter = LocationPolicy::Scope.new(current_account, Location).resolve
+    @locations = get_filtered_locations(locations_to_filter, params[:filter])
     if @locations.length > 0 || params[:filter].present?
       @onboard_step = -1
     elsif @clients.length > 0

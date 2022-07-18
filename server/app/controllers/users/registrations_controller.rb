@@ -13,15 +13,16 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /register
   def create
-    @user = User.create user_params
-    @account = Account.create account_params
-    if params[:avatar]
-      filename = "#{@user.id}-avatar.#{get_type}"
-      decoded_data = Base64.decode64(params[:avatar].split(',')[1])
-      @user.avatar.attach(io: StringIO.new(decoded_data), filename: filename, content_type: params[:avatar_type])
+    User.transaction do
+      @user = User.create user_params
+      @account = Account.create account_params
+      # Nit: no need to actually call @user.avatar.attach
+      # because it actually already does it in the create statement.
+      # What's more, it actually creates a PurgeJob if you do both
+      # create() with avatar + attach(), so it ends up deleting the attachment.
+      @user.save
+      @account.save
     end
-    @user.save!
-    @account.save!
     # Link account and new user together
     @user_account = UsersAccount.create(user_id: @user.id, account_id: @account.id, joined_at: Time.now)
     respond_to do |format|
@@ -109,7 +110,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   private
 
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :email, :password, :terms)
+    params.require(:user).permit(:first_name, :last_name, :email, :password, :terms, :avatar)
   end
 
   def account_params

@@ -119,8 +119,12 @@
           <!--begin::Content-->
           <div id="kt_account_basic_info" class="collapse show">
             <!--begin::Form-->
-            <%= form_for(current_user, url: update_authed_user_name_path) do |f| %>
-            <form id="kt_account_basic_info_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" novalidate="novalidate">
+            <%= form_for current_user,
+                         url: update_authed_user_name_path,
+                         id: "kt_account_basic_info_form",
+                         class: "form fv-plugins-bootstrap5 fv-plugins-framework",
+                         novalidate: "novalidate" do |f| %>
+            <!--form id="" class="" novalidate="novalidate"-->
               <!--begin::Card body-->
               <div class="card-body border-top p-9">
                 <!--begin::Input group-->
@@ -164,7 +168,7 @@
               <!--end::Actions-->
             <input type="hidden"><div></div>
             <% end %>
-            </form>
+            <!--/form-->
             <!--end::Form-->
           </div>
           <!--end::Content-->

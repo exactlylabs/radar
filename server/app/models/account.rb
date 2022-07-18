@@ -8,6 +8,6 @@ class Account < ApplicationRecord
 
   enum account_type: [ :personal, :organization ]
 
-  scope :not_deleted, -> { where('deleted_at IS NULL') }
+  scope :not_deleted, -> { where(deleted_at: nil) }
 
 end

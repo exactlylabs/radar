@@ -2,9 +2,43 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="52615d7d-e0f3-4b35-b42d-cfbc57926895" name="Changes" comment="removed debug msg">
+      <change afterPath="$PROJECT_DIR$/server/db/migrate/20220707181738_create_users_tables.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/accounts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/accounts_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/application_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/views/devise/registrations/new.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/devise/registrations/new.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/clients_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/clients_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/dashboard_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/dashboard_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/location_clients_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/location_clients_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/location_measurements_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/location_measurements_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/locations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/locations_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/users/registrations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/users/registrations_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/helpers/accounts_helper.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/helpers/application_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/helpers/application_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/javascript/controllers/registration_controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/javascript/controllers/registration_controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/models/account.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/account.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/models/client.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/client.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/models/location.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/location.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/models/user.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/user.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/policies/account_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/policies/account_policy.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/policies/application_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/policies/application_policy.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/policies/client_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/policies/client_policy.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/policies/location_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/policies/location_policy.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/accounts/_sidebar_account_item.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/accounts/_sidebar_account_item.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/clients/add_pod_wizard/_add_pod_step_2.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/clients/add_pod_wizard/_add_pod_step_2.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/clients/edit.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/clients/edit.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/clients/index.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/clients/index.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/devise/registrations/edit.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/devise/registrations/edit.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/layouts/application.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/layouts/application.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/custom_seeds/seed_default_accounts.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/db/custom_seeds/seed_default_accounts.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220707175742_create_accounts.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220707180714_create_invites.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220707181738_create_users_accounts.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220707183519_add_account_id_to_locations.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/db/migrate/20220707183519_add_account_id_reference.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220707183929_add_account_id_to_clients.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220707190022_rename_type_column_in_account.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220707190711_add_account_id_to_measurements.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220715134501_add_deleted_at_column_to_accounts.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/db/schema.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +68,7 @@
                 <list>
                   <RecentBranch>
                     <option name="branchName" value="eugenio/ttac-284" />
-                    <option name="lastUsedInstant" value="1657897170" />
+                    <option name="lastUsedInstant" value="1658144772" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="master" />
@@ -71,21 +105,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/iuke/Documents/Exactly/radar/server/app/assets/images&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;SCSS&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;ruby.rails.projectView.checked&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/Users/iuke/Documents/Exactly/radar/server/app/assets/images",
+    "list.type.of.created.stylesheet": "SCSS",
+    "nodejs_package_manager_path": "yarn",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "ruby.rails.projectView.checked": "true",
+    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/server/app/assets/images" />
@@ -335,7 +370,14 @@
       <option name="project" value="LOCAL" />
       <updated>1657897599509</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="wip: users page">
+      <created>1658144756212</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1658144756212</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -361,7 +403,8 @@
     <MESSAGE value="added empty organization state on sidebar" />
     <MESSAGE value="added edit account modal" />
     <MESSAGE value="removed debug msg" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed debug msg" />
+    <MESSAGE value="wip: users page" />
+    <option name="LAST_COMMIT_MESSAGE" value="wip: users page" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/radar@Server.rcov" NAME="Server Coverage Results" MODIFIED="1657204824158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" MODULE_NAME="server" />

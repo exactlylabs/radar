@@ -27,8 +27,9 @@ class AccountsController < ApplicationController
     @account = Account.find(params[:id])
     # Soft delete everything?
     @users_accounts = UsersAccount.where(account_id: params[:id])
+    now = Time.now
     respond_to do |format|
-      if @account.update(deleted_at: Time.now) && @users_accounts.delete_all
+      if @account.update(deleted_at: now) && @users_accounts.update_all(deleted_at: now)
         format.html { redirect_back fallback_location: root_path, notice: "Account was successfully deleted." }
       else
         format.html { render :edit, status: :unprocessable_entity }
