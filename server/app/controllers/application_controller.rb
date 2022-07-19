@@ -9,29 +9,34 @@ class ApplicationController < ActionController::Base
     dashboard_path
   end
 
-  def current_account
-    return unless cookies[:radar_current_account_id] && current_user
-    account_policy_instance = AccountPolicy::Scope.new(current_user, Account, cookies[:radar_current_account_id])
-    @current_account = account_policy_instance.resolve
-    # If cookie account id was invalid for user,
-    # overriding it with a valid one, and replacing cookie value
-    if @current_account.nil?
-      @current_account = account_policy_instance.get_default_account
-      if @current_account
-        cookies[:radar_current_account_id] = @current_account.id
-      else
-        # Maybe the user has no current accounts associated
-        cookies[:radar_current_account_id] = nil
-      end
-    end
-    @current_account
-  end
+  protected
 
   def accounts
     @accounts ||= current_user.accounts.not_deleted if current_user
   end
 
-  protected
+  def pundit_user
+    return unless current_user
+    @current_user_account ||= current_user.users_accounts.not_deleted.find_by_account_id(cookies[:radar_current_account_id])
+    # if @current_user_account is null, the cookie might be
+    # outdated or wrong, so defaulting to first UserAccount
+    # for current_user
+    @current_user_account = current_user.users_accounts.not_deleted.first if @current_user_account.nil?
+
+    # If @current_user_account is null again, then this user
+    # has no associated account currently, so we clear both
+    # @current_account as well as the cookie itself.
+    unless @current_account
+      if @current_user_account
+        @current_account ||= Account.find(@current_user_account.account_id)
+        cookies[:radar_current_account_id] = @current_account.id
+      else
+        @current_account = nil
+        cookies[:radar_current_account_id] = nil
+      end
+    end
+    @current_user_account
+  end
 
   def set_sentry_user
     Sentry.set_user(id: current_user.id, email: current_user.email) if current_user

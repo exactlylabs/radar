@@ -4,8 +4,7 @@ class LocationsController < ApplicationController
 
   # GET /locations or /locations.json
   def index
-    # @locations = Location.for_current_account(cookies[:radar_current_account_id])
-    @locations = LocationPolicy::Scope.new(current_account, Location).resolve
+    @locations = policy_scope(Location)
   end
 
   # GET /locations/1 or /locations/1.json
@@ -29,7 +28,7 @@ class LocationsController < ApplicationController
 
     # TODO: Is there a better UX for this?
     # current_clients = Client.for_current_account(cookies[:radar_current_account_id])
-    current_clients = ClientPolicy::Scope.new(current_account, Client).resolve
+    current_clients = policy_scope(Client)
     if current_clients.count == 1
       @location.clients << current_clients.first
     end
@@ -72,8 +71,7 @@ class LocationsController < ApplicationController
   def destroy
     @location.destroy
     respond_to do |format|
-      #locations = Location.for_current_account(cookies[:radar_current_account_id])
-      locations = LocationPolicy::Scope.new(current_account, Location).resolve
+      locations = policy_scope(Location)
       format.turbo_stream { render turbo_stream: turbo_stream.replace('location_container_dynamic', partial: 'locations_list', locals: {locations: locations}) }
       format.turbo_stream { render turbo_stream: turbo_stream.remove(@location) }
       format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }
@@ -84,8 +82,7 @@ class LocationsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_location
-      # @location = Location.for_current_account(cookies[:radar_current_account_id]).find(params[:id])
-      @location = LocationPolicy::Scope.new(current_account, Location).resolve.find(params[:id])
+      @location = policy_scope(Location).find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.

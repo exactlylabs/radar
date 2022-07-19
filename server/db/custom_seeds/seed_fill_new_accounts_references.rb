@@ -3,7 +3,7 @@
 # in the database, linking them all with the corresponding
 # default account.
 # To run, execute the following command:
-# `rake db:seed:seed_fill_new_accounts_references` inside the
+# `rails runner db/custom_seeds/seed_fill_new_accounts_references.rb` inside the
 # /server directory.
 
 puts 'Custom default accounts references seeder running...'

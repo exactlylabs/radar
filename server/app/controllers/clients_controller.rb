@@ -11,8 +11,7 @@ class ClientsController < ApplicationController
   def index
     @status = params[:status]
     @location = params[:location]
-    @all_locations = LocationPolicy::Scope.new(current_account, Location).resolve.where_has_client_associated
-    #@all_locations = Location.for_current_account(cookies[:radar_current_account_id]).where_has_client_associated
+    @all_locations = policy_scope(Location).where_has_client_associated
     # New designs index clients by location
     get_indexed_clients
   end
@@ -44,8 +43,7 @@ class ClientsController < ApplicationController
     # If no secret, then we need to authenticate
     if !@client
       authenticate_user!
-      @client = ClientPolicy::Scope.new(current_account, Client).resolve.find_by_unix_user(params[:id])
-      # @client = Client.for_current_account(cookies[:radar_current_account_id]).find_by_unix_user(params[:id])
+      @client = policy_scope(Client).find_by_unix_user(params[:id])
     end
 
     respond_to do |format|
@@ -80,8 +78,7 @@ class ClientsController < ApplicationController
     @location_id = params[:location_id]
     @client_name = params[:name]
 
-    location = LocationPolicy::Scope.new(current_account, Location).resolve.where(id: @location_id).first if @location_id.present?
-    #location = Location.for_current_account(cookies[:radar_current_account_id]).where(id: @location_id).first if @location_id.present?
+    location = policy_scope(Location).where(id: @location_id).first if @location_id.present?
     @client = Client.where(unix_user: @client_id).first
 
     respond_to do |format|
@@ -221,8 +218,7 @@ EOF
 
     respond_to do |format|
       if @client.save
-        clients = ClientPolicy::Scope.new(current_account, Client).resolve
-        #clients = Client.for_current_account(cookies[:radar_current_account_id])
+        clients = policy_scope(Client)
         format.turbo_stream {
           render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: clients})
         }
@@ -237,8 +233,7 @@ EOF
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
-    location = LocationPolicy::Scope.new(current_account, Location).resolve.find(params[:location_id]) if params[:location_id]
-    #location = Location.for_current_account(cookies[:radar_current_account_id]).find(params[:location_id]) if params[:location_id]
+    location = policy_scope(Location).find(params[:location_id]) if params[:location_id]
     client = params[:client]
     respond_to do |format|
       if @client.update(name: client[:name], location: location)
@@ -263,8 +258,7 @@ EOF
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_client
-      @client = ClientPolicy::Scope.new(current_account, Client).resolve.find_by_unix_user(params[:id])
-      #@client = Client.for_current_account(cookies[:radar_current_account_id]).find_by_unix_user(params[:id])
+      @client = policy_scope(Client).find_by_unix_user(params[:id])
       if !@client
         raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])
       end
@@ -300,7 +294,7 @@ EOF
     def get_indexed_clients
       # Is there a better way to override the scope method for using
       # account instead of user??
-      @clients = ClientPolicy::Scope.new(current_account, Client).resolve
+      @clients = policy_scope(Client)
       if @location.present?
         @clients = @clients.where(location: @location) if @location.to_i != -1
         @clients = @clients.where_no_location if @location.to_i == -1

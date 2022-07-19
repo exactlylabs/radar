@@ -117,10 +117,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
     params.require(:account).permit(:name, :account_type)
   end
 
-  def get_type
-    params[:avatar_type].split('/')[1]
-  end
-
   # DELETE /resource
   # def destroy
   #   super

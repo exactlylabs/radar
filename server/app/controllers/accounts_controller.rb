@@ -1,6 +1,6 @@
 class AccountsController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_user_is_allowed, except: %i[ create ]
+  before_action :set_account, except: %i[ create ]
 
   def create
     @account = Account.create account_params
@@ -14,7 +14,6 @@ class AccountsController < ApplicationController
   end
 
   def delete
-    @account = Account.find(params[:id])
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.update('delete_account_modal', template: "accounts/delete", locals: { account: @account })
@@ -24,7 +23,6 @@ class AccountsController < ApplicationController
   end
 
   def destroy
-    @account = Account.find(params[:id])
     # Soft delete everything?
     @users_accounts = UsersAccount.where(account_id: params[:id])
     now = Time.now
@@ -38,7 +36,6 @@ class AccountsController < ApplicationController
   end
 
   def edit
-    @account = Account.find(params[:id])
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.update('edit_account_modal', template: "accounts/edit", locals: { account: @account })
@@ -48,7 +45,6 @@ class AccountsController < ApplicationController
   end
 
   def update
-    @account = Account.find(params[:id])
     respond_to do |format|
       if @account.update(account_params)
         format.html { redirect_back fallback_location: root_path, notice: "Account was successfully updated." }
@@ -63,9 +59,10 @@ class AccountsController < ApplicationController
     params.require(:account).permit(:name, :account_type)
   end
 
-  def check_user_is_allowed
-    unless UsersAccount.is_user_allowed(params[:id], current_user.id)
-      head(401)
+  def set_account
+    @account = policy_scope(Account).find(params[:id])
+    unless @account
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Account with 'id'=#{params[:id]}", Account.name, params[:id])
     end
   end
 end
