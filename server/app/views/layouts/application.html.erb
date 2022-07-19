@@ -82,7 +82,7 @@
                     <i class="fas fa-angle-down" style="display: none; color: #00a3ff;" data-drawer-target="downAngle"></i>
                   </button>
                   <div id="accounts-collapse" class="collapse">
-                  <% @accounts.order("LOWER(name)").each do |account| %>
+                  <% current_user.accounts.order("LOWER(name)").each do |account| %>
                     <%= render partial: "accounts/sidebar_account_item", locals: { account: account } %>
                   <% end %>
                   <button type="button"

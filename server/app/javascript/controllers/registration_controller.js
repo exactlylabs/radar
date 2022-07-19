@@ -22,7 +22,6 @@ export default class extends Controller {
       account_name: null,
       account_type: null,
       avatar: null,
-      avatar_type: null,
     };
   }
 
@@ -90,7 +89,6 @@ export default class extends Controller {
     formData.append('user[terms]', this.registrationData.terms);
     formData.append('user[password]', this.registrationData.password);
     formData.append('user[avatar]', this.registrationData.avatar);
-    //formData.append('avatar_type', this.registrationData.avatar_type);
     formData.append('account[name]', accountName);
     formData.append('account[account_type]', this.registrationData.account_type);
     this.finishButtonTarget.style.display = 'none';
