@@ -292,8 +292,6 @@ EOF
     end
 
     def get_indexed_clients
-      # Is there a better way to override the scope method for using
-      # account instead of user??
       @clients = policy_scope(Client)
       if @location.present?
         @clients = @clients.where(location: @location) if @location.to_i != -1

@@ -1,4 +1,4 @@
-class CreateUsersAccounts < ActiveRecord::Migration[6.1]
+class AddAccounts < ActiveRecord::Migration[6.1]
   def change
     create_table :accounts do |t|
       t.integer :account_type, default: 0, null: false
@@ -25,5 +25,17 @@ class CreateUsersAccounts < ActiveRecord::Migration[6.1]
       t.references :user, null: true, foreign_key: true
       t.timestamps
     end
+    add_column :locations, :account_id, :integer
+    add_foreign_key :locations, :accounts
+
+    add_column :clients, :account_id, :integer
+    add_foreign_key :clients, :accounts
+
+    add_column :measurements, :account_id, :integer
+    add_foreign_key :measurements, :accounts
+
+    rename_column :locations, :user_id, :created_by_id
+    rename_column :clients, :user_id, :claimed_by_id
+    rename_column :measurements, :user_id, :measured_by_id
   end
 end
