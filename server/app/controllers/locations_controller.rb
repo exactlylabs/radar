@@ -27,7 +27,6 @@ class LocationsController < ApplicationController
     @location.user = current_user
 
     # TODO: Is there a better UX for this?
-    # current_clients = Client.for_current_account(cookies[:radar_current_account_id])
     current_clients = policy_scope(Client)
     if current_clients.count == 1
       @location.clients << current_clients.first

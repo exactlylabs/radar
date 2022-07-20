@@ -60,7 +60,7 @@
                    data-kt-scroll-offset="20px"
                    data-kt-scroll-dependencies="#kt_aside_logo, #kt_aside_footer"
               >
-                <% if @current_account.present? %>
+                <% if current_account.present? %>
                   <button class="btn d-flex flex-row justify-content-center align-items-center"
                           data-bs-toggle="collapse"
                           data-bs-target="#accounts-collapse"
@@ -74,10 +74,10 @@
                     <!--begin::AccountIcon-->
                     <div class="d-flex justify-content-center align-items-center fw-bolder"
                          style="width: 40px; height: 40px; background-color: #dbf2ff; color: #00a3ff; font-size: 20px; border-radius: 8px">
-                      <%= @current_account.name[0].upcase %>
+                      <%= current_account.name[0].upcase %>
                     </div>
                     <!--end::AccountIcon-->
-                    <span class="menu-title sidebar--account-selected-title" style="overflow: hidden; max-width: 120px; margin-left: 15px; white-space: nowrap; text-overflow: ellipsis"><%= @current_account.name %></span>
+                    <span class="menu-title sidebar--account-selected-title" style="overflow: hidden; max-width: 120px; margin-left: 15px; white-space: nowrap; text-overflow: ellipsis"><%= current_account.name %></span>
                     <i class="fas fa-angle-right" data-drawer-target="rightAngle"></i>
                     <i class="fas fa-angle-down" style="display: none; color: #00a3ff;" data-drawer-target="downAngle"></i>
                   </button>
@@ -241,7 +241,7 @@
                     <!--begin::Menu wrapper-->
                     <div class="cursor-pointer symbol symbol-35px symbol-lg-35px" data-kt-menu-trigger="click" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
                       <% if current_user.avatar.attached? %>
-                        <%= image_tag current_user.avatar %>
+                        <%= image_tag current_user.avatar.variant(resize: "35x35") %>
                       <% else %>
                         <%= image_tag "blank.png" %>
                       <% end %>
@@ -254,7 +254,7 @@
                           <!--begin::Avatar-->
                           <div class="symbol symbol-50px me-5">
                             <% if current_user.avatar.attached? %>
-                              <%= image_tag current_user.avatar %>
+                              <%= image_tag current_user.avatar.variant(resize: "35x35") %>
                             <% else %>
                               <%= image_tag "blank.png" %>
                             <% end %>

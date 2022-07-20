@@ -21,7 +21,7 @@
 				<select id="client_id" class="form-select select2-hidden-accessible" data-add-client-to-location-blanks-value="true"
 								data-placeholder="Choose a Pod" data-action="change->add-client-to-location#checkClientLocation" tabindex="-1" data-add-client-to-location-id="add-client-to-location-data-client_id">
 					<option value=""></option>
-					<% @current_account.clients.each do |client| %>
+					<% current_account.clients.each do |client| %>
 						<!-- using 'picked' attribute instead of reserved word 'selected' to prevent defaulting a value -->
 						<option value="<%= client.unix_user %>" picked="false" data-location-name="<%= client.location&.name %>" data-location-id="<%= client.location&.id %>">
 								<%= client.name || "Unnamed Pod" %>
