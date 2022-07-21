@@ -20,6 +20,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def set_user_account(new_account_id)
+    @current_user_account = current_user.users_accounts.find_by_account_id(new_account_id)
+  end
+
   helper_method :current_account
 
   protected
@@ -27,10 +31,12 @@ class ApplicationController < ActionController::Base
   def pundit_user
     return unless current_user
     return @current_user_account if @current_user_account
-    # if @current_user_account is null, the cookie might be
-    # outdated or wrong, so defaulting to first UserAccount
-    # for current_user
-    @current_user_account = current_user.users_accounts.not_deleted.first if @current_user_account.nil?
+    if cookies[:radar_current_account_id]
+      @current_user_account = current_user.users_accounts.find_by_account_id(cookies[:radar_current_account_id])
+    else
+      @current_user_account = current_user.users_accounts.first
+    end
+    @current_user_account
   end
 
   def set_sentry_user
