@@ -87,6 +87,9 @@ Rails.application.routes.draw do
   end
 
   resources :accounts do
+    collection do
+      post 'switch', to: "accounts#switch"
+    end
     member do
       post :edit
       post :delete, to: "accounts#delete"

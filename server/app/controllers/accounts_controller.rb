@@ -53,6 +53,12 @@ class AccountsController < ApplicationController
     end
   end
 
+  def switch
+    new_account_id = params[:id]
+    new_account = policy_scope(Account).find(new_account_id)
+    set_user_account new_account_id if new_account
+  end
+
   private
   def account_params
     params.require(:account).permit(:name, :account_type)
