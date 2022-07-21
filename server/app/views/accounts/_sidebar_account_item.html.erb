@@ -1,6 +1,7 @@
 <div id="sidebar--account-container@<%= account.id %>"
      class="sidebar--account-row <%= account.id == current_account.id ? 'active' : 'text-gray-600' %>"
-     data-action="click->drawer#selectAccount mouseenter->drawer#handleAccountHover">
+     data-controller="switch-account"
+     data-action="click->switch-account#selectAccount">
   <div id="sidebar--account-market@<%= account.id %>"class="sidebar--circular-marker"></div>
   <p id="sidebar--account-name@<%= account.id %>" style="overflow: hidden; max-width: 120px; white-space: nowrap; text-overflow: ellipsis"><%= account.name %></p>
   <!-- TODO: Add once Edit/Delete are supported -->
