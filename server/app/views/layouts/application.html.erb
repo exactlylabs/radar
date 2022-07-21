@@ -241,7 +241,7 @@
                     <!--begin::Menu wrapper-->
                     <div class="cursor-pointer symbol symbol-35px symbol-lg-35px" data-kt-menu-trigger="click" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
                       <% if current_user.avatar.attached? %>
-                        <%= image_tag current_user.avatar.variant(resize: "35x35") %>
+                        <%= image_tag current_user.avatar.variant(resize_to_limit: [35, 35]) %>
                       <% else %>
                         <%= image_tag "blank.png" %>
                       <% end %>
@@ -254,7 +254,7 @@
                           <!--begin::Avatar-->
                           <div class="symbol symbol-50px me-5">
                             <% if current_user.avatar.attached? %>
-                              <%= image_tag current_user.avatar.variant(resize: "35x35") %>
+                              <%= image_tag current_user.avatar.variant(resize_to_limit: [50, 50]) %>
                             <% else %>
                               <%= image_tag "blank.png" %>
                             <% end %>

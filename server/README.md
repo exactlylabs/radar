@@ -19,6 +19,9 @@ bundle install
 rails db:create db:migrate db:seed
 ```
 
+In order for Image Processing to work correctly, you need to install ImageMagick
+locally on the computer running the app. Installation instructions [here](https://imagemagick.org/script/download.php).
+
 ### Running
 
 To Run, simply call `rails s` or `rails s -p <port>` in case you already have an app at port 3000 (default)

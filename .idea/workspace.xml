@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="52615d7d-e0f3-4b35-b42d-cfbc57926895" name="Changes" comment="fixed policy_scope comments on PR">
+    <list default="true" id="19333de3-deb7-4545-a5ad-a5ff34374cb8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/server/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/controllers/accounts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/accounts_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/server/Gemfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/Gemfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/server/Gemfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/server/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/application_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/controllers/clients_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/clients_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/controllers/locations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/locations_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/policies/measurement_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/policies/measurement_policy.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/helpers/application_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/helpers/application_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/javascript/controllers/drawer_controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/javascript/controllers/drawer_controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/javascript/controllers/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/javascript/controllers/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/models/user.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/user.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/views/accounts/_sidebar_account_item.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/accounts/_sidebar_account_item.html.erb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/views/layouts/application.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/layouts/application.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/views/location_clients/_add_pod_step_1_existing.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/location_clients/_add_pod_step_1_existing.html.erb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220707181738_create_users_tables.rb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220707183519_add_account_id_reference.rb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/db/migrate/20220707184039_rename_user_id_column.rb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/dump.rdb" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,9 +22,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="ERB File" />
         <option value="SCSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -45,7 +42,7 @@
                 <list>
                   <RecentBranch>
                     <option name="branchName" value="eugenio/ttac-284" />
-                    <option name="lastUsedInstant" value="1658144772" />
+                    <option name="lastUsedInstant" value="1658342444" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="master" />
@@ -282,7 +279,7 @@
   <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="false" RAKE_SPRING_PRE_LOADER_OPTION="false" RAILS_SPRING_PRE_LOADER_OPTION="false" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="52615d7d-e0f3-4b35-b42d-cfbc57926895" name="Changes" comment="revert last commit" />
+      <changelist id="19333de3-deb7-4545-a5ad-a5ff34374cb8" name="Changes" comment="" />
       <created>1657218497452</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -293,6 +290,7 @@
       <workItem from="1658228995748" duration="8320000" />
       <workItem from="1658249544632" duration="81000" />
       <workItem from="1658319934135" duration="5022000" />
+      <workItem from="1658367618238" duration="537000" />
     </task>
     <task id="LOCAL-00001" summary="created new accounts/invites entites + seed files for creating default accounts for already present users on DB">
       <created>1657307249511</created>

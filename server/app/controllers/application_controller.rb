@@ -8,29 +8,29 @@ class ApplicationController < ActionController::Base
     dashboard_path
   end
 
+  def current_account
+    return @current_account if @current_account && @current_account.id == cookies[:radar_current_account_id]
+    begin
+      @current_account = policy_scope(Account).find(cookies[:radar_current_account_id])
+    rescue ActiveRecord::RecordNotFound
+      @current_account = nil
+      cookies[:radar_current_account_id] = nil
+    ensure
+      @current_account
+    end
+  end
+
+  helper_method :current_account
+
   protected
 
   def pundit_user
     return unless current_user
-    @current_user_account ||= current_user.users_accounts.not_deleted.find_by_account_id(cookies[:radar_current_account_id])
+    return @current_user_account if @current_user_account
     # if @current_user_account is null, the cookie might be
     # outdated or wrong, so defaulting to first UserAccount
     # for current_user
     @current_user_account = current_user.users_accounts.not_deleted.first if @current_user_account.nil?
-
-    # If @current_user_account is null again, then this user
-    # has no associated account currently, so we clear both
-    # @current_account as well as the cookie itself.
-    unless @current_account
-      if @current_user_account
-        @current_account ||= Account.find(@current_user_account.account_id)
-        cookies[:radar_current_account_id] = @current_account.id
-      else
-        @current_account = nil
-        cookies[:radar_current_account_id] = nil
-      end
-    end
-    @current_user_account
   end
 
   def set_sentry_user
