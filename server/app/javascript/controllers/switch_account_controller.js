@@ -23,7 +23,6 @@ export default class extends Controller {
       headers: { "X-CSRF-Token": token },
     }).then((res) => {
       if (res.ok) {
-        document.cookie = `radar_current_account_id=${selectedAccountId}; path=/`;
         window.location.reload();
       } else {
         // TODO: add Sentry logging once integrated

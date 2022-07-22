@@ -2,61 +2,64 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application"
+import { application } from "./application";
 
-import StagingClientsController from "./staging_clients_controller.js"
-application.register("staging-clients", StagingClientsController)
+import StagingClientsController from "./staging_clients_controller.js";
+application.register("staging-clients", StagingClientsController);
 
-import HelloController from "./hello_controller.js"
-application.register("hello", HelloController)
+import HelloController from "./hello_controller.js";
+application.register("hello", HelloController);
 
-import ModalController from "./modal_controller.js"
-application.register("modal", ModalController)
+import ModalController from "./modal_controller.js";
+application.register("modal", ModalController);
 
-import MenuController from "./menu_controller.js"
-application.register("menu", MenuController)
+import MenuController from "./menu_controller.js";
+application.register("menu", MenuController);
 
-import PasswordController from "./password_controller.js"
-application.register("password", PasswordController)
+import PasswordController from "./password_controller.js";
+application.register("password", PasswordController);
 
-import LocationController from "./location_controller.js"
-application.register("location", LocationController)
+import LocationController from "./location_controller.js";
+application.register("location", LocationController);
 
-import LocationFormController from "./location_form_controller.js"
-application.register("location-form", LocationFormController)
+import LocationFormController from "./location_form_controller.js";
+application.register("location-form", LocationFormController);
 
-import DrawerController from "./drawer_controller.js"
-application.register("drawer", DrawerController)
+import DrawerController from "./drawer_controller.js";
+application.register("drawer", DrawerController);
 
-import LocaltimeController from "./localtime_controller.js"
-application.register("localtime", LocaltimeController)
+import LocaltimeController from "./localtime_controller.js";
+application.register("localtime", LocaltimeController);
 
-import TimezoneController from "./timezone_controller.js"
-application.register("timezone", TimezoneController)
+import TimezoneController from "./timezone_controller.js";
+application.register("timezone", TimezoneController);
 
-import OnboardController from "./onboard_controller.js"
-application.register("onboard", OnboardController)
+import OnboardController from "./onboard_controller.js";
+application.register("onboard", OnboardController);
 
-import Select2Controller from "./select2_controller.js"
-application.register("select2", Select2Controller)
+import Select2Controller from "./select2_controller.js";
+application.register("select2", Select2Controller);
 
-import MapController from "./map_controller.js"
+import MapController from "./map_controller.js";
 application.register("map", MapController);
 
-import AddClientToLocation from "./add_client_to_location_controller.js"
-application.register("add-client-to-location", AddClientToLocation)
+import AddClientToLocation from "./add_client_to_location_controller.js";
+application.register("add-client-to-location", AddClientToLocation);
 
-import AddPodController from "./add_pod_controller.js"
+import AddPodController from "./add_pod_controller.js";
 application.register("add-pod", AddPodController);
 
-import EditPodController from "./edit_pod_controller.js"
+import EditPodController from "./edit_pod_controller.js";
 application.register("edit-pod", EditPodController);
 
-import RegistrationController from "./registration_controller.js"
+import RegistrationController from "./registration_controller.js";
 application.register("registration", RegistrationController);
 
-import AddAccountController from "./add_account_controller.js"
+import AddAccountController from "./add_account_controller.js";
 application.register("add-account", AddAccountController);
 
-import SwitchAccountController from "./switch_account_controller.js"
+import SwitchAccountController from "./switch_account_controller.js";
 application.register("switch-account", SwitchAccountController);
+
+import AccountsDrawerMenuController from "./accounts_drawer_menu_controller.js";
+application.register("accounts-drawer-menu", AccountsDrawerMenuController);
