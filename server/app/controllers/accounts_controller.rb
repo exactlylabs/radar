@@ -7,7 +7,8 @@ class AccountsController < ApplicationController
     @account.save!
     @user_account = UsersAccount.create(user_id: current_user.id, account_id: @account.id, joined_at: Time.now)
     if @user_account.save
-      render json: { status: :ok, account_id: @account.id }
+      set_cookie(:radar_current_account_id, @account.id)
+      render json: { status: :ok }
     else
       render json: { status: :unprocessable_entity }
     end
@@ -56,7 +57,8 @@ class AccountsController < ApplicationController
   def switch
     new_account_id = params[:id]
     new_account = policy_scope(Account).find(new_account_id)
-    set_user_account new_account_id if new_account
+    set_user_account new_account if new_account
+    set_cookie(:radar_current_account_id, new_account_id)
   end
 
   private

@@ -33,8 +33,8 @@
              data-kt-drawer-width="{default:'200px', '300px': '250px'}"
              data-kt-drawer-direction="start"
              data-kt-drawer-toggle="#kt_aside_toggle"
-             data-controller="drawer"
-             data-action="mouseenter->drawer#handleMouseEnter mouseleave->drawer#handleMouseLeave"
+             data-controller="drawer accounts-drawer-menu"
+             data-action="mouseenter->accounts-drawer-menu#handleMouseEnter mouseleave->accounts-drawer-menu#handleMouseLeave"
         >
           <!--begin::Brand-->
           <div class="aside-logo flex-column-auto pt-9 pb-5" id="kt_aside_logo">
@@ -68,8 +68,8 @@
                           aria-expanded="false"
                           aria-controls="accounts-collapse"
                           style="padding-left: 0"
-                          data-drawer-target="accountsMenuButton"
-                          data-action="click->drawer#toggleMenu"
+                          data-accounts-drawer-menu-target="accountsMenuButton"
+                          data-action="click->accounts-drawer-menu#toggleMenu"
                   >
                     <!--begin::AccountIcon-->
                     <div class="d-flex justify-content-center align-items-center fw-bolder"
@@ -78,8 +78,8 @@
                     </div>
                     <!--end::AccountIcon-->
                     <span class="menu-title sidebar--account-selected-title" style="overflow: hidden; max-width: 120px; margin-left: 15px; white-space: nowrap; text-overflow: ellipsis"><%= current_account.name %></span>
-                    <i class="fas fa-angle-right" data-drawer-target="rightAngle"></i>
-                    <i class="fas fa-angle-down" style="display: none; color: #00a3ff;" data-drawer-target="downAngle"></i>
+                    <i class="fas fa-angle-right" data-accounts-drawer-menu-target="rightAngle"></i>
+                    <i class="fas fa-angle-down" style="display: none; color: #00a3ff;" data-accounts-drawer-menu-target="downAngle"></i>
                   </button>
                   <div id="accounts-collapse" class="collapse">
                   <% current_user.accounts.order("LOWER(name)").each do |account| %>
@@ -122,11 +122,11 @@
                 <% end %>
                 <div class="mb-5"
                      style="height: 1px; width: 40px; background-color: #edf0f4"
-                     data-drawer-target="smallDivider"
+                     data-accounts-drawer-menu-target="smallDivider"
                 ></div>
                 <div class="mb-5"
                      style="height: 1px; width: 190px; background-color: #edf0f4; display: none"
-                     data-drawer-target="fullSizeDivider"
+                     data-accounts-drawer-menu-target="fullSizeDivider"
                 ></div>
                 <div class="menu-item mb-5 ms-2">
                   <a class="menu-link <%= active_path?(dashboard_path) %>" href="<%= dashboard_path %>">
