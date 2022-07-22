@@ -66,8 +66,5 @@ class AccountsController < ApplicationController
 
   def set_account
     @account = policy_scope(Account).find(params[:id])
-    unless @account
-      raise ActiveRecord::RecordNotFound.new("Couldn't find Account with 'id'=#{params[:id]}", Account.name, params[:id])
-    end
   end
 end
