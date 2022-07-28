@@ -4,7 +4,7 @@ import { MyButton } from '../common/MyButton';
 import { MyTitle } from '../common/MyTitle';
 
 const FormPage = ({ goToNextStep }) => {
-  const [formData, setFormData] = useState({ name: null, number: null });
+  const [formData, setFormData] = useState({ address: null });
 
   const handleInputChange = e => {
     const value = e.target.value;
@@ -23,32 +23,21 @@ const FormPage = ({ goToNextStep }) => {
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
           <TextField
             required
-            label={'Street name'}
+            label={'Full Address'}
             type={'text'}
-            placeholder={'Insert your street name'}
-            name={'name'}
+            placeholder={'Insert your full address'}
+            name={'address'}
             onChange={handleInputChange}
             margin={'normal'}
-            style={{ width: '50%', minWidth: 200, maxWidth: 500, marginRight: 20 }}
+            fullWidth
             variant={'standard'}
-          />
-          <TextField
-            required
-            label={'Street number'}
-            type={'number'}
-            placeholder={'Insert your street number'}
-            name={'number'}
-            onChange={handleInputChange}
-            margin={'normal'}
-            variant={'standard'}
-            style={{ maxWidth: 150 }}
           />
         </div>
         <MyButton
           style={{ width: '25%', margin: '20px auto' }}
           text={'Submit'}
           onClick={handleSubmit}
-          disabled={!formData.name || !formData.number}
+          disabled={!formData.address}
         />
       </FormControl>
     </div>

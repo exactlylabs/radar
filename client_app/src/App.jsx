@@ -18,7 +18,7 @@ const App = ({ config }) => {
   const [manualAddress, setManualAddress] = useState(null);
 
   const goToMapPage = addressInfo => {
-    setManualAddress(`${addressInfo.name} ${addressInfo.number}`);
+    setManualAddress(addressInfo.address);
     setStep(STEPS.MAP);
   };
 
