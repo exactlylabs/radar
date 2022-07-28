@@ -2,7 +2,7 @@
   "root": "dist/",
   "proxies": {
     "/api/": {
-      "origin": "https://example.com/api"
+      "origin": "http://34.170.247.202:64114"
     }
   }
 }
