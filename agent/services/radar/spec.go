@@ -21,8 +21,9 @@ type Update struct {
 // PodConfigs is the response from the Ping method
 type PodConfigs struct {
 	Pod
-	TestRequested bool    `json:"test_requested"`
-	Update        *Update `json:"update"`
+	TestRequested  bool    `json:"test_requested"`
+	Update         *Update `json:"update"`
+	WatchdogUpdate *Update `json:"watchdog_update"`
 }
 
 type RadarRequester interface {
