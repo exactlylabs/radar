@@ -6,18 +6,18 @@ import (
 	"testing"
 )
 
-func createConfig(conf, path string) {
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0660)
+func createConfig(conf string) {
+	SetBasePath("/tmp")
+	f, err := os.OpenFile("/tmp/config.conf", os.O_WRONLY|os.O_CREATE, 0660)
 	if err != nil {
 		panic(err)
 	}
 	f.WriteString(conf)
 	f.Close()
-	os.Setenv("CONF_FILE_PATH", path)
 }
 
-func clear(path string) {
-	os.Remove(path)
+func clear() {
+	os.Remove("/tmp/config.conf")
 }
 
 func TestLoadConfig(t *testing.T) {
@@ -26,6 +26,7 @@ func TestLoadConfig(t *testing.T) {
 		ClientId:  "1234",
 		Secret:    "6666",
 		TestFreq:  "600",
+		PingFreq:  "15",
 	}
 
 	conf := `
@@ -34,8 +35,8 @@ func TestLoadConfig(t *testing.T) {
 	secret=6666
 	test_freq=600
 	`
-	createConfig(conf, "/tmp/tmp_config.conf")
-	defer clear("/tmp/tmp_config.conf")
+	createConfig(conf)
+	defer clear()
 
 	c := LoadConfig()
 	if *c != *expected {
@@ -48,21 +49,24 @@ func TestSaveConfig(t *testing.T) {
 client_id=5555
 secret=
 test_freq=
+test_minute=
+ping_freq=
 last_tested=
+last_updated=
+last_download_speed=
+last_upload_speed=
 `
 	c := &Config{
 		ServerURL: "localhost",
 		ClientId:  "5555",
 	}
-	os.Setenv("CONF_FILE_PATH", "/tmp/test_save.conf")
+	SetBasePath("/tmp")
 	err := Save(c)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer func() {
-		os.Remove("/tmp/test_save.conf")
-	}()
-	f, err := os.Open("/tmp/test_save.conf")
+	defer clear()
+	f, err := os.Open("/tmp/config.conf")
 	if err != nil {
 		t.Fatal(err)
 	}
