@@ -1,7 +1,6 @@
 package info
 
 import (
-	"fmt"
 	"testing"
 	"time"
 )
@@ -44,7 +43,7 @@ func TestInfoGetPatch(t *testing.T) {
 
 func TestBuildTime(t *testing.T) {
 	expected := time.Date(2022, 2, 10, 0, 0, 0, 0, time.UTC)
-	var bt buildTime = buildTime(fmt.Sprintf("%d", expected.Unix()))
+	var bt buildTime = buildTime(expected.Format("200601021504"))
 	if bt.Time() != expected {
 		t.Fatalf("expected %v, got %v", expected, bt.Time())
 	}
