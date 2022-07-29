@@ -7,3 +7,9 @@ if @client.has_update?
         json.url url_for(@client.to_update_signed_binary)
     end
 end
+if @client.has_watchdog_update? @user_token
+    json.watchdog_update do
+        json.version @client.to_update_watchdog_version.version
+        json.url url_for(@client.to_update_watchdog_signed_binary)
+    end
+end

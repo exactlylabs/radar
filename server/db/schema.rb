@@ -20,9 +20,9 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.string "name", null: false
     t.boolean "superaccount", default: false
     t.boolean "exportaccount", default: false
+    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "deleted_at"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -59,8 +59,6 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.float "longitude"
     t.float "download_avg"
     t.float "upload_avg"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
     t.string "ip"
     t.string "token"
     t.string "download_id"
@@ -68,6 +66,8 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.float "latency"
     t.float "loss"
     t.datetime "processed_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "client_versions", force: :cascade do |t|
@@ -104,11 +104,14 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.string "raw_secret"
     t.jsonb "network_interfaces"
     t.integer "account_id"
+    t.bigint "watchdog_version_id"
+    t.string "raw_watchdog_version"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
     t.index ["update_group_id"], name: "index_clients_on_update_group_id"
+    t.index ["watchdog_version_id"], name: "index_clients_on_watchdog_version_id"
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -122,9 +125,9 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
 
   create_table "invites", force: :cascade do |t|
     t.boolean "is_active", default: false
-    t.string "first_name", null: false
-    t.string "last_name", null: false
-    t.string "email", null: false
+    t.string "user_first_name", null: false
+    t.string "user_last_name", null: false
+    t.string "user_email", null: false
     t.datetime "sent_at", null: false
     t.bigint "account_id", null: false
     t.bigint "user_id"
@@ -195,7 +198,9 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.bigint "client_version_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "watchdog_version_id"
     t.index ["client_version_id"], name: "index_update_groups_on_client_version_id"
+    t.index ["watchdog_version_id"], name: "index_update_groups_on_watchdog_version_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -224,12 +229,18 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.bigint "account_id", null: false
     t.bigint "user_id", null: false
     t.datetime "joined_at", null: false
+    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "invited_at"
-    t.datetime "deleted_at"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
+  end
+
+  create_table "watchdog_versions", force: :cascade do |t|
+    t.string "version"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["version"], name: "index_watchdog_versions_on_version", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -239,6 +250,7 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
   add_foreign_key "clients", "locations"
   add_foreign_key "clients", "update_groups"
   add_foreign_key "clients", "users", column: "claimed_by_id"
+  add_foreign_key "clients", "watchdog_versions"
   add_foreign_key "distributions", "client_versions"
   add_foreign_key "invites", "accounts"
   add_foreign_key "invites", "users"
@@ -250,6 +262,7 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
   add_foreign_key "measurements", "users", column: "measured_by_id"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "update_groups", "client_versions"
+  add_foreign_key "update_groups", "watchdog_versions"
   add_foreign_key "users_accounts", "accounts"
   add_foreign_key "users_accounts", "users"
 end
