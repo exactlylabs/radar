@@ -17,5 +17,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(result))
+	fmt.Println(string(result.Raw))
 }
