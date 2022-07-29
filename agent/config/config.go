@@ -24,11 +24,15 @@ type Config struct {
 	TestMinute        string `config:"test_minute"`
 	PingFreq          string `config:"ping_freq"`
 	LastTested        string `config:"last_tested"`
+	LastUpdated       string `config:"last_updated"`
+	LastDownloadSpeed string `config:"last_download_speed"`
+	LastUploadSpeed   string `config:"last_upload_speed"`
 	SentryDsn         string
 	RegistrationToken *string `config:"registration_token"`
 }
 
 var config *Config
+var basePath string
 
 func mapConfigs(config *Config) map[string]reflect.Value {
 	configs := make(map[string]reflect.Value)
@@ -42,7 +46,14 @@ func mapConfigs(config *Config) map[string]reflect.Value {
 	return configs
 }
 
+func SetBasePath(path string) {
+	basePath = path
+}
+
 func BasePath() string {
+	if basePath != "" {
+		return basePath
+	}
 	if info.IsDev() {
 		basePath, err := os.Getwd()
 		if err != nil {
@@ -50,7 +61,6 @@ func BasePath() string {
 		}
 		return basePath
 	}
-	var basePath string
 	var err error
 	// For Windows, it is best to always store on AppData,
 	// since if running as a service, it will be sent to a system32 directory
@@ -67,9 +77,9 @@ func BasePath() string {
 		}
 	}
 
-	p := filepath.Join(basePath, "radar")
-	os.Mkdir(p, 0775)
-	return p
+	basePath = filepath.Join(basePath, "radar")
+	os.Mkdir(basePath, 0775)
+	return basePath
 }
 
 // Join will join the config base directory with
@@ -141,6 +151,11 @@ func LoadConfig() *Config {
 		}
 	}
 	return config
+}
+
+func Reload() *Config {
+	config = nil
+	return LoadConfig()
 }
 
 // Save will store the current configuration into the .ini file
