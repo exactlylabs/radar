@@ -10,8 +10,12 @@ cd $SCRIPT_DIR/..
 if ! command -v reflex &> /dev/null 2>&1
 then
     echo "Installing `reflex` to watch for changes and recompile on demand"
-  cd ~
-  go get github.com/cespare/reflex
+  go install github.com/cespare/reflex@latest
+fi
+
+if ! command -v reflex &> /dev/null 2>&1
+then
+    echo "reflex command not found. Is your \$GOBIN environment added to path?"
 fi
 
 echo watching $(pwd)
