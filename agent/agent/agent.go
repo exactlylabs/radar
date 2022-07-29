@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"os/exec"
 	"strconv"
 	"sync"
 	"time"
@@ -62,7 +63,7 @@ func (a *Agent) registerAgent(ctx context.Context, c *config.Config) *Registered
 	}
 }
 
-func (a *Agent) setup(ctx context.Context, c *config.Config) {
+func (a *Agent) Setup(ctx context.Context, c *config.Config) {
 	if c.ClientId == "" {
 		log.Println("No Client ID found for this agent.")
 
@@ -92,7 +93,7 @@ func (a *Agent) setup(ctx context.Context, c *config.Config) {
 // Start the Agent, blocking the current goroutine
 func (a *Agent) Start(ctx context.Context, c *config.Config) {
 	agentCtx, cancel := context.WithCancel(ctx)
-	a.setup(ctx, c)
+	a.Setup(ctx, c)
 
 	// Start the workers
 	a.wg.Add(2)
@@ -137,6 +138,29 @@ func (a *Agent) Start(ctx context.Context, c *config.Config) {
 					panic(err)
 				} else {
 					log.Println("Successfully Updated the Binary. Exiting current version.")
+					cancel()
+					os.Exit(1)
+				}
+			}
+			if pingResp.WatchdogUpdate != nil {
+				log.Printf("An Update for Watchdog Version %v is available\n", pingResp.WatchdogUpdate.Version)
+				err := update.UpdateWatchdog(pingResp.WatchdogUpdate.BinaryUrl)
+				if err != nil && (errors.Is(err, update.ErrInvalidCertificate) || errors.Is(err, update.ErrInvalidSignature)) {
+					log.Printf("Existent update is invalid: %v\n", err)
+					tracing.NotifyError(err, map[string]interface{}{
+						"Update Data": map[string]string{
+							"version": pingResp.Update.Version,
+							"url":     pingResp.Update.BinaryUrl,
+						},
+					})
+				} else if err != nil {
+					panic(err)
+				} else {
+					log.Println("Successfully Updated the Watchdog. Restarting the whole system")
+					out, err := exec.Command("shutdown", "-r", "0").Output()
+					if err != nil {
+						panic(fmt.Errorf("agent.Start Output: %s: %w", string(out), err))
+					}
 					cancel()
 					os.Exit(1)
 				}

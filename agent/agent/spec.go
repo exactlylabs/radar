@@ -1,14 +1,18 @@
 package agent
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 type BinaryUpdate struct {
 	Version   string
 	BinaryUrl string
 }
 type PingResponse struct {
-	TestRequested bool
-	Update        *BinaryUpdate
+	TestRequested  bool
+	Update         *BinaryUpdate
+	WatchdogUpdate *BinaryUpdate
 }
 
 type NetInterfaces struct {
@@ -17,9 +21,18 @@ type NetInterfaces struct {
 }
 
 type ClientMeta struct {
-	Version       string
-	Distribution  string
-	NetInterfaces []NetInterfaces
+	Version           string          `json:"version"`
+	Distribution      string          `json:"distribution"`
+	NetInterfaces     []NetInterfaces `json:"net_interfaces"`
+	WatchdogVersion   string          `json:"watchdog_version"`
+	RegistrationToken *string         `json:"registration_token"`
+}
+
+func (m *ClientMeta) String() string {
+	return fmt.Sprintf(`Version: %v
+Distribution: %v
+NetInterfaces: %+v`,
+		m.Version, m.Distribution, m.NetInterfaces)
 }
 
 type Pinger interface {
@@ -29,6 +42,12 @@ type Pinger interface {
 type RegisteredPod struct {
 	ClientId string
 	Secret   string
+}
+
+type Measurement struct {
+	Raw          []byte
+	DownloadMbps float64
+	UploadMbps   float64
 }
 
 type Registerer interface {
@@ -48,6 +67,6 @@ type ServerClient interface {
 }
 
 type Runner interface {
-	Run(ctx context.Context) ([]byte, error)
+	Run(ctx context.Context) (*Measurement, error)
 	Type() string
 }
