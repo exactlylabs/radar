@@ -171,6 +171,7 @@ EOF
   def status
     @client.pinged_at = Time.now
     @client.raw_version = params[:version]
+    @client.watchdog_raw_version = params[:watchdog_version]
     @client.distribution_name = params[:distribution]
     if params[:network_interfaces]
       @client.network_interfaces = JSON.parse(params[:network_interfaces])
@@ -187,8 +188,16 @@ EOF
       end
       @client.client_version = version
     end
-    @client.save
 
+    if params[:watchdog_version]
+      wv = WatchdogVersion.find_by_version(params[:watchdog_version])
+      if wv
+        @client.watchdog_version = wv
+      end
+    end
+
+    @client.save
+    @user_token = params[:user_token]
     respond_to do |format|
       format.json { render :status, status: :ok }
     end

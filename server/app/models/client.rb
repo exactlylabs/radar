@@ -79,6 +79,13 @@ class Client < ApplicationRecord
     end
   end
 
+  def to_update_watchdog_version
+    if self.raw_watchdog_version != "Dev" &&
+      !self.update_group.nil?
+      self.update_group.watchdog_version
+    end
+  end
+
   def to_update_distribution
     update_version = self.to_update_version
     if !update_version.nil?
@@ -93,6 +100,13 @@ class Client < ApplicationRecord
     end
   end
 
+  def to_update_watchdog_signed_binary
+    v = self.to_update_watchdog_version
+    if v
+      v.signed_binary
+    end
+  end
+
   def to_update_binary
     dist = self.to_update_distribution
     if !dist.nil?
@@ -100,9 +114,24 @@ class Client < ApplicationRecord
     end
   end
 
+  def to_update_watchdog_binary
+    v = self.to_update_watchdog_version
+    if v
+      v.binary
+    end
+  end
+
   def has_update?
     dist = self.to_update_distribution
     !dist.nil? && dist.client_version.version != self.raw_version
+  end
+
+  def has_watchdog_update?(user_token)
+    @user = User.where({"token": user_token}).first
+    if @user && @user.superuser?
+      v = self.to_update_watchdog_version
+      !v.nil? && v.version != self.raw_watchdog_version
+    end
   end
 
   def latest_measurement
