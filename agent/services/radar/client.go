@@ -40,7 +40,11 @@ func (c *radarClient) Ping(clientId, secret string, meta *agent.ClientMeta) (*ag
 	form := url.Values{}
 	form.Add("secret", secret)
 	form.Add("version", meta.Version)
+	form.Add("watchdog_version", meta.WatchdogVersion)
 	form.Add("distribution", meta.Distribution)
+	if meta.RegistrationToken != nil {
+		form.Add("user_token", *meta.RegistrationToken)
+	}
 	ifaces, err := json.Marshal(meta.NetInterfaces)
 	if err != nil {
 		return nil, fmt.Errorf("radarClient#Ping error marshalling NetInterfaces: %w", err)
@@ -74,6 +78,12 @@ func (c *radarClient) Ping(clientId, secret string, meta *agent.ClientMeta) (*ag
 		res.Update = &agent.BinaryUpdate{
 			Version:   podConfig.Update.Version,
 			BinaryUrl: fmt.Sprintf("%s/%s", c.serverUrl, podConfig.Update.Url),
+		}
+	}
+	if podConfig.WatchdogUpdate != nil {
+		res.WatchdogUpdate = &agent.BinaryUpdate{
+			Version:   podConfig.WatchdogUpdate.Version,
+			BinaryUrl: fmt.Sprintf("%s/%s", c.serverUrl, podConfig.WatchdogUpdate.Url),
 		}
 	}
 	return res, nil
