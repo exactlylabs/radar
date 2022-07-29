@@ -1,0 +1,20 @@
+Welcome to your Radar Pod
+
+{{bold}}General Information:{{resetColor}}
+ - Pod ID: {{.podId}}
+ - Radar OS Version: {{.podOsVersion}}
+ - Pod Client Version: {{.podAgentVersion}}
+ - Agent Status: {{if .isRunning}}{{green}}Running{{else}}{{red}}Not Running{{end}}{{resetColor}}
+{{if not .isRunning}} - Error Message: {{.runningErr}}{{end}}
+
+{{bold}}Network Interfaces:{{resetColor}}
+{{range $idx, $iface := .netInterfaces}} - {{.Name}}:
+   - MAC: {{.MAC}}
+   - IPs: {{.IPs}}
+{{end}}
+{{bold}}Last Speed Test Measurements:{{resetColor}}
+ - Time: {{.lastMeasurementTime}}
+ - Download Mbps: {{.lastMeasurementDownload}}
+ - Upload Mbps: {{.lastMeasurementUpload}}
+
+Display Last Update: {{.lastDisplayUpdate.Format "2006-01-02 15:04:05"}}
