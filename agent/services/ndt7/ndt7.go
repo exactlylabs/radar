@@ -61,8 +61,8 @@ func (r *ndt7Runner) runTest(ctx context.Context, w io.Writer, testFn func(conte
 	return nil
 }
 
-func (r *ndt7Runner) writeSummary(w io.Writer, client *ndt7.Client) error {
-	s := summary{}
+func (r *ndt7Runner) writeSummary(w io.Writer, client *ndt7.Client) (*summary, error) {
+	s := &summary{}
 	results := client.Results()
 	if dl, ok := results[spec.TestDownload]; ok {
 		if dl.Client.AppInfo != nil && dl.Client.AppInfo.ElapsedTime > 0 {
@@ -91,23 +91,23 @@ func (r *ndt7Runner) writeSummary(w io.Writer, client *ndt7.Client) error {
 
 	data, err := json.Marshal(s)
 	if err != nil {
-		return fmt.Errorf("ndt7.ndt7Runner#writeSummary error marshaling: %w", err)
+		return nil, fmt.Errorf("ndt7.ndt7Runner#writeSummary error marshaling: %w", err)
 	}
 	w.Write(data)
-	return nil
+	return s, nil
 }
 
 func (r *ndt7Runner) Type() string {
 	return "NDT7"
 }
 
-func (r *ndt7Runner) Run(ctx context.Context) (res []byte, err error) {
+func (r *ndt7Runner) Run(ctx context.Context) (*agent.Measurement, error) {
 	log.Println("NDT7 - Starting Speed Test")
 	log.Println("NDT7 - Starting Download Test")
 	client := ndt7.NewClient(clientName, clientVersion)
 	client.Scheme = defaultSchemeForArch()
 	b := &bytes.Buffer{}
-	err = r.runTest(ctx, b, client.StartDownload)
+	err := r.runTest(ctx, b, client.StartDownload)
 	if err != nil {
 		if strings.Contains(err.Error(), "bad handshake") {
 			// Try one more time
@@ -117,7 +117,7 @@ func (r *ndt7Runner) Run(ctx context.Context) (res []byte, err error) {
 		}
 		if err != nil {
 			// There is still an error. return the error
-			return nil, fmt.Errorf("speedtest.ndt7Runner#Run download error: %w", err)
+			return nil, fmt.Errorf("ndt7speedtest.ndt7Runner#Run download error: %w", err)
 		}
 
 	}
@@ -131,16 +131,23 @@ func (r *ndt7Runner) Run(ctx context.Context) (res []byte, err error) {
 			err = r.runTest(ctx, b, client.StartUpload)
 		}
 		if err != nil {
-			return nil, fmt.Errorf("speedtest.ndt7Runner#Run upload error: %w", err)
+			return nil, fmt.Errorf("ndt7speedtest.ndt7Runner#Run upload error: %w", err)
 		}
 	}
-	r.writeSummary(b, client)
-	log.Println("NDT7 - Speed Test Finished")
-	res, err = io.ReadAll(b)
+	summary, err := r.writeSummary(b, client)
 	if err != nil {
-		return nil, fmt.Errorf("speedtest.ndt7Runner#Run failed reading buffer: %w", err)
+		return nil, fmt.Errorf("ndt7speedtest.ndt7Runner")
 	}
-	return res, nil
+	log.Println("NDT7 - Speed Test Finished")
+	res, err := io.ReadAll(b)
+	if err != nil {
+		return nil, fmt.Errorf("ndt7speedtest.ndt7Runner#Run failed reading buffer: %w", err)
+	}
+	return &agent.Measurement{
+		Raw:          res,
+		DownloadMbps: summary.Download.Value,
+		UploadMbps:   summary.Upload.Value,
+	}, nil
 }
 
 // defaultSchemeForArch returns the default WebSocket scheme to use, depending
