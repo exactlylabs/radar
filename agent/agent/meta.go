@@ -5,10 +5,10 @@ import (
 	"log"
 	"net"
 	"os/exec"
-	"path/filepath"
 
 	"github.com/exactlylabs/radar/agent/config"
 	"github.com/exactlylabs/radar/agent/internal/info"
+	"github.com/exactlylabs/radar/agent/internal/update"
 )
 
 func Metadata() *ClientMeta {
@@ -38,7 +38,7 @@ func macAddresses() []NetInterfaces {
 
 func getWatchdogVersion() string {
 	// we imply that watchdog is installed at /opt/radar/watchdog
-	out, err := exec.Command(filepath.Join("/opt", "radar", "watchdog"), "-v").Output()
+	out, err := exec.Command(update.WatchdogPath, "-v").Output()
 	if err != nil {
 		log.Println("watchdog not found.")
 		return ""
