@@ -42,6 +42,9 @@ build:
 ookla_bin:
 	./scripts/make_ookla.sh
 
+watchdog:
+	go build -o ${OUTPUT_DIR}/watchdog cmd/watchdog/main.go
+
 run:
 	./scripts/dev.sh
 
