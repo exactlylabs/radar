@@ -2,6 +2,8 @@
 
 set -e
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     echo "Must be run as root"
     exit
@@ -9,7 +11,7 @@ fi
 
 function usage() {
 echo """
-Usage: ./create_master_image.sh [OPTIONS] <SUPERUSER_TOKEN>
+Usage: ./create_master_image.sh [OPTIONS] <SUPERUSER_TOKEN> <OS_BUILD_VERSION>
 
 Required Arguments:
 
@@ -44,20 +46,39 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-RADAR_SERVER_URL="https://radar.exactlylabs.com"
+if [ -z "$2" ]; then
+    echo "Error: missing OS_BUILD_VERSION argument"
+    usage
+    exit 1
+fi
 
+BUILD_VERSION=$2
+RADAR_SERVER_URL="https://radar.exactlylabs.com"
 AGENT_SERVICE="radar_agent.service"
+WATCHDOG_SERVICE="podwatchdog@.service"
 RADAR_AGENT_BIN_URL="$RADAR_SERVER_URL/client_versions/stable/distributions/linux-arm64/download"
 PROJECT_DIR="opt/radar"
 BINARY_NAME="radar_agent"
 IMAGE_FILENAME="radar.img"
 SUPERUSER_TOKEN="$1"
+FILES_DIR=${SCRIPT_DIR}/pod_image_files
+BUILD_DIR=${SCRIPT_DIR}/build
+TMP_DIR=${BUILD_DIR}/tmp
+
+if [ ! -f ${FILES_DIR}/watchdog ]; then
+    echo "Error: missing ${FILES_DIR}/watchdog binary. Make sure to make it before running this script"
+    usage
+    exit 1
+fi
+
+mkdir -p ${BUILD_DIR}
+mkdir -p ${TMP_DIR}
 
 ## Start ##
 
 apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip unzip
 
-curl --output $BINARY_NAME $RADAR_AGENT_BIN_URL
+curl --output ${BUILD_DIR}/$BINARY_NAME $RADAR_AGENT_BIN_URL
 
 
 #### NOTE: Images after 2022-01-28 appear to use .xz and before use .zip
@@ -69,34 +90,33 @@ curl --output $BINARY_NAME $RADAR_AGENT_BIN_URL
 # unxz $VERSION.xz
 
 VERSION=2022-01-28-raspios-bullseye-arm64-lite.img
-if [ ! -f $VERSION.zip ]; then
-curl -L --output $VERSION.zip https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-01-28/2022-01-28-raspios-bullseye-arm64-lite.zip
+if [ ! -f ${BUILD_DIR}/${VERSION}.zip ]; then
+curl -L --output ${BUILD_DIR}/${VERSION}.zip https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-01-28/2022-01-28-raspios-bullseye-arm64-lite.zip
 fi
-unzip $VERSION.zip
+unzip -qod ${BUILD_DIR} ${BUILD_DIR}/${VERSION}.zip
 
 # Mount the .img in an available loop (/dev/loop) device
 # This makes plain files accessible as block devices 
 # (as if it was a device such as a HD)
-LOOP_DEV=$(losetup -f -P --show $VERSION)
+LOOP_DEV=$(losetup -f -P --show ${BUILD_DIR}/${VERSION})
 
-mkdir -p tmp
-mount ${LOOP_DEV}p2 -o rw tmp
-mount ${LOOP_DEV}p1 -o rw tmp/boot
+mount ${LOOP_DEV}p2 -o rw ${TMP_DIR}
+mount ${LOOP_DEV}p1 -o rw ${TMP_DIR}/boot
 
 
 # Configure the Image
 
 # Setup radar user
-echo "radar:x:1000:1000:,,,:/home/radar:/bin/bash" >> tmp/etc/passwd
-echo "radar:x:1000:" >> tmp/etc/group
-echo "radar:*:18862:0:99999:7:::" >> tmp/etc/shadow
-cp -r tmp/etc/skel/. tmp/home/radar
-mkdir -p tmp/home/radar/.ssh
+echo "radar:x:1000:1000:,,,:/home/radar:/bin/bash" >> ${TMP_DIR}/etc/passwd
+echo "radar:x:1000:" >> ${TMP_DIR}/etc/group
+echo "radar:*:18862:0:99999:7:::" >> ${TMP_DIR}/etc/shadow
+cp -r ${TMP_DIR}/etc/skel/. ${TMP_DIR}/home/radar
+mkdir -p ${TMP_DIR}/home/radar/.ssh
 
 # Disable root local password login
-tail -n +2 tmp/etc/shadow > tmp/etc/shadow.tmp
-echo 'root:*:18862:0:99999:7:::' | cat - tmp/etc/shadow.tmp > tmp/etc/shadow
-rm tmp/etc/shadow.tmp
+tail -n +2 ${TMP_DIR}/etc/shadow > ${TMP_DIR}/etc/shadow.tmp
+echo 'root:*:18862:0:99999:7:::' | cat - ${TMP_DIR}/etc/shadow.tmp > ${TMP_DIR}/etc/shadow
+rm ${TMP_DIR}/etc/shadow.tmp
 
 
 # Setup Radar Agent into the image
@@ -104,46 +124,70 @@ rm tmp/etc/shadow.tmp
 # Replace the variables in the .service and move to the 
 # mount's systemd dir
 AGENT_BINARY_PATH="/$PROJECT_DIR/$BINARY_NAME" \
-envsubst < $AGENT_SERVICE > tmp/etc/systemd/system/$AGENT_SERVICE
+envsubst < ${FILES_DIR}/$AGENT_SERVICE > ${TMP_DIR}/etc/systemd/system/$AGENT_SERVICE
 
-mkdir -p tmp/$PROJECT_DIR
-cp $BINARY_NAME tmp/$PROJECT_DIR/$BINARY_NAME
-chmod +x tmp/$PROJECT_DIR/$BINARY_NAME
-chown -R 1000:1000 tmp/home/radar
-chown -R 1000:1000 tmp/$PROJECT_DIR
+# Copy Radar Agent Binary to the image
+mkdir -p ${TMP_DIR}/$PROJECT_DIR
+cp ${BUILD_DIR}/$BINARY_NAME ${TMP_DIR}/$PROJECT_DIR/$BINARY_NAME
+chmod +x ${TMP_DIR}/$PROJECT_DIR/$BINARY_NAME
 
-mkdir -p tmp/home/radar/.config/radar
+# Move Pod Watchdog .service and the binary to the image
+WATCHDOG_BINARY_PATH="/$PROJECT_DIR/watchdog" \
+envsubst < ${FILES_DIR}/$WATCHDOG_SERVICE > ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
+cp ${FILES_DIR}/watchdog ${TMP_DIR}/$PROJECT_DIR/watchdog
+chmod +x ${TMP_DIR}/$PROJECT_DIR/watchdog
+
+# Set permissions for radar user and create .config/radar directory
+chown -R 1000:1000 ${TMP_DIR}/home/radar
+chown -R 1000:1000 ${TMP_DIR}/$PROJECT_DIR
+mkdir -p ${TMP_DIR}/home/radar/.config/radar
 
 # Move radar config.conf file with the superuser token set
 REGISTRATION_TOKEN=$SUPERUSER_TOKEN \
-envsubst < config.conf > tmp/home/radar/.config/radar/config.conf
-chown -R 1000:1000 tmp/home/radar/
-# Create Chroot
-cp /usr/bin/qemu-aarch64-static tmp/usr/bin
-cp withinnewimage.sh tmp/root
+envsubst < ${FILES_DIR}/config.conf > ${TMP_DIR}/home/radar/.config/radar/config.conf
+chown -R 1000:1000 ${TMP_DIR}/home/radar/
 
-systemd-nspawn -D tmp /root/withinnewimage.sh
+# Create Chroot
+cp /usr/bin/qemu-aarch64-static ${TMP_DIR}/usr/bin
+cp ${FILES_DIR}/withinnewimage.sh ${TMP_DIR}/root
+systemd-nspawn -D ${TMP_DIR} /root/withinnewimage.sh
 
 # Allow radar to elevate to root
-echo "radar ALL=(ALL:ALL) NOPASSWD:ALL" > tmp/etc/sudoers.d/radar_sudoers
-chown 0:0 tmp/etc/sudoers.d/radar_sudoers
-chmod 440 tmp/etc/sudoers.d/radar_sudoers
+echo "radar ALL=(ALL:ALL) NOPASSWD:ALL" > ${TMP_DIR}/etc/sudoers.d/radar_sudoers
+chown 0:0 ${TMP_DIR}/etc/sudoers.d/radar_sudoers
+chmod 440 ${TMP_DIR}/etc/sudoers.d/radar_sudoers
 
 if [[ $ENABLE_SSH -eq 1 ]]; then
-    touch tmp/boot/ssh
+    touch ${TMP_DIR}/boot/ssh
 fi
 
-# copy firstrun.sh to boot
-echo "$(echo -n $(cat tmp/boot/cmdline.txt)) systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target" > tmp/boot/cmdline.txt
-cp firstrun.sh tmp/boot/firstrun.sh
+# copy firstrun.sh to boot and configure cmdline.txt to run it. Additionally, add some flags for removing logs
+echo "quiet splash loglevel=0 logo.nologo vt.global_cursor_default=0 $(echo -n $(cat ${TMP_DIR}/boot/cmdline.txt)) systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target" > ${TMP_DIR}/boot/cmdline.txt
+cp ${FILES_DIR}/firstrun.sh ${TMP_DIR}/boot/firstrun.sh
 
-rm tmp/usr/bin/qemu-aarch64-static
-rm tmp/root/withinnewimage.sh
+# Replace rc.local with our own
+cp ${FILES_DIR}/rc.local /etc/rc.local
 
-umount tmp/boot
-umount tmp
+# Remove Splash Screen
+echo "disable splash=1" >> ${TMP_DIR}/boot/config.txt
+
+# Make so we can only have one virtual terminal (ctrl+alt+F[2-6] won't work!)
+echo "NAutoVTs=0" >> /etc/systemd/logind.conf
+echo "ReserveVT=0" >> /etc/systemd/logind.conf
+
+# Add this build version
+echo -n ${BUILD_VERSION} >> ${TMP_DIR}/boot/pod_build_version
+
+# Clear and umount
+rm ${TMP_DIR}/usr/bin/qemu-aarch64-static
+rm ${TMP_DIR}/root/withinnewimage.sh
+
+umount ${TMP_DIR}/boot
+umount ${TMP_DIR}
 losetup -d $LOOP_DEV
-rm -r tmp
 
-mv $VERSION $IMAGE_FILENAME
-zip $IMAGE_FILENAME.zip $IMAGE_FILENAME
+mkdir -p ${SCRIPT_DIR}/dist
+mv ${BUILD_DIR}/$VERSION ${SCRIPT_DIR}/dist/$IMAGE_FILENAME
+zip ${SCRIPT_DIR}/dist/$IMAGE_FILENAME.zip ${SCRIPT_DIR}/dist/$IMAGE_FILENAME
+
+rm -r ${BUILD_DIR}
