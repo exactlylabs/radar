@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -26,10 +27,19 @@ var runners = []agent.Runner{
 
 func main() {
 	version := flag.Bool("v", false, "Show Agent Version")
+	jsonVersion := flag.Bool("vv", false, "Show Agent Version in JSON format")
 	flag.Parse()
 
 	if *version {
-		fmt.Println(info.BuildInfo())
+		fmt.Println(agent.Metadata())
+		os.Exit(0)
+	}
+	if *jsonVersion {
+		jsonMeta, err := json.Marshal(agent.Metadata())
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(string(jsonMeta))
 		os.Exit(0)
 	}
 	// Setup this executable's Service (if running as one or a command was sent for it)
