@@ -31,6 +31,7 @@ const FormPage = ({ goToNextStep }) => {
             margin={'normal'}
             fullWidth
             variant={'standard'}
+            autoComplete={'off'}
           />
         </div>
         <MyButton
