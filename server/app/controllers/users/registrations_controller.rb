@@ -14,25 +14,29 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /register
   def create
-    User.transaction do
-      @user = User.create user_params
-      @account = Account.create account_params
-      # Nit: no need to actually call @user.avatar.attach
-      # because it actually already does it in the create statement.
-      # What's more, it actually creates a PurgeJob if you do both
-      # create() with avatar + attach(), so it ends up deleting the attachment.
-      @user.save
-      @account.save
+    error = false
+    begin
+      User.transaction do
+        @user = User.create! user_params
+        @account = Account.create! account_params
+        # Nit: no need to actually call @user.avatar.attach
+        # because it actually already does it in the create statement.
+        # What's more, it actually creates a PurgeJob if you do both
+        # create() with avatar + attach(), so it ends up deleting the attachment.
+
+        # Link account and new user together
+        now = Time.now
+        @user_account = UsersAccount.create!(user_id: @user.id, account_id: @account.id, joined_at: now, invited_at: now)
+      end
+    rescue ActiveRecord::RecordInvalid => invalid
+      error = invalid.record.errors
     end
-    # Link account and new user together
-    now = Time.now
-    @user_account = UsersAccount.create(user_id: @user.id, account_id: @account.id, joined_at: now, invited_at: now)
     respond_to do |format|
-      if @user_account.save
+      if !error
         sign_in @user
         format.html { redirect_to dashboard_path, notice: "Registered successfully" }
       else
-        format.html { render :create, status: :unprocessable_entity }
+        format.html { render :create, status: :unprocessable_entity, error: error }
       end
     end
   end
@@ -43,10 +47,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
     begin
       User.transaction do
         @user = User.create! user_params
-        @user.save
         # Link account and new user together
         @user_account = UsersAccount.create!(user_id: @user.id, account_id: @invite[:account_id], joined_at: Time.now, invited_at: @invite[:sent_at])
-        @user_account.save!
         @invite.destroy!
       end
     rescue ActiveRecord::RecordInvalid => invalid
@@ -67,24 +69,20 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # POST /sign_in_from_invite
   def sign_from_invite
     error = false
-    begin
-      User.transaction do
-        @user = User.find_by_email(params[:user][:email])
-        if @user.valid_password?(params[:user][:password])
+    @user = User.find_by_email(params[:user][:email])
+    if @user.valid_password?(params[:user][:password])
+      begin
+        UsersAccount.transaction do
           @user_account = UsersAccount.create!(user_id: @user.id, account_id: @invite[:account_id], joined_at: Time.now, invited_at: @invite[:sent_at])
-        else
-          error = "Invalid email or password."
-        end
-
-        unless error
-          @user_account.save!
           @invite.destroy!
         end
+      rescue ActiveRecord::RecordInvalid => invalid
+        error = invalid.record.errors
+      rescue ActiveRecord::RecordNotDestroyed => invalid
+        error = invalid.record.errors
       end
-    rescue ActiveRecord::RecordInvalid => invalid
-      error = invalid.record.errors
-    rescue ActiveRecord::RecordNotDestroyed => invalid
-      error = invalid.record.errors
+    else
+      error = "Invalid email or password."
     end
     respond_to do |format|
       if !error

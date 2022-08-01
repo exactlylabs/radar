@@ -32,6 +32,9 @@
           <% users.each_with_index do |user, index| %>
             <%= render partial: "users/users_table_row", locals: { user: user, is_even: index % 2 == 0 } %>
           <% end %>
+          <% invited_users.each_with_index do |invitee, index| %>
+            <%= render partial: "users/users_table_row", locals: { user: invitee, is_even: (index + users.length) % 2 == 0 } %>
+          <% end %>
           </tbody>
           <!--end::Table body-->
         </table>

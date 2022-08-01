@@ -1,6 +1,7 @@
 require "sshkey"
 
 class ClientsController < ApplicationController
+  include SecretsHelper
   before_action :authenticate_user!, except: %i[ configuration new create status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status ], if: :json_request?
   before_action :set_client, only: %i[ release show edit update destroy ]
@@ -83,7 +84,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client && @client.authenticate_secret(@client_secret)
-        @client.claimed_by_id = current_user.id
+        @client.user = current_user
         @client.location = location
         @client.name = @client_name
         @client.account = current_account
@@ -198,9 +199,7 @@ EOF
   def create
     @client = Client.new
     @client.user = current_user
-
-    o = [('a'..'z'), ('A'..'Z'), (0..9)].map(&:to_a).flatten - [0, 1, "o", "l", "I", "O"]
-    @secret = (0...11).map { o[rand(o.length)] }.join
+    @secret = create_secret(11, [0, 1, "o", "l", "I", "O"])
     @client.secret = @secret
     ug = UpdateGroup.default_group
     if !ug.nil?
