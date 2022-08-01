@@ -15,7 +15,7 @@
         <li class="breadcrumb-item text-muted">
           <a href="<%= users_account_index_path %>" class="text-muted text-hover-primary"><%= current_account.name %></a>
         </li>
-        <li class="breadcrumb-item text-dark"><%= "#{user.first_name} #{user.last_name}" %></li>
+        <li class="breadcrumb-item text-dark"><%= "#{user.get_first_name} #{user.get_last_name}" %></li>
       </ul>
       <!--end::Breadcrumb-->
     </div>

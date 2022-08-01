@@ -1,40 +1,40 @@
-<tr id="<%= dom_id(user) %>">
+<tr id="<%= dom_id(element) %>">
   <td style="padding-left: 30px">
     <div class="d-flex flex-row align-items-center">
       <div class="d-flex align-items-center justify-content-center me-5"
            style="border-radius:50%; background-color: <%= is_even ? '#f1faff' : '#e8fff3' %>; min-width: 36px; width: 36px; min-height: 36px; height: 36px">
         <span class="<%= is_even ? 'text-primary' : 'text-success'%>" style="position: relative; font-size: 16px">
-          <%= user.first_name[0].upcase %>
+          <%= element.get_first_name[0].upcase %>
         </span>
       </div>
       <div class="d-flex flex-column">
         <a class="text-gray-800 text-hover-primary fw-bolder"
            style="font-size:15px; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
-           href="<%= users_account_path(user, type: user.class.name)%>"
+           href="<%= users_account_path(element, type: element.class.name)%>"
            data-turbo-frame="_top"
         >
-          <%= "#{user.first_name} #{user.last_name}" %>
+          <%= "#{element.get_first_name} #{element.get_last_name}" %>
         </a>
-        <div class="text-gray-600" style="font-size: 13px"><%= user.email %></div>
+        <div class="text-gray-600" style="font-size: 13px"><%= element.get_email %></div>
       </div>
     </div>
   </td>
   <td class="text-gray-600 mb-1"
       style="font-size:14px; color: #b5b5c3; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-    <span style="color: #5e6278;"><%= user["invited_at"] ? pretty_print_date(user["invited_at"]) : pretty_print_date(user["sent_at"]) %></span>
+    <span style="color: #5e6278;"><%= pretty_print_date(element.get_invited_at) %></span>
   </td>
   <td class="text-gray-600 mb-1"
       style="font-size:14px; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-    <span style="color: #5e6278;"><%= user["joined_at"] ? pretty_print_date(user["joined_at"]) : "-" %></span>
+    <span style="color: #5e6278;"><%= pretty_print_date(element.get_joined_at) %></span>
   </td>
   <td class="mb-1"
       style="font-size:14px;">
-    <span class="badge <%= user.get_badge_style %>"><%= user.status_to_human %></span>
+    <span class="badge <%= element.get_badge_style %>"><%= element.status_to_human %></span>
   </td>
   <td class="text-gray-600 mb-1"
       style="font-size:14px; color: #7e8299">
-    <%if user.class.name == 'Invite' %>
-      <%= link_to "Resend invite", resend_invites_path(email: user["email"]), class: "btn btn-light-primary", style: "padding-left: 10px; padding-right: 10px;", method: :post %>
+    <%if element.class.name == 'Invite' %>
+      <%= link_to "Resend invite", resend_invites_path(email: element.get_email), class: "btn btn-light-primary", style: "padding-left: 10px; padding-right: 10px;", method: :post %>
     <% end %>
   </td>
   <td class="text-end" style="padding-right: 30px">
@@ -43,7 +43,7 @@
             data-bs-toggle="dropdown"
             aria-expanded="false"
             style="border-radius: 6px"
-            id="<%= "options-button-#{user.id}" %>"
+            id="<%= "options-button-#{element.id}" %>"
     >
       Options
       <span class="svg-icon svg-icon-5 m-0">
@@ -53,18 +53,17 @@
         </span>
     </button>
     <div class="dropdown-menu fw-bold fs-7 w-125px py-4"
-         aria-labelledby="<%= "options-button-#{user.id}" %>">
+         aria-labelledby="<%= "options-button-#{element.id}" %>">
       <!--begin::Menu item-->
       <div class="menu-item">
-        <%= link_to "View", users_account_path(user, type: user.class.name), { class: "menu-link text-hover-gray-500 text-gray-700 px-3" } %>
+        <%= link_to "View", users_account_path(element, type: element.class.name), { class: "menu-link text-hover-gray-500 text-gray-700 px-3" } %>
       </div>
       <!--end::Menu item-->
       <!--begin::Menu item-->
       <div class="menu-item">
-        <%= link_to 'Remove', users_account_path(user, type: user.class.name), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link text-hover-gray-500 text-gray-700 px-3" %>
+        <%= link_to 'Remove', users_account_path(element, type: element.class.name), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link text-hover-gray-500 text-gray-700 px-3" %>
       </div>
       <!--end::Menu item-->
-    </div>
     </div>
   </td>
 </tr>

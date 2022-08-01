@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="693de456-06d6-4b7e-a118-dd6e03d805e4" name="Changes" comment="PR comments + some bug fixing">
+    <list default="true" id="693de456-06d6-4b7e-a118-dd6e03d805e4" name="Changes" comment="added email sending + style layout">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/controllers/clients_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/clients_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/controllers/invites_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/invites_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/app/controllers/users/registrations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/users/registrations_controller.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/controllers/users_account_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/users_account_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/helpers/application_helper.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/helpers/application_helper.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/models/invite.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/invite.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/models/user.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/user.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/models/users_account.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/models/users_account.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/policies/user_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/policies/user_policy.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/policies/users_account_policy.rb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/policies/users_account_policy.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/users/_user_details.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/users/_user_details.html.erb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/views/users/_users_table.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/users/_users_table.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/users/_users_table_row.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/users/_users_table_row.html.erb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app/views/users/index.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/users/index.html.erb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/views/users/show.html.erb" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/views/users/show.html.erb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
