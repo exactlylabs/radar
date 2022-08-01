@@ -56,12 +56,12 @@
   border: solid 1px #b5b5c3;
   border-radius: 50%;
   background-color: #b5b5c3;
-  margin-left: 20px;
+  margin-left: 17.5px;
   margin-right: 13px;
 }
 
 .sidebar--account-add-icon {
-  margin-left: 15px;
+  margin-left: 6.5px;
   margin-right: 7px;
 }
 
@@ -95,4 +95,13 @@
 .sidebar--account-add-button {
   background: transparent;
   border: none;
+}
+
+.sidebar--menu-icon {
+  color: #7f8299;
+}
+
+.sidebar--menu-icon:hover,
+.sidebar--menu-icon.selected {
+  color: #5f6278;
 }
