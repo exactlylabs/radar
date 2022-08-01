@@ -1,7 +1,7 @@
 class UsersAccountPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      scope.where(user_id: current_user.user_id)
+      scope.where(account_id: @user_account.account.id)
     end
   end
 end
