@@ -1,7 +1,11 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  connect() {}
+  static targets = ["menuIcon"];
+
+  connect() {
+    KTMenu.createInstances();
+  }
 
   selectAccount(e) {
     // prevent <i> or <a> from switching account on click
@@ -29,5 +33,30 @@ export default class extends Controller {
         console.error(res);
       }
     });
+  }
+
+  showMoreOptionsIcon(e) {
+    const accountId = e.target.id.split("@")[1];
+    const menuIcon = this.getSpecificIcon(accountId);
+    menuIcon.style.display = "block";
+  }
+
+  hideMoreOptionsIcon(e) {
+    const accountId = e.target.id.split("@")[1];
+    const menuIcon = this.getSpecificIcon(accountId);
+    menuIcon.style.display = "none";
+    menuIcon.classList.remove("selected");
+  }
+
+  getSpecificIcon(id) {
+    return this.menuIconTargets.find(
+      (target) => target.id === `sidebar--menu-icon@${id}`
+    );
+  }
+
+  setMenuIconAsSelected(e) {
+    const accountId = e.target.id.split("@")[1];
+    const menuIcon = this.getSpecificIcon(accountId);
+    menuIcon.classList.add("selected");
   }
 }

@@ -1,18 +1,22 @@
 <div id="sidebar--account-container@<%= account.id %>"
      class="sidebar--account-row <%= account.id == current_account.id ? 'active' : 'text-gray-600' %>"
      data-controller="switch-account"
-     data-action="click->switch-account#selectAccount">
+     data-action="click->switch-account#selectAccount mouseenter->switch-account#showMoreOptionsIcon mouseleave->switch-account#hideMoreOptionsIcon">
   <div id="sidebar--account-market@<%= account.id %>"class="sidebar--circular-marker"></div>
   <p id="sidebar--account-name@<%= account.id %>" style="overflow: hidden; max-width: 120px; white-space: nowrap; text-overflow: ellipsis"><%= account.name %></p>
-  <!-- TODO: Add once Edit/Delete are supported -->
-  <i class="fas fa-ellipsis-h"
-     style="position: absolute; right: 40px;"
+  <i class="fas fa-ellipsis-h sidebar--menu-icon"
+     style="position: absolute; right: 40px; display: none"
      data-kt-menu-trigger="click"
-     data-kt-menu-placement="right-start"></i>
+     data-kt-menu-placement="right-start"
+     data-switch-account-target="menuIcon"
+     data-action="click->switch-account#setMenuIconAsSelected"
+     id="sidebar--menu-icon@<%= account.id %>">
+  </i>
   <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded
   menu-gray-600 fw-bold fs-7 w-200px py-4"
        data-kt-menu="true"
        style="max-width: max-content"
+       id="sidebar--account-more-options@<%= account.id %>"
   >
     <div class="menu-item px-3 bg-hover-light">
       <%= link_to "Edit", edit_account_path(account.id), class: "menu-link px-3", method: :post, data: { "bs-target" => "#edit_account_modal", "bs-toggle" => "modal" } %>

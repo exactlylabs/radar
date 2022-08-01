@@ -40,7 +40,7 @@
           <div class="aside-logo flex-column-auto pt-9 pb-5" id="kt_aside_logo">
             <!--begin::Logo-->
             <a href="<%= dashboard_path %>">
-              <img alt="Logo" src="<%= image_url('logo-with-phrase@3x.png') %>" width="90" class="max-h-50px logo-default">
+              <img alt="Logo" src="<%= image_url('logo-with-phrase@3x.png') %>" width="108" class="max-h-50px logo-default">
               <img alt="Logo" src="<%= image_url('favico@3x.png') %>" width="32" class="max-h-50px logo-minimize">
             </a>
             <!--end::Logo-->
@@ -78,8 +78,8 @@
                     </div>
                     <!--end::AccountIcon-->
                     <span class="menu-title sidebar--account-selected-title" style="overflow: hidden; max-width: 120px; margin-left: 15px; white-space: nowrap; text-overflow: ellipsis"><%= current_account.name %></span>
-                    <i class="fas fa-angle-right" data-accounts-drawer-menu-target="rightAngle"></i>
-                    <i class="fas fa-angle-down" style="display: none; color: #00a3ff;" data-accounts-drawer-menu-target="downAngle"></i>
+                    <i class="fas fa-angle-right" style="position: absolute; right: 38px;" data-accounts-drawer-menu-target="rightAngle"></i>
+                    <i class="fas fa-angle-down" style="position: absolute; right: 38px; display: none; color: #00a3ff;" data-accounts-drawer-menu-target="downAngle"></i>
                   </button>
                   <div id="accounts-collapse" class="collapse">
                   <% current_user.accounts.order("LOWER(name)").each do |account| %>
@@ -120,12 +120,10 @@
                     <span class="menu-title sidebar--account-empty-title text-nowrap" style="margin-left: 15px;">Add new account</span>
                   </button>
                 <% end %>
-                <div class="mb-5"
-                     style="height: 1px; width: 40px; background-color: #edf0f4"
+                <div style="height: 1px; width: 40px; background-color: #edf0f4; margin-bottom: 15px; margin-top: 16px;"
                      data-accounts-drawer-menu-target="smallDivider"
                 ></div>
-                <div class="mb-5"
-                     style="height: 1px; width: 190px; background-color: #edf0f4; display: none"
+                <div style="height: 1px; width: 190px; background-color: #edf0f4; display: none; margin-bottom: 15px; margin-top: 16px;"
                      data-accounts-drawer-menu-target="fullSizeDivider"
                 ></div>
                 <div class="menu-item mb-5 ms-2">
