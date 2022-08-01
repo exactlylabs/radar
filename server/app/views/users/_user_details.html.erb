@@ -10,15 +10,15 @@
       <div class="card-title--icon d-flex align-items-center justify-content-center"
            style="height: 70px; width: 70px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
         <span class="text-primary" style="position: relative; font-size: 32px">
-          <%= user.first_name[0].upcase %>
+          <%= user.get_first_name[0].upcase %>
         </span>
       </div>
       <div class="card-title--title-content">
         <div class="fw-bolder" style="margin-bottom: 5px;font-size: 19px;">
-          <%= "#{user.first_name} #{user.last_name}" %>
+          <%= "#{user.get_first_name} #{user.get_last_name}" %>
         </div>
         <div style="margin-bottom: 10px;color: #b5b5c3;font-size: 14px;">
-          <%= user.email %>
+          <%= user.get_email %>
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder w-50" style="min-width: 130px">Join Date</div>
         <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
-          <%= user["joined_at"] ? pretty_print_date(user["joined_at"]) : "-" %>
+          <%= pretty_print_date(user.get_joined_at) %>
         </div>
       </div>
       <!-- TODO: add once we support last login

@@ -9,6 +9,9 @@ module ApplicationHelper
   end
 
   def pretty_print_date(date)
+    if date.nil?
+      return "-"
+    end
     date.strftime('%b %d, %Y')
   end
 

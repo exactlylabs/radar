@@ -4,16 +4,16 @@ class UsersAccountController < ApplicationController
   def index
     # Sorting here instead of in the view because I want users to appear first, then invites
     # each of those lists individually sorted by first_name
-    users_for_account = policy_scope(User).select("users.*, users_accounts.joined_at, users_accounts.invited_at").order("LOWER(first_name)")
+    users_accounts = policy_scope(UsersAccount).includes(:user).order("users.first_name")
     invited_users = policy_scope(Invite).order("LOWER(first_name)")
     respond_to do |format|
-      format.html { render "users/index", locals: { users: users_for_account, invited_users: invited_users } }
+      format.html { render "users/index", locals: { users_accounts: users_accounts, invited_users: invited_users } }
     end
   end
 
   def show
-    if params[:type] == 'User'
-      user = policy_scope(User).select("users.*, joined_at").find(params[:id])
+    if params[:type] == 'UsersAccount'
+      user = policy_scope(UsersAccount).includes(:user).find(params[:id])
     else
       user = policy_scope(Invite).find(params[:id])
     end
@@ -29,11 +29,11 @@ class UsersAccountController < ApplicationController
 
   def destroy
     current_account_id = current_account.id
-    user_to_remove_id = params[:id]
-    if params[:type] == 'User'
-      entity_to_remove = policy_scope(UsersAccount).where(user_id: user_to_remove_id, account_id: current_account_id).first
+    entity_to_remove_id = params[:id]
+    if params[:type] == 'UsersAccount'
+      entity_to_remove = policy_scope(UsersAccount).where(id: entity_to_remove_id, account_id: current_account_id).first
     else
-      entity_to_remove = policy_scope(Invite).where(id: user_to_remove_id, account_id: current_account_id).first
+      entity_to_remove = policy_scope(Invite).where(id: entity_to_remove_id, account_id: current_account_id).first
     end
     respond_to do |format|
       if entity_to_remove.destroy
