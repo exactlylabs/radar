@@ -99,6 +99,16 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #  super
   #end
 
+  # DELETE /sign_out
+  def custom_sign_out
+    remove_account_cookie
+    clear_user_account
+    sign_out
+    respond_to do |format|
+      format.html { redirect_to root_path }
+    end
+  end
+
   def update_name
     user_params = params.require(:user).permit(:first_name, :last_name)
 

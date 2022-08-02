@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     post 'users/register_from_invite' => 'users/registrations#create_from_invite'
     get 'users/invite_sign_in' => 'users/registrations#render_invite_sign_in'
     post 'users/sign_in_from_invite' => 'users/registrations#sign_from_invite'
+
+    delete 'users/custom_sign_out' => 'users/registrations#custom_sign_out'
   end
 
   resources :measurements, only: [:index] do
