@@ -30,10 +30,10 @@
           <!--begin::Table body-->
           <tbody class="fw-bold text-gray-600" id="users_table">
           <% users_accounts.each_with_index do |user_account, index| %>
-            <%= render partial: "users/users_table_row", locals: { element: user_account, is_even: index % 2 == 0 } %>
+            <%= render partial: "users/users_table_row_user_account", locals: { user_account: user_account, is_even: index % 2 == 0 } %>
           <% end %>
           <% invited_users.each_with_index do |invitee, index| %>
-            <%= render partial: "users/users_table_row", locals: { element: invitee, is_even: (index + users_accounts.length) % 2 == 0 } %>
+            <%= render partial: "users/users_table_row_invitee", locals: { invitee: invitee, is_even: (index + users_accounts.length) % 2 == 0 } %>
           <% end %>
           </tbody>
           <!--end::Table body-->
