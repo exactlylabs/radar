@@ -99,7 +99,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #  super
   #end
 
-  # DELETE /sign_out
+  # DELETE /custom_sign_out
   def custom_sign_out
     remove_account_cookie
     clear_user_account
