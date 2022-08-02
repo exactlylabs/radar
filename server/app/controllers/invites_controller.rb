@@ -1,5 +1,4 @@
 class InvitesController < ApplicationController
-  include SecretsHelper
   before_action :authenticate_user!
   before_action :check_user_is_allowed
 
@@ -7,7 +6,7 @@ class InvitesController < ApplicationController
     new_invite = Invite.new invite_params
     new_invite.account = current_account
     new_invite.sent_at = Time.now
-    secret = create_secret(16)
+    secret = SecretsHelper.create_secret(16)
     new_invite.token = secret
     respond_to do |format|
       if new_invite.save
@@ -22,8 +21,7 @@ class InvitesController < ApplicationController
 
   def resend
     invite = Invite.find_by_email(params[:email])
-    all_characters = [('a'..'z'), ('A'..'Z'), (0..9)].map(&:to_a).flatten
-    secret = (0...16).map { all_characters[rand(all_characters.length)] }.join
+    secret = SecretsHelper.create_secret(16)
     respond_to do |format|
       if invite.update(token: secret, sent_at: Time.now)
         token = "#{invite.id}#{secret}"
