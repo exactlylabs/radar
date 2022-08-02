@@ -36,21 +36,21 @@ export const getAllSpeedTests = (setResults, setFilteredResults, setError, setLo
       let parsedResults = {
         type: 'FeatureCollection',
         features: [],
-      }
+      };
       parsedResults.features = res.map(result => {
         return {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [result.longitude, result.latitude]
+            coordinates: [result.longitude, result.latitude],
           },
           properties: {
             title: 'Test',
             description: 'Test desc',
             download_avg: result.download_avg,
             upload_avg: result.upload_avg,
-          }
-        }
+          },
+        };
       });
       setResults(parsedResults);
       setFilteredResults(parsedResults);

@@ -22,4 +22,4 @@ export const SPEED_THRESHOLD_COLORS = {
   MID: '#ce5db8',
   LOW: '#8f46a0',
   LOWEST: '#5534a5',
-}
+};
