@@ -9,5 +9,6 @@ module.exports = {
     REACT_APP_ENV: JSON.stringify('production'),
     REACT_APP_API_BASE_URL: JSON.stringify('https://radar.exactlylabs.com'),
     REACT_APP_SENTRY_DSN: JSON.stringify('https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151'),
+    MAPBOX_ACCESS_TOKEN: JSON.stringify('pk.eyJ1IjoiZXVnZWRhbW0iLCJhIjoiY2w2Yzkzcmg3MWtrajNrcDNrcjkxZnR4byJ9.MOnt7ReZbKwEGZx9_UE1_w')
   })],
 };

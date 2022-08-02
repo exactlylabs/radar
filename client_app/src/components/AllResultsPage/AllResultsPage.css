@@ -1,0 +1,7 @@
+.marker {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.55;
+}

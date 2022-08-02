@@ -10,6 +10,7 @@ module.exports = {
   devtool: 'eval-source-map',
   plugins: [new webpack.DefinePlugin({
     REACT_APP_ENV: JSON.stringify('development'),
-    REACT_APP_API_BASE_URL: JSON.stringify('http://localhost:3000')
+    REACT_APP_API_BASE_URL: JSON.stringify('http://localhost:3000'),
+    MAPBOX_ACCESS_TOKEN: JSON.stringify('pk.eyJ1IjoiZXVnZWRhbW0iLCJhIjoiY2w2Yzkzcmg3MWtrajNrcDNrcjkxZnR4byJ9.MOnt7ReZbKwEGZx9_UE1_w')
   })]
 };
