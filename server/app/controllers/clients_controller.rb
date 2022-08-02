@@ -1,7 +1,6 @@
 require "sshkey"
 
 class ClientsController < ApplicationController
-  include SecretsHelper
   before_action :authenticate_user!, except: %i[ configuration new create status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status ], if: :json_request?
   before_action :set_client, only: %i[ release show edit update destroy ]
@@ -199,7 +198,7 @@ EOF
   def create
     @client = Client.new
     @client.user = current_user
-    @secret = create_secret(11, [0, 1, "o", "l", "I", "O"])
+    @secret = SecretsHelper.create_human_readable_secret(11)
     @client.secret = @secret
     ug = UpdateGroup.default_group
     if !ug.nil?
