@@ -151,9 +151,9 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
-    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
+    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
@@ -238,8 +238,10 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
 
   create_table "watchdog_versions", force: :cascade do |t|
     t.string "version"
+    t.boolean "is_stable"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["is_stable"], name: "index_watchdog_versions_on_is_stable", unique: true
     t.index ["version"], name: "index_watchdog_versions_on_version", unique: true
   end
 
