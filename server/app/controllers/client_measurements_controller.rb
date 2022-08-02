@@ -68,7 +68,7 @@ class ClientMeasurementsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_client
       if user_signed_in?
-        @client = current_user.clients.find_by_unix_user(params[:client_id])
+        @client = current_account.clients.find_by_unix_user(params[:client_id])
       else
         client = Client.find_by_unix_user(params[:client_id])
         if client.authenticate_secret(params[:client_secret])
