@@ -9,13 +9,13 @@
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Users
+        <li class="breadcrumb-item text-muted"><%= current_account.name %>
           <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
         </li>
         <li class="breadcrumb-item text-muted">
-          <a href="<%= users_account_index_path %>" class="text-muted text-hover-primary"><%= current_account.name %></a>
+          <a href="<%= users_account_index_path %>" class="text-muted text-hover-primary">Users</a>
         </li>
-        <li class="breadcrumb-item text-dark"><%= "#{user.get_first_name} #{user.get_last_name}" %></li>
+        <li class="breadcrumb-item text-dark"><%= "#{user_account.user.first_name} #{user_account.user.last_name}" %></li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
@@ -35,7 +35,7 @@
     <!-- TODO: add when more options are available? -->
     <!--end::OptionsCard-->
     <!--begin::Card-->
-    <%= render partial: "users/user_details", locals: { user: user } %>
+    <%= render partial: "users/user_details", locals: { user_account: user_account } %>
     <!--end::Card-->
   </div>
   <!--end::Container-->

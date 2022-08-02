@@ -12,15 +12,18 @@ class UsersAccountController < ApplicationController
   end
 
   def show
-    if params[:type] == 'UsersAccount'
-      user = policy_scope(UsersAccount).includes(:user).find(params[:id])
+    entity_type = params[:type]
+    if entity_type == 'UsersAccount'
+      entity = policy_scope(UsersAccount).includes(:user).find(params[:id])
     else
-      user = policy_scope(Invite).find(params[:id])
+      entity = policy_scope(Invite).find(params[:id])
     end
 
     respond_to do |format|
-      if user
-        format.html { render "users/show", locals: { user: user } }
+      if entity && entity_type == 'UsersAccount'
+        format.html { render "users/show_user_account", locals: { user_account: entity } }
+      elsif entity && entity_type == 'Invite'
+        format.html { render "users/show_invitee", locals: { invitee: entity } }
       else
         raise ActiveRecord::RecordNotFound.new("Couldn't find User with 'id'=#{params[:id]}", params[:type], params[:id])
       end

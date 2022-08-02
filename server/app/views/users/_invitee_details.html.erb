@@ -10,20 +10,21 @@
       <div class="card-title--icon d-flex align-items-center justify-content-center"
            style="height: 70px; width: 70px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
         <span class="text-primary" style="position: relative; font-size: 32px">
-          <%= user_account.user.first_name[0].upcase %>
+          <%= invitee.first_name[0].upcase %>
         </span>
       </div>
       <div class="card-title--title-content">
         <div class="fw-bolder" style="margin-bottom: 5px;font-size: 19px;">
-          <%= "#{user_account.user.first_name} #{user_account.user.last_name}" %>
+          <%= "#{invitee.first_name} #{invitee.last_name}" %>
         </div>
         <div style="margin-bottom: 10px;color: #b5b5c3;font-size: 14px;">
-          <%= user_account.user.email %>
+          <%= invitee.email %>
         </div>
       </div>
     </div>
     <div class="d-flex flex-row flex-wrap justify-content-evenly">
-      <%= link_to 'Remove User', users_account_path(user_account, type: 'UsersAccount'), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-light-danger" %>
+      <%= link_to "Resend invite", resend_invites_path(email: invitee.email), class: "btn btn-light-primary", style: "padding-left: 10px; padding-right: 10px; margin-right: 10px;", method: :post %>
+      <%= link_to 'Remove User', users_account_path(invitee, type: 'Invite'), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-light-danger" %>
     </div>
   </div>
   <!--end::Card title-->
@@ -34,13 +35,13 @@
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder w-50" style="min-width: 130px">Status</div>
         <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
-          <span class="badge <%= user_account.get_badge_style %>"><%= user_account.status_to_human %></span>
+          <span class="badge <%= invitee.get_badge_style %>"><%= invitee.status_to_human %></span>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder w-50" style="min-width: 130px">Join Date</div>
         <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
-          <%= pretty_print_date(user_account.joined_at) %>
+          -
         </div>
       </div>
       <!-- TODO: add once we support last login

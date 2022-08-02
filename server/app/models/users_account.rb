@@ -12,24 +12,4 @@ class UsersAccount < ApplicationRecord
   def status_to_human
     "Active"
   end
-
-  def get_first_name
-    user.first_name
-  end
-
-  def get_last_name
-    user.last_name
-  end
-
-  def get_email
-    user.email
-  end
-
-  def get_invited_at
-    invited_at
-  end
-
-  def get_joined_at
-    joined_at
-  end
 end
