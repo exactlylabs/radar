@@ -30,3 +30,15 @@ type SystemManager interface {
 	// Reboot makes the system reboot
 	Reboot() error
 }
+
+type BinaryUpdate struct {
+	Version   string
+	BinaryUrl string
+}
+
+type PingResponse struct {
+	Update *BinaryUpdate
+}
+type WatchdogPinger interface {
+	WatchdogPing(clientId, secret string, meta *sysinfo.ClientMeta) (*PingResponse, error)
+}

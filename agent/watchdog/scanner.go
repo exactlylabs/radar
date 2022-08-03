@@ -10,6 +10,11 @@ import (
 	"github.com/exactlylabs/radar/agent/config"
 )
 
+var cmdLineCommands = []string{
+	"quiet", "splash", "rootwait", "logo.nologo",
+	"vt.global_cursor_default=0", "loglevel=0",
+}
+
 // StartScanLoop is a blocking function that keeps monitoring the system,
 // checking it's health and files to update
 func StartScanLoop(ctx context.Context, sysEditor SystemManager) {
@@ -52,6 +57,7 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 		if err := sysManager.SetHostname(c.ClientId); err != nil {
 			return false, errMsg(err, "SetHostname")
 		}
+		log.Printf("Hostname replaced to %s due to it being different from the expected\n", c.ClientId)
 		hasChanges = 1
 	}
 
@@ -62,15 +68,15 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 	}
 	hasChanges |= changed
 
-	// Validate config.txt file
+	// // Validate config.txt file
 	changed, err = checkAndReplace("osfiles/boot/config.txt", sysManager.GetBootConfig, sysManager.SetBootConfig)
 	if err != nil {
 		return false, err
 	}
 	hasChanges |= changed
 
-	// Validate cmdline.txt
-	changed, err = checkAndReplace("osfiles/boot/cmdline.txt", sysManager.GetCMDLine, sysManager.SetCMDLine)
+	// // Validate cmdline.txt
+	changed, err = checkAndUpdateCMDLine(sysManager, cmdLineCommands)
 	if err != nil {
 		return false, err
 	}
@@ -84,6 +90,39 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 	hasChanges |= changed
 
 	return hasChanges > 0, nil
+}
+
+// checkAndUpdateCMDLine goes through the kernel commands and make sure that the provided commands are there
+func checkAndUpdateCMDLine(sysManager SystemManager, arguments []string) (int, error) {
+	cmdLine, err := sysManager.GetCMDLine()
+	if err != nil {
+		return 0, fmt.Errorf("watchdog.checkAndUpdateCMDLine GetCMDLine: %w", err)
+	}
+
+	commands := bytes.Split(bytes.Trim(cmdLine, "\n"), []byte(" "))
+	added := false
+	for _, cmd := range arguments {
+		if !isIn([]byte(cmd), commands) {
+			commands = append(commands, []byte(cmd))
+			added = true
+		}
+	}
+	if added {
+		if err := sysManager.SetCMDLine(bytes.Trim(bytes.Join(commands, []byte(" ")), " ")); err != nil {
+			return 0, fmt.Errorf("watchdog.ScanSystem SetCMDLine: %w", err)
+		}
+		return 1, nil
+	}
+	return 0, nil
+}
+
+func isIn(target []byte, arr [][]byte) bool {
+	for _, obj := range arr {
+		if bytes.Equal(target, obj) {
+			return true
+		}
+	}
+	return false
 }
 
 func checkAndReplace(filePath string, getter func() ([]byte, error), setter func([]byte) error) (int, error) {
@@ -102,6 +141,7 @@ func checkAndReplace(filePath string, getter func() ([]byte, error), setter func
 		if err := setter(expected); err != nil {
 			return 0, errMsg(err, "setter")
 		}
+		log.Printf("File %s was replaced due to it being different from the expected\n", filePath)
 		return 1, nil
 	}
 	return 0, nil

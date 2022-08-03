@@ -1,6 +1,7 @@
 package watchdog
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/exactlylabs/radar/agent/config"
@@ -97,7 +98,7 @@ func TestScanSystemCMDLineDiffers(t *testing.T) {
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
 	m.On("GetCMDLine").Return([]byte{}, nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
-	m.On("SetCMDLine", mustReadFile("osfiles/boot/cmdline.txt")).Return(nil)
+	m.On("SetCMDLine", []byte(strings.Join(cmdLineCommands, " "))).Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
