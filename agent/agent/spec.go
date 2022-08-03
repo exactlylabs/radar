@@ -2,7 +2,8 @@ package agent
 
 import (
 	"context"
-	"fmt"
+
+	"github.com/exactlylabs/radar/agent/services/sysinfo"
 )
 
 type BinaryUpdate struct {
@@ -15,28 +16,8 @@ type PingResponse struct {
 	WatchdogUpdate *BinaryUpdate
 }
 
-type NetInterfaces struct {
-	Name string `json:"name"`
-	MAC  string `json:"mac"`
-}
-
-type ClientMeta struct {
-	Version           string          `json:"version"`
-	Distribution      string          `json:"distribution"`
-	NetInterfaces     []NetInterfaces `json:"net_interfaces"`
-	WatchdogVersion   string          `json:"watchdog_version"`
-	RegistrationToken *string         `json:"registration_token"`
-}
-
-func (m *ClientMeta) String() string {
-	return fmt.Sprintf(`Version: %v
-Distribution: %v
-NetInterfaces: %+v`,
-		m.Version, m.Distribution, m.NetInterfaces)
-}
-
 type Pinger interface {
-	Ping(clientId, secret string, meta *ClientMeta) (*PingResponse, error)
+	Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*PingResponse, error)
 }
 
 type RegisteredPod struct {
@@ -69,4 +50,8 @@ type ServerClient interface {
 type Runner interface {
 	Run(ctx context.Context) (*Measurement, error)
 	Type() string
+}
+
+type Rebooter interface {
+	Reboot() error
 }
