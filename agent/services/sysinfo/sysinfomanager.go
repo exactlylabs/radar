@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
-	"os/exec"
-	"syscall"
 )
 
 type SysInfoManager struct {
@@ -22,6 +20,7 @@ func (*SysInfoManager) readFile(filePath string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("sysInfoManager#readFile Open: %w", err)
 	}
+	defer r.Close()
 
 	data, err := ioutil.ReadAll(r)
 	if err != nil {
@@ -34,6 +33,10 @@ func (*SysInfoManager) writeFile(filePath string, content []byte) error {
 	f, err := os.OpenFile(filePath, os.O_RDWR, 0640)
 	if err != nil {
 		return fmt.Errorf("sysInfoManager#writeFile OpenFile: %w", err)
+	}
+	defer f.Close()
+	if err := f.Truncate(0); err != nil {
+		return fmt.Errorf("sysInfoManager#writeFile Trucante: %w", err)
 	}
 	_, err = f.Write(content)
 	if err != nil {
@@ -53,12 +56,12 @@ func (si *SysInfoManager) GetCMDLine() ([]byte, error) {
 }
 
 // GetHostname implements SystemManager
-func (*SysInfoManager) GetHostname() (string, error) {
-	h, err := os.Hostname()
+func (si *SysInfoManager) GetHostname() (string, error) {
+	hostname, err := si.readFile("/etc/hostname")
 	if err != nil {
-		return "", fmt.Errorf("sysInfoManager#GetHostname Hostname: %w", err)
+		return "", err
 	}
-	return h, nil
+	return string(hostname), err
 }
 
 // GetLogindConf implements SystemManager
@@ -73,10 +76,18 @@ func (si *SysInfoManager) GetRCLocal() ([]byte, error) {
 
 // Reboot implements SystemManager
 func (*SysInfoManager) Reboot() error {
-	out, err := exec.Command("shutdown", "-r", "0").Output()
-	if err != nil {
-		return fmt.Errorf("sysInfoManager#Reboot Output: %s: %w", string(out), err)
-	}
+	// out, err := exec.Command("shutdown", "-r", "0").Output()
+	// if err != nil {
+	// 	if exitErr, ok := err.(*exec.ExitError); ok {
+	// 		if exitErr.ExitCode() == 1 {
+	// 			out, err = exec.Command("sudo", "shutdown", "-r", "0").Output()
+	// 			if err == nil {
+	// 				return nil
+	// 			}
+	// 		}
+	// 	}
+	// 	return fmt.Errorf("sysInfoManager#Reboot Output: %s: %w", string(out), err)
+	// }
 	return nil
 }
 
@@ -92,10 +103,7 @@ func (si *SysInfoManager) SetCMDLine(data []byte) error {
 
 // SetHostname implements SystemManager
 func (si *SysInfoManager) SetHostname(hostname string) error {
-	if err := syscall.Sethostname([]byte(hostname)); err != nil {
-		return fmt.Errorf("sysInfoManager#SetHostname Sethostname: %w", err)
-	}
-	return nil
+	return si.writeFile("/etc/hostname", []byte(hostname))
 }
 
 // SetLogindConf implements SystemManager

@@ -1,17 +1,39 @@
 package sysinfo
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os/exec"
 	"strings"
-
-	"github.com/exactlylabs/radar/agent/agent"
 )
+
+const AgentPath = "/opt/radar/agent"
+const AgentServicePath = "/etc/systemd/system/radar_agent.service"
 
 type AgentInfoManager struct {
 	binPath     string
 	serviceName string
+}
+
+type NetInterfaces struct {
+	Name string `json:"name"`
+	MAC  string `json:"mac"`
+}
+
+type ClientMeta struct {
+	Version           string          `json:"version"`
+	Distribution      string          `json:"distribution"`
+	NetInterfaces     []NetInterfaces `json:"net_interfaces"`
+	WatchdogVersion   string          `json:"watchdog_version"`
+	RegistrationToken *string         `json:"registration_token"`
+}
+
+func (m *ClientMeta) String() string {
+	return fmt.Sprintf(`Version: %v
+Distribution: %v
+NetInterfaces: %+v`,
+		m.Version, m.Distribution, m.NetInterfaces)
 }
 
 func NewAgentInfoManager(binaryPath, serviceName string) *AgentInfoManager {
@@ -22,14 +44,14 @@ func NewAgentInfoManager(binaryPath, serviceName string) *AgentInfoManager {
 }
 
 // AgentMetadata should call the installed radar agent and get his version
-func (am *AgentInfoManager) AgentMetadata() (*agent.ClientMeta, error) {
+func (am *AgentInfoManager) AgentMetadata() (*ClientMeta, error) {
 	cmd := exec.Command(am.binPath, "-vv")
 	metaBytes, err := cmd.Output()
 	if err != nil {
 		return nil, fmt.Errorf("pod.AgentMetadata Output: %w", err)
 	}
 
-	meta := &agent.ClientMeta{}
+	meta := &ClientMeta{}
 	if err := json.Unmarshal(metaBytes, meta); err != nil {
 		return nil, fmt.Errorf("pod.AgentMetadata Unmarshal: %w", err)
 	}
@@ -50,7 +72,7 @@ func (am *AgentInfoManager) IsRunning() (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("%v: %w", strings.TrimRight(string(out), "\n"), err)
 	}
-	if string(out) != "active" {
+	if string(bytes.Trim(out, "\n")) != "active" {
 		return false, fmt.Errorf("unexpected status: %v", string(out))
 	}
 	return true, nil
