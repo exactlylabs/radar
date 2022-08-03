@@ -17,6 +17,7 @@ import (
 	ndt7speedtest "github.com/exactlylabs/radar/agent/services/ndt7"
 	"github.com/exactlylabs/radar/agent/services/ookla"
 	"github.com/exactlylabs/radar/agent/services/radar"
+	"github.com/exactlylabs/radar/agent/services/sysinfo"
 	"github.com/exactlylabs/radar/agent/services/tracing"
 )
 
@@ -31,11 +32,11 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Println(agent.Metadata())
+		fmt.Println(sysinfo.Metadata())
 		os.Exit(0)
 	}
 	if *jsonVersion {
-		jsonMeta, err := json.Marshal(agent.Metadata())
+		jsonMeta, err := json.Marshal(sysinfo.Metadata())
 		if err != nil {
 			panic(err)
 		}
@@ -76,8 +77,9 @@ func main() {
 	agent := agent.NewAgent(cli, runners)
 
 	svc := service.MakeService(agent, c, ctx, cancel)
+	sysManager := sysinfo.NewSystemManager()
 	if service.Interactive() {
-		agent.Start(ctx, c)
+		agent.Start(ctx, c, sysManager)
 		log.Println("Bye :)")
 	} else {
 		if svc != nil {

@@ -9,8 +9,8 @@ type DevAgentManager struct {
 	IsRunning_ bool
 }
 
-func NewDevAgentManager() display.AgentClient {
-	return &DevAgentManager{}
+func NewDevAgentManager(version string, isRunning bool) display.AgentClient {
+	return &DevAgentManager{version, isRunning}
 }
 
 // GetVersion implements display.AgentClient
