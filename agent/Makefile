@@ -1,3 +1,5 @@
+.PHONY: watchdog
+
 export OS?=$(shell go env GOOS)
 export ARCH?=$(shell go env GOARCH)
 OUTPUT_DIR?=./dist
@@ -43,7 +45,12 @@ ookla_bin:
 	./scripts/make_ookla.sh
 
 watchdog:
-	go build -o ${OUTPUT_DIR}/watchdog cmd/watchdog/main.go
+	./scripts/build.sh \
+		--output ${DIST_DIR}/watchdog \
+		--os ${OS} \
+		--arch ${ARCH} \
+		--project cmd/start_watchdog/main.go \
+		${VERSION}
 
 run:
 	./scripts/dev.sh

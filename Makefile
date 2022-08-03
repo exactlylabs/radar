@@ -30,6 +30,11 @@ agent:
 	$(MAKE) -C agent sign
 	$(MAKE) -C agent validate
 
+watchdog:
+	$(MAKE) -C agent watchdog ARCH=arm64 OS=linux
+	$(MAKE) -C agent sign BIN_NAME=watchdog
+	$(MAKE) -C agent validate BIN_NAME=watchdog
+
 upload_distribution:
 	./scripts/upload_distribution.sh ${VERSION} ${OUTPUT_DIR}/${BIN_NAME} ${DIST_NAME}
 
