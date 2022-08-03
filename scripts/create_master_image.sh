@@ -11,7 +11,7 @@ fi
 
 function usage() {
 echo """
-Usage: ./create_master_image.sh [OPTIONS] <SUPERUSER_TOKEN> <OS_BUILD_VERSION>
+Usage: ./create_master_image.sh [OPTIONS] <SUPERUSER_TOKEN>
 
 Required Arguments:
 
@@ -24,6 +24,7 @@ Optional Arguments:
 }
 
 ENABLE_SSH=0
+RADAR_SERVER_URL="https://radar.exactlylabs.com"
 
 while :; do
     case $1 in
@@ -33,6 +34,10 @@ while :; do
         ;;
         -s|--enable-ssh)             
             ENABLE_SSH=1
+        ;;
+        -u|--url)
+            RADAR_SERVER_URL=$2
+            shift
         ;;
         *) break
     esac
@@ -46,30 +51,19 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-if [ -z "$2" ]; then
-    echo "Error: missing OS_BUILD_VERSION argument"
-    usage
-    exit 1
-fi
 
-BUILD_VERSION=$2
-RADAR_SERVER_URL="https://radar.exactlylabs.com"
 AGENT_SERVICE="radar_agent.service"
 WATCHDOG_SERVICE="podwatchdog@.service"
 RADAR_AGENT_BIN_URL="$RADAR_SERVER_URL/client_versions/stable/distributions/linux-arm64/download"
+RADAR_WATCHDOG_BIN_URL="$RADAR_SERVER_URL/watchdog_versions/stable/download"
 PROJECT_DIR="opt/radar"
 BINARY_NAME="radar_agent"
+WATCHDOG_BINARY_NAME="watchdog"
 IMAGE_FILENAME="radar.img"
 SUPERUSER_TOKEN="$1"
 FILES_DIR=${SCRIPT_DIR}/pod_image_files
 BUILD_DIR=${SCRIPT_DIR}/build
 TMP_DIR=${BUILD_DIR}/tmp
-
-if [ ! -f ${FILES_DIR}/watchdog ]; then
-    echo "Error: missing ${FILES_DIR}/watchdog binary. Make sure to make it before running this script"
-    usage
-    exit 1
-fi
 
 mkdir -p ${BUILD_DIR}
 mkdir -p ${TMP_DIR}
@@ -79,7 +73,7 @@ mkdir -p ${TMP_DIR}
 apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip unzip
 
 curl --output ${BUILD_DIR}/$BINARY_NAME $RADAR_AGENT_BIN_URL
-
+curl --output ${BUILD_DIR}/$WATCHDOG_BINARY_NAME $RADAR_WATCHDOG_BIN_URL
 
 #### NOTE: Images after 2022-01-28 appear to use .xz and before use .zip
 # Decompress the .xz file
@@ -132,10 +126,12 @@ cp ${BUILD_DIR}/$BINARY_NAME ${TMP_DIR}/$PROJECT_DIR/$BINARY_NAME
 chmod +x ${TMP_DIR}/$PROJECT_DIR/$BINARY_NAME
 
 # Move Pod Watchdog .service and the binary to the image
-WATCHDOG_BINARY_PATH="/$PROJECT_DIR/watchdog" \
-envsubst < ${FILES_DIR}/$WATCHDOG_SERVICE > ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
-cp ${FILES_DIR}/watchdog ${TMP_DIR}/$PROJECT_DIR/watchdog
-chmod +x ${TMP_DIR}/$PROJECT_DIR/watchdog
+WATCHDOG_BINARY_PATH="/$PROJECT_DIR/$WATCHDOG_BINARY_NAME"
+cp ${SCRIPT_DIR}/../agent/watchdog/osfiles/etc/systemd/system/podwatchdog@.service ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
+sed -i -r 's|^(ExecStart=).*|\1'"${WATCHDOG_BINARY_PATH}"'|' ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
+cp ${BUILD_DIR}/$WATCHDOG_BINARY_NAME ${TMP_DIR}/$PROJECT_DIR/$WATCHDOG_BINARY_NAME
+chmod +x ${TMP_DIR}/$PROJECT_DIR/$WATCHDOG_BINARY_NAME
+chown :1000 ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
 
 # Set permissions for radar user and create .config/radar directory
 chown -R 1000:1000 ${TMP_DIR}/home/radar
@@ -162,21 +158,8 @@ if [[ $ENABLE_SSH -eq 1 ]]; then
 fi
 
 # copy firstrun.sh to boot and configure cmdline.txt to run it. Additionally, add some flags for removing logs
-echo "quiet splash loglevel=0 logo.nologo vt.global_cursor_default=0 $(echo -n $(cat ${TMP_DIR}/boot/cmdline.txt)) systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target" > ${TMP_DIR}/boot/cmdline.txt
+echo "$(echo -n $(cat ${TMP_DIR}/boot/cmdline.txt)) systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target" > ${TMP_DIR}/boot/cmdline.txt
 cp ${FILES_DIR}/firstrun.sh ${TMP_DIR}/boot/firstrun.sh
-
-# Replace rc.local with our own
-cp ${FILES_DIR}/rc.local /etc/rc.local
-
-# Remove Splash Screen
-echo "disable splash=1" >> ${TMP_DIR}/boot/config.txt
-
-# Make so we can only have one virtual terminal (ctrl+alt+F[2-6] won't work!)
-echo "NAutoVTs=0" >> /etc/systemd/logind.conf
-echo "ReserveVT=0" >> /etc/systemd/logind.conf
-
-# Add this build version
-echo -n ${BUILD_VERSION} >> ${TMP_DIR}/boot/pod_build_version
 
 # Clear and umount
 rm ${TMP_DIR}/usr/bin/qemu-aarch64-static
