@@ -11,7 +11,6 @@ import (
 )
 
 func SelfUpdate(binaryUrl string) error {
-	// Binary Validated, replace existing one with this
 	binPath, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("update.SelfUpdate error obtaining binary path: %w", err)
