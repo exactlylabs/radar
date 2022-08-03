@@ -20,7 +20,7 @@
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
       <a 
         type="button" 
-        class="btn btn-primary" 
+        class="btn btn-primary <%= current_account.nil? ? 'disabled' : '' %>"
         href="<%= new_location_path %>" 
         data-turbo-frame="new_location_modal"
       >Add Location</a>

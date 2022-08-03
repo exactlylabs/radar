@@ -29,7 +29,7 @@
         <% end %>
       </div>
       <% if empty_search_params? %>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard" style="margin-bottom: 50px">Add a Pod</button>
+        <button type="button" class="btn btn-primary <%= current_account.nil? ? 'disabled' : '' %>" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard" style="margin-bottom: 50px">Add a Pod</button>
       <% else %>
         <%= link_to "Clear filters", clients_path, class: "btn btn-primary", style: "margin-bottom: 50px" %>
       <% end %>

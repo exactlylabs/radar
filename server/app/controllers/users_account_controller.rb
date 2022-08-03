@@ -33,14 +33,22 @@ class UsersAccountController < ApplicationController
   def destroy
     current_account_id = current_account.id
     entity_to_remove_id = params[:id]
-    if params[:type] == 'UsersAccount'
+    entity_type = params[:type]
+    if entity_type == 'UsersAccount'
       entity_to_remove = policy_scope(UsersAccount).where(id: entity_to_remove_id, account_id: current_account_id).first
     else
       entity_to_remove = policy_scope(Invite).where(id: entity_to_remove_id, account_id: current_account_id).first
     end
     respond_to do |format|
       if entity_to_remove.destroy
-        format.html { redirect_to users_account_index_path, locals: { notice: "User removed successfully" } }
+        # If the user is removing itself from the users table
+        # then reassign the current_account if any
+        if entity_type == 'UsersAccount' && entity_to_remove.user_id == current_user.id
+          get_first_user_account
+          format.html { redirect_to "/dashboard", locals: { notice: "User removed successfully" } }
+        else
+          format.html { redirect_to users_account_index_path, locals: { notice: "User removed successfully" } }
+        end
       else
         format.html { redirect_back fallback_location: root_path, notice: "Error removing user."  }
       end

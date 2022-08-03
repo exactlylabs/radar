@@ -1,7 +1,11 @@
 class AccountPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      User.find(@user_account.user_id).accounts
+      if @user_account.present?
+        User.find(@user_account.user_id).accounts
+      else
+        scope.none
+      end
     end
   end
 end

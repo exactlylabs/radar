@@ -39,7 +39,7 @@
   <!--end::Container-->
 </div>
 
-<div class="modal fade" tabindex="-1" id="add_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit">
+<div class="modal fade" tabindex="-1" id="add_pod_modal" data-controller="modal add-pod" data-action="turbo:submit-end->modal#submit">
   <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path(location_id: @location.id) do %>
   <% end %>
 </div>
