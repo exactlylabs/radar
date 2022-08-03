@@ -7,15 +7,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 )
-
-//go:embed podwatchdog@.service
-var watchdogServiceFile []byte
-
-const watchdogServicePath = "/etc/systemd/system/podwatchdog@.service"
-const WatchdogPath = "/opt/radar/watchdog"
 
 func SelfUpdate(binaryUrl string) error {
 	// Binary Validated, replace existing one with this
@@ -30,14 +23,6 @@ func SelfUpdate(binaryUrl string) error {
 	}
 
 	return InstallFromUrl(binPath, binaryUrl)
-}
-
-func UpdateWatchdog(binaryUrl string) error {
-	err := InstallFromUrl(WatchdogPath, binaryUrl)
-	if err != nil {
-		return err
-	}
-	return installWatchdogService()
 }
 
 func InstallFromUrl(binPath, url string) error {
@@ -71,12 +56,12 @@ func Install(binPath string, binary []byte) error {
 func addBinary(binPath string, binary []byte) error {
 	f, err := os.OpenFile(binPath, os.O_CREATE|os.O_RDWR, 0776)
 	if err != nil {
-		return fmt.Errorf("watchdog.Install OpenFile: %w", err)
+		return fmt.Errorf("watchdog.addBinary OpenFile: %w", err)
 	}
 	defer f.Close()
 	_, err = f.Write(binary)
 	if err != nil {
-		return fmt.Errorf("watchdog.Install Write: %w", err)
+		return fmt.Errorf("watchdog.addBinary Write: %w", err)
 	}
 	return nil
 }
@@ -84,51 +69,26 @@ func addBinary(binPath string, binary []byte) error {
 func replaceBinary(binPath string, binary []byte) error {
 	tmpFile := fmt.Sprintf("%s_tmp", binPath)
 	oldFile := fmt.Sprintf("%s_old", binPath)
-	f, err := os.OpenFile(tmpFile, os.O_RDWR, 0776)
+	f, err := os.OpenFile(tmpFile, os.O_CREATE|os.O_RDWR, 0776)
 	if err != nil {
-		return fmt.Errorf("watchdog.Install OpenFile: %w", err)
+		return fmt.Errorf("watchdog.replaceBinary OpenFile: %w", err)
 	}
 	defer f.Close()
 	n, err := f.Write(binary)
 	if err != nil {
-		return fmt.Errorf("watchdog.Install Write: %w", err)
+		return fmt.Errorf("watchdog.replaceBinary Write: %w", err)
 	}
 	log.Printf("Copied %d Bytes\n", n)
 	f.Close()
 	if err = os.Rename(binPath, oldFile); err != nil {
-		return fmt.Errorf("update.Install Rename: %w", err)
+		return fmt.Errorf("update.replaceBinary Rename: %w", err)
 	}
 	// // Replace existing binary with new one
 	if err = os.Rename(tmpFile, binPath); err != nil {
 		os.Rename(oldFile, binPath)
-		return fmt.Errorf("update.Install Rename: %w", err)
+		return fmt.Errorf("update.replaceBinary Rename: %w", err)
 	}
 	os.Remove(oldFile)
 	os.Chmod(binPath, 0776)
-	return nil
-}
-
-// installWatchdogService removes getty@.service and installs watchdog@.service
-func installWatchdogService() error {
-	out, err := exec.Command("systemctl", "disable", "getty@.service").Output()
-	if err != nil {
-		return fmt.Errorf("update.installWatchdogService Disable %v: %w", out, err)
-	}
-	f, err := os.OpenFile(watchdogServicePath, os.O_CREATE|os.O_RDWR, 0644)
-	if err != nil {
-		return fmt.Errorf("update.installWatchdogService OpenFile: %w", err)
-	}
-	defer f.Close()
-	if _, err := f.Write(watchdogServiceFile); err != nil {
-		return fmt.Errorf("update.installWatchdogService Write: %w", err)
-	}
-	out, err = exec.Command("systemctl", "daemon-reload").Output()
-	if err != nil {
-		return fmt.Errorf("update.installWatchdogService DaemonReload %v: %w", out, err)
-	}
-	out, err = exec.Command("systemctl", "enable", "getty@.service").Output()
-	if err != nil {
-		return fmt.Errorf("update.installWatchdogService Enable %v: %w", out, err)
-	}
 	return nil
 }

@@ -12,6 +12,8 @@ import (
 	"strings"
 
 	"github.com/exactlylabs/radar/agent/agent"
+	"github.com/exactlylabs/radar/agent/services/sysinfo"
+	"github.com/exactlylabs/radar/agent/watchdog"
 )
 
 type radarClient struct {
@@ -35,16 +37,13 @@ func (c *radarClient) NewRequest(method, url string, body io.Reader) (*http.Requ
 	return req, nil
 }
 
-func (c *radarClient) Ping(clientId, secret string, meta *agent.ClientMeta) (*agent.PingResponse, error) {
+func (c *radarClient) Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*agent.PingResponse, error) {
 	apiUrl := fmt.Sprintf("%s/clients/%s/status", c.serverUrl, clientId)
 	form := url.Values{}
 	form.Add("secret", secret)
 	form.Add("version", meta.Version)
-	form.Add("watchdog_version", meta.WatchdogVersion)
 	form.Add("distribution", meta.Distribution)
-	if meta.RegistrationToken != nil {
-		form.Add("user_token", *meta.RegistrationToken)
-	}
+	form.Add("watchdog_version", meta.WatchdogVersion)
 	ifaces, err := json.Marshal(meta.NetInterfaces)
 	if err != nil {
 		return nil, fmt.Errorf("radarClient#Ping error marshalling NetInterfaces: %w", err)
@@ -53,6 +52,10 @@ func (c *radarClient) Ping(clientId, secret string, meta *agent.ClientMeta) (*ag
 	req, err := c.NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err
+	}
+	req.Header.Add("Accept", "application/json")
+	if meta.RegistrationToken != nil {
+		req.Header.Add("Authorization", fmt.Sprintf("Token %s", *meta.RegistrationToken))
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := http.DefaultClient.Do(req)
@@ -153,4 +156,44 @@ func (c *radarClient) ReportMeasurement(clientId, secret, style string, measurem
 		return fmt.Errorf("radar.radarClient#ReportMeasurement wrong status code: %d", resp.StatusCode)
 	}
 	return nil
+}
+
+func (c *radarClient) WatchdogPing(clientId, secret string, meta *sysinfo.ClientMeta) (*watchdog.PingResponse, error) {
+	apiUrl := fmt.Sprintf("%s/clients/%s/watchdog_status", c.serverUrl, clientId)
+	form := url.Values{}
+	form.Add("secret", secret)
+	form.Add("version", meta.Version)
+	req, err := c.NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Accept", "application/json")
+	if meta.RegistrationToken != nil {
+		req.Header.Add("Authorization", fmt.Sprintf("Token %s", *meta.RegistrationToken))
+	}
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("radarClient#WatchdogPing request error: %w", err)
+	}
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("radarClient#WatchdogPing wrong status code %d", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("radarClient#WatchdogPing error reading response: %w", err)
+	}
+	podConfig := &WatchdogStatusResponse{}
+	if err := json.Unmarshal(body, podConfig); err != nil {
+		return nil, fmt.Errorf("radarClient#WatchdogPing error unmarshalling: %w", err)
+	}
+	res := &watchdog.PingResponse{}
+	if podConfig.Update != nil {
+		res.Update = &watchdog.BinaryUpdate{
+			Version:   podConfig.Update.Version,
+			BinaryUrl: fmt.Sprintf("%s/%s", c.serverUrl, podConfig.Update.Url),
+		}
+	}
+	return res, nil
 }

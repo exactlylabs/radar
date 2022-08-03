@@ -2,6 +2,7 @@ package radar
 
 import (
 	"github.com/exactlylabs/radar/agent/agent"
+	"github.com/exactlylabs/radar/agent/watchdog"
 )
 
 // Pod is returned when you call Register method
@@ -26,8 +27,14 @@ type PodConfigs struct {
 	WatchdogUpdate *Update `json:"watchdog_update"`
 }
 
+type WatchdogStatusResponse struct {
+	Pod
+	Update *Update `json:"update"`
+}
+
 type RadarRequester interface {
 	agent.Pinger
 	agent.Registerer
 	agent.MeasurementReporter
+	watchdog.WatchdogPinger
 }
