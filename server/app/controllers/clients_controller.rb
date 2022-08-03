@@ -169,6 +169,9 @@ EOF
   end
 
   def status
+    if policy(@client).access_watchdog?
+      puts "BBBBBBBBBBBBBBBBBBBBB"
+    end
     @client.pinged_at = Time.now
     @client.raw_version = params[:version]
     @client.distribution_name = params[:distribution]
@@ -303,11 +306,13 @@ EOF
     end
 
     def authenticate_token!
+      puts get_cookie(:radar_current_account_id)
       if !request.headers["Authorization"].nil?
         token = request.headers["Authorization"].split(" ")
         if token.size == 2
-          puts "Checking User"
           @user = User.where({"token": token[1]}).first
+          puts @user
+          sign_in(@user, store: false, event: :fetch)
         end
       end
     end
