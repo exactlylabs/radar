@@ -5,6 +5,7 @@
   <div class="w-lg-500px p-10 p-lg-15 mx-auto">
     <!--begin::Form-->
     <!-- data-turbo: false is needed to prevent "Nil location provided. Can't build URI. on Password reset" -->
+    <!-- reference: https://stackoverflow.com/questions/36214082/rails-devise-nil-location-provided-cant-build-uri-on-password-reset -->
     <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, novalidate: "novalidate", class: "form w-100 fv-plugins-bootstrap5 fv-plugins-framework", "data-turbo" => "false" }) do |f| %>
       <!--begin::Heading-->
       <div class="text-center mb-10">
