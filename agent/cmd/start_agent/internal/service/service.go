@@ -8,6 +8,7 @@ import (
 
 	"github.com/exactlylabs/radar/agent/agent"
 	"github.com/exactlylabs/radar/agent/config"
+	"github.com/exactlylabs/radar/agent/services/sysinfo"
 	"github.com/exactlylabs/radar/agent/services/tracing"
 	"github.com/kardianos/service"
 )
@@ -49,7 +50,8 @@ type agentSvc struct {
 func (svc *agentSvc) Start(s service.Service) error {
 	go func() {
 		defer tracing.NotifyPanic()
-		svc.agent.Start(svc.ctx, svc.c)
+		sysManager := sysinfo.NewSystemManager()
+		svc.agent.Start(svc.ctx, svc.c, sysManager)
 	}()
 	return nil
 }
