@@ -43,8 +43,7 @@ func InstallFromUrl(binPath, url string) error {
 	return nil
 }
 
-// Install adds or replaces the watchdog binary into the OS,
-// as well as configures systemd
+// Install adds or replaces the binary into the OS
 func Install(binPath string, binary []byte) error {
 	if _, err := os.Stat(binPath); errors.Is(err, os.ErrNotExist) {
 		return addBinary(binPath, binary)
@@ -55,12 +54,12 @@ func Install(binPath string, binary []byte) error {
 func addBinary(binPath string, binary []byte) error {
 	f, err := os.OpenFile(binPath, os.O_CREATE|os.O_RDWR, 0776)
 	if err != nil {
-		return fmt.Errorf("watchdog.addBinary OpenFile: %w", err)
+		return fmt.Errorf("update.addBinary OpenFile: %w", err)
 	}
 	defer f.Close()
 	_, err = f.Write(binary)
 	if err != nil {
-		return fmt.Errorf("watchdog.addBinary Write: %w", err)
+		return fmt.Errorf("update.addBinary Write: %w", err)
 	}
 	return nil
 }
@@ -70,12 +69,12 @@ func replaceBinary(binPath string, binary []byte) error {
 	oldFile := fmt.Sprintf("%s_old", binPath)
 	f, err := os.OpenFile(tmpFile, os.O_CREATE|os.O_RDWR, 0776)
 	if err != nil {
-		return fmt.Errorf("watchdog.replaceBinary OpenFile: %w", err)
+		return fmt.Errorf("update.replaceBinary OpenFile: %w", err)
 	}
 	defer f.Close()
 	n, err := f.Write(binary)
 	if err != nil {
-		return fmt.Errorf("watchdog.replaceBinary Write: %w", err)
+		return fmt.Errorf("update.replaceBinary Write: %w", err)
 	}
 	log.Printf("Copied %d Bytes\n", n)
 	f.Close()
