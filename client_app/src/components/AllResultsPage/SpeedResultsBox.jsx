@@ -13,7 +13,7 @@ const SpeedResultsBox = ({ selectedFilter, setSelectedFilter }) => {
   };
 
   return (
-    <Box component={Paper}>
+    <Box component={Paper} style={{ position: 'relative', right: '10%', top: '40%' }}>
       <List className={'speed-results-box--my-list'} dense={false}>
         <ListItem
           className={'speed-results-box--filter-list-item'}

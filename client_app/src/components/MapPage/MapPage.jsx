@@ -14,6 +14,7 @@ import { storeRunData } from '../../utils/storage';
 import { getGeocodedAddress, sendRawData } from '../../utils/apiRequests';
 import { RESIZING_WIDTH_PX_LIMIT } from '../../utils/screenDimensions';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import './MapPage.css';
 
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
@@ -74,17 +75,15 @@ const MapPage = ({ manualAddress, maxHeight }) => {
     if (map.current) return;
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/eugedamm/cl6cpklwt002v14qz6eto3mjb',
       center: [location[1], location[0]],
       zoom,
     });
+    createMarker();
   }, [location]);
 
   useEffect(() => {
     if (!map.current) return;
-    map.current.on('load', () => {
-      map.addLayer({});
-    });
     map.current.on('move', () => {
       const long = map.current.getCenter().lng.toFixed(4);
       const lat = map.current.getCenter().lat.toFixed(4);
@@ -92,6 +91,19 @@ const MapPage = ({ manualAddress, maxHeight }) => {
       setLocation([long, lat]);
     });
   });
+
+  const createMarker = () => {
+    const el = document.createElement('div');
+    el.className = 'map-page--marker';
+    const pin = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [location[1], location[0]],
+      },
+    };
+    new mapboxgl.Marker(el).setLngLat(pin.geometry.coordinates).addTo(map.current);
+  };
 
   const updateMapDimensions = () => {
     const height = window.innerWidth >= RESIZING_WIDTH_PX_LIMIT ? maxHeight - 200 : SMALL_SCREEN_MAP_HEIGHT;

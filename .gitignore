@@ -6,3 +6,4 @@ dist/
 *.log
 .env
 .DS_Store
+.idea

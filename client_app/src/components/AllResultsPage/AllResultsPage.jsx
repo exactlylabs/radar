@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MyTitle } from '../common/MyTitle';
-import { CircularProgress, Grid, Paper } from '@mui/material';
+import { CircularProgress, Grid, Paper, Typography } from '@mui/material';
 import { MyButton } from '../common/MyButton';
 import { STEPS } from '../../constants';
 import SpeedResultsBox from './SpeedResultsBox';
@@ -9,6 +9,7 @@ import { DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD, SPEED_FILTERS, SPEED_THRESHOLD_COL
 import { getAllSpeedTests } from '../../utils/apiRequests';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import './AllResultsPage.css';
+import { notifyError } from '../../utils/errors';
 
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
@@ -17,27 +18,38 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
   const map = useRef(null);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [resultsLoading, setResultsLoading] = useState(true);
+  const [geolocationLoading, setGeolocationLoading] = useState(true);
   const [filteredResults, setFilteredResults] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState(null);
-  const [location, setLocation] = useState([0, 0]);
-  const [zoom, setZoom] = useState(1);
+  const [location, setLocation] = useState();
+  const [zoom, setZoom] = useState(15);
 
   useEffect(() => {
-    getAllSpeedTests(setResults, setFilteredResults, setError, setLoading);
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          setLocation([pos.coords.latitude, pos.coords.longitude]);
+          setGeolocationLoading(false);
+        },
+        notifyError,
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      );
+    }
+    getAllSpeedTests(setResults, setFilteredResults, setError, setResultsLoading);
   }, []);
 
   useEffect(() => {
-    if (loading) return;
+    if (resultsLoading || geolocationLoading) return;
     if (map.current) return;
     map.current = new mapboxgl.Map({
       container: document.querySelector('.map-container'),
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/eugedamm/cl6cpklwt002v14qz6eto3mjb',
       center: [location[1], location[0]],
-      zoom,
+      zoom: zoom,
     });
     createMarkers();
-  }, [loading]);
+  }, [resultsLoading, geolocationLoading]);
 
   useEffect(() => {
     if (!map.current) return;
@@ -50,10 +62,10 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
   });
 
   const createMarkers = () => {
-    if (filteredResults && !loading) {
+    if (filteredResults) {
       for (const feature of filteredResults.features) {
         const el = document.createElement('div');
-        el.className = 'marker';
+        el.className = 'all-results--marker';
         const markerColor = getColor(feature.properties);
         el.style.backgroundColor = markerColor;
         el.style.border = `solid 1px ${markerColor}`;
@@ -109,25 +121,27 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
   return (
     <div style={{ textAlign: 'center' }}>
       <MyTitle text={'All results'} />
-      {loading && <CircularProgress size={25} />}
-      {!loading && error && <p>Error fetching results! Try again later.</p>}
-      {!loading && results !== null && results.features.length === 0 && (
+      {resultsLoading && geolocationLoading && <CircularProgress size={25} />}
+      {!resultsLoading && error && <p>Error fetching results! Try again later.</p>}
+      {!resultsLoading && results !== null && results.features.length === 0 && (
         <div>
           <p>No measurements taken so far!</p>
           <MyButton text={'Test'} onClick={goToMap} />
         </div>
       )}
-      {!loading && results !== null && results.features.length > 0 && (
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={10}>
-            <Box component={Paper} style={{ padding: 10 }}>
+      {!resultsLoading && results !== null && results.features.length > 0 && (
+        <div style={{ height: maxHeight - 150, width: '100%' }}>
+          <div style={{ position: 'relative', top: 0, left: 0 }}>
+            {geolocationLoading ? (
+              <div style={{ height: maxHeight - 150, width: '100%' }}>
+                <CircularProgress size={50} />
+              </div>
+            ) : (
               <div className="map-container" style={{ height: maxHeight - 150, margin: 'auto' }} />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <SpeedResultsBox selectedFilter={selectedFilter} setSelectedFilter={setFilter} />
-          </Grid>
-        </Grid>
+            )}
+          </div>
+          <SpeedResultsBox selectedFilter={selectedFilter} setSelectedFilter={setFilter} />
+        </div>
       )}
     </div>
   );
