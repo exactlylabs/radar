@@ -9,4 +9,7 @@ class WatchdogVersion < ApplicationRecord
     validates :binary, presence: true
     validates :signed_binary, presence: true
 
+    def self.stable
+        self.find_by_is_stable(true)
+    end
 end

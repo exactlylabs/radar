@@ -1,11 +1,11 @@
 require "sshkey"
 
 class ClientsController < ApplicationController
-  before_action :authenticate_user!, except: %i[ configuration new create status public_status check_public_status run_test ]
-  before_action :authenticate_client!, only: %i[ configuration status ], if: :json_request?
+  before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test ]
+  before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
   before_action :set_client, only: %i[ release show edit update destroy ]
-  before_action :authenticate_token!, only: %i[ create ]
-  skip_forgery_protection only: %i[ status configuration new create ]
+  before_action :authenticate_token!, only: %i[ create status watchdog_status ]
+  skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 
   # GET /clients or /clients.json
   def index
@@ -171,7 +171,6 @@ EOF
   def status
     @client.pinged_at = Time.now
     @client.raw_version = params[:version]
-    @client.watchdog_raw_version = params[:watchdog_version]
     @client.distribution_name = params[:distribution]
     if params[:network_interfaces]
       @client.network_interfaces = JSON.parse(params[:network_interfaces])
@@ -190,16 +189,33 @@ EOF
     end
 
     if params[:watchdog_version]
-      wv = WatchdogVersion.find_by_version(params[:watchdog_version])
+      # TODO: This should be deprecated in future versions
+      #       once all existing pods have a watchdog
+      @client.raw_watchdog_version = params[:watchdog_version]
+      wv = WatchdogVersion.find_by_version params[:watchdog_version]
       if wv
         @client.watchdog_version = wv
       end
     end
-
+    
     @client.save
-    @user_token = params[:user_token]
     respond_to do |format|
       format.json { render :status, status: :ok }
+    end
+  end
+
+  def watchdog_status
+    @client.raw_watchdog_version = params[:version]
+    
+    if params[:version]
+      # Check client Version
+      version = WatchdogVersion.find_by_version(params[:version])
+      @client.watchdog_version = version
+    end
+
+    @client.save
+    respond_to do |format|
+      format.json { render :watchdog_status, status: :ok }
     end
   end
 
@@ -290,6 +306,7 @@ EOF
       if !request.headers["Authorization"].nil?
         token = request.headers["Authorization"].split(" ")
         if token.size == 2
+          puts "Checking User"
           @user = User.where({"token": token[1]}).first
         end
       end

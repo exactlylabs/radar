@@ -49,6 +49,7 @@ Rails.application.routes.draw do
       delete 'release'
       post 'configuration'
       post 'status'
+      post 'watchdog_status'
       post 'run_test'
     end
 
@@ -78,6 +79,12 @@ Rails.application.routes.draw do
       member do
         get 'download'
       end
+    end
+  end
+
+  resources :watchdog_versions, constraints: {id: /[^\/]+/} do
+    member do
+      get 'download'
     end
   end
 
