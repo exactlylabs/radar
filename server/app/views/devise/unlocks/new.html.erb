@@ -1,16 +1,27 @@
-<h2>Resend unlock instructions</h2>
+<div class="d-flex flex-center flex-column flex-column-fluid">
+  <!--begin::Wrapper-->
+  <div class="w-lg-500px p-10 p-lg-15 mx-auto">
 
-<%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+  <div class="text-center mb-10">
+    <h1 class="text-dark mb-3">Resend unlock instructions</h1>
   </div>
+  <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="actions">
-    <%= f.submit "Resend unlock instructions" %>
+    <div class="field fv-row mb-10 fv-plugins-icon-container">
+      <% if resource.errors[:email] %>
+        <div class="fv-plugins-message-container invalid-feedback"><%= resource.errors[:email].join(", ") %></div>
+      <% end %>
+      <label class="form-label fw-bolder text-gray-900 fs-6">Email</label>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control form-control-solid" %>
+    </div>
+
+      <div class="d-flex flex-wrap justify-content-center pb-lg-0">
+      <%= f.submit "Resend unlock instructions", class: "btn btn-lg btn-primary fw-bolder me-4" %>
+    </div>
+  <% end %>
+
+  <%= render "devise/shared/links" %>
+
   </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>
