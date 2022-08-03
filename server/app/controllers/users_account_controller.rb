@@ -42,9 +42,9 @@ class UsersAccountController < ApplicationController
     respond_to do |format|
       if entity_to_remove.destroy
         # If the user is removing itself from the users table
-        # then reassign the current_account if any
+        # then reassign the current_account to the first available if any
         if entity_type == 'UsersAccount' && entity_to_remove.user_id == current_user.id
-          get_first_user_account
+          get_first_user_account_and_set_cookie
           format.html { redirect_to "/dashboard", locals: { notice: "User removed successfully" } }
         else
           format.html { redirect_to users_account_index_path, locals: { notice: "User removed successfully" } }
