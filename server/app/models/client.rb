@@ -4,7 +4,8 @@ class Client < ApplicationRecord
   belongs_to :client_version, optional: true
   belongs_to :update_group, optional: true
   belongs_to :account, optional: true
-
+  belongs_to :watchdog_version, optional: true
+  
   has_many :measurements
 
   geocoded_by :address
@@ -126,12 +127,9 @@ class Client < ApplicationRecord
     !dist.nil? && dist.client_version.version != self.raw_version
   end
 
-  def has_watchdog_update?(user_token)
-    @user = User.where({"token": user_token}).first
-    if @user && @user.superuser?
-      v = self.to_update_watchdog_version
-      !v.nil? && v.version != self.raw_watchdog_version
-    end
+  def has_watchdog_update?
+    v = self.to_update_watchdog_version
+    !v.nil? && v.version != self.raw_watchdog_version
   end
 
   def latest_measurement
