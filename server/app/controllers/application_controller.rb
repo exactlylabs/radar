@@ -60,8 +60,6 @@ class ApplicationController < ActionController::Base
       @current_user_account = nil
       @current_account = nil
       set_cookie(:radar_current_account_id, nil)
-    rescue Exception => e
-      puts e.message
     end
   end
 
