@@ -7,7 +7,6 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	"os/exec"
 	"strconv"
 	"sync"
 	"time"
@@ -15,6 +14,7 @@ import (
 	"github.com/exactlylabs/radar/agent/config"
 	"github.com/exactlylabs/radar/agent/internal/update"
 	"github.com/exactlylabs/radar/agent/services/tracing"
+	"github.com/exactlylabs/radar/agent/watchdog"
 )
 
 type Agent struct {
@@ -91,7 +91,7 @@ func (a *Agent) Setup(ctx context.Context, c *config.Config) {
 }
 
 // Start the Agent, blocking the current goroutine
-func (a *Agent) Start(ctx context.Context, c *config.Config) {
+func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) {
 	agentCtx, cancel := context.WithCancel(ctx)
 	a.Setup(ctx, c)
 
@@ -144,7 +144,7 @@ func (a *Agent) Start(ctx context.Context, c *config.Config) {
 			}
 			if pingResp.WatchdogUpdate != nil {
 				log.Printf("An Update for Watchdog Version %v is available\n", pingResp.WatchdogUpdate.Version)
-				err := update.UpdateWatchdog(pingResp.WatchdogUpdate.BinaryUrl)
+				err := watchdog.UpdateWatchdog(pingResp.WatchdogUpdate.BinaryUrl)
 				if err != nil && (errors.Is(err, update.ErrInvalidCertificate) || errors.Is(err, update.ErrInvalidSignature)) {
 					log.Printf("Existent update is invalid: %v\n", err)
 					tracing.NotifyError(err, map[string]interface{}{
@@ -157,9 +157,8 @@ func (a *Agent) Start(ctx context.Context, c *config.Config) {
 					panic(err)
 				} else {
 					log.Println("Successfully Updated the Watchdog. Restarting the whole system")
-					out, err := exec.Command("shutdown", "-r", "0").Output()
-					if err != nil {
-						panic(fmt.Errorf("agent.Start Output: %s: %w", string(out), err))
+					if err := rebooter.Reboot(); err != nil {
+						panic(fmt.Errorf("agent.Start Reboot: %w", err))
 					}
 					cancel()
 					os.Exit(1)
