@@ -36,7 +36,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         sign_in @user
         format.html { redirect_to dashboard_path, notice: "Registered successfully" }
       else
-        format.html { render :create, status: :unprocessable_entity, error: error }
+        format.json { render json: { error: error, status: :unprocessable_entity } }
       end
     end
   end

@@ -4,7 +4,7 @@
   <!--begin::Wrapper-->
   <div class="w-lg-500px p-10 p-lg-15 mx-auto">
     <!--begin::Form-->
-    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, novalidate: "novalidate", class: "form w-100 fv-plugins-bootstrap5 fv-plugins-framework" }) do |f| %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, novalidate: "novalidate", class: "form w-100 fv-plugins-bootstrap5 fv-plugins-framework", "data-turbo" => "false" }) do |f| %>
       <!--begin::Heading-->
       <div class="text-center mb-10">
         <!--begin::Title-->

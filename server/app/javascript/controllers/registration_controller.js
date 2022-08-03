@@ -27,6 +27,7 @@ export default class extends Controller {
     "step1Wrapper",
     "step2Wrapper",
     "step3Wrapper",
+    "errorText",
   ];
 
   connect() {}
@@ -113,7 +114,6 @@ export default class extends Controller {
     this.avatarPreviewTarget.src = url;
     this.avatarPreviewTarget.style.display = "block";
     this.plusIconTarget.style.display = "none";
-    this.avatarContinueButtonTarget.classList.remove("disabled");
   }
 
   finishRegistrationWithInvite() {
@@ -145,6 +145,8 @@ export default class extends Controller {
   }
 
   finishRegistration() {
+    // clear error message if any
+    this.errorTextTarget.innerText = null;
     const token = document.getElementsByName("csrf-token")[0].content;
     const accountName = this.accountNameInputTarget.value;
     const formData = new FormData();
@@ -153,7 +155,8 @@ export default class extends Controller {
     formData.append("user[email]", this.registrationData.email);
     formData.append("user[terms]", this.registrationData.terms);
     formData.append("user[password]", this.registrationData.password);
-    formData.append("user[avatar]", this.registrationData.avatar);
+    if (this.registrationData.avatar)
+      formData.append("user[avatar]", this.registrationData.avatar);
     formData.append("account[name]", accountName);
     formData.append(
       "account[account_type]",
@@ -168,9 +171,19 @@ export default class extends Controller {
       body: formData,
     })
       .then((res) => {
+        // If res is trying to redirect ==> registration success, follow redirect
+        // Else error message through JSON body
         if (res.redirected) {
           window.location.href = res.url;
+        } else {
+          return res.json();
         }
+      })
+      .then((res) => {
+        const responseErrorKey = Object.keys(res.error)[0];
+        const responseErrorValue = res.error[responseErrorKey][0];
+        const errorMessage = `${responseErrorKey} ${responseErrorValue}.`;
+        this.errorTextTarget.innerText = errorMessage;
       })
       .catch((err) => console.error(err))
       .finally(() => {
@@ -231,6 +244,7 @@ export default class extends Controller {
   clearTypes() {
     this.organizationBoxTarget.classList.remove("selected");
     this.personalBoxTarget.classList.remove("selected");
+    this.continueToNameButtonTarget.classList.add("disabled");
   }
 
   clearAccountName() {
@@ -280,5 +294,6 @@ export default class extends Controller {
   backToStep2() {
     this.step2WrapperTarget.style.display = "flex";
     this.step3WrapperTarget.style.display = "none";
+    this.errorTextTarget.innerText = null;
   }
 }

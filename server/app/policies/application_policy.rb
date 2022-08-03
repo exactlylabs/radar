@@ -43,8 +43,8 @@ class ApplicationPolicy
     end
 
     def resolve
-      if user_account
-        scope.where(account_id: user_account.account_id)
+      if @user_account
+        scope.where(account_id: @user_account.account_id)
       else
         # The only time we could hit this condition is if
         # the current_user has no account associated to it
