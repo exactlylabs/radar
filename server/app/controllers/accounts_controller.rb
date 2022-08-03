@@ -29,7 +29,12 @@ class AccountsController < ApplicationController
     now = Time.now
     respond_to do |format|
       if @account.update(deleted_at: now) && users_accounts.update_all(deleted_at: now)
-        format.html { redirect_back fallback_location: root_path, notice: "Account was successfully deleted." }
+        # If user decides to delete currently selected account
+        # then automatically switch over to a different available one
+        if @account == current_account
+          get_first_user_account
+        end
+        format.html { redirect_to "/dashboard", notice: "Account was successfully deleted." }
       else
         format.html { render :edit, status: :unprocessable_entity }
       end

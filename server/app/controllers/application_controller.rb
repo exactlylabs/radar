@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
 
   def current_account
     cookie_account_id = get_cookie(:radar_current_account_id)
-    return @current_account if @current_account&.id == cookie_account_id && @current_account&.deleted_at.nil?
+    return @current_account if @current_account&.id == cookie_account_id
     get_or_set_account_from_cookie
     @current_account
   end
@@ -18,6 +18,12 @@ class ApplicationController < ActionController::Base
   def set_user_account(new_account)
     @current_account = new_account
     @current_user_account = current_user.users_accounts.find_by_account_id(new_account.id)
+  end
+
+  def clear_user_account_and_cookie
+    @current_account = nil
+    @current_user_account = nil
+    cookies.delete :radar_current_account_id
   end
 
   def set_cookie(key, value)
@@ -52,14 +58,10 @@ class ApplicationController < ActionController::Base
       else
         # We fall into this case if the current_user has no record
         # of a user_account association in the DB (empty account state).
-        @current_user_account = nil
-        @current_account = nil
-        set_cookie(:radar_current_account_id, nil)
+        clear_user_account_and_cookie
       end
     rescue ActiveRecord::RecordNotFound
-      @current_user_account = nil
-      @current_account = nil
-      set_cookie(:radar_current_account_id, nil)
+      clear_user_account_and_cookie
     end
   end
 
@@ -81,8 +83,12 @@ class ApplicationController < ActionController::Base
 
   def get_first_user_account
     @current_user_account = current_user.users_accounts.not_deleted.first
-    @current_account = current_user.accounts.find(@current_user_account.account_id)
-    set_cookie(:radar_current_account_id, @current_user_account.account_id)
+    if @current_user_account.nil?
+      clear_user_account_and_cookie
+    else
+      @current_account = current_user.accounts.find(@current_user_account.account_id)
+      set_cookie(:radar_current_account_id, @current_user_account.account_id)
+    end
   end
 
 end

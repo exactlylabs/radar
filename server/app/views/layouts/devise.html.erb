@@ -1,4 +1,6 @@
-<% if action_name != "update_name" %>
+<!-- action_name != "edit" would match with the forgot_password action as well as edit user -->
+<!-- checking with the actual request path I can get the expected output -->
+<% if request.original_fullpath != "/users/edit" && action_name != "update_name" %>
 <% content_for :content do %>
 	<div class="d-flex flex-column flex-root">
 		<!--begin::Authentication - Sign-in -->

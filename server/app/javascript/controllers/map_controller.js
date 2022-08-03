@@ -1,9 +1,18 @@
 import { Controller } from "@hotwired/stimulus";
 
+//Using a global variable to prevent console error:
+//`Map container is already initialized`
+let map;
+
 export default class extends Controller {
+  disconnect() {
+    // clear map so it can get properly initialized on re-render
+    map = null;
+  }
+
   connect() {
-    if (!document.querySelector("#map")) return;
-    var map = L.map("map").setView([51.505, -0.09], 13);
+    if (!document.querySelector("#map")) return; // don't try to initialize a map if the <div id="map"> is not present on the screen
+    if (!map) map = L.map("map").setView([51.505, -0.09], 13); // only initialize the map if it has not been yet
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:

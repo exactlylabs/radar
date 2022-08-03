@@ -1,7 +1,11 @@
 class UsersAccountPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      scope.where(account_id: @user_account.account_id)
+      if @user_account.present?
+        scope.where(account_id: @user_account.account_id)
+      else
+        scope.none
+      end
     end
   end
 end

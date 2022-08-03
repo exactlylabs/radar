@@ -73,75 +73,83 @@
 <!--begin::Post-->
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post" style="max-height: 68vh">
   <!--begin::Container-->
-  <div class="container-xxl w-100 mw-100" data-controller="onboard" data-onboard-step-value="<%= @onboard_step %>">
-    <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
-      <%= render partial: "onboard", locals: { step: @onboard_step } %>
-    </div>
-    <% if @locations.length > 0 || params[:filter].present? %>
-    <div class="row h-100 w-100">
-      <div class="col-4 h-100 pe-6">
-        <div class="" style="max-height: 100%; overflow: scroll">
-          <div class="card" style="min-height: 200px;">
-            <div class="card-header">
-              <div class="my-6 d-flex justify-content-between align-items-center w-100">
-                <div class="d-flex flex-column">
-                  <div class="text-dark fw-bolder my-1 fs-2">Locations</div>
-                  <div class="text-muted"><%= @locations.length %> locations</div>
-                </div>
-                <div>
-                  <div class="btn-group">
-                    <a href="#" 
-                       class="btn btn-sm <%= params[:filter] ? 'btn-light-primary' : 'btn-light' %> btn-active-light-primary"
-                       data-bs-toggle="dropdown"
-                       aria-expanded="false"
-                       style="border-radius: 6px"
-                       id="filters-button"
-                    >
-                      <%= location_filter_name_to_human(params[:filter]) %>
-                      <span class="svg-icon svg-icon-5 m-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                          <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
-                        </svg>
-                      </span>
-                    </a>
-                    <div class="dropdown-menu fw-bold fs-7 py-4"
-                      aria-labelledby="schedule-button">
-                      <a href="<%= params[:filter] == 'all' ? dashboard_path : dashboard_path(filter: 'all') %>" 
-                        class="menu-item text-hover-gray-500 <%= params[:filter].nil? || params[:filter] == 'all' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
-                        All locations
+  <% if current_account.present? %>
+    <div class="container-xxl w-100 mw-100" data-controller="onboard" data-onboard-step-value="<%= @onboard_step %>">
+      <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
+        <%= render partial: "onboard", locals: { step: @onboard_step } %>
+      </div>
+      <% if @locations.length > 0 || params[:filter].present? %>
+      <div class="row h-100 w-100">
+        <div class="col-4 h-100 pe-6">
+          <div class="" style="max-height: 100%; overflow: scroll">
+            <div class="card" style="min-height: 200px;">
+              <div class="card-header">
+                <div class="my-6 d-flex justify-content-between align-items-center w-100">
+                  <div class="d-flex flex-column">
+                    <div class="text-dark fw-bolder my-1 fs-2">Locations</div>
+                    <div class="text-muted"><%= @locations.length %> locations</div>
+                  </div>
+                  <div>
+                    <div class="btn-group">
+                      <a href="#"
+                         class="btn btn-sm <%= params[:filter] ? 'btn-light-primary' : 'btn-light' %> btn-active-light-primary"
+                         data-bs-toggle="dropdown"
+                         aria-expanded="false"
+                         style="border-radius: 6px"
+                         id="filters-button"
+                      >
+                        <%= location_filter_name_to_human(params[:filter]) %>
+                        <span class="svg-icon svg-icon-5 m-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+                          </svg>
+                        </span>
                       </a>
-                      <!--begin::Menu item-->
-                      <a href="<%= params[:filter] == 'active' ? dashboard_path : dashboard_path(filter: 'active') %>" 
-                        class="menu-item text-hover-gray-500 <%= params[:filter] == 'active' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
-                        Active locations
-                      </a>
-                      <!--end::Menu item-->
-                      <!--begin::Menu item-->
-                      <a href="<%= params[:filter] == 'inactive' ? dashboard_path : dashboard_path(filter: 'inactive') %>" 
-                        class="menu-item text-hover-gray-500 <%= params[:filter] == 'inactive' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
-                        Inactive locations
-                      </a>
+                      <div class="dropdown-menu fw-bold fs-7 py-4"
+                        aria-labelledby="schedule-button">
+                        <a href="<%= params[:filter] == 'all' ? dashboard_path : dashboard_path(filter: 'all') %>"
+                          class="menu-item text-hover-gray-500 <%= params[:filter].nil? || params[:filter] == 'all' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                          All locations
+                        </a>
+                        <!--begin::Menu item-->
+                        <a href="<%= params[:filter] == 'active' ? dashboard_path : dashboard_path(filter: 'active') %>"
+                          class="menu-item text-hover-gray-500 <%= params[:filter] == 'active' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                          Active locations
+                        </a>
+                        <!--end::Menu item-->
+                        <!--begin::Menu item-->
+                        <a href="<%= params[:filter] == 'inactive' ? dashboard_path : dashboard_path(filter: 'inactive') %>"
+                          class="menu-item text-hover-gray-500 <%= params[:filter] == 'inactive' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                          Inactive locations
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="card-body">
-              <div style="max-height: 100%; overflow: scroll">
-                <% @locations.each do |location| %>
-                  <%= render "location_row", location: location %>
-                <% end %>
+              <div class="card-body">
+                <div style="max-height: 100%; overflow: scroll">
+                  <% @locations.each do |location| %>
+                    <%= render "location_row", location: location %>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="col-8 h-100 position-relative">
+          <div class="position-absolute top-0 bottom-0 start-0 end-0 <%= @onboard_step > 0 ? "d-none" : "" %>" data-onboard-target="map"  id="map"></div>
+        </div>
       </div>
-      <div class="col-8 h-100 position-relative">
-        <div class="position-absolute top-0 bottom-0 start-0 end-0 <%= @onboard_step > 0 ? "d-none" : "" %>" data-onboard-target="map"  id="map"></div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="container-xxl w-100 mw-100">
+      <div class="h-100">
+        <%= render partial: "create_account" %>
       </div>
     </div>
-    <% end %>
-  </div>
+  <% end %>
   <!--end::Container-->
 </div>
 <!--end::Post-->
