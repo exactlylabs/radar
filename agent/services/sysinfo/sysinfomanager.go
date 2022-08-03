@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"os/exec"
 )
 
 type SysInfoManager struct {
@@ -76,18 +77,18 @@ func (si *SysInfoManager) GetRCLocal() ([]byte, error) {
 
 // Reboot implements SystemManager
 func (*SysInfoManager) Reboot() error {
-	// out, err := exec.Command("shutdown", "-r", "0").Output()
-	// if err != nil {
-	// 	if exitErr, ok := err.(*exec.ExitError); ok {
-	// 		if exitErr.ExitCode() == 1 {
-	// 			out, err = exec.Command("sudo", "shutdown", "-r", "0").Output()
-	// 			if err == nil {
-	// 				return nil
-	// 			}
-	// 		}
-	// 	}
-	// 	return fmt.Errorf("sysInfoManager#Reboot Output: %s: %w", string(out), err)
-	// }
+	out, err := exec.Command("shutdown", "-r", "0").Output()
+	if err != nil {
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			if exitErr.ExitCode() == 1 {
+				out, err = exec.Command("sudo", "shutdown", "-r", "0").Output()
+				if err == nil {
+					return nil
+				}
+			}
+		}
+		return fmt.Errorf("sysInfoManager#Reboot Output: %s: %w", string(out), err)
+	}
 	return nil
 }
 
