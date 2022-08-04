@@ -2,7 +2,7 @@ class MeasurementsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @measurements = current_user.measurements
+    @measurements = policy_scope(Measurement)
     authorize @measurements
     respond_to do |format|
       format.csv { send_data @measurements.to_csv, filename: "measurements.csv" }
