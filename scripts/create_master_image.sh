@@ -157,7 +157,7 @@ if [[ $ENABLE_SSH -eq 1 ]]; then
     touch ${TMP_DIR}/boot/ssh
 fi
 
-# copy firstrun.sh to boot and configure cmdline.txt to run it. Additionally, add some flags for removing logs
+# copy firstrun.sh to boot and configure cmdline.txt to run it
 echo "$(echo -n $(cat ${TMP_DIR}/boot/cmdline.txt)) systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target" > ${TMP_DIR}/boot/cmdline.txt
 cp ${FILES_DIR}/firstrun.sh ${TMP_DIR}/boot/firstrun.sh
 
