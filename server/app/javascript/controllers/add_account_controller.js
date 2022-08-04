@@ -32,35 +32,23 @@ export default class extends Controller {
   selectPersonal() {
     const classList = this.personalBoxTarget.classList;
     const otherClassList = this.organizationBoxTarget.classList;
-    if (classList.contains("selected")) {
-      classList.remove("selected");
-      this.continueToNameButtonTarget.classList.add("disabled");
-      this.selectType(null);
-    } else {
-      if (otherClassList.contains("selected")) {
-        otherClassList.remove("selected");
-      }
-      classList.add("selected");
-      this.continueToNameButtonTarget.classList.remove("disabled");
-      this.selectType("personal");
+    if (otherClassList.contains("selected")) {
+      otherClassList.remove("selected");
     }
+    classList.add("selected");
+    this.continueToNameButtonTarget.classList.remove("disabled");
+    this.selectType("personal");
   }
 
   selectOrganization() {
     const classList = this.organizationBoxTarget.classList;
     const otherClassList = this.personalBoxTarget.classList;
-    if (classList.contains("selected")) {
-      classList.remove("selected");
-      this.continueToNameButtonTarget.classList.add("disabled");
-      this.selectType(null);
-    } else {
-      if (otherClassList.contains("selected")) {
-        otherClassList.remove("selected");
-      }
-      classList.add("selected");
-      this.continueToNameButtonTarget.classList.remove("disabled");
-      this.selectType("organization");
+    if (otherClassList.contains("selected")) {
+      otherClassList.remove("selected");
     }
+    classList.add("selected");
+    this.continueToNameButtonTarget.classList.remove("disabled");
+    this.selectType("organization");
   }
 
   selectType(type) {
@@ -84,6 +72,7 @@ export default class extends Controller {
     this.step1Target.style.display = "flex";
     this.step0FooterTarget.style.display = "none";
     this.step1FooterTarget.style.display = "flex";
+    this.accountNameInputTarget.focus();
     this.clearAccountName();
     if (type === "personal") {
       this.accountNameLabelTarget.innerText = "Name";

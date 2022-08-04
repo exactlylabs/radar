@@ -13,7 +13,7 @@
         <!--end::Title-->
         <!--begin::Link-->
           <div class="text-gray-400 fw-bold fs-4">New Here?
-            <a href="<%= users_register_from_invite_path(id: params[:id], first_name: params[:first_name], last_name: params[:last_name], email: params[:email]) %>" class="link-primary fw-bolder">Create an Account</a>
+            <a href="<%= users_invite_sign_up_path(token: params[:token]) %>" class="link-primary fw-bolder">Create an Account</a>
           </div>
         <!--end::Link-->
       </div>
