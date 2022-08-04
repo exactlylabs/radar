@@ -307,7 +307,9 @@ EOF
         token = request.headers["Authorization"].split(" ")
         if token.size == 2
           @user = User.where({"token": token[1]}).first
-          sign_in(@user, store: false, event: :fetch)
+          if @user
+            sign_in(@user, store: false, event: :fetch)
+          end
         end
       end
     end
