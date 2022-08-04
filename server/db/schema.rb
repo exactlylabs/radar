@@ -125,9 +125,9 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
 
   create_table "invites", force: :cascade do |t|
     t.boolean "is_active", default: false
-    t.string "user_first_name", null: false
-    t.string "user_last_name", null: false
-    t.string "user_email", null: false
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.string "email", null: false
     t.datetime "sent_at", null: false
     t.bigint "account_id", null: false
     t.bigint "user_id"
@@ -232,6 +232,7 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "invited_at"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
