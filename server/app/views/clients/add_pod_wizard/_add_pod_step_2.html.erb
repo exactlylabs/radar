@@ -26,7 +26,7 @@
       <%= form.text_field :id_final, class: "form-control form-control-solid", value: @client_id, name: "id", style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step2IdInputHidden"}%>
       <%= form.text_field :secret_final, class: "form-control form-control-solid", value: @client_secret, name: "secret", style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step2SecretInputHidden"}%>
       <!--begin::Label-->
-      <label class="required fs-6 fw-bold mb-2">Name</label>
+      <label class="fs-6 fw-bold mb-2">Name</label>
       <!--end::Label-->
       <!--begin::Input-->
       <%= form.text_field :name, class: "form-control form-control-solid" %>
@@ -34,7 +34,7 @@
       <div class="fv-plugins-message-container invalid-feedback"></div>
     </div>
 
-    <div class="fv-row mb-7 fv-plugins-icon-container">
+    <div class="fv-row mb-7 fv-plugins-icon-container" data-add-pod-target="locationWrapper">
       <label class="required fs-6 fw-bold mb-2">Location</label>
       <select class="form-select" data-controller="select2" data-select2-blanks-value="true" id="client-locations-dropdown"
       data-placeholder="Select a location" name="location_id" data-select2-id="select2-data-location_id" tabindex="-1">
@@ -63,11 +63,12 @@
       <div style="font-size: 13px; color: #b5b5c3;">Creating new location...</div>
     </div>
 
-    <a class="d-flex align-items-center fw-bold" 
+    <a class="align-items-center fw-bold"
         href="#"
-        style="color: #00a3ff; font-size: 12px"
+        style="display: flex; color: #00a3ff; font-size: 12px"
         data-bs-toggle="modal" 
-        data-bs-target="#new_location_modal">
+        data-bs-target="#new_location_modal"
+        data-add-pod-target="addNewLocationWrapper">
       Add new location
       <span class="svg-icon svg-icon-primary">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
