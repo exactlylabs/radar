@@ -230,13 +230,13 @@ EOF
       @client.update_group = ug
     end
 
-    # If it's registered with a superuser token
+    # If it's registered with a superaccount token
     # set the pod as a staging pod
-    if @user && @user.superuser?
+    if @account&.superaccount?
       @client.staging = true
-        @client.raw_secret = @secret
+      @client.raw_secret = @secret
 
-        # TODO: For future releases, it's interesting
+      # TODO: For future releases, it's interesting
       # if we could auto-claim the pod if it's already authenticated.
     end
 
@@ -303,10 +303,10 @@ EOF
     end
 
     def authenticate_token!
-      if !request.headers["Authorization"].nil?
+      if request.headers["Authorization"].present?
         token = request.headers["Authorization"].split(" ")
-        if token.size == 2
-          @user = User.where({"token": token[1]}).first
+        if token.size == 2 && token[0] == 'Token'
+          @account = Account.find_by_token(token[1])
         end
       end
     end

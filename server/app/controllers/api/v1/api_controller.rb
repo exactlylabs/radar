@@ -19,27 +19,17 @@ module Api
           head :unauthorized
           return
         end
-        authenticate_with_http_basic do |email, password|
-          user = User.find_by(email: email.downcase)
-          if user && user.valid_password?(password)
-            sign_in(:user, user)
-            @current_user = user
-          else
-            head :unauthorized
-          end
-        end
-        if @current_user.nil?
-          head :unauthorized
+        token = request.authorization
+        token_key, token_value = token.split(" ")
+        if token_key == "Token"
+          @account = Account.find_by_token(token_value)
+          head :unauthorized unless @account
         end
       end
 
-      def current_user
-        @current_user
-      end
-
-      def ensure_superuser!
-        if !@current_user.superuser?
-          render json: {error: "you must be a superuser to use this endpoint"}, status: :forbidden
+      def ensure_superaccount!
+        if !@account.superaccount?
+          render json: {error: "you must be a superaccount to use this endpoint"}, status: :forbidden
         end
       end
     end

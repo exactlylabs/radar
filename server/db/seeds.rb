@@ -14,13 +14,6 @@ UpdateGroup.where(:name => "Default Group").first_or_create do |group|
     end
 end
 
-# Generate a token to all users that doesn't have one
-User.all.each do |user|
-    if user.token.nil?
-        user.regenerate_token
-    end
-end
-
 if Rails.env.production?
     # Update US locations with missing fips codes
     Location.where("county is NOT NULL AND latitude IS NOT NULL AND longitude IS NOT NULL AND county_fips IS NULL AND state_fips IS NULL").each do |loc|

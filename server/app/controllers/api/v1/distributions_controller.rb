@@ -2,7 +2,7 @@ module Api
   module V1
     class DistributionsController < ApiController
       before_action :set_version!
-      before_action :ensure_superuser!
+      before_action :ensure_superaccount!
       
       def index
         if @version

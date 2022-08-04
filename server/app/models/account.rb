@@ -1,4 +1,5 @@
 class Account < ApplicationRecord
+  has_secure_token :token
   has_many :users_accounts
   has_many :users, through: :users_accounts
   has_many :invites

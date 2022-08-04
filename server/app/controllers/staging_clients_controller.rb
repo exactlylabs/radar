@@ -1,6 +1,6 @@
 class StagingClientsController < ApplicationController
   def index
-    if !current_user.superuser
+    if !current_account.superaccount
       head(403)
     end
     @clients = Client.where(staging: true).where_online
@@ -9,7 +9,7 @@ class StagingClientsController < ApplicationController
   # POST /staging-clients/id/publish
   # Unset the staging flag
   def publish
-    if !current_user.superuser
+    if !current_account.superaccount
       head(403)
     end
     @client = Client.find_by_unix_user(params[:id])
