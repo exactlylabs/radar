@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_29_042509) do
+ActiveRecord::Schema.define(version: 2022_08_04_222305) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,9 +20,9 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.string "name", null: false
     t.boolean "superaccount", default: false
     t.boolean "exportaccount", default: false
-    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -59,6 +59,8 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.float "longitude"
     t.float "download_avg"
     t.float "upload_avg"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "ip"
     t.string "token"
     t.string "download_id"
@@ -66,8 +68,6 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.float "latency"
     t.float "loss"
     t.datetime "processed_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "client_versions", force: :cascade do |t|
@@ -151,9 +151,9 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
+    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
-    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
@@ -229,10 +229,10 @@ ActiveRecord::Schema.define(version: 2022_07_29_042509) do
     t.bigint "account_id", null: false
     t.bigint "user_id", null: false
     t.datetime "joined_at", null: false
-    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
+    t.datetime "deleted_at"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
