@@ -210,35 +210,23 @@ export default class extends Controller {
   selectPersonal() {
     const classList = this.personalBoxTarget.classList;
     const otherClassList = this.organizationBoxTarget.classList;
-    if (classList.contains("selected")) {
-      classList.remove("selected");
-      this.continueToNameButtonTarget.classList.add("disabled");
-      this.selectType(null);
-    } else {
-      if (otherClassList.contains("selected")) {
-        otherClassList.remove("selected");
-      }
-      classList.add("selected");
-      this.continueToNameButtonTarget.classList.remove("disabled");
-      this.selectType("personal");
+    if (otherClassList.contains("selected")) {
+      otherClassList.remove("selected");
     }
+    classList.add("selected");
+    this.continueToNameButtonTarget.classList.remove("disabled");
+    this.selectType("personal");
   }
 
   selectOrganization() {
     const classList = this.organizationBoxTarget.classList;
     const otherClassList = this.personalBoxTarget.classList;
-    if (classList.contains("selected")) {
-      classList.remove("selected");
-      this.continueToNameButtonTarget.classList.add("disabled");
-      this.selectType(null);
-    } else {
-      if (otherClassList.contains("selected")) {
-        otherClassList.remove("selected");
-      }
-      classList.add("selected");
-      this.continueToNameButtonTarget.classList.remove("disabled");
-      this.selectType("organization");
+    if (otherClassList.contains("selected")) {
+      otherClassList.remove("selected");
     }
+    classList.add("selected");
+    this.continueToNameButtonTarget.classList.remove("disabled");
+    this.selectType("organization");
   }
 
   clearTypes() {
@@ -266,6 +254,7 @@ export default class extends Controller {
     this.step2WrapperTarget.style.display = "none";
     this.step3WrapperTarget.style.display = "flex";
     this.clearAccountName();
+    this.accountNameInputTarget.focus();
     if (type === "personal") {
       this.accountNameLabelTarget.innerText = "Name";
       this.accountNameInputTarget.placeholder = "E.g.: John's Home";

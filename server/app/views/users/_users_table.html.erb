@@ -3,9 +3,8 @@
   <div class="card-body pt-0 px-0">
     <!--begin::Table-->
     <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-      <div class="table-responsive">
-        <table class="table table-row-bordered align-middle fs-6 gy-5 dataTable
-                          no-footer table-rounded" id="kt_customers_table">
+      <div class="table-responsive" style="overflow: visible">
+        <table class="table table-row-bordered align-middle fs-6 gy-5 dataTable no-footer table-rounded" id="kt_customers_table">
           <!--begin::Table head-->
           <thead>
           <!--begin::Table row-->
@@ -29,12 +28,12 @@
           <!--end::Table head-->
           <!--begin::Table body-->
           <tbody class="fw-bold text-gray-600" id="users_table">
-          <% users_accounts.each_with_index do |user_account, index| %>
-            <%= render partial: "users/users_table_row_user_account", locals: { user_account: user_account, is_even: index % 2 == 0 } %>
-          <% end %>
-          <% invited_users.each_with_index do |invitee, index| %>
-            <%= render partial: "users/users_table_row_invitee", locals: { invitee: invitee, is_even: (index + users_accounts.length) % 2 == 0 } %>
-          <% end %>
+            <% users_accounts.each_with_index do |user_account, index| %>
+              <%= render partial: "users/users_table_row_user_account", locals: { user_account: user_account, is_even: index % 2 == 0 } %>
+            <% end %>
+            <% invited_users.each_with_index do |invitee, index| %>
+              <%= render partial: "users/users_table_row_invitee", locals: { invitee: invitee, is_even: (index + users_accounts.length) % 2 == 0 } %>
+            <% end %>
           </tbody>
           <!--end::Table body-->
         </table>

@@ -20,19 +20,22 @@ export default class extends Controller {
         currentAccount = cookie.split("=")[1];
       }
     });
-    if (currentAccount && currentAccount === selectedAccountId) return;
-    const token = document.getElementsByName("csrf-token")[0].content;
-    fetch(`/accounts/switch?id=${selectedAccountId}`, {
-      method: "POST",
-      headers: { "X-CSRF-Token": token },
-    }).then((res) => {
-      if (res.ok) {
-        window.location.reload();
-      } else {
-        // TODO: add Sentry logging once integrated
-        console.error(res);
-      }
-    });
+    if (currentAccount && currentAccount === selectedAccountId) {
+      window.location.href = "/dashboard";
+    } else {
+      const token = document.getElementsByName("csrf-token")[0].content;
+      fetch(`/accounts/switch?id=${selectedAccountId}`, {
+        method: "POST",
+        headers: { "X-CSRF-Token": token },
+      }).then((res) => {
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          // TODO: add Sentry logging once integrated
+          console.error(res);
+        }
+      });
+    }
   }
 
   showMoreOptionsIcon(e) {
