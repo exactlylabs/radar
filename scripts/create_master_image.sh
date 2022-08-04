@@ -11,11 +11,11 @@ fi
 
 function usage() {
 echo """
-Usage: ./create_master_image.sh [OPTIONS] <SUPERUSER_TOKEN>
+Usage: ./create_master_image.sh [OPTIONS] <SUPERACCOUNT_TOKEN>
 
 Required Arguments:
 
-  SUPERUSER_TOKEN: is a token provided to you from radar server administrators
+  SUPERACCOUNT_TOKEN: is a token provided to you from radar server administrators
 
 Optional Arguments:
 
@@ -46,7 +46,7 @@ done
 
 
 if [ -z "$1" ]; then
-    echo "Error: missing SUPERUSER_TOKEN argument"
+    echo "Error: missing SUPERACCOUNT_TOKEN argument"
     usage
     exit 1
 fi
@@ -60,7 +60,7 @@ PROJECT_DIR="opt/radar"
 BINARY_NAME="radar_agent"
 WATCHDOG_BINARY_NAME="watchdog"
 IMAGE_FILENAME="radar.img"
-SUPERUSER_TOKEN="$1"
+SUPERACCOUNT_TOKEN="$1"
 FILES_DIR=${SCRIPT_DIR}/pod_image_files
 BUILD_DIR=${SCRIPT_DIR}/build
 TMP_DIR=${BUILD_DIR}/tmp
@@ -138,8 +138,8 @@ chown -R 1000:1000 ${TMP_DIR}/home/radar
 chown -R 1000:1000 ${TMP_DIR}/$PROJECT_DIR
 mkdir -p ${TMP_DIR}/home/radar/.config/radar
 
-# Move radar config.conf file with the superuser token set
-REGISTRATION_TOKEN=$SUPERUSER_TOKEN \
+# Move radar config.conf file with the superaccount token set
+REGISTRATION_TOKEN=$SUPERACCOUNT_TOKEN \
 envsubst < ${FILES_DIR}/config.conf > ${TMP_DIR}/home/radar/.config/radar/config.conf
 chown -R 1000:1000 ${TMP_DIR}/home/radar/
 
