@@ -100,7 +100,7 @@ class ClientsController < ApplicationController
 
   def release
     respond_to do |format|
-      if @client.update(user: nil, location: nil)
+      if @client.update(user: nil, location: nil, account: nil)
         format.html { redirect_back fallback_location: root_path, notice: "Client was successfully released." }
         format.json { head :no_content }
       end
