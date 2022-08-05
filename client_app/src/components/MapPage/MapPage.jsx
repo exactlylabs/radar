@@ -16,6 +16,7 @@ import { storeRunData } from '../../utils/storage';
 import { getGeocodedAddress, sendRawData } from '../../utils/apiRequests';
 import { customMarker, mapTileAttribution, mapTileUrl, SMALL_SCREEN_MAP_HEIGHT } from '../../utils/map';
 import { RESIZING_WIDTH_PX_LIMIT } from '../../utils/screenDimensions';
+import { MyMap } from '../common/MyMap';
 
 const MapPage = ({ manualAddress, maxHeight }) => {
   const [error, setError] = useState(null);
@@ -213,6 +214,7 @@ const MapPage = ({ manualAddress, maxHeight }) => {
                   scrollWheelZoom
                   style={{ height: '100%', minWidth: 450, maxWidth: 800, margin: '20px auto' }}
                 >
+                  <MyMap />
                   <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
                   <Marker position={location} icon={customMarker} />
                 </MapContainer>
@@ -221,17 +223,18 @@ const MapPage = ({ manualAddress, maxHeight }) => {
           </Grid>
           <Grid item md={12} lg={6}>
             {!runningTest && (
-              <MyButton
-                text={
-                  <>
-                    <NetworkCheck style={{ marginRight: 3 }} />
-                    <span>Run speed test</span>
-                  </>
-                }
-                onClick={runSpeedTest}
-                disabled={runningTest}
-                style={{ width: '30%', margin: '10px auto' }}
-              />
+              <div style={{ width: 'max-content', margin: '10px auto' }}>
+                <MyButton
+                  text={
+                    <>
+                      <NetworkCheck style={{ marginRight: 3 }} />
+                      <span>Run speed test</span>
+                    </>
+                  }
+                  onClick={runSpeedTest}
+                  disabled={runningTest}
+                />
+              </div>
             )}
             {runningTest && <RunningTest downloadValue={downloadValue} uploadValue={uploadValue} progress={progress} />}
             {!runningTest && uploadValue !== null && downloadValue !== null && (
