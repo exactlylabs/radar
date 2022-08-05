@@ -1,7 +1,6 @@
 import { DEFAULT_FOOTER_BACKGROUND_COLOR, DEFAULT_FOOTER_FONT_COLOR } from '../../utils/colors';
 import anthcLogo from '../../assets/anthc-logo.png';
 import radarLogoDark from '../../assets/radar-logo-dark.png';
-import mlabLogo from '../../assets/mlab-logo.png';
 
 const footerStyle = {
   height: 173,
@@ -53,9 +52,10 @@ const leftSideBottomRowStyle = {
   color: DEFAULT_FOOTER_FONT_COLOR,
 };
 
-const anthcLogoStyle = {
+// Commented until we add the MLab logo back again
+/*const anthcLogoStyle = {
   marginRight: 48,
-};
+};*/
 
 const Footer = () => {
   return (
@@ -73,8 +73,7 @@ const Footer = () => {
           </div>
         </div>
         <div style={rightSideContainerStyle}>
-          <img src={anthcLogo} alt={'ANTHC-logo'} width={110} height={30} style={anthcLogoStyle} />
-          <img src={mlabLogo} alt={'MLAB-logo'} width={60} height={18} />
+          <img src={anthcLogo} alt={'ANTHC-logo'} width={110} height={30} />
         </div>
       </div>
     </div>
