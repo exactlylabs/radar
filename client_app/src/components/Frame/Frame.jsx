@@ -1,16 +1,28 @@
 import React from 'react';
-import { MyButton } from '../common/MyButton';
-import { STEPS } from '../../constants';
+import Header from './Header';
+import Footer from './Footer';
+import Tabs from './Tabs';
+import { DEFAULT_MAIN_SECTION_BACKGROUND_COLOR } from '../../utils/colors';
+
+const defaultMainWrapperStyle = {
+  backgroundColor: DEFAULT_MAIN_SECTION_BACKGROUND_COLOR,
+};
+
+const childrenWrapperStyle = {
+  width: '90%',
+  margin: '0 auto',
+  overflowY: 'scroll',
+};
 
 const Frame = ({ config, children, step, setStep }) => {
-  const handleBack = () => setStep(STEPS.LANDING);
-
   return (
-    <div style={{ ...config.frameStyle }}>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', margin: 10 }}>
-        {step !== 'landing' && <MyButton text={'< Back'} onClick={handleBack} style={{ marginTop: 10 }} />}
+    <div style={{ ...defaultMainWrapperStyle, ...config.frameStyle }}>
+      {!config.widgetMode && <Header setStep={setStep} />}
+      <Tabs step={step} setStep={setStep} />
+      <div style={{ ...childrenWrapperStyle, height: `calc(${config.frameStyle.height} - 70px - 173px - 53px)` }}>
+        {children}
       </div>
-      {children}
+      {!config.widgetMode && <Footer />}
     </div>
   );
 };
