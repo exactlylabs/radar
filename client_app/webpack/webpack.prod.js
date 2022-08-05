@@ -9,6 +9,7 @@ module.exports = {
     REACT_APP_ENV: JSON.stringify('production'),
     REACT_APP_API_BASE_URL: JSON.stringify('https://radar.exactlylabs.com'),
     REACT_APP_SENTRY_DSN: JSON.stringify('https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151'),
-    MAPBOX_ACCESS_TOKEN: JSON.stringify('pk.eyJ1IjoiZXVnZWRhbW0iLCJhIjoiY2w2YzlhOG42MXdxazNrbzE5MTA2cmFmbCJ9.qYBmAC0V6Z5eilJd2ND5yA')
+    MAPBOX_ACCESS_TOKEN: JSON.stringify('pk.eyJ1IjoiZXVnZWRhbW0iLCJhIjoiY2w2YzlhOG42MXdxazNrbzE5MTA2cmFmbCJ9.qYBmAC0V6Z5eilJd2ND5yA'),
+    MAPBOX_TILESET_URL: JSON.stringify(`https://api.mapbox.com/styles/v1/eugedamm/cl6gn9zaj007n15nte2uyks96/tiles/512/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZXVnZWRhbW0iLCJhIjoiY2w2YzlhOG42MXdxazNrbzE5MTA2cmFmbCJ9.qYBmAC0V6Z5eilJd2ND5yA`)
   })],
 };

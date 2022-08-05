@@ -20,9 +20,9 @@ const defaultButtonStyle = {
   cursor: 'pointer',
 };
 
-export const MyButton = ({ text, onClick, disabled, style }) => {
+export const MyButton = ({ text, onClick, disabled }) => {
   return (
-    <button style={{ ...defaultButtonStyle, ...style }} onClick={onClick} disabled={disabled}>
+    <button style={{ ...defaultButtonStyle }} onClick={onClick} disabled={disabled}>
       {text}
     </button>
   );

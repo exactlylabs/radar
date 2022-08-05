@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { MyTitle } from '../common/MyTitle';
 import { CircularProgress, Grid, Paper } from '@mui/material';
 import { MyButton } from '../common/MyButton';
-import { CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet';
+import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from 'react-leaflet';
 import { STEPS } from '../../constants';
 import SpeedResultsBox from './SpeedResultsBox';
 import { Box } from '@mui/system';
 import { DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD, SPEED_FILTERS } from '../../utils/speeds';
 import { mapTileAttribution, mapTileUrl } from '../../utils/map';
 import { getAllSpeedTests } from '../../utils/apiRequests';
+import { MyMap } from '../common/MyMap';
 
 const AllResultsPage = ({ setStep, maxHeight }) => {
   const [results, setResults] = useState(null);
@@ -75,6 +76,7 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
                 scrollWheelZoom
                 style={{ height: `calc(${maxHeight} - 170px`, margin: 'auto' }}
               >
+                <MyMap />
                 <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
                 {filteredResults.map(measurement => (
                   <CircleMarker

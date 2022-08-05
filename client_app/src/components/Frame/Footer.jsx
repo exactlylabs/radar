@@ -21,7 +21,7 @@ const leftSideContainerStyle = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
-  minWidth: 245,
+  minWidth: 300,
 };
 
 const rightSideContainerStyle = {
@@ -63,7 +63,7 @@ const Footer = () => {
       <div style={contentWrapperStyle}>
         <div style={leftSideContainerStyle}>
           <div style={leftSideTopRowStyle}>
-            <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} />
+            <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={{ marginRight: 20 }} />
             <div>Cookie Policy</div>
             <div>Privacy Policy</div>
             <div>Terms of Use</div>

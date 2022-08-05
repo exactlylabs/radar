@@ -42,8 +42,10 @@ export const LandingPage = ({ setStep }) => {
           />
         </RadioGroup>
       </FormControl>
-      <MyButton text={'Continue'} onClick={handleContinue} style={{ marginTop: 10 }} />
-      <MyButton text={'See all measurements'} onClick={handleSeeAll} style={{ marginTop: 50 }} />
+      <div style={{ marginBottom: 20 }}>
+        <MyButton text={'Continue'} onClick={handleContinue} />
+      </div>
+      <MyButton text={'See all measurements'} onClick={handleSeeAll} />
     </div>
   );
 };

@@ -36,9 +36,3 @@
     transform: rotate(360deg);
   }
 }
-
-/* Remove Ukraine flag from Leaflet attribution everywhere */
-/* Required !important because they already enforce it using it */
-.leaflet-control-attribution > a > svg {
-  display: none !important;
-}

@@ -34,12 +34,9 @@ const FormPage = ({ goToNextStep }) => {
             autoComplete={'off'}
           />
         </div>
-        <MyButton
-          style={{ width: '25%', margin: '20px auto' }}
-          text={'Submit'}
-          onClick={handleSubmit}
-          disabled={!formData.address}
-        />
+        <div style={{ width: 'max-content', margin: '20px auto' }}>
+          <MyButton text={'Submit'} onClick={handleSubmit} disabled={!formData.address} />
+        </div>
       </FormControl>
     </div>
   );
