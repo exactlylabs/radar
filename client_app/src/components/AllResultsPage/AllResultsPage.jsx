@@ -56,8 +56,7 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
   const goToMap = () => setStep(STEPS.MAP);
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      <MyTitle text={'All results'} />
+    <div style={{ textAlign: 'center', paddingTop: 10, paddingBottom: 10 }}>
       {loading && <CircularProgress size={25} />}
       {!loading && error && <p>Error fetching results! Try again later.</p>}
       {!loading && results !== null && results.length === 0 && (
@@ -70,7 +69,12 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
         <Grid container spacing={2}>
           <Grid item xs={12} md={10}>
             <Box component={Paper} style={{ padding: 10 }}>
-              <MapContainer center={[0, 0]} zoom={2} scrollWheelZoom style={{ height: maxHeight - 150, margin: 'auto' }}>
+              <MapContainer
+                center={[0, 0]}
+                zoom={2}
+                scrollWheelZoom
+                style={{ height: `calc(${maxHeight} - 170px`, margin: 'auto' }}
+              >
                 <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
                 {filteredResults.map(measurement => (
                   <CircleMarker
@@ -80,8 +84,8 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
                     pathOptions={getColor(measurement)}
                   >
                     <Popup>
-                      <p>{`Upload: ${measurement.upload_avg.toFixed(3)} Mbps`}</p>
-                      <p>{`Download: ${measurement.download_avg.toFixed(3)} Mbps`}</p>
+                      <p>{`Upload: ${measurement.upload_avg?.toFixed(3)} Mbps`}</p>
+                      <p>{`Download: ${measurement.download_avg?.toFixed(3)} Mbps`}</p>
                       <p>{`Loss: ${measurement.loss}%`}</p>
                     </Popup>
                   </CircleMarker>

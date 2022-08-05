@@ -32,7 +32,7 @@ const MapPage = ({ manualAddress, maxHeight }) => {
   const [loss, setLoss] = useState(0);
   const [latency, setLatency] = useState(0);
   const [startTimestamp, setStartTimestamp] = useState('');
-  const [mapScreenHeight, setMapScreenHeight] = useState(maxHeight - 200);
+  const [mapScreenHeight, setMapScreenHeight] = useState(`calc(${maxHeight} - 200px)`);
 
   let counter = 0;
   let observer;
@@ -68,7 +68,7 @@ const MapPage = ({ manualAddress, maxHeight }) => {
   }, [loading, runningTest, startTimestamp]);
 
   const updateMapDimensions = () => {
-    const height = window.innerWidth >= RESIZING_WIDTH_PX_LIMIT ? maxHeight - 200 : SMALL_SCREEN_MAP_HEIGHT;
+    const height = window.innerWidth >= RESIZING_WIDTH_PX_LIMIT ? `calc(${maxHeight} - 200px)` : SMALL_SCREEN_MAP_HEIGHT;
     setMapScreenHeight(height);
   };
 
