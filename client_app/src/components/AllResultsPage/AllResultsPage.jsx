@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { MyTitle } from '../common/MyTitle';
 import { CircularProgress, Grid, Paper } from '@mui/material';
 import { MyButton } from '../common/MyButton';
-import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from 'react-leaflet';
+import { CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet';
 import { STEPS } from '../../constants';
 import SpeedResultsBox from './SpeedResultsBox';
 import { Box } from '@mui/system';
@@ -86,9 +85,21 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
                     pathOptions={getColor(measurement)}
                   >
                     <Popup>
-                      <p>{`Upload: ${measurement.upload_avg?.toFixed(3)} Mbps`}</p>
-                      <p>{`Download: ${measurement.download_avg?.toFixed(3)} Mbps`}</p>
-                      <p>{`Loss: ${measurement.loss}%`}</p>
+                      {measurement.upload_avg !== null && measurement.upload_avg !== undefined ? (
+                        <p>{`Upload: ${measurement.upload_avg.toFixed(3)} Mbps`}</p>
+                      ) : (
+                        <p>Upload: N/A</p>
+                      )}
+                      {measurement.download_avg !== null && measurement.download_avg !== undefined ? (
+                        <p>{`Download: ${measurement.download_avg.toFixed(3)} Mbps`}</p>
+                      ) : (
+                        <p>Download: N/A</p>
+                      )}
+                      {measurement.loss !== null && measurement.loss !== undefined ? (
+                        <p>{`Loss: ${measurement.loss}%`}</p>
+                      ) : (
+                        <p>Loss: N/A</p>
+                      )}
                     </Popup>
                   </CircleMarker>
                 ))}
