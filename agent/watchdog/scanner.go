@@ -39,6 +39,8 @@ func StartScanLoop(ctx context.Context, sysEditor SystemManager) {
 	}
 }
 
+var previousAuthLogTime *time.Time
+
 // ScanSystem looks through the system
 // verifying and modifying files based on the expected state.
 // It returns True if any file was changed
@@ -88,6 +90,16 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 		return false, err
 	}
 	hasChanges |= changed
+
+	authLog, err := sysManager.GetAuthLogFile()
+	if err != nil {
+		return false, fmt.Errorf("watchdog.ScanSystem GetAuthLogFile: %w", err)
+	}
+	t, err := scanAuthLog(c, authLog, previousAuthLogTime)
+	if err != nil {
+		return false, err
+	}
+	previousAuthLogTime = &t
 
 	return hasChanges > 0, nil
 }

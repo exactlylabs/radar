@@ -8,6 +8,8 @@ import (
 	"github.com/exactlylabs/radar/agent/watchdog/mocks"
 )
 
+//go:generate docker run -v "$PWD/..:/src" -w /src vektra/mockery -r --name SystemManager --output ./watchdog/mocks
+
 func mustReadFile(filePath string) []byte {
 	val, err := OSFS.ReadFile(filePath)
 	if err != nil {
@@ -23,6 +25,7 @@ func TestScanSystemNoChange(t *testing.T) {
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
+	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -41,6 +44,7 @@ func TestScanSystemHostDiffers(t *testing.T) {
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
+	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	m.On("SetHostname", "1234").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -60,6 +64,7 @@ func TestScanSystemRCLocalDiffers(t *testing.T) {
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
+	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	m.On("SetRCLocal", mustReadFile("osfiles/etc/rc.local")).Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -79,6 +84,7 @@ func TestScanSystemBootConfigDiffers(t *testing.T) {
 	m.On("GetBootConfig").Return([]byte{1, 2, 3}, nil)
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
+	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	m.On("SetBootConfig", mustReadFile("osfiles/boot/config.txt")).Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -98,6 +104,7 @@ func TestScanSystemCMDLineDiffers(t *testing.T) {
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
 	m.On("GetCMDLine").Return([]byte{}, nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
+	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	m.On("SetCMDLine", []byte(strings.Join(cmdLineCommands, " "))).Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -117,6 +124,7 @@ func TestScanSystemLogindDiffers(t *testing.T) {
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return([]byte("test"), nil)
+	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	m.On("SetLogindConf", mustReadFile("osfiles/etc/systemd/logind.conf")).Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -136,6 +144,7 @@ func TestScanSystemMultipleChanged(t *testing.T) {
 	m.On("GetBootConfig").Return([]byte("test"), nil)
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
+	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	m.On("SetHostname", "1234").Return(nil)
 	m.On("SetBootConfig", mustReadFile("osfiles/boot/config.txt")).Return(nil)
 	c := &config.Config{}

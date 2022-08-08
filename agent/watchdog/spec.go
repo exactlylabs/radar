@@ -29,6 +29,8 @@ type SystemManager interface {
 	Interfaces() ([]sysinfo.NetInterface, error)
 	// Reboot makes the system reboot
 	Reboot() error
+	// GetAuthFile returns a log of authentications in the system
+	GetAuthLogFile() ([]byte, error)
 }
 
 type BinaryUpdate struct {
