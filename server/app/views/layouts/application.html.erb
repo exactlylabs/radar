@@ -33,7 +33,7 @@
                data-kt-drawer-direction="start"
                data-kt-drawer-toggle="#kt_aside_toggle"
                data-controller="drawer accounts-drawer-menu"
-               data-action="mouseenter->accounts-drawer-menu#handleMouseEnter mouseleave->accounts-drawer-menu#handleMouseLeave"
+               data-action="mouseenter->accounts-drawer-menu#handleMouseEnter mouseleave->accounts-drawer-menu#closeMenu"
           >
             <!--begin::Brand-->
             <div class="aside-logo flex-column-auto pt-9 pb-5" id="kt_aside_logo">
@@ -53,7 +53,6 @@
                    id="kt_aside_menu"
                    data-kt-menu="true"
                    data-controller="menu"
-                   data-action="mouseleave->accounts-drawer-menu#closeMenu"
               >
                 <div class="menu-fit hover-scroll-y me-lg-n5 pe-lg-5"
                      id="kt_aside_menu_wrapper"
