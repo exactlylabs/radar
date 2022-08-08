@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     put 'users/edit_password' => 'users/registrations#update_password', as: :update_authed_user_password
 
     patch 'users/edit_name' => 'users/registrations#update_name', as: :update_authed_user_name
+    patch 'users/edit_avatar' => 'users/registrations#update_avatar', as: :update_authed_avatar
 
     get 'users/invite_sign_up' => 'users/registrations#render_invite_sign_up'
     post 'users/register_from_invite' => 'users/registrations#create_from_invite'
