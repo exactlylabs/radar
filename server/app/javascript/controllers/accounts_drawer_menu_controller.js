@@ -7,6 +7,7 @@ export default class extends Controller {
     "rightAngle",
     "smallDivider",
     "fullSizeDivider",
+    "accountsCollapse",
   ];
 
   handleMouseEnter() {
@@ -15,26 +16,31 @@ export default class extends Controller {
   }
 
   handleMouseLeave() {
-    if (
-      this.hasAccountsMenuButtonTarget &&
-      this.accountsMenuButtonTarget.classList.contains("accounts-collapse-open")
-    ) {
-      this.accountsMenuButtonTarget.click();
+    const collapsableAccountsClassList = this.accountsCollapseTarget.classList;
+    if (collapsableAccountsClassList.contains("show")) {
+      this.accountsCollapseTarget.classList.remove("show");
     }
     this.smallDividerTarget.style.display = "block";
     this.fullSizeDividerTarget.style.display = "none";
   }
 
   toggleMenu() {
-    this.accountsMenuButtonTarget.classList.toggle("accounts-collapse-open");
-    if (
-      this.accountsMenuButtonTarget.classList.contains("accounts-collapse-open")
-    ) {
-      this.downAngleTarget.style.display = "block";
-      this.rightAngleTarget.style.display = "none";
-    } else {
+    const accountsButtonClassList = this.accountsMenuButtonTarget.classList;
+    if (accountsButtonClassList.contains("accounts-collapse-open")) {
+      accountsButtonClassList.remove("accounts-collapse-open");
       this.downAngleTarget.style.display = "none";
       this.rightAngleTarget.style.display = "block";
+    } else {
+      accountsButtonClassList.add("accounts-collapse-open");
+      this.downAngleTarget.style.display = "block";
+      this.rightAngleTarget.style.display = "none";
     }
+  }
+
+  closeMenu() {
+    this.accountsMenuButtonTarget.classList.remove("accounts-collapse-open");
+    this.downAngleTarget.style.display = "none";
+    this.rightAngleTarget.style.display = "block";
+    this.accountsCollapseTarget.classList.remove("show");
   }
 }

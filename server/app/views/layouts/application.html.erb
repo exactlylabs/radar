@@ -49,7 +49,12 @@
             <div class="aside-menu flex-column-fluid">
               <!--begin::Aside Menu-->
               <!--begin::Menu-->
-              <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-bold fs-5 my-5 mt-lg-2 mb-lg-0" id="kt_aside_menu" data-kt-menu="true" data-controller="menu">
+              <div class="menu menu-column menu-fit menu-rounded menu-title-gray-600 menu-icon-gray-400 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-bold fs-5 my-5 mt-lg-2 mb-lg-0"
+                   id="kt_aside_menu"
+                   data-kt-menu="true"
+                   data-controller="menu"
+                   data-action="mouseleave->accounts-drawer-menu#closeMenu"
+              >
                 <div class="menu-fit hover-scroll-y me-lg-n5 pe-lg-5"
                      id="kt_aside_menu_wrapper"
                      data-kt-scroll="true"
@@ -80,26 +85,26 @@
                       <i class="fas fa-angle-right" style="position: absolute; right: 38px;" data-accounts-drawer-menu-target="rightAngle"></i>
                       <i class="fas fa-angle-down" style="position: absolute; right: 38px; display: none; color: #00a3ff;" data-accounts-drawer-menu-target="downAngle"></i>
                     </button>
-                    <div id="accounts-collapse" class="collapse">
-                    <% current_user.accounts.not_deleted.order("LOWER(name)").each do |account| %>
-                      <%= render partial: "accounts/sidebar_account_item", locals: { account: account } %>
-                    <% end %>
-                    <button type="button"
-                            class="sidebar--account-add-button"
-                            data-bs-toggle="modal"
-                            data-bs-target="#add_account_wizard"
-                    >
-                      <div class="sidebar--add-account-row text-primary d-flex flex-row">
-                        <span class="svg-icon svg-icon-primary svg-icon-1x sidebar--account-add-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="black"/>
-                            <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="black"/>
-                          </svg>
-                        </span>
-                        <p>Add new account</p>
-                      </div>
-                    </button>
-                  </div>
+                    <div id="accounts-collapse" class="collapse" data-accounts-drawer-menu-target="accountsCollapse">
+                      <% current_user.accounts.not_deleted.order("LOWER(name)").each do |account| %>
+                        <%= render partial: "accounts/sidebar_account_item", locals: { account: account } %>
+                      <% end %>
+                      <button type="button"
+                              class="sidebar--account-add-button"
+                              data-bs-toggle="modal"
+                              data-bs-target="#add_account_wizard"
+                      >
+                        <div class="sidebar--add-account-row text-primary d-flex flex-row">
+                          <span class="svg-icon svg-icon-primary svg-icon-1x sidebar--account-add-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                              <rect opacity="0.5" x="11.364" y="20.364" width="16" height="2" rx="1" transform="rotate(-90 11.364 20.364)" fill="black"/>
+                              <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="black"/>
+                            </svg>
+                          </span>
+                          <p>Add new account</p>
+                        </div>
+                      </button>
+                    </div>
                   <% else %>
                     <button class="btn d-flex flex-row justify-content-center align-items-center"
                             type="button"
