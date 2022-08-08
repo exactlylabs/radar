@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import handleError from "./error_handler_controller";
 
 export default class extends Controller {
   static targets = [
@@ -110,8 +111,6 @@ export default class extends Controller {
     window.location.href = "/dashboard";
   }
 
-  renderErrorModal() {}
-
   submitNewAccount() {
     const token = document.getElementsByName("csrf-token")[0].content;
     const accountName = this.accountNameInputTarget.value;
@@ -128,9 +127,11 @@ export default class extends Controller {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "ok") this.closeModalAndSetNewCookie(res);
-        else this.renderErrorModal();
+        else throw new Error(res);
       })
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        handleError(err, this.identifier);
+      })
       .finally(() => {
         this.finishButtonTarget.style.display = "block";
         this.finishButtonLoadingTarget.style.display = "none";

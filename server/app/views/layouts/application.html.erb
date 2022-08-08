@@ -16,7 +16,16 @@
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled aside-fixed aside-default-enabled" data-kt-aside-minimize="on">
+  <body class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled aside-fixed aside-default-enabled"
+        data-kt-aside-minimize="on">
+    <% if user_signed_in?  %>
+      <div hidden="true"
+           id="user_id_hidden"
+           data-id="<%= current_user.id %>"
+           data-email="<%= current_user.email %>"
+           data-controller="sentry-initializer"
+      ></div>
+    <% end %>
     <% if content_for?(:content) %>
       <%= yield(:content) %>
     <% elsif user_signed_in? %>

@@ -1,4 +1,5 @@
 import { add, Controller } from "@hotwired/stimulus";
+import handleError from "./error_handler_controller";
 
 export default class extends Controller {
   static targets = [
@@ -27,8 +28,7 @@ export default class extends Controller {
           this.geoIconTarget.classList.remove("d-none");
         })
         .catch((err) => {
-          // TODO: Integrate Sentry!
-          console.error(err);
+          handleError(err, this.identifier);
         });
     } else {
       this.mapTarget.setAttribute(
@@ -56,8 +56,7 @@ export default class extends Controller {
           .then((response) => response.json())
           .then((data) => (that.addressTarget.value = `${data[1]}, ${data[0]}`))
           .catch((err) => {
-            // TODO: Integrate Sentry reporting!
-            console.error(err);
+            handleError(err, this.identifier);
           })
           .finally(() => {
             this.spinnerTarget.classList.add("d-none");
@@ -116,8 +115,7 @@ export default class extends Controller {
             this.longitudeTarget.value = data[1];
           })
           .catch((err) => {
-            // TODO: Integrate Sentry reporting!
-            console.error(err);
+            handleError(err, this.identifier);
           });
       }.bind(this),
       1000

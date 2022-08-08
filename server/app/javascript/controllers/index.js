@@ -70,6 +70,9 @@ application.register("sign-in", SignInController);
 import AccountsDrawerMenuController from "./accounts_drawer_menu_controller.js";
 application.register("accounts-drawer-menu", AccountsDrawerMenuController);
 
+import SentryInitializerController from "./sentry_initializer_controller.js";
+application.register("sentry-initializer", SentryInitializerController);
+
 import EditProfilePictureController from "./edit_profile_picture_controller";
 application.register("edit-profile-picture", EditProfilePictureController);
 
