@@ -15,15 +15,6 @@ export default class extends Controller {
     this.fullSizeDividerTarget.style.display = "block";
   }
 
-  handleMouseLeave() {
-    const collapsableAccountsClassList = this.accountsCollapseTarget.classList;
-    if (collapsableAccountsClassList.contains("show")) {
-      this.accountsCollapseTarget.classList.remove("show");
-    }
-    this.smallDividerTarget.style.display = "block";
-    this.fullSizeDividerTarget.style.display = "none";
-  }
-
   toggleMenu() {
     const accountsButtonClassList = this.accountsMenuButtonTarget.classList;
     if (accountsButtonClassList.contains("accounts-collapse-open")) {
@@ -42,5 +33,7 @@ export default class extends Controller {
     this.downAngleTarget.style.display = "none";
     this.rightAngleTarget.style.display = "block";
     this.accountsCollapseTarget.classList.remove("show");
+    this.smallDividerTarget.style.display = "block";
+    this.fullSizeDividerTarget.style.display = "none";
   }
 }
