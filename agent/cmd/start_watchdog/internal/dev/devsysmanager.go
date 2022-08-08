@@ -14,6 +14,7 @@ type devSysManager struct {
 	LogindConf  []byte
 	RCLocal     []byte
 	Interfaces_ []sysinfo.NetInterface
+	AuthLogFile []byte
 }
 
 func NewDevSysManager() watchdog.SystemManager {
@@ -83,4 +84,8 @@ func (dm *devSysManager) SetRCLocal(data []byte) error {
 
 func (dm *devSysManager) Interfaces() ([]sysinfo.NetInterface, error) {
 	return dm.Interfaces_, nil
+}
+
+func (dm *devSysManager) GetAuthLogFile() ([]byte, error) {
+	return dm.AuthLogFile, nil
 }
