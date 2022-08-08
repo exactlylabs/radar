@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/exactlylabs/radar/agent/config"
+	"github.com/exactlylabs/radar/agent/services/tracing"
 )
 
 var cmdLineCommands = []string{
@@ -95,11 +96,24 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("watchdog.ScanSystem GetAuthLogFile: %w", err)
 	}
-	t, err := scanAuthLog(c, authLog, previousAuthLogTime)
+	loginEvents, err := scanAuthLog(c, authLog, previousAuthLogTime)
 	if err != nil {
 		return false, err
 	}
-	previousAuthLogTime = &t
+	for _, evt := range loginEvents {
+		if previousAuthLogTime == nil || previousAuthLogTime.Before(evt.Time) {
+			previousAuthLogTime = &evt.Time
+		}
+		log.Printf("New Login Detected at %v, notifying through tracing\n", evt.Time)
+		tracing.NotifyError(
+			fmt.Errorf("new Login Detected in the Pod"),
+			map[string]interface{}{
+				"User":      evt.User,
+				"Time":      evt.Time,
+				"Unix User": c.ClientId,
+			},
+		)
+	}
 
 	return hasChanges > 0, nil
 }
