@@ -4,17 +4,20 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"log"
 	"regexp"
 	"strings"
 	"time"
 
 	"github.com/exactlylabs/radar/agent/config"
-	"github.com/exactlylabs/radar/agent/services/tracing"
 )
 
 var connectionRegexp = regexp.MustCompile(`^(?P<month>\w+)\s+(?P<day>\d+)\s+(?P<time>[\d:]+).*?systemd-logind.*?user\s+(?P<user>\w+)`)
 var datesRegexp = regexp.MustCompile(`^(?P<month>\w+)\s+(?P<day>\d+)\s+(?P<time>[\d:]+)`)
+
+type LoginEvent struct {
+	Time time.Time
+	User string
+}
 
 func parseDateFromAuthLog(month, day, t string) (time.Time, error) {
 	d := fmt.Sprintf("%d %s %s %s", time.Now().Year(), month, day, t)
@@ -28,10 +31,12 @@ func parseDateFromAuthLog(month, day, t string) (time.Time, error) {
 	return matchTime, nil
 }
 
-func scanAuthLog(c *config.Config, authLog []byte, lastTime *time.Time) (time.Time, error) {
+func scanAuthLog(c *config.Config, authLog []byte, lastTime *time.Time) ([]LoginEvent, error) {
 	scanner := bufio.NewScanner(bytes.NewBuffer(authLog))
 	var t time.Time
 	var err error
+
+	loginEvents := make([]LoginEvent, 0)
 	for scanner.Scan() {
 		line := scanner.Bytes()
 		text := strings.Replace(string(line), "\x00", "", -1)
@@ -39,35 +44,29 @@ func scanAuthLog(c *config.Config, authLog []byte, lastTime *time.Time) (time.Ti
 		if len(match) == 5 {
 			t, err = parseDateFromAuthLog(match[1], match[2], match[3])
 			if err != nil {
-				return t, err
+				return nil, err
 			}
 
 			if lastTime == nil || t.Equal(*lastTime) || t.Before(*lastTime) {
 				continue
 			}
-			log.Printf("New Login Detected at %v, notifying through tracing\n", t)
-			tracing.NotifyError(
-				fmt.Errorf("new Login Detected in the Pod"),
-				map[string]interface{}{
-					"User":      match[4],
-					"Time":      t,
-					"Unix User": c.ClientId,
-				},
-			)
+			loginEvents = append(loginEvents, LoginEvent{
+				User: match[4], Time: t,
+			})
 		} else {
 			match = datesRegexp.FindStringSubmatch(text)
 			if len(match) == 4 {
 				t, err = parseDateFromAuthLog(match[1], match[2], match[3])
 				if err != nil {
-					return t, err
+					return nil, err
 				}
 				if lastTime == nil || t.Equal(*lastTime) || t.Before(*lastTime) {
 					continue
 				}
 			} else {
-				return t, fmt.Errorf("watchdog.scanAuthLog no matches for '%v'. Found %v", text, match)
+				return nil, fmt.Errorf("watchdog.scanAuthLog no matches for '%v'. Found %v", text, match)
 			}
 		}
 	}
-	return t, nil
+	return loginEvents, nil
 }
