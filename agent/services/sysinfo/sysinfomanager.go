@@ -139,3 +139,7 @@ func (si *SysInfoManager) Interfaces() ([]NetInterface, error) {
 	}
 	return netInterfaces, nil
 }
+
+func (si SysInfoManager) GetAuthLogFile() ([]byte, error) {
+	return si.readFile("/var/log/auth.log")
+}
