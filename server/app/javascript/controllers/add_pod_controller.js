@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import handleError from "./error_handler_controller";
 
 const POD_ID_LENGTH = 12;
 const POD_SECRET_LENGTH = 11;
@@ -191,9 +192,8 @@ export default class extends Controller {
         this.gotoLocationModal();
       })
       .catch((err) => {
-        // TODO: Integrate Sentry!
         this.goToErrorModal();
-        console.error(err);
+        handleError(err, this.identifier);
       });
   }
 }

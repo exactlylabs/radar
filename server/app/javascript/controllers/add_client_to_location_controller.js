@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import handleError from "./error_handler_controller";
 
 export default class extends Controller {
   static targets = [
@@ -95,6 +96,7 @@ export default class extends Controller {
     const formData = new FormData();
     formData.append("client[name]", clientName);
     formData.append("location_id", locationId);
+    const token = document.getElementsByName("csrf-token")[0].content;
     fetch(`/clients/${clientId}`, {
       method: "PUT",
       headers: { "X-CSRF-Token": token },
@@ -102,7 +104,7 @@ export default class extends Controller {
     })
       .then((res) => {
         if (res.status.toString().startsWith("4")) {
-          console.error(res);
+          handleError(res, this.identifier);
           return;
         }
         // force redirect to locations/:id/clients to see
@@ -114,8 +116,7 @@ export default class extends Controller {
         }
       })
       .catch((err) => {
-        // TODO: integrate Sentry!
-        console.error(err);
+        handleError(err, this.identifier);
       });
   }
 
