@@ -69,3 +69,6 @@ application.register("sign-in", SignInController);
 
 import AccountsDrawerMenuController from "./accounts_drawer_menu_controller.js";
 application.register("accounts-drawer-menu", AccountsDrawerMenuController);
+
+import EditProfilePictureController from "./edit_profile_picture_controller";
+application.register("edit-profile-picture", EditProfilePictureController);

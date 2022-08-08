@@ -122,6 +122,29 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  def update_avatar
+    # Request might have either:
+    # 1. { authenticity_token => XXX, user => { avatar: XXX } }
+    # 2. { authenticity_token => XXX }
+    # So checking if user is present in params, will allow us
+    # to retrieve the avatar from it. This should be safe as this
+    # endpoint is only called in an environment of avatar update.
+    if params[:user]
+      avatar = params[:user][:avatar]
+    else
+      avatar = nil
+    end
+    respond_to do |format|
+      if current_user.update(avatar: avatar)
+        format.html { redirect_back fallback_location: root_path, notice: "User avatar was successfully updated." }
+        format.json { render :edit, status: :ok }
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: current_user.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   def edit_password
     @resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
     edit

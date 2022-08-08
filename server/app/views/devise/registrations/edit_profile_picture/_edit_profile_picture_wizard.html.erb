@@ -1,0 +1,82 @@
+<div class="modal-dialog"
+     style="width: max-content; max-width: none; min-width: 500px;"
+     data-controller="edit-profile-picture"
+>
+  <div class="modal-content" style="width: 100%">
+
+    <!-- data-turbo="false" is needed due to a turbo-links issue when updating the user's avatar -->
+    <!-- Reference: https://turbo.hotwired.dev/handbook/drive#disabling-turbo-drive-on-specific-links-or-forms -->
+    <%= form_for current_user,
+                 url: update_authed_avatar_path,
+                 data: { turbo: "false" },
+                 novalidate: "novalidate" do |f| %>
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-size: 20px; color: #191c31;">Change profile picture</h5>
+
+        <!--begin::Close-->
+        <div class="btn btn-sm btn-icon btn-active-color-primary"
+             data-bs-dismiss="modal"
+             data-action="click->edit-profile-picture#clearUnsaved"
+        >
+          <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+          <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
+                  <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
+                  <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
+              </svg>
+          </span>
+          <!--end::Svg Icon-->
+        </div>
+        <!--end::Close-->
+      </div>
+
+      <div class="modal-body" style="width: 100%; padding-left: 60px; padding-right: 60px">
+        <div class="d-flex flex-column align-items-center justify-content-center text-center">
+          <!--begin::Title-->
+          <div class="text-dark fw-bolder" style="font-size: 18px; margin-bottom: 25px">Upload a picture.</div>
+          <%= f.file_field "avatar", data: { action: "input->edit-profile-picture#handleFileUpload", "edit-profile-picture-target" => "userAvatarInput" }, style: "display: none" %>
+          <div class="sign-up--custom-input d-flex justify-content-center align-items-center"
+               style="width: 160px; height: 160px; border: dashed 1px #00a3ff; background-color: #f1faff; border-radius: 12px; margin-bottom: 20px"
+               data-action="click->edit-profile-picture#handleFileZoneClicked"
+               data-edit-profile-picture-target="dropzone"
+          >
+            <img src="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_limit: [158, 158])) : nil %>"
+                 width="158"
+                 height="158"
+                 id="edit-profile-picture-avatar"
+                 data-edit-profile-picture-target="avatarPreview"
+                 style="display: <%= current_user.avatar.attached? ? 'block' : 'none' %>; margin: auto; border-radius: inherit"
+            />
+            <span class="svg-icon svg-icon-primary svg-icon-2hx"
+                  data-edit-profile-picture-target="plusIcon"
+                  style="display: <%= current_user.avatar.attached? ? 'none' : 'block'%>">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 13H3C2.4 13 2 12.6 2 12C2 11.4 2.4 11 3 11H21C21.6 11 22 11.4 22 12C22 12.6 21.6 13 21 13Z" fill="black"/>
+                  <path d="M12 22C11.4 22 11 21.6 11 21V3C11 2.4 11.4 2 12 2C12.6 2 13 2.4 13 3V21C13 21.6 12.6 22 12 22Z" fill="black"/>
+                </svg>
+            </span>
+          </div>
+
+          <div class="d-flex flex-row justify-content-between" style="width: max-content;">
+            <button type="button"
+                    class="btn btn-light"
+                    data-action="click->edit-profile-picture#handleFileZoneClicked"
+            >Upload picture</button>
+            <button type="button"
+                    class="btn btn-light-danger ms-5"
+                    style="display: <%= current_user.avatar.attached? ? 'block' : 'none' %>"
+                    data-action="click->edit-profile-picture#deleteCurrentPicture"
+                    data-edit-profile-picture-target="deleteButton"
+            >Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer flex-row justify-content-end">
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+
+    <% end %>
+  </div>
+</div>

@@ -118,15 +118,49 @@
           <!--begin::Card header-->
           <!--begin::Content-->
           <div id="kt_account_basic_info" class="collapse show">
+            <!--begin::Card body-->
             <!--begin::Form-->
             <%= form_for current_user,
                          url: update_authed_user_name_path,
                          id: "kt_account_basic_info_form",
                          class: "form fv-plugins-bootstrap5 fv-plugins-framework",
                          novalidate: "novalidate" do |f| %>
-            <!--form id="" class="" novalidate="novalidate"-->
-              <!--begin::Card body-->
               <div class="card-body border-top p-9">
+                <div class="row mb-6">
+                  <label class="col-lg-4 col-form-label fw-bold fs-6">Profile picture</label>
+                  <div class="col-lg-8">
+                    <div class="row">
+                      <div class="col-lg-6 fv-row fv-plugins-icon-container">
+                        <div class="sign-up--custom-input d-flex justify-content-center align-items-center"
+                             style="width: 120px; height: 120px; border: dashed 1px #00a3ff; background-color: #f1faff; border-radius: 12px; margin-bottom: 20px"
+                             data-bs-toggle="modal"
+                             data-bs-target="#edit_profile_picture_wizard"
+                        >
+                          <img src="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_limit: [118, 118])) : nil %>"
+                               width="118"
+                               height="118"
+                               style="display: <%= current_user.avatar.attached? ? 'block' : 'none'%>; margin: auto; border-radius: inherit"
+                            />
+                          <span class="svg-icon svg-icon-primary svg-icon-2hx" style="display: <%= current_user.avatar.attached? ? 'none' : 'block'%>">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                              <path d="M21 13H3C2.4 13 2 12.6 2 12C2 11.4 2.4 11 3 11H21C21.6 11 22 11.4 22 12C22 12.6 21.6 13 21 13Z" fill="black"/>
+                              <path d="M12 22C11.4 22 11 21.6 11 21V3C11 2.4 11.4 2 12 2C12.6 2 13 2.4 13 3V21C13 21.6 12.6 22 12 22Z" fill="black"/>
+                            </svg>
+                          </span>
+                        </div>
+                        <% if current_user.avatar.attached? %>
+                          <div class="d-flex justify-content-center align-items-center"
+                               style="cursor: pointer; border-radius: 6px; width: 28px; height: 28px; position: relative; bottom: 37px; right: -85px; background-color: white;  box-shadow: 0 0 10px 0 rgba(74, 80, 102, 0.14);"
+                               data-bs-toggle="modal"
+                               data-bs-target="#edit_profile_picture_wizard"
+                          >
+                            <%= image_tag "edit.png", width: 12, height: 12 %>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <!--begin::Input group-->
                 <div class="row mb-6">
                   <!--begin::Label-->
@@ -148,7 +182,7 @@
                       <div class="col-lg-6 fv-row fv-plugins-icon-container">
                         <%= f.text_field "last_name", class: "form-control form-control-lg form-control-solid mb-3 mb-lg-0", placeholder: "Last name" %>
                       <% if current_user.errors[:last_name] %>
-                      <div class="fv-plugins-message-container invalid-feedback"><%= current_user.errors[:last_name].join(", ") %></div>
+                        <div class="fv-plugins-message-container invalid-feedback"><%= current_user.errors[:last_name].join(", ") %></div>
                       <% end %>
                       </div>
                       <!--end::Col-->
@@ -166,7 +200,7 @@
                 <button type="submit" class="btn btn-primary" id="kt_account_basic_info_submit">Save Changes</button>
               </div>
               <!--end::Actions-->
-            <input type="hidden"><div></div>
+              <input type="hidden"/>
             <% end %>
             <!--/form-->
             <!--end::Form-->
@@ -179,4 +213,8 @@
     </div>
   </div>
   <!--end::Container-->
+</div>
+
+<div class="modal fade" tabindex="-1" id="edit_profile_picture_wizard">
+  <%= render partial: "devise/registrations/edit_profile_picture/edit_profile_picture_wizard" %>
 </div>
