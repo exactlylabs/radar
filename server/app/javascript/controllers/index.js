@@ -72,3 +72,6 @@ application.register("accounts-drawer-menu", AccountsDrawerMenuController);
 
 import EditProfilePictureController from "./edit_profile_picture_controller";
 application.register("edit-profile-picture", EditProfilePictureController);
+
+import PasswordRevealController from "./password_reveal_controller.js";
+application.register("password-reveal", PasswordRevealController);
