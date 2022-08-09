@@ -65,7 +65,7 @@
   </div>
   <!--end::Input group-->
   <!--begin::Input group-->
-  <div class="mb-10 fv-row fv-plugins-icon-container" data-kt-password-meter="true" data-controller="password">
+  <div class="mb-10 fv-row fv-plugins-icon-container" data-kt-password-meter="true">
     <!--begin::Wrapper-->
     <div class="mb-1">
       <!--begin::Label-->
@@ -81,11 +81,13 @@
                class="form-control form-control-lg form-control-solid"
                data-action="input->registration#handleInputChange"
                data-registration-target="passwordInput"
+               data-password-reveal-target="passwordInput"
           />
-        <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2" data-kt-password-meter-control="visibility">
-              <i class="bi bi-eye-slash fs-2"></i>
-              <i class="bi bi-eye fs-2 d-none"></i>
-            </span>
+        <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
+              data-action="click->password-reveal#toggleVisibility">
+          <i data-password-reveal-target="eyeSlashIcon" class="bi bi-eye-slash fs-2"></i>
+          <i data-password-reveal-target="eyeIcon" class="bi bi-eye fs-2 d-none"></i>
+        </span>
       </div>
       <!--end::Input wrapper-->
       <!--begin::Meter-->
@@ -111,14 +113,22 @@
   <!--begin::Input group-->
   <div class="fv-row mb-5 fv-plugins-icon-container">
     <label class="form-label fw-bolder text-dark fs-6 required">Confirm Password</label>
-    <input type="password"
-           id="password_confirmation"
-           name="password_confirmation"
-           autocomplete="off"
-           class="form-control form-control-lg form-control-solid"
-           data-action="input->registration#handleInputChange"
-           data-registration-target="passwordCheckInput"
+    <div class="position-relative mb-3">
+      <input type="password"
+             id="password_confirmation"
+             name="password_confirmation"
+             autocomplete="off"
+             class="form-control form-control-lg form-control-solid"
+             data-action="input->registration#handleInputChange"
+             data-registration-target="passwordCheckInput"
+             data-password-reveal-target="passwordConfirmationInput"
       />
+      <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
+            data-action="click->password-reveal#toggleVisibility">
+        <i data-password-reveal-target="eyeSlashIconConfirmation" class="bi bi-eye-slash fs-2 password-confirmation"></i>
+        <i data-password-reveal-target="eyeIconConfirmation" class="bi bi-eye fs-2 d-none password-confirmation"></i>
+      </span>
+    </div>
     <% if resource.errors[:password_confirmation] %>
       <div class="fv-plugins-message-container invalid-feedback"><%= resource.errors[:password_confirmation].join(", ") %></div>
     <% end %>
