@@ -29,7 +29,7 @@ export default class extends Controller {
         headers: { "X-CSRF-Token": token },
       }).then((res) => {
         if (res.ok) {
-          window.location.reload();
+          window.location.href = "/dashboard";
         } else {
           // TODO: add Sentry logging once integrated
           console.error(res);

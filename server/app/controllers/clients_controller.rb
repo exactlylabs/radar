@@ -3,7 +3,7 @@ require "sshkey"
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
-  before_action :set_client, only: %i[ release show edit update destroy ]
+  before_action :set_client, only: %i[ release show edit destroy ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 
@@ -257,15 +257,33 @@ EOF
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
-    location = policy_scope(Location).find(params[:location_id]) if params[:location_id]
-    client = params[:client]
+    name = params[:client][:name]
+    account_id = params[:account_id]
+    location_id = params[:location_id]
+    # defaulting to current_account. UI does not
+    # allow account to be empty anyways
+    account = current_account
+    location = nil
+    if account_id
+      account = policy_scope(Account).find(account_id) if account_id != current_account.id
+      if location_id
+        # not doing policy_scope as that would check with current_account and the new location
+        # could not be in the current_account's locations list
+        location = Location.where(id: location_id, account_id: account_id).first
+      end
+    else
+      location = policy_scope(Location).find(params[:location_id]) if location_id
+    end
+    # not doing policy_scope because when selecting another account
+    # different to current_account, running policy_scope(Client) would throw
+    client = Client.find_by_unix_user(params[:id])
     respond_to do |format|
-      if @client.update(name: client[:name], location: location)
-        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated." }
-        format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
+      if client.update(name: name, location: location, account: account)
+        format.html { redirect_to clients_path, notice: "Client was successfully updated.", status: :see_other }
+        format.json { render :show, status: :ok, location: client_path(client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @client.errors, status: :unprocessable_entity }
+        format.json { render json: client.errors, status: :unprocessable_entity }
       end
     end
   end

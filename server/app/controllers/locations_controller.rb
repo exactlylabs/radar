@@ -79,6 +79,21 @@ class LocationsController < ApplicationController
     end
   end
 
+  # Method called by edit pod modal to retrieve locations
+  # associated to selected account from select dropdown
+  def get_by_account_id
+    account_id = params[:account_id]
+    account = policy_scope(Account).find(account_id)
+    respond_to do |format|
+      if account
+        locations = account.locations.map { |location| { id: location.id, text: location.name } }
+        format.json { render json: locations, status: :ok }
+      else
+        format.json { render json: [], status: :not_found }
+      end
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_location
