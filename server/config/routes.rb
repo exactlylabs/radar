@@ -41,6 +41,8 @@ Rails.application.routes.draw do
     resources :clients, controller: 'location_clients', only: [:index]
   end
 
+  get 'locations/account/:account_id', to: 'locations#get_by_account_id'
+
   resources :clients do
     resources :measurements, controller: 'client_measurements', only: [:index, :create] do
       collection do

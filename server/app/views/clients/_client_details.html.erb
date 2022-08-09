@@ -45,14 +45,14 @@
               data-kt-menu="true" 
               data-controller="menu">
           <div class="menu-item">
-            <a href="#" data-bs-toggle="modal" data-bs-target="#edit_client_modal" class="menu-link p-5">Edit Pod</a>
+            <%= link_to "Edit", edit_client_path(@client.unix_user), { class: "menu-link p-5", data: { "turbo-frame" => "edit_client_modal" } } %>
           </div>
           <div class="menu-item">
             <a href="<%= client_measurements_path(@client.unix_user) %>" class="menu-link p-5">View Measurements</a>
           </div>
         </div>
       </div>
-      <a href="#" data-bs-toggle="modal" data-bs-target="#edit_client_modal" class="btn btn-light me-3">Edit Pod</a>
+      <%= link_to "Edit", edit_client_path(@client.unix_user), { class: "btn btn-light me-3", data: { "turbo-frame" => "edit_client_modal" } } %>
       <a href="<%= client_measurements_path(@client.unix_user) %>" class="btn btn-light me-3">View Measurements</a>
       <%= link_to "Run Test", run_test_client_path(@client.unix_user), method: :post, class: "btn btn-primary #{@client.test_requested ? "disabled" : ""}" %>
     </div>
