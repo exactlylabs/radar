@@ -96,7 +96,6 @@ export default class extends Controller {
     const formData = new FormData();
     formData.append("client[name]", clientName);
     formData.append("location_id", locationId);
-    const token = document.getElementsByName("csrf-token")[0].content;
     fetch(`/clients/${clientId}`, {
       method: "PUT",
       headers: { "X-CSRF-Token": token },
