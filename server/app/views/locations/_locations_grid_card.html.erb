@@ -1,4 +1,4 @@
-<div class="card card-flush col-md-4 col-sm-6 col-xs-12 mb-10 w-100 mw-375px min-w-325px">
+<div class="card card-flush col-md-4 col-sm-6 col-xs-12 mb-10 w-100 mw-375px min-w-325px" id="locations_grid_row_<%= location.id %>">
     <div class="card-header d-flex flex-row align-items-center py-3">
         <div class="d-flex flex-column" style="width: 75%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
             <div class="card-title fs-1">
@@ -9,13 +9,28 @@
             </h5>
         </div>
         <div class="d-flex align-items-center justify-content-center" 
-           style="border-radius:50%; background-color:#f1faff; min-width: 50px; width: 50px; min-height: 50px; height: 50px">
-            <span class="svg-icon svg-icon-2x svg-icon-primary" style="position: relative;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path opacity="0.3" d="M18.0624 15.3453L13.1624 20.7453C12.5624 21.4453 11.5624 21.4453 10.9624 20.7453L6.06242 15.3453C4.56242 13.6453 3.76242 11.4453 4.06242 8.94534C4.56242 5.34534 7.46242 2.44534 11.0624 2.04534C15.8624 1.54534 19.9624 5.24534 19.9624 9.94534C20.0624 12.0453 19.2624 13.9453 18.0624 15.3453Z" fill="black"/>
-                <path d="M12.0624 13.0453C13.7193 13.0453 15.0624 11.7022 15.0624 10.0453C15.0624 8.38849 13.7193 7.04535 12.0624 7.04535C10.4056 7.04535 9.06241 8.38849 9.06241 10.0453C9.06241 11.7022 10.4056 13.0453 12.0624 13.0453Z" fill="black"/>
-            </svg>
-            </span>
+           style="border-radius:50%; background-color:#f5f8fa; min-width: 40px; width: 40px; min-height: 40px; height: 40px;">
+          <button type="button"
+                  class="btn dropwdown-toggle"
+                  style="background-color: transparent; width: 100%; margin: auto; display: flex; justify-content: center; align-items: center"
+                  aria-expanded="false"
+                  data-bs-toggle="dropdown"
+          >
+            <i class="fas fa-ellipsis-v text-gray-600" style="margin-left: 4px;"></i>
+          </button>
+          <div class="dropdown-menu fw-bold fs-7 w-150px py-4"
+               data-kt-menu="true">
+              <!--begin::Menu item-->
+              <div class="menu-item">
+                <%= link_to "Edit", edit_location_path(location), { class: "menu-link text-hover-gray-500 text-gray-700 px-3", data: { "turbo-frame" => "edit_location_modal" } } %>
+              </div>
+              <!--end::Menu item-->
+              <!--begin::Menu item-->
+              <div class="menu-item">
+                <%= link_to 'Delete', location_path(location), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link text-hover-gray-500 text-gray-700 px-3" %>
+              </div>
+              <!--end::Menu item-->
+          </div>
         </div>
     </div>
     <div class="card-body pt-3">
@@ -73,7 +88,7 @@
             </div>
         </div>
         <div class="card-footer d-flex justify-content-end px-0 pb-3 border-0">
-            <a href="<%= location_path(location) %>" class="btn btn-primary" data-turbo-frame="_top">View Details</a>
+            <a href="<%= location_path(location) %>" class="btn btn-light-primary w-100" data-turbo-frame="_top">View Details</a>
         </div>
     </div>
 </div>

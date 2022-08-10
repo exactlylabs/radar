@@ -1,5 +1,5 @@
 <div class="container-auto d-flex flex-row flex-wrap justify-content-evenly" id="locations_grid">
-    <% locations.order("LOWER(name)").each do |location| %>
-        <%= render "locations_grid_card", location: location %>
-    <% end %>
+  <% locations.order("LOWER(name)").each do |location| %>
+    <%= render partial: "locations_grid_card", locals: {location: location} %>
+  <% end %>
 </div>
