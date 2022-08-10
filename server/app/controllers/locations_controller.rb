@@ -57,6 +57,7 @@ class LocationsController < ApplicationController
   def update
     respond_to do |format|
       if @location.update(location_params)
+        @locations = policy_scope(Location)
         format.turbo_stream
         format.html { redirect_to locations_path, notice: "Location was successfully updated." }
         format.json { render :show, status: :ok, location: @location }
