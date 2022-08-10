@@ -11,6 +11,26 @@
 
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
 
+    <script>
+      // based on sentry.rb file config
+      Sentry.init({
+        dsn: "https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151",
+        tracesSampleRate: 0.0,
+        environment: "production",
+      });
+
+      // Set Sentry tag for current account id if present in cookies
+      const cookieArray = document.cookie.split(";");
+      let currentAccountId;
+      cookieArray.forEach((cookie) => {
+        if (cookie.trim().includes("radar_current_account_id")) {
+          currentAccountId = cookie.split("=")[1];
+        }
+      });
+      if (currentAccountId) {
+        Sentry.setContext("account", { id: currentAccountId });
+      }
+    </script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
