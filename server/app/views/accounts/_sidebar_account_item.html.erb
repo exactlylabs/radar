@@ -1,7 +1,7 @@
 <div id="sidebar--account-container@<%= account.id %>"
      class="sidebar--account-row <%= account.id == current_account.id ? 'active' : 'text-gray-600' %>"
-     data-controller="switch-account"
-     data-action="click->switch-account#selectAccount mouseenter->switch-account#showMoreOptionsIcon mouseleave->switch-account#hideMoreOptionsIcon">
+     data-controller="switch-account sentry-initializer"
+     data-action="click->switch-account#selectAccount click->sentry-initializer#switchAccount mouseenter->switch-account#showMoreOptionsIcon mouseleave->switch-account#hideMoreOptionsIcon">
   <div id="sidebar--account-market@<%= account.id %>"class="sidebar--circular-marker"></div>
   <p id="sidebar--account-name@<%= account.id %>" style="overflow: hidden; max-width: 120px; white-space: nowrap; text-overflow: ellipsis"><%= account.name %></p>
   <i class="fas fa-ellipsis-h sidebar--menu-icon"
