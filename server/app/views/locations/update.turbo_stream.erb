@@ -1,3 +1,15 @@
 <%= turbo_stream.replace "location-details" do %>
   <%= render partial: 'locations/location_details', locals: {location: @location} %>
 <% end %>
+
+<%= turbo_stream.update "locations_table" do %>
+  <% @locations.order("LOWER(name)").each do |location| %>
+    <%= render partial: "locations_table_row", locals: {location: location} %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.update "locations_grid" do %>
+  <% @locations.order("LOWER(name)").each do |location| %>
+    <%= render partial: "locations_grid_card", locals: {location: location} %>
+  <% end %>
+<% end %>

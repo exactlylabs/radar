@@ -1,14 +1,19 @@
 <div class="d-flex flex-stack mb-6 location-row" 
-      data-location-id="<%= location.id %>"
-      data-location-name="<%= location.name %>"
-      data-location-download="<%= location.latest_download %>"
-      data-location-upload="<%= location.latest_upload %>"
-      data-location-online="<%= location.online? %>"
-      data-location-latitude="<%= location.latitude %>"
-      data-location-longitude="<%= location.longitude %>">
+     data-location-id="<%= location.id %>"
+     data-location-name="<%= location.name %>"
+     data-location-download="<%= location.download_avg.present? ? location.download_avg : nil %>"
+     data-location-upload="<%= location.upload_avg.present? ? location.upload_avg : nil %>"
+     data-location-online="<%= location.online? %>"
+     data-location-latitude="<%= location.latitude %>"
+     data-location-longitude="<%= location.longitude %>"
+     data-location-download-diff="<%= location.download_diff.present? ? location.download_diff : nil %>"
+     data-location-upload-diff="<%= location.upload_diff.present? ? location.upload_diff : nil %>"
+     data-location-expected-download="<%= location.expected_mbps_down %>"
+     data-location-expected-upload="<%= location.expected_mbps_up %>"
+>
   <div class="d-flex">
     <div class="card-title--icon d-flex align-items-center justify-content-center" 
-               style="height: 36px; width: 36px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
+               style="min-width: 36px; height: 36px; width: 36px; background-color: <%= location.online? ? '#f1faff' : '#fff5f7' %>; border-radius: 50%; margin-right: 20px">
       <span class="svg-icon svg-icon-2x <%= location.online? ? "svg-icon-primary" : "svg-icon-danger" %>">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path opacity="0.3" d="M18.0624 15.3453L13.1624 20.7453C12.5624 21.4453 11.5624 21.4453 10.9624 20.7453L6.06242 15.3453C4.56242 13.6453 3.76242 11.4453 4.06242 8.94534C4.56242 5.34534 7.46242 2.44534 11.0624 2.04534C15.8624 1.54534 19.9624 5.24534 19.9624 9.94534C20.0624 12.0453 19.2624 13.9453 18.0624 15.3453Z" fill="black"/>

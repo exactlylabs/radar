@@ -32,7 +32,7 @@
                 <!--begin::Table body-->
                 <tbody class="fw-bold text-gray-600" id="locations_table">
                     <% locations.order("LOWER(name)").each do |location| %>
-                        <%= render "locations_table_row", location: location %>
+                        <%= render partial: "locations_table_row", locals: { location: location } %>
                     <% end %>
                 </tbody>
                 <!--end::Table body-->

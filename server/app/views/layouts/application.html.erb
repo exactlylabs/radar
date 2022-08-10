@@ -294,15 +294,21 @@
                         <!--end::Menu separator-->
                         <!--begin::Menu item-->
                         <div class="menu-item px-5">
-                          <a href="<%= edit_user_registration_path %>" class="menu-link px-5">My Profile</a>
+                          <a href="<%= edit_user_registration_path %>" class="menu-link px-2">
+                            <%= image_tag "user-icon.png", size: "16x16", style: "margin-right: 13px" %>
+                            My Profile
+                          </a>
                         </div>
                         <!--end::Menu item-->
                         <!--begin::Menu separator-->
                         <div class="separator my-2"></div>
                         <!--end::Menu separator-->
                         <!--begin::Menu item-->
-                        <div class="menu-item px-5">
-                          <%= link_to "Sign Out", users_custom_sign_out_path, method: :delete, class: "menu-link px-5" %>
+                        <div class="menu-item px-2">
+                          <a class="menu-link px-5" rel="nofollow" data-method="delete" href="/users/custom_sign_out">
+                            <%= image_tag "logout-icon.png", size: "16x16", style: "margin-right: 13px" %>
+                            Sign Out
+                          </a>
                         </div>
                         <!--end::Menu item-->
                       </div>
