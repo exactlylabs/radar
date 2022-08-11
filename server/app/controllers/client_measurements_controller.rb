@@ -32,13 +32,8 @@ class ClientMeasurementsController < ApplicationController
     @measurement.client_version = @client.raw_version
     @measurement.client_distribution = @client.distribution_name
     @measurement.network_interfaces = @client.network_interfaces
-    if !@client.location.nil?
-      @measurement.location = @client.location
-    end
-
-    if !@client.account.nil?
-      @measurement.account = @client.account
-    end
+    @measurement.account = @client.account if @client.account.present?
+    @measurement.location = @client.location if @client.location.present?
 
     if @client.test_requested
       @client.test_requested = false
