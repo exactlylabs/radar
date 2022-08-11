@@ -36,8 +36,8 @@ class ClientMeasurementsController < ApplicationController
       @measurement.location = @client.location
     end
 
-    if !@client.user.nil?
-      @measurement.user = @client.user
+    if !@client.account.nil?
+      @measurement.account = @client.account
     end
 
     if @client.test_requested
