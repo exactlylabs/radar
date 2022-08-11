@@ -14,7 +14,8 @@ export default class extends Controller {
     "geoIcon",
     "spinner",
     "conditional",
-    "addressWrapper"
+    "addressWrapper",
+    "locationErrorMessage"
   ];
 
   connect() {
@@ -47,6 +48,7 @@ export default class extends Controller {
     clearTimeout(this.addressTimeout);
     this.addressWrapperTarget.style.border = 'none';
     this.addressWrapperTarget.style.borderRadius = 'none';
+    this.locationErrorMessageTarget.innerText = '';
     this.addressTimeout = setTimeout(
       function () {
         let formData = new FormData();
@@ -72,6 +74,7 @@ export default class extends Controller {
   autofillGeoData() {
     this.addressWrapperTarget.style.border = 'none';
     this.addressWrapperTarget.style.borderRadius = 'none';
+    this.locationErrorMessageTarget.innerText = '';
     this.spinnerTarget.classList.remove("d-none");
     this.geoIconTarget.classList.add("d-none");
     if ("geolocation" in navigator) {
@@ -113,8 +116,10 @@ export default class extends Controller {
             if(data.length > 0) {
               this.addressWrapperTarget.style.border = 'none';
               this.addressWrapperTarget.style.borderRadius = 'none';
+              this.locationErrorMessageTarget.innerText = '';
               coordinates = data;
             } else {
+              this.locationErrorMessageTarget.innerText = 'The address returned no results. Try a different one.';
               this.addressWrapperTarget.style.border = 'solid 1px red';
               this.addressWrapperTarget.style.borderRadius = '6px';
             }
