@@ -30,9 +30,8 @@ export default class extends Controller {
       return;
     }
     this.drawn = true;
-
-    this.latitudeValue = this.latitudeValue || 0;
-    this.longitudeValue = this.longitudeValue || 0;
+    this.latitudeValue = this.latitudeValue || 40.566296; // Specific coordinates to fallback onto almost center point of the US
+    this.longitudeValue = this.longitudeValue || -97.264547;
 
     this.map = L.map(this.element).setView(
       [this.latitudeValue, this.longitudeValue],
@@ -56,9 +55,26 @@ export default class extends Controller {
       this.marker.remove();
     }
 
-    this.marker = L.marker([this.latitudeValue, this.longitudeValue]);
+    if (this.element.getAttribute("data-draggable") === "true") {
+      this.marker = L.marker([this.latitudeValue, this.longitudeValue], {
+        draggable: true,
+      });
+      this.marker.on("dragend", (e) => this.updateMapPosition(e));
+    } else {
+      this.marker = L.marker([this.latitudeValue, this.longitudeValue]);
+    }
     this.marker.addTo(this.map);
     this.map.setView([this.latitudeValue, this.longitudeValue], 13);
+  }
+
+  updateMapPosition(e) {
+    const marker = e.target;
+    const { lat, lng } = marker.getLatLng();
+    this.latitudeValue = lat;
+    this.longitudeValue = lng;
+    document.querySelector("#location_latitude").value = lat;
+    document.querySelector("#location_longitude").value = lng;
+    this.addOrUpdateMarker();
   }
 
   latitudeValueChanged() {
