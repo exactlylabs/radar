@@ -8,13 +8,20 @@ class Location < ApplicationRecord
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
 
-  after_validation :custom_geocode, if: :will_save_change_to_address?
+  after_validation :custom_geocode, if: :lat_long_changed?
 
   scope :where_online, -> { joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) >= 1") }
 
   scope :where_offline, -> { left_joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) = 0") }
 
   scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
+
+  # Create helper method as using [:symbol_1, :symbol_2] only runs
+  # if and only if both are true, and we need an OR condition in this case
+  # Plus, it's a bit more understandable
+  def lat_long_changed?
+    will_save_change_to_latitude? || will_save_change_to_longitude?
+  end
 
   def latest_download
     latest_measurement ? latest_measurement.download : nil
@@ -102,10 +109,8 @@ class Location < ApplicationRecord
   private
 
   def custom_geocode
-    # if user manually set lat/long or clicked on the auto-locate
-    # then we should use those values of lat/long for fips location
-    # instead of the address (cause that value could have been overriden
-    # with some other value on purpose)
+    # if the location entity had no lat/long, then geocode based
+    # on address, else, always stick to given lat/long values.
     if !self.longitude && !self.latitude
       results = Geocoder.search(self.address)
     else
@@ -113,8 +118,8 @@ class Location < ApplicationRecord
     end
     if geo = results.first
       self.state_fips, self.county_fips = FipsGeocoderCli::get_fips_codes geo.latitude, geo.longitude
-      self.latitude = geo.latitude if !self.latitude
-      self.longitude = geo.longitude if !self.longitude
+      self.latitude = geo.latitude unless self.latitude
+      self.longitude = geo.longitude unless self.longitude
       self.state = geo.state
       self.county = geo.county
     end
