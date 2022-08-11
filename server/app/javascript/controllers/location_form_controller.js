@@ -14,6 +14,7 @@ export default class extends Controller {
     "geoIcon",
     "spinner",
     "conditional",
+    "addressWrapper"
   ];
 
   connect() {
@@ -44,6 +45,8 @@ export default class extends Controller {
   autofillAddress(lat, lon) {
     let that = this;
     clearTimeout(this.addressTimeout);
+    this.addressWrapperTarget.style.border = 'none';
+    this.addressWrapperTarget.style.borderRadius = 'none';
     this.addressTimeout = setTimeout(
       function () {
         let formData = new FormData();
@@ -67,6 +70,8 @@ export default class extends Controller {
   }
 
   autofillGeoData() {
+    this.addressWrapperTarget.style.border = 'none';
+    this.addressWrapperTarget.style.borderRadius = 'none';
     this.spinnerTarget.classList.remove("d-none");
     this.geoIconTarget.classList.add("d-none");
     if ("geolocation" in navigator) {
@@ -101,16 +106,28 @@ export default class extends Controller {
         })
           .then((response) => response.json())
           .then((data) => {
+            // fallback location to center of the US
+            const defaultLatitude = 40.566296;
+            const defaultLongitude = -97.264547;
+            let coordinates = [defaultLatitude, defaultLongitude];
+            if(data.length > 0) {
+              this.addressWrapperTarget.style.border = 'none';
+              this.addressWrapperTarget.style.borderRadius = 'none';
+              coordinates = data;
+            } else {
+              this.addressWrapperTarget.style.border = 'solid 1px red';
+              this.addressWrapperTarget.style.borderRadius = '6px';
+            }
             that.mapTarget.setAttribute(
               "data-location-latitude-value",
-              data[0]
+              coordinates[0]
             );
             that.mapTarget.setAttribute(
               "data-location-longitude-value",
-              data[1]
+              coordinates[1]
             );
-            this.latitudeTarget.value = data[0];
-            this.longitudeTarget.value = data[1];
+            this.latitudeTarget.value = coordinates[0];
+            this.longitudeTarget.value = coordinates[1];
           })
           .catch((err) => {
             handleError(err, this.identifier);

@@ -55,6 +55,11 @@ export default class extends Controller {
       this.marker.remove();
     }
 
+    if(isNaN(this.latitudeValue) || isNaN(this.longitudeValue)) {
+      this.latitudeValue = 40.566296; // Specific coordinates to fallback onto almost center point of the US
+      this.longitudeValue = -97.264547;
+    }
+
     if (this.element.getAttribute("data-draggable") === "true") {
       this.marker = L.marker([this.latitudeValue, this.longitudeValue], {
         draggable: true,
