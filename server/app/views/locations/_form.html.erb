@@ -1,4 +1,4 @@
-<%= form_with model: @location, data: {controller: "location-form"} do |form| %>
+<%= form_with model: @location do |form| %>
   <div class="modal-body">
     <% if @location&.errors.present? %>
       <div id="error_explanation">
@@ -12,7 +12,7 @@
       </div>
     <% end %>
 
-    <div class="row">
+    <div class="row" data-controller="location-form">
       <div class="col-lg-6 mb-10 mb-lg-0">
         <div class="fv-row mb-7 fv-plugins-icon-container">
           <!--begin::Label-->
@@ -30,7 +30,7 @@
           <!--end::Label-->
           <!--begin::Input-->
           <div class="input-group">
-            <input class="form-control form-control-solid" placeholder="Your location address" data-location-form-target="address" data-action="input->location-form#onAddressChange" type="text" name="location[address]" id="location_address" value="<%= @location&.address %>">
+            <input class="form-control form-control-solid" placeholder="Your location address" data-location-form-target="address" data-action="input->location-form#onAddressChange" type="text" name="location[address]" id="location_address" value="<%= @location&.address %>"/>
             <div class="d-none input-group-text" style="border: none; border-radius: 6px" data-location-form-target="spinner">
               <div class="spinner-border text-primary" role="status"></div>
             </div>
@@ -47,7 +47,7 @@
 
         <div class="fv-row mb-7 fv-plugins-icon-container">
           <div class="form-check form-switch form-check-custom form-check-solid">
-            <%= form.check_box :manual_lat_long, name: "location[manual_lat_long]",class: "form-check-input h-30px w-50px", data: { "location-form-target" => "manualLatLong", action: "input->location-form#onManuallyChange" } %>
+            <%= form.check_box :manual_lat_long, name: "location[manual_lat_long]",class: "form-check-input h-30px w-50px", data: { "location-form-target" => "manualLatLong", action: "input->location-form#onManualChange" } %>
             <label class="form-check-label text-muted fw-bold" for="flexSwitchDefault">
                 Adjust coordinates manually
             </label>
@@ -111,7 +111,14 @@
         </div>
       </div>
       <div class="col-lg-6 mb-10 mb-lg-0">
-        <div style="height: 300px;" data-location-form-target="map" data-action="modal:shown->location#display" data-controller="location" data-location-latitude-value="<%= @location&.latitude %>" data-location-longitude-value="<%= @location&.longitude %>"></div>
+        <div style="height: 300px;"
+             data-location-form-target="map"
+             data-action="modal:shown->location#display"
+             data-controller="location"
+             data-location-latitude-value="<%= @location&.latitude %>"
+             data-location-longitude-value="<%= @location&.longitude %>"
+             data-draggable="true"
+        ></div>
       </div>
     </div>
   </div>

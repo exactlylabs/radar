@@ -9,7 +9,6 @@ export default class extends Controller {
     "latitude",
     "longitude",
     "manualLatLong",
-    "automaticLocation",
     "expectedDownload",
     "expectedUpload",
     "geoIcon",
@@ -85,7 +84,6 @@ export default class extends Controller {
           userGeoLongitude
         );
         this.autofillAddress(userGeoLatitude, userGeoLongitude);
-        this.automaticLocationTarget.value = true;
       });
     }
   }
@@ -124,7 +122,7 @@ export default class extends Controller {
 
   onAddressChange(e) {
     const isSwitchOn = this.manualLatLongTarget.checked;
-    if (isSwitchOn || this.automaticLocationTarget.value === "true") return; // If switch is on, prevent geo searching
+    if (isSwitchOn) return; // If switch is on, prevent geo searching
     this.fetchGeoData(e.target.value);
   }
 

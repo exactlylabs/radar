@@ -106,15 +106,15 @@ class Location < ApplicationRecord
     # then we should use those values of lat/long for fips location
     # instead of the address (cause that value could have been overriden
     # with some other value on purpose)
-    if !self.manual_lat_long && !self.automatic_location
+    if !self.longitude && !self.latitude
       results = Geocoder.search(self.address)
     else
       results = Geocoder.search([self.latitude, self.longitude])
     end
     if geo = results.first
       self.state_fips, self.county_fips = FipsGeocoderCli::get_fips_codes geo.latitude, geo.longitude
-      self.latitude = geo.latitude
-      self.longitude = geo.longitude
+      self.latitude = geo.latitude if !self.latitude
+      self.longitude = geo.longitude if !self.longitude
       self.state = geo.state
       self.county = geo.county
     end
