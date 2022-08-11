@@ -3,22 +3,22 @@ require "csv"
 class Measurement < ApplicationRecord
   belongs_to :client
   belongs_to :location, optional: true
-  belongs_to :user, optional: true, foreign_key: 'measured_by_id'
+  belongs_to :account, optional: true
   has_one_attached :result
 
   def self.to_ndt7_csv
-    info_attributes = %w{id client_id user location_name latitude longitude address loss_rate}
+    info_attributes = %w{id client_id account location_name latitude longitude address loss_rate}
     attributes = %w{style upload download jitter latency created_at}
     extended_attributes = %w{State CAState Retransmits Probes Backoff Options WScale AppLimited RTO ATO SndMSS RcvMSS Unacked Sacked Lost Retrans Fackets LastDataSent LastAckSent LastDataRecv LastAckRecv PMTU RcvSsThresh RTT RTTVar SndSsThresh SndCwnd AdvMSS Reordering RcvRTT RcvSpace TotalRetrans PacingRate MaxPacingRate BytesAcked BytesReceived SegsOut SegsIn NotsentBytes MinRTT DataSegsIn DataSegsOut DeliveryRate BusyTime RWndLimited SndBufLimited Delivered DeliveredCE BytesSent BytesRetrans DSackDups ReordSeen RcvOooPack SndWnd ElapsedTime}
 
     CSV.generate(headers: true) do |csv|
       csv << info_attributes + attributes + extended_attributes
 
-      includes(:location, :client, :user).each do |measurement|
+      includes(:location, :client, :account).each do |measurement|
         info = [
           measurement.id,
           measurement.client ? measurement.client.unix_user : "",
-          measurement.user ? measurement.user.email : "",
+          measurement.account ? measurement.account.name : "",
           measurement.location ? measurement.location.name : "",
           measurement.location ? measurement.location.latitude : "",
           measurement.location ? measurement.location.longitude : "",
@@ -43,16 +43,16 @@ class Measurement < ApplicationRecord
   end
 
   def self.to_ndt7_csv_enumerator
-    info_attributes = %w{id client_id user location_name latitude longitude address loss_rate}
+    info_attributes = %w{id client_id account location_name latitude longitude address loss_rate}
     attributes = %w{style upload download jitter latency created_at}
     extended_attributes = %w{State CAState Retransmits Probes Backoff Options WScale AppLimited RTO ATO SndMSS RcvMSS Unacked Sacked Lost Retrans Fackets LastDataSent LastAckSent LastDataRecv LastAckRecv PMTU RcvSsThresh RTT RTTVar SndSsThresh SndCwnd AdvMSS Reordering RcvRTT RcvSpace TotalRetrans PacingRate MaxPacingRate BytesAcked BytesReceived SegsOut SegsIn NotsentBytes MinRTT DataSegsIn DataSegsOut DeliveryRate BusyTime RWndLimited SndBufLimited Delivered DeliveredCE BytesSent BytesRetrans DSackDups ReordSeen RcvOooPack SndWnd ElapsedTime}
     @enumerator = Enumerator.new do |yielder|
       yielder << CSV.generate_line(info_attributes + attributes + extended_attributes)
-      includes(:location, :client, :user).find_each do |measurement|
+      includes(:location, :client, :account).find_each do |measurement|
         info = [
           measurement.id,
           measurement.client ? measurement.client.unix_user : "",
-          measurement.user ? measurement.user.email : "",
+          measurement.account ? measurement.account.name : "",
           measurement.location ? measurement.location.name : "",
           measurement.location ? measurement.location.latitude : "",
           measurement.location ? measurement.location.longitude : "",
@@ -86,13 +86,13 @@ class Measurement < ApplicationRecord
 
   def self.to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w{id client_id user location_name latitude longitude address style upload download jitter latency created_at}
+      csv << %w{id client_id account location_name latitude longitude address style upload download jitter latency created_at}
 
-      includes(:location, :client, :user).each do |measurement|
+      includes(:location, :client, :account).each do |measurement|
         csv << [
           measurement.id,
           measurement.client ? measurement.client.unix_user : "",
-          measurement.user ? measurement.user.email : "",
+          measurement.account ? measurement.account.name : "",
           measurement.location ? measurement.location.name : "",
           measurement.location ? measurement.location.latitude : "",
           measurement.location ? measurement.location.longitude : "",
@@ -110,12 +110,12 @@ class Measurement < ApplicationRecord
 
   def self.to_csv_enumerator
     @enumerator = Enumerator.new do |yielder|
-      yielder << CSV.generate_line(%w{id client_id user location_name latitude longitude address style upload download jitter latency created_at})
-      includes(:location, :client, :user).find_each do |measurement|
+      yielder << CSV.generate_line(%w{id client_id account location_name latitude longitude address style upload download jitter latency created_at})
+      includes(:location, :client, :account).find_each do |measurement|
         yielder << CSV.generate_line([
           measurement.id,
           measurement.client ? measurement.client.unix_user : "",
-          measurement.user ? measurement.user.email : "",
+          measurement.account ? measurement.account.name : "",
           measurement.location ? measurement.location.name : "",
           measurement.location ? measurement.location.latitude : "",
           measurement.location ? measurement.location.longitude : "",
