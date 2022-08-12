@@ -24,7 +24,7 @@
           environment: "production",
         });
         <% if current_account.present? %>
-          Sentry.setContext("account", { id: <%= current_account.id %> });
+          Sentry.setContext("account", { id: <%= current_account.id %>, name: "<%= current_account.name %>" });
         <% end %>
         <% if user_signed_in? %>
           Sentry.setUser({
