@@ -63,19 +63,32 @@ if [ $# -lt 1 ]; then
 fi
 VERSION=$1
 
+rm -r ${DESTDIR}
+mkdir -p ${DESTDIR}
 
 # We only support amd64 for windows, due to ookla
-make build VERSION=$VERSION OS=windows ARCH=amd64 BIN_NAME=radar-agent.exe OUTPUT_DIR=$DESTDIR
+make build VERSION=${VERSION} OS=windows ARCH=amd64 BIN_NAME=radar-agent-unsigned.exe OUTPUT_DIR=${DESTDIR}
 
-mkdir -p $DESTDIR
+osslsigncode sign -certs ${SIGNING_CERT_FILE} -key ${SIGNING_KEY_FILE} \
+    -n "Radar Agent" -i https://radar.exactlylabs.com/ \
+    -t http://timestamp.digicert.com \
+    -in ${DESTDIR}/radar-agent-unsigned.exe -out ${DESTDIR}/radar-agent.exe
 
-cp $PACKAGE_DIR/RadarAgent.wxs $DESTDIR
-sed -i 's/${VERSION}/'$VERSION'/g' $DESTDIR/RadarAgent.wxs
+
+
+cp ${PACKAGE_DIR}/RadarAgent.wxs ${DESTDIR}
+sed -i 's/${VERSION}/'${VERSION}'/g' ${DESTDIR}/RadarAgent.wxs
 
 # Now generate the .msi file
-mkdir -p $OUTPUT_PATH
-wixl -a x64 -o $OUTPUT_PATH/RadarAgent.msi $DESTDIR/RadarAgent.wxs
+mkdir -p ${OUTPUT_PATH}
+wixl -a x64 -o ${DESTDIR}/RadarAgent-unsigned.msi ${DESTDIR}/RadarAgent.wxs
 
-echo "Generated msi file at $OUTPUT_PATH/RadarAgent.msi"
+rm ${OUTPUT_PATH}/RadarAgent.msi
+osslsigncode sign -certs ${SIGNING_CERT_FILE} -key ${SIGNING_KEY_FILE} \
+    -n "Radar Agent Installer" -i https://radar.exactlylabs.com/ \
+    -t http://timestamp.digicert.com \
+    -in ${DESTDIR}/RadarAgent-unsigned.msi -out ${OUTPUT_PATH}/RadarAgent.msi
 
-rm -r $DESTDIR
+echo "Generated msi file at ${OUTPUT_PATH}/RadarAgent.msi"
+
+rm -r ${DESTDIR}
