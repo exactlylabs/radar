@@ -120,3 +120,16 @@ If you modify the .proto file, you can generate the new .go file by calling at t
 ```sh
 protoc -I=. --go_out=. ./internal/update/signedBinary.proto
 ```
+
+### Building Packages
+
+We support creating packages for the following:
+
+* Debian `.deb` packages: `make deb`
+* Fedora `.rpm` packages: `make rpm`
+* Windows `.msi` packages: `make msi` (using linux for creating the package. Also needs signing keys. Check `./scripts/build_msi.sh`)
+* Apple `.pkg` packages: `make pkg` (can only be called on OSx and also needs signing keys for it. Check `./scripts/build_pkg.sh`)
+
+#### Apple Notarization
+
+Since apple needs to validate our binary before enabling it to be downloaded without warnings, you also have to call `./scripts/notarize_pkg.sh`. See the file for more information on how to use it.
