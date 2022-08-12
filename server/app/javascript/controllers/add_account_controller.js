@@ -127,7 +127,7 @@ export default class extends Controller {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "ok") this.closeModalAndSetNewCookie(res);
-        else throw new Error(res);
+        else throw new Error(`There was an error creating the account: ${accountName}`);
       })
       .catch((err) => {
         handleError(err, this.identifier);
