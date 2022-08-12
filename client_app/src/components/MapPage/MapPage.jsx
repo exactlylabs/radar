@@ -13,12 +13,12 @@ import RunningTest from './RunningTest';
 import TestAverages from './TestAverages';
 import { notifyError } from '../../utils/errors';
 import { storeRunData } from '../../utils/storage';
-import { getGeocodedAddress, sendRawData } from '../../utils/apiRequests';
+import { sendRawData } from '../../utils/apiRequests';
 import { customMarker, mapTileAttribution, mapTileUrl, SMALL_SCREEN_MAP_HEIGHT } from '../../utils/map';
 import { RESIZING_WIDTH_PX_LIMIT } from '../../utils/screenDimensions';
 import { MyMap } from '../common/MyMap';
 
-const MapPage = ({ manualAddress, maxHeight }) => {
+const MapPage = ({ manualAddress, givenLocation, maxHeight }) => {
   const [error, setError] = useState(null);
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,9 +42,8 @@ const MapPage = ({ manualAddress, maxHeight }) => {
     updateMapDimensions();
     window.addEventListener('resize', updateMapDimensions);
     if (manualAddress) {
-      const formData = new FormData();
-      formData.append('address', manualAddress);
-      getGeocodedAddress(formData, setLoading, setLocation);
+      setLoading(false);
+      setLocation(givenLocation);
     } else if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         pos => {
