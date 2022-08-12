@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import handleError from "./error_handler_controller";
 
 export default class extends Controller {
   static targets = [
@@ -137,7 +138,7 @@ export default class extends Controller {
           window.location.href = res.url;
         }
       })
-      .catch((err) => console.error(err))
+      .catch((err) => handleError(err, this.identifier))
       .finally(() => {
         this.finishButtonTarget.style.display = "block";
         this.finishButtonLoadingTarget.style.display = "none";
@@ -185,7 +186,7 @@ export default class extends Controller {
         const errorMessage = `${responseErrorKey} ${responseErrorValue}.`;
         this.errorTextTarget.innerText = errorMessage;
       })
-      .catch((err) => console.error(err))
+      .catch((err) => handleError(err, this.identifier))
       .finally(() => {
         this.finishButtonTarget.style.display = "block";
         this.finishButtonLoadingTarget.style.display = "none";
