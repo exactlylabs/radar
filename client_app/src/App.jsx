@@ -15,10 +15,12 @@ const App = ({ config }) => {
   theme = responsiveFontSizes(theme);
 
   const [step, setStep] = useState(STEPS.LANDING);
+  const [givenLocation, setGivenLocation] = useState(null);
   const [manualAddress, setManualAddress] = useState(null);
 
-  const goToMapPage = addressInfo => {
-    setManualAddress(addressInfo.address);
+  const goToMapPage = location => {
+    setManualAddress(true);
+    setGivenLocation(location);
     setStep(STEPS.MAP);
   };
 
@@ -29,7 +31,7 @@ const App = ({ config }) => {
         content = <FormPage setStep={setStep} goToNextStep={goToMapPage} />;
         break;
       case STEPS.MAP:
-        content = <MapPage manualAddress={manualAddress} maxHeight={config.frameStyle.height ?? 500} />;
+        content = <MapPage manualAddress={manualAddress} givenLocation={givenLocation} maxHeight={config.frameStyle.height ?? 500} />;
         break;
       case STEPS.ALL_RESULTS:
         content = <AllResultsPage setStep={setStep} maxHeight={config.frameStyle.height ?? 500} />;

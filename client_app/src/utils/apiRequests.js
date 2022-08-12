@@ -1,5 +1,6 @@
 import { API_URL } from '../constants';
 import { notifyError } from './errors';
+import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "./map";
 
 export const sendRawData = (rawData, location, startTimestamp) => {
   fetch(`${API_URL}/speed_tests`, {
@@ -13,20 +14,24 @@ export const sendRawData = (rawData, location, startTimestamp) => {
   }).catch(notifyError);
 };
 
-export const getGeocodedAddress = (formData, setLoading, setLocation) => {
+export const getGeocodedAddress = (formData, setLoading, setLocation, setError = null) => {
   fetch(`${API_URL}/geocode`, {
     method: 'POST',
     body: formData,
   })
     .then(res => res.json())
     .then(res => {
-      setLoading(false);
-      setLocation(res);
+      if(res.length > 0) {
+        setLocation(res);
+      } else {
+        setError && setError(true);
+        setLocation([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
+      }
     })
     .catch(err => {
-      setLoading(false);
       notifyError(err);
-    });
+    })
+    .finally(() => setLoading(false));
 };
 
 export const getAllSpeedTests = (setResults, setFilteredResults, setError, setLoading) => {

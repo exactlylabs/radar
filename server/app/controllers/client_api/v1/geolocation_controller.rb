@@ -3,7 +3,11 @@ module ClientApi
     class GeolocationController < ApiController
       def code
         results = Geocoder.search(params[:address])
-        render json: results.first.coordinates
+        if results.first
+          render json: results.first.coordinates
+        else
+          render json: []
+        end
       end
     end
   end
