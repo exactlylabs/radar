@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import handleError from "./error_handler_controller";
 
 export default class extends Controller {
   static targets = [
@@ -29,15 +30,13 @@ export default class extends Controller {
         } else if (res.status === 422) {
           this.errorMessageTarget.innerText = "Invalid email or password.";
         } else if (res.status === 500) {
-          this.errorMessageTarget.innerText =
-            "There was an unexpected error. Please try again later.";
+          throw new Error(`Error in sign in process from invite, user email: ${this.emailInputTarget.value}`);
         }
       })
       .catch((err) => {
         this.errorMessageTarget.innerText =
           "There was an unexpected error. Please try again later.";
-        // TODO: Integrate Sentry!
-        console.error(err);
+        handleError(err, this.identifier);
       });
   }
 }

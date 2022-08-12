@@ -10,27 +10,30 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
 
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-
-    <script>
-      // based on sentry.rb file config
-      Sentry.init({
-        dsn: "https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151",
-        tracesSampleRate: 0.0,
-        environment: "production",
-      });
-
-      // Set Sentry tag for current account id if present in cookies
-      const cookieArray = document.cookie.split(";");
-      let currentAccountId;
-      cookieArray.forEach((cookie) => {
-        if (cookie.trim().includes("radar_current_account_id")) {
-          currentAccountId = cookie.split("=")[1];
-        }
-      });
-      if (currentAccountId) {
-        Sentry.setContext("account", { id: currentAccountId });
-      }
-    </script>
+    <script
+      src="https://browser.sentry-cdn.com/7.9.0/bundle.min.js"
+      integrity="sha384-4Q6VnoFQcxYhNxg1ic5R+RRx0fam6rRf9PFAE3oTZhtTV2S8IM7uyl8Bg2z3AFi9"
+      crossorigin="anonymous"
+    ></script>
+    <% if Rails.env.development? %>
+      <script>
+        // based on sentry.rb file config
+        Sentry.init({
+          dsn: "https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151",
+          tracesSampleRate: 0.0,
+          environment: "production",
+        });
+        <% if current_account.present? %>
+          Sentry.setContext("account", { id: <%= current_account.id %> });
+        <% end %>
+        <% if user_signed_in? %>
+          Sentry.setUser({
+            id: <%= current_user.id %>,
+            email: "<%= current_user.email %>"
+          });
+        <% end %>
+      </script>
+    <% end %>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
@@ -38,14 +41,6 @@
 
   <body class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled aside-fixed aside-default-enabled"
         data-kt-aside-minimize="on">
-    <% if user_signed_in?  %>
-      <div hidden="true"
-           id="user_id_hidden"
-           data-id="<%= current_user.id %>"
-           data-email="<%= current_user.email %>"
-           data-controller="sentry-initializer"
-      ></div>
-    <% end %>
     <% if content_for?(:content) %>
       <%= yield(:content) %>
     <% elsif user_signed_in? %>
