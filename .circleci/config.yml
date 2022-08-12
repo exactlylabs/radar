@@ -159,9 +159,15 @@ jobs:
     steps:
       - build_config
       - run: sudo apt update && sudo apt install -y msitools wixl
+      - run: echo $MSI_CERT_FILE | base64 -d > ~/repo/certificate.cer
+      - run: echo $MSI_KEY_FILE | base64 -d > ~/repo/key.pem
       - run: |
           cd agent
-          make msi VERSION=<<parameters.version>> ARCH=amd64 OUTPUT_DIR=~/repo/dist
+          make msi VERSION=<<parameters.version>> \
+          ARCH=amd64 \
+          SIGNING_CERT_FILE=~/repo/certificate.cer \
+          SIGNING_KEY_FILE=~/repo/key.pem \
+          OUTPUT_DIR=~/repo/dist
       - store_artifacts:
           path: ~/repo/dist/
       - persist_to_workspace:
