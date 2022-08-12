@@ -8,6 +8,7 @@ export default class extends Controller {
     "continueToNameButton",
     "step0",
     "step1",
+    "stepError",
     "step0Footer",
     "step1Footer",
     "accountNameLabel",
@@ -104,11 +105,19 @@ export default class extends Controller {
     }
   }
 
-  closeModalAndSetNewCookie(res) {
+  closeModalAndSetNewCookie() {
     this.clearAccountName();
     this.clearTypes();
     $(this.element).modal("hide");
     window.location.href = "/dashboard";
+  }
+
+  showErrorModal() {
+    this.clearAccountName();
+    this.clearTypes();
+    this.step1Target.style.display = "none";
+    this.stepErrorTarget.style.display = "flex";
+    this.step1FooterTarget.style.display = "none";
   }
 
   submitNewAccount() {
@@ -126,10 +135,11 @@ export default class extends Controller {
     })
       .then((res) => res.json())
       .then((res) => {
-        if (res.status === "ok") this.closeModalAndSetNewCookie(res);
-        else throw new Error(`There was an error creating the account: ${accountName}`);
+        if (res.status === "ok") this.closeModalAndSetNewCookie();
+        else throw new Error(`There was an error creating an account: ${res.msg}`);
       })
       .catch((err) => {
+        this.showErrorModal();
         handleError(err, this.identifier);
       })
       .finally(() => {

@@ -3,15 +3,21 @@ class AccountsController < ApplicationController
   before_action :set_account, except: %i[ create ]
 
   def create
-    @account = Account.create account_params
-    @account.save!
-    now = Time.now
-    @user_account = UsersAccount.create(user_id: current_user.id, account_id: @account.id, joined_at: now, invited_at: now)
-    if @user_account.save
+    error = false
+    begin
+      Account.transaction do
+        @account = Account.create! account_params
+        now = Time.now
+        @user_account = UsersAccount.create!(user_id: current_user.id, account_id: @account.id, joined_at: now, invited_at: now)
+      end
+    rescue Exception => e
+      error = e.message
+    end
+    if !error
       set_cookie(:radar_current_account_id, @account.id)
       render json: { status: :ok }
     else
-      render json: { status: :unprocessable_entity }
+      render json: { status: :unprocessable_entity, msg: error }
     end
   end
 
