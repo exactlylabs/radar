@@ -10,8 +10,7 @@
 #
 # Variables:
 #  * RADAR_URL: Radar Server URL
-#  * RADAR_USER: Username to login to Radar Server
-#  * RADAR_PASSWORD: Password to login to Radar Server
+#  * RADAR_TOKEN: Account Token to authenticate to Radar Server
 #
 # ----------------------------------------------------------------------- #
 
@@ -29,7 +28,7 @@ FILE_PATH=$2
 OS=$3
 ARCH=$4
 EXTENSION=${FILE_PATH##*.}
-
+echo $RADAR_URL/api/v1/client_versions/$VERSION/packages
 AUTH="Token ${RADAR_TOKEN}"
 STATUS_CODE=$(curl -s -XPOST \
   -H 'Accept: application/json' \

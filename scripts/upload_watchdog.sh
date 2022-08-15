@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
 # ----------------------------------------------------------------------- #
-# Name: Upload Distribution
+# Name: Upload Watchdog
 #
-# Usage: ./upload_distribution.sh VERSION BINARY_FILE_PATH DIST_NAME
+# Usage: ./upload_watchdog.sh VERSION BINARY_FILE_PATH
 #  * Note that the BINARY_FILE_PATH should be the path to the non-signed binary
 #
 # Description: 
-#   Uploads the generated binary and signed binary 
-#     as a distribution to the radar server
+#   Uploads the generated watchdog binary and signed binary 
+#   to the radar server
 #
 # Variables:
 #  * RADAR_URL: URL for Radar Server
@@ -16,7 +16,7 @@
 #
 # ----------------------------------------------------------------------- #
 
-if [ $# -lt 3 ]; then
+if [ $# -lt 2 ]; then
   echo "Error: missing variables"
   exit 1
 fi
@@ -33,12 +33,12 @@ AUTH="Token ${RADAR_TOKEN}"
 STATUS_CODE=$(curl -s -XPOST \
   -H 'Accept: application/json' \
   -H 'Authorization: '"$AUTH"'' \
-  -F distribution[binary]=@${FILE_PATH} \
-  -F distribution[signed_binary]=@${FILE_PATH}_signed \
-  -F distribution[name]=$DIST_NAME \
+  -F version=''"${VERSION}"'' \
+  -F binary=@${FILE_PATH} \
+  -F signed_binary=@${FILE_PATH}_signed \
   --output /dev/stderr \
   --write-out '%{http_code}' \
-  $RADAR_URL/api/v1/client_versions/$VERSION/distributions)
+  $RADAR_URL/api/v1/watchdog_versions)
 
 if [[ $STATUS_CODE -ne 201 && $STATUS_CODE -ne 303 ]]; then
   echo "request failed with status: $STATUS_CODE"
