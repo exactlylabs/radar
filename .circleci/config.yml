@@ -16,7 +16,7 @@ jobs:
       - image: cimg/base:2022.05
     steps:
       - checkout
-      - run: make client_version VERSION=$CIRCLE_TAG RADAR_URL=${RADAR_URL} RADAR_USER=${RADAR_USER} RADAR_PASSWORD=${RADAR_PASSWORD}
+      - run: make client_version VERSION=$CIRCLE_TAG RADAR_URL=${RADAR_URL} RADAR_TOKEN=${RADAR_TOKEN}
 
   build_and_upload:
     working_directory: ~/repo
@@ -35,7 +35,7 @@ jobs:
       binName:
         default: "radar_agent"
         type: string
-    
+
     steps:
       - build_config
       - run: |
@@ -45,8 +45,8 @@ jobs:
             ARCH=<<parameters.arch>> \
             BIN_NAME=<<parameters.binName>> \
             PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
-            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key RADAR_URL=${RADAR_URL} RADAR_USER=${RADAR_USER} RADAR_PASSWORD=${RADAR_PASSWORD}
-  
+            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key RADAR_URL=${RADAR_URL} RADAR_TOKEN=${RADAR_TOKEN}
+
   deb_package:
     working_directory: ~/repo
     docker:
@@ -101,7 +101,7 @@ jobs:
             ARCH=<<parameters.arch>> \
             BIN_NAME=radar-agent \
             OUTPUT_DIR=~/repo/agent/dist
-            
+
       - store_artifacts:
           path: ~/repo/agent/dist
       - persist_to_workspace:
@@ -177,7 +177,7 @@ jobs:
 
   upload_package:
     docker:
-        - image: cimg/base:2022.05
+      - image: cimg/base:2022.05
     parameters:
       version:
         type: string
@@ -192,17 +192,16 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: | 
+      - run: |
           make upload_package \
             VERSION=<<parameters.version>> \
             FILE_PATH=/tmp/workspace/<<parameters.workspace_file_name>> \
             OS=<<parameters.os>> \
-            ARCH=<<parameters.arch>> RADAR_URL=${RADAR_URL} RADAR_USER=${RADAR_USER} RADAR_PASSWORD=${RADAR_PASSWORD}
-            
+            ARCH=<<parameters.arch>> RADAR_URL=${RADAR_URL} RADAR_TOKEN=${RADAR_TOKEN}
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
-workflows:  
+workflows:
   build_distributions:
     jobs:
       - create_version:
@@ -211,9 +210,9 @@ workflows:
               only: /^(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
-            
+
       - build_and_upload:
-          requires: [ create_version ]
+          requires: [create_version]
           version: $CIRCLE_TAG
           filters:
             tags:

@@ -30,7 +30,7 @@ OS=$3
 ARCH=$4
 EXTENSION=${FILE_PATH##*.}
 
-AUTH="Basic $(echo -n ${RADAR_USER}:${RADAR_PASSWORD} | base64)"
+AUTH="Token ${RADAR_TOKEN}"
 STATUS_CODE=$(curl -s -XPOST \
   -H 'Accept: application/json' \
   -H 'Authorization: '"${AUTH}"'' \

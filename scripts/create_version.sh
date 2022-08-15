@@ -15,7 +15,7 @@
 #
 # ----------------------------------------------------------------------- #
 
-AUTH="Basic $(echo -n $RADAR_USER:$RADAR_PASSWORD | base64)"
+AUTH="Token ${RADAR_TOKEN}"
 STATUS_CODE=$(curl -s -X POST \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
