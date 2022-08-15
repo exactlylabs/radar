@@ -63,7 +63,7 @@ if [ $# -lt 1 ]; then
 fi
 VERSION=$1
 
-rm -r ${DESTDIR}
+rm -rf ${DESTDIR}
 mkdir -p ${DESTDIR}
 
 # We only support amd64 for windows, due to ookla
@@ -83,7 +83,7 @@ sed -i 's/${VERSION}/'${VERSION}'/g' ${DESTDIR}/RadarAgent.wxs
 mkdir -p ${OUTPUT_PATH}
 wixl -a x64 -o ${DESTDIR}/RadarAgent-unsigned.msi ${DESTDIR}/RadarAgent.wxs
 
-rm ${OUTPUT_PATH}/RadarAgent.msi
+rm -f ${OUTPUT_PATH}/RadarAgent.msi
 osslsigncode sign -certs ${SIGNING_CERT_FILE} -key ${SIGNING_KEY_FILE} \
     -n "Radar Agent Installer" -i https://radar.exactlylabs.com/ \
     -t http://timestamp.digicert.com \
@@ -91,4 +91,4 @@ osslsigncode sign -certs ${SIGNING_CERT_FILE} -key ${SIGNING_KEY_FILE} \
 
 echo "Generated msi file at ${OUTPUT_PATH}/RadarAgent.msi"
 
-rm -r ${DESTDIR}
+rm -rf ${DESTDIR}
