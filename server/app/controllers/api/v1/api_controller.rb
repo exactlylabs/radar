@@ -21,10 +21,11 @@ module Api
         end
         token = request.authorization
         token_key, token_value = token.split(" ")
-        if token_key == "Token"
-          @account = Account.find_by_token(token_value)
-          head :unauthorized unless @account
+        if token_key != "Token"
+          head :unauthorized
         end
+        @account = Account.find_by_token(token_value)
+        head :unauthorized unless @account
       end
 
       def ensure_superaccount!
