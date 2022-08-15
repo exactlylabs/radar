@@ -47,6 +47,44 @@ jobs:
             PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
             PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key RADAR_URL=${RADAR_URL} RADAR_TOKEN=${RADAR_TOKEN}
 
+  build_watchdog:
+    working_directory: ~/repo
+    docker:
+      # Available Images: https://circleci.com/developer/images/image/cimg/go
+      - image: cimg/go:1.18.2
+    parameters:
+      version:
+        type: string
+
+    steps:
+      - build_config
+      - run: |
+          make watchdog \
+            VERSION=<<parameters.version>> \
+            OS=linux \
+            ARCH=arm64 \
+            BIN_NAME=watchdog \
+            PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
+            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key
+    
+      - persist_to_workspace:
+          root: ~/repo/agent/dist/
+          paths:
+            - "*"
+
+  upload_watchdog:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/base:2022.05
+    parameters:
+      version:
+        type: string
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: ./scripts/upload_watchdog.sh <<parameters.version>> /tmp/workspace/watchdog
+
   deb_package:
     working_directory: ~/repo
     docker:
@@ -333,3 +371,24 @@ workflows:
           arch: amd64
           workspace_file_name: RadarAgent.msi
           requires: [msi_package]
+
+  build_watchdog:
+    jobs:
+      - build_watchdog:
+          version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
+          filters:
+            tags:
+              only: /^watchdog-(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+          
+          
+      - upload_watchdog:
+          requires: [build_watchdog]
+          version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
+          filters:
+            tags:
+              only: /^watchdog-(?:\d+\.){2}\d+$/
+            branches:
+              ignore: "/.*/"
+        
