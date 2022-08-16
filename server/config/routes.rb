@@ -128,9 +128,7 @@ Rails.application.routes.draw do
         resources :distributions
         resources :packages
       end
-      resources :watchdog_versions, constraints: {id: /[^\/]+/} do
-
-      end
+      resources :watchdog_versions, constraints: {id: /[^\/]+/}
     end
   end
 
