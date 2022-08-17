@@ -66,9 +66,9 @@ jobs:
             BIN_NAME=watchdog \
             PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
             PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key
-    
+
       - persist_to_workspace:
-          root: ~/repo/agent/dist/
+          root: ~/repo/dist/
           paths:
             - "*"
 
@@ -381,8 +381,7 @@ workflows:
               only: /^watchdog-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
-          
-          
+
       - upload_watchdog:
           requires: [build_watchdog]
           version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
@@ -391,4 +390,3 @@ workflows:
               only: /^watchdog-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
-        
