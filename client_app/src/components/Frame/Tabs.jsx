@@ -110,7 +110,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.SPEED_TEST ? 'speed-active' : 'speed-inactive'}
             />
-            <div>Test your speed</div>
+            <div>Speed Test</div>
           </div>
           <div style={selectedTab === TABS.SPEED_TEST ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
@@ -123,7 +123,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.EXPLORE_MAP ? 'explore-active' : 'explore-inactive'}
             />
-            <div>Explore the map</div>
+            <div>Explore the Map</div>
           </div>
           <div style={selectedTab === TABS.EXPLORE_MAP ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>

@@ -4,6 +4,12 @@
   font-weight: normal;
 }
 
+@font-face {
+  font-family: 'MulishExtraBold';
+  src: local('MulishExtraBold'), url('./fonts/Mulish-ExtraBold.ttf') format('truetype');
+  font-weight: normal;
+}
+
 body {
   margin: 0;
   font-family: MulishRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
@@ -14,4 +20,8 @@ body {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+div {
+  color: #3f3c70;
 }

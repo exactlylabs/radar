@@ -1,6 +1,6 @@
 import { LOCAL_STORAGE_KEY } from '../constants';
 
-export const storeRunData = (data, setHistoricalValues) => {
+export const storeRunData = (data) => {
   const currentValue = window.localStorage.getItem(LOCAL_STORAGE_KEY);
   const newMeasurement = {
     timestamp: data.startTimestamp,
@@ -19,5 +19,4 @@ export const storeRunData = (data, setHistoricalValues) => {
   values = [newMeasurement, ...values]; // prepend to have the array sorted since creation by date desc
   const newValues = JSON.stringify({ values });
   window.localStorage.setItem(LOCAL_STORAGE_KEY, newValues);
-  setHistoricalValues(values);
 };
