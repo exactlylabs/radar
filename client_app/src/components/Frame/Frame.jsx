@@ -11,7 +11,7 @@ const defaultMainWrapperStyle = {
 const childrenWrapperStyle = {
   width: '90%',
   margin: '0 auto',
-  overflowY: 'scroll',
+  overflowY: 'auto',
 };
 
 const Frame = ({ config, children, step, setStep }) => {

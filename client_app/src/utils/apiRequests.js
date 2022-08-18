@@ -47,3 +47,12 @@ export const getAllSpeedTests = (setResults, setFilteredResults, setError, setLo
     })
     .finally(() => setLoading(false));
 };
+
+export const getSuggestions = async (addressString) => {
+  const formData = new FormData();
+  formData.append('address', addressString);
+  return fetch(`${API_URL}/suggestions`, {
+    method: 'POST',
+    body: formData
+  });
+}

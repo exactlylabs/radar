@@ -7,6 +7,7 @@ import AllResultsPage from './components/AllResultsPage/AllResultsPage';
 import Frame from './components/Frame/Frame';
 import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material';
 import { STEPS } from './constants';
+import StepsPage from "./components/StepsPage/StepsPage";
 
 // Application entry point, would hold all logic for state management
 // of multistep process
@@ -14,7 +15,7 @@ const App = ({ config }) => {
   let theme = createTheme();
   theme = responsiveFontSizes(theme);
 
-  const [step, setStep] = useState(STEPS.LANDING);
+  const [step, setStep] = useState('test');
   const [givenLocation, setGivenLocation] = useState(null);
   const [manualAddress, setManualAddress] = useState(null);
 
@@ -27,6 +28,9 @@ const App = ({ config }) => {
   const renderContent = () => {
     let content = null;
     switch (step) {
+      case 'test':
+        content = <StepsPage />
+        break;
       case STEPS.FORM:
         content = <FormPage setStep={setStep} goToNextStep={goToMapPage} />;
         break;

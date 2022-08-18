@@ -135,6 +135,7 @@ Rails.application.routes.draw do
     namespace 'v1' do
       resources :speed_tests, controller: 'speed_tests', only: [:index, :create]
       post 'geocode', to: 'geolocation#code'
+      post 'suggestions', to: 'geolocation#suggestions'
     end
   end
 

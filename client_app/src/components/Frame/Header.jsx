@@ -42,6 +42,7 @@ const rightSideContainerStyle = {
 
 const navElementStyle = {
   cursor: 'pointer',
+  color: WHITE,
 };
 
 const Header = ({ setStep }) => {
