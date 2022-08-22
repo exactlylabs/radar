@@ -15,7 +15,7 @@ const App = ({ config }) => {
   let theme = createTheme();
   theme = responsiveFontSizes(theme);
 
-  const [step, setStep] = useState('test');
+  const [step, setStep] = useState(STEPS.SPEED_TEST);
   const [givenLocation, setGivenLocation] = useState(null);
   const [manualAddress, setManualAddress] = useState(null);
 
