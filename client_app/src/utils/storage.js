@@ -1,6 +1,6 @@
 import { LOCAL_STORAGE_KEY } from '../constants';
 
-export const storeRunData = (data) => {
+export const storeRunData = data => {
   const currentValue = window.localStorage.getItem(LOCAL_STORAGE_KEY);
   const newMeasurement = {
     timestamp: data.startTimestamp,

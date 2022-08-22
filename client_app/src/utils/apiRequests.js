@@ -1,6 +1,6 @@
 import { API_URL } from '../constants';
 import { notifyError } from './errors';
-import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "./map";
+import { DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE } from './map';
 
 export const sendRawData = (rawData, location, startTimestamp) => {
   fetch(`${API_URL}/speed_tests`, {
@@ -22,11 +22,14 @@ export const getGeocodedAddress = async (formData, setLoading, setError = null) 
   })
     .then(res => res.json())
     .then(res => {
-      if(res.length > 0) {
-        response = {name: formData.get('address'), coordinates: res};
+      if (res.length > 0) {
+        response = { name: formData.get('address'), coordinates: res };
       } else {
         setError && setError(true);
-        response = {name: formData.get('address'), coordinates: [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]};
+        response = {
+          name: formData.get('address'),
+          coordinates: [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE],
+        };
       }
     })
     .catch(err => {
@@ -53,20 +56,20 @@ export const getAllSpeedTests = (setResults, setFilteredResults, setError, setLo
     .finally(() => setLoading(false));
 };
 
-export const getSuggestions = async (addressString) => {
+export const getSuggestions = async addressString => {
   const formData = new FormData();
   formData.append('address', addressString);
   return fetch(`${API_URL}/suggestions`, {
     method: 'POST',
-    body: formData
+    body: formData,
   });
-}
+};
 
-export const getAddressForCoordinates = async (coordinates) => {
+export const getAddressForCoordinates = async coordinates => {
   const formData = new FormData();
   formData.append('coordinates', coordinates);
   return fetch(`${API_URL}/coordinates`, {
     method: 'POST',
-    body: formData
+    body: formData,
   });
-}
+};

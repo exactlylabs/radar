@@ -1,4 +1,4 @@
-import {useEffect, useRef} from 'react';
+import { useEffect, useRef } from 'react';
 
 export const usePrev = status => {
   const ref = useRef();
@@ -6,4 +6,4 @@ export const usePrev = status => {
     ref.current = status;
   });
   return ref.current;
-}
+};
