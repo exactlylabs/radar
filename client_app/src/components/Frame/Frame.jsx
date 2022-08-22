@@ -3,6 +3,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Tabs from './Tabs';
 import { DEFAULT_MAIN_SECTION_BACKGROUND_COLOR } from '../../utils/colors';
+import {STEPS} from "../../constants";
 
 const defaultMainWrapperStyle = {
   backgroundColor: DEFAULT_MAIN_SECTION_BACKGROUND_COLOR,
@@ -14,12 +15,26 @@ const childrenWrapperStyle = {
   overflowY: 'auto',
 };
 
+const fullWidthWrapperStyle = {
+  ...childrenWrapperStyle,
+  width: '100%',
+}
+
 const Frame = ({ config, children, step, setStep }) => {
+
+  const getFrameStyleBasedOnCurrentTab = () => {
+    if(step === STEPS.ALL_RESULTS) {
+      return fullWidthWrapperStyle;
+    } else {
+      return childrenWrapperStyle;
+    }
+  }
+
   return (
     <div style={{ ...defaultMainWrapperStyle, ...config.frameStyle }}>
       {!config.widgetMode && <Header setStep={setStep} />}
       <Tabs step={step} setStep={setStep} />
-      <div style={{ ...childrenWrapperStyle, height: `calc(${config.frameStyle.height} - 70px - 173px - 53px)` }}>
+      <div style={{ ...getFrameStyleBasedOnCurrentTab(), height: `calc(${config.frameStyle.height} - 70px - 173px - 53px)` }}>
         {children}
       </div>
       {!config.widgetMode && <Footer />}

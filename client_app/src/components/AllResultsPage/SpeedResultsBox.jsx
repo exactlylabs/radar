@@ -3,6 +3,20 @@ import { Box, List, ListItem, ListItemIcon, ListItemText, Paper } from '@mui/mat
 import { Adjust, CheckCircle } from '@mui/icons-material';
 import { DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD, SPEED_FILTERS } from '../../utils/speeds';
 import './SpeedResultsBox.css';
+import {DEFAULT_SPEED_FILTER_BACKGROUND_COLOR, DEFAULT_SPEED_FILTER_BOX_SHADOW, WHITE} from "../../utils/colors";
+
+const speedFiltersBoxStyle = {
+  width: 275,
+  height: 300,
+  borderRadius: 16,
+  backgroundColor: DEFAULT_SPEED_FILTER_BACKGROUND_COLOR,
+  boxShadow: DEFAULT_SPEED_FILTER_BOX_SHADOW,
+  position: 'absolute',
+  bottom: 200,
+  right: 25,
+  zIndex: 1000,
+  color: WHITE,
+}
 
 const SpeedResultsBox = ({ selectedFilter, setSelectedFilter }) => {
   const handleFilterClick = e => {
@@ -13,7 +27,8 @@ const SpeedResultsBox = ({ selectedFilter, setSelectedFilter }) => {
   };
 
   return (
-    <Box component={Paper}>
+    <div style={speedFiltersBoxStyle}>
+      <My
       <List className={'speed-results-box--my-list'} dense={false}>
         <ListItem
           className={'speed-results-box--filter-list-item'}
@@ -83,7 +98,7 @@ const SpeedResultsBox = ({ selectedFilter, setSelectedFilter }) => {
           />
         </ListItem>
       </List>
-    </Box>
+    </div>
   );
 };
 
