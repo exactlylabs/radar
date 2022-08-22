@@ -1,4 +1,4 @@
-import LocationIcon from '../../../assets/location-icon.png';
+import LocationIcon from '../../../../../assets/location-icon.png';
 import './SuggestionRow.css';
 import {useEffect, useState} from "react";
 
@@ -72,7 +72,7 @@ const SuggestionRow = ({
   return (
     <div style={suggestionRowStyle}
          id={`row-${index}`}
-         className={`suggestion-row ${selected ? 'selected' : ''}`}
+         className={`suggestion-row ${selected ? 'suggestion-row--selected' : ''}`}
          onMouseOver={setHovered}
          onMouseLeave={unsetHovered}
          onClick={autofillInputAndCloseSuggestions}

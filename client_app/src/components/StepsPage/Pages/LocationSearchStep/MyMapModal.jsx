@@ -10,6 +10,7 @@ import {customMarker, mapTileAttribution, mapTileUrl} from "../../../../utils/ma
 import {useEffect, useMemo, useRef, useState} from "react";
 import {getGeocodedAddress, getSuggestions} from "../../../../utils/apiRequests";
 import {notifyError} from "../../../../utils/errors";
+import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 
 const modalStyle = {
   width: '700px',
@@ -58,19 +59,23 @@ const MyMapModal = ({
   const [addressCoordinates, setAddressCoordinates] = useState(address.coordinates);
 
   useEffect(() => {
+    const fetchSuggestions = async () => {
+      const suggestions = await getSuggestions(address.name);
+      if(suggestions.length > 0) {
+        setAddressCoordinates(suggestions[0].coordinates);
+      } else {
+        setError(true);
+      }
+      setLoading(false);
+    }
     setAddressCoordinates(address.coordinates);
     if (isOpen && address.coordinates.length === 0) {
       setLoading(true);
-      getSuggestions(address.name)
-        .then(res => res.json())
-        .then(res => {
-          if(res.length > 0) {
-            setAddressCoordinates(res[0].coordinates);
-          } else {
-            setError(true);
-          }
+      fetchSuggestions()
+        .catch(err => {
+          notifyError(err);
+          setError('There was an error searching for your address. Please, try again later.');
         })
-        .catch(err => notifyError(err))
         .finally(() => setLoading(false));
     }
   }, [isOpen, address.coordinates]);
@@ -119,6 +124,9 @@ const MyMapModal = ({
           }
           {
             loading && <CircularProgress size={25} />
+          }
+          {
+            !loading && error && <MyMessageSnackbar message={error} type={'error'}/>
           }
         </div>
         <div style={footerStyle}>

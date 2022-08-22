@@ -98,6 +98,14 @@ const iconsWrapperStyle = {
   margin: '20px auto',
 }
 
+/**
+ * Custom inner gauge values to display. These come with its own normalizer
+ * to map actual result values to their correct position inside the rounded gauge.
+ * For reference: /src/components/StepsPage/Pages/SpeedTestStep/utils/normalizer.js
+ * @param currentValue: either download or upload current value in Mbps.
+ * @param isDownloading: simple flag to know when the test is running the download/upload phase.
+ * @returns {JSX.Element}
+ */
 const SpeedGaugeInterior = ({
   currentValue,
   isDownloading,

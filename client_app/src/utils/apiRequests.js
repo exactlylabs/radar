@@ -59,17 +59,29 @@ export const getAllSpeedTests = (setResults, setFilteredResults, setError, setLo
 export const getSuggestions = async addressString => {
   const formData = new FormData();
   formData.append('address', addressString);
-  return fetch(`${API_URL}/suggestions`, {
-    method: 'POST',
-    body: formData,
-  });
+  try {
+    return await fetch(`${API_URL}/suggestions`, {
+      method: 'POST',
+      body: formData,
+    }).then(res => res.json());
+  } catch (e) {
+    notifyError(e);
+    // Just human-readable error for UI display
+    throw new Error('Error fetching suggestions. Please try again later.');
+  }
 };
 
 export const getAddressForCoordinates = async coordinates => {
   const formData = new FormData();
   formData.append('coordinates', coordinates);
-  return fetch(`${API_URL}/coordinates`, {
-    method: 'POST',
-    body: formData,
-  });
+  try {
+    return fetch(`${API_URL}/coordinates`, {
+      method: 'POST',
+      body: formData,
+    }).then(res => res.json());
+  } catch (e) {
+    notifyError(e);
+    // Just human-readable error for UI display
+    throw new Error('Error fetching address. Please try again later.');
+  }
 };
