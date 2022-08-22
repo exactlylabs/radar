@@ -5,6 +5,8 @@ import {
 } from "../../../../utils/colors";
 import MyConnectionInformationVerticalDivider from "./MyConnectionInformationVerticalDivider";
 import AddressIcon from '../../../../assets/address-icon.png';
+import HomeIconLight from '../../../../assets/icon-location-home-light.png';
+import WifiIconLight from '../../../../assets/icon-connection-wifi-light.png';
 
 const connectionInformationStyle = {
   width: '100%',
@@ -16,6 +18,11 @@ const connectionInformationStyle = {
   margin: '0 auto',
   position: 'relative',
   overflow: 'hidden'
+}
+
+const integratedStyle = {
+  ...connectionInformationStyle,
+  borderRadius: '16px 16px 0 0',
 }
 
 const opaqueStyle = {
@@ -45,15 +52,17 @@ const commonRowStyle = {
 
 const addressRowStyle = {
   ...commonRowStyle,
-  maxWidth: 300,
+  maxWidth: 200,
 }
 
 const placementRowStyle = {
   ...commonRowStyle,
+  width: 'max-content',
 }
 
 const typeRowStyle = {
   ...commonRowStyle,
+  width: 'max-content',
 }
 
 const iconStyle = {
@@ -78,45 +87,32 @@ const addressStyle = {
 const ConnectionInformation = ({
   disabled,
   progress = 0,
-  userStepData
+  userStepData,
+  integratedToStatsTable
 }) => {
 
-  const calculateAvailableWidth = () => {
-    const hasNetworkLocation = userStepData.networkLocation !== null;
-    const hasNetworkType = userStepData.networkType !== null;
-    let width = 300;
-    if((!hasNetworkLocation && hasNetworkType) || (hasNetworkLocation && !hasNetworkType)) width = 400;
-    if(!hasNetworkLocation && !hasNetworkType) width = '95%';
-    return width;
+  const getStyle = () => {
+    if(integratedToStatsTable) return integratedStyle;
+    return disabled ? opaqueStyle : connectionInformationStyle;
   }
 
   return (
-    <div style={disabled ? opaqueStyle : connectionInformationStyle}>
+    <div style={getStyle()}>
       <div style={columnsContainerStyle}>
-        <div style={{...addressRowStyle, maxWidth: calculateAvailableWidth()}}>
+        <div style={addressRowStyle}>
           <img style={iconStyle} src={AddressIcon} width={22} height={22} alt={'address-icon'}/>
-          <div style={addressStyle}>{userStepData.address}</div>
+          <div style={addressStyle}>{userStepData.address.address}</div>
         </div>
-        {
-          userStepData.networkLocation &&
-          <>
-            <MyConnectionInformationVerticalDivider disabled={disabled}/>
-            <div style={placementRowStyle}>
-              <img style={iconStyle} src={userStepData.networkLocation.iconLightSrc} width={22} height={22} alt={'address-icon'}/>
-              {userStepData.networkLocation.text}
-            </div>
-          </>
-        }
-        {
-          userStepData.networkType &&
-          <>
-            <MyConnectionInformationVerticalDivider disabled={disabled}/>
-            <div style={typeRowStyle}>
-              <img style={iconStyle} src={userStepData.networkType.iconLightSrc} width={22} height={22} alt={'address-icon'}/>
-              {userStepData.networkType.text}
-            </div>
-          </>
-        }
+        <MyConnectionInformationVerticalDivider disabled={disabled}/>
+        <div style={placementRowStyle}>
+          <img style={iconStyle} src={userStepData.networkLocation ? userStepData.networkLocation.iconLightSrc : HomeIconLight} width={22} height={22} alt={'address-icon'}/>
+          {userStepData.networkLocation ? userStepData.networkLocation.text : 'Not available'}
+        </div>
+        <MyConnectionInformationVerticalDivider disabled={disabled}/>
+        <div style={typeRowStyle}>
+          <img style={iconStyle} src={userStepData.networkType ? userStepData.networkType.iconLightSrc : WifiIconLight} width={22} height={22} alt={'address-icon'}/>
+          {userStepData.networkType ? userStepData.networkType.text : 'Not available'}
+        </div>
       </div>
       <div style={{...progressBarStyle, width: `${progress}%`}}></div>
     </div>

@@ -9,27 +9,39 @@ import {errors, warnings} from "../../utils/messages";
 import {steps} from "./utils/steps";
 import {placementOptions} from "../../utils/placements";
 import {types} from "../../utils/networkTypes";
+import MyMapModal from "./Pages/LocationSearchStep/MyMapModal";
+import {getAddressForCoordinates, getSuggestions} from "../../utils/apiRequests";
+import {notifyError} from "../../utils/errors";
+import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResultsStepPage";
 
 const stepsPageStyle = {
-  width: '40%',
+  width: '100%',
   margin: '0 auto',
   textAlign: 'center',
   paddingTop: 40,
 }
 
-const StepsPage = () => {
+const StepsPage = ({
+  goToAreaMap,
+  goToAllResults
+}) => {
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(steps.CONNECTION_ADDRESS);
   const [error, setError] = useState(null);
   const [warning, setWarning] = useState(null);
   const [userStepData, setUserStepData] = useState({
-    address: null,
+    address: {
+      address: '',
+      coordinates: [],
+    },
     confirmedLocation: true, // TODO: change to false and create location confirmation modal
     terms: false,
     networkLocation: null,
     networkType: null,
-    networkCost: null,
+    networkCost: undefined,
   });
+  const [lastTestResults, setLastTestResults] = useState(null);
 
   const setAddress = address => setUserStepData({...userStepData, address});
   const setTerms = status => setUserStepData({...userStepData, terms: status});
@@ -45,16 +57,29 @@ const StepsPage = () => {
   };
   const setNetworkCost = cost => setUserStepData({ ...userStepData, networkCost: cost });
 
-  const goToPage2 = () => {
+  const checkAndOpenModal = () => {
     setError(null);
     const { address, confirmedLocation, terms } = userStepData;
-    if(!address) {
+    if(address.address === '') {
       setError(errors.NO_LOCATION_ERROR);
     } else if(!terms) {
       setError(errors.NO_TERMS_ERROR);
-    } else if(address && confirmedLocation && terms) {
-      setCurrentStep(steps.CONNECTION_PLACEMENT);
+    } else if(address.name !== '' && confirmedLocation && terms) {
+      setIsModalOpen(true);
     }
+  }
+
+  const goToPage2 = (finalCoordinates) => {
+    getAddressForCoordinates(finalCoordinates)
+      .then(res => res.json())
+      .then(res => {
+        setAddress(res);
+        setCurrentStep(steps.CONNECTION_PLACEMENT);
+      })
+      .catch(err => {
+        notifyError(err)
+        setError('There was an error saving your address! Please try again later.');
+      });
   }
 
   const goToPage3 = () => setCurrentStep(steps.CONNECTION_TYPE);
@@ -63,10 +88,17 @@ const StepsPage = () => {
 
   const goToPage5 = () => setCurrentStep(steps.RUN_SPEED_TEST);
 
+  const goToPage6 = (testResults) => {
+    setLastTestResults(testResults);
+    setCurrentStep(steps.SPEED_TEST_RESULTS);
+  }
+
+  const goToMapPage = () => goToAreaMap(userStepData.address.coordinates);
+
   return (
     <div style={stepsPageStyle}>
       {
-        currentStep < steps.CONNECTION_COST &&
+        currentStep <= steps.CONNECTION_COST &&
           <MyStepper activeStep={currentStep}/>
       }
       {
@@ -75,6 +107,10 @@ const StepsPage = () => {
                                 error={error}
                                 setAddress={setAddress}
                                 setTerms={setTerms}
+                                isModalOpen={isModalOpen}
+                                setIsModalOpen={setIsModalOpen}
+                                checkAndOpenModal={checkAndOpenModal}
+                                currentAddress={userStepData.address}
         />
       }
       {
@@ -104,7 +140,18 @@ const StepsPage = () => {
       }
       {
         currentStep === steps.RUN_SPEED_TEST &&
-        <SpeedTestStepPage userStepData={userStepData}/>
+        <SpeedTestStepPage userStepData={userStepData}
+                           goForward={goToPage6}
+        />
+      }
+      {
+        currentStep === steps.SPEED_TEST_RESULTS &&
+        <SpeedTestResultsStepPage testResults={lastTestResults}
+                                  userStepData={userStepData}
+                                  goToAllResults={goToAllResults}
+                                  goToAreaMap={goToMapPage}
+                                  goToTestAgain={goToPage5}
+        />
       }
     </div>
   );

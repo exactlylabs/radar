@@ -17,7 +17,7 @@ const contentWrapperStyle = {
 };
 
 const leftSideContainerStyle = {
-  width: '45%',
+  width: '35%',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
@@ -64,7 +64,6 @@ const Footer = () => {
         <div style={leftSideContainerStyle}>
           <div style={leftSideTopRowStyle}>
             <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={{ marginRight: 20 }} />
-            <div>Cookie Policy</div>
             <div>Privacy Policy</div>
             <div>Terms of Use</div>
           </div>

@@ -19,7 +19,7 @@ export const MyBackButton = ({ text, onClick, disabled, icon, iconFirst }) => {
       {icon}
       {text}
     </button> :
-    <button style={defaultButtonStyle} onClick={onClick} disabled={disabled}>
+    <button style={backButtonStyle} onClick={onClick} disabled={disabled}>
       {text}
       {icon}
     </button>

@@ -53,7 +53,7 @@ const MyAddressInput = ({ setAddress }) => {
 
   const handleInputChange = debounce( e => {
     setLocationLoading(true);
-    setAddress(e.target.value);
+    setAddress({name: e.target.value, coordinates: []});
     getSuggestions(e.target.value)
       .then(res => res.json())
       .then(res => setSuggestions(res))
@@ -61,11 +61,11 @@ const MyAddressInput = ({ setAddress }) => {
       .finally(() => setLocationLoading(false));
   });
 
-  const autofillInput = id => {
+  const autofillInput = (id, selectedAddress) => {
     const addressInputElement = document.getElementById('address-input');
     const selectedRowText = document.getElementById(`row-${id}-text`);
     addressInputElement.value = selectedRowText.innerText;
-    setAddress(addressInputElement.value);
+    setAddress(selectedAddress);
   }
 
   return (

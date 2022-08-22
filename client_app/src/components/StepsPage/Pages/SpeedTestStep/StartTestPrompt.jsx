@@ -10,6 +10,7 @@ const promptStyle = {
 
 const textStyle = {
   width: '75%',
+  maxWidth: 600,
   marginBottom: 30
 }
 

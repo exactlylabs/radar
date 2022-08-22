@@ -2,6 +2,8 @@ import {MyTitle} from "../../../common/MyTitle";
 import MyAddressInput from "../../AddressInput/MyAddressInput";
 import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
+import {useState} from "react";
+import MyMapModal from "./MyMapModal";
 
 const locationSearchStepStyle = {
   width: '100%',
@@ -26,7 +28,11 @@ const LocationSearchStepPage = ({
   goForward,
   error,
   setAddress,
-  setTerms
+  setTerms,
+  isModalOpen,
+  setIsModalOpen,
+  checkAndOpenModal,
+  currentAddress
 }) => {
 
   return (
@@ -39,7 +45,12 @@ const LocationSearchStepPage = ({
         <input type={'checkbox'} style={checkboxStyle} onChange={e => setTerms(e.target.checked)}/>
         <div style={termsTextStyle}>I agree to the Radar’s <a href={'/terms'}>Terms of Use</a> and <a href={'/privacy-policy'}>Privacy Policy</a>.</div>
       </div>
-      <MyStepSwitcher goForward={goForward}/>
+      <MyStepSwitcher goForward={checkAndOpenModal}/>
+      <MyMapModal isOpen={isModalOpen}
+                  setIsOpen={setIsModalOpen}
+                  goForward={goForward}
+                  address={currentAddress}
+      />
     </div>
   )
 }

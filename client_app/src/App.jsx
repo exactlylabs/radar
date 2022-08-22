@@ -22,26 +22,24 @@ const App = ({ config }) => {
   const goToMapPage = location => {
     setManualAddress(true);
     setGivenLocation(location);
-    setStep(STEPS.MAP);
+    setStep(STEPS.ALL_RESULTS);
   };
+
+  const goToAllResults = () => {
+    setStep(STEPS.ALL_RESULTS);
+  }
 
   const renderContent = () => {
     let content = null;
     switch (step) {
-      case 'test':
-        content = <StepsPage />
-        break;
-      case STEPS.FORM:
-        content = <FormPage setStep={setStep} goToNextStep={goToMapPage} />;
-        break;
-      case STEPS.MAP:
-        content = <MapPage manualAddress={manualAddress} givenLocation={givenLocation} maxHeight={config.frameStyle.height ?? 500} />;
+      case STEPS.SPEED_TEST:
+        content = <StepsPage goToAreaMap={goToMapPage} goToAllResults={goToAllResults}/>
         break;
       case STEPS.ALL_RESULTS:
-        content = <AllResultsPage setStep={setStep} maxHeight={config.frameStyle.height ?? 500} />;
+        content = <AllResultsPage givenLocation={givenLocation} setStep={setStep} maxHeight={config.frameStyle.height ?? 500} />;
         break;
       default:
-        content = <LandingPage setStep={setStep} />;
+        content = <StepsPage goToAreaMap={goToMapPage} goToAllResults={goToAllResults} />;
         break;
     }
     return content;
