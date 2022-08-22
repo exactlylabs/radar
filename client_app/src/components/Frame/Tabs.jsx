@@ -95,7 +95,7 @@ const Tabs = ({ step, setStep }) => {
 
   const goToTestSpeed = () => {
     setSelectedTab(TABS.SPEED_TEST);
-    setStep(STEPS.LANDING);
+    setStep(STEPS.SPEED_TEST);
   };
 
   return (

@@ -25,3 +25,7 @@ code {
 div {
   color: #3f3c70;
 }
+
+p {
+  margin: 0;
+}

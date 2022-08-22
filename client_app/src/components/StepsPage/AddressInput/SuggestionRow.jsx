@@ -65,7 +65,7 @@ const SuggestionRow = ({
   }
 
   const autofillInputAndCloseSuggestions = () => {
-    autofillInput(index);
+    autofillInput(index, suggestion);
     setOpen(false);
   }
 
@@ -78,7 +78,7 @@ const SuggestionRow = ({
          onClick={autofillInputAndCloseSuggestions}
     >
       <img src={LocationIcon} width={11} height={15} alt={'Location-icon'} style={locationIconStyle}/>
-      <div style={suggestionTextStyle} id={`row-${index}-text`}>{suggestion}</div>
+      <div style={suggestionTextStyle} id={`row-${index}-text`}>{suggestion.address}</div>
     </div>
   );
 }

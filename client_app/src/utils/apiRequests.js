@@ -14,7 +14,8 @@ export const sendRawData = (rawData, location, startTimestamp) => {
   }).catch(notifyError);
 };
 
-export const getGeocodedAddress = (formData, setLoading, setLocation, setError = null) => {
+export const getGeocodedAddress = async (formData, setLoading, setError = null) => {
+  let response;
   fetch(`${API_URL}/geocode`, {
     method: 'POST',
     body: formData,
@@ -22,24 +23,28 @@ export const getGeocodedAddress = (formData, setLoading, setLocation, setError =
     .then(res => res.json())
     .then(res => {
       if(res.length > 0) {
-        setLocation(res);
+        response = {name: formData.get('address'), coordinates: res};
       } else {
         setError && setError(true);
-        setLocation([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
+        response = {name: formData.get('address'), coordinates: [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]};
       }
     })
     .catch(err => {
       notifyError(err);
     })
-    .finally(() => setLoading(false));
+    .finally(() => {
+      setLoading(false);
+    });
+  return response;
 };
 
 export const getAllSpeedTests = (setResults, setFilteredResults, setError, setLoading) => {
   fetch(`${API_URL}/speed_tests`)
     .then(res => res.json())
     .then(res => {
-      setResults(res);
-      setFilteredResults(res);
+      const cleanResults = res.filter(measurement => measurement.latitude && measurement.longitude);
+      setResults(cleanResults);
+      setFilteredResults(cleanResults);
     })
     .catch(err => {
       setError(err);
@@ -52,6 +57,15 @@ export const getSuggestions = async (addressString) => {
   const formData = new FormData();
   formData.append('address', addressString);
   return fetch(`${API_URL}/suggestions`, {
+    method: 'POST',
+    body: formData
+  });
+}
+
+export const getAddressForCoordinates = async (coordinates) => {
+  const formData = new FormData();
+  formData.append('coordinates', coordinates);
+  return fetch(`${API_URL}/coordinates`, {
     method: 'POST',
     body: formData
   });

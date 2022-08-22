@@ -6,7 +6,9 @@ import {
 } from "../../utils/colors";
 
 const commonStyle = {
-  width: '60%',
+  width: '30%',
+  minWidth: 400,
+  maxWidth: 550,
   paddingTop: 10,
   paddingBottom: 10,
   paddingLeft: 15,

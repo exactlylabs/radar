@@ -1,8 +1,8 @@
 import SpeedGauge from "./SpeedGauge";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import ConnectionInformation from "./ConnectionInformation";
 import StartTestPrompt from "./StartTestPrompt";
-import TestStatsTable from "./TestStatsTable";
+import TestStatsTableContent from "./TestStatsTable";
 import {storeRunData} from "../../../../utils/storage";
 
 const footerStyle = {
@@ -10,7 +10,8 @@ const footerStyle = {
 }
 
 const SpeedTestStepPage = ({
-  userStepData
+  userStepData,
+  goForward
 }) => {
 
   const [disabled, setDisabled] = useState(true);
@@ -25,11 +26,12 @@ const SpeedTestStepPage = ({
       startTimestamp,
       downloadValue,
       uploadValue,
-      location,
+      location: userStepData.address.coordinates,
       loss,
       latency,
     };
     storeRunData(results);
+    goForward(results);
   }
 
   return (
@@ -54,11 +56,11 @@ const SpeedTestStepPage = ({
           <div style={footerStyle}>Testing <b>{!uploadValue ? 'download' : 'upload'}</b> speed...</div>
         </>
       }
-      <TestStatsTable disabled={disabled}
-                      downloadValue={downloadValue?.toFixed(2)}
-                      uploadValue={uploadValue?.toFixed(2)}
-                      latencyValue={latency?.toFixed(0)}
-                      pingValue={null}
+      <TestStatsTableContent disabled={disabled}
+                             downloadValue={downloadValue?.toFixed(2)}
+                             uploadValue={uploadValue?.toFixed(2)}
+                             latencyValue={latency?.toFixed(0)}
+                             pingValue={null}
       />
     </div>
   )

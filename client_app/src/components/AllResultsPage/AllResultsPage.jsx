@@ -10,7 +10,7 @@ import { mapTileAttribution, mapTileUrl } from '../../utils/map';
 import { getAllSpeedTests } from '../../utils/apiRequests';
 import { MyMap } from '../common/MyMap';
 
-const AllResultsPage = ({ setStep, maxHeight }) => {
+const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [results, setResults] = useState(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -53,7 +53,7 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
     setFilteredResults(results.filter(r => r.download_avg >= limit[0] && r.download_avg < limit[1]));
   };
 
-  const goToMap = () => setStep(STEPS.MAP);
+  const goToSpeedTest = () => setStep(STEPS.SPEED_TEST);
 
   return (
     <div style={{ textAlign: 'center', paddingTop: 10, paddingBottom: 10 }}>
@@ -62,7 +62,7 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
       {!loading && results !== null && results.length === 0 && (
         <div>
           <p>No measurements taken so far!</p>
-          <MyButton text={'Test'} onClick={goToMap} />
+          <MyButton text={'Test'} onClick={goToSpeedTest} />
         </div>
       )}
       {!loading && results !== null && results.length > 0 && (
@@ -70,8 +70,8 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
           <Grid item xs={12} md={10}>
             <Box component={Paper} style={{ padding: 10 }}>
               <MapContainer
-                center={[0, 0]}
-                zoom={2}
+                center={givenLocation ? givenLocation : [0,0]}
+                zoom={givenLocation ? 20 : 2}
                 scrollWheelZoom
                 style={{ height: `calc(${maxHeight} - 170px`, margin: 'auto' }}
               >
@@ -81,7 +81,7 @@ const AllResultsPage = ({ setStep, maxHeight }) => {
                   <CircleMarker
                     key={measurement.id}
                     radius={5}
-                    center={[measurement.latitude, measurement.longitude]}
+                    center={[measurement.latitude , measurement.longitude]}
                     pathOptions={getColor(measurement)}
                   >
                     <Popup>

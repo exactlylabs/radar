@@ -4,6 +4,7 @@ import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
 import PreferNotToAnswer from "../../../common/PreferNotToAnswer";
 import {MyTitle} from "../../../common/MyTitle";
 import {types} from "../../../../utils/networkTypes";
+import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 
 
 const ConnectionTypeStepPage = ({
@@ -11,6 +12,7 @@ const ConnectionTypeStepPage = ({
   goBack,
   selectedOption,
   setSelectedOption,
+  warning
 }) => {
 
   useEffect(() => {
@@ -29,6 +31,7 @@ const ConnectionTypeStepPage = ({
                       selectedOption={selectedOption}
                       setSelectedOption={setSelectedOption}
       />
+      { warning && <MyMessageSnackbar message={warning} type={'warning'}/> }
       <MyStepSwitcher goForward={goForward} goBack={goBack} forwardDisabled={selectedOption === null}/>
       <PreferNotToAnswer goForward={goForward}/>
     </div>

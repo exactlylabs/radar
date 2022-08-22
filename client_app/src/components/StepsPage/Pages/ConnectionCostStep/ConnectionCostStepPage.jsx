@@ -1,7 +1,5 @@
 import CostInput from "./CostInputContainer/CostInputContainer";
 import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
-import {useState} from "react";
-import {ArrowForward} from "@mui/icons-material";
 import PreferNotToAnswer from "../../../common/PreferNotToAnswer";
 import {MyTitle} from "../../../common/MyTitle";
 
