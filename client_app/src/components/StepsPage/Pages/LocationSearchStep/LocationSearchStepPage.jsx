@@ -1,5 +1,5 @@
 import {MyTitle} from "../../../common/MyTitle";
-import MyAddressInput from "../../AddressInput/MyAddressInput";
+import MyAddressInput from "./AddressInput/MyAddressInput";
 import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 import {useState} from "react";

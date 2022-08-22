@@ -46,9 +46,9 @@ const navElementStyle = {
 };
 
 const Header = ({ setStep }) => {
-  const goToHome = () => setStep(STEPS.LANDING);
+  const goToHome = () => setStep(STEPS.SPEED_TEST);
 
-  const goToTestSpeed = () => setStep(STEPS.LANDING);
+  const goToTestSpeed = () => setStep(STEPS.SPEED_TEST);
 
   return (
     <div style={headerStyle}>

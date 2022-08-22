@@ -1,13 +1,13 @@
-import {DEFAULT_ADDRESS_INPUT_BACKGROUND_COLOR} from "../../../utils/colors";
-import {DEFAULT_FONT_FAMILY} from "../../../utils/fonts";
+import {DEFAULT_ADDRESS_INPUT_BACKGROUND_COLOR, RED} from "../../../../../utils/colors";
+import {DEFAULT_FONT_FAMILY} from "../../../../../utils/fonts";
 import {TextField} from "@mui/material";
-import locationButtonIcon from '../../../assets/location-button.png';
+import locationButtonIcon from '../../../../../assets/location-button.png';
 import {useState} from "react";
-import MySpinner from "../../common/MySpinner";
+import MySpinner from "../../../../common/MySpinner";
 import LocationSuggestionsList from "./LocationSuggestionsList";
-import {debounce} from "../../../utils/debouncer";
-import {getGeocodedAddress, getSuggestions} from "../../../utils/apiRequests";
-import {notifyError} from "../../../utils/errors";
+import {debounce} from "../../../../../utils/debouncer";
+import {getGeocodedAddress, getSuggestions} from "../../../../../utils/apiRequests";
+import {notifyError} from "../../../../../utils/errors";
 
 const addressInputWrapperStyle = {
   width: '80%',
@@ -46,19 +46,26 @@ const inputAdornmentStyle = {
   justifyContent: 'center',
 }
 
+const errorMessageStyle = {
+  color: RED
+}
+
 const MyAddressInput = ({ setAddress }) => {
 
+  const [error, setError] = useState(false);
   const [suggestions, setSuggestions] = useState(null);
   const [locationLoading, setLocationLoading] = useState(false);
 
-  const handleInputChange = debounce( e => {
+  const handleInputChange = debounce( async (e) => {
     setLocationLoading(true);
     setAddress({name: e.target.value, coordinates: []});
-    getSuggestions(e.target.value)
-      .then(res => res.json())
-      .then(res => setSuggestions(res))
-      .catch(err => notifyError(err))
-      .finally(() => setLocationLoading(false));
+    try {
+      const suggestions = await getSuggestions(e.target.value);
+      setSuggestions(suggestions);
+    } catch (e) {
+      setError(e.message);
+    }
+    setLocationLoading(false);
   });
 
   const autofillInput = (id, selectedAddress) => {
@@ -75,6 +82,7 @@ const MyAddressInput = ({ setAddress }) => {
                    id={'address-input'}
                    sx={{width: '90%'}}
                    InputProps={addressInputStyle}
+                   error={error}
                    onChange={handleInputChange}
                    variant={'standard'}/>
         <div style={inputAdornmentStyle} onClick={() => setLocationLoading(!locationLoading)}>
@@ -89,6 +97,7 @@ const MyAddressInput = ({ setAddress }) => {
           }
         </div>
       </div>
+      { error && <p style={errorMessageStyle}>{error}</p> }
       <LocationSuggestionsList suggestions={suggestions} autofillInput={autofillInput}/>
     </div>
   )

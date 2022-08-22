@@ -69,17 +69,14 @@ const StepsPage = ({
     }
   }
 
-  const goToPage2 = (finalCoordinates) => {
-    getAddressForCoordinates(finalCoordinates)
-      .then(res => res.json())
-      .then(res => {
-        setAddress(res);
-        setCurrentStep(steps.CONNECTION_PLACEMENT);
-      })
-      .catch(err => {
-        notifyError(err)
-        setError('There was an error saving your address! Please try again later.');
-      });
+  const goToPage2 = async (finalCoordinates) => {
+    try {
+      const address = await getAddressForCoordinates(finalCoordinates);
+      setAddress(address);
+      setCurrentStep(steps.CONNECTION_PLACEMENT);
+    } catch (e) {
+      setError('There was an error saving your address! Please try again later.');
+    }
   }
 
   const goToPage3 = () => setCurrentStep(steps.CONNECTION_TYPE);
@@ -95,64 +92,68 @@ const StepsPage = ({
 
   const goToMapPage = () => goToAreaMap(userStepData.address.coordinates);
 
+  const getCurrentPage = () => {
+    switch (currentStep) {
+      case steps.CONNECTION_ADDRESS:
+        return <LocationSearchStepPage goForward={goToPage2}
+                                       error={error}
+                                       setAddress={setAddress}
+                                       setTerms={setTerms}
+                                       isModalOpen={isModalOpen}
+                                       setIsModalOpen={setIsModalOpen}
+                                       checkAndOpenModal={checkAndOpenModal}
+                                       currentAddress={userStepData.address}
+        />;
+      case steps.CONNECTION_PLACEMENT:
+        return <ConnectionPlacementStepPage goForward={goToPage3}
+                                            goBack={() => setCurrentStep(steps.CONNECTION_ADDRESS)}
+                                            setSelectedOption={setNetworkLocation}
+                                            selectedOption={userStepData.networkLocation}
+        />;
+      case steps.CONNECTION_TYPE:
+        return <ConnectionTypeStepPage goForward={goToPage4}
+                                       goBack={() => setCurrentStep(steps.CONNECTION_PLACEMENT)}
+                                       selectedOption={userStepData.networkType}
+                                       setSelectedOption={setNetworkType}
+                                       warning={warning}
+        />;
+      case steps.CONNECTION_COST:
+        return <ConnectionCostStepPage goForward={goToPage5}
+                                       goBack={() => setCurrentStep(steps.CONNECTION_TYPE)}
+                                       setCost={setNetworkCost}
+                                       cost={userStepData.networkCost}
+        />;
+      case steps.RUN_SPEED_TEST:
+        return <SpeedTestStepPage userStepData={userStepData}
+                                  goForward={goToPage6}
+        />;
+      case steps.SPEED_TEST_RESULTS:
+        return <SpeedTestResultsStepPage testResults={lastTestResults}
+                                         userStepData={userStepData}
+                                         goToAllResults={goToAllResults}
+                                         goToAreaMap={goToMapPage}
+                                         goToTestAgain={goToPage5}
+        />;
+      default:
+        return <LocationSearchStepPage goForward={goToPage2}
+                                       error={error}
+                                       setAddress={setAddress}
+                                       setTerms={setTerms}
+                                       isModalOpen={isModalOpen}
+                                       setIsModalOpen={setIsModalOpen}
+                                       checkAndOpenModal={checkAndOpenModal}
+                                       currentAddress={userStepData.address}
+        />;
+    }
+  }
+
   return (
     <div style={stepsPageStyle}>
       {
         currentStep <= steps.CONNECTION_COST &&
           <MyStepper activeStep={currentStep}/>
       }
-      {
-        currentStep === steps.CONNECTION_ADDRESS &&
-        <LocationSearchStepPage goForward={goToPage2}
-                                error={error}
-                                setAddress={setAddress}
-                                setTerms={setTerms}
-                                isModalOpen={isModalOpen}
-                                setIsModalOpen={setIsModalOpen}
-                                checkAndOpenModal={checkAndOpenModal}
-                                currentAddress={userStepData.address}
-        />
-      }
-      {
-        currentStep === steps.CONNECTION_PLACEMENT &&
-        <ConnectionPlacementStepPage goForward={goToPage3}
-                                     goBack={() => setCurrentStep(steps.CONNECTION_ADDRESS)}
-                                     setSelectedOption={setNetworkLocation}
-                                     selectedOption={userStepData.networkLocation}
-        />
-      }
-      {
-        currentStep === steps.CONNECTION_TYPE &&
-        <ConnectionTypeStepPage goForward={goToPage4}
-                                goBack={() => setCurrentStep(steps.CONNECTION_PLACEMENT)}
-                                selectedOption={userStepData.networkType}
-                                setSelectedOption={setNetworkType}
-                                warning={warning}
-        />
-      }
-      {
-        currentStep === steps.CONNECTION_COST &&
-        <ConnectionCostStepPage goForward={goToPage5}
-                                goBack={() => setCurrentStep(steps.CONNECTION_TYPE)}
-                                setCost={setNetworkCost}
-                                cost={userStepData.networkCost}
-        />
-      }
-      {
-        currentStep === steps.RUN_SPEED_TEST &&
-        <SpeedTestStepPage userStepData={userStepData}
-                           goForward={goToPage6}
-        />
-      }
-      {
-        currentStep === steps.SPEED_TEST_RESULTS &&
-        <SpeedTestResultsStepPage testResults={lastTestResults}
-                                  userStepData={userStepData}
-                                  goToAllResults={goToAllResults}
-                                  goToAreaMap={goToMapPage}
-                                  goToTestAgain={goToPage5}
-        />
-      }
+      { getCurrentPage() }
     </div>
   );
 }

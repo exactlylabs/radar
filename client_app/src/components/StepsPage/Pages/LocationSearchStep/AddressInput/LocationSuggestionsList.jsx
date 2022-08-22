@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import SuggestionRow from "./SuggestionRow";
-import {WHITE} from "../../../utils/colors";
+import {WHITE} from "../../../../../utils/colors";
 
 const invisibleStyle = {
   display: 'none',

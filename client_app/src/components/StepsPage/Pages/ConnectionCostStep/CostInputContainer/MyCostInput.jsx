@@ -5,7 +5,6 @@ import {
 } from "../../../../../utils/colors";
 import {TextField} from "@mui/material";
 import {DEFAULT_FONT_FAMILY} from "../../../../../utils/fonts";
-import './styles/MyCostInput.css';
 
 const costInputWrapperStyle = {
   width: 140,

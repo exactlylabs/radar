@@ -1,11 +1,10 @@
 import {useEffect, useState} from "react";
-import {Donut} from './gauge.min';
+import {Donut} from '../../../../../vendor/lib/gauge';
 import * as ndt7 from "@m-lab/ndt7";
-import {storeRunData} from "../../../../utils/storage";
 import {sendRawData} from "../../../../utils/apiRequests";
 import {notifyError} from "../../../../utils/errors";
-import {LOCAL_STORAGE_KEY} from "../../../../constants";
 import SpeedGaugeInterior from "./SpeedGaugeInterior";
+import {normalizeValue} from "./utils/normalizer";
 
 const canvasWrapperStyle = {
   width: 250,
@@ -81,28 +80,9 @@ const SpeedGauge = ({
       storeRunData(startTimestamp);
       sendRawData(rawData, location, startTimestamp);
     } else {
-      alert('Error running test!');
       notifyError(error);
     }
   };
-
-  const normalizeValue = originalValue => {
-    if(originalValue <= 20) {
-      return originalValue * 2.5;
-    } else if(originalValue > 20 && originalValue <= 30) {
-      return originalValue * 2.4;
-    } else if(originalValue > 30 && originalValue <= 50) {
-      return originalValue * 1.7;
-    } else if(originalValue > 50 && originalValue <= 60) {
-      return originalValue * 1.4;
-    } else if(originalValue > 60 && originalValue <= 80) {
-      return originalValue * 1.2;
-    } else if(originalValue > 80 && originalValue <= 90) {
-      return originalValue * 1.05;
-    } else {
-      return originalValue;
-    }
-  }
 
   const saveDownloadValue = (data, rawData, donut) => {
     if (data.Source === 'client') {

@@ -2,6 +2,7 @@
 export const WHITE = 'white';
 export const BLACK = 'black';
 export const TRANSPARENT = 'transparent';
+export const RED = 'red';
 
 // SPECIFIC COLORS FROM DESIGN
 export const DEFAULT_HEADER_BACKGROUND_COLOR = '#110e4c';

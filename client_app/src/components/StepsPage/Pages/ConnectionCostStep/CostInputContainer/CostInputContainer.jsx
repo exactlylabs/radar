@@ -1,8 +1,3 @@
-/**
- * Custom cost input element for connection cost.
- * @returns {JSX.Element}
- */
-import {useState} from "react";
 import MyCostInput from "./MyCostInput";
 import MyCostButton from "./MyCostButton";
 
@@ -15,6 +10,10 @@ const costInputContainerStyle = {
   marginBottom: 40,
 }
 
+/**
+ * Custom cost input element for connection cost.
+ * @returns {JSX.Element}
+ */
 const CostInputContainer = ({
   cost,
   setCost
