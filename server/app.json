@@ -1,0 +1,16 @@
+{
+    "name": "Radar Server",
+    "description": "",
+    "website": "http://rubyonrails.org",
+    "repository": "https://github.com/heroku/ruby-rails-sample",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Ruby_on_Rails_logo.svg",
+    "scripts": {
+      "postdeploy": "bundle exec rake db:migrate"
+    },
+    "env": {
+      "RAILS_ENV": "staging",
+      "RACK_ENV": "staging",
+      "RAILS_SERVE_STATIC_FILES": "true"
+    },
+    "addons": ["heroku-postgresql"]
+  }
