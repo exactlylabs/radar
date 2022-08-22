@@ -9,12 +9,15 @@ module ClientApi
           render json: []
         end
       end
-
+      # 
       # POST /client_api/v1/suggestions
       def suggestions
         results = Geocoder.search(params[:address])
         if results.first
-          render json: results.map {|match| {address: match.display_name, coordinates: match.coordinates}}
+          render json: results.map {|match| {
+            address: "#{match.house_number} #{match.street}, #{match.city}, #{match.state} #{match.postal_code}", 
+            coordinates: match.coordinates
+          }}
         else
           render json: []
         end
@@ -24,7 +27,11 @@ module ClientApi
         results = Geocoder.search(params[:coordinates])
         if results.first
           coordinates_array = params[:coordinates].split(",")
-          render json: {address: results.first.display_name, coordinates: coordinates_array}
+          match = results.first
+          render json: {
+            address: "#{match.house_number} #{match.street}, #{match.city}, #{match.state} #{match.postal_code}", 
+            coordinates: coordinates_array
+          }
         else
           render json: {}, status: :not_found
         end
