@@ -376,6 +376,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.6.0)
+    zip (2.0.2)
 
 PLATFORMS
   arm64-darwin-21
@@ -414,6 +415,7 @@ DEPENDENCIES
   web-console (>= 4.1.0)
   webdrivers
   webpacker (~> 5.0)
+  zip
 
 RUBY VERSION
    ruby 3.0.2p107
