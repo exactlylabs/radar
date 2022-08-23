@@ -14,7 +14,7 @@ export const sendRawData = (rawData, location, startTimestamp) => {
   }).catch(notifyError);
 };
 
-export const getGeocodedAddress = async (formData, setLoading, setError = null) => {
+export const getGeocodedAddress = async (formData, setLoading) => {
   let response;
   fetch(`${API_URL}/geocode`, {
     method: 'POST',
@@ -25,7 +25,6 @@ export const getGeocodedAddress = async (formData, setLoading, setError = null) 
       if (res.length > 0) {
         response = { name: formData.get('address'), coordinates: res };
       } else {
-        setError && setError(true);
         response = {
           name: formData.get('address'),
           coordinates: [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE],
@@ -34,6 +33,7 @@ export const getGeocodedAddress = async (formData, setLoading, setError = null) 
     })
     .catch(err => {
       notifyError(err);
+      throw new Error('Error fetching address. Please try again later.');
     })
     .finally(() => {
       setLoading(false);
@@ -41,19 +41,14 @@ export const getGeocodedAddress = async (formData, setLoading, setError = null) 
   return response;
 };
 
-export const getAllSpeedTests = (setResults, setFilteredResults, setError, setLoading) => {
-  fetch(`${API_URL}/speed_tests`)
+export const getAllSpeedTests = async () => {
+  return fetch(`${API_URL}/speed_tests`)
     .then(res => res.json())
-    .then(res => {
-      const cleanResults = res.filter(measurement => measurement.latitude && measurement.longitude);
-      setResults(cleanResults);
-      setFilteredResults(cleanResults);
-    })
+    .then(res => res.filter(measurement => measurement.latitude && measurement.longitude))
     .catch(err => {
-      setError(err);
       notifyError(err);
-    })
-    .finally(() => setLoading(false));
+      throw new Error('Error fetching all speed test results. Please try again later.');
+    });
 };
 
 export const getSuggestions = async addressString => {

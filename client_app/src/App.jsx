@@ -1,8 +1,5 @@
 import './App.css';
 import { useState } from 'react';
-import { LandingPage } from './components/LandingPage/LandingPage';
-import MapPage from './components/MapPage/MapPage';
-import FormPage from './components/FormPage/FormPage';
 import AllResultsPage from './components/AllResultsPage/AllResultsPage';
 import Frame from './components/Frame/Frame';
 import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material';

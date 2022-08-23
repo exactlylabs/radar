@@ -1,6 +1,9 @@
 /**
  * Method to normalize speed test download/upload results to fit inside our
  * custom Gauge values as they aren't mapped 1:1 to their specific "circular" position.
+ * There was no equation used for the values themselves, they are the result of testing
+ * for visual correspondence between the gauge fill and its expected position relative
+ * to the gauge value itself.
  * @param originalValue: Actual download/upload result in Mbps.
  * @returns {number|*} normalized.
  */

@@ -72,10 +72,7 @@ const MyMapModal = ({
     if (isOpen && address.coordinates.length === 0) {
       setLoading(true);
       fetchSuggestions()
-        .catch(err => {
-          notifyError(err);
-          setError('There was an error searching for your address. Please, try again later.');
-        })
+        .catch(err => setError(err.message))
         .finally(() => setLoading(false));
     }
   }, [isOpen, address.coordinates]);

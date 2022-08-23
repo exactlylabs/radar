@@ -50,6 +50,7 @@ const SpeedTestResultsStepPage = ({
                              latencyValue={testResults.latency.toFixed(0)}
                              downloadValue={testResults.downloadValue.toFixed(2)}
                              uploadValue={testResults.uploadValue.toFixed(2)}
+                             lossValue={testResults.loss.toFixed(2)}
                              userStepData={userStepData}
       />
       <div style={buttonFooterStyle}>
