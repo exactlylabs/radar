@@ -18,7 +18,16 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [selectedFilter, setSelectedFilter] = useState(null);
 
   useEffect(() => {
-    getAllSpeedTests(setResults, setFilteredResults, setError, setLoading);
+
+    const fetchSpeedTests = async () => {
+      const speedTests = await getAllSpeedTests();
+      setResults(speedTests);
+      setFilteredResults(speedTests);
+    }
+
+    fetchSpeedTests()
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   const getColor = measurement => {
@@ -58,7 +67,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   return (
     <div style={{ textAlign: 'center', paddingTop: 10, paddingBottom: 10 }}>
       {loading && <CircularProgress size={25} />}
-      {!loading && error && <p>Error fetching results! Try again later.</p>}
+      {!loading && error && <p>{error}</p>}
       {!loading && results !== null && results.length === 0 && (
         <div>
           <p>No measurements taken so far!</p>
@@ -73,7 +82,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
                 center={givenLocation ? givenLocation : [0,0]}
                 zoom={givenLocation ? 20 : 2}
                 scrollWheelZoom
-                style={{ height: `calc(${maxHeight} - 170px`, margin: 'auto' }}
+                style={{ height: `calc(${maxHeight} - 70px - 173px - 53px`, margin: 'auto' }}
               >
                 <MyMap />
                 <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />

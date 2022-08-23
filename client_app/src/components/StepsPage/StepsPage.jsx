@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import MyStepper from "./Stepper/MyStepper";
 import LocationSearchStepPage from "./Pages/LocationSearchStep/LocationSearchStepPage";
 import ConnectionPlacementStepPage from "./Pages/ConnectionPlacementStep/ConnectionPlacementStepPage";
@@ -9,9 +9,7 @@ import {errors, warnings} from "../../utils/messages";
 import {steps} from "./utils/steps";
 import {placementOptions} from "../../utils/placements";
 import {types} from "../../utils/networkTypes";
-import MyMapModal from "./Pages/LocationSearchStep/MyMapModal";
-import {getAddressForCoordinates, getSuggestions} from "../../utils/apiRequests";
-import {notifyError} from "../../utils/errors";
+import {getAddressForCoordinates} from "../../utils/apiRequests";
 import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResultsStepPage";
 
 const stepsPageStyle = {

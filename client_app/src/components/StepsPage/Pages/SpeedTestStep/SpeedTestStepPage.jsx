@@ -16,8 +16,8 @@ const SpeedTestStepPage = ({
 
   const [disabled, setDisabled] = useState(true);
   const [testProgress, setTestProgress] = useState(0);
-  const [loss, setLoss] = useState(0);
-  const [latency, setLatency] = useState(0);
+  const [loss, setLoss] = useState(null);
+  const [latency, setLatency] = useState(null);
   const [downloadValue, setDownloadValue] = useState(null);
   const [uploadValue, setUploadValue] = useState(null);
 
@@ -61,7 +61,7 @@ const SpeedTestStepPage = ({
                              downloadValue={downloadValue?.toFixed(2)}
                              uploadValue={uploadValue?.toFixed(2)}
                              latencyValue={latency?.toFixed(0)}
-                             pingValue={null}
+                             lossValue={loss?.toFixed(2)}
       />
     </div>
   )

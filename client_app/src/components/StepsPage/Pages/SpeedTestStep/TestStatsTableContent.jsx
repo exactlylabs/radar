@@ -66,7 +66,7 @@ const TestStatsTableContent = ({
   downloadValue,
   uploadValue,
   latencyValue,
-  pingValue
+  lossValue
 }) => {
   return (
     <div style={extended ? extendedRowStyle : tableContentStyle}>
@@ -90,11 +90,11 @@ const TestStatsTableContent = ({
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
-          <img style={iconStyle} src={PingIcon} width={16} height={16} alt={'ping-icon'}/>
-          <div style={titleStyle}>Ping</div>
+          <img style={iconStyle} src={PingIcon} width={16} height={16} alt={'loss-icon'}/>
+          <div style={titleStyle}>Loss</div>
         </div>
-        <div style={valueStyle}>{pingValue ? pingValue : '-'}</div>
-        <div style={unitStyle}>ms</div>
+        <div style={valueStyle}>{lossValue ? lossValue : '-'}</div>
+        <div style={unitStyle}>%</div>
       </div>
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>

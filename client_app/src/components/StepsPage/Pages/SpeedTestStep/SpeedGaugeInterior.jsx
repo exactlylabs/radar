@@ -19,6 +19,15 @@ const sharedNumbersStyle = {
   fontSize: 13
 }
 
+/**
+ * All styles applied to gauge interior are based off design
+ * and calculated with an initial approximation to be equally
+ * distributed along the inner circle of the actual donut gauge.
+ * As the gauge itself is not perfectly circular by design, the position
+ * values aren't trivially calculated, so the values present
+ * here were eventually hand-picked to be correctly positioned
+ * inside the gauge, after the initial approximation.
+ */
 const zeroStyle = {
   ...sharedNumbersStyle,
   bottom: -6,

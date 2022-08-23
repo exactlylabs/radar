@@ -41,7 +41,7 @@ const TestStatsTable = ({
   disabled,
   downloadValue,
   uploadValue,
-  pingValue,
+  lossValue,
   latencyValue,
   userStepData,
 }) => {
@@ -64,7 +64,7 @@ const TestStatsTable = ({
                                      downloadValue={downloadValue}
                                      uploadValue={uploadValue}
                                      latencyValue={latencyValue}
-                                     pingValue={pingValue}
+                                     lossValue={lossValue}
               />
             </div>
           </> :
@@ -72,7 +72,7 @@ const TestStatsTable = ({
                                  downloadValue={downloadValue}
                                  uploadValue={uploadValue}
                                  latencyValue={latencyValue}
-                                 pingValue={pingValue}
+                                 lossValue={lossValue}
           />
       }
     </div>

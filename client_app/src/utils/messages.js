@@ -7,5 +7,5 @@ export const errors = {
 
 export const warnings = {
   NOT_ENOUGH_DATA:
-    'Please note that your current data plan may have a data cap.\n' + 'The speed test may take ~70 MB.',
+    'Please note that the speed test will be counted against your current data plan which may have a data cap.',
 };
