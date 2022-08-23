@@ -1,0 +1,7 @@
+{
+    "scripts": {
+        "dokku": {
+            "predeploy": "echo $GOOGLE_STORAGE_CREDENTIALS > /app/storage-credentials.json"
+        }
+    }
+}
