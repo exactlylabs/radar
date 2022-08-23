@@ -17,7 +17,7 @@ module ClientApi
           return true
         end
 
-        if count.to_i >= 100 # 10 requests per minute
+        if count.to_i >= 1000 # 10 requests per minute
           render status: :too_many_requests, json: { message: "You have fired too many requests. Please wait some time before requesting this resource again." }
           return
         end
