@@ -18,7 +18,7 @@ local:
 google:
   service: GCS
   project: ttac-prod
-  credentials: <%= Rails.root.join("gcs.keyfile") %>
+  credentials: <%= ENV['GOOGLE_APPLICATION_CREDENTIALS'].as_json %>
   bucket: radar-results-prod
 
 # Use rails credentials:edit to set the Azure Storage secret (as azure_storage:storage_access_key)
