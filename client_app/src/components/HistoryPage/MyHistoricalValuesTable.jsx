@@ -4,10 +4,9 @@ import MyHistoricalValuesTableHeader from "./MyHistoricalValuesTableHeader";
 import MyHistoricalValuesTableRow from "./MyHistoricalValuesTableRow";
 
 const historicalValuesTableStyle = {
-  width: '75%',
+  width: '65%',
   minWidth: 900,
   maxHeight: 270,
-  border: 'solid 1px black',
   margin: '35px auto'
 }
 
@@ -15,10 +14,8 @@ const MyHistoricalValuesTable = ({ values }) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  console.log(values);
-
   const paginatedValues = () => {
-    return values.slice((currentPage - 1) * 5, currentPage * 5);
+    return values.reverse().slice((currentPage - 1) * 5, currentPage * 5);
   }
 
   return (
