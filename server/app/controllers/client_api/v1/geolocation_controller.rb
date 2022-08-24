@@ -36,6 +36,14 @@ module ClientApi
           render json: {}, status: :not_found
         end
       end
+
+      def user_coordinates
+        results = Geocoder.search(request.ip)
+        if results.first
+          return render json: results.first.coordinates
+        end
+        render json: []
+      end
     end
   end
 end

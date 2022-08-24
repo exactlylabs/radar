@@ -1,0 +1,10 @@
+/* WILL HIDE BECAUSE IT POINTS TO A WRONG SPOT */
+/* ADDED CUSTOM POPUP TIP */
+.leaflet-popup-tip {
+    display: none;
+}
+
+.leaflet-popup {
+    border: solid 1px rgba(17 14 76 / 15%);
+    border-radius: 12px;
+}

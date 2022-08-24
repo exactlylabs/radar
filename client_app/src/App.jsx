@@ -12,12 +12,10 @@ const App = ({ config }) => {
   let theme = createTheme();
   theme = responsiveFontSizes(theme);
 
-  const [step, setStep] = useState(STEPS.ALL_RESULTS);
+  const [step, setStep] = useState(STEPS.SPEED_TEST);
   const [givenLocation, setGivenLocation] = useState(null);
-  const [manualAddress, setManualAddress] = useState(null);
 
   const goToMapPage = location => {
-    setManualAddress(true);
     setGivenLocation(location);
     setStep(STEPS.ALL_RESULTS);
   };

@@ -1,8 +1,12 @@
 import { API_URL } from '../constants';
 import { notifyError } from './errors';
 import { DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE } from './map';
+import {getFilterTag} from "./speeds";
 
-export const sendRawData = (rawData, location, startTimestamp) => {
+export const sendRawData = (rawData, startTimestamp, userStepData) => {
+  const { networkLocation, networkType, networkCost } = userStepData;
+  const address = userStepData.address.address;
+  const location = userStepData.address.coordinates;
   fetch(`${API_URL}/speed_tests`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -10,6 +14,10 @@ export const sendRawData = (rawData, location, startTimestamp) => {
       result: { raw: rawData },
       location: location,
       timestamp: startTimestamp,
+      address: address,
+      network_location: networkLocation?.text ?? null,
+      network_type: networkType?.text ?? null,
+      network_cost: networkCost,
     }),
   }).catch(notifyError);
 };
@@ -44,7 +52,21 @@ export const getGeocodedAddress = async (formData, setLoading) => {
 export const getAllSpeedTests = async () => {
   return fetch(`${API_URL}/speed_tests`)
     .then(res => res.json())
-    .then(res => res.filter(measurement => measurement.latitude && measurement.longitude))
+    .then(res => {
+      return res.filter(measurement => measurement.latitude &&
+                                       measurement.longitude &&
+                                       measurement.download_avg &&
+                                       measurement.upload_avg &&
+                                       measurement.address)
+        .map(measurement => {
+          return {
+            ...measurement,
+            uploadFilterTag: getFilterTag(measurement.upload_avg, 'upload'),
+            downloadFilterTag: getFilterTag(measurement.download_avg, 'download'),
+            visible: true,
+          }
+        });
+    })
     .catch(err => {
       notifyError(err);
       throw new Error('Error fetching all speed test results. Please try again later.');
@@ -80,3 +102,13 @@ export const getAddressForCoordinates = async coordinates => {
     throw new Error('Error fetching address. Please try again later.');
   }
 };
+
+export const getUserApproximateCoordinates = () => {
+  try {
+    return fetch(`${API_URL}/user_coordinates`)
+      .then(res => res.json());
+  } catch (e) {
+    notifyError(e);
+    throw new Error('Error fetching user coordinates. Please try again later.');
+  }
+}

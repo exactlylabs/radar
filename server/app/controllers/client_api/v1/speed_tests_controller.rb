@@ -6,6 +6,10 @@ module ClientApi
         @speed_test.latitude = params[:location][0]
         @speed_test.longitude = params[:location][1]
         @speed_test.tested_at = params[:timestamp]
+        @speed_test.address = params[:address]
+        @speed_test.network_location = params[:network_location]
+        @speed_test.network_type = params[:network_type]
+        @speed_test.network_cost = params[:network_cost]
         filename = "speed-test-#{params[:timestamp]}.json"
         json_content = params[:result].to_json
         @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: "application/json")
