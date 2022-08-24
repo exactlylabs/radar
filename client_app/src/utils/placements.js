@@ -1,15 +1,19 @@
 import HomeIcon from '../assets/icon-location-home.png';
 import HomeIconSelected from '../assets/icon-location-home-selected.png';
 import HomeIconLight from '../assets/icon-location-home-light.png';
+import HomeIconPopup from '../assets/icon-location-home-popup.png';
 import WorkIcon from '../assets/icon-location-work.png';
 import WorkIconSelected from '../assets/icon-location-work-selected.png';
 import WorkIconLight from '../assets/icon-location-work-light.png';
+import WorkIconPopup from '../assets/icon-location-work-popup.png';
 import OtherIcon from '../assets/icon-location-other.png';
 import OtherIconSelected from '../assets/icon-location-other-selected.png';
 import OtherIconLight from '../assets/icon-location-other-light.png';
+import OtherIconPopup from '../assets/icon-location-other-popup.png';
 import NoneIcon from '../assets/icon-location-nointernet.png';
 import NoneIconSelected from '../assets/icon-location-nointernet-selected.png';
 import NoneIconLight from '../assets/icon-location-nointernet-light.png';
+import NoneIconPopup from '../assets/icon-location-nointernet-popup.png';
 
 export const placementOptions = [
   {
@@ -17,6 +21,7 @@ export const placementOptions = [
     iconSrc: HomeIcon,
     iconSelectedSrc: HomeIconSelected,
     iconLightSrc: HomeIconLight,
+    iconPopupSrc: HomeIconPopup,
     text: 'Home',
   },
   {
@@ -24,6 +29,7 @@ export const placementOptions = [
     iconSrc: WorkIcon,
     iconSelectedSrc: WorkIconSelected,
     iconLightSrc: WorkIconLight,
+    iconPopupSrc: WorkIconPopup,
     text: 'Work',
   },
   {
@@ -31,6 +37,7 @@ export const placementOptions = [
     iconSrc: OtherIcon,
     iconSelectedSrc: OtherIconSelected,
     iconLightSrc: OtherIconLight,
+    iconPopupSrc: OtherIconPopup,
     text: 'Other',
   },
   {
@@ -38,6 +45,7 @@ export const placementOptions = [
     iconSrc: NoneIcon,
     iconSelectedSrc: NoneIconSelected,
     iconLightSrc: NoneIconLight,
+    iconPopupSrc: NoneIconPopup,
     text: "I don't have",
   },
 ];

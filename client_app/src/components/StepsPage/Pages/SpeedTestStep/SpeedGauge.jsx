@@ -45,8 +45,8 @@ const SpeedGauge = ({
   downloadValue,
   setUploadValue,
   uploadValue,
-  location,
-  storeRunData
+  storeRunData,
+  userStepData,
 }) => {
 
   let counter = 0;
@@ -79,7 +79,7 @@ const SpeedGauge = ({
   const finishTestRun = (exitCode, error) => {
     if (exitCode === 0) {
       storeRunData(startTimestamp);
-      sendRawData(rawData, location, startTimestamp);
+      sendRawData(rawData, startTimestamp, userStepData);
     } else {
       notifyError(error);
     }

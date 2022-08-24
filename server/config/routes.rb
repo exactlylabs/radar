@@ -138,6 +138,7 @@ Rails.application.routes.draw do
       post 'geocode', to: 'geolocation#code'
       post 'suggestions', to: 'geolocation#suggestions'
       post 'coordinates', to: 'geolocation#coordinates'
+      get 'user_coordinates', to: 'geolocation#user_coordinates'
     end
   end
 

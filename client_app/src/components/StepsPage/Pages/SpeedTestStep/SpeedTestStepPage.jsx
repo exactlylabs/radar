@@ -52,7 +52,7 @@ const SpeedTestStepPage = ({
                       setUploadValue={setUploadValue}
                       uploadValue={uploadValue}
                       storeRunData={storeRunResults}
-                      location={userStepData.address.coordinates}
+                      userStepData={userStepData}
           />
           <div style={footerStyle}>Testing <b>{!uploadValue ? 'download' : 'upload'}</b> speed...</div>
         </>

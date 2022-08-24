@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_04_222306) do
+ActiveRecord::Schema.define(version: 2022_08_24_131625) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,10 @@ ActiveRecord::Schema.define(version: 2022_08_04_222306) do
     t.float "latency"
     t.float "loss"
     t.datetime "processed_at"
+    t.string "address"
+    t.string "network_location"
+    t.string "network_type"
+    t.float "network_cost"
   end
 
   create_table "client_versions", force: :cascade do |t|
