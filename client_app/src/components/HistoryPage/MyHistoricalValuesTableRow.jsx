@@ -3,10 +3,11 @@ import UploadIcon from "../../assets/small-upload-icon.png";
 import LossIcon from "../../assets/ping-icon.png";
 import LatencyIcon from "../../assets/latency-icon.png";
 import {
-  DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR,
-  HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR,
+  DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR, HISTORICAL_VALUES_TABLE_ROW_DARK_VALUES_COLOR,
+  HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR, TRANSPARENT,
   WHITE
 } from "../../utils/colors";
+import {types} from "../../utils/networkTypes";
 
 const historicalValuesTableRowStyle = {
   width: '100%',
@@ -46,7 +47,8 @@ const locationColumnStyle = {
 
 const columnWithIconStyle = {
   ...commonRowStyle,
-  width: '14%'
+  width: '14%',
+  color: HISTORICAL_VALUES_TABLE_ROW_DARK_VALUES_COLOR
 }
 
 const iconStyle = {
@@ -62,21 +64,26 @@ const MyHistoricalValuesTableRow = ({
   isEven
 }) => {
 
+  const getNetworkTypeIcon = () => {
+    const networkType = types.find(type => type.text === measurement.network_type);
+    return networkType.iconSrc;
+  }
+
   return (
-    <div style={{...historicalValuesTableRowStyle, backgroundColor: isEven ? HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR : WHITE}}>
-      <div style={networkTypeColumStyle}>{measurement.network_type}</div>
+    <div style={{...historicalValuesTableRowStyle, backgroundColor: isEven ? HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR : TRANSPARENT}}>
+      <div style={networkTypeColumStyle}>{measurement.network_type ? getNetworkTypeIcon() : null}</div>
       <div style={dateTimeColumnStyle}>{measurement.timestamp}</div>
       <div style={columnWithIconStyle}>
-        {measurement.download_avg}
+        {measurement.download_avg ? `${measurement.download_avg.toFixed(2)} Mbps` : '-'}
       </div>
       <div style={columnWithIconStyle}>
-        {measurement.upload_avg}
+        {measurement.upload_avg ? `${measurement.upload_avg.toFixed(2)} Mbps` : '-'}
       </div>
       <div style={columnWithIconStyle}>
-        {measurement.loss}
+        {measurement.loss ? `${measurement.loss.toFixed(2)} %` : '-'}
       </div>
       <div style={columnWithIconStyle}>
-        {measurement.latency}
+        {measurement.latency ? `${measurement.latency.toFixed(0)} ms` : '-'}
       </div>
       <div style={locationColumnStyle}>{measurement.address}</div>
     </div>
