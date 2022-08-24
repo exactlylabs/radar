@@ -57,3 +57,5 @@ export const DEFAULT_POPUP_TITLE_COLOR = '#6d6a94';
 export const DEFAULT_POPUP_VALUE_COLOR = '#110e4c';
 export const DEFAULT_POPUP_UNIT_COLOR = '#110e4c';
 export const DEFAULT_MAP_LEFT_ARROW_BORDER_COLOR = 'solid 1px rgba(17 14 76 / 35%)';
+export const DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR = '#6d6a94';
+export const HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR = 'rgba(17 14 76 / 5%)';

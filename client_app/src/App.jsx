@@ -5,6 +5,7 @@ import Frame from './components/Frame/Frame';
 import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material';
 import { STEPS } from './constants';
 import StepsPage from "./components/StepsPage/StepsPage";
+import HistoryPage from "./components/HistoryPage/HistoryPage";
 
 // Application entry point, would hold all logic for state management
 // of multistep process
@@ -12,7 +13,7 @@ const App = ({ config }) => {
   let theme = createTheme();
   theme = responsiveFontSizes(theme);
 
-  const [step, setStep] = useState(STEPS.SPEED_TEST);
+  const [step, setStep] = useState(STEPS.HISTORY);
   const [givenLocation, setGivenLocation] = useState(null);
 
   const goToMapPage = location => {
@@ -32,6 +33,9 @@ const App = ({ config }) => {
         break;
       case STEPS.ALL_RESULTS:
         content = <AllResultsPage givenLocation={givenLocation} setStep={setStep} maxHeight={config.frameStyle.height ?? 500} />;
+        break;
+      case STEPS.HISTORY:
+        content = <HistoryPage goToMapPage={goToMapPage} goToAllResults={goToAllResults}/>;
         break;
       default:
         content = <StepsPage goToAreaMap={goToMapPage} goToAllResults={goToAllResults} />;

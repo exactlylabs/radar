@@ -51,6 +51,10 @@ const testSpeedTabStyle = {
   ...commonTabStyle,
 };
 
+const historyTabStyle = {
+  ...commonTabStyle,
+}
+
 const selectedTabTextStyle = {
   ...commonTabTextStyle,
   color: DEFAULT_SELECTED_TAB_COLOR,
@@ -78,14 +82,16 @@ const selectedTabUnderlineStyle = {
 const TABS = {
   SPEED_TEST: 'speedTest',
   EXPLORE_MAP: 'exploreMap',
+  HISTORY: 'history'
 };
 
 const Tabs = ({ step, setStep }) => {
   const [selectedTab, setSelectedTab] = useState(TABS.SPEED_TEST);
 
   useEffect(() => {
-    if (step === STEPS.ALL_RESULTS && selectedTab !== TABS.EXPLORE_MAP) setSelectedTab(TABS.EXPLORE_MAP);
-    else if (step !== STEPS.ALL_RESULTS && selectedTab !== TABS.SPEED_TEST) setSelectedTab(TABS.SPEED_TEST);
+    if(step === STEPS.HISTORY && selectedTab !== TABS.HISTORY) setSelectedTab(TABS.HISTORY);
+    else if (step === STEPS.ALL_RESULTS && selectedTab !== TABS.EXPLORE_MAP) setSelectedTab(TABS.EXPLORE_MAP);
+    else if (step === STEPS.SPEED_TEST && selectedTab !== TABS.SPEED_TEST) setSelectedTab(TABS.SPEED_TEST);
   }, [step]);
 
   const goToExploreMap = () => {
@@ -97,6 +103,11 @@ const Tabs = ({ step, setStep }) => {
     setSelectedTab(TABS.SPEED_TEST);
     setStep(STEPS.SPEED_TEST);
   };
+
+  const goToHistory = () => {
+    setSelectedTab(TABS.HISTORY);
+    setStep(STEPS.HISTORY);
+  }
 
   return (
     <div style={tabsWrapperStyle}>
@@ -114,6 +125,21 @@ const Tabs = ({ step, setStep }) => {
           </div>
           <div style={selectedTab === TABS.SPEED_TEST ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
+
+        <div style={historyTabStyle} onClick={goToHistory}>
+          <div style={selectedTab === TABS.HISTORY ? selectedTabTextStyle : commonTabTextStyle}>
+            <img
+              src={selectedTab === TABS.HISTORY ? speedTestIconActive : speedTestIconInactive}
+              width={18}
+              height={18}
+              style={tabIconStyle}
+              alt={selectedTab === TABS.HISTORY ? 'history-active' : 'history-inactive'}
+            />
+            <div>Your History</div>
+          </div>
+          <div style={selectedTab === TABS.HISTORY ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
+        </div>
+
         <div style={exploreMapTabStyle} onClick={goToExploreMap}>
           <div style={selectedTab === TABS.EXPLORE_MAP ? selectedTabTextStyle : commonTabTextStyle}>
             <img
