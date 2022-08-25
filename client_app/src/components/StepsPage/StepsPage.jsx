@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import MyStepper from "./Stepper/MyStepper";
 import LocationSearchStepPage from "./Pages/LocationSearchStep/LocationSearchStepPage";
 import ConnectionPlacementStepPage from "./Pages/ConnectionPlacementStep/ConnectionPlacementStepPage";
@@ -11,6 +11,7 @@ import {placementOptions} from "../../utils/placements";
 import {types} from "../../utils/networkTypes";
 import {getAddressForCoordinates} from "../../utils/apiRequests";
 import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResultsStepPage";
+import {LOCAL_STORAGE_KEY} from "../../constants";
 
 const stepsPageStyle = {
   width: '100%',
@@ -21,7 +22,8 @@ const stepsPageStyle = {
 
 const StepsPage = ({
   goToAreaMap,
-  goToAllResults
+  goToHistory,
+  specificStep
 }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -58,6 +60,33 @@ const StepsPage = ({
     setUserStepData({ ...userStepData, networkType: chosenOption});
   };
   const setNetworkCost = cost => setUserStepData({ ...userStepData, networkCost: cost });
+
+  useEffect(() => {
+    if(specificStep) {
+      if(specificStep === steps.SPEED_TEST_RESULTS) {
+        const lastTestTaken = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY)).values[0];
+        const networkLocation = placementOptions.find(placement => placement.text === lastTestTaken.networkLocation);
+        const networkType = types.find(type => type.text === lastTestTaken.networkType);
+        setUserStepData({
+          ...userStepData,
+          address: {
+            address: lastTestTaken.address,
+            coordinates: [lastTestTaken.lat, lastTestTaken.long]
+          },
+          terms: true,
+          networkLocation: networkLocation,
+          networkType: networkType,
+        });
+        setLastTestResults({
+          downloadValue: lastTestTaken.download,
+          uploadValue: lastTestTaken.upload,
+          loss: lastTestTaken.loss,
+          latency: lastTestTaken.latency,
+        });
+      }
+      setCurrentStep(specificStep);
+    }
+  }, []);
 
   const checkAndOpenModal = () => {
     setError(null);
@@ -132,8 +161,8 @@ const StepsPage = ({
       case steps.SPEED_TEST_RESULTS:
         return <SpeedTestResultsStepPage testResults={lastTestResults}
                                          userStepData={userStepData}
-                                         goToAllResults={goToAllResults}
                                          goToAreaMap={goToMapPage}
+                                         goToHistory={goToHistory}
                                          goToTestAgain={goToPage5}
         />;
       default:

@@ -17,7 +17,6 @@ const commonHeaderStyle = {
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'flex-start',
   fontSize: 14,
   fontWeight: 'bold',
   color: DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR,
@@ -32,17 +31,25 @@ const networkTypeColumStyle = {
 
 const dateTimeColumnStyle = {
   ...commonHeaderStyle,
-  width: '20%',
+  width: '18%',
+  justifyContent: 'flex-start',
 }
 
 const locationColumnStyle = {
   ...commonHeaderStyle,
-  width: '17%'
+  width: '20%',
+  justifyContent: 'flex-start',
 }
 
 const columnWithIconStyle = {
   ...commonHeaderStyle,
-  width: '14%'
+  width: '13.5%',
+  justifyContent: 'flex-end',
+}
+
+const columnWithIconNarrowStyle = {
+  ...columnWithIconStyle,
+  width: '12%',
 }
 
 const iconStyle = {
@@ -69,14 +76,15 @@ const MyHistoricalValuesTableHeader = ({
         <img src={UploadIcon} height={16} width={16} alt={'upload-icon'} style={iconStyle}/>
         <div style={textStyle}>Upload</div>
       </div>
-      <div style={columnWithIconStyle}>
+      <div style={columnWithIconNarrowStyle}>
         <img src={LossIcon} height={16} width={16} alt={'loss-icon'} style={iconStyle}/>
         <div style={textStyle}>Loss</div>
       </div>
-      <div style={columnWithIconStyle}>
+      <div style={columnWithIconNarrowStyle}>
         <img src={LatencyIcon} height={16} width={16} alt={'latency-icon'} style={iconStyle}/>
         <div style={textStyle}>Latency</div>
       </div>
+      <div style={{width: '4%'}}></div>
       <div style={locationColumnStyle}>Location</div>
     </div>
   )

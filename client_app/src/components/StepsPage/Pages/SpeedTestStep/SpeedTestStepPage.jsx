@@ -29,6 +29,9 @@ const SpeedTestStepPage = ({
       location: userStepData.address.coordinates,
       loss,
       latency,
+      address: userStepData.address.address,
+      networkType: userStepData.networkType.text,
+      networkLocation: userStepData.networkLocation.text,
     };
     storeRunData(results);
     goForward(results);

@@ -9,6 +9,8 @@ import speedTestIconActive from '../../assets/test-icon-active.png';
 import speedTestIconInactive from '../../assets/test-icon-inactive.png';
 import exploreMapIconActive from '../../assets/explore-icon-active.png';
 import exploreMapIconInactive from '../../assets/explore-icon-inactive.png';
+import historyIconActive from '../../assets/history-icon-active.png';
+import historyIconInactive from '../../assets/history-icon-inactive.png';
 
 const tabsWrapperStyle = {
   width: '100%',
@@ -59,6 +61,10 @@ const selectedTabTextStyle = {
   ...commonTabTextStyle,
   color: DEFAULT_SELECTED_TAB_COLOR,
 };
+
+const selectedContentStyle = {
+  color: DEFAULT_SELECTED_TAB_COLOR,
+}
 
 const exploreMapTabStyle = {
   ...commonTabStyle,
@@ -121,7 +127,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.SPEED_TEST ? 'speed-active' : 'speed-inactive'}
             />
-            <div>Speed Test</div>
+            <div style={selectedTab === TABS.SPEED_TEST ? selectedContentStyle : null}>Speed Test</div>
           </div>
           <div style={selectedTab === TABS.SPEED_TEST ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
@@ -129,13 +135,13 @@ const Tabs = ({ step, setStep }) => {
         <div style={historyTabStyle} onClick={goToHistory}>
           <div style={selectedTab === TABS.HISTORY ? selectedTabTextStyle : commonTabTextStyle}>
             <img
-              src={selectedTab === TABS.HISTORY ? speedTestIconActive : speedTestIconInactive}
+              src={selectedTab === TABS.HISTORY ? historyIconActive : historyIconInactive}
               width={18}
               height={18}
               style={tabIconStyle}
               alt={selectedTab === TABS.HISTORY ? 'history-active' : 'history-inactive'}
             />
-            <div>Your History</div>
+            <div style={selectedTab === TABS.HISTORY ? selectedContentStyle : null}>Your History</div>
           </div>
           <div style={selectedTab === TABS.HISTORY ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
@@ -149,7 +155,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.EXPLORE_MAP ? 'explore-active' : 'explore-inactive'}
             />
-            <div>Explore the Map</div>
+            <div style={selectedTab === TABS.EXPLORE_MAP ? selectedContentStyle : null}>Explore the Map</div>
           </div>
           <div style={selectedTab === TABS.EXPLORE_MAP ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>

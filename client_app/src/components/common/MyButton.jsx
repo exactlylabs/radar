@@ -2,6 +2,7 @@ import {DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR, DEFAULT_BUTTON_BOX_SHADOW_RGBA, WH
 
 export const defaultButtonStyle = {
   width: 'max-content',
+  height: 45,
   backgroundColor: DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR,
   color: WHITE,
   borderRadius: 24,
