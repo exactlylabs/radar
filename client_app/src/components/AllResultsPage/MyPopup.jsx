@@ -135,7 +135,7 @@ const MyPopup = ({
   }
 
   return (
-    <Popup {...popupOptions} eventHandlers={{popupclose: () => console.log('tooltip closed')}}>
+    <Popup {...popupOptions}>
       <div style={leftPointingArrowStyle}></div>
       <div style={popupDivStyle}>
         <div style={popupHeaderStyle}>

@@ -106,7 +106,7 @@ const MyHistoricalValuesTableRow = ({
       </div>
       <div style={{width: '4%'}}></div>
       <div style={locationColumnStyle}>
-        <p style={ellipsisStyle}>{measurement.address}</p>
+        <p style={ellipsisStyle}>{`${measurement.city}, ${measurement.state}`}</p>
       </div>
     </div>
   )

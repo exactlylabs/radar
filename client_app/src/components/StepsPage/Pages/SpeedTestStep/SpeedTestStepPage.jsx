@@ -26,12 +26,12 @@ const SpeedTestStepPage = ({
       startTimestamp,
       downloadValue,
       uploadValue,
-      location: userStepData.address.coordinates,
       loss,
       latency,
-      address: userStepData.address.address,
-      networkType: userStepData.networkType.text,
-      networkLocation: userStepData.networkLocation.text,
+      networkType: userStepData.networkType?.text ?? null,
+      networkLocation: userStepData.networkLocation?.text ?? null,
+      location: userStepData.address.coordinates,
+      ...userStepData.address,
     };
     storeRunData(results);
     goForward(results);
