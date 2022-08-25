@@ -13,6 +13,7 @@ import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE, mapTileAttributio
 import {getAllSpeedTests, getUserApproximateCoordinates} from '../../utils/apiRequests';
 import { MyMap } from '../common/MyMap';
 import MyCustomMarker from "./MyCustomMarker";
+import {notifyError} from "../../utils/errors";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -44,12 +45,20 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     }
 
     fetchSpeedTests()
-      .catch(err => setError(err.message))
+      .catch(err => {
+        notifyError(err);
+        setError('Failed to fetch speed tests. Please try again later.');
+      })
       .finally(() => setLoading(false));
 
     if(!givenLocation) {
       fetchUserApproximateCoordinates()
-        .catch(err => setError(err.message))
+        .catch(err => {
+          setRequestArea([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
+          // Not setting UI error message, as we can default to fallback if this request fails
+          // so the user still sees content, but unfortunately not centered around their coords.
+          notifyError(err);
+        })
         .finally(() => setCenterCoordinatesLoading(false));
     } else {
       setCenterCoordinatesLoading(false);

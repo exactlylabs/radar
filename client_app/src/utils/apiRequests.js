@@ -105,12 +105,4 @@ export const getAddressForCoordinates = async coordinates => {
   }
 };
 
-export const getUserApproximateCoordinates = () => {
-  try {
-    return fetch(`${API_URL}/user_coordinates`)
-      .then(res => res.json());
-  } catch (e) {
-    notifyError(e);
-    throw new Error('Error fetching user coordinates. Please try again later.');
-  }
-}
+export const getUserApproximateCoordinates = () => fetch(`${API_URL}/user_coordinates`).then(res => res.json())
