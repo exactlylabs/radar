@@ -55,11 +55,12 @@ const MyMapModal = ({
 
   const markerRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null);
   const [addressCoordinates, setAddressCoordinates] = useState(address.coordinates);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
+      setError(null);
       const suggestions = await getSuggestions(address.name);
       if(suggestions.length > 0) {
         setAddressCoordinates(suggestions[0].coordinates);
@@ -72,7 +73,10 @@ const MyMapModal = ({
     if (isOpen && address.coordinates.length === 0) {
       setLoading(true);
       fetchSuggestions()
-        .catch(err => setError(err.message))
+        .catch(err => {
+          notifyError(err);
+          setError('Failed to fetch for suggestions. Please try again later.');
+        })
         .finally(() => setLoading(false));
     }
   }, [isOpen, address.coordinates]);

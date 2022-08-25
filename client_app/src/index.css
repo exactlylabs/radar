@@ -1,4 +1,5 @@
 @import url("./resets.css");
+@import url("./leaflet-overrides.css");
 
 @font-face {
   font-family: 'MulishRegular';
@@ -26,8 +27,4 @@ code {
 
 div {
   color: #3f3c70;
-}
-
-p {
-  margin: 0;
 }

@@ -15,6 +15,11 @@ module ClientApi
         results = Geocoder.search(params[:address])
         if results.first
           render json: results.map {|match| {
+            city: match.city,
+            street: match.street,
+            state: match.state,
+            postal_code: match.postal_code,
+            house_number: match.house_number,
             address: "#{match.house_number} #{match.street}, #{match.city}, #{match.state} #{match.postal_code}", 
             coordinates: match.coordinates
           }}
@@ -29,6 +34,11 @@ module ClientApi
           coordinates_array = params[:coordinates].split(",")
           match = results.first
           render json: {
+            city: match.city,
+            street: match.street,
+            state: match.state,
+            postal_code: match.postal_code,
+            house_number: match.house_number,
             address: "#{match.house_number} #{match.street}, #{match.city}, #{match.state} #{match.postal_code}", 
             coordinates: coordinates_array
           }
