@@ -1,13 +1,11 @@
-import DownloadIcon from "../../assets/small-download-icon.png";
-import UploadIcon from "../../assets/small-upload-icon.png";
-import LossIcon from "../../assets/ping-icon.png";
-import LatencyIcon from "../../assets/latency-icon.png";
 import {
-  DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR, HISTORICAL_VALUES_TABLE_ROW_DARK_VALUES_COLOR,
-  HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR, TRANSPARENT,
-  WHITE
+  DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR,
+  HISTORICAL_VALUES_TABLE_ROW_DARK_VALUES_COLOR,
+  HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR,
+  TRANSPARENT,
 } from "../../utils/colors";
 import {types} from "../../utils/networkTypes";
+import {prettyPrintDate} from "../../utils/dates";
 
 const historicalValuesTableRowStyle = {
   width: '100%',
@@ -23,32 +21,48 @@ const commonRowStyle = {
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'flex-start',
-  fontSize: 14,
+  fontSize: 15,
   color: DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR,
 }
 
-// 7 20 12 12 12 12 15
 const networkTypeColumStyle = {
   ...commonRowStyle,
   width: '7%',
-  height: '100%'
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center'
 }
 
 const dateTimeColumnStyle = {
   ...commonRowStyle,
-  width: '20%',
+  width: '18%',
+  justifyContent: 'flex-start',
 }
 
 const locationColumnStyle = {
   ...commonRowStyle,
-  width: '17%'
+  width: '20%',
+  justifyContent: 'flex-start',
+}
+
+const ellipsisStyle = {
+  maxWidth: '90%',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
 }
 
 const columnWithIconStyle = {
   ...commonRowStyle,
-  width: '14%',
-  color: HISTORICAL_VALUES_TABLE_ROW_DARK_VALUES_COLOR
+  width: '13.5%',
+  color: HISTORICAL_VALUES_TABLE_ROW_DARK_VALUES_COLOR,
+  justifyContent: 'flex-end',
+}
+
+const columnWithIconNarrowStyle = {
+  ...columnWithIconStyle,
+  width: '12%',
 }
 
 const iconStyle = {
@@ -65,27 +79,35 @@ const MyHistoricalValuesTableRow = ({
 }) => {
 
   const getNetworkTypeIcon = () => {
-    const networkType = types.find(type => type.text === measurement.network_type);
-    return networkType.iconSrc;
+    const networkType = types.find(type => type.text === measurement.networkType);
+    return networkType.iconSelectedSrc;
   }
 
   return (
     <div style={{...historicalValuesTableRowStyle, backgroundColor: isEven ? HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR : TRANSPARENT}}>
-      <div style={networkTypeColumStyle}>{measurement.network_type ? getNetworkTypeIcon() : null}</div>
-      <div style={dateTimeColumnStyle}>{measurement.timestamp}</div>
+      <div style={networkTypeColumStyle}>
+        {measurement.networkType ?
+          <img src={getNetworkTypeIcon()} width={16} height={16} alt={'network-type-icon'}/> :
+          null
+        }
+      </div>
+      <div style={dateTimeColumnStyle}>{prettyPrintDate(measurement.timestamp)}</div>
       <div style={columnWithIconStyle}>
-        {measurement.download_avg ? `${measurement.download_avg.toFixed(2)} Mbps` : '-'}
+        {measurement.download !== null ? `${measurement.download.toFixed(2)} Mbps` : '-'}
       </div>
       <div style={columnWithIconStyle}>
-        {measurement.upload_avg ? `${measurement.upload_avg.toFixed(2)} Mbps` : '-'}
+        {measurement.upload !== null ? `${measurement.upload.toFixed(2)} Mbps` : '-'}
       </div>
-      <div style={columnWithIconStyle}>
-        {measurement.loss ? `${measurement.loss.toFixed(2)} %` : '-'}
+      <div style={columnWithIconNarrowStyle}>
+        {measurement.loss !== null ? `${measurement.loss.toFixed(2)} %` : '-'}
       </div>
-      <div style={columnWithIconStyle}>
-        {measurement.latency ? `${measurement.latency.toFixed(0)} ms` : '-'}
+      <div style={columnWithIconNarrowStyle}>
+        {measurement.latency !== null ? `${measurement.latency.toFixed(0)} ms` : '-'}
       </div>
-      <div style={locationColumnStyle}>{measurement.address}</div>
+      <div style={{width: '4%'}}></div>
+      <div style={locationColumnStyle}>
+        <p style={ellipsisStyle}>{measurement.address}</p>
+      </div>
     </div>
   )
 }

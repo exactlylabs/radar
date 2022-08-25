@@ -35,7 +35,7 @@ const SpeedTestResultsStepPage = ({
   testResults,
   userStepData,
   goToAreaMap,
-  goToAllResults,
+  goToHistory,
   goToTestAgain
 }) => {
 
@@ -55,7 +55,7 @@ const SpeedTestResultsStepPage = ({
       />
       <div style={buttonFooterStyle}>
         <MyBackButton text={'Test again'} onClick={goToTestAgain}/>
-        <MyForwardButton text={'View all results'} onClick={goToAllResults}/>
+        <MyForwardButton text={'View all results'} onClick={() => goToHistory(true)}/>
       </div>
     </div>
   )

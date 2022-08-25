@@ -7,12 +7,14 @@ import {STEPS} from "../../constants";
 
 const defaultMainWrapperStyle = {
   backgroundColor: DEFAULT_MAIN_SECTION_BACKGROUND_COLOR,
+  overflowX: 'auto',
 };
 
 const childrenWrapperStyle = {
   width: '90%',
   margin: '0 auto',
   overflowY: 'auto',
+  height: 'auto',
 };
 
 const fullWidthWrapperStyle = {
@@ -34,7 +36,7 @@ const Frame = ({ config, children, step, setStep }) => {
     <div style={{ ...defaultMainWrapperStyle, ...config.frameStyle }}>
       {!config.widgetMode && <Header setStep={setStep} />}
       <Tabs step={step} setStep={setStep} />
-      <div style={{ ...getFrameStyleBasedOnCurrentTab(), height: `calc(${config.frameStyle.height} - 70px - 173px - 53px)` }}>
+      <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: `calc(${config.frameStyle.height} - 70px - 173px - 53px)` }}>
         {children}
       </div>
       {!config.widgetMode && <Footer />}

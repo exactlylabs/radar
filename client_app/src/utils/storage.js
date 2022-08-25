@@ -10,6 +10,9 @@ export const storeRunData = data => {
     long: data.location[1],
     loss: data.loss,
     latency: data.latency,
+    networkType: data.networkType,
+    address: data.address,
+    networkLocation: data.networkLocation,
   };
   let values = [];
   if (currentValue) {

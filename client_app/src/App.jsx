@@ -6,6 +6,7 @@ import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material';
 import { STEPS } from './constants';
 import StepsPage from "./components/StepsPage/StepsPage";
 import HistoryPage from "./components/HistoryPage/HistoryPage";
+import {steps} from "./components/StepsPage/utils/steps";
 
 // Application entry point, would hold all logic for state management
 // of multistep process
@@ -14,10 +15,12 @@ const App = ({ config }) => {
   theme = responsiveFontSizes(theme);
 
   const [step, setStep] = useState(STEPS.HISTORY);
+  const [hasRecentTest, setHasRecentTest] = useState(false);
   const [givenLocation, setGivenLocation] = useState(null);
+  const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(steps.CONNECTION_ADDRESS);
 
   const goToMapPage = location => {
-    setGivenLocation(location);
+    location && setGivenLocation(location);
     setStep(STEPS.ALL_RESULTS);
   };
 
@@ -25,20 +28,47 @@ const App = ({ config }) => {
     setStep(STEPS.ALL_RESULTS);
   }
 
+  const goToHistory = (hasRecentTest) => {
+    setHasRecentTest(!!hasRecentTest);
+    setStep(STEPS.HISTORY);
+  }
+
+  const goToLastTest = () => {
+    setSpecificSpeedTestStep(steps.SPEED_TEST_RESULTS);
+    setStep(STEPS.SPEED_TEST);
+  }
+
+  const goToSpeedTest = () => {
+    setSpecificSpeedTestStep(steps.CONNECTION_ADDRESS);
+    setStep(STEPS.SPEED_TEST);
+  }
+
   const renderContent = () => {
     let content = null;
     switch (step) {
       case STEPS.SPEED_TEST:
-        content = <StepsPage goToAreaMap={goToMapPage} goToAllResults={goToAllResults}/>
+        content = <StepsPage goToAreaMap={goToMapPage}
+                             goToHistory={goToHistory}
+                             specificStep={specificSpeedTestStep}
+        />
         break;
       case STEPS.ALL_RESULTS:
-        content = <AllResultsPage givenLocation={givenLocation} setStep={setStep} maxHeight={config.frameStyle.height ?? 500} />;
+        content = <AllResultsPage givenLocation={givenLocation}
+                                  setStep={setStep}
+                                  maxHeight={config.frameStyle.height ?? 500}
+        />;
         break;
       case STEPS.HISTORY:
-        content = <HistoryPage goToMapPage={goToMapPage} goToAllResults={goToAllResults}/>;
+        content = <HistoryPage goToMapPage={goToMapPage}
+                               goToSpeedTest={goToSpeedTest}
+                               hasRecentTest={hasRecentTest}
+                               goToLastTest={goToLastTest}
+        />;
         break;
       default:
-        content = <StepsPage goToAreaMap={goToMapPage} goToAllResults={goToAllResults} />;
+        content = <StepsPage goToAreaMap={goToMapPage}
+                             goToHistory={goToHistory}
+        />;
         break;
     }
     return content;

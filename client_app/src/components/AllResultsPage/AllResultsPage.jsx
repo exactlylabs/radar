@@ -4,11 +4,7 @@ import { MyButton } from '../common/MyButton';
 import { MapContainer, TileLayer} from 'react-leaflet';
 import { STEPS } from '../../constants';
 import SpeedResultsBox from './SpeedResultsBox';
-import {
-  DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD,
-  getCorrespondingFilterTag,
-  SPEED_FILTERS,
-} from '../../utils/speeds';
+import {getCorrespondingFilterTag} from '../../utils/speeds';
 import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE, mapTileAttribution, mapTileUrl} from '../../utils/map';
 import {getAllSpeedTests, getUserApproximateCoordinates} from '../../utils/apiRequests';
 import { MyMap } from '../common/MyMap';
