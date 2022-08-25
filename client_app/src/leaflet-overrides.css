@@ -1,0 +1,10 @@
+/* Leaving this here as this is style we ideally want to have system-wide */
+/* for every instance of a leaflet map, no matter the current rendered page. */
+.leaflet-container {
+    font-family: MulishRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.leaflet-popup-content {
+    margin: 0;
+}

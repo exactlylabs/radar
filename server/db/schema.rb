@@ -71,6 +71,11 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
     t.datetime "processed_at"
     t.string "address"
     t.string "network_location"
+    t.string "city"
+    t.string "street"
+    t.string "state"
+    t.string "postal_code"
+    t.integer "house_number"
     t.string "network_type"
     t.float "network_cost"
   end

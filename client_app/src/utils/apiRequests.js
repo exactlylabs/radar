@@ -5,19 +5,27 @@ import {getFilterTag} from "./speeds";
 
 export const sendRawData = (rawData, startTimestamp, userStepData) => {
   const { networkLocation, networkType, networkCost } = userStepData;
-  const address = userStepData.address.address;
+  const { address, city, state, house_number, street, postal_code } = userStepData.address;
   const location = userStepData.address.coordinates;
   fetch(`${API_URL}/speed_tests`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       result: { raw: rawData },
-      location: location,
-      timestamp: startTimestamp,
-      address: address,
-      network_location: networkLocation?.text ?? null,
-      network_type: networkType?.text ?? null,
-      network_cost: networkCost,
+      speed_test: {
+        latitude: location[0],
+        longitude: location[1],
+        tested_at: startTimestamp,
+        address,
+        city,
+        street,
+        state,
+        postal_code,
+        house_number,
+        network_location: networkLocation?.text ?? null,
+        network_type: networkType?.text ?? null,
+        network_cost: networkCost,
+      },
     }),
   }).catch(notifyError);
 };
@@ -76,16 +84,10 @@ export const getAllSpeedTests = async () => {
 export const getSuggestions = async addressString => {
   const formData = new FormData();
   formData.append('address', addressString);
-  try {
-    return await fetch(`${API_URL}/suggestions`, {
+  return fetch(`${API_URL}/suggestions`, {
       method: 'POST',
       body: formData,
-    }).then(res => res.json());
-  } catch (e) {
-    notifyError(e);
-    // Just human-readable error for UI display
-    throw new Error('Error fetching suggestions. Please try again later.');
-  }
+  }).then(res => res.json());
 };
 
 export const getAddressForCoordinates = async coordinates => {

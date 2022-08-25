@@ -58,12 +58,13 @@ const MyAddressInput = ({ setAddress }) => {
 
   const handleInputChange = debounce( async (e) => {
     setLocationLoading(true);
-    setAddress({name: e.target.value, coordinates: []});
+    setAddress({address: e.target.value, coordinates: []});
     try {
       const suggestions = await getSuggestions(e.target.value);
       setSuggestions(suggestions);
     } catch (e) {
-      setError(e.message);
+      notifyError(e);
+      setError('Failed to fetch for suggestions. Please try again later.');
     }
     setLocationLoading(false);
   });

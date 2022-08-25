@@ -2,14 +2,7 @@ module ClientApi
   module V1
     class SpeedTestsController < ApiController
       def create
-        @speed_test = ClientSpeedTest.new
-        @speed_test.latitude = params[:location][0]
-        @speed_test.longitude = params[:location][1]
-        @speed_test.tested_at = params[:timestamp]
-        @speed_test.address = params[:address]
-        @speed_test.network_location = params[:network_location]
-        @speed_test.network_type = params[:network_type]
-        @speed_test.network_cost = params[:network_cost]
+        @speed_test = ClientSpeedTest.new speed_test_params
         filename = "speed-test-#{params[:timestamp]}.json"
         json_content = params[:result].to_json
         @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: "application/json")
@@ -22,6 +15,11 @@ module ClientApi
       def index
         @speed_tests = ClientSpeedTest.all
         render json: @speed_tests
+      end
+
+      private
+      def speed_test_params
+        params.require(:speed_test).permit(:latitude, :longitude, :tested_at, :address, :network_location, :network_type, :network_cost, :city, :state, :street, :house_number, :postal_code)
       end
     end
   end

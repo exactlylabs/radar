@@ -108,23 +108,6 @@ const MyPopup = ({
   measurement
 }) => {
 
-  const getStreetName = () => {
-    //123 Street name, City name, State name Zipcode
-    const splitAddress = measurement.address.split(',');
-    const numberAndStreet = splitAddress[0];
-    return numberAndStreet.split(' ').slice(1).join(' ');
-  }
-
-  const getCityAndState = () => {
-    //123 Street name, City name, State name Zipcode
-    const splitAddress = measurement.address.split(',');
-    const city = splitAddress[1]; // => City name
-    // State comes appended with zipcode, so slice out last element (zipcode)
-    // and re-join on a space to form the state string again.
-    const state = splitAddress[2].split(' ').slice(0, -1).join(' '); // => State name
-    return `${city}, ${state}`;
-  }
-
   const getAvailableWidth = () => {
     const hasLocation = measurement.network_location !== null;
     const hasType = measurement.network_type !== null;
@@ -157,8 +140,8 @@ const MyPopup = ({
       <div style={popupDivStyle}>
         <div style={popupHeaderStyle}>
           <div style={{...popupHeaderAddressContainerStyle, width: getAvailableWidth()}}>
-            <div style={addressTitleStyle}>{getStreetName()}</div>
-            <div style={addressSubtitleStyle}>{getCityAndState()}</div>
+            <div style={addressTitleStyle}>{measurement.street}</div>
+            <div style={addressSubtitleStyle}>{`${measurement.city}, ${measurement.state}`}</div>
           </div>
           {
             (measurement.network_type || measurement.network_location) &&

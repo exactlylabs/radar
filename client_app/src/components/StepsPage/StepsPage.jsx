@@ -32,6 +32,10 @@ const StepsPage = ({
     address: {
       address: '',
       coordinates: [],
+      city: '',
+      street: '',
+      state: '',
+      zipcode: '',
     },
     confirmedLocation: true, // TODO: change to false and create location confirmation modal
     terms: false,
@@ -41,7 +45,10 @@ const StepsPage = ({
   });
   const [lastTestResults, setLastTestResults] = useState(null);
 
-  const setAddress = address => setUserStepData({...userStepData, address});
+  const setAddress = address => {
+    console.log(address);
+    setUserStepData({...userStepData, address});
+  }
   const setTerms = status => setUserStepData({...userStepData, terms: status});
   const setNetworkLocation = index => setUserStepData({ ...userStepData, networkLocation: placementOptions[index] });
   const setNetworkType = index => {

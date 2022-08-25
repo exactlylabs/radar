@@ -60,9 +60,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const filterResults = (selectedTab, filters) => {
     let fullRange = [];
     setSelectedFilterType(selectedTab);
-    filters.forEach(filter => {
-      fullRange.push(getCorrespondingFilterTag(selectedTab, filter));
-    });
+    fullRange = filters.map(filter => getCorrespondingFilterTag(selectedTab, filter));
     if(fullRange.length === 0) {
       setResults(results.map(results => { return {...results, visible: true} }));
     } else {
