@@ -37,7 +37,8 @@ const StepsPage = ({
       city: '',
       street: '',
       state: '',
-      zipcode: '',
+      postal_code: '',
+      house_number: ''
     },
     confirmedLocation: true, // TODO: change to false and create location confirmation modal
     terms: false,

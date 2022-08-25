@@ -8,11 +8,7 @@ export const storeRunData = data => {
     upload: data.uploadValue,
     lat: data.location[0],
     long: data.location[1],
-    loss: data.loss,
-    latency: data.latency,
-    networkType: data.networkType,
-    address: data.address,
-    networkLocation: data.networkLocation,
+    ...data,
   };
   let values = [];
   if (currentValue) {
