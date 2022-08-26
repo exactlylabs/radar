@@ -1,7 +1,17 @@
 import { LOCAL_STORAGE_KEY } from '../constants';
 
+export const getStoredValues = () => JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY))?.values ?? null;
+
+export const getLastStoredValue = () => {
+  const values = getStoredValues();
+  return values !== null ? values[0] : null;
+}
+
+const setNewValues = newValues => window.localStorage.setItem(LOCAL_STORAGE_KEY, newValues);
+
+const hasStoredData = () => window.localStorage.getItem(LOCAL_STORAGE_KEY) !== null;
+
 export const storeRunData = data => {
-  const currentValue = window.localStorage.getItem(LOCAL_STORAGE_KEY);
   const newMeasurement = {
     timestamp: data.startTimestamp,
     download: data.downloadValue,
@@ -11,11 +21,10 @@ export const storeRunData = data => {
     ...data,
   };
   let values = [];
-  if (currentValue) {
-    const json = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY));
-    values = [...json.values];
+  if (hasStoredData()) {
+    values = [...getStoredValues()];
   }
   values = [newMeasurement, ...values]; // prepend to have the array sorted since creation by date desc
   const newValues = JSON.stringify({ values });
-  window.localStorage.setItem(LOCAL_STORAGE_KEY, newValues);
+  setNewValues(newValues);
 };
