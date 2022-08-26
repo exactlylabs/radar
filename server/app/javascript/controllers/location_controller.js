@@ -38,6 +38,14 @@ export default class extends Controller {
       13
     );
 
+    // Limit map bounds to display America + Africa + Western Europe mainly
+    const topLeftBoundingPoint = L.latLng(80.011830, -172.614055);
+    const bottomRightBoundingPoint = L.latLng(-65.116127, 53.220752);
+    const bounds = L.latLngBounds(topLeftBoundingPoint, bottomRightBoundingPoint);
+    this.map.setMaxBounds(bounds);
+    this.map.setMinZoom(3);
+    this.map.on('drag', () => {this.map.panInsideBounds(bounds, {animate: false})});
+
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
