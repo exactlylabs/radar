@@ -48,12 +48,6 @@ class AccountsController < ApplicationController
   end
 
   def edit
-    respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.update('edit_account_modal', template: "accounts/edit", locals: { account: @account })
-      end
-      format.html
-    end
   end
 
   def update
