@@ -19,7 +19,7 @@
        id="sidebar--account-more-options@<%= account.id %>"
   >
     <div class="menu-item px-3 bg-hover-light">
-      <%= link_to "Edit", edit_account_path(account.id), class: "menu-link px-3", method: :post, data: { "bs-target" => "#edit_account_modal", "bs-toggle" => "modal" } %>
+      <%= link_to "Edit", edit_account_path(account.id), { class: "menu-link px-3", "data-turbo-frame" => "edit_account_modal" } %>
     </div>
     <div class="menu-item px-3 bg-hover-light">
       <%= link_to "Delete", delete_account_path(account.id), class: "menu-link px-3 text-danger", method: :post, data: { "bs-target" => "#delete_account_modal", "bs-toggle" => "modal" }%>

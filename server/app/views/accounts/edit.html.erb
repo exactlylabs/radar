@@ -1,4 +1,4 @@
-
+<%= turbo_frame_tag "edit_account_modal" do %>
   <%= form_with(model: Account, url: account_path(@account.id), method: :put, data: {"turbo-frame" => "_top"}) do |form| %>
     <div class="modal-dialog">
       <div class="modal-content">
@@ -65,4 +65,4 @@
       </div>
     </div>
   <% end %>
-
+<% end %>
