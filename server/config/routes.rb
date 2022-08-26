@@ -52,7 +52,6 @@ Rails.application.routes.draw do
 
     member do
       delete 'release'
-      post 'configuration'
       post 'status'
       post 'watchdog_status'
       post 'run_test'
