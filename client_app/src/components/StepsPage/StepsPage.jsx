@@ -11,7 +11,7 @@ import {placementOptions} from "../../utils/placements";
 import {types} from "../../utils/networkTypes";
 import {getAddressForCoordinates} from "../../utils/apiRequests";
 import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResultsStepPage";
-import {LOCAL_STORAGE_KEY} from "../../constants";
+import {getLastStoredValue} from "../../utils/storage";
 
 const stepsPageStyle = {
   width: '100%',
@@ -64,8 +64,9 @@ const StepsPage = ({
 
   useEffect(() => {
     if(specificStep) {
-      if(specificStep === steps.SPEED_TEST_RESULTS) {
-        const lastTestTaken = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY)).values[0];
+      setCurrentStep(specificStep);
+      if (specificStep === steps.SPEED_TEST_RESULTS) {
+        const lastTestTaken = getLastStoredValue();
         const networkLocation = placementOptions.find(placement => placement.text === lastTestTaken.networkLocation);
         const networkType = types.find(type => type.text === lastTestTaken.networkType);
         setUserStepData({
@@ -85,7 +86,6 @@ const StepsPage = ({
           latency: lastTestTaken.latency,
         });
       }
-      setCurrentStep(specificStep);
     }
   }, []);
 

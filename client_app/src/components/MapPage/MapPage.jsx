@@ -5,7 +5,6 @@ import { MyButton } from '../common/MyButton';
 import * as ndt7 from '@m-lab/ndt7/src/ndt7';
 import { CircularProgress, Grid, Paper } from '@mui/material';
 import HistoricalValuesTable from './HistoricalValuesTable';
-import { LOCAL_STORAGE_KEY } from '../../constants';
 import { MyTitle } from '../common/MyTitle';
 import { NetworkCheck } from '@mui/icons-material';
 import { Box } from '@mui/system';

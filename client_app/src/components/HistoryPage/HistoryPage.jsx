@@ -1,12 +1,10 @@
-import {useState} from "react";
 import {MyTitle} from "../common/MyTitle";
-import {LOCAL_STORAGE_KEY} from "../../constants";
 import MyHistoricalValuesTable from "./MyHistoricalValuesTable";
-import MyStepSwitcher from "../StepsPage/Stepper/MyStepSwitcher";
 import {MyBackButton} from "../common/MyBackButton";
 import {ArrowBack} from "@mui/icons-material";
 import {MyForwardButton} from "../common/MyForwardButton";
 import {MyButton} from "../common/MyButton";
+import {getStoredValues} from "../../utils/storage";
 
 const historyPageStyle = {
   width: '100%',
@@ -44,7 +42,7 @@ const HistoryPage = ({
   hasRecentTest,
 }) => {
 
-  const historicalValues = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY))?.values ?? null
+  const historicalValues = getStoredValues();
 
   return (
     <div style={historyPageStyle}>
