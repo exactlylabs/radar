@@ -5,6 +5,7 @@ import { Controller } from "@hotwired/stimulus";
 let map;
 
 export default class extends Controller {
+
   disconnect() {
     // clear map so it can get properly initialized on re-render
     map = null;
@@ -12,7 +13,9 @@ export default class extends Controller {
 
   connect() {
     if (!document.querySelector("#map")) return; // don't try to initialize a map if the <div id="map"> is not present on the screen
-    if (!map) map = L.map("map").setView([51.505, -0.09], 13); // only initialize the map if it has not been yet
+    if (!map) { // only initialize the map if it has not been yet
+      map = L.map("map").setView([51.505, -0.09], 13);
+    }
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -118,6 +121,14 @@ export default class extends Controller {
 
     var group = new L.featureGroup(markers);
     map.fitBounds(group.getBounds());
+
+    // Limit map bounds to display America + Africa + Western Europe mainly
+    const topLeftBoundingPoint = L.latLng(80.011830, -172.614055);
+    const bottomRightBoundingPoint = L.latLng(-65.116127, 53.220752);
+    const bounds = L.latLngBounds(topLeftBoundingPoint, bottomRightBoundingPoint);
+    map.setMaxBounds(bounds);
+    map.setMinZoom(3);
+    map.on('drag', () => {map.panInsideBounds(bounds, {animate: false})});
 
     this.observer = new ResizeObserver((entries) => {
       if (

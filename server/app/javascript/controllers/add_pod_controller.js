@@ -36,6 +36,7 @@ export default class extends Controller {
 
   async insertFromPaste(e) {
     const data = await e.clipboardData.getData("text");
+    if(data === null || data === '') return;
     const className = e.srcElement.className;
     const inputs = document.querySelectorAll(`.${className}`);
     let i;
@@ -59,7 +60,8 @@ export default class extends Controller {
   switchInput(e) {
     if (
       e.inputType === "deleteContentBackward" ||
-      e.inputType === "insertFromPaste"
+      e.inputType === "insertFromPaste" ||
+      e.inputType === "historyUndo" // CTRL + Z
     )
       return;
     if (e.type === "paste") return this.insertFromPaste(e);
