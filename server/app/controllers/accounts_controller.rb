@@ -23,10 +23,10 @@ class AccountsController < ApplicationController
 
   def delete
     respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.update('delete_account_modal', template: "accounts/delete", locals: { account: @account })
-      end
       format.html
+      format.turbo_stream {
+        render turbo_stream: turbo_stream.update('delete_account_modal', partial: "accounts/delete_modal", locals: { account: @account })
+      }
     end
   end
 
@@ -40,6 +40,7 @@ class AccountsController < ApplicationController
         if @account == current_account
           get_first_user_account_and_set_cookie
         end
+        format.turbo_stream { render turbo_stream: turbo_stream.remove(@account) }
         format.html { redirect_to "/dashboard", notice: "Account was successfully deleted." }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -48,6 +49,12 @@ class AccountsController < ApplicationController
   end
 
   def edit
+    respond_to do |format|
+      format.html
+      format.turbo_stream {
+        render turbo_stream: turbo_stream.update('edit_account_modal', partial: "accounts/edit_modal", locals: { account: @account })
+      }
+    end
   end
 
   def update

@@ -108,7 +108,7 @@ Rails.application.routes.draw do
     end
     member do
       post :edit
-      post :delete, to: "accounts#delete"
+      get :delete
     end
   end
 
