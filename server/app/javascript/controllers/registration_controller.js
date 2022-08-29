@@ -118,6 +118,8 @@ export default class extends Controller {
   }
 
   finishRegistrationWithInvite() {
+    this.continueButtonTarget.style.display = 'none';
+    this.finishButtonLoadingTarget.style.display = 'inline-block';
     const csrfToken = document.getElementsByName("csrf-token")[0].content;
     const accountToken = window.location.href.split("?token=")[1];
     let formData = new FormData();
@@ -136,13 +138,16 @@ export default class extends Controller {
       .then((res) => {
         if (res.redirected) {
           window.location.href = res.url;
+        } else if(res.status >= 400) {
+          return res.json();
         }
       })
+      .then(res => { this.errorTextTarget.innerText = res.error; })
       .catch((err) => handleError(err, this.identifier))
       .finally(() => {
-        this.finishButtonTarget.style.display = "block";
-        this.finishButtonLoadingTarget.style.display = "none";
-      });
+        this.continueButtonTarget.style.display = 'inline-block';
+        this.finishButtonLoadingTarget.style.display = 'none';
+      })
   }
 
   finishRegistration() {

@@ -52,16 +52,16 @@ class Users::RegistrationsController < Devise::RegistrationsController
         @invite.destroy!
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      error = invalid.record.errors
+      error = invalid
     rescue ActiveRecord::RecordNotDestroyed => invalid
-      error = invalid.record.errors
+      error = invalid
     end
     respond_to do |format|
       if !error
         sign_in @user
         format.html { redirect_to dashboard_path(invite: true), notice: "Registered successfully" }
       else
-        format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity }
+        format.json { render json: { error: error }, status: :unprocessable_entity }
       end
     end
   end
