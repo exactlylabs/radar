@@ -16,6 +16,7 @@
       <!--end::Heading-->
       <!--begin::Input group-->
       <div class="row fv-row mb-7 fv-plugins-icon-container">
+        <p style="color: red" data-registration-target="errorText"></p>
         <!--begin::Col-->
         <div class="col-xl-6">
           <label class="form-label fw-bolder text-dark fs-6 required">First Name</label>
@@ -144,6 +145,13 @@
                 data-action="click->registration#finishRegistrationWithInvite"
                 data-registration-target="continueButton"
         >Finish</button>
+        <button type="button"
+                class="btn btn-primary disabled"
+                style="height: 48px; display: none;"
+                data-registration-target="finishButtonLoading"
+        >
+          <div class="spinner-border text-light m-auto" role="status"></div>
+        </button>
       </div>
     </div>
   </div>
