@@ -1,7 +1,10 @@
-import { DEFAULT_HEADER_BACKGROUND_COLOR, WHITE } from '../../utils/colors';
+import {useState} from "react";
+import {DEFAULT_HEADER_BACKGROUND_COLOR, DEFAULT_HORIZONTAL_DIVIDER_BG_COLOR, WHITE} from '../../utils/colors';
 import { MyButton } from '../common/MyButton';
 import { STEPS } from '../../constants';
 import radarLogoLight from '../../assets/radar-logo-light.png';
+import MenuCloseButton from '../../assets/menu-close-button.png';
+import MenuOpenButton from '../../assets/menu-open-button.png';
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -12,6 +15,11 @@ const headerStyle = {
   width: '100%',
   fontWeight: 'bold',
 };
+
+const mobileHeaderStyle = {
+  ...headerStyle,
+
+}
 
 const contentWrapperStyle = {
   width: '90%',
@@ -45,15 +53,62 @@ const navElementStyle = {
   color: WHITE,
 };
 
-const Header = ({ setStep }) => {
-  const goToHome = () => setStep(STEPS.SPEED_TEST);
+const menuCloseButtonStyle = {
+  cursor: 'pointer'
+}
 
-  const goToTestSpeed = () => setStep(STEPS.SPEED_TEST);
+const collapsableContentStyle = {
+  width: '100%',
+  height: 'max-content',
+  minHeight: 200,
+  backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  fontWeight: 'bold',
+  position: 'absolute',
+  top: 70,
+  left: 0,
+  paddingLeft: '5%',
+  paddingRight: '5%',
+  paddingTop: 15,
+  paddingBottom: 15,
+}
+
+const mobileNavElementStyle = {
+  fontSize: 16,
+  fontWeight: 'bold',
+  color: WHITE,
+  marginBottom: 15,
+}
+
+const horizontalDividerStyle = {
+  width: '90%',
+  height: 1,
+  backgroundColor: DEFAULT_HORIZONTAL_DIVIDER_BG_COLOR,
+  marginBottom: 15,
+}
+
+const Header = ({ setStep, isMobile }) => {
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const goToHome = () => {
+    if(isMenuOpen) setIsMenuOpen(false);
+    setStep(STEPS.SPEED_TEST);
+  }
+
+  const goToTestSpeed = () => {
+    if(isMenuOpen) setIsMenuOpen(false);
+    setStep(STEPS.SPEED_TEST);
+  }
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <div style={headerStyle}>
-      <div className={'header--content-wrapper'} style={contentWrapperStyle}>
-        <div className={'header--left-side-container'} style={leftSideContainerStyle}>
+    <div style={isMobile ? mobileHeaderStyle : headerStyle}>
+      <div style={contentWrapperStyle}>
+        <div style={leftSideContainerStyle}>
           <img
             src={radarLogoLight}
             alt={'Radar-logo=light'}
@@ -62,15 +117,37 @@ const Header = ({ setStep }) => {
             onClick={goToHome}
             style={navElementStyle}
           />
-          <div onClick={goToHome} style={navElementStyle}>
-            Home
-          </div>
-          <div style={navElementStyle}>About Us</div>
+          {!isMobile &&
+            <div onClick={goToHome} style={navElementStyle}>
+              Home
+            </div>
+          }
+          {!isMobile && <div style={navElementStyle}>About Us</div>}
         </div>
-        <div className={'header--right-side-container'} style={rightSideContainerStyle}>
-          <MyButton text={'Test your speed'} onClick={goToTestSpeed} />
+        <div style={rightSideContainerStyle}>
+          {
+            isMobile ?
+              <img src={isMenuOpen ? MenuOpenButton : MenuCloseButton}
+                   width={22}
+                   height={22}
+                   alt={'menu-close-button'}
+                   style={menuCloseButtonStyle}
+                   onClick={toggleMenu}
+              /> :
+              <MyButton text={'Test your speed'} onClick={goToTestSpeed}/>
+          }
         </div>
       </div>
+      {
+        isMobile && isMenuOpen &&
+        <div style={collapsableContentStyle}>
+          <div onClick={goToHome} style={mobileNavElementStyle}>Home</div>
+          <div style={horizontalDividerStyle}></div>
+          <div style={mobileNavElementStyle}>About Us</div>
+          <div style={horizontalDividerStyle}></div>
+          <MyButton text={'Test your speed'} onClick={goToTestSpeed}/>
+        </div>
+      }
     </div>
   );
 };
