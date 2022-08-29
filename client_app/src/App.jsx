@@ -1,5 +1,5 @@
 import './App.css';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import AllResultsPage from './components/AllResultsPage/AllResultsPage';
 import Frame from './components/Frame/Frame';
 import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material';
@@ -7,6 +7,7 @@ import { STEPS } from './constants';
 import StepsPage from "./components/StepsPage/StepsPage";
 import HistoryPage from "./components/HistoryPage/HistoryPage";
 import {steps} from "./components/StepsPage/utils/steps";
+import {RESPONSIVE_VERSION_BREAKPOINT} from "./utils/breakpoints";
 
 // Application entry point, would hold all logic for state management
 // of multistep process
@@ -18,6 +19,13 @@ const App = ({ config }) => {
   const [hasRecentTest, setHasRecentTest] = useState(false);
   const [givenLocation, setGivenLocation] = useState(null);
   const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(steps.CONNECTION_ADDRESS);
+  const [isMobileWidth, setIsMobileWidth] = useState(window.innerWidth <= RESPONSIVE_VERSION_BREAKPOINT);
+
+  useEffect(() => {
+    window.addEventListener('resize', () => setIsMobileWidth(window.innerWidth <= RESPONSIVE_VERSION_BREAKPOINT));
+
+    return () => window.removeEventListener('resize', () => setIsMobileWidth(window.innerWidth <= RESPONSIVE_VERSION_BREAKPOINT));
+  }, [])
 
   const goToMapPage = location => {
     location && setGivenLocation(location);
@@ -76,7 +84,7 @@ const App = ({ config }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Frame config={config} setStep={setStep} step={step}>
+      <Frame config={config} setStep={setStep} step={step} isMobile={isMobileWidth}>
         {renderContent()}
       </Frame>
     </ThemeProvider>

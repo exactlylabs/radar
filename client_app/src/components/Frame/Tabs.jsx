@@ -49,6 +49,12 @@ const commonTabTextStyle = {
   fontSize: 15,
 };
 
+const commonResponsiveTabTextStyle = {
+  ...commonTabTextStyle,
+  paddingLeft: 15,
+  paddingRight: 15,
+}
+
 const testSpeedTabStyle = {
   ...commonTabStyle,
 };
@@ -61,6 +67,11 @@ const selectedTabTextStyle = {
   ...commonTabTextStyle,
   color: DEFAULT_SELECTED_TAB_COLOR,
 };
+
+const mobileSelectedTabTextStyle = {
+  ...commonResponsiveTabTextStyle,
+  color: DEFAULT_SELECTED_TAB_COLOR,
+}
 
 const selectedContentStyle = {
   color: DEFAULT_SELECTED_TAB_COLOR,
@@ -91,7 +102,7 @@ const TABS = {
   HISTORY: 'history'
 };
 
-const Tabs = ({ step, setStep }) => {
+const Tabs = ({ step, setStep, isMobile }) => {
   const [selectedTab, setSelectedTab] = useState(TABS.SPEED_TEST);
 
   useEffect(() => {
@@ -115,11 +126,19 @@ const Tabs = ({ step, setStep }) => {
     setStep(STEPS.HISTORY);
   }
 
+  const getTabStyle = (tabName) => {
+    if(selectedTab === tabName) {
+      return isMobile ? mobileSelectedTabTextStyle : selectedTabTextStyle;
+    } else {
+      return isMobile ? commonResponsiveTabTextStyle : commonTabTextStyle;
+    }
+  }
+
   return (
     <div style={tabsWrapperStyle}>
       <div style={tabsContentWrapperStyle}>
         <div style={testSpeedTabStyle} onClick={goToTestSpeed}>
-          <div style={selectedTab === TABS.SPEED_TEST ? selectedTabTextStyle : commonTabTextStyle}>
+          <div style={getTabStyle(TABS.SPEED_TEST)}>
             <img
               src={selectedTab === TABS.SPEED_TEST ? speedTestIconActive : speedTestIconInactive}
               width={18}
@@ -133,7 +152,7 @@ const Tabs = ({ step, setStep }) => {
         </div>
 
         <div style={historyTabStyle} onClick={goToHistory}>
-          <div style={selectedTab === TABS.HISTORY ? selectedTabTextStyle : commonTabTextStyle}>
+          <div style={getTabStyle(TABS.HISTORY)}>
             <img
               src={selectedTab === TABS.HISTORY ? historyIconActive : historyIconInactive}
               width={18}
@@ -147,7 +166,7 @@ const Tabs = ({ step, setStep }) => {
         </div>
 
         <div style={exploreMapTabStyle} onClick={goToExploreMap}>
-          <div style={selectedTab === TABS.EXPLORE_MAP ? selectedTabTextStyle : commonTabTextStyle}>
+          <div style={getTabStyle(TABS.EXPLORE_MAP)}>
             <img
               src={selectedTab === TABS.EXPLORE_MAP ? exploreMapIconActive : exploreMapIconInactive}
               width={18}
@@ -155,7 +174,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.EXPLORE_MAP ? 'explore-active' : 'explore-inactive'}
             />
-            <div style={selectedTab === TABS.EXPLORE_MAP ? selectedContentStyle : null}>Explore the Map</div>
+            <div style={selectedTab === TABS.EXPLORE_MAP ? selectedContentStyle : null}>{ isMobile ? 'Map' : 'Explore the Map'}</div>
           </div>
           <div style={selectedTab === TABS.EXPLORE_MAP ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
