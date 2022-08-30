@@ -22,7 +22,7 @@ const fullWidthWrapperStyle = {
   width: '100%',
 }
 
-const Frame = ({ config, children, step, setStep, isMobile }) => {
+const Frame = ({ config, children, step, setStep }) => {
 
   const getFrameStyleBasedOnCurrentTab = () => {
     if(step === STEPS.ALL_RESULTS) {
@@ -34,8 +34,8 @@ const Frame = ({ config, children, step, setStep, isMobile }) => {
 
   return (
     <div style={{ ...defaultMainWrapperStyle, ...config.frameStyle }}>
-      {!config.widgetMode && <Header setStep={setStep} isMobile={isMobile}/>}
-      <Tabs step={step} setStep={setStep} isMobile={isMobile}/>
+      {!config.widgetMode && <Header setStep={setStep}/>}
+      <Tabs step={step} setStep={setStep}/>
       <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: `calc(${config.frameStyle.height} - 70px - 173px - 53px)` }}>
         {children}
       </div>

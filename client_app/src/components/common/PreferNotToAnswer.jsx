@@ -1,5 +1,6 @@
 import ArrowRightIcon from '../../assets/icons-right-arrow.png';
 import {DEFAULT_SKIP_FONT_COLOR} from "../../utils/colors";
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const textStyle = {
   fontSize: 15,
@@ -11,6 +12,12 @@ const textStyle = {
   justifyContent: 'center',
   alignItems: 'center',
   cursor: 'pointer',
+  marginBottom: 70
+}
+
+const mobileTextStyle = {
+  ...textStyle,
+  marginTop: -40,
 }
 
 const iconStyle = {
@@ -19,11 +26,16 @@ const iconStyle = {
 
 const PreferNotToAnswer = ({
   goForward
-}) => (
-  <div style={textStyle} onClick={goForward}>
-    I prefer not to answer
-    <img src={ArrowRightIcon} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/>
-  </div>
-);
+}) => {
+
+  const isMobile = useScreenSize();
+
+  return (
+    <div style={isMobile ? mobileTextStyle : textStyle} onClick={goForward}>
+      I prefer not to answer
+      <img src={ArrowRightIcon} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/>
+    </div>
+  );
+};
 
 export default PreferNotToAnswer;

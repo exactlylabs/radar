@@ -6,12 +6,18 @@ import {notifyError} from "../../../../utils/errors";
 import SpeedGaugeInterior from "./SpeedGaugeInterior";
 import {normalizeValue} from "./utils/normalizer";
 import {downloadWorkerUrl, runnerConfig, uploadWorkerUrl} from "../../../../utils/ndt7Tester";
+import {useScreenSize} from "../../../../hooks/useScreenSize";
 
 const canvasWrapperStyle = {
   width: 250,
   height: 250,
   margin: 'auto',
   paddingTop: 40,
+}
+
+const mobileCanvasWrapperStyle = {
+  ...canvasWrapperStyle,
+  paddingTop: 0,
 }
 
 const commonDonutOptions = {
@@ -169,8 +175,10 @@ const SpeedGauge = ({
     });
   };
 
+  const isMobile = useScreenSize();
+
   return (
-    <div style={canvasWrapperStyle}>
+    <div style={isMobile ? mobileCanvasWrapperStyle : canvasWrapperStyle}>
       <canvas id={'gauge-canvas'} width={250} height={250}></canvas>
       <SpeedGaugeInterior currentValue={isDownloading ? downloadValue?.toFixed(2) : uploadValue?.toFixed(2)} isDownloading={isDownloading}/>
     </div>

@@ -18,16 +18,22 @@ const disabledForwardButtonStyle = {
   opacity: 0.5,
 }
 
-export const MyForwardButton = ({ text, onClick, disabled, icon, iconFirst }) => {
+export const MyForwardButton = ({ text, onClick, disabled, icon, iconFirst, fullWidth }) => {
+
+  const getStyle = () => {
+    let baseStyle = disabled ? disabledForwardButtonStyle : forwardButtonStyle;
+    return { ...baseStyle, width: fullWidth ? '100%' : baseStyle.width };
+  }
+
   return iconFirst ?
-    <button style={disabled ? disabledForwardButtonStyle : forwardButtonStyle}
+    <button style={getStyle()}
             onClick={onClick}
             disabled={disabled}
     >
       {icon}
       {text}
     </button> :
-    <button style={disabled ? disabledForwardButtonStyle : forwardButtonStyle}
+    <button style={getStyle()}
             onClick={onClick}
             disabled={disabled}
     >

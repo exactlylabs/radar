@@ -8,9 +8,10 @@ import {MapContainer, Marker, TileLayer} from "react-leaflet";
 import {MyMap} from "../../../common/MyMap";
 import {customMarker, mapTileAttribution, mapTileUrl} from "../../../../utils/map";
 import {useEffect, useMemo, useRef, useState} from "react";
-import {getGeocodedAddress, getSuggestions} from "../../../../utils/apiRequests";
+import {getSuggestions} from "../../../../utils/apiRequests";
 import {notifyError} from "../../../../utils/errors";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
+import {useScreenSize} from "../../../../hooks/useScreenSize";
 
 const modalStyle = {
   width: '700px',
@@ -18,6 +19,14 @@ const modalStyle = {
   position: 'fixed',
   top: '10%',
   left: 'calc(50% - 350px)'
+}
+
+const mobileModalStyle = {
+  width: '90%',
+  height: '85%',
+  position: 'fixed',
+  top: '10%',
+  left: '5%',
 }
 
 const boxStyle = {
@@ -36,6 +45,10 @@ const mapContainerStyle = {
   height: 250,
 }
 
+const mobileMapContainerStyle = {
+  height: '45%'
+}
+
 const footerStyle = {
   height: 110,
   display: 'flex',
@@ -46,17 +59,28 @@ const footerStyle = {
   margin: 'auto'
 }
 
+const mobileFooterStyle = {
+  display: 'flex',
+  height: 120,
+  flexDirection: 'column',
+  width: '70%',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  margin: '30px auto',
+}
+
 const MyMapModal = ({
   isOpen,
   setIsOpen,
   goForward,
-  address
+  address,
 }) => {
 
   const markerRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [addressCoordinates, setAddressCoordinates] = useState(address.coordinates);
+  const isMobile = useScreenSize();
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -97,21 +121,21 @@ const MyMapModal = ({
   return (
     <Modal open={isOpen}
            onClose={() => setIsOpen(false)}
-           style={modalStyle}
+           style={isMobile ? mobileModalStyle : modalStyle}
     >
       <Box sx={boxStyle}>
         <div style={headerStyle}>
           <MyModalTitle text={'Confirm your location'}/>
           <div>You can move the marker to your approximate location.</div>
         </div>
-        <div style={mapContainerStyle}>
+        <div style={isMobile ? mobileMapContainerStyle : mapContainerStyle}>
           {
             !loading && addressCoordinates.length > 0 &&
             <MapContainer
               center={addressCoordinates}
               zoom={20}
               scrollWheelZoom
-              style={{height: '100%', minWidth: 450, maxWidth: 800}}
+              style={{height: '100%', maxWidth: 800}}
             >
               <MyMap/>
               <TileLayer attribution={mapTileAttribution} url={mapTileUrl}/>
@@ -130,11 +154,15 @@ const MyMapModal = ({
             !loading && error && <MyMessageSnackbar message={error} type={'error'}/>
           }
         </div>
-        <div style={footerStyle}>
-          <MyBackButton text={'Change address'} onClick={() => setIsOpen(false)}/>
+        <div style={isMobile ? mobileFooterStyle : footerStyle}>
+          <MyBackButton text={'Change address'}
+                        onClick={() => setIsOpen(false)}
+                        fullWidth
+          />
           <MyForwardButton text={'Confirm location'}
                            icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
                            onClick={() => goForward(addressCoordinates)}
+                           fullWidth
           />
         </div>
       </Box>

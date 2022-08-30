@@ -15,14 +15,12 @@ const App = ({ config }) => {
   let theme = createTheme();
   theme = responsiveFontSizes(theme);
 
-  const [step, setStep] = useState(STEPS.SPEED_TEST);
+  const [step, setStep] = useState(STEPS.HISTORY);
   const [hasRecentTest, setHasRecentTest] = useState(false);
   const [givenLocation, setGivenLocation] = useState(null);
   const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(steps.CONNECTION_ADDRESS);
-  const [isMobileWidth, setIsMobileWidth] = useState(window.innerWidth <= RESPONSIVE_VERSION_BREAKPOINT);
 
   useEffect(() => {
-    window.addEventListener('resize', () => setIsMobileWidth(window.innerWidth <= RESPONSIVE_VERSION_BREAKPOINT));
 
     return () => window.removeEventListener('resize', () => setIsMobileWidth(window.innerWidth <= RESPONSIVE_VERSION_BREAKPOINT));
   }, [])
@@ -55,10 +53,7 @@ const App = ({ config }) => {
     let content = null;
     switch (step) {
       case STEPS.SPEED_TEST:
-        content = <StepsPage goToAreaMap={goToMapPage}
-                             goToHistory={goToHistory}
-                             specificStep={specificSpeedTestStep}
-        />
+        content = <StepsPage goToAreaMap={goToMapPage} goToHistory={goToHistory} specificStep={specificSpeedTestStep}/>
         break;
       case STEPS.ALL_RESULTS:
         content = <AllResultsPage givenLocation={givenLocation}
@@ -74,9 +69,7 @@ const App = ({ config }) => {
         />;
         break;
       default:
-        content = <StepsPage goToAreaMap={goToMapPage}
-                             goToHistory={goToHistory}
-        />;
+        content = <StepsPage goToAreaMap={goToMapPage} goToHistory={goToHistory}/>;
         break;
     }
     return content;
@@ -84,7 +77,7 @@ const App = ({ config }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Frame config={config} setStep={setStep} step={step} isMobile={isMobileWidth}>
+      <Frame config={config} setStep={setStep} step={step}>
         {renderContent()}
       </Frame>
     </ThemeProvider>

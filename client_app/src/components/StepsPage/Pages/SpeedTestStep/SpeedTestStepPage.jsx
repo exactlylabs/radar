@@ -38,7 +38,7 @@ const SpeedTestStepPage = ({
   }
 
   return (
-    <div>
+    <div style={{width: '100%'}}>
       <ConnectionInformation disabled={disabled} progress={testProgress} userStepData={userStepData}/>
       {
         disabled &&

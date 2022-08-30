@@ -2,9 +2,13 @@ import {MyTitle} from "../../../common/MyTitle";
 import TestStatsTableContent from "../SpeedTestStep/TestStatsTable";
 import {DEFAULT_EXPLORE_AREA_COLOR} from "../../../../utils/colors";
 import ArrowRightBlue from '../../../../assets/icons-arrow-right-blue.png';
-import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
+import {useScreenSize} from "../../../../hooks/useScreenSize";
+
+const speedTestResultsContainerStyle = {
+  marginTop: 25,
+}
 
 const exploreAreaStyle = {
   cursor: 'pointer',
@@ -31,6 +35,11 @@ const buttonFooterStyle = {
   minWidth: 300,
 }
 
+const mobileButtonFooterStyle = {
+  ...buttonFooterStyle,
+  margin: '35px auto 70px',
+}
+
 const SpeedTestResultsStepPage = ({
   testResults,
   userStepData,
@@ -40,9 +49,10 @@ const SpeedTestResultsStepPage = ({
 }) => {
 
   const goToHistoryWithRecentTestTaken = () => goToHistory(true);
+  const isMobile = useScreenSize();
 
   return (
-    <div>
+    <div style={speedTestResultsContainerStyle}>
       <MyTitle text={'Your test results'}/>
       <div style={exploreAreaStyle} onClick={goToAreaMap}>
         <div style={textStyle}>Explore you area</div>
@@ -55,7 +65,7 @@ const SpeedTestResultsStepPage = ({
                              lossValue={testResults.loss.toFixed(2)}
                              userStepData={userStepData}
       />
-      <div style={buttonFooterStyle}>
+      <div style={isMobile ? mobileButtonFooterStyle : buttonFooterStyle}>
         <MyBackButton text={'Test again'} onClick={goToTestAgain}/>
         <MyForwardButton text={'View all results'} onClick={goToHistoryWithRecentTestTaken}/>
       </div>

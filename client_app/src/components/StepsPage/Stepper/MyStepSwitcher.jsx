@@ -2,6 +2,7 @@ import {MyButton} from "../../common/MyButton";
 import {ArrowBack, ArrowForward} from "@mui/icons-material";
 import {MyBackButton} from "../../common/MyBackButton";
 import {MyForwardButton} from "../../common/MyForwardButton";
+import {useScreenSize} from "../../../hooks/useScreenSize";
 
 const stepSwitcherStyle = {
   width: '20%',
@@ -10,7 +11,7 @@ const stepSwitcherStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center',
-  margin: '0 auto',
+  margin: '0 auto 70px',
 }
 
 const doubleButtonStepSwitcherStyle = {
@@ -25,8 +26,12 @@ const MyStepSwitcher = ({
   backDisabled
 }) => {
 
+  const isMobile = useScreenSize();
+
+  const getStyle = () => goBack && goForward ? doubleButtonStepSwitcherStyle : stepSwitcherStyle;
+
   return (
-    <div style={goBack && goForward ? doubleButtonStepSwitcherStyle : stepSwitcherStyle}>
+    <div style={getStyle()}>
       {
         goBack &&
         <MyBackButton text={'Go back'} icon={<ArrowBack style={{marginRight: 15}}/>} iconFirst onClick={goBack} disabled={backDisabled}/>

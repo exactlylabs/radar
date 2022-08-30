@@ -1,5 +1,7 @@
 import MyOption from "./MyOption";
 import MyVerticalDivider from "./MyVerticalDivider";
+import MyHorizontalOptionDivider from "./MyHorizontalOptionDivider";
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const optionsPickerStyle = {
   display: 'flex',
@@ -8,9 +10,22 @@ const optionsPickerStyle = {
   margin: '40px auto',
 }
 
+const mobileOptionsPickerStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  width: '95%',
+  margin: '30px auto',
+}
+
 const verticalDividerOptionStyle = {
   display: 'flex',
   flexDirection: 'row',
+  alignItems: 'center',
+}
+
+const horizontalDividerOptionStyle = {
+  display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
 }
 
@@ -29,11 +44,13 @@ const MyOptionPicker = ({
   needsDivider,
   dividerIndex,
   setSelectedOption,
-  selectedOption
+  selectedOption,
 }) => {
 
+  const isMobile = useScreenSize();
+
   return (
-    <div style={optionsPickerStyle}>
+    <div style={isMobile ? mobileOptionsPickerStyle : optionsPickerStyle}>
       {
         !needsDivider &&
         options.map((option, index) => <MyOption key={index}
@@ -42,19 +59,25 @@ const MyOptionPicker = ({
                                                  isLast={index === (options.length - 1)}
                                                  selectedOption={selectedOption}
                                                  setSelectedOption={setSelectedOption}
+                                                 isMobile={isMobile}
         />)
       }
       {
         needsDivider && dividerIndex &&
         options.map((option, index) => {
           if(index === dividerIndex) {
-            return (<div key={`divider-${index}`} style={verticalDividerOptionStyle}>
-              <MyVerticalDivider/>
+            return (<div key={`divider-${index}`} style={isMobile ? horizontalDividerOptionStyle : verticalDividerOptionStyle}>
+              {
+                isMobile ?
+                  <MyHorizontalOptionDivider/> :
+                  <MyVerticalDivider/>
+              }
               <MyOption option={option}
                         index={index}
                         isLast={index === (options.length - 1)}
                         selectedOption={selectedOption}
                         setSelectedOption={setSelectedOption}
+                        isMobile={isMobile}
               />
             </div>);
           } else {
@@ -64,6 +87,7 @@ const MyOptionPicker = ({
                              isLast={index === (options.length - 1)}
                              selectedOption={selectedOption}
                              setSelectedOption={setSelectedOption}
+                             isMobile={isMobile}
             />
           }
         })

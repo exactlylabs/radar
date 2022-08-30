@@ -6,6 +6,8 @@ import {
 } from "../../utils/colors";
 import {types} from "../../utils/networkTypes";
 import {prettyPrintDate} from "../../utils/dates";
+import {useScreenSize} from "../../hooks/useScreenSize";
+import InfoIcon from '../../assets/info-icon.png';
 
 const historicalValuesTableRowStyle = {
   width: '100%',
@@ -34,10 +36,21 @@ const networkTypeColumStyle = {
   alignItems: 'center'
 }
 
+const mobileNetworkTypeColumnStyle = {
+  ...networkTypeColumStyle,
+  width: '12%',
+}
+
 const dateTimeColumnStyle = {
   ...commonRowStyle,
   width: '18%',
   justifyContent: 'flex-start',
+}
+
+const mobileDateTimeColumnStyle = {
+  ...dateTimeColumnStyle,
+  width: '28%',
+  textAlign: 'left'
 }
 
 const locationColumnStyle = {
@@ -60,54 +73,84 @@ const columnWithIconStyle = {
   justifyContent: 'flex-end',
 }
 
+const mobileColumnWithIconStyle = {
+  ...columnWithIconStyle,
+  width: '24%',
+}
+
 const columnWithIconNarrowStyle = {
   ...columnWithIconStyle,
   width: '12%',
 }
 
-const iconStyle = {
-  marginRight: 5
-}
-
-const textStyle = {
-  color: '#6d6a94'
+const infoIconColumnStyle = {
+  ...networkTypeColumStyle,
+  width: '12%',
+  cursor: 'pointer',
 }
 
 const MyHistoricalValuesTableRow = ({
   measurement,
-  isEven
+  isEven,
+  openMeasurementInfoModal
 }) => {
+
+  const isMobile = useScreenSize();
 
   const getNetworkTypeIcon = () => {
     const networkType = types.find(type => type.text === measurement.networkType);
     return networkType.iconSelectedSrc;
   }
 
+  const getMbpsText = possibleValue => {
+    if(!possibleValue) return '-';
+    return isMobile ? possibleValue.toFixed(2) : `${measurement.download.toFixed(2)} Mbps`;
+  }
+
+  const openInfoModal = () => openMeasurementInfoModal(measurement);
+
   return (
     <div style={{...historicalValuesTableRowStyle, backgroundColor: isEven ? HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR : TRANSPARENT}}>
-      <div style={networkTypeColumStyle}>
+      <div style={isMobile ? mobileNetworkTypeColumnStyle : networkTypeColumStyle}>
         {measurement.networkType ?
           <img src={getNetworkTypeIcon()} width={16} height={16} alt={'network-type-icon'}/> :
           null
         }
       </div>
-      <div style={dateTimeColumnStyle}>{prettyPrintDate(measurement.timestamp)}</div>
-      <div style={columnWithIconStyle}>
-        {measurement.download !== null ? `${measurement.download.toFixed(2)} Mbps` : '-'}
+      <div style={isMobile ? mobileDateTimeColumnStyle : dateTimeColumnStyle}>{prettyPrintDate(measurement.timestamp)}</div>
+      <div style={isMobile ? mobileColumnWithIconStyle : columnWithIconStyle}>
+        {getMbpsText(measurement.download)}
       </div>
-      <div style={columnWithIconStyle}>
-        {measurement.upload !== null ? `${measurement.upload.toFixed(2)} Mbps` : '-'}
+      <div style={isMobile ? mobileColumnWithIconStyle : columnWithIconStyle}>
+        {getMbpsText(measurement.upload)}
       </div>
-      <div style={columnWithIconNarrowStyle}>
+      {
+        !isMobile &&
+        <div style={columnWithIconNarrowStyle}>
         {measurement.loss !== null ? `${measurement.loss.toFixed(2)} %` : '-'}
-      </div>
-      <div style={columnWithIconNarrowStyle}>
-        {measurement.latency !== null ? `${measurement.latency.toFixed(0)} ms` : '-'}
-      </div>
-      <div style={{width: '4%'}}></div>
-      <div style={locationColumnStyle}>
-        <p style={ellipsisStyle}>{`${measurement.city}, ${measurement.state}`}</p>
-      </div>
+        </div>
+      }
+      {
+        !isMobile &&
+        <div style={columnWithIconNarrowStyle}>
+          {measurement.latency !== null ? `${measurement.latency.toFixed(0)} ms` : '-'}
+        </div>
+      }
+      {
+        !isMobile && <div style={{width: '4%'}}></div>
+      }
+      {
+        !isMobile &&
+        <div style={locationColumnStyle}>
+          <p style={ellipsisStyle}>{`${measurement.city}, ${measurement.state}`}</p>
+        </div>
+      }
+      {
+        isMobile &&
+        <div style={infoIconColumnStyle}>
+          <img src={InfoIcon} width={22} height={22} alt={'info-icon'} onClick={openInfoModal}/>
+        </div>
+      }
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { STEPS } from '../../constants';
 import radarLogoLight from '../../assets/radar-logo-light.png';
 import MenuCloseButton from '../../assets/menu-close-button.png';
 import MenuOpenButton from '../../assets/menu-open-button.png';
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -73,6 +74,7 @@ const collapsableContentStyle = {
   paddingRight: '5%',
   paddingTop: 15,
   paddingBottom: 15,
+  zIndex: 1,
 }
 
 const mobileNavElementStyle = {
@@ -89,9 +91,10 @@ const horizontalDividerStyle = {
   marginBottom: 15,
 }
 
-const Header = ({ setStep, isMobile }) => {
+const Header = ({ setStep }) => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMobile = useScreenSize();
 
   const goToHome = () => {
     if(isMenuOpen) setIsMenuOpen(false);

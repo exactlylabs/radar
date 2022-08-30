@@ -5,6 +5,9 @@ import {ArrowBack} from "@mui/icons-material";
 import {MyForwardButton} from "../common/MyForwardButton";
 import {MyButton} from "../common/MyButton";
 import {getStoredValues} from "../../utils/storage";
+import {useState} from "react";
+import MyMeasurementInfoModal from "./MyMeasurementInfoModal";
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const historyPageStyle = {
   width: '100%',
@@ -20,6 +23,15 @@ const buttonsContainerStyle = {
   alignItems: 'center',
   justifyContent: 'space-between',
   margin: '50px auto',
+}
+
+const mobileButtonsContainerStyle = {
+  ...buttonsContainerStyle,
+  width: '100%',
+  flexDirection: 'column',
+  height: 110,
+  justifyContent: 'space-between',
+  margin: '30px auto'
 }
 
 const emptyStateTextStyle = {
@@ -42,7 +54,23 @@ const HistoryPage = ({
   hasRecentTest,
 }) => {
 
+  const isMobile = useScreenSize();
   const historicalValues = getStoredValues();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentMeasurement, setCurrentMeasurement] = useState(null);
+
+  const openMeasurementInfoModal = measurement => {
+    setCurrentMeasurement(measurement);
+    setIsModalOpen(true);
+  }
+
+  const getButtonsStyle = () => {
+    let style;
+    if(isMobile && hasRecentTest) style = mobileButtonsContainerStyle;
+    else if(isMobile && !hasRecentTest) style = {...mobileButtonsContainerStyle, justifyContent: 'flex-start'};
+    else style = {...buttonsContainerStyle, justifyContent: hasRecentTest ? 'space-between' : 'center'};
+    return style;
+  }
 
   return (
     <div style={historyPageStyle}>
@@ -56,9 +84,9 @@ const HistoryPage = ({
       }
       {
         !!historicalValues &&
-        <MyHistoricalValuesTable values={historicalValues}/>
+        <MyHistoricalValuesTable values={historicalValues} openMeasurementInfoModal={openMeasurementInfoModal}/>
       }
-      <div style={{...buttonsContainerStyle, justifyContent: hasRecentTest ? 'space-between' : 'center'}}>
+      <div style={getButtonsStyle()}>
         {
           hasRecentTest &&
           <MyBackButton text={'Go to last test'}
@@ -69,6 +97,13 @@ const HistoryPage = ({
         }
         <MyForwardButton text={'Explore the map'} onClick={() => goToMapPage(null)} />
       </div>
+      {
+        isMobile &&
+        <MyMeasurementInfoModal isOpen={isModalOpen}
+                                setIsOpen={setIsModalOpen}
+                                measurement={currentMeasurement}
+        />
+      }
     </div>
   )
 }
