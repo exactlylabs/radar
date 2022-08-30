@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import './styles/MyOption.css';
 import {placementOptions} from "../../utils/placements";
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const optionStyle = {
   width: 134,
@@ -14,6 +15,20 @@ const optionStyle = {
   cursor: 'pointer',
 }
 
+const mobileOptionStyle = {
+  width: 'calc(100% - 40px)',
+  height: 56,
+  borderRadius: 8,
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: 10,
+  cursor: 'pointer',
+  paddingLeft: 20,
+  paddingRight: 20,
+}
+
 const lastOptionStyle = {
   ...optionStyle,
   marginRight: 0,
@@ -25,6 +40,10 @@ const hoverStyle = {
 
 const optionIconStyle = {
   marginBottom: 10,
+}
+
+const mobileOptionIconStyle = {
+
 }
 
 const optionTextStyle = {
@@ -41,6 +60,8 @@ const optionTextStyle = {
  * @returns {JSX.Element}
  */
 const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) => {
+
+  const isMobile = useScreenSize();
 
   useEffect(() => {
     if(isCurrentOption()) {
@@ -64,7 +85,16 @@ const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) 
     setSelectedOption(index);
   }
 
-  return (
+  return isMobile ?
+    <div style={mobileOptionStyle}
+         className={'my-option'}
+         onClick={pickOption}
+         id={`option-${index}`}
+    >
+      <div style={optionTextStyle}>{option.text}</div>
+      <img src={isCurrentOption() ? option.iconSelectedSrc : option.iconSrc} width={28} height={28} style={mobileOptionIconStyle} alt={`${option.text}-icon`}/>
+    </div>
+    :
     <div style={isLast ? lastOptionStyle : optionStyle}
          className={'my-option'}
          onClick={pickOption}
@@ -73,7 +103,7 @@ const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) 
       <img src={isCurrentOption() ? option.iconSelectedSrc : option.iconSrc} width={32} height={32} style={optionIconStyle} alt={`${option.text}-icon`}/>
       <div style={optionTextStyle}>{option.text}</div>
     </div>
-  )
+
 }
 
 export default MyOption;

@@ -7,7 +7,7 @@ const ConnectionCostStepPage = ({
   goForward,
   goBack,
   cost,
-  setCost
+  setCost,
 }) => {
 
   return (

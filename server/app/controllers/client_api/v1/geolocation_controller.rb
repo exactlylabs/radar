@@ -14,7 +14,7 @@ module ClientApi
       def suggestions
         results = Geocoder.search(params[:address])
         if results.first
-          render json: results.map {|match| {
+          render json: results.first(5).map {|match| {
             city: match.city,
             street: match.street,
             state: match.state,

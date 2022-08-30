@@ -12,8 +12,11 @@ const locationSearchStepStyle = {
 
 const termsStyle = {
   display: 'flex',
-  width: 'max-content',
-  margin: '26px auto 40px'
+  width: '90%',
+  maxWidth: 415,
+  margin: '26px auto 40px',
+  justifyContent: 'center',
+  alignItems: 'flex-start'
 }
 
 const checkboxStyle = {
@@ -21,7 +24,8 @@ const checkboxStyle = {
 }
 
 const termsTextStyle = {
-  fontSize: 14
+  fontSize: 14,
+  width: '85%',
 }
 
 const LocationSearchStepPage = ({
@@ -43,7 +47,7 @@ const LocationSearchStepPage = ({
       { error && <MyMessageSnackbar type={'error'} message={error}/> }
       <div style={termsStyle}>
         <input type={'checkbox'} style={checkboxStyle} onChange={e => setTerms(e.target.checked)}/>
-        <div style={termsTextStyle}>I agree to the Radar’s <a href={'/terms'}>Terms of Use</a> and <a href={'/privacy-policy'}>Privacy Policy</a>.</div>
+        <p style={termsTextStyle}>I agree to the Radar’s <a href={'/terms'}>Terms of Use</a> and <a href={'/privacy-policy'}>Privacy Policy</a>.</p>
       </div>
       <MyStepSwitcher goForward={checkAndOpenModal}/>
       <MyMapModal isOpen={isModalOpen}

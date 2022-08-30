@@ -12,6 +12,7 @@ import {types} from "../../utils/networkTypes";
 import {getAddressForCoordinates} from "../../utils/apiRequests";
 import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResultsStepPage";
 import {getLastStoredValue} from "../../utils/storage";
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const stepsPageStyle = {
   width: '100%',
@@ -20,10 +21,15 @@ const stepsPageStyle = {
   paddingTop: 40,
 }
 
+const mobileStepsPageStyle = {
+  ...stepsPageStyle,
+  paddingTop: 0,
+}
+
 const StepsPage = ({
   goToAreaMap,
   goToHistory,
-  specificStep
+  specificStep,
 }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,6 +53,7 @@ const StepsPage = ({
     networkCost: undefined,
   });
   const [lastTestResults, setLastTestResults] = useState(null);
+  const isMobile = useScreenSize();
 
   const setAddress = address => setUserStepData({...userStepData, address});
   const setTerms = status => setUserStepData({...userStepData, terms: status});
@@ -180,10 +187,10 @@ const StepsPage = ({
   }
 
   return (
-    <div style={stepsPageStyle}>
+    <div style={isMobile ? mobileStepsPageStyle : stepsPageStyle}>
       {
         currentStep <= steps.CONNECTION_COST &&
-          <MyStepper activeStep={currentStep}/>
+          <MyStepper activeStep={currentStep} isMobile={isMobile}/>
       }
       { getCurrentPage() }
     </div>

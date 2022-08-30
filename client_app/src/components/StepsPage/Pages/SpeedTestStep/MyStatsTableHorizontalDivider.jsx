@@ -1,12 +1,12 @@
 import {DEFAULT_STATS_TABLE_VERTICAL_DIVIDER_COLOR} from "../../../../utils/colors";
 
 const dividerStyle = {
-  width: 1,
-  height: 84,
+  width: '100%',
+  height: 1,
   backgroundColor: DEFAULT_STATS_TABLE_VERTICAL_DIVIDER_COLOR,
-  margin: '0 10px',
+  margin: '0 12px',
 }
 
-const MyStatsTableVerticalDivider = () => <div style={dividerStyle}></div>;
+const MyStatsTableHorizontalDivider = () => <div style={dividerStyle}></div>;
 
-export default MyStatsTableVerticalDivider;
+export default MyStatsTableHorizontalDivider;

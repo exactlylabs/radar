@@ -2,6 +2,7 @@ import {Step, StepConnector, StepIcon, StepLabel, Stepper} from "@mui/material";
 import {steps} from "../utils/steps";
 import MyStepIcon from "./MyStepIcon";
 import {DEFAULT_STEP_CONNECTOR_COLOR} from "../../../utils/colors";
+import {useScreenSize} from "../../../hooks/useScreenSize";
 
 const stepperContainerStyle = {
   width: '30%',
@@ -10,6 +11,11 @@ const stepperContainerStyle = {
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center'
+}
+
+const mobileStepperContainerStyle = {
+  ...stepperContainerStyle,
+  margin: '30px auto 15px'
 }
 
 const stepConnectorStyle = {
@@ -59,6 +65,8 @@ const MyStepper = ({
   activeStep
 }) => {
 
+  const isMobile = useScreenSize();
+
   const getIcon = (step) => {
     if(step < activeStep) {
       return <MyStepIcon complete step={step}/>
@@ -70,7 +78,7 @@ const MyStepper = ({
   }
 
   return (
-    <div style={stepperContainerStyle}>
+    <div style={isMobile ? mobileStepperContainerStyle : stepperContainerStyle}>
       {
         Object.values(steps).map(step => {
           if(step < steps.RUN_SPEED_TEST) {

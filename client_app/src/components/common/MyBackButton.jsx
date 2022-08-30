@@ -13,13 +13,13 @@ const backButtonStyle = {
   paddingBottom: 14,
 };
 
-export const MyBackButton = ({ text, onClick, disabled, icon, iconFirst }) => {
+export const MyBackButton = ({ text, onClick, disabled, icon, iconFirst, fullWidth }) => {
   return iconFirst ?
-    <button style={backButtonStyle} onClick={onClick} disabled={disabled}>
+    <button style={{...backButtonStyle, width: fullWidth ? '100%' : backButtonStyle.width }} onClick={onClick} disabled={disabled}>
       {icon}
       {text}
     </button> :
-    <button style={backButtonStyle} onClick={onClick} disabled={disabled}>
+    <button style={{...backButtonStyle, width: fullWidth ? '100%' : backButtonStyle.width }} onClick={onClick} disabled={disabled}>
       {text}
       {icon}
     </button>

@@ -2,6 +2,7 @@ import {useState} from "react";
 import MyHistoricalValuesTablePaginator from "./MyHistoricalValuesTablePaginator";
 import MyHistoricalValuesTableHeader from "./MyHistoricalValuesTableHeader";
 import MyHistoricalValuesTableRow from "./MyHistoricalValuesTableRow";
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const historicalValuesTableStyle = {
   width: '65%',
@@ -9,8 +10,14 @@ const historicalValuesTableStyle = {
   margin: '35px auto'
 }
 
-const MyHistoricalValuesTable = ({ values }) => {
+const mobileHistoricalValuesTableStyle = {
+  width: '95%',
+  margin: '30px auto 25px'
+}
 
+const MyHistoricalValuesTable = ({ values, openMeasurementInfoModal }) => {
+
+  const isMobile = useScreenSize();
   const [currentPage, setCurrentPage] = useState(1);
 
   const paginatedValues = () => {
@@ -18,10 +25,14 @@ const MyHistoricalValuesTable = ({ values }) => {
   }
 
   return (
-    <div style={historicalValuesTableStyle}>
+    <div style={isMobile ? mobileHistoricalValuesTableStyle : historicalValuesTableStyle}>
       <MyHistoricalValuesTableHeader />
       {
-        paginatedValues().map((measurement, index) => <MyHistoricalValuesTableRow key={measurement.timestamp} measurement={measurement} isEven={index % 2 === 0}/>)
+        paginatedValues().map((measurement, index) => <MyHistoricalValuesTableRow key={measurement.timestamp}
+                                                                                  measurement={measurement}
+                                                                                  isEven={index % 2 === 0}
+                                                                                  openMeasurementInfoModal={openMeasurementInfoModal}
+        />)
       }
       {
         values.length > 5 &&

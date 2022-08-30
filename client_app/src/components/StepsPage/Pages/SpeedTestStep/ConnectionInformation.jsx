@@ -7,6 +7,9 @@ import MyConnectionInformationVerticalDivider from "./MyConnectionInformationVer
 import AddressIcon from '../../../../assets/address-icon.png';
 import HomeIconLight from '../../../../assets/icon-location-home-light.png';
 import WifiIconLight from '../../../../assets/icon-connection-wifi-light.png';
+import {useScreenSize} from "../../../../hooks/useScreenSize";
+import {useEffect, useState} from "react";
+import {CONNECTION_INFORMATION_MIN_WIDTH} from "../../../../utils/breakpoints";
 
 const connectionInformationStyle = {
   width: '100%',
@@ -20,15 +23,27 @@ const connectionInformationStyle = {
   overflow: 'hidden'
 }
 
+const mobileStyle = {
+  width: '100%',
+  height: 43,
+  backgroundColor: DEFAULT_CONNECTION_INFORMATION_BACKGROUND_COLOR,
+  borderRadius: 16,
+  margin: '25px auto 30px',
+  position: 'relative',
+  overflow: 'hidden'
+}
+
 const integratedStyle = {
   ...connectionInformationStyle,
   borderRadius: '16px 16px 0 0',
 }
 
-const opaqueStyle = {
-  ...connectionInformationStyle,
-  opacity: 0.3,
+const integratedMobileStyle = {
+  ...mobileStyle,
+  borderRadius: '16px 16px 0 0',
+  margin: 'auto',
 }
+
 
 const columnsContainerStyle = {
   width: '95%',
@@ -46,13 +61,21 @@ const commonRowStyle = {
   fontWeight: 'bold',
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   alignItems: 'center',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
 }
 
 const addressRowStyle = {
   ...commonRowStyle,
   maxWidth: 200,
+}
+
+const mobileAddressRowStyle = {
+  ...commonRowStyle,
+
 }
 
 const placementRowStyle = {
@@ -91,27 +114,49 @@ const ConnectionInformation = ({
   integratedToStatsTable
 }) => {
 
+  const [shouldTextAppear, setShouldTextAppear] = useState(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH);
+  const isMobile = useScreenSize();
+
+  useEffect(() => {
+    window.addEventListener('resize', () => setShouldTextAppear(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH));
+    return () => window.removeEventListener('resize', () => setShouldTextAppear(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH));
+  }, []);
+
   const getStyle = () => {
-    if(integratedToStatsTable) return integratedStyle;
-    return disabled ? opaqueStyle : connectionInformationStyle;
+    let style;
+    if(isMobile && !integratedToStatsTable) style = mobileStyle;
+    else if(isMobile && integratedToStatsTable) style = integratedMobileStyle;
+    else if(!isMobile && integratedToStatsTable) style = integratedStyle;
+    else style = connectionInformationStyle;
+    return disabled ? {...style, opacity: 0.3} : style;
+  }
+
+  const getText = possibleData => {
+    if(possibleData) return possibleData.text;
+    return isMobile ? 'N/A' : 'Not available';
+  }
+
+  const getAddressStyle = () => {
+    let style = isMobile ? mobileAddressRowStyle : addressRowStyle;
+    return shouldTextAppear ? style : {...style, maxWidth: 175};
   }
 
   return (
     <div style={getStyle()}>
       <div style={columnsContainerStyle}>
-        <div style={addressRowStyle}>
+        <div style={getAddressStyle()}>
           <img style={iconStyle} src={AddressIcon} width={22} height={22} alt={'address-icon'}/>
           <div style={addressStyle}>{userStepData.address.address}</div>
         </div>
         <MyConnectionInformationVerticalDivider disabled={disabled}/>
         <div style={placementRowStyle}>
           <img style={iconStyle} src={userStepData.networkLocation ? userStepData.networkLocation.iconLightSrc : HomeIconLight} width={22} height={22} alt={'address-icon'}/>
-          {userStepData.networkLocation ? userStepData.networkLocation.text : 'Not available'}
+          { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkLocation)}</div> }
         </div>
         <MyConnectionInformationVerticalDivider disabled={disabled}/>
         <div style={typeRowStyle}>
           <img style={iconStyle} src={userStepData.networkType ? userStepData.networkType.iconLightSrc : WifiIconLight} width={22} height={22} alt={'address-icon'}/>
-          {userStepData.networkType ? userStepData.networkType.text : 'Not available'}
+          { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkType)}</div> }
         </div>
       </div>
       <div style={{...progressBarStyle, width: `${progress}%`}}></div>

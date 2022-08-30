@@ -1,6 +1,11 @@
-import { DEFAULT_FOOTER_BACKGROUND_COLOR, DEFAULT_FOOTER_FONT_COLOR } from '../../utils/colors';
+import {
+  DEFAULT_FOOTER_BACKGROUND_COLOR,
+  DEFAULT_FOOTER_FONT_COLOR, DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR,
+  DEFAULT_HORIZONTAL_DIVIDER_BG_COLOR
+} from '../../utils/colors';
 import anthcLogo from '../../assets/anthc-logo.png';
 import radarLogoDark from '../../assets/radar-logo-dark.png';
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const footerStyle = {
   height: 173,
@@ -52,13 +57,54 @@ const leftSideBottomRowStyle = {
   color: DEFAULT_FOOTER_FONT_COLOR,
 };
 
+const mobileFooterStyle = {
+  display: 'flex',
+  height: 'max-content',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: DEFAULT_FOOTER_BACKGROUND_COLOR,
+}
+
+const horizontalDividerStyle = {
+  width: '90%',
+  height: 1,
+  backgroundColor: DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR,
+  marginBottom: 15,
+}
+
+const footerLinkStyle = {
+  fontSize: 15,
+  fontWeight: 'bold',
+  marginBottom: 15,
+  color: DEFAULT_FOOTER_FONT_COLOR
+}
+
+const copyrightStyle = {
+  fontSize: 14,
+  marginBottom: 30,
+}
+
+const FooterHorizontalDivider = () => <div style={horizontalDividerStyle}></div>
+
 // Commented until we add the MLab logo back again
 /*const anthcLogoStyle = {
   marginRight: 48,
 };*/
 
 const Footer = () => {
-  return (
+  const isMobile = useScreenSize();
+
+  return isMobile ?
+    <div style={mobileFooterStyle}>
+      <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={{ marginBottom: 30, marginTop: 25 }} />
+      <div style={footerLinkStyle}>Privacy Policy</div>
+      <div style={footerLinkStyle}>Terms of Use</div>
+      <img src={anthcLogo} alt={'ANTHC-logo'} width={110} height={30} style={{marginTop: 15, marginBottom: 20}}/>
+      <FooterHorizontalDivider />
+      <div style={copyrightStyle}>Copyright © 2022. Radar. All Rights Reserved</div>
+    </div>
+    :
     <div style={footerStyle}>
       <div style={contentWrapperStyle}>
         <div style={leftSideContainerStyle}>
@@ -76,7 +122,6 @@ const Footer = () => {
         </div>
       </div>
     </div>
-  );
 };
 
 export default Footer;
