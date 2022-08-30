@@ -24,7 +24,7 @@ const speedFiltersBoxStyle = {
 
 const mobileFiltersContainer = {
   width: '70%',
-  height: '100%',
+  height: 230,
   zIndex: 1001,
   position: 'relative',
   left: 0,
@@ -33,10 +33,10 @@ const mobileFiltersContainer = {
 
 const mobileFiltersWrapper = {
   position: 'relative',
-  top: 'calc(-100vh + 115px)',
+  top: 'calc(-100vh + 92%)',
   left: 0,
   width: '100%',
-  height: 'calc(100vh - 125px)',
+  height: 225,
   zIndex: 1000,
 }
 
@@ -54,9 +54,9 @@ const mobileFilterListStyle = {
 }
 
 const mobileFilterSwitcherContainerStyle = {
-  width: '85%',
+  width: '50%',
   position: 'absolute',
-  top: 15,
+  top: 'calc(-55vh)',
   left: 15,
 }
 
@@ -106,11 +106,6 @@ const SpeedResultsBox = ({
 
   const getMobileVersion = () => (
     <div style={mobileFiltersContainer}>
-      <div style={mobileFilterSwitcherContainerStyle}>
-        <MyFiltersTypeSwitcher currentType={currentFilterType}
-                               setCurrentType={handleChangeTab}
-        />
-      </div>
       <div style={mobileFilterListStyle}>
         <MyFiltersList currentFilter={filterTypes[currentFilterType]}
                        selectedRangeIndexes={selectedRangeIndexes}
@@ -120,8 +115,17 @@ const SpeedResultsBox = ({
     </div>
   )
 
+  const getFloatingFilterTypeSwitch = () => (
+    <div style={mobileFilterSwitcherContainerStyle}>
+      <MyFiltersTypeSwitcher currentType={currentFilterType}
+                             setCurrentType={handleChangeTab}
+      />
+    </div>
+  )
+
   return (
     <div style={isMobile ? mobileFiltersWrapper : null}>
+      { isBoxOpen && isMobile && getFloatingFilterTypeSwitch() }
       { isBoxOpen && getContent() }
       <FloatingExploreButton activeFiltersCount={selectedRangeIndexes.length}
                              isBoxOpen={isBoxOpen}
