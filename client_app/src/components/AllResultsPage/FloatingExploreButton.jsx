@@ -1,6 +1,7 @@
 import FilterButtonOn from '../../assets/filter-button-on.png';
 import FilterButtonOff from '../../assets/filter-button-off.png';
 import {DEFAULT_FILTER_ACTIVE_COUNT_COLOR, WHITE} from "../../utils/colors";
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const floatingButtonStyle = {
   width: 68,
@@ -11,6 +12,12 @@ const floatingButtonStyle = {
   bottom: 180,
   right: 10,
   zIndex: 1001,
+}
+
+const mobileFloatingButtonStyle = {
+  ...floatingButtonStyle,
+  bottom: 15,
+  right: 10,
 }
 
 const activeFiltersCountStyle = {
@@ -33,8 +40,10 @@ const FloatingExploreButton = ({
   onClick
 }) => {
 
+  const isMobile = useScreenSize();
+
   return (
-    <div style={floatingButtonStyle} onClick={onClick}>
+    <div style={isMobile ? mobileFloatingButtonStyle : floatingButtonStyle} onClick={onClick}>
       <img src={isBoxOpen ? FilterButtonOn : FilterButtonOff} width={68} height={68} alt={'filters-button'}/>
       {
         activeFiltersCount > 0 && !isBoxOpen &&

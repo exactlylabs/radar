@@ -74,7 +74,7 @@ const collapsableContentStyle = {
   paddingRight: '5%',
   paddingTop: 15,
   paddingBottom: 15,
-  zIndex: 1,
+  zIndex: 2000,
 }
 
 const mobileNavElementStyle = {

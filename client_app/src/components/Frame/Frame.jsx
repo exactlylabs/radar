@@ -4,6 +4,7 @@ import Footer from './Footer';
 import Tabs from './Tabs';
 import { DEFAULT_MAIN_SECTION_BACKGROUND_COLOR } from '../../utils/colors';
 import {STEPS} from "../../constants";
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const defaultMainWrapperStyle = {
   backgroundColor: DEFAULT_MAIN_SECTION_BACKGROUND_COLOR,
@@ -22,11 +23,18 @@ const fullWidthWrapperStyle = {
   width: '100%',
 }
 
+const mobileFullWidthWrapperStyle = {
+  ...fullWidthWrapperStyle,
+  height: 'calc(100vh - 125px)',
+}
+
 const Frame = ({ config, children, step, setStep }) => {
+
+  const isMobile = useScreenSize();
 
   const getFrameStyleBasedOnCurrentTab = () => {
     if(step === STEPS.ALL_RESULTS) {
-      return fullWidthWrapperStyle;
+      return isMobile ? mobileFullWidthWrapperStyle : fullWidthWrapperStyle;
     } else {
       return childrenWrapperStyle;
     }
