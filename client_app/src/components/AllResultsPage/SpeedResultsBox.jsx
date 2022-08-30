@@ -56,7 +56,7 @@ const mobileFilterListStyle = {
 const mobileFilterSwitcherContainerStyle = {
   width: '50%',
   position: 'absolute',
-  top: 'calc(-55vh)',
+  top: 'calc(-57vh)',
   left: 15,
 }
 
