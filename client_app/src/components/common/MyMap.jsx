@@ -1,9 +1,12 @@
+import L from 'leaflet';
 import { useMap } from 'react-leaflet';
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 // The idea here is to remove the Ukranian flag from map's attribution
 // and re-center map on marker click
 export const MyMap = ({ position, shouldRecenter, onPopupClose, onPopupOpen }) => {
   const map = useMap();
+  map.zoomControl = false;
   // Reference: https://github.com/Leaflet/Leaflet/pull/8109
   // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
   map.attributionControl.setPrefix('');

@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 import './SpeedResultsBox.css';
-import {DEFAULT_SPEED_FILTER_BACKGROUND_COLOR, DEFAULT_SPEED_FILTER_BOX_SHADOW, WHITE} from "../../utils/colors";
+import {BLACK, DEFAULT_SPEED_FILTER_BACKGROUND_COLOR, DEFAULT_SPEED_FILTER_BOX_SHADOW, WHITE} from "../../utils/colors";
 import MyFiltersSubtitle from "./MyFiltersSubtitle";
 import MyFiltersTitle from "./MyFiltersTitle";
 import MyFiltersTypeSwitcher from "./MyFiltersTypeSwitcher";
 import MyFiltersList from "./MyFiltersList";
 import FloatingExploreButton from "./FloatingExploreButton";
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const speedFiltersBoxStyle = {
   width: 255,
@@ -21,6 +22,44 @@ const speedFiltersBoxStyle = {
   padding: 20,
 }
 
+const mobileFiltersContainer = {
+  width: '70%',
+  height: '100%',
+  zIndex: 1001,
+  position: 'relative',
+  left: 0,
+  top: 0,
+}
+
+const mobileFiltersWrapper = {
+  position: 'relative',
+  top: 'calc(-100vh + 115px)',
+  left: 0,
+  width: '100%',
+  height: 'calc(100vh - 125px)',
+  zIndex: 1000,
+}
+
+const mobileFilterListStyle = {
+  width: 'calc(85% - 30px)',
+  borderRadius: 16,
+  paddingLeft: 15,
+  paddingRight: 15,
+  paddingTop: 15,
+  paddingBottom: 15,
+  backgroundColor: DEFAULT_SPEED_FILTER_BACKGROUND_COLOR,
+  position: 'absolute',
+  bottom: 15,
+  left: 15,
+}
+
+const mobileFilterSwitcherContainerStyle = {
+  width: '85%',
+  position: 'absolute',
+  top: 15,
+  left: 15,
+}
+
 const filterTypes = ['download', 'upload'];
 
 const SpeedResultsBox = ({
@@ -30,6 +69,8 @@ const SpeedResultsBox = ({
   const [isBoxOpen, setIsBoxOpen] = useState(true);
   const [currentFilterType, setCurrentFilterType] = useState(0);
   const [selectedRangeIndexes, setSelectedRangeIndexes] = useState([]);
+
+  const isMobile = useScreenSize();
 
   const handleFilterClick = filtersArray => {
     setSelectedRangeIndexes(filtersArray)
@@ -47,23 +88,41 @@ const SpeedResultsBox = ({
     setIsBoxOpen(!isBoxOpen);
   }
 
-  return (
-    <div>
-      {
-        isBoxOpen &&
-        <div style={speedFiltersBoxStyle}>
-          <MyFiltersTitle text={'Explore the Map'}/>
-          <MyFiltersSubtitle text={'Filter tests by speed results.'}/>
-          <MyFiltersTypeSwitcher currentType={currentFilterType}
-                                 setCurrentType={handleChangeTab}
-          />
-          <MyFiltersList currentFilter={filterTypes[currentFilterType]}
-                         selectedRangeIndexes={selectedRangeIndexes}
-                         setSelectedRangeIndexes={handleFilterClick}
+  const getContent = () => isMobile ? getMobileVersion() : getDesktopVersion();
 
-          />
-        </div>
-      }
+  const getDesktopVersion = () => (
+    <div style={speedFiltersBoxStyle}>
+      <MyFiltersTitle text={'Explore the Map'}/>
+      <MyFiltersSubtitle text={'Filter tests by speed results.'}/>
+      <MyFiltersTypeSwitcher currentType={currentFilterType}
+                             setCurrentType={handleChangeTab}
+      />
+      <MyFiltersList currentFilter={filterTypes[currentFilterType]}
+                     selectedRangeIndexes={selectedRangeIndexes}
+                     setSelectedRangeIndexes={handleFilterClick}
+      />
+    </div>
+  );
+
+  const getMobileVersion = () => (
+    <div style={mobileFiltersContainer}>
+      <div style={mobileFilterSwitcherContainerStyle}>
+        <MyFiltersTypeSwitcher currentType={currentFilterType}
+                               setCurrentType={handleChangeTab}
+        />
+      </div>
+      <div style={mobileFilterListStyle}>
+        <MyFiltersList currentFilter={filterTypes[currentFilterType]}
+                       selectedRangeIndexes={selectedRangeIndexes}
+                       setSelectedRangeIndexes={handleFilterClick}
+        />
+      </div>
+    </div>
+  )
+
+  return (
+    <div style={isMobile ? mobileFiltersWrapper : null}>
+      { isBoxOpen && getContent() }
       <FloatingExploreButton activeFiltersCount={selectedRangeIndexes.length}
                              isBoxOpen={isBoxOpen}
                              onClick={toggleBox}

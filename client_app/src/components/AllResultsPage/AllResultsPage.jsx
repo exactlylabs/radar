@@ -1,19 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import { MyButton } from '../common/MyButton';
-import { MapContainer, TileLayer} from 'react-leaflet';
+import {MapContainer, TileLayer, ZoomControl} from 'react-leaflet';
 import { STEPS } from '../../constants';
 import SpeedResultsBox from './SpeedResultsBox';
 import {getCorrespondingFilterTag} from '../../utils/speeds';
-import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE, mapTileAttribution, mapTileUrl} from '../../utils/map';
+import {
+  DEFAULT_FALLBACK_LATITUDE,
+  DEFAULT_FALLBACK_LONGITUDE,
+  mapTileAttribution,
+  mapTileUrl,
+  SMALL_SCREEN_MAP_HEIGHT
+} from '../../utils/map';
 import {getAllSpeedTests, getUserApproximateCoordinates} from '../../utils/apiRequests';
 import { MyMap } from '../common/MyMap';
 import MyCustomMarker from "./MyCustomMarker";
 import {notifyError} from "../../utils/errors";
+import {useScreenSize} from "../../hooks/useScreenSize";
+import {RESIZING_WIDTH_PX_LIMIT} from "../../utils/screenDimensions";
 
 const mapWrapperStyle = {
   width: '100%',
-  display: 'relative'
+  display: 'relative',
+  height: '100%',
+}
+
+const mobileMapContainerStyle = {
+  height: '80%',
+  margin: 0,
 }
 
 const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
@@ -25,6 +39,8 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [loading, setLoading] = useState(true);
   const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(true);
   const [selectedFilterType, setSelectedFilterType] = useState('download');
+
+  const isMobile = useScreenSize();
 
   useEffect(() => {
 
@@ -81,8 +97,10 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
 
   const goToSpeedTest = () => setStep(STEPS.SPEED_TEST);
 
+  const getMapContainerHeight = () => isMobile ? 'calc(100vh - 125px)' : `calc(${maxHeight} - 70px - 173px - 53px`;
+
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ textAlign: 'center', height: '90%' }}>
       {(loading || centerCoordinatesLoading) && <CircularProgress size={25} />}
       {(!loading || !centerCoordinatesLoading) && error && <p>{error}</p>}
       {!loading && results !== null && results.length === 0 && (
@@ -98,7 +116,8 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
             center={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}
             zoom={14}
             scrollWheelZoom
-            style={{ height: `calc(${maxHeight} - 70px - 173px - 53px`, margin: 0 }}
+            style={{ height: getMapContainerHeight(), margin: 0, position: 'relative' }}
+            zoomControl={!isMobile}
           >
             <MyMap position={requestArea}
                    shouldRecenter={shouldRecenter}

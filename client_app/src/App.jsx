@@ -15,7 +15,7 @@ const App = ({ config }) => {
   let theme = createTheme();
   theme = responsiveFontSizes(theme);
 
-  const [step, setStep] = useState(STEPS.HISTORY);
+  const [step, setStep] = useState(STEPS.SPEED_TEST);
   const [hasRecentTest, setHasRecentTest] = useState(false);
   const [givenLocation, setGivenLocation] = useState(null);
   const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(steps.CONNECTION_ADDRESS);
