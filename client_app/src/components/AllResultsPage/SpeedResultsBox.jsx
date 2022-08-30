@@ -33,7 +33,7 @@ const mobileFiltersContainer = {
 
 const mobileFiltersWrapper = {
   position: 'relative',
-  top: 'calc(-100vh + 92%)',
+  bottom: 240,
   left: 0,
   width: '100%',
   height: 225,
@@ -42,6 +42,7 @@ const mobileFiltersWrapper = {
 
 const mobileFilterListStyle = {
   width: 'calc(85% - 30px)',
+  maxWidth: 250,
   borderRadius: 16,
   paddingLeft: 15,
   paddingRight: 15,
@@ -56,8 +57,9 @@ const mobileFilterListStyle = {
 const mobileFilterSwitcherContainerStyle = {
   width: '50%',
   position: 'absolute',
-  top: 'calc(-57vh)',
+  top: 'calc(-100vh + 170%)',
   left: 15,
+  maxWidth: 250,
 }
 
 const filterTypes = ['download', 'upload'];
