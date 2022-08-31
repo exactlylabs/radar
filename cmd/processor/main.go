@@ -41,11 +41,17 @@ func main() {
 	for {
 		select {
 		case <-time.NewTimer(time.Until(nextMidnight)).C:
-			dateRange := helpers.DateRange(startTime, nextMidnight)
-			if len(dateRange) > 0 {
-				log.Printf("Processing data from %v to %v\n", dateRange[0], dateRange[len(dateRange)-1])
+			// Safer to have a two days delay, since we don't know when all data is going to be uploaded to MLab's bucket
+			finalTime := time.Now().AddDate(0, 0, -2)
+
+			if startTime.Before(finalTime) {
+				dateRange := helpers.DateRange(startTime, finalTime)
+				if len(dateRange) > 0 {
+					log.Printf("Processing data from %v to %v\n", dateRange[0], dateRange[len(dateRange)-1])
+				}
+				pipeline.RunPipeline(dsProvider, dateRange, pipelineStr, false)
 			}
-			pipeline.RunPipeline(dsProvider, dateRange, pipelineStr, false)
+
 			nextMidnight = time.Now().UTC().Add(time.Hour * 24).Truncate(time.Hour * 24)
 		case <-ctx.Done():
 			return
