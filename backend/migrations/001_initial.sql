@@ -93,21 +93,21 @@ WITH (timescaledb.continuous, timescaledb.materialized_only=true) as (
 SELECT add_continuous_aggregate_policy('geospace_asns', start_offset => INTERVAL '1 month', end_offset => NULL, schedule_interval => INTERVAL '24 hours', if_not_exists => true);
 
 -- Query: SELECT BY geospace only (State, County and etc)
-SELECT 
-    time_bucket('366 day', bucket, origin => (NOW() - INTERVAL '1 year')::date) as b,
-    sum(s.total) as total_samples,
-    sum(s.bad) as total_bad,
-    sum(s.normal) as total_normal,
-    sum(s.good) as total_good,
-    upload,
-    approx_percentile(0.5, ROLLUP(s.percentiles_mbps)) as upload_med_mbps,
-    approx_percentile(0.5, ROLLUP(s.percentiles_rtt)) as upload_med_rtt
-    FROM summary_geospace s
-    WHERE 
-        s.bucket > (NOW() - INTERVAL '1 year')::date
-        AND geospace_id=1
-    GROUP BY b, upload
-;
+-- SELECT 
+--     time_bucket('366 day', bucket, origin => (NOW() - INTERVAL '1 year')::date) as b,
+--     sum(s.total) as total_samples,
+--     sum(s.bad) as total_bad,
+--     sum(s.normal) as total_normal,
+--     sum(s.good) as total_good,
+--     upload,
+--     approx_percentile(0.5, ROLLUP(s.percentiles_mbps)) as upload_med_mbps,
+--     approx_percentile(0.5, ROLLUP(s.percentiles_rtt)) as upload_med_rtt
+--     FROM summary_geospace s
+--     WHERE 
+--         s.bucket > (NOW() - INTERVAL '1 year')::date
+--         AND geospace_id=1
+--     GROUP BY b, upload
+-- ;
 
 -- Query: SELECT BY geospace and ASN
 
