@@ -7,7 +7,6 @@ import { STEPS } from './constants';
 import StepsPage from "./components/StepsPage/StepsPage";
 import HistoryPage from "./components/HistoryPage/HistoryPage";
 import {steps} from "./components/StepsPage/utils/steps";
-import {RESPONSIVE_VERSION_BREAKPOINT} from "./utils/breakpoints";
 
 // Application entry point, would hold all logic for state management
 // of multistep process
@@ -19,11 +18,6 @@ const App = ({ config }) => {
   const [hasRecentTest, setHasRecentTest] = useState(false);
   const [givenLocation, setGivenLocation] = useState(null);
   const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(steps.CONNECTION_ADDRESS);
-
-  useEffect(() => {
-
-    return () => window.removeEventListener('resize', () => setIsMobileWidth(window.innerWidth <= RESPONSIVE_VERSION_BREAKPOINT));
-  }, [])
 
   const goToMapPage = location => {
     location && setGivenLocation(location);
