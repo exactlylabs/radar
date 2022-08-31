@@ -1,0 +1,73 @@
+- name: Install TimescaleDB
+  hosts: db
+
+  tasks:
+    - name: Install Requirements
+      become: yes
+      ansible.builtin.apt:
+        pkg: 
+          - gnupg 
+          - acl
+          - postgresql-common
+          - apt-transport-https 
+          - lsb-release 
+          - wget
+        state: present
+      
+    - name: Run PostgreSQL Setup Script
+      become: yes
+      ansible.builtin.command: /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+    
+    - name: "Add TimescaleDB Repository"
+      become: yes
+      apt_repository:
+        repo: deb https://packagecloud.io/timescale/timescaledb/debian/ {{ ansible_distribution_release | lower }} main
+        state: present
+
+    - name: Install Timescale GPG Key
+      become: yes
+      ansible.builtin.apt_key: 
+        url: https://packagecloud.io/timescale/timescaledb/gpgkey
+        state: present
+    
+    - name: Install TimescaleDB Package
+      become: yes
+      ansible.builtin.apt:
+        update_cache: yes
+        name: timescaledb-2-postgresql-14
+    
+    - name: Tune TimescaleDB
+      become: yes
+      ansible.builtin.command: timescaledb-tune -quiet -yes
+    
+    - name: Restart Service
+      become: yes
+      ansible.builtin.service:
+        name: postgresql
+        state: restarted
+
+    - name: Install pip
+      become: yes
+      ansible.builtin.apt:
+        update_cache: yes
+        name: python3-pip
+    
+    - name: Install Psycopg2
+      become: yes
+      ansible.builtin.pip:
+        name: psycopg2-binary
+
+    - name: Create User
+      become: yes
+      become_user: postgres
+      community.postgresql.postgresql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        encrypted: yes
+        role_attr_flags: SUPERUSER
+    - name: Create Database
+      become: yes
+      become_user: postgres
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+        owner: "{{ db_user }}"
