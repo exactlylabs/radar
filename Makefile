@@ -19,6 +19,3 @@ install:
 	systemctl daemon-reload
 	systemctl enable mlab-processor
 	systemctl start mlab-processor
-
-run:
-	./scripts/dev.sh
