@@ -1,0 +1,13 @@
+<%= turbo_stream.remove "location-clients-row-#{dom_id(@client)}" do %>
+<% end %>
+
+<%= turbo_stream.update "location-clients-count" do %>
+  <span style="font-size: 14px; color: #b5b5c3" id="location-clients-count"><%= @location_clients_count %> total pods</span>
+<% end %>
+
+<%= turbo_stream.remove "clients-table-row-#{dom_id(@client)}" do %>
+<% end %>
+
+<%= turbo_stream.update "location-clients-count-#{@location_id}" do %>
+  <span style="font-size: 14px; color: #b5b5c3" id="location-clients-count-<%= @location_id %>"><%= @location_clients_count %> total pods</span>
+<% end %>

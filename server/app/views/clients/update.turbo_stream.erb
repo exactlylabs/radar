@@ -6,6 +6,21 @@
   <%= render partial: 'clients/client_details', locals: {client: @client} %>
 <% end %>
 
-<%= turbo_stream.replace @client do %>
+<%= turbo_stream.replace "clients-table-row-#{dom_id(@client)}" do %>
   <%= render partial: "clients_table_row", locals: { client: @client }%>
+<% end %>
+
+<!-- This validation is required for the case a user is in the location clients table -->
+<!-- and decides to move a client from the list to another location, so it should be removed -->
+<!-- from the list they are currently viewing -->
+<% if @should_remove_from_view %>
+  <%= turbo_stream.remove "location-clients-row-#{dom_id(@client)}" do %>
+  <% end %>
+  <%= turbo_stream.update "location-clients-count" do %>
+    <span style="font-size: 14px; color: #b5b5c3" id="location-clients-count"><%= @location_clients_count %> total pods</span>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace "location-clients-row-#{dom_id(@client)}" do %>
+    <%= render partial: "location_clients/location_clients_table_row", locals: { client: @client } %>
+  <% end %>
 <% end %>

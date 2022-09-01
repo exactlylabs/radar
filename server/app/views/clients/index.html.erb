@@ -40,7 +40,7 @@
         <%= render partial: "clients_table_per_location", locals: { clients: clients, location: location } %>
       <% end %>
       <% if @clients_with_no_location.present? %>
-        <%= render partial: "clients_table_per_location", locals: { clients: @clients_with_no_location, location: {name: 'No location'} } %>
+        <%= render partial: "clients_table_per_location", locals: { clients: @clients_with_no_location, location: {name: 'No location', id: 'empty'} } %>
       <% end %>
     <% end %>
   </div>

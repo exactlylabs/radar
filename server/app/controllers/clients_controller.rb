@@ -81,6 +81,13 @@ class ClientsController < ApplicationController
     location = policy_scope(Location).where(id: @location_id).first if @location_id.present?
     @client = Client.where(unix_user: @client_id).first
 
+    # Reason behind checking where the request came from:
+    # We currently have 2 places that might call claim/update for a client: clients#index && location_clients#index
+    # On client#index view, for an account/location change or even a new client, we need to re-index data, so we force a full-page reload
+    # If the request is coming from location_clients table, we can do inline editing or remove/append in case of deleting/creating
+    # a client with pure turbo_streams which is much more efficient.
+    should_use_turbo_stream = request.referrer.include? "locations"
+
     respond_to do |format|
       if @client && @client.authenticate_secret(@client_secret)
         @client.user = current_user
@@ -88,6 +95,7 @@ class ClientsController < ApplicationController
         @client.name = @client_name
         @client.account = current_account
         @client.save
+        format.turbo_stream if should_use_turbo_stream
         format.html { redirect_back fallback_location: root_path, notice: "Client was successfully created." }
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
@@ -99,8 +107,15 @@ class ClientsController < ApplicationController
   end
 
   def release
+    if @client.location
+      @location_id = @client.location.id
+    else
+      @location_id = "empty"
+    end
+    @location_clients_count = @client.location.clients.length - 1
     respond_to do |format|
       if @client.update(user: nil, location: nil, account: nil)
+        format.turbo_stream
         format.html { redirect_back fallback_location: root_path, notice: "Client was successfully released." }
         format.json { head :no_content }
       end
@@ -206,6 +221,9 @@ class ClientsController < ApplicationController
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
+    # not doing policy_scope because when selecting another account
+    # different to current_account, running policy_scope(Client) would throw
+    @client = Client.find_by_unix_user(params[:id])
     name = params[:client][:name]
     account_id = params[:account_id]
     location_id = params[:location_id]
@@ -213,6 +231,12 @@ class ClientsController < ApplicationController
     # allow account to be empty anyways
     account = current_account
     location = nil
+    # Reason behind @should_remove_from_view:
+    # Given we can use turbo_streams to make loading more efficient, we need to check if the
+    # update function itself is just being called for an inline edit like changing the pod's name
+    # or changing location/account. If that's the case, the pod should disappear from the current view
+    # as this variable works mainly for the turbo_stream variant of the response (from location_clients view).
+    @should_remove_from_view = false
     if account_id
       account = policy_scope(Account).find(account_id) if account_id != current_account.id
       if location_id
@@ -220,19 +244,41 @@ class ClientsController < ApplicationController
         # could not be in the current_account's locations list
         location = Location.where(id: location_id, account_id: account_id).first
       end
+      if account != @client.account || location != @client.location
+        @should_remove_from_view = true
+      end
     else
       location = policy_scope(Location).find(params[:location_id]) if location_id
+      @should_remove_from_view = location != @client.location
     end
-    # not doing policy_scope because when selecting another account
-    # different to current_account, running policy_scope(Client) would throw
-    client = Client.find_by_unix_user(params[:id])
+    if @should_remove_from_view
+      # If the pod row was to be removed from the current table, update subtitle saying:
+      # 'X total pods' -> '(X - 1) total pods' for an updated value.
+      if @client.location
+        @location_clients_count = @client.location.clients.length - 1
+      else
+        @location_clients_count = policy_scope(Client).where_no_location.length - 1
+      end
+    end
+
+    # Reason behind checking where the request came from:
+    # We currently have 2 places that might call claim/update for a client: clients#index && location_clients#index
+    # On client#index view, for an account/location change or even a new client, we need to re-index data, so we force a full-page reload
+    # If the request is coming from location_clients table, we can do inline editing or remove/append in case of deleting/creating
+    # a client with pure turbo_streams which is much more efficient.
+    requested_from_location_clients = request.referrer.include? "locations"
+    should_use_turbo_frame = true
+    unless requested_from_location_clients
+      should_use_turbo_frame = !@should_remove_from_view
+    end
     respond_to do |format|
-      if client.update(name: name, location: location, account: account)
-        format.html { redirect_to clients_path, notice: "Client was successfully updated.", status: :see_other }
-        format.json { render :show, status: :ok, location: client_path(client.unix_user) }
+      if @client.update(name: name, location: location, account: account)
+        format.turbo_stream if should_use_turbo_frame
+        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated.", status: :see_other }
+        format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: client.errors, status: :unprocessable_entity }
+        format.json { render json: @client.errors, status: :unprocessable_entity }
       end
     end
   end
