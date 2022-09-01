@@ -1,7 +1,7 @@
 import {DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA, WHITE} from "../../../../utils/colors";
 import ConnectionInformation from "./ConnectionInformation";
 import TestStatsTableContent from "../../../common/TestStatsTableContent";
-import {useScreenSize} from "../../../../hooks/useScreenSize";
+import {useMobile} from "../../../../hooks/useMobile";
 
 const tableStyle = {
   width: '100%',
@@ -66,7 +66,7 @@ const TestStatsTable = ({
   userStepData,
 }) => {
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   const getStyle = () => {
     let style;

@@ -1,6 +1,6 @@
 import ArrowRightIcon from '../../assets/icons-right-arrow.png';
 import {DEFAULT_SKIP_FONT_COLOR} from "../../utils/colors";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
 
 const textStyle = {
   fontSize: 15,
@@ -28,7 +28,7 @@ const PreferNotToAnswer = ({
   goForward
 }) => {
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   return (
     <div style={isMobile ? mobileTextStyle : textStyle} onClick={goForward}>

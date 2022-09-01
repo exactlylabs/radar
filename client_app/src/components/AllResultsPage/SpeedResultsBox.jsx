@@ -6,7 +6,7 @@ import MyFiltersTitle from "./MyFiltersTitle";
 import MyFiltersTypeSwitcher from "./MyFiltersTypeSwitcher";
 import MyFiltersList from "./MyFiltersList";
 import FloatingExploreButton from "./FloatingExploreButton";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
 
 const speedFiltersBoxStyle = {
   width: 255,
@@ -72,7 +72,7 @@ const SpeedResultsBox = ({
   const [currentFilterType, setCurrentFilterType] = useState(0);
   const [selectedRangeIndexes, setSelectedRangeIndexes] = useState([]);
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   const handleFilterClick = filtersArray => {
     setSelectedRangeIndexes(filtersArray)

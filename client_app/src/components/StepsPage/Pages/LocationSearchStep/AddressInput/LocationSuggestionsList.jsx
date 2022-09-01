@@ -17,8 +17,8 @@ const suggestionsContainerStyle = {
   padding: 5,
   left: '50%',
   transform: 'translate(-50%, -10px)',
-  maxHeight: 250,
-  overflowY: 'auto',
+  maxHeight: 200,
+  overflowY: 'scroll',
   overflowX: 'hidden',
 }
 

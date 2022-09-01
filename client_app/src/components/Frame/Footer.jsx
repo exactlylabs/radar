@@ -5,7 +5,7 @@ import {
 } from '../../utils/colors';
 import anthcLogo from '../../assets/anthc-logo.png';
 import radarLogoDark from '../../assets/radar-logo-dark.png';
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
 
 const footerStyle = {
   height: 173,
@@ -93,7 +93,7 @@ const FooterHorizontalDivider = () => <div style={horizontalDividerStyle}></div>
 };*/
 
 const Footer = () => {
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   return isMobile ?
     <div style={mobileFooterStyle}>

@@ -15,7 +15,7 @@ import {getAllSpeedTests, getUserApproximateCoordinates} from '../../utils/apiRe
 import { MyMap } from '../common/MyMap';
 import MyCustomMarker from "./MyCustomMarker";
 import {notifyError} from "../../utils/errors";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -33,7 +33,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(true);
   const [selectedFilterType, setSelectedFilterType] = useState('download');
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   useEffect(() => {
 

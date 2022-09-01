@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import './styles/MyOption.css';
 import {placementOptions} from "../../utils/placements";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
 
 const optionStyle = {
   width: 134,
@@ -61,7 +61,7 @@ const optionTextStyle = {
  */
 const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) => {
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   useEffect(() => {
     if(isCurrentOption()) {

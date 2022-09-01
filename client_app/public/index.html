@@ -25,12 +25,14 @@
   <script>
     SpeedTest.config({
       clientId: 'local',
-      widgetMode: false,
+      widgetMode: true,
       elementId: 'root-embedded',
       frameStyle: {
-        width: '100vw',
-        height: '100vh',
-        margin: '0',
+        width: '500px',
+        height: '500px',
+        margin: '50px 200px auto auto',
+        border: 'solid 1px black',
+        backgroundColor: 'white'
       },
     });
     SpeedTest.new().mount();

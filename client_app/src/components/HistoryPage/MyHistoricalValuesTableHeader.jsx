@@ -3,7 +3,8 @@ import UploadIcon from '../../assets/small-upload-icon.png';
 import LossIcon from '../../assets/ping-icon.png';
 import LatencyIcon from '../../assets/latency-icon.png';
 import {DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR} from "../../utils/colors";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
+import {useSmall} from "../../hooks/useSmall";
 
 const historicalValuesTableHeaderStyle = {
   width: '100%',
@@ -42,7 +43,13 @@ const dateTimeColumnStyle = {
   justifyContent: 'flex-start',
 }
 
-const mobileDateTimeColumnStyle = {
+const midDateTimeColumnStyle = {
+  ...commonHeaderStyle,
+  width: '22%',
+  justifyContent: 'flex-start',
+}
+
+const smallDateTimeColumnStyle = {
   ...commonHeaderStyle,
   width: '28%',
   justifyContent: 'flex-start',
@@ -60,7 +67,13 @@ const columnWithIconStyle = {
   justifyContent: 'flex-end',
 }
 
-const mobileColumnWithIconStyle = {
+const midColumnWithIconStyle = {
+  ...commonHeaderStyle,
+  width: '15%',
+  justifyContent: 'flex-end',
+}
+
+const smallColumnWithIconStyle = {
   ...commonHeaderStyle,
   width: '25%',
   justifyContent: 'flex-end',
@@ -83,37 +96,56 @@ const MyHistoricalValuesTableHeader = ({
 
 }) => {
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
+  const isSmall = useSmall();
+
+  const getNetworkTypeColumnStyle = () => ({...commonHeaderStyle, height: '100%', width: '7%'});
+
+  const getDateTimeColumnStyle = () => {
+    let style = dateTimeColumnStyle;
+    if(isSmall) style = smallDateTimeColumnStyle;
+    if(isMobile) style = midDateTimeColumnStyle;
+    return style;
+  }
+
+  const getDownUpColumnStyle = () => {
+    let style = columnWithIconStyle;
+    if(isSmall) style = smallColumnWithIconStyle;
+    if(isMobile) style = midColumnWithIconStyle;
+    return style;
+  }
+
+  const getLatencyLossColumnStyle = () => isMobile ? midColumnWithIconStyle : columnWithIconNarrowStyle;
 
   return (
     <div style={historicalValuesTableHeaderStyle}>
-      <div style={isMobile ? mobileNetworkTypeColumnStyle : networkTypeColumStyle}></div>
-      <div style={isMobile ? mobileDateTimeColumnStyle : dateTimeColumnStyle}>Date/Time</div>
-      <div style={isMobile ? mobileColumnWithIconStyle : columnWithIconStyle}>
+      <div style={getNetworkTypeColumnStyle()}></div>
+      <div style={getDateTimeColumnStyle()}>Date/Time</div>
+      <div style={getDownUpColumnStyle()}>
         <img src={DownloadIcon} height={16} width={16} alt={'download-icon'} style={iconStyle}/>
-        <div style={textStyle}>{isMobile ? 'Mbps' : 'Download'}</div>
+        <div style={textStyle}>{isSmall || isMobile ? 'Mbps' : 'Download'}</div>
       </div>
-      <div style={isMobile ? mobileColumnWithIconStyle : columnWithIconStyle}>
+      <div style={getDownUpColumnStyle()}>
         <img src={UploadIcon} height={16} width={16} alt={'upload-icon'} style={iconStyle}/>
-        <div style={textStyle}>{isMobile ? 'Mbps' : 'Upload'}</div>
+        <div style={textStyle}>{isSmall || isMobile ? 'Mbps' : 'Upload'}</div>
       </div>
       {
-        !isMobile &&
-        <div style={columnWithIconNarrowStyle}>
-          <img src={LossIcon} height={16} width={16} alt={'loss-icon'} style={iconStyle}/>
-          <div style={textStyle}>Loss</div>
+        !isSmall &&
+        <div style={getLatencyLossColumnStyle()}>
+          <img src={LatencyIcon} height={16} width={16} alt={'latency-icon'} style={iconStyle}/>
+          <div style={textStyle}>{ isMobile ? 'ms' : 'Latency' }</div>
         </div>
       }
       {
-        !isMobile &&
-        <div style={columnWithIconNarrowStyle}>
-          <img src={LatencyIcon} height={16} width={16} alt={'latency-icon'} style={iconStyle}/>
-          <div style={textStyle}>Latency</div>
+        !isSmall &&
+        <div style={getLatencyLossColumnStyle()}>
+          <img src={LossIcon} height={16} width={16} alt={'loss-icon'} style={iconStyle}/>
+          <div style={textStyle}>{isMobile ? '%' : 'Loss'}</div>
         </div>
       }
-      { !isMobile && <div style={{width: '4%'}}></div> }
-      { !isMobile && <div style={locationColumnStyle}>Location</div> }
-      { isMobile && <div style={{width: '10%'}}></div> }
+      { !isSmall && !isMobile && <div style={{width: '4%'}}></div> }
+      { !isSmall && !isMobile && <div style={locationColumnStyle}>Location</div> }
+      { (isSmall || isMobile) && <div style={{width: '11%'}}></div> }
     </div>
   )
 }

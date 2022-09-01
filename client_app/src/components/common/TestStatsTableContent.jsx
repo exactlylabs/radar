@@ -4,7 +4,7 @@ import UploadIcon from "../../assets/small-upload-icon.png";
 import PingIcon from "../../assets/ping-icon.png";
 import LatencyIcon from "../../assets/latency-icon.png";
 import {DEFAULT_STATS_TABLE_TEXT_COLOR} from "../../utils/colors";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
 import MyStatsTableHorizontalDivider from "../StepsPage/Pages/SpeedTestStep/MyStatsTableHorizontalDivider";
 
 const tableContentStyle = {
@@ -120,7 +120,7 @@ const TestStatsTableContent = ({
   lossValue
 }) => {
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   const getStyle = () => {
     let style;

@@ -6,7 +6,7 @@ import {notifyError} from "../../../../utils/errors";
 import SpeedGaugeInterior from "./SpeedGaugeInterior";
 import {normalizeValue} from "./utils/normalizer";
 import {downloadWorkerUrl, runnerConfig, uploadWorkerUrl} from "../../../../utils/ndt7Tester";
-import {useScreenSize} from "../../../../hooks/useScreenSize";
+import {useMobile} from "../../../../hooks/useMobile";
 
 const canvasWrapperStyle = {
   width: 250,
@@ -175,7 +175,7 @@ const SpeedGauge = ({
     });
   };
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   return (
     <div style={isMobile ? mobileCanvasWrapperStyle : canvasWrapperStyle}>
