@@ -11,7 +11,7 @@
 						<tr class="text-start fs-1 fw-bolder">
 							<th class="py-7 ps-10 d-flex flex-column" style="font-size: 20px; color: #3f4254">
 								<%= location[:name] %>
-								<span style="font-size: 14px; color: #b5b5c3"><%= clients.length %> total pods</span>
+								<span style="font-size: 14px; color: #b5b5c3" id="location-clients-count-<%= location[:id] %>"><%= clients.length %> total pods</span>
 							</th>
 							<th></th>
 							<th></th>
@@ -41,7 +41,7 @@
 					<!--end::Table head-->
 					<!--begin::Table body-->
 					<tbody class="fw-bold text-gray-600">
-						<% clients.take(5).each_with_index do |client, index| %>
+						<% clients.take(5).each_with_index do |client| %>
 							<%= render partial: "clients_table_row", locals: { client: client }%>
 						<% end %>
 					</tbody>
