@@ -7,11 +7,14 @@ import {ArrowForward} from "@mui/icons-material";
 import {MapContainer, Marker, TileLayer} from "react-leaflet";
 import {MyMap} from "../../../common/MyMap";
 import {customMarker, mapTileAttribution, mapTileUrl} from "../../../../utils/map";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useContext, useEffect, useMemo, useRef, useState} from "react";
 import {getSuggestions} from "../../../../utils/apiRequests";
 import {notifyError} from "../../../../utils/errors";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
-import {useScreenSize} from "../../../../hooks/useScreenSize";
+import {useMobile} from "../../../../hooks/useMobile";
+import ConfigContext from "../../../../context/ConfigContext";
+import {useSmall} from "../../../../hooks/useSmall";
+import {widgetModalFraming} from "../../../../utils/modals";
 
 const modalStyle = {
   width: '700px',
@@ -76,11 +79,13 @@ const MyMapModal = ({
   address,
 }) => {
 
+  const config = useContext(ConfigContext);
   const markerRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [addressCoordinates, setAddressCoordinates] = useState(address.coordinates);
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
+  const isSmall = useSmall();
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -118,10 +123,15 @@ const MyMapModal = ({
     [],
   )
 
+  const getStyle = () => {
+    if(config.widgetMode) return widgetModalFraming(config);
+    return isMobile ? mobileModalStyle : modalStyle
+  }
+
   return (
     <Modal open={isOpen}
            onClose={() => setIsOpen(false)}
-           style={isMobile ? mobileModalStyle : modalStyle}
+           style={getStyle()}
     >
       <Box sx={boxStyle}>
         <div style={headerStyle}>
@@ -154,7 +164,7 @@ const MyMapModal = ({
             !loading && error && <MyMessageSnackbar message={error} type={'error'}/>
           }
         </div>
-        <div style={isMobile ? mobileFooterStyle : footerStyle}>
+        <div style={isSmall ? mobileFooterStyle : footerStyle}>
           <MyBackButton text={'Change address'}
                         onClick={() => setIsOpen(false)}
                         fullWidth

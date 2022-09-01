@@ -7,7 +7,7 @@ import {MyButton} from "../common/MyButton";
 import {getStoredValues} from "../../utils/storage";
 import {useState} from "react";
 import MyMeasurementInfoModal from "./MyMeasurementInfoModal";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
 
 const historyPageStyle = {
   width: '100%',
@@ -54,7 +54,7 @@ const HistoryPage = ({
   hasRecentTest,
 }) => {
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
   const historicalValues = getStoredValues();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMeasurement, setCurrentMeasurement] = useState(null);

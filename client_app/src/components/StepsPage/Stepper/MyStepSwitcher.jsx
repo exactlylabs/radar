@@ -2,7 +2,7 @@ import {MyButton} from "../../common/MyButton";
 import {ArrowBack, ArrowForward} from "@mui/icons-material";
 import {MyBackButton} from "../../common/MyBackButton";
 import {MyForwardButton} from "../../common/MyForwardButton";
-import {useScreenSize} from "../../../hooks/useScreenSize";
+import {useMobile} from "../../../hooks/useMobile";
 
 const stepSwitcherStyle = {
   width: '20%',
@@ -26,7 +26,7 @@ const MyStepSwitcher = ({
   backDisabled
 }) => {
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   const getStyle = () => goBack && goForward ? doubleButtonStepSwitcherStyle : stepSwitcherStyle;
 

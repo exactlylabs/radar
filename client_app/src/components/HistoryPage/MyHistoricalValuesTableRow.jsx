@@ -6,8 +6,9 @@ import {
 } from "../../utils/colors";
 import {types} from "../../utils/networkTypes";
 import {prettyPrintDate} from "../../utils/dates";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
 import InfoIcon from '../../assets/info-icon.png';
+import {useSmall} from "../../hooks/useSmall";
 
 const historicalValuesTableRowStyle = {
   width: '100%',
@@ -47,7 +48,13 @@ const dateTimeColumnStyle = {
   justifyContent: 'flex-start',
 }
 
-const mobileDateTimeColumnStyle = {
+const midDateTimeColumnStyle = {
+  ...dateTimeColumnStyle,
+  width: '22%',
+  textAlign: 'left',
+}
+
+const smallDateTimeColumnStyle = {
   ...dateTimeColumnStyle,
   width: '28%',
   textAlign: 'left'
@@ -55,7 +62,7 @@ const mobileDateTimeColumnStyle = {
 
 const locationColumnStyle = {
   ...commonRowStyle,
-  width: '20%',
+  width: '16%',
   justifyContent: 'flex-start',
 }
 
@@ -78,15 +85,25 @@ const mobileColumnWithIconStyle = {
   width: '24%',
 }
 
+const midLatencyLossStyle = {
+  ...columnWithIconStyle,
+  width: '15%',
+}
+
 const columnWithIconNarrowStyle = {
   ...columnWithIconStyle,
-  width: '12%',
+  width: '14%',
 }
 
 const infoIconColumnStyle = {
   ...networkTypeColumStyle,
-  width: '12%',
+  width: '11%',
   cursor: 'pointer',
+}
+
+const smallInfoIconColumnStyle = {
+  ...infoIconColumnStyle,
+  width: '15%',
 }
 
 const MyHistoricalValuesTableRow = ({
@@ -95,7 +112,8 @@ const MyHistoricalValuesTableRow = ({
   openMeasurementInfoModal
 }) => {
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
+  const isSmall = useSmall();
 
   const getNetworkTypeIcon = () => {
     const networkType = types.find(type => type.text === measurement.networkType);
@@ -104,50 +122,78 @@ const MyHistoricalValuesTableRow = ({
 
   const getMbpsText = possibleValue => {
     if(!possibleValue) return '-';
-    return isMobile ? possibleValue.toFixed(2) : `${measurement.download.toFixed(2)} Mbps`;
+    return isMobile || isSmall ? possibleValue.toFixed(2) : `${measurement.download.toFixed(2)} Mbps`;
   }
+
+  const getMsText = possibleValue => {
+    if(possibleValue === null) return '-';
+    return isMobile || isSmall ? measurement.latency.toFixed(0) : `${measurement.latency.toFixed(0)} ms`;
+  }
+
+  const getPercentageText = possibleValue => {
+    if(possibleValue === null) return '-';
+    return isMobile || isSmall ? measurement.loss.toFixed(2) : `${measurement.loss.toFixed(2)} %`;
+  }
+
+  const getDownUpStyle = () => {
+    let style = columnWithIconStyle;
+    if(isSmall) return {...style, width: '24%'};
+    if(isMobile) return {...style, width: '15%'}
+    return style;
+  }
+
+  const getDateTimeStyle = () => {
+    let style = dateTimeColumnStyle;
+    if(isSmall) style = smallDateTimeColumnStyle;
+    if(isMobile) style = midDateTimeColumnStyle;
+    return style;
+  }
+
+  const getLatencyLossStyle = () => isMobile ? midLatencyLossStyle : columnWithIconNarrowStyle;
+
+  const getInfoIconStyle = () => isSmall ? smallInfoIconColumnStyle : infoIconColumnStyle;
 
   const openInfoModal = () => openMeasurementInfoModal(measurement);
 
   return (
     <div style={{...historicalValuesTableRowStyle, backgroundColor: isEven ? HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR : TRANSPARENT}}>
-      <div style={isMobile ? mobileNetworkTypeColumnStyle : networkTypeColumStyle}>
+      <div style={networkTypeColumStyle}>
         {measurement.networkType ?
           <img src={getNetworkTypeIcon()} width={16} height={16} alt={'network-type-icon'}/> :
           null
         }
       </div>
-      <div style={isMobile ? mobileDateTimeColumnStyle : dateTimeColumnStyle}>{prettyPrintDate(measurement.timestamp)}</div>
-      <div style={isMobile ? mobileColumnWithIconStyle : columnWithIconStyle}>
+      <div style={getDateTimeStyle()}>{prettyPrintDate(measurement.timestamp)}</div>
+      <div style={getDownUpStyle()}>
         {getMbpsText(measurement.download)}
       </div>
-      <div style={isMobile ? mobileColumnWithIconStyle : columnWithIconStyle}>
+      <div style={getDownUpStyle()}>
         {getMbpsText(measurement.upload)}
       </div>
       {
-        !isMobile &&
-        <div style={columnWithIconNarrowStyle}>
-        {measurement.loss !== null ? `${measurement.loss.toFixed(2)} %` : '-'}
+        !isSmall &&
+        <div style={getLatencyLossStyle()}>
+          {getMsText(measurement.latency)}
         </div>
       }
       {
-        !isMobile &&
-        <div style={columnWithIconNarrowStyle}>
-          {measurement.latency !== null ? `${measurement.latency.toFixed(0)} ms` : '-'}
+        !isSmall &&
+        <div style={getLatencyLossStyle()}>
+          {getPercentageText(measurement.loss)}
         </div>
       }
       {
-        !isMobile && <div style={{width: '4%'}}></div>
+        !isSmall && !isMobile && <div style={{width: '4%'}}></div>
       }
       {
-        !isMobile &&
+        (!isSmall && !isMobile) &&
         <div style={locationColumnStyle}>
           <p style={ellipsisStyle}>{`${measurement.city}, ${measurement.state}`}</p>
         </div>
       }
       {
-        isMobile &&
-        <div style={infoIconColumnStyle}>
+        (isSmall || isMobile) &&
+        <div style={getInfoIconStyle()}>
           <img src={InfoIcon} width={22} height={22} alt={'info-icon'} onClick={openInfoModal}/>
         </div>
       }

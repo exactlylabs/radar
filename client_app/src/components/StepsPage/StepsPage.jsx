@@ -12,7 +12,8 @@ import {types} from "../../utils/networkTypes";
 import {getAddressForCoordinates} from "../../utils/apiRequests";
 import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResultsStepPage";
 import {getLastStoredValue} from "../../utils/storage";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
+import {useSmall} from "../../hooks/useSmall";
 
 const stepsPageStyle = {
   width: '100%',
@@ -53,7 +54,8 @@ const StepsPage = ({
     networkCost: undefined,
   });
   const [lastTestResults, setLastTestResults] = useState(null);
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
+  const isSmall = useSmall();
 
   const setAddress = address => setUserStepData({...userStepData, address});
   const setTerms = status => setUserStepData({...userStepData, terms: status});
@@ -187,7 +189,7 @@ const StepsPage = ({
   }
 
   return (
-    <div style={isMobile ? mobileStepsPageStyle : stepsPageStyle}>
+    <div style={isMobile || isSmall ? mobileStepsPageStyle : stepsPageStyle}>
       {
         currentStep <= steps.CONNECTION_COST &&
           <MyStepper activeStep={currentStep} isMobile={isMobile}/>

@@ -1,7 +1,7 @@
 import FilterButtonOn from '../../assets/filter-button-on.png';
 import FilterButtonOff from '../../assets/filter-button-off.png';
 import {DEFAULT_FILTER_ACTIVE_COUNT_COLOR, WHITE} from "../../utils/colors";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
 
 const floatingButtonStyle = {
   width: 68,
@@ -40,7 +40,7 @@ const FloatingExploreButton = ({
   onClick
 }) => {
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   return (
     <div style={isMobile ? mobileFloatingButtonStyle : floatingButtonStyle} onClick={onClick}>

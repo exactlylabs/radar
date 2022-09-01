@@ -1,11 +1,13 @@
+import {useContext} from "react";
 import {Modal, Box} from "@mui/material";
 import {DEFAULT_POPUP_VALUE_COLOR, WHITE} from "../../utils/colors";
 import {MyModalTitle} from "../common/MyModalTitle";
 import {prettyPrintDate} from "../../utils/dates";
 import {Close} from "@mui/icons-material";
-import TestStatsTable from "../StepsPage/Pages/SpeedTestStep/TestStatsTable";
 import TestStatsTableContent from "../common/TestStatsTableContent";
 import MyMeasurementInfoModalTable from "./MyMeasurementInfoModalTable";
+import ConfigContext from "../../context/ConfigContext";
+import {widgetModalFraming} from "../../utils/modals";
 
 const mobileModalStyle = {
   width: '90%',
@@ -42,16 +44,29 @@ const dateStyle = {
   fontSize: 15,
 }
 
+const widgetStyle = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+}
+
 const MyMeasurementInfoModal = ({
   isOpen,
   setIsOpen,
   measurement
 }) => {
 
+  const config = useContext(ConfigContext);
+
   const closeModal = () => setIsOpen(false);
 
+  const getModalStyle = () => {
+    if(config.widgetMode) return widgetModalFraming(config);
+    return mobileModalStyle;
+  }
+
   return measurement &&
-    <Modal open={isOpen} style={mobileModalStyle}>
+    <Modal open={isOpen} style={getModalStyle()}>
       <Box sx={boxStyle}>
         <div style={closeButtonStyle} onClick={closeModal}>
           <Close fontSize={'small'} color={'disabled'}/>

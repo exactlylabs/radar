@@ -1,5 +1,6 @@
 import './App.css';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
+import {ConfigContextProvider} from "./context/ConfigContext";
 import AllResultsPage from './components/AllResultsPage/AllResultsPage';
 import Frame from './components/Frame/Frame';
 import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material';
@@ -70,11 +71,13 @@ const App = ({ config }) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Frame config={config} setStep={setStep} step={step}>
-        {renderContent()}
-      </Frame>
-    </ThemeProvider>
+    <ConfigContextProvider value={config}>
+      <ThemeProvider theme={theme}>
+        <Frame config={config} setStep={setStep} step={step}>
+          {renderContent()}
+        </Frame>
+      </ThemeProvider>
+    </ConfigContextProvider>
   );
 };
 

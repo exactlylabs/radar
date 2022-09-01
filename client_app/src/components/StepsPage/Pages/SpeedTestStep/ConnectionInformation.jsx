@@ -7,7 +7,7 @@ import MyConnectionInformationVerticalDivider from "./MyConnectionInformationVer
 import AddressIcon from '../../../../assets/address-icon.png';
 import HomeIconLight from '../../../../assets/icon-location-home-light.png';
 import WifiIconLight from '../../../../assets/icon-connection-wifi-light.png';
-import {useScreenSize} from "../../../../hooks/useScreenSize";
+import {useMobile} from "../../../../hooks/useMobile";
 import {useEffect, useState} from "react";
 import {CONNECTION_INFORMATION_MIN_WIDTH} from "../../../../utils/breakpoints";
 
@@ -115,7 +115,7 @@ const ConnectionInformation = ({
 }) => {
 
   const [shouldTextAppear, setShouldTextAppear] = useState(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH);
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   useEffect(() => {
     window.addEventListener('resize', () => setShouldTextAppear(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH));

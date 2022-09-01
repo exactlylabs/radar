@@ -8,6 +8,8 @@ import MyMapModal from "./MyMapModal";
 const locationSearchStepStyle = {
   width: '100%',
   margin: '0 auto',
+  position: 'relative',
+  overflowY: 'hidden',
 }
 
 const termsStyle = {

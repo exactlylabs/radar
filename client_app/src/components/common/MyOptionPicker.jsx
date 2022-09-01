@@ -1,7 +1,7 @@
 import MyOption from "./MyOption";
 import MyVerticalDivider from "./MyVerticalDivider";
 import MyHorizontalOptionDivider from "./MyHorizontalOptionDivider";
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
 
 const optionsPickerStyle = {
   display: 'flex',
@@ -47,7 +47,7 @@ const MyOptionPicker = ({
   selectedOption,
 }) => {
 
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
 
   return (
     <div style={isMobile ? mobileOptionsPickerStyle : optionsPickerStyle}>

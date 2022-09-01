@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR,
   DEFAULT_SELECTED_TAB_COLOR,
   DEFAULT_TABS_BACKGROUND_COLOR,
   DEFAULT_UNSELECTED_TAB_COLOR,
@@ -11,12 +12,14 @@ import exploreMapIconActive from '../../assets/explore-icon-active.png';
 import exploreMapIconInactive from '../../assets/explore-icon-inactive.png';
 import historyIconActive from '../../assets/history-icon-active.png';
 import historyIconInactive from '../../assets/history-icon-inactive.png';
-import {useScreenSize} from "../../hooks/useScreenSize";
+import {useMobile} from "../../hooks/useMobile";
+import {useSmall} from "../../hooks/useSmall";
 
 const tabsWrapperStyle = {
   width: '100%',
   height: 53,
   backgroundColor: DEFAULT_TABS_BACKGROUND_COLOR,
+  borderBottom:  `solid 1px ${DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR}`
 };
 
 const tabsContentWrapperStyle = {
@@ -105,7 +108,8 @@ const TABS = {
 
 const Tabs = ({ step, setStep }) => {
   const [selectedTab, setSelectedTab] = useState(TABS.SPEED_TEST);
-  const isMobile = useScreenSize();
+  const isMobile = useMobile();
+  const isSmall = useSmall();
 
   useEffect(() => {
     if(step === STEPS.HISTORY && selectedTab !== TABS.HISTORY) setSelectedTab(TABS.HISTORY);
@@ -130,9 +134,9 @@ const Tabs = ({ step, setStep }) => {
 
   const getTabStyle = (tabName) => {
     if(selectedTab === tabName) {
-      return isMobile ? mobileSelectedTabTextStyle : selectedTabTextStyle;
+      return isMobile || isSmall ? mobileSelectedTabTextStyle : selectedTabTextStyle;
     } else {
-      return isMobile ? commonResponsiveTabTextStyle : commonTabTextStyle;
+      return isMobile || isSmall ? commonResponsiveTabTextStyle : commonTabTextStyle;
     }
   }
 
