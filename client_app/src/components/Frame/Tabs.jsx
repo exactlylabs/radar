@@ -180,7 +180,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.EXPLORE_MAP ? 'explore-active' : 'explore-inactive'}
             />
-            <div style={selectedTab === TABS.EXPLORE_MAP ? selectedContentStyle : null}>{ isMobile ? 'Map' : 'Explore the Map'}</div>
+            <div style={selectedTab === TABS.EXPLORE_MAP ? selectedContentStyle : null}>{ isMobile || isSmall ? 'Map' : 'Explore the Map'}</div>
           </div>
           <div style={selectedTab === TABS.EXPLORE_MAP ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>

@@ -10,6 +10,7 @@ import WifiIconLight from '../../../../assets/icon-connection-wifi-light.png';
 import {useMobile} from "../../../../hooks/useMobile";
 import {useEffect, useState} from "react";
 import {CONNECTION_INFORMATION_MIN_WIDTH} from "../../../../utils/breakpoints";
+import {useSmall} from "../../../../hooks/useSmall";
 
 const connectionInformationStyle = {
   width: '100%',
@@ -116,6 +117,7 @@ const ConnectionInformation = ({
 
   const [shouldTextAppear, setShouldTextAppear] = useState(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH);
   const isMobile = useMobile();
+  const isSmall = useSmall();
 
   useEffect(() => {
     window.addEventListener('resize', () => setShouldTextAppear(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH));
@@ -124,9 +126,9 @@ const ConnectionInformation = ({
 
   const getStyle = () => {
     let style;
-    if(isMobile && !integratedToStatsTable) style = mobileStyle;
-    else if(isMobile && integratedToStatsTable) style = integratedMobileStyle;
-    else if(!isMobile && integratedToStatsTable) style = integratedStyle;
+    if((isMobile || isSmall) && !integratedToStatsTable) style = mobileStyle;
+    else if((isMobile || isSmall) && integratedToStatsTable) style = integratedMobileStyle;
+    else if(!(isMobile || isSmall) && integratedToStatsTable) style = integratedStyle;
     else style = connectionInformationStyle;
     return disabled ? {...style, opacity: 0.3} : style;
   }
@@ -137,7 +139,7 @@ const ConnectionInformation = ({
   }
 
   const getAddressStyle = () => {
-    let style = isMobile ? mobileAddressRowStyle : addressRowStyle;
+    let style = (isMobile || isSmall) ? mobileAddressRowStyle : addressRowStyle;
     return shouldTextAppear ? style : {...style, maxWidth: 175};
   }
 

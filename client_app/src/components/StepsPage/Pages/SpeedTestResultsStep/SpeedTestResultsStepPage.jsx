@@ -28,7 +28,7 @@ const textStyle = {
 const buttonFooterStyle = {
   display: 'flex',
   flexDirection: 'row',
-  margin: 'auto',
+  margin: '35px auto 70px',
   alignItems: 'center',
   justifyContent: 'space-between',
   width: '20%',

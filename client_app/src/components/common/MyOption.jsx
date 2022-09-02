@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import './styles/MyOption.css';
 import {placementOptions} from "../../utils/placements";
 import {useMobile} from "../../hooks/useMobile";
+import {useSmall} from "../../hooks/useSmall";
 
 const optionStyle = {
   width: 134,
@@ -62,6 +63,7 @@ const optionTextStyle = {
 const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) => {
 
   const isMobile = useMobile();
+  const isSmall = useSmall();
 
   useEffect(() => {
     if(isCurrentOption()) {
@@ -85,7 +87,7 @@ const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) 
     setSelectedOption(index);
   }
 
-  return isMobile ?
+  return isMobile || isSmall?
     <div style={mobileOptionStyle}
          className={'my-option'}
          onClick={pickOption}

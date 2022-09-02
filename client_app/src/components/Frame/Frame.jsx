@@ -35,6 +35,10 @@ const mobileFullWidthWrapperStyle = {
   height: 'calc(100vh - 125px)',
 }
 
+const widgetFullWidthWrapperStyle = {
+  ...fullWidthWrapperStyle,
+}
+
 const Frame = ({ config, children, step, setStep }) => {
 
   const isMobile = useMobile();
@@ -42,6 +46,7 @@ const Frame = ({ config, children, step, setStep }) => {
 
   const getFrameStyleBasedOnCurrentTab = () => {
     if(step === STEPS.ALL_RESULTS) {
+      if(config.widgetMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height} - 175px`};
       return isMobile || isSmall ? mobileFullWidthWrapperStyle : fullWidthWrapperStyle;
     } else {
       return childrenWrapperStyle;
@@ -55,11 +60,19 @@ const Frame = ({ config, children, step, setStep }) => {
     return {...baseStyle, ...config.frameStyle};
   }
 
+  const getMinHeight = () => {
+    if(config.widgetMode) {
+      return `calc(${config.frameStyle.height} - 175px)`;
+    } else {
+      return `calc(${config.frameStyle.height} - 70px - 173px - 53px)`;
+    }
+  }
+
   return (
     <div style={getWrapperStyle()} id={'main-frame'}>
       {!config.widgetMode && <Header setStep={setStep}/>}
       <Tabs step={step} setStep={setStep}/>
-      <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: `calc(${config.frameStyle.height} - 70px - 173px - 53px)` }}>
+      <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: getMinHeight() }}>
         {children}
       </div>
       {!config.widgetMode && <Footer />}

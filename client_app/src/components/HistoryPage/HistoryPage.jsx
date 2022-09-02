@@ -8,6 +8,7 @@ import {getStoredValues} from "../../utils/storage";
 import {useState} from "react";
 import MyMeasurementInfoModal from "./MyMeasurementInfoModal";
 import {useMobile} from "../../hooks/useMobile";
+import {useSmall} from "../../hooks/useSmall";
 
 const historyPageStyle = {
   width: '100%',
@@ -55,6 +56,7 @@ const HistoryPage = ({
 }) => {
 
   const isMobile = useMobile();
+  const isSmall = useSmall();
   const historicalValues = getStoredValues();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMeasurement, setCurrentMeasurement] = useState(null);
@@ -66,8 +68,8 @@ const HistoryPage = ({
 
   const getButtonsStyle = () => {
     let style;
-    if(isMobile && hasRecentTest) style = mobileButtonsContainerStyle;
-    else if(isMobile && !hasRecentTest) style = {...mobileButtonsContainerStyle, justifyContent: 'flex-start'};
+    if((isMobile || isSmall) && hasRecentTest) style = mobileButtonsContainerStyle;
+    else if((isMobile || isSmall) && !hasRecentTest) style = {...mobileButtonsContainerStyle, justifyContent: 'flex-start'};
     else style = {...buttonsContainerStyle, justifyContent: hasRecentTest ? 'space-between' : 'center'};
     return style;
   }
@@ -98,7 +100,7 @@ const HistoryPage = ({
         <MyForwardButton text={'Explore the map'} onClick={() => goToMapPage(null)} />
       </div>
       {
-        isMobile &&
+        (isMobile || isSmall) &&
         <MyMeasurementInfoModal isOpen={isModalOpen}
                                 setIsOpen={setIsModalOpen}
                                 measurement={currentMeasurement}

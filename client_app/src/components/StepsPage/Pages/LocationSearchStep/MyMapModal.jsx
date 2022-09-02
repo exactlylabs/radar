@@ -62,6 +62,11 @@ const footerStyle = {
   margin: 'auto'
 }
 
+const smallFooterStyle = {
+  ...footerStyle,
+  width: '95%',
+}
+
 const mobileFooterStyle = {
   display: 'flex',
   height: 120,
@@ -125,7 +130,12 @@ const MyMapModal = ({
 
   const getStyle = () => {
     if(config.widgetMode) return widgetModalFraming(config);
-    return isMobile ? mobileModalStyle : modalStyle
+    return isMobile || isSmall ? mobileModalStyle : modalStyle
+  }
+
+  const getFooterStyle = () => {
+    if(isSmall && config.widgetMode) return smallFooterStyle;
+    return isMobile || isSmall ? mobileFooterStyle : footerStyle
   }
 
   return (
@@ -138,7 +148,7 @@ const MyMapModal = ({
           <MyModalTitle text={'Confirm your location'}/>
           <div>You can move the marker to your approximate location.</div>
         </div>
-        <div style={isMobile ? mobileMapContainerStyle : mapContainerStyle}>
+        <div style={isMobile || isSmall ? mobileMapContainerStyle : mapContainerStyle}>
           {
             !loading && addressCoordinates.length > 0 &&
             <MapContainer
@@ -164,7 +174,7 @@ const MyMapModal = ({
             !loading && error && <MyMessageSnackbar message={error} type={'error'}/>
           }
         </div>
-        <div style={isSmall ? mobileFooterStyle : footerStyle}>
+        <div style={getFooterStyle()}>
           <MyBackButton text={'Change address'}
                         onClick={() => setIsOpen(false)}
                         fullWidth
