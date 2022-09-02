@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { CircularProgress } from '@mui/material';
 import { MyButton } from '../common/MyButton';
 import {MapContainer, TileLayer, ZoomControl} from 'react-leaflet';
@@ -16,10 +16,12 @@ import { MyMap } from '../common/MyMap';
 import MyCustomMarker from "./MyCustomMarker";
 import {notifyError} from "../../utils/errors";
 import {useMobile} from "../../hooks/useMobile";
+import ConfigContext from "../../context/ConfigContext";
+import {useSmall} from "../../hooks/useSmall";
 
 const mapWrapperStyle = {
   width: '100%',
-  display: 'relative',
+  position: 'relative',
   height: '100%',
 }
 
@@ -34,6 +36,8 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [selectedFilterType, setSelectedFilterType] = useState('download');
 
   const isMobile = useMobile();
+  const isSmall = useSmall();
+  const config = useContext(ConfigContext);
 
   useEffect(() => {
 
@@ -90,7 +94,22 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
 
   const goToSpeedTest = () => setStep(STEPS.SPEED_TEST);
 
-  const getMapContainerHeight = () => isMobile ? 'calc(99vh - 125px)' : `calc(${maxHeight} - 70px - 173px - 53px`;
+  const getMapContainerHeight = () => {
+    if(config.widgetMode) {
+      const widgetHeight = config.frameStyle.height;
+      return `calc(${widgetHeight} - 53px - 55px)`;
+    }
+    if(isMobile || isSmall) return 'calc(99vh - 125px)';
+    else return `calc(${maxHeight} - 70px - 173px - 53px)`;
+  }
+
+  const getMapWrapperStyle = () => {
+    if(config.widgetMode) {
+      return {...mapWrapperStyle, height: '100%'}
+    } else {
+      return mapWrapperStyle;
+    }
+  }
 
   return (
     <div style={{ textAlign: 'center', height: '100%' }}>
@@ -104,13 +123,13 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
       )}
       {!loading && !centerCoordinatesLoading &&
         results !== null && results.length > 0 && (
-        <div style={mapWrapperStyle}>
+        <div style={getMapWrapperStyle()}>
           <MapContainer
             center={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}
             zoom={14}
             scrollWheelZoom
             style={{ height: getMapContainerHeight(), margin: 0, position: 'relative' }}
-            zoomControl={!isMobile}
+            zoomControl={isMobile || isSmall || config.widgetMode}
           >
             <MyMap position={requestArea}
                    shouldRecenter={shouldRecenter}

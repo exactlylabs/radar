@@ -7,6 +7,7 @@ import SpeedGaugeInterior from "./SpeedGaugeInterior";
 import {normalizeValue} from "./utils/normalizer";
 import {downloadWorkerUrl, runnerConfig, uploadWorkerUrl} from "../../../../utils/ndt7Tester";
 import {useMobile} from "../../../../hooks/useMobile";
+import {useSmall} from "../../../../hooks/useSmall";
 
 const canvasWrapperStyle = {
   width: 250,
@@ -176,9 +177,10 @@ const SpeedGauge = ({
   };
 
   const isMobile = useMobile();
+  const isSmall = useSmall();
 
   return (
-    <div style={isMobile ? mobileCanvasWrapperStyle : canvasWrapperStyle}>
+    <div style={isMobile || isSmall ? mobileCanvasWrapperStyle : canvasWrapperStyle}>
       <canvas id={'gauge-canvas'} width={250} height={250}></canvas>
       <SpeedGaugeInterior currentValue={isDownloading ? downloadValue?.toFixed(2) : uploadValue?.toFixed(2)} isDownloading={isDownloading}/>
     </div>

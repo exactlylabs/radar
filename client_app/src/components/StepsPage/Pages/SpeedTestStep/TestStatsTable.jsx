@@ -2,6 +2,7 @@ import {DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA, WHITE} from "../../../../utils/colo
 import ConnectionInformation from "./ConnectionInformation";
 import TestStatsTableContent from "../../../common/TestStatsTableContent";
 import {useMobile} from "../../../../hooks/useMobile";
+import {useSmall} from "../../../../hooks/useSmall";
 
 const tableStyle = {
   width: '100%',
@@ -51,11 +52,6 @@ const mobileExtendedStyle = {
   paddingBottom: 0,
 }
 
-const opaqueStyle = {
-  ...tableStyle,
-  opacity: 0.5,
-}
-
 const TestStatsTable = ({
   extended,
   disabled,
@@ -67,12 +63,13 @@ const TestStatsTable = ({
 }) => {
 
   const isMobile = useMobile();
+  const isSmall = useSmall();
 
   const getStyle = () => {
     let style;
-    if(isMobile && !extended) style = mobileStyle;
-    else if(isMobile && extended) style = mobileExtendedStyle;
-    else if(!isMobile && extended) style = extendedStyle;
+    if((isMobile || isSmall) && !extended) style = mobileStyle;
+    else if((isMobile || isSmall) && extended) style = mobileExtendedStyle;
+    else if(!(isMobile || isSmall) && extended) style = extendedStyle;
     else style = tableStyle;
     return disabled ? {...style, opacity: 0.3} : style;
   }

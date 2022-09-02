@@ -6,6 +6,7 @@ import LatencyIcon from "../../assets/latency-icon.png";
 import {DEFAULT_STATS_TABLE_TEXT_COLOR} from "../../utils/colors";
 import {useMobile} from "../../hooks/useMobile";
 import MyStatsTableHorizontalDivider from "../StepsPage/Pages/SpeedTestStep/MyStatsTableHorizontalDivider";
+import {useSmall} from "../../hooks/useSmall";
 
 const tableContentStyle = {
   display: 'flex',
@@ -121,12 +122,13 @@ const TestStatsTableContent = ({
 }) => {
 
   const isMobile = useMobile();
+  const isSmall = useSmall();
 
   const getStyle = () => {
     let style;
-    if(isMobile && extended) style = mobileExtendedRowStyle;
-    else if(isMobile && !extended) style = mobileTableContentStyle;
-    else if(!isMobile && extended) style = extendedRowStyle;
+    if((isMobile || isSmall) && extended) style = mobileExtendedRowStyle;
+    else if((isMobile || isSmall) && !extended) style = mobileTableContentStyle;
+    else if(!(isMobile || isSmall) && extended) style = extendedRowStyle;
     else style = tableContentStyle;
     return style;
   }
@@ -224,7 +226,7 @@ const TestStatsTableContent = ({
 
   return (
     <div style={getStyle()}>
-      { isMobile ? getMobileContent() : getDesktopContent() }
+      { isMobile || isSmall ? getMobileContent() : getDesktopContent() }
     </div>
   )
 }

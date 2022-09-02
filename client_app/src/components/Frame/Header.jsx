@@ -6,6 +6,7 @@ import radarLogoLight from '../../assets/radar-logo-light.png';
 import MenuCloseButton from '../../assets/menu-close-button.png';
 import MenuOpenButton from '../../assets/menu-open-button.png';
 import {useMobile} from "../../hooks/useMobile";
+import {useSmall} from "../../hooks/useSmall";
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -19,7 +20,6 @@ const headerStyle = {
 
 const mobileHeaderStyle = {
   ...headerStyle,
-
 }
 
 const contentWrapperStyle = {
@@ -95,6 +95,7 @@ const Header = ({ setStep }) => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useMobile();
+  const isSmall = useSmall();
 
   const goToHome = () => {
     if(isMenuOpen) setIsMenuOpen(false);
@@ -109,7 +110,7 @@ const Header = ({ setStep }) => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <div style={isMobile ? mobileHeaderStyle : headerStyle}>
+    <div style={isMobile || isSmall ? mobileHeaderStyle : headerStyle}>
       <div style={contentWrapperStyle}>
         <div style={leftSideContainerStyle}>
           <img
@@ -120,16 +121,16 @@ const Header = ({ setStep }) => {
             onClick={goToHome}
             style={navElementStyle}
           />
-          {!isMobile &&
+          {!isMobile && !isSmall &&
             <div onClick={goToHome} style={navElementStyle}>
               Home
             </div>
           }
-          {!isMobile && <div style={navElementStyle}>About Us</div>}
+          {!isMobile && !isSmall && <div style={navElementStyle}>About Us</div>}
         </div>
         <div style={rightSideContainerStyle}>
           {
-            isMobile ?
+            isMobile || isSmall ?
               <img src={isMenuOpen ? MenuOpenButton : MenuCloseButton}
                    width={22}
                    height={22}
@@ -142,7 +143,7 @@ const Header = ({ setStep }) => {
         </div>
       </div>
       {
-        isMobile && isMenuOpen &&
+        (isMobile || isSmall) && isMenuOpen &&
         <div style={collapsableContentStyle}>
           <div onClick={goToHome} style={mobileNavElementStyle}>Home</div>
           <div style={horizontalDividerStyle}></div>

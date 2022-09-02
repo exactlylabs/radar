@@ -1,7 +1,6 @@
 import {
   DOWNLOAD_RANGES,
-  DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD, UPLOAD_RANGES,
-  UPLOAD_SPEED_LOW_TO_MID_THRESHOLD
+  UPLOAD_RANGES,
 } from "../../utils/speeds";
 import MyResultFilter from "./MyResultFilter";
 import {

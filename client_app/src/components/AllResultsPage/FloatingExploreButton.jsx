@@ -2,6 +2,9 @@ import FilterButtonOn from '../../assets/filter-button-on.png';
 import FilterButtonOff from '../../assets/filter-button-off.png';
 import {DEFAULT_FILTER_ACTIVE_COUNT_COLOR, WHITE} from "../../utils/colors";
 import {useMobile} from "../../hooks/useMobile";
+import {useSmall} from "../../hooks/useSmall";
+import {useContext} from "react";
+import ConfigContext from "../../context/ConfigContext";
 
 const floatingButtonStyle = {
   width: 68,
@@ -16,8 +19,6 @@ const floatingButtonStyle = {
 
 const mobileFloatingButtonStyle = {
   ...floatingButtonStyle,
-  bottom: 15,
-  right: 10,
 }
 
 const activeFiltersCountStyle = {
@@ -41,9 +42,22 @@ const FloatingExploreButton = ({
 }) => {
 
   const isMobile = useMobile();
+  const isSmall = useSmall();
+  const config = useContext(ConfigContext);
+
+  const getFloatingButtonStyle = () => {
+    const element = document.getElementById('main-frame');
+    const {x, y, width, height} = element.getBoundingClientRect();
+    if(config.widgetMode) {
+      return {...floatingButtonStyle, bottom: null, right: null, top: (height - 180), left: (width - 80)}
+    } else {
+      if(isMobile || isSmall) return {...mobileFloatingButtonStyle, top: (height - 225)};
+      return { ...floatingButtonStyle, top: (height - 380), left: width - 80 };
+    }
+  }
 
   return (
-    <div style={isMobile ? mobileFloatingButtonStyle : floatingButtonStyle} onClick={onClick}>
+    <div style={getFloatingButtonStyle()} onClick={onClick}>
       <img src={isBoxOpen ? FilterButtonOn : FilterButtonOff} width={68} height={68} alt={'filters-button'}/>
       {
         activeFiltersCount > 0 && !isBoxOpen &&
