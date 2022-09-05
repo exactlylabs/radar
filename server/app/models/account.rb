@@ -11,4 +11,12 @@ class Account < ApplicationRecord
 
   scope :not_deleted, -> { where(deleted_at: nil) }
 
+  def is_organization?
+    self.account_type == "organization"
+  end
+
+  def is_personal?
+    self.account_type == "personal"
+  end
+
 end

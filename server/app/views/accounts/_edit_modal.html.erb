@@ -22,7 +22,7 @@
       <div class="modal-body">
         <div class="fv-row mb-7 fv-plugins-icon-container">
           <!--begin::Label-->
-          <label class="required fs-6 fw-bold mb-2"><%= "#{@account.account_type === 0 ? 'Account' : 'Organization'} Name" %></label>
+          <label class="required fs-6 fw-bold mb-2"><%= "#{@account.is_personal? ? 'Account' : 'Organization'} Name" %></label>
           <!--end::Label-->
           <!--begin::Input-->
           <%= form.text_field :name, class: "form-control form-control-solid", value: @account.name %>
@@ -38,7 +38,7 @@
                      type="radio"
                      value="personal"
                      name="account[account_type]"
-                     <%= @account.account_type == "personal" ? "checked=checked" : nil %>
+                     <%= @account.is_personal? ? "checked=checked" : nil %>
                      id="personal-radio"
                 />
               <label for="personal-radio" style="font-weight: 500; font-size: 14px; color: #5e6278">Personal</label>
@@ -48,7 +48,7 @@
                      type="radio"
                      value="organization"
                      name="account[account_type]"
-                     <%= @account.account_type == "organization" ? "checked=checked" : nil %>
+                     <%= @account.is_organization? ? "checked=checked" : nil %>
                      id="organization-radio"
                 />
               <label for="organization-radio" style="font-weight: 500; font-size: 14px; color: #5e6278">Organization</label>
