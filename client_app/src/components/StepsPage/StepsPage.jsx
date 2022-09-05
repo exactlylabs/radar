@@ -12,8 +12,8 @@ import {types} from "../../utils/networkTypes";
 import {getAddressForCoordinates} from "../../utils/apiRequests";
 import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResultsStepPage";
 import {getLastStoredValue} from "../../utils/storage";
-import {useMobile} from "../../hooks/useMobile";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const stepsPageStyle = {
   width: '100%',
@@ -54,8 +54,8 @@ const StepsPage = ({
     networkCost: undefined,
   });
   const [lastTestResults, setLastTestResults] = useState(null);
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   const setAddress = address => setUserStepData({...userStepData, address});
   const setTerms = status => setUserStepData({...userStepData, terms: status});
@@ -189,10 +189,10 @@ const StepsPage = ({
   }
 
   return (
-    <div style={isMobile || isSmall ? mobileStepsPageStyle : stepsPageStyle}>
+    <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileStepsPageStyle : stepsPageStyle}>
       {
         currentStep <= steps.CONNECTION_COST &&
-          <MyStepper activeStep={currentStep} isMobile={isMobile}/>
+          <MyStepper activeStep={currentStep} isMobile={isMediumSizeScreen}/>
       }
       { getCurrentPage() }
     </div>

@@ -7,8 +7,8 @@ import {MyButton} from "../common/MyButton";
 import {getStoredValues} from "../../utils/storage";
 import {useState} from "react";
 import MyMeasurementInfoModal from "./MyMeasurementInfoModal";
-import {useMobile} from "../../hooks/useMobile";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const historyPageStyle = {
   width: '100%',
@@ -55,8 +55,8 @@ const HistoryPage = ({
   hasRecentTest,
 }) => {
 
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
   const historicalValues = getStoredValues();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMeasurement, setCurrentMeasurement] = useState(null);
@@ -68,8 +68,8 @@ const HistoryPage = ({
 
   const getButtonsStyle = () => {
     let style;
-    if((isMobile || isSmall) && hasRecentTest) style = mobileButtonsContainerStyle;
-    else if((isMobile || isSmall) && !hasRecentTest) style = {...mobileButtonsContainerStyle, justifyContent: 'flex-start'};
+    if((isMediumSizeScreen || isSmallSizeScreen) && hasRecentTest) style = mobileButtonsContainerStyle;
+    else if((isMediumSizeScreen || isSmallSizeScreen) && !hasRecentTest) style = {...mobileButtonsContainerStyle, justifyContent: 'flex-start'};
     else style = {...buttonsContainerStyle, justifyContent: hasRecentTest ? 'space-between' : 'center'};
     return style;
   }
@@ -100,7 +100,7 @@ const HistoryPage = ({
         <MyForwardButton text={'Explore the map'} onClick={() => goToMapPage(null)} />
       </div>
       {
-        (isMobile || isSmall) &&
+        (isMediumSizeScreen || isSmallSizeScreen) &&
         <MyMeasurementInfoModal isOpen={isModalOpen}
                                 setIsOpen={setIsModalOpen}
                                 measurement={currentMeasurement}

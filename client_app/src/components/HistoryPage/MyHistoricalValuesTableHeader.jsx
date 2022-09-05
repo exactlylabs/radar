@@ -3,8 +3,8 @@ import UploadIcon from '../../assets/small-upload-icon.png';
 import LossIcon from '../../assets/ping-icon.png';
 import LatencyIcon from '../../assets/latency-icon.png';
 import {DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR} from "../../utils/colors";
-import {useMobile} from "../../hooks/useMobile";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const historicalValuesTableHeaderStyle = {
   width: '100%',
@@ -96,26 +96,26 @@ const MyHistoricalValuesTableHeader = ({
 
 }) => {
 
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   const getNetworkTypeColumnStyle = () => ({...commonHeaderStyle, height: '100%', width: '7%'});
 
   const getDateTimeColumnStyle = () => {
     let style = dateTimeColumnStyle;
-    if(isSmall) style = smallDateTimeColumnStyle;
-    if(isMobile) style = midDateTimeColumnStyle;
+    if(isSmallSizeScreen) style = smallDateTimeColumnStyle;
+    if(isMediumSizeScreen) style = midDateTimeColumnStyle;
     return style;
   }
 
   const getDownUpColumnStyle = () => {
     let style = columnWithIconStyle;
-    if(isSmall) style = smallColumnWithIconStyle;
-    if(isMobile) style = midColumnWithIconStyle;
+    if(isSmallSizeScreen) style = smallColumnWithIconStyle;
+    if(isMediumSizeScreen) style = midColumnWithIconStyle;
     return style;
   }
 
-  const getLatencyLossColumnStyle = () => isMobile ? midColumnWithIconStyle : columnWithIconNarrowStyle;
+  const getLatencyLossColumnStyle = () => isMediumSizeScreen ? midColumnWithIconStyle : columnWithIconNarrowStyle;
 
   return (
     <div style={historicalValuesTableHeaderStyle}>
@@ -123,29 +123,29 @@ const MyHistoricalValuesTableHeader = ({
       <div style={getDateTimeColumnStyle()}>Date/Time</div>
       <div style={getDownUpColumnStyle()}>
         <img src={DownloadIcon} height={16} width={16} alt={'download-icon'} style={iconStyle}/>
-        <div style={textStyle}>{isSmall || isMobile ? 'Mbps' : 'Download'}</div>
+        <div style={textStyle}>{isSmallSizeScreen || isMediumSizeScreen ? 'Mbps' : 'Download'}</div>
       </div>
       <div style={getDownUpColumnStyle()}>
         <img src={UploadIcon} height={16} width={16} alt={'upload-icon'} style={iconStyle}/>
-        <div style={textStyle}>{isSmall || isMobile ? 'Mbps' : 'Upload'}</div>
+        <div style={textStyle}>{isSmallSizeScreen || isMediumSizeScreen ? 'Mbps' : 'Upload'}</div>
       </div>
       {
-        !isSmall &&
+        !isSmallSizeScreen &&
         <div style={getLatencyLossColumnStyle()}>
           <img src={LatencyIcon} height={16} width={16} alt={'latency-icon'} style={iconStyle}/>
-          <div style={textStyle}>{ isMobile ? 'ms' : 'Latency' }</div>
+          <div style={textStyle}>{ isMediumSizeScreen ? 'ms' : 'Latency' }</div>
         </div>
       }
       {
-        !isSmall &&
+        !isSmallSizeScreen &&
         <div style={getLatencyLossColumnStyle()}>
           <img src={LossIcon} height={16} width={16} alt={'loss-icon'} style={iconStyle}/>
-          <div style={textStyle}>{isMobile ? '%' : 'Loss'}</div>
+          <div style={textStyle}>{isMediumSizeScreen ? '%' : 'Loss'}</div>
         </div>
       }
-      { !isSmall && !isMobile && <div style={{width: '4%'}}></div> }
-      { !isSmall && !isMobile && <div style={locationColumnStyle}>Location</div> }
-      { (isSmall || isMobile) && <div style={{width: '11%'}}></div> }
+      { !isSmallSizeScreen && !isMediumSizeScreen && <div style={{width: '4%'}}></div> }
+      { !isSmallSizeScreen && !isMediumSizeScreen && <div style={locationColumnStyle}>Location</div> }
+      { (isSmallSizeScreen || isMediumSizeScreen) && <div style={{width: '11%'}}></div> }
     </div>
   )
 }

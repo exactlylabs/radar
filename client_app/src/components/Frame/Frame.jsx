@@ -4,9 +4,9 @@ import Footer from './Footer';
 import Tabs from './Tabs';
 import {DEFAULT_MAIN_SECTION_BACKGROUND_COLOR, WHITE} from '../../utils/colors';
 import {STEPS} from "../../constants";
-import {useMobile} from "../../hooks/useMobile";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 import WidgetFooter from "./WidgetFooter";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const defaultMainWrapperStyle = {
   backgroundColor: DEFAULT_MAIN_SECTION_BACKGROUND_COLOR,
@@ -28,6 +28,7 @@ const childrenWrapperStyle = {
 const fullWidthWrapperStyle = {
   ...childrenWrapperStyle,
   width: '100%',
+  overflowX: 'hidden',
 }
 
 const mobileFullWidthWrapperStyle = {
@@ -41,13 +42,13 @@ const widgetFullWidthWrapperStyle = {
 
 const Frame = ({ config, children, step, setStep }) => {
 
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   const getFrameStyleBasedOnCurrentTab = () => {
     if(step === STEPS.ALL_RESULTS) {
       if(config.widgetMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height} - 175px`};
-      return isMobile || isSmall ? mobileFullWidthWrapperStyle : fullWidthWrapperStyle;
+      return isMediumSizeScreen || isSmallSizeScreen ? mobileFullWidthWrapperStyle : fullWidthWrapperStyle;
     } else {
       return childrenWrapperStyle;
     }

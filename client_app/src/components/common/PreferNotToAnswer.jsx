@@ -1,6 +1,6 @@
 import ArrowRightIcon from '../../assets/icons-right-arrow.png';
 import {DEFAULT_SKIP_FONT_COLOR} from "../../utils/colors";
-import {useMobile} from "../../hooks/useMobile";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 
 const textStyle = {
   fontSize: 15,
@@ -28,10 +28,10 @@ const PreferNotToAnswer = ({
   goForward
 }) => {
 
-  const isMobile = useMobile();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
 
   return (
-    <div style={isMobile ? mobileTextStyle : textStyle} onClick={goForward}>
+    <div style={isMediumSizeScreen ? mobileTextStyle : textStyle} onClick={goForward}>
       I prefer not to answer
       <img src={ArrowRightIcon} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/>
     </div>

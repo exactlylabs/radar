@@ -5,8 +5,8 @@ import { STEPS } from '../../constants';
 import radarLogoLight from '../../assets/radar-logo-light.png';
 import MenuCloseButton from '../../assets/menu-close-button.png';
 import MenuOpenButton from '../../assets/menu-open-button.png';
-import {useMobile} from "../../hooks/useMobile";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -94,8 +94,8 @@ const horizontalDividerStyle = {
 const Header = ({ setStep }) => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   const goToHome = () => {
     if(isMenuOpen) setIsMenuOpen(false);
@@ -110,7 +110,7 @@ const Header = ({ setStep }) => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <div style={isMobile || isSmall ? mobileHeaderStyle : headerStyle}>
+    <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileHeaderStyle : headerStyle}>
       <div style={contentWrapperStyle}>
         <div style={leftSideContainerStyle}>
           <img
@@ -121,16 +121,16 @@ const Header = ({ setStep }) => {
             onClick={goToHome}
             style={navElementStyle}
           />
-          {!isMobile && !isSmall &&
+          {!isMediumSizeScreen && !isSmallSizeScreen &&
             <div onClick={goToHome} style={navElementStyle}>
               Home
             </div>
           }
-          {!isMobile && !isSmall && <div style={navElementStyle}>About Us</div>}
+          {!isMediumSizeScreen && !isSmallSizeScreen && <div style={navElementStyle}>About Us</div>}
         </div>
         <div style={rightSideContainerStyle}>
           {
-            isMobile || isSmall ?
+            isMediumSizeScreen || isSmallSizeScreen ?
               <img src={isMenuOpen ? MenuOpenButton : MenuCloseButton}
                    width={22}
                    height={22}
@@ -143,7 +143,7 @@ const Header = ({ setStep }) => {
         </div>
       </div>
       {
-        (isMobile || isSmall) && isMenuOpen &&
+        (isMediumSizeScreen || isSmallSizeScreen) && isMenuOpen &&
         <div style={collapsableContentStyle}>
           <div onClick={goToHome} style={mobileNavElementStyle}>Home</div>
           <div style={horizontalDividerStyle}></div>

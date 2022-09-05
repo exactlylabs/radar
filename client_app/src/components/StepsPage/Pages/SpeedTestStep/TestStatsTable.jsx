@@ -1,8 +1,8 @@
 import {DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA, WHITE} from "../../../../utils/colors";
 import ConnectionInformation from "./ConnectionInformation";
 import TestStatsTableContent from "../../../common/TestStatsTableContent";
-import {useMobile} from "../../../../hooks/useMobile";
-import {useSmall} from "../../../../hooks/useSmall";
+import {useIsMediumSizeScreen} from "../../../../hooks/useIsMediumSizeScreen";
+import {useIsSmallSizeScreen} from "../../../../hooks/useIsSmallSizeScreen";
 
 const tableStyle = {
   width: '100%',
@@ -62,14 +62,14 @@ const TestStatsTable = ({
   userStepData,
 }) => {
 
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   const getStyle = () => {
     let style;
-    if((isMobile || isSmall) && !extended) style = mobileStyle;
-    else if((isMobile || isSmall) && extended) style = mobileExtendedStyle;
-    else if(!(isMobile || isSmall) && extended) style = extendedStyle;
+    if((isMediumSizeScreen || isSmallSizeScreen) && !extended) style = mobileStyle;
+    else if((isMediumSizeScreen || isSmallSizeScreen) && extended) style = mobileExtendedStyle;
+    else if(!(isMediumSizeScreen || isSmallSizeScreen) && extended) style = extendedStyle;
     else style = tableStyle;
     return disabled ? {...style, opacity: 0.3} : style;
   }

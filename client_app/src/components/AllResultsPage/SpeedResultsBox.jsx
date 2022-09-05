@@ -6,8 +6,8 @@ import MyFiltersTitle from "./MyFiltersTitle";
 import MyFiltersTypeSwitcher from "./MyFiltersTypeSwitcher";
 import MyFiltersList from "./MyFiltersList";
 import FloatingExploreButton from "./FloatingExploreButton";
-import {useMobile} from "../../hooks/useMobile";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 import ConfigContext from "../../context/ConfigContext";
 
 const speedFiltersBoxStyle = {
@@ -66,11 +66,11 @@ const SpeedResultsBox = ({
   const [selectedRangeIndexes, setSelectedRangeIndexes] = useState([]);
 
   const config = useContext(ConfigContext);
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   const getSpeedResultsStyle = () => {
-    let style = isMobile || isSmall ? mobileFiltersWrapper : {};
+    let style = isMediumSizeScreen || isSmallSizeScreen ? mobileFiltersWrapper : {};
     return style;
   }
 
@@ -88,7 +88,7 @@ const SpeedResultsBox = ({
   // Reset all selected filters & tab
   const toggleBox = () => setIsBoxOpen(!isBoxOpen);
 
-  const getContent = () => isMobile || isSmall ? getMobileVersion() : getDesktopVersion();
+  const getContent = () => isMediumSizeScreen || isSmallSizeScreen ? getMobileVersion() : getDesktopVersion();
 
   const getSpeedFiltersDesktopStyle = () => {
     /*bottom: 200,
@@ -146,7 +146,7 @@ const SpeedResultsBox = ({
 
   return (
     <div style={getSpeedResultsStyle()} id={'speed-resss'}>
-      { isBoxOpen && (isMobile || isSmall) && getFloatingFilterTypeSwitch() }
+      { isBoxOpen && (isMediumSizeScreen || isSmallSizeScreen) && getFloatingFilterTypeSwitch() }
       { isBoxOpen && getContent() }
       <FloatingExploreButton activeFiltersCount={selectedRangeIndexes.length}
                              isBoxOpen={isBoxOpen}

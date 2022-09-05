@@ -11,9 +11,9 @@ import {useContext, useEffect, useMemo, useRef, useState} from "react";
 import {getSuggestions} from "../../../../utils/apiRequests";
 import {notifyError} from "../../../../utils/errors";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
-import {useMobile} from "../../../../hooks/useMobile";
+import {useIsMediumSizeScreen} from "../../../../hooks/useIsMediumSizeScreen";
 import ConfigContext from "../../../../context/ConfigContext";
-import {useSmall} from "../../../../hooks/useSmall";
+import {useIsSmallSizeScreen} from "../../../../hooks/useIsSmallSizeScreen";
 import {widgetModalFraming} from "../../../../utils/modals";
 
 const modalStyle = {
@@ -89,8 +89,8 @@ const MyMapModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [addressCoordinates, setAddressCoordinates] = useState(address.coordinates);
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -130,12 +130,12 @@ const MyMapModal = ({
 
   const getStyle = () => {
     if(config.widgetMode) return widgetModalFraming(config);
-    return isMobile || isSmall ? mobileModalStyle : modalStyle
+    return isMediumSizeScreen || isSmallSizeScreen ? mobileModalStyle : modalStyle
   }
 
   const getFooterStyle = () => {
-    if(isSmall && config.widgetMode) return smallFooterStyle;
-    return isMobile || isSmall ? mobileFooterStyle : footerStyle
+    if(isSmallSizeScreen && config.widgetMode) return smallFooterStyle;
+    return isMediumSizeScreen || isSmallSizeScreen ? mobileFooterStyle : footerStyle
   }
 
   return (
@@ -148,7 +148,7 @@ const MyMapModal = ({
           <MyModalTitle text={'Confirm your location'}/>
           <div>You can move the marker to your approximate location.</div>
         </div>
-        <div style={isMobile || isSmall ? mobileMapContainerStyle : mapContainerStyle}>
+        <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileMapContainerStyle : mapContainerStyle}>
           {
             !loading && addressCoordinates.length > 0 &&
             <MapContainer

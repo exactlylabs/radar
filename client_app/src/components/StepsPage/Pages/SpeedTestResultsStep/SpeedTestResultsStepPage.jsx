@@ -4,7 +4,7 @@ import {DEFAULT_EXPLORE_AREA_COLOR} from "../../../../utils/colors";
 import ArrowRightBlue from '../../../../assets/icons-arrow-right-blue.png';
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
-import {useMobile} from "../../../../hooks/useMobile";
+import {useIsMediumSizeScreen} from "../../../../hooks/useIsMediumSizeScreen";
 
 const speedTestResultsContainerStyle = {
   marginTop: 25,
@@ -49,7 +49,7 @@ const SpeedTestResultsStepPage = ({
 }) => {
 
   const goToHistoryWithRecentTestTaken = () => goToHistory(true);
-  const isMobile = useMobile();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
 
   return (
     <div style={speedTestResultsContainerStyle}>
@@ -65,7 +65,7 @@ const SpeedTestResultsStepPage = ({
                              lossValue={testResults.loss.toFixed(2)}
                              userStepData={userStepData}
       />
-      <div style={isMobile ? mobileButtonFooterStyle : buttonFooterStyle}>
+      <div style={isMediumSizeScreen ? mobileButtonFooterStyle : buttonFooterStyle}>
         <MyBackButton text={'Test again'} onClick={goToTestAgain}/>
         <MyForwardButton text={'View all results'} onClick={goToHistoryWithRecentTestTaken}/>
       </div>
