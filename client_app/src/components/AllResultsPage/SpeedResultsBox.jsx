@@ -91,11 +91,6 @@ const SpeedResultsBox = ({
   const getContent = () => isMediumSizeScreen || isSmallSizeScreen ? getMobileVersion() : getDesktopVersion();
 
   const getSpeedFiltersDesktopStyle = () => {
-    /*bottom: 200,
-      right: 25,*/
-    const element = document.getElementById('main-frame');
-    const {x, y, width, height} = element.getBoundingClientRect();
-
     return { ...speedFiltersBoxStyle, bottom: 35 , right: 26 };
   }
 

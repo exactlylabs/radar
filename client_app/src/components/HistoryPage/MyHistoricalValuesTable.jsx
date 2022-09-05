@@ -7,7 +7,6 @@ import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const historicalValuesTableStyle = {
   width: '75%',
-  //minWidth: 900,
   margin: '35px auto'
 }
 
