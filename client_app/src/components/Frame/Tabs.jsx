@@ -12,8 +12,8 @@ import exploreMapIconActive from '../../assets/explore-icon-active.png';
 import exploreMapIconInactive from '../../assets/explore-icon-inactive.png';
 import historyIconActive from '../../assets/history-icon-active.png';
 import historyIconInactive from '../../assets/history-icon-inactive.png';
-import {useMobile} from "../../hooks/useMobile";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const tabsWrapperStyle = {
   width: '100%',
@@ -108,8 +108,8 @@ const TABS = {
 
 const Tabs = ({ step, setStep }) => {
   const [selectedTab, setSelectedTab] = useState(TABS.SPEED_TEST);
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   useEffect(() => {
     if(step === STEPS.HISTORY && selectedTab !== TABS.HISTORY) setSelectedTab(TABS.HISTORY);
@@ -134,9 +134,9 @@ const Tabs = ({ step, setStep }) => {
 
   const getTabStyle = (tabName) => {
     if(selectedTab === tabName) {
-      return isMobile || isSmall ? mobileSelectedTabTextStyle : selectedTabTextStyle;
+      return isMediumSizeScreen || isSmallSizeScreen ? mobileSelectedTabTextStyle : selectedTabTextStyle;
     } else {
-      return isMobile || isSmall ? commonResponsiveTabTextStyle : commonTabTextStyle;
+      return isMediumSizeScreen || isSmallSizeScreen ? commonResponsiveTabTextStyle : commonTabTextStyle;
     }
   }
 
@@ -180,7 +180,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.EXPLORE_MAP ? 'explore-active' : 'explore-inactive'}
             />
-            <div style={selectedTab === TABS.EXPLORE_MAP ? selectedContentStyle : null}>{ isMobile || isSmall ? 'Map' : 'Explore the Map'}</div>
+            <div style={selectedTab === TABS.EXPLORE_MAP ? selectedContentStyle : null}>{ isMediumSizeScreen || isSmallSizeScreen ? 'Map' : 'Explore the Map'}</div>
           </div>
           <div style={selectedTab === TABS.EXPLORE_MAP ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>

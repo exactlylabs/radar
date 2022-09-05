@@ -1,6 +1,6 @@
 import {DEFAULT_FILTERS_SUBTITLE_COLOR, DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR, WHITE} from "../../utils/colors";
 import RadarLogoGray from '../../assets/radar-logo-gray.png';
-import {useMobile} from "../../hooks/useMobile";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 const widgetFooterStyle = {
   width: '100%',
   height: 55,
@@ -77,15 +77,15 @@ const termsStyle = {
 
 const WidgetFooter = () => {
 
-  const isMobile = useMobile();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
 
   return (
-    <div style={isMobile ? narrowWidgetFooterStyle : widgetFooterStyle}>
-      <div style={isMobile ? narrowLeftSideContainer : leftSideContainer}>
+    <div style={isMediumSizeScreen ? narrowWidgetFooterStyle : widgetFooterStyle}>
+      <div style={isMediumSizeScreen ? narrowLeftSideContainer : leftSideContainer}>
         <div style={poweredByStyle}>Powered by</div>
         <img src={RadarLogoGray} height={17} width={70} alt={'radar-logo'}/>
       </div>
-      <div style={isMobile ? narrowRightSideContainer : rightSideContainer}>
+      <div style={isMediumSizeScreen ? narrowRightSideContainer : rightSideContainer}>
         <div style={privacyStyle}>Privacy Policy</div>
         <div style={termsStyle}>Terms of Use</div>
       </div>

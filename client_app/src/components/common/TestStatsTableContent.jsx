@@ -4,9 +4,9 @@ import UploadIcon from "../../assets/small-upload-icon.png";
 import PingIcon from "../../assets/ping-icon.png";
 import LatencyIcon from "../../assets/latency-icon.png";
 import {DEFAULT_STATS_TABLE_TEXT_COLOR} from "../../utils/colors";
-import {useMobile} from "../../hooks/useMobile";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 import MyStatsTableHorizontalDivider from "../StepsPage/Pages/SpeedTestStep/MyStatsTableHorizontalDivider";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const tableContentStyle = {
   display: 'flex',
@@ -121,14 +121,14 @@ const TestStatsTableContent = ({
   lossValue
 }) => {
 
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   const getStyle = () => {
     let style;
-    if((isMobile || isSmall) && extended) style = mobileExtendedRowStyle;
-    else if((isMobile || isSmall) && !extended) style = mobileTableContentStyle;
-    else if(!(isMobile || isSmall) && extended) style = extendedRowStyle;
+    if((isMediumSizeScreen || isSmallSizeScreen) && extended) style = mobileExtendedRowStyle;
+    else if((isMediumSizeScreen || isSmallSizeScreen) && !extended) style = mobileTableContentStyle;
+    else if(extended) style = extendedRowStyle;
     else style = tableContentStyle;
     return style;
   }
@@ -226,7 +226,7 @@ const TestStatsTableContent = ({
 
   return (
     <div style={getStyle()}>
-      { isMobile || isSmall ? getMobileContent() : getDesktopContent() }
+      { isMediumSizeScreen || isSmallSizeScreen ? getMobileContent() : getDesktopContent() }
     </div>
   )
 }

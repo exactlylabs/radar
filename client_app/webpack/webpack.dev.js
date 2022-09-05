@@ -11,7 +11,7 @@ module.exports = {
   plugins: [new webpack.DefinePlugin({
     REACT_APP_ENV: JSON.stringify('development'),
     REACT_APP_API_BASE_URL: JSON.stringify('http://localhost:3000'),
-    MAPBOX_ACCESS_TOKEN: JSON.stringify('pk.eyJ1IjoiZGNvc3RhIiwiYSI6ImNsMDE0M3p3YTBxbjUzcHFwNzFsazd0angifQ.OhNi1BTmkyFazLWj4kU6TQ'),
-    MAPBOX_TILESET_URL: JSON.stringify('https://api.mapbox.com/styles/v1/dcosta/cl6xo58jj003r14pmmij5zscr/tiles/512/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZGNvc3RhIiwiYSI6ImNsMDE0M3p3YTBxbjUzcHFwNzFsazd0angifQ.OhNi1BTmkyFazLWj4kU6TQ')
+    MAPBOX_ACCESS_TOKEN: JSON.stringify('pk.eyJ1IjoiZXhhY3RseWxhYnMiLCJhIjoiY2w3OXJqcXhjMG1vbzQycGxidHNqdXRtcCJ9.BTDEZoZFcVnMMftMm33EMw'),
+    MAPBOX_TILESET_URL: JSON.stringify('https://api.mapbox.com/styles/v1/exactlylabs/cl7iwvbaz000l15mmms6da3kx/tiles/512/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZXhhY3RseWxhYnMiLCJhIjoiY2w3OXJqcXhjMG1vbzQycGxidHNqdXRtcCJ9.BTDEZoZFcVnMMftMm33EMw')
   })]
 };

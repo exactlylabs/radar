@@ -1,8 +1,8 @@
 import MyOption from "./MyOption";
 import MyVerticalDivider from "./MyVerticalDivider";
 import MyHorizontalOptionDivider from "./MyHorizontalOptionDivider";
-import {useMobile} from "../../hooks/useMobile";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const optionsPickerStyle = {
   display: 'flex',
@@ -48,11 +48,11 @@ const MyOptionPicker = ({
   selectedOption,
 }) => {
 
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   return (
-    <div style={isMobile || isSmall ? mobileOptionsPickerStyle : optionsPickerStyle}>
+    <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileOptionsPickerStyle : optionsPickerStyle}>
       {
         !needsDivider &&
         options.map((option, index) => <MyOption key={index}
@@ -67,9 +67,9 @@ const MyOptionPicker = ({
         needsDivider && dividerIndex &&
         options.map((option, index) => {
           if(index === dividerIndex) {
-            return (<div key={`divider-${index}`} style={isMobile || isSmall? horizontalDividerOptionStyle : verticalDividerOptionStyle}>
+            return (<div key={`divider-${index}`} style={isMediumSizeScreen || isSmallSizeScreen? horizontalDividerOptionStyle : verticalDividerOptionStyle}>
               {
-                isMobile || isSmall ?
+                isMediumSizeScreen || isSmallSizeScreen ?
                   <MyHorizontalOptionDivider/> :
                   <MyVerticalDivider/>
               }

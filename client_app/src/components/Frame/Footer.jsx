@@ -5,8 +5,8 @@ import {
 } from '../../utils/colors';
 import anthcLogo from '../../assets/anthc-logo.png';
 import radarLogoDark from '../../assets/radar-logo-dark.png';
-import {useMobile} from "../../hooks/useMobile";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const footerStyle = {
   height: 173,
@@ -94,10 +94,10 @@ const FooterHorizontalDivider = () => <div style={horizontalDividerStyle}></div>
 };*/
 
 const Footer = () => {
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
-  return isMobile || isSmall ?
+  return isMediumSizeScreen || isSmallSizeScreen ?
     <div style={mobileFooterStyle}>
       <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={{ marginBottom: 30, marginTop: 25 }} />
       <div style={footerLinkStyle}>Privacy Policy</div>

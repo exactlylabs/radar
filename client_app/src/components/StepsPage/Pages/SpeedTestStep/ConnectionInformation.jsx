@@ -7,10 +7,10 @@ import MyConnectionInformationVerticalDivider from "./MyConnectionInformationVer
 import AddressIcon from '../../../../assets/address-icon.png';
 import HomeIconLight from '../../../../assets/icon-location-home-light.png';
 import WifiIconLight from '../../../../assets/icon-connection-wifi-light.png';
-import {useMobile} from "../../../../hooks/useMobile";
+import {useIsMediumSizeScreen} from "../../../../hooks/useIsMediumSizeScreen";
 import {useEffect, useState} from "react";
 import {CONNECTION_INFORMATION_MIN_WIDTH} from "../../../../utils/breakpoints";
-import {useSmall} from "../../../../hooks/useSmall";
+import {useIsSmallSizeScreen} from "../../../../hooks/useIsSmallSizeScreen";
 
 const connectionInformationStyle = {
   width: '100%',
@@ -116,8 +116,8 @@ const ConnectionInformation = ({
 }) => {
 
   const [shouldTextAppear, setShouldTextAppear] = useState(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH);
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   useEffect(() => {
     window.addEventListener('resize', () => setShouldTextAppear(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH));
@@ -126,20 +126,20 @@ const ConnectionInformation = ({
 
   const getStyle = () => {
     let style;
-    if((isMobile || isSmall) && !integratedToStatsTable) style = mobileStyle;
-    else if((isMobile || isSmall) && integratedToStatsTable) style = integratedMobileStyle;
-    else if(!(isMobile || isSmall) && integratedToStatsTable) style = integratedStyle;
+    if((isMediumSizeScreen || isSmallSizeScreen) && !integratedToStatsTable) style = mobileStyle;
+    else if((isMediumSizeScreen || isSmallSizeScreen) && integratedToStatsTable) style = integratedMobileStyle;
+    else if(!(isMediumSizeScreen || isSmallSizeScreen) && integratedToStatsTable) style = integratedStyle;
     else style = connectionInformationStyle;
     return disabled ? {...style, opacity: 0.3} : style;
   }
 
   const getText = possibleData => {
     if(possibleData) return possibleData.text;
-    return isMobile ? 'N/A' : 'Not available';
+    return isMediumSizeScreen ? 'N/A' : 'Not available';
   }
 
   const getAddressStyle = () => {
-    let style = (isMobile || isSmall) ? mobileAddressRowStyle : addressRowStyle;
+    let style = (isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressRowStyle : addressRowStyle;
     return shouldTextAppear ? style : {...style, maxWidth: 175};
   }
 

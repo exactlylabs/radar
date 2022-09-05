@@ -1,8 +1,8 @@
 import FilterButtonOn from '../../assets/filter-button-on.png';
 import FilterButtonOff from '../../assets/filter-button-off.png';
 import {DEFAULT_FILTER_ACTIVE_COUNT_COLOR, WHITE} from "../../utils/colors";
-import {useMobile} from "../../hooks/useMobile";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 import {useContext} from "react";
 import ConfigContext from "../../context/ConfigContext";
 
@@ -41,8 +41,8 @@ const FloatingExploreButton = ({
   onClick
 }) => {
 
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
   const config = useContext(ConfigContext);
 
   const getFloatingButtonStyle = () => {
@@ -51,7 +51,7 @@ const FloatingExploreButton = ({
     if(config.widgetMode) {
       return {...floatingButtonStyle, bottom: null, right: null, top: (height - 180), left: (width - 80)}
     } else {
-      if(isMobile || isSmall) return {...mobileFloatingButtonStyle, top: (height - 225)};
+      if(isMediumSizeScreen || isSmallSizeScreen) return {...mobileFloatingButtonStyle, top: (height - 225)};
       return { ...floatingButtonStyle, top: (height - 380), left: width - 80 };
     }
   }

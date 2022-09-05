@@ -6,9 +6,9 @@ import {
 } from "../../utils/colors";
 import {types} from "../../utils/networkTypes";
 import {prettyPrintDate} from "../../utils/dates";
-import {useMobile} from "../../hooks/useMobile";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 import InfoIcon from '../../assets/info-icon.png';
-import {useSmall} from "../../hooks/useSmall";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const historicalValuesTableRowStyle = {
   width: '100%',
@@ -112,8 +112,8 @@ const MyHistoricalValuesTableRow = ({
   openMeasurementInfoModal
 }) => {
 
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
 
   const getNetworkTypeIcon = () => {
     const networkType = types.find(type => type.text === measurement.networkType);
@@ -122,36 +122,36 @@ const MyHistoricalValuesTableRow = ({
 
   const getMbpsText = possibleValue => {
     if(!possibleValue) return '-';
-    return isMobile || isSmall ? possibleValue.toFixed(2) : `${measurement.download.toFixed(2)} Mbps`;
+    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(2) : `${measurement.download.toFixed(2)} Mbps`;
   }
 
   const getMsText = possibleValue => {
     if(possibleValue === null) return '-';
-    return isMobile || isSmall ? measurement.latency.toFixed(0) : `${measurement.latency.toFixed(0)} ms`;
+    return isMediumSizeScreen || isSmallSizeScreen ? measurement.latency.toFixed(0) : `${measurement.latency.toFixed(0)} ms`;
   }
 
   const getPercentageText = possibleValue => {
     if(possibleValue === null) return '-';
-    return isMobile || isSmall ? measurement.loss.toFixed(2) : `${measurement.loss.toFixed(2)} %`;
+    return isMediumSizeScreen || isSmallSizeScreen ? measurement.loss.toFixed(2) : `${measurement.loss.toFixed(2)} %`;
   }
 
   const getDownUpStyle = () => {
     let style = columnWithIconStyle;
-    if(isSmall) return {...style, width: '24%'};
-    if(isMobile) return {...style, width: '15%'}
+    if(isSmallSizeScreen) return {...style, width: '24%'};
+    if(isMediumSizeScreen) return {...style, width: '15%'}
     return style;
   }
 
   const getDateTimeStyle = () => {
     let style = dateTimeColumnStyle;
-    if(isSmall) style = smallDateTimeColumnStyle;
-    if(isMobile) style = midDateTimeColumnStyle;
+    if(isSmallSizeScreen) style = smallDateTimeColumnStyle;
+    if(isMediumSizeScreen) style = midDateTimeColumnStyle;
     return style;
   }
 
-  const getLatencyLossStyle = () => isMobile ? midLatencyLossStyle : columnWithIconNarrowStyle;
+  const getLatencyLossStyle = () => isMediumSizeScreen ? midLatencyLossStyle : columnWithIconNarrowStyle;
 
-  const getInfoIconStyle = () => isSmall ? smallInfoIconColumnStyle : infoIconColumnStyle;
+  const getInfoIconStyle = () => isSmallSizeScreen ? smallInfoIconColumnStyle : infoIconColumnStyle;
 
   const openInfoModal = () => openMeasurementInfoModal(measurement);
 
@@ -171,28 +171,28 @@ const MyHistoricalValuesTableRow = ({
         {getMbpsText(measurement.upload)}
       </div>
       {
-        !isSmall &&
+        !isSmallSizeScreen &&
         <div style={getLatencyLossStyle()}>
           {getMsText(measurement.latency)}
         </div>
       }
       {
-        !isSmall &&
+        !isSmallSizeScreen &&
         <div style={getLatencyLossStyle()}>
           {getPercentageText(measurement.loss)}
         </div>
       }
       {
-        !isSmall && !isMobile && <div style={{width: '4%'}}></div>
+        !isSmallSizeScreen && !isMediumSizeScreen && <div style={{width: '4%'}}></div>
       }
       {
-        (!isSmall && !isMobile) &&
+        (!isSmallSizeScreen && !isMediumSizeScreen) &&
         <div style={locationColumnStyle}>
           <p style={ellipsisStyle}>{`${measurement.city}, ${measurement.state}`}</p>
         </div>
       }
       {
-        (isSmall || isMobile) &&
+        (isSmallSizeScreen || isMediumSizeScreen) &&
         <div style={getInfoIconStyle()}>
           <img src={InfoIcon} width={22} height={22} alt={'info-icon'} onClick={openInfoModal}/>
         </div>

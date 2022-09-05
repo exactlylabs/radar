@@ -15,9 +15,9 @@ import {getAllSpeedTests, getUserApproximateCoordinates} from '../../utils/apiRe
 import { MyMap } from '../common/MyMap';
 import MyCustomMarker from "./MyCustomMarker";
 import {notifyError} from "../../utils/errors";
-import {useMobile} from "../../hooks/useMobile";
+import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 import ConfigContext from "../../context/ConfigContext";
-import {useSmall} from "../../hooks/useSmall";
+import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -35,8 +35,8 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(true);
   const [selectedFilterType, setSelectedFilterType] = useState('download');
 
-  const isMobile = useMobile();
-  const isSmall = useSmall();
+  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const isSmallSizeScreen = useIsSmallSizeScreen();
   const config = useContext(ConfigContext);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
       const widgetHeight = config.frameStyle.height;
       return `calc(${widgetHeight} - 53px - 55px)`;
     }
-    if(isMobile || isSmall) return 'calc(99vh - 125px)';
+    if(isMediumSizeScreen || isSmallSizeScreen) return 'calc(99vh - 125px)';
     else return `calc(${maxHeight} - 70px - 173px - 53px)`;
   }
 
@@ -129,7 +129,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
             zoom={14}
             scrollWheelZoom
             style={{ height: getMapContainerHeight(), margin: 0, position: 'relative' }}
-            zoomControl={isMobile || isSmall || config.widgetMode}
+            zoomControl={isMediumSizeScreen || isSmallSizeScreen || config.widgetMode}
           >
             <MyMap position={requestArea}
                    shouldRecenter={shouldRecenter}
