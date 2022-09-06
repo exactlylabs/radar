@@ -14,7 +14,7 @@ const commonIconStyle = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  fontSize: 14,
+  fontSize: 13,
   fontFamily: 'MulishExtraBold'
 }
 

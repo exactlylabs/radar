@@ -1,4 +1,8 @@
-import {DEFAULT_MAP_MODAL_BACKGROUND_COLOR} from "../../../../utils/colors";
+import {
+  DEFAULT_MAP_MODAL_BACKGROUND_COLOR,
+  DEFAULT_MODAL_BOX_SHADOW,
+  DEFAULT_TEXT_COLOR
+} from "../../../../utils/colors";
 import {Box, CircularProgress, Modal} from '@mui/material';
 import {MyModalTitle} from "../../../common/MyModalTitle";
 import {MyBackButton} from "../../../common/MyBackButton";
@@ -15,7 +19,12 @@ import ConfigContext from "../../../../context/ConfigContext";
 import {widgetModalFraming} from "../../../../utils/modals";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
+const commonModalStyle = {
+  boxShadow: DEFAULT_MODAL_BOX_SHADOW,
+}
+
 const modalStyle = {
+  ...commonModalStyle,
   width: '700px',
   height: '485px',
   position: 'fixed',
@@ -24,6 +33,7 @@ const modalStyle = {
 }
 
 const mobileModalStyle = {
+  ...commonModalStyle,
   width: '90%',
   height: '85%',
   position: 'fixed',
@@ -55,7 +65,7 @@ const footerStyle = {
   height: 110,
   display: 'flex',
   flexDirection: 'row',
-  width: '55%',
+  maxWidth: 385,
   justifyContent: 'space-between',
   alignItems: 'center',
   margin: 'auto'
@@ -74,6 +84,10 @@ const mobileFooterStyle = {
   justifyContent: 'space-between',
   alignItems: 'center',
   margin: '30px auto',
+}
+
+const subtitleStyle = {
+  color: DEFAULT_TEXT_COLOR
 }
 
 const MyMapModal = ({
@@ -144,7 +158,7 @@ const MyMapModal = ({
       <Box sx={boxStyle}>
         <div style={headerStyle}>
           <MyModalTitle text={'Confirm your location'}/>
-          <div>You can move the marker to your approximate location.</div>
+          <div style={subtitleStyle}>You can move the marker to your approximate location.</div>
         </div>
         <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileMapContainerStyle : mapContainerStyle}>
           {
@@ -175,12 +189,10 @@ const MyMapModal = ({
         <div style={getFooterStyle()}>
           <MyBackButton text={'Change address'}
                         onClick={() => setIsOpen(false)}
-                        fullWidth
           />
           <MyForwardButton text={'Confirm location'}
                            icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
                            onClick={() => goForward(addressCoordinates)}
-                           fullWidth
           />
         </div>
       </Box>

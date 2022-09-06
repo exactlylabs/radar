@@ -35,11 +35,6 @@ const filterTextStyle = {
   marginLeft: 8,
 }
 
-const selectedFilterTextStyle = {
-  ...filterTextStyle,
-  fontWeight: 'bolder',
-}
-
 const checkIconSX = {
   fontSize: 14,
   color: 'white'
@@ -66,7 +61,7 @@ const MyResultFilter = ({
           {selected && <Check sx={checkIconSX}/>}
         </div>
       </div>
-      <div style={selected ? selectedFilterTextStyle : filterTextStyle}>{getRangeText()}</div>
+      <div className={selected ? 'bold' : ''} style={filterTextStyle}>{getRangeText()}</div>
     </div>
   )
 }

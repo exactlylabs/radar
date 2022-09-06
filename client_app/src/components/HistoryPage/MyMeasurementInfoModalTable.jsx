@@ -51,7 +51,6 @@ const addressTextStyle = {
   ...ellipsisStyle,
   color: DEFAULT_POPUP_VALUE_COLOR,
   fontSize: 15,
-  fontWeight: 'bold',
 }
 
 const networkTextStyle = {
@@ -108,7 +107,7 @@ const MyMeasurementInfoModalTable = ({
         <div style={locationIconContainerStyle}>
           <img src={LocationIcon} width={20} height={20} alt={'location-icon'}/>
         </div>
-        <div style={addressTextStyle}>{address}</div>
+        <div className={'bold'} style={addressTextStyle}>{address}</div>
       </div>
       {
         (networkLocation || networkType) &&
@@ -119,7 +118,7 @@ const MyMeasurementInfoModalTable = ({
           <div style={lowRowStyle}>
           {
             networkLocation &&
-            <div style={addressRowStyle}>
+            <div className={'bold'} style={addressRowStyle}>
               <img src={getNetworkLocationIcon()} width={28} height={28} alt={'location-icon'} style={iconStyle}/>
               <div style={networkTextStyle}>{networkLocation}</div>
             </div>
@@ -130,7 +129,7 @@ const MyMeasurementInfoModalTable = ({
           }
           {
             networkType &&
-            <div style={addressRowStyle}>
+            <div className={'bold'} style={addressRowStyle}>
               <img src={getNetworkTypeIcon()} width={28} height={28} alt={'location-icon'} style={iconStyle}/>
               <div style={networkTextStyle}>{networkType}</div>
             </div>

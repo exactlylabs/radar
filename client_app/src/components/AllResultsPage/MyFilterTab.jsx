@@ -8,7 +8,6 @@ const filterTabStyle = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  fontWeight: 'bold',
   fontSize: 13,
   cursor: 'pointer',
 }
@@ -26,7 +25,7 @@ const MyFilterTab = ({
 }) => {
 
   return (
-    <div style={selected ? selectedFilterTabStyle : filterTabStyle}
+    <div className={'bold'} style={selected ? selectedFilterTabStyle : filterTabStyle}
          onClick={onClick}>
       {label}
     </div>

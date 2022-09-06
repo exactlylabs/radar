@@ -15,11 +15,11 @@ const stepperContainerStyle = {
 
 const mobileStepperContainerStyle = {
   ...stepperContainerStyle,
-  margin: '30px auto 15px'
+  margin: '30px auto 20px'
 }
 
 const stepConnectorStyle = {
-  width: 10,
+  width: 20,
   height: 2,
   marginLeft: 5,
   marginRight: 5,

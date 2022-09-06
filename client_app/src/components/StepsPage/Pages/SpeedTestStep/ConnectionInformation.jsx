@@ -1,5 +1,6 @@
 import {
-  DEFAULT_CONNECTION_INFORMATION_BACKGROUND_COLOR,
+  DEFAULT_CONNECTION_INFORMATION_BACKGROUND_COLOR, DEFAULT_CONNECTION_INFORMATION_BOX_SHADOW,
+  DEFAULT_CONNECTION_INFORMATION_BOX_SHADOW,
   DEFAULT_SPEED_TEST_PROGRESS_BAR_COLOR,
   WHITE
 } from "../../../../utils/colors";
@@ -44,7 +45,6 @@ const integratedMobileStyle = {
   margin: 'auto',
 }
 
-
 const columnsContainerStyle = {
   width: '95%',
   height: 'calc(100% - 3px)',
@@ -58,7 +58,6 @@ const columnsContainerStyle = {
 const commonRowStyle = {
   color: WHITE,
   fontSize: 15,
-  fontWeight: 'bold',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-start',
@@ -70,22 +69,22 @@ const commonRowStyle = {
 
 const addressRowStyle = {
   ...commonRowStyle,
-  maxWidth: 200,
 }
 
 const mobileAddressRowStyle = {
   ...commonRowStyle,
-
 }
 
 const placementRowStyle = {
   ...commonRowStyle,
   width: 'max-content',
+  minWidth: 75,
 }
 
 const typeRowStyle = {
   ...commonRowStyle,
   width: 'max-content',
+  minWidth: 75,
 }
 
 const iconStyle = {
@@ -104,7 +103,8 @@ const addressStyle = {
   color: WHITE,
   textOverflow: 'ellipsis',
   overflow: 'hidden',
-  whiteSpace:'nowrap'
+  whiteSpace:'nowrap',
+  fontSize: 15,
 }
 
 const ConnectionInformation = ({
@@ -128,6 +128,7 @@ const ConnectionInformation = ({
     else if((isMediumSizeScreen || isSmallSizeScreen) && integratedToStatsTable) style = integratedMobileStyle;
     else if(!(isMediumSizeScreen || isSmallSizeScreen) && integratedToStatsTable) style = integratedStyle;
     else style = connectionInformationStyle;
+    if(!integratedToStatsTable) style = {...style, boxShadow: DEFAULT_CONNECTION_INFORMATION_BOX_SHADOW}
     return disabled ? {...style, opacity: 0.3} : style;
   }
 
@@ -144,17 +145,17 @@ const ConnectionInformation = ({
   return (
     <div style={getStyle()}>
       <div style={columnsContainerStyle}>
-        <div style={getAddressStyle()}>
+        <div className={'bold'} style={getAddressStyle()}>
           <img style={iconStyle} src={AddressIcon} width={22} height={22} alt={'address-icon'}/>
           <div style={addressStyle}>{userStepData.address.address}</div>
         </div>
         <MyConnectionInformationVerticalDivider disabled={disabled}/>
-        <div style={placementRowStyle}>
+        <div className={'bold'} style={placementRowStyle}>
           <img style={iconStyle} src={userStepData.networkLocation ? userStepData.networkLocation.iconLightSrc : HomeIconLight} width={22} height={22} alt={'address-icon'}/>
           { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkLocation)}</div> }
         </div>
         <MyConnectionInformationVerticalDivider disabled={disabled}/>
-        <div style={typeRowStyle}>
+        <div className={'bold'} style={typeRowStyle}>
           <img style={iconStyle} src={userStepData.networkType ? userStepData.networkType.iconLightSrc : WifiIconLight} width={22} height={22} alt={'address-icon'}/>
           { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkType)}</div> }
         </div>

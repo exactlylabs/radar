@@ -16,7 +16,7 @@ const suggestionsContainerStyle = {
   position: 'absolute',
   padding: 5,
   left: '50%',
-  transform: 'translate(-50%, -10px)',
+  transform: 'translate(-50%, -35px)',
   maxHeight: 200,
   overflowY: 'scroll',
   overflowX: 'hidden',
@@ -33,14 +33,15 @@ const emptySuggestionStyle = {
 
 const LocationSuggestionsList = ({
   suggestions,
-  autofillInput
+  autofillInput,
+  open,
+  setOpen
 }) => {
 
-  const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const clickOutsideContainerFunction = e => {
-    const suggestionsListContainerElement = document.getElementById('suggestions-list-container');
+    const suggestionsListContainerElement = document.getElementById('address-input-wrapper');
     if (!suggestionsListContainerElement.contains(e.target)) {
       setOpen(false);
     }
@@ -58,6 +59,8 @@ const LocationSuggestionsList = ({
         autofillInput(prevState);
         return prevState;
       })
+      setOpen(false);
+    } else if(e.key === 'Escape') {
       setOpen(false);
     }
   }
