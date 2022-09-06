@@ -2,9 +2,8 @@ import {MyTitle} from "../../../common/MyTitle";
 import MyAddressInput from "./AddressInput/MyAddressInput";
 import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
+import {useState} from "react";
 import MyMapModal from "./MyMapModal";
-import {DEFAULT_LINK_COLOR, DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
-import MyCheckbox from "../../../common/MyCheckbox";
 
 const locationSearchStepStyle = {
   width: '100%',
@@ -15,23 +14,18 @@ const termsStyle = {
   display: 'flex',
   width: '90%',
   maxWidth: 415,
-  margin: '30px auto 40px',
+  margin: '26px auto 40px',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'flex-start'
+}
+
+const checkboxStyle = {
+  marginRight: 10,
 }
 
 const termsTextStyle = {
   fontSize: 14,
   width: '85%',
-  color: DEFAULT_TEXT_COLOR
-}
-
-const subtitleStyle = {
-  color: DEFAULT_TEXT_COLOR
-}
-
-const linkStyle = {
-  color: DEFAULT_LINK_COLOR,
 }
 
 const LocationSearchStepPage = ({
@@ -45,17 +39,15 @@ const LocationSearchStepPage = ({
   currentAddress
 }) => {
 
-  const handleSetTerms = checked => setTerms(checked);
-
   return (
     <div style={locationSearchStepStyle}>
       <MyTitle text={'What is your location?'}/>
-      <div style={subtitleStyle}>We’ll show your speed test results on the map.</div>
+      <div>We’ll show your speed test results on the map.</div>
       <MyAddressInput setAddress={setAddress}/>
       { error && <MyMessageSnackbar type={'error'} message={error}/> }
       <div style={termsStyle}>
-        <MyCheckbox onChange={handleSetTerms}/>
-        <p style={termsTextStyle}>I agree to the Radar’s <a className={'opaque-hoverable'} style={linkStyle} href={'/terms'}>Terms of Use</a> and <a className={'opaque-hoverable'} style={linkStyle} href={'/privacy-policy'}>Privacy Policy</a>.</p>
+        <input type={'checkbox'} style={checkboxStyle} onChange={e => setTerms(e.target.checked)}/>
+        <p style={termsTextStyle}>I agree to the Radar’s <a href={'/terms'}>Terms of Use</a> and <a href={'/privacy-policy'}>Privacy Policy</a>.</p>
       </div>
       <MyStepSwitcher goForward={checkAndOpenModal}/>
       <MyMapModal isOpen={isModalOpen}

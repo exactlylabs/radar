@@ -5,11 +5,7 @@ import PreferNotToAnswer from "../../../common/PreferNotToAnswer";
 import {MyTitle} from "../../../common/MyTitle";
 import {types} from "../../../../utils/networkTypes";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
-import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
 
-const subtitleStyle = {
-  color: DEFAULT_TEXT_COLOR
-}
 
 const ConnectionTypeStepPage = ({
   goForward,
@@ -30,7 +26,7 @@ const ConnectionTypeStepPage = ({
   return (
     <div>
       <MyTitle text={'How are you connected?'}/>
-      <div style={subtitleStyle}>Choose how you are connected to the internet.</div>
+      <div>Choose how you are connected to the internet.</div>
       <MyOptionPicker options={types}
                       selectedOption={selectedOption}
                       setSelectedOption={setSelectedOption}

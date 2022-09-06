@@ -1,4 +1,0 @@
-.MuiModal-root > .MuiBackdrop-root {
-  opacity: 0.3 !important; /* Couldn't get the override to work otherwise */
-  background-color: rgba(17, 14, 76);
-}

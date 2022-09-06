@@ -12,6 +12,7 @@ const paginatorStyle = {
 }
 
 const regularPageStyle = {
+  fontWeight: 'bold',
   fontSize: 15,
   marginLeft: 7.5,
   marginRight: 7.5,
@@ -43,7 +44,7 @@ const MyHistoricalValuesTablePaginator = ({
     if(pageCount > 8) {
       // < 1 2 ... 9 10 >
       const distanceToLastPage = pageCount - currentPage;
-      if(distanceToLastPage === 3) {
+      if(distanceToLastPage == 3) {
         pages = [currentPage, currentPage + 1, pageCount - 1, pageCount];
       } else if(distanceToLastPage === 2) {
         pages = [currentPage - 1, currentPage, currentPage + 1, pageCount];
@@ -61,7 +62,7 @@ const MyHistoricalValuesTablePaginator = ({
     }
     return pages.map(page => {
         return page ?
-        <p className={'bold'} key={page} style={currentPage === page ? selectedPageStyle : regularPageStyle}
+        <p key={page} style={currentPage === page ? selectedPageStyle : regularPageStyle}
            onClick={() => setCurrentPage(page)}
         >
           {page}

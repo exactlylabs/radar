@@ -28,12 +28,14 @@ const gridItemBottomRowStyle = {
 
 const gridItemTitleStyle = {
   fontSize: 14,
+  fontWeight: 'bold',
   color: DEFAULT_POPUP_TITLE_COLOR,
   marginLeft: 5,
 }
 
 const gridItemValueStyle = {
   fontSize: 18,
+  fontWeight: 'bold',
   color: DEFAULT_POPUP_VALUE_COLOR,
   margin: 0,
   marginRight: 4,
@@ -56,10 +58,10 @@ const MyPopupGridItem = ({
     <div style={gridItemStyle}>
       <div style={gridItemTopRowStyle}>
         <img src={icon} width={16} height={16} alt={`${title}-icon`}/>
-        <div className={'bold'} style={gridItemTitleStyle}>{title}</div>
+        <div style={gridItemTitleStyle}>{title}</div>
       </div>
       <div style={gridItemBottomRowStyle}>
-        <p className={'bold'} style={gridItemValueStyle}>{value}</p>
+        <p style={gridItemValueStyle}>{value}</p>
         <p style={gridItemUnitStyle}>{unit}</p>
       </div>
     </div>

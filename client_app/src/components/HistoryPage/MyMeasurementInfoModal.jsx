@@ -27,6 +27,7 @@ const closeButtonStyle = {
   width: 28,
   height: 28,
   borderRadius: '50%',
+  backgroundColor: '#dedce8',
   position: 'absolute',
   right: 12,
   top: 12,
@@ -52,7 +53,7 @@ const MyMeasurementInfoModal = ({
   return measurement &&
     <Modal open={isOpen} style={mobileModalStyle}>
       <Box sx={boxStyle}>
-        <div style={closeButtonStyle} onClick={closeModal} className={'modal-dismiss--hoverable'}>
+        <div style={closeButtonStyle} onClick={closeModal}>
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
         <MyModalTitle text={'Test details'}/>

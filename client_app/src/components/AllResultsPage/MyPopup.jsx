@@ -70,6 +70,7 @@ const popupContentContainerStyle = {
 
 const addressTitleStyle = {
   fontSize: 15,
+  fontWeight: 'bold',
   color: DEFAULT_MAP_POPUP_ADDRESS_TITLE_COLOR,
   marginBottom: 2,
   maxWidth: '95%',
@@ -139,7 +140,7 @@ const MyPopup = ({
       <div style={popupDivStyle}>
         <div style={popupHeaderStyle}>
           <div style={{...popupHeaderAddressContainerStyle, width: getAvailableWidth()}}>
-            <div className={'bold'} style={addressTitleStyle}>{measurement.street}</div>
+            <div style={addressTitleStyle}>{measurement.street}</div>
             <div style={addressSubtitleStyle}>{`${measurement.city}, ${measurement.state}`}</div>
           </div>
           {

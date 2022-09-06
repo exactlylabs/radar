@@ -5,11 +5,6 @@ import {MyTitle} from "../../../common/MyTitle";
 import {placementOptions} from "../../../../utils/placements";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 import {warnings} from "../../../../utils/messages";
-import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
-
-const subtitleStyle = {
-  color: DEFAULT_TEXT_COLOR
-}
 
 const ConnectionPlacementStepPage = ({
   goForward,
@@ -22,7 +17,7 @@ const ConnectionPlacementStepPage = ({
   return (
     <div>
       <MyTitle text={'Where do you have Internet?'}/>
-      <div style={subtitleStyle}>Choose the option that best applies.</div>
+      <div>Choose the option that best applies.</div>
       <MyOptionPicker options={placementOptions}
                       needsDivider
                       dividerIndex={3}

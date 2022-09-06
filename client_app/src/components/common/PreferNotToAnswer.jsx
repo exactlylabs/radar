@@ -1,12 +1,11 @@
-import {useState} from "react";
-import {useScreenSize} from "../../hooks/useScreenSize";
-import {DEFAULT_SKIP_FONT_COLOR} from "../../utils/colors";
 import ArrowRightIcon from '../../assets/icons-right-arrow.png';
-import ArrowRightIconHovered from '../../assets/icons-right-arrow-hovered.png';
+import {DEFAULT_SKIP_FONT_COLOR} from "../../utils/colors";
+import {useScreenSize} from "../../hooks/useScreenSize";
 
 const textStyle = {
   fontSize: 15,
   color: DEFAULT_SKIP_FONT_COLOR,
+  fontWeight: 'bold',
   marginTop: 30,
   display: 'flex',
   flexDirection: 'row',
@@ -30,25 +29,11 @@ const PreferNotToAnswer = ({
 }) => {
 
   const isMobile = useScreenSize();
-  const [hovered, setHovered] = useState(false);
-
-  const hoverOn = () => setHovered(true);
-
-  const hoverOff = () => setHovered(false);
 
   return (
-    <div className={'bold'}
-         style={isMobile ? mobileTextStyle : textStyle}
-         onClick={goForward}
-         onMouseEnter={hoverOn}
-         onMouseLeave={hoverOff}
-    >
-      <p className={'regular-link--hoverable'}>I prefer not to answer</p>
-      {
-        hovered ?
-          <img src={ArrowRightIconHovered} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/> :
-          <img src={ArrowRightIcon} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/>
-      }
+    <div style={isMobile ? mobileTextStyle : textStyle} onClick={goForward}>
+      I prefer not to answer
+      <img src={ArrowRightIcon} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/>
     </div>
   );
 };

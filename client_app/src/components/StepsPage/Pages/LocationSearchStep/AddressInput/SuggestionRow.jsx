@@ -1,7 +1,6 @@
 import LocationIcon from '../../../../../assets/location-icon.png';
 import './SuggestionRow.css';
-import {useEffect} from "react";
-import {DEFAULT_TEXT_COLOR} from "../../../../../utils/colors";
+import {useEffect, useState} from "react";
 
 const suggestionRowStyle = {
   width: '100%',
@@ -13,7 +12,6 @@ const suggestionRowStyle = {
   fontSize: 15,
   cursor: 'pointer',
   overflowX: 'hidden',
-  color: DEFAULT_TEXT_COLOR
 }
 
 const locationIconStyle = {

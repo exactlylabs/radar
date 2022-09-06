@@ -1,6 +1,5 @@
 import MyCostInput from "./MyCostInput";
 import MyCostButton from "./MyCostButton";
-import {isBackspace, isValidNumericalCharacter} from "../../../../../utils/validations";
 
 const costInputContainerStyle = {
   display: 'flex',
@@ -21,10 +20,9 @@ const CostInputContainer = ({
 }) => {
 
   const subtractTen = () => {
-    if(cost === null || cost === undefined) return;
-    const newCost = parseFloat(cost) - 10;
-    if(newCost < 0) setCost('');
-    else setCost(newCost.toFixed(2));
+    if(!cost) return;
+    if((cost - 10) < 0) setCost(0);
+    else setCost(parseInt(cost) - 10);
   }
 
   const addTen = () => {
@@ -32,14 +30,13 @@ const CostInputContainer = ({
       setCost(10);
       return;
     }
-    const newCost = parseFloat(cost) + 10;
-    setCost(newCost.toFixed(2));
+    setCost(parseInt(cost) + 10);
   }
 
   const handleChange = e => {
-    if(isBackspace(e.nativeEvent) || isValidNumericalCharacter(e.nativeEvent.data)) {
-      setCost(e.target.value);
-    }
+    const newCost = parseInt(e.target.value);
+    if(isNaN(newCost)) setCost(0);
+    else setCost(newCost);
   }
 
   return (

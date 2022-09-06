@@ -5,7 +5,7 @@ export const getStoredValues = () => JSON.parse(window.localStorage.getItem(LOCA
 export const getLastStoredValue = () => {
   const values = getStoredValues();
   return values !== null ? values[0] : null;
-}
+};
 
 const setNewValues = newValues => window.localStorage.setItem(LOCAL_STORAGE_KEY, newValues);
 

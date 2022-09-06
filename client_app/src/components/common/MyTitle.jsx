@@ -7,4 +7,10 @@ const titleStyle = {
   marginBottom: 10,
 }
 
-export const MyTitle = ({ text }) => <p style={titleStyle}>{text}</p>;
+export const MyTitle = ({ text }) => {
+  return (
+    <p style={titleStyle}>
+      {text}
+    </p>
+  );
+};

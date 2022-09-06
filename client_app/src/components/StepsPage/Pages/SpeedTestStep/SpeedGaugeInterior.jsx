@@ -15,6 +15,7 @@ const gaugeInteriorStyle = {
 const sharedNumbersStyle = {
   color: 'rgba(160 159 183 / 50%)',
   position: 'absolute',
+  fontWeight: 'bold',
   fontSize: 13
 }
 
@@ -83,6 +84,7 @@ const hundredStyle = {
 
 const currentValueStyle = {
   fontSize: 38,
+  fontWeight: 'bold',
   position: 'absolute',
   top: 60,
   left: '50%',
@@ -91,6 +93,7 @@ const currentValueStyle = {
 
 const mbpsStyle = {
   fontSize: 14,
+  fontWeight: 'bold',
   position: 'absolute',
   top: 105,
   left: '50%',
@@ -118,7 +121,7 @@ const SpeedGaugeInterior = ({
 }) => {
 
   return (
-    <div className={'bold'} style={gaugeInteriorStyle}>
+    <div style={gaugeInteriorStyle}>
       <div style={zeroStyle}>0</div>
       <div style={fiveStyle}>5</div>
       <div style={tenStyle}>10</div>
