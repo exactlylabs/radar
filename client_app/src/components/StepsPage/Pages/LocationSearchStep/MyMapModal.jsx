@@ -23,6 +23,10 @@ const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
 }
 
+const commonModalStyle = {
+  boxShadow: DEFAULT_MODAL_BOX_SHADOW,
+}
+
 const modalStyle = {
   ...commonModalStyle,
   width: '700px',
