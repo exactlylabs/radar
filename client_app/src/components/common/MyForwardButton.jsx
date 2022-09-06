@@ -1,14 +1,7 @@
-import {
-  DEFAULT_GRAY_BUTTON_BACKGROUND_COLOR,
-  DEFAULT_BUTTON_BOX_SHADOW_RGBA,
-  DEFAULT_GRAY_BUTTON_TEXT_COLOR, WHITE, DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR
-} from '../../utils/colors';
 import {defaultButtonStyle} from "./MyButton";
 
 const forwardButtonStyle = {
   ...defaultButtonStyle,
-  backgroundColor: DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR,
-  color: WHITE,
   paddingTop: 14,
   paddingBottom: 14,
 };
@@ -18,15 +11,13 @@ const disabledForwardButtonStyle = {
   opacity: 0.5,
 }
 
-export const MyForwardButton = ({ text, onClick, disabled, icon, iconFirst, fullWidth }) => {
+export const MyForwardButton = ({ text, onClick, disabled, icon, iconFirst }) => {
 
-  const getStyle = () => {
-    let baseStyle = disabled ? disabledForwardButtonStyle : forwardButtonStyle;
-    return { ...baseStyle, width: fullWidth ? '100%' : baseStyle.width };
-  }
+  const getStyle = () => disabled ? disabledForwardButtonStyle : forwardButtonStyle;
 
   return iconFirst ?
     <button style={getStyle()}
+            className={'bold blue-button--hoverable'}
             onClick={onClick}
             disabled={disabled}
     >
@@ -34,6 +25,7 @@ export const MyForwardButton = ({ text, onClick, disabled, icon, iconFirst, full
       {text}
     </button> :
     <button style={getStyle()}
+            className={'bold blue-button--hoverable'}
             onClick={onClick}
             disabled={disabled}
     >

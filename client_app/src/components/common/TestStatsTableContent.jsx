@@ -3,7 +3,7 @@ import MyStatsTableVerticalDivider from "../StepsPage/Pages/SpeedTestStep/MyStat
 import UploadIcon from "../../assets/small-upload-icon.png";
 import PingIcon from "../../assets/ping-icon.png";
 import LatencyIcon from "../../assets/latency-icon.png";
-import {DEFAULT_STATS_TABLE_TEXT_COLOR} from "../../utils/colors";
+import {DEFAULT_POPUP_VALUE_COLOR, DEFAULT_STATS_TABLE_TEXT_COLOR} from "../../utils/colors";
 import MyStatsTableHorizontalDivider from "../StepsPage/Pages/SpeedTestStep/MyStatsTableHorizontalDivider";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 
@@ -27,7 +27,6 @@ const mobileTableContentStyle = {
 const columnStyle = {
   width: '13%',
   minWidth: 100,
-  paddingTop: 12,
   height: 90,
   margin: 'auto',
 }
@@ -51,7 +50,6 @@ const headerStyle = {
 
 const titleStyle = {
   fontSize: 14,
-  fontWeight: 'bold',
   color: DEFAULT_STATS_TABLE_TEXT_COLOR
 }
 
@@ -61,16 +59,15 @@ const iconStyle = {
 
 const valueStyle = {
   fontSize: 26,
-  fontWeight: 'bold',
   height: 33,
-  color: DEFAULT_STATS_TABLE_TEXT_COLOR,
+  color: DEFAULT_POPUP_VALUE_COLOR,
   margin: '5px auto'
 }
 
 const unitStyle = {
   fontSize: 14,
   height: 25,
-  color: DEFAULT_STATS_TABLE_TEXT_COLOR
+  color: DEFAULT_POPUP_VALUE_COLOR
 }
 
 const mobileValueStyle = {
@@ -136,36 +133,36 @@ const TestStatsTableContent = ({
       <div style={columnStyle}>
         <div style={headerStyle}>
           <img style={iconStyle} src={DownloadIcon} width={16} height={16} alt={'download-icon'}/>
-          <div style={titleStyle}>Download</div>
+          <div className={'bold'} style={titleStyle}>Download</div>
         </div>
-        <div style={valueStyle}>{downloadValue ? downloadValue : '-'}</div>
+        <div className={'bold'} style={valueStyle}>{downloadValue ? downloadValue : '-'}</div>
         <div style={unitStyle}>Mbps</div>
       </div>
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
           <img style={iconStyle} src={UploadIcon} width={16} height={16} alt={'upload-icon'}/>
-          <div style={titleStyle}>Upload</div>
+          <div className={'bold'} style={titleStyle}>Upload</div>
         </div>
-        <div style={valueStyle}>{uploadValue ? uploadValue : '-'}</div>
+        <div className={'bold'} style={valueStyle}>{uploadValue ? uploadValue : '-'}</div>
         <div style={unitStyle}>Mbps</div>
       </div>
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
           <img style={iconStyle} src={PingIcon} width={16} height={16} alt={'loss-icon'}/>
-          <div style={titleStyle}>Loss</div>
+          <div className={'bold'} style={titleStyle}>Loss</div>
         </div>
-        <div style={valueStyle}>{lossValue ? lossValue : '-'}</div>
+        <div className={'bold'} style={valueStyle}>{lossValue ? lossValue : '-'}</div>
         <div style={unitStyle}>%</div>
       </div>
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
           <img style={iconStyle} src={LatencyIcon} width={16} height={16} alt={'latency-icon'}/>
-          <div style={titleStyle}>Latency</div>
+          <div className={'bold'} style={titleStyle}>Latency</div>
         </div>
-        <div style={valueStyle}>{latencyValue ? latencyValue : '-'}</div>
+        <div className={'bold'} style={valueStyle}>{latencyValue ? latencyValue : '-'}</div>
         <div style={unitStyle}>ms</div>
       </div>
     </div>
@@ -177,10 +174,10 @@ const TestStatsTableContent = ({
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
             <img style={iconStyle} src={DownloadIcon} width={16} height={16} alt={'download-icon'}/>
-            <div style={titleStyle}>Download</div>
+            <div className={'bold'} style={titleStyle}>Download</div>
           </div>
           <div style={mobileValuesStyle}>
-            <div style={mobileValueStyle}>{downloadValue ? downloadValue : '-'}</div>
+            <div className={'bold'} style={mobileValueStyle}>{downloadValue ? downloadValue : '-'}</div>
             <div style={mobileUnitStyle}>Mbps</div>
           </div>
         </div>
@@ -188,10 +185,10 @@ const TestStatsTableContent = ({
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
             <img style={iconStyle} src={PingIcon} width={16} height={16} alt={'loss-icon'}/>
-            <div style={titleStyle}>Loss</div>
+            <div className={'bold'} style={titleStyle}>Loss</div>
           </div>
           <div style={mobileValuesStyle}>
-            <div style={mobileValueStyle}>{lossValue ? lossValue : '-'}</div>
+            <div className={'bold'} style={mobileValueStyle}>{lossValue ? lossValue : '-'}</div>
             <div style={mobileUnitStyle}>%</div>
           </div>
         </div>
@@ -200,10 +197,10 @@ const TestStatsTableContent = ({
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
             <img style={iconStyle} src={UploadIcon} width={16} height={16} alt={'upload-icon'}/>
-            <div style={titleStyle}>Upload</div>
+            <div className={'bold'} style={titleStyle}>Upload</div>
           </div>
           <div style={mobileValuesStyle}>
-            <div style={mobileValueStyle}>{uploadValue ? uploadValue : '-'}</div>
+            <div className={'bold'} style={mobileValueStyle}>{uploadValue ? uploadValue : '-'}</div>
             <div style={mobileUnitStyle}>Mbps</div>
           </div>
         </div>
@@ -211,10 +208,10 @@ const TestStatsTableContent = ({
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
             <img style={iconStyle} src={LatencyIcon} width={16} height={16} alt={'latency-icon'}/>
-            <div style={titleStyle}>Latency</div>
+            <div className={'bold'} style={titleStyle}>Latency</div>
           </div>
           <div style={mobileValuesStyle}>
-            <div style={mobileValueStyle}>{latencyValue ? latencyValue : '-'}</div>
+            <div className={'bold'} style={mobileValueStyle}>{latencyValue ? latencyValue : '-'}</div>
             <div style={mobileUnitStyle}>ms</div>
           </div>
         </div>

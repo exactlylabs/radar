@@ -2,6 +2,11 @@ import CostInput from "./CostInputContainer/CostInputContainer";
 import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
 import PreferNotToAnswer from "../../../common/PreferNotToAnswer";
 import {MyTitle} from "../../../common/MyTitle";
+import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
+
+const subtitleStyle = {
+  color: DEFAULT_TEXT_COLOR
+}
 
 const ConnectionCostStepPage = ({
   goForward,
@@ -13,9 +18,9 @@ const ConnectionCostStepPage = ({
   return (
     <div>
       <MyTitle text={'What’s your estimated monthly bill cost?'}/>
-      <div>This helps us understand the average internet cost in your area.</div>
+      <div style={subtitleStyle}>This helps us understand the average internet cost in your area.</div>
       <CostInput setCost={setCost} cost={cost}/>
-      <MyStepSwitcher goForward={goForward} goBack={goBack} forwardDisabled={!cost}/>
+      <MyStepSwitcher goForward={goForward} goBack={goBack} forwardDisabled={cost === null || cost === undefined}/>
       <PreferNotToAnswer goForward={goForward}/>
     </div>
   )
