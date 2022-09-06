@@ -134,7 +134,7 @@ const ConnectionInformation = ({
 
   const getText = possibleData => {
     if(possibleData) return possibleData.text;
-    return isMediumSizeScreen ? 'N/A' : 'Not available';
+    return isMediumSizeScreen || isSmallSizeScreen ? 'N/A' : 'Not available';
   }
 
   const getAddressStyle = () => {
