@@ -1,20 +1,13 @@
-import {DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR, DEFAULT_BUTTON_BOX_SHADOW_RGBA, WHITE} from '../../utils/colors';
-
 export const defaultButtonStyle = {
   width: 'max-content',
   height: 45,
-  backgroundColor: DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR,
-  color: WHITE,
   borderRadius: 24,
-  paddingRight: 20,
-  paddingLeft: 20,
+  paddingRight: 25,
+  paddingLeft: 25,
   paddingTop: 8,
   paddingBottom: 8,
   border: 'none',
-  /* offset-x | offset-y | blur-radius | spread-radius | color */
-  boxShadow: `0px 4px 15px -2px ${DEFAULT_BUTTON_BOX_SHADOW_RGBA}`,
-  fontSize: 16,
-  fontWeight: 'bold',
+  fontSize: 15,
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
@@ -24,11 +17,11 @@ export const defaultButtonStyle = {
 
 export const MyButton = ({ text, onClick, disabled, icon, iconFirst }) => {
   return iconFirst ?
-    <button style={defaultButtonStyle} onClick={onClick} disabled={disabled}>
+    <button className={'bold blue-button--hoverable'} style={defaultButtonStyle} onClick={onClick} disabled={disabled}>
       {icon}
       {text}
     </button> :
-    <button style={defaultButtonStyle} onClick={onClick} disabled={disabled}>
+    <button className={'bold blue-button--hoverable'} style={defaultButtonStyle} onClick={onClick} disabled={disabled}>
       {text}
       {icon}
     </button>

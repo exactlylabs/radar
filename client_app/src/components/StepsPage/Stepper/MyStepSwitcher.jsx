@@ -26,8 +26,6 @@ const MyStepSwitcher = ({
   backDisabled
 }) => {
 
-  const isMobile = useScreenSize();
-
   const getStyle = () => goBack && goForward ? doubleButtonStepSwitcherStyle : stepSwitcherStyle;
 
   return (

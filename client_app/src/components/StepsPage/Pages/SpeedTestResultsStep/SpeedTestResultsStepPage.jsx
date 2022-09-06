@@ -1,6 +1,6 @@
 import {MyTitle} from "../../../common/MyTitle";
 import TestStatsTableContent from "../SpeedTestStep/TestStatsTable";
-import {DEFAULT_EXPLORE_AREA_COLOR} from "../../../../utils/colors";
+import {DEFAULT_EXPLORE_AREA_COLOR, DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
 import ArrowRightBlue from '../../../../assets/icons-arrow-right-blue.png';
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
@@ -21,8 +21,8 @@ const exploreAreaStyle = {
 
 const textStyle = {
   color: DEFAULT_EXPLORE_AREA_COLOR,
-  fontWeight: 'bold',
   fontSize: 16,
+  cursor: 'pointer',
 }
 
 const buttonFooterStyle = {
@@ -33,11 +33,19 @@ const buttonFooterStyle = {
   justifyContent: 'space-between',
   width: '20%',
   minWidth: 300,
+  marginBottom: 120,
+  marginTop: 42,
 }
 
 const mobileButtonFooterStyle = {
   ...buttonFooterStyle,
   margin: '35px auto 70px',
+}
+
+const regularTextStyle = {
+  color: DEFAULT_TEXT_COLOR,
+  fontSize: 16,
+  marginRight: 3,
 }
 
 const SpeedTestResultsStepPage = ({
@@ -55,7 +63,8 @@ const SpeedTestResultsStepPage = ({
     <div style={speedTestResultsContainerStyle}>
       <MyTitle text={'Your test results'}/>
       <div style={exploreAreaStyle} onClick={goToAreaMap}>
-        <div style={textStyle}>Explore you area</div>
+        <p style={regularTextStyle}>See how you compare to others.</p>
+        <div className={'bold opaque-hoverable'} style={textStyle}>Explore your area</div>
         <img src={ArrowRightBlue} style={{marginLeft: 7}} width={14} height={14} alt={'blue-arrow-right'}/>
       </div>
       <TestStatsTableContent extended

@@ -19,7 +19,6 @@ const commonHeaderStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   fontSize: 14,
-  fontWeight: 'bold',
   color: DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR,
 }
 
@@ -86,7 +85,7 @@ const MyHistoricalValuesTableHeader = ({
   const isMobile = useScreenSize();
 
   return (
-    <div style={historicalValuesTableHeaderStyle}>
+    <div className={'bold'} style={historicalValuesTableHeaderStyle}>
       <div style={isMobile ? mobileNetworkTypeColumnStyle : networkTypeColumStyle}></div>
       <div style={isMobile ? mobileDateTimeColumnStyle : dateTimeColumnStyle}>Date/Time</div>
       <div style={isMobile ? mobileColumnWithIconStyle : columnWithIconStyle}>

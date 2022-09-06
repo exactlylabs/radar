@@ -31,7 +31,6 @@ const activeFiltersCountStyle = {
   right: 10,
   zIndex: 1002,
   fontSize: 11,
-  fontWeight: 'bold',
 }
 
 const FloatingExploreButton = ({
@@ -43,7 +42,7 @@ const FloatingExploreButton = ({
   const isMobile = useScreenSize();
 
   return (
-    <div style={isMobile ? mobileFloatingButtonStyle : floatingButtonStyle} onClick={onClick}>
+    <div className={'bold'} style={isMobile ? mobileFloatingButtonStyle : floatingButtonStyle} onClick={onClick}>
       <img src={isBoxOpen ? FilterButtonOn : FilterButtonOff} width={68} height={68} alt={'filters-button'}/>
       {
         activeFiltersCount > 0 && !isBoxOpen &&

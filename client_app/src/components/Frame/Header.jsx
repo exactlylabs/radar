@@ -6,6 +6,7 @@ import radarLogoLight from '../../assets/radar-logo-light.png';
 import MenuCloseButton from '../../assets/menu-close-button.png';
 import MenuOpenButton from '../../assets/menu-open-button.png';
 import {useScreenSize} from "../../hooks/useScreenSize";
+import MyNavLink from "../common/MyNavLink";
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -14,7 +15,6 @@ const headerStyle = {
   alignItems: 'center',
   height: 70,
   width: '100%',
-  fontWeight: 'bold',
 };
 
 const mobileHeaderStyle = {
@@ -32,27 +32,25 @@ const contentWrapperStyle = {
 };
 
 const leftSideContainerStyle = {
-  width: '25%',
+  width: 'max-content',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  color: WHITE,
-  fontSize: 16,
   minWidth: 250,
 };
 
 const rightSideContainerStyle = {
-  width: '70%',
+  width: 'auto',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-end',
 };
 
-const navElementStyle = {
+const radarLogoStyle = {
+  marginRight: 66,
   cursor: 'pointer',
-  color: WHITE,
-};
+}
 
 const menuCloseButtonStyle = {
   cursor: 'pointer'
@@ -66,7 +64,6 @@ const collapsableContentStyle = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
-  fontWeight: 'bold',
   position: 'absolute',
   top: 70,
   left: 0,
@@ -75,13 +72,6 @@ const collapsableContentStyle = {
   paddingTop: 15,
   paddingBottom: 15,
   zIndex: 2000,
-}
-
-const mobileNavElementStyle = {
-  fontSize: 16,
-  fontWeight: 'bold',
-  color: WHITE,
-  marginBottom: 15,
 }
 
 const horizontalDividerStyle = {
@@ -109,7 +99,7 @@ const Header = ({ setStep }) => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <div style={isMobile ? mobileHeaderStyle : headerStyle}>
+    <div className={'bold'} style={isMobile ? mobileHeaderStyle : headerStyle}>
       <div style={contentWrapperStyle}>
         <div style={leftSideContainerStyle}>
           <img
@@ -118,14 +108,10 @@ const Header = ({ setStep }) => {
             width={104}
             height={25}
             onClick={goToHome}
-            style={navElementStyle}
+            style={!isMobile ? radarLogoStyle : null}
           />
-          {!isMobile &&
-            <div onClick={goToHome} style={navElementStyle}>
-              Home
-            </div>
-          }
-          {!isMobile && <div style={navElementStyle}>About Us</div>}
+          {!isMobile && <MyNavLink text={'Home'} onClick={goToHome}/>}
+          {!isMobile && <MyNavLink text={'About Us'}/>}
         </div>
         <div style={rightSideContainerStyle}>
           {
@@ -144,9 +130,9 @@ const Header = ({ setStep }) => {
       {
         isMobile && isMenuOpen &&
         <div style={collapsableContentStyle}>
-          <div onClick={goToHome} style={mobileNavElementStyle}>Home</div>
+          <MyNavLink text={'Home'} onClick={goToHome} isCollapsed/>
           <div style={horizontalDividerStyle}></div>
-          <div style={mobileNavElementStyle}>About Us</div>
+          <MyNavLink text={'About Us'} isCollapsed/>
           <div style={horizontalDividerStyle}></div>
           <MyButton text={'Test your speed'} onClick={goToTestSpeed}/>
         </div>

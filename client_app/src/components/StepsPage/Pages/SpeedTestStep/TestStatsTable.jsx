@@ -14,7 +14,7 @@ const tableStyle = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  boxShadow: DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA,
+  boxShadow: `0 0 10px 0 ${DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA}`,
   paddingLeft: 18,
   paddingRight: 18,
 }
@@ -29,7 +29,7 @@ const extendedStyle = {
   margin: '25px auto',
   display: 'flex',
   flexDirection: 'column',
-  boxShadow: DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA,
+  boxShadow: `0 0 10px 0 ${DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA}`,
 }
 
 const mobileStyle = {
@@ -40,7 +40,7 @@ const mobileStyle = {
   margin: '25px auto',
   display: 'flex',
   flexDirection: 'column',
-  boxShadow: DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA,
+  boxShadow: `0 0 10px 0 ${DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA}`,
   paddingTop: 5,
   paddingBottom: 5,
 }

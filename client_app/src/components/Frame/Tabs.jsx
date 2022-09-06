@@ -42,7 +42,6 @@ const commonTabTextStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
-  fontWeight: 'bold',
   color: DEFAULT_UNSELECTED_TAB_COLOR,
   height: '100%',
   paddingLeft: 30,
@@ -95,6 +94,7 @@ const tabUnderlineStyle = {
 const selectedTabUnderlineStyle = {
   ...tabUnderlineStyle,
   backgroundColor: DEFAULT_SELECTED_TAB_COLOR,
+  borderRadius: '2.5px 2.5px 0 0'
 };
 
 const TABS = {
@@ -148,7 +148,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.SPEED_TEST ? 'speed-active' : 'speed-inactive'}
             />
-            <div style={selectedTab === TABS.SPEED_TEST ? selectedContentStyle : null}>Speed Test</div>
+            <div className={'bold tab-item--hoverable'} style={selectedTab === TABS.SPEED_TEST ? selectedContentStyle : null}>Speed Test</div>
           </div>
           <div style={selectedTab === TABS.SPEED_TEST ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
@@ -162,7 +162,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.HISTORY ? 'history-active' : 'history-inactive'}
             />
-            <div style={selectedTab === TABS.HISTORY ? selectedContentStyle : null}>Your History</div>
+            <div className={'bold tab-item--hoverable'} style={selectedTab === TABS.HISTORY ? selectedContentStyle : null}>Your History</div>
           </div>
           <div style={selectedTab === TABS.HISTORY ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
@@ -176,7 +176,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.EXPLORE_MAP ? 'explore-active' : 'explore-inactive'}
             />
-            <div style={selectedTab === TABS.EXPLORE_MAP ? selectedContentStyle : null}>{ isMobile ? 'Map' : 'Explore the Map'}</div>
+            <div className={'bold tab-item--hoverable'} style={selectedTab === TABS.EXPLORE_MAP ? selectedContentStyle : null}>{ isMobile ? 'Map' : 'Explore the Map'}</div>
           </div>
           <div style={selectedTab === TABS.EXPLORE_MAP ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>

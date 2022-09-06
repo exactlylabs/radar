@@ -50,12 +50,12 @@ const StepsPage = ({
     terms: false,
     networkLocation: null,
     networkType: null,
-    networkCost: undefined,
+    networkCost: '', // init with empty string to prevent console error regarding controlled vs. uncontrolled input value change
   });
   const [lastTestResults, setLastTestResults] = useState(null);
   const isMobile = useScreenSize();
 
-  const setAddress = address => setUserStepData({...userStepData, address});
+  const setAddress = address => setUserStepData(prevState => ({...prevState, address}));
   const setTerms = status => setUserStepData({...userStepData, terms: status});
   const setNetworkLocation = index => setUserStepData({ ...userStepData, networkLocation: placementOptions[index] });
   const setNetworkType = index => {

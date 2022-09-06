@@ -48,7 +48,6 @@ const leftSideTopRowStyle = {
   width: '100%',
   fontSize: 15,
   color: DEFAULT_FOOTER_FONT_COLOR,
-  fontWeight: 'bold',
 };
 
 const leftSideBottomRowStyle = {
@@ -75,9 +74,7 @@ const horizontalDividerStyle = {
 
 const footerLinkStyle = {
   fontSize: 15,
-  fontWeight: 'bold',
   marginBottom: 15,
-  color: DEFAULT_FOOTER_FONT_COLOR
 }
 
 const copyrightStyle = {
@@ -98,8 +95,8 @@ const Footer = () => {
   return isMobile ?
     <div style={mobileFooterStyle}>
       <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={{ marginBottom: 30, marginTop: 25 }} />
-      <div style={footerLinkStyle}>Privacy Policy</div>
-      <div style={footerLinkStyle}>Terms of Use</div>
+      <div className={'bold regular-link--hoverable'} style={footerLinkStyle}>Privacy Policy</div>
+      <div className={'bold regular-link--hoverable'} style={footerLinkStyle}>Terms of Use</div>
       <img src={anthcLogo} alt={'ANTHC-logo'} width={110} height={30} style={{marginTop: 15, marginBottom: 20}}/>
       <FooterHorizontalDivider />
       <div style={copyrightStyle}>Copyright © 2022. Radar. All Rights Reserved</div>
@@ -108,10 +105,10 @@ const Footer = () => {
     <div style={footerStyle}>
       <div style={contentWrapperStyle}>
         <div style={leftSideContainerStyle}>
-          <div style={leftSideTopRowStyle}>
+          <div className={'bold'} style={leftSideTopRowStyle}>
             <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={{ marginRight: 20 }} />
-            <div>Privacy Policy</div>
-            <div>Terms of Use</div>
+            <div className={'bold regular-link--hoverable'}>Privacy Policy</div>
+            <div className={'bold regular-link--hoverable'}>Terms of Use</div>
           </div>
           <div style={leftSideBottomRowStyle}>
             <div>Copyright © 2022. Radar. All Rights Reserved</div>
