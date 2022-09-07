@@ -12,6 +12,7 @@ import {types} from "../../utils/networkTypes";
 import {getAddressForCoordinates} from "../../utils/apiRequests";
 import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResultsStepPage";
 import {getLastStoredValue} from "../../utils/storage";
+import NoInternetStepPage from "./Pages/NoInternetStep/NoInternetStepPage";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const stepsPageStyle = {
@@ -79,8 +80,8 @@ const StepsPage = ({
         setUserStepData({
           ...userStepData,
           address: {
-            address: lastTestTaken.address,
-            coordinates: [lastTestTaken.lat, lastTestTaken.long]
+            coordinates: [lastTestTaken.lat, lastTestTaken.long],
+            ...lastTestTaken,
           },
           terms: true,
           networkLocation: networkLocation,
@@ -131,6 +132,8 @@ const StepsPage = ({
 
   const goToMapPage = () => goToAreaMap(userStepData.address.coordinates);
 
+  const goToNoInternetPage = () => setCurrentStep(steps.NO_INTERNET);
+
   const getCurrentPage = () => {
     switch (currentStep) {
       case steps.CONNECTION_ADDRESS:
@@ -148,6 +151,8 @@ const StepsPage = ({
                                             goBack={() => setCurrentStep(steps.CONNECTION_ADDRESS)}
                                             setSelectedOption={setNetworkLocation}
                                             selectedOption={userStepData.networkLocation}
+                                            address={userStepData.address.address}
+                                            goToLastFlowStep={goToNoInternetPage}
         />;
       case steps.CONNECTION_TYPE:
         return <ConnectionTypeStepPage goForward={goToPage4}
@@ -173,6 +178,8 @@ const StepsPage = ({
                                          goToHistory={goToHistory}
                                          goToTestAgain={goToPage5}
         />;
+      case steps.NO_INTERNET:
+        return <NoInternetStepPage goToMapPage={goToMapPage}/>
       default:
         return <LocationSearchStepPage goForward={goToPage2}
                                        error={error}

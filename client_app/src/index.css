@@ -36,6 +36,10 @@ code {
   font-family: MulishBold, MulishRegular, -apple-system, sans-serif;
 }
 
+.regular {
+  font-family: MulishRegular, -apple-system, sans-serif;
+}
+
 .navlink--hoverable:hover {
   text-decoration: underline white;
   cursor: pointer;

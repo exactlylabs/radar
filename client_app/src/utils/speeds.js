@@ -1,6 +1,6 @@
 export const DOWNLOAD_SPEED_LOW_TO_MID_THRESHOLD = {
-  HIGH: 99,
-  MID: 19,
+  HIGH: 100,
+  MID: 25,
 };
 
 export const UPLOAD_SPEED_LOW_TO_MID_THRESHOLD = {
@@ -42,9 +42,9 @@ export const getCorrespondingFilterTag = (type, filterIndex) => {
 
 export const getFilterTag = (value, type) => {
   if(type === 'download') {
-    if(value >= DOWNLOAD_RANGES[0][0] && value < DOWNLOAD_RANGES[0][1] + 1) {
+    if(value >= DOWNLOAD_RANGES[0][0] && value < DOWNLOAD_RANGES[0][1]) {
       return DOWNLOAD_LOW;
-    } else if(value >= DOWNLOAD_RANGES[1][0] && value < DOWNLOAD_RANGES[1][1] + 1) {
+    } else if(value >= DOWNLOAD_RANGES[1][0] && value < DOWNLOAD_RANGES[1][1]) {
       return DOWNLOAD_MID;
     } else {
       return DOWNLOAD_HIGH;
@@ -52,7 +52,7 @@ export const getFilterTag = (value, type) => {
   } else {
     if(value >= UPLOAD_RANGES[0][0] && value < UPLOAD_RANGES[0][1] + 1) {
       return UPLOAD_LOW;
-    } else if(value >= UPLOAD_RANGES[1][0] && value < UPLOAD_RANGES[1][1] + 1) {
+    } else if(value >= UPLOAD_RANGES[1][0] && value < UPLOAD_RANGES[1][1]) {
       return UPLOAD_MID;
     } else {
       return UPLOAD_HIGH;

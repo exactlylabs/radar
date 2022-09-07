@@ -8,9 +8,9 @@ const titleStyle = {
   paddingTop: 30,
 }
 
-export const MyModalTitle = ({ text }) => {
+export const MyModalTitle = ({ text, style }) => {
   return (
-    <div style={titleStyle}>
+    <div style={{...titleStyle, ...style}}>
       {text}
     </div>
   );

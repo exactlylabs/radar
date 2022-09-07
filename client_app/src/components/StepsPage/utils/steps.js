@@ -5,4 +5,5 @@ export const steps = {
   CONNECTION_COST: 3,
   RUN_SPEED_TEST: 4,
   SPEED_TEST_RESULTS: 5,
+  NO_INTERNET: 6,
 };

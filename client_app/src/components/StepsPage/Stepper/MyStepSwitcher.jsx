@@ -21,7 +21,9 @@ const MyStepSwitcher = ({
   goForward,
   goBack,
   forwardDisabled,
-  backDisabled
+  backDisabled,
+  shouldExecuteAlt,
+  altForward
 }) => {
 
   const getStyle = () => goBack && goForward ? doubleButtonStepSwitcherStyle : stepSwitcherStyle;
@@ -34,7 +36,11 @@ const MyStepSwitcher = ({
       }
       {
         goForward &&
-        <MyForwardButton text={'Continue'} icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>} onClick={goForward} disabled={forwardDisabled}/>
+        <MyForwardButton text={'Continue'}
+                         icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
+                         onClick={shouldExecuteAlt ? altForward : goForward}
+                         disabled={forwardDisabled}
+        />
       }
     </div>
   )

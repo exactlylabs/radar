@@ -15,6 +15,8 @@ import {getAllSpeedTests, getUserApproximateCoordinates} from '../../utils/apiRe
 import { MyMap } from '../common/MyMap';
 import MyCustomMarker from "./MyCustomMarker";
 import {notifyError} from "../../utils/errors";
+import {hasVisitedAllResults, setAlreadyVisitedCookieIfNotPresent} from "../../utils/cookies";
+import FirstTimeModal from "./FirstTimeModal";
 import ConfigContext from "../../context/ConfigContext";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 
@@ -33,6 +35,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [loading, setLoading] = useState(true);
   const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(true);
   const [selectedFilterType, setSelectedFilterType] = useState('download');
+  const [firstTimeModalOpen, setFirstTimeModalOpen] = useState(false);
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
@@ -70,6 +73,11 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     } else {
       setCenterCoordinatesLoading(false);
       setRequestArea(givenLocation);
+    }
+
+    if(!hasVisitedAllResults()) {
+      setAlreadyVisitedCookieIfNotPresent();
+      openFirstTimeModal();
     }
   }, []);
 
@@ -109,6 +117,8 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     }
   }
 
+  const openFirstTimeModal = () => setFirstTimeModalOpen(true);
+
   return (
     <div style={{ textAlign: 'center', height: '100%' }}>
       {(loading || centerCoordinatesLoading) && <CircularProgress size={25} />}
@@ -119,6 +129,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
           <MyButton text={'Test'} onClick={goToSpeedTest} />
         </div>
       )}
+      <FirstTimeModal isOpen={firstTimeModalOpen} setIsOpen={setFirstTimeModalOpen}/>
       {!loading && !centerCoordinatesLoading &&
         results !== null && results.length > 0 && (
         <div style={getMapWrapperStyle()}>
