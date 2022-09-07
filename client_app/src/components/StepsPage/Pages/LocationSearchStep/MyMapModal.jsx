@@ -111,7 +111,7 @@ const MyMapModal = ({
   useEffect(() => {
     const fetchSuggestions = async () => {
       setError(null);
-      const suggestions = await getSuggestions(address.name);
+      const suggestions = await getSuggestions(address.address);
       if(suggestions.length > 0) {
         setAddressCoordinates(suggestions[0].coordinates);
       } else {
@@ -119,7 +119,9 @@ const MyMapModal = ({
       }
       setLoading(false);
     }
-    setAddressCoordinates(address.coordinates);
+    if(address?.coordinates) {
+      setAddressCoordinates(address.coordinates);
+    }
     if (isOpen && address.coordinates.length === 0) {
       setLoading(true);
       fetchSuggestions()

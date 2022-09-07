@@ -11,6 +11,7 @@ import WifiIconLight from '../../../../assets/icon-connection-wifi-light.png';
 import {useEffect, useState} from "react";
 import {CONNECTION_INFORMATION_MIN_WIDTH} from "../../../../utils/breakpoints";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
+import MyConnectionInformationTooltip from "./MyConnectionInformationTooltip";
 
 const connectionInformationStyle = {
   width: '100%',
@@ -147,20 +148,35 @@ const ConnectionInformation = ({
   return (
     <div style={getStyle()}>
       <div style={columnsContainerStyle}>
-        <div className={'bold'} style={getAddressStyle()}>
-          <img style={iconStyle} src={AddressIcon} width={22} height={22} alt={'address-icon'}/>
-          <div style={addressStyle}>{userStepData.address.address}</div>
-        </div>
+        <MyConnectionInformationTooltip title={`${userStepData.address.house_number} ${userStepData.address.street}`}
+                                        subtitle={`${userStepData.address.city}, ${userStepData.address.state} ${userStepData.address.postal_code}`}
+                                        shouldNotAppear={disabled}
+        >
+          <div className={'bold'} style={getAddressStyle()}>
+            <img style={iconStyle} src={AddressIcon} width={22} height={22} alt={'address-icon'}/>
+            <div style={addressStyle}>{userStepData.address.address}</div>
+          </div>
+        </MyConnectionInformationTooltip>
         <MyConnectionInformationVerticalDivider disabled={disabled}/>
-        <div className={'bold'} style={getPlacementOrTypeCellStyle()}>
-          <img style={iconStyle} src={userStepData.networkLocation ? userStepData.networkLocation.iconLightSrc : HomeIconLight} width={22} height={22} alt={'address-icon'}/>
-          { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkLocation)}</div> }
-        </div>
+        <MyConnectionInformationTooltip subtitle={'You are connected at '}
+                                        accent={`${userStepData.networkLocation.text}.`}
+                                        shouldNotAppear={disabled}
+        >
+          <div className={'bold'} style={placementRowStyle}>
+            <img style={iconStyle} src={userStepData.networkLocation ? userStepData.networkLocation.iconLightSrc : HomeIconLight} width={22} height={22} alt={'address-icon'}/>
+            { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkLocation)}</div> }
+          </div>
+        </MyConnectionInformationTooltip>
         <MyConnectionInformationVerticalDivider disabled={disabled}/>
-        <div className={'bold'} style={getPlacementOrTypeCellStyle()}>
-          <img style={iconStyle} src={userStepData.networkType ? userStepData.networkType.iconLightSrc : WifiIconLight} width={22} height={22} alt={'address-icon'}/>
-          { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkType)}</div> }
-        </div>
+        <MyConnectionInformationTooltip subtitle={'You are connected via '}
+                                        accent={`${userStepData.networkType.text}.`}
+                                        shouldNotAppear={disabled}
+        >
+          <div className={'bold'} style={typeRowStyle}>
+            <img style={iconStyle} src={userStepData.networkType ? userStepData.networkType.iconLightSrc : WifiIconLight} width={22} height={22} alt={'address-icon'}/>
+            { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkType)}</div> }
+          </div>
+        </MyConnectionInformationTooltip>
       </div>
       <div style={{...progressBarStyle, width: `${progress}%`}}></div>
     </div>

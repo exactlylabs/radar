@@ -6,6 +6,8 @@ import {placementOptions} from "../../../../utils/placements";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 import {warnings} from "../../../../utils/messages";
 import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
+import {useState} from "react";
+import MyNoConnectionConfirmationModal from "./MyNoConnectionConfirmationModal";
 
 const subtitleStyle = {
   color: DEFAULT_TEXT_COLOR
@@ -16,8 +18,26 @@ const ConnectionPlacementStepPage = ({
   goBack,
   selectedOption,
   setSelectedOption,
-  warning
+  warning,
+  address,
+  goToLastFlowStep
 }) => {
+
+  const [shouldExecuteAlt, setShouldExecuteAlt] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+
+  const handleSelectOption = index => {
+    if(index === 3) {
+      setShouldExecuteAlt(true);
+    } else {
+      setShouldExecuteAlt(false);
+    }
+    setSelectedOption(index);
+  }
+
+  const openConfirmationModal = () => setIsConfirmationModalOpen(true);
+
+  const closeConfirmationModal = () => setIsConfirmationModalOpen(false);
 
   return (
     <div>
@@ -27,11 +47,21 @@ const ConnectionPlacementStepPage = ({
                       needsDivider
                       dividerIndex={3}
                       selectedOption={selectedOption}
-                      setSelectedOption={setSelectedOption}
+                      setSelectedOption={handleSelectOption}
       />
       { warning && <MyMessageSnackbar message={warnings.NOT_ENOUGH_DATA} type={'warning'}/> }
-      <MyStepSwitcher goForward={goForward} goBack={goBack} forwardDisabled={selectedOption === null}/>
+      <MyStepSwitcher goForward={goForward}
+                      goBack={goBack}
+                      forwardDisabled={selectedOption === null}
+                      altForward={openConfirmationModal}
+                      shouldExecuteAlt={shouldExecuteAlt}
+      />
       <PreferNotToAnswer goForward={goForward}/>
+      <MyNoConnectionConfirmationModal open={isConfirmationModalOpen}
+                                       close={closeConfirmationModal}
+                                       address={address}
+                                       goToLastFlowStep={goToLastFlowStep}
+      />
     </div>
   )
 }

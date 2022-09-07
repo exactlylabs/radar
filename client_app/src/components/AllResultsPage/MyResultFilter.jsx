@@ -1,4 +1,9 @@
-import {DEFAULT_FILTER_BULLET_OUTLINE_COLOR, TRANSPARENT, WHITE} from "../../utils/colors";
+import {
+  DEFAULT_FILTER_BULLET_OUTLINE_COLOR,
+  DEFAULT_FILTERS_SUBTITLE_COLOR,
+  TRANSPARENT,
+  WHITE
+} from "../../utils/colors";
 import {Check} from "@mui/icons-material";
 
 const resultFilterStyle = {
@@ -7,6 +12,11 @@ const resultFilterStyle = {
   width: '100%',
   marginBottom: 15,
   cursor: 'pointer'
+}
+
+const opaqueResultFilterStyle = {
+  ...resultFilterStyle,
+  opacity: 0.7,
 }
 
 const filterBulletWrapperStyle = {
@@ -40,11 +50,19 @@ const checkIconSX = {
   color: 'white'
 }
 
+const stateStyle = {
+  fontSize: 14,
+  color: DEFAULT_FILTERS_SUBTITLE_COLOR,
+  marginLeft: 3,
+}
+
 const MyResultFilter = ({
   color,
   range,
   selected,
-  onClick
+  onClick,
+  state,
+  opaque
 }) => {
 
   const getRangeText = () => {
@@ -55,13 +73,14 @@ const MyResultFilter = ({
   }
 
   return (
-    <div style={resultFilterStyle} onClick={onClick}>
+    <div style={opaque ? opaqueResultFilterStyle : resultFilterStyle} onClick={onClick}>
       <div style={filterBulletWrapperStyle}>
         <div style={{...filterBulletStyle, backgroundColor: color}}>
           {selected && <Check sx={checkIconSX}/>}
         </div>
       </div>
       <div className={selected ? 'bold' : ''} style={filterTextStyle}>{getRangeText()}</div>
+      <div style={stateStyle}>{state}</div>
     </div>
   )
 }
