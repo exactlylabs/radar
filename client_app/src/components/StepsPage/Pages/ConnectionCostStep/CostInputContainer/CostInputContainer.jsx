@@ -1,6 +1,6 @@
 import MyCostInput from "./MyCostInput";
 import MyCostButton from "./MyCostButton";
-import {isBackspace, isValidNumericalCharacter} from "../../../../../utils/validations";
+import {isEventBackspace, isValidNumericalCharacter} from "../../../../../utils/validations";
 
 const costInputContainerStyle = {
   display: 'flex',
@@ -37,7 +37,7 @@ const CostInputContainer = ({
   }
 
   const handleChange = e => {
-    if(isBackspace(e.nativeEvent) || isValidNumericalCharacter(e.nativeEvent.data)) {
+    if(isEventBackspace(e.nativeEvent) || isValidNumericalCharacter(e.nativeEvent.data)) {
       setCost(e.target.value);
     }
   }
