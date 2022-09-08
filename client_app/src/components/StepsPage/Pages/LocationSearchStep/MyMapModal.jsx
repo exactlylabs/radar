@@ -11,10 +11,9 @@ import {useContext, useEffect, useMemo, useRef, useState} from "react";
 import {getSuggestions} from "../../../../utils/apiRequests";
 import {notifyError} from "../../../../utils/errors";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
-import {useIsMediumSizeScreen} from "../../../../hooks/useIsMediumSizeScreen";
 import ConfigContext from "../../../../context/ConfigContext";
-import {useIsSmallSizeScreen} from "../../../../hooks/useIsSmallSizeScreen";
 import {widgetModalFraming} from "../../../../utils/modals";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 const modalStyle = {
   width: '700px',
@@ -89,8 +88,7 @@ const MyMapModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [addressCoordinates, setAddressCoordinates] = useState(address.coordinates);
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   useEffect(() => {
     const fetchSuggestions = async () => {

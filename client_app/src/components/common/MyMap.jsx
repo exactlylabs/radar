@@ -1,6 +1,4 @@
-import L from 'leaflet';
 import { useMap } from 'react-leaflet';
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 
 // The idea here is to remove the Ukranian flag from map's attribution
 // and re-center map on marker click

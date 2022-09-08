@@ -15,9 +15,8 @@ import {getAllSpeedTests, getUserApproximateCoordinates} from '../../utils/apiRe
 import { MyMap } from '../common/MyMap';
 import MyCustomMarker from "./MyCustomMarker";
 import {notifyError} from "../../utils/errors";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 import ConfigContext from "../../context/ConfigContext";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -35,8 +34,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(true);
   const [selectedFilterType, setSelectedFilterType] = useState('download');
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
 
   useEffect(() => {

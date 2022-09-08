@@ -5,8 +5,7 @@ import { STEPS } from '../../constants';
 import radarLogoLight from '../../assets/radar-logo-light.png';
 import MenuCloseButton from '../../assets/menu-close-button.png';
 import MenuOpenButton from '../../assets/menu-open-button.png';
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -94,8 +93,7 @@ const horizontalDividerStyle = {
 const Header = ({ setStep }) => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const goToHome = () => {
     if(isMenuOpen) setIsMenuOpen(false);

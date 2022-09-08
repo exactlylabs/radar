@@ -6,9 +6,8 @@ import MyFiltersTitle from "./MyFiltersTitle";
 import MyFiltersTypeSwitcher from "./MyFiltersTypeSwitcher";
 import MyFiltersList from "./MyFiltersList";
 import FloatingExploreButton from "./FloatingExploreButton";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 import ConfigContext from "../../context/ConfigContext";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const speedFiltersBoxStyle = {
   width: 255,
@@ -66,8 +65,7 @@ const SpeedResultsBox = ({
   const [selectedRangeIndexes, setSelectedRangeIndexes] = useState([]);
 
   const config = useContext(ConfigContext);
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getSpeedResultsStyle = () => {
     let style = isMediumSizeScreen || isSmallSizeScreen ? mobileFiltersWrapper : {};

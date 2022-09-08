@@ -7,10 +7,9 @@ import MyConnectionInformationVerticalDivider from "./MyConnectionInformationVer
 import AddressIcon from '../../../../assets/address-icon.png';
 import HomeIconLight from '../../../../assets/icon-location-home-light.png';
 import WifiIconLight from '../../../../assets/icon-connection-wifi-light.png';
-import {useIsMediumSizeScreen} from "../../../../hooks/useIsMediumSizeScreen";
 import {useEffect, useState} from "react";
 import {CONNECTION_INFORMATION_MIN_WIDTH} from "../../../../utils/breakpoints";
-import {useIsSmallSizeScreen} from "../../../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 const connectionInformationStyle = {
   width: '100%',
@@ -116,8 +115,7 @@ const ConnectionInformation = ({
 }) => {
 
   const [shouldTextAppear, setShouldTextAppear] = useState(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH);
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   useEffect(() => {
     window.addEventListener('resize', () => setShouldTextAppear(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH));

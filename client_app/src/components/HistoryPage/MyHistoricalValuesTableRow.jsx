@@ -6,9 +6,8 @@ import {
 } from "../../utils/colors";
 import {types} from "../../utils/networkTypes";
 import {prettyPrintDate} from "../../utils/dates";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 import InfoIcon from '../../assets/info-icon.png';
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const historicalValuesTableRowStyle = {
   width: '100%',
@@ -112,8 +111,7 @@ const MyHistoricalValuesTableRow = ({
   openMeasurementInfoModal
 }) => {
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getNetworkTypeIcon = () => {
     const networkType = types.find(type => type.text === measurement.networkType);

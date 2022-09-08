@@ -4,9 +4,8 @@ import UploadIcon from "../../assets/small-upload-icon.png";
 import PingIcon from "../../assets/ping-icon.png";
 import LatencyIcon from "../../assets/latency-icon.png";
 import {DEFAULT_STATS_TABLE_TEXT_COLOR} from "../../utils/colors";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 import MyStatsTableHorizontalDivider from "../StepsPage/Pages/SpeedTestStep/MyStatsTableHorizontalDivider";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const tableContentStyle = {
   display: 'flex',
@@ -121,8 +120,7 @@ const TestStatsTableContent = ({
   lossValue
 }) => {
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getStyle = () => {
     let style;

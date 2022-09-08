@@ -1,6 +1,6 @@
 import ArrowRightIcon from '../../assets/icons-right-arrow.png';
 import {DEFAULT_SKIP_FONT_COLOR} from "../../utils/colors";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const textStyle = {
   fontSize: 15,
@@ -28,7 +28,7 @@ const PreferNotToAnswer = ({
   goForward
 }) => {
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const {isMediumSizeScreen} = useViewportSizes();
 
   return (
     <div style={isMediumSizeScreen ? mobileTextStyle : textStyle} onClick={goForward}>

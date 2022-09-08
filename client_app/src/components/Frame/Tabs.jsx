@@ -12,8 +12,7 @@ import exploreMapIconActive from '../../assets/explore-icon-active.png';
 import exploreMapIconInactive from '../../assets/explore-icon-inactive.png';
 import historyIconActive from '../../assets/history-icon-active.png';
 import historyIconInactive from '../../assets/history-icon-inactive.png';
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const tabsWrapperStyle = {
   width: '100%',
@@ -108,8 +107,7 @@ const TABS = {
 
 const Tabs = ({ step, setStep }) => {
   const [selectedTab, setSelectedTab] = useState(TABS.SPEED_TEST);
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   useEffect(() => {
     if(step === STEPS.HISTORY && selectedTab !== TABS.HISTORY) setSelectedTab(TABS.HISTORY);

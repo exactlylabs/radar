@@ -4,7 +4,7 @@ import {DEFAULT_EXPLORE_AREA_COLOR} from "../../../../utils/colors";
 import ArrowRightBlue from '../../../../assets/icons-arrow-right-blue.png';
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
-import {useIsMediumSizeScreen} from "../../../../hooks/useIsMediumSizeScreen";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 const speedTestResultsContainerStyle = {
   marginTop: 25,
@@ -49,7 +49,7 @@ const SpeedTestResultsStepPage = ({
 }) => {
 
   const goToHistoryWithRecentTestTaken = () => goToHistory(true);
-  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const {isMediumSizeScreen} = useViewportSizes();
 
   return (
     <div style={speedTestResultsContainerStyle}>
