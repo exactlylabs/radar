@@ -13,6 +13,7 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/helpers"
 	"github.com/exactlylabs/mlab-processor/pkg/app/helpers/flavors"
 	"github.com/exactlylabs/mlab-processor/pkg/app/ipgeocoder"
+	"github.com/exactlylabs/mlab-processor/pkg/app/measurementlinker"
 	"github.com/exactlylabs/mlab-processor/pkg/app/pipeline"
 	"github.com/exactlylabs/mlab-processor/pkg/app/reversegeocoder"
 
@@ -35,7 +36,7 @@ var upload = flag.Bool("upload", false, "Set to upload generated files to cloud 
 
 func usage() {
 	fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
-	fmt.Fprintf(os.Stderr, "  %s [options] fetch|ipgeocode|reversegeocode|all\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "  %s [options] fetch|ipgeocode|reversegeocode|measurementlink|all\n", os.Args[0])
 	fmt.Fprintf(os.Stderr, "\nOptions:\n")
 
 	flag.PrintDefaults()
@@ -86,11 +87,14 @@ func main() {
 			pipelineStr = append(pipelineStr, ipgeocoder.StepName)
 		case reversegeocoder.StepName:
 			pipelineStr = append(pipelineStr, reversegeocoder.StepName)
+		case measurementlinker.StepName:
+			pipelineStr = append(pipelineStr, measurementlinker.StepName)
 		case "all":
 			pipelineStr = []string{
 				fetcher.StepName,
 				ipgeocoder.StepName,
 				reversegeocoder.StepName,
+				measurementlinker.StepName,
 			}
 		default:
 			usage()
