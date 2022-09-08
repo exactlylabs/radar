@@ -1,0 +1,9 @@
+{
+    "type": "record",
+    "name": "measurementlink",
+    "namespace": "exactlylabs",
+    "fields" : [
+        {"name": "download_id", "type": "string"},
+        {"name": "upload_id", "type": "string"}
+    ]
+}
