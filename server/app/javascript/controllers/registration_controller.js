@@ -10,6 +10,7 @@ export default class extends Controller {
     "passwordCheckInput",
     "termsInput",
     "continueButton",
+    "continueButtonLoading",
     "userAvatarInput",
     "dropzone",
     "avatarPreview",
@@ -29,6 +30,8 @@ export default class extends Controller {
     "step2Wrapper",
     "step3Wrapper",
     "errorText",
+    "emailErrorText",
+    "generalErrorText"
   ];
 
   connect() {}
@@ -101,7 +104,40 @@ export default class extends Controller {
       password: this.passwordInputTarget.value,
       terms: "on",
     };
-    this.goToStep1();
+    // Reset error messages on submit
+    this.emailErrorTextTarget.innerText = '';
+    this.generalErrorTextTarget.innerText = '';
+
+    this.continueButtonTarget.style.display = 'none';
+    this.continueButtonLoadingTarget.style.display = 'block';
+    const csrfToken = document.getElementsByName("csrf-token")[0].content;
+    const formData = new FormData();
+    formData.append('user[email]', this.registrationData.email);
+    fetch('/users/check_registration_data', {
+      method: 'POST',
+      headers: { "X-CSRF-Token": csrfToken },
+      body: formData
+    })
+      .then(res => {
+        if(res.status !== 500) return res.json()
+        else throw new Error(res.message);
+      })
+      .then(res => {
+        if(res.status === 200) this.goToStep1();
+        else if(res.status === 422) {
+          this.emailErrorTextTarget.innerText = res.msg;
+        } else {
+          throw new Error(res.message);
+        }
+      })
+      .catch(err => {
+        handleError(err, this.identifier);
+        this.generalErrorTextTarget.innerText = 'There has been an error processing your request. Please try again later.'
+      })
+      .finally(() => {
+        this.continueButtonTarget.style.display = 'block';
+        this.continueButtonLoadingTarget.style.display = 'none';
+      });
   }
 
   handleFileZoneClicked() {
@@ -142,8 +178,14 @@ export default class extends Controller {
           return res.json();
         }
       })
-      .then(res => { this.errorTextTarget.innerText = res.error; })
-      .catch((err) => handleError(err, this.identifier))
+      .then(res => {
+        if(res.error) this.errorTextTarget.innerText = res.error;
+        else this.errorTextTarget.innerText = 'There has been an unexpected error. Please try again later.';
+      })
+      .catch((err) => {
+        this.errorTextTarget.innerText = 'There has been an unexpected error. Please try again later.';
+        handleError(err, this.identifier);
+      })
       .finally(() => {
         this.continueButtonTarget.style.display = 'inline-block';
         this.finishButtonLoadingTarget.style.display = 'none';
