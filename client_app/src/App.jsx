@@ -8,6 +8,7 @@ import { STEPS } from './constants';
 import StepsPage from "./components/StepsPage/StepsPage";
 import HistoryPage from "./components/HistoryPage/HistoryPage";
 import {steps} from "./components/StepsPage/utils/steps";
+import ViewportContext, {ViewportContextProvider} from "./context/ViewportContext";
 
 // Application entry point, would hold all logic for state management
 // of multistep process
@@ -71,13 +72,15 @@ const App = ({ config }) => {
   };
 
   return (
-    <ConfigContextProvider value={config}>
-      <ThemeProvider theme={theme}>
-        <Frame config={config} setStep={setStep} step={step}>
-          {renderContent()}
-        </Frame>
-      </ThemeProvider>
-    </ConfigContextProvider>
+    <ViewportContextProvider>
+      <ConfigContextProvider value={config}>
+        <ThemeProvider theme={theme}>
+          <Frame config={config} setStep={setStep} step={step}>
+            {renderContent()}
+          </Frame>
+        </ThemeProvider>
+      </ConfigContextProvider>
+    </ViewportContextProvider>
   );
 };
 

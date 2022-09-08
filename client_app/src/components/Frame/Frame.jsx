@@ -4,9 +4,8 @@ import Footer from './Footer';
 import Tabs from './Tabs';
 import {DEFAULT_MAIN_SECTION_BACKGROUND_COLOR, WHITE} from '../../utils/colors';
 import {STEPS} from "../../constants";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
 import WidgetFooter from "./WidgetFooter";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const defaultMainWrapperStyle = {
   backgroundColor: DEFAULT_MAIN_SECTION_BACKGROUND_COLOR,
@@ -42,8 +41,7 @@ const widgetFullWidthWrapperStyle = {
 
 const Frame = ({ config, children, step, setStep }) => {
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getFrameStyleBasedOnCurrentTab = () => {
     if(step === STEPS.ALL_RESULTS) {

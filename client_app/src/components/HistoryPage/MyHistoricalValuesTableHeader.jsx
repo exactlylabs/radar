@@ -3,8 +3,7 @@ import UploadIcon from '../../assets/small-upload-icon.png';
 import LossIcon from '../../assets/ping-icon.png';
 import LatencyIcon from '../../assets/latency-icon.png';
 import {DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR} from "../../utils/colors";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const historicalValuesTableHeaderStyle = {
   width: '100%',
@@ -96,8 +95,7 @@ const MyHistoricalValuesTableHeader = ({
 
 }) => {
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getNetworkTypeColumnStyle = () => ({...commonHeaderStyle, height: '100%', width: '7%'});
 

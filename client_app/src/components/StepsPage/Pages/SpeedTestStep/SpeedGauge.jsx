@@ -5,9 +5,8 @@ import {sendRawData} from "../../../../utils/apiRequests";
 import {notifyError} from "../../../../utils/errors";
 import SpeedGaugeInterior from "./SpeedGaugeInterior";
 import {normalizeValue} from "./utils/normalizer";
-import {downloadWorkerUrl, runnerConfig, uploadWorkerUrl} from "../../../../utils/ndt7Tester";
-import {useIsMediumSizeScreen} from "../../../../hooks/useIsMediumSizeScreen";
-import {useIsSmallSizeScreen} from "../../../../hooks/useIsSmallSizeScreen";
+import {runnerConfig} from "../../../../utils/ndt7Tester";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 const canvasWrapperStyle = {
   width: 250,
@@ -176,8 +175,7 @@ const SpeedGauge = ({
     });
   };
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   return (
     <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileCanvasWrapperStyle : canvasWrapperStyle}>

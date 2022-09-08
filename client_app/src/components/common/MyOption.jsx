@@ -1,8 +1,6 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import './styles/MyOption.css';
-import {placementOptions} from "../../utils/placements";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const optionStyle = {
   width: 134,
@@ -62,8 +60,7 @@ const optionTextStyle = {
  */
 const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) => {
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   useEffect(() => {
     if(isCurrentOption()) {

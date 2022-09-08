@@ -1,6 +1,6 @@
 import {DEFAULT_FILTERS_SUBTITLE_COLOR, DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR, WHITE} from "../../utils/colors";
 import RadarLogoGray from '../../assets/radar-logo-gray.png';
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 const widgetFooterStyle = {
   width: '100%',
   height: 55,
@@ -77,7 +77,7 @@ const termsStyle = {
 
 const WidgetFooter = () => {
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const {isMediumSizeScreen} = useViewportSizes();
 
   return (
     <div style={isMediumSizeScreen ? narrowWidgetFooterStyle : widgetFooterStyle}>

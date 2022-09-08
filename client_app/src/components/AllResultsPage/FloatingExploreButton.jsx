@@ -1,10 +1,9 @@
 import FilterButtonOn from '../../assets/filter-button-on.png';
 import FilterButtonOff from '../../assets/filter-button-off.png';
 import {DEFAULT_FILTER_ACTIVE_COUNT_COLOR, WHITE} from "../../utils/colors";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
 import {useContext} from "react";
 import ConfigContext from "../../context/ConfigContext";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const floatingButtonStyle = {
   width: 68,
@@ -41,8 +40,7 @@ const FloatingExploreButton = ({
   onClick
 }) => {
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
 
   const getFloatingButtonStyle = () => {

@@ -12,8 +12,7 @@ import {types} from "../../utils/networkTypes";
 import {getAddressForCoordinates} from "../../utils/apiRequests";
 import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResultsStepPage";
 import {getLastStoredValue} from "../../utils/storage";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const stepsPageStyle = {
   width: '100%',
@@ -54,8 +53,7 @@ const StepsPage = ({
     networkCost: undefined,
   });
   const [lastTestResults, setLastTestResults] = useState(null);
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const setAddress = address => setUserStepData({...userStepData, address});
   const setTerms = status => setUserStepData({...userStepData, terms: status});

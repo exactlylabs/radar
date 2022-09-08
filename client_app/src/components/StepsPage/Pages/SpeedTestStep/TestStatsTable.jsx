@@ -1,8 +1,7 @@
 import {DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA, WHITE} from "../../../../utils/colors";
 import ConnectionInformation from "./ConnectionInformation";
 import TestStatsTableContent from "../../../common/TestStatsTableContent";
-import {useIsMediumSizeScreen} from "../../../../hooks/useIsMediumSizeScreen";
-import {useIsSmallSizeScreen} from "../../../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 const tableStyle = {
   width: '100%',
@@ -62,8 +61,7 @@ const TestStatsTable = ({
   userStepData,
 }) => {
 
-  const isMediumSizeScreen = useIsMediumSizeScreen();
-  const isSmallSizeScreen = useIsSmallSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getStyle = () => {
     let style;

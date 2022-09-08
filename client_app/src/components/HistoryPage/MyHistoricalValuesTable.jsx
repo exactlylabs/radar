@@ -2,8 +2,7 @@ import {useState} from "react";
 import MyHistoricalValuesTablePaginator from "./MyHistoricalValuesTablePaginator";
 import MyHistoricalValuesTableHeader from "./MyHistoricalValuesTableHeader";
 import MyHistoricalValuesTableRow from "./MyHistoricalValuesTableRow";
-import {useIsMediumSizeScreen} from "../../hooks/useIsMediumSizeScreen";
-import {useIsSmallSizeScreen} from "../../hooks/useIsSmallSizeScreen";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const historicalValuesTableStyle = {
   width: '75%',
@@ -17,8 +16,7 @@ const mobileHistoricalValuesTableStyle = {
 
 const MyHistoricalValuesTable = ({ values, openMeasurementInfoModal }) => {
 
-  const isSmallSizeScreen = useIsSmallSizeScreen();
-  const isMediumSizeScreen = useIsMediumSizeScreen();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const [currentPage, setCurrentPage] = useState(1);
 
   const paginatedValues = () => {
