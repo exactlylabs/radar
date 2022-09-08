@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     post 'users/sign_in_from_invite' => 'users/registrations#sign_from_invite'
 
     delete 'users/custom_sign_out' => 'users/registrations#custom_sign_out'
+
+    post 'users/check_registration_data' => 'users/registrations#check_registration_data'
   end
 
   resources :measurements, only: [:index] do

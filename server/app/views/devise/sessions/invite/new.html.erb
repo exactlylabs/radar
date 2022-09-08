@@ -1,5 +1,5 @@
 
-<div class="d-flex flex-center flex-column flex-column-fluid" data-controller="sign-in password-reveal">
+<div class="d-flex flex-center flex-column flex-column-fluid" data-controller="sign-in">
   <!--begin::Wrapper-->
   <div class="w-lg-500px p-10 p-lg-15 mx-auto">
     <!--begin::Form-->
@@ -44,7 +44,7 @@
         </div>
         <!--end::Wrapper-->
         <!--begin::Input-->
-        <div class="position-relative mb-3">
+        <div class="position-relative mb-3" data-controller="password-reveal">
           <input type="password"
                  autocomplete="true"
                  id="current-password"
