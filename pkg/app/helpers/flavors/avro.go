@@ -6,6 +6,7 @@ import (
 
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher"
 	"github.com/exactlylabs/mlab-processor/pkg/app/ipgeocoder"
+	"github.com/exactlylabs/mlab-processor/pkg/app/measurementlinker"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
 	"github.com/exactlylabs/mlab-processor/pkg/app/pipeline"
 	"github.com/exactlylabs/mlab-processor/pkg/app/reversegeocoder"
@@ -23,6 +24,8 @@ func getAvroStoreSchema(store string) string {
 		return models.GeocodedResultSchema
 	case reversegeocoder.StepName:
 		return models.RevGeoResultSchema
+	case measurementlinker.StepName:
+		return models.MeasLinkResultSchema
 	default:
 		panic(fmt.Errorf("storage.getStoreSchema err: Avro schema not found for %v", store))
 	}
