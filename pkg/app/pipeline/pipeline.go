@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 func RunPipeline(dsProvider DataStoreProvider, dateRange []time.Time, pipeline []string, rerun bool) {
 	maxLocalFiles := 2 // amount of latest files to keep locally if upload is enabled
 	files := make(map[string][]datastore.DataStore)
-
+	ctx := NewContext(context.Background())
 	for _, date := range dateRange {
 		for _, stepName := range pipeline {
 			log.Printf("Running %v for date %v\n", stepName, date)
@@ -22,7 +23,7 @@ func RunPipeline(dsProvider DataStoreProvider, dateRange []time.Time, pipeline [
 			if !exists || !rerun && ds.Exists() {
 				continue
 			}
-			ds = processor(dsProvider, date)
+			ds = processor(ctx, dsProvider, date)
 			if ds == nil {
 				continue
 			}
