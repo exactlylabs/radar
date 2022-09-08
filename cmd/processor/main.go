@@ -10,6 +10,7 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/helpers"
 	"github.com/exactlylabs/mlab-processor/pkg/app/helpers/flavors"
 	"github.com/exactlylabs/mlab-processor/pkg/app/ipgeocoder"
+	"github.com/exactlylabs/mlab-processor/pkg/app/measurementlinker"
 	"github.com/exactlylabs/mlab-processor/pkg/app/pipeline"
 	"github.com/exactlylabs/mlab-processor/pkg/app/reversegeocoder"
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/storagedatastore"
@@ -19,6 +20,7 @@ var pipelineStr = []string{
 	fetcher.StepName,
 	ipgeocoder.StepName,
 	reversegeocoder.StepName,
+	measurementlinker.StepName,
 }
 
 func main() {
