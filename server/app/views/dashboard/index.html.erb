@@ -22,8 +22,6 @@
         <% if policy(:export).all? %>
           <a href="<%= all_exports_path(format: 'zip') %>"
              class="btn bg-body btn-color-gray-700 btn-active-primary me-4"
-             data-controller="exports"
-             data-action="click->exports#displayProgress"
           >
             <span class="svg-icon svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -37,8 +35,6 @@
         <% end %>
         <a href="<%= measurements_path(format: 'csv') %>"
            class="btn bg-body btn-color-gray-700 btn-active-primary me-4"
-           data-controller="exports"
-           data-action="click->exports#displayProgress"
         >
           <span class="svg-icon svg-icon-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -52,8 +48,6 @@
         <% if policy(:measurement).full_index? %>
           <a href="<%= full_index_measurements_path(format: 'csv') %>"
              class="btn bg-body btn-color-gray-700 btn-active-primary me-4"
-             data-controller="exports"
-             data-action="click->exports#displayProgress"
           >
             <span class="svg-icon svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -68,8 +62,6 @@
         <% if policy(:measurement).full_ndt7_index? %>
           <a href="<%= full_ndt7_index_measurements_path(format: 'csv') %>"
              class="btn bg-body btn-color-gray-700 btn-active-primary me-4"
-             data-controller="exports"
-             data-action="click->exports#displayProgress"
           >
             <span class="svg-icon svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
