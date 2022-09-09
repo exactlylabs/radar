@@ -152,9 +152,13 @@ const MyMapModal = ({
     return isMediumSizeScreen || isSmallSizeScreen ? mobileFooterStyle : footerStyle
   }
 
+  const closeModal = () => setIsOpen(false);
+
+  const confirmCoordinates = () => goForward(addressCoordinates)
+
   return (
     <Modal open={isOpen}
-           onClose={() => setIsOpen(false)}
+           onClose={closeModal}
            style={getStyle()}
     >
       <Box sx={boxStyle}>
@@ -190,11 +194,11 @@ const MyMapModal = ({
         </div>
         <div style={getFooterStyle()}>
           <MyBackButton text={'Change address'}
-                        onClick={() => setIsOpen(false)}
+                        onClick={closeModal}
           />
           <MyForwardButton text={'Confirm location'}
                            icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
-                           onClick={() => goForward(addressCoordinates)}
+                           onClick={confirmCoordinates}
           />
         </div>
       </Box>

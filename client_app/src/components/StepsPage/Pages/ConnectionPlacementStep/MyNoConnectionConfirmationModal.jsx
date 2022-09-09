@@ -12,6 +12,7 @@ import {MyModalTitle} from "../../../common/MyModalTitle";
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
+import MySecondaryModalTitle from "../../../common/MySecondaryModalTitle";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -147,7 +148,7 @@ const MyNoConnectionConfirmationModal = ({
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
         <img style={noInternetIconStyle} src={NoInternetIconBlue} alt={'no-internet-icon'} width={42} height={42}/>
-        <MyModalTitle text={'Confirm you don\'t have internet'} style={{paddingTop: 20}}/>
+        <MySecondaryModalTitle text={'Confirm you don\'t have internet'}/>
         <div style={subtitleStyle}>Are you sure you don’t have Internet at the address below?</div>
         <div style={ (isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressWrapperStyle : addressWrapperStyle}>
           <img style={locationPinIconStyle} src={LocationPinIcon} width={28} height={28} alt={'location-pin'}/>

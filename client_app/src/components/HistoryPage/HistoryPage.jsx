@@ -72,6 +72,9 @@ const HistoryPage = ({
     return style;
   }
 
+
+  const goToMapPageWithNoCoordinates = () => goToMapPage(null)
+
   return (
     <div style={historyPageStyle}>
       <MyTitle text={'All your results'}/>
@@ -95,7 +98,7 @@ const HistoryPage = ({
                         onClick={goToLastTest}
           />
         }
-        <MyForwardButton text={'Explore the map'} onClick={() => goToMapPage(null)} />
+        <MyForwardButton text={'Explore the map'} onClick={goToMapPageWithNoCoordinates} />
       </div>
       {
         (isMediumSizeScreen || isSmallSizeScreen) &&

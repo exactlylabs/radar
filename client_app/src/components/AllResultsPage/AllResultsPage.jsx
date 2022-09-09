@@ -119,6 +119,10 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
 
   const openFirstTimeModal = () => setFirstTimeModalOpen(true);
 
+  const forceRecenter = () => setShouldRecenter(true);
+
+  const disableRecenter = () => setShouldRecenter(false);
+
   return (
     <div style={{ textAlign: 'center', height: '100%' }}>
       {(loading || centerCoordinatesLoading) && <CircularProgress size={25} />}
@@ -142,8 +146,8 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
           >
             <MyMap position={requestArea}
                    shouldRecenter={shouldRecenter}
-                   onPopupClose={() => setShouldRecenter(false)}
-                   onPopupOpen={() => setShouldRecenter(true)}
+                   onPopupClose={disableRecenter}
+                   onPopupOpen={forceRecenter}
             />
             <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
             {results.map(measurement => (
