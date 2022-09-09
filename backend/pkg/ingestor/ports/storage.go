@@ -17,11 +17,11 @@ type RevGeocodeIterator interface {
 }
 
 type Geospace struct {
-	Id        int64   `json:"id"`
+	Id        string  `json:"id"`
 	Name      *string `json:"name"`
 	Namespace string  `json:"namespace"`
 	GeoId     string  `json:"geo_id"`
-	ParentId  *int64  `json:"parent_id"`
+	ParentId  *string `json:"parent_id"`
 }
 
 type MeasurementsStorage interface {

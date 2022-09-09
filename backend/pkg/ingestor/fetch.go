@@ -65,8 +65,9 @@ func Fetch(bucket string, directories []string, start, end time.Time) (*ItemIter
 				dateNames = append(dateNames, item.Name)
 			}
 		}
-
-		names = append(names, dateNames)
+		if len(dateNames) == len(directories) {
+			names = append(names, dateNames)
+		}
 	}
 	return &ItemIterator{
 		names:  names,

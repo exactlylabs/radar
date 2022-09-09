@@ -1,14 +1,14 @@
 package ingestor
 
 import (
-	"bytes"
+	"context"
 	"fmt"
-	"io/ioutil"
-	"log"
+	"io"
 	"time"
 
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/models"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/ports"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/hamba/avro/ocf"
 )
 
@@ -17,44 +17,53 @@ type geodata struct {
 	geoId     string
 }
 
-func Ingest(s ports.MeasurementsStorage, bucketName string, start, end time.Time) error {
+func processDate(readers []io.ReadCloser, s ports.MeasurementsStorage) error {
+	measReader, revReader := readers[0], readers[1]
+	measDecoder, err := ocf.NewDecoder(measReader)
+	if err != nil {
+		return err
+	}
+	// Load the whole file
+	revDecoder, err := ocf.NewDecoder(revReader)
+	if err != nil {
+		return err
+	}
+	index, err := indexGeospaces(revDecoder)
+	if err != nil {
+		return err
+	}
+	revReader.Close()
+
+	if err := s.InsertMeasurements(
+		&measurementIterator{decoder: measDecoder, geoIndex: index},
+	); err != nil {
+		return err
+	}
+	return nil
+}
+
+func Ingest(ctx context.Context, s ports.MeasurementsStorage, bucketName string, start, end time.Time) error {
 	it, err := Fetch(bucketName, []string{"ipgeocode", "reversegeocode"}, start, end)
 	if err != nil {
 		return err
 	}
-	for readers, err := it.Next(); readers != nil; readers, err = it.Next() {
-		if err != nil {
-			return err
-		}
-
-		measReader, revReader := readers[0], readers[1]
-		data, err := ioutil.ReadAll(measReader)
-		if err != nil {
-			return err
-		}
-		log.Println("Downloaded reader")
-		measDecoder, err := ocf.NewDecoder(bytes.NewBuffer(data))
-		if err != nil {
-			return err
-		}
-		// Load the whole file
-		revDecoder, err := ocf.NewDecoder(revReader)
-		if err != nil {
-			return err
-		}
-		index, err := indexGeospaces(revDecoder)
-		if err != nil {
-			return err
-		}
-		revReader.Close()
-
-		if err := s.InsertMeasurements(
-			&measurementIterator{decoder: measDecoder, geoIndex: index},
-		); err != nil {
-			return err
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+			readers, err := it.Next()
+			if err != nil {
+				return errors.Wrap(err, "ingestor.Ingest Next")
+			}
+			if readers == nil {
+				return nil
+			}
+			if err := processDate(readers, s); err != nil {
+				return errors.Wrap(err, "ingestor.Ingest processDate")
+			}
 		}
 	}
-	return nil
 }
 
 func indexGeospaces(dec *ocf.Decoder) (map[string][]geodata, error) {
