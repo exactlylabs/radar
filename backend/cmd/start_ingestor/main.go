@@ -2,21 +2,26 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"runtime"
+	"strconv"
 	"syscall"
 	"time"
 
+	"github.com/ClickHouse/clickhouse-go/v2"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorage"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/tsdbstorage"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/ports"
 )
 
-var defaultStartTime = time.Date(2019, 8, 1, 0, 0, 0, 0, time.UTC)
+var defaultStartTime = time.Date(2020, 8, 1, 0, 0, 0, 0, time.UTC)
 
-func runInsertions(storage ports.MeasurementsStorage) {
+func runInsertions(ctx context.Context, storage ports.MeasurementsStorage) {
 	err := storage.Begin()
 	if err != nil {
 		panic(err)
@@ -34,7 +39,7 @@ func runInsertions(storage ports.MeasurementsStorage) {
 	log.Printf("Requesting insertions from %v to %v\n", measStartTime, endTime)
 
 	defer storage.Close()
-	err = ingestor.Ingest(storage, config.GetConfig().FilesBucketName, *measStartTime, endTime)
+	err = ingestor.Ingest(ctx, storage, config.GetConfig().FilesBucketName, *measStartTime, endTime)
 	if err != nil {
 		panic(err)
 	}
@@ -43,7 +48,7 @@ func runInsertions(storage ports.MeasurementsStorage) {
 
 func main() {
 	sigs := make(chan os.Signal)
-	signal.Notify(sigs, syscall.SIGINT)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	ctx, cancel := context.WithCancel(context.Background())
 	interrupts := 0
 	go func() {
@@ -60,7 +65,36 @@ func main() {
 		}
 	}()
 	conf := config.GetConfig()
-	storage := tsdbstorage.New(conf.DBDSN())
+	var storage ports.MeasurementsStorage
+	if conf.StorageType == "tsdb" {
+		nWorkers := runtime.NumCPU()
+		if conf.TSDBStorageNWorkers != "" {
+			n, err := strconv.Atoi(conf.TSDBStorageNWorkers)
+			if err != nil {
+				panic(err)
+			}
+			nWorkers = n
+		}
+		storage = tsdbstorage.New(conf.DBDSN(), nWorkers)
+	} else {
+		nWorkers := runtime.NumCPU()
+		if conf.ClickhouseStorageNWorkers != "" {
+			n, err := strconv.Atoi(conf.ClickhouseStorageNWorkers)
+			if err != nil {
+				panic(err)
+			}
+			nWorkers = n
+		}
+		storage = clickhousestorage.New(&clickhouse.Options{
+			Auth: clickhouse.Auth{
+				Database: conf.DBName,
+				Username: conf.DBUser,
+				Password: conf.DBPassword,
+			},
+			Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
+			MaxOpenConns: +5,
+		}, nWorkers)
+	}
 
 	// Run a first time then, run once every x hour
 	timer := time.NewTimer(time.Second)
@@ -69,7 +103,7 @@ func main() {
 		case <-ctx.Done():
 			return
 		case <-timer.C:
-			runInsertions(storage)
+			runInsertions(ctx, storage)
 			timer.Reset(time.Hour)
 		}
 	}
