@@ -1,5 +1,5 @@
 import SpeedGauge from "./SpeedGauge";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import ConnectionInformation from "./ConnectionInformation";
 import StartTestPrompt from "./StartTestPrompt";
 import TestStatsTableContent from "./TestStatsTable";
