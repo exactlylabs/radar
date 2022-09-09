@@ -29,13 +29,228 @@ CREATE TABLE IF NOT EXISTS measurements (
     location_accuracy_km DOUBLE PRECISION,
     has_access_token BOOLEAN,
     access_token_sig VARCHAR,
-    asn_id BIGINT REFERENCES asns(id),
-    geospace_id BIGINT REFERENCES geospaces(id)
+    asn_id BIGINT REFERENCES asn (id) ON DELETE SET NULL,
+    geospace_id BIGINT REFERENCES geospaces (id) ON DELETE SET NULL
 );
-SELECT * FROM create_hypertable('measurements', 'time', chunk_time_interval => INTERVAL '1 day');
-CREATE INDEX IF NOT EXISTS measurements_upload_index ON measurements(upload, time DESC) WITH (timescaledb.transaction_per_chunk);
-CREATE INDEX IF NOT EXISTS measurements_geospace_index ON measurements(geospace_id, upload, time DESC) WITH (timescaledb.transaction_per_chunk);
-CREATE INDEX IF NOT EXISTS measurements_asn_index ON measurements(asn_id, upload, time DESC) WITH (timescaledb.transaction_per_chunk);
+SELECT create_hypertable('measurements', 'time', chunk_time_interval => INTERVAL '7 day');
+CREATE INDEX IF NOT EXISTS measurements_geospace_index ON measurements(geospace_id, asn_id, upload, time DESC) WITH (timescaledb.transaction_per_chunk);
+CREATE INDEX IF NOT EXISTS measurements_geospace_index ON measurements(geospace_id, asn_id, upload, ip, time DESC) WITH (timescaledb.transaction_per_chunk);
+
+
+-- Yearly
+
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS summary_yearly AS (
+    WITH ip_groups AS (
+        SELECT 
+            time_bucket('1 year', m.time, origin => '2000-01-01') as bucket,
+            geospace_id,
+            asn_id,
+            stats_agg(mbps) stats,
+            approx_percentile(0.5, percentile_agg(mbps)) percentiles_mbps,
+            approx_percentile(0.5, percentile_agg(min_rtt)) percentiles_rtt,
+            upload,
+            ip
+        FROM measurements m
+        GROUP BY bucket, geospace_id, asn_id, upload, ip
+    )
+    SELECT 
+        bucket,
+        geospace_id,
+        asn_id,
+        ROLLUP(ip_groups.stats) stats,
+        percentile_agg(ip_groups.percentiles_mbps) percentiles_mbps,
+        percentile_agg(ip_groups.percentiles_rtt) percentiles_rtt,
+        upload
+    FROM ip_groups
+    GROUP BY bucket, geospace_id, asn_id, upload
+) WITH NO DATA;
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS summary_geospace_yearly AS (
+    WITH ip_groups AS (
+        SELECT 
+            time_bucket('1 year', m.time, origin => '2000-01-01') as bucket,
+            geospace_id,
+            stats_agg(mbps) as stats,
+            approx_percentile(0.5, percentile_agg(mbps)) percentiles_mbps,
+            approx_percentile(0.5, percentile_agg(min_rtt)) percentiles_rtt,
+            upload,
+            ip
+        FROM measurements m
+        GROUP BY bucket, geospace_id, upload, ip
+    )
+    SELECT 
+        bucket,
+        geospace_id,
+        ROLLUP(ip_groups.stats) stats,
+        percentile_agg(ip_groups.percentiles_mbps) percentiles_mbps,
+        percentile_agg(ip_groups.percentiles_rtt) percentiles_rtt,
+        upload
+    FROM ip_groups
+    GROUP BY bucket, geospace_id, upload
+) WITH NO DATA;
+
+-- Half Year
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS summary_half_year AS (
+    WITH ip_groups AS (
+        SELECT 
+            time_bucket('6 month', m.time, origin => '2000-01-01') as bucket,
+            geospace_id,
+            asn_id,
+            stats_agg(mbps) stats,
+            approx_percentile(0.5, percentile_agg(mbps)) percentiles_mbps,
+            approx_percentile(0.5, percentile_agg(min_rtt)) percentiles_rtt,
+            upload,
+            ip
+        FROM measurements m
+        GROUP BY bucket, geospace_id, asn_id, upload, ip
+    )
+    SELECT 
+        bucket,
+        geospace_id,
+        asn_id,
+        ROLLUP(ip_groups.stats) stats,
+        percentile_agg(ip_groups.percentiles_mbps) percentiles_mbps,
+        percentile_agg(ip_groups.percentiles_rtt) percentiles_rtt,
+        upload
+    FROM ip_groups
+    GROUP BY bucket, geospace_id, asn_id, upload
+) WITH NO DATA;
+
+
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS summary_geospace_half_year AS (
+    WITH ip_groups AS (
+        SELECT 
+            time_bucket('6 month', m.time, origin => '2000-01-01') as bucket,
+            geospace_id,
+            stats_agg(mbps) as stats,
+            approx_percentile(0.5, percentile_agg(mbps)) percentiles_mbps,
+            approx_percentile(0.5, percentile_agg(min_rtt)) percentiles_rtt,
+            upload,
+            ip
+        FROM measurements m
+        GROUP BY bucket, geospace_id, upload, ip
+    )
+    SELECT 
+        bucket,
+        geospace_id,
+        ROLLUP(ip_groups.stats) stats,
+        percentile_agg(ip_groups.percentiles_mbps) percentiles_mbps,
+        percentile_agg(ip_groups.percentiles_rtt) percentiles_rtt,
+        upload
+    FROM ip_groups
+    GROUP BY bucket, geospace_id, upload
+) WITH NO DATA;
+
+-- Monthly
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS summary_monthly AS (
+    WITH ip_groups AS (
+        SELECT 
+            time_bucket('1 month', m.time, origin => '2000-01-01') as bucket,
+            geospace_id,
+            asn_id,
+            stats_agg(mbps) stats,
+            approx_percentile(0.5, percentile_agg(mbps)) percentiles_mbps,
+            approx_percentile(0.5, percentile_agg(min_rtt)) percentiles_rtt,
+            upload,
+            ip
+        FROM measurements m
+        GROUP BY bucket, geospace_id, asn_id, upload, ip
+    )
+    SELECT 
+        bucket,
+        geospace_id,
+        asn_id,
+        ROLLUP(ip_groups.stats) stats,
+        percentile_agg(ip_groups.percentiles_mbps) percentiles_mbps,
+        percentile_agg(ip_groups.percentiles_rtt) percentiles_rtt,
+        upload
+    FROM ip_groups
+    GROUP BY bucket, geospace_id, asn_id, upload
+) WITH NO DATA;
+
+
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS summary_geospace_monthly AS (
+    WITH ip_groups AS (
+        SELECT 
+            time_bucket('1 month', m.time, origin => '2000-01-01') as bucket,
+            geospace_id,
+            stats_agg(mbps) as stats,
+            approx_percentile(0.5, percentile_agg(mbps)) percentiles_mbps,
+            approx_percentile(0.5, percentile_agg(min_rtt)) percentiles_rtt,
+            upload,
+            ip
+        FROM measurements m
+        GROUP BY bucket, geospace_id, upload, ip
+    )
+    SELECT 
+        bucket,
+        geospace_id,
+        ROLLUP(ip_groups.stats) stats,
+        percentile_agg(ip_groups.percentiles_mbps) percentiles_mbps,
+        percentile_agg(ip_groups.percentiles_rtt) percentiles_rtt,
+        upload
+    FROM ip_groups
+    GROUP BY bucket, geospace_id, upload
+) WITH NO DATA;
+
+-- Weekly
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS summary_weekly AS (
+    WITH ip_groups AS (
+        SELECT 
+            time_bucket('7 day', m.time, origin => '2000-01-01') as bucket,
+            geospace_id,
+            asn_id,
+            stats_agg(mbps) stats,
+            approx_percentile(0.5, percentile_agg(mbps)) percentiles_mbps,
+            approx_percentile(0.5, percentile_agg(min_rtt)) percentiles_rtt,
+            upload,
+            ip
+        FROM measurements m
+        GROUP BY bucket, geospace_id, asn_id, upload, ip
+    )
+    SELECT 
+        bucket,
+        geospace_id,
+        asn_id,
+        ROLLUP(ip_groups.stats) stats,
+        percentile_agg(ip_groups.percentiles_mbps) percentiles_mbps,
+        percentile_agg(ip_groups.percentiles_rtt) percentiles_rtt,
+        upload
+    FROM ip_groups
+    GROUP BY bucket, geospace_id, asn_id, upload
+) WITH NO DATA;
+
+
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS summary_geospace_weekly AS (
+    WITH ip_groups AS (
+        SELECT 
+            time_bucket('7 day', m.time, origin => '2000-01-01') as bucket,
+            geospace_id,
+            stats_agg(mbps) as stats,
+            approx_percentile(0.5, percentile_agg(mbps)) percentiles_mbps,
+            approx_percentile(0.5, percentile_agg(min_rtt)) percentiles_rtt,
+            upload,
+            ip
+        FROM measurements m
+        GROUP BY bucket, geospace_id, upload, ip
+    )
+    SELECT 
+        bucket,
+        geospace_id,
+        ROLLUP(ip_groups.stats) stats,
+        percentile_agg(ip_groups.percentiles_mbps) percentiles_mbps,
+        percentile_agg(ip_groups.percentiles_rtt) percentiles_rtt,
+        upload
+    FROM ip_groups
+    GROUP BY bucket, geospace_id, upload
+) WITH NO DATA;
 
 
 -- Continuous Aggregates --
@@ -60,6 +275,15 @@ WITH (timescaledb.continuous, timescaledb.materialized_only=true) AS (
     GROUP BY bucket, upload, geospace_id, asn_id
 ) WITH NO DATA;
 SELECT add_continuous_aggregate_policy('summary', start_offset => INTERVAL '1 month', end_offset => NULL, schedule_interval => INTERVAL '24 hours', if_not_exists => true);
+
+-- Index to enable us to check all ASNs of a given geospace_id in a time bucket
+-- CREATE INDEX asn_idx ON _timescaledb_internal._materialized_hypertable_6 (geospace_id, bucket, asn_id);
+-- Unfortunatelly, we can only create an index for constinuous aggregates using their hypertable name, which we don't have unless we run the query bellow
+-- SELECT view_name, format('%I.%I', materialization_hypertable_schema,
+--         materialization_hypertable_name) AS materialization_hypertable
+--     FROM timescaledb_information.continuous_aggregates WHERE view_name='summary';
+
+
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS summary_geospace
 WITH (timescaledb.continuous, timescaledb.materialized_only=true) AS (
@@ -151,3 +375,12 @@ SELECT add_continuous_aggregate_policy('geospace_asns', start_offset => INTERVAL
 --     AND s.geospace_id=1
 -- GROUP BY b, s.asn_id
 -- ;
+
+
+-- WITH V AS (
+-- SELECT 
+--     time_bucket('1 day', m.time) bucket
+-- FROM measurements m
+-- WHERE m.time > NOW() - INTERVAL '1 year'
+-- GROUP BY bucket, upload, geospace_id, asn_id, ip
+-- ) SELECT count(*) FROM V;
