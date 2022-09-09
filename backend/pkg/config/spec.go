@@ -8,13 +8,16 @@ import (
 )
 
 type Config struct {
-	DBName             string `config:"DB_NAME"`
-	DBUser             string `config:"DB_USER"`
-	DBPassword         string `config:"DB_PASSWORD"`
-	DBHost             string `config:"DB_HOST"`
-	DBPort             string `config:"DB_PORT"`
-	FilesBucketName    string `config:"FILES_BUCKET_NAME"`
-	CORSAllowedOrigins string `config:"CORS_ALLOWED_ORIGINS"`
+	DBName                    string `config:"DB_NAME"`
+	DBUser                    string `config:"DB_USER"`
+	DBPassword                string `config:"DB_PASSWORD"`
+	DBHost                    string `config:"DB_HOST"`
+	DBPort                    string `config:"DB_PORT"`
+	FilesBucketName           string `config:"FILES_BUCKET_NAME"`
+	CORSAllowedOrigins        string `config:"CORS_ALLOWED_ORIGINS"`
+	TSDBStorageNWorkers       string `config:"TSDB_STORAGE_NWORKERS"`
+	ClickhouseStorageNWorkers string `config:"CLICKHOUSE_STORAGE_NWORKERS"`
+	StorageType               string `config:"STORAGE_TYPE"`
 }
 
 func (c *Config) DBDSN() string {
