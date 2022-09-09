@@ -37,12 +37,14 @@ const SpeedTestStepPage = ({
     goForward(results);
   }
 
+  const enableContent = () => setDisabled(false);
+
   return (
     <div style={{width: '100%'}}>
       <ConnectionInformation disabled={disabled} progress={testProgress} userStepData={userStepData}/>
       {
         disabled &&
-        <StartTestPrompt startTest={() => setDisabled(false)}/>
+        <StartTestPrompt startTest={enableContent}/>
       }
       {
         !disabled &&

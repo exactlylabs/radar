@@ -134,6 +134,12 @@ const StepsPage = ({
 
   const goToNoInternetPage = () => setCurrentStep(steps.NO_INTERNET);
 
+  const goToConnectionAddress = () => setCurrentStep(steps.CONNECTION_ADDRESS);
+
+  const goToConnectionPlacement = () => setCurrentStep(steps.CONNECTION_PLACEMENT);
+
+  const goToConnectionType = () => setCurrentStep(steps.CONNECTION_TYPE);
+
   const getCurrentPage = () => {
     switch (currentStep) {
       case steps.CONNECTION_ADDRESS:
@@ -148,7 +154,7 @@ const StepsPage = ({
         />;
       case steps.CONNECTION_PLACEMENT:
         return <ConnectionPlacementStepPage goForward={goToPage3}
-                                            goBack={() => setCurrentStep(steps.CONNECTION_ADDRESS)}
+                                            goBack={goToConnectionAddress}
                                             setSelectedOption={setNetworkLocation}
                                             selectedOption={userStepData.networkLocation}
                                             address={userStepData.address.address}
@@ -156,14 +162,14 @@ const StepsPage = ({
         />;
       case steps.CONNECTION_TYPE:
         return <ConnectionTypeStepPage goForward={goToPage4}
-                                       goBack={() => setCurrentStep(steps.CONNECTION_PLACEMENT)}
+                                       goBack={goToConnectionPlacement}
                                        selectedOption={userStepData.networkType}
                                        setSelectedOption={setNetworkType}
                                        warning={warning}
         />;
       case steps.CONNECTION_COST:
         return <ConnectionCostStepPage goForward={goToPage5}
-                                       goBack={() => setCurrentStep(steps.CONNECTION_TYPE)}
+                                       goBack={goToConnectionType}
                                        setCost={setNetworkCost}
                                        cost={userStepData.networkCost}
         />;

@@ -114,13 +114,15 @@ const FirstTimeModal = ({
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
+  const closeModal = () => setIsOpen(false);
+
   return (
     <Modal open={isOpen}
-           onClose={() => setIsOpen(false)}
+           onClose={closeModal}
            style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle}
     >
       <Box sx={boxStyle}>
-        <div style={closeButtonStyle} onClick={() => setIsOpen(false)} className={'modal-dismiss--hoverable'}>
+        <div style={closeButtonStyle} onClick={closeModal} className={'modal-dismiss--hoverable'}>
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
         <MyModalTitle text={'Explore Map'}/>
@@ -133,7 +135,7 @@ const FirstTimeModal = ({
         <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileFooterStyle : footerStyle}>
           <MyButton text={'Go to map'}
                     icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
-                    onClick={() => setIsOpen(false)}
+                    onClick={closeModal}
                     fullWidth
           />
         </div>
