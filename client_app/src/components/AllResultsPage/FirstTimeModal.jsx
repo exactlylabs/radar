@@ -1,11 +1,11 @@
 import {Box, Modal} from "@mui/material";
 import {MyModalTitle} from "../common/MyModalTitle";
 import {DEFAULT_MAP_MODAL_BACKGROUND_COLOR, DEFAULT_MODAL_BOX_SHADOW, DEFAULT_TEXT_COLOR} from "../../utils/colors";
-import {useScreenSize} from "../../hooks/useScreenSize";
 import {ArrowForward, Close} from "@mui/icons-material";
 import MapPhoto from '../../assets/map-photo.png';
 import TooltipPhoto from '../../assets/map-tooltip.png';
 import {MyButton} from "../common/MyButton";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -27,6 +27,7 @@ const mobileModalStyle = {
   position: 'fixed',
   top: '10%',
   left: '5%',
+  maxHeight: 450,
 }
 
 const boxStyle = {
@@ -111,12 +112,12 @@ const FirstTimeModal = ({
   setIsOpen
 }) => {
 
-  const isMobile = useScreenSize();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   return (
     <Modal open={isOpen}
            onClose={() => setIsOpen(false)}
-           style={isMobile ? mobileModalStyle : modalStyle}
+           style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle}
     >
       <Box sx={boxStyle}>
         <div style={closeButtonStyle} onClick={() => setIsOpen(false)} className={'modal-dismiss--hoverable'}>
@@ -125,11 +126,11 @@ const FirstTimeModal = ({
         <MyModalTitle text={'Explore Map'}/>
         <div style={subtitleStyle}>Our map shows all speed tests taken across the country.
           You can click a test to view more details or filter tests by speed results.</div>
-        <div style={isMobile ? mobileImageContainerStyle : imageContainerStyle}>
+        <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileImageContainerStyle : imageContainerStyle}>
           <img src={MapPhoto} style={mapPhotoStyle} alt={'map-photo'}/>
           <img src={TooltipPhoto} style={tooltipPhotoStyle} alt={'tooltip-photo'}/>
         </div>
-        <div style={isMobile ? mobileFooterStyle : footerStyle}>
+        <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileFooterStyle : footerStyle}>
           <MyButton text={'Go to map'}
                     icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
                     onClick={() => setIsOpen(false)}

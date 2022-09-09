@@ -2,7 +2,7 @@ import {MyTitle} from "../../../common/MyTitle";
 import {MyForwardButton} from "../../../common/MyForwardButton";
 import CheckIcon from '../../../../assets/check-icon.png';
 import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
-import {useScreenSize} from "../../../../hooks/useScreenSize";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 const noInternetStepPageStyle = {
   width: '45%',
@@ -42,10 +42,10 @@ const NoInternetStepPage = ({
   goToMapPage
 }) => {
 
-  const isMobile = useScreenSize();
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   return (
-    <div style={isMobile ? mobileNoInternetStepPageStyle : noInternetStepPageStyle}>
+    <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileNoInternetStepPageStyle : noInternetStepPageStyle}>
       <img style={checkIconStyle} src={CheckIcon} width={42} height={42} alt={'check-icon'}/>
       <MyTitle text={'Thanks for letting us know.'}/>
       <div style={firstLineStyle}>While we cannot run a speed test at your location as you don’t have Internet, we do appreciate your information that helps us learn more about which areas are currently not served.</div>

@@ -1,7 +1,7 @@
 import DownloadIcon from "../../assets/small-download-icon.png";
 import MyStatsTableVerticalDivider from "../StepsPage/Pages/SpeedTestStep/MyStatsTableVerticalDivider";
 import UploadIcon from "../../assets/small-upload-icon.png";
-import PingIcon from "../../assets/ping-icon.png";
+import LossIcon from "../../assets/loss-icon.png";
 import LatencyIcon from "../../assets/latency-icon.png";
 import {DEFAULT_POPUP_VALUE_COLOR, DEFAULT_STATS_TABLE_TEXT_COLOR} from "../../utils/colors";
 import MyStatsTableHorizontalDivider from "../StepsPage/Pages/SpeedTestStep/MyStatsTableHorizontalDivider";
@@ -150,7 +150,7 @@ const TestStatsTableContent = ({
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
-          <img style={iconStyle} src={PingIcon} width={16} height={16} alt={'loss-icon'}/>
+          <img style={iconStyle} src={LossIcon} width={16} height={16} alt={'loss-icon'}/>
           <div className={'bold'} style={titleStyle}>Loss</div>
         </div>
         <div className={'bold'} style={valueStyle}>{lossValue ? lossValue : '-'}</div>
@@ -184,7 +184,7 @@ const TestStatsTableContent = ({
         <MyStatsTableHorizontalDivider/>
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
-            <img style={iconStyle} src={PingIcon} width={16} height={16} alt={'loss-icon'}/>
+            <img style={iconStyle} src={LossIcon} width={16} height={16} alt={'loss-icon'}/>
             <div className={'bold'} style={titleStyle}>Loss</div>
           </div>
           <div style={mobileValuesStyle}>

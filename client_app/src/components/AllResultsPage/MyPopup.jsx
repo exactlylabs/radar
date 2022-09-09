@@ -9,7 +9,7 @@ import {
 } from "../../utils/colors";
 import DownloadIcon from '../../assets/small-download-icon.png';
 import UploadIcon from '../../assets/small-upload-icon.png';
-import LossIcon from '../../assets/ping-icon.png';
+import LossIcon from '../../assets/loss-icon.png';
 import LatencyIcon from '../../assets/latency-icon.png';
 import MyPopupGridItem from "./MyPopupGridItem";
 import {placementOptions} from "../../utils/placements";
