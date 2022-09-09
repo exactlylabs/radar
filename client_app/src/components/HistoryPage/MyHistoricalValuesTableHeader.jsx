@@ -1,6 +1,6 @@
 import DownloadIcon from '../../assets/small-download-icon.png';
 import UploadIcon from '../../assets/small-upload-icon.png';
-import LossIcon from '../../assets/ping-icon.png';
+import LossIcon from '../../assets/loss-icon.png';
 import LatencyIcon from '../../assets/latency-icon.png';
 import {DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR} from "../../utils/colors";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
@@ -20,19 +20,6 @@ const commonHeaderStyle = {
   alignItems: 'center',
   fontSize: 14,
   color: DEFAULT_HISTORICAL_VALUES_HEADER_TITLE_COLOR,
-}
-
-// 7 20 12 12 12 12 15
-const networkTypeColumStyle = {
-  ...commonHeaderStyle,
-  width: '7%',
-  height: '100%'
-}
-
-const mobileNetworkTypeColumnStyle = {
-  ...commonHeaderStyle,
-  width: '12%',
-  height: '100%'
 }
 
 const dateTimeColumnStyle = {
@@ -55,13 +42,13 @@ const smallDateTimeColumnStyle = {
 
 const locationColumnStyle = {
   ...commonHeaderStyle,
-  width: '20%',
+  width: '21%',
   justifyContent: 'flex-start',
 }
 
 const columnWithIconStyle = {
   ...commonHeaderStyle,
-  width: '13.5%',
+  width: '13%',
   justifyContent: 'flex-end',
 }
 
@@ -79,7 +66,7 @@ const smallColumnWithIconStyle = {
 
 const columnWithIconNarrowStyle = {
   ...columnWithIconStyle,
-  width: '12%',
+  width: '14%',
 }
 
 const iconStyle = {

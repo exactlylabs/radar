@@ -162,7 +162,7 @@ const ConnectionInformation = ({
                                         accent={`${userStepData.networkLocation.text}.`}
                                         shouldNotAppear={disabled}
         >
-          <div className={'bold'} style={placementRowStyle}>
+          <div className={'bold'} style={getPlacementOrTypeCellStyle()}>
             <img style={iconStyle} src={userStepData.networkLocation ? userStepData.networkLocation.iconLightSrc : HomeIconLight} width={22} height={22} alt={'address-icon'}/>
             { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkLocation)}</div> }
           </div>
@@ -172,7 +172,7 @@ const ConnectionInformation = ({
                                         accent={`${userStepData.networkType.text}.`}
                                         shouldNotAppear={disabled}
         >
-          <div className={'bold'} style={typeRowStyle}>
+          <div className={'bold'} style={getPlacementOrTypeCellStyle()}>
             <img style={iconStyle} src={userStepData.networkType ? userStepData.networkType.iconLightSrc : WifiIconLight} width={22} height={22} alt={'address-icon'}/>
             { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkType)}</div> }
           </div>

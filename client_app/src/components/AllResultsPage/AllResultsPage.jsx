@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { CircularProgress } from '@mui/material';
 import { MyButton } from '../common/MyButton';
-import {MapContainer, TileLayer, ZoomControl} from 'react-leaflet';
+import {MapContainer, TileLayer} from 'react-leaflet';
 import { STEPS } from '../../constants';
 import SpeedResultsBox from './SpeedResultsBox';
 import {getCorrespondingFilterTag} from '../../utils/speeds';

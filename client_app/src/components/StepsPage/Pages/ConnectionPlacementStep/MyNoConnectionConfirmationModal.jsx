@@ -1,5 +1,4 @@
 import {Box, Modal} from "@mui/material";
-import {useScreenSize} from "../../../../hooks/useScreenSize";
 import {
   DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR,
   DEFAULT_MAP_MODAL_BACKGROUND_COLOR,
@@ -12,6 +11,7 @@ import LocationPinIcon from '../../../../assets/address-icon-rounded.png';
 import {MyModalTitle} from "../../../common/MyModalTitle";
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -135,12 +135,12 @@ const MyNoConnectionConfirmationModal = ({
   goToLastFlowStep
 }) => {
 
-  const isMobile = useScreenSize();
+  const {isMediumSizeScreen, isSmallSizeScreen} = useViewportSizes();
 
   return (
     <Modal open={open}
            onClose={close}
-           style={isMobile ? mobileModalStyle : modalStyle}
+           style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle}
     >
       <Box sx={boxStyle}>
         <div style={closeButtonStyle} onClick={close} className={'modal-dismiss--hoverable'}>
@@ -149,11 +149,11 @@ const MyNoConnectionConfirmationModal = ({
         <img style={noInternetIconStyle} src={NoInternetIconBlue} alt={'no-internet-icon'} width={42} height={42}/>
         <MyModalTitle text={'Confirm you don\'t have internet'} style={{paddingTop: 20}}/>
         <div style={subtitleStyle}>Are you sure you don’t have Internet at the address below?</div>
-        <div style={ isMobile ? mobileAddressWrapperStyle : addressWrapperStyle}>
+        <div style={ (isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressWrapperStyle : addressWrapperStyle}>
           <img style={locationPinIconStyle} src={LocationPinIcon} width={28} height={28} alt={'location-pin'}/>
-          <p style={isMobile ? mobileAddressTextStyle : addressTextStyle}>{address}</p>
+          <p style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressTextStyle : addressTextStyle}>{address}</p>
         </div>
-        <div style={isMobile ? mobileFooterStyle : footerStyle}>
+        <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileFooterStyle : footerStyle}>
           <MyBackButton text={'Cancel'}
                         onClick={close}
           />

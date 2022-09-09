@@ -36,11 +36,6 @@ const networkTypeColumStyle = {
   alignItems: 'center'
 }
 
-const mobileNetworkTypeColumnStyle = {
-  ...networkTypeColumStyle,
-  width: '12%',
-}
-
 const dateTimeColumnStyle = {
   ...commonRowStyle,
   width: '18%',
@@ -61,7 +56,7 @@ const smallDateTimeColumnStyle = {
 
 const locationColumnStyle = {
   ...commonRowStyle,
-  width: '16%',
+  width: '20%',
   justifyContent: 'flex-start',
 }
 
@@ -77,11 +72,6 @@ const columnWithIconStyle = {
   width: '13.5%',
   color: HISTORICAL_VALUES_TABLE_ROW_DARK_VALUES_COLOR,
   justifyContent: 'flex-end',
-}
-
-const mobileColumnWithIconStyle = {
-  ...columnWithIconStyle,
-  width: '24%',
 }
 
 const midLatencyLossStyle = {
