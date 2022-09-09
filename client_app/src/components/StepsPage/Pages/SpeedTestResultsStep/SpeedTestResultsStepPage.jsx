@@ -19,6 +19,13 @@ const exploreAreaStyle = {
   margin: '20px auto 35px'
 }
 
+const stackedTextStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center'
+}
+
 const textStyle = {
   color: DEFAULT_EXPLORE_AREA_COLOR,
   fontSize: 16,
@@ -48,6 +55,12 @@ const regularTextStyle = {
   marginRight: 3,
 }
 
+const exploreAreaLinkStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center'
+}
+
 const SpeedTestResultsStepPage = ({
   testResults,
   userStepData,
@@ -57,15 +70,19 @@ const SpeedTestResultsStepPage = ({
 }) => {
 
   const goToHistoryWithRecentTestTaken = () => goToHistory(true);
-  const {isMediumSizeScreen} = useViewportSizes();
+  const {isMediumSizeScreen, isSmallSizeScreen} = useViewportSizes();
+
+  const getExploreAreaTextStyle = () => isMediumSizeScreen || isSmallSizeScreen ? stackedTextStyle : exploreAreaStyle
 
   return (
     <div style={speedTestResultsContainerStyle}>
       <MyTitle text={'Your test results'}/>
-      <div style={exploreAreaStyle} onClick={goToAreaMap}>
+      <div style={getExploreAreaTextStyle()} onClick={goToAreaMap}>
         <p style={regularTextStyle}>See how you compare to others.</p>
-        <div className={'bold opaque-hoverable'} style={textStyle}>Explore your area</div>
-        <img src={ArrowRightBlue} style={{marginLeft: 7}} width={14} height={14} alt={'blue-arrow-right'}/>
+        <div style={exploreAreaLinkStyle}>
+          <div className={'bold opaque-hoverable'} style={textStyle}>Explore your area</div>
+          <img src={ArrowRightBlue} style={{marginLeft: 7}} width={14} height={14} alt={'blue-arrow-right'}/>
+        </div>
       </div>
       <TestStatsTableContent extended
                              latencyValue={testResults.latency.toFixed(0)}

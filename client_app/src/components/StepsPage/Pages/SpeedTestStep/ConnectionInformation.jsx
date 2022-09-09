@@ -1,5 +1,5 @@
 import {
-  DEFAULT_CONNECTION_INFORMATION_BACKGROUND_COLOR, DEFAULT_CONNECTION_INFORMATION_BOX_SHADOW,
+  DEFAULT_CONNECTION_INFORMATION_BACKGROUND_COLOR,
   DEFAULT_CONNECTION_INFORMATION_BOX_SHADOW,
   DEFAULT_SPEED_TEST_PROGRESS_BAR_COLOR,
   WHITE
@@ -81,10 +81,10 @@ const placementRowStyle = {
   minWidth: 75,
 }
 
-const typeRowStyle = {
+const withoutTextPlacementRowStyle = {
   ...commonRowStyle,
   width: 'max-content',
-  minWidth: 75,
+  minWidth: 30,
 }
 
 const iconStyle = {
@@ -142,6 +142,8 @@ const ConnectionInformation = ({
     return shouldTextAppear ? style : {...style, maxWidth: 175};
   }
 
+  const getPlacementOrTypeCellStyle = () => shouldTextAppear ?  placementRowStyle : withoutTextPlacementRowStyle;
+
   return (
     <div style={getStyle()}>
       <div style={columnsContainerStyle}>
@@ -150,12 +152,12 @@ const ConnectionInformation = ({
           <div style={addressStyle}>{userStepData.address.address}</div>
         </div>
         <MyConnectionInformationVerticalDivider disabled={disabled}/>
-        <div className={'bold'} style={placementRowStyle}>
+        <div className={'bold'} style={getPlacementOrTypeCellStyle()}>
           <img style={iconStyle} src={userStepData.networkLocation ? userStepData.networkLocation.iconLightSrc : HomeIconLight} width={22} height={22} alt={'address-icon'}/>
           { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkLocation)}</div> }
         </div>
         <MyConnectionInformationVerticalDivider disabled={disabled}/>
-        <div className={'bold'} style={typeRowStyle}>
+        <div className={'bold'} style={getPlacementOrTypeCellStyle()}>
           <img style={iconStyle} src={userStepData.networkType ? userStepData.networkType.iconLightSrc : WifiIconLight} width={22} height={22} alt={'address-icon'}/>
           { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkType)}</div> }
         </div>
