@@ -75,6 +75,3 @@ application.register("edit-profile-picture", EditProfilePictureController);
 
 import PasswordRevealController from "./password_reveal_controller.js";
 application.register("password-reveal", PasswordRevealController);
-
-import ExportsController from "./exports_controller.js";
-application.register("exports", ExportsController);

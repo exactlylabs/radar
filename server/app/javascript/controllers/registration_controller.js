@@ -113,7 +113,7 @@ export default class extends Controller {
     const csrfToken = document.getElementsByName("csrf-token")[0].content;
     const formData = new FormData();
     formData.append('user[email]', this.registrationData.email);
-    fetch('/users/check_registration_data', {
+    fetch('/users/check_email_uniqueness_on_cold_sign_up', {
       method: 'POST',
       headers: { "X-CSRF-Token": csrfToken },
       body: formData

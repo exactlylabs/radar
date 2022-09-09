@@ -215,7 +215,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     render template: "devise/sessions/invite/new", locals: { account: account, first_name: first_name, last_name: last_name, email: email }
   end
 
-  def check_registration_data
+  def check_email_uniqueness_on_cold_sign_up
     email = params[:user][:email]
     possible_user = User.find_by_email(email)
     respond_to do |format|
