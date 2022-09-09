@@ -2,9 +2,9 @@ package tsdbstorage
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -25,34 +25,107 @@ var materializedViews = []string{
 
 type TimescaleDBStorage struct {
 	dsn       string
-	db        *sql.DB
+	db        *pgx.Conn
 	wg        *sync.WaitGroup
-	geospaces map[string]*ports.Geospace
-	asns      map[string]int64
+	geospaces sync.Map
+	asns      sync.Map
 	started   bool
-	l         *sync.Mutex
+	lock      *sync.Mutex
+	nWorkers  int
+	copyCh    chan ports.MeasurementIterator
 }
 
-func New(dsn string) ports.MeasurementsStorage {
+func New(dsn string, nWorkers int) ports.MeasurementsStorage {
 	wg := &sync.WaitGroup{}
 	s := &TimescaleDBStorage{
 		dsn:       dsn,
 		wg:        wg,
-		geospaces: make(map[string]*ports.Geospace),
-		asns:      make(map[string]int64),
-		l:         &sync.Mutex{},
+		geospaces: sync.Map{},
+		asns:      sync.Map{},
+		lock:      &sync.Mutex{},
+		nWorkers:  nWorkers,
+		copyCh:    make(chan ports.MeasurementIterator),
 	}
-	db, err := sql.Open("postgres", dsn)
-	if err != nil {
-		panic(errors.Wrap(err, "unable to connect to db"))
-	}
-	s.db = db
+
 	return s
 }
 
 func (ts *TimescaleDBStorage) Begin() error {
+	db, err := pgx.Connect(context.Background(), ts.dsn)
+	// db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		panic(errors.Wrap(err, "unable to connect to db"))
+	}
+	ts.db = db
 	ts.started = true
+	if err := ts.loadGeospaces(); err != nil {
+		return err
+	}
+	if err := ts.loadASNs(); err != nil {
+		return err
+	}
+	for i := 0; i < ts.nWorkers; i++ {
+		ts.wg.Add(1)
+		go func() {
+			defer ts.wg.Done()
+			ts.copyWorker()
+		}()
+	}
+	return nil
+}
 
+func (ts *TimescaleDBStorage) copyWorker() {
+	columns := []string{
+		"id", "test_style", "ip", "time", "upload", "mbps", "loss_rate", "min_rtt",
+		"latitude", "longitude", "location_accuracy_km", "asn_id",
+		"has_access_token", "access_token_sig", "geospace_id",
+	}
+	for it := range ts.copyCh {
+		err := ts.copyInsert2("measurements", columns, it)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func (ts *TimescaleDBStorage) loadASNs() error {
+	rows, err := ts.db.Query(context.Background(), `SELECT id, asn, organization FROM asns;`)
+	if err != nil {
+		return errors.Wrap(err, "TimescaleDBStorage#loadASNs Query")
+	}
+
+	for rows.Next() {
+		var organization string
+		var asn, id int64
+		if err := rows.Scan(&id, &asn, &organization); err != nil {
+			return errors.Wrap(err, "TimescaleDBStorage#loadASNs Scan")
+		}
+		ts.asns.Store(fmt.Sprintf("%d%s", asn, organization), id)
+	}
+	return nil
+}
+
+func (ts *TimescaleDBStorage) loadGeospaces() error {
+	rows, err := ts.db.Query(context.Background(), `SELECT id, geo_namespace, geo_id, name, parent_id FROM geospaces;`)
+	if err != nil {
+		return errors.Wrap(err, "TimescaleDBStorage#loadGeospaces Query")
+	}
+
+	for rows.Next() {
+		g := &ports.Geospace{}
+		var id int64
+		var parentId *int64
+		if err := rows.Scan(&id, &g.Namespace, &g.GeoId, &g.Name, &parentId); err != nil {
+			return errors.Wrap(err, "TimescaleDBStorage#loadGeospaces Scan")
+		}
+		g.Id = fmt.Sprintf("%d", id)
+		if parentId != nil {
+			p := fmt.Sprintf("%d", parentId)
+			g.ParentId = &p
+		}
+
+		ts.geospaces.Store(g.Namespace+g.GeoId, g)
+	}
 	return nil
 }
 
@@ -73,9 +146,13 @@ func (ts *TimescaleDBStorage) mountParametrizedArgs(nColumns, nRows int) string 
 }
 
 func (ts *TimescaleDBStorage) getOrCreateGeospace(g *ports.Geospace) (int64, error) {
+	ts.lock.Lock()
+	defer ts.lock.Unlock()
 	var id int64
-	if g, exists := ts.geospaces[g.Namespace+g.GeoId]; exists {
-		return g.Id, nil
+	if gRaw, exists := ts.geospaces.Load(g.Namespace + g.GeoId); exists {
+		g := gRaw.(*ports.Geospace)
+		id, _ = strconv.ParseInt(g.Id, 10, 64)
+		return id, nil
 	}
 	query := `
 	WITH e AS (
@@ -87,22 +164,23 @@ func (ts *TimescaleDBStorage) getOrCreateGeospace(g *ports.Geospace) (int64, err
 	) SELECT * FROM E
 	UNION SELECT id FROM geospaces WHERE geo_namespace=$1 AND geo_id=$2 AND name=$3 AND parent_id=$4;
 	`
-	ts.l.Lock()
-	row := ts.db.QueryRow(query, g.Namespace, g.GeoId, g.Name, g.ParentId)
+
+	row := ts.db.QueryRow(context.Background(), query, g.Namespace, g.GeoId, g.Name, g.ParentId)
 	if err := row.Scan(&id); err != nil {
 		return 0, errors.Wrap(err, "TimescaleDBStorage#getOrCreateGeospace Scan")
 	}
-	g.Id = id
-	ts.geospaces[g.Namespace+g.GeoId] = g
-	ts.l.Unlock()
+	g.Id = fmt.Sprintf("%d", id)
+	ts.geospaces.Store(g.Namespace+g.GeoId, g)
 	return id, nil
 }
 
 func (ts *TimescaleDBStorage) getOrCreateASN(asn int, orgName string) (int64, error) {
+	ts.lock.Lock()
+	defer ts.lock.Unlock()
 	var id int64
 	key := fmt.Sprintf("%d%s", asn, orgName)
-	if id, exists := ts.asns[key]; exists {
-		return id, nil
+	if id, exists := ts.asns.Load(key); exists {
+		return id.(int64), nil
 	}
 	query := `
 	WITH e AS (
@@ -113,13 +191,12 @@ func (ts *TimescaleDBStorage) getOrCreateASN(asn int, orgName string) (int64, er
 	) SELECT * FROM E
 	UNION SELECT id FROM asns WHERE asn=$1 AND organization=$2;
 	`
-	ts.l.Lock()
-	row := ts.db.QueryRow(query, asn, orgName)
+
+	row := ts.db.QueryRow(context.Background(), query, asn, orgName)
 	if err := row.Scan(&id); err != nil {
 		return 0, errors.Wrap(err, "TimescaleDBStorage#getOrCreateGeospace Scan")
 	}
-	ts.asns[key] = id
-	ts.l.Unlock()
+	ts.asns.Store(key, id)
 	return id, nil
 }
 
@@ -135,9 +212,27 @@ func (ts *TimescaleDBStorage) bulkInsert(table string, columns []string, values 
 		"INSERT INTO %s (%s) VALUES %s",
 		table, strings.Join(columns, ","), paramArgs,
 	)
-	_, err := ts.db.Exec(chunkSql, values...)
+	_, err := ts.db.Exec(context.Background(), chunkSql, values...)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (ts *TimescaleDBStorage) copyInsert2(table string, columns []string, it ports.MeasurementIterator) error {
+	ctx := context.Background()
+	conn, err := pgx.Connect(ctx, ts.dsn)
+	if err != nil {
+		return err
+	}
+	_, err = conn.Exec(ctx, "SET session_replication_role=replica")
+	if err != nil {
+		return errors.Wrap(err, "TimescaleDBStorage#copyInsert2 Exec")
+	}
+	c := &copyStruct{it: it, ts: ts}
+	_, err = conn.CopyFrom(ctx, pgx.Identifier{table}, columns, c)
+	if err != nil {
+		return errors.Wrap(err, "TimescaleDBStorage#copyInsert2 CopyFrom")
 	}
 	return nil
 }
@@ -181,24 +276,16 @@ func (ts *TimescaleDBStorage) copyInsert(table string, columns []string, it port
 
 // Insert measurements data into the DB from an io.Reader
 func (ts *TimescaleDBStorage) InsertMeasurements(it ports.MeasurementIterator) error {
-	columns := []string{
-		"id", "test_style", "ip", "time", "upload", "mbps", "loss_rate", "min_rtt",
-		"latitude", "longitude", "location_accuracy_km", "asn_id",
-		"has_access_token", "access_token_sig", "geospace_id",
-	}
-
-	if err := ts.copyInsert("measurements", columns, it); err != nil {
-		panic(err)
-	}
+	ts.copyCh <- it
 	return nil
 }
 
 func (ts *TimescaleDBStorage) LastMeasurementDate() (*time.Time, error) {
 	query := `SELECT time FROM measurements ORDER BY time DESC LIMIT 1`
-	row := ts.db.QueryRow(query)
+	row := ts.db.QueryRow(context.Background(), query)
 	var t *time.Time
 	err := row.Scan(&t)
-	if err != nil && err == sql.ErrNoRows {
+	if err != nil && err == pgx.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
 		return nil, errors.Wrap(err, "TimescaleDBStorage#LastMeasurementDate Scan")
@@ -211,24 +298,21 @@ func (ts *TimescaleDBStorage) SaveGeospace(g *ports.Geospace) error {
 	if err != nil {
 		return errors.Wrap(err, "TimescaleDBStorage#SaveGeospace")
 	}
-	g.Id = id
+	g.Id = fmt.Sprintf("%d", id)
 	return nil
 }
 
 func (ts *TimescaleDBStorage) GetGeospaceByGeoId(namespace, geoId string) (*ports.Geospace, error) {
-	if g, exists := ts.geospaces[namespace+geoId]; exists {
-		return g, nil
+	if g, exists := ts.geospaces.Load(namespace + geoId); exists {
+		return g.(*ports.Geospace), nil
 	}
 	query := `SELECT 
 		id, geo_namespace, geo_id, name, parent_id 
 	FROM geospaces
 	WHERE geo_namespace=$1 AND geo_id=$2`
-	row := ts.db.QueryRow(query, namespace, geoId)
-	if row.Err() != nil {
-		return nil, errors.Wrap(row.Err(), "TimescaleDBStorage#GetGeospaceByGeoId QueryRow")
-	}
+	row := ts.db.QueryRow(context.Background(), query, namespace, geoId)
 	g := &ports.Geospace{}
-	if err := row.Scan(&g.Id, &g.Namespace, &g.GeoId, &g.Name, &g.ParentId); err == sql.ErrNoRows {
+	if err := row.Scan(&g.Id, &g.Namespace, &g.GeoId, &g.Name, &g.ParentId); err == pgx.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
 		return nil, errors.Wrap(err, "TimescaleDBStorage#GetGeospaceByGeoId Scan")
@@ -240,7 +324,7 @@ func (ts *TimescaleDBStorage) updateViews() error {
 
 	for _, name := range materializedViews {
 		log.Println("updating materialized view", name)
-		_, err := ts.db.Exec(fmt.Sprintf("CALL refresh_continuous_aggregate(%s, NULL, NULL)", name))
+		_, err := ts.db.Exec(context.Background(), fmt.Sprintf("CALL refresh_continuous_aggregate(%s, NULL, NULL)", name))
 		if err != nil {
 			return errors.Wrap(err, "TimescaleDBStorage#updateViews Exec")
 		}
@@ -249,6 +333,7 @@ func (ts *TimescaleDBStorage) updateViews() error {
 }
 
 func (ts *TimescaleDBStorage) Close() error {
+	close(ts.copyCh)
 	ts.wg.Wait()
 	ts.updateViews()
 	ts.started = false
