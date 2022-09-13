@@ -1,0 +1,62 @@
+import {CSSProperties} from "react";
+import {FOOTER_TEXT, DEFAULT_CONTEXT_DIVIDER} from "../../../styles/colors";
+
+const secondLevelFooterStyle: CSSProperties = {
+  width: '100%',
+  height: '105px',
+  borderTop: `1px solid ${DEFAULT_CONTEXT_DIVIDER}`,
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+}
+
+const leftSideContainerStyle: CSSProperties = {
+  width: 'max-content',
+  marginLeft: '60px',
+}
+
+const copyrightTextStyle: CSSProperties = {
+  fontSize: '15px',
+  color: FOOTER_TEXT,
+}
+
+const rightSideContainerStyle: CSSProperties = {
+  width: 'max-content',
+  marginRight: '60px',
+  marginLeft: 'auto',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center'
+}
+
+const footerIconStyle: CSSProperties = {
+  marginLeft: '45px',
+  height: '36px',
+}
+
+const associationTextStyle: CSSProperties = {
+  fontSize: '16px',
+  color: FOOTER_TEXT,
+}
+
+export const styles = {
+  SecondLevelFooter: () => {
+    return secondLevelFooterStyle;
+  },
+  LeftSideContainer: () => {
+    return leftSideContainerStyle;
+  },
+  CopyrightText: () => {
+    return copyrightTextStyle;
+  },
+  RightSideContainer: () => {
+    return rightSideContainerStyle;
+  },
+  FooterIcon: () => {
+    return footerIconStyle;
+  },
+  AssociationText: () => {
+    return associationTextStyle;
+  }
+}
