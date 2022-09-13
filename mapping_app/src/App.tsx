@@ -3,6 +3,7 @@ import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import ExplorePage from "./components/ExplorePage/ExplorePage";
 import AboutPage from "./components/AboutPage/AboutPage";
 import Frame from "./components/Frame/Frame";
+import './App.css';
 
 const App = () => {
   return (
