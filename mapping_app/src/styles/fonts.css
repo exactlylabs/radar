@@ -2,7 +2,6 @@
   font-family: 'OutfitBlack';
   src: local('OutfitBlack'), url('../fonts/Outfit-Black.ttf') format('truetype');
   font-weight: normal;
-  font-display: block;
 }
 
 @font-face {
