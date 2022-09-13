@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	_ "net/http/pprof"
 	"runtime"
@@ -18,6 +19,9 @@ import (
 )
 
 func main() {
+	startStr := flag.String("start", "2022-01-01", "Start date")
+	finalStr := flag.String("final", "2023-01-01", "Final date")
+	flag.Parse()
 	godotenv.Load()
 	conf := config.GetConfig()
 	var storage ports.MeasurementsStorage
@@ -47,15 +51,15 @@ func main() {
 				Password: conf.DBPassword,
 			},
 			Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
-			MaxOpenConns: +5,
+			MaxOpenConns: nWorkers + 5,
 		}, nWorkers)
 	}
 	if err := storage.Begin(); err != nil {
 		panic(err)
 	}
 	defer storage.Close()
-	start, _ := time.Parse("2006-01-02", "2021-06-04")
-	final, _ := time.Parse("2006-01-02", "2021-06-06")
+	start, _ := time.Parse("2006-01-02", *startStr)
+	final, _ := time.Parse("2006-01-02", *finalStr)
 	err := ingestor.Ingest(context.Background(), storage, config.GetConfig().FilesBucketName, start, final)
 	if err != nil {
 		panic(err)

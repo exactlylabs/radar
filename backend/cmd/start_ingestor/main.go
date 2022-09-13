@@ -92,7 +92,7 @@ func main() {
 				Password: conf.DBPassword,
 			},
 			Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
-			MaxOpenConns: +5,
+			MaxOpenConns: nWorkers + 5,
 		}, nWorkers)
 	}
 
