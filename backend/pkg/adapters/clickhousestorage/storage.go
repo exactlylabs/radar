@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"math"
+	"strings"
 	"sync"
 	"time"
 
@@ -75,10 +76,25 @@ func (cs *clickhouseStorage) storeWorker() {
 func (cs *clickhouseStorage) Close() error {
 	close(cs.jobCh)
 	cs.wg.Wait()
+	cs.updateViews()
 	if err := cs.conn.Close(); err != nil {
 		return errors.Wrap(err, "clickhouseStorage#Close Close")
 	}
 	return nil
+}
+
+func (cs *clickhouseStorage) updateViews() {
+	for name, query := range views {
+		tmpName := name + "_tmp"
+		tmpQuery := strings.ReplaceAll(query, name, tmpName)
+		if err := cs.conn.Exec(context.Background(), tmpQuery); err != nil {
+			panic(errors.Wrap(err, "clickhouseStorage#updateViews Exec"))
+		}
+
+		// Now rename back
+		cs.conn.Exec(context.Background(), fmt.Sprintf("DROP VIEW %v", name))
+		cs.conn.Exec(context.Background(), "RENAME TABLE %s TO %s", tmpName, name)
+	}
 }
 
 func (cs *clickhouseStorage) loadCache() error {
