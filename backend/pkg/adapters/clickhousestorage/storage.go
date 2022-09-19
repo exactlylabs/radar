@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 	"math"
 	"strings"
 	"sync"
@@ -84,6 +85,7 @@ func (cs *clickhouseStorage) Close() error {
 }
 
 func (cs *clickhouseStorage) updateViews() {
+	log.Println("clickhouseStorage#updateViews Starting Updating Views")
 	for name, query := range views {
 		tmpName := name + "_tmp"
 		tmpQuery := strings.ReplaceAll(query, name, tmpName)
