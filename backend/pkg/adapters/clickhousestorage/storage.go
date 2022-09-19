@@ -88,12 +88,12 @@ func (cs *clickhouseStorage) updateViews() {
 		tmpName := name + "_tmp"
 		tmpQuery := strings.ReplaceAll(query, name, tmpName)
 		if err := cs.conn.Exec(context.Background(), tmpQuery); err != nil {
-			panic(errors.Wrap(err, "clickhouseStorage#updateViews Exec"))
+			panic(errors.Wrap(err, "clickhouseStorage#updateViews Exec View"))
 		}
-
-		// Now rename back
-		cs.conn.Exec(context.Background(), fmt.Sprintf("DROP VIEW %v", name))
-		cs.conn.Exec(context.Background(), "RENAME TABLE %s TO %s", tmpName, name)
+		// Exchange the names
+		if err := cs.conn.Exec(context.Background(), "EXCHANGE TABLES %s AND %s", tmpName, name); err != nil {
+			panic(errors.Wrap(err, "clickhouseStorage#updateViews Exec Exchange"))
+		}
 	}
 }
 
