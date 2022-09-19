@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS geospaces
     `parent_id` Nullable(UUID)
 )
 ENGINE = MergeTree
-PRIMARY KEY id;
+PRIMARY KEY (namespace, geo_id)
+ORDER BY (namespace, geo_id);
 
 
 CREATE TABLE IF NOT EXISTS asns
@@ -42,6 +43,63 @@ ORDER BY (upload, geospace_id, asn_id, time);
 
 -- Materialized Views
 
+-- All Time
+
+CREATE MATERIALIZED VIEW summary_alltime
+ENGINE=MergeTree
+ORDER BY (upload, geospace_id, asn_id)
+POPULATE
+AS
+SELECT
+    quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
+    quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
+    Count(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    Count(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    Count(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
+    m_ip.geospace_id,
+    m_ip.asn_id,
+    m_ip.upload
+FROM (
+    SELECT 
+        m.geospace_id, 
+        m.asn_id, 
+        quantileExact(0.5)(m.mbps) as med_ip_mbps,
+        quantileExact(0.5)(m.min_rtt) as med_ip_rtt,
+        m.upload
+    FROM measurements m
+    GROUP BY m.geospace_id, m.asn_id, m.upload, m.ip
+) m_ip 
+GROUP BY m_ip.geospace_id, m_ip.asn_id, m_ip.upload;
+
+
+CREATE MATERIALIZED VIEW summary_geospace_alltime
+ENGINE=MergeTree
+ORDER BY (upload, geospace_id)
+POPULATE
+AS
+SELECT
+    quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
+    quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
+    Count(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    Count(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    Count(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
+    m_ip.geospace_id,
+    m_ip.upload
+FROM (
+    SELECT 
+        m.geospace_id, 
+        quantileExact(0.5)(m.mbps) as med_ip_mbps,
+        quantileExact(0.5)(m.min_rtt) as med_ip_rtt,
+        m.upload
+    FROM measurements m
+    GROUP BY m.geospace_id, m.upload, m.ip
+) m_ip 
+GROUP BY m_ip.geospace_id, m_ip.upload;
+
+-- Year
+
 CREATE MATERIALIZED VIEW summary_year
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id, asn_id, year)
@@ -50,14 +108,10 @@ AS
 SELECT
     quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
     quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
-    CountIf(med_ip_mbps < 25 AND upload=0) as bad_download,
-    CountIf(med_ip_mbps >= 25 AND med_ip_mbps < 100 and upload=0) as normal_download,
-    CountIf(med_ip_mbps >= 100 AND upload=0) as good_download,
-    CountIf(med_ip_mbps < 3 AND upload=1) as bad_upload,
-    CountIf(med_ip_mbps >= 3  AND med_ip_mbps < 20 AND upload=1) as normal_upload,
-    CountIf(med_ip_mbps >= 20 AND upload=1) as good_upload,
-    CountIf(upload=1) as total_upload_samples,
-    CountIf(upload=0) as total_download_samples,
+    Count(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    Count(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    Count(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
     m_ip.geospace_id,
     m_ip.asn_id,
     m_ip.upload,
@@ -83,14 +137,10 @@ AS
 SELECT
     quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
     quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
-    CountIf(med_ip_mbps < 25 AND upload=0) as bad_download,
-    CountIf(med_ip_mbps >= 25 AND med_ip_mbps < 100 and upload=0) as normal_download,
-    CountIf(med_ip_mbps >= 100 AND upload=0) as good_download,
-    CountIf(med_ip_mbps < 3 AND upload=1) as bad_upload,
-    CountIf(med_ip_mbps >= 3  AND med_ip_mbps < 20 AND upload=1) as normal_upload,
-    CountIf(med_ip_mbps >= 20 AND upload=1) as good_upload,
-    CountIf(upload=1) as total_upload_samples,
-    CountIf(upload=0) as total_download_samples,
+    Count(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    Count(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    Count(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
     m_ip.geospace_id,
     m_ip.upload,
     m_ip.year as year
@@ -118,14 +168,10 @@ AS
 SELECT
     quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
     quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
-    CountIf(med_ip_mbps < 25 AND upload=0) as bad_download,
-    CountIf(med_ip_mbps >= 25 AND med_ip_mbps < 100 and upload=0) as normal_download,
-    CountIf(med_ip_mbps >= 100 AND upload=0) as good_download,
-    CountIf(med_ip_mbps < 3 AND upload=1) as bad_upload,
-    CountIf(med_ip_mbps >= 3  AND med_ip_mbps < 20 AND upload=1) as normal_upload,
-    CountIf(med_ip_mbps >= 20 AND upload=1) as good_upload,
-    CountIf(upload=1) as total_upload_samples,
-    CountIf(upload=0) as total_download_samples,
+    Count(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    Count(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    Count(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
     m_ip.geospace_id,
     m_ip.asn_id,
     m_ip.upload,
@@ -153,14 +199,10 @@ AS
 SELECT
     quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
     quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
-    CountIf(med_ip_mbps < 25 AND upload=0) as bad_download,
-    CountIf(med_ip_mbps >= 25 AND med_ip_mbps < 100 and upload=0) as normal_download,
-    CountIf(med_ip_mbps >= 100 AND upload=0) as good_download,
-    CountIf(med_ip_mbps < 3 AND upload=1) as bad_upload,
-    CountIf(med_ip_mbps >= 3  AND med_ip_mbps < 20 AND upload=1) as normal_upload,
-    CountIf(med_ip_mbps >= 20 AND upload=1) as good_upload,
-    CountIf(upload=1) as total_upload_samples,
-    CountIf(upload=0) as total_download_samples,
+    Count(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    Count(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    Count(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
     m_ip.geospace_id,
     m_ip.upload,
     m_ip.year as year,
@@ -190,14 +232,10 @@ AS
 SELECT
     quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
     quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
-    CountIf(med_ip_mbps < 25 AND upload=0) as bad_download,
-    CountIf(med_ip_mbps >= 25 AND med_ip_mbps < 100 and upload=0) as normal_download,
-    CountIf(med_ip_mbps >= 100 AND upload=0) as good_download,
-    CountIf(med_ip_mbps < 3 AND upload=1) as bad_upload,
-    CountIf(med_ip_mbps >= 3  AND med_ip_mbps < 20 AND upload=1) as normal_upload,
-    CountIf(med_ip_mbps >= 20 AND upload=1) as good_upload,
-    CountIf(upload=1) as total_upload_samples,
-    CountIf(upload=0) as total_download_samples,
+    Count(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    Count(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    Count(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
     m_ip.geospace_id,
     m_ip.asn_id,
     m_ip.upload,
@@ -225,14 +263,10 @@ AS
 SELECT
     quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
     quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
-    CountIf(med_ip_mbps < 25 AND upload=0) as bad_download,
-    CountIf(med_ip_mbps >= 25 AND med_ip_mbps < 100 and upload=0) as normal_download,
-    CountIf(med_ip_mbps >= 100 AND upload=0) as good_download,
-    CountIf(med_ip_mbps < 3 AND upload=1) as bad_upload,
-    CountIf(med_ip_mbps >= 3  AND med_ip_mbps < 20 AND upload=1) as normal_upload,
-    CountIf(med_ip_mbps >= 20 AND upload=1) as good_upload,
-    CountIf(upload=1) as total_upload_samples,
-    CountIf(upload=0) as total_download_samples,
+    Count(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    Count(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    Count(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
     m_ip.geospace_id,
     m_ip.upload,
     m_ip.year as year,
@@ -261,14 +295,10 @@ AS
 SELECT
     quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
     quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
-    CountIf(med_ip_mbps < 25 AND upload=0) as bad_download,
-    CountIf(med_ip_mbps >= 25 AND med_ip_mbps < 100 and upload=0) as normal_download,
-    CountIf(med_ip_mbps >= 100 AND upload=0) as good_download,
-    CountIf(med_ip_mbps < 3 AND upload=1) as bad_upload,
-    CountIf(med_ip_mbps >= 3  AND med_ip_mbps < 20 AND upload=1) as normal_upload,
-    CountIf(med_ip_mbps >= 20 AND upload=1) as good_upload,
-    CountIf(upload=1) as total_upload_samples,
-    CountIf(upload=0) as total_download_samples,
+    Count(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    Count(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    Count(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
     m_ip.geospace_id,
     m_ip.asn_id,
     m_ip.upload,
@@ -296,14 +326,10 @@ AS
 SELECT
     quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
     quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
-    CountIf(med_ip_mbps < 25 AND upload=0) as bad_download,
-    CountIf(med_ip_mbps >= 25 AND med_ip_mbps < 100 and upload=0) as normal_download,
-    CountIf(med_ip_mbps >= 100 AND upload=0) as good_download,
-    CountIf(med_ip_mbps < 3 AND upload=1) as bad_upload,
-    CountIf(med_ip_mbps >= 3  AND med_ip_mbps < 20 AND upload=1) as normal_upload,
-    CountIf(med_ip_mbps >= 20 AND upload=1) as good_upload,
-    CountIf(upload=1) as total_upload_samples,
-    CountIf(upload=0) as total_download_samples,
+    Count(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    Count(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    Count(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
     m_ip.geospace_id,
     m_ip.upload,
     m_ip.year as year,
@@ -321,3 +347,15 @@ FROM (
 ) m_ip 
 GROUP BY m_ip.geospace_id, m_ip.upload, m_ip.year, m_ip.week;
 
+CREATE MATERIALIZED VIEW us_asns
+ENGINE=MergeTree
+ORDER BY (geospace_id)
+POPULATE
+AS
+SELECT DISTINCT ON (
+    id,
+    asn,
+    organization
+)
+FROM measurements m
+WHERE m.geospace_id IS NOT NULL;
