@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"strings"
 	"sync"
 	"time"
 
@@ -88,13 +87,15 @@ func (cs *clickhouseStorage) updateViews() {
 	log.Println("clickhouseStorage#updateViews Starting Updating Views")
 	for name, query := range views {
 		tmpName := name + "_tmp"
-		tmpQuery := strings.ReplaceAll(query, name, tmpName)
-		if err := cs.conn.Exec(context.Background(), tmpQuery); err != nil {
-			panic(errors.Wrap(err, "clickhouseStorage#updateViews Exec View"))
+		if err := cs.conn.Exec(context.Background(), fmt.Sprintf("DROP VIEW %s", tmpName)); err != nil {
+			log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec Drop"))
+		}
+		if err := cs.conn.Exec(context.Background(), query); err != nil {
+			log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec View"))
 		}
 		// Exchange the names
 		if err := cs.conn.Exec(context.Background(), "EXCHANGE TABLES %s AND %s", tmpName, name); err != nil {
-			panic(errors.Wrap(err, "clickhouseStorage#updateViews Exec Exchange"))
+			log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec Exchange"))
 		}
 	}
 }
