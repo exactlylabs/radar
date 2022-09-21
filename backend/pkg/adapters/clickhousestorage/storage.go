@@ -94,7 +94,7 @@ func (cs *clickhouseStorage) updateViews() {
 			log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec View"))
 		}
 		// Exchange the names
-		if err := cs.conn.Exec(context.Background(), "EXCHANGE TABLES %s AND %s", tmpName, name); err != nil {
+		if err := cs.conn.Exec(context.Background(), fmt.Sprintf("EXCHANGE TABLES %s AND %s", tmpName, name)); err != nil {
 			log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec Exchange"))
 		}
 	}

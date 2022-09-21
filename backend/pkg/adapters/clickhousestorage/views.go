@@ -2,7 +2,7 @@ package clickhousestorage
 
 // maps all views that should be created at each update
 var views = map[string]string{
-	"summaryAllTimeView": `
+	"summary_alltime": `
 CREATE MATERIALIZED VIEW summary_alltime_tmp
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id, asn_id)
@@ -31,7 +31,7 @@ FROM (
 GROUP BY m_ip.geospace_id, m_ip.asn_id, m_ip.upload;
 `,
 
-	"summaryAllTimeGeospaceView": `
+	"summary_geospace_alltime": `
 CREATE MATERIALIZED VIEW summary_geospace_alltime_tmp
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id)
@@ -58,7 +58,7 @@ FROM (
 GROUP BY m_ip.geospace_id, m_ip.upload;
 `,
 
-	"summaryYearView": `
+	"summary_year": `
 CREATE MATERIALIZED VIEW summary_year_tmp
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id, asn_id, year)
@@ -89,7 +89,7 @@ FROM (
 GROUP BY m_ip.geospace_id, m_ip.asn_id, m_ip.upload, m_ip.year;
 `,
 
-	"summaryGeospaceYearView": `
+	"summary_geospace_year": `
 CREATE MATERIALIZED VIEW summary_geospace_year_tmp
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id, year)
@@ -118,7 +118,7 @@ FROM (
 GROUP BY m_ip.geospace_id, m_ip.upload, m_ip.year;
 `,
 
-	"summarySemesterView": `
+	"summary_semester": `
 CREATE MATERIALIZED VIEW summary_semester_tmp
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id, asn_id, year, semester)
@@ -151,7 +151,7 @@ FROM (
 GROUP BY m_ip.geospace_id, m_ip.asn_id, m_ip.upload, m_ip.year, m_ip.semester;
 `,
 
-	"summaryGeospaceSemesterView": `
+	"summary_geospace_semester": `
 CREATE MATERIALIZED VIEW summary_geospace_semester_tmp
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id, year, semester)
@@ -182,7 +182,7 @@ FROM (
 GROUP BY m_ip.geospace_id, m_ip.upload, m_ip.year, m_ip.semester;
 `,
 
-	"summaryMonthView": `
+	"summary_month": `
 CREATE MATERIALIZED VIEW summary_month_tmp
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id, asn_id, year, month)
@@ -215,7 +215,7 @@ FROM (
 GROUP BY m_ip.geospace_id, m_ip.asn_id, m_ip.upload, m_ip.year, m_ip.month;
 `,
 
-	"summaryGeospaceMonthView": `
+	"summary_geospace_month": `
 CREATE MATERIALIZED VIEW summary_geospace_month_tmp
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id, year, month)
@@ -246,7 +246,7 @@ FROM (
 GROUP BY m_ip.geospace_id, m_ip.upload, m_ip.year, m_ip.month;
 `,
 
-	"summaryWeekView": `
+	"summary_week": `
 CREATE MATERIALIZED VIEW summary_week_tmp
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id, asn_id, year, week)
@@ -279,7 +279,7 @@ FROM (
 GROUP BY m_ip.geospace_id, m_ip.asn_id, m_ip.upload, m_ip.year, m_ip.week;
 `,
 
-	"summaryGeospaceWeekView": `
+	"summary_geospace_week": `
 CREATE MATERIALIZED VIEW summary_geospace_week_tmp
 ENGINE=MergeTree
 ORDER BY (upload, geospace_id, year, week)
@@ -310,7 +310,7 @@ FROM (
 GROUP BY m_ip.geospace_id, m_ip.upload, m_ip.year, m_ip.week;
 `,
 
-	"usASNsView": `
+	"us_asns": `
 CREATE MATERIALIZED VIEW us_asns_tmp
 ENGINE=MergeTree
 ORDER BY (geospace_id)
