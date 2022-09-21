@@ -48,7 +48,7 @@ func runInsertions(ctx context.Context, storage ports.MeasurementsStorage) {
 
 func main() {
 	sigs := make(chan os.Signal)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(sigs, syscall.SIGINT)
 	ctx, cancel := context.WithCancel(context.Background())
 	interrupts := 0
 	go func() {
