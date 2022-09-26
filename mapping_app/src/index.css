@@ -14,3 +14,18 @@ body {
 .hover-opaque:hover {
   opacity: 0.8;
 }
+
+.hover-popover-option-lighter {
+  background-color: #3e4040;
+  border-radius: 6px;
+}
+
+.hover-popover-option-lighter:hover {
+  background-color: #585b5b;
+  border-radius: 6px;
+}
+
+.popover-dark {
+  background-color: transparent;
+  border-radius: 0;
+}

@@ -2,7 +2,7 @@ import {CSSProperties} from "react";
 
 const mapContainerStyle: CSSProperties = {
   height: '100%',
-  minHeight: '550px',
+  minHeight: '700px',
 }
 
 export const styles = {
