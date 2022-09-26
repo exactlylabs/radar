@@ -32,17 +32,6 @@ module.exports = {
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
-      },
-      {
-        test: /\.js$/,
-        enforce: 'post',
-        exclude: /node_modules/,
-        use: {
-          loader: WebpackObfuscatorPlugin.loader,
-          options: {
-            sourceMap: true,
-          }
-        }
       }
     ]
   },
@@ -65,9 +54,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../public/index.html'),
     }),
-    new WebpackObfuscatorPlugin({
-      sourceMap: true,
-    }, [])
   ],
   // https://webpack.js.org/configuration/optimization/
   optimization: {
