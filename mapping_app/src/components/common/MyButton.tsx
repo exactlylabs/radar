@@ -8,6 +8,7 @@ interface MyButtonProps {
   color?: string;
   iconFirst?: boolean;
   onClick: () => void;
+  className?: string;
 }
 
 const MyButton = ({
@@ -16,18 +17,19 @@ const MyButton = ({
   backgroundColor,
   color,
   iconFirst,
-  onClick
+  onClick,
+  className
 }: MyButtonProps): ReactElement => {
 
   return iconFirst ?
-    <div className={'fw-medium hover-opaque'}
+    <div className={className ?? 'fw-medium hover-opaque'}
          style={styles.MyButton(backgroundColor, color)}
          onClick={onClick}
     >
       {icon}
       {text}
     </div> :
-    <div className={'fw-medium hover-opaque'}
+    <div className={className ?? 'fw-medium hover-opaque'}
          style={styles.MyButton(backgroundColor, color)}
          onClick={onClick}
     >
