@@ -15,6 +15,7 @@ const CustomMap = (): null => {
   const bounds = L.latLngBounds(topLeftBoundingPoint, bottomRightBoundingPoint);
   map.setMaxBounds(bounds);
   map.setMinZoom(4);
+  map.zoomControl.setPosition('bottomright');
   map.on('drag', () => { map.panInsideBounds(bounds, {animate: false}) });
   return null;
 }

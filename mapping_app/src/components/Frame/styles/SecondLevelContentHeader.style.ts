@@ -4,8 +4,10 @@ import {DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT, HEADER_AND_FOOTER_BOX_SHADOW_RGBA}
 const secondLevelContentHeaderStyle: CSSProperties = {
   width: '100%',
   height: '106px',
-  boxShadow: `0 2px 4px 0 ${HEADER_AND_FOOTER_BOX_SHADOW_RGBA}`,
+  boxShadow: `0 6px 10px 0 ${HEADER_AND_FOOTER_BOX_SHADOW_RGBA}`,
   paddingTop: '25px',
+  zIndex: 1005,
+  position: 'relative',
 }
 
 const titleStyle: CSSProperties = {
