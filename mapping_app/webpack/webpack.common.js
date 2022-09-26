@@ -2,9 +2,7 @@ require('webpack');
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const WebpackObfuscatorPlugin = require("webpack-obfuscator");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   // Entry point, from where all extraction should be made
@@ -33,17 +31,6 @@ module.exports = {
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
-      },
-      {
-        test: /\.js$/,
-        enforce: 'post',
-        exclude: /node_modules/,
-        use: {
-          loader: WebpackObfuscatorPlugin.loader,
-          options: {
-            sourceMap: true,
-          }
-        }
       }
     ]
   },
@@ -67,9 +54,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../public/index.html'),
     }),
-    new WebpackObfuscatorPlugin({
-      sourceMap: true,
-    }, []),
   ],
   // https://webpack.js.org/configuration/optimization/
   optimization: {
