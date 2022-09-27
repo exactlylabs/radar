@@ -1,6 +1,7 @@
 import L from 'leaflet';
 
 export const mapTileUrl = MAPBOX_TILESET_URL;
+export const mapBoxAccessToken = MAPBOX_ACCESS_TOKEN;
 export const mapTileAttribution =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 export const customMarker = new L.icon({

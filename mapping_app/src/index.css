@@ -12,3 +12,7 @@ body {
 .hover-opaque:hover {
   opacity: 0.8;
 }
+
+.map-container {
+  height: 400px;
+  }

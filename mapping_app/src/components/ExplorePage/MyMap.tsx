@@ -28,6 +28,7 @@ const MyMap = (): ReactElement => {
     >
       <CustomMap />
       <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
+      <TileLayer attribution={mapTileAttribution} url={"http://127.0.0.1:5000/test/{z}/{x}/{z}"} />
     </MapContainer>
   )
 }
