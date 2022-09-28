@@ -17,9 +17,10 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/ports"
+	"github.com/joho/godotenv"
 )
 
-var defaultStartTime = time.Date(2020, 8, 1, 0, 0, 0, 0, time.UTC)
+var defaultStartTime = time.Date(2022, 9, 24, 0, 0, 0, 0, time.UTC)
 
 func runInsertions(ctx context.Context, storage ports.MeasurementsStorage) {
 	err := storage.Begin()
@@ -32,6 +33,9 @@ func runInsertions(ctx context.Context, storage ports.MeasurementsStorage) {
 	}
 	if measStartTime == nil {
 		measStartTime = &defaultStartTime
+	} else {
+		truncated := measStartTime.Truncate(time.Hour*24).AddDate(0, 0, 1)
+		measStartTime = &truncated
 	}
 
 	endTime := time.Now().Truncate(time.Hour * 24)
@@ -64,6 +68,7 @@ func main() {
 			}
 		}
 	}()
+	godotenv.Load()
 	conf := config.GetConfig()
 	var storage ports.MeasurementsStorage
 	if conf.StorageType == "tsdb" {
