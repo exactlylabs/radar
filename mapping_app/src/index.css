@@ -1,4 +1,6 @@
 @import url('./styles/fonts.css');
+@import url('./styles/resets.css');
+@import url('./vendor/leaflet/leaflet.css');
 
 body {
   margin: 0;
