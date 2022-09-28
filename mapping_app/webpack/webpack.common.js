@@ -4,6 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const WebpackObfuscatorPlugin = require("webpack-obfuscator");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   // Entry point, from where all extraction should be made
@@ -68,7 +69,7 @@ module.exports = {
     }),
     new WebpackObfuscatorPlugin({
       sourceMap: true,
-    }, [])
+    }, []),
   ],
   // https://webpack.js.org/configuration/optimization/
   optimization: {
