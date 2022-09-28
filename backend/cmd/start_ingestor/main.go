@@ -93,6 +93,7 @@ func main() {
 			},
 			Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
 			MaxOpenConns: nWorkers + 5,
+			ReadTimeout:  time.Hour,
 		}, nWorkers)
 	}
 
