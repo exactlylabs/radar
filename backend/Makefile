@@ -1,7 +1,5 @@
 all: build
 
-run:
-	ENVIRONMENT=DEV ./scripts/dev.sh
 
-build:
+ingestor:
 	go build -o mlab-ingestor cmd/start_ingestor/main.go
