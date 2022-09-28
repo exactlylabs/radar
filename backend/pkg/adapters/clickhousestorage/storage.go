@@ -32,7 +32,6 @@ func New(opts *clickhouse.Options, nWorkers int) ports.MeasurementsStorage {
 		opts:      opts,
 		geospaces: make(map[string]*ports.Geospace),
 		asns:      make(map[string]string),
-		jobCh:     make(chan ports.MeasurementIterator),
 		wg:        &sync.WaitGroup{},
 		lock:      &sync.Mutex{},
 		nWorkers:  nWorkers,
@@ -41,6 +40,7 @@ func New(opts *clickhouse.Options, nWorkers int) ports.MeasurementsStorage {
 
 // Begin implements ports.MeasurementsStorage
 func (cs *clickhouseStorage) Begin() error {
+	cs.jobCh = make(chan ports.MeasurementIterator)
 	conn, err := clickhouse.Open(cs.opts)
 	if err != nil {
 		return errors.Wrap(err, "clickhouseStorage#Begin Open")
@@ -97,9 +97,14 @@ func (cs *clickhouseStorage) updateViews() {
 		// Exchange the names
 		if err := cs.conn.Exec(context.Background(), fmt.Sprintf("EXCHANGE TABLES %s AND %s", tmpName, name)); err != nil {
 			log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec Exchange"))
+			log.Println("Trying to rename instead")
+			if err := cs.conn.Exec(context.Background(), fmt.Sprintf("RENAME TABLE %s TO %s", tmpName, name)); err != nil {
+				log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec Rename"))
+			}
 		}
 		log.Println("Renamed to View", name)
 	}
+	log.Println("Finished updating views")
 }
 
 func (cs *clickhouseStorage) loadCache() error {
