@@ -93,10 +93,12 @@ func (cs *clickhouseStorage) updateViews() {
 		if err := cs.conn.Exec(context.Background(), query); err != nil {
 			log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec View"))
 		}
+		log.Println("Created View", tmpName)
 		// Exchange the names
 		if err := cs.conn.Exec(context.Background(), fmt.Sprintf("EXCHANGE TABLES %s AND %s", tmpName, name)); err != nil {
 			log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec Exchange"))
 		}
+		log.Println("Renamed to View", name)
 	}
 }
 
