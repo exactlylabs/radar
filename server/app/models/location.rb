@@ -40,11 +40,11 @@ class Location < ApplicationRecord
   end
 
   def download_avg
-    self.measurements.average(:download).round(3) if self.measurements.length.positive?
+    self.measurements.average(:download).round(3) if self.measurements.count.positive?
   end
 
   def upload_avg
-    self.measurements.average(:upload).round(3) if self.measurements.length.positive?
+    self.measurements.average(:upload).round(3) if self.measurements.count.positive?
   end
 
   def diff_to_human(diff, expected_value)
