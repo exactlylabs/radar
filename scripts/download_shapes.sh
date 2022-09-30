@@ -22,8 +22,8 @@ curl -s -f "${URL}" -o "${TARGET_DIR}/tl_2021_us_county.zip"
 
 # US Tribal Tracts
 echo "Downloading US Tribal Tract Shapes"
-URL="https://www2.census.gov/geo/tiger/TIGER2021/TTRACT/tl_2021_us_ttract.zip"
-curl -s -f "${URL}" -o "${TARGET_DIR}/tl_2021_us_ttract.zip"
+URL="https://www.sciencebase.gov/catalog/file/get/4f4e4a2ee4b07f02db61576c?facet=Indian_Reservations"
+curl -s -f "${URL}" -o "${TARGET_DIR}/Indian_Reservations.zip"
 
 
 # Census Tracts
