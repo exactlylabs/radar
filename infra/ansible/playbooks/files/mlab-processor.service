@@ -6,6 +6,7 @@ Wants = network-online.target
 [Service]
 User=root
 ExecStart = /usr/local/bin/mlab-processor
+WorkingDirectory = /var/mlab-processor
 Restart = on-failure
 RestartSec = 10s
 Environment=IPV4_DB_PATH=/var/mlab-processor/input/GeoLite2-City-Blocks-IPv4.csv
