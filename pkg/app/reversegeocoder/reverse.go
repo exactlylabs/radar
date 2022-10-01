@@ -2,6 +2,7 @@ package reversegeocoder
 
 import (
 	"fmt"
+	"log"
 	"runtime"
 	"strings"
 	"sync"
@@ -148,6 +149,7 @@ func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
 
 func initIndex() {
 	if !indexInitialized {
+		log.Println("ReverseGeocoder - Loading Index")
 		index = geo.NewIndex()
 
 		files := config.GetConfig().ShapePathEntries()
@@ -166,6 +168,7 @@ func initIndex() {
 		}
 
 		indexInitialized = true
+		log.Println("ReverseGeocoder - Index Initialized")
 	}
 }
 
@@ -178,7 +181,7 @@ func processDate(ds datastore.DataStore, geocodeDS datastore.DataStore, date tim
 	if err != nil {
 		return fmt.Errorf("reversegeocoder.processDate dsProvider.Read error: %w", err)
 	}
-	// iter := storage.DatedRows("geocode", &models.GeocodedResult{}, date)
+	log.Printf("ReverseGeocoder - Getting Rows for %v\n", date)
 	for iter.Next() {
 		next, err := iter.GetRow()
 		if err != nil {
@@ -188,6 +191,7 @@ func processDate(ds datastore.DataStore, geocodeDS datastore.DataStore, date tim
 	}
 
 	pool.Close() // Wait until all jobs are done
+	log.Printf("ReverseGeocoder - Finished processing for %v\n", date)
 	return nil
 }
 

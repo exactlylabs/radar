@@ -278,7 +278,7 @@ func processDate(ds datastore.DataStore, fetchDS datastore.DataStore, date time.
 	writer := writer.NewWriter(ds)
 	defer writer.Close()
 	pool := newGeocodingPool(writer)
-	fmt.Printf("Getting Rows for %v\n", date)
+	log.Printf("IPGeocoder - Getting Rows for %v\n", date)
 	iter, err := fetchDS.ItemsReader()
 	if err != nil {
 		return fmt.Errorf("ipgeocoder.processDate fetchDS.Read error: %w", err)
@@ -297,7 +297,7 @@ func processDate(ds datastore.DataStore, fetchDS datastore.DataStore, date time.
 	}
 
 	pool.Close() // Wait until all jobs are done
-
+	log.Printf("IPGeocoder - Finished Processing for %v\n", date)
 	return nil
 }
 
