@@ -3,15 +3,17 @@ import {KeyboardArrowDownRounded} from "@mui/icons-material";
 import {styles} from "./styles/DropdownFilter.style";
 import OptionsDropdown from "./OptionsDropdown";
 import {filterTypes} from "../../../utils/filters";
+import {Filter} from "../../../utils/types";
+import {isAsn} from "../../../api/asns/types";
 
 interface DropdownFilterProps {
   icon: ReactElement;
-  options: Array<string>;
+  options: Array<Filter>;
   withSearchbar?: boolean;
   textWidth: string;
   type: string;
-  changeFilter: (filter: string) => void;
-  selectedFilter: string;
+  changeFilter: (filter: Filter) => void;
+  selectedFilter: Filter;
 }
 
 const DropdownFilter = ({
@@ -23,7 +25,7 @@ const DropdownFilter = ({
   changeFilter,
   selectedFilter
 }: DropdownFilterProps): ReactElement => {
-  const [selectedOption, setSelectedOption] = useState(selectedFilter ?? options[0]);
+  const [selectedOption, setSelectedOption] = useState<Filter>(selectedFilter ?? options[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleOptionsDropdown = () => {
@@ -35,9 +37,13 @@ const DropdownFilter = ({
 
   const closeOptionsDropdown = () => setDropdownOpen(false);
 
-  const handleSelectNewFilter = (newFilter: string) => {
+  const handleSelectNewFilter = (newFilter: Filter) => {
     setSelectedOption(newFilter);
     changeFilter(newFilter);
+  }
+
+  const getText = () => {
+    return isAsn(selectedOption) ? selectedOption.organization : selectedOption;
   }
 
   return (
@@ -45,7 +51,7 @@ const DropdownFilter = ({
          onClick={toggleOptionsDropdown}
     >
       {icon}
-      <p className={'fw-regular hover-opaque'} style={styles.Text(textWidth)}>{selectedOption}</p>
+      <p className={'fw-regular hover-opaque'} style={styles.Text(textWidth)}>{getText()}</p>
       <KeyboardArrowDownRounded style={styles.Arrow()}/>
       {
         dropdownOpen &&

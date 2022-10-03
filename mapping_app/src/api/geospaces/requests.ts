@@ -20,11 +20,3 @@ export const getOverview = (geospaceId: string, filters: string): Promise<Geospa
       else return res.json() as Promise<GeospaceOverview>;
     })
 }
-
-export const getAsns = (geospaceId: string): Promise<GeospaceAsnResponse> => {
-  return fetch(`${API_URL}/geospaces/${geospaceId}/asns`)
-    .then(res => {
-      if(!res.ok) throw new Error(res.statusText);
-      else return res.json() as Promise<GeospaceAsnResponse>;
-    })
-}
