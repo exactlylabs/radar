@@ -10,6 +10,7 @@ const dropdownFilterContainerStyle: CSSProperties = {
   position: 'relative',
   marginLeft: '10px',
   marginRight: '10px',
+  zIndex: 1050,
 }
 
 const arrowStyle: CSSProperties = {

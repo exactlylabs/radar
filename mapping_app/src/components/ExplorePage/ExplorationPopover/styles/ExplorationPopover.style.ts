@@ -2,7 +2,7 @@ import {CSSProperties} from "react";
 import {
   DEFAULT_SECONDARY_BLACK,
   EXPLORATION_POPOVER_BLACK,
-  EXPLORATION_POPOVER_SECONDARY_BLACK
+  EXPLORATION_POPOVER_SECONDARY_BLACK, WHITE
 } from "../../../../styles/colors";
 import {popoverStates} from "../ExplorationPopover";
 
@@ -38,11 +38,20 @@ const shrinkButtonContainerStyle: CSSProperties = {
   cursor: 'pointer',
 }
 
+const arrowStyle: CSSProperties = {
+  transform: 'rotate(180deg)',
+  color: WHITE,
+  opacity: 0.8
+};
+
 export const styles = {
   ExplorationPopoverContainer: (currentPopoverState: string) => {
     return currentPopoverState === popoverStates.INITIAL ? explorationPopoverContainerStyle : extendedExplorationPopoverContainerStyle;
   },
   ShrinkButtonContainer: () => {
     return shrinkButtonContainerStyle;
+  },
+  Arrow: () => {
+    return arrowStyle;
   }
 }

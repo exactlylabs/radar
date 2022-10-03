@@ -2,14 +2,16 @@ import {ReactElement, useState} from "react";
 import {KeyboardArrowDownRounded} from "@mui/icons-material";
 import {styles} from "./styles/DropdownFilter.style";
 import OptionsDropdown from "./OptionsDropdown";
-import {filterTypes} from "./DropdownFilters";
+import {filterTypes} from "../../../utils/filters";
 
 interface DropdownFilterProps {
   icon: ReactElement;
   options: Array<string>;
   withSearchbar?: boolean;
-  textWidth: string,
-  type: string,
+  textWidth: string;
+  type: string;
+  changeFilter: (filter: string) => void;
+  selectedFilter: string;
 }
 
 const DropdownFilter = ({
@@ -17,10 +19,11 @@ const DropdownFilter = ({
   options,
   withSearchbar,
   textWidth,
-  type
+  type,
+  changeFilter,
+  selectedFilter
 }: DropdownFilterProps): ReactElement => {
-
-  const [selectedOption, setSelectedOption] = useState(options[0]);
+  const [selectedOption, setSelectedOption] = useState(selectedFilter ?? options[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleOptionsDropdown = () => {
@@ -31,6 +34,11 @@ const DropdownFilter = ({
   const openOptionsDropdown = () => setDropdownOpen(true);
 
   const closeOptionsDropdown = () => setDropdownOpen(false);
+
+  const handleSelectNewFilter = (newFilter: string) => {
+    setSelectedOption(newFilter);
+    changeFilter(newFilter);
+  }
 
   return (
     <div style={styles.DropdownFilterContainer()}
@@ -44,7 +52,7 @@ const DropdownFilter = ({
         <OptionsDropdown options={options}
                          closeDropdown={closeOptionsDropdown}
                          selectedOption={selectedOption}
-                         setSelectedOption={setSelectedOption}
+                         setSelectedOption={handleSelectNewFilter}
                          dropRight={type === filterTypes.SPEED || type === filterTypes.CALENDAR}
                          dropLeft={type === filterTypes.PROVIDERS}
         />

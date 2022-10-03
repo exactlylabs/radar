@@ -1,12 +1,15 @@
-import {ReactElement, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/ExplorationPopover.style";
-import {ArrowOutward, ArrowOutwardRounded} from "@mui/icons-material";
-import {WHITE} from "../../../styles/colors";
+import {ArrowOutwardRounded} from "@mui/icons-material";
 import InitialExplorationPopoverContent from "./InitialExplorationPopoverContent";
 import SpecificExplorationPopoverContent from "./SpecificExplorationPopoverContent";
+import {Geospace, GeospaceData, GeospaceOverview} from "../../../api/geospaces/types";
+import {getGeospaces} from "../../../api/namespaces/requests";
+import {handleError} from "../../../api";
 
 interface ExplorationPopoverProps {
   closePopover: () => void;
+  selectGeospace: (geospace: GeospaceOverview) => void;
 }
 
 export type PopoverStateObject = {
@@ -25,9 +28,27 @@ export const popoverStates: PopoverStateObject = {
   TRIBAL_LANDS: 'TRIBAL_LANDS',
 }
 
-const ExplorationPopover = ({closePopover}: ExplorationPopoverProps): ReactElement => {
+const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverProps): ReactElement => {
 
   const [currentPopoverState, setCurrentPopoverState] = useState(popoverStates.INITIAL);
+  const [states, setStates] = useState<Array<Geospace>>([]);
+  const [counties, setCounties] = useState<Array<Geospace>>([]);
+  const [tribalTracts, setTribalTracts] = useState<Array<Geospace>>([]);
+
+  useEffect(() => {
+    const allNamespaces = Promise.all([
+      getGeospaces('states'),
+      getGeospaces('counties'),
+      getGeospaces('tribal_tracts'),
+    ]);
+    allNamespaces
+      .then(res => {
+        setStates(res[0].results);
+        setCounties(res[1].results);
+        setTribalTracts(res[2].results);
+      })
+      .catch(err => handleError(err));
+  }, []);
 
   const handleChangePopoverState = (newState: string): void => {
     setCurrentPopoverState(newState);
@@ -47,7 +68,7 @@ const ExplorationPopover = ({closePopover}: ExplorationPopoverProps): ReactEleme
            style={styles.ShrinkButtonContainer()}
            onClick={closePopover}
       >
-        <ArrowOutwardRounded style={{transform: 'rotate(180deg)', color: WHITE, opacity: 0.8}}
+        <ArrowOutwardRounded style={styles.Arrow()}
                              fontSize={'small'}
         />
       </div>
@@ -60,6 +81,10 @@ const ExplorationPopover = ({closePopover}: ExplorationPopoverProps): ReactEleme
         <SpecificExplorationPopoverContent type={currentPopoverState}
                                            setType={handleChangePopoverState}
                                            goBack={goBackToInitial}
+                                           selectGeospace={selectGeospace}
+                                           states={states}
+                                           counties={counties}
+                                           tribalTracts={tribalTracts}
         />
       }
     </div>
