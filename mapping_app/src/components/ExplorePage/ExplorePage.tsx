@@ -1,4 +1,4 @@
-import {ReactElement, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/ExplorePage.style";
 import MyMap from "./MyMap";
 import ExplorationPopover from "./ExplorationPopover/ExplorationPopover";
@@ -24,10 +24,6 @@ const ExplorePage = (): ReactElement => {
   const [calendarType, setCalendarType] = useState(calendarFilters[0]);
   const [provider, setProvider] = useState(providerFilters[0]);
   const [selectedSpeedFilters, setSelectedSpeedFilters] = useState<Array<string>>([speedTypes.UNSERVED, speedTypes.UNDERSERVED, speedTypes.SERVED]);
-
-  // Just for testing actual popover appearing/disappearing
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const openTooltip = () => setIsTooltipOpen(true);
 
   const closePopover = () => setIsExplorationPopoverOpen(false);
 
@@ -65,6 +61,8 @@ const ExplorePage = (): ReactElement => {
              selectedGeospace={selectedGeospace}
              selectGeospace={selectGeospace}
              speedType={speedType}
+             calendarType={calendarType}
+             provider={provider}
              selectedSpeedFilters={selectedSpeedFilters}
       />
       <TopSearchbar selectSuggestion={selectSuggestion}
