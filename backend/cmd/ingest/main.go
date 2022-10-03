@@ -34,7 +34,7 @@ func main() {
 			}
 			nWorkers = n
 		}
-		storage = tsdbstorage.New(conf.DBDSN(), nWorkers)
+		storage = tsdbstorage.New(conf.DBDSN(), nWorkers, true)
 	} else {
 		nWorkers := runtime.NumCPU()
 		if conf.ClickhouseStorageNWorkers != "" {
@@ -52,7 +52,7 @@ func main() {
 			},
 			Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
 			MaxOpenConns: nWorkers + 5,
-		}, nWorkers)
+		}, nWorkers, true)
 	}
 	if err := storage.Begin(); err != nil {
 		panic(err)

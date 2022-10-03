@@ -17,24 +17,26 @@ import (
 )
 
 type clickhouseStorage struct {
-	conn      driver.Conn
-	opts      *clickhouse.Options
-	geospaces map[string]*ports.Geospace
-	asns      map[string]string
-	jobCh     chan ports.MeasurementIterator
-	wg        *sync.WaitGroup
-	lock      *sync.Mutex
-	nWorkers  int
+	conn              driver.Conn
+	opts              *clickhouse.Options
+	geospaces         map[string]*ports.Geospace
+	asns              map[string]string
+	jobCh             chan ports.MeasurementIterator
+	wg                *sync.WaitGroup
+	lock              *sync.Mutex
+	nWorkers          int
+	shouldUpdateViews bool
 }
 
-func New(opts *clickhouse.Options, nWorkers int) ports.MeasurementsStorage {
+func New(opts *clickhouse.Options, nWorkers int, updateViews bool) ports.MeasurementsStorage {
 	return &clickhouseStorage{
-		opts:      opts,
-		geospaces: make(map[string]*ports.Geospace),
-		asns:      make(map[string]string),
-		wg:        &sync.WaitGroup{},
-		lock:      &sync.Mutex{},
-		nWorkers:  nWorkers,
+		opts:              opts,
+		geospaces:         make(map[string]*ports.Geospace),
+		asns:              make(map[string]string),
+		wg:                &sync.WaitGroup{},
+		lock:              &sync.Mutex{},
+		nWorkers:          nWorkers,
+		shouldUpdateViews: updateViews,
 	}
 }
 
@@ -76,7 +78,9 @@ func (cs *clickhouseStorage) storeWorker() {
 func (cs *clickhouseStorage) Close() error {
 	close(cs.jobCh)
 	cs.wg.Wait()
-	cs.updateViews()
+	if cs.shouldUpdateViews {
+		cs.updateViews()
+	}
 	if err := cs.conn.Close(); err != nil {
 		return errors.Wrap(err, "clickhouseStorage#Close Close")
 	}
@@ -173,11 +177,37 @@ func (cs *clickhouseStorage) getOrCreateGeospace(g *ports.Geospace) (*ports.Geos
 	if existing != nil {
 		return existing, nil
 	}
-	if err := cs.SaveGeospace(g); err != nil {
-		return nil, errors.Wrap(err, "clickhouseStorage#getOrCreateGeospace SaveGeospace")
+
+	if err := cs.createGeospace(g); err != nil {
+		return nil, errors.Wrap(err, "clickhouseStorage#getOrCreateGeospace createGeospace")
 	}
 	cs.geospaces[g.Namespace+g.GeoId] = g
 	return g, nil
+}
+
+func (cs *clickhouseStorage) createGeospace(g *ports.Geospace) error {
+	id := uuid.New()
+	var parent *string = g.ParentId
+	var name *string = g.Name
+	if parent == nil {
+		p := ""
+		parent = &p
+	}
+	if name == nil {
+		n := ""
+		name = &n
+	}
+
+	err := cs.conn.Exec(
+		context.Background(),
+		`INSERT INTO geospaces (id, name, namespace, geo_id, parent_id) VALUES ($1, $2, $3, $4, $5)`,
+		id, *name, g.Namespace, g.GeoId, *parent,
+	)
+	if err != nil {
+		return errors.Wrap(err, "clickhouseStorage#createGeospace Exec")
+	}
+	g.Id = id.String()
+	return nil
 }
 
 func (cs *clickhouseStorage) getOrCreateASN(asn int, orgName string) (string, error) {
@@ -303,25 +333,8 @@ func (cs *clickhouseStorage) LastMeasurementDate() (*time.Time, error) {
 
 // SaveGeospace implements ports.MeasurementsStorage
 func (cs *clickhouseStorage) SaveGeospace(g *ports.Geospace) error {
-	id := uuid.New()
-	var parent *string = g.ParentId
-	var name *string = g.Name
-	if parent == nil {
-		p := "NULL"
-		parent = &p
+	if _, err := cs.getOrCreateGeospace(g); err != nil {
+		return errors.Wrap(err, "clickhouseStorage#SaveGeospace getOrCreateGeospace")
 	}
-	if name == nil {
-		n := "NULL"
-		name = &n
-	}
-	err := cs.conn.Exec(
-		context.Background(),
-		`INSERT INTO geospaces (id, name, namespace, geo_id, parent_id) VALUES ($1, $2, $3, $4, $5)`,
-		id, *name, g.Namespace, g.GeoId, *parent,
-	)
-	if err != nil {
-		return errors.Wrap(err, "clickhouseStorage#SaveGeospace Exec")
-	}
-	g.Id = id.String()
 	return nil
 }

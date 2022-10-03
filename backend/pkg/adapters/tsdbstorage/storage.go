@@ -24,27 +24,29 @@ var materializedViews = []string{
 }
 
 type TimescaleDBStorage struct {
-	dsn       string
-	db        *pgx.Conn
-	wg        *sync.WaitGroup
-	geospaces sync.Map
-	asns      sync.Map
-	started   bool
-	lock      *sync.Mutex
-	nWorkers  int
-	copyCh    chan ports.MeasurementIterator
+	dsn               string
+	db                *pgx.Conn
+	wg                *sync.WaitGroup
+	geospaces         sync.Map
+	asns              sync.Map
+	started           bool
+	lock              *sync.Mutex
+	nWorkers          int
+	copyCh            chan ports.MeasurementIterator
+	shouldUpdateViews bool
 }
 
-func New(dsn string, nWorkers int) ports.MeasurementsStorage {
+func New(dsn string, nWorkers int, updateViews bool) ports.MeasurementsStorage {
 	wg := &sync.WaitGroup{}
 	s := &TimescaleDBStorage{
-		dsn:       dsn,
-		wg:        wg,
-		geospaces: sync.Map{},
-		asns:      sync.Map{},
-		lock:      &sync.Mutex{},
-		nWorkers:  nWorkers,
-		copyCh:    make(chan ports.MeasurementIterator),
+		dsn:               dsn,
+		wg:                wg,
+		geospaces:         sync.Map{},
+		asns:              sync.Map{},
+		lock:              &sync.Mutex{},
+		nWorkers:          nWorkers,
+		copyCh:            make(chan ports.MeasurementIterator),
+		shouldUpdateViews: updateViews,
 	}
 
 	return s
@@ -335,7 +337,9 @@ func (ts *TimescaleDBStorage) updateViews() error {
 func (ts *TimescaleDBStorage) Close() error {
 	close(ts.copyCh)
 	ts.wg.Wait()
-	ts.updateViews()
+	if ts.shouldUpdateViews {
+		ts.updateViews()
+	}
 	ts.started = false
 	return nil
 }

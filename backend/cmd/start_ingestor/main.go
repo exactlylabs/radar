@@ -80,7 +80,7 @@ func main() {
 			}
 			nWorkers = n
 		}
-		storage = tsdbstorage.New(conf.DBDSN(), nWorkers)
+		storage = tsdbstorage.New(conf.DBDSN(), nWorkers, true)
 	} else {
 		nWorkers := runtime.NumCPU()
 		if conf.ClickhouseStorageNWorkers != "" {
@@ -99,7 +99,7 @@ func main() {
 			Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
 			MaxOpenConns: nWorkers + 5,
 			ReadTimeout:  time.Hour,
-		}, nWorkers)
+		}, nWorkers, true)
 	}
 
 	// Run a first time then, run once every x hour

@@ -1,39 +1,27 @@
 #!/usr/bin/env bash
 set -e
-TARGET_DIR=input
+TOLERANCE=${TOLERANCE:-0.0012}
+TARGET_DIR=geos
 mkdir -p ${TARGET_DIR}
-
-# 5Digit Zip Codes
-echo "Downloading 5-Digit Zip Code Shapes"
-URL="https://www2.census.gov/geo/tiger/TIGER2021/ZCTA520/tl_2021_us_zcta520.zip"
-curl -s -f "${URL}" -o "${TARGET_DIR}/tl_2021_us_zcta520.zip"
-
 
 # US States
 echo "Download US State Shapes"
 URL="https://www2.census.gov/geo/tiger/TIGER2021/STATE/tl_2021_us_state.zip"
 curl -s -f "${URL}" -o "${TARGET_DIR}/tl_2021_us_state.zip"
+unzip -o "${TARGET_DIR}/tl_2021_us_state.zip" -d "${TARGET_DIR}/tl_2021_us_state"
+ogr2ogr -simplify $TOLERANCE -f GeoJSON "${TARGET_DIR}/US_STATES.geojson" "${TARGET_DIR}/tl_2021_us_state/tl_2021_us_state.shp"
 
 
 # US Counties
 echo "Downloading US Counties Shapes"
 URL="https://www2.census.gov/geo/tiger/TIGER2021/COUNTY/tl_2021_us_county.zip"
 curl -s -f "${URL}" -o "${TARGET_DIR}/tl_2021_us_county.zip"
+unzip -o "${TARGET_DIR}/tl_2021_us_county.zip" -d "${TARGET_DIR}/tl_2021_us_county"
+ogr2ogr -simplify $TOLERANCE  -f GeoJSON "${TARGET_DIR}/US_COUNTIES.geojson" "${TARGET_DIR}/tl_2021_us_county/tl_2021_us_county.shp"
 
 # US Tribal Tracts
 echo "Downloading US Tribal Tract Shapes"
-URL="https://www2.census.gov/geo/tiger/TIGER2021/TTRACT/tl_2021_us_ttract.zip"
-curl -s -f "${URL}" -o "${TARGET_DIR}/tl_2021_us_ttract.zip"
-
-
-# Census Tracts
-echo "Downloading US Census Tract Shapes"
-URL="https://www2.census.gov/geo/tiger/TIGER2021/TRACT/"
-mkdir -p ${TARGET_DIR}/tracts
-for state_fips in {1..78}
-do
-    if [ $state_fips -lt 10 ]; then
-        state_fips="0${state_fips}"
-    fi
-    curl -L -s -f "${URL}tl_2021_${state_fips}_tract.zip" -o "${TARGET_DIR}/tracts/tl_2021_${state_fips}_tract.zip"
-done
+URL="https://www.sciencebase.gov/catalog/file/get/4f4e4a2ee4b07f02db61576c?facet=Indian_Reservations"
+curl -s -f "${URL}" -o "${TARGET_DIR}/Indian_Reservations.zip"
+unzip -o "${TARGET_DIR}/Indian_Reservations.zip" -d "${TARGET_DIR}/Indian_Reservations"
+ogr2ogr -simplify $TOLERANCE -f GeoJSON "${TARGET_DIR}/Indian_Reservations.geojson" "${TARGET_DIR}/Indian_Reservations/Indian_Reservations.shp"
