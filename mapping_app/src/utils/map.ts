@@ -1,14 +1,55 @@
 import {Geospace, GeospaceData, GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/types";
-import {getSignalStateDownload, getSignalStateUpload} from "./speeds";
-import {LatLng} from "leaflet";
+import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject, speedTypes} from "./speeds";
+import {LatLng, LeafletMouseEvent} from "leaflet";
 
 export const mapTileUrl: string = MAPBOX_TILESET_URL;
 export const mapTileAttribution =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
 // Specific coordinates to fallback onto almost center point of the US
-export const DEFAULT_FALLBACK_LATITUDE: number = 40.566296;
+export const DEFAULT_FALLBACK_LATITUDE: number = 45.566296;
 export const DEFAULT_FALLBACK_LONGITUDE: number = -97.264547;
+
+export const baseStyle = {
+  stroke: true,
+  fill: true,
+  opacity: 0.5,
+  fillOpacity: 0.5,
+  weight: 1,
+  color: speedColors[speedTypes.UNSERVED as keyof SpeedsObject],
+  fillColor: speedColors[speedTypes.UNSERVED as keyof SpeedsObject],
+};
+
+export const invisibleStyle = {
+  ...baseStyle,
+  opacity: 0,
+  fillOpacity: 0,
+}
+
+export const getStyle = (isSelected: boolean, key: string) => {
+  return {
+    ...baseStyle,
+    weight: isSelected ? 3 : baseStyle.weight,
+    opacity: isSelected ? 0.8 : baseStyle.opacity,
+    fillOpacity: isSelected ? 0.8 : baseStyle.fillOpacity,
+    color: speedColors[key as keyof SpeedsObject],
+    fillColor: speedColors[key as keyof SpeedsObject]
+  }
+}
+
+export const layerMouseoutHandler = (ev: LeafletMouseEvent, timeoutId: NodeJS.Timeout) => {
+  let target = ev.target;
+  clearTimeout(timeoutId);
+  target.closeTooltip();
+  target.setStyle({weight: 1, opacity: 0.5, fillOpacity: 0.5});
+}
+
+export const layerMouseoverHandler = (ev: LeafletMouseEvent) => {
+  let target = ev.target;
+  target.setStyle({weight: 3, opacity: 0.8, fillOpacity: 0.8});
+  target.closeTooltip();
+  return setTimeout(() => { target.openTooltip() }, 700);
+}
 
 export const shouldShowLayer = (
   summary: GeospaceOverview,
