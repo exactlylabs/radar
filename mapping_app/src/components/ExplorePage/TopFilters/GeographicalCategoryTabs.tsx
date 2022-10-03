@@ -4,20 +4,33 @@ import {styles} from "./styles/GeographicalCategoryTabs.style";
 const tabs = {
   STATES: 'STATES',
   COUNTIES: 'COUNTIES',
-  TRIBAL_LANDS: 'TRIBAL_LANDS',
+  TRIBAL_TRACTS: 'TRIBAL_TRACTS',
+}
+
+interface GeographicalCategoryTabsProps {
+  setGeospaceNamespace: (namespace: string) => void;
 }
 
 const GeographicalCategoryTabs = ({
-
-}): ReactElement => {
+  setGeospaceNamespace
+}: GeographicalCategoryTabsProps): ReactElement => {
 
   const [selectedTab, setSelectedTab] = useState<string>(tabs.STATES)
 
-  const selectStates = () => setSelectedTab(tabs.STATES);
+  const selectStates = () => {
+    setSelectedTab(tabs.STATES);
+    setGeospaceNamespace(tabs.STATES.toLowerCase());
+  }
 
-  const selectCounties = () => setSelectedTab(tabs.COUNTIES);
+  const selectCounties = () => {
+    setSelectedTab(tabs.COUNTIES);
+    setGeospaceNamespace(tabs.COUNTIES.toLowerCase());
+  }
 
-  const selectTribalLands = () => setSelectedTab(tabs.TRIBAL_LANDS);
+  const selectTribalLands = () => {
+    setSelectedTab(tabs.TRIBAL_TRACTS);
+    setGeospaceNamespace(tabs.TRIBAL_TRACTS.toLowerCase());
+  }
 
   return (
     <div style={styles.GeographicalCategoryTabsContainer()}>
@@ -34,7 +47,7 @@ const GeographicalCategoryTabs = ({
         Counties
       </div>
       <div className={'fw-regular hover-opaque'}
-           style={styles.Tab(selectedTab === tabs.TRIBAL_LANDS)}
+           style={styles.Tab(selectedTab === tabs.TRIBAL_TRACTS)}
            onClick={selectTribalLands}
       >
         Tribal Lands

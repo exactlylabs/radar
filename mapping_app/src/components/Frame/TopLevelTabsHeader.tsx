@@ -26,23 +26,21 @@ const TopLevelTabsHeader = (): ReactElement => {
                              className={selectedTab === paths.EXPLORE ? '' : 'hover-opaque'}
                              selected={selectedTab === paths.EXPLORE}
       />
-      <TopLevelTabsHeaderTab text={'About'}
+      {/* TODO: uncomment once about page is designed */}
+      {/*<TopLevelTabsHeaderTab text={'About'}
                              url={'about'}
                              className={selectedTab === paths.ABOUT ? '' : 'hover-opaque'}
                              selected={selectedTab === paths.ABOUT}
-      />
+      />*/}
       <div style={styles.RightSideButtonContainer()}>
-        {/* TODO: remove false flag once we have the functionality implemented */}
-        {
-          false &&
-          <MyButton text={'Check your region'}
+        {/* TODO: uncomment once we have the functionality implemented */}
+        {/*<MyButton text={'Check your region'}
                     icon={<Room style={{marginRight: '4px'}}/>}
                     backgroundColor={buttonColors.BLACK}
                     color={buttonTextColors.WHITE}
                     iconFirst
                     onClick={() => console.log('Check your region!')}
-          />
-        }
+          />*/}
       </div>
     </div>
   )

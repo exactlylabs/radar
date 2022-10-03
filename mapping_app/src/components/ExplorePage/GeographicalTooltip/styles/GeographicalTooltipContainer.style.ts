@@ -9,7 +9,7 @@ import {SignalStates} from "../../../../utils/types";
 
 const geographicalTooltipContainerStyle: CSSProperties = {
   width: '300px',
-  height: '200px',
+  height: '150px',
   backgroundColor: DEFAULT_SECONDARY_BUTTON,
   borderRadius: '10px',
   boxShadow: `0 2px 10px -4px ${EXPLORATION_POPOVER_SECONDARY_BLACK}`,
@@ -119,7 +119,7 @@ export const styles = {
   SignalStateContainer: () => {
     return signalStateContainerStyle;
   },
-  SignalStateIndicator: (signalState: SignalStates) => {
+  SignalStateIndicator: (signalState: string) => {
     const backgroundColor = speedColors[signalState.toUpperCase() as keyof SpeedsObject];
     return {...signalStateIndicatorStyle, backgroundColor};
   },
@@ -129,7 +129,7 @@ export const styles = {
   SpeedDataContainer: () => {
     return speedDataContainerStyle;
   },
-  Icon: (signalState?: SignalStates) => {
+  Icon: (signalState?: string) => {
     if(signalState) {
       const color = speedColors[signalState.toUpperCase() as keyof SpeedsObject];
       return {...iconStyle, color};

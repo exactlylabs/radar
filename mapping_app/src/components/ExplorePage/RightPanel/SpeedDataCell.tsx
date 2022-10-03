@@ -4,7 +4,7 @@ import {styles} from "./styles/SpeedDataCell.style";
 interface SpeedDataCellProps {
   icon: ReactElement;
   text: string;
-  value: number;
+  value: string;
   unit: string;
 }
 

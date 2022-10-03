@@ -5,6 +5,15 @@ const mapContainerStyle: CSSProperties = {
   minHeight: '700px',
 }
 
+const spinnerContainerStyle: CSSProperties = {
+  height: '100%',
+  minHeight: '700px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center'
+}
+
 export const styles = {
-  MapContainer: mapContainerStyle
+  MapContainer: mapContainerStyle,
+  SpinnerContainer: spinnerContainerStyle
 }
