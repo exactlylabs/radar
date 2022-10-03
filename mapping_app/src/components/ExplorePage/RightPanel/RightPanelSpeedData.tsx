@@ -16,6 +16,7 @@ const RightPanelSpeedData = ({
   medianUpload,
   medianLatency,
 }: RightPanelSpeedDataProps): ReactElement => {
+
   return (
     <div style={styles.RightPanelSpeedDataContainer()}>
       <SpeedDataCell icon={<ArrowDownwardRounded style={styles.Icon(speedState)}/>}

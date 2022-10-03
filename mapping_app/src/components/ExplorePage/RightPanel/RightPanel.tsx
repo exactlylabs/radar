@@ -64,8 +64,8 @@ const RightPanel = ({
       }
       const overview: GeospaceOverview = await getOverview(geospaceId, filtersString);
       const allData: GeospaceInfo = {
-        ...overview,
         ...selectedGeospaceInfo,
+        ...overview,
         download_scores: { ...overview.download_scores },
         upload_scores: { ...overview.upload_scores },
       };
