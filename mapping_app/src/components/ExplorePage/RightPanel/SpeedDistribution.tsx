@@ -6,12 +6,13 @@ import {styles} from "./styles/SpeedDistribution.style";
 import RightPanelHorizontalDivider from "./RightPanelHorizontalDivider";
 import SpeedDistributionPercentageBarIndicators from "./SpeedDistributionPercentageBarIndicators";
 import {isNotZero} from "../../../utils/percentages";
+import {Filter} from "../../../utils/types";
 
 interface SpeedDistributionProps {
   unservedPeopleCount: number;
   underservedPeopleCount: number;
   servedPeopleCount: number;
-  speedType: string;
+  speedType: Filter;
 }
 
 const SpeedDistribution = ({

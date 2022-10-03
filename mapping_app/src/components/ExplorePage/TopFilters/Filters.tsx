@@ -3,17 +3,18 @@ import {styles} from "./styles/Filters.style";
 import GeographicalCategoryTabs from "./GeographicalCategoryTabs";
 import DropdownFilters from "./DropdownFilters";
 import HideFiltersButton from "./HideFiltersButton";
+import {Filter} from "../../../utils/types";
 
 interface FiltersProps {
   closeFilters: () => void;
   extendedView: boolean;
   setGeospaceNamespace: (namespace: string) => void;
-  setSpeedType: (type: string) => void;
-  setCalendarType: (type: string) => void;
-  setProvider: (type: string) => void;
-  speedType: string;
-  calendarType: string;
-  provider: string;
+  setSpeedType: (type: Filter) => void;
+  setCalendarType: (type: Filter) => void;
+  setProvider: (type: Filter) => void;
+  speedType: Filter;
+  calendarType: Filter;
+  provider: Filter;
 }
 
 const Filters = ({
@@ -28,7 +29,7 @@ const Filters = ({
   provider
 }: FiltersProps): ReactElement => {
 
-  const handleChangeFilters = (filters: Array<string>) => {
+  const handleChangeFilters = (filters: Array<Filter>) => {
     setSpeedType(filters[0]);
     setCalendarType(filters[1]);
     setProvider(filters[2]);

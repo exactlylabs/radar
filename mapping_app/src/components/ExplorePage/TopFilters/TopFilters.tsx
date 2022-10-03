@@ -2,16 +2,17 @@ import {ReactElement, useState} from "react";
 import {styles} from "./styles/TopFilters.style";
 import OpenFiltersButton from "./OpenFiltersButton";
 import Filters from "./Filters";
+import {Filter} from "../../../utils/types";
 
 interface TopFiltersProps {
   isRightPanelOpen: boolean;
   setGeospaceNamespace: (namespace: string) => void;
-  setSpeedType: (type: string) => void;
-  setCalendarType: (type: string) => void;
-  setProvider: (type: string) => void;
-  speedType: string;
-  calendarType: string;
-  provider: string;
+  setSpeedType: (type: Filter) => void;
+  setCalendarType: (type: Filter) => void;
+  setProvider: (type: Filter) => void;
+  speedType: Filter;
+  calendarType: Filter;
+  provider: Filter;
 }
 
 const TopFilters = ({

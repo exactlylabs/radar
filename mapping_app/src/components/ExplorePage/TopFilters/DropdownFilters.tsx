@@ -1,18 +1,22 @@
-import {ReactElement, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/DropdownFilters.style";
 import DropdownFilter from "./DropdownFilter";
 import CalendarIcon from '../../../assets/calendar-icon.png';
 import ProvidersIcon from '../../../assets/providers-icon.png';
 import SpeedIcon from '../../../assets/speeds-icon.png';
 import DropdownFilterVerticalDivider from "./DropdownFilterVerticalDivider";
-import {calendarFilters, filterTypes, providerFilters, speedFilters} from "../../../utils/filters";
+import {calendarFilters, filterTypes, speedFilters} from "../../../utils/filters";
+import {getAsns} from "../../../api/asns/requests";
+import {Asn} from "../../../api/asns/types";
+import {handleError} from "../../../api";
+import {Filter} from "../../../utils/types";
 
 
 interface DropdownFiltersProps {
-  changeFilters: (filters: Array<string>) => void;
-  speedType: string;
-  calendarType: string;
-  provider: string;
+  changeFilters: (filters: Array<Filter>) => void;
+  speedType: Filter;
+  calendarType: Filter;
+  provider: Filter;
 }
 
 const DropdownFilters = ({
@@ -22,24 +26,31 @@ const DropdownFilters = ({
   provider,
 }: DropdownFiltersProps): ReactElement => {
 
-  const [currentFilters, setCurrentFilters] = useState<Array<string>>([speedType, calendarType, provider]);
+  const [currentFilters, setCurrentFilters] = useState<Array<Filter>>([speedType, calendarType, provider]);
+  const [providers, setProviders] = useState<Array<Asn>>([]);
 
-  const changeFilter = (newFilter: string, index: number) => {
-    let filters: Array<string> = [...currentFilters];
+  useEffect(() => {
+    getAsns()
+      .then(res => setProviders(res.results))
+      .catch(err => handleError(err));
+  }, []);
+
+  const changeFilter = (newFilter: Filter, index: number) => {
+    let filters: Array<Filter> = [...currentFilters];
     filters[index] = newFilter;
     setCurrentFilters(filters);
     changeFilters(filters);
   }
 
-  const changeSpeedFilter = (newFilter: string) => {
+  const changeSpeedFilter = (newFilter: Filter) => {
     changeFilter(newFilter, 0);
   }
 
-  const changeCalendarFilter = (newFilter: string) => {
+  const changeCalendarFilter = (newFilter: Filter) => {
     changeFilter(newFilter, 1);
   }
 
-  const changeProviderFilter = (newFilter: string) => {
+  const changeProviderFilter = (newFilter: Filter) => {
     changeFilter(newFilter, 2);
   }
 
@@ -63,7 +74,7 @@ const DropdownFilters = ({
       />
       <DropdownFilterVerticalDivider/>
       <DropdownFilter icon={<img src={ProvidersIcon} style={styles.Icon()} alt={'speed-icon'}/>}
-                      options={providerFilters}
+                      options={providers}
                       withSearchbar
                       textWidth={'85px'}
                       type={filterTypes.PROVIDERS}

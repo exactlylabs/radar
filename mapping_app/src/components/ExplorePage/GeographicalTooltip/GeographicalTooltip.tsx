@@ -1,5 +1,4 @@
 import {ReactElement} from "react";
-import {SelectedAreaInfo} from "../../../utils/types";
 import {styles} from "./styles/GeographicalTooltipContainer.style";
 import {capitalize} from "../../../utils/strings";
 import SpeedDataCell from "../RightPanel/SpeedDataCell";
