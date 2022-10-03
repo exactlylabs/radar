@@ -91,9 +91,8 @@ const CustomMap = ({
           const isSelected: boolean = !!selectedGeospace ? isCurrentGeospace(properties.summary.geospace, selectedGeospace) : false;
           layer.addEventListener('click', () => { selectGeospace(layer.feature.properties.summary); });
           if(!isSelected) {
-            let timeoutId: NodeJS.Timeout;
-            layer.addEventListener('mouseout', (ev: LeafletMouseEvent) => layerMouseoutHandler(ev, timeoutId));
-            layer.addEventListener('mouseover', (ev: LeafletMouseEvent) => { timeoutId = layerMouseoverHandler(ev); });
+            layer.addEventListener('mouseout', layerMouseoutHandler);
+            layer.addEventListener('mouseover', layerMouseoverHandler);
           } else {
             const geospacePosition: LatLng = getCoordinates(layer.feature.geometry);
             map.flyTo(geospacePosition, 5);
