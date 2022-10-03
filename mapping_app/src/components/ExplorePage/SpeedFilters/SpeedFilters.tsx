@@ -3,59 +3,64 @@ import {styles} from "./styles/SpeedFilters.style";
 import DropdownFilterVerticalDivider from "../TopFilters/DropdownFilterVerticalDivider";
 import {SPEED_NORMAL, SPEED_UNDERSERVED, SPEED_UNSERVED} from "../../../styles/colors";
 import SpeedFilter from "./SpeedFilter";
+import {speedTextsDownload, speedTextsUpload} from "../../../utils/speeds";
 
 const speedFilters = {
   UNSERVED: 'UNSERVED',
   UNDERSERVED: 'UNDERSERVED',
-  NORMAL: 'NORMAL',
+  SERVED: 'SERVED',
 };
 
 interface SpeedFiltersProps {
   isRightPanelOpen: boolean;
+  speedType: string;
+  selectedSpeedFilters: Array<string>;
+  setSelectedSpeedFilters: (filters: Array<string>) => void;
 }
 
 const SpeedFilters = ({
-  isRightPanelOpen
+  isRightPanelOpen,
+  speedType,
+  selectedSpeedFilters,
+  setSelectedSpeedFilters
 }: SpeedFiltersProps): ReactElement => {
 
-  const [selectedFilters, setSelectedFilters] = useState<Array<string>>(Object.keys(speedFilters));
-
   const toggleFilter = (filter: string) => {
-    let elements = [...selectedFilters];
-    if(selectedFilters.includes(filter)) {
+    let elements = [...selectedSpeedFilters];
+    if(selectedSpeedFilters.includes(filter)) {
       const index = elements.indexOf(filter);
       elements.splice(index, 1);
     } else {
       elements.push(filter);
     }
-    setSelectedFilters(elements);
+    setSelectedSpeedFilters(elements);
   }
 
   const toggleUnserved = () => toggleFilter(speedFilters.UNSERVED);
 
   const toggleUnderserved = () => toggleFilter(speedFilters.UNDERSERVED);
 
-  const toggleNormal = () => toggleFilter(speedFilters.NORMAL);
+  const toggleNormal = () => toggleFilter(speedFilters.SERVED);
 
   return (
     <div style={styles.SpeedFiltersContainer(isRightPanelOpen)}>
       <SpeedFilter boxColor={SPEED_UNSERVED}
-                   text={'<25 Mbps'}
+                   text={speedType === 'Download' ? speedTextsDownload['UNSERVED'] : speedTextsUpload['UNSERVED']}
                    secondaryText={'(Unserved)'}
-                   isChecked={selectedFilters.includes(speedFilters.UNSERVED)}
+                   isChecked={selectedSpeedFilters.includes(speedFilters.UNSERVED)}
                    toggleFilter={toggleUnserved}
       />
       <DropdownFilterVerticalDivider/>
       <SpeedFilter boxColor={SPEED_UNDERSERVED}
-                   text={'25 - 100 Mbps'}
+                   text={speedType === 'Download' ? speedTextsDownload['UNDERSERVED'] : speedTextsUpload['UNDERSERVED']}
                    secondaryText={'(Underserved)'}
-                   isChecked={selectedFilters.includes(speedFilters.UNDERSERVED)}
+                   isChecked={selectedSpeedFilters.includes(speedFilters.UNDERSERVED)}
                    toggleFilter={toggleUnderserved}
       />
       <DropdownFilterVerticalDivider/>
       <SpeedFilter boxColor={SPEED_NORMAL}
-                   text={'100+ Mbps'}
-                   isChecked={selectedFilters.includes(speedFilters.NORMAL)}
+                   text={speedType === 'Download' ? speedTextsDownload['SERVED'] : speedTextsUpload['SERVED']}
+                   isChecked={selectedSpeedFilters.includes(speedFilters.SERVED)}
                    toggleFilter={toggleNormal}
       />
     </div>
