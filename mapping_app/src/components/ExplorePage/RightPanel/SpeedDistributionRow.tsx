@@ -2,12 +2,13 @@ import {ReactElement} from "react";
 import {speedColors, SpeedsObject, speedTextsDownload, speedTextsUpload} from "../../../utils/speeds";
 import {capitalize} from "../../../utils/strings";
 import {styles} from "./styles/SpeedDistributionRow.style";
+import {Filter} from "../../../utils/types";
 
 interface SpeedDistributionRowProps {
   type: string;
   peopleCount: number;
   percentage: string;
-  speedType: string;
+  speedType: Filter;
 }
 
 const SpeedDistributionRow = ({

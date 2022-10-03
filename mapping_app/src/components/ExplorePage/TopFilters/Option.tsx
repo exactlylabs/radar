@@ -1,11 +1,14 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/Option.style";
 import {CheckRounded} from "@mui/icons-material";
+import {Filter} from "../../../utils/types";
+import {isAsn} from "../../../api/asns/types";
+import {capitalize} from "../../../utils/strings";
 
 interface OptionProps {
-  option: string;
+  option: Filter;
   selected: boolean;
-  onClick: (option: string) => void;
+  onClick: (option: Filter) => void;
 }
 
 const Option = ({
@@ -18,9 +21,13 @@ const Option = ({
     onClick(option);
   }
 
+  const getText = () => {
+    return isAsn(option) ? capitalize(option.organization) : option;
+  }
+
   return (
     <div style={styles.Option()} onClick={handleClick}>
-      <p className={'hover-opaque'} style={styles.Text(selected)}>{option}</p>
+      <p className={'hover-opaque'} style={styles.Text(selected)}>{getText()}</p>
       { !selected && <div style={styles.Icon()}></div> }
       {  selected && <CheckRounded style={styles.Icon()}/> }
     </div>

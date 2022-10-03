@@ -1,4 +1,5 @@
 import {Optional} from "../../utils/types";
+import {PaginationLinks} from "../index";
 
 export type Geospace = {
   id: string;
@@ -10,11 +11,6 @@ export type Geospace = {
 
 export type GeospacesResult = {
   results: Array<Geospace>;
-}
-
-export type PaginationLinks = {
-  next: Optional<string>;
-  previous: Optional<string>;
 }
 
 export type GeospaceSearchResult = {

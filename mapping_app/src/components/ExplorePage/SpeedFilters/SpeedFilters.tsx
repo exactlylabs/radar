@@ -4,6 +4,7 @@ import DropdownFilterVerticalDivider from "../TopFilters/DropdownFilterVerticalD
 import {SPEED_NORMAL, SPEED_UNDERSERVED, SPEED_UNSERVED} from "../../../styles/colors";
 import SpeedFilter from "./SpeedFilter";
 import {speedTextsDownload, speedTextsUpload} from "../../../utils/speeds";
+import {Filter} from "../../../utils/types";
 
 const speedFilters = {
   UNSERVED: 'UNSERVED',
@@ -13,9 +14,9 @@ const speedFilters = {
 
 interface SpeedFiltersProps {
   isRightPanelOpen: boolean;
-  speedType: string;
-  selectedSpeedFilters: Array<string>;
-  setSelectedSpeedFilters: (filters: Array<string>) => void;
+  speedType: Filter;
+  selectedSpeedFilters: Array<Filter>;
+  setSelectedSpeedFilters: (filters: Array<Filter>) => void;
 }
 
 const SpeedFilters = ({

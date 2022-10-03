@@ -3,13 +3,14 @@ import {SpeedsObject, speedTextsDownload, speedTextsUpload} from "../../../utils
 import PercentageBarIndicator from "./PercentageBarIndicator";
 import {addPercentages} from "../../../utils/percentages";
 import {styles} from "./styles/SpeedDistributionPercentageBarIndicators.style";
+import {Filter} from "../../../utils/types";
 
 interface SpeedDistributionPercentageBarIndicatorsProps {
   percentages: Array<string>;
   indexesToDisplay: Array<number>;
   top?: boolean;
   bottom?: boolean;
-  speedType: string;
+  speedType: Filter;
 }
 
 const SpeedDistributionPercentageBarIndicators = ({

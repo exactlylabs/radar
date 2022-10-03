@@ -1,4 +1,6 @@
-export const getFiltersString = (filters: Array<string>): string => {
+import {Filter} from "../../utils/types";
+
+export const getFiltersString = (filters: Array<Filter>): string => {
   let filterString: string = '';
   if(filters[1] !== '') {
     filterString += getCalendarFilterValue(filters[1]);
@@ -6,7 +8,7 @@ export const getFiltersString = (filters: Array<string>): string => {
   return filterString;
 }
 
-export const getCalendarFilterValue = (filter: string): string => {
+export const getCalendarFilterValue = (filter: Filter): string => {
   const today: Date = new Date();
   switch (filter) {
     case 'All time':
