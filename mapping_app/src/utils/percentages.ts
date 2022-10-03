@@ -6,3 +6,5 @@ export const addPercentages = (percentage1: string, percentage2: string): string
 }
 
 export const isNotZero = (percentage: string): boolean => percentage !== '0.0%';
+
+export const getPeopleCount = (percentage: number, totalAmount: number): number => Math.ceil(totalAmount * percentage);

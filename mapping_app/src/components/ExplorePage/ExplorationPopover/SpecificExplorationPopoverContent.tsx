@@ -3,49 +3,61 @@ import {styles} from "./styles/SpecificExplorationPopoverContent.style";
 import {ArrowBackRounded} from "@mui/icons-material";
 import {popoverStates} from "./ExplorationPopover";
 import PopoverSearchbar from "./PopoverSearchbar";
-import {counties, GeographicalCategory, isState, State, states, tribalLands} from "../../../utils/geographicalLists";
 import PopoverOption from "./PopoverOption";
-import {InputText, Optional} from "../../../utils/types";
+import {Optional} from "../../../utils/types";
+import {Geospace, GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
+import {getOverview} from "../../../api/geospaces/requests";
+import filters from "../TopFilters/Filters";
 
 interface SpecificExplorationPopoverContentProps {
   type: string;
   setType: (type: string) => void;
   goBack: () => void;
+  selectGeospace: (geospace: GeospaceOverview) => void;
+  states: Array<Geospace>;
+  counties: Array<Geospace>;
+  tribalTracts: Array<Geospace>;
 }
 
 const SpecificExplorationPopoverContent = ({
   type,
   setType,
   goBack,
+  selectGeospace,
+  states,
+  counties,
+  tribalTracts
 }: SpecificExplorationPopoverContentProps): ReactElement => {
 
-  const [allItems, setAllItems] = useState<Array<GeographicalCategory>>([]);
-  const [filteredItems, setFilteredItems] = useState<Array<GeographicalCategory>>([]);
-  const [selectedOption, setSelectedOption] = useState<Optional<GeographicalCategory>>(null);
+  const [allItems, setAllItems] = useState<Array<Geospace>>([]);
+  const [filteredItems, setFilteredItems] = useState<Array<Geospace>>([]);
+  const [selectedOption, setSelectedOption] = useState<Optional<Geospace>>(null);
   const [inputText, setInputText] = useState<string>('');
+  const [loadingStates, setLoadingStates] = useState<Array<boolean>>([]);
 
   useEffect(() => {
-    let items: Array<GeographicalCategory>;
+    let items: Array<Geospace>;
     switch (type) {
       case popoverStates.STATES:
         items = states;
         break;
       case popoverStates.COUNTIES:
-        items = states;
+        items = counties;
         break;
       case popoverStates.SPECIFIC_STATE:
         if (selectedOption !== null && selectedOption !== undefined)
-          items = counties.filter(county => county.state.title === selectedOption.title);
+          items = counties.filter(county => county.name === selectedOption.name);
         else
           items = [];
         break;
       case popoverStates.TRIBAL_LANDS:
-        items = tribalLands;
+        items = tribalTracts;
         break;
       default:
         items = states;
         break;
     }
+    setLoadingStates(items.map(() => false));
     setAllItems(items);
     setFilteredItems(items);
   }, [type]);
@@ -63,7 +75,7 @@ const SpecificExplorationPopoverContent = ({
         title = 'Browse by Tribal Lands';
         break;
       case popoverStates.SPECIFIC_STATE:
-        if(selectedOption) title = selectedOption.title;
+        if(selectedOption) title = selectedOption.name;
         else title = '';
         break;
       default:
@@ -73,9 +85,17 @@ const SpecificExplorationPopoverContent = ({
     return title;
   }
 
-  const handleSelectOption = (option: GeographicalCategory) => {
+  const handleSelectOption = async (option: Geospace, index: number) => {
     setSelectedOption(option);
-    if(type === popoverStates.COUNTIES) setType(popoverStates.SPECIFIC_STATE);
+    let loadingStatesCopy = [...loadingStates];
+    setLoadingStates(loadingStatesCopy.map((elem, idx) => idx === index));
+    const response: GeospaceOverview = await getOverview(option.id, '');
+    const allData: GeospaceInfo = {
+      ...response,
+      geospace: {...option},
+    };
+    await selectGeospace(allData);
+    setLoadingStates(loadingStatesCopy.map((elem, idx) => false));
   }
 
   const getContent = () => {
@@ -87,11 +107,12 @@ const SpecificExplorationPopoverContent = ({
         </div>
       );
     } else {
-      return filteredItems.map(item =>
-        <PopoverOption key={item.title}
-                       text={item.title}
-                       secondaryText={isState(item) ? item.abbreviation : undefined}
-                       onClick={() => handleSelectOption(item)}
+      return filteredItems.map((item, index) =>
+        <PopoverOption key={item.id}
+                       text={item.name}
+                       secondaryText={undefined}
+                       onClick={() => handleSelectOption(item, index)}
+                       loading={loadingStates[index]}
         />
       );
     }
@@ -100,12 +121,12 @@ const SpecificExplorationPopoverContent = ({
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const filterText = e.target.value;
     setInputText(filterText);
-    setFilteredItems(allItems.filter(item => item.title.toLowerCase().includes(filterText.toLowerCase())));
+    setFilteredItems(allItems.filter(item => item.name?.toLowerCase().includes(filterText.toLowerCase())));
   }
 
   const handleSetText = (text: string) => {
     setInputText(text);
-    setFilteredItems(allItems.filter(item => item.title.toLowerCase().includes(text.toLowerCase())));
+    setFilteredItems(allItems.filter(item => item.name.toLowerCase().includes(text.toLowerCase())));
   }
 
   return (
@@ -118,7 +139,8 @@ const SpecificExplorationPopoverContent = ({
                         text={inputText}
                         setText={handleSetText}
       />
-      { type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText()}>Start by choosing a state...</p> }
+      {/* TODO: Once API supports relation between county<>state we can add this */}
+      {/* type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText()}>Start by choosing a state...</p> */}
       <div style={styles.ContentContainer(type)}>
         {getContent()}
       </div>

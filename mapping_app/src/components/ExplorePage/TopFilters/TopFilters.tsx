@@ -5,10 +5,24 @@ import Filters from "./Filters";
 
 interface TopFiltersProps {
   isRightPanelOpen: boolean;
+  setGeospaceNamespace: (namespace: string) => void;
+  setSpeedType: (type: string) => void;
+  setCalendarType: (type: string) => void;
+  setProvider: (type: string) => void;
+  speedType: string;
+  calendarType: string;
+  provider: string;
 }
 
 const TopFilters = ({
-  isRightPanelOpen
+  isRightPanelOpen,
+  setGeospaceNamespace,
+  setSpeedType,
+  setCalendarType,
+  setProvider,
+  speedType,
+  calendarType,
+  provider
 }: TopFiltersProps): ReactElement => {
 
   const [filtersOpen, setFiltersOpen] = useState(true);
@@ -20,7 +34,18 @@ const TopFilters = ({
   return (
     <div style={styles.TopFiltersContainer(isRightPanelOpen)}>
       {!filtersOpen && <OpenFiltersButton openFilters={openFilters}/>}
-      { filtersOpen && <Filters closeFilters={closeFilters} extendedView={!isRightPanelOpen}/>}
+      { filtersOpen &&
+        <Filters closeFilters={closeFilters}
+                 extendedView={!isRightPanelOpen}
+                 setGeospaceNamespace={setGeospaceNamespace}
+                 setSpeedType={setSpeedType}
+                 setCalendarType={setCalendarType}
+                 setProvider={setProvider}
+                 speedType={speedType}
+                 calendarType={calendarType}
+                 provider={provider}
+        />
+      }
     </div>
   )
 }

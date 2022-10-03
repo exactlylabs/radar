@@ -14,23 +14,23 @@ const RightPanelSpeedData = ({
   speedState,
   medianDownload,
   medianUpload,
-  medianLatency
+  medianLatency,
 }: RightPanelSpeedDataProps): ReactElement => {
   return (
     <div style={styles.RightPanelSpeedDataContainer()}>
       <SpeedDataCell icon={<ArrowDownwardRounded style={styles.Icon(speedState)}/>}
                      text={'Med. Download'}
-                     value={medianDownload}
+                     value={medianDownload.toFixed(2)}
                      unit={'Mbps'}
       />
       <SpeedDataCell icon={<ArrowUpwardRounded style={styles.Icon()}/>}
                      text={'Med. Upload'}
-                     value={medianUpload}
+                     value={medianUpload.toFixed(2)}
                      unit={'Mbps'}
       />
       <SpeedDataCell icon={<CompareArrowsRounded style={styles.Icon()}/>}
                      text={'Med. Latency'}
-                     value={medianLatency}
+                     value={medianLatency.toFixed(2)}
                      unit={'ms'}
       />
     </div>

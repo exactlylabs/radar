@@ -1,6 +1,6 @@
 import {ReactElement} from "react";
 import SpeedDistributionPercentageBar from "./SpeedDistributionPercentageBar";
-import {speedTexts, speedTypes} from "../../../utils/speeds";
+import {speedTypes} from "../../../utils/speeds";
 import SpeedDistributionRow from "./SpeedDistributionRow";
 import {styles} from "./styles/SpeedDistribution.style";
 import RightPanelHorizontalDivider from "./RightPanelHorizontalDivider";
@@ -11,12 +11,14 @@ interface SpeedDistributionProps {
   unservedPeopleCount: number;
   underservedPeopleCount: number;
   servedPeopleCount: number;
+  speedType: string;
 }
 
 const SpeedDistribution = ({
   unservedPeopleCount,
   underservedPeopleCount,
-  servedPeopleCount
+  servedPeopleCount,
+  speedType
 }: SpeedDistributionProps): ReactElement => {
 
   const totalPeople = unservedPeopleCount + underservedPeopleCount + servedPeopleCount;
@@ -60,6 +62,7 @@ const SpeedDistribution = ({
       <SpeedDistributionPercentageBarIndicators percentages={[unservedPercentage, underservedPercentage, servedPercentage]}
                                                 indexesToDisplay={getIndexesForTopHalf()}
                                                 top
+                                                speedType={speedType}
       />
       <SpeedDistributionPercentageBar unservedPercentage={unservedPercentage}
                                       underservedPercentage={underservedPercentage}
@@ -68,20 +71,24 @@ const SpeedDistribution = ({
       <SpeedDistributionPercentageBarIndicators percentages={[unservedPercentage, underservedPercentage, servedPercentage]}
                                                 indexesToDisplay={getIndexesForBottomHalf()}
                                                 bottom
+                                                speedType={speedType}
       />
       <SpeedDistributionRow type={speedTypes.UNSERVED}
                             peopleCount={unservedPeopleCount}
                             percentage={unservedPercentage}
+                            speedType={speedType}
       />
       <RightPanelHorizontalDivider/>
       <SpeedDistributionRow type={speedTypes.UNDERSERVED}
                             peopleCount={underservedPeopleCount}
                             percentage={underservedPercentage}
+                            speedType={speedType}
       />
       <RightPanelHorizontalDivider/>
       <SpeedDistributionRow type={speedTypes.SERVED}
                             peopleCount={servedPeopleCount}
                             percentage={servedPercentage}
+                            speedType={speedType}
       />
       <RightPanelHorizontalDivider/>
     </div>
