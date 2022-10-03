@@ -28,7 +28,7 @@ import {
   speedTypes
 } from "../../utils/speeds";
 import {GeospaceInfo} from "../../api/geospaces/types";
-import {Optional} from "../../utils/types";
+import {Filter, Optional} from "../../utils/types";
 import ReactDOMServer from "react-dom/server";
 import GeographicalTooltip from "./GeographicalTooltip/GeographicalTooltip";
 
@@ -61,8 +61,8 @@ interface CustomMapProps {
   geoJSON: GeoJSONResponse;
   selectedGeospace: Optional<GeospaceInfo>;
   selectGeospace: (geospace: GeospaceInfo) => void;
-  speedType: string;
-  selectedSpeedFilters: Array<string>;
+  speedType: Filter;
+  selectedSpeedFilters: Array<Filter>;
 }
 
 const CustomMap = ({
@@ -113,10 +113,10 @@ interface MyMapProps {
   namespace: string;
   selectedGeospace: Optional<GeospaceInfo>;
   selectGeospace: (geospace: GeospaceInfo) => void;
-  speedType: string;
-  calendarType: string;
-  provider: string;
-  selectedSpeedFilters: Array<string>;
+  speedType: Filter;
+  calendarType: Filter;
+  provider: Filter;
+  selectedSpeedFilters: Array<Filter>;
 }
 
 const MyMap = ({

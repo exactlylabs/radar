@@ -1,6 +1,7 @@
 import {Geospace, GeospaceData, GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/types";
 import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject, speedTypes} from "./speeds";
 import {LatLng, LeafletMouseEvent} from "leaflet";
+import {Filter} from "./types";
 
 export const mapTileUrl: string = MAPBOX_TILESET_URL;
 export const mapTileAttribution =
@@ -52,8 +53,8 @@ export const layerMouseoverHandler = (ev: LeafletMouseEvent) => {
 
 export const shouldShowLayer = (
   summary: GeospaceOverview,
-  speedType: string,
-  selectedFilters: Array<string>
+  speedType: Filter,
+  selectedFilters: Array<Filter>
 ): boolean => {
   const {download_median, upload_median} = summary;
   return speedType === 'Download' ?

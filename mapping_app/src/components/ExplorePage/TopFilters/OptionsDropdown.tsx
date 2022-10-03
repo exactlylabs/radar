@@ -1,12 +1,14 @@
 import {ReactElement, useEffect} from "react";
 import {styles} from "./styles/OptionsDropdown.style";
 import Option from './Option';
+import {Filter} from "../../../utils/types";
+import {isAsn} from "../../../api/asns/types";
 
 interface OptionsDropdownProps {
-  options: Array<string>;
+  options: Array<Filter>;
   closeDropdown: () => void;
-  selectedOption: string,
-  setSelectedOption: (option: string) => void;
+  selectedOption: Filter,
+  setSelectedOption: (option: Filter) => void;
   dropLeft: boolean;
   dropRight: boolean;
 }
@@ -20,13 +22,13 @@ const OptionsDropdown = ({
   dropRight
 }: OptionsDropdownProps): ReactElement => {
 
-  const handleSelectOption = (option: string) => setSelectedOption(option);
+  const handleSelectOption = (option: Filter) => setSelectedOption(option);
 
   return (
     <div style={styles.OptionsDropdownContainer(dropLeft, dropRight)}>
       {
         options.map(option => (
-          <Option key={option}
+          <Option key={isAsn(option) ? option.id : option}
                   option={option}
                   selected={option === selectedOption}
                   onClick={handleSelectOption}

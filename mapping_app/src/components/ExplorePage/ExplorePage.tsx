@@ -1,4 +1,4 @@
-import {ReactElement, useEffect, useState} from "react";
+import {ReactElement, useState} from "react";
 import {styles} from "./styles/ExplorePage.style";
 import MyMap from "./MyMap";
 import ExplorationPopover from "./ExplorationPopover/ExplorationPopover";
@@ -7,12 +7,12 @@ import TopSearchbar from "./TopSearchbar/TopSearchbar";
 import TopFilters from "./TopFilters/TopFilters";
 import SpeedFilters from "./SpeedFilters/SpeedFilters";
 import RightPanel from "./RightPanel/RightPanel";
-import {Optional} from "../../utils/types";
+import {Filter, Optional} from "../../utils/types";
 import {Geospace, GeospaceInfo, GeospaceOverview} from "../../api/geospaces/types";
 import {getOverview} from "../../api/geospaces/requests";
 import {handleError} from "../../api";
 import {speedTypes} from "../../utils/speeds";
-import {calendarFilters, providerFilters, speedFilters} from "../../utils/filters";
+import {calendarFilters, speedFilters} from "../../utils/filters";
 
 const ExplorePage = (): ReactElement => {
 
@@ -20,10 +20,10 @@ const ExplorePage = (): ReactElement => {
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(null);
   const [geospaceNamespace, setGeospaceNamespace] = useState('states');
-  const [speedType, setSpeedType] = useState(speedFilters[0]);
-  const [calendarType, setCalendarType] = useState(calendarFilters[0]);
-  const [provider, setProvider] = useState(providerFilters[0]);
-  const [selectedSpeedFilters, setSelectedSpeedFilters] = useState<Array<string>>([speedTypes.UNSERVED, speedTypes.UNDERSERVED, speedTypes.SERVED]);
+  const [speedType, setSpeedType] = useState<Filter>(speedFilters[0]);
+  const [calendarType, setCalendarType] = useState<Filter>(calendarFilters[0]);
+  const [provider, setProvider] = useState<Filter>('All providers');
+  const [selectedSpeedFilters, setSelectedSpeedFilters] = useState<Array<Filter>>([speedTypes.UNSERVED, speedTypes.UNDERSERVED, speedTypes.SERVED]);
 
   const closePopover = () => setIsExplorationPopoverOpen(false);
 
