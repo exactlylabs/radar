@@ -1,5 +1,5 @@
 import {CSSProperties} from "react";
-import {BLACK, SELECTED_TAB, WHITE} from "../../../../styles/colors";
+import {WHITE} from "../../../../styles/colors";
 
 const suggestionsBoxContainerStyle: CSSProperties = {
   width: '100%',

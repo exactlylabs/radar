@@ -1,5 +1,5 @@
 import {CSSProperties} from "react";
-import {BLACK, DEFAULT_SECONDARY_TEXT, WHITE} from "../../../../styles/colors";
+import {BLACK, DEFAULT_SECONDARY_TEXT} from "../../../../styles/colors";
 
 const speedFilterStyle: CSSProperties = {
   display: 'flex',

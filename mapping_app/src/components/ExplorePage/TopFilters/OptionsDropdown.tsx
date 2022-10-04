@@ -1,8 +1,9 @@
-import {ReactElement, useEffect} from "react";
+import {ChangeEventHandler, ReactElement} from "react";
 import {styles} from "./styles/OptionsDropdown.style";
 import Option from './Option';
 import {Filter} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
+import MyOptionsDropdownSearchbar from "./MyOptionsDropdownSearchbar";
 
 interface OptionsDropdownProps {
   options: Array<Filter>;
@@ -11,6 +12,8 @@ interface OptionsDropdownProps {
   setSelectedOption: (option: Filter) => void;
   dropLeft: boolean;
   dropRight: boolean;
+  withSearchbar?: boolean;
+  searchbarOnChange?: ChangeEventHandler;
 }
 
 const OptionsDropdown = ({
@@ -19,13 +22,19 @@ const OptionsDropdown = ({
   selectedOption,
   setSelectedOption,
   dropLeft,
-  dropRight
+  dropRight,
+  withSearchbar,
+  searchbarOnChange
 }: OptionsDropdownProps): ReactElement => {
 
   const handleSelectOption = (option: Filter) => setSelectedOption(option);
 
   return (
     <div style={styles.OptionsDropdownContainer(dropLeft, dropRight)}>
+      {
+        withSearchbar &&
+        <MyOptionsDropdownSearchbar onChange={searchbarOnChange}/>
+      }
       {
         options.map(option => (
           <Option key={isAsn(option) ? option.id : option}

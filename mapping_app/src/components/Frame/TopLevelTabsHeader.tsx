@@ -1,10 +1,7 @@
 import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/TopLevelTabsHeader.style";
 import MappingLogo from '../../assets/mapping-logo.png';
-import MyButton from "../common/MyButton";
 import TopLevelTabsHeaderTab from "./TopLevelTabsHeaderTab";
-import {buttonColors, buttonTextColors} from "../../utils/buttons";
-import {Room} from "@mui/icons-material";
 import {useLocation} from "react-router-dom";
 import {paths} from "../../utils/routes";
 

@@ -1,4 +1,4 @@
-import {ReactElement, useState} from "react";
+import {ReactElement} from "react";
 import {styles} from "./styles/SpeedFilters.style";
 import DropdownFilterVerticalDivider from "../TopFilters/DropdownFilterVerticalDivider";
 import {SPEED_NORMAL, SPEED_UNDERSERVED, SPEED_UNSERVED} from "../../../styles/colors";
