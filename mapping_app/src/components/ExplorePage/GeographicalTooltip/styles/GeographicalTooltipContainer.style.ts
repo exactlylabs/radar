@@ -1,11 +1,12 @@
 import {CSSProperties} from "react";
 import {
   DEFAULT_SECONDARY_BUTTON,
-  DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT,
-  EXPLORATION_POPOVER_SECONDARY_BLACK, FOOTER_TEXT
+  DEFAULT_SECONDARY_TEXT,
+  DEFAULT_TEXT,
+  EXPLORATION_POPOVER_SECONDARY_BLACK,
+  FOOTER_TEXT
 } from "../../../../styles/colors";
 import {speedColors, SpeedsObject} from "../../../../utils/speeds";
-import {SignalStates} from "../../../../utils/types";
 
 const geographicalTooltipContainerStyle: CSSProperties = {
   width: '300px',

@@ -1,11 +1,12 @@
 import {ReactElement, useEffect, useState} from "react";
-import L, {LatLng, LeafletMouseEvent} from "leaflet";
+import L, {LatLng} from "leaflet";
 import {MapContainer, TileLayer, useMap} from "react-leaflet";
 import {
   baseStyle,
   DEFAULT_FALLBACK_LATITUDE,
   DEFAULT_FALLBACK_LONGITUDE,
-  getCoordinates, getStyle,
+  getCoordinates,
+  getStyle,
   invisibleStyle,
   isCurrentGeospace,
   layerMouseoutHandler,
@@ -20,17 +21,12 @@ import {getGeoJSON} from "../../api/geojson/requests";
 import {handleError} from "../../api";
 import MySpinner from "../common/MySpinner";
 import {BLACK} from "../../styles/colors";
-import {
-  getSignalStateDownload,
-  getSignalStateUpload,
-  speedColors,
-  SpeedsObject,
-  speedTypes
-} from "../../utils/speeds";
+import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject} from "../../utils/speeds";
 import {GeospaceInfo} from "../../api/geospaces/types";
 import {Filter, Optional} from "../../utils/types";
 import ReactDOMServer from "react-dom/server";
 import GeographicalTooltip from "./GeographicalTooltip/GeographicalTooltip";
+import {Asn} from "../../api/asns/types";
 
 const geoJSONOptions: L.GeoJSONOptions = {
   style: (feature) => {
@@ -132,12 +128,12 @@ const MyMap = ({
   const [geoJSON, setGeoJSON] = useState<GeoJSONResponse>();
 
   useEffect(() => {
-    getGeoJSON(namespace, calendarType)
+    getGeoJSON(namespace, calendarType, provider as Asn)
       .then((res: GeoJSONResponse) => {
         setGeoJSON(res);
       })
       .catch(err => handleError(err));
-  }, [namespace, calendarType]);
+  }, [namespace, calendarType, provider]);
 
   return (
     <>

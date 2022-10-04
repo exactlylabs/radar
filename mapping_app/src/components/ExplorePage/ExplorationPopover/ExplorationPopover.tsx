@@ -3,7 +3,7 @@ import {styles} from "./styles/ExplorationPopover.style";
 import {ArrowOutwardRounded} from "@mui/icons-material";
 import InitialExplorationPopoverContent from "./InitialExplorationPopoverContent";
 import SpecificExplorationPopoverContent from "./SpecificExplorationPopoverContent";
-import {Geospace, GeospaceData, GeospaceOverview} from "../../../api/geospaces/types";
+import {Geospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
 

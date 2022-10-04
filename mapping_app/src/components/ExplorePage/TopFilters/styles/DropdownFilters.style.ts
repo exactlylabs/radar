@@ -1,8 +1,5 @@
 import {CSSProperties} from "react";
-import {
-  DEFAULT_BUTTON_BOX_SHADOW_RGBA,
-  DEFAULT_SECONDARY_BUTTON,
-} from "../../../../styles/colors";
+import {DEFAULT_BUTTON_BOX_SHADOW_RGBA, DEFAULT_SECONDARY_BUTTON,} from "../../../../styles/colors";
 
 const dropdownFiltersContainerStyle: CSSProperties = {
   width: 'max-content',

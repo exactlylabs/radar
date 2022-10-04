@@ -1,4 +1,4 @@
-import {ReactElement, useEffect, useState} from "react";
+import {ChangeEvent, ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/DropdownFilters.style";
 import DropdownFilter from "./DropdownFilter";
 import CalendarIcon from '../../../assets/calendar-icon.png';
@@ -10,7 +10,8 @@ import {getAsns} from "../../../api/asns/requests";
 import {Asn} from "../../../api/asns/types";
 import {handleError} from "../../../api";
 import {Filter} from "../../../utils/types";
-
+import {debounce} from "../../../api/utils/debouncer";
+import {allProvidersElement} from "./utils/providers";
 
 interface DropdownFiltersProps {
   changeFilters: (filters: Array<Filter>) => void;
@@ -31,7 +32,9 @@ const DropdownFilters = ({
 
   useEffect(() => {
     getAsns()
-      .then(res => setProviders(res.results))
+      .then(res => {
+        setProviders([allProvidersElement, ...res.results]);
+      })
       .catch(err => handleError(err));
   }, []);
 
@@ -53,6 +56,13 @@ const DropdownFilters = ({
   const changeProviderFilter = (newFilter: Filter) => {
     changeFilter(newFilter, 2);
   }
+
+  const handleProviderSearchbarChange = debounce(async (e: ChangeEvent<HTMLInputElement>) => {
+    const value: string = e.target.value;
+    getAsns(value)
+      .then(res => setProviders([allProvidersElement, ...res.results]))
+      .catch(err => handleError(err));
+  });
 
   return (
     <div style={styles.DropdownFiltersContainer()}>
@@ -80,6 +90,7 @@ const DropdownFilters = ({
                       type={filterTypes.PROVIDERS}
                       changeFilter={changeProviderFilter}
                       selectedFilter={provider}
+                      searchbarOnChange={handleProviderSearchbarChange}
       />
     </div>
   )

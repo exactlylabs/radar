@@ -1,9 +1,14 @@
 import {Filter} from "../../utils/types";
+import {Asn} from "../asns/types";
 
 export const getFiltersString = (filters: Array<Filter>): string => {
   let filterString: string = '';
   if(filters[1] !== '') {
     filterString += getCalendarFilterValue(filters[1]);
+  }
+  if(filters[2] !== 'All providers') {
+    const asn: Asn = filters[2] as Asn;
+    filterString += `&asn_id=${asn.id}`;
   }
   return filterString;
 }
