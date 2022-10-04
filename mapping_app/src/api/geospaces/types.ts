@@ -9,11 +9,11 @@ export type Geospace = {
   parent: Optional<Geospace>
 }
 
-export type GeospacesResult = {
+export type GeospacesResponse = {
   results: Array<Geospace>;
 }
 
-export type GeospaceSearchResult = {
+export type GeospaceSearchResponse = {
   _links: PaginationLinks;
   count: number;
   results: Array<Geospace>
@@ -34,16 +34,6 @@ export type GeospaceOverview = {
   latency_median: number;
   download_scores: TestScores;
   upload_scores: TestScores;
-}
-
-export type GeospaceAsnResult = {
-  id: string;
-  asn: string;
-  organization: string;
-}
-
-export type GeospaceAsnResponse = {
-  results: Array<GeospaceAsnResult>;
 }
 
 export type GeospaceData = {

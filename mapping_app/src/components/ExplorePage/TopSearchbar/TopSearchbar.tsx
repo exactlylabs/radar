@@ -9,7 +9,7 @@ import {WHITE} from "../../../styles/colors";
 import SuggestionsBox from "./SuggestionsBox";
 import {Optional} from "../../../utils/types";
 import {getGeospaces} from "../../../api/geospaces/requests";
-import {Geospace, GeospaceSearchResult} from "../../../api/geospaces/types";
+import {Geospace, GeospaceSearchResponse} from "../../../api/geospaces/types";
 
 interface TopSearchbarProps {
   selectSuggestion: (suggestion: Geospace) => void;
@@ -42,7 +42,7 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
     if(e.target.value) {
       setLoading(true);
       try {
-        const response: GeospaceSearchResult = await getGeospaces(e.target.value, 5);
+        const response: GeospaceSearchResponse = await getGeospaces(e.target.value, 5);
         setSuggestions(response.results);
         setOpen(true);
       } catch (e: any) {
