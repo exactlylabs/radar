@@ -11,7 +11,9 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/exactlylabs/radar/agent/internal/info"
 )
@@ -29,6 +31,19 @@ type Config struct {
 	LastUploadSpeed   string `config:"last_upload_speed"`
 	SentryDsn         string
 	RegistrationToken *string `config:"registration_token"`
+}
+
+func (c *Config) LastTestedAt() *time.Time {
+	if c.LastTested == "" {
+		return nil
+	}
+	intVal, err := strconv.ParseInt(c.LastTested, 10, 64)
+	if err != nil {
+		log.Println(fmt.Errorf("config#LastTestedAt Atoi: %v", err))
+		return nil
+	}
+	t := time.Unix(intVal, 0)
+	return &t
 }
 
 var config *Config

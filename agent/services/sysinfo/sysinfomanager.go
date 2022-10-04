@@ -6,6 +6,8 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"strings"
+	"time"
 )
 
 type SysInfoManager struct {
@@ -142,4 +144,12 @@ func (si *SysInfoManager) Interfaces() ([]NetInterface, error) {
 
 func (si SysInfoManager) GetAuthLogFile() ([]byte, error) {
 	return si.readFile("/var/log/auth.log")
+}
+
+func (si SysInfoManager) SetSysTimezone(tz *time.Location) error {
+	out, err := exec.Command("timedatectl", "set-timezone", tz.String()).Output()
+	if err != nil {
+		return fmt.Errorf("SysInfoManager#SetSysTimezone %v: %w", strings.TrimRight(string(out), "\n"), err)
+	}
+	return nil
 }
