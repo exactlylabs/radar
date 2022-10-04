@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import ExplorePage from "./components/ExplorePage/ExplorePage";
 import AboutPage from "./components/AboutPage/AboutPage";
 import Frame from "./components/Frame/Frame";

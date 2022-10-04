@@ -1,10 +1,11 @@
-import {ReactElement, useState} from "react";
+import {ChangeEventHandler, ReactElement, useState} from "react";
 import {KeyboardArrowDownRounded} from "@mui/icons-material";
 import {styles} from "./styles/DropdownFilter.style";
 import OptionsDropdown from "./OptionsDropdown";
 import {filterTypes} from "../../../utils/filters";
-import {Filter} from "../../../utils/types";
+import {Filter, Optional} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
+import {capitalize} from "../../../utils/strings";
 
 interface DropdownFilterProps {
   icon: ReactElement;
@@ -14,6 +15,7 @@ interface DropdownFilterProps {
   type: string;
   changeFilter: (filter: Filter) => void;
   selectedFilter: Filter;
+  searchbarOnChange?: ChangeEventHandler;
 }
 
 const DropdownFilter = ({
@@ -23,14 +25,18 @@ const DropdownFilter = ({
   textWidth,
   type,
   changeFilter,
-  selectedFilter
+  selectedFilter,
+  searchbarOnChange
 }: DropdownFilterProps): ReactElement => {
   const [selectedOption, setSelectedOption] = useState<Filter>(selectedFilter ?? options[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const toggleOptionsDropdown = () => {
-    if(dropdownOpen) closeOptionsDropdown();
-    else openOptionsDropdown();
+  const toggleOptionsDropdown = (e: any) => {
+    const optionElement: Optional<HTMLElement> = document.getElementById(`filter-${type}`);
+    if(optionElement && optionElement === e.target) {
+      if (dropdownOpen) closeOptionsDropdown();
+      else openOptionsDropdown();
+    }
   }
 
   const openOptionsDropdown = () => setDropdownOpen(true);
@@ -43,7 +49,7 @@ const DropdownFilter = ({
   }
 
   const getText = () => {
-    return isAsn(selectedOption) ? selectedOption.organization : selectedOption;
+    return isAsn(selectedOption) ? capitalize(selectedOption.organization) : capitalize(selectedOption);
   }
 
   return (
@@ -51,7 +57,7 @@ const DropdownFilter = ({
          onClick={toggleOptionsDropdown}
     >
       {icon}
-      <p className={'fw-regular hover-opaque'} style={styles.Text(textWidth)}>{getText()}</p>
+      <p className={'fw-regular hover-opaque'} style={styles.Text(textWidth)} id={`filter-${type}`}>{getText()}</p>
       <KeyboardArrowDownRounded style={styles.Arrow()}/>
       {
         dropdownOpen &&
@@ -61,6 +67,8 @@ const DropdownFilter = ({
                          setSelectedOption={handleSelectNewFilter}
                          dropRight={type === filterTypes.SPEED || type === filterTypes.CALENDAR}
                          dropLeft={type === filterTypes.PROVIDERS}
+                         withSearchbar={withSearchbar}
+                         searchbarOnChange={searchbarOnChange}
         />
       }
     </div>

@@ -13,6 +13,7 @@ import {getOverview} from "../../api/geospaces/requests";
 import {handleError} from "../../api";
 import {speedTypes} from "../../utils/speeds";
 import {calendarFilters, speedFilters} from "../../utils/filters";
+import {allProvidersElement} from "./TopFilters/utils/providers";
 
 const ExplorePage = (): ReactElement => {
 
@@ -22,7 +23,7 @@ const ExplorePage = (): ReactElement => {
   const [geospaceNamespace, setGeospaceNamespace] = useState('states');
   const [speedType, setSpeedType] = useState<Filter>(speedFilters[0]);
   const [calendarType, setCalendarType] = useState<Filter>(calendarFilters[0]);
-  const [provider, setProvider] = useState<Filter>('All providers');
+  const [provider, setProvider] = useState<Filter>(allProvidersElement);
   const [selectedSpeedFilters, setSelectedSpeedFilters] = useState<Array<Filter>>([speedTypes.UNSERVED, speedTypes.UNDERSERVED, speedTypes.SERVED]);
 
   const closePopover = () => setIsExplorationPopoverOpen(false);

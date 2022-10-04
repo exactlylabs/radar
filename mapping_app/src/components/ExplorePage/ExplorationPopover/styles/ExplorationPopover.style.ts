@@ -2,7 +2,8 @@ import {CSSProperties} from "react";
 import {
   DEFAULT_SECONDARY_BLACK,
   EXPLORATION_POPOVER_BLACK,
-  EXPLORATION_POPOVER_SECONDARY_BLACK, WHITE
+  EXPLORATION_POPOVER_SECONDARY_BLACK,
+  WHITE
 } from "../../../../styles/colors";
 import {popoverStates} from "../ExplorationPopover";
 
