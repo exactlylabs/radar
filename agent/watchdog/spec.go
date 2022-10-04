@@ -1,6 +1,10 @@
 package watchdog
 
-import "github.com/exactlylabs/radar/agent/services/sysinfo"
+import (
+	"time"
+
+	"github.com/exactlylabs/radar/agent/services/sysinfo"
+)
 
 // SystemManager interface provides methods for dealing with some
 // files of the POD Os
@@ -31,6 +35,8 @@ type SystemManager interface {
 	Reboot() error
 	// GetAuthFile returns a log of authentications in the system
 	GetAuthLogFile() ([]byte, error)
+	// ResetLocaltime removes the timezone configuration
+	SetSysTimezone(*time.Location) error
 }
 
 type BinaryUpdate struct {

@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	time "time"
+
 	sysinfo "github.com/exactlylabs/radar/agent/services/sysinfo"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -247,6 +249,20 @@ func (_m *SystemManager) SetRCLocal(_a0 []byte) error {
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func([]byte) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// SetSysTimezone provides a mock function with given fields: _a0
+func (_m *SystemManager) SetSysTimezone(_a0 *time.Location) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*time.Location) error); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Error(0)
