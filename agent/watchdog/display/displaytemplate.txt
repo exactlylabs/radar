@@ -17,4 +17,4 @@ Welcome to your Radar Pod
  - Download Mbps: {{.lastMeasurementDownload}}
  - Upload Mbps: {{.lastMeasurementUpload}}
 
-Display Last Update: {{.lastDisplayUpdate.Format "2006-01-02 15:04:05 MST"}}
+Display Last Update: {{.lastDisplayUpdate}}
