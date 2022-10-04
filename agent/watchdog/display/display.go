@@ -45,18 +45,23 @@ func Refresh(w io.Writer, c *config.Config, agentCli AgentClient, podProber PodI
 	}
 
 	isRunning, runningErr := agentCli.IsRunning()
-
+	lastTestedAt := c.LastTestedAt()
+	lastTestedStr := ""
+	if lastTestedAt != nil {
+		// Format set to mm/dd/yyyy HH:MM TZ
+		lastTestedStr = lastTestedAt.Format("01/02/2006 15:04 MST")
+	}
 	args := map[string]interface{}{
 		"podId":                   c.ClientId,
 		"podOsVersion":            info.Version,
 		"podAgentVersion":         v,
 		"netInterfaces":           ifaces,
-		"lastMeasurementTime":     c.LastTested,
+		"lastMeasurementTime":     lastTestedStr,
 		"lastMeasurementDownload": c.LastDownloadSpeed,
 		"lastMeasurementUpload":   c.LastUploadSpeed,
 		"isRunning":               isRunning,
 		"runningErr":              runningErr,
-		"lastDisplayUpdate":       time.Now(),
+		"lastDisplayUpdate":       time.Now().Format("01/02/2006 15:04 MST"),
 	}
 	b := bufio.NewWriter(w)
 	b.WriteString("\033[H\033[2J")
@@ -69,7 +74,7 @@ func Refresh(w io.Writer, c *config.Config, agentCli AgentClient, podProber PodI
 
 // StartDisplayLoop is a blocking function, that keeps sending the current display info to a Writer interface
 func StartDisplayLoop(ctx context.Context, w io.Writer, agentCli AgentClient, podProber PodInfoProvider) {
-	timer := time.NewTicker(time.Second)
+	timer := time.NewTicker(time.Minute)
 	for {
 		select {
 		case <-ctx.Done():
