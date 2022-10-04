@@ -21,9 +21,7 @@ const Option = ({
     onClick(option);
   }
 
-  const getText = () => {
-    return isAsn(option) ? capitalize(option.organization) : option;
-  }
+  const getText = () => isAsn(option) ? capitalize(option.organization) : option;
 
   return (
     <div style={styles.Option()} onClick={handleClick}>

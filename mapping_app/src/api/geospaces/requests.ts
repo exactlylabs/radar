@@ -1,4 +1,4 @@
-import {Geospace, GeospaceAsnResponse, GeospaceOverview, GeospaceSearchResult, GeospacesResult} from "./types";
+import {GeospaceOverview, GeospaceSearchResult} from "./types";
 import {API_URL} from "../index";
 
 export const getGeospaces = (query: string, limit?: number, offset?: number): Promise<GeospaceSearchResult> => {

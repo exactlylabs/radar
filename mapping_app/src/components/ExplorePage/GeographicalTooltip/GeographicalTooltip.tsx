@@ -2,9 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/GeographicalTooltipContainer.style";
 import {capitalize} from "../../../utils/strings";
 import SpeedDataCell from "../RightPanel/SpeedDataCell";
-import {ArrowDownwardRounded, ArrowForwardRounded, ArrowUpwardRounded} from "@mui/icons-material";
-import MyFullWidthButton from "../../common/MyFullWidthButton";
-import {DEFAULT_GREEN, WHITE} from "../../../styles/colors";
+import {ArrowDownwardRounded, ArrowUpwardRounded} from "@mui/icons-material";
 import {GeospaceOverview} from "../../../api/geospaces/types";
 import {getSignalStateDownload} from "../../../utils/speeds";
 

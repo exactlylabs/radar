@@ -1,9 +1,9 @@
 import {CSSProperties, ReactElement} from "react";
-import { SpinnerCircular } from "spinners-react";
+import {SpinnerCircular} from "spinners-react";
 
 interface MySpinnerProps {
   color: string;
-  style: CSSProperties;
+  style?: CSSProperties;
 }
 
 const MySpinner = ({color, style}: MySpinnerProps): ReactElement => {

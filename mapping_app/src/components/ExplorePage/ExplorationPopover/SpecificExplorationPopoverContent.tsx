@@ -7,7 +7,6 @@ import PopoverOption from "./PopoverOption";
 import {Optional} from "../../../utils/types";
 import {Geospace, GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
 import {getOverview} from "../../../api/geospaces/requests";
-import filters from "../TopFilters/Filters";
 
 interface SpecificExplorationPopoverContentProps {
   type: string;

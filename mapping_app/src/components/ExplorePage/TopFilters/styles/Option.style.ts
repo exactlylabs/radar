@@ -3,6 +3,7 @@ import {DEFAULT_GREEN, DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT} from "../../../../s
 
 const optionStyle: CSSProperties = {
   minWidth: '140px',
+  maxWidth: '180px',
   height: '40px',
   display: 'flex',
   flexDirection: 'row',
@@ -23,6 +24,9 @@ const textStyle: CSSProperties = {
   fontSize: '15px',
   fontFamily: 'OutfitRegular',
   color: DEFAULT_SECONDARY_TEXT,
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
 }
 
 const selectedTextStyle: CSSProperties = {

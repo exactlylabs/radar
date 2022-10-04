@@ -39,8 +39,7 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
   }
 
   const handleInputChange = debounce(async (e: ChangeEvent<HTMLInputElement>) => {
-    if(!e.target.value) console.log('empty search');
-    else {
+    if(e.target.value) {
       setLoading(true);
       try {
         const response: GeospaceSearchResult = await getGeospaces(e.target.value, 5);

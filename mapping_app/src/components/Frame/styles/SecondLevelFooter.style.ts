@@ -1,5 +1,5 @@
 import {CSSProperties} from "react";
-import {FOOTER_TEXT, DEFAULT_CONTEXT_DIVIDER} from "../../../styles/colors";
+import {DEFAULT_CONTEXT_DIVIDER, FOOTER_TEXT} from "../../../styles/colors";
 
 const secondLevelFooterStyle: CSSProperties = {
   width: '100%',
