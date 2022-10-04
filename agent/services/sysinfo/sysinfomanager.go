@@ -146,6 +146,18 @@ func (si SysInfoManager) GetAuthLogFile() ([]byte, error) {
 	return si.readFile("/var/log/auth.log")
 }
 
+func (si SysInfoManager) GetSysTimezone() (*time.Location, error) {
+	out, err := exec.Command("timedatectl", "--value", "-p", "Timezone", "show").Output()
+	if err != nil {
+		return nil, fmt.Errorf("SysInfoManager#GetSysTimezone %v: %w", strings.TrimRight(string(out), "\n"), err)
+	}
+	loc, err := time.LoadLocation(string(out))
+	if err != nil {
+		return nil, fmt.Errorf("SysInfoManager#GetSysTimezone %w", err)
+	}
+	return loc, nil
+}
+
 func (si SysInfoManager) SetSysTimezone(tz *time.Location) error {
 	out, err := exec.Command("timedatectl", "set-timezone", tz.String()).Output()
 	if err != nil {

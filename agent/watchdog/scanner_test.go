@@ -3,6 +3,7 @@ package watchdog
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/exactlylabs/radar/agent/config"
 	"github.com/exactlylabs/radar/agent/watchdog/mocks"
@@ -18,6 +19,8 @@ func mustReadFile(filePath string) []byte {
 	return val
 }
 
+var otherTz, _ = time.LoadLocation("America/Sao_Paulo")
+
 func TestScanSystemNoChange(t *testing.T) {
 	m := mocks.NewSystemManager(t)
 	m.On("GetHostname").Return("1234", nil)
@@ -25,6 +28,7 @@ func TestScanSystemNoChange(t *testing.T) {
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
+	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -45,6 +49,7 @@ func TestScanSystemHostDiffers(t *testing.T) {
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
 	m.On("GetAuthLogFile").Return([]byte(""), nil)
+	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetHostname", "1234").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -65,6 +70,7 @@ func TestScanSystemRCLocalDiffers(t *testing.T) {
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
 	m.On("GetAuthLogFile").Return([]byte(""), nil)
+	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetRCLocal", mustReadFile("osfiles/etc/rc.local")).Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -85,6 +91,7 @@ func TestScanSystemBootConfigDiffers(t *testing.T) {
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
 	m.On("GetAuthLogFile").Return([]byte(""), nil)
+	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetBootConfig", mustReadFile("osfiles/boot/config.txt")).Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -105,6 +112,7 @@ func TestScanSystemCMDLineDiffers(t *testing.T) {
 	m.On("GetCMDLine").Return([]byte{}, nil)
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
 	m.On("GetAuthLogFile").Return([]byte(""), nil)
+	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetCMDLine", []byte(strings.Join(cmdLineCommands, " "))).Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -125,6 +133,7 @@ func TestScanSystemLogindDiffers(t *testing.T) {
 	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
 	m.On("GetLogindConf").Return([]byte("test"), nil)
 	m.On("GetAuthLogFile").Return([]byte(""), nil)
+	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetLogindConf", mustReadFile("osfiles/etc/systemd/logind.conf")).Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -146,6 +155,7 @@ func TestScanSystemMultipleChanged(t *testing.T) {
 	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
 	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	m.On("SetHostname", "1234").Return(nil)
+	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetBootConfig", mustReadFile("osfiles/boot/config.txt")).Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
@@ -155,5 +165,26 @@ func TestScanSystemMultipleChanged(t *testing.T) {
 	}
 	if !hasChanged {
 		t.Fatal("ScanSystem didn't return that it has changed")
+	}
+}
+
+func TestScanSystemTimeZoneChanged(t *testing.T) {
+	m := mocks.NewSystemManager(t)
+	m.On("GetHostname").Return("1234", nil)
+	m.On("GetRCLocal").Return(mustReadFile("osfiles/etc/rc.local"), nil)
+	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
+	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
+	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
+	m.On("GetSysTimezone").Return(otherTz, nil)
+	m.On("GetAuthLogFile").Return([]byte(""), nil)
+	m.On("SetSysTimezone", utc).Return(nil)
+	c := &config.Config{}
+	c.ClientId = "1234"
+	hasChanged, err := ScanSystem(c, m)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !hasChanged {
+		t.Fatalf("ScanSystem didn't return that it has changed")
 	}
 }
