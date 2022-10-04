@@ -59,5 +59,5 @@ func main() {
 }
 
 func isDev() bool {
-	return strings.ToLower(os.Getenv("ENVIRONMENT")) == "dev" || strings.ToLower(info.BuildInfo().Version) == "dev"
+	return strings.ToLower(os.Getenv("ENVIRONMENT")) == "dev" || strings.ToLower(info.BuildInfo().Version) == "dev" || info.IsDev()
 }

@@ -2,6 +2,7 @@ package dev
 
 import (
 	"log"
+	"time"
 
 	"github.com/exactlylabs/radar/agent/services/sysinfo"
 	"github.com/exactlylabs/radar/agent/watchdog"
@@ -15,10 +16,12 @@ type devSysManager struct {
 	RCLocal     []byte
 	Interfaces_ []sysinfo.NetInterface
 	AuthLogFile []byte
+	Tz          *time.Location
 }
 
 func NewDevSysManager() watchdog.SystemManager {
-	return &devSysManager{}
+	utc, _ := time.LoadLocation("utc")
+	return &devSysManager{Tz: utc}
 }
 
 // GetBootConfig implements watchdog.SystemManager
@@ -88,4 +91,9 @@ func (dm *devSysManager) Interfaces() ([]sysinfo.NetInterface, error) {
 
 func (dm *devSysManager) GetAuthLogFile() ([]byte, error) {
 	return dm.AuthLogFile, nil
+}
+
+func (dm *devSysManager) SetSysTimezone(tz *time.Location) error {
+	dm.Tz = tz
+	return nil
 }
