@@ -93,6 +93,10 @@ func (dm *devSysManager) GetAuthLogFile() ([]byte, error) {
 	return dm.AuthLogFile, nil
 }
 
+func (dm *devSysManager) GetSysTimezone() (*time.Location, error) {
+	return dm.Tz, nil
+}
+
 func (dm *devSysManager) SetSysTimezone(tz *time.Location) error {
 	dm.Tz = tz
 	return nil

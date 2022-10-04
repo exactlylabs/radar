@@ -16,6 +16,8 @@ var cmdLineCommands = []string{
 	"vt.global_cursor_default=0", "loglevel=0",
 }
 
+var utc, _ = time.LoadLocation("UTC")
+
 // StartScanLoop is a blocking function that keeps monitoring the system,
 // checking it's health and files to update
 func StartScanLoop(ctx context.Context, sysEditor SystemManager) {
@@ -91,6 +93,18 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 		return false, err
 	}
 	hasChanges |= changed
+
+	// Validate that the system is set to UTC
+	tz, err := sysManager.GetSysTimezone()
+	if err != nil {
+		return false, err
+	}
+	if tz.String() != "UTC" {
+		if err := sysManager.SetSysTimezone(utc); err != nil {
+			return false, err
+		}
+		hasChanges = 1
+	}
 
 	authLog, err := sysManager.GetAuthLogFile()
 	if err != nil {

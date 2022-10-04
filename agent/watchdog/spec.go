@@ -35,6 +35,8 @@ type SystemManager interface {
 	Reboot() error
 	// GetAuthFile returns a log of authentications in the system
 	GetAuthLogFile() ([]byte, error)
+	// GetSysTimezone
+	GetSysTimezone() (*time.Location, error)
 	// ResetLocaltime removes the timezone configuration
 	SetSysTimezone(*time.Location) error
 }
