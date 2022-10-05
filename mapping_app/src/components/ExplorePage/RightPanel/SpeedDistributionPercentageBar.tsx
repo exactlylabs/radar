@@ -13,16 +13,22 @@ const SpeedDistributionPercentageBar = ({
   underservedPercentage,
   servedPercentage
 }: SpeedDistributionPercentageBarProps): ReactElement => {
+
+  const isPercentageWideEnough = (percentage: string): boolean => {
+    const value: number = parseFloat(percentage.split('%')[0]);
+    return value > 11;
+  }
+
   return (
     <div style={styles.SpeedDistributionPercentageBarContainer}>
       <div className={'fw-medium'} style={styles.Fragment(unservedPercentage, speedColors.UNSERVED)}>
-        {unservedPercentage}
+        { isPercentageWideEnough(unservedPercentage) ? unservedPercentage : ''}
       </div>
       <div className={'fw-medium'} style={styles.Fragment(underservedPercentage, speedColors.UNDERSERVED)}>
-        {underservedPercentage}
+        { isPercentageWideEnough(underservedPercentage) ? underservedPercentage : ''}
       </div>
       <div className={'fw-medium'} style={styles.Fragment(servedPercentage, speedColors.SERVED)}>
-        {servedPercentage}
+        { isPercentageWideEnough(servedPercentage) ? servedPercentage : ''}
       </div>
     </div>
   )

@@ -21,7 +21,7 @@ export const getCalendarFilterValue = (filter: Filter): string => {
     case 'This week':
       const januaryFirst: Date = new Date(today.getFullYear(), 0, 1);
       const dayNumber: number = Math.floor((today.getTime() - januaryFirst.getTime()) / (24 * 60 * 60 * 1000));
-      const weekNumber: number = Math.ceil((dayNumber + januaryFirst.getDay()) / 7);
+      const weekNumber: number = Math.floor((dayNumber + januaryFirst.getDay()) / 7);
       return `week=${weekNumber}&year=${today.getFullYear()}`;
     case 'This month':
       return `month=${today.getMonth() + 1}&year=${today.getFullYear()}`;

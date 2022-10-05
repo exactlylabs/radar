@@ -38,6 +38,10 @@ const DropdownFilters = ({
       .catch(err => handleError(err));
   }, []);
 
+  useEffect(() => {
+    setCurrentFilters([speedType, calendarType, provider]);
+  }, [speedType, calendarType, provider]);
+
   const changeFilter = (newFilter: Filter, index: number) => {
     let filters: Array<Filter> = [...currentFilters];
     filters[index] = newFilter;

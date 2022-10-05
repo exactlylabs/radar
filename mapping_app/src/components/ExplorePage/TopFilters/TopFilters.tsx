@@ -10,6 +10,7 @@ interface TopFiltersProps {
   setSpeedType: (type: Filter) => void;
   setCalendarType: (type: Filter) => void;
   setProvider: (type: Filter) => void;
+  geospaceNamespace: string;
   speedType: Filter;
   calendarType: Filter;
   provider: Filter;
@@ -21,6 +22,7 @@ const TopFilters = ({
   setSpeedType,
   setCalendarType,
   setProvider,
+  geospaceNamespace,
   speedType,
   calendarType,
   provider
@@ -42,6 +44,7 @@ const TopFilters = ({
                  setSpeedType={setSpeedType}
                  setCalendarType={setCalendarType}
                  setProvider={setProvider}
+                 geospaceNamespace={geospaceNamespace}
                  speedType={speedType}
                  calendarType={calendarType}
                  provider={provider}

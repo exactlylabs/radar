@@ -12,6 +12,7 @@ interface FiltersProps {
   setSpeedType: (type: Filter) => void;
   setCalendarType: (type: Filter) => void;
   setProvider: (type: Filter) => void;
+  geospaceNamespace: string;
   speedType: Filter;
   calendarType: Filter;
   provider: Filter;
@@ -24,6 +25,7 @@ const Filters = ({
   setSpeedType,
   setCalendarType,
   setProvider,
+  geospaceNamespace,
   speedType,
   calendarType,
   provider
@@ -37,7 +39,9 @@ const Filters = ({
 
   return (
     <div style={styles.FiltersContainer}>
-      <GeographicalCategoryTabs setGeospaceNamespace={setGeospaceNamespace}/>
+      <GeographicalCategoryTabs geospaceNamespace={geospaceNamespace}
+                                setGeospaceNamespace={setGeospaceNamespace}
+      />
       {
         extendedView &&
         <div style={styles.ConditionalFiltersContainer}>

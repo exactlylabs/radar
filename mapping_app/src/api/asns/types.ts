@@ -13,5 +13,6 @@ export type AsnsResponse = {
 }
 
 export const isAsn = (object: any): object is Asn => {
+  if(!object) return false;
   return object.organization !== null && object.organization !== undefined;
 }

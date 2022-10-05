@@ -1,36 +1,33 @@
-import {ReactElement, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/GeographicalCategoryTabs.style";
 
-const tabs = {
+export const tabs = {
   STATES: 'STATES',
   COUNTIES: 'COUNTIES',
   TRIBAL_TRACTS: 'TRIBAL_TRACTS',
 }
 
 interface GeographicalCategoryTabsProps {
+  geospaceNamespace: string;
   setGeospaceNamespace: (namespace: string) => void;
 }
 
 const GeographicalCategoryTabs = ({
+  geospaceNamespace,
   setGeospaceNamespace
 }: GeographicalCategoryTabsProps): ReactElement => {
 
   const [selectedTab, setSelectedTab] = useState<string>(tabs.STATES)
 
-  const selectStates = () => {
-    setSelectedTab(tabs.STATES);
-    setGeospaceNamespace(tabs.STATES.toLowerCase());
-  }
+  useEffect(() => {
+    setSelectedTab(geospaceNamespace);
+  }, [geospaceNamespace]);
 
-  const selectCounties = () => {
-    setSelectedTab(tabs.COUNTIES);
-    setGeospaceNamespace(tabs.COUNTIES.toLowerCase());
-  }
+  const selectStates = () => setGeospaceNamespace(tabs.STATES);
 
-  const selectTribalLands = () => {
-    setSelectedTab(tabs.TRIBAL_TRACTS);
-    setGeospaceNamespace(tabs.TRIBAL_TRACTS.toLowerCase());
-  }
+  const selectCounties = () => setGeospaceNamespace(tabs.COUNTIES);
+
+  const selectTribalLands = () => setGeospaceNamespace(tabs.TRIBAL_TRACTS);
 
   return (
     <div style={styles.GeographicalCategoryTabsContainer}>

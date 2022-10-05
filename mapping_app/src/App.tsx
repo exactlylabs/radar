@@ -6,6 +6,7 @@ import Frame from "./components/Frame/Frame";
 import './App.css';
 
 const App = () => {
+
   return (
     <BrowserRouter>
       <Frame>

@@ -71,11 +71,3 @@ export const isCurrentGeospace = (geospace: Geospace, selectedGeospace: Geospace
     return isGeospaceInView || isParentInView;
   }
 }
-
-export const getCoordinates = (geometry: any): LatLng => {
-  if(geometry.type === 'Polygon') {
-    return {lng: geometry.coordinates[0][0][0], lat: geometry.coordinates[0][0][1]} as LatLng;
-  } else {
-    return {lng: geometry.coordinates[0][0][0][0], lat: geometry.coordinates[0][0][0][1]} as LatLng;
-  }
-}
