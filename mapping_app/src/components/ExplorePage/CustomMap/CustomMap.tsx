@@ -9,6 +9,7 @@ import {Filter, Optional} from "../../../utils/types";
 import {GeospaceInfo} from "../../../api/geospaces/types";
 import {useMap} from "react-leaflet";
 import {vectorTilesUrl} from "../../../api/namespaces/requests";
+import geojsonvt from 'geojson-vt';
 
 const geoJSONOptions: L.GeoJSONOptions = {
   style: (feature) => {
@@ -39,6 +40,7 @@ const protobufOptions: VectorGrid.ProtobufOptions = {
   rendererFactory: L.canvas.tile, // Much needed performance improvement to force rendering with Tile canvas instead of SVG
   vectorTileLayerStyles: { myLayer: baseStyle },
   interactive: true,
+  getFeatureId: (feature: any) => feature.properties.name,
 }
 
 interface CustomMapProps {
@@ -62,22 +64,28 @@ export const CustomMap = ({
   map.attributionControl.setPrefix('');
   map.setMinZoom(3);
   map.zoomControl.setPosition('bottomright');
-  /*map.eachLayer((layer: any) => {
-    if(layer.feature) {
-      layer.remove();
+  map.eachLayer(l => {
+    let c: VectorGrid.Protobuf = l as VectorGrid.Protobuf;
+    if(c.options.rendererFactory === L.canvas.tile && !c.isLoading()) {
+      l.remove();
     }
-  });*/
-  const vectorGridLayer = L.vectorGrid.protobuf(vectorTilesUrl(namespace), protobufOptions);
-  map.addLayer(vectorGridLayer);
-  // vector grid gets instantiated before the actual map layer, so it gets overlapped.
-  // bringToFront() allows the layer to be on the very top of the layer stack.
-  vectorGridLayer.bringToFront();
-  vectorGridLayer.on('click', (e: LeafletMouseEvent) => {
-    console.log(e.propagatedFrom)
-    const properties: GeoJSONProperties = e.propagatedFrom.properties as GeoJSONProperties;
-    console.log(properties)
-    selectGeospace(properties.summary);
-  })
+  });
+  const vectorGridLayer: VectorGrid.Protobuf = L.vectorGrid.protobuf(vectorTilesUrl(namespace), protobufOptions);
+  if(!map.hasLayer(vectorGridLayer)) {
+    map.addLayer(vectorGridLayer);
+    // vector grid might get instantiated before the actual map layer, so it might overlap.
+    // bringToFront() allows the layer to be on the very top of the layer stack.
+    vectorGridLayer.bringToFront();
+    vectorGridLayer.on('click', (e: LeafletMouseEvent) => {
+      const properties: GeoJSONProperties = e.propagatedFrom.properties as GeoJSONProperties;
+      selectGeospace(properties.summary);
+    });
+    vectorGridLayer.on('mouseover', (e: LeafletMouseEvent) => {
+      const properties: GeoJSONProperties = e.propagatedFrom.properties as GeoJSONProperties;
+      console.log(e.layer);
+      vectorGridLayer.setFeatureStyle(e.propagatedFrom.feature.id, {fillOpacity: 1})
+    })
+  }
   /*map.eachLayer((layer: any) => {
       if(layer.feature) {
         const properties: GeoJSONProperties = layer.feature.properties as GeoJSONProperties;
