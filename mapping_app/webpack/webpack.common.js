@@ -2,7 +2,6 @@ require('webpack');
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const WebpackObfuscatorPlugin = require("webpack-obfuscator");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
