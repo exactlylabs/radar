@@ -193,9 +193,7 @@ const MyMap = ({
           <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
         </MapContainer>
       :
-          <div style={styles.SpinnerContainer}>
-            <MySpinner color={BLACK} style={{width: '50px'}}/>
-          </div>
+        <div style={styles.SpinnerContainer}></div>
       }
     </>
   )

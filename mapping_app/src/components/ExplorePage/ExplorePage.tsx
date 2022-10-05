@@ -94,7 +94,6 @@ const ExplorePage = (): ReactElement => {
       setCurrentMapZoom(5);
     }
     openRightPanel();
-    setLoading(false);
   }
 
   return (

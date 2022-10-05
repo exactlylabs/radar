@@ -79,4 +79,10 @@ export const isGeospaceOverview = (object: any): object is GeospaceOverview => {
   return !!castedObject.geospace;
 }
 
+export const isGeospaceOverview = (object: any): object is GeospaceOverview => {
+  if(!object) return false;
+  const castedObject: GeospaceOverview = object as GeospaceOverview;
+  return !!castedObject.geospace;
+}
+
 export type GeospaceInfo = GeospaceData | GeospaceOverview;
