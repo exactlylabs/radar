@@ -67,13 +67,6 @@ const DropdownFilters = ({
     }
   }, [speedType, calendarType, provider]);
 
-  const closeFiltersIfOutsideContainer = (e: MouseEvent) => {
-    const filtersContainer: Optional<HTMLElement> = document.getElementById('dropdown-filters--container');
-    if(filtersContainer && !filtersContainer.contains(e.target as Node)) {
-      setOpenFilter(null);
-    }
-  }
-
   const updateFilters = (filters: GeoJSONFilters) => {
     setCurrentFilters(filters);
     changeFilters(filters);
