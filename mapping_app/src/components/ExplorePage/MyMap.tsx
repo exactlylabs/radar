@@ -1,5 +1,5 @@
 import {ReactElement, useEffect, useState} from "react";
-import L from "leaflet";
+import L, {LatLng} from "leaflet";
 import {MapContainer, TileLayer, useMap} from "react-leaflet";
 import {
   baseStyle,
@@ -104,6 +104,10 @@ const CustomMap = ({
           if(!isSelected) {
             layer.addEventListener('mouseout', layerMouseoutHandler);
             layer.addEventListener('mouseover', layerMouseoverHandler);
+          } else {
+            const geospacePosition: L.LatLng = layer.getBounds().getCenter();
+            map.flyTo(geospacePosition, 5);
+            map.setView(geospacePosition, map.getZoom() > 5 ? map.getZoom() : 5);
           }
           const key: string = speedType === 'Download' ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
           layer.setStyle(getStyle(isSelected, key));
