@@ -6,7 +6,7 @@ const topFiltersContainerStyle: CSSProperties = {
   position: 'absolute',
   top: '25px',
   right: '25px',
-  zIndex: 1000,
+  zIndex: 1002,
 }
 
 const narrowTopFiltersContainerStyle: CSSProperties = {

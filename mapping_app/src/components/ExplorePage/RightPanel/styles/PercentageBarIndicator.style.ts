@@ -12,7 +12,10 @@ const textStyle: CSSProperties = {
   color: DEFAULT_SECONDARY_TEXT,
   left: 0,
   position: 'absolute',
-  flexWrap: 'nowrap'
+  flexWrap: 'nowrap',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
 }
 
 const verticalLineStyle: CSSProperties = {
@@ -25,7 +28,12 @@ const verticalLineStyle: CSSProperties = {
 
 export const styles = {
   PercentageBarIndicatorContainer: percentageBarIndicatorContainerStyle,
-  Text: (left: string | number, isTop?: boolean) => {
+  Text: (left: string, percentage: string, isTop?: boolean) => {
+    const leftPercentage: number = parseFloat(left.split('%')[0]);
+    // text inversion check in case the space is too narrow
+    if(leftPercentage > 80) {
+      return isTop ? {...textStyle, left: undefined, right: percentage, top: 0} : {...textStyle, left: undefined, right: percentage, bottom: 0}
+    }
     return isTop ? {...textStyle, left, top: 0} : {...textStyle, left, bottom: 0}
   },
   VerticalLine: (left: string | number, isTop?: boolean) => {

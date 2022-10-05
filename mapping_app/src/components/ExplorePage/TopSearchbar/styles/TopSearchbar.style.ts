@@ -21,7 +21,7 @@ const topSearchbarContainerStyle: CSSProperties = {
   position: 'absolute',
   top: '25px',
   left: '25px',
-  zIndex: 1000,
+  zIndex: 1002,
 }
 
 const inputStyle: CSSProperties = {

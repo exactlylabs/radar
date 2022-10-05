@@ -2,10 +2,11 @@ import {ReactElement} from "react";
 import {styles} from "./styles/PercentageBarIndicator.style";
 
 interface PercentageBarIndicatorProps {
-  left: number | string;
+  left: string;
   top?: boolean;
   bottom?: boolean;
   text: string;
+  percentage: string;
 }
 
 const PercentageBarIndicator = ({
@@ -13,10 +14,11 @@ const PercentageBarIndicator = ({
   top,
   bottom,
   text,
+  percentage
 }: PercentageBarIndicatorProps): ReactElement => {
   return (
     <div style={styles.PercentageBarIndicatorContainer}>
-      <p className={'fw-regular'} style={styles.Text(left, top)}>{text}</p>
+      <p className={'fw-regular'} style={styles.Text(left, percentage, top)}>{text}</p>
       <div style={styles.VerticalLine(left, top)}></div>
     </div>
   )

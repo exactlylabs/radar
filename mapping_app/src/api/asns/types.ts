@@ -9,5 +9,6 @@ export type Asn = {
 export type AsnsResponse = PaginatedResponse<Asn>;
 
 export const isAsn = (object: any): object is Asn => {
+  if(!object) return false;
   return !!object.organization; // This covers both cases of null && undefined
 }

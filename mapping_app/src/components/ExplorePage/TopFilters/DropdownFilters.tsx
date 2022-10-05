@@ -43,6 +43,15 @@ const DropdownFilters = ({
       .catch(err => handleError(err));
   }, []);
 
+  useEffect(() => {
+    let filters: GeoJSONFilters = {
+      speedType,
+      calendar: calendarType,
+      provider,
+    };
+    setCurrentFilters(filters);
+  }, [speedType, calendarType, provider]);
+
   const updateFilters = (filters: GeoJSONFilters) => {
     setCurrentFilters(filters);
     changeFilters(filters);

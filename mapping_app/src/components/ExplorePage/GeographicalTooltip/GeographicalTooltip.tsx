@@ -4,15 +4,24 @@ import {capitalize} from "../../../utils/strings";
 import SpeedDataCell from "../RightPanel/SpeedDataCell";
 import {ArrowDownwardRounded, ArrowUpwardRounded} from "@mui/icons-material";
 import {GeospaceOverview} from "../../../api/geospaces/types";
-import {getSignalStateDownload} from "../../../utils/speeds";
+import {getSignalStateDownload, getSignalStateUpload} from "../../../utils/speeds";
 
 interface GeographicalTooltipProps {
   geospace: GeospaceOverview;
+  speedType: string;
 }
 
 const GeographicalTooltip = ({
-  geospace
+  geospace,
+  speedType
 }: GeographicalTooltipProps): ReactElement => {
+
+  const getCorrespondingSignalState = () => {
+    return speedType === 'Download' ?
+      getSignalStateDownload(geospace.download_median) :
+      getSignalStateUpload(geospace.upload_median);
+  }
+
   return (
     <div style={styles.GeographicalTooltipContainer}>
       <div style={styles.GeographicalTooltipContentWrapper}>
@@ -22,12 +31,12 @@ const GeographicalTooltip = ({
             <p className={'fw-light'} style={styles.SecondaryText}>{'U.S.A.'}</p>
           </div>
           <div style={styles.SignalStateContainer}>
-            <div style={styles.SignalStateIndicator(getSignalStateDownload(geospace.download_median))}></div>
-            <p className={'fw-regular'} style={styles.SignalStateText}>{capitalize(getSignalStateDownload(geospace.download_median))}</p>
+            <div style={styles.SignalStateIndicator(getCorrespondingSignalState())}></div>
+            <p className={'fw-regular'} style={styles.SignalStateText}>{capitalize(getCorrespondingSignalState())}</p>
           </div>
         </div>
         <div style={styles.SpeedDataContainer}>
-          <SpeedDataCell icon={<ArrowDownwardRounded style={styles.Icon(getSignalStateDownload(geospace.download_median))}/>}
+          <SpeedDataCell icon={<ArrowDownwardRounded style={styles.Icon(getCorrespondingSignalState())}/>}
                          text={'Med. Download'}
                          value={geospace.download_median.toFixed(2)}
                          unit={'Mbps'}
@@ -38,9 +47,6 @@ const GeographicalTooltip = ({
                          unit={'Mbps'}
           />
         </div>
-        {/*<div style={styles.ButtonContainer()}>
-          <MyFullWidthButton text={`View ${geospace.geospace.name}`} icon={<ArrowForwardRounded style={styles.Arrow(WHITE)}/>} backgroundColor={DEFAULT_GREEN} color={WHITE}/>
-        </div>*/}
       </div>
     </div>
   )

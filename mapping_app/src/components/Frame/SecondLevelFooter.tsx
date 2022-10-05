@@ -11,9 +11,9 @@ const SecondLevelFooter = (): ReactElement => {
       </div>
       <div style={styles.RightSideContainer}>
         <p className={'fw-light'} style={styles.AssociationText}>In association with:</p>
-        <img src={XLabLogo} style={styles.FooterIcon} alt={'xlab-logo'}/>
         <img src={ANTHCLogo} style={styles.FooterIcon} alt={'anthc-logo'}/>
         {/* TODO: add once icon is exportable from Zeplin. <img src={ExactlyLabsLogo} style={styles.FooterIcon()} alt={'exactlylabs-logo'}/> */}
+        <img src={XLabLogo} style={styles.FooterIcon} alt={'xlab-logo'}/>
       </div>
     </div>
   )
