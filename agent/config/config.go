@@ -39,8 +39,7 @@ func (c *Config) LastTestedAt() *time.Time {
 	}
 	intVal, err := strconv.ParseInt(c.LastTested, 10, 64)
 	if err != nil {
-		log.Println(fmt.Errorf("config#LastTestedAt Atoi: %v", err))
-		return nil
+		panic(fmt.Errorf("config#LastTestedAt Atoi: %v", err))
 	}
 	t := time.Unix(intVal, 0)
 	return &t
