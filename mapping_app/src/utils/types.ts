@@ -4,7 +4,6 @@
 // response type definition if the content could be null for any reason.
 import {Asn} from "../api/asns/types";
 import {GeospaceInfo} from "../api/geospaces/types";
-import L from "leaflet";
 
 export type Optional<T> = T | null | undefined;
 
