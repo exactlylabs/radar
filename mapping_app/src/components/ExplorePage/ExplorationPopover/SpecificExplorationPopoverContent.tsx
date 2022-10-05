@@ -110,7 +110,7 @@ const SpecificExplorationPopoverContent = ({
       return filteredItems.map((item, index) =>
         <PopoverOption key={item.id}
                        text={item.name}
-                       secondaryText={undefined}
+                       secondaryText={type === popoverStates.COUNTIES && item.parent ? item.parent.name : undefined}
                        onClick={() => handleSelectOption(item, index)}
                        loading={loadingStates[index]}
         />

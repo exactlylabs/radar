@@ -32,15 +32,30 @@ const SpeedDistributionPercentageBarIndicators = ({
     <div style={styles.SpeedDistributionPercentageBarIndicatorsContainer(top, bottom)}>
       {
         shouldDisplay(0) &&
-        <PercentageBarIndicator left={0} top={top} bottom={bottom} text={getSpeedTexts('UNSERVED')}/>
+        <PercentageBarIndicator left={'0%'}
+                                top={top}
+                                bottom={bottom}
+                                text={getSpeedTexts('UNSERVED')}
+                                percentage={percentages[0]}
+        />
       }
       {
         shouldDisplay(1) &&
-        <PercentageBarIndicator left={percentages[0]} top={top} bottom={bottom} text={getSpeedTexts('UNDERSERVED')}/>
+        <PercentageBarIndicator left={percentages[0]}
+                                top={top}
+                                bottom={bottom}
+                                text={getSpeedTexts('UNDERSERVED')}
+                                percentage={percentages[1]}
+        />
       }
       {
         shouldDisplay(2) &&
-        <PercentageBarIndicator left={addPercentages(percentages[0], percentages[1])} top={top} bottom={bottom} text={getSpeedTexts('SERVED')}/>
+        <PercentageBarIndicator left={addPercentages(percentages[0], percentages[1])}
+                                top={top}
+                                bottom={bottom}
+                                text={getSpeedTexts('SERVED')}
+                                percentage={percentages[2]}
+        />
       }
     </div>
   )

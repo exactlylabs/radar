@@ -1,21 +1,31 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Mapping App",
+  "name": "Mapping App - Explore how broadband varies across the country",
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "sizes": "48x48"
     },
     {
-      "src": "logo192.png",
+      "src": "favicon-16x16",
+      "type": "image/x-icon",
+      "sizes": "16x16"
+    },
+    {
+      "src": "favicon-32x32",
+      "type": "image/x-icon",
+      "sizes": "32x32"
+    },
+    {
+      "src": "android-chrome-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "android-chrome-256x256.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "256x256"
     }
   ],
   "start_url": ".",

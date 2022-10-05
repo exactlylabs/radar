@@ -19,8 +19,8 @@ export enum speedTextsDownload {
 }
 
 export enum speedTextsUpload {
-  UNSERVED = '<2 Mbps',
-  UNDERSERVED = '2 - 20 Mbps',
+  UNSERVED = '<3 Mbps',
+  UNDERSERVED = '3 - 20 Mbps',
   SERVED = '20+ Mbps'
 }
 
@@ -40,7 +40,7 @@ export const getSignalStateDownload = (downloadMedian: number): string => {
 }
 
 export const getSignalStateUpload = (uploadMedian: number): string => {
-  if(uploadMedian < 2) return speedTypes.UNSERVED;
-  else if(uploadMedian >= 2 && uploadMedian < 20) return speedTypes.UNDERSERVED;
+  if(uploadMedian < 3) return speedTypes.UNSERVED;
+  else if(uploadMedian >= 3 && uploadMedian < 20) return speedTypes.UNDERSERVED;
   else return speedTypes.SERVED;
 }

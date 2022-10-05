@@ -3,9 +3,6 @@ import L, {LatLng} from "leaflet";
 import {MapContainer, TileLayer, useMap} from "react-leaflet";
 import {
   baseStyle,
-  DEFAULT_FALLBACK_LATITUDE,
-  DEFAULT_FALLBACK_LONGITUDE,
-  getCoordinates,
   getStyle,
   invisibleStyle,
   isCurrentGeospace,
@@ -42,14 +39,6 @@ const geoJSONOptions: L.GeoJSONOptions = {
       }
     }
     return style;
-  },
-  onEachFeature: (feature, layer) => {
-    if(feature.properties.summary) {
-      layer.bindTooltip(
-        ReactDOMServer.renderToString(<GeographicalTooltip geospace={feature.properties.summary}/>),
-        {sticky: true, direction: 'center'}
-      );
-    }
   }
 }
 
@@ -59,6 +48,8 @@ interface CustomMapProps {
   selectGeospace: (geospace: GeospaceInfo) => void;
   speedType: Filter;
   selectedSpeedFilters: Array<Filter>;
+  setZoom: (zoom: number) => void;
+  setCenter: (center: Array<number>) => void;
 }
 
 const CustomMap = ({
@@ -66,7 +57,9 @@ const CustomMap = ({
   selectedGeospace,
   selectGeospace,
   speedType,
-  selectedSpeedFilters
+  selectedSpeedFilters,
+  setZoom,
+  setCenter
 }: CustomMapProps): null => {
   const map = useMap();
   // Reference: https://github.com/Leaflet/Leaflet/pull/8109
@@ -79,6 +72,11 @@ const CustomMap = ({
       layer.remove();
     }
   });
+  map.on('zoomend', () => { setZoom(map.getZoom()) });
+  map.on('dragend', () => {
+    const center: L.LatLng = map.getCenter();
+    setCenter([center.lat, center.lng]);
+  });
   L.geoJSON(geoJSON, geoJSONOptions)
     .eachLayer((layer: any) => {
       if(layer.feature) {
@@ -90,12 +88,16 @@ const CustomMap = ({
             layer.addEventListener('mouseout', layerMouseoutHandler);
             layer.addEventListener('mouseover', layerMouseoverHandler);
           } else {
-            const geospacePosition: LatLng = getCoordinates(layer.feature.geometry);
+            const geospacePosition: LatLng = layer.getBounds().getCenter();
             map.flyTo(geospacePosition, 5);
             map.setView(geospacePosition, map.getZoom() > 5 ? map.getZoom() : 5);
           }
           const key: string = speedType === 'Download' ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
           layer.setStyle(getStyle(isSelected, key));
+          layer.bindTooltip(
+            ReactDOMServer.renderToString(<GeographicalTooltip geospace={layer.feature.properties.summary} speedType={speedType as string}/>),
+            {sticky: true, direction: 'center'}
+          );
         } else if (properties.summary !== undefined) {
           layer.setStyle(invisibleStyle);
         }
@@ -113,6 +115,11 @@ interface MyMapProps {
   calendarType: Filter;
   provider: Filter;
   selectedSpeedFilters: Array<Filter>;
+  initialZoom: number;
+  setZoom: (zoom: number) => void;
+  initialCenter: Array<number>;
+  setCenter: (center: Array<number>) => void;
+  setLoading: (value: boolean) => void;
 }
 
 const MyMap = ({
@@ -122,47 +129,53 @@ const MyMap = ({
   speedType,
   calendarType,
   provider,
-  selectedSpeedFilters
+  selectedSpeedFilters,
+  initialZoom,
+  setZoom,
+  initialCenter,
+  setCenter,
+  setLoading,
 }: MyMapProps): ReactElement => {
 
   const [geoJSON, setGeoJSON] = useState<GeoJSONResponse>();
 
   useEffect(() => {
+    setLoading(true);
     const filters: GeoJSONFilters = {
       speedType: speedType as string,
       calendar: calendarType as string,
       provider: provider as Asn,
     };
-    getGeoJSON(namespace, filters)
+    getGeoJSON(namespace.toLowerCase(), filters)
       .then((res: GeoJSONResponse) => {
         setGeoJSON(res);
       })
-      .catch(err => handleError(err));
+      .catch(err => handleError(err))
+      .finally(() => setLoading(false));
   }, [namespace, calendarType, provider]);
 
   return (
     <>
       {
-        geoJSON &&
-        <MapContainer center={[DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}
-                    zoom={3}
-                    scrollWheelZoom
-                    style={styles.MapContainer}
-        >
-          <CustomMap geoJSON={geoJSON}
-                     selectedGeospace={selectedGeospace}
-                     selectGeospace={selectGeospace}
-                     speedType={speedType}
-                     selectedSpeedFilters={selectedSpeedFilters}
-          />
-          <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
-        </MapContainer>
-      }
-      {
-        !geoJSON &&
-        <div style={styles.SpinnerContainer}>
-          <MySpinner color={BLACK} style={{width: '50px'}}/>
-        </div>
+        geoJSON ?
+          <MapContainer center={{lat: initialCenter[0], lng: initialCenter[1]}}
+                      zoom={initialZoom}
+                      scrollWheelZoom
+                      style={styles.MapContainer}
+          >
+            <CustomMap geoJSON={geoJSON}
+                       selectedGeospace={selectedGeospace}
+                       selectGeospace={selectGeospace}
+                       speedType={speedType}
+                       selectedSpeedFilters={selectedSpeedFilters}
+                       setZoom={setZoom}
+                       setCenter={setCenter}
+            />
+            <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
+          </MapContainer> :
+          <div style={styles.SpinnerContainer}>
+            <MySpinner color={BLACK} style={{width: '50px'}}/>
+          </div>
       }
     </>
   )

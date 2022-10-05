@@ -32,7 +32,7 @@ const speedTagStyle: CSSProperties = {
 const peopleCountStyle: CSSProperties = {
   fontSize: '16px',
   color: BLACK,
-  marginRight: '45px',
+  marginRight: '60px',
   marginLeft: 'auto'
 }
 

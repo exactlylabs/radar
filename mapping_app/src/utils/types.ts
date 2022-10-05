@@ -3,6 +3,8 @@
 // can be defined such as { key?: string } for example in an API
 // response type definition if the content could be null for any reason.
 import {Asn} from "../api/asns/types";
+import {GeospaceInfo} from "../api/geospaces/types";
+import L from "leaflet";
 
 export type Optional<T> = T | null | undefined;
 
@@ -15,3 +17,29 @@ export enum SignalStates {
 }
 
 export type Filter = string | Asn;
+
+export type AppState = {
+  geospaceNamespace: string;
+  speedType: Filter;
+  calendarType: Filter;
+  provider: Filter;
+  selectedGeospace: Optional<GeospaceInfo>;
+  selectedSpeedFilters: Array<Filter>;
+  zoom: number;
+  center: Array<number>;
+}
+
+export const isLatLngValid = (value: any): boolean => {
+  if(!Array.isArray(value)) return false;
+  const arr: Array<any> = value as Array<any>;
+  if(arr.length !== 2) return false;
+  return isNumber(arr[0]) && isNumber(arr[1]);
+}
+
+export const isNumber = (value: any): boolean => {
+  return typeof value === 'number' && !isNaN(value as number) && isFinite(value as number);
+}
+
+export const isString = (value: any): boolean => {
+  return typeof value === 'string';
+}

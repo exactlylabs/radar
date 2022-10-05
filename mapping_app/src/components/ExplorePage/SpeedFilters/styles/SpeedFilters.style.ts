@@ -10,7 +10,7 @@ const speedFiltersStyle: CSSProperties = {
   bottom: '25px',
   right: '60px',
   borderRadius: '6px',
-  zIndex: 1000,
+  zIndex: 1002,
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',

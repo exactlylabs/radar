@@ -7,7 +7,7 @@ const rightPanelContainerStyle: CSSProperties = {
   position: 'absolute',
   top: 0,
   right: 0,
-  zIndex: 1000,
+  zIndex: 1002,
   boxShadow: `0 2px 4px -4px ${EXPLORATION_POPOVER_SECONDARY_BLACK}`,
 }
 
