@@ -1,5 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:ndt7_client/models/client_response.dart';
+import 'package:ndt7_client/models/ndt7_response.dart';
+import 'package:ndt7_client/models/server_response.dart';
 
 import 'ndt7_client_platform_interface.dart';
 
@@ -7,11 +14,48 @@ import 'ndt7_client_platform_interface.dart';
 class MethodChannelNdt7Client extends Ndt7ClientPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('ndt7_client');
+  final methodChannel = const MethodChannel('method_ndt7_client');
+
+  /// The event channel used to receive events from the native platform.
+  @visibleForTesting
+  final eventChannel = const EventChannel('event_ndt7_client');
+
+  Stream<dynamic> ndt7Result = const Stream.empty();
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
+  Stream<NDT7Response?> get data {
+    ndt7Result = eventChannel.receiveBroadcastStream();
+    return ndt7Result.map((dynamic event) {
+      try {
+        final jsonResponse = jsonDecode(event) as Map<String, dynamic>;
+        if (jsonResponse.containsKey('TCPInfo')) {
+          return ServerResponse.fromJson(jsonResponse);
+        } else {
+          return ClientResponse.fromJson(jsonResponse);
+        }
+      } catch (excepcion, stackTrace) {
+        log(excepcion.toString());
+        log(stackTrace.toString());
+        //Handle exception
+        return null;
+      }
+    });
+  }
+
+  @override
+  Future<void> startDownloadTest() async {
+    ndt7Result = eventChannel.receiveBroadcastStream();
+    await methodChannel.invokeMethod('startDownloadTest');
+  }
+
+  @override
+  Future<void> startUploadTest() async {
+    ndt7Result = eventChannel.receiveBroadcastStream();
+    await methodChannel.invokeMethod('startUploadTest');
+  }
+
+  @override
+  Future<void> stopTest() async {
+    await methodChannel.invokeMethod('stopTest');
   }
 }

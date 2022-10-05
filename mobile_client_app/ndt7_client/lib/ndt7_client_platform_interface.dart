@@ -1,5 +1,6 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'models/ndt7_response.dart';
 import 'ndt7_client_method_channel.dart';
 
 abstract class Ndt7ClientPlatform extends PlatformInterface {
@@ -23,7 +24,19 @@ abstract class Ndt7ClientPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+  Stream<NDT7Response?> get data {
+    throw UnimplementedError('data() has not been implemented.');
+  }
+
+  Future<void> startDownloadTest() {
+    throw UnimplementedError('startDownloadTest() has not been implemented.');
+  }
+
+  Future<void> startUploadTest() {
+    throw UnimplementedError('startUploadTest() has not been implemented.');
+  }
+
+  Future<void> stopTest() {
+    throw UnimplementedError('stopTest() has not been implemented.');
   }
 }
