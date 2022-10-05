@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.client_mobile_app">
+    package="com.exactlylabs.client_mobile_app">
    <application
         android:label="client_mobile_app"
         android:name="${applicationName}"
