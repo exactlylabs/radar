@@ -20,6 +20,7 @@ import {tabs} from "./TopFilters/GeographicalCategoryTabs";
 import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "../../utils/map";
 import MyOverlayingLoader from "../common/MyOverlayingLoader";
 import {emptyGeoJSONFilters} from "../../api/geojson/types";
+import L from "leaflet";
 
 const ExplorePage = (): ReactElement => {
 
@@ -85,9 +86,13 @@ const ExplorePage = (): ReactElement => {
     }
   }
 
-  const selectGeospace = (geospace: GeospaceInfo) => {
+  const selectGeospace = (geospace: GeospaceInfo, center?: L.LatLng) => {
     setLoading(true);
     setSelectedGeospace(geospace);
+    if(center) {
+      setCurrentMapCenter([center.lat, center.lng]);
+      setCurrentMapZoom(5);
+    }
     openRightPanel();
     setLoading(false);
   }
