@@ -13,7 +13,6 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorage"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/tsdbstorage"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/ports"
@@ -70,38 +69,24 @@ func main() {
 	}()
 	godotenv.Load()
 	conf := config.GetConfig()
-	var storage ports.MeasurementsStorage
-	if conf.StorageType == "tsdb" {
-		nWorkers := runtime.NumCPU()
-		if conf.TSDBStorageNWorkers != "" {
-			n, err := strconv.Atoi(conf.TSDBStorageNWorkers)
-			if err != nil {
-				panic(err)
-			}
-			nWorkers = n
+	nWorkers := runtime.NumCPU()
+	if conf.ClickhouseStorageNWorkers != "" {
+		n, err := strconv.Atoi(conf.ClickhouseStorageNWorkers)
+		if err != nil {
+			panic(err)
 		}
-		storage = tsdbstorage.New(conf.DBDSN(), nWorkers, true)
-	} else {
-		nWorkers := runtime.NumCPU()
-		if conf.ClickhouseStorageNWorkers != "" {
-			n, err := strconv.Atoi(conf.ClickhouseStorageNWorkers)
-			if err != nil {
-				panic(err)
-			}
-			nWorkers = n
-		}
-		storage = clickhousestorage.New(&clickhouse.Options{
-			Auth: clickhouse.Auth{
-				Database: conf.DBName,
-				Username: conf.DBUser,
-				Password: conf.DBPassword,
-			},
-			Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
-			MaxOpenConns: nWorkers + 5,
-			ReadTimeout:  time.Hour,
-		}, nWorkers, true)
+		nWorkers = n
 	}
-
+	storage := clickhousestorage.New(&clickhouse.Options{
+		Auth: clickhouse.Auth{
+			Database: conf.DBName,
+			Username: conf.DBUser,
+			Password: conf.DBPassword,
+		},
+		Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
+		MaxOpenConns: nWorkers + 5,
+		ReadTimeout:  time.Hour,
+	}, nWorkers, true)
 	// Run a first time then, run once every x hour
 	timer := time.NewTimer(time.Second)
 	for {

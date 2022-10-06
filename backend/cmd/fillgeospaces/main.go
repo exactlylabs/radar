@@ -16,7 +16,6 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorage"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/tsdbstorage"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/ports"
 	"github.com/joho/godotenv"
@@ -41,29 +40,23 @@ func main() {
 	godotenv.Load()
 	conf := config.GetConfig()
 	flag.Parse()
-
-	var storage ports.MeasurementsStorage
-	if os.Getenv("STORAGE_TYPE") == "tsdb" {
-		storage = tsdbstorage.New(config.GetConfig().DBDSN(), 0, false)
-	} else if os.Getenv("STORAGE_TYPE") == "clickhouse" {
-		nWorkers := runtime.NumCPU()
-		if conf.ClickhouseStorageNWorkers != "" {
-			n, err := strconv.Atoi(conf.ClickhouseStorageNWorkers)
-			if err != nil {
-				panic(err)
-			}
-			nWorkers = n
+	nWorkers := runtime.NumCPU()
+	if conf.ClickhouseStorageNWorkers != "" {
+		n, err := strconv.Atoi(conf.ClickhouseStorageNWorkers)
+		if err != nil {
+			panic(err)
 		}
-		storage = clickhousestorage.New(&clickhouse.Options{
-			Auth: clickhouse.Auth{
-				Database: conf.DBName,
-				Username: conf.DBUser,
-				Password: conf.DBPassword,
-			},
-			Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
-			MaxOpenConns: nWorkers + 5,
-		}, nWorkers, false)
+		nWorkers = n
 	}
+	storage := clickhousestorage.New(&clickhouse.Options{
+		Auth: clickhouse.Auth{
+			Database: conf.DBName,
+			Username: conf.DBUser,
+			Password: conf.DBPassword,
+		},
+		Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
+		MaxOpenConns: nWorkers + 5,
+	}, nWorkers, false)
 	storage.Begin()
 	defer storage.Close()
 	for _, ns := range importOrder {
