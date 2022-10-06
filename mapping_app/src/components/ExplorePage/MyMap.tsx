@@ -175,23 +175,24 @@ const MyMap = ({
     <>
       {
         geoJSON ?
-          <MapContainer center={{lat: initialCenter[0], lng: initialCenter[1]}}
-                      zoom={initialZoom}
-                      scrollWheelZoom
-                      style={styles.MapContainer}
-          >
-            <CustomMap geoJSON={geoJSON}
-                       selectedGeospace={selectedGeospace}
-                       selectGeospace={selectGeospace}
-                       speedType={speedType}
-                       selectedSpeedFilters={selectedSpeedFilters}
-                       setZoom={setZoom}
-                       setCenter={setCenter}
-                       center={initialCenter}
-                       zoom={initialZoom}
-            />
-            <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
-          </MapContainer> :
+        <MapContainer center={{lat: initialCenter[0], lng: initialCenter[1]}}
+                    zoom={initialZoom}
+                    scrollWheelZoom
+                    style={styles.MapContainer}
+        >
+          <CustomMap geoJSON={geoJSON}
+                     selectedGeospace={selectedGeospace}
+                     selectGeospace={selectGeospace}
+                     speedType={speedType}
+                     selectedSpeedFilters={selectedSpeedFilters}
+                     setZoom={setZoom}
+                     setCenter={setCenter}
+                     center={initialCenter}
+                     zoom={initialZoom}
+          />
+          <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
+        </MapContainer>
+      :
           <div style={styles.SpinnerContainer}>
             <MySpinner color={BLACK} style={{width: '50px'}}/>
           </div>
