@@ -39,22 +39,19 @@ const geoJSONOptions: L.GeoJSONOptions = {
       }
     }
     return style;
-  },
-  onEachFeature: (feature, layer) => {
-    if(feature.properties.summary) {
-
-    }
   }
 }
 
 interface CustomMapProps {
   geoJSON: GeoJSONResponse;
   selectedGeospace: Optional<GeospaceInfo>;
-  selectGeospace: (geospace: GeospaceInfo) => void;
+  selectGeospace: (geospace: GeospaceInfo, newCenter: L.LatLng) => void;
   speedType: Filter;
   selectedSpeedFilters: Array<Filter>;
   setZoom: (zoom: number) => void;
   setCenter: (center: Array<number>) => void;
+  center: Array<number>;
+  zoom: number;
 }
 
 const CustomMap = ({
@@ -64,20 +61,27 @@ const CustomMap = ({
   speedType,
   selectedSpeedFilters,
   setZoom,
-  setCenter
+  setCenter,
+  center,
+  zoom
 }: CustomMapProps): null => {
   const map = useMap();
   // Reference: https://github.com/Leaflet/Leaflet/pull/8109
   // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
   map.attributionControl.setPrefix('');
   map.setMinZoom(3);
+  map.setView({lat: center[0], lng: center[1]}, zoom);
   map.zoomControl.setPosition('bottomright');
   map.eachLayer((layer: any) => {
     if(layer.feature) {
       layer.remove();
     }
   });
-  map.on('zoomend', () => { setZoom(map.getZoom()) });
+  map.on('zoomend', () => {
+    const center: L.LatLng = map.getCenter();
+    setZoom(map.getZoom());
+    setCenter([center.lat, center.lng]);
+  });
   map.on('dragend', () => {
     const center: L.LatLng = map.getCenter();
     setCenter([center.lat, center.lng]);
@@ -88,14 +92,12 @@ const CustomMap = ({
         const properties: GeoJSONProperties = layer.feature.properties as GeoJSONProperties;
         if(properties.summary !== undefined && shouldShowLayer(layer.feature.properties.summary, speedType, selectedSpeedFilters)) {
           const isSelected: boolean = !!selectedGeospace ? isCurrentGeospace(properties.summary.geospace, selectedGeospace) : false;
-          layer.addEventListener('click', () => { selectGeospace(layer.feature.properties.summary); });
+          layer.addEventListener('click', () => {
+            selectGeospace(layer.feature.properties.summary, layer.getBounds().getCenter());
+          });
           if(!isSelected) {
             layer.addEventListener('mouseout', layerMouseoutHandler);
             layer.addEventListener('mouseover', layerMouseoverHandler);
-          } else {
-            const geospacePosition: LatLng = layer.getBounds().getCenter();
-            map.flyTo(geospacePosition, 5);
-            map.setView(geospacePosition, map.getZoom() > 5 ? map.getZoom() : 5);
           }
           const key: string = speedType === 'Download' ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
           layer.setStyle(getStyle(isSelected, key));
@@ -115,7 +117,7 @@ const CustomMap = ({
 interface MyMapProps {
   namespace: string;
   selectedGeospace: Optional<GeospaceInfo>;
-  selectGeospace: (geospace: GeospaceInfo) => void;
+  selectGeospace: (geospace: GeospaceInfo, center: L.LatLng) => void;
   speedType: Filter;
   calendarType: Filter;
   provider: Filter;
@@ -170,6 +172,8 @@ const MyMap = ({
                      selectedSpeedFilters={selectedSpeedFilters}
                      setZoom={setZoom}
                      setCenter={setCenter}
+                     center={initialCenter}
+                     zoom={initialZoom}
           />
           <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
         </MapContainer>

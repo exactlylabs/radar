@@ -37,7 +37,7 @@ module.exports = {
   // https://webpack.js.org/configuration/output/
   output: {
     path: path.resolve(__dirname, '../dist'),
-    filename: '[name].js',
+    filename: '[name].[contenthash].js',
     chunkFilename: '[id].[chunkhash].js',
   },
   // https://webpack.js.org/configuration/dev-server/
