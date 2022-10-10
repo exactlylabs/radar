@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS measurements (
     has_access_token BOOLEAN,
     access_token_sig VARCHAR,
     asn_id UUID,
-    geospace_id UUID,
+    geospace_id UUID
 )
 ENGINE = MergeTree
 PRIMARY KEY (upload, geospace_id, asn_id)
