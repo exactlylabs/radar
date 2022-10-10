@@ -1,5 +1,5 @@
 /*
-This binary will populate the US_STATE, US_COUNTIES and US_CITIES FIPs Codes
+This binary will populate the US_STATE, US_COUNTIES and US_TRIBAL_TRACTS shape files
 
 It fills geospace table with the FIPs codes, Display names and other informations
 */
@@ -56,7 +56,7 @@ func main() {
 		},
 		Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
 		MaxOpenConns: nWorkers + 5,
-	}, nWorkers, false)
+	}, nWorkers, false, false)
 	storage.Begin()
 	defer storage.Close()
 	for _, ns := range importOrder {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -19,7 +20,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var defaultStartTime = time.Date(2022, 9, 24, 0, 0, 0, 0, time.UTC)
+var defaultStartTime = time.Date(2020, 7, 1, 0, 0, 0, 0, time.UTC)
 
 func runInsertions(ctx context.Context, storage ports.MeasurementsStorage) {
 	err := storage.Begin()
@@ -46,10 +47,17 @@ func runInsertions(ctx context.Context, storage ports.MeasurementsStorage) {
 	if err != nil {
 		panic(err)
 	}
-	log.Println("Finished in", time.Now().Sub(start))
+	log.Println("Finished in", time.Since(start))
 }
 
 func main() {
+	startStr := flag.String("default-start", "2020-07-01", "Date to start ingesting when no data is present in the DB")
+	flag.Parse()
+	startT, err := time.Parse("2006-01-02", *startStr)
+	if err != nil {
+		panic("default-start is not a valid date. Use format YYYY-mm-dd")
+	}
+	defaultStartTime = startT
 	sigs := make(chan os.Signal)
 	signal.Notify(sigs, syscall.SIGINT)
 	ctx, cancel := context.WithCancel(context.Background())
@@ -86,7 +94,7 @@ func main() {
 		Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
 		MaxOpenConns: nWorkers + 5,
 		ReadTimeout:  time.Hour,
-	}, nWorkers, true)
+	}, nWorkers, true, false)
 	// Run a first time then, run once every x hour
 	timer := time.NewTimer(time.Second)
 	for {

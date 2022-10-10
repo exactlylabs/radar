@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	_ "net/http/pprof"
 	"runtime"
 	"strconv"
 	"time"
@@ -19,6 +18,8 @@ import (
 func main() {
 	startStr := flag.String("start", "2022-01-01", "Start date")
 	finalStr := flag.String("final", "2023-01-01", "Final date")
+	updateViews := flag.Bool("update-views", false, "Whether to update the materialized views")
+	useTempTable := flag.Bool("temp-table", false, "Whether to insert measurements in a temporary table and then switch to the original")
 	flag.Parse()
 	godotenv.Load()
 	conf := config.GetConfig()
@@ -38,7 +39,7 @@ func main() {
 		},
 		Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
 		MaxOpenConns: nWorkers + 5,
-	}, nWorkers, true)
+	}, nWorkers, *updateViews, *useTempTable)
 	if err := storage.Begin(); err != nil {
 		panic(err)
 	}
