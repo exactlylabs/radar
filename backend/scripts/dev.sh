@@ -8,15 +8,10 @@ cd $SCRIPT_DIR
 
 docker-compose up -d
 
-until docker-compose exec timescaledb pg_isready -d nuka_dev 2>/dev/null; do
-  echo "waiting for postgresql to be ready"
-  sleep 1
-  
-done
 
-./migrate.sh
+DB_PORT=9001 ./migrate.sh
 
 
 cd $SCRIPT_DIR/..
 
-go run cmd/start_ingestor/main.go
+go run cmd/start_ingestor/main.go $@

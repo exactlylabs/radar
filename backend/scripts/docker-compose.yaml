@@ -1,12 +1,11 @@
 version: "3.9"
 services:
-  timescaledb:
-    image: timescale/timescaledb-ha:pg14-latest
-    shm_size: 1g
+  clickhousedb:
+    image: yandex/clickhouse-server
     ports:
-    - 54321:5432
-    environment:
-    - POSTGRES_USER=postgres
-    - POSTGRES_PASSWORD=postgres
-    - POSTGRES_DB=mlab-mapping
+    - 9001:9000
+    ulimits:
+      nofile:
+        soft: "262144"
+        hard: "262144"
 
