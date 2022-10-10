@@ -19,6 +19,7 @@ type storageDataStore struct {
 	path            string
 	obj             any
 	uploader        *Uploader
+	ongoingFiles    map[string]bool
 }
 
 func New(uploader *Uploader, path string, encoderProvider encoders.ItemEncoderFactory, decoderProvider encoders.ItemDecoderFactory, obj any) (datastore.DataStore, error) {
@@ -28,6 +29,7 @@ func New(uploader *Uploader, path string, encoderProvider encoders.ItemEncoderFa
 		path:            path,
 		obj:             obj,
 		uploader:        uploader,
+		ongoingFiles:    make(map[string]bool),
 	}, nil
 }
 
@@ -99,7 +101,15 @@ func (ds *storageDataStore) Delete() error {
 	return nil
 }
 
+func (ds *storageDataStore) existsLocally() bool {
+	_, err := os.Stat(ds.localPath())
+	return !errors.Is(err, os.ErrNotExist)
+}
+
 func (ds *storageDataStore) Exists() bool {
+	if ds.existsLocally() {
+		return true
+	}
 	ctx := context.Background()
 	info, err := ds.uploader.bucket.Object(ds.path).Attrs(ctx)
 	if err != nil {
