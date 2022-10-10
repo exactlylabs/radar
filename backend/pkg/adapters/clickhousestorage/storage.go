@@ -11,6 +11,7 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorage/views"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/ports"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/google/uuid"
@@ -26,9 +27,10 @@ type clickhouseStorage struct {
 	lock              *sync.Mutex
 	nWorkers          int
 	shouldUpdateViews bool
+	useTempTable      bool
 }
 
-func New(opts *clickhouse.Options, nWorkers int, updateViews bool) ports.MeasurementsStorage {
+func New(opts *clickhouse.Options, nWorkers int, updateViews bool, useTempTable bool) ports.MeasurementsStorage {
 	return &clickhouseStorage{
 		opts:              opts,
 		geospaces:         make(map[string]*ports.Geospace),
@@ -37,6 +39,8 @@ func New(opts *clickhouse.Options, nWorkers int, updateViews bool) ports.Measure
 		lock:              &sync.Mutex{},
 		nWorkers:          nWorkers,
 		shouldUpdateViews: updateViews,
+		// Instead of inserting into the main table, we insert into a temporary table and then swap back
+		useTempTable: useTempTable,
 	}
 }
 
@@ -51,6 +55,12 @@ func (cs *clickhouseStorage) Begin() error {
 	if err := cs.loadCache(); err != nil {
 		return errors.Wrap(err, "clickhouseStorage#Begin loadCache")
 	}
+	if cs.useTempTable {
+		err := cs.createTempTable()
+		if err != nil {
+			return errors.Wrap(err, "clickhouseStorage#Begin createTempTable")
+		}
+	}
 	for i := 0; i < cs.nWorkers; i++ {
 		cs.wg.Add(1)
 		go func() {
@@ -63,7 +73,7 @@ func (cs *clickhouseStorage) Begin() error {
 
 func (cs *clickhouseStorage) storeWorker() {
 	for it := range cs.jobCh {
-		batch, err := cs.prepareBatch()
+		batch, err := cs.prepareBatch(cs.useTempTable)
 		if err != nil {
 			panic(errors.Wrap(err, "clickhouseStorage#storeWorker prepareBatch"))
 		}
@@ -78,6 +88,11 @@ func (cs *clickhouseStorage) storeWorker() {
 func (cs *clickhouseStorage) Close() error {
 	close(cs.jobCh)
 	cs.wg.Wait()
+	if cs.useTempTable {
+		if err := cs.swapTempTable(); err != nil {
+			return errors.Wrap(err, "clickhouseStorage#Close swapTempTable")
+		}
+	}
 	if cs.shouldUpdateViews {
 		cs.updateViews()
 	}
@@ -87,9 +102,33 @@ func (cs *clickhouseStorage) Close() error {
 	return nil
 }
 
+func (cs *clickhouseStorage) createTempTable() error {
+	err := cs.conn.Exec(context.Background(), `DROP TABLE measurements_tmp`)
+	if err != nil {
+		log.Println(errors.Wrap(err, "clickhouseStorage#createTempTable Exec"))
+	}
+	err = cs.conn.Exec(context.Background(), `CREATE TABLE measurements_tmp AS measurements`)
+	if err != nil {
+		return errors.Wrap(err, "clickhouseStorage#createTempTable Exec")
+	}
+	err = cs.conn.Exec(context.Background(), `EXCHANGE TABLES measurements AND measurements_tmp`)
+	if err != nil {
+		return errors.Wrap(err, "clickhouseStorage#createTempTable Exec")
+	}
+	return nil
+}
+
+func (cs *clickhouseStorage) swapTempTable() error {
+	err := cs.conn.Exec(context.Background(), `EXCHANGE TABLES measurements_tmp AND measurements`)
+	if err != nil {
+		return errors.Wrap(err, "clickhouseStorage#swapTempTable Exec")
+	}
+	return nil
+}
+
 func (cs *clickhouseStorage) updateViews() {
 	log.Println("clickhouseStorage#updateViews Starting Updating Views")
-	for name, query := range views {
+	for name, query := range views.MaterializedViews {
 		tmpName := name + "_tmp"
 		if err := cs.conn.Exec(context.Background(), fmt.Sprintf("DROP VIEW %s", tmpName)); err != nil {
 			log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec Drop"))
@@ -278,7 +317,7 @@ func (cs *clickhouseStorage) insertInBatch(batch driver.Batch, it ports.Measurem
 			if err := batch.Send(); err != nil {
 				return errors.Wrap(err, "clickhouseStorage#InsertMeasurements Send")
 			}
-			batch, err = cs.prepareBatch()
+			batch, err = cs.prepareBatch(cs.useTempTable)
 			if err != nil {
 				return errors.Wrap(err, "clickhouseStorage#InsertMeasurements prepareBatch")
 			}
@@ -293,11 +332,15 @@ func (cs *clickhouseStorage) insertInBatch(batch driver.Batch, it ports.Measurem
 	return nil
 }
 
-func (cs *clickhouseStorage) prepareBatch() (driver.Batch, error) {
-	query := `INSERT INTO measurements (
+func (cs *clickhouseStorage) prepareBatch(useTempTable bool) (driver.Batch, error) {
+	tableName := "measurements"
+	if useTempTable {
+		tableName = "measurements_tmp"
+	}
+	query := fmt.Sprintf(`INSERT INTO %s (
 		id, test_style, ip, time, upload, mbps, loss_rate, min_rtt, latitude,
 		longitude, location_accuracy_km, has_access_token, access_token_sig, asn_id, geospace_id
-	)`
+	)`, tableName)
 	batch, err := cs.conn.PrepareBatch(context.Background(), query)
 	if err != nil {
 		return nil, errors.Wrap(err, "clickhouseStorage#InsertMeasurements PrepareBatch")
