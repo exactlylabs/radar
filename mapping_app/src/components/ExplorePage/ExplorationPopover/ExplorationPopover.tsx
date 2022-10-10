@@ -80,11 +80,14 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
              style={styles.ShrinkButtonContainer}
              onClick={closePopover}
         >
-          <img src={DiagonalArrow} style={styles.Arrow} alt={'diagonal-arrow'}/>
+          <img src={DiagonalArrow} style={styles.Arrow}
+                               alt={'diagonal-arrow'}
+          />
         </div>
         {
           currentPopoverState === popoverStates.INITIAL ?
           <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState}/>:
+
 
           <SpecificExplorationPopoverContent type={currentPopoverState}
                                              setType={handleChangePopoverState}
