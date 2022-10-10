@@ -4,10 +4,8 @@ import {styles} from "./styles/DropdownFilter.style";
 import OptionsDropdown from "./OptionsDropdown";
 import {calendarFilters, filterTypes, speedFilters} from "../../../utils/filters";
 import {Filter, Optional} from "../../../utils/types";
-import {Asn, isAsn} from "../../../api/asns/types";
+import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
-import Option from "./Option";
-import {allProvidersElement} from "./utils/providers";
 
 interface DropdownFilterProps {
   icon: ReactElement;

@@ -19,8 +19,8 @@ import {tabs} from "./TopFilters/GeographicalCategoryTabs";
 import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "../../utils/map";
 import MyOverlayingLoader from "../common/MyOverlayingLoader";
 import {emptyGeoJSONFilters} from "../../api/geojson/types";
-import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
 import L from "leaflet";
+import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
 
 const ExplorePage = (): ReactElement => {
 
@@ -62,6 +62,11 @@ const ExplorePage = (): ReactElement => {
   const closePopover = () => setIsExplorationPopoverOpen(false);
 
   const openPopover = () => setIsExplorationPopoverOpen(true);
+
+  const togglePopover = () => {
+    if(isExplorationPopoverOpen) closePopover();
+    else openPopover();
+  }
 
   const openRightPanel = () => setIsRightPanelOpen(true);
 
@@ -132,9 +137,7 @@ const ExplorePage = (): ReactElement => {
                     setSelectedSpeedFilters={setSelectedSpeedFilters}
       />
       { isExplorationPopoverOpen ?
-        <ExplorationPopover closePopover={closePopover}
-                            selectGeospace={selectGeospace}
-        /> :
+        <ExplorationPopover closePopover={closePopover} selectGeospace={selectGeospace}/> :
         <ExplorationPopoverIcon openPopover={openPopover}/>
       }
       { isRightPanelOpen && selectedGeospace &&

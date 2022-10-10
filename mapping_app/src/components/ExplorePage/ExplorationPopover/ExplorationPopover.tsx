@@ -6,7 +6,6 @@ import SpecificExplorationPopoverContent from "./SpecificExplorationPopoverConte
 import {DetailedGeospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
-import ExplorationPopoverIcon from "./ExplorationPopoverIcon";
 
 interface ExplorationPopoverProps {
   closePopover: () => void;
@@ -76,28 +75,29 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
   }
 
   return (
-    <div style={styles.ExplorationPopoverContainer(currentPopoverState)}>
-      <div className={'hover-opaque'}
-           style={styles.ShrinkButtonContainer}
-           onClick={closePopover}
-      >
-        <ArrowOutwardRounded style={styles.Arrow}
-                             fontSize={'small'}
-        />
+      <div style={styles.ExplorationPopoverContainer(currentPopoverState)}>
+        <div className={'hover-opaque'}
+             style={styles.ShrinkButtonContainer}
+             onClick={closePopover}
+        >
+          <ArrowOutwardRounded style={styles.Arrow}
+                               fontSize={'small'}
+          />
+        </div>
+        {
+          currentPopoverState === popoverStates.INITIAL ?
+          <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState}/>:
+
+          <SpecificExplorationPopoverContent type={currentPopoverState}
+                                             setType={handleChangePopoverState}
+                                             goBack={goBackToInitial}
+                                             selectGeospace={selectGeospace}
+                                             states={states}
+                                             indexedCounties={indexedCounties}
+                                             tribalTracts={tribalTracts}
+          />
+        }
       </div>
-      {
-        currentPopoverState === popoverStates.INITIAL ?
-        <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState} /> :
-        <SpecificExplorationPopoverContent type={currentPopoverState}
-                                           setType={handleChangePopoverState}
-                                           goBack={goBackToInitial}
-                                           selectGeospace={selectGeospace}
-                                           states={states}
-                                           indexedCounties={indexedCounties}
-                                           tribalTracts={tribalTracts}
-        />
-      }
-    </div>
   )
 }
 
