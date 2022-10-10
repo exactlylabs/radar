@@ -14,7 +14,7 @@ interface SpecificExplorationPopoverContentProps {
   goBack: () => void;
   selectGeospace: (geospace: GeospaceOverview) => void;
   states: Array<Geospace>;
-  counties: Array<Geospace>;
+  indexedCounties: any;
   tribalTracts: Array<Geospace>;
 }
 
@@ -24,7 +24,7 @@ const SpecificExplorationPopoverContent = ({
   goBack,
   selectGeospace,
   states,
-  counties,
+  indexedCounties,
   tribalTracts
 }: SpecificExplorationPopoverContentProps): ReactElement => {
 
@@ -32,7 +32,6 @@ const SpecificExplorationPopoverContent = ({
   const [filteredItems, setFilteredItems] = useState<Array<Geospace>>([]);
   const [selectedOption, setSelectedOption] = useState<Optional<Geospace>>(null);
   const [inputText, setInputText] = useState<string>('');
-  const [loadingStates, setLoadingStates] = useState<Array<boolean>>([]);
 
   useEffect(() => {
     let items: Array<Geospace>;
@@ -41,11 +40,11 @@ const SpecificExplorationPopoverContent = ({
         items = states;
         break;
       case popoverStates.COUNTIES:
-        items = counties;
+        items = states;
         break;
       case popoverStates.SPECIFIC_STATE:
         if (selectedOption !== null && selectedOption !== undefined)
-          items = counties.filter(county => county.name === selectedOption.name);
+          items = indexedCounties[selectedOption.name];
         else
           items = [];
         break;
@@ -56,7 +55,6 @@ const SpecificExplorationPopoverContent = ({
         items = states;
         break;
     }
-    setLoadingStates(items.map(() => false));
     setAllItems(items);
     setFilteredItems(items);
   }, [type]);
@@ -86,15 +84,17 @@ const SpecificExplorationPopoverContent = ({
 
   const handleSelectOption = async (option: Geospace, index: number) => {
     setSelectedOption(option);
-    let loadingStatesCopy = [...loadingStates];
-    setLoadingStates(loadingStatesCopy.map((elem, idx) => idx === index));
-    const response: GeospaceOverview = await getOverview(option.id, '');
-    const allData: GeospaceInfo = {
-      ...response,
-      geospace: {...option},
-    };
-    await selectGeospace(allData);
-    setLoadingStates(loadingStatesCopy.map((elem, idx) => false));
+    if(type !== popoverStates.COUNTIES) {
+      const response: GeospaceOverview = await getOverview(option.id, '');
+      const allData: GeospaceInfo = {
+        ...response,
+        geospace: {...option},
+      };
+      await selectGeospace(allData);
+    } else {
+      setType(popoverStates.SPECIFIC_STATE);
+      setInputText('');
+    }
   }
 
   const getContent = () => {
@@ -111,7 +111,6 @@ const SpecificExplorationPopoverContent = ({
                        text={item.name}
                        secondaryText={type === popoverStates.COUNTIES && item.parent ? item.parent.name : undefined}
                        onClick={() => handleSelectOption(item, index)}
-                       loading={loadingStates[index]}
         />
       );
     }
@@ -138,8 +137,7 @@ const SpecificExplorationPopoverContent = ({
                         text={inputText}
                         setText={handleSetText}
       />
-      {/* TODO: Once API supports relation between county<>state we can add this */}
-      {/* type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText()}>Start by choosing a state...</p> */}
+      {type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText()}>Start by choosing a state...</p>}
       <div style={styles.ContentContainer(type)}>
         {getContent()}
       </div>

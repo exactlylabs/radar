@@ -28,3 +28,5 @@ export const SPEED_UNDERSERVED = '#fa9f6c';
 export const SPEED_NORMAL = '#9f7bd7';
 export const RIGHT_PANEL = 'rgba(255, 255, 255, 0.95)';
 export const VERTICAL_LINE_PERCENTAGE = 'rgba(151, 161, 157, 0.5)';
+export const HORIZONTAL_DIVIDER = 'rgba(42, 43, 43, 0.0)';
+export const HORIZONTAL_DIVIDER_BOX_SHADOW = 'rgba(0, 0, 0, 0.15)';

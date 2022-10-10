@@ -28,7 +28,7 @@ const SpeedDistributionRow = ({
       <div style={styles.SpeedDistributionRowIcon(speedColors[type as keyof SpeedsObject])}></div>
       <p className={'fw-regular'} style={styles.SpeedText}>{getSpeedText(type)}</p>
       <p className={'fw-light'} style={styles.SpeedTag}>{`(${capitalize(type)})`}</p>
-      <p className={'fw-regular'} style={styles.PeopleCount}>{`${peopleCount} samples`}</p>
+      <p className={'fw-regular'} style={styles.PeopleCount}>{`${peopleCount} ${peopleCount === 1 ? 'sample' : 'samples'}`}</p>
       <p className={'fw-regular'} style={styles.Percentage}>{percentage}</p>
     </div>
   )

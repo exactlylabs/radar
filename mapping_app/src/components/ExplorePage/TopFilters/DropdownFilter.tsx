@@ -1,12 +1,12 @@
-import {ChangeEventHandler, ReactElement, useEffect, useState} from "react";
+import React, {ChangeEventHandler, ReactElement, ChangeEvent, useState} from "react";
 import {KeyboardArrowDownRounded} from "@mui/icons-material";
 import {styles} from "./styles/DropdownFilter.style";
 import OptionsDropdown from "./OptionsDropdown";
 import {calendarFilters, filterTypes, speedFilters} from "../../../utils/filters";
 import {Filter, Optional} from "../../../utils/types";
-import {Asn, isAsn} from "../../../api/asns/types";
+import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
-import {allProvidersElement} from "./utils/providers";
+import Option from "./Option";
 
 interface DropdownFilterProps {
   icon: ReactElement;
@@ -17,6 +17,7 @@ interface DropdownFilterProps {
   changeFilter: (filter: Filter) => void;
   selectedFilter: Filter;
   searchbarOnChange?: ChangeEventHandler;
+  clearProviderList?: () => void;
 }
 
 const DropdownFilter = ({
@@ -27,7 +28,8 @@ const DropdownFilter = ({
   type,
   changeFilter,
   selectedFilter,
-  searchbarOnChange
+  searchbarOnChange,
+  clearProviderList
 }: DropdownFilterProps): ReactElement => {
 
   const [selectedOption, setSelectedOption] = useState<Filter>(selectedFilter ?? options[0]);
@@ -49,6 +51,7 @@ const DropdownFilter = ({
     setSelectedOption(newFilter);
     changeFilter(newFilter);
     setDropdownOpen(false);
+    if(isAsn(newFilter) && clearProviderList) clearProviderList();
   }
 
   const getText = () => {
