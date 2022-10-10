@@ -21,9 +21,11 @@ const titleStyle: CSSProperties = {
 const inputStyle: CSSProperties = {
   width: 'calc(100% - 17px - 18px)',
   height: '50px',
+  fontSize: '15px',
+  marginLeft: '15px',
   border: 'none',
   color: FOOTER_TEXT,
-  fontSize: '15px',
+  borderBottom: `solid 1px ${VERTICAL_DIVIDER}`,
 }
 
 const horizontalDividerStyle: CSSProperties = {
