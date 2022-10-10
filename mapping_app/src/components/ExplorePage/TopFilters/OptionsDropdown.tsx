@@ -4,6 +4,7 @@ import Option from './Option';
 import {Filter} from "../../../utils/types";
 import {Asn, isAsn} from "../../../api/asns/types";
 import MyOptionsDropdownSearchbar from "./MyOptionsDropdownSearchbar";
+import {allProvidersElement} from "./utils/providers";
 
 interface OptionsDropdownProps {
   options: Array<Filter>;
@@ -33,7 +34,13 @@ const OptionsDropdown = ({
     <div style={styles.OptionsDropdownContainer(dropLeft, dropRight)}>
       {
         withSearchbar &&
-        <MyOptionsDropdownSearchbar onChange={searchbarOnChange}/>
+        <MyOptionsDropdownSearchbar
+          type={'provider'}
+          stickyOption={allProvidersElement}
+          stickyOptionOnSelect={setSelectedOption}
+          stickyOptionSelected={allProvidersElement.id === (selectedOption as Asn).id}
+          onChange={searchbarOnChange}
+        />
       }
       {
         options.map(option => (

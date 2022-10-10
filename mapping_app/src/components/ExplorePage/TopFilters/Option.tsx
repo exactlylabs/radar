@@ -4,6 +4,7 @@ import {CheckRounded} from "@mui/icons-material";
 import {Filter} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
+import OptionHorizontalDivider from "./OptionHorizontalDivider";
 
 interface OptionProps {
   option: Filter;
@@ -24,11 +25,14 @@ const Option = ({
   const getText = () => isAsn(option) ? capitalize(option.organization) : option;
 
   return (
-    <div style={styles.Option} onClick={handleClick}>
-      <p className={'hover-opaque'} style={styles.Text(selected)}>{getText()}</p>
-      { !selected && <div style={styles.Icon}></div> }
-      {  selected && <CheckRounded style={styles.Icon}/> }
-    </div>
+    <>
+      <div style={styles.Option} onClick={handleClick}>
+        <p className={'hover-opaque'} style={styles.Text(selected)}>{getText()}</p>
+        { !selected && <div style={styles.Icon}></div> }
+        {  selected && <CheckRounded style={styles.Icon}/> }
+      </div>
+      <OptionHorizontalDivider />
+    </>
   )
 }
 

@@ -2,7 +2,8 @@ import {CSSProperties} from "react";
 import {DEFAULT_GREEN, DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT} from "../../../../styles/colors";
 
 const optionStyle: CSSProperties = {
-  minWidth: '140px',
+  width: 'calc(100% - 30px)',
+  minWidth: '175px',
   maxWidth: '180px',
   height: '40px',
   display: 'flex',
@@ -11,6 +12,7 @@ const optionStyle: CSSProperties = {
   alignItems: 'center',
   marginLeft: '15px',
   marginRight: '15px',
+  position: 'relative'
 }
 
 const iconStyle: CSSProperties = {

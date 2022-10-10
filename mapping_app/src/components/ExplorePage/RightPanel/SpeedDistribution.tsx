@@ -23,9 +23,9 @@ const SpeedDistribution = ({
 }: SpeedDistributionProps): ReactElement => {
 
   const totalPeople = unservedPeopleCount + underservedPeopleCount + servedPeopleCount;
-  const unservedPercentage = (unservedPeopleCount * 100 / totalPeople).toFixed(1) + '%';
-  const underservedPercentage = (underservedPeopleCount * 100/ totalPeople).toFixed(1) + '%';
-  const servedPercentage = (servedPeopleCount * 100/ totalPeople).toFixed(1) + '%';
+  const unservedPercentage = totalPeople === 0 ? '0%' : (unservedPeopleCount * 100 / totalPeople).toFixed(1) + '%';
+  const underservedPercentage = totalPeople === 0 ? '0%' : (underservedPeopleCount * 100/ totalPeople).toFixed(1) + '%';
+  const servedPercentage = totalPeople === 0 ? '0%' : (servedPeopleCount * 100/ totalPeople).toFixed(1) + '%';
 
   const getIndexesForTopHalf = (): Array<number> => {
     let indexes: Array<number> = [];
@@ -60,20 +60,26 @@ const SpeedDistribution = ({
   return (
     <div style={styles.SpeedDistributionContainer}>
       <p className={'fw-semi-bold'} style={styles.Title}>SPEED DISTRIBUTION</p>
-      <SpeedDistributionPercentageBarIndicators percentages={[unservedPercentage, underservedPercentage, servedPercentage]}
-                                                indexesToDisplay={getIndexesForTopHalf()}
-                                                top
-                                                speedType={speedType}
-      />
-      <SpeedDistributionPercentageBar unservedPercentage={unservedPercentage}
-                                      underservedPercentage={underservedPercentage}
-                                      servedPercentage={servedPercentage}
-      />
-      <SpeedDistributionPercentageBarIndicators percentages={[unservedPercentage, underservedPercentage, servedPercentage]}
-                                                indexesToDisplay={getIndexesForBottomHalf()}
-                                                bottom
-                                                speedType={speedType}
-      />
+      { totalPeople > 0 &&
+        <>
+          <SpeedDistributionPercentageBarIndicators
+            percentages={[unservedPercentage, underservedPercentage, servedPercentage]}
+            indexesToDisplay={getIndexesForTopHalf()}
+            top
+            speedType={speedType}
+          />
+          <SpeedDistributionPercentageBar unservedPercentage={unservedPercentage}
+                                          underservedPercentage={underservedPercentage}
+                                          servedPercentage={servedPercentage}
+          />
+          <SpeedDistributionPercentageBarIndicators
+            percentages={[unservedPercentage, underservedPercentage, servedPercentage]}
+            indexesToDisplay={getIndexesForBottomHalf()}
+            bottom
+            speedType={speedType}
+          />
+        </>
+      }
       <SpeedDistributionRow type={speedTypes.UNSERVED}
                             peopleCount={unservedPeopleCount}
                             percentage={unservedPercentage}
