@@ -1,6 +1,6 @@
 import {DetailedGeospace, GeospaceData, GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/types";
 import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject, speedTypes} from "./speeds";
-import {LatLng, LeafletMouseEvent} from "leaflet";
+import {LeafletMouseEvent} from "leaflet";
 import {Filter} from "./types";
 
 export const mapTileUrl: string = MAPBOX_TILESET_URL;

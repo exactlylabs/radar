@@ -2,7 +2,6 @@ import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/ExplorePage.style";
 import MyMap from "./MyMap";
 import ExplorationPopover from "./ExplorationPopover/ExplorationPopover";
-import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
 import TopSearchbar from "./TopSearchbar/TopSearchbar";
 import TopFilters from "./TopFilters/TopFilters";
 import SpeedFilters from "./SpeedFilters/SpeedFilters";
@@ -21,6 +20,8 @@ import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "../../utils
 import MyOverlayingLoader from "../common/MyOverlayingLoader";
 import {emptyGeoJSONFilters} from "../../api/geojson/types";
 import L from "leaflet";
+import {getGeospaces} from "../../api/namespaces/requests";
+import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
 
 const ExplorePage = (): ReactElement => {
 
@@ -62,6 +63,11 @@ const ExplorePage = (): ReactElement => {
   const closePopover = () => setIsExplorationPopoverOpen(false);
 
   const openPopover = () => setIsExplorationPopoverOpen(true);
+
+  const togglePopover = () => {
+    if(isExplorationPopoverOpen) closePopover();
+    else openPopover();
+  }
 
   const openRightPanel = () => setIsRightPanelOpen(true);
 

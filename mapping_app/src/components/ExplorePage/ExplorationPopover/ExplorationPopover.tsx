@@ -1,4 +1,4 @@
-import {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/ExplorationPopover.style";
 import {ArrowOutwardRounded} from "@mui/icons-material";
 import InitialExplorationPopoverContent from "./InitialExplorationPopoverContent";
@@ -6,6 +6,7 @@ import SpecificExplorationPopoverContent from "./SpecificExplorationPopoverConte
 import {DetailedGeospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
+import ExplorationPopoverIcon from "./ExplorationPopoverIcon";
 
 interface ExplorationPopoverProps {
   closePopover: () => void;
@@ -33,6 +34,7 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
   const [currentPopoverState, setCurrentPopoverState] = useState(popoverStates.INITIAL);
   const [states, setStates] = useState<Array<DetailedGeospace>>([]);
   const [counties, setCounties] = useState<Array<DetailedGeospace>>([]);
+  const [indexedCounties, setIndexedCounties] = useState({});
   const [tribalTracts, setTribalTracts] = useState<Array<DetailedGeospace>>([]);
 
   useEffect(() => {
@@ -44,8 +46,19 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
     allNamespaces
       .then(res => {
         setStates(res[0].results);
-        setCounties(res[1].results);
         setTribalTracts(res[2].results);
+        // index counties by state
+        let indexed: any = {};
+        res[1].results.forEach(county => {
+          if(county.parent) {
+            if (!(county.parent.name in indexed)) {
+              indexed[county.parent.name] = [];
+            }
+            indexed[county.parent.name].push(county);
+          }
+        });
+        setIndexedCounties(indexed);
+        setCounties(res[1].results);
       })
       .catch(err => handleError(err));
   }, []);
@@ -80,7 +93,7 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
                                            goBack={goBackToInitial}
                                            selectGeospace={selectGeospace}
                                            states={states}
-                                           counties={counties}
+                                           indexedCounties={indexedCounties}
                                            tribalTracts={tribalTracts}
         />
       }
@@ -88,4 +101,4 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
   )
 }
 
-export default ExplorationPopover;
+export default React.memo(ExplorationPopover);

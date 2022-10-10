@@ -1,5 +1,5 @@
 import {ReactElement, useEffect, useState} from "react";
-import L, {LatLng} from "leaflet";
+import L from "leaflet";
 import {MapContainer, TileLayer, useMap} from "react-leaflet";
 import {
   baseStyle,
@@ -16,8 +16,6 @@ import {styles} from "./styles/MyMap.style";
 import {GeoJSONFilters, GeoJSONProperties, GeoJSONResponse} from "../../api/geojson/types";
 import {getGeoJSON} from "../../api/geojson/requests";
 import {handleError} from "../../api";
-import MySpinner from "../common/MySpinner";
-import {BLACK} from "../../styles/colors";
 import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject} from "../../utils/speeds";
 import {GeospaceInfo} from "../../api/geospaces/types";
 import {Filter, Optional} from "../../utils/types";
@@ -93,7 +91,13 @@ const CustomMap = ({
         if(properties.summary !== undefined && shouldShowLayer(layer.feature.properties.summary, speedType, selectedSpeedFilters)) {
           const isSelected: boolean = !!selectedGeospace ? isCurrentGeospace(properties.summary.geospace, selectedGeospace) : false;
           layer.addEventListener('click', () => {
-            selectGeospace(layer.feature.properties.summary, layer.getBounds().getCenter());
+            if(properties.NAME === 'Alaska') {
+              // TODO: quick fix for Alaskan center wrongly calculated. From the internet, Alaska's center is at 64.2008° N, 149.4937° W
+              const center: L.LatLng = L.latLng(64.2008, -149.4937);
+              selectGeospace(layer.feature.properties.summary, center);
+            } else {
+              selectGeospace(layer.feature.properties.summary, layer.getBounds().getCenter());
+            }
           });
           if(!isSelected) {
             layer.addEventListener('mouseout', layerMouseoutHandler);

@@ -38,7 +38,7 @@ const DropdownFilters = ({
   useEffect(() => {
     getAsns()
       .then(res => {
-        setProviders([allProvidersElement, ...res.results]);
+        setProviders(res.results);
       })
       .catch(err => handleError(err));
   }, []);
@@ -84,9 +84,15 @@ const DropdownFilters = ({
   const handleProviderSearchbarChange = debounce(async (e: ChangeEvent<HTMLInputElement>) => {
     const value: string = e.target.value;
     getAsns(value)
-      .then(res => setProviders([allProvidersElement, ...res.results]))
+      .then(res => setProviders(res.results))
       .catch(err => handleError(err));
   });
+
+  const clearProviderList = () => {
+    getAsns()
+      .then(res => setProviders(res.results))
+      .catch(err => handleError(err));
+  }
 
   return (
     <div style={styles.DropdownFiltersContainer}>
@@ -115,6 +121,7 @@ const DropdownFilters = ({
                       changeFilter={changeProviderFilter}
                       selectedFilter={provider}
                       searchbarOnChange={handleProviderSearchbarChange}
+                      clearProviderList={clearProviderList}
       />
     </div>
   )
