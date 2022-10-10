@@ -224,6 +224,28 @@ func (cs *clickhouseStorage) getOrCreateGeospace(g *ports.Geospace) (*ports.Geos
 	return g, nil
 }
 
+func (cs *clickhouseStorage) updateOrCreateGeospace(g *ports.Geospace) (*ports.Geospace, error) {
+	cs.lock.Lock()
+	defer cs.lock.Unlock()
+	existing, err := cs.GetGeospaceByGeoId(g.Namespace, g.GeoId)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, errors.Wrap(err, "clickhouseStorage#updateOrCreateGeospace GetGeospaceByGeoId")
+	}
+	if existing == nil {
+		if err := cs.createGeospace(g); err != nil {
+			return nil, errors.Wrap(err, "clickhouseStorage#updateOrCreateGeospace createGeospace")
+		}
+	} else {
+		g.Id = existing.Id
+		if err := cs.updateGeospace(g); err != nil {
+			return nil, errors.Wrap(err, "clickhouseStorage#updateOrCreateGeospace updateGeospace")
+		}
+	}
+
+	cs.geospaces[g.Namespace+g.GeoId] = g
+	return g, nil
+}
+
 func (cs *clickhouseStorage) createGeospace(g *ports.Geospace) error {
 	id := uuid.New()
 	var parent *string = g.ParentId
@@ -239,13 +261,34 @@ func (cs *clickhouseStorage) createGeospace(g *ports.Geospace) error {
 
 	err := cs.conn.Exec(
 		context.Background(),
-		`INSERT INTO geospaces (id, name, namespace, geo_id, parent_id) VALUES ($1, $2, $3, $4, $5)`,
-		id, *name, g.Namespace, g.GeoId, *parent,
+		`INSERT INTO geospaces (id, name, namespace, geo_id, parent_id, centroid_lat, centroid_long) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+		id, *name, g.Namespace, g.GeoId, *parent, g.Centroid[0], g.Centroid[1],
 	)
 	if err != nil {
 		return errors.Wrap(err, "clickhouseStorage#createGeospace Exec")
 	}
 	g.Id = id.String()
+	return nil
+}
+
+func (cs *clickhouseStorage) updateGeospace(g *ports.Geospace) error {
+	var parent *string = g.ParentId
+	var name *string = g.Name
+	if parent == nil {
+		p := ""
+		parent = &p
+	}
+	if name == nil {
+		n := ""
+		name = &n
+	}
+	err := cs.conn.Exec(
+		context.Background(),
+		`ALTER TABLE geospaces UPDATE name=$1, parent_id=$2, centroid_lat=$3, centroid_long=$4 WHERE id=$5`, *name, *parent, g.Centroid[0], g.Centroid[1], g.Id,
+	)
+	if err != nil {
+		return errors.Wrap(err, "clickhouseStorage#updateGeospace Exec")
+	}
 	return nil
 }
 
@@ -376,8 +419,8 @@ func (cs *clickhouseStorage) LastMeasurementDate() (*time.Time, error) {
 
 // SaveGeospace implements ports.MeasurementsStorage
 func (cs *clickhouseStorage) SaveGeospace(g *ports.Geospace) error {
-	if _, err := cs.getOrCreateGeospace(g); err != nil {
-		return errors.Wrap(err, "clickhouseStorage#SaveGeospace getOrCreateGeospace")
+	if _, err := cs.updateOrCreateGeospace(g); err != nil {
+		return errors.Wrap(err, "clickhouseStorage#SaveGeospace updateOrCreateGeospace")
 	}
 	return nil
 }
