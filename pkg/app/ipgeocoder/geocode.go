@@ -175,11 +175,16 @@ func processItem(toProcess *ipgeocodeWorkItem) *models.GeocodedResult {
 		asn = asnInfo.asn
 		asnObj, err := asnmap.Lookup(fmt.Sprintf("%d", asn))
 		if err != nil {
-			org = asnInfo.org
+			// Try checking the org name against the asnmap we have
+			// Sometimes the organization Name is actually the ASN name
+			if asnObj, err := asnmap.LookupByName(asnInfo.org); err == nil {
+				org = asnObj.Organization.Name
+			} else {
+				org = asnInfo.org
+			}
 		} else {
 			org = asnObj.Organization.Name
 		}
-
 	}
 	return &models.GeocodedResult{
 		Id:                 toProcess.fetchedResult.Id,
