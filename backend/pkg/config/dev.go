@@ -6,12 +6,11 @@ import (
 )
 
 var DevConfig = &Config{
-	DBName:                    "mlab-mapping",
-	DBUser:                    "postgres",
-	DBPassword:                "postgres",
+	DBName:                    "default",
+	DBUser:                    "default",
+	DBPassword:                "",
 	DBHost:                    "localhost",
-	DBPort:                    "5432",
+	DBPort:                    "9001",
 	FilesBucketName:           "mlab-processed-data",
-	TSDBStorageNWorkers:       fmt.Sprintf("%d", runtime.NumCPU()),
 	ClickhouseStorageNWorkers: fmt.Sprintf("%d", runtime.NumCPU()),
 }
