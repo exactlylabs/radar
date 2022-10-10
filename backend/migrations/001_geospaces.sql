@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS geospaces
     `name` Nullable(VARCHAR),
     `namespace` VARCHAR,
     `geo_id` VARCHAR,
+    `centroid_lat` DOUBLE PRECISION,
+    `centroid_long` DOUBLE PRECISION,
     `parent_id` Nullable(UUID)
 )
 ENGINE = MergeTree
