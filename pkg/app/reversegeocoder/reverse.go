@@ -110,7 +110,7 @@ func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
 
 		var geoid string
 		for k, f := range fields {
-			if f.String() == "GEOID" || f.String() == "GEOID20" {
+			if f.String() == "GEOID" || f.String() == "GEOID20" || f.String() == "ORG_CODE" {
 				geoid = shape.Attribute(k)
 				break
 			}
@@ -119,18 +119,13 @@ func addShapeToIndex(index *geo.Index, namespace, shpPath string) error {
 		for i := int32(0); i < poly.NumParts; i++ {
 			var startIndex, endIndex int32
 
-			if i == 0 {
-				startIndex = 0
-			} else {
-				startIndex = poly.Parts[i]
-			}
+			startIndex = poly.Parts[i]
 
-			if i == poly.NumParts {
+			if i < poly.NumParts-1 {
 				endIndex = poly.Parts[i+1]
 			} else {
 				endIndex = int32(len(poly.Points))
 			}
-
 			loopPoints := make([]*geo.Point, endIndex-startIndex)
 			for li := startIndex; li < endIndex; li++ {
 				loopPoints[li-startIndex] = &geo.Point{
@@ -154,6 +149,7 @@ func initIndex() {
 
 		files := config.GetConfig().ShapePathEntries()
 		for namespace, path := range files {
+			log.Printf("ReverseGeocoder - Loading %s from file %s\n", namespace, path)
 			err := addShapeToIndex(index, namespace, path)
 			if err != nil {
 				panic(err)
