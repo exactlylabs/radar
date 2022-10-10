@@ -20,6 +20,7 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/ports"
 	"github.com/joho/godotenv"
 	"github.com/twpayne/go-geom/encoding/geojson"
+	"github.com/twpayne/go-geom/xy"
 )
 
 var files = map[string]string{
@@ -90,12 +91,17 @@ func main() {
 				continue
 			}
 			name := rawName.(string)
+			centroid, err := xy.Centroid(feature.Geometry)
+			if err != nil {
+				panic(err)
+			}
 			switch ns {
 			case "US_STATES":
 				g := &ports.Geospace{
 					Name:      &name,
 					GeoId:     code,
 					Namespace: "US_STATES",
+					Centroid:  [2]float64{centroid[0], centroid[1]},
 				}
 				if err := storage.SaveGeospace(g); err != nil {
 					panic(err)
@@ -110,9 +116,20 @@ func main() {
 					Namespace: "US_COUNTIES",
 					Name:      &name,
 					GeoId:     code,
+					Centroid:  [2]float64{centroid[0], centroid[1]},
 				}
 				if parent != nil {
 					g.ParentId = &parent.Id
+				}
+				if err := storage.SaveGeospace(g); err != nil {
+					panic(err)
+				}
+			case "US_TRIBAL_TRACTS":
+				g := &ports.Geospace{
+					Name:      &name,
+					GeoId:     code,
+					Namespace: "US_TRIBAL_TRACTS",
+					Centroid:  [2]float64{centroid[0], centroid[1]},
 				}
 				if err := storage.SaveGeospace(g); err != nil {
 					panic(err)
