@@ -27,8 +27,11 @@ type ASN struct {
 // Maps organization information by org_id
 var organizations map[string]*Organization
 
-// Maps ASN values to an organization id
+// Maps ASN values to their Obj
 var asns map[string]*ASN
+
+// Maps ASN names to their Obj
+var asnNamesMap map[string]*ASN
 
 var loaded = false
 
@@ -36,6 +39,7 @@ var loaded = false
 func LoadCAIDAJsonl(file io.Reader) error {
 	organizations = make(map[string]*Organization)
 	asns = make(map[string]*ASN)
+	asnNamesMap = make(map[string]*ASN)
 	scanner := bufio.NewScanner(file)
 	i := 0
 	for scanner.Scan() {
@@ -60,10 +64,12 @@ func LoadCAIDAJsonl(file io.Reader) error {
 			if !exists {
 				return ErrMissingOrg
 			}
-			asns[row["asn"]] = &ASN{
+			obj := &ASN{
 				Asn:          row["asn"],
 				Organization: org,
 			}
+			asns[row["asn"]] = obj
+			asnNamesMap["name"] = obj
 		}
 		i++
 	}
@@ -77,6 +83,17 @@ func Lookup(asn string) (*ASN, error) {
 		return nil, ErrNotInitialized
 	}
 	if asnObj, exists := asns[asn]; exists {
+		return asnObj, nil
+	}
+	return nil, ErrASNNotFound
+}
+
+// Lookup an ASN object by its Name value
+func LookupByName(asnName string) (*ASN, error) {
+	if !loaded {
+		return nil, ErrNotInitialized
+	}
+	if asnObj, exists := asnNamesMap[asnName]; exists {
 		return asnObj, nil
 	}
 	return nil, ErrASNNotFound
