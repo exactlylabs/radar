@@ -6,6 +6,7 @@ import {Filter, Optional} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
 import Chevron from '../../../assets/chevron.png';
+import Option from "./Option";
 
 interface DropdownFilterProps {
   iconSrc: string;

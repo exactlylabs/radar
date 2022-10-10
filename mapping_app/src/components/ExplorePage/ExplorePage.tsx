@@ -21,6 +21,7 @@ import MyOverlayingLoader from "../common/MyOverlayingLoader";
 import {emptyGeoJSONFilters} from "../../api/geojson/types";
 import L from "leaflet";
 import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
+import {getGeospaces} from "../../api/namespaces/requests";
 
 const ExplorePage = (): ReactElement => {
 
@@ -63,6 +64,11 @@ const ExplorePage = (): ReactElement => {
 
   const openPopover = () => setIsExplorationPopoverOpen(true);
 
+  const togglePopover = () => {
+    if(isExplorationPopoverOpen) closePopover();
+    else openPopover();
+  }
+
   const openRightPanel = () => setIsRightPanelOpen(true);
 
   const closeRightPanel = () => {
@@ -94,6 +100,7 @@ const ExplorePage = (): ReactElement => {
       setCurrentMapZoom(5);
     }
     openRightPanel();
+    setLoading(false);
   }
 
   return (
