@@ -1,5 +1,5 @@
 - name: Install Mlab Ingestor
-  hosts: db
+  hosts: ingestor
 
   tasks:
     - name: Copy binary to host
@@ -20,10 +20,15 @@
         path: /etc/systemd/system/mlab-ingestor.service
         regexp: '(\${DBPASSWORD})'
         replace: "{{ db_password }}"
+    - name: Delete Previous Migrations
+      become: yes
+      ansible.builtin.file:
+        path: /var/mlab-ingestor/migrations
+        state: absent
     - name: Copy migrations to host
       become: yes
       ansible.builtin.copy:
-        src: "{{migrations_dir}}"
+        src: "../../migrations"
         dest: /var/mlab-ingestor/
         mode: '0644'
     - name: Run Migrations
