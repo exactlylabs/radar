@@ -3,7 +3,8 @@ import {DEFAULT_GREEN, DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT} from "../../../../s
 
 const optionStyle: CSSProperties = {
   width: 'calc(100% - 30px)',
-  minWidth: '135px',
+  minWidth: '175px',
+  maxWidth: '180px',
   height: '40px',
   display: 'flex',
   flexDirection: 'row',
