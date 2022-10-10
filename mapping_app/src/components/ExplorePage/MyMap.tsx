@@ -1,5 +1,5 @@
 import {ReactElement, useEffect, useState} from "react";
-import L, {LatLng} from "leaflet";
+import L from "leaflet";
 import {MapContainer, TileLayer, useMap} from "react-leaflet";
 import {
   baseStyle,
