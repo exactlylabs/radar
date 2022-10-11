@@ -27,12 +27,15 @@ type ChStorageOptions struct {
 	// UpdateViews, when true is going to recreate all materialized views when Close is called
 	// Defaults to false
 	UpdateViews bool
-	// UseTempTable makes the ingestor first swap current measurements table
+	// SwapTempTable makes the ingestor first swap current measurements table
 	// into a temporary one and when Closed is called, it swaps it back.
 	// This options is useful due to a problem with clickhouse where when we insert more data,
 	// the views get messed up because it tries to auto update them, but ends up failing because of our double aggregation.
 	// Defaults to false
-	UseTempTable bool
+	SwapTempTable bool
+	// TruncateFirst will drop the whole data before ingesting.
+	// If UseTempTable is also set, the truncate will be executed in the temporary table, not the original.
+	TruncateFirst bool
 }
 
 type clickhouseStorage struct {
@@ -45,7 +48,8 @@ type clickhouseStorage struct {
 	lock              *sync.Mutex
 	nWorkers          int
 	shouldUpdateViews bool
-	useTempTable      bool
+	swap              bool
+	truncate          bool
 	started           bool
 }
 
@@ -67,7 +71,8 @@ func New(options *ChStorageOptions) ports.MeasurementsStorage {
 		lock:              &sync.Mutex{},
 		nWorkers:          options.NWorkers,
 		shouldUpdateViews: options.UpdateViews,
-		useTempTable:      options.UseTempTable,
+		swap:              options.SwapTempTable,
+		truncate:          options.TruncateFirst,
 	}
 }
 
@@ -85,10 +90,16 @@ func (cs *clickhouseStorage) Begin() error {
 	if err := cs.loadCache(); err != nil {
 		return errors.Wrap(err, "clickhouseStorage#Begin loadCache")
 	}
-	if cs.useTempTable {
-		err := cs.createTempTable()
+	if cs.swap {
+		err := cs.swapToTempTable()
 		if err != nil {
-			return errors.Wrap(err, "clickhouseStorage#Begin createTempTable")
+			return errors.Wrap(err, "clickhouseStorage#Begin swapToTempTable")
+		}
+	}
+	if cs.truncate {
+		err := cs.truncateMeasurements()
+		if err != nil {
+			return errors.Wrap(err, "clickhouseStorage#Begin truncateMeasurements")
 		}
 	}
 	for i := 0; i < cs.nWorkers; i++ {
@@ -104,7 +115,7 @@ func (cs *clickhouseStorage) Begin() error {
 
 func (cs *clickhouseStorage) storeWorker() {
 	for it := range cs.jobCh {
-		batch, err := cs.prepareBatch(cs.useTempTable)
+		batch, err := cs.prepareBatch()
 		if err != nil {
 			panic(errors.Wrap(err, "clickhouseStorage#storeWorker prepareBatch"))
 		}
@@ -119,9 +130,9 @@ func (cs *clickhouseStorage) storeWorker() {
 func (cs *clickhouseStorage) Close() error {
 	close(cs.jobCh)
 	cs.wg.Wait()
-	if cs.useTempTable {
-		if err := cs.swapTempTable(); err != nil {
-			return errors.Wrap(err, "clickhouseStorage#Close swapTempTable")
+	if cs.swap {
+		if err := cs.swapTempTableBack(); err != nil {
+			return errors.Wrap(err, "clickhouseStorage#Close swapTempTableBack")
 		}
 	}
 	if cs.shouldUpdateViews {
@@ -133,26 +144,41 @@ func (cs *clickhouseStorage) Close() error {
 	return nil
 }
 
-func (cs *clickhouseStorage) createTempTable() error {
-	err := cs.conn.Exec(context.Background(), `DROP TABLE measurements_tmp`)
-	if err != nil {
-		log.Println(errors.Wrap(err, "clickhouseStorage#createTempTable Exec"))
+func (cs *clickhouseStorage) measurementsTableName() string {
+	if cs.swap {
+		return "measurements_tmp"
 	}
-	err = cs.conn.Exec(context.Background(), `CREATE TABLE measurements_tmp AS measurements`)
+	return "measurements"
+}
+
+func (cs *clickhouseStorage) truncateMeasurements() error {
+	err := cs.conn.Exec(context.Background(), fmt.Sprintf(`TRUNCATE %s`, cs.measurementsTableName()))
 	if err != nil {
-		return errors.Wrap(err, "clickhouseStorage#createTempTable Exec")
-	}
-	err = cs.conn.Exec(context.Background(), `EXCHANGE TABLES measurements AND measurements_tmp`)
-	if err != nil {
-		return errors.Wrap(err, "clickhouseStorage#createTempTable Exec")
+		return errors.Wrap(err, "clickhouseStorage#truncateMeasurements Exec")
 	}
 	return nil
 }
 
-func (cs *clickhouseStorage) swapTempTable() error {
+func (cs *clickhouseStorage) swapToTempTable() error {
+	err := cs.conn.Exec(context.Background(), `DROP TABLE measurements_tmp`)
+	if err != nil {
+		log.Println(errors.Wrap(err, "clickhouseStorage#swapToTempTable Exec"))
+	}
+	err = cs.conn.Exec(context.Background(), `CREATE TABLE measurements_tmp AS measurements`)
+	if err != nil {
+		return errors.Wrap(err, "clickhouseStorage#swapToTempTable Exec")
+	}
+	err = cs.conn.Exec(context.Background(), `EXCHANGE TABLES measurements AND measurements_tmp`)
+	if err != nil {
+		return errors.Wrap(err, "clickhouseStorage#swapToTempTable Exec")
+	}
+	return nil
+}
+
+func (cs *clickhouseStorage) swapTempTableBack() error {
 	err := cs.conn.Exec(context.Background(), `EXCHANGE TABLES measurements_tmp AND measurements`)
 	if err != nil {
-		return errors.Wrap(err, "clickhouseStorage#swapTempTable Exec")
+		return errors.Wrap(err, "clickhouseStorage#swapTempTableBack Exec")
 	}
 	return nil
 }
@@ -391,7 +417,7 @@ func (cs *clickhouseStorage) insertInBatch(batch driver.Batch, it ports.Measurem
 			if err := batch.Send(); err != nil {
 				return errors.Wrap(err, "clickhouseStorage#InsertMeasurements Send")
 			}
-			batch, err = cs.prepareBatch(cs.useTempTable)
+			batch, err = cs.prepareBatch()
 			if err != nil {
 				return errors.Wrap(err, "clickhouseStorage#InsertMeasurements prepareBatch")
 			}
@@ -406,11 +432,8 @@ func (cs *clickhouseStorage) insertInBatch(batch driver.Batch, it ports.Measurem
 	return nil
 }
 
-func (cs *clickhouseStorage) prepareBatch(useTempTable bool) (driver.Batch, error) {
-	tableName := "measurements"
-	if useTempTable {
-		tableName = "measurements_tmp"
-	}
+func (cs *clickhouseStorage) prepareBatch() (driver.Batch, error) {
+	tableName := cs.measurementsTableName()
 	query := fmt.Sprintf(`INSERT INTO %s (
 		id, test_style, ip, time, upload, mbps, loss_rate, min_rtt, latitude,
 		longitude, location_accuracy_km, has_access_token, access_token_sig, asn_id, geospace_id
@@ -432,7 +455,7 @@ func (cs *clickhouseStorage) InsertMeasurements(it ports.MeasurementIterator) er
 func (cs *clickhouseStorage) LastMeasurementDate() (*time.Time, error) {
 	row := cs.conn.QueryRow(
 		context.Background(),
-		`SELECT time FROM measurements ORDER BY time DESC LIMIT 1`,
+		fmt.Sprintf(`SELECT time FROM %s ORDER BY time DESC LIMIT 1`, cs.measurementsTableName()),
 	)
 	if row.Err() == sql.ErrNoRows {
 		return nil, nil
