@@ -1,36 +1,28 @@
 CREATE MATERIALIZED VIEW summary_geospace_month_tmp
 ENGINE=MergeTree
-ORDER BY (geospace_id, year, month)
+ORDER BY (upload, geospace_id, year, month)
 POPULATE
 AS
 SELECT
-    quantileExactState(0.5)(m_ip.med_download_ip_mbps) as med_download_mbps,
-    quantileExactState(0.5)(m_ip.med_upload_ip_mbps) as med_upload_mbps,
-    quantileExactState(0.5)(m_ip.med_download_ip_rtt) as med_download_min_rtt,
-    quantileExactState(0.5)(m_ip.med_upload_ip_rtt) as med_upload_min_rtt,
-    CountIf(med_download_ip_mbps < 25) as bad_download_count,
-    CountIf(med_upload_ip_mbps < 3) as bad_upload_count,
-    CountIf(med_download_ip_mbps >= 25 AND med_download_ip_mbps < 100) as normal_download_count,
-    CountIf(med_upload_ip_mbps >= 3 AND med_upload_ip_mbps < 20) as normal_upload_count,
-    CountIf(med_download_ip_mbps > 100) as good_download_count,
-    CountIf(med_upload_ip_mbps > 20) as good_upload_count,
-    Sum(has_download) as total_download_samples,
-    Sum(has_upload) as total_upload_samples,
+    quantileExact(0.5)(m_ip.med_ip_mbps) as med_mbps,
+    quantileExact(0.5)(m_ip.med_ip_rtt) as med_min_rtt,
+    CountIf(med_ip_mbps < if(upload=0, 25, 3)) as bad_count,
+    CountIf(med_ip_mbps >= if(upload=0, 25, 3) AND med_ip_mbps < if (upload=0, 100, 20)) as normal_count,
+    CountIf(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
+    Count(*) as total_samples,
     m_ip.geospace_id,
+    m_ip.upload,
     m_ip.year as year,
     m_ip.month as month
 FROM (
     SELECT 
         m.geospace_id, 
-        quantileExactIf(0.5)(m.mbps, m.upload = 0) as med_download_ip_mbps,
-        quantileExactIf(0.5)(m.mbps, m.upload = 1) as med_upload_ip_mbps,
-        quantileExactIf(0.5)(m.min_rtt, m.upload = 0) as med_download_ip_rtt,
-        quantileExactIf(0.5)(m.min_rtt, m.upload = 1) as med_upload_ip_rtt,
-        CountIf(DISTINCT m.ip, upload = 1) as has_upload,
-        CountIf(DISTINCT m.ip, upload = 0) as has_download,
+        quantileExact(0.5)(m.mbps) as med_ip_mbps,
+        quantileExact(0.5)(m.min_rtt) as med_ip_rtt,
+        m.upload,
         YEAR(m.time) as year,
         MONTH(m.time) as month
     FROM measurements m
-    GROUP BY m.geospace_id, m.ip, year, month
+    GROUP BY m.geospace_id, m.upload, m.ip, year, month
 ) m_ip 
-GROUP BY m_ip.geospace_id, m_ip.year, m_ip.month;
+GROUP BY m_ip.geospace_id, m_ip.upload, m_ip.year, m_ip.month;
