@@ -10,7 +10,7 @@ var DevConfig = &Config{
 	DBUser:                    "default",
 	DBPassword:                "",
 	DBHost:                    "localhost",
-	DBPort:                    "9001",
+	DBPortStr:                 "9001",
 	FilesBucketName:           "mlab-processed-data",
 	ClickhouseStorageNWorkers: fmt.Sprintf("%d", runtime.NumCPU()),
 }

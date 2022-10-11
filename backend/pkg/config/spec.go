@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
+
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 )
 
 type Config struct {
@@ -12,7 +15,7 @@ type Config struct {
 	DBUser                    string `config:"DB_USER"`
 	DBPassword                string `config:"DB_PASSWORD"`
 	DBHost                    string `config:"DB_HOST"`
-	DBPort                    string `config:"DB_PORT"`
+	DBPortStr                 string `config:"DB_PORT"`
 	FilesBucketName           string `config:"FILES_BUCKET_NAME"`
 	CORSAllowedOrigins        string `config:"CORS_ALLOWED_ORIGINS"`
 	TSDBStorageNWorkers       string `config:"TSDB_STORAGE_NWORKERS"`
@@ -25,6 +28,14 @@ func (c *Config) DBDSN() string {
 		"host=%s dbname=%s user=%s password=%s port=%s sslmode=disable",
 		c.DBHost, c.DBName, c.DBUser, c.DBPassword, c.DBPort,
 	)
+}
+
+func (c *Config) DBPort() int {
+	dbPort, err := strconv.Atoi(c.DBPortStr)
+	if err != nil {
+		panic(errors.Wrap(err, "Config#DBPort Atoi"))
+	}
+	return dbPort
 }
 
 func (c *Config) AllowedOrigins() []string {
