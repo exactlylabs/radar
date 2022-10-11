@@ -6,7 +6,5 @@ const mapContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  MapContainer: () => {
-    return mapContainerStyle;
-  }
+  MapContainer: mapContainerStyle
 }

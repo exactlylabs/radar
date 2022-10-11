@@ -24,7 +24,7 @@ const MyMap = (): ReactElement => {
     <MapContainer center={[DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}
                   zoom={4}
                   scrollWheelZoom
-                  style={styles.MapContainer()}
+                  style={styles.MapContainer}
     >
       <CustomMap />
       <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />

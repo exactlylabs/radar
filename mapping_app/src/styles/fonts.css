@@ -1,90 +1,19 @@
 @font-face {
-  font-family: 'OutfitBlack';
-  src: local('OutfitBlack'), url('../fonts/Outfit-Black.ttf') format('truetype');
-  font-weight: normal;
-  font-display: block;
-}
-
-@font-face {
-  font-family: 'OutfitBold';
-  src: local('OutfitBold'), url('../fonts/Outfit-Bold.ttf') format('truetype');
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: 'OutfitExtraBold';
-  src: local('OutfitExtraBold'), url('../fonts/Outfit-ExtraBold.ttf') format('truetype');
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: 'OutfitExtraLight';
-  src: local('OutfitExtraLight'), url('../fonts/Outfit-ExtraLight.ttf') format('truetype');
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: 'OutfitLight';
-  src: local('OutfitLight'), url('../fonts/Outfit-Light.ttf') format('truetype');
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: 'OutfitMedium';
-  src: local('OutfitMedium'), url('../fonts/Outfit-Medium.ttf') format('truetype');
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: 'OutfitRegular';
-  src: local('OutfitRegular'), url('../fonts/Outfit-Regular.ttf') format('truetype');
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: 'OutfitSemiBold';
-  src: local('OutfitSemiBold'), url('../fonts/Outfit-SemiBold.ttf') format('truetype');
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: 'OutfitThin';
-  src: local('OutfitThin'), url('../fonts/Outfit-Thin.ttf') format('truetype');
-  font-weight: normal;
-}
-
-.fw-black {
-  font-family: OutfitBlack, OutfitRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-}
-
-.fw-bold {
-  font-family: OutfitBold, OutfitRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-}
-
-.fw-extra-bold {
-  font-family: OutfitExtraBold, OutfitRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-}
-
-.fw-extra-light {
-  font-family: OutfitExtraLight, OutfitRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Outfit';
+  src: local('Outfit'), url('../fonts/Outfit-VariableFont_wght.ttf') format('truetype-variations');
+  font-weight: 100 1000;
 }
 
 .fw-light {
-  font-family: OutfitLight, OutfitRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-variation-settings: 'wght' 300;
 }
 
 .fw-medium {
-  font-family: OutfitMedium, OutfitRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-variation-settings: 'wght' 500;
 }
 
 .fw-regular {
-  font-family: OutfitRegular, OutfitRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-}
-
-.fw-semi-bold {
-  font-family: OutfitSemiBold, OutfitRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-}
-
-.fw-thin {
-  font-family: OutfitThin, OutfitRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: Outfit, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
