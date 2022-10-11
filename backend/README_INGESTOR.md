@@ -32,14 +32,14 @@ Then, call `go run cmd/fillgeospaces/main.go` and it will import everything for 
 ### Ingest
 
 This executable runs the ingestion of a specific date range and finishes the process.
-Call it by executing `go run cmd/ingest/main.go -start=2022-10-01 -end=2022-10-02`. Modify the date range as you see fit
+Call it by executing `go run cmd/ingest/main.go -start=2022-10-01 -end=2022-10-02`. Modify the date range as you see fit or use `-h` option to see the other options
 
 
 ### Ingestor Service
 
-This is the executable that should run in production. It runs the ingestion continuously, when the first time executing the ingestion, it will start from a default date (configurable through `-default-start` option) and then it will initiate a loop that triggers every hour and starts an ingestion of new data since the latest timestamp stored in the DB.
+This is the executable that should run in production. It runs the ingestion continuously, triggering every hour and starting an ingestion of new data since the latest timestamp stored in the DB.
 
-Call it by executing `go run cmd/ingestor_service/main.go`. Modify the date range as you see fit
+Call it by executing `go run cmd/ingestor_service/main.go`.
 
 
 ## Code Architecture
