@@ -90,6 +90,9 @@ func main() {
 		Port:        conf.DBPort(),
 		NWorkers:    nWorkers,
 		UpdateViews: true,
+		// When ingesting, the view gets updated and ends up in a bad state.
+		// This prevents it from happening
+		SwapTempTable: true,
 	})
 	// Run a first time then, run once every x hour
 	timer := time.NewTimer(time.Second)

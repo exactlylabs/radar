@@ -16,9 +16,10 @@ import (
 
 func main() {
 	startStr := flag.String("start", "2022-01-01", "Start date")
-	finalStr := flag.String("final", "2023-01-01", "Final date")
+	endStr := flag.String("end", "2023-01-01", "Final date")
 	updateViews := flag.Bool("update-views", false, "Whether to update the materialized views")
-	useTempTable := flag.Bool("temp-table", false, "Whether to insert measurements in a temporary table and then switch to the original")
+	swapTable := flag.Bool("swap-table", false, "Whether to first swap the existing measurements table in a temporary table and then switch back to the original")
+	truncate := flag.Bool("truncate", false, "Whether to truncate before inserting")
 	flag.Parse()
 	godotenv.Load()
 	conf := config.GetConfig()
@@ -31,18 +32,19 @@ func main() {
 		nWorkers = n
 	}
 	storage := clickhousestorage.New(&clickhousestorage.ChStorageOptions{
-		DBName:       conf.DBName,
-		Username:     conf.DBUser,
-		Password:     conf.DBPassword,
-		Host:         conf.DBHost,
-		Port:         conf.DBPort(),
-		NWorkers:     nWorkers,
-		UpdateViews:  *updateViews,
-		UseTempTable: *useTempTable,
+		DBName:        conf.DBName,
+		Username:      conf.DBUser,
+		Password:      conf.DBPassword,
+		Host:          conf.DBHost,
+		Port:          conf.DBPort(),
+		NWorkers:      nWorkers,
+		UpdateViews:   *updateViews,
+		SwapTempTable: *swapTable,
+		TruncateFirst: *truncate,
 	})
 
 	start, _ := time.Parse("2006-01-02", *startStr)
-	final, _ := time.Parse("2006-01-02", *finalStr)
+	final, _ := time.Parse("2006-01-02", *endStr)
 	t := time.Now()
 	err := ingestor.Ingest(context.Background(), storage, config.GetConfig().FilesBucketName, start, final)
 	if err != nil {
