@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -12,7 +11,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorage"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor"
@@ -41,8 +39,6 @@ func runInsertions(ctx context.Context, storage ports.MeasurementsStorage) {
 	endTime := time.Now().Truncate(time.Hour * 24)
 	start := time.Now()
 	log.Printf("Requesting insertions from %v to %v\n", measStartTime, endTime)
-
-	defer storage.Close()
 	err = ingestor.Ingest(ctx, storage, config.GetConfig().FilesBucketName, *measStartTime, endTime)
 	if err != nil {
 		panic(err)
@@ -85,16 +81,16 @@ func main() {
 		}
 		nWorkers = n
 	}
-	storage := clickhousestorage.New(&clickhouse.Options{
-		Auth: clickhouse.Auth{
-			Database: conf.DBName,
-			Username: conf.DBUser,
-			Password: conf.DBPassword,
-		},
-		Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
-		MaxOpenConns: nWorkers + 5,
-		ReadTimeout:  time.Hour,
-	}, nWorkers, true, false)
+
+	storage := clickhousestorage.New(&clickhousestorage.ChStorageOptions{
+		DBName:      conf.DBName,
+		Username:    conf.DBUser,
+		Password:    conf.DBPassword,
+		Host:        conf.DBHost,
+		Port:        conf.DBPort(),
+		NWorkers:    nWorkers,
+		UpdateViews: true,
+	})
 	// Run a first time then, run once every x hour
 	timer := time.NewTimer(time.Second)
 	for {

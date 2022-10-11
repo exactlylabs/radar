@@ -17,6 +17,24 @@ import (
 	"github.com/google/uuid"
 )
 
+type ChStorageOptions struct {
+	Username string
+	Password string
+	Host     string
+	Port     int
+	DBName   string
+	NWorkers int
+	// UpdateViews, when true is going to recreate all materialized views when Close is called
+	// Defaults to false
+	UpdateViews bool
+	// UseTempTable makes the ingestor first swap current measurements table
+	// into a temporary one and when Closed is called, it swaps it back.
+	// This options is useful due to a problem with clickhouse where when we insert more data,
+	// the views get messed up because it tries to auto update them, but ends up failing because of our double aggregation.
+	// Defaults to false
+	UseTempTable bool
+}
+
 type clickhouseStorage struct {
 	conn              driver.Conn
 	opts              *clickhouse.Options
@@ -28,24 +46,36 @@ type clickhouseStorage struct {
 	nWorkers          int
 	shouldUpdateViews bool
 	useTempTable      bool
+	started           bool
 }
 
-func New(opts *clickhouse.Options, nWorkers int, updateViews bool, useTempTable bool) ports.MeasurementsStorage {
+func New(options *ChStorageOptions) ports.MeasurementsStorage {
 	return &clickhouseStorage{
-		opts:              opts,
+		opts: &clickhouse.Options{
+			Auth: clickhouse.Auth{
+				Database: options.DBName,
+				Username: options.Username,
+				Password: options.Password,
+			},
+			Addr:         []string{fmt.Sprintf("%s:%d", options.Host, options.Port)},
+			MaxOpenConns: options.NWorkers + 5,
+			ReadTimeout:  time.Hour,
+		},
 		geospaces:         make(map[string]*ports.Geospace),
 		asns:              make(map[string]string),
 		wg:                &sync.WaitGroup{},
 		lock:              &sync.Mutex{},
-		nWorkers:          nWorkers,
-		shouldUpdateViews: updateViews,
-		// Instead of inserting into the main table, we insert into a temporary table and then swap back
-		useTempTable: useTempTable,
+		nWorkers:          options.NWorkers,
+		shouldUpdateViews: options.UpdateViews,
+		useTempTable:      options.UseTempTable,
 	}
 }
 
 // Begin implements ports.MeasurementsStorage
 func (cs *clickhouseStorage) Begin() error {
+	if cs.started {
+		return nil
+	}
 	cs.jobCh = make(chan ports.MeasurementIterator)
 	conn, err := clickhouse.Open(cs.opts)
 	if err != nil {
@@ -68,6 +98,7 @@ func (cs *clickhouseStorage) Begin() error {
 			cs.storeWorker()
 		}()
 	}
+	cs.started = true
 	return nil
 }
 

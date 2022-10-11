@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorage"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor"
@@ -31,23 +30,23 @@ func main() {
 		}
 		nWorkers = n
 	}
-	storage := clickhousestorage.New(&clickhouse.Options{
-		Auth: clickhouse.Auth{
-			Database: conf.DBName,
-			Username: conf.DBUser,
-			Password: conf.DBPassword,
-		},
-		Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
-		MaxOpenConns: nWorkers + 5,
-	}, nWorkers, *updateViews, *useTempTable)
-	if err := storage.Begin(); err != nil {
-		panic(err)
-	}
-	defer storage.Close()
+	storage := clickhousestorage.New(&clickhousestorage.ChStorageOptions{
+		DBName:       conf.DBName,
+		Username:     conf.DBUser,
+		Password:     conf.DBPassword,
+		Host:         conf.DBHost,
+		Port:         conf.DBPort(),
+		NWorkers:     nWorkers,
+		UpdateViews:  *updateViews,
+		UseTempTable: *useTempTable,
+	})
+
 	start, _ := time.Parse("2006-01-02", *startStr)
 	final, _ := time.Parse("2006-01-02", *finalStr)
+	t := time.Now()
 	err := ingestor.Ingest(context.Background(), storage, config.GetConfig().FilesBucketName, start, final)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Finished Ingestion in ", time.Since(t))
 }

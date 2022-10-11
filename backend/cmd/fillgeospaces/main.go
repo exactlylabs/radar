@@ -7,14 +7,12 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"runtime"
 	"strconv"
 
-	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorage"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/ports"
@@ -49,15 +47,14 @@ func main() {
 		}
 		nWorkers = n
 	}
-	storage := clickhousestorage.New(&clickhouse.Options{
-		Auth: clickhouse.Auth{
-			Database: conf.DBName,
-			Username: conf.DBUser,
-			Password: conf.DBPassword,
-		},
-		Addr:         []string{fmt.Sprintf("%s:%s", conf.DBHost, conf.DBPort)},
-		MaxOpenConns: nWorkers + 5,
-	}, nWorkers, false, false)
+	storage := clickhousestorage.New(&clickhousestorage.ChStorageOptions{
+		DBName:   conf.DBName,
+		Username: conf.DBUser,
+		Password: conf.DBPassword,
+		Host:     conf.DBHost,
+		Port:     conf.DBPort(),
+		NWorkers: nWorkers,
+	})
 	storage.Begin()
 	defer storage.Close()
 	for _, ns := range importOrder {
