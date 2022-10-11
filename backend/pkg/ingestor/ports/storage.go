@@ -26,7 +26,7 @@ type Geospace struct {
 }
 
 type MeasurementsStorage interface {
-	// Begin the storage before starting running insertions
+	// Begin the storage before starting running insertions. Should be idempotent
 	Begin() error
 	InsertMeasurements(it MeasurementIterator) error
 	LastMeasurementDate() (*time.Time, error)
