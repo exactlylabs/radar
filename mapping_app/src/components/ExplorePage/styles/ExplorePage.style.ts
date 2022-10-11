@@ -6,7 +6,5 @@ const explorePageContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  ExplorePageContainer: () => {
-    return explorePageContainerStyle;
-  }
+  ExplorePageContainer: explorePageContainerStyle
 }
