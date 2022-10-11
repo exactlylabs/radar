@@ -6,10 +6,10 @@ import {getSignalStateDownload, speedColors, SpeedsObject} from "../../../utils/
 import ReactDOMServer from "react-dom/server";
 import GeographicalTooltip from "../GeographicalTooltip/GeographicalTooltip";
 import {Filter, Optional} from "../../../utils/types";
-import {GeospaceInfo} from "../../../api/geospaces/types";
+import {Geospace, GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
 import {useMap} from "react-leaflet";
 import {vectorTilesUrl} from "../../../api/namespaces/requests";
-import geojsonvt from 'geojson-vt';
+
 
 const geoJSONOptions: L.GeoJSONOptions = {
   style: (feature) => {
@@ -40,7 +40,11 @@ const protobufOptions: VectorGrid.ProtobufOptions = {
   rendererFactory: L.canvas.tile, // Much needed performance improvement to force rendering with Tile canvas instead of SVG
   vectorTileLayerStyles: { myLayer: baseStyle },
   interactive: true,
-  getFeatureId: (feature: any) => feature.properties.name,
+  getFeatureId: (feature: any): string => {
+    const summary: GeospaceOverview = JSON.parse(feature.properties.summary) as GeospaceOverview;
+    // ids that start with 0 will then be wrongly parsed as an integer without the zero.
+    return summary.geospace.geo_id[0] === '0' ? summary.geospace.geo_id.substring(1) : summary.geospace.geo_id;
+  },
 }
 
 interface CustomMapProps {
@@ -82,9 +86,16 @@ export const CustomMap = ({
     });
     vectorGridLayer.on('mouseover', (e: LeafletMouseEvent) => {
       const properties: GeoJSONProperties = e.propagatedFrom.properties as GeoJSONProperties;
-      console.log(e.layer);
-      vectorGridLayer.setFeatureStyle(e.propagatedFrom.feature.id, {fillOpacity: 1})
-    })
+      const summary: GeospaceOverview = JSON.parse(e.propagatedFrom.properties.summary) as GeospaceOverview;
+      console.log(summary.geospace.geo_id)
+      vectorGridLayer.setFeatureStyle(parseInt(summary.geospace.geo_id), {...baseStyle, fillOpacity: 1})
+    });
+    vectorGridLayer.on('mouseout', (e: LeafletMouseEvent) => {
+      const properties: GeoJSONProperties = e.propagatedFrom.properties as GeoJSONProperties;
+      const summary: GeospaceOverview = JSON.parse(e.propagatedFrom.properties.summary) as GeospaceOverview;
+      console.log(summary.geospace.geo_id)
+      vectorGridLayer.setFeatureStyle(parseInt(summary.geospace.geo_id), {...baseStyle, fillOpacity: baseStyle.fillOpacity})
+    });
   }
   /*map.eachLayer((layer: any) => {
       if(layer.feature) {
