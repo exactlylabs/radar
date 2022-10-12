@@ -8,8 +8,8 @@ interface ExplorationPopoverProps {
 
 const ExplorationPopoverIcon = ({openPopover}: ExplorationPopoverProps): ReactElement => {
   return (
-    <div style={styles.ExplorationPopoverIconContainer()} onClick={openPopover}>
-      <img src={PopoverClosedIcon} style={styles.Icon()} alt={'popover-closed-icon'}/>
+    <div style={styles.ExplorationPopoverIconContainer} onClick={openPopover}>
+      <img src={PopoverClosedIcon} style={styles.Icon} alt={'popover-closed-icon'}/>
     </div>
   )
 }

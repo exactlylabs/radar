@@ -14,7 +14,7 @@ const SpeedDistributionPercentageBar = ({
   servedPercentage
 }: SpeedDistributionPercentageBarProps): ReactElement => {
   return (
-    <div style={styles.SpeedDistributionPercentageBarContainer()}>
+    <div style={styles.SpeedDistributionPercentageBarContainer}>
       <div className={'fw-medium'} style={styles.Fragment(unservedPercentage, speedColors.UNSERVED)}>
         {unservedPercentage}
       </div>

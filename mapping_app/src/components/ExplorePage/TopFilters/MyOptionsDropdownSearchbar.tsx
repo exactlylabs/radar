@@ -9,7 +9,7 @@ const MyOptionsDropdownSearchbar = ({
   onChange
 }: MyOptionsDropdownSearchbarProps): ReactElement => {
   return (
-    <input style={styles.Input()}
+    <input style={styles.Input}
            className={'fw-medium'}
            onChange={onChange}
            placeholder={`Enter provider's name...`}

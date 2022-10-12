@@ -8,7 +8,6 @@ const dropdownFilterVerticalDividerStyle: CSSProperties = {
 }
 
 export const styles = {
-  DropdownFilterVerticalDivider: () => {
-    return dropdownFilterVerticalDividerStyle;
-  }
+  DropdownFilterVerticalDivider: dropdownFilterVerticalDividerStyle
+
 }

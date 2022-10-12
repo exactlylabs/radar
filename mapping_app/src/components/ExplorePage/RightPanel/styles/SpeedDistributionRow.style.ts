@@ -44,9 +44,7 @@ const percentageStyle: CSSProperties = {
 }
 
 export const styles = {
-  SpeedDistributionRowContainer: () => {
-    return speedDistributionRowContainerStyle;
-  },
+  SpeedDistributionRowContainer: speedDistributionRowContainerStyle,
   SpeedDistributionRowIcon: (backgroundColor: string) => {
     const boxShadow = `0 2px 8px -2px ${backgroundColor}`;
     const border = `solid 1px ${backgroundColor}`;
@@ -57,16 +55,8 @@ export const styles = {
       backgroundColor,
     };
   },
-  SpeedText: () => {
-    return speedTextStyle;
-  },
-  SpeedTag: () => {
-    return speedTagStyle;
-  },
-  PeopleCount: () => {
-    return peopleCountStyle;
-  },
-  Percentage: () => {
-    return percentageStyle;
-  }
+  SpeedText: speedTextStyle,
+  SpeedTag: speedTagStyle,
+  PeopleCount: peopleCountStyle,
+  Percentage: percentageStyle
 }

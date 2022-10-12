@@ -21,7 +21,6 @@ const popoverSearchbarContainerStyle: CSSProperties = {
 const inputStyle: CSSProperties = {
   width: 'calc(100% - 21px)',
   color: WHITE,
-  fontFamily: 'OutfitLight',
   fontSize: '17px',
   backgroundColor: TRANSPARENT,
   border: 'none',
@@ -54,22 +53,10 @@ const clearIconStyle: CSSProperties = {
 }
 
 export const styles = {
-  PopoverSearchbarContainer: () => {
-    return popoverSearchbarContainerStyle;
-  },
-  Input: () => {
-    return inputStyle;
-  },
-  IconContainer: () => {
-    return iconContainerStyle;
-  },
-  SearchIcon: () => {
-    return searchIconStyle;
-  },
-  ClearIconContainer: () => {
-    return clearIconContainerStyle;
-  },
-  ClearIcon: () => {
-    return clearIconStyle;
-  }
+  PopoverSearchbarContainer: popoverSearchbarContainerStyle,
+  Input: inputStyle,
+  IconContainer: iconContainerStyle,
+  SearchIcon: searchIconStyle,
+  ClearIconContainer: clearIconContainerStyle,
+  ClearIcon: clearIconStyle,
 }

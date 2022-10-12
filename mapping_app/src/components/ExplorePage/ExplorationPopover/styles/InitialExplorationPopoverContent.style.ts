@@ -20,13 +20,7 @@ const subtitleStyle: CSSProperties = {
 }
 
 export const styles = {
-  InitialExplorationPopoverContentContainer: () => {
-    return initialExplorationPopoverContentContainerStyle;
-  },
-  Title: () => {
-    return titleStyle;
-  },
-  Subtitle: () => {
-    return subtitleStyle;
-  },
+  InitialExplorationPopoverContentContainer: initialExplorationPopoverContentContainerStyle,
+  Title: titleStyle,
+  Subtitle: subtitleStyle,
 }

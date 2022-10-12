@@ -16,8 +16,8 @@ const TopLevelTabsHeader = (): ReactElement => {
   }, [location.pathname])
 
   return (
-    <div style={styles.TopLevelTabsHeaderContainer()}>
-      <img src={MappingLogo} style={styles.MappingLogo()} alt={'mapping-logo'}/>
+    <div style={styles.TopLevelTabsHeaderContainer}>
+      <img src={MappingLogo} style={styles.MappingLogo} alt={'mapping-logo'}/>
       <TopLevelTabsHeaderTab text={'Explore the map'}
                              url={'explore'}
                              className={selectedTab === paths.EXPLORE ? '' : 'hover-opaque'}
@@ -29,7 +29,7 @@ const TopLevelTabsHeader = (): ReactElement => {
                              className={selectedTab === paths.ABOUT ? '' : 'hover-opaque'}
                              selected={selectedTab === paths.ABOUT}
       />*/}
-      <div style={styles.RightSideButtonContainer()}>
+      <div style={styles.RightSideButtonContainer}>
         {/* TODO: uncomment once we have the functionality implemented */}
         {/*<MyButton text={'Check your region'}
                     icon={<Room style={{marginRight: '4px'}}/>}

@@ -42,22 +42,10 @@ const unitStyle: CSSProperties = {
 }
 
 export const styles = {
-  SpeedDataCellContainer: () => {
-    return speedDataCellContainerStyle;
-  },
-  SpeedDataCellHeader: () => {
-    return speedDataCellHeaderStyle;
-  },
-  Text: () => {
-    return textStyle;
-  },
-  ValueContainer: () => {
-    return valueContainerStyle;
-  },
-  Value: () => {
-    return valueStyle;
-  },
-  Unit: () => {
-    return unitStyle;
-  }
+  SpeedDataCellContainer: speedDataCellContainerStyle,
+  SpeedDataCellHeader: speedDataCellHeaderStyle,
+  Text: textStyle,
+  ValueContainer: valueContainerStyle,
+  Value: valueStyle,
+  Unit: unitStyle
 }

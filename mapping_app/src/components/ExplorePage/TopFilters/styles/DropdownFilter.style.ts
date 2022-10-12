@@ -26,12 +26,8 @@ const textStyle: CSSProperties = {
 }
 
 export const styles = {
-  DropdownFilterContainer: () => {
-    return dropdownFilterContainerStyle;
-  },
-  Arrow: () => {
-    return arrowStyle;
-  },
+  DropdownFilterContainer: dropdownFilterContainerStyle,
+  Arrow: arrowStyle,
   Text: (textWidth: string) => {
     return {...textStyle, width: textWidth};
   }

@@ -14,9 +14,9 @@ const SecondLevelContentHeader = (): ReactElement => {
   }, [location.pathname]);
 
   return (
-    <div style={styles.SecondLevelContentHeader()}>
-      <p className={'fw-medium'} style={styles.Title()}>{currentPathname === paths.EXPLORE ? 'Explore the map' : ''}</p>
-      <p className={'fw-light'} style={styles.Subtitle()}>{currentPathname === paths.EXPLORE ? 'Use our mapping tool to see how broadband speeds vary across the country.' : ''}</p>
+    <div style={styles.SecondLevelContentHeader}>
+      <p className={'fw-medium'} style={styles.Title}>{currentPathname === paths.EXPLORE ? 'Explore the map' : ''}</p>
+      <p className={'fw-light'} style={styles.Subtitle}>{currentPathname === paths.EXPLORE ? 'Use our mapping tool to see how broadband speeds vary across the country.' : ''}</p>
     </div>
   )
 }

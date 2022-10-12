@@ -34,16 +34,8 @@ const arrowStyle: CSSProperties = {
 }
 
 export const styles = {
-  SuggestionContainer: () => {
-    return suggestionContainerStyle;
-  },
-  Icon: () => {
-    return iconStyle;
-  },
-  Text: () => {
-    return textStyle;
-  },
-  Arrow: () => {
-    return arrowStyle;
-  }
+  SuggestionContainer: suggestionContainerStyle,
+  Icon: iconStyle,
+  Text: textStyle,
+  Arrow: arrowStyle,
 }

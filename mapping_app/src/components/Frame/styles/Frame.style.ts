@@ -12,10 +12,6 @@ const contentWrapperStyle: CSSProperties = {
 }
 
 export const styles = {
-  FrameWrapper: () => {
-    return frameWrapperStyle;
-  },
-  ContentWrapper: () => {
-    return contentWrapperStyle;
-  }
+  FrameWrapper: frameWrapperStyle,
+  ContentWrapper: contentWrapperStyle
 }

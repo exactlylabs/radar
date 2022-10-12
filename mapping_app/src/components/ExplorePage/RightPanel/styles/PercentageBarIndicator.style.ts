@@ -24,9 +24,7 @@ const verticalLineStyle: CSSProperties = {
 }
 
 export const styles = {
-  PercentageBarIndicatorContainer: () => {
-    return percentageBarIndicatorContainerStyle;
-  },
+  PercentageBarIndicatorContainer: percentageBarIndicatorContainerStyle,
   Text: (left: string | number, isTop?: boolean) => {
     return isTop ? {...textStyle, left, top: 0} : {...textStyle, left, bottom: 0}
   },

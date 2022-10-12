@@ -33,7 +33,7 @@ const GeographicalCategoryTabs = ({
   }
 
   return (
-    <div style={styles.GeographicalCategoryTabsContainer()}>
+    <div style={styles.GeographicalCategoryTabsContainer}>
       <div className={'fw-regular hover-opaque'}
            style={styles.Tab(selectedTab === tabs.STATES)}
            onClick={selectStates}

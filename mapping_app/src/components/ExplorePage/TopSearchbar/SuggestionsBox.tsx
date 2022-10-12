@@ -36,7 +36,7 @@ const SuggestionsBox = ({
   }
 
   return (
-    <div style={styles.SuggestionsBoxContainer()} id={'suggestions-box'}>
+    <div style={styles.SuggestionsBoxContainer} id={'suggestions-box'}>
       {
         suggestions.map((suggestion, index) =>
           <Suggestion suggestion={suggestion}

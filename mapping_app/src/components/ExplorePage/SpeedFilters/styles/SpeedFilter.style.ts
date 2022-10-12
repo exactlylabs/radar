@@ -21,13 +21,7 @@ const secondaryTextStyle: CSSProperties = {
 }
 
 export const styles = {
-  SpeedFilterContainer: () => {
-    return speedFilterStyle;
-  },
-  Text: () => {
-    return textStyle;
-  },
-  SecondaryText: () => {
-    return secondaryTextStyle;
-  }
+  SpeedFilterContainer: speedFilterStyle,
+  Text: textStyle,
+  SecondaryText: secondaryTextStyle,
 }

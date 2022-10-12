@@ -100,16 +100,16 @@ const RightPanel = ({
   }
 
   return (
-    <div style={styles.RightPanelContainer()} id={'right-panel'}>
+    <div style={styles.RightPanelContainer} id={'right-panel'}>
       <ClosePanelButton onClick={closePanel}/>
-      <div style={styles.RightPanelContentContainer()}>
-        <div style={styles.RightPanelContentWrapper()}>
+      <div style={styles.RightPanelContentContainer}>
+        <div style={styles.RightPanelContentWrapper}>
           <RightPanelHeader stateName={getName()}
                             stateCountry={'U.S.A'}
                             stateSignalState={getSignalState()}
                             closePanel={closePanel}
           />
-          <div style={styles.DropdownFiltersContainer()}>
+          <div style={styles.DropdownFiltersContainer}>
             <DropdownFilters changeFilters={handleFilterChange}
                              speedType={speedType}
                              calendarType={calendarType}

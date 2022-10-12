@@ -19,14 +19,14 @@ const SpeedFilter = ({
   toggleFilter
 }: SpeedFilterProps): ReactElement => {
   return (
-    <div style={styles.SpeedFilterContainer()}>
+    <div style={styles.SpeedFilterContainer}>
       <MyCheckbox backgroundColor={boxColor}
                   color={WHITE}
                   isChecked={isChecked}
                   onClick={toggleFilter}
       />
-      <p className={'fw-regular'} style={styles.Text()}>{text}</p>
-      { secondaryText && <p className={'fw-light'} style={styles.SecondaryText()}>{secondaryText}</p> }
+      <p className={'fw-regular'} style={styles.Text}>{text}</p>
+      { secondaryText && <p className={'fw-light'} style={styles.SecondaryText}>{secondaryText}</p> }
     </div>
   )
 }

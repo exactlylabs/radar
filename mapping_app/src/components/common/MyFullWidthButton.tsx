@@ -19,11 +19,11 @@ const MyFullWidthButton = ({
   return iconFirst ?
   <div style={styles.ButtonContainer(backgroundColor, color)}>
     {icon}
-    <p className={'fw-medium'} style={styles.Text()}>{text}</p>
+    <p className={'fw-medium'} style={styles.Text}>{text}</p>
   </div>
   :
   <div style={styles.ButtonContainer(backgroundColor, color)}>
-    <p className={'fw-medium'} style={styles.Text()}>{text}</p>
+    <p className={'fw-medium'} style={styles.Text}>{text}</p>
     {icon}
   </div>;
 }
