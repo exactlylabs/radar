@@ -16,7 +16,7 @@ const OpenFiltersButton = ({
               onClick={openFilters}
               color={BLACK}
               backgroundColor={DEFAULT_SECONDARY_BUTTON}
-              icon={<img src={FiltersIcon} style={styles.Icon()} alt={'filters-icon'}/> }
+              icon={<img src={FiltersIcon} style={styles.Icon} alt={'filters-icon'}/> }
               iconFirst
               className={'fw-regular hover-opaque'}
     />

@@ -19,24 +19,24 @@ const PopoverSearchbar = ({
   const clearInput = () => setText('');
 
   return (
-    <div style={styles.PopoverSearchbarContainer()}>
-      <div style={styles.IconContainer()}>
-        <img src={SearchIcon} style={styles.SearchIcon()} alt={'search-icon'}/>
+    <div style={styles.PopoverSearchbarContainer}>
+      <div style={styles.IconContainer}>
+        <img src={SearchIcon} style={styles.SearchIcon} alt={'search-icon'}/>
       </div>
       <input placeholder={'Search...'}
              id={'popover-searchbar'}
              className={'fw-light'}
-             style={styles.Input()}
+             style={styles.Input}
              onChange={handleInputChange}
              value={text}
        />
       {
         !!text &&
         <div className={'hover-opaque'}
-             style={styles.ClearIconContainer()}
+             style={styles.ClearIconContainer}
              onClick={clearInput}
         >
-          <ClearRounded style={styles.ClearIcon()}/>
+          <ClearRounded style={styles.ClearIcon}/>
         </div>
       }
     </div>

@@ -19,7 +19,7 @@ const MyCheckbox = ({
     <div style={styles.MyCheckboxContainer(backgroundColor, color)}
          onClick={onClick}
     >
-      {isChecked && <CheckRounded style={styles.Icon()}/>}
+      {isChecked && <CheckRounded style={styles.Icon}/>}
     </div>
   )
 }

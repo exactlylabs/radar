@@ -49,10 +49,6 @@ export const styles = {
   ExplorationPopoverContainer: (currentPopoverState: string) => {
     return currentPopoverState === popoverStates.INITIAL ? explorationPopoverContainerStyle : extendedExplorationPopoverContainerStyle;
   },
-  ShrinkButtonContainer: () => {
-    return shrinkButtonContainerStyle;
-  },
-  Arrow: () => {
-    return arrowStyle;
-  }
+  ShrinkButtonContainer: shrinkButtonContainerStyle,
+  Arrow: arrowStyle
 }

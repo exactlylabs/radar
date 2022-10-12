@@ -12,7 +12,5 @@ const inputStyle: CSSProperties = {
 }
 
 export const styles = {
-  Input: () => {
-    return inputStyle;
-  }
+  Input: inputStyle,
 }

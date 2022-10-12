@@ -60,28 +60,14 @@ const searchedTermStyle: CSSProperties = {
 }
 
 export const styles = {
-  SpecificExplorationPopoverContentContainer: () => {
-    return specificExplorationPopoverContentStyle;
-  },
-  Header: () => {
-    return headerStyle;
-  },
+  SpecificExplorationPopoverContentContainer: specificExplorationPopoverContentStyle,
+  Header: headerStyle,
   ContentContainer: (type: string) => {
     return type === popoverStates.COUNTIES ? specificStateContentContainerStyle : contentContainerStyle;
   },
-  ArrowBack: () => {
-    return arrowBackStyle;
-  },
-  Title: () => {
-    return titleStyle;
-  },
-  StateSelectionText: () => {
-    return stateSelectionTextStyle;
-  },
-  NoResultsContainer: () => {
-    return noResultsContainerStyle;
-  },
-  SearchedTerm: () => {
-    return searchedTermStyle;
-  }
+  ArrowBack: arrowBackStyle,
+  Title: titleStyle,
+  StateSelectionText: stateSelectionTextStyle,
+  NoResultsContainer: noResultsContainerStyle,
+  SearchedTerm: searchedTermStyle
 }

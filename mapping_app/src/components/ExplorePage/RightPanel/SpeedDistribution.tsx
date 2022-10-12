@@ -58,8 +58,8 @@ const SpeedDistribution = ({
   }
 
   return (
-    <div style={styles.SpeedDistributionContainer()}>
-      <p className={'fw-semi-bold'} style={styles.Title()}>SPEED DISTRIBUTION</p>
+    <div style={styles.SpeedDistributionContainer}>
+      <p className={'fw-semi-bold'} style={styles.Title}>SPEED DISTRIBUTION</p>
       <SpeedDistributionPercentageBarIndicators percentages={[unservedPercentage, underservedPercentage, servedPercentage]}
                                                 indexesToDisplay={getIndexesForTopHalf()}
                                                 top

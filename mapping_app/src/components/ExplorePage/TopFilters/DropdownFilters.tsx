@@ -65,8 +65,8 @@ const DropdownFilters = ({
   });
 
   return (
-    <div style={styles.DropdownFiltersContainer()}>
-      <DropdownFilter icon={<img src={SpeedIcon} style={styles.Icon()} alt={'speed-icon'}/>}
+    <div style={styles.DropdownFiltersContainer}>
+      <DropdownFilter icon={<img src={SpeedIcon} style={styles.Icon} alt={'speed-icon'}/>}
                       options={speedFilters}
                       textWidth={'70px'}
                       type={filterTypes.SPEED}
@@ -75,7 +75,7 @@ const DropdownFilters = ({
 
       />
       <DropdownFilterVerticalDivider/>
-      <DropdownFilter icon={<img src={CalendarIcon} style={styles.Icon()} alt={'speed-icon'}/>}
+      <DropdownFilter icon={<img src={CalendarIcon} style={styles.Icon} alt={'speed-icon'}/>}
                       options={calendarFilters}
                       textWidth={'70px'}
                       type={filterTypes.CALENDAR}
@@ -83,7 +83,7 @@ const DropdownFilters = ({
                       selectedFilter={calendarType}
       />
       <DropdownFilterVerticalDivider/>
-      <DropdownFilter icon={<img src={ProvidersIcon} style={styles.Icon()} alt={'speed-icon'}/>}
+      <DropdownFilter icon={<img src={ProvidersIcon} style={styles.Icon} alt={'speed-icon'}/>}
                       options={providers}
                       withSearchbar
                       textWidth={'85px'}

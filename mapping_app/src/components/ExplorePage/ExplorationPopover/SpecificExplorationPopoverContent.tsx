@@ -100,9 +100,9 @@ const SpecificExplorationPopoverContent = ({
   const getContent = () => {
     if(filteredItems.length === 0) {
       return (
-        <div style={styles.NoResultsContainer()}>
+        <div style={styles.NoResultsContainer}>
           <p className={'fw-light'}>No results for </p>
-          <p className={'fw-medium'} style={styles.SearchedTerm()}>{inputText}</p>
+          <p className={'fw-medium'} style={styles.SearchedTerm}>{inputText}</p>
         </div>
       );
     } else {
@@ -129,10 +129,10 @@ const SpecificExplorationPopoverContent = ({
   }
 
   return (
-    <div style={styles.SpecificExplorationPopoverContentContainer()}>
-      <div style={styles.Header()}>
-        <ArrowBackRounded style={styles.ArrowBack()} onClick={goBack}/>
-        <p className={'fw-medium'} style={styles.Title()}>{getTitle()}</p>
+    <div style={styles.SpecificExplorationPopoverContentContainer}>
+      <div style={styles.Header}>
+        <ArrowBackRounded style={styles.ArrowBack} onClick={goBack}/>
+        <p className={'fw-medium'} style={styles.Title}>{getTitle()}</p>
       </div>
       <PopoverSearchbar handleInputChange={handleInputChange}
                         text={inputText}

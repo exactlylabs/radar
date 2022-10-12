@@ -28,13 +28,13 @@ const Suggestion = ({
 
   return (
     <div key={suggestion.name}
-         style={styles.SuggestionContainer()}
+         style={styles.SuggestionContainer}
          className={'hover-opaque'}
          onClick={handleSelectSuggestion}
     >
-      <LocationOnOutlined style={styles.Icon()}/>
-      <p className={'fw-regular'} style={styles.Text()}>{getName()}</p>
-      <ArrowForwardRounded style={styles.Arrow()}/>
+      <LocationOnOutlined style={styles.Icon}/>
+      <p className={'fw-regular'} style={styles.Text}>{getName()}</p>
+      <ArrowForwardRounded style={styles.Arrow}/>
     </div>
   )
 }

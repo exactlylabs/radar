@@ -22,10 +22,6 @@ const arrowStyle: CSSProperties = {
 }
 
 export const styles = {
-  ClosePanelButtonContainer: () => {
-    return closePanelButtonStyle;
-  },
-  Arrow: () => {
-    return arrowStyle;
-  }
+  ClosePanelButtonContainer: closePanelButtonStyle,
+  Arrow: arrowStyle,
 }

@@ -24,13 +24,7 @@ const rightSideButtonContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  TopLevelTabsHeaderContainer: () => {
-    return topLevelTabsHeaderContainerStyle;
-  },
-  MappingLogo: () => {
-    return mappingLogoStyle;
-  },
-  RightSideButtonContainer: () => {
-    return rightSideButtonContainerStyle;
-  }
+  TopLevelTabsHeaderContainer: topLevelTabsHeaderContainerStyle,
+  MappingLogo: mappingLogoStyle,
+  RightSideButtonContainer: rightSideButtonContainerStyle
 }

@@ -17,10 +17,6 @@ const conditionalFiltersContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  FiltersContainer: () => {
-    return filtersContainerStyle;
-  },
-  ConditionalFiltersContainer: () => {
-    return conditionalFiltersContainerStyle;
-  }
+  FiltersContainer: filtersContainerStyle,
+  ConditionalFiltersContainer: conditionalFiltersContainerStyle,
 }

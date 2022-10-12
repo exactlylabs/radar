@@ -9,7 +9,5 @@ const iconStyle: CSSProperties = {
 }
 
 export const styles = {
-  Icon: () => {
-    return iconStyle;
-  }
+  Icon: iconStyle,
 }

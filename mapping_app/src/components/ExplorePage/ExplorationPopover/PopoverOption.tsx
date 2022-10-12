@@ -24,12 +24,12 @@ const PopoverOption = ({
          style={styles.PopoverOptionContainer(light)}
          onClick={onClick}
     >
-      <p className={'fw-medium'} style={styles.Text()}>{text}</p>
-      {secondaryText && <p className={'fw-light'} style={styles.SecondaryText()}>{secondaryText}</p>}
+      <p className={'fw-medium'} style={styles.Text}>{text}</p>
+      {secondaryText && <p className={'fw-light'} style={styles.SecondaryText}>{secondaryText}</p>}
       {
         loading ?
-          <MySpinner color={DEFAULT_GREEN} style={styles.Arrow()}/> :
-          <ArrowForwardRounded style={styles.Arrow()}/>
+          <MySpinner color={DEFAULT_GREEN} style={styles.Arrow}/> :
+          <ArrowForwardRounded style={styles.Arrow}/>
       }
     </div>
   )

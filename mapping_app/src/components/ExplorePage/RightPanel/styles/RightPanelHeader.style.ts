@@ -81,35 +81,17 @@ const closeIconStyle: CSSProperties = {
 }
 
 export const styles = {
-  RightPanelHeaderContainer: () => {
-    return rightPanelHeaderContainerStyle;
-  },
-  LeftSideContainer: () => {
-    return leftSideContainerStyle;
-  },
-  StateTextContainer: () => {
-    return stateTextContainerStyle;
-  },
-  StateName: () => {
-    return stateNameStyle;
-  },
-  StateCountry: () => {
-    return stateCountryStyle;
-  },
-  SignalStateContainer: () => {
-    return signalStateContainerStyle;
-  },
+  RightPanelHeaderContainer: rightPanelHeaderContainerStyle,
+  LeftSideContainer: leftSideContainerStyle,
+  StateTextContainer: stateTextContainerStyle,
+  StateName: stateNameStyle,
+  StateCountry: stateCountryStyle,
+  SignalStateContainer: signalStateContainerStyle,
   StateSignalStateIndicator: (stateSignalState: string) => {
     const backgroundColor = speedColors[stateSignalState.toUpperCase() as keyof SpeedsObject];
     return {...stateSignalStateIndicatorStyle, backgroundColor};
   },
-  StateSignalState: () => {
-    return stateSignalStateStyle;
-  },
-  CloseButton: () => {
-    return closeButtonStyle;
-  },
-  CloseIcon: () => {
-    return closeIconStyle;
-  }
+  StateSignalState: stateSignalStateStyle,
+  CloseButton: closeButtonStyle,
+  CloseIcon: closeIconStyle
 }

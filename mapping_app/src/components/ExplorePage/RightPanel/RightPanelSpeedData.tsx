@@ -18,7 +18,7 @@ const RightPanelSpeedData = ({
 }: RightPanelSpeedDataProps): ReactElement => {
 
   return (
-    <div style={styles.RightPanelSpeedDataContainer()}>
+    <div style={styles.RightPanelSpeedDataContainer}>
       <SpeedDataCell icon={<ArrowDownwardRounded style={styles.Icon(speedState)}/>}
                      text={'Med. Download'}
                      value={medianDownload.toFixed(2)}

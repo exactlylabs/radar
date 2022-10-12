@@ -16,10 +16,6 @@ const titleStyle: CSSProperties = {
 }
 
 export const styles = {
-  SpeedDistributionContainer: () => {
-    return speedDistributionStyle;
-  },
-  Title: () => {
-    return titleStyle;
-  }
+  SpeedDistributionContainer: speedDistributionStyle,
+  Title: titleStyle
 }

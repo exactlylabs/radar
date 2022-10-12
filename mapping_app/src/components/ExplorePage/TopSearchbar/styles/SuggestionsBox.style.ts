@@ -15,7 +15,5 @@ const suggestionsBoxContainerStyle: CSSProperties = {
 
 
 export const styles = {
-  SuggestionsBoxContainer: () => {
-    return suggestionsBoxContainerStyle;
-  }
+  SuggestionsBoxContainer: suggestionsBoxContainerStyle
 }

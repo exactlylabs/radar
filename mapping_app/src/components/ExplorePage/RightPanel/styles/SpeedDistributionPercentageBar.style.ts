@@ -25,9 +25,7 @@ const fragmentStyle: CSSProperties = {
 }
 
 export const styles = {
-  SpeedDistributionPercentageBarContainer: () => {
-    return speedDistributionPercentageBarContainerStyle;
-  },
+  SpeedDistributionPercentageBarContainer: speedDistributionPercentageBarContainerStyle,
   Fragment: (width: string, backgroundColor: string) => {
     const boxShadow = `0 6px 15px -8px ${backgroundColor}`;
     return {...fragmentStyle, width, backgroundColor, boxShadow};

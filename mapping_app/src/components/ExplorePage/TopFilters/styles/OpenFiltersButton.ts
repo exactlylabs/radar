@@ -1,10 +1,5 @@
 import {CSSProperties} from "react";
 
-const openFiltersButtonContainerStyle: CSSProperties = {
-  width: '130px',
-  height: '48px',
-}
-
 const iconStyle: CSSProperties = {
   width: '18px',
   height: '18px',
@@ -12,10 +7,5 @@ const iconStyle: CSSProperties = {
 }
 
 export const styles = {
-  OpenFiltersButtonContainer: () => {
-    return openFiltersButtonContainerStyle;
-  },
-  Icon: () => {
-    return iconStyle;
-  }
+  Icon: iconStyle,
 }

@@ -33,7 +33,5 @@ export const styles = {
     if(color) style = {...style, color};
     return {...style, boxShadow};
   },
-  Text: () => {
-    return textStyle;
-  }
+  Text: textStyle
 }

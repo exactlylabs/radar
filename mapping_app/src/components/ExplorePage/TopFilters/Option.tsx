@@ -24,10 +24,10 @@ const Option = ({
   const getText = () => isAsn(option) ? capitalize(option.organization) : option;
 
   return (
-    <div style={styles.Option()} onClick={handleClick}>
+    <div style={styles.Option} onClick={handleClick}>
       <p className={'hover-opaque'} style={styles.Text(selected)}>{getText()}</p>
-      { !selected && <div style={styles.Icon()}></div> }
-      {  selected && <CheckRounded style={styles.Icon()}/> }
+      { !selected && <div style={styles.Icon}></div> }
+      {  selected && <CheckRounded style={styles.Icon}/> }
     </div>
   )
 }

@@ -10,7 +10,5 @@ const rightPanelHorizontalDividerStyle: CSSProperties = {
 }
 
 export const styles = {
-  RightPanelHorizontalDivider: () => {
-    return rightPanelHorizontalDividerStyle;
-  }
+  RightPanelHorizontalDivider: rightPanelHorizontalDividerStyle
 }
