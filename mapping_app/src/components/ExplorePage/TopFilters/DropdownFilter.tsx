@@ -53,12 +53,12 @@ const DropdownFilter = ({
   }
 
   return (
-    <div style={styles.DropdownFilterContainer()}
+    <div style={styles.DropdownFilterContainer}
          onClick={toggleOptionsDropdown}
     >
       {icon}
       <p className={'fw-regular hover-opaque'} style={styles.Text(textWidth)} id={`filter-${type}`}>{getText()}</p>
-      <KeyboardArrowDownRounded style={styles.Arrow()}/>
+      <KeyboardArrowDownRounded style={styles.Arrow}/>
       {
         dropdownOpen &&
         <OptionsDropdown options={options}

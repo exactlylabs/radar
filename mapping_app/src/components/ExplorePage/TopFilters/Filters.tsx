@@ -36,11 +36,11 @@ const Filters = ({
   }
 
   return (
-    <div style={styles.FiltersContainer()}>
+    <div style={styles.FiltersContainer}>
       <GeographicalCategoryTabs setGeospaceNamespace={setGeospaceNamespace}/>
       {
         extendedView &&
-        <div style={styles.ConditionalFiltersContainer()}>
+        <div style={styles.ConditionalFiltersContainer}>
           <DropdownFilters changeFilters={handleChangeFilters}
                            speedType={speedType}
                            calendarType={calendarType}

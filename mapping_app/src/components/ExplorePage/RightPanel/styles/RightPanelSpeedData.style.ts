@@ -19,9 +19,7 @@ const iconStyle: CSSProperties = {
 }
 
 export const styles = {
-  RightPanelSpeedDataContainer: () => {
-    return rightPanelSpeedDataContainerStyle;
-  },
+  RightPanelSpeedDataContainer: rightPanelSpeedDataContainerStyle,
   Icon: (speedState?: string) => {
     if(speedState) {
       const color = speedColors[speedState.toUpperCase() as keyof SpeedsObject];

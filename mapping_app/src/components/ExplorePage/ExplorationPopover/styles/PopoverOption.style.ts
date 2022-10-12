@@ -47,13 +47,7 @@ export const styles = {
   PopoverOptionContainer: (light?: boolean) => {
     return light ? popoverOptionContainerStyle : darkPopoverOptionContainerStyle;
   },
-  Text: () => {
-    return textStyle;
-  },
-  SecondaryText: () => {
-    return secondaryTextStyle;
-  },
-  Arrow: () => {
-    return arrowStyle;
-  }
+  Text: textStyle,
+  SecondaryText: secondaryTextStyle,
+  Arrow: arrowStyle
 }

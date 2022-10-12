@@ -41,22 +41,10 @@ const associationTextStyle: CSSProperties = {
 }
 
 export const styles = {
-  SecondLevelFooter: () => {
-    return secondLevelFooterStyle;
-  },
-  LeftSideContainer: () => {
-    return leftSideContainerStyle;
-  },
-  CopyrightText: () => {
-    return copyrightTextStyle;
-  },
-  RightSideContainer: () => {
-    return rightSideContainerStyle;
-  },
-  FooterIcon: () => {
-    return footerIconStyle;
-  },
-  AssociationText: () => {
-    return associationTextStyle;
-  }
+  SecondLevelFooter: secondLevelFooterStyle,
+  LeftSideContainer: leftSideContainerStyle,
+  CopyrightText: copyrightTextStyle,
+  RightSideContainer: rightSideContainerStyle,
+  FooterIcon: footerIconStyle,
+  AssociationText: associationTextStyle
 }

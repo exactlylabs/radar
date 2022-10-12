@@ -15,7 +15,7 @@ const PercentageBarIndicator = ({
   text,
 }: PercentageBarIndicatorProps): ReactElement => {
   return (
-    <div style={styles.PercentageBarIndicatorContainer()}>
+    <div style={styles.PercentageBarIndicatorContainer}>
       <p className={'fw-regular'} style={styles.Text(left, top)}>{text}</p>
       <div style={styles.VerticalLine(left, top)}></div>
     </div>

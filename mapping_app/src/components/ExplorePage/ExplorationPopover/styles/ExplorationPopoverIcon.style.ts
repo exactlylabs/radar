@@ -23,10 +23,6 @@ const iconStyle: CSSProperties = {
 }
 
 export const styles = {
-  ExplorationPopoverIconContainer: () => {
-    return explorationPopoverIconContainerStyle;
-  },
-  Icon: () => {
-    return iconStyle;
-  }
+  ExplorationPopoverIconContainer: explorationPopoverIconContainerStyle,
+  Icon: iconStyle
 }

@@ -39,18 +39,10 @@ const linkStyle: CSSProperties = {
 }
 
 export const styles = {
-  TopLevelFooter: () => {
-    return topLevelFooterStyle;
-  },
-  MappingLogo: () => {
-    return mappingLogoStyle;
-  },
-  LeftSideContainer: () => {
-    return leftSideContainerStyle;
-  },
-  RightSideContainer: () => {
-    return rightSideContainerStyle;
-  },
+  TopLevelFooter: topLevelFooterStyle,
+  MappingLogo: mappingLogoStyle,
+  LeftSideContainer: leftSideContainerStyle,
+  RightSideContainer: rightSideContainerStyle,
   Link: () => {
     return linkStyle;
   }

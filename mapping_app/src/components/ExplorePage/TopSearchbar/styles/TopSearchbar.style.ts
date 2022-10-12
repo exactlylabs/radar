@@ -27,7 +27,6 @@ const topSearchbarContainerStyle: CSSProperties = {
 const inputStyle: CSSProperties = {
   width: 'calc(100% - 105px)',
   color: BLACK,
-  fontFamily: 'OutfitLight',
   fontSize: '17px',
   backgroundColor: TRANSPARENT,
   border: 'none',

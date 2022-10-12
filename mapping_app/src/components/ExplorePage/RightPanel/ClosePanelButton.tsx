@@ -11,10 +11,10 @@ const ClosePanelButton = ({
 }: ClosePanelProps): ReactElement => {
   return (
     <div className={'hover-opaque'}
-         style={styles.ClosePanelButtonContainer()}
+         style={styles.ClosePanelButtonContainer}
          onClick={onClick}
     >
-      <ArrowForwardRounded style={styles.Arrow()}/>
+      <ArrowForwardRounded style={styles.Arrow}/>
     </div>
   )
 }

@@ -12,10 +12,10 @@ interface FrameProps {
 const Frame = ({children}: FrameProps): ReactElement => {
 
   return (
-    <div style={styles.FrameWrapper()}>
+    <div style={styles.FrameWrapper}>
       <TopLevelTabsHeader/>
       <SecondLevelContentHeader/>
-      <div style={styles.ContentWrapper()}>
+      <div style={styles.ContentWrapper}>
         {children}
       </div>
       <TopLevelFooter/>

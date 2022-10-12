@@ -99,37 +99,19 @@ const buttonContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  GeographicalTooltipContainer: () => {
-    return geographicalTooltipContainerStyle;
-  },
-  GeographicalTooltipContentWrapper: () => {
-    return geographicalTooltipContentWrapperStyle;
-  },
-  Header: () => {
-    return headerStyle;
-  },
-  TextContainer: () => {
-    return textContainerStyle;
-  },
-  MainText: () => {
-    return mainTextStyle;
-  },
-  SecondaryText: () => {
-    return secondaryTextStyle;
-  },
-  SignalStateContainer: () => {
-    return signalStateContainerStyle;
-  },
+  GeographicalTooltipContainer: geographicalTooltipContainerStyle,
+  GeographicalTooltipContentWrapper: geographicalTooltipContentWrapperStyle,
+  Header: headerStyle,
+  TextContainer: textContainerStyle,
+  MainText: mainTextStyle,
+  SecondaryText: secondaryTextStyle,
+  SignalStateContainer: signalStateContainerStyle,
   SignalStateIndicator: (signalState: string) => {
     const backgroundColor = speedColors[signalState.toUpperCase() as keyof SpeedsObject];
     return {...signalStateIndicatorStyle, backgroundColor};
   },
-  SignalStateText: () => {
-    return signalStateStyle;
-  },
-  SpeedDataContainer: () => {
-    return speedDataContainerStyle;
-  },
+  SignalStateText: signalStateStyle,
+  SpeedDataContainer: speedDataContainerStyle,
   Icon: (signalState?: string) => {
     if(signalState) {
       const color = speedColors[signalState.toUpperCase() as keyof SpeedsObject];
@@ -138,9 +120,7 @@ export const styles = {
       return iconStyle;
     }
   },
-  ButtonContainer: () => {
-    return buttonContainerStyle;
-  },
+  ButtonContainer: buttonContainerStyle,
   Arrow: (color: string) => {
     return {...arrowStyle, color};
   }

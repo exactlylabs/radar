@@ -36,12 +36,8 @@ const selectedTextStyle: CSSProperties = {
 }
 
 export const styles = {
-  Option: () => {
-    return optionStyle;
-  },
-  Icon: () => {
-    return iconStyle;
-  },
+  Option: optionStyle,
+  Icon: iconStyle,
   Text: (selected: boolean) => {
     return selected ? selectedTextStyle : textStyle;
   }

@@ -22,10 +22,6 @@ const iconStyle: CSSProperties = {
 }
 
 export const styles = {
-  DropdownFiltersContainer: () => {
-    return dropdownFiltersContainerStyle;
-  },
-  Icon: () => {
-    return iconStyle;
-  }
+  DropdownFiltersContainer: dropdownFiltersContainerStyle,
+  Icon: iconStyle,
 }

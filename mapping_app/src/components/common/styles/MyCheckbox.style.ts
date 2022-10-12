@@ -31,7 +31,5 @@ export const styles = {
       color
     };
   },
-  Icon: () => {
-    return iconStyle;
-  }
+  Icon: iconStyle
 }

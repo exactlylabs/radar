@@ -42,9 +42,7 @@ const selectedTabStyle: CSSProperties = {
 }
 
 export const styles = {
-  GeographicalCategoryTabsContainer: () => {
-    return geographicalCategoryTabsContainerStyle;
-  },
+  GeographicalCategoryTabsContainer: geographicalCategoryTabsContainerStyle,
   Tab: (selected: boolean) => {
     return selected ? selectedTabStyle : tabStyle;
   },

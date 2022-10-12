@@ -65,10 +65,10 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
   return (
     <div style={styles.ExplorationPopoverContainer(currentPopoverState)}>
       <div className={'hover-opaque'}
-           style={styles.ShrinkButtonContainer()}
+           style={styles.ShrinkButtonContainer}
            onClick={closePopover}
       >
-        <ArrowOutwardRounded style={styles.Arrow()}
+        <ArrowOutwardRounded style={styles.Arrow}
                              fontSize={'small'}
         />
       </div>

@@ -33,16 +33,8 @@ const dropdownFiltersContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  RightPanelContainer: () => {
-    return rightPanelContainerStyle;
-  },
-  RightPanelContentContainer: () => {
-    return rightPanelContentContainerStyle;
-  },
-  RightPanelContentWrapper: () => {
-    return rightPanelContentWrapperStyle;
-  },
-  DropdownFiltersContainer: () => {
-    return dropdownFiltersContainerStyle;
-  }
+  RightPanelContainer: rightPanelContainerStyle,
+  RightPanelContentContainer: rightPanelContentContainerStyle,
+  RightPanelContentWrapper: rightPanelContentWrapperStyle,
+  DropdownFiltersContainer: dropdownFiltersContainerStyle
 }

@@ -24,13 +24,7 @@ const subtitleStyle: CSSProperties = {
 }
 
 export const styles = {
-  SecondLevelContentHeader: () => {
-    return secondLevelContentHeaderStyle;
-  },
-  Title: () => {
-    return titleStyle;
-  },
-  Subtitle: () => {
-    return subtitleStyle;
-  }
+  SecondLevelContentHeader: secondLevelContentHeaderStyle,
+  Title: titleStyle,
+  Subtitle: subtitleStyle
 }

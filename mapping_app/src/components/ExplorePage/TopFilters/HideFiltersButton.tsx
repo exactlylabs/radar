@@ -14,7 +14,7 @@ const HideFiltersButton = ({
   return (
     <MyButton text={'Hide'}
               onClick={closeFilters}
-              icon={<ArrowForwardRounded style={styles.Icon()}/>}
+              icon={<ArrowForwardRounded style={styles.Icon}/>}
               iconFirst
               color={BLACK}
               backgroundColor={DEFAULT_SECONDARY_BUTTON}
