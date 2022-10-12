@@ -39,16 +39,36 @@ export const getStyle = (isSelected: boolean, key: string) => {
 }
 
 export const layerMouseoutHandler = (ev: LeafletMouseEvent) => {
-  let target = ev.target;
-  target.closeTooltip();
-  target.setStyle({weight: 1, opacity: 0.5, fillOpacity: 0.5});
+  if(ev.propagatedFrom.feature) {
+    const target = ev.propagatedFrom;
+    const summary: GeospaceOverview = JSON.parse(target.feature.properties.summary) as GeospaceOverview;
+    target.closeTooltip();
+    target.setStyle({
+      ...baseStyle,
+      weight: 1,
+      opacity: 0.5,
+      fillOpacity: 0.5,
+      color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
+      fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
+    });
+  }
 }
 
 export const layerMouseoverHandler = (ev: LeafletMouseEvent) => {
-  let target = ev.target;
-  target.setStyle({weight: 3, opacity: 0.8, fillOpacity: 0.8});
-  target.closeTooltip();
-  target.openTooltip();
+  if(ev.propagatedFrom.feature) {
+    const target = ev.propagatedFrom;
+    const summary: GeospaceOverview = JSON.parse(target.feature.properties.summary) as GeospaceOverview;
+    target.setStyle({
+      ...baseStyle,
+      weight: 3,
+      opacity: 0.8,
+      fillOpacity: 0.8,
+      color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
+      fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
+    });
+    target.closeTooltip();
+    target.openTooltip();
+  }
 }
 
 export const shouldShowLayer = (
