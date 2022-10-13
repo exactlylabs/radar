@@ -42,7 +42,7 @@ type clickhouseStorage struct {
 	conn              driver.Conn
 	opts              *clickhouse.Options
 	geospaces         map[string]*ports.Geospace
-	asns              map[string]string
+	asnOrgs           map[string]string
 	jobCh             chan ports.MeasurementIterator
 	wg                *sync.WaitGroup
 	lock              *sync.Mutex
@@ -66,7 +66,7 @@ func New(options *ChStorageOptions) ports.MeasurementsStorage {
 			ReadTimeout:  time.Hour,
 		},
 		geospaces:         make(map[string]*ports.Geospace),
-		asns:              make(map[string]string),
+		asnOrgs:           make(map[string]string),
 		wg:                &sync.WaitGroup{},
 		lock:              &sync.Mutex{},
 		nWorkers:          options.NWorkers,
@@ -208,6 +208,7 @@ func (cs *clickhouseStorage) updateViews() {
 }
 
 func (cs *clickhouseStorage) loadCache() error {
+	// Load Geospaces
 	query := `SELECT id, name, namespace, geo_id, parent_id FROM geospaces;`
 	rows, err := cs.conn.Query(context.Background(), query)
 	if err != nil {
@@ -222,19 +223,19 @@ func (cs *clickhouseStorage) loadCache() error {
 		}
 		cs.geospaces[g.Namespace+g.GeoId] = g
 	}
-	query = `SELECT id, asn, organization FROM asns;`
+	// Load ASN Organizations
+	query = `SELECT id, name FROM asn_orgs`
 	rows, err = cs.conn.Query(context.Background(), query)
 	if err != nil {
 		return errors.Wrap(err, "clickhouseStorage#loadCache Query")
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var id, organization string
-		var asn int32
-		if err := rows.Scan(&id, &asn, &organization); err != nil {
+		var id, name string
+		if err := rows.Scan(&id, &name); err != nil {
 			return errors.Wrap(err, "clickhouseStorage#loadCache Scan")
 		}
-		cs.asns[fmt.Sprintf("%d%s", asn, organization)] = id
+		cs.asnOrgs[name] = id
 	}
 	return nil
 }
@@ -349,32 +350,31 @@ func (cs *clickhouseStorage) updateGeospace(g *ports.Geospace) error {
 	return nil
 }
 
-func (cs *clickhouseStorage) getOrCreateASN(asn int, orgName string) (string, error) {
+func (cs *clickhouseStorage) getOrCreateASNOrg(orgName string) (string, error) {
 	cs.lock.Lock()
 	defer cs.lock.Unlock()
-	key := fmt.Sprintf("%d%s", asn, orgName)
-	if a, exists := cs.asns[key]; exists {
+	key := orgName
+	if a, exists := cs.asnOrgs[key]; exists {
 		return a, nil
 	}
-	query := `SELECT id from asns WHERE asn=$1 AND organization=$2`
-	row := cs.conn.QueryRow(context.Background(), query, asn, orgName)
+	query := `SELECT id from asn_orgs WHERE name=$1`
+	args := []any{orgName}
+	row := cs.conn.QueryRow(context.Background(), query, args...)
 	if row.Err() != nil {
-		return "", errors.Wrap(row.Err(), "clickhouseStorage#getOrCreateASN QueryRow")
+		return "", errors.Wrap(row.Err(), "clickhouseStorage#getOrCreateASNOrg QueryRow")
 	}
 	var id uuid.UUID
 	if err := row.Scan(&id); err != nil && err != sql.ErrNoRows {
-		return "", errors.Wrap(err, "clickhouseStorage#getOrCreateASN Scan")
+		return "", errors.Wrap(err, "clickhouseStorage#getOrCreateASNOrg Scan")
 	} else if err == sql.ErrNoRows {
 		id = uuid.New()
-		query = `INSERT INTO asns(id, asn, organization)
-			VALUES ($1, $2, $3)
-		`
-		err := cs.conn.Exec(context.Background(), query, id, asn, orgName)
+		query = `INSERT INTO asn_orgs(id, name) VALUES ($1, $2)`
+		err = cs.conn.Exec(context.Background(), query, id, orgName)
 		if err != nil {
 			return "", errors.Wrap(err, "clickhouseStorage#getOrCreateASN Exec")
 		}
 	}
-	cs.asns[key] = id.String()
+	cs.asnOrgs[key] = id.String()
 	return id.String(), nil
 }
 
@@ -388,9 +388,7 @@ func (cs *clickhouseStorage) insertInBatch(batch driver.Batch, it ports.Measurem
 		if err != nil {
 			return errors.Wrap(err, "clickhouseStorage#InsertMeasurements getOrCreateGeospace")
 		}
-		asnId, err := cs.getOrCreateASN(
-			m.ASN, m.ASNOrg,
-		)
+		asnOrgId, err := cs.getOrCreateASNOrg(m.ASNOrg)
 		if err != nil {
 			return errors.Wrap(err, "clickhouseStorage#InsertMeasurements getOrCreateASN")
 		}
@@ -408,7 +406,7 @@ func (cs *clickhouseStorage) insertInBatch(batch driver.Batch, it ports.Measurem
 		err = batch.Append(
 			m.Id, m.TestStyle, m.IP, t.UTC(), m.Upload, float64(m.MBPS),
 			lossRate, minRTT, m.Latitude, m.Longitude, m.LocationAccuracyKM,
-			m.HasAccessToken, m.AccessTokenSig, asnId, geospace.Id,
+			m.HasAccessToken, m.AccessTokenSig, asnOrgId, geospace.Id,
 		)
 		if err != nil {
 			return errors.Wrap(err, "clickhouseStorage#InsertMeasurements Append")
@@ -436,7 +434,7 @@ func (cs *clickhouseStorage) prepareBatch() (driver.Batch, error) {
 	tableName := cs.measurementsTableName()
 	query := fmt.Sprintf(`INSERT INTO %s (
 		id, test_style, ip, time, upload, mbps, loss_rate, min_rtt, latitude,
-		longitude, location_accuracy_km, has_access_token, access_token_sig, asn_id, geospace_id
+		longitude, location_accuracy_km, has_access_token, access_token_sig, asn_org_id, geospace_id
 	)`, tableName)
 	batch, err := cs.conn.PrepareBatch(context.Background(), query)
 	if err != nil {

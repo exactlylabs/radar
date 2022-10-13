@@ -1,6 +1,6 @@
 CREATE MATERIALIZED VIEW summary_semester_tmp
 ENGINE=MergeTree
-ORDER BY (upload, geospace_id, asn_id, year, semester)
+ORDER BY (upload, geospace_id, asn_org_id, year, semester)
 POPULATE
 AS
 SELECT
@@ -11,20 +11,20 @@ SELECT
     CountIf(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
     Count(*) as total_samples,
     m_ip.geospace_id,
-    m_ip.asn_id,
+    m_ip.asn_org_id,
     m_ip.upload,
     m_ip.year as year,
     m_ip.semester as semester
 FROM (
     SELECT 
         m.geospace_id, 
-        m.asn_id, 
+        m.asn_org_id, 
         quantileExact(0.5)(m.mbps) as med_ip_mbps,
         quantileExact(0.5)(m.min_rtt) as med_ip_rtt,
         m.upload,
         YEAR(m.time) as year,
         (MONTH(m.time) / 6)::int + 1 as semester
     FROM measurements m
-    GROUP BY m.geospace_id, m.asn_id, m.upload, m.ip, year, semester
+    GROUP BY m.geospace_id, m.asn_org_id, m.upload, m.ip, year, semester
 ) m_ip 
-GROUP BY m_ip.geospace_id, m_ip.asn_id, m_ip.upload, m_ip.year, m_ip.semester;
+GROUP BY m_ip.geospace_id, m_ip.asn_org_id, m_ip.upload, m_ip.year, m_ip.semester;

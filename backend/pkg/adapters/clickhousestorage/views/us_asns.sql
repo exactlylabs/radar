@@ -3,7 +3,7 @@ ENGINE=MergeTree
 ORDER BY (geospace_id)
 POPULATE
 AS
-SELECT DISTINCT ON (m.asn_id, m.geospace_id) m.asn_id, m.geospace_id, a.asn, a.organization
+SELECT DISTINCT ON (m.asn_org_id, m.geospace_id) m.asn_org_id, m.geospace_id, a.name
 FROM measurements m
-JOIN asns a ON a.id = m.asn_id
+JOIN asn_orgs a ON a.id = m.asn_org_id
 WHERE m.geospace_id IS NOT NULL;

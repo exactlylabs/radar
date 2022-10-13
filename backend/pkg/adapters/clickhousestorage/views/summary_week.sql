@@ -1,6 +1,6 @@
 CREATE MATERIALIZED VIEW summary_week_tmp
 ENGINE=MergeTree
-ORDER BY (upload, geospace_id, asn_id, year, week)
+ORDER BY (upload, geospace_id, asn_org_id, year, week)
 POPULATE
 AS
 SELECT
@@ -11,20 +11,20 @@ SELECT
     CountIf(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
     Count(*) as total_samples,
     m_ip.geospace_id,
-    m_ip.asn_id,
+    m_ip.asn_org_id,
     m_ip.upload,
     m_ip.year as year,
     m_ip.week as week
 FROM (
     SELECT 
         m.geospace_id, 
-        m.asn_id, 
+        m.asn_org_id, 
         quantileExact(0.5)(m.mbps) as med_ip_mbps,
         quantileExact(0.5)(m.min_rtt) as med_ip_rtt,
         m.upload,
         YEAR(m.time) as year,
         WEEK(m.time) as week
     FROM measurements m
-    GROUP BY m.geospace_id, m.asn_id, m.upload, m.ip, year, week
+    GROUP BY m.geospace_id, m.asn_org_id, m.upload, m.ip, year, week
 ) m_ip 
-GROUP BY m_ip.geospace_id, m_ip.asn_id, m_ip.upload, m_ip.year, m_ip.week;
+GROUP BY m_ip.geospace_id, m_ip.asn_org_id, m_ip.upload, m_ip.year, m_ip.week;

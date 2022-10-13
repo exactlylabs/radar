@@ -1,6 +1,6 @@
 CREATE MATERIALIZED VIEW summary_alltime_tmp
 ENGINE=MergeTree
-ORDER BY (upload, geospace_id, asn_id)
+ORDER BY (upload, geospace_id, asn_org_id)
 POPULATE
 AS
 SELECT
@@ -11,16 +11,16 @@ SELECT
     CountIf(med_ip_mbps > if(upload=0, 100, 20)) as good_count,
     Count(*) as total_samples,
     m_ip.geospace_id,
-    m_ip.asn_id,
+    m_ip.asn_org_id,
     m_ip.upload
 FROM (
     SELECT 
         m.geospace_id, 
-        m.asn_id, 
+        m.asn_org_id, 
         quantileExact(0.5)(m.mbps) as med_ip_mbps,
         quantileExact(0.5)(m.min_rtt) as med_ip_rtt,
         m.upload
     FROM measurements m
-    GROUP BY m.geospace_id, m.asn_id, m.upload, m.ip
+    GROUP BY m.geospace_id, m.asn_org_id, m.upload, m.ip
 ) m_ip 
-GROUP BY m_ip.geospace_id, m_ip.asn_id, m_ip.upload;
+GROUP BY m_ip.geospace_id, m_ip.asn_org_id, m_ip.upload;

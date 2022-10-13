@@ -12,12 +12,12 @@ CREATE TABLE IF NOT EXISTS measurements (
     location_accuracy_km DOUBLE PRECISION,
     has_access_token BOOLEAN,
     access_token_sig VARCHAR,
-    asn_id UUID,
+    asn_org_id UUID,
     geospace_id UUID,
     INDEX time_minmax_idx time TYPE minmax GRANULARITY 2
 )
 ENGINE = MergeTree
-PRIMARY KEY (upload, geospace_id, asn_id)
-ORDER BY (upload, geospace_id, asn_id, time)
+PRIMARY KEY (upload, geospace_id, asn_org_id)
+ORDER BY (upload, geospace_id, asn_org_id, time)
 SETTINGS index_granularity = 8192
 ;

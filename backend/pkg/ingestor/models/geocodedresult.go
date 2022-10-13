@@ -14,9 +14,9 @@ type IPGeocodeResult struct {
 	Longitude          float64 `parquet:"name=longitude, type=FLOAT" avro:"longitude"`
 	LocationAccuracyKM float64 `parquet:"name=location_accuracy_km, type=FLOAT" avro:"location_accuracy_km"`
 
-	ASN    int    `parquet:"name=asn, type=INT32" avro:"asn"`
-	ASNOrg string `parquet:"name=asn_org, type=BYTE_ARRAY, convertedtype=UTF8" avro:"asn_org"`
-
+	ASN            int     `parquet:"name=asn, type=INT32" avro:"asn"`
+	ASNOrg         string  `parquet:"name=asn_org, type=BYTE_ARRAY, convertedtype=UTF8" avro:"asn_org"`
+	ASNOrgId       *string `avro:"asn_org_id"`
 	HasAccessToken bool    `parquet:"name=has_access_token, type=BOOLEAN" avro:"has_access_token"`
 	AccessTokenSig *string `parquet:"name=access_token_sig, type=BYTE_ARRAY, convertedtype=UTF8" avro:"access_token_sig"`
 }
