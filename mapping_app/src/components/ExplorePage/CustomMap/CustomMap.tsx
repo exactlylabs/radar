@@ -1,10 +1,9 @@
 import {useEffect} from "react";
-import 'leaflet.vectorgrid';
 // @ts-ignore
 import vectorTileLayer from 'leaflet-vector-tile-layer';
 import L, {LatLng, LeafletMouseEvent, VectorGrid} from "leaflet";
 import {
-  baseStyle, getCoordinates, getStyle, invisibleStyle,
+  baseStyle, getCoordinates, highlightedStyle, invisibleStyle,
   isCurrentGeospace,
   layerMouseoutHandler,
   layerMouseoverHandler,
@@ -20,7 +19,7 @@ import {useMap} from "react-leaflet";
 import {vectorTilesUrl} from "../../../api/namespaces/requests";
 
 
-const geoJSONOptions: L.GeoJSONOptions = {
+/*const geoJSONOptions: L.GeoJSONOptions = {
   style: (feature) => {
     let style = baseStyle;
     if(feature) {
@@ -43,22 +42,32 @@ const geoJSONOptions: L.GeoJSONOptions = {
     );
     }
   }
-}
+}*/
 
 const options: any = {
-  style: (feature: any) => {
-    let style = baseStyle;
-    if(feature) {
-      if(feature.properties?.summary !== undefined) {
-        const summary: GeospaceOverview = JSON.parse(feature.properties.summary) as GeospaceOverview;
-        style = {
-          ...style,
-          color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
-          fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
+  vectorTileLayerStyles: {
+    myLayer: (feature: any) => {
+      let style = baseStyle;
+      if (feature) {
+        if (feature.summary !== undefined) {
+          const summary: GeospaceOverview = JSON.parse(feature.summary) as GeospaceOverview;
+          style = {
+            ...style,
+            color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
+            fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
+          }
         }
       }
+      return style;
     }
-    return style;
+  },
+  getFeatureId: (feature: any) => {
+    if(feature.properties?.summary !== undefined) {
+      const summary: GeospaceOverview = JSON.parse(feature.properties.summary) as GeospaceOverview;
+      return summary.geospace.geo_id;
+    } else {
+      return '';
+    }
   }
 }
 
@@ -78,31 +87,52 @@ export const CustomMap = ({
   namespace
 }: CustomMapProps): null => {
 
+  const map = useMap();
+
   useEffect(() => {
-    //const vectorGridLayer: VectorGrid.Protobuf = L.vectorGrid.protobuf(vectorTilesUrl(namespace), protobufOptions);
-    const vg = vectorTileLayer(vectorTilesUrl(namespace), options);
-    if(!map.hasLayer(vg)) {
-      map.addLayer(vg);
+    map.eachLayer((l: any) => {
+      console.log(l);
+      if(!l._url && !l._loading) l.remove();
+    })
+    const tileLayer = vectorTileLayer(vectorTilesUrl(namespace), options);
+    tileLayer.on('load', () => alert('load end'));
+    if(!map.hasLayer(tileLayer)) {
+      map.addLayer(tileLayer);
       // vector grid might get instantiated before the actual map layer, so it might overlap.
       // bringToFront() allows the layer to be on the very top of the layer stack.
-      vg.bringToFront();
-    }
-    vg.on('click', (e: LeafletMouseEvent) => {
-      if(e.propagatedFrom.feature) {
-        const summary: GeospaceOverview = JSON.parse(e.propagatedFrom.feature.properties.summary) as GeospaceOverview;
-        selectGeospace(summary);
+      tileLayer.bringToFront();
+      tileLayer.on('click', (e: LeafletMouseEvent) => {
+        if (e.propagatedFrom.feature) {
+          const summary: GeospaceOverview = JSON.parse(e.propagatedFrom.feature.properties.summary) as GeospaceOverview;
+          selectGeospace(summary);
+          const centroid: Array<number> = summary.geospace.centroid;
+          const geospacePosition: LatLng = L.latLng(centroid[1], centroid[0]);
+          map.flyTo(geospacePosition, 5);
+          map.setView(geospacePosition, map.getZoom() > 5 ? map.getZoom() : 5);
+          const newStyle = {
+            ...baseStyle,
+            weight: 3,
+            opacity: 0.8,
+            fillOpacity: 0.8,
+            color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
+            fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
+          };
+          tileLayer.setFeatureStyle(summary.geospace.geo_id, newStyle);
+        }
+      });
+      tileLayer.on('mouseover', (ev: LeafletMouseEvent) => layerMouseoverHandler(ev, tileLayer));
+      tileLayer.on('mouseout', (ev: LeafletMouseEvent) => layerMouseoutHandler(ev, tileLayer, selectedGeospace));
+      if(!!selectedGeospace) {
+        const newStyle = {
+          ...highlightedStyle,
+          color: speedColors[getSignalStateDownload(selectedGeospace.download_median) as keyof SpeedsObject],
+          fillColor: speedColors[getSignalStateDownload(selectedGeospace.download_median) as keyof SpeedsObject]
+        };
+        tileLayer.setFeatureStyle((selectedGeospace as GeospaceOverview).geospace.geo_id, newStyle);
       }
-    });
-    vg.on('mouseover', layerMouseoverHandler);
-    vg.on('mouseout', layerMouseoutHandler);
-  }, [namespace, speedType, selectedSpeedFilters]);
+    }
+  }, [namespace, speedType, selectedSpeedFilters, selectedGeospace]);
 
-
-  useEffect(() => {
-    map.eachLayer((l: any) => console.log(l));
-  }, [selectedGeospace]);
-
-  const map = useMap();
   // Reference: https://github.com/Leaflet/Leaflet/pull/8109
   // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
   map.attributionControl.setPrefix('');

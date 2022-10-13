@@ -6,7 +6,8 @@ export type Geospace = {
   geo_id: string;
   namespace: number;
   name: string;
-  parent: Optional<Geospace>
+  parent: Optional<Geospace>;
+  centroid: Array<number>;
 }
 
 export type GeospacesResponse = {

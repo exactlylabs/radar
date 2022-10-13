@@ -1,7 +1,7 @@
 import {Geospace, GeospaceData, GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/types";
 import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject, speedTypes} from "./speeds";
-import {LatLng, LeafletMouseEvent} from "leaflet";
-import {Filter} from "./types";
+import L, {LatLng, LeafletMouseEvent} from "leaflet";
+import {Filter, Optional} from "./types";
 
 export const mapTileUrl: string = MAPBOX_TILESET_URL;
 export const mapTileAttribution =
@@ -27,7 +27,14 @@ export const invisibleStyle = {
   fillOpacity: 0,
 }
 
-export const getStyle = (isSelected: boolean, key: string) => {
+export const highlightedStyle = {
+  ...baseStyle,
+  weight: 2,
+  opacity: 0.8,
+  fillOpacity: 0.8,
+}
+
+/*export const getStyle = (isSelected: boolean, key: string) => {
   return {
     ...baseStyle,
     weight: isSelected ? 3 : baseStyle.weight,
@@ -36,38 +43,37 @@ export const getStyle = (isSelected: boolean, key: string) => {
     color: speedColors[key as keyof SpeedsObject],
     fillColor: speedColors[key as keyof SpeedsObject]
   }
-}
+}*/
 
-export const layerMouseoutHandler = (ev: LeafletMouseEvent) => {
+export const layerMouseoutHandler = (ev: LeafletMouseEvent, layer: any, selectedGeospace: Optional<GeospaceInfo>) => {
   if(ev.propagatedFrom.feature) {
     const target = ev.propagatedFrom;
     const summary: GeospaceOverview = JSON.parse(target.feature.properties.summary) as GeospaceOverview;
     target.closeTooltip();
-    target.setStyle({
-      ...baseStyle,
-      weight: 1,
-      opacity: 0.5,
-      fillOpacity: 0.5,
-      color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
-      fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
-    });
+    if(!selectedGeospace ||
+      (selectedGeospace as GeospaceOverview).geospace.geo_id !== summary.geospace.geo_id) {
+      const newStyle = {
+        ...baseStyle,
+        color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
+        fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
+      };
+      layer.setFeatureStyle(summary.geospace.geo_id, newStyle);
+    }
   }
 }
 
-export const layerMouseoverHandler = (ev: LeafletMouseEvent) => {
+export const layerMouseoverHandler = (ev: LeafletMouseEvent, layer: any) => {
   if(ev.propagatedFrom.feature) {
     const target = ev.propagatedFrom;
     const summary: GeospaceOverview = JSON.parse(target.feature.properties.summary) as GeospaceOverview;
-    target.setStyle({
-      ...baseStyle,
-      weight: 3,
-      opacity: 0.8,
-      fillOpacity: 0.8,
+    const newStyle = {
+      ...highlightedStyle,
       color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
       fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
-    });
+    };
     target.closeTooltip();
     target.openTooltip();
+    layer.setFeatureStyle(summary.geospace.geo_id, newStyle);
   }
 }
 
