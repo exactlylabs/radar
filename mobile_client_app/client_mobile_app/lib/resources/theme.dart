@@ -12,6 +12,23 @@ final theme = ThemeData(
     ),
     elevation: 0,
   ),
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: AppColors.snow,
+    selectedItemColor: AppColors.blue,
+    unselectedItemColor: AppColors.darkLavender,
+    selectedIconTheme: IconThemeData(color: AppColors.blue),
+    unselectedIconTheme: IconThemeData(color: AppColors.darkLavender),
+    unselectedLabelStyle: TextStyle(
+      fontSize: 11.0,
+      fontFamily: 'Mulish',
+      fontWeight: FontWeight.bold,
+    ),
+    selectedLabelStyle: TextStyle(
+      fontSize: 11.0,
+      fontFamily: 'Mulish',
+      fontWeight: FontWeight.bold,
+    ),
+  ),
   colorScheme: const ColorScheme(
     primary: AppColors.deepBlue,
     secondary: AppColors.blue,
