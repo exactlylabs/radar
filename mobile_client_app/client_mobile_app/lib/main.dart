@@ -1,6 +1,5 @@
 import 'dart:ui' as ui;
 
-import 'package:client_mobile_app/presentation/splash_page/splash_page.dart';
 import 'package:client_mobile_app/resources/theme.dart';
 import 'package:client_mobile_app/speed_test_gauge.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: theme,
-      home: const SplashPage(),
+      home: Container(),
     );
   }
 }
