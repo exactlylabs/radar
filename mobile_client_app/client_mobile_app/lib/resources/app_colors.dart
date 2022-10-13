@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Primary Colors
   static const deepBlue = Color(0xFF110E4C);
-  static const blue = Color(0xFF1EA6BD);
-  static const paleLilac = Color(0xFFFFFFFF);
+  static const blue = Color(0xFF4B7BE5);
+  static const paleLilac = Color(0xFFF8F7FF);
   static const snow = Color(0xFFFFFFFF);
 
   // Secondary Colors
