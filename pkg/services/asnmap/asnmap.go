@@ -1,7 +1,6 @@
 package asnmap
 
 import (
-	"bufio"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -40,15 +39,11 @@ func LoadCAIDAJsonl(file io.Reader) error {
 	organizations = make(map[string]*Organization)
 	asns = make(map[string]*ASN)
 	asnNamesMap = make(map[string]*ASN)
-	scanner := bufio.NewScanner(file)
+	decoder := json.NewDecoder(file)
 	i := 0
-	for scanner.Scan() {
+	for decoder.More() {
 		row := make(map[string]string)
-		rowData := scanner.Bytes()
-		if len(rowData) == 0 {
-			continue
-		}
-		if err := json.Unmarshal(rowData, &row); err != nil {
+		if err := decoder.Decode(&row); err != nil {
 			return fmt.Errorf("asnmap.LoadData error unmarshalling row %d: %w", i, err)
 		}
 
@@ -69,7 +64,7 @@ func LoadCAIDAJsonl(file io.Reader) error {
 				Organization: org,
 			}
 			asns[row["asn"]] = obj
-			asnNamesMap["name"] = obj
+			asnNamesMap[row["name"]] = obj
 		}
 		i++
 	}
