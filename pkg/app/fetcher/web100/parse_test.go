@@ -6,7 +6,7 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/m-lab/etl/web100"
+	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/web100"
 )
 
 // shortTcpKisTxt is a snippet from the tcp-kis.txt file. It includes variables with

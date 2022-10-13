@@ -1,7 +1,6 @@
 package ipgeocoder
 
 import (
-	"encoding/ascii85"
 	"encoding/csv"
 	"fmt"
 	"io"
@@ -163,6 +162,7 @@ func processItem(toProcess *ipgeocodeWorkItem) *models.GeocodedResult {
 	var lat, lng, acc float64
 	var asn int
 	var org string
+	var orgId *string
 	if latlonRaw != nil {
 		latlon := latlonRaw.([]float64)
 		lat = latlon[0]
@@ -179,11 +179,13 @@ func processItem(toProcess *ipgeocodeWorkItem) *models.GeocodedResult {
 			// Sometimes the organization Name is actually the ASN name
 			if asnObj, err := asnmap.LookupByName(asnInfo.org); err == nil {
 				org = asnObj.Organization.Name
+				orgId = &asnObj.Organization.Id
 			} else {
 				org = asnInfo.org
 			}
 		} else {
 			org = asnObj.Organization.Name
+			orgId = &asnObj.Organization.Id
 		}
 	}
 	return &models.GeocodedResult{
@@ -200,6 +202,7 @@ func processItem(toProcess *ipgeocodeWorkItem) *models.GeocodedResult {
 		LocationAccuracyKM: acc,
 		ASN:                asn,
 		ASNOrg:             org,
+		ASNOrgId:           orgId,
 		HasAccessToken:     toProcess.fetchedResult.HasAccessToken,
 		AccessTokenSig:     toProcess.fetchedResult.AccessTokenSig,
 	}
@@ -273,7 +276,7 @@ func initializeNetMaps() {
 		log.Fatal(fmt.Errorf("ipgeocoder.Geocode error opening db file: %w", err))
 	}
 	defer f.Close()
-	asnmapErr := asnmap.LoadCAIDAJsonl(ascii85.NewDecoder(f))
+	asnmapErr := asnmap.LoadCAIDAJsonl(f)
 	if asnmapErr != nil {
 		log.Fatal(asnmapErr)
 	}

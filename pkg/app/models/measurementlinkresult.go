@@ -8,6 +8,6 @@ import (
 var MeasLinkResultSchema string
 
 type MeasLinkResult struct {
-	DownloadId string `parquet:"name=download_id, type=BYTE_ARRAY, convertedtype=UTF8" avro:"download_id"`
-	UploadId   string `parquet:"name=upload_id, type=BYTE_ARRAY, convertedtype=UTF8" avro:"upload_id"`
+	DownloadId string `avro:"download_id"`
+	UploadId   string `avro:"upload_id"`
 }

@@ -16,7 +16,7 @@ type ProcessorConfig struct {
 	Ipv6DBPath       string `config:"IPV6_DB_PATH,default=./input/GeoLite2-City-Blocks-IPv6.csv"`
 	AsnIpv4DBPath    string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv4.csv"`
 	AsnIpv6DBPath    string `config:"ASN_IPV4_DB_PATH,default=./input/GeoLite2-ASN-Blocks-IPv6.csv"`
-	Asn2OrgDBPath    string `config:"ASN2ORG_DB_PATH,default=./input/20220401.as-org2info.jsonl"`
+	Asn2OrgDBPath    string `config:"ASN2ORG_DB_PATH,default=./input/20221001.as-org2info.jsonl"`
 	ShapePaths       string `config:"SHAPE_PATHS,default=US_STATES:./input/tl_2021_us_state.zip;US_COUNTIES:./input/tl_2021_us_county.zip;US_TRIBAL_TRACTS:./input/Indian_Reservations.zip;ZIP_CODES:./input/tl_2021_us_zcta520.zip"`
 	TractsShapeDir   string `config:"TRACTS_SHAPE_DIR,default=./input/tracts"`
 	UploadBucketName string `config:"UPLOAD_BUCKET_NAME,default=mlab-processed-data"`

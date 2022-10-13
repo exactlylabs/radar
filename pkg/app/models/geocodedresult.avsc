@@ -16,6 +16,7 @@
         {"name": "location_accuracy_km", "type": "double"},
         {"name": "asn", "type": "int"},
         {"name": "asn_org", "type": "string"},
+        {"name": "asn_org_id", "type": ["null", "string"]},
         {"name": "has_access_token", "type": "boolean"},
         {"name": "access_token_sig", "type": ["null", "string"], "default": null}
     ]
