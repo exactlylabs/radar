@@ -1,0 +1,17 @@
+//
+//  Debug-staging.xcconfig
+//  Runner
+//
+//  Created by Ignacio Grasso on 10/14/22.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-staging.xcconfig"
+#include "Generated.xcconfig"
+
+TARGET_NAME= Radar Staging
+FLUTTER_TARGET=lib/main_staging.dart
+BUNDLE_NAME_ID=.exactlylabs.radar.com
+BUNDLE_PREFIX=.staging
+APP_ICON_SUFIX=-staging
