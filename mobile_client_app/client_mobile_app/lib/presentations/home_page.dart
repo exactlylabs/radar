@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animations/animations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
 
@@ -25,17 +26,17 @@ class HomePage extends StatelessWidget {
               BottomNavigationBarItem(
                 icon: Image.asset(Images.speedTest),
                 activeIcon: Image.asset(Images.speedTestSelected),
-                label: 'Speed Test',
+                label: Strings.speedTestLabel,
               ),
               BottomNavigationBarItem(
                 icon: Image.asset(Images.yourResults),
                 activeIcon: Image.asset(Images.yourResultsSelected),
-                label: 'Your Results',
+                label: Strings.yourResultsLabel,
               ),
               BottomNavigationBarItem(
                 icon: Image.asset(Images.map),
                 activeIcon: Image.asset(Images.mapSelected),
-                label: 'Map',
+                label: Strings.mapLabel,
               ),
             ],
             type: BottomNavigationBarType.fixed,
