@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 import 'package:client_mobile_app/resources/strings.dart';
