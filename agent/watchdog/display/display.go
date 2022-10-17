@@ -74,7 +74,7 @@ func Refresh(w io.Writer, c *config.Config, agentCli AgentClient, podProber PodI
 
 // StartDisplayLoop is a blocking function, that keeps sending the current display info to a Writer interface
 func StartDisplayLoop(ctx context.Context, w io.Writer, agentCli AgentClient, podProber PodInfoProvider) {
-	timer := time.NewTicker(time.Minute)
+	timer := time.NewTimer(time.Second)
 	for {
 		select {
 		case <-ctx.Done():
@@ -82,6 +82,7 @@ func StartDisplayLoop(ctx context.Context, w io.Writer, agentCli AgentClient, po
 		case <-timer.C:
 			c := config.Reload()
 			Refresh(w, c, agentCli, podProber)
+			timer.Reset(time.Minute)
 		}
 	}
 }

@@ -9,6 +9,8 @@ import (
 	"os"
 	"strings"
 
+	_ "time/tzdata"
+
 	"github.com/exactlylabs/radar/agent/cmd/start_watchdog/internal/dev"
 	"github.com/exactlylabs/radar/agent/config"
 	"github.com/exactlylabs/radar/agent/internal/info"

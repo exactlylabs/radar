@@ -171,6 +171,6 @@ losetup -d $LOOP_DEV
 
 mkdir -p ${SCRIPT_DIR}/dist
 mv ${BUILD_DIR}/$VERSION ${SCRIPT_DIR}/dist/$IMAGE_FILENAME
-zip ${SCRIPT_DIR}/dist/$IMAGE_FILENAME.zip ${SCRIPT_DIR}/dist/$IMAGE_FILENAME
+zip -j ${SCRIPT_DIR}/dist/$IMAGE_FILENAME.zip ${SCRIPT_DIR}/dist/$IMAGE_FILENAME
 
 rm -r ${BUILD_DIR}
