@@ -53,6 +53,7 @@ const clearIconStyle: CSSProperties = {
   color: CLEAR_ICON_COLOR,
   width: '100%',
   height: '100%',
+  fontSize: '15px',
   marginRight: '60px'
 }
 
