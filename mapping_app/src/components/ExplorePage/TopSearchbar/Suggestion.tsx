@@ -1,8 +1,6 @@
 import {ReactElement, useEffect} from "react";
 import {styles} from "./styles/Suggestion.style";
-import {Geospace} from "../../../api/geospaces/types";
 import PinIconBlack from '../../../assets/pin-icon-black.png';
-import {Optional} from "../../../utils/types";
 import {ArrowForwardRounded} from "@mui/icons-material";
 import {DetailedGeospace} from "../../../api/geospaces/types";
 
@@ -35,7 +33,7 @@ const Suggestion = ({
 
   return (
     <div key={suggestion.name}
-         style={styles.SuggestionContainer}
+         style={styles.SuggestionContainer(isLast)}
          className={'hover-opaque suggestion'}
          onClick={handleSelectSuggestion}
     >
