@@ -8,6 +8,7 @@ import {Optional} from "../../../utils/types";
 import {Geospace, GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
 import {getOverview} from "../../../api/geospaces/requests";
 import './styles/SpecificExplorationPopoverContent.css';
+import {getZoomForNamespace, tabs} from "../../../utils/filters";
 
 interface SpecificExplorationPopoverContentProps {
   type: string;
@@ -17,6 +18,8 @@ interface SpecificExplorationPopoverContentProps {
   states: Array<Geospace>;
   indexedCounties: any;
   tribalTracts: Array<Geospace>;
+  setCenter: (center: Array<number>) => void;
+  setZoom: (zoom: number) => void;
 }
 
 const SpecificExplorationPopoverContent = ({
@@ -26,7 +29,9 @@ const SpecificExplorationPopoverContent = ({
   selectGeospace,
   states,
   indexedCounties,
-  tribalTracts
+  tribalTracts,
+  setCenter,
+  setZoom
 }: SpecificExplorationPopoverContentProps): ReactElement => {
 
   const [allItems, setAllItems] = useState<Array<Geospace>>([]);
@@ -83,7 +88,7 @@ const SpecificExplorationPopoverContent = ({
     return title;
   }
 
-  const handleSelectOption = async (option: Geospace, index: number) => {
+  const handleSelectOption = async (option: Geospace) => {
     setSelectedOption(option);
     if(type !== popoverStates.COUNTIES) {
       const response: GeospaceOverview = await getOverview(option.id, '');
@@ -93,6 +98,9 @@ const SpecificExplorationPopoverContent = ({
       };
       await selectGeospace(allData);
     } else {
+      const center: Array<number> = [option.centroid[1], option.centroid[0]];
+      setCenter(center);
+      setZoom(getZoomForNamespace(tabs.STATES));
       setType(popoverStates.SPECIFIC_STATE);
       setInputText('');
     }
@@ -108,11 +116,11 @@ const SpecificExplorationPopoverContent = ({
         </div>
       );
     } else {
-      return filteredItems.map((item, index) =>
+      return filteredItems.map(item =>
         <PopoverOption key={item.id}
                        text={item.name}
                        secondaryText={type === popoverStates.COUNTIES && item.parent ? item.parent.name : undefined}
-                       onClick={() => handleSelectOption(item, index)}
+                       onClick={() => handleSelectOption(item)}
                        listMode
         />
       );

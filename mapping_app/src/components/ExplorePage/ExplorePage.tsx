@@ -27,7 +27,7 @@ interface ExplorePageProps {
 const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   const [loading, setLoading] = useState(false);
-  const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(true);
+  const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(false);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(!!getValueFromUrl('selectedGeospace'));
   const [isRightPanelHidden, setIsRightPanelHidden] = useState(false);
   const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(getValueFromUrl('selectedGeospace') ?? null);
@@ -157,16 +157,15 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                     selectedSpeedFilters={selectedSpeedFilters}
                     setSelectedSpeedFilters={setSelectedSpeedFilters}
       />
-      { isExplorationPopoverOpen &&
-        <ExplorationPopover closePopover={closePopover}
-                            selectGeospace={selectGeospace}
-                            setGeospaceNamespace={setGeospaceNamespace}
-                            recenterMap={recenterMap}
-        />
-      }
-      { !isExplorationPopoverOpen &&
-        <ExplorationPopoverIcon openPopover={openPopover}/>
-      }
+      <ExplorationPopover closePopover={closePopover}
+                          selectGeospace={selectGeospace}
+                          setGeospaceNamespace={setGeospaceNamespace}
+                          recenterMap={recenterMap}
+                          setCenter={setCurrentMapCenter}
+                          setZoom={setCurrentMapZoom}
+                          isOpen={isExplorationPopoverOpen}
+                          setIsOpen={setIsExplorationPopoverOpen}
+      />
       { isRightPanelOpen && selectedGeospace &&
         <RightPanel closePanel={closeRightPanel}
                     selectedGeospaceInfo={selectedGeospace}
