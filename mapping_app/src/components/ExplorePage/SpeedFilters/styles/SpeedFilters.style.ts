@@ -15,6 +15,7 @@ const speedFiltersStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
+  backdropFilter: 'blur(10px)'
 }
 
 const slidedSpeedFiltersStyle: CSSProperties = {

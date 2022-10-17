@@ -12,7 +12,7 @@ const optionStyle: CSSProperties = {
   alignItems: 'center',
   marginLeft: '15px',
   marginRight: '15px',
-  position: 'relative'
+  position: 'relative',
 }
 
 const iconStyle: CSSProperties = {
@@ -24,7 +24,6 @@ const iconStyle: CSSProperties = {
 
 const textStyle: CSSProperties = {
   fontSize: '15px',
-  fontFamily: 'OutfitRegular',
   color: DEFAULT_SECONDARY_TEXT,
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
@@ -33,7 +32,6 @@ const textStyle: CSSProperties = {
 
 const selectedTextStyle: CSSProperties = {
   ...textStyle,
-  fontFamily: 'OutfitMedium',
   color: DEFAULT_TEXT,
 }
 

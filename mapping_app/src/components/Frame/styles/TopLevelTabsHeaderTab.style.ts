@@ -25,7 +25,7 @@ const horizontalSelectedUnderlineStyle: CSSProperties = {
   height: '2px',
   backgroundColor: DEFAULT_GREEN,
   position: 'absolute',
-  bottom: 0,
+  bottom: '-1px',
 }
 
 const emptyHorizontalSelectedUnderlineStyle: CSSProperties = {

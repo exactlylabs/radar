@@ -6,11 +6,13 @@ import {Geospace} from "../../../api/geospaces/types";
 interface SuggestionProps {
   suggestion: Geospace;
   selectSuggestion: (suggestion: Geospace) => void;
+  isLast: boolean;
 }
 
 const Suggestion = ({
   suggestion,
-  selectSuggestion
+  selectSuggestion,
+  isLast
 }: SuggestionProps): ReactElement => {
 
   const handleSelectSuggestion = () => {
@@ -28,7 +30,7 @@ const Suggestion = ({
 
   return (
     <div key={suggestion.name}
-         style={styles.SuggestionContainer}
+         style={styles.SuggestionContainer(isLast)}
          className={'hover-opaque'}
          onClick={handleSelectSuggestion}
     >

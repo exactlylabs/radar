@@ -48,37 +48,29 @@ const searchIconStyle: CSSProperties = {
 const arrowContainerStyle: CSSProperties = {
   width: '46px',
   height: '46px',
+  minWidth: '46px',
+  minHeight: '46px',
   borderRadius: '6px',
   backgroundColor: BLACK,
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   cursor: 'pointer',
-  boxShadow: `0 2px 10px -4px ${DEFAULT_BUTTON_BOX_SHADOW_RGBA}`
+  boxShadow: `0 2px 10px -4px ${DEFAULT_BUTTON_BOX_SHADOW_RGBA}`,
+  position: 'absolute',
+  right: '7px',
 }
 
 const arrowStyle: CSSProperties = {
   color: WHITE,
-  fontSize: '25px',
+  width: '20px',
 }
 
 export const styles = {
-  TopSearchbarContainer: () => {
-    return topSearchbarContainerStyle;
-  },
-  Input: () => {
-    return inputStyle;
-  },
-  IconContainer: () => {
-    return iconContainerStyle;
-  },
-  SearchIcon: () => {
-    return searchIconStyle;
-  },
-  ArrowContainer: () => {
-    return arrowContainerStyle;
-  },
-  Arrow: () => {
-    return arrowStyle;
-  }
+  TopSearchbarContainer: topSearchbarContainerStyle,
+  Input: inputStyle,
+  IconContainer: iconContainerStyle,
+  SearchIcon: searchIconStyle,
+  ArrowContainer: arrowContainerStyle,
+  Arrow: arrowStyle,
 }

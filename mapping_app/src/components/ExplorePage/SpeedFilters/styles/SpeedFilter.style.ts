@@ -6,6 +6,7 @@ const speedFilterStyle: CSSProperties = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center',
+  cursor: 'pointer',
 }
 
 const textStyle: CSSProperties = {

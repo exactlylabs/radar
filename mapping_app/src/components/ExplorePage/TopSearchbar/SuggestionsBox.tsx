@@ -42,6 +42,7 @@ const SuggestionsBox = ({
           <Suggestion suggestion={suggestion}
                       key={index}
                       selectSuggestion={handleSelectSuggestion}
+                      isLast={index === (suggestions.length - 1)}
           />)
       }
     </div>

@@ -1,5 +1,5 @@
 import {CSSProperties} from "react";
-import {WHITE} from "../../../styles/colors";
+import {FILTER_SQUARE_BORDER, WHITE} from "../../../styles/colors";
 
 const myCheckboxContainerStyle: CSSProperties = {
   width: '18px',
@@ -22,7 +22,7 @@ const iconStyle: CSSProperties = {
 export const styles = {
   MyCheckboxContainer: (backgroundColor: string, color: string) => {
     const boxShadow = `0 2px 8px -2px ${backgroundColor}`;
-    const border = `solid 1px ${backgroundColor}`;
+    const border = `solid 1px ${FILTER_SQUARE_BORDER}`;
     return {
       ...myCheckboxContainerStyle,
       boxShadow,

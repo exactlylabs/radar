@@ -13,6 +13,11 @@ const suggestionContainerStyle: CSSProperties = {
   borderBottom: `solid 1px ${SELECTED_TAB}`,
 }
 
+const lastSuggestionContainerStyle: CSSProperties = {
+  ...suggestionContainerStyle,
+  borderBottom: 'none',
+}
+
 const iconStyle: CSSProperties = {
   width: '18px',
   color: BLACK,
@@ -34,7 +39,9 @@ const arrowStyle: CSSProperties = {
 }
 
 export const styles = {
-  SuggestionContainer: suggestionContainerStyle,
+  SuggestionContainer: (isLast: boolean) => {
+    return isLast ? lastSuggestionContainerStyle : suggestionContainerStyle;
+  },
   Icon: iconStyle,
   Text: textStyle,
   Arrow: arrowStyle,

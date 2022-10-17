@@ -1,5 +1,5 @@
 import {CSSProperties} from "react";
-import {BLACK, DEFAULT_SECONDARY_TEXT, WHITE} from "../../../../styles/colors";
+import {BLACK, DEFAULT_SECONDARY_TEXT, FILTER_SQUARE_BORDER, WHITE} from "../../../../styles/colors";
 
 const speedDistributionRowContainerStyle: CSSProperties = {
   width: '100%',
@@ -47,7 +47,7 @@ export const styles = {
   SpeedDistributionRowContainer: speedDistributionRowContainerStyle,
   SpeedDistributionRowIcon: (backgroundColor: string) => {
     const boxShadow = `0 2px 8px -2px ${backgroundColor}`;
-    const border = `solid 1px ${backgroundColor}`;
+    const border = `solid 1px ${FILTER_SQUARE_BORDER}`;
     return {
       ...speedDistributionRowIconStyle,
       boxShadow,

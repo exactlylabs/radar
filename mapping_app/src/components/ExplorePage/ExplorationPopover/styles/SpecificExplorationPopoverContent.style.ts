@@ -1,16 +1,23 @@
 import {CSSProperties} from "react";
-import {DEFAULT_GREEN, FOOTER_TEXT, SEARCHBAR_COLOR, WHITE} from "../../../../styles/colors";
+import {
+  DEFAULT_GREEN,
+  EXPLORATION_POPOVER_GRADIENT_OVERLAY,
+  FOOTER_TEXT,
+  SEARCHBAR_COLOR,
+  WHITE
+} from "../../../../styles/colors";
 import {popoverStates} from "../ExplorationPopover";
 
 const specificExplorationPopoverContentStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
   height: 'calc(100% - 25px)',
   margin: '25px auto 0',
+  position: 'relative'
 }
 
 const contentContainerStyle: CSSProperties = {
-  height: 'calc(100% - 120px)',
-  width: '95%',
+  height: 'calc(100% - 110px)',
+  width: 'calc(100% + 20px)',
   margin: '20px auto 0',
   overflowY: 'scroll',
 }

@@ -9,12 +9,14 @@ interface MyButtonProps {
   iconFirst?: boolean;
   onClick: () => void;
   className?: string;
+  backdropFilter?: string;
 }
 
 const MyButton = ({
   text,
   icon,
   backgroundColor,
+  backdropFilter,
   color,
   iconFirst,
   onClick,
@@ -23,14 +25,14 @@ const MyButton = ({
 
   return iconFirst ?
     <div className={className ?? 'fw-medium hover-opaque'}
-         style={styles.MyButton(backgroundColor, color)}
+         style={styles.MyButton(backgroundColor, color, backdropFilter)}
          onClick={onClick}
     >
       {icon}
       {text}
     </div> :
     <div className={className ?? 'fw-medium hover-opaque'}
-         style={styles.MyButton(backgroundColor, color)}
+         style={styles.MyButton(backgroundColor, color, backdropFilter)}
          onClick={onClick}
     >
       {text}

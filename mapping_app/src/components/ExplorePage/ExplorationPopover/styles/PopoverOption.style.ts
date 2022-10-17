@@ -8,19 +8,17 @@ import {
 } from "../../../../styles/colors";
 
 const popoverOptionContainerStyle: CSSProperties = {
-  width: '100%',
+  width: '98%',
   height: '54px',
-  boxShadow: `0 4px 8px -4px ${POPOVER_OPTION_BOX_SHADOW_RGBA}`,
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  marginBottom: '25px',
+  marginBottom: '15px',
   cursor: 'pointer',
 }
 
 const darkPopoverOptionContainerStyle: CSSProperties = {
   ...popoverOptionContainerStyle,
-  borderBottom: `solid 1px ${POPOVER_OPTION_LIGHT_BOX_SHADOW_RGBA}`,
   marginBottom: 0,
 }
 
@@ -43,11 +41,21 @@ const arrowStyle: CSSProperties = {
   color: DEFAULT_GREEN,
 }
 
+const popoverOptionContentWrapperStyle: CSSProperties = {
+  width: '94%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  margin: 'auto',
+}
+
 export const styles = {
   PopoverOptionContainer: (light?: boolean) => {
     return light ? popoverOptionContainerStyle : darkPopoverOptionContainerStyle;
   },
   Text: textStyle,
   SecondaryText: secondaryTextStyle,
-  Arrow: arrowStyle
+  Arrow: arrowStyle,
+  PopoverOptionContentWrapper: popoverOptionContentWrapperStyle,
 }

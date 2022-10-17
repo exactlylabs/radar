@@ -103,6 +103,7 @@ const RightPanel = ({
     <div style={styles.RightPanelContainer} id={'right-panel'}>
       <ClosePanelButton onClick={closePanel}/>
       <div style={styles.RightPanelContentContainer}>
+        <div style={styles.GradientUnderlay}></div>
         <div style={styles.RightPanelContentWrapper}>
           <RightPanelHeader stateName={getName()}
                             stateCountry={'U.S.A'}
@@ -120,6 +121,7 @@ const RightPanel = ({
                                medianUpload={selectedGeospaceInfo.upload_median}
                                medianLatency={selectedGeospaceInfo.latency_median}
                                speedState={getSignalState()}
+                               speedType={speedType as string}
           />
           <RightPanelHorizontalDivider />
           <SpeedDistribution unservedPeopleCount={getUnservedPeopleCount()}

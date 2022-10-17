@@ -14,7 +14,5 @@ const overlayingLoaderContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  OverlayingLoaderContainer: () => {
-    return overlayingLoaderContainerStyle;
-  }
+  OverlayingLoaderContainer: overlayingLoaderContainerStyle
 }

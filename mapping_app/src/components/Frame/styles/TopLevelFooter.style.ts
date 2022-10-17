@@ -8,7 +8,9 @@ const topLevelFooterStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  boxShadow: `0 -2px 4px 0 ${HEADER_AND_FOOTER_BOX_SHADOW_RGBA}`
+  boxShadow: `0 -2px 4px 0 ${HEADER_AND_FOOTER_BOX_SHADOW_RGBA}`,
+  position: 'relative',
+  zIndex: 1002,
 }
 
 const leftSideContainerStyle: CSSProperties = {
@@ -43,7 +45,5 @@ export const styles = {
   MappingLogo: mappingLogoStyle,
   LeftSideContainer: leftSideContainerStyle,
   RightSideContainer: rightSideContainerStyle,
-  Link: () => {
-    return linkStyle;
-  }
+  Link:  linkStyle,
 }

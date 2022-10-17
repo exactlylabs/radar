@@ -1,7 +1,8 @@
 import {ChangeEvent, ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/TopSearchbar.style";
+import './styles/TopSearchbar.css';
 import SearchIcon from "../../../assets/search-icon.png";
-import {ArrowForwardRounded} from "@mui/icons-material";
+import ArrowRight from '../../../assets/arrow-right.png';
 import {debounce} from "../../../api/utils/debouncer";
 import {handleError} from "../../../api";
 import MySpinner from "../../common/MySpinner";
@@ -53,20 +54,21 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
   });
 
   return (
-    <div style={styles.TopSearchbarContainer()} id={'top-searchbar'}>
-      <div style={styles.IconContainer()}>
-        <img src={SearchIcon} style={styles.SearchIcon()} alt={'search-icon'}/>
+    <div style={styles.TopSearchbarContainer} id={'top-searchbar'}>
+      <div style={styles.IconContainer}>
+        <img src={SearchIcon} style={styles.SearchIcon} alt={'search-icon'}/>
       </div>
       <input placeholder={'State, county, city, address...'}
              className={'fw-light'}
-             style={styles.Input()}
+             style={styles.Input}
              onChange={handleInputChange}
+             id={'top-searchbar--input'}
       />
-      <div className={'hover-opaque'} style={styles.ArrowContainer()}>
+      <div className={'hover-opaque'} style={styles.ArrowContainer}>
         {
           loading ?
           <MySpinner color={WHITE} style={{}}/> :
-          <ArrowForwardRounded style={styles.Arrow()}/>
+          <img src={ArrowRight} style={styles.Arrow} alt={'arrow-right'}/>
         }
       </div>
       {

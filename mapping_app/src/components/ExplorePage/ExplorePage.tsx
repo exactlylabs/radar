@@ -19,7 +19,6 @@ import {tabs} from "./TopFilters/GeographicalCategoryTabs";
 import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "../../utils/map";
 import MyOverlayingLoader from "../common/MyOverlayingLoader";
 import L from "leaflet";
-import {getGeospaces} from "../../api/namespaces/requests";
 import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
 
 const ExplorePage = (): ReactElement => {
@@ -62,11 +61,6 @@ const ExplorePage = (): ReactElement => {
   const closePopover = () => setIsExplorationPopoverOpen(false);
 
   const openPopover = () => setIsExplorationPopoverOpen(true);
-
-  const togglePopover = () => {
-    if(isExplorationPopoverOpen) closePopover();
-    else openPopover();
-  }
 
   const openRightPanel = () => setIsRightPanelOpen(true);
 

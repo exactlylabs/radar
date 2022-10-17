@@ -21,7 +21,7 @@ const rightPanelContentContainerStyle: CSSProperties = {
 }
 
 const rightPanelContentWrapperStyle: CSSProperties = {
-  width: '85%',
+  width: '446px',
   margin: '0 auto',
 }
 
@@ -32,9 +32,20 @@ const dropdownFiltersContainerStyle: CSSProperties = {
   alignItems: 'center',
 }
 
+const gradientUnderlayStyle: CSSProperties = {
+  width: '100%',
+  height: '210px',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  backgroundImage: 'linear-gradient(to bottom, #f5f5f5, transparent)',
+  zIndex: 1001,
+}
+
 export const styles = {
   RightPanelContainer: rightPanelContainerStyle,
   RightPanelContentContainer: rightPanelContentContainerStyle,
   RightPanelContentWrapper: rightPanelContentWrapperStyle,
-  DropdownFiltersContainer: dropdownFiltersContainerStyle
+  DropdownFiltersContainer: dropdownFiltersContainerStyle,
+  GradientUnderlay: gradientUnderlayStyle,
 }
