@@ -6,7 +6,8 @@ import {DetailedGeospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
 import DiagonalArrow from '../../../assets/diagonal-arrow.png';
-import {tabs} from "../../../utils/filters";
+import {getZoomForNamespace, tabs} from "../../../utils/filters";
+import ExplorationPopoverIcon from "./ExplorationPopoverIcon";
 
 
 interface ExplorationPopoverProps {
@@ -14,6 +15,10 @@ interface ExplorationPopoverProps {
   selectGeospace: (geospace: GeospaceOverview) => void;
   setGeospaceNamespace: (namespace: string) => void;
   recenterMap: () => void;
+  setCenter: (center: Array<number>) => void;
+  setZoom: (zoom: number) => void;
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
 }
 
 export type PopoverStateObject = {
@@ -33,10 +38,13 @@ export const popoverStates: PopoverStateObject = {
 }
 
 const ExplorationPopover = ({
-  closePopover,
   selectGeospace,
   setGeospaceNamespace,
   recenterMap,
+  setCenter,
+  setZoom,
+  isOpen,
+  setIsOpen
 }: ExplorationPopoverProps): ReactElement => {
 
   const [currentPopoverState, setCurrentPopoverState] = useState(popoverStates.INITIAL);
@@ -73,14 +81,15 @@ const ExplorationPopover = ({
 
   const handleChangePopoverState = (newState: string): void => {
     setCurrentPopoverState(newState);
-    if(newState === popoverStates.SPECIFIC_STATE) return;
+    if(newState === popoverStates.COUNTIES) return;
     recenterMap();
     if(newState === popoverStates.STATES) setGeospaceNamespace(tabs.STATES);
-    else if(newState === popoverStates.COUNTIES) setGeospaceNamespace(tabs.COUNTIES);
+    else if(newState === popoverStates.SPECIFIC_STATE) setGeospaceNamespace(tabs.COUNTIES);
     else if(newState === popoverStates.TRIBAL_LANDS) setGeospaceNamespace(tabs.TRIBAL_TRACTS);
   }
 
   const goBackToInitial = (): void => {
+    recenterMap();
     if(currentPopoverState === popoverStates.SPECIFIC_STATE) {
       setCurrentPopoverState(popoverStates.COUNTIES);
     } else {
@@ -88,7 +97,15 @@ const ExplorationPopover = ({
     }
   }
 
-  return (
+  const closePopover = () => setIsOpen(false);
+  const openPopover = () => setIsOpen(true);
+
+  const handleChangeGeospace = (geospace: GeospaceOverview) => {
+    selectGeospace(geospace);
+    closePopover();
+  }
+
+  return isOpen ?
       <div style={styles.ExplorationPopoverContainer(currentPopoverState)}>
         <div className={'hover-opaque'}
              style={styles.ShrinkButtonContainer}
@@ -106,14 +123,18 @@ const ExplorationPopover = ({
           <SpecificExplorationPopoverContent type={currentPopoverState}
                                              setType={handleChangePopoverState}
                                              goBack={goBackToInitial}
-                                             selectGeospace={selectGeospace}
+                                             selectGeospace={handleChangeGeospace}
                                              states={states}
                                              indexedCounties={indexedCounties}
                                              tribalTracts={tribalTracts}
+                                             setCenter={setCenter}
+                                             setZoom={setZoom}
           />
         }
-      </div>
-  )
+      </div> :
+      <div style={styles.ClosedExplorationPopoverContainer} id={'testtest'}>
+        <ExplorationPopoverIcon openPopover={openPopover}/>
+      </div>;
 }
 
 export default React.memo(ExplorationPopover);
