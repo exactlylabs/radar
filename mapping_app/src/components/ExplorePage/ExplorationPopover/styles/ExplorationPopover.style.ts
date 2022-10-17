@@ -20,6 +20,11 @@ const explorationPopoverContainerStyle: CSSProperties = {
   backdropFilter: 'blur(5px)'
 }
 
+const closedExplorationPopoverContainerStyle: CSSProperties = {
+  width: '100%',
+  height: '100%',
+}
+
 const extendedExplorationPopoverContainerStyle: CSSProperties = {
   ...explorationPopoverContainerStyle,
   height: '540px',
@@ -51,5 +56,6 @@ export const styles = {
     return currentPopoverState === popoverStates.INITIAL ? explorationPopoverContainerStyle : extendedExplorationPopoverContainerStyle;
   },
   ShrinkButtonContainer: shrinkButtonContainerStyle,
-  Arrow: arrowStyle
+  Arrow: arrowStyle,
+  ClosedExplorationPopoverContainer: closedExplorationPopoverContainerStyle,
 }
