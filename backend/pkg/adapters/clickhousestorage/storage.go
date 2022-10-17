@@ -185,7 +185,8 @@ func (cs *clickhouseStorage) swapTempTableBack() error {
 
 func (cs *clickhouseStorage) updateViews() {
 	log.Println("clickhouseStorage#updateViews Starting Updating Views")
-	for name, query := range views.MaterializedViews {
+	for _, name := range views.ViewsCreationOrder {
+		query := views.MaterializedViews[name]
 		tmpName := name + "_tmp"
 		if err := cs.conn.Exec(context.Background(), fmt.Sprintf("DROP VIEW %s", tmpName)); err != nil {
 			log.Println(errors.Wrap(err, "clickhouseStorage#updateViews Exec Drop"))

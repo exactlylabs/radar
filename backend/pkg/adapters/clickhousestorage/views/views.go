@@ -51,3 +51,10 @@ var MaterializedViews = map[string]string{
 	"summary_geospace_week":     summaryGeospaceWeek,
 	"us_asns":                   usAsns,
 }
+
+var ViewsCreationOrder = []string{
+	"summary_alltime", "summary_geospace_alltime", "summary_year",
+	"summary_geospace_year", "summary_semester", "summary_geospace_semester",
+	"summary_month", "summary_geospace_month", "summary_week",
+	"summary_geospace_week", "us_asns",
+}
