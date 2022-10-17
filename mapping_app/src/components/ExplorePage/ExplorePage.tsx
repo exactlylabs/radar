@@ -155,6 +155,14 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     }
   }, [userCenter]);
 
+  useEffect(() => {
+    if(userCenter) {
+      setGeospaceNamespace(GeospacesTabs.COUNTIES);
+      setCurrentMapCenter(userCenter);
+      setCurrentMapZoom(getZoomForNamespace(GeospacesTabs.COUNTIES));
+    }
+  }, [userCenter]);
+
   const closePopover = () => setIsExplorationPopoverOpen(false);
 
   const openRightPanel = () => {
