@@ -28,7 +28,7 @@ const ExplorePage = (): ReactElement => {
   const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(true);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(!!getValueFromUrl('selectedGeospace'));
   const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(getValueFromUrl('selectedGeospace') ?? null);
-  const [geospaceNamespace, setGeospaceNamespace] = useState(getValueFromUrl('geospaceNamespace') ?? tabs.STATES);
+  const [geospaceNamespace, setGeospaceNamespace] = useState(getValueFromUrl('geospaceNamespace') ?? tabs.COUNTIES);
   const [speedType, setSpeedType] = useState<string>(getValueFromUrl('speedType') ?? speedFilters[0]);
   const [calendarType, setCalendarType] = useState<string>(getValueFromUrl('calendarType') ?? calendarFilters[3]);
   const [provider, setProvider] = useState<Asn>(getValueFromUrl('provider') ?? allProvidersElement);
