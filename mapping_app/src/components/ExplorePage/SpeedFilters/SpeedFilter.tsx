@@ -1,4 +1,4 @@
-import {ReactElement} from "react";
+import {ReactElement, useState} from "react";
 import {styles} from './styles/SpeedFilter.style';
 import MyCheckbox from "../../common/MyCheckbox";
 import {WHITE} from "../../../styles/colors";
@@ -18,14 +18,22 @@ const SpeedFilter = ({
   isChecked,
   toggleFilter
 }: SpeedFilterProps): ReactElement => {
+
+  const [checked, setChecked] = useState(isChecked);
+
+  const handleClick = () => {
+    setChecked(!checked);
+    toggleFilter();
+  }
+
   return (
-    <div style={styles.SpeedFilterContainer}>
+    <div className={'hover-opaque'} style={styles.SpeedFilterContainer}>
       <MyCheckbox backgroundColor={boxColor}
                   color={WHITE}
-                  isChecked={isChecked}
-                  onClick={toggleFilter}
+                  isChecked={checked}
+                  onClick={handleClick}
       />
-      <p className={'fw-regular'} style={styles.Text}>{text}</p>
+      <p className={'fw-regular'} style={styles.Text} onClick={handleClick}>{text}</p>
       { secondaryText && <p className={'fw-light'} style={styles.SecondaryText}>{secondaryText}</p> }
     </div>
   )

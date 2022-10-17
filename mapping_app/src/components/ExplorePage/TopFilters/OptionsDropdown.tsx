@@ -8,7 +8,6 @@ import {allProvidersElement} from "./utils/providers";
 
 interface OptionsDropdownProps {
   options: Array<Filter>;
-  closeDropdown: () => void;
   selectedOption: Filter,
   setSelectedOption: (option: Filter) => void;
   dropLeft: boolean;
@@ -19,7 +18,6 @@ interface OptionsDropdownProps {
 
 const OptionsDropdown = ({
   options,
-  closeDropdown,
   selectedOption,
   setSelectedOption,
   dropLeft,
@@ -43,11 +41,12 @@ const OptionsDropdown = ({
         />
       }
       {
-        options.map(option => (
+        options.map((option, index) => (
           <Option key={isAsn(option) ? option.id : option}
                   option={option}
                   selected={isAsn(option) ? (option as Asn).id === (selectedOption as Asn).id : option === selectedOption}
                   onClick={handleSelectOption}
+                  isLast={index === (options.length - 1)}
           />
         ))
       }

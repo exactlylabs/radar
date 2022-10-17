@@ -19,10 +19,11 @@ const myButtonStyle: CSSProperties = {
 }
 
 export const styles = {
-  MyButton: (backgroundColor?: string, color?: string) => {
+  MyButton: (backgroundColor?: string, color?: string, backdropFilter?: string) => {
     let style = myButtonStyle;
     if(color) style = {...style, color};
     if(backgroundColor) style = {...style, backgroundColor};
+    if(backdropFilter) style = {...style, backdropFilter};
     return style;
   }
 }

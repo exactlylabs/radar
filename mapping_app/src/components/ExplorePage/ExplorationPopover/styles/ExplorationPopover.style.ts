@@ -17,6 +17,7 @@ const explorationPopoverContainerStyle: CSSProperties = {
   bottom: '25px',
   left: '25px',
   zIndex: 1002,
+  backdropFilter: 'blur(5px)'
 }
 
 const extendedExplorationPopoverContainerStyle: CSSProperties = {
@@ -40,7 +41,7 @@ const shrinkButtonContainerStyle: CSSProperties = {
 }
 
 const arrowStyle: CSSProperties = {
-  transform: 'rotate(180deg)',
+  width: '22px',
   color: WHITE,
   opacity: 0.8
 };

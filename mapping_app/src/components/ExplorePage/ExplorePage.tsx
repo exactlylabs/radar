@@ -63,11 +63,6 @@ const ExplorePage = (): ReactElement => {
 
   const openPopover = () => setIsExplorationPopoverOpen(true);
 
-  const togglePopover = () => {
-    if(isExplorationPopoverOpen) closePopover();
-    else openPopover();
-  }
-
   const openRightPanel = () => setIsRightPanelOpen(true);
 
   const closeRightPanel = () => {

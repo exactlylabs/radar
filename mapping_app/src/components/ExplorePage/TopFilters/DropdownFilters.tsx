@@ -9,9 +9,8 @@ import {calendarFilters, filterTypes, speedFilters} from "../../../utils/filters
 import {getAsns} from "../../../api/asns/requests";
 import {Asn} from "../../../api/asns/types";
 import {handleError} from "../../../api";
-import {Filter} from "../../../utils/types";
+import {Filter, Optional} from "../../../utils/types";
 import {debounce} from "../../../api/utils/debouncer";
-import {allProvidersElement} from "./utils/providers";
 import {GeoJSONFilters} from "../../../api/geojson/types";
 
 interface DropdownFiltersProps {
@@ -34,8 +33,10 @@ const DropdownFilters = ({
     provider: provider
   });
   const [providers, setProviders] = useState<Array<Asn>>([]);
+  const [openFilter, setOpenFilter] = useState<Optional<string>>(null);
 
   useEffect(() => {
+    window.addEventListener('click', closeFiltersIfOutsideContainer);
     getAsns()
       .then(res => {
         setProviders(res.results);
@@ -51,6 +52,13 @@ const DropdownFilters = ({
     };
     setCurrentFilters(filters);
   }, [speedType, calendarType, provider]);
+
+  const closeFiltersIfOutsideContainer = (e: MouseEvent) => {
+    const filtersContainer: Optional<HTMLElement> = document.getElementById('dropdown-filters--container');
+    if(filtersContainer && !filtersContainer.contains(e.target as Node)) {
+      setOpenFilter(null);
+    }
+  }
 
   const updateFilters = (filters: GeoJSONFilters) => {
     setCurrentFilters(filters);
@@ -95,25 +103,28 @@ const DropdownFilters = ({
   }
 
   return (
-    <div style={styles.DropdownFiltersContainer}>
-      <DropdownFilter icon={<img src={SpeedIcon} style={styles.Icon} alt={'speed-icon'}/>}
+    <div style={styles.DropdownFiltersContainer} id={'dropdown-filters--container'}>
+      <DropdownFilter iconSrc={SpeedIcon}
                       options={speedFilters}
                       textWidth={'70px'}
                       type={filterTypes.SPEED}
                       changeFilter={changeSpeedFilter}
                       selectedFilter={speedType}
-
+                      setOpenFilter={setOpenFilter}
+                      openFilter={openFilter}
       />
       <DropdownFilterVerticalDivider/>
-      <DropdownFilter icon={<img src={CalendarIcon} style={styles.Icon} alt={'speed-icon'}/>}
+      <DropdownFilter iconSrc={CalendarIcon}
                       options={calendarFilters}
                       textWidth={'70px'}
                       type={filterTypes.CALENDAR}
                       changeFilter={changeCalendarFilter}
                       selectedFilter={calendarType}
+                      setOpenFilter={setOpenFilter}
+                      openFilter={openFilter}
       />
       <DropdownFilterVerticalDivider/>
-      <DropdownFilter icon={<img src={ProvidersIcon} style={styles.Icon} alt={'speed-icon'}/>}
+      <DropdownFilter iconSrc={ProvidersIcon}
                       options={providers}
                       withSearchbar
                       textWidth={'85px'}
@@ -122,6 +133,8 @@ const DropdownFilters = ({
                       selectedFilter={provider}
                       searchbarOnChange={handleProviderSearchbarChange}
                       clearProviderList={clearProviderList}
+                      setOpenFilter={setOpenFilter}
+                      openFilter={openFilter}
       />
     </div>
   )

@@ -4,7 +4,7 @@ import {styles} from "./styles/OptionHorizontalDivider.style";
 
 const OptionHorizontalDivider = (): ReactElement => {
   return (
-    <div style={styles.OptionHorizontalDivider()}></div>
+    <div style={styles.OptionHorizontalDivider}></div>
   )
 }
 

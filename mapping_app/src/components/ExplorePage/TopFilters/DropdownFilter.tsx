@@ -1,14 +1,14 @@
-import React, {ChangeEventHandler, ReactElement, ChangeEvent, useState} from "react";
-import {KeyboardArrowDownRounded} from "@mui/icons-material";
+import React, {ChangeEventHandler, ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/DropdownFilter.style";
 import OptionsDropdown from "./OptionsDropdown";
-import {calendarFilters, filterTypes, speedFilters} from "../../../utils/filters";
+import {filterTypes} from "../../../utils/filters";
 import {Filter, Optional} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
+import Chevron from '../../../assets/chevron.png';
 
 interface DropdownFilterProps {
-  icon: ReactElement;
+  iconSrc: string;
   options: Array<Filter>;
   withSearchbar?: boolean;
   textWidth: string;
@@ -17,10 +17,12 @@ interface DropdownFilterProps {
   selectedFilter: Filter;
   searchbarOnChange?: ChangeEventHandler;
   clearProviderList?: () => void;
+  openFilter: Optional<string>;
+  setOpenFilter: (newFilter: Optional<string>) => void;
 }
 
 const DropdownFilter = ({
-  icon,
+  iconSrc,
   options,
   withSearchbar,
   textWidth,
@@ -28,17 +30,26 @@ const DropdownFilter = ({
   changeFilter,
   selectedFilter,
   searchbarOnChange,
-  clearProviderList
+  clearProviderList,
+  openFilter,
+  setOpenFilter,
 }: DropdownFilterProps): ReactElement => {
 
   const [selectedOption, setSelectedOption] = useState<Filter>(selectedFilter ?? options[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  useEffect(() => {
+    if(dropdownOpen && type !== openFilter) closeOptionsDropdown();
+  }, [openFilter]);
+
   const toggleOptionsDropdown = (e: any) => {
-    const optionElement: Optional<HTMLElement> = document.getElementById(`filter-${type}`);
-    if(optionElement && optionElement === e.target) {
-      if (dropdownOpen) closeOptionsDropdown();
-      else openOptionsDropdown();
+    e.stopPropagation();
+    if (dropdownOpen) {
+      closeOptionsDropdown();
+      setOpenFilter(null);
+    } else {
+      setOpenFilter(type);
+      openOptionsDropdown();
     }
   }
 
@@ -60,14 +71,16 @@ const DropdownFilter = ({
   return (
     <div style={styles.DropdownFilterContainer}
          onClick={toggleOptionsDropdown}
+         id={`filter-${type}`}
     >
-      {icon}
-      <p className={'fw-regular hover-opaque'} style={styles.Text(textWidth)} id={`filter-${type}`}>{getText()}</p>
-      <KeyboardArrowDownRounded style={styles.Arrow}/>
+      <div className={'hover-opaque'} style={styles.FilterContentContainer(dropdownOpen)}>
+        <img src={iconSrc} style={styles.Icon} alt={'filter-icon'}/>
+        <p className={'fw-regular hover-opaque'} style={styles.Text(textWidth)}>{getText()}</p>
+        <img src={Chevron} style={styles.Arrow} alt={'chevron'}/>
+      </div>
       {
         dropdownOpen &&
         <OptionsDropdown options={options}
-                         closeDropdown={closeOptionsDropdown}
                          selectedOption={selectedOption}
                          setSelectedOption={handleSelectNewFilter}
                          dropRight={type === filterTypes.SPEED || type === filterTypes.CALENDAR}

@@ -1,11 +1,11 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/ExplorationPopover.style";
-import {ArrowOutwardRounded} from "@mui/icons-material";
 import InitialExplorationPopoverContent from "./InitialExplorationPopoverContent";
 import SpecificExplorationPopoverContent from "./SpecificExplorationPopoverContent";
 import {DetailedGeospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
+import DiagonalArrow from '../../../assets/diagonal-arrow.png';
 
 interface ExplorationPopoverProps {
   closePopover: () => void;
@@ -45,7 +45,7 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
     allNamespaces
       .then(res => {
         setStates(res[0].results);
-        setTribalTracts(res[2].results);
+        setTribalTracts(res[2].results.filter(tt => !!tt.name && tt.name !== 'NULL'));
         // index counties by state
         let indexed: any = {};
         res[1].results.forEach(county => {
@@ -80,9 +80,7 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
              style={styles.ShrinkButtonContainer}
              onClick={closePopover}
         >
-          <ArrowOutwardRounded style={styles.Arrow}
-                               fontSize={'small'}
-          />
+          <img src={DiagonalArrow} style={styles.Arrow} alt={'diagonal-arrow'}/>
         </div>
         {
           currentPopoverState === popoverStates.INITIAL ?

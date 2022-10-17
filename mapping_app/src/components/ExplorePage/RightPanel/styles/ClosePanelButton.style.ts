@@ -1,5 +1,5 @@
 import {CSSProperties} from "react";
-import {BLACK, DEFAULT_SECONDARY_BUTTON} from "../../../../styles/colors";
+import {BLACK, CLOSE_PANEL_BUTTON_SHADOW_RGBA, DEFAULT_SECONDARY_BUTTON} from "../../../../styles/colors";
 
 const closePanelButtonStyle: CSSProperties = {
   width: '25px',
@@ -13,7 +13,9 @@ const closePanelButtonStyle: CSSProperties = {
   alignItems: 'center',
   position: 'absolute',
   top: '260px',
-  left: 0
+  left: 0,
+  backdropFilter: 'blur(10px)',
+  boxShadow: `0 2px 10px -4px ${CLOSE_PANEL_BUTTON_SHADOW_RGBA}`,
 }
 
 const arrowStyle: CSSProperties = {

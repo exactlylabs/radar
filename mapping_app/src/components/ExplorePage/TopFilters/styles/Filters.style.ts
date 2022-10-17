@@ -2,7 +2,7 @@ import {CSSProperties} from "react";
 
 const filtersContainerStyle: CSSProperties = {
   width: 'max-content',
-  maxWidth: '815px',
+  maxWidth: '825px',
   height: '100%',
   display: 'flex',
   flexDirection: 'row',

@@ -1,0 +1,13 @@
+/* Different browser compatibility, do not group */
+#top-searchbar--input::placeholder {
+  color: #97a19d;
+}
+#top-searchbar--input:-ms-input-placeholder {
+  color: #97a19d;
+}
+#top-searchbar--input::-ms-input-placeholder {
+  color: #97a19d;
+}
+#top-searchbar--input::-webkit-input-placeholder{
+  color: #97a19d;
+}

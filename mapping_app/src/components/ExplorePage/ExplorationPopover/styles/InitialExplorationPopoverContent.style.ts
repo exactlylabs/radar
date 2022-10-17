@@ -17,6 +17,7 @@ const subtitleStyle: CSSProperties = {
   color: FOOTER_TEXT,
   marginTop: '9px',
   marginBottom: '25px',
+  lineHeight: '23px',
 }
 
 export const styles = {

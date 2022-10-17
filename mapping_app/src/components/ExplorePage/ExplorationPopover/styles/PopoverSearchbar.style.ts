@@ -29,6 +29,9 @@ const inputStyle: CSSProperties = {
 
 const iconContainerStyle: CSSProperties = {
   width: '21px',
+  minWidth: '21px',
+  height: '21px',
+  minHeight: '21px',
   marginRight: '9px',
 }
 
@@ -49,7 +52,7 @@ const clearIconContainerStyle: CSSProperties = {
 const clearIconStyle: CSSProperties = {
   color: CLEAR_ICON_COLOR,
   fontSize: '15px',
-  marginRight: '20px'
+  marginRight: '60px'
 }
 
 export const styles = {

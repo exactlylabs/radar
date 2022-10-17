@@ -4,7 +4,6 @@ import {styles} from "./styles/PercentageBarIndicator.style";
 interface PercentageBarIndicatorProps {
   left: string;
   top?: boolean;
-  bottom?: boolean;
   text: string;
   percentage: string;
 }
@@ -12,7 +11,6 @@ interface PercentageBarIndicatorProps {
 const PercentageBarIndicator = ({
   left,
   top,
-  bottom,
   text,
   percentage
 }: PercentageBarIndicatorProps): ReactElement => {
