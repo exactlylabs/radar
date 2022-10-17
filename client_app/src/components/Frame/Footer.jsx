@@ -93,7 +93,7 @@ const Footer = () => {
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   return isMediumSizeScreen || isSmallSizeScreen ?
-    <div style={mobileFooterStyle}>
+    <div style={mobileFooterStyle} id={'footer--wrapper'}>
       <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={{ marginBottom: 30, marginTop: 25 }} />
       <div className={'bold regular-link--hoverable'} style={footerLinkStyle}>Privacy Policy</div>
       <div className={'bold regular-link--hoverable'} style={footerLinkStyle}>Terms of Use</div>
