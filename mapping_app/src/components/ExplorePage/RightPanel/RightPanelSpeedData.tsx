@@ -5,7 +5,6 @@ import LatencyIconGray from '../../../assets/latency-icon-gray.png';
 import {getDownloadIconSrc, getUploadIconSrc} from "../../../utils/speeds";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
-
 interface RightPanelSpeedDataProps {
   speedState: string;
   medianDownload: number;
