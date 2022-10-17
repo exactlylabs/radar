@@ -4,17 +4,19 @@ import {PaginatedResponse, PaginationLinks} from "../index";
 export type DetailedGeospace = {
   id: string;
   geo_id: string;
-  namespace: number;
+  namespace: string;
   name: string;
   parent: Optional<Geospace>;
+  centroid: Array<number>;
 }
 
 export type Geospace = {
   id: string;
   geo_id: string;
-  namespace: number;
+  namespace: string;
   name: string;
-  parent_id: Optional<string>;
+  parent: Optional<Geospace>;
+  centroid: Array<number>;
 }
 
 export type GeospacesResult = {
@@ -71,12 +73,6 @@ export const isGeospaceData = (object: any): object is GeospaceData => {
   if(!object) return false;
   const castedObject: GeospaceData = object as GeospaceData;
   return !!castedObject.geospace_id;
-}
-
-export const isGeospaceOverview = (object: any): object is GeospaceOverview => {
-  if(!object) return false;
-  const castedObject: GeospaceOverview = object as GeospaceOverview;
-  return !!castedObject.geospace;
 }
 
 export const isGeospaceOverview = (object: any): object is GeospaceOverview => {

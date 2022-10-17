@@ -6,10 +6,14 @@ import {DetailedGeospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
 import DiagonalArrow from '../../../assets/diagonal-arrow.png';
+import {tabs} from "../../../utils/filters";
+
 
 interface ExplorationPopoverProps {
   closePopover: () => void;
   selectGeospace: (geospace: GeospaceOverview) => void;
+  setGeospaceNamespace: (namespace: string) => void;
+  recenterMap: () => void;
 }
 
 export type PopoverStateObject = {
@@ -28,7 +32,12 @@ export const popoverStates: PopoverStateObject = {
   TRIBAL_LANDS: 'TRIBAL_LANDS',
 }
 
-const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverProps): ReactElement => {
+const ExplorationPopover = ({
+  closePopover,
+  selectGeospace,
+  setGeospaceNamespace,
+  recenterMap,
+}: ExplorationPopoverProps): ReactElement => {
 
   const [currentPopoverState, setCurrentPopoverState] = useState(popoverStates.INITIAL);
   const [states, setStates] = useState<Array<DetailedGeospace>>([]);
@@ -64,6 +73,11 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
 
   const handleChangePopoverState = (newState: string): void => {
     setCurrentPopoverState(newState);
+    if(newState === popoverStates.SPECIFIC_STATE) return;
+    recenterMap();
+    if(newState === popoverStates.STATES) setGeospaceNamespace(tabs.STATES);
+    else if(newState === popoverStates.COUNTIES) setGeospaceNamespace(tabs.COUNTIES);
+    else if(newState === popoverStates.TRIBAL_LANDS) setGeospaceNamespace(tabs.TRIBAL_TRACTS);
   }
 
   const goBackToInitial = (): void => {

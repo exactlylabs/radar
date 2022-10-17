@@ -52,6 +52,7 @@ interface CustomMapProps {
   setCenter: (center: Array<number>) => void;
   center: Array<number>;
   zoom: number;
+  isRightPanelHidden: boolean;
 }
 
 const CustomMap = ({
@@ -63,7 +64,8 @@ const CustomMap = ({
   setZoom,
   setCenter,
   center,
-  zoom
+  zoom,
+  isRightPanelHidden,
 }: CustomMapProps): null => {
   const map = useMap();
   // Reference: https://github.com/Leaflet/Leaflet/pull/8109
@@ -72,6 +74,16 @@ const CustomMap = ({
   map.setMinZoom(3);
   map.setView({lat: center[0], lng: center[1]}, zoom);
   map.zoomControl.setPosition('bottomright');
+  if(!!selectedGeospace && !isRightPanelHidden) {
+    const zoomControlElements: HTMLCollection = document.getElementsByClassName('leaflet-control-zoom');
+    if(zoomControlElements.length > 0) {
+      const firstElement: Element | null = zoomControlElements.item(0);
+      // doing 2 line condition to prevent Typescript error
+      if(firstElement) {
+        firstElement.classList.add('leaflet-control-zoom-custom-position');
+      }
+    }
+  }
   map.eachLayer((layer: any) => {
     if(layer.feature) {
       layer.remove();
@@ -137,6 +149,7 @@ interface MyMapProps {
   initialCenter: Array<number>;
   setCenter: (center: Array<number>) => void;
   setLoading: (value: boolean) => void;
+  isRightPanelHidden: boolean;
 }
 
 const MyMap = ({
@@ -152,6 +165,7 @@ const MyMap = ({
   initialCenter,
   setCenter,
   setLoading,
+  isRightPanelHidden,
 }: MyMapProps): ReactElement => {
 
   const [geoJSON, setGeoJSON] = useState<GeoJSONResponse>();
@@ -189,6 +203,7 @@ const MyMap = ({
                      setCenter={setCenter}
                      center={initialCenter}
                      zoom={initialZoom}
+                     isRightPanelHidden={isRightPanelHidden}
           />
           <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
         </MapContainer>

@@ -36,17 +36,25 @@ const headerStyle: CSSProperties = {
 }
 
 const textContainerStyle: CSSProperties = {
+  width: '100%',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'baseline',
   marginBottom: '0px',
+  maxWidth: '100%',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden'
 }
 
 const mainTextStyle: CSSProperties = {
   fontSize: '20px',
   color: DEFAULT_TEXT,
   marginRight: '5px',
+  maxWidth: '100%',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden'
 }
 
 const secondaryTextStyle: CSSProperties = {
