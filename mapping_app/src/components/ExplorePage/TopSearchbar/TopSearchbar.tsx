@@ -24,9 +24,12 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
 
   useEffect(() => {
     window.removeEventListener('click', openSuggestionsIfPresent);
+    window.removeEventListener('keydown', goToFirstSuggestionOnEnter);
     window.addEventListener('click', openSuggestionsIfPresent);
+    window.addEventListener('keydown', goToFirstSuggestionOnEnter);
     return () => {
       window.removeEventListener('click', openSuggestionsIfPresent);
+      window.removeEventListener('keydown', goToFirstSuggestionOnEnter);
     }
   }, [suggestions]);
 
@@ -36,6 +39,13 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
        suggestionsListContainerElement.contains(e.target as Node) &&
        suggestions.length > 0) {
       setOpen(true);
+    }
+  }
+
+  const goToFirstSuggestionOnEnter = (e: KeyboardEvent) => {
+    if(open && !loading && suggestions.length > 0 && e.key === 'Enter') {
+      selectSuggestion(suggestions[0]);
+      setOpen(false);
     }
   }
 

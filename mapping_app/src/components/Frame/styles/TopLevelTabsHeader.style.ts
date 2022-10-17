@@ -23,8 +23,17 @@ const rightSideButtonContainerStyle: CSSProperties = {
   marginLeft: 'auto',
 }
 
+const pinIconStyle: CSSProperties = {
+  width: '20px',
+  height: '20px',
+  minWidth: '20px',
+  minHeight: '20px',
+  marginRight: '4px'
+}
+
 export const styles = {
   TopLevelTabsHeaderContainer: topLevelTabsHeaderContainerStyle,
   MappingLogo: mappingLogoStyle,
-  RightSideButtonContainer: rightSideButtonContainerStyle
+  RightSideButtonContainer: rightSideButtonContainerStyle,
+  PinIcon: pinIconStyle,
 }

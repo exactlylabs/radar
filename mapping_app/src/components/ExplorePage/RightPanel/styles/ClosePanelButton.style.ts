@@ -18,12 +18,20 @@ const closePanelButtonStyle: CSSProperties = {
   boxShadow: `0 2px 10px -4px ${CLOSE_PANEL_BUTTON_SHADOW_RGBA}`,
 }
 
+const hiddenClosePanelButtonStyle: CSSProperties = {
+  ...closePanelButtonStyle,
+  left: undefined,
+  right: '10px',
+}
+
 const arrowStyle: CSSProperties = {
   color: BLACK,
   width: '16px',
 }
 
 export const styles = {
-  ClosePanelButtonContainer: closePanelButtonStyle,
+  ClosePanelButtonContainer: (isHidden: boolean) => {
+    return isHidden ? hiddenClosePanelButtonStyle : closePanelButtonStyle;
+  },
   Arrow: arrowStyle,
 }
