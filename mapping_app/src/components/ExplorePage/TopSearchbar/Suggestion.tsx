@@ -35,7 +35,7 @@ const Suggestion = ({
 
   return (
     <div key={suggestion.name}
-         style={styles.SuggestionContainer}
+         style={styles.SuggestionContainer(isLast)}
          className={'hover-opaque suggestion'}
          onClick={handleSelectSuggestion}
     >

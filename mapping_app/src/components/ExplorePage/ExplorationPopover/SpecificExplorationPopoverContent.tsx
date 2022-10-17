@@ -11,6 +11,7 @@ import './styles/SpecificExplorationPopoverContent.css';
 import {emptyGeoJSONFilters} from "../../../api/geojson/types";
 import {getZoomForNamespace, GeospacesTabs} from "../../../utils/filters";
 import MyExplorationPopoverLoader from "./MyExplorationPopoverLoader";
+import './styles/SpecificExplorationPopoverContent.css';
 
 interface SpecificExplorationPopoverContentProps {
   type: string;
