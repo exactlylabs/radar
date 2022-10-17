@@ -139,7 +139,7 @@ const Tabs = ({ step, setStep }) => {
   }
 
   return (
-    <div style={tabsWrapperStyle}>
+    <div style={tabsWrapperStyle} id={'tabs--wrapper'}>
       <div style={tabsContentWrapperStyle}>
         <div style={testSpeedTabStyle} onClick={goToTestSpeed}>
           <div style={getTabStyle(TABS.SPEED_TEST)}>
@@ -169,7 +169,7 @@ const Tabs = ({ step, setStep }) => {
           <div style={selectedTab === TABS.HISTORY ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
 
-        <div style={exploreMapTabStyle} onClick={goToExploreMap}>
+        <div style={exploreMapTabStyle} onClick={goToExploreMap} id={'tabs--explore-map-button'}>
           <div style={getTabStyle(TABS.EXPLORE_MAP)}>
             <img
               src={selectedTab === TABS.EXPLORE_MAP ? exploreMapIconActive : exploreMapIconInactive}

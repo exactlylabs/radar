@@ -98,7 +98,7 @@ const Header = ({ setStep }) => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <div className={'bold'} style={isMediumSizeScreen || isSmallSizeScreen ? mobileHeaderStyle : headerStyle}>
+    <div className={'bold'} style={isMediumSizeScreen || isSmallSizeScreen ? mobileHeaderStyle : headerStyle} id={'header--wrapper'}>
       <div style={contentWrapperStyle}>
         <div style={leftSideContainerStyle}>
           <img
