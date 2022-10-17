@@ -4,25 +4,47 @@ import CloseIcon from '../../../assets/close-icon.png';
 import {capitalize} from "../../../utils/strings";
 
 interface RightPanelHeaderProps {
-  stateName: string;
-  stateCountry: string;
+  geospaceName: string;
+  country: string;
+  parentName?: string;
   stateSignalState: string;
   closePanel: () => void;
 }
 
 const RightPanelHeader = ({
-  stateName,
-  stateCountry,
+  geospaceName,
+  parentName,
+  country,
   stateSignalState,
   closePanel
 }: RightPanelHeaderProps): ReactElement => {
+
+  const getRegularContent = () => (
+    <div style={styles.StateTextContainer(false)}>
+      <p className={'fw-medium'} style={styles.GeospaceName}>{geospaceName}</p>
+      <p className={'fw-light'} style={styles.StateCountry}>{country}</p>
+    </div>
+  );
+
+  const getTwoLineContent = () => (
+    <div style={styles.StateTextContainer(true)}>
+      <p className={'fw-medium'} style={styles.GeospaceName}>{geospaceName}</p>
+      <div className={'fw-light'} style={styles.StateAndCountryLine}>
+        <p className={'fw-light'} style={styles.StateCountry}>{parentName}</p>,
+        <p className={'fw-light'} style={styles.StateCountry}>{country}</p>
+      </div>
+    </div>
+  )
+
+  const getTextContent = () => {
+    console.log(parentName)
+    return !!parentName ? getTwoLineContent() : getRegularContent();
+  }
+
   return (
     <div style={styles.RightPanelHeaderContainer}>
       <div style={styles.LeftSideContainer}>
-        <div style={styles.StateTextContainer}>
-          <p className={'fw-medium'} style={styles.StateName}>{stateName}</p>
-          <p className={'fw-light'} style={styles.StateCountry}>{stateCountry}</p>
-        </div>
+        {getTextContent()}
         <div style={styles.SignalStateContainer}>
           <div style={styles.StateSignalStateIndicator(stateSignalState)}></div>
           <p className={'fw-regular'} style={styles.StateSignalState}>{capitalize(stateSignalState)}</p>

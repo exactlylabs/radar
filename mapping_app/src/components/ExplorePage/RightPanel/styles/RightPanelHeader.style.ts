@@ -36,10 +36,19 @@ const stateTextContainerStyle: CSSProperties = {
   marginBottom: '7px',
 }
 
-const stateNameStyle: CSSProperties = {
+const countyTextContainerStyle: CSSProperties = {
+  ...stateTextContainerStyle,
+}
+
+const geospaceNameStyle: CSSProperties = {
   fontSize: '26px',
   color: DEFAULT_TEXT,
   marginRight: '5px',
+  maxWidth: '310px',
+  flexWrap: 'nowrap',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
 }
 
 const stateCountryStyle: CSSProperties = {
@@ -86,11 +95,15 @@ const closeIconStyle: CSSProperties = {
   minWidth: '20px'
 }
 
+const stateAndCountryStyle: CSSProperties = {
+
+}
+
 export const styles = {
   RightPanelHeaderContainer: rightPanelHeaderContainerStyle,
   LeftSideContainer: leftSideContainerStyle,
-  StateTextContainer: stateTextContainerStyle,
-  StateName: stateNameStyle,
+  StateTextContainer: (isCounty: boolean) => isCounty ? countyTextContainerStyle : stateTextContainerStyle,
+  GeospaceName: geospaceNameStyle,
   StateCountry: stateCountryStyle,
   SignalStateContainer: signalStateContainerStyle,
   StateSignalStateIndicator: (stateSignalState: string) => {
@@ -99,5 +112,6 @@ export const styles = {
   },
   StateSignalState: stateSignalStateStyle,
   CloseButton: closeButtonStyle,
-  CloseIcon: closeIconStyle
+  CloseIcon: closeIconStyle,
+  StateAndCountryLine: stateAndCountryStyle,
 }

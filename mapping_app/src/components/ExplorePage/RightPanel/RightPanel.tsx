@@ -1,6 +1,6 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/RightPanel.style";
-import ClosePanelButton from "./ClosePanelButton";
+import HidePanelButton from "./HidePanelButton";
 import DropdownFilters from "../TopFilters/DropdownFilters";
 import RightPanelHeader from "./RightPanelHeader";
 import RightPanelSpeedData from "./RightPanelSpeedData";
@@ -24,6 +24,8 @@ interface RightPanelProps {
   setSpeedType: (type: Filter) => void;
   setCalendarType: (type: Filter) => void;
   setProvider: (type: Filter) => void;
+  toggleHidden: () => void;
+  isHidden: boolean;
 }
 
 const RightPanel = ({
@@ -35,9 +37,12 @@ const RightPanel = ({
   provider,
   setSpeedType,
   setCalendarType,
-  setProvider
+  setProvider,
+  toggleHidden,
+  isHidden
 }: RightPanelProps): ReactElement => {
 
+  console.log(selectedGeospaceInfo)
   const getName = (): string => {
     if(isGeospaceData(selectedGeospaceInfo)) {
       if(selectedGeospaceInfo.state) return selectedGeospaceInfo.state as string;
@@ -101,36 +106,40 @@ const RightPanel = ({
 
   return (
     <div style={styles.RightPanelContainer} id={'right-panel'}>
-      <ClosePanelButton onClick={closePanel}/>
-      <div style={styles.RightPanelContentContainer}>
-        <div style={styles.GradientUnderlay}></div>
-        <div style={styles.RightPanelContentWrapper}>
-          <RightPanelHeader stateName={getName()}
-                            stateCountry={'U.S.A'}
-                            stateSignalState={getSignalState()}
-                            closePanel={closePanel}
-          />
-          <div style={styles.DropdownFiltersContainer}>
-            <DropdownFilters changeFilters={handleFilterChange}
-                             speedType={speedType}
-                             calendarType={calendarType}
-                             provider={provider}
+      <HidePanelButton onClick={toggleHidden} isHidden={isHidden}/>
+      {
+        !isHidden &&
+        <div style={styles.RightPanelContentContainer}>
+          <div style={styles.GradientUnderlay}></div>
+          <div style={styles.RightPanelContentWrapper}>
+            <RightPanelHeader geospaceName={getName()}
+                              parentName={(selectedGeospaceInfo as GeospaceOverview).geospace.parent?.name}
+                              country={'U.S.A'}
+                              stateSignalState={getSignalState()}
+                              closePanel={closePanel}
+            />
+            <div style={styles.DropdownFiltersContainer}>
+              <DropdownFilters changeFilters={handleFilterChange}
+                               speedType={speedType}
+                               calendarType={calendarType}
+                               provider={provider}
+              />
+            </div>
+            <RightPanelSpeedData medianDownload={selectedGeospaceInfo.download_median}
+                                 medianUpload={selectedGeospaceInfo.upload_median}
+                                 medianLatency={selectedGeospaceInfo.latency_median}
+                                 speedState={getSignalState()}
+                                 speedType={speedType as string}
+            />
+            <RightPanelHorizontalDivider/>
+            <SpeedDistribution unservedPeopleCount={getUnservedPeopleCount()}
+                               underservedPeopleCount={getUnderservedPeopleCount()}
+                               servedPeopleCount={getServedPeopleCount()}
+                               speedType={speedType}
             />
           </div>
-          <RightPanelSpeedData medianDownload={selectedGeospaceInfo.download_median}
-                               medianUpload={selectedGeospaceInfo.upload_median}
-                               medianLatency={selectedGeospaceInfo.latency_median}
-                               speedState={getSignalState()}
-                               speedType={speedType as string}
-          />
-          <RightPanelHorizontalDivider />
-          <SpeedDistribution unservedPeopleCount={getUnservedPeopleCount()}
-                             underservedPeopleCount={getUnderservedPeopleCount()}
-                             servedPeopleCount={getServedPeopleCount()}
-                             speedType={speedType}
-          />
         </div>
-      </div>
+      }
     </div>
   )
 }

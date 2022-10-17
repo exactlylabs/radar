@@ -1,7 +1,6 @@
 import {AppState, Filter, isLatLngValid, isNumber, isString, Optional} from "./types";
 import {GeospaceInfo, isGeospaceData, isGeospaceOverview} from "../api/geospaces/types";
-import {tabs} from "../components/ExplorePage/TopFilters/GeographicalCategoryTabs";
-import {calendarFilters, speedFilters} from "./filters";
+import {calendarFilters, speedFilters, tabs} from "./filters";
 import {isAsn} from "../api/asns/types";
 import {allProvidersElement} from "../components/ExplorePage/TopFilters/utils/providers";
 import {speedTypes} from "./speeds";
@@ -28,6 +27,9 @@ export const getValueFromUrl = (key: string): Optional<any> => {
   const stateBase64: string = window.location.search.split('?state=')[1];
   let possibleState: Optional<AppState> = getAppState(stateBase64);
   if(!possibleState) return undefined;
+  if(key === 'geospaceNamespace') {
+    console.log(possibleState[key])
+  }
   possibleState = getValidState(possibleState as AppState);
   return possibleState[key as keyof AppState];
 }

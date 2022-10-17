@@ -7,13 +7,14 @@ import {styles} from "./styles/Frame.style";
 
 interface FrameProps {
   children: ReactElement,
+  centerOnUser: (center: Array<number>) => void;
 }
 
-const Frame = ({children}: FrameProps): ReactElement => {
+const Frame = ({children, centerOnUser}: FrameProps): ReactElement => {
 
   return (
     <div style={styles.FrameWrapper}>
-      <TopLevelTabsHeader/>
+      <TopLevelTabsHeader centerOnUser={centerOnUser}/>
       <SecondLevelContentHeader/>
       <div style={styles.ContentWrapper}>
         {children}

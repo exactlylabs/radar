@@ -11,21 +11,25 @@ import {Geospace, GeospaceInfo, GeospaceOverview} from "../../api/geospaces/type
 import {getOverview} from "../../api/geospaces/requests";
 import {handleError} from "../../api";
 import {speedTypes} from "../../utils/speeds";
-import {calendarFilters, speedFilters} from "../../utils/filters";
+import {calendarFilters, getCorrectNamespace, getZoomForNamespace, speedFilters, tabs} from "../../utils/filters";
 import {allProvidersElement} from "./TopFilters/utils/providers";
 import {getValueFromUrl, updateUrl} from "../../utils/base64";
 import {Asn} from "../../api/asns/types";
-import {tabs} from "./TopFilters/GeographicalCategoryTabs";
 import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "../../utils/map";
 import MyOverlayingLoader from "../common/MyOverlayingLoader";
 import L from "leaflet";
 import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
 
-const ExplorePage = (): ReactElement => {
+interface ExplorePageProps {
+  userCenter: Optional<Array<number>>;
+}
+
+const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   const [loading, setLoading] = useState(false);
   const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(true);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(!!getValueFromUrl('selectedGeospace'));
+  const [isRightPanelHidden, setIsRightPanelHidden] = useState(false);
   const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(getValueFromUrl('selectedGeospace') ?? null);
   const [geospaceNamespace, setGeospaceNamespace] = useState(getValueFromUrl('geospaceNamespace') ?? tabs.STATES);
   const [speedType, setSpeedType] = useState<Filter>(getValueFromUrl('speedType') ?? speedFilters[0]);
@@ -58,6 +62,14 @@ const ExplorePage = (): ReactElement => {
     currentMapCenter
   ]);
 
+  useEffect(() => {
+    if(userCenter) {
+      setGeospaceNamespace(tabs.COUNTIES);
+      setCurrentMapCenter(userCenter);
+      setCurrentMapZoom(getZoomForNamespace(tabs.COUNTIES));
+    }
+  }, [userCenter]);
+
   const closePopover = () => setIsExplorationPopoverOpen(false);
 
   const openPopover = () => setIsExplorationPopoverOpen(true);
@@ -69,9 +81,16 @@ const ExplorePage = (): ReactElement => {
     setIsRightPanelOpen(false);
   }
 
+  const hidePanel = () => setIsRightPanelHidden(true);
+  const showPanel = () => setIsRightPanelHidden(false);
+  const togglePanel = () => isRightPanelHidden ? showPanel() : hidePanel();
+
   const selectSuggestion = async (suggestion: Geospace) => {
     try {
       setLoading(true);
+      setGeospaceNamespace(getCorrectNamespace(suggestion.namespace));
+      setCurrentMapCenter([suggestion.centroid[1], suggestion.centroid[0]]);
+      setCurrentMapZoom(getZoomForNamespace(suggestion.namespace));
       const overview: GeospaceOverview = await getOverview(suggestion.id, '');
       const allData: GeospaceInfo = {
         ...overview,
@@ -90,10 +109,19 @@ const ExplorePage = (): ReactElement => {
     setSelectedGeospace(geospace);
     if(center) {
       setCurrentMapCenter([center.lat, center.lng]);
-      setCurrentMapZoom(5);
+      setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
+    } else if((geospace as GeospaceOverview).geospace.centroid) {
+      const centroid: Array<number> = (geospace as GeospaceOverview).geospace.centroid;
+      setCurrentMapCenter([centroid[1], centroid[0]]);
+      setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
     }
     openRightPanel();
     setLoading(false);
+  }
+
+  const recenterMap = () => {
+    setCurrentMapCenter([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
+    setCurrentMapZoom(3);
   }
 
   return (
@@ -111,11 +139,10 @@ const ExplorePage = (): ReactElement => {
              initialCenter={currentMapCenter}
              setCenter={setCurrentMapCenter}
              setLoading={setLoading}
+             isRightPanelHidden={isRightPanelHidden}
       />
-      <TopSearchbar selectSuggestion={selectSuggestion}
-
-      />
-      <TopFilters isRightPanelOpen={isRightPanelOpen}
+      <TopSearchbar selectSuggestion={selectSuggestion}/>
+      <TopFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
                   setGeospaceNamespace={setGeospaceNamespace}
                   setSpeedType={setSpeedType}
                   setCalendarType={setCalendarType}
@@ -125,13 +152,17 @@ const ExplorePage = (): ReactElement => {
                   calendarType={calendarType}
                   provider={provider}
       />
-      <SpeedFilters isRightPanelOpen={isRightPanelOpen}
+      <SpeedFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
                     speedType={speedType}
                     selectedSpeedFilters={selectedSpeedFilters}
                     setSelectedSpeedFilters={setSelectedSpeedFilters}
       />
       { isExplorationPopoverOpen &&
-        <ExplorationPopover closePopover={closePopover} selectGeospace={selectGeospace}/>
+        <ExplorationPopover closePopover={closePopover}
+                            selectGeospace={selectGeospace}
+                            setGeospaceNamespace={setGeospaceNamespace}
+                            recenterMap={recenterMap}
+        />
       }
       { !isExplorationPopoverOpen &&
         <ExplorationPopoverIcon openPopover={openPopover}/>
@@ -146,6 +177,8 @@ const ExplorePage = (): ReactElement => {
                     setCalendarType={setCalendarType}
                     provider={provider}
                     setProvider={setProvider}
+                    toggleHidden={togglePanel}
+                    isHidden={isRightPanelHidden}
         />
       }
     </div>

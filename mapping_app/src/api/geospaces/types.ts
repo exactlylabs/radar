@@ -4,9 +4,10 @@ import {PaginationLinks} from "../index";
 export type Geospace = {
   id: string;
   geo_id: string;
-  namespace: number;
+  namespace: string;
   name: string;
-  parent: Optional<Geospace>
+  parent: Optional<Geospace>;
+  centroid: Array<number>;
 }
 
 export type GeospacesResult = {

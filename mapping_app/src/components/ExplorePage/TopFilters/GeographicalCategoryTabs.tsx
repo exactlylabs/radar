@@ -1,11 +1,6 @@
 import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/GeographicalCategoryTabs.style";
-
-export const tabs = {
-  STATES: 'STATES',
-  COUNTIES: 'COUNTIES',
-  TRIBAL_TRACTS: 'TRIBAL_TRACTS',
-}
+import {tabs} from "../../../utils/filters";
 
 interface GeographicalCategoryTabsProps {
   geospaceNamespace: string;
