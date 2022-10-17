@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import ExplorePage from "./components/ExplorePage/ExplorePage";
 import AboutPage from "./components/AboutPage/AboutPage";
-import Frame from "./components/Frame/Frame";
 import {Optional} from "./utils/types";
 import { ViewportContextProvider } from './context/ViewportContent';
 import {MenuContextProvider} from "./context/MenuContent";
+import Frame from "./components/Frame/Frame";
 
 const App = () => {
 
