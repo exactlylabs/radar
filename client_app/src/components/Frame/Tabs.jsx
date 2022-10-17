@@ -139,7 +139,7 @@ const Tabs = ({ step, setStep }) => {
   }
 
   return (
-    <div style={tabsWrapperStyle} id={'footer--wrapper'}>
+    <div style={tabsWrapperStyle} id={'tabs--wrapper'}>
       <div style={tabsContentWrapperStyle}>
         <div style={testSpeedTabStyle} onClick={goToTestSpeed}>
           <div style={getTabStyle(TABS.SPEED_TEST)}>
