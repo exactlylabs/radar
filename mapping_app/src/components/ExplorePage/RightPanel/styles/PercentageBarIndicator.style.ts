@@ -19,7 +19,7 @@ const textStyle: CSSProperties = {
 }
 
 const verticalLineStyle: CSSProperties = {
-  width: '2px',
+  width: '1px',
   height: '12px',
   backgroundColor: VERTICAL_LINE_PERCENTAGE,
   borderRadius: '2px',
@@ -37,6 +37,6 @@ export const styles = {
     return isTop ? {...textStyle, left, top: 0} : {...textStyle, left, bottom: 0}
   },
   VerticalLine: (left: string | number, isTop?: boolean) => {
-    return isTop ? {...verticalLineStyle, left, bottom: '6px'} : {...verticalLineStyle, left, top: '6px'};
+    return isTop ? {...verticalLineStyle, left: `calc(${left} + 2px)`, bottom: '6px'} : {...verticalLineStyle, left, top: '6px'};
   }
 }

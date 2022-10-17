@@ -15,6 +15,7 @@ const rightPanelHeaderContainerStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
+  zIndex: 1002,
 }
 
 const leftSideContainerStyle: CSSProperties = {
@@ -23,6 +24,8 @@ const leftSideContainerStyle: CSSProperties = {
   height: '100%',
   justifyContent: 'space-between',
   alignItems: 'flex-start',
+  zIndex: 1002,
+  marginLeft: '10px',
 }
 
 const stateTextContainerStyle: CSSProperties = {
@@ -73,11 +76,14 @@ const closeButtonStyle: CSSProperties = {
   alignItems: 'center',
   boxShadow: `0 2px 10px -4px ${SEARCHBAR_BOX_SHADOW_RGBA}`,
   borderRadius: '6px',
+  zIndex: 1002,
 }
 
 const closeIconStyle: CSSProperties = {
-  width: '15px',
-
+  width: '20px',
+  height: '20px',
+  minHeight: '20px',
+  minWidth: '20px'
 }
 
 export const styles = {

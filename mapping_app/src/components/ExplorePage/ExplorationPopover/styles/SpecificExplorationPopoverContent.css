@@ -1,0 +1,13 @@
+#exploration-popover--content-container {
+  --mask-size-content: calc(100% - 10px) 100%;
+  --mask-image-scrollbar: linear-gradient(black, black);
+  --mask-size-scrollbar: 10px 100%;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(238, 238, 238, 0.2) 0%, #ededed 7%, rgba(232, 232, 232, 0.79) 91%, rgba(216, 216, 216, 0.2) 100%), var(--mask-image-scrollbar);
+  mask-image: linear-gradient(to bottom, rgba(238, 238, 238, 0.2) 0%, #ededed 7%, rgba(232, 232, 232, 0.79) 91%, rgba(216, 216, 216, 0.2) 100%), var(--mask-image-scrollbar);
+  mask-size: var(--mask-size-content), var(--mask-size-scrollbar);
+  -webkit-mask-size: var(--mask-size-content), var(--mask-size-scrollbar);
+  mask-position: 0 0, 100% 0;
+  -webkit-mask-position: 0 0, 100% 0;
+  mask-repeat: no-repeat, no-repeat;
+  -webkit-mask-repeat: no-repeat, no-repeat;
+}

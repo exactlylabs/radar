@@ -40,14 +40,14 @@ export const getStyle = (isSelected: boolean, key: string) => {
 
 export const layerMouseoutHandler = (ev: LeafletMouseEvent) => {
   let target = ev.target;
-  target.closeTooltip();
+  //target.closeTooltip();
   target.setStyle({weight: 1, opacity: 0.5, fillOpacity: 0.5});
 }
 
 export const layerMouseoverHandler = (ev: LeafletMouseEvent) => {
   let target = ev.target;
   target.setStyle({weight: 3, opacity: 0.8, fillOpacity: 0.8});
-  target.closeTooltip();
+  //target.closeTooltip();
   target.openTooltip();
 }
 

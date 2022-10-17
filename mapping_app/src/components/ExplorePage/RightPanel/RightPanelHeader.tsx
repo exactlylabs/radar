@@ -1,6 +1,6 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/RightPanelHeader.style";
-import {CloseRounded} from "@mui/icons-material";
+import CloseIcon from '../../../assets/close-icon.png';
 import {capitalize} from "../../../utils/strings";
 
 interface RightPanelHeaderProps {
@@ -29,7 +29,7 @@ const RightPanelHeader = ({
         </div>
       </div>
       <div className={'hover-opaque'} style={styles.CloseButton} onClick={closePanel}>
-        <CloseRounded style={styles.CloseIcon}/>
+        <img src={CloseIcon} style={styles.CloseIcon} alt={'close-icon'}/>
       </div>
     </div>
   )

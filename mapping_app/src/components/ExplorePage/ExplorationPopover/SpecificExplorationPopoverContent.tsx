@@ -7,6 +7,7 @@ import PopoverOption from "./PopoverOption";
 import {Optional} from "../../../utils/types";
 import {DetailedGeospace, GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
 import {getOverview} from "../../../api/geospaces/requests";
+import './styles/SpecificExplorationPopoverContent.css';
 import {emptyGeoJSONFilters} from "../../../api/geojson/types";
 
 interface SpecificExplorationPopoverContentProps {
@@ -104,6 +105,7 @@ const SpecificExplorationPopoverContent = ({
         <div style={styles.NoResultsContainer}>
           <p className={'fw-light'}>No results for </p>
           <p className={'fw-medium'} style={styles.SearchedTerm}>{inputText}</p>
+          <p className={'fw-light'}>.</p>
         </div>
       );
     } else {
@@ -112,6 +114,7 @@ const SpecificExplorationPopoverContent = ({
                        text={item.name}
                        secondaryText={type === popoverStates.COUNTIES && item.parent ? item.parent.name : undefined}
                        onClick={() => handleSelectOption(item, index)}
+                       listMode
         />
       );
     }
@@ -139,7 +142,7 @@ const SpecificExplorationPopoverContent = ({
                         setText={handleSetText}
       />
       {type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText}>Start by choosing a state...</p>}
-      <div style={styles.ContentContainer(type)}>
+      <div style={styles.ContentContainer(type)} id={'exploration-popover--content-container'}>
         {getContent()}
       </div>
     </div>

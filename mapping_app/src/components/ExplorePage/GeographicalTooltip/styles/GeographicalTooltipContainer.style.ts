@@ -10,7 +10,6 @@ import {speedColors, SpeedsObject} from "../../../../utils/speeds";
 
 const geographicalTooltipContainerStyle: CSSProperties = {
   width: '300px',
-  height: '150px',
   backgroundColor: DEFAULT_SECONDARY_BUTTON,
   borderRadius: '10px',
   boxShadow: `0 2px 10px -4px ${EXPLORATION_POPOVER_SECONDARY_BLACK}`,
@@ -18,12 +17,12 @@ const geographicalTooltipContainerStyle: CSSProperties = {
   left: '40%',
   top: '40%',
   zIndex: 1000,
+  backdropFilter: 'blur(10px)',
 }
 
 const geographicalTooltipContentWrapperStyle: CSSProperties = {
   width: '276px',
-  height: '173px',
-  margin: '17px auto 10px',
+  margin: '15px auto',
   position: 'relative'
 }
 
@@ -33,7 +32,7 @@ const headerStyle: CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
-  marginBottom: '10px',
+  marginBottom: '15px',
 }
 
 const textContainerStyle: CSSProperties = {
@@ -41,7 +40,7 @@ const textContainerStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'baseline',
-  marginBottom: '7px',
+  marginBottom: '0px',
 }
 
 const mainTextStyle: CSSProperties = {
@@ -78,13 +77,13 @@ const speedDataContainerStyle: CSSProperties = {
   width: '100%',
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'space-between',
+  justifyContent: 'flex-start',
   alignItems: 'center',
 }
 
 const iconStyle: CSSProperties = {
-  width: '15px',
-  marginRight: '8px',
+  width: '20px',
+  marginRight: '6px',
   color: FOOTER_TEXT,
 }
 

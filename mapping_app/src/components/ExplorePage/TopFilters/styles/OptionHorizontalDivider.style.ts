@@ -11,7 +11,5 @@ const optionHorizontalDividerStyle: CSSProperties = {
 }
 
 export const styles = {
-  OptionHorizontalDivider: () => {
-    return optionHorizontalDividerStyle;
-  }
+  OptionHorizontalDivider: optionHorizontalDividerStyle
 }

@@ -17,7 +17,7 @@ import {GeoJSONFilters, GeoJSONProperties, GeoJSONResponse} from "../../api/geoj
 import {getGeoJSON} from "../../api/geojson/requests";
 import {handleError} from "../../api";
 import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject} from "../../utils/speeds";
-import {GeospaceInfo} from "../../api/geospaces/types";
+import {GeospaceInfo, GeospaceOverview} from "../../api/geospaces/types";
 import {Filter, Optional} from "../../utils/types";
 import ReactDOMServer from "react-dom/server";
 import GeographicalTooltip from "./GeographicalTooltip/GeographicalTooltip";

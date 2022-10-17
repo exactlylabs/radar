@@ -1,6 +1,6 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/Option.style";
-import {CheckRounded} from "@mui/icons-material";
+import GreenCheckIcon from '../../../assets/green-check-icon.png';
 import {Filter} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
@@ -10,12 +10,14 @@ interface OptionProps {
   option: Filter;
   selected: boolean;
   onClick: (option: Filter) => void;
+  isLast?: boolean;
 }
 
 const Option = ({
   option,
   selected,
-  onClick
+  onClick,
+  isLast
 }: OptionProps): ReactElement => {
 
   const handleClick = () => {
@@ -27,11 +29,11 @@ const Option = ({
   return (
     <>
       <div style={styles.Option} onClick={handleClick}>
-        <p className={`${selected ? 'fw-medium' : 'fw-regular'} hover-opaque`} style={styles.Text(selected)}>{getText()}</p>
+        <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected)}>{getText()}</p>
         { !selected && <div style={styles.Icon}></div> }
-        {  selected && <CheckRounded style={styles.Icon}/> }
+        {  selected && <img src={GreenCheckIcon} style={styles.Icon} alt={'green-check-icon'}/> }
       </div>
-      <OptionHorizontalDivider />
+      { !isLast && <OptionHorizontalDivider /> }
     </>
   )
 }

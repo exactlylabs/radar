@@ -18,6 +18,7 @@ const geographicalCategoryTabsContainerStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
+  backdropFilter: 'blur(10px)'
 }
 
 const tabStyle: CSSProperties = {

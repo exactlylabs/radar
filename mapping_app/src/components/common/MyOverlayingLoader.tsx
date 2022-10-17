@@ -5,7 +5,7 @@ import {styles} from "./styles/MyOverlayingLoader.style";
 
 const MyOverlayingLoader = (): ReactElement => {
   return (
-    <div style={styles.OverlayingLoaderContainer()}>
+    <div style={styles.OverlayingLoaderContainer}>
       <MySpinner color={DEFAULT_GREEN} style={{width: '50px'}}/>
     </div>
   )

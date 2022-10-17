@@ -6,6 +6,7 @@ const speedDataCellContainerStyle: CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'center',
+  marginRight: '20px'
 }
 
 const speedDataCellHeaderStyle: CSSProperties = {
@@ -13,7 +14,7 @@ const speedDataCellHeaderStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'center',
-  marginBottom: '5px'
+  marginBottom: '0'
 }
 
 const textStyle: CSSProperties = {
@@ -33,7 +34,13 @@ const valueStyle: CSSProperties = {
   fontSize: '20px',
   color: DEFAULT_TEXT,
   marginRight: '5px',
-  marginLeft: '23px',
+  marginLeft: '28px',
+}
+
+const smallValueStyle: CSSProperties = {
+  ...valueStyle,
+  fontSize: '17px',
+  marginLeft: '27px',
 }
 
 const unitStyle: CSSProperties = {
@@ -41,11 +48,20 @@ const unitStyle: CSSProperties = {
   color: DEFAULT_TEXT
 }
 
+const smallUnitStyle: CSSProperties = {
+  ...unitStyle,
+  fontSize: '15px',
+}
+
 export const styles = {
   SpeedDataCellContainer: speedDataCellContainerStyle,
   SpeedDataCellHeader: speedDataCellHeaderStyle,
   Text: textStyle,
   ValueContainer: valueContainerStyle,
-  Value: valueStyle,
-  Unit: unitStyle
+  Value: (smallVersion?: boolean) => {
+    return smallVersion ? smallValueStyle : valueStyle;
+  },
+  Unit: (smallVersion?: boolean) => {
+    return smallVersion ? smallUnitStyle : unitStyle;
+  }
 }

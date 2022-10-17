@@ -13,7 +13,10 @@ const rightPanelSpeedDataContainerStyle: CSSProperties = {
 }
 
 const iconStyle: CSSProperties = {
-  width: '15px',
+  width: '20px',
+  minWidth: '20px',
+  height: '20px',
+  minHeight: '20px',
   marginRight: '8px',
   color: FOOTER_TEXT,
 }

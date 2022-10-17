@@ -6,13 +6,15 @@ interface SpeedDataCellProps {
   text: string;
   value: string;
   unit: string;
+  smallVersion?: boolean;
 }
 
 const SpeedDataCell = ({
   icon,
   text,
   value,
-  unit
+  unit,
+  smallVersion
 }: SpeedDataCellProps): ReactElement => {
   return (
     <div style={styles.SpeedDataCellContainer}>
@@ -21,8 +23,8 @@ const SpeedDataCell = ({
         <p className={'fw-regular'} style={styles.Text}>{text}</p>
       </div>
       <div style={styles.ValueContainer}>
-        <p className={'fw-medium'} style={styles.Value}>{value}</p>
-        <p className={'fw-regular'} style={styles.Unit}>{unit}</p>
+        <p className={smallVersion ? 'fw-regular' : 'fw-medium'} style={styles.Value(smallVersion)}>{value}</p>
+        <p className={'fw-regular'} style={styles.Unit(smallVersion)}>{unit}</p>
       </div>
     </div>
   )

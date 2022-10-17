@@ -12,7 +12,7 @@ const optionStyle: CSSProperties = {
   alignItems: 'center',
   marginLeft: '15px',
   marginRight: '15px',
-  position: 'relative'
+  position: 'relative',
 }
 
 const iconStyle: CSSProperties = {

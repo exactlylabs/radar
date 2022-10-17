@@ -39,6 +39,10 @@ const PopoverSearchbar = ({
           <ClearRounded style={styles.ClearIcon}/>
         </div>
       }
+      {
+        !text &&
+        <div style={styles.ClearIconContainer}></div>
+      }
     </div>
   )
 }

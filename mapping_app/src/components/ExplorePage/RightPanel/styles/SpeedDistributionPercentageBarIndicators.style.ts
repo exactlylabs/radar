@@ -10,7 +10,7 @@ const speedDistributionPercentageBarIndicatorsContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  SpeedDistributionPercentageBarIndicatorsContainer: (top?: boolean, bottom?: boolean) => {
+  SpeedDistributionPercentageBarIndicatorsContainer: (top?: boolean) => {
     const margin = top ? '20px auto 0' : '0 auto 25px';
     return {...speedDistributionPercentageBarIndicatorsContainerStyle, margin};
   }

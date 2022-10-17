@@ -35,6 +35,12 @@ const footerIconStyle: CSSProperties = {
   height: '36px',
 }
 
+const exactlyIconStyle: CSSProperties = {
+  ...footerIconStyle,
+  height: '25px',
+  width: '111px',
+}
+
 const associationTextStyle: CSSProperties = {
   fontSize: '16px',
   color: FOOTER_TEXT,
@@ -46,5 +52,6 @@ export const styles = {
   CopyrightText: copyrightTextStyle,
   RightSideContainer: rightSideContainerStyle,
   FooterIcon: footerIconStyle,
+  ExactlyIcon: exactlyIconStyle,
   AssociationText: associationTextStyle
 }

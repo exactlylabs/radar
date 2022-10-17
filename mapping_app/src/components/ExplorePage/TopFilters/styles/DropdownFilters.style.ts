@@ -3,25 +3,21 @@ import {DEFAULT_BUTTON_BOX_SHADOW_RGBA, DEFAULT_SECONDARY_BUTTON,} from "../../.
 
 const dropdownFiltersContainerStyle: CSSProperties = {
   width: 'max-content',
+  minWidth: '445px',
   height: '48px',
   borderRadius: '6px',
   backgroundColor: DEFAULT_SECONDARY_BUTTON,
   boxShadow: `0 2px 10px -4px ${DEFAULT_BUTTON_BOX_SHADOW_RGBA}`,
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'center',
+  justifyContent: 'space-around',
   alignItems: 'center',
   marginRight: '10px',
   marginLeft: '10px',
-}
-
-const iconStyle: CSSProperties = {
-  width: '18px',
-  height: '18px',
-  marginRight: '5px',
+  backdropFilter: 'blur(10px)',
+  zIndex: 1002,
 }
 
 export const styles = {
   DropdownFiltersContainer: dropdownFiltersContainerStyle,
-  Icon: iconStyle,
 }
