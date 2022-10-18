@@ -37,7 +37,6 @@ const RightPanelHeader = ({
   )
 
   const getTextContent = () => {
-    console.log(parentName)
     return !!parentName ? getTwoLineContent() : getRegularContent();
   }
 

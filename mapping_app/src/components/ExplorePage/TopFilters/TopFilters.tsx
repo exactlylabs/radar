@@ -1,6 +1,5 @@
-import {ReactElement, useState} from "react";
+import {ReactElement} from "react";
 import {styles} from "./styles/TopFilters.style";
-import OpenFiltersButton from "./OpenFiltersButton";
 import Filters from "./Filters";
 import {Filter} from "../../../utils/types";
 
@@ -28,28 +27,18 @@ const TopFilters = ({
   provider
 }: TopFiltersProps): ReactElement => {
 
-  const [filtersOpen, setFiltersOpen] = useState(true);
-
-  const openFilters = () => setFiltersOpen(true);
-
-  const closeFilters = () => setFiltersOpen(false);
-
   return (
     <div style={styles.TopFiltersContainer(isRightPanelOpen)}>
-      {!filtersOpen && <OpenFiltersButton openFilters={openFilters}/>}
-      { filtersOpen &&
-        <Filters closeFilters={closeFilters}
-                 extendedView={!isRightPanelOpen}
-                 setGeospaceNamespace={setGeospaceNamespace}
-                 setSpeedType={setSpeedType}
-                 setCalendarType={setCalendarType}
-                 setProvider={setProvider}
-                 geospaceNamespace={geospaceNamespace}
-                 speedType={speedType}
-                 calendarType={calendarType}
-                 provider={provider}
-        />
-      }
+      <Filters extendedView={!isRightPanelOpen}
+               setGeospaceNamespace={setGeospaceNamespace}
+               setSpeedType={setSpeedType}
+               setCalendarType={setCalendarType}
+               setProvider={setProvider}
+               geospaceNamespace={geospaceNamespace}
+               speedType={speedType}
+               calendarType={calendarType}
+               provider={provider}
+      />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import {Filter, Optional} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
 import Chevron from '../../../assets/chevron.png';
+import {AnimatePresence} from "framer-motion";
 
 interface DropdownFilterProps {
   iconSrc: string;
@@ -78,17 +79,19 @@ const DropdownFilter = ({
         <p className={'fw-regular hover-opaque'} style={styles.Text(textWidth)}>{getText()}</p>
         <img src={Chevron} style={styles.Arrow} alt={'chevron'}/>
       </div>
-      {
-        dropdownOpen &&
-        <OptionsDropdown options={options}
-                         selectedOption={selectedOption}
-                         setSelectedOption={handleSelectNewFilter}
-                         dropRight={type === filterTypes.SPEED || type === filterTypes.CALENDAR}
-                         dropLeft={type === filterTypes.PROVIDERS}
-                         withSearchbar={withSearchbar}
-                         searchbarOnChange={searchbarOnChange}
-        />
-      }
+      <AnimatePresence>
+        {
+          dropdownOpen &&
+          <OptionsDropdown options={options}
+                           selectedOption={selectedOption}
+                           setSelectedOption={handleSelectNewFilter}
+                           dropRight={type === filterTypes.SPEED || type === filterTypes.CALENDAR}
+                           dropLeft={type === filterTypes.PROVIDERS}
+                           withSearchbar={withSearchbar}
+                           searchbarOnChange={searchbarOnChange}
+          />
+        }
+      </AnimatePresence>
     </div>
   )
 }

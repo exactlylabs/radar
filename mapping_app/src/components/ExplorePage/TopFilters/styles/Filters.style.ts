@@ -16,7 +16,21 @@ const conditionalFiltersContainerStyle: CSSProperties = {
   flexDirection: 'row'
 }
 
+const animatedContainer: CSSProperties = {
+  display: 'flex',
+  position: 'absolute',
+  left: '-250px',
+}
+
+const extendedAnimatedContainer: CSSProperties = {
+  ...animatedContainer,
+  left: '-730px',
+}
+
 export const styles = {
   FiltersContainer: filtersContainerStyle,
   ConditionalFiltersContainer: conditionalFiltersContainerStyle,
+  AnimatedContainer: (extended: boolean) => {
+    return extended ? extendedAnimatedContainer : animatedContainer;
+  }
 }

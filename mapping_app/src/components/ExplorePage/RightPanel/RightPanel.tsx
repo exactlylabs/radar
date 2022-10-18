@@ -42,7 +42,6 @@ const RightPanel = ({
   isHidden
 }: RightPanelProps): ReactElement => {
 
-  console.log(selectedGeospaceInfo)
   const getName = (): string => {
     if(isGeospaceData(selectedGeospaceInfo)) {
       if(selectedGeospaceInfo.state) return selectedGeospaceInfo.state as string;

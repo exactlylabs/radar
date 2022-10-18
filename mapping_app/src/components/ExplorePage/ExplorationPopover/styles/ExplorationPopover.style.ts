@@ -51,11 +51,34 @@ const arrowStyle: CSSProperties = {
   opacity: 0.8
 };
 
+const iconStyle: CSSProperties = {
+  width: '24px',
+  height: '24px',
+}
+
+const closedContainerStyle: CSSProperties = {
+  width: '46px',
+  height: '46px',
+  borderRadius: '6px',
+  backgroundColor: EXPLORATION_POPOVER_BLACK,
+  boxShadow: `0 2px 10px -4px ${EXPLORATION_POPOVER_SECONDARY_BLACK}`,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  cursor: 'pointer',
+  position: 'absolute',
+  bottom: '25px',
+  left: '25px',
+  zIndex: 1002,
+}
+
 export const styles = {
-  ExplorationPopoverContainer: (currentPopoverState: string) => {
+  ExplorationPopoverContainer: (currentPopoverState: string, isOpen: boolean) => {
+    if(!isOpen) return closedContainerStyle;
     return currentPopoverState === popoverStates.INITIAL ? explorationPopoverContainerStyle : extendedExplorationPopoverContainerStyle;
   },
   ShrinkButtonContainer: shrinkButtonContainerStyle,
   Arrow: arrowStyle,
   ClosedExplorationPopoverContainer: closedExplorationPopoverContainerStyle,
+  Icon: iconStyle
 }

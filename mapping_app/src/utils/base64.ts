@@ -27,9 +27,6 @@ export const getValueFromUrl = (key: string): Optional<any> => {
   const stateBase64: string = window.location.search.split('?state=')[1];
   let possibleState: Optional<AppState> = getAppState(stateBase64);
   if(!possibleState) return undefined;
-  if(key === 'geospaceNamespace') {
-    console.log(possibleState[key])
-  }
   possibleState = getValidState(possibleState as AppState);
   return possibleState[key as keyof AppState];
 }

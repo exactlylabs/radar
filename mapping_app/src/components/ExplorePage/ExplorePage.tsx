@@ -18,7 +18,7 @@ import {Asn} from "../../api/asns/types";
 import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "../../utils/map";
 import MyOverlayingLoader from "../common/MyOverlayingLoader";
 import L from "leaflet";
-import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
+import {AnimatePresence} from "framer-motion";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -27,7 +27,7 @@ interface ExplorePageProps {
 const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   const [loading, setLoading] = useState(false);
-  const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(false);
+  const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(true);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(!!getValueFromUrl('selectedGeospace'));
   const [isRightPanelHidden, setIsRightPanelHidden] = useState(false);
   const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(getValueFromUrl('selectedGeospace') ?? null);
@@ -72,9 +72,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   const closePopover = () => setIsExplorationPopoverOpen(false);
 
-  const openPopover = () => setIsExplorationPopoverOpen(true);
-
-  const openRightPanel = () => setIsRightPanelOpen(true);
+  const openRightPanel = () => {
+    setIsRightPanelHidden(false);
+    setIsRightPanelOpen(true);
+  }
 
   const closeRightPanel = () => {
     setSelectedGeospace(null);

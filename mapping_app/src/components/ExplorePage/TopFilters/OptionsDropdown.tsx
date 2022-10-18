@@ -5,6 +5,7 @@ import {Filter} from "../../../utils/types";
 import {Asn, isAsn} from "../../../api/asns/types";
 import MyOptionsDropdownSearchbar from "./MyOptionsDropdownSearchbar";
 import {allProvidersElement} from "./utils/providers";
+import { motion } from "framer-motion";
 
 interface OptionsDropdownProps {
   options: Array<Filter>;
@@ -29,7 +30,12 @@ const OptionsDropdown = ({
   const handleSelectOption = (option: Filter) => setSelectedOption(option);
 
   return (
-    <div style={styles.OptionsDropdownContainer(dropLeft, dropRight)}>
+    <motion.div style={styles.OptionsDropdownContainer(dropLeft, dropRight)}
+                initial={{opacity: 0, top: 45}}
+                exit={{opacity: 0, top: 45}}
+                animate={{opacity: 1, top: 50}}
+                transition={{duration: 0.2}}
+    >
       {
         withSearchbar &&
         <MyOptionsDropdownSearchbar
@@ -50,7 +56,7 @@ const OptionsDropdown = ({
           />
         ))
       }
-    </div>
+    </motion.div>
   )
 }
 

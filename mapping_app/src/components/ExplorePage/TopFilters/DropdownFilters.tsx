@@ -11,7 +11,6 @@ import {Asn} from "../../../api/asns/types";
 import {handleError} from "../../../api";
 import {Filter, Optional} from "../../../utils/types";
 import {debounce} from "../../../api/utils/debouncer";
-import {allProvidersElement} from "./utils/providers";
 
 interface DropdownFiltersProps {
   changeFilters: (filters: Array<Filter>) => void;

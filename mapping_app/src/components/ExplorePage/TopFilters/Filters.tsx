@@ -1,12 +1,12 @@
-import {ReactElement} from "react";
+import {ReactElement, useState} from "react";
 import {styles} from "./styles/Filters.style";
 import GeographicalCategoryTabs from "./GeographicalCategoryTabs";
 import DropdownFilters from "./DropdownFilters";
-import HideFiltersButton from "./HideFiltersButton";
 import {Filter} from "../../../utils/types";
+import {AnimatePresence, motion} from "framer-motion";
+import ToggleFiltersButton from "./ToggleFiltersButton";
 
 interface FiltersProps {
-  closeFilters: () => void;
   extendedView: boolean;
   setGeospaceNamespace: (namespace: string) => void;
   setSpeedType: (type: Filter) => void;
@@ -19,7 +19,6 @@ interface FiltersProps {
 }
 
 const Filters = ({
-  closeFilters,
   extendedView,
   setGeospaceNamespace,
   setSpeedType,
@@ -31,6 +30,17 @@ const Filters = ({
   provider
 }: FiltersProps): ReactElement => {
 
+  const animationDuration = 1;
+  const [filtersOpen, setFiltersOpen] = useState(true);
+  const [openContent, setOpenContent] = useState(true);
+
+  const toggleContent = () => setOpenContent(!openContent);
+
+  const toggleFilters = () => {
+    setTimeout(() => toggleContent(), animationDuration * 1000);
+    setFiltersOpen(!filtersOpen);
+  }
+
   const handleChangeFilters = (filters: Array<Filter>) => {
     setSpeedType(filters[0]);
     setCalendarType(filters[1]);
@@ -39,19 +49,34 @@ const Filters = ({
 
   return (
     <div style={styles.FiltersContainer}>
-      <GeographicalCategoryTabs geospaceNamespace={geospaceNamespace}
-                                setGeospaceNamespace={setGeospaceNamespace}
-      />
+      <AnimatePresence>
+      {
+        filtersOpen &&
+          <motion.div initial={{ opacity: 0, left: extendedView ? -720 : -250 }}
+                      exit={{ opacity: 0, left: extendedView ? -720 : -250 }}
+                      animate={{ opacity: 1, left: extendedView ? -730 : -260 }}
+                      transition={{ duration: animationDuration }}
+                      style={styles.AnimatedContainer(extendedView)}
+          >
+            <GeographicalCategoryTabs geospaceNamespace={geospaceNamespace}
+                                      setGeospaceNamespace={setGeospaceNamespace}
+            />
+            {
+              extendedView &&
+              <div style={styles.ConditionalFiltersContainer}>
+                <DropdownFilters changeFilters={handleChangeFilters}
+                                 speedType={speedType}
+                                 calendarType={calendarType}
+                                 provider={provider}
+                />
+              </div>
+            }
+          </motion.div>
+      }
+      </AnimatePresence>
       {
         extendedView &&
-        <div style={styles.ConditionalFiltersContainer}>
-          <DropdownFilters changeFilters={handleChangeFilters}
-                           speedType={speedType}
-                           calendarType={calendarType}
-                           provider={provider}
-          />
-          <HideFiltersButton closeFilters={closeFilters}/>
-        </div>
+        <ToggleFiltersButton toggleFilters={toggleFilters} openContent={openContent}/>
       }
     </div>
   )

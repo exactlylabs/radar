@@ -1,6 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/ClosePanelButton.style";
 import {ArrowBackRounded, ArrowForwardRounded} from "@mui/icons-material";
+import { motion } from "framer-motion";
 
 interface ClosePanelProps {
   onClick: () => void;
