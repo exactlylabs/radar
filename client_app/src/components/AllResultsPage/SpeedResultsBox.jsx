@@ -93,7 +93,7 @@ const SpeedResultsBox = ({
   }
 
   const getDesktopVersion = () => (
-    <div style={getSpeedFiltersDesktopStyle()}>
+    <div style={getSpeedFiltersDesktopStyle()} >
       <MyFiltersTitle text={'Explore the Map'}/>
       <MyFiltersSubtitle text={'Filter tests by speed results.'}/>
       <MyFiltersTypeSwitcher currentType={currentFilterType}
@@ -112,7 +112,7 @@ const SpeedResultsBox = ({
     const {x, y, width, height} = element.getBoundingClientRect();
     style = {...style, top: (y + height - 300)}
     return (
-      <div style={style}>
+      <div style={style} id={'speed-results-box--mobile-filters'}>
         <MyFiltersList currentFilter={filterTypes[currentFilterType]}
                        selectedRangeIndexes={selectedRangeIndexes}
                        setSelectedRangeIndexes={handleFilterClick}
