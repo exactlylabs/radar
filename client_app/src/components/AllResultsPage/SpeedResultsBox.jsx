@@ -93,7 +93,7 @@ const SpeedResultsBox = ({
   }
 
   const getDesktopVersion = () => (
-    <div style={getSpeedFiltersDesktopStyle()} >
+    <div style={getSpeedFiltersDesktopStyle()}>
       <MyFiltersTitle text={'Explore the Map'}/>
       <MyFiltersSubtitle text={'Filter tests by speed results.'}/>
       <MyFiltersTypeSwitcher currentType={currentFilterType}
