@@ -54,7 +54,7 @@ const FloatingExploreButton = ({
   }
 
   return (
-    <div className={'bold'} style={getFloatingButtonStyle()} onClick={onClick}>
+    <div className={'bold'} style={getFloatingButtonStyle()} id={'floating-explore-button--filters-button'} onClick={onClick}>
       <img src={isBoxOpen ? FilterButtonOn : FilterButtonOff} width={68} height={68} alt={'filters-button'}/>
       {
         activeFiltersCount > 0 && !isBoxOpen &&

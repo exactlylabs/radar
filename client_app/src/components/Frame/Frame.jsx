@@ -71,7 +71,7 @@ const Frame = ({ config, children, step, setStep }) => {
     <div style={getWrapperStyle()} id={'main-frame'}>
       {!config.widgetMode && <Header setStep={setStep}/>}
       <Tabs step={step} setStep={setStep}/>
-      <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: getMinHeight() }}>
+      <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: getMinHeight() }} id={'frame--main-frame-wrapper'}>
         {children}
       </div>
       {!config.widgetMode && <Footer />}

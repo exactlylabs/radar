@@ -138,6 +138,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
         results !== null && results.length > 0 && (
         <div style={getMapWrapperStyle()}>
           <MapContainer
+            id={'all-results-page--map-container'}
             center={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}
             zoom={14}
             scrollWheelZoom

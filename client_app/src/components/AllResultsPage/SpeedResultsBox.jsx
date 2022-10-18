@@ -112,7 +112,7 @@ const SpeedResultsBox = ({
     const {x, y, width, height} = element.getBoundingClientRect();
     style = {...style, top: (y + height - 300)}
     return (
-      <div style={style}>
+      <div style={style} id={'speed-results-box--mobile-filters'}>
         <MyFiltersList currentFilter={filterTypes[currentFilterType]}
                        selectedRangeIndexes={selectedRangeIndexes}
                        setSelectedRangeIndexes={handleFilterClick}
