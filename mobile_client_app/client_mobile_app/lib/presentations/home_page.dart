@@ -1,3 +1,5 @@
+import 'package:client_mobile_app/presentations/map/map_web_view_page.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,12 +64,7 @@ class HomePage extends StatelessWidget {
                           child: Text('Your Results'),
                         ),
                       )
-                    : Container(
-                        // color: Colors.red,
-                        child: const Center(
-                          child: Text('Map'),
-                        ),
-                      ),
+                    : MapWebViewPage(),
           ),
         );
       },
