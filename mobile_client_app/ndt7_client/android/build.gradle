@@ -1,4 +1,4 @@
-group 'com.exactlylabs.ndt7_client'
+group 'com.exactlylabs.ndt7client'
 version '1.0-SNAPSHOT'
 
 buildscript {

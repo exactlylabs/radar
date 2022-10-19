@@ -35,7 +35,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.exactlylabs.ndt7_client
+        package: com.exactlylabs.ndt7client
         pluginClass: Ndt7ClientPlugin
       ios:
         pluginClass: Ndt7ClientPlugin

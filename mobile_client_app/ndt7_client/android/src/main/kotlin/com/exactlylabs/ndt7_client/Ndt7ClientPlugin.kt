@@ -1,10 +1,10 @@
-package com.exactlylabs.ndt7_client
+package com.exactlylabs.ndt7client
 
 
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.annotation.NonNull
-import com.exactlylabs.ndt7_client.utils.MainThreadEventSink
+import com.exactlylabs.ndt7client.utils.MainThreadEventSink
 import com.google.gson.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.exactlylabs.ndt7_client_example">
+    package="com.exactlylabs.ndt7clientexample">
    <application
         android:label="ndt7_client_example"
         android:name="${applicationName}"

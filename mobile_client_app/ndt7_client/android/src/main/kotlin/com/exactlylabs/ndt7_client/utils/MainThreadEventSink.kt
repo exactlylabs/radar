@@ -1,4 +1,4 @@
-package com.exactlylabs.ndt7_client.utils
+package com.exactlylabs.ndt7client.utils
 
 import android.os.Handler
 import android.os.Looper
