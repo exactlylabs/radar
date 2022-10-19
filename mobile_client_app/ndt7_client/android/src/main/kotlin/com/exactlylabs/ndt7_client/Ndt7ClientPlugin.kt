@@ -126,7 +126,7 @@ class Ndt7ClientPlugin : FlutterPlugin, MethodChannel.MethodCallHandler,
             val speed = DataConverter.convertToMbps(clientResponse)
             var jsonClientResponse: String = gson.toJson(clientResponse)
             Log.d(TAG, "download speed: $speed")
-            //TODO: Remove this when Issue opened in mlab-ndt7-client-Android is fixed
+            //TODO: Remove this when Issue opened in mlab-ndt7-client-Android is fixed (https://github.com/m-lab/ndt7-client-android/issues/17)
             jsonClientResponse = jsonClientResponse.replace(".0", "")
             eventSink?.success(jsonClientResponse)
         }
