@@ -55,7 +55,7 @@ func main() {
 		Port:     conf.DBPort(),
 		NWorkers: nWorkers,
 	})
-	storage.Begin()
+	storage.Open()
 	defer storage.Close()
 	for _, ns := range importOrder {
 		filePath := files[ns]

@@ -19,7 +19,7 @@ import (
 )
 
 func runInsertions(ctx context.Context, storage ports.MeasurementsStorage) {
-	err := storage.Begin()
+	err := storage.Open()
 	if err != nil {
 		panic(err)
 	}
