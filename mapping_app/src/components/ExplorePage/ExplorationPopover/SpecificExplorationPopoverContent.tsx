@@ -9,6 +9,7 @@ import {Geospace, GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/t
 import {getOverview} from "../../../api/geospaces/requests";
 import './styles/SpecificExplorationPopoverContent.css';
 import {getZoomForNamespace, tabs} from "../../../utils/filters";
+import MyExplorationPopoverLoader from "./MyExplorationPopoverLoader";
 
 interface SpecificExplorationPopoverContentProps {
   type: string;
@@ -20,6 +21,8 @@ interface SpecificExplorationPopoverContentProps {
   tribalTracts: Array<Geospace>;
   setCenter: (center: Array<number>) => void;
   setZoom: (zoom: number) => void;
+  loading: boolean;
+  setLoading: (state: boolean) => void;
 }
 
 const SpecificExplorationPopoverContent = ({
@@ -31,7 +34,9 @@ const SpecificExplorationPopoverContent = ({
   indexedCounties,
   tribalTracts,
   setCenter,
-  setZoom
+  setZoom,
+  loading,
+  setLoading,
 }: SpecificExplorationPopoverContentProps): ReactElement => {
 
   const [allItems, setAllItems] = useState<Array<Geospace>>([]);
@@ -63,7 +68,7 @@ const SpecificExplorationPopoverContent = ({
     }
     setAllItems(items);
     setFilteredItems(items);
-  }, [type]);
+  }, [type, loading, states, tribalTracts]);
 
   const getTitle = () => {
     let title: string = '';
@@ -144,14 +149,23 @@ const SpecificExplorationPopoverContent = ({
         <ArrowBackRounded style={styles.ArrowBack} onClick={goBack}/>
         <p className={'fw-medium'} style={styles.Title}>{getTitle()}</p>
       </div>
-      <PopoverSearchbar handleInputChange={handleInputChange}
-                        text={inputText}
-                        setText={handleSetText}
-      />
-      {type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText}>Start by choosing a state...</p>}
-      <div style={styles.ContentContainer(type)} id={'exploration-popover--content-container'}>
-        {getContent()}
-      </div>
+      {
+        loading && <MyExplorationPopoverLoader/>
+      }
+      {
+        !loading &&
+        <>
+          <PopoverSearchbar handleInputChange={handleInputChange}
+                            text={inputText}
+                            setText={handleSetText}
+                            disabled={loading}
+          />
+          {!loading && type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText}>Start by choosing a state...</p>}
+          <div style={styles.ContentContainer(type)} id={'exploration-popover--content-container'}>
+            {getContent()}
+          </div>
+        </>
+      }
     </div>
   )
 }

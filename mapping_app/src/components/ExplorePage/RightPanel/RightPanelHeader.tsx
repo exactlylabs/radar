@@ -30,19 +30,18 @@ const RightPanelHeader = ({
     <div style={styles.StateTextContainer(true)}>
       <p className={'fw-medium'} style={styles.GeospaceName}>{geospaceName}</p>
       <div className={'fw-light'} style={styles.StateAndCountryLine}>
-        <p className={'fw-light'} style={styles.StateCountry}>{parentName}</p>,
+        <p className={'fw-light'} style={styles.ParentName}>{`${parentName}, `}</p>
         <p className={'fw-light'} style={styles.StateCountry}>{country}</p>
       </div>
     </div>
   )
 
   const getTextContent = () => {
-    console.log(parentName)
     return !!parentName ? getTwoLineContent() : getRegularContent();
   }
 
   return (
-    <div style={styles.RightPanelHeaderContainer}>
+    <div style={styles.RightPanelHeaderContainer(!!parentName)}>
       <div style={styles.LeftSideContainer}>
         {getTextContent()}
         <div style={styles.SignalStateContainer}>

@@ -42,7 +42,6 @@ const RightPanel = ({
   isHidden
 }: RightPanelProps): ReactElement => {
 
-  console.log(selectedGeospaceInfo)
   const getName = (): string => {
     if(isGeospaceData(selectedGeospaceInfo)) {
       if(selectedGeospaceInfo.state) return selectedGeospaceInfo.state as string;
@@ -105,7 +104,7 @@ const RightPanel = ({
   }
 
   return (
-    <div style={styles.RightPanelContainer} id={'right-panel'}>
+    <div style={styles.RightPanelContainer(isHidden)} id={'right-panel'}>
       <HidePanelButton onClick={toggleHidden} isHidden={isHidden}/>
       {
         !isHidden &&

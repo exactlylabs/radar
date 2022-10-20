@@ -8,6 +8,7 @@ import {handleError} from "../../../api";
 import DiagonalArrow from '../../../assets/diagonal-arrow.png';
 import {getZoomForNamespace, tabs} from "../../../utils/filters";
 import ExplorationPopoverIcon from "./ExplorationPopoverIcon";
+import MyExplorationPopoverLoader from "./MyExplorationPopoverLoader";
 
 
 interface ExplorationPopoverProps {
@@ -47,6 +48,7 @@ const ExplorationPopover = ({
   setIsOpen
 }: ExplorationPopoverProps): ReactElement => {
 
+  const [loading, setLoading] = useState(true);
   const [currentPopoverState, setCurrentPopoverState] = useState(popoverStates.INITIAL);
   const [states, setStates] = useState<Array<Geospace>>([]);
   const [counties, setCounties] = useState<Array<Geospace>>([]);
@@ -76,7 +78,8 @@ const ExplorationPopover = ({
         setIndexedCounties(indexed);
         setCounties(res[1].results);
       })
-      .catch(err => handleError(err));
+      .catch(err => handleError(err))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleChangePopoverState = (newState: string): void => {
@@ -128,6 +131,8 @@ const ExplorationPopover = ({
                                              tribalTracts={tribalTracts}
                                              setCenter={setCenter}
                                              setZoom={setZoom}
+                                             loading={loading}
+                                             setLoading={setLoading}
           />
         }
       </div> :
