@@ -103,69 +103,8 @@ extension SwiftNdt7ClientPlugin: NDT7TestInteraction {
                 eventSink?(jsonString)
             }
             // Let's save the data to decode it back to Swift below.
-        } catch var err {
-            
+        } catch var err {   
         }
-        //        if let server = ndt7Test?.settings.currentServer {
-        //            //            serverLabel.text = server.machine
-        //            print("\(origin.rawValue) serverLabel = \(server.machine)")
-        //            if let serverCountry = server.location?.country,
-        //               let serverCity = server.location?.city
-        //            {
-        //                //                serverLocationLabel.text = "\(serverCity), \(serverCountry)"
-        //                print("\(origin.rawValue) serverLocationLabel = \(serverCity), \(serverCountry)")
-        //            }
-        //        }
-        //
-        //        if origin == .client,
-        //           //           enableAppData,
-        //           let elapsedTime = measurement.appInfo?.elapsedTime,
-        //           let numBytes = measurement.appInfo?.numBytes,
-        //           elapsedTime >= 1000000 {
-        //            let seconds = elapsedTime / 1000000
-        //            let mbit = numBytes / 125000
-        //            let rounded = Double(Float64(mbit)/Float64(seconds)).rounded(toPlaces: 1)
-        //            switch kind {
-        //            case .download:
-        //                print(".client downloadSpeed = \(rounded) Mbit/s")
-        //                //                downloadSpeed = rounded
-        //                //                DispatchQueue.main.async { [weak self] in
-        //                //                    self?.downloadSpeedLabel.text = "\(rounded) Mbit/s"
-        //                //                }
-        //            case .upload:
-        //                print(".client uploadSpeed = \(rounded) Mbit/s")
-        //                //                uploadSpeed = rounded
-        //                //                DispatchQueue.main.async { [weak self] in
-        //                //                    self?.uploadSpeedLabel.text = "\(rounded) Mbit/s"
-        //                //                }
-        //            }
-        //        } else if origin == .server,
-        //                  let elapsedTime = measurement.tcpInfo?.elapsedTime,
-        //                  elapsedTime >= 1000000 {
-        //            let seconds = elapsedTime / 1000000
-        //            switch kind {
-        //            case .download:
-        //                if let numBytes = measurement.tcpInfo?.bytesSent {
-        //                    let mbit = numBytes / 125000
-        //                    let rounded = Double(Float64(mbit)/Float64(seconds)).rounded(toPlaces: 1)
-        //                    print(".server downloadSpeed = \(rounded) Mbit/s")
-        //                    //                    downloadSpeed = rounded
-        //                    //                    DispatchQueue.main.async { [weak self] in
-        //                    //                        self?.downloadSpeedLabel.text = "\(rounded) Mbit/s"
-        //                    //                    }
-        //                }
-        //            case .upload:
-        //                if let numBytes = measurement.tcpInfo?.bytesReceived {
-        //                    let mbit = numBytes / 125000
-        //                    let rounded = Double(Float64(mbit)/Float64(seconds)).rounded(toPlaces: 1)
-        //                    print(".server uploadSpeed = \(rounded) Mbit/s")
-        //                    //                    uploadSpeed = rounded
-        //                    //                    DispatchQueue.main.async { [weak self] in
-        //                    //                        self?.uploadSpeedLabel.text = "\(rounded) Mbit/s"
-        //                    //                    }
-        //                }
-        //            }
-        //        }
     }
     
     public func error(kind: NDT7TestConstants.Kind, error: NSError) {
