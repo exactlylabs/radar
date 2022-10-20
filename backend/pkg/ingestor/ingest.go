@@ -43,7 +43,7 @@ func processDate(readers []io.ReadCloser, s ports.MeasurementsStorage) error {
 }
 
 func Ingest(ctx context.Context, s ports.MeasurementsStorage, bucketName string, start, end time.Time) error {
-	if err := s.Begin(); err != nil {
+	if err := s.Open(); err != nil {
 		panic(err)
 	}
 	defer s.Close()

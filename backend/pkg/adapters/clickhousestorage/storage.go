@@ -76,30 +76,30 @@ func New(options *ChStorageOptions) ports.MeasurementsStorage {
 	}
 }
 
-// Begin implements ports.MeasurementsStorage
-func (cs *clickhouseStorage) Begin() error {
+// Open implements ports.MeasurementsStorage
+func (cs *clickhouseStorage) Open() error {
 	if cs.started {
 		return nil
 	}
 	cs.jobCh = make(chan ports.MeasurementIterator)
 	conn, err := clickhouse.Open(cs.opts)
 	if err != nil {
-		return errors.Wrap(err, "clickhouseStorage#Begin Open")
+		return errors.Wrap(err, "clickhouseStorage#Open Open")
 	}
 	cs.conn = conn
 	if err := cs.loadCache(); err != nil {
-		return errors.Wrap(err, "clickhouseStorage#Begin loadCache")
+		return errors.Wrap(err, "clickhouseStorage#Open loadCache")
 	}
 	if cs.swap {
 		err := cs.swapToTempTable()
 		if err != nil {
-			return errors.Wrap(err, "clickhouseStorage#Begin swapToTempTable")
+			return errors.Wrap(err, "clickhouseStorage#Open swapToTempTable")
 		}
 	}
 	if cs.truncate {
 		err := cs.truncateMeasurements()
 		if err != nil {
-			return errors.Wrap(err, "clickhouseStorage#Begin truncateMeasurements")
+			return errors.Wrap(err, "clickhouseStorage#Open truncateMeasurements")
 		}
 	}
 	for i := 0; i < cs.nWorkers; i++ {
