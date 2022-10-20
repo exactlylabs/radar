@@ -8,12 +8,14 @@ interface PopoverSearchbarProps {
   handleInputChange: ChangeEventHandler;
   text: InputText;
   setText: (text: string) => void;
+  disabled?: boolean;
 }
 
 const PopoverSearchbar = ({
   handleInputChange,
   text,
-  setText
+  setText,
+  disabled
 }: PopoverSearchbarProps): ReactElement => {
 
   const clearInput = () => setText('');
@@ -29,6 +31,7 @@ const PopoverSearchbar = ({
              style={styles.Input}
              onChange={handleInputChange}
              value={text}
+             disabled={!!disabled}
        />
       {
         !!text &&

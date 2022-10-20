@@ -104,7 +104,7 @@ const RightPanel = ({
   }
 
   return (
-    <div style={styles.RightPanelContainer} id={'right-panel'}>
+    <div style={styles.RightPanelContainer(isHidden)} id={'right-panel'}>
       <HidePanelButton onClick={toggleHidden} isHidden={isHidden}/>
       {
         !isHidden &&

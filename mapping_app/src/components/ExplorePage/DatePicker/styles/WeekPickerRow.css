@@ -1,0 +1,9 @@
+.week-picker-row:hover {
+  background-color: rgba(209, 209, 209, 0.4);
+  cursor: pointer;
+}
+
+.week-picker-row--disabled:hover {
+  background-color: transparent;
+  cursor: default;
+}

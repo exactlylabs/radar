@@ -11,6 +11,11 @@ const rightPanelContainerStyle: CSSProperties = {
   boxShadow: `0 2px 4px -4px ${EXPLORATION_POPOVER_SECONDARY_BLACK}`,
 }
 
+const hiddenRightPanelContainerStyle: CSSProperties = {
+  ...rightPanelContainerStyle,
+  width: '25px',
+}
+
 const rightPanelContentContainerStyle: CSSProperties = {
   width: '496px',
   height: '100%',
@@ -43,7 +48,9 @@ const gradientUnderlayStyle: CSSProperties = {
 }
 
 export const styles = {
-  RightPanelContainer: rightPanelContainerStyle,
+  RightPanelContainer: (isHidden: boolean) => {
+    return isHidden ? hiddenRightPanelContainerStyle : rightPanelContainerStyle;
+  },
   RightPanelContentContainer: rightPanelContentContainerStyle,
   RightPanelContentWrapper: rightPanelContentWrapperStyle,
   DropdownFiltersContainer: dropdownFiltersContainerStyle,

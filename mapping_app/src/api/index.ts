@@ -2,7 +2,9 @@ import * as Sentry from '@sentry/react';
 import {Optional} from "../utils/types";
 import {Asn} from "./asns/types";
 
-export const API_URL = 'https://api.mapping.exactlylabs.com/api/v1';
+export const API_URL = REACT_APP_ENV === 'production' ?
+  'https://api.mapping.exactlylabs.com/api/v1' :
+  'https://api.mapping.staging.exactlylabs.com/api/v1';
 
 export const handleError = (err: Error): void => {
   if(REACT_APP_ENV === 'production') {
