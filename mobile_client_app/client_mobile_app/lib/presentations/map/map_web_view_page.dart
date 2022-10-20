@@ -32,16 +32,16 @@ class MapWebViewPageState extends State<MapWebViewPage> {
           _cookieManager.setCookie(const WebViewCookie(
               name: 'visitedAllResults', value: 'true', domain: 'speedtest-staging.exactlylabs.com', path: '/'));
         },
-        onPageFinished: (String url) async {
+        onPageFinished: (String url) {
           _myController.runJavascript("document.getElementById(\"tabs--explore-map-button\").click();");
           _myController.runJavascript("document.getElementById(\"header--wrapper\").style.display='none';");
           _myController.runJavascript("document.getElementById(\"tabs--wrapper\").style.display='none';");
           _myController.runJavascript("document.getElementById(\"footer--wrapper\").style.display='none';");
           _myController.runJavascript("document.getElementById(\"frame--main-frame-wrapper\").style.height='100%';");
-          // _myController
-          //     .runJavascript("document.getElementById(\"all-results-page--map-container\").style.height='100%';");
-          print(await _myController.runJavascriptReturningResult(
-              "document.getElementsByClassName(\"leaflet-container\")[0].style.height='100%';"));
+          Future.delayed(const Duration(milliseconds: 500), () {
+            _myController
+                .runJavascript("document.getElementById(\"all-results-page--map-container\").style.height='100%';");
+          });
         },
       ),
     );
