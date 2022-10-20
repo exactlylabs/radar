@@ -212,6 +212,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
            setLoading={setLoading}
            isRightPanelHidden={isRightPanelHidden}
       />
+      <DatePicker closeDatePicker={closeDatePicker} applyRanges={handleApplyRanges} initialState={getInitialStateFromCalendarType(calendarType)}/>
       <TopSearchbar selectSuggestion={selectSuggestion}/>
       <TopFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
                   setGeospaceNamespace={setGeospaceNamespace}
