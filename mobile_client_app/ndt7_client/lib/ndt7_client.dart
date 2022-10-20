@@ -5,10 +5,21 @@
 // platforms in the `pubspec.yaml` at
 // https://flutter.dev/docs/development/packages-and-plugins/developing-packages#plugin-platforms.
 
+import 'models/ndt7_response.dart';
 import 'ndt7_client_platform_interface.dart';
 
 class Ndt7Client {
-  Future<String?> getPlatformVersion() {
-    return Ndt7ClientPlatform.instance.getPlatformVersion();
+  Stream<NDT7Response?> get data => Ndt7ClientPlatform.instance.data;
+
+  Future<void> startDownloadTest() {
+    return Ndt7ClientPlatform.instance.startDownloadTest();
+  }
+
+  Future<void> startUploadTest() {
+    return Ndt7ClientPlatform.instance.startUploadTest();
+  }
+
+  Future<void> stopTest() {
+    return Ndt7ClientPlatform.instance.stopTest();
   }
 }

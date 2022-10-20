@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ndt7_client_example">
+    package="com.exactlylabs.ndt7clientexample">
    <application
-        android:label="ndt7_client_example"
+        android:label="ndt7clientexample"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
