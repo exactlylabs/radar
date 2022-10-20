@@ -10,14 +10,12 @@ interface OptionProps {
   option: Filter;
   selected: boolean;
   onClick: (option: Filter) => void;
-  isLast?: boolean;
 }
 
 const Option = ({
   option,
   selected,
   onClick,
-  isLast
 }: OptionProps): ReactElement => {
 
   const handleClick = () => {
@@ -33,7 +31,6 @@ const Option = ({
         { !selected && <div style={styles.Icon}></div> }
         {  selected && <img src={GreenCheckIcon} style={styles.Icon} alt={'green-check-icon'}/> }
       </div>
-      { !isLast && <OptionHorizontalDivider /> }
     </>
   )
 }

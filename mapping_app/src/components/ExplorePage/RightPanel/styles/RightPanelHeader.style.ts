@@ -18,6 +18,11 @@ const rightPanelHeaderContainerStyle: CSSProperties = {
   zIndex: 1002,
 }
 
+const countyRightPanelHeaderContainerStyle: CSSProperties = {
+  ...rightPanelHeaderContainerStyle,
+  height: '85px',
+}
+
 const leftSideContainerStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
@@ -38,6 +43,7 @@ const stateTextContainerStyle: CSSProperties = {
 
 const countyTextContainerStyle: CSSProperties = {
   ...stateTextContainerStyle,
+  flexDirection: 'column',
 }
 
 const geospaceNameStyle: CSSProperties = {
@@ -54,6 +60,12 @@ const geospaceNameStyle: CSSProperties = {
 const stateCountryStyle: CSSProperties = {
   fontSize: '18px',
   color: DEFAULT_TEXT,
+}
+
+const parentNameStyle: CSSProperties = {
+  fontSize: '18px',
+  color: DEFAULT_TEXT,
+  marginRight: '3px',
 }
 
 const signalStateContainerStyle: CSSProperties = {
@@ -96,15 +108,22 @@ const closeIconStyle: CSSProperties = {
 }
 
 const stateAndCountryStyle: CSSProperties = {
-
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  marginBottom: '7px',
 }
 
 export const styles = {
-  RightPanelHeaderContainer: rightPanelHeaderContainerStyle,
+  RightPanelHeaderContainer: (isCounty: boolean) => {
+    return isCounty ? countyRightPanelHeaderContainerStyle : rightPanelHeaderContainerStyle;
+  },
   LeftSideContainer: leftSideContainerStyle,
   StateTextContainer: (isCounty: boolean) => isCounty ? countyTextContainerStyle : stateTextContainerStyle,
   GeospaceName: geospaceNameStyle,
   StateCountry: stateCountryStyle,
+  ParentName: parentNameStyle,
   SignalStateContainer: signalStateContainerStyle,
   StateSignalStateIndicator: (stateSignalState: string) => {
     const backgroundColor = speedColors[stateSignalState.toUpperCase() as keyof SpeedsObject];

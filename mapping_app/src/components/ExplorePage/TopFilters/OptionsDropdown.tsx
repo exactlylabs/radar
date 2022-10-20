@@ -46,7 +46,6 @@ const OptionsDropdown = ({
                   option={option}
                   selected={isAsn(option) ? (option as Asn).id === (selectedOption as Asn).id : option === selectedOption}
                   onClick={handleSelectOption}
-                  isLast={index === (options.length - 1)}
           />
         ))
       }

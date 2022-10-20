@@ -33,3 +33,6 @@ export const HORIZONTAL_DIVIDER_BOX_SHADOW = 'rgba(0, 0, 0, 0.15)';
 export const EXPLORATION_POPOVER_GRADIENT_OVERLAY = 'rgba(42, 43, 43, 0.5)';
 export const FILTER_SQUARE_BORDER = 'rgba(0, 0, 0, 0.1)';
 export const CLOSE_PANEL_BUTTON_SHADOW_RGBA = 'rgba(0, 0, 0, 0.4)';
+export const DATE_PICKER = DEFAULT_SECONDARY_BUTTON;
+export const DATE_PICKER_HORIZONTAL_DIVIDER = 'rgba(0, 0, 0, 0.08)';
+export const OPTIONS_DROPRIGHT = 'rgba(255, 255, 255, 0.9)';
