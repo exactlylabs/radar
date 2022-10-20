@@ -1,4 +1,4 @@
-package com.example.ndt7_client
+package com.example.ndt7client
 
 import androidx.annotation.NonNull
 
@@ -17,7 +17,7 @@ class Ndt7ClientPlugin: FlutterPlugin, MethodCallHandler {
   private lateinit var channel : MethodChannel
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ndt7_client")
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ndt7client")
     channel.setMethodCallHandler(this)
   }
 

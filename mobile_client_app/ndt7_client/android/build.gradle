@@ -21,7 +21,7 @@ rootProject.allprojects {
 
         //Add this below <plugin_name> is whatever your plugin is called eg. url_launcher
         flatDir {
-            dirs project(':ndt7_client').file('src/main/kotlin/com/exactlylabs/ndt7_client/libs')
+            dirs project(':ndt7_client').file('src/main/kotlin/com/exactlylabs/ndt7client/libs')
             // e.g. dirs project(':url_launcher').file('libs')  - don't miss the ':'
         }
     }
