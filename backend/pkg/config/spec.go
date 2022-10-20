@@ -18,9 +18,7 @@ type Config struct {
 	DBPortStr                 string `config:"DB_PORT"`
 	FilesBucketName           string `config:"FILES_BUCKET_NAME"`
 	CORSAllowedOrigins        string `config:"CORS_ALLOWED_ORIGINS"`
-	TSDBStorageNWorkers       string `config:"TSDB_STORAGE_NWORKERS"`
 	ClickhouseStorageNWorkers string `config:"CLICKHOUSE_STORAGE_NWORKERS"`
-	StorageType               string `config:"STORAGE_TYPE"`
 }
 
 func (c *Config) DBDSN() string {

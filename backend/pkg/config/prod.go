@@ -11,6 +11,5 @@ var ProdConfig = &Config{
 	DBHost:                    "",
 	DBPortStr:                 "",
 	FilesBucketName:           "mlab-processed-data",
-	TSDBStorageNWorkers:       fmt.Sprintf("%d", runtime.NumCPU()),
 	ClickhouseStorageNWorkers: fmt.Sprintf("%d", runtime.NumCPU()),
 }
