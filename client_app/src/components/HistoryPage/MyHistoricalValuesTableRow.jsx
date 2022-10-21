@@ -110,17 +110,17 @@ const MyHistoricalValuesTableRow = ({
 
   const getMbpsText = possibleValue => {
     if(!possibleValue) return '-';
-    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(2) : `${measurement.download.toFixed(2)} Mbps`;
+    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(2) : `${possibleValue.toFixed(2)} Mbps`;
   }
 
   const getMsText = possibleValue => {
     if(possibleValue === null) return '-';
-    return isMediumSizeScreen || isSmallSizeScreen ? measurement.latency.toFixed(0) : `${measurement.latency.toFixed(0)} ms`;
+    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(0) : `${possibleValue.toFixed(0)} ms`;
   }
 
   const getPercentageText = possibleValue => {
     if(possibleValue === null) return '-';
-    return isMediumSizeScreen || isSmallSizeScreen ? measurement.loss.toFixed(2) : `${measurement.loss.toFixed(2)} %`;
+    return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(2) : `${possibleValue.toFixed(2)} %`;
   }
 
   const getDownUpStyle = () => {
