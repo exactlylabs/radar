@@ -75,7 +75,7 @@ final theme = ThemeData(
         },
       ),
       shape: MaterialStateProperty.all<OutlinedBorder?>(
-          const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(124.0)))),
+          const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(24.0)))),
     ),
   ),
   fontFamily: 'Mulish',
