@@ -1,0 +1,68 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "client_mobile_app",
+            "cwd": "client_mobile_app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "client_mobile_app (profile mode)",
+            "cwd": "client_mobile_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "client_mobile_app (release mode)",
+            "cwd": "client_mobile_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "ndt7_client",
+            "cwd": "ndt7_client",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "ndt7_client (profile mode)",
+            "cwd": "ndt7_client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "ndt7_client (release mode)",
+            "cwd": "ndt7_client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "example",
+            "cwd": "ndt7_client/example",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "example (profile mode)",
+            "cwd": "ndt7_client/example",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "example (release mode)",
+            "cwd": "ndt7_client/example",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
