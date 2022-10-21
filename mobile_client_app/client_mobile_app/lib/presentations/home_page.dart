@@ -7,7 +7,9 @@ import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animations/animations.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/presentations/home_page_body.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
 
