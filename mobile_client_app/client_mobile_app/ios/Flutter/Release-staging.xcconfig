@@ -12,6 +12,6 @@
 
 TARGET_NAME= Radar Staging
 FLUTTER_TARGET=lib/main_staging.dart
-BUNDLE_NAME_ID=.exactlylabs.radar.com
+BUNDLE_NAME_ID=com.exactlylabs.radar
 BUNDLE_PREFIX=.staging
 APP_ICON_SUFIX=-staging

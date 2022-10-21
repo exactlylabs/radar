@@ -57,7 +57,7 @@ android {
 
     defaultConfig {
         minSdkVersion 31
-        applicationId "cc.exactlylabs.radar.com"
+        applicationId "com.exactlylabs.radar"
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -88,7 +88,7 @@ android {
     flavorDimensions "app"
     productFlavors {
         prod {
-            applicationId "cc.exactlylabs.radar.com"
+            applicationId "com.exactlylabs.radar"
             signingConfig signingConfigs.prod
             manifestPlaceholders = [
                     app_name: "Radar",
@@ -96,7 +96,7 @@ android {
             ]
         }
         dev {
-            applicationId "cc.exactlylabs.radar.com"
+            applicationId "com.exactlylabs.radar"
             applicationIdSuffix ".dev"
             signingConfig signingConfigs.dev
             manifestPlaceholders = [
@@ -105,7 +105,7 @@ android {
             ]
         }
         staging {
-            applicationId "cc.exactlylabs.radar.com"
+            applicationId "com.exactlylabs.radar"
             applicationIdSuffix ".staging"
             signingConfig signingConfigs.dev
             manifestPlaceholders = [

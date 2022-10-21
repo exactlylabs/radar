@@ -12,5 +12,5 @@
 
 TARGET_NAME= Radar
 FLUTTER_TARGET=lib/main_prod.dart
-BUNDLE_NAME_ID=.exactlylabs.radar.com
+BUNDLE_NAME_ID=com.exactlylabs.radar
 APP_ICON_SUFIX=-prod

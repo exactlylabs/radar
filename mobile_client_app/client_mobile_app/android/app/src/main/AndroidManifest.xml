@@ -1,8 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cc.exactlylabs.radar.com">
+    package="com.exactlylabs.radar">
 
     <application
-        android:name=".Application"
         android:icon="${icon}"
         android:label="${app_name}">
         <activity
