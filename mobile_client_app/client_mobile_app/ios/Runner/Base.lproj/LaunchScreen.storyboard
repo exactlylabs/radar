@@ -12,8 +12,8 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Ydg-fD-yQy"/>
-                        <viewControllerLayoutGuide type="bottom" id="xbc-2k-c8Z"/>
+                        <viewControllerLayoutGuide type="top" id="dMs-YI-ElP"/>
+                        <viewControllerLayoutGuide type="bottom" id="m1c-MH-ShJ"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
@@ -22,20 +22,20 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="EjW-wN-1K5">
                                 <rect key="frame" x="97.666666666666686" y="384.66666666666669" width="180" height="43"/>
                             </imageView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="pbz-nI-EN5">
-                                <rect key="frame" x="51.666666666666657" y="684.33333333333337" width="271.66666666666674" height="68.666666666666629"/>
+                            <stackView opaque="NO" contentMode="bottom" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" axis="vertical" alignment="center" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="pbz-nI-EN5">
+                                <rect key="frame" x="50.666666666666657" y="684.33333333333337" width="273.66666666666674" height="68.666666666666629"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="anthcLogo" translatesAutoresizingMaskIntoConstraints="NO" id="ZvS-lB-XV3">
-                                        <rect key="frame" x="86" y="0.0" width="100" height="28"/>
+                                        <rect key="frame" x="87" y="0.0" width="100" height="28"/>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Copyright © 2022 Radar. All rights reserved." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yr2-Vp-Ehn">
-                                        <rect key="frame" x="1.3333333333333428" y="53" width="269" height="15.666666666666671"/>
+                                        <rect key="frame" x="2.3333333333333428" y="53" width="269" height="15.666666666666671"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <color key="textColor" red="0.42745098039215684" green="0.41568627450980389" blue="0.58039215686274503" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </label>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="pbz-nI-EN5" secondAttribute="height" multiplier="269:68" id="QvL-4D-X46"/>
+                                    <constraint firstAttribute="width" secondItem="pbz-nI-EN5" secondAttribute="height" multiplier="271:68" id="J6m-4l-JwZ"/>
                                 </constraints>
                             </stackView>
                         </subviews>
@@ -43,7 +43,7 @@
                         <constraints>
                             <constraint firstItem="EjW-wN-1K5" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="7jB-h0-lUC"/>
                             <constraint firstItem="EjW-wN-1K5" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="CE9-tQ-Too"/>
-                            <constraint firstItem="xbc-2k-c8Z" firstAttribute="top" secondItem="pbz-nI-EN5" secondAttribute="bottom" constant="25" id="SBM-ir-G7F"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="pbz-nI-EN5" secondAttribute="bottom" constant="25" id="RtH-l8-o70"/>
                             <constraint firstItem="pbz-nI-EN5" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="imn-RQ-P8e"/>
                         </constraints>
                     </view>

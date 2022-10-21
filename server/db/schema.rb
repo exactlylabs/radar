@@ -20,9 +20,9 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
     t.string "name", null: false
     t.boolean "superaccount", default: false
     t.boolean "exportaccount", default: false
-    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
     t.string "token"
   end
 
@@ -60,6 +60,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
     t.float "longitude"
     t.float "download_avg"
     t.float "upload_avg"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "ip"
     t.string "token"
     t.string "download_id"
@@ -67,8 +69,6 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
     t.float "latency"
     t.float "loss"
     t.datetime "processed_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
     t.string "address"
     t.string "network_location"
     t.string "city"
@@ -235,10 +235,10 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
     t.bigint "account_id", null: false
     t.bigint "user_id", null: false
     t.datetime "joined_at", null: false
-    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
+    t.datetime "deleted_at"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
