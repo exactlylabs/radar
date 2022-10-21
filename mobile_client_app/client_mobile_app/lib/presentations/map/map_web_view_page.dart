@@ -29,18 +29,17 @@ class MapWebViewPageState extends State<MapWebViewPage> {
           _cookieManager.clearCookies();
         },
         onPageStarted: (String url) {
-          _cookieManager.setCookie(const WebViewCookie(
-              name: 'visitedAllResults', value: 'true', domain: 'speedtest-staging.exactlylabs.com', path: '/'));
+          _cookieManager.setCookie(
+              const WebViewCookie(name: _cookieName, value: _cookieValue, domain: _cookieDomain, path: _cookiePath));
         },
         onPageFinished: (String url) {
-          _myController.runJavascript("document.getElementById(\"tabs--explore-map-button\").click();");
-          _myController.runJavascript("document.getElementById(\"header--wrapper\").style.display='none';");
-          _myController.runJavascript("document.getElementById(\"tabs--wrapper\").style.display='none';");
-          _myController.runJavascript("document.getElementById(\"footer--wrapper\").style.display='none';");
-          _myController.runJavascript("document.getElementById(\"frame--main-frame-wrapper\").style.height='100%';");
+          _myController.runJavascript(_goToMap);
+          _myController.runJavascript(_hideHeader);
+          _myController.runJavascript(_hideTabs);
+          _myController.runJavascript(_hideFooter);
+          _myController.runJavascript(_setMainFrameMaxHeight);
           Future.delayed(const Duration(milliseconds: 500), () {
-            _myController
-                .runJavascript("document.getElementById(\"all-results-page--map-container\").style.height='100%';");
+            _myController.runJavascript(_setMapMaxHeight);
           });
         },
       ),
@@ -51,4 +50,17 @@ class MapWebViewPageState extends State<MapWebViewPage> {
   void dispose() {
     super.dispose();
   }
+
+  static const String _cookieName = 'visitedAllResults';
+  static const String _cookieValue = 'true';
+  static const String _cookieDomain = 'speedtest-staging.exactlylabs.com';
+  static const String _cookiePath = '/';
+  static const String _goToMap = "document.getElementById(\"tabs--explore-map-button\").click();";
+  static const String _hideHeader = "document.getElementById(\"header--wrapper\").style.display='none';";
+  static const String _hideTabs = "document.getElementById(\"tabs--wrapper\").style.display='none';";
+  static const String _hideFooter = "document.getElementById(\"footer--wrapper\").style.display='none';";
+  static const String _setMainFrameMaxHeight =
+      "document.getElementById(\"frame--main-frame-wrapper\").style.height='100%';";
+  static const String _setMapMaxHeight =
+      "document.getElementById(\"all-results-page--map-container\").style.height='100%';";
 }

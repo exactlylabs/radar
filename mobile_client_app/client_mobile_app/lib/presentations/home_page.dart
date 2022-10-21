@@ -1,12 +1,11 @@
-import 'package:client_mobile_app/presentations/map/map_web_view_page.dart';
-import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/presentations/home_page_body.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({
@@ -55,16 +54,7 @@ class HomePage extends StatelessWidget {
                 child: child,
               );
             },
-            child: state.currentIndex == 0
-                ? Center(child: Text('Speed Test'))
-                : state.currentIndex == 1
-                    ? Container(
-                        // color: Colors.blue,
-                        child: const Center(
-                          child: Text('Your Results'),
-                        ),
-                      )
-                    : MapWebViewPage(),
+            child: HomePageBody(pageIdx: state.currentIndex),
           ),
         );
       },
