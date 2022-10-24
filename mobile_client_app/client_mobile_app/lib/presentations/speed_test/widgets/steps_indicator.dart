@@ -71,7 +71,6 @@ class StepsIndicator extends CustomPainter {
 
       textPainter.layout();
       Offset offset2 = Offset(
-        // Do calculations here:
         (offset.dx - textPainter.width / 2),
         (offset.dy - textPainter.height) / 2,
       );
