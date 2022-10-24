@@ -33,7 +33,7 @@ final theme = ThemeData(
     primary: AppColors.deepBlue,
     secondary: AppColors.blue,
     tertiary: AppColors.darkLavender,
-    surface: AppColors.paleLilac,
+    surface: AppColors.lightGrey,
     background: AppColors.paleLilac,
     error: AppColors.error,
     onPrimary: AppColors.snow,
