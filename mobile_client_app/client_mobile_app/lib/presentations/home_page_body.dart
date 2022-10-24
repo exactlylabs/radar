@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:client_mobile_app/presentations/map/map_web_view_page.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/agree_to_terms.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/steps_indicator.dart';
 import 'package:client_mobile_app/resources/images.dart';
@@ -43,6 +44,8 @@ class HomePageBody extends StatelessWidget {
               }
             },
           ),
+          const SizedBox(height: 50),
+          AgreeToTerms(),
         ],
       );
     } else if (pageIdx == _YOUR_RESULTS_PAGE_IDX) {

@@ -20,12 +20,12 @@ final theme = ThemeData(
     unselectedIconTheme: IconThemeData(color: AppColors.darkLavender),
     unselectedLabelStyle: TextStyle(
       fontSize: 11.0,
-      fontFamily: 'Mulish',
+      fontFamily: 'MulishRoman',
       fontWeight: FontWeight.bold,
     ),
     selectedLabelStyle: TextStyle(
       fontSize: 11.0,
-      fontFamily: 'Mulish',
+      fontFamily: 'MulishRoman',
       fontWeight: FontWeight.bold,
     ),
   ),
@@ -78,7 +78,7 @@ final theme = ThemeData(
           const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(24.0)))),
     ),
   ),
-  fontFamily: 'Mulish',
+  fontFamily: 'MulishRoman',
   textTheme: const TextTheme(
     headline1: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w800, color: AppColors.deepBlue),
     headline2: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w800, color: AppColors.deepBlue),
