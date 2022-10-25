@@ -36,3 +36,4 @@ export const CLOSE_PANEL_BUTTON_SHADOW_RGBA = 'rgba(0, 0, 0, 0.4)';
 export const DATE_PICKER = DEFAULT_SECONDARY_BUTTON;
 export const DATE_PICKER_HORIZONTAL_DIVIDER = 'rgba(0, 0, 0, 0.08)';
 export const OPTIONS_DROPRIGHT = 'rgba(255, 255, 255, 0.9)';
+export const LOW_OPACITY_DIVIDER = 'rgba(209, 209, 209, 0.5)';

@@ -12,9 +12,8 @@ interface DateRangeSelectorProps {
   selectedYear: number;
   selectedMonth: number;
   selectedWeek: number;
-  setSelectedYear: (newYear: number) => void;
   setSelectedMonth: (newMonth: number) => void;
-  setSelectedWeek: (newWeek: number) => void;
+  setSelectedWeek: (newWeek: number, year: number, month: number) => void;
 }
 
 const DateRangeSelector = ({
@@ -26,7 +25,6 @@ const DateRangeSelector = ({
   selectedYear,
   selectedMonth,
   selectedWeek,
-  setSelectedYear,
   setSelectedMonth,
   setSelectedWeek
 }: DateRangeSelectorProps): ReactElement => {
@@ -41,7 +39,6 @@ const DateRangeSelector = ({
                                   selectedYear={selectedYear}
                                   selectedMonth={selectedMonth}
                                   selectedWeek={selectedWeek}
-                                  setSelectedYear={setSelectedYear}
                                   setSelectedMonth={setSelectedMonth}
                                   setSelectedWeek={setSelectedWeek}
       />

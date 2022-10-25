@@ -13,9 +13,8 @@ interface DateRangeSelectorDroprightProps {
   selectedYear: number;
   selectedMonth: number;
   selectedWeek: number;
-  setSelectedYear: (newYear: number) => void;
   setSelectedMonth: (newMonth: number) => void;
-  setSelectedWeek: (newWeek: number) => void;
+  setSelectedWeek: (newWeek: number, year: number, month: number) => void;
 }
 
 const DateRangeSelectorDropright = ({
@@ -26,7 +25,6 @@ const DateRangeSelectorDropright = ({
   selectedYear,
   selectedMonth,
   selectedWeek,
-  setSelectedYear,
   setSelectedMonth,
   setSelectedWeek
 }: DateRangeSelectorDroprightProps): ReactElement => {
@@ -64,7 +62,6 @@ const DateRangeSelectorDropright = ({
         <WeekPicker selectedMonth={selectedMonth}
                     selectedYear={selectedYear}
                     selectedWeek={selectedWeek}
-                    setSelectedYear={setSelectedYear}
                     setSelectedMonth={setSelectedMonth}
                     setSelectedWeek={setSelectedWeek}
         />
@@ -118,8 +115,9 @@ const DateRangeSelectorDropright = ({
         return getMonthContent();
       case dateTabs.WEEK:
         return getWeekContent();
-      case dateTabs.QUARTER:
-        return getQuarterContent();
+      // TODO: Once Qs are supported on the backed, uncomment
+      /*case dateTabs.QUARTER:
+        return getQuarterContent();*/
       case dateTabs.HALF_YEAR:
         return getHalfyearContent();
       default:

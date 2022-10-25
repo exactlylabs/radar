@@ -1,18 +1,17 @@
-import React, {MouseEventHandler, ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/WeekPicker.style";
 import ChevronRight from '../../../assets/chevron-right.png';
 import ChevronLeft from '../../../assets/chevron-left.png';
 import WeekPickerRow from "./WeekPickerRow";
-import {getLastWeek, getMonthName, getWeekNumber, years} from "../../../utils/filters";
-import {Day} from "../../../utils/dates";
+import {years} from "../../../utils/filters";
+import {Day, getLastWeek, getMonthCalendar, getMonthName} from "../../../utils/dates";
 
 interface WeekPickerProps {
   selectedMonth: number;
   selectedYear: number;
   selectedWeek: number;
   setSelectedMonth: (newMonth: number) => void;
-  setSelectedYear: (newYear: number) => void;
-  setSelectedWeek: (newWeek: number) => void;
+  setSelectedWeek: (newWeek: number, year: number, month: number) => void;
 }
 
 const WeekPicker = ({
@@ -20,70 +19,17 @@ const WeekPicker = ({
   selectedYear,
   selectedWeek,
   setSelectedMonth,
-  setSelectedYear,
   setSelectedWeek,
 }: WeekPickerProps): ReactElement => {
 
   const [weekDays, setWeekDays] = useState<Array<Day>>([]);
+  const [weekPickerInternalYear, setWeekPickerInternalYear] = useState(selectedYear);
 
   useEffect(() => {
-    let monthDays: Array<Day> = [];
-    const startingDay = new Date(selectedYear, selectedMonth, 1);
-    monthDays.push({
-      dayNumber: startingDay.getDate(),
-      month: startingDay.getMonth(),
-      year: startingDay.getFullYear(),
-      week: getWeekNumber(startingDay),
-    });
-    // Fill in the first week of the month backwards
-    let weekDay = startingDay.getDay();
-    let dayCount = 1;
-    let dayObject: Day;
-    while(weekDay > 0) {
-      let day = new Date(startingDay);
-      day.setDate(day.getDate() - dayCount);
-      const prevDay = new Date(day);
-      dayObject = {
-        dayNumber: prevDay.getDate(),
-        month: prevDay.getMonth(),
-        year: prevDay.getFullYear(),
-        week: getWeekNumber(prevDay),
-      }
-      monthDays = [dayObject, ...monthDays];
-      dayCount++;
-      weekDay--;
-    }
-    // Fill in the rest of the month
-    let currentDay = new Date(selectedYear, selectedMonth, 2);
-    while(currentDay.getMonth() === selectedMonth) {
-      const monthDay = new Date(currentDay);
-      dayObject = {
-        dayNumber: monthDay.getDate(),
-        month: monthDay.getMonth(),
-        year: monthDay.getFullYear(),
-        week: getWeekNumber(monthDay),
-      }
-      monthDays.push(dayObject);
-      currentDay.setDate(currentDay.getDate() + 1);
-    }
-    // first day of next month is mid-week (AKA not sunday)
-    if(currentDay.getDay() !== 0) {
-      while(currentDay.getDay() !== 0) {
-        const remainingDay = new Date(currentDay);
-        dayObject = {
-          dayNumber: remainingDay.getDate(),
-          month: remainingDay.getMonth(),
-          year: remainingDay.getFullYear(),
-          week: getWeekNumber(remainingDay),
-        }
-        monthDays.push(dayObject);
-        currentDay.setDate(currentDay.getDate() + 1);
-      }
-    }
-    setWeekDays(monthDays);
-  }, [selectedMonth, selectedYear]);
+    setWeekDays(getMonthCalendar(weekPickerInternalYear, selectedMonth));
+  }, [selectedMonth, weekPickerInternalYear]);
 
-  const getTitle = () => `${getMonthName(selectedMonth)} - ${selectedYear}`;
+  const getTitle = () => `${getMonthName(selectedMonth)} ${weekPickerInternalYear}`;
 
   const getWeeks = () => {
     let weeks: Array<Array<Day>> = [];
@@ -98,19 +44,23 @@ const WeekPicker = ({
     return weeks.map((week, index) => (
       <WeekPickerRow key={week[index].week}
                      elements={week}
-                     selected={selectedWeek === week[0].week}
+                     selected={selectedWeek === week[0].week && !!week.find(day => day.year === selectedYear)} // we need find() here because for example first week of the year might have both elements from the current year as well as last year, so 2 possible year values, so we check to see if there is any day with the same year as the one selected
                      currentMonth={selectedMonth}
-                     setSelectedWeek={setSelectedWeek}
-                     disabled={week[0].week > getLastWeek()}
+                     setSelectedWeek={handleSelectWeek}
+                     disabled={weekPickerInternalYear === years[0] ? week[0].week > getLastWeek() : false}
       />
     ));
+  }
+
+  const handleSelectWeek = (newWeek: number, newMonth: number) => {
+    setSelectedWeek(newWeek, weekPickerInternalYear, newMonth);
   }
 
   const goBackOneMonth = (e: React.MouseEvent<HTMLImageElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if(selectedMonth === 0) {
-      setSelectedYear(selectedYear - 1);
+      setWeekPickerInternalYear(prevYear => prevYear - 1);
       setSelectedMonth(11);
     } else {
       setSelectedMonth(selectedMonth - 1);
@@ -121,7 +71,7 @@ const WeekPicker = ({
     e.preventDefault();
     e.stopPropagation();
     if(selectedMonth === 11) {
-      setSelectedYear(selectedYear + 1);
+      setWeekPickerInternalYear(prevYear => prevYear + 1);
       setSelectedMonth(0);
     } else {
       setSelectedMonth(selectedMonth + 1);
@@ -130,13 +80,13 @@ const WeekPicker = ({
 
   const isBackDisabled = () => {
     // not allow user to back to a date before current data
-    return selectedMonth === 0 && selectedYear === years[years.length - 1];
+    return selectedMonth === 0 && weekPickerInternalYear === years[years.length - 1];
   }
 
   const isForwardDisabled = () => {
     // not allow user to back to a date after current data
     const today: Date = new Date();
-    return selectedMonth === today.getMonth() && selectedYear === today.getFullYear();
+    return selectedMonth === today.getMonth() && weekPickerInternalYear === today.getFullYear();
   }
 
   return (

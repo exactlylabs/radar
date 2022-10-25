@@ -1,3 +1,8 @@
+import {getDateFromString, getMonthName, getMonthNumberFromName, getWeekLimits, getWeekNumber} from "./dates";
+import Option from "../components/ExplorePage/TopFilters/Option";
+import {Optional} from "./types";
+import {start} from "repl";
+
 export const filterTypes = {
   SPEED: 'speed',
   CALENDAR: 'calendar',
@@ -5,7 +10,7 @@ export const filterTypes = {
 }
 
 export const speedFilters = ['Download', 'Upload'];
-export const calendarFilters = ['All time', 'This week', 'This month', 'This year'];
+export const calendarFilters = ['All time', 'Last week', 'Last month', 'This year', 'Custom date...'];
 
 export type NamespaceTabObject = {
   STATES: string;
@@ -43,58 +48,109 @@ export const getCorrectNamespace = (namespace: string): string => {
 }
 
 export const getZoomForNamespace = (namespace: string): number => {
-  if(namespace.toUpperCase() === 'STATES') return 5;
+  if (namespace.toUpperCase() === 'STATES') return 5;
   return 7;
 }
 
-const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-const getMonthAbbreviation = (monthIndex: number) => monthAbbreviations[monthIndex];
-export const getMonthName = (monthIndex: number) => monthNames[monthIndex];
-
-export const getCurrentWeekLimits = (): string => {
-  const curr = new Date; // get current date
-  const first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-  const last = first + 6; // last day is the first day + 6
-
-  const firstDay: Date = new Date(curr.setDate(first));
-  const lastDay: Date = new Date(curr.setDate(last));
-
-  const firstDayString: string = `${getMonthAbbreviation(firstDay.getMonth())} ${firstDay.getDate()}`;
-  const lastDayString: string = `${getMonthAbbreviation(lastDay.getMonth())} ${lastDay.getDate()}`;
-  return `${firstDayString} - ${lastDayString}`;
-}
-
-export const getWeekLimits = (selectedYear: number, selectedWeek: number): string => {
-  const firstDay: Date = getFirstDayOfWeek(selectedWeek, selectedYear);
-  const lastDay: Date = new Date(firstDay);
-  lastDay.setDate(lastDay.getDate() + 6);
-  const firstDayString: string = `${getMonthAbbreviation(firstDay.getMonth())} ${firstDay.getDate()}`;
-  const lastDayString: string = `${getMonthAbbreviation(lastDay.getMonth())} ${lastDay.getDate()}`;
-  return `${firstDayString} - ${lastDayString}`;
-}
-
-export const getWeekNumber = (day?: Date): number => {
-  let startingDay: Date;
-  if(day) startingDay = day;
-  else {
-    const today: Date = new Date();
-    startingDay = new Date(today);
-    startingDay.setDate(startingDay.getDate() - 7);
+export const generateFilterLabel = (queryString: string): string => {
+  const split: Array<string> = queryString.split('&');
+  const year: number = parseInt(split[1].split('=')[1]);
+  const isCurrentYear: boolean = year === years[0];
+  const otherField: string = split[2];
+  if(!otherField) {
+    return isCurrentYear ? 'This year' : year.toString();
   }
-  const januaryFirst: Date = new Date(startingDay.getFullYear(), 0, 1);
-  const dayNumber: number = Math.floor((startingDay.getTime() - januaryFirst.getTime()) / (24 * 60 * 60 * 1000));
-  return Math.floor((dayNumber + januaryFirst.getDay()) / 7);
+  const [otherFieldLabel, otherFieldValue] = otherField.split('=');
+  let filterLabel: string = '';
+  switch (otherFieldLabel) {
+    case 'month':
+      filterLabel = `${getMonthName(parseInt(otherFieldValue) - 1)}${isCurrentYear ? '' : ` (${year})`}`;
+      break;
+    case 'semester':
+      filterLabel = `H${otherFieldValue}${isCurrentYear ? '' : ` (${year})`}`;
+      break;
+    case 'week':
+      filterLabel = `${getWeekLimits(year, parseInt(otherFieldValue) + 1)}${isCurrentYear ? '' : ` (${year})`}`;
+      break;
+  }
+  return filterLabel;
 }
 
-export const getFirstDayOfWeek = (weekNumber: number, year: number): Date => {
-  let day = (1 + (weekNumber - 1) * 7);
-  return new Date(year, 0, day + 1);
+export const getDateQueryStringFromCalendarType = (calendarType: string): string => {
+  let queryString: string = '';
+  switch (calendarType) {
+    case 'Last week':
+      const thisWeekNumber = getWeekNumber();
+      queryString = `&year=${new Date().getFullYear()}&week=${thisWeekNumber - 1 - 1}`; // minus 2 (1 for backend 0 indexing and 1 for one less week)
+      break;
+    case 'Last month':
+      // Month in JS is 0-based, backend is 1-based. So for example if we are in February, getMonth() would
+      // return 1. For our backend that's January, but as we want 'Last Month' we can keep that value as is.
+      const thisMonth = new Date().getMonth();
+      queryString = `&year=${new Date().getFullYear()}&month=${thisMonth}`;
+      break;
+    case 'This year':
+      const thisYear = new Date().getFullYear();
+      queryString = `&year=${thisYear}`;
+      break;
+    case 'All time':
+      break;
+    default:
+      queryString = decodeCustomDate(calendarType);
+      break;
+  }
+  return queryString;
 }
 
-export const getLastWeek = () => {
-  const today: Date = new Date();
-  today.setDate(today.getDate() - 7);
-  return getWeekNumber(today);
+const decodeCustomDate = (customDate: string): string => {
+  let queryString = '';
+  if(customDate.includes('H')) {
+    const split: Array<string> = customDate.split(' ');
+    const h: string = split[0];
+    let year: Optional<string> = split.length > 1 ? split[1] : null;
+    queryString += `&semester=${h === 'H1' ? 1 : 2}`;
+    if(year) {
+      year = year.replace('(', '').replace(')', '');
+      queryString += `&year=${year}`;
+    } else {
+      queryString += `&year=2022`;
+    }
+  } else if(customDate.includes('-')) {
+    //Oct 11 - Oct 17 || Oct 11 - Oct 17 (2020)
+    const split: Array<string> = customDate.split('-');
+    let endMonthDay = split[1];
+    let year: Optional<string> = null;
+    if(endMonthDay.includes('(')) {
+      const endDaySplit = endMonthDay.split('(');
+      year = endDaySplit[1].split(')')[0];
+      endMonthDay = endDaySplit[0];
+    }
+    const endDay = getDateFromString(endMonthDay.trim(), year);
+    const weekNumber = getWeekNumber(endDay);
+    queryString += `&week=${weekNumber - 1}`;
+    if(year) queryString += `&year=${year}`;
+    else queryString += `&year=2022`;
+  } else if(isSpecificMonth(customDate)) {
+    const split: Array<string> = customDate.split(' ');
+    const month = getMonthNumberFromName(split[0]);
+    const year = split.length > 1 ? split[1].split('(')[1].split(')')[0] : null;
+    queryString += `&month=${month}`;
+    if(year) queryString += `&year=${year}`;
+    else queryString += `&year=2022`;
+  } else if(isSpecificYear(customDate)) {
+    queryString += `&year=${customDate}`;
+  } else {
+    queryString = customDate;
+  }
+  return queryString;
+}
+
+export const isSpecificMonth = (string: string): boolean => {
+  const possibleMonth = string.split(' ')[0];
+  return getMonthNumberFromName(possibleMonth) !== -1;
+}
+
+export const isSpecificYear = (string: string): boolean => {
+  const possibleYearNumber: number = parseInt(string);
+  return !isNaN(possibleYearNumber) && years.includes(possibleYearNumber);
 }

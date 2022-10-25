@@ -51,6 +51,7 @@ const getValidState = (state: AppState): AppState => {
     calendarType: validateAttribute('calendarType', state.calendarType) as string,
     provider: validateAttribute('provider', state.provider) as Asn,
     selectedGeospace: validateAttribute('selectedGeospace', state.selectedGeospace) as Optional<GeospaceInfo>,
+    selectedGeospaceId: validateAttribute('selectedGeospaceId', state.selectedGeospaceId) as string,
     selectedSpeedFilters: validateAttribute('selectedSpeedFilters', state.selectedSpeedFilters) as Array<string>,
     zoom: validateAttribute('zoom', state.zoom) as number,
     center: validateAttribute('center', state.center) as Array<number>,
@@ -83,6 +84,9 @@ const validateAttribute = (key: string, value: any): any => {
       break;
     case 'center':
       returnValue = validateCenter(value);
+      break;
+    case 'selectedGeospaceId':
+      returnValue = validateGeospaceId(value);
       break;
     default:
       break;
@@ -142,5 +146,10 @@ const validateZoom = (value: any): Optional<number> => {
 
 const validateCenter = (value: any): Optional<Array<number>> => {
   if(!isLatLngValid(value)) return null;
+  return value;
+}
+
+const validateGeospaceId = (value: any): Optional<string> => {
+  if(!isString(value)) return null;
   return value;
 }
