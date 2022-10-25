@@ -71,7 +71,6 @@ const DatePicker = ({
   }
 
   const applyDateRange = () => {
-    //let dateQuery = `&year=${selectedYear}`;
     let dateObject: DateFilter = {selectedYear};
     switch (selectedTab) {
       case DateTabs.MONTH:
