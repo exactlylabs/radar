@@ -49,7 +49,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [isRightPanelHidden, setIsRightPanelHidden] = useState(false);
   const [selectedGeospaceId, setSelectedGeospaceId] = useState(getGeospaceId());
   const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(null);
-  const [geospaceNamespace, setGeospaceNamespace] = useState(getValueFromUrl('geospaceNamespace') ?? tabs.STATES);
+  const [geospaceNamespace, setGeospaceNamespace] = useState(getValueFromUrl('geospaceNamespace') ?? tabs.COUNTIES);
   const [speedType, setSpeedType] = useState<Filter>(getValueFromUrl('speedType') ?? speedFilters[0]);
   const [calendarType, setCalendarType] = useState<Filter>(getValueFromUrl('calendarType') ?? calendarFilters[3]);
   const [provider, setProvider] = useState<Filter>(getValueFromUrl('provider') ?? allProvidersElement);
