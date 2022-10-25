@@ -1,26 +1,32 @@
-import {ReactElement} from "react";
+import {ReactElement, useEffect} from "react";
 import {styles} from "./styles/Suggestion.style";
-import {ArrowForwardRounded, LocationOnOutlined} from "@mui/icons-material";
+import {ArrowForwardRounded} from "@mui/icons-material";
 import {Geospace} from "../../../api/geospaces/types";
+import PinIconBlack from '../../../assets/pin-icon-black.png';
+import {Optional} from "../../../utils/types";
 
 interface SuggestionProps {
   suggestion: Geospace;
   selectSuggestion: (suggestion: Geospace) => void;
   isLast: boolean;
+  index: number;
 }
 
 const Suggestion = ({
   suggestion,
   selectSuggestion,
-  isLast
+  isLast,
+  index
 }: SuggestionProps): ReactElement => {
 
   const handleSelectSuggestion = () => {
     selectSuggestion(suggestion);
   }
 
-  const getName = () => {
-    let name: string = suggestion.name;
+  const getName = () => suggestion.name;
+
+  const getSecondaryText = () => {
+    let name: string = '';
     if(suggestion.parent) {
       name += `, ${suggestion.parent.name}`;
     }
@@ -30,12 +36,15 @@ const Suggestion = ({
 
   return (
     <div key={suggestion.name}
-         style={styles.SuggestionContainer(isLast)}
-         className={'hover-opaque'}
+         style={styles.SuggestionContainer}
+         className={'hover-opaque suggestion'}
          onClick={handleSelectSuggestion}
     >
-      <LocationOnOutlined style={styles.Icon}/>
-      <p className={'fw-regular'} style={styles.Text}>{getName()}</p>
+      <img src={PinIconBlack} style={styles.Icon} alt={'pin-icon'}/>
+      <div style={styles.TextContainer}>
+        <p className={'fw-regular'} style={styles.Text}>{getName()}</p>
+        <p className={'fw-regular'} style={styles.SecondaryText}>{getSecondaryText()}</p>
+      </div>
       <ArrowForwardRounded style={styles.Arrow}/>
     </div>
   )

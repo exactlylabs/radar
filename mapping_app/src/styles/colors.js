@@ -40,3 +40,4 @@ export const LOW_OPACITY_DIVIDER = 'rgba(209, 209, 209, 0.5)';
 export const PERCENTAGE_BAR_TOOLTIP = DEFAULT_SECONDARY_BUTTON;
 export const LOADER_PILL = 'rgba(0, 0, 0, 0.7)';
 export const MAP_OVERLAY = 'rgba(255, 255, 255, 0.5)';
+export const SEARCHBAR_TEXT = 'rgba(80, 89, 85, 0.6)';

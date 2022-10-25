@@ -11,3 +11,8 @@
 #top-searchbar--input::-webkit-input-placeholder{
   color: #97a19d;
 }
+
+.suggestion:hover {
+  background-color: rgba(209, 209, 209, 0.25);
+  border-radius: 6px;
+}
