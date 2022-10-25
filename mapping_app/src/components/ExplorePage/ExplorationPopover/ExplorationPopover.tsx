@@ -6,9 +6,9 @@ import {Geospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
 import DiagonalArrow from '../../../assets/diagonal-arrow.png';
-import {getZoomForNamespace, tabs} from "../../../utils/filters";
+import {tabs} from "../../../utils/filters";
 import ExplorationPopoverIcon from "./ExplorationPopoverIcon";
-import MyExplorationPopoverLoader from "./MyExplorationPopoverLoader";
+import {Optional} from "../../../utils/types";
 
 
 interface ExplorationPopoverProps {
@@ -54,6 +54,7 @@ const ExplorationPopover = ({
   const [counties, setCounties] = useState<Array<Geospace>>([]);
   const [indexedCounties, setIndexedCounties] = useState({});
   const [tribalTracts, setTribalTracts] = useState<Array<Geospace>>([]);
+  const [selectedOption, setSelectedOption] = useState<Optional<Geospace>>(null);
 
   useEffect(() => {
     const allNamespaces = Promise.all([
@@ -133,10 +134,12 @@ const ExplorationPopover = ({
                                              setZoom={setZoom}
                                              loading={loading}
                                              setLoading={setLoading}
+                                             selectedOption={selectedOption}
+                                             setSelectedOption={setSelectedOption}
           />
         }
       </div> :
-      <div style={styles.ClosedExplorationPopoverContainer} id={'testtest'}>
+      <div style={styles.ClosedExplorationPopoverContainer}>
         <ExplorationPopoverIcon openPopover={openPopover}/>
       </div>;
 }

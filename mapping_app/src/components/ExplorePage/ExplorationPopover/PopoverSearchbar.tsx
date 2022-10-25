@@ -1,8 +1,8 @@
 import {ChangeEventHandler, ReactElement} from "react";
 import SearchIcon from '../../../assets/search-icon.png';
 import {styles} from "./styles/PopoverSearchbar.style";
-import {ClearRounded} from "@mui/icons-material";
 import {InputText} from "../../../utils/types";
+import ClearIcon from '../../../assets/clear-button.png';
 
 interface PopoverSearchbarProps {
   handleInputChange: ChangeEventHandler;
@@ -39,7 +39,7 @@ const PopoverSearchbar = ({
              style={styles.ClearIconContainer}
              onClick={clearInput}
         >
-          <ClearRounded style={styles.ClearIcon}/>
+          <img src={ClearIcon} style={styles.ClearIcon} alt={'clear-icon'}/>
         </div>
       }
       {
