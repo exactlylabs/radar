@@ -41,3 +41,5 @@ export const PERCENTAGE_BAR_TOOLTIP = DEFAULT_SECONDARY_BUTTON;
 export const LOADER_PILL = 'rgba(0, 0, 0, 0.7)';
 export const MAP_OVERLAY = 'rgba(255, 255, 255, 0.5)';
 export const SEARCHBAR_TEXT = 'rgba(80, 89, 85, 0.6)';
+export const OUTLINE_ONLY_SHAPE_COLOR = 'rgba(151, 161, 157, 0.2)';
+export const OUTLINE_ONLY_SHAPE_FILL = 'rgba(151, 161, 157, 0.3)';

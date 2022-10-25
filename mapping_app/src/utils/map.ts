@@ -2,7 +2,7 @@ import {DetailedGeospace, GeospaceData, GeospaceInfo, GeospaceOverview, isGeospa
 import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject, speedTypes} from "./speeds";
 import {LeafletMouseEvent} from "leaflet";
 import {Filter} from "./types";
-import {BLACK, DEFAULT_GREEN, TRANSPARENT} from "../styles/colors";
+import {BLACK, DEFAULT_GREEN, OUTLINE_ONLY_SHAPE_COLOR, OUTLINE_ONLY_SHAPE_FILL, TRANSPARENT} from "../styles/colors";
 
 export const mapTileUrl: string = MAPBOX_TILESET_URL;
 export const mapTileAttribution =
@@ -32,8 +32,8 @@ export const invisibleStyle = {
 
 export const outlineOnlyStyle = {
   ...baseStyle,
-  color: 'rgba(151, 161, 157, 0.2)',
-  fillColor: 'rgba(151, 161, 157, 0.3)',
+  color: OUTLINE_ONLY_SHAPE_COLOR,
+  fillColor: OUTLINE_ONLY_SHAPE_FILL,
 }
 
 export const getStyle = (isSelected: boolean, key: string, shouldFill: boolean) => {
