@@ -1,10 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.exactlylabs.client_mobile_app">
+    package="com.exactlylabs.radar">
 
     <application
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
-        android:label="Radar">
+        android:icon="${icon}"
+        android:label="${app_name}">
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

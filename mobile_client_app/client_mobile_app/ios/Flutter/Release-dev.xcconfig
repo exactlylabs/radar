@@ -1,0 +1,17 @@
+//
+//  Release-dev.xcconfig
+//  Runner
+//
+//  Created by Ignacio Grasso on 10/14/22.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-dev.xcconfig"
+#include "Generated.xcconfig"
+
+TARGET_NAME= Radar Dev
+FLUTTER_TARGET=lib/main_dev.dart
+BUNDLE_NAME_ID=com.exactlylabs.radar
+BUNDLE_PREFIX=.dev
+APP_ICON_SUFIX=-dev

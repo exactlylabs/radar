@@ -1,4 +1,4 @@
-package com.exactlylabs.client_mobile_app
+package com.exactlylabs.radar
 
 import io.flutter.embedding.android.FlutterActivity
 

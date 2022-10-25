@@ -25,6 +25,18 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+def devKeystoreProperties = new Properties()
+def devKeystorePropertiesFile = rootProject.file('key.dev.properties')
+if (devKeystorePropertiesFile.exists()) {
+    devKeystoreProperties.load(new FileInputStream(devKeystorePropertiesFile))
+}
+
 android {
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
@@ -44,14 +56,74 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.exactlylabs.client_mobile_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
         minSdkVersion 31
-        targetSdkVersion flutter.targetSdkVersion
+        applicationId "com.exactlylabs.radar"
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+    }
+
+    signingConfigs {
+        dev {
+            keyAlias devKeystoreProperties['keyAlias']
+            keyPassword devKeystoreProperties['keyPassword']
+            storeFile devKeystoreProperties['storeFile'] ? file(devKeystoreProperties['storeFile']) : null
+            storePassword devKeystoreProperties['storePassword']
+        }
+
+        prod {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    // TODO: Remove this once https://github.com/flutter/flutter/issues/87649
+    // is resolved and upgrade Gradle to 7.0.2 in android/build.gradle and android/gradle/wrapper/gradle-wrapper.properties
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
+    flavorDimensions "app"
+    productFlavors {
+        prod {
+            applicationId "com.exactlylabs.radar"
+            signingConfig signingConfigs.prod
+            manifestPlaceholders = [
+                    app_name: "Radar",
+                    icon: "@mipmap/ic_launcher"
+            ]
+        }
+        dev {
+            applicationId "com.exactlylabs.radar"
+            applicationIdSuffix ".dev"
+            signingConfig signingConfigs.dev
+            manifestPlaceholders = [
+                    app_name: "Radar Dev",
+                    icon: "@mipmap/ic_launcher"
+            ]
+        }
+        staging {
+            applicationId "com.exactlylabs.radar"
+            applicationIdSuffix ".staging"
+            signingConfig signingConfigs.dev
+            manifestPlaceholders = [
+                    app_name: "Radar Staging",
+                    icon: "@mipmap/ic_launcher"
+            ]
+        }
+    }
+
+    configurations {
+        implementation.exclude group: 'org.jetbrains', module: 'annotations'
+    }
+
+    buildTypes {
+        release {
+            shrinkResources false
+            minifyEnabled false
+        }
     }
 
     buildTypes {
