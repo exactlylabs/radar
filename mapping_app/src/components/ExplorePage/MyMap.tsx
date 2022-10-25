@@ -9,28 +9,29 @@ import {
   layerMouseoutHandler,
   layerMouseoverHandler,
   mapTileAttribution,
-  mapTileUrl,
+  mapTileUrl, outlineOnlyStyle,
   shouldShowLayer
 } from "../../utils/map";
 import {styles} from "./styles/MyMap.style";
-import {GeoJSONFilters, GeoJSONProperties, GeoJSONResponse} from "../../api/geojson/types";
+import {GeoJSONFilters, GeoJSONProperties, GeoJSONResponse, GeoJSONTimedResponse} from "../../api/geojson/types";
 import {getGeoJSON} from "../../api/geojson/requests";
 import {handleError} from "../../api";
 import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject} from "../../utils/speeds";
-import {GeospaceInfo, GeospaceOverview} from "../../api/geospaces/types";
+import {GeospaceData, GeospaceInfo, GeospaceOverview} from "../../api/geospaces/types";
 import {Filter, Optional} from "../../utils/types";
 import ReactDOMServer from "react-dom/server";
 import GeographicalTooltip from "./GeographicalTooltip/GeographicalTooltip";
 import {Asn} from "../../api/asns/types";
 import {BLACK} from "../../styles/colors";
 import MySpinner from "../common/MySpinner";
+import {usePrev} from "../../utils/hooks/usePrev";
 
 const geoJSONOptions: L.GeoJSONOptions = {
   style: (feature) => {
     let style = baseStyle;
-    if(feature) {
+    if (feature) {
       const properties: GeoJSONProperties = feature.properties as GeoJSONProperties;
-      if(properties.summary !== undefined) {
+      if (properties.summary !== undefined) {
         style = {
           ...style,
           color: speedColors[getSignalStateDownload(properties.summary.download_median) as keyof SpeedsObject],
@@ -53,6 +54,8 @@ interface CustomMapProps {
   center: Array<number>;
   zoom: number;
   isRightPanelHidden: boolean;
+  lastGeoJSONUpdate: Date;
+  dateQueryString?: string;
 }
 
 const CustomMap = ({
@@ -66,73 +69,136 @@ const CustomMap = ({
   center,
   zoom,
   isRightPanelHidden,
+  lastGeoJSONUpdate,
+  dateQueryString
 }: CustomMapProps): null => {
+
   const map = useMap();
   // Reference: https://github.com/Leaflet/Leaflet/pull/8109
   // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
-  map.attributionControl.setPrefix('');
-  map.setMinZoom(3);
+
+  const prevSelectedGeospace = usePrev(selectedGeospace);
+
+  useEffect(() => {
+    map.attributionControl.setPrefix('');
+    map.setMinZoom(3);
+    map.zoomControl.setPosition('bottomright');
+    map.on('zoomend', () => {
+      const center: L.LatLng = map.getCenter();
+      setZoom(map.getZoom());
+      setCenter([center.lat, center.lng]);
+    });
+    map.on('dragend', () => {
+      const center: L.LatLng = map.getCenter();
+      setCenter([center.lat, center.lng]);
+    });
+  }, []);
+
   map.setView({lat: center[0], lng: center[1]}, zoom);
-  map.zoomControl.setPosition('bottomright');
-  if(!!selectedGeospace && !isRightPanelHidden) {
+
+  useEffect(() => {
     const zoomControlElements: HTMLCollection = document.getElementsByClassName('leaflet-control-zoom');
     if(zoomControlElements.length > 0) {
       const firstElement: Element | null = zoomControlElements.item(0);
       // doing 2 line condition to prevent Typescript error
-      if(firstElement) {
-        firstElement.classList.add('leaflet-control-zoom-custom-position');
+      if (firstElement) {
+        if (!!selectedGeospace && !isRightPanelHidden) {
+          firstElement.classList.add('leaflet-control-zoom-custom-position');
+        } else {
+          firstElement.classList.remove('leaflet-control-zoom-custom-position');
+        }
       }
     }
-  }
-  map.eachLayer((layer: any) => {
-    if(layer.feature) {
-      layer.remove();
+    // check to see if we need to re-paint a shape is selected or unselected
+    if((!!prevSelectedGeospace && !!selectedGeospace && (prevSelectedGeospace as GeospaceOverview).geospace.id !== (selectedGeospace as GeospaceOverview).geospace.id) ||
+      (!prevSelectedGeospace && !!selectedGeospace) || (!!prevSelectedGeospace && !selectedGeospace)) {
+      map.eachLayer((layer: any) => {
+        if(layer.feature) {
+          const properties: GeoJSONProperties = layer.feature.properties as GeoJSONProperties;
+          if(properties.summary !== undefined) {
+            const isSelected: boolean = !!selectedGeospace ? isCurrentGeospace(properties.summary.geospace, selectedGeospace) : false;
+            const key: string = speedType === 'Download' ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
+            const shouldColorFill = shouldShowLayer(properties.summary, speedType, selectedSpeedFilters);
+            layer.setStyle(getStyle(isSelected, key, shouldColorFill));
+            if (!isSelected) {
+              layer.removeEventListener('mouseout', layerMouseoutHandler);
+              layer.removeEventListener('mouseover', layerMouseoverHandler);
+              layer.addEventListener('mouseout', layerMouseoutHandler);
+              layer.addEventListener('mouseover', layerMouseoverHandler);
+            } else {
+              layer.removeEventListener('mouseout', layerMouseoutHandler);
+              layer.removeEventListener('mouseover', layerMouseoverHandler);
+            }
+          }
+        }
+      });
     }
-  });
-  map.on('zoomend', () => {
-    const center: L.LatLng = map.getCenter();
-    setZoom(map.getZoom());
-    setCenter([center.lat, center.lng]);
-  });
-  map.on('dragend', () => {
-    const center: L.LatLng = map.getCenter();
-    setCenter([center.lat, center.lng]);
-  });
-  L.geoJSON(geoJSON, geoJSONOptions)
-    .eachLayer((layer: any) => {
+  }, [selectedGeospace, isRightPanelHidden]);
+
+  useEffect(() => {
+    map.eachLayer((layer: any) => {
       if(layer.feature) {
         const properties: GeoJSONProperties = layer.feature.properties as GeoJSONProperties;
-        if(properties.summary !== undefined && shouldShowLayer(layer.feature.properties.summary, speedType, selectedSpeedFilters)) {
+        if(properties.summary !== undefined) {
           const isSelected: boolean = !!selectedGeospace ? isCurrentGeospace(properties.summary.geospace, selectedGeospace) : false;
-          layer.addEventListener('click', () => {
-            if(properties.summary.geospace.name === 'Alaska') {
-              // TODO: quick fix for Alaskan center wrongly calculated. From the internet, Alaska's center is at 64.2008° N, 149.4937° W
-              const center: L.LatLng = L.latLng(64.2008, -149.4937);
-              selectGeospace(layer.feature.properties.summary, center);
-            } else {
-              selectGeospace(layer.feature.properties.summary, layer.getBounds().getCenter());
-            }
-          });
-          if(!isSelected) {
+          const key: string = speedType === 'Download' ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
+          const shouldColorFill = shouldShowLayer(properties.summary, speedType, selectedSpeedFilters);
+          layer.setStyle(getStyle(isSelected, key, shouldColorFill));
+          if (!isSelected) {
+            layer.removeEventListener('mouseout', layerMouseoutHandler);
+            layer.removeEventListener('mouseover', layerMouseoverHandler);
             layer.addEventListener('mouseout', layerMouseoutHandler);
             layer.addEventListener('mouseover', layerMouseoverHandler);
           } else {
-            const geospacePosition: L.LatLng = layer.getBounds().getCenter();
-            map.flyTo(geospacePosition, 5);
-            map.setView(geospacePosition, map.getZoom() > 5 ? map.getZoom() : 5);
+            layer.removeEventListener('mouseout', layerMouseoutHandler);
+            layer.removeEventListener('mouseover', layerMouseoverHandler);
           }
-          const key: string = speedType === 'Download' ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
-          layer.setStyle(getStyle(isSelected, key));
-          layer.bindTooltip(
-            ReactDOMServer.renderToString(<GeographicalTooltip geospace={layer.feature.properties.summary} speedType={speedType as string}/>),
-            {sticky: true, direction: 'center'}
-          );
-        } else if (properties.summary !== undefined) {
-          layer.setStyle(invisibleStyle);
         }
       }
-    })
-    .addTo(map);
+    });
+  }, [speedType, selectedSpeedFilters, dateQueryString]);
+
+  useEffect(() => {
+    map.eachLayer((layer: any) => {
+      if(layer.feature) {
+        layer.remove();
+      }
+    });
+    L.geoJSON(geoJSON, geoJSONOptions)
+      .eachLayer((layer: any) => {
+        if(layer.feature) {
+          const properties: GeoJSONProperties = layer.feature.properties as GeoJSONProperties;
+          const shouldColorFill = shouldShowLayer(properties.summary, speedType, selectedSpeedFilters);
+          if(properties.summary !== undefined) {
+            const isSelected: boolean = !!selectedGeospace ? isCurrentGeospace(properties.summary.geospace, selectedGeospace) : false;
+            layer.addEventListener('click', () => {
+              if (properties.summary.geospace.name === 'Alaska') {
+                // TODO: quick fix for Alaskan center wrongly calculated. From the internet, Alaska's center is at 64.2008° N, 149.4937° W
+                const center: L.LatLng = L.latLng(64.2008, -149.4937);
+                selectGeospace(layer.feature.properties.summary, center);
+              } else {
+                selectGeospace(layer.feature.properties.summary, layer.getBounds().getCenter());
+              }
+            });
+            if (!isSelected) {
+              layer.addEventListener('mouseout', layerMouseoutHandler);
+              layer.addEventListener('mouseover', layerMouseoverHandler);
+            }
+            const key: string = speedType === 'Download' ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
+            layer.setStyle(getStyle(isSelected, key, shouldColorFill));
+            layer.bindTooltip(
+              ReactDOMServer.renderToString(<GeographicalTooltip geospace={layer.feature.properties.summary} speedType={speedType as string}/>),
+              {sticky: true, direction: 'center'}
+            );
+          } else {
+            layer.setStyle(outlineOnlyStyle);
+          }
+        }
+      })
+      .addTo(map);
+  }, [lastGeoJSONUpdate]);
+
+
   return null;
 }
 
@@ -140,9 +206,9 @@ interface MyMapProps {
   namespace: string;
   selectedGeospace: Optional<GeospaceInfo>;
   selectGeospace: (geospace: GeospaceInfo, center: L.LatLng) => void;
-  speedType: Filter;
-  calendarType: Filter;
-  provider: Filter;
+  speedType: string;
+  provider: Asn;
+  calendarType: string;
   selectedSpeedFilters: Array<Filter>;
   initialZoom: number;
   setZoom: (zoom: number) => void;
@@ -157,7 +223,6 @@ const MyMap = ({
   selectedGeospace,
   selectGeospace,
   speedType,
-  calendarType,
   provider,
   selectedSpeedFilters,
   initialZoom,
@@ -166,9 +231,10 @@ const MyMap = ({
   setCenter,
   setLoading,
   isRightPanelHidden,
+  calendarType
 }: MyMapProps): ReactElement => {
 
-  const [geoJSON, setGeoJSON] = useState<GeoJSONResponse>();
+  const [geoJSON, setGeoJSON] = useState<GeoJSONTimedResponse>();
 
   useEffect(() => {
     setLoading(true);
@@ -179,11 +245,11 @@ const MyMap = ({
     };
     getGeoJSON(namespace.toLowerCase(), filters)
       .then((res: GeoJSONResponse) => {
-        setGeoJSON(res);
+        setGeoJSON({ data: res, lastUpdate: new Date() });
       })
       .catch(err => handleError(err))
       .finally(() => setLoading(false));
-  }, [namespace, calendarType, provider]);
+  }, [namespace, calendarType, provider, speedType]);
 
   return (
     <>
@@ -194,7 +260,7 @@ const MyMap = ({
                     scrollWheelZoom
                     style={styles.MapContainer}
         >
-          <CustomMap geoJSON={geoJSON}
+          <CustomMap geoJSON={geoJSON.data}
                      selectedGeospace={selectedGeospace}
                      selectGeospace={selectGeospace}
                      speedType={speedType}
@@ -204,6 +270,7 @@ const MyMap = ({
                      center={initialCenter}
                      zoom={initialZoom}
                      isRightPanelHidden={isRightPanelHidden}
+                     lastGeoJSONUpdate={geoJSON.lastUpdate}
           />
           <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
         </MapContainer>

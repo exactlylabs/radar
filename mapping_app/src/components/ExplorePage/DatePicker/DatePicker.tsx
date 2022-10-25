@@ -6,103 +6,129 @@ import DateRangeSelector from "./DateRangeSelector";
 import ApplyDateRangeButton from "./ApplyDateRangeButton";
 import {
   dateTabs,
-  getCurrentWeekLimits,
-  getWeekLimits,
-  getWeekNumber,
   halves,
   months,
   quarters,
   years
 } from "../../../utils/filters";
+import {
+  DatePickerState,
+  getCurrentMonth,
+  getFirstDayOfLastWeek,
+  getMonthNumberFromName,
+  getWeekLimits,
+  getWeekNumber
+} from "../../../utils/dates";
+import {Optional} from "../../../utils/types";
 
 interface DatePickerProps {
-
+  closeDatePicker: () => void;
+  applyRanges: (queryString: string) => void;
+  initialState: Optional<DatePickerState>;
 }
 
 const DatePicker = ({
-
+  closeDatePicker,
+  applyRanges,
+  initialState
 }: DatePickerProps): ReactElement => {
 
-  const [selectedYear, setSelectedYear] = useState(years[0]);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [selectedWeek, setSelectedWeek] = useState(getWeekNumber());
-  const [selectedTab, setSelectedTab] = useState(dateTabs.WEEK);
-  const [selectedRangeValue, setSelectedRangeValue] = useState<string | number>(months[0]);
-  const [subtitleText, setSubtitleText] = useState('');
+  const [selectedYear, setSelectedYear] = useState(initialState?.selectedYear ?? years[0]);
+  const [selectedMonth, setSelectedMonth] = useState(initialState?.selectedMonth ?? new Date().getMonth());
+  const [selectedWeek, setSelectedWeek] = useState(initialState?.selectedWeek ?? getWeekNumber(getFirstDayOfLastWeek()));
+  const [selectedTab, setSelectedTab] = useState(initialState?.selectedTab ?? dateTabs.WEEK);
+  const [selectedRangeValue, setSelectedRangeValue] = useState<string | number>(initialState?.selectedRangeValue ?? months[0]);
+  const [subtitleText, setSubtitleText] = useState(initialState?.subtitleText ?? '');
 
   useEffect(() => {
-    if(selectedYear === years[0]) {
-      setSelectedRangeValue(getDefaultValueForTab());
-      setSubtitleText(getDefaultSubtitleTextForTab());
+    if(selectedTab === dateTabs.HALF_YEAR) {
+      setSubtitleText(getSubtitleForHalf(selectedRangeValue as string));
     }
-  }, [selectedTab]);
+  }, [selectedRangeValue]);
 
-  useEffect(() => {
-    setSelectedRangeValue(getWeekLimits(selectedYear, selectedWeek));
-    setSubtitleText(`Week: ${selectedWeek}`);
-  }, [selectedWeek]);
-
-  const getDefaultValueForTab = (): string | number => {
-    switch (selectedTab) {
-      case dateTabs.MONTH:
-        return months[0];
-      case dateTabs.WEEK:
-        return getCurrentWeekLimits();
-      case dateTabs.QUARTER:
-        return quarters[0];
-      case dateTabs.HALF_YEAR:
-        return halves[0];
-      default:
-        return months[0];
+  const handleChangeYear = (newYear: number) => {
+    setSelectedYear(newYear);
+    const newWeek = newYear === years[0] ? getWeekNumber() : 1;
+    const newMonth = newYear === years[0] ? getCurrentMonth() : 0;
+    setSelectedMonth(newMonth);
+    setSelectedWeek(newWeek);
+    if(dateTabs.WEEK === selectedTab) {
+      setSelectedRangeValue(getWeekLimits(newYear, newWeek));
+      setSubtitleText(`Week: ${newWeek}`);
     }
   }
 
-  const getDefaultSubtitleTextForTab = () => {
-    let subtitle: string = '';
+  const handleChangeWeek = (newWeek: number, year: number, month: number) => {
+    if(selectedYear !== year) setSelectedYear(year);
+    if(selectedMonth !== month) setSelectedMonth(month);
+    setSelectedWeek(newWeek);
+    setSelectedRangeValue(getWeekLimits(year, newWeek));
+    setSubtitleText(`Week: ${newWeek}`);
+  }
+
+  const applyDateRange = () => {
+    let dateQuery = `&year=${selectedYear}`;
     switch (selectedTab) {
-      case dateTabs.WEEK:
-        subtitle = `Week ${getWeekNumber()}`;
-        break;
-      case dateTabs.QUARTER:
-        subtitle = 'Q1';
+      case dateTabs.MONTH:
+        if(selectedRangeValue !== months[0]) {
+          dateQuery += `&month=${getMonthNumberFromName(selectedRangeValue as string) + 1}`; // months are 1-indexed in backend
+        }
         break;
       case dateTabs.HALF_YEAR:
-        subtitle = 'H1';
+        dateQuery += `&semester=${subtitleText === 'H1' ? 1 : 2}`;
         break;
-      default:
+      case dateTabs.WEEK:
+        dateQuery += `&week=${selectedWeek - 1}`; // weeks are 0-indexed in backend
         break;
     }
-    return subtitle;
+    applyRanges(dateQuery);
+  }
+
+  const getSubtitleForHalf = (halfRange: string): string => {
+    return halfRange === halves[0] ? 'H1' : 'H2';
+  }
+
+  const handleSelectTab = (newTab: string) => {
+    setSelectedTab(newTab);
+    if(newTab === dateTabs.WEEK) {
+      setSelectedRangeValue(getWeekLimits(selectedYear, selectedWeek));
+      setSubtitleText(`Week: ${selectedWeek}`);
+    } else if(newTab === dateTabs.MONTH) {
+      setSelectedRangeValue(months[0]);
+      setSubtitleText('');
+    } else if(newTab === dateTabs.HALF_YEAR) {
+      setSelectedRangeValue(halves[0]);
+      setSubtitleText('H1');
+    }
   }
 
   return (
     <div style={styles.DatePickerContainer}>
       <div style={styles.TitleContainer}>
         <p className={'fw-medium'} style={styles.Title}>Select custom range</p>
-        <img className={'hover-opaque'} src={CloseIcon} style={styles.CloseIcon} alt={'close-icon'}/>
+        <img className={'hover-opaque'} src={CloseIcon} style={styles.CloseIcon} alt={'close-icon'} onClick={closeDatePicker}/>
       </div>
       <div style={styles.YearSelectorContainer}>
         <p className={'fw-regular'} style={styles.Label}>Choose a year</p>
         <YearSelector selectedYear={selectedYear}
-                      setSelectedYear={setSelectedYear}
+                      setSelectedYear={handleChangeYear}
         />
       </div>
       <div style={styles.DateRangeSelectorContainer}>
         <p className={'fw-regular'} style={styles.Label}>Choose a date range</p>
         <DateRangeSelector selectedTab={selectedTab}
-                           setSelectedRange={setSelectedTab}
+                           setSelectedRange={handleSelectTab}
                            selectedRangeValue={selectedRangeValue}
                            setSelectedRangeValue={setSelectedRangeValue}
                            subtitleText={subtitleText}
                            selectedYear={selectedYear}
                            selectedWeek={selectedWeek}
                            selectedMonth={selectedMonth}
-                           setSelectedYear={setSelectedYear}
                            setSelectedMonth={setSelectedMonth}
-                           setSelectedWeek={setSelectedWeek}
+                           setSelectedWeek={handleChangeWeek}
         />
       </div>
-      <ApplyDateRangeButton/>
+      <ApplyDateRangeButton onClick={applyDateRange}/>
     </div>
   )
 }

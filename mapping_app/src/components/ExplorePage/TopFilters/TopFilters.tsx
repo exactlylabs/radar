@@ -15,6 +15,8 @@ interface TopFiltersProps {
   speedType: string;
   calendarType: string;
   provider: Asn;
+  openDatePicker: () => void;
+  isRightPanelHidden: boolean;
 }
 
 const TopFilters = ({
@@ -26,7 +28,9 @@ const TopFilters = ({
   geospaceNamespace,
   speedType,
   calendarType,
-  provider
+  provider,
+  openDatePicker,
+  isRightPanelHidden
 }: TopFiltersProps): ReactElement => {
 
   const [filtersOpen, setFiltersOpen] = useState(true);
@@ -49,6 +53,8 @@ const TopFilters = ({
                  speedType={speedType}
                  calendarType={calendarType}
                  provider={provider}
+                 openDatePicker={openDatePicker}
+                 isRightPanelHidden={isRightPanelHidden}
         />
       }
     </div>

@@ -26,6 +26,7 @@ export type AppState = {
   selectedSpeedFilters: Array<string>;
   zoom: number;
   center: Array<number>;
+  selectedGeospaceId: Optional<string>;
 }
 
 export const isLatLngValid = (value: any): boolean => {

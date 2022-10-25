@@ -31,12 +31,13 @@ const DateRangeSelectorTabs = ({
       >
         Week
       </div>
-      <div className={'fw-regular hover-opaque'}
+      {/* TODO: Once backend supports Qs, uncomment */}
+      {/*<div className={'fw-regular hover-opaque'}
            style={styles.Tab(selectedTab === dateTabs.QUARTER)}
            onClick={selectQuarter}
       >
         Quarter
-      </div>
+      </div>*/}
       <div className={'fw-regular hover-opaque'}
            style={styles.Tab(selectedTab === dateTabs.HALF_YEAR)}
            onClick={selectHalfyear}

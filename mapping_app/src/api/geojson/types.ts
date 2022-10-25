@@ -26,3 +26,8 @@ export const emptyGeoJSONFilters: GeoJSONFilters = {
     organization: 'All providers'
   }
 }
+
+export type GeoJSONTimedResponse = {
+  data: GeoJSONResponse;
+  lastUpdate: Date;
+}
