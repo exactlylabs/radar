@@ -12,11 +12,6 @@ const suggestionContainerStyle: CSSProperties = {
   cursor: 'pointer',
 }
 
-const lastSuggestionContainerStyle: CSSProperties = {
-  ...suggestionContainerStyle,
-  borderBottom: 'none',
-}
-
 const iconStyle: CSSProperties = {
   width: '20px',
   color: BLACK,
@@ -56,9 +51,7 @@ const textContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  SuggestionContainer: (isLast: boolean) => {
-    return isLast ? lastSuggestionContainerStyle : suggestionContainerStyle;
-  },
+  SuggestionContainer: suggestionContainerStyle,
   Icon: iconStyle,
   Text: textStyle,
   SecondaryText: secondaryTextStyle,
