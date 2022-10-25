@@ -47,7 +47,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [loading, setLoading] = useState(false);
   const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(true);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(!!getValueFromUrl('selectedGeospace') || !!getValueFromUrl('selectedGeospaceId'));
-  const [isRightPanelHidden, setIsRightPanelHidden] = useState(!getValueFromUrl('selectedGeospace') && !getValueFromUrl('selectedGeospaceId'));
+  const [isRightPanelHidden, setIsRightPanelHidden] = useState(false);
   const [selectedGeospaceId, setSelectedGeospaceId] = useState(getGeospaceId());
   const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(getValueFromUrl('selectedGeospace') ?? null);
   const [geospaceNamespace, setGeospaceNamespace] = useState(getValueFromUrl('geospaceNamespace') ?? GeospacesTabs.COUNTIES);
