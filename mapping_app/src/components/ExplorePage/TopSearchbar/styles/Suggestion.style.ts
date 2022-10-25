@@ -1,5 +1,5 @@
 import {CSSProperties} from "react";
-import {BLACK, SELECTED_TAB} from "../../../../styles/colors";
+import {BLACK, DEFAULT_TEXT, SEARCHBAR_TEXT, SELECTED_TAB} from "../../../../styles/colors";
 
 const suggestionContainerStyle: CSSProperties = {
   width: '95%',
@@ -8,18 +8,12 @@ const suggestionContainerStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'center',
-  height: '45px',
+  height: '40px',
   cursor: 'pointer',
-  borderBottom: `solid 1px ${SELECTED_TAB}`,
-}
-
-const lastSuggestionContainerStyle: CSSProperties = {
-  ...suggestionContainerStyle,
-  borderBottom: 'none',
 }
 
 const iconStyle: CSSProperties = {
-  width: '18px',
+  width: '20px',
   color: BLACK,
   marginRight: '10px',
   marginLeft: '5px',
@@ -27,10 +21,16 @@ const iconStyle: CSSProperties = {
 
 const textStyle: CSSProperties = {
   fontSize: '16px',
-  maxWidth: '85%',
+  color: DEFAULT_TEXT,
+  maxWidth: '100%',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   overflow: 'hidden',
+}
+
+const secondaryTextStyle: CSSProperties = {
+  fontSize: '15px',
+  color: SEARCHBAR_TEXT,
 }
 
 const arrowStyle: CSSProperties = {
@@ -38,11 +38,23 @@ const arrowStyle: CSSProperties = {
   marginLeft: 'auto',
 }
 
+const textContainerStyle: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  alignItems: 'baseline',
+  color: SEARCHBAR_TEXT,
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  maxWidth: '75%'
+}
+
 export const styles = {
-  SuggestionContainer: (isLast: boolean) => {
-    return isLast ? lastSuggestionContainerStyle : suggestionContainerStyle;
-  },
+  SuggestionContainer: suggestionContainerStyle,
   Icon: iconStyle,
   Text: textStyle,
+  SecondaryText: secondaryTextStyle,
   Arrow: arrowStyle,
+  TextContainer: textContainerStyle,
 }
