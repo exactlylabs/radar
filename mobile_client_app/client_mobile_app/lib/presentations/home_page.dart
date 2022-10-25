@@ -1,9 +1,9 @@
-import 'package:animations/animations.dart';
-import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
-import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
-import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:animations/animations.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
+import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({
