@@ -35,15 +35,31 @@ const SuggestionsBox = ({
     selectSuggestion(suggestion);
   }
 
+  const getInputValue = () => {
+    const input: Optional<HTMLElement> = document.getElementById('top-searchbar--input');
+    if(input) return (input as HTMLInputElement).value;
+    return '';
+  }
+
   return (
     <div style={styles.SuggestionsBoxContainer} id={'suggestions-box'}>
       {
+        suggestions.length > 0 &&
         suggestions.map((suggestion, index) =>
           <Suggestion suggestion={suggestion}
                       key={index}
+                      index={index}
                       selectSuggestion={handleSelectSuggestion}
                       isLast={index === (suggestions.length - 1)}
           />)
+      }
+      {
+        suggestions.length === 0 &&
+        <div style={styles.NoResultsContainer}>
+          <p className={'fw-light'} style={styles.NoResultsText}>No results for</p>
+          <p className={'fw-medium'} style={styles.NoResultsText}>{getInputValue()}</p>
+          <p className={'fw-light'} style={styles.NoResultsText}>.</p>
+        </div>
       }
     </div>
   )

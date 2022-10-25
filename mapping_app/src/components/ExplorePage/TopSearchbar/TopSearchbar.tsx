@@ -1,4 +1,4 @@
-import {ChangeEvent, ReactElement, useEffect, useState} from "react";
+import {ChangeEvent, ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/TopSearchbar.style";
 import './styles/TopSearchbar.css';
 import SearchIcon from "../../../assets/search-icon.png";
@@ -17,6 +17,8 @@ interface TopSearchbarProps {
 }
 
 const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => {
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -50,7 +52,7 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
   }
 
   const handleInputChange = debounce(async (e: ChangeEvent<HTMLInputElement>) => {
-    if(e.target.value) {
+    if(!!e.target.value) {
       setLoading(true);
       try {
         const response: GeospaceSearchResult = await getGeospaces(e.target.value, 5);
@@ -60,6 +62,9 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
         handleError(e);
       }
       setLoading(false);
+    } else {
+      setSuggestions([]);
+      setOpen(false);
     }
   });
 
@@ -73,6 +78,7 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
              style={styles.Input}
              onChange={handleInputChange}
              id={'top-searchbar--input'}
+             ref={inputRef}
       />
       <div className={'hover-opaque'} style={styles.ArrowContainer}>
         {
@@ -82,7 +88,7 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
         }
       </div>
       {
-        suggestions.length > 0 && open &&
+        inputRef && inputRef.current?.value && open &&
         <SuggestionsBox suggestions={suggestions}
                         setOpen={setOpen}
                         selectSuggestion={selectSuggestion}
