@@ -51,7 +51,7 @@ const DropdownFilters = ({
         })
         .catch(err => handleError(err));
     }
-  }, []);
+  }, [selectedGeospaceId]);
 
   useEffect(() => {
     if(prevFilters && prevFilters.speedType !== speedType) {
