@@ -24,6 +24,8 @@ interface SpecificExplorationPopoverContentProps {
   setZoom: (zoom: number) => void;
   loading: boolean;
   setLoading: (state: boolean) => void;
+  selectedOption: Optional<DetailedGeospace>;
+  setSelectedOption: (newOption: DetailedGeospace) => void;
 }
 
 const SpecificExplorationPopoverContent = ({
@@ -38,11 +40,12 @@ const SpecificExplorationPopoverContent = ({
   setZoom,
   loading,
   setLoading,
+  selectedOption,
+  setSelectedOption
 }: SpecificExplorationPopoverContentProps): ReactElement => {
 
   const [allItems, setAllItems] = useState<Array<DetailedGeospace>>([]);
   const [filteredItems, setFilteredItems] = useState<Array<DetailedGeospace>>([]);
-  const [selectedOption, setSelectedOption] = useState<Optional<DetailedGeospace>>(null);
   const [inputText, setInputText] = useState<string>('');
 
   useEffect(() => {
@@ -95,7 +98,7 @@ const SpecificExplorationPopoverContent = ({
   }
 
   const handleSelectOption = async (option: DetailedGeospace) => {
-    setSelectedOption(option);
+    if(type !== popoverStates.SPECIFIC_STATE) setSelectedOption(option);
     if(type !== popoverStates.COUNTIES) {
       const response: GeospaceOverview = await getOverview(option.id, emptyGeoJSONFilters);
       const allData: GeospaceInfo = {
@@ -113,7 +116,7 @@ const SpecificExplorationPopoverContent = ({
   }
 
   const getContent = () => {
-    if(filteredItems.length === 0) {
+    if(!filteredItems || filteredItems.length === 0) {
       return (
         <div style={styles.NoResultsContainer}>
           <p className={'fw-light'}>No results for </p>
@@ -150,9 +153,7 @@ const SpecificExplorationPopoverContent = ({
         <ArrowBackRounded style={styles.ArrowBack} onClick={goBack}/>
         <p className={'fw-medium'} style={styles.Title}>{getTitle()}</p>
       </div>
-      {
-        loading && <MyExplorationPopoverLoader/>
-      }
+      { loading && <MyExplorationPopoverLoader/> }
       {
         !loading &&
         <>
@@ -161,7 +162,7 @@ const SpecificExplorationPopoverContent = ({
                             setText={handleSetText}
                             disabled={loading}
           />
-          {!loading && type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText}>Start by choosing a state...</p>}
+          {!loading && type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText}>Choose a state...</p>}
           <div style={styles.ContentContainer(type)} id={'exploration-popover--content-container'}>
             {getContent()}
           </div>

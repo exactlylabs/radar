@@ -1,5 +1,5 @@
 import {CSSProperties} from "react";
-import {DEFAULT_BUTTON_BOX_SHADOW_RGBA, WHITE} from "../../../../styles/colors";
+import {DEFAULT_BUTTON_BOX_SHADOW_RGBA, DEFAULT_SECONDARY_TEXT, WHITE} from "../../../../styles/colors";
 
 const optionsDropdownContainerStyle: CSSProperties = {
   width: 'max-content',
@@ -14,11 +14,28 @@ const optionsDropdownContainerStyle: CSSProperties = {
   overflowX: 'unset'
 }
 
+const noResultsTextContainerStyle: CSSProperties = {
+  width: 'calc(100% - 30px)',
+  margin: '20px 15px',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'flex-start'
+}
+
+const noResultsTextStyle: CSSProperties = {
+  fontSize: '15px',
+  color: DEFAULT_SECONDARY_TEXT,
+  marginRight: '3px',
+}
+
 export const styles = {
   OptionsDropdownContainer: (dropLeft: boolean, dropRight: boolean) => {
     let style = optionsDropdownContainerStyle;
     if(dropLeft) style = {...style, right: '-5px'};
     if(dropRight) style = {...style, left: '-5px'}
     return style;
-  }
+  },
+  NoResultsTextContainer: noResultsTextContainerStyle,
+  NoResultsText: noResultsTextStyle,
 }

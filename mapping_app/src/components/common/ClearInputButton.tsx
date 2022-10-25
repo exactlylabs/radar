@@ -1,6 +1,6 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/ClearInputButton.style";
-import ClearIcon from '../../assets/close-icon.png';
+import ClearIcon from '../../assets/clear-button.png';
 
 interface ClearInputButtonProps {
   onClick: () => void;

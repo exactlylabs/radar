@@ -51,7 +51,8 @@ const clearIconContainerStyle: CSSProperties = {
 
 const clearIconStyle: CSSProperties = {
   color: CLEAR_ICON_COLOR,
-  fontSize: '15px',
+  width: '100%',
+  height: '100%',
   marginRight: '60px'
 }
 

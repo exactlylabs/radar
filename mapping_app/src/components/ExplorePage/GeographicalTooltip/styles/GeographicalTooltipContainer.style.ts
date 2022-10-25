@@ -14,8 +14,8 @@ const geographicalTooltipContainerStyle: CSSProperties = {
   borderRadius: '10px',
   boxShadow: `0 2px 10px -4px ${EXPLORATION_POPOVER_SECONDARY_BLACK}`,
   position: 'absolute',
-  left: '40%',
-  top: '40%',
+  left: '25px',
+  top: '15px',
   zIndex: 1000,
   backdropFilter: 'blur(10px)',
 }

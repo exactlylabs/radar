@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/OpenFiltersButton";
 import MyButton from "../../common/MyButton";
 import {BLACK, DEFAULT_SECONDARY_BUTTON} from "../../../styles/colors";
-import FiltersIcon from '../../../assets/filters-icon.png';
+import FiltersIcon from '../../../assets/show-filters.png';
 
 interface OpenFiltersButtonProps {
   openFilters: () => void;

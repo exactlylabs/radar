@@ -25,6 +25,7 @@ import {Asn} from "../../api/asns/types";
 import {BLACK} from "../../styles/colors";
 import MySpinner from "../common/MySpinner";
 import {usePrev} from "../../utils/hooks/usePrev";
+import {dateTabs} from "../../utils/filters";
 
 const geoJSONOptions: L.GeoJSONOptions = {
   style: (feature) => {
@@ -144,14 +145,11 @@ const CustomMap = ({
           const key: string = speedType === 'Download' ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
           const shouldColorFill = shouldShowLayer(properties.summary, speedType, selectedSpeedFilters);
           layer.setStyle(getStyle(isSelected, key, shouldColorFill));
+          layer.removeEventListener('mouseout', layerMouseoutHandler);
+          layer.removeEventListener('mouseover', layerMouseoverHandler);
           if (!isSelected) {
-            layer.removeEventListener('mouseout', layerMouseoutHandler);
-            layer.removeEventListener('mouseover', layerMouseoverHandler);
             layer.addEventListener('mouseout', layerMouseoutHandler);
             layer.addEventListener('mouseover', layerMouseoverHandler);
-          } else {
-            layer.removeEventListener('mouseout', layerMouseoutHandler);
-            layer.removeEventListener('mouseover', layerMouseoverHandler);
           }
         }
       }
@@ -247,7 +245,7 @@ const MyMap = ({
       .then((res: GeoJSONResponse) => {
         setGeoJSON({ data: res, lastUpdate: new Date() });
       })
-      .catch(err => handleError(err))
+      .catch(err => { handleError(err); })
       .finally(() => setLoading(false));
   }, [namespace, calendarType, provider, speedType]);
 
