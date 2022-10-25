@@ -1,12 +1,15 @@
 import {ReactElement} from "react";
 import MySpinner from "./MySpinner";
-import {DEFAULT_GREEN} from "../../styles/colors";
+import {WHITE} from "../../styles/colors";
 import {styles} from "./styles/MyOverlayingLoader.style";
 
 const MyOverlayingLoader = (): ReactElement => {
   return (
     <div style={styles.OverlayingLoaderContainer}>
-      <MySpinner color={DEFAULT_GREEN} style={{width: '50px'}}/>
+      <div style={styles.ContentContainer}>
+        <MySpinner color={WHITE} style={styles.Spinner}/>
+        <p className={'fw-light'} style={styles.Text}>Loading map...</p>
+      </div>
     </div>
   )
 }
