@@ -26,5 +26,5 @@ export const getAsnsForGeospace = (geospaceId: string, query?: string): Promise<
     .then(res => {
       if(!res.ok) return throwError(res);
       else return res.json() as Promise<AsnsResponse>;
-    })
+    });
 }

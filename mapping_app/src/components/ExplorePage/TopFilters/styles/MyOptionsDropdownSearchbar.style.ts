@@ -13,19 +13,17 @@ const myOptionsDropdownSearchbarContainerStyle: CSSProperties = {
 
 const titleStyle: CSSProperties = {
   fontSize: '14px',
-  color: DEFAULT_SECONDARY_TEXT,
+  color: FOOTER_TEXT,
   marginBottom: '-5px',
   marginLeft: '15px',
 }
 
 const inputStyle: CSSProperties = {
-  width: 'calc(100% - 30px)',
+  width: 'calc(100% - 17px - 18px)',
   height: '50px',
-  fontSize: '15px',
-  marginLeft: '15px',
   border: 'none',
-  borderBottom: `solid 1px ${VERTICAL_DIVIDER}`,
   color: FOOTER_TEXT,
+  fontSize: '15px',
 }
 
 const horizontalDividerStyle: CSSProperties = {

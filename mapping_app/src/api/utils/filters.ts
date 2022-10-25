@@ -1,5 +1,4 @@
 import {Filter} from "../../utils/types";
-import {Asn} from "../asns/types";
 import {GeoJSONFilters} from "../geojson/types";
 import {getQueryStringFromDateObject, getWeekNumber} from "../../utils/dates";
 import {CalendarFilters, getDateQueryStringFromCalendarType} from "../../utils/filters";
