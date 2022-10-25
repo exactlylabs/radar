@@ -140,7 +140,7 @@ const ExplorationPopover = ({
           />
         }
       </div> :
-      <div style={styles.ClosedExplorationPopoverContainer} id={'testtest'}>
+      <div style={styles.ClosedExplorationPopoverContainer}>
         <ExplorationPopoverIcon openPopover={openPopover}/>
       </div>;
 }
