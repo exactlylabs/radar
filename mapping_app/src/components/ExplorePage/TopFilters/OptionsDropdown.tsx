@@ -1,7 +1,7 @@
 import {ChangeEventHandler, ReactElement} from "react";
 import {styles} from "./styles/OptionsDropdown.style";
 import Option from './Option';
-import {Filter} from "../../../utils/types";
+import {Filter, Optional} from "../../../utils/types";
 import {Asn, isAsn} from "../../../api/asns/types";
 import MyOptionsDropdownSearchbar from "./MyOptionsDropdownSearchbar";
 import {allProvidersElement} from "./utils/providers";
@@ -36,6 +36,12 @@ const OptionsDropdown = ({
 
   const handleSelectOption = (option: Filter) => setSelectedOption(option);
 
+  const getInputValue = () => {
+    const input: Optional<HTMLElement> = document.getElementById('providers-input');
+    if(input) return (input as HTMLInputElement).value;
+    else return '';
+  }
+
   return (
     <div style={styles.OptionsDropdownContainer(dropLeft, dropRight)}>
       {
@@ -50,6 +56,7 @@ const OptionsDropdown = ({
         />
       }
       {
+        options.length > 0 &&
         options.map((option, index) => {
           return lastOptionTriggersFunction && lastOptionOnClick ?
             <Option key={isAsn(option) ? option.id : option}
@@ -63,6 +70,14 @@ const OptionsDropdown = ({
                     onClick={handleSelectOption}
             />;
         })
+      }
+      {
+        options.length === 0 && !loading &&
+        <div style={styles.NoResultsTextContainer}>
+          <p className={'fw-light'} style={styles.NoResultsText}>No results for</p>
+          <p className={'fw-medium'} style={styles.NoResultsText}>{getInputValue()}</p>
+          <p className={'fw-light'} style={styles.NoResultsText}>.</p>
+        </div>
       }
     </div>
   )

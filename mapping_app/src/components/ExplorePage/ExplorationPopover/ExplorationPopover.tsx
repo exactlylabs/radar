@@ -6,9 +6,9 @@ import {DetailedGeospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
 import DiagonalArrow from '../../../assets/diagonal-arrow.png';
-import {getZoomForNamespace, tabs} from "../../../utils/filters";
+import {tabs} from "../../../utils/filters";
 import ExplorationPopoverIcon from "./ExplorationPopoverIcon";
-import MyExplorationPopoverLoader from "./MyExplorationPopoverLoader";
+import {Optional} from "../../../utils/types";
 
 
 interface ExplorationPopoverProps {
@@ -54,6 +54,7 @@ const ExplorationPopover = ({
   const [counties, setCounties] = useState<Array<DetailedGeospace>>([]);
   const [indexedCounties, setIndexedCounties] = useState({});
   const [tribalTracts, setTribalTracts] = useState<Array<DetailedGeospace>>([]);
+  const [selectedOption, setSelectedOption] = useState<Optional<DetailedGeospace>>(null);
 
   useEffect(() => {
     const allNamespaces = Promise.all([
@@ -134,6 +135,8 @@ const ExplorationPopover = ({
                                              setZoom={setZoom}
                                              loading={loading}
                                              setLoading={setLoading}
+                                             selectedOption={selectedOption}
+                                             setSelectedOption={setSelectedOption}
           />
         }
       </div> :

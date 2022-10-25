@@ -12,7 +12,7 @@ const HideFiltersButton = ({
   closeFilters
 }: HideFiltersButtonProps): ReactElement => {
   return (
-    <MyButton text={'Hide'}
+    <MyButton text={''}
               onClick={closeFilters}
               icon={<img src={ArrowRightBlack} style={styles.Icon} alt={'arrow-right'}/>}
               iconFirst
