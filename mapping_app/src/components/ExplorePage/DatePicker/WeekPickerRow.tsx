@@ -9,7 +9,7 @@ interface WeekPickerRowProps {
   selected: boolean;
   header?: boolean;
   currentMonth: number;
-  setSelectedWeek?: (newWeek: number) => void;
+  setSelectedWeek?: (newWeek: number, newMonth: number) => void;
 }
 
 const WeekPickerRow = ({
@@ -27,7 +27,7 @@ const WeekPickerRow = ({
     return dayElem.month !== currentMonth;
   }
 
-  const selectWeek = () => setSelectedWeek && setSelectedWeek((elements[0] as Day).week);
+  const selectWeek = () => setSelectedWeek && setSelectedWeek((elements[0] as Day).week, (elements[0] as Day).month);
 
   return (
     <div className={`week-picker-row ${selected ? 'week-picker-row--selected' : ''} ${disabled ? 'week-picker-row--disabled' : ''}`}

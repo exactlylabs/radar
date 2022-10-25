@@ -11,15 +11,23 @@ import {Geospace, GeospaceInfo, GeospaceOverview} from "../../api/geospaces/type
 import {getOverview} from "../../api/geospaces/requests";
 import {handleError} from "../../api";
 import {speedTypes} from "../../utils/speeds";
-import {calendarFilters, getCorrectNamespace, getZoomForNamespace, speedFilters, tabs} from "../../utils/filters";
+import {
+  calendarFilters,
+  generateFilterLabel,
+  getCorrectNamespace, getDateQueryStringFromCalendarType,
+  getZoomForNamespace,
+  speedFilters,
+  tabs
+} from "../../utils/filters";
 import {allProvidersElement} from "./TopFilters/utils/providers";
 import {getValueFromUrl, updateUrl} from "../../utils/base64";
 import {Asn} from "../../api/asns/types";
 import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "../../utils/map";
 import MyOverlayingLoader from "../common/MyOverlayingLoader";
 import L from "leaflet";
-import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
 import DatePicker from "./DatePicker/DatePicker";
+import {getInitialStateFromCalendarType} from "../../utils/dates";
+import {getFiltersString} from "../../api/utils/filters";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -27,11 +35,20 @@ interface ExplorePageProps {
 
 const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
+  const getGeospaceId = () => {
+    const possibleId = getValueFromUrl('selectedGeospaceId');
+    if(possibleId) return possibleId;
+    const possibleGeospace = getValueFromUrl('selectedGeospace');
+    if(!possibleGeospace) return null;
+    return (possibleGeospace as GeospaceOverview).geospace.id;
+  }
+
   const [loading, setLoading] = useState(false);
   const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(true);
-  const [isRightPanelOpen, setIsRightPanelOpen] = useState(!!getValueFromUrl('selectedGeospace'));
-  const [isRightPanelHidden, setIsRightPanelHidden] = useState(false);
-  const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(getValueFromUrl('selectedGeospace') ?? null);
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(!!getValueFromUrl('selectedGeospace') || !!getValueFromUrl('selectedGeospaceId'));
+  const [isRightPanelHidden, setIsRightPanelHidden] = useState(!!getValueFromUrl('selectedGeospace') || !!getValueFromUrl('selectedGeospaceId'));
+  const [selectedGeospaceId, setSelectedGeospaceId] = useState(getGeospaceId());
+  const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(null);
   const [geospaceNamespace, setGeospaceNamespace] = useState(getValueFromUrl('geospaceNamespace') ?? tabs.STATES);
   const [speedType, setSpeedType] = useState<Filter>(getValueFromUrl('speedType') ?? speedFilters[0]);
   const [calendarType, setCalendarType] = useState<Filter>(getValueFromUrl('calendarType') ?? calendarFilters[3]);
@@ -39,6 +56,8 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [selectedSpeedFilters, setSelectedSpeedFilters] = useState<Array<Filter>>(getValueFromUrl('selectedSpeedFilters') ?? [speedTypes.UNSERVED, speedTypes.UNDERSERVED, speedTypes.SERVED]);
   const [currentMapZoom, setCurrentMapZoom] = useState(getValueFromUrl('zoom') ?? 3)
   const [currentMapCenter, setCurrentMapCenter] = useState<Array<number>>(getValueFromUrl('center') ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [dateQueryString, setDateQueryString] = useState(getValueFromUrl('calendarType') ? getDateQueryStringFromCalendarType(getValueFromUrl('calendarType')) : getDateQueryStringFromCalendarType(calendarFilters[3]));
 
   useEffect(() => {
     const currentState: AppState = {
@@ -49,7 +68,8 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       selectedGeospace,
       selectedSpeedFilters,
       zoom: currentMapZoom,
-      center: currentMapCenter
+      center: currentMapCenter,
+      selectedGeospaceId,
     };
     updateUrl(currentState);
   }, [
@@ -60,8 +80,20 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     selectedGeospace,
     selectedSpeedFilters,
     currentMapZoom,
-    currentMapCenter
+    currentMapCenter,
+    selectedGeospaceId
   ]);
+
+  useEffect(() => {
+    if(selectedGeospaceId) {
+      const filtersString: string = getFiltersString([provider, calendarType]);
+      getOverview(selectedGeospaceId, filtersString)
+        .then(res => { setSelectedGeospace(res); })
+        .catch(err => handleError(err));
+    } else {
+      setSelectedGeospace(null);
+    }
+  }, [selectedGeospaceId]);
 
   useEffect(() => {
     if(userCenter) {
@@ -80,6 +112,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   const closeRightPanel = () => {
     setSelectedGeospace(null);
+    setSelectedGeospaceId(null);
     setIsRightPanelOpen(false);
   }
 
@@ -91,7 +124,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     try {
       setLoading(true);
       setGeospaceNamespace(getCorrectNamespace(suggestion.namespace));
-      setCurrentMapCenter([suggestion.centroid[1], suggestion.centroid[0]]);
+      setCurrentMapCenter([suggestion.centroid[0], suggestion.centroid[1]]);
       setCurrentMapZoom(getZoomForNamespace(suggestion.namespace));
       const overview: GeospaceOverview = await getOverview(suggestion.id, '');
       const allData: GeospaceInfo = {
@@ -99,6 +132,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
         ...suggestion,
       };
       setSelectedGeospace(allData);
+      setSelectedGeospaceId(allData.geospace.id);
       openRightPanel();
       setLoading(false);
     } catch (e: any) {
@@ -109,12 +143,13 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const selectGeospace = (geospace: GeospaceInfo, center?: L.LatLng) => {
     setLoading(true);
     setSelectedGeospace(geospace);
+    setSelectedGeospaceId((geospace as GeospaceOverview).geospace.id);
     if(center) {
       setCurrentMapCenter([center.lat, center.lng]);
       setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
     } else if((geospace as GeospaceOverview).geospace.centroid) {
       const centroid: Array<number> = (geospace as GeospaceOverview).geospace.centroid;
-      setCurrentMapCenter([centroid[1], centroid[0]]);
+      setCurrentMapCenter([centroid[0], centroid[1]]);
       setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
     }
     openRightPanel();
@@ -126,6 +161,20 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     setCurrentMapZoom(3);
   }
 
+  const openDatePicker = () => setIsDatePickerOpen(true);
+  const closeDatePicker = () => setIsDatePickerOpen(false);
+
+  const handleApplyRanges = (queryString: string) => {
+    setCalendarType(generateFilterLabel(queryString));
+    setDateQueryString(queryString);
+    closeDatePicker();
+  }
+
+  const handleSetCalendarType = (calendarType: Filter) => {
+    setCalendarType(calendarType);
+    setDateQueryString(getDateQueryStringFromCalendarType(calendarType as string));
+  }
+
   return (
     <div style={styles.ExplorePageContainer}>
       { loading && <MyOverlayingLoader/> }
@@ -133,7 +182,6 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
              selectedGeospace={selectedGeospace}
              selectGeospace={selectGeospace}
              speedType={speedType}
-             calendarType={calendarType}
              provider={provider}
              selectedSpeedFilters={selectedSpeedFilters}
              initialZoom={currentMapZoom}
@@ -142,18 +190,20 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
              setCenter={setCurrentMapCenter}
              setLoading={setLoading}
              isRightPanelHidden={isRightPanelHidden}
+             dateQueryString={dateQueryString}
       />
-      <DatePicker />
       <TopSearchbar selectSuggestion={selectSuggestion}/>
       <TopFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
                   setGeospaceNamespace={setGeospaceNamespace}
                   setSpeedType={setSpeedType}
-                  setCalendarType={setCalendarType}
+                  setCalendarType={handleSetCalendarType}
                   setProvider={setProvider}
                   geospaceNamespace={geospaceNamespace}
                   speedType={speedType}
                   calendarType={calendarType}
                   provider={provider}
+                  openDatePicker={openDatePicker}
+                  isRightPanelHidden={isRightPanelHidden}
       />
       <SpeedFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
                     speedType={speedType}
@@ -176,11 +226,20 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                     speedType={speedType}
                     setSpeedType={setSpeedType}
                     calendarType={calendarType}
-                    setCalendarType={setCalendarType}
+                    setCalendarType={handleSetCalendarType}
                     provider={provider}
                     setProvider={setProvider}
                     toggleHidden={togglePanel}
                     isHidden={isRightPanelHidden}
+                    openDatePicker={openDatePicker}
+                    loading={loading}
+        />
+      }
+      {
+        isDatePickerOpen &&
+        <DatePicker closeDatePicker={closeDatePicker}
+                    applyRanges={handleApplyRanges}
+                    initialState={getInitialStateFromCalendarType(calendarType as string)}
         />
       }
     </div>

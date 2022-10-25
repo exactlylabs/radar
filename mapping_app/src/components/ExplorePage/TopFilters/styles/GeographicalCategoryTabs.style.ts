@@ -21,6 +21,12 @@ const geographicalCategoryTabsContainerStyle: CSSProperties = {
   backdropFilter: 'blur(10px)'
 }
 
+const geographicalCategoryTabsContainerWithHiddenPanelStyle: CSSProperties = {
+  ...geographicalCategoryTabsContainerStyle,
+  position: 'absolute',
+  right: '25px',
+}
+
 const tabStyle: CSSProperties = {
   width: 'max-content',
   height: '38px',
@@ -43,7 +49,9 @@ const selectedTabStyle: CSSProperties = {
 }
 
 export const styles = {
-  GeographicalCategoryTabsContainer: geographicalCategoryTabsContainerStyle,
+  GeographicalCategoryTabsContainer: (isRightPanelHidden: boolean) => {
+    return isRightPanelHidden ? geographicalCategoryTabsContainerWithHiddenPanelStyle : geographicalCategoryTabsContainerStyle;
+  },
   Tab: (selected: boolean) => {
     return selected ? selectedTabStyle : tabStyle;
   },

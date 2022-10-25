@@ -5,11 +5,13 @@ import {tabs} from "../../../utils/filters";
 interface GeographicalCategoryTabsProps {
   geospaceNamespace: string;
   setGeospaceNamespace: (namespace: string) => void;
+  isRightPanelHidden: boolean;
 }
 
 const GeographicalCategoryTabs = ({
   geospaceNamespace,
-  setGeospaceNamespace
+  setGeospaceNamespace,
+  isRightPanelHidden
 }: GeographicalCategoryTabsProps): ReactElement => {
 
   const [selectedTab, setSelectedTab] = useState<string>(tabs.STATES)
@@ -25,7 +27,7 @@ const GeographicalCategoryTabs = ({
   const selectTribalLands = () => setGeospaceNamespace(tabs.TRIBAL_TRACTS);
 
   return (
-    <div style={styles.GeographicalCategoryTabsContainer}>
+    <div style={styles.GeographicalCategoryTabsContainer(isRightPanelHidden)}>
       <div className={'fw-regular hover-opaque'}
            style={styles.Tab(selectedTab === tabs.STATES)}
            onClick={selectStates}

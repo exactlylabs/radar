@@ -14,6 +14,10 @@ interface OptionsDropdownProps {
   dropRight: boolean;
   withSearchbar?: boolean;
   searchbarOnChange?: ChangeEventHandler;
+  lastOptionTriggersFunction?: boolean;
+  lastOptionOnClick?: () => void;
+  loading: boolean;
+  clearSearch?: () => void;
 }
 
 const OptionsDropdown = ({
@@ -23,7 +27,11 @@ const OptionsDropdown = ({
   dropLeft,
   dropRight,
   withSearchbar,
-  searchbarOnChange
+  searchbarOnChange,
+  lastOptionTriggersFunction,
+  lastOptionOnClick,
+  loading,
+  clearSearch,
 }: OptionsDropdownProps): ReactElement => {
 
   const handleSelectOption = (option: Filter) => setSelectedOption(option);
@@ -33,21 +41,28 @@ const OptionsDropdown = ({
       {
         withSearchbar &&
         <MyOptionsDropdownSearchbar
-          type={'provider'}
           stickyOption={allProvidersElement}
           stickyOptionOnSelect={setSelectedOption}
           stickyOptionSelected={allProvidersElement.id === (selectedOption as Asn).id}
           onChange={searchbarOnChange}
+          loading={loading}
+          clearSearch={clearSearch}
         />
       }
       {
-        options.map((option, index) => (
-          <Option key={isAsn(option) ? option.id : option}
-                  option={option}
-                  selected={isAsn(option) ? (option as Asn).id === (selectedOption as Asn).id : option === selectedOption}
-                  onClick={handleSelectOption}
-          />
-        ))
+        options.map((option, index) => {
+          return lastOptionTriggersFunction && lastOptionOnClick ?
+            <Option key={isAsn(option) ? option.id : option}
+                    option={option}
+                    selected={isAsn(option) ? (option as Asn).id === (selectedOption as Asn).id : option === selectedOption}
+                    onClick={index === (options.length - 1) ? lastOptionOnClick : handleSelectOption}
+            /> :
+            <Option key={isAsn(option) ? option.id : option}
+                    option={option}
+                    selected={isAsn(option) ? (option as Asn).id === (selectedOption as Asn).id : option === selectedOption}
+                    onClick={handleSelectOption}
+            />;
+        })
       }
     </div>
   )

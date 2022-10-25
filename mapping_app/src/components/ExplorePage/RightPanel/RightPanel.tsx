@@ -13,6 +13,8 @@ import {getFiltersString} from "../../../api/utils/filters";
 import {getOverview} from "../../../api/geospaces/requests";
 import {handleError} from "../../../api";
 import {Filter} from "../../../utils/types";
+import RightPanelLoader from "./RightPanelLoader";
+
 
 interface RightPanelProps {
   closePanel: () => void;
@@ -26,6 +28,8 @@ interface RightPanelProps {
   setProvider: (type: Filter) => void;
   toggleHidden: () => void;
   isHidden: boolean;
+  openDatePicker: () => void;
+  loading: boolean;
 }
 
 const RightPanel = ({
@@ -39,9 +43,10 @@ const RightPanel = ({
   setCalendarType,
   setProvider,
   toggleHidden,
-  isHidden
+  isHidden,
+  openDatePicker,
+  loading,
 }: RightPanelProps): ReactElement => {
-
   const getName = (): string => {
     if(isGeospaceData(selectedGeospaceInfo)) {
       if(selectedGeospaceInfo.state) return selectedGeospaceInfo.state as string;
@@ -56,7 +61,7 @@ const RightPanel = ({
     setSpeedType(filters[0]);
     setCalendarType(filters[1]);
     setProvider(filters[2]);
-    const filtersString: string = getFiltersString(filters);
+    const filtersString: string = getFiltersString([filters[2], filters[1]]);
     try {
       let geospaceId: string;
       if(isGeospaceData(selectedGeospaceInfo)) {
@@ -107,7 +112,7 @@ const RightPanel = ({
     <div style={styles.RightPanelContainer(isHidden)} id={'right-panel'}>
       <HidePanelButton onClick={toggleHidden} isHidden={isHidden}/>
       {
-        !isHidden &&
+        !isHidden && !loading &&
         <div style={styles.RightPanelContentContainer}>
           <div style={styles.GradientUnderlay}></div>
           <div style={styles.RightPanelContentWrapper}>
@@ -122,6 +127,8 @@ const RightPanel = ({
                                speedType={speedType}
                                calendarType={calendarType}
                                provider={provider}
+                               openDatePicker={openDatePicker}
+                               selectedGeospaceId={(selectedGeospaceInfo as GeospaceOverview).geospace.id}
               />
             </div>
             <RightPanelSpeedData medianDownload={selectedGeospaceInfo.download_median}
@@ -138,6 +145,14 @@ const RightPanel = ({
             />
           </div>
         </div>
+      }
+      {
+        !isHidden && loading &&
+        <RightPanelLoader geospaceName={getName()}
+                          parentName={(selectedGeospaceInfo as GeospaceOverview).geospace.parent?.name}
+                          country={'U.S.A'}
+                          stateSignalState={getSignalState()}
+                          closePanel={closePanel}/>
       }
     </div>
   )

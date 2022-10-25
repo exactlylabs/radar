@@ -16,6 +16,8 @@ interface FiltersProps {
   speedType: Filter;
   calendarType: Filter;
   provider: Filter;
+  openDatePicker: () => void;
+  isRightPanelHidden: boolean;
 }
 
 const Filters = ({
@@ -28,7 +30,9 @@ const Filters = ({
   geospaceNamespace,
   speedType,
   calendarType,
-  provider
+  provider,
+  openDatePicker,
+  isRightPanelHidden
 }: FiltersProps): ReactElement => {
 
   const handleChangeFilters = (filters: Array<Filter>) => {
@@ -41,14 +45,16 @@ const Filters = ({
     <div style={styles.FiltersContainer}>
       <GeographicalCategoryTabs geospaceNamespace={geospaceNamespace}
                                 setGeospaceNamespace={setGeospaceNamespace}
+                                isRightPanelHidden={isRightPanelHidden}
       />
       {
-        extendedView &&
+        extendedView && !isRightPanelHidden &&
         <div style={styles.ConditionalFiltersContainer}>
           <DropdownFilters changeFilters={handleChangeFilters}
                            speedType={speedType}
                            calendarType={calendarType}
                            provider={provider}
+                           openDatePicker={openDatePicker}
           />
           <HideFiltersButton closeFilters={closeFilters}/>
         </div>

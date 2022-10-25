@@ -4,8 +4,8 @@ import {getFiltersString} from "../utils/filters";
 import {Filter} from "../../utils/types";
 import {Asn} from "../asns/types";
 
-export const getGeoJSON = (namespace: string = 'states', calendarType?: Filter, provider?: Asn): Promise<GeoJSONResponse> => {
-  const filters: string = getFiltersString([namespace, calendarType ?? '', provider ?? '']);
+export const getGeoJSON = (namespace: string = 'states', provider?: Asn, dateQueryString?: string): Promise<GeoJSONResponse> => {
+  const filters: string = getFiltersString([provider ?? '', dateQueryString ?? '']);
   return fetch(`${API_URL}/geojson?namespace=${namespace}&${filters}`)
     .then(res => {
       if(!res.ok) throw new Error(res.statusText);

@@ -103,7 +103,7 @@ const SpecificExplorationPopoverContent = ({
       };
       await selectGeospace(allData);
     } else {
-      const center: Array<number> = [option.centroid[1], option.centroid[0]];
+      const center: Array<number> = [option.centroid[0], option.centroid[1]];
       setCenter(center);
       setZoom(getZoomForNamespace(tabs.STATES));
       setType(popoverStates.SPECIFIC_STATE);

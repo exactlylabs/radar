@@ -26,3 +26,8 @@ export type GeoJSONFeature = {
 }
 
 export type GeoJSONResponse = GeoJSON.FeatureCollection<any>;
+
+export type GeoJSONTimedResponse = {
+  data: GeoJSONResponse;
+  lastUpdate: Date;
+}

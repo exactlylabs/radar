@@ -19,6 +19,9 @@ interface DropdownFilterProps {
   clearProviderList?: () => void;
   openFilter: Optional<string>;
   setOpenFilter: (newFilter: Optional<string>) => void;
+  lastOptionTriggersFunction?: boolean;
+  lastOptionOnClick?: () => void;
+  loading: boolean;
 }
 
 const DropdownFilter = ({
@@ -33,6 +36,9 @@ const DropdownFilter = ({
   clearProviderList,
   openFilter,
   setOpenFilter,
+  lastOptionTriggersFunction,
+  lastOptionOnClick,
+  loading
 }: DropdownFilterProps): ReactElement => {
 
   const [selectedOption, setSelectedOption] = useState<Filter>(selectedFilter ?? options[0]);
@@ -42,8 +48,14 @@ const DropdownFilter = ({
     if(dropdownOpen && type !== openFilter) closeOptionsDropdown();
   }, [openFilter]);
 
+  useEffect(() => {
+    setSelectedOption(selectedFilter);
+  }, [selectedFilter]);
+
   const toggleOptionsDropdown = (e: any) => {
     e.stopPropagation();
+    const providerSearchbar = document.getElementById('options-dropdown-searchbar--container');
+    if(providerSearchbar && providerSearchbar.contains(e.target)) return;
     if (dropdownOpen) {
       closeOptionsDropdown();
       setOpenFilter(null);
@@ -87,6 +99,10 @@ const DropdownFilter = ({
                          dropLeft={type === filterTypes.PROVIDERS}
                          withSearchbar={withSearchbar}
                          searchbarOnChange={searchbarOnChange}
+                         lastOptionTriggersFunction={lastOptionTriggersFunction}
+                         lastOptionOnClick={lastOptionOnClick}
+                         loading={loading}
+                         clearSearch={clearProviderList}
         />
       }
     </div>
