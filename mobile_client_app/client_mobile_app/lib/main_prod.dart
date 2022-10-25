@@ -6,7 +6,7 @@ import 'package:client_mobile_app/core/flavors/string_resource/string_resource_p
 import 'package:client_mobile_app/main_common.dart';
 import 'package:flutter/material.dart';
 
-Future<void> main() async {
+void main() {
   final prodStringResources = StringResourceProd();
   mainCommon(Uri.parse(prodStringResources.SERVER_ENDPOINT));
 
@@ -16,18 +16,21 @@ Future<void> main() async {
     child: const App(),
   );
 
-  await runWithCrashReporting(
+  runWithCrashReporting(
     codeToExecute: () => runApp(prodConfig),
     appNamePrefix: prodStringResources.APP_NAME_PREFIX,
     dsn: prodStringResources.SENTRY_FLUTTER_KEY,
   );
 }
 
-Future<void> runWithCrashReporting({
+void runWithCrashReporting({
   required VoidCallback codeToExecute,
   required String appNamePrefix,
   String? dsn,
-}) async {
+}) {
   // Run the code to execute in a zone and handle all errors within.
-  runZonedGuarded(codeToExecute, (error, trace) {});
+  runZonedGuarded(
+    codeToExecute,
+    (error, trace) {},
+  );
 }
