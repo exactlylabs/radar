@@ -1,0 +1,49 @@
+- name: Install Mlab Ingestor
+  hosts: ingestor
+
+  tasks:
+    - name: Copy binary to host
+      become: yes
+      ansible.builtin.copy:
+        src: ../../../mlab-ingestor
+        dest: /usr/local/bin/mlab-ingestor
+        mode: '0655'
+    - name: Copy systemd service file to host
+      become: yes
+      ansible.builtin.copy:
+        src: ./mlab-ingestor.service
+        dest: /etc/systemd/system/mlab-ingestor.service
+        mode: '0644'
+    - name: Write Service Password
+      become: yes
+      ansible.builtin.replace:
+        path: /etc/systemd/system/mlab-ingestor.service
+        regexp: '(\${DBPASSWORD})'
+        replace: "{{ db_password }}"
+    - name: Delete Previous Migrations
+      become: yes
+      ansible.builtin.file:
+        path: /var/mlab-ingestor/migrations
+        state: absent
+    - name: Copy migrations to host
+      become: yes
+      ansible.builtin.copy:
+        src: "../../migrations"
+        dest: /var/mlab-ingestor/
+        mode: '0644'
+    - name: Run Migrations
+      become: yes
+      ansible.builtin.script: ../../../scripts/migrate.sh /var/mlab-ingestor/migrations
+      environment:
+        DB_USER: "{{ db_user }}"
+        DB_NAME: "{{ db_name }}"
+        DB_PASSWORD: "{{ db_password }}"
+        DB_HOST: "{{ db_host }}"
+        DB_PORT: "{{ db_port }}"
+    - name: Reload Systemd
+      become: yes
+      ansible.builtin.systemd:
+        daemon_reload: true
+        enabled: true
+        name: mlab-ingestor
+        state: started
