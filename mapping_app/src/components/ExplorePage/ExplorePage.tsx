@@ -28,6 +28,7 @@ import L from "leaflet";
 import DatePicker from "./DatePicker/DatePicker";
 import {getInitialStateFromCalendarType} from "../../utils/dates";
 import {getFiltersString} from "../../api/utils/filters";
+import * as amplitude from "@amplitude/analytics-browser";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -58,6 +59,13 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [currentMapCenter, setCurrentMapCenter] = useState<Array<number>>(getValueFromUrl('center') ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [dateQueryString, setDateQueryString] = useState(getValueFromUrl('calendarType') ? getDateQueryStringFromCalendarType(getValueFromUrl('calendarType')) : getDateQueryStringFromCalendarType(calendarFilters[3]));
+
+  useEffect(() => {
+    if(REACT_APP_ENV === 'production') {
+      amplitude.init(AMPLITUDE_KEY);
+      amplitude.track('Page visited');
+    }
+  }, []);
 
   useEffect(() => {
     const currentState: AppState = {

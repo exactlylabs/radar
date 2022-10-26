@@ -22,7 +22,7 @@ import {Filter, Optional} from "../../utils/types";
 import ReactDOMServer from "react-dom/server";
 import GeographicalTooltip from "./GeographicalTooltip/GeographicalTooltip";
 import {Asn} from "../../api/asns/types";
-import {usePrev} from "../../utils/hooks/usePrev";
+import {usePrev} from "../../hooks/usePrev";
 import {dateTabs} from "../../utils/filters";
 
 const geoJSONOptions: L.GeoJSONOptions = {
