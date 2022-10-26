@@ -1,12 +1,12 @@
 all:
   hosts:
     clickhousedb:
-      ansible_host: 34.122.242.245
+      ansible_host: db.mapping.exactlylabs.com
       db_name: "mlab-mapping"
       ansible_connection: "ssh"          
 
     ingestor:
-      ansible_host: 34.122.242.245
+      ansible_host: ingestor-01.mapping.exactlylabs.com
       db_name: "mlab-mapping"
       db_host: "127.0.0.1"
       db_port: 9000
