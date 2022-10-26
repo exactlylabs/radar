@@ -107,6 +107,7 @@ const anthcLogoStyle: CSSProperties = {
 
 const exactlyLogoStyle: CSSProperties = {
   height: '28px',
+  cursor: 'pointer',
 }
 
 const xlabLogoStyle: CSSProperties = {
