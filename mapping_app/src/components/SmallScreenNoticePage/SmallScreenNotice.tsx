@@ -32,8 +32,8 @@ const SmallScreenNotice = ({ setWantsToProceed }: SmallScreenNoticeProps): React
           <p className={'fw-light'} style={styles.LightText}>In association with:</p>
           <div style={styles.FooterLogoContainer}>
             <img src={AnthcLogo} style={styles.AnthcLogo} alt={'ANTHC-logo'}/>
-            <img src={ExactlyLogo} style={styles.ExactlyLogo} alt={'ANTHC-logo'} onClick={goToExactlyLabsWebsite}/>
-            <img src={XlabLogo} style={styles.XlabLogo} alt={'ANTHC-logo'}/>
+            <img src={ExactlyLogo} style={styles.ExactlyLogo} alt={'Exactly-logo'} onClick={goToExactlyLabsWebsite}/>
+            <img src={XlabLogo} style={styles.XlabLogo} alt={'XLab-logo'}/>
           </div>
         </div>
         <div style={styles.HorizontalDivider}></div>

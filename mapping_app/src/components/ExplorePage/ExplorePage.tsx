@@ -68,6 +68,13 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   }, []);
 
   useEffect(() => {
+    if(REACT_APP_ENV === 'production') {
+      amplitude.init(AMPLITUDE_KEY);
+      amplitude.track('Page visited');
+    }
+  }, []);
+
+  useEffect(() => {
     const currentState: AppState = {
       geospaceNamespace,
       speedType,
