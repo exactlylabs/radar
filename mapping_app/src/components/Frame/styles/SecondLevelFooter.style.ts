@@ -39,6 +39,7 @@ const exactlyIconStyle: CSSProperties = {
   ...footerIconStyle,
   height: '25px',
   width: '111px',
+  cursor: 'pointer'
 }
 
 const associationTextStyle: CSSProperties = {

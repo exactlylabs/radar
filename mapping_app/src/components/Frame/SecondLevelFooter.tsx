@@ -3,6 +3,7 @@ import {styles} from "./styles/SecondLevelFooter.style";
 import XLabLogo from '../../assets/xlab-logo.png';
 import ANTHCLogo from '../../assets/anthc-logo.png';
 import ExactlyLabsLogo from '../../assets/exactly-logo.png';
+import {goToExactlyLabsWebsite} from "../../utils/redirects";
 
 const SecondLevelFooter = (): ReactElement => {
   return (
@@ -13,7 +14,7 @@ const SecondLevelFooter = (): ReactElement => {
       <div style={styles.RightSideContainer}>
         <p className={'fw-light'} style={styles.AssociationText}>In association with:</p>
         <img src={ANTHCLogo} style={styles.FooterIcon} alt={'anthc-logo'}/>
-        <img src={ExactlyLabsLogo} style={styles.ExactlyIcon} alt={'exactlylabs-logo'}/>
+        <img src={ExactlyLabsLogo} style={styles.ExactlyIcon} alt={'exactlylabs-logo'} onClick={goToExactlyLabsWebsite}/>
         <img src={XLabLogo} style={styles.FooterIcon} alt={'xlab-logo'}/>
       </div>
     </div>

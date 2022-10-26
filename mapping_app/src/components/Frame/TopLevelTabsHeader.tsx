@@ -8,6 +8,8 @@ import {buttonColors, buttonTextColors} from "../../utils/buttons";
 import PinIcon from '../../assets/pin-icon.png';
 import MyButton from "../common/MyButton";
 import {handleError} from "../../api";
+import MySpinner from "../common/MySpinner";
+import {WHITE} from "../../styles/colors";
 
 interface TopLevelTabsHeaderProps {
   centerOnUser: (center: Array<number>) => void;
@@ -18,21 +20,25 @@ const TopLevelTabsHeader = ({centerOnUser}: TopLevelTabsHeaderProps): ReactEleme
   const location = useLocation();
 
   const [selectedTab, setSelectedTab] = useState(location.pathname);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setSelectedTab(location.pathname);
   }, [location.pathname]);
 
   const onError = (err: GeolocationPositionError) => {
+    setLoading(false);
     handleError(new Error(err.message));
   }
 
   const centerOnUserPosition = () => {
     if ('geolocation' in navigator) {
+      setLoading(true);
       navigator.geolocation.getCurrentPosition(
         pos => {
           const center: Array<number> = [pos.coords.latitude, pos.coords.longitude];
           centerOnUser(center);
+          setLoading(false);
         },
         onError,
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
@@ -55,14 +61,23 @@ const TopLevelTabsHeader = ({centerOnUser}: TopLevelTabsHeaderProps): ReactEleme
                              selected={selectedTab === paths.ABOUT}
       />*/}
       <div style={styles.RightSideButtonContainer}>
-        <MyButton text={'Check your region'}
-                  icon={<img src={PinIcon} style={styles.PinIcon} alt={'pin-icon'}/>}
-                  backgroundColor={buttonColors.BLACK}
-                  color={buttonTextColors.WHITE}
-                  iconFirst
-                  onClick={centerOnUserPosition}
-                  className={'fw-medium hover-opaque'}
+        {
+          !loading &&
+          <MyButton text={'Check your region'}
+                    icon={<img src={PinIcon} style={styles.PinIcon} alt={'pin-icon'}/>}
+                    backgroundColor={buttonColors.BLACK}
+                    color={buttonTextColors.WHITE}
+                    iconFirst
+                    onClick={centerOnUserPosition}
+                    className={'fw-medium hover-opaque'}
           />
+        }
+        {
+          loading &&
+          <MyButton text={''} icon={<MySpinner color={WHITE}/>}
+                    backgroundColor={buttonColors.BLACK}
+                    color={buttonTextColors.WHITE}/>
+        }
       </div>
     </div>
   )

@@ -7,7 +7,7 @@ interface MyButtonProps {
   backgroundColor?: string;
   color?: string;
   iconFirst?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
   className?: string;
   backdropFilter?: string;
 }
