@@ -6,6 +6,7 @@ import ArrowRight from '../../assets/arrow-right-black.png';
 import AnthcLogo from '../../assets/anthc-logo.png';
 import ExactlyLogo from '../../assets/exactly-logo.png';
 import XlabLogo from '../../assets/xlab-logo.png';
+import {goToExactlyLabsWebsite} from "../../utils/redirects";
 
 interface SmallScreenNoticeProps {
   setWantsToProceed: (value: boolean) => void;
@@ -31,7 +32,7 @@ const SmallScreenNotice = ({ setWantsToProceed }: SmallScreenNoticeProps): React
           <p className={'fw-light'} style={styles.LightText}>In association with:</p>
           <div style={styles.FooterLogoContainer}>
             <img src={AnthcLogo} style={styles.AnthcLogo} alt={'ANTHC-logo'}/>
-            <img src={ExactlyLogo} style={styles.ExactlyLogo} alt={'ANTHC-logo'}/>
+            <img src={ExactlyLogo} style={styles.ExactlyLogo} alt={'ANTHC-logo'} onClick={goToExactlyLabsWebsite}/>
             <img src={XlabLogo} style={styles.XlabLogo} alt={'ANTHC-logo'}/>
           </div>
         </div>
