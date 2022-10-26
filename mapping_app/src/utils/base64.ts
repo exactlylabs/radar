@@ -1,7 +1,6 @@
 import {AppState, Filter, isLatLngValid, isNumber, isString, Optional} from "./types";
 import {Geospace, GeospaceInfo, isGeospaceData, isGeospaceOverview} from "../api/geospaces/types";
-import {tabs} from "../components/ExplorePage/TopFilters/GeographicalCategoryTabs";
-import {calendarFilters, speedFilters} from "./filters";
+import {calendarFilters, speedFilters, tabs} from "./filters";
 import {Asn, isAsn} from "../api/asns/types";
 import {allProvidersElement} from "../components/ExplorePage/TopFilters/utils/providers";
 import {speedTypes} from "./speeds";

@@ -1,0 +1,1 @@
+export const SMALL_SCREEN_SIZE_BREAKPOINT = 1210;

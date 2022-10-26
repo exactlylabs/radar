@@ -24,8 +24,8 @@ import GeographicalTooltip from "./GeographicalTooltip/GeographicalTooltip";
 import {Asn} from "../../api/asns/types";
 import {BLACK} from "../../styles/colors";
 import MySpinner from "../common/MySpinner";
-import {usePrev} from "../../utils/hooks/usePrev";
 import {dateTabs} from "../../utils/filters";
+import {usePrev} from "../../hooks/usePrev";
 
 const geoJSONOptions: L.GeoJSONOptions = {
   style: (feature) => {
