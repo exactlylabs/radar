@@ -9,7 +9,10 @@ import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_co
 class SpeedTestPage extends StatelessWidget {
   const SpeedTestPage({
     Key? key,
+    required this.height,
   }) : super(key: key);
+
+  final double height;
 
   @override
   Widget build(BuildContext context) {
