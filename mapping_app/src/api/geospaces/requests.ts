@@ -1,5 +1,5 @@
 import {GeospaceOverview, GeospaceSearchResult} from "./types";
-import {API_URL} from "../index";
+import {API_URL, throwError} from "../index";
 
 export const getGeospaces = (query: string, limit?: number, offset?: number): Promise<GeospaceSearchResult> => {
   let limitString: string = '';
@@ -8,7 +8,7 @@ export const getGeospaces = (query: string, limit?: number, offset?: number): Pr
   if(offset) offsetString = `&offset=${offset}`;
   return fetch(`${API_URL}/geospaces?query=${query}${limitString}${offsetString}`)
     .then(res => {
-      if(!res.ok) throw new Error(res.statusText);
+      if(!res.ok) return throwError(res);
       else return res.json() as Promise<GeospaceSearchResult>;
     })
 }
@@ -16,7 +16,7 @@ export const getGeospaces = (query: string, limit?: number, offset?: number): Pr
 export const getOverview = (geospaceId: string, filters: string): Promise<GeospaceOverview> => {
   return fetch(`${API_URL}/geospaces/${geospaceId}/overview?${filters}`)
     .then(res => {
-      if(!res.ok) throw new Error(res.statusText);
+      if(!res.ok) return throwError(res);
       else return res.json() as Promise<GeospaceOverview>;
     })
 }

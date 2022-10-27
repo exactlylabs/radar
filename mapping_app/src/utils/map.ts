@@ -1,8 +1,9 @@
 import {Geospace, GeospaceData, GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/types";
 import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject, speedTypes} from "./speeds";
-import {LeafletMouseEvent} from "leaflet";
-import {Filter} from "./types";
-import {BLACK, DEFAULT_GREEN, OUTLINE_ONLY_SHAPE_COLOR, OUTLINE_ONLY_SHAPE_FILL, TRANSPARENT} from "../styles/colors";
+import L, {LeafletMouseEvent} from "leaflet";
+import {Filter, Optional} from "./types";
+import {OUTLINE_ONLY_SHAPE_COLOR, OUTLINE_ONLY_SHAPE_FILL, TRANSPARENT} from "../styles/colors";
+import {GeoJSONProperties} from "../api/geojson/types";
 
 export const mapTileUrl: string = MAPBOX_TILESET_URL;
 export const mapTileAttribution =
@@ -11,6 +12,7 @@ export const mapTileAttribution =
 // Specific coordinates to fallback onto almost center point of the US
 export const DEFAULT_FALLBACK_LATITUDE: number = 45.566296;
 export const DEFAULT_FALLBACK_LONGITUDE: number = -97.264547;
+const MIN_ZOOM = 3;
 
 export const baseStyle = {
   stroke: true,
@@ -34,6 +36,23 @@ export const outlineOnlyStyle = {
   ...baseStyle,
   color: OUTLINE_ONLY_SHAPE_COLOR,
   fillColor: OUTLINE_ONLY_SHAPE_FILL,
+}
+
+export const geoJSONOptions: L.GeoJSONOptions = {
+  style: (feature) => {
+    let style = baseStyle;
+    if (feature) {
+      const properties: GeoJSONProperties = feature.properties as GeoJSONProperties;
+      if (properties.summary !== undefined) {
+        style = {
+          ...style,
+          color: speedColors[getSignalStateDownload(properties.summary.download_median) as keyof SpeedsObject],
+          fillColor: speedColors[getSignalStateDownload(properties.summary.download_median) as keyof SpeedsObject]
+        }
+      }
+    }
+    return style;
+  }
 }
 
 export const getStyle = (isSelected: boolean, key: string, shouldFill: boolean) => {
@@ -92,5 +111,73 @@ export const isCurrentGeospace = (geospace: Geospace, selectedGeospace: Geospace
     const isGeospaceInView: boolean = selectedGeospace.geospace.id === geospace.id;
     const isParentInView: boolean = !!selectedGeospace.geospace.parent && selectedGeospace.geospace.parent.id === geospace.id
     return isGeospaceInView || isParentInView;
+  }
+}
+
+export const paintLayer = (layer: any, selectedGeospace: Optional<GeospaceInfo>, speedType: Filter, selectedSpeedFilters: Array<Filter>) => {
+  if(layer.feature) {
+    const properties: GeoJSONProperties = layer.feature.properties as GeoJSONProperties;
+    if(properties.summary !== undefined) {
+      const isSelected: boolean = !!selectedGeospace ? isCurrentGeospace(properties.summary.geospace, selectedGeospace) : false;
+      const key: string = speedType === 'Download' ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
+      const shouldColorFill = shouldShowLayer(properties.summary, speedType, selectedSpeedFilters);
+      layer.setStyle(getStyle(isSelected, key, shouldColorFill));
+      layer.removeEventListener('mouseout', layerMouseoutHandler);
+      layer.removeEventListener('mouseover', layerMouseoverHandler);
+      if (!isSelected) {
+        layer.addEventListener('mouseout', layerMouseoutHandler);
+        layer.addEventListener('mouseover', layerMouseoverHandler);
+      }
+    }
+  }
+}
+
+export const initializeMap = (map: L.Map, setZoom: (newZoom: number) => void, setCenter: (newCenter: Array<number>) => void) => {
+  map.attributionControl.setPrefix('');
+  map.setMinZoom(MIN_ZOOM);
+  map.zoomControl.setPosition('bottomright');
+  map.on('zoomend', () => {
+    const center: L.LatLng = map.getCenter();
+    setZoom(map.getZoom());
+    setCenter([center.lat, center.lng]);
+  });
+  map.on('dragend', () => {
+    const center: L.LatLng = map.getCenter();
+    setCenter([center.lat, center.lng]);
+  });
+}
+
+export const addClickHandler = (layer: any, properties: GeoJSONProperties, selectGeospace: (geospace: GeospaceInfo, newCenter: L.LatLng) => void) => {
+  layer.addEventListener('click', () => {
+    if (properties.summary.geospace.name === 'Alaska') {
+      // TODO: quick fix for Alaskan center wrongly calculated. From the internet, Alaska's center is at 64.2008° N, 149.4937° W
+      const center: L.LatLng = L.latLng(64.2008, -149.4937);
+      selectGeospace(layer.feature.properties.summary, center);
+    } else {
+      selectGeospace(layer.feature.properties.summary, layer.getBounds().getCenter());
+    }
+  });
+}
+
+export const removeAllFeatureLayers = (map: L.Map) => {
+  map.eachLayer((layer: any) => {
+    if(layer.feature) {
+      layer.remove();
+    }
+  });
+}
+
+export const checkZoomControlPosition = (selectedGeospace: Optional<GeospaceInfo>, isRightPanelHidden: boolean) => {
+  const zoomControlElements: HTMLCollection = document.getElementsByClassName('leaflet-control-zoom');
+  if(zoomControlElements.length > 0) {
+    const firstElement: Element | null = zoomControlElements.item(0);
+    // doing 2 line condition to prevent Typescript error
+    if (firstElement) {
+      if (!!selectedGeospace && !isRightPanelHidden) {
+        firstElement.classList.add('leaflet-control-zoom-custom-position');
+      } else {
+        firstElement.classList.remove('leaflet-control-zoom-custom-position');
+      }
+    }
   }
 }

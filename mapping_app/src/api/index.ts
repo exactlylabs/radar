@@ -17,3 +17,7 @@ export type PaginationLinks = {
   next: Optional<string>;
   previous: Optional<string>;
 }
+
+export const throwError = (res: Response) => {
+  throw new Error(`${res.statusText}. Status code: ${res.status}`);
+}
