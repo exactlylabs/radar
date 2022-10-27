@@ -7,23 +7,14 @@ class LocalStorage {
 
   static const String resultsKey = 'RESULTS';
 
-  Future<void> addResult(Map<String, dynamic> value) async {
-    try {
-      final results = _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[]);
-      return _box.put(resultsKey, [...results!, value]);
-    } catch (exception, stackTrace) {
-      print(exception);
-      print(stackTrace);
-    }
+  Future<List<Map<String, dynamic>>> addResult(Map<String, dynamic> value) async {
+    final results = _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[]);
+    final newResults = [...results!, value];
+    await _box.put(resultsKey, newResults);
+    return newResults;
   }
 
-  Future<List<Map<String, dynamic>>> getResults() async {
-    try {
-      return _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[])!;
-    } catch (exception, stackTrace) {
-      print(exception);
-      print(stackTrace);
-      return <Map<String, dynamic>>[];
-    }
+  List<Map<String, dynamic>> getResults() {
+    return _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[])!;
   }
 }
