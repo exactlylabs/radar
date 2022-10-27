@@ -9,6 +9,7 @@ class HomePageBody extends StatelessWidget {
   }) : super(key: key);
 
   final int pageIdx;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
