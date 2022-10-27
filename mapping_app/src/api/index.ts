@@ -1,6 +1,5 @@
 import * as Sentry from '@sentry/react';
 import {Optional} from "../utils/types";
-import {Asn} from "./asns/types";
 
 export const API_URL = REACT_APP_ENV === 'production' ?
   'https://api.mapping.exactlylabs.com/api/v1' :
@@ -23,4 +22,8 @@ export type PaginatedResponse<T> = {
   _links: PaginationLinks;
   count: number;
   results: Array<T>;
+}
+
+export const throwError = (res: Response) => {
+  throw new Error(`${res.statusText}. Status code: ${res.status}`);
 }
