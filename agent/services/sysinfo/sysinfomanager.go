@@ -149,11 +149,11 @@ func (si SysInfoManager) GetAuthLogFile() ([]byte, error) {
 func (si SysInfoManager) GetSysTimezone() (*time.Location, error) {
 	out, err := exec.Command("timedatectl", "--value", "-p", "Timezone", "show").Output()
 	if err != nil {
-		return nil, fmt.Errorf("SysInfoManager#GetSysTimezone %v: %w", strings.TrimRight(string(out), "\n"), err)
+		return nil, fmt.Errorf("SysInfoManager#GetSysTimezone Output: %v: %w", strings.TrimRight(string(out), "\n"), err)
 	}
-	loc, err := time.LoadLocation(string(out))
+	loc, err := time.LoadLocation(strings.Trim(strings.TrimSpace(string(out)), "\n"))
 	if err != nil {
-		return nil, fmt.Errorf("SysInfoManager#GetSysTimezone %w", err)
+		return nil, fmt.Errorf("SysInfoManager#GetSysTimezone LoadLocation: %w", err)
 	}
 	return loc, nil
 }
