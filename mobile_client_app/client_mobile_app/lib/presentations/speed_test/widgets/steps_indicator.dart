@@ -1,8 +1,63 @@
-import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-class StepsIndicator extends CustomPainter {
-  StepsIndicator({
+import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/images.dart';
+
+class StepIndicator extends StatelessWidget {
+  const StepIndicator({
+    Key? key,
+    required this.currentStep,
+    required this.totalSteps,
+    this.textColor = Colors.grey,
+    this.stepColor = Colors.black,
+    this.currentStepColor = Colors.amber,
+    this.currentTextColor = Colors.black,
+  }) : super(key: key);
+
+  final int currentStep;
+  final int totalSteps;
+  final Color currentStepColor;
+  final Color currentTextColor;
+  final Color textColor;
+  final Color stepColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _loadCheckImageInfo(context),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return CustomPaint(
+            painter: StepsIndicatorPainter(
+              imageInfo: snapshot.data as ImageInfo,
+              currentStep: currentStep,
+              totalSteps: 4,
+              textColor: textColor,
+              currentTextColor: currentTextColor,
+              stepColor: stepColor,
+              currentStepColor: currentStepColor,
+            ),
+            child: Container(height: 20),
+          );
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+
+  Future<ImageInfo> _loadCheckImageInfo(BuildContext context) async {
+    AssetImage assetImage = const AssetImage(Images.check);
+    ImageStream stream = assetImage.resolve(createLocalImageConfiguration(context));
+    Completer<ImageInfo> completer = Completer();
+    stream.addListener(ImageStreamListener((imageInfo, _) => completer.complete(imageInfo)));
+    return completer.future;
+  }
+}
+
+class StepsIndicatorPainter extends CustomPainter {
+  StepsIndicatorPainter({
     required this.currentStep,
     required this.totalSteps,
     required this.imageInfo,
