@@ -9,10 +9,11 @@ import SpeedDistribution from "./SpeedDistribution";
 import {GeospaceInfo, GeospaceOverview, isGeospaceData} from "../../../api/geospaces/types";
 import {getSignalStateDownload, getSignalStateUpload} from "../../../utils/speeds";
 import {getPeopleCount} from "../../../utils/percentages";
-import {getFiltersString} from "../../../api/utils/filters";
 import {getOverview} from "../../../api/geospaces/requests";
 import {handleError} from "../../../api";
 import {Filter} from "../../../utils/types";
+import {Asn} from "../../../api/asns/types";
+import {GeoJSONFilters} from "../../../api/geojson/types";
 
 interface RightPanelProps {
   closePanel: () => void;
@@ -48,11 +49,10 @@ const RightPanel = ({
     }
   }
 
-  const handleFilterChange = async (filters: Array<Filter>) => {
-    setSpeedType(filters[0]);
-    setCalendarType(filters[1]);
-    setProvider(filters[2]);
-    const filtersString: string = getFiltersString(filters);
+  const handleFilterChange = async (filters: GeoJSONFilters) => {
+    setSpeedType(filters.speedType);
+    setCalendarType(filters.calendar);
+    setProvider(filters.provider);
     try {
       let geospaceId: string;
       if(isGeospaceData(selectedGeospaceInfo)) {
@@ -63,12 +63,12 @@ const RightPanel = ({
         const info: GeospaceOverview = selectedGeospaceInfo as GeospaceOverview;
         geospaceId = info.geospace.id;
       }
-      const overview: GeospaceOverview = await getOverview(geospaceId, filtersString);
+      const overview: GeospaceOverview = await getOverview(geospaceId, filters);
       const allData: GeospaceInfo = {
         ...selectedGeospaceInfo,
         ...overview,
-        download_scores: { ...overview.download_scores },
-        upload_scores: { ...overview.upload_scores },
+        download_scores: overview.download_scores,
+        upload_scores: overview.upload_scores,
       };
       setSelectedGeoSpaceInfo(allData);
     } catch (e: any) {
@@ -111,9 +111,9 @@ const RightPanel = ({
           />
           <div style={styles.DropdownFiltersContainer}>
             <DropdownFilters changeFilters={handleFilterChange}
-                             speedType={speedType}
-                             calendarType={calendarType}
-                             provider={provider}
+                             speedType={speedType as string}
+                             calendarType={calendarType as string}
+                             provider={provider as Asn}
             />
           </div>
           <RightPanelSpeedData medianDownload={selectedGeospaceInfo.download_median}

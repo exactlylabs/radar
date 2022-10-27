@@ -1,4 +1,4 @@
-import {Geospace, GeospaceData, GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/types";
+import {DetailedGeospace, GeospaceData, GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/types";
 import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject, speedTypes} from "./speeds";
 import {LatLng, LeafletMouseEvent} from "leaflet";
 import {Filter} from "./types";
@@ -62,7 +62,7 @@ export const shouldShowLayer = (
     selectedFilters.includes(getSignalStateUpload(upload_median));
 }
 
-export const isCurrentGeospace = (geospace: Geospace, selectedGeospace: GeospaceInfo): boolean => {
+export const isCurrentGeospace = (geospace: DetailedGeospace, selectedGeospace: GeospaceInfo): boolean => {
   if(isGeospaceData(selectedGeospace)) {
     return (selectedGeospace as GeospaceData).geospace_id === geospace.id;
   } else {

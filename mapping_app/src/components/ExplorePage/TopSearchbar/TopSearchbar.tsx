@@ -9,17 +9,17 @@ import {WHITE} from "../../../styles/colors";
 import SuggestionsBox from "./SuggestionsBox";
 import {Optional} from "../../../utils/types";
 import {getGeospaces} from "../../../api/geospaces/requests";
-import {Geospace, GeospaceSearchResult} from "../../../api/geospaces/types";
+import {DetailedGeospace, GeospaceSearchResult} from "../../../api/geospaces/types";
 
 interface TopSearchbarProps {
-  selectSuggestion: (suggestion: Geospace) => void;
+  selectSuggestion: (suggestion: DetailedGeospace) => void;
 }
 
 const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => {
 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [suggestions, setSuggestions] = useState<Array<Geospace>>([]);
+  const [suggestions, setSuggestions] = useState<Array<DetailedGeospace>>([]);
 
   useEffect(() => {
     window.removeEventListener('click', openSuggestionsIfPresent);

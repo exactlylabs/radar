@@ -12,12 +12,13 @@ import {handleError} from "../../../api";
 import {Filter} from "../../../utils/types";
 import {debounce} from "../../../api/utils/debouncer";
 import {allProvidersElement} from "./utils/providers";
+import {GeoJSONFilters} from "../../../api/geojson/types";
 
 interface DropdownFiltersProps {
-  changeFilters: (filters: Array<Filter>) => void;
-  speedType: Filter;
-  calendarType: Filter;
-  provider: Filter;
+  changeFilters: (filters: GeoJSONFilters) => void;
+  speedType: string;
+  calendarType: string;
+  provider: Asn;
 }
 
 const DropdownFilters = ({
@@ -27,7 +28,11 @@ const DropdownFilters = ({
   provider,
 }: DropdownFiltersProps): ReactElement => {
 
-  const [currentFilters, setCurrentFilters] = useState<Array<Filter>>([speedType, calendarType, provider]);
+  const [currentFilters, setCurrentFilters] = useState<GeoJSONFilters>({
+    speedType: speedType,
+    calendar: calendarType,
+    provider: provider
+  });
   const [providers, setProviders] = useState<Array<Asn>>([]);
 
   useEffect(() => {
@@ -38,23 +43,33 @@ const DropdownFilters = ({
       .catch(err => handleError(err));
   }, []);
 
-  const changeFilter = (newFilter: Filter, index: number) => {
-    let filters: Array<Filter> = [...currentFilters];
-    filters[index] = newFilter;
+  const updateFilters = (filters: GeoJSONFilters) => {
     setCurrentFilters(filters);
     changeFilters(filters);
   }
 
   const changeSpeedFilter = (newFilter: Filter) => {
-    changeFilter(newFilter, 0);
+    let filters: GeoJSONFilters = {
+      ...currentFilters,
+      speedType: newFilter as string,
+    };
+    updateFilters(filters);
   }
 
   const changeCalendarFilter = (newFilter: Filter) => {
-    changeFilter(newFilter, 1);
+    let filters: GeoJSONFilters = {
+      ...currentFilters,
+      calendar: newFilter as string
+    };
+    updateFilters(filters);
   }
 
   const changeProviderFilter = (newFilter: Filter) => {
-    changeFilter(newFilter, 2);
+    const filters: GeoJSONFilters = {
+      ...currentFilters,
+      provider: newFilter as Asn,
+    };
+    updateFilters(filters);
   }
 
   const handleProviderSearchbarChange = debounce(async (e: ChangeEvent<HTMLInputElement>) => {

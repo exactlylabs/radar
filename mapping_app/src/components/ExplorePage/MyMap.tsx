@@ -16,7 +16,7 @@ import {
   shouldShowLayer
 } from "../../utils/map";
 import {styles} from "./styles/MyMap.style";
-import {GeoJSONProperties, GeoJSONResponse} from "../../api/geojson/types";
+import {GeoJSONFilters, GeoJSONProperties, GeoJSONResponse} from "../../api/geojson/types";
 import {getGeoJSON} from "../../api/geojson/requests";
 import {handleError} from "../../api";
 import MySpinner from "../common/MySpinner";
@@ -128,7 +128,12 @@ const MyMap = ({
   const [geoJSON, setGeoJSON] = useState<GeoJSONResponse>();
 
   useEffect(() => {
-    getGeoJSON(namespace, calendarType, provider as Asn)
+    const filters: GeoJSONFilters = {
+      speedType: speedType as string,
+      calendar: calendarType as string,
+      provider: provider as Asn,
+    };
+    getGeoJSON(namespace, filters)
       .then((res: GeoJSONResponse) => {
         setGeoJSON(res);
       })

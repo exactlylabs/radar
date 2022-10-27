@@ -3,7 +3,7 @@ import {styles} from "./styles/ExplorationPopover.style";
 import {ArrowOutwardRounded} from "@mui/icons-material";
 import InitialExplorationPopoverContent from "./InitialExplorationPopoverContent";
 import SpecificExplorationPopoverContent from "./SpecificExplorationPopoverContent";
-import {Geospace, GeospaceOverview} from "../../../api/geospaces/types";
+import {DetailedGeospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
 
@@ -31,9 +31,9 @@ export const popoverStates: PopoverStateObject = {
 const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverProps): ReactElement => {
 
   const [currentPopoverState, setCurrentPopoverState] = useState(popoverStates.INITIAL);
-  const [states, setStates] = useState<Array<Geospace>>([]);
-  const [counties, setCounties] = useState<Array<Geospace>>([]);
-  const [tribalTracts, setTribalTracts] = useState<Array<Geospace>>([]);
+  const [states, setStates] = useState<Array<DetailedGeospace>>([]);
+  const [counties, setCounties] = useState<Array<DetailedGeospace>>([]);
+  const [tribalTracts, setTribalTracts] = useState<Array<DetailedGeospace>>([]);
 
   useEffect(() => {
     const allNamespaces = Promise.all([
@@ -73,11 +73,8 @@ const ExplorationPopover = ({closePopover, selectGeospace}: ExplorationPopoverPr
         />
       </div>
       {
-        currentPopoverState === popoverStates.INITIAL &&
-        <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState} />
-      }
-      {
-        currentPopoverState !== popoverStates.INITIAL &&
+        currentPopoverState === popoverStates.INITIAL ?
+        <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState} /> :
         <SpecificExplorationPopoverContent type={currentPopoverState}
                                            setType={handleChangePopoverState}
                                            goBack={goBackToInitial}

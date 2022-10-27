@@ -4,6 +4,8 @@ import GeographicalCategoryTabs from "./GeographicalCategoryTabs";
 import DropdownFilters from "./DropdownFilters";
 import HideFiltersButton from "./HideFiltersButton";
 import {Filter} from "../../../utils/types";
+import {Asn} from "../../../api/asns/types";
+import {GeoJSONFilters} from "../../../api/geojson/types";
 
 interface FiltersProps {
   closeFilters: () => void;
@@ -29,10 +31,10 @@ const Filters = ({
   provider
 }: FiltersProps): ReactElement => {
 
-  const handleChangeFilters = (filters: Array<Filter>) => {
-    setSpeedType(filters[0]);
-    setCalendarType(filters[1]);
-    setProvider(filters[2]);
+  const handleChangeFilters = (filters: GeoJSONFilters) => {
+    setSpeedType(filters.speedType);
+    setCalendarType(filters.calendar);
+    setProvider(filters.provider);
   }
 
   return (
@@ -42,9 +44,9 @@ const Filters = ({
         extendedView &&
         <div style={styles.ConditionalFiltersContainer}>
           <DropdownFilters changeFilters={handleChangeFilters}
-                           speedType={speedType}
-                           calendarType={calendarType}
-                           provider={provider}
+                           speedType={speedType as string}
+                           calendarType={calendarType as string}
+                           provider={provider as Asn}
           />
           <HideFiltersButton closeFilters={closeFilters}/>
         </div>

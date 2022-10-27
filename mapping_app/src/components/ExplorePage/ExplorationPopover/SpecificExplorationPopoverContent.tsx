@@ -5,17 +5,18 @@ import {popoverStates} from "./ExplorationPopover";
 import PopoverSearchbar from "./PopoverSearchbar";
 import PopoverOption from "./PopoverOption";
 import {Optional} from "../../../utils/types";
-import {Geospace, GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
+import {DetailedGeospace, GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
 import {getOverview} from "../../../api/geospaces/requests";
+import {emptyGeoJSONFilters} from "../../../api/geojson/types";
 
 interface SpecificExplorationPopoverContentProps {
   type: string;
   setType: (type: string) => void;
   goBack: () => void;
   selectGeospace: (geospace: GeospaceOverview) => void;
-  states: Array<Geospace>;
-  counties: Array<Geospace>;
-  tribalTracts: Array<Geospace>;
+  states: Array<DetailedGeospace>;
+  counties: Array<DetailedGeospace>;
+  tribalTracts: Array<DetailedGeospace>;
 }
 
 const SpecificExplorationPopoverContent = ({
@@ -28,14 +29,14 @@ const SpecificExplorationPopoverContent = ({
   tribalTracts
 }: SpecificExplorationPopoverContentProps): ReactElement => {
 
-  const [allItems, setAllItems] = useState<Array<Geospace>>([]);
-  const [filteredItems, setFilteredItems] = useState<Array<Geospace>>([]);
-  const [selectedOption, setSelectedOption] = useState<Optional<Geospace>>(null);
+  const [allItems, setAllItems] = useState<Array<DetailedGeospace>>([]);
+  const [filteredItems, setFilteredItems] = useState<Array<DetailedGeospace>>([]);
+  const [selectedOption, setSelectedOption] = useState<Optional<DetailedGeospace>>(null);
   const [inputText, setInputText] = useState<string>('');
   const [loadingStates, setLoadingStates] = useState<Array<boolean>>([]);
 
   useEffect(() => {
-    let items: Array<Geospace>;
+    let items: Array<DetailedGeospace>;
     switch (type) {
       case popoverStates.STATES:
         items = states;
@@ -84,17 +85,17 @@ const SpecificExplorationPopoverContent = ({
     return title;
   }
 
-  const handleSelectOption = async (option: Geospace, index: number) => {
+  const handleSelectOption = async (option: DetailedGeospace, index: number) => {
     setSelectedOption(option);
     let loadingStatesCopy = [...loadingStates];
     setLoadingStates(loadingStatesCopy.map((elem, idx) => idx === index));
-    const response: GeospaceOverview = await getOverview(option.id, '');
+    const response: GeospaceOverview = await getOverview(option.id, emptyGeoJSONFilters);
     const allData: GeospaceInfo = {
       ...response,
       geospace: {...option},
     };
     await selectGeospace(allData);
-    setLoadingStates(loadingStatesCopy.map((elem, idx) => false));
+    setLoadingStates(loadingStatesCopy.map(() => false));
   }
 
   const getContent = () => {

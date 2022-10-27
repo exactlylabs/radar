@@ -1,11 +1,11 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/Suggestion.style";
 import {ArrowForwardRounded, LocationOnOutlined} from "@mui/icons-material";
-import {Geospace} from "../../../api/geospaces/types";
+import {DetailedGeospace} from "../../../api/geospaces/types";
 
 interface SuggestionProps {
-  suggestion: Geospace;
-  selectSuggestion: (suggestion: Geospace) => void;
+  suggestion: DetailedGeospace;
+  selectSuggestion: (suggestion: DetailedGeospace) => void;
 }
 
 const Suggestion = ({

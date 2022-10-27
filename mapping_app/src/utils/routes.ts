@@ -1,9 +1,4 @@
-export type RoutesObject = {
-  EXPLORE: string;
-  ABOUT: string;
-}
-
-export const paths: RoutesObject = {
-  EXPLORE: '/explore',
-  ABOUT: '/about',
+export enum paths {
+  EXPLORE = '/explore',
+  ABOUT = '/about',
 }

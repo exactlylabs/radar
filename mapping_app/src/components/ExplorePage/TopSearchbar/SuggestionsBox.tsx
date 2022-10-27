@@ -2,12 +2,12 @@ import {ReactElement, useEffect} from "react";
 import {styles} from "./styles/SuggestionsBox.style";
 import {Optional} from "../../../utils/types";
 import Suggestion from "./Suggestion";
-import {Geospace} from "../../../api/geospaces/types";
+import {DetailedGeospace} from "../../../api/geospaces/types";
 
 interface SuggestionsBoxProps {
-  suggestions: Array<Geospace>;
+  suggestions: Array<DetailedGeospace>;
   setOpen: (state: boolean) => void;
-  selectSuggestion: (suggestion: Geospace) => void;
+  selectSuggestion: (suggestion: DetailedGeospace) => void;
 }
 
 const SuggestionsBox = ({
@@ -30,7 +30,7 @@ const SuggestionsBox = ({
     }
   }
 
-  const handleSelectSuggestion = (suggestion: Geospace): void => {
+  const handleSelectSuggestion = (suggestion: DetailedGeospace): void => {
     setOpen(false);
     selectSuggestion(suggestion);
   }

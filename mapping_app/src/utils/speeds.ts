@@ -6,24 +6,27 @@ export type SpeedsObject = {
   SERVED: string;
 }
 
-export const speedTypes: SpeedsObject = {
-  UNSERVED: 'UNSERVED',
-  UNDERSERVED: 'UNDERSERVED',
-  SERVED: 'SERVED',
+export enum speedTypes {
+  UNSERVED = 'UNSERVED',
+  UNDERSERVED = 'UNDERSERVED',
+  SERVED = 'SERVED',
 }
 
-export const speedTextsDownload: SpeedsObject = {
-  UNSERVED: '<25 Mbps',
-  UNDERSERVED: '25 - 100 Mbps',
-  SERVED: '100+ Mbps'
+export enum speedTextsDownload {
+  UNSERVED = '<25 Mbps',
+  UNDERSERVED = '25 - 100 Mbps',
+  SERVED = '100+ Mbps'
 }
 
-export const speedTextsUpload: SpeedsObject = {
-  UNSERVED: '<2 Mbps',
-  UNDERSERVED: '2 - 20 Mbps',
-  SERVED: '20+ Mbps'
+export enum speedTextsUpload {
+  UNSERVED = '<2 Mbps',
+  UNDERSERVED = '2 - 20 Mbps',
+  SERVED = '20+ Mbps'
 }
 
+// Here I use object over enum as JS/TS does not allow for dynamic
+// string enums, so if we want to keep using the color variables
+// we need the object pattern.
 export const speedColors: SpeedsObject = {
   UNSERVED: SPEED_UNSERVED,
   UNDERSERVED: SPEED_UNDERSERVED,
