@@ -13,5 +13,5 @@ export type AsnsResponse = {
 }
 
 export const isAsn = (object: any): object is Asn => {
-  return object.organization !== null && object.organization !== undefined;
+  return !!object.organization; // This covers both cases of null && undefined
 }

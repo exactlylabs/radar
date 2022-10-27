@@ -1,5 +1,7 @@
 import {GeospaceOverview, GeospaceSearchResult} from "./types";
 import {API_URL} from "../index";
+import {GeoJSONFilters} from "../geojson/types";
+import {getFiltersString} from "../utils/filters";
 
 export const getGeospaces = (query: string, limit?: number, offset?: number): Promise<GeospaceSearchResult> => {
   let limitString: string = '';
@@ -13,8 +15,9 @@ export const getGeospaces = (query: string, limit?: number, offset?: number): Pr
     })
 }
 
-export const getOverview = (geospaceId: string, filters: string): Promise<GeospaceOverview> => {
-  return fetch(`${API_URL}/geospaces/${geospaceId}/overview?${filters}`)
+export const getOverview = (geospaceId: string, filters: GeoJSONFilters): Promise<GeospaceOverview> => {
+  const filtersString: string = getFiltersString(filters);
+  return fetch(`${API_URL}/geospaces/${geospaceId}/overview?${filtersString}`)
     .then(res => {
       if(!res.ok) throw new Error(res.statusText);
       else return res.json() as Promise<GeospaceOverview>;

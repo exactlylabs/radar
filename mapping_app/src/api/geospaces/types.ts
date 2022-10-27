@@ -1,22 +1,30 @@
 import {Optional} from "../../utils/types";
 import {PaginationLinks} from "../index";
 
+export type DetailedGeospace = {
+  id: string;
+  geo_id: string;
+  namespace: number;
+  name: string;
+  parent: Optional<Geospace>;
+}
+
 export type Geospace = {
   id: string;
   geo_id: string;
   namespace: number;
   name: string;
-  parent: Optional<Geospace>
+  parent_id: Optional<string>;
 }
 
 export type GeospacesResult = {
-  results: Array<Geospace>;
+  results: Array<DetailedGeospace>;
 }
 
 export type GeospaceSearchResult = {
   _links: PaginationLinks;
   count: number;
-  results: Array<Geospace>
+  results: Array<DetailedGeospace>;
 }
 
 export type TestScores = {
@@ -27,7 +35,7 @@ export type TestScores = {
 }
 
 export type GeospaceOverview = {
-  geospace: Geospace;
+  geospace: DetailedGeospace;
   asn: Optional<string>;
   download_median: number;
   upload_median: number;
@@ -38,7 +46,6 @@ export type GeospaceOverview = {
 
 export type GeospaceAsnResult = {
   id: string;
-  asn: string;
   organization: string;
 }
 
@@ -66,7 +73,7 @@ export type GeospaceData = {
 
 export const isGeospaceData = (object: any): object is GeospaceData => {
   const castedObject: GeospaceData = object as GeospaceData;
-  return castedObject.geospace_id !== undefined;
+  return !!castedObject.geospace_id;
 }
 
 export type GeospaceInfo = GeospaceData | GeospaceOverview;

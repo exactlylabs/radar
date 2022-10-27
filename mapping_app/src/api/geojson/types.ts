@@ -1,28 +1,28 @@
 import {GeoJSON} from "leaflet";
 import {GeospaceOverview} from "../geospaces/types";
-
-export type GeoJSONGeometry = {
-  type: string;
-  coordinates: Array<number>;
-}
+import {Asn} from "../asns/types";
+import {speedFilters} from "../../utils/filters";
 
 export type GeoJSONProperties = {
-  AFFGEOID: string;
-  ALAND: number;
-  AWATER: number;
+  ID: string;
   GEOID: string;
-  LSAD: string;
-  NAME: string;
-  STATEFP: string;
-  STATENS: string;
-  STUSPS: string;
   summary: GeospaceOverview;
 }
 
-export type GeoJSONFeature = {
-  type: string;
-  geometry: GeoJSONGeometry;
-  properties: GeoJSONProperties;
+export type GeoJSONResponse = GeoJSON.FeatureCollection<any>;
+
+export type GeoJSONFilters = {
+  speedType: string;
+  calendar: string;
+  provider: Asn;
 }
 
-export type GeoJSONResponse = GeoJSON.FeatureCollection<any>;
+export const emptyGeoJSONFilters: GeoJSONFilters = {
+  speedType: '',
+  calendar: '',
+  provider: {
+    id: '',
+    asn: '',
+    organization: 'All providers'
+  }
+}

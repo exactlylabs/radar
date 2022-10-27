@@ -1,14 +1,14 @@
 import {Filter} from "../../utils/types";
 import {Asn} from "../asns/types";
+import {GeoJSONFilters} from "../geojson/types";
 
-export const getFiltersString = (filters: Array<Filter>): string => {
+export const getFiltersString = (filters: GeoJSONFilters): string => {
   let filterString: string = '';
-  if(filters[1] !== '') {
-    filterString += getCalendarFilterValue(filters[1]);
+  if(!!filters.calendar) {
+    filterString += getCalendarFilterValue(filters.calendar);
   }
-  if(filters[2] !== 'All providers') {
-    const asn: Asn = filters[2] as Asn;
-    filterString += `&asn_id=${asn.id}`;
+  if(filters.provider && filters.provider.organization !== 'All providers') {
+    filterString += `&asn_id=${filters.provider.id}`;
   }
   return filterString;
 }

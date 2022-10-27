@@ -8,12 +8,13 @@ import TopFilters from "./TopFilters/TopFilters";
 import SpeedFilters from "./SpeedFilters/SpeedFilters";
 import RightPanel from "./RightPanel/RightPanel";
 import {Filter, Optional} from "../../utils/types";
-import {Geospace, GeospaceInfo, GeospaceOverview} from "../../api/geospaces/types";
+import {DetailedGeospace, GeospaceInfo, GeospaceOverview} from "../../api/geospaces/types";
 import {getOverview} from "../../api/geospaces/requests";
 import {handleError} from "../../api";
 import {speedTypes} from "../../utils/speeds";
 import {calendarFilters, speedFilters} from "../../utils/filters";
 import {allProvidersElement} from "./TopFilters/utils/providers";
+import {emptyGeoJSONFilters} from "../../api/geojson/types";
 
 const ExplorePage = (): ReactElement => {
 
@@ -37,9 +38,9 @@ const ExplorePage = (): ReactElement => {
     setIsRightPanelOpen(false);
   }
 
-  const selectSuggestion = async (suggestion: Geospace) => {
+  const selectSuggestion = async (suggestion: DetailedGeospace) => {
     try {
-      const overview: GeospaceOverview = await getOverview(suggestion.id, '');
+      const overview: GeospaceOverview = await getOverview(suggestion.id, emptyGeoJSONFilters);
       const allData: GeospaceInfo = {
         ...overview,
         ...suggestion,
@@ -83,12 +84,10 @@ const ExplorePage = (): ReactElement => {
                     selectedSpeedFilters={selectedSpeedFilters}
                     setSelectedSpeedFilters={setSelectedSpeedFilters}
       />
-      { isExplorationPopoverOpen &&
+      { isExplorationPopoverOpen ?
         <ExplorationPopover closePopover={closePopover}
                             selectGeospace={selectGeospace}
-        />
-      }
-      { !isExplorationPopoverOpen &&
+        /> :
         <ExplorationPopoverIcon openPopover={openPopover}/>
       }
       { isRightPanelOpen && selectedGeospace &&
