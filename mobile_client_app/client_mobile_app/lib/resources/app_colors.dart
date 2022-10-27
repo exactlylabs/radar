@@ -17,7 +17,7 @@ class AppColors {
   static const wolf = Color(0xFF4D4D4F);
   static const grey = Color(0xFFC5C8D8);
   static const darkGrey = Color(0xFF3F3C70);
-  static const lightGrey = Color(0xFFE1DFEE);
+  static const lightGrey = Color(0xFFA09FB7);
 
   //Error Colors
   static const error = Color(0xFFC41D52);

@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:flutter/material.dart';
 
 class StepsIndicator extends CustomPainter {
@@ -58,9 +59,9 @@ class StepsIndicator extends CustomPainter {
     } else {
       TextSpan stepNumber = TextSpan(
         text: '${step + 1}',
-        style: TextStyle(
+        style: AppTextStyle(
           fontSize: 13.0,
-          fontWeight: FontWeight.w900,
+          fontWeight: 800,
           color: (step == currentStep) ? currentTextColor : textColor,
         ),
       );
@@ -72,7 +73,7 @@ class StepsIndicator extends CustomPainter {
       textPainter.layout();
       Offset offset2 = Offset(
         (offset.dx - textPainter.width / 2),
-        (offset.dy - textPainter.height) / 2,
+        (offset.dy - textPainter.height / 2),
       );
       textPainter.paint(canvas, offset2);
     }

@@ -11,4 +11,6 @@ class Images {
   static const mapSelected = 'assets/icons/map_tab_selected_icon.png';
   static const mapIllustration = 'assets/images/map.png';
   static const check = 'assets/icons/check.png';
+  static const location = 'assets/icons/location.png';
+  static const locationButton = 'assets/icons/location_button.png';
 }
