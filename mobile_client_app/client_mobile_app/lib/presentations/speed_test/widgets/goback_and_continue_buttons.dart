@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,7 @@ class GoBackAndContinueButtons extends StatelessWidget {
         children: [
           Expanded(
             child: PrimaryButton(
-              onPressed: () {},
+              onPressed: onGoBackPressed,
               color: Theme.of(context).colorScheme.onPrimary,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -31,9 +32,9 @@ class GoBackAndContinueButtons extends StatelessWidget {
                   const SizedBox(width: 15.0),
                   Text(
                     'Go back',
-                    style: TextStyle(
+                    style: AppTextStyle(
                       fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: 700,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
@@ -44,15 +45,15 @@ class GoBackAndContinueButtons extends StatelessWidget {
           const SizedBox(width: 20.0),
           Expanded(
             child: PrimaryButton(
-              onPressed: () {},
+              onPressed: onContinuePressed,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     'Continue',
-                    style: TextStyle(
+                    style: AppTextStyle(
                       fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: 700,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
@@ -69,16 +70,17 @@ class GoBackAndContinueButtons extends StatelessWidget {
       );
     } else {
       return PrimaryButton(
-        onPressed: () {},
+        onPressed: onContinuePressed,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               'Continue',
-              style: TextStyle(
+              style: AppTextStyle(
                 fontSize: 16.0,
-                fontWeight: FontWeight.bold,
+                fontWeight: 700,
                 color: Theme.of(context).colorScheme.onPrimary,
+                letterSpacing: 0.5,
               ),
             ),
             const SizedBox(width: 15.0),

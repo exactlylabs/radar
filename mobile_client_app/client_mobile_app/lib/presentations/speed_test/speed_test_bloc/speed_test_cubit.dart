@@ -6,7 +6,7 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
   SpeedTestCubit() : super(const SpeedTestState());
 
   bool isStepValid(int step) {
-    switch (state.step) {
+    switch (step) {
       case _NETWORK_LOCATION_STEP:
         return state.networkLocation != null;
       case _NETWORK_TYPE_STEP:

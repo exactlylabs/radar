@@ -12,6 +12,8 @@ class SpeedTestState {
     this.networkType,
     this.monthlyBillCost,
     this.networkLocation,
+    this.termsError,
+    this.locationError,
     this.isTestRunning = false,
     this.termsAccepted = false,
     this.isLocationLoading = false,
@@ -31,6 +33,8 @@ class SpeedTestState {
         isTestRunning: json['isTestRunning'],
         termsAccepted: json['termsAccepted'],
         isLocationLoading: json['isLocationLoading'],
+        termsError: json['termsError'],
+        locationError: json['locationError'],
       );
 
   SpeedTestState copyWith({
@@ -47,6 +51,8 @@ class SpeedTestState {
     bool? isTestRunning,
     bool? termsAccepted,
     bool? isLocationLoading,
+    String? termsError,
+    String? locationError,
   }) =>
       SpeedTestState(
         step: step ?? this.step,
@@ -79,6 +85,8 @@ class SpeedTestState {
       'isTestRunning': isTestRunning,
       'termsAccepted': termsAccepted,
       'isLocationLoading': isLocationLoading,
+      'termsError': termsError,
+      'locationError': locationError,
     };
   }
 
@@ -89,7 +97,9 @@ class SpeedTestState {
   final double? latency;
   final double? download;
   final Location? location;
+  final String? locationError;
   final bool termsAccepted;
+  final String? termsError;
   final bool isTestRunning;
   final String? networkType;
   final bool isLocationLoading;

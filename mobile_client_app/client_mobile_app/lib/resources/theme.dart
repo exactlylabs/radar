@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -20,13 +22,13 @@ final theme = ThemeData(
     unselectedIconTheme: IconThemeData(color: AppColors.darkLavender),
     unselectedLabelStyle: TextStyle(
       fontSize: 11.0,
-      fontFamily: 'MulishRoman',
-      fontWeight: FontWeight.bold,
+      fontFamily: 'Mulish',
+      fontVariations: [FontVariation('wght', 700)],
     ),
     selectedLabelStyle: TextStyle(
       fontSize: 11.0,
-      fontFamily: 'MulishRoman',
-      fontWeight: FontWeight.bold,
+      fontFamily: 'Mulish',
+      fontVariations: [FontVariation('wght', 700)],
     ),
   ),
   colorScheme: const ColorScheme(
@@ -78,7 +80,7 @@ final theme = ThemeData(
           const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(24.0)))),
     ),
   ),
-  fontFamily: 'MulishRoman',
+  fontFamily: 'Mulish',
   textTheme: const TextTheme(
     headline1: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w800, color: AppColors.deepBlue),
     headline2: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w800, color: AppColors.deepBlue),

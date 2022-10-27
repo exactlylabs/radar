@@ -19,6 +19,7 @@ class PrimaryButton extends StatelessWidget {
         backgroundColor: color,
         disabledBackgroundColor: color?.withOpacity(0.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26.0)),
+        shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
       ),
       onPressed: onPressed,
       child: Padding(

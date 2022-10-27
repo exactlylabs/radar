@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:flutter/material.dart';
 
 class TitleAndSubtitle extends StatelessWidget {
@@ -13,26 +16,26 @@ class TitleAndSubtitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           title,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w900,
+          style: AppTextStyle(
+            fontSize: 22.0,
+            fontWeight: 800,
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(height: 5.0),
-        Text(
-          subtitle,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.tertiary,
-          ),
-        ),
+        Text(subtitle,
+            textAlign: TextAlign.center,
+            style: AppTextStyle(
+              fontSize: 16.0,
+              fontWeight: 200,
+              letterSpacing: 1,
+              color: Theme.of(context).colorScheme.tertiary,
+            )),
       ],
     );
   }

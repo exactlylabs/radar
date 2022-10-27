@@ -41,6 +41,7 @@ dependencies:
   path_provider: ^2.0.11
   webview_flutter: ^3.0.4
   hydrated_bloc: ^8.1.0
+  path_provider: ^2.0.11
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -92,8 +93,7 @@ flutter:
     - family: Mulish
       fonts:
         - asset: fonts/Mulish-VariableFont_wght.ttf
-        - asset: fonts/Mulish-Italic-VariableFont_wght.ttf
-          style: italic
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
