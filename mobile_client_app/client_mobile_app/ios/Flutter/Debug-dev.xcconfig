@@ -11,7 +11,7 @@
 #include "Generated.xcconfig"
 
 TARGET_NAME= Radar Dev
-FLUTTER_TARGET=lib/main.dart
+FLUTTER_TARGET=lib/main_dev.dart
 BUNDLE_NAME_ID=com.exactlylabs.radar
 BUNDLE_PREFIX=.dev
 APP_ICON_SUFIX=-dev

@@ -5,10 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "client_mobile_app",
+            "name": "radar dev",
             "cwd": "client_mobile_app",
             "request": "launch",
-            "type": "dart"
+            "program": "${workspaceFolder}/client_mobile_app/lib/main_dev.dart",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "dev"
+            ]
         },
         {
             "name": "client_mobile_app (profile mode)",
