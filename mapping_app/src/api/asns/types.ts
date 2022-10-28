@@ -1,4 +1,4 @@
-import {PaginationLinks} from "../index";
+import {PaginatedResponse} from "../index";
 
 export type Asn = {
   id: string;
@@ -6,11 +6,7 @@ export type Asn = {
   organization: string;
 }
 
-export type AsnsResponse = {
-  _links: PaginationLinks;
-  count: number;
-  results: Array<Asn>;
-}
+export type AsnsResponse = PaginatedResponse<Asn>;
 
 export const isAsn = (object: any): object is Asn => {
   return !!object.organization; // This covers both cases of null && undefined

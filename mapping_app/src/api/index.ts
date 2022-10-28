@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react';
 import {Optional} from "../utils/types";
+import {Asn} from "./asns/types";
 
 export const API_URL = 'https://api.mapping.exactlylabs.com/api/v1';
 
@@ -14,4 +15,10 @@ export const handleError = (err: Error): void => {
 export type PaginationLinks = {
   next: Optional<string>;
   previous: Optional<string>;
+}
+
+export type PaginatedResponse<T> = {
+  _links: PaginationLinks;
+  count: number;
+  results: Array<T>;
 }

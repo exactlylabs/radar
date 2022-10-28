@@ -1,5 +1,5 @@
 import {Optional} from "../../utils/types";
-import {PaginationLinks} from "../index";
+import {PaginatedResponse, PaginationLinks} from "../index";
 
 export type DetailedGeospace = {
   id: string;
@@ -21,11 +21,7 @@ export type GeospacesResult = {
   results: Array<DetailedGeospace>;
 }
 
-export type GeospaceSearchResult = {
-  _links: PaginationLinks;
-  count: number;
-  results: Array<DetailedGeospace>;
-}
+export type GeospaceSearchResult = PaginatedResponse<DetailedGeospace>;
 
 export type TestScores = {
   bad: number;
