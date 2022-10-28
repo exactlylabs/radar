@@ -13,4 +13,9 @@ class Images {
   static const check = 'assets/icons/check.png';
   static const location = 'assets/icons/location.png';
   static const locationButton = 'assets/icons/location_button.png';
+  static const locationHome = 'assets/icons/location_home.png';
+  static const locationWork = 'assets/icons/location_work.png';
+  static const locationOther = 'assets/icons/location_other.png';
+  static const locationNoInternet = 'assets/icons/location_nointernet.png';
+  static const rightArrow = 'assets/icons/right_arrow.png';
 }

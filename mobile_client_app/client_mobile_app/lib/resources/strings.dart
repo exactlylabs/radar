@@ -5,4 +5,6 @@ class Strings {
   static const String mapLabel = 'Map';
   static const String locationStepTitle = "What's your location?";
   static const String locationStepSubtitle = "We’ll show your speed test results on the map.";
+  static const String networkPlaceStepTitle = 'Where do you have Internet?';
+  static const String networkPlaceStepSubtitle = 'Choose the option that best applies.';
 }
