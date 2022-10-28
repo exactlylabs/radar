@@ -21,6 +21,7 @@ class AgreeToTerms extends StatelessWidget {
         Checkbox(
           value: agreed,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          activeColor: Theme.of(context).colorScheme.secondary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6.0),
           ),

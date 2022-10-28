@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 
-class NetworkPlaceStep extends StatelessWidget {
-  const NetworkPlaceStep({
+class NetworkTypeStep extends StatelessWidget {
+  const NetworkTypeStep({
     Key? key,
     this.optionSelected,
   }) : super(key: key);
@@ -22,39 +22,32 @@ class NetworkPlaceStep extends StatelessWidget {
     return Column(
       children: [
         const TitleAndSubtitle(
-          title: Strings.networkPlaceStepTitle,
-          subtitle: Strings.networkPlaceStepSubtitle,
+          title: Strings.networkTypeStepTitle,
+          subtitle: Strings.networkTypeStepSubtitle,
         ),
         const SizedBox(height: 30.0),
         ListView.separated(
           shrinkWrap: true,
-          itemCount: NETWORK_LOCATIONS.length,
+          itemCount: CONNECTION_TYPE.length,
           separatorBuilder: (context, index) {
-            if (index < NETWORK_LOCATIONS.length - 3) {
+            if (index < CONNECTION_TYPE.length - 2) {
               return const SizedBox(height: 10.0);
-            } else if (index == NETWORK_LOCATIONS.length - 3) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.5),
-                child: HorizontalDashedSeparator(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                ),
-              );
             } else {
               return const SizedBox(height: 20.0);
             }
           },
           itemBuilder: (context, idx) {
-            final entry = NETWORK_LOCATIONS.entries.elementAt(idx);
-            if (idx < NETWORK_LOCATIONS.length - 1) {
+            final entry = CONNECTION_TYPE.entries.elementAt(idx);
+            if (idx < CONNECTION_TYPE.length - 1) {
               return OptionCard(
                 name: entry.key,
                 icon: entry.value,
                 isSelected: optionSelected == entry.key,
-                onTap: (name) => context.read<SpeedTestCubit>().setNetworkLocation(name),
+                onTap: (name) => context.read<SpeedTestCubit>().setNetworkType(name),
               );
             } else {
               return TextButton(
-                onPressed: () => context.read<SpeedTestCubit>().setNetworkLocation(entry.key),
+                onPressed: () => context.read<SpeedTestCubit>().setNetworkType(entry.key),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -89,11 +82,10 @@ class NetworkPlaceStep extends StatelessWidget {
     );
   }
 
-  static const NETWORK_LOCATIONS = <String, String>{
-    'Home': Images.locationHome,
-    'Work': Images.locationWork,
-    'Other': Images.locationOther,
-    'I don\'t have': Images.locationNoInternet,
+  static const CONNECTION_TYPE = <String, String>{
+    'Wired': Images.connectionWired,
+    'Wifi': Images.connectionWifi,
+    'Cellular': Images.connectionCellular,
     'I prefer not to answer': '',
   };
 }
