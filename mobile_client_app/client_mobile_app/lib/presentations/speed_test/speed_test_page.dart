@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/presentations/speed_test/steps/network_place_step.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step.dart';
@@ -30,8 +31,8 @@ class SpeedTestPage extends StatelessWidget {
                   const SizedBox(height: 10.0),
                   if (state.step < 4)
                     StepIndicator(
-                      currentStep: state.step,
                       totalSteps: 4,
+                      currentStep: state.step,
                       textColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                       currentTextColor: Theme.of(context).colorScheme.onPrimary,
                       stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.15),
