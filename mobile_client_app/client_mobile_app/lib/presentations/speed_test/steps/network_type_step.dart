@@ -1,6 +1,7 @@
 import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/horizontal_dashed_separator.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/option_card.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/prefer_not_to_answer_button.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/images.dart';
@@ -28,17 +29,17 @@ class NetworkTypeStep extends StatelessWidget {
         const SizedBox(height: 30.0),
         ListView.separated(
           shrinkWrap: true,
-          itemCount: CONNECTION_TYPE.length,
+          itemCount: CONNECTION_TYPE.length + 1,
           separatorBuilder: (context, index) {
-            if (index < CONNECTION_TYPE.length - 2) {
+            if (index < CONNECTION_TYPE.length) {
               return const SizedBox(height: 10.0);
             } else {
               return const SizedBox(height: 20.0);
             }
           },
           itemBuilder: (context, idx) {
-            final entry = CONNECTION_TYPE.entries.elementAt(idx);
-            if (idx < CONNECTION_TYPE.length - 1) {
+            if (idx < CONNECTION_TYPE.length) {
+              final entry = CONNECTION_TYPE.entries.elementAt(idx);
               return OptionCard(
                 name: entry.key,
                 icon: entry.value,
@@ -46,28 +47,8 @@ class NetworkTypeStep extends StatelessWidget {
                 onTap: (name) => context.read<SpeedTestCubit>().setNetworkType(name),
               );
             } else {
-              return TextButton(
-                onPressed: () => context.read<SpeedTestCubit>().setNetworkType(entry.key),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      entry.key,
-                      style: AppTextStyle(
-                        color: Theme.of(context).colorScheme.tertiary,
-                        fontSize: 15.0,
-                        fontWeight: 700,
-                      ),
-                    ),
-                    const SizedBox(width: 5.0),
-                    Image.asset(
-                      Images.rightArrow,
-                      width: 10.0,
-                      height: 10.0,
-                      color: Theme.of(context).colorScheme.tertiary,
-                    ),
-                  ],
-                ),
+              return PreferNotToAnswerButton(
+                onPressed: (option) => context.read<SpeedTestCubit>().setNetworkType(option),
               );
             }
           },
@@ -86,6 +67,5 @@ class NetworkTypeStep extends StatelessWidget {
     'Wired': Images.connectionWired,
     'Wifi': Images.connectionWifi,
     'Cellular': Images.connectionCellular,
-    'I prefer not to answer': '',
   };
 }

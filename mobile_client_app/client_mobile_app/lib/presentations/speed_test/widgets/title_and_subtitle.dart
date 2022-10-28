@@ -21,6 +21,7 @@ class TitleAndSubtitle extends StatelessWidget {
       children: [
         Text(
           title,
+          textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 22.0,
             fontWeight: 800,
@@ -28,14 +29,16 @@ class TitleAndSubtitle extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5.0),
-        Text(subtitle,
-            textAlign: TextAlign.center,
-            style: AppTextStyle(
-              fontSize: 16.0,
-              fontWeight: 200,
-              letterSpacing: 1,
-              color: Theme.of(context).colorScheme.tertiary,
-            )),
+        Text(
+          subtitle,
+          textAlign: TextAlign.center,
+          style: AppTextStyle(
+            fontSize: 16.0,
+            fontWeight: 200,
+            letterSpacing: 1,
+            color: Theme.of(context).colorScheme.tertiary,
+          ),
+        ),
       ],
     );
   }

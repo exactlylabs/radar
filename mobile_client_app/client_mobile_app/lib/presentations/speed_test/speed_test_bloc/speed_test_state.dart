@@ -46,7 +46,7 @@ class SpeedTestState {
     Location? location,
     double? download,
     String? networkType,
-    String? monthlyBillCost,
+    int? monthlyBillCost,
     String? networkLocation,
     bool? isTestRunning,
     bool? termsAccepted,
@@ -104,5 +104,5 @@ class SpeedTestState {
   final String? networkType;
   final bool isLocationLoading;
   final String? networkLocation;
-  final String? monthlyBillCost;
+  final int? monthlyBillCost;
 }

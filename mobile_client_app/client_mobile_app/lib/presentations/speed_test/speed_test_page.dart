@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/presentations/speed_test/steps/monthly_bill_cost_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_place_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_type_step.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,11 @@ class SpeedTestPage extends StatelessWidget {
                   else if (state.step == 1)
                     NetworkPlaceStep(optionSelected: state.networkLocation)
                   else if (state.step == 2)
-                    NetworkTypeStep(optionSelected: state.networkType),
+                    NetworkTypeStep(optionSelected: state.networkType)
+                  else if (state.step == 3)
+                    MonthlyBillCostStep(
+                      billCost: state.monthlyBillCost,
+                    ),
                 ],
               ),
             ),

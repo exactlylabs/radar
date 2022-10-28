@@ -1,6 +1,7 @@
 import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/horizontal_dashed_separator.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/option_card.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/prefer_not_to_answer_button.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/images.dart';
@@ -30,9 +31,9 @@ class NetworkPlaceStep extends StatelessWidget {
           shrinkWrap: true,
           itemCount: NETWORK_LOCATIONS.length,
           separatorBuilder: (context, index) {
-            if (index < NETWORK_LOCATIONS.length - 3) {
+            if (index < NETWORK_LOCATIONS.length - 2) {
               return const SizedBox(height: 10.0);
-            } else if (index == NETWORK_LOCATIONS.length - 3) {
+            } else if (index == NETWORK_LOCATIONS.length - 2) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.5),
                 child: HorizontalDashedSeparator(
@@ -44,8 +45,8 @@ class NetworkPlaceStep extends StatelessWidget {
             }
           },
           itemBuilder: (context, idx) {
-            final entry = NETWORK_LOCATIONS.entries.elementAt(idx);
-            if (idx < NETWORK_LOCATIONS.length - 1) {
+            if (idx < NETWORK_LOCATIONS.length) {
+              final entry = NETWORK_LOCATIONS.entries.elementAt(idx);
               return OptionCard(
                 name: entry.key,
                 icon: entry.value,
@@ -53,28 +54,8 @@ class NetworkPlaceStep extends StatelessWidget {
                 onTap: (name) => context.read<SpeedTestCubit>().setNetworkLocation(name),
               );
             } else {
-              return TextButton(
-                onPressed: () => context.read<SpeedTestCubit>().setNetworkLocation(entry.key),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      entry.key,
-                      style: AppTextStyle(
-                        color: Theme.of(context).colorScheme.tertiary,
-                        fontSize: 15.0,
-                        fontWeight: 700,
-                      ),
-                    ),
-                    const SizedBox(width: 5.0),
-                    Image.asset(
-                      Images.rightArrow,
-                      width: 10.0,
-                      height: 10.0,
-                      color: Theme.of(context).colorScheme.tertiary,
-                    ),
-                  ],
-                ),
+              return PreferNotToAnswerButton(
+                onPressed: (option) => context.read<SpeedTestCubit>().setNetworkLocation(option),
               );
             }
           },
@@ -94,6 +75,5 @@ class NetworkPlaceStep extends StatelessWidget {
     'Work': Images.locationWork,
     'Other': Images.locationOther,
     'I don\'t have': Images.locationNoInternet,
-    'I prefer not to answer': '',
   };
 }

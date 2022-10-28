@@ -21,4 +21,6 @@ class Images {
   static const connectionWired = 'assets/icons/connection_wired.png';
   static const connectionWifi = 'assets/icons/connection_wifi.png';
   static const connectionCellular = 'assets/icons/connection_cellular.png';
+  static const lessButton = 'assets/icons/less_button.png';
+  static const moreButton = 'assets/icons/plus_button.png';
 }
