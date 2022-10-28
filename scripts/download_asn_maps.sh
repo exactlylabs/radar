@@ -2,12 +2,14 @@
 
 set -e
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 if [ -z $MAXMIND_KEY ]; then
     echo "ERROR: MAXMIND_KEY variable is not set"
     exit 1
 fi
 
-TARGET_DIR=input
+TARGET_DIR=${SCRIPT_DIR}/../input
 mkdir -p ${TARGET_DIR}
 
 # ASN code to Organization Map

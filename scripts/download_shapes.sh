@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
-TARGET_DIR=input
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+TARGET_DIR=${SCRIPT_DIR}/../input
 mkdir -p ${TARGET_DIR}
 
 # 5Digit Zip Codes
