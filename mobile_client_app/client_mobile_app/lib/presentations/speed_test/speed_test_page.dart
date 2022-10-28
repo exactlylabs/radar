@@ -6,7 +6,6 @@ import 'package:client_mobile_app/presentations/speed_test/steps/location_step.d
 import 'package:client_mobile_app/presentations/speed_test/widgets/steps_indicator.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 
 class SpeedTestPage extends StatelessWidget {
   const SpeedTestPage({
