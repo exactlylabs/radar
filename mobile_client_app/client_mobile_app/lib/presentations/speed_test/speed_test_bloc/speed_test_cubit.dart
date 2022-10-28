@@ -44,7 +44,7 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
     emit(state.copyWith(networkType: networkType, isStepValid: isStepValid(state.step)));
   }
 
-  void setMonthlyBillCost(String monthlyBillCost) {
+  void setMonthlyBillCost(int monthlyBillCost) {
     emit(state.copyWith(monthlyBillCost: monthlyBillCost, isStepValid: isStepValid(state.step)));
   }
 

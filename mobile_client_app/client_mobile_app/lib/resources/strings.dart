@@ -9,4 +9,6 @@ class Strings {
   static const String networkPlaceStepSubtitle = 'Choose the option that best applies.';
   static const String networkTypeStepTitle = 'How are you connected?';
   static const String networkTypeStepSubtitle = 'Choose how you are connected to the internet.';
+  static const String monthlyBillCostStepTitle = "What’s your estimated monthly bill cost?";
+  static const String monthlyBillCostStepSubtitle = "This helps us understand the average internet cost in your area.";
 }
