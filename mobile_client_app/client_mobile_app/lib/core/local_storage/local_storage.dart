@@ -8,8 +8,8 @@ class LocalStorage {
   static const String resultsKey = 'RESULTS';
 
   Future<List<Map<String, dynamic>>> addResult(Map<String, dynamic> value) async {
-    final results = _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[]);
-    final newResults = [...results!, value];
+    final results = getResults();
+    final newResults = [value, ...results];
     await _box.put(resultsKey, newResults);
     return newResults;
   }
