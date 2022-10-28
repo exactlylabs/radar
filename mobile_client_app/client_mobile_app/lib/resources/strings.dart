@@ -7,4 +7,6 @@ class Strings {
   static const String locationStepSubtitle = "We’ll show your speed test results on the map.";
   static const String networkPlaceStepTitle = 'Where do you have Internet?';
   static const String networkPlaceStepSubtitle = 'Choose the option that best applies.';
+  static const String networkTypeStepTitle = 'How are you connected?';
+  static const String networkTypeStepSubtitle = 'Choose how you are connected to the internet.';
 }

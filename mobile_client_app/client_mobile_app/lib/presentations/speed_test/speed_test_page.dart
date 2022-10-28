@@ -1,4 +1,5 @@
 import 'package:client_mobile_app/presentations/speed_test/steps/network_place_step.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/network_type_step.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step.dart';
@@ -44,7 +45,9 @@ class SpeedTestPage extends StatelessWidget {
                       termsError: state.termsError,
                     )
                   else if (state.step == 1)
-                    NetworkPlaceStep(optionSelected: state.networkLocation),
+                    NetworkPlaceStep(optionSelected: state.networkLocation)
+                  else if (state.step == 2)
+                    NetworkTypeStep(optionSelected: state.networkType),
                 ],
               ),
             ),
