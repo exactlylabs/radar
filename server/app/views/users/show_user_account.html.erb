@@ -29,7 +29,7 @@
   <div class="container-xxl w-100 d-flex flex-column" style="max-width: none;">
 
     <% if notice %>
-      <p id="notice"><%= notice %></p>
+      <%= render partial: "application/notice_alert", locals: {notice: notice} %>
     <% end %>
     <!--begin::OptionsCard-->
     <!-- TODO: add when more options are available? -->

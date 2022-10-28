@@ -21,7 +21,8 @@
   <!--begin::AccountTypeContainer-->
   <div class="sign-up--custom-input d-flex justify-content-center align-items-center"
        style="width: 160px; height: 160px; border: dashed 1px #00a3ff; background-color: #f1faff; border-radius: 12px; margin-bottom: 20px"
-       data-action="click->registration#handleFileZoneClicked"
+       draggable="true"
+       data-action="click->registration#handleFileZoneClicked drop->registration#handleFileDrop dragenter->registration#preventDefault dragleave->registration#preventDefault dragover->registration#preventDefault"
        data-registration-target="dropzone"
   >
     <img src=""
