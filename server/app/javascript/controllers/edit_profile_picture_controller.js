@@ -56,4 +56,23 @@ export default class extends Controller {
       this.deleteButtonTarget.style.display = "none";
     }
   }
+
+  handleFileDrop(e) {
+    e.preventDefault();
+    const dataTransfer = e.dataTransfer;
+    const files = dataTransfer.files;
+    const avatar = files[0];
+    this.userAvatarInputTarget.files = files;
+    const url = URL.createObjectURL(avatar);
+    this.avatarPreviewTarget.src = url;
+    this.avatarPreviewTarget.style.display = "block";
+    this.plusIconTarget.style.display = "none";
+    this.deleteButtonTarget.style.display = "block";
+  }
+
+  // Required to prevent defaults for drag-drop to work:
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/Drag_operations#specifying_drop_targets
+  preventDefault(e) {
+    e.preventDefault();
+  }
 }

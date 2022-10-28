@@ -37,8 +37,9 @@
           <div class="text-dark fw-bolder" style="font-size: 18px; margin-bottom: 25px">Upload a picture.</div>
           <%= f.file_field "avatar", data: { action: "input->edit-profile-picture#handleFileUpload", "edit-profile-picture-target" => "userAvatarInput" }, style: "display: none" %>
           <div class="sign-up--custom-input d-flex justify-content-center align-items-center"
+               draggable="true"
                style="width: 160px; height: 160px; border: dashed 1px #00a3ff; background-color: #f1faff; border-radius: 12px; margin-bottom: 20px"
-               data-action="click->edit-profile-picture#handleFileZoneClicked"
+               data-action="click->edit-profile-picture#handleFileZoneClicked drop->edit-profile-picture#handleFileDrop dragenter->edit-profile-picture#preventDefault dragleave->edit-profile-picture#preventDefault dragover->edit-profile-picture#preventDefault"
                data-edit-profile-picture-target="dropzone"
           >
             <img src="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_limit: [158, 158])) : nil %>"

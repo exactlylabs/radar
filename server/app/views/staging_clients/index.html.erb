@@ -28,7 +28,7 @@
   <div class="container-xxl">
   
     <% if notice %>
-    <p id="notice"><%= notice %></p>
+      <%= render partial: "application/notice_alert", locals: {notice: notice} %>
     <% end %>
     <!--begin::Card-->
     <div class="card">

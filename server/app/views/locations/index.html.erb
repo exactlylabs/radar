@@ -61,7 +61,7 @@
       <!--begin::Container-->
         <div class="container-auto px-5">
           <% if notice %>
-            <p id="notice"><%= notice %></p>
+            <%= render partial: "application/notice_alert", locals: {notice: notice} %>
           <% end %>
           <!--begin::Card-->
           <% if params[:display] == 'table' %>

@@ -153,6 +153,25 @@ export default class extends Controller {
     this.plusIconTarget.style.display = "none";
   }
 
+  handleFileDrop(e) {
+    e.preventDefault();
+    const dataTransfer = e.dataTransfer;
+    const files = dataTransfer.files;
+    const avatar = files[0];
+    this.registrationData.avatar = avatar;
+    this.userAvatarInputTarget.files = files;
+    const url = URL.createObjectURL(avatar);
+    this.avatarPreviewTarget.src = url;
+    this.avatarPreviewTarget.style.display = "block";
+    this.plusIconTarget.style.display = "none";
+  }
+
+  // Required to prevent defaults for drag-drop to work:
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/Drag_operations#specifying_drop_targets
+  preventDefault(e) {
+    e.preventDefault();
+  }
+
   finishRegistrationWithInvite() {
     this.continueButtonTarget.style.display = 'none';
     this.finishButtonLoadingTarget.style.display = 'inline-block';
