@@ -35,7 +35,7 @@ class TitleAndSubtitle extends StatelessWidget {
           style: AppTextStyle(
             fontSize: 16.0,
             fontWeight: 200,
-            letterSpacing: 1,
+            letterSpacing: 0.5,
             color: Theme.of(context).colorScheme.tertiary,
           ),
         ),

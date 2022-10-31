@@ -1,6 +1,7 @@
 import 'package:client_mobile_app/presentations/speed_test/steps/monthly_bill_cost_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_place_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_type_step.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/take_speed_test_step.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step.dart';
@@ -51,7 +52,9 @@ class SpeedTestPage extends StatelessWidget {
                   else if (state.step == SpeedTestCubit.MONTHLY_BILL_COST_STEP)
                     MonthlyBillCostStep(
                       billCost: state.monthlyBillCost,
-                    ),
+                    )
+                  else if (state.step == 4)
+                    TakeSpeedTestStep(),
                 ],
               ),
             ),
