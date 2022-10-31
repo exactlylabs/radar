@@ -46,11 +46,10 @@ func (r *ooklaRunner) Run(ctx context.Context) (*agent.Measurement, error) {
 		log.Printf("Ookla - Attempt %d of %d", i+1, r.MaxRetries)
 		cmd := exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json")
 		res, err = cmd.Output()
-		if err != nil {
-			log.Println("Ookla - Run Failed:", err)
-		} else {
+		if err == nil {
 			break
 		}
+		log.Println("Ookla - Run Failed:", err)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("ookla.ooklaRunner#Run error executing the binary: %w", err)
