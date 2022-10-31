@@ -10,7 +10,7 @@ import (
 	"github.com/exactlylabs/radar/agent/agent"
 )
 
-const DefaultMaxRetries int = 2
+const DefaultMaxRetries int = 3
 
 type Value struct {
 	Bandwidth int64 `json:"bandwidth"`
