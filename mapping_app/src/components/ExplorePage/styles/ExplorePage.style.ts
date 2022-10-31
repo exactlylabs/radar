@@ -6,6 +6,14 @@ const explorePageContainerStyle: CSSProperties = {
   position: 'relative',
 }
 
+const smallExplorePageContainerStyle: CSSProperties = {
+  width: '100%',
+  height: 'calc(100vh - 48px)',
+  position: 'relative',
+}
+
 export const styles = {
-  ExplorePageContainer: explorePageContainerStyle
+  ExplorePageContainer: (isSmall: boolean) => {
+    return isSmall ? smallExplorePageContainerStyle : explorePageContainerStyle;
+  }
 }

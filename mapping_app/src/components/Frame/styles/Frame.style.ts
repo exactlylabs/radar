@@ -7,11 +7,18 @@ const frameWrapperStyle: CSSProperties = {
   overflowY: 'auto',
 }
 
+const smallFrameWrapperStyle: CSSProperties = {
+  ...frameWrapperStyle,
+  overflowY: 'hidden',
+}
+
 const contentWrapperStyle: CSSProperties = {
   width: '100vw',
 }
 
 export const styles = {
-  FrameWrapper: frameWrapperStyle,
+  FrameWrapper: (isSmall: boolean) => {
+    return isSmall ? smallFrameWrapperStyle : frameWrapperStyle;
+  },
   ContentWrapper: contentWrapperStyle
 }

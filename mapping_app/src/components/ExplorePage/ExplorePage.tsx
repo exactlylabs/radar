@@ -29,6 +29,9 @@ import L from "leaflet";
 import DatePicker from "./DatePicker/DatePicker";
 import {DateFilter, getInitialStateFromCalendarType, getQueryStringFromDateObject} from "../../utils/dates";
 import * as amplitude from "@amplitude/analytics-browser";
+import {hasVisitedAllResults, setAlreadyVisitedCookie} from "../../utils/cookies";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
+import FirstTimeModal from "./FirstTimeModal/FirstTimeModal";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -59,18 +62,18 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [currentMapCenter, setCurrentMapCenter] = useState<Array<number>>(getValueFromUrl('center') ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [dateQueryString, setDateQueryString] = useState(getValueFromUrl('calendarType') ? getDateQueryStringFromCalendarType(getValueFromUrl('calendarType')) : getDateQueryStringFromCalendarType(CalendarFilters.THIS_YEAR));
+  const [isFirstTimeModalOpen, setIsFirstTimeModalOpen] = useState(false);
+
+  const {isSmallerThanMid} = useViewportSizes();
 
   useEffect(() => {
     if(REACT_APP_ENV === 'production') {
       amplitude.init(AMPLITUDE_KEY);
       amplitude.track('Page visited');
     }
-  }, []);
-
-  useEffect(() => {
-    if(REACT_APP_ENV === 'production') {
-      amplitude.init(AMPLITUDE_KEY);
-      amplitude.track('Page visited');
+    if(!hasVisitedAllResults()) {
+      setIsFirstTimeModalOpen(true);
+      setAlreadyVisitedCookie();
     }
   }, []);
 
@@ -124,9 +127,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   useEffect(() => {
     if(userCenter) {
-      setGeospaceNamespace(tabs.COUNTIES);
+      setGeospaceNamespace(GeospacesTabs.COUNTIES);
       setCurrentMapCenter(userCenter);
-      setCurrentMapZoom(getZoomForNamespace(tabs.COUNTIES));
+      setCurrentMapZoom(getZoomForNamespace(GeospacesTabs.COUNTIES));
     }
   }, [userCenter]);
 
@@ -202,8 +205,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     setDateQueryString(getDateQueryStringFromCalendarType(calendarType as string));
   }
 
+  const closeFirstTimeModal = () => setIsFirstTimeModalOpen(false);
+
   return (
-    <div style={styles.ExplorePageContainer}>
+    <div style={styles.ExplorePageContainer(isSmallerThanMid)}>
       { loading && <CustomMapOverlayingLoader/> }
       <Map namespace={geospaceNamespace}
            selectedGeospace={selectedGeospace}
@@ -269,6 +274,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                     applyRanges={handleApplyRanges}
                     initialState={getInitialStateFromCalendarType(calendarType as string)}
         />
+      }
+      {
+        isFirstTimeModalOpen && isSmallerThanMid &&
+        <FirstTimeModal closeModal={closeFirstTimeModal}/>
       }
     </div>
   )
