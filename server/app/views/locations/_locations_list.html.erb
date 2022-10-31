@@ -1,5 +1,5 @@
 <div class="container-xxl" style="<%= locations.length == 0 ? 'max-width: 700px' : ''%>" id="location_container_dynamic">
-    <% if true %>
+    <% if notice %>
       <%= render partial: "application/notice_alert", locals: {notice: 'notice'} %>
     <% end %>
     <!--begin::Card-->
