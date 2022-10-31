@@ -1,38 +1,35 @@
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/images.dart';
-import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
 
-class PreferNotToAnswerButton extends StatelessWidget {
-  const PreferNotToAnswerButton({
+class ExploreYoutAreaButton extends StatelessWidget {
+  const ExploreYoutAreaButton({
     Key? key,
     this.onPressed,
   }) : super(key: key);
 
-  final Function(String)? onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () => onPressed != null ? onPressed!(Strings.preferNotToAnswer) : null,
+      onPressed: onPressed,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            Strings.preferNotToAnswer,
+            'Explore your area',
             style: AppTextStyle(
-              color: Theme.of(context).colorScheme.tertiary,
-              fontSize: 15.0,
+              color: Theme.of(context).colorScheme.secondary,
+              fontSize: 16.0,
               fontWeight: 700,
             ),
           ),
           const SizedBox(width: 5.0),
           Image.asset(
             Images.rightArrow,
-            width: 10.0,
-            height: 10.0,
-            color: Theme.of(context).colorScheme.tertiary,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ],
       ),

@@ -1,5 +1,9 @@
 PODS:
   - Flutter (1.0.0)
+  - NDT7 (0.0.4)
+  - ndt7_client (0.0.1):
+    - Flutter
+    - NDT7 (~> 0.0.4)
   - path_provider_ios (0.0.1):
     - Flutter
   - webview_flutter_wkwebview (0.0.1):
@@ -7,12 +11,19 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - ndt7_client (from `.symlinks/plugins/ndt7_client/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
+
+SPEC REPOS:
+  trunk:
+    - NDT7
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  ndt7_client:
+    :path: ".symlinks/plugins/ndt7_client/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
   webview_flutter_wkwebview:
@@ -20,6 +31,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  NDT7: db6448ebf5648c2f1721bf3b473470ab201f4145
+  ndt7_client: 78eda2f43b2f3b910875ce86601349f598aa47e7
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
