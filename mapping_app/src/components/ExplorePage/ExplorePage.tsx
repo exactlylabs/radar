@@ -100,6 +100,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       amplitude.init(AMPLITUDE_KEY);
       amplitude.track('Page visited');
     }
+    if(!hasVisitedAllResults()) {
+      setIsFirstTimeModalOpen(true);
+      setAlreadyVisitedCookie();
+    }
   }, []);
 
   useEffect(() => {
