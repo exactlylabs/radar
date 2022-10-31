@@ -16,13 +16,18 @@ const buttonContainerStyle: CSSProperties = {
   cursor: 'pointer',
 }
 
+const iconLessButtonContainerStyle: CSSProperties = {
+  ...buttonContainerStyle,
+  justifyContent: 'center',
+}
+
 const textStyle: CSSProperties = {
   fontSize: '16px',
 }
 
 export const styles = {
-  ButtonContainer: (backgroundColor?: string, color?: string) => {
-    let style = buttonContainerStyle;
+  ButtonContainer: (hasIcon: boolean, backgroundColor?: string, color?: string) => {
+    let style = hasIcon ? buttonContainerStyle : iconLessButtonContainerStyle;
     let boxShadow = `0 4px 8px -4px `;
     if(backgroundColor) {
       boxShadow += backgroundColor;

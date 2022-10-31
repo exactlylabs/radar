@@ -1,6 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/TopLevelTabsHeaderTab.style";
 import {NavigateFunction, useNavigate} from "react-router-dom";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 interface TopLevelTabsHeaderTabProps {
   text: string;
@@ -17,11 +18,12 @@ const TopLevelTabsHeaderTab = ({
 }: TopLevelTabsHeaderTabProps): ReactElement => {
 
   const navigate: NavigateFunction = useNavigate();
+  const {isSmallerThanMid} = useViewportSizes();
 
   const goToUrl = () => navigate(url);
 
   return (
-    <div style={styles.TopLevelTabsHeaderTab(selected)}
+    <div style={styles.TopLevelTabsHeaderTab(selected, isSmallerThanMid)}
          onClick={goToUrl}
          className={className}
     >

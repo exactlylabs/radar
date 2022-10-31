@@ -3,10 +3,12 @@ import {styles} from "./styles/MyFullWidthButton.style";
 
 interface CustomFullWidthButtonProps {
   text: string;
-  icon: ReactElement;
+  onClick: () => void;
+  icon?: ReactElement;
   iconFirst?: boolean;
   backgroundColor?: string;
   color?: string;
+  className?: string;
 }
 
 const CustomFullWidthButton = ({
@@ -15,14 +17,16 @@ const CustomFullWidthButton = ({
   iconFirst,
   backgroundColor,
   color,
+  onClick,
+  className,
 }: CustomFullWidthButtonProps): ReactElement => {
   return iconFirst ?
-  <div style={styles.ButtonContainer(backgroundColor, color)}>
+  <div className={className} style={styles.ButtonContainer(!!icon, backgroundColor, color)} onClick={onClick}>
     {icon}
     <p className={'fw-medium'} style={styles.Text}>{text}</p>
   </div>
   :
-  <div style={styles.ButtonContainer(backgroundColor, color)}>
+  <div className={className} style={styles.ButtonContainer(!!icon, backgroundColor, color)} onClick={onClick}>
     <p className={'fw-medium'} style={styles.Text}>{text}</p>
     {icon}
   </div>;
