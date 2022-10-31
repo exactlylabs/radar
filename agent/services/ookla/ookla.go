@@ -42,7 +42,7 @@ func (r *ooklaRunner) Run(ctx context.Context) (*agent.Measurement, error) {
 	log.Println("Ookla - Starting Speed Test")
 	var res []byte
 	var err error
-	for i := 0; i < r.MaxRetries; i++ { // Retry 2 times at most
+	for i := 0; i < r.MaxRetries; i++ {
 		log.Printf("Ookla - Attempt %d of %d", i+1, r.MaxRetries)
 		cmd := exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json")
 		res, err = cmd.Output()
