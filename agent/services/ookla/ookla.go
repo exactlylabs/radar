@@ -10,6 +10,8 @@ import (
 	"github.com/exactlylabs/radar/agent/agent"
 )
 
+const DefaultMaxRetries int = 2
+
 type Value struct {
 	Bandwidth int64 `json:"bandwidth"`
 	Bytes     int64 `json:"bytes"`
@@ -22,11 +24,14 @@ type testResult struct {
 }
 
 type ooklaRunner struct {
+	MaxRetries int
 }
 
 // New ookla speedtest runner
 func New() agent.Runner {
-	return &ooklaRunner{}
+	return &ooklaRunner{
+		MaxRetries: DefaultMaxRetries,
+	}
 }
 
 func (r *ooklaRunner) Type() string {
@@ -35,8 +40,18 @@ func (r *ooklaRunner) Type() string {
 
 func (r *ooklaRunner) Run(ctx context.Context) (*agent.Measurement, error) {
 	log.Println("Ookla - Starting Speed Test")
-	cmd := exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json")
-	res, err := cmd.Output()
+	var res []byte
+	var err error
+	for i := 0; i < r.MaxRetries; i++ { // Retry 2 times at most
+		log.Printf("Ookla - Attempt %d of %d", i+1, r.MaxRetries)
+		cmd := exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json")
+		res, err = cmd.Output()
+		if err != nil {
+			log.Println("Ookla - Run Failed:", err)
+		} else {
+			break
+		}
+	}
 	if err != nil {
 		return nil, fmt.Errorf("ookla.ooklaRunner#Run error executing the binary: %w", err)
 	}
