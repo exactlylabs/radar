@@ -33,9 +33,16 @@ const emptyHorizontalSelectedUnderlineStyle: CSSProperties = {
   backgroundColor: TRANSPARENT,
 }
 
+const smallTabsHeaderTab: CSSProperties = {
+  height: '31px',
+  margin: '0 auto',
+  justifyContent: 'space-between',
+}
+
 export const styles = {
-  TopLevelTabsHeaderTab: (selected: boolean) => {
-    return selected ? selectedTopLevelTabsHeaderTabStyle : topLevelTabsHeaderTabStyle;
+  TopLevelTabsHeaderTab: (selected: boolean, isSmall: boolean) => {
+    let style = selected ? selectedTopLevelTabsHeaderTabStyle : topLevelTabsHeaderTabStyle;
+    return isSmall ? {...style, ...smallTabsHeaderTab} : style;
   },
   HorizontalSelectedUnderline: (selected: boolean) => {
     return selected ? horizontalSelectedUnderlineStyle : emptyHorizontalSelectedUnderlineStyle;

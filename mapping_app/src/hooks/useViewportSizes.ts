@@ -1,4 +1,5 @@
 import {useIsSmallSizeScreen} from "./useIsSmallScreen";
+import {useIsMidSizeScreen} from "./useIsMidSizeScreen";
 
 /**
  * Custom hook for retrieving current comparisons for screen sizes.
@@ -6,9 +7,11 @@ import {useIsSmallSizeScreen} from "./useIsSmallScreen";
  * one component at the same time, so pulling the entire object comes in
  * handy to do something like:
  * const {isSmallSizeScreen, ...} = useViewportSizes();
- * @returns {{isSmallSizeScreen: boolean}}
+ * @returns {{isSmallSizeScreen: boolean, isMidSizeScreen: boolean}}
  */
 export const useViewportSizes = () => {
   const isSmallSizeScreen = useIsSmallSizeScreen();
-  return {isSmallSizeScreen};
+  const isMidSizeScreen = useIsMidSizeScreen();
+  const isSmallerThanMid = isSmallSizeScreen || isMidSizeScreen;
+  return {isSmallSizeScreen, isMidSizeScreen, isSmallerThanMid};
 }

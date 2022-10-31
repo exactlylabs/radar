@@ -29,6 +29,9 @@ import DatePicker from "./DatePicker/DatePicker";
 import {getInitialStateFromCalendarType} from "../../utils/dates";
 import {getFiltersString} from "../../api/utils/filters";
 import * as amplitude from "@amplitude/analytics-browser";
+import {hasVisitedAllResults, setAlreadyVisitedCookie} from "../../utils/cookies";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
+import FirstTimeModal from "./FirstTimeModal/FirstTimeModal";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -59,11 +62,18 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [currentMapCenter, setCurrentMapCenter] = useState<Array<number>>(getValueFromUrl('center') ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [dateQueryString, setDateQueryString] = useState(getValueFromUrl('calendarType') ? getDateQueryStringFromCalendarType(getValueFromUrl('calendarType')) : getDateQueryStringFromCalendarType(calendarFilters[3]));
+  const [isFirstTimeModalOpen, setIsFirstTimeModalOpen] = useState(false);
+
+  const {isSmallerThanMid} = useViewportSizes();
 
   useEffect(() => {
     if(REACT_APP_ENV === 'production') {
       amplitude.init(AMPLITUDE_KEY);
       amplitude.track('Page visited');
+    }
+    if(!hasVisitedAllResults()) {
+      setIsFirstTimeModalOpen(true);
+      setAlreadyVisitedCookie();
     }
   }, []);
 
@@ -183,8 +193,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     setDateQueryString(getDateQueryStringFromCalendarType(calendarType as string));
   }
 
+  const closeFirstTimeModal = () => setIsFirstTimeModalOpen(false);
+
   return (
-    <div style={styles.ExplorePageContainer}>
+    <div style={styles.ExplorePageContainer(isSmallerThanMid)}>
       { loading && <MyOverlayingLoader/> }
       <MyMap namespace={geospaceNamespace}
              selectedGeospace={selectedGeospace}
@@ -249,6 +261,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                     applyRanges={handleApplyRanges}
                     initialState={getInitialStateFromCalendarType(calendarType as string)}
         />
+      }
+      {
+        isFirstTimeModalOpen && isSmallerThanMid &&
+        <FirstTimeModal closeModal={closeFirstTimeModal}/>
       }
     </div>
   )
