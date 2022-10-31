@@ -23,4 +23,15 @@ class Images {
   static const connectionCellular = 'assets/icons/connection_cellular.png';
   static const lessButton = 'assets/icons/less_button.png';
   static const moreButton = 'assets/icons/plus_button.png';
+  static const roundedPinAddress = 'assets/icons/rounded_pin_address.png';
+  static const roundedConnectionWifi = 'assets/icons/rounded_connection_wifi.png';
+  static const roundedConnectionCellular = 'assets/icons/rounded_connection_cellular.png';
+  static const roundedConnectionWired = 'assets/icons/rounded_connection_wired.png';
+  static const roundedLocationHome = 'assets/icons/rounded_location_home.png';
+  static const roundedLocationWork = 'assets/icons/rounded_location_work.png';
+  static const roundedLocationOther = 'assets/icons/rounded_location_other.png';
+  static const downloadIcon = 'assets/icons/download_icon.png';
+  static const uploadIcon = 'assets/icons/upload_icon.png';
+  static const lossIcon = 'assets/icons/loss_icon.png';
+  static const latencyIcon = 'assets/icons/latency_icon.png';
 }
