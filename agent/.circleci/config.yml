@@ -250,6 +250,9 @@ workflows:
   test:
     jobs:
       - run_unit_tests
+      filters:
+        branches:
+          ignore: "/.*/"
 
   build_distributions:
     jobs:
