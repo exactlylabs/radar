@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 void main() {
   final prodStringResources = StringResourceProd();
-  mainCommon(Uri.parse(prodStringResources.SERVER_ENDPOINT));
+  mainCommon(prodStringResources.SERVER_ENDPOINT);
 
   final prodConfig = AppConfig(
     appName: prodStringResources.APP_NAME,
