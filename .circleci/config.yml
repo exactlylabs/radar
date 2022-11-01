@@ -16,7 +16,7 @@ jobs:
     docker:
       - image: cimg/go:1.18.2
     steps:
-      - checkout
+      - build_config
       - run: cd agent && go test ./...
 
   create_version:
