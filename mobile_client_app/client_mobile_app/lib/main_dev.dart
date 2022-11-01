@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 void main() {
   final devStringResources = StringResourceDev();
-  mainCommon(Uri.parse(devStringResources.SERVER_ENDPOINT));
+  mainCommon(devStringResources.SERVER_ENDPOINT);
 
   final devConfig = AppConfig(
     appName: devStringResources.APP_NAME,
