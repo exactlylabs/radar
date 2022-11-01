@@ -1,8 +1,12 @@
 version: 2.1
 
-setup: true
+setup: << pipeline.parameters.run-setup >>
 
 parameters:
+  run-setup:
+    description: Whether it is a setup workflow or a continuation
+    type: boolean
+    default: true
   force-all:
     description: Emergency valve - forcibly build all the modules
     type: boolean
