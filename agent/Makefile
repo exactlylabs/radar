@@ -22,7 +22,6 @@ ifeq ("${OS}", "windows")
   endif
 endif
 
-
 sign:
 	@echo "Signing Binary"
 	go run cmd/signing/main.go -bin ${OUTPUT_PATH} -key ${KEY_PATH} -cert ${CERT_PATH} -o ${OUTPUT_PATH}_signed
