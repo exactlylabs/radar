@@ -11,6 +11,13 @@ commands:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  run_unit_tests:
+    docker:
+      - image: cimg/go:1.18.2
+    steps:
+      - checkout
+      - run: cd agent && go test ./...
+
   create_version:
     docker:
       - image: cimg/base:2022.05
@@ -240,6 +247,10 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
+  test:
+    jobs:
+      - run_unit_tests
+
   build_distributions:
     jobs:
       - create_version:
