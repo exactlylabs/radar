@@ -6,6 +6,7 @@ class LocalStorage {
   final Box<List<Map<String, dynamic>>> _box;
 
   static const String resultsKey = 'RESULTS';
+  static const String ftueMapKey = 'FTUE_MAP';
 
   Future<List<Map<String, dynamic>>> addResult(Map<String, dynamic> value) async {
     final results = getResults();
@@ -16,5 +17,18 @@ class LocalStorage {
 
   List<Map<String, dynamic>> getResults() {
     return _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[])!;
+  }
+
+  bool getFTUEMap() {
+    final ftue = _box.get(ftueMapKey, defaultValue: [
+      {'value': true}
+    ])!;
+    return ftue.first['value'] as bool;
+  }
+
+  Future<void> setFTUEMap() async {
+    await _box.put(ftueMapKey, [
+      {'value': false}
+    ]);
   }
 }
