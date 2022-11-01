@@ -15,6 +15,7 @@ parameters:
 workflows:
   # The setup workflow
   setup-workflow:
+    when: << pipeline.parameters.run-setup >>
     jobs:
       - config-splitting/setup-dynamic-config:
           force-all: << pipeline.parameters.force-all >>
