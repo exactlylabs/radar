@@ -22,6 +22,8 @@ import {Filter, Optional} from "../../utils/types";
 import ReactDOMServer from "react-dom/server";
 import GeographicalTooltip from "./GeographicalTooltip/GeographicalTooltip";
 import {Asn} from "../../api/asns/types";
+import {BLACK} from "../../styles/colors";
+import MySpinner from "../common/MySpinner";
 
 const geoJSONOptions: L.GeoJSONOptions = {
   style: (feature) => {
@@ -91,7 +93,7 @@ const CustomMap = ({
         if(properties.summary !== undefined && shouldShowLayer(layer.feature.properties.summary, speedType, selectedSpeedFilters)) {
           const isSelected: boolean = !!selectedGeospace ? isCurrentGeospace(properties.summary.geospace, selectedGeospace) : false;
           layer.addEventListener('click', () => {
-            if(properties.NAME === 'Alaska') {
+            if(properties.summary.geospace.name === 'Alaska') {
               // TODO: quick fix for Alaskan center wrongly calculated. From the internet, Alaska's center is at 64.2008° N, 149.4937° W
               const center: L.LatLng = L.latLng(64.2008, -149.4937);
               selectGeospace(layer.feature.properties.summary, center);

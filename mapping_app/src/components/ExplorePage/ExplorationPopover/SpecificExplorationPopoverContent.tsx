@@ -138,7 +138,7 @@ const SpecificExplorationPopoverContent = ({
                         text={inputText}
                         setText={handleSetText}
       />
-      {type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText()}>Start by choosing a state...</p>}
+      {type === popoverStates.COUNTIES && <p className={'fw-light'} style={styles.StateSelectionText}>Start by choosing a state...</p>}
       <div style={styles.ContentContainer(type)}>
         {getContent()}
       </div>

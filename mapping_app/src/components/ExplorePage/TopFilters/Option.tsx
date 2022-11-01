@@ -27,7 +27,7 @@ const Option = ({
   return (
     <>
       <div style={styles.Option} onClick={handleClick}>
-        <p className={'hover-opaque'} style={styles.Text(selected)}>{getText()}</p>
+        <p className={`${selected ? 'fw-medium' : 'fw-regular'} hover-opaque`} style={styles.Text(selected)}>{getText()}</p>
         { !selected && <div style={styles.Icon}></div> }
         {  selected && <CheckRounded style={styles.Icon}/> }
       </div>
