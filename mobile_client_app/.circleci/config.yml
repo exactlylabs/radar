@@ -19,12 +19,14 @@ jobs:
           app-dir: ~/project/mobile_client_app/client_mobile_app
       - flutter/install_android_gem:
           app-dir: ~/project/mobile_client_app/client_mobile_app
-      - run: cd ~/project/mobile_client_app/client_mobile_app && flutter build apk --flavor dev -t lib/main_dev.dart
+      - run: 
+          command: flutter build apk --flavor dev -t lib/main_dev.dart
+          working_directory: ~/project/mobile_client_app/client_mobile_app
   
   build-ios:
     working_directory: ~/project
     macos:
-      xcode: 12.5.1
+      xcode: 13
     steps:
       - checkout
       - flutter/install_sdk_and_pub:
