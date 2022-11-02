@@ -12,4 +12,7 @@ class StringResourceProd implements IStringResource {
 
   @override
   String SENTRY_FLUTTER_KEY = '';
+
+  @override
+  String WEB_ENDPOINT = 'https://speedtest.exactlylabs.com/';
 }
