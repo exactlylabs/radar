@@ -7,7 +7,7 @@ import 'package:get_it/get_it.dart';
 final sl = GetIt.instance;
 
 void registerDependencies(String baseUrl) {
-  sl.registerLazySingleton<LocalStorage>(() => LocalStorage());
+  sl.registerSingleton<LocalStorage>(LocalStorage());
 
   sl.registerLazySingleton<IHttpProvider>(() => HttpProvider());
 

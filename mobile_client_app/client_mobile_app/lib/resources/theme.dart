@@ -32,7 +32,7 @@ final theme = ThemeData(
   colorScheme: const ColorScheme(
     primary: AppColors.deepBlue,
     secondary: AppColors.blue,
-    tertiary: AppColors.paleLilac,
+    tertiary: AppColors.darkLavender,
     surface: AppColors.paleLilac,
     background: AppColors.paleLilac,
     error: AppColors.error,

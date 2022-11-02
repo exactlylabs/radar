@@ -9,5 +9,5 @@ class Images {
   static const yourResultsSelected = 'assets/icons/results_tab_selected_icon.png';
   static const map = 'assets/icons/map_tab_icon.png';
   static const mapSelected = 'assets/icons/map_tab_selected_icon.png';
-  static const mapIllustration = 'assets/icons/map.png';
+  static const mapIllustration = 'assets/images/map.png';
 }

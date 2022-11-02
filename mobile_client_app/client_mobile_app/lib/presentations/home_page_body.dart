@@ -16,7 +16,7 @@ class HomePageBody extends StatelessWidget {
     } else if (pageIdx == _YOUR_RESULTS_PAGE_IDX) {
       return const Center(child: Text('Your Results'));
     } else if (pageIdx == _MAP_PAGE_IDX) {
-      return const MapWebViewPage();
+      return MapWebViewPage();
     } else {
       return const Center(child: Text('Speed Test'));
     }

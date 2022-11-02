@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 
-Future<void> modalWithTitle(BuildContext context, bool? isScrollControlled, String title, Widget body) async {
+Future<void> modalWithTitle(BuildContext context, bool? isScrollControlled, String title, Widget body,
+    [VoidCallback? onPop]) async {
   return showModalBottomSheet(
     context: context,
     backgroundColor: Theme.of(context).backgroundColor,
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0))),
     isScrollControlled: isScrollControlled ?? false,
-    builder: (context) => ModalWithTitle(title: title, body: body),
+    builder: (context) => ModalWithTitle(
+      title: title,
+      body: body,
+      onPop: onPop,
+    ),
   );
 }
 
@@ -47,11 +52,11 @@ class ModalWithTitle extends StatelessWidget {
                                 shape: const CircleBorder(),
                                 elevation: 0.0,
                                 padding: EdgeInsets.zero,
-                                backgroundColor: Theme.of(context).colorScheme.background,
+                                backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                               ),
                               child: Icon(
                                 Icons.close_rounded,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.tertiary,
                               ),
                               onPressed: () {
                                 if (onPop != null) onPop!();
@@ -72,7 +77,7 @@ class ModalWithTitle extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
                       child: body,
                     )
                   ],
