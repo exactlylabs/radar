@@ -6,28 +6,34 @@ orbs:
 
 jobs:
   build-android:
-    working_directory: ~/project/mobile_client_app/client_mobile_app
+    working_directory: ~/project
     executor:
       name: android/android-machine
     steps:
       - checkout
       - flutter/install_sdk_and_pub:
           flutter_version: 3.3.1
-      - flutter/install_android_gradle
-      - flutter/install_android_gem
-      - run: flutter build apk --flavor dev -t lib/main_dev.dart
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - flutter/install_android_gradle:
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - flutter/install_android_gem:
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - run: cd ~/project/mobile_client_app/client_mobile_app && flutter build apk --flavor dev -t lib/main_dev.dart
   
   build-ios:
-    working_directory: ~/project/mobile_client_app/client_mobile_app
+    working_directory: ~/project
     macos:
       xcode: 12.5.1
     steps:
       - checkout
       - flutter/install_sdk_and_pub:
           flutter_version: 3.3.1
-      - flutter/install_ios_pod
-      - flutter/install_ios_gem
-      - run: flutter build api --flavor dev -t lib/main_dev.dart
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - flutter/install_ios_pod:
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - flutter/install_ios_gem:
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - run: cd ~/project/mobile_client_app/client_mobile_app && flutter build api --flavor dev -t lib/main_dev.dart
 
 workflows:
   test_build:
