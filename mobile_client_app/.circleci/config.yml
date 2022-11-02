@@ -6,7 +6,7 @@ orbs:
 
 jobs:
   build-android:
-    working_directory: ~/repo/mobile_client_app/client_mobile_app
+    working_directory: ~/project/mobile_client_app/client_mobile_app
     executor:
       name: android/android-machine
     steps:
@@ -18,7 +18,7 @@ jobs:
       - run: flutter build apk --flavor dev -t lib/main_dev.dart
   
   build-ios:
-    working_directory: ~/repo/mobile_client_app/client_mobile_app
+    working_directory: ~/project/mobile_client_app/client_mobile_app
     macos:
       xcode: 12.5.1
     steps:
@@ -33,7 +33,7 @@ workflows:
   test_build:
     jobs:
       - flutter/unit_test:
-          app-dir: ~/repo/mobile_client_app/client_mobile_app
+          app-dir: ~/project/mobile_client_app/client_mobile_app
           version: 3.3.1
       - build-android
       - build-ios
