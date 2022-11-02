@@ -12,8 +12,8 @@ class MapCubit extends Cubit<MapState> {
 
   final LocalStorage _localStorage;
 
-  Future<void> _loadFTUEMap() async {
-    final isFTUE = await _localStorage.getFTUEMap();
+  void _loadFTUEMap() {
+    final isFTUE = _localStorage.getFTUEMap();
     emit(state.copyWith(isFTUE: isFTUE));
   }
 
