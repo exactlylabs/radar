@@ -26,7 +26,7 @@ jobs:
   build-ios:
     working_directory: ~/project
     macos:
-      xcode: 13
+      xcode: 13.4.1
     steps:
       - checkout
       - flutter/install_sdk_and_pub:
