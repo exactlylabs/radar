@@ -6,9 +6,11 @@ orbs:
 
 jobs:
   build-android:
+    working_directory: ~/repo/mobile_client_app/client_mobile_app
     executor:
       name: android/android-machine
     steps:
+      - checkout
       - flutter/install_sdk_and_pub:
           flutter_version: 3.3.1
       - flutter/install_android_gradle
@@ -16,9 +18,11 @@ jobs:
       - run: flutter build apk --flavor dev -t lib/main_dev.dart
   
   build-ios:
+    working_directory: ~/repo/mobile_client_app/client_mobile_app
     macos:
       xcode: 12.5.1
     steps:
+      - checkout
       - flutter/install_sdk_and_pub:
           flutter_version: 3.3.1
       - flutter/install_ios_pod
@@ -29,6 +33,7 @@ workflows:
   test_build:
     jobs:
       - flutter/unit_test:
+          working_directory: ~/repo/mobile_client_app/client_mobile_app
           version: 3.3.1
       - build-android
       - build-ios
