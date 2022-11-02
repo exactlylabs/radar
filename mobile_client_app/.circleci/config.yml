@@ -33,7 +33,7 @@ workflows:
   test_build:
     jobs:
       - flutter/unit_test:
-          working_directory: ~/repo/mobile_client_app/client_mobile_app
+          app-dir: ~/repo/mobile_client_app/client_mobile_app
           version: 3.3.1
       - build-android
       - build-ios
