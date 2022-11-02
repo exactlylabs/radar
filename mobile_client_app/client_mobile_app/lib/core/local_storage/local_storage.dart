@@ -6,7 +6,7 @@ class LocalStorage {
     _openBox();
   }
 
-  late LazyBox<List<Map<String, dynamic>>> _box;
+  late Box<List<Map<String, dynamic>>> _box;
 
   static const String resultsKey = 'RESULTS';
   static const String ftueMapKey = 'FTUE_MAP';
@@ -16,7 +16,7 @@ class LocalStorage {
       final directory = await getApplicationDocumentsDirectory();
       Hive.init(directory.path);
     }
-    _box = await Hive.openLazyBox<List<Map<String, dynamic>>>('local_storage');
+    _box = await Hive.openBox<List<Map<String, dynamic>>>('local_storage');
   }
 
   Future<List<Map<String, dynamic>>> addResult(Map<String, dynamic> value) async {
@@ -26,16 +26,15 @@ class LocalStorage {
     return newResults;
   }
 
-  Future<List<Map<String, dynamic>>> getResults() async {
-    final results = await _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[]);
-    return results!;
+  List<Map<String, dynamic>> getResults() {
+    return _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[])!;
   }
 
-  Future<bool> getFTUEMap() async {
-    final List<Map<String, dynamic>>? ftue = await _box.get(ftueMapKey, defaultValue: [
+  bool getFTUEMap() {
+    final List<Map<String, dynamic>> ftue = _box.get(ftueMapKey, defaultValue: [
       {'value': true}
-    ]);
-    return ftue!.first['value'] as bool;
+    ])!;
+    return ftue.first['value'] as bool;
   }
 
   Future<void> setFTUEMap() async {
