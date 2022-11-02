@@ -1,14 +1,15 @@
 version: 2.1
 
 orbs:
-  android: circleci/android@1.0.3
+  android: circleci/android@2.1.2
   flutter: circleci/flutter@1.1.0
 
 jobs:
   build-android:
     working_directory: ~/project
     executor:
-      name: android/android-machine
+      name: android/android-docker
+      tag: 2022.09.1
     steps:
       - checkout
       - flutter/install_sdk_and_pub:
@@ -33,7 +34,9 @@ jobs:
           app-dir: ~/project/mobile_client_app/client_mobile_app
       - flutter/install_ios_gem:
           app-dir: ~/project/mobile_client_app/client_mobile_app
-      - run: cd ~/project/mobile_client_app/client_mobile_app && flutter build api --flavor dev -t lib/main_dev.dart
+      - run: 
+          command: flutter build ios --flavor dev -t lib/main_dev.dart --release
+          working_directory: ~/project/mobile_client_app/client_mobile_app
 
 workflows:
   test_build:
