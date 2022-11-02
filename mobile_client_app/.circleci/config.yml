@@ -37,7 +37,7 @@ jobs:
       - flutter/install_ios_gem:
           app-dir: ~/project/mobile_client_app/client_mobile_app
       - run: 
-          command: flutter build ios --flavor dev -t lib/main_dev.dart --release
+          command: flutter build ios --flavor dev -t lib/main_dev.dart --release --no-codesign
           working_directory: ~/project/mobile_client_app/client_mobile_app
 
 workflows:
