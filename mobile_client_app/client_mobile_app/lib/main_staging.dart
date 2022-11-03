@@ -5,8 +5,10 @@ import 'package:client_mobile_app/core/flavors/app_config.dart';
 import 'package:client_mobile_app/core/flavors/string_resource/string_resources_stg.dart';
 import 'package:client_mobile_app/main_common.dart';
 import 'package:flutter/material.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() {
+Future<void> main() async {
   final stgStringResources = StringResourceStg();
   mainCommon(stgStringResources.SERVER_ENDPOINT);
 
@@ -16,10 +18,15 @@ void main() {
     child: const App(),
   );
 
-  runWithCrashReporting(
-    codeToExecute: () => runApp(stgConfig),
-    appNamePrefix: stgStringResources.APP_NAME_PREFIX,
-    dsn: stgStringResources.SENTRY_FLUTTER_KEY,
+  HydratedBlocOverrides.runZoned(
+    () async {
+      runWithCrashReporting(
+        codeToExecute: () => runApp(stgConfig),
+        appNamePrefix: stgStringResources.APP_NAME_PREFIX,
+        dsn: stgStringResources.SENTRY_FLUTTER_KEY,
+      );
+    },
+    storage: await _buildStorage(),
   );
 }
 
@@ -33,4 +40,10 @@ void runWithCrashReporting({
     codeToExecute,
     (error, trace) {},
   );
+}
+
+Future<HydratedStorage> _buildStorage() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final storage = await HydratedStorage.build(storageDirectory: await getTemporaryDirectory());
+  return storage;
 }
