@@ -82,20 +82,18 @@ jobs:
   release-android:
     working_directory: ~/project
     docker:
-      - image: "cimg/base:stable"
+      - image: "cimg/ruby:3.0.2"
     parameters:
       flavor:
         type: enum
         enum: ["staging", "prod"]
     steps:
       - checkout
-      - ruby/install:
-          version: '3.0.2'
       - ruby/install-deps:
           app-dir: ~/project/mobile_client_app/client_mobile_app
       - run:
           command: fastlane << parameters.flavor >>
-          working_directory: ~/project/mobile_client_app/client_mobile_app
+          working_directory: ~/project/mobile_client_app/client_mobile_app/android
 
   build-ios:
     working_directory: ~/project
