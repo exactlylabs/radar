@@ -13,4 +13,5 @@ APPDIR=${SCRIPT_DIR}/..
 mkdir -p ${WORKSPACE}/android/staging
 
 export VERSION=$(cat ${APPDIR}/android/local.properties | sed -n -e 's/^flutter\.versionName=//p')
-cp ${SCRIPT_DIR}/../build/app/outputs/bundle/stagingRelease/app-staging-release.aab ${WORKSPACE}/android/staging/app_${VERSION}-release.aab
+export VERSION_CODE=$(cat ${APPDIR}/android/local.properties | sed -n -e 's/^flutter\.versionCode=//p')
+cp ${SCRIPT_DIR}/../build/app/outputs/bundle/stagingRelease/app-staging-release.aab ${WORKSPACE}/android/staging/app_${VERSION}+${VERSION_CODE}-release.aab
