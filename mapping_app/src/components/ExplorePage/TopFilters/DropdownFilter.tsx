@@ -6,6 +6,7 @@ import {Filter, Optional} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
 import Chevron from '../../../assets/chevron.png';
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 interface DropdownFilterProps {
   iconSrc: string;
@@ -21,6 +22,7 @@ interface DropdownFilterProps {
   setOpenFilter: (newFilter: Optional<string>) => void;
   lastOptionOnClick?: () => void;
   loading: boolean;
+  isLast?: boolean;
 }
 
 const DropdownFilter = ({
@@ -36,8 +38,11 @@ const DropdownFilter = ({
   openFilter,
   setOpenFilter,
   lastOptionOnClick,
-  loading
+  loading,
+  isLast
 }: DropdownFilterProps): ReactElement => {
+
+  const {isSmallerThanMid} = useViewportSizes();
 
   const [selectedOption, setSelectedOption] = useState<Filter>(selectedFilter ?? options[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -79,11 +84,11 @@ const DropdownFilter = ({
   }
 
   return (
-    <div style={styles.DropdownFilterContainer}
+    <div style={styles.DropdownFilterContainer(isSmallerThanMid, isLast)}
          onClick={toggleOptionsDropdown}
          id={`filter-${type}`}
     >
-      <div className={'hover-opaque'} style={styles.FilterContentContainer(dropdownOpen)}>
+      <div className={'hover-opaque'} style={styles.FilterContentContainer(dropdownOpen, isSmallerThanMid)}>
         <img src={iconSrc} style={styles.Icon} alt={'filter-icon'}/>
         <p className={'fw-regular hover-opaque'} style={styles.Text(textWidth)}>{getText()}</p>
         <img src={Chevron} style={styles.Arrow} alt={'chevron'}/>

@@ -27,6 +27,8 @@ export type AppState = {
   zoom: number;
   center: Array<number>;
   selectedGeospaceId: Optional<string>;
+  isExplorationPopoverOpen: boolean;
+  areSpeedFiltersOpen: boolean;
 }
 
 export const isLatLngValid = (value: any): boolean => {
@@ -42,4 +44,8 @@ export const isNumber = (value: any): boolean => {
 
 export const isString = (value: any): boolean => {
   return typeof value === 'string';
+}
+
+export const isBoolean = (value: any): boolean => {
+  return typeof value === 'boolean' || (typeof value === 'string' && (value === 'true' || value === 'false'));
 }

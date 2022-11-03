@@ -18,6 +18,24 @@ const dropdownFiltersContainerStyle: CSSProperties = {
   zIndex: 1002,
 }
 
+const smallDropdownFiltersContainerStyle: CSSProperties = {
+  width: '345px',
+  height: '40px',
+  position: 'absolute',
+  top: '82px',
+  left: '50%',
+  marginLeft: '-172.5px',
+  zIndex: 1010,
+  overflowX: 'scroll',
+  overflowY: 'hidden',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center'
+}
+
 export const styles = {
-  DropdownFiltersContainer: dropdownFiltersContainerStyle,
+  DropdownFiltersContainer: (isSmall: boolean) => {
+    return isSmall ? smallDropdownFiltersContainerStyle : dropdownFiltersContainerStyle;
+  },
 }

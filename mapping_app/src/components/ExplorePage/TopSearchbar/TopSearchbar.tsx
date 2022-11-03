@@ -11,13 +11,19 @@ import SuggestionsBox from "./SuggestionsBox";
 import {Optional} from "../../../utils/types";
 import {getGeospaces} from "../../../api/geospaces/requests";
 import {DetailedGeospace, GeospaceSearchResult} from "../../../api/geospaces/types";
+import SmallScreenSearchbar from "./SmallScreenSearchbar/SmallScreenSearchbar";
+import RegularSearchbar from "./RegularSearchbar/RegularSearchbar";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 interface TopSearchbarProps {
   selectSuggestion: (suggestion: DetailedGeospace) => void;
+  toggleFilters: () => void;
+  areSmallFiltersOpen: boolean;
 }
 
-const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => {
+const TopSearchbar = ({ selectSuggestion, areSmallFiltersOpen, toggleFilters }: TopSearchbarProps): ReactElement => {
 
+  const {isSmallerThanMid} = useViewportSizes();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
@@ -68,34 +74,25 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
     }
   });
 
-  return (
-    <div style={styles.TopSearchbarContainer} id={'top-searchbar'}>
-      <div style={styles.IconContainer}>
-        <img src={SearchIcon} style={styles.SearchIcon} alt={'search-icon'}/>
-      </div>
-      <input placeholder={'State, county, city, address...'}
-             className={'fw-light'}
-             style={styles.Input}
-             onChange={handleInputChange}
-             id={'top-searchbar--input'}
-             ref={inputRef}
-      />
-      <div className={'hover-opaque'} style={styles.ArrowContainer}>
-        {
-          loading ?
-          <CustomSpinner color={WHITE} style={{}}/> :
-          <img src={ArrowRight} style={styles.Arrow} alt={'arrow-right'}/>
-        }
-      </div>
-      {
-        inputRef && inputRef.current?.value && open &&
-        <SuggestionsBox suggestions={suggestions}
-                        setOpen={setOpen}
-                        selectSuggestion={selectSuggestion}
-        />
-      }
-    </div>
-  )
+  return isSmallerThanMid ?
+    <SmallScreenSearchbar inputRef={inputRef}
+                          handleInputChange={handleInputChange}
+                          loading={loading}
+                          suggestions={suggestions}
+                          selectSuggestion={selectSuggestion}
+                          open={open}
+                          setOpen={setOpen}
+                          toggleFilters={toggleFilters}
+                          areSmallFiltersOpen={areSmallFiltersOpen}
+    /> :
+    <RegularSearchbar inputRef={inputRef}
+                      handleInputChange={handleInputChange}
+                      loading={loading}
+                      suggestions={suggestions}
+                      selectSuggestion={selectSuggestion}
+                      open={open}
+                      setOpen={setOpen}
+    />;
 }
 
 export default TopSearchbar;

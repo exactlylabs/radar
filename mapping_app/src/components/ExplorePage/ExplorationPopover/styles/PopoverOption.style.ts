@@ -22,6 +22,11 @@ const darkPopoverOptionContainerStyle: CSSProperties = {
   marginBottom: 0,
 }
 
+const smallStyle: CSSProperties = {
+  height: '50px',
+  width: '100%',
+}
+
 const textStyle: CSSProperties = {
   fontSize: '17px',
   color: WHITE,
@@ -51,8 +56,9 @@ const popoverOptionContentWrapperStyle: CSSProperties = {
 }
 
 export const styles = {
-  PopoverOptionContainer: (light?: boolean) => {
-    return light ? popoverOptionContainerStyle : darkPopoverOptionContainerStyle;
+  PopoverOptionContainer: (isSmall: boolean, light?: boolean) => {
+    let style = light ? popoverOptionContainerStyle : darkPopoverOptionContainerStyle;
+    return isSmall ? {...style, ...smallStyle} : style;
   },
   Text: textStyle,
   SecondaryText: secondaryTextStyle,

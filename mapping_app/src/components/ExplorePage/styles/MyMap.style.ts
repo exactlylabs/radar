@@ -5,6 +5,10 @@ const mapContainerStyle: CSSProperties = {
   minHeight: '700px',
 }
 
+const smallMapContainerStyle: CSSProperties = {
+  height: '100%',
+}
+
 const spinnerContainerStyle: CSSProperties = {
   height: '100%',
   minHeight: '700px',
@@ -14,6 +18,8 @@ const spinnerContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  MapContainer: mapContainerStyle,
+  MapContainer: (isSmall: boolean) => {
+    return isSmall ? smallMapContainerStyle : mapContainerStyle;
+  },
   SpinnerContainer: spinnerContainerStyle
 }
