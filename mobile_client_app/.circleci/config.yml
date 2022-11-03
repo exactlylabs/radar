@@ -98,6 +98,7 @@ workflows:
           app-dir: ~/project/mobile_client_app/client_mobile_app
           version: 3.3.1
       - build-android:
+          name: "build-android-dev"
           flavor: dev
           filters:
             branches:
@@ -105,17 +106,19 @@ workflows:
                 - "master"
                 - "dev"
       - build-android:
-        flavor: stag
-        filters:
-          branches:
-            only: "dev"
+          name: "build-android-staging"
+          flavor: staging
+          filters:
+            branches:
+              only: "dev"
       - build-android:
-        flavor: prod
-        filters:
-          branches:
-            only: "master"
+          name: "build-android-prod"
+          flavor: prod
+          filters:
+            branches:
+              only: "master"
       - upload-android:
-          requires: [build-android]
+          requires: [build-android-dev, build-android-staging, build-android-prod]
       # # iOS
       # - build-ios:
       #     flavor: dev
@@ -123,7 +126,7 @@ workflows:
       #       branches:
       #         ignore: "master"
       # - build-ios:
-      #   flavor: stag
+      #   flavor: staging
       #   filters:
       #     branches:
       #       only: "dev"
