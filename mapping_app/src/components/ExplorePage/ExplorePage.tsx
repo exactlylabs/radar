@@ -20,7 +20,6 @@ import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "../../utils
 import MyOverlayingLoader from "../common/MyOverlayingLoader";
 import {emptyGeoJSONFilters} from "../../api/geojson/types";
 import L from "leaflet";
-import {getGeospaces} from "../../api/namespaces/requests";
 import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
 
 const ExplorePage = (): ReactElement => {
@@ -30,10 +29,10 @@ const ExplorePage = (): ReactElement => {
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(!!getValueFromUrl('selectedGeospace'));
   const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(getValueFromUrl('selectedGeospace') ?? null);
   const [geospaceNamespace, setGeospaceNamespace] = useState(getValueFromUrl('geospaceNamespace') ?? tabs.STATES);
-  const [speedType, setSpeedType] = useState<Filter>(getValueFromUrl('speedType') ?? speedFilters[0]);
-  const [calendarType, setCalendarType] = useState<Filter>(getValueFromUrl('calendarType') ?? calendarFilters[3]);
-  const [provider, setProvider] = useState<Filter>(getValueFromUrl('provider') ?? allProvidersElement);
-  const [selectedSpeedFilters, setSelectedSpeedFilters] = useState<Array<Filter>>(getValueFromUrl('selectedSpeedFilters') ?? [speedTypes.UNSERVED, speedTypes.UNDERSERVED, speedTypes.SERVED]);
+  const [speedType, setSpeedType] = useState<string>(getValueFromUrl('speedType') ?? speedFilters[0]);
+  const [calendarType, setCalendarType] = useState<string>(getValueFromUrl('calendarType') ?? calendarFilters[3]);
+  const [provider, setProvider] = useState<Asn>(getValueFromUrl('provider') ?? allProvidersElement);
+  const [selectedSpeedFilters, setSelectedSpeedFilters] = useState<Array<string>>(getValueFromUrl('selectedSpeedFilters') ?? [speedTypes.UNSERVED, speedTypes.UNDERSERVED, speedTypes.SERVED]);
   const [currentMapZoom, setCurrentMapZoom] = useState(getValueFromUrl('zoom') ?? 3)
   const [currentMapCenter, setCurrentMapCenter] = useState<Array<number>>(getValueFromUrl('center') ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
 
@@ -63,11 +62,6 @@ const ExplorePage = (): ReactElement => {
   const closePopover = () => setIsExplorationPopoverOpen(false);
 
   const openPopover = () => setIsExplorationPopoverOpen(true);
-
-  const togglePopover = () => {
-    if(isExplorationPopoverOpen) closePopover();
-    else openPopover();
-  }
 
   const openRightPanel = () => setIsRightPanelOpen(true);
 

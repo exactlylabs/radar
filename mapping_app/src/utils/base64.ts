@@ -1,11 +1,12 @@
 import {AppState, Filter, isLatLngValid, isNumber, isString, Optional} from "./types";
-import {GeospaceInfo, isGeospaceData, isGeospaceOverview} from "../api/geospaces/types";
+import {Geospace, GeospaceInfo, isGeospaceData, isGeospaceOverview} from "../api/geospaces/types";
 import {tabs} from "../components/ExplorePage/TopFilters/GeographicalCategoryTabs";
 import {calendarFilters, speedFilters} from "./filters";
-import {isAsn} from "../api/asns/types";
+import {Asn, isAsn} from "../api/asns/types";
 import {allProvidersElement} from "../components/ExplorePage/TopFilters/utils/providers";
 import {speedTypes} from "./speeds";
 import {handleError} from "../api";
+import Option from "../components/ExplorePage/TopFilters/Option";
 
 export const getAppState = (encoded: string): Optional<AppState> => {
   if(!encoded) return null;
@@ -42,43 +43,42 @@ export const getValueFromUrl = (key: string): Optional<any> => {
 const getValidState = (state: AppState): AppState => {
   return {
     geospaceNamespace: validateAttribute('geospaceNamespace', state.geospaceNamespace) as string,
-    speedType: validateAttribute('speedType', state.speedType) as Filter,
-    calendarType: validateAttribute('calendarType', state.calendarType) as Filter,
-    provider: validateAttribute('provider', state.provider) as Filter,
+    speedType: validateAttribute('speedType', state.speedType) as string,
+    calendarType: validateAttribute('calendarType', state.calendarType) as string,
+    provider: validateAttribute('provider', state.provider) as Asn,
     selectedGeospace: validateAttribute('selectedGeospace', state.selectedGeospace) as Optional<GeospaceInfo>,
-    selectedSpeedFilters: validateAttribute('selectedSpeedFilters', state.selectedSpeedFilters) as Array<Filter>,
+    selectedSpeedFilters: validateAttribute('selectedSpeedFilters', state.selectedSpeedFilters) as Array<string>,
     zoom: validateAttribute('zoom', state.zoom) as number,
     center: validateAttribute('center', state.center) as Array<number>,
   }
 }
 
 const validateAttribute = (key: string, value: any): any => {
+  let returnValue: any;
   switch (key) {
     case 'geospaceNamespace':
-      if(!isString(value) || !Object.keys(tabs).includes(value as string)) return tabs.STATES;
+      returnValue = validateGeospaceNamespace(value);
       break;
     case 'speedType':
-      if(!isString(value) || !speedFilters.includes(value as string)) return speedFilters[0];
+      returnValue = validateSpeedType(value);
       break;
     case 'calendarType':
-      if(!isString(value) || !calendarFilters.includes(value as string)) return calendarFilters[0];
+      returnValue = validateCalendarType(value);
       break;
     case 'provider':
-      if(!isAsn(value)) return allProvidersElement;
+      returnValue = validateProvider(value);
       break;
     case 'selectedGeospace':
-      if(!isGeospaceOverview(value) && !isGeospaceData(value)) return null;
+      returnValue = validateSelectedGeospace(value);
       break;
     case 'selectedSpeedFilters':
-      if(!areAllValuesSpeedFilters(value)) return null;
+      returnValue = validateSelectedSpeedFilters(value);
       break;
     case 'zoom':
-      if(!isNumber(value)) return null;
-      if((value as number) < 3) return 3; // min zoom
-      if((value as number) > 18) return 18; // max zoom
+      returnValue = validateZoom(value)
       break;
     case 'center':
-      if(!isLatLngValid(value)) return null;
+      returnValue = validateCenter(value);
       break;
     default:
       break;
@@ -97,4 +97,46 @@ const areAllValuesSpeedFilters = (value: any): boolean => {
       hasInvalid = true;
   });
   return !hasInvalid;
+}
+
+const validateGeospaceNamespace = (value: any): string => {
+  if (!isString(value) || !Object.keys(tabs).includes(value as string)) return tabs.STATES;
+  return value;
+}
+
+const validateSpeedType = (value: any): string => {
+  if(!isString(value) || !speedFilters.includes(value as string)) return speedFilters[0];
+  return value;
+}
+
+const validateCalendarType = (value: any): string => {
+  if(!isString(value) || !calendarFilters.includes(value as string)) return calendarFilters[0];
+  return value;
+}
+
+const validateProvider = (value: any): Asn => {
+  if(!isAsn(value)) return allProvidersElement;
+  return value;
+}
+
+const validateSelectedGeospace = (value: any): Optional<GeospaceInfo> => {
+  if(!isGeospaceOverview(value) && !isGeospaceData(value)) return null;
+  return value;
+}
+
+const validateSelectedSpeedFilters = (value: any): Optional<Array<string>> => {
+  if(!areAllValuesSpeedFilters(value)) return null;
+  return value;
+}
+
+const validateZoom = (value: any): Optional<number> => {
+  if(!isNumber(value)) return null;
+  if((value as number) < 3) return 3; // min zoom
+  if((value as number) > 18) return 18; // max zoom
+  return value;
+}
+
+const validateCenter = (value: any): Optional<Array<number>> => {
+  if(!isLatLngValid(value)) return null;
+  return value;
 }

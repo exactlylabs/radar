@@ -19,12 +19,12 @@ interface RightPanelProps {
   closePanel: () => void;
   selectedGeospaceInfo: GeospaceInfo;
   setSelectedGeoSpaceInfo: (data: GeospaceInfo) => void;
-  speedType: Filter;
-  calendarType: Filter;
-  provider: Filter;
-  setSpeedType: (type: Filter) => void;
-  setCalendarType: (type: Filter) => void;
-  setProvider: (type: Filter) => void;
+  speedType: string;
+  calendarType: string;
+  provider: Asn;
+  setSpeedType: (type: string) => void;
+  setCalendarType: (type: string) => void;
+  setProvider: (type: Asn) => void;
 }
 
 const RightPanel = ({

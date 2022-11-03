@@ -15,8 +15,8 @@ const speedFilters = {
 interface SpeedFiltersProps {
   isRightPanelOpen: boolean;
   speedType: Filter;
-  selectedSpeedFilters: Array<Filter>;
-  setSelectedSpeedFilters: (filters: Array<Filter>) => void;
+  selectedSpeedFilters: Array<string>;
+  setSelectedSpeedFilters: (filters: Array<string>) => void;
 }
 
 const SpeedFilters = ({

@@ -20,11 +20,11 @@ export type Filter = string | Asn;
 
 export type AppState = {
   geospaceNamespace: string;
-  speedType: Filter;
-  calendarType: Filter;
-  provider: Filter;
+  speedType: string;
+  calendarType: string;
+  provider: Asn;
   selectedGeospace: Optional<GeospaceInfo>;
-  selectedSpeedFilters: Array<Filter>;
+  selectedSpeedFilters: Array<string>;
   zoom: number;
   center: Array<number>;
 }
