@@ -7,6 +7,7 @@ commands:
       - run: echo -n $PROVIDER_SIGNING_CERT | base64 -d > binCert.crt
       - run: echo -n $PROVIDER_SIGNING_KEY | base64 -d > binKey.key
       - run: echo -n $ROOT_CA | base64 -d > agent/internal/update/rootCA.pem
+      - run: agent/scripts/make_ookla.sh
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
