@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:flutter/material.dart';
 
 Future<void> modalWithTitle(BuildContext context, bool? isScrollControlled, String title, Widget body,
@@ -66,10 +67,10 @@ class ModalWithTitle extends StatelessWidget {
                           ),
                           Text(
                             title,
-                            style: TextStyle(
+                            style: AppTextStyle(
                               fontSize: 17.0,
+                              fontWeight: 800,
                               letterSpacing: -0.5,
-                              fontWeight: FontWeight.w600,
                               color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
