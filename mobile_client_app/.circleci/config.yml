@@ -54,11 +54,11 @@ jobs:
     executor: gcp-cli/google
     steps:
       - attach_workspace:
-          at: ./workspace
+          at: ~/workspace
       - gcp-cli/initialize:
           gcloud-service-key: TTAC_PROD_GCP_CRED
           google-project-id: TTAC_PROD_ID
-      - run: gsutil cp ./workspace/android/* gs://${MOBILE_APP_BUCKET_NAME}/android
+      - run: gsutil cp -r ~/workspace/android/* gs://${MOBILE_APP_BUCKET_NAME}/android
 
   build-ios:
     working_directory: ~/project
