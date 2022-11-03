@@ -66,6 +66,15 @@ const arrowStyle: CSSProperties = {
   width: '20px',
 }
 
+const clearIconStyle: CSSProperties = {
+  width: '20px',
+  height: '20px',
+  position: 'absolute',
+  right: '65px',
+  top: '50%',
+  marginTop: '-10px',
+}
+
 export const styles = {
   TopSearchbarContainer: topSearchbarContainerStyle,
   Input: inputStyle,
@@ -73,4 +82,5 @@ export const styles = {
   SearchIcon: searchIconStyle,
   ArrowContainer: arrowContainerStyle,
   Arrow: arrowStyle,
+  ClearIcon: clearIconStyle,
 }
