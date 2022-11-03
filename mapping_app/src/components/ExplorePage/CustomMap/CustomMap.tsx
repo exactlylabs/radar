@@ -85,7 +85,7 @@ const CustomMap = ({
            addClickHandler(layer, properties, selectGeospace);
            const geospace: GeospaceOverview = properties.summary as GeospaceOverview;
            const tooltip: ReactElement = <GeographicalTooltip geospace={geospace} speedType={speedType as string}/>;
-           layer.bindTooltip(ReactDOMServer.renderToString(tooltip), {sticky: true, direction: 'center'});
+           if(!isSmallerThanMid) layer.bindTooltip(ReactDOMServer.renderToString(tooltip), {sticky: true, direction: 'center'});
          } else {
            layer.setStyle(outlineOnlyStyle);
          }
