@@ -3,7 +3,6 @@ import LayersIconBlack from '../../../../assets/layers-icon.png';
 import LayersIconWhite from '../../../../assets/layers-icon-white.png';
 import {styles} from "./styles/SmallSpeedFilters.style";
 import OpenSmallSpeedFilters from "./OpenSmallSpeedFilters";
-import {Filter} from "../../../../utils/types";
 
 interface SmallSpeedFiltersProps {
   isOpen: boolean;
