@@ -44,3 +44,5 @@ export const SEARCHBAR_TEXT = 'rgba(80, 89, 85, 0.6)';
 export const OUTLINE_ONLY_SHAPE_COLOR = 'rgba(151, 161, 157, 0.2)';
 export const OUTLINE_ONLY_SHAPE_FILL = 'rgba(151, 161, 157, 0.3)';
 export const RESPONSIVE_FOOTER = '#f7f9f8';
+export const GEOGRAPHICAL_CATEGORY_BOTTOM = 'rgba(255, 255, 255, 0.8)';
+export const SELECTED_TABS = 'rgba(209, 209, 209, 0.7)';

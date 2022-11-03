@@ -1,6 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/PopoverOption.style";
 import {ArrowForwardRounded} from "@mui/icons-material";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 interface PopoverOptionProps {
   text: string;
@@ -17,6 +18,8 @@ const PopoverOption = ({
   onClick,
   listMode
 }: PopoverOptionProps): ReactElement => {
+
+  const {isSmallerThanMid} = useViewportSizes();
 
   const getRegularContent = () => (
     <>
@@ -40,7 +43,7 @@ const PopoverOption = ({
 
   return (
     <div className={`hover-popover-option-lighter ${light ? 'popover-light' : 'popover-dark'}`}
-         style={styles.PopoverOptionContainer(light)}
+         style={styles.PopoverOptionContainer(isSmallerThanMid, light)}
          onClick={onClick}
     >
       { getContent() }

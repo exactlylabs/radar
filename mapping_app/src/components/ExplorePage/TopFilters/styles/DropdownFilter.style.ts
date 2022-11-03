@@ -1,16 +1,33 @@
 import {CSSProperties} from "react";
-import {BLACK, DEFAULT_TEXT, SELECTED_TAB} from "../../../../styles/colors";
+import {
+  BLACK,
+  CLOSE_PANEL_BUTTON_SHADOW_RGBA,
+  DEFAULT_TEXT,
+  GEOGRAPHICAL_CATEGORY_BOTTOM,
+  SELECTED_TAB
+} from "../../../../styles/colors";
 
 const dropdownFilterContainerStyle: CSSProperties = {
   width: '31%',
   marginLeft: '5px',
   marginRight: '5px',
   position: 'relative',
-  zIndex: 1050,
+  zIndex: 1010,
+}
+
+const smallDropdownFilterContainerStyle: CSSProperties = {
+  width: '132px',
+  position: 'relative',
+  zIndex: 1010,
+  backgroundColor: GEOGRAPHICAL_CATEGORY_BOTTOM,
+  borderRadius: '6px',
+  boxShadow: `0 2px 10px -4px ${CLOSE_PANEL_BUTTON_SHADOW_RGBA}`,
+  backdropFilter: 'blur(10px)',
+  marginRight: '8px',
 }
 
 const filterContentContainerStyle: CSSProperties = {
-  width: '100%',
+  minWidth: '100%',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-evenly',
@@ -47,10 +64,18 @@ const iconStyle: CSSProperties = {
   marginRight: '5px',
 }
 
+const smallStyle: CSSProperties = {
+  width: '132px',
+}
+
 export const styles = {
-  DropdownFilterContainer: dropdownFilterContainerStyle,
-  FilterContentContainer: (isOpen: boolean) => {
-    return isOpen ? openFilterContentContainerStyle : filterContentContainerStyle;
+  DropdownFilterContainer: (isSmall: boolean, isLast?: boolean) => {
+    let style = isSmall ? smallDropdownFilterContainerStyle : dropdownFilterContainerStyle;
+    return isLast ? {...style, marginRight: 0} : style;
+  },
+  FilterContentContainer: (isOpen: boolean, isSmall: boolean) => {
+    let style = isOpen ? openFilterContentContainerStyle : filterContentContainerStyle;
+    return isSmall ? {...style, ...smallStyle} : style;
   },
   Arrow: arrowStyle,
   Text: (textWidth: string) => {

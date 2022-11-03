@@ -1,4 +1,4 @@
-import {AppState, isLatLngValid, isNumber, isString, Optional} from "./types";
+import {AppState, isBoolean, isLatLngValid, isNumber, isString, Optional} from "./types";
 import {GeospaceInfo, isGeospaceData, isGeospaceOverview} from "../api/geospaces/types";
 import {CalendarFilters, SpeedFilters, GeospacesTabs} from "./filters";
 import {Asn, isAsn} from "../api/asns/types";
@@ -53,6 +53,8 @@ const getValidState = (state: AppState): AppState => {
     selectedSpeedFilters: validateAttribute('selectedSpeedFilters', state.selectedSpeedFilters) as Array<string>,
     zoom: validateAttribute('zoom', state.zoom) as number,
     center: validateAttribute('center', state.center) as Array<number>,
+    isExplorationPopoverOpen: validateAttribute('isExplorationPopoverOpen', state.isExplorationPopoverOpen) as boolean,
+    areSpeedFiltersOpen: validateAttribute('areSpeedFiltersOpen', state.areSpeedFiltersOpen) as boolean,
   }
 }
 
@@ -85,6 +87,10 @@ const validateAttribute = (key: string, value: any): any => {
       break;
     case 'selectedGeospaceId':
       returnValue = validateGeospaceId(value);
+      break;
+    case 'isExplorationPopoverOpen':
+    case 'areSpeedFiltersOpen':
+      returnValue = validateBoolean(value);
       break;
     default:
       break;
@@ -150,4 +156,9 @@ const validateCenter = (value: any): Optional<Array<number>> => {
 const validateGeospaceId = (value: any): Optional<string> => {
   if(!isString(value)) return null;
   return value;
+}
+
+const validateBoolean = (value: any): Optional<boolean> => {
+  if(!isBoolean(value)) return false;
+  return value === true || value === 'true';
 }

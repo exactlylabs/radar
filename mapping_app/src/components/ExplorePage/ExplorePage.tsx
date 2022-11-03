@@ -32,6 +32,8 @@ import * as amplitude from "@amplitude/analytics-browser";
 import {hasVisitedAllResults, setAlreadyVisitedCookie} from "../../utils/cookies";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import FirstTimeModal from "./FirstTimeModal/FirstTimeModal";
+import SmallScreenBottomNavigator from "./SmallScreenBottomNavigator/SmallScreenBottomNavigator";
+import DropdownFilters from "./TopFilters/DropdownFilters";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -47,8 +49,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     return (possibleGeospace as GeospaceOverview).geospace.id;
   }
 
+  const {isSmallerThanMid} = useViewportSizes();
+
   const [loading, setLoading] = useState(false);
-  const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(true);
+  const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(getValueFromUrl('isExplorationPopoverOpen') ?? !isSmallerThanMid); // if small screen, closed by default
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(!!getValueFromUrl('selectedGeospace') || !!getValueFromUrl('selectedGeospaceId'));
   const [isRightPanelHidden, setIsRightPanelHidden] = useState(false);
   const [selectedGeospaceId, setSelectedGeospaceId] = useState(getGeospaceId());
@@ -63,8 +67,8 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [dateQueryString, setDateQueryString] = useState(getValueFromUrl('calendarType') ? getDateQueryStringFromCalendarType(getValueFromUrl('calendarType')) : getDateQueryStringFromCalendarType(CalendarFilters.THIS_YEAR));
   const [isFirstTimeModalOpen, setIsFirstTimeModalOpen] = useState(false);
-
-  const {isSmallerThanMid} = useViewportSizes();
+  const [areSpeedFiltersOpen, setAreSpeedFiltersOpen] = useState(getValueFromUrl('areSpeedFiltersOpen') ?? false);
+  const [areSmallScreenFiltersOpen, setAreSmallScreenFiltersOpen] = useState(true);
 
   useEffect(() => {
     if(REACT_APP_ENV === 'production') {
@@ -88,6 +92,8 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       zoom: currentMapZoom,
       center: currentMapCenter,
       selectedGeospaceId,
+      isExplorationPopoverOpen,
+      areSpeedFiltersOpen
     };
     updateUrl(currentState);
   }, [
@@ -99,7 +105,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     selectedSpeedFilters,
     currentMapZoom,
     currentMapCenter,
-    selectedGeospaceId
+    selectedGeospaceId,
+    isExplorationPopoverOpen,
+    areSpeedFiltersOpen
   ]);
 
   useEffect(() => {
@@ -207,6 +215,21 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   const closeFirstTimeModal = () => setIsFirstTimeModalOpen(false);
 
+  const handleToggleExplorationPopover = (value: boolean) => {
+    if(isSmallerThanMid && areSpeedFiltersOpen) setAreSpeedFiltersOpen(false);
+    setIsExplorationPopoverOpen(value);
+  }
+
+  const toggleSmallScreenFilters = () => {
+    setAreSmallScreenFiltersOpen(!areSmallScreenFiltersOpen);
+  }
+
+  const handleChangeFilters = (filters: GeoJSONFilters) => {
+    setSpeedType(filters.speedType);
+    setCalendarType(filters.calendar);
+    setProvider(filters.provider);
+  }
+
   return (
     <div style={styles.ExplorePageContainer(isSmallerThanMid)}>
       { loading && <CustomMapOverlayingLoader/> }
@@ -225,24 +248,40 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
            isRightPanelHidden={isRightPanelHidden}
       />
       <DatePicker closeDatePicker={closeDatePicker} applyRanges={handleApplyRanges} initialState={getInitialStateFromCalendarType(calendarType)}/>
-      <TopSearchbar selectSuggestion={selectSuggestion}/>
-      <TopFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
-                  setGeospaceNamespace={setGeospaceNamespace}
-                  setSpeedType={setSpeedType}
-                  setCalendarType={handleSetCalendarType}
-                  setProvider={setProvider}
-                  geospaceNamespace={geospaceNamespace}
-                  speedType={speedType}
-                  calendarType={calendarType}
-                  provider={provider}
-                  openDatePicker={openDatePicker}
-                  isRightPanelHidden={isRightPanelHidden}
+      <TopSearchbar selectSuggestion={selectSuggestion}
+                    toggleFilters={toggleSmallScreenFilters}
+                    areSmallFiltersOpen={areSmallScreenFiltersOpen}
       />
-      <SpeedFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
+      { isSmallerThanMid && areSmallScreenFiltersOpen &&
+        <DropdownFilters calendarType={calendarType}
+                         provider={provider}
+                         speedType={speedType}
+                         openDatePicker={openDatePicker}
+                         selectedGeospaceId={selectedGeospaceId}
+                         changeFilters={handleChangeFilters}
+        />
+      }
+      {!isSmallerThanMid &&
+        <TopFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
+                    setGeospaceNamespace={setGeospaceNamespace}
+                    setSpeedType={setSpeedType}
+                    setCalendarType={handleSetCalendarType}
+                    setProvider={setProvider}
+                    geospaceNamespace={geospaceNamespace}
                     speedType={speedType}
-                    selectedSpeedFilters={selectedSpeedFilters}
-                    setSelectedSpeedFilters={setSelectedSpeedFilters}
-      />
+                    calendarType={calendarType}
+                    provider={provider}
+                    openDatePicker={openDatePicker}
+                    isRightPanelHidden={isRightPanelHidden}
+        />
+      }
+      { !isSmallerThanMid &&
+        <SpeedFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
+                      speedType={speedType}
+                      selectedSpeedFilters={selectedSpeedFilters}
+                      setSelectedSpeedFilters={setSelectedSpeedFilters}
+        />
+      }
       <ExplorationPopover closePopover={closePopover}
                           selectGeospace={selectGeospace}
                           setGeospaceNamespace={setGeospaceNamespace}
@@ -250,7 +289,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                           setCenter={setCurrentMapCenter}
                           setZoom={setCurrentMapZoom}
                           isOpen={isExplorationPopoverOpen}
-                          setIsOpen={setIsExplorationPopoverOpen}
+                          setIsOpen={handleToggleExplorationPopover}
       />
       { isRightPanelOpen && selectedGeospace &&
         <RightPanel closePanel={closeRightPanel}
@@ -268,16 +307,24 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                     loading={loading}
         />
       }
-      {
-        isDatePickerOpen &&
+      { isDatePickerOpen &&
         <DatePicker closeDatePicker={closeDatePicker}
                     applyRanges={handleApplyRanges}
                     initialState={getInitialStateFromCalendarType(calendarType as string)}
         />
       }
-      {
-        isFirstTimeModalOpen && isSmallerThanMid &&
+      { isFirstTimeModalOpen && isSmallerThanMid &&
         <FirstTimeModal closeModal={closeFirstTimeModal}/>
+      }
+      { isSmallerThanMid && !isExplorationPopoverOpen &&
+        <SmallScreenBottomNavigator geospaceNamespace={geospaceNamespace}
+                                    setGeospaceNamespace={setGeospaceNamespace}
+                                    areSpeedFiltersOpen={areSpeedFiltersOpen}
+                                    setAreSpeedFiltersOpen={setAreSpeedFiltersOpen}
+                                    speedType={speedType as string}
+                                    selectedSpeedFilters={selectedSpeedFilters}
+                                    setSelectedSpeedFilters={setSelectedSpeedFilters}
+        />
       }
     </div>
   )

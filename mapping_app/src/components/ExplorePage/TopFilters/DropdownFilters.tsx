@@ -1,4 +1,4 @@
-import {ChangeEvent, ReactElement, useEffect, useState} from "react";
+import React, {ChangeEvent, MouseEventHandler, ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/DropdownFilters.style";
 import DropdownFilter from "./DropdownFilter";
 import CalendarIcon from '../../../assets/calendar-icon.png';
@@ -13,6 +13,14 @@ import {Filter, Optional} from "../../../utils/types";
 import {debounce} from "../../../api/utils/debouncer";
 import {GeoJSONFilters} from "../../../api/geojson/types";
 import {usePrev} from "../../../hooks/usePrev";
+import DatePicker from "../DatePicker/DatePicker";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import './styles/DropdownFilters.css';
+
+type ScrollPosition = {
+  clientX: number;
+  scrollX: number;
+}
 
 interface DropdownFiltersProps {
   changeFilters: (filters: GeoJSONFilters) => void;
@@ -32,6 +40,8 @@ const DropdownFilters = ({
   selectedGeospaceId
 }: DropdownFiltersProps): ReactElement => {
 
+  const {isSmallerThanMid} = useViewportSizes();
+
   const [currentFilters, setCurrentFilters] = useState<GeoJSONFilters>({
     speedType: speedType,
     calendar: calendarType,
@@ -40,8 +50,11 @@ const DropdownFilters = ({
   const [providers, setProviders] = useState<Array<Asn>>([]);
   const [openFilter, setOpenFilter] = useState<Optional<string>>(null);
   const [providersLoading, setProvidersLoading] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState<ScrollPosition>({clientX: 0, scrollX: 0});
 
   const prevFilters = usePrev({speedType, calendarType, provider});
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if(selectedGeospaceId) {
@@ -127,8 +140,35 @@ const DropdownFilters = ({
     }
   }
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsScrolling(true);
+    setScrollPosition({clientX: e.clientX, scrollX: scrollPosition.scrollX});
+  }
+
+  const turnOffSlider = () => {
+    setIsScrolling(false);
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const {clientX, scrollX} = scrollPosition;
+    if(isScrolling && !!sliderRef.current) {
+      const scroll: number = scrollX + e.clientX - clientX;
+      sliderRef.current.scrollLeft = scroll;
+      setScrollPosition({scrollX: scroll, clientX: e.clientX});
+    }
+  }
+
   return (
-    <div style={styles.DropdownFiltersContainer} id={'dropdown-filters--container'}>
+    <div style={styles.DropdownFiltersContainer(isSmallerThanMid)}
+         id={'dropdown-filters--container'}
+         className={`${isSmallerThanMid ? 'dropdown-filters--container-small' : ''}`}
+         ref={sliderRef}
+         onMouseDown={isSmallerThanMid ? handleMouseDown : undefined}
+         onMouseUp={isSmallerThanMid ? turnOffSlider : undefined}
+         onMouseMove={isSmallerThanMid ? handleMouseMove : undefined}
+         draggable={true}
+    >
       <DropdownFilter iconSrc={SpeedIcon}
                       options={Object.values(SpeedFilters)}
                       textWidth={'70px'}
@@ -139,7 +179,7 @@ const DropdownFilters = ({
                       openFilter={openFilter}
                       loading={false}
       />
-      <DropdownFilterVerticalDivider/>
+      { !isSmallerThanMid && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={CalendarIcon}
                       options={isCalendarFilterPresent(calendarType) ? Object.values(CalendarFilters) : [calendarType, ...Object.values(CalendarFilters)]}
                       textWidth={'70px'}
@@ -151,7 +191,7 @@ const DropdownFilters = ({
                       lastOptionOnClick={openDatePicker}
                       loading={false}
       />
-      <DropdownFilterVerticalDivider/>
+      { !isSmallerThanMid && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={ProvidersIcon}
                       options={providers}
                       withSearchbar
@@ -164,6 +204,7 @@ const DropdownFilters = ({
                       setOpenFilter={setOpenFilter}
                       openFilter={openFilter}
                       loading={providersLoading}
+                      isLast
       />
     </div>
   )
