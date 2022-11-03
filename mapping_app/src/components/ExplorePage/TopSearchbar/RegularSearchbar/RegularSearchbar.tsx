@@ -6,6 +6,7 @@ import {WHITE} from "../../../../styles/colors";
 import ArrowRight from "../../../../assets/arrow-right.png";
 import SuggestionsBox from "../SuggestionsBox";
 import {Geospace} from "../../../../api/geospaces/types";
+import ClearIcon from '../../../../assets/clear-button.png';
 
 interface RegularSearchbarProps {
   inputRef: RefObject<HTMLInputElement>;
@@ -15,6 +16,7 @@ interface RegularSearchbarProps {
   selectSuggestion: (suggestion: Geospace) => void;
   open: boolean;
   setOpen: (value: boolean) => void;
+  clearInput: () => void;
 }
 
 const RegularSearchbar = ({
@@ -24,7 +26,8 @@ const RegularSearchbar = ({
   suggestions,
   selectSuggestion,
   open,
-  setOpen
+  setOpen,
+  clearInput
 }: RegularSearchbarProps): ReactElement => {
   return (
     <div style={styles.TopSearchbarContainer} id={'top-searchbar'}>
@@ -38,6 +41,9 @@ const RegularSearchbar = ({
              id={'top-searchbar--input'}
              ref={inputRef}
       />
+      { inputRef && inputRef.current?.value &&
+        <img className={'hover-opaque'} src={ClearIcon} style={styles.ClearIcon} alt={'clear-icon'} onClick={clearInput}/>
+      }
       <div className={'hover-opaque'} style={styles.ArrowContainer}>
         {
           loading ?
