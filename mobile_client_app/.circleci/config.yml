@@ -103,6 +103,9 @@ jobs:
       - ruby/install-deps:
           app-dir: ~/project/mobile_client_app/client_mobile_app
       - run:
+          command: gem install fastlane
+          working_directory: ~/project/mobile_client_app/client_mobile_app
+      - run:
           command: ANDROID_AAB_PATH="~/workspace/android/<< parameters.flavor >>/*.aab" fastlane << parameters.flavor >>
           working_directory: ~/project/mobile_client_app/client_mobile_app/android
 
@@ -160,10 +163,10 @@ workflows:
       #         ignore:
       #           - "master"
       #           - "dev"
-      - build-android:
-          name: "build-android-staging"
-          # requires: [unit_test, check-android-changelog]
-          flavor: staging
+      # - build-android:
+      #     name: "build-android-staging"
+      #     # requires: [unit_test, check-android-changelog]
+      #     flavor: staging
       #     # filters:
       #     #   branches:
       #     #     only: ["dev"]
@@ -178,7 +181,7 @@ workflows:
       #     requires: [build-android-dev, build-android-staging, build-android-prod]
       - release-android:
           name: "release-android-staging"
-          requires: [build-android-staging]
+          # requires: [build-android-staging]
           flavor: staging
           # filters:
           #   branches:
