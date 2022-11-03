@@ -1,4 +1,12 @@
 import {SPEED_NORMAL, SPEED_UNDERSERVED, SPEED_UNSERVED} from "../styles/colors";
+import DownloadIconGray from "../assets/download-icon-gray.png";
+import DownloadIconUnserved from "../assets/download-icon-unserved.png";
+import DownloadIconUnderserved from "../assets/download-icon-underserved.png";
+import DownloadIconServed from "../assets/download-icon-served.png";
+import UploadIconGray from "../assets/upload-icon-gray.png";
+import UploadIconUnserved from "../assets/upload-icon-unserved.png";
+import UploadIconUnderserved from "../assets/upload-icon-underserved.png";
+import UploadIconServed from "../assets/upload-icon-served.png";
 
 export type SpeedsObject = {
   UNSERVED: string;
@@ -43,4 +51,19 @@ export const getSignalStateUpload = (uploadMedian: number): string => {
   if(uploadMedian < 3) return speedTypes.UNSERVED;
   else if(uploadMedian >= 3 && uploadMedian < 20) return speedTypes.UNDERSERVED;
   else return speedTypes.SERVED;
+}
+
+export const getDownloadIconSrc = (speedType: string, speedState: string) => {
+  console.log(speedType, speedState);
+  if(speedType !== 'Download') return DownloadIconGray;
+  if(speedState === speedTypes.UNSERVED) return DownloadIconUnserved;
+  else if(speedState === speedTypes.UNDERSERVED) return DownloadIconUnderserved;
+  else return DownloadIconServed;
+}
+
+export const getUploadIconSrc = (speedType: string, speedState: string) => {
+  if(speedType !== 'Upload') return UploadIconGray;
+  if(speedState === speedTypes.UNSERVED) return UploadIconUnserved;
+  else if(speedState === speedTypes.UNDERSERVED) return UploadIconUnderserved;
+  else return UploadIconServed;
 }

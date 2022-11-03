@@ -11,7 +11,7 @@ const buttonContainerStyle: CSSProperties = {
   paddingRight: '15px',
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'space-between',
+  justifyContent: 'center',
   alignItems: 'center',
   cursor: 'pointer',
 }
