@@ -46,22 +46,19 @@ jobs:
           command: ./scripts/build_<<  parameters.flavor >>.sh
           working_directory: ~/project/mobile_client_app/client_mobile_app
       - persist_to_workspace:
-          root: ~/project/workspace
+          root: ~/project/mobile_client_app/client_mobile_app/workspace
           paths:
             - android/*
 
-  upload:
-    executor: google
+  upload-android:
+    executor: gcp-cli/google
     steps:
       - attach_workspace:
           at: ./workspace
       - run: echo ${TTAC_PROD_GCP_CRED} | base64 -d > gcpkey.json
-      - gcp-cli/install_and_initialize_cli:
-          context: uploadMobile
-          executor: gcp-cli/default
-          gcloud-service-key: $(echo ${TTAC_PROD_GCP_CRED} | base64 -d)
+      - gcp-cli/initialize:
+          gcloud-service-key: TTAC_PROD_GCP_CRED
       - run: gsutil cp ./workspace/android/* gs://${MOBILE_APP_BUCKET_NAME}/android
-
 
   build-ios:
     working_directory: ~/project
@@ -88,4 +85,6 @@ workflows:
           version: 3.3.1
       - build-android:
           flavor: dev
+      - upload-android:
+          requires: [build-android]
       - build-ios
