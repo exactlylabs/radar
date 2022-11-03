@@ -13,6 +13,7 @@ import {
 } from "../../../utils/map";
 import GeographicalTooltip from "../GeographicalTooltip/GeographicalTooltip";
 import ReactDOMServer from "react-dom/server";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 
 interface CustomMapProps {
@@ -50,9 +51,10 @@ const CustomMap = ({
   // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
 
   const prevSelectedGeospace = usePrev(selectedGeospace);
+  const {isSmallerThanMid} = useViewportSizes();
 
   useEffect(() => {
-    initializeMap(map, setZoom, setCenter);
+    initializeMap(map, setZoom, setCenter, isSmallerThanMid);
   }, []);
 
   map.setView({lat: center[0], lng: center[1]}, zoom);
@@ -61,7 +63,7 @@ const CustomMap = ({
     const selectedGeospaceChanged = (!!prevSelectedGeospace && !!selectedGeospace && (prevSelectedGeospace as GeospaceOverview).geospace.id !== (selectedGeospace as GeospaceOverview).geospace.id);
     const nowThereIsASelectedGeospace = !prevSelectedGeospace && !!selectedGeospace;
     const nowThereIsNoSelectedGeospace = !!prevSelectedGeospace && !selectedGeospace;
-    // check to see if we need to re-paint a shape is selected or unselected
+    // check to see if we need to re-paint shapes
     if(selectedGeospaceChanged || nowThereIsASelectedGeospace || nowThereIsNoSelectedGeospace) {
       map.eachLayer((layer: any) => { paintLayer(layer, selectedGeospace, speedType, selectedSpeedFilters); });
     }

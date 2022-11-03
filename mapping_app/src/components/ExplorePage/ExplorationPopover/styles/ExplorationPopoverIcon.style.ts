@@ -1,5 +1,9 @@
 import {CSSProperties} from "react";
-import {EXPLORATION_POPOVER_BLACK, EXPLORATION_POPOVER_SECONDARY_BLACK} from "../../../../styles/colors";
+import {
+  EXPLORATION_POPOVER_BLACK,
+  EXPLORATION_POPOVER_SECONDARY_BLACK,
+  GEOGRAPHICAL_CATEGORY_BOTTOM
+} from "../../../../styles/colors";
 
 const explorationPopoverIconContainerStyle: CSSProperties = {
   width: '46px',
@@ -17,12 +21,32 @@ const explorationPopoverIconContainerStyle: CSSProperties = {
   zIndex: 1002,
 }
 
+const smallExplorationPopoverIconContainerStyle: CSSProperties = {
+  ...explorationPopoverIconContainerStyle,
+  width: '48px',
+  height: '48px',
+  bottom: '150px',
+  left: undefined,
+  right: '50%',
+  marginRight: 'calc(-24px - 148.5px)',
+  backgroundColor: GEOGRAPHICAL_CATEGORY_BOTTOM
+}
+
 const iconStyle: CSSProperties = {
   width: '24px',
   height: '24px',
 }
 
+const smallIconStyle: CSSProperties = {
+  width: '20px',
+  height: '20px'
+}
+
 export const styles = {
-  ExplorationPopoverIconContainer: explorationPopoverIconContainerStyle,
-  Icon: iconStyle
+  ExplorationPopoverIconContainer: (isSmall: boolean) => {
+    return isSmall ? smallExplorationPopoverIconContainerStyle : explorationPopoverIconContainerStyle;
+  },
+  Icon: (isSmall: boolean) => {
+    return isSmall ? smallIconStyle : iconStyle;
+  }
 }

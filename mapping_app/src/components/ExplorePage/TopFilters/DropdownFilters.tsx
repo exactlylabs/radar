@@ -1,4 +1,4 @@
-import {ChangeEvent, ReactElement, useEffect, useState} from "react";
+import React, {ChangeEvent, MouseEventHandler, ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/DropdownFilters.style";
 import DropdownFilter from "./DropdownFilter";
 import CalendarIcon from '../../../assets/calendar-icon.png';
@@ -13,6 +13,13 @@ import {Filter, Optional} from "../../../utils/types";
 import {debounce} from "../../../api/utils/debouncer";
 import DatePicker from "../DatePicker/DatePicker";
 import {usePrev} from '../../../hooks/usePrev';
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import './styles/DropdownFilters.css';
+
+type ScrollPosition = {
+  clientX: number;
+  scrollX: number;
+}
 
 interface DropdownFiltersProps {
   changeFilters: (filters: Array<Filter>) => void;
@@ -32,12 +39,17 @@ const DropdownFilters = ({
   selectedGeospaceId
 }: DropdownFiltersProps): ReactElement => {
 
+  const {isSmallerThanMid} = useViewportSizes();
+
   const [currentFilters, setCurrentFilters] = useState<Array<Filter>>([speedType, calendarType, provider]);
   const [providers, setProviders] = useState<Array<Asn>>([]);
   const [openFilter, setOpenFilter] = useState<Optional<string>>(null);
   const [providersLoading, setProvidersLoading] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState<ScrollPosition>({clientX: 0, scrollX: 0});
 
   const prevFilters = usePrev({speedType, calendarType, provider});
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if(selectedGeospaceId) {
@@ -120,8 +132,35 @@ const DropdownFilters = ({
     }
   }
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsScrolling(true);
+    setScrollPosition({clientX: e.clientX, scrollX: scrollPosition.scrollX});
+  }
+
+  const turnOffSlider = () => {
+    setIsScrolling(false);
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const {clientX, scrollX} = scrollPosition;
+    if(isScrolling && !!sliderRef.current) {
+      const scroll: number = scrollX + e.clientX - clientX;
+      sliderRef.current.scrollLeft = scroll;
+      setScrollPosition({scrollX: scroll, clientX: e.clientX});
+    }
+  }
+
   return (
-    <div style={styles.DropdownFiltersContainer} id={'dropdown-filters--container'}>
+    <div style={styles.DropdownFiltersContainer(isSmallerThanMid)}
+         id={'dropdown-filters--container'}
+         className={`${isSmallerThanMid ? 'dropdown-filters--container-small' : ''}`}
+         ref={sliderRef}
+         onMouseDown={isSmallerThanMid ? handleMouseDown : undefined}
+         onMouseUp={isSmallerThanMid ? turnOffSlider : undefined}
+         onMouseMove={isSmallerThanMid ? handleMouseMove : undefined}
+         draggable={true}
+    >
       <DropdownFilter iconSrc={SpeedIcon}
                       options={speedFilters}
                       textWidth={'70px'}
@@ -132,7 +171,7 @@ const DropdownFilters = ({
                       openFilter={openFilter}
                       loading={false}
       />
-      <DropdownFilterVerticalDivider/>
+      { !isSmallerThanMid && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={CalendarIcon}
                       options={calendarFilters.includes((calendarType as string)) ? calendarFilters : [calendarType, ...calendarFilters]}
                       textWidth={'70px'}
@@ -145,7 +184,7 @@ const DropdownFilters = ({
                       lastOptionOnClick={openDatePicker}
                       loading={false}
       />
-      <DropdownFilterVerticalDivider/>
+      { !isSmallerThanMid && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={ProvidersIcon}
                       options={providers}
                       withSearchbar
@@ -158,6 +197,7 @@ const DropdownFilters = ({
                       setOpenFilter={setOpenFilter}
                       openFilter={openFilter}
                       loading={providersLoading}
+                      isLast
       />
     </div>
   )

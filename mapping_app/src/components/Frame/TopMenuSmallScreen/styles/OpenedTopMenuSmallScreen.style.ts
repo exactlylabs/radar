@@ -3,7 +3,7 @@ import {FOOTER_TEXT, WHITE} from "../../../../styles/colors";
 
 const openedTopMenuContainerStyle: CSSProperties = {
   width: '100vw',
-  height: '385px',
+  height: '355px',
   backgroundColor: WHITE,
   zIndex: 1050,
   display: 'flex',

@@ -132,10 +132,14 @@ export const paintLayer = (layer: any, selectedGeospace: Optional<GeospaceInfo>,
   }
 }
 
-export const initializeMap = (map: L.Map, setZoom: (newZoom: number) => void, setCenter: (newCenter: Array<number>) => void) => {
+export const initializeMap = (map: L.Map, setZoom: (newZoom: number) => void, setCenter: (newCenter: Array<number>) => void, isSmallScreen: boolean) => {
   map.attributionControl.setPrefix('');
   map.setMinZoom(MIN_ZOOM);
-  map.zoomControl.setPosition('bottomright');
+  if(isSmallScreen) {
+    map.zoomControl.remove();
+  } else {
+    map.zoomControl.setPosition('bottomright');
+  }
   map.on('zoomend', () => {
     const center: L.LatLng = map.getCenter();
     setZoom(map.getZoom());

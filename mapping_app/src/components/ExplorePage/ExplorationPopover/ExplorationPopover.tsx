@@ -6,9 +6,11 @@ import {Geospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
 import DiagonalArrow from '../../../assets/diagonal-arrow.png';
+import CloseIconLight from '../../../assets/close-icon-light.png';
 import {tabs} from "../../../utils/filters";
 import ExplorationPopoverIcon from "./ExplorationPopoverIcon";
 import {Optional} from "../../../utils/types";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 
 interface ExplorationPopoverProps {
@@ -22,20 +24,12 @@ interface ExplorationPopoverProps {
   setIsOpen: (value: boolean) => void;
 }
 
-export type PopoverStateObject = {
-  INITIAL: string;
-  STATES: string;
-  COUNTIES: string;
-  SPECIFIC_STATE: string;
-  TRIBAL_LANDS: string;
-}
-
-export const popoverStates: PopoverStateObject = {
-  INITIAL: 'INITIAL',
-  STATES: 'STATES',
-  SPECIFIC_STATE: 'SPECIFIC_STATE',
-  COUNTIES: 'COUNTIES',
-  TRIBAL_LANDS: 'TRIBAL_LANDS',
+export enum popoverStates {
+  INITIAL = 'INITIAL',
+  STATES = 'STATES',
+  SPECIFIC_STATE = 'SPECIFIC_STATE',
+  COUNTIES = 'COUNTIES',
+  TRIBAL_LANDS = 'TRIBAL_LANDS',
 }
 
 const ExplorationPopover = ({
@@ -48,8 +42,10 @@ const ExplorationPopover = ({
   setIsOpen
 }: ExplorationPopoverProps): ReactElement => {
 
+  const {isSmallerThanMid} = useViewportSizes();
+
   const [loading, setLoading] = useState(true);
-  const [currentPopoverState, setCurrentPopoverState] = useState(popoverStates.INITIAL);
+  const [currentPopoverState, setCurrentPopoverState] = useState<string>(popoverStates.INITIAL);
   const [states, setStates] = useState<Array<Geospace>>([]);
   const [counties, setCounties] = useState<Array<Geospace>>([]);
   const [indexedCounties, setIndexedCounties] = useState({});
@@ -110,38 +106,35 @@ const ExplorationPopover = ({
   }
 
   return isOpen ?
-      <div style={styles.ExplorationPopoverContainer(currentPopoverState)}>
-        <div className={'hover-opaque'}
-             style={styles.ShrinkButtonContainer}
-             onClick={closePopover}
-        >
-          <img src={DiagonalArrow} style={styles.Arrow} alt={'diagonal-arrow'}/>
-        </div>
-        {
-          currentPopoverState === popoverStates.INITIAL &&
-          <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState}/>
-        }
-        {
-          currentPopoverState !== popoverStates.INITIAL &&
-          <SpecificExplorationPopoverContent type={currentPopoverState}
-                                             setType={handleChangePopoverState}
-                                             goBack={goBackToInitial}
-                                             selectGeospace={handleChangeGeospace}
-                                             states={states}
-                                             indexedCounties={indexedCounties}
-                                             tribalTracts={tribalTracts}
-                                             setCenter={setCenter}
-                                             setZoom={setZoom}
-                                             loading={loading}
-                                             setLoading={setLoading}
-                                             selectedOption={selectedOption}
-                                             setSelectedOption={setSelectedOption}
-          />
-        }
-      </div> :
-      <div style={styles.ClosedExplorationPopoverContainer}>
-        <ExplorationPopoverIcon openPopover={openPopover}/>
-      </div>;
+    <div style={styles.ExplorationPopoverContainer(currentPopoverState, isSmallerThanMid)}>
+      <div className={'hover-opaque'}
+           style={styles.ShrinkButtonContainer(isSmallerThanMid)}
+           onClick={closePopover}
+      >
+        <img src={isSmallerThanMid ? CloseIconLight : DiagonalArrow} style={styles.Arrow} alt={'diagonal-arrow'}/>
+      </div>
+      {
+        currentPopoverState === popoverStates.INITIAL ?
+        <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState}/> :
+        <SpecificExplorationPopoverContent type={currentPopoverState}
+                                           setType={handleChangePopoverState}
+                                           goBack={goBackToInitial}
+                                           selectGeospace={handleChangeGeospace}
+                                           states={states}
+                                           indexedCounties={indexedCounties}
+                                           tribalTracts={tribalTracts}
+                                           setCenter={setCenter}
+                                           setZoom={setZoom}
+                                           loading={loading}
+                                           setLoading={setLoading}
+                                           selectedOption={selectedOption}
+                                           setSelectedOption={setSelectedOption}
+        />
+      }
+    </div> :
+    <div style={styles.ClosedExplorationPopoverContainer}>
+      <ExplorationPopoverIcon openPopover={openPopover}/>
+    </div>;
 }
 
 export default React.memo(ExplorationPopover);

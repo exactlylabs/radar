@@ -10,6 +10,7 @@ import {GeospaceInfo} from "../../api/geospaces/types";
 import {Filter, Optional} from "../../utils/types";
 import {Asn} from "../../api/asns/types";
 import CustomMap from "./CustomMap/CustomMap";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 interface MyMapProps {
   namespace: string;
@@ -43,6 +44,8 @@ const MyMap = ({
   dateQueryString,
 }: MyMapProps): ReactElement => {
 
+  const {isSmallerThanMid} = useViewportSizes();
+
   const [geoJSON, setGeoJSON] = useState<GeoJSONTimedResponse>();
 
   useEffect(() => {
@@ -62,7 +65,7 @@ const MyMap = ({
         <MapContainer center={{lat: initialCenter[0], lng: initialCenter[1]}}
                     zoom={initialZoom}
                     scrollWheelZoom
-                    style={styles.MapContainer}
+                    style={styles.MapContainer(isSmallerThanMid)}
         >
           <CustomMap geoJSON={geoJSON.data}
                      selectedGeospace={selectedGeospace}

@@ -2,7 +2,7 @@ import {CSSProperties} from "react";
 import {
   DEFAULT_SECONDARY_BLACK,
   EXPLORATION_POPOVER_BLACK,
-  EXPLORATION_POPOVER_SECONDARY_BLACK,
+  EXPLORATION_POPOVER_SECONDARY_BLACK, TRANSPARENT,
   WHITE
 } from "../../../../styles/colors";
 import {popoverStates} from "../ExplorationPopover";
@@ -45,17 +45,45 @@ const shrinkButtonContainerStyle: CSSProperties = {
   cursor: 'pointer',
 }
 
+const transparentShrinkButtonContainerStyle: CSSProperties = {
+  ...shrinkButtonContainerStyle,
+  backgroundColor: TRANSPARENT
+}
+
 const arrowStyle: CSSProperties = {
   width: '22px',
   color: WHITE,
   opacity: 0.8
 };
 
+const smallStyle: CSSProperties = {
+  ...explorationPopoverContainerStyle,
+  width: '345px',
+  height: '330px',
+  bottom: '25px',
+  left: '50%',
+  marginLeft: '-172.5px'
+}
+
+const extendedSmallStyle: CSSProperties = {
+  ...extendedExplorationPopoverContainerStyle,
+  width: '345px',
+  bottom: '25px',
+  left: '50%',
+  marginLeft: '-172.5px'
+}
+
 export const styles = {
-  ExplorationPopoverContainer: (currentPopoverState: string) => {
-    return currentPopoverState === popoverStates.INITIAL ? explorationPopoverContainerStyle : extendedExplorationPopoverContainerStyle;
+  ExplorationPopoverContainer: (currentPopoverState: string, isSmall: boolean) => {
+    let style = explorationPopoverContainerStyle;
+    if(!isSmall && currentPopoverState !== popoverStates.INITIAL) style = extendedExplorationPopoverContainerStyle;
+    else if(isSmall && currentPopoverState === popoverStates.INITIAL) style = smallStyle;
+    else if(isSmall && currentPopoverState !== popoverStates.INITIAL) style = extendedSmallStyle;
+    return style;
   },
-  ShrinkButtonContainer: shrinkButtonContainerStyle,
+  ShrinkButtonContainer: (isSmall: boolean) => {
+    return isSmall ? transparentShrinkButtonContainerStyle : shrinkButtonContainerStyle;
+  },
   Arrow: arrowStyle,
   ClosedExplorationPopoverContainer: closedExplorationPopoverContainerStyle,
 }
