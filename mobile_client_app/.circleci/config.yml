@@ -104,16 +104,16 @@ workflows:
               ignore: 
                 - "master"
                 - "dev"
-        - build-android:
-          flavor: stag
-          filters:
-            branches:
-              only: "dev"
-        - build-android:
-          flavor: prod
-          filters:
-            branches:
-              only: "master"
+      - build-android:
+        flavor: stag
+        filters:
+          branches:
+            only: "dev"
+      - build-android:
+        flavor: prod
+        filters:
+          branches:
+            only: "master"
       - upload-android:
           requires: [build-android]
       # # iOS
