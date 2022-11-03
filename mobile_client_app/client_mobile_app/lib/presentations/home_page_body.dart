@@ -4,18 +4,16 @@ import 'package:client_mobile_app/presentations/speed_test/speed_test_page.dart'
 
 class HomePageBody extends StatelessWidget {
   const HomePageBody({
+    Key? key,
     required this.pageIdx,
-    required this.height,
-    super.key,
-  });
+  }) : super(key: key);
 
   final int pageIdx;
-  final double height;
 
   @override
   Widget build(BuildContext context) {
     if (pageIdx == _SPEED_TEST_PAGE_IDX) {
-      return SpeedTestPage(height: height);
+      return SpeedTestPage();
     } else if (pageIdx == _YOUR_RESULTS_PAGE_IDX) {
       return const Center(child: Text('Your Results'));
     } else if (pageIdx == _MAP_PAGE_IDX) {
