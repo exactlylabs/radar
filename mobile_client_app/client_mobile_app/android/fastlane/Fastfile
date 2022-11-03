@@ -22,17 +22,12 @@ platform :android do
   end
 
   desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-  
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
-  end
-
-  desc "Deploy a new version to the Google Play"
-  lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+  lane :staging do
+    upload_to_play_store(
+      track: "internal", 
+      metadata_path: "./fastlane/metadata", 
+      aab_paths: "../build/app/outputs/bundle/stagingRelease/app-staging-release.aab",
+      release_status: "draft" # As soon as the app is released, we can remove this.
+    )
   end
 end

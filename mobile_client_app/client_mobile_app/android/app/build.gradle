@@ -132,16 +132,12 @@ android {
         implementation.exclude group: 'org.jetbrains', module: 'annotations'
     }
 
-    // buildTypes {
-    //     release {
-    //         shrinkResources false
-    //         minifyEnabled false
-    //     }
-    // }
-
-    // buildTypes {
-        
-    // }
+    buildTypes {
+        release {
+            shrinkResources false
+            minifyEnabled false
+        }
+    }
 }
 
 flutter {
