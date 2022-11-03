@@ -30,6 +30,25 @@ commands:
           storeFile=/tmp/upload-keystore.jks
           """ > << parameters.working_directory >>/key.properties
 
+  build-android:
+    parameters:
+      flavor:
+        type: enum
+        enum: ["dev","staging", "prod"]
+    steps:
+      - setup_keystores:
+          working_directory: ~/project/mobile_client_app/client_mobile_app/android
+      - flutter/install_sdk_and_pub:
+          flutter_version: 3.3.1
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - flutter/install_android_gradle:
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - flutter/install_android_gem:
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - run: 
+          command: ./scripts/build_android_<<  parameters.flavor >>.sh
+          working_directory: ~/project/mobile_client_app/client_mobile_app
+
 jobs:
   check-android-changelog:
     docker:
@@ -52,18 +71,8 @@ jobs:
       tag: 2022.09.1
     steps:
       - checkout
-      - setup_keystores:
-          working_directory: ~/project/mobile_client_app/client_mobile_app/android
-      - flutter/install_sdk_and_pub:
-          flutter_version: 3.3.1
-          app-dir: ~/project/mobile_client_app/client_mobile_app
-      - flutter/install_android_gradle:
-          app-dir: ~/project/mobile_client_app/client_mobile_app
-      - flutter/install_android_gem:
-          app-dir: ~/project/mobile_client_app/client_mobile_app
-      - run: 
-          command: ./scripts/build_android_<<  parameters.flavor >>.sh
-          working_directory: ~/project/mobile_client_app/client_mobile_app
+      - build-android:
+          flavor: << parameters.flavor >>
       - persist_to_workspace:
           root: ~/project/mobile_client_app/client_mobile_app/workspace
           paths:
@@ -89,10 +98,12 @@ jobs:
         enum: ["staging", "prod"]
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/workspace
       - ruby/install-deps:
           app-dir: ~/project/mobile_client_app/client_mobile_app
       - run:
-          command: fastlane << parameters.flavor >>
+          command: ANDROID_AAB_PATH="~/workspace/android/<< parameters.flavor >>/*.aab" fastlane << parameters.flavor >>
           working_directory: ~/project/mobile_client_app/client_mobile_app/android
 
   build-ios:
@@ -135,37 +146,36 @@ workflows:
     jobs:
       
       # Android
-      - check-android-changelog
-      - flutter/unit_test:
-          name: "unit_test"
-          app-dir: ~/project/mobile_client_app/client_mobile_app
-          version: 3.3.1
-      - build-android:
-          name: "build-android-dev"
-          requires: [unit_test, check-android-changelog]
-          flavor: dev
-          filters:
-            branches:
-              ignore:
-                - "/.*/" # TODO: REMOVE THIS DEBUG CONDITION
-                - "master"
-                - "dev"
+      # - check-android-changelog
+      # - flutter/unit_test:
+      #     name: "unit_test"
+      #     app-dir: ~/project/mobile_client_app/client_mobile_app
+      #     version: 3.3.1
+      # - build-android:
+      #     name: "build-android-dev"
+      #     requires: [unit_test, check-android-changelog]
+      #     flavor: dev
+      #     filters:
+      #       branches:
+      #         ignore:
+      #           - "master"
+      #           - "dev"
       - build-android:
           name: "build-android-staging"
-          requires: [unit_test, check-android-changelog]
+          # requires: [unit_test, check-android-changelog]
           flavor: staging
-          # filters:
-          #   branches:
-          #     only: ["dev"]
-      - build-android:
-          name: "build-android-prod"
-          requires: [unit_test, check-android-changelog]
-          flavor: prod
-          filters:
-            branches:
-              only: "master"
-      - upload-android:
-          requires: [build-android-dev, build-android-staging, build-android-prod]
+      #     # filters:
+      #     #   branches:
+      #     #     only: ["dev"]
+      # - build-android:
+      #     name: "build-android-prod"
+      #     requires: [unit_test, check-android-changelog]
+      #     flavor: prod
+      #     filters:
+      #       branches:
+      #         only: "master"
+      # - upload-android:
+      #     requires: [build-android-dev, build-android-staging, build-android-prod]
       - release-android:
           name: "release-android-staging"
           requires: [build-android-staging]
@@ -173,31 +183,31 @@ workflows:
           # filters:
           #   branches:
           #     only: ["dev"]
-      - release-android:
-          name: "release-android-prod"
-          requires: [build-android-prod]
-          flavor: prod
-          filters:
-            branches:
-              only: ["master"]
+      # - release-android:
+      #     name: "release-android-prod"
+      #     requires: [build-android-prod]
+      #     flavor: prod
+      #     filters:
+      #       branches:
+      #         only: ["master"]
       # iOS
-      - build-ios:
-          name: "build-ios-dev"
-          flavor: dev
-          filters:
-            branches:
-              ignore: "master"
-      - build-ios:
-          name: "build-ios-staging"
-          flavor: staging
-          filters:
-            branches:
-              only: "dev"
-      - build-ios:
-          name: "build-ios-prod"
-          flavor: prod
-          filters:
-            branches:
-              only: "master"
-      - upload-ios:
-          requires: [build-ios-dev, build-ios-staging, build-ios-prod]
+      # - build-ios:
+      #     name: "build-ios-dev"
+      #     flavor: dev
+      #     filters:
+      #       branches:
+      #         ignore: "master"
+      # - build-ios:
+      #     name: "build-ios-staging"
+      #     flavor: staging
+      #     filters:
+      #       branches:
+      #         only: "dev"
+      # - build-ios:
+      #     name: "build-ios-prod"
+      #     flavor: prod
+      #     filters:
+      #       branches:
+      #         only: "master"
+      # - upload-ios:
+      #     requires: [build-ios-dev, build-ios-staging, build-ios-prod]
