@@ -27,7 +27,7 @@ jobs:
     parameters:
       flavor:
         type: enum
-        enum: ["dev", "stag", "prod"]
+        enum: ["dev", "staging", "prod"]
     executor:
       name: android/android-docker
       tag: 2022.09.1
@@ -64,6 +64,10 @@ jobs:
     working_directory: ~/project
     macos:
       xcode: 13.4.1
+    parameters:
+      flavor:
+        type: enum
+        enum: ["dev", "staging", "prod"]
     steps:
       - checkout
       - flutter/install_sdk_and_pub:
@@ -77,14 +81,56 @@ jobs:
           command: flutter build ios --flavor dev -t lib/main_dev.dart --release --no-codesign
           working_directory: ~/project/mobile_client_app/client_mobile_app
 
+  upload-ios:
+    executor: gcp-cli/google
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - gcp-cli/initialize:
+          gcloud-service-key: TTAC_PROD_GCP_CRED
+          google-project-id: TTAC_PROD_ID
+      - run: gsutil cp -r ~/workspace/ios/* gs://${MOBILE_APP_BUCKET_NAME}/ios
+
 workflows:
-  test_build:
+  dev-commit:
     jobs:
       - flutter/unit_test:
           app-dir: ~/project/mobile_client_app/client_mobile_app
           version: 3.3.1
       - build-android:
           flavor: dev
+          filters:
+            branches:
+              ignore: 
+                - "master"
+                - "dev"
+        - build-android:
+          flavor: stag
+          filters:
+            branches:
+              only: "dev"
+        - build-android:
+          flavor: prod
+          filters:
+            branches:
+              only: "master"
       - upload-android:
           requires: [build-android]
-      - build-ios
+      # # iOS
+      # - build-ios:
+      #     flavor: dev
+      #     filters:
+      #       branches:
+      #         ignore: "master"
+      # - build-ios:
+      #   flavor: stag
+      #   filters:
+      #     branches:
+      #       only: "dev"
+      # - build-ios:
+      #   flavor: prod
+      #   filters:
+      #     branches:
+      #       only: "master"
+      # - upload-ios:
+      #     requires: [build-ios]
