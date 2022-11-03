@@ -181,7 +181,7 @@ workflows:
       #     requires: [build-android-dev, build-android-staging, build-android-prod]
       - release-android:
           name: "release-android-staging"
-          # requires: [build-android-staging]
+          requires: [build-android-staging]
           flavor: staging
           # filters:
           #   branches:
