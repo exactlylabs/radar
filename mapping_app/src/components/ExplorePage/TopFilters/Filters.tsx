@@ -11,13 +11,13 @@ interface FiltersProps {
   closeFilters: () => void;
   extendedView: boolean;
   setGeospaceNamespace: (namespace: string) => void;
-  setSpeedType: (type: Filter) => void;
-  setCalendarType: (type: Filter) => void;
-  setProvider: (type: Filter) => void;
+  setSpeedType: (type: string) => void;
+  setCalendarType: (type: string) => void;
+  setProvider: (type: Asn) => void;
   geospaceNamespace: string;
-  speedType: Filter;
-  calendarType: Filter;
-  provider: Filter;
+  speedType: string;
+  calendarType: string;
+  provider: Asn;
 }
 
 const Filters = ({

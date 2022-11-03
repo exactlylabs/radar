@@ -3,17 +3,18 @@ import {styles} from "./styles/TopFilters.style";
 import OpenFiltersButton from "./OpenFiltersButton";
 import Filters from "./Filters";
 import {Filter} from "../../../utils/types";
+import {Asn} from "../../../api/asns/types";
 
 interface TopFiltersProps {
   isRightPanelOpen: boolean;
   setGeospaceNamespace: (namespace: string) => void;
-  setSpeedType: (type: Filter) => void;
-  setCalendarType: (type: Filter) => void;
-  setProvider: (type: Filter) => void;
+  setSpeedType: (type: string) => void;
+  setCalendarType: (type: string) => void;
+  setProvider: (type: Asn) => void;
   geospaceNamespace: string;
-  speedType: Filter;
-  calendarType: Filter;
-  provider: Filter;
+  speedType: string;
+  calendarType: string;
+  provider: Asn;
 }
 
 const TopFilters = ({
