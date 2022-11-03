@@ -25,14 +25,14 @@ class StepsIndicator extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     stepCircleSize = (size.width * 0.055) / 2;
 
-    final xi =
+    final x =
         (size.width / 2) - ((size.width * 0.055) * (totalSteps)) / 2 - ((stepCircleSize! + 20) * (totalSteps - 1)) / 2;
     final y = size.height / 2;
 
     for (var i = 0; i < totalSteps; i++) {
-      final x = stepCircleSize! + ((size.width * 0.055) * i) + (stepCircleSize! + 20) * i;
-      drawStep(Offset(xi + x, y), canvas, i);
-      if (i < totalSteps - 1) drawSeparator(Offset(xi + x + stepCircleSize! + 5, y), canvas);
+      final xi = stepCircleSize! + ((size.width * 0.055) * i) + (stepCircleSize! + 20) * i;
+      drawStep(Offset(x + xi, y), canvas, i);
+      if (i < totalSteps - 1) drawSeparator(Offset(x + xi + stepCircleSize! + 5, y), canvas);
     }
   }
 
