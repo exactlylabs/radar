@@ -21,7 +21,11 @@ interface TopSearchbarProps {
   areSmallFiltersOpen: boolean;
 }
 
-const TopSearchbar = ({ selectSuggestion, areSmallFiltersOpen, toggleFilters }: TopSearchbarProps): ReactElement => {
+const TopSearchbar = ({
+  selectSuggestion,
+  areSmallFiltersOpen,
+  toggleFilters
+}: TopSearchbarProps): ReactElement => {
 
   const {isSmallerThanMid} = useViewportSizes();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -40,6 +44,10 @@ const TopSearchbar = ({ selectSuggestion, areSmallFiltersOpen, toggleFilters }: 
       window.removeEventListener('keydown', goToFirstSuggestionOnEnter);
     }
   }, [suggestions]);
+
+  useEffect(() => {
+    if(open && areSmallFiltersOpen) toggleFilters();
+  }, [open]);
 
   const openSuggestionsIfPresent = (e: MouseEvent): void => {
     const suggestionsListContainerElement: Optional<HTMLElement> = document.getElementById('top-searchbar');
@@ -74,6 +82,10 @@ const TopSearchbar = ({ selectSuggestion, areSmallFiltersOpen, toggleFilters }: 
     }
   });
 
+  const clearInput = () => {
+    if(inputRef.current) inputRef.current.value = '';
+  }
+
   return isSmallerThanMid ?
     <SmallScreenSearchbar inputRef={inputRef}
                           handleInputChange={handleInputChange}
@@ -84,6 +96,7 @@ const TopSearchbar = ({ selectSuggestion, areSmallFiltersOpen, toggleFilters }: 
                           setOpen={setOpen}
                           toggleFilters={toggleFilters}
                           areSmallFiltersOpen={areSmallFiltersOpen}
+                          clearInput={clearInput}
     /> :
     <RegularSearchbar inputRef={inputRef}
                       handleInputChange={handleInputChange}
@@ -92,6 +105,7 @@ const TopSearchbar = ({ selectSuggestion, areSmallFiltersOpen, toggleFilters }: 
                       selectSuggestion={selectSuggestion}
                       open={open}
                       setOpen={setOpen}
+                      clearInput={clearInput}
     />;
 }
 

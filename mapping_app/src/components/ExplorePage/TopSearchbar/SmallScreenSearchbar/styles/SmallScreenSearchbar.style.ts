@@ -69,6 +69,24 @@ const filtersIconStyle: CSSProperties = {
   height: '18px',
 }
 
+const loaderStyle: CSSProperties = {
+  height: '2px',
+  backgroundColor: BLACK,
+  borderRadius: '2.5px',
+  position: 'absolute',
+  bottom: 0,
+  left: 0
+}
+
+const clearIconStyle: CSSProperties = {
+  width: '20px',
+  height: '20px',
+  position: 'absolute',
+  right: '65px',
+  top: '50%',
+  marginTop: '-10px',
+}
+
 export const styles = {
   SmallScreenSearchbarContainer: smallScreenSearchbarContainerStyle,
   Input: inputStyle,
@@ -78,4 +96,8 @@ export const styles = {
     return areFiltersOpen ? openFiltersButtonStyle : filtersButtonStyle;
   },
   FiltersIcon: filtersIconStyle,
+  Loader: (width: number) => {
+    return {...loaderStyle, width: `${width}%`};
+  },
+  ClearIcon: clearIconStyle,
 }
