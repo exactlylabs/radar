@@ -36,13 +36,11 @@ class SpeedTestPage extends StatelessWidget {
                     ),
                   const SizedBox(height: 15.0),
                   if (state.step == 0)
-                    Expanded(
-                      child: LocationStep(
-                        location: state.location,
-                        locationError: state.locationError,
-                        termsAccepted: state.termsAccepted,
-                        termsError: state.termsError,
-                      ),
+                    LocationStep(
+                      location: state.location,
+                      locationError: state.locationError,
+                      termsAccepted: state.termsAccepted,
+                      termsError: state.termsError,
                     ),
                   const SizedBox(height: 35.0),
                   GoBackAndContinueButtons(onContinuePressed: () => context.read<SpeedTestCubit>().nextStep()),
