@@ -3,15 +3,38 @@ version: 2.1
 orbs:
   android: circleci/android@2.1.2
   flutter: circleci/flutter@1.1.0
+  gcp-cli: circleci/gcp-cli@2.4.1
+
+commands:
+  setup_keystores:
+    parameters:
+      working_directory:
+        type: string
+        default: "."
+    steps:
+      - run: echo ${FLUTTER_DEV_KEYSTORE} | base64 -d > /tmp/upload-keystore.jks
+      - run: |
+          echo """
+          storePassword=${FLUTTER_DEV_KEYSTORE_PASSWORD}
+          keyPassword=${FLUTTER_DEV_KEYSTORE_PASSWORD}
+          keyAlias=upload
+          storeFile=/tmp/upload-keystore.jks
+          """ > << parameters.working_directory >>/key.dev.properties
 
 jobs:
   build-android:
     working_directory: ~/project
+    parameters:
+      flavor:
+        type: enum
+        enum: ["dev", "stag", "prod"]
     executor:
       name: android/android-docker
       tag: 2022.09.1
     steps:
       - checkout
+      - setup_keystores:
+          working_directory: ~/project/mobile_client_app/client_mobile_app/android
       - flutter/install_sdk_and_pub:
           flutter_version: 3.3.1
           app-dir: ~/project/mobile_client_app/client_mobile_app
@@ -20,9 +43,26 @@ jobs:
       - flutter/install_android_gem:
           app-dir: ~/project/mobile_client_app/client_mobile_app
       - run: 
-          command: flutter build apk --flavor dev -t lib/main_dev.dart
+          command: ./scripts/build_<<  parameters.flavor >>.sh
           working_directory: ~/project/mobile_client_app/client_mobile_app
-  
+      - persist_to_workspace:
+          root: ~/project/workspace
+          paths:
+            - android/*
+
+  upload:
+    executor: google
+    steps:
+      - attach_workspace:
+          at: ./workspace
+      - run: echo ${TTAC_PROD_GCP_CRED} | base64 -d > gcpkey.json
+      - gcp-cli/install_and_initialize_cli:
+          context: uploadMobile
+          executor: gcp-cli/default
+          gcloud-service-key: $(echo ${TTAC_PROD_GCP_CRED} | base64 -d)
+      - run: gsutil cp ./workspace/android/* gs://${MOBILE_APP_BUCKET_NAME}/android
+
+
   build-ios:
     working_directory: ~/project
     macos:
@@ -46,5 +86,6 @@ workflows:
       - flutter/unit_test:
           app-dir: ~/project/mobile_client_app/client_mobile_app
           version: 3.3.1
-      - build-android
+      - build-android:
+          flavor: dev
       - build-ios
