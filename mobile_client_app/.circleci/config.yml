@@ -55,7 +55,6 @@ jobs:
     steps:
       - attach_workspace:
           at: ./workspace
-      - run: echo ${TTAC_PROD_GCP_CRED} | base64 -d > gcpkey.json
       - gcp-cli/initialize:
           gcloud-service-key: TTAC_PROD_GCP_CRED
       - run: gsutil cp ./workspace/android/* gs://${MOBILE_APP_BUCKET_NAME}/android

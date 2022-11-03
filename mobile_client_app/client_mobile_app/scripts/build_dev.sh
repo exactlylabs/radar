@@ -8,7 +8,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 WORKSPACE=${SCRIPT_DIR}/../workspace
 APPDIR=${SCRIPT_DIR}/..
-flutter build appbundle --release --flavor dev -t lib/main_dev.dart
+( cd ${APPDIR} && flutter build appbundle --release --flavor dev -t lib/main_dev.dart )
 
 mkdir -p ${WORKSPACE}/android/dev
 
