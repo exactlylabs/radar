@@ -8,6 +8,8 @@ import {speedTypes} from "./speeds";
 import {handleError} from "../api";
 import Option from "../components/ExplorePage/TopFilters/Option";
 
+let appState: Optional<AppState>;
+
 export const getAppState = (encoded: string): Optional<AppState> => {
   if(!encoded) return null;
   try {
@@ -26,11 +28,13 @@ export const updateUrl = (state: AppState): void => {
 }
 
 export const getValueFromUrl = (key: string): Optional<any> => {
-  const stateBase64: string = window.location.search.split('?state=')[1];
-  let possibleState: Optional<AppState> = getAppState(stateBase64);
-  if(!possibleState) return undefined;
-  possibleState = getValidState(possibleState as AppState);
-  return possibleState[key as keyof AppState];
+  if(!appState) {
+    const stateBase64: string = window.location.search.split('?state=')[1];
+    appState = getAppState(stateBase64);
+    if(!appState) return undefined;
+  }
+  appState = getValidState(appState as AppState);
+  return appState[key as keyof AppState];
 }
 
 /**
