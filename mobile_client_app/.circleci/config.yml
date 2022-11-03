@@ -4,6 +4,7 @@ orbs:
   android: circleci/android@2.1.2
   flutter: circleci/flutter@1.1.0
   gcp-cli: circleci/gcp-cli@2.4.1
+  ruby: circleci/ruby@2.0.0
 
 commands:
   setup_keystores:
@@ -77,6 +78,24 @@ jobs:
           gcloud-service-key: TTAC_PROD_GCP_CRED
           google-project-id: TTAC_PROD_ID
       - run: gsutil cp -r ~/workspace/android/* gs://${MOBILE_APP_BUCKET_NAME}/android
+  
+  release-android:
+    working_directory: ~/project
+    docker:
+      - image: "cimg/base:stable"
+    parameters:
+      flavor:
+        type: enum
+        enum: ["staging", "prod"]
+    steps:
+      - checkout
+      - ruby/install:
+          version: '3.0.2'
+      - ruby/install-deps:
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - run:
+          command: fastlane << parameters.flavor >>
+          working_directory: ~/project/mobile_client_app/client_mobile_app
 
   build-ios:
     working_directory: ~/project
@@ -129,16 +148,17 @@ workflows:
           flavor: dev
           filters:
             branches:
-              ignore: 
+              ignore:
+                - "/.*/" # TODO: REMOVE THIS DEBUG CONDITION
                 - "master"
                 - "dev"
       - build-android:
           name: "build-android-staging"
           requires: [unit_test, check-android-changelog]
           flavor: staging
-          filters:
-            branches:
-              only: ["dev"]
+          # filters:
+          #   branches:
+          #     only: ["dev"]
       - build-android:
           name: "build-android-prod"
           requires: [unit_test, check-android-changelog]
@@ -148,6 +168,20 @@ workflows:
               only: "master"
       - upload-android:
           requires: [build-android-dev, build-android-staging, build-android-prod]
+      - release-android:
+          name: "release-android-staging"
+          requires: [build-android-staging]
+          flavor: staging
+          # filters:
+          #   branches:
+          #     only: ["dev"]
+      - release-android:
+          name: "release-android-prod"
+          requires: [build-android-prod]
+          flavor: prod
+          filters:
+            branches:
+              only: ["master"]
       # iOS
       - build-ios:
           name: "build-ios-dev"
