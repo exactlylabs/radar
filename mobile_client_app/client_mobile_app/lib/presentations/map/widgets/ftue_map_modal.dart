@@ -1,4 +1,5 @@
 import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
 class FTUEMapModal extends StatelessWidget {
@@ -27,8 +28,8 @@ class FTUEMapModal extends StatelessWidget {
         const SizedBox(height: 30.0),
         Image.asset(Images.mapIllustration),
         const SizedBox(height: 40.0),
-        // TODO(Nacho): Replace this with PrimarButton when merged
-        ElevatedButton(
+        // TODO(Nacho): Add AppTextStyle when merged
+        PrimaryButton(
           onPressed: onPressed,
           child: Text('Go to map'),
         ),
