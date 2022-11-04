@@ -201,18 +201,21 @@ workflows:
       # iOS
       - build-ios:
           name: "build-ios-dev"
+          requires: [unit_test]
           flavor: dev
           filters:
             branches:
               ignore: "master"
       - build-ios:
           name: "build-ios-staging"
+          requires: [unit_test]
           flavor: staging
           filters:
             branches:
               only: "dev"
       - build-ios:
           name: "build-ios-prod"
+          requires: [unit_test]
           flavor: prod
           filters:
             branches:
