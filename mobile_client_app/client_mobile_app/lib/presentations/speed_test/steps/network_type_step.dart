@@ -1,9 +1,7 @@
 import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/horizontal_dashed_separator.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/option_card.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/prefer_not_to_answer_button.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
-import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
