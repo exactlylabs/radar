@@ -29,23 +29,28 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
   }
 
   void setLocation(Location location) {
-    emit(state.copyWith(location: location, isStepValid: isStepValid(state.step)));
+    emit(state.copyWith(location: location));
+    emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
 
   void setTermsAccepted(bool termsAccepted) {
-    emit(state.copyWith(termsAccepted: termsAccepted, isStepValid: isStepValid(state.step)));
+    emit(state.copyWith(termsAccepted: termsAccepted));
+    emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
 
   void setNetworkLocation(String networkLocation) {
-    emit(state.copyWith(networkLocation: networkLocation, isStepValid: isStepValid(state.step)));
+    emit(state.copyWith(networkLocation: networkLocation));
+    emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
 
   void setNetworkType(String networkType) {
-    emit(state.copyWith(networkType: networkType, isStepValid: isStepValid(state.step)));
+    emit(state.copyWith(networkType: networkType));
+    emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
 
   void setMonthlyBillCost(int monthlyBillCost) {
-    emit(state.copyWith(monthlyBillCost: monthlyBillCost, isStepValid: isStepValid(state.step)));
+    emit(state.copyWith(monthlyBillCost: monthlyBillCost));
+    emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
 
   void startSpeedTest() {
