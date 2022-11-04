@@ -10,10 +10,7 @@ import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_co
 class SpeedTestPage extends StatelessWidget {
   const SpeedTestPage({
     Key? key,
-    required this.height,
   }) : super(key: key);
-
-  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +42,9 @@ class SpeedTestPage extends StatelessWidget {
                       locationError: state.locationError,
                       termsAccepted: state.termsAccepted,
                       termsError: state.termsError,
-                    ),
-                  const SizedBox(height: 35.0),
-                  GoBackAndContinueButtons(onContinuePressed: () => context.read<SpeedTestCubit>().nextStep()),
-                  const SizedBox(height: 45.0),
+                    )
+                  else if (state.step == 1)
+                    NetworkPlaceStep(optionSelected: state.networkLocation),
                 ],
               ),
             ),

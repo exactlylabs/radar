@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
@@ -48,6 +49,9 @@ class LocationStep extends StatelessWidget {
           agreed: termsAccepted,
           onAgreed: (value) => context.read<SpeedTestCubit>().setTermsAccepted(value ?? false),
         ),
+        const SizedBox(height: 35.0),
+        GoBackAndContinueButtons(onContinuePressed: () => context.read<SpeedTestCubit>().nextStep()),
+        const SizedBox(height: 45.0),
       ],
     );
   }
