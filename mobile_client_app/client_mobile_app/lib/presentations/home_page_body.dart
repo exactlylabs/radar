@@ -9,12 +9,11 @@ class HomePageBody extends StatelessWidget {
   }) : super(key: key);
 
   final int pageIdx;
-  final double height;
 
   @override
   Widget build(BuildContext context) {
     if (pageIdx == _SPEED_TEST_PAGE_IDX) {
-      return SpeedTestPage();
+      return const SpeedTestPage();
     } else if (pageIdx == _YOUR_RESULTS_PAGE_IDX) {
       return const Center(child: Text('Your Results'));
     } else if (pageIdx == _MAP_PAGE_IDX) {
