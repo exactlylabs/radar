@@ -6,7 +6,7 @@ class LocalStorage {
     _openBox();
   }
 
-  late Box<List<Map<String, dynamic>>> _box;
+  late Box<List> _box;
 
   static const String resultsKey = 'RESULTS';
   static const String ftueMapKey = 'FTUE_MAP';
@@ -16,24 +16,22 @@ class LocalStorage {
       final directory = await getApplicationDocumentsDirectory();
       Hive.init(directory.path);
     }
-    _box = await Hive.openBox<List<Map<String, dynamic>>>('local_storage');
+    _box = await Hive.openBox<List>('local_storage');
   }
 
   Future<List<Map<String, dynamic>>> addResult(Map<String, dynamic> value) async {
-    final results = await getResults();
+    final results = getResults();
     final newResults = [value, ...results];
     await _box.put(resultsKey, newResults);
     return newResults;
   }
 
   List<Map<String, dynamic>> getResults() {
-    return _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[])!;
+    return _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[]) as List<Map<String, dynamic>>;
   }
 
   bool getFTUEMap() {
-    final List<Map<String, dynamic>> ftue = _box.get(ftueMapKey, defaultValue: [
-      {'value': true}
-    ])!;
+    final ftue = _box.get(ftueMapKey, defaultValue: [])!;
     return ftue.first['value'] as bool;
   }
 
