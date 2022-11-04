@@ -18,17 +18,18 @@ import {BLACK, WHITE} from "../../../../styles/colors";
 interface MenuContentGeospaceProps {
   geospace: GeospaceOverview;
   speedType: string;
+  openFullMenu: () => void;
 }
 
 const MenuContentGeospace = ({
   geospace,
-  speedType
+  speedType,
+  openFullMenu
 }: MenuContentGeospaceProps): ReactElement => {
 
   const speedState = speedType === 'Download' ?
       getSignalStateDownload(geospace.download_median) :
       getSignalStateUpload(geospace.upload_median);
-  console.log(speedState)
 
   return (
     <div style={styles.MenuContentGeospace}>
@@ -59,7 +60,7 @@ const MenuContentGeospace = ({
                            color={WHITE}
                            text={'View all details'}
                            icon={<img src={ArrowRight} style={styles.ArrowRight} alt={'arrow-right'}/>}
-                           onClick={() => {}}
+                           onClick={openFullMenu}
         />
       </div>
       <div style={styles.FooterTextContainer}>

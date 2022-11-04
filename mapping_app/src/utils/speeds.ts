@@ -51,7 +51,6 @@ export const getSignalStateUpload = (uploadMedian: number): string => {
 }
 
 export const getDownloadIconSrc = (speedType: string, speedState: string) => {
-  console.log(speedType, speedState);
   if(speedType !== 'Download') return DownloadIconGray;
   if(speedState === speedTypes.UNSERVED) return DownloadIconUnserved;
   else if(speedState === speedTypes.UNDERSERVED) return DownloadIconUnderserved;

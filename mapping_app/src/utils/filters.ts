@@ -1,7 +1,12 @@
 import {getDateFromString, getMonthName, getMonthNumberFromName, getWeekLimits, getWeekNumber} from "./dates";
 import Option from "../components/ExplorePage/TopFilters/Option";
-import {Optional} from "./types";
+import {Filter, Optional} from "./types";
 import {start} from "repl";
+import {getSignalStateDownload, getSignalStateUpload} from "./speeds";
+import {GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/types";
+import {getFiltersString} from "../api/utils/filters";
+import {getOverview} from "../api/geospaces/requests";
+import {handleError} from "../api";
 
 export const filterTypes = {
   SPEED: 'speed',
@@ -153,4 +158,9 @@ export const isSpecificMonth = (string: string): boolean => {
 export const isSpecificYear = (string: string): boolean => {
   const possibleYearNumber: number = parseInt(string);
   return !isNaN(possibleYearNumber) && years.includes(possibleYearNumber);
+}
+
+export const getSignalState = (speedType: string, selectedGeospaceInfo: GeospaceInfo): string => {
+  return speedType === 'Download' ?
+    getSignalStateDownload(selectedGeospaceInfo.download_median) : getSignalStateUpload(selectedGeospaceInfo.upload_median);
 }

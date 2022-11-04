@@ -184,12 +184,28 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
     }
     if(isSmallerThanMid) {
-      setMenuContent(getMenuContent(MenuContent.GEOSPACE, geospace, {speedType}));
+      const params = { speedType, openFullMenu };
+      setMenuContent(getMenuContent(MenuContent.GEOSPACE, geospace, params));
       setGenericMenuOpen(true);
     } else {
       openRightPanel();
     }
     setLoading(false);
+  }
+
+  const openFullMenu = () => {
+    const params = {
+      geospace: selectedGeospace,
+      loading,
+      speedType,
+      setSpeedType,
+      calendarType,
+      setCalendarType,
+      provider,
+      setProvider
+    };
+    setAreSmallScreenFiltersOpen(false);
+    setMenuContent(getMenuContent(MenuContent.FULL_GEOSPACE, selectedGeospace, params));
   }
 
   const recenterMap = () => {

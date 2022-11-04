@@ -7,13 +7,17 @@ import RightPanelSpeedData from "./RightPanelSpeedData";
 import RightPanelHorizontalDivider from "./RightPanelHorizontalDivider";
 import SpeedDistribution from "./SpeedDistribution";
 import {GeospaceInfo, GeospaceOverview, isGeospaceData} from "../../../api/geospaces/types";
-import {getSignalStateDownload, getSignalStateUpload} from "../../../utils/speeds";
-import {getPeopleCount} from "../../../utils/percentages";
+import {
+  getServedPeopleCount,
+  getUnderservedPeopleCount,
+  getUnservedPeopleCount
+} from "../../../utils/percentages";
 import {getFiltersString} from "../../../api/utils/filters";
 import {getOverview} from "../../../api/geospaces/requests";
 import {handleError} from "../../../api";
 import {Filter} from "../../../utils/types";
 import RightPanelLoader from "./RightPanelLoader";
+import {getSignalState} from "../../../utils/filters";
 
 
 interface RightPanelProps {
@@ -85,29 +89,6 @@ const RightPanel = ({
     }
   }
 
-  const getSignalState = (): string => {
-    return speedType === 'Download' ?
-      getSignalStateDownload(selectedGeospaceInfo.download_median) : getSignalStateUpload(selectedGeospaceInfo.upload_median);
-  }
-
-  const getUnservedPeopleCount = () => {
-    const percentage: number = speedType === 'Download' ? selectedGeospaceInfo.download_scores.bad : selectedGeospaceInfo.upload_scores.bad;
-    const totalSamples: number = speedType === 'Download' ? selectedGeospaceInfo.download_scores.total_samples : selectedGeospaceInfo.upload_scores.total_samples;
-    return getPeopleCount(percentage, totalSamples)
-  }
-
-  const getUnderservedPeopleCount = () => {
-    const percentage: number = speedType === 'Download' ? selectedGeospaceInfo.download_scores.medium : selectedGeospaceInfo.upload_scores.medium;
-    const totalSamples: number = speedType === 'Download' ? selectedGeospaceInfo.download_scores.total_samples : selectedGeospaceInfo.upload_scores.total_samples;
-    return getPeopleCount(percentage, totalSamples)
-  }
-
-  const getServedPeopleCount = () => {
-    const percentage: number = speedType === 'Download' ? selectedGeospaceInfo.download_scores.good : selectedGeospaceInfo.upload_scores.good;
-    const totalSamples: number = speedType === 'Download' ? selectedGeospaceInfo.download_scores.total_samples : selectedGeospaceInfo.upload_scores.total_samples;
-    return getPeopleCount(percentage, totalSamples)
-  }
-
   return (
     <div style={styles.RightPanelContainer(isHidden)} id={'right-panel'}>
       <HidePanelButton onClick={toggleHidden} isHidden={isHidden}/>
@@ -119,7 +100,7 @@ const RightPanel = ({
             <RightPanelHeader geospaceName={getName()}
                               parentName={(selectedGeospaceInfo as GeospaceOverview).geospace.parent?.name}
                               country={'U.S.A'}
-                              stateSignalState={getSignalState()}
+                              stateSignalState={getSignalState(speedType as string, selectedGeospaceInfo)}
                               closePanel={closePanel}
             />
             <div style={styles.DropdownFiltersContainer}>
@@ -134,13 +115,13 @@ const RightPanel = ({
             <RightPanelSpeedData medianDownload={selectedGeospaceInfo.download_median}
                                  medianUpload={selectedGeospaceInfo.upload_median}
                                  medianLatency={selectedGeospaceInfo.latency_median}
-                                 speedState={getSignalState()}
+                                 speedState={getSignalState(speedType as string, selectedGeospaceInfo)}
                                  speedType={speedType as string}
             />
             <RightPanelHorizontalDivider/>
-            <SpeedDistribution unservedPeopleCount={getUnservedPeopleCount()}
-                               underservedPeopleCount={getUnderservedPeopleCount()}
-                               servedPeopleCount={getServedPeopleCount()}
+            <SpeedDistribution unservedPeopleCount={getUnservedPeopleCount(speedType as string, selectedGeospaceInfo)}
+                               underservedPeopleCount={getUnderservedPeopleCount(speedType as string, selectedGeospaceInfo)}
+                               servedPeopleCount={getServedPeopleCount(speedType as string, selectedGeospaceInfo)}
                                speedType={speedType}
             />
           </div>
@@ -151,7 +132,7 @@ const RightPanel = ({
         <RightPanelLoader geospaceName={getName()}
                           parentName={(selectedGeospaceInfo as GeospaceOverview).geospace.parent?.name}
                           country={'U.S.A'}
-                          stateSignalState={getSignalState()}
+                          stateSignalState={getSignalState(speedType as string, selectedGeospaceInfo)}
                           closePanel={closePanel}/>
       }
     </div>
