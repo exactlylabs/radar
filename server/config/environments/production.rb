@@ -98,6 +98,11 @@ Rails.application.configure do
   # Tell Active Support which deprecation messages to disallow.
   config.active_support.disallowed_deprecation_warnings = []
 
+  # Enable Stackdriver / Google Cloud Logging
+  config.google_cloud.use_trace = true
+  config.google_cloud.use_logging = true
+  config.google_cloud.use_error_reporting = true
+
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 
