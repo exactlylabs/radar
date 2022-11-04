@@ -11,4 +11,5 @@ class Strings {
   static const String networkTypeStepSubtitle = 'Choose how you are connected to the internet.';
   static const String monthlyBillCostStepTitle = "What’s your estimated monthly bill cost?";
   static const String monthlyBillCostStepSubtitle = "This helps us understand the average internet cost in your area.";
+  static const String preferNotToAnswer = 'I prefer not to answer';
 }

@@ -37,18 +37,18 @@ class SpeedTestPage extends StatelessWidget {
                       currentStepColor: Theme.of(context).colorScheme.secondary,
                     ),
                   const SizedBox(height: 15.0),
-                  if (state.step == 0)
+                  if (state.step == SpeedTestCubit.LOCATION_STEP)
                     LocationStep(
                       location: state.location,
                       locationError: state.locationError,
                       termsAccepted: state.termsAccepted,
                       termsError: state.termsError,
                     )
-                  else if (state.step == 1)
+                  else if (state.step == SpeedTestCubit.NETWORK_LOCATION_STEP)
                     NetworkPlaceStep(optionSelected: state.networkLocation)
-                  else if (state.step == 2)
+                  else if (state.step == SpeedTestCubit.NETWORK_TYPE_STEP)
                     NetworkTypeStep(optionSelected: state.networkType)
-                  else if (state.step == 3)
+                  else if (state.step == SpeedTestCubit.MONTHLY_BILL_COST_STEP)
                     MonthlyBillCostStep(
                       billCost: state.monthlyBillCost,
                     ),

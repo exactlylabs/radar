@@ -29,11 +29,11 @@ class NetworkPlaceStep extends StatelessWidget {
         const SizedBox(height: 30.0),
         ListView.separated(
           shrinkWrap: true,
-          itemCount: NETWORK_LOCATIONS.length,
+          itemCount: NETWORK_LOCATIONS.length + 1,
           separatorBuilder: (context, index) {
-            if (index < NETWORK_LOCATIONS.length - 2) {
+            if (index < 2) {
               return const SizedBox(height: 10.0);
-            } else if (index == NETWORK_LOCATIONS.length - 2) {
+            } else if (index == 2) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.5),
                 child: HorizontalDashedSeparator(

@@ -33,9 +33,7 @@ class _BillCostInputFieldState extends State<BillCostInputField> {
       children: [
         InkWell(
           onTap: () {
-            _controller.text = (int.tryParse(_controller.text) ?? 0) - 1 > 0
-                ? ((int.tryParse(_controller.text) ?? 0) - 1).toString()
-                : '0';
+            _controller.text = decrease(_controller.text);
             if (widget.onChanged != null) widget.onChanged!(_controller.text);
           },
           child: Image.asset(Images.lessButton),
@@ -95,14 +93,20 @@ class _BillCostInputFieldState extends State<BillCostInputField> {
         const SizedBox(width: 22.0),
         InkWell(
           onTap: () {
-            _controller.text = (int.tryParse(_controller.text) ?? 0) + 1 > 0
-                ? ((int.tryParse(_controller.text) ?? 0) + 1).toString()
-                : '0';
+            _controller.text = increase(_controller.text);
             if (widget.onChanged != null) widget.onChanged!(_controller.text);
           },
           child: Image.asset(Images.moreButton),
         ),
       ],
     );
+  }
+
+  String increase(String value) {
+    return (int.tryParse(value) ?? 0) + 1 > 0 ? ((int.tryParse(value) ?? 0) + 1).toString() : '0';
+  }
+
+  String decrease(String value) {
+    return (int.tryParse(value) ?? 0) - 1 > 0 ? ((int.tryParse(value) ?? 0) - 1).toString() : '0';
   }
 }

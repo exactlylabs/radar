@@ -7,11 +7,11 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
 
   bool isStepValid(int step) {
     switch (step) {
-      case _NETWORK_LOCATION_STEP:
+      case NETWORK_LOCATION_STEP:
         return state.networkLocation != null;
-      case _NETWORK_TYPE_STEP:
+      case NETWORK_TYPE_STEP:
         return state.networkType != null;
-      case _MONTHLY_BILL_COST_STEP:
+      case MONTHLY_BILL_COST_STEP:
         return state.monthlyBillCost != null;
       default:
         return true;
@@ -66,7 +66,8 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
     return state.toJson();
   }
 
-  static const _NETWORK_LOCATION_STEP = 1;
-  static const _NETWORK_TYPE_STEP = 2;
-  static const _MONTHLY_BILL_COST_STEP = 3;
+  static const LOCATION_STEP = 0;
+  static const NETWORK_LOCATION_STEP = 1;
+  static const NETWORK_TYPE_STEP = 2;
+  static const MONTHLY_BILL_COST_STEP = 3;
 }
