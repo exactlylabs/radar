@@ -7,6 +7,8 @@ import UploadIconGray from "../assets/upload-icon-gray.png";
 import UploadIconUnserved from "../assets/upload-icon-unserved.png";
 import UploadIconUnderserved from "../assets/upload-icon-underserved.png";
 import UploadIconServed from "../assets/upload-icon-served.png";
+import {SpeedFilters} from "./filters";
+import {GeospaceInfo} from "../api/geospaces/types";
 
 export type SpeedsObject = {
   UNSERVED: string;
@@ -41,6 +43,11 @@ export const speedColors: SpeedsObject = {
   SERVED: SPEED_NORMAL
 }
 
+export const getSignalState = (speedType: string, selectedGeospaceInfo: GeospaceInfo): string => {
+  return speedType === SpeedFilters.DOWNLOAD ?
+    getSignalStateDownload(selectedGeospaceInfo.download_median) : getSignalStateUpload(selectedGeospaceInfo.upload_median);
+}
+
 export const getSignalStateDownload = (downloadMedian: number): string => {
   if(downloadMedian < 25) return speedTypes.UNSERVED;
   else if(downloadMedian >= 25 && downloadMedian < 100) return speedTypes.UNDERSERVED;
@@ -54,7 +61,6 @@ export const getSignalStateUpload = (uploadMedian: number): string => {
 }
 
 export const getDownloadIconSrc = (speedType: string, speedState: string) => {
-  console.log(speedType, speedState);
   if(speedType !== 'Download') return DownloadIconGray;
   if(speedState === speedTypes.UNSERVED) return DownloadIconUnserved;
   else if(speedState === speedTypes.UNDERSERVED) return DownloadIconUnderserved;

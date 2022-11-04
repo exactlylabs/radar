@@ -7,6 +7,7 @@ import {
   getWeekNumber
 } from "./dates";
 import {Optional} from "./types";
+import {getSignalStateDownload, getSignalStateUpload} from "./speeds";
 
 export enum FilterTypes {
   SPEED = 'speed',
