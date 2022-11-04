@@ -109,7 +109,7 @@ jobs:
           command: echo ${ANDROID_GCP_CRED} > /tmp/android_gcpkey.json
       - run:
           command: |
-            ANDROID_AAB_PATH=$(ls "~/workspace/android/<< parameters.flavor >>/*.aab") \
+            ANDROID_AAB_PATH=$(ls ~/workspace/android/<< parameters.flavor >>/*.aab) \
             FASTLANE_GCP_JSONKEY_PATH="/tmp/android_gcpkey.json" \
             fastlane << parameters.flavor >>
           working_directory: ~/project/mobile_client_app/client_mobile_app/android
