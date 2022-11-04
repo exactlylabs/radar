@@ -154,68 +154,68 @@ workflows:
     jobs:
       
       # Android
-      # - check-android-changelog
-      # - flutter/unit_test:
-      #     name: "unit_test"
-      #     app-dir: ~/project/mobile_client_app/client_mobile_app
-      #     version: 3.3.1
-      # - build-android:
-      #     name: "build-android-dev"
-      #     requires: [unit_test, check-android-changelog]
-      #     flavor: dev
-      #     filters:
-      #       branches:
-      #         ignore:
-      #           - "master"
-      #           - "dev"
+      - check-android-changelog
+      - flutter/unit_test:
+          name: "unit_test"
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+          version: 3.3.1
+      - build-android:
+          name: "build-android-dev"
+          requires: [unit_test, check-android-changelog]
+          flavor: dev
+          filters:
+            branches:
+              ignore:
+                - "master"
+                - "dev"
       - build-android:
           name: "build-android-staging"
-          # requires: [unit_test, check-android-changelog]
+          requires: [unit_test, check-android-changelog]
           flavor: staging
-      #     # filters:
-      #     #   branches:
-      #     #     only: ["dev"]
-      # - build-android:
-      #     name: "build-android-prod"
-      #     requires: [unit_test, check-android-changelog]
-      #     flavor: prod
-      #     filters:
-      #       branches:
-      #         only: "master"
-      # - upload-android:
-      #     requires: [build-android-dev, build-android-staging, build-android-prod]
+          filters:
+            branches:
+              only: ["dev"]
+      - build-android:
+          name: "build-android-prod"
+          requires: [unit_test, check-android-changelog]
+          flavor: prod
+          filters:
+            branches:
+              only: "master"
+      - upload-android:
+          requires: [build-android-dev, build-android-staging, build-android-prod]
       - release-android:
           name: "release-android-staging"
           requires: [build-android-staging]
           flavor: staging
-          # filters:
-          #   branches:
-          #     only: ["dev"]
-      # - release-android:
-      #     name: "release-android-prod"
-      #     requires: [build-android-prod]
-      #     flavor: prod
-      #     filters:
-      #       branches:
-      #         only: ["master"]
+          filters:
+            branches:
+              only: ["dev"]
+      - release-android:
+          name: "release-android-prod"
+          requires: [build-android-prod]
+          flavor: prod
+          filters:
+            branches:
+              only: ["master"]
       # iOS
-      # - build-ios:
-      #     name: "build-ios-dev"
-      #     flavor: dev
-      #     filters:
-      #       branches:
-      #         ignore: "master"
-      # - build-ios:
-      #     name: "build-ios-staging"
-      #     flavor: staging
-      #     filters:
-      #       branches:
-      #         only: "dev"
-      # - build-ios:
-      #     name: "build-ios-prod"
-      #     flavor: prod
-      #     filters:
-      #       branches:
-      #         only: "master"
-      # - upload-ios:
-      #     requires: [build-ios-dev, build-ios-staging, build-ios-prod]
+      - build-ios:
+          name: "build-ios-dev"
+          flavor: dev
+          filters:
+            branches:
+              ignore: "master"
+      - build-ios:
+          name: "build-ios-staging"
+          flavor: staging
+          filters:
+            branches:
+              only: "dev"
+      - build-ios:
+          name: "build-ios-prod"
+          flavor: prod
+          filters:
+            branches:
+              only: "master"
+      - upload-ios:
+          requires: [build-ios-dev, build-ios-staging, build-ios-prod]
