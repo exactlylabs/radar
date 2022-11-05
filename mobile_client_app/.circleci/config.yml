@@ -50,16 +50,6 @@ commands:
           working_directory: ~/project/mobile_client_app/client_mobile_app
 
 jobs:
-  check-android-changelog:
-    docker:
-      - image: cimg/base:2022.05
-    working_directory: ~/project
-    steps:
-      - checkout
-      - run: 
-          command: ./scripts/test_changelog.sh
-          working_directory: ~/project/mobile_client_app/client_mobile_app
-
   build-android:
     working_directory: ~/project
     parameters:
@@ -154,14 +144,13 @@ workflows:
     jobs:
       
       # Android
-      - check-android-changelog
       - flutter/unit_test:
           name: "unit_test"
           app-dir: ~/project/mobile_client_app/client_mobile_app
           version: 3.3.1
       - build-android:
           name: "build-android-dev"
-          requires: [unit_test, check-android-changelog]
+          requires: [unit_test]
           flavor: dev
           filters:
             branches:
@@ -170,14 +159,14 @@ workflows:
                 - "dev"
       - build-android:
           name: "build-android-staging"
-          requires: [unit_test, check-android-changelog]
+          requires: [unit_test]
           flavor: staging
           filters:
             branches:
               only: ["dev"]
       - build-android:
           name: "build-android-prod"
-          requires: [unit_test, check-android-changelog]
+          requires: [unit_test]
           flavor: prod
           filters:
             branches:
