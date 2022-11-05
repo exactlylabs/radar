@@ -2,14 +2,7 @@ app_identifier("com.exactlylabs.radar") # Bundle Identifier
 team_id("MQYTP6VS48") # Got from developers portal -> Management
 team_name("Exactly Labs, Inc.") # Got from developers portal -> Management
 itc_team_id("123344463") # Got from cmd: fastlane spaceship ## Log in and then type Spaceship::Tunes.select_team
-apple_id(ENV["APPSTORE_KEY_ID"])
-api_key = app_store_connect_api_key(
-    # All of this is from app store connect Users and Access
-    key_id: ENV["APPSTORE_KEY_ID"],
-    issuer_id: "f3ccfe4d-0633-445b-904d-c8d20320b1ca", 
-    key_filepath: ENV["APPSTORE_KEY_PATH"],
-    in_house: false,
-)
+apple_id(ENV["APP_STORE_CONNECT_API_KEY_KEY"])
 
 for_platform :ios do  
     for_lane :release_dev do
@@ -18,21 +11,4 @@ for_platform :ios do
     for_lane :release_staging do
         app_identifier("com.exactlylabs.radar.staging")
     end
-
-    lane :staging do
-        # Flutter requires us to build using it first
-        build_app(
-            skip_build_archive: true,
-            archive_path: "../build/ios/archive/Runner.xcarchive",
-        )
-    end
-
-    lane :release_dev do
-        # Flutter requires us to build using it first
-        build_app(
-            skip_build_archive: true,
-            archive_path: "../build/ios/archive/Runner.xcarchive",
-        )
-        pilot(api_key: api_key)
-    end
-end
+  end
