@@ -8,10 +8,10 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 WORKSPACE=${SCRIPT_DIR}/../workspace
 APPDIR=${SCRIPT_DIR}/..
-( cd ${APPDIR} && flutter build appbundle --release --flavor prod -t lib/main_dev.dart )
+BUILD=$(date +%s)
+( cd ${APPDIR} && flutter build appbundle --build-number ${BUILD} --release --flavor prod -t lib/main_dev.dart )
 
 mkdir -p ${WORKSPACE}/android/prod
 
-export VERSION=$(cat ${APPDIR}/android/local.properties | sed -n -e 's/^flutter\.versionName=//p')
-export VERSION_CODE=$(cat ${APPDIR}/android/local.properties | sed -n -e 's/^flutter\.versionCode=//p')
-cp ${SCRIPT_DIR}/../build/app/outputs/bundle/prodRelease/app-prod-release.aab ${WORKSPACE}/android/prod/app_${VERSION}+${VERSION_CODE}-release.aab
+export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -ne 's/version: \([0-9]\+\.[0-9]\+\.[0-9]\+\)+[0-9]\+/\1/p')
+cp ${SCRIPT_DIR}/../build/app/outputs/bundle/prodRelease/app-prod-release.aab ${WORKSPACE}/android/prod/app_${VERSION_NAME}+${BUILD}-release.aab
