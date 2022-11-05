@@ -17,4 +17,4 @@ BUILD=$(date +%s)
 
 mkdir -p ${WORKSPACE}/ios/dev
 export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -ne 's/version: \([0-9]\+\.[0-9]\+\.[0-9]\+\)+[0-9]\+/\1/p')
-cp ${APPDIR}/build/ios/iphoneos/Runner.app ${WORKSPACE}/ios/dev/Runner${VERSION}+${BUILD}.app
+cp -r ${APPDIR}/build/ios/iphoneos/Runner.app ${WORKSPACE}/ios/dev/Runner${VERSION}+${BUILD}.app
