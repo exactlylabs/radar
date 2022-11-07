@@ -1,11 +1,14 @@
 import {CSSProperties} from "react";
-import {DEFAULT_BUTTON_BOX_SHADOW_RGBA, GEOGRAPHICAL_CATEGORY_BOTTOM} from "../../../../styles/colors";
+import {DEFAULT_BUTTON_BOX_SHADOW_RGBA, GENERIC_MENU, GEOGRAPHICAL_CATEGORY_BOTTOM} from "../../../../styles/colors";
 
-const myGenericMenuPropsStyle: CSSProperties = {
+const myGenericMenuStyle: CSSProperties = {
   width: '100vw',
   height: 'max-content',
   minHeight: '250px',
-  backgroundColor: GEOGRAPHICAL_CATEGORY_BOTTOM,
+  maxHeight: 'calc(100vh - 58px)',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  backgroundColor: GENERIC_MENU,
   borderTopLeftRadius: '8px',
   borderTopRightRadius: '8px',
   boxShadow: `0 2px 10px -4px ${DEFAULT_BUTTON_BOX_SHADOW_RGBA}`,
@@ -24,9 +27,10 @@ const closeIconStyle: CSSProperties = {
   top: '15px',
   right: '15px',
   cursor: 'pointer',
+  zIndex: 1200,
 }
 
 export const styles = {
-  MyGenericMenuProps: myGenericMenuPropsStyle,
+  MyGenericMenu: myGenericMenuStyle,
   CloseIcon: closeIconStyle,
 }
