@@ -2,13 +2,14 @@ import {ReactElement} from "react";
 import {styles} from "./styles/RightPanelHeader.style";
 import CloseIcon from '../../../assets/close-icon.png';
 import {capitalize} from "../../../utils/strings";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 interface RightPanelHeaderProps {
   geospaceName: string;
   country: string;
   parentName?: string;
   stateSignalState: string;
-  closePanel: () => void;
+  closePanel?: () => void;
 }
 
 const RightPanelHeader = ({
@@ -19,19 +20,21 @@ const RightPanelHeader = ({
   closePanel
 }: RightPanelHeaderProps): ReactElement => {
 
+  const {isSmallerThanMid} = useViewportSizes();
+
   const getRegularContent = () => (
     <div style={styles.StateTextContainer(false)}>
-      <p className={'fw-medium'} style={styles.GeospaceName}>{geospaceName}</p>
-      <p className={'fw-light'} style={styles.StateCountry}>{country}</p>
+      <p className={'fw-medium'} style={styles.GeospaceName(isSmallerThanMid)}>{geospaceName}</p>
+      <p className={'fw-light'} style={styles.StateCountry(isSmallerThanMid)}>{country}</p>
     </div>
   );
 
   const getTwoLineContent = () => (
     <div style={styles.StateTextContainer(true)}>
-      <p className={'fw-medium'} style={styles.GeospaceName}>{geospaceName}</p>
+      <p className={'fw-medium'} style={styles.GeospaceName(isSmallerThanMid)}>{geospaceName}</p>
       <div className={'fw-light'} style={styles.StateAndCountryLine}>
-        <p className={'fw-light'} style={styles.ParentName}>{`${parentName}, `}</p>
-        <p className={'fw-light'} style={styles.StateCountry}>{country}</p>
+        <p className={'fw-light'} style={styles.ParentName(isSmallerThanMid)}>{`${parentName}, `}</p>
+        <p className={'fw-light'} style={styles.StateCountry(isSmallerThanMid)}>{country}</p>
       </div>
     </div>
   )
@@ -41,17 +44,19 @@ const RightPanelHeader = ({
   }
 
   return (
-    <div style={styles.RightPanelHeaderContainer(!!parentName)}>
-      <div style={styles.LeftSideContainer}>
+    <div style={styles.RightPanelHeaderContainer(!!parentName, isSmallerThanMid)}>
+      <div style={styles.LeftSideContainer(isSmallerThanMid)}>
         {getTextContent()}
         <div style={styles.SignalStateContainer}>
           <div style={styles.StateSignalStateIndicator(stateSignalState)}></div>
           <p className={'fw-regular'} style={styles.StateSignalState}>{capitalize(stateSignalState)}</p>
         </div>
       </div>
-      <div className={'hover-opaque'} style={styles.CloseButton} onClick={closePanel}>
-        <img src={CloseIcon} style={styles.CloseIcon} alt={'close-icon'}/>
-      </div>
+      { !!closePanel &&
+        <div className={'hover-opaque'} style={styles.CloseButton} onClick={closePanel}>
+          <img src={CloseIcon} style={styles.CloseIcon} alt={'close-icon'}/>
+        </div>
+      }
     </div>
   )
 }

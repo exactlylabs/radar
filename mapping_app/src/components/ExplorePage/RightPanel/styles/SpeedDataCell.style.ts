@@ -9,6 +9,13 @@ const speedDataCellContainerStyle: CSSProperties = {
   marginRight: '20px'
 }
 
+const smallSpeedDataCellContainerStyle: CSSProperties = {
+  ...speedDataCellContainerStyle,
+  alignItems: 'flex-start',
+  justifyContent: 'space-between',
+  marginRight: '32px'
+}
+
 const speedDataCellHeaderStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'row',
@@ -20,6 +27,12 @@ const speedDataCellHeaderStyle: CSSProperties = {
 const textStyle: CSSProperties = {
   fontSize: '14px',
   color: DEFAULT_SECONDARY_TEXT
+}
+
+const smallTextStyle: CSSProperties = {
+  ...textStyle,
+  marginTop: '5px',
+  marginBottom: '3px'
 }
 
 const valueContainerStyle: CSSProperties = {
@@ -43,6 +56,11 @@ const smallValueStyle: CSSProperties = {
   marginLeft: '27px',
 }
 
+const smallScreenValueStyle: CSSProperties = {
+  ...valueStyle,
+  marginLeft: 0,
+}
+
 const unitStyle: CSSProperties = {
   fontSize: '16px',
   color: DEFAULT_TEXT
@@ -54,11 +72,16 @@ const smallUnitStyle: CSSProperties = {
 }
 
 export const styles = {
-  SpeedDataCellContainer: speedDataCellContainerStyle,
+  SpeedDataCellContainer: (isSmall: boolean) => {
+    return isSmall ? smallSpeedDataCellContainerStyle : speedDataCellContainerStyle;
+  },
   SpeedDataCellHeader: speedDataCellHeaderStyle,
-  Text: textStyle,
+  Text: (isSmall: boolean) => {
+    return isSmall ? smallTextStyle : textStyle;
+  },
   ValueContainer: valueContainerStyle,
-  Value: (smallVersion?: boolean) => {
+  Value: (isSmallScreen: boolean, smallVersion?: boolean) => {
+    if(isSmallScreen) return smallScreenValueStyle;
     return smallVersion ? smallValueStyle : valueStyle;
   },
   Unit: (smallVersion?: boolean) => {

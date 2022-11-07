@@ -3,6 +3,7 @@ import SpeedDataCell from "./SpeedDataCell";
 import {styles} from "./styles/RightPanelSpeedData.style";
 import LatencyIconGray from '../../../assets/latency-icon-gray.png';
 import {getDownloadIconSrc, getUploadIconSrc} from "../../../utils/speeds";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 
 interface RightPanelSpeedDataProps {
@@ -21,10 +22,10 @@ const RightPanelSpeedData = ({
   speedType,
 }: RightPanelSpeedDataProps): ReactElement => {
 
-
+  const {isSmallerThanMid} = useViewportSizes();
 
   return (
-    <div style={styles.RightPanelSpeedDataContainer}>
+    <div style={styles.RightPanelSpeedDataContainer(isSmallerThanMid)}>
       <SpeedDataCell icon={<img src={getDownloadIconSrc(speedType, speedState)} style={styles.Icon(speedState)} alt={'download-icon'}/>}
                      text={'Med. Download'}
                      value={medianDownload.toFixed(2)}

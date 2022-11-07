@@ -1,5 +1,6 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/SpeedDataCell.style";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 interface SpeedDataCellProps {
   icon: ReactElement;
@@ -16,18 +17,34 @@ const SpeedDataCell = ({
   unit,
   smallVersion
 }: SpeedDataCellProps): ReactElement => {
-  return (
-    <div style={styles.SpeedDataCellContainer}>
+
+  const {isSmallerThanMid} = useViewportSizes();
+
+  const getRegularContent = () => (
+    <div style={styles.SpeedDataCellContainer(isSmallerThanMid)}>
       <div style={styles.SpeedDataCellHeader}>
         {icon}
-        <p className={'fw-regular'} style={styles.Text}>{text}</p>
+        <p className={'fw-regular'} style={styles.Text(isSmallerThanMid)}>{text}</p>
       </div>
       <div style={styles.ValueContainer}>
-        <p className={smallVersion ? 'fw-regular' : 'fw-medium'} style={styles.Value(smallVersion)}>{value}</p>
+        <p className={smallVersion ? 'fw-regular' : 'fw-medium'} style={styles.Value(isSmallerThanMid, smallVersion)}>{value}</p>
+        <p className={'fw-regular'} style={styles.Unit(smallVersion)}>{unit}</p>
+      </div>
+    </div>
+  );
+
+  const getSmallContent = () => (
+    <div style={styles.SpeedDataCellContainer(isSmallerThanMid)}>
+      {icon}
+      <p className={'fw-regular'} style={styles.Text(isSmallerThanMid)}>{text}</p>
+      <div style={styles.ValueContainer}>
+        <p className={smallVersion ? 'fw-regular' : 'fw-medium'} style={styles.Value(isSmallerThanMid, smallVersion)}>{value}</p>
         <p className={'fw-regular'} style={styles.Unit(smallVersion)}>{unit}</p>
       </div>
     </div>
   )
+
+  return isSmallerThanMid ? getSmallContent() : getRegularContent();
 }
 
 export default SpeedDataCell;

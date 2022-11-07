@@ -5,7 +5,7 @@ const openedTopMenuContainerStyle: CSSProperties = {
   width: '100vw',
   height: '355px',
   backgroundColor: WHITE,
-  zIndex: 1050,
+  zIndex: 2000,
   display: 'flex',
   flexDirection: 'column',
   position: 'absolute',
