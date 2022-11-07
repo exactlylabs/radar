@@ -9,7 +9,14 @@ const rightPanelSpeedDataContainerStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  margin: '30px auto',
+  margin: '30px auto 25px 0',
+}
+
+const smallRightPanelSpeedDataContainerStyle: CSSProperties = {
+  ...rightPanelSpeedDataContainerStyle,
+  width: 'max-content',
+  justifyContent: 'flex-start',
+  height: '70px',
 }
 
 const iconStyle: CSSProperties = {
@@ -22,7 +29,9 @@ const iconStyle: CSSProperties = {
 }
 
 export const styles = {
-  RightPanelSpeedDataContainer: rightPanelSpeedDataContainerStyle,
+  RightPanelSpeedDataContainer: (isSmall: boolean) => {
+    return isSmall ? smallRightPanelSpeedDataContainerStyle : rightPanelSpeedDataContainerStyle;
+  },
   Icon: (speedState?: string) => {
     if(speedState) {
       const color = speedColors[speedState.toUpperCase() as keyof SpeedsObject];

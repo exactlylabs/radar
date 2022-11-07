@@ -33,6 +33,11 @@ const leftSideContainerStyle: CSSProperties = {
   marginLeft: '10px',
 }
 
+const smallLeftSideContainerStyle: CSSProperties = {
+  ...leftSideContainerStyle,
+  marginLeft: 0
+}
+
 const stateTextContainerStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'row',
@@ -57,16 +62,25 @@ const geospaceNameStyle: CSSProperties = {
   overflow: 'hidden',
 }
 
+const smallGeospaceNameStyle: CSSProperties = {
+  ...geospaceNameStyle,
+  fontSize: '22px',
+}
+
 const stateCountryStyle: CSSProperties = {
   fontSize: '18px',
   color: DEFAULT_TEXT,
 }
+
+const smallStateCountryStyle: CSSProperties = stateCountryStyle;
 
 const parentNameStyle: CSSProperties = {
   fontSize: '18px',
   color: DEFAULT_TEXT,
   marginRight: '3px',
 }
+
+const smallParentNameStyle: CSSProperties = parentNameStyle;
 
 const signalStateContainerStyle: CSSProperties = {
   display: 'flex',
@@ -116,14 +130,17 @@ const stateAndCountryStyle: CSSProperties = {
 }
 
 export const styles = {
-  RightPanelHeaderContainer: (isCounty: boolean) => {
-    return isCounty ? countyRightPanelHeaderContainerStyle : rightPanelHeaderContainerStyle;
+  RightPanelHeaderContainer: (isCounty: boolean, isSmall: boolean) => {
+    let style = isCounty ? countyRightPanelHeaderContainerStyle : rightPanelHeaderContainerStyle;
+    return isSmall ? {...style, margin: '0 auto'} : style;
   },
-  LeftSideContainer: leftSideContainerStyle,
+  LeftSideContainer: (isSmall: boolean) => {
+    return isSmall ? smallLeftSideContainerStyle : leftSideContainerStyle;
+  },
   StateTextContainer: (isCounty: boolean) => isCounty ? countyTextContainerStyle : stateTextContainerStyle,
-  GeospaceName: geospaceNameStyle,
-  StateCountry: stateCountryStyle,
-  ParentName: parentNameStyle,
+  GeospaceName: (isSmall: boolean) => isSmall ? smallGeospaceNameStyle : geospaceNameStyle,
+  StateCountry: (isSmall: boolean) => isSmall ? smallStateCountryStyle : stateCountryStyle,
+  ParentName: (isSmall: boolean) => isSmall ? smallParentNameStyle : parentNameStyle,
   SignalStateContainer: signalStateContainerStyle,
   StateSignalStateIndicator: (stateSignalState: string) => {
     const backgroundColor = speedColors[stateSignalState.toUpperCase() as keyof SpeedsObject];

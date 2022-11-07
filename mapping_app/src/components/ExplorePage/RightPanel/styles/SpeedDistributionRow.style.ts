@@ -10,6 +10,12 @@ const speedDistributionRowContainerStyle: CSSProperties = {
   position: 'relative'
 }
 
+const smallSpeedDistributionRowContainerStyle: CSSProperties = {
+  ...speedDistributionRowContainerStyle,
+  margin: '8px auto',
+  alignItems: 'flex-start'
+}
+
 const speedDistributionRowIconStyle: CSSProperties = {
   width: '18px',
   height: '18px',
@@ -29,11 +35,22 @@ const speedTagStyle: CSSProperties = {
   color: DEFAULT_SECONDARY_TEXT
 }
 
+const smallSpeedTagStyle: CSSProperties = {
+  fontSize: '13px',
+  color: DEFAULT_SECONDARY_TEXT
+}
+
 const peopleCountStyle: CSSProperties = {
   fontSize: '16px',
   color: BLACK,
   marginRight: '60px',
   marginLeft: 'auto'
+}
+
+const smallPeopleCountStyle: CSSProperties = {
+  ...peopleCountStyle,
+  marginRight: '0',
+  marginLeft: '0'
 }
 
 const percentageStyle: CSSProperties = {
@@ -43,8 +60,25 @@ const percentageStyle: CSSProperties = {
   right: 0
 }
 
+const samplesContainerStyle: CSSProperties = {
+  width: 'max-content',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-end',
+  alignItems: 'flex-end',
+  marginRight: '60px',
+  marginLeft: 'auto',
+}
+
+const peopleCountLabelStyle: CSSProperties = {
+  fontSize: '13px',
+  color: DEFAULT_SECONDARY_TEXT,
+}
+
 export const styles = {
-  SpeedDistributionRowContainer: speedDistributionRowContainerStyle,
+  SpeedDistributionRowContainer: (isSmall: boolean) => {
+    return isSmall ? smallSpeedDistributionRowContainerStyle : speedDistributionRowContainerStyle
+  },
   SpeedDistributionRowIcon: (backgroundColor: string) => {
     const boxShadow = `0 2px 8px -2px ${backgroundColor}`;
     const border = `solid 1px ${FILTER_SQUARE_BORDER}`;
@@ -56,7 +90,13 @@ export const styles = {
     };
   },
   SpeedText: speedTextStyle,
-  SpeedTag: speedTagStyle,
-  PeopleCount: peopleCountStyle,
-  Percentage: percentageStyle
+  SpeedTag: (isSmall: boolean) => {
+    return isSmall ? smallSpeedTagStyle : speedTagStyle;
+  },
+  PeopleCount: (isSmall: boolean) => {
+    return isSmall ? smallPeopleCountStyle : peopleCountStyle;
+  },
+  Percentage: percentageStyle,
+  SamplesContainer: samplesContainerStyle,
+  PeopleCountLabel: peopleCountLabelStyle,
 }
