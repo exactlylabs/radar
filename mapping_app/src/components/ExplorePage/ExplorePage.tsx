@@ -59,7 +59,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(!isSmallerThanMid && (!!getValueFromUrl('selectedGeospace') || !!getValueFromUrl('selectedGeospaceId')));
   const [isRightPanelHidden, setIsRightPanelHidden] = useState(false);
   const [selectedGeospaceId, setSelectedGeospaceId] = useState(getGeospaceId());
-  const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(null);
+  const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(getValueFromUrl('selectedGeospace') ?? null);
   const [geospaceNamespace, setGeospaceNamespace] = useState(getValueFromUrl('geospaceNamespace') ?? tabs.COUNTIES);
   const [speedType, setSpeedType] = useState<Filter>(getValueFromUrl('speedType') ?? speedFilters[0]);
   const [calendarType, setCalendarType] = useState<Filter>(getValueFromUrl('calendarType') ?? calendarFilters[3]);
@@ -72,8 +72,8 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [isFirstTimeModalOpen, setIsFirstTimeModalOpen] = useState(false);
   const [areSpeedFiltersOpen, setAreSpeedFiltersOpen] = useState(getValueFromUrl('areSpeedFiltersOpen') ?? false);
   const [areSmallScreenFiltersOpen, setAreSmallScreenFiltersOpen] = useState(true);
-  const [genericMenuOpen, setGenericMenuOpen] = useState(isSmallerThanMid && (!!getValueFromUrl('selectedGeospace') || !!getValueFromUrl('selectedGeospaceId')));
-  const [menuContent, setMenuContent] = useState<Optional<ReactElement>>(isSmallerThanMid && (!!getValueFromUrl('selectedGeospace') || !!getValueFromUrl('selectedGeospaceId')) ? getMenuContent(MenuContent.GEOSPACE, getValueFromUrl('selectedGeospace'), {speedType: getValueFromUrl('speedType') ?? speedFilters[0]}) : null);
+  const [genericMenuOpen, setGenericMenuOpen] = useState(false);
+  const [menuContent, setMenuContent] = useState<Optional<ReactElement>>(null);
 
   useEffect(() => {
     if(REACT_APP_ENV === 'production') {
@@ -171,6 +171,21 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     }
   }
 
+  const openFullMenu = (geospace: GeospaceInfo) => {
+    const params = {
+      geospace,
+      loading,
+      speedType,
+      setSpeedType,
+      calendarType,
+      setCalendarType,
+      provider,
+      setProvider
+    };
+    setAreSmallScreenFiltersOpen(false);
+    setMenuContent(getMenuContent(MenuContent.FULL_GEOSPACE, geospace, params));
+  }
+
   const selectGeospace = (geospace: GeospaceInfo, center?: L.LatLng) => {
     setLoading(true);
     setSelectedGeospace(geospace);
@@ -184,28 +199,14 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
     }
     if(isSmallerThanMid) {
-      const params = { speedType, openFullMenu };
+      const callback = () => openFullMenu(geospace);
+      const params = { speedType, openFullMenu: callback };
       setMenuContent(getMenuContent(MenuContent.GEOSPACE, geospace, params));
       setGenericMenuOpen(true);
     } else {
       openRightPanel();
     }
     setLoading(false);
-  }
-
-  const openFullMenu = () => {
-    const params = {
-      geospace: selectedGeospace,
-      loading,
-      speedType,
-      setSpeedType,
-      calendarType,
-      setCalendarType,
-      provider,
-      setProvider
-    };
-    setAreSmallScreenFiltersOpen(false);
-    setMenuContent(getMenuContent(MenuContent.FULL_GEOSPACE, selectedGeospace, params));
   }
 
   const recenterMap = () => {
@@ -342,9 +343,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
         />
       }
       { isSmallerThanMid && genericMenuOpen &&
-        <MyGenericMenu content={menuContent}
-                       closeMenu={closeMenu}
-        />
+        <MyGenericMenu content={menuContent} closeMenu={closeMenu}/>
       }
     </div>
   )

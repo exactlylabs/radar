@@ -1,16 +1,9 @@
 import {ReactElement} from "react";
 import SpeedDataCell from "./SpeedDataCell";
 import {styles} from "./styles/RightPanelSpeedData.style";
-import DownloadIconGray from '../../../assets/download-icon-gray.png';
-import DownloadIconUnserved from '../../../assets/download-icon-unserved.png';
-import DownloadIconUnderserved from '../../../assets/download-icon-underserved.png';
-import DownloadIconServed from '../../../assets/download-icon-served.png';
-import UploadIconGray from '../../../assets/upload-icon-gray.png';
-import UploadIconUnserved from '../../../assets/upload-icon-unserved.png';
-import UploadIconUnderserved from '../../../assets/upload-icon-underserved.png';
-import UploadIconServed from '../../../assets/upload-icon-served.png';
 import LatencyIconGray from '../../../assets/latency-icon-gray.png';
-import {getDownloadIconSrc, getUploadIconSrc, speedTypes} from "../../../utils/speeds";
+import {getDownloadIconSrc, getUploadIconSrc} from "../../../utils/speeds";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 
 interface RightPanelSpeedDataProps {
@@ -29,10 +22,10 @@ const RightPanelSpeedData = ({
   speedType,
 }: RightPanelSpeedDataProps): ReactElement => {
 
-
+  const {isSmallerThanMid} = useViewportSizes();
 
   return (
-    <div style={styles.RightPanelSpeedDataContainer}>
+    <div style={styles.RightPanelSpeedDataContainer(isSmallerThanMid)}>
       <SpeedDataCell icon={<img src={getDownloadIconSrc(speedType, speedState)} style={styles.Icon(speedState)} alt={'download-icon'}/>}
                      text={'Med. Download'}
                      value={medianDownload.toFixed(2)}

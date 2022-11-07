@@ -34,8 +34,17 @@ const smallDropdownFiltersContainerStyle: CSSProperties = {
   alignItems: 'center'
 }
 
+const insideContainerStyle: CSSProperties = {
+  position: 'relative',
+  margin: 0,
+  top: undefined,
+  left: undefined
+}
+
 export const styles = {
-  DropdownFiltersContainer: (isSmall: boolean) => {
-    return isSmall ? smallDropdownFiltersContainerStyle : dropdownFiltersContainerStyle;
+  DropdownFiltersContainer: (isSmall: boolean, isInsideContainer?: boolean) => {
+    let style = isSmall ? smallDropdownFiltersContainerStyle : dropdownFiltersContainerStyle;
+    if(!isInsideContainer) return style;
+    return {...style, ...insideContainerStyle};
   },
 }

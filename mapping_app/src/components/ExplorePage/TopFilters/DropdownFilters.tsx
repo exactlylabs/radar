@@ -27,6 +27,7 @@ interface DropdownFiltersProps {
   provider: Filter;
   openDatePicker: () => void;
   selectedGeospaceId?: string;
+  isInsideContainer?: boolean;
 }
 
 const DropdownFilters = ({
@@ -35,7 +36,8 @@ const DropdownFilters = ({
   calendarType,
   provider,
   openDatePicker,
-  selectedGeospaceId
+  selectedGeospaceId,
+  isInsideContainer
 }: DropdownFiltersProps): ReactElement => {
 
   const {isSmallerThanMid} = useViewportSizes();
@@ -151,7 +153,7 @@ const DropdownFilters = ({
   }
 
   return (
-    <div style={styles.DropdownFiltersContainer(isSmallerThanMid)}
+    <div style={styles.DropdownFiltersContainer(isSmallerThanMid, isInsideContainer)}
          id={'dropdown-filters--container'}
          className={`${isSmallerThanMid ? 'dropdown-filters--container-small' : ''}`}
          ref={sliderRef}
