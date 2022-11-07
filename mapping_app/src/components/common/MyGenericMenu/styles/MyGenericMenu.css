@@ -1,0 +1,8 @@
+#my-generic-menu::-webkit-scrollbar {
+  display: none !important;
+}
+
+#my-generic-menu {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
