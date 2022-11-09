@@ -53,12 +53,8 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
     emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
 
-  void startSpeedTest() {
-    emit(state.copyWith(isTestRunning: true));
-  }
-
-  void stopSpeedTest() {
-    emit(state.copyWith(isTestRunning: false));
+  void resetForm() {
+    emit(const SpeedTestState());
   }
 
   @override

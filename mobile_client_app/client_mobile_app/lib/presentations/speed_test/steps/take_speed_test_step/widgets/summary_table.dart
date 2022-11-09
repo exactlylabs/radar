@@ -1,6 +1,6 @@
-import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/icon_with_text.dart';
-import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/icon_with_text.dart';
 
 class SummaryTable extends StatelessWidget {
   const SummaryTable({

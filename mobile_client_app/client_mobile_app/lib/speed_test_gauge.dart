@@ -3,14 +3,15 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'dart:math' as math;
-import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
 
 class SpeedTestGauge extends StatefulWidget {
   const SpeedTestGauge({
-    GlobalKey? key,
+    Key? key,
     this.speed = 0,
+    required this.minSpeed,
+    required this.maxSpeed,
     this.isDownloadTest = true,
     this.speedTextStyle = const TextStyle(
       color: Colors.black,
@@ -23,8 +24,6 @@ class SpeedTestGauge extends StatefulWidget {
       fontSize: 20.0,
       fontWeight: FontWeight.w600,
     ),
-    required this.minSpeed,
-    required this.maxSpeed,
     this.minMaxTextStyle = const TextStyle(
       color: Colors.black,
       fontSize: 20,
@@ -35,14 +34,14 @@ class SpeedTestGauge extends StatefulWidget {
     this.activeGaugeColor = Colors.green,
     this.innerCirclePadding = 30,
     this.animate = false,
-    this.duration = const Duration(milliseconds: 400),
+    this.duration = const Duration(milliseconds: 200),
     this.fractionDigits = 0,
-    this.child,
     this.activeGaugeGradientColor,
+    this.child,
   }) : super(key: key);
 
   @override
-  SpeedTestGaugeState createState() => SpeedTestGaugeState(speed, animate);
+  State<SpeedTestGauge> createState() => _SpeedTestGaugeState();
 
   final double speed;
   final bool isDownloadTest;
@@ -54,31 +53,29 @@ class SpeedTestGauge extends StatefulWidget {
   final TextStyle minMaxTextStyle;
   final double gaugeWidth;
   final Color baseGaugeColor;
-  final Color inactiveGaugeColor;
   final Color activeGaugeColor;
+  final Color inactiveGaugeColor;
   final ui.Gradient? activeGaugeGradientColor;
   final double innerCirclePadding;
   final bool animate;
   final Duration duration;
   final int fractionDigits;
-
   final Widget? child;
 }
 
-class SpeedTestGaugeState extends State<SpeedTestGauge> with SingleTickerProviderStateMixin {
+class _SpeedTestGaugeState extends State<SpeedTestGauge> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-
-  double _speed;
-  final bool _animate;
+  late double _speed;
+  late bool _animate;
 
   double lastMarkSpeed = 0;
   double _gaugeMarkSpeed = 0;
 
-  SpeedTestGaugeState(this._speed, this._animate);
-
   @override
   void initState() {
+    _speed = widget.speed;
+    _animate = widget.animate;
     if (_animate) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) => updateSpeed(_speed, animate: _animate));
     } else {
@@ -90,10 +87,11 @@ class SpeedTestGaugeState extends State<SpeedTestGauge> with SingleTickerProvide
       duration: widget.duration,
       vsync: this,
     );
+
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller)
       ..addListener(() {
         setState(() {
-          _gaugeMarkSpeed = lastMarkSpeed + (_speed - lastMarkSpeed) * _animation.value;
+          _gaugeMarkSpeed = lastMarkSpeed + ((_speed - lastMarkSpeed) * _animation.value);
         });
       })
       ..addStatusListener((status) {
@@ -101,7 +99,6 @@ class SpeedTestGaugeState extends State<SpeedTestGauge> with SingleTickerProvide
           lastMarkSpeed = _gaugeMarkSpeed;
         }
       });
-
     super.initState();
   }
 
@@ -113,6 +110,9 @@ class SpeedTestGaugeState extends State<SpeedTestGauge> with SingleTickerProvide
 
   @override
   Widget build(BuildContext context) {
+    if (_speed != widget.speed) {
+      updateSpeed(widget.speed, animate: widget.animate, duration: widget.duration);
+    }
     return FutureBuilder(
       future: _loadImagesInfo(context),
       builder: (context, snapshot) {
@@ -154,6 +154,7 @@ class SpeedTestGaugeState extends State<SpeedTestGauge> with SingleTickerProvide
 
   void updateSpeed(double speed, {bool animate = false, Duration? duration}) {
     if (animate) {
+      // print(speed);
       _speed = speed;
       _controller.reset();
       if (duration != null) _controller.duration = duration;
@@ -223,7 +224,6 @@ class _SpeedTestGaugeCustomPainter extends CustomPainter {
     _drawGauge(size, canvas);
 
     //draw division dots circle(big one)
-    // paint.color = divisionCircleColors;
     _drawSteps(canvas, size);
 
     //Draw Unit of Measurement
@@ -248,10 +248,8 @@ class _SpeedTestGaugeCustomPainter extends CustomPainter {
     paint.strokeCap = StrokeCap.round;
     paint.style = PaintingStyle.stroke;
 
-    //Draw base gauge
     canvas.drawCircle(center!, mRadius, paint..color = baseGaugeColor);
 
-    //Draw inactive gauge view
     canvas.drawArc(
       Rect.fromCircle(center: center!, radius: mRadius),
       degToRad(arcStartAngle) as double,
@@ -262,7 +260,6 @@ class _SpeedTestGaugeCustomPainter extends CustomPainter {
 
     paint.color = activeGaugeColor;
 
-    // final rect = ;
     const uploadGradient = LinearGradient(
       tileMode: TileMode.clamp,
       colors: [
@@ -291,26 +288,25 @@ class _SpeedTestGaugeCustomPainter extends CustomPainter {
       paint,
     );
 
-    //Going to draw division, Subdivision and Alert Circle
     paint.style = PaintingStyle.fill;
   }
 
   void _drawDownloadIcon(ui.Canvas canvas, Size size, [double opacity = 1.0]) {
-    Offset offset = Offset((size.width / 2) - (imageInfo.image.width / 2), (size.height / 2) - 45);
+    Offset offset = Offset((size.width / 2) - (imageInfo.image.width / 3.5), (size.height / 2) - 45);
     paintImage(
       canvas: canvas,
       opacity: opacity,
       rect: Rect.fromCenter(
         center: offset,
-        width: imageInfo.image.width / 1.5,
-        height: imageInfo.image.height / 1.5,
+        width: imageInfo.image.width / 2.5,
+        height: imageInfo.image.height / 2.5,
       ),
       image: imageInfo.image,
     );
   }
 
   void _drawUploadIcon(ui.Canvas canvas, Size size, [double opacity = 1.0]) {
-    canvas.translate((size.width / 2) + (imageInfo.image.width / 2), (size.height / 2) - 45);
+    canvas.translate((size.width / 2) + (imageInfo.image.width / 3.5), (size.height / 2) - 45);
     canvas.rotate(180 * pi / 180);
     paintImage(
       canvas: canvas,
@@ -318,8 +314,8 @@ class _SpeedTestGaugeCustomPainter extends CustomPainter {
       colorFilter: const ColorFilter.mode(Color.fromRGBO(229, 101, 187, 1), BlendMode.srcIn),
       rect: Rect.fromCenter(
         center: Offset.zero,
-        width: imageInfo.image.width / 1.5,
-        height: imageInfo.image.height / 1.5,
+        width: imageInfo.image.width / 2.5,
+        height: imageInfo.image.height / 2.5,
       ),
       image: imageInfo.image,
     );

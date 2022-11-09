@@ -1,11 +1,15 @@
-import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
 
 class LocationInputField extends StatefulWidget {
   const LocationInputField({
     Key? key,
+    this.onChanged,
   }) : super(key: key);
+
+  final Function(String)? onChanged;
 
   @override
   State<LocationInputField> createState() => _LocationInputFieldState();
@@ -15,6 +19,7 @@ class _LocationInputFieldState extends State<LocationInputField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      onChanged: widget.onChanged,
       style: AppTextStyle(
         fontSize: 16.0,
         color: Theme.of(context).colorScheme.primary,
@@ -23,7 +28,7 @@ class _LocationInputFieldState extends State<LocationInputField> {
       decoration: InputDecoration(
         filled: true,
         fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.05),
-        hintText: 'Enter your address or zip code',
+        hintText: Strings.locationInputFieldHint,
         hintStyle: AppTextStyle(
           fontSize: 16.0,
           letterSpacing: 0.5,

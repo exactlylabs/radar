@@ -1,6 +1,7 @@
-import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
 
 class ExploreYoutAreaButton extends StatelessWidget {
   const ExploreYoutAreaButton({
@@ -19,7 +20,7 @@ class ExploreYoutAreaButton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Explore your area',
+            Strings.exploreYourAreaButtonLabel,
             style: AppTextStyle(
               color: Theme.of(context).colorScheme.secondary,
               fontSize: 16.0,

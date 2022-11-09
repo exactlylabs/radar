@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,7 @@ class TitleAndSubtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -28,7 +30,10 @@ class TitleAndSubtitle extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
-        const SizedBox(height: 5.0),
+        SpacerWithMax(
+          size: height * 0.012,
+          maxSize: 10,
+        ),
         Text(
           subtitle,
           textAlign: TextAlign.center,

@@ -18,6 +18,7 @@ class BillCostInputField extends StatefulWidget {
 
 class _BillCostInputFieldState extends State<BillCostInputField> {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -41,6 +42,8 @@ class _BillCostInputFieldState extends State<BillCostInputField> {
         const SizedBox(width: 22.0),
         Expanded(
           child: TextFormField(
+            focusNode: _focusNode,
+            autofocus: true,
             controller: _controller,
             onChanged: widget.onChanged,
             keyboardType: TextInputType.number,

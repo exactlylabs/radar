@@ -2,6 +2,11 @@ class TakeSpeedTestStepState {
   const TakeSpeedTestStepState({
     this.downloadSpeed,
     this.uploadSpeed,
+    this.latency,
+    this.loss,
+    this.minRtt,
+    this.bytesRetrans,
+    this.bytesSent,
     this.finishedTesting = false,
     this.isTestingDownloadSpeed = false,
     this.isTestingUploadSpeed = false,
@@ -13,11 +18,21 @@ class TakeSpeedTestStepState {
     bool? isTestingUploadSpeed,
     double? downloadSpeed,
     double? uploadSpeed,
+    double? latency,
+    double? loss,
+    int? minRtt,
+    int? bytesRetrans,
+    int? bytesSent,
   }) {
     return TakeSpeedTestStepState(
       finishedTesting: finishedTesting ?? this.finishedTesting,
       downloadSpeed: downloadSpeed ?? this.downloadSpeed,
       uploadSpeed: uploadSpeed ?? this.uploadSpeed,
+      latency: latency ?? this.latency,
+      loss: loss ?? this.loss,
+      minRtt: minRtt ?? this.minRtt,
+      bytesRetrans: bytesRetrans ?? this.bytesRetrans,
+      bytesSent: bytesSent ?? this.bytesSent,
       isTestingDownloadSpeed: isTestingDownloadSpeed ?? this.isTestingDownloadSpeed,
       isTestingUploadSpeed: isTestingUploadSpeed ?? this.isTestingUploadSpeed,
     );
@@ -28,4 +43,9 @@ class TakeSpeedTestStepState {
   final bool isTestingUploadSpeed;
   final double? downloadSpeed;
   final double? uploadSpeed;
+  final double? latency;
+  final double? loss;
+  final int? minRtt;
+  final int? bytesRetrans;
+  final int? bytesSent;
 }

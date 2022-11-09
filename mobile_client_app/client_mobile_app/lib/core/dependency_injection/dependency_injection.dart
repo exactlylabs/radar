@@ -3,6 +3,7 @@ import 'package:client_mobile_app/core/http_provider/implementation/http_provide
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:get_it/get_it.dart';
+import 'package:ndt7_client/ndt7_client.dart';
 
 final sl = GetIt.instance;
 
@@ -12,4 +13,6 @@ void registerDependencies(String baseUrl) {
   sl.registerLazySingleton<IHttpProvider>(() => HttpProvider());
 
   sl.registerLazySingleton<RestClient>(() => RestClient(baseUrl: baseUrl));
+
+  sl.registerLazySingleton<Ndt7Client>(() => Ndt7Client());
 }

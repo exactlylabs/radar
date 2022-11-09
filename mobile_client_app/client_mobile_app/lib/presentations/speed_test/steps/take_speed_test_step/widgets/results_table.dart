@@ -1,14 +1,23 @@
-import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/result_item.dart';
-import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/result_item.dart';
 
 class ResultsTable extends StatelessWidget {
   const ResultsTable({
     Key? key,
+    this.download,
+    this.upload,
+    this.latency,
+    this.loss,
     this.isEnabled = true,
   }) : super(key: key);
 
   final bool isEnabled;
+  final String? download;
+  final String? upload;
+  final String? latency;
+  final String? loss;
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +47,17 @@ class ResultsTable extends StatelessWidget {
               children: [
                 ResultItem(
                   icon: Images.downloadIcon,
-                  name: 'Download',
-                  unit: 'Mbps',
-                  value: '30.30',
+                  name: Strings.downloadResultsLabel,
+                  unit: Strings.downloadResultsUnit,
+                  value: download,
                   isEnabled: isEnabled,
                 ),
                 Divider(color: Theme.of(context).colorScheme.surface.withOpacity(0.3), thickness: 1.0),
                 ResultItem(
                   icon: Images.latencyIcon,
-                  name: 'Latency',
-                  unit: 'ms',
-                  value: '10',
+                  name: Strings.latencyResultsLabel,
+                  unit: Strings.latencyResultsUnit,
+                  value: latency,
                   isEnabled: isEnabled,
                 ),
               ],
@@ -62,18 +71,18 @@ class ResultsTable extends StatelessWidget {
               children: [
                 ResultItem(
                   icon: Images.uploadIcon,
-                  name: 'Upload',
-                  unit: 'Mbps',
+                  name: Strings.uploadResultsLabel,
+                  unit: Strings.uploadResultsUnit,
+                  value: upload,
                   isEnabled: isEnabled,
-                  // value: '100',
                 ),
                 Divider(color: Theme.of(context).colorScheme.surface.withOpacity(0.3), thickness: 1.0),
                 ResultItem(
                   icon: Images.lossIcon,
-                  name: 'Loss',
-                  unit: '%',
+                  name: Strings.lossResultsLabel,
+                  unit: Strings.lossResultsUnit,
+                  value: loss,
                   isEnabled: isEnabled,
-                  // value: '100',
                 ),
               ],
             ),
