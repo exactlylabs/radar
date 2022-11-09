@@ -31,7 +31,9 @@ class LocalStorage {
   }
 
   bool getFTUEMap() {
-    final ftue = _box.get(ftueMapKey, defaultValue: [])!;
+    final ftue = _box.get(ftueMapKey, defaultValue: [
+      {'value': true}
+    ])!;
     return ftue.first['value'] as bool;
   }
 

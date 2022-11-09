@@ -1,4 +1,5 @@
 import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
 
 class ResultItem extends StatelessWidget {
@@ -44,7 +45,7 @@ class ResultItem extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: value ?? '-',
+                text: value ?? Strings.emptyOption,
                 style: AppTextStyle(
                   fontSize: 22.0,
                   fontWeight: 700,

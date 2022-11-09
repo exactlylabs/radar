@@ -1,5 +1,5 @@
-import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
 
 class IconWithText extends StatelessWidget {
   const IconWithText({

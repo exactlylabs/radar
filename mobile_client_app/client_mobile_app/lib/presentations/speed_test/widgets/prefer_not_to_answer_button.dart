@@ -1,7 +1,7 @@
-import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:flutter/material.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
-import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
 
 class PreferNotToAnswerButton extends StatelessWidget {
   const PreferNotToAnswerButton({
@@ -14,7 +14,7 @@ class PreferNotToAnswerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () => onPressed != null ? onPressed!(Strings.preferNotToAnswer) : null,
+      onPressed: () => onPressed != null ? onPressed!(Strings.emptyOption) : null,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
