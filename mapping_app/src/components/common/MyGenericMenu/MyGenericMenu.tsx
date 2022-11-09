@@ -2,7 +2,6 @@ import {ReactElement} from "react";
 import {styles} from "./styles/MyGenericMenu.style";
 import CloseIcon from "../../../assets/close-icon.png";
 import {Optional} from "../../../utils/types";
-import './styles/MyGenericMenu.css';
 
 interface MyGenericMenuProps {
   content: Optional<ReactElement>;
