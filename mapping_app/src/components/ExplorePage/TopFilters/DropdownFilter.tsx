@@ -23,6 +23,7 @@ interface DropdownFilterProps {
   lastOptionOnClick?: () => void;
   loading: boolean;
   isLast?: boolean;
+  openFilterMenu: () => void;
 }
 
 const DropdownFilter = ({
@@ -39,7 +40,8 @@ const DropdownFilter = ({
   setOpenFilter,
   lastOptionOnClick,
   loading,
-  isLast
+  isLast,
+  openFilterMenu
 }: DropdownFilterProps): ReactElement => {
 
   const {isSmallerThanMid} = useViewportSizes();
@@ -85,7 +87,7 @@ const DropdownFilter = ({
 
   return (
     <div style={styles.DropdownFilterContainer(isSmallerThanMid, isLast)}
-         onClick={toggleOptionsDropdown}
+         onClick={isSmallerThanMid ? openFilterMenu : toggleOptionsDropdown}
          id={`filter-${type}`}
     >
       <div className={'hover-opaque'} style={styles.FilterContentContainer(dropdownOpen, isSmallerThanMid)}>
