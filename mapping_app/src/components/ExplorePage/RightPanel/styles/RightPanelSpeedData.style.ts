@@ -17,6 +17,7 @@ const smallRightPanelSpeedDataContainerStyle: CSSProperties = {
   width: 'max-content',
   justifyContent: 'flex-start',
   height: '70px',
+  margin: '0 auto 25px 0',
 }
 
 const iconStyle: CSSProperties = {

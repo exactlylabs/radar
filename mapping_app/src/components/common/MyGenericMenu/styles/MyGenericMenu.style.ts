@@ -4,9 +4,8 @@ import {DEFAULT_BUTTON_BOX_SHADOW_RGBA, GENERIC_MENU, GEOGRAPHICAL_CATEGORY_BOTT
 const myGenericMenuStyle: CSSProperties = {
   width: '100vw',
   height: 'max-content',
-  minHeight: '250px',
   maxHeight: 'calc(100vh - 58px)',
-  overflowY: 'auto',
+  overflowY: 'hidden',
   overflowX: 'hidden',
   backgroundColor: GENERIC_MENU,
   borderTopLeftRadius: '8px',

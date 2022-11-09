@@ -14,6 +14,7 @@ import {debounce} from "../../../api/utils/debouncer";
 import {usePrev} from '../../../hooks/usePrev';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import './styles/DropdownFilters.css';
+import filters from "./Filters";
 
 type ScrollPosition = {
   clientX: number;
@@ -28,6 +29,7 @@ interface DropdownFiltersProps {
   openDatePicker: () => void;
   selectedGeospaceId?: string;
   isInsideContainer?: boolean;
+  openFilterMenu?: (filter: string) => void;
 }
 
 const DropdownFilters = ({
@@ -37,7 +39,8 @@ const DropdownFilters = ({
   provider,
   openDatePicker,
   selectedGeospaceId,
-  isInsideContainer
+  isInsideContainer,
+  openFilterMenu
 }: DropdownFiltersProps): ReactElement => {
 
   const {isSmallerThanMid} = useViewportSizes();
@@ -152,6 +155,10 @@ const DropdownFilters = ({
     }
   }
 
+  const openSpeedTypeMenu = () => openFilterMenu && openFilterMenu(filterTypes.SPEED);
+  const openCalendarTypeMenu = () => openFilterMenu && openFilterMenu(filterTypes.CALENDAR);
+  const openProviderMenu = () => openFilterMenu && openFilterMenu(filterTypes.PROVIDERS);
+
   return (
     <div style={styles.DropdownFiltersContainer(isSmallerThanMid, isInsideContainer)}
          id={'dropdown-filters--container'}
@@ -171,6 +178,7 @@ const DropdownFilters = ({
                       setOpenFilter={setOpenFilter}
                       openFilter={openFilter}
                       loading={false}
+                      openFilterMenu={openSpeedTypeMenu}
       />
       { !isSmallerThanMid && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={CalendarIcon}
@@ -184,6 +192,7 @@ const DropdownFilters = ({
                       lastOptionTriggersFunction
                       lastOptionOnClick={openDatePicker}
                       loading={false}
+                      openFilterMenu={openCalendarTypeMenu}
       />
       { !isSmallerThanMid && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={ProvidersIcon}
@@ -199,6 +208,7 @@ const DropdownFilters = ({
                       openFilter={openFilter}
                       loading={providersLoading}
                       isLast
+                      openFilterMenu={openProviderMenu}
       />
     </div>
   )

@@ -2,6 +2,7 @@ import {CSSProperties} from "react";
 
 const menuFullGeospaceContentContainerStyle: CSSProperties = {
   width: '100%',
+  maxHeight: 'calc(100vh - 58px - 40px)'
 }
 
 const gradientUnderlayStyle: CSSProperties = {
@@ -17,11 +18,14 @@ const gradientUnderlayStyle: CSSProperties = {
 const menuContentWrapperStyle: CSSProperties = {
   width: '100%',
   margin: '0 auto',
+  height: 'calc(100vh - 58px - 40px)',
+  display: 'flex',
+  flexDirection: 'column',
 }
 
 const dropdownFiltersContainerStyle: CSSProperties = {
   width: '100%',
-  height: '40px',
+  height: '50px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -29,10 +33,17 @@ const dropdownFiltersContainerStyle: CSSProperties = {
   marginBottom: '30px'
 }
 
+const speedDataScrollableContainerStyle: CSSProperties = {
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  height: 'calc(100% - 58px - 40px - 50px)'
+}
+
 export const styles = {
   MenuFullGeospaceContentContainer: menuFullGeospaceContentContainerStyle,
   GradientUnderlay: gradientUnderlayStyle,
   MenuContentWrapper: menuContentWrapperStyle,
   DropdownFiltersContainer: dropdownFiltersContainerStyle,
+  SpeedDataScrollableContainer: speedDataScrollableContainerStyle,
 
 }

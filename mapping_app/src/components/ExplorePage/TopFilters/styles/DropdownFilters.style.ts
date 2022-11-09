@@ -20,7 +20,7 @@ const dropdownFiltersContainerStyle: CSSProperties = {
 
 const smallDropdownFiltersContainerStyle: CSSProperties = {
   width: '345px',
-  height: '40px',
+  height: '50px',
   position: 'absolute',
   top: '82px',
   left: '50%',

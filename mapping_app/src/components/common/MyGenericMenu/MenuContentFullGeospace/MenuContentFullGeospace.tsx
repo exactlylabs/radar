@@ -12,6 +12,7 @@ import {getFiltersString} from "../../../../api/utils/filters";
 import {getOverview} from "../../../../api/geospaces/requests";
 import {handleError} from "../../../../api";
 import {styles} from "./styles/MenuContentFullGeospace.style";
+import './styles/MenuContentFullGeospace.css';
 
 interface MenuContentFullGeospaceProps {
   geospace: GeospaceOverview;
@@ -23,6 +24,7 @@ interface MenuContentFullGeospaceProps {
   setCalendarType: (value: Filter) => void;
   provider: Filter;
   setProvider: (value: Filter) => void;
+  openFilterMenu: (option: string) => void;
 }
 
 const MenuContentFullGeospace = ({
@@ -34,7 +36,8 @@ const MenuContentFullGeospace = ({
   calendarType,
   setCalendarType,
   provider,
-  setProvider
+  setProvider,
+  openFilterMenu
 }: MenuContentFullGeospaceProps): ReactElement => {
 
   const getName = (): string => {
@@ -79,33 +82,38 @@ const MenuContentFullGeospace = ({
     <div style={styles.MenuFullGeospaceContentContainer}>
       <div style={styles.MenuContentWrapper}>
         <div style={styles.GradientUnderlay}></div>
-        <RightPanelHeader geospaceName={getName()}
-                          parentName={(geospace as GeospaceOverview).geospace.parent?.name}
-                          country={'U.S.A'}
-                          stateSignalState={getSignalState(speedType as string, geospace)}
-        />
-        <div style={styles.DropdownFiltersContainer}>
-          <DropdownFilters changeFilters={handleFilterChange}
-                           speedType={speedType}
-                           calendarType={calendarType}
-                           provider={provider}
-                           openDatePicker={() => {}}
-                           selectedGeospaceId={(geospace as GeospaceOverview).geospace.id}
-                           isInsideContainer
+        <div>
+          <RightPanelHeader geospaceName={getName()}
+                            parentName={(geospace as GeospaceOverview).geospace.parent?.name}
+                            country={'U.S.A'}
+                            stateSignalState={getSignalState(speedType as string, geospace)}
+          />
+          <div style={styles.DropdownFiltersContainer}>
+            <DropdownFilters changeFilters={handleFilterChange}
+                             speedType={speedType}
+                             calendarType={calendarType}
+                             provider={provider}
+                             openDatePicker={() => {}}
+                             selectedGeospaceId={(geospace as GeospaceOverview).geospace.id}
+                             isInsideContainer
+                             openFilterMenu={openFilterMenu}
+            />
+          </div>
+        </div>
+        <div style={styles.SpeedDataScrollableContainer} id={'menu-content-full-geospace--scrollable-container'}>
+          <RightPanelSpeedData medianDownload={geospace.download_median}
+                               medianUpload={geospace.upload_median}
+                               medianLatency={geospace.latency_median}
+                               speedState={getSignalState(speedType as string, geospace)}
+                               speedType={speedType as string}
+          />
+          <RightPanelHorizontalDivider/>
+          <SpeedDistribution unservedPeopleCount={getUnservedPeopleCount(speedType as string, geospace)}
+                             underservedPeopleCount={getUnderservedPeopleCount(speedType as string, geospace)}
+                             servedPeopleCount={getServedPeopleCount(speedType as string, geospace)}
+                             speedType={speedType}
           />
         </div>
-        <RightPanelSpeedData medianDownload={geospace.download_median}
-                             medianUpload={geospace.upload_median}
-                             medianLatency={geospace.latency_median}
-                             speedState={getSignalState(speedType as string, geospace)}
-                             speedType={speedType as string}
-        />
-        <RightPanelHorizontalDivider/>
-        <SpeedDistribution unservedPeopleCount={getUnservedPeopleCount(speedType as string, geospace)}
-                           underservedPeopleCount={getUnderservedPeopleCount(speedType as string, geospace)}
-                           servedPeopleCount={getServedPeopleCount(speedType as string, geospace)}
-                           speedType={speedType}
-        />
       </div>
     </div>
   )
