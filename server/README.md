@@ -24,7 +24,7 @@ locally on the computer running the app. Installation instructions [here](https:
 
 ### Running
 
-To Run, simply call `rails s` or `rails s -p <port>` in case you already have an app at port 3000 (default)
+To Run, simply call `foreman start -f Procfile.dev`
 
 
 ### Upgrading Agents

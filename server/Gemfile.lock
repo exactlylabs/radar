@@ -90,6 +90,8 @@ GEM
     digest-crc (0.6.4)
       rake (>= 12.0.0, < 14.0.0)
     erubi (1.10.0)
+    et-orbi (1.2.7)
+      tzinfo
     faraday (2.4.0)
       faraday-net_http (~> 2.0)
       ruby2_keywords (>= 0.0.4)
@@ -97,6 +99,10 @@ GEM
     faraday-retry (2.0.0)
       faraday (~> 2.0)
     ffi (1.15.5)
+    foreman (0.87.2)
+    fugit (1.7.2)
+      et-orbi (~> 1, >= 1.2.7)
+      raabro (~> 1.4)
     gapic-common (0.11.0)
       faraday (>= 1.9, < 3.a)
       faraday-retry (>= 1.0, < 3.a)
@@ -239,6 +245,7 @@ GEM
       nio4r (~> 2.0)
     pundit (2.2.0)
       activesupport (>= 3.0.0)
+    raabro (1.4.0)
     racc (1.6.0)
     rack (2.2.4)
     rack-cors (1.1.1)
@@ -296,6 +303,8 @@ GEM
       ffi (~> 1.12)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
+    rufus-scheduler (3.8.2)
+      fugit (~> 1.1, >= 1.1.6)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.4.0)
@@ -384,6 +393,7 @@ DEPENDENCIES
   byebug
   capybara (>= 3.26)
   devise
+  foreman
   geocoder
   google-cloud-storage
   hotwire-rails
@@ -400,6 +410,7 @@ DEPENDENCIES
   rails (~> 6.1.4, >= 6.1.4.1)
   redis (~> 4.0)
   rubyzip
+  rufus-scheduler
   sass-rails (>= 6)
   selenium-webdriver
   sentry-rails
