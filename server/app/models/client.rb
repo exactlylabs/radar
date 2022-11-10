@@ -1,4 +1,6 @@
 class Client < ApplicationRecord
+  PING_DURRATION = 15
+
   belongs_to :user, optional: true, foreign_key: 'claimed_by_id'
   belongs_to :location, optional: true
   belongs_to :client_version, optional: true
@@ -7,16 +9,47 @@ class Client < ApplicationRecord
   belongs_to :watchdog_version, optional: true
   
   has_many :measurements
+  has_many :client_online_logs
 
   geocoded_by :address
 
   before_create :create_ids
   after_validation :geocode
+  after_save :update_online_log
   has_secure_password :secret, validations: false
 
-  scope :where_online, -> { where("pinged_at > ?", 1.minute.ago)}
-  scope :where_offline, -> { where("pinged_at <= ? OR pinged_at IS NULL", 1.minute.ago) }
+  # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
+  scope :where_outdated_online, -> { where("online = true AND (pinged_at < ? OR pinged_at IS NULL)", (PING_DURRATION * 1.5).second.ago) }
+
+  scope :where_online, -> { where(online: true) }
+  scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where("location_id IS NULL") }
+
+  def self.update_outdated_online!
+    Client.where_outdated_online.each do |c|
+      c.online = false
+      c.save!
+    end
+  end
+
+  def update_online_log
+    # Save an event to the prior account if the pod was removed from the account
+    if saved_change_to_account_id && self.online
+      ClientOnlineLog.create(
+        client: self,
+        account_id: account_id_before_last_save,
+        event_name: "WENT_OFFLINE"
+      )
+    end
+    # If online status was updated or account was changed or client was just created
+    if saved_change_to_online || saved_change_to_account_id || saved_change_to_created_at
+      ClientOnlineLog.create(
+        client: self,
+        account: self.account,
+        event_name: online ? "WENT_ONLINE" : "WENT_OFFLINE"
+      )
+    end
+  end
 
   def latest_download
     latest_measurement ? latest_measurement.download : nil
@@ -173,5 +206,4 @@ class Client < ApplicationRecord
     string = (0...11).map { o[rand(o.length)] }.join
     self.unix_user = "r#{string}"
   end
-
 end

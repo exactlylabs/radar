@@ -119,6 +119,7 @@ class ClientsController < ApplicationController
 
   def status
     @client.pinged_at = Time.now
+    @client.online = true
     @client.raw_version = params[:version]
     @client.distribution_name = params[:distribution]
     if params[:network_interfaces]

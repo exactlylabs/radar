@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_24_131625) do
+ActiveRecord::Schema.define(version: 2022_11_04_210219) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,9 +20,9 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
     t.string "name", null: false
     t.boolean "superaccount", default: false
     t.boolean "exportaccount", default: false
+    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "deleted_at"
     t.string "token"
   end
 
@@ -54,14 +54,22 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "client_online_logs", force: :cascade do |t|
+    t.bigint "client_id"
+    t.bigint "account_id"
+    t.string "event_name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_client_online_logs_on_account_id"
+    t.index ["client_id"], name: "index_client_online_logs_on_client_id"
+  end
+
   create_table "client_speed_tests", force: :cascade do |t|
     t.datetime "tested_at"
     t.float "latitude"
     t.float "longitude"
     t.float "download_avg"
     t.float "upload_avg"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
     t.string "ip"
     t.string "token"
     t.string "download_id"
@@ -69,6 +77,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
     t.float "latency"
     t.float "loss"
     t.datetime "processed_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "address"
     t.string "network_location"
     t.string "city"
@@ -116,6 +126,7 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
     t.integer "account_id"
     t.bigint "watchdog_version_id"
     t.string "raw_watchdog_version"
+    t.boolean "online", default: false
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
@@ -235,10 +246,10 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
     t.bigint "account_id", null: false
     t.bigint "user_id", null: false
     t.datetime "joined_at", null: false
+    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
-    t.datetime "deleted_at"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
@@ -254,6 +265,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_131625) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "client_online_logs", "accounts"
+  add_foreign_key "client_online_logs", "clients"
   add_foreign_key "clients", "accounts"
   add_foreign_key "clients", "client_versions"
   add_foreign_key "clients", "locations"
