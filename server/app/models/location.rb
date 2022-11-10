@@ -36,7 +36,7 @@ class Location < ApplicationRecord
   end
 
   def online?
-    clients.where("pinged_at > ?", 1.minute.ago).any?
+    clients.where(online: true).any?
   end
 
   def download_avg
