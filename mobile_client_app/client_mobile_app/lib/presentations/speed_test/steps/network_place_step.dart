@@ -1,8 +1,8 @@
-import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/option_card.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';

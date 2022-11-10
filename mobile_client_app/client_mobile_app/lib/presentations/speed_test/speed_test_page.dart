@@ -65,7 +65,7 @@ class SpeedTestPage extends StatelessWidget {
                       billCost: state.monthlyBillCost,
                       isStepValid: state.isStepValid,
                     )
-                  else if (state.step == 4)
+                  else if (state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP)
                     TakeSpeedTestStep(
                       networkType: state.networkType ?? Strings.emptyOption,
                       networkPlace: state.networkLocation ?? Strings.emptyOption,

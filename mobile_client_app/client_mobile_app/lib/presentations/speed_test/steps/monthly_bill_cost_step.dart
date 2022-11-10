@@ -1,7 +1,7 @@
-import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/bill_cost_input_field.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';

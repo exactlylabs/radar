@@ -71,4 +71,5 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
   static const NETWORK_LOCATION_STEP = 1;
   static const NETWORK_TYPE_STEP = 2;
   static const MONTHLY_BILL_COST_STEP = 3;
+  static const TAKE_SPEED_TEST_STEP = 4;
 }
