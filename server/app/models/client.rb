@@ -75,7 +75,7 @@ class Client < ApplicationRecord
   end
 
   def online?
-    self.pinged_at && self.pinged_at > 1.minute.ago
+    self.online
   end
 
   def test_requested?
