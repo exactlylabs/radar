@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/presentations/your_results/your_results_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_mobile_app/presentations/map/map_web_view_page.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_page.dart';
@@ -15,7 +16,7 @@ class HomePageBody extends StatelessWidget {
     if (pageIdx == _SPEED_TEST_PAGE_IDX) {
       return const SpeedTestPage();
     } else if (pageIdx == _YOUR_RESULTS_PAGE_IDX) {
-      return const Center(child: Text('Your Results'));
+      return const YourResultsPage();
     } else if (pageIdx == _MAP_PAGE_IDX) {
       return MapWebViewPage();
     } else {
