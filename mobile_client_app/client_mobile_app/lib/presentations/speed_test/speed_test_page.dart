@@ -31,7 +31,7 @@ class SpeedTestPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SpacerWithMax(size: height * 0.05, maxSize: 40.0),
-                  if (state.step < 4)
+                  if (state.step < SpeedTestCubit.TAKE_SPEED_TEST_STEP)
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0, bottom: 15.0),
                       child: StepIndicator(
