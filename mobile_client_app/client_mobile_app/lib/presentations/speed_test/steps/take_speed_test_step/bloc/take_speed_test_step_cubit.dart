@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ndt7_client/models/test_completed_event.dart';
 import 'package:ndt7_client/ndt7_client.dart';
 import 'package:ndt7_client/models/client_response.dart';
 import 'package:ndt7_client/models/server_response.dart';
@@ -16,7 +17,6 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
 
   late StreamSubscription _ndt7clientSubscription;
   final Ndt7Client _ndt7client;
-  Timer? _timer;
 
   void startDownloadTest() {
     emit(const TakeSpeedTestStepState(isTestingDownloadSpeed: true));
@@ -25,24 +25,21 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
 
   void startUploadTest() {
     emit(state.copyWith(isTestingUploadSpeed: true));
-    Timer(const Duration(seconds: 1), () {
-      _ndt7client.startUploadTest();
-    });
+    _ndt7client.startUploadTest();
   }
 
   void _subscribeToNdt7Client() {
     _ndt7clientSubscription = _ndt7client.data.listen(
       (data) {
-        if (_timer != null) {
-          _timer!.cancel();
-        }
-        _timer = Timer(const Duration(seconds: 1), () {
+        if (data is TestCompletedEvent) {
           if (state.isTestingDownloadSpeed) {
-            emit(state.copyWith(
-              isTestingDownloadSpeed: false,
-              latency: (state.minRtt ?? 0) / 1000,
-              loss: (state.bytesRetrans ?? 0) / (state.bytesSent ?? 0) * 100,
-            ));
+            emit(
+              state.copyWith(
+                isTestingDownloadSpeed: false,
+                latency: (state.minRtt ?? 0) / 1000,
+                loss: (state.bytesRetrans ?? 0) / (state.bytesSent ?? 0) * 100,
+              ),
+            );
             startUploadTest();
           } else if (state.isTestingUploadSpeed) {
             emit(state.copyWith(
@@ -50,8 +47,7 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
               finishedTesting: true,
             ));
           }
-        });
-        if (data is ClientResponse) {
+        } else if (data is ClientResponse) {
           final speed = convertToMbps(data.appInfo.elapsedTime, data.appInfo.numBytes);
           if (state.isTestingDownloadSpeed) {
             emit(state.copyWith(downloadSpeed: speed));

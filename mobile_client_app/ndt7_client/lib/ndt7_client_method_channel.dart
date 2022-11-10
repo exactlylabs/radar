@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:ndt7_client/models/client_response.dart';
 import 'package:ndt7_client/models/ndt7_response.dart';
 import 'package:ndt7_client/models/server_response.dart';
+import 'package:ndt7_client/models/test_completed_event.dart';
 
 import 'ndt7_client_platform_interface.dart';
 
@@ -26,7 +27,9 @@ class MethodChannelNdt7Client extends Ndt7ClientPlatform {
     ndt7Result = eventChannel.receiveBroadcastStream();
     return ndt7Result.map((dynamic event) {
       final jsonResponse = jsonDecode(event) as Map<String, dynamic>;
-      if (jsonResponse.containsKey('TCPInfo')) {
+      if (jsonResponse.length == 1 && jsonResponse.containsKey('test')) {
+        return TestCompletedEvent.fromJson(jsonResponse);
+      } else if (jsonResponse.containsKey('TCPInfo')) {
         return ServerResponse.fromJson(jsonResponse);
       } else {
         return ClientResponse.fromJson(jsonResponse);

@@ -45,7 +45,9 @@ public class SwiftNdt7ClientPlugin: NSObject, FlutterPlugin, FlutterStreamHandle
                 print("NDT7 iOS Example app - Error during test: \(error.localizedDescription)")
                 flutterError = FlutterError(code: "startUploadTest", message:error.localizedDescription, details: error)
             } else {
-                print("NDT7 iOS Example app - Test finished.")
+                print("NDT7 iOS Example app - Download finished.")
+                let testCompletedEvent: TestCompletedEvent = TestCompletedEvent.init(test: "Download");
+                self?.eventSink?(testCompletedEvent.toJson())
             }
         }
         return flutterError
@@ -59,7 +61,9 @@ public class SwiftNdt7ClientPlugin: NSObject, FlutterPlugin, FlutterStreamHandle
                 print("NDT7 iOS Example app - Error during test: \(error.localizedDescription)")
                 flutterError = FlutterError(code: "startUploadTest", message:error.localizedDescription, details: error)
             } else {
-                print("NDT7 iOS Example app - Test finished.")
+                print("NDT7 iOS Example app - Upload finished.")
+                let testCompletedEvent: TestCompletedEvent = TestCompletedEvent.init(test: "Upload");
+                self?.eventSink?(testCompletedEvent.toJson())
             }
         }
         return flutterError
