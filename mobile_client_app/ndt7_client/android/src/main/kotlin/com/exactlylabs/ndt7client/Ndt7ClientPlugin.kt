@@ -4,6 +4,7 @@ package com.exactlylabs.ndt7client
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.annotation.NonNull
+import com.exactlylabs.ndt7client.models.TestCompletedEvent
 import com.exactlylabs.ndt7client.utils.MainThreadEventSink
 import com.google.gson.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -161,7 +162,9 @@ class Ndt7ClientPlugin : FlutterPlugin, MethodChannel.MethodCallHandler,
             //TODO: Remove this when Issue opened in mlab-ndt7-client-Android is fixed
             jsonClientResponse = jsonClientResponse.replace(".0", "")
             eventSink?.success(jsonClientResponse)
-            Log.d(TAG, "ALL DONE: $speed")
+            val testCompletedEvent = TestCompletedEvent(testType.name)
+            eventSink?.success(gson.toJson(testCompletedEvent))
+
         }
 
         private fun addTestToJsonMeasurement(jsonMeasurement: String, test: String): String {
