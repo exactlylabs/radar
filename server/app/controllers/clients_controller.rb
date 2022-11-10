@@ -148,7 +148,7 @@ class ClientsController < ApplicationController
       end
     end
     
-    @client.save
+    @client.save!
     respond_to do |format|
       format.json { render :status, status: :ok }
     end

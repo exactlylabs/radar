@@ -1,5 +1,6 @@
 class Client < ApplicationRecord
-  PING_DURRATION = 15
+  # TODO: New agents are 15 seconds, old were 30. Once all the legacy "script based" clients are gone, update this to 15
+  PING_DURRATION = 30
 
   belongs_to :user, optional: true, foreign_key: 'claimed_by_id'
   belongs_to :location, optional: true
