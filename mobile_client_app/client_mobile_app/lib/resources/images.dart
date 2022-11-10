@@ -34,4 +34,5 @@ class Images {
   static const uploadIcon = 'assets/icons/upload_icon.png';
   static const lossIcon = 'assets/icons/loss_icon.png';
   static const latencyIcon = 'assets/icons/latency_icon.png';
+  static const infoIcon = 'assets/icons/info_icon.png';
 }
