@@ -15,6 +15,18 @@ const weekPickerStyle: CSSProperties = {
   padding: '15px',
 }
 
+const smallWeekPickerStyle: CSSProperties = {
+  ...weekPickerStyle,
+  width: '100%',
+  maxWidth: '335px',
+  height: '320px',
+  position: 'relative',
+  left: undefined,
+  top: undefined,
+  marginLeft: 'auto',
+  marginRight: 'auto',
+}
+
 const monthSelectorStyle: CSSProperties = {
   width: '100%',
   height: '38px',
@@ -47,7 +59,9 @@ const monthTitleStyle: CSSProperties = {
 }
 
 export const styles = {
-  WeekPicker: weekPickerStyle,
+  WeekPicker: (isSmall: boolean) => {
+    return isSmall ? smallWeekPickerStyle : weekPickerStyle;
+  },
   MonthSelector: monthSelectorStyle,
   Chevron: (disabled: boolean) => {
     return disabled ? disabledChevronStyle : chevronStyle;

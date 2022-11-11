@@ -5,6 +5,7 @@ import ChevronLeft from '../../../assets/chevron-left.png';
 import WeekPickerRow from "./WeekPickerRow";
 import {years} from "../../../utils/filters";
 import {Day, getLastWeek, getMonthCalendar, getMonthName} from "../../../utils/dates";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 interface WeekPickerProps {
   selectedMonth: number;
@@ -21,6 +22,8 @@ const WeekPicker = ({
   setSelectedMonth,
   setSelectedWeek,
 }: WeekPickerProps): ReactElement => {
+
+  const {isSmallerThanMid} = useViewportSizes();
 
   const [weekDays, setWeekDays] = useState<Array<Day>>([]);
   const [weekPickerInternalYear, setWeekPickerInternalYear] = useState(selectedYear);
@@ -90,7 +93,7 @@ const WeekPicker = ({
   }
 
   return (
-    <div style={styles.WeekPicker}>
+    <div style={styles.WeekPicker(isSmallerThanMid)}>
       <div style={styles.MonthSelector}>
         <img className={'hover-opaque'}
              src={ChevronLeft}

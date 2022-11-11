@@ -12,7 +12,8 @@ import {getOverview} from "../../api/geospaces/requests";
 import {handleError} from "../../api";
 import {speedTypes} from "../../utils/speeds";
 import {
-  calendarFilters, filterTypes,
+  calendarFilters,
+  filterTypes,
   generateFilterLabel,
   getCorrectNamespace,
   getDateQueryStringFromCalendarType,
@@ -37,6 +38,7 @@ import SmallScreenBottomNavigator from "./SmallScreenBottomNavigator/SmallScreen
 import DropdownFilters from "./TopFilters/DropdownFilters";
 import MyGenericMenu from "../common/MyGenericMenu/MyGenericMenu";
 import {getMenuContent, MenuContent} from "../common/MyGenericMenu/menu";
+import {useContentMenu} from "../../hooks/useContentMenu";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -53,6 +55,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   }
 
   const {isSmallerThanMid} = useViewportSizes();
+  const {menuContent, setMenuContent} = useContentMenu();
 
   const [loading, setLoading] = useState(false);
   const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(getValueFromUrl('isExplorationPopoverOpen') ?? !isSmallerThanMid); // if small screen, closed by default
@@ -73,7 +76,6 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [areSpeedFiltersOpen, setAreSpeedFiltersOpen] = useState(getValueFromUrl('areSpeedFiltersOpen') ?? false);
   const [areSmallScreenFiltersOpen, setAreSmallScreenFiltersOpen] = useState(true);
   const [genericMenuOpen, setGenericMenuOpen] = useState(false);
-  const [menuContent, setMenuContent] = useState<Optional<ReactElement>>(null);
 
   useEffect(() => {
     if(REACT_APP_ENV === 'production') {
@@ -249,21 +251,42 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const closeMenu = () => setGenericMenuOpen(false);
 
   const openFilterMenu = (filter: string) => {
+    let params: any;
+    let menuContentType: MenuContent;
     setGenericMenuOpen(true);
     switch (filter) {
+      case filterTypes.PROVIDERS:
+        params = {
+          geospaceId: selectedGeospaceId,
+          selectedOption: provider,
+          setSelectedOption: (option: Asn) => handleChangeFilters([speedType, calendarType, option]),
+          closeMenu,
+        };
+        menuContentType = MenuContent.PROVIDERS;
+        break;
+      case filterTypes.CALENDAR:
+        params = {
+          selectedOption: calendarType,
+          setSelectedOption: (option: string) => {
+            handleChangeFilters([speedType, option, provider]);
+            handleSetCalendarType(option);
+          },
+          closeMenu,
+          setMenuContent
+        }
+        menuContentType = MenuContent.CALENDAR;
+        break;
       case filterTypes.SPEED:
-        const params = {
+      default:
+        params = {
           selectedOption: speedType,
           setSelectedOption: (option: string) => handleChangeFilters([option, calendarType, provider]),
           closeMenu,
         };
-        setMenuContent(getMenuContent(MenuContent.SPEED_TYPE, params));
-        break;
-      case filterTypes.CALENDAR:
-      case filterTypes.PROVIDERS:
-      default:
+        menuContentType = MenuContent.SPEED_TYPE;
         break;
     }
+    setMenuContent(getMenuContent(menuContentType, params));
   }
 
   return (

@@ -5,6 +5,7 @@ import {Filter} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
 import OptionHorizontalDivider from "./OptionHorizontalDivider";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 interface OptionProps {
   option: Filter;
@@ -20,6 +21,8 @@ const Option = ({
   isLast,
 }: OptionProps): ReactElement => {
 
+  const {isSmallerThanMid} = useViewportSizes();
+
   const handleClick = () => {
     onClick(option);
   }
@@ -28,8 +31,8 @@ const Option = ({
 
   const lastOption = (
     <>
-      <div style={styles.Option} onClick={handleClick}>
-        <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected)}>{getText()}</p>
+      <div style={styles.Option(isSmallerThanMid)} onClick={handleClick}>
+        <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected, isSmallerThanMid)}>{getText()}</p>
         { !selected && <div style={styles.Icon}></div> }
         {  selected && <img src={GreenCheckIcon} style={styles.Icon} alt={'green-check-icon'}/> }
       </div>
@@ -39,8 +42,8 @@ const Option = ({
   const lastOptionWithStyle = (
     <>
       <OptionHorizontalDivider/>
-      <div style={styles.Option} onClick={handleClick}>
-        <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected)}>{getText()}</p>
+      <div style={styles.Option(isSmallerThanMid)} onClick={handleClick}>
+        <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected, isSmallerThanMid)}>{getText()}</p>
         { !selected && <div style={styles.Icon}></div> }
         {  selected && <img src={GreenCheckIcon} style={styles.Icon} alt={'green-check-icon'}/> }
       </div>

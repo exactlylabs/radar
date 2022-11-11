@@ -5,6 +5,7 @@ import AboutPage from "./components/AboutPage/AboutPage";
 import Frame from "./components/Frame/Frame";
 import {Optional} from "./utils/types";
 import { ViewportContextProvider } from './context/ViewportContent';
+import {MenuContextProvider} from "./context/MenuContent";
 
 const App = () => {
 
@@ -12,15 +13,17 @@ const App = () => {
 
   return (
     <ViewportContextProvider>
-      <BrowserRouter>
-        <Frame centerOnUser={setUserCenter}>
-          <Routes>
-            <Route path={'/explore'} element={<ExplorePage userCenter={userCenter}/>}/>
-            <Route path={'/about'} element={<AboutPage/>}/>
-            <Route path={'*'} element={<Navigate to={'/explore'} replace />} />
-          </Routes>
-        </Frame>
-      </BrowserRouter>
+      <MenuContextProvider>
+        <BrowserRouter>
+          <Frame centerOnUser={setUserCenter}>
+            <Routes>
+              <Route path={'/explore'} element={<ExplorePage userCenter={userCenter}/>}/>
+              <Route path={'/about'} element={<AboutPage/>}/>
+              <Route path={'*'} element={<Navigate to={'/explore'} replace />} />
+            </Routes>
+          </Frame>
+        </BrowserRouter>
+      </MenuContextProvider>
     </ViewportContextProvider>
   );
 }
