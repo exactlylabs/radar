@@ -30,9 +30,13 @@ class Images {
   static const roundedLocationHome = 'assets/icons/rounded_location_home.png';
   static const roundedLocationWork = 'assets/icons/rounded_location_work.png';
   static const roundedLocationOther = 'assets/icons/rounded_location_other.png';
+  static const roundedBadNetworkQuality = 'assets/icons/rounded_bad_network_quality.png';
+  static const roundedGoodNetworkQuality = 'assets/icons/rounded_good_network_quality.png';
+  static const roundedRegularNetworkQuality = 'assets/icons/rounded_regular_network_quality.png';
   static const downloadIcon = 'assets/icons/download_icon.png';
   static const uploadIcon = 'assets/icons/upload_icon.png';
   static const lossIcon = 'assets/icons/loss_icon.png';
   static const latencyIcon = 'assets/icons/latency_icon.png';
   static const infoIcon = 'assets/icons/info_icon.png';
+  static const roundedCheck = 'assets/images/rounded_check.png';
 }

@@ -40,6 +40,16 @@ class Strings {
   static const String wiredConnectionType = 'Wired';
   static const String wifiConnectionType = 'WiFi';
   static const String cellularConnectionType = 'Cellular';
+  static const String badNetworkQuality = 'Bad';
+  static const String regularNetworkQuality = 'Regular';
+  static const String goodNetworkQuality = 'Good';
   static const String locationInputFieldHint = 'Enter your address or zip code';
   static const String exploreYourAreaButtonLabel = 'Explore your area';
+  static const String allResultsLabel = 'All your results';
+  static const String exploreTheMapButtonLabel = 'Explore the map';
+  static const String startOverButtonLabel = 'Start over';
+  static const String noInternetConnectionTitle = 'Thanks for letting us know.';
+  static const String noInternetConnectionSubtitle =
+      'While we cannot run a speed test at your location as you don’t have Internet, we do appreciate your information that helps us learn more about which areas are currently not served.';
+  static const String noInternetConnectionDescription = 'You can explore the map to see how others compare to you.';
 }

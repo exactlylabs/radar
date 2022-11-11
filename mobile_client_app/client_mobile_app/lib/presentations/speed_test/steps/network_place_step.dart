@@ -68,7 +68,11 @@ class NetworkPlaceStep extends StatelessWidget {
         SpacerWithMax(size: height * 0.042, maxSize: 34.0),
         GoBackAndContinueButtons(
           onGoBackPressed: () => context.read<SpeedTestCubit>().previousStep(),
-          onContinuePressed: isStepValid ? () => context.read<SpeedTestCubit>().nextStep() : null,
+          onContinuePressed: isStepValid
+              ? optionSelected == Strings.iDontHaveNetworkLocation
+                  ? () => context.read<SpeedTestCubit>().endForm()
+                  : () => context.read<SpeedTestCubit>().nextStep()
+              : null,
         ),
         SpacerWithMax(size: height * 0.053, maxSize: 45.0),
       ],

@@ -1,9 +1,16 @@
-import 'package:client_mobile_app/core/models/location.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:client_mobile_app/core/models/location.dart';
+import 'package:client_mobile_app/core/models/test_result.dart';
+import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
 
 class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
-  SpeedTestCubit() : super(const SpeedTestState());
+  SpeedTestCubit({
+    required LocalStorage localStorage,
+  })  : _localStorage = localStorage,
+        super(const SpeedTestState());
+
+  final LocalStorage _localStorage;
 
   bool isStepValid(int step) {
     switch (step) {
@@ -57,6 +64,21 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
     emit(const SpeedTestState());
   }
 
+  void saveResults(double downloadSpeed, double uploadSpeed, double latency, double loss) {
+    final result = TestResult(
+      dateTime: DateTime.now(),
+      download: downloadSpeed,
+      upload: uploadSpeed,
+      loss: loss,
+      latency: latency,
+      address: state.location?.address ?? '',
+      networkType: state.networkType ?? '',
+      networkLocation: state.networkLocation ?? '',
+      networkQuality: '',
+    );
+    _localStorage.addResult(result.toJson());
+  }
+
   @override
   SpeedTestState? fromJson(Map<String, dynamic> json) {
     return SpeedTestState.fromJson(json);
@@ -72,4 +94,8 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
   static const NETWORK_TYPE_STEP = 2;
   static const MONTHLY_BILL_COST_STEP = 3;
   static const TAKE_SPEED_TEST_STEP = 4;
+
+  void endForm() {
+    emit(state.copyWith(isFormEnded: true));
+  }
 }

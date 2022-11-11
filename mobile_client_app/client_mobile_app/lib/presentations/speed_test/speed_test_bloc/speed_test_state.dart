@@ -17,6 +17,7 @@ class SpeedTestState {
     this.isTestRunning = false,
     this.termsAccepted = false,
     this.isLocationLoading = false,
+    this.isFormEnded = false,
   });
 
   factory SpeedTestState.fromJson(Map<String, dynamic> json) => SpeedTestState(
@@ -35,6 +36,7 @@ class SpeedTestState {
         isLocationLoading: json['isLocationLoading'],
         termsError: json['termsError'],
         locationError: json['locationError'],
+        isFormEnded: json['isFormEnded'],
       );
 
   SpeedTestState copyWith({
@@ -53,6 +55,7 @@ class SpeedTestState {
     bool? isLocationLoading,
     String? termsError,
     String? locationError,
+    bool? isFormEnded,
   }) =>
       SpeedTestState(
         step: step ?? this.step,
@@ -68,6 +71,9 @@ class SpeedTestState {
         isTestRunning: isTestRunning ?? this.isTestRunning,
         termsAccepted: termsAccepted ?? this.termsAccepted,
         isLocationLoading: isLocationLoading ?? this.isLocationLoading,
+        isFormEnded: isFormEnded ?? this.isFormEnded,
+        termsError: termsError ?? this.termsError,
+        locationError: locationError ?? this.locationError,
       );
 
   Map<String, dynamic> toJson() {
@@ -87,6 +93,7 @@ class SpeedTestState {
       'isLocationLoading': isLocationLoading,
       'termsError': termsError,
       'locationError': locationError,
+      'isFormEnded': isFormEnded,
     };
   }
 
@@ -105,4 +112,5 @@ class SpeedTestState {
   final bool isLocationLoading;
   final String? networkLocation;
   final int? monthlyBillCost;
+  final bool isFormEnded;
 }

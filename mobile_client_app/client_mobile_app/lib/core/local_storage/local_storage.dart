@@ -27,7 +27,8 @@ class LocalStorage {
   }
 
   List<Map<String, dynamic>> getResults() {
-    return _box.get(resultsKey, defaultValue: <Map<String, dynamic>>[]) as List<Map<String, dynamic>>;
+    List<dynamic> results = _box.get(resultsKey, defaultValue: [])!;
+    return results.map((result) => Map<String, dynamic>.from(result)).toList();
   }
 
   bool getFTUEMap() {
