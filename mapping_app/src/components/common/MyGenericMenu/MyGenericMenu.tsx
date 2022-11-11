@@ -5,13 +5,11 @@ import {Optional} from "../../../utils/types";
 
 interface MyGenericMenuProps {
   content: Optional<ReactElement>;
-  hasGoBack?: boolean;
   closeMenu: () => void;
 }
 
 const MyGenericMenu = ({
   content,
-  hasGoBack,
   closeMenu
 }: MyGenericMenuProps): ReactElement => {
   return (
