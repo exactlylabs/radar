@@ -37,6 +37,7 @@ import SmallScreenBottomNavigator from "./SmallScreenBottomNavigator/SmallScreen
 import DropdownFilters from "./TopFilters/DropdownFilters";
 import MyGenericMenu from "../common/MyGenericMenu/MyGenericMenu";
 import {getMenuContent, MenuContent} from "../common/MyGenericMenu/menu";
+import {useContentMenu} from "../../hooks/useContentMenu";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -53,6 +54,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   }
 
   const {isSmallerThanMid} = useViewportSizes();
+  const {menuContent, setMenuContent} = useContentMenu();
 
   const [loading, setLoading] = useState(false);
   const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(getValueFromUrl('isExplorationPopoverOpen') ?? !isSmallerThanMid); // if small screen, closed by default
@@ -73,7 +75,6 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [areSpeedFiltersOpen, setAreSpeedFiltersOpen] = useState(getValueFromUrl('areSpeedFiltersOpen') ?? false);
   const [areSmallScreenFiltersOpen, setAreSmallScreenFiltersOpen] = useState(true);
   const [genericMenuOpen, setGenericMenuOpen] = useState(false);
-  const [menuContent, setMenuContent] = useState<Optional<ReactElement>>(null);
 
   useEffect(() => {
     if(REACT_APP_ENV === 'production') {
@@ -261,21 +262,49 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const closeMenu = () => setGenericMenuOpen(false);
 
   const openFilterMenu = (filter: string) => {
+    let params: any;
+    let menuContentType: MenuContent;
     setGenericMenuOpen(true);
     switch (filter) {
       case FilterTypes.SPEED:
-        const params = {
+        params = {
           selectedOption: speedType,
           setSelectedOption: (option: string) => handleChangeFilters({speedType: option, calendar: calendarType, provider}),
           closeMenu,
         };
-        setMenuContent(getMenuContent(MenuContent.SPEED_TYPE, params));
+        menuContentType = MenuContent.SPEED_TYPE;
+        break;
+      case FilterTypes.PROVIDERS:
+        params = {
+          geospaceId: selectedGeospaceId,
+          selectedOption: provider,
+          setSelectedOption: (option: Asn) => handleChangeFilters({speedType, calendar: calendarType, provider: option}),
+          closeMenu,
+        };
+        menuContentType = MenuContent.PROVIDERS;
         break;
       case FilterTypes.CALENDAR:
-      case FilterTypes.PROVIDERS:
+        params = {
+          selectedOption: calendarType,
+          setSelectedOption: (option: string) => {
+            handleChangeFilters({speedType, calendar: option, provider});
+            handleSetCalendarType(option);
+          },
+          closeMenu,
+          setMenuContent
+        }
+        menuContentType = MenuContent.CALENDAR;
+        break;
       default:
+        params = {
+          selectedOption: speedType,
+          setSelectedOption: (option: string) => handleChangeFilters({speedType: option, calendar: calendarType, provider}),
+          closeMenu,
+        };
+        menuContentType = MenuContent.SPEED_TYPE;
         break;
     }
+    setMenuContent(getMenuContent(menuContentType, params));
   }
 
   return (

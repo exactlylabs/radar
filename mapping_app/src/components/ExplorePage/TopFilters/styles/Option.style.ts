@@ -15,6 +15,12 @@ const optionStyle: CSSProperties = {
   cursor: 'pointer',
 }
 
+const smallOptionStyle: CSSProperties = {
+  ...optionStyle,
+  height: '48px',
+  minHeight: '48px',
+}
+
 const iconStyle: CSSProperties = {
   width: '20px',
   height: '20px',
@@ -35,9 +41,12 @@ const selectedTextStyle: CSSProperties = {
 }
 
 export const styles = {
-  Option: optionStyle,
+  Option: (isSmall: boolean) => {
+    return isSmall ? smallOptionStyle : optionStyle;
+  },
   Icon: iconStyle,
-  Text: (selected: boolean) => {
-    return selected ? selectedTextStyle : textStyle;
+  Text: (selected: boolean, isSmall: boolean) => {
+    let style = selected ? selectedTextStyle : textStyle;
+    return isSmall ? {...style, fontSize: '16px'} : style;
   }
 }
