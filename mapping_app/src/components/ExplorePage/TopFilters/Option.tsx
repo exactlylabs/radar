@@ -50,17 +50,6 @@ const Option = ({
     </>
   );
 
-  const lastOptionWithStyle = (
-    <>
-      <OptionHorizontalDivider/>
-      <div style={styles.Option} onClick={handleClick}>
-        <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected)}>{getText()}</p>
-        { !selected && <div style={styles.Icon}></div> }
-        {  selected && <img src={GreenCheckIcon} style={styles.Icon} alt={'green-check-icon'}/> }
-      </div>
-    </>
-  )
-
   return isLast ? lastOptionWithStyle : lastOption;
 }
 
