@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:ndt7_client/ndt7_client.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/test_results_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/testing_speed_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/start_speed_test_step.dart';
@@ -29,27 +30,33 @@ class TakeSpeedTestStep extends StatelessWidget {
       address: address,
       child: BlocProvider(
         create: (context) => TakeSpeedTestStepCubit(ndt7client: GetIt.I<Ndt7Client>()),
-        child: BlocBuilder<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
-          builder: (context, state) {
-            if (state.isTestingDownloadSpeed || state.isTestingUploadSpeed) {
-              return TestingSpeedStep(
-                upload: state.uploadSpeed,
-                download: state.downloadSpeed,
-                loss: state.loss,
-                latency: state.latency,
-                isDownloadTest: state.isTestingDownloadSpeed,
-              );
-            } else if (state.finishedTesting) {
-              return TestResultsStep(
-                download: state.downloadSpeed ?? 0,
-                upload: state.uploadSpeed ?? 0,
-                latency: state.latency ?? 0,
-                loss: state.loss ?? 0,
-              );
-            } else {
-              return const StartSpeedTestStep();
-            }
-          },
+        child: BlocListener<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
+          listenWhen: (previous, current) => current.finishedTesting,
+          listener: (context, state) => context
+              .read<SpeedTestCubit>()
+              .saveResults(state.downloadSpeed!, state.uploadSpeed!, state.latency!, state.loss!),
+          child: BlocBuilder<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
+            builder: (context, state) {
+              if (state.isTestingDownloadSpeed || state.isTestingUploadSpeed) {
+                return TestingSpeedStep(
+                  upload: state.uploadSpeed,
+                  download: state.downloadSpeed,
+                  loss: state.loss,
+                  latency: state.latency,
+                  isDownloadTest: state.isTestingDownloadSpeed,
+                );
+              } else if (state.finishedTesting) {
+                return TestResultsStep(
+                  download: state.downloadSpeed ?? 0,
+                  upload: state.uploadSpeed ?? 0,
+                  latency: state.latency ?? 0,
+                  loss: state.loss ?? 0,
+                );
+              } else {
+                return const StartSpeedTestStep();
+              }
+            },
+          ),
         ),
       ),
     );

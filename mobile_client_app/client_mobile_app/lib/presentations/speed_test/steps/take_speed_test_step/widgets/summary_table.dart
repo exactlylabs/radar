@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/icon_with_text.dart';
 
@@ -42,7 +43,7 @@ class SummaryTable extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconWithText(
-                  icon: Images.roundedLocationHome,
+                  icon: _getNetworkLocationIcon(networkPlace),
                   text: networkPlace,
                   alignment: MainAxisAlignment.end,
                 ),
@@ -53,7 +54,7 @@ class SummaryTable extends StatelessWidget {
                   color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
                 ),
                 IconWithText(
-                  icon: Images.roundedConnectionWifi,
+                  icon: _getNetworkTypeIcon(networkType),
                   text: networkType,
                   alignment: MainAxisAlignment.center,
                 ),
@@ -65,7 +66,7 @@ class SummaryTable extends StatelessWidget {
                     color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
                   ),
                   IconWithText(
-                    icon: Images.roundedConnectionWifi,
+                    icon: _getNetworkQualityIcon(networkQuality!),
                     text: networkQuality!,
                     alignment: MainAxisAlignment.start,
                   ),
@@ -76,5 +77,38 @@ class SummaryTable extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _getNetworkLocationIcon(String networkPlace) {
+    switch (networkPlace) {
+      case Strings.homeNetworkLocation:
+        return Images.roundedLocationHome;
+      case Strings.workNetworkLocation:
+        return Images.roundedLocationWork;
+      default:
+        return Images.roundedLocationOther;
+    }
+  }
+
+  String _getNetworkTypeIcon(String networkType) {
+    switch (networkType) {
+      case Strings.wiredConnectionType:
+        return Images.roundedConnectionWired;
+      case Strings.wifiConnectionType:
+        return Images.roundedConnectionWifi;
+      default:
+        return Images.roundedConnectionCellular;
+    }
+  }
+
+  String _getNetworkQualityIcon(String networkQuality) {
+    switch (networkQuality) {
+      case Strings.goodNetworkQuality:
+        return Images.roundedGoodNetworkQuality;
+      case Strings.badNetworkQuality:
+        return Images.roundedBadNetworkQuality;
+      default:
+        return Images.roundedRegularNetworkQuality;
+    }
   }
 }

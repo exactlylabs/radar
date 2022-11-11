@@ -74,7 +74,7 @@ class ResultCard extends StatelessWidget {
               ),
             ),
           ),
-          InkWell(
+          GestureDetector(
             onTap: onTap,
             child: Image.asset(Images.infoIcon),
           )
