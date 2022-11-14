@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/option_card.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
@@ -15,9 +17,11 @@ class NetworkPlaceStep extends StatelessWidget {
     Key? key,
     this.optionSelected,
     required this.isStepValid,
+    required this.address,
   }) : super(key: key);
 
   final String? optionSelected;
+  final String address;
   final bool isStepValid;
 
   @override
@@ -53,7 +57,9 @@ class NetworkPlaceStep extends StatelessWidget {
                 name: entry.key,
                 icon: entry.value,
                 isSelected: optionSelected == entry.key,
-                onTap: (name) => context.read<SpeedTestCubit>().setNetworkLocation(name),
+                onTap: (name) => name == Strings.iDontHaveNetworkLocation
+                    ? _noInternetModal(context, address)
+                    : context.read<SpeedTestCubit>().setNetworkLocation(name),
               );
             } else {
               return PreferNotToAnswerButton(
@@ -76,6 +82,21 @@ class NetworkPlaceStep extends StatelessWidget {
         ),
         SpacerWithMax(size: height * 0.053, maxSize: 45.0),
       ],
+    );
+  }
+
+  Future<void> _noInternetModal(BuildContext context, String address) {
+    return modalWithTitle(
+      context,
+      true,
+      '',
+      NoInternetModal(
+        address: address,
+        onPressed: () {
+          Navigator.of(context).pop();
+          context.read<SpeedTestCubit>().setNetworkLocation(Strings.iDontHaveNetworkLocation);
+        },
+      ),
     );
   }
 

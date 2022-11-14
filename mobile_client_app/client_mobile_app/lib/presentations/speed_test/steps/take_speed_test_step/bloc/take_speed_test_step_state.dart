@@ -7,6 +7,7 @@ class TakeSpeedTestStepState {
     this.minRtt,
     this.bytesRetrans,
     this.bytesSent,
+    this.responses = const [],
     this.finishedTesting = false,
     this.isTestingDownloadSpeed = false,
     this.isTestingUploadSpeed = false,
@@ -23,6 +24,7 @@ class TakeSpeedTestStepState {
     int? minRtt,
     int? bytesRetrans,
     int? bytesSent,
+    List<Map<String, dynamic>>? responses,
   }) {
     return TakeSpeedTestStepState(
       finishedTesting: finishedTesting ?? this.finishedTesting,
@@ -35,6 +37,7 @@ class TakeSpeedTestStepState {
       bytesSent: bytesSent ?? this.bytesSent,
       isTestingDownloadSpeed: isTestingDownloadSpeed ?? this.isTestingDownloadSpeed,
       isTestingUploadSpeed: isTestingUploadSpeed ?? this.isTestingUploadSpeed,
+      responses: responses ?? this.responses,
     );
   }
 
@@ -48,4 +51,5 @@ class TakeSpeedTestStepState {
   final int? minRtt;
   final int? bytesRetrans;
   final int? bytesSent;
+  final List<Map<String, dynamic>> responses;
 }

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:ndt7_client/models/ndt7_response.dart';
 
 class ClientResponse implements NDT7Response {

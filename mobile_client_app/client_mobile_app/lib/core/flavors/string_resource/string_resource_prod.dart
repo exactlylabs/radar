@@ -2,7 +2,7 @@ import 'package:client_mobile_app/core/flavors/string_resource/i_string_resource
 
 class StringResourceProd implements IStringResource {
   @override
-  String SERVER_ENDPOINT = '';
+  String SERVER_ENDPOINT = 'https://radar.exactlylabs.com';
 
   @override
   String APP_NAME = 'Radar';

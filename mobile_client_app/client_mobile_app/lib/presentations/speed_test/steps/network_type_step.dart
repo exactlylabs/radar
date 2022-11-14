@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/option_card.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/cellular_connection_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/prefer_not_to_answer_button.dart';
 
@@ -46,7 +48,9 @@ class NetworkTypeStep extends StatelessWidget {
                 name: entry.key,
                 icon: entry.value,
                 isSelected: optionSelected == entry.key,
-                onTap: (name) => context.read<SpeedTestCubit>().setNetworkType(name),
+                onTap: (name) => name == Strings.cellularConnectionType
+                    ? _cellularConnectionModal(context)
+                    : context.read<SpeedTestCubit>().setNetworkType(name),
               );
             } else {
               return PreferNotToAnswerButton(
@@ -65,6 +69,20 @@ class NetworkTypeStep extends StatelessWidget {
         ),
         SpacerWithMax(size: height * 0.053, maxSize: 45.0),
       ],
+    );
+  }
+
+  Future<void> _cellularConnectionModal(BuildContext context) {
+    return modalWithTitle(
+      context,
+      true,
+      '',
+      ConnectionCellularModal(
+        onPressed: () {
+          Navigator.of(context).pop();
+          context.read<SpeedTestCubit>().setNetworkType(Strings.cellularConnectionType);
+        },
+      ),
     );
   }
 

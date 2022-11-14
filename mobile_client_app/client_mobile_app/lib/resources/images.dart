@@ -39,4 +39,6 @@ class Images {
   static const latencyIcon = 'assets/icons/latency_icon.png';
   static const infoIcon = 'assets/icons/info_icon.png';
   static const roundedCheck = 'assets/images/rounded_check.png';
+  static const locationNoInternetBig = 'assets/icons/location_nointernet_big.png';
+  static const connectionCellularAlert = 'assets/icons/connection_cellular_alert.png';
 }
