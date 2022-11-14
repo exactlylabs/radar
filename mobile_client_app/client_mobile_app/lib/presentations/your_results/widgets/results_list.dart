@@ -1,11 +1,12 @@
+import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/core/models/test_result.dart';
 import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 import 'package:client_mobile_app/presentations/your_results/widgets/result_card.dart';
 import 'package:client_mobile_app/presentations/your_results/widgets/test_result_info_modal.dart';
-import 'package:client_mobile_app/resources/app_colors.dart';
-import 'package:client_mobile_app/resources/images.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ResultsList extends StatefulWidget {
   const ResultsList({
@@ -67,7 +68,7 @@ class _ResultsListState extends State<ResultsList> {
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           return ResultCard(
-            networkType: Images.connectionCellular,
+            networkType: _getNetworkType(widget.results[index].networkType),
             date: _dateFromDateTime(widget.results[index].dateTime),
             time: _timeFromDateTime(widget.results[index].dateTime),
             download: widget.results[index].download.toStringAsFixed(2),
@@ -94,7 +95,7 @@ class _ResultsListState extends State<ResultsList> {
     return modalWithTitle(
       context,
       true,
-      'Test details',
+      Strings.testResultsModalTitle,
       TestResultInfoModal(
         date: _dateFromDateTime(result.dateTime),
         time: _timeFromDateTime(result.dateTime),
@@ -108,5 +109,16 @@ class _ResultsListState extends State<ResultsList> {
         loss: result.loss,
       ),
     );
+  }
+
+  _getNetworkType(String networkType) {
+    switch (networkType) {
+      case Strings.wifiConnectionType:
+        return Images.connectionWifi;
+      case Strings.cellularConnectionType:
+        return Images.connectionCellular;
+      default:
+        return Images.connectionWired;
+    }
   }
 }

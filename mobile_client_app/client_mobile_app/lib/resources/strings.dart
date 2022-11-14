@@ -52,4 +52,14 @@ class Strings {
   static const String noInternetConnectionSubtitle =
       'While we cannot run a speed test at your location as you don’t have Internet, we do appreciate your information that helps us learn more about which areas are currently not served.';
   static const String noInternetConnectionDescription = 'You can explore the map to see how others compare to you.';
+  static const String okButtonLabel = 'OK';
+  static const String noInternetConnectionModalTitle = 'Are you sure that you don’t have Internet?';
+  static const String noInternetConnectionModalSubtitle =
+      'Please confirm that you don’t have Internet at the address below:';
+  static const String iDontHaveInternetButtonLabel = 'I don’t have Internet';
+  static const String cancelButttonLabel = 'Cancel';
+  static const String cellularConnectionModalTitle = 'Are you sure you want to run a speedtest on celullar?';
+  static const String cellularConnectionModalSubtitle = 'Please note that your current data plan may have a data cap.';
+  static const String yesContinueButtonLabel = 'Yes, continue';
+  static const String testResultsModalTitle = 'Test details';
 }

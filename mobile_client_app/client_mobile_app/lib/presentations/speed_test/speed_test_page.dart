@@ -1,8 +1,7 @@
-import 'package:get_it/get_it.dart';
+import 'package:client_mobile_app/core/results_service/i_results_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
-import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/steps_indicator.dart';
@@ -23,7 +22,7 @@ class SpeedTestPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     return BlocProvider<SpeedTestCubit>(
-      create: (_) => SpeedTestCubit(localStorage: GetIt.I.get<LocalStorage>()),
+      create: (_) => SpeedTestCubit(resultsService: context.read<IResultsService>()),
       child: BlocBuilder<SpeedTestCubit, SpeedTestState>(
         builder: (context, state) {
           if (state.isFormEnded) {
@@ -58,8 +57,9 @@ class SpeedTestPage extends StatelessWidget {
                       )
                     else if (state.step == SpeedTestCubit.NETWORK_LOCATION_STEP)
                       NetworkPlaceStep(
-                        optionSelected: state.networkLocation,
                         isStepValid: state.isStepValid,
+                        address: state.location?.address ?? '',
+                        optionSelected: state.networkLocation,
                       )
                     else if (state.step == SpeedTestCubit.NETWORK_TYPE_STEP)
                       NetworkTypeStep(

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:client_mobile_app/presentations/speed_test/utils/responses_parser.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ndt7_client/models/test_completed_event.dart';
 import 'package:ndt7_client/ndt7_client.dart';
@@ -48,18 +49,23 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
             ));
           }
         } else if (data is ClientResponse) {
+          final updatedResponses = List<Map<String, dynamic>>.from(state.responses)
+            ..add(ResponsesParser.parseClientResponse(data));
           final speed = convertToMbps(data.appInfo.elapsedTime, data.appInfo.numBytes);
           if (state.isTestingDownloadSpeed) {
-            emit(state.copyWith(downloadSpeed: speed));
+            emit(state.copyWith(downloadSpeed: speed, responses: updatedResponses));
           } else if (state.isTestingUploadSpeed) {
-            emit(state.copyWith(uploadSpeed: speed));
+            emit(state.copyWith(uploadSpeed: speed, responses: updatedResponses));
           }
         } else if (data is ServerResponse) {
+          var updatedResponses = List<Map<String, dynamic>>.from(state.responses)
+            ..add(ResponsesParser.parseServerResponse(data));
           emit(
             state.copyWith(
               minRtt: data.tcpInfo.minRTT,
               bytesRetrans: data.tcpInfo.bytesRetrans,
               bytesSent: data.tcpInfo.bytesSent,
+              responses: updatedResponses,
             ),
           );
         }

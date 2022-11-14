@@ -34,7 +34,7 @@ class TakeSpeedTestStep extends StatelessWidget {
           listenWhen: (previous, current) => current.finishedTesting,
           listener: (context, state) => context
               .read<SpeedTestCubit>()
-              .saveResults(state.downloadSpeed!, state.uploadSpeed!, state.latency!, state.loss!),
+              .saveResults(state.downloadSpeed!, state.uploadSpeed!, state.latency!, state.loss!, state.responses),
           child: BlocBuilder<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
             builder: (context, state) {
               if (state.isTestingDownloadSpeed || state.isTestingUploadSpeed) {

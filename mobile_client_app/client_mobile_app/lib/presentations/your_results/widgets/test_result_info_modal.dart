@@ -1,6 +1,7 @@
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/results_table.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/summary_table.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
@@ -49,7 +50,6 @@ class TestResultInfoModal extends StatelessWidget {
           address: address,
           networkType: networkType,
           networkPlace: networkPlace,
-          // networkQuality: networkQuality,
         ),
         const SizedBox(height: 30.0),
         ResultsTable(
@@ -62,7 +62,7 @@ class TestResultInfoModal extends StatelessWidget {
         PrimaryButton(
           onPressed: () => Navigator.of(context).pop(),
           child: Text(
-            'OK',
+            Strings.okButtonLabel,
             style: AppTextStyle(
               fontSize: 16.0,
               fontWeight: 700,

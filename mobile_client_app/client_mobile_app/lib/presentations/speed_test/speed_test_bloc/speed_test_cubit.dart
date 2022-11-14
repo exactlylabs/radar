@@ -1,16 +1,16 @@
+import 'package:client_mobile_app/core/results_service/i_results_service.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/models/test_result.dart';
-import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
 
 class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
   SpeedTestCubit({
-    required LocalStorage localStorage,
-  })  : _localStorage = localStorage,
+    required IResultsService resultsService,
+  })  : _resultsService = resultsService,
         super(const SpeedTestState());
 
-  final LocalStorage _localStorage;
+  final IResultsService _resultsService;
 
   bool isStepValid(int step) {
     switch (step) {
@@ -60,11 +60,10 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
     emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
 
-  void resetForm() {
-    emit(const SpeedTestState());
-  }
+  void resetForm() => emit(const SpeedTestState());
 
-  void saveResults(double downloadSpeed, double uploadSpeed, double latency, double loss) {
+  void saveResults(
+      double downloadSpeed, double uploadSpeed, double latency, double loss, List<Map<String, dynamic>> responses) {
     final result = TestResult(
       dateTime: DateTime.now(),
       download: downloadSpeed,
@@ -76,7 +75,8 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
       networkLocation: state.networkLocation ?? '',
       networkQuality: '',
     );
-    _localStorage.addResult(result.toJson());
+
+    _resultsService.addResult(responses, result);
   }
 
   @override
