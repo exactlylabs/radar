@@ -1,29 +1,46 @@
-import {ReactElement, useState} from "react";
+import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/MenuContentCalendar.style";
 import Option from "../../../ExplorePage/TopFilters/Option";
 import {calendarFilters} from "../../../../utils/filters";
 import MyFullWidthButton from "../../MyFullWidthButton";
 import {getMenuContent, MenuContent} from "../menu";
-import {Optional} from "../../../../utils/types";
+import {Filter, Optional} from "../../../../utils/types";
 import {useContentMenu} from "../../../../hooks/useContentMenu";
+import {DatePickerState} from "../../../../utils/dates";
 
 interface MenuContentCalendarProps {
   selectedOption: string;
   setSelectedOption: (option: string) => void;
   closeMenu: () => void;
+  applyRanges: (queryString: string) => void;
+  initialState: Optional<DatePickerState>;
+  setMenuContent: (menuContent: Optional<MenuContent>) => void;
 }
 
 const MenuContentCalendar = ({
   selectedOption,
   setSelectedOption,
   closeMenu,
+  applyRanges,
+  initialState,
+  setMenuContent,
 }: MenuContentCalendarProps): ReactElement => {
 
-  const {setMenuContent} = useContentMenu();
-
   const [innerOption, setInnerOption] = useState<string>(selectedOption);
+  const [options, setOptions] = useState<Array<string>>(calendarFilters);
 
-  const pickDefaultOption = (index: number) => setInnerOption(calendarFilters[index]);
+  useEffect(() => {
+    if(selectedOption && !calendarFilters.includes(selectedOption)) {
+      setOptions([
+        calendarFilters[0],
+        calendarFilters[1],
+        calendarFilters[2],
+        calendarFilters[3],
+        selectedOption,
+        calendarFilters[4]
+      ]);
+    }
+  }, [selectedOption]);
 
   const applyOptionSelected = () => {
     setSelectedOption(innerOption);
@@ -31,11 +48,17 @@ const MenuContentCalendar = ({
   }
 
   const goToCustomRange = () => {
-    const thisProps = {selectedOption, setSelectedOption, closeMenu, setMenuContent};
     const customDateRangeProps = {
-      goBack: () => setMenuContent(getMenuContent(MenuContent.CALENDAR, thisProps))
+      goBack: () => setMenuContent(MenuContent.CALENDAR),
+      applyRanges,
+      initialState
     };
-    setMenuContent(getMenuContent(MenuContent.CUSTOM_DATE_RANGE, customDateRangeProps));
+    setMenuContent(MenuContent.CUSTOM_DATE_RANGE);
+  }
+
+  const handleSelectOption = (option: Filter) => {
+    if(option === calendarFilters[4]) goToCustomRange();
+    else setInnerOption(option as string);
   }
 
   return (
@@ -43,12 +66,12 @@ const MenuContentCalendar = ({
       <p className={'fw-medium'} style={styles.Title}>Filter by time</p>
       <div style={styles.MenuContentCalendarContainer}>
         {
-          calendarFilters.map((filter, index) => (
+          options.map((filter, index) => (
             <Option option={filter}
                     key={index}
                     selected={innerOption === filter}
-                    onClick={index === (calendarFilters.length - 1) ? goToCustomRange : () => pickDefaultOption(index)}
-                    isLast={index === (calendarFilters.length - 1)}
+                    onClick={handleSelectOption}
+                    isLast={index === (options.length - 1) || !calendarFilters.includes(filter)}
             />
           ))
         }
