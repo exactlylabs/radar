@@ -25,6 +25,7 @@ class Strings {
   static const String speedgaugeUploadLabel = 'upload';
   static const String speedgaugeSpeedLabel = ' speed...';
   static const String emptyOption = '-';
+  static const String emptyString = '';
   static const String downloadResultsLabel = 'Download';
   static const String downloadResultsUnit = 'Mbps';
   static const String uploadResultsLabel = 'Upload';
@@ -58,7 +59,7 @@ class Strings {
       'Please confirm that you don’t have Internet at the address below:';
   static const String iDontHaveInternetButtonLabel = 'I don’t have Internet';
   static const String cancelButttonLabel = 'Cancel';
-  static const String cellularConnectionModalTitle = 'Are you sure you want to run a speedtest on celullar?';
+  static const String cellularConnectionModalTitle = 'Are you sure you want to run a speedtest on cellular?';
   static const String cellularConnectionModalSubtitle = 'Please note that your current data plan may have a data cap.';
   static const String yesContinueButtonLabel = 'Yes, continue';
   static const String testResultsModalTitle = 'Test details';

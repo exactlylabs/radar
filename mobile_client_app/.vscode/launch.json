@@ -5,6 +5,28 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "radar",
+            "cwd": "client_mobile_app",
+            "request": "launch",
+            "program": "${workspaceFolder}/client_mobile_app/lib/main_prod.dart",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "prod"
+            ]
+        },
+        {
+            "name": "radar stg",
+            "cwd": "client_mobile_app",
+            "request": "launch",
+            "program": "${workspaceFolder}/client_mobile_app/lib/main_staging.dart",
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "staging"
+            ]
+        },
+        {
             "name": "radar dev",
             "cwd": "client_mobile_app",
             "request": "launch",

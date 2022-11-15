@@ -3,11 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		03F0A04ECB59812797CE3489 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		03F0A04ECB59812797CE3489 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		34B4F951251AD398EA6BF5FF /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 982F2A6FA9A4C7980700D824 /* Pods_Runner.framework */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
@@ -67,7 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03F0A04ECB59812797CE3489 /* BuildFile in Frameworks */,
+				03F0A04ECB59812797CE3489 /* (null) in Frameworks */,
 				34B4F951251AD398EA6BF5FF /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

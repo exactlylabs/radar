@@ -1,4 +1,5 @@
 import 'package:client_mobile_app/core/results_service/i_results_service.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/models/test_result.dart';
@@ -70,10 +71,10 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
       upload: uploadSpeed,
       loss: loss,
       latency: latency,
-      address: state.location?.address ?? '',
-      networkType: state.networkType ?? '',
-      networkLocation: state.networkLocation ?? '',
-      networkQuality: '',
+      address: state.location?.address ?? Strings.emptyString,
+      networkType: state.networkType ?? Strings.emptyString,
+      networkLocation: state.networkLocation ?? Strings.emptyString,
+      networkQuality: Strings.emptyString,
     );
 
     _resultsService.addResult(responses, result);

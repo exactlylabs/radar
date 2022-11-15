@@ -76,7 +76,7 @@ class NetworkTypeStep extends StatelessWidget {
     return modalWithTitle(
       context,
       true,
-      '',
+      Strings.emptyString,
       ConnectionCellularModal(
         onPressed: () {
           Navigator.of(context).pop();

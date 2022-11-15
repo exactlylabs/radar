@@ -43,8 +43,9 @@ class LocationStep extends StatelessWidget {
             ),
             SpacerWithMax(size: height * 0.037, maxSize: 30.0),
             LocationInputField(
-              onChanged: (value) =>
-                  context.read<SpeedTestCubit>().setLocation(Location(address: value, lat: '', long: '')),
+              onChanged: (value) => context
+                  .read<SpeedTestCubit>()
+                  .setLocation(Location(address: value, lat: Strings.emptyString, long: Strings.emptyString)),
             ),
             const CurrentLocationButton(),
           ],
