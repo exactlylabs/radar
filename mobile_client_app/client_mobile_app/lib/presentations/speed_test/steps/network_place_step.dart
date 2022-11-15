@@ -89,7 +89,7 @@ class NetworkPlaceStep extends StatelessWidget {
     return modalWithTitle(
       context,
       true,
-      '',
+      Strings.emptyString,
       NoInternetModal(
         address: address,
         onPressed: () {

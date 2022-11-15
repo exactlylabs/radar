@@ -12,15 +12,15 @@ class TestResult {
   });
 
   factory TestResult.fromJson(Map<String, dynamic> json) => TestResult(
-        dateTime: DateTime.parse(json["dateTime"]),
-        download: json["download"],
-        upload: json["upload"],
-        loss: json["loss"],
-        latency: json["latency"],
-        address: json["address"],
-        networkType: json["networkType"],
-        networkLocation: json["networkLocation"],
-        networkQuality: json["networkQuality"],
+        dateTime: DateTime.parse(json['dateTime']),
+        download: json['download'],
+        upload: json['upload'],
+        loss: json['loss'],
+        latency: json['latency'],
+        address: json['address'],
+        networkType: json['networkType'],
+        networkLocation: json['networkLocation'],
+        networkQuality: json['networkQuality'],
       );
 
   Map<String, dynamic> toJson() {
