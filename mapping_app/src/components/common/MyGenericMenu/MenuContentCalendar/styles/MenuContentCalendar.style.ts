@@ -13,9 +13,8 @@ const titleStyle: CSSProperties = {
 
 const menuContentCalendarContainerStyle: CSSProperties = {
   width: '100%',
-  maxWidth: '335px',
   minHeight: '260px',
-  maxHeight: '320px',
+  maxHeight: '350px',
   backgroundColor: WHITE,
   borderRadius: '6px',
   marginBottom: '30px',

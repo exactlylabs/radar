@@ -30,14 +30,14 @@ const extendedExplorationPopoverContainerStyle: CSSProperties = {
   height: '540px',
 }
 
-const shrinkButtonContainerStyle: CSSProperties = {
+const  shrinkButtonContainerStyle: CSSProperties = {
   width: '28px',
   height: '28px',
   position: 'absolute',
   top: '8px',
   right: '8px',
   backgroundColor: DEFAULT_SECONDARY_BLACK,
-  boxShadow: `0 4px 8px -4px${EXPLORATION_POPOVER_SECONDARY_BLACK}`,
+  boxShadow: `0 4px 8px -4px ${EXPLORATION_POPOVER_SECONDARY_BLACK}`,
   borderRadius: '6px',
   display: 'flex',
   justifyContent: 'center',

@@ -7,16 +7,17 @@
  */
 import {createContext, ReactElement, useState} from "react";
 import {Optional} from "../utils/types";
+import {MenuContent} from "../components/common/MyGenericMenu/menu";
 
 type MenuContextValue = {
-  menuContent: Optional<ReactElement>;
-  setMenuContent: (content: Optional<ReactElement>) => void;
+  menuContent: Optional<MenuContent>;
+  setMenuContent: (content: Optional<MenuContent>) => void;
 }
 
 // On app initialization, it gets set
 const defaultValue: MenuContextValue = {
   menuContent: null,
-  setMenuContent: (content: Optional<ReactElement>) => {}
+  setMenuContent: (content: Optional<MenuContent>) => {}
 }
 
 const MenuContext = createContext(defaultValue);
@@ -26,7 +27,7 @@ interface MenuContentProps {
 }
 
 export const MenuContextProvider = ({children}: MenuContentProps) => {
-  const [menuContent, setMenuContent] = useState<Optional<ReactElement>>(null);
+  const [menuContent, setMenuContent] = useState<Optional<MenuContent>>(null);
   return (
     <MenuContext.Provider value={{menuContent, setMenuContent}}>
       {children}

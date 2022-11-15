@@ -16,7 +16,6 @@ import {usePrev} from "../../../hooks/usePrev";
 import DatePicker from "../DatePicker/DatePicker";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import './styles/DropdownFilters.css';
-import filters from "./Filters";
 
 type ScrollPosition = {
   clientX: number;
