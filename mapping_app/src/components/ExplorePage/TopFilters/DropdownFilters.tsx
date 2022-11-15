@@ -14,7 +14,6 @@ import {debounce} from "../../../api/utils/debouncer";
 import {usePrev} from '../../../hooks/usePrev';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import './styles/DropdownFilters.css';
-import filters from "./Filters";
 
 type ScrollPosition = {
   clientX: number;

@@ -19,12 +19,13 @@ const dropdownFiltersContainerStyle: CSSProperties = {
 }
 
 const smallDropdownFiltersContainerStyle: CSSProperties = {
-  width: '345px',
+  width: 'calc(100vw - 30px)',
+  minWidth: '250px',
+  maxWidth: '420px',
   height: '50px',
   position: 'absolute',
   top: '82px',
-  left: '50%',
-  marginLeft: '-172.5px',
+  left: '15px',
   zIndex: 1010,
   overflowX: 'scroll',
   overflowY: 'hidden',

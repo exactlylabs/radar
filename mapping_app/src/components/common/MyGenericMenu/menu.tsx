@@ -8,6 +8,7 @@ import MenuContentProviders from "./MenuContentProviders/MenuContentProviders";
 import MenuContentCalendar from "./MenuContentCalendar/MenuContentCalendar";
 import MenuContentCustomDateRange from "./MenuContentCustomRange/MenuContentCustomDateRange";
 import MenuContentYearOrMonth from "./MenuContentYearOrMonth/MenuContentYearOrMonth";
+import {Optional} from "../../../utils/types";
 
 export enum MenuContent {
   GEOSPACE = 'GEOSPACE',
@@ -19,21 +20,18 @@ export enum MenuContent {
   YEAR_OR_MONTH = 'YEAR_OR_MONTH',
 }
 
-export const getMenuContent = (content: MenuContent, params?: any): ReactElement => {
+export const getMenuContent = (content: Optional<MenuContent>, params?: any): ReactElement => {
+  if(!content) return <></>;
   switch (content) {
-    case MenuContent.GEOSPACE:
-      return <MenuContentGeospace {...params}/>
-    case MenuContent.FULL_GEOSPACE:
-      return <MenuContentFullGeospace {...params}/>
     case MenuContent.SPEED_TYPE:
       return <MenuContentSpeedType {...params}/>
     case MenuContent.PROVIDERS:
-      return <MenuContentProviders {...params}/>
+
     case MenuContent.CALENDAR:
       return <MenuContentCalendar {...params}/>
     case MenuContent.CUSTOM_DATE_RANGE:
       return <MenuContentCustomDateRange {...params}/>
     default:
-      return <h1>Default</h1>
+      return <></>;
   }
 }

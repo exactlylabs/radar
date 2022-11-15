@@ -16,7 +16,7 @@ import {
   filterTypes,
   generateFilterLabel,
   getCorrectNamespace,
-  getDateQueryStringFromCalendarType,
+  getDateQueryStringFromCalendarType, getFilterMenuContentFromFilter,
   getZoomForNamespace,
   speedFilters,
   tabs
@@ -37,8 +37,14 @@ import FirstTimeModal from "./FirstTimeModal/FirstTimeModal";
 import SmallScreenBottomNavigator from "./SmallScreenBottomNavigator/SmallScreenBottomNavigator";
 import DropdownFilters from "./TopFilters/DropdownFilters";
 import MyGenericMenu from "../common/MyGenericMenu/MyGenericMenu";
-import {getMenuContent, MenuContent} from "../common/MyGenericMenu/menu";
+import {MenuContent} from "../common/MyGenericMenu/menu";
 import {useContentMenu} from "../../hooks/useContentMenu";
+import MenuContentGeospace from "../common/MyGenericMenu/MenuContentGeospace/MenuContentGeospace";
+import MenuContentFullGeospace from "../common/MyGenericMenu/MenuContentFullGeospace/MenuContentFullGeospace";
+import MenuContentProviders from "../common/MyGenericMenu/MenuContentProviders/MenuContentProviders";
+import MenuContentCalendar from "../common/MyGenericMenu/MenuContentCalendar/MenuContentCalendar";
+import MenuContentSpeedType from "../common/MyGenericMenu/MenuContentSpeedType/MenuContentSpeedType";
+import MenuContentCustomDateRange from "../common/MyGenericMenu/MenuContentCustomRange/MenuContentCustomDateRange";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -166,27 +172,28 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       };
       setSelectedGeospace(allData);
       setSelectedGeospaceId(allData.geospace.id);
-      openRightPanel();
+      if(isSmallerThanMid) {
+        openFullMenu();
+      } else {
+        openRightPanel();
+      }
       setLoading(false);
     } catch (e: any) {
       handleError(e);
     }
   }
 
-  const openFullMenu = (geospace: GeospaceInfo) => {
-    const params = {
-      geospace,
-      loading,
-      speedType,
-      setSpeedType,
-      calendarType,
-      setCalendarType,
-      provider,
-      setProvider,
-      openFilterMenu
-    };
+  const openFullMenu = () => {
+    setGenericMenuOpen(true);
     setAreSmallScreenFiltersOpen(false);
-    setMenuContent(getMenuContent(MenuContent.FULL_GEOSPACE, params));
+    setMenuContent(MenuContent.FULL_GEOSPACE);
+  }
+
+  const setSelectedGeoSpaceInfo = (geospaceInfo: GeospaceInfo) => {
+    setLoading(true);
+    setSelectedGeospace(geospaceInfo);
+    setSelectedGeospaceId((geospaceInfo as GeospaceOverview).geospace.id);
+    setLoading(false);
   }
 
   const selectGeospace = (geospace: GeospaceInfo, center?: L.LatLng) => {
@@ -202,11 +209,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
     }
     if(isSmallerThanMid) {
-      const callback = () => openFullMenu(geospace);
-      const params = { geospace, speedType, openFullMenu: callback };
-      setMenuContent(getMenuContent(MenuContent.GEOSPACE, params));
+      setMenuContent(MenuContent.GEOSPACE);
       setGenericMenuOpen(true);
-    } else {
+    } else if(!isSmallerThanMid){
       openRightPanel();
     }
     setLoading(false);
@@ -223,7 +228,8 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const handleApplyRanges = (queryString: string) => {
     setCalendarType(generateFilterLabel(queryString));
     setDateQueryString(queryString);
-    closeDatePicker();
+    if(isSmallerThanMid) closeMenu();
+    else closeDatePicker();
   }
 
   const handleSetCalendarType = (calendarType: Filter) => {
@@ -244,49 +250,78 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   const handleChangeFilters = (filters: Array<Filter>) => {
     setSpeedType(filters[0]);
-    setCalendarType(filters[1]);
+    handleSetCalendarType(filters[1]);
     setProvider(filters[2]);
   }
 
-  const closeMenu = () => setGenericMenuOpen(false);
+  const closeMenu = () => {
+    setMenuContent(null);
+    setGenericMenuOpen(false);
+  }
 
   const openFilterMenu = (filter: string) => {
-    let params: any;
-    let menuContentType: MenuContent;
     setGenericMenuOpen(true);
-    switch (filter) {
-      case filterTypes.PROVIDERS:
-        params = {
-          geospaceId: selectedGeospaceId,
-          selectedOption: provider,
-          setSelectedOption: (option: Asn) => handleChangeFilters([speedType, calendarType, option]),
-          closeMenu,
-        };
-        menuContentType = MenuContent.PROVIDERS;
-        break;
-      case filterTypes.CALENDAR:
-        params = {
-          selectedOption: calendarType,
-          setSelectedOption: (option: string) => {
-            handleChangeFilters([speedType, option, provider]);
-            handleSetCalendarType(option);
-          },
-          closeMenu,
-          setMenuContent
-        }
-        menuContentType = MenuContent.CALENDAR;
-        break;
-      case filterTypes.SPEED:
+    setMenuContent(getFilterMenuContentFromFilter(filter));
+  }
+
+  const getCurrentContent = () => {
+    switch (menuContent) {
+      case MenuContent.GEOSPACE:
+        return (
+          <MenuContentGeospace geospace={selectedGeospace as GeospaceOverview}
+                               speedType={speedType as string}
+                               openFullMenu={openFullMenu}
+        />);
+      case MenuContent.FULL_GEOSPACE:
+        return (
+          <MenuContentFullGeospace geospace={selectedGeospace as GeospaceOverview}
+                                   applyRanges={handleApplyRanges}
+                                   loading={loading}
+                                   setLoading={setLoading}
+                                   speedType={speedType}
+                                   setSpeedType={setSpeedType}
+                                   calendarType={calendarType}
+                                   setCalendarType={setCalendarType}
+                                   provider={provider}
+                                   setProvider={setProvider}
+                                   setSelectedGeoSpaceInfo={setSelectedGeoSpaceInfo}
+          />
+        );
+      case MenuContent.CALENDAR:
+        return (
+          <MenuContentCalendar selectedOption={calendarType as string}
+                               setSelectedOption={(option: string) => handleChangeFilters([speedType, option, provider])}
+                               closeMenu={closeMenu}
+                               applyRanges={handleApplyRanges}
+                               initialState={getInitialStateFromCalendarType(calendarType as string)}
+                               setMenuContent={setMenuContent}
+          />
+        );
+      case MenuContent.PROVIDERS:
+        return (
+          <MenuContentProviders geospaceId={selectedGeospaceId}
+                                selectedOption={provider as Asn}
+                                setSelectedOption={(option: Asn) => handleChangeFilters([speedType, calendarType, option])}
+                                closeMenu={closeMenu}
+          />
+        );
+      case MenuContent.SPEED_TYPE:
+        return (
+          <MenuContentSpeedType selectedOption={speedType as string}
+                                setSelectedOption={(option: string) => handleChangeFilters([option, calendarType, provider])}
+                                closeMenu={closeMenu}
+          />
+        );
+      case MenuContent.CUSTOM_DATE_RANGE:
+        return (
+          <MenuContentCustomDateRange goBack={() => openFilterMenu(filterTypes.CALENDAR)}
+                                      applyRanges={handleApplyRanges}
+                                      initialState={getInitialStateFromCalendarType(calendarType as string)}
+          />
+        )
       default:
-        params = {
-          selectedOption: speedType,
-          setSelectedOption: (option: string) => handleChangeFilters([option, calendarType, provider]),
-          closeMenu,
-        };
-        menuContentType = MenuContent.SPEED_TYPE;
-        break;
+        return null;
     }
-    setMenuContent(getMenuContent(menuContentType, params));
   }
 
   return (
@@ -386,7 +421,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
         />
       }
       { isSmallerThanMid && genericMenuOpen &&
-        <MyGenericMenu content={menuContent} closeMenu={closeMenu}/>
+        <MyGenericMenu closeMenu={closeMenu}>
+          {getCurrentContent()}
+        </MyGenericMenu>
       }
     </div>
   )

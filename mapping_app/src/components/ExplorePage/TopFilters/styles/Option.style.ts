@@ -21,6 +21,11 @@ const smallOptionStyle: CSSProperties = {
   minHeight: '48px',
 }
 
+const extraMargin: CSSProperties = {
+  marginTop: '5px',
+  marginBottom: '5px',
+}
+
 const iconStyle: CSSProperties = {
   width: '20px',
   height: '20px',
@@ -41,8 +46,9 @@ const selectedTextStyle: CSSProperties = {
 }
 
 export const styles = {
-  Option: (isSmall: boolean) => {
-    return isSmall ? smallOptionStyle : optionStyle;
+  Option: (isSmall: boolean, hasHorizontalDivider: boolean) => {
+    let style = isSmall ? smallOptionStyle : optionStyle;
+    return hasHorizontalDivider ? {...style, ...extraMargin} : style;
   },
   Icon: iconStyle,
   Text: (selected: boolean, isSmall: boolean) => {

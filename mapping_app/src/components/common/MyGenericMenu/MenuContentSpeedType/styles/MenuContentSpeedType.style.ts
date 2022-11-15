@@ -8,7 +8,6 @@ const menuContentSpeedTypeStyle: CSSProperties = {
 
 const menuContentSpeedTypeContainerStyle: CSSProperties = {
   width: '100%',
-  maxWidth: '335px',
   height: '105px',
   backgroundColor: WHITE,
   borderRadius: '6px',

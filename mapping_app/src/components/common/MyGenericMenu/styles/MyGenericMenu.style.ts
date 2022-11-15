@@ -1,5 +1,10 @@
 import {CSSProperties} from "react";
-import {DEFAULT_BUTTON_BOX_SHADOW_RGBA, GENERIC_MENU, GEOGRAPHICAL_CATEGORY_BOTTOM} from "../../../../styles/colors";
+import {
+  CLOSE_PANEL_BUTTON_SHADOW_RGBA,
+  DEFAULT_BUTTON_BOX_SHADOW_RGBA,
+  GENERIC_MENU,
+  GEOGRAPHICAL_CATEGORY_BOTTOM
+} from "../../../../styles/colors";
 
 const myGenericMenuStyle: CSSProperties = {
   width: '100vw',
@@ -29,7 +34,18 @@ const closeIconStyle: CSSProperties = {
   zIndex: 1200,
 }
 
+const shadowStyle: CSSProperties = {
+  width: '100vw',
+  height: '100vh',
+  backgroundColor: CLOSE_PANEL_BUTTON_SHADOW_RGBA,
+  zIndex: 1099,
+  position: 'fixed',
+  top: 0,
+  left: 0
+}
+
 export const styles = {
   MyGenericMenu: myGenericMenuStyle,
   CloseIcon: closeIconStyle,
+  Shadow: shadowStyle,
 }

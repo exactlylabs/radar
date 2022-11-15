@@ -9,7 +9,9 @@ import {
 } from "../../../../../styles/colors";
 
 const smallScreenSearchbarContainerStyle: CSSProperties = {
-  width: '345px',
+  width: 'calc(100vw - 30px)',
+  minWidth: '250px',
+  maxWidth: '420px',
   height: '52px',
   borderRadius: '6px',
   backgroundColor: WHITE,
@@ -20,8 +22,7 @@ const smallScreenSearchbarContainerStyle: CSSProperties = {
   alignItems: 'center',
   position: 'absolute',
   top: '15px',
-  left: '50%',
-  marginLeft: '-172.5px',
+  left: '15px',
   zIndex: 1003,
 }
 

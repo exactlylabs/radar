@@ -6,6 +6,7 @@ import MyFullWidthButton from "../../MyFullWidthButton";
 import DateRangeSelectorTabs from "../../../ExplorePage/DatePicker/DateRangeSelectorTabs";
 import {dateTabs, halves, months, tabs, years} from "../../../../utils/filters";
 import {
+  DatePickerState,
   getCurrentMonth,
   getFirstDayOfLastWeek,
   getMonthNumberFromName,
@@ -15,7 +16,7 @@ import {
 import {getMenuContent, MenuContent} from "../menu";
 import {useContentMenu} from "../../../../hooks/useContentMenu";
 import MenuContentYearOrMonth from "../MenuContentYearOrMonth/MenuContentYearOrMonth";
-import {isNumber, isString} from "../../../../utils/types";
+import {isNumber, isString, Optional} from "../../../../utils/types";
 import MenuContentHalf from "../MenuContentHalf/MenuContentHalf";
 import MenuContentWeek from "../MenuContentWeek/MenuContentWeek";
 
@@ -29,22 +30,40 @@ enum DateMenuLevel {
 
 interface MenuContentCustomDateRangeProps {
   goBack: () => void;
+  applyRanges: (queryString: string) => void;
+  initialState: Optional<DatePickerState>;
 }
 
 const MenuContentCustomDateRange = ({
   goBack,
+  applyRanges,
+  initialState
 }: MenuContentCustomDateRangeProps): ReactElement => {
 
   const [currentLevel, setCurrentLevel] = useState<DateMenuLevel>(DateMenuLevel.INITIAL);
-  const [selectedTab, setSelectedTab] = useState<string>(dateTabs.MONTH);
-  const [subtitleText, setSubtitleText] = useState<string>('');
-  const [innerValue, setInnerValue] = useState<string>(months[0]);
-  const [selectedYear, setSelectedYear] = useState(years[0]);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [selectedWeek, setSelectedWeek] = useState(getWeekNumber(getFirstDayOfLastWeek()));
+  const [selectedTab, setSelectedTab] = useState<string>(initialState?.selectedTab ?? dateTabs.MONTH);
+  const [subtitleText, setSubtitleText] = useState<string>(initialState?.subtitleText ?? '');
+  const [innerValue, setInnerValue] = useState<string | number>(initialState?.selectedRangeValue ?? months[0]);
+  const [selectedYear, setSelectedYear] = useState(initialState?.selectedYear ?? years[0]);
+  const [selectedMonth, setSelectedMonth] = useState(initialState?.selectedMonth ?? new Date().getMonth());
+  const [selectedWeek, setSelectedWeek] = useState(initialState?.selectedWeek ?? getWeekNumber(getFirstDayOfLastWeek()));
 
   const applyChanges = () => {
-    console.log(selectedTab, innerValue, selectedYear, selectedMonth, selectedWeek);
+    let dateQuery = `&year=${selectedYear}`;
+    switch (selectedTab) {
+      case dateTabs.MONTH:
+        if(innerValue !== months[0]) {
+          dateQuery += `&month=${getMonthNumberFromName(innerValue as string) + 1}`; // months are 1-indexed in backend
+        }
+        break;
+      case dateTabs.HALF_YEAR:
+        dateQuery += `&semester=${subtitleText === 'H1' ? 1 : 2}`;
+        break;
+      case dateTabs.WEEK:
+        dateQuery += `&week=${selectedWeek - 1}`; // weeks are 0-indexed in backend
+        break;
+    }
+    applyRanges(dateQuery);
   }
 
   const handleSelectTab = (newTab: string) => {
@@ -169,7 +188,7 @@ const MenuContentCustomDateRange = ({
 
   const getHalfScreenContent = () => (
     <MenuContentHalf goBack={goToInitialLevel}
-                     selectedOption={innerValue}
+                     selectedOption={innerValue as string}
                      setSelectedOption={handleSelectHalfyear}
     />
   )

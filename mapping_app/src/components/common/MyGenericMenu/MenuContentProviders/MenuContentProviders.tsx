@@ -15,8 +15,8 @@ import OptionHorizontalDivider from "../../../ExplorePage/TopFilters/OptionHoriz
 
 interface MenuContentProvidersProps {
   geospaceId: Optional<string>;
-  selectedOption: Optional<Asn>;
-  setSelectedOption: (option: Optional<Asn>) => void;
+  selectedOption: Asn;
+  setSelectedOption: (option: Asn) => void;
   closeMenu: () => void;
 }
 
@@ -65,7 +65,7 @@ const MenuContentProviders = ({
   });
 
   const applyOptionSelected = () => {
-    setSelectedOption(innerOption);
+    setSelectedOption(innerOption ?? allProvidersElement);
     closeMenu();
   }
 

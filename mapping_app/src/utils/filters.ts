@@ -7,6 +7,7 @@ import {GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/t
 import {getFiltersString} from "../api/utils/filters";
 import {getOverview} from "../api/geospaces/requests";
 import {handleError} from "../api";
+import {MenuContent} from "../components/common/MyGenericMenu/menu";
 
 export const filterTypes = {
   SPEED: 'speed',
@@ -163,4 +164,10 @@ export const isSpecificYear = (string: string): boolean => {
 export const getSignalState = (speedType: string, selectedGeospaceInfo: GeospaceInfo): string => {
   return speedType === 'Download' ?
     getSignalStateDownload(selectedGeospaceInfo.download_median) : getSignalStateUpload(selectedGeospaceInfo.upload_median);
+}
+
+export  const getFilterMenuContentFromFilter = (filter: string): MenuContent => {
+  if(filter === filterTypes.SPEED) return MenuContent.SPEED_TYPE;
+  else if(filter === filterTypes.PROVIDERS) return MenuContent.PROVIDERS;
+  else return MenuContent.CALENDAR;
 }

@@ -1,11 +1,12 @@
 import {CSSProperties} from "react";
 
 const smallScreenBottomNavigatorContainerStyle: CSSProperties = {
-  width: '345px',
+  width: 'calc(100vw - 30px)',
+  minWidth: '250px',
+  maxWidth: '420px',
   height: '40px',
   position: 'absolute',
-  left: '50%',
-  marginLeft: '-172.5px',
+  left: '15px',
   bottom: '30px',
   zIndex: 1005,
 }
