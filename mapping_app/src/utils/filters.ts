@@ -7,7 +7,7 @@ import {
   getWeekNumber
 } from "./dates";
 import {Optional} from "./types";
-import {getSignalStateDownload, getSignalStateUpload} from "./speeds";
+import {MenuContent} from "../components/common/MyGenericMenu/menu";
 
 export enum FilterTypes {
   SPEED = 'speed',
@@ -240,4 +240,10 @@ export const isSpecificMonth = (string: string): boolean => {
 export const isSpecificYear = (string: string): boolean => {
   const possibleYearNumber: number = parseInt(string);
   return !isNaN(possibleYearNumber) && years.includes(possibleYearNumber);
+}
+
+export const getFilterMenuContentFromFilter = (filter: string): MenuContent => {
+  if(filter === FilterTypes.SPEED) return MenuContent.SPEED_TYPE;
+  else if(filter === FilterTypes.PROVIDERS) return MenuContent.PROVIDERS;
+  else return MenuContent.CALENDAR;
 }

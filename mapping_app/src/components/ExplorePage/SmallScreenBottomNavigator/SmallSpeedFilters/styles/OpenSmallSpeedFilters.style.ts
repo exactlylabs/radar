@@ -6,7 +6,7 @@ const openSmallSpeedFiltersContainerStyle: CSSProperties = {
   height: '112px',
   position: 'absolute',
   bottom: '20px',
-  right: '130px',
+  right: 'calc(100vw - 48px - 215px + 15px)',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',

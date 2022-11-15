@@ -22,11 +22,13 @@ const geographicalCategoryBottomTabsContainerStyle: CSSProperties = {
 }
 
 const tabContainerStyle: CSSProperties = {
-  width: 'max-content',
   textAlign: 'center',
   fontSize: '15px',
   color: DEFAULT_SECONDARY_TEXT,
   padding: '6px 25px',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden'
 }
 
 const selectedTabContainerStyle: CSSProperties = {
@@ -38,7 +40,8 @@ const selectedTabContainerStyle: CSSProperties = {
 
 export const styles = {
   GeographicalCategoryBottomTabsContainer: geographicalCategoryBottomTabsContainerStyle,
-  TabContainer: (selected: boolean) => {
-    return selected ? selectedTabContainerStyle : tabContainerStyle;
+  TabContainer: (selected: boolean, width: string) => {
+    let style = selected ? selectedTabContainerStyle : tabContainerStyle;
+    return {...style, width};
   },
 }

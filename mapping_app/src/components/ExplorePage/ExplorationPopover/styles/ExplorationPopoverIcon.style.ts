@@ -27,8 +27,7 @@ const smallExplorationPopoverIconContainerStyle: CSSProperties = {
   height: '48px',
   bottom: '150px',
   left: undefined,
-  right: '50%',
-  marginRight: 'calc(-24px - 148.5px)',
+  right: '15px',
   backgroundColor: GEOGRAPHICAL_CATEGORY_BOTTOM
 }
 

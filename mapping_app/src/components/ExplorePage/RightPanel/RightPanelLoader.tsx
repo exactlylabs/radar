@@ -8,7 +8,7 @@ interface RightPanelLoaderProps {
   country: string;
   parentName?: string;
   stateSignalState: string;
-  closePanel: () => void;
+  closePanel?: () => void;
 }
 
 const RightPanelLoader = ({

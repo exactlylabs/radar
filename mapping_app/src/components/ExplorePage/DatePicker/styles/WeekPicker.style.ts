@@ -18,7 +18,6 @@ const weekPickerStyle: CSSProperties = {
 const smallWeekPickerStyle: CSSProperties = {
   ...weekPickerStyle,
   width: '100%',
-  maxWidth: '335px',
   height: '320px',
   position: 'relative',
   left: undefined,
