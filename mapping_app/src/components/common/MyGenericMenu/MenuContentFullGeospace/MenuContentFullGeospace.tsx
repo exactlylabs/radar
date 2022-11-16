@@ -7,34 +7,35 @@ import RightPanelSpeedData from "../../../ExplorePage/RightPanel/RightPanelSpeed
 import RightPanelHorizontalDivider from "../../../ExplorePage/RightPanel/RightPanelHorizontalDivider";
 import SpeedDistribution from "../../../ExplorePage/RightPanel/SpeedDistribution";
 import {getServedPeopleCount, getUnderservedPeopleCount, getUnservedPeopleCount} from "../../../../utils/percentages";
-import {filterTypes, getFilterMenuContentFromFilter, getSignalState} from "../../../../utils/filters";
+import {FilterTypes, getFilterMenuContentFromFilter, getSignalState} from "../../../../utils/filters";
 import {getFiltersString} from "../../../../api/utils/filters";
 import {getOverview} from "../../../../api/geospaces/requests";
 import {handleError} from "../../../../api";
 import {styles} from "./styles/MenuContentFullGeospace.style";
 import './styles/MenuContentFullGeospace.css';
 import MyGenericMenu from "../MyGenericMenu";
-import {getMenuContent, MenuContent} from "../menu";
+import {MenuContent} from "../menu";
 import {Asn} from "../../../../api/asns/types";
 import {getInitialStateFromCalendarType} from "../../../../utils/dates";
 import MenuContentCalendar from "../MenuContentCalendar/MenuContentCalendar";
 import MenuContentProviders from "../MenuContentProviders/MenuContentProviders";
 import MenuContentSpeedType from "../MenuContentSpeedType/MenuContentSpeedType";
 import MenuContentCustomDateRange from "../MenuContentCustomRange/MenuContentCustomDateRange";
-import RightPanelLoader from "../../../ExplorePage/RightPanel/RightPanelLoader";
 import MenuFullGeospaceLoader from "./MenuFullGeospaceLoader";
+import {getGeospaceName} from "../../../../utils/geospaces";
+import {GeoJSONFilters} from "../../../../api/geojson/types";
 
 interface MenuContentFullGeospaceProps {
   geospace: GeospaceOverview;
   setSelectedGeoSpaceInfo: (value: GeospaceInfo) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
-  speedType: Filter;
-  setSpeedType: (value: Filter) => void;
-  calendarType: Filter;
-  setCalendarType: (value: Filter) => void;
-  provider: Filter;
-  setProvider: (value: Filter) => void;
+  speedType: string;
+  setSpeedType: (value: string) => void;
+  calendarType: string;
+  setCalendarType: (value: string) => void;
+  provider: Asn;
+  setProvider: (value: Asn) => void;
   applyRanges: (queryString: string) => void;
 }
 
@@ -55,23 +56,12 @@ const MenuContentFullGeospace = ({
   const [isMenuContentOpen, setIsMenuContentOpen] = useState(false);
   const [menuContent, setMenuContent] = useState<Optional<MenuContent>>(null);
 
-  const getName = (): string => {
-    if(isGeospaceData(geospace)) {
-      if(geospace.state) return geospace.state as string;
-      else return geospace.county as string;
-    } else {
-      const info: GeospaceOverview = geospace as GeospaceOverview;
-      return info.geospace.name;
-    }
-  }
-
-  const handleFilterChange = async (filters: Array<Filter>) => {
-    setSpeedType(filters[0]);
-    setCalendarType(filters[1]);
-    setProvider(filters[2]);
+  const handleFilterChange = async (filters: GeoJSONFilters) => {
+    setSpeedType(filters.speedType);
+    setCalendarType(filters.calendar);
+    setProvider(filters.provider);
     setLoading(true);
     closeMenu();
-    const filtersString: string = getFiltersString([filters[2], filters[1]]);
     try {
       let geospaceId: string;
       if(isGeospaceData(geospace)) {
@@ -82,7 +72,7 @@ const MenuContentFullGeospace = ({
         const info: GeospaceOverview = geospace as GeospaceOverview;
         geospaceId = info.geospace.id;
       }
-      const overview: GeospaceOverview = await getOverview(geospaceId, filtersString);
+      const overview: GeospaceOverview = await getOverview(geospaceId, filters);
       const allData: GeospaceInfo = {
         ...geospace,
         ...overview,
@@ -108,7 +98,7 @@ const MenuContentFullGeospace = ({
       case MenuContent.CALENDAR:
         return (
           <MenuContentCalendar selectedOption={calendarType as string}
-                               setSelectedOption={(option: string) => handleFilterChange([speedType, option, provider])}
+                               setSelectedOption={(option: string) => handleFilterChange({speedType, calendar: option, provider})}
                                closeMenu={closeMenu}
                                applyRanges={applyRanges}
                                initialState={getInitialStateFromCalendarType(calendarType as string)}
@@ -119,20 +109,20 @@ const MenuContentFullGeospace = ({
         return (
           <MenuContentProviders geospaceId={geospace.geospace.id}
                                 selectedOption={provider as Asn}
-                                setSelectedOption={(option: Asn) => handleFilterChange([speedType, calendarType, option])}
+                                setSelectedOption={(option: Asn) => handleFilterChange({speedType, calendar: calendarType, provider: option})}
                                 closeMenu={closeMenu}
           />
         );
       case MenuContent.SPEED_TYPE:
         return (
           <MenuContentSpeedType selectedOption={speedType as string}
-                                setSelectedOption={(option: string) => handleFilterChange([option, calendarType, provider])}
+                                setSelectedOption={(option: string) => handleFilterChange({speedType: option, calendar: calendarType, provider})}
                                 closeMenu={closeMenu}
           />
         );
       case MenuContent.CUSTOM_DATE_RANGE:
         return (
-          <MenuContentCustomDateRange goBack={() => openFilterMenu(filterTypes.CALENDAR)}
+          <MenuContentCustomDateRange goBack={() => openFilterMenu(FilterTypes.CALENDAR)}
                                       applyRanges={applyRanges}
                                       initialState={getInitialStateFromCalendarType(calendarType as string)}
           />
@@ -146,7 +136,7 @@ const MenuContentFullGeospace = ({
     <div style={styles.MenuFullGeospaceContentContainer}>
       {
         loading ?
-          <MenuFullGeospaceLoader geospaceName={getName()}
+          <MenuFullGeospaceLoader geospaceName={getGeospaceName(geospace)}
                                   parentName={(geospace as GeospaceOverview).geospace.parent?.name}
                                   stateSignalState={getSignalState(speedType as string, geospace)}
                                   country={'U.S.A'}
@@ -154,7 +144,7 @@ const MenuContentFullGeospace = ({
           <div style={styles.MenuContentWrapper}>
             <div style={styles.GradientUnderlay}></div>
             <div>
-              <RightPanelHeader geospaceName={getName()}
+              <RightPanelHeader geospaceName={getGeospaceName(geospace)}
                                 parentName={(geospace as GeospaceOverview).geospace.parent?.name}
                                 country={'U.S.A'}
                                 stateSignalState={getSignalState(speedType as string, geospace)}
@@ -168,7 +158,7 @@ const MenuContentFullGeospace = ({
                                  }}
                                  selectedGeospaceId={(geospace as GeospaceOverview).geospace.id}
                                  isInsideContainer
-                                 openFilterMenu={openFilterMenu}
+                                 openFloatingFilter={openFilterMenu}
                 />
               </div>
             </div>

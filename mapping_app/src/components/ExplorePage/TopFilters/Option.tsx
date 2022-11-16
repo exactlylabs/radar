@@ -21,7 +21,7 @@ const Option = ({
   isLast,
 }: OptionProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen} = useViewportSizes();
 
   const handleClick = () => {
     onClick(option);
@@ -31,8 +31,8 @@ const Option = ({
 
   const lastOption = (
     <>
-      <div style={styles.Option(isSmallerThanMid, false)} onClick={handleClick}>
-        <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected, isSmallerThanMid)}>{getText()}</p>
+      <div style={styles.Option(isSmallScreen, false)} onClick={handleClick}>
+        <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected, isSmallScreen)}>{getText()}</p>
         { !selected && <div style={styles.Icon}></div> }
         {  selected && <img src={GreenCheckIcon} style={styles.Icon} alt={'green-check-icon'}/> }
       </div>
@@ -42,8 +42,8 @@ const Option = ({
   const lastOptionWithStyle = (
     <>
       <OptionHorizontalDivider/>
-      <div style={styles.Option(isSmallerThanMid, true)} onClick={handleClick}>
-        <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected, isSmallerThanMid)}>{getText()}</p>
+      <div style={styles.Option(isSmallScreen, true)} onClick={handleClick}>
+        <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected, isSmallScreen)}>{getText()}</p>
         { !selected && <div style={styles.Icon}></div> }
         {  selected && <img src={GreenCheckIcon} style={styles.Icon} alt={'green-check-icon'}/> }
       </div>

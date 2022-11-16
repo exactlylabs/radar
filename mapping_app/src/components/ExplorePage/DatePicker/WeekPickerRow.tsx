@@ -22,7 +22,8 @@ const WeekPickerRow = ({
   setSelectedWeek
 }: WeekPickerRowProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isSmallTabletScreen;
 
   const isNotCurrentMonth = (elem: Day | string): boolean => {
     if(!isDay(elem)) return true;
@@ -34,13 +35,13 @@ const WeekPickerRow = ({
 
   return (
     <div className={`week-picker-row ${selected ? 'week-picker-row--selected' : ''} ${disabled ? 'week-picker-row--disabled' : ''}`}
-         style={styles.WeekPickerRow(isSmallerThanMid, selected, header)}
+         style={styles.WeekPickerRow(isSmall, selected, header)}
          onClick={disabled ? undefined : selectWeek}
     >
       { elements.map((elem, index) => (
         <div key={`${isDay(elem) ? (elem as Day).dayNumber : elem as string}${index}`} style={styles.TextContainer}>
           <p className={header ? 'fw-medium' : 'fw-regular'}
-             style={styles.Text(isSmallerThanMid, selected, isNotCurrentMonth(elem), header, disabled)}>
+             style={styles.Text(isSmall, selected, isNotCurrentMonth(elem), header, disabled)}>
             {isDay(elem) ? (elem as Day).dayNumber : elem as string}
           </p>
         </div>

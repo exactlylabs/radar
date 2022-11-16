@@ -20,21 +20,22 @@ const RightPanelHeader = ({
   closePanel
 }: RightPanelHeaderProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isSmallTabletScreen;
 
   const getRegularContent = () => (
     <div style={styles.StateTextContainer(false)}>
-      <p className={'fw-medium'} style={styles.GeospaceName(isSmallerThanMid)}>{geospaceName}</p>
-      <p className={'fw-light'} style={styles.StateCountry(isSmallerThanMid)}>{country}</p>
+      <p className={'fw-medium'} style={styles.GeospaceName(isSmall)}>{geospaceName}</p>
+      <p className={'fw-light'} style={styles.StateCountry(isSmall)}>{country}</p>
     </div>
   );
 
   const getTwoLineContent = () => (
     <div style={styles.StateTextContainer(true)}>
-      <p className={'fw-medium'} style={styles.GeospaceName(isSmallerThanMid)}>{geospaceName}</p>
+      <p className={'fw-medium'} style={styles.GeospaceName(isSmall)}>{geospaceName}</p>
       <div className={'fw-light'} style={styles.StateAndCountryLine}>
-        <p className={'fw-light'} style={styles.ParentName(isSmallerThanMid)}>{`${parentName}, `}</p>
-        <p className={'fw-light'} style={styles.StateCountry(isSmallerThanMid)}>{country}</p>
+        <p className={'fw-light'} style={styles.ParentName(isSmall)}>{`${parentName}, `}</p>
+        <p className={'fw-light'} style={styles.StateCountry(isSmall)}>{country}</p>
       </div>
     </div>
   )
@@ -44,8 +45,8 @@ const RightPanelHeader = ({
   }
 
   return (
-    <div style={styles.RightPanelHeaderContainer(!!parentName, isSmallerThanMid)}>
-      <div style={styles.LeftSideContainer(isSmallerThanMid)}>
+    <div style={styles.RightPanelHeaderContainer(!!parentName, isSmall)}>
+      <div style={styles.LeftSideContainer(isSmall)}>
         {getTextContent()}
         <div style={styles.SignalStateContainer}>
           <div style={styles.StateSignalStateIndicator(stateSignalState)}></div>

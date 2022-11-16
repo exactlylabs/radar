@@ -8,7 +8,7 @@ import ViewportContext from "../context/ViewportContent";
  * Pulling current width from app's viewport context provider.
  * @returns {boolean}
  */
-export const useIsSmallSizeScreen = () => {
+export const useIsSmallScreen = () => {
   const {width} = useContext(ViewportContext);
-  return width <= SMALL_SCREEN_SIZE_BREAKPOINT;
+  return width < SMALL_SCREEN_SIZE_BREAKPOINT;
 }

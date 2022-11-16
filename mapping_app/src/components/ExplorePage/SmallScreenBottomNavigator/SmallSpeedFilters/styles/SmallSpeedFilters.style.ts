@@ -34,15 +34,22 @@ const buttonStyle: CSSProperties = {
   cursor: 'pointer'
 }
 
-const selectedButtonStyle: CSSProperties = {
+const smallTabletButtonStyle: CSSProperties = {
   ...buttonStyle,
+  bottom: '-38px',
+  right: undefined,
+  left: 'calc(100vw - 420px - 30px - 47px)'
+}
+
+const selectedButtonStyle: CSSProperties = {
   backgroundColor: DEFAULT_SECONDARY_BLACK
 }
 
 export const styles = {
   SmallSpeedFiltersContainer: smallSpeedFiltersContainerStyle,
   LayersIcon: layersIconStyle,
-  Button: (isOpen: boolean) => {
-    return isOpen ? selectedButtonStyle : buttonStyle;
+  Button: (isOpen: boolean, isSmallTablet: boolean) => {
+    let style = isSmallTablet ? smallTabletButtonStyle : buttonStyle;
+    return isOpen ? {...style, ...selectedButtonStyle} : style;
   },
 }
