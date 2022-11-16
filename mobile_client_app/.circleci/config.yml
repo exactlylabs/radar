@@ -124,9 +124,6 @@ jobs:
       - run: 
           command: ./scripts/build_ios_<<  parameters.flavor >>.sh
           working_directory: ~/project/mobile_client_app/client_mobile_app
-      - run:
-          command: fastlane ios << parameters.flavor >>
-          working_directory: ~/project/mobile_client_app/client_mobile_app/ios
       - persist_to_workspace:
           root: ~/project/mobile_client_app/client_mobile_app/workspace
           paths:
@@ -145,51 +142,51 @@ jobs:
 workflows:
   workflow:
     jobs:
-      
-      # Android
       - flutter/unit_test:
           name: "unit_test"
           app-dir: ~/project/mobile_client_app/client_mobile_app
           version: 3.3.1
-      - build-android:
-          name: "build-android-dev"
-          requires: [unit_test]
-          flavor: dev
-          filters:
-            branches:
-              ignore:
-                - "master"
-                - "dev"
-      - build-android:
-          name: "build-android-staging"
-          requires: [unit_test]
-          flavor: staging
-          filters:
-            branches:
-              only: ["dev"]
-      - build-android:
-          name: "build-android-prod"
-          requires: [unit_test]
-          flavor: prod
-          filters:
-            branches:
-              only: "master"
-      - upload-android:
-          requires: [build-android-dev, build-android-staging, build-android-prod]
-      - release-android:
-          name: "release-android-staging"
-          requires: [build-android-staging]
-          flavor: staging
-          filters:
-            branches:
-              only: ["dev"]
-      - release-android:
-          name: "release-android-prod"
-          requires: [build-android-prod]
-          flavor: prod
-          filters:
-            branches:
-              only: ["master"]
+      
+      # # Android
+      # - build-android:
+      #     name: "build-android-dev"
+      #     requires: [unit_test]
+      #     flavor: dev
+      #     filters:
+      #       branches:
+      #         ignore:
+      #           - "master"
+      #           - "dev"
+      # - build-android:
+      #     name: "build-android-staging"
+      #     requires: [unit_test]
+      #     flavor: staging
+      #     filters:
+      #       branches:
+      #         only: ["dev"]
+      # - build-android:
+      #     name: "build-android-prod"
+      #     requires: [unit_test]
+      #     flavor: prod
+      #     filters:
+      #       branches:
+      #         only: "master"
+      # - upload-android:
+      #     requires: [build-android-dev, build-android-staging, build-android-prod]
+      # - release-android:
+      #     name: "release-android-staging"
+      #     requires: [build-android-staging]
+      #     flavor: staging
+      #     filters:
+      #       branches:
+      #         only: ["dev"]
+      # - release-android:
+      #     name: "release-android-prod"
+      #     requires: [build-android-prod]
+      #     flavor: prod
+      #     filters:
+      #       branches:
+      #         only: ["master"]
       # iOS
       - build-ios:
           name: "build-ios-dev"
