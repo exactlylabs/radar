@@ -18,6 +18,6 @@ BUILD=$(date +%s)
 mkdir -p ${WORKSPACE}/ios/staging
 export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -ne 's/version: \([0-9]\+\.[0-9]\+\.[0-9]\+\)+[0-9]\+/\1/p')
 
-( cd ${APPDIR} && fastlane ios sign_staging )
+( cd ${APPDIR}/ios && fastlane ios sign_staging )
 
 # cp -r ${APPDIR}/build/ios/iphoneos/Runner.app ${WORKSPACE}/ios/staging/Runner${VERSION_NAME}+${BUILD}.app
