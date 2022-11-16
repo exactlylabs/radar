@@ -1,5 +1,9 @@
 import {useContext} from "react";
-import {MID_SCREEN_SIZE_BREAKPOINT, SMALL_SCREEN_SIZE_BREAKPOINT} from "../utils/breakpoints";
+import {
+  LARGE_SCREEN_SIZE_BREAKPOINT,
+  MID_SCREEN_SIZE_BREAKPOINT,
+  SMALL_SCREEN_SIZE_BREAKPOINT
+} from "../utils/breakpoints";
 import ViewportContext from "../context/ViewportContent";
 
 /**
@@ -7,7 +11,7 @@ import ViewportContext from "../context/ViewportContent";
  * Pulling current width from app's viewport context provider.
  * @returns {boolean}
  */
-export const useIsMidSizeScreen = () => {
+export const useIsLargeTabletScreen = () => {
   const {width} = useContext(ViewportContext);
-  return width >= SMALL_SCREEN_SIZE_BREAKPOINT && width <= MID_SCREEN_SIZE_BREAKPOINT;
+  return width >= MID_SCREEN_SIZE_BREAKPOINT && width < LARGE_SCREEN_SIZE_BREAKPOINT;
 }

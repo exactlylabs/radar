@@ -5,17 +5,25 @@ import PopoverClosedIconBlack from '../../../assets/popover-icon-black.png';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 interface ExplorationPopoverProps {
-  openPopover: () => void;
+  onClick: () => void;
+  isOpen?: boolean;
 }
 
-const ExplorationPopoverIcon = ({openPopover}: ExplorationPopoverProps): ReactElement => {
+const ExplorationPopoverIcon = ({
+  onClick,
+  isOpen,
+}: ExplorationPopoverProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+
+  const shouldShowBlackIcon = isSmallScreen || (isSmallTabletScreen && !isOpen);
 
   return (
-    <div style={styles.ExplorationPopoverIconContainer(isSmallerThanMid)} onClick={openPopover}>
-      <img src={isSmallerThanMid ? PopoverClosedIconBlack : PopoverClosedIconWhite}
-           style={styles.Icon(isSmallerThanMid)} alt={'popover-closed-icon'}
+    <div style={styles.ExplorationPopoverIconContainer(isSmallScreen, isSmallTabletScreen, isOpen)}
+         onClick={onClick}
+    >
+      <img src={shouldShowBlackIcon ? PopoverClosedIconBlack : PopoverClosedIconWhite}
+           style={styles.Icon(isSmallScreen || isSmallTabletScreen)} alt={'popover-closed-icon'}
       />
     </div>
   )

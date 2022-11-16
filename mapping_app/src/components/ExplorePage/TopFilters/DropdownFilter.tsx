@@ -23,7 +23,7 @@ interface DropdownFilterProps {
   lastOptionOnClick?: () => void;
   loading: boolean;
   isLast?: boolean;
-  openFilterMenu: () => void;
+  openFloatingFilter: () => void;
 }
 
 const DropdownFilter = ({
@@ -41,10 +41,11 @@ const DropdownFilter = ({
   lastOptionOnClick,
   loading,
   isLast,
-  openFilterMenu
+  openFloatingFilter
 }: DropdownFilterProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen, isDesktopScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isSmallTabletScreen;
 
   const [selectedOption, setSelectedOption] = useState<Filter>(selectedFilter ?? options[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -86,14 +87,14 @@ const DropdownFilter = ({
   }
 
   return (
-    <div style={styles.DropdownFilterContainer(isSmallerThanMid, isLast)}
-         onClick={isSmallerThanMid ? openFilterMenu : toggleOptionsDropdown}
+    <div style={styles.DropdownFilterContainer(isSmall, isLast)}
+         onClick={isSmall ? openFloatingFilter : toggleOptionsDropdown}
          id={`filter-${type}`}
     >
-      <div className={'hover-opaque'} style={styles.FilterContentContainer(dropdownOpen, isSmallerThanMid)}>
+      <div className={'hover-opaque'} style={styles.FilterContentContainer(dropdownOpen, isSmall)}>
         <img src={iconSrc} style={styles.Icon} alt={'filter-icon'}/>
         <p className={'fw-regular hover-opaque'} style={styles.Text(textWidth)}>{getText()}</p>
-        <img src={Chevron} style={styles.Arrow} alt={'chevron'}/>
+        { isDesktopScreen && <img src={Chevron} style={styles.Arrow} alt={'chevron'}/> }
       </div>
       {
         dropdownOpen &&

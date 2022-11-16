@@ -31,6 +31,17 @@ const smallExplorationPopoverIconContainerStyle: CSSProperties = {
   backgroundColor: GEOGRAPHICAL_CATEGORY_BOTTOM
 }
 
+const smallTabletExplorationPopoverIconContainerStyle: CSSProperties = {
+  ...smallExplorationPopoverIconContainerStyle,
+  bottom: '93px',
+}
+
+const openSmallTabletExplorationPopoverIconContainerStyle: CSSProperties = {
+  ...smallExplorationPopoverIconContainerStyle,
+  bottom: '93px',
+  backgroundColor: EXPLORATION_POPOVER_BLACK,
+}
+
 const iconStyle: CSSProperties = {
   width: '24px',
   height: '24px',
@@ -42,8 +53,13 @@ const smallIconStyle: CSSProperties = {
 }
 
 export const styles = {
-  ExplorationPopoverIconContainer: (isSmall: boolean) => {
-    return isSmall ? smallExplorationPopoverIconContainerStyle : explorationPopoverIconContainerStyle;
+  ExplorationPopoverIconContainer: (isSmall: boolean, isSmallTablet: boolean, isOpen?: boolean) => {
+    let style;
+    if(isSmall && !isOpen) style = smallExplorationPopoverIconContainerStyle;
+    else if(isSmallTablet && !isOpen) style = smallTabletExplorationPopoverIconContainerStyle;
+    else if(isSmallTablet && isOpen) style = openSmallTabletExplorationPopoverIconContainerStyle;
+    else style = explorationPopoverIconContainerStyle;
+    return style;
   },
   Icon: (isSmall: boolean) => {
     return isSmall ? smallIconStyle : iconStyle;

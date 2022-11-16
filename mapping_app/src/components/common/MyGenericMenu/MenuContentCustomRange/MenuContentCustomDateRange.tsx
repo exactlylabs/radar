@@ -4,8 +4,9 @@ import GoBackIcon from '../../../../assets/go-back-arrow-icon.png';
 import ChevronRight from '../../../../assets/chevron-right.png';
 import MyFullWidthButton from "../../MyFullWidthButton";
 import DateRangeSelectorTabs from "../../../ExplorePage/DatePicker/DateRangeSelectorTabs";
-import {dateTabs, halves, months, tabs, years} from "../../../../utils/filters";
+import {applyChanges, dateTabs, halves, months, tabs, years} from "../../../../utils/filters";
 import {
+  DateMenuLevel,
   DatePickerState,
   getCurrentMonth,
   getFirstDayOfLastWeek,
@@ -19,14 +20,6 @@ import MenuContentYearOrMonth from "../MenuContentYearOrMonth/MenuContentYearOrM
 import {isNumber, isString, Optional} from "../../../../utils/types";
 import MenuContentHalf from "../MenuContentHalf/MenuContentHalf";
 import MenuContentWeek from "../MenuContentWeek/MenuContentWeek";
-
-enum DateMenuLevel {
-  INITIAL = 'INITIAL',
-  SELECT_YEAR = 'SELECT_YEAR',
-  SELECT_MONTH = 'SELECT_MONTH',
-  SELECT_HALF = 'SELECT_HALF',
-  SELECT_WEEK = 'SELECT_WEEK'
-}
 
 interface MenuContentCustomDateRangeProps {
   goBack: () => void;
@@ -47,24 +40,6 @@ const MenuContentCustomDateRange = ({
   const [selectedYear, setSelectedYear] = useState(initialState?.selectedYear ?? years[0]);
   const [selectedMonth, setSelectedMonth] = useState(initialState?.selectedMonth ?? new Date().getMonth());
   const [selectedWeek, setSelectedWeek] = useState(initialState?.selectedWeek ?? getWeekNumber(getFirstDayOfLastWeek()));
-
-  const applyChanges = () => {
-    let dateQuery = `&year=${selectedYear}`;
-    switch (selectedTab) {
-      case dateTabs.MONTH:
-        if(innerValue !== months[0]) {
-          dateQuery += `&month=${getMonthNumberFromName(innerValue as string) + 1}`; // months are 1-indexed in backend
-        }
-        break;
-      case dateTabs.HALF_YEAR:
-        dateQuery += `&semester=${subtitleText === 'H1' ? 1 : 2}`;
-        break;
-      case dateTabs.WEEK:
-        dateQuery += `&week=${selectedWeek - 1}`; // weeks are 0-indexed in backend
-        break;
-    }
-    applyRanges(dateQuery);
-  }
 
   const handleSelectTab = (newTab: string) => {
     setSelectedTab(newTab);
@@ -140,6 +115,8 @@ const MenuContentCustomDateRange = ({
     setSubtitleText(option === halves[0] ? 'H1' : 'H2');
   }
 
+  const handleOnClick = () => applyChanges(selectedYear, selectedWeek, selectedTab, innerValue, subtitleText, applyRanges);
+
   const getInitialScreenContent = () => (
     <div style={styles.MenuContentCustomRange}>
       <img src={GoBackIcon}
@@ -164,7 +141,7 @@ const MenuContentCustomDateRange = ({
           <img src={ChevronRight} style={styles.Chevron} alt={'chevron-right'}/>
         </div>
       </div>
-      <MyFullWidthButton text={'Apply'} onClick={applyChanges}/>
+      <MyFullWidthButton text={'Apply'} onClick={handleOnClick}/>
     </div>
   )
 

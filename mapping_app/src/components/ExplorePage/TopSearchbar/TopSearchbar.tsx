@@ -27,7 +27,7 @@ const TopSearchbar = ({
   toggleFilters
 }: TopSearchbarProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
@@ -86,7 +86,7 @@ const TopSearchbar = ({
     if(inputRef.current) inputRef.current.value = '';
   }
 
-  return isSmallerThanMid ?
+  return isSmallScreen || isSmallTabletScreen ?
     <SmallScreenSearchbar inputRef={inputRef}
                           handleInputChange={handleInputChange}
                           loading={loading}

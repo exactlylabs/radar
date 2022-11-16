@@ -46,6 +46,14 @@ import MenuContentProviders from "../common/CustomGenericMenu/MenuContentProvide
 import MenuContentCalendar from "../common/CustomGenericMenu/MenuContentCalendar/MenuContentCalendar";
 import MenuContentSpeedType from "../common/CustomGenericMenu/MenuContentSpeedType/MenuContentSpeedType";
 import MenuContentCustomDateRange from "../common/CustomGenericMenu/MenuContentCustomRange/MenuContentCustomDateRange";
+import MyGenericModal from "../common/MyGenericModal/MyGenericModal";
+import ModalContentGeospace from "../common/MyGenericModal/ModalContentGeospace/ModalContentGeospace";
+import ModalContentFullGeospace from "../common/MyGenericModal/ModalContentFullGeospace/ModalContentFullGeospace";
+import ModalContentSpeedType from "../common/MyGenericModal/ModalContentSpeedType/ModalContentSpeedType";
+import ModalContentProviders from "../common/MyGenericModal/ModalContentProviders/ModalContentProviders";
+import ModalContentCustomDateRange
+  from "../common/MyGenericModal/ModalContentCustomDateRange/ModalContentCustomDateRange";
+import ModalContentCalendar from "../common/MyGenericModal/ModalContentCalendar/ModalContentCalendar";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -61,12 +69,13 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     return (possibleGeospace as GeospaceOverview).geospace.id;
   }
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen, isTabletScreen} = useViewportSizes();
+  const isSmallExplorePage = isSmallScreen || isTabletScreen;
   const {menuContent, setMenuContent} = useContentMenu();
 
   const [loading, setLoading] = useState(false);
-  const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(getValueFromUrl('isExplorationPopoverOpen') ?? !isSmallerThanMid); // if small screen, closed by default
-  const [isRightPanelOpen, setIsRightPanelOpen] = useState(!isSmallerThanMid && (!!getValueFromUrl('selectedGeospace') || !!getValueFromUrl('selectedGeospaceId')));
+  const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(getValueFromUrl('isExplorationPopoverOpen') ?? !isSmallScreen); // if small screen, closed by default
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(!(isSmallScreen || isSmallTabletScreen) && (!!getValueFromUrl('selectedGeospace') || !!getValueFromUrl('selectedGeospaceId')));
   const [isRightPanelHidden, setIsRightPanelHidden] = useState(false);
   const [selectedGeospaceId, setSelectedGeospaceId] = useState(getGeospaceId());
   const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(getValueFromUrl('selectedGeospace') ?? null);
@@ -83,17 +92,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [areSpeedFiltersOpen, setAreSpeedFiltersOpen] = useState(getValueFromUrl('areSpeedFiltersOpen') ?? false);
   const [areSmallScreenFiltersOpen, setAreSmallScreenFiltersOpen] = useState(true);
   const [genericMenuOpen, setGenericMenuOpen] = useState(false);
+  const [genericModalOpen, setGenericModalOpen] = useState(false);
 
-  useEffect(() => {
-    if(REACT_APP_ENV === 'production') {
-      amplitude.init(AMPLITUDE_KEY);
-      amplitude.track('Page visited');
-    }
-    if(!hasVisitedAllResults()) {
-      setIsFirstTimeModalOpen(true);
-      setAlreadyVisitedCookie();
-    }
-  }, []);
+  const shouldDisplaySmallScreenBottomNavigator = (isSmallScreen && !isExplorationPopoverOpen) || isTabletScreen;
 
   useEffect(() => {
     if(REACT_APP_ENV === 'production') {
@@ -204,8 +205,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       };
       setSelectedGeospace(allData);
       setSelectedGeospaceId(allData.geospace.id);
-      if(isSmallerThanMid) {
+      if(isSmallScreen) {
         openFullMenu();
+      } else if(isSmallTabletScreen) {
+        openFullModal();
       } else {
         openRightPanel();
       }
@@ -218,6 +221,11 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const openFullMenu = () => {
     setGenericMenuOpen(true);
     setAreSmallScreenFiltersOpen(false);
+    setMenuContent(MenuContent.FULL_GEOSPACE);
+  }
+
+  const openFullModal = () => {
+    setGenericModalOpen(true);
     setMenuContent(MenuContent.FULL_GEOSPACE);
   }
 
@@ -240,10 +248,13 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       setCurrentMapCenter([centroid[0], centroid[1]]);
       setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
     }
-    if(isSmallerThanMid) {
+    if(isSmallScreen) {
       setMenuContent(MenuContent.GEOSPACE);
       setGenericMenuOpen(true);
-    } else if(!isSmallerThanMid){
+    } else if(isSmallTabletScreen) {
+      setMenuContent(MenuContent.GEOSPACE);
+      setGenericModalOpen(true);
+    } else {
       openRightPanel();
     }
     setLoading(false);
@@ -260,7 +271,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const handleApplyRanges = (dateObject: DateFilter) => {
     setCalendarType(generateFilterLabel(dateObject));
     setDateQueryString(getQueryStringFromDateObject(dateObject));
-    if(isSmallerThanMid) closeMenu();
+    if(isSmallScreen) closeMenu();
     else closeDatePicker();
   }
 
@@ -272,7 +283,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const closeFirstTimeModal = () => setIsFirstTimeModalOpen(false);
 
   const handleToggleExplorationPopover = (value: boolean) => {
-    if(isSmallerThanMid && areSpeedFiltersOpen) setAreSpeedFiltersOpen(false);
+    if(isSmallScreen && areSpeedFiltersOpen) setAreSpeedFiltersOpen(false);
     setIsExplorationPopoverOpen(value);
   }
 
@@ -289,6 +300,15 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const closeMenu = () => {
     setMenuContent(null);
     setGenericMenuOpen(false);
+    setSelectedGeospace(null);
+    setSelectedGeospaceId(null);
+  }
+
+  const closeModal = () => {
+    setMenuContent(null);
+    setGenericModalOpen(false);
+    setSelectedGeospace(null);
+    setSelectedGeospaceId(null);
   }
 
   const openFilterMenu = (filter: string) => {
@@ -296,14 +316,19 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     setMenuContent(getFilterMenuContentFromFilter(filter));
   }
 
-  const getCurrentContent = () => {
+  const openFilterModal = (filter: string) => {
+    setGenericModalOpen(true);
+    setMenuContent(getFilterMenuContentFromFilter(filter));
+  }
+
+  const getContentForMenu = () => {
     switch (menuContent) {
       case MenuContent.GEOSPACE:
         return (
           <MenuContentGeospace geospace={selectedGeospace as GeospaceOverview}
                                speedType={speedType as string}
                                openFullMenu={openFullMenu}
-        />);
+          />);
       case MenuContent.FULL_GEOSPACE:
         return (
           <MenuContentFullGeospace geospace={selectedGeospace as GeospaceOverview}
@@ -356,38 +381,101 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     }
   }
 
+  const getContentForModal = () => {
+    switch (menuContent) {
+      case MenuContent.GEOSPACE:
+        return (
+          <ModalContentGeospace geospace={selectedGeospace as GeospaceOverview}
+                                openFullModal={openFullModal}
+                                speedType={speedType as string}
+          />
+        );
+      case MenuContent.FULL_GEOSPACE:
+        return (
+          <ModalContentFullGeospace geospace={selectedGeospace as GeospaceOverview}
+                                    applyRanges={handleApplyRanges}
+                                    loading={loading}
+                                    setLoading={setLoading}
+                                    speedType={speedType}
+                                    setSpeedType={setSpeedType}
+                                    calendarType={calendarType}
+                                    setCalendarType={setCalendarType}
+                                    provider={provider}
+                                    setProvider={setProvider}
+                                    setSelectedGeoSpaceInfo={setSelectedGeoSpaceInfo}/>
+        );
+      case MenuContent.SPEED_TYPE:
+        return (
+          <ModalContentSpeedType selectedOption={speedType as string}
+                                 setSelectedOption={(option: string) => handleChangeFilters({speedType: option, calendar: calendarType, provider})}
+                                 closeModal={closeModal}
+          />
+        );
+      case MenuContent.PROVIDERS:
+        return (
+          <ModalContentProviders geospaceId={selectedGeospaceId}
+                                 selectedOption={provider as Asn}
+                                 setSelectedOption={(option: Asn) => handleChangeFilters({speedType, calendar: calendarType, provider: option})}
+                                 closeModal={closeModal}
+          />
+        );
+      case MenuContent.CUSTOM_DATE_RANGE:
+        return (
+          <ModalContentCustomDateRange goBack={() => openFilterModal(FilterTypes.CALENDAR)}
+                                       applyRanges={handleApplyRanges}
+                                       initialState={getInitialStateFromCalendarType(calendarType as string)}
+                                       closeModal={closeModal}
+          />
+        );
+      case MenuContent.CALENDAR:
+        return (
+          <ModalContentCalendar selectedOption={calendarType as string}
+                               setSelectedOption={(option: string) => handleChangeFilters({speedType, calendar: option, provider})}
+                               closeModal={closeModal}
+                               applyRanges={handleApplyRanges}
+                               initialState={getInitialStateFromCalendarType(calendarType as string)}
+                               setModalContent={setMenuContent}
+          />
+        );
+    }
+  }
+
+  const getCurrentContent = () => {
+    return isSmallTabletScreen ? getContentForModal() : getContentForMenu();
+  }
+
   return (
-    <div style={styles.ExplorePageContainer(isSmallerThanMid)}>
+    <div style={styles.ExplorePageContainer(isSmallExplorePage)}>
       { loading && <CustomMapOverlayingLoader/> }
       <Map namespace={geospaceNamespace}
-           selectedGeospace={selectedGeospace}
-           selectGeospace={selectGeospace}
-           speedType={speedType}
-           provider={provider}
-           calendarType={calendarType}
-           selectedSpeedFilters={selectedSpeedFilters}
-           initialZoom={currentMapZoom}
-           setZoom={setCurrentMapZoom}
-           initialCenter={currentMapCenter}
-           setCenter={setCurrentMapCenter}
-           setLoading={setLoading}
-           isRightPanelHidden={isRightPanelHidden}
+             selectedGeospace={selectedGeospace}
+             selectGeospace={selectGeospace}
+             speedType={speedType}
+             provider={provider}
+             calendarType={calendarType}
+             selectedSpeedFilters={selectedSpeedFilters}
+             initialZoom={currentMapZoom}
+             setZoom={setCurrentMapZoom}
+             initialCenter={currentMapCenter}
+             setCenter={setCurrentMapCenter}
+             setLoading={setLoading}
+             isRightPanelHidden={isRightPanelHidden}
       />
       <TopSearchbar selectSuggestion={selectSuggestion}
                     toggleFilters={toggleSmallScreenFilters}
                     areSmallFiltersOpen={areSmallScreenFiltersOpen}
       />
-      { isSmallerThanMid && areSmallScreenFiltersOpen &&
+      { isSmallExplorePage && areSmallScreenFiltersOpen &&
         <DropdownFilters calendarType={calendarType}
                          provider={provider}
                          speedType={speedType}
                          openDatePicker={openDatePicker}
                          selectedGeospaceId={selectedGeospaceId}
                          changeFilters={handleChangeFilters}
-                         openFilterMenu={openFilterMenu}
+                         openFloatingFilter={isSmallScreen ? openFilterMenu : openFilterModal}
         />
       }
-      {!isSmallerThanMid &&
+      { !isSmallExplorePage &&
         <TopFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
                     setGeospaceNamespace={setGeospaceNamespace}
                     setSpeedType={setSpeedType}
@@ -401,7 +489,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                     isRightPanelHidden={isRightPanelHidden}
         />
       }
-      { !isSmallerThanMid &&
+      { !isSmallExplorePage &&
         <SpeedFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}
                       speedType={speedType}
                       selectedSpeedFilters={selectedSpeedFilters}
@@ -439,10 +527,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                     initialState={getInitialStateFromCalendarType(calendarType as string)}
         />
       }
-      { isFirstTimeModalOpen && isSmallerThanMid &&
+      { isFirstTimeModalOpen && isSmallScreen &&
         <FirstTimeModal closeModal={closeFirstTimeModal}/>
       }
-      { isSmallerThanMid && !isExplorationPopoverOpen &&
+      { shouldDisplaySmallScreenBottomNavigator &&
         <SmallScreenBottomNavigator geospaceNamespace={geospaceNamespace}
                                     setGeospaceNamespace={setGeospaceNamespace}
                                     areSpeedFiltersOpen={areSpeedFiltersOpen}
@@ -452,10 +540,16 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                                     setSelectedSpeedFilters={setSelectedSpeedFilters}
         />
       }
-      { isSmallerThanMid && genericMenuOpen &&
+      { isSmallScreen && genericMenuOpen &&
         <CustomGenericMenu closeMenu={closeMenu}>
           {getCurrentContent()}
         </CustomGenericMenu>
+      }
+      {
+        isSmallTabletScreen && genericModalOpen &&
+        <MyGenericModal closeModal={closeModal}>
+          {getCurrentContent()}
+        </MyGenericModal>
       }
     </div>
   )

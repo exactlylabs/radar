@@ -255,3 +255,31 @@ export const getFilterMenuContentFromFilter = (filter: string): MenuContent => {
   else if(filter === FilterTypes.PROVIDERS) return MenuContent.PROVIDERS;
   else return MenuContent.CALENDAR;
 }
+
+export const applyChanges = (
+  selectedYear: number,
+  selectedWeek: number,
+  selectedTab: string,
+  innerValue: string | number,
+  subtitleText: string,
+  applyFn: (dateObject: DateFilter) => void
+) => {
+  let dateObject: DateFilter = {selectedYear};
+  switch (selectedTab) {
+    case DateTabs.MONTH:
+      if(innerValue !== months[0]) {
+        dateObject.selectedMonth = getMonthNumberFromName(innerValue as string) + 1;
+      }
+      break;
+    case DateTabs.HALF_YEAR:
+      dateObject.selectedSemester = subtitleText === 'H1' ? 1 : 2;
+      break;
+    case DateTabs.WEEK:
+      dateObject.selectedWeek = selectedWeek - 1;
+      break;
+    case DateTabs.QUARTER:
+      dateObject.selectedQuarter = getSemesterFromSelectedQ(innerValue as string);
+      break;
+  }
+  applyFn(dateObject);
+}

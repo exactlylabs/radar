@@ -11,13 +11,14 @@ interface FrameProps {
 
 const Frame = ({children, centerOnUser}: FrameProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isTabletScreen} = useViewportSizes();
+  const hasSmallFrame = isSmallScreen || isTabletScreen;
 
   const [wantsToProceed, setWantsToProceed] = useState(false);
 
   return (
-    <div style={styles.FrameWrapper(isSmallerThanMid)} id={'main-frame'}>
-      { isSmallerThanMid && !wantsToProceed ?
+    <div style={styles.FrameWrapper(hasSmallFrame)} id={'main-frame'}>
+      { hasSmallFrame && !wantsToProceed ?
         <SmallScreenFrame centerOnUser={centerOnUser} setWantsToProceed={setWantsToProceed}>{children}</SmallScreenFrame> :
         <DesktopScreenFrame centerOnUser={centerOnUser}>{children}</DesktopScreenFrame>
       }

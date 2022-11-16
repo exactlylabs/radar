@@ -29,7 +29,7 @@ interface DropdownFiltersProps {
   openDatePicker: () => void;
   selectedGeospaceId?: string;
   isInsideContainer?: boolean;
-  openFilterMenu?: (filter: string) => void;
+  openFloatingFilter?: (filter: string) => void;
 }
 
 const DropdownFilters = ({
@@ -40,10 +40,11 @@ const DropdownFilters = ({
   openDatePicker,
   selectedGeospaceId,
   isInsideContainer,
-  openFilterMenu
+  openFloatingFilter
 }: DropdownFiltersProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isSmallTabletScreen;
 
   const [currentFilters, setCurrentFilters] = useState<GeoJSONFilters>({
     speedType: speedType,
@@ -162,18 +163,18 @@ const DropdownFilters = ({
     }
   }
 
-  const openSpeedTypeMenu = () => openFilterMenu && openFilterMenu(FilterTypes.SPEED);
-  const openCalendarTypeMenu = () => openFilterMenu && openFilterMenu(FilterTypes.CALENDAR);
-  const openProviderMenu = () => openFilterMenu && openFilterMenu(FilterTypes.PROVIDERS);
+  const openSpeedTypeFloatingFilter = () => openFloatingFilter && openFloatingFilter(FilterTypes.SPEED);
+  const openCalendarTypeFloatingFilter = () => openFloatingFilter && openFloatingFilter(FilterTypes.CALENDAR);
+  const openProviderFloatingFilter = () => openFloatingFilter && openFloatingFilter(FilterTypes.PROVIDERS);
 
   return (
-    <div style={styles.DropdownFiltersContainer(isSmallerThanMid, isInsideContainer)}
+    <div style={styles.DropdownFiltersContainer(isSmallScreen, isSmallTabletScreen, isInsideContainer)}
          id={'dropdown-filters--container'}
-         className={`${isSmallerThanMid ? 'dropdown-filters--container-small' : ''}`}
+         className={`${isSmall ? 'dropdown-filters--container-small' : ''}`}
          ref={sliderRef}
-         onMouseDown={isSmallerThanMid ? handleMouseDown : undefined}
-         onMouseUp={isSmallerThanMid ? turnOffSlider : undefined}
-         onMouseMove={isSmallerThanMid ? handleMouseMove : undefined}
+         onMouseDown={isSmall ? handleMouseDown : undefined}
+         onMouseUp={isSmall ? turnOffSlider : undefined}
+         onMouseMove={isSmall ? handleMouseMove : undefined}
          draggable={true}
     >
       <DropdownFilter iconSrc={SpeedIcon}
@@ -185,12 +186,12 @@ const DropdownFilters = ({
                       setOpenFilter={setOpenFilter}
                       openFilter={openFilter}
                       loading={false}
-                      openFilterMenu={openSpeedTypeMenu}
+                      openFloatingFilter={openSpeedTypeFloatingFilter}
       />
-      { !isSmallerThanMid && <DropdownFilterVerticalDivider/> }
+      { !isSmall && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={CalendarIcon}
-                      options={isCalendarFilterPresent(calendarType) ? Object.values(CalendarFilters) : [calendarType, ...Object.values(CalendarFilters)]}
-                      textWidth={'70px'}
+                      options={isCalendarFilterPresent(calendarType as string) ? Object.values(CalendarFilters) : [calendarType, ...Object.values(CalendarFilters)]}
+                      textWidth={isSmall ? '50px' : '70px'}
                       type={FilterTypes.CALENDAR}
                       changeFilter={changeCalendarFilter}
                       selectedFilter={calendarType}
@@ -198,9 +199,9 @@ const DropdownFilters = ({
                       openFilter={openFilter}
                       lastOptionOnClick={openDatePicker}
                       loading={false}
-                      openFilterMenu={openCalendarTypeMenu}
+                      openFloatingFilter={openCalendarTypeFloatingFilter}
       />
-      { !isSmallerThanMid && <DropdownFilterVerticalDivider/> }
+      { !isSmall && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={ProvidersIcon}
                       options={providers}
                       withSearchbar
@@ -214,7 +215,7 @@ const DropdownFilters = ({
                       openFilter={openFilter}
                       loading={providersLoading}
                       isLast
-                      openFilterMenu={openProviderMenu}
+                      openFloatingFilter={openProviderFloatingFilter}
       />
     </div>
   )

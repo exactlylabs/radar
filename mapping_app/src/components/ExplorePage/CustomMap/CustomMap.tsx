@@ -51,10 +51,11 @@ const CustomMap = ({
   // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
 
   const prevSelectedGeospace = usePrev(selectedGeospace);
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+  const isSmallMap = isSmallScreen || isSmallTabletScreen;
 
   useEffect(() => {
-    initializeMap(map, setZoom, setCenter, isSmallerThanMid);
+    initializeMap(map, setZoom, setCenter, isSmallMap);
   }, []);
 
   map.setView({lat: center[0], lng: center[1]}, zoom);
@@ -85,7 +86,7 @@ const CustomMap = ({
            addClickHandler(layer, properties, selectGeospace);
            const geospace: GeospaceOverview = properties.summary as GeospaceOverview;
            const tooltip: ReactElement = <GeographicalTooltip geospace={geospace} speedType={speedType as string}/>;
-           if(!isSmallerThanMid) layer.bindTooltip(ReactDOMServer.renderToString(tooltip), {sticky: true, direction: 'center'});
+           if(!isSmallMap) layer.bindTooltip(ReactDOMServer.renderToString(tooltip), {sticky: true, direction: 'center'});
          } else {
            layer.setStyle(outlineOnlyStyle);
          }

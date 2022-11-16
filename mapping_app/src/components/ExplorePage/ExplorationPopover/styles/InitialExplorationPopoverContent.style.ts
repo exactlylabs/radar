@@ -5,12 +5,14 @@ const initialExplorationPopoverContentContainerStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
   height: 'calc(100% - 65px)',
   margin: '25px auto 40px',
+  zIndex: 1051
 }
 
 const smallInitialExplorationPopoverContentContainerStyle: CSSProperties = {
   width: 'calc(100% - 40px)',
   height: 'calc(100% - 40px)',
   margin: '20px',
+  zIndex: 1051
 }
 
 const titleStyle: CSSProperties = {

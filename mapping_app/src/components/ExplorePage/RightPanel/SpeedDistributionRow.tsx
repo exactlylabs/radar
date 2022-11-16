@@ -1,11 +1,12 @@
 import {ReactElement} from "react";
-import {SpeedsObject, speedTextsDownload, speedTextsUpload} from "../../../utils/speeds";
+import {speedColors, SpeedsObject, speedTextsDownload, speedTextsUpload} from "../../../utils/speeds";
 import {styles} from "./styles/SpeedDistributionRow.style";
 import {Filter} from "../../../utils/types";
 import {SpeedFilters} from "../../../utils/filters";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import RegularSpeedDistributionRow from "./SpeedDistributionRows/RegularSpeedDistributionRow";
 import SmallSpeedDistributionRow from "./SpeedDistributionRows/SmallSpeedDistributionRow";
+import {capitalize} from "../../../utils/strings";
 
 interface SpeedDistributionRowProps {
   type: string;
@@ -21,28 +22,41 @@ const SpeedDistributionRow = ({
   speedType
 }: SpeedDistributionRowProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen} = useViewportSizes();
 
   const getSpeedText = (type: string): string => {
     return speedType === SpeedFilters.DOWNLOAD ?
       speedTextsDownload[type as keyof SpeedsObject] : speedTextsUpload[type as keyof SpeedsObject];
   }
 
+  const smallContent = () => (
+    <>
+      <div style={styles.SpeedDistributionRowIcon(speedColors[type as keyof SpeedsObject])}></div>
+      <div>
+        <p className={'fw-regular'} style={styles.SpeedText}>{getSpeedText(type)}</p>
+        <p className={'fw-light'} style={styles.SpeedTag(isSmallScreen)}>{`(${capitalize(type)})`}</p>
+      </div>
+      <div style={styles.SamplesContainer}>
+        <p className={'fw-regular'} style={styles.PeopleCount(isSmallScreen)}>{peopleCount}</p>
+        <p className={'fw-light'} style={styles.PeopleCountLabel}>{peopleCount === 1 ? 'sample' : 'samples'}</p>
+      </div>
+      <p className={'fw-regular'} style={styles.Percentage}>{percentage}</p>
+    </>
+  )
+
+  const regularContent = () => (
+    <>
+      <div style={styles.SpeedDistributionRowIcon(speedColors[type as keyof SpeedsObject])}></div>
+      <p className={'fw-regular'} style={styles.SpeedText}>{getSpeedText(type)}</p>
+      <p className={'fw-light'} style={styles.SpeedTag(isSmallScreen)}>{`(${capitalize(type)})`}</p>
+      <p className={'fw-regular'} style={styles.PeopleCount(isSmallScreen)}>{`${peopleCount} ${peopleCount === 1 ? 'sample' : 'samples'}`}</p>
+      <p className={'fw-regular'} style={styles.Percentage}>{percentage}</p>
+    </>
+  )
+
   return (
-    <div style={styles.SpeedDistributionRowContainer(isSmallerThanMid)}>
-      {
-        isSmallerThanMid ?
-        <SmallSpeedDistributionRow speedText={getSpeedText(type)}
-                                   type={type}
-                                   peopleCount={peopleCount}
-                                   percentage={percentage}
-        /> :
-        <RegularSpeedDistributionRow speedText={getSpeedText(type)}
-                                     type={type}
-                                     peopleCount={peopleCount}
-                                     percentage={percentage}
-        />
-      }
+    <div style={styles.SpeedDistributionRowContainer(isSmallScreen)}>
+      {isSmallScreen ? smallContent() : regularContent()}
     </div>
   )
 }

@@ -16,7 +16,7 @@ const dropdownFilterContainerStyle: CSSProperties = {
 }
 
 const smallDropdownFilterContainerStyle: CSSProperties = {
-  width: '132px',
+  width: 'max-content',
   position: 'relative',
   zIndex: 1010,
   backgroundColor: GEOGRAPHICAL_CATEGORY_BOTTOM,
@@ -30,15 +30,20 @@ const filterContentContainerStyle: CSSProperties = {
   minWidth: '100%',
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'space-evenly',
+  justifyContent: 'center',
   alignItems: 'center',
   cursor: 'pointer',
   padding: '10px 5px',
   borderRadius: '8px',
 }
 
-const openFilterContentContainerStyle: CSSProperties = {
+const smallContentContainerStyle: CSSProperties = {
   ...filterContentContainerStyle,
+  minWidth: undefined,
+  padding: '10px 15px',
+}
+
+const openFilterContentContainerStyle: CSSProperties = {
   backgroundColor: SELECTED_TAB,
 }
 
@@ -64,18 +69,14 @@ const iconStyle: CSSProperties = {
   marginRight: '5px',
 }
 
-const smallStyle: CSSProperties = {
-  width: '132px',
-}
-
 export const styles = {
   DropdownFilterContainer: (isSmall: boolean, isLast?: boolean) => {
     let style = isSmall ? smallDropdownFilterContainerStyle : dropdownFilterContainerStyle;
     return isLast ? {...style, marginRight: 0} : style;
   },
   FilterContentContainer: (isOpen: boolean, isSmall: boolean) => {
-    let style = isOpen ? openFilterContentContainerStyle : filterContentContainerStyle;
-    return isSmall ? {...style, ...smallStyle} : style;
+    let style = isSmall ? smallContentContainerStyle : filterContentContainerStyle;
+    return isOpen ? {...style, ...openFilterContentContainerStyle} : style;
   },
   Arrow: arrowStyle,
   Text: (textWidth: string) => {

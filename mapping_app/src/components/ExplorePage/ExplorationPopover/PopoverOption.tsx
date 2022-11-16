@@ -19,7 +19,7 @@ const PopoverOption = ({
   listMode
 }: PopoverOptionProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen} = useViewportSizes();
 
   const getRegularContent = () => (
     <>
@@ -43,7 +43,7 @@ const PopoverOption = ({
 
   return (
     <div className={`hover-popover-option-lighter ${light ? 'popover-light' : 'popover-dark'}`}
-         style={styles.PopoverOptionContainer(isSmallerThanMid, light)}
+         style={styles.PopoverOptionContainer(isSmallScreen, light)}
          onClick={onClick}
     >
       { getContent() }

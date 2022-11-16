@@ -1,13 +1,7 @@
 import {ReactElement} from "react";
-import {GeospaceOverview} from "../../../api/geospaces/types";
-import MenuContentGeospace from "./MenuContentGeospace/MenuContentGeospace";
-import MenuContentFullGeospace
-  from "./MenuContentFullGeospace/MenuContentFullGeospace";
 import MenuContentSpeedType from "./MenuContentSpeedType/MenuContentSpeedType";
-import MenuContentProviders from "./MenuContentProviders/MenuContentProviders";
 import MenuContentCalendar from "./MenuContentCalendar/MenuContentCalendar";
 import MenuContentCustomDateRange from "./MenuContentCustomRange/MenuContentCustomDateRange";
-import MenuContentYearOrMonth from "./MenuContentYearOrMonth/MenuContentYearOrMonth";
 import {Optional} from "../../../utils/types";
 
 export enum MenuContent {

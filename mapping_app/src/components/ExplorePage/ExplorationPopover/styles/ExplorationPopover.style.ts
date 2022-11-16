@@ -16,7 +16,7 @@ const explorationPopoverContainerStyle: CSSProperties = {
   position: 'absolute',
   bottom: '25px',
   left: '25px',
-  zIndex: 1002,
+  zIndex: 1050,
   backdropFilter: 'blur(5px)'
 }
 
@@ -65,6 +65,14 @@ const smallStyle: CSSProperties = {
   marginLeft: '-172.5px'
 }
 
+const smallTabletStyle: CSSProperties = {
+  ...smallStyle,
+  height: '370px',
+  top: '50%',
+  marginTop: '-185px',
+  bottom: undefined,
+}
+
 const extendedSmallStyle: CSSProperties = {
   ...extendedExplorationPopoverContainerStyle,
   width: '345px',
@@ -73,12 +81,25 @@ const extendedSmallStyle: CSSProperties = {
   marginLeft: '-172.5px'
 }
 
+const extendedSmallTabletStyle: CSSProperties = {
+  ...extendedSmallStyle,
+  top: '50%',
+  marginTop: '-270px',
+  left: '50%',
+  marginLeft: '-172.5px'
+}
+
 export const styles = {
-  ExplorationPopoverContainer: (currentPopoverState: string, isSmall: boolean) => {
+  ExplorationPopoverContainer: (currentPopoverState: string, isSmall: boolean, isSmallTablet: boolean) => {
     let style = explorationPopoverContainerStyle;
-    if(!isSmall && currentPopoverState !== popoverStates.INITIAL) style = extendedExplorationPopoverContainerStyle;
-    else if(isSmall && currentPopoverState === popoverStates.INITIAL) style = smallStyle;
-    else if(isSmall && currentPopoverState !== popoverStates.INITIAL) style = extendedSmallStyle;
+    const isPhone = isSmall && !isSmallTablet;
+    const isTablet = !isSmall && isSmallTablet;
+    const isBigScreen = !isSmall && !isSmallTablet;
+    if(isBigScreen && currentPopoverState !== popoverStates.INITIAL) style = extendedExplorationPopoverContainerStyle;
+    else if(isPhone && currentPopoverState === popoverStates.INITIAL) style = smallStyle;
+    else if(isPhone && currentPopoverState !== popoverStates.INITIAL) style = extendedSmallStyle;
+    else if(isTablet && currentPopoverState === popoverStates.INITIAL) style = smallTabletStyle;
+    else if(isTablet && currentPopoverState !== popoverStates.INITIAL) style = extendedSmallTabletStyle;
     return style;
   },
   ShrinkButtonContainer: (isSmall: boolean) => {

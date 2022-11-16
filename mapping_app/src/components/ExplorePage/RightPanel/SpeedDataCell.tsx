@@ -18,33 +18,34 @@ const SpeedDataCell = ({
   smallVersion
 }: SpeedDataCellProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isSmallTabletScreen;
 
   const getRegularContent = () => (
-    <div style={styles.SpeedDataCellContainer(isSmallerThanMid)}>
+    <div style={styles.SpeedDataCellContainer(isSmall)}>
       <div style={styles.SpeedDataCellHeader}>
         {icon}
-        <p className={'fw-regular'} style={styles.Text(isSmallerThanMid)}>{text}</p>
+        <p className={'fw-regular'} style={styles.Text(isSmall)}>{text}</p>
       </div>
       <div style={styles.ValueContainer}>
-        <p className={smallVersion ? 'fw-regular' : 'fw-medium'} style={styles.Value(isSmallerThanMid, smallVersion)}>{value}</p>
+        <p className={smallVersion ? 'fw-regular' : 'fw-medium'} style={styles.Value(isSmall, smallVersion)}>{value}</p>
         <p className={'fw-regular'} style={styles.Unit(smallVersion)}>{unit}</p>
       </div>
     </div>
   );
 
   const getSmallContent = () => (
-    <div style={styles.SpeedDataCellContainer(isSmallerThanMid)}>
+    <div style={styles.SpeedDataCellContainer(isSmall)}>
       {icon}
-      <p className={'fw-regular'} style={styles.Text(isSmallerThanMid)}>{text}</p>
+      <p className={'fw-regular'} style={styles.Text(isSmall)}>{text}</p>
       <div style={styles.ValueContainer}>
-        <p className={smallVersion ? 'fw-regular' : 'fw-medium'} style={styles.Value(isSmallerThanMid, smallVersion)}>{value}</p>
+        <p className={smallVersion ? 'fw-regular' : 'fw-medium'} style={styles.Value(isSmall, smallVersion)}>{value}</p>
         <p className={'fw-regular'} style={styles.Unit(smallVersion)}>{unit}</p>
       </div>
     </div>
   )
 
-  return isSmallerThanMid ? getSmallContent() : getRegularContent();
+  return isSmall ? getSmallContent() : getRegularContent();
 }
 
 export default SpeedDataCell;
