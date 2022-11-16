@@ -14,15 +14,15 @@ import {handleError} from "../../../../api";
 import {styles} from "./styles/MenuContentFullGeospace.style";
 import './styles/MenuContentFullGeospace.css';
 import MyGenericMenu from "../MyGenericMenu";
-import {getMenuContent, MenuContent} from "../menu";
+import {MenuContent} from "../menu";
 import {Asn} from "../../../../api/asns/types";
 import {getInitialStateFromCalendarType} from "../../../../utils/dates";
 import MenuContentCalendar from "../MenuContentCalendar/MenuContentCalendar";
 import MenuContentProviders from "../MenuContentProviders/MenuContentProviders";
 import MenuContentSpeedType from "../MenuContentSpeedType/MenuContentSpeedType";
 import MenuContentCustomDateRange from "../MenuContentCustomRange/MenuContentCustomDateRange";
-import RightPanelLoader from "../../../ExplorePage/RightPanel/RightPanelLoader";
 import MenuFullGeospaceLoader from "./MenuFullGeospaceLoader";
+import {getGeospaceName} from "../../../../utils/geospaces";
 
 interface MenuContentFullGeospaceProps {
   geospace: GeospaceOverview;
@@ -54,16 +54,6 @@ const MenuContentFullGeospace = ({
 
   const [isMenuContentOpen, setIsMenuContentOpen] = useState(false);
   const [menuContent, setMenuContent] = useState<Optional<MenuContent>>(null);
-
-  const getName = (): string => {
-    if(isGeospaceData(geospace)) {
-      if(geospace.state) return geospace.state as string;
-      else return geospace.county as string;
-    } else {
-      const info: GeospaceOverview = geospace as GeospaceOverview;
-      return info.geospace.name;
-    }
-  }
 
   const handleFilterChange = async (filters: Array<Filter>) => {
     setSpeedType(filters[0]);
@@ -146,7 +136,7 @@ const MenuContentFullGeospace = ({
     <div style={styles.MenuFullGeospaceContentContainer}>
       {
         loading ?
-          <MenuFullGeospaceLoader geospaceName={getName()}
+          <MenuFullGeospaceLoader geospaceName={getGeospaceName(geospace)}
                                   parentName={(geospace as GeospaceOverview).geospace.parent?.name}
                                   stateSignalState={getSignalState(speedType as string, geospace)}
                                   country={'U.S.A'}
@@ -154,7 +144,7 @@ const MenuContentFullGeospace = ({
           <div style={styles.MenuContentWrapper}>
             <div style={styles.GradientUnderlay}></div>
             <div>
-              <RightPanelHeader geospaceName={getName()}
+              <RightPanelHeader geospaceName={getGeospaceName(geospace)}
                                 parentName={(geospace as GeospaceOverview).geospace.parent?.name}
                                 country={'U.S.A'}
                                 stateSignalState={getSignalState(speedType as string, geospace)}
@@ -168,7 +158,7 @@ const MenuContentFullGeospace = ({
                                  }}
                                  selectedGeospaceId={(geospace as GeospaceOverview).geospace.id}
                                  isInsideContainer
-                                 openFilterMenu={openFilterMenu}
+                                 openFloatingFilter={openFilterMenu}
                 />
               </div>
             </div>

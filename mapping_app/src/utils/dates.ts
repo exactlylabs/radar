@@ -1,6 +1,14 @@
 import {Optional} from "./types";
 import {dateTabs, halves, isSpecificMonth, isSpecificYear, months} from "./filters";
 
+export enum DateMenuLevel {
+  INITIAL = 'INITIAL',
+  SELECT_YEAR = 'SELECT_YEAR',
+  SELECT_MONTH = 'SELECT_MONTH',
+  SELECT_HALF = 'SELECT_HALF',
+  SELECT_WEEK = 'SELECT_WEEK'
+}
+
 export type DatePickerState = {
   selectedYear: Optional<number>;
   selectedMonth: Optional<number>;

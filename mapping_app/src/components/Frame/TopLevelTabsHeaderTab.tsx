@@ -18,12 +18,13 @@ const TopLevelTabsHeaderTab = ({
 }: TopLevelTabsHeaderTabProps): ReactElement => {
 
   const navigate: NavigateFunction = useNavigate();
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isTabletScreen;
 
   const goToUrl = () => navigate(url);
 
   return (
-    <div style={styles.TopLevelTabsHeaderTab(selected, isSmallerThanMid)}
+    <div style={styles.TopLevelTabsHeaderTab(selected, isSmall)}
          onClick={goToUrl}
          className={className}
     >

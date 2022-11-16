@@ -1,12 +1,7 @@
 import {getDateFromString, getMonthName, getMonthNumberFromName, getWeekLimits, getWeekNumber} from "./dates";
-import Option from "../components/ExplorePage/TopFilters/Option";
-import {Filter, Optional} from "./types";
-import {start} from "repl";
+import {Optional} from "./types";
 import {getSignalStateDownload, getSignalStateUpload} from "./speeds";
-import {GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/types";
-import {getFiltersString} from "../api/utils/filters";
-import {getOverview} from "../api/geospaces/requests";
-import {handleError} from "../api";
+import {GeospaceInfo} from "../api/geospaces/types";
 import {MenuContent} from "../components/common/MyGenericMenu/menu";
 
 export const filterTypes = {
@@ -166,8 +161,33 @@ export const getSignalState = (speedType: string, selectedGeospaceInfo: Geospace
     getSignalStateDownload(selectedGeospaceInfo.download_median) : getSignalStateUpload(selectedGeospaceInfo.upload_median);
 }
 
-export  const getFilterMenuContentFromFilter = (filter: string): MenuContent => {
+export const getFilterMenuContentFromFilter = (filter: string): MenuContent => {
   if(filter === filterTypes.SPEED) return MenuContent.SPEED_TYPE;
   else if(filter === filterTypes.PROVIDERS) return MenuContent.PROVIDERS;
   else return MenuContent.CALENDAR;
+}
+
+export const applyChanges = (
+  selectedYear: number,
+  selectedWeek: number,
+  selectedTab: string,
+  innerValue: string | number,
+  subtitleText: string,
+  applyFn: (str: string) => void
+) => {
+  let dateQuery = `&year=${selectedYear}`;
+  switch (selectedTab) {
+    case dateTabs.MONTH:
+      if(innerValue !== months[0]) {
+        dateQuery += `&month=${getMonthNumberFromName(innerValue as string) + 1}`; // months are 1-indexed in backend
+      }
+      break;
+    case dateTabs.HALF_YEAR:
+      dateQuery += `&semester=${subtitleText === 'H1' ? 1 : 2}`;
+      break;
+    case dateTabs.WEEK:
+      dateQuery += `&week=${selectedWeek - 1}`; // weeks are 0-indexed in backend
+      break;
+  }
+  applyFn(dateQuery);
 }

@@ -13,6 +13,12 @@ const openSmallSpeedFiltersContainerStyle: CSSProperties = {
   alignItems: 'flex-start',
 }
 
+const openSmallTabletSpeedFiltersContainerStyle: CSSProperties = {
+  ...openSmallSpeedFiltersContainerStyle,
+  left: '-420px',
+  right: undefined
+}
+
 const speedFiltersContainerStyle: CSSProperties = {
   width: 'max-content',
   height: '32px',
@@ -25,6 +31,8 @@ const speedFiltersContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  OpenSmallSpeedFiltersContainer: openSmallSpeedFiltersContainerStyle,
+  OpenSmallSpeedFiltersContainer: (isSmallTablet: boolean) => {
+    return isSmallTablet ? openSmallTabletSpeedFiltersContainerStyle : openSmallSpeedFiltersContainerStyle;
+},
   SpeedFiltersContainer: speedFiltersContainerStyle,
 }

@@ -4,6 +4,7 @@ import LayersIconWhite from '../../../../assets/layers-icon-white.png';
 import {styles} from "./styles/SmallSpeedFilters.style";
 import OpenSmallSpeedFilters from "./OpenSmallSpeedFilters";
 import {Filter} from "../../../../utils/types";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 interface SmallSpeedFiltersProps {
   isOpen: boolean;
@@ -21,11 +22,13 @@ const SmallSpeedFilters = ({
   setSelectedSpeedFilters
 }: SmallSpeedFiltersProps): ReactElement => {
 
+  const {isSmallTabletScreen} = useViewportSizes();
+
   const toggleFilters = () => setIsOpen(!isOpen);
 
   return (
     <div style={styles.SmallSpeedFiltersContainer}>
-      <div className={'hover-opaque'} style={styles.Button(isOpen)} onClick={toggleFilters}>
+      <div className={'hover-opaque'} style={styles.Button(isOpen, isSmallTabletScreen)} onClick={toggleFilters}>
         <img src={isOpen ? LayersIconWhite : LayersIconBlack} style={styles.LayersIcon} alt={'layers-icon'}/>
       </div>
       { isOpen &&

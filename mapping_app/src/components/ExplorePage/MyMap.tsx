@@ -44,7 +44,8 @@ const MyMap = ({
   dateQueryString,
 }: MyMapProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+  const isSmallMap = isSmallScreen || isSmallTabletScreen;
 
   const [geoJSON, setGeoJSON] = useState<GeoJSONTimedResponse>();
 
@@ -65,7 +66,7 @@ const MyMap = ({
         <MapContainer center={{lat: initialCenter[0], lng: initialCenter[1]}}
                     zoom={initialZoom}
                     scrollWheelZoom
-                    style={styles.MapContainer(isSmallerThanMid)}
+                    style={styles.MapContainer(isSmallMap)}
         >
           <CustomMap geoJSON={geoJSON.data}
                      selectedGeospace={selectedGeospace}

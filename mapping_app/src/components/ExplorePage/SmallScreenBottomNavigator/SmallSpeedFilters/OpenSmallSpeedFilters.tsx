@@ -4,6 +4,7 @@ import {SPEED_NORMAL, SPEED_UNDERSERVED, SPEED_UNSERVED} from "../../../../style
 import {speedTextsDownload, speedTextsUpload, speedTypes} from "../../../../utils/speeds";
 import SpeedFilter from "../../SpeedFilters/SpeedFilter";
 import {Filter} from "../../../../utils/types";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 interface OpenSmallSpeedFiltersProps {
   speedType: string;
@@ -16,6 +17,8 @@ const OpenSmallSpeedFilters = ({
   selectedSpeedFilters,
   setSelectedSpeedFilters
 }: OpenSmallSpeedFiltersProps): ReactElement => {
+
+  const {isSmallTabletScreen} = useViewportSizes();
 
   const toggleFilter = (filter: string) => {
     let elements = [...selectedSpeedFilters];
@@ -35,7 +38,7 @@ const OpenSmallSpeedFilters = ({
   const toggleNormal = () => toggleFilter(speedTypes.SERVED);
 
   return (
-    <div style={styles.OpenSmallSpeedFiltersContainer}>
+    <div style={styles.OpenSmallSpeedFiltersContainer(isSmallTabletScreen)}>
       <div style={styles.SpeedFiltersContainer}>
         <SpeedFilter boxColor={SPEED_UNSERVED}
                      text={speedType === 'Download' ? speedTextsDownload.UNSERVED : speedTextsUpload.UNSERVED}

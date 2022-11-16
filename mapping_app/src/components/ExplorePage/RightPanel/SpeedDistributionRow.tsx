@@ -19,7 +19,7 @@ const SpeedDistributionRow = ({
   speedType
 }: SpeedDistributionRowProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen} = useViewportSizes();
 
   const getSpeedText = (type: string): string => {
     return speedType === 'Download' ?
@@ -31,10 +31,10 @@ const SpeedDistributionRow = ({
       <div style={styles.SpeedDistributionRowIcon(speedColors[type as keyof SpeedsObject])}></div>
       <div>
         <p className={'fw-regular'} style={styles.SpeedText}>{getSpeedText(type)}</p>
-        <p className={'fw-light'} style={styles.SpeedTag(isSmallerThanMid)}>{`(${capitalize(type)})`}</p>
+        <p className={'fw-light'} style={styles.SpeedTag(isSmallScreen)}>{`(${capitalize(type)})`}</p>
       </div>
       <div style={styles.SamplesContainer}>
-        <p className={'fw-regular'} style={styles.PeopleCount(isSmallerThanMid)}>{peopleCount}</p>
+        <p className={'fw-regular'} style={styles.PeopleCount(isSmallScreen)}>{peopleCount}</p>
         <p className={'fw-light'} style={styles.PeopleCountLabel}>{peopleCount === 1 ? 'sample' : 'samples'}</p>
       </div>
       <p className={'fw-regular'} style={styles.Percentage}>{percentage}</p>
@@ -45,15 +45,15 @@ const SpeedDistributionRow = ({
     <>
       <div style={styles.SpeedDistributionRowIcon(speedColors[type as keyof SpeedsObject])}></div>
       <p className={'fw-regular'} style={styles.SpeedText}>{getSpeedText(type)}</p>
-      <p className={'fw-light'} style={styles.SpeedTag(isSmallerThanMid)}>{`(${capitalize(type)})`}</p>
-      <p className={'fw-regular'} style={styles.PeopleCount(isSmallerThanMid)}>{`${peopleCount} ${peopleCount === 1 ? 'sample' : 'samples'}`}</p>
+      <p className={'fw-light'} style={styles.SpeedTag(isSmallScreen)}>{`(${capitalize(type)})`}</p>
+      <p className={'fw-regular'} style={styles.PeopleCount(isSmallScreen)}>{`${peopleCount} ${peopleCount === 1 ? 'sample' : 'samples'}`}</p>
       <p className={'fw-regular'} style={styles.Percentage}>{percentage}</p>
     </>
   )
 
   return (
-    <div style={styles.SpeedDistributionRowContainer(isSmallerThanMid)}>
-      {isSmallerThanMid ? smallContent() : regularContent()}
+    <div style={styles.SpeedDistributionRowContainer(isSmallScreen)}>
+      {isSmallScreen ? smallContent() : regularContent()}
     </div>
   )
 }

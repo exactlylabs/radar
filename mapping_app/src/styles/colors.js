@@ -47,3 +47,4 @@ export const RESPONSIVE_FOOTER = '#f7f9f8';
 export const GEOGRAPHICAL_CATEGORY_BOTTOM = 'rgba(255, 255, 255, 0.8)';
 export const GENERIC_MENU = 'rgba(255, 255, 255, 0.95)';
 export const SELECTED_TABS = 'rgba(209, 209, 209, 0.7)';
+export const SHADOW_UNDERLAY = CLOSE_PANEL_BUTTON_SHADOW_RGBA;

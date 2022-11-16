@@ -22,10 +22,11 @@ const RightPanelSpeedData = ({
   speedType,
 }: RightPanelSpeedDataProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isSmallTabletScreen;
 
   return (
-    <div style={styles.RightPanelSpeedDataContainer(isSmallerThanMid)}>
+    <div style={styles.RightPanelSpeedDataContainer(isSmall)}>
       <SpeedDataCell icon={<img src={getDownloadIconSrc(speedType, speedState)} style={styles.Icon(speedState)} alt={'download-icon'}/>}
                      text={'Med. Download'}
                      value={medianDownload.toFixed(2)}

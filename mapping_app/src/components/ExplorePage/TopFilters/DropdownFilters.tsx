@@ -28,7 +28,7 @@ interface DropdownFiltersProps {
   openDatePicker: () => void;
   selectedGeospaceId?: string;
   isInsideContainer?: boolean;
-  openFilterMenu?: (filter: string) => void;
+  openFloatingFilter?: (filter: string) => void;
 }
 
 const DropdownFilters = ({
@@ -39,10 +39,11 @@ const DropdownFilters = ({
   openDatePicker,
   selectedGeospaceId,
   isInsideContainer,
-  openFilterMenu
+  openFloatingFilter
 }: DropdownFiltersProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isSmallTabletScreen;
 
   const [currentFilters, setCurrentFilters] = useState<Array<Filter>>([speedType, calendarType, provider]);
   const [providers, setProviders] = useState<Array<Asn>>([]);
@@ -77,13 +78,6 @@ const DropdownFilters = ({
       changeProviderFilter(provider);
     }
   }, [speedType, calendarType, provider]);
-
-  const closeFiltersIfOutsideContainer = (e: MouseEvent) => {
-    const filtersContainer: Optional<HTMLElement> = document.getElementById('dropdown-filters--container');
-    if(filtersContainer && !filtersContainer.contains(e.target as Node)) {
-      setOpenFilter(null);
-    }
-  }
 
   const changeFilter = (newFilter: Filter, index: number) => {
     let filters: Array<Filter> = [...currentFilters];
@@ -154,18 +148,18 @@ const DropdownFilters = ({
     }
   }
 
-  const openSpeedTypeMenu = () => openFilterMenu && openFilterMenu(filterTypes.SPEED);
-  const openCalendarTypeMenu = () => openFilterMenu && openFilterMenu(filterTypes.CALENDAR);
-  const openProviderMenu = () => openFilterMenu && openFilterMenu(filterTypes.PROVIDERS);
+  const openSpeedTypeFloatingFilter = () => openFloatingFilter && openFloatingFilter(filterTypes.SPEED);
+  const openCalendarTypeFloatingFilter = () => openFloatingFilter && openFloatingFilter(filterTypes.CALENDAR);
+  const openProviderFloatingFilter = () => openFloatingFilter && openFloatingFilter(filterTypes.PROVIDERS);
 
   return (
-    <div style={styles.DropdownFiltersContainer(isSmallerThanMid, isInsideContainer)}
+    <div style={styles.DropdownFiltersContainer(isSmallScreen, isSmallTabletScreen, isInsideContainer)}
          id={'dropdown-filters--container'}
-         className={`${isSmallerThanMid ? 'dropdown-filters--container-small' : ''}`}
+         className={`${isSmall ? 'dropdown-filters--container-small' : ''}`}
          ref={sliderRef}
-         onMouseDown={isSmallerThanMid ? handleMouseDown : undefined}
-         onMouseUp={isSmallerThanMid ? turnOffSlider : undefined}
-         onMouseMove={isSmallerThanMid ? handleMouseMove : undefined}
+         onMouseDown={isSmall ? handleMouseDown : undefined}
+         onMouseUp={isSmall ? turnOffSlider : undefined}
+         onMouseMove={isSmall ? handleMouseMove : undefined}
          draggable={true}
     >
       <DropdownFilter iconSrc={SpeedIcon}
@@ -177,12 +171,12 @@ const DropdownFilters = ({
                       setOpenFilter={setOpenFilter}
                       openFilter={openFilter}
                       loading={false}
-                      openFilterMenu={openSpeedTypeMenu}
+                      openFloatingFilter={openSpeedTypeFloatingFilter}
       />
-      { !isSmallerThanMid && <DropdownFilterVerticalDivider/> }
+      { !isSmall && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={CalendarIcon}
                       options={calendarFilters.includes((calendarType as string)) ? calendarFilters : [calendarType, ...calendarFilters]}
-                      textWidth={'70px'}
+                      textWidth={isSmall ? '50px' : '70px'}
                       type={filterTypes.CALENDAR}
                       changeFilter={changeCalendarFilter}
                       selectedFilter={calendarType}
@@ -191,9 +185,9 @@ const DropdownFilters = ({
                       lastOptionTriggersFunction
                       lastOptionOnClick={openDatePicker}
                       loading={false}
-                      openFilterMenu={openCalendarTypeMenu}
+                      openFloatingFilter={openCalendarTypeFloatingFilter}
       />
-      { !isSmallerThanMid && <DropdownFilterVerticalDivider/> }
+      { !isSmall && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={ProvidersIcon}
                       options={providers}
                       withSearchbar
@@ -207,7 +201,7 @@ const DropdownFilters = ({
                       openFilter={openFilter}
                       loading={providersLoading}
                       isLast
-                      openFilterMenu={openProviderMenu}
+                      openFloatingFilter={openProviderFloatingFilter}
       />
     </div>
   )

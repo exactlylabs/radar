@@ -23,7 +23,8 @@ const WeekPicker = ({
   setSelectedWeek,
 }: WeekPickerProps): ReactElement => {
 
-  const {isSmallerThanMid} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isSmallTabletScreen;
 
   const [weekDays, setWeekDays] = useState<Array<Day>>([]);
   const [weekPickerInternalYear, setWeekPickerInternalYear] = useState(selectedYear);
@@ -93,7 +94,7 @@ const WeekPicker = ({
   }
 
   return (
-    <div style={styles.WeekPicker(isSmallerThanMid)}>
+    <div style={styles.WeekPicker(isSmall)}>
       <div style={styles.MonthSelector}>
         <img className={'hover-opaque'}
              src={ChevronLeft}
