@@ -20,8 +20,17 @@ platform :ios do
     setup_circle_ci
   end
 
+  lane :dev do
+    build_app(
+      skip_build_archive: true,
+      scheme: "dev",
+      archive_path: "../build/ios/archive/Runner.xcarchive",
+      export_team_id: "MQYTP6VS48",      
+  )
+  end
   
-  lane :staging do
+  end
+  lane :sign_staging do
     # How to increment build number with fastlane:
     # increment_build_number(
     #   build_number: app_store_build_number(
@@ -39,7 +48,9 @@ platform :ios do
         export_team_id: "MQYTP6VS48",
         # export_options: {}
     )
-    
+  end
+  
+  lane release_staging:
     # Upload to TestFlight
     pilot(
       distribute_external: true,

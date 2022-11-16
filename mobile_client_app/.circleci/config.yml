@@ -124,6 +124,9 @@ jobs:
       - run: 
           command: ./scripts/build_ios_<<  parameters.flavor >>.sh
           working_directory: ~/project/mobile_client_app/client_mobile_app
+      - run:
+          command: fastlane ios << parameters.flavor >>
+          working_directory: ~/project/mobile_client_app/client_mobile_app/ios
       - persist_to_workspace:
           root: ~/project/mobile_client_app/client_mobile_app/workspace
           paths:
@@ -191,7 +194,7 @@ workflows:
       - build-ios:
           name: "build-ios-dev"
           requires: [unit_test]
-          flavor: dev
+          flavor: staging # TODO: Go Back to dev
           filters:
             branches:
               ignore: "master"
