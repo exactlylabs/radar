@@ -14,14 +14,13 @@
 # update_fastlane
 
 default_platform(:ios)
-
-
+# app_store_connect_api_key
 platform :ios do
   before_all do
     setup_circle_ci
   end
 
-  app_store_connect_api_key
+  
   lane :staging do
     # How to increment build number with fastlane:
     # increment_build_number(
@@ -31,12 +30,16 @@ platform :ios do
     #     live: false
     #   ) + 1,
     # )
-
+    # app_identifier("com.exactlylabs.radar.staging")
     # Flutter requires us to build using it first
     build_app(
         skip_build_archive: true,
+        scheme: "staging",
         archive_path: "../build/ios/archive/Runner.xcarchive",
+        export_team_id: "MQYTP6VS48",
+        # export_options: {}
     )
+    
     # Upload to TestFlight
     pilot(
       distribute_external: true,

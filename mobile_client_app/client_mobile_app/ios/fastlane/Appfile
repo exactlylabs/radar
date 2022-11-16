@@ -1,14 +1,14 @@
-app_identifier("com.exactlylabs.radar") # Bundle Identifier
+# app_identifier("com.exactlylabs.radar.staging") # Bundle Identifier
 team_id("MQYTP6VS48") # Got from developers portal -> Management
 team_name("Exactly Labs, Inc.") # Got from developers portal -> Management
 itc_team_id("123344463") # Got from cmd: fastlane spaceship ## Log in and then type Spaceship::Tunes.select_team
-apple_id(ENV["APP_STORE_CONNECT_API_KEY_KEY"])
+# apple_id(ENV["APP_STORE_CONNECT_API_KEY_KEY"])
 
-for_platform :ios do  
-    for_lane :release_dev do
-        app_identifier("com.exactlylabs.radar.dev")
-    end
-    for_lane :release_staging do
-        app_identifier("com.exactlylabs.radar.staging")
-    end
-  end
+# for_platform :ios do  
+#     for_lane :release_dev do
+#         app_identifier("com.exactlylabs.radar.dev")
+#     end
+#     for_lane :release_staging do
+#         app_identifier("com.exactlylabs.radar.staging")
+#     end
+#   end
