@@ -13,22 +13,12 @@ commands:
         type: string
         default: "."
     steps:
-      - run: echo ${FLUTTER_DEV_KEYSTORE} | base64 -d > /tmp/upload-dev-keystore.jks
-      - run: |
-          echo """
-          storePassword=${FLUTTER_DEV_KEYSTORE_PASSWORD}
-          keyPassword=${FLUTTER_DEV_KEYSTORE_PASSWORD}
-          keyAlias=upload
-          storeFile=/tmp/upload-dev-keystore.jks
-          """ > << parameters.working_directory >>/key.dev.properties
-      - run: echo ${FLUTTER_PROD_KEYSTORE} | base64 -d > /tmp/upload-keystore.jks
-      - run: |
-          echo """
-          storePassword=${FLUTTER_PROD_KEYSTORE_PASSWORD}
-          keyPassword=${FLUTTER_PROD_KEYSTORE_PASSWORD}
-          keyAlias=upload
-          storeFile=/tmp/upload-keystore.jks
-          """ > << parameters.working_directory >>/key.properties
+      - run: echo ${FLUTTER_ANDROID_DEV_KEYSTORE} | base64 -d > << parameters.working_directory >>/upload-dev-keystore.jks
+      - run: echo ${FLUTTER_ANDROID_DEV_KEY_PROPERTIES} | base64 -d > << parameters.working_directory >>/key.dev.properties
+      - run: echo ${FLUTTER_ANDROID_STAGING_KEYSTORE} | base64 -d > << parameters.working_directory >>/upload-staging-keystore.jks
+      - run: echo ${FLUTTER_ANDROID_STAGING_KEY_PROPERTIES} | base64 -d > << parameters.working_directory >>/key.staging.properties
+      - run: echo ${FLUTTER_ANDROID_PROD_KEYSTORE} | base64 -d > << parameters.working_directory >>/upload-prod-keystore.jks
+      - run: echo ${FLUTTER_ANDROID_PROD_KEY_PROPERTIES} | base64 -d > << parameters.working_directory >>/key.properties
 
   build-android:
     parameters:
@@ -114,6 +104,10 @@ jobs:
         enum: ["dev", "staging", "prod"]
     steps:
       - checkout
+      - run: mkdir -p "/Library/MobileDevice/Provisioning Profiles"
+      - run: echo ${FLUTTER_IOS_STAGING_PROVISIONING_PROFILE} | base64 -d > "/Library/MobileDevice/Provisioning Profiles/Radar_Staging_Distribution.mobileprovision"
+      - run: echo ${FLUTTER_IOS_PROD_PROVISIONING_PROFILE} | base64 -d > "/Library/MobileDevice/Provisioning Profiles/Radar_Prod_Distribution.mobileprovision"
+      - run: echo ${FLUTTER_IOS_DEV_PROVISIONING_PROFILE} | base64 -d > "/Library/MobileDevice/Provisioning Profiles/Radar_Dev.mobileprovision"
       - run: echo "${FLUTTER_IOS_DISTRIBUTION_CERT}" | base64 -d > /tmp/distribution.cer
       - run: echo ${FLUTTER_IOS_DISTRIBUTION_KEY} | base64 -d > /tmp/distribution.p12
       - run: |
