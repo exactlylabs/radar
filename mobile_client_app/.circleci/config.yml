@@ -44,7 +44,7 @@ commands:
       - run: sudo mkdir -p "/Library/MobileDevice/Provisioning Profiles"
       - run: echo ${FLUTTER_IOS_STAGING_PROVISIONING_PROFILE} | base64 -d | sudo tee "/Library/MobileDevice/Provisioning Profiles/Radar_Staging_Distribution.mobileprovision" &>/dev/null
       - run: echo ${FLUTTER_IOS_PROD_PROVISIONING_PROFILE} | base64 -d | sudo tee "/Library/MobileDevice/Provisioning Profiles/Radar_Prod_Distribution.mobileprovision" &>/dev/null
-      - run: echo ${FLUTTER_IOS_DEV_PROVISIONING_PROFILE} | base64 -d | sudo tee "/Library/MobileDevice/Provisioning Profiles/Radar_Dev.mobileprovision" &>/dev/null
+      - run: echo ${FLUTTER_IOS_DEV_PROVISIONING_PROFILE} | base64 -d | sudo tee "/Library/MobileDevice/Provisioning Profiles/Radar_Dev_AdHoc.mobileprovision" &>/dev/null
       - run: echo "${FLUTTER_IOS_DISTRIBUTION_CERT}" | base64 -d > /tmp/distribution.cer
       - run: echo ${FLUTTER_IOS_DISTRIBUTION_KEY} | base64 -d > /tmp/distribution.p12
 
