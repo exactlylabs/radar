@@ -37,8 +37,14 @@ if (devKeystorePropertiesFile.exists()) {
     devKeystoreProperties.load(new FileInputStream(devKeystorePropertiesFile))
 }
 
+def stagingKeystoreProperties = new Properties()
+def stagingKeystorePropertiesFile = rootProject.file('key.staging.properties')
+if (stagingKeystorePropertiesFile.exists()) {
+    stagingKeystoreProperties.load(new FileInputStream(stagingKeystorePropertiesFile))
+}
+
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 32
     ndkVersion flutter.ndkVersion
 
 
@@ -69,6 +75,13 @@ android {
             keyPassword devKeystoreProperties['keyPassword']
             storeFile devKeystoreProperties['storeFile'] ? file(devKeystoreProperties['storeFile']) : null
             storePassword devKeystoreProperties['storePassword']
+        }
+
+        staging {
+            keyAlias stagingKeystoreProperties['keyAlias']
+            keyPassword stagingKeystoreProperties['keyPassword']
+            storeFile stagingKeystoreProperties['storeFile'] ? file(stagingKeystoreProperties['storeFile']) : null
+            storePassword stagingKeystoreProperties['storePassword']
         }
 
         prod {
@@ -107,7 +120,7 @@ android {
         staging {
             applicationId "com.exactlylabs.radar"
             applicationIdSuffix ".staging"
-            signingConfig signingConfigs.dev
+            signingConfig signingConfigs.staging
             manifestPlaceholders = [
                     app_name: "Radar Staging",
                     icon: "@mipmap/ic_launcher"
