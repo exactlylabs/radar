@@ -9,15 +9,10 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 WORKSPACE=${SCRIPT_DIR}/../workspace
 APPDIR=${SCRIPT_DIR}/..
 BUILD=$(date +%s)
+
 ( cd ${APPDIR} && flutter build ipa --build-number ${BUILD} --flavor staging -t lib/main_staging.dart --release --no-codesign )
-
-# flutter build ipa -t lib/main_dev.dart --flavor dev --no-codesign --release
-# This generates a .xcarchive file at build/ios/archive/Runner.xcarchive
-
-
 mkdir -p ${WORKSPACE}/ios/staging
-export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -ne 's/version: \([0-9]\+\.[0-9]\+\.[0-9]\+\)+[0-9]\+/\1/p')
-
+export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -nre 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/\1/p')
 ( cd ${APPDIR}/ios && fastlane ios sign_staging )
 
 cp -r ${APPDIR}/ios/Runner.ipa ${WORKSPACE}/ios/staging/Runner${VERSION_NAME}+${BUILD}.ipa
