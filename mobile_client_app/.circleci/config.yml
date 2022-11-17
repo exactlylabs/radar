@@ -139,6 +139,31 @@ jobs:
           google-project-id: TTAC_PROD_ID
       - run: gsutil cp -r ~/workspace/ios/* gs://${MOBILE_APP_BUCKET_NAME}/ios
 
+  release-ios:
+    working_directory: ~/project
+    docker:
+      - image: "cimg/ruby:3.0.2"
+    parameters:
+      flavor:
+        type: enum
+        enum: ["staging", "prod"]
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/workspace
+      - ruby/install-deps:
+          app-dir: ~/project/mobile_client_app/client_mobile_app
+      - run:
+          command: gem install fastlane
+          working_directory: ~/project/mobile_client_app/client_mobile_app
+      - run:
+          command: cp ~/workspace/ios/<< parameters.flavor >>/*.ipa ~/project/mobile_client_app/client_mobile_app/ios/Runner.ipa
+          working_directory: ~/project/mobile_client_app/client_mobile_app
+      - run:
+          command: fastlane release_<< parameters.flavor >>
+          working_directory: ~/project/mobile_client_app/client_mobile_app/ios
+
+
 workflows:
   workflow:
     jobs:
@@ -211,3 +236,10 @@ workflows:
               only: "master"
       - upload-ios:
           requires: [build-ios-dev, build-ios-staging, build-ios-prod]
+      - release-ios:
+          name: "release-ios-staging"
+          requires: [build-ios-dev, build-ios-staging, build-ios-prod] # TODO: Remove Dev
+          flavor: staging
+          filters:
+            branches:
+              ignore: "master" # TODO: Fix this

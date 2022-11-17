@@ -20,7 +20,7 @@ platform :ios do
     setup_circle_ci
   end
 
-  lane :dev do
+  lane :sign_dev do
     build_app(
       skip_build_archive: true,
       scheme: "dev",
@@ -51,6 +51,12 @@ platform :ios do
 
   lane :release_staging do
     # Upload to TestFlight
+    app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
+      key_filepath: "/tmp/appconnectkey.p8",
+      
+    )
     pilot(
       distribute_external: true,
       notify_external_testers: true,
@@ -60,6 +66,12 @@ platform :ios do
   end
 
   lane :release_dev do
+    app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
+      key_filepath: "/tmp/appconnectkey.p8",
+      
+    )
     # Flutter requires us to build using it first
     build_app(
         skip_build_archive: true,
