@@ -20,4 +20,4 @@ export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -ne 's/version: \([0-9]\+
 
 ( cd ${APPDIR}/ios && fastlane ios sign_staging )
 
-# cp -r ${APPDIR}/build/ios/iphoneos/Runner.app ${WORKSPACE}/ios/staging/Runner${VERSION_NAME}+${BUILD}.app
+cp -r ${APPDIR}/build/ios/Runner.ipa ${WORKSPACE}/ios/staging/Runner${VERSION_NAME}+${BUILD}.ipa
