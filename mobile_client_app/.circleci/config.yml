@@ -140,8 +140,8 @@ jobs:
       - attach_workspace:
           at: ~/workspace
       - gcp-cli/initialize:
-          gcloud-service-key: TTAC_PROD_GCP_CRED
-          google-project-id: TTAC_PROD_ID
+          gcloud-service-key: FLUTTER_STORAGE_UPLOAD_GCP_CRED
+          google-project-id: TTAC_PROD_PROJECT_ID
       - run: gsutil cp -r ~/workspace/ios/* gs://${MOBILE_APP_BUCKET_NAME}/ios
 
   release-ios:
