@@ -36,10 +36,36 @@ const smallTabletExplorationPopoverIconContainerStyle: CSSProperties = {
   bottom: '93px',
 }
 
+const largeTabletExplorationPopoverIconContainerStyle: CSSProperties = {
+  ...smallExplorationPopoverIconContainerStyle,
+  bottom: '142px',
+  left: 'calc(100vw - 47px - 25px)'
+}
+
+const largeTabletExplorationPopoverIconContainerRightPanelOpenStyle: CSSProperties = {
+  ...smallExplorationPopoverIconContainerStyle,
+  bottom: '142px',
+  left: 'calc(100vw - 47px - 25px - 497px)'
+}
+
 const openSmallTabletExplorationPopoverIconContainerStyle: CSSProperties = {
   ...smallExplorationPopoverIconContainerStyle,
   bottom: '93px',
   backgroundColor: EXPLORATION_POPOVER_BLACK,
+}
+
+const openLargeTabletExplorationPopoverIconContainerStyle: CSSProperties = {
+  ...smallExplorationPopoverIconContainerStyle,
+  bottom: '142px',
+  left: 'calc(100vw - 47px - 25px)',
+  backgroundColor: EXPLORATION_POPOVER_BLACK
+}
+
+const openLargeTabletExplorationPopoverIconContainerRightPanelOpenStyle: CSSProperties = {
+  ...smallExplorationPopoverIconContainerStyle,
+  bottom: '142px',
+  left: 'calc(100vw - 47px - 25px - 497px)',
+  backgroundColor: EXPLORATION_POPOVER_BLACK
 }
 
 const iconStyle: CSSProperties = {
@@ -53,11 +79,15 @@ const smallIconStyle: CSSProperties = {
 }
 
 export const styles = {
-  ExplorationPopoverIconContainer: (isSmall: boolean, isSmallTablet: boolean, isOpen?: boolean) => {
+  ExplorationPopoverIconContainer: (isSmall: boolean, isSmallTablet: boolean, isLargeTablet: boolean, isRightPanelOpen: boolean, isOpen?: boolean) => {
     let style;
     if(isSmall && !isOpen) style = smallExplorationPopoverIconContainerStyle;
     else if(isSmallTablet && !isOpen) style = smallTabletExplorationPopoverIconContainerStyle;
     else if(isSmallTablet && isOpen) style = openSmallTabletExplorationPopoverIconContainerStyle;
+    else if(isLargeTablet && !isOpen && !isRightPanelOpen) style = largeTabletExplorationPopoverIconContainerStyle;
+    else if(isLargeTablet && isOpen && !isRightPanelOpen) style = openLargeTabletExplorationPopoverIconContainerStyle;
+    else if(isLargeTablet && !isOpen && isRightPanelOpen) style = largeTabletExplorationPopoverIconContainerRightPanelOpenStyle;
+    else if(isLargeTablet && isOpen && isRightPanelOpen) style = openLargeTabletExplorationPopoverIconContainerRightPanelOpenStyle;
     else style = explorationPopoverIconContainerStyle;
     return style;
   },

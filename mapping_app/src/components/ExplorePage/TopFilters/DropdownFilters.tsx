@@ -42,8 +42,8 @@ const DropdownFilters = ({
   openFloatingFilter
 }: DropdownFiltersProps): ReactElement => {
 
-  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
-  const isSmall = isSmallScreen || isSmallTabletScreen;
+  const {isSmallScreen, isSmallTabletScreen, isLargeTabletScreen, isTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isTabletScreen;
 
   const [currentFilters, setCurrentFilters] = useState<Array<Filter>>([speedType, calendarType, provider]);
   const [providers, setProviders] = useState<Array<Asn>>([]);
@@ -153,7 +153,7 @@ const DropdownFilters = ({
   const openProviderFloatingFilter = () => openFloatingFilter && openFloatingFilter(filterTypes.PROVIDERS);
 
   return (
-    <div style={styles.DropdownFiltersContainer(isSmallScreen, isSmallTabletScreen, isInsideContainer)}
+    <div style={styles.DropdownFiltersContainer(isSmallScreen, isSmallTabletScreen, isLargeTabletScreen, isInsideContainer)}
          id={'dropdown-filters--container'}
          className={`${isSmall ? 'dropdown-filters--container-small' : ''}`}
          ref={sliderRef}
@@ -176,7 +176,7 @@ const DropdownFilters = ({
       { !isSmall && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={CalendarIcon}
                       options={calendarFilters.includes((calendarType as string)) ? calendarFilters : [calendarType, ...calendarFilters]}
-                      textWidth={isSmall ? '50px' : '70px'}
+                      textWidth={isSmall && !isInsideContainer ? '50px' : '70px'}
                       type={filterTypes.CALENDAR}
                       changeFilter={changeCalendarFilter}
                       selectedFilter={calendarType}

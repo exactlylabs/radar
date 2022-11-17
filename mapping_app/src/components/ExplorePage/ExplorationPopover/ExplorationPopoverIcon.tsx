@@ -7,19 +7,22 @@ import {useViewportSizes} from "../../../hooks/useViewportSizes";
 interface ExplorationPopoverProps {
   onClick: () => void;
   isOpen?: boolean;
+  isRightPanelOpen: boolean;
 }
 
 const ExplorationPopoverIcon = ({
   onClick,
   isOpen,
+  isRightPanelOpen
 }: ExplorationPopoverProps): ReactElement => {
 
-  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen, isLargeTabletScreen} = useViewportSizes();
+  const isTablet = isSmallTabletScreen || isLargeTabletScreen;
 
-  const shouldShowBlackIcon = isSmallScreen || (isSmallTabletScreen && !isOpen);
+  const shouldShowBlackIcon = isSmallScreen || (isTablet && !isOpen);
 
   return (
-    <div style={styles.ExplorationPopoverIconContainer(isSmallScreen, isSmallTabletScreen, isOpen)}
+    <div style={styles.ExplorationPopoverIconContainer(isSmallScreen, isSmallTabletScreen, isLargeTabletScreen, isRightPanelOpen, isOpen)}
          onClick={onClick}
     >
       <img src={shouldShowBlackIcon ? PopoverClosedIconBlack : PopoverClosedIconWhite}

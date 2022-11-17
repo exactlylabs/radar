@@ -19,6 +19,13 @@ const openSmallTabletSpeedFiltersContainerStyle: CSSProperties = {
   right: undefined
 }
 
+const openLargeTabletSpeedFiltersContainerStyle: CSSProperties = {
+  ...openSmallSpeedFiltersContainerStyle,
+  left: '-408px',
+  right: undefined,
+  bottom: '-40px'
+}
+
 const speedFiltersContainerStyle: CSSProperties = {
   width: 'max-content',
   height: '32px',
@@ -31,8 +38,12 @@ const speedFiltersContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  OpenSmallSpeedFiltersContainer: (isSmallTablet: boolean) => {
-    return isSmallTablet ? openSmallTabletSpeedFiltersContainerStyle : openSmallSpeedFiltersContainerStyle;
-},
+  OpenSmallSpeedFiltersContainer: (isSmallTablet: boolean, isLargeTablet: boolean) => {
+    let style;
+    if(isSmallTablet) style = openSmallTabletSpeedFiltersContainerStyle;
+    else if(isLargeTablet) style = openLargeTabletSpeedFiltersContainerStyle;
+    else style = openSmallSpeedFiltersContainerStyle;
+    return style;
+  },
   SpeedFiltersContainer: speedFiltersContainerStyle,
 }

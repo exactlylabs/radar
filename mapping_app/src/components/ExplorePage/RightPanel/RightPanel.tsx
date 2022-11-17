@@ -1,4 +1,4 @@
-import {ReactElement} from "react";
+import {ReactElement, useState} from "react";
 import {styles} from "./styles/RightPanel.style";
 import HidePanelButton from "./HidePanelButton";
 import DropdownFilters from "../TopFilters/DropdownFilters";
@@ -15,9 +15,19 @@ import {
 import {getFiltersString} from "../../../api/utils/filters";
 import {getOverview} from "../../../api/geospaces/requests";
 import {handleError} from "../../../api";
-import {Filter} from "../../../utils/types";
+import {Filter, Optional} from "../../../utils/types";
 import RightPanelLoader from "./RightPanelLoader";
-import {getSignalState} from "../../../utils/filters";
+import {filterTypes, getFilterMenuContentFromFilter, getSignalState} from "../../../utils/filters";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import MyGenericModal from "../../common/MyGenericModal/MyGenericModal";
+import {MenuContent} from "../../common/MyGenericMenu/menu";
+import ModalContentSpeedType from "../../common/MyGenericModal/ModalContentSpeedType/ModalContentSpeedType";
+import ModalContentProviders from "../../common/MyGenericModal/ModalContentProviders/ModalContentProviders";
+import {Asn} from "../../../api/asns/types";
+import ModalContentCalendar from "../../common/MyGenericModal/ModalContentCalendar/ModalContentCalendar";
+import {getInitialStateFromCalendarType} from "../../../utils/dates";
+import ModalContentCustomDateRange
+  from "../../common/MyGenericModal/ModalContentCustomDateRange/ModalContentCustomDateRange";
 
 
 interface RightPanelProps {
@@ -34,6 +44,7 @@ interface RightPanelProps {
   isHidden: boolean;
   openDatePicker: () => void;
   loading: boolean;
+  openFilterModal: (filter: string) => void;
 }
 
 const RightPanel = ({
@@ -50,7 +61,11 @@ const RightPanel = ({
   isHidden,
   openDatePicker,
   loading,
+  openFilterModal
 }: RightPanelProps): ReactElement => {
+
+  const {isLargeTabletScreen} = useViewportSizes();
+
   const getName = (): string => {
     if(isGeospaceData(selectedGeospaceInfo)) {
       if(selectedGeospaceInfo.state) return selectedGeospaceInfo.state as string;
@@ -103,13 +118,15 @@ const RightPanel = ({
                               stateSignalState={getSignalState(speedType as string, selectedGeospaceInfo)}
                               closePanel={closePanel}
             />
-            <div style={styles.DropdownFiltersContainer}>
+            <div style={styles.DropdownFiltersContainer(isLargeTabletScreen)}>
               <DropdownFilters changeFilters={handleFilterChange}
                                speedType={speedType}
                                calendarType={calendarType}
                                provider={provider}
                                openDatePicker={openDatePicker}
                                selectedGeospaceId={(selectedGeospaceInfo as GeospaceOverview).geospace.id}
+                               isInsideContainer
+                               openFloatingFilter={isLargeTabletScreen ? openFilterModal : undefined}
               />
             </div>
             <RightPanelSpeedData medianDownload={selectedGeospaceInfo.download_median}

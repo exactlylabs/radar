@@ -3,8 +3,6 @@ import SmallGeographicalCategoryTabs from "./SmallGeographicalCategoryTabs/Small
 import {styles} from "./styles/SmallScreenBottomNavigator.style";
 import SmallSpeedFilters from "./SmallSpeedFilters/SmallSpeedFilters";
 import {Filter} from "../../../utils/types";
-import {GeospaceOverview} from "../../../api/geospaces/types";
-import SmallExplorationPopover from "./SmallExplorationPopover/SmallExplorationPopover";
 
 interface SmallScreenBottomNavigatorProps {
   geospaceNamespace: string;
@@ -14,6 +12,7 @@ interface SmallScreenBottomNavigatorProps {
   speedType: string;
   selectedSpeedFilters: Array<Filter>;
   setSelectedSpeedFilters: (filters: Array<Filter>) => void;
+  isRightPanelOpen: boolean;
 }
 
 const SmallScreenBottomNavigator = ({
@@ -24,17 +23,20 @@ const SmallScreenBottomNavigator = ({
   speedType,
   selectedSpeedFilters,
   setSelectedSpeedFilters,
+  isRightPanelOpen
 }: SmallScreenBottomNavigatorProps): ReactElement => {
   return (
     <div style={styles.SmallScreenBottomNavigatorContainer}>
       <SmallGeographicalCategoryTabs namespace={geospaceNamespace}
                                      selectNamespace={setGeospaceNamespace}
+                                     isRightPanelOpen={isRightPanelOpen}
       />
       <SmallSpeedFilters isOpen={areSpeedFiltersOpen}
                          setIsOpen={setAreSpeedFiltersOpen}
                          speedType={speedType}
                          selectedSpeedFilters={selectedSpeedFilters}
                          setSelectedSpeedFilters={setSelectedSpeedFilters}
+                         isRightPanelOpen={isRightPanelOpen}
       />
     </div>
   )

@@ -44,8 +44,8 @@ const MyMap = ({
   dateQueryString,
 }: MyMapProps): ReactElement => {
 
-  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
-  const isSmallMap = isSmallScreen || isSmallTabletScreen;
+  const {isSmallScreen, isTabletScreen} = useViewportSizes();
+  const isSmallMap = isSmallScreen || isTabletScreen;
 
   const [geoJSON, setGeoJSON] = useState<GeoJSONTimedResponse>();
 

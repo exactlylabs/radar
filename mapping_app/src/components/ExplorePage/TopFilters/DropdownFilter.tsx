@@ -46,8 +46,8 @@ const DropdownFilter = ({
   openFloatingFilter
 }: DropdownFilterProps): ReactElement => {
 
-  const {isSmallScreen, isSmallTabletScreen, isDesktopScreen} = useViewportSizes();
-  const isSmall = isSmallScreen || isSmallTabletScreen;
+  const {isSmallScreen, isTabletScreen, isDesktopScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isTabletScreen;
 
   const [selectedOption, setSelectedOption] = useState<Filter>(selectedFilter ?? options[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);

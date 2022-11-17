@@ -43,7 +43,7 @@ const ModalContentWeek = ({
            alt={'go-back'}
            onClick={goBack}
       />
-      <p className={'fw-medium'} style={styles.Title}>Choose halfyear</p>
+      <p className={'fw-medium'} style={styles.Title}>Choose week</p>
       <div style={styles.ItemsContainer}>
         <WeekPicker selectedMonth={internalMonth}
                     selectedYear={internalYear}

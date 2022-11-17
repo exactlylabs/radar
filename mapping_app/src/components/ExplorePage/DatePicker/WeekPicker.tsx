@@ -23,8 +23,8 @@ const WeekPicker = ({
   setSelectedWeek,
 }: WeekPickerProps): ReactElement => {
 
-  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
-  const isSmall = isSmallScreen || isSmallTabletScreen;
+  const {isSmallScreen, isTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isTabletScreen;
 
   const [weekDays, setWeekDays] = useState<Array<Day>>([]);
   const [weekPickerInternalYear, setWeekPickerInternalYear] = useState(selectedYear);
