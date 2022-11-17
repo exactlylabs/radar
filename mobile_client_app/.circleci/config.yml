@@ -199,6 +199,8 @@ workflows:
           requires: [unit_test]
           flavor: prod
           filters:
+            branches:
+              ignore: "*"
             tags:
               only: "/^v.*/"
       ## Upload Flavors to Storage
@@ -217,6 +219,8 @@ workflows:
           requires: [build-android-prod]
           flavor: prod
           filters:
+            branches:
+              ignore: "*"
             tags:
               only: "/^v.*/"
     
@@ -241,6 +245,8 @@ workflows:
           requires: [unit_test]
           flavor: prod
           filters:
+            branches:
+              ignore: "*"
             tags:
               only: "/^v.*/"
       ## Upload Flavors to Storage
@@ -259,5 +265,7 @@ workflows:
           requires: [build-ios-prod]
           flavor: prod
           filters:
+            branches:
+              ignore: "*"
             tags:
               only: "/^v.*/"
