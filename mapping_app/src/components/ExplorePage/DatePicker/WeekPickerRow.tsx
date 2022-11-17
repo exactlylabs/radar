@@ -22,8 +22,8 @@ const WeekPickerRow = ({
   setSelectedWeek
 }: WeekPickerRowProps): ReactElement => {
 
-  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
-  const isSmall = isSmallScreen || isSmallTabletScreen;
+  const {isSmallScreen, isTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isTabletScreen;
 
   const isNotCurrentMonth = (elem: Day | string): boolean => {
     if(!isDay(elem)) return true;

@@ -18,6 +18,7 @@ import {Asn} from "../../../api/asns/types";
 import {GeoJSONFilters} from "../../../api/geojson/types";
 import RightPanelLoader from "./RightPanelLoader";
 import {getSignalState} from "../../../utils/speeds";
+import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 
 interface RightPanelProps {
@@ -34,6 +35,7 @@ interface RightPanelProps {
   isHidden: boolean;
   openDatePicker: () => void;
   loading: boolean;
+  openFilterModal: (filter: string) => void;
 }
 
 const RightPanel = ({
@@ -50,7 +52,11 @@ const RightPanel = ({
   isHidden,
   openDatePicker,
   loading,
+  openFilterModal
 }: RightPanelProps): ReactElement => {
+
+  const {isLargeTabletScreen} = useViewportSizes();
+
   const getName = (): string => {
     if(isGeospaceData(selectedGeospaceInfo)) {
       if(selectedGeospaceInfo.state) return selectedGeospaceInfo.state as string;
@@ -102,13 +108,15 @@ const RightPanel = ({
                               stateSignalState={getSignalState(speedType as string, selectedGeospaceInfo)}
                               closePanel={closePanel}
             />
-            <div style={styles.DropdownFiltersContainer}>
+            <div style={styles.DropdownFiltersContainer(isLargeTabletScreen)}>
               <DropdownFilters changeFilters={handleFilterChange}
                                speedType={speedType}
                                calendarType={calendarType}
                                provider={provider}
                                openDatePicker={openDatePicker}
                                selectedGeospaceId={(selectedGeospaceInfo as GeospaceOverview).geospace.id}
+                               isInsideContainer
+                               openFloatingFilter={isLargeTabletScreen ? openFilterModal : undefined}
               />
             </div>
             <RightPanelSpeedData medianDownload={selectedGeospaceInfo.download_median}

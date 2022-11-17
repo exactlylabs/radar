@@ -51,8 +51,8 @@ const CustomMap = ({
   // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
 
   const prevSelectedGeospace = usePrev(selectedGeospace);
-  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
-  const isSmallMap = isSmallScreen || isSmallTabletScreen;
+  const {isDesktopScreen} = useViewportSizes();
+  const isSmallMap = !isDesktopScreen;
 
   useEffect(() => {
     initializeMap(map, setZoom, setCenter, isSmallMap);

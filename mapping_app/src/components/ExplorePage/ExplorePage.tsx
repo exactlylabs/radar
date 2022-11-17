@@ -307,8 +307,6 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const closeModal = () => {
     setMenuContent(null);
     setGenericModalOpen(false);
-    setSelectedGeospace(null);
-    setSelectedGeospaceId(null);
   }
 
   const openFilterMenu = (filter: string) => {
@@ -441,7 +439,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   }
 
   const getCurrentContent = () => {
-    return isSmallTabletScreen ? getContentForModal() : getContentForMenu();
+    return isTabletScreen ? getContentForModal() : getContentForMenu();
   }
 
   return (
@@ -465,7 +463,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                     toggleFilters={toggleSmallScreenFilters}
                     areSmallFiltersOpen={areSmallScreenFiltersOpen}
       />
-      { isSmallExplorePage && areSmallScreenFiltersOpen &&
+      { isSmallExplorePage &&
+        areSmallScreenFiltersOpen &&
+        !isRightPanelOpen &&
         <DropdownFilters calendarType={calendarType}
                          provider={provider}
                          speedType={speedType}
@@ -504,6 +504,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                           setZoom={setCurrentMapZoom}
                           isOpen={isExplorationPopoverOpen}
                           setIsOpen={handleToggleExplorationPopover}
+                          isRightPanelOpen={isRightPanelOpen}
       />
       { isRightPanelOpen && selectedGeospace &&
         <RightPanel closePanel={closeRightPanel}
@@ -519,6 +520,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                     isHidden={isRightPanelHidden}
                     openDatePicker={openDatePicker}
                     loading={loading}
+                    openFilterModal={openFilterModal}
         />
       }
       { isDatePickerOpen &&
@@ -538,6 +540,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                                     speedType={speedType as string}
                                     selectedSpeedFilters={selectedSpeedFilters}
                                     setSelectedSpeedFilters={setSelectedSpeedFilters}
+                                    isRightPanelOpen={isRightPanelOpen}
         />
       }
       { isSmallScreen && genericMenuOpen &&
@@ -546,7 +549,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
         </CustomGenericMenu>
       }
       {
-        isSmallTabletScreen && genericModalOpen &&
+        isTabletScreen && genericModalOpen &&
         <MyGenericModal closeModal={closeModal}>
           {getCurrentContent()}
         </MyGenericModal>

@@ -133,10 +133,10 @@ export const paintLayer = (layer: any, selectedGeospace: Optional<GeospaceInfo>,
   }
 }
 
-export const initializeMap = (map: L.Map, setZoom: (newZoom: number) => void, setCenter: (newCenter: Array<number>) => void, isSmallScreen: boolean) => {
+export const initializeMap = (map: L.Map, setZoom: (newZoom: number) => void, setCenter: (newCenter: Array<number>) => void, withNoZoomControl: boolean) => {
   map.attributionControl.setPrefix('');
   map.setMinZoom(MIN_ZOOM);
-  if(isSmallScreen) {
+  if(withNoZoomControl) {
     map.zoomControl.remove();
   } else {
     map.zoomControl.setPosition('bottomright');

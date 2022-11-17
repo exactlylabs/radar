@@ -29,7 +29,7 @@ const buttonStyle: CSSProperties = {
   boxShadow: `0 2px 10px -4px ${DEFAULT_BUTTON_BOX_SHADOW_RGBA}`,
   backdropFilter: 'blur(10px)',
   position: 'absolute',
-  bottom: '20px',
+  bottom: '10px',
   right: 0,
   cursor: 'pointer'
 }
@@ -41,6 +41,18 @@ const smallTabletButtonStyle: CSSProperties = {
   left: 'calc(100vw - 420px - 30px - 47px)'
 }
 
+const largeTabletButtonStyle: CSSProperties = {
+  ...buttonStyle,
+  right: undefined,
+  left: 'calc(100vw - 420px - 40px - 47px)'
+}
+
+const rightPanelOpenLargeTabletButtonStyle: CSSProperties = {
+  ...buttonStyle,
+  right: undefined,
+  left: 'calc(100vw - 420px - 40px - 47px - 497px)'
+}
+
 const selectedButtonStyle: CSSProperties = {
   backgroundColor: DEFAULT_SECONDARY_BLACK
 }
@@ -48,8 +60,13 @@ const selectedButtonStyle: CSSProperties = {
 export const styles = {
   SmallSpeedFiltersContainer: smallSpeedFiltersContainerStyle,
   LayersIcon: layersIconStyle,
-  Button: (isOpen: boolean, isSmallTablet: boolean) => {
-    let style = isSmallTablet ? smallTabletButtonStyle : buttonStyle;
+  Button: (isOpen: boolean, isSmallTablet: boolean, isLargeTablet: boolean, isRightPanelOpen: boolean) => {
+    let style;
+    if(isSmallTablet) style = smallTabletButtonStyle;
+    else if(isLargeTablet) {
+      style = isRightPanelOpen ? rightPanelOpenLargeTabletButtonStyle : largeTabletButtonStyle;
+    }
+    else style = buttonStyle;
     return isOpen ? {...style, ...selectedButtonStyle} : style;
   },
 }

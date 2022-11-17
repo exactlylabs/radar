@@ -1,23 +1,28 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/GeographicalCategoryBottomTabs.style";
 import {GeospacesTabs} from "../../../../utils/filters";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 interface SmallGeographicalCategoryTabsProps {
   namespace: string;
   selectNamespace: (newNamespace: string) => void;
+  isRightPanelOpen: boolean;
 }
 
 const SmallGeographicalCategoryTabs = ({
   namespace,
-  selectNamespace
+  selectNamespace,
+  isRightPanelOpen
 }: SmallGeographicalCategoryTabsProps): ReactElement => {
+
+  const {isLargeTabletScreen} = useViewportSizes();
 
   const selectStates = () => selectNamespace(GeospacesTabs.STATES);
   const selectCounties = () => selectNamespace(GeospacesTabs.COUNTIES);
   const selectTribalTracts = () => selectNamespace(GeospacesTabs.TRIBAL_TRACTS);
 
   return (
-    <div style={styles.GeographicalCategoryBottomTabsContainer}>
+    <div style={styles.GeographicalCategoryBottomTabsContainer(isLargeTabletScreen, isRightPanelOpen)}>
       <div className={'fw-regular hover-opaque'}
            style={styles.TabContainer(namespace === GeospacesTabs.STATES, '28%')}
            onClick={selectStates}

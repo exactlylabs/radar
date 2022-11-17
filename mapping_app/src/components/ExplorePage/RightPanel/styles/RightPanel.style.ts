@@ -7,7 +7,7 @@ const rightPanelContainerStyle: CSSProperties = {
   position: 'absolute',
   top: 0,
   right: 0,
-  zIndex: 1002,
+  zIndex: 1010,
   boxShadow: `0 2px 4px -4px ${EXPLORATION_POPOVER_SECONDARY_BLACK}`,
 }
 
@@ -37,6 +37,11 @@ const dropdownFiltersContainerStyle: CSSProperties = {
   alignItems: 'center',
 }
 
+const tabletDropdownFiltersContainerStyle: CSSProperties = {
+  ...dropdownFiltersContainerStyle,
+  paddingLeft: '25px',
+}
+
 const gradientUnderlayStyle: CSSProperties = {
   width: '100%',
   height: '210px',
@@ -53,6 +58,8 @@ export const styles = {
   },
   RightPanelContentContainer: rightPanelContentContainerStyle,
   RightPanelContentWrapper: rightPanelContentWrapperStyle,
-  DropdownFiltersContainer: dropdownFiltersContainerStyle,
+  DropdownFiltersContainer: (isTablet: boolean) => {
+    return isTablet ? tabletDropdownFiltersContainerStyle : dropdownFiltersContainerStyle;
+  },
   GradientUnderlay: gradientUnderlayStyle,
 }
