@@ -29,7 +29,6 @@ platform :ios do
   )
   end
   
-  end
   lane :sign_staging do
     # How to increment build number with fastlane:
     # increment_build_number(
@@ -49,7 +48,7 @@ platform :ios do
         # export_options: {}
     )
   end
-  
+
   lane release_staging:
     # Upload to TestFlight
     pilot(
