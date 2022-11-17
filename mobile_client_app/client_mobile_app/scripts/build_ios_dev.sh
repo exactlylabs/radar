@@ -15,4 +15,4 @@ mkdir -p ${WORKSPACE}/ios/dev
 export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -nre 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/\1/p')
 ( cd ${APPDIR}/ios && fastlane ios sign_dev )
 
-cp -r ${APPDIR}/build/ios/iphoneos/Runner.app ${WORKSPACE}/ios/dev/Runner${VERSION_NAME}+${BUILD}.app
+cp -r ${APPDIR}/ios/Runner.ipa ${WORKSPACE}/ios/dev/Runner${VERSION_NAME}+${BUILD}.ipa
