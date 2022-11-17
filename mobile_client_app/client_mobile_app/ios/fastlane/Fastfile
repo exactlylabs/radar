@@ -49,7 +49,7 @@ platform :ios do
     )
   end
 
-  lane release_staging:
+  lane release_staging: do
     # Upload to TestFlight
     pilot(
       distribute_external: true,
