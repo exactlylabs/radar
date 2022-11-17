@@ -22,9 +22,24 @@ platform :android do
   end
 
   desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :staging do
+  lane :release_staging do
+    changelog_from_git_commits(
+      merge_commit_filtering: 'exclude_merges'
+    )
     upload_to_play_store(
       track: "internal", 
+      metadata_path: "./fastlane/metadata", 
+      aab_paths: ENV["ANDROID_AAB_PATH"],
+      release_status: "draft" # As soon as the app is released, we can remove this.
+    )
+  end
+
+  desc "Submit a new Release Build"
+  lane :release_prod do
+    changelog_from_git_commits(
+      merge_commit_filtering: 'exclude_merges'
+    )
+    upload_to_play_store(
       metadata_path: "./fastlane/metadata", 
       aab_paths: ENV["ANDROID_AAB_PATH"],
       release_status: "draft" # As soon as the app is released, we can remove this.
