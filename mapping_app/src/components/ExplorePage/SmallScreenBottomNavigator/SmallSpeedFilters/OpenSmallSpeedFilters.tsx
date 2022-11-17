@@ -18,7 +18,7 @@ const OpenSmallSpeedFilters = ({
   setSelectedSpeedFilters
 }: OpenSmallSpeedFiltersProps): ReactElement => {
 
-  const {isSmallTabletScreen} = useViewportSizes();
+  const {isSmallTabletScreen, isLargeTabletScreen} = useViewportSizes();
 
   const toggleFilter = (filter: string) => {
     let elements = [...selectedSpeedFilters];
@@ -38,7 +38,7 @@ const OpenSmallSpeedFilters = ({
   const toggleNormal = () => toggleFilter(speedTypes.SERVED);
 
   return (
-    <div style={styles.OpenSmallSpeedFiltersContainer(isSmallTabletScreen)}>
+    <div style={styles.OpenSmallSpeedFiltersContainer(isSmallTabletScreen, isLargeTabletScreen)}>
       <div style={styles.SpeedFiltersContainer}>
         <SpeedFilter boxColor={SPEED_UNSERVED}
                      text={speedType === SpeedFilters.DOWNLOAD ? speedTextsDownload.UNSERVED : speedTextsUpload.UNSERVED}

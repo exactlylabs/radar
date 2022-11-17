@@ -18,7 +18,22 @@ const geographicalCategoryBottomTabsContainerStyle: CSSProperties = {
   justifyContent: 'space-between',
   alignItems: 'center',
   paddingLeft: '4px',
-  paddingRight: '4px'
+  paddingRight: '4px',
+}
+
+const rightGeographicalCategoryBottomTabsContainerStyle: CSSProperties = {
+  ...geographicalCategoryBottomTabsContainerStyle,
+  position: 'absolute',
+  left: 'calc(100vw - 420px - 40px)',
+  top: '5px'
+}
+
+const rightGeographicalCategoryBottomTabsContainerWithOpenPanelStyle: CSSProperties = {
+  ...geographicalCategoryBottomTabsContainerStyle,
+  width: '90%',
+  position: 'absolute',
+  left: 'calc(100vw - 420px - 40px - 455px)',
+  top: '5px'
 }
 
 const tabContainerStyle: CSSProperties = {
@@ -39,7 +54,14 @@ const selectedTabContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  GeographicalCategoryBottomTabsContainer: geographicalCategoryBottomTabsContainerStyle,
+  GeographicalCategoryBottomTabsContainer: (floatRight: boolean, isRightPanelOpen: boolean) => {
+    let style;
+    if(floatRight) {
+      return isRightPanelOpen ? rightGeographicalCategoryBottomTabsContainerWithOpenPanelStyle : rightGeographicalCategoryBottomTabsContainerStyle;
+    } else {
+      return geographicalCategoryBottomTabsContainerStyle;
+    }
+  },
   TabContainer: (selected: boolean, width: string) => {
     let style = selected ? selectedTabContainerStyle : tabContainerStyle;
     return {...style, width};

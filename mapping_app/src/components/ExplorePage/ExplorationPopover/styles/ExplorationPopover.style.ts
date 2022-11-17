@@ -90,14 +90,13 @@ const extendedSmallTabletStyle: CSSProperties = {
 }
 
 export const styles = {
-  ExplorationPopoverContainer: (currentPopoverState: string, isSmall: boolean, isSmallTablet: boolean) => {
+  ExplorationPopoverContainer: (currentPopoverState: string, isSmall: boolean, isSmallTablet: boolean, isLargeTablet: boolean) => {
     let style = explorationPopoverContainerStyle;
-    const isPhone = isSmall && !isSmallTablet;
-    const isTablet = !isSmall && isSmallTablet;
-    const isBigScreen = !isSmall && !isSmallTablet;
+    const isTablet = isSmallTablet || isLargeTablet;
+    const isBigScreen = !isSmall && !isSmallTablet && !isLargeTablet;
     if(isBigScreen && currentPopoverState !== popoverStates.INITIAL) style = extendedExplorationPopoverContainerStyle;
-    else if(isPhone && currentPopoverState === popoverStates.INITIAL) style = smallStyle;
-    else if(isPhone && currentPopoverState !== popoverStates.INITIAL) style = extendedSmallStyle;
+    else if(isSmall && currentPopoverState === popoverStates.INITIAL) style = smallStyle;
+    else if(isSmall && currentPopoverState !== popoverStates.INITIAL) style = extendedSmallStyle;
     else if(isTablet && currentPopoverState === popoverStates.INITIAL) style = smallTabletStyle;
     else if(isTablet && currentPopoverState !== popoverStates.INITIAL) style = extendedSmallTabletStyle;
     return style;

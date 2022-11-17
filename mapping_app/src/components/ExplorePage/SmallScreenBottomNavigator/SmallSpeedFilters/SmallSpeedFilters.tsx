@@ -3,7 +3,6 @@ import LayersIconBlack from '../../../../assets/layers-icon.png';
 import LayersIconWhite from '../../../../assets/layers-icon-white.png';
 import {styles} from "./styles/SmallSpeedFilters.style";
 import OpenSmallSpeedFilters from "./OpenSmallSpeedFilters";
-import {Filter} from "../../../../utils/types";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 interface SmallSpeedFiltersProps {
@@ -12,6 +11,7 @@ interface SmallSpeedFiltersProps {
   speedType: string;
   selectedSpeedFilters: Array<string>;
   setSelectedSpeedFilters: (filters: Array<string>) => void;
+  isRightPanelOpen: boolean;
 }
 
 const SmallSpeedFilters = ({
@@ -19,16 +19,17 @@ const SmallSpeedFilters = ({
   setIsOpen,
   speedType,
   selectedSpeedFilters,
-  setSelectedSpeedFilters
+  setSelectedSpeedFilters,
+  isRightPanelOpen
 }: SmallSpeedFiltersProps): ReactElement => {
 
-  const {isSmallTabletScreen} = useViewportSizes();
+  const {isSmallTabletScreen, isLargeTabletScreen} = useViewportSizes();
 
   const toggleFilters = () => setIsOpen(!isOpen);
 
   return (
     <div style={styles.SmallSpeedFiltersContainer}>
-      <div className={'hover-opaque'} style={styles.Button(isOpen, isSmallTabletScreen)} onClick={toggleFilters}>
+      <div className={'hover-opaque'} style={styles.Button(isOpen, isSmallTabletScreen, isLargeTabletScreen, isRightPanelOpen)} onClick={toggleFilters}>
         <img src={isOpen ? LayersIconWhite : LayersIconBlack} style={styles.LayersIcon} alt={'layers-icon'}/>
       </div>
       { isOpen &&

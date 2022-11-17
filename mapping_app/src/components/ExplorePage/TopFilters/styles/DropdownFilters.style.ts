@@ -40,6 +40,18 @@ const smallTabletDropdownFiltersContainerStyle: CSSProperties = {
   maxWidth: '380px'
 }
 
+const largeTabletDropdownFiltersContainerStyle: CSSProperties = {
+  ...smallDropdownFiltersContainerStyle,
+  maxWidth: '380px',
+  top: '20px',
+  right: '25px',
+  left: undefined
+}
+
+const largeTabletAndInContainer: CSSProperties = {
+  maxWidth: '420px',
+}
+
 const insideContainerStyle: CSSProperties = {
   position: 'relative',
   margin: 0,
@@ -48,12 +60,15 @@ const insideContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  DropdownFiltersContainer: (isSmall: boolean, isSmallTablet: boolean, isInsideContainer?: boolean) => {
+  DropdownFiltersContainer: (isSmall: boolean, isSmallTablet: boolean, isLargeTablet: boolean, isInsideContainer?: boolean) => {
     let style;
     if(isSmall) style = smallDropdownFiltersContainerStyle;
     else if(isSmallTablet) style = smallTabletDropdownFiltersContainerStyle;
+    else if(isLargeTablet) style = largeTabletDropdownFiltersContainerStyle;
+    //else if(isLargeAndInRightPanel) style = largeTabletAndInRightPanelDropdownFiltersContainerStyle;
     else style = dropdownFiltersContainerStyle;
     if(!isInsideContainer) return style;
+    if(isLargeTablet) style = {...style, ...largeTabletAndInContainer};
     return {...style, ...insideContainerStyle};
   },
 }

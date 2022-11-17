@@ -18,8 +18,8 @@ const SpeedDataCell = ({
   smallVersion
 }: SpeedDataCellProps): ReactElement => {
 
-  const {isSmallScreen, isSmallTabletScreen} = useViewportSizes();
-  const isSmall = isSmallScreen || isSmallTabletScreen;
+  const {isSmallScreen, isTabletScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isTabletScreen;
 
   const getRegularContent = () => (
     <div style={styles.SpeedDataCellContainer(isSmall)}>
