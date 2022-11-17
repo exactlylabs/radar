@@ -9,7 +9,8 @@ platform :ios do
       skip_build_archive: true,
       scheme: "dev",
       archive_path: "../build/ios/archive/Runner.xcarchive",
-      export_team_id: "MQYTP6VS48",      
+      export_team_id: "MQYTP6VS48",    
+      export_method: "ad-hoc",
   )
   end
   
