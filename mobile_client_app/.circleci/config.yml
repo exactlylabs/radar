@@ -114,7 +114,7 @@ jobs:
         enum: ["dev", "staging", "prod"]
     steps:
       - checkout
-      - run: echo ${FLUTTER_IOS_DISTRIBUTION_CERT} | base64 -d > /tmp/distribution.cer
+      - run: echo "${FLUTTER_IOS_DISTRIBUTION_CERT}" | base64 -d > /tmp/distribution.cer
       - run: echo ${FLUTTER_IOS_DISTRIBUTION_KEY} | base64 -d > /tmp/distribution.p12
       - run: |
           P12_KEY_PATH=/tmp/distribution.p12 \
