@@ -200,7 +200,7 @@ workflows:
           flavor: prod
           filters:
             branches:
-              ignore: "*"
+              ignore: /.*/
             tags:
               only: "/^v.*/"
       ## Upload Flavors to Storage
@@ -220,7 +220,7 @@ workflows:
           flavor: prod
           filters:
             branches:
-              ignore: "*"
+              ignore: /.*/
             tags:
               only: "/^v.*/"
     
@@ -246,7 +246,7 @@ workflows:
           flavor: prod
           filters:
             branches:
-              ignore: "*"
+              ignore: /.*/
             tags:
               only: "/^v.*/"
       ## Upload Flavors to Storage
@@ -266,6 +266,6 @@ workflows:
           flavor: prod
           filters:
             branches:
-              ignore: "*"
+              ignore: /.*/
             tags:
               only: "/^v.*/"
