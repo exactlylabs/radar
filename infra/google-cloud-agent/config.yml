@@ -1,0 +1,73 @@
+metrics:
+  receivers:
+    nginx:
+      type: nginx
+      stub_status_url: http://127.0.0.1:80/status
+  service:
+    pipelines:
+      nginx:
+        receivers:
+          - nginx
+
+logging:
+  receivers:
+    nginx_error:
+      type: nginx_error
+      include_paths:
+        - "/var/log/nginx/mapping-error.log"
+    nginx_access:
+      type: files
+      include_paths:
+        - "/var/log/nginx/*-access.log"
+      record_log_file_path: true
+
+  processors:
+    # Adds request latency to the log parser, expects that we are using the modified nginx template for dokku or, in case of a baremetal,
+    # that the nginx config file has the log format configured.
+    nginx_extended:
+      type: parse_regex
+      regex: '^(?:(?<app_name>[^ ]*) )?(?<http_request_remoteIp>[^ ]*) (?<host>[^ ]*) (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<http_request_requestMethod>\S+)(?: +(?<http_request_requestUrl>[^\"]*?)(?: +(?<http_request_protocol>\S+))?)?" (?<http_request_status>[^ ]*) (?<http_request_responseSize>[^ ]*) ?(?<http_request_latency>[^ ]*)?(?: "(?<http_request_referer>[^\"]*)" "(?<http_request_userAgent>[^\"]*)")?$'
+      time_key: "time"
+      time_format: "%d/%b/%Y:%H:%M:%S %z"
+    
+    set_http_request:
+       type: modify_fields
+       fields:
+         labels.source:
+           static_value: "nginx"
+         labels.dokku_app_name:
+           move_from: jsonPayload.app_name
+         httpRequest.status:
+           move_from: jsonPayload.http_request_status
+#           type: integer
+         httpRequest.requestMethod:
+           move_from: jsonPayload.http_request_requestMethod
+         httpRequest.requestUrl:
+           move_from: jsonPayload.http_request_requestUrl
+         httpRequest.responseSize:
+           move_from: jsonPayload.http_request_responseSize
+ #          type: integer
+         httpRequest.userAgent:
+           move_from: jsonPayload.http_request_userAgent
+         httpRequest.remoteIp:
+           move_from: jsonPayload.http_request_remoteIp
+         httpRequest.referer:
+           move_from: jsonPayload.http_request_referer
+           omit_if: jsonPayload.http_request_referer = "-"
+         httpRequest.latency:
+           move_from: jsonPayload.http_request_latency
+         httpRequest.protocol:
+           move_from: jsonPayload.http_request_protocol
+         jsonPayload.user:
+           omit_if: jsonPayload.user = "-"
+         jsonPayload.host:
+           omit_if: jsonPayload.host = "-"
+ 
+  service:
+    pipelines:
+      nginx_access:
+        receivers: [nginx_access]
+        processors: [nginx_extended, set_http_request]
+
+      nginx_error:
+        receivers: [nginx_error]
