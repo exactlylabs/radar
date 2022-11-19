@@ -78,7 +78,7 @@ class ModalWithTitle extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: body,
                     )
                   ],

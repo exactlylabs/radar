@@ -1,9 +1,9 @@
-import 'package:client_mobile_app/core/results_service/i_results_service.dart';
+import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
-import 'package:client_mobile_app/presentations/speed_test/steps/location_step.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/steps_indicator.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_type_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_place_step.dart';

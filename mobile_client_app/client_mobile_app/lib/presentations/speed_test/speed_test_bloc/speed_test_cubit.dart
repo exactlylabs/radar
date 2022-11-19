@@ -1,4 +1,4 @@
-import 'package:client_mobile_app/core/results_service/i_results_service.dart';
+import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:client_mobile_app/core/models/location.dart';

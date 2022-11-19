@@ -41,4 +41,5 @@ class Images {
   static const roundedCheck = 'assets/images/rounded_check.png';
   static const locationNoInternetBig = 'assets/icons/location_nointernet_big.png';
   static const connectionCellularAlert = 'assets/icons/connection_cellular_alert.png';
+  static const pinAddressIcon = 'assets/icons/pin_address.png';
 }
