@@ -65,7 +65,7 @@ class HttpProvider implements IHttpProvider {
   Either<HttpProviderFailure, T> _decodeResponse<T>(
       HttpResponseModel response, T Function(Map<String, dynamic> json)? fromJson) {
     try {
-      T t = fromJson != null ? fromJson(json.decode(response.body)) : response.body as T;
+      T t = fromJson != null ? fromJson(json.decode(response.body)) : json.decode(response.body) as T;
       return Right(t);
     } catch (exception, stackTrace) {
       return Left(HttpProviderFailure(

@@ -2,7 +2,7 @@ import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/models/test_result.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
-import 'package:client_mobile_app/core/results_service/i_results_service.dart';
+import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
 
 class ResultsService implements IResultsService {
   const ResultsService({

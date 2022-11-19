@@ -3,8 +3,10 @@ import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
-import 'package:client_mobile_app/core/results_service/i_results_service.dart';
-import 'package:client_mobile_app/core/results_service/implementation/results_service.dart';
+import 'package:client_mobile_app/core/services/locations_service/i_locations_service.dart';
+import 'package:client_mobile_app/core/services/locations_service/implementation/locations_service.dart';
+import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
+import 'package:client_mobile_app/core/services/results_service/implementation/results_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_mobile_app/resources/theme.dart';
 import 'package:client_mobile_app/presentations/home_page.dart';
@@ -30,6 +32,12 @@ class App extends StatelessWidget {
           create: (_) => ResultsService(
             restClient: restClient,
             localStorage: localStorage,
+            httpProvider: httpProvider,
+          ),
+        ),
+        RepositoryProvider<ILocationsService>(
+          create: (_) => LocationsService(
+            restClient: restClient,
             httpProvider: httpProvider,
           ),
         ),
