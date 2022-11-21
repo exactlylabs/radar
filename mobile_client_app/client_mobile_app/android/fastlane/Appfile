@@ -2,10 +2,7 @@ json_key_file(ENV["FASTLANE_GCP_JSONKEY_PATH"]) # Path to the json secret file -
 package_name("com.exactlylabs.radar")
 
 for_platform :android do
-    for_lane :dev do
-        package_name("com.exactlylabs.radar.dev")
-    end
-    for_lane :staging do
+    for_lane :release_staging do
         package_name("com.exactlylabs.radar.staging")
     end
 end
