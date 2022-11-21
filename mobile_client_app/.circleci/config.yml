@@ -193,7 +193,7 @@ workflows:
           flavor: staging
           filters:
             branches:
-              ignore: ["master"]
+              only: ["master"]
       - build-android:
           name: "build-android-prod"
           requires: [unit_test]
@@ -213,7 +213,7 @@ workflows:
           flavor: staging
           filters:
             branches:
-              ignore: ["master"]
+              only: ["master"]
       - release-android:
           name: "release-android-prod"
           requires: [build-android-prod]
