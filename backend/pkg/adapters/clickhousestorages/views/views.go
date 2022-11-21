@@ -22,6 +22,12 @@ var summarySemester string
 //go:embed summary_geospace_semester.sql
 var summaryGeospaceSemester string
 
+//go:embed summary_quarter.sql
+var summaryQuarter string
+
+//go:embed summary_geospace_quarter.sql
+var summaryGeospaceQuarter string
+
 //go:embed summary_month.sql
 var summaryMonth string
 
@@ -45,6 +51,8 @@ var MaterializedViews = map[string]string{
 	"summary_geospace_year":     summaryGeospaceYear,
 	"summary_semester":          summarySemester,
 	"summary_geospace_semester": summaryGeospaceSemester,
+	"summary_quarter":           summaryQuarter,
+	"summary_geospace_quarter":  summaryGeospaceQuarter,
 	"summary_month":             summaryMonth,
 	"summary_geospace_month":    summaryGeospaceMonth,
 	"summary_week":              summaryWeek,
@@ -55,6 +63,6 @@ var MaterializedViews = map[string]string{
 var ViewsCreationOrder = []string{
 	"summary_alltime", "summary_geospace_alltime", "summary_year",
 	"summary_geospace_year", "summary_semester", "summary_geospace_semester",
-	"summary_month", "summary_geospace_month", "summary_week",
-	"summary_geospace_week", "us_asns",
+	"summary_quarter", "summary_geospace_quarter", "summary_month", "summary_geospace_month",
+	"summary_week", "summary_geospace_week", "us_asns",
 }
