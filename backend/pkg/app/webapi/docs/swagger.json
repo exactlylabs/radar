@@ -1,0 +1,630 @@
+{
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This api provides a summary of broadband measurements for the US based on geolocations (geospaces)",
+        "title": "Broadband Mapping API",
+        "contact": {
+            "name": "Exactly Labs",
+            "url": "https://exactlylabs.com",
+            "email": "devops@exactlylabs.com"
+        },
+        "version": "0.1.0"
+    },
+    "host": "api.mapping.exactlylabs.com",
+    "basePath": "/api/v1",
+    "paths": {
+        "/asns": {
+            "get": {
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "text to filter for",
+                        "name": "query",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/paginator.PaginatedResponse-storages_ASNOrg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                        }
+                    }
+                }
+            }
+        },
+        "/geojson": {
+            "get": {
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "asn_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "month",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "namespace",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "quarter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "semester",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Weeks of the Year.",
+                        "name": "week",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "year",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {}
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                        }
+                    }
+                }
+            }
+        },
+        "/geospaces": {
+            "get": {
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "text to filter for",
+                        "name": "query",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/paginator.PaginatedResponse-storages_DetailedGeospace"
+                        }
+                    }
+                }
+            }
+        },
+        "/geospaces/{id}/asns": {
+            "get": {
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Geospace ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "text to filter for",
+                        "name": "query",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/paginator.PaginatedResponse-storages_ASNOrg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                        }
+                    }
+                }
+            }
+        },
+        "/geospaces/{id}/overview": {
+            "get": {
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Geospace ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Additionally filter by an ASN",
+                        "name": "asn_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "month",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "quarter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "semester",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Weeks of the Year.",
+                        "name": "week",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "year",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/storages.GeospaceSummaryResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                        }
+                    }
+                }
+            }
+        },
+        "/namespaces/{namespace}/geospaces": {
+            "get": {
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "namespace to list",
+                        "name": "namespace",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "text to filter for",
+                        "name": "query",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/routes.ListNamespaceGeospacesResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/namespaces/{namespace}/tiles/{z}/{x}/{y}": {
+            "get": {
+                "produces": [
+                    "application/vnd.mapbox-vector-tile"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Namespace to return the tiles",
+                        "name": "namespace",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "zoom level",
+                        "name": "z",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "tile x position",
+                        "name": "x",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "tile y position",
+                        "name": "y",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "month",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "quarter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "semester",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Weeks of the Year.",
+                        "name": "week",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "year",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "encoded vector tile",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                        }
+                    }
+                }
+            }
+        },
+        "/tiles/{z}/{x}/{y}": {
+            "get": {
+                "produces": [
+                    "application/vnd.mapbox-vector-tile"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Namespace to return the tiles",
+                        "name": "namespace",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "zoom level",
+                        "name": "z",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "tile x position",
+                        "name": "x",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "tile y position",
+                        "name": "y",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "name": "month",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "quarter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "semester",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Weeks of the Year.",
+                        "name": "week",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "year",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "encoded vector tile",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "paginator.PaginatedResponse-storages_ASNOrg": {
+            "type": "object",
+            "properties": {
+                "_links": {
+                    "$ref": "#/definitions/paginator.PaginationLinks"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/storages.ASNOrg"
+                    }
+                }
+            }
+        },
+        "paginator.PaginatedResponse-storages_DetailedGeospace": {
+            "type": "object",
+            "properties": {
+                "_links": {
+                    "$ref": "#/definitions/paginator.PaginationLinks"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/storages.DetailedGeospace"
+                    }
+                }
+            }
+        },
+        "paginator.PaginationLinks": {
+            "type": "object",
+            "properties": {
+                "next": {
+                    "type": "string"
+                },
+                "previous": {
+                    "type": "string"
+                }
+            }
+        },
+        "restapi.APIError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "restapi.FieldErrors": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/restapi.APIError"
+                    }
+                },
+                "nested": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/restapi.FieldErrors"
+                    }
+                }
+            }
+        },
+        "restapi.FieldsValidationError": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "description": "Errors has dictionary of errors for each field",
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/restapi.FieldErrors"
+                    }
+                }
+            }
+        },
+        "routes.ListNamespaceGeospacesResult": {
+            "type": "object",
+            "properties": {
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/storages.DetailedGeospace"
+                    }
+                }
+            }
+        },
+        "storages.ASNOrg": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "organization": {
+                    "type": "string"
+                }
+            }
+        },
+        "storages.DetailedGeospace": {
+            "type": "object",
+            "properties": {
+                "centroid": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "geo_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "parent": {
+                    "$ref": "#/definitions/storages.Geospace"
+                }
+            }
+        },
+        "storages.Geospace": {
+            "type": "object",
+            "properties": {
+                "centroid": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "geo_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "parent_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "storages.GeospaceSummaryResult": {
+            "type": "object",
+            "properties": {
+                "asn": {
+                    "$ref": "#/definitions/storages.ASNOrg"
+                },
+                "download_median": {
+                    "type": "number"
+                },
+                "download_scores": {
+                    "$ref": "#/definitions/storages.MeasurementScore"
+                },
+                "geospace": {
+                    "$ref": "#/definitions/storages.DetailedGeospace"
+                },
+                "latency_median": {
+                    "type": "number"
+                },
+                "upload_median": {
+                    "type": "number"
+                },
+                "upload_scores": {
+                    "$ref": "#/definitions/storages.MeasurementScore"
+                }
+            }
+        },
+        "storages.MeasurementScore": {
+            "type": "object",
+            "properties": {
+                "bad": {
+                    "type": "number"
+                },
+                "good": {
+                    "type": "number"
+                },
+                "medium": {
+                    "type": "number"
+                },
+                "total_samples": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

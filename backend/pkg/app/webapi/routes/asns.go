@@ -1,0 +1,56 @@
+package routes
+
+import (
+	"net/http"
+
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/paginator"
+)
+
+// @Param id path string true "Geospace ID"
+// @Param query query string  false "text to filter for"
+// @Param args query paginator.PaginationArgs false "pagination arguments"
+// @Success 200 {object} paginator.PaginatedResponse[storages.ASNOrg]
+// @Failure 400 {object} restapi.FieldsValidationError
+// @Router /geospaces/{id}/asns [get]
+func GeospaceASNs(ctx *restapi.WebContext) {
+	asns := ctx.MustGetValue("asnsStorage").(storages.ASNOrgStorage)
+	geospaceId := ctx.UrlParameters()["id"]
+	if ctx.HasErrors() {
+		return
+	}
+	// TODO: move this to paginated response after scheduling the change with frontend
+	response, err := paginator.New[*storages.ASNOrg]().Paginate(ctx, func(limit, offset int) (paginator.Iterator[*storages.ASNOrg], error) {
+		query := ctx.QueryParams().Get("query")
+		if query != "" {
+			return asns.SearchFromGeospace(query, geospaceId, nil, nil)
+		}
+		return asns.AllFromGeospace(geospaceId, nil, nil)
+	})
+	if err != nil {
+		panic(errors.Wrap(err, "GeospaceASNs Paginate"))
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+// @Param query query string  false "text to filter for"
+// @Param args query paginator.PaginationArgs false "pagination arguments"
+// @Success 200 {object} paginator.PaginatedResponse[storages.ASNOrg]
+// @Failure 400 {object} restapi.FieldsValidationError
+// @Router /asns [get]
+func ListASNs(ctx *restapi.WebContext) {
+	asns := ctx.MustGetValue("asnsStorage").(storages.ASNOrgStorage)
+	response, err := paginator.New[*storages.ASNOrg]().Paginate(ctx, func(limit, offset int) (paginator.Iterator[*storages.ASNOrg], error) {
+		query := ctx.QueryParams().Get("query")
+		if query != "" {
+			return asns.Search(query, &limit, &offset)
+		}
+		return asns.All(&limit, &offset)
+	})
+	if err != nil {
+		panic(errors.Wrap(err, "routes.ListASNs Paginate"))
+	}
+	ctx.JSON(http.StatusOK, response)
+}
