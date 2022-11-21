@@ -19,6 +19,17 @@ type Config struct {
 	FilesBucketName           string `config:"FILES_BUCKET_NAME"`
 	CORSAllowedOrigins        string `config:"CORS_ALLOWED_ORIGINS"`
 	ClickhouseStorageNWorkers string `config:"CLICKHOUSE_STORAGE_NWORKERS"`
+	UseCacheStr               string `config:"USE_CACHE"`
+	StatesGeoJSONFile         string `config:"STATES_GEOJSON_FILE"`
+	CountiesGeoJSONFile       string `config:"COUNTIES_GEOJSON_FILE"`
+	TribalTractsGeoJSONFile   string `config:"TRIBAL_TRACTS_GEOJSON_FILE"`
+	StatesMBTilesFile         string `config:"STATES_MBTILES_FILE"`
+	CountiesMBTilesFile       string `config:"COUNTIES_MBTILES_FILE"`
+	TribalTractsMBTilesFile   string `config:"TRIBAL_TRACTS_MBTILES_FILE"`
+	MultiLayeredMBTilesFile   string `config:"MULTI_LAYERED_MBTILES_FILE"`
+	StatesLayerName           string `config:"STATES_LAYER_NAME"`
+	CountiesLayerName         string `config:"COUNTIES_LAYER_NAME"`
+	TribalTractsLayerName     string `config:"TRIBAL_TRACTS_LAYER_NAME"`
 }
 
 func (c *Config) DBDSN() string {
@@ -34,6 +45,14 @@ func (c *Config) DBPort() int {
 		panic(errors.Wrap(err, "Config#DBPort Atoi"))
 	}
 	return dbPort
+}
+
+func (c *Config) UseCache() bool {
+	b, err := strconv.ParseBool(c.UseCacheStr)
+	if err != nil {
+		panic(errors.Wrap(err, "Config#UseCache ParseBool"))
+	}
+	return b
 }
 
 func (c *Config) AllowedOrigins() []string {
