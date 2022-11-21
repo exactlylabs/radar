@@ -11,34 +11,32 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorage"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorages"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ingestor"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/ports"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/clickhousedb"
 	"github.com/joho/godotenv"
 )
 
-func runInsertions(ctx context.Context, storage ports.MeasurementsStorage) {
-	err := storage.Open()
-	if err != nil {
+func runInsertions(ctx context.Context, s storages.IngestorAppStorages) {
+	if err := s.MeasurementStorage.Open(); err != nil {
 		panic(err)
 	}
-	measStartTime, err := storage.LastMeasurementDate()
+	defer s.MeasurementStorage.Close()
+	measStartTime, err := s.MeasurementStorage.LastDate()
 	if err != nil {
 		panic(err)
 	}
 	if measStartTime == nil {
-		fmt.Println("Error: there's not previous data inserted into the database. You should call the ingest CLI first to backpopulate the DB")
+		fmt.Println("Error: there's no previous data inserted into the database. You should call the ingest CLI first to backpopulate the DB")
 		os.Exit(1)
-	} else {
-		truncated := measStartTime.Truncate(time.Hour*24).AddDate(0, 0, 1)
-		measStartTime = &truncated
 	}
 
 	endTime := time.Now().Truncate(time.Hour * 24)
 	start := time.Now()
 	log.Printf("Requesting insertions from %v to %v\n", measStartTime, endTime)
-	err = ingestor.Ingest(ctx, storage, config.GetConfig().FilesBucketName, *measStartTime, endTime)
+	err = ingestor.Ingest(ctx, s, config.GetConfig().FilesBucketName, *measStartTime, endTime, true)
 	if err != nil {
 		panic(err)
 	}
@@ -74,18 +72,28 @@ func main() {
 		nWorkers = n
 	}
 
-	storage := clickhousestorage.New(&clickhousestorage.ChStorageOptions{
-		DBName:      conf.DBName,
-		Username:    conf.DBUser,
-		Password:    conf.DBPassword,
-		Host:        conf.DBHost,
-		Port:        conf.DBPort(),
-		NWorkers:    nWorkers,
-		UpdateViews: true,
-		// When ingesting, the view gets updated and ends up in a bad state.
-		// This prevents it from happening
-		SwapTempTable: true,
+	db, err := clickhousedb.Open(clickhousedb.ChStorageOptions{
+		DBName:         conf.DBName,
+		Username:       conf.DBUser,
+		Password:       conf.DBPassword,
+		Host:           conf.DBHost,
+		Port:           conf.DBPort(),
+		MaxConnections: nWorkers + 5,
 	})
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	s := storages.IngestorAppStorages{
+		GeospaceStorage: clickhousestorages.NewGeospaceStorage(db),
+		ASNOrgStorage:   clickhousestorages.NewASNOrgStorage(db),
+		MeasurementStorage: clickhousestorages.NewMeasurementStorage(db, &clickhousestorages.MeasurementStorageOpts{
+			NWorkers:  nWorkers,
+			SwapTable: true,
+			Truncate:  false,
+		}),
+		SummariesStorage: clickhousestorages.NewSummariesStorage(db),
+	}
 	// Run a first time then, run once every x hour
 	timer := time.NewTimer(time.Second)
 	for {
@@ -93,7 +101,7 @@ func main() {
 		case <-ctx.Done():
 			return
 		case <-timer.C:
-			runInsertions(ctx, storage)
+			runInsertions(ctx, s)
 			timer.Reset(time.Hour)
 		}
 	}

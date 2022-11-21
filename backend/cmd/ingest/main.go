@@ -8,9 +8,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorage"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorages"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ingestor"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/clickhousedb"
 	"github.com/joho/godotenv"
 )
 
@@ -31,22 +33,32 @@ func main() {
 		}
 		nWorkers = n
 	}
-	storage := clickhousestorage.New(&clickhousestorage.ChStorageOptions{
-		DBName:        conf.DBName,
-		Username:      conf.DBUser,
-		Password:      conf.DBPassword,
-		Host:          conf.DBHost,
-		Port:          conf.DBPort(),
-		NWorkers:      nWorkers,
-		UpdateViews:   *updateViews,
-		SwapTempTable: *swapTable,
-		TruncateFirst: *truncate,
+	db, err := clickhousedb.Open(clickhousedb.ChStorageOptions{
+		DBName:         conf.DBName,
+		Username:       conf.DBUser,
+		Password:       conf.DBPassword,
+		Host:           conf.DBHost,
+		Port:           conf.DBPort(),
+		MaxConnections: nWorkers + 5,
 	})
-
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
 	start, _ := time.Parse("2006-01-02", *startStr)
 	final, _ := time.Parse("2006-01-02", *endStr)
+	s := storages.IngestorAppStorages{
+		GeospaceStorage: clickhousestorages.NewGeospaceStorage(db),
+		ASNOrgStorage:   clickhousestorages.NewASNOrgStorage(db),
+		MeasurementStorage: clickhousestorages.NewMeasurementStorage(db, &clickhousestorages.MeasurementStorageOpts{
+			NWorkers:  nWorkers,
+			SwapTable: *swapTable,
+			Truncate:  *truncate,
+		}),
+		SummariesStorage: clickhousestorages.NewSummariesStorage(db),
+	}
 	t := time.Now()
-	err := ingestor.Ingest(context.Background(), storage, config.GetConfig().FilesBucketName, start, final)
+	err = ingestor.Ingest(context.Background(), s, config.GetConfig().FilesBucketName, start, final, *updateViews)
 	if err != nil {
 		panic(err)
 	}
