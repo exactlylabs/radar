@@ -7,6 +7,7 @@ import (
 
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
 )
 
 const (
@@ -33,7 +34,7 @@ func (pa *PaginationArgs) Parse(c *restapi.WebContext) {
 	if limitStr != "" {
 		l, err := strconv.Atoi(limitStr)
 		if err != nil {
-			c.AddFieldError("limit", restapi.SingleFieldError(
+			c.AddFieldError("limit", apierrors.SingleFieldError(
 				"not a valid integer", "invalid_format",
 			))
 		}
@@ -42,7 +43,7 @@ func (pa *PaginationArgs) Parse(c *restapi.WebContext) {
 	if offsetStr != "" {
 		o, err := strconv.Atoi(offsetStr)
 		if err != nil {
-			c.AddFieldError("offset", restapi.SingleFieldError(
+			c.AddFieldError("offset", apierrors.SingleFieldError(
 				"not a valid integer", "invalid_format",
 			))
 		}

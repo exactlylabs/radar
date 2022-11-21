@@ -1,4 +1,4 @@
-package restapi
+package apierrors
 
 var (
 	InternalAPIError APIError = APIError{

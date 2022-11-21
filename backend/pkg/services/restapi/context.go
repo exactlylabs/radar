@@ -9,17 +9,18 @@ import (
 	"net/url"
 
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
 	"github.com/gorilla/mux"
 	"golang.org/x/sync/syncmap"
 )
 
 type WebContext struct {
 	tmpWriter    io.ReadWriter
-	writer       http.ResponseWriter
+	Writer       http.ResponseWriter
 	Request      *http.Request
 	meta         syncmap.Map
-	fieldsErrors map[string]FieldErrors
-	err          *APIError
+	fieldsErrors map[string]apierrors.FieldErrors
+	err          *apierrors.APIError
 	statusCode   int
 	URLParams    map[string]string
 }
@@ -42,9 +43,9 @@ func (wc *WebContext) PrepareRequest(w http.ResponseWriter, r *http.Request) *We
 	}
 	return &WebContext{
 		meta:         wc.meta,
-		writer:       w,
+		Writer:       w,
 		Request:      r,
-		fieldsErrors: make(map[string]FieldErrors),
+		fieldsErrors: make(map[string]apierrors.FieldErrors),
 		tmpWriter:    bytes.NewBuffer(nil),
 		statusCode:   200,
 		URLParams:    urlParams,
@@ -68,12 +69,12 @@ func (wc *WebContext) MustGetValue(key string) any {
 	return obj
 }
 
-func (wc *WebContext) AddFieldError(field string, err FieldErrors) {
+func (wc *WebContext) AddFieldError(field string, err apierrors.FieldErrors) {
 	wc.fieldsErrors[field] = err
 	wc.statusCode = http.StatusBadRequest
 }
 
-func (wc *WebContext) Reject(status int, err *APIError) {
+func (wc *WebContext) Reject(status int, err *apierrors.APIError) {
 	wc.err = err
 	wc.statusCode = status
 }
@@ -83,7 +84,7 @@ func (wc *WebContext) HasErrors() bool {
 }
 
 func (wc *WebContext) JSON(status int, response any) {
-	wc.writer.Header().Set("Content-Type", "application/json")
+	wc.Writer.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(wc.tmpWriter).Encode(response); err != nil {
 		panic(errors.Wrap(err, "WebContext#JSON"))
 	}
@@ -101,18 +102,18 @@ func (wc *WebContext) Write(data []byte) (int, error) {
 func (wc *WebContext) Commit() error {
 	// WriteHeader should always be called before we Write to the ResponseWriter
 	// otherwise the statusCode is set to http.StatusOK and we get warnings
-	wc.writer.WriteHeader(wc.statusCode)
+	wc.Writer.WriteHeader(wc.statusCode)
 	if wc.err != nil {
-		valError := ValidationError{Errors: []APIError{*wc.err}}
-		if err := json.NewEncoder(wc.writer).Encode(valError); err != nil {
+		valError := apierrors.ValidationError{Errors: []apierrors.APIError{*wc.err}}
+		if err := json.NewEncoder(wc.Writer).Encode(valError); err != nil {
 			panic(errors.Wrap(err, "WebContext#Commit Encode"))
 		}
 	} else if len(wc.fieldsErrors) > 0 {
-		valError := FieldsValidationError{Errors: wc.fieldsErrors}
-		if err := json.NewEncoder(wc.writer).Encode(valError); err != nil {
+		valError := apierrors.FieldsValidationError{Errors: wc.fieldsErrors}
+		if err := json.NewEncoder(wc.Writer).Encode(valError); err != nil {
 			panic(errors.Wrap(err, "WebContext#Commit Encode"))
 		}
-	} else if _, err := io.Copy(wc.writer, wc.tmpWriter); err != nil {
+	} else if _, err := io.Copy(wc.Writer, wc.tmpWriter); err != nil {
 		return errors.Wrap(err, "WebContext#Commit Copy")
 	}
 	return nil
@@ -123,7 +124,7 @@ func (wc *WebContext) SetStatus(status int) {
 }
 
 func (wc *WebContext) ResponseHeader() http.Header {
-	return wc.writer.Header()
+	return wc.Writer.Header()
 }
 
 func (wc *WebContext) UrlParameters() map[string]string {

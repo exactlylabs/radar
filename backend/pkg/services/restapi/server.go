@@ -9,27 +9,44 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type RouteHandler func(ctx *WebContext)
+
 type WebServer struct {
-	server           *http.Server
-	handlerProviders []func(http.Handler) http.Handler
-	router           *mux.Router
-	baseCtx          *WebContext
+	server             *http.Server
+	middlewares        []Middleware
+	recoveryMiddleware Middleware
+	loggerMiddleware   Middleware
+	router             *mux.Router
+	baseCtx            *WebContext
 }
 
-func NewWebServer() *WebServer {
-	return &WebServer{
-		handlerProviders: make([]func(http.Handler) http.Handler, 0),
-		router:           mux.NewRouter(),
-		baseCtx:          NewWebContext(),
+func NewWebServer(options ...ServerOption) (*WebServer, error) {
+	server := &WebServer{
+		middlewares:        make([]Middleware, 0),
+		recoveryMiddleware: NewRecoveryMiddleware(),
+		loggerMiddleware:   NewRequestLoggerMiddleware(),
+		router:             mux.NewRouter(),
+		baseCtx:            NewWebContext(),
 	}
+	for _, opt := range options {
+		err := opt(server)
+		if err != nil {
+			return nil, errors.Wrap(err, "restapi.NewWebServer %T", opt)
+		}
+	}
+	return server, nil
 }
-func (w *WebServer) Route(endpoint string, route func(*WebContext), methods ...string) {
+
+func (w *WebServer) Route(endpoint string, route RouteHandler, methods ...string) {
 	if len(methods) == 0 {
 		methods = []string{"GET"}
 	}
 	w.router.HandleFunc(endpoint, func(writer http.ResponseWriter, r *http.Request) {
 		ctx := w.baseCtx.PrepareRequest(writer, r)
-		route(ctx)
+		routeHandler := func(ctx *WebContext) {
+			route(ctx)
+		}
+		w.prepareRoute(ctx, routeHandler, w.middlewares...)()
 		if err := ctx.Commit(); err != nil {
 			panic(errors.Wrap(err, "WebServer#Route Commit"))
 		}
@@ -37,17 +54,37 @@ func (w *WebServer) Route(endpoint string, route func(*WebContext), methods ...s
 	}).Methods(methods...)
 }
 
-// AddHandlers adds layers of handler functions before calling the route.
+// prepareRoute will create the call sequence for a specific route, calling all middlewares recursivelly until the route is called
+func (w *WebServer) prepareRoute(ctx *WebContext, route RouteHandler, mds ...Middleware) func() {
+	if len(mds) == 0 {
+		return func() {
+			route(ctx)
+		}
+	}
+	return func() {
+		// Call Middleware, passing the next callable (either the route or another middleware)
+		mds[0](ctx, w.prepareRoute(ctx, route, mds[1:]...))
+	}
+}
+
+// AddMiddlewares adds layers of handler functions that intercept both request and response.
 // Note that the ordering matters here, so the first argument is going to be called first
-func (w *WebServer) AddHandlers(provider ...func(h http.Handler) http.Handler) {
-	w.handlerProviders = append(w.handlerProviders, provider...)
+// Important Note: NewRequestLoggerMiddleware and NewRecoveryMiddleware
+// are set separatedly and always at start and the end, respectively.
+func (w *WebServer) AddMiddlewares(middlewares ...Middleware) {
+	w.middlewares = append(w.middlewares, middlewares...)
 }
 
 func (w *WebServer) Setup() {
-	handler := newRequestLogger()(recoveryHandler()(w.router))
-	for i := len(w.handlerProviders) - 1; i >= 0; i-- {
-		handler = w.handlerProviders[i](handler)
+	// Set the logging and recovery middlewares in the first and last position, respectively.
+	extendedMiddlewares := make([]Middleware, len(w.middlewares)+2)
+	extendedMiddlewares[0] = w.loggerMiddleware
+	for i, m := range w.middlewares {
+		extendedMiddlewares[i+1] = m
 	}
+	extendedMiddlewares[len(extendedMiddlewares)-1] = w.recoveryMiddleware
+	w.middlewares = extendedMiddlewares
+	var handler http.Handler = w.router
 	w.server = &http.Server{
 		Handler: handler,
 	}
