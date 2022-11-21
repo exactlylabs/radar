@@ -96,7 +96,7 @@ jobs:
           working_directory: ~/project/mobile_client_app/client_mobile_app
       - run:
           # TODO: This credential might change if we move our App release to TTAC's account
-          command: echo ${FLUTTER_ANDROID_DEV_RELEASE_GCP_CREDENTIAL} | base64 -d 0 > /tmp/android_gcpkey.json
+          command: echo ${FLUTTER_ANDROID_DEV_RELEASE_GCP_CREDENTIAL} | base64 -d > /tmp/android_gcpkey.json
       - run:
           command: |
             ANDROID_AAB_PATH=$(ls ~/workspace/android/<< parameters.flavor >>/*.aab) \
@@ -171,7 +171,7 @@ jobs:
 
 
 workflows:
-  workflow:
+  mobile_app:
     jobs:
       - flutter/unit_test:
           name: "unit_test"
