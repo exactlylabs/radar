@@ -6,8 +6,8 @@ import (
 	"io"
 	"time"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/models"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/ingestor/ports"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ingestor/models"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/hamba/avro/ocf"
 )
@@ -17,7 +17,7 @@ type geodata struct {
 	geoId     string
 }
 
-func processDate(readers []io.ReadCloser, s ports.MeasurementsStorage) error {
+func processDate(readers []io.ReadCloser, startTime time.Time, s storages.IngestorAppStorages) error {
 	measReader, revReader := readers[0], readers[1]
 	measDecoder, err := ocf.NewDecoder(measReader)
 	if err != nil {
@@ -33,24 +33,47 @@ func processDate(readers []io.ReadCloser, s ports.MeasurementsStorage) error {
 		return err
 	}
 	revReader.Close()
-
-	if err := s.InsertMeasurements(
-		&measurementIterator{decoder: measDecoder, geoIndex: index},
+	if err := s.MeasurementStorage.Insert(
+		newMeasurementIterator(measDecoder, index, &startTime, s.GeospaceStorage, s.ASNOrgStorage),
 	); err != nil {
 		return err
 	}
 	return nil
 }
 
-func Ingest(ctx context.Context, s ports.MeasurementsStorage, bucketName string, start, end time.Time) error {
-	if err := s.Open(); err != nil {
-		panic(err)
-	}
-	defer s.Close()
+func Ingest(ctx context.Context, s storages.IngestorAppStorages, bucketName string, start, end time.Time, summarize bool) error {
 	it, err := Fetch(bucketName, []string{"ipgeocode", "reversegeocode"}, start, end)
 	if err != nil {
 		return err
 	}
+	if it == nil {
+		return nil
+	}
+	if err := s.OpenAll(); err != nil {
+		panic(err)
+	}
+	defer func() {
+		s.GeospaceStorage.Close()
+		s.ASNOrgStorage.Close()
+		s.SummariesStorage.Close()
+		clearCache()
+	}()
+	if err := loadCache(s.GeospaceStorage, s.ASNOrgStorage); err != nil {
+		return errors.Wrap(err, "ingestor.Ingest loadCache")
+	}
+
+	if err := ingestFetchedData(ctx, start, s, it); err != nil {
+		return err
+	}
+	// Ensure that any outstanding insertion is finished before summarizing
+	s.MeasurementStorage.Close()
+	if summarize {
+		s.SummariesStorage.Summarize()
+	}
+	return nil
+}
+
+func ingestFetchedData(ctx context.Context, startTime time.Time, s storages.IngestorAppStorages, it *ItemIterator) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -63,7 +86,7 @@ func Ingest(ctx context.Context, s ports.MeasurementsStorage, bucketName string,
 			if readers == nil {
 				return nil
 			}
-			if err := processDate(readers, s); err != nil {
+			if err := processDate(readers, startTime, s); err != nil {
 				return errors.Wrap(err, "ingestor.Ingest processDate")
 			}
 		}

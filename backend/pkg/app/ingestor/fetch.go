@@ -36,7 +36,7 @@ func (it *ItemIterator) Next() ([]io.ReadCloser, error) {
 	return readers, nil
 }
 
-// Fetch avro files, returning an iterator of files
+// Fetch avro files, returning an iterator of files or nil in case no files are found
 func Fetch(bucket string, directories []string, start, end time.Time) (*ItemIterator, error) {
 	ctx := context.Background()
 	client, err := gcpstorage.NewClient(ctx)
@@ -46,7 +46,7 @@ func Fetch(bucket string, directories []string, start, end time.Time) (*ItemIter
 	log.Printf("Fetching files to download for bucket %v\n from %v to %v", bucket, start, end)
 	names := make([][]string, 0)
 	// Iterate through dates and add them to be added into the database
-	for date := start; date.Before(end); date = date.AddDate(0, 0, 1) {
+	for date := start.Truncate(time.Hour * 24); date.Before(end); date = date.AddDate(0, 0, 1) {
 		dateStr := date.Format("2006-01-02")
 		dateNames := make([]string, 0)
 		for _, directory := range directories {
@@ -68,6 +68,9 @@ func Fetch(bucket string, directories []string, start, end time.Time) (*ItemIter
 		if len(dateNames) == len(directories) {
 			names = append(names, dateNames)
 		}
+	}
+	if len(names) == 0 {
+		return nil, nil
 	}
 	return &ItemIterator{
 		names:  names,
