@@ -14,5 +14,5 @@ BUILD=$(date +%s)
 
 mkdir -p ${WORKSPACE}/android/dev
 
-export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -ne 's/version: \([0-9]\+\.[0-9]\+\.[0-9]\+\)+[0-9]\+/\1/p')
+export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -nre 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/\1/p')
 cp ${SCRIPT_DIR}/../build/app/outputs/bundle/devRelease/app-dev-release.aab ${WORKSPACE}/android/dev/app_${VERSION_NAME}+${BUILD}-release.aab

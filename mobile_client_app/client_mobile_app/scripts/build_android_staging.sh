@@ -13,5 +13,5 @@ BUILD=$(date +%s)
 
 mkdir -p ${WORKSPACE}/android/staging
 
-export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -ne 's/version: \([0-9]\+\.[0-9]\+\.[0-9]\+\)+[0-9]\+/\1/p')
+export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -nre 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/\1/p')
 cp ${SCRIPT_DIR}/../build/app/outputs/bundle/stagingRelease/app-staging-release.aab ${WORKSPACE}/android/staging/app_${VERSION_NAME}+${BUILD}-release.aab
