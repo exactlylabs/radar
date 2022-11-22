@@ -1,7 +1,6 @@
 import {GeoJSONResponse} from "./types";
 import {API_URL, throwError} from "../index";
 import {getFiltersString} from "../utils/filters";
-import {Filter} from "../../utils/types";
 import {Asn} from "../asns/types";
 
 export const getGeoJSON = (namespace: string = 'states', provider?: Asn, dateQueryString?: string): Promise<GeoJSONResponse> => {

@@ -1,16 +1,25 @@
 import {ReactElement, useEffect, useState} from "react";
 import L from "leaflet";
 import {MapContainer, TileLayer} from "react-leaflet";
-import { mapTileAttribution, mapTileUrl} from "../../utils/map";
+import {baseStyle, mapTileAttribution, mapTileUrl} from "../../utils/map";
 import {styles} from "./styles/MyMap.style";
-import {GeoJSONResponse, GeoJSONTimedResponse} from "../../api/geojson/types";
+import {
+  GeoJSONProperties,
+  GeoJSONResponse,
+  GeoJSONTimedResponse,
+  UnparsedGeoJSONProperties
+} from "../../api/geojson/types";
 import {getGeoJSON} from "../../api/geojson/requests";
 import {handleError} from "../../api";
-import {GeospaceInfo} from "../../api/geospaces/types";
+import {GeospaceInfo, GeospaceOverview} from "../../api/geospaces/types";
 import {Filter, Optional} from "../../utils/types";
 import {Asn} from "../../api/asns/types";
 import CustomMap from "./CustomMap/CustomMap";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+// @ts-ignore
+import vectorTileLayer from 'leaflet-vector-tile-layer';
+import {getVectorTilesUrl} from "../../api/tiles/requests";
+import {getSignalStateDownload, speedColors, SpeedsObject} from "../../utils/speeds";
 
 interface MyMapProps {
   namespace: string;
@@ -47,29 +56,52 @@ const MyMap = ({
   const {isSmallScreen, isTabletScreen} = useViewportSizes();
   const isSmallMap = isSmallScreen || isTabletScreen;
 
-  const [geoJSON, setGeoJSON] = useState<GeoJSONTimedResponse>();
+  const [tileLayer, setTileLayer] = useState(null);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+
+  const options: any = {
+    style: (feature: any) => {
+      let style = baseStyle;
+      if (feature) {
+        const properties = feature.properties as UnparsedGeoJSONProperties;
+        if (properties.summary !== undefined) {
+          const summary: GeospaceOverview = JSON.parse(properties.summary) as GeospaceOverview;
+          style = {
+            ...style,
+            color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
+            fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
+          }
+        }
+      }
+      return style;
+    },
+    getFeatureId: (feature: any) => {
+      if(feature.properties?.summary !== undefined) {
+        const summary: GeospaceOverview = JSON.parse(feature.properties.summary) as GeospaceOverview;
+        return summary.geospace.geo_id;
+      } else {
+        return '';
+      }
+    }
+  }
 
   useEffect(() => {
     setLoading(true);
-    getGeoJSON(namespace.toLowerCase(), provider as Asn, dateQueryString)
-      .then((res: GeoJSONResponse) => {
-        setGeoJSON({ data: res, lastUpdate: new Date() });
-      })
-      .catch(err => { handleError(err); })
-      .finally(() => setLoading(false));
+    setTileLayer(vectorTileLayer(getVectorTilesUrl(namespace), options));
+    setLastUpdate(new Date());
+    setLoading(false);
   }, [namespace, provider, dateQueryString]);
 
   return (
     <>
       {
-        geoJSON &&
+        tileLayer &&
         <MapContainer center={{lat: initialCenter[0], lng: initialCenter[1]}}
                     zoom={initialZoom}
                     scrollWheelZoom
                     style={styles.MapContainer(isSmallMap)}
         >
-          <CustomMap geoJSON={geoJSON.data}
-                     selectedGeospace={selectedGeospace}
+          <CustomMap selectedGeospace={selectedGeospace}
                      selectGeospace={selectGeospace}
                      speedType={speedType}
                      selectedSpeedFilters={selectedSpeedFilters}
@@ -79,13 +111,14 @@ const MyMap = ({
                      center={initialCenter}
                      zoom={initialZoom}
                      isRightPanelHidden={isRightPanelHidden}
-                     lastGeoJSONUpdate={geoJSON.lastUpdate}
+                     lastGeoJSONUpdate={lastUpdate}
+                     vectorTileLayer={tileLayer}
           />
           <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
         </MapContainer>
       }
       {
-        !geoJSON &&
+        !tileLayer &&
         <div style={styles.SpinnerContainer}></div>
       }
     </>

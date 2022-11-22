@@ -7,16 +7,15 @@ export type GeoJSONGeometry = {
 }
 
 export type GeoJSONProperties = {
-  AFFGEOID: string;
-  ALAND: number;
-  AWATER: number;
+  ID: string;
   GEOID: string;
-  LSAD: string;
-  NAME: string;
-  STATEFP: string;
-  STATENS: string;
-  STUSPS: string;
   summary: GeospaceOverview;
+}
+
+export type UnparsedGeoJSONProperties = {
+  ID: string;
+  GEOID: string;
+  summary: string;
 }
 
 export type GeoJSONFeature = {

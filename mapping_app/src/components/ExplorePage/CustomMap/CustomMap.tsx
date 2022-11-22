@@ -1,23 +1,23 @@
 import {GeoJSONProperties, GeoJSONResponse} from "../../../api/geojson/types";
 import {Filter, Optional} from "../../../utils/types";
 import {GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
-import L from "leaflet";
+import L, {LeafletMouseEvent, tileLayer} from "leaflet";
 import {useMap} from "react-leaflet";
 import {usePrev} from "../../../hooks/usePrev";
 import {ReactElement, useEffect} from "react";
 import {
-  addClickHandler, checkZoomControlPosition,
-  geoJSONOptions, initializeMap,
+  addClickHandler, baseStyle, checkZoomControlPosition,
+  geoJSONOptions, initializeMap, layerMouseoutHandler, layerMouseoverHandler,
   outlineOnlyStyle,
   paintLayer, removeAllFeatureLayers,
 } from "../../../utils/map";
 import GeographicalTooltip from "../GeographicalTooltip/GeographicalTooltip";
 import ReactDOMServer from "react-dom/server";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import {getSignalStateDownload, speedColors, SpeedsObject} from "../../../utils/speeds";
 
 
 interface CustomMapProps {
-  geoJSON: GeoJSONResponse;
   selectedGeospace: Optional<GeospaceInfo>;
   selectGeospace: (geospace: GeospaceInfo, newCenter: L.LatLng) => void;
   speedType: Filter;
@@ -29,10 +29,10 @@ interface CustomMapProps {
   isRightPanelHidden: boolean;
   lastGeoJSONUpdate: Date;
   dateQueryString?: string;
+  vectorTileLayer: any;
 }
 
 const CustomMap = ({
-  geoJSON,
   selectedGeospace,
   selectGeospace,
   speedType,
@@ -43,7 +43,8 @@ const CustomMap = ({
   zoom,
   isRightPanelHidden,
   lastGeoJSONUpdate,
-  dateQueryString
+  dateQueryString,
+  vectorTileLayer
 }: CustomMapProps): null => {
 
   const map = useMap();
@@ -76,23 +77,29 @@ const CustomMap = ({
   }, [speedType, selectedSpeedFilters, dateQueryString]);
 
   useEffect(() => {
-    removeAllFeatureLayers(map);
-    L.geoJSON(geoJSON, geoJSONOptions)
-     .eachLayer((layer: any) => {
-       paintLayer(layer, selectedGeospace, speedType, selectedSpeedFilters);
-       if(layer.feature) {
-         const properties: GeoJSONProperties = layer.feature.properties as GeoJSONProperties;
-         if(properties.summary !== undefined) {
-           addClickHandler(layer, properties, selectGeospace);
-           const geospace: GeospaceOverview = properties.summary as GeospaceOverview;
-           const tooltip: ReactElement = <GeographicalTooltip geospace={geospace} speedType={speedType as string}/>;
-           if(!isSmallMap) layer.bindTooltip(ReactDOMServer.renderToString(tooltip), {sticky: true, direction: 'center'});
-         } else {
-           layer.setStyle(outlineOnlyStyle);
-         }
-       }
-     })
-     .addTo(map);
+    if(vectorTileLayer) {
+      removeAllFeatureLayers(map);
+      vectorTileLayer.bringToFront();
+      map.addLayer(vectorTileLayer);
+      /*vectorTileLayer.on('click', (e: LeafletMouseEvent) => {
+        if (e.propagatedFrom.feature) {
+          const summary: GeospaceOverview = JSON.parse(e.propagatedFrom.feature.properties.summary) as GeospaceOverview;
+          const centroid: Array<number> = summary.geospace.centroid;
+          const geospacePosition: L.LatLng = L.latLng(centroid[1], centroid[0]);
+          map.flyTo(geospacePosition, 5);
+          map.setView(geospacePosition, map.getZoom() > 5 ? map.getZoom() : 5);
+          const newStyle = {
+            ...baseStyle,
+            weight: 3,
+            opacity: 0.8,
+            fillOpacity: 0.8,
+            color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
+            fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
+          };
+          vectorTileLayer.setFeatureStyle(summary.geospace.geo_id, newStyle);
+        }
+      });*/
+    }
   }, [lastGeoJSONUpdate]);
 
 

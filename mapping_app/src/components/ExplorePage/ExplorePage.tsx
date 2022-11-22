@@ -54,6 +54,7 @@ import ModalContentProviders from "../common/MyGenericModal/ModalContentProvider
 import ModalContentCustomDateRange
   from "../common/MyGenericModal/ModalContentCustomDateRange/ModalContentCustomDateRange";
 import ModalContentCalendar from "../common/MyGenericModal/ModalContentCalendar/ModalContentCalendar";
+import {getVectorTilesUrl} from "../../api/tiles/requests";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;

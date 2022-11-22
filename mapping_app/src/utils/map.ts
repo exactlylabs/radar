@@ -133,6 +133,7 @@ export const paintLayer = (layer: any, selectedGeospace: Optional<GeospaceInfo>,
 }
 
 export const initializeMap = (map: L.Map, setZoom: (newZoom: number) => void, setCenter: (newCenter: Array<number>) => void, withNoZoomControl: boolean) => {
+  console.log('init map', map)
   map.attributionControl.setPrefix('');
   map.setMinZoom(MIN_ZOOM);
   if(withNoZoomControl) {
@@ -165,7 +166,7 @@ export const addClickHandler = (layer: any, properties: GeoJSONProperties, selec
 
 export const removeAllFeatureLayers = (map: L.Map) => {
   map.eachLayer((layer: any) => {
-    if(layer.feature) {
+    if(!layer._url && !layer._loading) {
       layer.remove();
     }
   });
