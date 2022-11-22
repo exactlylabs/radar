@@ -7,14 +7,15 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
 )
 
 func toInt(ctx *restapi.WebContext, key string) *int {
 	val := ctx.QueryParams().Get(key)
 	intVal, err := strconv.Atoi(val)
 	if err != nil {
-		ctx.AddFieldError(key, restapi.FieldErrors{
-			Errors: []*restapi.APIError{
+		ctx.AddFieldError(key, apierrors.FieldErrors{
+			Errors: []*apierrors.APIError{
 				{Message: "is not a valid integer", Code: "invalid_int"},
 			},
 		})
@@ -54,7 +55,7 @@ func GeospaceMeasurementsOverviewHandler(ctx *restapi.WebContext) {
 	if res.Geospace.Id == "" {
 		g, err := geospaces.Get(geospaceId)
 		if err == storages.ErrGeospaceNotFound {
-			ctx.AddFieldError("id", restapi.SingleFieldError(
+			ctx.AddFieldError("id", apierrors.SingleFieldError(
 				"not found", "not_found",
 			))
 			return
@@ -66,7 +67,7 @@ func GeospaceMeasurementsOverviewHandler(ctx *restapi.WebContext) {
 	if asnId != "" && res.ASNOrg == nil {
 		a, err := asns.Get(asnId)
 		if err == storages.ErrASNOrgNotFound {
-			ctx.AddFieldError("id", restapi.SingleFieldError(
+			ctx.AddFieldError("id", apierrors.SingleFieldError(
 				"not found", "not_found",
 			))
 			return

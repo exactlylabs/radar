@@ -31,11 +31,15 @@ func NewMappingAPI(
 	tilesetServers *ports.TilesetServers,
 ) *restapi.WebServer {
 
-	api := restapi.NewWebServer()
-
-	api.AddHandlers(
-		handlers.CORS(
-			handlers.AllowedOrigins(conf.AllowedOrigins()),
+	api, err := restapi.NewWebServer()
+	if err != nil {
+		panic(err)
+	}
+	api.AddMiddlewares(
+		restapi.WrapMuxMiddlewareFunc(
+			handlers.CORS(
+				handlers.AllowedOrigins(conf.AllowedOrigins()),
+			),
 		),
 	)
 

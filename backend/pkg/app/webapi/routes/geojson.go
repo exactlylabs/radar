@@ -13,6 +13,7 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/cache"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
 	"golang.org/x/exp/slices"
 )
 
@@ -59,7 +60,7 @@ func (gja *GeoJSONArgs) PortNamespace() namespaces.Namespace {
 // @Router /geojson [get]
 func HandleGetGeoJSON(c *restapi.WebContext) {
 	conf := c.MustGetValue("config").(*config.Config)
-	cacheKey := fmt.Sprintf("%s", c.Request.URL)
+	cacheKey := c.Request.URL.String()
 	if v, exists := geojsonCache.Get(cacheKey); exists && conf.UseCache() {
 		c.ResponseHeader().Add("Content-Encoding", "gzip")
 		c.Write(v.([]byte))
@@ -74,7 +75,7 @@ func HandleGetGeoJSON(c *restapi.WebContext) {
 	}
 	geoJsonServer, err := servers.Get(args.PortNamespace())
 	if err == geo.ErrWrongNamespace {
-		c.Reject(http.StatusBadRequest, &restapi.APIError{
+		c.Reject(http.StatusBadRequest, &apierrors.APIError{
 			Message: "provided namespace is not supported",
 			Code:    "namespace_not_found",
 		})
@@ -87,7 +88,7 @@ func HandleGetGeoJSON(c *restapi.WebContext) {
 		panic(errors.Wrap(err, "routes.HandleGetGeoJSON GetGeoJSON"))
 	}
 	if collection == nil {
-		c.Reject(http.StatusBadRequest, &restapi.APIError{
+		c.Reject(http.StatusBadRequest, &apierrors.APIError{
 			Message: "no available geojson for this query",
 			Code:    "geojson_not_available",
 		})
@@ -135,19 +136,19 @@ func validateTimeFilter(c *restapi.WebContext) storages.SummaryFilter {
 		filter.Week = toInt(c, "week")
 	}
 	if filter.Semester != nil && filter.Year == nil {
-		c.AddFieldError("year", restapi.SingleFieldError(
+		c.AddFieldError("year", apierrors.SingleFieldError(
 			"is required to use semester filtering",
 			"year_required",
 		))
 	}
 	if filter.Month != nil && filter.Year == nil {
-		c.AddFieldError("year", restapi.SingleFieldError(
+		c.AddFieldError("year", apierrors.SingleFieldError(
 			"is required to use month filtering",
 			"year_required",
 		))
 	}
 	if filter.Week != nil && filter.Year == nil {
-		c.AddFieldError("year", restapi.SingleFieldError(
+		c.AddFieldError("year", apierrors.SingleFieldError(
 			"is required to use week filtering",
 			"year_required",
 		))
@@ -157,11 +158,11 @@ func validateTimeFilter(c *restapi.WebContext) storages.SummaryFilter {
 
 func validateNamespace(ns string, c *restapi.WebContext) string {
 	if ns == "" {
-		c.AddFieldError("namespace", restapi.MissingFieldError)
+		c.AddFieldError("namespace", apierrors.MissingFieldError)
 		return ""
 	}
 	if !slices.Contains([]string{"states", "counties", "tribal_tracts"}, ns) {
-		c.AddFieldError("namespace", restapi.SingleFieldError(
+		c.AddFieldError("namespace", apierrors.SingleFieldError(
 			"is not a valid choice. Choose between [states, counties, tribal_tracts]",
 			"invalid_choice",
 		))
@@ -171,7 +172,7 @@ func validateNamespace(ns string, c *restapi.WebContext) string {
 }
 
 type ServeVectorTilesArgs struct {
-	asnOrgId *string `json:"asn_id"`
+	ASNOrgId *string `json:"asn_id"`
 	storages.SummaryFilter
 }
 
@@ -179,7 +180,7 @@ func (gja *ServeVectorTilesArgs) Parse(c *restapi.WebContext) {
 	gja.SummaryFilter = validateTimeFilter(c)
 	asnId := c.QueryParams().Get("asn_id")
 	if asnId != "" {
-		gja.asnOrgId = &asnId
+		gja.ASNOrgId = &asnId
 	}
 }
 
@@ -220,7 +221,7 @@ func ServeVectorTiles(c *restapi.WebContext) {
 	namespace := convertNamespace(ns)
 	tilesetServer, err := servers.Get(namespace)
 	if err != nil {
-		c.Reject(http.StatusBadRequest, &restapi.APIError{
+		c.Reject(http.StatusBadRequest, &apierrors.APIError{
 			Message: "provided namespace is not supported",
 			Code:    "namespace_not_found",
 		})
@@ -242,7 +243,7 @@ func ServeVectorTiles(c *restapi.WebContext) {
 	}
 	fmt.Println("Time to load VT:", time.Since(start))
 	start = time.Now()
-	summaryMap, err := getSummary(summaries, namespace, args.asnOrgId, args.SummaryFilter, conf.UseCache())
+	summaryMap, err := getSummary(summaries, namespace, args.ASNOrgId, args.SummaryFilter, conf.UseCache())
 	if err != nil {
 		panic(errors.Wrap(err, "routes.ServeVectorTiles getSummary"))
 	}
@@ -323,11 +324,11 @@ func ServeMultiLayeredVectorTiles(c *restapi.WebContext) {
 	fmt.Println("Time to load VT:", time.Since(start))
 	start = time.Now()
 	nsSummary := make(map[namespaces.Namespace]map[string]storages.GeospaceSummaryResult)
-	nsSummary[namespaces.US_STATE], err = getSummary(summaries, namespaces.US_STATE, args.asnOrgId, args.SummaryFilter, conf.UseCache())
+	nsSummary[namespaces.US_STATE], err = getSummary(summaries, namespaces.US_STATE, args.ASNOrgId, args.SummaryFilter, conf.UseCache())
 	if err != nil {
 		panic(errors.Wrap(err, "routes.ServeVectorTiles getSummary"))
 	}
-	nsSummary[namespaces.US_COUNTY], err = getSummary(summaries, namespaces.US_COUNTY, args.asnOrgId, args.SummaryFilter, conf.UseCache())
+	nsSummary[namespaces.US_COUNTY], err = getSummary(summaries, namespaces.US_COUNTY, args.ASNOrgId, args.SummaryFilter, conf.UseCache())
 	if err != nil {
 		panic(errors.Wrap(err, "routes.ServeVectorTiles getSummary"))
 	}
