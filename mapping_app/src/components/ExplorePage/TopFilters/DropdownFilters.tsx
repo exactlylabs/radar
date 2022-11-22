@@ -5,7 +5,7 @@ import CalendarIcon from '../../../assets/calendar-icon.png';
 import ProvidersIcon from '../../../assets/providers-icon.png';
 import SpeedIcon from '../../../assets/speeds-icon.png';
 import DropdownFilterVerticalDivider from "./DropdownFilterVerticalDivider";
-import {calendarFilters, filterTypes, speedFilters} from "../../../utils/filters";
+import {calendarFilters, filterTypes, isCalendarFilterPresent, speedFilters} from "../../../utils/filters";
 import {getAsns, getAsnsForGeospace} from "../../../api/asns/requests";
 import {Asn} from "../../../api/asns/types";
 import {handleError} from "../../../api";
@@ -137,7 +137,7 @@ const DropdownFilters = ({
   return (
     <div style={styles.DropdownFiltersContainer} id={'dropdown-filters--container'}>
       <DropdownFilter iconSrc={SpeedIcon}
-                      options={speedFilters}
+                      options={Object.values(speedFilters)}
                       textWidth={'70px'}
                       type={filterTypes.SPEED}
                       changeFilter={changeSpeedFilter}
@@ -148,14 +148,13 @@ const DropdownFilters = ({
       />
       <DropdownFilterVerticalDivider/>
       <DropdownFilter iconSrc={CalendarIcon}
-                      options={calendarFilters.includes((calendarType as string)) ? calendarFilters : [calendarType, ...calendarFilters]}
+                      options={isCalendarFilterPresent(calendarType) ? Object.values(calendarFilters) : [calendarType, ...Object.values(calendarFilters)]}
                       textWidth={'70px'}
                       type={filterTypes.CALENDAR}
                       changeFilter={changeCalendarFilter}
                       selectedFilter={calendarType}
                       setOpenFilter={setOpenFilter}
                       openFilter={openFilter}
-                      lastOptionTriggersFunction
                       lastOptionOnClick={openDatePicker}
                       loading={false}
       />

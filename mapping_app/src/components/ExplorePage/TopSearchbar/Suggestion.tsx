@@ -24,8 +24,6 @@ const Suggestion = ({
     selectSuggestion(suggestion);
   }
 
-  const getName = () => suggestion.name;
-
   const getSecondaryText = () => {
     let name: string = '';
     if(suggestion.parent) {
@@ -43,7 +41,7 @@ const Suggestion = ({
     >
       <img src={PinIconBlack} style={styles.Icon} alt={'pin-icon'}/>
       <div style={styles.TextContainer}>
-        <p className={'fw-regular'} style={styles.Text}>{getName()}</p>
+        <p className={'fw-regular'} style={styles.Text}>{suggestion.name}</p>
         <p className={'fw-regular'} style={styles.SecondaryText}>{getSecondaryText()}</p>
       </div>
       <ArrowForwardRounded style={styles.Arrow}/>

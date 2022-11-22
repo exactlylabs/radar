@@ -20,7 +20,6 @@ interface DropdownFilterProps {
   clearProviderList?: () => void;
   openFilter: Optional<string>;
   setOpenFilter: (newFilter: Optional<string>) => void;
-  lastOptionTriggersFunction?: boolean;
   lastOptionOnClick?: () => void;
   loading: boolean;
 }
@@ -37,7 +36,6 @@ const DropdownFilter = ({
   clearProviderList,
   openFilter,
   setOpenFilter,
-  lastOptionTriggersFunction,
   lastOptionOnClick,
   loading
 }: DropdownFilterProps): ReactElement => {
@@ -100,7 +98,6 @@ const DropdownFilter = ({
                          dropLeft={type === filterTypes.PROVIDERS}
                          withSearchbar={withSearchbar}
                          searchbarOnChange={searchbarOnChange}
-                         lastOptionTriggersFunction={lastOptionTriggersFunction}
                          lastOptionOnClick={lastOptionOnClick}
                          loading={loading}
                          clearSearch={clearProviderList}

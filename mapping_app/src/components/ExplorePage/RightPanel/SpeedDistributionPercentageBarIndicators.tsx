@@ -4,6 +4,7 @@ import PercentageBarIndicator from "./PercentageBarIndicator";
 import {addPercentages} from "../../../utils/percentages";
 import {styles} from "./styles/SpeedDistributionPercentageBarIndicators.style";
 import {Filter} from "../../../utils/types";
+import {speedFilters} from "../../../utils/filters";
 
 interface SpeedDistributionPercentageBarIndicatorsProps {
   percentages: Array<string>;
@@ -24,7 +25,7 @@ const SpeedDistributionPercentageBarIndicators = ({
   const shouldDisplay = (index: number): boolean => indexesToDisplay.includes(index);
 
   const getSpeedTexts = (key: string): string => {
-    return speedType === 'Download' ?
+    return speedType === speedFilters.DOWNLOAD ?
       speedTextsDownload[key as keyof SpeedsObject] : speedTextsUpload[key as keyof SpeedsObject];
   }
 

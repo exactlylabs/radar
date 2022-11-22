@@ -23,13 +23,13 @@ import {allProvidersElement} from "./TopFilters/utils/providers";
 import {getValueFromUrl, updateUrl} from "../../utils/base64";
 import {Asn} from "../../api/asns/types";
 import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "../../utils/map";
-import MyOverlayingLoader from "../common/MyOverlayingLoader";
+import MyMapOverlayingLoader from "../common/MyMapOverlayingLoader";
 import {emptyGeoJSONFilters, GeoJSONFilters} from "../../api/geojson/types";
 import L from "leaflet";
 import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
 import {getGeospaces} from "../../api/namespaces/requests";
 import DatePicker from "./DatePicker/DatePicker";
-import {getInitialStateFromCalendarType} from "../../utils/dates";
+import {DateFilter, getInitialStateFromCalendarType, getQueryStringFromDateObject} from "../../utils/dates";
 import {getFiltersString} from "../../api/utils/filters";
 import * as amplitude from "@amplitude/analytics-browser";
 
@@ -54,14 +54,14 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [selectedGeospaceId, setSelectedGeospaceId] = useState(getGeospaceId());
   const [selectedGeospace, setSelectedGeospace] = useState<Optional<GeospaceInfo>>(getValueFromUrl('selectedGeospace') ?? null);
   const [geospaceNamespace, setGeospaceNamespace] = useState(getValueFromUrl('geospaceNamespace') ?? tabs.COUNTIES);
-  const [speedType, setSpeedType] = useState<string>(getValueFromUrl('speedType') ?? speedFilters[0]);
-  const [calendarType, setCalendarType] = useState<string>(getValueFromUrl('calendarType') ?? calendarFilters[3]);
+  const [speedType, setSpeedType] = useState<string>(getValueFromUrl('speedType') ?? speedFilters.DOWNLOAD);
+  const [calendarType, setCalendarType] = useState<string>(getValueFromUrl('calendarType') ?? calendarFilters.THIS_YEAR);
   const [provider, setProvider] = useState<Asn>(getValueFromUrl('provider') ?? allProvidersElement);
   const [selectedSpeedFilters, setSelectedSpeedFilters] = useState<Array<string>>(getValueFromUrl('selectedSpeedFilters') ?? [speedTypes.UNSERVED, speedTypes.UNDERSERVED, speedTypes.SERVED]);
   const [currentMapZoom, setCurrentMapZoom] = useState(getValueFromUrl('zoom') ?? 3)
   const [currentMapCenter, setCurrentMapCenter] = useState<Array<number>>(getValueFromUrl('center') ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [dateQueryString, setDateQueryString] = useState(getValueFromUrl('calendarType') ? getDateQueryStringFromCalendarType(getValueFromUrl('calendarType')) : getDateQueryStringFromCalendarType(calendarFilters[3]));
+  const [dateQueryString, setDateQueryString] = useState(getValueFromUrl('calendarType') ? getDateQueryStringFromCalendarType(getValueFromUrl('calendarType')) : getDateQueryStringFromCalendarType(calendarFilters.THIS_YEAR));
 
   useEffect(() => {
     if(REACT_APP_ENV === 'production') {
@@ -179,9 +179,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const openDatePicker = () => setIsDatePickerOpen(true);
   const closeDatePicker = () => setIsDatePickerOpen(false);
 
-  const handleApplyRanges = (queryString: string) => {
-    setCalendarType(generateFilterLabel(queryString));
-    setDateQueryString(queryString);
+  const handleApplyRanges = (dateObject: DateFilter) => {
+    setCalendarType(generateFilterLabel(dateObject));
+    setDateQueryString(getQueryStringFromDateObject(dateObject));
     closeDatePicker();
   }
 
@@ -192,7 +192,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   return (
     <div style={styles.ExplorePageContainer}>
-      { loading && <MyOverlayingLoader/> }
+      { loading && <MyMapOverlayingLoader/> }
       <MyMap namespace={geospaceNamespace}
              selectedGeospace={selectedGeospace}
              selectGeospace={selectGeospace}

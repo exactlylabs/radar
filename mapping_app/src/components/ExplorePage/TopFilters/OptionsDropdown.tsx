@@ -14,7 +14,6 @@ interface OptionsDropdownProps {
   dropRight: boolean;
   withSearchbar?: boolean;
   searchbarOnChange?: ChangeEventHandler;
-  lastOptionTriggersFunction?: boolean;
   lastOptionOnClick?: () => void;
   loading: boolean;
   clearSearch?: () => void;
@@ -28,7 +27,6 @@ const OptionsDropdown = ({
   dropRight,
   withSearchbar,
   searchbarOnChange,
-  lastOptionTriggersFunction,
   lastOptionOnClick,
   loading,
   clearSearch,
@@ -58,18 +56,14 @@ const OptionsDropdown = ({
       {
         options.length > 0 &&
         options.map((option, index) => {
-          return lastOptionTriggersFunction && lastOptionOnClick ?
+          return (
             <Option key={isAsn(option) ? option.id : option}
                     option={option}
                     selected={isAsn(option) ? (option as Asn).id === (selectedOption as Asn).id : option === selectedOption}
-                    onClick={index === (options.length - 1) ? lastOptionOnClick : handleSelectOption}
+                    onClick={index === (options.length - 1) && !!lastOptionOnClick ? lastOptionOnClick : handleSelectOption}
                     isLast={index === (options.length - 1)}
-            /> :
-            <Option key={isAsn(option) ? option.id : option}
-                    option={option}
-                    selected={isAsn(option) ? (option as Asn).id === (selectedOption as Asn).id : option === selectedOption}
-                    onClick={handleSelectOption}
-            />;
+            />
+          );
         })
       }
       {

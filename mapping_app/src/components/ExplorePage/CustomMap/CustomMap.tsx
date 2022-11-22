@@ -27,7 +27,6 @@ interface CustomMapProps {
   zoom: number;
   isRightPanelHidden: boolean;
   lastGeoJSONUpdate: Date;
-  dateQueryString?: string;
 }
 
 const CustomMap = ({
@@ -41,8 +40,7 @@ const CustomMap = ({
   center,
   zoom,
   isRightPanelHidden,
-  lastGeoJSONUpdate,
-  dateQueryString
+  lastGeoJSONUpdate
 }: CustomMapProps): null => {
 
   const map = useMap();
@@ -70,7 +68,7 @@ const CustomMap = ({
 
   useEffect(() => {
     map.eachLayer((layer: any) => { paintLayer(layer, selectedGeospace, speedType, selectedSpeedFilters); });
-  }, [speedType, selectedSpeedFilters, dateQueryString]);
+  }, [speedType, selectedSpeedFilters]);
 
   useEffect(() => {
     removeAllFeatureLayers(map);

@@ -1,4 +1,11 @@
-import {getDateFromString, getMonthName, getMonthNumberFromName, getWeekLimits, getWeekNumber} from "./dates";
+import {
+  DateFilter,
+  getDateFromString,
+  getMonthName,
+  getMonthNumberFromName,
+  getWeekLimits,
+  getWeekNumber
+} from "./dates";
 import Option from "../components/ExplorePage/TopFilters/Option";
 import {Optional} from "./types";
 import {start} from "repl";
@@ -9,8 +16,22 @@ export const filterTypes = {
   PROVIDERS: 'providers',
 }
 
-export const speedFilters = ['Download', 'Upload'];
-export const calendarFilters = ['All time', 'Last week', 'Last month', 'This year', 'Custom date...'];
+export enum speedFilters {
+  DOWNLOAD = 'Download',
+  UPLOAD = 'Upload'
+}
+
+export enum calendarFilters {
+  ALL_TIME = 'All time',
+  LAST_WEEK = 'Last week',
+  LAST_MONTH = 'Last month',
+  THIS_YEAR = 'This year',
+  CUSTOM_DATE = 'Custom date...'
+}
+
+export const isCalendarFilterPresent = (value: string): boolean => {
+  return Object.values(calendarFilters).includes(value as calendarFilters);
+}
 
 export type NamespaceTabObject = {
   STATES: string;
@@ -48,52 +69,45 @@ export const getCorrectNamespace = (namespace: string): string => {
 }
 
 export const getZoomForNamespace = (namespace: string): number => {
-  if (namespace.toUpperCase() === 'STATES') return 5;
+  if (namespace.toUpperCase() === tabs.STATES) return 5;
   return 7;
 }
 
-export const generateFilterLabel = (queryString: string): string => {
-  const split: Array<string> = queryString.split('&');
-  const year: number = parseInt(split[1].split('=')[1]);
+export const generateFilterLabel = (dateObject: DateFilter): string => {
+  const year: number = dateObject.selectedYear;
   const isCurrentYear: boolean = year === years[0];
-  const otherField: string = split[2];
-  if(!otherField) {
-    return isCurrentYear ? 'This year' : year.toString();
+  const hasOtherFields: boolean = Object.keys(dateObject).length > 1;
+  if(!hasOtherFields) {
+    return isCurrentYear ? calendarFilters.THIS_YEAR : year.toString();
   }
-  const [otherFieldLabel, otherFieldValue] = otherField.split('=');
   let filterLabel: string = '';
-  switch (otherFieldLabel) {
-    case 'month':
-      filterLabel = `${getMonthName(parseInt(otherFieldValue) - 1)}${isCurrentYear ? '' : ` (${year})`}`;
-      break;
-    case 'semester':
-      filterLabel = `H${otherFieldValue}${isCurrentYear ? '' : ` (${year})`}`;
-      break;
-    case 'week':
-      filterLabel = `${getWeekLimits(year, parseInt(otherFieldValue) + 1)}${isCurrentYear ? '' : ` (${year})`}`;
-      break;
-  }
+  if(dateObject.selectedMonth)
+    filterLabel = `${getMonthName(dateObject.selectedMonth - 1)}${isCurrentYear ? '' : ` (${year})`}`;
+  if(dateObject.selectedSemester)
+    filterLabel = `H${dateObject.selectedSemester}${isCurrentYear ? '' : ` (${year})`}`;
+  if(dateObject.selectedWeek)
+    filterLabel = `${getWeekLimits(year, dateObject.selectedWeek + 1)}${isCurrentYear ? '' : ` (${year})`}`;
   return filterLabel;
 }
 
 export const getDateQueryStringFromCalendarType = (calendarType: string): string => {
   let queryString: string = '';
   switch (calendarType) {
-    case 'Last week':
+    case calendarFilters.LAST_WEEK:
       const thisWeekNumber = getWeekNumber();
       queryString = `&year=${new Date().getFullYear()}&week=${thisWeekNumber - 1 - 1}`; // minus 2 (1 for backend 0 indexing and 1 for one less week)
       break;
-    case 'Last month':
+    case calendarFilters.LAST_MONTH:
       // Month in JS is 0-based, backend is 1-based. So for example if we are in February, getMonth() would
       // return 1. For our backend that's January, but as we want 'Last Month' we can keep that value as is.
       const thisMonth = new Date().getMonth();
       queryString = `&year=${new Date().getFullYear()}&month=${thisMonth}`;
       break;
-    case 'This year':
+    case calendarFilters.THIS_YEAR:
       const thisYear = new Date().getFullYear();
       queryString = `&year=${thisYear}`;
       break;
-    case 'All time':
+    case calendarFilters.ALL_TIME:
       break;
     default:
       queryString = decodeCustomDate(calendarType);

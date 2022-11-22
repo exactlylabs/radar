@@ -112,12 +112,12 @@ const validateGeospaceNamespace = (value: any): string => {
 }
 
 const validateSpeedType = (value: any): string => {
-  if(!isString(value) || !speedFilters.includes(value as string)) return speedFilters[0];
+  if(!isString(value) || !(value as string in speedFilters)) return speedFilters.DOWNLOAD;
   return value;
 }
 
 const validateCalendarType = (value: any): string => {
-  if(!isString(value) || !calendarFilters.includes(value as string)) return calendarFilters[0];
+  if(!isString(value) || !(value as string in calendarFilters)) return calendarFilters.THIS_YEAR;
   return value;
 }
 
