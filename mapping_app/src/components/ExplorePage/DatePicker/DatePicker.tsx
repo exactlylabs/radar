@@ -12,6 +12,7 @@ import {
   years
 } from "../../../utils/filters";
 import {
+  DateFilter,
   DatePickerState,
   getCurrentMonth,
   getFirstDayOfLastWeek,
@@ -23,7 +24,7 @@ import {Optional} from "../../../utils/types";
 
 interface DatePickerProps {
   closeDatePicker: () => void;
-  applyRanges: (queryString: string) => void;
+  applyRanges: (dateObject: DateFilter) => void;
   initialState: Optional<DatePickerState>;
 }
 
@@ -67,21 +68,23 @@ const DatePicker = ({
   }
 
   const applyDateRange = () => {
-    let dateQuery = `&year=${selectedYear}`;
+    //let dateQuery = `&year=${selectedYear}`;
+    let dateObject: DateFilter = {selectedYear};
     switch (selectedTab) {
       case dateTabs.MONTH:
         if(selectedRangeValue !== months[0]) {
-          dateQuery += `&month=${getMonthNumberFromName(selectedRangeValue as string) + 1}`; // months are 1-indexed in backend
+          dateObject.selectedMonth = getMonthNumberFromName(selectedRangeValue as string) + 1;
         }
         break;
       case dateTabs.HALF_YEAR:
-        dateQuery += `&semester=${subtitleText === 'H1' ? 1 : 2}`;
+        dateObject.selectedSemester = subtitleText === 'H1' ? 1 : 2;
         break;
       case dateTabs.WEEK:
-        dateQuery += `&week=${selectedWeek - 1}`; // weeks are 0-indexed in backend
+        dateObject.selectedWeek = selectedWeek - 1;
         break;
     }
-    applyRanges(dateQuery);
+    console.log('date Object', dateObject);
+    applyRanges(dateObject);
   }
 
   const getSubtitleForHalf = (halfRange: string): string => {

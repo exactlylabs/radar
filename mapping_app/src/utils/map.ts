@@ -4,6 +4,7 @@ import L, {LeafletMouseEvent} from "leaflet";
 import {Filter, Optional} from "./types";
 import {OUTLINE_ONLY_SHAPE_COLOR, OUTLINE_ONLY_SHAPE_FILL, TRANSPARENT} from "../styles/colors";
 import {GeoJSONProperties} from "../api/geojson/types";
+import {speedFilters} from "./filters";
 
 export const mapTileUrl: string = MAPBOX_TILESET_URL;
 export const mapTileAttribution =
@@ -97,7 +98,7 @@ export const shouldShowLayer = (
   const {download_median, upload_median, download_scores, upload_scores} = summary;
   if(download_scores.total_samples === 0 && upload_scores.total_samples === 0)
     return false;
-  if(speedType === 'Download') {
+  if(speedType === speedFilters.DOWNLOAD) {
     return download_scores.total_samples > 0 && selectedFilters.includes(getSignalStateDownload(download_median));
   } else {
     return upload_scores.total_samples > 0 && selectedFilters.includes(getSignalStateUpload(upload_median));
@@ -119,7 +120,7 @@ export const paintLayer = (layer: any, selectedGeospace: Optional<GeospaceInfo>,
     const properties: GeoJSONProperties = layer.feature.properties as GeoJSONProperties;
     if(properties.summary !== undefined) {
       const isSelected: boolean = !!selectedGeospace ? isCurrentGeospace(properties.summary.geospace, selectedGeospace) : false;
-      const key: string = speedType === 'Download' ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
+      const key: string = speedType === speedFilters.DOWNLOAD ? getSignalStateDownload(properties.summary.download_median) : getSignalStateUpload(properties.summary.upload_median);
       const shouldColorFill = shouldShowLayer(properties.summary, speedType, selectedSpeedFilters);
       layer.setStyle(getStyle(isSelected, key, shouldColorFill));
       layer.removeEventListener('mouseout', layerMouseoutHandler);

@@ -1,5 +1,5 @@
 import {Optional} from "./types";
-import {dateTabs, halves, isSpecificMonth, isSpecificYear, months} from "./filters";
+import {calendarFilters, dateTabs, halves, isSpecificMonth, isSpecificYear, months} from "./filters";
 
 export type DatePickerState = {
   selectedYear: Optional<number>;
@@ -10,6 +10,14 @@ export type DatePickerState = {
   subtitleText: Optional<string>;
 }
 
+export type DateFilter = {
+  selectedYear: number;
+  selectedMonth?: number;
+  selectedWeek?: number;
+  selectedSemester?: number;
+  selectedQuarter?: number;
+}
+
 export type Day = {
   dayNumber: number;
   month: number;
@@ -17,8 +25,65 @@ export type Day = {
   week: number;
 }
 
-const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const enum MonthAbbreviations {
+  JANUARY = 'Jan',
+  FEBRUARY = 'Feb',
+  MARCH = 'Mar',
+  APRIL = 'Apr',
+  MAY = 'May',
+  JUNE = 'Jun',
+  JULY = 'Jul',
+  AUGUST = 'Aug',
+  SEPTEMBER = 'Sep',
+  OCTOBER = 'Oct',
+  NOVEMBER = 'Nov',
+  DECEMBER = 'Dec'
+}
+
+const enum MonthFullNames {
+  JANUARY = 'January',
+  FEBRUARY = 'February',
+  MARCH = 'March',
+  APRIL = 'April',
+  MAY = 'May',
+  JUNE = 'June',
+  JULY = 'July',
+  AUGUST = 'August',
+  SEPTEMBER = 'September',
+  OCTOBER = 'October',
+  NOVEMBER = 'November',
+  DECEMBER = 'December'
+}
+
+const monthAbbreviations = [
+  MonthAbbreviations.JANUARY,
+  MonthAbbreviations.FEBRUARY,
+  MonthAbbreviations.MARCH,
+  MonthAbbreviations.APRIL,
+  MonthAbbreviations.MAY,
+  MonthAbbreviations.JUNE,
+  MonthAbbreviations.JULY,
+  MonthAbbreviations.AUGUST,
+  MonthAbbreviations.SEPTEMBER,
+  MonthAbbreviations.OCTOBER,
+  MonthAbbreviations.NOVEMBER,
+  MonthAbbreviations.DECEMBER
+];
+
+const monthNames = [
+  MonthFullNames.JANUARY,
+  MonthFullNames.FEBRUARY,
+  MonthFullNames.MARCH,
+  MonthFullNames.APRIL,
+  MonthFullNames.MAY,
+  MonthFullNames.JUNE,
+  MonthFullNames.JULY,
+  MonthFullNames.AUGUST,
+  MonthFullNames.SEPTEMBER,
+  MonthFullNames.OCTOBER,
+  MonthFullNames.NOVEMBER,
+  MonthFullNames.DECEMBER
+];
 
 export const isDay = (elem: any): elem is Day => {
   return !!(elem as Day).dayNumber;
@@ -26,7 +91,7 @@ export const isDay = (elem: any): elem is Day => {
 
 const getMonthAbbreviation = (monthIndex: number) => monthAbbreviations[monthIndex];
 export const getMonthName = (monthIndex: number) => monthNames[monthIndex];
-const getIndexFromAbbreviation = (abbreviation: string) => monthAbbreviations.indexOf(abbreviation);
+const getIndexFromAbbreviation = (abbreviation: string) => monthAbbreviations.indexOf(abbreviation as MonthAbbreviations);
 
 export const getCurrentWeekLimits = (): string => {
   const curr = new Date; // get current date
@@ -150,7 +215,7 @@ export const getMonthCalendar = (selectedYear: number, selectedMonth: number): A
 }
 
 export const getMonthNumberFromName = (monthName: string) => {
-  return monthNames.indexOf(monthName);
+  return monthNames.indexOf(monthName as MonthFullNames);
 }
 
 export const getDateFromString = (string: string, year: Optional<string>): Date => {
@@ -170,12 +235,12 @@ export const getInitialStateFromCalendarType = (calendarType: string): DatePicke
     selectedRangeValue: null,
     selectedTab: null,
   }
-  if(calendarType === 'This year' || calendarType === 'All time') {
+  if(calendarType === calendarFilters.THIS_YEAR || calendarType === calendarFilters.ALL_TIME) {
     const today = new Date();
     pickerState.selectedYear = today.getFullYear();
     pickerState.selectedTab = dateTabs.MONTH;
     pickerState.selectedRangeValue = months[0];
-  } else if(calendarType === 'Last week') {
+  } else if(calendarType === calendarFilters.LAST_WEEK) {
     const today = new Date();
     const thisWeekNumber = getWeekNumber();
     pickerState.selectedYear = today.getFullYear();
@@ -183,7 +248,7 @@ export const getInitialStateFromCalendarType = (calendarType: string): DatePicke
     pickerState.selectedWeek = thisWeekNumber - 1;
     pickerState.subtitleText = `Week ${thisWeekNumber - 1}`;
     pickerState.selectedRangeValue = getWeekLimits(2022, thisWeekNumber - 1);
-  } else if(calendarType === 'Last month') {
+  } else if(calendarType === calendarFilters.LAST_MONTH) {
     const today = new Date();
     const todayMonth = today.getMonth();
     pickerState.selectedYear = today.getFullYear();
@@ -229,4 +294,15 @@ export const getInitialStateFromCalendarType = (calendarType: string): DatePicke
     pickerState.selectedTab = dateTabs.MONTH;
   }
   return pickerState;
+}
+
+export const getQueryStringFromDateObject = (dateObject: DateFilter): string => {
+  let dateQuery = `&year=${dateObject.selectedYear}`;
+  if(dateObject.selectedMonth)
+    dateQuery += `&month=${dateObject.selectedMonth}`;
+  if(dateObject.selectedWeek)
+    dateQuery += `&week=${dateObject.selectedWeek}`;
+  if(dateObject.selectedSemester)
+    dateQuery += `&semester=${dateObject.selectedSemester}`;
+  return dateQuery;
 }

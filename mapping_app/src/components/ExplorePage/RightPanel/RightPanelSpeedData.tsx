@@ -11,6 +11,7 @@ import UploadIconUnderserved from '../../../assets/upload-icon-underserved.png';
 import UploadIconServed from '../../../assets/upload-icon-served.png';
 import LatencyIconGray from '../../../assets/latency-icon-gray.png';
 import {speedTypes} from "../../../utils/speeds";
+import {speedFilters} from "../../../utils/filters";
 
 
 interface RightPanelSpeedDataProps {
@@ -30,7 +31,7 @@ const RightPanelSpeedData = ({
 }: RightPanelSpeedDataProps): ReactElement => {
 
   const getDownloadIconSrc = () => {
-    if(speedType !== 'Download') return DownloadIconGray;
+    if(speedType !== speedFilters.DOWNLOAD) return DownloadIconGray;
     if(speedState === speedTypes.UNSERVED) return DownloadIconUnserved;
     else if(speedState === speedTypes.UNDERSERVED) return DownloadIconUnderserved;
     else return DownloadIconServed;

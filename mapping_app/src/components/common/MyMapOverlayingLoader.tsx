@@ -1,9 +1,9 @@
 import {ReactElement} from "react";
 import MySpinner from "./MySpinner";
 import {WHITE} from "../../styles/colors";
-import {styles} from "./styles/MyOverlayingLoader.style";
+import {styles} from "./styles/MyMapOverlayingLoader.style";
 
-const MyOverlayingLoader = (): ReactElement => {
+const MyMapOverlayingLoader = (): ReactElement => {
   return (
     <div style={styles.OverlayingLoaderContainer}>
       <div style={styles.ContentContainer}>
@@ -14,4 +14,4 @@ const MyOverlayingLoader = (): ReactElement => {
   )
 }
 
-export default MyOverlayingLoader;
+export default MyMapOverlayingLoader;
