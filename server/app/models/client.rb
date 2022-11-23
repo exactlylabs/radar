@@ -18,6 +18,7 @@ class Client < ApplicationRecord
   after_validation :geocode
   after_save :update_online_log
   has_secure_password :secret, validations: false
+  validate :valid_cron_string
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, -> { where("online = true AND (pinged_at < ? OR pinged_at IS NULL)", (PING_DURRATION * 1.5).second.ago) }
@@ -217,6 +218,12 @@ class Client < ApplicationRecord
       end
     end
     tmp_file
+  end
+
+  def valid_cron_string
+    if cron_string && !Fugit::Cron.parse(cron_string).present?
+        errors.add(:cron_string, "invalid cron string")
+    end
   end
 
   private
