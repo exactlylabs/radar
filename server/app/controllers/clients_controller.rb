@@ -148,6 +148,7 @@ class ClientsController < ApplicationController
       end
     end
     
+    @client.verify_test_scheduler!
     @client.save!
     respond_to do |format|
       format.json { render :status, status: :ok }
