@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_04_210219) do
+ActiveRecord::Schema.define(version: 2022_11_22_235741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,6 +127,8 @@ ActiveRecord::Schema.define(version: 2022_11_04_210219) do
     t.bigint "watchdog_version_id"
     t.string "raw_watchdog_version"
     t.boolean "online", default: false
+    t.datetime "next_schedule_at"
+    t.string "cron_string"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
@@ -172,9 +174,9 @@ ActiveRecord::Schema.define(version: 2022_11_04_210219) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
-    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
+    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
