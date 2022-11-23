@@ -25,7 +25,6 @@ func TestLoadConfig(t *testing.T) {
 		ServerURL: "127.0.0.1:3001",
 		ClientId:  "1234",
 		Secret:    "6666",
-		TestFreq:  "600",
 		PingFreq:  "15",
 	}
 
@@ -33,7 +32,6 @@ func TestLoadConfig(t *testing.T) {
 	server_url=127.0.0.1:3001
 	client_id=1234
 	secret=6666
-	test_freq=600
 	`
 	createConfig(conf)
 	defer clear()
@@ -48,8 +46,6 @@ func TestSaveConfig(t *testing.T) {
 	expected := `server_url=localhost
 client_id=5555
 secret=
-test_freq=
-test_minute=
 ping_freq=
 last_tested=
 last_updated=
