@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
 	"strconv"
 	"sync"
@@ -79,11 +78,6 @@ func (a *Agent) Setup(ctx context.Context, c *config.Config) {
 		log.Println("Secret =", c.Secret)
 		log.Println("You can find these values in the config file located at", config.Join("config.conf"))
 	}
-	if c.TestMinute == "" {
-		s := rand.NewSource(time.Now().UnixNano())
-		r := rand.New(s)
-		c.TestMinute = fmt.Sprintf("%d", r.Intn(59))
-	}
 	err := config.Save(c)
 	if err != nil {
 		panic(err)
@@ -108,9 +102,7 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 		startPingLoop(agentCtx, a.pingRespCh, a.pinger, pingFrequency(c), c.ClientId, c.Secret)
 	}()
 
-	// Main Loop will listen to the responses and schedule Speed Tests
-	speedTestTimer := newSpeedTestTicker(c)
-	firstRun := true
+	// Main Loop will listen to the responses and schedule Speed Tests when requested by the server
 	for {
 		select {
 		case <-agentCtx.Done():
@@ -164,14 +156,6 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 					os.Exit(1)
 				}
 			}
-		case <-speedTestTimer.C:
-			if firstRun {
-				firstRun = false
-				// Now that it started at the correct minute,
-				// start the timer with the correct frequency
-				speedTestTimer.Reset(speedTestFrequency(c))
-			}
-			maybeSendChannel(a.runTestCh)
 		}
 	}
 }
@@ -185,23 +169,6 @@ func (a *Agent) StartTest() {
 		panic("you cannot start a test before starting the agent")
 	}
 	maybeSendChannel(a.runTestCh)
-}
-
-// newSpeedTestTicker initiates a ticker configured to trigger
-// at the next `TestMinute` from the config file.
-// Make sure to Reset() it to the proper frequency after first run
-func newSpeedTestTicker(c *config.Config) *time.Ticker {
-	minute, err := strconv.Atoi(c.TestMinute)
-	if err != nil {
-		panic(fmt.Errorf("agent.Start error converting TestMinute to int: %w", err))
-	}
-	minutesMissing := minute - (time.Now().Minute())
-	if minutesMissing < 0 {
-		minutesMissing = 60 - minutesMissing
-	} else if minutesMissing == 0 {
-		return time.NewTicker(time.Second)
-	}
-	return time.NewTicker(time.Minute * time.Duration(minutesMissing))
 }
 
 // maybeSendChannel simply tries to send to the channel
@@ -225,10 +192,4 @@ func pingFrequency(c *config.Config) time.Duration {
 	pingFreqStr := c.PingFreq
 	pingFreq := strToDuration(pingFreqStr, time.Second)
 	return pingFreq
-}
-
-func speedTestFrequency(c *config.Config) time.Duration {
-	testFreqStr := c.TestFreq
-	testFreq := strToDuration(testFreqStr, time.Second)
-	return testFreq
 }
