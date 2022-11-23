@@ -1,17 +1,17 @@
 import {ReactElement} from "react";
-import MySpinner from "./MySpinner";
+import CustomSpinner from "./CustomSpinner";
 import {WHITE} from "../../styles/colors";
 import {styles} from "./styles/MyMapOverlayingLoader.style";
 
-const MyMapOverlayingLoader = (): ReactElement => {
+const CustomMapOverlayingLoader = (): ReactElement => {
   return (
     <div style={styles.OverlayingLoaderContainer}>
       <div style={styles.ContentContainer}>
-        <MySpinner color={WHITE} style={styles.Spinner}/>
+        <CustomSpinner color={WHITE} style={styles.Spinner}/>
         <p className={'fw-light'} style={styles.Text}>Loading map...</p>
       </div>
     </div>
   )
 }
 
-export default MyMapOverlayingLoader;
+export default CustomMapOverlayingLoader;

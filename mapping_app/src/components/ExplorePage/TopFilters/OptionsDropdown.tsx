@@ -3,7 +3,7 @@ import {styles} from "./styles/OptionsDropdown.style";
 import Option from './Option';
 import {Filter, Optional} from "../../../utils/types";
 import {Asn, isAsn} from "../../../api/asns/types";
-import MyOptionsDropdownSearchbar from "./MyOptionsDropdownSearchbar";
+import CustomOptionsDropdownSearchbar from "./CustomOptionsDropdownSearchbar";
 import {allProvidersElement} from "./utils/providers";
 
 interface OptionsDropdownProps {
@@ -44,7 +44,7 @@ const OptionsDropdown = ({
     <div style={styles.OptionsDropdownContainer(dropLeft, dropRight)}>
       {
         withSearchbar &&
-        <MyOptionsDropdownSearchbar
+        <CustomOptionsDropdownSearchbar
           stickyOption={allProvidersElement}
           stickyOptionOnSelect={setSelectedOption}
           stickyOptionSelected={allProvidersElement.id === (selectedOption as Asn).id}

@@ -6,9 +6,9 @@ import {useLocation} from "react-router-dom";
 import {paths} from "../../utils/routes";
 import {buttonColors, buttonTextColors} from "../../utils/buttons";
 import PinIcon from '../../assets/pin-icon.png';
-import MyButton from "../common/MyButton";
+import CustomButton from "../common/CustomButton";
 import {handleError} from "../../api";
-import MySpinner from "../common/MySpinner";
+import CustomSpinner from "../common/CustomSpinner";
 import {WHITE} from "../../styles/colors";
 
 interface TopLevelTabsHeaderProps {
@@ -63,20 +63,20 @@ const TopLevelTabsHeader = ({centerOnUser}: TopLevelTabsHeaderProps): ReactEleme
       <div style={styles.RightSideButtonContainer}>
         {
           !loading &&
-          <MyButton text={'Check your region'}
-                    icon={<img src={PinIcon} style={styles.PinIcon} alt={'pin-icon'}/>}
-                    backgroundColor={buttonColors.BLACK}
-                    color={buttonTextColors.WHITE}
-                    iconFirst
-                    onClick={centerOnUserPosition}
-                    className={'fw-medium hover-opaque'}
+          <CustomButton text={'Check your region'}
+                        icon={<img src={PinIcon} style={styles.PinIcon} alt={'pin-icon'}/>}
+                        backgroundColor={buttonColors.BLACK}
+                        color={buttonTextColors.WHITE}
+                        iconFirst
+                        onClick={centerOnUserPosition}
+                        className={'fw-medium hover-opaque'}
           />
         }
         {
           loading &&
-          <MyButton text={''} icon={<MySpinner color={WHITE}/>}
-                    backgroundColor={buttonColors.BLACK}
-                    color={buttonTextColors.WHITE}/>
+          <CustomButton text={''} icon={<CustomSpinner color={WHITE}/>}
+                        backgroundColor={buttonColors.BLACK}
+                        color={buttonTextColors.WHITE}/>
         }
       </div>
     </div>

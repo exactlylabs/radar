@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/MyButton.style";
 
-interface MyButtonProps {
+interface CustomButtonProps {
   text: string;
   icon?: ReactElement;
   backgroundColor?: string;
@@ -12,7 +12,7 @@ interface MyButtonProps {
   backdropFilter?: string;
 }
 
-const MyButton = ({
+const CustomButton = ({
   text,
   icon,
   backgroundColor,
@@ -21,7 +21,7 @@ const MyButton = ({
   iconFirst,
   onClick,
   className
-}: MyButtonProps): ReactElement => {
+}: CustomButtonProps): ReactElement => {
 
   return iconFirst ?
     <div className={className ?? 'fw-medium hover-opaque'}
@@ -40,4 +40,4 @@ const MyButton = ({
     </div>
 }
 
-export default MyButton;
+export default CustomButton;

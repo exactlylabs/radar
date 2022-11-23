@@ -11,7 +11,7 @@ import {Filter, Optional} from "../../utils/types";
 import {Asn} from "../../api/asns/types";
 import CustomMap from "./CustomMap/CustomMap";
 
-interface MyMapProps {
+interface MapProps {
   namespace: string;
   selectedGeospace: Optional<GeospaceInfo>;
   selectGeospace: (geospace: GeospaceInfo, center: L.LatLng) => void;
@@ -27,7 +27,7 @@ interface MyMapProps {
   isRightPanelHidden: boolean;
 }
 
-const MyMap = ({
+const Map = ({
   namespace,
   selectedGeospace,
   selectGeospace,
@@ -41,7 +41,7 @@ const MyMap = ({
   setLoading,
   isRightPanelHidden,
   calendarType
-}: MyMapProps): ReactElement => {
+}: MapProps): ReactElement => {
 
   const [geoJSON, setGeoJSON] = useState<GeoJSONTimedResponse>();
 
@@ -90,4 +90,4 @@ const MyMap = ({
   )
 }
 
-export default MyMap;
+export default Map;
