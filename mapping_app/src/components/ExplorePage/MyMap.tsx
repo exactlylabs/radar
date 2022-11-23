@@ -1,7 +1,15 @@
 import {ReactElement, useEffect, useState} from "react";
 import L from "leaflet";
 import {MapContainer, TileLayer} from "react-leaflet";
-import {baseStyle, mapTileAttribution, mapTileUrl} from "../../utils/map";
+import {
+  baseStyle, getFeatureIdHandler,
+  getStyle, getVectorTileOptions,
+  isCurrentGeospace,
+  mapTileAttribution,
+  mapTileUrl,
+  parseStringIntoCorrectNumber, featureStyleHandler,
+  shouldShowLayer
+} from "../../utils/map";
 import {styles} from "./styles/MyMap.style";
 import {
   GeoJSONProperties,
@@ -19,7 +27,8 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 // @ts-ignore
 import vectorTileLayer from 'leaflet-vector-tile-layer';
 import {getVectorTilesUrl} from "../../api/tiles/requests";
-import {getSignalStateDownload, speedColors, SpeedsObject} from "../../utils/speeds";
+import {getSignalState, getSignalStateDownload, speedColors, SpeedsObject} from "../../utils/speeds";
+import {speedFilters} from "../../utils/filters";
 
 interface MyMapProps {
   namespace: string;
@@ -59,35 +68,14 @@ const MyMap = ({
   const [tileLayer, setTileLayer] = useState(null);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-  const options: any = {
-    style: (feature: any) => {
-      let style = baseStyle;
-      if (feature) {
-        const properties = feature.properties as UnparsedGeoJSONProperties;
-        if (properties.summary !== undefined) {
-          const summary: GeospaceOverview = JSON.parse(properties.summary) as GeospaceOverview;
-          style = {
-            ...style,
-            color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
-            fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
-          }
-        }
-      }
-      return style;
-    },
-    getFeatureId: (feature: any) => {
-      if(feature.properties?.summary !== undefined) {
-        const summary: GeospaceOverview = JSON.parse(feature.properties.summary) as GeospaceOverview;
-        return summary.geospace.geo_id;
-      } else {
-        return '';
-      }
-    }
-  }
-
   useEffect(() => {
     setLoading(true);
-    setTileLayer(vectorTileLayer(getVectorTilesUrl(namespace), options));
+    setTileLayer(
+      vectorTileLayer(
+        getVectorTilesUrl(namespace, dateQueryString, provider as Asn),
+        getVectorTileOptions(selectedGeospace, speedType, selectedSpeedFilters)
+      )
+    );
     setLastUpdate(new Date());
     setLoading(false);
   }, [namespace, provider, dateQueryString]);
@@ -114,7 +102,6 @@ const MyMap = ({
                      lastGeoJSONUpdate={lastUpdate}
                      vectorTileLayer={tileLayer}
           />
-          <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
         </MapContainer>
       }
       {

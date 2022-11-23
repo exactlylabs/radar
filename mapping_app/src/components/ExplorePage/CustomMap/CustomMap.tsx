@@ -15,6 +15,7 @@ import GeographicalTooltip from "../GeographicalTooltip/GeographicalTooltip";
 import ReactDOMServer from "react-dom/server";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import {getSignalStateDownload, speedColors, SpeedsObject} from "../../../utils/speeds";
+import {BLACK} from "../../../styles/colors";
 
 
 interface CustomMapProps {
@@ -67,25 +68,25 @@ const CustomMap = ({
     const nowThereIsNoSelectedGeospace = !!prevSelectedGeospace && !selectedGeospace;
     // check to see if we need to re-paint shapes
     if(selectedGeospaceChanged || nowThereIsASelectedGeospace || nowThereIsNoSelectedGeospace) {
-      map.eachLayer((layer: any) => { paintLayer(layer, selectedGeospace, speedType, selectedSpeedFilters); });
+      paintLayer(map, vectorTileLayer, selectedGeospace, speedType, selectedSpeedFilters);
     }
     checkZoomControlPosition(selectedGeospace, isRightPanelHidden);
   }, [selectedGeospace, isRightPanelHidden]);
 
   useEffect(() => {
-    map.eachLayer((layer: any) => { paintLayer(layer, selectedGeospace, speedType, selectedSpeedFilters); });
+    paintLayer(map, vectorTileLayer, selectedGeospace, speedType, selectedSpeedFilters);
   }, [speedType, selectedSpeedFilters, dateQueryString]);
 
   useEffect(() => {
     if(vectorTileLayer) {
       removeAllFeatureLayers(map);
       vectorTileLayer.bringToFront();
-      map.addLayer(vectorTileLayer);
-      /*vectorTileLayer.on('click', (e: LeafletMouseEvent) => {
+      vectorTileLayer.on('click', (e: LeafletMouseEvent) => {
         if (e.propagatedFrom.feature) {
           const summary: GeospaceOverview = JSON.parse(e.propagatedFrom.feature.properties.summary) as GeospaceOverview;
           const centroid: Array<number> = summary.geospace.centroid;
-          const geospacePosition: L.LatLng = L.latLng(centroid[1], centroid[0]);
+          const geospacePosition: L.LatLng = L.latLng(centroid[0], centroid[1]);
+          selectGeospace(summary, geospacePosition);
           map.flyTo(geospacePosition, 5);
           map.setView(geospacePosition, map.getZoom() > 5 ? map.getZoom() : 5);
           const newStyle = {
@@ -96,9 +97,10 @@ const CustomMap = ({
             color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
             fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
           };
-          vectorTileLayer.setFeatureStyle(summary.geospace.geo_id, newStyle);
+          vectorTileLayer.setFeatureStyle(parseInt(summary.geospace.geo_id), newStyle);
         }
-      });*/
+      });
+      map.addLayer(vectorTileLayer);
     }
   }, [lastGeoJSONUpdate]);
 

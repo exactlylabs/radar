@@ -7,6 +7,7 @@ import UploadIconGray from "../assets/upload-icon-gray.png";
 import UploadIconUnserved from "../assets/upload-icon-unserved.png";
 import UploadIconUnderserved from "../assets/upload-icon-underserved.png";
 import UploadIconServed from "../assets/upload-icon-served.png";
+import {speedFilters} from "./filters";
 
 export type SpeedsObject = {
   UNSERVED: string;
@@ -36,6 +37,11 @@ export const speedColors: SpeedsObject = {
   UNSERVED: SPEED_UNSERVED,
   UNDERSERVED: SPEED_UNDERSERVED,
   SERVED: SPEED_NORMAL
+}
+
+export const getSignalState = (speedType: string, median: number): string => {
+  if(speedType === speedFilters[0]) return getSignalStateDownload(median);
+  else return getSignalStateUpload(median);
 }
 
 export const getSignalStateDownload = (downloadMedian: number): string => {
