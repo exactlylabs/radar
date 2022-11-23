@@ -5,7 +5,7 @@ import SearchIcon from "../../../assets/search-icon.png";
 import ArrowRight from '../../../assets/arrow-right.png';
 import {debounce} from "../../../api/utils/debouncer";
 import {handleError} from "../../../api";
-import MySpinner from "../../common/MySpinner";
+import CustomSpinner from "../../common/CustomSpinner";
 import {WHITE} from "../../../styles/colors";
 import SuggestionsBox from "./SuggestionsBox";
 import {Optional} from "../../../utils/types";
@@ -83,7 +83,7 @@ const TopSearchbar = ({ selectSuggestion }: TopSearchbarProps): ReactElement => 
       <div className={'hover-opaque'} style={styles.ArrowContainer}>
         {
           loading ?
-          <MySpinner color={WHITE} style={{}}/> :
+          <CustomSpinner color={WHITE} style={{}}/> :
           <img src={ArrowRight} style={styles.Arrow} alt={'arrow-right'}/>
         }
       </div>

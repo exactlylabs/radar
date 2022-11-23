@@ -1,6 +1,6 @@
 import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/ExplorePage.style";
-import MyMap from "./MyMap";
+import Map from "./Map";
 import ExplorationPopover from "./ExplorationPopover/ExplorationPopover";
 import TopSearchbar from "./TopSearchbar/TopSearchbar";
 import TopFilters from "./TopFilters/TopFilters";
@@ -23,7 +23,7 @@ import {allProvidersElement} from "./TopFilters/utils/providers";
 import {getValueFromUrl, updateUrl} from "../../utils/base64";
 import {Asn} from "../../api/asns/types";
 import {DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE} from "../../utils/map";
-import MyMapOverlayingLoader from "../common/MyMapOverlayingLoader";
+import CustomMapOverlayingLoader from "../common/CustomMapOverlayingLoader";
 import {emptyGeoJSONFilters, GeoJSONFilters} from "../../api/geojson/types";
 import L from "leaflet";
 import ExplorationPopoverIcon from "./ExplorationPopover/ExplorationPopoverIcon";
@@ -192,20 +192,20 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   return (
     <div style={styles.ExplorePageContainer}>
-      { loading && <MyMapOverlayingLoader/> }
-      <MyMap namespace={geospaceNamespace}
-             selectedGeospace={selectedGeospace}
-             selectGeospace={selectGeospace}
-             speedType={speedType}
-             provider={provider}
-             calendarType={calendarType}
-             selectedSpeedFilters={selectedSpeedFilters}
-             initialZoom={currentMapZoom}
-             setZoom={setCurrentMapZoom}
-             initialCenter={currentMapCenter}
-             setCenter={setCurrentMapCenter}
-             setLoading={setLoading}
-             isRightPanelHidden={isRightPanelHidden}
+      { loading && <CustomMapOverlayingLoader/> }
+      <Map namespace={geospaceNamespace}
+           selectedGeospace={selectedGeospace}
+           selectGeospace={selectGeospace}
+           speedType={speedType}
+           provider={provider}
+           calendarType={calendarType}
+           selectedSpeedFilters={selectedSpeedFilters}
+           initialZoom={currentMapZoom}
+           setZoom={setCurrentMapZoom}
+           initialCenter={currentMapCenter}
+           setCenter={setCurrentMapCenter}
+           setLoading={setLoading}
+           isRightPanelHidden={isRightPanelHidden}
       />
       <TopSearchbar selectSuggestion={selectSuggestion}/>
       <TopFilters isRightPanelOpen={isRightPanelOpen && !isRightPanelHidden}

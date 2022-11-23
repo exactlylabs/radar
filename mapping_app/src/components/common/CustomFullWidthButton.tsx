@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/MyFullWidthButton.style";
 
-interface MyFullWidthButtonProps {
+interface CustomFullWidthButtonProps {
   text: string;
   icon: ReactElement;
   iconFirst?: boolean;
@@ -9,13 +9,13 @@ interface MyFullWidthButtonProps {
   color?: string;
 }
 
-const MyFullWidthButton = ({
+const CustomFullWidthButton = ({
   text,
   icon,
   iconFirst,
   backgroundColor,
   color,
-}: MyFullWidthButtonProps): ReactElement => {
+}: CustomFullWidthButtonProps): ReactElement => {
   return iconFirst ?
   <div style={styles.ButtonContainer(backgroundColor, color)}>
     {icon}
@@ -28,4 +28,4 @@ const MyFullWidthButton = ({
   </div>;
 }
 
-export default MyFullWidthButton;
+export default CustomFullWidthButton;

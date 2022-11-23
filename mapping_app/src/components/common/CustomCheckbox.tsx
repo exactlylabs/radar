@@ -2,19 +2,19 @@ import {ReactElement} from "react";
 import {styles} from "./styles/MyCheckbox.style";
 import {CheckRounded} from "@mui/icons-material";
 
-interface MyCheckboxProps {
+interface CustomCheckboxProps {
   backgroundColor: string;
   color: string;
   isChecked: boolean;
   onClick: () => void;
 }
 
-const MyCheckbox = ({
+const CustomCheckbox = ({
   backgroundColor,
   color,
   isChecked,
   onClick,
-}: MyCheckboxProps): ReactElement => {
+}: CustomCheckboxProps): ReactElement => {
   return (
     <div style={styles.MyCheckboxContainer(backgroundColor, color)}
          onClick={onClick}
@@ -24,4 +24,4 @@ const MyCheckbox = ({
   )
 }
 
-export default MyCheckbox;
+export default CustomCheckbox;

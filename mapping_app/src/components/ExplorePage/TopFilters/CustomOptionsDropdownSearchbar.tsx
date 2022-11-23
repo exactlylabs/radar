@@ -3,11 +3,11 @@ import {styles} from "./styles/MyOptionsDropdownSearchbar.style";
 import Option from "./Option";
 import {Filter} from "../../../utils/types";
 import SearchIcon from '../../../assets/search-icon.png';
-import MySpinner from "../../common/MySpinner";
+import CustomSpinner from "../../common/CustomSpinner";
 import {FOOTER_TEXT} from "../../../styles/colors";
 import ClearInputButton from "../../common/ClearInputButton";
 
-interface MyOptionsDropdownSearchbarProps {
+interface CustomOptionsDropdownSearchbarProps {
   onChange?: ChangeEventHandler;
   stickyOption?: Filter;
   stickyOptionSelected?: boolean;
@@ -16,14 +16,14 @@ interface MyOptionsDropdownSearchbarProps {
   clearSearch?: () => void;
 }
 
-const MyOptionsDropdownSearchbar = ({
+const CustomOptionsDropdownSearchbar = ({
   onChange,
   stickyOption,
   stickyOptionSelected,
   stickyOptionOnSelect,
   loading,
   clearSearch
-}: MyOptionsDropdownSearchbarProps): ReactElement => {
+}: CustomOptionsDropdownSearchbarProps): ReactElement => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -44,7 +44,7 @@ const MyOptionsDropdownSearchbar = ({
                ref={inputRef}
         />
         { !loading && !inputRef.current?.value && <div style={styles.EmptySpace}></div> }
-        { loading && <MySpinner style={{width: '18px'}} color={FOOTER_TEXT}/> }
+        { loading && <CustomSpinner style={{width: '18px'}} color={FOOTER_TEXT}/> }
         { !loading && !!inputRef.current?.value && <ClearInputButton onClick={handleClear}/> }
       </div>
       {
@@ -59,4 +59,4 @@ const MyOptionsDropdownSearchbar = ({
   )
 }
 
-export default MyOptionsDropdownSearchbar;
+export default CustomOptionsDropdownSearchbar;
