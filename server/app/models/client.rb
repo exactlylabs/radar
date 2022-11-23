@@ -83,6 +83,25 @@ class Client < ApplicationRecord
     self.test_requested || self.location&.test_requested
   end
 
+  def verify_test_scheduler!
+    # Load Cron and set a default value in case it's empty
+    if self.cron_string.nil?
+      # Assign an hourly cron, with a random minute
+      minute = rand(0..59)
+      self.cron_string = "#{minute} * * * *"
+    end
+    cron = Fugit.parse_cron(self.cron_string)
+
+    if self.next_schedule_at.nil?
+      self.next_schedule_at = cron.next_time(self&.measurements&.last&.created_at || Time.current).to_t
+
+    elsif self.next_schedule_at < Time.current
+      # Request a test and increment the next_schedule_at
+      self.test_requested = true
+      self.next_schedule_at = cron.next_time(Time.current).to_t
+    end
+  end
+
   def status
     if self.online?
       if test_requested?
