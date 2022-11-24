@@ -7,11 +7,14 @@ import {
   SpeedsObject,
   speedTypes
 } from "./speeds";
-import L, {LeafletMouseEvent, TileLayer} from "leaflet";
+import L, {LatLng, LeafletMouseEvent, PathOptions, TileLayer} from "leaflet";
 import {Filter, Optional} from "./types";
 import {BLACK, OUTLINE_ONLY_SHAPE_COLOR, OUTLINE_ONLY_SHAPE_FILL, TRANSPARENT} from "../styles/colors";
 import {GeoJSONProperties, UnparsedGeoJSONProperties} from "../api/geojson/types";
 import {speedFilters} from "./filters";
+import {ReactElement} from "react";
+import GeographicalTooltip from "../components/ExplorePage/GeographicalTooltip/GeographicalTooltip";
+import ReactDOMServer from "react-dom/server";
 
 export const mapTileUrl: string = MAPBOX_TILESET_URL;
 export const mapTileAttribution =
@@ -32,37 +35,11 @@ export const baseStyle = {
   fillColor: speedColors[speedTypes.UNSERVED as keyof SpeedsObject],
 };
 
-export const invisibleStyle = {
-  ...baseStyle,
-  opacity: 0,
-  fillOpacity: 0,
-  color: TRANSPARENT,
-  fillColor: TRANSPARENT,
-}
-
 export const outlineOnlyStyle = {
   ...baseStyle,
   color: OUTLINE_ONLY_SHAPE_COLOR,
   fillColor: OUTLINE_ONLY_SHAPE_FILL,
 }
-
-export const geoJSONOptions: L.GeoJSONOptions = {
-  style: (feature) => {
-    let style = baseStyle;
-    if (feature) {
-      const properties: GeoJSONProperties = feature.properties as GeoJSONProperties;
-      if (properties.summary !== undefined) {
-        style = {
-          ...style,
-          color: speedColors[getSignalStateDownload(properties.summary.download_median) as keyof SpeedsObject],
-          fillColor: speedColors[getSignalStateDownload(properties.summary.download_median) as keyof SpeedsObject]
-        }
-      }
-    }
-    return style;
-  }
-}
-
 
 export const getVectorTileOptions =
   (selectedGeospace: Optional<GeospaceInfo>, speedType: Filter, selectedSpeedFilters: Array<Filter>) => ({
@@ -90,16 +67,14 @@ export const getStyle = (isSelected: boolean, key: string, shouldFill: boolean) 
   }
 }
 
-export const layerMouseoutHandler = (ev: LeafletMouseEvent) => {
-  let target = ev.propagatedFrom.feature;
-  //target.closeTooltip();
-  target.setStyle({weight: 1, opacity: 0.5, fillOpacity: 0.5});
+export const layerMouseoutHandler = (ev: LeafletMouseEvent, layer: any, speedType: Filter, selectedSpeedFilters: Array<Filter>, selectedGeospace: Optional<GeospaceInfo>) => {
+  const summary: GeospaceOverview = JSON.parse(ev.propagatedFrom.feature.properties.summary) as GeospaceOverview;
+  layer.setStyle((feature: any) => feature && mouseOutFeatureStyleHandler(feature, summary, selectedGeospace, speedType, selectedSpeedFilters));
 }
 
-export const layerMouseoverHandler = (ev: LeafletMouseEvent, layer: any) => {
-  let target = ev.propagatedFrom.feature as UnparsedGeoJSONProperties;
-  layer.setFeatureStyle(target.GEOID, {weight: 3, opacity: 0.8, fillOpacity: 0.8})
-  //target.openTooltip();
+export const layerMouseoverHandler = (ev: LeafletMouseEvent, layer: any, speedType: Filter, selectedSpeedFilters: Array<Filter>, selectedGeospace: Optional<GeospaceInfo>) => {
+  const summary: GeospaceOverview = JSON.parse(ev.propagatedFrom.feature.properties.summary) as GeospaceOverview;
+  layer.setStyle((feature: any) => feature && mouseOverFeatureStyleHandler(layer, feature, summary, selectedGeospace, speedType, selectedSpeedFilters));
 }
 
 export const shouldShowLayer = (
@@ -137,16 +112,7 @@ export const paintLayer = (map: L.Map, layer: any, selectedGeospace: Optional<Ge
   // specific property that only the vector-tile-layer has
   if(!!layer && map.hasLayer(layer) && !!layer.getFeatureStyle) {
     layer.setStyle((feature: any) => feature && featureStyleHandler(feature, selectedGeospace, speedType, selectedSpeedFilters));
-    updateMouseHandlersForLayer(layer);
   }
-}
-
-const updateMouseHandlersForLayer = (layer: any) => {
-  const mouseOverFn = (ev: LeafletMouseEvent) => layerMouseoverHandler(ev, layer);
-  layer.removeEventListener('mouseout', layerMouseoutHandler);
-  layer.removeEventListener('mouseover', mouseOverFn);
-  layer.addEventListener('mouseout', layerMouseoutHandler);
-  layer.addEventListener('mouseover', mouseOverFn);
 }
 
 export const featureStyleHandler = (feature: any, selectedGeospace: Optional<GeospaceInfo>, speedType: Filter, selectedSpeedFilters: Array<Filter>) => {
@@ -157,10 +123,51 @@ export const featureStyleHandler = (feature: any, selectedGeospace: Optional<Geo
     const isSelected: boolean = !!selectedGeospace && isCurrentGeospace(summary.geospace, selectedGeospace);
     const median: number = speedType === speedFilters[0] ? summary.download_median : summary.upload_median;
     const key: string = getSignalState(speedType as string, median);
-    const shouldColorFill = shouldShowLayer(summary, speedType, selectedSpeedFilters);
+    const shouldColorFill: boolean = shouldShowLayer(summary, speedType, selectedSpeedFilters);
     style = getStyle(isSelected, key, shouldColorFill);
   }
   return style;
+}
+
+export const mouseOverFeatureStyleHandler = (layer: any, feature: any, mouseOverGeospace: GeospaceOverview, selectedGeospace: Optional<GeospaceInfo>, speedType: Filter, selectedSpeedFilters: Array<Filter>) => {
+  const currentFeatureProperties = feature.properties as UnparsedGeoJSONProperties;
+  if(currentFeatureProperties?.summary !== undefined) {
+    const currentFeatureSummary: GeospaceOverview = JSON.parse(currentFeatureProperties.summary) as GeospaceOverview;
+    const isCurrentFeature: boolean = isCurrentGeospace(currentFeatureSummary.geospace, mouseOverGeospace);
+    const isAlreadyTheSelectedGeospace: boolean = !!selectedGeospace && isCurrentGeospace(currentFeatureSummary.geospace, selectedGeospace);
+    const median: number = speedType === speedFilters[0] ? currentFeatureSummary.download_median : currentFeatureSummary.upload_median;
+    const key: string = getSignalState(speedType as string, median);
+    const shouldColorFill: boolean = shouldShowLayer(currentFeatureSummary, speedType, selectedSpeedFilters);
+    if(isCurrentFeature) {
+      const tooltip: ReactElement = <GeographicalTooltip geospace={currentFeatureSummary} speedType={speedType as string}/>;
+      const latlng: LatLng = L.latLng(currentFeatureSummary.geospace.centroid[0], currentFeatureSummary.geospace.centroid[1]);
+      layer.bindTooltip(ReactDOMServer.renderToString(tooltip), {sticky: true, direction: 'center'}).openTooltip(latlng);
+    }
+    return getStyle(isCurrentFeature || isAlreadyTheSelectedGeospace, key, shouldColorFill);
+  }
+  return undefined;
+}
+
+export const mouseOutFeatureStyleHandler = (feature: any, mouseOutGeospace: GeospaceOverview, selectedGeospace: Optional<GeospaceInfo>, speedType: Filter, selectedSpeedFilters: Array<Filter>) => {
+  const currentFeatureProperties = feature.properties as UnparsedGeoJSONProperties;
+  if(currentFeatureProperties?.summary !== undefined) {
+    const currentFeatureSummary: GeospaceOverview = JSON.parse(currentFeatureProperties.summary) as GeospaceOverview;
+    const isAlreadyTheSelectedGeospace: boolean = !!selectedGeospace && isCurrentGeospace(currentFeatureSummary.geospace, selectedGeospace);
+    const median: number = speedType === speedFilters[0] ? currentFeatureSummary.download_median : currentFeatureSummary.upload_median;
+    const key: string = getSignalState(speedType as string, median);
+    const shouldColorFill: boolean = shouldShowLayer(currentFeatureSummary, speedType, selectedSpeedFilters);
+    return getStyle(isAlreadyTheSelectedGeospace, key, shouldColorFill);
+  }
+  return undefined;
+}
+
+export const updateMouseOverHandlers = (vectorTileLayer: any, speedType: Filter, selectedSpeedFilters: Array<Filter>, selectedGeospace: Optional<GeospaceInfo>) => {
+  const mouseOverFn = (ev: LeafletMouseEvent) => layerMouseoverHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
+  const mouseOutFn = (ev: LeafletMouseEvent) => layerMouseoutHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
+  vectorTileLayer.off('mouseout', mouseOutFn);
+  vectorTileLayer.off('mouseover', mouseOverFn);
+  vectorTileLayer.on('mouseout', mouseOutFn);
+  vectorTileLayer.on('mouseover', mouseOverFn);
 }
 
 export const getFeatureIdHandler = (feature: any) => {
@@ -192,16 +199,30 @@ export const initializeMap = (map: L.Map, setZoom: (newZoom: number) => void, se
   });
 }
 
-export const addClickHandler = (layer: any, properties: GeoJSONProperties, selectGeospace: (geospace: GeospaceInfo, newCenter: L.LatLng) => void) => {
-  layer.addEventListener('click', () => {
-    if (properties.summary.geospace.name === 'Alaska') {
+export const addClickHandler = (ev: LeafletMouseEvent, map: L.Map, layer: any, selectGeospace: (geospace: GeospaceInfo, newCenter: L.LatLng) => void) => {
+  if (ev.propagatedFrom.feature) {
+    const summary: GeospaceOverview = JSON.parse(ev.propagatedFrom.feature.properties.summary) as GeospaceOverview;
+    const centroid: Array<number> = summary.geospace.centroid;
+    const geospacePosition: L.LatLng = L.latLng(centroid[0], centroid[1]);
+    if (summary.geospace.name === 'Alaska') {
       // TODO: quick fix for Alaskan center wrongly calculated. From the internet, Alaska's center is at 64.2008° N, 149.4937° W
       const center: L.LatLng = L.latLng(64.2008, -149.4937);
-      selectGeospace(layer.feature.properties.summary, center);
+      selectGeospace(summary, center);
     } else {
-      selectGeospace(layer.feature.properties.summary, layer.getBounds().getCenter());
+      selectGeospace(summary, geospacePosition);
     }
-  });
+    map.flyTo(geospacePosition, 5);
+    map.setView(geospacePosition, map.getZoom() > 5 ? map.getZoom() : 5);
+    const newStyle = {
+      ...baseStyle,
+      weight: 3,
+      opacity: 0.8,
+      fillOpacity: 0.8,
+      color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
+      fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
+    };
+    //layer.setFeatureStyle(parseInt(summary.geospace.geo_id), newStyle);
+  }
 }
 
 export const removeAllFeatureLayers = (map: L.Map) => {

@@ -1,21 +1,15 @@
-import {GeoJSONProperties, GeoJSONResponse} from "../../../api/geojson/types";
 import {Filter, Optional} from "../../../utils/types";
 import {GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
-import L, {LeafletMouseEvent, tileLayer} from "leaflet";
+import L, {LeafletMouseEvent} from "leaflet";
 import {useMap} from "react-leaflet";
 import {usePrev} from "../../../hooks/usePrev";
-import {ReactElement, useEffect} from "react";
+import {useEffect} from "react";
 import {
-  addClickHandler, baseStyle, checkZoomControlPosition,
-  geoJSONOptions, initializeMap, layerMouseoutHandler, layerMouseoverHandler,
-  outlineOnlyStyle,
-  paintLayer, removeAllFeatureLayers,
+  addClickHandler, checkZoomControlPosition,
+  initializeMap, layerMouseoutHandler, layerMouseoverHandler,
+  paintLayer, removeAllFeatureLayers, updateMouseOverHandlers,
 } from "../../../utils/map";
-import GeographicalTooltip from "../GeographicalTooltip/GeographicalTooltip";
-import ReactDOMServer from "react-dom/server";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
-import {getSignalStateDownload, speedColors, SpeedsObject} from "../../../utils/speeds";
-import {BLACK} from "../../../styles/colors";
 
 
 interface CustomMapProps {
@@ -69,6 +63,7 @@ const CustomMap = ({
     // check to see if we need to re-paint shapes
     if(selectedGeospaceChanged || nowThereIsASelectedGeospace || nowThereIsNoSelectedGeospace) {
       paintLayer(map, vectorTileLayer, selectedGeospace, speedType, selectedSpeedFilters);
+      updateMouseOverHandlers(vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
     }
     checkZoomControlPosition(selectedGeospace, isRightPanelHidden);
   }, [selectedGeospace, isRightPanelHidden]);
@@ -81,25 +76,13 @@ const CustomMap = ({
     if(vectorTileLayer) {
       removeAllFeatureLayers(map);
       vectorTileLayer.bringToFront();
-      vectorTileLayer.on('click', (e: LeafletMouseEvent) => {
-        if (e.propagatedFrom.feature) {
-          const summary: GeospaceOverview = JSON.parse(e.propagatedFrom.feature.properties.summary) as GeospaceOverview;
-          const centroid: Array<number> = summary.geospace.centroid;
-          const geospacePosition: L.LatLng = L.latLng(centroid[0], centroid[1]);
-          selectGeospace(summary, geospacePosition);
-          map.flyTo(geospacePosition, 5);
-          map.setView(geospacePosition, map.getZoom() > 5 ? map.getZoom() : 5);
-          const newStyle = {
-            ...baseStyle,
-            weight: 3,
-            opacity: 0.8,
-            fillOpacity: 0.8,
-            color: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject],
-            fillColor: speedColors[getSignalStateDownload(summary.download_median) as keyof SpeedsObject]
-          };
-          vectorTileLayer.setFeatureStyle(parseInt(summary.geospace.geo_id), newStyle);
-        }
-      });
+      const clickHandlerFn = (ev: LeafletMouseEvent) => addClickHandler(ev, map, vectorTileLayer, selectGeospace);
+      const mouseOverHandlerFn = (ev: LeafletMouseEvent) => layerMouseoverHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
+      const mouseOutHandlerFn = (ev: LeafletMouseEvent) => layerMouseoutHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
+      vectorTileLayer.on('click', clickHandlerFn);
+      vectorTileLayer.on('mouseover', mouseOverHandlerFn);
+      vectorTileLayer.on('mouseout', mouseOutHandlerFn);
+
       map.addLayer(vectorTileLayer);
     }
   }, [lastGeoJSONUpdate]);

@@ -1,25 +1,9 @@
 import {ReactElement, useEffect, useState} from "react";
 import L from "leaflet";
-import {MapContainer, TileLayer} from "react-leaflet";
-import {
-  baseStyle, getFeatureIdHandler,
-  getStyle, getVectorTileOptions,
-  isCurrentGeospace,
-  mapTileAttribution,
-  mapTileUrl,
-  parseStringIntoCorrectNumber, featureStyleHandler,
-  shouldShowLayer
-} from "../../utils/map";
+import {MapContainer} from "react-leaflet";
+import {getVectorTileOptions} from "../../utils/map";
 import {styles} from "./styles/MyMap.style";
-import {
-  GeoJSONProperties,
-  GeoJSONResponse,
-  GeoJSONTimedResponse,
-  UnparsedGeoJSONProperties
-} from "../../api/geojson/types";
-import {getGeoJSON} from "../../api/geojson/requests";
-import {handleError} from "../../api";
-import {GeospaceInfo, GeospaceOverview} from "../../api/geospaces/types";
+import {GeospaceInfo} from "../../api/geospaces/types";
 import {Filter, Optional} from "../../utils/types";
 import {Asn} from "../../api/asns/types";
 import CustomMap from "./CustomMap/CustomMap";
