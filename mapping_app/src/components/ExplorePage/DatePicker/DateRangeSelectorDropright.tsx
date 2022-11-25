@@ -33,6 +33,11 @@ const DateRangeSelectorDropright = ({
 
   const toggleDropright = () => setIsDroprightOpen(!isDroprightOpen);
 
+  const getMonths = () => {
+    if(selectedYear === 2009) return [months[0], ...months.slice(4)]; // 2009 only has data since April - months[0] is 'All months'
+    else return months;
+  }
+
   const getMonthContent = () => (
     <>
       <div className={'hover-opaque'} style={styles.YearSelectorContent}>
@@ -41,7 +46,7 @@ const DateRangeSelectorDropright = ({
       </div>
       {
         isDroprightOpen &&
-        <OptionsDropright options={months}
+        <OptionsDropright options={getMonths()}
                           selectedOption={selectedDateRange}
                           setSelectedOption={setSelectedDateRange}
         />
