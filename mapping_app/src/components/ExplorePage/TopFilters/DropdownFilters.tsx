@@ -5,7 +5,7 @@ import CalendarIcon from '../../../assets/calendar-icon.png';
 import ProvidersIcon from '../../../assets/providers-icon.png';
 import SpeedIcon from '../../../assets/speeds-icon.png';
 import DropdownFilterVerticalDivider from "./DropdownFilterVerticalDivider";
-import {calendarFilters, filterTypes, isCalendarFilterPresent, speedFilters} from "../../../utils/filters";
+import {CalendarFilters, FilterTypes, isCalendarFilterPresent, SpeedFilters} from "../../../utils/filters";
 import {getAsns, getAsnsForGeospace} from "../../../api/asns/requests";
 import {Asn} from "../../../api/asns/types";
 import {handleError} from "../../../api";
@@ -137,9 +137,9 @@ const DropdownFilters = ({
   return (
     <div style={styles.DropdownFiltersContainer} id={'dropdown-filters--container'}>
       <DropdownFilter iconSrc={SpeedIcon}
-                      options={Object.values(speedFilters)}
+                      options={Object.values(SpeedFilters)}
                       textWidth={'70px'}
-                      type={filterTypes.SPEED}
+                      type={FilterTypes.SPEED}
                       changeFilter={changeSpeedFilter}
                       selectedFilter={speedType}
                       setOpenFilter={setOpenFilter}
@@ -148,9 +148,9 @@ const DropdownFilters = ({
       />
       <DropdownFilterVerticalDivider/>
       <DropdownFilter iconSrc={CalendarIcon}
-                      options={isCalendarFilterPresent(calendarType) ? Object.values(calendarFilters) : [calendarType, ...Object.values(calendarFilters)]}
+                      options={isCalendarFilterPresent(calendarType) ? Object.values(CalendarFilters) : [calendarType, ...Object.values(CalendarFilters)]}
                       textWidth={'70px'}
-                      type={filterTypes.CALENDAR}
+                      type={FilterTypes.CALENDAR}
                       changeFilter={changeCalendarFilter}
                       selectedFilter={calendarType}
                       setOpenFilter={setOpenFilter}
@@ -163,7 +163,7 @@ const DropdownFilters = ({
                       options={providers}
                       withSearchbar
                       textWidth={'85px'}
-                      type={filterTypes.PROVIDERS}
+                      type={FilterTypes.PROVIDERS}
                       changeFilter={changeProviderFilter}
                       selectedFilter={provider}
                       searchbarOnChange={handleProviderSearchbarChange}

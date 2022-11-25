@@ -6,7 +6,7 @@ import {DetailedGeospace, GeospaceOverview} from "../../../api/geospaces/types";
 import {getGeospaces} from "../../../api/namespaces/requests";
 import {handleError} from "../../../api";
 import DiagonalArrow from '../../../assets/diagonal-arrow.png';
-import {tabs} from "../../../utils/filters";
+import {GeospacesTabs} from "../../../utils/filters";
 import ExplorationPopoverIcon from "./ExplorationPopoverIcon";
 import {Optional} from "../../../utils/types";
 
@@ -87,9 +87,9 @@ const ExplorationPopover = ({
     setCurrentPopoverState(newState);
     if(newState === popoverStates.COUNTIES) return;
     recenterMap();
-    if(newState === popoverStates.STATES) setGeospaceNamespace(tabs.STATES);
-    else if(newState === popoverStates.SPECIFIC_STATE) setGeospaceNamespace(tabs.COUNTIES);
-    else if(newState === popoverStates.TRIBAL_LANDS) setGeospaceNamespace(tabs.TRIBAL_TRACTS);
+    if(newState === popoverStates.STATES) setGeospaceNamespace(GeospacesTabs.STATES);
+    else if(newState === popoverStates.SPECIFIC_STATE) setGeospaceNamespace(GeospacesTabs.COUNTIES);
+    else if(newState === popoverStates.TRIBAL_LANDS) setGeospaceNamespace(GeospacesTabs.TRIBAL_TRACTS);
   }
 
   const goBackToInitial = (): void => {

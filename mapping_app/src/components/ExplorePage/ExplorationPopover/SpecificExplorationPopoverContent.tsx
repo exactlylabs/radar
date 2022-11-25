@@ -9,7 +9,7 @@ import {DetailedGeospace, GeospaceInfo, GeospaceOverview} from "../../../api/geo
 import {getOverview} from "../../../api/geospaces/requests";
 import './styles/SpecificExplorationPopoverContent.css';
 import {emptyGeoJSONFilters} from "../../../api/geojson/types";
-import {getZoomForNamespace, tabs} from "../../../utils/filters";
+import {getZoomForNamespace, GeospacesTabs} from "../../../utils/filters";
 import MyExplorationPopoverLoader from "./MyExplorationPopoverLoader";
 
 interface SpecificExplorationPopoverContentProps {
@@ -109,7 +109,7 @@ const SpecificExplorationPopoverContent = ({
     } else {
       const center: Array<number> = [option.centroid[0], option.centroid[1]];
       setCenter(center);
-      setZoom(getZoomForNamespace(tabs.STATES));
+      setZoom(getZoomForNamespace(GeospacesTabs.STATES));
       setType(popoverStates.SPECIFIC_STATE);
       setInputText('');
     }

@@ -8,7 +8,7 @@ import {GeospaceOverview} from "../../../api/geospaces/types";
 import {getSignalStateDownload, getSignalStateUpload} from "../../../utils/speeds";
 import DownloadIconGray from '../../../assets/download-icon-gray.png';
 import UploadIconGray from '../../../assets/upload-icon-gray.png';
-import {speedFilters} from "../../../utils/filters";
+import {SpeedFilters} from "../../../utils/filters";
 
 interface GeographicalTooltipProps {
   geospace: GeospaceOverview;
@@ -21,7 +21,7 @@ const GeographicalTooltip = ({
 }: GeographicalTooltipProps): ReactElement => {
 
   const getCorrespondingSignalState = () => {
-    return speedType === speedFilters.DOWNLOAD ?
+    return speedType === SpeedFilters.DOWNLOAD ?
       getSignalStateDownload(geospace.download_median) :
       getSignalStateUpload(geospace.upload_median);
   }

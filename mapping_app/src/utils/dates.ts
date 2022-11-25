@@ -1,5 +1,13 @@
 import {Optional} from "./types";
-import {calendarFilters, dateTabs, halves, isSpecificMonth, isSpecificYear, months} from "./filters";
+import {
+  CalendarFilters,
+  DateTabs,
+  getSubtitleForQuarter,
+  halves,
+  isSpecificMonth,
+  isSpecificYear,
+  months
+} from "./filters";
 
 export type DatePickerState = {
   selectedYear: Optional<number>;
@@ -235,24 +243,24 @@ export const getInitialStateFromCalendarType = (calendarType: string): DatePicke
     selectedRangeValue: null,
     selectedTab: null,
   }
-  if(calendarType === calendarFilters.THIS_YEAR || calendarType === calendarFilters.ALL_TIME) {
+  if(calendarType === CalendarFilters.THIS_YEAR || calendarType === CalendarFilters.ALL_TIME) {
     const today = new Date();
     pickerState.selectedYear = today.getFullYear();
-    pickerState.selectedTab = dateTabs.MONTH;
+    pickerState.selectedTab = DateTabs.MONTH;
     pickerState.selectedRangeValue = months[0];
-  } else if(calendarType === calendarFilters.LAST_WEEK) {
+  } else if(calendarType === CalendarFilters.LAST_WEEK) {
     const today = new Date();
     const thisWeekNumber = getWeekNumber();
     pickerState.selectedYear = today.getFullYear();
-    pickerState.selectedTab = dateTabs.WEEK;
+    pickerState.selectedTab = DateTabs.WEEK;
     pickerState.selectedWeek = thisWeekNumber - 1;
     pickerState.subtitleText = `Week ${thisWeekNumber - 1}`;
     pickerState.selectedRangeValue = getWeekLimits(2022, thisWeekNumber - 1);
-  } else if(calendarType === calendarFilters.LAST_MONTH) {
+  } else if(calendarType === CalendarFilters.LAST_MONTH) {
     const today = new Date();
     const todayMonth = today.getMonth();
     pickerState.selectedYear = today.getFullYear();
-    pickerState.selectedTab = dateTabs.MONTH;
+    pickerState.selectedTab = DateTabs.MONTH;
     pickerState.selectedRangeValue = months[todayMonth + 1];
   } else if(calendarType.includes('H')) {
     const split: Array<string> = calendarType.split(' ');
@@ -264,7 +272,18 @@ export const getInitialStateFromCalendarType = (calendarType: string): DatePicke
       year = year.replace('(', '').replace(')', '');
       pickerState.selectedYear = parseInt(year);
     }
-    pickerState.selectedTab = dateTabs.HALF_YEAR;
+    pickerState.selectedTab = DateTabs.HALF_YEAR;
+  } else if(calendarType.includes('Q')) {
+    const split: Array<string> = calendarType.split(' ');
+    const q: string = split[0];
+    let year: Optional<string> = split.length > 1 ? split[1] : null;
+    pickerState.selectedRangeValue = q;
+    pickerState.subtitleText = getSubtitleForQuarter(q);
+    if(year) {
+      year = year.replace('(', '').replace(')', '');
+      pickerState.selectedYear = parseInt(year);
+    }
+    pickerState.selectedTab = DateTabs.QUARTER;
   } else if(calendarType.includes('-')) {
     const split: Array<string> = calendarType.split('-');
     let endMonthDay = split[1];
@@ -281,17 +300,17 @@ export const getInitialStateFromCalendarType = (calendarType: string): DatePicke
     pickerState.selectedRangeValue = getWeekLimits(year ? parseInt(year) : 2022, week);
     pickerState.subtitleText = `Week ${week}`;
     pickerState.selectedMonth = endDay.getMonth();
-    pickerState.selectedTab = dateTabs.WEEK;
+    pickerState.selectedTab = DateTabs.WEEK;
   } else if(isSpecificMonth(calendarType)) {
     const split: Array<string> = calendarType.split(' ');
     const month = getMonthNumberFromName(split[0]);
     const year = split.length > 1 ? split[1].split('(')[1].split(')')[0] : null;
     pickerState.selectedRangeValue = months[month + 1];
     if(year) pickerState.selectedYear = parseInt(year);
-    pickerState.selectedTab = dateTabs.MONTH;
+    pickerState.selectedTab = DateTabs.MONTH;
   } else if(isSpecificYear(calendarType)) {
     pickerState.selectedYear = parseInt(calendarType);
-    pickerState.selectedTab = dateTabs.MONTH;
+    pickerState.selectedTab = DateTabs.MONTH;
   }
   return pickerState;
 }
@@ -304,5 +323,7 @@ export const getQueryStringFromDateObject = (dateObject: DateFilter): string => 
     dateQuery += `&week=${dateObject.selectedWeek}`;
   if(dateObject.selectedSemester)
     dateQuery += `&semester=${dateObject.selectedSemester}`;
+  if(dateObject.selectedQuarter)
+    dateQuery += `&quarter=${dateObject.selectedQuarter}`;
   return dateQuery;
 }

@@ -2,7 +2,7 @@ import {Filter} from "../../utils/types";
 import {Asn} from "../asns/types";
 import {GeoJSONFilters} from "../geojson/types";
 import {getQueryStringFromDateObject, getWeekNumber} from "../../utils/dates";
-import {calendarFilters, getDateQueryStringFromCalendarType} from "../../utils/filters";
+import {CalendarFilters, getDateQueryStringFromCalendarType} from "../../utils/filters";
 
 export const getFiltersString = (filters: GeoJSONFilters): string => {
   let filterString: string = '';
@@ -18,14 +18,14 @@ export const getFiltersString = (filters: GeoJSONFilters): string => {
 export const getCalendarFilterValue = (filter: Filter): string => {
   const today: Date = new Date();
   switch (filter) {
-    case calendarFilters.ALL_TIME:
+    case CalendarFilters.ALL_TIME:
       return '';
-    case calendarFilters.LAST_WEEK:
+    case CalendarFilters.LAST_WEEK:
       const lastWeekNumber = getWeekNumber() - 2;
       return `week=${lastWeekNumber}&year=${today.getFullYear()}`;
-    case calendarFilters.LAST_MONTH:
+    case CalendarFilters.LAST_MONTH:
       return `month=${today.getMonth()}&year=${today.getFullYear()}`;
-    case calendarFilters.THIS_YEAR:
+    case CalendarFilters.THIS_YEAR:
       return `year=${today.getFullYear()}`;
     default:
       return getDateQueryStringFromCalendarType(filter as string);
