@@ -1,6 +1,6 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/DateRangeSelectorTabs.style";
-import {dateTabs} from "../../../utils/filters";
+import {DateTabs} from "../../../utils/filters";
 
 interface DateRangeSelectorTabsProps {
   selectedTab: string;
@@ -12,34 +12,33 @@ const DateRangeSelectorTabs = ({
   selectDateTab
 }: DateRangeSelectorTabsProps): ReactElement => {
 
-  const selectWeek = () => selectDateTab(dateTabs.WEEK);
-  const selectMonth = () => selectDateTab(dateTabs.MONTH);
-  const selectQuarter = () => selectDateTab(dateTabs.QUARTER);
-  const selectHalfyear = () => selectDateTab(dateTabs.HALF_YEAR);
+  const selectWeek = () => selectDateTab(DateTabs.WEEK);
+  const selectMonth = () => selectDateTab(DateTabs.MONTH);
+  const selectQuarter = () => selectDateTab(DateTabs.QUARTER);
+  const selectHalfyear = () => selectDateTab(DateTabs.HALF_YEAR);
 
   return (
     <div style={styles.DateRangeSelectorTabs}>
       <div className={'fw-regular hover-opaque'}
-           style={styles.Tab(selectedTab === dateTabs.MONTH)}
+           style={styles.Tab(selectedTab === DateTabs.MONTH)}
            onClick={selectMonth}
       >
         Month
       </div>
       <div className={'fw-regular hover-opaque'}
-           style={styles.Tab(selectedTab === dateTabs.WEEK)}
+           style={styles.Tab(selectedTab === DateTabs.WEEK)}
            onClick={selectWeek}
       >
         Week
       </div>
-      {/* TODO: Once backend supports Qs, uncomment */}
-      {/*<div className={'fw-regular hover-opaque'}
-           style={styles.Tab(selectedTab === dateTabs.QUARTER)}
+      <div className={'fw-regular hover-opaque'}
+           style={styles.Tab(selectedTab === DateTabs.QUARTER)}
            onClick={selectQuarter}
       >
         Quarter
-      </div>*/}
+      </div>
       <div className={'fw-regular hover-opaque'}
-           style={styles.Tab(selectedTab === dateTabs.HALF_YEAR)}
+           style={styles.Tab(selectedTab === DateTabs.HALF_YEAR)}
            onClick={selectHalfyear}
       >
         Halfyear

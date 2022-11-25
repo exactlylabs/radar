@@ -15,7 +15,7 @@ import {Filter} from "../../../utils/types";
 import {Asn} from "../../../api/asns/types";
 import {GeoJSONFilters} from "../../../api/geojson/types";
 import RightPanelLoader from "./RightPanelLoader";
-import {speedFilters} from "../../../utils/filters";
+import {SpeedFilters} from "../../../utils/filters";
 
 
 interface RightPanelProps {
@@ -87,25 +87,25 @@ const RightPanel = ({
   }
 
   const getSignalState = (): string => {
-    return speedType === speedFilters.DOWNLOAD ?
+    return speedType === SpeedFilters.DOWNLOAD ?
       getSignalStateDownload(selectedGeospaceInfo.download_median) : getSignalStateUpload(selectedGeospaceInfo.upload_median);
   }
 
   const getUnservedPeopleCount = () => {
-    const percentage: number = speedType === speedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.bad : selectedGeospaceInfo.upload_scores.bad;
-    const totalSamples: number = speedType === speedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.total_samples : selectedGeospaceInfo.upload_scores.total_samples;
+    const percentage: number = speedType === SpeedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.bad : selectedGeospaceInfo.upload_scores.bad;
+    const totalSamples: number = speedType === SpeedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.total_samples : selectedGeospaceInfo.upload_scores.total_samples;
     return getPeopleCount(percentage, totalSamples)
   }
 
   const getUnderservedPeopleCount = () => {
-    const percentage: number = speedType === speedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.medium : selectedGeospaceInfo.upload_scores.medium;
-    const totalSamples: number = speedType === speedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.total_samples : selectedGeospaceInfo.upload_scores.total_samples;
+    const percentage: number = speedType === SpeedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.medium : selectedGeospaceInfo.upload_scores.medium;
+    const totalSamples: number = speedType === SpeedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.total_samples : selectedGeospaceInfo.upload_scores.total_samples;
     return getPeopleCount(percentage, totalSamples)
   }
 
   const getServedPeopleCount = () => {
-    const percentage: number = speedType === speedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.good : selectedGeospaceInfo.upload_scores.good;
-    const totalSamples: number = speedType === speedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.total_samples : selectedGeospaceInfo.upload_scores.total_samples;
+    const percentage: number = speedType === SpeedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.good : selectedGeospaceInfo.upload_scores.good;
+    const totalSamples: number = speedType === SpeedFilters.DOWNLOAD ? selectedGeospaceInfo.download_scores.total_samples : selectedGeospaceInfo.upload_scores.total_samples;
     return getPeopleCount(percentage, totalSamples)
   }
 

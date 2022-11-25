@@ -1,11 +1,10 @@
-import {AppState, Filter, isLatLngValid, isNumber, isString, Optional} from "./types";
-import {Geospace, GeospaceInfo, isGeospaceData, isGeospaceOverview} from "../api/geospaces/types";
-import {calendarFilters, speedFilters, tabs} from "./filters";
+import {AppState, isLatLngValid, isNumber, isString, Optional} from "./types";
+import {GeospaceInfo, isGeospaceData, isGeospaceOverview} from "../api/geospaces/types";
+import {CalendarFilters, SpeedFilters, GeospacesTabs} from "./filters";
 import {Asn, isAsn} from "../api/asns/types";
 import {allProvidersElement} from "../components/ExplorePage/TopFilters/utils/providers";
 import {speedTypes} from "./speeds";
 import {handleError} from "../api";
-import Option from "../components/ExplorePage/TopFilters/Option";
 
 let appState: Optional<AppState>;
 
@@ -107,17 +106,17 @@ const areAllValuesSpeedFilters = (value: any): boolean => {
 }
 
 const validateGeospaceNamespace = (value: any): string => {
-  if (!isString(value) || !Object.keys(tabs).includes(value as string)) return tabs.STATES;
+  if (!isString(value) || !Object.keys(GeospacesTabs).includes(value as string)) return GeospacesTabs.STATES;
   return value;
 }
 
 const validateSpeedType = (value: any): string => {
-  if(!isString(value) || !(value as string in speedFilters)) return speedFilters.DOWNLOAD;
+  if(!isString(value) || !(value as string in SpeedFilters)) return SpeedFilters.DOWNLOAD;
   return value;
 }
 
 const validateCalendarType = (value: any): string => {
-  if(!isString(value) || !(value as string in calendarFilters)) return calendarFilters.THIS_YEAR;
+  if(!isString(value) || !(value as string in CalendarFilters)) return CalendarFilters.THIS_YEAR;
   return value;
 }
 

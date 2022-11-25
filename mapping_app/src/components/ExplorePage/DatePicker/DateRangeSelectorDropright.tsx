@@ -1,7 +1,7 @@
 import {ReactElement, useState} from "react";
 import {styles} from "./styles/DateRangeSelectorDropright.style";
 import ChevronRight from "../../../assets/chevron-right.png";
-import {dateTabs, halves, months, quarters, years} from "../../../utils/filters";
+import {DateTabs, halves, isQuarterSelected, months, Quarters, quartersWithRange, years} from "../../../utils/filters";
 import OptionsDropright from "./OptionsDropright";
 import WeekPicker from "./WeekPicker";
 
@@ -85,10 +85,12 @@ const DateRangeSelectorDropright = ({
       </div>
       {
         isDroprightOpen &&
-        <OptionsDropright options={quarters}
+        <OptionsDropright options={Object.values(quartersWithRange)}
                           selectedOption={selectedDateRange}
                           setSelectedOption={setSelectedDateRange}
                           bottomAligned
+                          isSelectedFn={isQuarterSelected}
+
         />
       }
     </>
@@ -116,14 +118,13 @@ const DateRangeSelectorDropright = ({
 
   const getContent = () => {
     switch (selectedTab) {
-      case dateTabs.MONTH:
+      case DateTabs.MONTH:
         return getMonthContent();
-      case dateTabs.WEEK:
+      case DateTabs.WEEK:
         return getWeekContent();
-      // TODO: Once Qs are supported on the backed, uncomment
-      /*case dateTabs.QUARTER:
-        return getQuarterContent();*/
-      case dateTabs.HALF_YEAR:
+      case DateTabs.QUARTER:
+        return getQuarterContent();
+      case DateTabs.HALF_YEAR:
         return getHalfyearContent();
       default:
         return getMonthContent();

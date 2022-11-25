@@ -1,7 +1,7 @@
 import {GeoJSON} from "leaflet";
 import {GeospaceOverview} from "../geospaces/types";
 import {Asn} from "../asns/types";
-import {speedFilters} from "../../utils/filters";
+import {SpeedFilters} from "../../utils/filters";
 
 export type GeoJSONProperties = {
   ID: string;

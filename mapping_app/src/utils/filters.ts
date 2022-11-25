@@ -6,22 +6,20 @@ import {
   getWeekLimits,
   getWeekNumber
 } from "./dates";
-import Option from "../components/ExplorePage/TopFilters/Option";
 import {Optional} from "./types";
-import {start} from "repl";
 
-export const filterTypes = {
-  SPEED: 'speed',
-  CALENDAR: 'calendar',
-  PROVIDERS: 'providers',
+export enum FilterTypes {
+  SPEED = 'speed',
+  CALENDAR = 'calendar',
+  PROVIDERS = 'providers',
 }
 
-export enum speedFilters {
+export enum SpeedFilters {
   DOWNLOAD = 'Download',
   UPLOAD = 'Upload'
 }
 
-export enum calendarFilters {
+export enum CalendarFilters {
   ALL_TIME = 'All time',
   LAST_WEEK = 'Last week',
   LAST_MONTH = 'Last month',
@@ -30,46 +28,106 @@ export enum calendarFilters {
 }
 
 export const isCalendarFilterPresent = (value: string): boolean => {
-  return Object.values(calendarFilters).includes(value as calendarFilters);
+  return Object.values(CalendarFilters).includes(value as CalendarFilters);
 }
 
-export type NamespaceTabObject = {
-  STATES: string;
-  COUNTIES: string;
-  TRIBAL_TRACTS: string;
+export enum GeospacesTabs {
+  STATES = 'STATES',
+  COUNTIES = 'COUNTIES',
+  TRIBAL_TRACTS = 'TRIBAL_TRACTS',
 }
 
-export type DateTabObject = {
-  WEEK: string;
-  MONTH: string;
-  QUARTER: string;
-  HALF_YEAR: string;
+export enum DateTabs {
+  WEEK = 'WEEK',
+  MONTH = 'MONTH',
+  QUARTER = 'QUARTER',
+  HALF_YEAR = 'HALF_YEAR',
 }
 
-export const tabs: NamespaceTabObject = {
-  STATES: 'STATES',
-  COUNTIES: 'COUNTIES',
-  TRIBAL_TRACTS: 'TRIBAL_TRACTS',
+export enum Quarters {
+  Q1 = 'Q1',
+  Q2 = 'Q2',
+  Q3 = 'Q3',
+  Q4 = 'Q4',
 }
 
-export const dateTabs: DateTabObject = {
-  WEEK: 'WEEK',
-  MONTH: 'MONTH',
-  QUARTER: 'QUARTER',
-  HALF_YEAR: 'HALF_YEAR',
+export enum QuartersDateRanges {
+  Q1 = 'Jan 1 - Mar 31',
+  Q2 = 'Apr 1 - Jun 30',
+  Q3 = 'Jul 1 - Sep 30',
+  Q4 = 'Oct 1 - Dec 31',
+}
+
+export type QuartersWithRangeObject = {
+  Q1: string;
+  Q2: string;
+  Q3: string;
+  Q4: string;
+}
+
+// Need to use object instead of enum because of dynamic string values
+export const quartersWithRange: QuartersWithRangeObject = {
+  Q1: `${Quarters.Q1} (${QuartersDateRanges.Q1})`,
+  Q2: `${Quarters.Q2} (${QuartersDateRanges.Q2})`,
+  Q3: `${Quarters.Q3} (${QuartersDateRanges.Q3})`,
+  Q4: `${Quarters.Q4} (${QuartersDateRanges.Q4})`,
 }
 
 export const years = [2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009];
 export const months = ['All months', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-export const quarters = ['Q1: Jan 1 - Mar 31', 'Q2: Apr 1 - Jun 30', 'Q3: Jul 1 - Sep 30', 'Q4: Oct 1 - Dec 31'];
 export const halves = ['Jan 1 - Jun 30', 'Jul 1 - Dec 31'];
 
+/**
+ * Function to check if actual option label matches the Q{1,2,3,4} value.
+ * @param currentQuarter: current quarter from options' loop. Type of QuartersWithRange.
+ * @param selectedQuarter: current selected quarter. Type of Quarters.
+ */
+export const isQuarterSelected = (currentQuarter: any, selectedQuarter: any): boolean => {
+  const key = selectedQuarter as string;
+  const currentQuarterString = currentQuarter as string;
+  return quartersWithRange[key as keyof QuartersWithRangeObject] === currentQuarterString;
+}
+
+/**
+ * Get Quarter type from QuarterWithRangeObject value.
+ * @param selectedFullQuarter: string from QuartersWithRangeObject type.
+ */
+export const getQuarterValueFromCompleteRange = (selectedFullQuarter: string): string => {
+  const indexOfQ = Object.values(quartersWithRange).indexOf(selectedFullQuarter);
+  if(indexOfQ > 0) return Object.values(Quarters)[indexOfQ];
+  return Quarters.Q1;
+}
+
+/**
+ * Function to get range from given Q value.
+ * @param quarter: Q value of type Quarter.
+ */
+export const getSubtitleForQuarter = (quarter: string): string => {
+  return QuartersDateRanges[quarter as keyof QuartersWithRangeObject];
+}
+
+/**
+ * Function to get subtitle text from given H value.
+ * @param halfRange: H value of type half.
+ */
+export const getSubtitleForHalf = (halfRange: string): string => {
+  return halfRange === halves[0] ? 'H1' : 'H2';
+}
+
+/**
+ * Function to get semester index for query to backend API.
+ * @param quarter: string of type Quarter.
+ */
+export const getSemesterFromSelectedQ = (quarter: string): number => {
+  return parseInt(quarter.split('Q')[1]);
+}
+
 export const getCorrectNamespace = (namespace: string): string => {
-  return tabs[namespace.toUpperCase() as keyof NamespaceTabObject];
+  return GeospacesTabs[namespace.toUpperCase() as GeospacesTabs];
 }
 
 export const getZoomForNamespace = (namespace: string): number => {
-  if (namespace.toUpperCase() === tabs.STATES) return 5;
+  if (namespace.toUpperCase() === GeospacesTabs.STATES) return 5;
   return 7;
 }
 
@@ -78,7 +136,7 @@ export const generateFilterLabel = (dateObject: DateFilter): string => {
   const isCurrentYear: boolean = year === years[0];
   const hasOtherFields: boolean = Object.keys(dateObject).length > 1;
   if(!hasOtherFields) {
-    return isCurrentYear ? calendarFilters.THIS_YEAR : year.toString();
+    return isCurrentYear ? CalendarFilters.THIS_YEAR : year.toString();
   }
   let filterLabel: string = '';
   if(dateObject.selectedMonth)
@@ -87,27 +145,29 @@ export const generateFilterLabel = (dateObject: DateFilter): string => {
     filterLabel = `H${dateObject.selectedSemester}${isCurrentYear ? '' : ` (${year})`}`;
   if(dateObject.selectedWeek)
     filterLabel = `${getWeekLimits(year, dateObject.selectedWeek + 1)}${isCurrentYear ? '' : ` (${year})`}`;
+  if(dateObject.selectedQuarter)
+    filterLabel = `Q${dateObject.selectedQuarter}${isCurrentYear ? '' : ` (${year})`}`;
   return filterLabel;
 }
 
 export const getDateQueryStringFromCalendarType = (calendarType: string): string => {
   let queryString: string = '';
   switch (calendarType) {
-    case calendarFilters.LAST_WEEK:
+    case CalendarFilters.LAST_WEEK:
       const thisWeekNumber = getWeekNumber();
       queryString = `&year=${new Date().getFullYear()}&week=${thisWeekNumber - 1 - 1}`; // minus 2 (1 for backend 0 indexing and 1 for one less week)
       break;
-    case calendarFilters.LAST_MONTH:
+    case CalendarFilters.LAST_MONTH:
       // Month in JS is 0-based, backend is 1-based. So for example if we are in February, getMonth() would
       // return 1. For our backend that's January, but as we want 'Last Month' we can keep that value as is.
       const thisMonth = new Date().getMonth();
       queryString = `&year=${new Date().getFullYear()}&month=${thisMonth}`;
       break;
-    case calendarFilters.THIS_YEAR:
+    case CalendarFilters.THIS_YEAR:
       const thisYear = new Date().getFullYear();
       queryString = `&year=${thisYear}`;
       break;
-    case calendarFilters.ALL_TIME:
+    case CalendarFilters.ALL_TIME:
       break;
     default:
       queryString = decodeCustomDate(calendarType);
@@ -123,6 +183,17 @@ const decodeCustomDate = (customDate: string): string => {
     const h: string = split[0];
     let year: Optional<string> = split.length > 1 ? split[1] : null;
     queryString += `&semester=${h === 'H1' ? 1 : 2}`;
+    if (year) {
+      year = year.replace('(', '').replace(')', '');
+      queryString += `&year=${year}`;
+    } else {
+      queryString += `&year=2022`;
+    }
+  } else if(customDate.includes('Q')) {
+    const split: Array<string> = customDate.split(' ');
+    const q: string = split[0];
+    let year: Optional<string> = split.length > 1 ? split[1] : null;
+    queryString += `&quarter=${getSemesterFromSelectedQ(q)}`;
     if(year) {
       year = year.replace('(', '').replace(')', '');
       queryString += `&year=${year}`;

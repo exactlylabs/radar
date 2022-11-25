@@ -1,7 +1,7 @@
 import React, {ChangeEventHandler, ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/DropdownFilter.style";
 import OptionsDropdown from "./OptionsDropdown";
-import {filterTypes} from "../../../utils/filters";
+import {FilterTypes} from "../../../utils/filters";
 import {Filter, Optional} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
@@ -94,8 +94,8 @@ const DropdownFilter = ({
         <OptionsDropdown options={options}
                          selectedOption={selectedOption}
                          setSelectedOption={handleSelectNewFilter}
-                         dropRight={type === filterTypes.SPEED || type === filterTypes.CALENDAR}
-                         dropLeft={type === filterTypes.PROVIDERS}
+                         dropRight={type === FilterTypes.SPEED || type === FilterTypes.CALENDAR}
+                         dropLeft={type === FilterTypes.PROVIDERS}
                          withSearchbar={withSearchbar}
                          searchbarOnChange={searchbarOnChange}
                          lastOptionOnClick={lastOptionOnClick}

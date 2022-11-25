@@ -1,6 +1,6 @@
 import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/GeographicalCategoryTabs.style";
-import {tabs} from "../../../utils/filters";
+import {GeospacesTabs} from "../../../utils/filters";
 
 interface GeographicalCategoryTabsProps {
   geospaceNamespace: string;
@@ -14,34 +14,34 @@ const GeographicalCategoryTabs = ({
   isRightPanelHidden
 }: GeographicalCategoryTabsProps): ReactElement => {
 
-  const [selectedTab, setSelectedTab] = useState<string>(tabs.STATES)
+  const [selectedTab, setSelectedTab] = useState<string>(GeospacesTabs.STATES)
 
   useEffect(() => {
     setSelectedTab(geospaceNamespace);
   }, [geospaceNamespace]);
 
-  const selectStates = () => setGeospaceNamespace(tabs.STATES);
+  const selectStates = () => setGeospaceNamespace(GeospacesTabs.STATES);
 
-  const selectCounties = () => setGeospaceNamespace(tabs.COUNTIES);
+  const selectCounties = () => setGeospaceNamespace(GeospacesTabs.COUNTIES);
 
-  const selectTribalLands = () => setGeospaceNamespace(tabs.TRIBAL_TRACTS);
+  const selectTribalLands = () => setGeospaceNamespace(GeospacesTabs.TRIBAL_TRACTS);
 
   return (
     <div style={styles.GeographicalCategoryTabsContainer(isRightPanelHidden)}>
       <div className={'fw-regular hover-opaque'}
-           style={styles.Tab(selectedTab === tabs.STATES)}
+           style={styles.Tab(selectedTab === GeospacesTabs.STATES)}
            onClick={selectStates}
       >
         States
       </div>
       <div className={'fw-regular hover-opaque'}
-           style={styles.Tab(selectedTab === tabs.COUNTIES)}
+           style={styles.Tab(selectedTab === GeospacesTabs.COUNTIES)}
            onClick={selectCounties}
       >
         Counties
       </div>
       <div className={'fw-regular hover-opaque'}
-           style={styles.Tab(selectedTab === tabs.TRIBAL_TRACTS)}
+           style={styles.Tab(selectedTab === GeospacesTabs.TRIBAL_TRACTS)}
            onClick={selectTribalLands}
       >
         Tribal Lands

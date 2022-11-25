@@ -3,7 +3,7 @@ import {speedColors, SpeedsObject, speedTextsDownload, speedTextsUpload} from ".
 import {capitalize} from "../../../utils/strings";
 import {styles} from "./styles/SpeedDistributionRow.style";
 import {Filter} from "../../../utils/types";
-import {speedFilters} from "../../../utils/filters";
+import {SpeedFilters} from "../../../utils/filters";
 
 interface SpeedDistributionRowProps {
   type: string;
@@ -20,7 +20,7 @@ const SpeedDistributionRow = ({
 }: SpeedDistributionRowProps): ReactElement => {
 
   const getSpeedText = (type: string): string => {
-    return speedType === speedFilters.DOWNLOAD ?
+    return speedType === SpeedFilters.DOWNLOAD ?
       speedTextsDownload[type as keyof SpeedsObject] : speedTextsUpload[type as keyof SpeedsObject];
   }
 

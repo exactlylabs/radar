@@ -5,10 +5,11 @@ import YearSelector from "./YearSelector";
 import DateRangeSelector from "./DateRangeSelector";
 import ApplyDateRangeButton from "./ApplyDateRangeButton";
 import {
-  dateTabs,
+  DateTabs, getQuarterValueFromCompleteRange, getSemesterFromSelectedQ, getSubtitleForHalf, getSubtitleForQuarter,
   halves,
   months,
-  quarters,
+  Quarters,
+  QuartersDateRanges,
   years
 } from "../../../utils/filters";
 import {
@@ -37,13 +38,15 @@ const DatePicker = ({
   const [selectedYear, setSelectedYear] = useState(initialState?.selectedYear ?? years[0]);
   const [selectedMonth, setSelectedMonth] = useState(initialState?.selectedMonth ?? new Date().getMonth());
   const [selectedWeek, setSelectedWeek] = useState(initialState?.selectedWeek ?? getWeekNumber(getFirstDayOfLastWeek()));
-  const [selectedTab, setSelectedTab] = useState(initialState?.selectedTab ?? dateTabs.WEEK);
+  const [selectedTab, setSelectedTab] = useState(initialState?.selectedTab ?? DateTabs.WEEK);
   const [selectedRangeValue, setSelectedRangeValue] = useState<string | number>(initialState?.selectedRangeValue ?? months[0]);
   const [subtitleText, setSubtitleText] = useState(initialState?.subtitleText ?? '');
 
   useEffect(() => {
-    if(selectedTab === dateTabs.HALF_YEAR) {
+    if(selectedTab === DateTabs.HALF_YEAR) {
       setSubtitleText(getSubtitleForHalf(selectedRangeValue as string));
+    } else if(selectedTab === DateTabs.QUARTER) {
+      setSubtitleText(getSubtitleForQuarter(selectedRangeValue as string));
     }
   }, [selectedRangeValue]);
 
@@ -53,7 +56,7 @@ const DatePicker = ({
     const newMonth = newYear === years[0] ? getCurrentMonth() : 0;
     setSelectedMonth(newMonth);
     setSelectedWeek(newWeek);
-    if(dateTabs.WEEK === selectedTab) {
+    if(DateTabs.WEEK === selectedTab) {
       setSelectedRangeValue(getWeekLimits(newYear, newWeek));
       setSubtitleText(`Week: ${newWeek}`);
     }
@@ -71,37 +74,51 @@ const DatePicker = ({
     //let dateQuery = `&year=${selectedYear}`;
     let dateObject: DateFilter = {selectedYear};
     switch (selectedTab) {
-      case dateTabs.MONTH:
+      case DateTabs.MONTH:
         if(selectedRangeValue !== months[0]) {
           dateObject.selectedMonth = getMonthNumberFromName(selectedRangeValue as string) + 1;
         }
         break;
-      case dateTabs.HALF_YEAR:
+      case DateTabs.HALF_YEAR:
         dateObject.selectedSemester = subtitleText === 'H1' ? 1 : 2;
         break;
-      case dateTabs.WEEK:
+      case DateTabs.WEEK:
         dateObject.selectedWeek = selectedWeek - 1;
         break;
+      case DateTabs.QUARTER:
+        dateObject.selectedQuarter = getSemesterFromSelectedQ(selectedRangeValue as string);
+        break;
     }
-    console.log('date Object', dateObject);
     applyRanges(dateObject);
-  }
-
-  const getSubtitleForHalf = (halfRange: string): string => {
-    return halfRange === halves[0] ? 'H1' : 'H2';
   }
 
   const handleSelectTab = (newTab: string) => {
     setSelectedTab(newTab);
-    if(newTab === dateTabs.WEEK) {
-      setSelectedRangeValue(getWeekLimits(selectedYear, selectedWeek));
-      setSubtitleText(`Week: ${selectedWeek}`);
-    } else if(newTab === dateTabs.MONTH) {
-      setSelectedRangeValue(months[0]);
-      setSubtitleText('');
-    } else if(newTab === dateTabs.HALF_YEAR) {
-      setSelectedRangeValue(halves[0]);
-      setSubtitleText('H1');
+    switch (newTab) {
+      case DateTabs.WEEK:
+        setSelectedRangeValue(getWeekLimits(selectedYear, selectedWeek));
+        setSubtitleText(`Week: ${selectedWeek}`);
+        break;
+      case DateTabs.MONTH:
+        setSelectedRangeValue(months[0]);
+        setSubtitleText('');
+        break;
+      case DateTabs.QUARTER:
+        setSelectedRangeValue(Quarters.Q1);
+        setSubtitleText(QuartersDateRanges.Q1);
+        break;
+      case DateTabs.HALF_YEAR:
+        setSelectedRangeValue(halves[0]);
+        setSubtitleText('H1');
+        break;
+    }
+  }
+
+  const handleSelectDateRangeValue = (value: string | number) => {
+    if(selectedTab === DateTabs.QUARTER) {
+      setSelectedRangeValue(getQuarterValueFromCompleteRange(value as string))
+    } else {
+      setSelectedRangeValue(value);
     }
   }
 
@@ -122,7 +139,7 @@ const DatePicker = ({
         <DateRangeSelector selectedTab={selectedTab}
                            setSelectedRange={handleSelectTab}
                            selectedRangeValue={selectedRangeValue}
-                           setSelectedRangeValue={setSelectedRangeValue}
+                           setSelectedRangeValue={handleSelectDateRangeValue}
                            subtitleText={subtitleText}
                            selectedYear={selectedYear}
                            selectedWeek={selectedWeek}
