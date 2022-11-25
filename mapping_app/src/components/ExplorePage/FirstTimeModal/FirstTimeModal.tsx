@@ -1,11 +1,11 @@
 import {ReactElement} from "react";
-import MyFullWidthButton from "../../common/MyFullWidthButton";
 import {styles} from "./styles/FirstTimeModal.style";
 import CloseIcon from '../../../assets/close-icon.png';
 import FiltersIcon from '../../../assets/modal-row-filters-icon.png';
 import LayersIcon from '../../../assets/modal-row-layers-icon.png';
 import ExploreIcon from '../../../assets/modal-row-explore-icon.png';
 import {speedTypes} from "../../../utils/speeds";
+import CustomFullWidthButton from "../../common/CustomFullWidthButton";
 
 interface FirstTimeModalProps {
   closeModal: () => void;
@@ -36,7 +36,7 @@ const FirstTimeModal = ({ closeModal }: FirstTimeModalProps): ReactElement => {
             <p className={'fw-light'} style={styles.RowText}><b className={'fw-medium'}>Explore the U.S.A.</b> by states, counties and tribal lands.</p>
           </div>
         </div>
-        <MyFullWidthButton text={`Let's go`} onClick={closeModal} className={'hover-opaque'}/>
+        <CustomFullWidthButton text={`Let's go`} onClick={closeModal} className={'hover-opaque'}/>
       </div>
     </>
   )

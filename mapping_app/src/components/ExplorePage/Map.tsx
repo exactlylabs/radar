@@ -3,13 +3,14 @@ import L from "leaflet";
 import {MapContainer, TileLayer} from "react-leaflet";
 import { mapTileAttribution, mapTileUrl} from "../../utils/map";
 import {styles} from "./styles/MyMap.style";
-import {GeoJSONFilters, GeoJSONProperties, GeoJSONResponse, GeoJSONTimedResponse} from "../../api/geojson/types";
+import {GeoJSONFilters, GeoJSONResponse, GeoJSONTimedResponse} from "../../api/geojson/types";
 import {getGeoJSON} from "../../api/geojson/requests";
 import {handleError} from "../../api";
 import {GeospaceInfo} from "../../api/geospaces/types";
 import {Filter, Optional} from "../../utils/types";
 import {Asn} from "../../api/asns/types";
 import CustomMap from "./CustomMap/CustomMap";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 interface MapProps {
   namespace: string;
@@ -43,6 +44,8 @@ const Map = ({
   calendarType
 }: MapProps): ReactElement => {
 
+  const {isSmallerThanMid} = useViewportSizes();
+
   const [geoJSON, setGeoJSON] = useState<GeoJSONTimedResponse>();
 
   useEffect(() => {
@@ -67,7 +70,7 @@ const Map = ({
         <MapContainer center={{lat: initialCenter[0], lng: initialCenter[1]}}
                     zoom={initialZoom}
                     scrollWheelZoom
-                    style={styles.MapContainer}
+                    style={styles.MapContainer(isSmallerThanMid)}
         >
           <CustomMap geoJSON={geoJSON.data}
                      selectedGeospace={selectedGeospace}

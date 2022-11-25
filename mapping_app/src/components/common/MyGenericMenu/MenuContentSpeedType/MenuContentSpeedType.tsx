@@ -2,7 +2,7 @@ import {ReactElement, useState} from "react";
 import Option from "../../../ExplorePage/TopFilters/Option";
 import {speedFilters} from "../../../../utils/filters";
 import {styles} from "./styles/MenuContentSpeedType.style";
-import MyFullWidthButton from "../../MyFullWidthButton";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface MenuContentSpeedTypeProps {
   selectedOption: string;
@@ -18,14 +18,14 @@ const MenuContentSpeedType = ({
 
   const [innerOption, setInnerOption] = useState(selectedOption);
 
-  const selectDownload = () => setSelectedOption(speedFilters[0]);
-  const selectUpload = () => setSelectedOption(speedFilters[1]);
+  const selectDownload = () => setSelectedOption(speedFilters.DOWNLOAD);
+  const selectUpload = () => setSelectedOption(speedFilters.UPLOAD);
 
-  const previewDownloadSelected = () => setInnerOption(speedFilters[0]);
-  const previewUploadSelected = () => setInnerOption(speedFilters[1]);
+  const previewDownloadSelected = () => setInnerOption(speedFilters.DOWNLOAD);
+  const previewUploadSelected = () => setInnerOption(speedFilters.UPLOAD);
 
   const applyOptionSelected = () => {
-    innerOption === speedFilters[0] ?
+    innerOption === speedFilters.DOWNLOAD ?
       selectDownload() : selectUpload();
     closeMenu();
   }
@@ -34,16 +34,16 @@ const MenuContentSpeedType = ({
     <div style={styles.MenuContentSpeedType}>
       <p className={'fw-medium'} style={styles.Title}>Filter speeds by</p>
       <div style={styles.MenuContentSpeedTypeContainer}>
-        <Option option={speedFilters[0]}
-                selected={innerOption === speedFilters[0]}
+        <Option option={speedFilters.DOWNLOAD}
+                selected={innerOption === speedFilters.DOWNLOAD}
                 onClick={previewDownloadSelected}
         />
-        <Option option={speedFilters[1]}
-                selected={innerOption === speedFilters[1]}
+        <Option option={speedFilters.UPLOAD}
+                selected={innerOption === speedFilters.UPLOAD}
                 onClick={previewUploadSelected}
         />
       </div>
-      <MyFullWidthButton text={'Apply'} onClick={applyOptionSelected}/>
+      <CustomFullWidthButton text={'Apply'} onClick={applyOptionSelected}/>
     </div>
   )
 }

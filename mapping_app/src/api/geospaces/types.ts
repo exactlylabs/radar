@@ -1,5 +1,5 @@
 import {Optional} from "../../utils/types";
-import {PaginatedResponse, PaginationLinks} from "../index";
+import {PaginatedResponse} from "../index";
 
 export type DetailedGeospace = {
   id: string;
