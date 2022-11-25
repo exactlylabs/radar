@@ -1,8 +1,8 @@
 import {ReactElement, useState} from "react";
 import {styles} from "./styles/MenuContentYearOrMonth.style";
 import GoBackIcon from "../../../../assets/go-back-arrow-icon.png";
-import MyFullWidthButton from "../../MyFullWidthButton";
 import Option from "../../../ExplorePage/TopFilters/Option";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface MenuContentYearOrMonthProps {
   goBack: () => void;
@@ -48,7 +48,7 @@ const MenuContentYearOrMonth = ({
           }
         </div>
       </div>
-      <MyFullWidthButton text={'Confirm'} onClick={confirmSelection}/>
+      <CustomFullWidthButton text={'Confirm'} onClick={confirmSelection}/>
     </div>
   )
 }

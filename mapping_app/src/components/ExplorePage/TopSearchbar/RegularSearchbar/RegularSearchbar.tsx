@@ -1,12 +1,12 @@
 import {ChangeEventHandler, ReactElement, RefObject} from "react";
 import {styles} from "../styles/TopSearchbar.style";
 import SearchIcon from "../../../../assets/search-icon.png";
-import MySpinner from "../../../common/MySpinner";
 import {WHITE} from "../../../../styles/colors";
 import ArrowRight from "../../../../assets/arrow-right.png";
 import SuggestionsBox from "../SuggestionsBox";
 import {Geospace} from "../../../../api/geospaces/types";
 import ClearIcon from '../../../../assets/clear-button.png';
+import CustomSpinner from "../../../common/CustomSpinner";
 
 interface RegularSearchbarProps {
   inputRef: RefObject<HTMLInputElement>;
@@ -47,7 +47,7 @@ const RegularSearchbar = ({
       <div className={'hover-opaque'} style={styles.ArrowContainer}>
         {
           loading ?
-            <MySpinner color={WHITE} style={{}}/> :
+            <CustomSpinner color={WHITE} style={{}}/> :
             <img src={ArrowRight} style={styles.Arrow} alt={'arrow-right'}/>
         }
       </div>

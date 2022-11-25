@@ -2,10 +2,8 @@ import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/OpenedTopMenuSmallScreen.style";
 import TopLevelTabsHeaderTab from "../TopLevelTabsHeaderTab";
 import {paths} from "../../../utils/routes";
-import MyButton from "../../common/MyButton";
 import PinIcon from "../../../assets/pin-icon.png";
 import {buttonColors, buttonTextColors} from "../../../utils/buttons";
-import MySpinner from "../../common/MySpinner";
 import {WHITE} from "../../../styles/colors";
 import {useLocation} from "react-router-dom";
 import {handleError} from "../../../api";
@@ -14,6 +12,8 @@ import AnthcLogo from "../../../assets/anthc-logo.png";
 import ExactlyLogo from "../../../assets/exactly-logo.png";
 import XlabLogo from "../../../assets/xlab-logo.png";
 import {goToExactlyLabsWebsite} from "../../../utils/redirects";
+import CustomButton from "../../common/CustomButton";
+import CustomSpinner from "../../common/CustomSpinner";
 
 interface OpenedTopMenuSmallScreenProps {
   centerOnUser: (center: Array<number>) => void;
@@ -65,7 +65,7 @@ const OpenedTopMenuSmallScreen = ({centerOnUser}: OpenedTopMenuSmallScreenProps)
       <div style={styles.ButtonContainer}>
         {
           !loading ?
-            <MyButton text={'Check your region'}
+            <CustomButton text={'Check your region'}
                       icon={<img src={PinIcon} style={styles.PinIcon} alt={'pin-icon'}/>}
                       backgroundColor={buttonColors.BLACK}
                       color={buttonTextColors.WHITE}
@@ -73,7 +73,7 @@ const OpenedTopMenuSmallScreen = ({centerOnUser}: OpenedTopMenuSmallScreenProps)
                       onClick={centerOnUserPosition}
                       className={'fw-medium hover-opaque'}
             /> :
-            <MyButton text={''} icon={<MySpinner color={WHITE}/>}
+            <CustomButton text={''} icon={<CustomSpinner color={WHITE}/>}
                       backgroundColor={buttonColors.BLACK}
                       color={buttonTextColors.WHITE}/>
         }

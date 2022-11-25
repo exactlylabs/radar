@@ -2,7 +2,7 @@ import {ReactElement, useState} from "react";
 import GoBackIcon from "../../../../assets/go-back-arrow-icon.png";
 import WeekPicker from "../../../ExplorePage/DatePicker/WeekPicker";
 import {styles} from "./styles/MenuContentWeek.style";
-import MyFullWidthButton from "../../MyFullWidthButton";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface MenuContentWeekProps {
   goBack: () => void;
@@ -52,7 +52,7 @@ const MenuContentWeek = ({
                     setSelectedWeek={handleSetSelectedWeek}
         />
       </div>
-      <MyFullWidthButton text={'Confirm'} onClick={confirmSelection}/>
+      <CustomFullWidthButton text={'Confirm'} onClick={confirmSelection}/>
     </div>
   )
 }

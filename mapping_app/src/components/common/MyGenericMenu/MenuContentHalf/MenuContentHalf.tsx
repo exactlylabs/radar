@@ -2,8 +2,8 @@ import {ReactElement, useState} from "react";
 import {styles} from "./styles/MenuContentHalf.style";
 import GoBackIcon from "../../../../assets/go-back-arrow-icon.png";
 import Option from "../../../ExplorePage/TopFilters/Option";
-import MyFullWidthButton from "../../MyFullWidthButton";
 import {halves} from "../../../../utils/filters";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface MenuContentHalfProps {
   goBack: () => void;
@@ -39,7 +39,7 @@ const MenuContentHalf = ({
         <Option option={halves[0]} selected={innerValue === halves[0]} onClick={selectH1}/>
         <Option option={halves[1]} selected={innerValue === halves[1]} onClick={selectH2}/>
       </div>
-      <MyFullWidthButton text={'Confirm'} onClick={confirmSelection}/>
+      <CustomFullWidthButton text={'Confirm'} onClick={confirmSelection}/>
     </div>
   )
 }
