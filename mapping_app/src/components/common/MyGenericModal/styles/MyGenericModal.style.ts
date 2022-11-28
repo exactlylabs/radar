@@ -1,12 +1,12 @@
 import {CSSProperties} from "react";
-import {GENERIC_MENU, SHADOW_UNDERLAY} from "../../../../styles/colors";
+import {DARKER_GENERIC_MENU, GENERIC_MENU, SHADOW_UNDERLAY} from "../../../../styles/colors";
 
 const myGenericModalStyle: CSSProperties = {
   width: 'max-content',
   height: 'max-content',
-  maxHeight: '625px',
+  maxHeight: 'calc(100vh - 48px - 48px)',
   maxWidth: '450px',
-  padding: '20px',
+  padding: '15px',
   borderRadius: '8px',
   backgroundColor: GENERIC_MENU,
   boxShadow: `0 -2px -4px 10px ${SHADOW_UNDERLAY}`,
@@ -17,6 +17,11 @@ const myGenericModalStyle: CSSProperties = {
   transform: 'translate(-50%, -50%)',
   zIndex: 1100,
   overflow: 'hidden hidden'
+}
+
+const darkerMyGenericModalStyle: CSSProperties = {
+  ...myGenericModalStyle,
+  backgroundColor: DARKER_GENERIC_MENU,
 }
 
 const underlayStyle: CSSProperties = {
@@ -40,7 +45,7 @@ const closeIconStyle: CSSProperties = {
 }
 
 export const styles = {
-  MyGenericModal: myGenericModalStyle,
+  MyGenericModal: (isDarker: boolean) => isDarker ? darkerMyGenericModalStyle : myGenericModalStyle,
   Underlay: underlayStyle,
   CloseIcon: closeIconStyle,
 }

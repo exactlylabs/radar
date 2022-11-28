@@ -2,7 +2,7 @@ import {CSSProperties} from "react";
 
 const modalContentFullGeospaceStyle: CSSProperties = {
   width: '410px',
-  maxHeight: 'calc(100vh - 48px - 50px)'
+  maxHeight: 'calc(100vh - 48px - 50px - 30px)'
 }
 
 const gradientUnderlayStyle: CSSProperties = {
@@ -18,7 +18,7 @@ const gradientUnderlayStyle: CSSProperties = {
 const menuContentWrapperStyle: CSSProperties = {
   width: '100%',
   margin: '0 auto',
-  height: 'calc(100vh - 58px - 40px)',
+  height: 'calc(100vh - 58px - 40px - 30px)',
   display: 'flex',
   flexDirection: 'column',
 }

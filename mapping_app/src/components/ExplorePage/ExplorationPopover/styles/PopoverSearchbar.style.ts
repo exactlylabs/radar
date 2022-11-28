@@ -47,6 +47,8 @@ const clearIconContainerStyle: CSSProperties = {
   justifyContent: 'center',
   alignItems: 'center',
   cursor: 'pointer',
+  position: 'absolute',
+  right: '30px'
 }
 
 const clearIconStyle: CSSProperties = {

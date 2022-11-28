@@ -24,6 +24,7 @@ interface DropdownFilterProps {
   loading: boolean;
   isLast?: boolean;
   openFloatingFilter: () => void;
+  shouldFloatLeft?: boolean;
 }
 
 const DropdownFilter = ({
@@ -41,10 +42,11 @@ const DropdownFilter = ({
   lastOptionOnClick,
   loading,
   isLast,
-  openFloatingFilter
+  openFloatingFilter,
+  shouldFloatLeft,
 }: DropdownFilterProps): ReactElement => {
 
-  const {isSmallScreen, isTabletScreen, isDesktopScreen} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen, isTabletScreen, isDesktopScreen} = useViewportSizes();
   const isSmall = isSmallScreen || isTabletScreen;
 
   const [selectedOption, setSelectedOption] = useState<Filter>(selectedFilter ?? options[0]);
@@ -87,7 +89,7 @@ const DropdownFilter = ({
   }
 
   return (
-    <div style={styles.DropdownFilterContainer(isSmall, isLast)}
+    <div style={styles.DropdownFilterContainer(isSmall, isSmallTabletScreen, isLast, shouldFloatLeft)}
          onClick={isSmall ? openFloatingFilter : toggleOptionsDropdown}
          id={`filter-${type}`}
     >

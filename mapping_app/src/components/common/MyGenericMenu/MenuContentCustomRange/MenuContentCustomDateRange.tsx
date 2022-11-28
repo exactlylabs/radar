@@ -2,10 +2,10 @@ import {ReactElement, useState} from "react";
 import {styles} from "./styles/MenuContentCustomRange.style";
 import GoBackIcon from '../../../../assets/go-back-arrow-icon.png';
 import ChevronRight from '../../../../assets/chevron-right.png';
-import MyFullWidthButton from "../../MyFullWidthButton";
 import DateRangeSelectorTabs from "../../../ExplorePage/DatePicker/DateRangeSelectorTabs";
-import {applyChanges, dateTabs, halves, months, tabs, years} from "../../../../utils/filters";
+import {applyChanges, DateTabs, halves, months, years} from "../../../../utils/filters";
 import {
+  DateFilter,
   DateMenuLevel,
   DatePickerState,
   getCurrentMonth,
@@ -14,16 +14,15 @@ import {
   getWeekLimits,
   getWeekNumber
 } from "../../../../utils/dates";
-import {getMenuContent, MenuContent} from "../menu";
-import {useContentMenu} from "../../../../hooks/useContentMenu";
 import MenuContentYearOrMonth from "../MenuContentYearOrMonth/MenuContentYearOrMonth";
 import {isNumber, isString, Optional} from "../../../../utils/types";
 import MenuContentHalf from "../MenuContentHalf/MenuContentHalf";
 import MenuContentWeek from "../MenuContentWeek/MenuContentWeek";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface MenuContentCustomDateRangeProps {
   goBack: () => void;
-  applyRanges: (queryString: string) => void;
+  applyRanges: (dateObject: DateFilter) => void;
   initialState: Optional<DatePickerState>;
 }
 
@@ -34,7 +33,7 @@ const MenuContentCustomDateRange = ({
 }: MenuContentCustomDateRangeProps): ReactElement => {
 
   const [currentLevel, setCurrentLevel] = useState<DateMenuLevel>(DateMenuLevel.INITIAL);
-  const [selectedTab, setSelectedTab] = useState<string>(initialState?.selectedTab ?? dateTabs.MONTH);
+  const [selectedTab, setSelectedTab] = useState<string>(initialState?.selectedTab ?? DateTabs.MONTH);
   const [subtitleText, setSubtitleText] = useState<string>(initialState?.subtitleText ?? '');
   const [innerValue, setInnerValue] = useState<string | number>(initialState?.selectedRangeValue ?? months[0]);
   const [selectedYear, setSelectedYear] = useState(initialState?.selectedYear ?? years[0]);
@@ -43,13 +42,13 @@ const MenuContentCustomDateRange = ({
 
   const handleSelectTab = (newTab: string) => {
     setSelectedTab(newTab);
-    if(newTab === dateTabs.WEEK) {
+    if(newTab === DateTabs.WEEK) {
       setInnerValue(getWeekLimits(selectedYear, selectedWeek));
       setSubtitleText(`Week: ${selectedWeek}`);
-    } else if(newTab === dateTabs.MONTH) {
+    } else if(newTab === DateTabs.MONTH) {
       setInnerValue(months[0]);
       setSubtitleText('');
-    } else if(newTab === dateTabs.HALF_YEAR) {
+    } else if(newTab === DateTabs.HALF_YEAR) {
       setInnerValue(halves[0]);
       setSubtitleText('H1');
     }
@@ -61,7 +60,7 @@ const MenuContentCustomDateRange = ({
     const newMonth = newYear === years[0] ? getCurrentMonth() : 0;
     setSelectedMonth(newMonth);
     setSelectedWeek(newWeek);
-    if(dateTabs.WEEK === selectedTab) {
+    if(DateTabs.WEEK === selectedTab) {
       setInnerValue(getWeekLimits(newYear, newWeek));
       setSubtitleText(`Week: ${newWeek}`);
     }
@@ -81,13 +80,13 @@ const MenuContentCustomDateRange = ({
   const goToSpecificTabPage = () => {
     let level: DateMenuLevel;
     switch (selectedTab) {
-      case dateTabs.MONTH:
+      case DateTabs.MONTH:
         level = DateMenuLevel.SELECT_MONTH;
         break;
-      case dateTabs.HALF_YEAR:
+      case DateTabs.HALF_YEAR:
         level = DateMenuLevel.SELECT_HALF;
         break;
-      case dateTabs.WEEK:
+      case DateTabs.WEEK:
         level = DateMenuLevel.SELECT_WEEK;
         break;
       default:
@@ -141,7 +140,7 @@ const MenuContentCustomDateRange = ({
           <img src={ChevronRight} style={styles.Chevron} alt={'chevron-right'}/>
         </div>
       </div>
-      <MyFullWidthButton text={'Apply'} onClick={handleOnClick}/>
+      <CustomFullWidthButton text={'Apply'} onClick={handleOnClick}/>
     </div>
   )
 

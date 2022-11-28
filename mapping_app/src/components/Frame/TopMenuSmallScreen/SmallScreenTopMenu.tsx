@@ -15,12 +15,13 @@ const SmallScreenTopMenu = ({
 }: SmallScreenTopMenuProps): ReactElement => {
   return (
     <div style={styles.ClosedTopMenuContainer(isTopMenuOpen)}>
-      <img className={'hover-opaque'}
-           src={isTopMenuOpen ? CloseTopMenuIcon : HamburgerIcon}
-           style={styles.Hamburger}
-           alt={'toggle-top-menu-icon'}
-           onClick={toggleTopMenu}
-      />
+      <div style={styles.HamburgerContainer} onClick={toggleTopMenu}>
+        <img className={'hover-opaque'}
+             src={isTopMenuOpen ? CloseTopMenuIcon : HamburgerIcon}
+             style={styles.Hamburger}
+             alt={'toggle-top-menu-icon'}
+        />
+      </div>
       <img src={MappingLogo} style={styles.MappingLogo} alt={'mapping-logo'}/>
     </div>
   )

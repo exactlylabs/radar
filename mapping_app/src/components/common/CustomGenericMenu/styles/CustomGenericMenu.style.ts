@@ -1,10 +1,11 @@
 import {CSSProperties} from "react";
 import {
-  CLOSE_PANEL_BUTTON_SHADOW_RGBA,
+  CLOSE_PANEL_BUTTON_SHADOW_RGBA, DARKER_GENERIC_MENU,
   DEFAULT_BUTTON_BOX_SHADOW_RGBA,
   GENERIC_MENU,
   GEOGRAPHICAL_CATEGORY_BOTTOM
 } from "../../../../styles/colors";
+import myGenericMenu from "../../MyGenericMenu/MyGenericMenu";
 
 const customGenericMenuStyle: CSSProperties = {
   width: '100vw',
@@ -22,6 +23,11 @@ const customGenericMenuStyle: CSSProperties = {
   left: 0,
   padding: '20px',
   zIndex: 1100,
+}
+
+const darkerMyCustomMenuStyle: CSSProperties = {
+  ...customGenericMenuStyle,
+  backgroundColor: DARKER_GENERIC_MENU,
 }
 
 const closeIconStyle: CSSProperties = {
@@ -45,7 +51,7 @@ const shadowStyle: CSSProperties = {
 }
 
 export const styles = {
-  MyGenericMenu: customGenericMenuStyle,
+  MyGenericMenu: (isDarker: boolean) => isDarker ? darkerMyCustomMenuStyle : customGenericMenuStyle,
   CloseIcon: closeIconStyle,
   Shadow: shadowStyle,
 }

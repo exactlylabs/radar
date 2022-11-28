@@ -174,7 +174,7 @@ const ModalContentFullGeospace = ({
                                  speedType={speedType}
               />
             </div>
-            {isModalOpen && <MyGenericModal closeModal={closeModal}>{getModalContent()}</MyGenericModal>}
+            {isModalOpen && <MyGenericModal closeModal={closeModal} isDarker={false}>{getModalContent()}</MyGenericModal>}
           </div>
       }
     </div>

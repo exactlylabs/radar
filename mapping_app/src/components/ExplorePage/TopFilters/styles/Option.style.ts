@@ -34,7 +34,7 @@ const iconStyle: CSSProperties = {
 
 const textStyle: CSSProperties = {
   fontSize: '15px',
-  color: DEFAULT_SECONDARY_TEXT,
+  color: DEFAULT_TEXT,
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   overflow: 'hidden',

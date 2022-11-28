@@ -19,8 +19,6 @@ export const getMenuContent = (content: Optional<MenuContent>, params?: any): Re
   switch (content) {
     case MenuContent.SPEED_TYPE:
       return <MenuContentSpeedType {...params}/>
-    case MenuContent.PROVIDERS:
-
     case MenuContent.CALENDAR:
       return <MenuContentCalendar {...params}/>
     case MenuContent.CUSTOM_DATE_RANGE:

@@ -1,6 +1,6 @@
 import {ReactElement, useState} from "react";
 import {GeospaceInfo, GeospaceOverview, isGeospaceData} from "../../../../api/geospaces/types";
-import {Filter, Optional} from "../../../../utils/types";
+import {Optional} from "../../../../utils/types";
 import RightPanelHeader from "../../../ExplorePage/RightPanel/RightPanelHeader";
 import DropdownFilters from "../../../ExplorePage/TopFilters/DropdownFilters";
 import RightPanelSpeedData from "../../../ExplorePage/RightPanel/RightPanelSpeedData";
@@ -8,7 +8,6 @@ import RightPanelHorizontalDivider from "../../../ExplorePage/RightPanel/RightPa
 import SpeedDistribution from "../../../ExplorePage/RightPanel/SpeedDistribution";
 import {getServedPeopleCount, getUnderservedPeopleCount, getUnservedPeopleCount} from "../../../../utils/percentages";
 import {FilterTypes, getFilterMenuContentFromFilter, getSignalState} from "../../../../utils/filters";
-import {getFiltersString} from "../../../../api/utils/filters";
 import {getOverview} from "../../../../api/geospaces/requests";
 import {handleError} from "../../../../api";
 import {styles} from "./styles/MenuContentFullGeospace.style";
@@ -16,7 +15,7 @@ import './styles/MenuContentFullGeospace.css';
 import MyGenericMenu from "../MyGenericMenu";
 import {MenuContent} from "../menu";
 import {Asn} from "../../../../api/asns/types";
-import {getInitialStateFromCalendarType} from "../../../../utils/dates";
+import {DateFilter, getInitialStateFromCalendarType} from "../../../../utils/dates";
 import MenuContentCalendar from "../MenuContentCalendar/MenuContentCalendar";
 import MenuContentProviders from "../MenuContentProviders/MenuContentProviders";
 import MenuContentSpeedType from "../MenuContentSpeedType/MenuContentSpeedType";
@@ -36,7 +35,7 @@ interface MenuContentFullGeospaceProps {
   setCalendarType: (value: string) => void;
   provider: Asn;
   setProvider: (value: Asn) => void;
-  applyRanges: (queryString: string) => void;
+  applyRanges: (queryObject: DateFilter) => void;
 }
 
 const MenuContentFullGeospace = ({
@@ -176,7 +175,7 @@ const MenuContentFullGeospace = ({
                                  speedType={speedType}
               />
             </div>
-            {isMenuContentOpen && <MyGenericMenu closeMenu={closeMenu}>{getContent()}</MyGenericMenu>}
+            {isMenuContentOpen && <MyGenericMenu closeMenu={closeMenu} isDarker={false}>{getContent()}</MyGenericMenu>}
           </div>
       }
     </div>

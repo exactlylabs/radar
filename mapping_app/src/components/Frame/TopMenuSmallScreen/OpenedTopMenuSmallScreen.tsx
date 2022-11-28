@@ -17,9 +17,10 @@ import CustomSpinner from "../../common/CustomSpinner";
 
 interface OpenedTopMenuSmallScreenProps {
   centerOnUser: (center: Array<number>) => void;
+  closeMenu: () => void;
 }
 
-const OpenedTopMenuSmallScreen = ({centerOnUser}: OpenedTopMenuSmallScreenProps): ReactElement => {
+const OpenedTopMenuSmallScreen = ({centerOnUser, closeMenu}: OpenedTopMenuSmallScreenProps): ReactElement => {
 
   const location = useLocation();
 
@@ -48,6 +49,7 @@ const OpenedTopMenuSmallScreen = ({centerOnUser}: OpenedTopMenuSmallScreenProps)
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
     }
+    closeMenu();
   }
 
   return (

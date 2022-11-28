@@ -22,7 +22,7 @@ const InitialExplorationPopoverContent = ({
 
   return (
     <div style={styles.InitialExplorationPopoverContentContainer(isSmallScreen)}>
-      <p className={'fw-medium'} style={styles.Title}>Explore the U.S.A.</p>
+      <p className={'fw-medium'} style={styles.Title(isSmallScreen)}>Explore the U.S.A.</p>
       <p className={'fw-light'} style={styles.Subtitle(isSmallScreen)}>Explore the map or browse by geography to see how broadband access is made.</p>
       <PopoverOption text={'Browse by States'} light onClick={selectStates}/>
       <PopoverOption text={'Browse by Counties'} light onClick={selectCounties}/>

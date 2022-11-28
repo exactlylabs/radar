@@ -79,7 +79,7 @@ export const quartersWithRange: QuartersWithRangeObject = {
 // Removing all years prior to 2019 due to missing download data
 export const years = [2022, 2021, 2020, 2019]//, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009];
 export const months = ['All months', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export const quarters = ['Q1: Jan 1 - Mar 31', 'Q2: Apr 1 - Jun 30', 'Q3: Jul 1 - Sep 30', 'Q4: Oct 1 - Dec 31'];
 export const halves = ['Jan 1 - Jun 30', 'Jul 1 - Dec 31'];
 
 /**

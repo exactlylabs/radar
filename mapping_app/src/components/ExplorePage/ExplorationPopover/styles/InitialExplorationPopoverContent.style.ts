@@ -20,10 +20,15 @@ const titleStyle: CSSProperties = {
   color: WHITE,
 }
 
+const smallTitleStyle: CSSProperties = {
+  fontSize: '20px',
+  color: WHITE,
+}
+
 const subtitleStyle: CSSProperties = {
   fontSize: '16px',
   color: FOOTER_TEXT,
-  marginTop: '9px',
+  marginTop: '10px',
   marginBottom: '25px',
   lineHeight: '23px',
 }
@@ -37,6 +42,6 @@ export const styles = {
   InitialExplorationPopoverContentContainer: (isSmall: boolean) => {
     return isSmall ? smallInitialExplorationPopoverContentContainerStyle : initialExplorationPopoverContentContainerStyle;
   },
-  Title: titleStyle,
+  Title: (isSmall: boolean) => isSmall ? smallTitleStyle : titleStyle,
   Subtitle: (isSmall: boolean) => isSmall ? smallSubtitleStyle : subtitleStyle,
 }

@@ -1,8 +1,8 @@
 import {ReactElement, useState} from "react";
 import GoBackIcon from "../../../../assets/go-back-arrow-icon.png";
-import MyFullWidthButton from "../../MyFullWidthButton";
 import Option from "../../../ExplorePage/TopFilters/Option";
 import {styles} from "./styles/ModalContentYearOrMonth.style";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface ModalContentYearOrMonthProps {
   goBack: () => void;
@@ -48,7 +48,7 @@ const ModalContentYearOrMonth = ({
           }
         </div>
       </div>
-      <MyFullWidthButton text={'Confirm'} onClick={confirmSelection}/>
+      <CustomFullWidthButton text={'Confirm'} onClick={confirmSelection}/>
     </div>
   )
 }

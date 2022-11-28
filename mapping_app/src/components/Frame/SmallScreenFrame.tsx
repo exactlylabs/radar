@@ -17,11 +17,12 @@ const SmallScreenFrame = ({
   const [isTopMenuOpen, setIsTopMenuOpen] = useState(false);
 
   const toggleTopMenu = () => setIsTopMenuOpen(!isTopMenuOpen);
+  const closeMenu = () => setIsTopMenuOpen(false);
 
   return (
     <>
       <SmallScreenTopMenu toggleTopMenu={toggleTopMenu} isTopMenuOpen={isTopMenuOpen}/>
-      { isTopMenuOpen && <OpenedTopMenuSmallScreen centerOnUser={centerOnUser}/> }
+      { isTopMenuOpen && <OpenedTopMenuSmallScreen centerOnUser={centerOnUser} closeMenu={closeMenu}/> }
       { children }
     </>
   )

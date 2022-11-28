@@ -8,7 +8,7 @@ import {
 } from "../../../../styles/colors";
 
 const popoverOptionContainerStyle: CSSProperties = {
-  width: '98%',
+  width: '100%',
   height: '54px',
   display: 'flex',
   flexDirection: 'row',
@@ -19,12 +19,12 @@ const popoverOptionContainerStyle: CSSProperties = {
 
 const darkPopoverOptionContainerStyle: CSSProperties = {
   ...popoverOptionContainerStyle,
+  width: '97%',
   marginBottom: 0,
 }
 
 const smallStyle: CSSProperties = {
   height: '50px',
-  width: '100%',
 }
 
 const textStyle: CSSProperties = {
@@ -47,7 +47,7 @@ const arrowStyle: CSSProperties = {
 }
 
 const popoverOptionContentWrapperStyle: CSSProperties = {
-  width: '94%',
+  width: '93%',
   height: '100%',
   display: 'flex',
   flexDirection: 'row',
@@ -58,7 +58,7 @@ const popoverOptionContentWrapperStyle: CSSProperties = {
 export const styles = {
   PopoverOptionContainer: (isSmall: boolean, light?: boolean) => {
     let style = light ? popoverOptionContainerStyle : darkPopoverOptionContainerStyle;
-    return isSmall ? {...style, ...smallStyle} : style;
+    return isSmall && !light ? {...style, ...smallStyle} : style;
   },
   Text: textStyle,
   SecondaryText: secondaryTextStyle,

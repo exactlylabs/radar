@@ -66,7 +66,7 @@ const samplesContainerStyle: CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'flex-end',
   alignItems: 'flex-end',
-  marginRight: '60px',
+  marginRight: '70px',
   marginLeft: 'auto',
 }
 

@@ -15,14 +15,14 @@ const SmallGeographicalCategoryTabs = ({
   isRightPanelOpen
 }: SmallGeographicalCategoryTabsProps): ReactElement => {
 
-  const {isLargeTabletScreen} = useViewportSizes();
+  const {isSmallTabletScreen, isLargeTabletScreen} = useViewportSizes();
 
   const selectStates = () => selectNamespace(GeospacesTabs.STATES);
   const selectCounties = () => selectNamespace(GeospacesTabs.COUNTIES);
   const selectTribalTracts = () => selectNamespace(GeospacesTabs.TRIBAL_TRACTS);
 
   return (
-    <div style={styles.GeographicalCategoryBottomTabsContainer(isLargeTabletScreen, isRightPanelOpen)}>
+    <div style={styles.GeographicalCategoryBottomTabsContainer(isSmallTabletScreen, isLargeTabletScreen, isRightPanelOpen)}>
       <div className={'fw-regular hover-opaque'}
            style={styles.TabContainer(namespace === GeospacesTabs.STATES, '28%')}
            onClick={selectStates}

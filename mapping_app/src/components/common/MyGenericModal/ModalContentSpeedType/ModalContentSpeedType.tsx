@@ -1,8 +1,8 @@
 import {ReactElement, useState} from "react";
 import {styles} from "./styles/ModalContentSpeedType.style";
-import {speedFilters} from "../../../../utils/filters";
+import {SpeedFilters} from "../../../../utils/filters";
 import Option from "../../../ExplorePage/TopFilters/Option";
-import MyFullWidthButton from "../../MyFullWidthButton";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface ModalContentSpeedTypeProps {
   selectedOption: string;
@@ -18,14 +18,14 @@ const ModalContentSpeedType = ({
 
   const [innerOption, setInnerOption] = useState(selectedOption);
 
-  const selectDownload = () => setSelectedOption(speedFilters[0]);
-  const selectUpload = () => setSelectedOption(speedFilters[1]);
+  const selectDownload = () => setSelectedOption(SpeedFilters.DOWNLOAD);
+  const selectUpload = () => setSelectedOption(SpeedFilters.UPLOAD);
 
-  const previewDownloadSelected = () => setInnerOption(speedFilters[0]);
-  const previewUploadSelected = () => setInnerOption(speedFilters[1]);
+  const previewDownloadSelected = () => setInnerOption(SpeedFilters.DOWNLOAD);
+  const previewUploadSelected = () => setInnerOption(SpeedFilters.UPLOAD);
 
   const applyOptionSelected = () => {
-    innerOption === speedFilters[0] ?
+    innerOption === SpeedFilters.DOWNLOAD ?
       selectDownload() : selectUpload();
     closeModal();
   }
@@ -34,16 +34,16 @@ const ModalContentSpeedType = ({
     <div style={styles.ModalContentSpeedType}>
       <p className={'fw-medium'} style={styles.Title}>Filter speeds by</p>
       <div style={styles.ModalContentSpeedTypeContainer}>
-        <Option option={speedFilters[0]}
-                selected={innerOption === speedFilters[0]}
+        <Option option={SpeedFilters.DOWNLOAD}
+                selected={innerOption === SpeedFilters.DOWNLOAD}
                 onClick={previewDownloadSelected}
         />
-        <Option option={speedFilters[1]}
-                selected={innerOption === speedFilters[1]}
+        <Option option={SpeedFilters.UPLOAD}
+                selected={innerOption === SpeedFilters.UPLOAD}
                 onClick={previewUploadSelected}
         />
       </div>
-      <MyFullWidthButton text={'Apply'} onClick={applyOptionSelected}/>
+      <CustomFullWidthButton text={'Apply'} onClick={applyOptionSelected}/>
     </div>
   )
 }

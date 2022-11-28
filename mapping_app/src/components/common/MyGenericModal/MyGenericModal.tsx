@@ -1,21 +1,23 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/MyGenericModal.style";
 import {Optional} from "../../../utils/types";
-import CloseIconBlack from '../../../assets/close-icon.png';
+import CloseIconBlack from '../../../assets/close-icon-gray.png';
 
 interface MyGenericModalProps {
   closeModal: () => void;
   children: Optional<ReactElement>;
+  isDarker: boolean;
 }
 
 const MyGenericModal = ({
   closeModal,
-  children
+  children,
+  isDarker
 }: MyGenericModalProps): ReactElement => {
   return (
     <>
       <div style={styles.Underlay} onClick={closeModal}></div>
-      <div style={styles.MyGenericModal}>
+      <div style={styles.MyGenericModal(isDarker)}>
         <img className={'hover-opaque'}
              src={CloseIconBlack}
              onClick={closeModal}

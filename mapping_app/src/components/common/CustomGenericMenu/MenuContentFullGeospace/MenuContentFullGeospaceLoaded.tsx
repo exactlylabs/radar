@@ -148,7 +148,7 @@ const MenuContentFullGeospaceLoaded = ({
                            }}
                            selectedGeospaceId={(geospace as GeospaceOverview).geospace.id}
                            isInsideContainer
-                           openFilterMenu={openFilterMenu}
+                           openFloatingFilter={openFilterMenu}
           />
         </div>
       </div>
@@ -166,7 +166,7 @@ const MenuContentFullGeospaceLoaded = ({
                            speedType={speedType}
         />
       </div>
-      {isMenuContentOpen && <CustomGenericMenu closeMenu={closeMenu}>{getContent()}</CustomGenericMenu>}
+      {isMenuContentOpen && <CustomGenericMenu closeMenu={closeMenu} isDarker>{getContent()}</CustomGenericMenu>}
     </div>
   )
 }
