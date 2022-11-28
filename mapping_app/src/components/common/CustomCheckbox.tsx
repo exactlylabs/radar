@@ -1,5 +1,5 @@
 import {ReactElement} from "react";
-import {styles} from "./styles/MyCheckbox.style";
+import {styles} from "./styles/CustomCheckbox.style";
 import {CheckRounded} from "@mui/icons-material";
 
 interface CustomCheckboxProps {

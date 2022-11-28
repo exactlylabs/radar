@@ -1,17 +1,17 @@
 import {ReactElement} from "react";
-import {styles} from "./styles/MyGenericMenu.style";
+import {styles} from "./styles/CustomGenericMenu.style";
 import CloseIcon from "../../../assets/close-icon.png";
 import {Optional} from "../../../utils/types";
 
-interface MyGenericMenuProps {
+interface CustomGenericMenuProps {
   children: Optional<ReactElement>;
   closeMenu: () => void;
 }
 
-const MyGenericMenu = ({
+const CustomGenericMenu = ({
   children,
   closeMenu
-}: MyGenericMenuProps): ReactElement => {
+}: CustomGenericMenuProps): ReactElement => {
   return (
     <>
       <div style={styles.Shadow} onClick={closeMenu}></div>
@@ -30,4 +30,4 @@ const MyGenericMenu = ({
   )
 }
 
-export default MyGenericMenu;
+export default CustomGenericMenu;

@@ -7,12 +7,14 @@ import {
   getWeekNumber
 } from "./dates";
 import {Optional} from "./types";
-import {MenuContent} from "../components/common/MyGenericMenu/menu";
+import {getSignalStateDownload, getSignalStateUpload} from "./speeds";
+import {GeospaceInfo} from "../api/geospaces/types";
+import {MenuContent} from "../components/common/CustomGenericMenu/menu";
 
-export enum FilterTypes {
-  SPEED = 'speed',
-  CALENDAR = 'calendar',
-  PROVIDERS = 'providers',
+export const FilterTypes = {
+  SPEED: 'speed',
+  CALENDAR: 'calendar',
+  PROVIDERS: 'providers',
 }
 
 export enum SpeedFilters {
@@ -29,7 +31,7 @@ export enum CalendarFilters {
 }
 
 export const isCalendarFilterPresent = (value: string): boolean => {
-  return Object.values(CalendarFilters).includes(value as CalendarFilters);
+  return Object.values(CalendarFilters).includes(value as calendarFilters);
 }
 
 export enum GeospacesTabs {
@@ -240,6 +242,11 @@ export const isSpecificMonth = (string: string): boolean => {
 export const isSpecificYear = (string: string): boolean => {
   const possibleYearNumber: number = parseInt(string);
   return !isNaN(possibleYearNumber) && years.includes(possibleYearNumber);
+}
+
+export const getSignalState = (speedType: string, selectedGeospaceInfo: GeospaceInfo): string => {
+  return speedType === SpeedFilters.DOWNLOAD ?
+    getSignalStateDownload(selectedGeospaceInfo.download_median) : getSignalStateUpload(selectedGeospaceInfo.upload_median);
 }
 
 export const getFilterMenuContentFromFilter = (filter: string): MenuContent => {

@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import CustomSpinner from "./CustomSpinner";
 import {WHITE} from "../../styles/colors";
-import {styles} from "./styles/MyMapOverlayingLoader.style";
+import {styles} from "./styles/CustomMapOverlayingLoader.style";
 
 const CustomMapOverlayingLoader = (): ReactElement => {
   return (

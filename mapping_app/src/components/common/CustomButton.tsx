@@ -1,5 +1,5 @@
 import {ReactElement} from "react";
-import {styles} from "./styles/MyButton.style";
+import {styles} from "./styles/CustomButton.style";
 
 interface CustomButtonProps {
   text: string;
