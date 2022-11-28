@@ -129,6 +129,9 @@ func validateTimeFilter(c *restapi.WebContext) storages.SummaryFilter {
 	if c.QueryParams().Has("semester") {
 		filter.Semester = toInt(c, "semester")
 	}
+	if c.QueryParams().Has("quarter") {
+		filter.Quarter = toInt(c, "quarter")
+	}
 	if c.QueryParams().Has("month") {
 		filter.Month = toInt(c, "month")
 	}
@@ -136,6 +139,12 @@ func validateTimeFilter(c *restapi.WebContext) storages.SummaryFilter {
 		filter.Week = toInt(c, "week")
 	}
 	if filter.Semester != nil && filter.Year == nil {
+		c.AddFieldError("year", apierrors.SingleFieldError(
+			"is required to use semester filtering",
+			"year_required",
+		))
+	}
+	if filter.Quarter != nil && filter.Year == nil {
 		c.AddFieldError("year", apierrors.SingleFieldError(
 			"is required to use semester filtering",
 			"year_required",
