@@ -1,5 +1,5 @@
 import {ReactElement, useState} from "react";
-import {dateTabs, halves, months, years} from "../../../../utils/filters";
+import {DateTabs, getSubtitleForQuarter, halves, months, years} from "../../../../utils/filters";
 import {
   DateFilter,
   DatePickerState,
@@ -14,13 +14,15 @@ import {isNumber, isString, Optional} from "../../../../utils/types";
 import MenuContentHalf from "../MenuContentHalf/MenuContentHalf";
 import MenuContentWeek from "../MenuContentWeek/MenuContentWeek";
 import InitialMenuContentCustomRange from "./InitialMenuContentCustomRange";
+import MenuContentQuarter from "../MenuContentQuarter/MenuContentQuarter";
 
 export enum DateMenuLevel {
   INITIAL = 'INITIAL',
   SELECT_YEAR = 'SELECT_YEAR',
   SELECT_MONTH = 'SELECT_MONTH',
   SELECT_HALF = 'SELECT_HALF',
-  SELECT_WEEK = 'SELECT_WEEK'
+  SELECT_WEEK = 'SELECT_WEEK',
+  SELECT_QUARTER = 'SELECT_QUARTER',
 }
 
 interface MenuContentCustomDateRangeProps {
@@ -36,7 +38,7 @@ const MenuContentCustomDateRange = ({
 }: MenuContentCustomDateRangeProps): ReactElement => {
 
   const [currentLevel, setCurrentLevel] = useState<DateMenuLevel>(DateMenuLevel.INITIAL);
-  const [selectedTab, setSelectedTab] = useState<string>(initialState?.selectedTab ?? dateTabs.MONTH);
+  const [selectedTab, setSelectedTab] = useState<string>(initialState?.selectedTab ?? DateTabs.MONTH);
   const [subtitleText, setSubtitleText] = useState<string>(initialState?.subtitleText ?? '');
   const [innerValue, setInnerValue] = useState<string | number>(initialState?.selectedRangeValue ?? months[0]);
   const [selectedYear, setSelectedYear] = useState(initialState?.selectedYear ?? years[0]);
@@ -49,7 +51,7 @@ const MenuContentCustomDateRange = ({
     const newMonth = newYear === years[0] ? getCurrentMonth() : 0;
     setSelectedMonth(newMonth);
     setSelectedWeek(newWeek);
-    if(dateTabs.WEEK === selectedTab) {
+    if(DateTabs.WEEK === selectedTab) {
       setInnerValue(getWeekLimits(newYear, newWeek));
       setSubtitleText(`Week: ${newWeek}`);
     }
@@ -81,6 +83,11 @@ const MenuContentCustomDateRange = ({
   const handleSelectHalfyear = (option: string) => {
     setInnerValue(option);
     setSubtitleText(option === halves[0] ? 'H1' : 'H2');
+  }
+
+  const handleSelectQuarter = (option: string) => {
+    setInnerValue(option);
+    setSubtitleText(getSubtitleForQuarter(option));
   }
 
   const getInitialScreenContent = () => (
@@ -134,6 +141,13 @@ const MenuContentCustomDateRange = ({
     />
   )
 
+  const getQuarterScreenContent = () => (
+    <MenuContentQuarter goBack={goToInitialLevel}
+                        selectedOption={innerValue as string}
+                        setSelectedOption={handleSelectQuarter}
+    />
+  )
+
   const getContent = () => {
     switch (currentLevel) {
       case DateMenuLevel.SELECT_YEAR:
@@ -144,6 +158,8 @@ const MenuContentCustomDateRange = ({
         return getHalfScreenContent();
       case DateMenuLevel.SELECT_WEEK:
         return getWeekScreenContent();
+      case DateMenuLevel.SELECT_QUARTER:
+        return getQuarterScreenContent();
       case DateMenuLevel.INITIAL:
       default:
         return getInitialScreenContent();

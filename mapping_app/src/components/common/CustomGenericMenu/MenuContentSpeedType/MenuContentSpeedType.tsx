@@ -1,8 +1,8 @@
 import {ReactElement, useState} from "react";
 import Option from "../../../ExplorePage/TopFilters/Option";
-import {speedFilters} from "../../../../utils/filters";
 import {styles} from "./styles/MenuContentSpeedType.style";
 import CustomFullWidthButton from "../../CustomFullWidthButton";
+import {SpeedFilters} from "../../../../utils/filters";
 
 interface MenuContentSpeedTypeProps {
   selectedOption: string;
@@ -18,14 +18,14 @@ const MenuContentSpeedType = ({
 
   const [innerOption, setInnerOption] = useState(selectedOption);
 
-  const selectDownload = () => setSelectedOption(speedFilters.DOWNLOAD);
-  const selectUpload = () => setSelectedOption(speedFilters.UPLOAD);
+  const selectDownload = () => setSelectedOption(SpeedFilters.DOWNLOAD);
+  const selectUpload = () => setSelectedOption(SpeedFilters.UPLOAD);
 
-  const previewDownloadSelected = () => setInnerOption(speedFilters.DOWNLOAD);
-  const previewUploadSelected = () => setInnerOption(speedFilters.UPLOAD);
+  const previewDownloadSelected = () => setInnerOption(SpeedFilters.DOWNLOAD);
+  const previewUploadSelected = () => setInnerOption(SpeedFilters.UPLOAD);
 
   const applyOptionSelected = () => {
-    innerOption === speedFilters.DOWNLOAD ?
+    innerOption === SpeedFilters.DOWNLOAD ?
       selectDownload() : selectUpload();
     closeMenu();
   }
@@ -34,12 +34,12 @@ const MenuContentSpeedType = ({
     <div style={styles.MenuContentSpeedType}>
       <p className={'fw-medium'} style={styles.Title}>Filter speeds by</p>
       <div style={styles.MenuContentSpeedTypeContainer}>
-        <Option option={speedFilters.DOWNLOAD}
-                selected={innerOption === speedFilters.DOWNLOAD}
+        <Option option={SpeedFilters.DOWNLOAD}
+                selected={innerOption === SpeedFilters.DOWNLOAD}
                 onClick={previewDownloadSelected}
         />
-        <Option option={speedFilters.UPLOAD}
-                selected={innerOption === speedFilters.UPLOAD}
+        <Option option={SpeedFilters.UPLOAD}
+                selected={innerOption === SpeedFilters.UPLOAD}
                 onClick={previewUploadSelected}
         />
       </div>

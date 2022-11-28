@@ -1,4 +1,4 @@
-import React, {ChangeEvent, MouseEventHandler, ReactElement, useEffect, useRef, useState} from "react";
+import React, {ChangeEvent, ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/DropdownFilters.style";
 import DropdownFilter from "./DropdownFilter";
 import CalendarIcon from '../../../assets/calendar-icon.png';
@@ -13,7 +13,6 @@ import {Filter, Optional} from "../../../utils/types";
 import {debounce} from "../../../api/utils/debouncer";
 import {GeoJSONFilters} from "../../../api/geojson/types";
 import {usePrev} from "../../../hooks/usePrev";
-import DatePicker from "../DatePicker/DatePicker";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import './styles/DropdownFilters.css';
 
@@ -163,9 +162,9 @@ const DropdownFilters = ({
     }
   }
 
-  const openSpeedTypeMenu = () => openFilterMenu && openFilterMenu(filterTypes.SPEED);
-  const openCalendarTypeMenu = () => openFilterMenu && openFilterMenu(filterTypes.CALENDAR);
-  const openProviderMenu = () => openFilterMenu && openFilterMenu(filterTypes.PROVIDERS);
+  const openSpeedTypeMenu = () => openFilterMenu && openFilterMenu(FilterTypes.SPEED);
+  const openCalendarTypeMenu = () => openFilterMenu && openFilterMenu(FilterTypes.CALENDAR);
+  const openProviderMenu = () => openFilterMenu && openFilterMenu(FilterTypes.PROVIDERS);
 
   return (
     <div style={styles.DropdownFiltersContainer(isSmallerThanMid, isInsideContainer)}
