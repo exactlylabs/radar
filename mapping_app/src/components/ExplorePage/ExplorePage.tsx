@@ -1,4 +1,4 @@
-import {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/ExplorePage.style";
 import Map from "./Map";
 import ExplorationPopover from "./ExplorationPopover/ExplorationPopover";
@@ -442,6 +442,10 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     return isTabletScreen ? getContentForModal() : getContentForMenu();
   }
 
+  const isMenuDarker = () => {
+    return !!menuContent && menuContent === MenuContent.FULL_GEOSPACE;
+  }
+
   return (
     <div style={styles.ExplorePageContainer(isSmallExplorePage)}>
       { loading && <CustomMapOverlayingLoader/> }
@@ -459,6 +463,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
              setLoading={setLoading}
              isRightPanelHidden={isRightPanelHidden}
       />
+      { isSmallScreen && <div style={styles.InvisibleOverlay(false)}></div> }
       <TopSearchbar selectSuggestion={selectSuggestion}
                     toggleFilters={toggleSmallScreenFilters}
                     areSmallFiltersOpen={areSmallScreenFiltersOpen}
@@ -544,13 +549,14 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
         />
       }
       { isSmallScreen && genericMenuOpen &&
-        <CustomGenericMenu closeMenu={closeMenu}>
+        <CustomGenericMenu closeMenu={closeMenu} isDarker={isMenuDarker()}>
           {getCurrentContent()}
         </CustomGenericMenu>
       }
+      { isSmallScreen && <div style={styles.InvisibleOverlay(true)}></div> }
       {
         isTabletScreen && genericModalOpen &&
-        <MyGenericModal closeModal={closeModal}>
+        <MyGenericModal closeModal={closeModal} isDarker={isMenuDarker()}>
           {getCurrentContent()}
         </MyGenericModal>
       }

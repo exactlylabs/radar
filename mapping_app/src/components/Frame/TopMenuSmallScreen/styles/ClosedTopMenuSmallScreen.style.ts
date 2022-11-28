@@ -20,12 +20,20 @@ const openedTopMenuContainerStyle: CSSProperties = {
   boxShadow: 'none',
 }
 
+const hamburgerContainerStyle: CSSProperties = {
+  width: '50px',
+  height: '100%',
+  position: 'absolute',
+  left: '20px',
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-start'
+};
+
 const hamburgerStyle: CSSProperties = {
   width: '20px',
   height: '20px',
-  position: 'absolute',
-  left: '20px',
-  cursor: 'pointer'
 }
 
 const mappingLogoStyle: CSSProperties = {
@@ -37,6 +45,7 @@ export const styles = {
   ClosedTopMenuContainer: (isTopMenuOpen: boolean) => {
     return isTopMenuOpen ? openedTopMenuContainerStyle : closedTopMenuContainerStyle;
   },
+  HamburgerContainer: hamburgerContainerStyle,
   Hamburger: hamburgerStyle,
   MappingLogo: mappingLogoStyle,
 }

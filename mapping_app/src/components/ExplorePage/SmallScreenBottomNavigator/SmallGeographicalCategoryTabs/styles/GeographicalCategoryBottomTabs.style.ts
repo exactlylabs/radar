@@ -54,12 +54,12 @@ const selectedTabContainerStyle: CSSProperties = {
 }
 
 export const styles = {
-  GeographicalCategoryBottomTabsContainer: (floatRight: boolean, isRightPanelOpen: boolean) => {
-    let style;
+  GeographicalCategoryBottomTabsContainer: (isSmallTabletScreen: boolean, floatRight: boolean, isRightPanelOpen: boolean) => {
+    let style = isSmallTabletScreen ? {maxWidth: '365px'} : {};
     if(floatRight) {
-      return isRightPanelOpen ? rightGeographicalCategoryBottomTabsContainerWithOpenPanelStyle : rightGeographicalCategoryBottomTabsContainerStyle;
+      return isRightPanelOpen ? {...rightGeographicalCategoryBottomTabsContainerWithOpenPanelStyle, ...style} : {...rightGeographicalCategoryBottomTabsContainerStyle, ...style};
     } else {
-      return geographicalCategoryBottomTabsContainerStyle;
+      return {...geographicalCategoryBottomTabsContainerStyle, ...style};
     }
   },
   TabContainer: (selected: boolean, width: string) => {

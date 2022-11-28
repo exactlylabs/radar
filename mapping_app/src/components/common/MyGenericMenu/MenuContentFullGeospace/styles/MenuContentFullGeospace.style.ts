@@ -24,19 +24,21 @@ const menuContentWrapperStyle: CSSProperties = {
 }
 
 const dropdownFiltersContainerStyle: CSSProperties = {
-  width: '100%',
+  width: '100vw',
   height: '50px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   marginTop: '22px',
-  marginBottom: '30px'
+  marginBottom: '30px',
+  marginLeft: '-15px',
 }
 
 const speedDataScrollableContainerStyle: CSSProperties = {
   overflowY: 'auto',
   overflowX: 'hidden',
-  height: 'calc(100% - 58px - 40px - 50px)'
+  height: 'calc(100% - 58px - 40px - 50px)',
+  zIndex: 1100
 }
 
 export const styles = {

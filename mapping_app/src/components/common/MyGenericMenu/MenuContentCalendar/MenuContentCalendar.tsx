@@ -1,18 +1,17 @@
 import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/MenuContentCalendar.style";
 import Option from "../../../ExplorePage/TopFilters/Option";
-import {calendarFilters} from "../../../../utils/filters";
-import MyFullWidthButton from "../../MyFullWidthButton";
-import {getMenuContent, MenuContent} from "../menu";
+import {CalendarFilters} from "../../../../utils/filters";
+import {MenuContent} from "../menu";
 import {Filter, Optional} from "../../../../utils/types";
-import {useContentMenu} from "../../../../hooks/useContentMenu";
-import {DatePickerState} from "../../../../utils/dates";
+import {DateFilter, DatePickerState} from "../../../../utils/dates";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface MenuContentCalendarProps {
   selectedOption: string;
   setSelectedOption: (option: string) => void;
   closeMenu: () => void;
-  applyRanges: (queryString: string) => void;
+  applyRanges: (queryObject: DateFilter) => void;
   initialState: Optional<DatePickerState>;
   setMenuContent: (menuContent: Optional<MenuContent>) => void;
 }
@@ -27,17 +26,17 @@ const MenuContentCalendar = ({
 }: MenuContentCalendarProps): ReactElement => {
 
   const [innerOption, setInnerOption] = useState<string>(selectedOption);
-  const [options, setOptions] = useState<Array<string>>(calendarFilters);
+  const [options, setOptions] = useState<Array<string>>(Object.values(CalendarFilters));
 
   useEffect(() => {
-    if(selectedOption && !calendarFilters.includes(selectedOption)) {
+    if(selectedOption && !Object.values(CalendarFilters).includes(selectedOption as CalendarFilters)) {
       setOptions([
-        calendarFilters[0],
-        calendarFilters[1],
-        calendarFilters[2],
-        calendarFilters[3],
+        CalendarFilters.ALL_TIME,
+        CalendarFilters.LAST_WEEK,
+        CalendarFilters.LAST_MONTH,
+        CalendarFilters.THIS_YEAR,
         selectedOption,
-        calendarFilters[4]
+        CalendarFilters.CUSTOM_DATE
       ]);
     }
   }, [selectedOption]);
@@ -57,7 +56,7 @@ const MenuContentCalendar = ({
   }
 
   const handleSelectOption = (option: Filter) => {
-    if(option === calendarFilters[4]) goToCustomRange();
+    if(option === CalendarFilters.CUSTOM_DATE) goToCustomRange();
     else setInnerOption(option as string);
   }
 
@@ -71,12 +70,12 @@ const MenuContentCalendar = ({
                     key={index}
                     selected={innerOption === filter}
                     onClick={handleSelectOption}
-                    isLast={index === (options.length - 1) || !calendarFilters.includes(filter)}
+                    isLast={index === (options.length - 1) || !Object.values(CalendarFilters).includes(filter as CalendarFilters)}
             />
           ))
         }
       </div>
-      <MyFullWidthButton text={'Apply'} onClick={applyOptionSelected}/>
+      <CustomFullWidthButton text={'Apply'} onClick={applyOptionSelected}/>
     </div>
   )
 }

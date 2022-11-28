@@ -1,9 +1,7 @@
 import {ChangeEvent, ReactElement, useEffect, useState} from "react";
 import {styles} from './styles/MenuContentProviders.style';
-import {GeospaceInfo} from "../../../../api/geospaces/types";
 import {Filter, Optional} from "../../../../utils/types";
-import {Asn, isAsn} from "../../../../api/asns/types";
-import MyFullWidthButton from "../../MyFullWidthButton";
+import {Asn} from "../../../../api/asns/types";
 import SearchbarIcon from '../../../../assets/search-icon.png';
 import {debounce} from "../../../../api/utils/debouncer";
 import {getAsns, getAsnsForGeospace} from "../../../../api/asns/requests";
@@ -12,6 +10,7 @@ import './styles/MenuContentProviders.css';
 import {allProvidersElement} from "../../../ExplorePage/TopFilters/utils/providers";
 import Option from "../../../ExplorePage/TopFilters/Option";
 import OptionHorizontalDivider from "../../../ExplorePage/TopFilters/OptionHorizontalDivider";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface MenuContentProvidersProps {
   geospaceId: Optional<string>;
@@ -110,7 +109,7 @@ const MenuContentProviders = ({
           }
         </div>
       </div>
-      <MyFullWidthButton text={'Apply'} onClick={applyOptionSelected}/>
+      <CustomFullWidthButton text={'Apply'} onClick={applyOptionSelected}/>
     </div>
   )
 }

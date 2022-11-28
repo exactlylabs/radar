@@ -2,13 +2,12 @@ import {CSSProperties} from "react";
 import {DEFAULT_TEXT, GENERIC_MENU, WHITE} from "../../../../../styles/colors";
 
 const modalContentProvidersStyle: CSSProperties = {
-  width: '100%',
+  width: '420px',
 }
 
 const modalContentProvidersContainerStyle: CSSProperties = {
   width: '100%',
-  minHeight: '105px',
-  maxHeight: '375px',
+  height: '365px',
   backgroundColor: WHITE,
   borderRadius: '6px',
   marginBottom: '30px',

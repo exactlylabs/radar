@@ -23,7 +23,7 @@ const smallDropdownFilterContainerStyle: CSSProperties = {
   borderRadius: '6px',
   boxShadow: `0 2px 10px -4px ${CLOSE_PANEL_BUTTON_SHADOW_RGBA}`,
   backdropFilter: 'blur(10px)',
-  marginRight: '8px',
+  marginRight: '15px',
 }
 
 const filterContentContainerStyle: CSSProperties = {
@@ -70,9 +70,11 @@ const iconStyle: CSSProperties = {
 }
 
 export const styles = {
-  DropdownFilterContainer: (isSmall: boolean, isLast?: boolean) => {
+  DropdownFilterContainer: (isSmall: boolean, isSmallTablet: boolean, isLast?: boolean, shouldFloatLeft?: boolean) => {
     let style = isSmall ? smallDropdownFilterContainerStyle : dropdownFilterContainerStyle;
-    return isLast ? {...style, marginRight: 0} : style;
+    if(isSmallTablet) style = {...style, marginRight: '6px', marginLeft: undefined};
+    if(shouldFloatLeft) style = {...style, marginLeft: 0};
+    return style;
   },
   FilterContentContainer: (isOpen: boolean, isSmall: boolean) => {
     let style = isSmall ? smallContentContainerStyle : filterContentContainerStyle;

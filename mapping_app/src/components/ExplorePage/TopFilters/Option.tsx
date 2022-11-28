@@ -1,11 +1,13 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/Option.style";
 import GreenCheckIcon from '../../../assets/green-check-icon.png';
+import ChevronRight from '../../../assets/chevron-right.png';
 import {Filter} from "../../../utils/types";
 import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
 import OptionHorizontalDivider from "./OptionHorizontalDivider";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import {CalendarFilters} from "../../../utils/filters";
 
 interface OptionProps {
   option: Filter;
@@ -46,6 +48,7 @@ const Option = ({
         <p className={`hover-opaque ${selected ? 'fw-medium' : 'fw-regular'}`} style={styles.Text(selected, isSmallScreen)}>{getText()}</p>
         { !selected && <div style={styles.Icon}></div> }
         {  selected && <img src={GreenCheckIcon} style={styles.Icon} alt={'green-check-icon'}/> }
+        { !isAsn(option) && option === CalendarFilters.CUSTOM_DATE && <img src={ChevronRight} style={styles.Icon} alt={'right-chevron'}/> }
       </div>
     </>
   );

@@ -8,8 +8,8 @@ import {debounce} from "../../../../api/utils/debouncer";
 import SearchbarIcon from "../../../../assets/search-icon.png";
 import Option from "../../../ExplorePage/TopFilters/Option";
 import OptionHorizontalDivider from "../../../ExplorePage/TopFilters/OptionHorizontalDivider";
-import MyFullWidthButton from "../../MyFullWidthButton";
 import {styles} from "./styles/ModalContentProviders.style";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface ModalContentProvidersProps {
   geospaceId: Optional<string>;
@@ -108,7 +108,7 @@ const ModalContentProviders = ({
           }
         </div>
       </div>
-      <MyFullWidthButton text={'Apply'} onClick={applyOptionSelected}/>
+      <CustomFullWidthButton text={'Apply'} onClick={applyOptionSelected}/>
     </div>
   )
 }

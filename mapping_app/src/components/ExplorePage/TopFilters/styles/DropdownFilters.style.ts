@@ -19,12 +19,12 @@ const dropdownFiltersContainerStyle: CSSProperties = {
 }
 
 const smallDropdownFiltersContainerStyle: CSSProperties = {
-  width: 'calc(100vw - 30px)',
+  width: 'calc(100vw - 20px)',
   minWidth: '250px',
   maxWidth: '420px',
   height: '50px',
   position: 'absolute',
-  top: '82px',
+  top: '76px',
   left: '15px',
   zIndex: 1010,
   overflowX: 'scroll',
@@ -37,7 +37,6 @@ const smallDropdownFiltersContainerStyle: CSSProperties = {
 
 const smallTabletDropdownFiltersContainerStyle: CSSProperties = {
   ...smallDropdownFiltersContainerStyle,
-  maxWidth: '380px'
 }
 
 const largeTabletDropdownFiltersContainerStyle: CSSProperties = {

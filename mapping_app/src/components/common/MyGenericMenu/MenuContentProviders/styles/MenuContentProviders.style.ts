@@ -7,8 +7,7 @@ const menuContentProvidersStyle: CSSProperties = {
 
 const menuContentProvidersContainerStyle: CSSProperties = {
   width: '100%',
-  minHeight: '105px',
-  maxHeight: '375px',
+  height: '375px',
   backgroundColor: WHITE,
   borderRadius: '6px',
   marginBottom: '30px',

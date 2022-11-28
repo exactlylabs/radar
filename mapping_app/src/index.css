@@ -19,14 +19,27 @@ body {
 .hover-popover-option-lighter {
   background-color: #3e4040;
   border-radius: 6px;
-  width: 100%;
+  width: 96%;
 }
 
-.hover-popover-option-lighter:hover {
+@media (hover: hover) {
+  .hover-popover-option-lighter:hover {
+    background-color: #585b5b;
+    border-radius: 6px;
+    border-bottom: none;
+    box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.4);
+    width: 96%;
+  }
+}
+
+.hover-popover-option-lighter:active,
+.hover-popover-option-lighter:focus,
+.hover-popover-option-lighter:focus-visible {
   background-color: #585b5b;
   border-radius: 6px;
   border-bottom: none;
   box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.4);
+  width: 96%;
 }
 
 .popover-dark {

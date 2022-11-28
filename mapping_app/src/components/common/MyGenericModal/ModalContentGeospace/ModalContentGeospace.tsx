@@ -9,9 +9,9 @@ import {
   getSignalStateUpload,
   getUploadIconSrc
 } from "../../../../utils/speeds";
-import MyFullWidthButton from "../../MyFullWidthButton";
 import {BLACK, WHITE} from "../../../../styles/colors";
 import ArrowRight from "../../../../assets/arrow-right.png";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface ModalContentGeospaceProps {
   geospace: GeospaceOverview;
@@ -34,7 +34,7 @@ const ModalContentGeospace = ({
       <div style={styles.Header}>
         <div style={styles.TextContainer}>
           <p className={'fw-medium'} style={styles.MainText}>{geospace.geospace.name}</p>
-          <p className={'fw-light'} style={styles.SecondaryText}>{'U.S.A.'}</p>
+          <p className={'fw-light'} style={styles.SecondaryText}>{', U.S.A.'}</p>
         </div>
         <div style={styles.SignalStateContainer}>
           <div style={styles.SignalStateIndicator(speedState)}></div>
@@ -54,7 +54,7 @@ const ModalContentGeospace = ({
         />
       </div>
       <div style={styles.ButtonContainer}>
-        <MyFullWidthButton backgroundColor={BLACK}
+        <CustomFullWidthButton backgroundColor={BLACK}
                            color={WHITE}
                            text={'View all details'}
                            icon={<img src={ArrowRight} style={styles.ArrowRight} alt={'arrow-right'}/>}

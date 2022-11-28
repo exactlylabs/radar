@@ -1,8 +1,8 @@
 import {ReactElement, useState} from "react";
 import GoBackIcon from "../../../../assets/go-back-arrow-icon.png";
 import WeekPicker from "../../../ExplorePage/DatePicker/WeekPicker";
-import MyFullWidthButton from "../../MyFullWidthButton";
 import {styles} from "./styles/ModalContentWeek.style";
+import CustomFullWidthButton from "../../CustomFullWidthButton";
 
 interface ModalContentWeekProps {
   goBack: () => void;
@@ -52,7 +52,7 @@ const ModalContentWeek = ({
                     setSelectedWeek={handleSetSelectedWeek}
         />
       </div>
-      <MyFullWidthButton text={'Confirm'} onClick={confirmSelection}/>
+      <CustomFullWidthButton text={'Confirm'} onClick={confirmSelection}/>
     </div>
   )
 }

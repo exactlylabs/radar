@@ -32,7 +32,6 @@ const inputStyle: CSSProperties = {
   fontSize: '16px',
   backgroundColor: TRANSPARENT,
   border: 'none',
-  paddingBottom: '3px',
   paddingRight: '10px',
 }
 

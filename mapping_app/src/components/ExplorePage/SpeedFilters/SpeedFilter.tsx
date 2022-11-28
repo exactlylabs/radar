@@ -27,13 +27,13 @@ const SpeedFilter = ({
   }
 
   return (
-    <div className={'hover-opaque'} style={styles.SpeedFilterContainer}>
+    <div className={'hover-opaque'} style={styles.SpeedFilterContainer} onClick={handleClick}>
       <CustomCheckbox backgroundColor={boxColor}
                       color={WHITE}
                       isChecked={checked}
                       onClick={handleClick}
       />
-      <p className={'fw-regular'} style={styles.Text} onClick={handleClick}>{text}</p>
+      <p className={'fw-regular'} style={styles.Text}>{text}</p>
       { secondaryText && <p className={'fw-light'} style={styles.SecondaryText}>{secondaryText}</p> }
     </div>
   )

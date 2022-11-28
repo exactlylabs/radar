@@ -1,5 +1,12 @@
 import {CSSProperties} from "react";
-import {BLACK, DATE_PICKER, DEFAULT_SECONDARY_TEXT, SELECTED_TAB, TRANSPARENT} from "../../../../styles/colors";
+import {
+  BLACK,
+  DATE_PICKER,
+  DATE_PICKER_HORIZONTAL_DIVIDER,
+  DEFAULT_SECONDARY_TEXT,
+  SELECTED_TAB,
+  TRANSPARENT
+} from "../../../../styles/colors";
 
 const dateRangeSelectorTabsStyle: CSSProperties = {
   width: '100%',
@@ -11,6 +18,7 @@ const dateRangeSelectorTabsStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'space-evenly',
   alignItems: 'center',
+  borderBottom: `solid 1px ${DATE_PICKER_HORIZONTAL_DIVIDER}`
 }
 
 const tabStyle: CSSProperties = {

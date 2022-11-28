@@ -187,11 +187,12 @@ const DropdownFilters = ({
                       openFilter={openFilter}
                       loading={false}
                       openFloatingFilter={openSpeedTypeFloatingFilter}
+                      shouldFloatLeft={isSmallTabletScreen && isInsideContainer}
       />
       { !isSmall && <DropdownFilterVerticalDivider/> }
       <DropdownFilter iconSrc={CalendarIcon}
                       options={isCalendarFilterPresent(calendarType as string) ? Object.values(CalendarFilters) : [calendarType, ...Object.values(CalendarFilters)]}
-                      textWidth={isSmall && !isInsideContainer ? '50px' : '70px'}
+                      textWidth={isSmall && !isInsideContainer ? '90px' : '70px'}
                       type={FilterTypes.CALENDAR}
                       changeFilter={changeCalendarFilter}
                       selectedFilter={calendarType}

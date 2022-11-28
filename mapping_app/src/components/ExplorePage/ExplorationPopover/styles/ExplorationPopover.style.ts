@@ -1,5 +1,6 @@
 import {CSSProperties} from "react";
 import {
+  CLOSE_PANEL_BUTTON_SHADOW_RGBA,
   DEFAULT_SECONDARY_BLACK,
   EXPLORATION_POPOVER_BLACK,
   EXPLORATION_POPOVER_SECONDARY_BLACK, TRANSPARENT,
@@ -16,7 +17,7 @@ const explorationPopoverContainerStyle: CSSProperties = {
   position: 'absolute',
   bottom: '25px',
   left: '25px',
-  zIndex: 1050,
+  zIndex: 1100,
   backdropFilter: 'blur(5px)'
 }
 
@@ -56,6 +57,10 @@ const arrowStyle: CSSProperties = {
   opacity: 0.8
 };
 
+const smallArrowStyle: CSSProperties = {
+  width: '26px',
+}
+
 const smallStyle: CSSProperties = {
   ...explorationPopoverContainerStyle,
   width: '345px',
@@ -89,6 +94,16 @@ const extendedSmallTabletStyle: CSSProperties = {
   marginLeft: '-172.5px'
 }
 
+const shadowStyle: CSSProperties = {
+  width: '100vw',
+  height: '100vh',
+  backgroundColor: CLOSE_PANEL_BUTTON_SHADOW_RGBA,
+  zIndex: 1099,
+  position: 'fixed',
+  top: 0,
+  left: 0
+}
+
 export const styles = {
   ExplorationPopoverContainer: (currentPopoverState: string, isSmall: boolean, isSmallTablet: boolean, isLargeTablet: boolean) => {
     let style = explorationPopoverContainerStyle;
@@ -104,6 +119,7 @@ export const styles = {
   ShrinkButtonContainer: (isSmall: boolean) => {
     return isSmall ? transparentShrinkButtonContainerStyle : shrinkButtonContainerStyle;
   },
-  Arrow: arrowStyle,
+  Arrow: (isSmall: boolean) => isSmall ? smallArrowStyle : arrowStyle,
   ClosedExplorationPopoverContainer: closedExplorationPopoverContainerStyle,
+  Shadow: shadowStyle,
 }
