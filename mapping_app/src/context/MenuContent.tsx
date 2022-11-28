@@ -7,7 +7,7 @@
  */
 import {createContext, ReactElement, useState} from "react";
 import {Optional} from "../utils/types";
-import {MenuContent} from "../components/common/MyGenericMenu/menu";
+import {MenuContent} from "../components/common/CustomGenericMenu/menu";
 
 type MenuContextValue = {
   menuContent: Optional<MenuContent>;

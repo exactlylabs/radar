@@ -1,5 +1,5 @@
 import {ReactElement} from "react";
-import {styles} from "./styles/MyFullWidthButton.style";
+import {styles} from "./styles/CustomFullWidthButton.style";
 
 interface CustomFullWidthButtonProps {
   text: string;

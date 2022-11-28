@@ -1,9 +1,9 @@
 import {ReactElement} from "react";
 import {WHITE} from "../../styles/colors";
-import {styles} from "./styles/MyOverlayingLoader.style";
+import {styles} from "./styles/CustomOverlayingLoader.style";
 import CustomSpinner from "./CustomSpinner";
 
-const MyOverlayingLoader = (): ReactElement => {
+const CustomOverlayingLoader = (): ReactElement => {
   return (
     <div style={styles.OverlayingLoaderContainer}>
       <div style={styles.ContentContainer}>
@@ -14,4 +14,4 @@ const MyOverlayingLoader = (): ReactElement => {
   )
 }
 
-export default MyOverlayingLoader;
+export default CustomOverlayingLoader;

@@ -37,15 +37,15 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 import FirstTimeModal from "./FirstTimeModal/FirstTimeModal";
 import SmallScreenBottomNavigator from "./SmallScreenBottomNavigator/SmallScreenBottomNavigator";
 import DropdownFilters from "./TopFilters/DropdownFilters";
-import MyGenericMenu from "../common/MyGenericMenu/MyGenericMenu";
-import {MenuContent} from "../common/MyGenericMenu/menu";
+import CustomGenericMenu from "../common/CustomGenericMenu/CustomGenericMenu";
+import {MenuContent} from "../common/CustomGenericMenu/menu";
 import {useContentMenu} from "../../hooks/useContentMenu";
-import MenuContentGeospace from "../common/MyGenericMenu/MenuContentGeospace/MenuContentGeospace";
-import MenuContentFullGeospace from "../common/MyGenericMenu/MenuContentFullGeospace/MenuContentFullGeospace";
-import MenuContentProviders from "../common/MyGenericMenu/MenuContentProviders/MenuContentProviders";
-import MenuContentCalendar from "../common/MyGenericMenu/MenuContentCalendar/MenuContentCalendar";
-import MenuContentSpeedType from "../common/MyGenericMenu/MenuContentSpeedType/MenuContentSpeedType";
-import MenuContentCustomDateRange from "../common/MyGenericMenu/MenuContentCustomRange/MenuContentCustomDateRange";
+import MenuContentGeospace from "../common/CustomGenericMenu/MenuContentGeospace/MenuContentGeospace";
+import MenuContentFullGeospace from "../common/CustomGenericMenu/MenuContentFullGeospace/MenuContentFullGeospace";
+import MenuContentProviders from "../common/CustomGenericMenu/MenuContentProviders/MenuContentProviders";
+import MenuContentCalendar from "../common/CustomGenericMenu/MenuContentCalendar/MenuContentCalendar";
+import MenuContentSpeedType from "../common/CustomGenericMenu/MenuContentSpeedType/MenuContentSpeedType";
+import MenuContentCustomDateRange from "../common/CustomGenericMenu/MenuContentCustomRange/MenuContentCustomDateRange";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -434,9 +434,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
         />
       }
       { isSmallerThanMid && genericMenuOpen &&
-        <MyGenericMenu closeMenu={closeMenu}>
+        <CustomGenericMenu closeMenu={closeMenu}>
           {getCurrentContent()}
-        </MyGenericMenu>
+        </CustomGenericMenu>
       }
     </div>
   )

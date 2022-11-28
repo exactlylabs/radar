@@ -6,7 +6,7 @@ import {
   GEOGRAPHICAL_CATEGORY_BOTTOM
 } from "../../../../styles/colors";
 
-const myGenericMenuStyle: CSSProperties = {
+const customGenericMenuStyle: CSSProperties = {
   width: '100vw',
   height: 'max-content',
   maxHeight: 'calc(100vh - 58px)',
@@ -45,7 +45,7 @@ const shadowStyle: CSSProperties = {
 }
 
 export const styles = {
-  MyGenericMenu: myGenericMenuStyle,
+  MyGenericMenu: customGenericMenuStyle,
   CloseIcon: closeIconStyle,
   Shadow: shadowStyle,
 }
