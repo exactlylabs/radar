@@ -3,8 +3,7 @@ import {styles} from "./styles/OpenSmallSpeedFilters.style";
 import {SPEED_NORMAL, SPEED_UNDERSERVED, SPEED_UNSERVED} from "../../../../styles/colors";
 import {speedTextsDownload, speedTextsUpload, speedTypes} from "../../../../utils/speeds";
 import SpeedFilter from "../../SpeedFilters/SpeedFilter";
-import {Filter} from "../../../../utils/types";
-import {speedFilters} from "../../../../utils/filters";
+import {SpeedFilters} from "../../../../utils/filters";
 
 interface OpenSmallSpeedFiltersProps {
   speedType: string;
@@ -39,7 +38,7 @@ const OpenSmallSpeedFilters = ({
     <div style={styles.OpenSmallSpeedFiltersContainer}>
       <div style={styles.SpeedFiltersContainer}>
         <SpeedFilter boxColor={SPEED_UNSERVED}
-                     text={speedType === speedFilters.DOWNLOAD ? speedTextsDownload.UNSERVED : speedTextsUpload.UNSERVED}
+                     text={speedType === SpeedFilters.DOWNLOAD ? speedTextsDownload.UNSERVED : speedTextsUpload.UNSERVED}
                      secondaryText={'(Unserved)'}
                      isChecked={selectedSpeedFilters.includes(speedTypes.UNSERVED)}
                      toggleFilter={toggleUnserved}
@@ -47,7 +46,7 @@ const OpenSmallSpeedFilters = ({
       </div>
       <div style={styles.SpeedFiltersContainer}>
         <SpeedFilter boxColor={SPEED_UNDERSERVED}
-                     text={speedType === speedFilters.DOWNLOAD ? speedTextsDownload.UNDERSERVED : speedTextsUpload.UNDERSERVED}
+                     text={speedType === SpeedFilters.DOWNLOAD ? speedTextsDownload.UNDERSERVED : speedTextsUpload.UNDERSERVED}
                      secondaryText={'(Underserved)'}
                      isChecked={selectedSpeedFilters.includes(speedTypes.UNDERSERVED)}
                      toggleFilter={toggleUnderserved}
@@ -55,7 +54,7 @@ const OpenSmallSpeedFilters = ({
       </div>
       <div style={styles.SpeedFiltersContainer}>
         <SpeedFilter boxColor={SPEED_NORMAL}
-                     text={speedType === speedFilters.DOWNLOAD ? speedTextsDownload.SERVED : speedTextsUpload.SERVED}
+                     text={speedType === SpeedFilters.DOWNLOAD ? speedTextsDownload.SERVED : speedTextsUpload.SERVED}
                      isChecked={selectedSpeedFilters.includes(speedTypes.SERVED)}
                      toggleFilter={toggleNormal}
         />

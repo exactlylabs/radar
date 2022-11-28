@@ -4,9 +4,14 @@ import GoBackIcon from "../../../../assets/go-back-arrow-icon.png";
 import ChevronRight from "../../../../assets/chevron-right.png";
 import DateRangeSelectorTabs from "../../../ExplorePage/DatePicker/DateRangeSelectorTabs";
 import CustomFullWidthButton from "../../CustomFullWidthButton";
-import {DateFilter, DatePickerState, getMonthNumberFromName, getWeekLimits} from "../../../../utils/dates";
-import {Optional} from "../../../../utils/types";
-import {dateTabs, halves, months} from "../../../../utils/filters";
+import {DateFilter, getMonthNumberFromName, getWeekLimits} from "../../../../utils/dates";
+import {
+  DateTabs,
+  getQuarterValueFromCompleteRange,
+  getSemesterFromSelectedQ, getSubtitleForQuarter,
+  halves,
+  months, Quarters
+} from "../../../../utils/filters";
 import {DateMenuLevel} from "./MenuContentCustomDateRange";
 
 interface InitialMenuContentCustomRangeProps {
@@ -43,31 +48,37 @@ const InitialMenuContentCustomRange = ({
 
   const handleSelectTab = (newTab: string) => {
     setSelectedTab(newTab);
-    if(newTab === dateTabs.WEEK) {
+    if(newTab === DateTabs.WEEK) {
       setInnerValue(getWeekLimits(selectedYear, selectedWeek));
       setSubtitleText(`Week: ${selectedWeek}`);
-    } else if(newTab === dateTabs.MONTH) {
+    } else if(newTab === DateTabs.MONTH) {
       setInnerValue(months[0]);
       setSubtitleText('');
-    } else if(newTab === dateTabs.HALF_YEAR) {
+    } else if(newTab === DateTabs.HALF_YEAR) {
       setInnerValue(halves[0]);
       setSubtitleText('H1');
+    } else if(newTab === DateTabs.QUARTER) {
+      setInnerValue(Quarters.Q1);
+      setSubtitleText(getSubtitleForQuarter(Quarters.Q1));
     }
   }
 
   const applyChanges = () => {
     let dateObject: DateFilter = {selectedYear};
     switch (selectedTab) {
-      case dateTabs.MONTH:
+      case DateTabs.MONTH:
         if(innerValue !== months[0]) {
           dateObject.selectedMonth = getMonthNumberFromName(innerValue as string) + 1;
         }
         break;
-      case dateTabs.HALF_YEAR:
+      case DateTabs.HALF_YEAR:
         dateObject.selectedSemester = subtitleText === 'H1' ? 1 : 2;
         break;
-      case dateTabs.WEEK:
+      case DateTabs.WEEK:
         dateObject.selectedWeek = selectedWeek - 1;
+        break;
+      case DateTabs.QUARTER:
+        dateObject.selectedQuarter = getSemesterFromSelectedQ(innerValue as string);
         break;
     }
     applyRanges(dateObject);
@@ -76,14 +87,17 @@ const InitialMenuContentCustomRange = ({
   const goToSpecificTabPage = () => {
     let level: DateMenuLevel;
     switch (selectedTab) {
-      case dateTabs.MONTH:
+      case DateTabs.MONTH:
         level = DateMenuLevel.SELECT_MONTH;
         break;
-      case dateTabs.HALF_YEAR:
+      case DateTabs.HALF_YEAR:
         level = DateMenuLevel.SELECT_HALF;
         break;
-      case dateTabs.WEEK:
+      case DateTabs.WEEK:
         level = DateMenuLevel.SELECT_WEEK;
+        break;
+      case DateTabs.QUARTER:
+        level = DateMenuLevel.SELECT_QUARTER;
         break;
       default:
         level = currentLevel;

@@ -11,10 +11,10 @@ import {getSignalStateDownload, getSignalStateUpload} from "./speeds";
 import {GeospaceInfo} from "../api/geospaces/types";
 import {MenuContent} from "../components/common/CustomGenericMenu/menu";
 
-export const FilterTypes = {
-  SPEED: 'speed',
-  CALENDAR: 'calendar',
-  PROVIDERS: 'providers',
+export enum FilterTypes {
+  SPEED = 'speed',
+  CALENDAR = 'calendar',
+  PROVIDERS = 'providers',
 }
 
 export enum SpeedFilters {
@@ -31,7 +31,7 @@ export enum CalendarFilters {
 }
 
 export const isCalendarFilterPresent = (value: string): boolean => {
-  return Object.values(CalendarFilters).includes(value as calendarFilters);
+  return Object.values(CalendarFilters).includes(value as CalendarFilters);
 }
 
 export enum GeospacesTabs {

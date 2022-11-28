@@ -1,10 +1,9 @@
 import {ReactElement, useEffect, useState} from "react";
 import {styles} from "./styles/MenuContentCalendar.style";
 import Option from "../../../ExplorePage/TopFilters/Option";
-import {calendarFilters} from "../../../../utils/filters";
-import {getMenuContent, MenuContent} from "../menu";
+import {CalendarFilters} from "../../../../utils/filters";
+import {MenuContent} from "../menu";
 import {Filter, Optional} from "../../../../utils/types";
-import {useContentMenu} from "../../../../hooks/useContentMenu";
 import {DateFilter, DatePickerState} from "../../../../utils/dates";
 import CustomFullWidthButton from "../../CustomFullWidthButton";
 
@@ -27,17 +26,17 @@ const MenuContentCalendar = ({
 }: MenuContentCalendarProps): ReactElement => {
 
   const [innerOption, setInnerOption] = useState<string>(selectedOption);
-  const [options, setOptions] = useState<Array<string>>(Object.values(calendarFilters));
+  const [options, setOptions] = useState<Array<string>>(Object.values(CalendarFilters));
 
   useEffect(() => {
-    if(selectedOption && !Object.values(calendarFilters).includes(selectedOption as calendarFilters)) {
+    if(selectedOption && !Object.values(CalendarFilters).includes(selectedOption as CalendarFilters)) {
       setOptions([
-        calendarFilters.ALL_TIME,
-        calendarFilters.LAST_WEEK,
-        calendarFilters.LAST_MONTH,
-        calendarFilters.THIS_YEAR,
+        CalendarFilters.ALL_TIME,
+        CalendarFilters.LAST_WEEK,
+        CalendarFilters.LAST_MONTH,
+        CalendarFilters.THIS_YEAR,
         selectedOption,
-        calendarFilters.CUSTOM_DATE
+        CalendarFilters.CUSTOM_DATE
       ]);
     }
   }, [selectedOption]);
@@ -57,7 +56,7 @@ const MenuContentCalendar = ({
   }
 
   const handleSelectOption = (option: Filter) => {
-    if(option === calendarFilters.CUSTOM_DATE) goToCustomRange();
+    if(option === CalendarFilters.CUSTOM_DATE) goToCustomRange();
     else setInnerOption(option as string);
   }
 
@@ -71,7 +70,7 @@ const MenuContentCalendar = ({
                     key={index}
                     selected={innerOption === filter}
                     onClick={handleSelectOption}
-                    isLast={index === (options.length - 1) || !Object.values(calendarFilters).includes(filter as calendarFilters)}
+                    isLast={index === (options.length - 1) || !Object.values(CalendarFilters).includes(filter as CalendarFilters)}
             />
           ))
         }
