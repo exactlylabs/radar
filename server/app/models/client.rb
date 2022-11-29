@@ -102,16 +102,11 @@ class Client < ApplicationRecord
     # or the current cap. value is referencing a past period.
 
     if self.data_cap_max_usage.nil? || self.data_cap_periodicity.nil?
-      puts "is nil"
       return true
     end
     if (self.data_cap_max_usage > self.data_cap_current_period_usage) || self.data_cap_next_period.before?(Time.current)
-        puts "is higher"
-        puts self.data_cap_max_usage > self.data_cap_current_period_usage
-        puts self.data_cap_next_period.after?(Time.current)
         return true
     end
-    puts "not true"
     return false
   end
 
@@ -145,6 +140,18 @@ class Client < ApplicationRecord
       self.test_requested = true
       self.next_schedule_at = cron.next_time(Time.current).to_t
     end
+  end
+
+  def data_usage_summary
+    res = self.measurements.where(
+      "created_at >= ?", Time.current.at_beginning_of_month
+    ).pluck(Arel.sql('SUM(download_total_bytes)'), Arel.sql('AVG(download_total_bytes)'))
+    summary = {month_sum: nil, month_avg: nil}
+    if res
+      summary[:month_sum] = res[0][0]
+      summary[:month_avg] = res[0][1]
+    end
+    return summary
   end
 
   def status
