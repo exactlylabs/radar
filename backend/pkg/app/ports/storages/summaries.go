@@ -44,7 +44,7 @@ type SummaryFilter struct {
 func (sf SummaryFilter) String() string {
 	var y, s, q, m, w string
 	if sf.Year != nil {
-		y = fmt.Sprintf("%d", sf.Year)
+		y = fmt.Sprintf("%d", *sf.Year)
 	}
 	if sf.Semester != nil {
 		s = fmt.Sprintf("%d", *sf.Semester)
