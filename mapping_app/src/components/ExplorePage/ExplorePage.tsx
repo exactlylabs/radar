@@ -14,10 +14,11 @@ import {speedTypes} from "../../utils/speeds";
 import {
   CalendarFilters,
   generateFilterLabel,
-  getCorrectNamespace, getDateQueryStringFromCalendarType,
+  GeospacesTabs,
+  getCorrectNamespace,
+  getDateQueryStringFromCalendarType,
   getZoomForNamespace,
-  SpeedFilters as SF,
-  GeospacesTabs
+  SpeedFilters as SF
 } from "../../utils/filters";
 import {allProvidersElement} from "./TopFilters/utils/providers";
 import {getValueFromUrl, updateUrl} from "../../utils/base64";
@@ -28,7 +29,8 @@ import {emptyGeoJSONFilters, GeoJSONFilters} from "../../api/geojson/types";
 import L from "leaflet";
 import DatePicker from "./DatePicker/DatePicker";
 import {DateFilter, getInitialStateFromCalendarType, getQueryStringFromDateObject} from "../../utils/dates";
-import * as amplitude from "@amplitude/analytics-browser";
+import {AmplitudeEvent, trackAmplitudeEvent} from "../../utils/amplitude";
+import {Environment} from "../../utils/env";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -61,9 +63,8 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [dateQueryString, setDateQueryString] = useState(getValueFromUrl('calendarType') ? getDateQueryStringFromCalendarType(getValueFromUrl('calendarType')) : getDateQueryStringFromCalendarType(CalendarFilters.THIS_YEAR));
 
   useEffect(() => {
-    if(REACT_APP_ENV === 'production') {
-      amplitude.init(AMPLITUDE_KEY);
-      amplitude.track('Page visited');
+    if(REACT_APP_ENV === Environment.PRODUCTION) {
+      trackAmplitudeEvent(AmplitudeEvent.PAGE_VISITED);
     }
   }, []);
 
@@ -135,6 +136,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const selectSuggestion = async (suggestion: DetailedGeospace) => {
     try {
       setLoading(true);
+      trackAmplitudeEvent(AmplitudeEvent.GEOSPACE_SELECTED, {geospaceName: suggestion.name});
       const overview: GeospaceOverview = await getOverview(suggestion.id, emptyGeoJSONFilters);
       setGeospaceNamespace(getCorrectNamespace(suggestion.namespace));
       setCurrentMapCenter([suggestion.centroid[0], suggestion.centroid[1]]);
@@ -152,17 +154,19 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     }
   }
 
-  const selectGeospace = (geospace: GeospaceInfo, center?: L.LatLng) => {
+  const selectGeospace = (geospaceInfo: GeospaceInfo, center?: L.LatLng) => {
+    const {geospace} = geospaceInfo as GeospaceOverview;
+    trackAmplitudeEvent(AmplitudeEvent.GEOSPACE_SELECTED, {geospaceName: geospace.name});
     setLoading(true);
-    setSelectedGeospace(geospace);
-    setSelectedGeospaceId((geospace as GeospaceOverview).geospace.id);
+    setSelectedGeospace(geospaceInfo);
+    setSelectedGeospaceId(geospace.id);
     if(center) {
       setCurrentMapCenter([center.lat, center.lng]);
-      setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
-    } else if((geospace as GeospaceOverview).geospace.centroid) {
-      const centroid: Array<number> = (geospace as GeospaceOverview).geospace.centroid;
+      setCurrentMapZoom(getZoomForNamespace(geospace.namespace));
+    } else if(geospace.centroid) {
+      const centroid: Array<number> = geospace.centroid;
       setCurrentMapCenter([centroid[0], centroid[1]]);
-      setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
+      setCurrentMapZoom(getZoomForNamespace(geospace.namespace));
     }
     openRightPanel();
     setLoading(false);
