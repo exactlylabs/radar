@@ -86,6 +86,9 @@ class Client < ApplicationRecord
   end
 
   def data_cap_next_period
+    if self.data_cap_current_period.nil?
+      return Time.current
+    end
     if self.daily?
       return self.data_cap_current_period.tomorrow.to_date
     elsif self.weekly?
@@ -97,17 +100,24 @@ class Client < ApplicationRecord
     end
   end
 
-  def has_data_cap?
-    # We consider having data capacity if either there's enough cap. 
-    # or the current cap. value is referencing a past period.
+  def self.refresh_outdated_data_usage!
+    # For each Client, reset their current period usage in case
+    # the current period is no longer valid (moved to another one)
+    Client.all.each do |c|
+      if c.data_cap_next_period.before?(Time.current)
+        c.data_cap_current_period = c.data_cap_next_period
+        c.data_cap_current_period_usage = 0.0
+        c.save!
+      end
+    end
+  end
 
-    if self.data_cap_max_usage.nil? || self.data_cap_periodicity.nil?
-      return true
+  def has_data_cap?
+    ret = false
+    if self.data_cap_max_usage.nil? || self.data_cap_periodicity.nil? || 
+      self.data_cap_max_usage > self.data_cap_current_period_usage
+      ret = true
     end
-    if (self.data_cap_max_usage > self.data_cap_current_period_usage) || self.data_cap_next_period.before?(Time.current)
-        return true
-    end
-    return false
   end
 
   def add_bytes!(period, byte_size)
