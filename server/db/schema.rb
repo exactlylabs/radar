@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_22_235741) do
+ActiveRecord::Schema.define(version: 2022_11_28_163330) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -129,6 +129,10 @@ ActiveRecord::Schema.define(version: 2022_11_22_235741) do
     t.boolean "online", default: false
     t.datetime "next_schedule_at"
     t.string "cron_string"
+    t.float "data_cap_max_usage"
+    t.integer "data_cap_periodicity", default: 2
+    t.float "data_cap_current_period_usage", default: 0.0
+    t.datetime "data_cap_current_period"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"

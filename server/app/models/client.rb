@@ -1,6 +1,7 @@
 class Client < ApplicationRecord
   # TODO: New agents are 15 seconds, old were 30. Once all the legacy "script based" clients are gone, update this to 15
-  PING_DURRATION = 30
+  PING_DURATION = 30
+  enum data_cap_periodicity: {daily: 0, weekly: 1, monthly: 2, yearly: 3}
 
   belongs_to :user, optional: true, foreign_key: 'claimed_by_id'
   belongs_to :location, optional: true
@@ -21,7 +22,7 @@ class Client < ApplicationRecord
   validate :valid_cron_string
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
-  scope :where_outdated_online, -> { where("online = true AND (pinged_at < ? OR pinged_at IS NULL)", (PING_DURRATION * 1.5).second.ago) }
+  scope :where_outdated_online, -> { where("online = true AND (pinged_at < ? OR pinged_at IS NULL)", (PING_DURATION * 1.5).second.ago) }
 
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
@@ -84,6 +85,49 @@ class Client < ApplicationRecord
     self.test_requested || self.location&.test_requested
   end
 
+  def data_cap_next_period
+    if self.daily?
+      return self.data_cap_current_period.tomorrow.to_date
+    elsif self.weekly?
+      return self.data_cap_current_period.next_week.to_date
+    elsif self.monthly?
+      return self.data_cap_current_period.next_month.at_beginning_of_month.to_date
+    elsif self.yearly?
+      return self.data_cap_current_period.next_year.at_beginning_of_year.to_date
+    end
+  end
+
+  def has_data_cap?
+    # We consider having data capacity if either there's enough cap. 
+    # or the current cap. value is referencing a past period.
+
+    if self.data_cap_max_usage.nil? || self.data_cap_periodicity.nil?
+      puts "is nil"
+      return true
+    end
+    if (self.data_cap_max_usage > self.data_cap_current_period_usage) || self.data_cap_next_period.before?(Time.current)
+        puts "is higher"
+        puts self.data_cap_max_usage > self.data_cap_current_period_usage
+        puts self.data_cap_next_period.after?(Time.current)
+        return true
+    end
+    puts "not true"
+    return false
+  end
+
+  def add_bytes!(period, byte_size)
+    Client.transaction do
+      c = Client.lock("FOR UPDATE").find(self.id)
+      if c.data_cap_current_period && c.data_cap_next_period&.before?(period)
+        c.data_cap_current_period = period
+        c.data_cap_current_period_usage = 0.0
+      end
+      c.data_cap_current_period_usage += byte_size
+      c.save!
+    end
+    self.reload(:lock=>true)
+  end
+
   def verify_test_scheduler!
     # Load Cron and set a default value in case it's empty
     if self.cron_string.nil?
@@ -96,7 +140,7 @@ class Client < ApplicationRecord
     if self.next_schedule_at.nil?
       self.next_schedule_at = cron.next_time(self&.measurements&.last&.created_at || Time.current).to_t
 
-    elsif self.next_schedule_at < Time.current
+    elsif self.next_schedule_at < Time.current && self.has_data_cap?
       # Request a test and increment the next_schedule_at
       self.test_requested = true
       self.next_schedule_at = cron.next_time(Time.current).to_t
