@@ -23,8 +23,8 @@ type WebServer struct {
 func NewWebServer(options ...ServerOption) (*WebServer, error) {
 	server := &WebServer{
 		middlewares:        make([]Middleware, 0),
-		recoveryMiddleware: NewRecoveryMiddleware(),
-		loggerMiddleware:   NewRequestLoggerMiddleware(),
+		recoveryMiddleware: RecoveryMiddleware,
+		loggerMiddleware:   RequestLoggerMiddleware,
 		router:             mux.NewRouter(),
 		baseCtx:            NewWebContext(),
 	}
@@ -43,48 +43,28 @@ func (w *WebServer) Route(endpoint string, route RouteHandler, methods ...string
 	}
 	w.router.HandleFunc(endpoint, func(writer http.ResponseWriter, r *http.Request) {
 		ctx := w.baseCtx.PrepareRequest(writer, r)
-		routeHandler := func(ctx *WebContext) {
-			route(ctx)
-		}
-		w.prepareRoute(ctx, routeHandler, w.middlewares...)()
+		route(ctx)
 		if err := ctx.Commit(); err != nil {
 			panic(errors.Wrap(err, "WebServer#Route Commit"))
 		}
-
 	}).Methods(methods...)
 }
 
-// prepareRoute will create the call sequence for a specific route, calling all middlewares recursivelly until the route is called
-func (w *WebServer) prepareRoute(ctx *WebContext, route RouteHandler, mds ...Middleware) func() {
-	if len(mds) == 0 {
-		return func() {
-			route(ctx)
-		}
-	}
-	return func() {
-		// Call Middleware, passing the next callable (either the route or another middleware)
-		mds[0](ctx, w.prepareRoute(ctx, route, mds[1:]...))
-	}
-}
-
-// AddMiddlewares adds layers of handler functions that intercept both request and response.
+// AddMiddlewares adds layers of handler functions to an existing route.
 // Note that the ordering matters here, so the first argument is going to be called first
 // Important Note: NewRequestLoggerMiddleware and NewRecoveryMiddleware
-// are set separatedly and always at start and the end, respectively.
+// are set separatedly, and always at start.
 func (w *WebServer) AddMiddlewares(middlewares ...Middleware) {
 	w.middlewares = append(w.middlewares, middlewares...)
 }
 
 func (w *WebServer) Setup() {
-	// Set the logging and recovery middlewares in the first and last position, respectively.
-	extendedMiddlewares := make([]Middleware, len(w.middlewares)+2)
-	extendedMiddlewares[0] = w.loggerMiddleware
-	for i, m := range w.middlewares {
-		extendedMiddlewares[i+1] = m
-	}
-	extendedMiddlewares[len(extendedMiddlewares)-1] = w.recoveryMiddleware
-	w.middlewares = extendedMiddlewares
 	var handler http.Handler = w.router
+	for _, middleware := range w.middlewares {
+		handler = middleware(handler)
+	}
+	// Ensure the first middlewares are always the logging and recovery
+	handler = w.loggerMiddleware(w.recoveryMiddleware(handler))
 	w.server = &http.Server{
 		Handler: handler,
 	}

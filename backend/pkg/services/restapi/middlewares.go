@@ -10,54 +10,45 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Middleware is called each request.
-// The provided context is unique in the request lifecycle,
-// so any changes here are going to be reflected to the downstream middlewares and finally the route handler.
-// This function **must** call next() callback.
-// If you wish to run anything in the request, just run it before calling next().
-// If you wish to run anythin in the response, just run it after calling next().
-type Middleware func(ctx *WebContext, next func())
+type Middleware mux.MiddlewareFunc
 
 // Request Logging Middleware
 
-func NewRequestLoggerMiddleware() Middleware {
-	return func(ctx *WebContext, next func()) {
-		t := time.Now()
-		next()
-		log.Printf("%v - %s - %v\n", ctx.Request.Method, ctx.Request.URL, time.Since(t))
-	}
+type loggingMiddleware struct {
+	handler http.Handler
+}
+
+func (lm *loggingMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	t := time.Now()
+	lm.handler.ServeHTTP(w, r)
+	log.Printf("%v - %s - %v\n", r.Method, r.URL, time.Since(t))
+}
+
+func RequestLoggerMiddleware(handler http.Handler) http.Handler {
+	return &loggingMiddleware{handler}
 }
 
 // Panic Recovery Middleware
 
-func NewRecoveryMiddleware() Middleware {
-	return func(ctx *WebContext, next func()) {
-		defer func() {
-			if err := recover(); err != nil {
-				ctx.Reject(http.StatusInternalServerError, &apierrors.InternalAPIError)
-				log.Println(err)
-				stack := string(debug.Stack())
-				log.Println(stack)
-			}
-		}()
-		next()
-	}
+type recoveryMiddleware struct {
+	handler http.Handler
 }
 
-// WrapMuxMiddlewareFunc converts Mux middlewares into ours
-func WrapMuxMiddlewareFunc(m mux.MiddlewareFunc) Middleware {
-	return func(ctx *WebContext, next func()) {
-		mw := &muxWrapper{next: next}
-		handler := m(mw)
-		handler.ServeHTTP(ctx.Writer, ctx.Request)
-	}
+func (rm *recoveryMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	defer func() {
+		if err := recover(); err != nil {
+			ctx := NewWebContext()
+			ctx = ctx.PrepareRequest(w, r)
+			ctx.Reject(http.StatusInternalServerError, &apierrors.InternalAPIError)
+
+			log.Println(err)
+			stack := string(debug.Stack())
+			log.Println(stack)
+		}
+	}()
+	rm.handler.ServeHTTP(w, r)
 }
 
-type muxWrapper struct {
-	next func()
-}
-
-// ServeHTTP is going to be called by the Mux Middleware
-func (mw *muxWrapper) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	mw.next()
+func RecoveryMiddleware(handler http.Handler) http.Handler {
+	return &recoveryMiddleware{handler}
 }
