@@ -193,7 +193,7 @@ workflows:
           flavor: staging
           filters:
             branches:
-              only: ["master"]
+              ignore: ["master"] # TODO: Rollback to "only"
       - build-android:
           name: "build-android-prod"
           requires: [unit_test]
@@ -213,7 +213,7 @@ workflows:
           flavor: staging
           filters:
             branches:
-              only: ["master"]
+              ignore: "master" # TODO: Rollback to "only"
       - release-android:
           name: "release-android-prod"
           requires: [build-android-prod]
@@ -239,7 +239,7 @@ workflows:
           flavor: staging
           filters:
             branches:
-              only: "master"
+              ignore: "master" # TODO: Rollback to "only"
       - build-ios:
           name: "build-ios-prod"
           requires: [unit_test]
@@ -259,7 +259,7 @@ workflows:
           flavor: staging
           filters:
             branches:
-              only: "master"
+              ignore: "master" # TODO: Rollback to "only"
       - release-ios:
           name: "release-ios-prod"
           requires: [build-ios-prod]
