@@ -154,7 +154,7 @@ jobs:
         enum: ["staging", "prod"]
     steps:
       - checkout
-      - run: echo ${APP_STORE_CONNECT_API_KEY_KEY} > /tmp/appconnectkey.p8
+      - run: echo ${APP_STORE_CONNECT_API_KEY_KEY} | base64 -d > /tmp/appconnectkey.p8
       - attach_workspace:
           at: ~/workspace
       - ruby/install-deps:
@@ -193,7 +193,7 @@ workflows:
           flavor: staging
           filters:
             branches:
-              ignore: ["master"] # TODO: Rollback to "only"
+              only: ["master"]
       - build-android:
           name: "build-android-prod"
           requires: [unit_test]
@@ -213,7 +213,7 @@ workflows:
           flavor: staging
           filters:
             branches:
-              ignore: "master" # TODO: Rollback to "only"
+              only: "master"
       - release-android:
           name: "release-android-prod"
           requires: [build-android-prod]
