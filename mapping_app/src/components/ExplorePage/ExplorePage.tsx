@@ -1,4 +1,4 @@
-import {ReactElement, useEffect, useState} from "react";
+import {ReactElement, useContext, useEffect, useState} from "react";
 import {styles} from "./styles/ExplorePage.style";
 import Map from "./Map";
 import ExplorationPopover from "./ExplorationPopover/ExplorationPopover";
