@@ -36,10 +36,8 @@ func NewMappingAPI(
 		panic(err)
 	}
 	api.AddMiddlewares(
-		restapi.WrapMuxMiddlewareFunc(
-			handlers.CORS(
-				handlers.AllowedOrigins(conf.AllowedOrigins()),
-			),
+		handlers.CORS(
+			handlers.AllowedOrigins(conf.AllowedOrigins()),
 		),
 	)
 
