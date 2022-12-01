@@ -3,7 +3,7 @@ import {styles} from "./styles/MyGenericModal.style";
 import {Optional} from "../../../utils/types";
 import CloseIconBlack from '../../../assets/close-icon-gray.png';
 
-interface MyGenericModalProps {
+interface CustomGenericModalProps {
   closeModal: () => void;
   children: Optional<ReactElement>;
   isDarker: boolean;
@@ -13,7 +13,7 @@ const CustomGenericModal = ({
   closeModal,
   children,
   isDarker
-}: MyGenericModalProps): ReactElement => {
+}: CustomGenericModalProps): ReactElement => {
   return (
     <>
       <div style={styles.Underlay} onClick={closeModal}></div>

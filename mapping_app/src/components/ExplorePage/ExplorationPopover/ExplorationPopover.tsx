@@ -46,7 +46,7 @@ const ExplorationPopover = ({
   isRightPanelHidden
 }: ExplorationPopoverProps): ReactElement => {
 
-  const {isSmallScreen, isSmallTabletScreen, isLargeTabletScreen} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen, isLargeTabletScreen, isTabletScreen} = useViewportSizes();
   const isSmallExplorationPopover = isSmallScreen || isSmallTabletScreen || isLargeTabletScreen;
 
   const [loading, setLoading] = useState(true);
@@ -59,9 +59,9 @@ const ExplorationPopover = ({
 
   useEffect(() => {
     const allNamespaces = Promise.all([
-      getGeospaces('states'),
-      getGeospaces('counties'),
-      getGeospaces('tribal_tracts'),
+      getGeospaces(GeospacesTabs.STATES.toLowerCase()),
+      getGeospaces(GeospacesTabs.COUNTIES.toLowerCase()),
+      getGeospaces(GeospacesTabs.TRIBAL_TRACTS.toLowerCase()),
     ]);
     allNamespaces
       .then(res => {
@@ -101,7 +101,7 @@ const ExplorationPopover = ({
       setCurrentPopoverState(popoverStates.INITIAL);
     }
   }
-  const  togglePopover = () => setIsOpen(!isOpen);
+
   const closePopover = () => setIsOpen(false);
   const openPopover = () => setIsOpen(true);
 
@@ -110,137 +110,47 @@ const ExplorationPopover = ({
     closePopover();
   }
 
-  const phoneContent = () => (
+  return (
     <>
-      {
-        isOpen ?
-          <>
-            <div style={styles.Shadow} onClick={closePopover}></div>
-            <div style={styles.ExplorationPopoverContainer(currentPopoverState, isSmallScreen, isSmallTabletScreen, isLargeTabletScreen)}>
-              <div className={'hover-opaque'}
-                   style={styles.ShrinkButtonContainer(isSmallExplorationPopover)}
-                   onClick={closePopover}
-              >
-                <img src={isSmallExplorationPopover ? CloseIconLight : DiagonalArrow}
-                     style={styles.Arrow(isSmallExplorationPopover)}
-                     alt={'diagonal-arrow'}/>
-              </div>
-              {
-                currentPopoverState === popoverStates.INITIAL ?
-                  <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState}/> :
-                  <SpecificExplorationPopoverContent type={currentPopoverState}
-                                                     setType={handleChangePopoverState}
-                                                     goBack={goBackToInitial}
-                                                     selectGeospace={handleChangeGeospace}
-                                                     states={states}
-                                                     indexedCounties={indexedCounties}
-                                                     tribalTracts={tribalTracts}
-                                                     setCenter={setCenter}
-                                                     setZoom={setZoom}
-                                                     loading={loading}
-                                                     setLoading={setLoading}
-                                                     selectedOption={selectedOption}
-                                                     setSelectedOption={setSelectedOption}
-                  />
-              }
+    {
+      isOpen ?
+        <>
+          { (isSmallScreen || isTabletScreen) && <div style={styles.Shadow} onClick={closePopover}></div> }
+          <div style={styles.ExplorationPopoverContainer(currentPopoverState, isSmallScreen, isSmallTabletScreen, isLargeTabletScreen)}>
+            <div className={'hover-opaque'}
+                 style={styles.ShrinkButtonContainer(isSmallExplorationPopover)}
+                 onClick={closePopover}
+            >
+              <img src={isSmallExplorationPopover ? CloseIconLight : DiagonalArrow}
+                   style={styles.Arrow(isSmallExplorationPopover)}
+                   alt={'diagonal-arrow'}/>
             </div>
+            {
+              currentPopoverState === popoverStates.INITIAL ?
+                <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState}/> :
+                <SpecificExplorationPopoverContent type={currentPopoverState}
+                                                   setType={handleChangePopoverState}
+                                                   goBack={goBackToInitial}
+                                                   selectGeospace={handleChangeGeospace}
+                                                   states={states}
+                                                   indexedCounties={indexedCounties}
+                                                   tribalTracts={tribalTracts}
+                                                   setCenter={setCenter}
+                                                   setZoom={setZoom}
+                                                   loading={loading}
+                                                   setLoading={setLoading}
+                                                   selectedOption={selectedOption}
+                                                   setSelectedOption={setSelectedOption}
+                />
+            }
+          </div>
         </> :
         <div style={styles.ClosedExplorationPopoverContainer}>
           <ExplorationPopoverIcon onClick={openPopover} isRightPanelOpen={isRightPanelOpen} isRightPanelHidden={isRightPanelHidden}/>
         </div>
-      }
+    }
     </>
   );
-
-  const smallTabletContent = () => (
-    <>
-      {
-        isOpen &&
-        <>
-          <div style={styles.Shadow} onClick={closePopover}></div>
-          <div style={styles.ExplorationPopoverContainer(currentPopoverState, isSmallScreen, isSmallTabletScreen, isLargeTabletScreen)}>
-            <div className={'hover-opaque'}
-                 style={styles.ShrinkButtonContainer(isSmallExplorationPopover)}
-                 onClick={closePopover}
-            >
-              <img src={isSmallExplorationPopover ? CloseIconLight : DiagonalArrow} style={styles.Arrow(isSmallExplorationPopover)}
-                   alt={'diagonal-arrow'}/>
-            </div>
-            {
-              currentPopoverState === popoverStates.INITIAL ?
-                <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState}/> :
-                <SpecificExplorationPopoverContent type={currentPopoverState}
-                                                   setType={handleChangePopoverState}
-                                                   goBack={goBackToInitial}
-                                                   selectGeospace={handleChangeGeospace}
-                                                   states={states}
-                                                   indexedCounties={indexedCounties}
-                                                   tribalTracts={tribalTracts}
-                                                   setCenter={setCenter}
-                                                   setZoom={setZoom}
-                                                   loading={loading}
-                                                   setLoading={setLoading}
-                                                   selectedOption={selectedOption}
-                                                   setSelectedOption={setSelectedOption}
-                />
-            }
-          </div>
-        </>
-      }
-      <div style={styles.ClosedExplorationPopoverContainer}>
-        <ExplorationPopoverIcon onClick={togglePopover} isOpen={isOpen} isRightPanelOpen={isRightPanelOpen} isRightPanelHidden={isRightPanelHidden}/>
-      </div>
-    </>
-  );
-
-  const largeTabletContent = () => (
-    <>
-      {
-        isOpen &&
-        <>
-          <div style={styles.Shadow} onClick={closePopover}></div>
-          <div style={styles.ExplorationPopoverContainer(currentPopoverState, isSmallScreen, isSmallTabletScreen, isLargeTabletScreen)}>
-            <div className={'hover-opaque'}
-                 style={styles.ShrinkButtonContainer(isSmallExplorationPopover)}
-                 onClick={closePopover}
-            >
-              <img src={isSmallExplorationPopover ? CloseIconLight : DiagonalArrow} style={styles.Arrow(isSmallExplorationPopover)}
-                   alt={'diagonal-arrow'}/>
-            </div>
-            {
-              currentPopoverState === popoverStates.INITIAL ?
-                <InitialExplorationPopoverContent setCurrentPopoverState={handleChangePopoverState}/> :
-                <SpecificExplorationPopoverContent type={currentPopoverState}
-                                                   setType={handleChangePopoverState}
-                                                   goBack={goBackToInitial}
-                                                   selectGeospace={handleChangeGeospace}
-                                                   states={states}
-                                                   indexedCounties={indexedCounties}
-                                                   tribalTracts={tribalTracts}
-                                                   setCenter={setCenter}
-                                                   setZoom={setZoom}
-                                                   loading={loading}
-                                                   setLoading={setLoading}
-                                                   selectedOption={selectedOption}
-                                                   setSelectedOption={setSelectedOption}
-                />
-            }
-          </div>
-        </>
-      }
-      <div style={styles.ClosedExplorationPopoverContainer}>
-        <ExplorationPopoverIcon onClick={togglePopover} isOpen={isOpen} isRightPanelOpen={isRightPanelOpen} isRightPanelHidden={isRightPanelHidden}/>
-      </div>
-    </>
-  );
-
-  const getContent = () => {
-    if(isSmallScreen) return phoneContent();
-    else if(isSmallTabletScreen) return smallTabletContent();
-    else return largeTabletContent();
-  }
-
-  return getContent();
 }
 
 export default React.memo(ExplorationPopover);

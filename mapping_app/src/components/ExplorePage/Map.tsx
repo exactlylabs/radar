@@ -2,7 +2,7 @@ import {ReactElement, useEffect, useState} from "react";
 import L from "leaflet";
 import {MapContainer, TileLayer} from "react-leaflet";
 import { mapTileAttribution, mapTileUrl} from "../../utils/map";
-import {styles} from "./styles/MyMap.style";
+import {styles} from "./styles/Map.style";
 import {GeoJSONFilters, GeoJSONResponse, GeoJSONTimedResponse} from "../../api/geojson/types";
 import {getGeoJSON} from "../../api/geojson/requests";
 import {handleError} from "../../api";
