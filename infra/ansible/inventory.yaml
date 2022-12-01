@@ -1,6 +1,6 @@
 all:
   hosts:
     processor:
-      ansible_host: "34.172.92.38"
+      ansible_host: mlab-processor.exactlylabs.com
       ansible_connection: "ssh"
 
