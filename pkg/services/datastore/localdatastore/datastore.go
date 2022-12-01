@@ -101,7 +101,7 @@ func openFile(path string) (*os.File, error) {
 		return nil, fmt.Errorf("storage.writerWorker mdErr: %v", mdErr)
 	}
 
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0660)
+	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0660)
 	if err != nil {
 		return nil, fmt.Errorf("storage.writerWorker OpenFile err: %v", err)
 	}
