@@ -245,9 +245,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     else closeDatePicker();
   }
 
-  const handleSetCalendarType = (calendarType: Filter) => {
-    setCalendarType(calendarType as string);
-    setDateQueryString(getDateQueryStringFromCalendarType(calendarType as string));
+  const handleSetCalendarType = (calendarType: string) => {
+    setCalendarType(calendarType);
+    setDateQueryString(getDateQueryStringFromCalendarType(calendarType));
   }
 
   const closeFirstTimeModal = () => setIsFirstTimeModalOpen(false);

@@ -2,7 +2,6 @@ import {ReactElement, useState} from "react";
 import {styles} from "./styles/TopFilters.style";
 import OpenFiltersButton from "./OpenFiltersButton";
 import Filters from "./Filters";
-import {Filter} from "../../../utils/types";
 import {Asn} from "../../../api/asns/types";
 
 interface TopFiltersProps {
