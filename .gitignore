@@ -5,3 +5,4 @@ input
 analysis/
 .vscode
 mlab-processor
+infra/ansible/vars.yaml
