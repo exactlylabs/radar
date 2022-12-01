@@ -14,8 +14,8 @@ mkdir -p ${TARGET_DIR}
 
 # ASN code to Organization Map
 URL="https://publicdata.caida.org/datasets/as-organizations/20221001.as-org2info.jsonl.gz"
-curl -s -f "${URL}" -o "${TARGET_DIR}/20220401.as-org2info.jsonl.gz"
-gzip -fd ${TARGET_DIR}/20220401.as-org2info.jsonl.gz
+curl -s -f "${URL}" -o "${TARGET_DIR}/20221001.as-org2info.jsonl.gz"
+gzip -fd ${TARGET_DIR}/20221001.as-org2info.jsonl.gz
 
 # IPVx to ASN Map
 rm -rf input/GeoLite2-City-CSV_*
