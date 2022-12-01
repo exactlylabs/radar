@@ -30,7 +30,7 @@ const filterContentContainerStyle: CSSProperties = {
   minWidth: '100%',
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'center',
+  justifyContent: 'space-evenly',
   alignItems: 'center',
   cursor: 'pointer',
   padding: '10px 5px',
@@ -70,9 +70,9 @@ const iconStyle: CSSProperties = {
 }
 
 export const styles = {
-  DropdownFilterContainer: (isSmall: boolean, isSmallTablet: boolean, isLast?: boolean, shouldFloatLeft?: boolean) => {
+  DropdownFilterContainer: (isSmall: boolean, isTablet: boolean, isLast?: boolean, shouldFloatLeft?: boolean) => {
     let style = isSmall ? smallDropdownFilterContainerStyle : dropdownFilterContainerStyle;
-    if(isSmallTablet) style = {...style, marginRight: '6px', marginLeft: undefined};
+    if(isTablet) style = {...style, marginRight: '6px', marginLeft: undefined};
     if(shouldFloatLeft) style = {...style, marginLeft: 0};
     return style;
   },
@@ -82,7 +82,7 @@ export const styles = {
   },
   Arrow: arrowStyle,
   Text: (textWidth: string) => {
-    return {...textStyle, width: textWidth};
+    return {...textStyle, maxWidth: textWidth};
   },
   Icon: iconStyle,
 }

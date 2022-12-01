@@ -12,6 +12,7 @@ interface SmallSpeedFiltersProps {
   selectedSpeedFilters: Array<string>;
   setSelectedSpeedFilters: (filters: Array<string>) => void;
   isRightPanelOpen: boolean;
+  isRightPanelHidden: boolean;
 }
 
 const SmallSpeedFilters = ({
@@ -20,7 +21,8 @@ const SmallSpeedFilters = ({
   speedType,
   selectedSpeedFilters,
   setSelectedSpeedFilters,
-  isRightPanelOpen
+  isRightPanelOpen,
+  isRightPanelHidden
 }: SmallSpeedFiltersProps): ReactElement => {
 
   const {isSmallTabletScreen, isLargeTabletScreen} = useViewportSizes();
@@ -29,7 +31,7 @@ const SmallSpeedFilters = ({
 
   return (
     <div style={styles.SmallSpeedFiltersContainer}>
-      <div className={'hover-opaque'} style={styles.Button(isOpen, isSmallTabletScreen, isLargeTabletScreen, isRightPanelOpen)} onClick={toggleFilters}>
+      <div className={'hover-opaque'} style={styles.Button(isOpen, isSmallTabletScreen, isLargeTabletScreen, isRightPanelOpen, isRightPanelHidden)} onClick={toggleFilters}>
         <img src={isOpen ? LayersIconWhite : LayersIconBlack} style={styles.LayersIcon} alt={'layers-icon'}/>
       </div>
       { isOpen &&

@@ -8,12 +8,14 @@ interface ExplorationPopoverProps {
   onClick: () => void;
   isOpen?: boolean;
   isRightPanelOpen: boolean;
+  isRightPanelHidden: boolean;
 }
 
 const ExplorationPopoverIcon = ({
   onClick,
   isOpen,
-  isRightPanelOpen
+  isRightPanelOpen,
+  isRightPanelHidden
 }: ExplorationPopoverProps): ReactElement => {
 
   const {isSmallScreen, isSmallTabletScreen, isLargeTabletScreen} = useViewportSizes();
@@ -22,7 +24,7 @@ const ExplorationPopoverIcon = ({
   const shouldShowBlackIcon = isSmallScreen || (isTablet && !isOpen);
 
   return (
-    <div style={styles.ExplorationPopoverIconContainer(isSmallScreen, isSmallTabletScreen, isLargeTabletScreen, isRightPanelOpen, isOpen)}
+    <div style={styles.ExplorationPopoverIconContainer(isSmallScreen, isSmallTabletScreen, isLargeTabletScreen, isRightPanelOpen, isRightPanelHidden, isOpen)}
          onClick={onClick}
     >
       <img src={shouldShowBlackIcon ? PopoverClosedIconBlack : PopoverClosedIconWhite}

@@ -4,7 +4,7 @@ import GoBackIcon from "../../../../assets/go-back-arrow-icon.png";
 import ChevronRight from "../../../../assets/chevron-right.png";
 import DateRangeSelectorTabs from "../../../ExplorePage/DatePicker/DateRangeSelectorTabs";
 import CustomFullWidthButton from "../../CustomFullWidthButton";
-import {DateFilter, getMonthNumberFromName, getWeekLimits} from "../../../../utils/dates";
+import {DateFilter, DateMenuLevel, getMonthNumberFromName, getWeekLimits} from "../../../../utils/dates";
 import {
   DateTabs,
   getQuarterValueFromCompleteRange,
@@ -12,7 +12,6 @@ import {
   halves,
   months, Quarters
 } from "../../../../utils/filters";
-import {DateMenuLevel} from "./MenuContentCustomDateRange";
 
 interface InitialMenuContentCustomRangeProps {
   goBack: () => void;

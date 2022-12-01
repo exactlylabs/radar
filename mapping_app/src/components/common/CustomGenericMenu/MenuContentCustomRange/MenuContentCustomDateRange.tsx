@@ -1,7 +1,7 @@
 import {ReactElement, useState} from "react";
 import {DateTabs, getSubtitleForQuarter, halves, months, years} from "../../../../utils/filters";
 import {
-  DateFilter,
+  DateFilter, DateMenuLevel,
   DatePickerState,
   getCurrentMonth,
   getFirstDayOfLastWeek,
@@ -15,15 +15,6 @@ import MenuContentHalf from "../MenuContentHalf/MenuContentHalf";
 import MenuContentWeek from "../MenuContentWeek/MenuContentWeek";
 import InitialMenuContentCustomRange from "./InitialMenuContentCustomRange";
 import MenuContentQuarter from "../MenuContentQuarter/MenuContentQuarter";
-
-export enum DateMenuLevel {
-  INITIAL = 'INITIAL',
-  SELECT_YEAR = 'SELECT_YEAR',
-  SELECT_MONTH = 'SELECT_MONTH',
-  SELECT_HALF = 'SELECT_HALF',
-  SELECT_WEEK = 'SELECT_WEEK',
-  SELECT_QUARTER = 'SELECT_QUARTER',
-}
 
 interface MenuContentCustomDateRangeProps {
   goBack: () => void;

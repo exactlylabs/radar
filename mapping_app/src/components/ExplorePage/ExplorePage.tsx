@@ -13,14 +13,14 @@ import {handleError} from "../../api";
 import {speedTypes} from "../../utils/speeds";
 import {
   CalendarFilters,
+  FilterTypes,
   generateFilterLabel,
+  GeospacesTabs,
   getCorrectNamespace,
   getDateQueryStringFromCalendarType,
+  getFilterMenuContentFromFilter,
   getZoomForNamespace,
   SpeedFilters as SF,
-  GeospacesTabs,
-  FilterTypes,
-  getFilterMenuContentFromFilter,
 } from "../../utils/filters";
 import {allProvidersElement} from "./TopFilters/utils/providers";
 import {getValueFromUrl, updateUrl} from "../../utils/base64";
@@ -46,14 +46,14 @@ import MenuContentProviders from "../common/CustomGenericMenu/MenuContentProvide
 import MenuContentCalendar from "../common/CustomGenericMenu/MenuContentCalendar/MenuContentCalendar";
 import MenuContentSpeedType from "../common/CustomGenericMenu/MenuContentSpeedType/MenuContentSpeedType";
 import MenuContentCustomDateRange from "../common/CustomGenericMenu/MenuContentCustomRange/MenuContentCustomDateRange";
-import MyGenericModal from "../common/MyGenericModal/MyGenericModal";
-import ModalContentGeospace from "../common/MyGenericModal/ModalContentGeospace/ModalContentGeospace";
-import ModalContentFullGeospace from "../common/MyGenericModal/ModalContentFullGeospace/ModalContentFullGeospace";
-import ModalContentSpeedType from "../common/MyGenericModal/ModalContentSpeedType/ModalContentSpeedType";
-import ModalContentProviders from "../common/MyGenericModal/ModalContentProviders/ModalContentProviders";
+import CustomGenericModal from "../common/CustomGenericModal/CustomGenericModal";
+import ModalContentGeospace from "../common/CustomGenericModal/ModalContentGeospace/ModalContentGeospace";
+import ModalContentFullGeospace from "../common/CustomGenericModal/ModalContentFullGeospace/ModalContentFullGeospace";
+import ModalContentSpeedType from "../common/CustomGenericModal/ModalContentSpeedType/ModalContentSpeedType";
+import ModalContentProviders from "../common/CustomGenericModal/ModalContentProviders/ModalContentProviders";
 import ModalContentCustomDateRange
-  from "../common/MyGenericModal/ModalContentCustomDateRange/ModalContentCustomDateRange";
-import ModalContentCalendar from "../common/MyGenericModal/ModalContentCalendar/ModalContentCalendar";
+  from "../common/CustomGenericModal/ModalContentCustomDateRange/ModalContentCustomDateRange";
+import ModalContentCalendar from "../common/CustomGenericModal/ModalContentCalendar/ModalContentCalendar";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -74,7 +74,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const {menuContent, setMenuContent} = useContentMenu();
 
   const [loading, setLoading] = useState(false);
-  const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(getValueFromUrl('isExplorationPopoverOpen') ?? !isSmallScreen); // if small screen, closed by default
+  const [isExplorationPopoverOpen, setIsExplorationPopoverOpen] = useState(getValueFromUrl('isExplorationPopoverOpen') ?? false); // if small screen, closed by default
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(!(isSmallScreen || isSmallTabletScreen) && (!!getValueFromUrl('selectedGeospace') || !!getValueFromUrl('selectedGeospaceId')));
   const [isRightPanelHidden, setIsRightPanelHidden] = useState(false);
   const [selectedGeospaceId, setSelectedGeospaceId] = useState(getGeospaceId());
@@ -206,9 +206,11 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       setSelectedGeospace(allData);
       setSelectedGeospaceId(allData.geospace.id);
       if(isSmallScreen) {
-        openFullMenu();
+        setMenuContent(MenuContent.GEOSPACE);
+        setGenericMenuOpen(true);
       } else if(isSmallTabletScreen) {
-        openFullModal();
+        setMenuContent(MenuContent.GEOSPACE);
+        setGenericModalOpen(true);
       } else {
         openRightPanel();
       }
@@ -510,6 +512,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                           isOpen={isExplorationPopoverOpen}
                           setIsOpen={handleToggleExplorationPopover}
                           isRightPanelOpen={isRightPanelOpen}
+                          isRightPanelHidden={isRightPanelHidden}
       />
       { isRightPanelOpen && selectedGeospace &&
         <RightPanel closePanel={closeRightPanel}
@@ -546,6 +549,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
                                     selectedSpeedFilters={selectedSpeedFilters}
                                     setSelectedSpeedFilters={setSelectedSpeedFilters}
                                     isRightPanelOpen={isRightPanelOpen}
+                                    isRightPanelHidden={isRightPanelHidden}
         />
       }
       { isSmallScreen && genericMenuOpen &&
@@ -556,9 +560,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       { isSmallScreen && <div style={styles.InvisibleOverlay(true)}></div> }
       {
         isTabletScreen && genericModalOpen &&
-        <MyGenericModal closeModal={closeModal} isDarker={isMenuDarker()}>
+        <CustomGenericModal closeModal={closeModal} isDarker={isMenuDarker()}>
           {getCurrentContent()}
-        </MyGenericModal>
+        </CustomGenericModal>
       }
     </div>
   )
