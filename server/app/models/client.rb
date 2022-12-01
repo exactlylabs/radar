@@ -113,11 +113,8 @@ class Client < ApplicationRecord
   end
 
   def has_data_cap?
-    ret = false
-    if self.data_cap_max_usage.nil? || self.data_cap_periodicity.nil? || 
+    return self.data_cap_max_usage.nil? || self.data_cap_periodicity.nil? || 
       self.data_cap_max_usage > self.data_cap_current_period_usage
-      ret = true
-    end
   end
 
   def add_bytes!(period, byte_size)
