@@ -295,7 +295,7 @@ func processWeb100Reader(writer *writer.DataStoreWriter, r io.Reader, day time.T
 		return fmt.Errorf("fetcher.processWeb100Reader readTgz: %w", err)
 	}
 
-	for filename, fReader, err := iterator.Next(); fReader != nil; filename, fReader, err = iterator.Next() {
+	for filename, fReader, err := iterator.Next(); fReader != nil || err != nil; filename, fReader, err = iterator.Next() {
 		if err != nil {
 			return fmt.Errorf("fetcher.processWeb100Reader Next: %w", err)
 		}
@@ -330,7 +330,7 @@ func processWeb100Reader(writer *writer.DataStoreWriter, r io.Reader, day time.T
 				TestStyle:      "web100",
 				IP:             snapConn["remote_ip"].(string),
 				StartedAt:      snapVal["StartTimeStamp"].(int64),
-				Upload:         true,
+				Upload:         false,
 				MBPS:           web100.GetDownloadMbps(snapVal),
 				LossRate:       &lossRate,
 				MinRTT:         &minRTT,
@@ -374,6 +374,9 @@ func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, writer *writer.Data
 		}
 
 		atomic.AddInt32(item.completedRef, 1)
+		if *item.completedRef%500 == 0 {
+			fmt.Printf("Fetch %v - %v: %d of %d\n", item.testType, item.day, *item.completedRef, item.total)
+		}
 
 		// Close object after each iteration
 		object.Close()

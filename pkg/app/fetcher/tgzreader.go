@@ -11,6 +11,7 @@ import (
 type itemIterator struct {
 	r          *tar.Reader
 	extensions []string
+	gzreader   *gzip.Reader // minor improvement to avoid allocations
 }
 
 func (it *itemIterator) Next() (name string, r io.Reader, err error) {
@@ -36,16 +37,21 @@ func (it *itemIterator) Next() (name string, r io.Reader, err error) {
 			// only return the current file reader if the extension match
 			if len(it.extensions) > 0 {
 				extension := filepath.Ext(name)
-				for _, ext := range it.extensions {
-					if ext == ".gz" {
-						// Then first decompress it and get the decompressed file extension
-						r, err = gzip.NewReader(r)
-						if err != nil {
-							return "", nil, fmt.Errorf("fetcher.itemIterator#Next NewReader: %w", err)
-						}
-						name = name[:len(name)-3]
-						extension = filepath.Ext(name)
+				if extension == ".gz" {
+					if it.gzreader == nil {
+						// This avoids creating a new Reader for each item inside the existing gzip.
+						// Instead, we use a single Reader and reset it for each new item.
+						it.gzreader = new(gzip.Reader)
 					}
+					err = it.gzreader.Reset(r)
+					if err != nil {
+						return "", nil, fmt.Errorf("fetcher.itemIterator#Next NewReader: %w", err)
+					}
+					r = it.gzreader
+					name = name[:len(name)-3]
+					extension = filepath.Ext(name)
+				}
+				for _, ext := range it.extensions {
 					if ext == extension {
 						return name, r, nil
 					}
