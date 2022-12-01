@@ -9,7 +9,9 @@ if [ -z $MAXMIND_KEY ]; then
     exit 1
 fi
 
-TARGET_DIR=${SCRIPT_DIR}/../input
+if [ -z ${TARGET_DIR} ]; then
+    TARGET_DIR=${SCRIPT_DIR}/../input
+fi
 mkdir -p ${TARGET_DIR}
 
 # ASN code to Organization Map

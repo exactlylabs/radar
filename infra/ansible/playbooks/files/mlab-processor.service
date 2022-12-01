@@ -14,8 +14,8 @@ Environment=IPV6_DB_PATH=/var/mlab-processor/input/GeoLite2-City-Blocks-IPv6.csv
 Environment=ASN_IPV4_DB_PATH=/var/mlab-processor/input/GeoLite2-ASN-Blocks-IPv4.csv
 Environment=ASN_IPV6_DB_PATH=/var/mlab-processor/input/GeoLite2-ASN-Blocks-IPv6.csv
 Environment=ASN2ORG_DB_PATH=/var/mlab-processor/input/20220401.as-org2info.jsonl
-Environment=SHAPE_PATHS=US_STATES:/var/mlab-processor/input/tl_2021_us_state.zip;US_COUNTIES:/var/mlab-processor/input/tl_2021_us_county.zip;US_TRIBAL_TRACTS:/var/mlab-processor/input/Indian_Reservations.zip;ZIP_CODES:/var/mlab-processor/input/tl_2021_us_zcta520.zip
+Environment=SHAPE_PATHS=US_STATES:/var/mlab-processor/input/tl_2021_us_state.zip;US_COUNTIES:/var/mlab-processor/input/tl_2021_us_county.zip;US_AIANNH:/var/mlab-processor/input/tl_2022_us_aiannh.zip;ZIP_CODES:/var/mlab-processor/input/tl_2021_us_zcta520.zip
 Environment=TRACTS_SHAPE_DIR=/var/mlab-processor/input/tracts
-
+Environment=EARLIEST_DATE=2019-01-01
 [Install]
 WantedBy = multi-user.target

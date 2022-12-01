@@ -2,8 +2,9 @@
 set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
-TARGET_DIR=${SCRIPT_DIR}/../input
+if [ -z ${TARGET_DIR} ]; then
+    TARGET_DIR=${SCRIPT_DIR}/../input
+fi
 mkdir -p ${TARGET_DIR}
 
 # 5Digit Zip Codes
