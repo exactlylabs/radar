@@ -37,18 +37,20 @@ const smallDropdownFiltersContainerStyle: CSSProperties = {
 
 const smallTabletDropdownFiltersContainerStyle: CSSProperties = {
   ...smallDropdownFiltersContainerStyle,
+  justifyContent: 'flex-start',
 }
 
 const largeTabletDropdownFiltersContainerStyle: CSSProperties = {
   ...smallDropdownFiltersContainerStyle,
-  maxWidth: '380px',
   top: '20px',
-  right: '25px',
-  left: undefined
+  right: '15px',
+  left: undefined,
+  justifyContent: 'flex-end',
 }
 
 const largeTabletAndInContainer: CSSProperties = {
   maxWidth: '420px',
+  justifyContent: 'flex-start'
 }
 
 const insideContainerStyle: CSSProperties = {

@@ -44,7 +44,7 @@ const Map = ({
   calendarType
 }: MapProps): ReactElement => {
 
-  const {isSmallScreen} = useViewportSizes();
+  const {isSmallScreen, isTabletScreen} = useViewportSizes();
 
   const [geoJSON, setGeoJSON] = useState<GeoJSONTimedResponse>();
 
@@ -70,7 +70,7 @@ const Map = ({
         <MapContainer center={{lat: initialCenter[0], lng: initialCenter[1]}}
                     zoom={initialZoom}
                     scrollWheelZoom
-                    style={styles.MapContainer(isSmallScreen)}
+                    style={styles.MapContainer(isSmallScreen || isTabletScreen)}
         >
           <CustomMap geoJSON={geoJSON.data}
                      selectedGeospace={selectedGeospace}

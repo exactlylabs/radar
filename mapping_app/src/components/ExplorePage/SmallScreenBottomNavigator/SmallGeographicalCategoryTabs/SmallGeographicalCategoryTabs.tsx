@@ -7,12 +7,14 @@ interface SmallGeographicalCategoryTabsProps {
   namespace: string;
   selectNamespace: (newNamespace: string) => void;
   isRightPanelOpen: boolean;
+  isRightPanelHidden: boolean;
 }
 
 const SmallGeographicalCategoryTabs = ({
   namespace,
   selectNamespace,
-  isRightPanelOpen
+  isRightPanelOpen,
+  isRightPanelHidden
 }: SmallGeographicalCategoryTabsProps): ReactElement => {
 
   const {isSmallTabletScreen, isLargeTabletScreen} = useViewportSizes();
@@ -22,7 +24,7 @@ const SmallGeographicalCategoryTabs = ({
   const selectTribalTracts = () => selectNamespace(GeospacesTabs.TRIBAL_TRACTS);
 
   return (
-    <div style={styles.GeographicalCategoryBottomTabsContainer(isSmallTabletScreen, isLargeTabletScreen, isRightPanelOpen)}>
+    <div style={styles.GeographicalCategoryBottomTabsContainer(isSmallTabletScreen, isLargeTabletScreen, isRightPanelOpen, isRightPanelHidden)}>
       <div className={'fw-regular hover-opaque'}
            style={styles.TabContainer(namespace === GeospacesTabs.STATES, '28%')}
            onClick={selectStates}

@@ -7,6 +7,7 @@ import {isAsn} from "../../../api/asns/types";
 import {capitalize} from "../../../utils/strings";
 import Chevron from '../../../assets/chevron.png';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import {isWeekLimits} from "../../../utils/dates";
 
 interface DropdownFilterProps {
   iconSrc: string;
@@ -85,11 +86,13 @@ const DropdownFilter = ({
   }
 
   const getText = () => {
-    return isAsn(selectedOption) ? capitalize(selectedOption.organization) : capitalize(selectedOption);
+    if(isAsn(selectedOption)) return capitalize(selectedOption.organization);
+    else if(!isWeekLimits(selectedOption)) return capitalize(selectedOption);
+    else return selectedOption;
   }
 
   return (
-    <div style={styles.DropdownFilterContainer(isSmall, isSmallTabletScreen, isLast, shouldFloatLeft)}
+    <div style={styles.DropdownFilterContainer(isSmall, isTabletScreen, isLast, shouldFloatLeft)}
          onClick={isSmall ? openFloatingFilter : toggleOptionsDropdown}
          id={`filter-${type}`}
     >

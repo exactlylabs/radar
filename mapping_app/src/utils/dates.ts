@@ -14,7 +14,8 @@ export enum DateMenuLevel {
   SELECT_YEAR = 'SELECT_YEAR',
   SELECT_MONTH = 'SELECT_MONTH',
   SELECT_HALF = 'SELECT_HALF',
-  SELECT_WEEK = 'SELECT_WEEK'
+  SELECT_WEEK = 'SELECT_WEEK',
+  SELECT_QUARTER = 'SELECT_QUARTER',
 }
 
 export type DatePickerState = {
@@ -131,6 +132,10 @@ export const getWeekLimits = (selectedYear: number, selectedWeek: number): strin
   return `${firstDayString} - ${lastDayString}`;
 }
 
+export const isWeekLimits = (string: string): boolean => {
+  return string.includes('-');
+}
+
 export const getWeekNumber = (day?: Date): number => {
   let startingDay: Date;
   if(day) startingDay = day;
@@ -238,7 +243,9 @@ export const getDateFromString = (string: string, year: Optional<string>): Date 
   const [monthAbbreviation, dayNumber] = string.split(' ');
   const month = getIndexFromAbbreviation(monthAbbreviation);
   const day = parseInt(dayNumber);
-  const yearNumber: number = year ? parseInt(year) : 2022;
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const yearNumber: number = year ? parseInt(year) : currentYear;
   return new Date(yearNumber, month, day);
 }
 
@@ -251,21 +258,20 @@ export const getInitialStateFromCalendarType = (calendarType: string): DatePicke
     selectedRangeValue: null,
     selectedTab: null,
   }
+  const today = new Date();
+  const currentYear = today.getFullYear();
   if(calendarType === CalendarFilters.THIS_YEAR || calendarType === CalendarFilters.ALL_TIME) {
-    const today = new Date();
     pickerState.selectedYear = today.getFullYear();
     pickerState.selectedTab = DateTabs.MONTH;
     pickerState.selectedRangeValue = months[0];
   } else if(calendarType === CalendarFilters.LAST_WEEK) {
-    const today = new Date();
     const thisWeekNumber = getWeekNumber();
     pickerState.selectedYear = today.getFullYear();
     pickerState.selectedTab = DateTabs.WEEK;
     pickerState.selectedWeek = thisWeekNumber - 1;
     pickerState.subtitleText = `Week ${thisWeekNumber - 1}`;
-    pickerState.selectedRangeValue = getWeekLimits(2022, thisWeekNumber - 1);
+    pickerState.selectedRangeValue = getWeekLimits(currentYear, thisWeekNumber - 1);
   } else if(calendarType === CalendarFilters.LAST_MONTH) {
-    const today = new Date();
     const todayMonth = today.getMonth();
     pickerState.selectedYear = today.getFullYear();
     pickerState.selectedTab = DateTabs.MONTH;
@@ -305,7 +311,7 @@ export const getInitialStateFromCalendarType = (calendarType: string): DatePicke
     const week = getWeekNumber(endDay);
     pickerState.selectedWeek = week;
     if(year) pickerState.selectedYear = parseInt(year);
-    pickerState.selectedRangeValue = getWeekLimits(year ? parseInt(year) : 2022, week);
+    pickerState.selectedRangeValue = getWeekLimits(year ? parseInt(year) : currentYear, week);
     pickerState.subtitleText = `Week ${week}`;
     pickerState.selectedMonth = endDay.getMonth();
     pickerState.selectedTab = DateTabs.WEEK;

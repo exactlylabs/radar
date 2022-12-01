@@ -12,6 +12,7 @@ interface SmallScreenBottomNavigatorProps {
   selectedSpeedFilters: Array<string>;
   setSelectedSpeedFilters: (filters: Array<string>) => void;
   isRightPanelOpen: boolean;
+  isRightPanelHidden: boolean;
 }
 
 const SmallScreenBottomNavigator = ({
@@ -22,13 +23,15 @@ const SmallScreenBottomNavigator = ({
   speedType,
   selectedSpeedFilters,
   setSelectedSpeedFilters,
-  isRightPanelOpen
+  isRightPanelOpen,
+  isRightPanelHidden
 }: SmallScreenBottomNavigatorProps): ReactElement => {
   return (
     <div style={styles.SmallScreenBottomNavigatorContainer}>
       <SmallGeographicalCategoryTabs namespace={geospaceNamespace}
                                      selectNamespace={setGeospaceNamespace}
                                      isRightPanelOpen={isRightPanelOpen}
+                                     isRightPanelHidden={isRightPanelHidden}
       />
       <SmallSpeedFilters isOpen={areSpeedFiltersOpen}
                          setIsOpen={setAreSpeedFiltersOpen}
@@ -36,6 +39,7 @@ const SmallScreenBottomNavigator = ({
                          selectedSpeedFilters={selectedSpeedFilters}
                          setSelectedSpeedFilters={setSelectedSpeedFilters}
                          isRightPanelOpen={isRightPanelOpen}
+                         isRightPanelHidden={isRightPanelHidden}
       />
     </div>
   )

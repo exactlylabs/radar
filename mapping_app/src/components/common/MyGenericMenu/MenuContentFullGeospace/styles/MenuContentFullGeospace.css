@@ -1,8 +1,0 @@
-#menu-content-full-geospace--scrollable-container::-webkit-scrollbar {
-  display: none !important;
-}
-
-#menu-content-full-geospace--scrollable-container {
-  -ms-overflow-style: none !important;
-  scrollbar-width: none !important;
-}

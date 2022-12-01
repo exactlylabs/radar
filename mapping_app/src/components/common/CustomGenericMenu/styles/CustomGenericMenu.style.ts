@@ -3,9 +3,7 @@ import {
   CLOSE_PANEL_BUTTON_SHADOW_RGBA, DARKER_GENERIC_MENU,
   DEFAULT_BUTTON_BOX_SHADOW_RGBA,
   GENERIC_MENU,
-  GEOGRAPHICAL_CATEGORY_BOTTOM
 } from "../../../../styles/colors";
-import myGenericMenu from "../../MyGenericMenu/MyGenericMenu";
 
 const customGenericMenuStyle: CSSProperties = {
   width: '100vw',
