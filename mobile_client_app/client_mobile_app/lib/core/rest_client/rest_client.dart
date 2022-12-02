@@ -6,6 +6,8 @@ class RestClient {
 
   String get suggestedLocations => _combineUrl(_suggestedLocations);
 
+  String get locationByCoordinates => _combineUrl(_locationByCoordinates);
+
   String _combineUrl(String url) {
     return _baseUrl + url;
   }
@@ -14,6 +16,8 @@ class RestClient {
   static const String _speedTest = '/client_api/v1/speed_tests';
 
   static const String _suggestedLocations = '/client_api/v1/suggestions';
+
+  static const String _locationByCoordinates = '/client_api/v1/coordinates';
 
   final String _baseUrl;
 }

@@ -9,10 +9,12 @@ class TitleAndSubtitle extends StatelessWidget {
     super.key,
     required this.title,
     required this.subtitle,
+    this.textHeight,
   });
 
   final String title;
   final String subtitle;
+  final double? textHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class TitleAndSubtitle extends StatelessWidget {
           style: AppTextStyle(
             fontSize: 22.0,
             fontWeight: 800,
+            height: textHeight,
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
@@ -41,6 +44,7 @@ class TitleAndSubtitle extends StatelessWidget {
             fontSize: 16.0,
             fontWeight: 200,
             letterSpacing: 0.5,
+            height: textHeight,
             color: Theme.of(context).colorScheme.tertiary,
           ),
         ),

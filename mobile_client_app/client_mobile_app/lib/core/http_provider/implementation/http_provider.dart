@@ -45,7 +45,8 @@ class HttpProvider implements IHttpProvider {
     required Map<String, String> headers,
     required Map<String, dynamic> body,
   }) async =>
-      _dioCall(() => Dio().post(url, options: Options(headers: headers, responseType: ResponseType.plain), data: body));
+      _dioCall(() => Dio().post(url,
+          options: Options(headers: headers, responseType: ResponseType.plain), data: FormData.fromMap(body)));
 
   Future<Either<HttpProviderFailure, HttpResponseModel>> _dioCall(Future<Response> Function() call) async {
     try {

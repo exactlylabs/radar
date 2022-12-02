@@ -5,11 +5,13 @@ class PrimaryButton extends StatelessWidget {
     super.key,
     required this.child,
     this.color,
+    this.shadowColor,
     this.onPressed,
   });
 
   final VoidCallback? onPressed;
   final Color? color;
+  final Color? shadowColor;
   final Widget child;
 
   @override
@@ -17,9 +19,10 @@ class PrimaryButton extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
+        elevation: 0,
         disabledBackgroundColor: color?.withOpacity(0.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26.0)),
-        shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+        shadowColor: shadowColor ?? Theme.of(context).colorScheme.secondary.withOpacity(0.5),
       ),
       onPressed: onPressed,
       child: Padding(

@@ -1,8 +1,9 @@
 import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
 
 Future<void> modalWithTitle(BuildContext context, bool? isScrollControlled, String title, Widget body,
-    [VoidCallback? onPop]) async {
+    [VoidCallback? onPop, EdgeInsets? padding]) async {
   return showModalBottomSheet(
     context: context,
     backgroundColor: Theme.of(context).backgroundColor,
@@ -13,6 +14,7 @@ Future<void> modalWithTitle(BuildContext context, bool? isScrollControlled, Stri
       title: title,
       body: body,
       onPop: onPop,
+      padding: padding,
     ),
   );
 }
@@ -22,12 +24,14 @@ class ModalWithTitle extends StatelessWidget {
     Key? key,
     required this.title,
     required this.body,
+    this.padding,
     this.onPop,
   }) : super(key: key);
 
   final String title;
   final Widget body;
   final VoidCallback? onPop;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -41,44 +45,50 @@ class ModalWithTitle extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: const CircleBorder(),
-                                elevation: 0.0,
-                                padding: EdgeInsets.zero,
-                                backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: InkWell(
+                            onTap: () {
+                              if (onPop != null) {
+                                onPop!();
+                              }
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: 28,
+                              margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                                    spreadRadius: -2.0,
+                                    blurRadius: 15.0,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              child: Icon(
-                                Icons.close_rounded,
-                                color: Theme.of(context).colorScheme.tertiary,
-                              ),
-                              onPressed: () {
-                                if (onPop != null) onPop!();
-                                Navigator.of(context).pop();
-                              },
+                              child: Image.asset(Images.closeIcon),
                             ),
                           ),
-                          Text(
-                            title,
-                            style: AppTextStyle(
-                              fontSize: 17.0,
-                              fontWeight: 800,
-                              letterSpacing: -0.5,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                        ),
+                        Text(
+                          title,
+                          style: AppTextStyle(
+                            fontSize: 17.0,
+                            fontWeight: 800,
+                            letterSpacing: -0.5,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: padding ?? const EdgeInsets.symmetric(horizontal: 20.0),
                       child: body,
                     )
                   ],

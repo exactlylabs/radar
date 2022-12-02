@@ -62,5 +62,11 @@ class Strings {
   static const String cellularConnectionModalTitle = 'Are you sure you want to run a speedtest on cellular?';
   static const String cellularConnectionModalSubtitle = 'Please note that your current data plan may have a data cap.';
   static const String yesContinueButtonLabel = 'Yes, continue';
+  static const String continueButtonLabel = 'Continue';
   static const String testResultsModalTitle = 'Test details';
+  static const String addressNotListedButtonLabel = 'My address is not listed';
+  static const String locationError =
+      'We could not detect your current location. Make sure you enable location access in your browser and try again.';
+  static const String termsError =
+      'Please confirm that you agree to the Terms of Use and Privacy Policy before continuing.';
 }

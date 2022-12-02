@@ -1,8 +1,9 @@
 import 'package:client_mobile_app/core/models/location.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/address_not_listed_button.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/location_option_card.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/prefer_not_to_answer_button.dart';
 import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -48,40 +49,30 @@ class _ConfirmYourLocationModalState extends State<ConfirmYourLocationModal> {
             fontSize: 16.0,
             fontWeight: 200,
             height: 1.5,
-            color: AppColors.darkGrey,
+            color: Theme.of(context).colorScheme.tertiary,
           ),
         ),
         const SizedBox(height: 20.0),
         SizedBox(
-          height: 300,
+          height: (66.0 * widget.suggestions.length),
           child: ListView.separated(
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: widget.suggestions.length,
             separatorBuilder: (context, index) => const SizedBox(height: 10.0),
             itemBuilder: (context, index) {
               final suggestion = widget.suggestions[index];
               return LocationOptionCard(
-                address: suggestion.address,
+                location: suggestion,
                 onPressed: () => onSelected(index),
-                decoration: _selectedLocationIndex == index
-                    ? BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.secondary,
-                          width: 2.0,
-                        ),
-                      )
-                    : BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                          width: 1.0,
-                        ),
-                      ),
+                isSelected: _selectedLocationIndex == index,
               );
             },
           ),
         ),
+        const SizedBox(height: 30.0),
+        const AddressNotListedButton(),
+        const SizedBox(height: 35.0),
         PrimaryButton(
           onPressed: _selectedLocationIndex != null
               ? () => widget.onPressed(widget.suggestions[_selectedLocationIndex!])
@@ -90,7 +81,7 @@ class _ConfirmYourLocationModalState extends State<ConfirmYourLocationModal> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                Strings.yesContinueButtonLabel,
+                Strings.continueButtonLabel,
                 style: AppTextStyle(
                   fontSize: 16.0,
                   fontWeight: 700,

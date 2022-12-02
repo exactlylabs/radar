@@ -12,10 +12,8 @@ class SpeedTestState {
     this.networkType,
     this.monthlyBillCost,
     this.networkLocation,
-    this.termsError,
-    this.locationError,
-    this.isTestRunning = false,
     this.termsAccepted = false,
+    this.isTestRunning = false,
     this.isLocationLoading = false,
     this.isFormEnded = false,
   });
@@ -32,11 +30,9 @@ class SpeedTestState {
         monthlyBillCost: json['monthlyBillCost'],
         networkLocation: json['networkLocation'],
         isTestRunning: json['isTestRunning'],
-        termsAccepted: json['termsAccepted'],
         isLocationLoading: json['isLocationLoading'],
-        termsError: json['termsError'],
-        locationError: json['locationError'],
         isFormEnded: json['isFormEnded'],
+        termsAccepted: json['termsAccepted'],
       );
 
   SpeedTestState copyWith({
@@ -53,8 +49,6 @@ class SpeedTestState {
     bool? isTestRunning,
     bool? termsAccepted,
     bool? isLocationLoading,
-    String? termsError,
-    String? locationError,
     bool? isFormEnded,
   }) =>
       SpeedTestState(
@@ -69,11 +63,9 @@ class SpeedTestState {
         monthlyBillCost: monthlyBillCost ?? this.monthlyBillCost,
         networkLocation: networkLocation ?? this.networkLocation,
         isTestRunning: isTestRunning ?? this.isTestRunning,
-        termsAccepted: termsAccepted ?? this.termsAccepted,
         isLocationLoading: isLocationLoading ?? this.isLocationLoading,
         isFormEnded: isFormEnded ?? this.isFormEnded,
-        termsError: termsError ?? this.termsError,
-        locationError: locationError ?? this.locationError,
+        termsAccepted: termsAccepted ?? this.termsAccepted,
       );
 
   Map<String, dynamic> toJson() {
@@ -89,11 +81,9 @@ class SpeedTestState {
       'monthlyBillCost': monthlyBillCost,
       'networkLocation': networkLocation,
       'isTestRunning': isTestRunning,
-      'termsAccepted': termsAccepted,
       'isLocationLoading': isLocationLoading,
-      'termsError': termsError,
-      'locationError': locationError,
       'isFormEnded': isFormEnded,
+      'termsAccepted': termsAccepted,
     };
   }
 
@@ -104,9 +94,7 @@ class SpeedTestState {
   final double? latency;
   final double? download;
   final Location? location;
-  final String? locationError;
   final bool termsAccepted;
-  final String? termsError;
   final bool isTestRunning;
   final String? networkType;
   final bool isLocationLoading;
