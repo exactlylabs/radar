@@ -51,9 +51,7 @@ class SpeedTestPage extends StatelessWidget {
                     if (state.step == SpeedTestCubit.LOCATION_STEP)
                       LocationStep(
                         location: state.location,
-                        locationError: state.locationError,
                         termsAccepted: state.termsAccepted,
-                        termsError: state.termsError,
                       )
                     else if (state.step == SpeedTestCubit.NETWORK_LOCATION_STEP)
                       NetworkPlaceStep(

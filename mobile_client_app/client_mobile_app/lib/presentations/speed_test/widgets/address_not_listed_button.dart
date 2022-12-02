@@ -3,25 +3,25 @@ import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 
-class PreferNotToAnswerButton extends StatelessWidget {
-  const PreferNotToAnswerButton({
+class AddressNotListedButton extends StatelessWidget {
+  const AddressNotListedButton({
     Key? key,
     this.onPressed,
   }) : super(key: key);
 
-  final Function(String)? onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => onPressed != null ? onPressed!(Strings.emptyOption) : null,
+      onTap: onPressed,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            Strings.preferNotToAnswer,
+            Strings.addressNotListedButtonLabel,
             style: AppTextStyle(
               color: Theme.of(context).colorScheme.tertiary,
               fontSize: 15.0,

@@ -42,4 +42,7 @@ class Images {
   static const locationNoInternetBig = 'assets/icons/location_nointernet_big.png';
   static const connectionCellularAlert = 'assets/icons/connection_cellular_alert.png';
   static const pinAddressIcon = 'assets/icons/pin_address.png';
+  static const closeIcon = 'assets/icons/close_icon.png';
+  static const pinMarker = 'assets/icons/pin_marker.png';
+  static const circleMarker = 'assets/icons/circle_marker.png';
 }
