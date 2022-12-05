@@ -1,7 +1,6 @@
 import {GeoJSON} from "leaflet";
 import {GeospaceOverview} from "../geospaces/types";
 import {Asn} from "../asns/types";
-import {SpeedFilters} from "../../utils/filters";
 
 export type GeoJSONProperties = {
   ID: string;
@@ -30,4 +29,10 @@ export const emptyGeoJSONFilters: GeoJSONFilters = {
 export type GeoJSONTimedResponse = {
   data: GeoJSONResponse;
   lastUpdate: Date;
+}
+
+export type UnparsedGeoJSONProperties = {
+  ID: string;
+  GEOID: string;
+  summary: string;
 }

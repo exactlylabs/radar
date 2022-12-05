@@ -1,27 +1,23 @@
-import {GeoJSONProperties, GeoJSONResponse} from "../../../api/geojson/types";
 import {Filter, Optional} from "../../../utils/types";
 import {GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
-import L from "leaflet";
+import L, {LeafletMouseEvent} from "leaflet";
 import {useMap} from "react-leaflet";
 import {usePrev} from "../../../hooks/usePrev";
-import {ReactElement, useEffect} from "react";
+import {useEffect} from "react";
 import {
-  addClickHandler, checkZoomControlPosition,
-  geoJSONOptions, initializeMap,
-  outlineOnlyStyle,
-  paintLayer, removeAllFeatureLayers,
+  addClickHandler,
+  checkZoomControlPosition,
+  initializeMap, layerMouseoutHandler, layerMouseoverHandler,
+  paintLayer, removeAllFeatureLayers, updateMouseOverHandlers,
 } from "../../../utils/map";
-import GeographicalTooltip from "../GeographicalTooltip/GeographicalTooltip";
-import ReactDOMServer from "react-dom/server";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 
 interface CustomMapProps {
-  geoJSON: GeoJSONResponse;
   selectedGeospace: Optional<GeospaceInfo>;
   selectGeospace: (geospace: GeospaceInfo, newCenter: L.LatLng) => void;
-  speedType: Filter;
-  selectedSpeedFilters: Array<Filter>;
+  speedType: string;
+  selectedSpeedFilters: Array<string>;
   setZoom: (zoom: number) => void;
   setCenter: (center: Array<number>) => void;
   center: Array<number>;
@@ -29,10 +25,10 @@ interface CustomMapProps {
   isRightPanelHidden: boolean;
   lastGeoJSONUpdate: Date;
   dateQueryString?: string;
+  vectorTileLayer: any;
 }
 
 const CustomMap = ({
-  geoJSON,
   selectedGeospace,
   selectGeospace,
   speedType,
@@ -43,7 +39,8 @@ const CustomMap = ({
   zoom,
   isRightPanelHidden,
   lastGeoJSONUpdate,
-  dateQueryString
+  dateQueryString,
+  vectorTileLayer
 }: CustomMapProps): null => {
 
   const map = useMap();
@@ -66,33 +63,30 @@ const CustomMap = ({
     const nowThereIsNoSelectedGeospace = !!prevSelectedGeospace && !selectedGeospace;
     // check to see if we need to re-paint shapes
     if(selectedGeospaceChanged || nowThereIsASelectedGeospace || nowThereIsNoSelectedGeospace) {
-      map.eachLayer((layer: any) => { paintLayer(layer, selectedGeospace, speedType, selectedSpeedFilters); });
+      paintLayer(map, vectorTileLayer, selectedGeospace, speedType, selectedSpeedFilters);
+      updateMouseOverHandlers(vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
     }
     checkZoomControlPosition(selectedGeospace, isRightPanelHidden);
   }, [selectedGeospace, isRightPanelHidden]);
 
   useEffect(() => {
-    map.eachLayer((layer: any) => { paintLayer(layer, selectedGeospace, speedType, selectedSpeedFilters); });
+    paintLayer(map, vectorTileLayer, selectedGeospace, speedType, selectedSpeedFilters);
   }, [speedType, selectedSpeedFilters, dateQueryString]);
 
   useEffect(() => {
-    removeAllFeatureLayers(map);
-    L.geoJSON(geoJSON, geoJSONOptions)
-     .eachLayer((layer: any) => {
-       paintLayer(layer, selectedGeospace, speedType, selectedSpeedFilters);
-       if(layer.feature) {
-         const properties: GeoJSONProperties = layer.feature.properties as GeoJSONProperties;
-         if(properties.summary !== undefined) {
-           addClickHandler(layer, properties, selectGeospace);
-           const geospace: GeospaceOverview = properties.summary as GeospaceOverview;
-           const tooltip: ReactElement = <GeographicalTooltip geospace={geospace} speedType={speedType as string}/>;
-           if(!isSmallMap) layer.bindTooltip(ReactDOMServer.renderToString(tooltip), {sticky: true, direction: 'center'});
-         } else {
-           layer.setStyle(outlineOnlyStyle);
-         }
-       }
-     })
-     .addTo(map);
+    if(vectorTileLayer) {
+      removeAllFeatureLayers(map);
+      vectorTileLayer.bringToFront();
+      const clickHandlerFn = (ev: LeafletMouseEvent) => addClickHandler(ev, map, vectorTileLayer, selectGeospace);
+      const mouseOverHandlerFn = (ev: LeafletMouseEvent) => layerMouseoverHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
+      const mouseOutHandlerFn = (ev: LeafletMouseEvent) => layerMouseoutHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
+      vectorTileLayer.on('click', clickHandlerFn);
+      if(!isSmallMap) {
+        vectorTileLayer.on('mouseover', mouseOverHandlerFn);
+        vectorTileLayer.on('mouseout', mouseOutHandlerFn);
+      }
+      map.addLayer(vectorTileLayer);
+    }
   }, [lastGeoJSONUpdate]);
 
 
