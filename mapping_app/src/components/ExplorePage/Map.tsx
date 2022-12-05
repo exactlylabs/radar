@@ -1,16 +1,17 @@
 import {ReactElement, useEffect, useState} from "react";
 import L from "leaflet";
-import {MapContainer, TileLayer} from "react-leaflet";
-import { mapTileAttribution, mapTileUrl} from "../../utils/map";
+import {MapContainer} from "react-leaflet";
 import {styles} from "./styles/Map.style";
-import {GeoJSONFilters, GeoJSONResponse, GeoJSONTimedResponse} from "../../api/geojson/types";
-import {getGeoJSON} from "../../api/geojson/requests";
-import {handleError} from "../../api";
+import {GeoJSONFilters} from "../../api/geojson/types";
 import {GeospaceInfo} from "../../api/geospaces/types";
 import {Filter, Optional} from "../../utils/types";
 import {Asn} from "../../api/asns/types";
 import CustomMap from "./CustomMap/CustomMap";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+// @ts-ignore
+import vectorTileLayer from 'leaflet-vector-tile-layer';
+import {getVectorTilesUrl} from "../../api/tiles/requests";
+import {getVectorTileOptions} from "../../utils/vectorTiles";
 
 interface MapProps {
   namespace: string;
@@ -19,7 +20,7 @@ interface MapProps {
   speedType: string;
   provider: Asn;
   calendarType: string;
-  selectedSpeedFilters: Array<Filter>;
+  selectedSpeedFilters: Array<string>;
   initialZoom: number;
   setZoom: (zoom: number) => void;
   initialCenter: Array<number>;
@@ -46,7 +47,8 @@ const Map = ({
 
   const {isSmallScreen, isTabletScreen} = useViewportSizes();
 
-  const [geoJSON, setGeoJSON] = useState<GeoJSONTimedResponse>();
+  const [tileLayer, setTileLayer] = useState(null);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
   useEffect(() => {
     setLoading(true);
@@ -55,25 +57,24 @@ const Map = ({
       calendar: calendarType as string,
       provider: provider as Asn,
     };
-    getGeoJSON(namespace.toLowerCase(), filters)
-      .then((res: GeoJSONResponse) => {
-        setGeoJSON({ data: res, lastUpdate: new Date() });
-      })
-      .catch(err => { handleError(err); })
-      .finally(() => setLoading(false));
+    setTileLayer(vectorTileLayer(
+      getVectorTilesUrl(namespace.toLowerCase(), filters),
+      getVectorTileOptions(selectedGeospace, speedType, selectedSpeedFilters)
+    ));
+    setLastUpdate(new Date());
+    setLoading(false);
   }, [namespace, calendarType, provider, speedType]);
 
   return (
     <>
       {
-        geoJSON ?
+        tileLayer ?
         <MapContainer center={{lat: initialCenter[0], lng: initialCenter[1]}}
                     zoom={initialZoom}
                     scrollWheelZoom
                     style={styles.MapContainer(isSmallScreen || isTabletScreen)}
         >
-          <CustomMap geoJSON={geoJSON.data}
-                     selectedGeospace={selectedGeospace}
+          <CustomMap selectedGeospace={selectedGeospace}
                      selectGeospace={selectGeospace}
                      speedType={speedType}
                      selectedSpeedFilters={selectedSpeedFilters}
@@ -82,9 +83,9 @@ const Map = ({
                      center={initialCenter}
                      zoom={initialZoom}
                      isRightPanelHidden={isRightPanelHidden}
-                     lastGeoJSONUpdate={geoJSON.lastUpdate}
+                     lastGeoJSONUpdate={lastUpdate}
+                     vectorTileLayer={tileLayer}
           />
-          <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
         </MapContainer>
       :
         <div style={styles.SpinnerContainer}></div>
