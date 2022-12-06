@@ -1,0 +1,1 @@
+export const goToUrl = (url: string) => window.location.replace(url);

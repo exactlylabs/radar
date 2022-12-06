@@ -1,0 +1,2 @@
+export const SMALL_SCREEN_BREAKPOINT = 450;
+export const MID_SCREEN_BREAKPOINT = 850;
