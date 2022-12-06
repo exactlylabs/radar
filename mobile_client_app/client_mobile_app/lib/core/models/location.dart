@@ -45,7 +45,7 @@ class Location {
         houseNumber: json['house_number'] as String,
       );
 
-  factory Location.fromJson2(Map<String, dynamic> json) => Location(
+  factory Location.fromJsonWithDefaultValues(Map<String, dynamic> json) => Location(
         lat: double.tryParse(json['coordinates'][0] as String) ?? 0.0,
         long: double.tryParse(json['coordinates'][1] as String) ?? 0.0,
         address: json['address'] as String? ?? '',

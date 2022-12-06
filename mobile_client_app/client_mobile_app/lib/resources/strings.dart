@@ -69,4 +69,12 @@ class Strings {
       'We could not detect your current location. Make sure you enable location access in your browser and try again.';
   static const String termsError =
       'Please confirm that you agree to the Terms of Use and Privacy Policy before continuing.';
+  static const String noLocationModalTitle = 'Tell us your location';
+  static const String noLocationModalSubtitle = 'Zoom the map and drag the marker to tell us your current location.';
+  static const String locationModalTitle = 'Confirm your location';
+  static const String locationModalSubtitle =
+      'Please confirm your location by moving the marker to the correct place. You can zoom the map and drag the marker.';
+  static const String suggestionsModalSubtitle = 'Please select your address from the list below.';
+  static const String confirmLocationButtonLabel = 'Confirm location';
+  static const String changeAddressButtonLabel = 'Change address';
 }

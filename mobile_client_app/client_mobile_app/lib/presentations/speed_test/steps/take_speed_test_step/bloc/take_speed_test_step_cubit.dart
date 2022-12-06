@@ -19,6 +19,9 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
   late StreamSubscription _ndt7clientSubscription;
   final Ndt7Client _ndt7client;
 
+  Map<String, dynamic>? _lastServerMeasurement;
+  Map<String, dynamic>? _lastClientMeasurement;
+
   void startDownloadTest() {
     emit(const TakeSpeedTestStepState(isTestingDownloadSpeed: true));
     _ndt7client.startDownloadTest();
@@ -34,23 +37,36 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
       (data) {
         if (data is TestCompletedEvent) {
           if (state.isTestingDownloadSpeed) {
+            var updatedResponses = state.responses;
+            if (_lastClientMeasurement != null && _lastServerMeasurement != null) {
+              updatedResponses = _addLastMeasurement(state.responses, _lastClientMeasurement!, _lastServerMeasurement!);
+            }
+
             emit(
               state.copyWith(
                 isTestingDownloadSpeed: false,
                 latency: (state.minRtt ?? 0) / 1000,
                 loss: (state.bytesRetrans ?? 0) / (state.bytesSent ?? 0) * 100,
+                responses: updatedResponses,
               ),
             );
+            _lastClientMeasurement = null;
+            _lastServerMeasurement = null;
             startUploadTest();
           } else if (state.isTestingUploadSpeed) {
+            var updatedResponses = state.responses;
+            if (_lastClientMeasurement != null && _lastServerMeasurement != null) {
+              updatedResponses = _addLastMeasurement(state.responses, _lastClientMeasurement!, _lastServerMeasurement!);
+            }
             emit(state.copyWith(
               isTestingUploadSpeed: false,
               finishedTesting: true,
+              responses: updatedResponses,
             ));
           }
         } else if (data is ClientResponse) {
-          final updatedResponses = List<Map<String, dynamic>>.from(state.responses)
-            ..add(ResponsesParser.parseClientResponse(data));
+          _lastClientMeasurement = ResponsesParser.parseClientResponse(data);
+          final updatedResponses = List<Map<String, dynamic>>.from(state.responses)..add(_lastClientMeasurement!);
           final speed = convertToMbps(data.appInfo.elapsedTime, data.appInfo.numBytes);
           if (state.isTestingDownloadSpeed) {
             emit(state.copyWith(downloadSpeed: speed, responses: updatedResponses));
@@ -58,8 +74,8 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
             emit(state.copyWith(uploadSpeed: speed, responses: updatedResponses));
           }
         } else if (data is ServerResponse) {
-          var updatedResponses = List<Map<String, dynamic>>.from(state.responses)
-            ..add(ResponsesParser.parseServerResponse(data));
+          _lastServerMeasurement = ResponsesParser.parseServerResponse(data);
+          final updatedResponses = List<Map<String, dynamic>>.from(state.responses)..add(_lastServerMeasurement!);
           emit(
             state.copyWith(
               minRtt: data.tcpInfo.minRTT,
@@ -69,9 +85,6 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
             ),
           );
         }
-
-        if (state.isTestingDownloadSpeed) {
-        } else if (state.isTestingUploadSpeed) {}
       },
     );
   }
@@ -88,5 +101,15 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
     speed *= 8;
     speed /= 1e6;
     return speed;
+  }
+
+  List<Map<String, dynamic>> _addLastMeasurement(List<Map<String, dynamic>> responses,
+      Map<String, dynamic> lastClientMeasurement, Map<String, dynamic> lastServerMeasurement) {
+    final lastMeasurements = {
+      'LastClientMeasurement': lastClientMeasurement['Data'],
+      'LastServerMeasurement': lastServerMeasurement['Data'],
+      'type': lastClientMeasurement['type'],
+    };
+    return List<Map<String, dynamic>>.from(responses)..add(lastMeasurements);
   }
 }

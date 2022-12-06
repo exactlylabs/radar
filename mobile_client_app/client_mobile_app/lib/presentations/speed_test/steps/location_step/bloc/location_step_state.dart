@@ -43,7 +43,7 @@ class LocationStepState {
     );
   }
 
-  LocationStepState accepTerms(bool value) {
+  LocationStepState acceptTerms(bool value) {
     return LocationStepState(
       query: query,
       termsError: null,
