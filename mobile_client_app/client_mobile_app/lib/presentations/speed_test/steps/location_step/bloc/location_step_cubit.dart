@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:client_mobile_app/resources/strings.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/services/locations_service/i_locations_service.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/bloc/location_step_state.dart';
-import 'package:geolocator/geolocator.dart';
 
 class LocationStepCubit extends Cubit<LocationStepState> {
   LocationStepCubit({
@@ -84,7 +84,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
         Timer(const Duration(milliseconds: 400), () async => await getLocationByLatLng(lat, lng, isSuggestedLocation));
   }
 
-  void setTermsAccepted(bool value) => emit(state.accepTerms(value));
+  void setTermsAccepted(bool value) => emit(state.acceptTerms(value));
 
   void setTermsError() => emit(state.copyWith(termsError: Strings.termsError));
 

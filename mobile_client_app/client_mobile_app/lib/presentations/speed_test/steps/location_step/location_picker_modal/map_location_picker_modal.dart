@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/resources/app_colors.dart';
@@ -29,8 +30,8 @@ class MapLocationPickerBody extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: TitleAndSubtitle(
-            title: 'title',
-            subtitle: 'subtitle',
+            title: initialLocation == null ? Strings.noLocationModalTitle : Strings.locationModalTitle,
+            subtitle: initialLocation == null ? Strings.noLocationModalSubtitle : Strings.locationModalSubtitle,
             textHeight: 1.5,
           ),
         ),
@@ -60,7 +61,7 @@ class MapLocationPickerBody extends StatelessWidget {
                   ],
                 ),
                 child: Text(
-                  initialLocation?.address ?? '',
+                  initialLocation?.address ?? Strings.emptyString,
                   style: AppTextStyle(
                     color: AppColors.darkLavender,
                     fontSize: 14,
@@ -83,7 +84,7 @@ class MapLocationPickerBody extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Confirm location',
+                  Strings.confirmLocationButtonLabel,
                   style: AppTextStyle(
                     fontSize: 16.0,
                     fontWeight: 700,
@@ -105,7 +106,7 @@ class MapLocationPickerBody extends StatelessWidget {
           child: PrimaryButton(
             color: Theme.of(context).colorScheme.onPrimary,
             child: Text(
-              'Change address',
+              Strings.changeAddressButtonLabel,
               style: AppTextStyle(
                 fontSize: 16.0,
                 fontWeight: 700,

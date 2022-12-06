@@ -1,11 +1,11 @@
-import 'package:client_mobile_app/core/models/location.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/address_not_listed_button.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/location_option_card.dart';
-import 'package:client_mobile_app/resources/app_colors.dart';
-import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:client_mobile_app/resources/strings.dart';
-import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/core/models/location.dart';
+import 'package:client_mobile_app/resources/app_colors.dart';
+import 'package:client_mobile_app/widgets/primary_button.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/location_option_card.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/address_not_listed_button.dart';
 
 class SuggestionsListLocationPickerBody extends StatefulWidget {
   const SuggestionsListLocationPickerBody({
@@ -36,7 +36,7 @@ class _SuggestionsListLocationPickerBodyState extends State<SuggestionsListLocat
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Confirm your location',
+            Strings.locationModalTitle,
             textAlign: TextAlign.center,
             style: AppTextStyle(
               fontSize: 20.0,
@@ -47,7 +47,7 @@ class _SuggestionsListLocationPickerBodyState extends State<SuggestionsListLocat
           ),
           const SizedBox(height: 10.0),
           Text(
-            'Please select your address from the list below.',
+            Strings.suggestionsModalSubtitle,
             textAlign: TextAlign.center,
             style: AppTextStyle(
               fontSize: 16.0,

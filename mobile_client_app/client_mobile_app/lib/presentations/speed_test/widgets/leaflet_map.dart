@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/pin_marker.dart';
+import 'package:client_mobile_app/presentations/speed_test/utils/leaflet_map_utils.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/circle_marker.dart' as cm;
-
-// import 'package:flutter_map/plugin_api.dart';
 
 class LeafletMap extends StatefulWidget {
   const LeafletMap({
@@ -71,12 +70,8 @@ class _LeafletMapState extends State<LeafletMap> {
       ),
       children: [
         TileLayer(
-          urlTemplate:
-              'https://api.mapbox.com/styles/v1/exactlylabs/cl7iwvbaz000l15mmms6da3kx/tiles/512/{z}/{x}/{y}?access_token={access_token}',
-          additionalOptions: const {
-            'access_token':
-                'pk.eyJ1IjoiZXhhY3RseWxhYnMiLCJhIjoiY2w3OXJqcXhjMG1vbzQycGxidHNqdXRtcCJ9.BTDEZoZFcVnMMftMm33EMw'
-          },
+          urlTemplate: LeafletMapUtils.mapBoxUrlTemplate,
+          additionalOptions: const {'access_token': LeafletMapUtils.mapBoxAccessToken},
         ),
         MarkerLayer(
           markers: [

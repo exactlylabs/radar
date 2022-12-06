@@ -67,7 +67,7 @@ class LocationsService implements ILocationsService {
       url: _restClient.locationByCoordinates,
       headers: {'Content-Type': 'application/json'},
       body: {'coordinates': "$latitude, $longitude"},
-      fromJson: (json) => Location.fromJson2(json),
+      fromJson: (json) => Location.fromJsonWithDefaultValues(json),
     );
     return failureOrLocation.fold(
       (failure) => null,
