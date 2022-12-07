@@ -1,4 +1,5 @@
 import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,7 @@ class GoBackAndContinueButtons extends StatelessWidget {
           Expanded(
             child: PrimaryButton(
               onPressed: onGoBackPressed,
+              shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
               color: Theme.of(context).colorScheme.onPrimary,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -45,6 +47,7 @@ class GoBackAndContinueButtons extends StatelessWidget {
           const SizedBox(width: 20.0),
           Expanded(
             child: PrimaryButton(
+              shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
               onPressed: onContinuePressed,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -84,8 +87,8 @@ class GoBackAndContinueButtons extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 15.0),
-            Icon(
-              Icons.arrow_forward,
+            Image.asset(
+              Images.rightArrow,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ],

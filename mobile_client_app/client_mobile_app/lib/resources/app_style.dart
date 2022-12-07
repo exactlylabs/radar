@@ -11,6 +11,7 @@ class AppTextStyle extends TextStyle {
     double? height,
     TextDecoration? decoration,
   }) : super(
+          leadingDistribution: TextLeadingDistribution.even,
           fontSize: fontSize,
           color: color,
           letterSpacing: letterSpacing,

@@ -32,7 +32,7 @@ class MapLocationPickerBody extends StatelessWidget {
           child: TitleAndSubtitle(
             title: initialLocation == null ? Strings.noLocationModalTitle : Strings.locationModalTitle,
             subtitle: initialLocation == null ? Strings.noLocationModalSubtitle : Strings.locationModalSubtitle,
-            textHeight: 1.5,
+            subtitleHeight: 1.5,
           ),
         ),
         const SizedBox(height: 20),
