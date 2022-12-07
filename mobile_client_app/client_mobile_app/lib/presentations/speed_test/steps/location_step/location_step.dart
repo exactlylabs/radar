@@ -17,37 +17,39 @@ class LocationStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => LocationStepCubit(
-        locationsService: context.read<ILocationsService>(),
-        location: location,
-        termsAccepted: termsAccepted,
-      ),
-      child: BlocListener<LocationStepCubit, LocationStepState>(
-        listenWhen: (previous, current) =>
-            (previous.loadingCurrentLocation && !current.loadingCurrentLocation && current.locationError == null) ||
-            (previous.suggestedLocation != null && current.location == previous.suggestedLocation),
-        listener: (context, state) {
-          if (state.location != null && state.location == state.suggestedLocation) {
-            context.read<SpeedTestCubit>().setLocation(state.location!);
-            context.read<SpeedTestCubit>().nextStep();
-          } else {
-            _openConfirmYoutLocationModal(context, state.currentLocation);
-          }
-        },
-        child: BlocBuilder<LocationStepCubit, LocationStepState>(
-          builder: (context, state) {
-            return LocationStepBody(
-              location: state.location,
-              currentLocation: state.currentLocation,
-              locationError: state.locationError,
-              termsError: state.termsError,
-              termsAccepted: state.termsAccepted,
-              isLoading: state.isLoading,
-              suggestedLocation: state.suggestedLocation,
-              suggestions: state.suggestions,
-            );
+    return Expanded(
+      child: BlocProvider(
+        create: (_) => LocationStepCubit(
+          locationsService: context.read<ILocationsService>(),
+          location: location,
+          termsAccepted: termsAccepted,
+        ),
+        child: BlocListener<LocationStepCubit, LocationStepState>(
+          listenWhen: (previous, current) =>
+              (previous.loadingCurrentLocation && !current.loadingCurrentLocation && current.locationError == null) ||
+              (previous.suggestedLocation != null && current.location == previous.suggestedLocation),
+          listener: (context, state) {
+            if (state.location != null && state.location == state.suggestedLocation) {
+              context.read<SpeedTestCubit>().setLocation(state.location!);
+              context.read<SpeedTestCubit>().nextStep();
+            } else {
+              _openConfirmYoutLocationModal(context, state.currentLocation);
+            }
           },
+          child: BlocBuilder<LocationStepCubit, LocationStepState>(
+            builder: (context, state) {
+              return LocationStepBody(
+                location: state.location,
+                currentLocation: state.currentLocation,
+                locationError: state.locationError,
+                termsError: state.termsError,
+                termsAccepted: state.termsAccepted,
+                isLoading: state.isLoading,
+                suggestedLocation: state.suggestedLocation,
+                suggestions: state.suggestions,
+              );
+            },
+          ),
         ),
       ),
     );

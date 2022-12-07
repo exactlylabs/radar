@@ -38,7 +38,7 @@ class StepIndicator extends StatelessWidget {
               stepColor: stepColor,
               currentStepColor: currentStepColor,
             ),
-            child: Container(height: 20),
+            child: Container(height: 24),
           );
         } else {
           return Container();
@@ -79,14 +79,14 @@ class StepsIndicatorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    stepCircleSize = (size.width * 0.055) / 2;
+    stepCircleSize = (size.width * 0.064) / 2;
 
     final x =
-        (size.width / 2) - ((size.width * 0.055) * (totalSteps)) / 2 - ((stepCircleSize! + 20) * (totalSteps - 1)) / 2;
+        (size.width / 2) - ((size.width * 0.064) * (totalSteps)) / 2 - ((stepCircleSize! + 20) * (totalSteps - 1)) / 2;
     final y = size.height / 2;
 
     for (var i = 0; i < totalSteps; i++) {
-      final xi = stepCircleSize! + ((size.width * 0.055) * i) + (stepCircleSize! + 20) * i;
+      final xi = stepCircleSize! + ((size.width * 0.064) * i) + (stepCircleSize! + 20) * i;
       drawStep(Offset(x + xi, y), canvas, i);
       if (i < totalSteps - 1) drawSeparator(Offset(x + xi + stepCircleSize! + 5, y), canvas);
     }
@@ -99,7 +99,7 @@ class StepsIndicatorPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.round;
 
-    canvas.drawCircle(offset, stepCircleSize ?? 24, circlePaint);
+    canvas.drawCircle(offset, stepCircleSize ?? 12, circlePaint);
 
     if (step < currentStep) {
       paintImage(

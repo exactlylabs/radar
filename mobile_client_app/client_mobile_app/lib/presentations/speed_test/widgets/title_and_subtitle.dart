@@ -9,12 +9,14 @@ class TitleAndSubtitle extends StatelessWidget {
     super.key,
     required this.title,
     required this.subtitle,
-    this.textHeight,
+    this.titleHeight,
+    this.subtitleHeight,
   });
 
   final String title;
   final String subtitle;
-  final double? textHeight;
+  final double? titleHeight;
+  final double? subtitleHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +31,13 @@ class TitleAndSubtitle extends StatelessWidget {
           style: AppTextStyle(
             fontSize: 22.0,
             fontWeight: 800,
-            height: textHeight,
+            height: titleHeight,
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
         SpacerWithMax(
-          size: height * 0.012,
-          maxSize: 10,
+          size: height * 0.006,
+          maxSize: 5,
         ),
         Text(
           subtitle,
@@ -43,8 +45,7 @@ class TitleAndSubtitle extends StatelessWidget {
           style: AppTextStyle(
             fontSize: 16.0,
             fontWeight: 200,
-            letterSpacing: 0.5,
-            height: textHeight,
+            height: subtitleHeight,
             color: Theme.of(context).colorScheme.tertiary,
           ),
         ),

@@ -25,57 +25,63 @@ class LocationInputField extends StatefulWidget {
 class _LocationInputFieldState extends State<LocationInputField> {
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: widget.controller,
-      focusNode: widget.focusNode,
-      onChanged: widget.onChanged,
-      onSubmitted: widget.onSubmitted,
-      style: AppTextStyle(
-        fontSize: 16.0,
-        color: Theme.of(context).colorScheme.primary,
-        fontWeight: 400,
-      ),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.05),
-        hintText: Strings.locationInputFieldHint,
-        hintStyle: AppTextStyle(
+    return SizedBox(
+      height: 56.0,
+      child: TextField(
+        controller: widget.controller,
+        focusNode: widget.focusNode,
+        onChanged: widget.onChanged,
+        onSubmitted: widget.onSubmitted,
+        style: AppTextStyle(
           fontSize: 16.0,
-          letterSpacing: 0.5,
-          color: Theme.of(context).colorScheme.tertiary,
+          height: 1.56,
+          fontWeight: 400,
+          color: Theme.of(context).colorScheme.primary,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.0),
-          borderSide: BorderSide(
-            width: 1.5,
-            color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+        decoration: InputDecoration(
+          filled: true,
+          contentPadding: const EdgeInsets.fromLTRB(20, 15, 15, 15),
+          fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+          hintText: Strings.locationInputFieldHint,
+          hintStyle: AppTextStyle(
+            fontSize: 16.0,
+            height: 1.56,
+            fontWeight: 400,
+            color: Theme.of(context).colorScheme.surface,
           ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.0),
-          borderSide: BorderSide.none,
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.0),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.error,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.0),
+            borderSide: BorderSide(
+              width: 1.5,
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+            ),
           ),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16.0),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.error.withOpacity(0.4),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.0),
+            borderSide: BorderSide.none,
           ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.0),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.error,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.0),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.error.withOpacity(0.4),
+            ),
+          ),
+          suffixIcon: widget.isLoading
+              ? Transform.scale(
+                  scale: 0.4,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 6.0,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                )
+              : null,
         ),
-        suffixIcon: widget.isLoading
-            ? Transform.scale(
-                scale: 0.4,
-                child: CircularProgressIndicator(
-                  strokeWidth: 6.0,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              )
-            : null,
       ),
     );
   }

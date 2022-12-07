@@ -19,6 +19,7 @@ class HomePage extends StatelessWidget {
         return Scaffold(
           backgroundColor: Theme.of(context).backgroundColor,
           appBar: AppBar(
+            toolbarHeight: 24.0,
             backgroundColor: Theme.of(context).backgroundColor,
             title: Image.asset(Images.logoDark, fit: BoxFit.contain),
           ),

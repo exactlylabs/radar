@@ -12,8 +12,8 @@ class CurrentLocationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onPressed,
+    return InkWell(
+      onTap: onPressed,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -23,8 +23,9 @@ class CurrentLocationButton extends StatelessWidget {
             'Use my current location',
             style: AppTextStyle(
               fontSize: 15.0,
-              color: Theme.of(context).colorScheme.secondary,
               fontWeight: 700,
+              height: 1.66,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ],
