@@ -524,7 +524,7 @@ func Fetch(ds datastore.DataStore, date time.Time) {
 	if err != nil {
 		panic(fmt.Errorf("fetcher.Fetch err: %v", err))
 	}
-
+	defer client.Close()
 	if err := processDate(ctx, client, ds, date); err != nil {
 		panic(err)
 	}
