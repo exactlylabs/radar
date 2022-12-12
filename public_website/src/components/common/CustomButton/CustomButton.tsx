@@ -5,6 +5,7 @@ interface CustomButtonProps {
   text: string;
   onClick: () => void;
   backgroundColor?: string;
+  boxShadow?: string;
   color?: string;
   icon?: ReactElement;
   iconFirst?: boolean;
@@ -14,22 +15,23 @@ const CustomButton = ({
   text,
   onClick,
   backgroundColor,
+  boxShadow,
   color,
   icon,
   iconFirst,
 }: CustomButtonProps): ReactElement => {
   return (
-    <div style={styles.CustomButton}
+    <div style={styles.CustomButton(backgroundColor, boxShadow)}
          className={'hover-opaque'}
          onClick={onClick}
     >
       {iconFirst ?
         <>
           {icon}
-          <p className={'fw-bold'} style={styles.Text(backgroundColor, color)}>{text}</p>
+          <p className={'fw-bold'} style={styles.Text(color)}>{text}</p>
         </> :
         <>
-          <p className={'fw-bold'} style={styles.Text(backgroundColor, color)}>{text}</p>
+          <p className={'fw-bold'} style={styles.Text(color)}>{text}</p>
           {icon}
         </>
       }

@@ -4,6 +4,7 @@ import RadarLogo from "../../../../assets/images/radar-logo.png";
 import CustomButton from "../../../common/CustomButton/CustomButton";
 import ChevronRight from "../../../../assets/images/chevron-right-dark.png";
 import ToolkitFloatingMenu from "./ToolkitFloatingMenu/ToolkitFloatingMenu";
+import {goToHome} from "../../../../utils/navigation";
 
 interface RegularNavbarContentProps {
   goToGetStarted: () => void;
@@ -13,7 +14,7 @@ const RegularNavbarContent = ({
   goToGetStarted
 }: RegularNavbarContentProps): ReactElement => {
 
-  const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(true);
+  const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
   let timeoutId: NodeJS.Timeout;
 
   const openFloatingMenu = () => setIsFloatingMenuOpen(true);
@@ -28,7 +29,7 @@ const RegularNavbarContent = ({
 
   return (
     <div style={styles.NavbarContent}>
-      <img src={RadarLogo} style={styles.Logo} alt={'radar-logo'}/>
+      <img src={RadarLogo} style={styles.Logo} alt={'radar-logo'} onClick={goToHome}/>
       <div style={styles.TabsContainer}>
         <a className={'fw-bold hover-opaque'}
            href={'/overview'}

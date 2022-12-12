@@ -1,5 +1,5 @@
 import {CSSProperties} from "react";
-import {DEFAULT_TEXT} from "../../../../../../utils/colors";
+import {DEFAULT_TEXT, WHITE} from "../../../../../../utils/colors";
 
 const smallNavbarContentOpenStyle: CSSProperties = {
   width: '100vw',
@@ -7,6 +7,11 @@ const smallNavbarContentOpenStyle: CSSProperties = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  position: 'absolute',
+  top: '63px',
+  boxShadow: `0px 30px 30px -4px rgba(0, 0, 0, 0.15)`,
+  zIndex: 10,
+  backgroundColor: WHITE
 }
 
 const tabsContainerStyle: CSSProperties = {
