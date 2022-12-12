@@ -20,10 +20,14 @@ const textStyle: CSSProperties = {
 }
 
 export const styles = {
-  CustomButton: customButtonStyle,
-  Text: (backgroundColor?: string, color?: string) => {
-    let style = textStyle;
+  CustomButton: (backgroundColor?: string, boxShadow?: string) => {
+    let style = customButtonStyle;
     if(!!backgroundColor) style = {...style, backgroundColor};
+    if(!!boxShadow) style = {...style, boxShadow};
+    return style;
+  },
+  Text: (color?: string) => {
+    let style = textStyle;
     if(!!color) style = {...style, color};
     return style;
   },

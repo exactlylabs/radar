@@ -3,15 +3,15 @@ import {DEFAULT_TEXT} from "../../../../../utils/colors";
 
 const navbarContentStyle: CSSProperties = {
   width: '100%',
-  maxWidth: '1208px',
+  maxWidth: '1300px',
   height: '100%',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
   marginTop: '18px',
-  marginLeft: '8%',
-  marginRight: '8%',
+  marginLeft: 'auto',
+  marginRight: 'auto',
 }
 
 const logoStyle: CSSProperties = {

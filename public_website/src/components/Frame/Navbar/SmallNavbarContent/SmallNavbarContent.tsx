@@ -4,7 +4,7 @@ import RadarLogo from "../../../../assets/images/radar-logo.png";
 import CloseIcon from '../../../../assets/images/close-navbar-icon.png';
 import OpenIcon from '../../../../assets/images/hamburger-icon.png';
 import SmallNavbarContentOpen from "./SmallNavbarContentOpen/SmallNavbarContentOpen";
-import {goToUrl} from "../../../../utils/navigation";
+import {goToHome} from "../../../../utils/navigation";
 
 const SmallNavbarContent = (): ReactElement => {
 
@@ -12,8 +12,6 @@ const SmallNavbarContent = (): ReactElement => {
 
   const closeNavbar = () => setIsNavbarOpen(false);
   const openNavbar = () => setIsNavbarOpen(true);
-
-  const goToHome = () => goToUrl('/home');
 
   return (
     <div style={styles.NavbarContentWrapper(isNavbarOpen)}>
