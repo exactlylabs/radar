@@ -28,22 +28,28 @@ class ClientMeasurementsController < ApplicationController
       return
     end
 
-    @measurement = @client.measurements.build(measurement_params)
-    @measurement.client_version = @client.raw_version
-    @measurement.client_distribution = @client.distribution_name
-    @measurement.network_interfaces = @client.network_interfaces
-    @measurement.account = @client.account if @client.account.present?
-    @measurement.location = @client.location if @client.location.present?
+    Google::Cloud::Trace.in_span "Populating Measurement"
+      @measurement = @client.measurements.build(measurement_params)
+      @measurement.client_version = @client.raw_version
+      @measurement.client_distribution = @client.distribution_name
+      @measurement.network_interfaces = @client.network_interfaces
+      @measurement.account = @client.account if @client.account.present?
+      @measurement.location = @client.location if @client.location.present?
 
-    if @client.test_requested
-      @client.test_requested = false
-      @client.save
-    end
+      if @client.test_requested
+        Google::Cloud::Trace.in_span "Updating Client" do
+          @client.test_requested = false
+          @client.save
+        end
+      end
 
-    location = @client.location
-    if location && location.test_requested
-      location.test_requested = false
-      location.save
+      location = @client.location
+      if location && location.test_requested
+        Google::Cloud::Trace.in_span "Updating Location" do
+          location.test_requested = false
+          location.save
+        end
+      end
     end
 
     respond_to do |format|

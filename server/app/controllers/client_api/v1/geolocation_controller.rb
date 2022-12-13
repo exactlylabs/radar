@@ -12,7 +12,9 @@ module ClientApi
       # 
       # POST /client_api/v1/suggestions
       def suggestions
-        results = Geocoder.search(params[:address])
+        Google::Cloud::Trace.in_span "Searching in Geocoder: #{params[:address]}" do
+          results = Geocoder.search(params[:address])
+        end
         if results.first
           render json: results.filter {|match| match.city && match.street && match.state && match.postal_code && match.house_number}
                               .map {|match| {

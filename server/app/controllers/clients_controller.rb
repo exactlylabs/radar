@@ -118,31 +118,41 @@ class ClientsController < ApplicationController
   end
 
   def status
-    @client.pinged_at = Time.now
-    @client.online = true
-    @client.raw_version = params[:version]
-    @client.distribution_name = params[:distribution]
-    if params[:network_interfaces]
-      @client.network_interfaces = JSON.parse(params[:network_interfaces])
+    Google::Cloud::Trace.in_span "Updating attributes" do
+      @client.pinged_at = Time.now
+      @client.online = true
+      @client.raw_version = params[:version]
+      @client.distribution_name = params[:distribution]
+      if params[:network_interfaces]
+        @client.network_interfaces = JSON.parse(params[:network_interfaces])
+      end
     end
     
     if !params[:version].nil?
-      # Check client Version Id
-      version_ids = ClientVersion.where(version: params[:version]).pluck(:id)
-      if version_ids.length == 0
-        # No version found
-        version_id = nil
-      else
-        # pluck returns an array
-        version_id = version_ids[0]
+      Google::Cloud::Trace.in_span "Loading ClientVersion #{params[:version]}" do
+        # Check client Version Id
+        version_ids = ClientVersion.where(version: params[:version]).pluck(:id)
+        if version_ids.length == 0
+          # No version found
+          version_id = nil
+        else
+          # pluck returns an array
+          version_id = version_ids[0]
+        end
+        @client.client_version_id = version_id
       end
-      @client.client_version_id = version_id
     end
 
-    @client.verify_test_scheduler!
-    @client.save!
-    respond_to do |format|
-      format.json { render :status, status: :ok }
+    Google::Cloud::Trace.in_span "Verifying Test Scheduler" do
+      @client.verify_test_scheduler!
+    end
+    Google::Cloud::Trace.in_span "Saving Client" do
+      @client.save!
+    end
+    Google::Cloud::Trace.in_span "Rendering Response" do
+      respond_to do |format|
+        format.json { render :status, status: :ok }
+      end
     end
   end
 
@@ -150,16 +160,21 @@ class ClientsController < ApplicationController
     @client.raw_watchdog_version = params[:version]
     
     if params[:version]
-      # Check client Version Id
-      wv_ids = WatchdogVersion.where(version: params[:version]).pluck(:id)
-      if wv_ids.length > 0
-        @client.watchdog_version_id = wv_ids[0]
+      Google::Cloud::Trace.in_span "Loading WatchdogVersion #{params[:version]}" do
+        # Check client Version Id
+        wv_ids = WatchdogVersion.where(version: params[:version]).pluck(:id)
+        if wv_ids.length > 0
+          @client.watchdog_version_id = wv_ids[0]
+        end
       end
     end
-
-    @client.save
-    respond_to do |format|
-      format.json { render :watchdog_status, status: :ok }
+    Google::Cloud::Trace.in_span "Saving Client" do
+      @client.save
+    end
+    Google::Cloud::Trace.in_span "Rendering Response" do
+      respond_to do |format|
+        format.json { render :watchdog_status, status: :ok }
+      end
     end
   end
 
