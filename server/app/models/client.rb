@@ -137,12 +137,13 @@ class Client < ApplicationRecord
       minute = rand(0..59)
       self.cron_string = "#{minute} * * * *"
     end
-    cron = Fugit.parse_cron(self.cron_string)
-
+    
     if self.next_schedule_at.nil?
+      cron = Fugit.parse_cron(self.cron_string)
       self.next_schedule_at = cron.next_time(self&.measurements&.last&.created_at || Time.current).to_t
 
     elsif self.next_schedule_at < Time.current && self.has_data_cap?
+      cron = Fugit.parse_cron(self.cron_string)
       # Request a test and increment the next_schedule_at
       self.test_requested = true
       self.next_schedule_at = cron.next_time(Time.current).to_t
@@ -235,13 +236,23 @@ class Client < ApplicationRecord
   end
 
   def has_update?
-    dist = self.to_update_distribution
-    !dist.nil? && dist.client_version.version != self.raw_version
+    # This query bellow is an attempt to avoid deserializing Distribution, UpdateGroup and ClientVersion objects when not necessary
+    return Distribution.joins(
+      client_version: :update_groups
+    ).where(
+      "update_groups.id = ? AND distributions.name = ? AND client_versions.version != ?", 
+      self.update_group_id, self.distribution_name, self.raw_version
+    ).exists?
   end
 
   def has_watchdog_update?
-    v = self.to_update_watchdog_version
-    !v.nil? && v.version != self.raw_watchdog_version
+    # This query bellow is an attempt to avoid deserializing UpdateGroup and WatchdogVersion objects when not necessary
+    return WatchdogVersion.joins(
+      :update_groups
+    ).where(
+      "update_groups.id = ? AND watchdog_versions.version != ?", 
+      self.update_group_id, self.raw_watchdog_version
+    ).exists?
   end
 
   def latest_measurement

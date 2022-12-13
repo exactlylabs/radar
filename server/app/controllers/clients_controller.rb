@@ -127,27 +127,18 @@ class ClientsController < ApplicationController
     end
     
     if !params[:version].nil?
-      # Check client Version
-      version = ClientVersion.where version: params[:version]
-      if version.length == 0
+      # Check client Version Id
+      version_ids = ClientVersion.where(version: params[:version]).pluck(:id)
+      if version_ids.length == 0
         # No version found
-        version = nil
+        version_id = nil
       else
-        version = version[0]
+        # pluck returns an array
+        version_id = version_ids[0]
       end
-      @client.client_version = version
+      @client.client_version_id = version_id
     end
 
-    if params[:watchdog_version]
-      # TODO: This should be deprecated in future versions
-      #       once all existing pods have a watchdog
-      @client.raw_watchdog_version = params[:watchdog_version]
-      wv = WatchdogVersion.find_by_version params[:watchdog_version]
-      if wv
-        @client.watchdog_version = wv
-      end
-    end
-    
     @client.verify_test_scheduler!
     @client.save!
     respond_to do |format|
@@ -159,9 +150,11 @@ class ClientsController < ApplicationController
     @client.raw_watchdog_version = params[:version]
     
     if params[:version]
-      # Check client Version
-      version = WatchdogVersion.find_by_version(params[:version])
-      @client.watchdog_version = version
+      # Check client Version Id
+      wv_ids = WatchdogVersion.where(version: params[:version]).pluck(:id)
+      if wv_ids.length > 0
+        @client.watchdog_version_id = wv_ids[0]
+      end
     end
 
     @client.save
