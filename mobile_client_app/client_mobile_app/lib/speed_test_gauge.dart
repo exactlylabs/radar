@@ -348,28 +348,28 @@ class _SpeedTestGaugeCustomPainter extends CustomPainter {
       double width;
       double height;
 
-      if (index == 0) {
+      if (index == _CERO_INDEX) {
         width = -textPainter.width / 2;
         height = -textPainter.height * 0.1;
-      } else if (index == 1) {
+      } else if (index == _FIVE_INDEX) {
         width = -textPainter.width;
         height = -textPainter.height * 0.1;
-      } else if (index == 2) {
+      } else if (index == _TEN_INDEX) {
         width = -textPainter.width;
         height = -textPainter.height * 0.1;
-      } else if (index == 3) {
+      } else if (index == _FIFTEEN_INDEX) {
         width = -textPainter.width;
         height = -textPainter.height / 2;
-      } else if (index == 4) {
+      } else if (index == _TWENTY_INDEX) {
         width = -textPainter.width / 2;
         height = -textPainter.height;
-      } else if (index == 5) {
+      } else if (index == _THIRTY_INDEX) {
         width = textPainter.width * 0.1;
         height = -textPainter.height / 2;
-      } else if (index == 6) {
+      } else if (index == _FIFTY_INDEX) {
         width = -textPainter.width / 5;
         height = -textPainter.height * 0.1;
-      } else if (index == 7) {
+      } else if (index == _SEVENTY_FIVE_INDEX) {
         width = -textPainter.width / 2;
         height = -textPainter.height * 0.1;
       } else {
@@ -452,4 +452,13 @@ class _SpeedTestGaugeCustomPainter extends CustomPainter {
   }
 
   static num degToRad(num deg) => deg * (math.pi / 180.0);
+
+  static const _CERO_INDEX = 0;
+  static const _FIVE_INDEX = 1;
+  static const _TEN_INDEX = 2;
+  static const _FIFTEEN_INDEX = 3;
+  static const _TWENTY_INDEX = 4;
+  static const _THIRTY_INDEX = 5;
+  static const _FIFTY_INDEX = 6;
+  static const _SEVENTY_FIVE_INDEX = 7;
 }
