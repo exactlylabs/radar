@@ -47,6 +47,7 @@ dependencies:
   flutter_map: ^3.0.0
   async: ^2.9.0
   geolocator: ^9.0.2
+  sentry_flutter: ^6.18.1
 
 
 
