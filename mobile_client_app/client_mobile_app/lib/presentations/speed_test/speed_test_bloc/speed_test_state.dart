@@ -18,23 +18,6 @@ class SpeedTestState {
     this.isFormEnded = false,
   });
 
-  factory SpeedTestState.fromJson(Map<String, dynamic> json) => SpeedTestState(
-        step: json['step'],
-        isStepValid: json['isStepValid'],
-        loss: json['loss'],
-        upload: json['upload'],
-        latency: json['latency'],
-        location: json['location'],
-        download: json['download'],
-        networkType: json['networkType'],
-        monthlyBillCost: json['monthlyBillCost'],
-        networkLocation: json['networkLocation'],
-        isTestRunning: json['isTestRunning'],
-        isLocationLoading: json['isLocationLoading'],
-        isFormEnded: json['isFormEnded'],
-        termsAccepted: json['termsAccepted'],
-      );
-
   SpeedTestState copyWith({
     int? step,
     bool? isStepValid,
@@ -68,24 +51,22 @@ class SpeedTestState {
         termsAccepted: termsAccepted ?? this.termsAccepted,
       );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'step': step,
-      'isStepValid': isStepValid,
-      'loss': loss,
-      'upload': upload,
-      'latency': latency,
-      'location': location,
-      'download': download,
-      'networkType': networkType,
-      'monthlyBillCost': monthlyBillCost,
-      'networkLocation': networkLocation,
-      'isTestRunning': isTestRunning,
-      'isLocationLoading': isLocationLoading,
-      'isFormEnded': isFormEnded,
-      'termsAccepted': termsAccepted,
-    };
-  }
+  SpeedTestState resetSpecificStep(bool networkLocation, bool networkType, bool monthlyBillCost) => SpeedTestState(
+        step: step,
+        isStepValid: isStepValid,
+        loss: loss,
+        upload: upload,
+        latency: latency,
+        location: location,
+        download: download,
+        networkType: networkType ? null : this.networkType,
+        monthlyBillCost: monthlyBillCost ? null : this.monthlyBillCost,
+        networkLocation: networkLocation ? null : this.networkLocation,
+        isTestRunning: isTestRunning,
+        isLocationLoading: isLocationLoading,
+        isFormEnded: isFormEnded,
+        termsAccepted: termsAccepted,
+      );
 
   final int step;
   final bool isStepValid;

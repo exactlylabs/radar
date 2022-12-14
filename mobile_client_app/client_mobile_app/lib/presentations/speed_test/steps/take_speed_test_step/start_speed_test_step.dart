@@ -24,6 +24,8 @@ class StartSpeedTestStep extends StatelessWidget {
         const TitleAndSubtitle(
           title: Strings.startSpeedTestStepTitle,
           subtitle: Strings.startSpeedTestStepSubtitle,
+          titleHeight: 1.81,
+          subtitleHeight: 1.56,
         ),
         SpacerWithMax(size: height * 0.037, maxSize: 30.0),
         SummaryTable(

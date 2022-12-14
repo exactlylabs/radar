@@ -22,7 +22,7 @@ class ResultsTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 35.0),
+      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 35.0),
       decoration: BoxDecoration(
         color: isEnabled
             ? Theme.of(context).colorScheme.onPrimary
@@ -52,7 +52,11 @@ class ResultsTable extends StatelessWidget {
                   value: download,
                   isEnabled: isEnabled,
                 ),
-                Divider(color: Theme.of(context).colorScheme.surface.withOpacity(0.3), thickness: 1.0),
+                Divider(
+                  color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+                  thickness: 1.0,
+                  height: 25,
+                ),
                 ResultItem(
                   icon: Images.latencyIcon,
                   name: Strings.latencyResultsLabel,
@@ -76,7 +80,11 @@ class ResultsTable extends StatelessWidget {
                   value: upload,
                   isEnabled: isEnabled,
                 ),
-                Divider(color: Theme.of(context).colorScheme.surface.withOpacity(0.3), thickness: 1.0),
+                Divider(
+                  color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+                  thickness: 1.0,
+                  height: 25,
+                ),
                 ResultItem(
                   icon: Images.lossIcon,
                   name: Strings.lossResultsLabel,

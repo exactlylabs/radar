@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:client_mobile_app/resources/app_colors.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:flutter/material.dart';
 
 final theme = ThemeData(
@@ -14,21 +15,19 @@ final theme = ThemeData(
     ),
     elevation: 0,
   ),
-  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: AppColors.snow,
     selectedItemColor: AppColors.blue,
     unselectedItemColor: AppColors.darkLavender,
-    selectedIconTheme: IconThemeData(color: AppColors.blue),
-    unselectedIconTheme: IconThemeData(color: AppColors.darkLavender),
-    unselectedLabelStyle: TextStyle(
+    selectedIconTheme: const IconThemeData(color: AppColors.blue),
+    unselectedIconTheme: const IconThemeData(color: AppColors.darkLavender),
+    unselectedLabelStyle: AppTextStyle(
       fontSize: 11.0,
-      fontFamily: 'Mulish',
-      fontVariations: [FontVariation('wght', 700)],
+      fontWeight: 700,
     ),
-    selectedLabelStyle: TextStyle(
+    selectedLabelStyle: AppTextStyle(
       fontSize: 11.0,
-      fontFamily: 'Mulish',
-      fontVariations: [FontVariation('wght', 700)],
+      fontWeight: 700,
     ),
   ),
   colorScheme: const ColorScheme(

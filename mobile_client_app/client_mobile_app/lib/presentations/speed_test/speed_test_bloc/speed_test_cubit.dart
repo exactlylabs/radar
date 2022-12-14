@@ -1,11 +1,11 @@
 import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
 import 'package:client_mobile_app/resources/strings.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/models/test_result.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
+class SpeedTestCubit extends Cubit<SpeedTestState> {
   SpeedTestCubit({
     required IResultsService resultsService,
   })  : _resultsService = resultsService,
@@ -63,6 +63,17 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
 
   void resetForm() => emit(const SpeedTestState());
 
+  void preferNotToAnswer() {
+    if (state.step == 1) {
+      emit(state.resetSpecificStep(true, false, false));
+    } else if (state.step == 2) {
+      emit(state.resetSpecificStep(false, true, false));
+    } else if (state.step == 3) {
+      emit(state.resetSpecificStep(false, false, true));
+    }
+    emit(state.copyWith(step: state.step + 1));
+  }
+
   void saveResults(
       double downloadSpeed, double uploadSpeed, double latency, double loss, List<Map<String, dynamic>> responses) {
     final result = TestResult(
@@ -78,16 +89,6 @@ class SpeedTestCubit extends HydratedCubit<SpeedTestState> {
     );
 
     _resultsService.addResult(responses, result);
-  }
-
-  @override
-  SpeedTestState? fromJson(Map<String, dynamic> json) {
-    return SpeedTestState.fromJson(json);
-  }
-
-  @override
-  Map<String, dynamic>? toJson(SpeedTestState state) {
-    return state.toJson();
   }
 
   static const LOCATION_STEP = 0;

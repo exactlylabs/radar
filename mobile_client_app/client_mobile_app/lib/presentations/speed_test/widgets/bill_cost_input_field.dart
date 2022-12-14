@@ -35,6 +35,7 @@ class _BillCostInputFieldState extends State<BillCostInputField> {
         InkWell(
           onTap: () {
             _controller.text = decrease(_controller.text);
+            _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
             if (widget.onChanged != null) widget.onChanged!(_controller.text);
           },
           child: Image.asset(Images.lessButton),
@@ -49,8 +50,9 @@ class _BillCostInputFieldState extends State<BillCostInputField> {
             keyboardType: TextInputType.number,
             style: AppTextStyle(
               fontSize: 16.0,
-              color: Theme.of(context).colorScheme.primary,
               fontWeight: 400,
+              height: 1.56,
+              color: Theme.of(context).colorScheme.primary,
             ),
             decoration: InputDecoration(
               filled: true,
@@ -58,8 +60,9 @@ class _BillCostInputFieldState extends State<BillCostInputField> {
               hintText: '0',
               hintStyle: AppTextStyle(
                 fontSize: 16.0,
-                letterSpacing: 0.5,
-                color: Theme.of(context).colorScheme.tertiary,
+                height: 1.56,
+                fontWeight: 400,
+                color: Theme.of(context).colorScheme.surface,
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16.0),
@@ -97,6 +100,7 @@ class _BillCostInputFieldState extends State<BillCostInputField> {
         InkWell(
           onTap: () {
             _controller.text = increase(_controller.text);
+            _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
             if (widget.onChanged != null) widget.onChanged!(_controller.text);
           },
           child: Image.asset(Images.moreButton),
@@ -106,10 +110,10 @@ class _BillCostInputFieldState extends State<BillCostInputField> {
   }
 
   String increase(String value) {
-    return (int.tryParse(value) ?? 0) + 1 > 0 ? ((int.tryParse(value) ?? 0) + 1).toString() : '0';
+    return (int.tryParse(value) ?? 0) + 10 > 0 ? ((int.tryParse(value) ?? 0) + 10).toString() : '0';
   }
 
   String decrease(String value) {
-    return (int.tryParse(value) ?? 0) - 1 > 0 ? ((int.tryParse(value) ?? 0) - 1).toString() : '0';
+    return (int.tryParse(value) ?? 0) - 10 > 0 ? ((int.tryParse(value) ?? 0) - 10).toString() : '0';
   }
 }

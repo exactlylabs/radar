@@ -76,18 +76,23 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
         } else if (data is ServerResponse) {
           _lastServerMeasurement = ResponsesParser.parseServerResponse(data);
           final updatedResponses = List<Map<String, dynamic>>.from(state.responses)..add(_lastServerMeasurement!);
+          final progress = _calculteProgress(data.tcpInfo.bytesSent ?? 0);
           emit(
             state.copyWith(
               minRtt: data.tcpInfo.minRTT,
               bytesRetrans: data.tcpInfo.bytesRetrans,
               bytesSent: data.tcpInfo.bytesSent,
               responses: updatedResponses,
+              downloadProgress: state.isTestingDownloadSpeed ? progress : state.downloadProgress,
+              uploadProgress: state.isTestingUploadSpeed ? progress : state.uploadProgress,
             ),
           );
         }
       },
     );
   }
+
+  void resetSpeedTest() => emit(const TakeSpeedTestStepState());
 
   @override
   Future<void> close() {
@@ -111,5 +116,14 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
       'type': lastClientMeasurement['type'],
     };
     return List<Map<String, dynamic>>.from(responses)..add(lastMeasurements);
+  }
+
+  double _calculteProgress(int bytesSent) {
+    if (state.isTestingDownloadSpeed) {
+      return bytesSent >= 125000000 ? 1 : bytesSent / 125000000;
+    } else if (state.isTestingUploadSpeed) {
+      return bytesSent >= 51500 ? 1 : bytesSent / 51500;
+    }
+    return 0;
   }
 }

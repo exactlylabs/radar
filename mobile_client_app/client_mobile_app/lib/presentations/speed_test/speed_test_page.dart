@@ -23,75 +23,62 @@ class SpeedTestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    return BlocProvider<SpeedTestCubit>(
-      create: (_) => SpeedTestCubit(resultsService: context.read<IResultsService>()),
-      child: BlocBuilder<SpeedTestCubit, SpeedTestState>(
-        builder: (context, state) {
-          if (state.isFormEnded) {
-            return const NoInternetConnectionPage();
-          } else {
-            return Container(
-              color: Theme.of(context).backgroundColor,
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SpacerWithMax(size: height * 0.05, maxSize: 40.0),
-                  if (state.step < SpeedTestCubit.TAKE_SPEED_TEST_STEP)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                      child: StepIndicator(
-                        totalSteps: 4,
-                        currentStep: state.step,
-                        textColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                        currentTextColor: Theme.of(context).colorScheme.onPrimary,
-                        stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.15),
-                        currentStepColor: Theme.of(context).colorScheme.secondary,
-                      ),
+    return BlocBuilder<SpeedTestCubit, SpeedTestState>(
+      builder: (context, state) {
+        if (state.isFormEnded) {
+          return const NoInternetConnectionPage();
+        } else {
+          return Container(
+            color: Theme.of(context).backgroundColor,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SpacerWithMax(size: height * 0.05, maxSize: 40.0),
+                if (state.step < SpeedTestCubit.TAKE_SPEED_TEST_STEP)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                    child: StepIndicator(
+                      totalSteps: 4,
+                      currentStep: state.step,
+                      textColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                      currentTextColor: Theme.of(context).colorScheme.onPrimary,
+                      stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                      currentStepColor: Theme.of(context).colorScheme.secondary,
                     ),
-                  if (state.step == SpeedTestCubit.LOCATION_STEP)
-                    LocationStep(
-                      location: state.location,
-                      termsAccepted: state.termsAccepted,
-                    )
-                  else if (state.step == SpeedTestCubit.NETWORK_LOCATION_STEP)
-                    NetworkPlaceStep(
-                      isStepValid: state.isStepValid,
-                      address: state.location?.address ?? Strings.emptyString,
-                      optionSelected: state.networkLocation,
-                    )
-                  else if (state.step == SpeedTestCubit.NETWORK_TYPE_STEP)
-                    NetworkTypeStep(
-                      optionSelected: state.networkType,
-                      isStepValid: state.isStepValid,
-                    )
-                  else if (state.step == SpeedTestCubit.MONTHLY_BILL_COST_STEP)
-                    MonthlyBillCostStep(
-                      billCost: state.monthlyBillCost,
-                      isStepValid: state.isStepValid,
-                    )
-                  else if (state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP)
-                    TakeSpeedTestStep(
-                      networkType: state.networkType ?? Strings.emptyOption,
-                      networkPlace: state.networkLocation ?? Strings.emptyOption,
-                      address: state.location?.address ?? Strings.emptyOption,
-                    ),
-                ],
-              ),
-            );
-          }
-        },
-      ),
+                  ),
+                if (state.step == SpeedTestCubit.LOCATION_STEP)
+                  LocationStep(
+                    location: state.location,
+                    termsAccepted: state.termsAccepted,
+                  )
+                else if (state.step == SpeedTestCubit.NETWORK_LOCATION_STEP)
+                  NetworkPlaceStep(
+                    isStepValid: state.isStepValid,
+                    address: state.location?.address ?? Strings.emptyString,
+                    optionSelected: state.networkLocation,
+                  )
+                else if (state.step == SpeedTestCubit.NETWORK_TYPE_STEP)
+                  NetworkTypeStep(
+                    optionSelected: state.networkType,
+                    isStepValid: state.isStepValid,
+                  )
+                else if (state.step == SpeedTestCubit.MONTHLY_BILL_COST_STEP)
+                  MonthlyBillCostStep(
+                    billCost: state.monthlyBillCost,
+                    isStepValid: state.isStepValid,
+                  )
+                else if (state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP)
+                  TakeSpeedTestStep(
+                    networkType: state.networkType ?? Strings.emptyOption,
+                    networkPlace: state.networkLocation ?? Strings.emptyOption,
+                    address: state.location?.address ?? Strings.emptyOption,
+                  ),
+              ],
+            ),
+          );
+        }
+      },
     );
-  }
-
-  double _calculateMinHeight(BuildContext context) {
-    final safeAreaSize = Platform.isIOS ? 44 : 0.0;
-    const appBarHeight = 24.0;
-    return MediaQuery.of(context).size.height -
-        kToolbarHeight -
-        kBottomNavigationBarHeight -
-        safeAreaSize -
-        appBarHeight;
   }
 }

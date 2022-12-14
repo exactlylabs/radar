@@ -7,10 +7,13 @@ import 'package:client_mobile_app/core/services/locations_service/i_locations_se
 import 'package:client_mobile_app/core/services/locations_service/implementation/locations_service.dart';
 import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
 import 'package:client_mobile_app/core/services/results_service/implementation/results_service.dart';
+import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:client_mobile_app/resources/theme.dart';
 import 'package:client_mobile_app/presentations/home_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ndt7_client/ndt7_client.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -18,11 +21,13 @@ class App extends StatelessWidget {
     required this.restClient,
     required this.localStorage,
     required this.httpProvider,
+    required this.ndt7client,
   }) : super(key: key);
 
   final RestClient restClient;
   final LocalStorage localStorage;
   final IHttpProvider httpProvider;
+  final Ndt7Client ndt7client;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +50,9 @@ class App extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => NavigationCubit()),
+          BlocProvider<SpeedTestCubit>(
+              create: (context) => SpeedTestCubit(resultsService: context.read<IResultsService>())),
+          BlocProvider(create: (context) => TakeSpeedTestStepCubit(ndt7client: ndt7client))
         ],
         child: const AppBuilder(),
       ),

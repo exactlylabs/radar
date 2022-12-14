@@ -28,35 +28,33 @@ class TakeSpeedTestStep extends StatelessWidget {
       networkType: networkType,
       networkPlace: networkPlace,
       address: address,
-      child: BlocProvider(
-        create: (context) => TakeSpeedTestStepCubit(ndt7client: GetIt.I<Ndt7Client>()),
-        child: BlocListener<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
-          listenWhen: (previous, current) => current.finishedTesting,
-          listener: (context, state) => context
-              .read<SpeedTestCubit>()
-              .saveResults(state.downloadSpeed!, state.uploadSpeed!, state.latency!, state.loss!, state.responses),
-          child: BlocBuilder<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
-            builder: (context, state) {
-              if (state.isTestingDownloadSpeed || state.isTestingUploadSpeed) {
-                return TestingSpeedStep(
-                  upload: state.uploadSpeed,
-                  download: state.downloadSpeed,
-                  loss: state.loss,
-                  latency: state.latency,
-                  isDownloadTest: state.isTestingDownloadSpeed,
-                );
-              } else if (state.finishedTesting) {
-                return TestResultsStep(
-                  download: state.downloadSpeed ?? 0,
-                  upload: state.uploadSpeed ?? 0,
-                  latency: state.latency ?? 0,
-                  loss: state.loss ?? 0,
-                );
-              } else {
-                return const StartSpeedTestStep();
-              }
-            },
-          ),
+      child: BlocListener<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
+        listenWhen: (previous, current) => current.finishedTesting,
+        listener: (context, state) => context
+            .read<SpeedTestCubit>()
+            .saveResults(state.downloadSpeed!, state.uploadSpeed!, state.latency!, state.loss!, state.responses),
+        child: BlocBuilder<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
+          builder: (context, state) {
+            if (state.isTestingDownloadSpeed || state.isTestingUploadSpeed) {
+              return TestingSpeedStep(
+                upload: state.uploadSpeed,
+                download: state.downloadSpeed,
+                loss: state.loss,
+                latency: state.latency,
+                isDownloadTest: state.isTestingDownloadSpeed,
+                progress: state.isTestingDownloadSpeed ? state.downloadProgress : state.uploadProgress,
+              );
+            } else if (state.finishedTesting) {
+              return TestResultsStep(
+                download: state.downloadSpeed ?? 0,
+                upload: state.uploadSpeed ?? 0,
+                latency: state.latency ?? 0,
+                loss: state.loss ?? 0,
+              );
+            } else {
+              return const StartSpeedTestStep();
+            }
+          },
         ),
       ),
     );

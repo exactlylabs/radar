@@ -33,7 +33,7 @@ class ResultItem extends StatelessWidget {
               style: AppTextStyle(
                 fontSize: 14.0,
                 fontWeight: 700,
-                letterSpacing: 0.3,
+                height: 1.78,
                 color: isEnabled
                     ? Theme.of(context).colorScheme.tertiary
                     : Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
@@ -63,6 +63,7 @@ class ResultItem extends StatelessWidget {
                 style: AppTextStyle(
                   fontSize: 14.0,
                   fontWeight: 600,
+                  height: 1.78,
                   color: value != null
                       ? isEnabled
                           ? Theme.of(context).colorScheme.primary
