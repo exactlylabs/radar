@@ -3,7 +3,7 @@ import {DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT, GET_STARTED_BUTTON_BG} from "../..
 
 const toolkitDetailSectionStyle: CSSProperties = {
   width: '100vw',
-  maxWidth: '1300px',
+  maxWidth: '1200px',
   marginLeft: 'auto',
   marginRight: 'auto',
   height: 'max-content',

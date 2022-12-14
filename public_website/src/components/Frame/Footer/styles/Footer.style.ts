@@ -2,7 +2,8 @@ import {CSSProperties} from "react";
 import {DEFAULT_SECONDARY_TEXT, HORIZONTAL_DIVIDER} from "../../../../utils/colors";
 
 const footerStyle: CSSProperties = {
-  maxWidth: '1300px',
+  width: '90%',
+  maxWidth: '1200px',
   marginTop: '84px',
   marginLeft: 'auto',
   marginRight: 'auto',

@@ -2,7 +2,7 @@ import {CSSProperties} from "react";
 import {DEFAULT_TEXT} from "../../../../utils/colors";
 
 const toolkitIntroductionSectionStyle: CSSProperties = {
-  maxWidth: '1300px',
+  maxWidth: '1200px',
   marginLeft: 'auto',
   marginRight: 'auto',
   height: 'max-content',
@@ -21,7 +21,7 @@ const textContainerStyle: CSSProperties = {
   maxWidth: '588px',
   marginLeft: '25%',
   marginRight: '25%',
-  textAlign: 'center'
+  textAlign: 'center',
 }
 
 const smallTextContainerStyle: CSSProperties = {
@@ -54,6 +54,7 @@ const subtitleStyle: CSSProperties = {
   lineHeight: '28px',
   textAlign: 'center',
   color: DEFAULT_TEXT,
+  margin: '0 0 20px 0'
 }
 
 const smallSubtitleStyle: CSSProperties = {

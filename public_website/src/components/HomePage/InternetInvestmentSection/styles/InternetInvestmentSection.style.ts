@@ -6,6 +6,7 @@ import {
 } from "../../../../utils/colors";
 
 const internetInvestmentSectionStyle: CSSProperties = {
+  width: '90%',
   maxWidth: '1200px',
   minHeight: '318px',
   borderRadius: '20px',

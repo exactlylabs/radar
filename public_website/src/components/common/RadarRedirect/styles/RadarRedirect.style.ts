@@ -3,7 +3,7 @@ import {INVESTMENT_SECTION_BLUE, INVESTMENT_SECTION_BLUE_BOX_SHADOW, WHITE} from
 
 const radarRedirectStyle: CSSProperties = {
   width: '90%',
-  maxWidth: '1300px',
+  maxWidth: '1200px',
   borderRadius: '20px',
   height: '245px',
   backgroundColor: INVESTMENT_SECTION_BLUE,
