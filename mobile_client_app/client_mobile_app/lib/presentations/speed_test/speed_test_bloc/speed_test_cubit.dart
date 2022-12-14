@@ -64,11 +64,11 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   void resetForm() => emit(const SpeedTestState());
 
   void preferNotToAnswer() {
-    if (state.step == 1) {
+    if (state.step == NETWORK_LOCATION_STEP) {
       emit(state.resetSpecificStep(true, false, false));
-    } else if (state.step == 2) {
+    } else if (state.step == NETWORK_TYPE_STEP) {
       emit(state.resetSpecificStep(false, true, false));
-    } else if (state.step == 3) {
+    } else if (state.step == MONTHLY_BILL_COST_STEP) {
       emit(state.resetSpecificStep(false, false, true));
     }
     emit(state.copyWith(step: state.step + 1));
