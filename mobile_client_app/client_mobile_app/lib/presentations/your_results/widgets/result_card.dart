@@ -1,4 +1,3 @@
-import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
@@ -32,52 +31,74 @@ class ResultCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10.0),
-            child: Image.asset(
-              networkType,
-              scale: 1.5,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              '$date\n$time',
-              textAlign: TextAlign.start,
-              style: AppTextStyle(
-                fontSize: 13.0,
-                fontWeight: 200,
-                color: Theme.of(context).colorScheme.tertiary,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 15.0),
+                child: Image.asset(
+                  networkType,
+                  scale: 1.75,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               ),
-            ),
+              Flexible(
+                flex: 1,
+                fit: FlexFit.loose,
+                child: Text(
+                  '$date\n$time',
+                  maxLines: 2,
+                  textAlign: TextAlign.start,
+                  style: AppTextStyle(
+                    fontSize: 14.0,
+                    fontWeight: 200,
+                    height: 1.1,
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Expanded(
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
             child: Text(
               download,
               textAlign: TextAlign.center,
               style: AppTextStyle(
                 fontSize: 15.0,
                 fontWeight: 200,
+                height: 1.66,
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
-          Expanded(
-            child: Text(
-              upload,
-              textAlign: TextAlign.center,
-              style: AppTextStyle(
-                fontSize: 15.0,
-                fontWeight: 200,
-                color: Theme.of(context).colorScheme.primary,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                flex: 1,
+                fit: FlexFit.loose,
+                child: Text(
+                  upload,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle(
+                    fontSize: 15.0,
+                    fontWeight: 200,
+                    height: 1.66,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 22.0),
+              GestureDetector(
+                onTap: onTap,
+                child: Image.asset(Images.infoIcon),
+              )
+            ],
           ),
-          GestureDetector(
-            onTap: onTap,
-            child: Image.asset(Images.infoIcon),
-          )
         ],
       ),
     );

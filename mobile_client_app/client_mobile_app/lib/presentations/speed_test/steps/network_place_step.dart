@@ -27,61 +27,73 @@ class NetworkPlaceStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    return Column(
-      children: [
-        const TitleAndSubtitle(
-          title: Strings.networkPlaceStepTitle,
-          subtitle: Strings.networkPlaceStepSubtitle,
-        ),
-        SpacerWithMax(size: height * 0.037, maxSize: 30.0),
-        ListView.separated(
-          shrinkWrap: true,
-          itemCount: NETWORK_LOCATIONS.length + 1,
-          separatorBuilder: (context, index) {
-            if (index < 2) {
-              return SpacerWithMax(size: height * 0.012, maxSize: 10.0);
-            } else if (index == 2) {
-              final horizontal = height * 0.025 < 20.0 ? height * 0.025 : 20.0;
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: 14.5),
-                child: HorizontalDashedSeparator(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
-              );
-            } else {
-              return SpacerWithMax(size: height * 0.025, maxSize: 220.0);
-            }
-          },
-          itemBuilder: (context, idx) {
-            if (idx < NETWORK_LOCATIONS.length) {
-              final entry = NETWORK_LOCATIONS.entries.elementAt(idx);
-              return OptionCard(
-                name: entry.key,
-                icon: entry.value,
-                isSelected: optionSelected == entry.key,
-                onTap: (name) => name == Strings.iDontHaveNetworkLocation
-                    ? _noInternetModal(context, address)
-                    : context.read<SpeedTestCubit>().setNetworkLocation(name),
-              );
-            } else {
-              return PreferNotToAnswerButton(
-                onPressed: (option) {
-                  context.read<SpeedTestCubit>().setNetworkLocation(option);
-                  context.read<SpeedTestCubit>().nextStep();
-                },
-              );
-            }
-          },
-        ),
-        SpacerWithMax(size: height * 0.042, maxSize: 34.0),
-        GoBackAndContinueButtons(
-          onGoBackPressed: () => context.read<SpeedTestCubit>().previousStep(),
-          onContinuePressed: isStepValid
-              ? optionSelected == Strings.iDontHaveNetworkLocation
-                  ? () => context.read<SpeedTestCubit>().endForm()
-                  : () => context.read<SpeedTestCubit>().nextStep()
-              : null,
-        ),
-        SpacerWithMax(size: height * 0.053, maxSize: 45.0),
-      ],
+    return Expanded(
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                const TitleAndSubtitle(
+                  title: Strings.networkPlaceStepTitle,
+                  subtitle: Strings.networkPlaceStepSubtitle,
+                  subtitleHeight: 1.56,
+                  titleHeight: 1.81,
+                ),
+                SpacerWithMax(size: height * 0.037, maxSize: 30.0),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: NETWORK_LOCATIONS.length + 1,
+                  separatorBuilder: (context, index) {
+                    if (index < 2) {
+                      return SpacerWithMax(size: height * 0.012, maxSize: 10.0);
+                    } else if (index == 2) {
+                      final horizontal = height * 0.025 < 20.0 ? height * 0.025 : 20.0;
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: 14.5),
+                        child: HorizontalDashedSeparator(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
+                      );
+                    } else {
+                      return SpacerWithMax(size: height * 0.025, maxSize: 220.0);
+                    }
+                  },
+                  itemBuilder: (context, idx) {
+                    if (idx < NETWORK_LOCATIONS.length) {
+                      final entry = NETWORK_LOCATIONS.entries.elementAt(idx);
+                      return OptionCard(
+                        name: entry.key,
+                        icon: entry.value,
+                        isSelected: optionSelected == entry.key,
+                        onTap: (name) => context.read<SpeedTestCubit>().setNetworkLocation(name),
+                      );
+                    } else {
+                      return PreferNotToAnswerButton(
+                        onPressed: (option) => context.read<SpeedTestCubit>().preferNotToAnswer(),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 0.0,
+            right: 0.0,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 45.0),
+              child: GoBackAndContinueButtons(
+                onGoBackPressed: () => context.read<SpeedTestCubit>().previousStep(),
+                onContinuePressed: isStepValid
+                    ? optionSelected == Strings.iDontHaveNetworkLocation
+                        ? () => _noInternetModal(context, address)
+                        : () => context.read<SpeedTestCubit>().nextStep()
+                    : null,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -94,7 +106,7 @@ class NetworkPlaceStep extends StatelessWidget {
         address: address,
         onPressed: () {
           Navigator.of(context).pop();
-          context.read<SpeedTestCubit>().setNetworkLocation(Strings.iDontHaveNetworkLocation);
+          context.read<SpeedTestCubit>().endForm();
         },
       ),
     );

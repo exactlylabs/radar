@@ -39,6 +39,7 @@ class TestResultsStep extends StatelessWidget {
           style: AppTextStyle(
             fontSize: 22.0,
             fontWeight: 800,
+            height: 1.81,
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
@@ -62,6 +63,7 @@ class TestResultsStep extends StatelessWidget {
           style: AppTextStyle(
             fontSize: 16.0,
             fontWeight: 200,
+            height: 1.56,
             color: AppColors.darkGrey,
           ),
         ),
@@ -69,6 +71,7 @@ class TestResultsStep extends StatelessWidget {
           onPressed: () {
             context.read<NavigationCubit>().changeTab(2);
             context.read<SpeedTestCubit>().resetForm();
+            context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
           },
         ),
         SpacerWithMax(size: height * 0.025, maxSize: 20.0),
@@ -84,11 +87,13 @@ class TestResultsStep extends StatelessWidget {
           onPressed: () {
             context.read<NavigationCubit>().changeTab(1);
             context.read<SpeedTestCubit>().resetForm();
+            context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
           },
         ),
         SpacerWithMax(size: height * 0.025, maxSize: 20.0),
         PrimaryButton(
           color: Theme.of(context).colorScheme.onPrimary,
+          shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
           child: Text(
             Strings.testAgainButtonLabel,
             style: AppTextStyle(

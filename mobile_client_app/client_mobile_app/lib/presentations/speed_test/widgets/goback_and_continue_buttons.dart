@@ -18,17 +18,17 @@ class GoBackAndContinueButtons extends StatelessWidget {
     if (onGoBackPressed != null) {
       return Row(
         children: [
-          Expanded(
+          Flexible(
+            flex: 5,
             child: PrimaryButton(
               onPressed: onGoBackPressed,
               shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
               color: Theme.of(context).colorScheme.onPrimary,
               child: Row(
-                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.arrow_back,
+                  Image.asset(
+                    Images.leftArrow,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 15.0),
@@ -45,7 +45,8 @@ class GoBackAndContinueButtons extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 20.0),
-          Expanded(
+          Flexible(
+            flex: 6,
             child: PrimaryButton(
               shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
               onPressed: onContinuePressed,
@@ -61,8 +62,8 @@ class GoBackAndContinueButtons extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 15.0),
-                  Icon(
-                    Icons.arrow_forward,
+                  Image.asset(
+                    Images.buttonRightArrow,
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ],
@@ -83,12 +84,11 @@ class GoBackAndContinueButtons extends StatelessWidget {
                 fontSize: 16.0,
                 fontWeight: 700,
                 color: Theme.of(context).colorScheme.onPrimary,
-                letterSpacing: 0.5,
               ),
             ),
             const SizedBox(width: 15.0),
             Image.asset(
-              Images.rightArrow,
+              Images.buttonRightArrow,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ],

@@ -26,18 +26,36 @@ class HomePage extends StatelessWidget {
           bottomNavigationBar: BottomNavigationBar(
             items: [
               BottomNavigationBarItem(
-                icon: Image.asset(Images.speedTest),
-                activeIcon: Image.asset(Images.speedTestSelected),
+                icon: Container(
+                  margin: const EdgeInsets.only(bottom: 5.0),
+                  child: Image.asset(Images.speedTest),
+                ),
+                activeIcon: Container(
+                  margin: const EdgeInsets.only(bottom: 5.0),
+                  child: Image.asset(Images.speedTestSelected),
+                ),
                 label: Strings.speedTestLabel,
               ),
               BottomNavigationBarItem(
-                icon: Image.asset(Images.yourResults),
-                activeIcon: Image.asset(Images.yourResultsSelected),
+                icon: Container(
+                  margin: const EdgeInsets.only(bottom: 5.0),
+                  child: Image.asset(Images.yourResults),
+                ),
+                activeIcon: Container(
+                  margin: const EdgeInsets.only(bottom: 5.0),
+                  child: Image.asset(Images.yourResultsSelected),
+                ),
                 label: Strings.yourResultsLabel,
               ),
               BottomNavigationBarItem(
-                icon: Image.asset(Images.map),
-                activeIcon: Image.asset(Images.mapSelected),
+                icon: Container(
+                  margin: const EdgeInsets.only(bottom: 5.0),
+                  child: Image.asset(Images.map),
+                ),
+                activeIcon: Container(
+                  margin: const EdgeInsets.only(bottom: 5.0),
+                  child: Image.asset(Images.mapSelected),
+                ),
                 label: Strings.mapLabel,
               ),
             ],

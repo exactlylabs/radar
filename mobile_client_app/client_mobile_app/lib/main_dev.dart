@@ -7,8 +7,9 @@ import 'package:client_mobile_app/core/flavors/app_config.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/flavors/string_resource/string_resource_dev.dart';
+import 'package:ndt7_client/ndt7_client.dart';
 
-Future<void> main() async {
+void main() async {
   final devStringResources = StringResourceDev();
   mainCommon(devStringResources.SERVER_ENDPOINT);
 
@@ -19,8 +20,9 @@ Future<void> main() async {
       restClient: GetIt.I<RestClient>(),
       localStorage: GetIt.I<LocalStorage>(),
       httpProvider: GetIt.I<IHttpProvider>(),
+      ndt7client: GetIt.I<Ndt7Client>(),
     ),
   );
 
-  await Utils.run(devConfig);
+  Utils.run(devConfig);
 }

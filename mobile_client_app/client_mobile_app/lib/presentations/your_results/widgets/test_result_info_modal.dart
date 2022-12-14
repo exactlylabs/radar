@@ -37,11 +37,22 @@ class TestResultInfoModal extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
+          Strings.testResultsModalTitle,
+          textAlign: TextAlign.center,
+          style: AppTextStyle(
+            fontSize: 20.0,
+            fontWeight: 800,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const SizedBox(height: 10.0),
+        Text(
           '$date $time',
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 16.0,
             fontWeight: 200,
+            height: 1.56,
             color: Theme.of(context).colorScheme.tertiary,
           ),
         ),

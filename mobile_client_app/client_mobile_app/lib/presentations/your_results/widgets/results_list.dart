@@ -95,7 +95,7 @@ class _ResultsListState extends State<ResultsList> {
     return modalWithTitle(
       context,
       true,
-      Strings.testResultsModalTitle,
+      Strings.emptyString,
       TestResultInfoModal(
         date: _dateFromDateTime(result.dateTime),
         time: _timeFromDateTime(result.dateTime),

@@ -18,6 +18,8 @@ class Images {
   static const locationOther = 'assets/icons/location_other.png';
   static const locationNoInternet = 'assets/icons/location_nointernet.png';
   static const rightArrow = 'assets/icons/right_arrow.png';
+  static const buttonRightArrow = 'assets/icons/button_right_arrow.png';
+  static const leftArrow = 'assets/icons/left_arrow.png';
   static const connectionWired = 'assets/icons/connection_wired.png';
   static const connectionWifi = 'assets/icons/connection_wifi.png';
   static const connectionCellular = 'assets/icons/connection_cellular.png';

@@ -22,6 +22,7 @@ class NoInternetModal extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        const SizedBox(height: 15.0),
         Image.asset(Images.locationNoInternetBig, height: 50.0),
         const SizedBox(height: 30.0),
         Text(
@@ -30,7 +31,6 @@ class NoInternetModal extends StatelessWidget {
           style: AppTextStyle(
             fontSize: 20.0,
             fontWeight: 800,
-            height: 1.5,
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
@@ -41,7 +41,7 @@ class NoInternetModal extends StatelessWidget {
           style: AppTextStyle(
             fontSize: 16.0,
             fontWeight: 200,
-            height: 1.5,
+            height: 1.56,
             color: AppColors.darkGrey,
           ),
         ),
@@ -62,8 +62,8 @@ class NoInternetModal extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 15.0),
-              Icon(
-                Icons.arrow_forward,
+              Image.asset(
+                Images.buttonRightArrow,
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
             ],
@@ -72,6 +72,7 @@ class NoInternetModal extends StatelessWidget {
         const SizedBox(height: 20.0),
         PrimaryButton(
           color: Theme.of(context).colorScheme.onPrimary,
+          shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
           child: Text(
             Strings.cancelButttonLabel,
             style: AppTextStyle(

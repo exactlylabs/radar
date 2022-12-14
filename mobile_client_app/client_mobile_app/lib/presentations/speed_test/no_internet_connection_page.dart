@@ -1,5 +1,6 @@
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/resources/app_colors.dart';
@@ -56,6 +57,7 @@ class NoInternetConnectionPage extends StatelessWidget {
             onPressed: () {
               context.read<NavigationCubit>().changeTab(2);
               context.read<SpeedTestCubit>().resetForm();
+              context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
             },
           ),
           SpacerWithMax(size: height * 0.025, maxSize: 20.0),
@@ -69,7 +71,10 @@ class NoInternetConnectionPage extends StatelessWidget {
                 color: AppColors.darkGrey,
               ),
             ),
-            onPressed: () => context.read<SpeedTestCubit>().resetForm(),
+            onPressed: () {
+              context.read<SpeedTestCubit>().resetForm();
+              context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
+            },
           ),
           SpacerWithMax(size: height * 0.053, maxSize: 45.0),
         ],

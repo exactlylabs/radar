@@ -10,12 +10,14 @@ class SummaryTable extends StatelessWidget {
     required this.address,
     required this.networkType,
     required this.networkPlace,
+    this.progress = 0.0,
   }) : super(key: key);
 
   final String address;
   final String networkPlace;
   final String networkType;
   final String? networkQuality;
+  final double progress;
 
   @override
   Widget build(BuildContext context) {
@@ -37,42 +39,56 @@ class SummaryTable extends StatelessWidget {
             height: 1,
             color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
           ),
-          IntrinsicHeight(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconWithText(
-                  icon: _getNetworkLocationIcon(networkPlace),
-                  text: networkPlace,
-                  alignment: MainAxisAlignment.end,
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              IntrinsicHeight(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconWithText(
+                      icon: _getNetworkLocationIcon(networkPlace),
+                      text: networkPlace,
+                      alignment: MainAxisAlignment.end,
+                    ),
+                    VerticalDivider(
+                      thickness: 1,
+                      indent: 10,
+                      endIndent: 11,
+                      color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+                    ),
+                    IconWithText(
+                      icon: _getNetworkTypeIcon(networkType),
+                      text: networkType,
+                      alignment: MainAxisAlignment.center,
+                    ),
+                    if (networkQuality != null) ...[
+                      VerticalDivider(
+                        thickness: 1,
+                        indent: 8,
+                        endIndent: 8,
+                        color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+                      ),
+                      IconWithText(
+                        icon: _getNetworkQualityIcon(networkQuality!),
+                        text: networkQuality!,
+                        alignment: MainAxisAlignment.start,
+                      ),
+                    ],
+                  ],
                 ),
-                VerticalDivider(
-                  thickness: 1,
-                  indent: 8,
-                  endIndent: 8,
-                  color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  color: Theme.of(context).colorScheme.secondary,
+                  backgroundColor: Colors.transparent,
+                  minHeight: 2,
                 ),
-                IconWithText(
-                  icon: _getNetworkTypeIcon(networkType),
-                  text: networkType,
-                  alignment: MainAxisAlignment.center,
-                ),
-                if (networkQuality != null) ...[
-                  VerticalDivider(
-                    thickness: 1,
-                    indent: 8,
-                    endIndent: 8,
-                    color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
-                  ),
-                  IconWithText(
-                    icon: _getNetworkQualityIcon(networkQuality!),
-                    text: networkQuality!,
-                    alignment: MainAxisAlignment.start,
-                  ),
-                ]
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

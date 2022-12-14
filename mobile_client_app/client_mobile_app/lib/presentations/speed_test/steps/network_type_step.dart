@@ -24,51 +24,65 @@ class NetworkTypeStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    return Column(
-      children: [
-        const TitleAndSubtitle(
-          title: Strings.networkTypeStepTitle,
-          subtitle: Strings.networkTypeStepSubtitle,
-        ),
-        SpacerWithMax(size: height * 0.037, maxSize: 30.0),
-        ListView.separated(
-          shrinkWrap: true,
-          itemCount: CONNECTION_TYPE.length + 1,
-          separatorBuilder: (context, index) {
-            if (index < CONNECTION_TYPE.length - 1) {
-              return SpacerWithMax(size: height * 0.012, maxSize: 10.0);
-            } else {
-              return SpacerWithMax(size: height * 0.025, maxSize: 20.0);
-            }
-          },
-          itemBuilder: (context, idx) {
-            if (idx < CONNECTION_TYPE.length) {
-              final entry = CONNECTION_TYPE.entries.elementAt(idx);
-              return OptionCard(
-                name: entry.key,
-                icon: entry.value,
-                isSelected: optionSelected == entry.key,
-                onTap: (name) => name == Strings.cellularConnectionType
-                    ? _cellularConnectionModal(context)
-                    : context.read<SpeedTestCubit>().setNetworkType(name),
-              );
-            } else {
-              return PreferNotToAnswerButton(
-                onPressed: (option) {
-                  context.read<SpeedTestCubit>().setNetworkType(option);
-                  context.read<SpeedTestCubit>().nextStep();
-                },
-              );
-            }
-          },
-        ),
-        SpacerWithMax(size: height * 0.12, maxSize: 95.0),
-        GoBackAndContinueButtons(
-          onGoBackPressed: () => context.read<SpeedTestCubit>().previousStep(),
-          onContinuePressed: isStepValid ? () => context.read<SpeedTestCubit>().nextStep() : null,
-        ),
-        SpacerWithMax(size: height * 0.053, maxSize: 45.0),
-      ],
+    return Expanded(
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                const TitleAndSubtitle(
+                  title: Strings.networkTypeStepTitle,
+                  subtitle: Strings.networkTypeStepSubtitle,
+                  subtitleHeight: 1.56,
+                  titleHeight: 1.81,
+                ),
+                SpacerWithMax(size: height * 0.037, maxSize: 30.0),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: CONNECTION_TYPE.length + 1,
+                  separatorBuilder: (context, index) {
+                    if (index < CONNECTION_TYPE.length - 1) {
+                      return SpacerWithMax(size: height * 0.012, maxSize: 10.0);
+                    } else {
+                      return SpacerWithMax(size: height * 0.025, maxSize: 20.0);
+                    }
+                  },
+                  itemBuilder: (context, idx) {
+                    if (idx < CONNECTION_TYPE.length) {
+                      final entry = CONNECTION_TYPE.entries.elementAt(idx);
+                      return OptionCard(
+                        name: entry.key,
+                        icon: entry.value,
+                        isSelected: optionSelected == entry.key,
+                        onTap: (name) => name == Strings.cellularConnectionType
+                            ? _cellularConnectionModal(context)
+                            : context.read<SpeedTestCubit>().setNetworkType(name),
+                      );
+                    } else {
+                      return PreferNotToAnswerButton(
+                        onPressed: (option) => context.read<SpeedTestCubit>().preferNotToAnswer(),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 0.0,
+            right: 0.0,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 45.0),
+              child: GoBackAndContinueButtons(
+                onGoBackPressed: () => context.read<SpeedTestCubit>().previousStep(),
+                onContinuePressed: isStepValid ? () => context.read<SpeedTestCubit>().nextStep() : null,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

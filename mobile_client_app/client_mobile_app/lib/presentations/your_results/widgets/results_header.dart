@@ -10,10 +10,13 @@ class ResultsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(35, 12, 40, 12),
+      padding: const EdgeInsets.fromLTRB(46, 12, 60, 12),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
             child: Text(
               'Date/Time',
               textAlign: TextAlign.center,
@@ -24,11 +27,14 @@ class ResultsHeader extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const SizedBox(width: 5.0),
                 Image.asset(Images.downloadIcon),
                 const SizedBox(width: 5.0),
                 Text(
@@ -43,7 +49,9 @@ class ResultsHeader extends StatelessWidget {
               ],
             ),
           ),
-          Expanded(
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
             child: Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
               Image.asset(Images.uploadIcon),
               const SizedBox(width: 5.0),

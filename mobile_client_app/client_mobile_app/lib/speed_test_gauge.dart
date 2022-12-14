@@ -276,17 +276,26 @@ class _SpeedTestGaugeCustomPainter extends CustomPainter {
       ],
     );
 
+    Path path = Path();
+    path.addArc(
+      Rect.fromCircle(center: center!, radius: mRadius),
+      degToRad(arcStartAngle) as double,
+      degToRad(_getAngleOfSpeed(speed)) as double,
+    );
+
+    Paint shadowPaint = Paint();
+    shadowPaint.strokeWidth = gaugeWidth;
+    shadowPaint.strokeCap = StrokeCap.round;
+    shadowPaint.style = PaintingStyle.stroke;
+    shadowPaint.color = isDownloadTest ? Color.fromRGBO(0, 163, 255, 0.2) : Color.fromRGBO(229, 101, 187, 0.2);
+    shadowPaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 10);
+
     paint.shader = isDownloadTest
         ? downloadGradient.createShader(Rect.fromCircle(center: center!, radius: mRadius))
         : uploadGradient.createShader(Rect.fromCircle(center: center!, radius: mRadius));
 
-    canvas.drawArc(
-      Rect.fromCircle(center: center!, radius: mRadius),
-      degToRad(arcStartAngle) as double,
-      degToRad(_getAngleOfSpeed(speed)) as double,
-      false,
-      paint,
-    );
+    canvas.drawPath(path.shift(const Offset(0, 0)), shadowPaint);
+    canvas.drawPath(path, paint);
 
     paint.style = PaintingStyle.fill;
   }
@@ -324,9 +333,10 @@ class _SpeedTestGaugeCustomPainter extends CustomPainter {
   void _drawSteps(Canvas canvas, Size size) {
     final steps = ['0', '5', '10', '15', '20', '30', '50', '75', '100'];
     for (double i = 0; i <= 270; i = i + (33.75)) {
+      final index = (i / 33.75).round();
       final angle = i + arcStartAngle;
       var offset = _getDegreeOffsetOnCircle(mDottedCircleRadius, angle);
-      TextSpan span = TextSpan(style: minMaxTextStyle, text: steps[(i / 33.75).round()]);
+      TextSpan span = TextSpan(style: minMaxTextStyle, text: steps[index]);
       TextPainter textPainter = TextPainter(
         text: span,
         textDirection: TextDirection.ltr,
@@ -335,10 +345,39 @@ class _SpeedTestGaugeCustomPainter extends CustomPainter {
         minWidth: 0,
         maxWidth: size.width,
       );
+      double width;
+      double height;
 
-      final width = -textPainter.width / 2;
+      if (index == 0) {
+        width = -textPainter.width / 2;
+        height = -textPainter.height * 0.1;
+      } else if (index == 1) {
+        width = -textPainter.width;
+        height = -textPainter.height * 0.1;
+      } else if (index == 2) {
+        width = -textPainter.width;
+        height = -textPainter.height * 0.1;
+      } else if (index == 3) {
+        width = -textPainter.width;
+        height = -textPainter.height / 2;
+      } else if (index == 4) {
+        width = -textPainter.width / 2;
+        height = -textPainter.height;
+      } else if (index == 5) {
+        width = textPainter.width * 0.1;
+        height = -textPainter.height / 2;
+      } else if (index == 6) {
+        width = -textPainter.width / 5;
+        height = -textPainter.height * 0.1;
+      } else if (index == 7) {
+        width = -textPainter.width / 2;
+        height = -textPainter.height * 0.1;
+      } else {
+        width = -textPainter.width * 0.8;
+        height = -textPainter.height * 0.1;
+      }
 
-      offset = offset.translate(width, -textPainter.height / 2);
+      offset = offset.translate(width, height);
       textPainter.paint(canvas, offset);
     }
   }

@@ -25,12 +25,16 @@ class ExploreYoutAreaButton extends StatelessWidget {
               color: Theme.of(context).colorScheme.secondary,
               fontSize: 16.0,
               fontWeight: 700,
+              height: 1.56,
             ),
           ),
-          const SizedBox(width: 5.0),
-          Image.asset(
-            Images.rightArrow,
-            color: Theme.of(context).colorScheme.secondary,
+          const SizedBox(width: 7.0),
+          Container(
+            margin: const EdgeInsets.only(top: 4.0),
+            child: Image.asset(
+              Images.buttonRightArrow,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           ),
         ],
       ),

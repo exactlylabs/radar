@@ -43,7 +43,6 @@ dependencies:
   dio: ^4.0.6
   path_provider: ^2.0.11
   webview_flutter: ^3.0.4
-  hydrated_bloc: ^8.1.0
   intl: ^0.17.0
   flutter_map: ^3.0.0
   async: ^2.9.0

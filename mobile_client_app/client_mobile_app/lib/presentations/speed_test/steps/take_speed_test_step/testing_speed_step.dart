@@ -15,6 +15,7 @@ class TestingSpeedStep extends StatelessWidget {
     this.upload,
     this.loss,
     this.latency,
+    this.progress = 0.0,
     required this.isDownloadTest,
   }) : super(key: key);
 
@@ -22,6 +23,7 @@ class TestingSpeedStep extends StatelessWidget {
   final double? download;
   final double? loss;
   final double? latency;
+  final double progress;
   final bool isDownloadTest;
 
   @override
@@ -35,22 +37,23 @@ class TestingSpeedStep extends StatelessWidget {
           address: InheritedFormInformation.of(context).address,
           networkType: InheritedFormInformation.of(context).networkType,
           networkPlace: InheritedFormInformation.of(context).networkPlace,
+          progress: progress,
         ),
         SpacerWithMax(size: height * 0.0616, maxSize: 50.0),
         SizedBox(
-          height: width * 0.565 < 250 ? width * 0.565 : 250,
-          width: width * 0.565 < 250 ? width * 0.565 : 250,
+          height: width * 0.565 < 212 ? width * 0.565 : 212,
+          width: width * 0.565 < 212 ? width * 0.565 : 212,
           child: Center(
             child: SpeedTestGauge(
               speed: (isDownloadTest ? download : upload) ?? 0,
               minSpeed: 0,
               maxSpeed: 100,
-              gaugeWidth: 20,
+              gaugeWidth: 16,
               fractionDigits: 2,
               isDownloadTest: isDownloadTest,
               animate: true,
               minMaxTextStyle: AppTextStyle(
-                fontSize: 15.0,
+                fontSize: 13.0,
                 color: AppColors.lightGray.withOpacity(0.5),
                 fontWeight: 700,
               ),
@@ -58,6 +61,7 @@ class TestingSpeedStep extends StatelessWidget {
                 fontSize: 14.0,
                 color: AppColors.deepBlue,
                 fontWeight: 600,
+                height: 2,
               ),
               speedTextStyle: AppTextStyle(
                 fontSize: 38.0,

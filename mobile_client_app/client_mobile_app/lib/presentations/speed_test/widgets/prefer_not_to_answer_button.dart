@@ -25,14 +25,13 @@ class PreferNotToAnswerButton extends StatelessWidget {
             style: AppTextStyle(
               color: Theme.of(context).colorScheme.tertiary,
               fontSize: 15.0,
+              height: 1.66,
               fontWeight: 700,
             ),
           ),
           const SizedBox(width: 5.0),
           Image.asset(
             Images.rightArrow,
-            width: 10.0,
-            height: 10.0,
             color: Theme.of(context).colorScheme.tertiary,
           ),
         ],

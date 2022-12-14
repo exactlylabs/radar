@@ -21,29 +21,46 @@ class MonthlyBillCostStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    return Column(
-      children: [
-        const TitleAndSubtitle(
-          title: Strings.monthlyBillCostStepTitle,
-          subtitle: Strings.monthlyBillCostStepSubtitle,
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 5.0),
+                  const TitleAndSubtitle(
+                    title: Strings.monthlyBillCostStepTitle,
+                    subtitle: Strings.monthlyBillCostStepSubtitle,
+                    subtitleHeight: 1.56,
+                    titleHeight: 1.36,
+                  ),
+                  SpacerWithMax(size: height * 0.037, maxSize: 30.0),
+                  BillCostInputField(
+                    billCost: billCost,
+                    onChanged: (value) => context.read<SpeedTestCubit>().setMonthlyBillCost(int.tryParse(value) ?? 0),
+                  ),
+                  SpacerWithMax(size: height * 0.025, maxSize: 20.0),
+                  PreferNotToAnswerButton(onPressed: (_) => context.read<SpeedTestCubit>().preferNotToAnswer()),
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 0.0,
+              right: 0.0,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 45.0),
+                child: GoBackAndContinueButtons(
+                  onGoBackPressed: () => context.read<SpeedTestCubit>().previousStep(),
+                  onContinuePressed: isStepValid ? () => context.read<SpeedTestCubit>().nextStep() : null,
+                ),
+              ),
+            ),
+          ],
         ),
-        SpacerWithMax(size: height * 0.037, maxSize: 30.0),
-        BillCostInputField(
-          billCost: billCost,
-          onChanged: (value) => context.read<SpeedTestCubit>().setMonthlyBillCost(int.tryParse(value) ?? 0),
-        ),
-        SpacerWithMax(size: height * 0.025, maxSize: 20.0),
-        PreferNotToAnswerButton(onPressed: (_) {
-          context.read<SpeedTestCubit>().setMonthlyBillCost(0);
-          context.read<SpeedTestCubit>().nextStep();
-        }),
-        SpacerWithMax(size: height * 0.018, maxSize: 15.0),
-        GoBackAndContinueButtons(
-          onGoBackPressed: () => context.read<SpeedTestCubit>().previousStep(),
-          onContinuePressed: isStepValid ? () => context.read<SpeedTestCubit>().nextStep() : null,
-        ),
-        SpacerWithMax(size: height * 0.053, maxSize: 45.0),
-      ],
+      ),
     );
   }
 }
