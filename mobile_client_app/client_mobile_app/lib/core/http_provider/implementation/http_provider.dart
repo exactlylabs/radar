@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:client_mobile_app/core/http_provider/failures/http_provider_failure.dart';
+import 'package:dio/dio.dart';
+import 'package:dartz/dartz.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/http_provider/models/http_response_model.dart';
-import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
+import 'package:client_mobile_app/core/http_provider/failures/http_provider_failure.dart';
 
 class HttpProvider implements IHttpProvider {
   @override

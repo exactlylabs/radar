@@ -15,4 +15,7 @@ class StringResourceDev implements IStringResource {
 
   @override
   String WEB_ENDPOINT = 'https://speedtest-staging.exactlylabs.com/';
+
+  @override
+  String ENVIRONMENT = 'development';
 }

@@ -4,6 +4,7 @@ import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/services/locations_service/i_locations_service.dart';
 import 'package:client_mobile_app/presentations/speed_test/utils/utils.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class LocationsService implements ILocationsService {
   LocationsService({
@@ -57,7 +58,10 @@ class LocationsService implements ILocationsService {
     );
 
     return failureOrLocations.fold(
-      (failure) => [],
+      (failure) {
+        Sentry.captureException(failure.exception, stackTrace: failure.stackTrace);
+        return [];
+      },
       (locations) => locations.map((location) => Location.fromJson(location)).toList(),
     );
   }
@@ -70,7 +74,10 @@ class LocationsService implements ILocationsService {
       fromJson: (json) => Location.fromJsonWithDefaultValues(json),
     );
     return failureOrLocation.fold(
-      (failure) => null,
+      (failure) {
+        Sentry.captureException(failure.exception, stackTrace: failure.stackTrace);
+        return null;
+      },
       (location) => location,
     );
   }
