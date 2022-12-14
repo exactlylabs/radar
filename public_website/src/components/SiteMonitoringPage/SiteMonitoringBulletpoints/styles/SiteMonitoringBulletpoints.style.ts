@@ -8,7 +8,7 @@ const siteMonitoringBulletPointsStyle: CSSProperties = {
 
 const siteMonitoringBulletPointsContentStyle: CSSProperties = {
   width: '90%',
-  maxWidth: '1300px',
+  maxWidth: '1200px',
   height: 'calc(100% - 270px)',
   margin: '80px auto 190px',
   display: 'flex',

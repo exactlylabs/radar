@@ -5,6 +5,7 @@ import {
 } from "../../../../utils/colors";
 
 const toolkitRedirectionSectionStyle: CSSProperties = {
+  width: '90%',
   minWidth: '750px',
   maxWidth: '1200px',
   minHeight: '330px',

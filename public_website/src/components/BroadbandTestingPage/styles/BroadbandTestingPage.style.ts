@@ -6,7 +6,7 @@ const broadbandTestingPageStyle: CSSProperties = {
 
 const broadbandTestingPageContentStyle: CSSProperties = {
   width: '90%',
-  maxWidth: '1300px',
+  maxWidth: '1200px',
   margin: '0 auto'
 }
 

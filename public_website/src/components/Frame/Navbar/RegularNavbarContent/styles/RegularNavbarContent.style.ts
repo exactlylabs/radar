@@ -2,8 +2,8 @@ import {CSSProperties} from "react";
 import {DEFAULT_TEXT} from "../../../../../utils/colors";
 
 const navbarContentStyle: CSSProperties = {
-  width: '100%',
-  maxWidth: '1300px',
+  width: '90%',
+  maxWidth: '1200px',
   height: '100%',
   display: 'flex',
   flexDirection: 'row',

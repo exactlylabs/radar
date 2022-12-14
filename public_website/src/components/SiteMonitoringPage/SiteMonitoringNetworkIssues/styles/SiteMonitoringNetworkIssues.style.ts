@@ -53,7 +53,7 @@ const itemIconContainer: CSSProperties = {
 const wavesStyle: CSSProperties = {
   width: '100%',
   height: 'auto',
-  maxWidth: '1300px',
+  maxWidth: '1200px',
   maxHeight: '150px',
 }
 

@@ -1,5 +1,9 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/BroadbandTestingSpeedtest.style";
+import ChevronRightWhite from "../../../assets/images/chevron-right-white.png";
+import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
+import CustomButton from "../../common/CustomButton/CustomButton";
+import {goToHome} from "../../../utils/navigation";
 
 const BroadbandTestingSpeedtest = (): ReactElement => {
 
@@ -22,7 +26,23 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
   return (
     <div style={styles.BroadbandTestingSpeedtest}>
       <div style={styles.BroadbandTestingSpeedtestContent}>
+        <div style={styles.LeftColumn}>
+          <p className={'fw-bold'} style={styles.Header}>Speed test integration</p>
+          <p className={'fw-extra-bold'} style={styles.Title}>Enable visitors to run speed tests from your website.</p>
+          <p className={'fw-bold'} style={styles.Subtitle}>Add our white-lablable widget</p>
+          <p className={'fw-medium'} style={styles.Paragraph}>Enable your community to run speed tests and compare their service to their neighborhood’s, while capturing more information beyond their connections like service cost, location type and geolocation.
+            Contact us for customization and launching within the context of your own community.</p>
+          <CustomButton text={'Get started'}
+                        onClick={goToHome}
+                        icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
+                        backgroundColor={DEFAULT_PRIMARY_BUTTON}
+                        color={WHITE}
+                        boxShadow={`0 4px 15px -2px ${DEFAULT_PRIMARY_BUTTON_BOX_SHADOW}`}
+          />
+        </div>
+        <div style={styles.RightColumn}>
 
+        </div>
       </div>
     </div>
   );

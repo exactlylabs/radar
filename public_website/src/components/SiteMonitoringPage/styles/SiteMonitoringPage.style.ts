@@ -6,7 +6,7 @@ const siteMonitoringPageStyle: CSSProperties = {
 
 const siteMonitoringPageContentStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
-  maxWidth: '1300px',
+  maxWidth: '1200px',
   margin: '0 auto',
 }
 
