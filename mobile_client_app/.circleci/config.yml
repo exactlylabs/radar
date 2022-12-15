@@ -178,67 +178,67 @@ workflows:
           version: 3.3.1
       
       # Android
-      ## Build Flavors
-      # - build-android:
-      #     name: "build-android-dev"
-      #     requires: [unit_test]
-      #     flavor: dev
-      #     filters:
-      #       branches:
-      #         ignore: ["master"]
-      # - build-android:
-      #     name: "build-android-staging"
-      #     requires: [unit_test]
-      #     flavor: staging
-      #     filters:
-      #       branches:
-      #         ignore: "master" # TODO: Rollback to "only"
-      # - build-android:
-      #     name: "build-android-prod"
-      #     requires: [unit_test]
-      #     flavor: prod
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: "/^v.*/"
-      # ## Upload Flavors to Storage
-      # - upload-android:
-      #     requires: [build-android-dev, build-android-staging, build-android-prod]
-      # ## Release Stag/Prod Flavors
-      # - release-android:
-      #     name: "release-android-staging"
-      #     requires: [build-android-staging]
-      #     flavor: staging
-      #     filters:
-      #       branches:
-      #         ignore: "master" # TODO: Rollback to "only"
-      # - release-android:
-      #     name: "release-android-prod"
-      #     requires: [build-android-prod]
-      #     flavor: prod
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: "/^v.*/"
+      # Build Flavors
+      - build-android:
+          name: "build-android-dev"
+          requires: [unit_test]
+          flavor: dev
+          filters:
+            branches:
+              ignore: ["master"]
+      - build-android:
+          name: "build-android-staging"
+          requires: [unit_test]
+          flavor: staging
+          filters:
+            branches:
+              only: "master"
+      - build-android:
+          name: "build-android-prod"
+          requires: [unit_test]
+          flavor: prod
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: "/^v.*/"
+      ## Upload Flavors to Storage
+      - upload-android:
+          requires: [build-android-dev, build-android-staging, build-android-prod]
+      ## Release Stag/Prod Flavors
+      - release-android:
+          name: "release-android-staging"
+          requires: [build-android-staging]
+          flavor: staging
+          filters:
+            branches:
+              only: "master"
+      - release-android:
+          name: "release-android-prod"
+          requires: [build-android-prod]
+          flavor: prod
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: "/^v.*/"
     
       # iOS
-      ## Build Flavors
-      # - build-ios:
-      #     name: "build-ios-dev"
-      #     requires: [unit_test]
-      #     flavor: dev
-      #     filters:
-      #       branches:
-      #         ignore: "master"
+      # Build Flavors
+      - build-ios:
+          name: "build-ios-dev"
+          requires: [unit_test]
+          flavor: dev
+          filters:
+            branches:
+              ignore: "master"
       - build-ios:
           name: "build-ios-staging"
           requires: [unit_test]
           flavor: staging
           filters:
             branches:
-              ignore: "master" # TODO: Rollback to "only"
+              only: "master"
       - build-ios:
           name: "build-ios-prod"
           requires: [unit_test]
@@ -249,8 +249,8 @@ workflows:
             tags:
               only: "/^v.*/"
       ## Upload Flavors to Storage
-      # - upload-ios:
-      #     requires: [build-ios-dev, build-ios-staging, build-ios-prod]
+      - upload-ios:
+          requires: [build-ios-dev, build-ios-staging, build-ios-prod]
       ## Release Stag/Prod Flavors
       - release-ios:
           name: "release-ios-staging"
@@ -258,7 +258,7 @@ workflows:
           flavor: staging
           filters:
             branches:
-              ignore: "master" # TODO: Rollback to "only"
+              only: "master"
       - release-ios:
           name: "release-ios-prod"
           requires: [build-ios-prod]
