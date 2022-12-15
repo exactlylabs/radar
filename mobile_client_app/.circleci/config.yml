@@ -166,7 +166,7 @@ jobs:
           command: cp ~/workspace/ios/<< parameters.flavor >>/*.ipa ~/project/mobile_client_app/client_mobile_app/ios/Runner.ipa
           working_directory: ~/project/mobile_client_app/client_mobile_app
       - run:
-          command: APP_STORE_CONNECT_API_KEY_PATH=/tmp/appconnectkey.p8 fastlane release_<< parameters.flavor >>
+          command: fastlane release_<< parameters.flavor >>
           working_directory: ~/project/mobile_client_app/client_mobile_app/ios
 
 
