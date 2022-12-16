@@ -89,4 +89,3 @@ class ClientMeasurementsController < ApplicationController
     def client_signed_in?
       Client.find_by_unix_user(params[:client_id])&.authenticate_secret(params[:client_secret]) != false
     end
-end

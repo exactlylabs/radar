@@ -11,6 +11,7 @@ class Client < ApplicationRecord
   belongs_to :watchdog_version, optional: true
   
   has_many :measurements
+  has_many :schedulings
   has_many :client_online_logs
 
   geocoded_by :address

@@ -51,6 +51,8 @@ Rails.application.routes.draw do
         get 'ndt7_index'
       end
     end
+    
+    resources :schedulings, controller: 'client_schedulings', only: [:index, :create] 
 
     member do
       delete 'release'
