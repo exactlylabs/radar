@@ -11,6 +11,12 @@ const siteMonitoringNetworkIssuesStyle: CSSProperties = {
   marginTop: '85px',
 }
 
+const smallSiteMonitoringNetworkIssuesStyle: CSSProperties = {
+  ...siteMonitoringNetworkIssuesStyle,
+  height: undefined,
+  marginTop: 0
+}
+
 const textContainerStyle: CSSProperties = {
   width: '590px',
   display: 'flex',
@@ -21,13 +27,25 @@ const textContainerStyle: CSSProperties = {
   textAlign: 'center'
 }
 
+const smallTextContainerStyle: CSSProperties = {
+  ...textContainerStyle,
+  width: '100%',
+  marginBottom: '5px',
+}
+
 const itemsContainerStyle: CSSProperties = {
-  width: 'calc(100% - 20%)',
+  width: '80%',
   margin: '35px auto 80px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
+}
+
+const smallItemsContainerStyle: CSSProperties = {
+  width: '90%',
+  marginLeft: 'auto',
+  marginRight: 'auto'
 }
 
 const itemStyle: CSSProperties = {
@@ -38,6 +56,13 @@ const itemStyle: CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   textAlign: 'center'
+}
+
+const smallItemStyle: CSSProperties = {
+  ...itemStyle,
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  marginBottom: '30px'
 }
 
 const itemIconContainer: CSSProperties = {
@@ -57,6 +82,12 @@ const wavesStyle: CSSProperties = {
   maxHeight: '150px',
 }
 
+const smallWavesStyle: CSSProperties = {
+  width: '300vw',
+  maxWidth: '850px',
+  marginBottom: '50px'
+}
+
 const iconStyle: CSSProperties = {
   width: '34px',
   height: '34px',
@@ -69,12 +100,27 @@ const networkIssuesTextStyle: CSSProperties = {
   margin: '0 0 15px 0'
 }
 
+const smallNetworkIssuesTextStyle: CSSProperties = {
+  ...networkIssuesTextStyle,
+  margin: '0 0 10px 0',
+}
+
 const mainTitleStyle: CSSProperties = {
   fontSize: '34px',
   lineHeight: '42px',
   letterSpacing: '-0.7px',
   color: DEFAULT_TEXT,
   margin: '0 0 20px 0'
+}
+
+const smallMainTitleStyle: CSSProperties = {
+  width: '100%',
+  maxWidth: '100%',
+  fontSize: '26px',
+  lineHeight: '34px',
+  letterSpacing: '-0.56px',
+  color: DEFAULT_TEXT,
+  margin: '0 0 15px 0'
 }
 
 const itemTitleStyle: CSSProperties = {
@@ -99,17 +145,26 @@ const mainSubtitleStyle: CSSProperties = {
   margin: '0 0 20px 0',
 }
 
+const smallMainSubtitleStyle: CSSProperties = {
+  width: '100%',
+  maxWidth: '100%',
+  fontSize: '16px',
+  lineHeight: '26px',
+  color: DEFAULT_TEXT,
+  margin: 0,
+}
+
 export const styles = {
-  SiteMonitoringNetworkIssues: siteMonitoringNetworkIssuesStyle,
-  TextContainer: textContainerStyle,
-  ItemsContainer: itemsContainerStyle,
-  Item: itemStyle,
+  SiteMonitoringNetworkIssues: (isSmall: boolean) => isSmall ? smallSiteMonitoringNetworkIssuesStyle : siteMonitoringNetworkIssuesStyle,
+  TextContainer: (isSmall: boolean) => isSmall ? smallTextContainerStyle : textContainerStyle,
+  ItemsContainer: (isSmall: boolean) => isSmall ? smallItemsContainerStyle : itemsContainerStyle,
+  Item: (isSmall: boolean) => isSmall ? smallItemStyle : itemStyle,
   ItemIconContainer: itemIconContainer,
-  Waves: wavesStyle,
+  Waves: (isSmall: boolean) => isSmall ? smallWavesStyle : wavesStyle,
   Icon: iconStyle,
-  NetworkIssuesText: networkIssuesTextStyle,
-  MainTitle: mainTitleStyle,
-  MainSubtitle: mainSubtitleStyle,
+  NetworkIssuesText: (isSmall: boolean) => isSmall ? smallNetworkIssuesTextStyle : networkIssuesTextStyle,
+  MainTitle: (isSmall: boolean) => isSmall ? smallMainTitleStyle : mainTitleStyle,
+  MainSubtitle: (isSmall: boolean) => isSmall ? smallMainSubtitleStyle : mainSubtitleStyle,
   ItemTitle: itemTitleStyle,
   ItemSubtitle: itemSubtitleStyle,
 }

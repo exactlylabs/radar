@@ -10,7 +10,8 @@ const toolkitTabContentRowStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
-  marginTop: '25px'
+  marginTop: '25px',
+  cursor: 'pointer'
 }
 
 const smallToolkitTabContentRowStyle: CSSProperties = {

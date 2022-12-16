@@ -10,6 +10,7 @@ import {
 } from "../../RegularNavbarContent/ToolkitFloatingMenu/RightSideToolkitTabContent/styles/common.style";
 import BroadbandTestingIcon from "../../../../../assets/images/broadband-testing-icon.png";
 import MappingToolsIcon from "../../../../../assets/images/mapping-tools-icon.png";
+import {goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../../../utils/navigation";
 
 
 const SmallNavbarContentOpen = (): ReactElement => {
@@ -27,9 +28,18 @@ const SmallNavbarContentOpen = (): ReactElement => {
            style={styles.Link}>
           Our Toolkit
         </a>
-        <ToolkitTabContentRow icon={<img src={SiteMonitoringIcon} style={commonStyles.Icon} alt={'site-monitoring-icon'}/>} title={ToolkitTabContentRowTitle.SITE_MONITORING}/>
-        <ToolkitTabContentRow icon={<img src={BroadbandTestingIcon} style={commonStyles.Icon} alt={'broadband-testing-icon'}/>} title={ToolkitTabContentRowTitle.BROADBAND_TESTING}/>
-        <ToolkitTabContentRow icon={<img src={MappingToolsIcon} style={commonStyles.Icon} alt={'mapping-tools-icon'}/>} title={ToolkitTabContentRowTitle.MAPPING_TOOLS}/>
+        <ToolkitTabContentRow icon={<img src={SiteMonitoringIcon} style={commonStyles.Icon} alt={'site-monitoring-icon'}/>}
+                              title={ToolkitTabContentRowTitle.SITE_MONITORING}
+                              onClick={goToSiteMonitoring}
+        />
+        <ToolkitTabContentRow icon={<img src={BroadbandTestingIcon} style={commonStyles.Icon} alt={'broadband-testing-icon'}/>}
+                              title={ToolkitTabContentRowTitle.BROADBAND_TESTING}
+                              onClick={goToBroadbandTesting}
+        />
+        <ToolkitTabContentRow icon={<img src={MappingToolsIcon} style={commonStyles.Icon} alt={'mapping-tools-icon'}/>}
+                              title={ToolkitTabContentRowTitle.MAPPING_TOOLS}
+                              onClick={goToMappingApp}
+        />
         <NavbarHorizontalDivider/>
         <a className={'fw-bold hover-opaque'}
            href={'mailto:contact@exactlylabs.com'}

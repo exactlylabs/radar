@@ -20,10 +20,13 @@ const CustomButton = ({
   icon,
   iconFirst,
 }: CustomButtonProps): ReactElement => {
+
+  const handleClick = () => { onClick(); }
+
   return (
     <div style={styles.CustomButton(backgroundColor, boxShadow)}
          className={'hover-opaque'}
-         onClick={onClick}
+         onClick={handleClick}
     >
       {iconFirst ?
         <>

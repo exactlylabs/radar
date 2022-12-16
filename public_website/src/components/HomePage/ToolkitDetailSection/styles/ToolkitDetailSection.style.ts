@@ -43,6 +43,7 @@ const headerStyle: CSSProperties = {
   lineHeight: '26px',
   color: DEFAULT_SECONDARY_TEXT,
   marginBottom: '15px',
+  maxWidth: '100%'
 }
 
 const smallHeaderStyle: CSSProperties = {
@@ -55,7 +56,8 @@ const titleStyle: CSSProperties = {
   lineHeight: '42px',
   letterSpacing: '-0.7px',
   color: DEFAULT_TEXT,
-  marginBottom: '20px'
+  marginBottom: '20px',
+  maxWidth: '100%'
 }
 
 const smallTitleStyle: CSSProperties = {
@@ -72,7 +74,8 @@ const smallTitleStyle: CSSProperties = {
 const subtitleStyle: CSSProperties = {
   fontSize: '17px',
   lineHeight: '26px',
-  color: DEFAULT_TEXT
+  color: DEFAULT_TEXT,
+  maxWidth: '100%'
 }
 
 const smallSubtitleStyle: CSSProperties = {
@@ -139,39 +142,41 @@ const siteMonitoringBackgroundStyle: CSSProperties = {
 }
 
 const smallSiteMonitoringBackgroundStyle: CSSProperties = {
-  width: '200vw',
+  width: '150vw',
   height: 'auto',
-  marginLeft: '-55vw'
+  marginLeft: '-27vw',
+  marginTop: '-70px'
 }
 
 const broadbandTestingBackgroundStyle: CSSProperties = {
-  width: '834px',
-  height: '768px',
+  width: '60%',
+  height: 'auto',
   position: 'absolute',
-  top: '-60%',
-  left: '-15%',
+  top: '-150px',
+  left: '-10%',
 }
 
 const smallBroadbandTestingBackgroundStyle: CSSProperties = {
-  width: '150vw',
+  width: '100vw',
   height: 'auto',
-  marginLeft: '-32vw',
-  marginTop: '-40px',
-  marginBottom: '-20px'
+  marginLeft: '-5vw',
+  marginTop: '-70px',
+  marginBottom: '-70px'
 }
 
 const mappingToolsBackgroundStyle: CSSProperties = {
-  width: '1005px',
-  height: '776px',
+  width: '70%',
+  height: 'auto',
   position: 'absolute',
-  right: '-15%',
-  bottom: '-40%'
+  right: '-7%',
+  bottom: '-20%'
 }
 
 const smallMappingToolsBackgroundStyle: CSSProperties = {
   width: '140vw',
   height: 'auto',
   marginLeft: '-24vw',
+  marginTop: '-70px'
 }
 
 const chevronStyle: CSSProperties = {

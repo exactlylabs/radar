@@ -6,6 +6,10 @@ const siteMonitoringBulletPointsStyle: CSSProperties = {
   height: '745px',
 }
 
+const smallSiteMonitoringBulletPointsStyle: CSSProperties = {
+  width: '100%',
+}
+
 const siteMonitoringBulletPointsContentStyle: CSSProperties = {
   width: '90%',
   maxWidth: '1200px',
@@ -15,6 +19,16 @@ const siteMonitoringBulletPointsContentStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
+}
+
+const smallSiteMonitoringBulletPointsContentStyle: CSSProperties = {
+  width: '100%',
+  margin: '40px auto 0',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  textAlign: 'center'
 }
 
 const leftColumnStyle: CSSProperties = {
@@ -57,12 +71,27 @@ const cardsStyle: CSSProperties = {
   height: 'auto',
 }
 
+const smallCardsStyle: CSSProperties = {
+  width: '100%',
+  height: 'auto',
+  marginBottom: '70px'
+}
+
 const rowStyle: CSSProperties = {
   width: '100%',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
+}
+
+const smallRowStyle: CSSProperties = {
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: '30px'
 }
 
 const rowIconContainerStyle: CSSProperties = {
@@ -80,6 +109,12 @@ const rowIconContainerStyle: CSSProperties = {
   borderRadius: '50%'
 }
 
+const smallRowIconContainerStyle: CSSProperties = {
+  ...rowIconContainerStyle,
+  marginRight: undefined,
+  marginBottom: '10px'
+}
+
 const rowIconStyle: CSSProperties = {
   width: '34px',
   height: '34px'
@@ -92,6 +127,13 @@ const rowTextContainerStyle: CSSProperties = {
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   textAlign: 'left'
+}
+
+const smallRowTextContainerStyle: CSSProperties = {
+  ...rowTextContainerStyle,
+  textAlign: 'center',
+  justifyContent: 'center',
+  alignItems: 'center'
 }
 
 const rowTitleStyle: CSSProperties = {
@@ -109,18 +151,19 @@ const rowSubtitleStyle: CSSProperties = {
 }
 
 export const styles = {
-  SiteMonitoringBulletPoints: siteMonitoringBulletPointsStyle,
-  SiteMonitoringBulletPointsContent: siteMonitoringBulletPointsContentStyle,
+  SiteMonitoringBulletPoints: (isSmall: boolean) => isSmall ? smallSiteMonitoringBulletPointsStyle : siteMonitoringBulletPointsStyle,
+  SiteMonitoringBulletPointsContent: (isSmall: boolean) => isSmall ? smallSiteMonitoringBulletPointsContentStyle : siteMonitoringBulletPointsContentStyle,
   LeftColumn: leftColumnStyle,
   RightColumn: rightColumnStyle,
   Header: headerStyle,
   Title: titleStyle,
   Cards: cardsStyle,
+  SmallCards: smallCardsStyle,
   Row: rowStyle,
-  RowIconContainer: rowIconContainerStyle,
+  SmallRow: smallRowStyle,
+  RowIconContainer: (isSmall: boolean) => isSmall ? smallRowIconContainerStyle : rowIconContainerStyle,
   RowIcon: rowIconStyle,
-  RowTextContainer: rowTextContainerStyle,
+  RowTextContainer: (isSmall: boolean) => isSmall ? smallRowTextContainerStyle : rowTextContainerStyle,
   RowTitle: rowTitleStyle,
   RowSubtitle: rowSubtitleStyle,
-
 }

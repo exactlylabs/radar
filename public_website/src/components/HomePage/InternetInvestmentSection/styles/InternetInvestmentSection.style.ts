@@ -20,6 +20,7 @@ const internetInvestmentSectionStyle: CSSProperties = {
 
 const smallInternetInvestmentSectionStyle: CSSProperties = {
   ...internetInvestmentSectionStyle,
+  width: '100%',
   height: 'max-content',
   borderRadius: 0
 }
