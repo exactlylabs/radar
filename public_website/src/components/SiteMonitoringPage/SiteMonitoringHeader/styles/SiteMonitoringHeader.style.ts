@@ -12,6 +12,13 @@ const siteMonitoringHeaderStyle: CSSProperties = {
   position: 'relative'
 }
 
+const smallSiteMonitoringHeaderStyle: CSSProperties = {
+  ...siteMonitoringHeaderStyle,
+  height: undefined,
+  flexDirection: 'column',
+  marginTop: '50px',
+}
+
 const textContainerStyle: CSSProperties = {
   maxWidth: '480px',
   maxHeight: '240px',
@@ -19,6 +26,16 @@ const textContainerStyle: CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'flex-start'
+}
+
+const smallTextContainerStyle: CSSProperties = {
+  ...textContainerStyle,
+  maxWidth: '80%',
+  maxHeight: undefined,
+  textAlign: 'center',
+  alignItems: 'center',
+  marginLeft: 'auto',
+  marginRight: 'auto'
 }
 
 const titleStyle: CSSProperties = {
@@ -30,10 +47,28 @@ const titleStyle: CSSProperties = {
   margin: '0 0 20px 0',
 }
 
+const smallTitleStyle: CSSProperties = {
+  width: '100%',
+  maxWidth: '100%',
+  fontSize: '28px',
+  lineHeight: '36px',
+  letterSpacing: '-0.6px',
+  margin: '0 0 15px 0'
+}
+
 const subtitleStyle: CSSProperties = {
   width: '480px',
   fontSize: '18px',
   lineHeight: '28px',
+  color: DEFAULT_TEXT,
+  margin: '0 0 20px 0'
+}
+
+const smallSubtitleStyle: CSSProperties = {
+  width: '100%',
+  maxWidth: '100%',
+  fontSize: '16px',
+  lineHeight: '26px',
   color: DEFAULT_TEXT,
   margin: '0 0 20px 0'
 }
@@ -45,6 +80,13 @@ const cardsStyle: CSSProperties = {
   right: '80px',
   top: 0,
   zIndex: 1,
+}
+
+const smallCardsStyle: CSSProperties = {
+  width: '90vw',
+  height: 'auto',
+  margin: '50px auto',
+  zIndex: 1
 }
 
 const backgroundStyle: CSSProperties = {
@@ -81,11 +123,11 @@ const blueShapeStyle: CSSProperties = {
 }
 
 export const styles = {
-  SiteMonitoringHeader: siteMonitoringHeaderStyle,
-  TextContainer: textContainerStyle,
-  Title: titleStyle,
-  Subtitle: subtitleStyle,
-  Cards: cardsStyle,
+  SiteMonitoringHeader: (isSmall: boolean) => isSmall ? smallSiteMonitoringHeaderStyle : siteMonitoringHeaderStyle,
+  TextContainer: (isSmall: boolean) => isSmall ? smallTextContainerStyle : textContainerStyle,
+  Title: (isSmall: boolean) => isSmall ? smallTitleStyle : titleStyle,
+  Subtitle: (isSmall: boolean) => isSmall ? smallSubtitleStyle : subtitleStyle,
+  Cards: (isSmall: boolean) => isSmall ? smallCardsStyle : cardsStyle,
   Background: backgroundStyle,
   ChevronRight: chevronRightStyle,
   RedShape: redShapeStyle,

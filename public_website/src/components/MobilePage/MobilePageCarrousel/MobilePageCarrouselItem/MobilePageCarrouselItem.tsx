@@ -1,5 +1,6 @@
 import {ReactElement, useState} from "react";
 import {styles} from "./styles/MobilePageCarrouselItem.style";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 interface MobilePageCarrouselItemProps {
   selected: boolean;
@@ -9,6 +10,8 @@ interface MobilePageCarrouselItemProps {
   progress: number;
   index: number;
   setSelectedItem: (newItem: number) => void;
+  isFirst?: boolean;
+  isLast?: boolean;
 }
 
 const MobilePageCarrouselItem = ({
@@ -18,8 +21,13 @@ const MobilePageCarrouselItem = ({
   subtitle,
   progress,
   index,
-  setSelectedItem
+  setSelectedItem,
+  isFirst,
+  isLast
 }: MobilePageCarrouselItemProps): ReactElement => {
+
+  const {isSmallScreen, isMidScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isMidScreen;
 
   const [hovered, setHovered] = useState(false);
 
@@ -29,7 +37,7 @@ const MobilePageCarrouselItem = ({
   const selectItem = () => setSelectedItem(index);
 
   return (
-    <div style={styles.MobilePageCarrouselItem(selected || hovered)}
+    <div style={styles.MobilePageCarrouselItem(selected || hovered, isSmall, isFirst, isLast)}
          onMouseOver={hover}
          onMouseLeave={unhover}
          onClick={selectItem}

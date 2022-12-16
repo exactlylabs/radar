@@ -7,18 +7,20 @@ interface ToolkitTabContentRowProps {
   icon: ReactElement;
   title: ToolkitTabContentRowTitle;
   subtitle?: ToolkitTabContentRowSubtitle;
+  onClick: () => void;
 }
 
 const ToolkitTabContentRow = ({
   icon,
   title,
-  subtitle
+  subtitle,
+  onClick
 }: ToolkitTabContentRowProps): ReactElement => {
 
   const {isSmallScreen} = useViewportSizes();
 
   return (
-    <div style={styles.ToolkitTabContentRow(isSmallScreen)}>
+    <div className={'hover-opaque'} style={styles.ToolkitTabContentRow(isSmallScreen)} onClick={onClick}>
       <div style={styles.IconContainer}>
         {icon}
       </div>

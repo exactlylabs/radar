@@ -5,9 +5,28 @@ const mobilePageCarrouselStyle: CSSProperties = {
   width: '100%'
 }
 
+const smallCarrouselContainerStyle: CSSProperties = {
+  width: '100%',
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  textAlign: 'center',
+}
+
 const carrouselImageStyle: CSSProperties = {
   width: '300px',
   height: 'auto'
+}
+
+const smallCarrouselImageStyle: CSSProperties = {
+  width: '70%',
+  height: 'auto',
+  maxWidth: '200px',
+  marginRight: 'auto',
+  marginLeft: 'auto'
 }
 
 const iconStyle: CSSProperties = {
@@ -74,9 +93,22 @@ const rightColumnStyle: CSSProperties = {
   alignItems: 'center'
 }
 
+const horizontalCarrouselStyle: CSSProperties = {
+  width: 'calc(100% + 50px)',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
+  overflowX: 'scroll',
+  overflowY: 'hidden',
+  marginTop: '30px',
+  marginBottom: '50px'
+}
+
 export const styles = {
   MobilePageCarrousel: mobilePageCarrouselStyle,
-  CarrouselImage: carrouselImageStyle,
+  SmallCarrouselContainer: smallCarrouselContainerStyle,
+  CarrouselImage: (isSmall: boolean) => isSmall ? smallCarrouselImageStyle : carrouselImageStyle,
   Icon: iconStyle,
   TextContainer: textContainerStyle,
   Header: headerStyle,
@@ -85,4 +117,6 @@ export const styles = {
   CarrouselContainer: carrouselContainerStyle,
   LeftColumn: leftColumnStyle,
   RightColumn: rightColumnStyle,
+  HorizontalCarrousel: horizontalCarrouselStyle,
+  zIndex: 5
 }

@@ -7,12 +7,14 @@ import HomePage from "./components/HomePage/HomePage";
 import SiteMonitoringPage from "./components/SiteMonitoringPage/SiteMonitoringPage";
 import BroadbandTestingPage from "./components/BroadbandTestingPage/BroadbandTestingPage";
 import MobilePage from "./components/MobilePage/MobilePage";
+import PrivacyPolicyPage from "./components/PrivacyPolicyPage/PrivacyPolicyPage";
 
 const App = (): ReactElement => (
   <ViewportContextProvider>
     <BrowserRouter>
       <Frame>
         <Routes>
+          <Route path={AppRoutes.PRIVACY_POLICY} element={<PrivacyPolicyPage/>}/>
           <Route path={AppRoutes.MOBILE} element={<MobilePage/>}/>
           <Route path={AppRoutes.BROADBAND_TESTING} element={<BroadbandTestingPage/>}/>
           <Route path={AppRoutes.SITE_MONITORING} element={<SiteMonitoringPage/>}/>

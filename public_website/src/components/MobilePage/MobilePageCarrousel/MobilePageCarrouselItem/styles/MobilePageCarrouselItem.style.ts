@@ -25,8 +25,33 @@ const mobilePageCarrouselItemStyle: CSSProperties = {
   cursor: 'pointer'
 }
 
+const smallMobilePageCarrouselItemStyle: CSSProperties = {
+  width: '275px',
+  minWidth: '275px',
+  height: '215px',
+  padding: '20px',
+  borderRadius: '8px',
+  border: `solid 1px ${CARROUSEL_ITEM_BORDER}`,
+  backgroundColor: TRANSPARENT,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
+  textAlign: 'left',
+  position: 'relative',
+  overflow: 'hidden',
+  cursor: 'pointer',
+  marginRight: '10px',
+}
+
 const selectedMobilePageCarrouselItemStyle: CSSProperties = {
   ...mobilePageCarrouselItemStyle,
+  backgroundColor: CARROUSEL_ITEM,
+  boxShadow: `0 4px 30px -2px ${CARROUSEL_ITEM_BOX_SHADOW}`,
+}
+
+const smallSelectedMobilePageCarrouselItemStyle: CSSProperties = {
+  ...smallMobilePageCarrouselItemStyle,
   backgroundColor: CARROUSEL_ITEM,
   boxShadow: `0 4px 30px -2px ${CARROUSEL_ITEM_BOX_SHADOW}`,
 }
@@ -69,7 +94,14 @@ const loadingBarStyle: CSSProperties = {
 }
 
 export const styles = {
-  MobilePageCarrouselItem: (selected: boolean) => selected ? selectedMobilePageCarrouselItemStyle : mobilePageCarrouselItemStyle,
+  MobilePageCarrouselItem: (selected: boolean, isSmall: boolean, isFirst?: boolean, isLast?: boolean) => {
+    let style;
+    if(!isSmall) style = selected ? selectedMobilePageCarrouselItemStyle : mobilePageCarrouselItemStyle;
+    else style = selected ? smallSelectedMobilePageCarrouselItemStyle : smallMobilePageCarrouselItemStyle;
+    if(isFirst && isSmall) style = {...style, marginLeft: '25px'};
+    if(isLast && isSmall) style = {...style, marginRight: '25px'};
+    return style;
+  },
   IconContainer: iconContainerStyle,
   Title: titleStyle,
   Subtitle: subtitleStyle,

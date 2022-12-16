@@ -55,6 +55,11 @@ const linkStyle: CSSProperties = {
   marginLeft: '50px'
 }
 
+const smallLinkStyle: CSSProperties = {
+  ...linkStyle,
+  marginLeft: 0
+}
+
 const broadbandMappingLogoStyle: CSSProperties = {
   width: '208px',
   height: '28px',
@@ -147,6 +152,7 @@ export const styles = {
   BottomRow: bottomRowStyle,
   RadarLogo: radarLogoStyle,
   Link: linkStyle,
+  SmallLink: smallLinkStyle,
   BroadbandMappingLogo: broadbandMappingLogoStyle,
   ANTHCLogo: ANTHCLogoStyle,
   MLabLogo: MLabLogoStyle,

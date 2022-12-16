@@ -7,6 +7,12 @@ const broadbandTestingMobileStyle: CSSProperties = {
   paddingBottom: '215px',
 }
 
+const smallBroadbandTestingMobileStyle: CSSProperties = {
+  width: '100%',
+  marginTop: '60px',
+  marginBottom: '70px'
+}
+
 const broadbandTestingMobileContentStyle: CSSProperties = {
   width: '90%',
   maxWidth: '1200px',
@@ -18,9 +24,27 @@ const broadbandTestingMobileContentStyle: CSSProperties = {
   margin: '0 auto'
 }
 
+const smallBroadbandTestingMobileContentStyle: CSSProperties = {
+  width: 'calc(100% - 50px)',
+  maxWidth: '325px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  textAlign: 'center',
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  marginBottom: '50px'
+}
+
 const illustrationStyle: CSSProperties = {
   width: '445px',
   height: 'auto',
+}
+
+const smallIllustrationStyle: CSSProperties = {
+  width: '100%',
+  height: 'auto'
 }
 
 const chevronRightStyle: CSSProperties = {
@@ -36,12 +60,25 @@ const headerStyle: CSSProperties = {
   margin: '58px 0 15px 0',
 }
 
+const smallHeaderStyle: CSSProperties = {
+  ...headerStyle,
+  margin: '0 0 10px 0'
+}
+
 const titleStyle: CSSProperties = {
   fontSize: '34px',
   lineHeight: '42px',
   letterSpacing: '-0.7px',
   color: DEFAULT_TEXT,
   margin: '0 0 25px 0',
+}
+
+const smallTitleStyle: CSSProperties = {
+  fontSize: '26px',
+  lineHeight: '34px',
+  letterSpacing: '-0.56px',
+  color: DEFAULT_TEXT,
+  margin: '0 0 15px 0',
 }
 
 const paragraphStyle: CSSProperties = {
@@ -51,19 +88,34 @@ const paragraphStyle: CSSProperties = {
   margin: '0 0 25px 0',
 }
 
+const smallParagraphStyle: CSSProperties = {
+  fontSize: '16px',
+  lineHeight: '26px',
+  color: DEFAULT_TEXT,
+  margin: '0 0 20px 0',
+}
+
 const rightColumnStyle: CSSProperties = {
   width: '445px',
   textAlign: 'left',
+}
 
+const smallRightColumnStyle: CSSProperties = {
+  width: '100%',
+  textAlign: 'center',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center'
 }
 
 export const styles = {
-  BroadbandTestingMobile: broadbandTestingMobileStyle,
-  BroadbandTestingMobileContent: broadbandTestingMobileContentStyle,
-  Illustration: illustrationStyle,
-  Header: headerStyle,
-  Title: titleStyle,
-  Paragraph: paragraphStyle,
+  BroadbandTestingMobile: (isSmall: boolean) => isSmall ? smallBroadbandTestingMobileStyle : broadbandTestingMobileStyle,
+  BroadbandTestingMobileContent: (isSmall: boolean) => isSmall ? smallBroadbandTestingMobileContentStyle : broadbandTestingMobileContentStyle,
+  Illustration: (isSmall: boolean) => isSmall ? smallIllustrationStyle : illustrationStyle,
+  Header: (isSmall: boolean) => isSmall ? smallHeaderStyle : headerStyle,
+  Title: (isSmall: boolean) => isSmall ? smallTitleStyle : titleStyle,
+  Paragraph: (isSmall: boolean) => isSmall ? smallParagraphStyle : paragraphStyle,
   ChevronRight: chevronRightStyle,
-  RightColumn: rightColumnStyle,
+  RightColumn: (isSmall: boolean) => isSmall ? smallRightColumnStyle : rightColumnStyle,
 }

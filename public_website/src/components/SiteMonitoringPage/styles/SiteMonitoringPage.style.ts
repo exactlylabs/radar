@@ -5,11 +5,10 @@ const siteMonitoringPageStyle: CSSProperties = {
 }
 
 const siteMonitoringPageContentStyle: CSSProperties = {
-  width: 'calc(100% - 50px)',
+  width: '90%',
   maxWidth: '1200px',
   margin: '0 auto',
 }
-
 
 export const styles = {
   SiteMonitoringPage: siteMonitoringPageStyle,
