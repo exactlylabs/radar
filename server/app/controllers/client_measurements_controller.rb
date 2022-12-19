@@ -28,7 +28,7 @@ class ClientMeasurementsController < ApplicationController
       return
     end
 
-    Google::Cloud::Trace.in_span "Populating Measurement"
+    Google::Cloud::Trace.in_span "Populating Measurement" do
       @measurement = @client.measurements.build(measurement_params)
       @measurement.client_version = @client.raw_version
       @measurement.client_distribution = @client.distribution_name
