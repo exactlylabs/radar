@@ -7,6 +7,7 @@ class Location < ApplicationRecord
   belongs_to :user, foreign_key: 'created_by_id'
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
+  has_one :client_count_aggregate, :as => :aggregator
 
   after_validation :custom_geocode, if: :lat_long_changed?
 

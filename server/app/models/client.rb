@@ -11,13 +11,14 @@ class Client < ApplicationRecord
   belongs_to :watchdog_version, optional: true
   
   has_many :measurements
-  has_many :client_online_logs
+  has_many :client_event_logs
 
   geocoded_by :address
 
   before_create :create_ids
   after_validation :geocode
-  after_save :update_online_log
+  after_save :send_event
+  after_create :send_created_event
   has_secure_password :secret, validations: false
   validate :valid_cron_string
 
@@ -35,22 +36,22 @@ class Client < ApplicationRecord
     end
   end
 
-  def update_online_log
-    # Save an event to the prior account if the pod was removed from the account
-    if saved_change_to_account_id && self.online
-      ClientOnlineLog.create(
-        client: self,
-        account_id: account_id_before_last_save,
-        event_name: "WENT_OFFLINE"
-      )
+  def send_created_event
+    ClientEventLog.create_event self, ClientEventLog::CREATED, timestamp: self.created_at
+  end
+
+  def send_event
+    if saved_change_to_account_id
+      ClientEventLog.create_event self, ClientEventLog::ACCOUNT_CHANGED, {"from": account_id_before_last_save, "to": self.account_id}
     end
-    # If online status was updated or account was changed or client was just created
-    if saved_change_to_online || saved_change_to_account_id || saved_change_to_created_at
-      ClientOnlineLog.create(
-        client: self,
-        account: self.account,
-        event_name: online ? "WENT_ONLINE" : "WENT_OFFLINE"
-      )
+    if saved_change_to_location_id
+      ClientEventLog.create_event self, ClientEventLog::LOCATION_CHANGED, {"from": location_id_before_last_save, "to": self.location_id}
+    end
+    if saved_change_to_online && online
+      ClientEventLog.create_event self, ClientEventLog::WENT_ONLINE
+    end
+    if saved_change_to_online && !online
+      ClientEventLog.create_event self, ClientEventLog::WENT_OFFLINE
     end
   end
 
