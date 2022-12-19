@@ -1,6 +1,7 @@
 require_relative "boot"
 
 require "rails/all"
+require "./lib/monitor/monitor.rb"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -8,6 +9,8 @@ Bundler.require(*Rails.groups)
 
 module Radar
   class Application < Rails::Application
+    include HealthMonitor
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
 
