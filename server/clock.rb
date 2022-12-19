@@ -3,7 +3,10 @@ require 'rufus-scheduler'
 scheduler = Rufus::Scheduler.new
 
 scheduler.every '3s' do
-  Client.update_outdated_online!
+  if Rails.application.healthy? && !Rails.application.transient?
+    Client.update_outdated_online!
+  end
+  Rails.application.heartbeat!
 end
 
 scheduler.every '1m' do
