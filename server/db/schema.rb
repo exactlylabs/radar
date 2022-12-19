@@ -79,7 +79,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_192147) do
     t.string "name"
     t.bigint "client_id"
     t.datetime "timestamp"
-    t.json "data"
+    t.jsonb "data"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["client_id"], name: "index_client_event_logs_on_client_id"

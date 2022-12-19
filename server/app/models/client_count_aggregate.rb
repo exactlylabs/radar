@@ -1,4 +1,3 @@
-require "json"
 
 class ClientCountAggregate < ApplicationRecord
     belongs_to :aggregator, polymorphic: true
@@ -36,7 +35,6 @@ class ClientCountAggregate < ApplicationRecord
     end
 
     def self.aggregate!
-        
         # Consumes from the event stream from the last offset
         consumer_offset = ConsumerOffset.find_or_create_by!(consumer_id: "ClientCountAggregate")
         events = ClientEventLog.where("client_event_logs.id > ?", consumer_offset.offset).order('client_event_logs.timestamp ASC')
@@ -50,7 +48,7 @@ class ClientCountAggregate < ApplicationRecord
         
         count_events = []
         events.each do |evt|
-            client = JSON::parse!(evt.data["state"])
+            client = evt.data["state"]
             account_id = client["account_id"]
             location_id = client["location_id"]
 

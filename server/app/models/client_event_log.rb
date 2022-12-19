@@ -12,7 +12,7 @@ class ClientEventLog < ApplicationRecord
     ClientEventLog.create(
       client: client,
       name: name,
-      data: {"state" => client.to_json, "event_data" => data},
+      data: {"state" => client.as_json, "event_data" => data},
       timestamp: timestamp || Time.now
     )
   end
