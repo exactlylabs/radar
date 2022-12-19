@@ -4,7 +4,7 @@ class CreateClientEventLogs < ActiveRecord::Migration[6.1]
       t.string :name
       t.references :client, foreign_key: true
       t.timestamp :timestamp
-      t.json :data
+      t.jsonb :data
 
       t.timestamps
     end
