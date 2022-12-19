@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_28_163330) do
+ActiveRecord::Schema.define(version: 2022_12_15_192147) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,37 @@ ActiveRecord::Schema.define(version: 2022_11_28_163330) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "client_count_aggregates", force: :cascade do |t|
+    t.string "aggregator_type"
+    t.bigint "aggregator_id"
+    t.float "online", default: 0.0
+    t.integer "total", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["aggregator_type", "aggregator_id"], name: "index_client_count_aggregates_on_aggregator"
+  end
+
+  create_table "client_count_logs", force: :cascade do |t|
+    t.bigint "client_count_aggregate_id"
+    t.float "online"
+    t.integer "total"
+    t.string "update_cause"
+    t.time "timestamp"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["client_count_aggregate_id"], name: "index_client_count_logs_on_client_count_aggregate_id"
+  end
+
+  create_table "client_event_logs", force: :cascade do |t|
+    t.string "name"
+    t.bigint "client_id"
+    t.datetime "timestamp"
+    t.json "data"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["client_id"], name: "index_client_event_logs_on_client_id"
   end
 
   create_table "client_online_logs", force: :cascade do |t|
@@ -139,6 +170,12 @@ ActiveRecord::Schema.define(version: 2022_11_28_163330) do
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
     t.index ["update_group_id"], name: "index_clients_on_update_group_id"
     t.index ["watchdog_version_id"], name: "index_clients_on_watchdog_version_id"
+  end
+
+  create_table "consumer_offsets", force: :cascade do |t|
+    t.string "consumer_id"
+    t.integer "offset", default: 0
+    t.index ["consumer_id"], name: "index_consumer_offsets_on_consumer_id", unique: true
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -271,6 +308,8 @@ ActiveRecord::Schema.define(version: 2022_11_28_163330) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "client_count_logs", "client_count_aggregates"
+  add_foreign_key "client_event_logs", "clients"
   add_foreign_key "client_online_logs", "accounts"
   add_foreign_key "client_online_logs", "clients"
   add_foreign_key "clients", "accounts"
