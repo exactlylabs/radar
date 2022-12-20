@@ -29,7 +29,7 @@ class CreateClientEventLogs < ActiveRecord::Migration[6.1]
       t.float :online
       t.integer :total
       t.string :update_cause
-      t.time :timestamp 
+      t.timestamp :timestamp 
 
       t.timestamps
     end
