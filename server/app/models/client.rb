@@ -9,6 +9,7 @@ class Client < ApplicationRecord
   belongs_to :update_group, optional: true
   belongs_to :account, optional: true
   belongs_to :watchdog_version, optional: true
+  belongs_to :autonomous_system, optional: true
   
   has_many :measurements
   has_many :client_event_logs
@@ -19,6 +20,7 @@ class Client < ApplicationRecord
   after_validation :geocode
   after_save :send_event
   after_create :send_created_event
+  after_commit :check_ip_changed
   has_secure_password :secret, validations: false
   validate :valid_cron_string
 
@@ -28,6 +30,13 @@ class Client < ApplicationRecord
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where("location_id IS NULL") }
+
+  def check_ip_changed
+    if saved_change_to_ip
+        # Call a job to search for the new ASN
+        FindAsnByIp.perform_later self
+    end
+  end
 
   def self.update_outdated_online!
     Client.where_outdated_online.each do |c|
@@ -45,13 +54,20 @@ class Client < ApplicationRecord
       ClientEventLog.account_changed_event self, account_id_before_last_save, self.account_id
     end
     if saved_change_to_location_id
-      ClientEventLog.account_changed_event self, location_id_before_last_save, self.location_id
+      ClientEventLog.location_changed_event self, location_id_before_last_save, self.location_id
     end
     if saved_change_to_online && online
       ClientEventLog.went_online_event self
     end
     if saved_change_to_online && !online
       ClientEventLog.went_offline_event self
+    end
+    if saved_change_to_ip
+      ClientEventLog.ip_changed_event self, ip_before_last_save, self.ip
+    end
+
+    if saved_change_to_autonomous_system_id
+      ClientEventLog.autonomous_system_changed_event self, autonomous_system_id_before_last_save, self.autonomous_system_id
     end
   end
 

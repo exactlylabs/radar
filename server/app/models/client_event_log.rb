@@ -7,25 +7,35 @@ class ClientEventLog < ApplicationRecord
   WENT_OFFLINE = "WENT_OFFLINE"
   LOCATION_CHANGED = "LOCATION_CHANGED"
   ACCOUNT_CHANGED = "ACCOUNT_CHANGED"
+  IP_CHANGED = "IP_CHANGED"
+  AS_CHANGED = "AUTONOMOUS_SYSTEM_CHANGED"
 
   def self.created_event(client, timestamp=nil)
-    create_event client, CREATED, timestamp: timestamp
+    create_event client, CREATED, timestamp=timestamp
   end
 
   def self.went_online_event(client, timestamp=nil)
-    create_event client, WENT_ONLINE, timestamp: timestamp
+    create_event client, WENT_ONLINE, timestamp=timestamp
   end
 
   def self.went_offline_event(client, timestamp=nil)
-    create_event client, WENT_OFFLINE, timestamp: timestamp
+    create_event client, WENT_OFFLINE, timestamp=timestamp
   end
 
   def self.location_changed_event(client, from, to, timestamp=nil)
-    create_event client, LOCATION_CHANGED, data: {"from": from, "to": to}, timestamp: timestamp
+    create_event client, LOCATION_CHANGED, data={"from" => from, "to" => to}, timestamp=timestamp
   end
 
   def self.account_changed_event(client, from, to, timestamp=nil)
-    create_event client, ACCOUNT_CHANGED, data: {"from": from, "to": to}, timestamp: timestamp
+    create_event client, ACCOUNT_CHANGED, data={"from" => from, "to" => to}, timestamp=timestamp
+  end
+
+  def self.ip_changed_event(client, from, to, timestmap=nil)
+    create_event client, IP_CHANGED, data={"from" => from, "to" => to}, timestamp=timestamp
+  end
+
+  def self.autonomous_system_changed_event(client, from, to, timestmap=nil)
+    create_event client, AS_CHANGED, data={"from" => from, "to" => to}, timestamp=timestamp
   end
   
   private 

@@ -44,74 +44,91 @@ class ClientCountAggregate < ApplicationRecord
         aggregators = {
             "account" => {},
             "location" => {},
+            "as_org" => {},
         }
-        
+
         count_events = []
         events.each do |evt|
             client = evt.data["state"]
             account_id = client["account_id"]
             location_id = client["location_id"]
+            as_id = client["autonomous_system_id"]
 
-            if account_id && aggregators["account"][account_id].nil?
-                account = Account.find(account_id)
-                aggregators["account"][account_id] = ClientCountAggregate.find_or_create_by(aggregator: account)
-            end
-            account_aggregate = aggregators["account"][account_id] if account_id
-            
-
-            if location_id && aggregators["location"][location_id].nil?
-                location = Location.find(location_id)
-                aggregators["location"][location_id] = ClientCountAggregate.find_or_create_by(aggregator: location)
-            end
-            location_aggregate = aggregators["location"][location_id] if account_id
+            aggregates = [
+                get_aggregate(account_id, aggregators["account"], model=Account),
+                get_aggregate(location_id, aggregators["location"], model=Location),
+                get_aggregate(as_id, aggregators["as_org"]) do |id|
+                    AutonomousSystemOrg.joins(:autonomous_systems).find_by("autonomous_systems.id = ?", id)
+                end
+            ]
 
             Client.transaction do
                 case evt.name
                 when ClientEventLog::CREATED
-                    # Increase the count of both the account and location aggregators
-                    account_aggregate.new_client! client, evt if account_aggregate
-                    location_aggregate.new_client! client, evt if location_aggregate
+                    # Increase the count of all aggregates
+                    aggregates.map{|agg| agg.new_client! client, evt if agg}
                     
                 when ClientEventLog::WENT_ONLINE
-                    # Increase the online count for both the account and location aggregators
-                    account_aggregate.client_online! client, evt if account_aggregate
-                    location_aggregate.client_online! client, evt if location_aggregate
+                    # Increase the online count for all aggregates
+                    aggregates.map{|agg| agg.client_online! client, evt if agg}
 
                 when ClientEventLog::WENT_OFFLINE
-                    # Decrease the online count for both the account and location aggregators
-                    account_aggregate.client_offline! client, evt if account_aggregate
-                    location_aggregate.client_offline! client, evt if location_aggregate
+                    # Decrease the online count for all aggregates
+                    aggregates.map{|agg| agg.client_offline! client, evt if agg}
 
                 when ClientEventLog::LOCATION_CHANGED
                     # Increase the online count for the new location
                     # Decrease the online count for the old location
                     from = evt.data["event_data"]["from"]
-                    if from && aggregators["location"][from].nil?
-                        location = Location.find(from)
-                        aggregators["location"][from] = ClientCountAggregate.find_or_create_by(aggregator: location)
-                    end
-                    oldAggregate = aggregators["location"][from] if from
-
-                    location_aggregate.new_client! client, evt if location_aggregate
-                    oldAggregate.client_removed! client, evt if oldAggregate
+                    to = evt.data["event_data"]["to"]
+                    update_aggregator_change! client, evt, from, to, aggregators["location"], model=Location
 
                 when ClientEventLog::ACCOUNT_CHANGED
                     # Increase the online count for the new account
                     # Decrease the online count for the old account
                     from = evt.data["event_data"]["from"]
-                    if from && aggregators["account"][from].nil?
-                        account = Account.find(from)
-                        aggregators["account"][from] = ClientCountAggregate.find_or_create_by(aggregator: account)
-                    end
-                    oldAggregate = aggregators["account"][from] if from
+                    to = evt.data["event_data"]["to"]
+                    update_aggregator_change! client, evt, from, to, aggregators["account"], model=Account
 
-                    account_aggregate.new_client! client, evt if account_aggregate
-                    oldAggregate.client_removed! client, evt if oldAggregate
+                when ClientEventLog::AS_CHANGED
+                    # See if the organization is the same and if not:
+                    # Increase the online count for the new AS organization
+                    # Decrease the online count for the old AS organization
+                    from = evt.data["event_data"]["from"]
+                    to = evt.data["event_data"]["to"]
+                    update_aggregator_change! client, evt, from, to, aggregators["as_org"] do |id|
+                        AutonomousSystemOrg.joins(:autonomous_systems).find_by("autonomous_systems.id = ?", id)
+                    end
                 end
 
                 consumer_offset.offset = evt.id
                 consumer_offset.save!
             end
+        end
+    end
+
+    private
+
+    def self.get_aggregate(id, aggregator_cache, model=nil, &block)
+        if id.present? && aggregator_cache[id].nil?
+            if model.nil?
+                modelObj = block.call(id)
+            else
+                modelObj = model.find(id)
+            end
+            # modelObj = model.nil? ? block.call(id) : model.find(id)
+            aggregator_cache[id] = ClientCountAggregate.find_or_create_by(aggregator: modelObj)
+        end
+        return aggregator_cache[id]
+    end
+
+    def self.update_aggregator_change!(client, evt, from, to, aggregator_cache, model=nil, &block)
+        old_aggregate = get_aggregate(from, aggregator_cache, model=model, &block)
+        new_aggregate = get_aggregate(to, aggregator_cache, model=model, &block)
+        if old_aggregate != new_aggregate
+            # update aggregators
+            new_aggregate.new_client! client, evt if new_aggregate
+            old_aggregate.client_removed! client, evt if old_aggregate
         end
     end
 end
