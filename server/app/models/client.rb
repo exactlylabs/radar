@@ -37,21 +37,21 @@ class Client < ApplicationRecord
   end
 
   def send_created_event
-    ClientEventLog.create_event self, ClientEventLog::CREATED, timestamp: self.created_at
+    ClientEventLog.created_event self, timestamp: self.created_at
   end
 
   def send_event
     if saved_change_to_account_id
-      ClientEventLog.create_event self, ClientEventLog::ACCOUNT_CHANGED, {"from": account_id_before_last_save, "to": self.account_id}
+      ClientEventLog.account_changed_event self, account_id_before_last_save, self.account_id
     end
     if saved_change_to_location_id
-      ClientEventLog.create_event self, ClientEventLog::LOCATION_CHANGED, {"from": location_id_before_last_save, "to": self.location_id}
+      ClientEventLog.account_changed_event self, location_id_before_last_save, self.location_id
     end
     if saved_change_to_online && online
-      ClientEventLog.create_event self, ClientEventLog::WENT_ONLINE
+      ClientEventLog.went_online_event self
     end
     if saved_change_to_online && !online
-      ClientEventLog.create_event self, ClientEventLog::WENT_OFFLINE
+      ClientEventLog.went_offline_event self
     end
   end
 

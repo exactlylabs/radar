@@ -9,7 +9,7 @@ class ClientCountAggregate < ApplicationRecord
         if client["online"]
             self.online +=1
         end
-        ClientCountLog.create_event self, ClientCountLog::CLIENT_ADDED
+        ClientCountLog.new_client_event self
         self.save!
     end
 
@@ -18,19 +18,19 @@ class ClientCountAggregate < ApplicationRecord
         if client["online"]
             self.online -= 1
         end
-        ClientCountLog.create_event self, ClientCountLog::CLIENT_REMOVED
+        ClientCountLog.client_removed_event self
         self.save!
     end
 
     def client_online!(client, event)
         self.online += 1
-        ClientCountLog.create_event self, ClientCountLog::NEW_CLIENT_ONLINE
+        ClientCountLog.client_online_event self
         self.save!
     end
 
     def client_offline!(client, event)
         self.online -= 1
-        ClientCountLog.create_event self, ClientCountLog::NEW_CLIENT_OFFLINE
+        ClientCountLog.client_offline_event self
         self.save!
     end
 
@@ -56,31 +56,31 @@ class ClientCountAggregate < ApplicationRecord
                 account = Account.find(account_id)
                 aggregators["account"][account_id] = ClientCountAggregate.find_or_create_by(aggregator: account)
             end
-            accountAggregate = aggregators["account"][account_id] if account_id
+            account_aggregate = aggregators["account"][account_id] if account_id
             
 
             if location_id && aggregators["location"][location_id].nil?
                 location = Location.find(location_id)
                 aggregators["location"][location_id] = ClientCountAggregate.find_or_create_by(aggregator: location)
             end
-            locationAggregate = aggregators["location"][location_id] if account_id
+            location_aggregate = aggregators["location"][location_id] if account_id
 
             Client.transaction do
                 case evt.name
                 when ClientEventLog::CREATED
                     # Increase the count of both the account and location aggregators
-                    accountAggregate.new_client! client, evt if accountAggregate
-                    locationAggregate.new_client! client, evt if locationAggregate
+                    account_aggregate.new_client! client, evt if account_aggregate
+                    location_aggregate.new_client! client, evt if location_aggregate
                     
                 when ClientEventLog::WENT_ONLINE
                     # Increase the online count for both the account and location aggregators
-                    accountAggregate.client_online! client, evt if accountAggregate
-                    locationAggregate.client_online! client, evt if locationAggregate
+                    account_aggregate.client_online! client, evt if account_aggregate
+                    location_aggregate.client_online! client, evt if location_aggregate
 
                 when ClientEventLog::WENT_OFFLINE
                     # Decrease the online count for both the account and location aggregators
-                    accountAggregate.client_offline! client, evt if accountAggregate
-                    locationAggregate.client_offline! client, evt if locationAggregate
+                    account_aggregate.client_offline! client, evt if account_aggregate
+                    location_aggregate.client_offline! client, evt if location_aggregate
 
                 when ClientEventLog::LOCATION_CHANGED
                     # Increase the online count for the new location
@@ -92,7 +92,7 @@ class ClientCountAggregate < ApplicationRecord
                     end
                     oldAggregate = aggregators["location"][from] if from
 
-                    locationAggregate.new_client! client, evt if locationAggregate
+                    location_aggregate.new_client! client, evt if location_aggregate
                     oldAggregate.client_removed! client, evt if oldAggregate
 
                 when ClientEventLog::ACCOUNT_CHANGED
@@ -105,7 +105,7 @@ class ClientCountAggregate < ApplicationRecord
                     end
                     oldAggregate = aggregators["account"][from] if from
 
-                    accountAggregate.new_client! client, evt if accountAggregate
+                    account_aggregate.new_client! client, evt if account_aggregate
                     oldAggregate.client_removed! client, evt if oldAggregate
                 end
 
