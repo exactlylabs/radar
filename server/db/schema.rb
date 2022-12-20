@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_15_192147) do
+ActiveRecord::Schema.define(version: 2022_12_19_232505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,26 @@ ActiveRecord::Schema.define(version: 2022_12_15_192147) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "autonomous_system_orgs", force: :cascade do |t|
+    t.string "name"
+    t.string "org_id"
+    t.string "country"
+    t.string "source"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["org_id"], name: "index_autonomous_system_orgs_on_org_id", unique: true
+  end
+
+  create_table "autonomous_systems", force: :cascade do |t|
+    t.string "name"
+    t.string "asn"
+    t.bigint "autonomous_system_org_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["asn"], name: "index_autonomous_systems_on_asn", unique: true
+    t.index ["autonomous_system_org_id"], name: "index_autonomous_systems_on_autonomous_system_org_id"
   end
 
   create_table "client_count_aggregates", force: :cascade do |t|
@@ -164,6 +184,9 @@ ActiveRecord::Schema.define(version: 2022_12_15_192147) do
     t.integer "data_cap_periodicity", default: 2
     t.float "data_cap_current_period_usage", default: 0.0
     t.datetime "data_cap_current_period"
+    t.string "ip"
+    t.bigint "autonomous_system_id"
+    t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
@@ -243,6 +266,9 @@ ActiveRecord::Schema.define(version: 2022_12_15_192147) do
     t.bigint "download_total_bytes"
     t.bigint "upload_total_bytes"
     t.integer "account_id"
+    t.string "ip"
+    t.bigint "autonomous_system_id"
+    t.index ["autonomous_system_id"], name: "index_measurements_on_autonomous_system_id"
     t.index ["client_id"], name: "index_measurements_on_client_id"
     t.index ["location_id"], name: "index_measurements_on_location_id"
     t.index ["measured_by_id"], name: "index_measurements_on_measured_by_id"
@@ -308,11 +334,13 @@ ActiveRecord::Schema.define(version: 2022_12_15_192147) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "autonomous_systems", "autonomous_system_orgs"
   add_foreign_key "client_count_logs", "client_count_aggregates"
   add_foreign_key "client_event_logs", "clients"
   add_foreign_key "client_online_logs", "accounts"
   add_foreign_key "client_online_logs", "clients"
   add_foreign_key "clients", "accounts"
+  add_foreign_key "clients", "autonomous_systems"
   add_foreign_key "clients", "client_versions"
   add_foreign_key "clients", "locations"
   add_foreign_key "clients", "update_groups"
@@ -324,6 +352,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_192147) do
   add_foreign_key "locations", "accounts"
   add_foreign_key "locations", "users", column: "created_by_id"
   add_foreign_key "measurements", "accounts"
+  add_foreign_key "measurements", "autonomous_systems"
   add_foreign_key "measurements", "clients"
   add_foreign_key "measurements", "locations"
   add_foreign_key "measurements", "users", column: "measured_by_id"
