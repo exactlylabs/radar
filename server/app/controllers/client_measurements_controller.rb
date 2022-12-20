@@ -35,7 +35,7 @@ class ClientMeasurementsController < ApplicationController
       @measurement.network_interfaces = @client.network_interfaces
       @measurement.account = @client.account if @client.account.present?
       @measurement.location = @client.location if @client.location.present?
-
+      @measurement.ip = request.ip
       if @client.test_requested
         Google::Cloud::Trace.in_span "Updating Client" do
           @client.test_requested = false

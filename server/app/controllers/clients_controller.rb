@@ -123,6 +123,7 @@ class ClientsController < ApplicationController
       @client.online = true
       @client.raw_version = params[:version]
       @client.distribution_name = params[:distribution]
+      @client.ip = request.ip
       if params[:network_interfaces]
         @client.network_interfaces = JSON.parse(params[:network_interfaces])
       end
