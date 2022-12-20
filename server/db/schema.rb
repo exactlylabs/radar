@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 2022_12_15_192147) do
     t.float "online"
     t.integer "total"
     t.string "update_cause"
-    t.time "timestamp"
+    t.datetime "timestamp"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["client_count_aggregate_id"], name: "index_client_count_logs_on_client_count_aggregate_id"
