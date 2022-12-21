@@ -19,6 +19,12 @@ bundle install
 rails db:create db:migrate db:seed
 ```
 
+you also need to run a script that is going to download some necessary files
+
+`MAXMIND_KEY=<your token> ./scripts/setup.sh`
+
+>Note: For downloading IPV4/IPV6 to ASN map you must have a [Maxmind](https://www.maxmind.com/) License Key and set it as an environment variable named `MAXMIND_KEY`
+
 In order for Image Processing to work correctly, you need to install ImageMagick
 locally on the computer running the app. Installation instructions [here](https://imagemagick.org/script/download.php).
 
