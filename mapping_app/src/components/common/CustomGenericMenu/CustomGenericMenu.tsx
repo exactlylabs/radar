@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/CustomGenericMenu.style";
 import CloseIcon from "../../../assets/close-icon.png";
 import {Optional} from "../../../utils/types";
-import {isDay} from "../../../utils/dates";
+import {isIphoneAndSafari} from "../../../utils/iphone";
 
 interface CustomGenericMenuProps {
   children: Optional<ReactElement>;
@@ -18,7 +18,7 @@ const CustomGenericMenu = ({
   return (
     <>
       <div style={styles.Shadow} onClick={closeMenu}></div>
-      <div style={styles.MyGenericMenu(isDarker)} id={'my-generic-menu'}>
+      <div style={styles.MyGenericMenu(isDarker, isIphoneAndSafari())} id={'my-generic-menu'}>
         <>
           {children}
         </>

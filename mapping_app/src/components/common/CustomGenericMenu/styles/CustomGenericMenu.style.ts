@@ -49,7 +49,11 @@ const shadowStyle: CSSProperties = {
 }
 
 export const styles = {
-  MyGenericMenu: (isDarker: boolean) => isDarker ? darkerMyCustomMenuStyle : customGenericMenuStyle,
+  MyGenericMenu: (isDarker: boolean, isIphone: boolean) => {
+    let style = isDarker ? darkerMyCustomMenuStyle : customGenericMenuStyle
+    if(isIphone) style = {...style, maxHeight: 'calc(100vh - 140px)'};
+    return style;
+  },
   CloseIcon: closeIconStyle,
   Shadow: shadowStyle,
 }

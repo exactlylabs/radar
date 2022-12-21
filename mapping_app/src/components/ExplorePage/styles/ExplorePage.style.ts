@@ -31,8 +31,10 @@ const bottomInvisibleOverlayStyle: CSSProperties = {
 }
 
 export const styles = {
-  ExplorePageContainer: (isSmall: boolean) => {
-    return isSmall ? smallExplorePageContainerStyle : explorePageContainerStyle;
+  ExplorePageContainer: (isSmall: boolean, isIphone: boolean) => {
+    let style = isSmall ? smallExplorePageContainerStyle : explorePageContainerStyle;
+    if(isIphone) style = {...style, height: 'calc(100vh - 130px)'};
+    return style;
   },
   InvisibleOverlay: (isInBottom?: boolean) => {
     return isInBottom ? bottomInvisibleOverlayStyle : invisibleOverlayStyle;
