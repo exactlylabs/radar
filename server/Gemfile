@@ -77,3 +77,4 @@ gem 'turbo-rails'
 gem 'rufus-scheduler'
 
 gem 'grpc', '1.47'
+gem 'ipaddr'
