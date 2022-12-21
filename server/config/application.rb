@@ -2,6 +2,7 @@ require_relative "boot"
 
 require "rails/all"
 require "./lib/monitor/monitor.rb"
+require "./lib/geotools/asns.rb"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
