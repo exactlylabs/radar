@@ -40,3 +40,5 @@ start.sh
 .DS_Store
 dump.rdb
 server.iml
+
+lib/geotools/files
