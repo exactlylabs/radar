@@ -9,7 +9,7 @@ class ClientCountAggregate < ApplicationRecord
         if client["online"]
             self.online +=1
         end
-        ClientCountLog.new_client_event self
+        ClientCountLog.new_client_event self, event.timestamp
         self.save!
     end
 
@@ -18,19 +18,19 @@ class ClientCountAggregate < ApplicationRecord
         if client["online"]
             self.online -= 1
         end
-        ClientCountLog.client_removed_event self
+        ClientCountLog.client_removed_event self, event.timestamp
         self.save!
     end
 
     def client_online!(client, event)
         self.online += 1
-        ClientCountLog.client_online_event self
+        ClientCountLog.client_online_event self, event.timestamp
         self.save!
     end
 
     def client_offline!(client, event)
         self.online -= 1
-        ClientCountLog.client_offline_event self
+        ClientCountLog.client_offline_event self, event.timestamp
         self.save!
     end
 
