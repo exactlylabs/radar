@@ -1,5 +1,3 @@
-require "#{Rails.root}/lib/geotools/asns.rb"
-
 class FindAsnByIp < ApplicationJob
     queue_as :default
 
@@ -7,7 +5,6 @@ class FindAsnByIp < ApplicationJob
         # populates the "autonomous_system" attribute of a model object,
         # it expects the same model to also have an "ip" attribute
         if !obj.ip.present?
-            puts "IP NOT FOUND"
             obj.autonomous_system = nil
             obj.save!
             return
@@ -15,7 +12,6 @@ class FindAsnByIp < ApplicationJob
 
         geoAS = GeoTools::asn_from_ip obj.ip
         if !geoAS.present?
-            puts "GEOAS NOT FOUND"
             obj.autonomous_system = nil
             obj.save!
             return
