@@ -6,20 +6,20 @@ class ClientCountLog < ApplicationRecord
   NEW_CLIENT_ONLINE = "NEW_CLIENT_ONLINE"
   NEW_CLIENT_OFFLINE = "NEW_CLIENT_OFFLINE"
 
-  def self.new_client_event(agg)
-    create_event agg, CLIENT_ADDED
+  def self.new_client_event(agg, timestamp=nil)
+    create_event agg, CLIENT_ADDED, timestamp=timestamp
   end
 
-  def self.client_removed_event(agg)
-    create_event agg, CLIENT_REMOVED
+  def self.client_removed_event(agg, timestamp=nil)
+    create_event agg, CLIENT_REMOVED, timestamp=timestamp
   end
 
-  def self.client_online_event(agg)
-    create_event agg, NEW_CLIENT_ONLINE
+  def self.client_online_event(agg, timestamp=nil)
+    create_event agg, NEW_CLIENT_ONLINE, timestamp=timestamp
   end
 
-  def self.client_offline_event(agg)
-    create_event agg, NEW_CLIENT_OFFLINE    
+  def self.client_offline_event(agg, timestamp=nil)
+    create_event agg, NEW_CLIENT_OFFLINE, timestamp=timestamp
   end
 
   private
