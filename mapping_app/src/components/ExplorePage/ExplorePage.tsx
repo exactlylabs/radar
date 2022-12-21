@@ -54,6 +54,7 @@ import ModalContentProviders from "../common/CustomGenericModal/ModalContentProv
 import ModalContentCustomDateRange
   from "../common/CustomGenericModal/ModalContentCustomDateRange/ModalContentCustomDateRange";
 import ModalContentCalendar from "../common/CustomGenericModal/ModalContentCalendar/ModalContentCalendar";
+import {isIphoneAndSafari} from "../../utils/iphone";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -449,7 +450,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   }
 
   return (
-    <div style={styles.ExplorePageContainer(isSmallExplorePage)}>
+    <div style={styles.ExplorePageContainer(isSmallExplorePage, isIphoneAndSafari())}>
       { loading && <CustomMapOverlayingLoader/> }
       <Map namespace={geospaceNamespace}
              selectedGeospace={selectedGeospace}

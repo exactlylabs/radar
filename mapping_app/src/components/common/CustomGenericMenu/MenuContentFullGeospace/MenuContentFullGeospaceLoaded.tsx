@@ -22,6 +22,7 @@ import {handleError} from "../../../../api";
 import {getSignalState} from "../../../../utils/speeds";
 import {GeospaceInfo, GeospaceOverview, isGeospaceData} from "../../../../api/geospaces/types";
 import RightPanelHeader from "../../../ExplorePage/RightPanel/RightPanelHeader";
+import {isIphoneAndSafari} from "../../../../utils/iphone";
 
 interface MenuContentFullGeospaceLoadedProps {
   geospace: GeospaceOverview;
@@ -152,7 +153,7 @@ const MenuContentFullGeospaceLoaded = ({
           />
         </div>
       </div>
-      <div style={styles.SpeedDataScrollableContainer} id={'menu-content-full-geospace--scrollable-container'}>
+      <div style={styles.SpeedDataScrollableContainer(isIphoneAndSafari())} id={'menu-content-full-geospace--scrollable-container'}>
         <RightPanelSpeedData medianDownload={geospace.download_median}
                              medianUpload={geospace.upload_median}
                              medianLatency={geospace.latency_median}

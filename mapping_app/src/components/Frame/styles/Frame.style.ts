@@ -1,4 +1,4 @@
-import {CSSProperties} from "react";
+import {CSSProperties, MutableRefObject} from "react";
 
 const frameWrapperStyle: CSSProperties = {
   width: '100vw',
@@ -17,8 +17,10 @@ const contentWrapperStyle: CSSProperties = {
 }
 
 export const styles = {
-  FrameWrapper: (isSmall: boolean) => {
-    return isSmall ? smallFrameWrapperStyle : frameWrapperStyle;
+  FrameWrapper: (isSmall: boolean, isIphone: boolean) => {
+    let style = isSmall ? smallFrameWrapperStyle : frameWrapperStyle;
+    if(isIphone) style = {...style, height: 'calc(100vh - 80px)', position: 'absolute', top: 0, left: 0};
+    return style;
   },
   ContentWrapper: contentWrapperStyle
 }

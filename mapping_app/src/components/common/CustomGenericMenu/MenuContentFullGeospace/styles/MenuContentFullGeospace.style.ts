@@ -44,6 +44,10 @@ export const styles = {
   GradientUnderlay: gradientUnderlayStyle,
   MenuContentWrapper: menuContentWrapperStyle,
   DropdownFiltersContainer: dropdownFiltersContainerStyle,
-  SpeedDataScrollableContainer: speedDataScrollableContainerStyle,
+  SpeedDataScrollableContainer: (isIphone: boolean) => {
+    let style = speedDataScrollableContainerStyle;
+    if(isIphone) style = {...style, height: 'calc(100% - 58px - 40px - 50px - 90px)'};
+    return style;
+  },
 
 }
