@@ -42,7 +42,6 @@ module ApplicationHelper
   end
 
   def page_number
-    puts "PAGE: #{params[:page]}"
     params[:page]&.to_i || 1
   end
 

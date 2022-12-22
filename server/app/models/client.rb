@@ -327,7 +327,6 @@ class Client < ApplicationRecord
   end
 
   def get_periodicity_period
-    puts "PERIO => #{self.data_cap_periodicity}"
     "month" if self.data_cap_periodicity == 'monthly'
   end
 
