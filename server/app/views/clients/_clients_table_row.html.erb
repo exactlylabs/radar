@@ -28,6 +28,16 @@
       style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
     <%= client.account.name %>
   </td>
+  <% if current_user.super_user %>
+    <td class="mb-1"
+        style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+      <%= client.staging ? "Staging" : "Live" %>
+    </td>
+    <td class="mb-1"
+        style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+      <%= UpdateGroup.find(client.update_group_id).name %>
+    </td>
+  <% end %>
   <td class="mb-1"
       style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
       <%= pretty_print_date(client.created_at) %>
@@ -56,6 +66,11 @@
            aria-labelledby="<%= "options-button-#{client.id}" %>"
            style="min-width: 90px; width: max-content; height: max-content"
       >
+        <% if current_user.super_user && client.staging %>
+          <div class="menu-item">
+            <%= link_to "Mark as Live", unstage_client_path(client.unix_user), method: :post, class: "menu-link text-hover-gray-500 text-gray-700 px-3 py-2" %>
+          </div>
+        <% end %>
         <div class="menu-item">
           <%= link_to "Run Test", run_test_client_path(client.unix_user), method: :post, class: "menu-link text-hover-gray-500 text-gray-700 px-3 py-2" %>
         </div>

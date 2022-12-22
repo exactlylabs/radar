@@ -3,18 +3,22 @@ require "sshkey"
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
-  before_action :set_client, only: %i[ release show edit destroy ]
+  before_action :set_client, only: %i[ release show edit destroy unstage ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 
   # GET /clients or /clients.json
   def index
     @status = params[:status]
-    if params[:status]
-      @clients = policy_scope(Client).where_online if params[:status] == 'online'
-      @clients = policy_scope(Client).where_offline if params[:status] == 'offline'
-    else
-      @clients = policy_scope(Client)
+    @environment = params[:environment]
+    @clients = policy_scope(Client)
+    if @status
+      @clients = @clients.where_online if @status == 'online'
+      @clients = @clients.where_offline if @status == 'offline'
+    end
+    if @environment
+      @clients = @clients.where_live if @environment == 'live'
+      @clients = @clients.where_staging if @environment == 'staging'
     end
     @clients
   end
@@ -259,6 +263,19 @@ class ClientsController < ApplicationController
     end
   end
 
+  def unstage
+    @client.staging = false
+    if @client.save
+      notice = "Client was successfully set as live."
+    else
+      notice = "Error setting client as live."
+    end
+    respond_to do |format|
+      format.html { redirect_back fallback_location: root_path, notice: notice }
+      format.json { head :no_content }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_client
@@ -293,25 +310,5 @@ class ClientsController < ApplicationController
     
     def json_request?
       request.format.symbol == :json
-    end
-
-    def get_indexed_clients
-      @clients = policy_scope(Client)
-      if @location.present?
-        @clients = @clients.where(location: @location) if @location.to_i != -1
-        @clients = @clients.where_no_location if @location.to_i == -1
-      end
-      @clients = @clients.where_online if @status == "online"
-      @clients = @clients.where_offline if @status == "offline"
-      @indexed_clients = {}
-      @clients.each do |client|
-        if client.location
-          @indexed_clients[client.location] = [] if @indexed_clients[client.location].nil?
-          @indexed_clients[client.location].append(client)
-        else
-          @clients_with_no_location = [] if @clients_with_no_location.nil?
-          @clients_with_no_location.append(client)
-        end
-      end
     end
 end

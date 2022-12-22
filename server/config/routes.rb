@@ -57,6 +57,7 @@ Rails.application.routes.draw do
       post 'status'
       post 'watchdog_status'
       post 'run_test'
+      post 'unstage'
     end
 
     collection do
