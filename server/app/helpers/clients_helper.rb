@@ -9,4 +9,12 @@ module ClientsHelper
       'Offline'
     end
   end
+
+  def client_environment_to_human(param)
+    if param.nil?
+      'All environments'
+    else
+      param.capitalize()
+    end
+  end
 end

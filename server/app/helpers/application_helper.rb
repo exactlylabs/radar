@@ -63,7 +63,7 @@ module ApplicationHelper
   # /measurements?range=last-week&style=NDT7 could be en example.
   # execution would look like: <%= paginate_elements(@measurements, [:style, :range])
   # allowing for an abstracted implementation
-  def paginate_elements(items, possible_filters, possible_order)
+  def paginate_elements(items, possible_filters = [], possible_order = nil)
     possible_filters.each do |symbol|
       if params[symbol].present?
         if symbol == :range

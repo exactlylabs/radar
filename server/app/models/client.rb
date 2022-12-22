@@ -31,6 +31,8 @@ class Client < ApplicationRecord
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where("location_id IS NULL") }
+  scope :where_live, -> { where("staging=false OR staging IS NULL") }
+  scope :where_staging, -> { where(staging: true) }
 
   def check_ip_changed
     if saved_change_to_ip
@@ -306,6 +308,27 @@ class Client < ApplicationRecord
 
   def latest_measurement
     self.measurements.order(created_at: :desc).first
+  end
+
+  def get_measurement_data
+    data_string = ""
+    total_bytes = 0
+    self.measurements.each do |measurement|
+      if measurement.download_total_bytes.present? && measurement.upload_total_bytes.present?
+        total_bytes += ((measurement.download_total_bytes + measurement.upload_total_bytes) / 1_048_576).round(0)
+      end
+    end
+    if total_bytes > 0
+      data_string += "~#{(total_bytes / self.measurements.length).round(0)} MB per test ("
+    end
+    data_string += "#{(self.data_cap_current_period_usage / 1_048_576).round(0)} MB this month"
+    data_string += ")" if total_bytes > 0
+    data_string
+  end
+
+  def get_periodicity_period
+    puts "PERIO => #{self.data_cap_periodicity}"
+    "month" if self.data_cap_periodicity == 'monthly'
   end
 
   def self.to_csv_enumerator
