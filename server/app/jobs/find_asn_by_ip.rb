@@ -4,35 +4,35 @@ class FindAsnByIp < ApplicationJob
     def perform(obj)
         # populates the "autonomous_system" attribute of a model object,
         # it expects the same model to also have an "ip" attribute
-        if !obj.ip.present?
+        if obj.ip.blank?
             obj.autonomous_system = nil
             obj.save!
             return
         end
 
-        geoAS = GeoTools::asn_from_ip obj.ip
-        if !geoAS.present?
+        geo_as = GeoTools::asn_from_ip obj.ip
+        if geo_as.blank?
             obj.autonomous_system = nil
             obj.save!
             return
         end
 
-        as = AutonomousSystem.find_by_asn(geoAS.asn)
+        as = AutonomousSystem.find_by_asn(geo_as.asn)
         if as.nil?
             # Create one
-            org = AutonomousSystemOrg.find_by_org_id(geoAS.organization.id)
+            org = AutonomousSystemOrg.find_by_org_id(geo_as.organization.id)
             if org.nil?
                 org = AutonomousSystemOrg.create(
-                    name: geoAS.organization.name,
-                    org_id: geoAS.organization.id,
-                    country: geoAS.organization.country,
-                    source: geoAS.organization.source,
+                    name: geo_as.organization.name,
+                    org_id: geo_as.organization.id,
+                    country: geo_as.organization.country,
+                    source: geo_as.organization.source,
                 )
             end
             as = AutonomousSystem.create(
-                name: geoAS.name,
+                name: geo_as.name,
                 autonomous_system_org: org,
-                asn: geoAS.asn,
+                asn: geo_as.asn,
             )
         end
 
