@@ -327,7 +327,18 @@ class Client < ApplicationRecord
   end
 
   def get_periodicity_period
-    "month" if self.data_cap_periodicity == 'monthly'
+    case self.data_cap_periodicity
+    when "daily"
+      "day"
+    when "weekly"
+      "week"
+    when "monthly"
+      "month"
+    when "yearly"
+      "year"
+    else
+      ""
+    end
   end
 
   def self.to_csv_enumerator
