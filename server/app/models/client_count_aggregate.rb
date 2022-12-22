@@ -112,12 +112,11 @@ class ClientCountAggregate < ApplicationRecord
     def self.get_aggregate(id, aggregator_cache, model=nil, &block)
         if id.present? && aggregator_cache[id].nil?
             if model.nil?
-                modelObj = block.call(id)
+                model_obj = block.call(id)
             else
-                modelObj = model.find(id)
+                model_obj = model.find(id)
             end
-            # modelObj = model.nil? ? block.call(id) : model.find(id)
-            aggregator_cache[id] = ClientCountAggregate.find_or_create_by(aggregator: modelObj)
+            aggregator_cache[id] = ClientCountAggregate.find_or_create_by(aggregator: model_obj)
         end
         return aggregator_cache[id]
     end
