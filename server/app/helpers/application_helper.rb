@@ -42,6 +42,7 @@ module ApplicationHelper
   end
 
   def page_number
+    puts "PAGE: #{params[:page]}"
     params[:page]&.to_i || 1
   end
 
@@ -62,8 +63,8 @@ module ApplicationHelper
   # /measurements?range=last-week&style=NDT7 could be en example.
   # execution would look like: <%= paginate_elements(@measurements, [:style, :range])
   # allowing for an abstracted implementation
-  def paginate_elements(items, possible_filter_symbols)
-    possible_filter_symbols.each do |symbol|
+  def paginate_elements(items, possible_filters, possible_order)
+    possible_filters.each do |symbol|
       if params[symbol].present?
         if symbol == :range
           range = get_date_range(params[:range])
@@ -74,7 +75,11 @@ module ApplicationHelper
       end
     end
     @total = items.length
-    @items = items.order(created_at: :desc).limit(per_page).offset(paginate_offset)
+    if possible_order.nil?
+      @items = items.order(created_at: :desc).limit(per_page).offset(paginate_offset)
+    else
+      @items = items.order(possible_order).limit(per_page).offset(paginate_offset)
+    end
   end
 
   ##

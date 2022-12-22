@@ -10,10 +10,13 @@ class ClientsController < ApplicationController
   # GET /clients or /clients.json
   def index
     @status = params[:status]
-    @location = params[:location]
-    @all_locations = policy_scope(Location).where_has_client_associated
-    # New designs index clients by location
-    get_indexed_clients
+    if params[:status]
+      @clients = policy_scope(Client).where_online if params[:status] == 'online'
+      @clients = policy_scope(Client).where_offline if params[:status] == 'offline'
+    else
+      @clients = policy_scope(Client)
+    end
+    @clients
   end
 
   # GET /clients/1 or /clients/1.json

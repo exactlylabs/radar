@@ -9,7 +9,7 @@
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Home
+        <li class="breadcrumb-item text-muted"><%= current_account.name %>
           <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
         </li>
         <li class="breadcrumb-item text-dark">Pods</li>
@@ -31,17 +31,12 @@
   <!--begin::Container-->
   <div class="container-xxl d-flex flex-column" style="max-width: none;">
     <% if !params.empty? %>
-      <%= render partial: "clients_table_filters", locals: { locations: @all_locations, hasUnindexed: @clients_with_no_location.present? } %>
+      <%= render partial: "clients_table_filters" %>
     <% end %>
-    <% if @indexed_clients.empty? && @clients_with_no_location.nil? %>
+    <% if @clients.empty? || @clients.nil? %>
       <%= render partial: "empty_pods_view" %>
     <% else %>
-      <% @indexed_clients.sort_by{|location, clients| location[:name]}.each do |location, clients| %>
-        <%= render partial: "clients_table_per_location", locals: { clients: clients, location: location } %>
-      <% end %>
-      <% if @clients_with_no_location.present? %>
-        <%= render partial: "clients_table_per_location", locals: { clients: @clients_with_no_location, location: {name: 'No location'} } %>
-      <% end %>
+      <%= render partial: "clients_table", locals: {clients: @clients} %>
     <% end %>
   </div>
   <!--end::Container-->

@@ -1,4 +1,4 @@
-<div>
+<div style="font-size: 14px; color: #5e6278">
   <% page_elements = total == 10 ? items.length * params[:page].to_i : params[:page].to_i * 10 - 10 + items.length %>
   <% initial_element = items.length === 0 ? "0" : "1" %>
   Showing <%= params[:page].nil? ? initial_element : params[:page].to_i * 10 - 9 %> to <%= params[:page].nil? ? items.length : page_elements %> of <%= total %> records
@@ -58,7 +58,7 @@
   <% end %>
   <li class="page-item next <%= (pages == 0 || pages == 1) || (params[:page].present? && pages == params[:page].to_i) ? 'disabled' : ''%>">
     <% if pages > 1 %>
-      <%= link_to(request.query_parameters.merge({ page: params[:page].to_i + 1 }), { class: "page-link" }) do%>
+      <%= link_to(request.query_parameters.merge({ page: params[:page].nil? ? 2 : params[:page].to_i + 1 }), { class: "page-link" }) do%>
         <i class="next"></i>
       <% end %>
     <% else %>
