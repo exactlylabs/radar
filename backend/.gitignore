@@ -4,3 +4,4 @@ scripts/input
 mlab-ingestor
 infra/vars.yml
 migrations/migrated_files
+infra/roles/alexeysetevoi.clickhouse

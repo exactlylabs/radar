@@ -3,14 +3,25 @@
   become: yes
   vars:
     clickhouse_users_custom:
-      - { name: "{{ db_user }}", password_sha256_hex: "{{ db_password_sha256 }}", profile: "default"}
+      - { name: "{{ db_user }}", 
+          password_sha256_hex: "{{ db_password_sha256 }}", 
+          networks: "{{ clickhouse_networks_default }}",
+          profile: mapping-profile,
+          quota: default,
+          dbs: ["{{ db_name }}"],
+          comment: "Default User"}
     clickhouse_dbs_custom:
       - { name: "{{ db_name }}", state: present }
     clickhouse_profiles_custom:
-      default:
+      mapping-profile:
+        max_memory_usage: 10000000000
         max_bytes_before_external_group_by: 10000000000
+        use_uncompressed_cache: 0
         load_balancing: random
-    clickhouse_listen_host_custom:
-      - "0.0.0.0"
+        max_partitions_per_insert_block: 100
+      readonly:
+        readonly: 1
+    clickhouse_listen_host:
+      - "::"
   roles:
-    - ansible-clickhouse
+    - alexeysetevoi.clickhouse
