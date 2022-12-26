@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_19_232505) do
+ActiveRecord::Schema.define(version: 2022_12_23_194855) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -178,14 +178,17 @@ ActiveRecord::Schema.define(version: 2022_12_19_232505) do
     t.bigint "watchdog_version_id"
     t.string "raw_watchdog_version"
     t.boolean "online", default: false
-    t.datetime "next_schedule_at"
-    t.string "cron_string"
     t.float "data_cap_max_usage"
     t.integer "data_cap_periodicity", default: 2
     t.float "data_cap_current_period_usage", default: 0.0
     t.datetime "data_cap_current_period"
     t.string "ip"
     t.bigint "autonomous_system_id"
+    t.integer "scheduling_periodicity", default: 0
+    t.integer "scheduling_amount_per_period", default: 1
+    t.integer "scheduling_tests_in_period", default: 0
+    t.datetime "scheduling_period_end"
+    t.datetime "test_scheduled_at"
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
