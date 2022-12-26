@@ -33,7 +33,7 @@
     <% if !params.empty? %>
       <%= render partial: "clients_table_filters" %>
     <% end %>
-    <% if @clients.empty? || @clients.nil? %>
+    <% if @clients.blank? %>
       <%= render partial: "empty_pods_view" %>
     <% else %>
       <%= render partial: "clients_table", locals: {clients: @clients} %>
