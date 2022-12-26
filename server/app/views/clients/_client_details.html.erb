@@ -61,18 +61,18 @@
   <!--end::Card header-->
   <!--begin::Card body-->
   <div class="card-body pt-0 d-flex flex-row">
-    <div class="client-data" style="width: 40%">
+    <div class="client-data" style="width: 45%">
       <% if current_user.super_user %>
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-          <div class="fw-bolder w-40" style="min-width: 130px">Account</div>
-          <div class="fw-bold d-flex flex-row w-100 w-xl-50" style="color: #5e6278; font-size: 14px">
+          <div class="fw-bolder" style="width: 40%; min-width: 130px">Account</div>
+          <div class="fw-bold d-flex flex-row" style="width: 60%; color: #5e6278; font-size: 14px">
             <%= client.account.name %>
           </div>
         </div>
       <% end %>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-        <div class="fw-bolder w-50" style="min-width: 130px">Location</div>
-        <div class="fw-bold d-flex flex-row w-100 w-xl-50" style="color: #5e6278; font-size: 14px">
+        <div class="fw-bolder" style="width: 40%; min-width: 130px">Location</div>
+        <div class="fw-bold d-flex flex-row" style="width: 60%; color: #5e6278; font-size: 14px">
           <% if client.location != nil %>
             <%= link_to client.location.name, location_path(client.location) %>
           <% else %>
@@ -81,26 +81,26 @@
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-        <div class="fw-bolder w-50" style="min-width: 130px">Added on</div>
-        <div class="fw-bold d-flex flex-row w-100 w-xl-50" style="color: #5e6278; font-size: 14px">
+        <div class="fw-bolder" style="width: 40%; min-width: 130px">Added on</div>
+        <div class="fw-bold d-flex flex-row" style="width: 60%; color: #5e6278; font-size: 14px">
           <%= pretty_print_date(client.created_at) %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-        <div class="fw-bolder w-50" style="min-width: 130px">Total tests</div>
-        <div class="fw-bold d-flex flex-row w-100 w-xl-50" style="color: #5e6278; font-size: 14px">
-          <%= policy_scope(client.measurements).length %>
+        <div class="fw-bolder" style="width: 40%; min-width: 130px">Total tests</div>
+        <div class="fw-bold d-flex flex-row" style="width: 60%; color: #5e6278; font-size: 14px">
+          <%= policy_scope(client.measurements).size %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-        <div class="fw-bolder w-50" style="min-width: 130px">Data Cap</div>
-        <div class="fw-bold d-flex flex-row w-100 w-xl-50" style="color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+        <div class="fw-bolder" style="width: 40%; min-width: 130px">Data Cap</div>
+        <div class="fw-bold d-flex flex-row" style="width: 60%; color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
           <%= client.data_cap_max_usage.nil? ? "Disabled" : "#{(client.data_cap_max_usage / 1_048_576).round(0)} MB per #{client.get_periodicity_period}" %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-        <div class="fw-bolder w-50" style="min-width: 130px"><%= client.data_cap_periodicity.capitalize() %> Usage</div>
-        <div class="fw-bold d-flex flex-row w-100 w-xl-50" style="color: #5e6278; font-size: 14px;">
+        <div class="fw-bolder" style="width: 40%; min-width: 130px"><%= client.data_cap_periodicity.capitalize() %> Usage</div>
+        <div class="fw-bold d-flex flex-row" style="width: 60%; color: #5e6278; font-size: 14px;">
           <% if client.data_cap_max_usage.nil?%>
             <%= client.data_cap_current_period_usage.nil? ? "N/A" : "#{(client.data_cap_current_period_usage / 1_048_576).round(0)} MB" %>
           <% else %>
@@ -114,8 +114,8 @@
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-start justify-content-between flex-wrap">
-        <div class="fw-bolder w-50" style="min-width: 130px">Last Measurement</div>
-        <div class="d-flex flex-column w-100 w-xl-50 align-items-start justify-content-start" style="font-size: 14px; <%= client.latest_measurement.nil? ? "color: #b5b5c3;" : "" %>">
+        <div class="fw-bolder" style="width: 40%; min-width: 130px">Last Measurement</div>
+        <div class="d-flex flex-column align-items-start justify-content-start" style="width: 60%; font-size: 14px; <%= client.latest_measurement.nil? ? "color: #b5b5c3;" : "" %>">
           <p class="fw-bold mb-2" style="color: #5e6278"><%= client.latest_measurement.nil? ? "N/A" : pretty_print_date(client.latest_measurement.created_at) %></p>
           <% if client.latest_measurement.present? %>
             <div class="d-flex flex-row align-items-center justify-content-start">

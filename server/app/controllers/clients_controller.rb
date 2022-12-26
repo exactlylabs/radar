@@ -25,6 +25,10 @@ class ClientsController < ApplicationController
 
   # GET /clients/1 or /clients/1.json
   def show
+    last_10_tests_download_avg = "SELECT AVG(download_total_bytes) FROM (SELECT download_total_bytes FROM measurements WHERE client_id = #{@client.id} AND account_id = #{current_account.id} AND download_total_bytes IS NOT NULL LIMIT 10) AS download_avg"
+    last_10_tests_upload_avg = "SELECT AVG(upload_total_bytes) FROM (SELECT upload_total_bytes FROM measurements WHERE client_id = #{@client.id} AND account_id = #{current_account.id} AND upload_total_bytes IS NOT NULL LIMIT 10) AS upload_avg"
+    @download_total_avg = ActiveRecord::Base.connection.execute(last_10_tests_download_avg)[0]["avg"] || 0
+    @upload_total_avg = ActiveRecord::Base.connection.execute(last_10_tests_upload_avg)[0]["avg"] || 0
   end
 
   # GET /clients/new
