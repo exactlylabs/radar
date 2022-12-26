@@ -81,6 +81,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :update_groups do
+    member do
+      post 'default', to: 'update_groups#set_as_default'
+    end
+  end
+
   resources :client_versions, constraints: {id: /[^\/]+/} do
     resources :distributions do
       member do

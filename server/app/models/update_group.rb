@@ -4,6 +4,6 @@ class UpdateGroup < ApplicationRecord
     belongs_to :watchdog_version, optional: true
 
     def self.default_group
-        self.where(name: 'Default Group').first
+        self.where(default: true).first
     end
 end

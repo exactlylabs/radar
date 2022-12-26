@@ -6,7 +6,7 @@
       <rect x="11" y="9" width="2" height="2" rx="1" transform="rotate(-90 11 9)" fill="currentColor"/>
     </svg>
   </span>
-  <h4 class="text-primary mb-0"><%= notice %></h4>
+  <h4 class="<%= notice =~ /error/i ? "text-danger" : "text-primary" %> mb-0"><%= notice %></h4>
   <button type="button" class="btn btn-icon ms-10" data-bs-dismiss="alert">
           <span class="svg-icon svg-icon-gray-400 svg-icon-2hx">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
