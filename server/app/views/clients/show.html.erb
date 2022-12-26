@@ -35,7 +35,7 @@
     <%= render partial: "options_card", locals: { client: @client, location: nil, style: 'clients' } %>
     <!--end::OptionsCard-->
     <!--begin::Card-->
-    <%= render partial: "client_details", locals: { client: @client } %>
+    <%= render partial: "client_details", locals: { client: @client, total_bytes: @total_avg } %>
     <!--end::Card-->
   </div>
   <!--end::Container-->

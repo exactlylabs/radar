@@ -310,10 +310,9 @@ class Client < ApplicationRecord
     self.measurements.order(created_at: :desc).first
   end
 
-  def get_measurement_data(download_avg, upload_avg)
+  def get_measurement_data(total_bytes)
     data_string = ""
-    total_bytes = download_avg + upload_avg
-    data_string += "~#{(total_bytes / 1_048_576).round(0)} MB per test ("
+    data_string += "~#{(total_bytes / 1_048_576).round(0)} MB per test (" if total_bytes > 0
     data_string += "#{(self.data_cap_current_period_usage / 1_048_576).round(0)} MB this month"
     data_string += ")" if total_bytes > 0
     data_string
