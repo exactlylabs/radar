@@ -6,6 +6,7 @@ scheduler.every '3s' do
   if Rails.application.healthy? && !Rails.application.transient?
     Client.update_outdated_online!
   end
+  Client.request_scheduled_tests
   Rails.application.heartbeat!
 end
 
