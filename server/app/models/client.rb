@@ -10,7 +10,7 @@ class Client < ApplicationRecord
   belongs_to :account, optional: true
   belongs_to :watchdog_version, optional: true
   belongs_to :autonomous_system, optional: true
-  
+
   has_many :measurements
   has_many :client_event_logs
 
@@ -160,7 +160,7 @@ class Client < ApplicationRecord
 
     when "scheduler_weekly"
       self.scheduling_period_end.nil? ? Time.now.at_end_of_week : self.scheduling_period_end.next_week.at_end_of_week
-    
+
     when "scheduler_monthly"
       self.scheduling_period_end.nil? ? Time.now.at_end_of_month : self.scheduling_period_end.next_month.at_end_of_the_month
 
@@ -170,7 +170,7 @@ class Client < ApplicationRecord
   def schedule_next_test!(force=false)
     base_timestamp = Time.now
     return if self.test_scheduled_at.present? && self.test_scheduled_at > base_timestamp && !force
-    
+
     if self.scheduling_period_end.nil?
       # Set it for the first time
       self.scheduling_period_end = self.next_schedule_period_end
@@ -189,7 +189,7 @@ class Client < ApplicationRecord
     # Since we want randomly spaced tests, we select the next test in a range between now and the max_freq.
     # In other words, select a time between the range (base_timestamp, base_timestamp + max_freq]
     max_freq = (self.scheduling_period_end - base_timestamp) / (self.scheduling_amount_per_period - self.scheduling_tests_in_period)
-    
+
     self.test_scheduled_at = Time.at(base_timestamp + (max_freq * rand))
     self.save!
   end
@@ -342,6 +342,22 @@ class Client < ApplicationRecord
     download_avg = averages["download"] || 0
     upload_avg = averages["upload"] || 0
     download_avg + upload_avg
+  end
+
+  # Quick method for preventing division by zero
+  def get_safe_data_cap_max_usage
+    if self.data_cap_max_usage == 0
+      return 1
+    end
+    self.data_cap_max_usage
+  end
+
+  def get_data_cap_percentage_usage
+    percentage = (self.data_cap_current_period_usage * 100 / self.get_safe_data_cap_max_usage).round(0)
+    if percentage > 100
+      return 100
+    end
+    percentage
   end
 
   def self.to_csv_enumerator

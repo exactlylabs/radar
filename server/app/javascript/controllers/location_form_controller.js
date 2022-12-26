@@ -1,4 +1,4 @@
-import { add, Controller } from "@hotwired/stimulus";
+import { Controller } from "@hotwired/stimulus";
 import handleError from "./error_handler_controller";
 
 export default class extends Controller {
