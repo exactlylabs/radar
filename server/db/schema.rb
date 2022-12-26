@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_23_194855) do
+ActiveRecord::Schema.define(version: 2022_12_26_185522) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -292,6 +292,7 @@ ActiveRecord::Schema.define(version: 2022_12_23_194855) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "watchdog_version_id"
+    t.boolean "default", default: false
     t.index ["client_version_id"], name: "index_update_groups_on_client_version_id"
     t.index ["watchdog_version_id"], name: "index_update_groups_on_watchdog_version_id"
   end
