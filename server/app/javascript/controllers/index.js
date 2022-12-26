@@ -75,3 +75,6 @@ application.register("edit-profile-picture", EditProfilePictureController);
 
 import PasswordRevealController from "./password_reveal_controller.js";
 application.register("password-reveal", PasswordRevealController);
+
+import ClientDataCapFormController from "./client_data_cap_form_controller";
+application.register("client-data-cap-form", ClientDataCapFormController);

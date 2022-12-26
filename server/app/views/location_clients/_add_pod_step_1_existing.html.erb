@@ -19,13 +19,13 @@
 			<div class="fv-row mb-7 fv-plugins-icon-container">
 				<label class="required fs-6 fw-bold mb-1">Choose an existing Pod</label>
 				<select id="client_id"
-								class="form-select select2-hidden-accessible"
-								data-add-client-to-location-blanks-value="true"
-								data-placeholder="Choose a Pod"
-								data-action="select2-select->add-client-to-location#checkClientLocation"
-								tabindex="-1"
-								data-add-client-to-location-id="add-client-to-location-data-client_id"
-								data-controller="select2"
+								 class="form-select select2-hidden-accessible"
+								 data-add-client-to-location-blanks-value="true"
+								 data-placeholder="Choose a Pod"
+								 data-action="select2-select->add-client-to-location#checkClientLocation"
+								 tabindex="-1"
+								 data-add-client-to-location-id="add-client-to-location-data-client_id"
+								 data-controller="select2"
 				>
 					<option value=""></option>
 					<% current_account.clients.each do |client| %>

@@ -52,6 +52,9 @@ Rails.application.routes.draw do
       end
     end
 
+    get 'data_usage', to: 'client_data_usage#index'
+    put 'data_usage', to: 'client_data_usage#edit'
+
     member do
       delete 'release'
       post 'status'

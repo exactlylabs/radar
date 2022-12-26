@@ -22,3 +22,12 @@
 .location--offline path {
   fill: #852f41;
 }
+
+.select2-selection {
+  background-color: #f5f8fa !important;
+  border: none !important;
+}
+
+.select2-selection__rendered {
+  color: #5E6278 !important;
+}

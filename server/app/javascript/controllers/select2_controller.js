@@ -14,6 +14,12 @@ export default class extends Controller {
       options.allowClear = true;
     }
 
+    // Custom data attribute to be able to remove searchbar from select2 application-wide
+    // Reference on how to remove searchbar: https://select2.org/searching#single-select
+    if(this.element.getAttribute('data-remove-searchbar') === 'true') {
+      options.minimumResultsForSearch = Infinity;
+    }
+
     $(this.element).select2(options);
     $(this.element).on("select2:select", function () {
       let event = new Event("select2-select", { bubbles: true }); // fire a native event

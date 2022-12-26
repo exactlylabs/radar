@@ -1,0 +1,93 @@
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="text-dark fw-bolder my-1 fs-2">Data Usage
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <!--end::Title-->
+      <!--begin::Breadcrumb-->
+      <ul class="breadcrumb fw-bold fs-base my-1">
+        <li class="breadcrumb-item text-muted"><%= current_account.name %>
+        </li>
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= clients_path %>" class="text-muted text-hover-primary">Pods</a>
+        </li>
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= client_path(@client.unix_user) %>" class="text-muted text-hover-primary"><%= @client.name || 'Unnamed Pod' %></a>
+        </li>
+        <li class="breadcrumb-item text-dark">Data Usage</li>
+      </ul>
+      <!--end::Breadcrumb-->
+    </div>
+    <!--end::Info-->
+  </div>
+</div>
+<!--end::Toolbar-->
+
+<% if notice.present? %>
+  <%= render partial: "application/notice_alert", locals: {notice: notice} %>
+<% end %>
+
+<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
+  <!--begin::Container-->
+  <div class="container-xxl w-100 d-flex" style="max-width: none;">
+    <%= render partial: "options_card", locals: { client: @client.unix_user, location: nil, style: 'clients' } %>
+    <!--begin::Card-->
+    <div class="card" style="width: 90%; height: max-content">
+      <div class="card-header d-flex align-items-center" style="height: 65px">
+        <div class="card-title fw-bolder" style="font-size: 20px; color: #3f4254">
+          Data Usage
+        </div>
+      </div>
+      <!--end::Card toolbar-->
+      <!--begin::Card body-->
+      <div class="card-body pt-0 d-flex flex-row justify-content-start align-items-start">
+        <div style="margin-top: 30px; width: 60%">
+          <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+            <div class="fw-bolder w-50" style="min-width: 130px">Avg. Data Usage</div>
+            <div class="fw-bold d-flex flex-row w-100 w-xl-50" style="color: #5e6278; font-size: 14px; <%= @client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+              <%= @client.data_cap_max_usage.nil? ? "Disabled" : "#{(@client.data_cap_max_usage / 1_048_576).round(0)} MB per #{@client.get_periodicity_period}" %>
+            </div>
+          </div>
+          <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+            <div class="fw-bolder w-50" style="min-width: 130px">Data Cap</div>
+            <div class="fw-bold d-flex flex-row w-100 w-xl-50" style="color: #5e6278; font-size: 14px; <%= @client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+              <%= @client.data_cap_max_usage.nil? ? "Disabled" : "#{(@client.data_cap_max_usage / 1_048_576).round(0)} MB per #{@client.get_periodicity_period}" %>
+            </div>
+          </div>
+          <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+            <div class="fw-bolder w-50" style="min-width: 130px"><%= @client.data_cap_periodicity.capitalize() %> Usage</div>
+            <div class="fw-bold d-flex flex-row w-100 w-xl-50" style="color: #5e6278; font-size: 14px;">
+              <% if @client.data_cap_max_usage.nil?%>
+                <%= @client.data_cap_current_period_usage.nil? ? "N/A" : "#{(@client.data_cap_current_period_usage / 1_048_576).round(0)} MB" %>
+              <% else %>
+                <div class="d-flex flex-row align-items-center justify-content-center">
+                  <div class="w-100px h-5px d-flex justify-content-start align-items-center" style="border-radius: 6.5px; background-color: <%= @client.get_data_cap_percentage_usage >= 80 ? "#fff3f6" : "#e7f6ff" %>">
+                    <div class="h-5px" style="width: <%= "#{@client.get_data_cap_percentage_usage}%" %>; background-color: <%= @client.get_data_cap_percentage_usage >= 80 ? "#f1416c" : "#00a3ff" %>; border-radius: 5px"></div>
+                  </div>
+                  <p class="ms-3 mt-0 mb-0 me-0"><%= "#{(@client.data_cap_current_period_usage / 1_048_576).round(0)} MB (#{@client.get_data_cap_percentage_usage}% used)" %></p>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end align-items-start" style="width: 40%; margin-top: 30px;">
+          <button type="button"
+                  class="btn btn-primary"
+                  data-bs-target="#manage_pod_data_cap_modal"
+                  data-bs-toggle="modal"
+          >Manage Data Cap</button>
+        </div>
+      </div>
+      <!--end::Card body-->
+    </div>
+    <!--end::Card-->
+  </div>
+  <!--end::Container-->
+</div>
+
+<div class="modal fade" tabindex="-1" id="manage_pod_data_cap_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
+  <%= render partial: "client_data_usage/manage_pod_data_cap_modal", locals: {client: @client} %>
+</div>
