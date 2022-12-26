@@ -143,9 +143,8 @@ class ClientsController < ApplicationController
         @client.client_version_id = version_id
       end
     end
-
-    Google::Cloud::Trace.in_span "Verifying Test Scheduler" do
-      @client.verify_test_scheduler!
+    if @client.test_scheduled_at.nil?
+      @client.schedule_next_test!
     end
     Google::Cloud::Trace.in_span "Saving Client" do
       @client.save!
