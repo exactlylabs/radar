@@ -2,7 +2,7 @@ class Client < ApplicationRecord
   # TODO: New agents are 15 seconds, old were 30. Once all the legacy "script based" clients are gone, update this to 15
   PING_DURATION = 30
   enum data_cap_periodicity: {daily: 0, weekly: 1, monthly: 2, yearly: 3}
-
+  enum scheduling_periodicity: {scheduler_hourly: 0, scheduler_daily: 1, scheduler_weekly: 2, scheduler_monthly: 3}
   belongs_to :user, optional: true, foreign_key: 'claimed_by_id'
   belongs_to :location, optional: true
   belongs_to :client_version, optional: true
@@ -22,11 +22,10 @@ class Client < ApplicationRecord
   after_create :send_created_event
   after_commit :check_ip_changed
   has_secure_password :secret, validations: false
-  validate :valid_cron_string
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, -> { where("online = true AND (pinged_at < ? OR pinged_at IS NULL)", (PING_DURATION * 1.5).second.ago) }
-
+  scope :where_test_should_be_requested, -> { where("test_scheduled_at <= ? AND test_requested = false", Time.now)}
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where("location_id IS NULL") }
@@ -147,23 +146,54 @@ class Client < ApplicationRecord
     self.reload(:lock=>true)
   end
 
-  def verify_test_scheduler!
-    # Load Cron and set a default value in case it's empty
-    if self.cron_string.nil?
-      # Assign an hourly cron, with a random minute
-      minute = rand(0..59)
-      self.cron_string = "#{minute} * * * *"
-    end
-    
-    if self.next_schedule_at.nil?
-      cron = Fugit.parse_cron(self.cron_string)
-      self.next_schedule_at = cron.next_time(self&.measurements&.last&.created_at || Time.current).to_t
+  def next_schedule_period_end
+    case self.scheduling_periodicity
+    when "scheduler_hourly"
+      self.scheduling_period_end.nil? ? Time.now.at_end_of_hour : self.scheduling_period_end.advance(hours: 1).at_end_of_hour
 
-    elsif self.next_schedule_at < Time.current && self.has_data_cap?
-      cron = Fugit.parse_cron(self.cron_string)
-      # Request a test and increment the next_schedule_at
-      self.test_requested = true
-      self.next_schedule_at = cron.next_time(Time.current).to_t
+    when "scheduler_daily"
+      self.scheduling_period_end.nil? ? Time.now.at_end_of_day : self.scheduling_period_end.next_day.at_end_of_day
+
+    when "scheduler_weekly"
+      self.scheduling_period_end.nil? ? Time.now.at_end_of_week : self.scheduling_period_end.next_week.at_end_of_week
+    
+    when "scheduler_monthly"
+      self.scheduling_period_end.nil? ? Time.now.at_end_of_month : self.scheduling_period_end.next_month.at_end_of_the_month
+
+    end
+  end
+
+  def schedule_next_test!(force=false)
+    base_timestamp = Time.now
+    return if self.test_scheduled_at.present? && self.test_scheduled_at > base_timestamp && !force
+    
+    if self.scheduling_period_end.nil?
+      # Set it for the first time
+      self.scheduling_period_end = self.next_schedule_period_end
+    elsif self.scheduling_tests_in_period == self.scheduling_amount_per_period
+      # We finished the number of tests for this period, change it to the next one
+      self.scheduling_tests_in_period = 0
+      base_timestamp = self.scheduling_period_end
+      self.scheduling_period_end = self.next_schedule_period_end
+    elsif self.scheduling_period_end < Time.now
+      # It's time to set the next period
+      self.scheduling_tests_in_period = 0
+      self.scheduling_period_end = self.next_schedule_period_end
+    end
+
+    # If we were to split the N tests in equal parts, each test should be spaced by max_freq.
+    # Since we wan't randomly spaced tests, we select thge next test in a range between now and the max_freq.
+    # In other words, select a time between the range (base_timestamp, base_timestamp + max_freq]
+    max_freq = (self.scheduling_period_end - base_timestamp) / (self.scheduling_amount_per_period - self.scheduling_tests_in_period)
+    
+    self.test_scheduled_at = Time.at(base_timestamp + (max_freq * rand))
+    self.save!
+  end
+
+  def self.request_scheduled_tests!
+    Client.where_test_should_be_requested.each do |client|
+      client.test_requested = true
+      client.save!
     end
   end
 
@@ -304,12 +334,6 @@ class Client < ApplicationRecord
       end
     end
     tmp_file
-  end
-
-  def valid_cron_string
-    if cron_string && !Fugit::Cron.parse(cron_string).present?
-        errors.add(:cron_string, "invalid cron string")
-    end
   end
 
   private
