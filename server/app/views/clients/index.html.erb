@@ -18,8 +18,11 @@
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
+      <% if current_user.super_user %>
+        <a href="<%= update_groups_path %>" class="btn btn-secondary me-5">Manage Release Group</a>
+      <% end %>
       <% if current_account.superaccount %>
-        <a href="<%= staging_clients_path %>" class="btn btn-secondary mx-5">Staging Pods</a>
+        <a href="<%= staging_clients_path %>" class="btn btn-secondary me-5">Staging Pods</a>
       <% end %>
       <button type="button" class="btn btn-primary <%= current_account.nil? ? 'disabled' : '' %>" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard">Add Pod</button>
     </div>

@@ -245,8 +245,9 @@ class ClientsController < ApplicationController
     # not doing policy_scope because when selecting another account
     # different to current_account, running policy_scope(Client) would throw
     client = Client.find_by_unix_user(params[:id])
+    update_group = UpdateGroup.find(params[:update_group_id])
     respond_to do |format|
-      if client.update(name: name, location: location, account: account)
+      if client.update(name: name, location: location, account: account, update_group: update_group)
         format.html { redirect_to clients_path, notice: "Client was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: client_path(client.unix_user) }
       else

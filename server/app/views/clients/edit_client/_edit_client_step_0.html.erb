@@ -108,7 +108,7 @@
 
       <a class="d-flex align-items-center fw-bold"
          href="#"
-         style="color: #00a3ff; font-size: 12px"
+         style="color: #00a3ff; font-size: 12px;"
          data-bs-toggle="modal"
          data-bs-target="#new_location_modal-edit">
         Add new location
@@ -119,6 +119,26 @@
           </svg>
         </span>
       </a>
+
+      <% if current_user.super_user %>
+        <div class="fv-row my-7 fv-plugins-icon-container">
+          <label class="required fs-6 fw-bold mb-2">Release Group</label>
+          <select class="form-select"
+                  data-controller="select2"
+                  data-select2-blanks-value="true"
+                  id="client-update-groups-dropdown-edit"
+                  data-placeholder="Select a release group"
+                  name="update_group_id"
+                  data-select2-id="select2-data-update_group_id"
+                  tabindex="-1"
+          >
+            <% UpdateGroup.all.each do |ug|%>
+              <option value="<%= ug.id %>" label="<%= ug.name %>" <%= @client.update_group_id == ug.id ? "selected" : nil %>><%= ug.name %></option>
+            <% end %>
+          </select>
+        </div>
+      <% end %>
+
     </div>
 
     <div class="modal-footer">
