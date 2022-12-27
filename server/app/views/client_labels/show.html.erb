@@ -1,0 +1,23 @@
+<div id="label-frame">
+  <%= image_tag image_url('radar-label-logo.png'), id: 'label-logo' %>
+  <div id="inputs-qr-container">
+    <div id="inputs-wrapper">
+      <div class="row" id="pod-id-container">
+        <p class="label">Pod ID</p>
+        <div class="input">
+          <p class="input-content"><%= @client.unix_user %></p>
+        </div>
+      </div>
+      <div class="row" id="mac-address-container">
+        <p class="label">MAC Address</p>
+        <div class="input">
+          <p class="input-content"><%= @client.address.present? ? @client.address : "N/A" %></p>
+        </div>
+      </div>
+    </div>
+    <div id="qr-wrapper">
+      <%= qr.html_safe %>
+    </div>
+  </div>
+  <p id="footer-message">To check the Pod status, access its website by scanning the QR code on this label. For help, please contact support@exactlylabs.com.</p>
+</div>

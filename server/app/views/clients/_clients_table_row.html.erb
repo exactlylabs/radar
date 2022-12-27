@@ -84,6 +84,13 @@
           <%= link_to "Edit", edit_client_path(client.unix_user), { class: "menu-link text-hover-gray-500 text-gray-700 px-3 py-2", data: { "turbo-frame" => "edit_client_modal" } } %>
         </div>
         <!--end::Menu item-->
+        <% if current_user.super_user %>
+        <!--begin::Menu item-->
+        <div class="menu-item">
+          <%= link_to "Print Label", client_label_path(client.unix_user, format: :pdf), { class: "menu-link text-hover-gray-500 text-gray-700 px-3", target: "_blank" } %>
+        </div>
+        <!--end::Menu item-->
+        <% end %>
         <!--begin::Menu item-->
         <div class="menu-item">
           <%= link_to 'Delete', release_client_path(client.unix_user), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link text-hover-gray-500 text-gray-700 px-3 py-2" %>

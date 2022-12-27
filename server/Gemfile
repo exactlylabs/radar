@@ -78,3 +78,7 @@ gem 'rufus-scheduler'
 
 gem 'grpc', '1.47'
 gem 'ipaddr'
+
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
+gem "rqrcode"

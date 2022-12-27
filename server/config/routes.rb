@@ -124,6 +124,9 @@ Rails.application.routes.draw do
     end
   end
 
+
+  get 'pdf_labels/:unix_user', to: 'pdf_labels#get_client_label', as: 'client_label'
+
   namespace 'api' do
     namespace 'v1' do
       resources :client_versions, constraints: {id: /[^\/]+/} do
