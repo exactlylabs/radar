@@ -5,7 +5,7 @@ class ClientMeasurementsController < ApplicationController
 
   # GET /measurements or /measurements.json
   def index
-    @measurements = @client.measurements.where(account_id: current_account.id) # Don't bring in measurements made on another account different to the current one
+    @measurements = policy_scope(@client.measurements) # Don't bring in measurements made on another account different to the current one
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements } }
       format.csv { send_data @measurements.to_csv, filename: "measurements-#{@client.unix_user}.csv" }
