@@ -20,7 +20,7 @@ workflows:
       - config-splitting/setup-dynamic-config:
           force-all: << pipeline.parameters.force-all >>
           base-revision: master
-          
+
           # If A is modified, the job for A will run
           # Similarly if B is modified, the job for B will run
           # If C is modified, then the jobs for both C and B (as a dependency) will run
@@ -47,6 +47,7 @@ workflows:
               only: "/^mobile-.*/"
 
 orbs:
+  continuation: circleci/continuation@0.3.1
   # An "embedded" orb to facilitate config splitting
   config-splitting:
     # Dependencies
