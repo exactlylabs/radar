@@ -95,20 +95,20 @@
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder" style="width: 40%; min-width: 130px">Data Cap</div>
         <div class="fw-bold d-flex flex-row" style="width: 60%; color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
-          <%= client.data_cap_max_usage.nil? ? "Disabled" : "#{(client.data_cap_max_usage / 1_048_576).round(0)} MB per #{client.get_periodicity_period}" %>
+          <%= client.data_cap_max_usage.nil? ? "Disabled" : "#{(client.data_cap_max_usage / (1024**2)).round(0)} MB per #{client.get_periodicity_period}" %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder" style="width: 40%; min-width: 130px"><%= client.data_cap_periodicity.capitalize() %> Usage</div>
         <div class="fw-bold d-flex flex-row" style="width: 60%; color: #5e6278; font-size: 14px;">
           <% if client.data_cap_max_usage.nil?%>
-            <%= client.data_cap_current_period_usage.nil? ? "N/A" : "#{(client.data_cap_current_period_usage / 1_048_576).round(0)} MB" %>
+            <%= client.data_cap_current_period_usage.nil? ? "N/A" : "#{(client.data_cap_current_period_usage / (1024**2)).round(0)} MB" %>
           <% else %>
             <div class="d-flex flex-row align-items-center justify-content-center">
               <div class="w-100px h-5px d-flex justify-content-start align-items-center" style="border-radius: 6.5px; background-color: #e7f6ff">
                 <div class="h-5px" style="width: <%= "#{(client.data_cap_current_period_usage * 100 / client.data_cap_max_usage).round(0)}%" %>; background-color: #00a3ff; border-radius: 5px"></div>
               </div>
-              <p class="ms-3 mt-0 mb-0 me-0"><%= "#{(client.data_cap_current_period_usage / 1_048_576).round(0)} MB (#{(client.data_cap_current_period_usage / client.data_cap_max_usage * 100).round(0)}% used)" %></p>
+              <p class="ms-3 mt-0 mb-0 me-0"><%= "#{(client.data_cap_current_period_usage / (1024**2)).round(0)} MB (#{(client.data_cap_current_period_usage / client.data_cap_max_usage * 100).round(0)}% used)" %></p>
             </div>
           <% end %>
         </div>

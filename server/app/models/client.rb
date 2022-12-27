@@ -312,8 +312,8 @@ class Client < ApplicationRecord
 
   def get_measurement_data(total_bytes)
     data_string = ""
-    data_string += "~#{(total_bytes / 1_048_576).round(0)} MB per test (" if total_bytes > 0
-    data_string += "#{(self.data_cap_current_period_usage / 1_048_576).round(0)} MB this month"
+    data_string += "~#{(total_bytes / (1024**2)).round(0)} MB per test (" if total_bytes > 0
+    data_string += "#{(self.data_cap_current_period_usage / (1024**2)).round(0)} MB this month"
     data_string += ")" if total_bytes > 0
     data_string
   end
@@ -331,6 +331,17 @@ class Client < ApplicationRecord
     else
       ""
     end
+  end
+
+  def get_speed_averages(account_id)
+    raw_query = "SELECT AVG(download_total_bytes) as download, AVG(upload_total_bytes) as upload FROM " +
+      "(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ? AND account_id = ? " +
+      "AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg"
+    query = ActiveRecord::Base.sanitize_sql([raw_query, self.id, account_id])
+    averages = ActiveRecord::Base.connection.execute(query)[0]
+    download_avg = averages["download"] || 0
+    upload_avg = averages["upload"] || 0
+    download_avg + upload_avg
   end
 
   def self.to_csv_enumerator
