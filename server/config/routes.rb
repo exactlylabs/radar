@@ -58,6 +58,7 @@ Rails.application.routes.draw do
       post 'watchdog_status'
       post 'run_test'
       post 'unstage'
+      get 'pdf_label', to: 'clients#get_client_label'
     end
 
     collection do
@@ -123,9 +124,6 @@ Rails.application.routes.draw do
       post 'resend', to: 'invites#resend'
     end
   end
-
-
-  get 'pdf_labels/:unix_user', to: 'pdf_labels#get_client_label', as: 'client_label'
 
   namespace 'api' do
     namespace 'v1' do
