@@ -34,6 +34,8 @@ workflows:
           filters:
             tags:
               only: "/^agent-.*/"
+            branches:
+              ignore: "/^.*/"
 
       - continuation/continue:
           name: "Setup Mobile App Tag Workflows"
@@ -41,6 +43,8 @@ workflows:
           filters:
             tags:
               only: "/^mobile-.*/"
+            branches:
+              ignore: "/^.*/"
 
 orbs:
   continuation: circleci/continuation@0.3.1
