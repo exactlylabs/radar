@@ -38,7 +38,7 @@
             <label class="required fs-6 fw-bold mb-2">Data Limit</label>
             <div class="d-flex flex-row justify-content-between align-items-center w-100">
               <div class="input-group" style="width: 47.5%">
-                <input value="<%= (client.data_cap_max_usage.nil? ? 0 : (client.data_cap_max_usage / 1_048_576).round(0)) %>"
+                <input value="<%= (client.data_cap_max_usage.nil? ? 0 : (client.data_cap_max_usage / (1024**2)).round(0)) %>"
                        name="client[data_cap_max_usage]"
                        min="1"
                        step="1"
@@ -70,7 +70,7 @@
             </div>
           </div>
           <p class="fw-bold" style="width: 100%; font-size: 14px; letter-spacing: 0.1px; color: #a2a5b7">A data cap limits the amount of data this Pod will use for speed tests.
-            The current monthly usage is <%= client.data_cap_current_period_usage.present? ? (client.data_cap_current_period_usage / 1_048_576).round(0) : 0%> MB.</p>
+            The current monthly usage is <%= client.data_cap_current_period_usage.present? ? (client.data_cap_current_period_usage / (1024**2)).round(0) : 0%> MB.</p>
         </div>
       </div>
     </div>
