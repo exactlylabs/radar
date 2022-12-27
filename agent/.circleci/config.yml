@@ -23,9 +23,12 @@ jobs:
   create_version:
     docker:
       - image: cimg/base:2022.05
+    parameters:
+      version:
+        type: string
     steps:
       - checkout
-      - run: make client_version VERSION=$CIRCLE_TAG RADAR_URL=${RADAR_URL} RADAR_TOKEN=${RADAR_TOKEN}
+      - run: make client_version VERSION=<<parameters.version>> RADAR_URL=${RADAR_URL} RADAR_TOKEN=${RADAR_TOKEN}
 
   build_and_upload:
     working_directory: ~/repo
@@ -259,6 +262,7 @@ workflows:
   build_distributions:
     jobs:
       - create_version:
+          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
               only: /^agent-(?:\d+\.){2}\d+$/
@@ -267,7 +271,7 @@ workflows:
 
       - build_and_upload:
           requires: [create_version]
-          version: $CIRCLE_TAG
+          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
               only: /^agent-(?:\d+\.){2}\d+$/
@@ -284,7 +288,7 @@ workflows:
   build_packages:
     jobs:
       - deb_package:
-          version: $CIRCLE_TAG
+          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
               only: /^agent-(?:\d+\.){2}\d+$/
@@ -296,7 +300,7 @@ workflows:
 
       - upload_package: &upload_anchor
           name: upload_debian_amd64
-          version: $CIRCLE_TAG
+          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           os: linux
           arch: amd64
           workspace_file_name: radar-agent*amd64*.deb
@@ -314,7 +318,7 @@ workflows:
           requires: [deb_package-arm64]
 
       - rpm_package:
-          version: $CIRCLE_TAG
+          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
               only: /^agent-(?:\d+\.){2}\d+$/
@@ -337,7 +341,7 @@ workflows:
           requires: [rpm_package-amd64]
 
       - pkg_package:
-          version: $CIRCLE_TAG
+          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
               only: /^agent-(?:\d+\.){2}\d+$/
@@ -374,7 +378,7 @@ workflows:
           requires: [wait_notarization]
 
       - msi_package:
-          version: $CIRCLE_TAG
+          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
               only: /^agent-(?:\d+\.){2}\d+$/
