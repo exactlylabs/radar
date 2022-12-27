@@ -27,20 +27,16 @@ workflows:
           modules: |
             agent
             mobile_client_app
-
-  setup-agent-tag-workflow: # Tags don't have changes, so we need to force a trigger of the CI pipeline
-    when: << pipeline.parameters.run-setup >>
-    jobs:
+      
       - continuation/continue:
+          name: "Setup Agent Tag Workflows"
           configuration_path: agent/.circleci/config.yml
           filters:
             tags:
               only: "/^agent-.*/"
 
-  setup-mobile-app-tag-workflow: # Tags don't have changes, so we need to force a trigger of the CI pipeline
-    when: << pipeline.parameters.run-setup >>
-    jobs:
       - continuation/continue:
+          name: "Setup Mobile App Tag Workflows"
           configuration_path: mobile_client_app/.circleci/config.yml
           filters:
             tags:
