@@ -52,6 +52,9 @@
           </div>
         </div>
       </div>
+      <% if current_user.super_user %>
+        <%= link_to "Print Label", client_label_path(@client.unix_user, format: :pdf), { class: "btn btn-light me-3", target: "_blank" } %>
+      <% end %>
       <%= link_to "Edit Pod", edit_client_path(@client.unix_user), { class: "btn btn-light-primary me-3", data: { "turbo-frame" => "edit_client_modal" } } %>
       <a href="<%= client_measurements_path(@client.unix_user) %>" class="btn btn-light-primary me-3">View Measurements</a>
       <%= link_to "Run Test", run_test_client_path(@client.unix_user), method: :post, class: "btn btn-primary #{@client.test_requested ? "disabled" : ""}" %>
