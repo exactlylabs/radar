@@ -1,9 +1,10 @@
 require "sshkey"
+require "rqrcode"
 
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
-  before_action :set_client, only: %i[ release show edit destroy unstage ]
+  before_action :set_client, only: %i[ release show edit destroy unstage get_client_label ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 
@@ -274,6 +275,32 @@ class ClientsController < ApplicationController
     respond_to do |format|
       format.html { redirect_back fallback_location: root_path, notice: notice }
       format.json { head :no_content }
+    end
+  end
+
+  # GET /client/:unix_user/pdf_labels
+  def get_client_label
+    client_path = request.base_url + "/clients/#{@client.unix_user}"
+    qr = RQRCode::QRCode.new(client_path)
+
+    qr_svg = qr.as_svg(
+      color: "000",
+      shape_rendering: "crispEdges",
+      module_size: 11,
+      standalone: true,
+      use_path: true,
+      viewbox: true
+    )
+
+    respond_to do |format|
+      format.pdf do
+        render pdf: "#{@client.unix_user}",
+               page_size: "A4",
+               template: "client_labels/show.html.erb",
+               layout: "client_label.html",
+               orientation: "Landscape",
+               locals: { qr: qr_svg }
+      end
     end
   end
 

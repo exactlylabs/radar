@@ -87,7 +87,7 @@
         <% if current_user.super_user %>
         <!--begin::Menu item-->
         <div class="menu-item">
-          <%= link_to "Print Label", client_label_path(client.unix_user, format: :pdf), { class: "menu-link text-hover-gray-500 text-gray-700 px-3", target: "_blank" } %>
+          <%= link_to "Print Label", pdf_label_client_path(client.unix_user, format: :pdf), { class: "menu-link text-hover-gray-500 text-gray-700 px-3", target: "_blank" } %>
         </div>
         <!--end::Menu item-->
         <% end %>
