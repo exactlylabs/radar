@@ -14,10 +14,9 @@ set -e
 # sudo xcode-select -r
 
 
-xcrun altool \
-    -type osx \
-    --notarize-app \
-    --primary-bundle-id "${APPLE_BUNDLE_ID}" \
-    --username "${APPLEID_USERNAME}" \
-    --password "${APPLEID_PWD}" \
-    --file "${PKG_PATH}"
+xcrun notarytool \
+    submit \
+    --apple-id ${APPLEID_USERNAME} \
+    --password ${APPLEID_PWD} \
+    --team-id=MQYTP6VS48 \
+    "${PKG_PATH}"

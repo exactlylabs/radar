@@ -208,7 +208,7 @@ jobs:
         type: string
     steps:
       - build_config
-      - run: sudo apt update && sudo apt install -y msitools wixl
+      - run: sudo apt update && sudo apt install -y msitools wixl osslsigncode
       - run: echo $MSI_CERT_FILE | base64 -d > ~/repo/certificate.cer
       - run: echo $MSI_KEY_FILE | base64 -d > ~/repo/key.pem
       - run: |
