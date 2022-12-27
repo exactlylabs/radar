@@ -16,6 +16,8 @@ class Client < ApplicationRecord
 
   geocoded_by :address
 
+  validates :scheduling_amount_per_period, numericality: { only_integer: true, greater_than: 0 }
+
   before_create :create_ids
   after_validation :geocode
   after_save :send_event
@@ -182,7 +184,7 @@ class Client < ApplicationRecord
     end
 
     # If we were to split the N tests in equal parts, each test should be spaced by max_freq.
-    # Since we wan't randomly spaced tests, we select thge next test in a range between now and the max_freq.
+    # Since we want randomly spaced tests, we select the next test in a range between now and the max_freq.
     # In other words, select a time between the range (base_timestamp, base_timestamp + max_freq]
     max_freq = (self.scheduling_period_end - base_timestamp) / (self.scheduling_amount_per_period - self.scheduling_tests_in_period)
     
