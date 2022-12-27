@@ -295,11 +295,14 @@ class ClientsController < ApplicationController
     respond_to do |format|
       format.pdf do
         render pdf: "#{@client.unix_user}",
-               page_size: "A4",
+               page_width: "380px",
+               page_height: "287.5px",
                template: "client_labels/show.html.erb",
                layout: "client_label.html",
-               orientation: "Landscape",
-               locals: { qr: qr_svg }
+               page_offset: 0,
+               locals: { qr: qr_svg },
+               margin: {top: 1, bottom: 0, left: 0, right: 2},
+               outline: {outline: false}
       end
     end
   end
