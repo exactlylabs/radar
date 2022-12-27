@@ -261,7 +261,7 @@ workflows:
       - create_version:
           filters:
             tags:
-              only: /^(?:\d+\.){2}\d+$/
+              only: /^agent-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
 
@@ -270,7 +270,7 @@ workflows:
           version: $CIRCLE_TAG
           filters:
             tags:
-              only: /^(?:\d+\.){2}\d+$/
+              only: /^agent-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
           matrix:
@@ -287,7 +287,7 @@ workflows:
           version: $CIRCLE_TAG
           filters:
             tags:
-              only: /^(?:\d+\.){2}\d+$/
+              only: /^agent-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
           matrix:
@@ -302,7 +302,7 @@ workflows:
           workspace_file_name: radar-agent*amd64*.deb
           filters:
             tags:
-              only: /^(?:\d+\.){2}\d+$/
+              only: /^agent-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
           requires: [deb_package-amd64]
@@ -317,7 +317,7 @@ workflows:
           version: $CIRCLE_TAG
           filters:
             tags:
-              only: /^(?:\d+\.){2}\d+$/
+              only: /^agent-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
           matrix:
@@ -340,13 +340,13 @@ workflows:
           version: $CIRCLE_TAG
           filters:
             tags:
-              only: /^(?:\d+\.){2}\d+$/
+              only: /^agent-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
       - notarize_pkg:
           filters:
             tags:
-              only: /^(?:\d+\.){2}\d+$/
+              only: /^agent-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
           requires: [pkg_package]
@@ -354,7 +354,7 @@ workflows:
           type: approval
           filters:
             tags:
-              only: /^(?:\d+\.){2}\d+$/
+              only: /^agent-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
           requires: [notarize_pkg]
@@ -377,7 +377,7 @@ workflows:
           version: $CIRCLE_TAG
           filters:
             tags:
-              only: /^(?:\d+\.){2}\d+$/
+              only: /^agent-(?:\d+\.){2}\d+$/
             branches:
               ignore: "/.*/"
       - upload_package:
