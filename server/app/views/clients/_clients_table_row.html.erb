@@ -35,7 +35,7 @@
     </td>
     <td class="mb-1"
         style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-      <%= UpdateGroup.find(client.update_group_id).name %>
+      <%= client.update_group_id.present? ? UpdateGroup.find(client.update_group_id).name : "N/A" %>
     </td>
   <% end %>
   <td class="mb-1"
