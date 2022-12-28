@@ -52,8 +52,9 @@ Rails.application.routes.draw do
       end
     end
 
-    get 'data_usage', to: 'client_data_usage#index'
-    put 'data_usage', to: 'client_data_usage#edit'
+    get 'data_usage_and_scheduling', to: 'client_data_usage_and_scheduling#index'
+    put 'data_usage', to: 'client_data_usage_and_scheduling#edit_data_cap'
+    put 'scheduling', to: 'client_data_usage_and_scheduling#edit_scheduling'
 
     member do
       delete 'release'

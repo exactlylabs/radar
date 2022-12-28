@@ -34,11 +34,11 @@
   </a>
 </li>
 <li class="list-group-item border-0 p-0 d-flex justify-content-start">
-  <a href="<%= client_data_usage_path(@client.unix_user) %>"
+  <a href="<%= client_data_usage_and_scheduling_path(@client.unix_user) %>"
      class="btn btn-active-light btn-active-color-primary
             btn-active-icon-primary text-start px-3 w-100
             d-flex justify-content-start align-items-center flex-row
-            <%= active_full_path?(client_data_usage_path(@client.unix_user)) %>">
+            <%= active_full_path?(client_data_usage_and_scheduling_path(@client.unix_user)) %>">
     <!--begin::Svg Icon -->
     <span class="svg-icon mx-0" style="height: 14px; width: 14px;">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -47,6 +47,6 @@
       </svg>
     </span>
     <!--end::Svg Icon-->
-    <div class="d-md-none d-xl-block ms-3 me-5">Data Usage</div>
+    <div class="d-md-none d-xl-block ms-3 me-5">Data Usage & Scheduling</div>
   </a>
 </li>

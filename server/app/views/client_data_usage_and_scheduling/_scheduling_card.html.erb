@@ -1,0 +1,29 @@
+<div class="card" style="width: 100%; height: max-content">
+  <div class="card-header d-flex align-items-center" style="height: 65px">
+    <div class="card-title fw-bolder" style="font-size: 20px; color: #3f4254">
+      Scheduling
+    </div>
+  </div>
+  <div class="card-body pt-0 d-flex flex-row justify-content-start align-items-start">
+    <div style="margin-top: 30px; width: 60%">
+      <div class="location-data--row mb-6 d-flex flex-row align-items-start justify-content-between flex-wrap">
+        <div class="fw-bolder w-50" style="min-width: 130px">Custom Scheduling</div>
+        <div class="d-flex flex-column w-100 w-xl-50">
+          <p class="fw-bold mb-4" style="color: #5e6278; font-size: 14px; <%= !client.custom_scheduling ? "color: #b5b5c3;" : "" %>">
+            <%= client.custom_scheduling ? "Enabled" : "Disabled" %>
+          </p>
+          <p class="fw-bold" style="font-size: 14px; color: #5e6278">
+            <%= client.get_scheduling_periodicity_string %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end align-items-start" style="width: 40%; margin-top: 30px;">
+      <button type="button"
+              class="btn btn-primary"
+              data-bs-target="#manage_pod_scheduling_modal"
+              data-bs-toggle="modal"
+      >Manage Custom Scheduling</button>
+    </div>
+  </div>
+</div>
