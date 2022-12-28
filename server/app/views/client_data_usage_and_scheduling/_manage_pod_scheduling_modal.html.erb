@@ -1,0 +1,95 @@
+<%= form_with(model: client, url: client_scheduling_path(client.unix_user), method: :put, data: {"turbo-frame" => "_top"}) do |form| %>
+  <div class="modal-dialog" data-controller="client-scheduling-form">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-size: 20px">Manage Custom Scheduling</h5>
+        <!--begin::Close-->
+        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+          <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+          <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
+              <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
+              <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
+          </svg>
+      </span>
+          <!--end::Svg Icon-->
+        </div>
+        <!--end::Close-->
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-6 mb-10 mb-lg-0 w-100">
+            <div class="fv-row mb-7 fv-plugins-icon-container">
+              <label class="fs-6 fw-bold mb-2">Status</label>
+              <div class="form-check form-switch form-check-custom form-check-solid">
+                <input class="form-check-input"
+                       type="checkbox"
+                       role="switch"
+                       id="flexSwitchCheckDefault"
+                       name="client[custom_scheduling]"
+                       <%= client.custom_scheduling ? "checked" : nil %>
+                       data-action="input->client-scheduling-form#onSwitchChange"
+                  />
+                <label class="form-check-label" for="flexSwitchCheckDefault">Use a custom scheduling on this Pod</label>
+              </div>
+            </div>
+            <div class="fv-row mb-7 fv-plugins-icon-container">
+              <label class="required fs-6 fw-bold mb-2">Scheduling</label>
+              <div class="d-flex flex-row justify-content-between align-items-center w-100">
+                <div class="input-group" style="width: 47.5%">
+                  <input value="<%= client.scheduling_amount_per_period %>"
+                         name="client[scheduling_amount_per_period]"
+                         min="1"
+                         type="number"
+                         step="1"
+                         class="conditional form-control form-control-solid <%= client.custom_scheduling ? '' : 'text-muted'%>"
+                         <%= client.custom_scheduling ? nil : "readonly" %>
+                         placeholder="1"
+                         data-client-scheduling-form-target="schedulingValueInput"
+                         data-action="input->client-scheduling-form#onInputChange"
+                    />
+                </div>
+                <div style="width: 47.5%">
+                  <select id="client_data_cap_periodicity"
+                          class="form-select select2-hidden-accessible"
+                          data-placeholder="Choose period"
+                          tabindex="-1"
+                          data-controller="select2"
+                          style="background-color: #f5f8fa;"
+                          <%= client.custom_scheduling ? nil : "disabled" %>
+                          data-client-scheduling-form-target="schedulingValueSelect"
+                          name="client[scheduling_periodicity]"
+                          data-remove-searchbar="true"
+                          data-action="select2-select->client-scheduling-form#onSelectChange"
+                  >
+                    <option value="0" label="per hour"  <%= client.custom_scheduling && client.scheduling_periodicity == 0 ? "selected" : nil %>>per hour</option>
+                    <option value="1" label="per day"   <%= client.custom_scheduling && client.scheduling_periodicity == 1 ? "selected" : nil %>>per day</option>
+                    <option value="2" label="per week"  <%= client.custom_scheduling && client.scheduling_periodicity == 2 ? "selected" : nil %>>per week</option>
+                    <option value="3" label="per month" <%= client.custom_scheduling && client.scheduling_periodicity == 3 ? "selected" : nil %>>per month</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <p class="fw-bold" style="width: 100%; font-size: 14px; letter-spacing: 0.1px; color: #a2a5b7" data-client-scheduling-form-target="podPeriodicityString"><%= client.get_scheduling_periodicity_string %></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer d-flex flex-row justify-content-end">
+        <!--begin::LaterButton-->
+        <button type="button"
+                class="btn btn-light"
+                data-bs-dismiss="modal"
+                style="height: 48px;"
+        >Cancel</button>
+        <!--end::LaterButton-->
+        <!--begin::ContinueButton-->
+        <button type="submit"
+                class="btn btn-primary <%= client.data_cap_current_period_usage.nil? ? 'disabled' : '' %>"
+                style="height: 48px;"
+        >Save</button>
+        <!--end::ContinueButton-->
+      </div>
+    </div>
+  </div>
+<% end %>

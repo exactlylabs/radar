@@ -78,3 +78,6 @@ application.register("password-reveal", PasswordRevealController);
 
 import ClientDataCapFormController from "./client_data_cap_form_controller";
 application.register("client-data-cap-form", ClientDataCapFormController);
+
+import ClientSchedulingFormController from "./client_scheduling_form_controller";
+application.register("client-scheduling-form", ClientSchedulingFormController);

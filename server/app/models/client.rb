@@ -333,6 +333,19 @@ class Client < ApplicationRecord
     end
   end
 
+  def get_scheduling_periodicity_period
+    case self.scheduling_periodicity
+    when "scheduler_hourly"
+      "per hour"
+    when "scheduler_daily"
+      "per day"
+    when "scheduler_weekly"
+      "per week"
+    else
+      "per month"
+    end
+  end
+
   def get_speed_averages(account_id)
     raw_query = "SELECT AVG(download_total_bytes) as download, AVG(upload_total_bytes) as upload FROM " +
       "(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ? AND account_id = ? " +
@@ -358,6 +371,10 @@ class Client < ApplicationRecord
       return 100
     end
     percentage
+  end
+
+  def get_scheduling_periodicity_string
+    "Tests are set to run #{self.scheduling_amount_per_period} #{self.scheduling_amount_per_period == 1 ? "time" : "times"} #{self.get_scheduling_periodicity_period}."
   end
 
   def self.to_csv_enumerator

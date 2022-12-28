@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_26_185522) do
+ActiveRecord::Schema.define(version: 2022_12_28_131241) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -189,6 +189,7 @@ ActiveRecord::Schema.define(version: 2022_12_26_185522) do
     t.integer "scheduling_tests_in_period", default: 0
     t.datetime "scheduling_period_end"
     t.datetime "test_scheduled_at"
+    t.boolean "custom_scheduling", default: false
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
