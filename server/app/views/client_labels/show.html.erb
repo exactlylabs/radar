@@ -1,23 +1,23 @@
-<div id="label-frame">
-  <%= image_tag image_url('radar-label-logo.png'), id: 'label-logo' %>
-  <div id="inputs-qr-container">
-    <div id="inputs-wrapper">
-      <div class="row" id="pod-id-container">
-        <p class="label">Pod ID</p>
-        <div class="input">
-          <p class="input-content"><%= @client.unix_user %></p>
+<div id="pod-label--label-frame">
+  <%= image_tag image_url('radar-label-logo.png'), id: 'pod-label--label-logo' %>
+  <div id="pod-label--inputs-qr-container">
+    <div id="pod-label--inputs-wrapper">
+      <div class="pod-label--row" id="pod-label--pod-id-container">
+        <p class="pod-label--label">Pod ID</p>
+        <div class="pod-label--input">
+          <p class="pod-label--input-content pod-label--ff-mono"><%= @client.unix_user %></p>
         </div>
       </div>
-      <div class="row" id="mac-address-container">
-        <p class="label">MAC Address</p>
-        <div class="input">
-          <p class="input-content"><%= @client.address.present? ? @client.address : "N/A" %></p>
+      <div class="pod-label--row" id="pod-label--mac-address-container">
+        <p class="pod-label--label">MAC Address</p>
+        <div class="pod-label--input">
+          <p class="pod-label--input-content pod-label--ff-mono"><%= @client.address.present? ? @client.address : "N/A" %></p>
         </div>
       </div>
     </div>
-    <div id="qr-wrapper">
+    <div id="pod-label--qr-wrapper">
       <%= qr.html_safe %>
     </div>
   </div>
-  <p id="footer-message">To check the Pod status, access its website by scanning the QR code on this label. For help, please contact support@exactlylabs.com.</p>
+  <p id="pod-label--footer-message">To check the Pod status, access its website by scanning the QR code on this label. For help, please contact support@exactlylabs.com.</p>
 </div>
