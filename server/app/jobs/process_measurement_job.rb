@@ -29,7 +29,7 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.processed_at = Time.now
 
       measurement.save
-      measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes)
+      measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes + measurement.upload_total_bytes)
     when "OOKLA"
       result = JSON.parse(measurement.result.download)
 
@@ -41,7 +41,7 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.upload_total_bytes = result["upload"]["bytes"]
       measurement.save
       
-      measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes)
+      measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes + measurement.upload_total_bytes)
     end
   end
 end
