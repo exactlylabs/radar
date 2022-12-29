@@ -31,11 +31,6 @@
 <div class="post fs-6 d-flex flex-column" id="kt_post">
   <div class="container-fluid">
     <!--begin::Container-->
-    <div class="container-auto px-5">
-      <% if notice %>
-        <%= render partial: "application/notice_alert", locals: {notice: notice} %>
-      <% end %>
-    </div>
     <%= render partial: "users/users_table", locals: { users_accounts: users_accounts, invited_users: invited_users } %>
     <!--end::Container-->
   </div>

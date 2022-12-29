@@ -407,6 +407,8 @@
       <% end %>
     </div>
     <% end %>
-
+    <% if notice %>
+      <%= render partial: "application/notice_alert", locals: {notice: notice} %>
+    <% end %>
   </body>
 </html>

@@ -247,10 +247,12 @@ export default class extends Controller {
         }
       })
       .then((res) => {
-        const responseErrorKey = Object.keys(res.error)[0];
-        const responseErrorValue = res.error[responseErrorKey][0];
-        const errorMessage = `${responseErrorKey} ${responseErrorValue}.`;
-        this.errorTextTarget.innerText = errorMessage;
+        if(!!res && res.error) {
+          const responseErrorKey = Object.keys(res.error)[0];
+          const responseErrorValue = res.error[responseErrorKey][0];
+          const errorMessage = `${responseErrorKey} ${responseErrorValue}.`;
+          this.errorTextTarget.innerText = errorMessage;
+        }
       })
       .catch((err) => handleError(err, this.identifier))
       .finally(() => {

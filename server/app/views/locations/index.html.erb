@@ -60,9 +60,6 @@
       <!--end::DisplaySwitcher-->
       <!--begin::Container-->
         <div class="container-auto px-5">
-          <% if notice %>
-            <%= render partial: "application/notice_alert", locals: {notice: notice} %>
-          <% end %>
           <!--begin::Card-->
           <% if params[:display] == 'table' %>
             <%= render partial: 'locations_table', locals: { locations: @locations } %>

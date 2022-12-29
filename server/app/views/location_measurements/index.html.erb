@@ -27,9 +27,6 @@
 <div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
   <div class="container-xxl w-100 d-flex" style="max-width: none;">
-    <% if notice %>
-      <%= render partial: "application/notice_alert", locals: {notice: notice} %>
-    <% end %>
     <!--begin::OptionsCard-->
       <%= render partial: "options_card", locals: { location: @location, style: 'locations' } %>
     <!--end::OptionsCard-->

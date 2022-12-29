@@ -42,10 +42,6 @@
   <!--end::Container-->
 </div>
 
-<% if notice.present? %>
-  <%= render partial: "application/notice_alert", locals: {notice: notice} %>
-<% end %>
-
 <div class="modal fade" tabindex="-1" id="add_pod_modal_wizard" data-controller="add-pod">
   <%= render partial: "clients/add_pod_wizard/add_pod_modal_wizard" %>
 </div>
