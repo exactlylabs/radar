@@ -28,9 +28,6 @@
       <!--begin::OptionsCard-->
         <%= render partial: "options_card", locals: { location: @location, style: 'locations' } %>
       <!--end::OptionsCard-->
-      <% if notice %>
-        <%= render partial: "application/notice_alert", locals: {notice: notice} %>
-      <% end %>
       <!--begin::LocationCard-->
         <%= render partial: "location_details", locals: { location: @location } %>
       <!--end::LocationCard-->
