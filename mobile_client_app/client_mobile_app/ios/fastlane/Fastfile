@@ -30,7 +30,7 @@ platform :ios do
         skip_build_archive: true,
         scheme: "prod",
         archive_path: "../build/ios/archive/Runner.xcarchive",
-        export_team_id: "MQYTP6VS48",
+        export_team_id: "5SC4GE8QS7",
     )
   end
 
@@ -55,7 +55,7 @@ platform :ios do
       merge_commit_filtering: 'exclude_merges'
     )
     upload_to_app_store(
-      submit_for_review: true, # TODO: This could be false once we are ok with the whole pipeline
+      submit_for_review: true,
       force: true,
     )
   end
