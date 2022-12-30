@@ -204,7 +204,7 @@ workflows:
           flavor: prod
           filters:
             branches:
-              ignore: /.*/
+              only: /.*/ # TODO: change back to ignore
             tags:
               only: "/^v.*/"
       ## Upload Flavors to Storage
@@ -224,7 +224,7 @@ workflows:
           flavor: prod
           filters:
             branches:
-              ignore: /.*/
+              only: /.*/ # TODO: change back to ignore
             tags:
               only: "/^v.*/"
     
@@ -250,7 +250,7 @@ workflows:
           flavor: prod
           filters:
             branches:
-              ignore: /.*/
+              only: /.*/ # TODO: change back to ignore
             tags:
               only: "/^v.*/"
       ## Upload Flavors to Storage
@@ -270,6 +270,6 @@ workflows:
           flavor: prod
           filters:
             branches:
-              ignore: /.*/
+              only: /.*/ # TODO: change back to ignore
             tags:
               only: "/^v.*/"
