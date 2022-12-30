@@ -43,10 +43,14 @@ commands:
     steps:
       - run: sudo mkdir -p "/Library/MobileDevice/Provisioning Profiles"
       - run: echo ${FLUTTER_IOS_STAGING_PROVISIONING_PROFILE} | base64 -d | sudo tee "/Library/MobileDevice/Provisioning Profiles/Radar_Staging_Distribution.mobileprovision" &>/dev/null
-      - run: echo ${FLUTTER_IOS_PROD_PROVISIONING_PROFILE} | base64 -d | sudo tee "/Library/MobileDevice/Provisioning Profiles/Radar_Prod_Distribution.mobileprovision" &>/dev/null
+      - run: echo ${FLUTTER_IOS_PROD_PROVISIONING_PROFILE} | base64 -d | sudo tee "/Library/MobileDevice/Provisioning Profiles/Exactly_Labs_Provisioning.mobileprovision" &>/dev/null
       - run: echo ${FLUTTER_IOS_DEV_PROVISIONING_PROFILE} | base64 -d | sudo tee "/Library/MobileDevice/Provisioning Profiles/Radar_Dev_AdHoc.mobileprovision" &>/dev/null
-      - run: echo "${FLUTTER_IOS_DISTRIBUTION_CERT}" | base64 -d > /tmp/distribution.cer
-      - run: echo ${FLUTTER_IOS_DISTRIBUTION_KEY} | base64 -d > /tmp/distribution.p12
+      - run: echo "${FLUTTER_IOS_DISTRIBUTION_CERT}" | base64 -d > /tmp/distribution_dev.cer
+      - run: echo ${FLUTTER_IOS_DISTRIBUTION_KEY} | base64 -d > /tmp/distribution_dev.p12
+      - run: echo "${FLUTTER_IOS_DISTRIBUTION_CERT}" | base64 -d > /tmp/distribution_staging.cer
+      - run: echo ${FLUTTER_IOS_DISTRIBUTION_KEY} | base64 -d > /tmp/distribution_staging.p12
+      - run: echo ${ANTHC_FLUTTER_IOS_DISTRIBUTION_CERT} | base64 -d > /tmp/distribution_prod.cer
+      - run: echo ${ANTHC_FLUTTER_IOS_DISTRIBUTION_KEY} | base64 -d > /tmp/distribution_prod.p12
 
 jobs:
   build-android:
@@ -95,12 +99,13 @@ jobs:
           command: gem install fastlane
           working_directory: ~/project/mobile_client_app/client_mobile_app
       - run:
-          # TODO: This credential might change if we move our App release to TTAC's account
-          command: echo ${FLUTTER_ANDROID_DEV_RELEASE_GCP_CREDENTIAL} | base64 -d > /tmp/android_gcpkey.json
+          command: echo ${FLUTTER_ANDROID_DEV_RELEASE_GCP_CREDENTIAL} | base64 -d > /tmp/android_staging_gcpkey.json
+      - run:
+          command: echo ${FLUTTER_ANDROID_PROD_RELEASE_GCP_CREDENTIAL} | base64 -d > /tmp/android_prod_gcpkey.json
       - run:
           command: |
             ANDROID_AAB_PATH=$(ls ~/workspace/android/<< parameters.flavor >>/*.aab) \
-            FASTLANE_GCP_JSONKEY_PATH="/tmp/android_gcpkey.json" \
+            FASTLANE_GCP_JSONKEY_PATH="/tmp/android_<< parameters.flavor >>_gcpkey.json" \
             fastlane release_<< parameters.flavor >>
           working_directory: ~/project/mobile_client_app/client_mobile_app/android
 
@@ -116,8 +121,8 @@ jobs:
       - checkout
       - setup_provisioning_profiles
       - run: |
-          P12_KEY_PATH=/tmp/distribution.p12 \
-          CERT_PATH=/tmp/distribution.cer \
+          P12_KEY_PATH=/tmp/distribution_<< parameters.flavor>>.p12 \
+          CERT_PATH=/tmp/distribution_<< parameters.flavor>>.cer \
           ~/project/mobile_client_app/client_mobile_app/scripts/setup_keychain.sh
       - flutter/install_sdk_and_pub:
           flutter_version: 3.3.1
