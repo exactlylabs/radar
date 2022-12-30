@@ -12,9 +12,9 @@ class ProcessMeasurementJob < ApplicationJob
         if row["Key"] == "measurement" && row["Value"]["TCPInfo"] && extended_info.nil?
           extended_info = row["Value"]["TCPInfo"]
         elsif row["Key"] == "measurement" && row["Value"]["Test"] == "upload" && row["Value"]["AppInfo"] && measurement.upload_total_bytes.nil?
-          measurement.upload_total_bytes = row["Value"]["AppInfo"]["NumBytes"] 
+          measurement.upload_total_bytes = row["Value"]["AppInfo"]["NumBytes"] * 1.1 # From tests, it seems that the real value is 5-10% of what the test returns
         elsif row["Key"] == "measurement" && row["Value"]["Test"] == "download" && row["Value"]["AppInfo"] && measurement.download_total_bytes.nil?
-          measurement.download_total_bytes = row["Value"]["AppInfo"]["NumBytes"] 
+          measurement.download_total_bytes = row["Value"]["AppInfo"]["NumBytes"] * 1.1 # From tests, it seems that the real value is 3-10% of what the test returns
         end
       end
 
@@ -37,8 +37,8 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.upload = (result["upload"]["bandwidth"] / (1000.0 * 1000.0)) * 8
       measurement.latency = result["ping"]["latency"]
       measurement.jitter = result["ping"]["jitter"]
-      measurement.download_total_bytes = result["download"]["bytes"]
-      measurement.upload_total_bytes = result["upload"]["bytes"]
+      measurement.download_total_bytes = result["download"]["bytes"] * 1.1 # From tests, it seems that the real value is 3-10% of what the test returns
+      measurement.upload_total_bytes = result["upload"]["bytes"] * 1.1 # From tests, it seems that the real value is 5-10% of what the test returns
       measurement.save
       
       measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes + measurement.upload_total_bytes)
