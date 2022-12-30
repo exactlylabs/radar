@@ -157,6 +157,15 @@ jobs:
       flavor:
         type: enum
         enum: ["staging", "prod"]
+      issuer_id:
+        type: string
+        default: ${APP_STORE_CONNECT_API_KEY_ISSUER_ID}
+      key_key:
+        type: string
+        default: ${APP_STORE_CONNECT_API_KEY_KEY}
+      key_id:
+        type: string
+        default: ${APP_STORE_CONNECT_API_KEY_KEY_ID}
     steps:
       - checkout
       - attach_workspace:
@@ -170,7 +179,11 @@ jobs:
           command: cp ~/workspace/ios/<< parameters.flavor >>/*.ipa ~/project/mobile_client_app/client_mobile_app/ios/Runner.ipa
           working_directory: ~/project/mobile_client_app/client_mobile_app/ios
       - run:
-          command: fastlane release_<< parameters.flavor >>
+          command: |
+            APP_STORE_CONNECT_API_KEY_ISSUER_ID=<< parameters.issuer_id >> \
+            APP_STORE_CONNECT_API_KEY_KEY=<< parameters.key_key >> \
+            APP_STORE_CONNECT_API_KEY_KEY_ID=<< parameters.key_id >> \
+            fastlane release_<< parameters.flavor >>
           working_directory: ~/project/mobile_client_app/client_mobile_app/ios
 
 
@@ -268,6 +281,9 @@ workflows:
           name: "release-ios-prod"
           requires: [build-ios-prod]
           flavor: prod
+          issuer_id: ${ANTHC_APP_STORE_CONNECT_API_KEY_ISSUER_ID}
+          key_key: ${ANTHC_APP_STORE_CONNECT_API_KEY_KEY}
+          key_id: ${ANTHC_APP_STORE_CONNECT_API_KEY_KEY_ID}
           filters:
             branches:
               only: /.*/ # TODO: change back to ignore
