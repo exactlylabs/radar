@@ -101,7 +101,7 @@ android {
     flavorDimensions "app"
     productFlavors {
         prod {
-            applicationId "com.exactlylabs.radar"
+            applicationId "org.anthc.radar"
             signingConfig signingConfigs.prod
             manifestPlaceholders = [
                     app_name: "Radar",
