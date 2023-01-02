@@ -381,6 +381,10 @@ class Client < ApplicationRecord
     Client.scheduling_periodicities[self.scheduling_periodicity]
   end
 
+  def get_data_cap_periodicity_value
+    Client.data_cap_periodicities[self.data_cap_periodicity]
+  end
+
   def self.to_csv_enumerator
     @enumerator = Enumerator.new do |yielder|
       yielder << CSV.generate_line(%w{id client_id user_id location_id name address latitude longitude pinged_at created_at})
