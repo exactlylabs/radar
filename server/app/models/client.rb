@@ -377,6 +377,10 @@ class Client < ApplicationRecord
     "Tests are set to run #{self.scheduling_amount_per_period} #{self.scheduling_amount_per_period == 1 ? "time" : "times"} #{self.get_scheduling_periodicity_period}."
   end
 
+  def get_periodicity_value
+    Client.scheduling_periodicities[self.scheduling_periodicity]
+  end
+
   def self.to_csv_enumerator
     @enumerator = Enumerator.new do |yielder|
       yielder << CSV.generate_line(%w{id client_id user_id location_id name address latitude longitude pinged_at created_at})
