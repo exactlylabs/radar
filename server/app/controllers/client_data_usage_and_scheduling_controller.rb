@@ -51,7 +51,7 @@ class ClientDataUsageAndSchedulingController < ApplicationController
         amount = 1
       end
     else
-      periodicity = 0
+      periodicity = Client.scheduling_periodicities[:scheduling_hourly]
       amount = 1
     end
 
