@@ -1,7 +1,8 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/MobilePageHeader.style";
-import MobileAppHero from '../../../assets/images/mobile-app-hero.png';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const MobileAppHero = '/assets/images/mobile-app-hero.png';
 
 const MobilePageHeader = (): ReactElement => {
 

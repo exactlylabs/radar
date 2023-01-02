@@ -1,11 +1,12 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/SiteMonitoringBulletpoints.style";
-import SiteMonitoringTwoCards from '../../../assets/images/site-monitoring-two-cards.png';
-import SmallSiteMonitoringTwoCards from '../../../assets/images/small-site-monitoring-two-cards.png';
-import RouterIcon from '../../../assets/images/router-icon.png';
-import OwnDevicesIcon from '../../../assets/images/own-devices-icon.png';
-import AnalyzeTimeIcon from '../../../assets/images/analyze-time-icon.png';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const SiteMonitoringTwoCards = '/assets/images/site-monitoring-two-cards.png';
+const SmallSiteMonitoringTwoCards = '/assets/images/small-site-monitoring-two-cards.png';
+const RouterIcon = '/assets/images/router-icon.png';
+const OwnDevicesIcon = '/assets/images/own-devices-icon.png';
+const AnalyzeTimeIcon = '/assets/images/analyze-time-icon.png';
 
 const RegularSiteMonitoringBulletPointsContent = () => (
   <>

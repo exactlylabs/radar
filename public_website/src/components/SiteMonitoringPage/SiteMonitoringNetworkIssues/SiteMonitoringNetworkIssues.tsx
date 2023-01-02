@@ -1,10 +1,11 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/SiteMonitoringNetworkIssues.style";
-import SiteMonitoringWaves from '../../../assets/images/site-monitoring-waves.png';
-import UnderprovisionedIcon from '../../../assets/images/underprovisioned-icon.png';
-import NetworkIssuesIcon from '../../../assets/images/network-issues-icon.png';
-import QualityTimeIcon from '../../../assets/images/quality-time-icon.png';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const SiteMonitoringWaves = '/assets/images/site-monitoring-waves.png';
+const UnderprovisionedIcon = '/assets/images/underprovisioned-icon.png';
+const NetworkIssuesIcon = '/assets/images/network-issues-icon.png';
+const QualityTimeIcon = '/assets/images/quality-time-icon.png';
 
 const SiteMonitoringNetworkIssues = (): ReactElement => {
 

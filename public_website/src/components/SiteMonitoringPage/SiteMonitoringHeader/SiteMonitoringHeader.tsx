@@ -1,11 +1,12 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/SiteMonitoringHeader.style";
 import CustomButton from "../../common/CustomButton/CustomButton";
-import ChevronRightWhite from "../../../assets/images/chevron-right-white.png";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import {goToBase} from "../../../utils/navigation";
-import SiteMonitoringCards from '../../../assets/images/site-monitoring-cards.png';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const ChevronRightWhite = "/assets/images/chevron-right-white.png";
+const SiteMonitoringCards = '/assets/images/site-monitoring-cards.png';
 
 const SiteMonitoringHeader = (): ReactElement => {
 

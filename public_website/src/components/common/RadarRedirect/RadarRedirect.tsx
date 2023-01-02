@@ -2,9 +2,10 @@ import {ReactElement} from "react";
 import CustomButton from "../CustomButton/CustomButton";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import {goToBase} from "../../../utils/navigation";
-import ChevronRightWhite from "../../../assets/images/chevron-right-white.png";
 import {styles} from "./styles/RadarRedirect.style";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const ChevronRightWhite = "/assets/images/chevron-right-white.png";
 
 const RadarRedirect = (): ReactElement => {
 

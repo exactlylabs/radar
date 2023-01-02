@@ -1,10 +1,11 @@
 import {ReactElement, useState} from "react";
 import {styles} from "./styles/SmallNavbarContent.style";
-import RadarLogo from "../../../../assets/images/radar-logo.png";
-import CloseIcon from '../../../../assets/images/close-navbar-icon.png';
-import OpenIcon from '../../../../assets/images/hamburger-icon.png';
 import SmallNavbarContentOpen from "./SmallNavbarContentOpen/SmallNavbarContentOpen";
 import {goToHome} from "../../../../utils/navigation";
+
+const RadarLogo = "/assets/images/radar-logo.png";
+const CloseIcon = '/assets/images/close-navbar-icon.png';
+const OpenIcon = '/assets/images/hamburger-icon.png';
 
 const SmallNavbarContent = (): ReactElement => {
 

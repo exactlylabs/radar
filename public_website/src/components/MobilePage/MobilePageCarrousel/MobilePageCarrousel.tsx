@@ -1,13 +1,14 @@
 import {ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/MobilePageCarrousel.style";
-import AppFeature0 from '../../../assets/images/app-feature-0.png';
-import AppFeature1 from '../../../assets/images/app-feature-1.png';
-import AppFeature2 from '../../../assets/images/app-feature-2.png';
-import AppFeature3 from '../../../assets/images/app-feature-3.png';
 import {Optional} from "../../../utils/types";
 import SmallMobilePageCarrousel from "./SmallMobilePageCarrousel/SmallMobilePageCarrousel";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import RegularMobilePageCarrousel from "./RegularMobilePageCarrousel/RegularMobilePageCarrousel";
+
+const AppFeature0 = '/assets/images/app-feature-0.png';
+const AppFeature1 = '/assets/images/app-feature-1.png';
+const AppFeature2 = '/assets/images/app-feature-2.png';
+const AppFeature3 = '/assets/images/app-feature-3.png';
 
 export enum CarrouselItem {
   SPEED_TESTS,

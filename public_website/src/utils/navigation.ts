@@ -1,3 +1,5 @@
+import {useRouter} from "next/router";
+
 export enum AppRoutes {
   BASE = '/',
   HOME = '/home',
@@ -14,7 +16,7 @@ export enum ExternalRoutes {
   MAPPING_APP_STAGING = 'https://mapping.staging.exactlylabs.com',
 }
 
-export const goToUrl = (url: string) => window.location.replace(url);
+export const goToUrl = (url: string) => window.location.href = url;
 
 export const goToBase = () => goToUrl(AppRoutes.BASE);
 export const goToHome = () => goToUrl(AppRoutes.HOME);
