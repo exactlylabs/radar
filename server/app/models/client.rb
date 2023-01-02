@@ -377,7 +377,7 @@ class Client < ApplicationRecord
     "Tests are set to run #{self.scheduling_amount_per_period} #{self.scheduling_amount_per_period == 1 ? "time" : "times"} #{self.get_scheduling_periodicity_period}."
   end
 
-  def get_periodicity_value
+  def get_scheduling_periodicity_value
     Client.scheduling_periodicities[self.scheduling_periodicity]
   end
 

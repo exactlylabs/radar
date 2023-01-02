@@ -63,10 +63,10 @@
                           data-remove-searchbar="true"
                           data-action="select2-select->client-scheduling-form#onSelectChange"
                   >
-                    <option value="0" label="per hour"  <%= client.custom_scheduling && client.get_periodicity_value == 0 ? "selected" : nil %>>per hour</option>
-                    <option value="1" label="per day"   <%= client.custom_scheduling && client.get_periodicity_value == 1 ? "selected" : nil %>>per day</option>
-                    <option value="2" label="per week"  <%= client.custom_scheduling && client.get_periodicity_value == 2 ? "selected" : nil %>>per week</option>
-                    <option value="3" label="per month" <%= client.custom_scheduling && client.get_periodicity_value == 3 ? "selected" : nil %>>per month</option>
+                    <option value="0" label="per hour"  <%= client.custom_scheduling && client.get_scheduling_periodicity_value == 0 ? "selected" : nil %>>per hour</option>
+                    <option value="1" label="per day"   <%= client.custom_scheduling && client.get_scheduling_periodicity_value == 1 ? "selected" : nil %>>per day</option>
+                    <option value="2" label="per week"  <%= client.custom_scheduling && client.get_scheduling_periodicity_value == 2 ? "selected" : nil %>>per week</option>
+                    <option value="3" label="per month" <%= client.custom_scheduling && client.get_scheduling_periodicity_value == 3 ? "selected" : nil %>>per month</option>
                   </select>
                 </div>
               </div>
