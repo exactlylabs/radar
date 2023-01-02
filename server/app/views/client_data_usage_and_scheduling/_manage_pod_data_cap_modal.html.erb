@@ -61,10 +61,10 @@
                         name="client[data_cap_periodicity]"
                         data-remove-searchbar="true"
                 >
-                  <option value="0" label="per month" selected="selected">per day</option>
-                  <option value="1" label="per month" selected="selected">per week</option>
-                  <option value="2" label="per month" selected="selected">per month</option>
-                  <option value="3" label="per month" selected="selected">per year</option>
+                  <option value="0" label="per day" <%= client.data_cap_max_usage && client.get_data_cap_periodicity_value == 0  ? "selected" : nil%>>per day</option>
+                  <option value="1" label="per week" <%= client.data_cap_max_usage && client.get_data_cap_periodicity_value == 1  ? "selected" : nil%>>per week</option>
+                  <option value="2" label="per month" <%= client.data_cap_max_usage && client.get_data_cap_periodicity_value == 2  ? "selected" : nil%>>per month</option>
+                  <option value="3" label="per year" <%= client.data_cap_max_usage && client.get_data_cap_periodicity_value == 3  ? "selected" : nil%>>per year</option>
                 </select>
               </div>
             </div>
