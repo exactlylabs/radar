@@ -1,12 +1,12 @@
 import {ReactElement} from "react";
 import ToolkitTabContentRow from "../ToolkitTabContentRow/ToolkitTabContentRow";
-import SiteMonitoringIcon from "../../../../../../../assets/images/site-monitoring-icon.png";
 import {commonStyles} from "../styles/common.style";
 import {ToolkitTabContentRowSubtitle, ToolkitTabContentRowTitle} from "../../types";
-import BroadbandTestingIcon from "../../../../../../../assets/images/broadband-testing-icon.png";
-import MappingToolsIcon from "../../../../../../../assets/images/mapping-tools-icon.png";
 import {goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../../../../../utils/navigation";
 
+const SiteMonitoringIcon = "/assets/images/site-monitoring-icon.png";
+const BroadbandTestingIcon = "/assets/images/broadband-testing-icon.png";
+const MappingToolsIcon = "/assets/images/mapping-tools-icon.png";
 
 const RightSideToolkitTabContentInternetProviders = (): ReactElement => {
   return (

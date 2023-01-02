@@ -4,12 +4,14 @@ import NavbarHorizontalDivider from "./NavbarHorizontalDivider/NavbarHorizontalD
 import ToolkitTabContentRow
   from "../../RegularNavbarContent/ToolkitFloatingMenu/RightSideToolkitTabContent/ToolkitTabContentRow/ToolkitTabContentRow";
 import {ToolkitTabContentRowTitle} from "../../RegularNavbarContent/ToolkitFloatingMenu/types";
-import SiteMonitoringIcon from "../../../../../assets/images/site-monitoring-icon.png";
 import {
   commonStyles
 } from "../../RegularNavbarContent/ToolkitFloatingMenu/RightSideToolkitTabContent/styles/common.style";
-import BroadbandTestingIcon from "../../../../../assets/images/broadband-testing-icon.png";
-import MappingToolsIcon from "../../../../../assets/images/mapping-tools-icon.png";
+
+const BroadbandTestingIcon = "/assets/images/broadband-testing-icon.png";
+const MappingToolsIcon = "/assets/images/mapping-tools-icon.png";
+const SiteMonitoringIcon = "/assets/images/site-monitoring-icon.png";
+
 import {goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../../../utils/navigation";
 
 

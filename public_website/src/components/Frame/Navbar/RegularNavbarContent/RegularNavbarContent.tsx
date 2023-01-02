@@ -1,10 +1,11 @@
 import {ReactElement, useState} from "react";
 import {styles} from "./styles/RegularNavbarContent.style";
-import RadarLogo from "../../../../assets/images/radar-logo.png";
 import CustomButton from "../../../common/CustomButton/CustomButton";
-import ChevronRight from "../../../../assets/images/chevron-right-dark.png";
 import ToolkitFloatingMenu from "./ToolkitFloatingMenu/ToolkitFloatingMenu";
 import {goToHome} from "../../../../utils/navigation";
+
+const RadarLogo = "/assets/images/radar-logo.png";
+const ChevronRight = "/assets/images/chevron-right-dark.png";
 
 interface RegularNavbarContentProps {
   goToGetStarted: () => void;

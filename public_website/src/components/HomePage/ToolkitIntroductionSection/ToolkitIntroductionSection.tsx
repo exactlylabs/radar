@@ -1,11 +1,11 @@
 import {ReactElement} from "react";
 import CustomButton from "../../common/CustomButton/CustomButton";
-import ChevronRightWhite from '../../../assets/images/chevron-right-white.png';
 import {styles} from "./styles/ToolkitIntroductionSection.style";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import ToolkitIntroductionTable from "./ToolkitIntroductionTable/ToolkitIntroductionTable";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
+const ChevronRightWhite = '/assets/images/chevron-right-white.png';
 
 const ToolkitIntroductionSection = (): ReactElement => {
 

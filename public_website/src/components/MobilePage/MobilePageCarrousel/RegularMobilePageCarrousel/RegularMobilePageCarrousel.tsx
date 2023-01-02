@@ -2,10 +2,11 @@ import {ReactElement} from "react";
 import {CarrouselItem, carrouselItemSubtitles, carrouselItemTitles, itemImageSrc} from "../MobilePageCarrousel";
 import {styles} from "../styles/MobilePageCarrousel.style";
 import MobilePageCarrouselItem from "../MobilePageCarrouselItem/MobilePageCarrouselItem";
-import SpeedTestIcon from "../../../../assets/images/carrousel-item-speed-test-icon.png";
-import CompareIcon from "../../../../assets/images/carrousel-item-compare-icon.png";
-import PerformanceIcon from "../../../../assets/images/carrousel-item-performance-icon.png";
-import TransparencyIcon from "../../../../assets/images/carrousel-item-transparency-icon.png";
+
+const SpeedTestIcon = "/assets/images/carrousel-item-speed-test-icon.png";
+const CompareIcon = "/assets/images/carrousel-item-compare-icon.png";
+const PerformanceIcon = "/assets/images/carrousel-item-performance-icon.png";
+const TransparencyIcon = "/assets/images/carrousel-item-transparency-icon.png";
 
 interface RegularMobilePageCarrouselProps {
   currentItem: CarrouselItem;

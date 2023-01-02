@@ -1,11 +1,12 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/BroadbandTestingMobile.style";
-import MobileAppIllustration from '../../../assets/images/mobile-app-illustration.png';
 import CustomButton from "../../common/CustomButton/CustomButton";
-import ChevronRightWhite from "../../../assets/images/chevron-right-white.png";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import {goToMobile} from "../../../utils/navigation";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const MobileAppIllustration = '/assets/images/mobile-app-illustration.png';
+const ChevronRightWhite = "/assets/images/chevron-right-white.png";
 
 const BroadbandTestingMobile = (): ReactElement => {
 

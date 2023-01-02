@@ -1,12 +1,5 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/ToolkitDetailSection.style";
-import SiteMonitoringIcon from '../../../assets/images/site-monitoring-icon.png';
-import SiteMonitoringBackground from '../../../assets/images/site-monitoring-bg.png';
-import ChevronRightWhite from '../../../assets/images/chevron-right-white.png';
-import BroadbandTestingBackground from '../../../assets/images/broadband-testing-bg.png';
-import BroadbandTestingIcon from '../../../assets/images/broadband-testing-icon.png';
-import MappingIcon from '../../../assets/images/mapping-tools-icon.png';
-import MappingToolsBackground from '../../../assets/images/mapping-tools-bg.png';
 import CustomButton from "../../common/CustomButton/CustomButton";
 import {goToBroadbandTesting, goToSiteMonitoring, goToUrl} from "../../../utils/navigation";
 import {
@@ -16,6 +9,14 @@ import {
   WHITE
 } from "../../../utils/colors";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const SiteMonitoringIcon = '/assets/images/site-monitoring-icon.png';
+const SiteMonitoringBackground = '/assets/images/site-monitoring-bg.png';
+const ChevronRightWhite = '/assets/images/chevron-right-white.png';
+const BroadbandTestingBackground = '/assets/images/broadband-testing-bg.png';
+const BroadbandTestingIcon = '/assets/images/broadband-testing-icon.png';
+const MappingIcon = '/assets/images/mapping-tools-icon.png';
+const MappingToolsBackground = '/assets/images/mapping-tools-bg.png';
 
 const ToolkitDetailSection = (): ReactElement => {
 

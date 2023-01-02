@@ -1,8 +1,8 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/InternetInvestmentSection.style";
-import './styles/InternetInvestmentSection.css';
-import TickIcon from '../../../assets/images/tick-icon.png';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const TickIcon = '/assets/images/tick-icon.png';
 
 const InternetInvestmentSection = (): ReactElement => {
 

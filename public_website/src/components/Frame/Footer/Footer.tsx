@@ -1,10 +1,11 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/Footer.style";
-import RadarLogoGray from '../../../assets/images/radar-logo-gray.png';
-import BroadbandMappingLogo from '../../../assets/images/broadband-mapping-logo.png';
-import ANTHCLogo from '../../../assets/images/anthc-logo.png';
-import MLabLogo from '../../../assets/images/mlab-logo.png';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const RadarLogoGray = '/assets/images/radar-logo-gray.png';
+const BroadbandMappingLogo = '/assets/images/broadband-mapping-logo.png';
+const ANTHCLogo = '/assets/images/anthc-logo.png';
+const MLabLogo = '/assets/images/mlab-logo.png';
 
 // Not doing 2 different components for viewport changes as they are
 // pretty small components on their own and quite a lot of shared styles.

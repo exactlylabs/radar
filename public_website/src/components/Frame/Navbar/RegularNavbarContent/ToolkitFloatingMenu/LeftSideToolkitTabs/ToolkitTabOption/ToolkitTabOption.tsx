@@ -1,7 +1,6 @@
 import {ReactElement} from "react";
 import {ToolkitTabSubtitle, ToolkitTabTitle} from "../../types";
 import {styles} from "./styles/ToolkitTabOption.style";
-import './styles/ToolkitTabOption.css';
 
 interface ToolkitTabOptionProps {
   title: ToolkitTabTitle;

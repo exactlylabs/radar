@@ -27,6 +27,8 @@ const textContainerStyle: CSSProperties = {
 const smallTextContainerStyle: CSSProperties = {
   ...textContainerStyle,
   maxWidth: '100%',
+  marginRight: undefined,
+  marginLeft: undefined,
   margin: 0,
 }
 
@@ -44,6 +46,8 @@ const smallTitleStyle: CSSProperties = {
   fontSize: '28px',
   lineHeight: '36px',
   letterSpacing: '-0.6px',
+  marginBottom: undefined,
+  marginTop: undefined,
   margin: '50px auto 15px auto',
   width: 'calc(100% - 20px)',
   maxWidth: '425px',

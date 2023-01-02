@@ -1,9 +1,10 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/BroadbandTestingCommunity.style";
-import OpenSourceIcon from '../../../assets/images/open-source-icon.png';
-import BeyondSpeedsIcon from '../../../assets/images/beyond-speeds-icon.png';
-import ReachOutIcon from '../../../assets/images/reach-out-icon.png';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const OpenSourceIcon = '/assets/images/open-source-icon.png';
+const BeyondSpeedsIcon = '/assets/images/beyond-speeds-icon.png';
+const ReachOutIcon = '/assets/images/reach-out-icon.png';
 
 const BroadbandTestingCommunity = (): ReactElement => {
 

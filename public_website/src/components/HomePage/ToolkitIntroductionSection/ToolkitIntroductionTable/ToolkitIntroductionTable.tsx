@@ -1,10 +1,11 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/ToolkitIntroductionTable.style";
-import MapIcon from '../../../../assets/images/map-icon.png';
-import InvestmentsIcon from '../../../../assets/images/investments-icon.png';
-import CommunitiesIcon from '../../../../assets/images/communities-icon.png';
-import SeparatorLine from '../../../../assets/images/separator-line.png';
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
+
+const MapIcon = '/assets/images/map-icon.png';
+const InvestmentsIcon = '/assets/images/investments-icon.png';
+const CommunitiesIcon = '/assets/images/communities-icon.png';
+const SeparatorLine = '/assets/images/separator-line.png';
 
 const ToolkitIntroductionTable = (): ReactElement => {
 

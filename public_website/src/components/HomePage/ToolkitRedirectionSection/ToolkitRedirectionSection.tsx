@@ -1,9 +1,9 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/ToolkitRedirectionSection.style";
-import ChevronRightBlue from '../../../assets/images/chevron-right-blue.png';
-import RedirectArrowBlue from '../../../assets/images/redirect-arrow-blue.png';
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
+const ChevronRightBlue = '/assets/images/chevron-right-blue.png';
+const RedirectArrowBlue = '/assets/images/redirect-arrow-blue.png';
 
 const ToolkitRedirectionSection = (): ReactElement => {
 

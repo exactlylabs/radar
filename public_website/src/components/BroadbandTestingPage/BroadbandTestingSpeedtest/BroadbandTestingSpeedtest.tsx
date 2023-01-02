@@ -1,10 +1,11 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/BroadbandTestingSpeedtest.style";
-import ChevronRightWhite from "../../../assets/images/chevron-right-white.png";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import CustomButton from "../../common/CustomButton/CustomButton";
 import {goToSpeedTestWebsite} from "../../../utils/navigation";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+
+const ChevronRightWhite = "/assets/images/chevron-right-white.png";
 
 const BroadbandTestingSpeedtest = (): ReactElement => {
 

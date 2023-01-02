@@ -4,7 +4,7 @@ import {Optional} from "../utils/types";
 /**
  * Custom context provider to expose screen size application-wide
  * and prevent prop-drilling.
- * By exposing the context on our App.jsx, custom hooks can pull the
+ * By exposing the context on our Index.jsx, custom hooks can pull the
  * width value to compare with any given breakpoint at any given time
  * and only create one resize event listener for the whole app +
  * removing it on unmount.
@@ -17,7 +17,13 @@ interface ViewportContextProviderProps {
 }
 
 export const ViewportContextProvider = ({children}: ViewportContextProviderProps) => {
-  const [width, setWidth] = useState(window.innerWidth);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    if(!!window) {
+      setWidth(window.innerWidth);
+    }
+  }, []);
 
   const handleResize = () => {
     const frameElement: Optional<HTMLElement> = document.getElementById('root');
