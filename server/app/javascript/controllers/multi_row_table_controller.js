@@ -1,0 +1,66 @@
+import { Controller } from "@hotwired/stimulus"
+import handleError from "./error_handler_controller";
+
+
+export default class extends Controller {
+  static targets = [
+    "formCheckBoxInput",
+  ]
+
+  connect() {}
+
+  onCheckBoxChange(e) {
+    const multiRowActionsId = "multi-row-actions";
+    const rowAmountSelectedSpan = "row-amount-selected-span";
+    const amount = this.formCheckBoxInputTargets.filter((input) => input.checked).length;
+
+    if(amount >= 1) {
+      document.getElementById(multiRowActionsId).style.display = "block";
+      document.getElementById(rowAmountSelectedSpan).innerText = `${amount} selected`;
+    }
+    else {
+      document.getElementById(multiRowActionsId).style.display = "none";
+    }
+  }
+
+  bulkRunTests(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    const url = "/clients/bulk_run_tests";
+    this.runBulkRequest(url, "POST");
+  }
+
+  bulkDeletes(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    const idsLength = this.getIds().length;
+    const userConfirmation = confirm(`Are you sure you want to delete ${idsLength > 1 ? `these ${idsLength} of pods` : 'this pod'}?`);
+    if(!userConfirmation) return;
+    const url = "/clients/bulk_delete";
+    this.runBulkRequest(url, "DELETE"); 
+  }
+
+  runBulkRequest(url, method) {
+    const ids = this.getIds();
+    const selectedTestIds = JSON.stringify(ids);
+    const token = document.getElementsByName("csrf-token")[0].content;
+    let formData = new FormData();
+    formData.append("ids", selectedTestIds);
+    fetch(url, {
+      method: method,
+      redirect: "follow",
+      headers: { "X-CSRF-Token": token },
+      body: formData,
+    })
+    .then (response => response.text())
+    .then(html => Turbo.renderStreamMessage(html))
+    .catch((err) => {
+        handleError(err, this.identifier);
+      });
+  }
+
+  getIds() {
+    const prefix = "check-box-";
+    return this.formCheckBoxInputTargets.filter((input) => input.checked).map((input) => input.id.split(prefix)[1]);
+  }
+}

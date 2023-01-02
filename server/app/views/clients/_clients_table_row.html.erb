@@ -1,5 +1,16 @@
 <tr id="<%= dom_id(client) %>">
-  <td style="padding-left: 30px">
+  <td class="mb-1">
+    <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
+      <input id="check-box-<%= client.unix_user %>"
+             class="form-check-input" 
+             type="checkbox" 
+             value="1" 
+             data-multi-row-table-target="formCheckBoxInput"
+             data-action="input->multi-row-table#onCheckBoxChange"
+      />
+    </div>
+  </td>
+  <td>
     <div class="d-flex flex-row align-items-center">
       <div class="d-flex align-items-center justify-content-center me-5" 
            style="border-radius:50%; background-color:<%= client.status == 'Active' || client.status == 'Test running' ? '#f1faff' : '#f8f8f8' %>; min-width: 36px; width: 36px; min-height: 36px; height: 36px">

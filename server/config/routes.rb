@@ -66,7 +66,7 @@ Rails.application.routes.draw do
       post 'unstage'
       get 'pdf_label', to: 'clients#get_client_label'
     end
-
+    
     collection do
       get 'status', to: 'clients#public_status'
       post 'status', to: 'clients#check_public_status'
@@ -74,6 +74,8 @@ Rails.application.routes.draw do
       get 'claim', to: 'clients#claim_form'
       get 'check_claim', to: 'clients#check_claim_form'
       post 'check_claim', to: 'clients#check_claim'
+      post 'bulk_run_tests'
+      delete 'bulk_delete'
     end
   end
 
