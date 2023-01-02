@@ -110,7 +110,7 @@ class ClientsController < ApplicationController
   def release
     respond_to do |format|
       if @client.update(user: nil, location: nil, account: nil)
-        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully released." }
+        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully deleted." }
         format.json { head :no_content }
       end
     end
@@ -311,6 +311,40 @@ class ClientsController < ApplicationController
       end
     end
   end
+
+  def bulk_run_tests
+    client_ids = JSON.parse(params[:ids])
+
+    @clients = policy_scope(Client).where(unix_user: client_ids)
+
+    if @clients.update_all(test_requested: true)
+      @notice = "Test was successfully requested for selected clients."
+    else
+      @notice = "Error requesting test for selected clients."
+    end
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_back fallback_location: root_path, notice: @notice}
+    end
+  end
+ 
+  def bulk_delete
+    client_ids = JSON.parse(params[:ids])
+
+    @clients = policy_scope(Client).where(unix_user: client_ids)
+    if @clients.update_all(user: nil, location: nil, account: nil)
+      @notice = "Clients were successfully deleted."
+    else
+      @notice = "Error deleting clients."
+    end
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_back fallback_location: root_path, notice: @notice}
+    end
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

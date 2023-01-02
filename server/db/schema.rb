@@ -242,9 +242,9 @@ ActiveRecord::Schema.define(version: 2022_12_28_131241) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
+    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
-    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
@@ -293,7 +293,6 @@ ActiveRecord::Schema.define(version: 2022_12_28_131241) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "watchdog_version_id"
-    t.boolean "default", default: false
     t.index ["client_version_id"], name: "index_update_groups_on_client_version_id"
     t.index ["watchdog_version_id"], name: "index_update_groups_on_watchdog_version_id"
   end

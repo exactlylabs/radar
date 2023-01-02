@@ -81,3 +81,6 @@ application.register("client-data-cap-form", ClientDataCapFormController);
 
 import ClientSchedulingFormController from "./client_scheduling_form_controller";
 application.register("client-scheduling-form", ClientSchedulingFormController);
+
+import MultiRowTableController from "./multi_row_table_controller";
+application.register("multi-row-table", MultiRowTableController);
