@@ -217,7 +217,7 @@ workflows:
           flavor: prod
           filters:
             branches:
-              only: /.*/ # TODO: change back to ignore
+              ignore: /.*/
             tags:
               only: "/^v.*/"
       ## Upload Flavors to Storage
@@ -237,7 +237,7 @@ workflows:
           flavor: prod
           filters:
             branches:
-              only: /.*/ # TODO: change back to ignore
+              ignore: /.*/
             tags:
               only: "/^v.*/"
     
@@ -263,7 +263,7 @@ workflows:
           flavor: prod
           filters:
             branches:
-              only: /.*/ # TODO: change back to ignore
+              ignore: /.*/
             tags:
               only: "/^v.*/"
       ## Upload Flavors to Storage
@@ -286,6 +286,6 @@ workflows:
           key_id: ${ANTHC_APP_STORE_CONNECT_API_KEY_KEY_ID}
           filters:
             branches:
-              only: /.*/ # TODO: change back to ignore
+              ignore: /.*/
             tags:
               only: "/^v.*/"
