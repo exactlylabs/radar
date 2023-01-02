@@ -46,7 +46,7 @@ class UpdateGroupsController < ApplicationController
   # POST /update_groups/:id/default
   def set_as_default
     new_default_update_group = policy_scope(UpdateGroup).find(params[:id])
-    previous_default_update_group = policy_scope(UpdateGroup).where(default: true).first
+    previous_default_update_group = policy_scope(UpdateGroup).default_group
     error = false
     begin
       UpdateGroup.transaction do
@@ -68,7 +68,9 @@ class UpdateGroupsController < ApplicationController
 
   # DELETE /update_groups/:id
   def destroy
-    if @update_group.destroy
+    if policy_scope(UpdateGroup).default_group == @update_group
+      notice = 'Error deleting Release Group. Cannot delete default Release Group.'
+    elsif @update_group.destroy
       notice = 'Release Group was successfully deleted.'
     else
       notice = 'Error deleting Release Group.'
