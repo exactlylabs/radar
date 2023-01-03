@@ -239,10 +239,6 @@ class Client < ApplicationRecord
     end
   end
 
-  def get_status_to_human
-
-  end
-
   def has_pending_test
     !self.test_running? && self.test_requested?
   end
