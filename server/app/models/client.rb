@@ -105,6 +105,10 @@ class Client < ApplicationRecord
     self.test_requested || self.location&.test_requested
   end
 
+  def test_running?
+    self.status == 'Test running'
+  end
+
   def data_cap_next_period
     if self.data_cap_current_period.nil?
       return Time.current
@@ -226,15 +230,21 @@ class Client < ApplicationRecord
   end
 
   def status_style
-    if self.online?
-      if test_requested?
-        "badge-light-primary"
-      else
-        "badge-light-success"
-      end
+    if self.online? && !self.test_running?
+      "badge-light-success"
+    elsif self.test_running?
+      "badge-light-primary"
     else
       "badge-light-danger"
     end
+  end
+
+  def get_status_to_human
+
+  end
+
+  def has_pending_test
+    !self.test_running? && self.test_requested?
   end
 
   def to_update_version
@@ -413,6 +423,35 @@ class Client < ApplicationRecord
       end
     end
     tmp_file
+  end
+
+  def is_eth?(interface)
+    interface["name"].match(/eth\d+/)
+  end
+
+  def is_enps?(interface)
+    interface["name"].match(/enp\d+s\d+/)
+  end
+
+  def is_en?(interface)
+    interface["name"].match(/en\d+/)
+  end
+
+  def has_no_ethernet_interface?
+    self.network_interfaces.filter {|i| i.present? && (is_eth?(i) || is_enps?(i) || is_en?(i))}.size == 0
+  end
+
+  def get_mac_address
+    if self.network_interfaces.nil? || has_no_ethernet_interface?
+      "N/A"
+    else
+      possible_interface = self.network_interfaces.filter {|i| i.present? && is_eth?(i)}
+      return possible_interface[0]["mac"] if possible_interface.size >= 1
+      possible_interface = self.network_interfaces.filter {|i| i.present? && is_en?(i)}
+      return possible_interface[0]["mac"] if possible_interface.size >= 1
+      possible_interface = self.network_interfaces.filter {|i| i.present? && is_enps?(i)}
+      possible_interface[0]["mac"] # if we get to this point, we don't need to check for the length of filter result because it must be enps type
+    end
   end
 
   private

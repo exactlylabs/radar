@@ -114,9 +114,9 @@
         <% else %>
           <div class="d-flex flex-row align-items-center justify-content-center">
             <div class="w-100px h-5px d-flex justify-content-start align-items-center" style="border-radius: 6.5px; background-color: #e7f6ff">
-              <div class="h-5px" style="width: <%= "#{(client.data_cap_current_period_usage * 100 / client.data_cap_max_usage).round(0)}%" %>; background-color: #00a3ff; border-radius: 5px"></div>
+              <div class="h-5px" style="width: <%= "#{client.get_data_cap_percentage_usage}%" %>; background-color: #00a3ff; border-radius: 5px"></div>
             </div>
-            <p class="ms-3 mt-0 mb-0 me-0"><%= "#{(client.data_cap_current_period_usage / (1024**2)).round(0)} MB (#{(client.data_cap_current_period_usage / client.data_cap_max_usage * 100).round(0)}% used)" %></p>
+            <p class="ms-3 mt-0 mb-0 me-0"><%= "#{(client.data_cap_current_period_usage / (1024**2)).round(0)} MB (#{client.get_data_cap_percentage_usage}% used)" %></p>
           </div>
         <% end %>
       </div>

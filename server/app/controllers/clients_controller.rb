@@ -4,7 +4,7 @@ require "rqrcode"
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
-  before_action :set_client, only: %i[ release show edit destroy unstage get_client_label ]
+  before_action :set_client, only: %i[ release show edit destroy unstage get_client_label enable_custom_scheduling ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 

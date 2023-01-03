@@ -24,11 +24,11 @@
       </div>
     </div>
   </td>
-  <td class="mb-1"
-      style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-    <%= client.account.name %>
-  </td>
   <% if current_user.super_user %>
+    <td class="mb-1"
+        style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+      <%= client.account.name %>
+    </td>
     <td class="mb-1"
         style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
       <%= client.staging ? "Staging" : "Live" %>
@@ -45,9 +45,12 @@
   <td class="mb-1"
       style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
     <span class="badge <%= client.status_style %>"><%= client.status %></span>
+    <% if client.has_pending_test %>
+      <span class="badge badge-light-primary">Pending test</span>
+    <% end %>
   </td>
   <td class="text-end" style="padding-right: 30px">
-    <div class="btn-group">
+    <div class="btn-group dropend">
       <button  type="button"
                class="btn btn-sm btn-light btn-active-light-primary dropwdown-toggle"
                data-bs-toggle="dropdown"
@@ -55,12 +58,12 @@
                style="border-radius: 6px; display: flex; justify-content: center; align-items: center"
                id="<%= "options-button-#{client.id}" %>"
       >
-        Options
         <span class="svg-icon svg-icon-5 m-0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11.2657 11.4343L15.45 7.25C15.8642 6.83579 15.8642 6.16421 15.45 5.75C15.0358 5.33579 14.3642 5.33579 13.95 5.75L8.40712 11.2929C8.01659 11.6834 8.01659 12.3166 8.40712 12.7071L13.95 18.25C14.3642 18.6642 15.0358 18.6642 15.45 18.25C15.8642 17.8358 15.8642 17.1642 15.45 16.75L11.2657 12.5657C10.9533 12.2533 10.9533 11.7467 11.2657 11.4343Z" fill="currentColor"/>
           </svg>
         </span>
+        Options
       </button>
       <div class="dropdown-menu fw-bold fs-7 dropdown-menu-start"
            aria-labelledby="<%= "options-button-#{client.id}" %>"

@@ -35,7 +35,7 @@
             </div>
           </div>
           <div class="fv-row mb-7 fv-plugins-icon-container">
-            <label class="required fs-6 fw-bold mb-2">Data Limit</label>
+            <label class="required fs-6 fw-bold mb-2">Monthly Data Cap</label>
             <div class="d-flex flex-row justify-content-between align-items-center w-100">
               <div class="input-group" style="width: 47.5%">
                 <input value="<%= (client.data_cap_max_usage.nil? ? 0 : (client.data_cap_max_usage / (1024**2)).round(0)) %>"
@@ -48,24 +48,6 @@
                        data-client-data-cap-form-target="dataCapValueInput"
                   />
                 <span class="input-group-text" style="background-color: #f5f8fa; border: none; color: #a1a5b7">MB</span>
-              </div>
-              <div style="width: 47.5%">
-                <select id="client_data_cap_periodicity"
-                        class="form-select select2-hidden-accessible"
-                        data-placeholder="Choose period"
-                        tabindex="-1"
-                        data-controller="select2"
-                        style="background-color: #f5f8fa;"
-                        <%= client.data_cap_max_usage.nil? ? "disabled" : nil %>
-                        data-client-data-cap-form-target="dataCapValueSelect"
-                        name="client[data_cap_periodicity]"
-                        data-remove-searchbar="true"
-                >
-                  <option value="0" label="per day" <%= client.data_cap_max_usage && client.get_data_cap_periodicity_value == 0  ? "selected" : nil%>>per day</option>
-                  <option value="1" label="per week" <%= client.data_cap_max_usage && client.get_data_cap_periodicity_value == 1  ? "selected" : nil%>>per week</option>
-                  <option value="2" label="per month" <%= client.data_cap_max_usage && client.get_data_cap_periodicity_value == 2  ? "selected" : nil%>>per month</option>
-                  <option value="3" label="per year" <%= client.data_cap_max_usage && client.get_data_cap_periodicity_value == 3  ? "selected" : nil%>>per year</option>
-                </select>
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ export default class extends Controller {
     "dropzone",
     "userAvatarInput",
     "deleteButton",
+    "fileFormatErrorMessage"
   ];
 
   connect() {
@@ -20,10 +21,22 @@ export default class extends Controller {
     this.userAvatarInputTarget.click();
   }
 
+  isAnImage(file) {
+    return file.type.includes('image/');
+  }
+
   handleFileUpload(e) {
-    const avatar = this.userAvatarInputTarget.files[0];
-    const url = URL.createObjectURL(avatar);
-    this.avatarPreviewTarget.src = url;
+    // 'Overload resolution failed' issue fix
+    if(this.userAvatarInputTarget.files.length === 0) return;
+    const file = this.userAvatarInputTarget.files[0];
+    if(!this.isAnImage(file)) {
+      this.fileFormatErrorMessageTarget.style.display = 'block';
+      this.userAvatarInputTarget.value = ""; // clear input from storing file with wrong type
+      return;
+    } else {
+      this.fileFormatErrorMessageTarget.style.display = 'none';
+    }
+    this.avatarPreviewTarget.src = URL.createObjectURL(file);
     this.avatarPreviewTarget.style.display = "block";
     this.plusIconTarget.style.display = "none";
     this.deleteButtonTarget.style.display = "block";
