@@ -41,9 +41,9 @@ class SpeedTestPage extends StatelessWidget {
                     child: StepIndicator(
                       totalSteps: 4,
                       currentStep: state.step,
-                      textColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                      textColor: Theme.of(context).colorScheme.surface,
                       currentTextColor: Theme.of(context).colorScheme.onPrimary,
-                      stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                      stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.10),
                       currentStepColor: Theme.of(context).colorScheme.secondary,
                     ),
                   ),

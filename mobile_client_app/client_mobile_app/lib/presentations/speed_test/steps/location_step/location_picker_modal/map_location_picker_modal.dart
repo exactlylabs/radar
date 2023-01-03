@@ -45,30 +45,31 @@ class MapLocationPickerBody extends StatelessWidget {
                 address: initialLocation != null ? LatLng(initialLocation!.lat, initialLocation!.long) : null,
                 onLocationSelected: (latlng) => onChanged(latlng.latitude, latlng.longitude),
               ),
-              Container(
-                margin: const EdgeInsets.all(15.0),
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.snow.withOpacity(0.85),
-                  borderRadius: BorderRadius.circular(6.0),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color.fromARGB(40, 0, 0, 0),
-                      offset: Offset(0, 1),
-                      blurRadius: 6.0,
-                      spreadRadius: -3,
+              if (initialLocation != null)
+                Container(
+                  margin: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.snow.withOpacity(0.85),
+                    borderRadius: BorderRadius.circular(6.0),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color.fromARGB(40, 0, 0, 0),
+                        offset: Offset(0, 1),
+                        blurRadius: 6.0,
+                        spreadRadius: -3,
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    initialLocation!.address,
+                    style: AppTextStyle(
+                      color: AppColors.darkLavender,
+                      fontSize: 14,
+                      fontWeight: 200,
                     ),
-                  ],
-                ),
-                child: Text(
-                  initialLocation?.address ?? Strings.emptyString,
-                  style: AppTextStyle(
-                    color: AppColors.darkLavender,
-                    fontSize: 14,
-                    fontWeight: 200,
                   ),
                 ),
-              ),
             ],
           ),
         ),
