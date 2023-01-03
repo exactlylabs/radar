@@ -55,6 +55,8 @@ Rails.application.routes.draw do
     get 'data_usage_and_scheduling', to: 'client_data_usage_and_scheduling#index'
     put 'data_usage', to: 'client_data_usage_and_scheduling#edit_data_cap'
     put 'scheduling', to: 'client_data_usage_and_scheduling#edit_scheduling'
+    put 'enable_scheduling', to: 'client_data_usage_and_scheduling#enable_custom_scheduling'
+    put 'enable_data_cap', to: 'client_data_usage_and_scheduling#enable_data_cap'
 
     member do
       delete 'release'

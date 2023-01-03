@@ -11,7 +11,7 @@ class ClientDataUsageAndSchedulingController < ApplicationController
   def edit_data_cap
     given_data_cap = params[:client][:data_cap_max_usage]
 
-    # quick way to check if given value is a valid number
+    # Quick way to check if given value is a valid number
     if given_data_cap.to_i.to_s != given_data_cap
       given_data_cap = nil
     end
@@ -24,7 +24,10 @@ class ClientDataUsageAndSchedulingController < ApplicationController
       @client.data_cap_max_usage = nil
     end
 
-    @client.data_cap_periodicity = params[:client][:data_cap_periodicity].to_i
+    # Just in case something isn't set to monthly by this point
+    if @client.data_cap_periodicity != Client.data_cap_periodicities[:monthly]
+      @client.data_cap_periodicity = Client.data_cap_periodicities[:monthly]
+    end
 
     if @client.save
       notice = "Client's data cap was successfully saved."
@@ -61,6 +64,30 @@ class ClientDataUsageAndSchedulingController < ApplicationController
       notice = "Error saving client's custom scheduling."
     end
 
+    respond_to do |format|
+      format.html { redirect_back fallback_location: root_path, notice: notice }
+      format.json { head :no_content }
+    end
+  end
+
+  def enable_custom_scheduling
+    if @client.update(custom_scheduling: true)
+      notice = 'Pod Custom Scheduling was successfully enabled.'
+    else
+      notice = 'Error enabling Custom Scheduling.'
+    end
+    respond_to do |format|
+      format.html { redirect_back fallback_location: root_path, notice: notice }
+      format.json { head :no_content }
+    end
+  end
+
+  def enable_data_cap
+    if @client.update(data_cap_max_usage: 0, data_cap_periodicity: Client.data_cap_periodicities[:monthly])
+      notice = 'Pod Data Cap was successfully enabled.'
+    else
+      notice = 'Error enabling Data Cap.'
+    end
     respond_to do |format|
       format.html { redirect_back fallback_location: root_path, notice: notice }
       format.json { head :no_content }

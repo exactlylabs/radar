@@ -38,7 +38,6 @@ class ClientMeasurementsController < ApplicationController
       @measurement.ip = request.ip
       if @client.test_requested
         Google::Cloud::Trace.in_span "Updating Client" do
-          @client.test_requested = false
           @client.scheduling_tests_in_period += 1
           @client.schedule_next_test!
           @client.save

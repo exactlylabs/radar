@@ -11,27 +11,27 @@
           <!--begin::Table row-->
           <tr class="text-start fw-bolder gs-0"
               style="font-size: 12px; height: 65px">
-            <th class="fw-bold ps-10" style="width: <%= current_user.super_user ? 20 : 20 %>vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
+            <th class="fw-bold ps-10" style="width: <%= current_user.super_user ?  20 : 25%>vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                 aria-label="Pod Name">NAME</th>
-            <th class="fw-bold"
-                style="width: <%= current_user.super_user ? 20 : 20 %>vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px"
-                tabindex="0"
-                aria-controls="kt_customers_table"
-                aria-sort="ascending"
-                colspan="1"
-                rowspan="1"
-                aria-label="Pod Name">ACCOUNT</th>
             <% if current_user.super_user %>
+              <th class="fw-bold"
+                  style="width: 20vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px"
+                  tabindex="0"
+                  aria-controls="kt_customers_table"
+                  aria-sort="ascending"
+                  colspan="1"
+                  rowspan="1"
+                  aria-label="Pod Name">ACCOUNT</th>
               <th class="fw-bold" style="width: 10vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                   aria-label="Status">ENVIRONMENT</th>
               <th class="fw-bold" style="width: 10vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                   aria-label="Status">RELEASE</th>
             <% end %>
-            <th class="fw-bold" style="width: 20vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
+            <th class="fw-bold" style="width: <%= current_user.super_user ?  10 : 25%>vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                 aria-label="Status">ADDED</th>
-            <th class="fw-bold" style="width: 20vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
+            <th class="fw-bold" style="width: <%= current_user.super_user ?  10 : 25%>vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                 aria-label="Status">STATUS</th>
-            <th class="text-end sorting_disabled" style="width: 20vw" colspan="1" rowspan="1" aria-label="Options"></th>
+            <th class="text-end sorting_disabled" style="width: <%= current_user.super_user ?  20 : 25%>vw" colspan="1" rowspan="1" aria-label="Options"></th>
           </tr>
           <!--end::Table row-->
           </thead>

@@ -5,7 +5,7 @@ class MeasurementPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       if @user_account.present?
-        scope.where(account_id: @user_account.account_id) # Prevent from seeing tests from different accounts where the test wasn't taken
+        scope.where(account_id: @user_account.account_id).where('download IS NOT NULL') # Prevent from seeing tests from different accounts where the test wasn't taken
       else
         scope.none
       end

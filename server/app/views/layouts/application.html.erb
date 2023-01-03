@@ -307,7 +307,7 @@
                             <!--begin::Username-->
                             <div class="d-flex flex-column">
                               <div class="fw-bolder d-flex align-items-center fs-5">Hello, <%= current_user.first_name %></div>
-                              <span class="fw-bold text-muted fs-7"><%= current_user.email %></span>
+                              <span class="fw-bold text-muted fs-7" style="max-width: 180px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><%= current_user.email %></span>
                             </div>
                             <!--end::Username-->
                           </div>

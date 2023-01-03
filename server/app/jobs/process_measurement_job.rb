@@ -43,5 +43,7 @@ class ProcessMeasurementJob < ApplicationJob
       
       measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes + measurement.upload_total_bytes)
     end
+    # Only update client's test_requested status once the actual measurement was already processed
+    measurement.client.update(test_requested: false)
   end
 end

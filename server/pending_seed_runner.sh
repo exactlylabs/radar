@@ -6,4 +6,4 @@
 # This script must be run from the root directory.
 # Whenever we add a new seed file, we need this file to get updated as well
 
-rails runner db/custom_seeds/seed_set_default_group_flag.rb
+rails runner db/custom_seeds/seed_set_data_cap_to_monthly.rb
