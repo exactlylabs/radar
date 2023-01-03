@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/presentations/widgets/close_rounded_button.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
@@ -50,30 +51,15 @@ class ModalWithTitle extends StatelessWidget {
                       children: [
                         Align(
                           alignment: Alignment.centerRight,
-                          child: InkWell(
+                          child: CloseRoundedButton(
+                            height: 28,
+                            margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0.0),
                             onTap: () {
                               if (onPop != null) {
                                 onPop!();
                               }
-                              Navigator.pop(context);
+                              Navigator.of(context).pop();
                             },
-                            child: Container(
-                              height: 28,
-                              margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0.0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-                                    spreadRadius: -2.0,
-                                    blurRadius: 15.0,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Image.asset(Images.closeIcon),
-                            ),
                           ),
                         ),
                         Text(

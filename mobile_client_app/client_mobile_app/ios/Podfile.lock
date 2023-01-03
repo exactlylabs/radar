@@ -6,8 +6,15 @@ PODS:
   - ndt7_client (0.0.1):
     - Flutter
     - NDT7 (~> 0.0.4)
+  - package_info_plus (0.4.5):
+    - Flutter
   - path_provider_ios (0.0.1):
     - Flutter
+  - Sentry/HybridSDK (7.31.3)
+  - sentry_flutter (0.0.1):
+    - Flutter
+    - FlutterMacOS
+    - Sentry/HybridSDK (= 7.31.3)
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
 
@@ -15,12 +22,15 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - ndt7_client (from `.symlinks/plugins/ndt7_client/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
 SPEC REPOS:
   trunk:
     - NDT7
+    - Sentry
 
 EXTERNAL SOURCES:
   Flutter:
@@ -29,8 +39,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   ndt7_client:
     :path: ".symlinks/plugins/ndt7_client/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
+  sentry_flutter:
+    :path: ".symlinks/plugins/sentry_flutter/ios"
   webview_flutter_wkwebview:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
@@ -39,9 +53,12 @@ SPEC CHECKSUMS:
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   NDT7: db6448ebf5648c2f1721bf3b473470ab201f4145
   ndt7_client: 78eda2f43b2f3b910875ce86601349f598aa47e7
+  package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
+  Sentry: 08884c523575ec0f6690d94ed3ccb0246a1600bf
+  sentry_flutter: 91ebe7757a166b34ff432a0d550d22cd010d44d2
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
 PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
 
-COCOAPODS: 1.10.2
+COCOAPODS: 1.11.3
