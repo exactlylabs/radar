@@ -44,11 +44,13 @@ class LocationStepBody extends StatefulWidget {
 }
 
 class _LocationStepBodyState extends State<LocationStepBody> {
+  bool _requestedLocationInputFocus = false;
   final locationInputFieldKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+    _requestedLocationInputFocus = false;
   }
 
   @override
@@ -75,6 +77,8 @@ class _LocationStepBodyState extends State<LocationStepBody> {
                     SpacerWithMax(size: height * 0.037, maxSize: 30.0),
                     Autocomplete<Location>(
                       fieldViewBuilder: (context, controller, focusNode, function) {
+                        makeLocationInputVisible(focusNode);
+
                         if (widget.location != null) {
                           controller.text = widget.location!.address;
                         } else if (widget.currentLocation != null && widget.currentLocation == widget.location) {
@@ -167,6 +171,7 @@ class _LocationStepBodyState extends State<LocationStepBody> {
                   if (!widget.termsAccepted) {
                     context.read<LocationStepCubit>().setTermsError();
                   } else if (widget.location != null) {
+                    // GO TO NEXT PAGE
                     context.read<SpeedTestCubit>().setLocation(widget.location!);
                     context.read<SpeedTestCubit>().nextStep();
                   } else if ((widget.suggestions?.isNotEmpty ?? false) || widget.suggestedLocation != null) {
@@ -183,7 +188,28 @@ class _LocationStepBodyState extends State<LocationStepBody> {
     );
   }
 
+  void makeLocationInputVisible(FocusNode focusNode) {
+    focusNode.addListener(() {
+      WidgetsBinding.instance.addPostFrameCallback((duration) {
+        Future.delayed(
+            const Duration(milliseconds: 150), () => Scrollable.ensureVisible(locationInputFieldKey.currentContext!));
+      });
+    });
+  }
+
   Future<void> _confirmYourLocationModal(BuildContext context, List<Location> locations) {
     return mapModal(context, true, false, () => context.read<LocationStepCubit>().reset());
+  }
+
+  void _requestLocationFocus() {
+    setState(() {
+      _requestedLocationInputFocus = true;
+    });
+  }
+
+  void _resetLocationFocus() {
+    setState(() {
+      _requestedLocationInputFocus = false;
+    });
   }
 }

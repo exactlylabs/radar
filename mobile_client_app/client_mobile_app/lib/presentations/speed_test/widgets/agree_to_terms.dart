@@ -15,18 +15,17 @@ class AgreeToTerms extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 13.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Row(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 20.0,
-            height: 20.0,
-            margin: const EdgeInsets.only(top: 3.0),
-            child: Transform.scale(
-              scale: 1.2,
+          Flexible(
+            flex: 1,
+            child: Container(
+              width: 20,
+              height: 20.0,
+              margin: const EdgeInsets.only(top: 3.0, right: 5.0),
               child: Checkbox(
                 value: agreed,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -42,7 +41,8 @@ class AgreeToTerms extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
+            flex: 6,
             child: RichText(
               textAlign: TextAlign.center,
               text: TextSpan(

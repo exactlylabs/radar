@@ -88,7 +88,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
 
   void setTermsError() => emit(state.copyWith(termsError: Strings.termsError));
 
-  void setLocationError() => emit(state.copyWith(locationError: Strings.locationMissingError));
+  void setLocationError() => emit(state.copyWith(locationError: Strings.locationError));
 
   void setSuggestedLocation(Location location) => emit(state.copyWith(suggestedLocation: location));
 

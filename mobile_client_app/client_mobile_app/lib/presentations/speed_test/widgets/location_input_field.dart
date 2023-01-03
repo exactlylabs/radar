@@ -1,4 +1,3 @@
-import 'package:client_mobile_app/presentations/widgets/close_rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
@@ -81,20 +80,7 @@ class _LocationInputFieldState extends State<LocationInputField> {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 )
-              : widget.controller != null && widget.controller!.text.isNotEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Transform.scale(
-                        scale: 0.8,
-                        child: CloseRoundedButton(
-                          height: 22,
-                          onTap: () {
-                            widget.controller!.clear();
-                          },
-                        ),
-                      ),
-                    )
-                  : null,
+              : null,
         ),
       ),
     );

@@ -9,12 +9,7 @@ import 'package:client_mobile_app/presentations/speed_test/steps/location_step/b
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_picker_modal/location_picker_modal.dart';
 
 class LocationStep extends StatelessWidget {
-  const LocationStep({
-    Key? key,
-    this.formHeight = 0.0,
-    this.location,
-    this.termsAccepted = false,
-  }) : super(key: key);
+  const LocationStep({Key? key, this.formHeight = 0.0, this.location, this.termsAccepted = false}) : super(key: key);
 
   final double formHeight;
   final Location? location;
