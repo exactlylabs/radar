@@ -66,7 +66,8 @@ class Strings {
   static const String testResultsModalTitle = 'Test details';
   static const String addressNotListedButtonLabel = 'My address is not listed';
   static const String locationError =
-      'We could not detect your current location. Make sure you enable location access in your browser and try again.';
+      'We could not detect your current location. Please enter your address or zip code before continuing.';
+  static const String locationMissingError = 'Please enter your address or zip code before continuing.';
   static const String termsError =
       'Please confirm that you agree to the Terms of Use and Privacy Policy before continuing.';
   static const String noLocationModalTitle = 'Tell us your location';
