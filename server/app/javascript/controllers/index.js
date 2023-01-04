@@ -84,3 +84,6 @@ application.register("client-scheduling-form", ClientSchedulingFormController);
 
 import MultiRowTableController from "./multi_row_table_controller";
 application.register("multi-row-table", MultiRowTableController);
+
+import BulkReleaseGroupModal from "./bulk_release_group_modal_controller";
+application.register("bulk-release-group-modal", BulkReleaseGroupModal);

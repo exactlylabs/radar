@@ -1,0 +1,65 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" style="font-size: 20px">Change Release Group</h5>
+      <!--begin::Close-->
+      <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+        <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+        <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
+              <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
+              <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
+          </svg>
+      </span>
+        <!--end::Svg Icon-->
+      </div>
+      <!--end::Close-->
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-lg-6 mb-10 mb-lg-0 w-100">
+          <div class="fv-row mb-7 fv-plugins-icon-container">
+            <label class="required fs-6 fw-bold mb-2">Release Group</label>
+            <div class="d-flex flex-row justify-content-start align-items-center w-100">
+              <div class="w-100">
+                <select id="release_group_select"
+                        class="form-select select2-hidden-accessible"
+                        data-placeholder="Choose a Release Group"
+                        tabindex="-1"
+                        data-controller="select2"
+                        style="background-color: #f5f8fa;"
+                        data-bulk-release-group-modal-target="releaseGroupValueSelect"
+                        name="update_group_id"
+                        data-remove-searchbar="true"
+                        data-action="select2-select->bulk-release-group-modal#onSelectChange"
+                >
+                  <% policy_scope(UpdateGroup).each do |ug| %>
+                    <option value="<%= ug.id %>" label="<%= ug.name %>" data-bulk-release-group-modal-target="releaseGroupOption"><%= ug.name %></option>
+                  <% end %>
+                </select>
+              </div>
+            </div>
+          </div>
+          <p class="fw-bold" style="width: 100%; font-size: 14px; letter-spacing: 0.1px; color: #a2a5b7" data-bulk-release-group-modal-target="releaseGroupMessage"></p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer d-flex flex-row justify-content-end">
+      <!--begin::LaterButton-->
+      <button type="button"
+              class="btn btn-light"
+              data-bs-dismiss="modal"
+              style="height: 48px;"
+      >Cancel</button>
+      <!--end::LaterButton-->
+      <!--begin::ContinueButton-->
+      <button type="submit"
+              class="btn btn-primary"
+              style="height: 48px;"
+              data-action="click->bulk-release-group-modal#onSubmit"
+      >Update</button>
+      <!--end::ContinueButton-->
+    </div>
+  </div>
+</div>

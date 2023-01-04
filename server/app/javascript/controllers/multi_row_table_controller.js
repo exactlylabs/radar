@@ -1,7 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import handleError from "./error_handler_controller";
 
-
 export default class extends Controller {
   static targets = [
     "formCheckBoxInput",
@@ -12,6 +11,13 @@ export default class extends Controller {
   onCheckBoxChange(e) {
     const multiRowActionsId = "multi-row-actions";
     const rowAmountSelectedSpan = "row-amount-selected-span";
+
+    if(e.target.checked) {
+      e.target.setAttribute('checked', 'true');
+    } else {
+      e.target.removeAttribute('checked');
+    }
+
     const amount = this.formCheckBoxInputTargets.filter((input) => input.checked).length;
 
     if(amount >= 1) {
@@ -21,6 +27,17 @@ export default class extends Controller {
     else {
       document.getElementById(multiRowActionsId).style.display = "none";
     }
+  }
+
+  clearSelection() {
+    document.getElementById("multi-row-actions").style.display = "none";
+  }
+
+  bulkPdfLabels(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    const ids = this.getIds();
+    window.open(`/clients/bulk_pdf_labels.pdf?ids=${ids}`, '_blank').focus();
   }
 
   bulkRunTests(e) {
@@ -37,10 +54,10 @@ export default class extends Controller {
     const userConfirmation = confirm(`Are you sure you want to delete ${idsLength > 1 ? `these ${idsLength} of pods` : 'this pod'}?`);
     if(!userConfirmation) return;
     const url = "/clients/bulk_delete";
-    this.runBulkRequest(url, "DELETE"); 
+    this.runBulkRequest(url, "DELETE", this.clearSelection);
   }
 
-  runBulkRequest(url, method) {
+  runBulkRequest(url, method, thenFunction = undefined) {
     const ids = this.getIds();
     const selectedTestIds = JSON.stringify(ids);
     const token = document.getElementsByName("csrf-token")[0].content;
@@ -53,10 +70,13 @@ export default class extends Controller {
       body: formData,
     })
     .then (response => response.text())
-    .then(html => Turbo.renderStreamMessage(html))
+    .then(html => {
+      Turbo.renderStreamMessage(html);
+      if(thenFunction) thenFunction();
+    })
     .catch((err) => {
-        handleError(err, this.identifier);
-      });
+      handleError(err, this.identifier);
+    });
   }
 
   getIds() {
