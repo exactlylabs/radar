@@ -175,6 +175,7 @@ class Client < ApplicationRecord
     base_timestamp = Time.now
     return if self.test_scheduled_at.present? && self.test_scheduled_at > base_timestamp && !force
 
+    self.scheduling_tests_in_period += 1
     if self.scheduling_period_end.nil?
       # Set it for the first time
       self.scheduling_period_end = self.next_schedule_period_end
