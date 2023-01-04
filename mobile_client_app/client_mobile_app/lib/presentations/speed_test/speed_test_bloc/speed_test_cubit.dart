@@ -3,6 +3,7 @@ import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/models/test_result.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SpeedTestCubit extends Cubit<SpeedTestState> {
@@ -91,13 +92,29 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     _resultsService.addResult(responses, result);
   }
 
+  void setOnContinueAndOnGoBackPressed(VoidCallback? onContinue, [VoidCallback? onBack]) {
+    VoidCallback? onContinueCallback;
+    VoidCallback? onBackCallback;
+
+    if (onContinue != null && state.onContinue == null && (state.isStepValid || state.step == LOCATION_STEP)) {
+      onContinueCallback = onContinue;
+    }
+
+    if (onBack != null && state.onBack == null) {
+      onBackCallback = onBack;
+    }
+
+    if (onContinueCallback == null && onBackCallback == null) return;
+    emit(state.copyWith(onContinue: onContinueCallback, onBack: onBackCallback));
+  }
+
+  void endForm() {
+    emit(state.copyWith(isFormEnded: true));
+  }
+
   static const LOCATION_STEP = 0;
   static const NETWORK_LOCATION_STEP = 1;
   static const NETWORK_TYPE_STEP = 2;
   static const MONTHLY_BILL_COST_STEP = 3;
   static const TAKE_SPEED_TEST_STEP = 4;
-
-  void endForm() {
-    emit(state.copyWith(isFormEnded: true));
-  }
 }

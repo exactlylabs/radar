@@ -154,7 +154,6 @@ class _SpeedTestGaugeState extends State<SpeedTestGauge> with SingleTickerProvid
 
   void updateSpeed(double speed, {bool animate = false, Duration? duration}) {
     if (animate) {
-      // print(speed);
       _speed = speed;
       _controller.reset();
       if (duration != null) _controller.duration = duration;

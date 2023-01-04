@@ -1,6 +1,5 @@
-import 'dart:io';
-
-import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
+import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
@@ -28,53 +27,88 @@ class SpeedTestPage extends StatelessWidget {
         if (state.isFormEnded) {
           return const NoInternetConnectionPage();
         } else {
-          return Container(
-            color: Theme.of(context).backgroundColor,
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SpacerWithMax(size: height * 0.05, maxSize: 40.0),
-                if (state.step < SpeedTestCubit.TAKE_SPEED_TEST_STEP)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                    child: StepIndicator(
-                      totalSteps: 4,
-                      currentStep: state.step,
-                      textColor: Theme.of(context).colorScheme.surface,
-                      currentTextColor: Theme.of(context).colorScheme.onPrimary,
-                      stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.10),
-                      currentStepColor: Theme.of(context).colorScheme.secondary,
-                    ),
+          return SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Container(
+                  color: Theme.of(context).backgroundColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Stack(
+                    children: [
+                      SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(minWidth: constraints.maxWidth, minHeight: constraints.maxHeight),
+                          child: IntrinsicHeight(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                AppBar(
+                                  toolbarHeight: 24.0,
+                                  backgroundColor: Theme.of(context).backgroundColor,
+                                  title: Image.asset(Images.logoDark, fit: BoxFit.contain),
+                                ),
+                                SpacerWithMax(size: height * 0.05, maxSize: 40.0),
+                                if (state.step < SpeedTestCubit.TAKE_SPEED_TEST_STEP)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                                    child: StepIndicator(
+                                      totalSteps: 4,
+                                      currentStep: state.step,
+                                      textColor: Theme.of(context).colorScheme.surface,
+                                      currentTextColor: Theme.of(context).colorScheme.onPrimary,
+                                      stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.10),
+                                      currentStepColor: Theme.of(context).colorScheme.secondary,
+                                    ),
+                                  ),
+                                if (state.step == SpeedTestCubit.LOCATION_STEP)
+                                  LocationStep(
+                                    location: state.location,
+                                    termsAccepted: state.termsAccepted,
+                                  )
+                                else if (state.step == SpeedTestCubit.NETWORK_LOCATION_STEP)
+                                  NetworkPlaceStep(
+                                    isStepValid: state.isStepValid,
+                                    address: state.location?.address ?? Strings.emptyString,
+                                    optionSelected: state.networkLocation,
+                                  )
+                                else if (state.step == SpeedTestCubit.NETWORK_TYPE_STEP)
+                                  NetworkTypeStep(
+                                    optionSelected: state.networkType,
+                                    isStepValid: state.isStepValid,
+                                  )
+                                else if (state.step == SpeedTestCubit.MONTHLY_BILL_COST_STEP)
+                                  MonthlyBillCostStep(
+                                    billCost: state.monthlyBillCost,
+                                    isStepValid: state.isStepValid,
+                                  )
+                                else if (state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP)
+                                  TakeSpeedTestStep(
+                                    networkType: state.networkType ?? Strings.emptyOption,
+                                    networkPlace: state.networkLocation ?? Strings.emptyOption,
+                                    address: state.location?.address ?? Strings.emptyOption,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (state.onContinue != null || state.onBack != null)
+                        Positioned(
+                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                          left: 0.0,
+                          right: 0.0,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 45.0),
+                            child: GoBackAndContinueButtons(
+                              onContinuePressed: state.onContinue,
+                              onGoBackPressed: state.onBack,
+                            ),
+                          ),
+                        )
+                    ],
                   ),
-                if (state.step == SpeedTestCubit.LOCATION_STEP)
-                  LocationStep(
-                    location: state.location,
-                    termsAccepted: state.termsAccepted,
-                  )
-                else if (state.step == SpeedTestCubit.NETWORK_LOCATION_STEP)
-                  NetworkPlaceStep(
-                    isStepValid: state.isStepValid,
-                    address: state.location?.address ?? Strings.emptyString,
-                    optionSelected: state.networkLocation,
-                  )
-                else if (state.step == SpeedTestCubit.NETWORK_TYPE_STEP)
-                  NetworkTypeStep(
-                    optionSelected: state.networkType,
-                    isStepValid: state.isStepValid,
-                  )
-                else if (state.step == SpeedTestCubit.MONTHLY_BILL_COST_STEP)
-                  MonthlyBillCostStep(
-                    billCost: state.monthlyBillCost,
-                    isStepValid: state.isStepValid,
-                  )
-                else if (state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP)
-                  TakeSpeedTestStep(
-                    networkType: state.networkType ?? Strings.emptyOption,
-                    networkPlace: state.networkLocation ?? Strings.emptyOption,
-                    address: state.location?.address ?? Strings.emptyOption,
-                  ),
-              ],
+                );
+              },
             ),
           );
         }

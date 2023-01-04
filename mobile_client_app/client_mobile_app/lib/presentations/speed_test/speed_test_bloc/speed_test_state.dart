@@ -1,4 +1,5 @@
 import 'package:client_mobile_app/core/models/location.dart';
+import 'package:flutter/material.dart';
 
 class SpeedTestState {
   const SpeedTestState({
@@ -16,6 +17,8 @@ class SpeedTestState {
     this.isTestRunning = false,
     this.isLocationLoading = false,
     this.isFormEnded = false,
+    this.onContinue,
+    this.onBack,
   });
 
   SpeedTestState copyWith({
@@ -33,6 +36,8 @@ class SpeedTestState {
     bool? termsAccepted,
     bool? isLocationLoading,
     bool? isFormEnded,
+    VoidCallback? onContinue,
+    VoidCallback? onBack,
   }) =>
       SpeedTestState(
         step: step ?? this.step,
@@ -49,6 +54,8 @@ class SpeedTestState {
         isLocationLoading: isLocationLoading ?? this.isLocationLoading,
         isFormEnded: isFormEnded ?? this.isFormEnded,
         termsAccepted: termsAccepted ?? this.termsAccepted,
+        onContinue: step != null && step != this.step ? null : onContinue ?? this.onContinue,
+        onBack: step != null && step != this.step ? null : onBack ?? this.onBack,
       );
 
   SpeedTestState resetSpecificStep(bool networkLocation, bool networkType, bool monthlyBillCost) => SpeedTestState(
@@ -66,7 +73,30 @@ class SpeedTestState {
         isLocationLoading: isLocationLoading,
         isFormEnded: isFormEnded,
         termsAccepted: termsAccepted,
+        onContinue: null,
+        onBack: null,
       );
+
+  SpeedTestState resetCallbacks() {
+    return SpeedTestState(
+      step: step,
+      isStepValid: isStepValid,
+      loss: loss,
+      upload: upload,
+      latency: latency,
+      location: location,
+      download: download,
+      networkType: networkType,
+      monthlyBillCost: monthlyBillCost,
+      networkLocation: networkLocation,
+      isTestRunning: isTestRunning,
+      isLocationLoading: isLocationLoading,
+      isFormEnded: isFormEnded,
+      termsAccepted: termsAccepted,
+      onContinue: null,
+      onBack: null,
+    );
+  }
 
   final int step;
   final bool isStepValid;
@@ -82,4 +112,6 @@ class SpeedTestState {
   final String? networkLocation;
   final int? monthlyBillCost;
   final bool isFormEnded;
+  final VoidCallback? onContinue;
+  final VoidCallback? onBack;
 }
