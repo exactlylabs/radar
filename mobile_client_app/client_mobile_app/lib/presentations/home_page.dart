@@ -18,11 +18,13 @@ class HomePage extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Theme.of(context).backgroundColor,
-          appBar: AppBar(
-            toolbarHeight: 24.0,
-            backgroundColor: Theme.of(context).backgroundColor,
-            title: Image.asset(Images.logoDark, fit: BoxFit.contain),
-          ),
+          appBar: state.currentIndex > 0
+              ? AppBar(
+                  toolbarHeight: 24.0,
+                  backgroundColor: Theme.of(context).backgroundColor,
+                  title: Image.asset(Images.logoDark, fit: BoxFit.contain),
+                )
+              : null,
           bottomNavigationBar: BottomNavigationBar(
             items: [
               BottomNavigationBarItem(
@@ -63,18 +65,7 @@ class HomePage extends StatelessWidget {
             currentIndex: state.currentIndex,
             onTap: (index) => context.read<NavigationCubit>().changeTab(index),
           ),
-          body: PageTransitionSwitcher(
-            duration: const Duration(milliseconds: 3000),
-            reverse: true,
-            transitionBuilder: (child, animation, secondaryAnimation) {
-              return FadeThroughTransition(
-                animation: animation,
-                secondaryAnimation: secondaryAnimation,
-                child: child,
-              );
-            },
-            child: HomePageBody(pageIdx: state.currentIndex),
-          ),
+          body: HomePageBody(pageIdx: state.currentIndex),
         );
       },
     );

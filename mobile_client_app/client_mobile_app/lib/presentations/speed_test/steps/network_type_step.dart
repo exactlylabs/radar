@@ -8,7 +8,6 @@ import 'package:client_mobile_app/presentations/speed_test/widgets/option_card.d
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/cellular_connection_modal.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/prefer_not_to_answer_button.dart';
 
 class NetworkTypeStep extends StatelessWidget {
@@ -24,65 +23,49 @@ class NetworkTypeStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    return Expanded(
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                const TitleAndSubtitle(
-                  title: Strings.networkTypeStepTitle,
-                  subtitle: Strings.networkTypeStepSubtitle,
-                  subtitleHeight: 1.56,
-                  titleHeight: 1.81,
-                ),
-                SpacerWithMax(size: height * 0.037, maxSize: 30.0),
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: CONNECTION_TYPE.length + 1,
-                  separatorBuilder: (context, index) {
-                    if (index < CONNECTION_TYPE.length - 1) {
-                      return SpacerWithMax(size: height * 0.012, maxSize: 10.0);
-                    } else {
-                      return SpacerWithMax(size: height * 0.025, maxSize: 20.0);
-                    }
-                  },
-                  itemBuilder: (context, idx) {
-                    if (idx < CONNECTION_TYPE.length) {
-                      final entry = CONNECTION_TYPE.entries.elementAt(idx);
-                      return OptionCard(
-                        name: entry.key,
-                        icon: entry.value,
-                        isSelected: optionSelected == entry.key,
-                        onTap: (name) => name == Strings.cellularConnectionType
-                            ? _cellularConnectionModal(context)
-                            : context.read<SpeedTestCubit>().setNetworkType(name),
-                      );
-                    } else {
-                      return PreferNotToAnswerButton(
-                        onPressed: (option) => context.read<SpeedTestCubit>().preferNotToAnswer(),
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
+    setOnContinueAndOnGoBackPressed(context);
+    return Column(
+      children: [
+        const TitleAndSubtitle(
+          title: Strings.networkTypeStepTitle,
+          subtitle: Strings.networkTypeStepSubtitle,
+          subtitleHeight: 1.56,
+          titleHeight: 1.81,
+        ),
+        SpacerWithMax(size: height * 0.037, maxSize: 30.0),
+        SizedBox(
+          height: 245,
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: CONNECTION_TYPE.length + 1,
+            separatorBuilder: (context, index) {
+              if (index < CONNECTION_TYPE.length - 1) {
+                return SpacerWithMax(size: height * 0.012, maxSize: 10.0);
+              } else {
+                return SpacerWithMax(size: height * 0.025, maxSize: 20.0);
+              }
+            },
+            itemBuilder: (context, idx) {
+              if (idx < CONNECTION_TYPE.length) {
+                final entry = CONNECTION_TYPE.entries.elementAt(idx);
+                return OptionCard(
+                  name: entry.key,
+                  icon: entry.value,
+                  isSelected: optionSelected == entry.key,
+                  onTap: (name) => name == Strings.cellularConnectionType
+                      ? _cellularConnectionModal(context)
+                      : context.read<SpeedTestCubit>().setNetworkType(name),
+                );
+              } else {
+                return PreferNotToAnswerButton(
+                  onPressed: (option) => context.read<SpeedTestCubit>().preferNotToAnswer(),
+                );
+              }
+            },
           ),
-          Positioned(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 0.0,
-            right: 0.0,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 45.0),
-              child: GoBackAndContinueButtons(
-                onGoBackPressed: () => context.read<SpeedTestCubit>().previousStep(),
-                onContinuePressed: isStepValid ? () => context.read<SpeedTestCubit>().nextStep() : null,
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -98,6 +81,14 @@ class NetworkTypeStep extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void setOnContinueAndOnGoBackPressed(BuildContext context) {
+    VoidCallback? onContinueCallback = isStepValid ? () => context.read<SpeedTestCubit>().nextStep() : null;
+
+    context
+        .read<SpeedTestCubit>()
+        .setOnContinueAndOnGoBackPressed(onContinueCallback, () => context.read<SpeedTestCubit>().previousStep());
   }
 
   static const CONNECTION_TYPE = <String, String>{
