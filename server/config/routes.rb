@@ -76,6 +76,8 @@ Rails.application.routes.draw do
       post 'check_claim', to: 'clients#check_claim'
       post 'bulk_run_tests'
       delete 'bulk_delete'
+      post 'bulk_update_release_group'
+      get 'bulk_pdf_labels'
     end
   end
 

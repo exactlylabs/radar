@@ -6,6 +6,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
   before_action :set_client, only: %i[ release show edit destroy unstage get_client_label ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
+  before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 
   # GET /clients or /clients.json
@@ -300,23 +301,19 @@ class ClientsController < ApplicationController
     respond_to do |format|
       format.pdf do
         render pdf: "#{@client.unix_user}",
-               page_width: "380px",
-               page_height: "287.5px",
+               page_width: "375px",
+               page_height: "280px",
                template: "client_labels/show.html.erb",
                layout: "client_label.html",
                page_offset: 0,
                locals: { qr: qr_svg },
-               margin: {top: 1, bottom: 0, left: 0, right: 2},
+               margin: {top: 0, bottom: 0, left: 0, right: 0},
                outline: {outline: false}
       end
     end
   end
 
   def bulk_run_tests
-    client_ids = JSON.parse(params[:ids])
-
-    @clients = policy_scope(Client).where(unix_user: client_ids)
-
     if @clients.update_all(test_requested: true)
       @notice = "Test was successfully requested for selected clients."
     else
@@ -330,10 +327,20 @@ class ClientsController < ApplicationController
   end
  
   def bulk_delete
-    client_ids = JSON.parse(params[:ids])
-
-    @clients = policy_scope(Client).where(unix_user: client_ids)
-    if @clients.update_all(user: nil, location: nil, account: nil)
+    error = nil
+    # Using a loop instead of update_all because update_all deletes the reference
+    # to @clients after finishing the transaction, and the reference is needed to
+    # update the view correctly and remove the deleted entities.
+    begin
+      Client.transaction do
+        @clients.each do |c|
+          c.update(user: nil, location: nil, account: nil)
+        end
+      end
+    rescue Exception => e
+      error = e.message
+    end
+    if error.nil?
       @notice = "Clients were successfully deleted."
     else
       @notice = "Error deleting clients."
@@ -345,6 +352,51 @@ class ClientsController < ApplicationController
     end
   end
 
+  def bulk_update_release_group
+    update_group_id = params[:update_group_id].to_i
+    if @clients.update_all(update_group_id: update_group_id)
+      @notice = "Clients' Release Group was successfully updated."
+    else
+      @notice = "Error updating Clients' Release Group."
+    end
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_back fallback_location: root_path, notice: @notice}
+    end
+  end
+
+  def bulk_pdf_labels
+    client_ids = params[:ids].split(',')
+    @clients = policy_scope(Client).where(unix_user: client_ids)
+    @qrs = []
+    @clients.each do |client|
+      client_path = request.base_url + "/clients/#{client.unix_user}"
+      qr = RQRCode::QRCode.new(client_path)
+      qr_svg = qr.as_svg(
+        color: "000",
+        shape_rendering: "crispEdges",
+        module_size: 11,
+        standalone: true,
+        use_path: true,
+        viewbox: true
+      )
+      @qrs.append(qr_svg)
+    end
+
+    respond_to do |format|
+      format.pdf do
+        render pdf: "Pod Labels",
+               page_width: "375px",
+               page_height: "280px",
+               template: "client_labels/bulk_show.html.erb",
+               layout: "client_label.html",
+               page_offset: 0,
+               locals: { qrs: @qrs },
+               margin: {top: 0, bottom: 0, left: 0, right: 0},
+               outline: {outline: false}
+      end
+    end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -380,5 +432,10 @@ class ClientsController < ApplicationController
     
     def json_request?
       request.format.symbol == :json
+    end
+
+    def set_clients
+      client_ids = JSON.parse(params[:ids])
+      @clients = policy_scope(Client).where(unix_user: client_ids)
     end
 end

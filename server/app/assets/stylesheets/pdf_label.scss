@@ -1,6 +1,10 @@
+body {
+  margin: 0;
+}
+
 #pod-label--label-frame {
   width: 410px;
-  height: 300px;
+  height: 295px;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -18,8 +22,8 @@
 }
 
 #pod-label--label-logo {
-  width: 130px;
-  height: 45px;
+  height: 43px;
+  width: auto;
   margin-bottom: 30px;
 }
 

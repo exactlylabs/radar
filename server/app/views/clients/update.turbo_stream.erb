@@ -7,5 +7,5 @@
 <% end %>
 
 <%= turbo_stream.replace @client do %>
-  <%= render partial: "clients_table_row", locals: { client: @client }%>
+  <%= render partial: "clients_table_row", locals: { client: @client, selected: false }%>
 <% end %>

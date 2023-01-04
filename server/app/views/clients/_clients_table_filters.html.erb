@@ -14,7 +14,8 @@
         </span>
       </a>
       <div class="dropdown-menu fw-bold fs-7 py-4"
-           aria-labelledby="schedule-button">
+           aria-labelledby="schedule-button"
+      >
         <a href="#"
            style="padding-left: 11px"
            class="menu-item text-hover-gray-500 text-gray-700 py-2 pe-3"
@@ -22,17 +23,24 @@
         >
           Run Test
         </a>
-        <%if current_user.super_user %>
+        <% if current_user.super_user %>
           <!--begin::Menu item-->
           <a href="#"
-            class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 text-gray-700 p-2 px-3"
-            data-action="click->multi-row-table#bulkChangeReleaseGroup"
+             class="menu-item text-hover-gray-500 text-gray-700 py-2 pe-3 text-nowrap"
+             data-bs-target="#bulk_change_release_group"
+             data-bs-toggle="modal"
+             style="padding-left: 11px"
           >
             Change Release Group
           </a>
           <!--end::Menu item-->
-          <a href="<%= params[:status] == 'staging' ? clients_path : clients_path(params.permit([:status, :environment]).merge(environment: 'staging')) %>"
-            class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 text-gray-700 p-2 px-3">
+          <!--begin::Menu item-->
+          <a href="#"
+             class="menu-item text-hover-gray-500 text-gray-700 py-2 pe-3"
+             data-action="click->multi-row-table#bulkPdfLabels"
+             style="padding-left: 11px"
+             target="_blank"
+          >
             Print Labels
           </a>
           <!--end::Menu item-->
@@ -40,8 +48,9 @@
 
         <!--begin::Menu item-->
         <a href="#"
-           class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 text-gray-700 p-2 px-3"
-            data-action="click->multi-row-table#bulkDeletes"
+           class="menu-item text-hover-gray-500 text-gray-700 py-2 pe-3"
+           data-action="click->multi-row-table#bulkDeletes"
+           style="padding-left: 11px"
         >
           Delete
         </a>

@@ -1,0 +1,8 @@
+<% @clients.each do |c| %>
+  <%= turbo_stream.remove c do %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.update 'notice-container' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% end %>
