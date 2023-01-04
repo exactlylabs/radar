@@ -11,7 +11,7 @@
       <div class="pod-label--row" id="pod-label--mac-address-container">
         <p class="pod-label--label">MAC Address</p>
         <div class="pod-label--input">
-          <p class="pod-label--input-content pod-label--ff-mono"><%= client.address.present? ? client.address : "N/A" %></p>
+          <p class="pod-label--input-content pod-label--ff-mono"><%= client.get_mac_address %></p>
         </div>
       </div>
     </div>
