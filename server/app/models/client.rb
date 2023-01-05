@@ -178,8 +178,11 @@ class Client < ApplicationRecord
     self.scheduling_tests_in_period += 1
     if self.scheduling_period_end.nil?
       # Set it for the first time
+      self.scheduling_tests_in_period = 0
       self.scheduling_period_end = self.next_schedule_period_end
-    elsif self.scheduling_tests_in_period == self.scheduling_amount_per_period
+    end
+
+    if self.scheduling_tests_in_period >= self.scheduling_amount_per_period
       # We finished the number of tests for this period, change it to the next one
       self.scheduling_tests_in_period = 0
       base_timestamp = self.scheduling_period_end
