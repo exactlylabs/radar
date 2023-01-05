@@ -85,10 +85,35 @@ const smallHeroImageStyle: CSSProperties = {
   marginTop: '-50px'
 }
 
+const comingSoonContainerStyle: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  marginBottom: '5px',
+  marginTop: '-5px',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start'
+}
+
+const storesIconStyle: CSSProperties = {
+  width: '54px',
+  height: 'auto',
+  marginBottom: '5px'
+}
+
+const comingSoonTextStyle: CSSProperties = {
+  fontSize: '15px',
+  lineHeight: '28px',
+  color: '#6d6a94',
+  margin: 0
+}
+
 export const styles = {
   MobilePageHeader: (isSmall: boolean) => isSmall ? smallMobilePageHeaderStyle : mobilePageHeaderStyle,
   TextContainer: (isSmall: boolean) => isSmall ? smallTextContainerStyle : textContainerStyle,
   Title: (isSmall: boolean) => isSmall ? smallTitleStyle : titleStyle,
   Subtitle: (isSmall: boolean) => isSmall ? smallSubtitleStyle : subtitleStyle,
   HeroImage: (isSmall: boolean) => isSmall ? smallHeroImageStyle : heroImageStyle,
+  ComingSoonContainer: comingSoonContainerStyle,
+  StoresIcon: storesIconStyle,
+  ComingSoonText: comingSoonTextStyle,
 }

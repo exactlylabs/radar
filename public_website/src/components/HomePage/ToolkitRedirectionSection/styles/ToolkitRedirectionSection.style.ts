@@ -111,7 +111,8 @@ const smallLinkContainerStyle: CSSProperties = {
 const linkStyle: CSSProperties = {
   fontSize: '16px',
   color: REDIRECTION_LINK,
-  margin: 0
+  margin: 0,
+  textDecoration: 'none'
 }
 
 const linkChevronStyle: CSSProperties = {
