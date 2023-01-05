@@ -8,15 +8,6 @@ class Measurement < ApplicationRecord
   belongs_to :autonomous_system, optional: true
   has_one_attached :result
 
-  after_commit :check_ip_changed
-
-  def check_ip_changed
-    if saved_change_to_ip
-        # Call a job to search for the new ASN
-        FindAsnByIp.perform_later self
-    end
-  end
-
   def self.to_ndt7_csv
     info_attributes = %w{id client_id account location_name latitude longitude address loss_rate}
     attributes = %w{style upload download jitter latency created_at}
