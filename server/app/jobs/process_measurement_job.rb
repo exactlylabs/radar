@@ -2,6 +2,7 @@ class ProcessMeasurementJob < ApplicationJob
   queue_as :default
 
   def perform(measurement)
+    FindAsnByIp.perform_now measurement
     case measurement.style
     when "NDT7"
       data = measurement.result.download.split("\n")
