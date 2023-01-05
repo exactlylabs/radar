@@ -16,7 +16,13 @@ export enum ExternalRoutes {
   MAPPING_APP_STAGING = 'https://mapping.staging.exactlylabs.com',
 }
 
-export const goToUrl = (url: string) => window.location.href = url;
+export const goToUrl = (url: string, anotherTab = false) => {
+  if(anotherTab) {
+    window.open(url, '_blank');
+  } else {
+    window.location.href = url;
+  }
+}
 
 export const goToBase = () => goToUrl(AppRoutes.BASE);
 export const goToHome = () => goToUrl(AppRoutes.HOME);

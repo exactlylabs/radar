@@ -2,6 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/MobilePageDownload.style";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
+const StoresIcon = '/assets/images/stores-icon.png';
 
 const MobilePageDownload = (): ReactElement => {
 
@@ -10,9 +11,17 @@ const MobilePageDownload = (): ReactElement => {
 
   return (
     <div style={styles.MobilePageDownload(isSmall)}>
-      <p className={'fw-bold'} style={styles.Header(isSmall)}>Get the app</p>
+      <div style={styles.ComingSoonPill}>
+        <p className={'fw-extra-bold'} style={styles.ComingSoonPillText}>COMING SOON</p>
+      </div>
+      {/* Commented until we have the app in stores */}
+      {/* <p className={'fw-bold'} style={styles.Header(isSmall)}>Get the app</p> */}
       <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Download Radar for free.</p>
       <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Radar is available for iOS and Android and is totally free to use. Download our app and ensure you’re getting what you’re expecting from your internet provider.</p>
+      <div style={styles.ComingSoonContainer}>
+        <img src={StoresIcon} style={styles.StoresIcon} alt={'stores'}/>
+        <p className={'fw-medium'} style={styles.ComingSoonText}>Radar will be available for iOS and Android soon.</p>
+      </div>
     </div>
   );
 }

@@ -23,7 +23,7 @@ const ToolkitDetailSection = (): ReactElement => {
   const {isSmallScreen, isMidScreen} = useViewportSizes();
   const isSmall = isSmallScreen || isMidScreen;
 
-  const goToExploreTheMap = () => goToUrl('/map');
+  const goToExploreTheMap = () => goToUrl('https://broadbandmapping.com', true);
 
   return (
     <div style={styles.ToolkitDetailSection}>

@@ -1,6 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/Footer.style";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import {goToUrl} from "../../../utils/navigation";
 
 const RadarLogoGray = '/assets/images/radar-logo-gray.png';
 const BroadbandMappingLogo = '/assets/images/broadband-mapping-logo.png';
@@ -23,9 +24,15 @@ const Footer = (): ReactElement => {
           <a href={'/terms'} style={styles.Link} className={'fw-bold hover-opaque'}>Terms of Use</a>
         </div>
         <div style={styles.RightColumn}>
-          <img src={BroadbandMappingLogo} style={styles.BroadbandMappingLogo} alt={'broadband-mapping-logo'}/>
-          <img src={ANTHCLogo} style={styles.ANTHCLogo} alt={'ANTHC-logo'}/>
-          <img src={MLabLogo} style={styles.MLabLogo} alt={'MLab-logo'}/>
+          <a href={'https://www.broadbandmapping.com/'} target={'_blank'} style={styles.MarginlessLink}>
+            <img src={BroadbandMappingLogo} style={styles.BroadbandMappingLogo} alt={'broadband-mapping-logo'}/>
+          </a>
+          <a href={'https://www.anthc.org/'} target={'_blank'} style={styles.MarginlessLink}>
+            <img src={ANTHCLogo} style={styles.ANTHCLogo} alt={'ANTHC-logo'}/>
+          </a>
+          <a href={'https://www.measurementlab.net/'} target={'_blank'} style={styles.MarginlessLink}>
+            <img src={MLabLogo} style={styles.MLabLogo} alt={'MLab-logo'}/>
+          </a>
         </div>
       </div>
       <div style={styles.BottomRow}>
@@ -45,9 +52,15 @@ const Footer = (): ReactElement => {
       </div>
       <div style={styles.FooterHorizontalDivider}></div>
       <div style={styles.SmallMidRow}>
-        <img src={BroadbandMappingLogo} style={styles.BroadbandMappingLogo} alt={'broadband-mapping-logo'}/>
-        <img src={ANTHCLogo} style={styles.SmallANTHCLogo} alt={'ANTHC-logo'}/>
-        <img src={MLabLogo} style={styles.SmallMLabLogo} alt={'MLab-logo'}/>
+        <a href={'https://www.broadbandmapping.com/'} target={'_blank'} style={styles.MarginlessLink}>
+          <img src={BroadbandMappingLogo} style={styles.BroadbandMappingLogo} alt={'broadband-mapping-logo'}/>
+        </a>
+        <a href={'https://www.anthc.org/'} target={'_blank'} style={styles.MarginlessLink}>
+          <img src={ANTHCLogo} style={styles.SmallANTHCLogo} alt={'ANTHC-logo'}/>
+        </a>
+        <a href={'https://www.measurementlab.net/'} target={'_blank'} style={styles.MarginlessLink}>
+          <img src={MLabLogo} style={styles.SmallMLabLogo} alt={'MLab-logo'}/>
+        </a>
       </div>
       <p className={'fw-regular'} style={styles.Copyright}>Copyright © 2022 Radar. All rights reserved.</p>
     </div>

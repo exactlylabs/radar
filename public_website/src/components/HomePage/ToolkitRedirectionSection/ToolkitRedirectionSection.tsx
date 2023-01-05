@@ -17,11 +17,11 @@ const ToolkitRedirectionSection = (): ReactElement => {
           <p className={'fw-bold'} style={styles.Title(isSmall)}>For Consumers</p>
           <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Test your internet connection to ensure you’re getting what you’re paying for.</p>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <p className={'fw-bold'} style={styles.Link}>Test your connection</p>
+            <a href={'/broadband-testing'} className={'fw-bold'} style={styles.Link}>Test your connection</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <p className={'fw-bold'} style={styles.Link}>Monitor your connectivity</p>
+            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor your connectivity</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
         </div>
@@ -29,15 +29,15 @@ const ToolkitRedirectionSection = (): ReactElement => {
           <p className={'fw-bold'} style={styles.Title(isSmall)}>For Internet Providers</p>
           <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>See how your service actually does and let your customers test their connectivity.</p>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <p className={'fw-bold'} style={styles.Link}>Explore broadband testing</p>
+            <a href={'/broadband-testing'} className={'fw-bold'} style={styles.Link}>Explore broadband testing</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <p className={'fw-bold'} style={styles.Link}>Monitor sites’ connectivity</p>
+            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor sites’ connectivity</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <p className={'fw-bold'} style={styles.Link}>Explore the map</p>
+            <a href={'https://broadbandmapping.com'} target={'_blank'} className={'fw-bold'} style={styles.Link}>Explore the map</a>
             <img src={RedirectArrowBlue} style={styles.LinkChevron} alt={'redirect-arrow-blue'}/>
           </div>
         </div>
@@ -45,15 +45,15 @@ const ToolkitRedirectionSection = (): ReactElement => {
           <p className={'fw-bold'} style={styles.Title(isSmall)}>For Policy Makers</p>
           <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Our tools can help grant funders and applicants figure out where investment makes sense.</p>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <p className={'fw-bold'} style={styles.Link}>Explore broadband testing</p>
+            <a href={'/broadband-testing'} className={'fw-bold'} style={styles.Link}>Explore broadband testing</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <p className={'fw-bold'} style={styles.Link}>Monitor sites’ connectivity</p>
+            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor sites’ connectivity</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <p className={'fw-bold'} style={styles.Link}>Explore the map</p>
+            <a href={'https://broadbandmapping.com'} target={'_blank'} className={'fw-bold'} style={styles.Link}>Explore the map</a>
             <img src={RedirectArrowBlue} style={styles.LinkChevron} alt={'redirect-arrow-blue'}/>
           </div>
         </div>

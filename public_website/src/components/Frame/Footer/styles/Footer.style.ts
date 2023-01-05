@@ -63,28 +63,33 @@ const smallLinkStyle: CSSProperties = {
 const broadbandMappingLogoStyle: CSSProperties = {
   width: '208px',
   height: '28px',
+  cursor: 'pointer'
 }
 
 const ANTHCLogoStyle: CSSProperties = {
   width: '110px',
   height: '31px',
-  marginLeft: '50px'
+  marginLeft: '50px',
+  cursor: 'pointer'
 }
 
 const smallANTHLogoStyle: CSSProperties = {
   width: '110px',
   height: '31px',
+  cursor: 'pointer'
 }
 
 const MLabLogoStyle: CSSProperties = {
   width: '60px',
   height: '18px',
-  marginLeft: '50px'
+  marginLeft: '50px',
+  cursor: 'pointer'
 }
 
 const smallMLabLogoStyle: CSSProperties = {
   width: '60px',
-  height: '18px'
+  height: '18px',
+  cursor: 'pointer'
 }
 
 const copyrightStyle: CSSProperties = {
@@ -144,6 +149,10 @@ const footerHorizontalDividerStyle: CSSProperties = {
   marginBottom: '40px',
 }
 
+const marginlessLinkStyle: CSSProperties = {
+  margin: 0
+}
+
 export const styles = {
   Footer: footerStyle,
   TopRow: topRowStyle,
@@ -165,4 +174,5 @@ export const styles = {
   SmallMidRow: smallMidRowStyle,
   SmallBottomRow: smallBottomRowStyle,
   FooterHorizontalDivider: footerHorizontalDividerStyle,
+  MarginlessLink: marginlessLinkStyle,
 }
