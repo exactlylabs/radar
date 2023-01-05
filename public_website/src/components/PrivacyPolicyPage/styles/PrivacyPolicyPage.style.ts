@@ -3,7 +3,7 @@ import {DEFAULT_TEXT, HIGHLIGHTER} from "../../../utils/colors";
 
 const privacyPolicyPageStyle: CSSProperties = {
   width: '100vw',
-  paddingTop: '80px'
+  paddingTop: '80px',
 }
 
 const privacyPolicyPageContentStyle: CSSProperties = {
@@ -45,7 +45,11 @@ const mainTitleStyle: CSSProperties = {
 
 const indexSection: CSSProperties = {
   width: '100%',
-  marginBottom: '25px',
+  height: '350px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start'
 }
 
 const sectionTitleStyle: CSSProperties = {
@@ -53,6 +57,7 @@ const sectionTitleStyle: CSSProperties = {
   lineHeight: '26px',
   color: DEFAULT_TEXT,
   margin: '0 0 8px 0',
+  textDecoration: 'none'
 }
 
 const subsectionTitleStyle: CSSProperties = {
@@ -74,6 +79,7 @@ const textSectionParagraphStyle: CSSProperties = {
   lineHeight: '28px',
   color: DEFAULT_TEXT,
   margin: '0 0 30px 0',
+  textAlign: 'justify'
 }
 
 const textSectionSubtitleStyle: CSSProperties = {
@@ -81,6 +87,7 @@ const textSectionSubtitleStyle: CSSProperties = {
   lineHeight: '26px',
   color: DEFAULT_TEXT,
   margin: '0 0 5px 0',
+  textAlign: 'justify'
 }
 
 const highlightSectionStyle: CSSProperties = {
@@ -90,11 +97,12 @@ const highlightSectionStyle: CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
-  textAlign: 'left',
+  textAlign: 'justify',
   borderLeft: `solid 4px ${HIGHLIGHTER}`,
   paddingLeft: '20px',
   paddingTop: '15px',
   paddingBottom: '15px',
+  marginBottom: '20px'
 }
 
 const highlighterStyle: CSSProperties = {
@@ -109,7 +117,7 @@ const highlighterStyle: CSSProperties = {
 
 const hightlightSectionParagraph: CSSProperties = {
   ...textSectionParagraphStyle,
-  margin: 0
+  margin: '0 0 10px 0'
 }
 
 export const styles = {
