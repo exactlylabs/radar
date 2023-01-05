@@ -2,7 +2,6 @@ import {ReactElement} from "react";
 import {styles} from "../src/components/PrivacyPolicyPage/styles/PrivacyPolicyPage.style";
 import Frame from "../src/components/Frame/Frame";
 import {ViewportContextProvider} from "../src/context/ViewportContent";
-import {useRouter} from "next/router";
 
 const PrivacyPolicyPage = (): ReactElement => {
 

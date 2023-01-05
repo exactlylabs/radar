@@ -1,5 +1,4 @@
-import {ReactElement, useEffect} from 'react';
-import {useRouter} from "next/router";
+import {ReactElement} from 'react';
 
 const Index = (): ReactElement => {
   return (<div></div>);

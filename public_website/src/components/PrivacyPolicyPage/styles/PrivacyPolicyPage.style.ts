@@ -105,16 +105,6 @@ const highlightSectionStyle: CSSProperties = {
   marginBottom: '20px'
 }
 
-const highlighterStyle: CSSProperties = {
-  width: '4px',
-  minWidth: '4px',
-  height: 'calc(100% + 30px)',
-  borderRadius: '10px',
-  backgroundColor: HIGHLIGHTER,
-  marginRight: '20px',
-  minHeight: '100%',
-}
-
 const hightlightSectionParagraph: CSSProperties = {
   ...textSectionParagraphStyle,
   margin: '0 0 10px 0'
