@@ -37,7 +37,7 @@ const ToolkitRedirectionSection = (): ReactElement => {
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <a href={'https://broadbandmapping.com'} target={'_blank'} className={'fw-bold'} style={styles.Link}>Explore the map</a>
+            <a href={'https://broadbandmapping.com'} target={'_blank'} rel={'noreferrer'} className={'fw-bold'} style={styles.Link}>Explore the map</a>
             <img src={RedirectArrowBlue} style={styles.LinkChevron} alt={'redirect-arrow-blue'}/>
           </div>
         </div>
@@ -53,7 +53,7 @@ const ToolkitRedirectionSection = (): ReactElement => {
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <a href={'https://broadbandmapping.com'} target={'_blank'} className={'fw-bold'} style={styles.Link}>Explore the map</a>
+            <a href={'https://broadbandmapping.com'} target={'_blank'} rel={'noreferrer'} className={'fw-bold'} style={styles.Link}>Explore the map</a>
             <img src={RedirectArrowBlue} style={styles.LinkChevron} alt={'redirect-arrow-blue'}/>
           </div>
         </div>

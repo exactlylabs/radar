@@ -1,7 +1,7 @@
 import {ReactElement, useState} from "react";
 import {styles} from "./styles/SmallNavbarContent.style";
-import SmallNavbarContentOpen from "./SmallNavbarContentOpen/SmallNavbarContentOpen";
 import {goToHome} from "../../../../utils/navigation";
+import SmallNavbarContentOpen from "./SmallNavbarContentOpen/SmallNavbarContentOpen";
 
 const RadarLogo = "/assets/images/radar-logo.png";
 const CloseIcon = '/assets/images/close-navbar-icon.png';

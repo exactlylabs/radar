@@ -7,12 +7,12 @@ import {ToolkitTabContentRowTitle} from "../../RegularNavbarContent/ToolkitFloat
 import {
   commonStyles
 } from "../../RegularNavbarContent/ToolkitFloatingMenu/RightSideToolkitTabContent/styles/common.style";
+import {goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../../../utils/navigation";
 
 const BroadbandTestingIcon = "/assets/images/broadband-testing-icon.png";
 const MappingToolsIcon = "/assets/images/mapping-tools-icon.png";
 const SiteMonitoringIcon = "/assets/images/site-monitoring-icon.png";
 
-import {goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../../../utils/navigation";
 
 
 const SmallNavbarContentOpen = (): ReactElement => {
