@@ -30,7 +30,7 @@ const ToolkitDetailSection = (): ReactElement => {
       <div style={styles.TextContainer(isSmall)}>
         <p className={'fw-bold'} style={styles.Header(isSmall)}>Our toolkit</p>
         <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Powerful data-driven tools to make better investments.</p>
-        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Our open-sourced toolkit allows you to analyze existing broadband data as well as collect un-biased information on how accessible and affordable the internet is in your communities.</p>
+        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Our open-sourced toolkit allows you to analyze existing broadband data and collect unbiased information on Internet accessibility and affordability in your community.</p>
       </div>
       <div style={styles.DetailSection(isSmall)}>
         {!isSmall && <div style={styles.Gradient('543px', 'linear-gradient(to top, #f2f4fd 38%, #fff 75%)')}></div>}
@@ -39,7 +39,7 @@ const ToolkitDetailSection = (): ReactElement => {
             <img src={SiteMonitoringIcon} style={styles.Icon} alt={'site-monitoring-icon'}/>
           </div>
           <p className={'fw-bold'} style={styles.InformationBlockTitle(isSmall)}>Site Monitoring</p>
-          <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Monitor your sites’ internet quality remotely and get better insights by analyzing the network performance over time.</p>
+          <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Remotely monitor your Internet quality and get better insights by analyzing the network performance over time.</p>
           <CustomButton text={'Learn more'}
                         onClick={goToSiteMonitoring}
                         icon={<img src={ChevronRightWhite} style={styles.Chevron} alt={'chevron-right-white'}/>}
@@ -57,7 +57,7 @@ const ToolkitDetailSection = (): ReactElement => {
             <img src={BroadbandTestingIcon} style={styles.Icon} alt={'broadband-testing-icon'}/>
           </div>
           <p className={'fw-bold'} style={styles.InformationBlockTitle(isSmall)}>Consumer Broadband Testing</p>
-          <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Capture detailed information beyond what consumers are getting from their internet connections with a white-label solution.</p>
+          <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Capture detailed information about upload speeds, download speeds, and quality metrics for Internet connections with a white-label solution.</p>
           <CustomButton text={'Learn more'}
                         onClick={goToBroadbandTesting}
                         icon={<img src={ChevronRightWhite} style={styles.Chevron} alt={'chevron-right-white'}/>}
@@ -75,7 +75,7 @@ const ToolkitDetailSection = (): ReactElement => {
             <img src={MappingIcon} style={styles.Icon} alt={'mapping-tools-icon'}/>
           </div>
           <p className={'fw-bold'} style={styles.InformationBlockTitle(isSmall)}>Mapping Tools</p>
-          <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Explore public data on an interactive map to learn more about how internet connectivity varies between different geographies, providers and timeframes.</p>
+          <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Explore public data on an interactive map to learn more about how Internet connectivity varies between different geographies, providers and timeframes.</p>
           <CustomButton text={'Explore the map'}
                         onClick={goToExploreTheMap}
                         icon={<img src={ChevronRightWhite} style={styles.Chevron} alt={'chevron-right-white'}/>}

@@ -16,7 +16,7 @@ const BroadbandTestingHeader = (): ReactElement => {
   return (
     <div style={styles.BroadbandTestingHeader(isSmall)}>
       <div style={styles.TextContainer(isSmall)}>
-        <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Do you know where broadband is missing?</p>
+        <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Where are the gaps in you broadband maps?</p>
         <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Discover the neighborhoods and streets with the most needs and make the most out of your investment.</p>
         <CustomButton text={'Get started'}
                       onClick={goToHome}

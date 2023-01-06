@@ -20,7 +20,6 @@ const Footer = (): ReactElement => {
         <div style={styles.LeftColumn}>
           <img src={RadarLogoGray} style={styles.RadarLogo} alt={'radar-logo'}/>
           <a href={'/privacy-policy'} style={styles.Link} className={'fw-bold hover-opaque'}>Privacy Policy</a>
-          <a href={'/terms'} style={styles.Link} className={'fw-bold hover-opaque'}>Terms of Use</a>
         </div>
         <div style={styles.RightColumn}>
           <a href={'https://www.broadbandmapping.com/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
@@ -46,7 +45,6 @@ const Footer = (): ReactElement => {
         <img src={RadarLogoGray} style={styles.RadarLogo} alt={'radar-logo'}/>
         <div style={styles.LinkContainer}>
           <a href={'/privacy-policy'} style={styles.SmallLink} className={'fw-bold hover-opaque'}>Privacy Policy</a>
-          <a href={'/terms'} style={styles.SmallLink} className={'fw-bold hover-opaque'}>Terms of Use</a>
         </div>
       </div>
       <div style={styles.FooterHorizontalDivider}></div>

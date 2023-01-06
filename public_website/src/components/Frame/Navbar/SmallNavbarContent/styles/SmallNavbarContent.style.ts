@@ -24,6 +24,7 @@ const navbarContentStyle: CSSProperties = {
 const logoStyle: CSSProperties = {
   width: '104px',
   height: '25px',
+  cursor: 'pointer'
 }
 
 const iconStyle: CSSProperties = {

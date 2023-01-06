@@ -16,8 +16,8 @@ const SiteMonitoringHeader = (): ReactElement => {
   return (
     <div style={styles.SiteMonitoringHeader(isSmall)}>
       <div style={styles.TextContainer(isSmall)}>
-        <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Getting what you paid for from your internet provider?</p>
-        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Ensure sites’ internet connectivity quality matches your expectations by continuous monitoring.</p>
+        <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Is your Internet Service Provider letting you down?</p>
+        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Ensure your Internet speed and quality meets expectations with our performance monitoring tools.</p>
         <CustomButton text={'Get started'}
                       onClick={goToBase}
                       icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
