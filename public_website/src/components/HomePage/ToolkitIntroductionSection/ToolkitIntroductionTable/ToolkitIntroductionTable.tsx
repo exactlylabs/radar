@@ -19,7 +19,7 @@ const ToolkitIntroductionTable = (): ReactElement => {
           <img src={MapIcon} style={styles.Icon} alt={'map-icon'}/>
         </div>
         <p className={'fw-bold'} style={styles.Title}>Explore the map in detail</p>
-        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Have a better understanding of where broadband is available down to the street.</p>
+        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Build a better understanding of broadband availability in your neighborhood.</p>
       </div>
       { !isSmall && <img src={SeparatorLine} style={styles.SeparatorLine} alt={'separator-line'}/> }
       <div style={styles.ToolkitIntroductionTableColumn}>
@@ -27,7 +27,7 @@ const ToolkitIntroductionTable = (): ReactElement => {
           <img src={InvestmentsIcon} style={styles.Icon} alt={'map-icon'}/>
         </div>
         <p className={'fw-bold'} style={styles.Title}>Make smart investments</p>
-        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Identify where internet investment will go the furthest.</p>
+        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Identify where Internet investment is needed most.</p>
       </div>
       { !isSmall && <img src={SeparatorLine} style={styles.SeparatorLine} alt={'separator-line'}/> }
       <div style={styles.ToolkitIntroductionTableColumn}>
@@ -35,7 +35,7 @@ const ToolkitIntroductionTable = (): ReactElement => {
           <img src={CommunitiesIcon} style={styles.Icon} alt={'map-icon'}/>
         </div>
         <p className={'fw-bold'} style={styles.Title}>Reach more communities</p>
-        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Identify and ensure connectivity at important community locations.</p>
+        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Measure connectivity at important community locations.</p>
       </div>
     </div>
   )

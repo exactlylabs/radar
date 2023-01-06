@@ -19,8 +19,8 @@ const BroadbandTestingMobile = (): ReactElement => {
         { !isSmall && <img src={MobileAppIllustration} style={styles.Illustration(isSmall)} alt={'mobile-app-illustration'}/> }
         <div style={styles.RightColumn(isSmall)}>
           <p className={'fw-bold'} style={styles.Header(isSmall)}>Radar for Mobile</p>
-          <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Test wifi and cellular connections with our mobile app.</p>
-          <p className={'fw-medium'} style={styles.Paragraph(isSmall)}>Let your customers or community test their conectivity indoors and outdoors by using our mobile app for iOS and Android.</p>
+          <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Test Wi-Fi and cellular connections with our mobile app.</p>
+          <p className={'fw-medium'} style={styles.Paragraph(isSmall)}>Let your customers or community test their connectivity from anywhere with our free mobile app for iOS and Android.</p>
           <CustomButton text={'Learn more'}
                         onClick={goToMobile}
                         icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}

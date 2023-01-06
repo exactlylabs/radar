@@ -16,30 +16,30 @@ const BroadbandTestingCommunity = (): ReactElement => {
       <div style={styles.BroadbandTestingCommunityContent(isSmall)}>
         <div style={styles.TextContainer(isSmall)}>
           <p className={'fw-bold'} style={styles.Header(isSmall)}>Consumer Broadband Testing</p>
-          <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Give your community a way to test their internet connections.</p>
-          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>White-label our open-source speed test tool to let your community or your customers test their internet connection and find out what broadband looks like where they live.</p>
+          <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Give your community a way to test their Internet connections.</p>
+          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>White label our open-source Internet speed test tool to let your community or customers test their connections and find out what broadband looks like where they live.</p>
         </div>
         <div style={isSmall ? styles.VerticalContainer : styles.Row}>
           <div style={styles.Column(isSmall)}>
             <div style={styles.IconContainer}>
               <img src={OpenSourceIcon} style={styles.Icon} alt={'open-source-icon'}/>
             </div>
-            <p className={'fw-bold'} style={styles.RowTitle(isSmall)}>White-labelable & open-source</p>
-            <p className={'fw-medium'} style={styles.RowSubtitle(isSmall)}>Our speed test tool is white-labelable and is fully open-source so you have full control over it.</p>
+            <p className={'fw-bold'} style={styles.RowTitle(isSmall)}>White label, open-source</p>
+            <p className={'fw-medium'} style={styles.RowSubtitle(isSmall)}>Our speed test tool can be white labeled and is fully open-source so you have full control over it.</p>
           </div>
           <div style={styles.Column(isSmall)}>
             <div style={styles.IconContainer}>
               <img src={BeyondSpeedsIcon} style={styles.Icon} alt={'open-source-icon'}/>
             </div>
-            <p className={'fw-bold'} style={styles.RowTitle(isSmall)}>Go beyond speeds</p>
-            <p className={'fw-medium'} style={styles.RowSubtitle(isSmall)}>Capture detailed information beyond what consumers are getting from their connections.</p>
+            <p className={'fw-bold'} style={styles.RowTitle(isSmall)}>Not just speed</p>
+            <p className={'fw-medium'} style={styles.RowSubtitle(isSmall)}>Go beyond simple upload and download speeds by capturing detailed performance metrics with every test.</p>
           </div>
           <div style={styles.Column(isSmall)}>
             <div style={styles.IconContainer}>
               <img src={ReachOutIcon} style={styles.Icon} alt={'open-source-icon'}/>
             </div>
-            <p className={'fw-bold'} style={styles.RowTitle(isSmall)}>Reach out further</p>
-            <p className={'fw-medium'} style={styles.RowSubtitle(isSmall)}>Get support reaching out to ensure the largest portion of the community responses.</p>
+            <p className={'fw-bold'} style={styles.RowTitle(isSmall)}>Extend your reach</p>
+            <p className={'fw-medium'} style={styles.RowSubtitle(isSmall)}>Use our outreach resources to ensure greater engagement within your communities.</p>
           </div>
         </div>
       </div>

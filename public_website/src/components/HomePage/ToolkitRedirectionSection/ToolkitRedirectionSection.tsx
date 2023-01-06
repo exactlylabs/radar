@@ -15,7 +15,7 @@ const ToolkitRedirectionSection = (): ReactElement => {
       <div style={styles.ToolkitRedirectionSectionContent(isSmall)}>
         <div style={styles.ToolkitRedirectionColumn(isSmall)}>
           <p className={'fw-bold'} style={styles.Title(isSmall)}>For Consumers</p>
-          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Test your internet connection to ensure you’re getting what you’re paying for.</p>
+          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Test your Internet connection to ensure you’re getting what you pay for.</p>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
             <a href={'/broadband-testing'} className={'fw-bold'} style={styles.Link}>Test your connection</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
@@ -27,13 +27,13 @@ const ToolkitRedirectionSection = (): ReactElement => {
         </div>
         <div style={styles.ToolkitRedirectionColumn(isSmall)}>
           <p className={'fw-bold'} style={styles.Title(isSmall)}>For Internet Providers</p>
-          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>See how your service actually does and let your customers test their connectivity.</p>
+          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Let your customers test their connectivity through a white-labeled speed test.</p>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
             <a href={'/broadband-testing'} className={'fw-bold'} style={styles.Link}>Explore broadband testing</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor sites’ connectivity</a>
+            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor locations’ connectivity</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
@@ -43,13 +43,13 @@ const ToolkitRedirectionSection = (): ReactElement => {
         </div>
         <div style={styles.ToolkitRedirectionColumn(isSmall)}>
           <p className={'fw-bold'} style={styles.Title(isSmall)}>For Policy Makers</p>
-          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Our tools can help grant funders and applicants figure out where investment makes sense.</p>
+          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Our tools can help grant funders and applicants determine where investment makes sense.</p>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
             <a href={'/broadband-testing'} className={'fw-bold'} style={styles.Link}>Explore broadband testing</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor sites’ connectivity</a>
+            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor locations’ connectivity</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>

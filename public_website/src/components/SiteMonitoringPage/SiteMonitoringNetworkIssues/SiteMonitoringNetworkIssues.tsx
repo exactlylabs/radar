@@ -17,30 +17,30 @@ const SiteMonitoringNetworkIssues = (): ReactElement => {
       <div style={styles.TextContainer(isSmall)}>
         <p className={'fw-bold'} style={styles.NetworkIssuesText(isSmall)}>Identify network issues</p>
         <p className={'fw-extra-bold'} style={styles.MainTitle(isSmall)}>See what’s wrong with your connectivity at a glance.</p>
-        <p className={'fw-medium'} style={styles.MainSubtitle(isSmall)}>Our remote monitoring solution lets you find out well-known connectivity issues at any of your locations.</p>
+        <p className={'fw-medium'} style={styles.MainSubtitle(isSmall)}>Our remote monitoring solution lets you identify well-known connectivity issues at any of your locations.</p>
       </div>
       <img src={SiteMonitoringWaves} style={styles.Waves(isSmall)} alt={'site-monitoring-waves'}/>
       <div style={styles.ItemsContainer(isSmall)}>
         <div style={styles.Item(isSmall)}>
           <div style={styles.ItemIconContainer}>
-            <img src={UnderprovisionedIcon} style={styles.Icon} alt={'underprovisioned-icon'}/>
+            <img src={UnderprovisionedIcon} style={styles.Icon} alt={'under-provisioned-icon'}/>
           </div>
           <p className={'fw-bold'} style={styles.ItemTitle}>Under provisioned links</p>
-          <p className={'fw-medium'} style={styles.ItemSubtitle}>Are you getting consistently less bandwidth than you signed up for?</p>
+          <p className={'fw-medium'} style={styles.ItemSubtitle}>Do you routinely receive less bandwidth than you are paying for?</p>
         </div>
         <div style={styles.Item(isSmall)}>
           <div style={styles.ItemIconContainer}>
             <img src={NetworkIssuesIcon} style={styles.Icon} alt={'network-issues-icon'}/>
           </div>
-          <p className={'fw-bold'} style={styles.ItemTitle}>Miss-configured networks</p>
-          <p className={'fw-medium'} style={styles.ItemSubtitle}>Is there a miss-configured router or switch resulting in lower bandwidth?</p>
+          <p className={'fw-bold'} style={styles.ItemTitle}>Misconfigured networks</p>
+          <p className={'fw-medium'} style={styles.ItemSubtitle}>Is a misconfigured router or switch reducing your Internet speed?</p>
         </div>
         <div style={styles.Item(isSmall)}>
           <div style={styles.ItemIconContainer}>
             <img src={QualityTimeIcon} style={styles.Icon} alt={'quality-time-icon'}/>
           </div>
           <p className={'fw-bold'} style={styles.ItemTitle}>Quality over time</p>
-          <p className={'fw-medium'} style={styles.ItemSubtitle}>Are there specific times of day where you’re not getting the throughput you pay for?</p>
+          <p className={'fw-medium'} style={styles.ItemSubtitle}>Are there times of day where your Internet is consistently slower than normal?</p>
         </div>
       </div>
     </div>

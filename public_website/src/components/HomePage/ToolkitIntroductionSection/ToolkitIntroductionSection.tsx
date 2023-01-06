@@ -20,8 +20,8 @@ const ToolkitIntroductionSection = (): ReactElement => {
   return (
     <div style={styles.ToolkitIntroductionSection(isSmall)}>
       <div style={styles.TextContainer(isSmall)}>
-        <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Bring broadband where it makes sense.</p>
-        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Our toolkit provides you better insights into broadband needs and let you figure out where internet investment should be done both at the community and country levels.</p>
+        <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Make better broadband decisions.</p>
+        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Our platform provides you with the insights, tools and resources you need to make better investments in broadband at the community, county, and country level.</p>
         <div style={styles.ButtonContainer}>
           <CustomButton text={'Get started'}
                         onClick={goToGetStarted}

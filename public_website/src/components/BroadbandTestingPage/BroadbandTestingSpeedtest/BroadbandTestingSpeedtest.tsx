@@ -34,9 +34,9 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
         <div style={styles.LeftColumn(isSmall)}>
           <p className={'fw-bold'} style={styles.Header(isSmall)}>Speed test integration</p>
           <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Enable visitors to run speed tests from your website.</p>
-          <p className={'fw-bold'} style={styles.Subtitle(isSmall)}>Add our white-lablable widget</p>
-          <p className={'fw-medium'} style={styles.Paragraph(isSmall)}>Enable your community to run speed tests and compare their service to their neighborhood’s, while capturing more information beyond their connections like service cost, location type and geolocation.
-            Contact us for customization and launching within the context of your own community.</p>
+          <p className={'fw-bold'} style={styles.Subtitle(isSmall)}>Add our white-labelable widget</p>
+          <p className={'fw-medium'} style={styles.Paragraph(isSmall)}>Let your users run speed tests and compare their speeds against the broader community, while capturing optional information like service cost, location type and geolocation.
+            Contact us for customization options as you prepare to launch this in the context of your own community.</p>
           <CustomButton text={'Get started'}
                         onClick={goToSpeedTestWebsite}
                         icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
