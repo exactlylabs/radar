@@ -59,8 +59,8 @@ class TestResultInfoModal extends StatelessWidget {
         const SizedBox(height: 25.0),
         SummaryTable(
           address: address,
-          networkType: networkType,
-          networkPlace: networkPlace,
+          networkType: networkType.isEmpty ? Strings.optionNotAnswered : networkType,
+          networkPlace: networkPlace.isEmpty ? Strings.optionNotAnswered : networkPlace,
         ),
         const SizedBox(height: 30.0),
         ResultsTable(

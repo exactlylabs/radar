@@ -22,6 +22,7 @@ class SummaryTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondary.withOpacity(0.15),
         borderRadius: BorderRadius.circular(16),
@@ -79,8 +80,8 @@ class SummaryTable extends StatelessWidget {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              Container(
+                width: MediaQuery.of(context).size.width - 30.0,
                 child: LinearProgressIndicator(
                   value: progress,
                   color: Theme.of(context).colorScheme.secondary,

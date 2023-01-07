@@ -17,7 +17,10 @@ class CurrentLocationButton extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(Images.location),
+          Padding(
+            padding: const EdgeInsets.only(left: 5.0),
+            child: Image.asset(Images.location),
+          ),
           const SizedBox(width: 8.0),
           Text(
             'Use my current location',

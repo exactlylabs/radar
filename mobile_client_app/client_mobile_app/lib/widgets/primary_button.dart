@@ -19,20 +19,22 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor ?? AppColors.blue.withOpacity(0.5),
-            offset: const Offset(0, 4),
-            blurRadius: 15.0,
-            spreadRadius: -2.0,
-          ),
-        ],
+        boxShadow: onPressed != null
+            ? [
+                BoxShadow(
+                  color: shadowColor ?? AppColors.blue.withOpacity(0.5),
+                  offset: const Offset(0, 4),
+                  blurRadius: 15.0,
+                  spreadRadius: -2.0,
+                ),
+              ]
+            : null,
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           elevation: 0,
-          disabledBackgroundColor: color?.withOpacity(0.5),
+          disabledBackgroundColor: color?.withOpacity(0.3),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26.0)),
         ),
         onPressed: onPressed,

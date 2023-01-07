@@ -30,82 +30,94 @@ class _BillCostInputFieldState extends State<BillCostInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        InkWell(
-          onTap: () {
-            _controller.text = decrease(_controller.text);
-            _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
-            if (widget.onChanged != null) widget.onChanged!(_controller.text);
-          },
-          child: Image.asset(Images.lessButton),
-        ),
-        const SizedBox(width: 22.0),
-        Expanded(
-          child: TextFormField(
-            focusNode: _focusNode,
-            autofocus: true,
-            controller: _controller,
-            onChanged: widget.onChanged,
-            keyboardType: TextInputType.number,
-            style: AppTextStyle(
-              fontSize: 16.0,
-              fontWeight: 400,
-              height: 1.56,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.05),
-              hintText: '0',
-              hintStyle: AppTextStyle(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      height: 56.0,
+      child: Row(
+        children: [
+          InkWell(
+            onTap: () {
+              _controller.text = decrease(_controller.text);
+              _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
+              if (widget.onChanged != null) widget.onChanged!(_controller.text);
+            },
+            child: Image.asset(Images.lessButton),
+          ),
+          const SizedBox(width: 22.0),
+          Expanded(
+            child: TextFormField(
+              focusNode: _focusNode,
+              autofocus: true,
+              controller: _controller,
+              onChanged: widget.onChanged,
+              keyboardType: TextInputType.number,
+              style: AppTextStyle(
                 fontSize: 16.0,
-                height: 1.56,
                 fontWeight: 400,
-                color: Theme.of(context).colorScheme.surface,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16.0),
-                borderSide: BorderSide(
-                  width: 1.5,
-                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16.0),
-                borderSide: BorderSide.none,
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16.0),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16.0),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.error.withOpacity(0.4),
-                ),
-              ),
-              suffixText: 'US \$',
-              suffixStyle: AppTextStyle(
-                fontSize: 15.0,
+                height: 1.56,
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: 300,
+              ),
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.only(left: 20.0, top: 16.0, bottom: 16.0),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                hintText: '0',
+                hintStyle: AppTextStyle(
+                  fontSize: 16.0,
+                  height: 1.56,
+                  fontWeight: 400,
+                  color: Theme.of(context).colorScheme.surface,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  borderSide: BorderSide(
+                    width: 1.5,
+                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  borderSide: BorderSide.none,
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.error.withOpacity(0.4),
+                  ),
+                ),
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'US \$',
+                      style: AppTextStyle(
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: 300,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(width: 22.0),
-        InkWell(
-          onTap: () {
-            _controller.text = increase(_controller.text);
-            _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
-            if (widget.onChanged != null) widget.onChanged!(_controller.text);
-          },
-          child: Image.asset(Images.moreButton),
-        ),
-      ],
+          const SizedBox(width: 22.0),
+          InkWell(
+            onTap: () {
+              _controller.text = increase(_controller.text);
+              _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
+              if (widget.onChanged != null) widget.onChanged!(_controller.text);
+            },
+            child: Image.asset(Images.moreButton),
+          ),
+        ],
+      ),
     );
   }
 

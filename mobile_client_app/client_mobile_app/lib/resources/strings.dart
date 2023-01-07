@@ -18,13 +18,14 @@ class Strings {
   static const String startSpeedTestButtonLabel = 'Start Speed Test';
   static const String testResultsStepTitle = 'Your test results';
   static const String testResultsStepDescription = 'See how you compare to others.';
-  static const String viewAllResultsButtonLabel = 'View All Results';
+  static const String viewAllResultsButtonLabel = 'View all results';
   static const String testAgainButtonLabel = 'Test again';
   static const String speedgaugeTestingLabel = 'Testing ';
   static const String speedgaugeDownloadLabel = 'download';
   static const String speedgaugeUploadLabel = 'upload';
   static const String speedgaugeSpeedLabel = ' speed...';
   static const String emptyOption = '-';
+  static const String optionNotAnswered = 'N/A';
   static const String emptyString = '';
   static const String downloadResultsLabel = 'Download';
   static const String downloadResultsUnit = 'Mbps';
@@ -39,7 +40,7 @@ class Strings {
   static const String otherNetworkLocation = 'Other';
   static const String iDontHaveNetworkLocation = "I don't have";
   static const String wiredConnectionType = 'Wired';
-  static const String wifiConnectionType = 'WiFi';
+  static const String wifiConnectionType = 'Wifi';
   static const String cellularConnectionType = 'Cellular';
   static const String badNetworkQuality = 'Bad';
   static const String regularNetworkQuality = 'Regular';

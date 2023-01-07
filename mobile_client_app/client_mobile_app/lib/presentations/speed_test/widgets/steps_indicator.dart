@@ -75,20 +75,18 @@ class StepsIndicatorPainter extends CustomPainter {
   final Color stepColor;
   final ImageInfo imageInfo;
 
-  double? stepCircleRadius;
+  final double stepCircleRadius = 12.0;
   final double stepSeparatorWidth = 30.0;
 
   @override
   void paint(Canvas canvas, Size size) {
-    stepCircleRadius = ((size.width * 0.064) / 2).floorToDouble();
-
-    final x = ((size.width) / 2 + stepCircleRadius!) -
-        ((totalSteps / 2) * (stepCircleRadius! * 2)) -
+    final x = ((size.width) / 2 + stepCircleRadius) -
+        ((totalSteps / 2) * (stepCircleRadius * 2)) -
         (totalSteps % 2 == 0 ? ((totalSteps - 1) / 2) : (totalSteps / 2)) * stepSeparatorWidth;
     final y = size.height / 2;
 
     for (var i = 0; i < totalSteps; i++) {
-      final xi = (((stepCircleRadius! * 2) + stepSeparatorWidth) * (i));
+      final xi = (((stepCircleRadius * 2) + stepSeparatorWidth) * (i));
       drawStep(Offset(x + xi, y), canvas, i);
       if (i < totalSteps - 1) drawSeparator(Offset(x + xi, y), canvas);
     }
@@ -101,15 +99,15 @@ class StepsIndicatorPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.round;
 
-    canvas.drawCircle(offset, stepCircleRadius ?? 12, circlePaint);
+    canvas.drawCircle(offset, stepCircleRadius, circlePaint);
 
     if (step < currentStep) {
       paintImage(
         canvas: canvas,
         rect: Rect.fromCenter(
           center: offset,
-          width: imageInfo.image.width / 2.5,
-          height: imageInfo.image.height / 2.5,
+          width: 10.0,
+          height: 8.0,
         ),
         image: imageInfo.image,
       );
@@ -145,13 +143,13 @@ class StepsIndicatorPainter extends CustomPainter {
   void drawSeparator(Offset offset, Canvas canvas) {
     var paint2 = Paint()
       ..color = stepColor
-      ..strokeWidth = 2
+      ..strokeWidth = 1.5
       ..strokeCap = StrokeCap.round;
 
     const double leftPadding = 5.0;
     const double separatorWidth = 20.0;
 
-    Offset startingPoint = Offset(offset.dx + stepCircleRadius! + leftPadding, offset.dy);
+    Offset startingPoint = Offset(offset.dx + stepCircleRadius + leftPadding, offset.dy);
     Offset endingPoint = Offset(startingPoint.dx + separatorWidth, offset.dy);
 
     canvas.drawLine(startingPoint, endingPoint, paint2);

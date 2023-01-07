@@ -23,36 +23,41 @@ class MapWebViewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocProvider<MapCubit>(
-        create: (_) => MapCubit(localStorage: GetIt.I.get<LocalStorage>()),
-        child: BlocListener<MapCubit, MapState>(
-          listenWhen: (previous, current) => current.isFTUE,
-          listener: (context, state) => _ftueModal(context),
-          child: WebView(
-            initialUrl: AppConfig.of(context)?.stringResource.WEB_ENDPOINT,
-            javascriptMode: JavascriptMode.unrestricted,
-            onWebViewCreated: (WebViewController webViewController) {
-              _controller.complete(webViewController);
-              _myController = webViewController;
-              _cookieManager.clearCookies();
-            },
-            onPageStarted: (String url) => _cookieManager.setCookie(
-                const WebViewCookie(name: _cookieName, value: _cookieValue, domain: _cookieDomain, path: _cookiePath)),
-            onPageFinished: (String url) {
-              _myController.runJavascript(_goToMap);
-              _myController.runJavascript(_hideHeader);
-              _myController.runJavascript(_hideTabs);
-              _myController.runJavascript(_hideFooter);
-              _myController.runJavascript(_setMainFrameMaxHeight);
-              Future.delayed(const Duration(milliseconds: 700), () {
-                _myController.runJavascript(_setMapMaxHeight);
-                _myController.runJavascript(_setSpeedResultsBoxPosition);
-                _myController.runJavascript(_setFloatingExploreButtonFiltersPosition);
-                _myController.runJavascript(_setCallbackForFloatingButton);
-              });
-            },
-          ),
+    return BlocProvider<MapCubit>(
+      create: (_) => MapCubit(localStorage: GetIt.I.get<LocalStorage>()),
+      child: BlocListener<MapCubit, MapState>(
+        listenWhen: (previous, current) => current.isFTUE,
+        listener: (context, state) => _ftueModal(context),
+        child: Column(
+          children: [
+            const SizedBox(height: 23.0),
+            Expanded(
+              child: WebView(
+                initialUrl: AppConfig.of(context)?.stringResource.WEB_ENDPOINT,
+                javascriptMode: JavascriptMode.unrestricted,
+                onWebViewCreated: (WebViewController webViewController) {
+                  _controller.complete(webViewController);
+                  _myController = webViewController;
+                  _cookieManager.clearCookies();
+                },
+                onPageStarted: (String url) => _cookieManager.setCookie(const WebViewCookie(
+                    name: _cookieName, value: _cookieValue, domain: _cookieDomain, path: _cookiePath)),
+                onPageFinished: (String url) {
+                  _myController.runJavascript(_goToMap);
+                  _myController.runJavascript(_hideHeader);
+                  _myController.runJavascript(_hideTabs);
+                  _myController.runJavascript(_hideFooter);
+                  _myController.runJavascript(_setMainFrameMaxHeight);
+                  Future.delayed(const Duration(milliseconds: 700), () {
+                    _myController.runJavascript(_setMapMaxHeight);
+                    _myController.runJavascript(_setSpeedResultsBoxPosition);
+                    _myController.runJavascript(_setFloatingExploreButtonFiltersPosition);
+                    _myController.runJavascript(_setCallbackForFloatingButton);
+                  });
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

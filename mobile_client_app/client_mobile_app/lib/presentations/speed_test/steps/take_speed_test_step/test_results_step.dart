@@ -33,17 +33,20 @@ class TestResultsStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          Strings.testResultsStepTitle,
-          textAlign: TextAlign.center,
-          style: AppTextStyle(
-            fontSize: 22.0,
-            fontWeight: 800,
-            height: 1.81,
-            color: Theme.of(context).colorScheme.primary,
+        Padding(
+          padding: const EdgeInsets.only(left: 9.0),
+          child: Text(
+            Strings.testResultsStepTitle,
+            textAlign: TextAlign.center,
+            style: AppTextStyle(
+              fontSize: 22.0,
+              fontWeight: 800,
+              height: 1.81,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
-        SpacerWithMax(size: height * 0.031, maxSize: 25.0),
+        SpacerWithMax(size: height * 0.031, maxSize: 20.0),
         SummaryTable(
           address: InheritedFormInformation.of(context).address,
           networkType: InheritedFormInformation.of(context).networkType,
@@ -64,6 +67,7 @@ class TestResultsStep extends StatelessWidget {
             fontSize: 16.0,
             fontWeight: 200,
             height: 1.56,
+            letterSpacing: 0.25,
             color: AppColors.darkGrey,
           ),
         ),
@@ -74,35 +78,41 @@ class TestResultsStep extends StatelessWidget {
             context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
           },
         ),
-        SpacerWithMax(size: height * 0.025, maxSize: 20.0),
-        PrimaryButton(
-          child: Text(
-            Strings.viewAllResultsButtonLabel,
-            style: AppTextStyle(
-              fontSize: 16.0,
-              fontWeight: 600,
-              color: Theme.of(context).colorScheme.onPrimary,
+        SpacerWithMax(size: height * 0.037, maxSize: 17.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+          child: PrimaryButton(
+            child: Text(
+              Strings.viewAllResultsButtonLabel,
+              style: AppTextStyle(
+                fontSize: 16.0,
+                fontWeight: 600,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
+            onPressed: () {
+              context.read<NavigationCubit>().changeTab(1);
+              context.read<SpeedTestCubit>().resetForm();
+              context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
+            },
           ),
-          onPressed: () {
-            context.read<NavigationCubit>().changeTab(1);
-            context.read<SpeedTestCubit>().resetForm();
-            context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
-          },
         ),
         SpacerWithMax(size: height * 0.025, maxSize: 20.0),
-        PrimaryButton(
-          color: Theme.of(context).colorScheme.onPrimary,
-          shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-          child: Text(
-            Strings.testAgainButtonLabel,
-            style: AppTextStyle(
-              fontSize: 16.0,
-              fontWeight: 700,
-              color: AppColors.darkGrey,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+          child: PrimaryButton(
+            color: Theme.of(context).colorScheme.onPrimary,
+            shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+            child: Text(
+              Strings.testAgainButtonLabel,
+              style: AppTextStyle(
+                fontSize: 16.0,
+                fontWeight: 700,
+                color: AppColors.darkGrey,
+              ),
             ),
+            onPressed: () => context.read<TakeSpeedTestStepCubit>().startDownloadTest(),
           ),
-          onPressed: () => context.read<TakeSpeedTestStepCubit>().startDownloadTest(),
         ),
         SpacerWithMax(size: height * 0.053, maxSize: 45.0),
       ],

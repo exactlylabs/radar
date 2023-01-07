@@ -1,8 +1,6 @@
-import 'dart:ui';
-
+import 'package:flutter/material.dart';
 import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:flutter/material.dart';
 
 final theme = ThemeData(
   backgroundColor: AppColors.paleLilac,
@@ -71,7 +69,7 @@ final theme = ThemeData(
         (Set<MaterialState> states) {
           if (states.contains(MaterialState.focused)) return AppColors.blue;
           if (states.contains(MaterialState.pressed)) return AppColors.blue;
-          if (states.contains(MaterialState.disabled)) return AppColors.blue.withOpacity(0.5);
+          if (states.contains(MaterialState.disabled)) return AppColors.blue.withOpacity(0.3);
           return AppColors.blue;
         },
       ),

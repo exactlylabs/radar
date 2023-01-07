@@ -26,34 +26,40 @@ class YourResultsPage extends StatelessWidget {
         builder: (context, state) {
           return Container(
             color: Theme.of(context).colorScheme.background,
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SpacerWithMax(size: height * 0.025, maxSize: 20.0),
-                Text(
-                  Strings.allResultsLabel,
-                  textAlign: TextAlign.center,
-                  style: AppTextStyle(
-                    fontSize: 22.0,
-                    fontWeight: 800,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                SpacerWithMax(size: height * 0.031, maxSize: 25.0),
-                const ResultsHeader(),
-                Expanded(child: ResultsList(results: state.results ?? [])),
-                PrimaryButton(
+                SpacerWithMax(size: height * 0.05, maxSize: 25.0),
+                Padding(
+                  padding: const EdgeInsets.only(left: 3.0),
                   child: Text(
-                    Strings.exploreTheMapButtonLabel,
+                    Strings.allResultsLabel,
+                    textAlign: TextAlign.center,
                     style: AppTextStyle(
-                      fontSize: 16.0,
-                      fontWeight: 700,
+                      fontSize: 22.0,
+                      fontWeight: 800,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  onPressed: () => context.read<NavigationCubit>().changeTab(2),
                 ),
-                SpacerWithMax(size: height * 0.037, maxSize: 30.0),
+                SpacerWithMax(size: height * 0.025, maxSize: 20.0),
+                const ResultsHeader(),
+                Expanded(child: ResultsList(results: state.results ?? [])),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: PrimaryButton(
+                    child: Text(
+                      Strings.exploreTheMapButtonLabel,
+                      style: AppTextStyle(
+                        fontSize: 16.0,
+                        fontWeight: 700,
+                      ),
+                    ),
+                    onPressed: () => context.read<NavigationCubit>().changeTab(2),
+                  ),
+                ),
+                SpacerWithMax(size: height * 0.037, maxSize: 25.0),
               ],
             ),
           );

@@ -16,7 +16,7 @@ class IconWithText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 2.0),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: alignment,
