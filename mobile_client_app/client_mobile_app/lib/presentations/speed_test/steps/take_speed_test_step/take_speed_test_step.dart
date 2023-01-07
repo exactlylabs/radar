@@ -1,6 +1,4 @@
-import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
-import 'package:ndt7_client/ndt7_client.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/test_results_step.dart';

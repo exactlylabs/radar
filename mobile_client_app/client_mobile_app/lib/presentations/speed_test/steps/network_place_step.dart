@@ -48,11 +48,11 @@ class NetworkPlaceStep extends StatelessWidget {
               } else if (index == 2) {
                 final horizontal = height * 0.025 < 20.0 ? height * 0.025 : 20.0;
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: 14.5),
+                  padding: EdgeInsets.only(left: horizontal, right: horizontal, bottom: 14.5, top: 15.5),
                   child: HorizontalDashedSeparator(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
                 );
               } else {
-                return SpacerWithMax(size: height * 0.025, maxSize: 220.0);
+                return const SizedBox(height: 30);
               }
             },
             itemBuilder: (context, idx) {

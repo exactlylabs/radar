@@ -10,7 +10,7 @@ class ResultsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(46, 12, 60, 12),
+      padding: const EdgeInsets.fromLTRB(46, 10, 46, 13),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -34,7 +34,7 @@ class ResultsHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(width: 5.0),
+                const SizedBox(width: 12.0),
                 Image.asset(Images.downloadIcon),
                 const SizedBox(width: 5.0),
                 Text(
@@ -64,6 +64,7 @@ class ResultsHeader extends StatelessWidget {
                   color: Theme.of(context).colorScheme.tertiary,
                 ),
               ),
+              const SizedBox(width: 13.0),
             ]),
           ),
         ],

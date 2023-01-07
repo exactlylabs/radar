@@ -24,7 +24,7 @@ class AgreeToTerms extends StatelessWidget {
           Container(
             width: 20.0,
             height: 20.0,
-            margin: const EdgeInsets.only(top: 3.0),
+            margin: const EdgeInsets.only(top: 3.0, right: 7.0),
             child: Transform.scale(
               scale: 1.2,
               child: Checkbox(

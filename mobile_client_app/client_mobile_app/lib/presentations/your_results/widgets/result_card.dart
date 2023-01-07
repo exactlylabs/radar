@@ -25,7 +25,7 @@ class ResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 15.0),
+      padding: const EdgeInsets.fromLTRB(15, 12, 15, 12),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(8.0),
@@ -64,14 +64,17 @@ class ResultCard extends StatelessWidget {
           Flexible(
             flex: 1,
             fit: FlexFit.loose,
-            child: Text(
-              download,
-              textAlign: TextAlign.center,
-              style: AppTextStyle(
-                fontSize: 15.0,
-                fontWeight: 200,
-                height: 1.66,
-                color: Theme.of(context).colorScheme.primary,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Text(
+                download,
+                textAlign: TextAlign.center,
+                style: AppTextStyle(
+                  fontSize: 15.0,
+                  fontWeight: 200,
+                  height: 1.66,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ),
           ),
@@ -92,7 +95,7 @@ class ResultCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 22.0),
+              const SizedBox(width: 23.0),
               GestureDetector(
                 onTap: onTap,
                 child: Image.asset(Images.infoIcon),

@@ -45,7 +45,7 @@ class ResultItem extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: value ?? Strings.emptyOption,
+                text: value ?? Strings.emptyString,
                 style: AppTextStyle(
                   fontSize: 22.0,
                   fontWeight: 700,

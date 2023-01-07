@@ -48,7 +48,7 @@ class GoBackAndContinueButtons extends StatelessWidget {
           Flexible(
             flex: 6,
             child: PrimaryButton(
-              shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+              shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
               onPressed: onContinuePressed,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -20,8 +20,8 @@ class OptionCard extends StatelessWidget {
     return InkWell(
       onTap: onTap != null ? () => onTap!(name) : null,
       child: Container(
-        height: 56.0,
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        height: 56,
+        padding: EdgeInsets.symmetric(horizontal: isSelected ? 18.0 : 19.0),
         decoration: BoxDecoration(
           color: Theme.of(context).backgroundColor,
           borderRadius: BorderRadius.circular(8.0),
@@ -35,13 +35,17 @@ class OptionCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              name,
-              style: AppTextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 16.0,
-                height: isSelected ? 1.56 : 1.37,
-                fontWeight: isSelected ? 700 : 200,
+            Padding(
+              padding: EdgeInsets.only(top: isSelected ? 4.0 : 0.0),
+              child: Text(
+                name,
+                style: AppTextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 16.0,
+                  height: isSelected ? 1.56 : 1.35,
+                  fontWeight: isSelected ? 700 : 200,
+                  letterSpacing: isSelected ? 0.0 : 0.2,
+                ),
               ),
             ),
             Image.asset(

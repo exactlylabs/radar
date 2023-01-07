@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:animations/animations.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/presentations/home_page_body.dart';
@@ -20,50 +19,55 @@ class HomePage extends StatelessWidget {
           backgroundColor: Theme.of(context).backgroundColor,
           appBar: state.currentIndex > 0
               ? AppBar(
-                  toolbarHeight: 24.0,
+                  toolbarHeight: 45,
                   backgroundColor: Theme.of(context).backgroundColor,
-                  title: Image.asset(Images.logoDark, fit: BoxFit.contain),
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 3.0),
+                    child: Image.asset(Images.logoDark, fit: BoxFit.contain),
+                  ),
                 )
               : null,
-          bottomNavigationBar: BottomNavigationBar(
-            items: [
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: const EdgeInsets.only(bottom: 5.0),
-                  child: Image.asset(Images.speedTest),
+          bottomNavigationBar: SizedBox(
+            child: BottomNavigationBar(
+              items: [
+                BottomNavigationBarItem(
+                  icon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.speedTest),
+                  ),
+                  activeIcon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.speedTestSelected),
+                  ),
+                  label: Strings.speedTestLabel,
                 ),
-                activeIcon: Container(
-                  margin: const EdgeInsets.only(bottom: 5.0),
-                  child: Image.asset(Images.speedTestSelected),
+                BottomNavigationBarItem(
+                  icon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.yourResults),
+                  ),
+                  activeIcon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.yourResultsSelected),
+                  ),
+                  label: Strings.yourResultsLabel,
                 ),
-                label: Strings.speedTestLabel,
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: const EdgeInsets.only(bottom: 5.0),
-                  child: Image.asset(Images.yourResults),
+                BottomNavigationBarItem(
+                  icon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.map),
+                  ),
+                  activeIcon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.mapSelected),
+                  ),
+                  label: Strings.mapLabel,
                 ),
-                activeIcon: Container(
-                  margin: const EdgeInsets.only(bottom: 5.0),
-                  child: Image.asset(Images.yourResultsSelected),
-                ),
-                label: Strings.yourResultsLabel,
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  margin: const EdgeInsets.only(bottom: 5.0),
-                  child: Image.asset(Images.map),
-                ),
-                activeIcon: Container(
-                  margin: const EdgeInsets.only(bottom: 5.0),
-                  child: Image.asset(Images.mapSelected),
-                ),
-                label: Strings.mapLabel,
-              ),
-            ],
-            type: BottomNavigationBarType.fixed,
-            currentIndex: state.currentIndex,
-            onTap: (index) => context.read<NavigationCubit>().changeTab(index),
+              ],
+              type: BottomNavigationBarType.fixed,
+              currentIndex: state.currentIndex,
+              onTap: (index) => context.read<NavigationCubit>().changeTab(index),
+            ),
           ),
           body: HomePageBody(pageIdx: state.currentIndex),
         );

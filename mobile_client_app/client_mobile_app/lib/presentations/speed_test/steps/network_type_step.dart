@@ -43,7 +43,9 @@ class NetworkTypeStep extends StatelessWidget {
               if (index < CONNECTION_TYPE.length - 1) {
                 return SpacerWithMax(size: height * 0.012, maxSize: 10.0);
               } else {
-                return SpacerWithMax(size: height * 0.025, maxSize: 20.0);
+                return const SizedBox(
+                  height: 30.0,
+                );
               }
             },
             itemBuilder: (context, idx) {

@@ -34,16 +34,19 @@ class StartSpeedTestStep extends StatelessWidget {
           networkPlace: InheritedFormInformation.of(context).networkPlace,
         ),
         SpacerWithMax(size: height * 0.0616, maxSize: 50.0),
-        PrimaryButton(
-          child: Text(
-            Strings.startSpeedTestButtonLabel,
-            style: AppTextStyle(
-              fontSize: 16.0,
-              fontWeight: 600,
-              color: Theme.of(context).colorScheme.onPrimary,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+          child: PrimaryButton(
+            child: Text(
+              Strings.startSpeedTestButtonLabel,
+              style: AppTextStyle(
+                fontSize: 16.0,
+                fontWeight: 600,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
+            onPressed: () => context.read<TakeSpeedTestStepCubit>().startDownloadTest(),
           ),
-          onPressed: () => context.read<TakeSpeedTestStepCubit>().startDownloadTest(),
         ),
         SpacerWithMax(size: height * 0.068, maxSize: 55.0),
         const ResultsTable(isEnabled: false),

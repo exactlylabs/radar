@@ -32,7 +32,7 @@ class SpeedTestPage extends StatelessWidget {
               builder: (context, constraints) {
                 return Container(
                   color: Theme.of(context).backgroundColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  padding: EdgeInsets.symmetric(horizontal: state.step == 4 ? 15.0 : 20.0),
                   child: Stack(
                     children: [
                       SingleChildScrollView(
@@ -42,6 +42,7 @@ class SpeedTestPage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
+                                const SizedBox(height: 10.0),
                                 AppBar(
                                   toolbarHeight: 24.0,
                                   backgroundColor: Theme.of(context).backgroundColor,
@@ -50,7 +51,7 @@ class SpeedTestPage extends StatelessWidget {
                                 SpacerWithMax(size: height * 0.05, maxSize: 40.0),
                                 if (state.step < SpeedTestCubit.TAKE_SPEED_TEST_STEP)
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                                    padding: const EdgeInsets.only(top: 10.0, bottom: 15.0),
                                     child: StepIndicator(
                                       totalSteps: 4,
                                       currentStep: state.step,
@@ -83,9 +84,9 @@ class SpeedTestPage extends StatelessWidget {
                                   )
                                 else if (state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP)
                                   TakeSpeedTestStep(
-                                    networkType: state.networkType ?? Strings.emptyOption,
-                                    networkPlace: state.networkLocation ?? Strings.emptyOption,
-                                    address: state.location?.address ?? Strings.emptyOption,
+                                    networkType: state.networkType ?? Strings.emptyString,
+                                    networkPlace: state.networkLocation ?? Strings.emptyString,
+                                    address: state.location?.address ?? Strings.emptyString,
                                   ),
                               ],
                             ),
@@ -98,7 +99,7 @@ class SpeedTestPage extends StatelessWidget {
                           left: 0.0,
                           right: 0.0,
                           child: Padding(
-                            padding: const EdgeInsets.only(bottom: 45.0),
+                            padding: EdgeInsets.only(bottom: state.step == 3 ? 20.0 : 40.0),
                             child: GoBackAndContinueButtons(
                               onContinuePressed: state.onContinue,
                               onGoBackPressed: state.onBack,
