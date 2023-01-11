@@ -6,12 +6,30 @@ const privacyPolicyPageStyle: CSSProperties = {
   paddingTop: '80px',
 }
 
+const smallPrivacyPolicyPageStyle: CSSProperties = {
+  width: '100%',
+  paddingTop: '45px',
+  marginBottom: '25px',
+}
+
 const privacyPolicyPageContentStyle: CSSProperties = {
   width: '90%',
   maxWidth: '1200px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  textAlign: 'left',
+  marginLeft: 'auto',
+  marginRight: 'auto'
+}
+
+const smallPrivacyPolicyPageContentStyle: CSSProperties = {
+  width: '90%',
+  maxWidth: '588px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
   alignItems: 'flex-start',
   textAlign: 'left',
   marginLeft: 'auto',
@@ -33,6 +51,16 @@ const rightColumnStyle: CSSProperties = {
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   marginTop: '92px',
+}
+
+const smallRightColumnStyle: CSSProperties = {
+  width: '100%',
+  maxWidth: '588px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
+  margin: '0 auto'
 }
 
 const mainTitleStyle: CSSProperties = {
@@ -79,7 +107,8 @@ const textSectionParagraphStyle: CSSProperties = {
   lineHeight: '28px',
   color: DEFAULT_TEXT,
   margin: '0 0 30px 0',
-  textAlign: 'justify'
+  textAlign: 'justify',
+  width: '100%',
 }
 
 const textSectionSubtitleStyle: CSSProperties = {
@@ -105,16 +134,30 @@ const highlightSectionStyle: CSSProperties = {
   marginBottom: '20px'
 }
 
-const hightlightSectionParagraph: CSSProperties = {
+const smallHighlightSectionStyle: CSSProperties = {
+  ...highlightSectionStyle,
+  width: 'calc(100% - 15px)',
+  paddingLeft: '15px',
+}
+
+const highlightSectionParagraph: CSSProperties = {
   ...textSectionParagraphStyle,
   margin: '0 0 10px 0'
 }
 
+const smallMainTitle: CSSProperties = {
+  fontSize: '28px',
+  color: DEFAULT_TEXT,
+  margin: '0 auto 50px',
+  lineHeight: '1.29px',
+  letterSpacing: '-0.6px'
+}
+
 export const styles = {
-  PrivacyPolicyPage: privacyPolicyPageStyle,
-  PrivacyPolicyPageContent: privacyPolicyPageContentStyle,
+  PrivacyPolicyPage: (isSmall: boolean) => isSmall ? smallPrivacyPolicyPageStyle : privacyPolicyPageStyle,
+  PrivacyPolicyPageContent: (isSmall: boolean) => isSmall ? smallPrivacyPolicyPageContentStyle : privacyPolicyPageContentStyle,
   LeftColumn: leftColumnStyle,
-  RightColumn: rightColumnStyle,
+  RightColumn: (isSmall: boolean) => isSmall ? smallRightColumnStyle : rightColumnStyle,
   MainTitle: mainTitleStyle,
   IndexSection: indexSection,
   SectionTitle: sectionTitleStyle,
@@ -122,6 +165,7 @@ export const styles = {
   TextSectionTitle: textSectionTitleStyle,
   TextSectionParagraph: textSectionParagraphStyle,
   TextSectionSubtitle: textSectionSubtitleStyle,
-  HighlightSection: highlightSectionStyle,
-  HighlightSectionParagraph: hightlightSectionParagraph,
+  HighlightSection: (isSmall: boolean) => isSmall ? smallHighlightSectionStyle : highlightSectionStyle,
+  HighlightSectionParagraph: highlightSectionParagraph,
+  SmallMainTitle: smallMainTitle,
 }

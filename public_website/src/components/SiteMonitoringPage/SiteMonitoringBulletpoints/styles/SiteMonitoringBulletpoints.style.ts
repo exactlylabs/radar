@@ -8,10 +8,11 @@ const siteMonitoringBulletPointsStyle: CSSProperties = {
 
 const smallSiteMonitoringBulletPointsStyle: CSSProperties = {
   width: '100%',
+  backgroundImage: 'linear-gradient(0deg, rgba(75, 123, 229, 0), rgba(211, 224, 255, 0.28) 43%)'
 }
 
 const siteMonitoringBulletPointsContentStyle: CSSProperties = {
-  width: '90%',
+  width: '100%',
   maxWidth: '1200px',
   height: 'calc(100% - 270px)',
   margin: '80px auto 190px',
@@ -22,13 +23,14 @@ const siteMonitoringBulletPointsContentStyle: CSSProperties = {
 }
 
 const smallSiteMonitoringBulletPointsContentStyle: CSSProperties = {
-  width: '100%',
+  width: '90%',
   margin: '40px auto 0',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'center',
-  textAlign: 'center'
+  textAlign: 'center',
+  maxWidth: '588px',
 }
 
 const leftColumnStyle: CSSProperties = {
@@ -74,7 +76,8 @@ const cardsStyle: CSSProperties = {
 const smallCardsStyle: CSSProperties = {
   width: '100%',
   height: 'auto',
-  marginBottom: '70px'
+  marginBottom: '70px',
+  maxWidth: '450px',
 }
 
 const rowStyle: CSSProperties = {
@@ -133,7 +136,8 @@ const smallRowTextContainerStyle: CSSProperties = {
   ...rowTextContainerStyle,
   textAlign: 'center',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'center',
+  maxWidth: '588px'
 }
 
 const rowTitleStyle: CSSProperties = {
@@ -166,4 +170,5 @@ export const styles = {
   RowTextContainer: (isSmall: boolean) => isSmall ? smallRowTextContainerStyle : rowTextContainerStyle,
   RowTitle: rowTitleStyle,
   RowSubtitle: rowSubtitleStyle,
+  SmallSiteMonitoringBulletPointsContent: smallSiteMonitoringBulletPointsContentStyle,
 }

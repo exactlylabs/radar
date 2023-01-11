@@ -16,15 +16,13 @@ const BroadbandTesting = (): ReactElement => {
 
   return (
     <ViewportContextProvider>
-      <Frame>
+      <Frame isDifferentColorFooter>
         <div style={styles.BroadbandTestingPage}>
-          <div style={styles.BroadbandTestingPageContent}>
-            <BroadbandTestingHeader />
-            <BroadbandTestingCommunity />
-            <BroadbandTestingSpeedtest />
-            <BroadbandTestingMobile />
-            <RadarRedirect />
-          </div>
+          <BroadbandTestingHeader />
+          <BroadbandTestingCommunity />
+          <BroadbandTestingSpeedtest />
+          <BroadbandTestingMobile />
+          <RadarRedirect marginTop={'-90px'}/>
         </div>
       </Frame>
     </ViewportContextProvider>

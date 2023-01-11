@@ -12,8 +12,7 @@ import {goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../..
 const BroadbandTestingIcon = "/assets/images/broadband-testing-icon.png";
 const MappingToolsIcon = "/assets/images/mapping-tools-icon.png";
 const SiteMonitoringIcon = "/assets/images/site-monitoring-icon.png";
-
-
+const RedirectArrowGray = '/assets/images/redirect-arrow-gray.png';
 
 const SmallNavbarContentOpen = (): ReactElement => {
   return (
@@ -25,14 +24,11 @@ const SmallNavbarContentOpen = (): ReactElement => {
           Overview
         </a>
         <NavbarHorizontalDivider/>
-        <a className={'fw-bold hover-opaque'}
-           href={'/toolkit'}
-           style={styles.Link}>
-          Our Toolkit
-        </a>
+        <p className={'fw-bold hover-opaque'} style={styles.LinkText}>Our Toolkit</p>
         <ToolkitTabContentRow icon={<img src={SiteMonitoringIcon} style={commonStyles.Icon} alt={'site-monitoring-icon'}/>}
                               title={ToolkitTabContentRowTitle.SITE_MONITORING}
                               onClick={goToSiteMonitoring}
+                              isFirst
         />
         <ToolkitTabContentRow icon={<img src={BroadbandTestingIcon} style={commonStyles.Icon} alt={'broadband-testing-icon'}/>}
                               title={ToolkitTabContentRowTitle.BROADBAND_TESTING}
@@ -41,6 +37,8 @@ const SmallNavbarContentOpen = (): ReactElement => {
         <ToolkitTabContentRow icon={<img src={MappingToolsIcon} style={commonStyles.Icon} alt={'mapping-tools-icon'}/>}
                               title={ToolkitTabContentRowTitle.MAPPING_TOOLS}
                               onClick={goToMappingApp}
+                              extraIcon={<img src={RedirectArrowGray} style={commonStyles.RedirectIcon} alt={'new-tab-icon'}/>}
+
         />
         <NavbarHorizontalDivider/>
         <a className={'fw-bold hover-opaque'}

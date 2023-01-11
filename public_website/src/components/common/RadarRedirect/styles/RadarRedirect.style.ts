@@ -8,14 +8,18 @@ const radarRedirectStyle: CSSProperties = {
   height: '245px',
   backgroundColor: INVESTMENT_SECTION_BLUE,
   boxShadow: `0 14px 40px -4px ${INVESTMENT_SECTION_BLUE_BOX_SHADOW}`,
-  margin: '-100px auto 85px'
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  marginTop: '-175px',
+  position: 'relative'
 }
 
 const smallRadarRedirectStyle: CSSProperties = {
   width: '100vw',
   height: '285px',
   backgroundColor: INVESTMENT_SECTION_BLUE,
-  margin: '0 auto 50px -25px'
+  position: 'relative',
+  marginBottom: '-25px'
 }
 
 const siteMonitoringRadarRedirectContentStyle: CSSProperties = {
@@ -78,12 +82,131 @@ const chevronRightStyle: CSSProperties = {
   width: '14px',
   height: '14px',
   marginLeft: '5px',
+  marginRight: '-4px'
+}
+
+const bg1Style: CSSProperties = {
+  position: 'absolute',
+  left: 0,
+  bottom: 0,
+  width: '54%',
+  height: '100%',
+}
+
+const bg2Style: CSSProperties = {
+  position: 'absolute',
+  left: '50%',
+  top: 0,
+  marginLeft: '-41%',
+  width: '82%',
+  height: '100%',
+}
+
+const bg3Style: CSSProperties = {
+  position: 'absolute',
+  right: 0,
+  top: 0,
+  width: '63%',
+  height: '100%',
+}
+
+const bg4Style: CSSProperties = {
+  position: 'absolute',
+  right: 0,
+  top: 0,
+  width: '36%',
+  height: '100%',
+}
+
+const bg5Style: CSSProperties = {
+  position: 'absolute',
+  right: 0,
+  top: 0,
+  width: '60%',
+  height: '100%',
+}
+
+const semiCircleSmallStyle: CSSProperties = {
+  position: 'absolute',
+  left: 0,
+  bottom: 0,
+  width: '34%',
+  height: '100%',
+  zIndex: 1
+}
+
+const semiCircleBigStyle: CSSProperties = {
+  position: 'absolute',
+  left: '50%',
+  bottom: 0,
+  width: '83%',
+  marginLeft: '-41.5%',
+  height: '100%',
+  zIndex: 0
+}
+
+const SmallBg1Style: CSSProperties = {
+  position: 'absolute',
+  left: 0,
+  bottom: 0,
+  width: '67%',
+  zIndex: 1
+}
+
+const SmallBg2Style: CSSProperties = {
+  position: 'absolute',
+  left: '50%',
+  bottom: 0,
+  width: '100%',
+  marginLeft: '-50%',
+  zIndex: 0
+}
+
+const SmallBg3Style: CSSProperties = {
+  position: 'absolute',
+  right: 0,
+  bottom: 0,
+  width: '58%',
+  zIndex: 1
+}
+
+const SmallBg4Style: CSSProperties = {
+  position: 'absolute',
+  right: 0,
+  top: 0,
+  width: '15%',
+  zIndex: 1,
+  height: '100%'
+}
+
+const smallSemiCircleBigStyle: CSSProperties = {
+  position: 'absolute',
+  left: 0,
+  bottom: 0,
+  width: '45%',
+  zIndex: 0
 }
 
 export const styles = {
-  RadarRedirect: (isSmall: boolean) => isSmall ? smallRadarRedirectStyle : radarRedirectStyle,
+  RadarRedirect: (isSmall: boolean, marginTop?: string) => {
+    let style = isSmall ? smallRadarRedirectStyle : radarRedirectStyle;
+    if(!isSmall && marginTop) style = {...style, marginTop};
+    return style;
+  },
   RadarRedirectContent: (isSmall: boolean) => isSmall ? smallSiteMonitoringRadarRedirectContentStyle : siteMonitoringRadarRedirectContentStyle,
   Title: (isSmall: boolean) => isSmall ? smallTitleStyle : titleStyle,
   Subtitle: (isSmall: boolean) => isSmall ? smallSubtitleStyle : subtitleStyle,
   ChevronRight: chevronRightStyle,
+  Bg1: bg1Style,
+  Bg2: bg2Style,
+  Bg3: bg3Style,
+  Bg4: bg4Style,
+  Bg5: bg5Style,
+  SemiCircleSmall: semiCircleSmallStyle,
+  SemiCircleBig: semiCircleBigStyle,
+  SmallBg1: SmallBg1Style,
+  SmallBg2: SmallBg2Style,
+  SmallBg3: SmallBg3Style,
+  SmallBg4: SmallBg4Style,
+  SmallSemiCircleBig: smallSemiCircleBigStyle,
 }

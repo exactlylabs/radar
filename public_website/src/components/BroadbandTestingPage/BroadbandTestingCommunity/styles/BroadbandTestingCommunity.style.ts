@@ -19,12 +19,13 @@ const broadbandTestingCommunityContentStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
-  alignItems: 'center'
+  alignItems: 'center',
+  margin: '0 auto'
 }
 
 const smallBroadbandTestingCommunityContentStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
-  maxWidth: '325px',
+  maxWidth: '588px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',

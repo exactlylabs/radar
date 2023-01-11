@@ -4,20 +4,21 @@ import {DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT, GET_STARTED_BUTTON_BG} from "../..
 const toolkitTabContentRowStyle: CSSProperties = {
   width: 'calc(100% - 65px)',
   height: 'max-content',
-  marginLeft: 'auto',
+  marginLeft: '25px',
   marginRight: 'auto',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
-  marginTop: '25px',
+  marginTop: '30px',
   cursor: 'pointer'
 }
 
 const smallToolkitTabContentRowStyle: CSSProperties = {
   ...toolkitTabContentRowStyle,
   width: 'calc(100% - 20px)',
-  alignItems: 'center'
+  alignItems: 'center',
+  marginTop: '20px',
 }
 
 const iconContainerStyle: CSSProperties = {
@@ -30,7 +31,8 @@ const iconContainerStyle: CSSProperties = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  marginRight: '15px'
+  marginRight: '15px',
+  marginTop: '3px'
 }
 
 const textContainerStyle: CSSProperties = {
@@ -54,12 +56,22 @@ const subtitleStyle: CSSProperties = {
   margin: 0
 }
 
+const titleWithIconContainerStyle: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  alignItems: 'center'
+}
+
 export const styles = {
-  ToolkitTabContentRow: (isSmall: boolean) => {
-    return isSmall ? smallToolkitTabContentRowStyle : toolkitTabContentRowStyle;
+  ToolkitTabContentRow: (isSmall: boolean, isFirst?: boolean) => {
+    let style = isSmall ? smallToolkitTabContentRowStyle : toolkitTabContentRowStyle;
+    if(isFirst) style = {...style, marginTop: '25px'};
+    return style;
   },
   IconContainer: iconContainerStyle,
   TextContainer: textContainerStyle,
   Title: titleStyle,
   Subtitle: subtitleStyle,
+  TitleWithIconContainer: titleWithIconContainerStyle,
 }

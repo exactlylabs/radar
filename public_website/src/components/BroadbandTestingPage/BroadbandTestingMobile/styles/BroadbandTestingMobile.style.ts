@@ -3,30 +3,33 @@ import {DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT} from "../../../../utils/colors";
 
 const broadbandTestingMobileStyle: CSSProperties = {
   width: '100%',
-  paddingTop: '100px',
+  paddingTop: '105px',
   paddingBottom: '215px',
 }
 
 const smallBroadbandTestingMobileStyle: CSSProperties = {
   width: '100%',
-  marginTop: '60px',
-  marginBottom: '70px'
+  marginTop: '40px',
+  marginBottom: '30px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center'
 }
 
 const broadbandTestingMobileContentStyle: CSSProperties = {
-  width: '90%',
+  width: '95%',
   maxWidth: '1200px',
   height: '455px',
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'space-around',
+  justifyContent: 'space-between',
   alignItems: 'center',
   margin: '0 auto'
 }
 
 const smallBroadbandTestingMobileContentStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
-  maxWidth: '325px',
+  maxWidth: '588px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -34,17 +37,19 @@ const smallBroadbandTestingMobileContentStyle: CSSProperties = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginBottom: '50px'
+  marginBottom: '25px'
 }
 
 const illustrationStyle: CSSProperties = {
-  width: '445px',
+  width: '50%',
   height: 'auto',
+  marginTop: '60px'
 }
 
 const smallIllustrationStyle: CSSProperties = {
   width: '100%',
-  height: 'auto'
+  height: 'auto',
+  maxWidth: '588px',
 }
 
 const chevronRightStyle: CSSProperties = {

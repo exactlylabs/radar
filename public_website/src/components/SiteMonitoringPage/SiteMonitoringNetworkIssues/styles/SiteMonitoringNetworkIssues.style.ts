@@ -8,7 +8,7 @@ const siteMonitoringNetworkIssuesStyle: CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  marginTop: '85px',
+  marginTop: '95px',
 }
 
 const smallSiteMonitoringNetworkIssuesStyle: CSSProperties = {
@@ -23,7 +23,7 @@ const textContainerStyle: CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  marginBottom: '20px',
+  marginBottom: '30px',
   textAlign: 'center'
 }
 
@@ -31,10 +31,12 @@ const smallTextContainerStyle: CSSProperties = {
   ...textContainerStyle,
   width: '100%',
   marginBottom: '5px',
+  maxWidth: '588px',
 }
 
 const itemsContainerStyle: CSSProperties = {
-  width: '80%',
+  width: '90%',
+  maxWidth: '1200px',
   margin: '35px auto 80px',
   display: 'flex',
   flexDirection: 'row',
@@ -43,9 +45,10 @@ const itemsContainerStyle: CSSProperties = {
 }
 
 const smallItemsContainerStyle: CSSProperties = {
-  width: '90%',
+  width: '100%',
   marginLeft: 'auto',
-  marginRight: 'auto'
+  marginRight: 'auto',
+  maxWidth: '400px',
 }
 
 const itemStyle: CSSProperties = {
@@ -62,7 +65,10 @@ const smallItemStyle: CSSProperties = {
   ...itemStyle,
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginBottom: '30px'
+  marginBottom: '30px',
+  width: 'calc(100% - 50px)',
+  height: 'auto',
+  maxWidth: '588px',
 }
 
 const itemIconContainer: CSSProperties = {

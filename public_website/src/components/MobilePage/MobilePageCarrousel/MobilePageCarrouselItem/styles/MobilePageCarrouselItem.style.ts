@@ -8,7 +8,7 @@ import {
 
 const mobilePageCarrouselItemStyle: CSSProperties = {
   width: '100%',
-  maxWidth: '340px',
+  maxWidth: '300px',
   height: 'max-content',
   padding: '20px',
   borderRadius: '8px',

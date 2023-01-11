@@ -14,6 +14,7 @@ const RightSideToolkitTabContentConsumers = (): ReactElement => {
                             title={ToolkitTabContentRowTitle.BROADBAND_TESTING}
                             subtitle={ToolkitTabContentRowSubtitle.CONSUMERS_BROADBAND_TESTING}
                             onClick={goToBroadbandTesting}
+                            isFirst
       />
       <ToolkitTabContentRow icon={<img src={SiteMonitoringIcon} style={commonStyles.Icon} alt={'site-monitoring-icon'}/>}
                             title={ToolkitTabContentRowTitle.SITE_MONITORING}

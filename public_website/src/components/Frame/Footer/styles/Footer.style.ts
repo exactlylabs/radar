@@ -1,16 +1,15 @@
 import {CSSProperties} from "react";
-import {DEFAULT_SECONDARY_TEXT, HORIZONTAL_DIVIDER} from "../../../../utils/colors";
+import {DEFAULT_SECONDARY_TEXT, HORIZONTAL_DIVIDER, SPECIAL_FOOTER} from "../../../../utils/colors";
 
 const footerStyle: CSSProperties = {
-  width: '90%',
-  maxWidth: '1200px',
-  marginTop: '84px',
+  width: '100vw',
+  height: '358px',
   marginLeft: 'auto',
   marginRight: 'auto',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
-  alignItems: 'flex-start',
+  alignItems: 'center',
 }
 
 const topRowStyle: CSSProperties = {
@@ -99,7 +98,7 @@ const copyrightStyle: CSSProperties = {
 }
 
 const smallFooterStyle: CSSProperties = {
-  width: '290px',
+  width: '100vw',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -107,7 +106,8 @@ const smallFooterStyle: CSSProperties = {
   textAlign: 'center',
   marginLeft: 'auto',
   marginRight: 'auto',
-  marginBottom: '30px'
+  paddingTop: '30px',
+  marginTop: '185px'
 }
 
 const smallTopRowStyle: CSSProperties = {
@@ -153,8 +153,24 @@ const marginlessLinkStyle: CSSProperties = {
   margin: 0
 }
 
+const footerContentStyle: CSSProperties = {
+  width: '90%',
+  maxWidth: '1200px',
+  margin: '215px auto auto'
+}
+
 export const styles = {
-  Footer: footerStyle,
+  Footer: (isDifferentColor?: boolean, height?: string) => {
+    let style = footerStyle;
+    if(isDifferentColor) style = {...style, backgroundColor: SPECIAL_FOOTER};
+    if(height) style = {...style, height};
+    return style;
+  },
+  FooterContent: (margin?: string) => {
+    let style = footerContentStyle;
+    if(margin) style = {...style, margin};
+    return style;
+  },
   TopRow: topRowStyle,
   LeftColumn: leftColumnStyle,
   RightColumn: rightColumnStyle,
@@ -168,7 +184,11 @@ export const styles = {
   SmallANTHCLogo: smallANTHLogoStyle,
   SmallMLabLogo: smallMLabLogoStyle,
   Copyright: copyrightStyle,
-  SmallFooter: smallFooterStyle,
+  SmallFooter: (isDifferentColor?: boolean) => {
+    let style = smallFooterStyle;
+    if(isDifferentColor) style = {...style, backgroundColor: SPECIAL_FOOTER, marginTop: '160px'};
+    return style;
+  },
   SmallTopRow: smallTopRowStyle,
   LinkContainer: linkContainerStyle,
   SmallMidRow: smallMidRowStyle,

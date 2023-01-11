@@ -7,6 +7,7 @@ import {goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../..
 const SiteMonitoringIcon = "/assets/images/site-monitoring-icon.png";
 const BroadbandTestingIcon = "/assets/images/broadband-testing-icon.png";
 const MappingToolsIcon = "/assets/images/mapping-tools-icon.png";
+const RedirectArrowGray = '/assets/images/redirect-arrow-gray.png';
 
 const RightSideToolkitTabContentInternetProviders = (): ReactElement => {
   return (
@@ -15,6 +16,7 @@ const RightSideToolkitTabContentInternetProviders = (): ReactElement => {
                             title={ToolkitTabContentRowTitle.SITE_MONITORING}
                             subtitle={ToolkitTabContentRowSubtitle.INTERNET_PROVIDERS_SITE_MONITORING}
                             onClick={goToSiteMonitoring}
+                            isFirst
       />
       <ToolkitTabContentRow icon={<img src={BroadbandTestingIcon} style={commonStyles.Icon} alt={'broadband-testing-icon'}/>}
                             title={ToolkitTabContentRowTitle.BROADBAND_TESTING}
@@ -25,6 +27,7 @@ const RightSideToolkitTabContentInternetProviders = (): ReactElement => {
                             title={ToolkitTabContentRowTitle.MAPPING_TOOLS}
                             subtitle={ToolkitTabContentRowSubtitle.INTERNET_PROVIDERS_MAPPING_TOOLS}
                             onClick={goToMappingApp}
+                            extraIcon={<img src={RedirectArrowGray} style={commonStyles.RedirectIcon} alt={'new-tab-icon'}/>}
       />
     </div>
   )

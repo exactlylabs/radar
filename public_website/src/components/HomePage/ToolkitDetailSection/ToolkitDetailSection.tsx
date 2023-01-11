@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/ToolkitDetailSection.style";
 import CustomButton from "../../common/CustomButton/CustomButton";
-import {goToBroadbandTesting, goToSiteMonitoring, goToUrl} from "../../../utils/navigation";
+import {goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../utils/navigation";
 import {
   DEFAULT_PRIMARY_BUTTON,
   DEFAULT_PRIMARY_BUTTON_BOX_SHADOW,
@@ -23,8 +23,6 @@ const ToolkitDetailSection = (): ReactElement => {
   const {isSmallScreen, isMidScreen} = useViewportSizes();
   const isSmall = isSmallScreen || isMidScreen;
 
-  const goToExploreTheMap = () => goToUrl('https://broadbandmapping.com', true);
-
   return (
     <div style={styles.ToolkitDetailSection}>
       <div style={styles.TextContainer(isSmall)}>
@@ -35,7 +33,7 @@ const ToolkitDetailSection = (): ReactElement => {
       <div style={styles.DetailSection(isSmall)}>
         {!isSmall && <div style={styles.Gradient('543px', 'linear-gradient(to top, #f2f4fd 38%, #fff 75%)')}></div>}
         <div style={styles.InformationBlock(isSmall)}>
-          <div style={styles.IconContainer}>
+          <div style={styles.IconContainer(isSmall)}>
             <img src={SiteMonitoringIcon} style={styles.Icon} alt={'site-monitoring-icon'}/>
           </div>
           <p className={'fw-bold'} style={styles.InformationBlockTitle(isSmall)}>Site Monitoring</p>
@@ -52,8 +50,8 @@ const ToolkitDetailSection = (): ReactElement => {
       </div>
       <div style={styles.DetailSection(isSmall)}>
         {!isSmall && <img src={BroadbandTestingBackground} style={styles.BroadbandTestingBackground} alt={'broadband-testing-background'}/>}
-        <div style={styles.InformationBlock(isSmall, '12%')}>
-          <div style={styles.IconContainer}>
+        <div style={styles.InformationBlock(isSmall, '8.5%')}>
+          <div style={styles.IconContainer(isSmall)}>
             <img src={BroadbandTestingIcon} style={styles.Icon} alt={'broadband-testing-icon'}/>
           </div>
           <p className={'fw-bold'} style={styles.InformationBlockTitle(isSmall)}>Consumer Broadband Testing</p>
@@ -68,16 +66,16 @@ const ToolkitDetailSection = (): ReactElement => {
         </div>
         {isSmall && <img src={BroadbandTestingBackground} style={styles.SmallBroadbandTestingBackground} alt={'broadband-testing-background'}/>}
       </div>
-      <div style={styles.DetailSection(isSmall)}>
+      <div style={styles.DetailSection(isSmall, true)}>
         { !isSmall && <div style={styles.Fill('623px', DETAIL_SECTION_BG)}></div> }
         <div style={styles.InformationBlock(isSmall)}>
-          <div style={styles.IconContainer}>
+          <div style={styles.IconContainer(isSmall)}>
             <img src={MappingIcon} style={styles.Icon} alt={'mapping-tools-icon'}/>
           </div>
           <p className={'fw-bold'} style={styles.InformationBlockTitle(isSmall)}>Mapping Tools</p>
           <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Explore public data on an interactive map to learn more about how Internet connectivity varies between different geographies, providers and timeframes.</p>
           <CustomButton text={'Explore the map'}
-                        onClick={goToExploreTheMap}
+                        onClick={goToMappingApp}
                         icon={<img src={ChevronRightWhite} style={styles.Chevron} alt={'chevron-right-white'}/>}
                         backgroundColor={DEFAULT_PRIMARY_BUTTON}
                         color={WHITE}

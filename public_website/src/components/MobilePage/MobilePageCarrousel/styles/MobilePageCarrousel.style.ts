@@ -6,7 +6,7 @@ const mobilePageCarrouselStyle: CSSProperties = {
 }
 
 const smallCarrouselContainerStyle: CSSProperties = {
-  width: '100%',
+  width: 'calc(100% - 50px)',
   marginLeft: 'auto',
   marginRight: 'auto',
   display: 'flex',
@@ -45,6 +45,17 @@ const textContainerStyle: CSSProperties = {
   margin: '0 auto 60px'
 }
 
+const smallTextContainerStyle: CSSProperties = {
+  width: 'calc(100% - 50px)',
+  maxWidth: '588px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  textAlign: 'center',
+  margin: '0 auto 60px'
+}
+
 const headerStyle: CSSProperties = {
   fontSize: '18px',
   lineHeight: '26px',
@@ -68,7 +79,9 @@ const subtitleStyle: CSSProperties = {
 }
 
 const carrouselContainerStyle: CSSProperties = {
-  width: '100%',
+  width: '90%',
+  maxWidth: '1200px',
+  margin: '0 auto',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
@@ -110,7 +123,7 @@ export const styles = {
   SmallCarrouselContainer: smallCarrouselContainerStyle,
   CarrouselImage: (isSmall: boolean) => isSmall ? smallCarrouselImageStyle : carrouselImageStyle,
   Icon: iconStyle,
-  TextContainer: textContainerStyle,
+  TextContainer: (isSmall: boolean) => isSmall ? smallTextContainerStyle : textContainerStyle,
   Header: headerStyle,
   Title: titleStyle,
   Subtitle: subtitleStyle,

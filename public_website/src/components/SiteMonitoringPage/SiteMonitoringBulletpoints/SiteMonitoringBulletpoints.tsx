@@ -48,7 +48,7 @@ const RegularSiteMonitoringBulletPointsContent = () => (
 );
 
 const SmallSiteMonitoringBulletPointsContent = () => (
-  <>
+  <div style={styles.SmallSiteMonitoringBulletPointsContent}>
     <p className={'fw-bold'} style={styles.Header}>Location Monitoring</p>
     <p className={'fw-extra-bold'} style={styles.Title}>Continuous & autonomous monitoring for your home or business.</p>
     <div style={styles.SmallRow}>
@@ -79,7 +79,7 @@ const SmallSiteMonitoringBulletPointsContent = () => (
       </div>
     </div>
     <img src={SmallSiteMonitoringTwoCards} style={styles.SmallCards} alt={'site-monitoring-two-cards'}/>
-  </>
+  </div>
 )
 
 const SiteMonitoringBulletpoints = (): ReactElement => {

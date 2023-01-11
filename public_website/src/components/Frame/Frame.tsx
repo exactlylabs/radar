@@ -5,16 +5,19 @@ import Footer from "./Footer/Footer";
 
 interface FrameProps {
   children: ReactElement;
+  isDifferentColorFooter?: boolean;
+  footerHeight?: string;
+  footerMargin?: string;
 }
 
-const Frame = ({ children }: FrameProps): ReactElement => {
+const Frame = ({ children, isDifferentColorFooter, footerHeight,  footerMargin }: FrameProps): ReactElement => {
   return (
     <div style={styles.Frame}>
       <Navbar/>
-      <div>
+      <div style={styles.Children(footerMargin)}>
         {children}
       </div>
-      <Footer/>
+      <Footer isDifferentColor={isDifferentColorFooter} height={footerHeight} margin={footerMargin}/>
     </div>
   )
 }

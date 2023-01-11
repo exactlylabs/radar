@@ -1,4 +1,4 @@
-import {createContext, ReactElement, useEffect, useState} from "react";
+import {createContext, ReactElement, useEffect, useRef, useState} from "react";
 import {Optional} from "../utils/types";
 
 /**
@@ -20,20 +20,21 @@ export const ViewportContextProvider = ({children}: ViewportContextProviderProps
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
+    console.log('useEffect', window)
     if(!!window) {
+      console.log(window.innerWidth);
       setWidth(window.innerWidth);
+      window.addEventListener('resize', handleResize);
     }
-  }, []);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    }
+  });
 
   const handleResize = () => {
-    const frameElement: Optional<HTMLElement> = document.getElementById('root');
-    if(frameElement) setWidth(frameElement.getBoundingClientRect().width);
+    if(!!window) setWidth(window.innerWidth);
   }
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   return (
     <ViewportContext.Provider value={{width}}>

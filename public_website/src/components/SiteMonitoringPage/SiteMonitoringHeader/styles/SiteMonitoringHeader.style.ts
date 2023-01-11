@@ -1,5 +1,6 @@
 import {CSSProperties} from "react";
 import {DEFAULT_TEXT} from "../../../../utils/colors";
+import siteMonitoringHeader from "../SiteMonitoringHeader";
 
 const siteMonitoringHeaderStyle: CSSProperties = {
   width: '100%',
@@ -8,7 +9,7 @@ const siteMonitoringHeaderStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
-  marginTop: '120px',
+  marginTop: '100px',
   position: 'relative'
 }
 
@@ -16,30 +17,35 @@ const smallSiteMonitoringHeaderStyle: CSSProperties = {
   ...siteMonitoringHeaderStyle,
   height: undefined,
   flexDirection: 'column',
-  marginTop: '50px',
+  marginTop: 0
 }
 
 const textContainerStyle: CSSProperties = {
+  width: '40%',
   maxWidth: '480px',
+  minWidth: '250px',
   maxHeight: '240px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
-  alignItems: 'flex-start'
+  alignItems: 'flex-start',
+  marginTop: '50px',
 }
 
 const smallTextContainerStyle: CSSProperties = {
   ...textContainerStyle,
-  maxWidth: '80%',
+  width: '100%',
+  maxWidth: '588px',
   maxHeight: undefined,
   textAlign: 'center',
   alignItems: 'center',
   marginLeft: 'auto',
-  marginRight: 'auto'
+  marginRight: 'auto',
+  marginTop: '30px'
 }
 
 const titleStyle: CSSProperties = {
-  width: '480px',
+  width: '100%',
   fontSize: '36px',
   lineHeight: '48px',
   letterSpacing: '-0.9px',
@@ -49,7 +55,7 @@ const titleStyle: CSSProperties = {
 
 const smallTitleStyle: CSSProperties = {
   width: '100%',
-  maxWidth: '100%',
+  maxWidth: '588px',
   fontSize: '28px',
   lineHeight: '36px',
   letterSpacing: '-0.6px',
@@ -57,7 +63,7 @@ const smallTitleStyle: CSSProperties = {
 }
 
 const subtitleStyle: CSSProperties = {
-  width: '480px',
+  width: '100%',
   fontSize: '18px',
   lineHeight: '28px',
   color: DEFAULT_TEXT,
@@ -74,17 +80,19 @@ const smallSubtitleStyle: CSSProperties = {
 }
 
 const cardsStyle: CSSProperties = {
-  width: '395px',
-  height: '340px',
+  width: '30%',
+  minWidth: '350px',
+  height: 'auto',
   position: 'absolute',
-  right: '80px',
-  top: 0,
+  right: '14%',
+  top: '-5%',
   zIndex: 1,
 }
 
 const smallCardsStyle: CSSProperties = {
-  width: '90vw',
+  width: '100%',
   height: 'auto',
+  maxWidth: '450px',
   margin: '50px auto',
   zIndex: 1
 }
@@ -104,15 +112,6 @@ const chevronRightStyle: CSSProperties = {
   marginLeft: '5px',
 }
 
-const redShapeStyle: CSSProperties = {
-  width: '800px',
-  height: '660px',
-  position: 'absolute',
-  right: 0,
-  top: '120px',
-  zIndex: 0
-}
-
 const blueShapeStyle: CSSProperties = {
   width: '1074px',
   height: '545px',
@@ -120,6 +119,59 @@ const blueShapeStyle: CSSProperties = {
   right: '75px',
   top: '240px',
   zIndex: 0
+}
+
+const siteMonitoringHeaderContentStyle: CSSProperties = {
+  width: '90%',
+  maxWidth: '1200px',
+  margin: '0 auto',
+  zIndex: 1,
+  position: 'relative'
+}
+
+const heroBlueBgStyle: CSSProperties = {
+  position: 'absolute',
+  right: 0,
+  bottom: 0,
+  width: '62%',
+  height: 'auto',
+  zIndex: 0,
+  filter: 'blur(50px)',
+  opacity: 0.8,
+  maxWidth: '745px'
+}
+
+const heroOrangeBgStyle: CSSProperties = {
+  position: 'absolute',
+  right: 0,
+  bottom: 0,
+  width: '40%',
+  height: 'auto',
+  zIndex: 0,
+  filter: 'blur(50px)',
+  maxWidth: '480px'
+}
+
+const heroMapBgStyle: CSSProperties = {
+  position: 'absolute',
+  right: '40px',
+  bottom: 0,
+  width: '60%',
+  height: 'auto',
+  zIndex: 0,
+  maxWidth: '720px'
+}
+
+const smallHeroBgStyle: CSSProperties = {
+  position: 'absolute',
+  left: '50%',
+  marginLeft: '-50%',
+  bottom: '-150px',
+  width: '100%',
+  height: 'auto',
+  zIndex: 0,
+  opacity: 0.4,
+  filter: 'blur(65px)'
 }
 
 export const styles = {
@@ -130,6 +182,9 @@ export const styles = {
   Cards: (isSmall: boolean) => isSmall ? smallCardsStyle : cardsStyle,
   Background: backgroundStyle,
   ChevronRight: chevronRightStyle,
-  RedShape: redShapeStyle,
-  BlueShape: blueShapeStyle,
+  SiteMonitoringHeaderContent: siteMonitoringHeaderContentStyle,
+  HeroBlueBg: heroBlueBgStyle,
+  HeroOrangeBg: heroOrangeBgStyle,
+  HeroMapBg: heroMapBgStyle,
+  SmallHeroBg: smallHeroBgStyle,
 }

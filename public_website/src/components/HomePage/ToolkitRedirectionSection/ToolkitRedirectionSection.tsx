@@ -4,6 +4,12 @@ import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const ChevronRightBlue = '/assets/images/chevron-right-blue.png';
 const RedirectArrowBlue = '/assets/images/redirect-arrow-blue.png';
+const CenterBlueBg = '/assets/images/redirection-center-blue.png';
+const TopRightBg = '/assets/images/redirection-top-right-orange.png';
+const BottomBlueBg = '/assets/images/redirection-bottom-blue.png';
+const LeftBlueBg = '/assets/images/redirection-left-blue.png';
+const SmallRedirectBg1 = '/assets/images/small-redirect-shape-1.png'
+const SmallRedirectBg2 = '/assets/images/small-redirect-shape-2.png';
 
 const ToolkitRedirectionSection = (): ReactElement => {
 
@@ -12,6 +18,12 @@ const ToolkitRedirectionSection = (): ReactElement => {
 
   return (
     <div style={styles.ToolkitRedirectionSection(isSmall)}>
+      {!isSmall && <img src={CenterBlueBg} alt={'center blue background'} style={styles.CenterBlueBg}/> }
+      {!isSmall && <img src={TopRightBg} alt={'top right orange background'} style={styles.TopRightBg}/> }
+      {!isSmall && <img src={BottomBlueBg} alt={'bottom blue background'} style={styles.BottomBlueBg}/> }
+      {!isSmall && <img src={LeftBlueBg} alt={'left blue background'} style={styles.LeftBlueBg}/> }
+      { isSmall && <img src={SmallRedirectBg1} alt={'left blue background'} style={styles.SmallRedirectBg1}/> }
+      { isSmall && <img src={SmallRedirectBg2} alt={'left blue background'} style={styles.SmallRedirectBg2}/> }
       <div style={styles.ToolkitRedirectionSectionContent(isSmall)}>
         <div style={styles.ToolkitRedirectionColumn(isSmall)}>
           <p className={'fw-bold'} style={styles.Title(isSmall)}>For Consumers</p>

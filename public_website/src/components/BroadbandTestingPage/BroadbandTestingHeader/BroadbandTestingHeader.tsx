@@ -7,6 +7,7 @@ import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const ChevronRightWhite = "/assets/images/chevron-right-white.png";
 const BroadbandTestingIllustration = '/assets/images/broadband-testing-illustration.png';
+const BroadbandTestingMap = '/assets/images/broadband-testing-map.png';
 
 const BroadbandTestingHeader = (): ReactElement => {
 
@@ -15,18 +16,21 @@ const BroadbandTestingHeader = (): ReactElement => {
 
   return (
     <div style={styles.BroadbandTestingHeader(isSmall)}>
-      <div style={styles.TextContainer(isSmall)}>
-        <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Where are the gaps in you broadband maps?</p>
-        <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Discover the neighborhoods and streets with the most needs and make the most out of your investment.</p>
-        <CustomButton text={'Get started'}
-                      onClick={goToHome}
-                      icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
-                      backgroundColor={DEFAULT_PRIMARY_BUTTON}
-                      color={WHITE}
-                      boxShadow={`0 4px 15px -2px ${DEFAULT_PRIMARY_BUTTON_BOX_SHADOW}`}
-        />
+      <div style={styles.BroadbandTestingHeaderContent}>
+        <img src={BroadbandTestingMap} alt={'broadband testing map'} style={styles.BroadbandTestingMap(isSmall)}/>
+        <img src={BroadbandTestingIllustration} style={styles.Illustration(isSmall)} alt={'broadband-testing-illustration'}/>
+        <div style={styles.TextContainer(isSmall)}>
+          <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Where are the gaps in you broadband maps?</p>
+          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Discover the neighborhoods and streets with the most needs and make the most out of your investment.</p>
+          <CustomButton text={'Get started'}
+                        onClick={goToHome}
+                        icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
+                        backgroundColor={DEFAULT_PRIMARY_BUTTON}
+                        color={WHITE}
+                        boxShadow={`0 4px 15px -2px ${DEFAULT_PRIMARY_BUTTON_BOX_SHADOW}`}
+          />
+        </div>
       </div>
-      <img src={BroadbandTestingIllustration} style={styles.Illustration(isSmall)} alt={'broadband-testing-illustration'}/>
     </div>
   );
 }

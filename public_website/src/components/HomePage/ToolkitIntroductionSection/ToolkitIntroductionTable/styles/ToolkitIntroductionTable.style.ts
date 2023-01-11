@@ -9,13 +9,15 @@ const toolkitIntroductionTableStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'space-evenly',
   alignItems: 'center',
+  position: 'relative',
+  zIndex: 2
 }
 
 const smallToolkitIntroductionTableStyle: CSSProperties = {
   ...toolkitIntroductionTableStyle,
   flexDirection: 'column',
-  width: 'calc(100vw - 50px)',
-  maxWidth: '445px',
+  width: '100%',
+  maxWidth: '588px',
   height: 'max-content',
   marginTop: '-20px'
 }
@@ -28,6 +30,12 @@ const toolkitIntroductionTableColumnStyle: CSSProperties = {
   justifyContent: 'flex-start',
   alignItems: 'space-evenly',
   textAlign: 'center'
+}
+
+const smallToolkitIntroductionTableColumnStyle: CSSProperties = {
+  ...toolkitIntroductionTableColumnStyle,
+  width: '100%',
+  height: 'auto',
 }
 
 const iconContainerStyle: CSSProperties = {
@@ -70,12 +78,13 @@ const subtitleStyle: CSSProperties = {
 
 const smallSubtitleStyle: CSSProperties = {
   ...subtitleStyle,
+  width: '100%',
   margin: '0 0 30px 0',
 }
 
 const separatorLineStyle: CSSProperties = {
-  height: '100%',
-  width: '1px',
+  height: 'auto',
+  width: '2px',
   objectFit: 'contain',
   margin: '0 4.5%'
 }
@@ -84,7 +93,7 @@ export const styles = {
   ToolkitIntroductionTable: (isSmall: boolean) => {
     return isSmall ? smallToolkitIntroductionTableStyle : toolkitIntroductionTableStyle;
   },
-  ToolkitIntroductionTableColumn: toolkitIntroductionTableColumnStyle,
+  ToolkitIntroductionTableColumn: (isSmall: boolean) => isSmall ? smallToolkitIntroductionTableColumnStyle : toolkitIntroductionTableColumnStyle,
   IconContainer: (isSmall: boolean) => {
     return isSmall ? smallIconContainerStyle : iconContainerStyle;
   },

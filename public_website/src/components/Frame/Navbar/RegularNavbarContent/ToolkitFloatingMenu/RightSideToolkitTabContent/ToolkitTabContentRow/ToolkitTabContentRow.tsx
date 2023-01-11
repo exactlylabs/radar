@@ -8,24 +8,35 @@ interface ToolkitTabContentRowProps {
   title: ToolkitTabContentRowTitle;
   subtitle?: ToolkitTabContentRowSubtitle;
   onClick: () => void;
+  isFirst?: boolean;
+  extraIcon?: ReactElement;
 }
 
 const ToolkitTabContentRow = ({
   icon,
   title,
   subtitle,
-  onClick
+  onClick,
+  isFirst,
+  extraIcon
 }: ToolkitTabContentRowProps): ReactElement => {
 
-  const {isSmallScreen} = useViewportSizes();
+  const {isSmallScreen, isMidScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isMidScreen;
 
   return (
-    <div className={'hover-opaque'} style={styles.ToolkitTabContentRow(isSmallScreen)} onClick={onClick}>
+    <div className={'hover-opaque'} style={styles.ToolkitTabContentRow(isSmall, isFirst)} onClick={onClick}>
       <div style={styles.IconContainer}>
         {icon}
       </div>
       <div style={styles.TextContainer}>
-        <p className={'fw-bold'} style={styles.Title}>{title}</p>
+        { !!extraIcon ?
+          <div style={styles.TitleWithIconContainer}>
+            <p className={'fw-bold'} style={styles.Title}>{title}</p>
+            {extraIcon }
+          </div> :
+          <p className={'fw-bold'} style={styles.Title}>{title}</p>
+        }
         { !!subtitle && <p className={'fw-regular'} style={styles.Subtitle}>{subtitle}</p> }
       </div>
     </div>
