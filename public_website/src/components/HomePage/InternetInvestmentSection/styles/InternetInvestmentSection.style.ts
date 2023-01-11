@@ -15,24 +15,29 @@ const internetInvestmentSectionStyle: CSSProperties = {
   margin: '70px auto',
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'center',
+  position: 'relative',
+  overflow: 'hidden'
 }
 
 const smallInternetInvestmentSectionStyle: CSSProperties = {
   ...internetInvestmentSectionStyle,
   width: '100%',
   height: 'max-content',
-  borderRadius: 0
+  borderRadius: 0,
+  margin: '70px auto 60px',
+  boxShadow: undefined,
 }
 
 const internetInvestmentSectionContentStyle: CSSProperties = {
-  width: '80%',
+  width: '83%',
   height: '90%',
   margin: 'auto',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-start',
-  alignItems: 'flex-start'
+  alignItems: 'flex-start',
+  zIndex: 1
 }
 
 const smallInternetInvestmentSectionContentStyle: CSSProperties = {
@@ -117,6 +122,7 @@ const tickIconStyle: CSSProperties = {
 }
 
 const itemTextStyle: CSSProperties = {
+  width: '444px',
   fontSize: '17px',
   lineHeight: '28px',
   color: WHITE,
@@ -130,6 +136,42 @@ const smallItemTextStyle: CSSProperties = {
   margin: 0
 }
 
+const blueOrangeBgStyle: CSSProperties = {
+  position: 'absolute',
+  zIndex: 0,
+  left: 0,
+  bottom: 0,
+  width: '28%',
+  height: 'auto'
+}
+
+const centerOrangeBgStyle: CSSProperties = {
+  position: 'absolute',
+  zIndex: 0,
+  bottom: 0,
+  right: 0,
+  width: '56%',
+  height: 'auto'
+}
+
+const rightOrangeBgStyle: CSSProperties = {
+  position: 'absolute',
+  zIndex: 0,
+  bottom: 0,
+  right: 0,
+  width: '16%',
+  height: 'auto'
+}
+
+const leftSmallBlueBgStyle: CSSProperties = {
+  position: 'absolute',
+  zIndex: 0,
+  bottom: 0,
+  left: 0,
+  width: '75%',
+  height: 'auto'
+}
+
 export const styles = {
   InternetInvestmentSection: (isSmall: boolean) => {
     return isSmall ? smallInternetInvestmentSectionStyle : internetInvestmentSectionStyle;
@@ -137,13 +179,13 @@ export const styles = {
   InternetInvestmentSectionContent: (isSmall: boolean) => {
     return isSmall ? smallInternetInvestmentSectionContentStyle : internetInvestmentSectionContentStyle;
   },
-  ContentContainer: (isSmall: boolean, isLast: boolean) => {
+  ContentContainer: (isSmall: boolean, isLast: boolean, isRightContainer: boolean) => {
     let style;
-    if(isSmall) {
-      style = isLast ? {...smallContentContainerStyle, marginBottom: '30px'} : smallContentContainerStyle;
-    } else {
-      style = contentContainerStyle;
-    }
+    if(isSmall) style = isLast ? {...smallContentContainerStyle, marginBottom: '30px'} : smallContentContainerStyle;
+    else style = contentContainerStyle;
+
+    if(isRightContainer && !isSmall) style = {...style, width: '48%', marginLeft: '2%'};
+
     return style;
   },
   WhatWeOfferText: whatWeOfferTextStyle,
@@ -153,11 +195,17 @@ export const styles = {
   GradientText: (isSmall: boolean) => {
     return isSmall ? smallGradientTextStyle : gradientTextStyle;
   },
-  ItemContainer: (isLast?: boolean) => {
-    return isLast ? lastItemContainerStyle : itemContainerStyle;
+  ItemContainer: (isSmall: boolean, isLast?: boolean) => {
+    let style = isLast ? lastItemContainerStyle : itemContainerStyle;
+    if(isSmall) style = {...style, marginBottom: '15px'};
+    return style;
   },
   TickIcon: tickIconStyle,
   ItemText: (isSmall: boolean) => {
     return isSmall ? smallItemTextStyle : itemTextStyle;
   },
+  BlueOrangeBg: blueOrangeBgStyle,
+  CenterOrangeBg: centerOrangeBgStyle,
+  RightOrangeBg: rightOrangeBgStyle,
+  LeftSmallBlueBg: leftSmallBlueBgStyle,
 }

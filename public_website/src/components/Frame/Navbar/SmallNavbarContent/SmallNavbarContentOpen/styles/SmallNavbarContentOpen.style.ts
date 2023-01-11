@@ -11,7 +11,8 @@ const smallNavbarContentOpenStyle: CSSProperties = {
   top: '63px',
   boxShadow: `0px 30px 30px -4px rgba(0, 0, 0, 0.15)`,
   zIndex: 10,
-  backgroundColor: WHITE
+  backgroundColor: WHITE,
+  backdropFilter: 'blur(15px)'
 }
 
 const tabsContainerStyle: CSSProperties = {
@@ -29,8 +30,14 @@ const linkStyle: CSSProperties = {
   color: DEFAULT_TEXT,
 }
 
+const linkTextStyle: CSSProperties = {
+  color: DEFAULT_TEXT,
+  margin: 0
+}
+
 export const styles = {
   SmallNavbarContentOpen: smallNavbarContentOpenStyle,
   TabsContainer: tabsContainerStyle,
   Link: linkStyle,
+  LinkText: linkTextStyle,
 }

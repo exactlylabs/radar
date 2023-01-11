@@ -16,14 +16,12 @@ const SiteMonitoringPage = (): ReactElement => {
 
   return (
     <ViewportContextProvider>
-      <Frame>
+      <Frame isDifferentColorFooter>
         <div style={styles.SiteMonitoringPage}>
-          <div style={styles.SiteMonitoringPageContent}>
-            <SiteMonitoringHeader/>
-            <SiteMonitoringNetworkIssues />
-            <SiteMonitoringBulletpoints />
-            <RadarRedirect />
-          </div>
+          <SiteMonitoringHeader/>
+          <SiteMonitoringNetworkIssues />
+          <SiteMonitoringBulletpoints />
+          <RadarRedirect />
         </div>
       </Frame>
     </ViewportContextProvider>

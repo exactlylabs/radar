@@ -4,14 +4,18 @@ import {DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT, SPEED_TEST_BOX_SHADOW, WHITE} from
 const broadbandTestingSpeedtestStyle: CSSProperties = {
   width: '100%',
   height: '690px',
+  backgroundImage: 'linear-gradient(0, rgba(211, 224, 255, 0.58), rgba(211, 224, 255, 0.28))'
 }
 
 const smallBroadbandTestingSpeedtestStyle: CSSProperties = {
-  width: '100%'
+  width: '100%',
+  paddingTop: '40px',
+  paddingBottom: '40px',
+  backgroundImage: 'linear-gradient(0, rgba(211, 224, 255, 0.58), rgba(211, 224, 255, 0.28))'
 }
 
 const broadbandTestingSpeedtestContentStyle: CSSProperties = {
-  width: '90%',
+  width: '100%',
   maxWidth: '1200px',
   marginLeft: 'auto',
   marginRight: 'auto',
@@ -27,7 +31,7 @@ const broadbandTestingSpeedtestContentStyle: CSSProperties = {
 
 const smallBroadbandTestingSpeedtestContentStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
-  maxWidth: '325px',
+  maxWidth: '588px',
   marginLeft: 'auto',
   marginRight: 'auto',
   display: 'flex',
@@ -40,6 +44,7 @@ const chevronRightStyle: CSSProperties = {
   width: '14px',
   height: '14px',
   marginLeft: '5px',
+  marginRight: '-4px'
 }
 
 const leftColumnStyle: CSSProperties = {
@@ -68,7 +73,7 @@ const rightColumnStyle: CSSProperties = {
 
 const smallRightColumnStyle: CSSProperties = {
   width: '100%',
-  maxWidth: '325px',
+  maxWidth: '588px',
   height: 'auto',
   backgroundColor: WHITE,
   boxShadow: `0 5px 10px 0 ${SPEED_TEST_BOX_SHADOW}`,

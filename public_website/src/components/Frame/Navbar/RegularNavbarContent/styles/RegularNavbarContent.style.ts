@@ -24,10 +24,11 @@ const chevronRightStyle: CSSProperties = {
   width: '14px',
   height: '14px',
   marginLeft: '5px',
+  marginRight: '-4px'
 }
 
 const tabsContainerStyle: CSSProperties = {
-  width: '100%',
+  width: '30%',
   minWidth: '250px',
   maxWidth: '375px',
   display: 'flex',
@@ -53,14 +54,14 @@ const leftLinkStyle: CSSProperties = {
   ...linkStyle,
   width: '73px',
   position: 'absolute',
-  left: 'calc(50% - 200px)',
+  left: 'calc(50% - 40px - 60px - 73px)',
 }
 
 const rightLinkStyle: CSSProperties = {
   ...linkStyle,
   width: '84px',
   position: 'absolute',
-  left: 'calc(50% + 130px)',
+  right: 'calc(50% - 42px - 60px - 84px)',
 }
 
 export const styles = {

@@ -3,7 +3,7 @@ import {WHITE} from "../../../../../../utils/colors";
 
 const toolkitFloatingMenuStyle: CSSProperties = {
   width: '688px',
-  height: '319px',
+  height: '312px',
   backgroundColor: WHITE,
   borderRadius: '8px',
   boxShadow: `0 3px 10px -4px rgba(0, 0, 0, 0.4)`,

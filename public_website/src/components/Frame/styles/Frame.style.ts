@@ -7,6 +7,11 @@ const frameStyle: CSSProperties = {
   overflowY: 'auto',
 }
 
+const childrenStyle: CSSProperties = {
+  marginBottom: '-160px'
+}
+
 export const styles = {
   Frame: frameStyle,
+  Children: (hasMargin?: string) => hasMargin ? undefined : childrenStyle,
 }

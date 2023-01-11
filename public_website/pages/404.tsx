@@ -1,8 +1,8 @@
 import {ReactElement, useEffect} from "react";
-import {goToUrl} from "../src/utils/navigation";
+import {goToHome} from "../src/utils/navigation";
 
 const NotFound = (): ReactElement => {
-  useEffect(() => {goToUrl('/home')}, []);
+  useEffect(() => {goToHome()}, []);
   return (<div></div>);
 }
 

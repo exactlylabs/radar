@@ -43,12 +43,13 @@ const headerStyle: CSSProperties = {
   lineHeight: '26px',
   color: DEFAULT_SECONDARY_TEXT,
   marginBottom: '15px',
-  maxWidth: '100%'
+  maxWidth: '100%',
+  margin: '0 0 15px 0'
 }
 
 const smallHeaderStyle: CSSProperties = {
   ...headerStyle,
-  marginBottom: '10px',
+  margin: '0 0 10px 0'
 }
 
 const titleStyle: CSSProperties = {
@@ -56,34 +57,32 @@ const titleStyle: CSSProperties = {
   lineHeight: '42px',
   letterSpacing: '-0.7px',
   color: DEFAULT_TEXT,
-  marginBottom: '20px',
+  margin: '0 0 20px 0',
   maxWidth: '100%'
 }
 
 const smallTitleStyle: CSSProperties = {
   ...titleStyle,
+  width: 'calc(100vw - 70px)',
   fontSize: '26px',
   lineHeight: '34px',
   letterSpacing: '-0.56px',
-  marginBottom: '15px',
-  width: 'calc(100vw - 70px)',
-  marginLeft: 'auto',
-  marginRight: 'auto',
+  margin: '0 auto 15px'
 }
 
 const subtitleStyle: CSSProperties = {
   fontSize: '17px',
   lineHeight: '26px',
   color: DEFAULT_TEXT,
-  maxWidth: '100%'
+  maxWidth: '100%',
+  margin: '0'
 }
 
 const smallSubtitleStyle: CSSProperties = {
   ...subtitleStyle,
   fontSize: '16px',
   width: 'calc(100vw - 50px)',
-  marginLeft: 'auto',
-  marginRight: 'auto',
+  margin: '0 auto'
 }
 
 const informationBlockStyle: CSSProperties = {
@@ -94,14 +93,14 @@ const informationBlockStyle: CSSProperties = {
   alignItems: 'flex-start',
   justifyContent: 'flex-start',
   textAlign: 'left',
-  marginLeft: '10%',
+  marginLeft: '8.5%',
   zIndex: 10,
   position: 'absolute'
 }
 
 const smallInformationBlockStyle: CSSProperties = {
-  width: '325px',
-  height: '250px',
+  width: '90%',
+  maxWidth: '588px',
   textAlign: 'center',
   display: 'flex',
   flexDirection: 'column',
@@ -128,6 +127,11 @@ const iconContainerStyle: CSSProperties = {
   marginBottom: '19px'
 }
 
+const smallIconContainerStyle: CSSProperties = {
+  ...iconContainerStyle,
+  marginBottom: '10px'
+}
+
 const iconStyle: CSSProperties = {
   width: '34px',
   height: '34px',
@@ -137,14 +141,14 @@ const siteMonitoringBackgroundStyle: CSSProperties = {
   width: '1106px',
   height: '637px',
   position: 'absolute',
-  bottom: '-10%',
+  bottom: '-23%',
   right: '-20%',
 }
 
 const smallSiteMonitoringBackgroundStyle: CSSProperties = {
-  width: '150vw',
+  width: '190vw',
   height: 'auto',
-  marginLeft: '-27vw',
+  marginLeft: '-52vw',
   marginTop: '-70px'
 }
 
@@ -157,9 +161,9 @@ const broadbandTestingBackgroundStyle: CSSProperties = {
 }
 
 const smallBroadbandTestingBackgroundStyle: CSSProperties = {
-  width: '100vw',
+  width: '125vw',
   height: 'auto',
-  marginLeft: '-5vw',
+  marginLeft: '-17vw',
   marginTop: '-70px',
   marginBottom: '-70px'
 }
@@ -173,16 +177,16 @@ const mappingToolsBackgroundStyle: CSSProperties = {
 }
 
 const smallMappingToolsBackgroundStyle: CSSProperties = {
-  width: '140vw',
+  width: '135vw',
   height: 'auto',
-  marginLeft: '-24vw',
-  marginTop: '-70px'
+  marginLeft: '-20vw'
 }
 
 const chevronStyle: CSSProperties = {
   width: '14px',
   height: '14px',
-  marginLeft: '5px'
+  marginLeft: '5px',
+  marginRight: '-4px'
 }
 
 const informationBlockTitleStyle: CSSProperties = {
@@ -231,7 +235,11 @@ const fillStyle: CSSProperties = {
 export const styles = {
   ToolkitDetailSection: toolkitDetailSectionStyle,
   TextContainer: (isSmall: boolean) => isSmall ? smallTextContainerStyle : textContainerStyle,
-  DetailSection: (isSmall: boolean) => isSmall ? smallDetailSectionStyle : detailSectionStyle,
+  DetailSection: (isSmall: boolean, isLast?: boolean) => {
+    let style = isSmall ? smallDetailSectionStyle : detailSectionStyle;
+    if(isLast) style = {...style, marginBottom: '120px'};
+    return style;
+  },
   InformationBlock: (isSmall: boolean, right?: string) => {
     if(isSmall) return smallInformationBlockStyle;
     if(right) {
@@ -243,7 +251,7 @@ export const styles = {
   Header: (isSmall: boolean) => isSmall ? smallHeaderStyle : headerStyle,
   Title: (isSmall: boolean) => isSmall ? smallTitleStyle : titleStyle,
   Subtitle: (isSmall: boolean) => isSmall ? smallSubtitleStyle : subtitleStyle,
-  IconContainer: iconContainerStyle,
+  IconContainer: (isSmall: boolean) => isSmall ? smallIconContainerStyle : iconContainerStyle,
   Icon: iconStyle,
   SiteMonitoringBackground: (isSmall: boolean) => isSmall ? smallSiteMonitoringBackgroundStyle : siteMonitoringBackgroundStyle,
   BroadbandTestingBackground: broadbandTestingBackgroundStyle,

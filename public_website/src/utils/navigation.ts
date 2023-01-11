@@ -3,7 +3,7 @@ export enum AppRoutes {
   HOME = '/home',
   SITE_MONITORING = '/site-monitoring',
   BROADBAND_TESTING = '/broadband-testing',
-  MOBILE = '/mobile',
+  MOBILE_TESTING = '/mobile-testing',
   PRIVACY_POLICY = '/privacy-policy'
 }
 
@@ -26,6 +26,6 @@ export const goToBase = () => goToUrl(AppRoutes.BASE);
 export const goToHome = () => goToUrl(AppRoutes.HOME);
 export const goToSiteMonitoring = () => goToUrl(AppRoutes.SITE_MONITORING);
 export const goToBroadbandTesting = () => goToUrl(AppRoutes.BROADBAND_TESTING);
-export const goToMobile = () => goToUrl(AppRoutes.MOBILE);
-export const goToSpeedTestWebsite = () => goToUrl(process.env.NODE_ENV === 'production' ? ExternalRoutes.SPEED_TEST_PROD : ExternalRoutes.SPEED_TEST_STAGING);
-export const goToMappingApp = () => goToUrl(process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING);
+export const goToMobile = () => goToUrl(AppRoutes.MOBILE_TESTING);
+export const goToSpeedTestWebsite = () => goToUrl(process.env.NODE_ENV === 'production' ? ExternalRoutes.SPEED_TEST_PROD : ExternalRoutes.SPEED_TEST_STAGING, true);
+export const goToMappingApp = () => goToUrl(process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING, true);

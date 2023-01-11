@@ -6,7 +6,7 @@ const broadbandTestingHeaderStyle: CSSProperties = {
   height: '380px',
   position: 'relative',
   marginTop: '90px',
-  marginBottom: '80px',
+  marginBottom: '50px',
 }
 
 const smallBroadbandTestingHeaderStyle: CSSProperties = {
@@ -17,11 +17,13 @@ const smallBroadbandTestingHeaderStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
 }
 
 const textContainerStyle: CSSProperties = {
-  width: '480px',
+  width: '35%',
+  maxWidth: '480px',
+  minWidth: '300px',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
@@ -32,7 +34,7 @@ const textContainerStyle: CSSProperties = {
 
 const smallTextContainerStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
-  maxWidth: '325px',
+  maxWidth: '588px',
   margin: '0 auto 75px',
   display: 'flex',
   flexDirection: 'column',
@@ -46,7 +48,7 @@ const titleStyle: CSSProperties = {
   lineHeight: '48px',
   letterSpacing: '-0.9px',
   color: DEFAULT_TEXT,
-  margin: '75px 0 20px 0'
+  margin: '50px 0 20px 0'
 }
 
 const smallTitleStyle: CSSProperties = {
@@ -79,22 +81,53 @@ const chevronRightStyle: CSSProperties = {
   width: '14px',
   height: '14px',
   marginLeft: '5px',
+  marginRight: '-4px'
 }
 
 const illustrationStyle: CSSProperties = {
-  maxWidth: '500px',
+  maxWidth: '530px',
   width: '45%',
+  minWidth: '450px',
   height: 'auto',
   position: 'absolute',
-  right: '25px',
-  top: '10%'
+  right: 0,
+  top: '-20%'
 }
 
 const smallIllustrationStyle: CSSProperties = {
   width: '100%',
   height: 'auto',
-  maxWidth: '352px',
-  margin: '0 auto'
+  maxWidth: '588px',
+  margin: '0 auto',
+  zIndex: 1,
+  position: 'relative'
+}
+
+const broadbandTestingHeaderContentStyle: CSSProperties = {
+  width: '90%',
+  maxWidth: '1200px',
+  margin: '0 auto',
+  position: 'relative'
+}
+
+const broadbandTestingMapStyle: CSSProperties = {
+  position: 'absolute',
+  maxWidth: '767px',
+  minWidth: '450px',
+  width: '60%',
+  height: 'auto',
+  right: 0,
+  top: '-50%'
+}
+
+const smallBroadbandTestingMapStyle: CSSProperties = {
+  position: 'absolute',
+  width: '150%',
+  height: 'auto',
+  left: '50%',
+  marginLeft: '-75%',
+  bottom: '-25px',
+  zIndex: 0
 }
 
 export const styles = {
@@ -104,4 +137,6 @@ export const styles = {
   Subtitle: (isSmall: boolean) => isSmall ? smallSubtitleStyle : subtitleStyle,
   ChevronRight: chevronRightStyle,
   Illustration: (isSmall: boolean) => isSmall ? smallIllustrationStyle : illustrationStyle,
+  BroadbandTestingHeaderContent: broadbandTestingHeaderContentStyle,
+  BroadbandTestingMap: (isSmall: boolean) => isSmall ? smallBroadbandTestingMapStyle : broadbandTestingMapStyle,
 }

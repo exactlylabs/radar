@@ -4,13 +4,6 @@ const siteMonitoringPageStyle: CSSProperties = {
   width: '100vw'
 }
 
-const siteMonitoringPageContentStyle: CSSProperties = {
-  width: '90%',
-  maxWidth: '1200px',
-  margin: '0 auto',
-}
-
 export const styles = {
   SiteMonitoringPage: siteMonitoringPageStyle,
-  SiteMonitoringPageContent: siteMonitoringPageContentStyle
 }

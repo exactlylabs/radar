@@ -12,7 +12,7 @@ const toolkitRedirectionSectionStyle: CSSProperties = {
   backgroundColor: INVESTMENT_SECTION_BLUE,
   boxShadow: `0 14px 40px -4px ${REDIRECTION_SECTION_BLUE_BOX_SHADOW}`,
   borderRadius: '20px',
-  margin: '-80px auto 50px auto',
+  margin: '-80px auto 0',
   zIndex: 10,
   position: 'relative'
 }
@@ -26,7 +26,7 @@ const smallToolkitRedirectionSectionStyle: CSSProperties = {
   borderRadius: 0,
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'center',
 }
 
 const toolkitRedirectionSectionContentStyle: CSSProperties = {
@@ -38,6 +38,7 @@ const toolkitRedirectionSectionContentStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
+  zIndex: 1,
 }
 
 const smallToolkitRedirectionSectionContentStyle: CSSProperties = {
@@ -45,9 +46,11 @@ const smallToolkitRedirectionSectionContentStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
   height: undefined,
   flexDirection: 'column',
-  marginLeft: undefined,
+  marginLeft: 'calc(-50% + 25px)',
   marginRight: undefined,
-  margin: 'auto',
+  position: 'absolute',
+  top: 0,
+  left: '50%',
 }
 
 const toolkitRedirectionColumnStyle: CSSProperties = {
@@ -121,6 +124,60 @@ const linkChevronStyle: CSSProperties = {
   marginLeft: '5px'
 }
 
+const centerBlueBgStyle: CSSProperties = {
+  position: 'absolute',
+  zIndex: 0,
+  left: 0,
+  bottom: 0,
+  width: '70%',
+  height: 'auto',
+  filter: 'blur(50px)'
+}
+const topRightBgStyle: CSSProperties = {
+  position: 'absolute',
+  zIndex: 0,
+  right: 0,
+  top: 0,
+  width: '35%',
+  height: 'auto'
+}
+const bottomBlueBgStyle: CSSProperties = {
+  position: 'absolute',
+  zIndex: 0,
+  left: 0,
+  bottom: 0,
+  width: '85%',
+  height: 'auto'
+}
+const leftBlueBgStyle: CSSProperties = {
+  position: 'absolute',
+  zIndex: 0,
+  left: 0,
+  bottom: 0,
+  width: '60%',
+  height: '100%'
+}
+
+const smallRedirectBg1Style: CSSProperties = {
+  width: '100%',
+  height: 'auto',
+  zIndex: 0,
+  position: 'relative',
+  left: 0,
+  top: 0,
+  filter: 'blur(50px)'
+}
+
+const smallRedirectBg2Style: CSSProperties = {
+  width: '100%',
+  height: 'auto',
+  zIndex: 0,
+  position: 'relative',
+  right: 0,
+  top: 0,
+  filter: 'blur(50px)'
+}
+
 export const styles = {
   ToolkitRedirectionSection: (isSmall: boolean) => isSmall ? smallToolkitRedirectionSectionStyle : toolkitRedirectionSectionStyle,
   ToolkitRedirectionSectionContent: (isSmall: boolean) => isSmall ? smallToolkitRedirectionSectionContentStyle : toolkitRedirectionSectionContentStyle,
@@ -130,4 +187,10 @@ export const styles = {
   LinkContainer: (isSmall: boolean) => isSmall ? smallLinkContainerStyle : linkContainerStyle,
   Link: linkStyle,
   LinkChevron: linkChevronStyle,
+  CenterBlueBg: centerBlueBgStyle,
+  TopRightBg: topRightBgStyle,
+  BottomBlueBg: bottomBlueBgStyle,
+  LeftBlueBg: leftBlueBgStyle,
+  SmallRedirectBg1: smallRedirectBg1Style,
+  SmallRedirectBg2: smallRedirectBg2Style,
 }

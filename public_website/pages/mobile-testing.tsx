@@ -7,26 +7,24 @@ import RadarRedirect from "../src/components/common/RadarRedirect/RadarRedirect"
 import {ViewportContextProvider} from "../src/context/ViewportContent";
 import Frame from "../src/components/Frame/Frame";
 
-const Mobile = (): ReactElement => {
+const MobileTesting = (): ReactElement => {
 
   useEffect(() => {
-    document.title = 'Radar - Broadband Speed Test for Mobile Devices';
+    document.title = 'Radar - Broadband Speed Test for MobileTesting Devices';
   }, []);
 
   return (
     <ViewportContextProvider>
       <Frame>
         <div style={styles.MobilePage}>
-          <div style={styles.MobilePageContent}>
-            <MobilePageHeader/>
-            <MobilePageCarrousel/>
-            <MobilePageDownload/>
-            <RadarRedirect/>
-          </div>
+          <MobilePageHeader/>
+          <MobilePageCarrousel/>
+          <MobilePageDownload/>
+          <RadarRedirect marginTop={'-90px'}/>
         </div>
       </Frame>
     </ViewportContextProvider>
   );
 }
 
-export default Mobile;
+export default MobileTesting;

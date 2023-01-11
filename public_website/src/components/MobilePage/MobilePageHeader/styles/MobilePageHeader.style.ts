@@ -25,12 +25,12 @@ const textContainerStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
-  alignItems: 'flex-start'
+  alignItems: 'flex-start',
 }
 
 const smallTextContainerStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
-  maxWidth: '325px',
+  maxWidth: '588px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -75,8 +75,9 @@ const smallSubtitleStyle: CSSProperties = {
 }
 
 const heroImageStyle: CSSProperties = {
-  width: '582px',
-  height: 'auto'
+  width: '508px',
+  height: 'auto',
+  marginLeft: '11%'
 }
 
 const smallHeroImageStyle: CSSProperties = {
@@ -94,6 +95,12 @@ const comingSoonContainerStyle: CSSProperties = {
   alignItems: 'flex-start'
 }
 
+const smallComingSoonContainerStyle: CSSProperties = {
+  ...comingSoonContainerStyle,
+  justifyContent: 'center',
+  alignItems: 'center'
+}
+
 const storesIconStyle: CSSProperties = {
   width: '54px',
   height: 'auto',
@@ -107,13 +114,36 @@ const comingSoonTextStyle: CSSProperties = {
   margin: 0
 }
 
+const mobilePageHeaderContentStyle: CSSProperties = {
+  width: '90%',
+  maxWidth: '1200px',
+  margin: '0 auto',
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center'
+}
+
+const smallMobilePageHeaderContentStyle: CSSProperties = {
+  width: 'calc(100% - 50px)',
+  maxWidth: '588px',
+  margin: '0 auto',
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'center'
+}
+
 export const styles = {
   MobilePageHeader: (isSmall: boolean) => isSmall ? smallMobilePageHeaderStyle : mobilePageHeaderStyle,
   TextContainer: (isSmall: boolean) => isSmall ? smallTextContainerStyle : textContainerStyle,
   Title: (isSmall: boolean) => isSmall ? smallTitleStyle : titleStyle,
   Subtitle: (isSmall: boolean) => isSmall ? smallSubtitleStyle : subtitleStyle,
   HeroImage: (isSmall: boolean) => isSmall ? smallHeroImageStyle : heroImageStyle,
-  ComingSoonContainer: comingSoonContainerStyle,
+  ComingSoonContainer: (isSmall: boolean) => isSmall ? smallComingSoonContainerStyle : comingSoonContainerStyle,
   StoresIcon: storesIconStyle,
   ComingSoonText: comingSoonTextStyle,
+  MobilePageHeaderContent: (isSmall: boolean) => isSmall ? smallMobilePageHeaderContentStyle : mobilePageHeaderContentStyle,
 }

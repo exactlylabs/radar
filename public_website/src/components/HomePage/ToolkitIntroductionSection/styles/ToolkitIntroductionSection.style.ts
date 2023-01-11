@@ -1,7 +1,14 @@
 import {CSSProperties} from "react";
 import {DEFAULT_TEXT} from "../../../../utils/colors";
 
+const mainWrapperStyle: CSSProperties = {
+  width: '100vw',
+  height: 'max-content',
+  position: 'relative'
+}
+
 const toolkitIntroductionSectionStyle: CSSProperties = {
+  width: '90%',
   maxWidth: '1200px',
   marginLeft: 'auto',
   marginRight: 'auto',
@@ -9,7 +16,9 @@ const toolkitIntroductionSectionStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'center',
+  zIndex: 1,
+  position: 'relative'
 }
 
 const smallToolkitIntroductionSectionStyle: CSSProperties = {
@@ -22,6 +31,8 @@ const textContainerStyle: CSSProperties = {
   marginLeft: '25%',
   marginRight: '25%',
   textAlign: 'center',
+  position: 'relative',
+  zIndex: 2
 }
 
 const smallTextContainerStyle: CSSProperties = {
@@ -30,6 +41,8 @@ const smallTextContainerStyle: CSSProperties = {
   marginRight: undefined,
   marginLeft: undefined,
   margin: 0,
+  position: 'relative',
+  zIndex: 2
 }
 
 const titleStyle: CSSProperties = {
@@ -38,7 +51,7 @@ const titleStyle: CSSProperties = {
   letterSpacing: '-1px',
   color: DEFAULT_TEXT,
   marginBottom: '20px',
-  marginTop: '120px',
+  marginTop: '100px',
 }
 
 const smallTitleStyle: CSSProperties = {
@@ -48,9 +61,11 @@ const smallTitleStyle: CSSProperties = {
   letterSpacing: '-0.6px',
   marginBottom: undefined,
   marginTop: undefined,
-  margin: '50px auto 15px auto',
-  width: 'calc(100% - 20px)',
-  maxWidth: '425px',
+  margin: '35px auto 15px auto',
+  width: '100%',
+  maxWidth: '588px',
+  position: 'relative',
+  zIndex: 2
 }
 
 const subtitleStyle: CSSProperties = {
@@ -67,19 +82,80 @@ const smallSubtitleStyle: CSSProperties = {
   lineHeight: '26px',
   width: '100%',
   maxWidth: '445px',
+  position: 'relative',
+  zIndex: 2
 }
 
 const chevronRightStyle: CSSProperties = {
   width: '14px',
   height: '14px',
   marginLeft: '5px',
+  marginRight: '-4px'
 }
 
 const buttonContainerStyle: CSSProperties = {
   width: 'max-content',
   height: 'max-content',
   margin: 'auto',
-  marginBottom: '70px'
+  marginBottom: '70px',
+  position: 'relative',
+  zIndex: 2
+}
+
+const blueHeroBgStyle: CSSProperties = {
+  position: 'absolute',
+  top: '-50px',
+  left: '-100px',
+  zIndex: 0,
+  width: '800px',
+  height: 'auto',
+  filter: 'blur(50px)'
+}
+
+const smallBlueHeroBgStyle: CSSProperties = {
+  ...blueHeroBgStyle,
+  width: '100%',
+  top: 0,
+  left: '-25px',
+  opacity: 0.9
+}
+
+const pinkHeroBgStyle: CSSProperties = {
+  position: 'absolute',
+  top: '-50px',
+  right: '-50px',
+  zIndex: 0,
+  width: '500px',
+  height: 'auto',
+  filter: 'blur(50px)'
+}
+
+const smallPinkHeroBgStyle: CSSProperties = {
+  ...pinkHeroBgStyle,
+  width: '100%',
+  top: 0,
+  right: '-100px',
+  opacity: 0.9
+}
+
+const orangeHeroBgStyle: CSSProperties = {
+  position: 'absolute',
+  top: 0,
+  left: '60%',
+  zIndex: 0,
+  marginLeft: '-500px',
+  width: '1000px',
+  height: 'auto',
+  filter: 'blur(50px)'
+}
+
+const smallOrangeHeroBgStyle: CSSProperties = {
+  ...orangeHeroBgStyle,
+  width: '100%',
+  left: 0,
+  top: 0,
+  marginLeft: undefined,
+  opacity: 0.9
 }
 
 export const styles = {
@@ -97,4 +173,8 @@ export const styles = {
   },
   ChevronRight: chevronRightStyle,
   ButtonContainer: buttonContainerStyle,
+  BlueHeroBg: (isSmall: boolean) => isSmall ? smallBlueHeroBgStyle : blueHeroBgStyle,
+  PinkHeroBg: (isSmall: boolean) => isSmall ? smallPinkHeroBgStyle : pinkHeroBgStyle,
+  OrangeHeroBg: (isSmall: boolean) => isSmall ? smallOrangeHeroBgStyle : orangeHeroBgStyle,
+  MainWrapper: mainWrapperStyle,
 }

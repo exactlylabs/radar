@@ -23,3 +23,4 @@ export const CARROUSEL_ITEM_BORDER = 'rgba(75, 123, 229, 0.25)';
 export const HIGHLIGHTER = 'rgba(222, 230, 249, 0.5)';
 export const PILL = '#dee6f9';
 export const PILL_BG = 'rgba(75, 123, 229, 0.1)';
+export const SPECIAL_FOOTER = '#f1f4fd';

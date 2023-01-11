@@ -4,12 +4,13 @@ import {DEFAULT_PRIMARY_BUTTON, DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT, PILL, PILL
 const mobilePageDownloadStyle: CSSProperties = {
   width: '90%',
   maxWidth: '588px',
-  margin: '80px auto 180px',
+  margin: '160px auto 180px',
   textAlign: 'center'
 }
 
 const smallMobilePageDownloadStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
+  maxWidth: '588px',
   margin: '60px auto',
   textAlign: 'center',
   display: 'flex',
