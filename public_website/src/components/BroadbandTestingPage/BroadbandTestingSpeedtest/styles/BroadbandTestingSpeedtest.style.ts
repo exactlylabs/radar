@@ -15,7 +15,7 @@ const smallBroadbandTestingSpeedtestStyle: CSSProperties = {
 }
 
 const broadbandTestingSpeedtestContentStyle: CSSProperties = {
-  width: '100%',
+  width: '90%',
   maxWidth: '1200px',
   marginLeft: 'auto',
   marginRight: 'auto',

@@ -91,14 +91,14 @@ const illustrationStyle: CSSProperties = {
   height: 'auto',
   position: 'absolute',
   right: 0,
-  top: '-20%'
+  top: '-50px'
 }
 
 const smallIllustrationStyle: CSSProperties = {
-  width: '100%',
+  width: '75%',
   height: 'auto',
   maxWidth: '588px',
-  margin: '0 auto',
+  margin: '50px auto 0',
   zIndex: 1,
   position: 'relative'
 }
@@ -117,16 +117,17 @@ const broadbandTestingMapStyle: CSSProperties = {
   width: '60%',
   height: 'auto',
   right: 0,
-  top: '-50%'
+  top: '-100px'
 }
 
 const smallBroadbandTestingMapStyle: CSSProperties = {
   position: 'absolute',
-  width: '150%',
+  width: '100%',
+  maxWidth: '800px',
   height: 'auto',
   left: '50%',
-  marginLeft: '-75%',
-  bottom: '-25px',
+  marginLeft: '-50%',
+  bottom: '25px',
   zIndex: 0
 }
 

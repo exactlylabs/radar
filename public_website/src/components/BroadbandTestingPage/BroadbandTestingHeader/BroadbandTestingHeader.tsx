@@ -17,8 +17,6 @@ const BroadbandTestingHeader = (): ReactElement => {
   return (
     <div style={styles.BroadbandTestingHeader(isSmall)}>
       <div style={styles.BroadbandTestingHeaderContent}>
-        <img src={BroadbandTestingMap} alt={'broadband testing map'} style={styles.BroadbandTestingMap(isSmall)}/>
-        <img src={BroadbandTestingIllustration} style={styles.Illustration(isSmall)} alt={'broadband-testing-illustration'}/>
         <div style={styles.TextContainer(isSmall)}>
           <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Where are the gaps in you broadband maps?</p>
           <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Discover the neighborhoods and streets with the most needs and make the most out of your investment.</p>
@@ -29,6 +27,8 @@ const BroadbandTestingHeader = (): ReactElement => {
                         color={WHITE}
                         boxShadow={`0 4px 15px -2px ${DEFAULT_PRIMARY_BUTTON_BOX_SHADOW}`}
           />
+          <img src={BroadbandTestingMap} alt={'broadband testing map'} style={styles.BroadbandTestingMap(isSmall)}/>
+          <img src={BroadbandTestingIllustration} style={styles.Illustration(isSmall)} alt={'broadband-testing-illustration'}/>
         </div>
       </div>
     </div>
