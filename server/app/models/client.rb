@@ -113,15 +113,20 @@ class Client < ApplicationRecord
     if self.data_cap_current_period.nil?
       return Time.current
     end
+    t = Time.current
     if self.daily?
-      return self.data_cap_current_period.tomorrow.to_date
+      t = self.data_cap_current_period.tomorrow.to_date
     elsif self.weekly?
-      return self.data_cap_current_period.next_week.to_date
+      t = self.data_cap_current_period.next_week.to_date
     elsif self.monthly?
-      return self.data_cap_current_period.next_month.at_beginning_of_month.to_date
+      t = self.data_cap_current_period.next_month.at_beginning_of_month.to_date
     elsif self.yearly?
-      return self.data_cap_current_period.next_year.at_beginning_of_year.to_date
+      t = self.data_cap_current_period.next_year.at_beginning_of_year.to_date
     end
+    if t < Time.now
+      t = Time.now
+    end
+    return t
   end
 
   def self.refresh_outdated_data_usage!
@@ -155,20 +160,26 @@ class Client < ApplicationRecord
   end
 
   def next_schedule_period_end
+    t = nil
     case self.scheduling_periodicity
     when "scheduler_hourly"
-      self.scheduling_period_end.nil? ? Time.now.at_end_of_hour : self.scheduling_period_end.advance(hours: 1).at_end_of_hour
+      t = self.scheduling_period_end.nil? ? Time.now.at_end_of_hour : self.scheduling_period_end.advance(hours: 1).at_end_of_hour
 
     when "scheduler_daily"
-      self.scheduling_period_end.nil? ? Time.now.at_end_of_day : self.scheduling_period_end.next_day.at_end_of_day
+      t = self.scheduling_period_end.nil? ? Time.now.at_end_of_day : self.scheduling_period_end.next_day.at_end_of_day
 
     when "scheduler_weekly"
-      self.scheduling_period_end.nil? ? Time.now.at_end_of_week : self.scheduling_period_end.next_week.at_end_of_week
+      t = self.scheduling_period_end.nil? ? Time.now.at_end_of_week : self.scheduling_period_end.next_week.at_end_of_week
 
     when "scheduler_monthly"
-      self.scheduling_period_end.nil? ? Time.now.at_end_of_month : self.scheduling_period_end.next_month.at_end_of_the_month
+      t = self.scheduling_period_end.nil? ? Time.now.at_end_of_month : self.scheduling_period_end.next_month.at_end_of_the_month
 
     end
+    if t < Time.now
+      self.scheduling_period_end = nil
+      t = next_schedule_period_end
+    end
+    return t
   end
 
   def schedule_next_test!(force=false)
@@ -185,7 +196,7 @@ class Client < ApplicationRecord
     if self.scheduling_tests_in_period >= self.scheduling_amount_per_period
       # We finished the number of tests for this period, change it to the next one
       self.scheduling_tests_in_period = 0
-      base_timestamp = self.scheduling_period_end
+      base_timestamp = self.scheduling_period_end if self.scheduling_period_end > base_timestamp
       self.scheduling_period_end = self.next_schedule_period_end
     elsif self.scheduling_period_end < Time.now
       # It's time to set the next period
