@@ -193,6 +193,7 @@ class Client < ApplicationRecord
       self.scheduling_tests_in_period = 0
       base_timestamp = self.scheduling_period_end
       self.scheduling_period_end = self.next_schedule_period_end
+    end
     
     if self.scheduling_period_end < Time.now
       # It's time to set the next period
