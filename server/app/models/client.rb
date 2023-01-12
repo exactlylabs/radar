@@ -155,19 +155,25 @@ class Client < ApplicationRecord
   end
 
   def next_schedule_period_end
+    t = nil
     case self.scheduling_periodicity
     when "scheduler_hourly"
-      self.scheduling_period_end.nil? ? Time.now.at_end_of_hour : self.scheduling_period_end.advance(hours: 1).at_end_of_hour
+      t = self.scheduling_period_end.nil? ? Time.now.at_end_of_hour : self.scheduling_period_end.advance(hours: 1).at_end_of_hour
 
     when "scheduler_daily"
-      self.scheduling_period_end.nil? ? Time.now.at_end_of_day : self.scheduling_period_end.next_day.at_end_of_day
+      t = self.scheduling_period_end.nil? ? Time.now.at_end_of_day : self.scheduling_period_end.next_day.at_end_of_day
 
     when "scheduler_weekly"
-      self.scheduling_period_end.nil? ? Time.now.at_end_of_week : self.scheduling_period_end.next_week.at_end_of_week
+      t = self.scheduling_period_end.nil? ? Time.now.at_end_of_week : self.scheduling_period_end.next_week.at_end_of_week
 
     when "scheduler_monthly"
-      self.scheduling_period_end.nil? ? Time.now.at_end_of_month : self.scheduling_period_end.next_month.at_end_of_the_month
+      t = self.scheduling_period_end.nil? ? Time.now.at_end_of_month : self.scheduling_period_end.next_month.at_end_of_the_month
 
+    end
+    if t < Time.now
+      # The final period is way behind, better to reset it
+      self.scheduling_period_end = nil
+      return next_schedule_period_end
     end
   end
 
@@ -187,7 +193,8 @@ class Client < ApplicationRecord
       self.scheduling_tests_in_period = 0
       base_timestamp = self.scheduling_period_end
       self.scheduling_period_end = self.next_schedule_period_end
-    elsif self.scheduling_period_end < Time.now
+    
+    if self.scheduling_period_end < Time.now
       # It's time to set the next period
       self.scheduling_tests_in_period = 0
       self.scheduling_period_end = self.next_schedule_period_end
