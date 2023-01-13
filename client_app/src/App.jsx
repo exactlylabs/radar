@@ -1,5 +1,5 @@
 import './App.css';
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import {ConfigContextProvider} from "./context/ConfigContext";
 import AllResultsPage from './components/AllResultsPage/AllResultsPage';
 import Frame from './components/Frame/Frame';
@@ -16,7 +16,17 @@ const App = ({ config }) => {
   let theme = createTheme();
   theme = responsiveFontSizes(theme);
 
-  const [step, setStep] = useState(STEPS.SPEED_TEST);
+  const getConfigTab = (tab) => {
+    if(!tab) return STEPS.SPEED_TEST;
+    switch (tab) {
+      case 0: return STEPS.SPEED_TEST;
+      case 1: return STEPS.HISTORY;
+      case 2: return STEPS.ALL_RESULTS;
+      default: return STEPS.SPEED_TEST;
+    }
+  }
+
+  const [step, setStep] = useState(getConfigTab(config.tab) ?? STEPS.SPEED_TEST);
   const [hasRecentTest, setHasRecentTest] = useState(false);
   const [givenLocation, setGivenLocation] = useState(null);
   const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(steps.CONNECTION_ADDRESS);

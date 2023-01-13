@@ -110,7 +110,11 @@ const SpeedResultsBox = ({
     let style = mobileFilterListStyle;
     const element = document.getElementById('main-frame');
     const {x, y, width, height} = element.getBoundingClientRect();
-    style = {...style, top: (y + height - 300)}
+    if(config.webviewMode) {
+      style = {...style, top: 'calc(100vh - 125px - 25px)' }
+    } else {
+      style = {...style, top: (y + height - 300)}
+    }
     return (
       <div style={style} id={'speed-results-box--mobile-filters'}>
         <MyFiltersList currentFilter={filterTypes[currentFilterType]}
@@ -123,10 +127,8 @@ const SpeedResultsBox = ({
 
   const getFloatingFilterTypeSwitch = () => {
     let style = mobileFilterSwitcherContainerStyle;
-    if(config.widgetMode) {
-      const element = document.getElementById('main-frame');
-      const {x, y, width, height} = element.getBoundingClientRect();
-      style = {...style, position: 'absolute', bottom: null, top: 0, left: 50}
+    if(config.widgetMode || config.webviewMode) {
+      style = {...style, position: 'absolute', bottom: null, top: 0, left: config.noZoomControl ? 15 : 50}
     }
     return (
       <div style={style}>
