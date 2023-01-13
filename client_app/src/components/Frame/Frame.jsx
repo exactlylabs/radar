@@ -46,6 +46,7 @@ const Frame = ({ config, children, step, setStep }) => {
   const getFrameStyleBasedOnCurrentTab = () => {
     if(step === STEPS.ALL_RESULTS) {
       if(config.widgetMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height} - 175px`};
+      else if(config.webviewMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height}`};
       return isMediumSizeScreen || isSmallSizeScreen ? mobileFullWidthWrapperStyle : fullWidthWrapperStyle;
     } else {
       return childrenWrapperStyle;
@@ -54,7 +55,7 @@ const Frame = ({ config, children, step, setStep }) => {
 
   const getWrapperStyle = () => {
     let baseStyle;
-    if(config.widgetMode) baseStyle = widgetMainWrapperStyle;
+    if(config.widgetMode || config.webviewMode) baseStyle = widgetMainWrapperStyle;
     else baseStyle = defaultMainWrapperStyle;
     return {...baseStyle, ...config.frameStyle};
   }
@@ -62,6 +63,8 @@ const Frame = ({ config, children, step, setStep }) => {
   const getMinHeight = () => {
     if(config.widgetMode) {
       return `calc(${config.frameStyle.height} - 175px)`;
+    } else if(config.webviewMode) {
+      return `${config.frameStyle.height}`;
     } else {
       return `calc(${config.frameStyle.height} - 70px - 173px - 53px)`;
     }
@@ -69,13 +72,13 @@ const Frame = ({ config, children, step, setStep }) => {
 
   return (
     <div style={getWrapperStyle()} id={'main-frame'}>
-      {!config.widgetMode && <Header setStep={setStep}/>}
-      <Tabs step={step} setStep={setStep}/>
+      {!config.widgetMode && !config.webviewMode && <Header setStep={setStep}/>}
+      {!config.webviewMode && <Tabs step={step} setStep={setStep}/> }
       <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: getMinHeight() }} id={'frame--main-frame-wrapper'}>
         {children}
       </div>
-      {!config.widgetMode && <Footer />}
-      {config.widgetMode && <WidgetFooter />}
+      {!config.widgetMode && !config.webviewMode && <Footer />}
+      {config.widgetMode && !config.webviewMode && <WidgetFooter />}
     </div>
   );
 };

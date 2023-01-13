@@ -21,7 +21,10 @@ const baseInitConfig = {
   frameStyle: {
     width: '100vw',
     height: '100vh',
-  }
+  },
+  tab: 0,
+  noZoomControl: false,
+  webviewMode: false,
 }
 
 const checkConfig = config => {
@@ -43,7 +46,12 @@ const checkConfig = config => {
 };
 
 const hasParams = () => {
-  return window.location.search.includes('widgetMode');
+  return window.location.search.includes('widgetMode') ||
+    window.location.search.includes('frameWidth') ||
+    window.location.search.includes('frameHeight') ||
+    window.location.search.includes('tab') ||
+    window.location.search.includes('noZoomControl') ||
+    window.location.search.includes('webviewMode');
 }
 
 const getConfigFromParams = () => {
@@ -58,6 +66,12 @@ const getConfigFromParams = () => {
     } else if(param.includes('frameHeight')) {
       if(!config.frameStyle) config.frameStyle = {};
       config.frameStyle.height = param.split('=')[1];
+    } else if(param.includes('tab')) {
+      config.tab = parseInt(param.split('=')[1]);
+    } else if(param.includes('noZoomControl')) {
+      config.noZoomControl = param.split('=')[1] === 'true';
+    } else if(param.includes('webviewMode')) {
+      config.webviewMode = param.split('=')[1] === 'true';
     }
   });
   return config;
@@ -67,7 +81,10 @@ export default {
   config: config => {
     init = null;
     if (checkConfig(config)) init = config;
-    if (hasParams()) init = {...baseInitConfig, ...getConfigFromParams()};
+    if (hasParams()) {
+      if(!!init) init = { ...baseInitConfig, ...init, ...getConfigFromParams() };
+      else init = {...baseInitConfig, ...getConfigFromParams()};
+    }
   },
   new: () => {
     Sentry.setUser({ id: init.clientId });

@@ -104,6 +104,8 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     if(config.widgetMode) {
       const widgetHeight = config.frameStyle.height;
       return `calc(${widgetHeight} - 53px - 55px)`;
+    } else if(config.webviewMode) {
+      return '100%';
     }
     if(isMediumSizeScreen || isSmallSizeScreen) return 'calc(99vh - 125px)';
     else return `calc(${maxHeight} - 70px - 173px - 53px)`;
@@ -143,7 +145,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
             zoom={14}
             scrollWheelZoom
             style={{ height: getMapContainerHeight(), margin: 0, position: 'relative' }}
-            zoomControl={isMediumSizeScreen || isSmallSizeScreen || config.widgetMode}
+            zoomControl={(isMediumSizeScreen || isSmallSizeScreen || config.widgetMode) && !config.noZoomControl}
           >
             <MyMap position={requestArea}
                    shouldRecenter={shouldRecenter}
