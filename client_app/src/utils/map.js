@@ -1,13 +1,18 @@
 import L from 'leaflet';
+import MapMarker from '../assets/map-marker.png';
+import MapMarkerBg from '../assets/map-marker-shadow.png';
 
 export const mapTileUrl = MAPBOX_TILESET_URL;
 export const mapTileAttribution =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
 export const customMarker = new L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.5.1/dist/images/marker-icon.png',
-  iconSize: [25, 41],
-  iconAnchor: [10, 41],
-  popupAnchor: [2, -40],
+  iconUrl: MapMarker,
+  shadowUrl: MapMarkerBg,
+  iconSize:     [32, 38], // size of the icon
+  shadowSize:   [132, 132], // size of the shadow
+  iconAnchor:   [16, 38], // point of the icon which will correspond to marker's location
+  shadowAnchor: [65, 85],  // the same for the shadow
 });
 
 export const SMALL_SCREEN_MAP_HEIGHT = 400;

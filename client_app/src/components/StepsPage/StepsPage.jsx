@@ -47,13 +47,17 @@ const StepsPage = ({
       postal_code: '',
       house_number: ''
     },
-    confirmedLocation: true, // TODO: change to false and create location confirmation modal
     terms: false,
     networkLocation: null,
     networkType: null,
     networkCost: '', // init with empty string to prevent console error regarding controlled vs. uncontrolled input value change
   });
   const [lastTestResults, setLastTestResults] = useState(null);
+  const [canProceedToStep2, setCanProceedToStep2] = useState(false);
+  const [geolocationError, setGeolocationError] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(false);
+  const [confirmedAddress, setConfirmedAddress] = useState(false);
+
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const setAddress = address => setUserStepData(prevState => ({...prevState, address}));
@@ -97,25 +101,40 @@ const StepsPage = ({
     }
   }, []);
 
-  const checkAndOpenModal = () => {
+  useEffect(() => {
+    if(geolocationError) setError(errors.LOCATION_ACCESS_ERROR);
+  }, [geolocationError]);
+
+  useEffect(() => {
+    if(selectedSuggestion) setCanProceedToStep2(true);
+  }, [selectedSuggestion]);
+
+  const checkAndOpenModal = (addressSync = null) => {
     setError(null);
-    const { address, confirmedLocation, terms } = userStepData;
-    if(address.address === '') {
+    const { address } = userStepData;
+    if(address.address === '' && !addressSync) {
       setError(errors.NO_LOCATION_ERROR);
-    } else if(!terms) {
-      setError(errors.NO_TERMS_ERROR);
-    } else if(address.name !== '' && confirmedLocation && terms) {
+    } else if(!!address.address && !canProceedToStep2 && selectedSuggestion) {
       setIsModalOpen(true);
     }
   }
 
-  const goToPage2 = async (finalCoordinates) => {
+  const goToPage2 = async (isConfirmingAddress = false) => {
     try {
-      const address = await getAddressForCoordinates(finalCoordinates);
-      setAddress(address);
+      const { terms } = userStepData;
+      if(!terms) {
+        setError(errors.NO_TERMS_ERROR);
+        return;
+      }
+      setError(null);
+      if(!confirmedAddress && !isConfirmingAddress) {
+        setIsModalOpen(true);
+        return;
+      }
+      setConfirmedAddress(true);
       setCurrentStep(steps.CONNECTION_PLACEMENT);
     } catch (e) {
-      setError('There was an error saving your address! Please try again later.');
+      setError(errors.SAVE_ERROR);
     }
   }
 
@@ -140,17 +159,33 @@ const StepsPage = ({
 
   const goToConnectionType = () => setCurrentStep(steps.CONNECTION_TYPE);
 
+  const storeCoordinates = async (finalCoordinates) => {
+      try {
+        const address = await getAddressForCoordinates(finalCoordinates);
+        setAddress(address);
+        setCanProceedToStep2(true);
+        setConfirmedAddress(true);
+      } catch (e) {
+        setError(errors.SAVE_ERROR);
+      }
+  }
+
   const getCurrentPage = () => {
     switch (currentStep) {
       case steps.CONNECTION_ADDRESS:
-        return <LocationSearchStepPage goForward={goToPage2}
+        return <LocationSearchStepPage confirmAddress={storeCoordinates}
                                        error={error}
                                        setAddress={setAddress}
                                        setTerms={setTerms}
                                        isModalOpen={isModalOpen}
                                        setIsModalOpen={setIsModalOpen}
-                                       checkAndOpenModal={checkAndOpenModal}
+                                       handleContinue={canProceedToStep2 ? goToPage2 : checkAndOpenModal}
                                        currentAddress={userStepData.address}
+                                       setGeolocationError={setGeolocationError}
+                                       confirmedAddress={canProceedToStep2 && confirmedAddress}
+                                       setSelectedSuggestion={setSelectedSuggestion}
+                                       selectedSuggestion={selectedSuggestion}
+                                       goToNextPage={canProceedToStep2 ? goToPage2 : undefined}
         />;
       case steps.CONNECTION_PLACEMENT:
         return <ConnectionPlacementStepPage goForward={goToPage3}
@@ -187,14 +222,19 @@ const StepsPage = ({
       case steps.NO_INTERNET:
         return <NoInternetStepPage goToMapPage={goToMapPage}/>
       default:
-        return <LocationSearchStepPage goForward={goToPage2}
+        return <LocationSearchStepPage confirmAddress={storeCoordinates}
                                        error={error}
                                        setAddress={setAddress}
                                        setTerms={setTerms}
                                        isModalOpen={isModalOpen}
                                        setIsModalOpen={setIsModalOpen}
                                        checkAndOpenModal={checkAndOpenModal}
+                                       handleContinue={canProceedToStep2 ? goToPage2 : checkAndOpenModal}
                                        currentAddress={userStepData.address}
+                                       setGeolocationError={setGeolocationError}
+                                       confirmedAddress={canProceedToStep2}
+                                       setSelectedSuggestion={setSelectedSuggestion}
+                                       goToNextPage={canProceedToStep2 ? goToPage2 : undefined}
         />;
     }
   }

@@ -10,9 +10,13 @@ import {MyForwardButton} from "../../../common/MyForwardButton";
 import {ArrowForward} from "@mui/icons-material";
 import {MapContainer, Marker, TileLayer} from "react-leaflet";
 import {MyMap} from "../../../common/MyMap";
-import {customMarker, mapTileAttribution, mapTileUrl} from "../../../../utils/map";
+import {
+  customMarker,
+  mapTileAttribution,
+  mapTileUrl
+} from "../../../../utils/map";
 import {useContext, useEffect, useMemo, useRef, useState} from "react";
-import {getSuggestions} from "../../../../utils/apiRequests";
+import {getAddressForCoordinates, getSuggestions, getUserApproximateCoordinates} from "../../../../utils/apiRequests";
 import {notifyError} from "../../../../utils/errors";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 import ConfigContext from "../../../../context/ConfigContext";
@@ -93,15 +97,18 @@ const subtitleStyle = {
 const MyMapModal = ({
   isOpen,
   setIsOpen,
-  goForward,
+  confirmAddress,
   address,
+  isGeneric,
+  setAddress,
+  goToNextPage
 }) => {
 
   const config = useContext(ConfigContext);
   const markerRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [addressCoordinates, setAddressCoordinates] = useState(address.coordinates);
+  const [addressCoordinates, setAddressCoordinates] = useState(address?.coordinates ?? []);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   useEffect(() => {
@@ -113,21 +120,33 @@ const MyMapModal = ({
       } else {
         setError(true);
       }
-      setLoading(false);
     }
-    if(address?.coordinates) {
+    const fetchUserCoordinates = async () => {
+      setError(null);
+      const coords = await getUserApproximateCoordinates();
+      setAddressCoordinates(coords);
+    }
+    if (address?.coordinates) {
       setAddressCoordinates(address.coordinates);
     }
-    if (isOpen && address.coordinates.length === 0) {
-      setLoading(true);
-      fetchSuggestions()
-        .catch(err => {
-          notifyError(err);
-          setError('Failed to fetch for suggestions. Please try again later.');
-        })
-        .finally(() => setLoading(false));
+    if(isOpen) {
+      if (!address) {
+        setLoading(true);
+        fetchUserCoordinates()
+          .catch(err => setError(err))
+          .finally(() => setLoading(false));
+        return;
+      }
+      if (address.coordinates.length === 0) {
+        setLoading(true);
+        fetchSuggestions()
+          .catch(err => {
+            notifyError(err);
+          })
+          .finally(() => setLoading(false));
+      }
     }
-  }, [isOpen, address.coordinates]);
+  }, [isOpen, address?.coordinates]);
 
   const eventHandlers = useMemo(
     () => ({
@@ -154,7 +173,20 @@ const MyMapModal = ({
 
   const closeModal = () => setIsOpen(false);
 
-  const confirmCoordinates = () => goForward(addressCoordinates)
+  const confirmCoordinates = async () => {
+    const address = await getAddressForCoordinates(addressCoordinates);
+    setAddress(address);
+    confirmAddress(addressCoordinates);
+    closeModal();
+  }
+
+  const handleContinue = () => {
+    if(goToNextPage) {
+      goToNextPage(true);
+    } else {
+      confirmCoordinates();
+    }
+  }
 
   return (
     <Modal open={isOpen}
@@ -163,15 +195,15 @@ const MyMapModal = ({
     >
       <Box sx={boxStyle}>
         <div style={headerStyle}>
-          <MyModalTitle text={'Confirm your location'}/>
-          <div style={subtitleStyle}>You can move the marker to your approximate location.</div>
+          <MyModalTitle text={isGeneric ? 'Tell us your location' : 'Confirm your location'}/>
+          <div style={subtitleStyle}>{isGeneric ? 'Zoom the map and drag the marker to tell us your current location.' : 'You can move the marker to your approximate location.'}</div>
         </div>
         <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileMapContainerStyle : mapContainerStyle}>
           {
             !loading && addressCoordinates.length > 0 &&
             <MapContainer
               center={addressCoordinates}
-              zoom={20}
+              zoom={isGeneric ? 12 : 20}
               scrollWheelZoom
               style={{height: '100%', maxWidth: 800}}
             >
@@ -198,7 +230,7 @@ const MyMapModal = ({
           />
           <MyForwardButton text={'Confirm location'}
                            icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
-                           onClick={confirmCoordinates}
+                           onClick={handleContinue}
           />
         </div>
       </Box>

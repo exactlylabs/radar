@@ -42,7 +42,8 @@ const SuggestionRow = ({
     if(suggestion) {
       // always set first element as 'selected'
       const firstElement = document.getElementById('row-0');
-      firstElement.classList.add('selected');
+      if(firstElement) firstElement.classList.add('selected');
+      else document.getElementById('row--1').classList.add('selected');
     }
   }, [suggestion]);
 
@@ -51,7 +52,7 @@ const SuggestionRow = ({
   }, [selected]);
 
   const setHovered = () => {
-    setSelected(index);
+    setSelected && setSelected(index);
     const thisRow = document.getElementById(`row-${index}`);
     const hoveredElements = document.getElementsByClassName('selected');
     if(hoveredElements.length > 0) {
@@ -67,7 +68,9 @@ const SuggestionRow = ({
   }
 
   const autofillInputAndCloseSuggestions = () => {
-    autofillInput(index, suggestion);
+    if(index > 0) {
+      autofillInput(index, suggestion);
+    }
     setOpen(false);
   }
 

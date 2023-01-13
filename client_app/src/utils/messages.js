@@ -3,6 +3,7 @@ export const errors = {
   LOCATION_ACCESS_ERROR:
     'We could not detect your current location. Make sure you enable location access in your browser and try again.',
   NO_TERMS_ERROR: 'Please confirm that you agree to the Terms of Use and Privacy Policy before continuing.',
+  SAVE_ERROR: 'There was an error saving your address! Please try again later.'
 };
 
 export const warnings = {

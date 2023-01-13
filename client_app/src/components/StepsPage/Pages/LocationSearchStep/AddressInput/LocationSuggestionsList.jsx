@@ -17,9 +17,7 @@ const suggestionsContainerStyle = {
   padding: 5,
   left: '50%',
   transform: 'translate(-50%, -35px)',
-  maxHeight: 200,
-  overflowY: 'scroll',
-  overflowX: 'hidden',
+  maxHeight: 250,
 }
 
 const emptySuggestionStyle = {
@@ -31,11 +29,18 @@ const emptySuggestionStyle = {
   paddingLeft: 20
 }
 
+const scrollableContainerStyle = {
+  width: '100%',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+}
+
 const LocationSuggestionsList = ({
   suggestions,
   autofillInput,
   open,
-  setOpen
+  setOpen,
+  currentInputValue
 }) => {
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -81,8 +86,9 @@ const LocationSuggestionsList = ({
 
   return (
     <div id={'suggestions-list-container'} style={open ? suggestionsContainerStyle : invisibleStyle}>
-      {
-        suggestions?.length > 0 ?
+      <div style={scrollableContainerStyle}>
+        {
+          !!suggestions &&
           suggestions.map((suggestion, index) => (
             <SuggestionRow key={index}
                            suggestion={suggestion}
@@ -92,9 +98,18 @@ const LocationSuggestionsList = ({
                            autofillInput={autofillInput}
                            setOpen={setOpen}
             />
-          )) :
-          <div style={emptySuggestionStyle}>No suggestions for given address.</div>
-      }
+          ))
+        }
+        { !!currentInputValue &&
+          <SuggestionRow key={'current-input-value'}
+                         suggestion={{address: currentInputValue}}
+                         index={-1}
+                         selected={suggestions?.length === 0 || selectedIndex === -1}
+                         setSelected={setSelectedIndex}
+                         setOpen={setOpen}
+          />
+        }
+      </div>
     </div>
   )
 }

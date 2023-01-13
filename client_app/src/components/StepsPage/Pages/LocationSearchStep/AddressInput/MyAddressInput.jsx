@@ -1,18 +1,19 @@
 import {
   DEFAULT_ADDRESS_INPUT_BACKGROUND_COLOR,
   DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR,
-  RED
+  RED, WHITE
 } from "../../../../../utils/colors";
 import {DEFAULT_FONT_FAMILY} from "../../../../../utils/fonts";
 import {TextField} from "@mui/material";
-import locationButtonIcon from '../../../../../assets/location-button.png';
+import rightArrowWhite from '../../../../../assets/right-arrow-white.png';
 import LocationButtonSmall from '../../../../../assets/location-icon-small.png';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import MySpinner from "../../../../common/MySpinner";
 import LocationSuggestionsList from "./LocationSuggestionsList";
 import {debounce} from "../../../../../utils/debouncer";
 import {getAddressForCoordinates, getGeocodedAddress, getSuggestions} from "../../../../../utils/apiRequests";
 import {notifyError} from "../../../../../utils/errors";
+import {errors} from "../../../../../utils/messages";
 
 const addressInputWrapperStyle = {
   width: '80%',
@@ -42,8 +43,8 @@ const addressInputStyle = {
 }
 
 const inputAdornmentStyle = {
-  height: '100%',
   width: 44,
+  height: 44,
   position: 'absolute',
   right: 10,
   display: 'flex',
@@ -55,8 +56,9 @@ const errorMessageStyle = {
   color: RED
 }
 
-const locationButtonStyle = {
-  cursor: 'pointer',
+const rightArrowStyle = {
+  width: 14,
+  height: 14,
 }
 
 const useCurrentLocationStyle = {
@@ -78,25 +80,55 @@ const useLocationStyle = {
   color: DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR
 }
 
-const MyAddressInput = ({ setAddress }) => {
+const continueButtonStyle = {
+  width: '44px',
+  height: '44px',
+  borderRadius: '10px',
+  backgroundColor: DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  boxShadow: '0 4px 15px -2px rgba(75, 123, 229, 0.5)'
+}
 
-  const [error, setError] = useState(false);
-  const [suggestions, setSuggestions] = useState(null);
+const disabledContinueButtonStyle = {
+  ...continueButtonStyle,
+  opacity: 0.3
+}
+
+const MyAddressInput = ({
+  setAddress,
+  handleContinue,
+  currentAddress,
+  setGeolocationError,
+  openGenericLocationModal,
+  confirmedAddress,
+  setSelectedSuggestion,
+  selectedSuggestion,
+  openSuggestionsModal,
+  suggestions,
+  setSuggestions
+}) => {
+
+  const [error, setError] = useState(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [suggestionsListOpen, setSuggestionsListOpen] = useState(false);
 
+  useEffect(() => {
+    document.getElementById('address-input').value = currentAddress.address;
+  }, [currentAddress]);
+
   const handleInputChange = debounce( async (e) => {
+    setAddress({address: e.target.value, coordinates: []});
     if(!e.target.value) {
       setSuggestionsListOpen(false);
     } else {
       setLocationLoading(true);
-      setAddress({address: e.target.value, coordinates: []});
       try {
         const suggestions = await getSuggestions(e.target.value);
         setSuggestions(suggestions);
       } catch (e) {
         notifyError(e);
-        setError('Failed to fetch for suggestions. Please try again later.');
       }
       setLocationLoading(false);
     }
@@ -107,6 +139,7 @@ const MyAddressInput = ({ setAddress }) => {
     const selectedRowText = document.getElementById(`row-${id}-text`);
     addressInputElement.value = selectedRowText.innerText;
     setAddress(selectedAddress);
+    setSelectedSuggestion(true);
   }
 
   const handleOpenSuggestions = () => {
@@ -117,10 +150,17 @@ const MyAddressInput = ({ setAddress }) => {
   }
 
   const fetchAddress = async (coordinates) => {
+    setGeolocationError(false);
     const address = await getAddressForCoordinates(coordinates);
+    if(address.coordinates.length === 0) {
+      openGenericLocationModal();
+      return;
+    }
+    setAddress(address);
+    setSelectedSuggestion(true);
+    handleContinue(address.address);
     const addressInputElement = document.getElementById('address-input');
     addressInputElement.value = address.address;
-    setAddress(address);
   }
 
   const triggerAutoLocation = () => {
@@ -132,10 +172,19 @@ const MyAddressInput = ({ setAddress }) => {
             .catch(err => setError(err))
             .finally(() => setLocationLoading(false));
         },
-        notifyError,
+        (err) => {
+          setGeolocationError(true);
+          setLocationLoading(false);
+        },
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
     }
+  }
+
+  const checkClickConditions = () => {
+    if(suggestions?.length === 0 && !confirmedAddress) openGenericLocationModal();
+    else if(suggestions && suggestions.length > 0 && !confirmedAddress && !selectedSuggestion) openSuggestionsModal();
+    else handleContinue();
   }
 
   return (
@@ -148,18 +197,24 @@ const MyAddressInput = ({ setAddress }) => {
                    error={error}
                    onChange={handleInputChange}
                    onFocus={handleOpenSuggestions}
-                   variant={'standard'}/>
-        <div style={inputAdornmentStyle} onClick={triggerAutoLocation}>
-          {
-            locationLoading ?
-              <MySpinner/> :
-              <img src={locationButtonIcon}
-                   style={locationButtonStyle}
-                   alt={'location-button-icon'}
-                   width={32}
-                   height={32}
-              />
-          }
+                   variant={'standard'}
+        />
+        <div className={!!currentAddress.address ? 'opaque-hoverable' : ''}
+             style={inputAdornmentStyle}
+             onClick={!!currentAddress.address ? checkClickConditions : undefined}
+        >
+          <div style={!!currentAddress.address ? continueButtonStyle : disabledContinueButtonStyle}>
+            {
+              locationLoading ?
+                <MySpinner color={WHITE}/> :
+                <img src={rightArrowWhite}
+                     style={rightArrowStyle}
+                     alt={'location-button-icon'}
+                     width={32}
+                     height={32}
+                />
+            }
+          </div>
         </div>
       </div>
       <div className={'opaque-hoverable'}
@@ -179,6 +234,7 @@ const MyAddressInput = ({ setAddress }) => {
                                autofillInput={autofillInput}
                                open={suggestionsListOpen}
                                setOpen={setSuggestionsListOpen}
+                               currentInputValue={currentAddress.address}
       />
     </div>
   )
