@@ -90,7 +90,7 @@ export const getSuggestions = async addressString => {
   }).then(res => res.json());
 };
 
-export const getAddressForCoordinates = async coordinates => {
+export const getAddressForCoordinates = async (coordinates) => {
   const formData = new FormData();
   formData.append('coordinates', coordinates);
   try {

@@ -27,7 +27,7 @@ module ClientApi
             house_number: match.house_number,
             address: "#{match.house_number} #{match.street}, #{match.city}, #{match.state} #{match.postal_code}", 
             coordinates: match.coordinates
-          }}.first(5)
+          }}.first(3)
         else
           render json: []
         end
@@ -49,7 +49,7 @@ module ClientApi
             coordinates: coordinates_array
           }
         else
-          render json: {}, status: :not_found
+          render json: {coordinates: []}, status: :ok
         end
       end
 

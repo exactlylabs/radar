@@ -71,3 +71,5 @@ export const DEFAULT_TEXT_COLOR = '#3f3c70';
 export const DEFAULT_LINK_COLOR = '#6d6a94';
 export const DEFAULT_MODAL_BOX_SHADOW = 'rgba(17 14 76, 10%)'
 export const DEFAULT_WIDGET_FOOTER_BG_COLOR = '#efeff0';
+export const SUGGESTION_MODAL_ROW_BORDER = 'rgba(17, 14, 76, 0.2)';
+export const SELECTED_SUGGESTION_MODAL_ROW_BORDER = '#4b7be5';

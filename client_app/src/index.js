@@ -14,6 +14,15 @@ if (REACT_APP_ENV === 'production') {
 
 let init = null;
 let error = null;
+const baseInitConfig = {
+  clientId: 'local',
+  widgetMode: false,
+  elementId: 'root-embedded',
+  frameStyle: {
+    width: '100vw',
+    height: '100vh',
+  }
+}
 
 const checkConfig = config => {
   const { elementId, clientId } = config;
@@ -33,10 +42,32 @@ const checkConfig = config => {
   return true;
 };
 
+const hasParams = () => {
+  return window.location.search.includes('widgetMode');
+}
+
+const getConfigFromParams = () => {
+  const params = window.location.search.split('?')[1].split('&');
+  let config = { widgetMode: false };
+  params.forEach(param => {
+    if(param.includes('widgetMode')) {
+      config.widgetMode = param.split('=')[1] === 'true';
+    } else if(param.includes('frameWidth')) {
+      if(!config.frameStyle) config.frameStyle = {};
+      config.frameStyle.width = param.split('=')[1];
+    } else if(param.includes('frameHeight')) {
+      if(!config.frameStyle) config.frameStyle = {};
+      config.frameStyle.height = param.split('=')[1];
+    }
+  });
+  return config;
+}
+
 export default {
   config: config => {
+    init = null;
     if (checkConfig(config)) init = config;
-    else init = null;
+    if (hasParams()) init = {...baseInitConfig, ...getConfigFromParams()};
   },
   new: () => {
     Sentry.setUser({ id: init.clientId });
