@@ -1,0 +1,41 @@
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="text-dark fw-bolder my-1 fs-2">Technical Info
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <!--end::Title-->
+      <!--begin::Breadcrumb-->
+      <ul class="breadcrumb fw-bold fs-base my-1">
+        <li class="breadcrumb-item text-muted"><%= current_account.name %>
+        </li>
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= clients_path %>" class="text-muted text-hover-primary">Pods</a>
+        </li>
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= client_path(@client.unix_user) %>" class="text-muted text-hover-primary"><%= @client.name || 'Unnamed Pod' %></a>
+        </li>
+        <li class="breadcrumb-item text-dark">Technical Info</li>
+      </ul>
+      <!--end::Breadcrumb-->
+    </div>
+    <!--end::Info-->
+  </div>
+</div>
+<!--end::Toolbar-->
+
+<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
+  <!--begin::Container-->
+  <div class="container-xxl w-100 d-flex" style="max-width: none;">
+    <%= render partial: "options_card", locals: { client: @client.unix_user, location: nil, style: 'clients' } %>
+    <div class="d-flex flex-column d-xl-block d-md-none" style="width: calc(100% - 16% - 30px)">
+      <%= render partial: "technical_info_card", locals: { client: @client } %>
+    </div>
+    <div class="d-flex flex-column d-xl-none d-md-block" style="width: calc(100% - 8% - 30px)">
+      <%= render partial: "technical_info_card", locals: { client: @client } %>
+    </div>
+  </div>
+  <!--end::Container-->
+</div>
