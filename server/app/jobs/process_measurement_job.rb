@@ -3,6 +3,8 @@ class ProcessMeasurementJob < ApplicationJob
 
   def perform(measurement)
     FindAsnByIp.perform_now measurement
+    measurement.download_total_bytes = 0.0
+    measurement.upload_total_bytes = 0.0
     case measurement.style
     when "NDT7"
       data = measurement.result.download.split("\n")
