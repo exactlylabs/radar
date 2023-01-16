@@ -1,9 +1,12 @@
-import 'package:client_mobile_app/core/http_provider/failures/http_provider_failure.dart';
+import 'dart:convert';
+
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/models/test_result.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
+import 'package:dio/dio.dart';
+import 'package:network_connection_info/models/connection_info.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class ResultsService implements IResultsService {
@@ -27,13 +30,13 @@ class ResultsService implements IResultsService {
   }
 
   @override
-  void addResult(List<Map<String, dynamic>> responses, TestResult result) {
+  void addResult(List<Map<String, dynamic>> responses, TestResult result, ConnectionInfo? connectionInfo) {
     _localStorage.addResult(result.toJson());
     _httpProvider
         .postAndDecode(
       url: _restClient.speedTest,
       headers: {'Content-Type': 'application/json'},
-      body: _buildBody(responses, result),
+      body: _buildBody(responses, result, connectionInfo),
     )
         .then((failureOrSuccess) {
       failureOrSuccess.fold(
@@ -43,10 +46,12 @@ class ResultsService implements IResultsService {
     });
   }
 
-  Map<String, dynamic> _buildBody(List<Map<String, dynamic>> responses, TestResult result) {
+  Map<String, dynamic> _buildBody(
+      List<Map<String, dynamic>> responses, TestResult result, ConnectionInfo? connectionInfo) {
     return {
       'result': {'raw': responses},
-      'speed_test': result.toJson(),
+      'speed_test': result.toJsonServer(),
+      'connection_data': connectionInfo?.toJson(),
     };
   }
 }

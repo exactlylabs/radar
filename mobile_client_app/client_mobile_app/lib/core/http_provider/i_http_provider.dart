@@ -11,7 +11,7 @@ abstract class IHttpProvider {
   Future<Either<HttpProviderFailure, T>> postAndDecode<T>({
     required String url,
     required Map<String, String> headers,
-    required Map<String, dynamic> body,
+    required dynamic body,
     T Function(Map<String, dynamic> json)? fromJson,
   });
 }

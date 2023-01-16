@@ -28,9 +28,14 @@ class TakeSpeedTestStep extends StatelessWidget {
       address: address,
       child: BlocListener<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
         listenWhen: (previous, current) => current.finishedTesting,
-        listener: (context, state) => context
-            .read<SpeedTestCubit>()
-            .saveResults(state.downloadSpeed!, state.uploadSpeed!, state.latency!, state.loss!, state.responses),
+        listener: (context, state) => context.read<SpeedTestCubit>().saveResults(
+            state.downloadSpeed!,
+            state.uploadSpeed!,
+            state.latency!,
+            state.loss!,
+            state.networkQuality,
+            state.connectionInfo,
+            state.responses),
         child: BlocBuilder<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
           builder: (context, state) {
             if (state.isTestingDownloadSpeed || state.isTestingUploadSpeed) {
@@ -48,6 +53,7 @@ class TakeSpeedTestStep extends StatelessWidget {
                 upload: state.uploadSpeed ?? 0,
                 latency: state.latency ?? 0,
                 loss: state.loss ?? 0,
+                networkQuality: state.networkQuality,
               );
             } else {
               return const StartSpeedTestStep();
