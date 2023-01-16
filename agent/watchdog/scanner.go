@@ -42,7 +42,7 @@ func StartScanLoop(ctx context.Context, sysEditor SystemManager) {
 	}
 }
 
-var previousAuthLogTime *time.Time
+var previousAuthLogTime time.Time = time.Now()
 
 // ScanSystem looks through the system
 // verifying and modifying files based on the expected state.
@@ -115,16 +115,14 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 		return false, err
 	}
 	for _, evt := range loginEvents {
-		if previousAuthLogTime == nil || previousAuthLogTime.Before(evt.Time) {
-			previousAuthLogTime = &evt.Time
+		if previousAuthLogTime.Before(evt.Time) {
+			previousAuthLogTime = evt.Time
 		}
 		log.Printf("New Login Detected at %v, notifying through tracing\n", evt.Time)
 		tracing.NotifyError(
 			fmt.Errorf("new Login Detected in the Pod"),
 			map[string]interface{}{
-				"User":      evt.User,
-				"Time":      evt.Time,
-				"Unix User": c.ClientId,
+				"Login Info": map[string]interface{}{"User": evt.User, "Time": evt.Time, "Unix User": c.ClientId},
 			},
 		)
 	}
