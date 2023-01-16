@@ -1,23 +1,29 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:client_mobile_app/presentations/speed_test/utils/responses_parser.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ndt7_client/models/test_completed_event.dart';
 import 'package:ndt7_client/ndt7_client.dart';
 import 'package:ndt7_client/models/client_response.dart';
 import 'package:ndt7_client/models/server_response.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_state.dart';
+import 'package:network_connection_info/network_connection_info.dart';
 
 class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
   TakeSpeedTestStepCubit({
     required Ndt7Client ndt7client,
+    required NetworkConnectionInfo networkConnectionInfo,
   })  : _ndt7client = ndt7client,
+        _networkConnectionInfo = networkConnectionInfo,
         super(const TakeSpeedTestStepState()) {
     _subscribeToNdt7Client();
   }
 
   late StreamSubscription _ndt7clientSubscription;
   final Ndt7Client _ndt7client;
+  final NetworkConnectionInfo _networkConnectionInfo;
 
   Map<String, dynamic>? _lastServerMeasurement;
   Map<String, dynamic>? _lastClientMeasurement;
@@ -58,11 +64,22 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
             if (_lastClientMeasurement != null && _lastServerMeasurement != null) {
               updatedResponses = _addLastMeasurement(state.responses, _lastClientMeasurement!, _lastServerMeasurement!);
             }
-            emit(state.copyWith(
-              isTestingUploadSpeed: false,
-              finishedTesting: true,
-              responses: updatedResponses,
-            ));
+
+            if (Platform.isAndroid) {
+              _networkConnectionInfo.getNetworkConnectionInfo().then((connectionInfo) => emit(state.copyWith(
+                    isTestingUploadSpeed: false,
+                    finishedTesting: true,
+                    responses: updatedResponses,
+                    connectionInfo: connectionInfo,
+                    networkQuality: connectionInfo != null ? _getNetworkQuality(connectionInfo.rssi) : null,
+                  )));
+            } else {
+              emit(state.copyWith(
+                isTestingUploadSpeed: false,
+                finishedTesting: true,
+                responses: updatedResponses,
+              ));
+            }
           }
         } else if (data is ClientResponse) {
           _lastClientMeasurement = ResponsesParser.parseClientResponse(data);
@@ -106,6 +123,17 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
     speed *= 8;
     speed /= 1e6;
     return speed;
+  }
+
+  String? _getNetworkQuality(int rssi) {
+    if (rssi >= -85) {
+      return Strings.goodNetworkQuality;
+    } else if (rssi >= -90 && rssi <= -86) {
+      return Strings.regularNetworkQuality;
+    } else if (rssi < -90) {
+      return Strings.badNetworkQuality;
+    }
+    return null;
   }
 
   List<Map<String, dynamic>> _addLastMeasurement(List<Map<String, dynamic>> responses,

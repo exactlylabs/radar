@@ -13,7 +13,7 @@ class TestResultInfoModal extends StatelessWidget {
     required this.address,
     required this.networkPlace,
     required this.networkType,
-    required this.networkQuality,
+    this.networkQuality,
     required this.downloadSpeed,
     required this.uploadSpeed,
     required this.latency,
@@ -25,7 +25,7 @@ class TestResultInfoModal extends StatelessWidget {
   final String address;
   final String networkType;
   final String networkPlace;
-  final String networkQuality;
+  final String? networkQuality;
   final double downloadSpeed;
   final double uploadSpeed;
   final double latency;
@@ -61,6 +61,7 @@ class TestResultInfoModal extends StatelessWidget {
           address: address,
           networkType: networkType.isEmpty ? Strings.optionNotAnswered : networkType,
           networkPlace: networkPlace.isEmpty ? Strings.optionNotAnswered : networkPlace,
+          networkQuality: networkQuality,
         ),
         const SizedBox(height: 30.0),
         ResultsTable(

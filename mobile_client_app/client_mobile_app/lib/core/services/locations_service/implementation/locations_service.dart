@@ -4,6 +4,7 @@ import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/services/locations_service/i_locations_service.dart';
 import 'package:client_mobile_app/presentations/speed_test/utils/utils.dart';
+import 'package:dio/dio.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class LocationsService implements ILocationsService {
@@ -70,7 +71,7 @@ class LocationsService implements ILocationsService {
     final failureOrLocation = await _httpProvider.postAndDecode(
       url: _restClient.locationByCoordinates,
       headers: {'Content-Type': 'application/json'},
-      body: {'coordinates': "$latitude, $longitude"},
+      body: FormData.fromMap({'coordinates': "$latitude, $longitude"}),
       fromJson: (json) => Location.fromJsonWithDefaultValues(json),
     );
     return failureOrLocation.fold(

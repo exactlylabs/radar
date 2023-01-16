@@ -1,3 +1,5 @@
+import 'package:network_connection_info/models/connection_info.dart';
+
 class TakeSpeedTestStepState {
   const TakeSpeedTestStepState({
     this.downloadSpeed,
@@ -13,6 +15,8 @@ class TakeSpeedTestStepState {
     this.finishedTesting = false,
     this.isTestingDownloadSpeed = false,
     this.isTestingUploadSpeed = false,
+    this.networkQuality,
+    this.connectionInfo,
   });
 
   TakeSpeedTestStepState copyWith({
@@ -29,6 +33,8 @@ class TakeSpeedTestStepState {
     double? downloadProgress,
     double? uploadProgress,
     List<Map<String, dynamic>>? responses,
+    String? networkQuality,
+    ConnectionInfo? connectionInfo,
   }) {
     return TakeSpeedTestStepState(
       finishedTesting: finishedTesting ?? this.finishedTesting,
@@ -44,6 +50,8 @@ class TakeSpeedTestStepState {
       responses: responses ?? this.responses,
       downloadProgress: downloadProgress ?? this.downloadProgress,
       uploadProgress: uploadProgress ?? this.uploadProgress,
+      networkQuality: networkQuality ?? this.networkQuality,
+      connectionInfo: connectionInfo ?? this.connectionInfo,
     );
   }
 
@@ -60,4 +68,6 @@ class TakeSpeedTestStepState {
   final List<Map<String, dynamic>> responses;
   final double downloadProgress;
   final double uploadProgress;
+  final String? networkQuality;
+  final ConnectionInfo? connectionInfo;
 }

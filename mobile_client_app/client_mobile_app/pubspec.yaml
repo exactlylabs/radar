@@ -35,6 +35,9 @@ dependencies:
   ndt7_client:
     path: ../ndt7_client
 
+  network_connection_info:
+    path: ../network_connection_info
+
   flutter_bloc: ^8.1.1
   animations: ^2.0.7
   get_it: ^7.2.0

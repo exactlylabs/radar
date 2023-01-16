@@ -5,6 +5,7 @@ import 'package:client_mobile_app/core/models/test_result.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:network_connection_info/models/connection_info.dart';
 
 class SpeedTestCubit extends Cubit<SpeedTestState> {
   SpeedTestCubit({
@@ -75,21 +76,29 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     emit(state.copyWith(step: state.step + 1));
   }
 
-  void saveResults(
-      double downloadSpeed, double uploadSpeed, double latency, double loss, List<Map<String, dynamic>> responses) {
+  void saveResults(double downloadSpeed, double uploadSpeed, double latency, double loss, String? networkQuality,
+      ConnectionInfo? connectionInfo, List<Map<String, dynamic>> responses) {
     final result = TestResult(
-      dateTime: DateTime.now(),
       download: downloadSpeed,
       upload: uploadSpeed,
-      loss: loss,
       latency: latency,
+      loss: loss,
+      latitude: state.location?.lat ?? 0.0,
+      longitude: state.location?.long ?? 0.0,
       address: state.location?.address ?? Strings.emptyString,
+      city: state.location?.city ?? Strings.emptyString,
+      state: state.location?.state ?? Strings.emptyString,
+      street: state.location?.street ?? Strings.emptyString,
+      houseNumber: state.location?.houseNumber ?? Strings.emptyString,
+      postalCode: state.location?.postalCode ?? Strings.emptyString,
+      testedAt: DateTime.now(),
       networkType: state.networkType ?? Strings.emptyString,
       networkLocation: state.networkLocation ?? Strings.emptyString,
-      networkQuality: Strings.emptyString,
+      networkCost: state.monthlyBillCost?.toString() ?? Strings.emptyString,
+      networkQuality: networkQuality,
     );
 
-    _resultsService.addResult(responses, result);
+    _resultsService.addResult(responses, result, connectionInfo);
   }
 
   void setOnContinueAndOnGoBackPressed(VoidCallback? onContinue, [VoidCallback? onBack]) {

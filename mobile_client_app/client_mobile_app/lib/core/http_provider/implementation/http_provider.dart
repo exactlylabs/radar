@@ -24,7 +24,7 @@ class HttpProvider implements IHttpProvider {
   Future<Either<HttpProviderFailure, T>> postAndDecode<T>({
     required String url,
     required Map<String, String> headers,
-    required Map<String, dynamic> body,
+    required dynamic body,
     T Function(Map<String, dynamic> json)? fromJson,
   }) async {
     final failureOrResponse = await _post(url: url, headers: headers, body: body);
@@ -43,10 +43,9 @@ class HttpProvider implements IHttpProvider {
   Future<Either<HttpProviderFailure, HttpResponseModel>> _post({
     required String url,
     required Map<String, String> headers,
-    required Map<String, dynamic> body,
+    required dynamic body,
   }) async =>
-      _dioCall(() => Dio().post(url,
-          options: Options(headers: headers, responseType: ResponseType.plain), data: FormData.fromMap(body)));
+      _dioCall(() => Dio().post(url, options: Options(headers: headers, responseType: ResponseType.plain), data: body));
 
   Future<Either<HttpProviderFailure, HttpResponseModel>> _dioCall(Future<Response> Function() call) async {
     try {
@@ -66,7 +65,11 @@ class HttpProvider implements IHttpProvider {
   Either<HttpProviderFailure, T> _decodeResponse<T>(
       HttpResponseModel response, T Function(Map<String, dynamic> json)? fromJson) {
     try {
-      T t = fromJson != null ? fromJson(json.decode(response.body)) : json.decode(response.body) as T;
+      T t = fromJson != null
+          ? fromJson(json.decode(response.body))
+          : response.body.isNotEmpty
+              ? json.decode(response.body)
+              : response.body as T;
       return Right(t);
     } catch (exception, stackTrace) {
       return Left(HttpProviderFailure(

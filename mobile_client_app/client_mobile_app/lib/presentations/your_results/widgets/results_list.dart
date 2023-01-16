@@ -69,8 +69,8 @@ class _ResultsListState extends State<ResultsList> {
         itemBuilder: (BuildContext context, int index) {
           return ResultCard(
             networkType: _getNetworkType(widget.results[index].networkType),
-            date: _dateFromDateTime(widget.results[index].dateTime),
-            time: _timeFromDateTime(widget.results[index].dateTime),
+            date: _dateFromDateTime(widget.results[index].testedAt),
+            time: _timeFromDateTime(widget.results[index].testedAt),
             download: widget.results[index].download.toStringAsFixed(2),
             upload: widget.results[index].upload.toStringAsFixed(2),
             onTap: () => _infoModal(context, widget.results[index]),
@@ -97,8 +97,8 @@ class _ResultsListState extends State<ResultsList> {
       true,
       Strings.emptyString,
       TestResultInfoModal(
-        date: _dateFromDateTime(result.dateTime),
-        time: _timeFromDateTime(result.dateTime),
+        date: _dateFromDateTime(result.testedAt),
+        time: _timeFromDateTime(result.testedAt),
         address: result.address,
         networkPlace: result.networkLocation,
         networkType: result.networkType,

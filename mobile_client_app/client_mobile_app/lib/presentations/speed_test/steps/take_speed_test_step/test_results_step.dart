@@ -20,12 +20,14 @@ class TestResultsStep extends StatelessWidget {
     required this.upload,
     required this.latency,
     required this.loss,
+    this.networkQuality,
   }) : super(key: key);
 
   final double download;
   final double upload;
   final double latency;
   final double loss;
+  final String? networkQuality;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,7 @@ class TestResultsStep extends StatelessWidget {
           address: InheritedFormInformation.of(context).address,
           networkType: InheritedFormInformation.of(context).networkType,
           networkPlace: InheritedFormInformation.of(context).networkPlace,
+          networkQuality: networkQuality,
         ),
         SpacerWithMax(size: height * 0.031, maxSize: 25.0),
         ResultsTable(

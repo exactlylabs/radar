@@ -14,6 +14,7 @@ import 'package:client_mobile_app/resources/theme.dart';
 import 'package:client_mobile_app/presentations/home_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ndt7_client/ndt7_client.dart';
+import 'package:network_connection_info/network_connection_info.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -22,12 +23,14 @@ class App extends StatelessWidget {
     required this.localStorage,
     required this.httpProvider,
     required this.ndt7client,
+    required this.networkConnectionInfo,
   }) : super(key: key);
 
   final RestClient restClient;
   final LocalStorage localStorage;
   final IHttpProvider httpProvider;
   final Ndt7Client ndt7client;
+  final NetworkConnectionInfo networkConnectionInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +54,14 @@ class App extends StatelessWidget {
         providers: [
           BlocProvider(create: (context) => NavigationCubit()),
           BlocProvider<SpeedTestCubit>(
-              create: (context) => SpeedTestCubit(resultsService: context.read<IResultsService>())),
-          BlocProvider(create: (context) => TakeSpeedTestStepCubit(ndt7client: ndt7client))
+            create: (context) => SpeedTestCubit(resultsService: context.read<IResultsService>()),
+          ),
+          BlocProvider(
+            create: (context) => TakeSpeedTestStepCubit(
+              ndt7client: ndt7client,
+              networkConnectionInfo: networkConnectionInfo,
+            ),
+          )
         ],
         child: const AppBuilder(),
       ),
