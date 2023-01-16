@@ -30,7 +30,6 @@ class YourResultsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SpacerWithMax(size: height * 0.05, maxSize: 25.0),
                 Padding(
                   padding: const EdgeInsets.only(left: 3.0),
                   child: Text(
