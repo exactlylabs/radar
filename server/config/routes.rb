@@ -52,6 +52,7 @@ Rails.application.routes.draw do
       end
     end
 
+    get 'technical_info', to: 'client_technical_info#index'
     get 'data_usage_and_scheduling', to: 'client_data_usage_and_scheduling#index'
     put 'data_usage', to: 'client_data_usage_and_scheduling#edit_data_cap'
     put 'scheduling', to: 'client_data_usage_and_scheduling#edit_scheduling'
@@ -115,7 +116,7 @@ Rails.application.routes.draw do
   post 'geocode', to: 'geocode#code'
   post 'reverse_geocode', to: 'geocode#reverse_code'
   get 'dashboard', to: 'dashboard#index'
-  
+
   resources :exports do
     collection do
       get 'all'

@@ -1,0 +1,41 @@
+<div class="card" style="width: 100%; height: max-content; margin-bottom: 25px">
+  <div class="card-header d-flex align-items-center" style="height: 65px">
+    <div class="card-title fw-bolder" style="font-size: 20px; color: #3f4254">
+      Technical Info
+    </div>
+  </div>
+  <div class="card-body pt-0 d-flex flex-row justify-content-start align-items-start">
+    <div style="margin-top: 30px; width: 100%">
+      <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+        <div class="fw-bolder " style="width: 25%; min-width: 130px">Pod Type</div>
+        <div class="fw-bold d-flex flex-row" style="width: 75%; color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+          <%= client.raw_watchdog_version.nil? ? "Software Pod" : "Hardware Pod" %>
+        </div>
+      </div>
+      <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+        <div class="fw-bolder" style="width: 25%; min-width: 130px">MAC address</div>
+        <div class="fw-bold d-flex flex-row" style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+          <%= client.get_mac_address == "N/A" ? "-" : client.get_mac_address %>
+        </div>
+      </div>
+      <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+        <div class="fw-bolder" style="width: 25%; min-width: 130px">Agent Version</div>
+        <div class="fw-bold d-flex flex-row" style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+          <%= client.raw_version.nil? ? "-" : client.raw_version %>
+        </div>
+      </div>
+      <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+        <div class="fw-bolder" style="width: 25%; min-width: 130px">OS Version</div>
+        <div class="fw-bold d-flex flex-row " style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+          <%= "Not Available" %>
+        </div>
+      </div>
+      <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
+        <div class="fw-bolder" style="width: 25%; min-width: 130px">Hardware Platform</div>
+        <div class="fw-bold d-flex flex-row " style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+          <%= "Not Available" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
