@@ -44,6 +44,7 @@ class SpeedTestPage extends StatelessWidget {
                               children: [
                                 const SizedBox(height: 10.0),
                                 AppBar(
+                                  centerTitle: true,
                                   toolbarHeight: 24.0,
                                   backgroundColor: Theme.of(context).backgroundColor,
                                   title: Image.asset(Images.logoDark, fit: BoxFit.contain),
