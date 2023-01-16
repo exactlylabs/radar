@@ -31,7 +31,7 @@ func parseDateFromAuthLog(month, day, t string) (time.Time, error) {
 	return matchTime, nil
 }
 
-func scanAuthLog(c *config.Config, authLog []byte, lastTime *time.Time) ([]LoginEvent, error) {
+func scanAuthLog(c *config.Config, authLog []byte, lastTime time.Time) ([]LoginEvent, error) {
 	scanner := bufio.NewScanner(bytes.NewBuffer(authLog))
 	var t time.Time
 	var err error
@@ -47,7 +47,7 @@ func scanAuthLog(c *config.Config, authLog []byte, lastTime *time.Time) ([]Login
 				return nil, err
 			}
 
-			if lastTime == nil || t.Equal(*lastTime) || t.Before(*lastTime) {
+			if t.Equal(lastTime) || t.Before(lastTime) {
 				continue
 			}
 			loginEvents = append(loginEvents, LoginEvent{
@@ -60,7 +60,7 @@ func scanAuthLog(c *config.Config, authLog []byte, lastTime *time.Time) ([]Login
 				if err != nil {
 					return nil, err
 				}
-				if lastTime == nil || t.Equal(*lastTime) || t.Before(*lastTime) {
+				if t.Equal(lastTime) || t.Before(lastTime) {
 					continue
 				}
 			} else {
