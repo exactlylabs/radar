@@ -1,4 +1,4 @@
-<tr id="<%= dom_id(client) %>">
+<tr id="<%= dom_id(client) %>_row">
   <td class="mb-1">
     <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
       <input id="check-box-<%= client.unix_user %>"
@@ -28,7 +28,9 @@
       <div class="pod-name--container">
         <a class="text-hover-primary fw-bold"
             style="font-size:15px; color: #3f4254; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
-            href="<%= client_path(client.unix_user)%>" data-turbo-frame="_top">
+            href="<%= client_path(client.unix_user)%>" data-turbo-frame="_top"
+           id="client_<%= client.id %>_name"
+        >
             <%= client.name.present? ? client.name : "Unnamed Pod" %>
         </a>
         <div class="pod-name--subtitle" style="font-size: 13px; color: #b5b5c3;">
@@ -56,8 +58,10 @@
       <%= pretty_print_date(client.created_at) %>
   </td>
   <td class="mb-1"
-      style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-    <span class="badge <%= client.status_style %>"><%= client.status %></span>
+      style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
+      id="client_<%= client.id %>_status_wrapper"
+  >
+    <span class="badge <%= client.status_style %>" id="client_<%= client.id %>_status"><%= client.status %></span>
     <% if client.has_pending_test %>
       <span class="badge badge-light-primary">Pending test</span>
     <% end %>
