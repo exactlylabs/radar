@@ -3,15 +3,15 @@
   become: yes
   vars:
     clickhouse_users_custom:
-      - { name: "{{ db_user }}", 
-          password_sha256_hex: "{{ db_password_sha256 }}", 
-          networks: "{{ clickhouse_networks_default }}",
-          profile: mapping-profile,
-          quota: default,
-          dbs: ["{{ db_name }}"],
-          comment: "Default User"}
+      - name: "{{ db_user }}"
+        password_sha256_hex: "{{ db_password_sha256 }}"
+        profile: mapping-profile
+        quota: default
+        dbs: ["{{ db_name }}"]
+        comment: "Default User"
     clickhouse_dbs_custom:
-      - { name: "{{ db_name }}", state: present }
+      - name: "{{ db_name }}"
+        state: present
     clickhouse_profiles_custom:
       mapping-profile:
         max_memory_usage: 10000000000
