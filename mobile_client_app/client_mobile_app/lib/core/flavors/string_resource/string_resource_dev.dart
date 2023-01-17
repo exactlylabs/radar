@@ -2,7 +2,7 @@ import 'package:client_mobile_app/core/flavors/string_resource/i_string_resource
 
 class StringResourceDev implements IStringResource {
   @override
-  String SERVER_ENDPOINT = 'https://9b37-179-40-95-39.ngrok.io';
+  String SERVER_ENDPOINT = 'http://localhost:3000/';
 
   @override
   String APP_NAME = 'Radar Dev';
