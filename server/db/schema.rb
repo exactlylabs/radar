@@ -243,9 +243,9 @@ ActiveRecord::Schema.define(version: 2023_01_12_140958) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
-    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
+    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
