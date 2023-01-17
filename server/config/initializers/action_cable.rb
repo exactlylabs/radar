@@ -1,3 +1,3 @@
 CHANNELS = {
-  CLIENTS_STATUS: 'clients_status'
+  clients_status: 'clients_status'
 }

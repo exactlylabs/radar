@@ -1,4 +1,4 @@
-<tr id="<%= dom_id(client) %>">
+<tr id="<%= dom_id(client) %>_row">
   <td style="padding-left: 30px">
     <div class="d-flex flex-row align-items-center">
       <div class="d-flex align-items-center justify-content-center me-5" 
@@ -25,8 +25,13 @@
     </div>
   </td>
   <td class="text-gray-600 mb-1"
-      style="font-size:14px; color: #b5b5c3; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-      <span class="badge <%= client.status_style %>"><%= client.status %></span>
+      style="font-size:14px; color: #b5b5c3; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
+      id="client_<%= client.id %>_status_wrapper"
+  >
+    <span class="badge <%= client.status_style %>" id="client_<%= client.id %>_status"><%= client.status %></span>
+    <% if client.has_pending_test %>
+      <span class="badge badge-light-primary">Pending test</span>
+    <% end %>
   </td>
   <td class="text-end" style="padding-right: 30px">
     <a href="<%= client_path(client.unix_user) %>" 
