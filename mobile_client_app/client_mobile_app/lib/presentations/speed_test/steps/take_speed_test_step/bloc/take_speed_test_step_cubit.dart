@@ -84,11 +84,10 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
         } else if (data is ClientResponse) {
           _lastClientMeasurement = ResponsesParser.parseClientResponse(data);
           final updatedResponses = List<Map<String, dynamic>>.from(state.responses)..add(_lastClientMeasurement!);
-          final speed = convertToMbps(data.appInfo.elapsedTime, data.appInfo.numBytes);
           if (state.isTestingDownloadSpeed) {
-            emit(state.copyWith(downloadSpeed: speed, responses: updatedResponses));
+            emit(state.copyWith(downloadSpeed: data.appInfo.meanClientMbps, responses: updatedResponses));
           } else if (state.isTestingUploadSpeed) {
-            emit(state.copyWith(uploadSpeed: speed, responses: updatedResponses));
+            emit(state.copyWith(uploadSpeed: data.appInfo.meanClientMbps, responses: updatedResponses));
           }
         } else if (data is ServerResponse) {
           _lastServerMeasurement = ResponsesParser.parseServerResponse(data);
@@ -115,14 +114,6 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
   Future<void> close() {
     _ndt7clientSubscription.cancel();
     return super.close();
-  }
-
-  double convertToMbps(int elapsedTime, int numBytes) {
-    final time = elapsedTime / 1e6;
-    double speed = numBytes / time;
-    speed *= 8;
-    speed /= 1e6;
-    return speed;
   }
 
   String? _getNetworkQuality(int rssi) {
