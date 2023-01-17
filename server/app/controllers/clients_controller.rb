@@ -58,6 +58,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.update(test_requested: true)
+        PodStatusChannel.broadcast_to('clients_status', @client)
         format.html { redirect_to request.env['HTTP_REFERER'], notice: "Client test requested." }
         format.json { render :show, status: :ok, location: clients_path(@client.unix_user) }
       else
@@ -320,6 +321,8 @@ class ClientsController < ApplicationController
     else
       @notice = "Error requesting test for selected clients."
     end
+
+    PodStatusChannel.broadcast_to('clients_status', @clients)
 
     respond_to do |format|
       format.turbo_stream

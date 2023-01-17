@@ -4,7 +4,9 @@
 </div>
 <!--begin::Card title-->
 <div class="card-title-container d-flex flex-row justify-content-between align-items-center"
-     style="height: 90px;padding-left: 30px;padding-right: 30px;margin-top: 20px;margin-bottom: 50px;">
+     style="height: 90px;padding-left: 30px;padding-right: 30px;margin-top: 20px;margin-bottom: 50px;"
+     id="client_<%= client.id %>_details<% small ? '_small' : ''%>"
+>
   <div class="card-title--wrapper d-flex flow-row align-items-center">
     <div class="card-title--icon d-flex align-items-center justify-content-center"
          style="height: 90px; width: 90px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
@@ -18,14 +20,19 @@
       </span>
     </div>
     <div class="card-title--title-content">
-      <div class="fw-bolder" style="margin-bottom: 5px;font-size: 19px;">
+      <p class="fw-bolder" style="margin: 0 0 5px 0; font-size: 19px;" id="client_<%= client.id %>_name<%= small ? '_small' : ''%>">
         <%= client.name %>
-      </div>
+      </p>
       <div style="margin-bottom: 10px;color: #b5b5c3;font-size: 14px;">
         <%= client.unix_user %>
       </div>
-      <div style="font-size: 14px;">
-        <span class="badge <%= client.status_style %>"><%= client.status %></span>
+      <div style="font-size: 14px;"
+           id="client_<%= client.id %>_status_wrapper<%= small ? '_small' : ''%>"
+      >
+        <span class="badge <%= client.status_style %>" id="client_<%= client.id %>_status<%= small ? '_small' : ''%>"><%= client.status %></span>
+        <% if client.has_pending_test %>
+          <span class="badge badge-light-primary" id="client_<%= client.id %>_status_pending<%= small ? '_small' : ''%>">Pending test</span>
+        <% end %>
       </div>
     </div>
   </div>

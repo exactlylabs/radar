@@ -1,7 +1,7 @@
 <div class="card d-xl-block d-md-none" style="width: calc(100% - 16% - 30px); height: max-content" id="client-details">
-  <%= render partial: "clients/client_details_card_content", locals: {client: client} %>
+  <%= render partial: "clients/client_details_card_content", locals: {client: client, small: false} %>
 </div>
 
 <div class="card d-md-block d-xl-none" style="width: calc(100% - 8% - 30px); height: max-content" id="client-details">
-  <%= render partial: "clients/client_details_card_content", locals: {client: client} %>
+  <%= render partial: "clients/client_details_card_content", locals: {client: client, small: true} %>
 </div>
