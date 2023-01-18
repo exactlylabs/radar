@@ -432,29 +432,6 @@ class ClientsController < ApplicationController
     end
   end
 
-  # Only allow a list of trusted parameters through.
-  def client_params
-    params.require(:client).permit(:name, :address, :location_id)
-  end
-
-  def authenticate_client!
-    client_id = params[:id]
-    client_secret = params[:secret]
-    @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
-    if !@client
-      head(403)
-    end
-  end
-
-  def authenticate_token!
-    if request.headers["Authorization"].present?
-      token = request.headers["Authorization"].split(" ")
-      if token.size == 2 && token[0] == 'Token'
-        @account = Account.find_by_token(token[1])
-      end
-    end
-  end
-
   def json_request?
     request.format.symbol == :json
   end
