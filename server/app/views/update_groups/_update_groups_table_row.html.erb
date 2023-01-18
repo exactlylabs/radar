@@ -1,7 +1,7 @@
 <tr id="<%= dom_id(update_group) %>">
   <td style="padding-left: 30px">
     <div class="d-flex flex-row justify-content-start align-items-center">
-      <p class="fw-bold m-0" style="font-size:15px; color: #3f4254; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+      <p class="fw-bold m-0" style="font-size:15px; color: #3f4254; max-width: 20vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
         <%= update_group.name.present? ? update_group.name : "Unnamed Release Group" %>
       </p>
       <% if update_group.default %>
@@ -10,12 +10,16 @@
     </div>
   </td>
   <td class="mb-1"
-      style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+      style="font-size:15px; color: #5e6278; max-width: 12.5vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
     <%= update_group.clients.size %> pods
   </td>
   <td class="mb-1"
-      style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+      style="font-size:15px; color: #5e6278; max-width: 12.5vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
     <%= update_group.client_version.nil? ? "N/A" : update_group.client_version.version %>
+  </td>
+  <td class="mb-1"
+      style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+    <%= update_group.watchdog_version.nil? ? "N/A" : update_group.watchdog_version.version %>
   </td>
   <td class="mb-1" style="text-align: right">
     <% unless update_group.default %>

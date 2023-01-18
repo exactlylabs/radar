@@ -33,7 +33,8 @@ class UpdateGroupsController < ApplicationController
   def update
     new_name = params[:update_group][:name]
     new_client_version = policy_scope(ClientVersion).find(params[:update_group][:client_version_id])
-    if @update_group.update(name: new_name, client_version: new_client_version)
+    new_watchdog_version = policy_scope(WatchdogVersion).find(params[:update_group][:watchdog_version_id])
+    if @update_group.update(name: new_name, client_version: new_client_version, watchdog_version: new_watchdog_version)
       notice = 'Release Group was successfully updated.'
     else
       notice = 'Error updating Release Group.'
