@@ -223,8 +223,8 @@ workflows:
             tags:
               only: "/^v.*/"
       ## Upload Flavors to Storage
-      # - upload-android:
-      #     requires: [build-android-dev, build-android-staging, build-android-prod]
+      - upload-android:
+          requires: [build-android-dev, build-android-staging, build-android-prod]
       ## Release Stag/Prod Flavors
       - release-android:
           name: "release-android-staging"
@@ -245,49 +245,49 @@ workflows:
     
       # iOS
       # Build Flavors
-      # - build-ios:
-      #     name: "build-ios-dev"
-      #     requires: [unit_test]
-      #     flavor: dev
-      #     filters:
-      #       branches:
-      #         ignore: "master"
-      # - build-ios:
-      #     name: "build-ios-staging"
-      #     requires: [unit_test]
-      #     flavor: staging
-      #     filters:
-      #       branches:
-      #         only: "master"
-      # - build-ios:
-      #     name: "build-ios-prod"
-      #     requires: [unit_test]
-      #     flavor: prod
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: "/^v.*/"
+      - build-ios:
+          name: "build-ios-dev"
+          requires: [unit_test]
+          flavor: dev
+          filters:
+            branches:
+              ignore: "master"
+      - build-ios:
+          name: "build-ios-staging"
+          requires: [unit_test]
+          flavor: staging
+          filters:
+            branches:
+              only: "master"
+      - build-ios:
+          name: "build-ios-prod"
+          requires: [unit_test]
+          flavor: prod
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: "/^v.*/"
       ## Upload Flavors to Storage
-      # - upload-ios:
-      #     requires: [build-ios-dev, build-ios-staging, build-ios-prod]
+      - upload-ios:
+          requires: [build-ios-dev, build-ios-staging, build-ios-prod]
       ## Release Stag/Prod Flavors
-      # - release-ios:
-      #     name: "release-ios-staging"
-      #     requires: [build-ios-staging]
-      #     flavor: staging
-      #     filters:
-      #       branches:
-      #         only: "master"
-      # - release-ios:
-      #     name: "release-ios-prod"
-      #     requires: [build-ios-prod]
-      #     flavor: prod
-      #     issuer_id: ${ANTHC_APP_STORE_CONNECT_API_KEY_ISSUER_ID}
-      #     key_key: ${ANTHC_APP_STORE_CONNECT_API_KEY_KEY}
-      #     key_id: ${ANTHC_APP_STORE_CONNECT_API_KEY_KEY_ID}
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: "/^v.*/"
+      - release-ios:
+          name: "release-ios-staging"
+          requires: [build-ios-staging]
+          flavor: staging
+          filters:
+            branches:
+              only: "master"
+      - release-ios:
+          name: "release-ios-prod"
+          requires: [build-ios-prod]
+          flavor: prod
+          issuer_id: ${ANTHC_APP_STORE_CONNECT_API_KEY_ISSUER_ID}
+          key_key: ${ANTHC_APP_STORE_CONNECT_API_KEY_KEY}
+          key_id: ${ANTHC_APP_STORE_CONNECT_API_KEY_KEY_ID}
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: "/^v.*/"
