@@ -9,31 +9,31 @@
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder " style="width: 25%; min-width: 130px">Pod Type</div>
         <div class="fw-bold d-flex flex-row" style="width: 75%; color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
-          <%= client.raw_watchdog_version.nil? ? "Software Pod" : "Hardware Pod" %>
+          <%= client.raw_watchdog_version.nil? ? "Software Installed" : "Physical Pod" %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder" style="width: 25%; min-width: 130px">MAC address</div>
         <div class="fw-bold d-flex flex-row" style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
-          <%= client.get_mac_address == "N/A" ? "-" : client.get_mac_address %>
+          <%= client.get_mac_address == "N/A" ? "Not Available" : client.get_mac_address %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder" style="width: 25%; min-width: 130px">Agent Version</div>
         <div class="fw-bold d-flex flex-row" style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
-          <%= client.raw_version.nil? ? "-" : client.raw_version %>
+          <%= client.raw_version.nil? ? "Not Available" : client.raw_version %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder" style="width: 25%; min-width: 130px">OS Version</div>
         <div class="fw-bold d-flex flex-row " style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
-          <%= "Not Available" %>
+          <%= client.os_version.nil? ? "Not Available" : client.os_version %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder" style="width: 25%; min-width: 130px">Hardware Platform</div>
         <div class="fw-bold d-flex flex-row " style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
-          <%= "Not Available" %>
+          <%= client.hardware_platform.nil? ? "Not Available" : client.hardware_platform %>
         </div>
       </div>
     </div>

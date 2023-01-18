@@ -17,7 +17,13 @@
           </p>
           <% if !client.custom_scheduling %>
             <div class="d-flex flex-row justify-content-start align-items-center text-hover-light-primary" style="cursor: pointer">
-              <%= link_to "Enable Custom Scheduling", client_enable_scheduling_path(@client.unix_user), method: :put, class: "fw-bold" %>
+              <a href="#"
+                 class="fw-bold"
+                 data-bs-target="#manage_pod_scheduling_modal"
+                 data-bs-toggle="modal"
+              >
+                Enable Data Cap
+              </a>
               <span class="svg-icon svg-icon-primary svg-icon-1x ms-1">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect opacity="0.5" x="18" y="13" width="13" height="2" rx="1" transform="rotate(-180 18 13)" fill="currentColor"/>
@@ -34,7 +40,8 @@
               class="btn btn-primary"
               data-bs-target="#manage_pod_scheduling_modal"
               data-bs-toggle="modal"
-      >Manage Custom Scheduling</button>
+      >Manage Custom Scheduling
+      </button>
     </div>
   </div>
 </div>
