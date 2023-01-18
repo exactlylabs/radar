@@ -272,8 +272,13 @@ export const getInitialStateFromCalendarType = (calendarType: string): DatePicke
     pickerState.subtitleText = `Week ${thisWeekNumber - 1}`;
     pickerState.selectedRangeValue = getWeekLimits(currentYear, thisWeekNumber - 1);
   } else if(calendarType === CalendarFilters.LAST_MONTH) {
-    const todayMonth = today.getMonth();
-    pickerState.selectedYear = today.getFullYear();
+    let todayMonth = today.getMonth();
+    let todayYear = today.getFullYear();
+    if(todayMonth === 0) {
+      todayMonth = 11;
+      todayYear = todayYear - 1;
+    }
+    pickerState.selectedYear = todayYear
     pickerState.selectedTab = DateTabs.MONTH;
     pickerState.selectedRangeValue = months[todayMonth + 1];
   } else if(calendarType.includes('H')) {
