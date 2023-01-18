@@ -94,12 +94,12 @@ jobs:
           at: ~/workspace
       - checkout
       - ruby/install-deps:
-          app-dir: ~/project/mobile_client_app/client_mobile_app
+          app-dir: ~/project/mobile_client_app/client_mobile_app/android
           bundler-version: 2.2.33
           key: android-gems-v1
       - run:
           command: gem install fastlane
-          working_directory: ~/project/mobile_client_app/client_mobile_app
+          working_directory: ~/project/mobile_client_app/client_mobile_app/android
       - run:
           command: echo ${FLUTTER_ANDROID_DEV_RELEASE_GCP_CREDENTIAL} | base64 -d > /tmp/android_staging_gcpkey.json
       - run:
