@@ -84,13 +84,15 @@ jobs:
   release-android:
     working_directory: ~/project
     docker:
-      - image: "cimg/ruby:3.0.2"
+      - image: 'cimg/base:stable'
     parameters:
       flavor:
         type: enum
         enum: ["staging", "prod"]
     steps:
       - checkout
+      - ruby/install:
+          version: '3.0.2'
       - attach_workspace:
           at: ~/workspace
       - ruby/install-deps:
