@@ -134,11 +134,12 @@ class ClientsController < ApplicationController
       @client.raw_version = params[:version]
       @client.distribution_name = params[:distribution]
       @client.ip = request.ip
-      if params[:network_interfaces]
-        @client.network_interfaces = JSON.parse(params[:network_interfaces])
-      end
+      @client.network_interfaces = JSON.parse(params[:network_interfaces]) unless params[:network_interfaces].nil?
+      @client.os_version = JSON.parse(params[:os_version]) unless params[:os_version].nil?
+      @client.hardware_platform = JSON.parse(params[:hardware_platform]) unless params[:hardware_platform].nil?
+
     end
-    
+
     if !params[:version].nil?
       Google::Cloud::Trace.in_span "Loading ClientVersion #{params[:version]}" do
         # Check client Version Id
@@ -168,7 +169,7 @@ class ClientsController < ApplicationController
 
   def watchdog_status
     @client.raw_watchdog_version = params[:version]
-    
+
     if params[:version]
       Google::Cloud::Trace.in_span "Loading WatchdogVersion #{params[:version]}" do
         # Check client Version Id
@@ -213,7 +214,7 @@ class ClientsController < ApplicationController
       if @client.save
         clients = policy_scope(Client)
         format.turbo_stream {
-          render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: {clients: clients})
+          render turbo_stream: turbo.stream.replace('clients_container_dynamic', partial: 'clients_list', locals: { clients: clients })
         }
         format.html { redirect_to clients_path, notice: "Client was successfully created." }
         format.json { render :show, status: :created, location: client_path(@client.unix_user) }
@@ -307,8 +308,8 @@ class ClientsController < ApplicationController
                layout: "client_label.html",
                page_offset: 0,
                locals: { qr: qr_svg },
-               margin: {top: 0, bottom: 0, left: 0, right: 0},
-               outline: {outline: false}
+               margin: { top: 0, bottom: 0, left: 0, right: 0 },
+               outline: { outline: false }
       end
     end
   end
@@ -322,10 +323,10 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_back fallback_location: root_path, notice: @notice}
+      format.html { redirect_back fallback_location: root_path, notice: @notice }
     end
   end
- 
+
   def bulk_delete
     error = nil
     # Using a loop instead of update_all because update_all deletes the reference
@@ -348,7 +349,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_back fallback_location: root_path, notice: @notice}
+      format.html { redirect_back fallback_location: root_path, notice: @notice }
     end
   end
 
@@ -361,7 +362,7 @@ class ClientsController < ApplicationController
     end
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_back fallback_location: root_path, notice: @notice}
+      format.html { redirect_back fallback_location: root_path, notice: @notice }
     end
   end
 
@@ -392,50 +393,74 @@ class ClientsController < ApplicationController
                layout: "client_label.html",
                page_offset: 0,
                locals: { qrs: @qrs },
-               margin: {top: 0, bottom: 0, left: 0, right: 0},
-               outline: {outline: false}
+               margin: { top: 0, bottom: 0, left: 0, right: 0 },
+               outline: { outline: false }
       end
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_client
-      @client = policy_scope(Client).find_by_unix_user(params[:id])
-      if !@client
-        raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_client
+    @client = policy_scope(Client).find_by_unix_user(params[:id])
+    if !@client
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])
+    end
+  end
+
+  # Only allow a list of trusted parameters through.
+  def client_params
+    params.require(:client).permit(:name, :address, :location_id)
+  end
+
+  def authenticate_client!
+    client_id = params[:id]
+    client_secret = params[:secret]
+    @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
+    if !@client
+      head(403)
+    end
+  end
+
+  def authenticate_token!
+    if request.headers["Authorization"].present?
+      token = request.headers["Authorization"].split(" ")
+      if token.size == 2 && token[0] == 'Token'
+        @account = Account.find_by_token(token[1])
       end
     end
+  end
 
-    # Only allow a list of trusted parameters through.
-    def client_params
-      params.require(:client).permit(:name, :address, :location_id)
+  # Only allow a list of trusted parameters through.
+  def client_params
+    params.require(:client).permit(:name, :address, :location_id)
+  end
+
+  def authenticate_client!
+    client_id = params[:id]
+    client_secret = params[:secret]
+    @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
+    if !@client
+      head(403)
     end
+  end
 
-    def authenticate_client!
-      client_id = params[:id]
-      client_secret = params[:secret]
-      @client = Client.find_by_unix_user(client_id)&.authenticate_secret(client_secret)
-      if !@client
-        head(403)
+  def authenticate_token!
+    if request.headers["Authorization"].present?
+      token = request.headers["Authorization"].split(" ")
+      if token.size == 2 && token[0] == 'Token'
+        @account = Account.find_by_token(token[1])
       end
     end
+  end
 
-    def authenticate_token!
-      if request.headers["Authorization"].present?
-        token = request.headers["Authorization"].split(" ")
-        if token.size == 2 && token[0] == 'Token'
-          @account = Account.find_by_token(token[1])
-        end
-      end
-    end
-    
-    def json_request?
-      request.format.symbol == :json
-    end
+  def json_request?
+    request.format.symbol == :json
+  end
 
-    def set_clients
-      client_ids = JSON.parse(params[:ids])
-      @clients = policy_scope(Client).where(unix_user: client_ids)
-    end
+  def set_clients
+    client_ids = JSON.parse(params[:ids])
+    @clients = policy_scope(Client).where(unix_user: client_ids)
+  end
 end
