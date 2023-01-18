@@ -77,7 +77,7 @@ export const quartersWithRange: QuartersWithRangeObject = {
 }
 
 // Removing all years prior to 2019 due to missing download data
-export const years = [2022, 2021, 2020, 2019]//, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009];
+export const years = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009];
 export const months = ['All months', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 export const quarters = ['Q1: Jan 1 - Mar 31', 'Q2: Apr 1 - Jun 30', 'Q3: Jul 1 - Sep 30', 'Q4: Oct 1 - Dec 31'];
 export const halves = ['Jan 1 - Jun 30', 'Jul 1 - Dec 31'];
@@ -157,6 +157,9 @@ export const generateFilterLabel = (dateObject: DateFilter): string => {
 
 export const getDateQueryStringFromCalendarType = (calendarType: string): string => {
   let queryString: string = '';
+  const today = new Date();
+  let thisMonth = today.getMonth();
+  let thisYear = today.getFullYear();
   switch (calendarType) {
     case CalendarFilters.LAST_WEEK:
       const thisWeekNumber = getWeekNumber();
@@ -165,11 +168,14 @@ export const getDateQueryStringFromCalendarType = (calendarType: string): string
     case CalendarFilters.LAST_MONTH:
       // Month in JS is 0-based, backend is 1-based. So for example if we are in February, getMonth() would
       // return 1. For our backend that's January, but as we want 'Last Month' we can keep that value as is.
-      const thisMonth = new Date().getMonth();
-      queryString = `&year=${new Date().getFullYear()}&month=${thisMonth}`;
+      if(thisMonth === 0) {
+        thisMonth = 11;
+        thisYear = thisYear - 1;
+      }
+      queryString = `&year=${thisYear}&month=${thisMonth}`;
       break;
     case CalendarFilters.THIS_YEAR:
-      const thisYear = new Date().getFullYear();
+
       queryString = `&year=${thisYear}`;
       break;
     case CalendarFilters.ALL_TIME:
