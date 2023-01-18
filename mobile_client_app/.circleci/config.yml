@@ -90,11 +90,11 @@ jobs:
         type: enum
         enum: ["staging", "prod"]
     steps:
+      - attach_workspace:
+          at: ~/workspace
       - checkout
       - ruby/install:
           version: '3.0.2'
-      - attach_workspace:
-          at: ~/workspace
       - ruby/install-deps:
           app-dir: ~/project/mobile_client_app/client_mobile_app
       - run:
