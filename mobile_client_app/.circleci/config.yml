@@ -95,6 +95,8 @@ jobs:
       - checkout
       - ruby/install-deps:
           app-dir: ~/project/mobile_client_app/client_mobile_app
+          bundler-version: 2.2.33
+          key: android-gems-v1
       - run:
           command: gem install fastlane
           working_directory: ~/project/mobile_client_app/client_mobile_app
