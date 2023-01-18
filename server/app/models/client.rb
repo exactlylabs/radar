@@ -1,8 +1,8 @@
 class Client < ApplicationRecord
   # TODO: New agents are 15 seconds, old were 30. Once all the legacy "script based" clients are gone, update this to 15
   PING_DURATION = 30
-  enum data_cap_periodicity: {daily: 0, weekly: 1, monthly: 2, yearly: 3}
-  enum scheduling_periodicity: {scheduler_hourly: 0, scheduler_daily: 1, scheduler_weekly: 2, scheduler_monthly: 3}
+  enum data_cap_periodicity: { daily: 0, weekly: 1, monthly: 2, yearly: 3 }
+  enum scheduling_periodicity: { scheduler_hourly: 0, scheduler_daily: 1, scheduler_weekly: 2, scheduler_monthly: 3 }
   belongs_to :user, optional: true, foreign_key: 'claimed_by_id'
   belongs_to :location, optional: true
   belongs_to :client_version, optional: true
@@ -27,7 +27,7 @@ class Client < ApplicationRecord
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, -> { where("online = true AND (pinged_at < ? OR pinged_at IS NULL)", (PING_DURATION * 1.5).second.ago) }
-  scope :where_test_should_be_requested, -> { where("test_scheduled_at <= ? AND test_requested = false", Time.now)}
+  scope :where_test_should_be_requested, -> { where("test_scheduled_at <= ? AND test_requested = false", Time.now) }
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where("location_id IS NULL") }
@@ -36,8 +36,8 @@ class Client < ApplicationRecord
 
   def check_ip_changed
     if saved_change_to_ip
-        # Call a job to search for the new ASN
-        FindAsnByIp.perform_later self
+      # Call a job to search for the new ASN
+      FindAsnByIp.perform_later self
     end
   end
 
@@ -85,9 +85,9 @@ class Client < ApplicationRecord
   def claim_remote_port
     # TODO: This is not safe with concurrent clients
     range = ENV["REMOTE_PORT_RANGE"]
-    start_port, end_port = range.split("-").map{|i| i.to_i}
+    start_port, end_port = range.split("-").map { |i| i.to_i }
     current_max = Client.maximum(:remote_gateway_port)
-    
+
     if current_max == nil
       self.remote_gateway_port = start_port
     elsif current_max < end_port
@@ -142,7 +142,7 @@ class Client < ApplicationRecord
   end
 
   def has_data_cap?
-    return self.data_cap_max_usage.nil? || self.data_cap_periodicity.nil? || 
+    return self.data_cap_max_usage.nil? || self.data_cap_periodicity.nil? ||
       self.data_cap_max_usage > self.data_cap_current_period_usage
   end
 
@@ -156,7 +156,7 @@ class Client < ApplicationRecord
       c.data_cap_current_period_usage += byte_size
       c.save!
     end
-    self.reload(:lock=>true)
+    self.reload(:lock => true)
   end
 
   def next_schedule_period_end
@@ -182,7 +182,7 @@ class Client < ApplicationRecord
     return t
   end
 
-  def schedule_next_test!(force=false)
+  def schedule_next_test!(force = false)
     base_timestamp = Time.now
     return if self.test_scheduled_at.present? && self.test_scheduled_at > base_timestamp && !force
 
@@ -224,7 +224,7 @@ class Client < ApplicationRecord
     res = self.measurements.where(
       "created_at >= ?", Time.current.at_beginning_of_month
     ).pluck(Arel.sql('SUM(download_total_bytes)'), Arel.sql('AVG(download_total_bytes)'))
-    summary = {month_sum: nil, month_avg: nil}
+    summary = { month_sum: nil, month_avg: nil }
     if res
       summary[:month_sum] = res[0][0]
       summary[:month_avg] = res[0][1]
@@ -278,7 +278,7 @@ class Client < ApplicationRecord
       update_version.distribution_by_name(self.distribution_name)
     end
   end
-  
+
   def to_update_signed_binary
     dist = self.to_update_distribution
     if !dist.nil?
@@ -312,7 +312,7 @@ class Client < ApplicationRecord
     return Distribution.joins(
       client_version: :update_groups
     ).where(
-      "update_groups.id = ? AND distributions.name = ? AND client_versions.version != ?", 
+      "update_groups.id = ? AND distributions.name = ? AND client_versions.version != ?",
       self.update_group_id, self.distribution_name, self.raw_version
     ).exists?
   end
@@ -322,7 +322,7 @@ class Client < ApplicationRecord
     return WatchdogVersion.joins(
       :update_groups
     ).where(
-      "update_groups.id = ? AND watchdog_versions.version != ?", 
+      "update_groups.id = ? AND watchdog_versions.version != ?",
       self.update_group_id, self.raw_watchdog_version
     ).exists?
   end
@@ -333,8 +333,8 @@ class Client < ApplicationRecord
 
   def get_measurement_data(total_bytes)
     data_string = ""
-    data_string += "~#{(total_bytes / (1024**2)).round(0)} MB per test (" if total_bytes > 0
-    data_string += "#{(self.data_cap_current_period_usage / (1024**2)).round(0)} MB this month"
+    data_string += "~#{(total_bytes / (1024 ** 2)).round(0)} MB per test (" if total_bytes > 0
+    data_string += "#{(self.data_cap_current_period_usage / (1024 ** 2)).round(0)} MB this month"
     data_string += ")" if total_bytes > 0
     data_string
   end
@@ -411,17 +411,17 @@ class Client < ApplicationRecord
       yielder << CSV.generate_line(%w{id client_id user_id location_id name address latitude longitude pinged_at created_at})
       includes(:location, :user).find_each do |client|
         yielder << CSV.generate_line([
-          client.id,
-          client.unix_user,
-          client.user ? client.user.id : "",
-          client.location ? client.location.id : "",
-          client.name,
-          client.address,
-          client.latitude,
-          client.longitude,
-          client.pinged_at ? client.pinged_at.strftime("%m/%d/%Y %H:%M:%S") : "",
-          client.created_at.strftime("%m/%d/%Y %H:%M:%S")
-        ])
+                                       client.id,
+                                       client.unix_user,
+                                       client.user ? client.user.id : "",
+                                       client.location ? client.location.id : "",
+                                       client.name,
+                                       client.address,
+                                       client.latitude,
+                                       client.longitude,
+                                       client.pinged_at ? client.pinged_at.strftime("%m/%d/%Y %H:%M:%S") : "",
+                                       client.created_at.strftime("%m/%d/%Y %H:%M:%S")
+                                     ])
       end
     end
   end
@@ -449,18 +449,18 @@ class Client < ApplicationRecord
   end
 
   def has_no_ethernet_interface?
-    self.network_interfaces.filter {|i| i.present? && (is_eth?(i) || is_enps?(i) || is_en?(i))}.size == 0
+    self.network_interfaces.filter { |i| i.present? && (is_eth?(i) || is_enps?(i) || is_en?(i)) }.size == 0
   end
 
   def get_mac_address
     if self.network_interfaces.nil? || has_no_ethernet_interface?
-      "N/A"
+      "Not Available"
     else
-      possible_interface = self.network_interfaces.filter {|i| i.present? && is_eth?(i)}
+      possible_interface = self.network_interfaces.filter { |i| i.present? && is_eth?(i) }
       return possible_interface[0]["mac"] if possible_interface.size >= 1
-      possible_interface = self.network_interfaces.filter {|i| i.present? && is_en?(i)}
+      possible_interface = self.network_interfaces.filter { |i| i.present? && is_en?(i) }
       return possible_interface[0]["mac"] if possible_interface.size >= 1
-      possible_interface = self.network_interfaces.filter {|i| i.present? && is_enps?(i)}
+      possible_interface = self.network_interfaces.filter { |i| i.present? && is_enps?(i) }
       possible_interface[0]["mac"] # if we get to this point, we don't need to check for the length of filter result because it must be enps type
     end
   end
