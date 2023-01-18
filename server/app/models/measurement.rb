@@ -10,7 +10,7 @@ class Measurement < ApplicationRecord
 
   def self.to_ndt7_csv
     info_attributes = %w{id client_id account location_name latitude longitude address loss_rate}
-    attributes = %w{style upload download jitter latency created_at}
+    attributes = %w{style upload download avg_data_used jitter latency created_at}
     extended_attributes = %w{State CAState Retransmits Probes Backoff Options WScale AppLimited RTO ATO SndMSS RcvMSS Unacked Sacked Lost Retrans Fackets LastDataSent LastAckSent LastDataRecv LastAckRecv PMTU RcvSsThresh RTT RTTVar SndSsThresh SndCwnd AdvMSS Reordering RcvRTT RcvSpace TotalRetrans PacingRate MaxPacingRate BytesAcked BytesReceived SegsOut SegsIn NotsentBytes MinRTT DataSegsIn DataSegsOut DeliveryRate BusyTime RWndLimited SndBufLimited Delivered DeliveredCE BytesSent BytesRetrans DSackDups ReordSeen RcvOooPack SndWnd ElapsedTime}
 
     CSV.generate(headers: true) do |csv|
@@ -46,7 +46,7 @@ class Measurement < ApplicationRecord
 
   def self.to_ndt7_csv_enumerator
     info_attributes = %w{id client_id account location_name latitude longitude address loss_rate}
-    attributes = %w{style upload download jitter latency created_at}
+    attributes = %w{style upload download avg_data_used jitter latency created_at}
     extended_attributes = %w{State CAState Retransmits Probes Backoff Options WScale AppLimited RTO ATO SndMSS RcvMSS Unacked Sacked Lost Retrans Fackets LastDataSent LastAckSent LastDataRecv LastAckRecv PMTU RcvSsThresh RTT RTTVar SndSsThresh SndCwnd AdvMSS Reordering RcvRTT RcvSpace TotalRetrans PacingRate MaxPacingRate BytesAcked BytesReceived SegsOut SegsIn NotsentBytes MinRTT DataSegsIn DataSegsOut DeliveryRate BusyTime RWndLimited SndBufLimited Delivered DeliveredCE BytesSent BytesRetrans DSackDups ReordSeen RcvOooPack SndWnd ElapsedTime}
     @enumerator = Enumerator.new do |yielder|
       yielder << CSV.generate_line(info_attributes + attributes + extended_attributes)
@@ -88,7 +88,7 @@ class Measurement < ApplicationRecord
 
   def self.to_csv
     CSV.generate(headers: true) do |csv|
-      csv << %w{id client_id account location_name latitude longitude address style upload download jitter latency created_at}
+      csv << %w{id client_id account location_name latitude longitude address style upload download avg_data_used jitter latency created_at}
 
       includes(:location, :client, :account).each do |measurement|
         csv << [
@@ -102,6 +102,7 @@ class Measurement < ApplicationRecord
           measurement.style,
           measurement.upload,
           measurement.download,
+          measurement.avg_data_used,
           measurement.jitter,
           measurement.latency,
           measurement.created_at.strftime("%m/%d/%Y %H:%M:%S"),
@@ -112,7 +113,7 @@ class Measurement < ApplicationRecord
 
   def self.to_csv_enumerator
     @enumerator = Enumerator.new do |yielder|
-      yielder << CSV.generate_line(%w{id client_id account location_name latitude longitude address style upload download jitter latency created_at})
+      yielder << CSV.generate_line(%w{id client_id account location_name latitude longitude address style upload download avg_data_used jitter latency created_at})
       includes(:location, :client, :account).find_each do |measurement|
         yielder << CSV.generate_line([
           measurement.id,
@@ -125,6 +126,7 @@ class Measurement < ApplicationRecord
           measurement.style,
           measurement.upload,
           measurement.download,
+          measurement.avg_data_used,
           measurement.jitter,
           measurement.latency,
           measurement.created_at.strftime("%m/%d/%Y %H:%M:%S"),
@@ -141,6 +143,14 @@ class Measurement < ApplicationRecord
       end
     end
     tmp_file
+  end
+
+  def avg_data_used
+    if self.download_total_bytes && self.upload_total_bytes
+      ((self.download_total_bytes + self.upload_total_bytes) / (1024**2)).round(0)
+    else
+      0
+    end
   end
 
 end

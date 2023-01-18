@@ -25,6 +25,22 @@
         <% end %>
       </select>
     </div>
+
+    <div class="fv-row mb-7 fv-plugins-icon-container">
+      <label class="required fs-6 fw-bold mb-2">Watchdog Version</label>
+      <select class="form-select"
+              data-controller="select2"
+              data-select2-blanks-value="true"
+              id="update-group-watchdog-version-dropdown-edit"
+              data-placeholder="Select a version"
+              name="update_group[watchdog_version_id]"
+              data-select2-id="select2-data-watchdog_version_id"
+              tabindex="-1">
+        <% policy_scope(WatchdogVersion).each do |wv|%>
+          <option value="<%= wv.id %>" label="<%= wv.version %>" <%= update_group.watchdog_version.present? && update_group.watchdog_version.id == wv.id ? "selected" : nil %>><%= wv.version %></option>
+        <% end %>
+      </select>
+    </div>
   </div>
 
   <div class="modal-footer">
