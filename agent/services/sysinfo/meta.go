@@ -36,7 +36,7 @@ func macAddresses() []NetInterfaces {
 			gatewayRoute = true
 		}
 		if iface.Flags&net.FlagLoopback == 0 {
-			addresses = append(addresses, NetInterfaces{Name: iface.Name, MAC: iface.HardwareAddr.String(), GatewayRoute: gatewayRoute})
+			addresses = append(addresses, NetInterfaces{Name: iface.Name, MAC: iface.HardwareAddr.String(), DefaultRoute: gatewayRoute})
 		}
 	}
 	return addresses
