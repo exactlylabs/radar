@@ -19,6 +19,8 @@ type AgentInfoManager struct {
 type NetInterfaces struct {
 	Name string `json:"name"`
 	MAC  string `json:"mac"`
+	// GatewayRoute tells us if this is the default interface to connect to the internet
+	GatewayRoute bool `json:"gateway_route"`
 }
 
 type ClientMeta struct {
