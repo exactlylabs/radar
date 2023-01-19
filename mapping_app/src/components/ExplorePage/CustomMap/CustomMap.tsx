@@ -3,7 +3,7 @@ import {GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
 import L, {LeafletMouseEvent} from "leaflet";
 import {useMap} from "react-leaflet";
 import {usePrev} from "../../../hooks/usePrev";
-import {useEffect} from "react";
+import {useEffect, useMemo, useRef} from "react";
 import {
   addClickHandler,
   checkZoomControlPosition,
@@ -12,6 +12,7 @@ import {
 } from "../../../utils/map";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 import {isIphoneAndSafari} from "../../../utils/iphone";
+import {isTouchDevice} from "../../../utils/screen";
 
 
 interface CustomMapProps {
@@ -51,9 +52,11 @@ const CustomMap = ({
   const prevSelectedGeospace = usePrev(selectedGeospace);
   const {isDesktopScreen} = useViewportSizes();
   const isSmallMap = !isDesktopScreen;
+  const isTouchRef = useRef(false);
 
   useEffect(() => {
     initializeMap(map, setZoom, setCenter, isSmallMap);
+    isTouchRef.current = isTouchDevice();
   }, []);
 
   map.setView({lat: center[0], lng: center[1]}, zoom);
@@ -65,7 +68,7 @@ const CustomMap = ({
     // check to see if we need to re-paint shapes
     if(selectedGeospaceChanged || nowThereIsASelectedGeospace || nowThereIsNoSelectedGeospace) {
       paintLayer(map, vectorTileLayer, selectedGeospace, speedType, selectedSpeedFilters);
-      updateMouseOverHandlers(vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
+      updateMouseOverHandlers(vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace, isTouchRef.current);
     }
     checkZoomControlPosition(selectedGeospace, isRightPanelHidden);
   }, [selectedGeospace, isRightPanelHidden]);
@@ -82,7 +85,7 @@ const CustomMap = ({
       const mouseOverHandlerFn = (ev: LeafletMouseEvent) => layerMouseoverHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
       const mouseOutHandlerFn = (ev: LeafletMouseEvent) => layerMouseoutHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
       vectorTileLayer.on('click', clickHandlerFn);
-      if(!isSmallMap && !isIphoneAndSafari()) {
+      if(!isSmallMap && !isIphoneAndSafari() && !isTouchRef.current) {
         vectorTileLayer.on('mouseover', mouseOverHandlerFn);
         vectorTileLayer.on('mouseout', mouseOutHandlerFn);
       }
