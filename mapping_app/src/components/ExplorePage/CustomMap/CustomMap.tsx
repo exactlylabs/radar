@@ -1,9 +1,9 @@
-import {Filter, Optional} from "../../../utils/types";
+import {Optional} from "../../../utils/types";
 import {GeospaceInfo, GeospaceOverview} from "../../../api/geospaces/types";
 import L, {LeafletMouseEvent} from "leaflet";
 import {useMap} from "react-leaflet";
 import {usePrev} from "../../../hooks/usePrev";
-import {useEffect, useMemo, useRef} from "react";
+import {useEffect, useRef} from "react";
 import {
   addClickHandler,
   checkZoomControlPosition,
@@ -11,7 +11,6 @@ import {
   paintLayer, removeAllFeatureLayers, updateMouseOverHandlers,
 } from "../../../utils/map";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
-import {isIphoneAndSafari} from "../../../utils/iphone";
 import {isTouchDevice} from "../../../utils/screen";
 
 
