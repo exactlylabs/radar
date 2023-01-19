@@ -59,12 +59,19 @@ class Client < ApplicationRecord
     if saved_change_to_location_id
       ClientEventLog.location_changed_event self, location_id_before_last_save, self.location_id
     end
-    if saved_change_to_online && online
-      ClientEventLog.went_online_event self
+
+    if saved_change_to_online
+      if online
+        ClientEventLog.went_online_event self
+      else
+        ClientEventLog.went_offline_event self
+      end
     end
-    if saved_change_to_online && !online
-      ClientEventLog.went_offline_event self
+
+    if saved_change_to_online || saved_change_to_test_requested
+      PodStatusChannel.broadcast_to(CHANNELS[:clients_status], self)
     end
+
     if saved_change_to_ip
       ClientEventLog.ip_changed_event self, ip_before_last_save, self.ip
     end

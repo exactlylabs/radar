@@ -58,7 +58,6 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.update(test_requested: true)
-        PodStatusChannel.broadcast_to(CHANNELS[:clients_status], @client)
         format.html { redirect_to request.env['HTTP_REFERER'], notice: "Client test requested." }
         format.json { render :show, status: :ok, location: clients_path(@client.unix_user) }
       else
@@ -161,7 +160,6 @@ class ClientsController < ApplicationController
     Google::Cloud::Trace.in_span "Saving Client" do
       @client.save!
     end
-    PodStatusChannel.broadcast_to(CHANNELS[:clients_status], @client)
     Google::Cloud::Trace.in_span "Rendering Response" do
       respond_to do |format|
         format.json { render :status, status: :ok }
@@ -322,8 +320,6 @@ class ClientsController < ApplicationController
     else
       @notice = "Error requesting test for selected clients."
     end
-
-    PodStatusChannel.broadcast_to(CHANNELS[:clients_status], @clients)
 
     respond_to do |format|
       format.turbo_stream
