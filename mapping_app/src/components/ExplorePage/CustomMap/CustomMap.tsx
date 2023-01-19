@@ -85,7 +85,7 @@ const CustomMap = ({
       const mouseOverHandlerFn = (ev: LeafletMouseEvent) => layerMouseoverHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
       const mouseOutHandlerFn = (ev: LeafletMouseEvent) => layerMouseoutHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
       vectorTileLayer.on('click', clickHandlerFn);
-      if(!isSmallMap && !isIphoneAndSafari() && !isTouchRef.current) {
+      if(!isTouchRef.current) {
         vectorTileLayer.on('mouseover', mouseOverHandlerFn);
         vectorTileLayer.on('mouseout', mouseOutHandlerFn);
       }
