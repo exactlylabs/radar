@@ -130,7 +130,8 @@ export const mouseOutFeatureStyleHandler = (feature: any, mouseOutGeospace: Geos
   return undefined;
 }
 
-export const updateMouseOverHandlers = (vectorTileLayer: any, speedType: string, selectedSpeedFilters: Array<string>, selectedGeospace: Optional<GeospaceInfo>) => {
+export const updateMouseOverHandlers = (vectorTileLayer: any, speedType: string, selectedSpeedFilters: Array<string>, selectedGeospace: Optional<GeospaceInfo>, isTouchScreen: boolean) => {
+  if(isTouchScreen) return;
   const mouseOverFn = (ev: LeafletMouseEvent) => layerMouseoverHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
   const mouseOutFn = (ev: LeafletMouseEvent) => layerMouseoutHandler(ev, vectorTileLayer, speedType, selectedSpeedFilters, selectedGeospace);
   vectorTileLayer.off('mouseout', mouseOutFn);
