@@ -12,9 +12,8 @@ import {
 } from "../../../utils/speeds";
 import WhiteRightArrow from '../../../assets/arrow-right.png';
 import CustomFullWidthButton from "../../common/CustomFullWidthButton";
-import './styles/FloatingPopover.css';
 import {useMap} from "react-leaflet";
-import L, {LatLng, Point} from "leaflet";
+import L, {Point} from "leaflet";
 import CloseIconBlack from "../../../assets/close-icon-gray.png";
 
 interface FloatingPopoverProps {
