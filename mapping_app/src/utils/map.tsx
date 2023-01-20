@@ -1,13 +1,14 @@
 import {DetailedGeospace, GeospaceData, GeospaceInfo, GeospaceOverview, isGeospaceData} from "../api/geospaces/types";
 import {getSignalStateDownload, getSignalStateUpload, speedColors, SpeedsObject, speedTypes} from "./speeds";
-import L, {LatLng, LeafletMouseEvent, TileLayer} from "leaflet";
+import L, {LatLng, LeafletMouseEvent, PopupOptions, TileLayer, TooltipOptions} from "leaflet";
 import {Filter, Optional} from "./types";
 import {OUTLINE_ONLY_SHAPE_COLOR, OUTLINE_ONLY_SHAPE_FILL, TRANSPARENT} from "../styles/colors";
-import {GeoJSONProperties, UnparsedGeoJSONProperties} from "../api/geojson/types";
+import { UnparsedGeoJSONProperties} from "../api/geojson/types";
 import {getSignalState, SpeedFilters} from "./filters";
 import {ReactElement} from "react";
 import GeographicalTooltip from "../components/ExplorePage/GeographicalTooltip/GeographicalTooltip";
 import ReactDOMServer from "react-dom/server";
+import FloatingPopover from "../components/ExplorePage/FloatingPopover/FloatingPopover";
 
 export const mapTileUrl: string = MAPBOX_TILESET_URL;
 export const mapTileAttribution =
@@ -172,7 +173,12 @@ export const isCurrentGeospace = (geospace: DetailedGeospace, selectedGeospace: 
   }
 }
 
-export const initializeMap = (map: L.Map, setZoom: (newZoom: number) => void, setCenter: (newCenter: Array<number>) => void, withNoZoomControl: boolean) => {
+export const initializeMap = (
+  map: L.Map,
+  setZoom: (newZoom: number) => void,
+  setCenter: (newCenter: Array<number>) => void,
+  withNoZoomControl: boolean,
+) => {
   map.attributionControl.setPrefix('');
   map.setMinZoom(MIN_ZOOM);
   map.addLayer(new TileLayer(mapTileUrl, {attribution: mapTileAttribution}));
@@ -192,8 +198,7 @@ export const initializeMap = (map: L.Map, setZoom: (newZoom: number) => void, se
   });
 }
 
-
-export const addClickHandler = (ev: LeafletMouseEvent, map: L.Map, layer: any, selectGeospace: (geospace: GeospaceInfo, newCenter: L.LatLng) => void) => {
+export const addClickHandler = (ev: LeafletMouseEvent, map: L.Map, layer: any, selectGeospace: (geospace: Optional<GeospaceInfo>, newCenter?: L.LatLng) => void) => {
   if (ev.propagatedFrom.feature) {
     const summary: GeospaceOverview = JSON.parse(ev.propagatedFrom.feature.properties.summary) as GeospaceOverview;
     const centroid: Array<number> = summary.geospace.centroid;
@@ -207,6 +212,8 @@ export const addClickHandler = (ev: LeafletMouseEvent, map: L.Map, layer: any, s
     }
     map.flyTo(geospacePosition, 5);
     map.setView(geospacePosition, map.getZoom() > 5 ? map.getZoom() : 5);
+  } else {
+    selectGeospace(null);
   }
 }
 

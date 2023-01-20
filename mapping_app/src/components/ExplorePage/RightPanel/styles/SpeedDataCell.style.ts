@@ -71,20 +71,52 @@ const smallUnitStyle: CSSProperties = {
   fontSize: '15px',
 }
 
+const horizontalStyle: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
+  marginRight: '20px'
+}
+
+const horizontalValueStyle: CSSProperties = {
+  fontSize: '17px',
+  color: DEFAULT_TEXT,
+  margin: '0 3px 0 0'
+}
+
+const horizontalUnitVersion: CSSProperties = {
+  fontSize: '15px',
+  color: DEFAULT_TEXT,
+  margin: 0
+}
+
+const horizontalTextStyle: CSSProperties = {
+  width: '100px',
+  fontSize: '14px',
+  color: DEFAULT_SECONDARY_TEXT,
+  margin: 0
+}
+
 export const styles = {
-  SpeedDataCellContainer: (isSmall: boolean) => {
-    return isSmall ? smallSpeedDataCellContainerStyle : speedDataCellContainerStyle;
+  SpeedDataCellContainer: (isSmall: boolean, isHorizontal?: boolean) => {
+    let style = isSmall ? smallSpeedDataCellContainerStyle : speedDataCellContainerStyle;
+    if(isHorizontal) style = {...style, ...horizontalStyle};
+    return style;
   },
   SpeedDataCellHeader: speedDataCellHeaderStyle,
-  Text: (isSmall: boolean) => {
+  Text: (isSmall: boolean, horizontalVersion?: boolean) => {
+    if(horizontalVersion) return horizontalTextStyle;
     return isSmall ? smallTextStyle : textStyle;
   },
   ValueContainer: valueContainerStyle,
-  Value: (isSmallScreen: boolean, smallVersion?: boolean) => {
+  Value: (isSmallScreen: boolean, smallVersion?: boolean, horizontalVersion?: boolean) => {
+    if(horizontalVersion) return horizontalValueStyle;
     if(isSmallScreen) return smallScreenValueStyle;
     return smallVersion ? smallValueStyle : valueStyle;
   },
-  Unit: (smallVersion?: boolean) => {
+  Unit: (smallVersion?: boolean, horizontalVersion?: boolean) => {
+    if(horizontalVersion) return horizontalUnitVersion;
     return smallVersion ? smallUnitStyle : unitStyle;
   }
 }

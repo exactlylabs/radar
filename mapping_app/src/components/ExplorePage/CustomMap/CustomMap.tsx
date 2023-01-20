@@ -16,7 +16,7 @@ import {isTouchDevice} from "../../../utils/screen";
 
 interface CustomMapProps {
   selectedGeospace: Optional<GeospaceInfo>;
-  selectGeospace: (geospace: GeospaceInfo, newCenter: L.LatLng) => void;
+  selectGeospace: (geospace: Optional<GeospaceInfo>, newCenter?: L.LatLng) => void;
   speedType: string;
   selectedSpeedFilters: Array<string>;
   setZoom: (zoom: number) => void;
@@ -27,6 +27,7 @@ interface CustomMapProps {
   lastGeoJSONUpdate: Date;
   dateQueryString?: string;
   vectorTileLayer: any;
+  viewAllDetails: () => void;
 }
 
 const CustomMap = ({
@@ -41,7 +42,8 @@ const CustomMap = ({
   isRightPanelHidden,
   lastGeoJSONUpdate,
   dateQueryString,
-  vectorTileLayer
+  vectorTileLayer,
+  viewAllDetails
 }: CustomMapProps): null => {
 
   const map = useMap();

@@ -3,7 +3,6 @@ import {styles} from "./styles/GeographicalTooltipContainer.style";
 import './styles/GeographicalTooltipContainer.css';
 import {capitalize} from "../../../utils/strings";
 import SpeedDataCell from "../RightPanel/SpeedDataCell";
-import {ArrowDownwardRounded, ArrowUpwardRounded} from "@mui/icons-material";
 import {GeospaceOverview} from "../../../api/geospaces/types";
 import {getSignalStateDownload, getSignalStateUpload} from "../../../utils/speeds";
 import DownloadIconGray from '../../../assets/download-icon-gray.png';

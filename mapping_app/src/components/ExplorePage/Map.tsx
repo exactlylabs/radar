@@ -1,5 +1,5 @@
-import {ReactElement, useEffect, useState} from "react";
-import L from "leaflet";
+import React, {ReactElement, useEffect, useState} from "react";
+import L, {control} from "leaflet";
 import {MapContainer} from "react-leaflet";
 import {styles} from "./styles/Map.style";
 import {GeoJSONFilters} from "../../api/geojson/types";
@@ -12,11 +12,13 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 import vectorTileLayer from 'leaflet-vector-tile-layer';
 import {getVectorTilesUrl} from "../../api/tiles/requests";
 import {getVectorTileOptions} from "../../utils/vectorTiles";
+import FloatingPopover from "./FloatingPopover/FloatingPopover";
+import zoom = control.zoom;
 
 interface MapProps {
   namespace: string;
   selectedGeospace: Optional<GeospaceInfo>;
-  selectGeospace: (geospace: GeospaceInfo, center: L.LatLng) => void;
+  selectGeospace: (geospace: Optional<GeospaceInfo>, center?: L.LatLng) => void;
   speedType: string;
   provider: Asn;
   calendarType: string;
@@ -27,6 +29,9 @@ interface MapProps {
   setCenter: (center: Array<number>) => void;
   setLoading: (value: boolean) => void;
   isRightPanelHidden: boolean;
+  viewAllDetails: () => void;
+  isFloatingPopoverOpen: boolean;
+  closePopover: () => void;
 }
 
 const Map = ({
@@ -42,7 +47,10 @@ const Map = ({
   setCenter,
   setLoading,
   isRightPanelHidden,
-  calendarType
+  calendarType,
+  viewAllDetails,
+  isFloatingPopoverOpen,
+  closePopover
 }: MapProps): ReactElement => {
 
   const {isSmallScreen, isTabletScreen} = useViewportSizes();
@@ -85,7 +93,18 @@ const Map = ({
                      isRightPanelHidden={isRightPanelHidden}
                      lastGeoJSONUpdate={lastUpdate}
                      vectorTileLayer={tileLayer}
+                     viewAllDetails={viewAllDetails}
           />
+          {
+            isFloatingPopoverOpen && selectedGeospace &&
+            <FloatingPopover selectedGeospace={selectedGeospace}
+                             viewAllDetails={viewAllDetails}
+                             speedType={speedType}
+                             center={initialCenter}
+                             zoom={initialZoom}
+                             closePopover={closePopover}
+            />
+          }
         </MapContainer>
       :
         <div style={styles.SpinnerContainer}></div>
