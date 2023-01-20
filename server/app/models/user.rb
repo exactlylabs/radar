@@ -7,6 +7,7 @@ class User < ApplicationRecord
   validates_acceptance_of :terms
 
   has_one_attached :avatar
+  has_many_attached :downloads
 
   has_many :clients
   has_many :locations

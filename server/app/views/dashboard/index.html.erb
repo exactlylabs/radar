@@ -20,8 +20,10 @@
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
       <% if @onboard_step < 0 %>
         <% if policy(:export).all? %>
-          <a href="<%= all_exports_path(format: 'zip') %>"
-             class="btn bg-body btn-color-gray-700 btn-active-primary me-4"
+          <button type="button"
+                  class="btn bg-body btn-color-gray-700 btn-active-primary me-4"
+                  data-controller="exports"
+                  data-action="click->exports#exportAll"
           >
             <span class="svg-icon svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -31,7 +33,7 @@
               </svg>
             </span>
             Export Everything
-          </a>
+          </button>
         <% end %>
         <a href="<%= measurements_path(format: 'csv') %>"
            class="btn bg-body btn-color-gray-700 btn-active-primary me-4"
