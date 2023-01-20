@@ -3,8 +3,5 @@
 # /server directory.
 
 Location.all.each do |location|
-    location.download_avg = location.measurements.average(:download).round(3) if location.measurements.count.positive?
-    
-    location.upload_avg = location.measurements.average(:upload).round(3) if location.measurements.count.positive?
-    location.save!
+    location.recalculate_averages!
 end
