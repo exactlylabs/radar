@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_18_143101) do
+ActiveRecord::Schema.define(version: 2023_01_20_171530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -250,6 +250,8 @@ ActiveRecord::Schema.define(version: 2023_01_18_143101) do
     t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
+    t.float "download_avg"
+    t.float "upload_avg"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
   end
 
