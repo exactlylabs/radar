@@ -24,7 +24,7 @@
     <!--<img src="" class="w-30px me-6" alt="">-->
     <div class="d-flex flex-column">
       <div class="fs-6 text-dark fw-bolder"><%= location.name %></div>
-      <div class="fs-6 fw-bold text-muted"><%= location.clients.length %> pod<%= location.clients != 1 ? "s" : "" %></div>
+      <div class="fs-6 fw-bold text-muted"><% total_pods = location.clients.size %><%= total_pods %> pod<%= total_pods != 1 ? "s" : "" %></div>
     </div>
   </div>
   <div class="d-flex justify-content-end">
