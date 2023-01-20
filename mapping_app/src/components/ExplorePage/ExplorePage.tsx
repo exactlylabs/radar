@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/ExplorePage.style";
 import Map from "./Map";
 import ExplorationPopover from "./ExplorationPopover/ExplorationPopover";
@@ -55,6 +55,8 @@ import ModalContentCustomDateRange
   from "../common/CustomGenericModal/ModalContentCustomDateRange/ModalContentCustomDateRange";
 import ModalContentCalendar from "../common/CustomGenericModal/ModalContentCalendar/ModalContentCalendar";
 import {isIphoneAndSafari} from "../../utils/iphone";
+import {isTouchDevice} from "../../utils/screen";
+import FloatingPopover from "./FloatingPopover/FloatingPopover";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -72,6 +74,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   const {isSmallScreen, isSmallTabletScreen, isTabletScreen} = useViewportSizes();
   const isSmallExplorePage = isSmallScreen || isTabletScreen;
+  const isTouchRef = useRef(false);
   const {menuContent, setMenuContent} = useContentMenu();
 
   const [loading, setLoading] = useState(false);
@@ -94,6 +97,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
   const [areSmallScreenFiltersOpen, setAreSmallScreenFiltersOpen] = useState(true);
   const [genericMenuOpen, setGenericMenuOpen] = useState(false);
   const [genericModalOpen, setGenericModalOpen] = useState(false);
+  const [isFloatingPopoverOpen, setIsFloatingPopoverOpen] = useState(false);
 
   const shouldDisplaySmallScreenBottomNavigator = (isSmallScreen && !isExplorationPopoverOpen) || isTabletScreen;
 
@@ -106,6 +110,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       setIsFirstTimeModalOpen(true);
       setAlreadyVisitedCookie();
     }
+    isTouchRef.current = isTouchDevice();
   }, []);
 
   useEffect(() => {
@@ -239,9 +244,15 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     setLoading(false);
   }
 
-  const selectGeospace = (geospace: GeospaceInfo, center?: L.LatLng) => {
-    setLoading(true);
+  const selectGeospace = (geospace: Optional<GeospaceInfo>, center?: L.LatLng) => {
     setSelectedGeospace(geospace);
+    if(!geospace) {
+      closeFloatingPopover();
+      setSelectedGeospaceId(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     setSelectedGeospaceId((geospace as GeospaceOverview).geospace.id);
     if(center) {
       setCurrentMapCenter([center.lat, center.lng]);
@@ -254,14 +265,20 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     if(isSmallScreen) {
       setMenuContent(MenuContent.GEOSPACE);
       setGenericMenuOpen(true);
-    } else if(isSmallTabletScreen) {
-      setMenuContent(MenuContent.GEOSPACE);
-      setGenericModalOpen(true);
+    } else if(isTabletScreen && isTouchRef.current) {
+      openFloatingPopover();
     } else {
       openRightPanel();
     }
     setLoading(false);
   }
+
+  const openFloatingPopover = () => setIsFloatingPopoverOpen(true);
+  const closeFloatingPopover = () => {
+    setIsFloatingPopoverOpen(false);
+    setSelectedGeospace(null);
+  }
+  const hideFloatingPopover = () => setIsFloatingPopoverOpen(false);
 
   const recenterMap = () => {
     setCurrentMapCenter([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
@@ -449,6 +466,16 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     return !!menuContent && menuContent === MenuContent.FULL_GEOSPACE;
   }
 
+  const handleViewAllDetails = () => {
+    if(isSmallTabletScreen) {
+      setMenuContent(MenuContent.GEOSPACE);
+      setGenericModalOpen(true);
+    } else {
+      setIsRightPanelOpen(true);
+    }
+    hideFloatingPopover();
+  }
+
   return (
     <div style={styles.ExplorePageContainer(isSmallExplorePage, isIphoneAndSafari())}>
       { loading && <CustomMapOverlayingLoader/> }
@@ -465,6 +492,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
              setCenter={setCurrentMapCenter}
              setLoading={setLoading}
              isRightPanelHidden={isRightPanelHidden}
+           viewAllDetails={handleViewAllDetails}
+           isFloatingPopoverOpen={isFloatingPopoverOpen}
+           closePopover={closeFloatingPopover}
       />
       { isSmallScreen && <div style={styles.InvisibleOverlay(false)}></div> }
       <TopSearchbar selectSuggestion={selectSuggestion}

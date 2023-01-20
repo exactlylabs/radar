@@ -8,6 +8,7 @@ interface SpeedDataCellProps {
   value: string;
   unit: string;
   smallVersion?: boolean;
+  horizontalVersion?: boolean;
 }
 
 const SpeedDataCell = ({
@@ -15,7 +16,8 @@ const SpeedDataCell = ({
   text,
   value,
   unit,
-  smallVersion
+  smallVersion,
+  horizontalVersion
 }: SpeedDataCellProps): ReactElement => {
 
   const {isSmallScreen, isTabletScreen} = useViewportSizes();
@@ -43,9 +45,26 @@ const SpeedDataCell = ({
         <p className={'fw-regular'} style={styles.Unit(smallVersion)}>{unit}</p>
       </div>
     </div>
-  )
+  );
 
-  return isSmall ? getSmallContent() : getRegularContent();
+  const getHorizontalContent = () => (
+    <div style={styles.SpeedDataCellContainer(isSmall, horizontalVersion)}>
+      <div>
+        {icon}
+      </div>
+      <div>
+        <p className={'fw-regular'} style={styles.Text(false, horizontalVersion)}>{text}</p>
+        <div style={styles.ValueContainer}>
+          <p className={'fw-medium'} style={styles.Value(isSmall, smallVersion, horizontalVersion)}>{value}</p>
+          <p className={'fw-medium'} style={styles.Unit(smallVersion, horizontalVersion)}>{unit}</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  return horizontalVersion ? getHorizontalContent() :
+         isSmall ? getSmallContent() :
+         getRegularContent();
 }
 
 export default SpeedDataCell;
