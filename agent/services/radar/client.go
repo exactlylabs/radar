@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"runtime"
 	"strings"
 
 	"github.com/exactlylabs/radar/agent/agent"
@@ -44,6 +45,8 @@ func (c *radarClient) Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*
 	form.Add("version", meta.Version)
 	form.Add("distribution", meta.Distribution)
 	form.Add("watchdog_version", meta.WatchdogVersion)
+	form.Add("os_version", runtime.GOOS)
+	form.Add("hardware_platform", runtime.GOARCH)
 	ifaces, err := json.Marshal(meta.NetInterfaces)
 	if err != nil {
 		return nil, fmt.Errorf("radarClient#Ping error marshalling NetInterfaces: %w", err)
