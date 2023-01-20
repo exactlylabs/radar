@@ -51,12 +51,13 @@ func getGatewayFromNetRoute() (*gatewayInfo, error) {
 		if err != nil {
 			return nil, fmt.Errorf("netroute.getGatewayFromNetRoute ParseInt: %w", err)
 		}
-		ip := make(net.IP, 4)
-		binary.LittleEndian.PutUint32(ip, uint32(gatewayAddr))
+
 		if gatewayAddr == 0 {
 			// The default route has a non empty gateway address
 			continue
 		}
+		ip := make(net.IP, 4)
+		binary.LittleEndian.PutUint32(ip, uint32(gatewayAddr))
 		// Found the gateway
 		return &gatewayInfo{
 			Interface: columns[headers["Iface"]],
