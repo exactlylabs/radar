@@ -87,3 +87,6 @@ application.register("multi-row-table", MultiRowTableController);
 
 import BulkReleaseGroupModal from "./bulk_release_group_modal_controller";
 application.register("bulk-release-group-modal", BulkReleaseGroupModal);
+
+import ExportsController from './exports_controller';
+application.register("exports", ExportsController);
