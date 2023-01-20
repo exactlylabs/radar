@@ -135,8 +135,8 @@ class ClientsController < ApplicationController
       @client.distribution_name = params[:distribution]
       @client.ip = request.ip
       @client.network_interfaces = JSON.parse(params[:network_interfaces]) unless params[:network_interfaces].nil?
-      @client.os_version = JSON.parse(params[:os_version]) unless params[:os_version].nil?
-      @client.hardware_platform = JSON.parse(params[:hardware_platform]) unless params[:hardware_platform].nil?
+      @client.os_version = params[:os_version]
+      @client.hardware_platform = params[:hardware_platform]
 
     end
 
