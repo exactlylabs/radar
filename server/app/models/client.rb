@@ -328,7 +328,8 @@ class Client < ApplicationRecord
   end
 
   def latest_measurement
-    self.measurements.order(created_at: :desc).first
+    # Extra condition for download/upload not being null just in case there is some bad state
+    self.measurements.order(created_at: :desc).where("download IS NOT NULL AND upload IS NOT NULL").first
   end
 
   def get_measurement_data(total_bytes)

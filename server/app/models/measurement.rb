@@ -147,9 +147,10 @@ class Measurement < ApplicationRecord
 
   def avg_data_used
     if self.download_total_bytes && self.upload_total_bytes
-      ((self.download_total_bytes + self.upload_total_bytes) / (1024**2)).round(0)
+      mbytes = ((self.download_total_bytes + self.upload_total_bytes) / (1024**2)).round(0)
+      "#{mbytes} MB"
     else
-      0
+      "N/A"
     end
   end
 
