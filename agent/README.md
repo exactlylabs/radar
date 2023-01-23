@@ -133,3 +133,35 @@ We support creating packages for the following:
 #### Apple Notarization
 
 Since apple needs to validate our binary before enabling it to be downloaded without warnings, you also have to call `./scripts/notarize_pkg.sh`. See the file for more information on how to use it.
+
+
+### Certificate Revocation List
+
+If for some reason our binary signer certificate (for the self-update only) is compromised, it is possible to revoke it. The revocation works adding that certificate to a CRL (Certificate Revocation List). The CRL will have mapped in it all certificates that we've revoked so far.
+
+It is important to make sure that we are only revoking certificates created by our `./scripts/gen_cert.sh` script, because it adds the newly created certificate to the certificates database, usually called `index.txt`. When revoking, the program will look for it there.
+
+#### Revoking a Certificate
+
+To revoke a certificate, you can use our utility tool:
+
+`./scripts/crl_tools.sh revoke <path_to_certificate>`
+
+This script will revoke the given certificate, if it exists in the list of valid certificates in the database and will also generate a new `.crl.pem` file -- This is the CRL file that you need to make available to all pods.
+
+#### Updating the CRL in the Cloud
+
+Just generating the CRL is not enough, we need to place it somewhere where all pods can have access. Currently, we are using GCP Storage, in the same bucket as our public files from radar server: `https://storage.googleapis.com/radar.exactlylabs.com/rootCRL.crl.pem`. So whenever you update the CRL, go and upload it to this bucket, replacing the old one. Once you do this, all pods will be able to reject this certificate that you have revoked.
+
+#### Renewing the CRL
+
+CRLs have an expiration time. Once you reach it, the agent will no longer consider it safe and throw an error -- This error is going to be sent to sentry, so we can take action and renew it.
+
+To renew the certificate, call: 
+
+`./scripts/crl_tools.sh renew`
+
+It will generate a new CRL file and you go and upload it to the storage, the same way as in the step above.
+
+
+> The default expiration time is set to 30 days.
