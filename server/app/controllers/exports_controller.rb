@@ -7,8 +7,10 @@ class ExportsController < ApplicationController
 
   # GET /exports/all
   def all
-    a = AllExportsJob.perform_later current_user
-    puts "job -> #{a}"
+    filename = "all-data-#{Time.now.to_i}.zip"
+    current_pending_downloads = current_user.pending_downloads
+    current_user.update(pending_downloads: [*current_pending_downloads, filename])
+    AllExportsJob.perform_later current_user, filename
     respond_to do |format|
       format.json { render json: { msg: 'File is being prepared' } }
     end
