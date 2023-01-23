@@ -118,7 +118,11 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 			if pingResp.Update != nil {
 				log.Printf("An Update for version %v is Available\n", pingResp.Update.Version)
 				err := update.SelfUpdate(pingResp.Update.BinaryUrl)
-				if err != nil && (errors.Is(err, update.ErrInvalidCertificate) || errors.Is(err, update.ErrInvalidSignature)) {
+				if err != nil && (errors.Is(err, update.ErrInvalidCertificate) ||
+					errors.Is(err, update.ErrInvalidSignature) ||
+					errors.Is(err, update.ErrCRLInvalidSignature) ||
+					errors.Is(err, update.ErrCRLNotFound)) {
+
 					log.Printf("Existent update is invalid: %v\n", err)
 					tracing.NotifyError(err, map[string]interface{}{
 						"Update Data": map[string]string{
@@ -126,6 +130,10 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 							"url":     pingResp.Update.BinaryUrl,
 						},
 					})
+				} else if errors.Is(err, update.ErrCRLExpired) {
+					log.Println(err)
+					// Notify ourselves to renew the CRL
+					tracing.NotifyError(err, map[string]interface{}{})
 				} else if err != nil {
 					panic(err)
 				} else {
