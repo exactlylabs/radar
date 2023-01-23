@@ -65,27 +65,28 @@ class ClientMeasurementsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_client
-      if user_signed_in?
-        @client = current_account.clients.find_by_unix_user(params[:client_id])
-      else
-        client = Client.find_by_unix_user(params[:client_id])
-        if client.authenticate_secret(params[:client_secret])
-          @client = client
-        end
-      end
-      if !@client
-        raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:client_id]}", Client.name, params[:client_id])
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_client
+    if user_signed_in?
+      @client = current_account.clients.find_by_unix_user(params[:client_id])
+    else
+      client = Client.find_by_unix_user(params[:client_id])
+      if client.authenticate_secret(params[:client_secret])
+        @client = client
       end
     end
-
-    # Only allow a list of trusted parameters through.
-    def measurement_params
-      params.require(:measurement).permit(:style, :result, :client_id)
+    if !@client
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:client_id]}", Client.name, params[:client_id])
     end
+  end
 
-    def client_signed_in?
-      Client.find_by_unix_user(params[:client_id])&.authenticate_secret(params[:client_secret]) != false
-    end
+  # Only allow a list of trusted parameters through.
+  def measurement_params
+    params.require(:measurement).permit(:style, :result, :client_id)
+  end
+
+  def client_signed_in?
+    Client.find_by_unix_user(params[:client_id])&.authenticate_secret(params[:client_secret]) != false
+  end
 end

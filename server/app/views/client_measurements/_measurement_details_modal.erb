@@ -1,0 +1,70 @@
+<%= turbo_frame_tag "measurement_details_modal" do %>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-size: 20px">Measurement Details</h5>
+        <!--begin::Close-->
+        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+          <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+          <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
+              <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
+              <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
+          </svg>
+          </span>
+          <!--end::Svg Icon-->
+        </div>
+        <!--end::Close-->
+      </div>
+      <div class="modal-body">
+        <div class="map-container" style="width: 100%; height: inherit;">
+          <div style="height:100%; min-height: 260px" data-location-form-target="map" data-action="modal:shown->location#display" data-controller="location" data-location-latitude-value="<%= latitude %>" data-location-longitude-value="<%= longitude %>"></div>
+        </div>
+        <div class="info-container">
+          <div class="row pt-5">
+            <div class="col-5">
+              Date/Time
+              <p data-controller="localtime" style="color: #5e6278"><%= measurement.created_at %></p>
+            </div>
+            <div class="col">
+              Style
+              <p style="color: #5e6278"><%= measurement.style %></p>
+            </div>
+            <div class="col-5">
+              Location
+              <p style="color: #5e6278"><%= latitude %>, <%= longitude %></p>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col">
+              <img alt="download icon" src="<%= image_url('download-icon.png') %>" width="14" height="14"> Download
+              <p style="color: #5e6278"><%= measurement.download %> Mbps</p>
+            </div>
+            <div class="col">
+              <img alt="upload icon" src="<%= image_url('upload-icon.png') %>" width="14" height="14"> Upload
+              <p style="color: #5e6278"><%= measurement.upload %> Mbps</p>
+            </div>
+            <div class="col">
+              Latency
+              <p style="color: #5e6278"><%= measurement.latency %> ms</p>
+            </div>
+            <div class="col">
+              Jitter
+              <p style="color: #5e6278"><%= measurement.jitter %> ms</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer d-flex flex-row justify-content-end">
+        <!--begin::LaterButton-->
+        <button type="button"
+                class="btn btn-light"
+                data-bs-dismiss="modal"
+                style="height: 48px;"
+        >Close
+        </button>
+      </div>
+    </div>
+  </div>
+<% end %>

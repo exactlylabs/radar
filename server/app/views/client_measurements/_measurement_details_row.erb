@@ -1,0 +1,19 @@
+<td data-controller="localtime" style="color: #5e6278"><%= measurement.created_at %></td>
+<td style="color: #5e6278"><%= measurement.style %></td>
+<td style="color: #5e6278">
+  <%= number_with_precision measurement.download, precision: 3 %>
+</td>
+<td style="color: #5e6278">
+  <%= number_with_precision measurement.upload, precision: 3 %>
+</td>
+<td style="color: #5e6278"><%= number_with_precision measurement.latency, precision: 3 %></td>
+<td style="color: #5e6278"><%= number_with_precision measurement.jitter, precision: 3 %></td>
+<td>
+  <button type="button" class="btn btn-sm btn-light btn-active-light-primary px-3" data-bs-toggle="modal" data-bs-target="#measurement_details_modal">View
+    Details
+  </button>
+</td>
+
+<div class="modal fade" tabindex="-1" id="measurement_details_modal" data-controller="modal" data-action="#">
+  <%= render partial: "client_measurements/measurement_details_modal", locals: { measurement: measurement, latitude: latitude, longitude: longitude } %>
+</div>
