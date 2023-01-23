@@ -12,6 +12,11 @@ else
   openssl req -x509 -new -config $CERT_CONFIG -nodes -key $SCRIPT_DIR/../dist/certs/rootCA.key -sha256 -out $SCRIPT_DIR/../dist/certs/rootCA.pem
 fi
 
+# Generate CRL
+if [ -z $DEV ]; then
+  openssl ca -config prod_root_ca.cnf -gencrl -out $SCRIPT_DIR/../dist/certs/rootCRL.crl.pem
+fi
+
 cp $SCRIPT_DIR/../dist/certs/rootCA.pem $SCRIPT_DIR/../internal/update/rootCA.pem
 echo ""
 echo "Finished Generating a new Certificate Authority"
