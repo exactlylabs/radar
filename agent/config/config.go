@@ -29,6 +29,8 @@ type Config struct {
 	LastUploadSpeed   string `config:"last_upload_speed"`
 	SentryDsn         string
 	RegistrationToken *string `config:"registration_token"`
+	// CRL stands for Certificate Revocation List
+	CRLUrl string
 }
 
 func (c *Config) LastTestedAt() *time.Time {
