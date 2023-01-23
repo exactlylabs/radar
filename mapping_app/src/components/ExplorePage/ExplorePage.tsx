@@ -55,8 +55,7 @@ import ModalContentCustomDateRange
   from "../common/CustomGenericModal/ModalContentCustomDateRange/ModalContentCustomDateRange";
 import ModalContentCalendar from "../common/CustomGenericModal/ModalContentCalendar/ModalContentCalendar";
 import {isIphoneAndSafari} from "../../utils/iphone";
-import {isTouchDevice} from "../../utils/screen";
-import FloatingPopover from "./FloatingPopover/FloatingPopover";
+import {useIsTouchDevice} from "../../hooks/useIsTouchDevice";
 
 interface ExplorePageProps {
   userCenter: Optional<Array<number>>;
@@ -72,9 +71,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     return (possibleGeospace as GeospaceOverview).geospace.id;
   }
 
-  const {isSmallScreen, isSmallTabletScreen, isTabletScreen} = useViewportSizes();
+  const {isSmallScreen, isSmallTabletScreen, isLargeTabletScreen, isTabletScreen} = useViewportSizes();
   const isSmallExplorePage = isSmallScreen || isTabletScreen;
-  const isTouchRef = useRef(false);
+  const isTouchRef = useIsTouchDevice();
   const {menuContent, setMenuContent} = useContentMenu();
 
   const [loading, setLoading] = useState(false);
@@ -110,7 +109,6 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
       setIsFirstTimeModalOpen(true);
       setAlreadyVisitedCookie();
     }
-    isTouchRef.current = isTouchDevice();
   }, []);
 
   useEffect(() => {
@@ -468,7 +466,7 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
 
   const handleViewAllDetails = () => {
     if(isSmallTabletScreen) {
-      setMenuContent(MenuContent.GEOSPACE);
+      setMenuContent(MenuContent.FULL_GEOSPACE);
       setGenericModalOpen(true);
     } else {
       setIsRightPanelOpen(true);
