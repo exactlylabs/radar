@@ -56,8 +56,8 @@ run:
 
 # Setup Dev environment
 dev: ookla_bin
-	CERT_CONFIG=scripts/dev_root_ca.cnf ./scripts/gen_root_ca.sh
-	CERT_CONFIG=scripts/dev_cert_ssl.cnf ./scripts/gen_cert.sh
+	DEV=1 CERT_CONFIG=scripts/dev_root_ca.cnf ./scripts/gen_root_ca.sh
+	DEV=1 CERT_CONFIG=scripts/dev_cert_ssl.cnf ./scripts/gen_cert.sh
 
 install:
 	mkdir -p ${DESTDIR}${INSTALL_DIR}
