@@ -11,7 +11,7 @@ import {
   paintLayer, removeAllFeatureLayers, updateMouseOverHandlers,
 } from "../../../utils/map";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
-import {isTouchDevice} from "../../../utils/screen";
+import {useIsTouchDevice} from "../../../hooks/useIsTouchDevice";
 
 
 interface CustomMapProps {
@@ -53,11 +53,10 @@ const CustomMap = ({
   const prevSelectedGeospace = usePrev(selectedGeospace);
   const {isDesktopScreen} = useViewportSizes();
   const isSmallMap = !isDesktopScreen;
-  const isTouchRef = useRef(false);
+  const isTouchRef = useIsTouchDevice();
 
   useEffect(() => {
     initializeMap(map, setZoom, setCenter, isSmallMap);
-    isTouchRef.current = isTouchDevice();
   }, []);
 
   map.setView({lat: center[0], lng: center[1]}, zoom);
