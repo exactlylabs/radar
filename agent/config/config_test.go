@@ -21,12 +21,11 @@ func clear() {
 }
 
 func TestLoadConfig(t *testing.T) {
-	expected := &Config{
-		ServerURL: "127.0.0.1:3001",
-		ClientId:  "1234",
-		Secret:    "6666",
-		PingFreq:  "15",
-	}
+	expected := DevConfig
+	expected.ServerURL = "127.0.0.1:3001"
+	expected.ClientId = "1234"
+	expected.Secret = "6666"
+	expected.PingFreq = "15"
 
 	conf := `
 	server_url=127.0.0.1:3001
