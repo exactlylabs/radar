@@ -1,5 +1,5 @@
-FQDN = dev.org
-ORGNAME = Development
+FQDN = exactlylabs.com
+ORGNAME = ExactlyLabs, Inc
 ALTNAMES = DNS:$FQDN   # , DNS:bar.example.org , DNS:www.foo.example.org
 
 [ req ]
@@ -15,20 +15,19 @@ prompt = no
 subjectAltName = $ALTNAMES
 
 [ subject ]
-countryName = DV
-stateOrProvinceName = Dev
-localityName = DevLand
-organizationName = Dev
-commonName = Dev
-
+countryName = US
+stateOrProvinceName = Washington
+localityName = Seattle
+organizationName = ExactlyLabs, Inc
+commonName = ExactlyLabsCA
 
 [ ca ]
 default_ca = CA_default
 
 
 [ CA_default ]
-dir = ../dist/certs
-certs = ../dist/certs
+dir = ./dist/certs
+certs = ./dist/certs
 crl_dir = $dir/revoked
 database = $dir/index.txt
 certificate = $dir/rootCA.pem

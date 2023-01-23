@@ -10,3 +10,19 @@ O = Org Name
 OU = Org Unit Name
 CN = Common Name
 emailAddress = test@email.com
+
+[ ca ]
+default_ca = CA_default
+
+
+[ CA_default ]
+dir = ../dist/certs
+certs = ../dist/certs
+crl_dir = $dir/revoked
+database = $dir/index.txt
+certificate = $dir/rootCA.pem
+private_key = $dir/rootCA.key
+crl = $dir/rootCRL.crl.pem
+default_md = default
+default_crl_days=30
+
