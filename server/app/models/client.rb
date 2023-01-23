@@ -1,7 +1,7 @@
 class Client < ApplicationRecord
   # TODO: New agents are 15 seconds, old were 30. Once all the legacy "script based" clients are gone, update this to 15
   PING_DURATION = 30
-  enum data_cap_periodicity: { daily: 0, weekly: 1, monthly: 2, yearly: 3 }
+  enum data_cap_periodicity: { daily: 0, weekly: 1, monthly: 2}
   enum scheduling_periodicity: { scheduler_hourly: 0, scheduler_daily: 1, scheduler_weekly: 2, scheduler_monthly: 3 }
   belongs_to :user, optional: true, foreign_key: 'claimed_by_id'
   belongs_to :location, optional: true
@@ -126,7 +126,14 @@ class Client < ApplicationRecord
     elsif self.weekly?
       t = self.data_cap_current_period.next_week.to_date
     elsif self.monthly?
-      t = self.data_cap_current_period.next_month.at_beginning_of_month.to_date
+      t = self.data_cap_current_period.next_month
+      dom = self.data_cap_day_of_month
+      # set the day accoding to the day of the month
+      if dom == -1 || t.end_of_month.day < self.data_cap_day_of_month
+        dom = t.end_of_month.day
+      end
+      t = t.change(day: dom).to_date
+
     elsif self.yearly?
       t = self.data_cap_current_period.next_year.at_beginning_of_year.to_date
     end
