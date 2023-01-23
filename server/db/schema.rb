@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_20_171530) do
+ActiveRecord::Schema.define(version: 2023_01_23_183452) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -193,6 +193,7 @@ ActiveRecord::Schema.define(version: 2023_01_20_171530) do
     t.boolean "custom_scheduling", default: false
     t.string "os_version"
     t.string "hardware_platform"
+    t.integer "data_cap_day_of_month", default: 1
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
@@ -232,6 +233,22 @@ ActiveRecord::Schema.define(version: 2023_01_20_171530) do
     t.index ["user_id"], name: "index_invites_on_user_id"
   end
 
+  create_table "location_groups", force: :cascade do |t|
+    t.string "name"
+    t.bigint "location_label_id"
+    t.bigint "account_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_location_groups_on_account_id"
+    t.index ["location_label_id"], name: "index_location_groups_on_location_label_id"
+  end
+
+  create_table "location_labels", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.string "address"
@@ -252,7 +269,9 @@ ActiveRecord::Schema.define(version: 2023_01_20_171530) do
     t.integer "account_id"
     t.float "download_avg"
     t.float "upload_avg"
+    t.bigint "location_group_id"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
+    t.index ["location_group_id"], name: "index_locations_on_location_group_id"
   end
 
   create_table "measurements", force: :cascade do |t|
@@ -360,7 +379,10 @@ ActiveRecord::Schema.define(version: 2023_01_20_171530) do
   add_foreign_key "distributions", "client_versions"
   add_foreign_key "invites", "accounts"
   add_foreign_key "invites", "users"
+  add_foreign_key "location_groups", "accounts"
+  add_foreign_key "location_groups", "location_labels"
   add_foreign_key "locations", "accounts"
+  add_foreign_key "locations", "location_groups"
   add_foreign_key "locations", "users", column: "created_by_id"
   add_foreign_key "measurements", "accounts"
   add_foreign_key "measurements", "autonomous_systems"
