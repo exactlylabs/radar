@@ -7,9 +7,31 @@
   </style>
 </head>
 <body>
-<div style="width: 60%; text-align: center; padding: 45px; margin-left: auto; margin-right: auto;">
-  <p>Testing Exports email</p>
-  <a href="<%= @url %>"><%= @url %></a>
-</div>
+  <div style="width: 60%; text-align: left; padding: 32px 45px; margin-left: auto; margin-right: auto;">
+    <div style="width: 100%; display: flex; justify-content: center; align-items: center">
+      <img src="<%= attachments["new-logo.png"].url %>" alt="Radar-logo" style="width: 25%; height: auto; margin-right: auto; margin-left: auto;"/>
+    </div>
+    <div style="height: 2px; width: 100%; margin-bottom: 45px; margin-top: 30px; background-color: #f6f8fa;"></div>
+    <div style="max-width: 340px; text-align: center; font-weight: bold; font-size: 24px; line-height: 30px; color: #181c31; margin: 0 auto 50px auto;">Your measurements are ready for download.</div>
+    <div style="width: 100%; display: flex; justify-content: center; align-items: center; margin-bottom: 32px">
+      <img src="<%= attachments["download-ready-icon.png"].url %>" alt="download ready icon" style="width: 12%; height: auto; margin-right: auto; margin-left: auto;"/>
+    </div>
+    <div style="font-weight: bold; font-size: 16px; line-height: 26px; color: #181c31; margin: 0 0 15px 0"><%= "Hi #{@user.first_name}," %></div>
+    <div style="margin: 0; font-size: 16px; line-height: 26px; color: #181c31">We just wanted to let you know that your measurements for Exactly Labs in Radar are now ready for download.</div>
+    <br/>
+    <div style="margin: 0 0 25px 0; font-size: 16px; line-height: 26px; color: #181c31">Click the button below to start your download or login to your dashboard to download them.</div>
+    <div style="width: 100%; display: flex; justify-content: center; align-items: center">
+      <button type="button" style="background-color: #00a3ff; color: white; font-size: 16px; border-radius: 6px; width: 175px; height: 48px; border: none; margin-bottom: 25px">
+        <a href="<%= @url %>" style="text-decoration: none; color: white; font-size: 16px; font-weight: bold">Download</a>
+      </button>
+    </div>
+    <div style="font-size: 14px; color: #7f8299; margin-bottom: 55px;; text-align: center">
+      Alternatively, you can paste this link into your browser:
+      <a href="<%= @url %>" style="color: #00a3ff"><%= @url %></a>
+    </div>
+    <span style="font-size: 16px;">If you experience difficulties setting up your account, please contact <a href="mailto:support@exactlylabs.com" style="color: #00a3ff">support@exactlylabs.com</a>.</span>
+    <div style="height: 2px; width: 100%; margin-bottom: 40px; margin-top: 30px; background-color: #f6f8fa;"></div>
+    <div style="color: #b5b5c3; text-align: center; font-size: 14px">© 2022 National Telehealth Technology Assessment Resource Center</div>
+  </div>
 </body>
 </html>

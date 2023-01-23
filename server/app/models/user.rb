@@ -15,4 +15,40 @@ class User < ApplicationRecord
   has_many :users_accounts
   has_many :accounts, through: :users_accounts
 
+  after_save :check_pending_downloads
+
+  def has_pending_downloads
+    self.pending_downloads.size > 0
+  end
+
+  def has_all_data_pending_download
+    return false unless self.has_pending_downloads
+    has_pending_download_key 'all-data'
+  end
+
+  def has_ndt7_pending_download
+    return false unless self.has_pending_downloads
+    has_pending_download_key 'ndt7'
+  end
+
+  def has_all_measurements_pending_download
+    return false unless self.has_pending_downloads
+    has_pending_download_key 'all-measurements'
+  end
+
+  def has_measurements_pending_download
+    return false unless self.has_pending_downloads
+    has_pending_download_key 'measurements'
+  end
+
+  private
+  def has_pending_download_key(key)
+    self.pending_downloads.filter { |p| p.include? key }.size > 0
+  end
+
+  def check_pending_downloads
+    if saved_change_to_pending_downloads
+      ExportsChannel.broadcast_to(CHANNELS[:exports], {has_pending_downloads: self.has_pending_downloads});
+    end
+  end
 end
