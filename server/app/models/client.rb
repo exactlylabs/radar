@@ -120,27 +120,36 @@ class Client < ApplicationRecord
     if self.data_cap_current_period.nil?
       return Time.current
     end
-    t = Time.current
+
+    next_period_date = Time.current
     if self.daily?
-      t = self.data_cap_current_period.tomorrow.to_date
+      next_period_date = self.data_cap_current_period.tomorrow.at_end_of_day.to_date
+
     elsif self.weekly?
-      t = self.data_cap_current_period.next_week.to_date
+      next_period_date = self.data_cap_current_period.next_week.at_end_of_week.to_date
+
     elsif self.monthly?
-      t = self.data_cap_current_period.next_month
-      dom = self.data_cap_day_of_month
+      # For monthly expiration, use -1 if you want the last day of the month
+      # In case of a day that is higher that the current month's, we use the last day of that month
+      next_period_date = self.data_cap_current_period.next_month
+      day_of_month = self.data_cap_day_of_month
+      
       # set the day accoding to the day of the month
-      if dom == -1 || t.end_of_month.day < self.data_cap_day_of_month
-        dom = t.end_of_month.day
+      if day_of_month == -1 || next_period_date.end_of_month.day < day_of_month
+        day_of_month = next_period_date.end_of_month.day
       end
-      t = t.change(day: dom).to_date
+      next_period_date = next_period_date.change(day: day_of_month).to_date
 
     elsif self.yearly?
-      t = self.data_cap_current_period.next_year.at_beginning_of_year.to_date
+      next_period_date = self.data_cap_current_period.next_year.at_beginning_of_year.to_date
+
     end
-    if t < Time.now
-      t = Time.now
+
+    if next_period_date < Time.now
+      # Ensures cases where the data_cap_current_period is way behind, making the .next_x_period still behind today
+      next_period_date = Time.now
     end
-    return t
+    return next_period_date
   end
 
   def self.refresh_outdated_data_usage!
