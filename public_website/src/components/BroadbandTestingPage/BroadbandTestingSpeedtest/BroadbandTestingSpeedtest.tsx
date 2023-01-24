@@ -12,21 +12,7 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
   const {isSmallScreen, isMidScreen} = useViewportSizes();
   const isSmall = isSmallScreen || isMidScreen;
 
-  /*useEffect(() => {
-    // @ts-ignore
-    SpeedTest.config({
-      clientId: 'local',
-      widgetMode: true,
-      elementId: 'embedded-widget',
-      frameStyle: {
-        width: '500px',
-        height: '500px',
-        margin: '0',
-      },
-    });
-    // @ts-ignore
-    SpeedTest.new().mount();
-  }, []);*/
+  const getSrc = () => `https://speedtest.staging.exactlylabs.com/?widgetMode=true&frameWidth=${isSmall ? '100%' : '600px'}&frameHeight=570px`
 
   return (
     <div style={styles.BroadbandTestingSpeedtest(isSmall)}>
@@ -45,10 +31,9 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
                         boxShadow={`0 4px 15px -2px ${DEFAULT_PRIMARY_BUTTON_BOX_SHADOW}`}
           />
         </div>
-        {/* Removing until we have the speed test embedded widget in place */}
-        {/*<div style={styles.RightColumn(isSmall)}>
-
-        </div>*/}
+        <div style={styles.RightColumn(isSmall)}>
+          <iframe style={styles.Iframe(isSmall)} src={getSrc()}/>
+        </div>
       </div>
     </div>
   );
