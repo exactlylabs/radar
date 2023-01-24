@@ -46,7 +46,7 @@ Rails.application.routes.draw do
   get 'locations/account/:account_id', to: 'locations#get_by_account_id'
 
   resources :clients do
-    resources :measurements, controller: 'client_measurements', only: [:index, :create] do
+    resources :measurements, controller: 'client_measurements', only: [:index, :create, :show] do
       collection do
         get 'ndt7_index'
       end
@@ -67,7 +67,7 @@ Rails.application.routes.draw do
       post 'unstage'
       get 'pdf_label', to: 'clients#get_client_label'
     end
-    
+
     collection do
       get 'status', to: 'clients#public_status'
       post 'status', to: 'clients#check_public_status'
@@ -94,7 +94,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :client_versions, constraints: {id: /[^\/]+/} do
+  resources :client_versions, constraints: { id: /[^\/]+/ } do
     resources :distributions do
       member do
         get 'download'
@@ -107,7 +107,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :watchdog_versions, constraints: {id: /[^\/]+/} do
+  resources :watchdog_versions, constraints: { id: /[^\/]+/ } do
     member do
       get 'download'
     end
@@ -144,11 +144,11 @@ Rails.application.routes.draw do
 
   namespace 'api' do
     namespace 'v1' do
-      resources :client_versions, constraints: {id: /[^\/]+/} do
+      resources :client_versions, constraints: { id: /[^\/]+/ } do
         resources :distributions
         resources :packages
       end
-      resources :watchdog_versions, constraints: {id: /[^\/]+/}
+      resources :watchdog_versions, constraints: { id: /[^\/]+/ }
     end
   end
 
@@ -162,6 +162,6 @@ Rails.application.routes.draw do
     end
   end
 
-  #root to: 'home#home'
+  # root to: 'home#home'
   root to: redirect('/users/sign_in')
 end
