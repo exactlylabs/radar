@@ -21,7 +21,7 @@
       <% if @onboard_step < 0 %>
         <% if policy(:export).all? %>
           <button type="button"
-                  class="btn bg-body btn-color-gray-700 btn-active-primary me-4 <%= current_user.has_all_data_pending_download ? 'disabled' : '' %>"
+                  class="btn bg-body btn-color-gray-700 btn-active-primary me-4 <%= current_user.has_all_data_pending_download ? 'disabled pending' : '' %>"
                   data-controller="exports"
                   data-action="click->exports#exportAll"
           >
