@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_24_153313) do
+ActiveRecord::Schema.define(version: 2023_01_24_192550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -173,9 +173,7 @@ ActiveRecord::Schema.define(version: 2023_01_24_153313) do
     t.bigint "client_version_id"
     t.string "raw_version"
     t.bigint "update_group_id"
-    t.boolean "staging"
     t.string "distribution_name"
-    t.string "raw_secret"
     t.jsonb "network_interfaces"
     t.integer "account_id"
     t.bigint "watchdog_version_id"
@@ -196,6 +194,9 @@ ActiveRecord::Schema.define(version: 2023_01_24_153313) do
     t.string "os_version"
     t.string "hardware_platform"
     t.integer "data_cap_day_of_month", default: 1
+    t.string "raw_secret"
+    t.boolean "staging"
+    t.boolean "in_use", default: false
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
