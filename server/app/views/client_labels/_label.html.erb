@@ -1,5 +1,6 @@
 <div id="pod-label--label-frame">
-  <%= image_tag image_url('radar-label-logo.png'), id: 'pod-label--label-logo' %>
+  <span style="color: #FFFFFF">.</span>
+  <%= image_tag image_url('new-radar-label-logo.png'), id: 'pod-label--label-logo' %>
   <div id="pod-label--inputs-qr-container">
     <div id="pod-label--inputs-wrapper">
       <div class="pod-label--row" id="pod-label--pod-id-container">
@@ -16,8 +17,11 @@
       </div>
     </div>
     <div id="pod-label--qr-wrapper">
-      <%= qr.html_safe %>
+      <div id="pod-label--qr">
+        <%= qr.html_safe %>
+      </div>
     </div>
   </div>
-  <p id="pod-label--footer-message">To check the Pod status, access its website by scanning the QR code on this label. For help, please contact support@exactlylabs.com.</p>
+  <p id="pod-label--footer-message">For more information about this Pod, scan the QR code above or access the website: https://pods.radarbroadband.com/check/</p>
+  <p id="pod-label--footer-message-second-line">www.radarbroadband.com  |  support@radarbroadband.com</p>
 </div>

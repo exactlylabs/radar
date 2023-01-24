@@ -460,9 +460,15 @@ class Client < ApplicationRecord
     self.network_interfaces.filter { |i| i.present? && (is_eth?(i) || is_enps?(i) || is_en?(i)) }.size == 0
   end
 
+  def get_default_interface
+    self.network_interfaces.filter { |i| i.present? && i[:default_route] == true }
+  end
+
   def get_mac_address
-    if self.network_interfaces.nil? || has_no_ethernet_interface?
-      "Not Available"
+    return "Not Available" if self.network_interfaces.nil?
+    default_interface = self.get_default_interface
+    if default_interface.size == 1
+      default_interface[0]["mac"]
     else
       possible_interface = self.network_interfaces.filter { |i| i.present? && is_eth?(i) }
       return possible_interface[0]["mac"] if possible_interface.size >= 1

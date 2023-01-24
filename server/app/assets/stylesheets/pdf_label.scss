@@ -22,9 +22,10 @@ body {
 }
 
 #pod-label--label-logo {
-  height: 43px;
+  height: 34px;
   width: auto;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
+  margin-left: -8px;
 }
 
 #pod-label--inputs-qr-container {
@@ -59,7 +60,7 @@ body {
 
 .pod-label--row {
   width: 100%;
-  height: 70px;
+  height: 62px;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -74,19 +75,19 @@ body {
 }
 
 #pod-label--pod-id-container {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .pod-label--label {
   font-size: 14px;
-  color: #575757;
-  margin: 0 0 10px 0;
+  color: rgba(87, 87, 87, 0.5);
+  margin: 0 0 8px 0;
   width: 100px;
 }
 
 .pod-label--input {
   width: 100%;
-  height: 40px;
+  height: 38px;
   border-radius: 7.8px;
   background-color: #f0f0f0;
   text-align: center;
@@ -103,23 +104,48 @@ body {
 
 .pod-label--input-content {
   color: #181c32;
-  font-size: 17px;
-  letter-spacing: 2px;
+  font-size: 18px;
+  letter-spacing: 2.12px;
   margin: 8px auto;
+  width: 100%;
+  white-space: nowrap;
 }
 
 #pod-label--qr-wrapper {
-  width: 132px;
-  height: 132px;
-  margin-top: 15px;
-  margin-left: 35px;
+  width: 122px;
+  height: 122px;
+  margin-left: 30px;
+  border: solid 2px rgba(151, 151, 151, 0.19);
+  border-radius: 7.8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#pod-label--qr {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 11px;
 }
 
 #pod-label--footer-message {
   font-size: 13px;
   line-height: 16px;
   color: #8e8e8e;
-  margin: 25px 0 0 0;
+  margin: 15px 0 0 0;
+  width: 100%;
+}
+
+#pod-label--footer-message-second-line {
+  font-size: 13px;
+  line-height: 16px;
+  color: #8e8e8e;
+  margin: 10px 0 0 0;
   width: 100%;
 }
 
