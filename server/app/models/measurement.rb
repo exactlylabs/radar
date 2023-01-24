@@ -75,11 +75,17 @@ class Measurement < ApplicationRecord
     end
   end
 
-  def self.to_ndt7_csv_file
+  def self.to_ndt7_csv_file(with_progress)
     tmp_file = Tempfile.new("tmp_all_ndt7_measurements.csv")
+    if with_progress
+      count = Measurement.where(style: 'NDT7').all.size
+      step = (12.0/count).round(2)
+    end
     File.open(tmp_file.path, 'w') do |file|
-      to_ndt7_csv_enumerator.each do |line|
+      to_ndt7_csv_enumerator.each_with_index do |line, index|
         file.write(line)
+        ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 37 + ((index + 1) * step).round(2)}) if with_progress
+        sleep 1
       end
     end
     tmp_file
@@ -134,11 +140,17 @@ class Measurement < ApplicationRecord
     end
   end
 
-  def self.to_csv_file
+  def self.to_csv_file(with_progress)
     tmp_file = Tempfile.new("tmp_all_measurements.csv")
+    if with_progress
+      count = Measurement.all.size
+      step = (12.0/count).round(2)
+    end
     File.open(tmp_file.path, 'w') do |file|
-      to_csv_enumerator.each do |line|
+      to_csv_enumerator.each_with_index do |line, index|
         file.write(line)
+        ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 25 + ((index + 1) * step).round(2)}) if with_progress
+        sleep 1
       end
     end
     tmp_file

@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import handleError from "./error_handler_controller";
+import showAlert from "./alert_handler_controller";
 
 export default class extends Controller {
 
@@ -22,6 +23,7 @@ export default class extends Controller {
       .then(res => res.json())
       .then(res => {
         if('ok' in res && !res.ok) handleError(res, 'exports controller');
+        if('msg' in res && res.msg.includes('Already queued')) showAlert(res.msg);
       })
       .catch(err => handleError(err, 'exports controller'));
   }

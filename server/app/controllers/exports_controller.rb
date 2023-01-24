@@ -4,6 +4,7 @@ class ExportsController < ApplicationController
   before_action :authenticate_user!
   before_action :authenticate_token!
   before_action :authenticate_account_type!
+  before_action :check_pending_downloads_type!
 
   # GET /exports/all
   def all
@@ -28,6 +29,15 @@ class ExportsController < ApplicationController
   end
 
   def authenticate_account_type!
-    head(403) unless current_account.exportaccount
+    head(:forbidden) unless current_account.exportaccount
+  end
+
+  def check_pending_downloads_type!
+    if current_user.has_all_data_pending_download
+      notice = 'Already queued a download of this type!'
+      respond_to do |format|
+        format.json { render json: { msg: notice }, status: :conflict }
+      end
+    end
   end
 end

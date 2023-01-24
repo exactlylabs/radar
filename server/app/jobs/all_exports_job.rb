@@ -5,22 +5,24 @@ class AllExportsJob < ApplicationJob
 
   def perform(user, filename)
     # Setup files for compressing
-    @locations = Location.all.to_csv_file
-    @clients = Client.all.to_csv_file
-    @all_measurements = Measurement.all.to_csv_file
-    @all_ndt7_measurements = Measurement.where(style: "NDT7").to_ndt7_csv_file
-    # Main zip for download
     ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 0})
+    @locations = Location.all.to_csv_file true
+    @clients = Client.all.to_csv_file true
+    ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 25})
+    @all_measurements = Measurement.all.to_csv_file true
+    @all_ndt7_measurements = Measurement.where(style: "NDT7").to_ndt7_csv_file true
+    ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 50})
+    # Main zip for download
     Zip::File.open(filename, create: true) do |zip|
       zip.add("locations.csv", @locations)
-      ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 25})
+      ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 56})
       zip.add("clients.csv", @clients)
-      ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 50})
+      ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 62})
       zip.add("all_measurements.csv", @all_measurements)
-      ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 75})
+      ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 68})
       zip.add("all_ndt7_measurements.csv", @all_ndt7_measurements)
     end
-
+    ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 75})
     # Attach a new download for user (helps for later reference if needed)
     user.downloads.attach(io: File.open(filename), filename: filename, content_type: 'application/zip')
 
