@@ -134,7 +134,7 @@ class Client < ApplicationRecord
       next_period_date = self.data_cap_current_period.next_month
       day_of_month = self.data_cap_day_of_month
       
-      # set the day accoding to the day of the month
+      # set the day according to the day of the month
       if day_of_month == -1 || next_period_date.end_of_month.day < day_of_month
         day_of_month = next_period_date.end_of_month.day
       end
