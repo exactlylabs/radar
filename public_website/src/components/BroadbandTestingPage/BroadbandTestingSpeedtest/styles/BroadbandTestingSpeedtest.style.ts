@@ -65,19 +65,20 @@ const smallLeftColumnStyle: CSSProperties = {
 
 const rightColumnStyle: CSSProperties = {
   width: '600px',
-  height: '100%',
+  height: '570px',
   backgroundColor: WHITE,
   boxShadow: `0 5px 10px 0 ${SPEED_TEST_BOX_SHADOW}`,
   borderRadius: '8px'
 }
 
 const smallRightColumnStyle: CSSProperties = {
-  width: '100%',
+  width: '100vw',
   maxWidth: '588px',
   height: 'auto',
   backgroundColor: WHITE,
   boxShadow: `0 5px 10px 0 ${SPEED_TEST_BOX_SHADOW}`,
-  borderRadius: '8px'
+  borderRadius: '8px',
+  marginTop: '50px',
 }
 
 const headerStyle: CSSProperties = {
@@ -136,6 +137,20 @@ const smallParagraphStyle: CSSProperties = {
   margin: '0 0 20px 0',
 }
 
+const iframeStyle: CSSProperties = {
+  width: '600px',
+  height: '570px',
+  border: 'none',
+  boxShadow: `0 5px 10px 0 rgba(109, 106, 148, 0.1)`,
+  borderRadius: '8px'
+}
+
+const smallIframeStyle: CSSProperties = {
+  ...iframeStyle,
+  width: '100%',
+  height: '570px',
+}
+
 export const styles = {
   BroadbandTestingSpeedtest: (isSmall: boolean) => isSmall ? smallBroadbandTestingSpeedtestStyle : broadbandTestingSpeedtestStyle,
   BroadbandTestingSpeedtestContent: (isSmall: boolean) => isSmall ? smallBroadbandTestingSpeedtestContentStyle : broadbandTestingSpeedtestContentStyle,
@@ -146,5 +161,5 @@ export const styles = {
   Title: (isSmall: boolean) => isSmall ? smallTitleStyle : titleStyle,
   Subtitle: (isSmall: boolean) => isSmall ? smallSubtitleStyle : subtitleStyle,
   Paragraph: (isSmall: boolean) => isSmall ? smallParagraphStyle : paragraphStyle,
-
+  Iframe: (isSmall: boolean) => isSmall ? smallIframeStyle : iframeStyle,
 }

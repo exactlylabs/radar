@@ -20,9 +20,7 @@ export const ViewportContextProvider = ({children}: ViewportContextProviderProps
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
-    console.log('useEffect', window)
     if(!!window) {
-      console.log(window.innerWidth);
       setWidth(window.innerWidth);
       window.addEventListener('resize', handleResize);
     }
