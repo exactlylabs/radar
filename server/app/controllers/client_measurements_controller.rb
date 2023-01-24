@@ -1,6 +1,7 @@
 class ClientMeasurementsController < ApplicationController
   before_action :authenticate_user!, except: %i[ create ]
   before_action :set_client
+  before_action :set_measurement, only: [:show]
   skip_forgery_protection only: %i[ create ]
 
   # GET /measurements or /measurements.json
@@ -10,6 +11,9 @@ class ClientMeasurementsController < ApplicationController
       format.html { render "index", locals: { measurements: @measurements } }
       format.csv { send_data @measurements.to_csv, filename: "measurements-#{@client.unix_user}.csv" }
     end
+  end
+
+  def show
   end
 
   def ndt7_index
@@ -88,5 +92,12 @@ class ClientMeasurementsController < ApplicationController
 
   def client_signed_in?
     Client.find_by_unix_user(params[:client_id])&.authenticate_secret(params[:client_secret]) != false
+  end
+
+  def set_measurement
+    # IF NOT CLIENT?
+    @measurement = @client.measurements.find(params[:id])
+    @longitude = @client.longitude
+    @latitude = @client.latitude
   end
 end

@@ -146,7 +146,7 @@
         <tbody class="fw-bold text-gray-600">
         <% paginate_elements(measurements, [:range, :style]).each do |measurement| %>
           <tr>
-            <%= render partial: "measurement_details_row", locals: { measurement: measurement, latitude: @client.latitude, longitude: @client.longitude } %>
+            <%= render partial: "measurement_details_row", locals: { measurement: measurement } %>
           </tr>
         <% end %>
         </tbody>
@@ -160,5 +160,10 @@
   <div class="pagination-container d-flex justify-content-between align-items-center mt-5">
     <%= pagination_footer %>
   </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="details_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
+  <%= turbo_frame_tag "measurement_details_modal" do %>
+  <% end %>
 </div>
 <!--end::Card body-->

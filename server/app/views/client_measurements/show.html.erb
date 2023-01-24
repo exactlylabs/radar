@@ -1,0 +1,3 @@
+<%= turbo_frame_tag "measurement_details_modal" do %>
+  <%= render partial: "client_measurements/measurement_details_modal", locals: { measurement: @measurement, latitude: @latitude, longitude: @longitude } %>
+<% end %>
