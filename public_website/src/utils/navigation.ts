@@ -29,3 +29,4 @@ export const goToBroadbandTesting = () => goToUrl(AppRoutes.BROADBAND_TESTING);
 export const goToMobile = () => goToUrl(AppRoutes.MOBILE_TESTING);
 export const goToSpeedTestWebsite = () => goToUrl(process.env.NODE_ENV === 'production' ? ExternalRoutes.SPEED_TEST_PROD : ExternalRoutes.SPEED_TEST_STAGING, true);
 export const goToMappingApp = () => goToUrl(process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING, true);
+export const emailContact = () => { window.open('mailto:info@exactlylabs.com'); }

@@ -42,7 +42,7 @@ const SmallNavbarContentOpen = (): ReactElement => {
         />
         <NavbarHorizontalDivider/>
         <a className={'fw-bold hover-opaque'}
-           href={'mailto:contact@exactlylabs.com'}
+           href={'mailto:info@exactlylabs.com'}
            style={styles.Link}>
           Contact Us
         </a>
