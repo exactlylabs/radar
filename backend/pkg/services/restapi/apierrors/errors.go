@@ -22,20 +22,28 @@ type FieldErrors struct {
 	Errors []*APIError            `json:"errors"`
 }
 
-// FieldsValidationError is returned when the API has errors associated to the request content
-type FieldsValidationError struct {
+// ValidationError is returned when the API has errors associated to the request content
+type ValidationError struct {
 	// Errors has dictionary of errors for each field
 	Errors map[string]FieldErrors `json:"errors"`
 }
 
-// ValidationError is returned when the API has errors not associated with the request content
-type ValidationError struct {
+// RequestError is returned when the API has errors not associated with the request content
+type RequestError struct {
 	Errors []APIError `json:"errors"`
 }
 
 func SingleFieldError(message, code string) FieldErrors {
 	return FieldErrors{
 		Errors: []*APIError{
+			{Message: message, Code: code},
+		},
+	}
+}
+
+func SingleRequestError(message, code string) RequestError {
+	return RequestError{
+		Errors: []APIError{
 			{Message: message, Code: code},
 		},
 	}

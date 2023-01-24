@@ -104,12 +104,12 @@ func (wc *WebContext) Commit() error {
 	// otherwise the statusCode is set to http.StatusOK and we get warnings
 	wc.Writer.WriteHeader(wc.statusCode)
 	if wc.err != nil {
-		valError := apierrors.ValidationError{Errors: []apierrors.APIError{*wc.err}}
+		valError := apierrors.RequestError{Errors: []apierrors.APIError{*wc.err}}
 		if err := json.NewEncoder(wc.Writer).Encode(valError); err != nil {
 			panic(errors.Wrap(err, "WebContext#Commit Encode"))
 		}
 	} else if len(wc.fieldsErrors) > 0 {
-		valError := apierrors.FieldsValidationError{Errors: wc.fieldsErrors}
+		valError := apierrors.ValidationError{Errors: wc.fieldsErrors}
 		if err := json.NewEncoder(wc.Writer).Encode(valError); err != nil {
 			panic(errors.Wrap(err, "WebContext#Commit Encode"))
 		}

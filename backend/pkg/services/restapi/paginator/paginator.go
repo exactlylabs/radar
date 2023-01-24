@@ -20,13 +20,15 @@ type PaginationLinks struct {
 }
 
 type PaginationArgs struct {
-	Limit  *int `json:"limit"`
-	Offset *int `json:"offset"`
+	Limit         *int `json:"limit"`
+	Offset        *int `json:"offset"`
+	defaultLimit  int
+	defaultOffset int
 }
 
 func (pa *PaginationArgs) Parse(c *restapi.WebContext) {
-	limit := DEFAULT_PAGINATION_LIMIT
-	defaultOffset := 0
+	limit := pa.defaultLimit
+	defaultOffset := pa.defaultOffset
 	pa.Limit = &limit
 	pa.Offset = &defaultOffset
 	limitStr := c.QueryParams().Get("limit")
@@ -63,14 +65,14 @@ type Paginator[T any] struct {
 }
 
 func New[T any]() *Paginator[T] {
-	return &Paginator[T]{}
+	return &Paginator[T]{DefaultLimit: DEFAULT_PAGINATION_LIMIT}
 }
 
 // Paginate mounts a PaginatedResponse.
 // It expects a getPage function that receives limit and offset integers
 // and returns an iterator, the total of rows and an error
 func (pr *Paginator[T]) Paginate(c *restapi.WebContext, getPage func(limit, offset int) (Iterator[T], error)) (*PaginatedResponse[T], error) {
-	args := &PaginationArgs{}
+	args := &PaginationArgs{defaultLimit: pr.DefaultLimit, defaultOffset: pr.DefaultOffset}
 	args.Parse(c)
 	if c.HasErrors() {
 		return nil, nil

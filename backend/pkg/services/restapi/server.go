@@ -18,6 +18,7 @@ type WebServer struct {
 	loggerMiddleware   Middleware
 	router             *mux.Router
 	baseCtx            *WebContext
+	setupCalled        bool
 }
 
 func NewWebServer(options ...ServerOption) (*WebServer, error) {
@@ -68,9 +69,13 @@ func (w *WebServer) Setup() {
 	w.server = &http.Server{
 		Handler: handler,
 	}
+	w.setupCalled = true
 }
 
 func (w *WebServer) Run(addr string) error {
+	if !w.setupCalled {
+		w.Setup()
+	}
 	w.server.Addr = addr
 	log.Printf("Web Service Listening at address: %v\n", addr)
 	if err := w.server.ListenAndServe(); err != http.ErrServerClosed {
