@@ -285,6 +285,19 @@ class ClientsController < ApplicationController
     end
   end
 
+  def update_in_use
+    @client.in_use = params[:in_use]
+    if @client.save
+      notice = "Client status was successfully updated."
+    else
+      notice = "Error updating client status."
+    end
+    respond_to do |format|
+      format.html { redirect_back fallback_location: root_path, notice: notice }
+      format.json { head :no_content }
+    end
+  end
+
   # GET /client/:unix_user/pdf_labels
   def get_client_label
     client_path = request.base_url + "/clients/#{@client.unix_user}"
