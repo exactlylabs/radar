@@ -22,7 +22,9 @@ consumer.subscriptions.create({ channel: 'ExportsChannel' }, {
       if(progressContainer && progressBar) {
         const {progress} = data;
         progressContainer.setAttribute('aria-valuenow', `${progress}`);
-        progressBar.style.width = `${progress}%`;
+        const progressText = `${progress}%`;
+        progressBar.style.width = progressText;
+        progressBar.innerText = progressText;
       }
     } else if('url' in data){
       // Fire an automatic download once the file's url is available

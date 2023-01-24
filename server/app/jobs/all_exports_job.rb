@@ -9,7 +9,6 @@ class AllExportsJob < ApplicationJob
     @clients = Client.all.to_csv_file
     @all_measurements = Measurement.all.to_csv_file
     @all_ndt7_measurements = Measurement.where(style: "NDT7").to_ndt7_csv_file
-    sleep 25
     # Main zip for download
     ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 0})
     Zip::File.open(filename, create: true) do |zip|
