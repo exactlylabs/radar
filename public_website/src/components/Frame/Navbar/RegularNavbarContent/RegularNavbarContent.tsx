@@ -2,7 +2,7 @@ import {ReactElement, useState} from "react";
 import {styles} from "./styles/RegularNavbarContent.style";
 import CustomButton from "../../../common/CustomButton/CustomButton";
 import ToolkitFloatingMenu from "./ToolkitFloatingMenu/ToolkitFloatingMenu";
-import {goToHome} from "../../../../utils/navigation";
+import {emailContact, goToHome} from "../../../../utils/navigation";
 
 const RadarLogo = "/assets/images/radar-logo.png";
 const ChevronRight = "/assets/images/chevron-right-dark.png";
@@ -46,7 +46,7 @@ const RegularNavbarContent = ({
           Our Toolkit
         </p>
         <a className={'fw-bold hover-opaque'}
-           href={'mailto:contact@exactlylabs.com'}
+           href={'mailto:info@exactlylabs.com'}
            style={styles.RightLink}
         >
           Contact Us
@@ -56,7 +56,7 @@ const RegularNavbarContent = ({
                     color={''}
                     icon={<img src={ChevronRight} style={styles.ChevronRight} alt={'chevron-right'}/>}
                     text={'Get started'}
-                    onClick={goToGetStarted}
+                    onClick={emailContact}
       />
       { isFloatingMenuOpen && <ToolkitFloatingMenu setIsOpen={handleSetIsOpen}/> }
     </div>

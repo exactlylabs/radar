@@ -4,6 +4,7 @@ import {styles} from "./styles/ToolkitIntroductionSection.style";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import ToolkitIntroductionTable from "./ToolkitIntroductionTable/ToolkitIntroductionTable";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import {emailContact} from "../../../utils/navigation";
 
 const ChevronRightWhite = '/assets/images/chevron-right-white.png';
 const LeftHeroBg = '/assets/images/left-blue-hero-bg.png';
@@ -31,7 +32,7 @@ const ToolkitIntroductionSection = (): ReactElement => {
           <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Our platform provides you with the insights, tools and resources you need to make better investments in broadband at the community, county, and country level.</p>
           <div style={styles.ButtonContainer}>
             <CustomButton text={'Get started'}
-                          onClick={goToGetStarted}
+                          onClick={emailContact}
                           icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
                           backgroundColor={DEFAULT_PRIMARY_BUTTON}
                           color={WHITE}

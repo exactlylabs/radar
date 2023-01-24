@@ -35,9 +35,14 @@ const Footer = ({isDifferentColor, height, margin}: FooterProps): ReactElement =
             <a href={'https://www.anthc.org/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
               <img src={ANTHCLogo} style={styles.ANTHCLogo} alt={'ANTHC-logo'}/>
             </a>
-            <a href={'https://www.measurementlab.net/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
-              <img src={MLabLogo} style={styles.MLabLogo} alt={'MLab-logo'}/>
-            </a>
+            {
+              /* Removing icon for now - Requested by Michael
+              <a href={'https://www.measurementlab.net/'} target={'_blank'} rel={'noreferrer'}
+                 style={styles.MarginlessLink}>
+                <img src={MLabLogo} style={styles.MLabLogo} alt={'MLab-logo'}/>
+              </a>
+               */
+            }
           </div>
         </div>
         <div style={styles.BottomRow}>
@@ -63,9 +68,13 @@ const Footer = ({isDifferentColor, height, margin}: FooterProps): ReactElement =
         <a href={'https://www.anthc.org/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
           <img src={ANTHCLogo} style={styles.SmallANTHCLogo} alt={'ANTHC-logo'}/>
         </a>
-        <a href={'https://www.measurementlab.net/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
-          <img src={MLabLogo} style={styles.SmallMLabLogo} alt={'MLab-logo'}/>
-        </a>
+        {
+          /* Removing icon for now - Requested by Michael
+          <a href={'https://www.measurementlab.net/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
+            <img src={MLabLogo} style={styles.SmallMLabLogo} alt={'MLab-logo'}/>
+          </a>
+          */
+        }
       </div>
       <p className={'fw-regular'} style={styles.Copyright}>Copyright © 2022 Radar. All rights reserved.</p>
     </div>
