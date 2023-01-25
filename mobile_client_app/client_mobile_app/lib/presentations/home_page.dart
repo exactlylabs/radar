@@ -17,16 +17,6 @@ class HomePage extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Theme.of(context).backgroundColor,
-          appBar: state.currentIndex > 0
-              ? AppBar(
-                  centerTitle: true,
-                  backgroundColor: Theme.of(context).backgroundColor,
-                  title: Padding(
-                    padding: const EdgeInsets.only(left: 3.0, top: 11, bottom: 23),
-                    child: Image.asset(Images.logoDark, fit: BoxFit.contain),
-                  ),
-                )
-              : null,
           bottomNavigationBar: SizedBox(
             child: BottomNavigationBar(
               items: [

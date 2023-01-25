@@ -26,21 +26,23 @@ class MapWebViewPage extends StatelessWidget {
       child: BlocListener<MapCubit, MapState>(
         listenWhen: (previous, current) => current.isFTUE,
         listener: (context, state) => _ftueModal(context),
-        child: Column(
-          children: [
-            Expanded(
-              child: WebView(
-                initialUrl: AppConfig.of(context)?.stringResource.WEB_ENDPOINT,
-                javascriptMode: JavascriptMode.unrestricted,
-                onWebViewCreated: (WebViewController webViewController) {
-                  _controller.complete(webViewController);
-                  _cookieManager.clearCookies();
-                },
-                onPageStarted: (String url) => _cookieManager.setCookie(const WebViewCookie(
-                    name: _cookieName, value: _cookieValue, domain: _cookieDomain, path: _cookiePath)),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: WebView(
+                  initialUrl: AppConfig.of(context)?.stringResource.WEB_ENDPOINT,
+                  javascriptMode: JavascriptMode.unrestricted,
+                  onWebViewCreated: (WebViewController webViewController) {
+                    _controller.complete(webViewController);
+                    _cookieManager.clearCookies();
+                  },
+                  onPageStarted: (String url) => _cookieManager.setCookie(const WebViewCookie(
+                      name: _cookieName, value: _cookieValue, domain: _cookieDomain, path: _cookiePath)),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

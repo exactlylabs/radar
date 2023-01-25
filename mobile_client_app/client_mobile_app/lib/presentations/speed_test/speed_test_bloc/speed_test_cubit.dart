@@ -1,17 +1,20 @@
-import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
-import 'package:client_mobile_app/resources/strings.dart';
-import 'package:client_mobile_app/core/models/location.dart';
-import 'package:client_mobile_app/core/models/test_result.dart';
-import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:network_connection_info/models/connection_info.dart';
+import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/core/models/location.dart';
+import 'package:client_mobile_app/core/models/test_result.dart';
+import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
+import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
 
 class SpeedTestCubit extends Cubit<SpeedTestState> {
   SpeedTestCubit({
     required IResultsService resultsService,
   })  : _resultsService = resultsService,
-        super(const SpeedTestState());
+        super(const SpeedTestState()) {
+    _setVersionAndBuildNumber();
+  }
 
   final IResultsService _resultsService;
 
@@ -96,6 +99,8 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
       networkLocation: state.networkLocation ?? Strings.emptyString,
       networkCost: state.monthlyBillCost?.toString() ?? Strings.emptyString,
       networkQuality: networkQuality,
+      versionNumber: state.versionNumber ?? Strings.emptyString,
+      buildNumber: state.buildNumber ?? Strings.emptyString,
     );
 
     _resultsService.addResult(responses, result, connectionInfo);
@@ -119,6 +124,12 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
 
   void endForm() {
     emit(state.copyWith(isFormEnded: true));
+  }
+
+  void _setVersionAndBuildNumber() {
+    PackageInfo.fromPlatform().then((packageInfo) {
+      emit(state.copyWith(versionNumber: packageInfo.version, buildNumber: packageInfo.buildNumber));
+    });
   }
 
   static const LOCATION_STEP = 0;

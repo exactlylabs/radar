@@ -6,6 +6,8 @@ PODS:
   - ndt7_client (0.0.1):
     - Flutter
     - NDT7 (~> 0.0.4)
+  - network_connection_info (0.0.1):
+    - Flutter
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_ios (0.0.1):
@@ -22,6 +24,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - ndt7_client (from `.symlinks/plugins/ndt7_client/ios`)
+  - network_connection_info (from `.symlinks/plugins/network_connection_info/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
@@ -39,6 +42,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   ndt7_client:
     :path: ".symlinks/plugins/ndt7_client/ios"
+  network_connection_info:
+    :path: ".symlinks/plugins/network_connection_info/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_ios:
@@ -53,6 +58,7 @@ SPEC CHECKSUMS:
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   NDT7: db6448ebf5648c2f1721bf3b473470ab201f4145
   ndt7_client: 78eda2f43b2f3b910875ce86601349f598aa47e7
+  network_connection_info: 3ee119ddc66007452b9d65f42300a7ad23250b88
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   Sentry: 08884c523575ec0f6690d94ed3ccb0246a1600bf

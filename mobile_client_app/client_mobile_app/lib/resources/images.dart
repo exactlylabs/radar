@@ -1,6 +1,7 @@
 class Images {
   static const anthcLogo = 'assets/images/anthcLogo.png';
   static const logo = 'assets/images/logo.png';
+  static const logoBig = 'assets/images/logo-big.png';
   static const logoDark = 'assets/images/logo-dark.png';
   static const mlabLogo = 'assets/images/mlabLogo.png';
   static const speedTest = 'assets/icons/speed_test_tab_icon.png';
@@ -40,6 +41,7 @@ class Images {
   static const lossIcon = 'assets/icons/loss_icon.png';
   static const latencyIcon = 'assets/icons/latency_icon.png';
   static const infoIcon = 'assets/icons/info_icon.png';
+  static const infoGreyIcon = 'assets/icons/info_grey_icon.png';
   static const roundedCheck = 'assets/images/rounded_check.png';
   static const locationNoInternetBig = 'assets/icons/location_nointernet_big.png';
   static const connectionCellularAlert = 'assets/icons/connection_cellular_alert.png';
