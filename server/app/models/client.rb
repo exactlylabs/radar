@@ -456,13 +456,10 @@ class Client < ApplicationRecord
       count = Client.all.size
       step = (12.0/count).round(2)
     end
-    puts count || -1
-    puts step || -1
     File.open(tmp_file.path, 'w') do |file|
       to_csv_enumerator.each_with_index do |line, index|
         file.write(line)
-        ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 12 + ((index + 1) * step).round(2)}) if with_progress
-        sleep 1
+        ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 12 + ((index + 1) * step).ceil(0)}) if with_progress
       end
     end
     tmp_file
