@@ -18,7 +18,7 @@ class User < ApplicationRecord
   after_save :check_pending_downloads
 
   def has_pending_downloads
-    self.pending_downloads.size > 0
+    self.pending_downloads.present? && self.pending_downloads.size > 0
   end
 
   def has_all_data_pending_download

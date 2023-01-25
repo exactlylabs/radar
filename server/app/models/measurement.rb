@@ -84,8 +84,7 @@ class Measurement < ApplicationRecord
     File.open(tmp_file.path, 'w') do |file|
       to_ndt7_csv_enumerator.each_with_index do |line, index|
         file.write(line)
-        ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 37 + ((index + 1) * step).round(2)}) if with_progress
-        sleep 1
+        ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 37 + ((index + 1) * step).ceil(0)}) if with_progress
       end
     end
     tmp_file
@@ -149,8 +148,7 @@ class Measurement < ApplicationRecord
     File.open(tmp_file.path, 'w') do |file|
       to_csv_enumerator.each_with_index do |line, index|
         file.write(line)
-        ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 25 + ((index + 1) * step).round(2)}) if with_progress
-        sleep 1
+        ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 25 + ((index + 1) * step).ceil(0)}) if with_progress
       end
     end
     tmp_file
