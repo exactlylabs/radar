@@ -154,32 +154,32 @@ class Measurement < ApplicationRecord
   end
 
   def get_download
-    if !self.download.nil?
-      self.download.round(3)
+    if self.download.present?
+      "#{self.download.round(3)} Mbps"
     else
       "N/A"
     end
   end
 
   def get_upload
-    if !self.upload.nil?
-      self.upload.round(3)
+    if self.upload.present?
+      "#{self.upload.round(3)} Mbps"
     else
       "N/A"
     end
   end
 
   def get_jitter
-    if !self.jitter.nil?
-      self.jitter.round(3)
+    if self.jitter.present?
+      "#{self.jitter.round(3)} ms"
     else
       "N/A"
     end
   end
 
   def get_latency
-    if !self.latency.nil?
-      self.latency.round(3)
+    if self.latency.present?
+      "#{self.latency.round(3)} ms"
     else
       "N/A"
     end
