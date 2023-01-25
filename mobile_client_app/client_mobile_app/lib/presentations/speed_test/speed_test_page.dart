@@ -1,10 +1,10 @@
-import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
-import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal.dart';
+import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
-import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/steps_indicator.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_type_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_place_step.dart';
@@ -12,6 +12,8 @@ import 'package:client_mobile_app/presentations/speed_test/no_internet_connectio
 import 'package:client_mobile_app/presentations/speed_test/steps/monthly_bill_cost_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_step.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/take_speed_test_step.dart';
 
 class SpeedTestPage extends StatelessWidget {
@@ -42,12 +44,20 @@ class SpeedTestPage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                const SizedBox(height: 10.0),
+                                const SizedBox(height: 11.0),
                                 AppBar(
                                   centerTitle: true,
-                                  toolbarHeight: 24.0,
+                                  toolbarHeight: 26.0,
                                   backgroundColor: Theme.of(context).backgroundColor,
                                   title: Image.asset(Images.logoDark, fit: BoxFit.contain),
+                                  actions: [
+                                    InkWell(
+                                      onTap: () => _openInfoModal(context, state.versionNumber, state.buildNumber),
+                                      child: Image.asset(
+                                        Images.infoGreyIcon,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 SpacerWithMax(size: height * 0.05, maxSize: 40.0),
                                 if (state.step < SpeedTestCubit.TAKE_SPEED_TEST_STEP)
@@ -115,6 +125,18 @@ class SpeedTestPage extends StatelessWidget {
           );
         }
       },
+    );
+  }
+
+  Future<void> _openInfoModal(BuildContext context, String? versionNumber, String? buildNumber) async {
+    return modalWithTitle(
+      context,
+      true,
+      Strings.emptyString,
+      AppInfoModal(
+        versionNumber: versionNumber ?? Strings.emptyString,
+        buildNumber: buildNumber ?? Strings.emptyString,
+      ),
     );
   }
 }

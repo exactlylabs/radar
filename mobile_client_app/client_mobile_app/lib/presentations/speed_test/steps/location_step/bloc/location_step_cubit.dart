@@ -94,7 +94,13 @@ class LocationStepCubit extends Cubit<LocationStepState> {
 
   void reset() => emit(LocationStepState(termsAccepted: state.termsAccepted));
 
-  void useCurrentLocation() => emit(state.setLocation(state.currentLocation!));
+  void useCurrentLocation() {
+    if (state.currentLocation == null) return;
+    emit(state.setLocation(state.currentLocation!));
+  }
 
-  void useSuggestedLocation() => emit(state.setLocation(state.suggestedLocation!));
+  void useSuggestedLocation() {
+    if (state.suggestedLocation == null) return;
+    emit(state.setLocation(state.suggestedLocation!));
+  }
 }

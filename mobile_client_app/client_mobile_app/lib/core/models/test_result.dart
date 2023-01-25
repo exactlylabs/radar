@@ -1,3 +1,5 @@
+import 'package:client_mobile_app/resources/strings.dart';
+
 class TestResult {
   TestResult({
     required this.latitude,
@@ -17,6 +19,8 @@ class TestResult {
     required this.download,
     required this.loss,
     required this.latency,
+    required this.versionNumber,
+    required this.buildNumber,
   });
 
   factory TestResult.fromJson(Map<String, dynamic> json) => TestResult(
@@ -37,6 +41,8 @@ class TestResult {
         download: json['download'],
         loss: json['loss'],
         latency: json['latency'],
+        versionNumber: json['version_number'] ?? Strings.emptyString,
+        buildNumber: json['build_number'] ?? Strings.emptyString,
       );
 
   Map<String, dynamic> toJsonServer() {
@@ -53,6 +59,8 @@ class TestResult {
       'network_type': networkType,
       'network_location': networkLocation,
       'network_cost': networkCost,
+      'version_number': versionNumber,
+      'build_number': buildNumber,
     };
   }
 
@@ -75,6 +83,8 @@ class TestResult {
       'network_location': networkLocation,
       'network_cost': networkCost,
       'network_quality': networkQuality,
+      'version_number': versionNumber,
+      'build_number': buildNumber,
     };
   }
 
@@ -95,4 +105,6 @@ class TestResult {
   final double upload;
   final double loss;
   final double latency;
+  final String versionNumber;
+  final String buildNumber;
 }

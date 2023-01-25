@@ -17,6 +17,8 @@ class SpeedTestState {
     this.isTestRunning = false,
     this.isLocationLoading = false,
     this.isFormEnded = false,
+    this.versionNumber,
+    this.buildNumber,
     this.onContinue,
     this.onBack,
   });
@@ -36,6 +38,8 @@ class SpeedTestState {
     bool? termsAccepted,
     bool? isLocationLoading,
     bool? isFormEnded,
+    String? versionNumber,
+    String? buildNumber,
     VoidCallback? onContinue,
     VoidCallback? onBack,
   }) =>
@@ -56,6 +60,8 @@ class SpeedTestState {
         termsAccepted: termsAccepted ?? this.termsAccepted,
         onContinue: step != null && step != this.step ? null : onContinue ?? this.onContinue,
         onBack: step != null && step != this.step ? null : onBack ?? this.onBack,
+        versionNumber: versionNumber ?? this.versionNumber,
+        buildNumber: buildNumber ?? this.buildNumber,
       );
 
   SpeedTestState resetSpecificStep(bool networkLocation, bool networkType, bool monthlyBillCost) => SpeedTestState(
@@ -72,6 +78,8 @@ class SpeedTestState {
         isTestRunning: isTestRunning,
         isLocationLoading: isLocationLoading,
         isFormEnded: isFormEnded,
+        versionNumber: versionNumber,
+        buildNumber: buildNumber,
         termsAccepted: termsAccepted,
         onContinue: null,
         onBack: null,
@@ -93,6 +101,8 @@ class SpeedTestState {
       isLocationLoading: isLocationLoading,
       isFormEnded: isFormEnded,
       termsAccepted: termsAccepted,
+      versionNumber: versionNumber,
+      buildNumber: buildNumber,
       onContinue: null,
       onBack: null,
     );
@@ -112,6 +122,8 @@ class SpeedTestState {
   final String? networkLocation;
   final int? monthlyBillCost;
   final bool isFormEnded;
+  final String? versionNumber;
+  final String? buildNumber;
   final VoidCallback? onContinue;
   final VoidCallback? onBack;
 }
