@@ -95,9 +95,13 @@ class ClientMeasurementsController < ApplicationController
   end
 
   def set_measurement
-    # IF NOT CLIENT?
     @measurement = @client.measurements.find(params[:id])
-    @longitude = @client.longitude
-    @latitude = @client.latitude
+
+    if @measurement
+      @longitude = @client.longitude
+      @latitude = @client.latitude
+    else
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Measurement with 'id'=#{params[:id]}", Measurement.name, params[:id])
+    end
   end
 end
