@@ -31,13 +31,12 @@ class Measurement < ApplicationRecord
         values = attributes.map do |attr|
           if attr == 'created_at'
             measurement.created_at.strftime("%m/%d/%Y %H:%M:%S")
-          else 
+          else
             measurement.send(attr)
           end
         end
-        
 
-        extended_values = extended_attributes.map{ |attr| measurement.extended_info ? measurement.extended_info[attr] : "" }
+        extended_values = extended_attributes.map { |attr| measurement.extended_info ? measurement.extended_info[attr] : "" }
 
         csv << info + values + extended_values
       end
@@ -65,12 +64,12 @@ class Measurement < ApplicationRecord
         values = attributes.map do |attr|
           if attr == 'created_at'
             measurement.created_at.strftime("%m/%d/%Y %H:%M:%S")
-          else 
+          else
             measurement.send(attr)
           end
         end
 
-        extended_values = extended_attributes.map{ |attr| measurement.extended_info ? measurement.extended_info[attr] : "" }
+        extended_values = extended_attributes.map { |attr| measurement.extended_info ? measurement.extended_info[attr] : "" }
         yielder << CSV.generate_line(info + values + extended_values)
       end
     end
@@ -116,21 +115,21 @@ class Measurement < ApplicationRecord
       yielder << CSV.generate_line(%w{id client_id account location_name latitude longitude address style upload download avg_data_used jitter latency created_at})
       includes(:location, :client, :account).find_each do |measurement|
         yielder << CSV.generate_line([
-          measurement.id,
-          measurement.client ? measurement.client.unix_user : "",
-          measurement.account ? measurement.account.name : "",
-          measurement.location ? measurement.location.name : "",
-          measurement.location ? measurement.location.latitude : "",
-          measurement.location ? measurement.location.longitude : "",
-          measurement.location ? measurement.location.address : "",
-          measurement.style,
-          measurement.upload,
-          measurement.download,
-          measurement.avg_data_used,
-          measurement.jitter,
-          measurement.latency,
-          measurement.created_at.strftime("%m/%d/%Y %H:%M:%S"),
-        ])
+                                       measurement.id,
+                                       measurement.client ? measurement.client.unix_user : "",
+                                       measurement.account ? measurement.account.name : "",
+                                       measurement.location ? measurement.location.name : "",
+                                       measurement.location ? measurement.location.latitude : "",
+                                       measurement.location ? measurement.location.longitude : "",
+                                       measurement.location ? measurement.location.address : "",
+                                       measurement.style,
+                                       measurement.upload,
+                                       measurement.download,
+                                       measurement.avg_data_used,
+                                       measurement.jitter,
+                                       measurement.latency,
+                                       measurement.created_at.strftime("%m/%d/%Y %H:%M:%S"),
+                                     ])
       end
     end
   end
@@ -147,8 +146,24 @@ class Measurement < ApplicationRecord
 
   def avg_data_used
     if self.download_total_bytes && self.upload_total_bytes
-      mbytes = ((self.download_total_bytes + self.upload_total_bytes) / (1024**2)).round(0)
+      mbytes = ((self.download_total_bytes + self.upload_total_bytes) / (1024 ** 2)).round(0)
       "#{mbytes} MB"
+    else
+      "N/A"
+    end
+  end
+
+  def get_download
+    if !self.download.nil?
+      self.download
+    else
+      "N/A"
+    end
+  end
+
+  def get_upload
+    if !self.upload.nil?
+      self.upload
     else
       "N/A"
     end
