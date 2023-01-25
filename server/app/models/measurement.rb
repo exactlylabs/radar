@@ -155,7 +155,7 @@ class Measurement < ApplicationRecord
 
   def get_download
     if !self.download.nil?
-      self.download
+      self.download.round(3)
     else
       "N/A"
     end
@@ -163,7 +163,23 @@ class Measurement < ApplicationRecord
 
   def get_upload
     if !self.upload.nil?
-      self.upload
+      self.upload.round(3)
+    else
+      "N/A"
+    end
+  end
+
+  def get_jitter
+    if !self.jitter.nil?
+      self.jitter.round(3)
+    else
+      "N/A"
+    end
+  end
+
+  def get_latency
+    if !self.latency.nil?
+      self.latency.round(3)
     else
       "N/A"
     end
