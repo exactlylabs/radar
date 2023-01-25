@@ -140,6 +140,8 @@ ActiveRecord::Schema.define(version: 2023_01_23_183304) do
     t.string "network_type"
     t.float "network_cost"
     t.jsonb "connection_data"
+    t.string "version_number"
+    t.string "build_number"
   end
 
   create_table "client_versions", force: :cascade do |t|
@@ -262,9 +264,9 @@ ActiveRecord::Schema.define(version: 2023_01_23_183304) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
+    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
-    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.float "download_avg"
