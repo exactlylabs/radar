@@ -1,10 +1,10 @@
 <td data-controller="localtime" style="color: #5e6278"><%= measurement.created_at %></td>
 <td style="color: #5e6278"><%= measurement.style %></td>
 <td style="color: #5e6278">
-  <%= number_with_precision measurement.get_download, precision: 3 %>
+  <%= number_with_precision measurement.download, precision: 3 %>
 </td>
 <td style="color: #5e6278">
-  <%= number_with_precision measurement.get_upload, precision: 3 %>
+  <%= number_with_precision measurement.upload, precision: 3 %>
 </td>
 <td style="color: #5e6278"><%= number_with_precision measurement.latency, precision: 3 %></td>
 <td style="color: #5e6278"><%= number_with_precision measurement.jitter, precision: 3 %></td>
