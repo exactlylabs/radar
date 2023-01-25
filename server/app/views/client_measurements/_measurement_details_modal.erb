@@ -24,34 +24,44 @@
         <div class="info-container">
           <div class="row pt-5">
             <div class="col-5">
-              Date/Time
-              <p data-controller="localtime" style="color: #5e6278"><%= measurement.created_at %></p>
+              <p class="mb-0" style="color: #191c31; font-size: 14px; font-weight: 500;">Date/Time</p>
+              <p data-controller="localtime" style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= measurement.created_at %></p>
             </div>
             <div class="col">
-              Style
-              <p style="color: #5e6278"><%= measurement.style %></p>
+              <p class="mb-0" style="color: #191c31; font-size: 14px; font-weight: 500">Style</p>
+              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= measurement.style %></p>
             </div>
             <div class="col-5">
-              Location
-              <p style="color: #5e6278"><%= latitude %>, <%= longitude %></p>
+              <p class="mb-0" style="color: #191c31; font-size: 14px; font-weight: 500">Location</p>
+              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= latitude %>, <%= longitude %></p>
             </div>
           </div>
           <div class="row pt-5">
             <div class="col">
-              <img alt="download icon" src="<%= image_url('download-icon.png') %>" width="14" height="14"> Download
-              <p style="color: #5e6278"><%= measurement.download %> Mbps</p>
+              <div class="d-flex flex-row align-items-center justify-content-start flex-wrap">
+                <img alt="download icon" src="<%= image_url('download-icon.png') %>" width="14" height="14">
+                <p class="mb-0 ms-1" style="color: #191c31; font-size: 14px; font-weight: 500">Download</p>
+              </div>
+              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= number_with_precision measurement.get_download, precision: 3 %>
+                Mbps</p>
             </div>
             <div class="col">
-              <img alt="upload icon" src="<%= image_url('upload-icon.png') %>" width="14" height="14"> Upload
-              <p style="color: #5e6278"><%= measurement.upload %> Mbps</p>
+              <div class="d-flex flex-row align-items-center justify-content-start flex-wrap">
+                <img alt="upload icon" src="<%= image_url('upload-icon.png') %>" width="14" height="14">
+                <p class="mb-0 ms-1" style="color: #191c31; font-size: 14px; font-weight: 500">Upload</p>
+              </div>
+              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= number_with_precision measurement.get_upload, precision: 3 %>
+                Mbps</p>
             </div>
             <div class="col">
-              Latency
-              <p style="color: #5e6278"><%= measurement.latency %> ms</p>
+              <p class="mb-0" style="color: #191c31; font-size: 14px; font-weight: 500">Latency</p>
+              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= number_with_precision measurement.latency, precision: 3 %>
+                ms</p>
             </div>
             <div class="col">
-              Jitter
-              <p style="color: #5e6278"><%= measurement.jitter %> ms</p>
+              <p class="mb-0" style="color: #191c31; font-size: 14px; font-weight: 500">Jitter</p>
+              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= number_with_precision measurement.jitter, precision: 3 %>
+                ms</p>
             </div>
           </div>
         </div>
