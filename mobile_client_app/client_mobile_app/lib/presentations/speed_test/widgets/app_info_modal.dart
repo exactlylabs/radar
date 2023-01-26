@@ -1,6 +1,7 @@
 import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
 
 class AppInfoModal extends StatelessWidget {
@@ -35,7 +36,7 @@ class AppInfoModal extends StatelessWidget {
         Image.asset(Images.anthcBlueLogo, height: 35.0),
         const SizedBox(height: 55.0),
         Text(
-          'Copyright © 2023 ANTHC. All rights reserved.',
+          Strings.rightsReserved,
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 14.0,
