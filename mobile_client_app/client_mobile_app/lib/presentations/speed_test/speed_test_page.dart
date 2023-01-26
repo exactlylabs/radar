@@ -49,7 +49,7 @@ class SpeedTestPage extends StatelessWidget {
                                   centerTitle: true,
                                   toolbarHeight: 26.0,
                                   backgroundColor: Theme.of(context).backgroundColor,
-                                  title: Image.asset(Images.logoDark, fit: BoxFit.contain),
+                                  title: Image.asset(Images.logoGrey, fit: BoxFit.contain),
                                   actions: [
                                     InkWell(
                                       onTap: () => _openInfoModal(context, state.versionNumber, state.buildNumber),
@@ -131,7 +131,7 @@ class SpeedTestPage extends StatelessWidget {
   Future<void> _openInfoModal(BuildContext context, String? versionNumber, String? buildNumber) async {
     return modalWithTitle(
       context,
-      true,
+      false,
       Strings.emptyString,
       AppInfoModal(
         versionNumber: versionNumber ?? Strings.emptyString,

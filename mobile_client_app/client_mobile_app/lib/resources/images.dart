@@ -1,7 +1,10 @@
 class Images {
   static const anthcLogo = 'assets/images/anthcLogo.png';
+  static const anthcBlueLogo = 'assets/images/anthcLogo_blue.png';
   static const logo = 'assets/images/logo.png';
   static const logoBig = 'assets/images/logo-big.png';
+  static const logoWhiteBig = 'assets/images/logo_white_big.png';
+  static const logoGrey = 'assets/images/logo-grey.png';
   static const logoDark = 'assets/images/logo-dark.png';
   static const mlabLogo = 'assets/images/mlabLogo.png';
   static const speedTest = 'assets/icons/speed_test_tab_icon.png';

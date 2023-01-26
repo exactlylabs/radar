@@ -6,6 +6,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/radar_logo" />
+            android:src="@drawable/new_radar_logo" />
     </item>
 </layer-list>

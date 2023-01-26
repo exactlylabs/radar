@@ -7,9 +7,9 @@
 
         <item name="android:windowSplashScreenIconBackgroundColor">@color/darkBlue</item>
 
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/radar_logo</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/new_radar_logo</item>
 
-        <item name="android:windowSplashScreenBrandingImage">@drawable/ic_anthclogo</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/new_anthc_logo</item>
 
         <item name="android:windowSplashScreenAnimationDuration">1000</item>
 

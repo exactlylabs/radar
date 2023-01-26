@@ -19,7 +19,7 @@ class AppInfoModal extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Image.asset(Images.logoBig),
+        Image.asset(Images.logoBig, height: 32.0),
         const SizedBox(height: 30.0),
         Text(
           'App version $versionNumber · Build $buildNumber',
@@ -32,7 +32,7 @@ class AppInfoModal extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 50.0),
-        Image.asset(Images.anthcLogo),
+        Image.asset(Images.anthcBlueLogo, height: 35.0),
         const SizedBox(height: 55.0),
         Text(
           'Copyright © 2023 ANTHC. All rights reserved.',
