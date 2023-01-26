@@ -31,3 +31,7 @@
 .select2-selection__rendered {
   color: #5E6278 !important;
 }
+
+.form-custom-opaque {
+  opacity: 0.4;
+}

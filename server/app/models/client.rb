@@ -411,7 +411,7 @@ class Client < ApplicationRecord
   end
 
   def get_data_cap_percentage_usage
-    percentage = (self.data_cap_current_period_usage * 100 / self.get_safe_data_cap_max_usage).round(0)
+    percentage = (self.data_cap_current_period_usage * 100 / self.get_safe_data_cap_max_usage).floor(0)
     if percentage > 100
       return 100
     end
@@ -497,6 +497,26 @@ class Client < ApplicationRecord
       return possible_interface[0]["mac"] if possible_interface.size >= 1
       possible_interface = self.network_interfaces.filter { |i| i.present? && is_enps?(i) }
       possible_interface[0]["mac"] # if we get to this point, we don't need to check for the length of filter result because it must be enps type
+    end
+  end
+
+  # We suggest the nearest 10K based rounding up.
+  # E.g. client's current data usage is 5302 MB ==> we suggest 10K MB
+  # E.g. client's current data usage is 13451 MB ==> we suggest 20K MB
+  def get_suggested_data_cap
+    current_data_cap = (self.data_cap_current_period_usage / (1024**2)).ceil(0)
+    (current_data_cap / 10_000.0).ceil(0) * 10_000
+  end
+
+  def get_frequency_text
+    day = self.data_cap_day_of_month
+    case day
+      when 1
+        "Data usage will be reset on the first day of each month."
+      when -1
+        "Data usage will be reset on the last day of each month."
+      else
+        "Data usage will be reset every month on day #{day}."
     end
   end
 

@@ -10,7 +10,6 @@ class ClientDataUsageAndSchedulingController < ApplicationController
   # PUT clients/:unix_user/data_usage
   def edit_data_cap
     given_data_cap = params[:client][:data_cap_max_usage]
-
     # Quick way to check if given value is a valid number
     if given_data_cap.to_i.to_s != given_data_cap
       given_data_cap = nil
@@ -20,8 +19,15 @@ class ClientDataUsageAndSchedulingController < ApplicationController
 
     if given_data_cap.present? && wants_to_have_data_cap
       @client.data_cap_max_usage = (given_data_cap.to_i * (1024**2)).round(0) # save the value in B (frontend asks for MB)
+      given_reset = params[:client][:data_cap_reset].to_i # 1 for first day, -1 for last, 2 for specific day
+      if given_reset == -1
+        @client.data_cap_day_of_month = -1
+      else
+        @client.data_cap_day_of_month = params[:client][:data_cap_day_of_month].to_i
+      end
     else
       @client.data_cap_max_usage = nil
+      @client.data_cap_day_of_month = 1
     end
 
     # Just in case something isn't set to monthly by this point
