@@ -198,7 +198,6 @@ ActiveRecord::Schema.define(version: 2023_02_24_121602) do
     t.string "hardware_platform"
     t.string "raw_secret"
     t.boolean "staging"
-    t.boolean "using_websocket", default: false
     t.integer "data_cap_day_of_month", default: 1
     t.boolean "in_service", default: false
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
