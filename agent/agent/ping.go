@@ -8,7 +8,7 @@ import (
 	"github.com/exactlylabs/radar/agent/services/sysinfo"
 )
 
-func startPingLoop(ctx context.Context, respCh chan<- *PingResponse, pinger Pinger, pingFreq time.Duration, cliId, secret string) {
+func startPingLoop(ctx context.Context, respCh chan<- *ServerMessage, pinger Pinger, pingFreq time.Duration, cliId, secret string) {
 	pingTimer := time.NewTicker(pingFreq)
 
 	meta := sysinfo.Metadata()

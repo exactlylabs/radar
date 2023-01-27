@@ -41,7 +41,7 @@ func (c *radarClient) NewRequest(method, url string, body io.Reader) (*http.Requ
 	return req, nil
 }
 
-func (c *radarClient) Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*agent.PingResponse, error) {
+func (c *radarClient) Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*agent.ServerMessage, error) {
 	apiUrl := fmt.Sprintf("%s/clients/%s/status", c.serverUrl, clientId)
 	form := url.Values{}
 	form.Add("secret", secret)
@@ -82,7 +82,7 @@ func (c *radarClient) Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*
 	if err := json.Unmarshal(body, podConfig); err != nil {
 		return nil, fmt.Errorf("radarClient#Ping error unmarshalling: %w", err)
 	}
-	res := &agent.PingResponse{
+	res := &agent.ServerMessage{
 		TestRequested: podConfig.TestRequested,
 	}
 	if podConfig.Update != nil {
