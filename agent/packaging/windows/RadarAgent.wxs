@@ -2,11 +2,17 @@
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
   <Product Name='RadarAgent' Id='4A89C26F-78D2-4F5F-8410-477D636E51AF' UpgradeCode='F9A36E92-65D1-422B-B412-435F30B26740'
     Language='1033' Codepage='1252' Version='${VERSION}' Manufacturer='Exactlylabs, Inc.'>
-
-    <Package Id='0833A3BE-E492-422E-85A1-ED1CE9017BC1' Keywords='Installer' Description="Radar's Agent to run speedtests"
+    <Package Id='*' Keywords='Installer' Description="Radar's Agent to run speedtests"
       Comments='' Manufacturer='Exactlylabs, Inc.'
       InstallerVersion='200' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
 
+    <Upgrade Id='F9A36E92-65D1-422B-B412-435F30B26740'>
+      <UpgradeVersion OnlyDetect='yes' Property='SELFFOUND'
+        Minimum='1.0.0' IncludeMinimum='yes' Maximum='${VERSION}' IncludeMaximum='yes' />
+      <UpgradeVersion OnlyDetect='yes' Property='NEWERFOUND'
+        Minimum='${VERSION}' IncludeMinimum='no' />
+    </Upgrade>
+    
     <Media Id='1' Cabinet='RadarAgent.cab' EmbedCab='yes' DiskPrompt="CD-ROM #1" />
     <Property Id='DiskPrompt' Value="RadarAgent Installation [1]" />
 
