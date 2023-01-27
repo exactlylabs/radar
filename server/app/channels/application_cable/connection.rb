@@ -1,13 +1,30 @@
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
-    identified_by :current_account
+    identified_by :current_account, :client
     rescue_from StandardError, with: :report_error
 
+    def allow_request_origin?
+      return true if request.path == "/api/v1/clients/ws/"
+      super
+    end
+
     def connect
-      self.current_account = identify_account
+      if request.path == "/api/v1/clients/ws/"
+        self.client = load_client
+        on_client_connected
+      else
+        self.current_account = identify_account
+      end
+    end
+
+    def disconnect
+      if self.client.present?
+        on_client_disconnected
+      end
     end
 
     private
+    
     def identify_account
       # TODO: check this verification method when we implement multi-account views
       if(verified_account = Account.find_by(id: cookies['radar_current_account_id']))
@@ -19,6 +36,30 @@ module ApplicationCable
 
     def report_error(error)
       Sentry.capture_exception(error)
+    end
+
+    def load_client
+      # Load a Client from the JWT
+      raw_token = request.params[:token]
+      begin
+        token = JsonWebToken.decode raw_token
+      rescue JWT::DecodeError => e
+        reject_unauthorized_connection
+      end
+      self.client = Client.find token[:client_id]
+    end
+
+    def on_client_connected
+      self.client.online = true
+      self.client.ip = request.ip
+      self.client.using_websocket = true
+      self.client.save!
+    end
+
+    def on_client_disconnected
+        self.client.online = false
+        self.client.using_websocket = false
+        self.client.save!
     end
   end
 end

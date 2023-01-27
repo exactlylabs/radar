@@ -144,7 +144,13 @@ Rails.application.routes.draw do
 
   namespace 'api' do
     namespace 'v1' do
-      resources :client_versions, constraints: { id: /[^\/]+/ } do
+      resources :clients do
+        collection do
+          mount ActionCable.server => '/ws'
+          post 'get_token'
+        end
+      end
+      resources :client_versions, constraints: {id: /[^\/]+/} do
         resources :distributions
         resources :packages
       end
