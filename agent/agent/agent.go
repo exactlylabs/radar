@@ -21,7 +21,7 @@ type Agent struct {
 	reporter   MeasurementReporter
 	runners    []Runner
 	runTestCh  chan bool
-	pingRespCh chan *PingResponse
+	pingRespCh chan *ServerMessage
 	wg         *sync.WaitGroup
 	started    bool
 }
@@ -33,7 +33,7 @@ func NewAgent(client ServerClient, runners []Runner) *Agent {
 		reporter:   client.(MeasurementReporter),
 		runners:    runners,
 		runTestCh:  make(chan bool),
-		pingRespCh: make(chan *PingResponse),
+		pingRespCh: make(chan *ServerMessage),
 		wg:         &sync.WaitGroup{},
 		started:    false,
 	}
@@ -98,7 +98,8 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 	go func() {
 		defer a.wg.Done()
 		defer tracing.NotifyPanic() // always add this to each new goroutine
-		startPingLoop(agentCtx, a.pingRespCh, a.pinger, pingFrequency(c), c.ClientId, c.Secret)
+		// startPingLoop(agentCtx, a.pingRespCh, a.pinger, pingFrequency(c), c.ClientId, c.Secret)
+		// startServerConnection(ctx, a.pingRespCh)
 	}()
 
 	// Main Loop will listen to the responses and schedule Speed Tests when requested by the server

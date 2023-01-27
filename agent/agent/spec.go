@@ -10,14 +10,14 @@ type BinaryUpdate struct {
 	Version   string
 	BinaryUrl string
 }
-type PingResponse struct {
+type ServerMessage struct {
 	TestRequested  bool
 	Update         *BinaryUpdate
 	WatchdogUpdate *BinaryUpdate
 }
 
 type Pinger interface {
-	Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*PingResponse, error)
+	Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*ServerMessage, error)
 }
 
 type RegisteredPod struct {
@@ -54,4 +54,11 @@ type Runner interface {
 
 type Rebooter interface {
 	Reboot() error
+}
+
+type OnServerMessage func(ServerMessage)
+type RadarClient interface {
+	Connect(ctx context.Context, callback OnServerMessage) error
+	Sync(ctx context.Context, metadata sysinfo.ClientMeta) error
+	SendMeasurement(ctx context.Context, data []byte) error
 }
