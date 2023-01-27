@@ -158,7 +158,10 @@
           <thead>
             <!--begin::Table row-->
             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-              <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 30%">Time</th>
+              <th class="min-w-125px sorting pe-3 d-flex align-items-center" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 30%">
+                Time
+                <%= render partial: "application/timezone_tooltip" %>
+              </th>
               <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Style</th>
               <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
                 Download
