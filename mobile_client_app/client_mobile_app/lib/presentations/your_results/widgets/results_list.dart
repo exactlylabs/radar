@@ -84,7 +84,7 @@ class _ResultsListState extends State<ResultsList> {
   }
 
   String _dateFromDateTime(DateTime dateTime) {
-    return DateFormat('yyyy/MM/dd').format(dateTime);
+    return DateFormat('MM/dd/yyyy').format(dateTime);
   }
 
   String _timeFromDateTime(DateTime dateTime) {

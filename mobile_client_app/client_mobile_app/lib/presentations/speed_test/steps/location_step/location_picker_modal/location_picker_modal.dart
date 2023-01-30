@@ -68,8 +68,7 @@ class _LocationPickerModalState extends State<LocationPickerModal> {
             onConfirmed: widget.isUsingCurrentLocation
                 ? () => context.read<LocationStepCubit>().useCurrentLocation()
                 : () => context.read<LocationStepCubit>().useSuggestedLocation(),
-            onChanged: (lat, long) =>
-                context.read<LocationStepCubit>().getDelayedLocationByLatLng(lat, long, !widget.isUsingCurrentLocation),
+            onChanged: (lat, long) => context.read<LocationStepCubit>().updateLocationLatLng(lat, long),
             onChangeAddress: () => context.read<LocationStepCubit>().reset(),
           );
         }

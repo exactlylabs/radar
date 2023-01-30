@@ -5,16 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/core/models/location.dart';
-import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/error_message.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/agree_to_terms.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/location_input_field.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/location_option_card.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/current_location_button.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/bloc/location_step_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_picker_modal/location_picker_modal.dart';
 
