@@ -10,7 +10,7 @@ class Location {
     required this.houseNumber,
   });
 
-  factory Location.empty(String address) {
+  factory Location.empty(String address, [double? lat, double? long]) {
     return Location(
       lat: 0.0,
       long: 0.0,
@@ -55,6 +55,28 @@ class Location {
         postalCode: json['postalCode'] as String? ?? '',
         houseNumber: json['houseNumber'] as String? ?? '',
       );
+
+  Location copyWith({
+    double? lat,
+    double? long,
+    String? city,
+    String? state,
+    String? street,
+    String? address,
+    String? postalCode,
+    String? houseNumber,
+  }) {
+    return Location(
+      lat: lat ?? this.lat,
+      long: long ?? this.long,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      street: street ?? this.street,
+      address: address ?? this.address,
+      postalCode: postalCode ?? this.postalCode,
+      houseNumber: houseNumber ?? this.houseNumber,
+    );
+  }
 
   @override
   bool operator ==(Object other) =>
