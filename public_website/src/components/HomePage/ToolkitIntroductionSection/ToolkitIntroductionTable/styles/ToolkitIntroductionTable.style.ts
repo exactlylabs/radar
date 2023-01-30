@@ -2,13 +2,13 @@ import {CSSProperties} from "react";
 import {DEFAULT_TEXT, GET_STARTED_BUTTON_BG} from "../../../../../utils/colors";
 
 const toolkitIntroductionTableStyle: CSSProperties = {
-  width: 'max-content',
+  width: '100%',
   maxWidth: '1000px',
-  height: '200px',
+  height: 'auto',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-evenly',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   position: 'relative',
   zIndex: 2
 }
@@ -23,7 +23,8 @@ const smallToolkitIntroductionTableStyle: CSSProperties = {
 }
 
 const toolkitIntroductionTableColumnStyle: CSSProperties = {
-  width: '280px',
+  width: 'calc(33% - 11% - 2px)',
+  maxWidth: '280px',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
@@ -66,10 +67,12 @@ const titleStyle: CSSProperties = {
   lineHeight: '26px',
   color: DEFAULT_TEXT,
   margin: '0 0 7px 0',
+  width: '100%',
 }
 
 const subtitleStyle: CSSProperties = {
-  width: '278px',
+  width: '100%',
+  maxWidth: '278px',
   fontSize: '17px',
   lineHeight: '28px',
   color: DEFAULT_TEXT,

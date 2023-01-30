@@ -1,0 +1,22 @@
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://toolkit.exactlylabs.com/</loc>
+    <lastmod>2023-30-01</lastmod>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.exactlylabs.com/site-monitoring</loc>
+    <lastmod>2023-30-01</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.exactlylabs.com/broadband-testing</loc>
+    <lastmod>2023-30-01</lastmod>
+    <priority>0.7</priority>
+  </url>
+    <url>
+    <loc>https://toolkit.exactlylabs.com/privacy-policy</loc>
+    <lastmod>2023-30-01</lastmod>
+    <priority>0.2</priority>
+  </url>
+</urlset>
