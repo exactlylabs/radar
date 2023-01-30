@@ -49,6 +49,8 @@ class ProcessMeasurementJob < ApplicationJob
     end
     # Only update client's test_requested status once the actual measurement was already processed
     measurement.client.update(test_requested: false)
-    measurement.location.recalculate_averages!
+    if measurement.location.present?
+      measurement.location.recalculate_averages!
+    end
   end
 end
