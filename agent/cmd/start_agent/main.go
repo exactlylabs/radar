@@ -71,7 +71,7 @@ func main() {
 	}()
 
 	// RadarClient implements all three required interfaces
-	cli := radar.NewClient(c.ServerURL)
+	cli := radar.NewClient(c.ServerURL, c.ClientId, c.Secret)
 
 	// Initiate the agent, passing the requested interfaces and runners
 	agent := agent.NewAgent(cli, runners)
