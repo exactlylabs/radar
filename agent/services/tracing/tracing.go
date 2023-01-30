@@ -10,6 +10,8 @@ import (
 	"github.com/getsentry/sentry-go"
 )
 
+type Context map[string]map[string]interface{}
+
 var notifiedErrors map[error]struct{}
 
 func init() {
@@ -80,7 +82,7 @@ func Setup(c *config.Config, build *info.Info) {
 	})
 }
 
-func NotifyError(err error, context map[string]interface{}) {
+func NotifyError(err error, context Context) {
 	hub := sentry.CurrentHub().Clone()
 	hub.ConfigureScope(func(scope *sentry.Scope) {
 		scope.SetContexts(context)
@@ -88,7 +90,7 @@ func NotifyError(err error, context map[string]interface{}) {
 	hub.CaptureException(err)
 }
 
-func NotifyErrorOnce(err error, context map[string]interface{}) {
+func NotifyErrorOnce(err error, context Context) {
 	if _, exists := notifiedErrors[err]; !exists {
 		log.Println("Notifying!")
 		NotifyError(err, context)
