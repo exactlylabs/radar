@@ -10,7 +10,7 @@ class Location {
     required this.houseNumber,
   });
 
-  factory Location.empty(String address, [double? lat, double? long]) {
+  factory Location.empty(String address) {
     return Location(
       lat: 0.0,
       long: 0.0,
