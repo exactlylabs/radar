@@ -7,8 +7,8 @@ import (
 )
 
 type BinaryUpdate struct {
-	Version   string
-	BinaryUrl string
+	Version   string `json:"version"`
+	BinaryUrl string `json:"binary_url"`
 }
 type ServerMessage struct {
 	TestRequested  bool
@@ -17,7 +17,7 @@ type ServerMessage struct {
 }
 
 type Pinger interface {
-	Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*ServerMessage, error)
+	Ping(meta *sysinfo.ClientMeta) (*ServerMessage, error)
 }
 
 type RegisteredPod struct {
@@ -38,13 +38,7 @@ type Registerer interface {
 }
 
 type MeasurementReporter interface {
-	ReportMeasurement(clientId, secret, style string, measurement []byte) error
-}
-
-type ServerClient interface {
-	Pinger
-	Registerer
-	MeasurementReporter
+	SendMeasurement(ctx context.Context, testStyle string, measurement []byte) error
 }
 
 type Runner interface {
@@ -56,9 +50,9 @@ type Rebooter interface {
 	Reboot() error
 }
 
-type OnServerMessage func(ServerMessage)
 type RadarClient interface {
-	Connect(ctx context.Context, callback OnServerMessage) error
-	Sync(ctx context.Context, metadata sysinfo.ClientMeta) error
-	SendMeasurement(ctx context.Context, data []byte) error
+	Connect(ctx context.Context, ch chan<- *ServerMessage) error
+	MeasurementReporter
+	Registerer
+	Pinger
 }

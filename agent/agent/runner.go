@@ -21,7 +21,7 @@ func startSpeedTestRunner(ctx context.Context, c *config.Config, runTestCh <-cha
 				tracing.NotifyErrorOnce(err, map[string]interface{}{})
 				continue
 			}
-			err = reporter.ReportMeasurement(c.ClientId, c.Secret, runner.Type(), result.Raw)
+			err = reporter.SendMeasurement(ctx, runner.Type(), result.Raw)
 			if err != nil {
 				err = fmt.Errorf("agent.startSpeedTestRunner failed sending speedtest result: %w", err)
 				log.Println(err)

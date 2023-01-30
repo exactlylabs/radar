@@ -16,9 +16,7 @@ import (
 )
 
 type Agent struct {
-	pinger     Pinger
-	registerer Registerer
-	reporter   MeasurementReporter
+	client     RadarClient
 	runners    []Runner
 	runTestCh  chan bool
 	pingRespCh chan *ServerMessage
@@ -26,11 +24,9 @@ type Agent struct {
 	started    bool
 }
 
-func NewAgent(client ServerClient, runners []Runner) *Agent {
+func NewAgent(client RadarClient, runners []Runner) *Agent {
 	return &Agent{
-		pinger:     client.(Pinger),
-		registerer: client.(Registerer),
-		reporter:   client.(MeasurementReporter),
+		client:     client,
 		runners:    runners,
 		runTestCh:  make(chan bool),
 		pingRespCh: make(chan *ServerMessage),
@@ -45,7 +41,7 @@ func (a *Agent) registerAgent(ctx context.Context, c *config.Config) *Registered
 	retryPeriod := 10 * time.Second
 	for {
 		log.Println("Registering the pod to the server")
-		pod, err := a.registerer.Register(c.RegistrationToken)
+		pod, err := a.client.Register(c.RegistrationToken)
 		if err != nil {
 			log.Println(err)
 			log.Printf("Waiting %v before retrying\n", retryPeriod)
@@ -93,13 +89,12 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 	go func() {
 		defer a.wg.Done()
 		defer tracing.NotifyPanic() // always add this to each new goroutine
-		startSpeedTestRunner(agentCtx, c, a.runTestCh, a.runners, a.reporter)
+		startSpeedTestRunner(agentCtx, c, a.runTestCh, a.runners, a.client)
 	}()
 	go func() {
 		defer a.wg.Done()
 		defer tracing.NotifyPanic() // always add this to each new goroutine
-		// startPingLoop(agentCtx, a.pingRespCh, a.pinger, pingFrequency(c), c.ClientId, c.Secret)
-		// startServerConnection(ctx, a.pingRespCh)
+		a.client.Connect(agentCtx, a.pingRespCh)
 	}()
 
 	// Main Loop will listen to the responses and schedule Speed Tests when requested by the server
@@ -120,8 +115,8 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 				err := update.SelfUpdate(pingResp.Update.BinaryUrl)
 				if update.IsValidationError(err) {
 					log.Printf("Existent update is invalid: %v\n", err)
-					tracing.NotifyErrorOnce(err, map[string]interface{}{
-						"Update Data": map[string]string{
+					tracing.NotifyErrorOnce(err, tracing.Context{
+						"Update Data": {
 							"version": pingResp.Update.Version,
 							"url":     pingResp.Update.BinaryUrl,
 						},
@@ -139,8 +134,8 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 				err := watchdog.UpdateWatchdog(pingResp.WatchdogUpdate.BinaryUrl)
 				if update.IsValidationError(err) {
 					log.Printf("Existent update is invalid: %v\n", err)
-					tracing.NotifyErrorOnce(err, map[string]interface{}{
-						"Update Data": map[string]string{
+					tracing.NotifyErrorOnce(err, tracing.Context{
+						"Update Data": {
 							"version": pingResp.Update.Version,
 							"url":     pingResp.Update.BinaryUrl,
 						},
