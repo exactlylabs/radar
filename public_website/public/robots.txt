@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.toolkit.exactlylabs.com/sitemap.xml
+Sitemap: https://toolkit.exactlylabs.com/sitemap.xml

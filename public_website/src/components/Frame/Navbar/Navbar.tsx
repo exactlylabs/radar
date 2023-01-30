@@ -12,7 +12,7 @@ const Navbar = (): ReactElement => {
   const goToGetStarted = () => {}
 
   return (
-    <div style={styles.Navbar}>
+    <div style={styles.Navbar(isSmallNavbar)}>
       { isSmallNavbar ? <SmallNavbarContent /> : <RegularNavbarContent goToGetStarted={goToGetStarted}/> }
     </div>
   )

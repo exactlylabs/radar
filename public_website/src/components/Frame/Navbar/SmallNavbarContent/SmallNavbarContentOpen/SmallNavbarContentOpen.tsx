@@ -7,7 +7,7 @@ import {ToolkitTabContentRowTitle} from "../../RegularNavbarContent/ToolkitFloat
 import {
   commonStyles
 } from "../../RegularNavbarContent/ToolkitFloatingMenu/RightSideToolkitTabContent/styles/common.style";
-import {goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../../../utils/navigation";
+import {DEFAULT_MAIL_TO, goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../../../utils/navigation";
 
 const BroadbandTestingIcon = "/assets/images/broadband-testing-icon.png";
 const MappingToolsIcon = "/assets/images/mapping-tools-icon.png";
@@ -42,7 +42,7 @@ const SmallNavbarContentOpen = (): ReactElement => {
         />
         <NavbarHorizontalDivider/>
         <a className={'fw-bold hover-opaque'}
-           href={'mailto:info@exactlylabs.com'}
+           href={DEFAULT_MAIL_TO}
            style={styles.Link}>
           Contact Us
         </a>

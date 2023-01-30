@@ -6,15 +6,15 @@ import {
 
 const toolkitRedirectionSectionStyle: CSSProperties = {
   width: '90%',
-  minWidth: '750px',
   maxWidth: '1200px',
-  minHeight: '330px',
   backgroundColor: INVESTMENT_SECTION_BLUE,
   boxShadow: `0 14px 40px -4px ${REDIRECTION_SECTION_BLUE_BOX_SHADOW}`,
   borderRadius: '20px',
   margin: '-80px auto 0',
   zIndex: 10,
-  position: 'relative'
+  position: 'relative',
+  paddingTop: '40px',
+  paddingBottom: '40px',
 }
 
 const smallToolkitRedirectionSectionStyle: CSSProperties = {
@@ -31,20 +31,22 @@ const smallToolkitRedirectionSectionStyle: CSSProperties = {
 
 const toolkitRedirectionSectionContentStyle: CSSProperties = {
   width: '85%',
-  height: '320px',
+  height: 'max-content',
   marginLeft: 'auto',
   marginRight: 'auto',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   zIndex: 1,
+  position: 'relative'
 }
 
 const smallToolkitRedirectionSectionContentStyle: CSSProperties = {
   ...toolkitRedirectionSectionContentStyle,
   width: 'calc(100% - 50px)',
   height: undefined,
+  minHeight: undefined,
   flexDirection: 'column',
   marginLeft: 'calc(-50% + 25px)',
   marginRight: undefined,
@@ -54,8 +56,10 @@ const smallToolkitRedirectionSectionContentStyle: CSSProperties = {
 }
 
 const toolkitRedirectionColumnStyle: CSSProperties = {
-  width: '280px',
-  height: '220px',
+  width: '30%',
+  maxWidth: '280px',
+  minHeight: '220px',
+  height: 'max-content',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
@@ -115,7 +119,11 @@ const linkStyle: CSSProperties = {
   fontSize: '16px',
   color: REDIRECTION_LINK,
   margin: 0,
-  textDecoration: 'none'
+  textDecoration: 'none',
+  width: 'max-content',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis'
 }
 
 const linkChevronStyle: CSSProperties = {

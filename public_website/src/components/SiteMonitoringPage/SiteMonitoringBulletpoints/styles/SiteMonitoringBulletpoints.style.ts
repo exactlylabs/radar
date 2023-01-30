@@ -2,7 +2,9 @@ import {CSSProperties} from "react";
 import {DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT, GET_STARTED_BUTTON_BG} from "../../../../utils/colors";
 
 const siteMonitoringBulletPointsStyle: CSSProperties = {
-  width: '100%',
+  width: '90%',
+  maxWidth: '1200px',
+  margin: '0 auto',
   height: '745px',
 }
 
@@ -86,6 +88,7 @@ const rowStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
+  marginBottom: '10px'
 }
 
 const smallRowStyle: CSSProperties = {

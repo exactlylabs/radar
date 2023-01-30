@@ -1,4 +1,4 @@
-import {ReactElement} from "react";
+import React, {ReactElement} from "react";
 import {ViewportContextProvider} from "../src/context/ViewportContent";
 import PrivacyPolicyContent from "../src/components/PrivacyPolicyPage/PrivacyPolicyContent";
 
