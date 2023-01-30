@@ -50,5 +50,5 @@ type PingResponse struct {
 	Update *BinaryUpdate
 }
 type WatchdogPinger interface {
-	WatchdogPing(clientId, secret string, meta *sysinfo.ClientMeta) (*PingResponse, error)
+	WatchdogPing(meta *sysinfo.ClientMeta) (*PingResponse, error)
 }
