@@ -96,8 +96,10 @@ class Client < ApplicationRecord
 
     if saved_change_to_online || saved_change_to_test_requested
       PodStatusChannel.broadcast_to(CHANNELS[:clients_status], self)
-      # Bellow is the broadcast to a single agent channel
-      ActionCable.server.broadcast("agent_channel_#{unix_user}", self)
+    end
+
+    if saved_change_to_test_requested && test_requested
+      PodAgentChannel.broadcast_test_requested self
     end
 
     if saved_change_to_ip
