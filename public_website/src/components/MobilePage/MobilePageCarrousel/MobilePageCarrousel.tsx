@@ -71,7 +71,7 @@ const MobilePageCarrousel = (): ReactElement => {
     <div style={styles.MobilePageCarrousel}>
       <div style={styles.TextContainer(isSmall)}>
         <p className={'fw-bold'} style={styles.Header}>Radar for Mobile</p>
-        <p className={'fw-extra-bold'} style={styles.Title}>Test your connectivity outdoors or your wifi at home.</p>
+        <p className={'fw-extra-bold'} style={styles.Title}>Test your connectivity outdoors or your Wi-Fi at home.</p>
         <p className={'fw-medium'} style={styles.Subtitle}>Radar lets you run speed tests outdoors and indoors, compare results over time, and explore your neighborhood to get a better idea of how broadband looks like around you.</p>
       </div>
       { isSmall ?
