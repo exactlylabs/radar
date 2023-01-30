@@ -29,98 +29,105 @@ class SpeedTestPage extends StatelessWidget {
         if (state.isFormEnded) {
           return const NoInternetConnectionPage();
         } else {
-          return SafeArea(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Container(
-                  color: Theme.of(context).backgroundColor,
-                  padding: EdgeInsets.symmetric(horizontal: state.step == 4 ? 15.0 : 20.0),
-                  child: Stack(
-                    children: [
-                      SingleChildScrollView(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(minWidth: constraints.maxWidth, minHeight: constraints.maxHeight),
-                          child: IntrinsicHeight(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const SizedBox(height: 11.0),
-                                AppBar(
-                                  centerTitle: true,
-                                  toolbarHeight: 26.0,
-                                  backgroundColor: Theme.of(context).backgroundColor,
-                                  title: Image.asset(Images.logoGrey, fit: BoxFit.contain),
-                                  actions: [
-                                    InkWell(
-                                      onTap: () => _openInfoModal(context, state.versionNumber, state.buildNumber),
-                                      child: Image.asset(
-                                        Images.infoGreyIcon,
+          return WillPopScope(
+            onWillPop: () {
+              context.read<SpeedTestCubit>().previousStep();
+              return Future.value(false);
+            },
+            child: SafeArea(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Container(
+                    color: Theme.of(context).backgroundColor,
+                    padding: EdgeInsets.symmetric(horizontal: state.step == 4 ? 15.0 : 20.0),
+                    child: Stack(
+                      children: [
+                        SingleChildScrollView(
+                          child: ConstrainedBox(
+                            constraints:
+                                BoxConstraints(minWidth: constraints.maxWidth, minHeight: constraints.maxHeight),
+                            child: IntrinsicHeight(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  const SizedBox(height: 11.0),
+                                  AppBar(
+                                    centerTitle: true,
+                                    toolbarHeight: 26.0,
+                                    backgroundColor: Theme.of(context).backgroundColor,
+                                    title: Image.asset(Images.logoGrey, fit: BoxFit.contain),
+                                    actions: [
+                                      InkWell(
+                                        onTap: () => _openInfoModal(context, state.versionNumber, state.buildNumber),
+                                        child: Image.asset(
+                                          Images.infoGreyIcon,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SpacerWithMax(size: height * 0.05, maxSize: 40.0),
+                                  if (state.step < SpeedTestCubit.TAKE_SPEED_TEST_STEP)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10.0, bottom: 15.0),
+                                      child: StepIndicator(
+                                        totalSteps: 4,
+                                        currentStep: state.step,
+                                        textColor: Theme.of(context).colorScheme.surface,
+                                        currentTextColor: Theme.of(context).colorScheme.onPrimary,
+                                        stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.10),
+                                        currentStepColor: Theme.of(context).colorScheme.secondary,
                                       ),
                                     ),
-                                  ],
-                                ),
-                                SpacerWithMax(size: height * 0.05, maxSize: 40.0),
-                                if (state.step < SpeedTestCubit.TAKE_SPEED_TEST_STEP)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 10.0, bottom: 15.0),
-                                    child: StepIndicator(
-                                      totalSteps: 4,
-                                      currentStep: state.step,
-                                      textColor: Theme.of(context).colorScheme.surface,
-                                      currentTextColor: Theme.of(context).colorScheme.onPrimary,
-                                      stepColor: Theme.of(context).colorScheme.primary.withOpacity(0.10),
-                                      currentStepColor: Theme.of(context).colorScheme.secondary,
+                                  if (state.step == SpeedTestCubit.LOCATION_STEP)
+                                    LocationStep(
+                                      location: state.location,
+                                      termsAccepted: state.termsAccepted,
+                                    )
+                                  else if (state.step == SpeedTestCubit.NETWORK_LOCATION_STEP)
+                                    NetworkPlaceStep(
+                                      isStepValid: state.isStepValid,
+                                      address: state.location?.address ?? Strings.emptyString,
+                                      optionSelected: state.networkLocation,
+                                    )
+                                  else if (state.step == SpeedTestCubit.NETWORK_TYPE_STEP)
+                                    NetworkTypeStep(
+                                      optionSelected: state.networkType,
+                                      isStepValid: state.isStepValid,
+                                    )
+                                  else if (state.step == SpeedTestCubit.MONTHLY_BILL_COST_STEP)
+                                    MonthlyBillCostStep(
+                                      billCost: state.monthlyBillCost,
+                                      isStepValid: state.isStepValid,
+                                    )
+                                  else if (state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP)
+                                    TakeSpeedTestStep(
+                                      networkType: state.networkType ?? Strings.emptyString,
+                                      networkPlace: state.networkLocation ?? Strings.emptyString,
+                                      address: state.location?.address ?? Strings.emptyString,
                                     ),
-                                  ),
-                                if (state.step == SpeedTestCubit.LOCATION_STEP)
-                                  LocationStep(
-                                    location: state.location,
-                                    termsAccepted: state.termsAccepted,
-                                  )
-                                else if (state.step == SpeedTestCubit.NETWORK_LOCATION_STEP)
-                                  NetworkPlaceStep(
-                                    isStepValid: state.isStepValid,
-                                    address: state.location?.address ?? Strings.emptyString,
-                                    optionSelected: state.networkLocation,
-                                  )
-                                else if (state.step == SpeedTestCubit.NETWORK_TYPE_STEP)
-                                  NetworkTypeStep(
-                                    optionSelected: state.networkType,
-                                    isStepValid: state.isStepValid,
-                                  )
-                                else if (state.step == SpeedTestCubit.MONTHLY_BILL_COST_STEP)
-                                  MonthlyBillCostStep(
-                                    billCost: state.monthlyBillCost,
-                                    isStepValid: state.isStepValid,
-                                  )
-                                else if (state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP)
-                                  TakeSpeedTestStep(
-                                    networkType: state.networkType ?? Strings.emptyString,
-                                    networkPlace: state.networkLocation ?? Strings.emptyString,
-                                    address: state.location?.address ?? Strings.emptyString,
-                                  ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      if (state.onContinue != null || state.onBack != null)
-                        Positioned(
-                          bottom: MediaQuery.of(context).viewInsets.bottom,
-                          left: 0.0,
-                          right: 0.0,
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: state.step == 3 ? 20.0 : 40.0),
-                            child: GoBackAndContinueButtons(
-                              onContinuePressed: state.onContinue,
-                              onGoBackPressed: state.onBack,
+                        if (state.onContinue != null || state.onBack != null)
+                          Positioned(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                            left: 0.0,
+                            right: 0.0,
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: state.step == 3 ? 20.0 : 40.0),
+                              child: GoBackAndContinueButtons(
+                                onContinuePressed: state.onContinue,
+                                onGoBackPressed: state.onBack,
+                              ),
                             ),
-                          ),
-                        )
-                    ],
-                  ),
-                );
-              },
+                          )
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           );
         }

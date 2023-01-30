@@ -30,6 +30,11 @@ class LocationsService implements ILocationsService {
   }
 
   Future<List<Location>> _getSuggestedLocations(String requestId, String query) async {
+    final userCoordinates = await _getUserCoordinates(requestId);
+    Location userLocation = Location.empty(query);
+    if (userCoordinates.length == 2) {
+      userLocation = userLocation.copyWith(lat: userCoordinates[0], long: userCoordinates[1]);
+    }
     return _suggestedLocationsRequest(query).then((locations) {
       List<Location> suggestions;
       if (requestId == _lastRequestId) {
@@ -37,7 +42,8 @@ class LocationsService implements ILocationsService {
       } else {
         suggestions = [];
       }
-      return suggestions..add(Location.empty(query));
+
+      return suggestions..add(userLocation);
     });
   }
 
@@ -80,6 +86,20 @@ class LocationsService implements ILocationsService {
         return null;
       },
       (location) => location,
+    );
+  }
+
+  Future<List<double>> _getUserCoordinates(String requestId) async {
+    final failureOrLocation = await _httpProvider.getAndDecode<List>(
+      url: _restClient.userCoordinates,
+      headers: {'Content-Type': 'application/json'},
+    );
+    return failureOrLocation.fold(
+      (failure) {
+        Sentry.captureException(failure.exception, stackTrace: failure.stackTrace);
+        return [];
+      },
+      (coordinates) => coordinates.map((coordinate) => coordinate as double).toList(),
     );
   }
 

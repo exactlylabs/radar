@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:client_mobile_app/presentations/speed_test/utils/responses_parser.dart';
-import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ndt7_client/models/test_completed_event.dart';
 import 'package:ndt7_client/ndt7_client.dart';
 import 'package:ndt7_client/models/client_response.dart';
 import 'package:ndt7_client/models/server_response.dart';
-import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_state.dart';
+import 'package:ndt7_client/models/test_completed_event.dart';
 import 'package:network_connection_info/network_connection_info.dart';
+import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/presentations/speed_test/utils/responses_parser.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_state.dart';
 
 class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
   TakeSpeedTestStepCubit({

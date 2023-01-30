@@ -76,12 +76,11 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     }
   }
 
-  Future<void> getDelayedLocationByLatLng(double lat, double lng, bool isSuggestedLocation) async {
-    if (_delayedSearchTimer != null) {
-      _delayedSearchTimer!.cancel();
+  Future<void> updateLocationLatLng(double lat, double lng) async {
+    if (state.currentLocation != null) {
+      Location newLocation = state.currentLocation!.copyWith(lat: lat, long: lng);
+      emit(state.copyWith(currentLocation: newLocation, loadingCurrentLocation: false));
     }
-    _delayedSearchTimer =
-        Timer(const Duration(milliseconds: 400), () async => await getLocationByLatLng(lat, lng, isSuggestedLocation));
   }
 
   void setTermsAccepted(bool value) => emit(state.acceptTerms(value));
