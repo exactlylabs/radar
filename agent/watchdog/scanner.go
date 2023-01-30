@@ -121,8 +121,8 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 		log.Printf("New Login Detected at %v, notifying through tracing\n", evt.Time)
 		tracing.NotifyError(
 			fmt.Errorf("new Login Detected in the Pod"),
-			map[string]interface{}{
-				"Login Info": map[string]interface{}{"User": evt.User, "Time": evt.Time, "Unix User": c.ClientId},
+			tracing.Context{
+				"Login Info": {"User": evt.User, "Time": evt.Time, "Unix User": c.ClientId},
 			},
 		)
 	}

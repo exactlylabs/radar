@@ -31,7 +31,7 @@ func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentC
 }
 
 func checkUpdate(c *config.Config, sysManager SystemManager, pinger WatchdogPinger) {
-	res, err := pinger.WatchdogPing(c.ClientId, c.Secret, sysinfo.Metadata())
+	res, err := pinger.WatchdogPing(sysinfo.Metadata())
 	if err != nil {
 		log.Println(fmt.Errorf("watchdog.checkUpdate Ping: %w", err))
 		return
@@ -44,8 +44,8 @@ func checkUpdate(c *config.Config, sysManager SystemManager, pinger WatchdogPing
 			errors.Is(err, update.ErrCRLInvalidSignature) ||
 			errors.Is(err, update.ErrCRLNotFound)) {
 			log.Printf("Existent update is invalid: %v\n", err)
-			tracing.NotifyErrorOnce(err, map[string]interface{}{
-				"Update Data": map[string]string{
+			tracing.NotifyErrorOnce(err, tracing.Context{
+				"Update Data": {
 					"version": res.Update.Version,
 					"url":     res.Update.BinaryUrl,
 				},
@@ -53,7 +53,7 @@ func checkUpdate(c *config.Config, sysManager SystemManager, pinger WatchdogPing
 		} else if errors.Is(err, update.ErrCRLExpired) {
 			log.Println(err)
 			// Notify ourselves to renew the CRL
-			tracing.NotifyErrorOnce(err, map[string]interface{}{})
+			tracing.NotifyErrorOnce(err, tracing.Context{})
 		} else if err != nil {
 			panic(err)
 		} else {
