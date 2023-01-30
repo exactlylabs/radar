@@ -13,26 +13,39 @@ import (
 	"strings"
 
 	"github.com/exactlylabs/radar/agent/agent"
+	"github.com/exactlylabs/radar/agent/services/radar/messages"
 	"github.com/exactlylabs/radar/agent/services/sysinfo"
 	"github.com/exactlylabs/radar/agent/watchdog"
+	"github.com/gorilla/websocket"
 )
 
 // firstPing since the service has started. It's set to false right after a successful ping
 var firstPing = true
 
-type radarClient struct {
-	serverUrl string
+var _ agent.RadarClient = &RadarClient{}
+
+// RadarClient exposes methods to communicate with our Radar server
+type RadarClient struct {
+	serverURL   string
+	clientID    string
+	secret      string
+	conn        *websocket.Conn
+	recvCh      chan messages.ReceiveMessage
+	sendCh      chan messages.SendCommand
+	errCh       chan error // Response from sender or reader if anything fails
+	isReady     bool
+	wsConnected bool // When false, we enable the fallbacks to the HTTP method -- intended to SendMeasurements method
 }
 
-// NewClient has all methods expected by the agent to communicate
-// with the server
-func NewClient(serverUrl string) RadarRequester {
-	return &radarClient{
-		serverUrl: serverUrl,
+func NewClient(serverURL, clientID, secret string) *RadarClient {
+	return &RadarClient{
+		serverURL: serverURL,
+		clientID:  clientID,
+		secret:    secret,
 	}
 }
 
-func (c *radarClient) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
+func (c *RadarClient) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, fmt.Errorf("radarClient#Register error creating request: %w", err)
@@ -41,10 +54,10 @@ func (c *radarClient) NewRequest(method, url string, body io.Reader) (*http.Requ
 	return req, nil
 }
 
-func (c *radarClient) Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*agent.ServerMessage, error) {
-	apiUrl := fmt.Sprintf("%s/clients/%s/status", c.serverUrl, clientId)
+func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) (*agent.ServerMessage, error) {
+	apiUrl := fmt.Sprintf("%s/clients/%s/status", c.serverURL, c.clientID)
 	form := url.Values{}
-	form.Add("secret", secret)
+	form.Add("secret", c.secret)
 	form.Add("version", meta.Version)
 	form.Add("distribution", meta.Distribution)
 	form.Add("watchdog_version", meta.WatchdogVersion)
@@ -88,20 +101,20 @@ func (c *radarClient) Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*
 	if podConfig.Update != nil {
 		res.Update = &agent.BinaryUpdate{
 			Version:   podConfig.Update.Version,
-			BinaryUrl: fmt.Sprintf("%s/%s", c.serverUrl, podConfig.Update.Url),
+			BinaryUrl: fmt.Sprintf("%s/%s", c.serverURL, podConfig.Update.Url),
 		}
 	}
 	if podConfig.WatchdogUpdate != nil {
 		res.WatchdogUpdate = &agent.BinaryUpdate{
 			Version:   podConfig.WatchdogUpdate.Version,
-			BinaryUrl: fmt.Sprintf("%s/%s", c.serverUrl, podConfig.WatchdogUpdate.Url),
+			BinaryUrl: fmt.Sprintf("%s/%s", c.serverURL, podConfig.WatchdogUpdate.Url),
 		}
 	}
 	return res, nil
 }
 
-func (c *radarClient) Register(registrationToken *string) (*agent.RegisteredPod, error) {
-	apiUrl := fmt.Sprintf("%s/clients", c.serverUrl)
+func (c *RadarClient) Register(registrationToken *string) (*agent.RegisteredPod, error) {
+	apiUrl := fmt.Sprintf("%s/clients", c.serverURL)
 	req, err := http.NewRequest("POST", apiUrl, nil)
 	if err != nil {
 		return nil, fmt.Errorf("radarCLient#Register error creating request: %w", err)
@@ -126,14 +139,16 @@ func (c *radarClient) Register(registrationToken *string) (*agent.RegisteredPod,
 	if err := json.Unmarshal(body, p); err != nil {
 		return nil, fmt.Errorf("radarClient#Register error unmarshalling: %w", err)
 	}
+	c.clientID = p.ClientId
+	c.secret = p.Secret
 	return &agent.RegisteredPod{
 		ClientId: p.ClientId,
 		Secret:   p.Secret,
 	}, nil
 }
 
-func (c *radarClient) ReportMeasurement(clientId, secret, style string, measurement []byte) error {
-	apiUrl := fmt.Sprintf("%s/clients/%s/measurements", c.serverUrl, clientId)
+func (c *RadarClient) SendMeasurementHTTP(style string, measurement []byte) error {
+	apiUrl := fmt.Sprintf("%s/clients/%s/measurements", c.serverURL, c.clientID)
 
 	// Create Form Data
 	var b bytes.Buffer
@@ -144,7 +159,7 @@ func (c *radarClient) ReportMeasurement(clientId, secret, style string, measurem
 
 	// Secret Field
 	secretWriter, _ := w.CreateFormField("client_secret")
-	secretWriter.Write([]byte(secret))
+	secretWriter.Write([]byte(c.secret))
 
 	// File Field
 	fW, _ := w.CreateFormFile("measurement[result]", "result.json")
@@ -166,10 +181,10 @@ func (c *radarClient) ReportMeasurement(clientId, secret, style string, measurem
 	return nil
 }
 
-func (c *radarClient) WatchdogPing(clientId, secret string, meta *sysinfo.ClientMeta) (*watchdog.PingResponse, error) {
-	apiUrl := fmt.Sprintf("%s/clients/%s/watchdog_status", c.serverUrl, clientId)
+func (c *RadarClient) WatchdogPing(meta *sysinfo.ClientMeta) (*watchdog.PingResponse, error) {
+	apiUrl := fmt.Sprintf("%s/clients/%s/watchdog_status", c.serverURL, c.clientID)
 	form := url.Values{}
-	form.Add("secret", secret)
+	form.Add("secret", c.secret)
 	form.Add("version", meta.Version)
 	req, err := c.NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
 	if err != nil {
@@ -200,7 +215,7 @@ func (c *radarClient) WatchdogPing(clientId, secret string, meta *sysinfo.Client
 	if podConfig.Update != nil {
 		res.Update = &watchdog.BinaryUpdate{
 			Version:   podConfig.Update.Version,
-			BinaryUrl: fmt.Sprintf("%s/%s", c.serverUrl, podConfig.Update.Url),
+			BinaryUrl: fmt.Sprintf("%s/%s", c.serverURL, podConfig.Update.Url),
 		}
 	}
 	return res, nil
