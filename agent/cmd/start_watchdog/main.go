@@ -42,8 +42,7 @@ func main() {
 	defer tracing.NotifyPanic()
 
 	sysManager := sysinfo.NewSystemManager()
-	cli := radar.NewClient(c.ServerURL)
-
+	cli := radar.NewClient(c.ServerURL, c.ClientId, c.Secret)
 	ctx := context.Background()
 	if !isDev() {
 		agentCli := sysinfo.NewAgentInfoManager(*radarPath, *agentService)
