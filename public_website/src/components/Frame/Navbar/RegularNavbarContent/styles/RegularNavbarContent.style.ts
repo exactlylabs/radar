@@ -29,6 +29,7 @@ const chevronRightStyle: CSSProperties = {
 
 const tabsContainerStyle: CSSProperties = {
   width: '30%',
+  height: '100%',
   minWidth: '250px',
   maxWidth: '375px',
   display: 'flex',
@@ -40,6 +41,9 @@ const tabsContainerStyle: CSSProperties = {
 const linkStyle: CSSProperties = {
   textDecoration: 'none',
   color: DEFAULT_TEXT,
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center'
 }
 
 const centerLinkStyle: CSSProperties = {
@@ -47,7 +51,7 @@ const centerLinkStyle: CSSProperties = {
   position: 'absolute',
   width: '84px',
   left: '50%',
-  marginLeft: '-42px',
+  margin: '16px 0 16px -42px'
 }
 
 const leftLinkStyle: CSSProperties = {
@@ -55,6 +59,7 @@ const leftLinkStyle: CSSProperties = {
   width: '73px',
   position: 'absolute',
   left: 'calc(50% - 40px - 60px - 73px)',
+  margin: '16px 0',
 }
 
 const rightLinkStyle: CSSProperties = {
@@ -62,6 +67,7 @@ const rightLinkStyle: CSSProperties = {
   width: '84px',
   position: 'absolute',
   right: 'calc(50% - 42px - 60px - 84px)',
+  margin: '16px 0',
 }
 
 export const styles = {

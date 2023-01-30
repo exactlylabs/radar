@@ -138,11 +138,12 @@ const iconStyle: CSSProperties = {
 }
 
 const siteMonitoringBackgroundStyle: CSSProperties = {
-  width: '1106px',
-  height: '637px',
+  width: '65vw',
+  maxWidth: '1106px',
+  height: 'auto',
   position: 'absolute',
-  bottom: '-23%',
-  right: '-20%',
+  bottom: '0',
+  right: '-6vw',
 }
 
 const smallSiteMonitoringBackgroundStyle: CSSProperties = {

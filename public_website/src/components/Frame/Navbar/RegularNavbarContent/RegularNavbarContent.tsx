@@ -1,8 +1,9 @@
-import {ReactElement, useState} from "react";
+import {ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/RegularNavbarContent.style";
 import CustomButton from "../../../common/CustomButton/CustomButton";
 import ToolkitFloatingMenu from "./ToolkitFloatingMenu/ToolkitFloatingMenu";
-import {emailContact, goToHome} from "../../../../utils/navigation";
+import {DEFAULT_MAIL_TO, emailContact, goToHome} from "../../../../utils/navigation";
+import { useIsTouchDevice } from "../../../../hooks/useIsTouchDevice";
 
 const RadarLogo = "/assets/images/radar-logo.png";
 const ChevronRight = "/assets/images/chevron-right-dark.png";
@@ -15,17 +16,55 @@ const RegularNavbarContent = ({
   goToGetStarted
 }: RegularNavbarContentProps): ReactElement => {
 
+  const isTouchDevice = useIsTouchDevice().current;
+
+  console.log(isTouchDevice);
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
+  const floatingMenuOpenRef = useRef(false);
   let timeoutId: NodeJS.Timeout;
 
-  const openFloatingMenu = () => setIsFloatingMenuOpen(true);
+  useEffect(() => {
+    if(isTouchDevice) window.addEventListener('click', closeMenuIfClickOutside);
+
+    return () => {
+      if(isTouchDevice) window.removeEventListener('click', closeMenuIfClickOutside);
+    }
+  }, []);
+
+  const closeMenuIfClickOutside = (e: any) => {
+    const possibleElement = document.getElementById('toolkit-floating-menu--container');
+    if(e.target.id === 'toolkit-link--floating-menu-toggle') return;
+    if (
+      possibleElement &&
+      !possibleElement.contains(e.target) && 
+      floatingMenuOpenRef.current
+    ) {
+      setIsFloatingMenuOpen(false);
+      floatingMenuOpenRef.current = false;
+    }
+  }
+
+  const openFloatingMenu = () => {
+    setIsFloatingMenuOpen(true);
+    floatingMenuOpenRef.current = true;
+  }
+
   const closeFloatingMenu = () => {
-    timeoutId = setTimeout(() => setIsFloatingMenuOpen(false), 100);
+    timeoutId = setTimeout(() => { 
+      setIsFloatingMenuOpen(false);
+      floatingMenuOpenRef.current = false 
+    }, 100);
+  }
+
+  const toggleFloatingMenu = () => {
+    setIsFloatingMenuOpen(!isFloatingMenuOpen);
+    floatingMenuOpenRef.current = !floatingMenuOpenRef.current;
   }
 
   const handleSetIsOpen = (isOpen: boolean) => {
     if(isOpen && !!timeoutId) clearTimeout(timeoutId);
     setIsFloatingMenuOpen(isOpen);
+    floatingMenuOpenRef.current = isOpen;
   }
 
   return (
@@ -40,13 +79,15 @@ const RegularNavbarContent = ({
         </a>
         <p className={'fw-bold hover-opaque'}
            style={styles.CenterLink}
-           onMouseOver={openFloatingMenu}
-           onMouseLeave={closeFloatingMenu}
+           onMouseOver={isTouchDevice ? undefined : openFloatingMenu}
+           onMouseLeave={isTouchDevice ? undefined : closeFloatingMenu}
+           onClick={isTouchDevice ? toggleFloatingMenu : undefined}
+           id='toolkit-link--floating-menu-toggle'
         >
           Our Toolkit
         </p>
         <a className={'fw-bold hover-opaque'}
-           href={'mailto:info@exactlylabs.com'}
+           href={DEFAULT_MAIL_TO}
            style={styles.RightLink}
         >
           Contact Us

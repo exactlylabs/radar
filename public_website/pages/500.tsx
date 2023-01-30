@@ -1,4 +1,4 @@
-import {ReactElement, useEffect} from "react";
+import React, {ReactElement, useEffect} from "react";
 import {goToHome} from "../src/utils/navigation";
 
 const ServerError = (): ReactElement => {

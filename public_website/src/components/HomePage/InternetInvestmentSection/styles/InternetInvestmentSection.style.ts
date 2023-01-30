@@ -122,7 +122,7 @@ const tickIconStyle: CSSProperties = {
 }
 
 const itemTextStyle: CSSProperties = {
-  width: '444px',
+  width: '100%',
   fontSize: '17px',
   lineHeight: '28px',
   color: WHITE,
