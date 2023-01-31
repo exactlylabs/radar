@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/BroadbandTestingSpeedtest.style";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import CustomButton from "../../common/CustomButton/CustomButton";
-import {emailContact, goToSpeedTestWebsite} from "../../../utils/navigation";
+import {DEFAULT_MAIL_TO, emailContact, goToSpeedTestWebsite} from "../../../utils/navigation";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const ChevronRightWhite = "/assets/images/chevron-right-white.png";
@@ -23,8 +23,8 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
           <p className={'fw-bold'} style={styles.Subtitle(isSmall)}>Add our white-labelable widget</p>
           <p className={'fw-medium'} style={styles.Paragraph(isSmall)}>Let your users run speed tests and compare their speeds against the broader community, while capturing optional information like service cost, location type and geolocation.
             Contact us for customization options as you prepare to launch this in the context of your own community.</p>
-          <CustomButton text={'Get in touch'}
-                        onClick={emailContact}
+          <CustomButton text={'Get started'}
+                        link={DEFAULT_MAIL_TO}
                         icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
                         backgroundColor={DEFAULT_PRIMARY_BUTTON}
                         color={WHITE}

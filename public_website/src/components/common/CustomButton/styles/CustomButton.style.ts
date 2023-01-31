@@ -12,7 +12,8 @@ const customButtonStyle: CSSProperties = {
   backgroundColor: GET_STARTED_BUTTON_BG,
   cursor: 'pointer',
   color: DEFAULT_TEXT,
-  zIndex: 5
+  zIndex: 5,
+  textDecoration: 'none'
 }
 
 const textStyle: CSSProperties = {

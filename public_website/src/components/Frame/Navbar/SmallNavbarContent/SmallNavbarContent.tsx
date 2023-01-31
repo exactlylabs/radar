@@ -1,6 +1,6 @@
 import {ReactElement, useState} from "react";
 import {styles} from "./styles/SmallNavbarContent.style";
-import {goToHome} from "../../../../utils/navigation";
+import {AppRoutes} from "../../../../utils/navigation";
 import SmallNavbarContentOpen from "./SmallNavbarContentOpen/SmallNavbarContentOpen";
 
 const RadarLogo = "/assets/images/radar-logo.png";
@@ -18,7 +18,9 @@ const SmallNavbarContent = (): ReactElement => {
     <div style={styles.NavbarContentWrapper(isNavbarOpen)}>
       <div style={styles.NavbarContent}>
         <div>
-          <img className={'hover-opaque'} src={RadarLogo} style={styles.Logo} alt={'radar-logo'} onClick={goToHome}/>
+          <a href={AppRoutes.HOME} style={styles.MarginlessLink}>
+            <img className={'hover-opaque'} src={RadarLogo} style={styles.Logo} alt={'radar-logo'}/>
+          </a>
           { isNavbarOpen ?
             <img className={'hover-opaque'} src={CloseIcon} style={styles.Icon} alt={'close-icon'} onClick={closeNavbar}/> :
             <img className={'hover-opaque'} src={OpenIcon} style={styles.Icon} alt={'open-icon'} onClick={openNavbar}/>

@@ -70,6 +70,10 @@ const rightLinkStyle: CSSProperties = {
   margin: '16px 0',
 }
 
+const marginlessLinkStyle: CSSProperties = {
+  margin: 0
+}
+
 export const styles = {
   NavbarContent: navbarContentStyle,
   Logo: logoStyle,
@@ -78,5 +82,6 @@ export const styles = {
   Link: linkStyle,
   CenterLink: centerLinkStyle,
   LeftLink: leftLinkStyle,
-  RightLink: rightLinkStyle
+  RightLink: rightLinkStyle,
+  MarginlessLink: marginlessLinkStyle,
 }

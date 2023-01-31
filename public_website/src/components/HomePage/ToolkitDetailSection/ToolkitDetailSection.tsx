@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/ToolkitDetailSection.style";
 import CustomButton from "../../common/CustomButton/CustomButton";
-import {goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../utils/navigation";
+import {AppRoutes, ExternalRoutes, goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../utils/navigation";
 import {
   DEFAULT_PRIMARY_BUTTON,
   DEFAULT_PRIMARY_BUTTON_BOX_SHADOW,
@@ -39,7 +39,7 @@ const ToolkitDetailSection = (): ReactElement => {
           <p className={'fw-bold'} style={styles.InformationBlockTitle(isSmall)}>Site Monitoring</p>
           <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Remotely monitor your Internet quality and get better insights by analyzing the network performance over time.</p>
           <CustomButton text={'Learn more'}
-                        onClick={goToSiteMonitoring}
+                        link={AppRoutes.SITE_MONITORING}
                         icon={<img src={ChevronRightWhite} style={styles.Chevron} alt={'chevron-right-white'}/>}
                         backgroundColor={DEFAULT_PRIMARY_BUTTON}
                         color={WHITE}
@@ -57,7 +57,7 @@ const ToolkitDetailSection = (): ReactElement => {
           <p className={'fw-bold'} style={styles.InformationBlockTitle(isSmall)}>Consumer Broadband Testing</p>
           <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Capture detailed information about upload speeds, download speeds, and quality metrics for Internet connections with a white-label solution.</p>
           <CustomButton text={'Learn more'}
-                        onClick={goToBroadbandTesting}
+                        link={AppRoutes.BROADBAND_TESTING}
                         icon={<img src={ChevronRightWhite} style={styles.Chevron} alt={'chevron-right-white'}/>}
                         backgroundColor={DEFAULT_PRIMARY_BUTTON}
                         color={WHITE}
@@ -75,7 +75,8 @@ const ToolkitDetailSection = (): ReactElement => {
           <p className={'fw-bold'} style={styles.InformationBlockTitle(isSmall)}>Mapping Tools</p>
           <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Explore public data on an interactive map to learn more about how Internet connectivity varies between different geographies, providers and timeframes.</p>
           <CustomButton text={'Explore the map'}
-                        onClick={goToMappingApp}
+                        link={process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING}
+                        openNewTab
                         icon={<img src={ChevronRightWhite} style={styles.Chevron} alt={'chevron-right-white'}/>}
                         backgroundColor={DEFAULT_PRIMARY_BUTTON}
                         color={WHITE}

@@ -7,7 +7,7 @@ import {ToolkitTabContentRowTitle} from "../../RegularNavbarContent/ToolkitFloat
 import {
   commonStyles
 } from "../../RegularNavbarContent/ToolkitFloatingMenu/RightSideToolkitTabContent/styles/common.style";
-import {DEFAULT_MAIL_TO, goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../../../utils/navigation";
+import {AppRoutes, DEFAULT_MAIL_TO, ExternalRoutes} from "../../../../../utils/navigation";
 
 const BroadbandTestingIcon = "/assets/images/broadband-testing-icon.png";
 const MappingToolsIcon = "/assets/images/mapping-tools-icon.png";
@@ -19,7 +19,7 @@ const SmallNavbarContentOpen = (): ReactElement => {
     <div style={styles.SmallNavbarContentOpen}>
       <div style={styles.TabsContainer}>
         <a className={'fw-bold hover-opaque'}
-           href={'/overview'}
+           href={AppRoutes.HOME}
            style={styles.Link}>
           Overview
         </a>
@@ -27,16 +27,17 @@ const SmallNavbarContentOpen = (): ReactElement => {
         <p className={'fw-bold hover-opaque'} style={styles.LinkText}>Our Toolkit</p>
         <ToolkitTabContentRow icon={<img src={SiteMonitoringIcon} style={commonStyles.Icon} alt={'site-monitoring-icon'}/>}
                               title={ToolkitTabContentRowTitle.SITE_MONITORING}
-                              onClick={goToSiteMonitoring}
+                              link={AppRoutes.SITE_MONITORING}
                               isFirst
         />
         <ToolkitTabContentRow icon={<img src={BroadbandTestingIcon} style={commonStyles.Icon} alt={'broadband-testing-icon'}/>}
                               title={ToolkitTabContentRowTitle.BROADBAND_TESTING}
-                              onClick={goToBroadbandTesting}
+                              link={AppRoutes.BROADBAND_TESTING}
         />
         <ToolkitTabContentRow icon={<img src={MappingToolsIcon} style={commonStyles.Icon} alt={'mapping-tools-icon'}/>}
                               title={ToolkitTabContentRowTitle.MAPPING_TOOLS}
-                              onClick={goToMappingApp}
+                              link={process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING}
+                              openNewTab
                               extraIcon={<img src={RedirectArrowGray} style={commonStyles.RedirectIcon} alt={'new-tab-icon'}/>}
 
         />
