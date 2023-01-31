@@ -1,6 +1,7 @@
 package tracing
 
 import (
+	"log"
 	"strings"
 	"time"
 
@@ -8,6 +9,12 @@ import (
 	"github.com/exactlylabs/radar/agent/internal/info"
 	"github.com/getsentry/sentry-go"
 )
+
+var notifiedErrors map[error]struct{}
+
+func init() {
+	notifiedErrors = make(map[error]struct{})
+}
 
 func NotifyPanic() {
 	// Clone the current hub so that modifications of the scope are visible only
@@ -79,4 +86,12 @@ func NotifyError(err error, context map[string]interface{}) {
 		scope.SetContexts(context)
 	})
 	hub.CaptureException(err)
+}
+
+func NotifyErrorOnce(err error, context map[string]interface{}) {
+	if _, exists := notifiedErrors[err]; !exists {
+		log.Println("Notifying!")
+		NotifyError(err, context)
+		notifiedErrors[err] = struct{}{}
+	}
 }
