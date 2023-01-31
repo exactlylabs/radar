@@ -2,8 +2,10 @@ package info
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -21,13 +23,13 @@ func (b buildTime) Time() time.Time {
 }
 
 // Versioning of the Binary
-var version = "Dev"
+var version = "1.0.0"
 var builtAt = "Dev"
 var commit = "Dev"
 
 // ${GOOS}-${GOARCH}
 // In case of $GOARM is set: ${GOOS}-${GOARCH}v${GOARM}
-var distribution = "Dev"
+var distribution = "linux-amd64"
 
 type Info struct {
 	Version      string    `json:"version"`
@@ -82,5 +84,5 @@ func (i *Info) Patch() int {
 }
 
 func IsDev() bool {
-	return version == "Dev"
+	return version == "Dev" || strings.ToLower(os.Getenv("ENVIRONMENT")) == "dev"
 }
