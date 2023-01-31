@@ -12,7 +12,7 @@ class Location < ApplicationRecord
 
   after_validation :custom_geocode, if: :lat_long_changed?
 
-  scope :where_online, -> { joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) >= 1") }
+  scope :where_online, -> { left_joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) >= 1") }
 
   scope :where_offline, -> { left_joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) = 0") }
 
