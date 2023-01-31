@@ -42,7 +42,7 @@ const Footer = ({isDifferentColor, height, margin}: FooterProps): ReactElement =
           </div>
         </div>
         <div style={styles.BottomRow}>
-          <p className={'fw-regular'} style={styles.Copyright}>Copyright © 2022 Radar. All rights reserved.</p>
+          <p className={'fw-regular'} style={styles.Copyright}>{`Copyright © ${new Date().getFullYear()} Radar. All rights reserved.`}</p>
         </div>
       </div>
     </div>
@@ -68,7 +68,7 @@ const Footer = ({isDifferentColor, height, margin}: FooterProps): ReactElement =
           <img src={XLabLogo} style={styles.SmallXLabLogo} alt={'XLab logo'}/>
         </a>
       </div>
-      <p className={'fw-regular'} style={styles.Copyright}>Copyright © 2022 Radar. All rights reserved.</p>
+      <p className={'fw-regular'} style={styles.Copyright}>{`Copyright © ${new Date().getFullYear()} Radar. All rights reserved.`}</p>
     </div>
   )
 
