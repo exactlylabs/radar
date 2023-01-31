@@ -16,9 +16,15 @@ import (
 	"time"
 
 	"github.com/exactlylabs/radar/agent/internal/info"
+	"github.com/joho/godotenv"
 )
 
+func init() {
+	godotenv.Load()
+}
+
 type Config struct {
+	Environment       string
 	ServerURL         string `config:"server_url"`
 	ClientId          string `config:"client_id"`
 	Secret            string `config:"secret"`
