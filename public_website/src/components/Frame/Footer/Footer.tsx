@@ -1,11 +1,12 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/Footer.style";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import { AppRoutes, ExternalRoutes } from "../../../utils/navigation";
 
 const RadarLogoGray = '/assets/images/radar-logo-gray.png';
-const BroadbandMappingLogo = '/assets/images/broadband-mapping-logo.png';
+const ExactlyLogo = '/assets/images/exactly-logo.png';
 const ANTHCLogo = '/assets/images/anthc-logo.png';
-const MLabLogo = '/assets/images/mlab-logo.png';
+const XLabLogo = '/assets/images/xlab-logo.png';
 
 interface FooterProps {
   isDifferentColor?: boolean;
@@ -26,23 +27,18 @@ const Footer = ({isDifferentColor, height, margin}: FooterProps): ReactElement =
         <div style={styles.TopRow}>
           <div style={styles.LeftColumn}>
             <img src={RadarLogoGray} style={styles.RadarLogo} alt={'radar-logo'}/>
-            <a href={'/privacy-policy'} style={styles.Link} className={'fw-bold hover-opaque'}>Privacy Policy</a>
+            <a href={AppRoutes.PRIVACY_POLICY} style={styles.Link} className={'fw-bold hover-opaque'}>Privacy Policy</a>
           </div>
           <div style={styles.RightColumn}>
-            <a href={'https://www.broadbandmapping.com/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
-              <img src={BroadbandMappingLogo} style={styles.BroadbandMappingLogo} alt={'broadband-mapping-logo'}/>
-            </a>
             <a href={'https://www.anthc.org/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
               <img src={ANTHCLogo} style={styles.ANTHCLogo} alt={'ANTHC-logo'}/>
             </a>
-            {
-              /* Removing icon for now - Requested by Michael
-              <a href={'https://www.measurementlab.net/'} target={'_blank'} rel={'noreferrer'}
-                 style={styles.MarginlessLink}>
-                <img src={MLabLogo} style={styles.MLabLogo} alt={'MLab-logo'}/>
-              </a>
-               */
-            }
+            <a href={'https://exactlylabs.com'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
+              <img src={ExactlyLogo} style={styles.ExactlyLogo} alt={'ExactlyLabs logo'}/>
+            </a>
+            <a href={'https://thexlab.org/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
+              <img src={XLabLogo} style={styles.XLabLogo} alt={'XLab logo'}/>
+            </a>
           </div>
         </div>
         <div style={styles.BottomRow}>
@@ -62,19 +58,15 @@ const Footer = ({isDifferentColor, height, margin}: FooterProps): ReactElement =
       </div>
       <div style={styles.FooterHorizontalDivider}></div>
       <div style={styles.SmallMidRow}>
-        <a href={'https://www.broadbandmapping.com/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
-          <img src={BroadbandMappingLogo} style={styles.BroadbandMappingLogo} alt={'broadband-mapping-logo'}/>
-        </a>
         <a href={'https://www.anthc.org/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
           <img src={ANTHCLogo} style={styles.SmallANTHCLogo} alt={'ANTHC-logo'}/>
         </a>
-        {
-          /* Removing icon for now - Requested by Michael
-          <a href={'https://www.measurementlab.net/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
-            <img src={MLabLogo} style={styles.SmallMLabLogo} alt={'MLab-logo'}/>
-          </a>
-          */
-        }
+        <a href={'https://exactlylabs.com'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>  
+          <img src={ExactlyLogo} style={styles.SmallExactlyLogo} alt={'ExactlyLabs logo'}/>
+        </a>
+        <a href={'https://thexlab.org/'} target={'_blank'} rel={'noreferrer'} style={styles.MarginlessLink}>
+          <img src={XLabLogo} style={styles.SmallXLabLogo} alt={'XLab logo'}/>
+        </a>
       </div>
       <p className={'fw-regular'} style={styles.Copyright}>Copyright © 2022 Radar. All rights reserved.</p>
     </div>

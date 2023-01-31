@@ -20,7 +20,8 @@ const toolkitRedirectionSectionStyle: CSSProperties = {
 const smallToolkitRedirectionSectionStyle: CSSProperties = {
   ...toolkitRedirectionSectionStyle,
   width: '100vw',
-  height: '700px',
+  height: 'max-content',
+  maxHeight: '700px',
   minWidth: undefined,
   maxWidth: undefined,
   borderRadius: 0,
@@ -53,6 +54,8 @@ const smallToolkitRedirectionSectionContentStyle: CSSProperties = {
   position: 'absolute',
   top: 0,
   left: '50%',
+  marginTop: '40px',
+  alignItems: 'center',
 }
 
 const toolkitRedirectionColumnStyle: CSSProperties = {

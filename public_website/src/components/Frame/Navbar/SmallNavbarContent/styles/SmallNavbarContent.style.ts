@@ -36,6 +36,10 @@ const iconStyle: CSSProperties = {
   marginTop: '-12px',
 }
 
+const marginlessLinkStyle: CSSProperties = {
+  margin: 0
+}
+
 export const styles = {
   NavbarContentWrapper: (isOpen: boolean) => {
     return isOpen ? navbarContentWrapperWithShadowStyle : navbarContentWrapperStyle;
@@ -43,4 +47,5 @@ export const styles = {
   NavbarContent: navbarContentStyle,
   Logo: logoStyle,
   Icon: iconStyle,
+  MarginlessLink: marginlessLinkStyle,
 }

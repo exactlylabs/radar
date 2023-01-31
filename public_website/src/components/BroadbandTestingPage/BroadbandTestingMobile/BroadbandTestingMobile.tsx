@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/BroadbandTestingMobile.style";
 import CustomButton from "../../common/CustomButton/CustomButton";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
-import {goToMobile} from "../../../utils/navigation";
+import {AppRoutes, goToMobile} from "../../../utils/navigation";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const MobileAppIllustration = '/assets/images/mobile-app-illustration.png';
@@ -22,7 +22,7 @@ const BroadbandTestingMobile = (): ReactElement => {
           <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Test Wi-Fi and cellular connections with our mobile app.</p>
           <p className={'fw-medium'} style={styles.Paragraph(isSmall)}>Let your customers or community test their connectivity from anywhere with our free mobile app for iOS and Android.</p>
           <CustomButton text={'Learn more'}
-                        onClick={goToMobile}
+                        link={AppRoutes.MOBILE_TESTING}
                         icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
                         backgroundColor={DEFAULT_PRIMARY_BUTTON}
                         color={WHITE}

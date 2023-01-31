@@ -68,7 +68,7 @@ const broadbandMappingLogoStyle: CSSProperties = {
 const ANTHCLogoStyle: CSSProperties = {
   width: '110px',
   height: '31px',
-  marginLeft: '50px',
+  marginRight: '50px',
   cursor: 'pointer'
 }
 
@@ -78,22 +78,35 @@ const smallANTHLogoStyle: CSSProperties = {
   cursor: 'pointer'
 }
 
-const MLabLogoStyle: CSSProperties = {
-  width: '60px',
-  height: '18px',
-  marginLeft: '50px',
+const XLabLogoStyle: CSSProperties = {
+  cursor: 'pointer',
+  width: '32px',
+  height: 'auto'
+}
+
+const smallXLabLogoStyle: CSSProperties = {
+  cursor: 'pointer',
+  width: '32px',
+  height: 'auto'
+}
+
+const exactlyLogoStyle: CSSProperties = {
+  width: '110px',
+  height: 'auto',
+  marginRight: '50px',
   cursor: 'pointer'
 }
 
-const smallMLabLogoStyle: CSSProperties = {
-  width: '60px',
-  height: '18px',
-  cursor: 'pointer'
+const smallExactlyLogoStyle: CSSProperties = {
+  cursor: 'pointer',
+  width: '110px',
+  height: 'auto',
 }
 
 const copyrightStyle: CSSProperties = {
   fontSize: '14px',
   lineHeight: '25px',
+  margin: '0 0 30px 0',
   color: DEFAULT_SECONDARY_TEXT,
 }
 
@@ -129,7 +142,7 @@ const linkContainerStyle: CSSProperties = {
 
 const smallMidRowStyle: CSSProperties = {
   width: '100%',
-  height: '130px',
+  height: '143px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
@@ -180,9 +193,11 @@ export const styles = {
   SmallLink: smallLinkStyle,
   BroadbandMappingLogo: broadbandMappingLogoStyle,
   ANTHCLogo: ANTHCLogoStyle,
-  MLabLogo: MLabLogoStyle,
+  XLabLogo: XLabLogoStyle,
+  ExactlyLogo: exactlyLogoStyle,
   SmallANTHCLogo: smallANTHLogoStyle,
-  SmallMLabLogo: smallMLabLogoStyle,
+  SmallXLabLogo: smallXLabLogoStyle,
+  SmallExactlyLogo: smallExactlyLogoStyle,
   Copyright: copyrightStyle,
   SmallFooter: (isDifferentColor?: boolean) => {
     let style = smallFooterStyle;

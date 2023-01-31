@@ -3,30 +3,31 @@ import {styles} from "./styles/CustomButton.style";
 
 interface CustomButtonProps {
   text: string;
-  onClick: () => void;
   backgroundColor?: string;
   boxShadow?: string;
   color?: string;
   icon?: ReactElement;
   iconFirst?: boolean;
+  link: string;
+  openNewTab?: boolean;
 }
 
 const CustomButton = ({
   text,
-  onClick,
   backgroundColor,
   boxShadow,
   color,
   icon,
   iconFirst,
+  link,
+  openNewTab
 }: CustomButtonProps): ReactElement => {
 
-  const handleClick = () => { onClick(); }
-
   return (
-    <div style={styles.CustomButton(backgroundColor, boxShadow)}
+    <a style={styles.CustomButton(backgroundColor, boxShadow)}
          className={'hover-opaque'}
-         onClick={handleClick}
+         href={link}
+         target={openNewTab ? '_blank' : '_self'}
     >
       {iconFirst ?
         <>
@@ -38,7 +39,7 @@ const CustomButton = ({
           {icon}
         </>
       }
-    </div>
+    </a>
   )
 }
 

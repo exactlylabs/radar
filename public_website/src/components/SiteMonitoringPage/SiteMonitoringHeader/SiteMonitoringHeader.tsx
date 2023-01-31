@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/SiteMonitoringHeader.style";
 import CustomButton from "../../common/CustomButton/CustomButton";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
-import {emailContact, goToBase} from "../../../utils/navigation";
+import {DEFAULT_MAIL_TO, emailContact, goToBase} from "../../../utils/navigation";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const ChevronRightWhite = "/assets/images/chevron-right-white.png";
@@ -29,6 +29,7 @@ const SiteMonitoringHeader = (): ReactElement => {
           <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Ensure your Internet speed and quality meets expectations with our performance monitoring tools.</p>
           <CustomButton text={'Get started'}
                         onClick={emailContact}
+                        link={DEFAULT_MAIL_TO}
                         icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
                         backgroundColor={DEFAULT_PRIMARY_BUTTON}
                         color={WHITE}
