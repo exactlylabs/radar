@@ -28,7 +28,7 @@ const ToolkitRedirectionSection = (): ReactElement => {
       <div style={styles.ToolkitRedirectionSectionContent(isSmall)}>
         <div style={styles.ToolkitRedirectionColumn(isSmall)}>
           <p className={'fw-bold'} style={styles.Title(isSmall)}>For Consumers</p>
-          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Test your Internet connection to ensure you’re getting what you pay for.</p>
+          <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Test your Internet connection to ensure you're getting what you pay for.</p>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
             <a href={'/broadband-testing'} className={'fw-bold'} style={styles.Link}>Test your connection</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
@@ -46,7 +46,7 @@ const ToolkitRedirectionSection = (): ReactElement => {
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor locations’ connectivity</a>
+            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor locations' connectivity</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
@@ -62,7 +62,7 @@ const ToolkitRedirectionSection = (): ReactElement => {
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor locations’ connectivity</a>
+            <a href={'/site-monitoring'} className={'fw-bold'} style={styles.Link}>Monitor locations' connectivity</a>
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
