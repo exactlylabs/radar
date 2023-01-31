@@ -1,18 +1,26 @@
 <?xml version='1.0' encoding='windows-1252'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
-  <Product Name='RadarAgent' Id='4A89C26F-78D2-4F5F-8410-477D636E51AF' UpgradeCode='F9A36E92-65D1-422B-B412-435F30B26740'
-    Language='1033' Codepage='1252' Version='${VERSION}' Manufacturer='Exactlylabs, Inc.'>
-    <Package Id='*' Keywords='Installer' Description="Radar's Agent to run speedtests"
-      Comments='' Manufacturer='Exactlylabs, Inc.'
-      InstallerVersion='200' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+  <Product 
+    Name='RadarAgent' 
+    Id='*' 
+    UpgradeCode='F9A36E92-65D1-422B-B412-435F30B26740'
+    Language='1033' 
+    Codepage='1252' 
+    Version='${VERSION}' 
+    Manufacturer='Exactly Labs, Inc.'
+  >
 
-    <Upgrade Id='F9A36E92-65D1-422B-B412-435F30B26740'>
-      <UpgradeVersion OnlyDetect='yes' Property='SELFFOUND'
-        Minimum='1.0.0' IncludeMinimum='yes' Maximum='${VERSION}' IncludeMaximum='yes' />
-      <UpgradeVersion OnlyDetect='yes' Property='NEWERFOUND'
-        Minimum='${VERSION}' IncludeMinimum='no' />
-    </Upgrade>
-    
+    <Package 
+      InstallScope="perMachine"
+      Keywords='Installer' 
+      Description="Radar's Agent to run speedtests"
+      Manufacturer='Exactly Labs, Inc.'
+      InstallerVersion='200' 
+      Languages='1033' 
+      Compressed='yes' 
+      SummaryCodepage='1252' 
+    />
+    <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
     <Media Id='1' Cabinet='RadarAgent.cab' EmbedCab='yes' DiskPrompt="CD-ROM #1" />
     <Property Id='DiskPrompt' Value="RadarAgent Installation [1]" />
 
@@ -20,33 +28,30 @@
       <Directory Id='ProgramFilesFolder' Name='PFiles'>
         <Directory Id='Exactlylabs' Name='Exactlylabs'>
           <Directory Id='INSTALLDIR' Name='Radar'>
-            <Component Id='MainExecutable' Guid='F22EF775-A3BC-4C1B-8C0F-A19E508D5A57'>
-              <File Id='AgentEXE' Name='radarAgent.exe' DiskId='1' Source='radar-agent.exe' KeyPath='yes'/>
+            <Component Id='radarAgent.exe' Guid='*'>
+              <File Id="radarAgent.exe" Name='radarAgent.exe' DiskId='1' Source='radar-agent.exe' Vital='yes' KeyPath='yes'/>
             </Component>
-
           </Directory>
         </Directory>
       </Directory>
     </Directory>
 
-    <Feature Id='Complete' Level='1'>
-      <ComponentRef Id='MainExecutable' />
+    <Feature Id='MainApplication' Title="Main Application" Level='1'>
+      <ComponentRef Id='radarAgent.exe' />
+      
     </Feature>
-     <Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable" />
-    <CustomAction Id='InstallService' FileKey='AgentEXE' Execute="deferred" ExeCommand='-service install'/>
-    <CustomAction Id='StartService' FileKey='AgentEXE' Execute="deferred" ExeCommand='-service start'/>
+    <Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable" />
+    <CustomAction Id='InstallService' Directory='INSTALLDIR' FileKey='radarAgent.exe' Execute="deferred"  Return="ignore" ExeCommand='-service install'/>
+    <CustomAction Id='StartService' Directory='INSTALLDIR' FileKey='radarAgent.exe' Execute="deferred"  Return="ignore" ExeCommand='-service start'/>
 
-    <CustomAction Id='UninstallService' FileKey='AgentEXE' Execute="deferred" Return="ignore" ExeCommand='-service uninstall'/>
-    <CustomAction Id='StopService' FileKey='AgentEXE' Execute="deferred" Return="ignore" ExeCommand='-service stop'/>
-
-    <InstallExecuteSequence>
-      <Custom Action='InstallService' After='InstallFiles' >NOT REMOVE</Custom>
-      <Custom Action='StartService' After='InstallService' >NOT REMOVE</Custom>
-    </InstallExecuteSequence>
+    <CustomAction Id='UninstallService' Directory='INSTALLDIR' FileKey='radarAgent.exe' Execute="deferred" Return="ignore" ExeCommand='-service uninstall'/>
+    <CustomAction Id='StopService' Directory='INSTALLDIR' FileKey='radarAgent.exe' Execute="deferred" Return="ignore" ExeCommand='-service stop'/>
 
     <InstallExecuteSequence>
-      <Custom Action='StopService' Before='RemoveFiles' >Installed</Custom>
-      <Custom Action='UninstallService' After='StopService' Before='RemoveFiles' >Installed</Custom>
+      <Custom Action='StopService' Sequence='3399' >Installed</Custom>
+      <Custom Action='UninstallService' Sequence='3400' >Installed</Custom>
+      <Custom Action='InstallService' Sequence='6101' >NOT Installed OR (WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))</Custom>
+      <Custom Action='StartService' Sequence='6102' >NOT Installed OR (WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))</Custom>
     </InstallExecuteSequence>
 
   </Product>
