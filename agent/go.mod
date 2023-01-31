@@ -14,6 +14,8 @@ require (
 	google.golang.org/protobuf v1.28.0
 )
 
+exclude github.com/getsentry/sentry-go v0.15.0
+
 require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
 	github.com/cespare/reflex v0.3.1 // indirect
