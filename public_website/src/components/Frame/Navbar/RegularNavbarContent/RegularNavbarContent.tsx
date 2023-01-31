@@ -2,7 +2,7 @@ import {ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/RegularNavbarContent.style";
 import CustomButton from "../../../common/CustomButton/CustomButton";
 import ToolkitFloatingMenu from "./ToolkitFloatingMenu/ToolkitFloatingMenu";
-import {DEFAULT_MAIL_TO, emailContact, goToHome} from "../../../../utils/navigation";
+import {AppRoutes, DEFAULT_MAIL_TO, emailContact} from "../../../../utils/navigation";
 import { useIsTouchDevice } from "../../../../hooks/useIsTouchDevice";
 
 const RadarLogo = "/assets/images/radar-logo.png";
@@ -69,10 +69,12 @@ const RegularNavbarContent = ({
 
   return (
     <div style={styles.NavbarContent}>
-      <img src={RadarLogo} style={styles.Logo} alt={'radar-logo'} onClick={goToHome}/>
+      <a href={AppRoutes.HOME} style={styles.MarginlessLink}>
+        <img src={RadarLogo} style={styles.Logo} alt={'radar-logo'}/>
+      </a>
       <div style={styles.TabsContainer}>
         <a className={'fw-bold hover-opaque'}
-           href={'/overview'}
+           href={AppRoutes.HOME}
            style={styles.LeftLink}
         >
           Overview
@@ -97,7 +99,7 @@ const RegularNavbarContent = ({
                     color={''}
                     icon={<img src={ChevronRight} style={styles.ChevronRight} alt={'chevron-right'}/>}
                     text={'Get started'}
-                    onClick={emailContact}
+                    link={DEFAULT_MAIL_TO}
       />
       { isFloatingMenuOpen && <ToolkitFloatingMenu setIsOpen={handleSetIsOpen}/> }
     </div>

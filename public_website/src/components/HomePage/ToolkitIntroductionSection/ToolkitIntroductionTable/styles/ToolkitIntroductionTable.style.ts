@@ -19,7 +19,8 @@ const smallToolkitIntroductionTableStyle: CSSProperties = {
   width: '100%',
   maxWidth: '588px',
   height: 'max-content',
-  marginTop: '-20px'
+  marginTop: '-20px',
+  alignItems: 'center'
 }
 
 const toolkitIntroductionTableColumnStyle: CSSProperties = {
