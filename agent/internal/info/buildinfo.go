@@ -23,13 +23,13 @@ func (b buildTime) Time() time.Time {
 }
 
 // Versioning of the Binary
-var version = "1.0.0"
+var version = "Dev"
 var builtAt = "Dev"
 var commit = "Dev"
 
 // ${GOOS}-${GOARCH}
 // In case of $GOARM is set: ${GOOS}-${GOARCH}v${GOARM}
-var distribution = "linux-amd64"
+var distribution = "Dev"
 
 type Info struct {
 	Version      string    `json:"version"`
