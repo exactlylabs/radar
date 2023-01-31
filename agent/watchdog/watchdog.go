@@ -39,14 +39,21 @@ func checkUpdate(c *config.Config, sysManager SystemManager, pinger WatchdogPing
 	if res.Update != nil {
 		log.Printf("An Update for Watchdog Version %v is available\n", res.Update.Version)
 		err = UpdateWatchdog(res.Update.BinaryUrl)
-		if err != nil && (errors.Is(err, update.ErrInvalidCertificate) || errors.Is(err, update.ErrInvalidSignature)) {
+		if err != nil && (errors.Is(err, update.ErrInvalidCertificate) ||
+			errors.Is(err, update.ErrInvalidSignature) ||
+			errors.Is(err, update.ErrCRLInvalidSignature) ||
+			errors.Is(err, update.ErrCRLNotFound)) {
 			log.Printf("Existent update is invalid: %v\n", err)
-			tracing.NotifyError(err, map[string]interface{}{
+			tracing.NotifyErrorOnce(err, map[string]interface{}{
 				"Update Data": map[string]string{
 					"version": res.Update.Version,
 					"url":     res.Update.BinaryUrl,
 				},
 			})
+		} else if errors.Is(err, update.ErrCRLExpired) {
+			log.Println(err)
+			// Notify ourselves to renew the CRL
+			tracing.NotifyErrorOnce(err, map[string]interface{}{})
 		} else if err != nil {
 			panic(err)
 		} else {
