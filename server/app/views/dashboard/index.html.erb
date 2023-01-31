@@ -88,7 +88,7 @@
       <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
         <%= render partial: "onboard", locals: { step: @onboard_step } %>
       </div>
-      <% if @locations.size > 0 || params[:filter].present? %>
+      <% if @locations.exists? || params[:filter].present? %>
       <div class="row h-100 w-100">
         <div class="col-4 h-100 pe-6">
           <div class="" style="max-height: 100%; overflow: scroll">
@@ -97,7 +97,7 @@
                 <div class="my-6 d-flex justify-content-between align-items-center w-100">
                   <div class="d-flex flex-column">
                     <div class="text-dark fw-bolder my-1 fs-2">Locations</div>
-                    <div class="text-muted"><%= @locations.size %> locations</div>
+                    <div class="text-muted"><%= @locations.length %> locations</div>
                   </div>
                   <div>
                     <div class="btn-group">

@@ -6,9 +6,9 @@ class DashboardController < ApplicationController
     @clients = policy_scope(Client)
     locations_to_filter = policy_scope(Location)
     @locations = get_filtered_locations(locations_to_filter, params[:filter])
-    if @locations.size > 0 || params[:filter].present?
+    if @locations.exists? || params[:filter].present?
       @onboard_step = -1
-    elsif @clients.size > 0
+    elsif @clients.exists?
       @onboard_step = 3
     else
       @onboard_step = 1
