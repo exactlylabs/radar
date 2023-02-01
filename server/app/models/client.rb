@@ -83,6 +83,14 @@ class Client < ApplicationRecord
     if saved_change_to_autonomous_system_id
       ClientEventLog.autonomous_system_changed_event self, autonomous_system_id_before_last_save, self.autonomous_system_id
     end
+
+    if saved_change_to_in_service
+      if in_service
+        ClientEventLog.is_in_service_event self
+      else
+        ClientEventLog.is_not_in_service_event self
+      end
+    end
   end
 
   def latest_download
