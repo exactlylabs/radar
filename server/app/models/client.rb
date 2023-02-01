@@ -28,16 +28,15 @@ class Client < ApplicationRecord
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, -> { where("online = true AND (pinged_at < ? OR pinged_at IS NULL)", (PING_DURATION * 1.5).second.ago) }
   
-  # TODO: when implemented in the frontend, we should add a new condition for in_use = true as part of where_test_should_be_requested scppe
-  scope :where_test_should_be_requested, -> { where("test_scheduled_at <= ? AND test_requested = false", Time.now) }
+  scope :where_test_should_be_requested, -> { where("in_service = true AND test_scheduled_at <= ? AND test_requested = false", Time.now) }
   
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where("location_id IS NULL") }
   scope :where_live, -> { where("staging=false OR staging IS NULL") }
   scope :where_staging, -> { where(staging: true) }
-  scope :where_in_use, -> { where(in_use: true)}
-  scope :where_not_in_use, -> { where(in_use: false)}
+  scope :where_in_service, -> { where(in_service: true)}
+  scope :where_not_in_service, -> { where(in_service: false)}
 
   def check_ip_changed
     if saved_change_to_ip
