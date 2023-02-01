@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 2023_01_24_192550) do
     t.integer "total", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "total_in_service", default: 0
     t.index ["aggregator_type", "aggregator_id"], name: "index_client_count_aggregates_on_aggregator"
   end
 
@@ -92,6 +93,7 @@ ActiveRecord::Schema.define(version: 2023_01_24_192550) do
     t.datetime "timestamp"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "total_in_service", default: 0
     t.index ["client_count_aggregate_id"], name: "index_client_count_logs_on_client_count_aggregate_id"
   end
 

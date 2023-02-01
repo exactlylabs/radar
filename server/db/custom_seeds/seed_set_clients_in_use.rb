@@ -24,8 +24,9 @@ WITH meas_by_day as (
     GROUP BY 1, 2
   )
   
-  UPDATE clients SET in_service = true WHERE id IN (SELECT client_id FROM daily_count WHERE rn >= 1);
+  SELECT DISTINCT (client_id) client_id FROM daily_count WHERE rn >= 1;
 }
 res = ActiveRecord::Base.connection.exec_query(query)
-
-puts "Result is ", res
+res.each do |row|
+    Client.find(row["client_id"]).update(in_service: true)
+end
