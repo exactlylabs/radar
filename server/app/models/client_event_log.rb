@@ -9,6 +9,8 @@ class ClientEventLog < ApplicationRecord
   ACCOUNT_CHANGED = "ACCOUNT_CHANGED"
   IP_CHANGED = "IP_CHANGED"
   AS_CHANGED = "AUTONOMOUS_SYSTEM_CHANGED"
+  IN_SERVICE = "IN_SERVICE"
+  NOT_IN_SERVICE = "NOT_IN_SERVICE"
 
   def self.created_event(client, timestamp=nil)
     create_event client, CREATED, timestamp=timestamp
@@ -36,6 +38,14 @@ class ClientEventLog < ApplicationRecord
 
   def self.autonomous_system_changed_event(client, from, to, timestmap=nil)
     create_event client, AS_CHANGED, data={"from" => from, "to" => to}, timestamp=timestamp
+  end
+
+  def self.is_in_service_event(client, timestamp=nil)
+    create_event client, IN_SERVICE, timestamp=timestamp
+  end
+
+  def self.is_not_in_service_event(client, timestamp=nil)
+    create_event client, NOT_IN_SERVICE, timestamp=timestamp
   end
   
   private 

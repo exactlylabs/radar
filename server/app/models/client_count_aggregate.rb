@@ -9,6 +9,10 @@ class ClientCountAggregate < ApplicationRecord
         if client["online"]
             self.online +=1
         end
+        if client["in_service"]
+            byebug
+            self.total_in_service += 1
+        end
         ClientCountLog.new_client_event self, event.timestamp
         self.save!
     end
@@ -17,6 +21,10 @@ class ClientCountAggregate < ApplicationRecord
         self.total -= 1
         if client["online"]
             self.online -= 1
+        end
+        if client["in_service"]
+            byebug
+            self.total_in_service -= 1
         end
         ClientCountLog.client_removed_event self, event.timestamp
         self.save!
@@ -31,6 +39,18 @@ class ClientCountAggregate < ApplicationRecord
     def client_offline!(client, event)
         self.online -= 1
         ClientCountLog.client_offline_event self, event.timestamp
+        self.save!
+    end
+
+    def client_in_service!(client, event)
+        self.total_in_service += 1
+        ClientCountLog.client_in_service_event self, event.timestamp
+        self.save!
+    end
+
+    def client_not_in_service!(client, event)
+        self.total_in_service -= 1
+        ClientCountLog.client_not_in_service_event self, event.timestamp
         self.save!
     end
 
@@ -99,6 +119,11 @@ class ClientCountAggregate < ApplicationRecord
                     update_aggregator_change! client, evt, from, to, aggregators["as_org"] do |id|
                         AutonomousSystemOrg.joins(:autonomous_systems).find_by("autonomous_systems.id = ?", id)
                     end
+                when ClientEventLog::IN_SERVICE
+                    aggregates.map{|agg| agg.client_in_service! client, evt if agg}
+                    
+                when ClientEventLog::NOT_IN_SERVICE
+                    aggregates.map{|agg| agg.client_not_in_service! client, evt if agg}
                 end
 
                 consumer_offset.offset = evt.id
