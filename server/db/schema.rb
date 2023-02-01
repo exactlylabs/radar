@@ -196,7 +196,8 @@ ActiveRecord::Schema.define(version: 2023_01_24_192550) do
     t.integer "data_cap_day_of_month", default: 1
     t.string "raw_secret"
     t.boolean "staging"
-    t.boolean "in_use", default: false
+    t.boolean "using_websocket", default: false
+    t.boolean "in_service", default: false
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
