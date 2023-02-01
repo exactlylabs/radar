@@ -27,5 +27,8 @@ class PackagesController < ApplicationController
     else
       @version = ClientVersion.find_by_version(params[:client_version_id])
     end
+    if @version.nil?
+      head 404
+    end
   end
 end
