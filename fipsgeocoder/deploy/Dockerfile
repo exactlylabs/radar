@@ -24,8 +24,7 @@ FROM alpine:3.14.0
 
 WORKDIR /app
 
-# Copy the binary and default shape files
-COPY --from=builder /go/src/github.com/exactlylabs/radar/fipsgeocoder/shapes/ ./shapes/
+# Copy the binary
 COPY --from=builder /go/src/github.com/exactlylabs/radar/fipsgeocoder/start_server ./
 
 EXPOSE 5000
