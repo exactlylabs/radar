@@ -7,7 +7,7 @@ module.exports = {
   devtool: 'source-map',
   plugins: [new webpack.DefinePlugin({
     REACT_APP_ENV: JSON.stringify('production'),
-    REACT_APP_API_BASE_URL: JSON.stringify('https://radar.exactlylabs.com'),
+    REACT_APP_API_BASE_URL: JSON.stringify('https://pods.radartoolkit.com'),
     REACT_APP_SENTRY_DSN: JSON.stringify('https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151'),
     MAPBOX_ACCESS_TOKEN: JSON.stringify('pk.eyJ1IjoiZXhhY3RseWxhYnMiLCJhIjoiY2w3OXJqcXhjMG1vbzQycGxidHNqdXRtcCJ9.BTDEZoZFcVnMMftMm33EMw'),
     MAPBOX_TILESET_URL: JSON.stringify('https://api.mapbox.com/styles/v1/exactlylabs/cl7iwvbaz000l15mmms6da3kx/tiles/512/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZXhhY3RseWxhYnMiLCJhIjoiY2w3OXJqcXhjMG1vbzQycGxidHNqdXRtcCJ9.BTDEZoZFcVnMMftMm33EMw')
