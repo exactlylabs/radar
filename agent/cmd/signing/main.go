@@ -47,8 +47,8 @@ func main() {
 func loadKey(path string) *rsa.PrivateKey {
 	data := loadFromPath(path)
 	block, _ := pem.Decode(data)
-	key, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
-	return key
+	key, _ := x509.ParsePKCS8PrivateKey(block.Bytes)
+	return key.(*rsa.PrivateKey)
 }
 
 func loadFromPath(path string) []byte {
