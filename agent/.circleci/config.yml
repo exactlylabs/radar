@@ -354,28 +354,20 @@ workflows:
             branches:
               ignore: "/.*/"
           requires: [pkg_package]
-      - wait_notarization:
-          type: approval
-          filters:
-            tags:
-              only: /^agent-(?:\d+\.){2}\d+$/
-            branches:
-              ignore: "/.*/"
-          requires: [notarize_pkg]
       - upload_package:
           <<: *upload_anchor
           name: upload_darwin_amd64
           os: darwin
           arch: amd64
           workspace_file_name: radar-agent*.pkg
-          requires: [wait_notarization]
+          requires: [notarize_pkg]
       - upload_package:
           <<: *upload_anchor
           name: upload_darwin_arm64
           os: darwin
           arch: arm64
           workspace_file_name: radar-agent*.pkg
-          requires: [wait_notarization]
+          requires: [notarize_pkg]
 
       - msi_package:
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
