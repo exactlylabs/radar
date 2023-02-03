@@ -86,9 +86,9 @@ class Client < ApplicationRecord
 
     if saved_change_to_in_service
       if in_service
-        ClientEventLog.is_in_service_event self
+        ClientEventLog.in_service_event self
       else
-        ClientEventLog.is_not_in_service_event self
+        ClientEventLog.not_in_service_event self
       end
     end
   end

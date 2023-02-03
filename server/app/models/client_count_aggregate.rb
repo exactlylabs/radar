@@ -10,7 +10,6 @@ class ClientCountAggregate < ApplicationRecord
             self.online +=1
         end
         if client["in_service"]
-            byebug
             self.total_in_service += 1
         end
         ClientCountLog.new_client_event self, event.timestamp
@@ -23,7 +22,6 @@ class ClientCountAggregate < ApplicationRecord
             self.online -= 1
         end
         if client["in_service"]
-            byebug
             self.total_in_service -= 1
         end
         ClientCountLog.client_removed_event self, event.timestamp
