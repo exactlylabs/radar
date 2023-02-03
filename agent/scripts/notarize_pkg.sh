@@ -19,4 +19,6 @@ xcrun notarytool \
     --apple-id ${APPLEID_USERNAME} \
     --password ${APPLEID_PWD} \
     --team-id=MQYTP6VS48 \
+    --wait \
+    --progress \
     "${PKG_PATH}"
