@@ -40,11 +40,11 @@ class ClientEventLog < ApplicationRecord
     create_event client, AS_CHANGED, data={"from" => from, "to" => to}, timestamp=timestamp
   end
 
-  def self.is_in_service_event(client, timestamp=nil)
+  def self.in_service_event(client, timestamp=nil)
     create_event client, IN_SERVICE, timestamp=timestamp
   end
 
-  def self.is_not_in_service_event(client, timestamp=nil)
+  def self.not_in_service_event(client, timestamp=nil)
     create_event client, NOT_IN_SERVICE, timestamp=timestamp
   end
   
