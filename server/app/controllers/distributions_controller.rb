@@ -28,7 +28,7 @@ class DistributionsController < ApplicationController
       @version = ClientVersion.find_by_version(params[:client_version_id])
     end
     if @version.nil?
-      head 404
+      head(404)
     end
   end
 end
