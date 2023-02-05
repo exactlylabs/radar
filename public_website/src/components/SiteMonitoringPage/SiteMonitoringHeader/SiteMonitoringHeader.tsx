@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/SiteMonitoringHeader.style";
 import CustomButton from "../../common/CustomButton/CustomButton";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
-import {DEFAULT_MAIL_TO, emailContact, goToBase} from "../../../utils/navigation";
+import {DEFAULT_MAIL_TO} from "../../../utils/navigation";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const ChevronRightWhite = "/assets/images/chevron-right-white.png";
@@ -19,6 +19,7 @@ const SiteMonitoringHeader = (): ReactElement => {
 
   return (
     <div style={styles.SiteMonitoringHeader(isSmall)}>
+      {!isSmall && <div style={styles.HeroGradientBg}></div>}
       {isSmall && <img src={SmallHeroBg} alt={'hero map background'} style={styles.SmallHeroBg}/>}
       <div style={styles.SiteMonitoringHeaderContent}>
         {!isSmall && <img src={HeroBlueBg} alt={'hero blue background'} style={styles.HeroBlueBg}/> }
@@ -28,7 +29,6 @@ const SiteMonitoringHeader = (): ReactElement => {
           <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Is your Internet Service Provider letting you down?</p>
           <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Ensure your Internet speed and quality meets expectations with our performance monitoring tools.</p>
           <CustomButton text={'Get started'}
-                        onClick={emailContact}
                         link={DEFAULT_MAIL_TO}
                         icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
                         backgroundColor={DEFAULT_PRIMARY_BUTTON}

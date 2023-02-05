@@ -88,9 +88,11 @@ const SiteMonitoringBulletpoints = (): ReactElement => {
   const isSmall = isSmallScreen || isMidScreen;
 
   return (
-    <div style={styles.SiteMonitoringBulletPoints(isSmall)}>
-      <div style={styles.SiteMonitoringBulletPointsContent(isSmall)}>
-        { isSmall ? <SmallSiteMonitoringBulletPointsContent/> : <RegularSiteMonitoringBulletPointsContent/> }
+    <div style={styles.SiteMonitoringWrapper}>
+      <div style={styles.SiteMonitoringBulletPoints(isSmall)}>
+        <div style={styles.SiteMonitoringBulletPointsContent(isSmall)}>
+          { isSmall ? <SmallSiteMonitoringBulletPointsContent/> : <RegularSiteMonitoringBulletPointsContent/> }
+        </div>
       </div>
     </div>
   );

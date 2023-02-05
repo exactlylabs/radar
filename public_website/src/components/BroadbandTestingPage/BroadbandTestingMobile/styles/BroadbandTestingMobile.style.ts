@@ -24,7 +24,8 @@ const broadbandTestingMobileContentStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  margin: '0 auto'
+  margin: '0 auto',
+  position: 'relative'
 }
 
 const smallBroadbandTestingMobileContentStyle: CSSProperties = {
@@ -41,9 +42,11 @@ const smallBroadbandTestingMobileContentStyle: CSSProperties = {
 }
 
 const illustrationStyle: CSSProperties = {
-  width: '50%',
+  width: '45%',
   height: 'auto',
-  marginTop: '60px'
+  marginTop: '60px',
+  position: 'absolute',
+  left: '75px',
 }
 
 const smallIllustrationStyle: CSSProperties = {
@@ -103,6 +106,8 @@ const smallParagraphStyle: CSSProperties = {
 const rightColumnStyle: CSSProperties = {
   width: '445px',
   textAlign: 'left',
+  position: 'absolute',
+  right: '40px'
 }
 
 const smallRightColumnStyle: CSSProperties = {

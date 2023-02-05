@@ -159,7 +159,7 @@ const heroMapBgStyle: CSSProperties = {
   width: '60%',
   height: 'auto',
   zIndex: 0,
-  maxWidth: '720px'
+  maxWidth: '720px',
 }
 
 const smallHeroBgStyle: CSSProperties = {
@@ -172,6 +172,16 @@ const smallHeroBgStyle: CSSProperties = {
   zIndex: 0,
   opacity: 0.4,
   filter: 'blur(65px)'
+}
+
+const heroGradientBgStyle: CSSProperties = {
+  width: '100vw',
+  height: '150%',
+  position: 'absolute',
+  top: '-156px',
+  left: 0,
+  background: 'linear-gradient(rgb(234, 236, 255, 10%), rgb(145 151 204 / 34%), rgb(234, 236, 255, 0%))',
+  zIndex: 0
 }
 
 export const styles = {
@@ -187,4 +197,5 @@ export const styles = {
   HeroOrangeBg: heroOrangeBgStyle,
   HeroMapBg: heroMapBgStyle,
   SmallHeroBg: smallHeroBgStyle,
+  HeroGradientBg: heroGradientBgStyle,
 }

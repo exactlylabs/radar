@@ -16,7 +16,7 @@ const MobileTesting = (): ReactElement => {
           <title>Radar - Broadband Speed Test for Mobile Devices</title>
           <meta name="description" content="Test your wifi or cellular connection to find out if you're getting what you expect from your Internet provider."/>
         </Head>
-        <Frame>
+        <Frame isDifferentColorFooter >
           <div style={styles.MobilePage}>
             <MobilePageHeader/>
             <MobilePageCarrousel/>

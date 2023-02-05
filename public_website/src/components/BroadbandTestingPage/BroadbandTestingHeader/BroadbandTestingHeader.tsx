@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/BroadbandTestingHeader.style";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import CustomButton from "../../common/CustomButton/CustomButton";
-import {DEFAULT_MAIL_TO, emailContact} from "../../../utils/navigation";
+import {DEFAULT_MAIL_TO} from "../../../utils/navigation";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const ChevronRightWhite = "/assets/images/chevron-right-white.png";
@@ -16,6 +16,7 @@ const BroadbandTestingHeader = (): ReactElement => {
 
   return (
     <div style={styles.BroadbandTestingHeader(isSmall)}>
+      {!isSmall && <div style={styles.HeroGradientBg}></div> }
       <div style={styles.BroadbandTestingHeaderContent}>
         <div style={styles.TextContainer(isSmall)}>
           <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Where are the gaps in you broadband maps?</p>

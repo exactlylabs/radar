@@ -11,13 +11,14 @@ const toolkitDetailSectionStyle: CSSProperties = {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'flex-start',
-  textAlign: 'center'
+  textAlign: 'center',
+  zIndex: 3
 }
 
 const textContainerStyle: CSSProperties = {
   maxWidth: '588px',
   marginBottom: '93px',
-  zIndex: 1
+  zIndex: 3
 }
 
 const smallTextContainerStyle: CSSProperties = {
@@ -144,21 +145,24 @@ const siteMonitoringBackgroundStyle: CSSProperties = {
   position: 'absolute',
   bottom: '0',
   right: '-6vw',
+  zIndex: 5
 }
 
 const smallSiteMonitoringBackgroundStyle: CSSProperties = {
   width: '190vw',
   height: 'auto',
   marginLeft: '-52vw',
-  marginTop: '-70px'
+  marginTop: '-70px',
+  zIndex: 5
 }
 
 const broadbandTestingBackgroundStyle: CSSProperties = {
   width: '60%',
   height: 'auto',
   position: 'absolute',
-  top: '-150px',
-  left: '-10%',
+  top: '-200px',
+  left: '-7%',
+  zIndex: 5
 }
 
 const smallBroadbandTestingBackgroundStyle: CSSProperties = {
@@ -166,24 +170,34 @@ const smallBroadbandTestingBackgroundStyle: CSSProperties = {
   height: 'auto',
   marginLeft: '-17vw',
   marginTop: '-70px',
-  marginBottom: '-70px'
+  marginBottom: '-70px',
+  zIndex: 5
 }
 
 const mappingToolsBackgroundStyle: CSSProperties = {
-  width: '70%',
+  width: '79%',
   height: 'auto',
   position: 'absolute',
-  right: '-7%',
-  bottom: '-20%'
+  right: '-9%',
+  bottom: '-23%',
+  zIndex: 5,
 }
 
 const smallMappingToolsBackgroundStyle: CSSProperties = {
   width: '135vw',
   height: 'auto',
-  marginLeft: '-20vw'
+  marginLeft: '-20vw',
+  zIndex: 5
 }
 
 const chevronStyle: CSSProperties = {
+  width: '14px',
+  height: '14px',
+  marginLeft: '5px',
+  marginRight: '-4px'
+}
+
+const redirectArrowWhite: CSSProperties = {
   width: '14px',
   height: '14px',
   marginLeft: '5px',
@@ -222,7 +236,7 @@ const gradientStyle: CSSProperties = {
   bottom: 0,
   left: '50%',
   marginLeft: '-50vw',
-  zIndex: 0
+  zIndex: 2
 }
 
 const fillStyle: CSSProperties = {
@@ -231,6 +245,7 @@ const fillStyle: CSSProperties = {
   bottom: '-100px',
   left: '50%',
   marginLeft: '-50vw',
+  zIndex: 5
 }
 
 export const styles = {
@@ -266,5 +281,6 @@ export const styles = {
   },
   Fill: (height: string, backgroundColor: string) => {
     return {...fillStyle, height, backgroundColor};
-  }
+  },
+  RedirectArrow: redirectArrowWhite,
 }

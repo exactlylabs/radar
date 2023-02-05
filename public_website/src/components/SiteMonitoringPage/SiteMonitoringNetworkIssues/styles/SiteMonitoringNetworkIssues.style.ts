@@ -35,8 +35,8 @@ const smallTextContainerStyle: CSSProperties = {
 }
 
 const itemsContainerStyle: CSSProperties = {
-  width: '90%',
-  maxWidth: '1200px',
+  width: '85%',
+  maxWidth: '1000px',
   margin: '35px auto 80px',
   display: 'flex',
   flexDirection: 'row',
@@ -74,6 +74,10 @@ const smallItemStyle: CSSProperties = {
 const itemIconContainer: CSSProperties = {
   width: '64px',
   height: '64px',
+  minWidth: '64px',
+  minHeight: '64px',
+  maxHeight: '64px',
+  maxWidth: '64px',
   borderRadius: '50%',
   backgroundColor: ITEM_ICON_CONTAINER_RED,
   display: 'flex',
@@ -97,6 +101,10 @@ const smallWavesStyle: CSSProperties = {
 const iconStyle: CSSProperties = {
   width: '34px',
   height: '34px',
+  minWidth: '34px',
+  minHeight: '34px',
+  maxWidth: '34px',
+  maxHeight: '34px',
 }
 
 const networkIssuesTextStyle: CSSProperties = {

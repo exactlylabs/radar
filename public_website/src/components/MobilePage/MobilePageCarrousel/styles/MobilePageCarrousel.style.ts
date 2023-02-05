@@ -2,7 +2,8 @@ import {CSSProperties} from "react";
 import {DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT} from "../../../../utils/colors";
 
 const mobilePageCarrouselStyle: CSSProperties = {
-  width: '100%'
+  width: '100%',
+  position: 'relative'
 }
 
 const smallCarrouselContainerStyle: CSSProperties = {
@@ -118,6 +119,16 @@ const horizontalCarrouselStyle: CSSProperties = {
   marginBottom: '50px'
 }
 
+const gradientBgStyle: CSSProperties = {
+  width: '100vw',
+  height: '100%',
+  position: 'absolute',
+  top: '80px',
+  left: 0,
+  background: 'linear-gradient(rgba(234, 236, 255, 0.1), rgba(145, 151, 204, 0.34))',
+  zIndex: 0
+}
+
 export const styles = {
   MobilePageCarrousel: mobilePageCarrouselStyle,
   SmallCarrouselContainer: smallCarrouselContainerStyle,
@@ -131,5 +142,5 @@ export const styles = {
   LeftColumn: leftColumnStyle,
   RightColumn: rightColumnStyle,
   HorizontalCarrousel: horizontalCarrouselStyle,
-  zIndex: 5
+  GradientBg: gradientBgStyle
 }
