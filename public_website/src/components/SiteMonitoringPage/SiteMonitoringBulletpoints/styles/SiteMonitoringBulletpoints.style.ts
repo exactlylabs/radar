@@ -17,7 +17,7 @@ const siteMonitoringBulletPointsContentStyle: CSSProperties = {
   width: '100%',
   maxWidth: '1200px',
   height: 'calc(100% - 270px)',
-  margin: '80px auto 190px',
+  margin: '0 auto 190px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
@@ -157,6 +157,13 @@ const rowSubtitleStyle: CSSProperties = {
   margin: 0,
 }
 
+const siteMonitoringWrapperStyle: CSSProperties = {
+  width: '100vw',
+  height: 'max-content',
+  paddingTop: '80px',
+  background: 'linear-gradient(to top, rgba(75, 123, 229, 0), rgba(211, 224, 255, 0.28))'
+}
+
 export const styles = {
   SiteMonitoringBulletPoints: (isSmall: boolean) => isSmall ? smallSiteMonitoringBulletPointsStyle : siteMonitoringBulletPointsStyle,
   SiteMonitoringBulletPointsContent: (isSmall: boolean) => isSmall ? smallSiteMonitoringBulletPointsContentStyle : siteMonitoringBulletPointsContentStyle,
@@ -174,4 +181,5 @@ export const styles = {
   RowTitle: rowTitleStyle,
   RowSubtitle: rowSubtitleStyle,
   SmallSiteMonitoringBulletPointsContent: smallSiteMonitoringBulletPointsContentStyle,
+  SiteMonitoringWrapper: siteMonitoringWrapperStyle,
 }

@@ -114,10 +114,12 @@ const broadbandTestingMapStyle: CSSProperties = {
   position: 'absolute',
   maxWidth: '767px',
   minWidth: '450px',
-  width: '60%',
+  width: '53%',
   height: 'auto',
   right: 0,
-  top: '-100px'
+  top: '-143px',
+  boxShadow: '0 20px 20px 0 rgba(255, 255, 255, 0.1)',
+  backdropFilter: 'blur(25px)'
 }
 
 const smallBroadbandTestingMapStyle: CSSProperties = {
@@ -131,6 +133,16 @@ const smallBroadbandTestingMapStyle: CSSProperties = {
   zIndex: 0
 }
 
+const heroGradientBgStyle: CSSProperties = {
+  width: '100vw',
+  height: '150%',
+  position: 'absolute',
+  top: '-156px',
+  left: 0,
+  background: 'linear-gradient(rgba(234, 236, 255, 1) -51%, rgba(145, 151, 204, 0.34), rgba(234, 236, 255, -0.1));',
+  zIndex: 0
+}
+
 export const styles = {
   BroadbandTestingHeader: (isSmall: boolean) => isSmall ? smallBroadbandTestingHeaderStyle : broadbandTestingHeaderStyle,
   TextContainer: (isSmall: boolean) => isSmall ? smallTextContainerStyle : textContainerStyle,
@@ -140,4 +152,5 @@ export const styles = {
   Illustration: (isSmall: boolean) => isSmall ? smallIllustrationStyle : illustrationStyle,
   BroadbandTestingHeaderContent: broadbandTestingHeaderContentStyle,
   BroadbandTestingMap: (isSmall: boolean) => isSmall ? smallBroadbandTestingMapStyle : broadbandTestingMapStyle,
+  HeroGradientBg: heroGradientBgStyle,
 }

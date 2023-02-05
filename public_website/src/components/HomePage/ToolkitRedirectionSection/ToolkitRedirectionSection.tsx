@@ -11,6 +11,7 @@ const BottomBlueBg = '/assets/images/redirection-bottom-blue.png';
 const LeftBlueBg = '/assets/images/redirection-left-blue.png';
 const SmallRedirectBg1 = '/assets/images/small-redirect-shape-1.png'
 const SmallRedirectBg2 = '/assets/images/small-redirect-shape-2.png';
+const BigCircle = '/assets/images/redirect-big-circle.png';
 
 const ToolkitRedirectionSection = (): ReactElement => {
 
@@ -23,6 +24,7 @@ const ToolkitRedirectionSection = (): ReactElement => {
       {!isSmall && <img src={TopRightBg} alt={'top right orange background'} style={styles.TopRightBg}/> }
       {!isSmall && <img src={BottomBlueBg} alt={'bottom blue background'} style={styles.BottomBlueBg}/> }
       {!isSmall && <img src={LeftBlueBg} alt={'left blue background'} style={styles.LeftBlueBg}/> }
+      {!isSmall && <img src={BigCircle} alt={'big circle'} style={styles.BigCircle}/>}
       { isSmall && <img src={SmallRedirectBg1} alt={'left blue background'} style={styles.SmallRedirectBg1}/> }
       { isSmall && <img src={SmallRedirectBg2} alt={'left blue background'} style={styles.SmallRedirectBg2}/> }
       <div style={styles.ToolkitRedirectionSectionContent(isSmall)}>

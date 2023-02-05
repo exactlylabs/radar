@@ -13,7 +13,7 @@ following commands on the root directory:
 
 ```
 $ npm i
-$ npm run start
+$ npm run dev
 ```
 
 This will execute the app on port 3000 by default, so you can access through any web browser at http://localhost:3000.

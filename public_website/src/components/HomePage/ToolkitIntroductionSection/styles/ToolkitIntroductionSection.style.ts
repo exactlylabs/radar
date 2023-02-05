@@ -4,7 +4,7 @@ import {DEFAULT_TEXT} from "../../../../utils/colors";
 const mainWrapperStyle: CSSProperties = {
   width: '100vw',
   height: 'max-content',
-  position: 'relative'
+  position: 'relative',
 }
 
 const toolkitIntroductionSectionStyle: CSSProperties = {
@@ -158,6 +158,24 @@ const smallOrangeHeroBgStyle: CSSProperties = {
   opacity: 0.9
 }
 
+const mapBgStyle: CSSProperties = {
+  width: '110vw',
+  height: 'auto',
+  position: 'absolute',
+  left: 0,
+  top: '-55px',
+  background: `linear-gradient(to bottom,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 80%)`,
+  backgroundSize: 'cover'
+}
+
+const whiteCircle: CSSProperties = {
+  position: 'absolute',
+  width: '100vw',
+  height: '200vw',
+  zIndex: 1,
+  top: '40%'
+}
+
 export const styles = {
   ToolkitIntroductionSection: (isSmall: boolean) => {
     return isSmall ? smallToolkitIntroductionSectionStyle : toolkitIntroductionSectionStyle;
@@ -177,4 +195,6 @@ export const styles = {
   PinkHeroBg: (isSmall: boolean) => isSmall ? smallPinkHeroBgStyle : pinkHeroBgStyle,
   OrangeHeroBg: (isSmall: boolean) => isSmall ? smallOrangeHeroBgStyle : orangeHeroBgStyle,
   MainWrapper: mainWrapperStyle,
+  MapBg: mapBgStyle,
+  WhiteCircle: whiteCircle,
 }

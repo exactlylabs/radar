@@ -4,9 +4,9 @@ import {ToolkitTabContentRowSubtitle, ToolkitTabContentRowTitle} from "../../typ
 import {commonStyles} from "../styles/common.style";
 import {AppRoutes, ExternalRoutes} from "../../../../../../../utils/navigation";
 
-const SiteMonitoringIcon = '/assets/images/site-monitoring-icon.png';
-const BroadbandTestingIcon = '/assets/images/broadband-testing-icon.png';
-const MappingToolsIcon = '/assets/images/mapping-tools-icon.png';
+const SiteMonitoringIcon = '/assets/images/floating-toolkit-site-monitoring-icon.png';
+const BroadbandTestingIcon = '/assets/images/floating-toolkit-broadband-testing-icon.png';
+const MappingToolsIcon = '/assets/images/floating-toolkit-map-icon.png';
 const RedirectArrowGray = '/assets/images/redirect-arrow-gray.png';
 
 const RightSideToolkitTabContentPolicyMakers = (): ReactElement => {

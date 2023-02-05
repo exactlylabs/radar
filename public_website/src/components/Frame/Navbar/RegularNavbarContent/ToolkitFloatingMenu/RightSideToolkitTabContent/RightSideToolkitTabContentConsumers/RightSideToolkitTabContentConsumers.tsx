@@ -4,8 +4,8 @@ import {commonStyles} from "../styles/common.style";
 import {ToolkitTabContentRowSubtitle, ToolkitTabContentRowTitle} from "../../types";
 import {AppRoutes} from "../../../../../../../utils/navigation";
 
-const SiteMonitoringIcon = "/assets/images/site-monitoring-icon.png";
-const BroadbandTestingIcon = "/assets/images/broadband-testing-icon.png";
+const SiteMonitoringIcon = '/assets/images/floating-toolkit-site-monitoring-icon.png';
+const BroadbandTestingIcon = '/assets/images/floating-toolkit-broadband-testing-icon.png';
 
 const RightSideToolkitTabContentConsumers = (): ReactElement => {
   return (

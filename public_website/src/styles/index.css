@@ -16,3 +16,7 @@ code {
   opacity: 0.8;
   cursor: pointer;
 }
+
+.custom-link {
+  color: #4B7BE5;
+}

@@ -69,6 +69,7 @@ const MobilePageCarrousel = (): ReactElement => {
 
   return (
     <div style={styles.MobilePageCarrousel}>
+      {!isSmall && <div style={styles.GradientBg}></div> }
       <div style={styles.TextContainer(isSmall)}>
         <p className={'fw-bold'} style={styles.Header}>Radar for Mobile</p>
         <p className={'fw-extra-bold'} style={styles.Title}>Test your connectivity outdoors or your Wi-Fi at home.</p>

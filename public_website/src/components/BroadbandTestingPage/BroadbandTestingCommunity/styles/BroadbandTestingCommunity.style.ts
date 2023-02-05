@@ -163,7 +163,7 @@ const smallRowTitleStyle: CSSProperties = {
 }
 
 const rowSubtitleStyle: CSSProperties = {
-  fontSize: '16px',
+  fontSize: '17px',
   lineHeight: '28px',
   color: DEFAULT_TEXT,
   margin: 0,

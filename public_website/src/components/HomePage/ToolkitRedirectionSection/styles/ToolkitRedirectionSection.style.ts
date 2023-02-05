@@ -149,7 +149,7 @@ const topRightBgStyle: CSSProperties = {
   zIndex: 0,
   right: 0,
   top: 0,
-  width: '35%',
+  width: '39%',
   height: 'auto'
 }
 const bottomBlueBgStyle: CSSProperties = {
@@ -157,7 +157,7 @@ const bottomBlueBgStyle: CSSProperties = {
   zIndex: 0,
   left: 0,
   bottom: 0,
-  width: '85%',
+  width: '100%',
   height: 'auto'
 }
 const leftBlueBgStyle: CSSProperties = {
@@ -189,6 +189,14 @@ const smallRedirectBg2Style: CSSProperties = {
   filter: 'blur(50px)'
 }
 
+const bigCircleStyle: CSSProperties = {
+  width: '75%',
+  height: 'auto',
+  position: 'absolute',
+  right: 0,
+  top: 0
+}
+
 export const styles = {
   ToolkitRedirectionSection: (isSmall: boolean) => isSmall ? smallToolkitRedirectionSectionStyle : toolkitRedirectionSectionStyle,
   ToolkitRedirectionSectionContent: (isSmall: boolean) => isSmall ? smallToolkitRedirectionSectionContentStyle : toolkitRedirectionSectionContentStyle,
@@ -204,4 +212,5 @@ export const styles = {
   LeftBlueBg: leftBlueBgStyle,
   SmallRedirectBg1: smallRedirectBg1Style,
   SmallRedirectBg2: smallRedirectBg2Style,
+  BigCircle: bigCircleStyle,
 }

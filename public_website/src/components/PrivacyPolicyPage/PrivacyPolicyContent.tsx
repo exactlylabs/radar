@@ -79,9 +79,9 @@ const PrivacyPolicyContent = (): ReactElement => {
               (M-Lab) NDT7 tool to perform Internet speed tests, and OpenStreetMap™ provides RADAR’s mapping functionality.
               M-Lab collects unprocessed Internet speed test data and makes the results of tests available to the public.
               OpenStreetMap™ collects certain analytics information which it uses to improve the functionality and
-              performance of their mapping products. Please review M-Lab’s Privacy Policy at <a
+              performance of their mapping products. Please review M-Lab’s Privacy Policy at <a className={'custom-link'}
                 href={'https://www.measurementlab.net/privacy'}>https://www.measurementlab.net/privacy/</a>, and
-              OpenStreetMap’s Privacy Policy at <a
+              OpenStreetMap’s Privacy Policy at <a className={'custom-link'}
                 href={'https://wiki.osmfoundation.org/wiki/Privacy_Policy'}>https://wiki.osmfoundation.org/wiki/Privacy_Policy.</a><br/>
               We may engage Service Providers to provide analytics services for the RADAR App and Website. These Service
               Providers may use cookies, web beacons, device identifiers, and other technologies to collect information
@@ -168,7 +168,7 @@ const PrivacyPolicyContent = (): ReactElement => {
               Questions?</p>
             <p className={'fw-medium'} style={styles.TextSectionParagraph}>Contact Us. If you have any questions or concerns
               about this Privacy Policy, please contact ANTHC as follows: <a
-                href={'mailto:radar@anthc.org'}>RADAR@anthc.org</a>.</p>
+                href={'mailto:radar@anthc.org'} className={'custom-link'}>RADAR@anthc.org</a>.</p>
           </div>
         </div>
       </div>
