@@ -3,13 +3,14 @@ import {DEFAULT_SECONDARY_TEXT, HORIZONTAL_DIVIDER, SPECIAL_FOOTER} from "../../
 
 const footerStyle: CSSProperties = {
   width: '100vw',
-  height: '358px',
+  height: '375px',
   marginLeft: 'auto',
   marginRight: 'auto',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'center',
+  zIndex: 5
 }
 
 const topRowStyle: CSSProperties = {

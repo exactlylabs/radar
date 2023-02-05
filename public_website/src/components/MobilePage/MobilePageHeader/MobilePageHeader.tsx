@@ -12,6 +12,7 @@ const MobilePageHeader = (): ReactElement => {
 
   return (
     <div style={styles.MobilePageHeader(isSmall)}>
+      {!isSmall && <div style={styles.HeroGradientBg}></div>}
       <div style={styles.MobilePageHeaderContent(isSmall)}>
         <div style={styles.TextContainer(isSmall)}>
           <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Test your Wi-Fi or cellular connection and compare it to others in your region.</p>

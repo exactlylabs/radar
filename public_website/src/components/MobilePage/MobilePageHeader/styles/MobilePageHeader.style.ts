@@ -6,7 +6,9 @@ const mobilePageHeaderStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  alignItems: 'center'
+  alignItems: 'center',
+  height: '600px',
+  position: 'relative'
 }
 
 const smallMobilePageHeaderStyle: CSSProperties = {
@@ -75,7 +77,7 @@ const smallSubtitleStyle: CSSProperties = {
 }
 
 const heroImageStyle: CSSProperties = {
-  width: '508px',
+  width: '45%',
   height: 'auto',
   marginLeft: '11%'
 }
@@ -136,6 +138,16 @@ const smallMobilePageHeaderContentStyle: CSSProperties = {
   alignItems: 'center'
 }
 
+const heroGradientBgStyle: CSSProperties = {
+  width: '100vw',
+  height: '100%',
+  position: 'absolute',
+  top: '-156px',
+  left: 0,
+  background: 'linear-gradient(rgb(234, 236, 255, 10%), rgb(145 151 204 / 34%), rgb(234, 236, 255, 0%))',
+  zIndex: 0
+}
+
 export const styles = {
   MobilePageHeader: (isSmall: boolean) => isSmall ? smallMobilePageHeaderStyle : mobilePageHeaderStyle,
   TextContainer: (isSmall: boolean) => isSmall ? smallTextContainerStyle : textContainerStyle,
@@ -146,4 +158,5 @@ export const styles = {
   StoresIcon: storesIconStyle,
   ComingSoonText: comingSoonTextStyle,
   MobilePageHeaderContent: (isSmall: boolean) => isSmall ? smallMobilePageHeaderContentStyle : mobilePageHeaderContentStyle,
+  HeroGradientBg: heroGradientBgStyle,
 }

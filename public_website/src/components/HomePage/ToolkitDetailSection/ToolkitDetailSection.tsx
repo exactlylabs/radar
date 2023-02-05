@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/ToolkitDetailSection.style";
 import CustomButton from "../../common/CustomButton/CustomButton";
-import {AppRoutes, ExternalRoutes, goToBroadbandTesting, goToMappingApp, goToSiteMonitoring} from "../../../utils/navigation";
+import {AppRoutes, ExternalRoutes} from "../../../utils/navigation";
 import {
   DEFAULT_PRIMARY_BUTTON,
   DEFAULT_PRIMARY_BUTTON_BOX_SHADOW,
@@ -17,6 +17,7 @@ const BroadbandTestingBackground = '/assets/images/broadband-testing-bg.png';
 const BroadbandTestingIcon = '/assets/images/broadband-testing-icon.png';
 const MappingIcon = '/assets/images/mapping-tools-icon.png';
 const MappingToolsBackground = '/assets/images/mapping-tools-bg.png';
+const RedirectArrowWhite = '/assets/images/redirect-arrow-white.png';
 
 const ToolkitDetailSection = (): ReactElement => {
 
@@ -77,7 +78,7 @@ const ToolkitDetailSection = (): ReactElement => {
           <CustomButton text={'Explore the map'}
                         link={process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING}
                         openNewTab
-                        icon={<img src={ChevronRightWhite} style={styles.Chevron} alt={'chevron-right-white'}/>}
+                        icon={<img src={RedirectArrowWhite} style={styles.RedirectArrow} alt={'new tab arrow white'}/>}
                         backgroundColor={DEFAULT_PRIMARY_BUTTON}
                         color={WHITE}
                         boxShadow={`0 4px 15px -2px ${DEFAULT_PRIMARY_BUTTON_BOX_SHADOW}`}

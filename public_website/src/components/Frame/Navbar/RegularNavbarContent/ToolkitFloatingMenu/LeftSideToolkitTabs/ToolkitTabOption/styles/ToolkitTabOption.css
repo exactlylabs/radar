@@ -1,3 +1,4 @@
 .toolkit-tabs--option:hover {
   background-color: white;
+  cursor: pointer;
 }

@@ -4,6 +4,7 @@ import {DEFAULT_TEXT, HIGHLIGHTER} from "../../../utils/colors";
 const privacyPolicyPageStyle: CSSProperties = {
   width: '100vw',
   paddingTop: '80px',
+  marginBottom: '100px'
 }
 
 const smallPrivacyPolicyPageStyle: CSSProperties = {

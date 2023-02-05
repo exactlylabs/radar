@@ -17,7 +17,8 @@ const internetInvestmentSectionStyle: CSSProperties = {
   justifyContent: 'center',
   alignItems: 'center',
   position: 'relative',
-  overflow: 'hidden'
+  overflow: 'hidden',
+  zIndex: 2
 }
 
 const smallInternetInvestmentSectionStyle: CSSProperties = {
@@ -37,7 +38,7 @@ const internetInvestmentSectionContentStyle: CSSProperties = {
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
-  zIndex: 1
+  zIndex: 2
 }
 
 const smallInternetInvestmentSectionContentStyle: CSSProperties = {
@@ -159,7 +160,7 @@ const rightOrangeBgStyle: CSSProperties = {
   zIndex: 0,
   bottom: 0,
   right: 0,
-  width: '16%',
+  width: '27%',
   height: 'auto'
 }
 
