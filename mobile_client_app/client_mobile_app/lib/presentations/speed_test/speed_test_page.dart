@@ -7,7 +7,6 @@ import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/steps_indicator.dart';
-import 'package:client_mobile_app/presentations/speed_test/steps/network_type_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_place_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/no_internet_connection_page.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/monthly_bill_cost_step.dart';
@@ -74,7 +73,7 @@ class SpeedTestPage extends StatelessWidget {
                                       Padding(
                                         padding: const EdgeInsets.only(top: 10.0, bottom: 15.0),
                                         child: StepIndicator(
-                                          totalSteps: 4,
+                                          totalSteps: 3,
                                           currentStep: state.step,
                                           textColor: Theme.of(context).colorScheme.surface,
                                           currentTextColor: Theme.of(context).colorScheme.onPrimary,
@@ -92,11 +91,6 @@ class SpeedTestPage extends StatelessWidget {
                                         isStepValid: state.isStepValid,
                                         address: state.location?.address ?? Strings.emptyString,
                                         optionSelected: state.networkLocation,
-                                      )
-                                    else if (state.step == SpeedTestCubit.NETWORK_TYPE_STEP)
-                                      NetworkTypeStep(
-                                        optionSelected: state.networkType,
-                                        isStepValid: state.isStepValid,
                                       )
                                     else if (state.step == SpeedTestCubit.MONTHLY_BILL_COST_STEP)
                                       MonthlyBillCostStep(

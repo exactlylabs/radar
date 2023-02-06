@@ -1,7 +1,7 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:network_connection_info/models/connection_info.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/core/models/location.dart';
@@ -17,6 +17,7 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   })  : _resultsService = resultsService,
         _localStorage = localStorage,
         super(const SpeedTestState()) {
+    _listenConnectivityState();
     _setVersionAndBuildNumber();
     _getFTUEApp();
   }
@@ -28,9 +29,6 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     switch (step) {
       case NETWORK_LOCATION_STEP:
         return state.networkLocation != null;
-      case NETWORK_TYPE_STEP:
-        if (state.networkType == null && state.step <= step) _checkConnectivity();
-        return state.networkType != null;
       case MONTHLY_BILL_COST_STEP:
         return state.monthlyBillCost != null;
       default:
@@ -63,7 +61,7 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
 
-  void setNetworkType(String networkType) {
+  void _setNetworkType(String networkType) {
     emit(state.copyWith(networkType: networkType));
     emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
@@ -78,8 +76,6 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   void preferNotToAnswer() {
     if (state.step == NETWORK_LOCATION_STEP) {
       emit(state.resetSpecificStep(true, false, false));
-    } else if (state.step == NETWORK_TYPE_STEP) {
-      emit(state.resetSpecificStep(false, true, false));
     } else if (state.step == MONTHLY_BILL_COST_STEP) {
       emit(state.resetSpecificStep(false, false, true));
     }
@@ -148,20 +144,24 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     emit(state.copyWith(isFTUEApp: ftue));
   }
 
-  Future<void> _checkConnectivity() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.wifi) {
-      setNetworkType(Strings.wifiConnectionType);
-      nextStep();
-    } else if (connectivityResult == ConnectivityResult.mobile) {
-      setNetworkType(Strings.cellularConnectionType);
-      nextStep();
-    }
+  Future<void> _listenConnectivityState() async {
+    Connectivity().onConnectivityChanged.listen(
+      (connectivity) {
+        if (connectivity == ConnectivityResult.wifi) {
+          _setNetworkType(Strings.wifiConnectionType);
+        } else if (connectivity == ConnectivityResult.mobile) {
+          _setNetworkType(Strings.cellularConnectionType);
+        } else if (connectivity == ConnectivityResult.ethernet) {
+          _setNetworkType(Strings.wiredConnectionType);
+        } else {
+          // TODO: Handle no connection case
+        }
+      },
+    );
   }
 
   static const LOCATION_STEP = 0;
   static const NETWORK_LOCATION_STEP = 1;
-  static const NETWORK_TYPE_STEP = 2;
-  static const MONTHLY_BILL_COST_STEP = 3;
-  static const TAKE_SPEED_TEST_STEP = 4;
+  static const MONTHLY_BILL_COST_STEP = 2;
+  static const TAKE_SPEED_TEST_STEP = 3;
 }
