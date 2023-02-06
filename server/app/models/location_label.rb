@@ -1,3 +1,3 @@
 class LocationLabel < ApplicationRecord
-    has_many :locations, dependent: :nullify
+    has_and_belongs_to_many :locations
 end
