@@ -21,6 +21,7 @@ class SpeedTestState {
     this.buildNumber,
     this.onContinue,
     this.onBack,
+    this.isFTUEApp = false,
   });
 
   SpeedTestState copyWith({
@@ -42,6 +43,7 @@ class SpeedTestState {
     String? buildNumber,
     VoidCallback? onContinue,
     VoidCallback? onBack,
+    bool? isFTUEApp,
   }) =>
       SpeedTestState(
         step: step ?? this.step,
@@ -62,6 +64,7 @@ class SpeedTestState {
         onBack: step != null && step != this.step ? null : onBack ?? this.onBack,
         versionNumber: versionNumber ?? this.versionNumber,
         buildNumber: buildNumber ?? this.buildNumber,
+        isFTUEApp: isFTUEApp ?? this.isFTUEApp,
       );
 
   SpeedTestState resetSpecificStep(bool networkLocation, bool networkType, bool monthlyBillCost) => SpeedTestState(
@@ -83,6 +86,7 @@ class SpeedTestState {
         termsAccepted: termsAccepted,
         onContinue: null,
         onBack: null,
+        isFTUEApp: isFTUEApp,
       );
 
   SpeedTestState resetCallbacks() {
@@ -105,6 +109,7 @@ class SpeedTestState {
       buildNumber: buildNumber,
       onContinue: null,
       onBack: null,
+      isFTUEApp: isFTUEApp,
     );
   }
 
@@ -124,6 +129,7 @@ class SpeedTestState {
   final bool isFormEnded;
   final String? versionNumber;
   final String? buildNumber;
+  final bool isFTUEApp;
   final VoidCallback? onContinue;
   final VoidCallback? onBack;
 }

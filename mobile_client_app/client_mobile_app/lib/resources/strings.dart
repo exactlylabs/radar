@@ -14,7 +14,7 @@ class Strings {
   static const String startSpeedTestStepTitle = "You’re ready to start.";
   static const String startSpeedTestStepSubtitle =
       "For more accurate results, please make sure you are not currently making heavy use of your internet connection.";
-  static const String preferNotToAnswer = 'I prefer not to answer';
+  static const String preferNotToAnswer = 'Skip this question';
   static const String startSpeedTestButtonLabel = 'Start Speed Test';
   static const String testResultsStepTitle = 'Your test results';
   static const String testResultsStepDescription = 'See how you compare to others.';
@@ -80,4 +80,10 @@ class Strings {
   static const String confirmLocationButtonLabel = 'Confirm location';
   static const String changeAddressButtonLabel = 'Change address';
   static const String rightsReserved = 'Copyright © 2023 ANTHC. All rights reserved.';
+  static const String ftueAppModalTitle = 'Test your Internet speed';
+  static const String ftueAppModalSubtitle =
+      'Radar Speed lets you test your Internet connection on your phone and compare it to others in your region.';
+  static const String ftueAppModalDescription =
+      'We’ll ask you a few questions to better understand where and how you’re connected so we can learn more about your current service.';
+  static const String ftueAppModalButtonLabel = 'Get started';
 }

@@ -52,4 +52,5 @@ class Images {
   static const closeIcon = 'assets/icons/close_icon.png';
   static const pinMarker = 'assets/icons/pin_marker.png';
   static const circleMarker = 'assets/icons/circle_marker.png';
+  static const speedtest = 'assets/images/speedtest.png';
 }

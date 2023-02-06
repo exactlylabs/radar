@@ -10,6 +10,7 @@ class LocalStorage {
 
   static const String resultsKey = 'RESULTS';
   static const String ftueMapKey = 'FTUE_MAP';
+  static const String ftueAppKey = 'FTUE_APP';
 
   Future<void> _openBox() async {
     if (!Hive.isBoxOpen('local_storage')) {
@@ -43,5 +44,19 @@ class LocalStorage {
       {'value': false}
     ];
     await _box.put(ftueMapKey, ftue);
+  }
+
+  bool getFTUEApp() {
+    final ftue = _box.get(ftueAppKey, defaultValue: [
+      {'value': true}
+    ])!;
+    return ftue.first['value'] as bool;
+  }
+
+  Future<void> setFTUEApp() async {
+    final ftue = [
+      {'value': false}
+    ];
+    await _box.put(ftueAppKey, ftue);
   }
 }

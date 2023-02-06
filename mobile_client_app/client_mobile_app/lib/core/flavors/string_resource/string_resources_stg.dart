@@ -18,4 +18,7 @@ class StringResourceStg implements IStringResource {
 
   @override
   String ENVIRONMENT = 'staging';
+
+  @override
+  String PRIVACY_POLICY_URL = 'https://www.radartoolkit.com/privacy-policy';
 }

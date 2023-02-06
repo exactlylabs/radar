@@ -1,6 +1,9 @@
-import 'package:client_mobile_app/resources/app_colors.dart';
-import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/app_colors.dart';
+import 'package:client_mobile_app/core/flavors/app_config.dart';
 
 class AgreeToTerms extends StatelessWidget {
   const AgreeToTerms({
@@ -14,6 +17,7 @@ class AgreeToTerms extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final privacyPolicyUrl = Uri.tryParse(AppConfig.of(context)?.stringResource.PRIVACY_POLICY_URL ?? '');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13.0),
       child: Row(
@@ -55,17 +59,10 @@ class AgreeToTerms extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                    text: 'Terms of Use',
-                    style: AppTextStyle(
-                      color: Theme.of(context).colorScheme.tertiary,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  const TextSpan(
-                    text: ' and ',
-                  ),
-                  TextSpan(
                     text: 'Privacy Policy',
+                    recognizer: privacyPolicyUrl != null
+                        ? (TapGestureRecognizer()..onTap = () => launchUrl(privacyPolicyUrl))
+                        : null,
                     style: AppTextStyle(
                       color: Theme.of(context).colorScheme.tertiary,
                       decoration: TextDecoration.underline,
