@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,24 +6,30 @@ import 'package:network_connection_info/models/connection_info.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/models/test_result.dart';
+import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
 
 class SpeedTestCubit extends Cubit<SpeedTestState> {
   SpeedTestCubit({
     required IResultsService resultsService,
+    required LocalStorage localStorage,
   })  : _resultsService = resultsService,
+        _localStorage = localStorage,
         super(const SpeedTestState()) {
     _setVersionAndBuildNumber();
+    _getFTUEApp();
   }
 
   final IResultsService _resultsService;
+  final LocalStorage _localStorage;
 
   bool isStepValid(int step) {
     switch (step) {
       case NETWORK_LOCATION_STEP:
         return state.networkLocation != null;
       case NETWORK_TYPE_STEP:
+        if (state.networkType == null && state.step <= step) _checkConnectivity();
         return state.networkType != null;
       case MONTHLY_BILL_COST_STEP:
         return state.monthlyBillCost != null;
@@ -130,6 +137,26 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     PackageInfo.fromPlatform().then((packageInfo) {
       emit(state.copyWith(versionNumber: packageInfo.version, buildNumber: packageInfo.buildNumber));
     });
+  }
+
+  Future<void> _getFTUEApp() async {
+    await Future.delayed(const Duration(seconds: 1));
+    final ftue = _localStorage.getFTUEApp();
+    if (ftue) {
+      _localStorage.setFTUEApp();
+    }
+    emit(state.copyWith(isFTUEApp: ftue));
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.wifi) {
+      setNetworkType(Strings.wifiConnectionType);
+      nextStep();
+    } else if (connectivityResult == ConnectivityResult.mobile) {
+      setNetworkType(Strings.cellularConnectionType);
+      nextStep();
+    }
   }
 
   static const LOCATION_STEP = 0;
