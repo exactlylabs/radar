@@ -18,4 +18,7 @@ class StringResourceProd implements IStringResource {
 
   @override
   String ENVIRONMENT = 'production';
+
+  @override
+  String PRIVACY_POLICY_URL = 'https://www.radartoolkit.com/privacy-policy';
 }
