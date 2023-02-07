@@ -3,6 +3,8 @@ require_relative "boot"
 require "rails/all"
 require "./lib/monitor/monitor.rb"
 require "./lib/geotools/asns.rb"
+require "./lib/rack/profiler.rb"
+require "bcrypt"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -29,5 +31,9 @@ module Radar
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.assets.paths << Rails.root.join("vendor", "assets", "javascripts")
+
+    config.middleware.use Profiler
+
+    BCrypt::Engine::DEFAULT_COST = BCrypt::Engine::MIN_COST
   end
 end
