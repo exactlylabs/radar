@@ -33,6 +33,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
     respond_to do |format|
       if !error
+        begin
+          EventsNotifier.notify_new_account(@account, @user)
+        rescue StandardError => exc
+          Sentry.capture_exception(exc)
+        end
         sign_in @user
         format.html { redirect_to dashboard_path, notice: "Registered successfully" }
       else
