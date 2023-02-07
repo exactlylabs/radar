@@ -83,3 +83,4 @@ gem 'wicked_pdf'
 gem 'wkhtmltopdf-binary'
 gem "rqrcode"
 gem "sidekiq"
+gem 'discordrb'
