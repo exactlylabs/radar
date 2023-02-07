@@ -6,5 +6,3 @@
 # This script must be run from the root directory.
 # Whenever we add a new seed file, we need this file to get updated as well
 
-rails runner db/custom_seeds/clear_count_aggregates.rb
-rails runner db/custom_seeds/seed_set_clients_in_use.rb
