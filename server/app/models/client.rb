@@ -58,7 +58,8 @@ class Client < ApplicationRecord
         self.secret = secret
         self.save!
       end
-    return self
+      return self
+    end
   end
 
   def check_ip_changed
