@@ -4,7 +4,6 @@ require "rails/all"
 require "./lib/monitor/monitor.rb"
 require "./lib/geotools/asns.rb"
 require "./lib/events_notifier/notifier.rb"
-require "./lib/rack/profiler.rb"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
