@@ -4,7 +4,6 @@ require "rqrcode"
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
-  before_action :signed_in_client, only: %i[run_test check_claim claim check_public_status]
   before_action :set_client, only: %i[ release show edit destroy unstage get_client_label ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group ]
@@ -48,6 +47,9 @@ class ClientsController < ApplicationController
   def run_test
     # Allow without a logged in user to request a test if id / secret is known
     client_id = params[:id]
+    @secret = params[:secret]
+    @client = Client.find_by_unix_user(client_id)&.authenticate_secret(@secret)
+
     # If no secret, then we need to authenticate
     if !@client
       authenticate_user!
@@ -67,8 +69,10 @@ class ClientsController < ApplicationController
 
   def check_claim
     @client_id = params[:id]
+    @client_secret = params[:secret]
+    @client = Client.where(unix_user: @client_id).first
     respond_to do |format|
-      if @client
+      if @client && @client.authenticate_secret(@client_secret)
         @client.user = current_user
         format.json { render status: :ok, json: @client.to_json }
       else
@@ -85,9 +89,9 @@ class ClientsController < ApplicationController
     @client_name = params[:name]
 
     location = policy_scope(Location).where(id: @location_id).first if @location_id.present?
-
+    @client = Client.where(unix_user: @client_id).first
     respond_to do |format|
-      if @client
+      if @client && @client.authenticate_secret(@client_secret)
         @client.user = current_user
         @client.location = location
         @client.name = @client_name
@@ -117,6 +121,9 @@ class ClientsController < ApplicationController
 
   def check_public_status
     client_id = params["id"]
+    @secret = params["secret"]
+
+    @client = Client.find_by_unix_user(client_id)&.authenticate_secret(@secret)
   end
 
   def status
@@ -408,22 +415,9 @@ class ClientsController < ApplicationController
   end
 
   def authenticate_client!
-    @client = signed_in_client
-    if @client&.new_secret_digest.blank?
-      @client.new_secret = params[:secret]
-      @client.save!
-    end
+    @client = Client.find_by_unix_user(params[:id])&.authenticate_secret(params[:secret])
     if !@client
       head(403)
-    end
-  end
-
-  def signed_in_client
-    client = Client.find_by_unix_user(params[:id])
-    if client&.new_secret_digest.present?
-      @client = client&.authenticate_new_secret(params[:secret])
-    else
-      @client = client&.authenticate_secret(params[:secret])
     end
   end
 
