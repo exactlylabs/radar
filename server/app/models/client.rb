@@ -38,13 +38,13 @@ class Client < ApplicationRecord
   scope :where_not_in_service, -> { where(in_service: false)}
 
   def secret=(unencrypted_secret)
-    # Manually set new_secret, to use our custom cost on BCrypt hasher
+    # Manually set secret, to use our custom cost on BCrypt hasher
     # https://github.com/rails/rails/blob/main/activemodel/lib/active_model/secure_password.rb#L146
     if unencrypted_secret.nil?
-      instance_variable_set("@secret", nil)
+      @secret = nil
       self.secret_digest = nil
     else
-      instance_variable_set("@secret", unencrypted_secret)
+      @secret = unencrypted_secret
       cost = BCrypt::Engine::MIN_COST
       self.secret_digest = BCrypt::Password.create(unencrypted_secret, cost: cost)
     end
