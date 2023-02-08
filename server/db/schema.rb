@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_06_193951) do
+ActiveRecord::Schema.define(version: 2023_02_07_230447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -200,6 +200,7 @@ ActiveRecord::Schema.define(version: 2023_02_06_193951) do
     t.boolean "using_websocket", default: false
     t.integer "data_cap_day_of_month", default: 1
     t.boolean "in_service", default: false
+    t.string "new_secret_digest"
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
