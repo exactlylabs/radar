@@ -467,7 +467,6 @@ DEPENDENCIES
   rails (~> 6.1.4, >= 6.1.4.1)
   redis (~> 4.0)
   rqrcode
-  ruby-prof
   ruby-prof-flamegraph
   rubyzip
   rufus-scheduler
