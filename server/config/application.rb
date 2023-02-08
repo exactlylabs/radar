@@ -33,8 +33,9 @@ module Radar
 
     config.assets.paths << Rails.root.join("vendor", "assets", "javascripts")
 
-    config.middleware.use Profiler
-
-    BCrypt::Engine::DEFAULT_COST = BCrypt::Engine::MIN_COST
+    if ENV["CPU_PROFILER"].present?
+      # call ./scripts/flamegraph.sh to generate flamegraphs from the dumps
+      config.middleware.use StackProf::Middleware, enabled: true, interval: 1000, save_every: 1, mode: :cpu, raw: true
+    end
   end
 end
