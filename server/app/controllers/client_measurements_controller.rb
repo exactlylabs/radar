@@ -76,8 +76,10 @@ class ClientMeasurementsController < ApplicationController
       @client = current_account.clients.find_by_unix_user(params[:client_id])
     else
       client = Client.find_by_unix_user(params[:client_id])
-      if client.authenticate_secret(params[:client_secret])
-        @client = client
+      if client&.new_secret_digest.present?
+        @client = client.authenticate_new_secret(params[:client_secret])
+      else
+        @client = client&.authenticate_secret(params[:client_secret])
       end
     end
     if !@client
@@ -91,7 +93,12 @@ class ClientMeasurementsController < ApplicationController
   end
 
   def client_signed_in?
-    Client.find_by_unix_user(params[:client_id])&.authenticate_secret(params[:client_secret]) != false
+    client = Client.find_by_unix_user(params[:client_id])
+    if client&.new_secret_digest.present?
+      client&.authenticate_new_secret(params[:client_secret]) != false
+    else
+      client&.authenticate_secret(params[:client_secret]) != false
+    end
   end
 
   def set_measurement
