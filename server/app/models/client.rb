@@ -24,6 +24,7 @@ class Client < ApplicationRecord
   after_create :send_created_event
   after_commit :check_ip_changed
   has_secure_password :secret, validations: false
+  has_secure_password :new_secret, validations: false
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, -> { where("online = true AND (pinged_at < ? OR pinged_at IS NULL)", (PING_DURATION * 1.5).second.ago) }
@@ -37,6 +38,19 @@ class Client < ApplicationRecord
   scope :where_staging, -> { where(staging: true) }
   scope :where_in_service, -> { where(in_service: true)}
   scope :where_not_in_service, -> { where(in_service: false)}
+
+  def new_secret=(unencrypted_secret)
+    # Manually set new_secret, to use our custom cost on BCrypt hasher
+    # https://github.com/rails/rails/blob/main/activemodel/lib/active_model/secure_password.rb#L146
+    if unencrypted_secret.nil?
+      instance_variable_set("@new_secret", nil)
+      self.new_secret_digest = nil
+    else
+      instance_variable_set("@new_secret", unencrypted_secret)
+      cost = BCrypt::Engine::MIN_COST
+      self.new_secret_digest = BCrypt::Password.create(unencrypted_secret, cost: cost)
+    end
+  end
 
   def check_ip_changed
     if saved_change_to_ip
