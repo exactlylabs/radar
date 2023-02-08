@@ -181,7 +181,7 @@ class ClientsController < ApplicationController
     @client = Client.new
     @client.user = current_user
     @secret = SecretsHelper.create_human_readable_secret(11)
-    @client.new_secret = @secret
+    @client.secret = @secret
     ug = UpdateGroup.default_group
     if !ug.nil?
       @client.update_group = ug
