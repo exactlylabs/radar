@@ -5,6 +5,7 @@ class ClientEventLog < ApplicationRecord
   CREATED = "CREATED"
   WENT_ONLINE = "WENT_ONLINE"
   WENT_OFFLINE = "WENT_OFFLINE"
+  SERVICE_STARTED = "SERVICE_STARTED"
   LOCATION_CHANGED = "LOCATION_CHANGED"
   ACCOUNT_CHANGED = "ACCOUNT_CHANGED"
   IP_CHANGED = "IP_CHANGED"
@@ -46,6 +47,10 @@ class ClientEventLog < ApplicationRecord
 
   def self.not_in_service_event(client, timestamp=nil)
     create_event client, NOT_IN_SERVICE, timestamp=timestamp
+  end
+
+  def self.service_started_event(client, timestamp=nil)
+    create_event client, SERVICE_STARTED, timestamp=timestamp
   end
   
   private 
