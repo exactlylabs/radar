@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_06_193951) do
+ActiveRecord::Schema.define(version: 2023_02_08_222343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -307,6 +307,7 @@ ActiveRecord::Schema.define(version: 2023_02_06_193951) do
     t.integer "account_id"
     t.string "ip"
     t.bigint "autonomous_system_id"
+    t.float "loss_rate"
     t.index ["autonomous_system_id"], name: "index_measurements_on_autonomous_system_id"
     t.index ["client_id"], name: "index_measurements_on_client_id"
     t.index ["location_id"], name: "index_measurements_on_location_id"
