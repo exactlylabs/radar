@@ -136,7 +136,6 @@ class ClientsController < ApplicationController
     @client.network_interfaces = JSON.parse(params[:network_interfaces]) unless params[:network_interfaces].nil?
     @client.os_version = params[:os_version]
     @client.hardware_platform = params[:hardware_platform]
-
     if !params[:version].nil?
       # Check client Version Id
       version_ids = ClientVersion.where(version: params[:version]).pluck(:id)
@@ -152,7 +151,7 @@ class ClientsController < ApplicationController
     if @client.test_scheduled_at.nil?
       @client.schedule_next_test!
     end
-    
+    ClientEventLog.service_started_event @client if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     @client.save!
     
     respond_to do |format|
