@@ -4,7 +4,7 @@ import {DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT, GET_STARTED_BUTTON_BG} from "../..
 const toolkitTabContentRowStyle: CSSProperties = {
   width: 'calc(100% - 65px)',
   height: 'max-content',
-  marginLeft: '25px',
+  marginLeft: '10px',
   marginRight: 'auto',
   display: 'flex',
   flexDirection: 'row',
@@ -16,7 +16,7 @@ const toolkitTabContentRowStyle: CSSProperties = {
 
 const smallToolkitTabContentRowStyle: CSSProperties = {
   ...toolkitTabContentRowStyle,
-  width: 'calc(100% - 20px)',
+  width: 'calc(100% - 10px)',
   alignItems: 'center',
   marginTop: '20px',
 }

@@ -24,3 +24,6 @@ export const HIGHLIGHTER = 'rgba(222, 230, 249, 0.5)';
 export const PILL = '#dee6f9';
 export const PILL_BG = 'rgba(75, 123, 229, 0.1)';
 export const SPECIAL_FOOTER = '#f1f4fd';
+export const CUSTOM_CHECKBOX_FILL = 'rgba(17, 14, 76, 0.05)';
+export const CUSTOM_CHECKBOX_FILL_CHECKED = '#4b7be5';
+export const CUSTOM_INPUT_ERROR_MESSAGE_COLOR = '#c41d52';

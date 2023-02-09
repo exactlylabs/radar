@@ -2,7 +2,7 @@ import {ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/RegularNavbarContent.style";
 import CustomButton from "../../../common/CustomButton/CustomButton";
 import ToolkitFloatingMenu from "./ToolkitFloatingMenu/ToolkitFloatingMenu";
-import {AppRoutes, DEFAULT_MAIL_TO, emailContact} from "../../../../utils/navigation";
+import {AppRoutes, DEFAULT_MAIL_TO} from "../../../../utils/navigation";
 import { useIsTouchDevice } from "../../../../hooks/useIsTouchDevice";
 
 const RadarLogo = "/assets/images/radar-logo.png";
@@ -18,7 +18,6 @@ const RegularNavbarContent = ({
 
   const isTouchDevice = useIsTouchDevice().current;
 
-  console.log(isTouchDevice);
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
   const floatingMenuOpenRef = useRef(false);
   let timeoutId: NodeJS.Timeout;
@@ -99,7 +98,7 @@ const RegularNavbarContent = ({
                     color={''}
                     icon={<img src={ChevronRight} style={styles.ChevronRight} alt={'chevron-right'}/>}
                     text={'Get started'}
-                    link={DEFAULT_MAIL_TO}
+                    link={AppRoutes.GET_STARTED}
       />
       { isFloatingMenuOpen && <ToolkitFloatingMenu setIsOpen={handleSetIsOpen}/> }
     </div>

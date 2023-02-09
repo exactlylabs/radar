@@ -72,9 +72,24 @@ const titleStyle: CSSProperties = {
   margin: '0 0 20px 0'
 }
 
+const smallTitleStyle: CSSProperties = {
+  fontSize: '26px',
+  lineHeight: '34px',
+  letterSpacing: '-0.56px',
+  color: DEFAULT_TEXT,
+  margin: '0 0 15px 0'
+}
+
 const subtitleStyle: CSSProperties = {
   fontSize: '17px',
   lineHeight: '28px',
+  color: DEFAULT_TEXT,
+  margin: 0
+}
+
+const smallSubtitleStyle: CSSProperties = {
+  fontSize: '16px',
+  lineHeight: '26px',
   color: DEFAULT_TEXT,
   margin: 0
 }
@@ -116,7 +131,8 @@ const horizontalCarrouselStyle: CSSProperties = {
   overflowX: 'scroll',
   overflowY: 'hidden',
   marginTop: '30px',
-  marginBottom: '50px'
+  marginBottom: '50px',
+  scrollBehavior: 'smooth'
 }
 
 const gradientBgStyle: CSSProperties = {
@@ -136,8 +152,8 @@ export const styles = {
   Icon: iconStyle,
   TextContainer: (isSmall: boolean) => isSmall ? smallTextContainerStyle : textContainerStyle,
   Header: headerStyle,
-  Title: titleStyle,
-  Subtitle: subtitleStyle,
+  Title: (isSmall: boolean) => isSmall ? smallTitleStyle : titleStyle,
+  Subtitle: (isSmall: boolean) => isSmall ? smallSubtitleStyle : subtitleStyle,
   CarrouselContainer: carrouselContainerStyle,
   LeftColumn: leftColumnStyle,
   RightColumn: rightColumnStyle,

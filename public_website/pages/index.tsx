@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect} from "react";
+import React, {ReactElement} from "react";
 import {styles} from "../src/components/HomePage/styles/HomePage.style";
 import ToolkitIntroductionSection from "../src/components/HomePage/ToolkitIntroductionSection/ToolkitIntroductionSection";
 import InternetInvestmentSection from "../src/components/HomePage/InternetInvestmentSection/InternetInvestmentSection";
@@ -16,7 +16,7 @@ const Index = (): ReactElement => {
           <title>Radar - Internet Speed Test and Monitoring for Better Broadband Investments</title>
           <meta name="description" content="Radar helps identify where Internet investment will go the furthest by providing insights into broadband as it is today in your community."/>
         </Head>
-        <Frame>
+        <Frame smallFooterMarginTop={'0px'}>
           <div style={styles.HomePage}>
             <ToolkitIntroductionSection />
             <InternetInvestmentSection />

@@ -10,7 +10,6 @@ const footerStyle: CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'center',
-  zIndex: 5
 }
 
 const topRowStyle: CSSProperties = {
@@ -200,9 +199,9 @@ export const styles = {
   SmallXLabLogo: smallXLabLogoStyle,
   SmallExactlyLogo: smallExactlyLogoStyle,
   Copyright: copyrightStyle,
-  SmallFooter: (isDifferentColor?: boolean) => {
+  SmallFooter: (isDifferentColor?: boolean, marginTop?: string) => {
     let style = smallFooterStyle;
-    if(isDifferentColor) style = {...style, backgroundColor: SPECIAL_FOOTER, marginTop: '160px'};
+    if(isDifferentColor) style = {...style, backgroundColor: SPECIAL_FOOTER, marginTop: marginTop ?? '160px'};
     return style;
   },
   SmallTopRow: smallTopRowStyle,

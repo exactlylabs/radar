@@ -12,12 +12,13 @@ const toolkitDetailSectionStyle: CSSProperties = {
   alignItems: 'center',
   justifyContent: 'flex-start',
   textAlign: 'center',
-  zIndex: 3
+  zIndex: 3,
+  position: 'relative'
 }
 
 const textContainerStyle: CSSProperties = {
   maxWidth: '588px',
-  marginBottom: '93px',
+  //marginBottom: '93px',
   zIndex: 3
 }
 
@@ -27,16 +28,19 @@ const smallTextContainerStyle: CSSProperties = {
 }
 
 const detailSectionStyle: CSSProperties = {
-  width: '100%',
-  height: '385px',
+  width: '100vw',
+  maxHeight: '385px',
+  minHeight: '250px',
+  height: 'max-content',
+  paddingTop: '150px',
+  paddingBottom: '150px',
   position: 'relative',
-  marginBottom: '150px',
 }
 
 const smallDetailSectionStyle: CSSProperties = {
   width: '100vw',
   height: 'max-content',
-  marginBottom: 0,
+  marginBottom: 0
 }
 
 const headerStyle: CSSProperties = {
@@ -94,9 +98,9 @@ const informationBlockStyle: CSSProperties = {
   alignItems: 'flex-start',
   justifyContent: 'flex-start',
   textAlign: 'left',
-  marginLeft: '8.5%',
+  marginLeft: '7%',
   zIndex: 10,
-  position: 'absolute'
+  position: 'relative'
 }
 
 const smallInformationBlockStyle: CSSProperties = {
@@ -111,6 +115,7 @@ const smallInformationBlockStyle: CSSProperties = {
   marginRight: 'auto',
   zIndex: 10,
   marginBottom: '20px',
+  position: 'relative'
 }
 
 const iconContainerStyle: CSSProperties = {
@@ -148,46 +153,90 @@ const siteMonitoringBackgroundStyle: CSSProperties = {
   zIndex: 5
 }
 
-const smallSiteMonitoringBackgroundStyle: CSSProperties = {
-  width: '190vw',
+const largeSiteMonitoringBackgroundStyle: CSSProperties = {
+  width: '75vw',
   height: 'auto',
-  marginLeft: '-52vw',
-  marginTop: '-70px',
+  position: 'absolute',
+  bottom: '1vw',
+  right: '-12vw',
   zIndex: 5
+}
+
+const midSiteMonitoringBackgroundStyle: CSSProperties = {
+  width: '100%',
+  height: 'auto',
+  position: 'relative',
+  zIndex: 5
+}
+
+const siteMonitoringBackgroundSmallStyle: CSSProperties = {
+  width: '100vw',
+  height: 'auto',
+  zIndex: 5,
+  position: 'relative'
 }
 
 const broadbandTestingBackgroundStyle: CSSProperties = {
   width: '60%',
   height: 'auto',
   position: 'absolute',
-  top: '-200px',
-  left: '-7%',
-  zIndex: 5
+  top: '-5vw',
+  left: '0',
+  zIndex: 5,
+}
+
+const largeBroadbandTestingBackgroundStyle: CSSProperties = {
+  width: '60%',
+  height: 'auto',
+  position: 'absolute',
+  top: '-2vw',
+  left: '-3vw',
+  zIndex: 5,
+}
+
+const midBroadbandTestingBackgroundStyle: CSSProperties = {
+  ...largeBroadbandTestingBackgroundStyle,
+  top: '0vw',
 }
 
 const smallBroadbandTestingBackgroundStyle: CSSProperties = {
   width: '125vw',
   height: 'auto',
-  marginLeft: '-17vw',
-  marginTop: '-70px',
-  marginBottom: '-70px',
-  zIndex: 5
+  zIndex: 5,
+  maxWidth: '100%',
+  margin: '-40px auto',
+  position: 'relative'
 }
 
 const mappingToolsBackgroundStyle: CSSProperties = {
   width: '79%',
   height: 'auto',
   position: 'absolute',
-  right: '-9%',
-  bottom: '-23%',
+  right: '-2%',
+  bottom: '-8vw',
   zIndex: 5,
+  maxWidth: '90%',
 }
 
 const smallMappingToolsBackgroundStyle: CSSProperties = {
   width: '135vw',
   height: 'auto',
-  marginLeft: '-20vw',
-  zIndex: 5
+  zIndex: 5,
+  maxWidth: '90%',
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  position: 'relative'
+}
+
+const midMappingToolsBackgroundStyle: CSSProperties = {
+  ...smallBroadbandTestingBackgroundStyle
+}
+
+const largeMappingToolsBackgroundStyle: CSSProperties = {
+  ...mappingToolsBackgroundStyle,
+  width: '71vw',
+  right: '-6%',
+  bottom: '0vw'
 }
 
 const chevronStyle: CSSProperties = {
@@ -215,6 +264,8 @@ const smallInformationBlockTitleStyle: CSSProperties = {
   ...informationBlockTitleStyle,
   fontSize: '18px',
   margin: '0 0 5px 0',
+  maxWidth: undefined,
+  width: '100%'
 }
 
 const informationBlockSubtitleStyle: CSSProperties = {
@@ -222,12 +273,15 @@ const informationBlockSubtitleStyle: CSSProperties = {
   lineHeight: '26px',
   color: DEFAULT_TEXT,
   margin: '0 0 25px 0',
+  maxWidth: '32vw',
 }
 
 const smallInformationBlockSubtitleStyle: CSSProperties = {
   ...informationBlockSubtitleStyle,
   fontSize: '16px',
-  margin: '0 0 20px 0'
+  margin: '0 0 20px 0',
+  maxWidth: undefined,
+  width: '100%'
 }
 
 const gradientStyle: CSSProperties = {
@@ -245,21 +299,45 @@ const fillStyle: CSSProperties = {
   bottom: '-100px',
   left: '50%',
   marginLeft: '-50vw',
-  zIndex: 5
+  zIndex: 0
+}
+
+const lastDetailSectionStyle: CSSProperties = {
+  marginBottom: '70px',
+  backgroundImage: 'linear-gradient(0deg, rgba(75, 123, 229, 0), rgba(211, 224, 255, 0.28) 43%)'
+}
+
+const firstDetailSectionStyle: CSSProperties = {
+  marginBottom: '30px',
+  backgroundImage: 'linear-gradient(180deg, rgba(75, 123, 229, 0), rgba(211, 224, 255, 0.28) 43%)'
+}
+
+const detailSectionContentStyle: CSSProperties = {
+  width: '90%',
+  height: 'max-content',
+  maxWidth: '1200px',
+  margin: '0 auto'
+}
+
+const smallDetailSectionContentStyle: CSSProperties = {
+  width: '90%',
+  height: 'max-content',
+  margin: '0 auto'
 }
 
 export const styles = {
   ToolkitDetailSection: toolkitDetailSectionStyle,
   TextContainer: (isSmall: boolean) => isSmall ? smallTextContainerStyle : textContainerStyle,
-  DetailSection: (isSmall: boolean, isLast?: boolean) => {
-    let style = isSmall ? smallDetailSectionStyle : detailSectionStyle;
-    if(isLast) style = {...style, marginBottom: '120px'};
+  DetailSection: (isSmall: boolean, padding: string, isLast?: boolean, isFirst?: boolean) => {
+    let style = isSmall ? smallDetailSectionStyle : {...detailSectionStyle, padding};
+    if(isSmall && isFirst) style = {...style, ...firstDetailSectionStyle};
+    else if(isLast) style = {...style, ...lastDetailSectionStyle, paddingTop: isSmall ? '40px' : '130px'};
     return style;
   },
   InformationBlock: (isSmall: boolean, right?: string) => {
     if(isSmall) return smallInformationBlockStyle;
     if(right) {
-      return {...informationBlockStyle, left: undefined, right};
+      return {...informationBlockStyle, left: undefined, marginRight: right, marginLeft: 'auto'};
     } else {
       return informationBlockStyle;
     }
@@ -269,10 +347,30 @@ export const styles = {
   Subtitle: (isSmall: boolean) => isSmall ? smallSubtitleStyle : subtitleStyle,
   IconContainer: (isSmall: boolean) => isSmall ? smallIconContainerStyle : iconContainerStyle,
   Icon: iconStyle,
-  SiteMonitoringBackground: (isSmall: boolean) => isSmall ? smallSiteMonitoringBackgroundStyle : siteMonitoringBackgroundStyle,
-  BroadbandTestingBackground: broadbandTestingBackgroundStyle,
+  SiteMonitoringBackground: (isMid: boolean, isLarge: boolean) => {
+    let style;
+    if(isMid) style = midSiteMonitoringBackgroundStyle;
+    else if(isLarge) style = largeSiteMonitoringBackgroundStyle;
+    else style = siteMonitoringBackgroundStyle;
+    return style;
+  },
+  SiteMonitoringBackgroundSmall: siteMonitoringBackgroundSmallStyle,
+  BroadbandTestingBackground: (isMid: boolean, isLarge: boolean) => {
+    let style;
+    if(isMid) style = midBroadbandTestingBackgroundStyle;
+    else if(isLarge) style = largeBroadbandTestingBackgroundStyle;
+    else style = broadbandTestingBackgroundStyle;
+    return style;
+  },
   SmallBroadbandTestingBackground: smallBroadbandTestingBackgroundStyle,
-  MappingToolsBackground: (isSmall: boolean) => isSmall ? smallMappingToolsBackgroundStyle : mappingToolsBackgroundStyle,
+  MappingToolsBackground: (isSmall: boolean, isMid: boolean, isLarge: boolean) => {
+    let style;
+    if(isSmall) style = smallMappingToolsBackgroundStyle;
+    else if(isMid) style = midMappingToolsBackgroundStyle;
+    else if(isLarge) style = largeMappingToolsBackgroundStyle;
+    else style = mappingToolsBackgroundStyle;
+    return style;
+  },
   Chevron: chevronStyle,
   InformationBlockTitle: (isSmall: boolean) => isSmall ? smallInformationBlockTitleStyle : informationBlockTitleStyle,
   InformationBlockSubtitle: (isSmall: boolean) => isSmall ? smallInformationBlockSubtitleStyle : informationBlockSubtitleStyle,
@@ -283,4 +381,5 @@ export const styles = {
     return {...fillStyle, height, backgroundColor};
   },
   RedirectArrow: redirectArrowWhite,
+  DetailSectionContent: (isSmall: boolean) => isSmall ? smallDetailSectionContentStyle : detailSectionContentStyle,
 }

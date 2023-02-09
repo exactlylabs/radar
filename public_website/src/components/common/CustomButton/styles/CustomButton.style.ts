@@ -13,7 +13,8 @@ const customButtonStyle: CSSProperties = {
   cursor: 'pointer',
   color: DEFAULT_TEXT,
   zIndex: 5,
-  textDecoration: 'none'
+  textDecoration: 'none',
+  border: 'none'
 }
 
 const textStyle: CSSProperties = {
@@ -22,10 +23,11 @@ const textStyle: CSSProperties = {
 }
 
 export const styles = {
-  CustomButton: (backgroundColor?: string, boxShadow?: string) => {
+  CustomButton: (backgroundColor?: string, boxShadow?: string, isFullWidth?: boolean) => {
     let style = customButtonStyle;
     if(!!backgroundColor) style = {...style, backgroundColor};
     if(!!boxShadow) style = {...style, boxShadow};
+    if(!!isFullWidth) style = {...style, width: '100%'};
     return style;
   },
   Text: (color?: string) => {
