@@ -15,13 +15,13 @@ const toolkitRedirectionSectionStyle: CSSProperties = {
   position: 'relative',
   paddingTop: '40px',
   paddingBottom: '40px',
+  overflow: 'hidden'
 }
 
 const smallToolkitRedirectionSectionStyle: CSSProperties = {
   ...toolkitRedirectionSectionStyle,
   width: '100vw',
   height: 'max-content',
-  maxHeight: '700px',
   minWidth: undefined,
   maxWidth: undefined,
   borderRadius: 0,
@@ -49,12 +49,6 @@ const smallToolkitRedirectionSectionContentStyle: CSSProperties = {
   height: undefined,
   minHeight: undefined,
   flexDirection: 'column',
-  marginLeft: 'calc(-50% + 25px)',
-  marginRight: undefined,
-  position: 'absolute',
-  top: 0,
-  left: '50%',
-  marginTop: '40px',
   alignItems: 'center',
 }
 
@@ -74,7 +68,8 @@ const smallToolkitRedirectionColumnStyle: CSSProperties = {
   width: '100%',
   justifyContent: 'center',
   alignItems: 'center',
-  textAlign: 'center'
+  textAlign: 'center',
+  maxWidth: undefined
 }
 
 const titleStyle: CSSProperties = {
@@ -99,7 +94,6 @@ const subtitleStyle: CSSProperties = {
 const smallSubtitleStyle: CSSProperties = {
   ...subtitleStyle,
   width: '100%',
-  maxWidth: '400px',
   margin: '0 0 15px 0'
 }
 
@@ -173,8 +167,9 @@ const smallRedirectBg1Style: CSSProperties = {
   width: '100%',
   height: 'auto',
   zIndex: 0,
-  position: 'relative',
-  left: 0,
+  position: 'absolute',
+  left: '50%',
+  marginLeft: '-50%',
   top: 0,
   filter: 'blur(50px)'
 }
@@ -183,8 +178,9 @@ const smallRedirectBg2Style: CSSProperties = {
   width: '100%',
   height: 'auto',
   zIndex: 0,
-  position: 'relative',
-  right: 0,
+  position: 'absolute',
+  left: '50%',
+  marginLeft: '-50%',
   top: 0,
   filter: 'blur(50px)'
 }

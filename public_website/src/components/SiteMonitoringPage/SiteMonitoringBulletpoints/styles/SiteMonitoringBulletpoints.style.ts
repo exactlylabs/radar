@@ -70,6 +70,14 @@ const titleStyle: CSSProperties = {
   margin: '0 0 55px 0',
 }
 
+const smallTitleStyle: CSSProperties = {
+  fontSize: '26px',
+  lineHeight: '34px',
+  letterSpacing: '-0.56px',
+  color: DEFAULT_TEXT,
+  margin: '0 0 40px 0',
+}
+
 const cardsStyle: CSSProperties = {
   width: '100%',
   height: 'auto',
@@ -79,7 +87,7 @@ const smallCardsStyle: CSSProperties = {
   width: '100%',
   height: 'auto',
   marginBottom: '70px',
-  maxWidth: '450px',
+  maxWidth: '350px',
 }
 
 const rowStyle: CSSProperties = {
@@ -164,13 +172,18 @@ const siteMonitoringWrapperStyle: CSSProperties = {
   background: 'linear-gradient(to top, rgba(75, 123, 229, 0), rgba(211, 224, 255, 0.28))'
 }
 
+const smallSiteMonitoringWrapperStyle: CSSProperties = {
+  ...siteMonitoringWrapperStyle,
+  paddingTop: undefined
+}
+
 export const styles = {
   SiteMonitoringBulletPoints: (isSmall: boolean) => isSmall ? smallSiteMonitoringBulletPointsStyle : siteMonitoringBulletPointsStyle,
   SiteMonitoringBulletPointsContent: (isSmall: boolean) => isSmall ? smallSiteMonitoringBulletPointsContentStyle : siteMonitoringBulletPointsContentStyle,
   LeftColumn: leftColumnStyle,
   RightColumn: rightColumnStyle,
   Header: headerStyle,
-  Title: titleStyle,
+  Title: (isSmall: boolean) => isSmall ? smallTitleStyle : titleStyle,
   Cards: cardsStyle,
   SmallCards: smallCardsStyle,
   Row: rowStyle,
@@ -181,5 +194,5 @@ export const styles = {
   RowTitle: rowTitleStyle,
   RowSubtitle: rowSubtitleStyle,
   SmallSiteMonitoringBulletPointsContent: smallSiteMonitoringBulletPointsContentStyle,
-  SiteMonitoringWrapper: siteMonitoringWrapperStyle,
+  SiteMonitoringWrapper: (isSmall: boolean) => isSmall ? smallSiteMonitoringWrapperStyle : siteMonitoringWrapperStyle,
 }

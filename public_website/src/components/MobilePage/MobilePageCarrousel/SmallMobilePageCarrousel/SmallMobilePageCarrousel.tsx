@@ -1,4 +1,4 @@
-import {ReactElement, useRef, useState} from "react";
+import {ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "../styles/MobilePageCarrousel.style";
 import MobilePageCarrouselItem from "../MobilePageCarrouselItem/MobilePageCarrouselItem";
 import {CarrouselItem, carrouselItemSubtitles, carrouselItemTitles, itemImageSrc} from "../MobilePageCarrousel";
@@ -29,6 +29,13 @@ const SmallMobilePageCarrousel = ({
   const [scrollPosition, setScrollPosition] = useState<ScrollPosition>({clientX: 0, scrollX: 0});
   const sliderRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const item: HTMLElement | null = document.getElementById(`small-carrousel-scrollable-container`);
+    if(item) {
+      item.scrollTo(currentItem * 285, item.scrollHeight);
+    }
+  }, [currentItem])
+
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsScrolling(true);
     setScrollPosition({clientX: e.clientX, scrollX: scrollPosition.scrollX});
@@ -53,6 +60,7 @@ const SmallMobilePageCarrousel = ({
       <img src={itemImageSrc[currentItem]} style={styles.CarrouselImage(true)} alt={'mobile-app-carrousel'}/>
       <div style={styles.HorizontalCarrousel}
            ref={sliderRef}
+           id={'small-carrousel-scrollable-container'}
            className={'draggable-carrousel-container'}
            onMouseDown={handleMouseDown}
            onMouseUp={turnOffSlider}

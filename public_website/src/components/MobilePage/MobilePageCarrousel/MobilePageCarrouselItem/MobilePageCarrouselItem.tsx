@@ -41,6 +41,7 @@ const MobilePageCarrouselItem = ({
          onMouseOver={hover}
          onMouseLeave={unhover}
          onClick={selectItem}
+         id={`carrousel-item-${index}`}
     >
       <div style={styles.IconContainer}>
         {icon}

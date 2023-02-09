@@ -3,7 +3,8 @@ export enum AppRoutes {
   SITE_MONITORING = '/site-monitoring',
   BROADBAND_TESTING = '/broadband-testing',
   MOBILE_TESTING = '/mobile-testing',
-  PRIVACY_POLICY = '/privacy-policy'
+  PRIVACY_POLICY = '/privacy-policy',
+  GET_STARTED = '/get-started'
 }
 
 export const DEFAULT_MAIL_TO = 'mailto:support@radartoolkit.com';

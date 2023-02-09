@@ -14,7 +14,10 @@ const siteMonitoringNetworkIssuesStyle: CSSProperties = {
 const smallSiteMonitoringNetworkIssuesStyle: CSSProperties = {
   ...siteMonitoringNetworkIssuesStyle,
   height: undefined,
-  marginTop: 0
+  marginTop: 0,
+  width: '90%',
+  marginLeft: 'auto',
+  marginRight: 'auto'
 }
 
 const textContainerStyle: CSSProperties = {
@@ -48,7 +51,6 @@ const smallItemsContainerStyle: CSSProperties = {
   width: '100%',
   marginLeft: 'auto',
   marginRight: 'auto',
-  maxWidth: '400px',
 }
 
 const itemStyle: CSSProperties = {

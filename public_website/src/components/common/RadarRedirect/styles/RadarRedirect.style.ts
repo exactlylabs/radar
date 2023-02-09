@@ -37,15 +37,14 @@ const siteMonitoringRadarRedirectContentStyle: CSSProperties = {
 
 const smallSiteMonitoringRadarRedirectContentStyle: CSSProperties = {
   width: 'calc(100% - 50px)',
-  maxWidth: '375px',
-  minHeight: '285px',
   margin: 'auto',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'center',
   textAlign: 'center',
-  paddingTop: '40px'
+  paddingTop: '40px',
+  paddingBottom: '55px'
 }
 
 const titleStyle: CSSProperties = {

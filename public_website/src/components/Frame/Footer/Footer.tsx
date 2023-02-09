@@ -12,11 +12,12 @@ interface FooterProps {
   isDifferentColor?: boolean;
   height?: string;
   margin?: string;
+  smallFooterMarginTop?: string;
 }
 
 // Not doing 2 different components for viewport changes as they are
 // pretty small components on their own and quite a lot of shared styles.
-const Footer = ({isDifferentColor, height, margin}: FooterProps): ReactElement => {
+const Footer = ({isDifferentColor, height, margin, smallFooterMarginTop}: FooterProps): ReactElement => {
 
   const {isSmallScreen, isMidScreen} = useViewportSizes();
   const isSmall = isSmallScreen || isMidScreen;
@@ -49,7 +50,7 @@ const Footer = ({isDifferentColor, height, margin}: FooterProps): ReactElement =
   );
 
   const smallFooter = (
-    <div style={styles.SmallFooter(isDifferentColor)}>
+    <div style={styles.SmallFooter(isDifferentColor, smallFooterMarginTop)}>
       <div style={styles.SmallTopRow}>
         <img src={RadarLogoGray} style={styles.RadarLogo} alt={'radar-logo'}/>
         <div style={styles.LinkContainer}>
