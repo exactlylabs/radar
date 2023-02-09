@@ -27,7 +27,7 @@ const smallToolkitIntroductionSectionStyle: CSSProperties = {
 }
 
 const textContainerStyle: CSSProperties = {
-  maxWidth: '588px',
+  width: '588px',
   marginLeft: '25%',
   marginRight: '25%',
   textAlign: 'center',
@@ -37,12 +37,13 @@ const textContainerStyle: CSSProperties = {
 
 const smallTextContainerStyle: CSSProperties = {
   ...textContainerStyle,
+  width: undefined,
   maxWidth: '100%',
-  marginRight: undefined,
-  marginLeft: undefined,
+  marginRight: 'auto',
+  marginLeft: 'auto',
   margin: 0,
   position: 'relative',
-  zIndex: 2
+  zIndex: 5
 }
 
 const titleStyle: CSSProperties = {
@@ -159,13 +160,28 @@ const smallOrangeHeroBgStyle: CSSProperties = {
 }
 
 const mapBgStyle: CSSProperties = {
-  width: '110vw',
+  width: '120vw',
   height: 'auto',
   position: 'absolute',
   left: 0,
   top: '-55px',
-  background: `linear-gradient(to bottom,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 80%)`,
+}
+
+const smallMapBgStyle: CSSProperties = {
+  width: 'auto',
+  height: '35%',
+  position: 'absolute',
+  left: 0,
+  top: '-62px',
   backgroundSize: 'cover'
+}
+
+const largeMapBgStyle: CSSProperties = {
+  ...mapBgStyle,
+}
+
+const xlMapgBgStyle: CSSProperties = {
+  ...mapBgStyle,
 }
 
 const whiteCircle: CSSProperties = {
@@ -173,7 +189,17 @@ const whiteCircle: CSSProperties = {
   width: '100vw',
   height: '200vw',
   zIndex: 1,
-  top: '40%'
+  top: '40%',
+  maxHeight: '200vh'
+}
+
+const smallWhiteCircle: CSSProperties = {
+  position: 'absolute',
+  width: '100vw',
+  height: '200vw',
+  zIndex: 2,
+  top: '23%',
+  maxHeight: '87vh'
 }
 
 export const styles = {
@@ -195,6 +221,10 @@ export const styles = {
   PinkHeroBg: (isSmall: boolean) => isSmall ? smallPinkHeroBgStyle : pinkHeroBgStyle,
   OrangeHeroBg: (isSmall: boolean) => isSmall ? smallOrangeHeroBgStyle : orangeHeroBgStyle,
   MainWrapper: mainWrapperStyle,
-  MapBg: mapBgStyle,
-  WhiteCircle: whiteCircle,
+  MapBg: (isSmall: boolean) => {
+    let style = mapBgStyle;
+    if(isSmall) style = smallMapBgStyle;
+    return style;
+  },
+  WhiteCircle: (isSmall: boolean) => isSmall ? smallWhiteCircle : whiteCircle,
 }

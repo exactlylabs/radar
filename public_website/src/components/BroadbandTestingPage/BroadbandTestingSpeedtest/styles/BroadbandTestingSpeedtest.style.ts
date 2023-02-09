@@ -10,8 +10,8 @@ const broadbandTestingSpeedtestStyle: CSSProperties = {
 const smallBroadbandTestingSpeedtestStyle: CSSProperties = {
   width: '100%',
   paddingTop: '40px',
-  paddingBottom: '40px',
-  backgroundImage: 'linear-gradient(0, rgba(211, 224, 255, 0.58), rgba(211, 224, 255, 0.28))'
+  paddingBottom: '15px',
+  backgroundImage: 'linear-gradient(0deg, rgba(211, 224, 255, 0.0), rgba(211, 224, 255, 0.88))'
 }
 
 const broadbandTestingSpeedtestContentStyle: CSSProperties = {
@@ -68,16 +68,14 @@ const rightColumnStyle: CSSProperties = {
   height: '570px',
   backgroundColor: WHITE,
   boxShadow: `0 5px 10px 0 ${SPEED_TEST_BOX_SHADOW}`,
-  borderRadius: '8px'
 }
 
 const smallRightColumnStyle: CSSProperties = {
   width: '100vw',
   maxWidth: '588px',
-  height: 'auto',
+  height: '570px',
   backgroundColor: WHITE,
   boxShadow: `0 5px 10px 0 ${SPEED_TEST_BOX_SHADOW}`,
-  borderRadius: '8px',
   marginTop: '50px',
 }
 
@@ -142,7 +140,6 @@ const iframeStyle: CSSProperties = {
   height: '570px',
   border: 'none',
   boxShadow: `0 5px 10px 0 rgba(109, 106, 148, 0.1)`,
-  borderRadius: '8px'
 }
 
 const smallIframeStyle: CSSProperties = {

@@ -28,7 +28,7 @@ const ToolkitTabContentRow = ({
   const isSmall = isSmallScreen || isMidScreen;
 
   return (
-    <a href={link} target={openNewTab ? '_blank' : '_self'} style={{margin: 0, textDecoration: 'none'}}>
+    <a href={link} target={openNewTab ? '_blank' : '_self'} style={{margin: 0, textDecoration: 'none'}} rel="noreferrer">
       <div className={'hover-opaque'} style={styles.ToolkitTabContentRow(isSmall, isFirst)}>
         <div style={styles.IconContainer}>
           {icon}

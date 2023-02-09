@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import CustomButton from "../CustomButton/CustomButton";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
-import {DEFAULT_MAIL_TO, emailContact} from "../../../utils/navigation";
+import {AppRoutes} from "../../../utils/navigation";
 import {styles} from "./styles/RadarRedirect.style";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
@@ -46,7 +46,7 @@ const RadarRedirect = ({marginTop}: RadarRedirectProps): ReactElement => {
         <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Get started with Radar today.</p>
         <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Get in touch with us to find out how our solutions can help you.</p>
         <CustomButton text={'Get started'}
-                      link={DEFAULT_MAIL_TO}
+                      link={AppRoutes.GET_STARTED}
                       icon={<img src={ChevronRightWhite} style={styles.ChevronRight} alt={'chevron-right'}/>}
                       backgroundColor={DEFAULT_PRIMARY_BUTTON}
                       color={WHITE}

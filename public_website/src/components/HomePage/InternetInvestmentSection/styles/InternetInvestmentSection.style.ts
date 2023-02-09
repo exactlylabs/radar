@@ -87,7 +87,8 @@ const smallLongTextStyle: CSSProperties = {
   ...longTextStyle,
   fontSize: '26px',
   lineHeight: '34px',
-  letterSpacing: '-0.56px'
+  letterSpacing: '-0.56px',
+  maxWidth: undefined
 }
 
 const gradientTextStyle: CSSProperties = {

@@ -30,6 +30,7 @@ const textContainerStyle: CSSProperties = {
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   marginTop: '50px',
+  textAlign: 'left'
 }
 
 const smallTextContainerStyle: CSSProperties = {
@@ -92,7 +93,7 @@ const cardsStyle: CSSProperties = {
 const smallCardsStyle: CSSProperties = {
   width: '100%',
   height: 'auto',
-  maxWidth: '450px',
+  maxWidth: '350px',
   margin: '50px auto',
   zIndex: 1
 }
@@ -126,7 +127,8 @@ const siteMonitoringHeaderContentStyle: CSSProperties = {
   maxWidth: '1200px',
   margin: '0 auto',
   zIndex: 1,
-  position: 'relative'
+  position: 'relative',
+  textAlign: 'center'
 }
 
 const heroBlueBgStyle: CSSProperties = {

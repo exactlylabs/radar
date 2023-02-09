@@ -16,7 +16,7 @@ const SmallNavbarContent = (): ReactElement => {
 
   return (
     <div style={styles.NavbarContentWrapper(isNavbarOpen)}>
-      <div style={styles.NavbarContent}>
+      <div style={styles.NavbarContent(isNavbarOpen)}>
         <div>
           <a href={AppRoutes.HOME} style={styles.MarginlessLink}>
             <img className={'hover-opaque'} src={RadarLogo} style={styles.Logo} alt={'radar-logo'}/>

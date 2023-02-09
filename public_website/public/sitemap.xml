@@ -1,22 +1,32 @@
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://toolkit.exactlylabs.com/</loc>
-    <lastmod>2023-30-01</lastmod>
+    <loc>https://radartoolkit.com/</loc>
+    <lastmod>2023-06-02</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://toolkit.exactlylabs.com/site-monitoring</loc>
-    <lastmod>2023-30-01</lastmod>
+    <loc>https://radartoolkit.com/site-monitoring</loc>
+    <lastmod>2023-06-02</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://toolkit.exactlylabs.com/broadband-testing</loc>
-    <lastmod>2023-30-01</lastmod>
+    <loc>https://radartoolkit.com/broadband-testing</loc>
+    <lastmod>2023-06-02</lastmod>
     <priority>0.7</priority>
   </url>
-    <url>
-    <loc>https://toolkit.exactlylabs.com/privacy-policy</loc>
-    <lastmod>2023-30-01</lastmod>
+  <url>
+    <loc>https://radartoolkit.com/privacy-policy</loc>
+    <lastmod>2023-06-02</lastmod>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://radartoolkit.com/get-started</loc>
+    <lastmod>2023-06-02</lastmod>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://radartoolkit.com/404</loc>
+    <lastmod>2023-06-02</lastmod>
     <priority>0.2</priority>
   </url>
 </urlset>

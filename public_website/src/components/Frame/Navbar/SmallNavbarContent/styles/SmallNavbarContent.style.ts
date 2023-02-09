@@ -1,5 +1,5 @@
 import {CSSProperties} from "react";
-import {OPEN_NAVBAR_BOX_SHADOW} from "../../../../../utils/colors";
+import {OPEN_NAVBAR_BOX_SHADOW, WHITE} from "../../../../../utils/colors";
 
 const navbarContentWrapperStyle: CSSProperties = {
   display: 'flex',
@@ -16,9 +16,17 @@ const navbarContentWrapperWithShadowStyle: CSSProperties = {
 
 const navbarContentStyle: CSSProperties = {
   width: 'calc(100% - 40px)',
-  height: '25px',
-  margin: '20px auto',
+  height: '65px',
+  display: 'flex',
+  alignItems: 'center',
+  margin: 'auto',
   position: 'relative'
+}
+
+const openNavbarContentStyle: CSSProperties = {
+  ...navbarContentStyle,
+  backgroundColor: WHITE,
+
 }
 
 const logoStyle: CSSProperties = {
@@ -44,7 +52,7 @@ export const styles = {
   NavbarContentWrapper: (isOpen: boolean) => {
     return isOpen ? navbarContentWrapperWithShadowStyle : navbarContentWrapperStyle;
   },
-  NavbarContent: navbarContentStyle,
+  NavbarContent: (isOpen: boolean) => isOpen ? openNavbarContentStyle : navbarContentStyle,
   Logo: logoStyle,
   Icon: iconStyle,
   MarginlessLink: marginlessLinkStyle,

@@ -17,10 +17,10 @@ const smallToolkitIntroductionTableStyle: CSSProperties = {
   ...toolkitIntroductionTableStyle,
   flexDirection: 'column',
   width: '100%',
-  maxWidth: '588px',
   height: 'max-content',
   marginTop: '-20px',
-  alignItems: 'center'
+  alignItems: 'center',
+  zIndex: 3
 }
 
 const toolkitIntroductionTableColumnStyle: CSSProperties = {
@@ -36,6 +36,7 @@ const toolkitIntroductionTableColumnStyle: CSSProperties = {
 
 const smallToolkitIntroductionTableColumnStyle: CSSProperties = {
   ...toolkitIntroductionTableColumnStyle,
+  maxWidth: '100%',
   width: '100%',
   height: 'auto',
 }
@@ -73,7 +74,6 @@ const titleStyle: CSSProperties = {
 
 const subtitleStyle: CSSProperties = {
   width: '100%',
-  maxWidth: '278px',
   fontSize: '17px',
   lineHeight: '28px',
   color: DEFAULT_TEXT,
@@ -82,6 +82,8 @@ const subtitleStyle: CSSProperties = {
 
 const smallSubtitleStyle: CSSProperties = {
   ...subtitleStyle,
+  fontSize: '16px',
+  lineHeight: '26px',
   width: '100%',
   margin: '0 0 30px 0',
 }

@@ -12,7 +12,7 @@ const RegularSiteMonitoringBulletPointsContent = () => (
   <>
     <div style={styles.LeftColumn}>
       <p className={'fw-bold'} style={styles.Header}>Location Monitoring</p>
-      <p className={'fw-extra-bold'} style={styles.Title}>Continuous & autonomous monitoring for your home or business.</p>
+      <p className={'fw-extra-bold'} style={styles.Title(false)}>Continuous & autonomous monitoring for your home or business.</p>
       <img src={SiteMonitoringTwoCards} style={styles.Cards} alt={'site-monitoring-two-cards'}/>
     </div>
     <div style={styles.RightColumn}>
@@ -50,7 +50,7 @@ const RegularSiteMonitoringBulletPointsContent = () => (
 const SmallSiteMonitoringBulletPointsContent = () => (
   <div style={styles.SmallSiteMonitoringBulletPointsContent}>
     <p className={'fw-bold'} style={styles.Header}>Location Monitoring</p>
-    <p className={'fw-extra-bold'} style={styles.Title}>Continuous & autonomous monitoring for your home or business.</p>
+    <p className={'fw-extra-bold'} style={styles.Title(true)}>Continuous & autonomous monitoring for your home or business.</p>
     <div style={styles.SmallRow}>
       <div style={styles.RowIconContainer(true)}>
         <img src={RouterIcon} style={styles.RowIcon} alt={'router-icon'}/>
@@ -88,7 +88,7 @@ const SiteMonitoringBulletpoints = (): ReactElement => {
   const isSmall = isSmallScreen || isMidScreen;
 
   return (
-    <div style={styles.SiteMonitoringWrapper}>
+    <div style={styles.SiteMonitoringWrapper(isSmall)}>
       <div style={styles.SiteMonitoringBulletPoints(isSmall)}>
         <div style={styles.SiteMonitoringBulletPointsContent(isSmall)}>
           { isSmall ? <SmallSiteMonitoringBulletPointsContent/> : <RegularSiteMonitoringBulletPointsContent/> }

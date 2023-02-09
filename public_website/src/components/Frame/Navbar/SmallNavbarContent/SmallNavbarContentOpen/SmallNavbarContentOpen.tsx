@@ -7,12 +7,15 @@ import {ToolkitTabContentRowTitle} from "../../RegularNavbarContent/ToolkitFloat
 import {
   commonStyles
 } from "../../RegularNavbarContent/ToolkitFloatingMenu/RightSideToolkitTabContent/styles/common.style";
-import {AppRoutes, DEFAULT_MAIL_TO, ExternalRoutes} from "../../../../../utils/navigation";
+import {AppRoutes, ExternalRoutes} from "../../../../../utils/navigation";
+import CustomButton from "../../../../common/CustomButton/CustomButton";
+import {DEFAULT_PRIMARY_BUTTON, WHITE} from "../../../../../utils/colors";
 
-const BroadbandTestingIcon = "/assets/images/broadband-testing-icon.png";
-const MappingToolsIcon = "/assets/images/mapping-tools-icon.png";
-const SiteMonitoringIcon = "/assets/images/site-monitoring-icon.png";
+const BroadbandTestingIcon = "/assets/images/floating-toolkit-broadband-testing-icon.png";
+const MappingToolsIcon = "/assets/images/floating-toolkit-map-icon.png";
+const SiteMonitoringIcon = "/assets/images/floating-toolkit-site-monitoring-icon.png";
 const RedirectArrowGray = '/assets/images/redirect-arrow-gray.png';
+const RightChevron = '/assets/images/chevron-right-white.png';
 
 const SmallNavbarContentOpen = (): ReactElement => {
   return (
@@ -42,11 +45,12 @@ const SmallNavbarContentOpen = (): ReactElement => {
 
         />
         <NavbarHorizontalDivider/>
-        <a className={'fw-bold hover-opaque'}
-           href={DEFAULT_MAIL_TO}
-           style={styles.Link}>
-          Contact Us
-        </a>
+        <CustomButton text={'Get started'}
+                      link={AppRoutes.GET_STARTED}
+                      backgroundColor={DEFAULT_PRIMARY_BUTTON}
+                      color={WHITE}
+                      icon={<img src={RightChevron} style={styles.Icon} alt={'white right chevron'}/>}
+        />
       </div>
     </div>
   )
