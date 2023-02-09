@@ -17,6 +17,9 @@ import (
 	"github.com/exactlylabs/radar/agent/watchdog"
 )
 
+// firstPing since the service has started. It's set to false right after a successful ping
+var firstPing = true
+
 type radarClient struct {
 	serverUrl string
 }
@@ -47,6 +50,7 @@ func (c *radarClient) Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*
 	form.Add("watchdog_version", meta.WatchdogVersion)
 	form.Add("os_version", runtime.GOOS)
 	form.Add("hardware_platform", runtime.GOARCH)
+	form.Add("service_first_ping", fmt.Sprintf("%t", firstPing))
 	ifaces, err := json.Marshal(meta.NetInterfaces)
 	if err != nil {
 		return nil, fmt.Errorf("radarClient#Ping error marshalling NetInterfaces: %w", err)
@@ -68,6 +72,7 @@ func (c *radarClient) Ping(clientId, secret string, meta *sysinfo.ClientMeta) (*
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("radarClient#Ping wrong status code %d", resp.StatusCode)
 	}
+	firstPing = false
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
