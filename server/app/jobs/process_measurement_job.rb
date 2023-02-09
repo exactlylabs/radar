@@ -33,12 +33,6 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.latency = result["MinRTT"]["Value"]
       measurement.extended_info = extended_info
       
-      measurement.processed = true
-      measurement.processed_at = measurement.processed_at ? measurement.processed_at : Time.now
-      measurement.download_total_bytes = 0 if measurement.download_total_bytes.nil?
-      measurement.upload_total_bytes = 0 if measurement.upload_total_bytes.nil?
-      measurement.save
-      measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes + measurement.upload_total_bytes)
     when "OOKLA"
       result = JSON.parse(measurement.result.download)
 
@@ -48,14 +42,15 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.jitter = result["ping"]["jitter"]
       measurement.download_total_bytes = result["download"]["bytes"] * 1.1 # From tests, it seems that the real value is 3-10% of what the test returns
       measurement.upload_total_bytes = result["upload"]["bytes"] * 1.1 # From tests, it seems that the real value is 5-10% of what the test returns
-      measurement.processed = true
-      measurement.processed_at = measurement.processed_at ? measurement.processed_at : Time.now
-      measurement.download_total_bytes = 0 if measurement.download_total_bytes.nil?
-      measurement.upload_total_bytes = 0 if measurement.upload_total_bytes.nil?
-      measurement.save
-      
-      measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes + measurement.upload_total_bytes)
+  
     end
+    measurement.processed = true
+    measurement.processed_at = measurement.processed_at ? measurement.processed_at : Time.now
+    measurement.download_total_bytes = 0 if measurement.download_total_bytes.nil?
+    measurement.upload_total_bytes = 0 if measurement.upload_total_bytes.nil?
+    measurement.save
+    measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes + measurement.upload_total_bytes)
+  
     # Only update client's test_requested status once the actual measurement was already processed
     measurement.client.update(test_requested: false)
     if measurement.location.present?
