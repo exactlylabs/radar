@@ -8,13 +8,20 @@ class ProcessMeasurementJob < ApplicationJob
       data = measurement.result.download.split("\n")
       extended_info = nil
       data.reverse.each do |line|
-        row = JSON.parse(line)
+        begin
+          row = JSON.parse(line)
+        rescue JSON::ParserError
+          next
+        end
         if row["Key"] == "measurement" && row["Value"]["TCPInfo"] && extended_info.nil?
           extended_info = row["Value"]["TCPInfo"]
         end
-        if row["Key"] == "measurement" && row["Value"]["Test"] == "upload" && row["Value"]["AppInfo"] && measurement.upload_total_bytes.nil?
+        if row["Key"] == "measurement" && row["Value"]["Test"] == "download" && row["Value"]["TCPInfo"] && measurement.loss_rate.nil?
+          measurement.loss_rate = (row["Value"]["TCPInfo"]["BytesRetrans"] / row["Value"]["TCPInfo"]["BytesSent"]) * 100.0
+        end
+        if row["Key"] == "measurement" && row["Value"]["Test"] == "upload" && row["Value"]["AppInfo"] && (measurement.upload_total_bytes.nil? || measurement.upload_total_bytes == 0)
           measurement.upload_total_bytes = row["Value"]["AppInfo"]["NumBytes"] * 1.1 # From tests, it seems that the real value is 5-10% of what the test returns
-        elsif row["Key"] == "measurement" && row["Value"]["Test"] == "download" && row["Value"]["AppInfo"] && measurement.download_total_bytes.nil?
+        elsif row["Key"] == "measurement" && row["Value"]["Test"] == "download" && row["Value"]["AppInfo"] && (measurement.download_total_bytes.blank? || measurement.download_total_bytes == 0)
           measurement.download_total_bytes = row["Value"]["AppInfo"]["NumBytes"] * 1.1 # From tests, it seems that the real value is 3-10% of what the test returns
         end
       end
@@ -27,7 +34,7 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.extended_info = extended_info
       
       measurement.processed = true
-      measurement.processed_at = Time.now
+      measurement.processed_at = measurement.processed_at ? measurement.processed_at : Time.now
       measurement.download_total_bytes = 0 if measurement.download_total_bytes.nil?
       measurement.upload_total_bytes = 0 if measurement.upload_total_bytes.nil?
       measurement.save
@@ -41,6 +48,8 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.jitter = result["ping"]["jitter"]
       measurement.download_total_bytes = result["download"]["bytes"] * 1.1 # From tests, it seems that the real value is 3-10% of what the test returns
       measurement.upload_total_bytes = result["upload"]["bytes"] * 1.1 # From tests, it seems that the real value is 5-10% of what the test returns
+      measurement.processed = true
+      measurement.processed_at = measurement.processed_at ? measurement.processed_at : Time.now
       measurement.download_total_bytes = 0 if measurement.download_total_bytes.nil?
       measurement.upload_total_bytes = 0 if measurement.upload_total_bytes.nil?
       measurement.save
