@@ -23,7 +23,7 @@ FROM (
         quantileExact(0.5)(m.min_rtt) as med_ip_rtt,
         m.upload,
         YEAR(m.time) as year,
-        (MONTH(m.time) / 4)::int + 1 as quarter
+        toQuarter(m.time) as quarter
     FROM measurements m
     GROUP BY m.geospace_id, m.asn_org_id, m.upload, m.ip, year, quarter
 ) m_ip 
