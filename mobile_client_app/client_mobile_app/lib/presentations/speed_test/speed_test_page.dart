@@ -42,7 +42,8 @@ class SpeedTestPage extends StatelessWidget {
                   builder: (context, constraints) {
                     return Container(
                       color: Theme.of(context).backgroundColor,
-                      padding: EdgeInsets.symmetric(horizontal: state.step == 4 ? 15.0 : 20.0),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP ? 15.0 : 20.0),
                       child: Stack(
                         children: [
                           SingleChildScrollView(
@@ -114,7 +115,8 @@ class SpeedTestPage extends StatelessWidget {
                               left: 0.0,
                               right: 0.0,
                               child: Padding(
-                                padding: EdgeInsets.only(bottom: state.step == 3 ? 20.0 : 40.0),
+                                padding: EdgeInsets.only(
+                                    bottom: state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP ? 20.0 : 40.0),
                                 child: GoBackAndContinueButtons(
                                   onContinuePressed: state.onContinue,
                                   onGoBackPressed: state.onBack,
