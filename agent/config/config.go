@@ -36,7 +36,7 @@ type Config struct {
 	SentryDsn         string
 	RegistrationToken *string `config:"registration_token"`
 	// CRL stands for Certificate Revocation List
-	CRLUrl string
+	CRLUrl string `env:"CRL_URL"`
 }
 
 func (c *Config) LastTestedAt() *time.Time {
@@ -61,7 +61,26 @@ func mapConfigs(config *Config) map[string]reflect.Value {
 	for i := 0; i < confType.NumField(); i++ {
 		field := confType.Field(i)
 		confText := field.Tag.Get("config")
-		configs[confText] = confValue.Field(i)
+		if confText != "" {
+			configs[confText] = confValue.Field(i)
+		} else if envText, exists := field.Tag.Lookup("env"); exists {
+			// Populate environment type configurations
+			envOptions := strings.Split(envText, ",")
+			if len(envOptions) > 0 {
+				defaultValue := ""
+				if len(envOptions) > 1 {
+					defaultValue = envOptions[1]
+				}
+				if val, exists := os.LookupEnv(envOptions[0]); exists {
+					confValue.Field(i).SetString(val)
+				} else if str, isStr := confValue.Field(i).Interface().(string); isStr && str == "" {
+					confValue.Field(i).SetString(defaultValue)
+				} else if strPtr, isStrPtr := confValue.Field(i).Interface().(*string); isStrPtr && strPtr == nil {
+					confValue.Field(i).Set(reflect.ValueOf(&defaultValue))
+				}
+			}
+		}
+
 	}
 	return configs
 }
@@ -170,7 +189,12 @@ func LoadConfig() *Config {
 			}
 		}
 	}
+	fmt.Printf("%+v\n", config)
 	return config
+}
+
+func loadEnvConfigs(c *Config) {
+
 }
 
 func Reload() *Config {
