@@ -10,7 +10,7 @@ module ApplicationCable
 
     def connect
       if request.path == "/api/v1/clients/ws/"
-        self.client = load_client
+        load_client
         on_client_connected
       else
         self.current_account = identify_account
@@ -39,26 +39,27 @@ module ApplicationCable
     end
 
     def load_client
-      # Load a Client from the JWT
-      raw_token = request.params[:token]
-      begin
-        token = JsonWebToken.decode raw_token
-      rescue JWT::DecodeError => e
+      # Load a Client from the Basic Authorization header
+      token = request.authorization
+      token_key, token_value = token.split(" ")
+      if token_key != "Basic"
+        head :unauthorized
+      end
+      unix_user, secret = token_value.split(":")
+      self.client = Client.find_by_unix_user(unix_user)&.authenticate_secret(secret)
+      if self.client.nil?
         reject_unauthorized_connection
       end
-      self.client = Client.find token[:client_id]
     end
 
     def on_client_connected
       self.client.online = true
       self.client.ip = request.ip
-      self.client.using_websocket = true
       self.client.save!
     end
 
     def on_client_disconnected
         self.client.online = false
-        self.client.using_websocket = false
         self.client.save!
     end
   end
