@@ -85,18 +85,14 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 	a.Setup(ctx, c)
 
 	// Start the workers
-	a.wg.Add(2)
+	a.wg.Add(1)
 	go func() {
 		defer a.wg.Done()
 		defer tracing.NotifyPanic() // always add this to each new goroutine
 		startSpeedTestRunner(agentCtx, c, a.runTestCh, a.runners, a.client)
 	}()
-	go func() {
-		defer a.wg.Done()
-		defer tracing.NotifyPanic() // always add this to each new goroutine
-		a.client.Connect(agentCtx, a.pingRespCh)
-	}()
-
+	a.client.Connect(agentCtx, a.pingRespCh)
+	defer a.client.Close()
 	// Main Loop will listen to the responses and schedule Speed Tests when requested by the server
 	for {
 		select {
