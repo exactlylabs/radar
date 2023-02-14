@@ -24,9 +24,7 @@ class Client < ApplicationRecord
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, -> { where("online = true AND (pinged_at < ? OR pinged_at IS NULL)", (PING_DURATION * 1.5).second.ago) }
-  # TODO: add "in_service = true" to the query below
-  scope :where_test_should_be_requested, -> { where("test_scheduled_at <= ? AND test_requested = false", Time.now) }
-  
+  scope :where_test_should_be_requested, -> { where("test_scheduled_at <= ? OR test_scheduled_at IS NULL AND test_requested = false", Time.now) }
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where("location_id IS NULL") }
