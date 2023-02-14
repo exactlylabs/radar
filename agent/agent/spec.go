@@ -52,6 +52,7 @@ type Rebooter interface {
 
 type RadarClient interface {
 	Connect(ctx context.Context, ch chan<- *ServerMessage) error
+	Close() error
 	MeasurementReporter
 	Registerer
 	Pinger
