@@ -7,4 +7,8 @@ class NavigationCubit extends Cubit<NavigationState> {
   void changeTab(int index) {
     emit(state.copyWith(currentIndex: index));
   }
+
+  static const SPEED_TEST_INDEX = 0;
+  static const RESULTS_INDEX = 1;
+  static const MAP_INDEX = 2;
 }

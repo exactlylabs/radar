@@ -6,7 +6,9 @@ import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
+import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/summary_table.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/results_table.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_cubit.dart';
@@ -74,11 +76,13 @@ class TestResultsStep extends StatelessWidget {
             color: AppColors.darkGrey,
           ),
         ),
-        ExploreYoutAreaButton(
+        ExploreYourAreaButton(
           onPressed: () {
-            context.read<NavigationCubit>().changeTab(2);
-            context.read<SpeedTestCubit>().resetForm();
-            context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
+            if (InheritedConnectivityStatus.of(context).isConnected) {
+              _onExploreYourAreaPressesd(context);
+            } else {
+              openNoInternetConnectionModal(context, () => _onExploreYourAreaPressesd(context));
+            }
           },
         ),
         SpacerWithMax(size: height * 0.037, maxSize: 17.0),
@@ -94,7 +98,7 @@ class TestResultsStep extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              context.read<NavigationCubit>().changeTab(1);
+              context.read<NavigationCubit>().changeTab(NavigationCubit.RESULTS_INDEX);
               context.read<SpeedTestCubit>().resetForm();
               context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
             },
@@ -114,11 +118,24 @@ class TestResultsStep extends StatelessWidget {
                 color: AppColors.darkGrey,
               ),
             ),
-            onPressed: () => context.read<TakeSpeedTestStepCubit>().startDownloadTest(),
+            onPressed: () {
+              if (InheritedConnectivityStatus.of(context).isConnected) {
+                context.read<TakeSpeedTestStepCubit>().startDownloadTest();
+              } else {
+                openNoInternetConnectionModal(
+                    context, () => context.read<TakeSpeedTestStepCubit>().startDownloadTest());
+              }
+            },
           ),
         ),
         SpacerWithMax(size: height * 0.053, maxSize: 45.0),
       ],
     );
+  }
+
+  void _onExploreYourAreaPressesd(BuildContext context) {
+    context.read<NavigationCubit>().changeTab(NavigationCubit.RESULTS_INDEX);
+    context.read<SpeedTestCubit>().resetForm();
+    context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
   }
 }

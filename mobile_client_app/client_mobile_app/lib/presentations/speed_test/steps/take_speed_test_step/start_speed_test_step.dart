@@ -4,7 +4,9 @@ import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
+import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/results_table.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/summary_table.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_cubit.dart';
@@ -45,7 +47,14 @@ class StartSpeedTestStep extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
             ),
-            onPressed: () => context.read<TakeSpeedTestStepCubit>().startDownloadTest(),
+            onPressed: () {
+              if (InheritedConnectivityStatus.of(context).isConnected) {
+                context.read<TakeSpeedTestStepCubit>().startDownloadTest();
+              } else {
+                openNoInternetConnectionModal(
+                    context, () => context.read<TakeSpeedTestStepCubit>().startDownloadTest());
+              }
+            },
           ),
         ),
         SpacerWithMax(size: height * 0.068, maxSize: 55.0),

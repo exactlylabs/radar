@@ -3,8 +3,8 @@ import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 
-class ExploreYoutAreaButton extends StatelessWidget {
-  const ExploreYoutAreaButton({
+class ExploreYourAreaButton extends StatelessWidget {
+  const ExploreYourAreaButton({
     Key? key,
     this.onPressed,
   }) : super(key: key);

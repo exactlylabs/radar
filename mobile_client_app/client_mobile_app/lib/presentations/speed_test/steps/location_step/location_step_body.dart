@@ -1,17 +1,19 @@
 import 'dart:async';
 
-import 'package:client_mobile_app/presentations/speed_test/widgets/location_input_field_with_suggestions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
+import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/error_message.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/agree_to_terms.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/current_location_button.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/bloc/location_step_cubit.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/location_input_field_with_suggestions.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_picker_modal/location_picker_modal.dart';
 
 class LocationStepBody extends StatefulWidget {
@@ -79,7 +81,13 @@ class _LocationStepBodyState extends State<LocationStepBody> {
                 suggestionsCallback: (value) => context.read<LocationStepCubit>().delayedSearch(value),
               ),
               SpacerWithMax(size: height * 0.0185, maxSize: 15.0),
-              CurrentLocationButton(onPressed: () => context.read<LocationStepCubit>().getCurrentLocation()),
+              CurrentLocationButton(onPressed: () {
+                if (InheritedConnectivityStatus.of(context).isConnected) {
+                  context.read<LocationStepCubit>().getCurrentLocation();
+                } else {
+                  openNoInternetConnectionModal(context, () => context.read<LocationStepCubit>().getCurrentLocation());
+                }
+              }),
             ],
           ),
           if (widget.locationError != null || widget.termsError != null) ...[
