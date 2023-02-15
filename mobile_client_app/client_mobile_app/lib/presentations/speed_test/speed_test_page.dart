@@ -1,11 +1,12 @@
-import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/ftue_app_modal.dart';
-import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
+import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
+import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/ftue_app_modal.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/steps_indicator.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_place_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/no_internet_connection_page.dart';
@@ -14,6 +15,7 @@ import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/take_speed_test_step.dart';
 
 class SpeedTestPage extends StatelessWidget {
@@ -118,7 +120,13 @@ class SpeedTestPage extends StatelessWidget {
                                 padding: EdgeInsets.only(
                                     bottom: state.step == SpeedTestCubit.TAKE_SPEED_TEST_STEP ? 20.0 : 40.0),
                                 child: GoBackAndContinueButtons(
-                                  onContinuePressed: state.onContinue,
+                                  onContinuePressed: () {
+                                    if (InheritedConnectivityStatus.of(context).isConnected) {
+                                      state.onContinue?.call();
+                                    } else {
+                                      openNoInternetConnectionModal(context, () => state.onContinue?.call());
+                                    }
+                                  },
                                   onGoBackPressed: state.onBack,
                                 ),
                               ),
