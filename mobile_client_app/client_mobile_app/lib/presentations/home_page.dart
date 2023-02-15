@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/presentations/home_page_body.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({
@@ -13,55 +15,63 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NavigationCubit, NavigationState>(
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Theme.of(context).backgroundColor,
-          bottomNavigationBar: SizedBox(
-            child: BottomNavigationBar(
-              items: [
-                BottomNavigationBarItem(
-                  icon: Container(
-                    margin: const EdgeInsets.only(bottom: 5.0),
-                    child: Image.asset(Images.speedTest),
+    return InheritedConnectivityStatus(
+      child: BlocBuilder<NavigationCubit, NavigationState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).backgroundColor,
+            bottomNavigationBar: SizedBox(
+              child: BottomNavigationBar(
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Container(
+                      margin: const EdgeInsets.only(bottom: 5.0),
+                      child: Image.asset(Images.speedTest),
+                    ),
+                    activeIcon: Container(
+                      margin: const EdgeInsets.only(bottom: 5.0),
+                      child: Image.asset(Images.speedTestSelected),
+                    ),
+                    label: Strings.speedTestLabel,
                   ),
-                  activeIcon: Container(
-                    margin: const EdgeInsets.only(bottom: 5.0),
-                    child: Image.asset(Images.speedTestSelected),
+                  BottomNavigationBarItem(
+                    icon: Container(
+                      margin: const EdgeInsets.only(bottom: 5.0),
+                      child: Image.asset(Images.yourResults),
+                    ),
+                    activeIcon: Container(
+                      margin: const EdgeInsets.only(bottom: 5.0),
+                      child: Image.asset(Images.yourResultsSelected),
+                    ),
+                    label: Strings.yourResultsLabel,
                   ),
-                  label: Strings.speedTestLabel,
-                ),
-                BottomNavigationBarItem(
-                  icon: Container(
-                    margin: const EdgeInsets.only(bottom: 5.0),
-                    child: Image.asset(Images.yourResults),
+                  BottomNavigationBarItem(
+                    icon: Container(
+                      margin: const EdgeInsets.only(bottom: 5.0),
+                      child: Image.asset(Images.map),
+                    ),
+                    activeIcon: Container(
+                      margin: const EdgeInsets.only(bottom: 5.0),
+                      child: Image.asset(Images.mapSelected),
+                    ),
+                    label: Strings.mapLabel,
                   ),
-                  activeIcon: Container(
-                    margin: const EdgeInsets.only(bottom: 5.0),
-                    child: Image.asset(Images.yourResultsSelected),
-                  ),
-                  label: Strings.yourResultsLabel,
-                ),
-                BottomNavigationBarItem(
-                  icon: Container(
-                    margin: const EdgeInsets.only(bottom: 5.0),
-                    child: Image.asset(Images.map),
-                  ),
-                  activeIcon: Container(
-                    margin: const EdgeInsets.only(bottom: 5.0),
-                    child: Image.asset(Images.mapSelected),
-                  ),
-                  label: Strings.mapLabel,
-                ),
-              ],
-              type: BottomNavigationBarType.fixed,
-              currentIndex: state.currentIndex,
-              onTap: (index) => context.read<NavigationCubit>().changeTab(index),
+                ],
+                type: BottomNavigationBarType.fixed,
+                currentIndex: state.currentIndex,
+                onTap: (index) {
+                  if (index != NavigationCubit.MAP_INDEX || InheritedConnectivityStatus.of(context).isConnected) {
+                    context.read<NavigationCubit>().changeTab(index);
+                  } else {
+                    openNoInternetConnectionModal(context, () => context.read<NavigationCubit>().changeTab(index));
+                  }
+                },
+              ),
             ),
-          ),
-          body: HomePageBody(pageIdx: state.currentIndex),
-        );
-      },
+            body: HomePageBody(pageIdx: state.currentIndex),
+          );
+        },
+      ),
     );
   }
 }

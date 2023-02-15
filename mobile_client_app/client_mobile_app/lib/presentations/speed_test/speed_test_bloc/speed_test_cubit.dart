@@ -154,7 +154,7 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
         } else if (connectivity == ConnectivityResult.ethernet) {
           _setNetworkType(Strings.wiredConnectionType);
         } else {
-          // TODO: Handle no connection case
+          emit(state.resetSpecificStep(false, true, false));
         }
       },
     );

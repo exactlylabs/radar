@@ -5,12 +5,14 @@ import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
-import 'package:client_mobile_app/presentations/your_results/bloc/your_results_cubit.dart';
-import 'package:client_mobile_app/presentations/your_results/bloc/your_results_state.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
+import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
+import 'package:client_mobile_app/presentations/your_results/bloc/your_results_cubit.dart';
+import 'package:client_mobile_app/presentations/your_results/bloc/your_results_state.dart';
 import 'package:client_mobile_app/presentations/your_results/widgets/results_list.dart';
 import 'package:client_mobile_app/presentations/your_results/widgets/results_header.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
 
 class YourResultsPage extends StatelessWidget {
   const YourResultsPage({
@@ -56,7 +58,14 @@ class YourResultsPage extends StatelessWidget {
                         fontWeight: 700,
                       ),
                     ),
-                    onPressed: () => context.read<NavigationCubit>().changeTab(2),
+                    onPressed: () {
+                      if (InheritedConnectivityStatus.of(context).isConnected) {
+                        context.read<NavigationCubit>().changeTab(NavigationCubit.MAP_INDEX);
+                      } else {
+                        openNoInternetConnectionModal(
+                            context, () => context.read<NavigationCubit>().changeTab(NavigationCubit.MAP_INDEX));
+                      }
+                    },
                   ),
                 ),
                 SpacerWithMax(size: height * 0.037, maxSize: 25.0),
