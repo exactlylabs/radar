@@ -2,8 +2,6 @@ package agent
 
 import (
 	"context"
-
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
 )
 
 type BinaryUpdate struct {
@@ -14,10 +12,6 @@ type ServerMessage struct {
 	TestRequested  bool
 	Update         *BinaryUpdate
 	WatchdogUpdate *BinaryUpdate
-}
-
-type Pinger interface {
-	Ping(meta *sysinfo.ClientMeta) (*ServerMessage, error)
 }
 
 type RegisteredPod struct {
@@ -55,5 +49,4 @@ type RadarClient interface {
 	Close() error
 	MeasurementReporter
 	Registerer
-	Pinger
 }
