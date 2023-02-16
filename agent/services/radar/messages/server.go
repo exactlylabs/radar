@@ -14,8 +14,6 @@ const (
 	Ping                MessageType = "ping"
 	ConfirmSubscription MessageType = "confirm_subscription"
 	RejectSubscription  MessageType = "reject_subscription"
-	RunTest             MessageType = "run_test" // Custom Type, when requested, the agent should run a speed test
-	Update              MessageType = "update"   // Custom Type, when requested, the agent should update itself
 )
 
 // Identifier enables us to know from which subscription the message came,
@@ -61,13 +59,22 @@ type ServerMessage struct {
 }
 
 // DecodeMessage decodes the contents from Message field into the given object
-func (rm ServerMessage) DecodeMessage(obj interface{}) error {
-	data, err := json.Marshal(rm.Message)
+func (sm ServerMessage) DecodeMessage(obj interface{}) error {
+	data, err := sm.EncodedMessage()
 	if err != nil {
-		return fmt.Errorf("messages.ServerMessage#DecodeMessage Marshal: %w", err)
+		return err
 	}
 	if err := json.Unmarshal(data, obj); err != nil {
 		return fmt.Errorf("messages.ServerMessage#DecodeMessage Unmarshal: %w", err)
 	}
 	return nil
+}
+
+// EncodedMessage tries to transform the Message field in an encoded JSON
+func (sm ServerMessage) EncodedMessage() ([]byte, error) {
+	data, err := json.Marshal(sm.Message)
+	if err != nil {
+		return nil, fmt.Errorf("messages.ServerMessage#EncodedMessage Marshal: %w", err)
+	}
+	return data, nil
 }
