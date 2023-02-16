@@ -2,7 +2,7 @@ package messages
 
 import "encoding/json"
 
-// CommandType is the types of commands accepted by the server
+// CommandType accepted by ActionCable protocol
 type CommandType string
 
 const (
@@ -11,14 +11,11 @@ const (
 	Message     CommandType = "message" // Use when sending custom actions
 )
 
-// CustomActionTypes has the custom actions the server exposes
+// CustomActionTypes that a specific channel exposes
 type CustomActionTypes string
 
-const (
-	Sync CustomActionTypes = "sync"
-	Pong CustomActionTypes = "pong"
-)
-
+// CustomActionData is the payload sent to the server for a Message CommandType
+// its Payload depends on the Action called and is specific to a channel
 type CustomActionData struct {
 	Action  CustomActionTypes `json:"action"`
 	Payload interface{}       `json:"payload"`

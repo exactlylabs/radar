@@ -1,12 +1,15 @@
 package messages
 
-import "github.com/exactlylabs/radar/agent/agent"
+import (
+	"encoding/json"
 
-// SubscriptionMessage has the base structure of ServerMessage.Message
-// when receiving a Subscription message from the server
+	"github.com/exactlylabs/radar/agent/agent"
+)
+
+// SubscriptionMessage is the content a Subscription MessageType
 type SubscriptionMessage struct {
-	Event   string `json:"type"`
-	Payload []byte `json:"payload"`
+	Event   string          `json:"event"`
+	Payload json.RawMessage `json:"payload"`
 }
 
 // TestRequestedSubscriptionPayload has the payload sent from the server, when it asks for a test
@@ -14,10 +17,7 @@ type TestRequestedSubscriptionPayload struct {
 	TestRequested bool `json:"test_requested"`
 }
 
-// UpdateRequestedSubscriptionPayload has the payload sent from the server when the server wants to update this agent
-type UpdateRequestedSubscriptionPayload struct {
-	// Client is the path to update this agent
-	Client *agent.BinaryUpdate `json:"client"`
-	// Watchdog is the path to update this agent's Watchdog -- Only applicable when in one of our managed pods
-	Watchdog *agent.BinaryUpdate `json:"watchdog"`
+// VersionChangedSubscriptionPayload has the payload sent from the server when the server wants to update this agent
+type VersionChangedSubscriptionPayload struct {
+	agent.BinaryUpdate
 }
