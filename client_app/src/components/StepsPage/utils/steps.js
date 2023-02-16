@@ -1,4 +1,4 @@
-export const steps = {
+export const STEPS = {
   CONNECTION_ADDRESS: 0,
   CONNECTION_PLACEMENT: 1,
   CONNECTION_TYPE: 2,

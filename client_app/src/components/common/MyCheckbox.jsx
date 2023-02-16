@@ -16,8 +16,8 @@ const myCheckboxStyle = {
 }
 
 const checkedInsideStyle = {
-  width: '99%',
-  height: '99%',
+  width: '100%',
+  height: '100%',
   borderRadius: 5,
   backgroundColor: DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR,
   border: 'none',
@@ -27,9 +27,9 @@ const checkedInsideStyle = {
   alignItems: 'center'
 }
 
-const MyCheckbox = ({onChange}) => {
+const MyCheckbox = ({onChange, isChecked}) => {
 
-  const [selected, setSelected] = useState(false);
+  const [selected, setSelected] = useState(isChecked);
 
   const handleOnChange = () => {
     onChange(!selected);

@@ -68,7 +68,7 @@ const SuggestionRow = ({
   }
 
   const autofillInputAndCloseSuggestions = () => {
-    if(index > 0) {
+    if(index >= 0) {
       autofillInput(index, suggestion);
     }
     setOpen(false);

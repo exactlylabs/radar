@@ -5,7 +5,7 @@ import {
   DEFAULT_TABS_BACKGROUND_COLOR,
   DEFAULT_UNSELECTED_TAB_COLOR,
 } from '../../utils/colors';
-import { STEPS } from '../../constants';
+import { TABS } from '../../constants';
 import speedTestIconActive from '../../assets/test-icon-active.png';
 import speedTestIconInactive from '../../assets/test-icon-inactive.png';
 import exploreMapIconActive from '../../assets/explore-icon-active.png';
@@ -13,6 +13,8 @@ import exploreMapIconInactive from '../../assets/explore-icon-inactive.png';
 import historyIconActive from '../../assets/history-icon-active.png';
 import historyIconInactive from '../../assets/history-icon-inactive.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import {useHistory} from "react-router-dom";
+import {useTabNavigation} from "../../hooks/useTabNavigation";
 
 const tabsWrapperStyle = {
   width: '100%',
@@ -99,35 +101,33 @@ const selectedTabUnderlineStyle = {
   borderRadius: '2.5px 2.5px 0 0'
 };
 
-const TABS = {
-  SPEED_TEST: 'speedTest',
-  EXPLORE_MAP: 'exploreMap',
-  HISTORY: 'history'
-};
-
 const Tabs = ({ step, setStep }) => {
   const [selectedTab, setSelectedTab] = useState(TABS.SPEED_TEST);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const tabsNavigator = useTabNavigation();
 
   useEffect(() => {
-    if(step === STEPS.HISTORY && selectedTab !== TABS.HISTORY) setSelectedTab(TABS.HISTORY);
-    else if (step === STEPS.ALL_RESULTS && selectedTab !== TABS.EXPLORE_MAP) setSelectedTab(TABS.EXPLORE_MAP);
-    else if (step === STEPS.SPEED_TEST && selectedTab !== TABS.SPEED_TEST) setSelectedTab(TABS.SPEED_TEST);
+    if(step === TABS.HISTORY && selectedTab !== TABS.HISTORY) setSelectedTab(TABS.HISTORY);
+    else if (step === TABS.ALL_RESULTS && selectedTab !== TABS.ALL_RESULTS) setSelectedTab(TABS.ALL_RESULTS);
+    else if (step === TABS.SPEED_TEST && selectedTab !== TABS.SPEED_TEST) setSelectedTab(TABS.SPEED_TEST);
   }, [step]);
 
   const goToExploreMap = () => {
-    setSelectedTab(TABS.EXPLORE_MAP);
-    setStep(STEPS.ALL_RESULTS);
+    tabsNavigator(TABS.ALL_RESULTS);
+    setSelectedTab(TABS.ALL_RESULTS);
+    setStep(TABS.ALL_RESULTS);
   };
 
   const goToTestSpeed = () => {
+    tabsNavigator(TABS.SPEED_TEST);
     setSelectedTab(TABS.SPEED_TEST);
-    setStep(STEPS.SPEED_TEST);
+    setStep(TABS.SPEED_TEST);
   };
 
   const goToHistory = () => {
+    tabsNavigator(TABS.HISTORY);
     setSelectedTab(TABS.HISTORY);
-    setStep(STEPS.HISTORY);
+    setStep(TABS.HISTORY);
   }
 
   const getTabStyle = (tabName) => {
@@ -170,17 +170,17 @@ const Tabs = ({ step, setStep }) => {
         </div>
 
         <div style={exploreMapTabStyle} onClick={goToExploreMap} id={'tabs--explore-map-button'}>
-          <div style={getTabStyle(TABS.EXPLORE_MAP)}>
+          <div style={getTabStyle(TABS.ALL_RESULTS)}>
             <img
-              src={selectedTab === TABS.EXPLORE_MAP ? exploreMapIconActive : exploreMapIconInactive}
+              src={selectedTab === TABS.ALL_RESULTS ? exploreMapIconActive : exploreMapIconInactive}
               width={18}
               height={18}
               style={tabIconStyle}
-              alt={selectedTab === TABS.EXPLORE_MAP ? 'explore-active' : 'explore-inactive'}
+              alt={selectedTab === TABS.ALL_RESULTS ? 'explore-active' : 'explore-inactive'}
             />
-            <div className={'bold tab-item--hoverable'} style={selectedTab === TABS.EXPLORE_MAP ? selectedContentStyle : null}>{ isMediumSizeScreen || isSmallSizeScreen ? 'Map' : 'Explore the Map'}</div>
+            <div className={'bold tab-item--hoverable'} style={selectedTab === TABS.ALL_RESULTS ? selectedContentStyle : null}>{ isMediumSizeScreen || isSmallSizeScreen ? 'Map' : 'Explore the Map'}</div>
           </div>
-          <div style={selectedTab === TABS.EXPLORE_MAP ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
+          <div style={selectedTab === TABS.ALL_RESULTS ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
       </div>
     </div>

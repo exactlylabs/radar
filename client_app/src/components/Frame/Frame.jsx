@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import Tabs from './Tabs';
 import {DEFAULT_MAIN_SECTION_BACKGROUND_COLOR, WHITE} from '../../utils/colors';
-import {STEPS} from "../../constants";
+import {TABS} from "../../constants";
 import WidgetFooter from "./WidgetFooter";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import {baseInitConfig} from "../../index";
 
 const defaultMainWrapperStyle = {
   backgroundColor: DEFAULT_MAIN_SECTION_BACKGROUND_COLOR,
@@ -39,12 +40,19 @@ const widgetFullWidthWrapperStyle = {
   ...fullWidthWrapperStyle,
 }
 
-const Frame = ({ config, children, step, setStep }) => {
+const overviewPageStyle = {
+  width: '100vw',
+  height: 'auto',
+}
+
+const Frame = ({ config, children, step, setStep, isOverviewPage }) => {
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const shouldShowTabs = !config.webviewMode && !isOverviewPage;
 
   const getFrameStyleBasedOnCurrentTab = () => {
-    if(step === STEPS.ALL_RESULTS) {
+    if(isOverviewPage) return overviewPageStyle;
+    if(step === TABS.ALL_RESULTS) {
       if(config.widgetMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height} - 175px`};
       else if(config.webviewMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height}`};
       return isMediumSizeScreen || isSmallSizeScreen ? mobileFullWidthWrapperStyle : fullWidthWrapperStyle;
@@ -61,6 +69,7 @@ const Frame = ({ config, children, step, setStep }) => {
   }
 
   const getMinHeight = () => {
+    if(isOverviewPage) return undefined;
     if(config.widgetMode) {
       return `calc(${config.frameStyle.height} - 175px)`;
     } else if(config.webviewMode) {
@@ -72,8 +81,8 @@ const Frame = ({ config, children, step, setStep }) => {
 
   return (
     <div style={getWrapperStyle()} id={'main-frame'}>
-      {!config.widgetMode && !config.webviewMode && <Header setStep={setStep}/>}
-      {!config.webviewMode && <Tabs step={step} setStep={setStep}/> }
+      {!config.widgetMode && !config.webviewMode && <Header setStep={setStep} isOverviewPage={isOverviewPage}/>}
+      {shouldShowTabs && <Tabs step={step} setStep={setStep}/> }
       <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: getMinHeight() }} id={'frame--main-frame-wrapper'}>
         {children}
       </div>

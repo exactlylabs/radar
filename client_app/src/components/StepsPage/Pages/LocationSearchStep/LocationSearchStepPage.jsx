@@ -6,7 +6,6 @@ import MyMapModal from "./MyMapModal";
 import {DEFAULT_LINK_COLOR, DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
 import MyCheckbox from "../../../common/MyCheckbox";
 import SuggestionsModal from "./SuggestionsModal";
-import {getAddressForCoordinates} from "../../../../utils/apiRequests";
 
 const locationSearchStepStyle = {
   width: '100%',
@@ -16,8 +15,8 @@ const locationSearchStepStyle = {
 
 const termsStyle = {
   display: 'flex',
-  width: '90%',
-  maxWidth: 415,
+  width: 'max-content',
+  maxWidth: '90%',
   margin: '30px auto 40px',
   justifyContent: 'center',
   alignItems: 'center'
@@ -25,7 +24,6 @@ const termsStyle = {
 
 const termsTextStyle = {
   fontSize: 14,
-  width: '85%',
   color: DEFAULT_TEXT_COLOR
 }
 
@@ -50,7 +48,8 @@ const LocationSearchStepPage = ({
   confirmedAddress,
   setSelectedSuggestion,
   selectedSuggestion,
-  goToNextPage
+  goToNextPage,
+  terms
 }) => {
 
   const [isGenericLocationModalOpen, setIsGenericLocationModalOpen] = useState(false);
@@ -93,8 +92,8 @@ const LocationSearchStepPage = ({
       />
       { error && <MyMessageSnackbar type={'error'} message={error}/> }
       <div style={termsStyle}>
-        <MyCheckbox onChange={handleSetTerms}/>
-        <p style={termsTextStyle}>I agree to the Radar’s <a className={'opaque-hoverable'} style={linkStyle} href={'/terms'}>Terms of Use</a> and <a className={'opaque-hoverable'} style={linkStyle} href={'/privacy-policy'}>Privacy Policy</a>.</p>
+        <MyCheckbox onChange={handleSetTerms} isChecked={terms}/>
+        <p style={termsTextStyle}>I agree to the Radar’s <a className={'opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>.</p>
       </div>
       <MyMapModal isOpen={isModalOpen}
                   setIsOpen={setIsModalOpen}

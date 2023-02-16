@@ -120,13 +120,15 @@ const SpeedGauge = ({
   const downloadComplete = (data, rawData, donut) => {
     counter = 0;
     setProgress(0);
-    donut.set(normalizeValue(data.LastClientMeasurement.MeanClientMbps));
-    setDownloadValue(data.LastClientMeasurement.MeanClientMbps);
-    setLatency(data.LastServerMeasurement.TCPInfo.MinRTT / 1000);
-    setLoss((data.LastServerMeasurement.TCPInfo.BytesRetrans / data.LastServerMeasurement.TCPInfo.BytesSent) * 100);
-    let currentData = rawData;
-    currentData.push({ ...data, type: 'download' });
-    setRawData(currentData);
+    if(data?.LastClientMeasurement?.MeanClientMbps) {
+      donut.set(normalizeValue(data.LastClientMeasurement.MeanClientMbps));
+      setDownloadValue(data.LastClientMeasurement.MeanClientMbps);
+      setLatency(data.LastServerMeasurement.TCPInfo.MinRTT / 1000);
+      setLoss((data.LastServerMeasurement.TCPInfo.BytesRetrans / data.LastServerMeasurement.TCPInfo.BytesSent) * 100);
+      let currentData = rawData;
+      currentData.push({...data, type: 'download'});
+      setRawData(currentData);
+    }
     donut.setOptions(uploadOptions);
     donut.set(0);
     setIsDownload(false);
@@ -135,13 +137,15 @@ const SpeedGauge = ({
   const uploadComplete = (data, rawData, donut) => {
     counter = 100;
     setProgress(100);
-    donut.set(normalizeValue((data.LastServerMeasurement.TCPInfo.BytesReceived / data.LastServerMeasurement.TCPInfo.ElapsedTime) * 8))
-    setUploadValue(
-      (data.LastServerMeasurement.TCPInfo.BytesReceived / data.LastServerMeasurement.TCPInfo.ElapsedTime) * 8
-    );
-    let currentData = rawData;
-    currentData.push({ ...data, type: 'upload' });
-    setRawData(currentData);
+    if(data?.LastServerMeasurement) {
+      donut.set(normalizeValue((data.LastServerMeasurement.TCPInfo.BytesReceived / data.LastServerMeasurement.TCPInfo.ElapsedTime) * 8))
+      setUploadValue(
+        (data.LastServerMeasurement.TCPInfo.BytesReceived / data.LastServerMeasurement.TCPInfo.ElapsedTime) * 8
+      );
+      let currentData = rawData;
+      currentData.push({...data, type: 'upload'});
+      setRawData(currentData);
+    }
     setLoading(false);
     setRunningTest(false);
     setError(null);

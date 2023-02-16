@@ -7,7 +7,7 @@ export const defaultButtonStyle = {
   paddingTop: 8,
   paddingBottom: 8,
   border: 'none',
-  fontSize: 15,
+  fontSize: 16,
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',

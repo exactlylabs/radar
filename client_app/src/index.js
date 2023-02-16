@@ -14,7 +14,7 @@ if (REACT_APP_ENV === 'production') {
 
 let init = null;
 let error = null;
-const baseInitConfig = {
+export const baseInitConfig = {
   clientId: 'local',
   widgetMode: false,
   elementId: 'root-embedded',

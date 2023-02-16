@@ -86,8 +86,7 @@ const WidgetFooter = () => {
         <img src={RadarLogoGray} height={17} width={70} alt={'radar-logo'}/>
       </div>
       <div style={isMediumSizeScreen ? narrowRightSideContainer : rightSideContainer}>
-        <div style={privacyStyle}>Privacy Policy</div>
-        <div style={termsStyle}>Terms of Use</div>
+        <a style={privacyStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>
       </div>
     </div>
   )
