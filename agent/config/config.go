@@ -189,12 +189,7 @@ func LoadConfig() *Config {
 			}
 		}
 	}
-	fmt.Printf("%+v\n", config)
 	return config
-}
-
-func loadEnvConfigs(c *Config) {
-
 }
 
 func Reload() *Config {
