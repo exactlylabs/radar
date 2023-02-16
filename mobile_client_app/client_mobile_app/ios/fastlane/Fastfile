@@ -49,14 +49,9 @@ platform :ios do
 
   lane :release_prod do
     app_store_connect_api_key
-    #capture_screenshots
     changelog_from_git_commits(
       merge_commit_filtering: 'exclude_merges'
     )
-    upload_to_testflight(
-      distribute_external: true,
-      notify_external_testers: true,
-      groups: ["ExactlyLabs"],
-    )
+    upload_to_app_store
   end
 end
