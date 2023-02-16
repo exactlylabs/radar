@@ -53,14 +53,18 @@ module ApplicationCable
     end
 
     def on_client_connected
-      self.client.online = true
-      self.client.ip = request.ip
-      self.client.save!
+      if !request.headers.fetch("watchdog", nil)
+        self.client.online = true
+        self.client.ip = request.ip
+        self.client.save!
+      end
     end
 
     def on_client_disconnected
+      if !request.headers.fetch("watchdog", nil)
         self.client.online = false
         self.client.save!
+      end
     end
   end
 end

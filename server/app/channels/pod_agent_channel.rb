@@ -6,7 +6,7 @@ class PodAgentChannel < ApplicationCable::Channel
   # Broadcasting Helpers
 
   def self.broadcast_test_requested(client)
-    broadcast_to(
+    ActionCable.pods_server.broadcast(
       PodAgentChannel.agent_stream_name(client), 
       {event: "test_requested", payload: {}}
     )
@@ -15,28 +15,30 @@ class PodAgentChannel < ApplicationCable::Channel
   def self.broadcast_update_group_version_changed(update_group)
     # Broadcast an update for each client
     update_group.clients.each do |client|
-      broadcast_to(
-        PodAgentChannel.agent_stream_name(client), 
-        {
-          event: "version_changed",
-          payload: {
-            version: update_group.client_version.version,
-            binary_url: client.to_update_signed_binary.url,
+      if client.has_update?
+        ActionCable.pods_server.broadcast(
+          PodAgentChannel.agent_stream_name(client), 
+          {
+            event: "version_changed",
+            payload: {
+              version: update_group.client_version.version,
+              binary_url: PodAgentChannel.blob_path(client.to_update_signed_binary),
+            }
           }
-        }
-      )
+        )
+      end
     end
   end
 
   def self.broadcast_client_update_group_changed(client)
     if client.has_update?
-      broadcast_to(
+      ActionCable.pods_server.broadcast(
         PodAgentChannel.agent_stream_name(client), 
         {
           event: "version_changed",
           payload: {
             version: client.update_group.client_version.version,
-            binary_url: client.to_update_signed_binary.url,
+            binary_url: PodAgentChannel.blob_path(client.to_update_signed_binary),
           }
         }
       )
@@ -99,8 +101,8 @@ class PodAgentChannel < ApplicationCable::Channel
       {
         type: "update",
         message: {
-          version: client.to_update_version.version,
-          binary_url: client.to_update_signed_binary.url
+          version: self.client.to_update_version.version,
+          binary_url: PodAgentChannel.blob_path(self.client.to_update_signed_binary)
         },
       }
     )
