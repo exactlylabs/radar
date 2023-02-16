@@ -115,6 +115,11 @@ class Client < ApplicationRecord
         ClientEventLog.not_in_service_event self
       end
     end
+
+    if saved_change_to_update_group_id
+      PodAgentChannel.broadcast_client_update_group_changed self
+      WatchdogChannel.broadcast_watchdog_update_group_changed self
+    end
   end
 
   def latest_download
