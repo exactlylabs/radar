@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/exactlylabs/radar/agent/cmd/start_watchdog/internal/dev"
 	"github.com/exactlylabs/radar/agent/config"
@@ -31,7 +30,7 @@ func main() {
 		os.Exit(0)
 	}
 	godotenv.Load()
-	if !isDev() {
+	if !info.IsDev() {
 		// watchdog needs to run as root, so we should manually set the config path
 		config.SetBasePath(*confPath)
 	}
@@ -42,9 +41,9 @@ func main() {
 	defer tracing.NotifyPanic()
 
 	sysManager := sysinfo.NewSystemManager()
-	cli := radar.NewClient(c.ServerURL, c.ClientId, c.Secret)
+	cli := radar.NewWatchdogClient(c.ServerURL, c.ClientId, c.Secret)
 	ctx := context.Background()
-	if !isDev() {
+	if !info.IsDev() {
 		agentCli := sysinfo.NewAgentInfoManager(*radarPath, *agentService)
 		watchdog.Run(ctx, c, sysManager, agentCli, cli)
 	} else {
@@ -55,8 +54,4 @@ func main() {
 
 		watchdog.Run(ctx, c, sysManager, agentCli, cli)
 	}
-}
-
-func isDev() bool {
-	return strings.ToLower(os.Getenv("ENVIRONMENT")) == "dev" || strings.ToLower(info.BuildInfo().Version) == "dev" || info.IsDev()
 }
