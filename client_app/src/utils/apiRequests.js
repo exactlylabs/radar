@@ -1,7 +1,7 @@
 import { API_URL } from '../constants';
 import { notifyError } from './errors';
 import { DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE } from './map';
-import {getFilterTag} from "./speeds";
+import { getFilterTag } from './speeds';
 
 export const sendRawData = (rawData, startTimestamp, userStepData) => {
   const { networkLocation, networkType, networkCost } = userStepData;
@@ -61,18 +61,22 @@ export const getAllSpeedTests = async () => {
   return fetch(`${API_URL}/speed_tests`)
     .then(res => res.json())
     .then(res => {
-      return res.filter(measurement => measurement.latitude &&
-                                       measurement.longitude &&
-                                       measurement.download_avg &&
-                                       measurement.upload_avg &&
-                                       measurement.address)
+      return res
+        .filter(
+          measurement =>
+            measurement.latitude &&
+            measurement.longitude &&
+            measurement.download_avg &&
+            measurement.upload_avg &&
+            measurement.address
+        )
         .map(measurement => {
           return {
             ...measurement,
             uploadFilterTag: getFilterTag(measurement.upload_avg, 'upload'),
             downloadFilterTag: getFilterTag(measurement.download_avg, 'download'),
             visible: true,
-          }
+          };
         });
     })
     .catch(err => {
@@ -85,12 +89,12 @@ export const getSuggestions = async addressString => {
   const formData = new FormData();
   formData.append('address', addressString);
   return fetch(`${API_URL}/suggestions`, {
-      method: 'POST',
-      body: formData,
+    method: 'POST',
+    body: formData,
   }).then(res => res.json());
 };
 
-export const getAddressForCoordinates = async (coordinates) => {
+export const getAddressForCoordinates = async coordinates => {
   const formData = new FormData();
   formData.append('coordinates', coordinates);
   try {
@@ -105,4 +109,4 @@ export const getAddressForCoordinates = async (coordinates) => {
   }
 };
 
-export const getUserApproximateCoordinates = () => fetch(`${API_URL}/user_coordinates`).then(res => res.json())
+export const getUserApproximateCoordinates = () => fetch(`${API_URL}/user_coordinates`).then(res => res.json());

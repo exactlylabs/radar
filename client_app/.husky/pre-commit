@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-cd client_app
-npx eslint . --fix
-npx pretty-quick --staged
-npm run prettier --write ./**/*.{js,jsx}

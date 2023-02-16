@@ -43,7 +43,7 @@ const PreferNotToAnswer = ({
          onMouseEnter={hoverOn}
          onMouseLeave={hoverOff}
     >
-      <p className={'regular-link--hoverable'}>I prefer not to answer</p>
+      <p className={'regular-link--hoverable'}>Skip this question</p>
       {
         hovered ?
           <img src={ArrowRightIconHovered} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/> :

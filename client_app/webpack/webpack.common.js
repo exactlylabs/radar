@@ -54,7 +54,8 @@ module.exports = {
     static: { directory: path.join(__dirname, '/') },
     hot: true,
     compress: true,
-    port: 9999
+    port: 9999,
+    historyApiFallback: true,
   },
   // https://webpack.js.org/configuration/plugins/
   plugins: [

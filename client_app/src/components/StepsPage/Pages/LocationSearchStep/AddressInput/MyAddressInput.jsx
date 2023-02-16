@@ -14,6 +14,7 @@ import {debounce} from "../../../../../utils/debouncer";
 import {getAddressForCoordinates, getGeocodedAddress, getSuggestions} from "../../../../../utils/apiRequests";
 import {notifyError} from "../../../../../utils/errors";
 import {errors} from "../../../../../utils/messages";
+import {emptyAddress} from "../../../StepsPage";
 
 const addressInputWrapperStyle = {
   width: '80%',
@@ -53,7 +54,8 @@ const inputAdornmentStyle = {
 }
 
 const errorMessageStyle = {
-  color: RED
+  color: RED,
+  marginTop: '15px'
 }
 
 const rightArrowStyle = {
@@ -122,6 +124,9 @@ const MyAddressInput = ({
     setAddress({address: e.target.value, coordinates: []});
     if(!e.target.value) {
       setSuggestionsListOpen(false);
+      setSelectedSuggestion(false);
+      setAddress(emptyAddress);
+      setSuggestions([]);
     } else {
       setLocationLoading(true);
       try {
@@ -129,6 +134,7 @@ const MyAddressInput = ({
         setSuggestions(suggestions);
       } catch (e) {
         notifyError(e);
+        setError(e);
       }
       setLocationLoading(false);
     }
@@ -137,9 +143,11 @@ const MyAddressInput = ({
   const autofillInput = (id, selectedAddress) => {
     const addressInputElement = document.getElementById('address-input');
     const selectedRowText = document.getElementById(`row-${id}-text`);
-    addressInputElement.value = selectedRowText.innerText;
-    setAddress(selectedAddress);
-    setSelectedSuggestion(true);
+    if(addressInputElement && selectedRowText) {
+      addressInputElement.value = selectedRowText.innerText;
+      setAddress(selectedAddress);
+      setSelectedSuggestion(true);
+    }
   }
 
   const handleOpenSuggestions = () => {
@@ -150,26 +158,31 @@ const MyAddressInput = ({
   }
 
   const fetchAddress = async (coordinates) => {
-    setGeolocationError(false);
     const address = await getAddressForCoordinates(coordinates);
     if(address.coordinates.length === 0) {
       openGenericLocationModal();
       return;
     }
-    setAddress(address);
     setSelectedSuggestion(true);
-    handleContinue(address.address);
+    setAddress(address);
+    handleContinue(address.address, true);
     const addressInputElement = document.getElementById('address-input');
     addressInputElement.value = address.address;
   }
 
   const triggerAutoLocation = () => {
+    setSelectedSuggestion(false);
+    setLocationLoading(true);
+    setAddress(emptyAddress);
+    setGeolocationError(false);
     if ('geolocation' in navigator) {
-      setLocationLoading(true);
       navigator.geolocation.getCurrentPosition(
         pos => {
           fetchAddress([pos.coords.latitude, pos.coords.longitude])
-            .catch(err => setError(err))
+            .catch(err => {
+              notifyError(err);
+              setError(err);
+            })
             .finally(() => setLocationLoading(false));
         },
         (err) => {
@@ -187,6 +200,11 @@ const MyAddressInput = ({
     else handleContinue();
   }
 
+  const parseError = (err) => {
+    if(typeof err === 'string') return err;
+    else return 'There has been an unexpected error. Please try again later.';
+  }
+
   return (
     <div id={'address-input-wrapper'}>
       <div style={addressInputWrapperStyle}>
@@ -194,16 +212,16 @@ const MyAddressInput = ({
                    id={'address-input'}
                    sx={{width: '90%'}}
                    InputProps={addressInputStyle}
-                   error={error}
+                   error={!!error}
                    onChange={handleInputChange}
                    onFocus={handleOpenSuggestions}
                    variant={'standard'}
         />
-        <div className={!!currentAddress.address ? 'opaque-hoverable' : ''}
+        <div className={!!currentAddress?.address ? 'opaque-hoverable' : ''}
              style={inputAdornmentStyle}
-             onClick={!!currentAddress.address ? checkClickConditions : undefined}
+             onClick={!!currentAddress?.address ? checkClickConditions : undefined}
         >
-          <div style={!!currentAddress.address ? continueButtonStyle : disabledContinueButtonStyle}>
+          <div style={!!currentAddress?.address ? continueButtonStyle : disabledContinueButtonStyle}>
             {
               locationLoading ?
                 <MySpinner color={WHITE}/> :
@@ -229,7 +247,7 @@ const MyAddressInput = ({
          />
         <p className={'bold'} style={useLocationStyle}>Use my current location.</p>
       </div>
-      { error && <p style={errorMessageStyle}>{error}</p> }
+      { error && <p style={errorMessageStyle}>{parseError(error)}</p> }
       <LocationSuggestionsList suggestions={suggestions}
                                autofillInput={autofillInput}
                                open={suggestionsListOpen}

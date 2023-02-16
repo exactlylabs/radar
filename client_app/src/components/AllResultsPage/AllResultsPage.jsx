@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { CircularProgress } from '@mui/material';
 import { MyButton } from '../common/MyButton';
 import {MapContainer, TileLayer} from 'react-leaflet';
-import { STEPS } from '../../constants';
+import { TABS } from '../../constants';
 import SpeedResultsBox from './SpeedResultsBox';
 import {getCorrespondingFilterTag} from '../../utils/speeds';
 import {
@@ -19,6 +19,8 @@ import {hasVisitedAllResults, setAlreadyVisitedCookieIfNotPresent} from "../../u
 import FirstTimeModal from "./FirstTimeModal";
 import ConfigContext from "../../context/ConfigContext";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import {useHistory} from "react-router-dom";
+import {useTabNavigation} from "../../hooks/useTabNavigation";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -39,6 +41,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
+  const tabsNavigator = useTabNavigation();
 
   useEffect(() => {
 
@@ -98,7 +101,10 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     }
   }
 
-  const goToSpeedTest = () => setStep(STEPS.SPEED_TEST);
+  const goToSpeedTest = () => {
+    tabsNavigator(TABS.SPEED_TEST);
+    setStep(TABS.SPEED_TEST);
+  }
 
   const getMapContainerHeight = () => {
     if(config.widgetMode) {

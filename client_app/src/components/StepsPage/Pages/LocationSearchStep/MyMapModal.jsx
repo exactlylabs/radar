@@ -173,6 +173,11 @@ const MyMapModal = ({
 
   const closeModal = () => setIsOpen(false);
 
+  const handleChangeAddress = () => {
+    confirmAddress(null);
+    closeModal();
+  }
+
   const confirmCoordinates = async () => {
     const address = await getAddressForCoordinates(addressCoordinates);
     setAddress(address);
@@ -184,7 +189,7 @@ const MyMapModal = ({
     if(goToNextPage) {
       goToNextPage(true);
     } else {
-      confirmCoordinates();
+      confirmCoordinates().catch(err => notifyError(err));
     }
   }
 
@@ -226,7 +231,7 @@ const MyMapModal = ({
         </div>
         <div style={getFooterStyle()}>
           <MyBackButton text={'Change address'}
-                        onClick={closeModal}
+                        onClick={handleChangeAddress}
           />
           <MyForwardButton text={'Confirm location'}
                            icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}

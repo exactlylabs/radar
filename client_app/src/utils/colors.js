@@ -73,3 +73,5 @@ export const DEFAULT_MODAL_BOX_SHADOW = 'rgba(17 14 76, 10%)'
 export const DEFAULT_WIDGET_FOOTER_BG_COLOR = '#efeff0';
 export const SUGGESTION_MODAL_ROW_BORDER = 'rgba(17, 14, 76, 0.2)';
 export const SELECTED_SUGGESTION_MODAL_ROW_BORDER = '#4b7be5';
+export const DATA_COLUMN_ICON_CONTAINER = 'rgba(75, 123, 229, 0.15)';
+export const DEFAULT_SECONDARY_TEXT = '#6d6a94';

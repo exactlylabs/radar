@@ -6,7 +6,7 @@ import ConnectionTypeStepPage from "./Pages/ConnectionTypeStep/ConnectionTypeSte
 import ConnectionCostStepPage from "./Pages/ConnectionCostStep/ConnectionCostStepPage";
 import SpeedTestStepPage from "./Pages/SpeedTestStep/SpeedTestStepPage";
 import {errors, warnings} from "../../utils/messages";
-import {steps} from "./utils/steps";
+import {STEPS} from "./utils/steps";
 import {placementOptions} from "../../utils/placements";
 import {types} from "../../utils/networkTypes";
 import {getAddressForCoordinates} from "../../utils/apiRequests";
@@ -27,6 +27,16 @@ const mobileStepsPageStyle = {
   paddingTop: 0,
 }
 
+export const emptyAddress = {
+  address: '',
+  coordinates: [],
+  city: '',
+  street: '',
+  state: '',
+  postal_code: '',
+  house_number: ''
+};
+
 const StepsPage = ({
   goToAreaMap,
   goToHistory,
@@ -34,19 +44,11 @@ const StepsPage = ({
 }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(steps.CONNECTION_ADDRESS);
+  const [currentStep, setCurrentStep] = useState(STEPS.CONNECTION_ADDRESS);
   const [error, setError] = useState(null);
   const [warning, setWarning] = useState(null);
   const [userStepData, setUserStepData] = useState({
-    address: {
-      address: '',
-      coordinates: [],
-      city: '',
-      street: '',
-      state: '',
-      postal_code: '',
-      house_number: ''
-    },
+    address: emptyAddress,
     terms: false,
     networkLocation: null,
     networkType: null,
@@ -77,7 +79,7 @@ const StepsPage = ({
   useEffect(() => {
     if(specificStep) {
       setCurrentStep(specificStep);
-      if (specificStep === steps.SPEED_TEST_RESULTS) {
+      if (specificStep === STEPS.SPEED_TEST_RESULTS) {
         const lastTestTaken = getLastStoredValue();
         const networkLocation = placementOptions.find(placement => placement.text === lastTestTaken.networkLocation);
         const networkType = types.find(type => type.text === lastTestTaken.networkType);
@@ -106,7 +108,7 @@ const StepsPage = ({
   }, [geolocationError]);
 
   useEffect(() => {
-    if(selectedSuggestion) setCanProceedToStep2(true);
+    setCanProceedToStep2(selectedSuggestion);
   }, [selectedSuggestion]);
 
   const checkAndOpenModal = (addressSync = null) => {
@@ -119,7 +121,11 @@ const StepsPage = ({
     }
   }
 
-  const goToPage2 = async (isConfirmingAddress = false) => {
+  const goToPage2 = async (isConfirmingAddress = false, shouldCheckFirst = false) => {
+    if(shouldCheckFirst) {
+      checkAndOpenModal(isConfirmingAddress);
+      return;
+    }
     try {
       const { terms } = userStepData;
       if(!terms) {
@@ -132,47 +138,51 @@ const StepsPage = ({
         return;
       }
       setConfirmedAddress(true);
-      setCurrentStep(steps.CONNECTION_PLACEMENT);
+      setCurrentStep(STEPS.CONNECTION_PLACEMENT);
     } catch (e) {
       setError(errors.SAVE_ERROR);
     }
   }
 
-  const goToPage3 = () => setCurrentStep(steps.CONNECTION_TYPE);
+  const goToPage3 = () => setCurrentStep(STEPS.CONNECTION_TYPE);
 
-  const goToPage4 = () => setCurrentStep(steps.CONNECTION_COST);
+  const goToPage4 = () => setCurrentStep(STEPS.CONNECTION_COST);
 
-  const goToPage5 = () => setCurrentStep(steps.RUN_SPEED_TEST);
+  const goToPage5 = () => setCurrentStep(STEPS.RUN_SPEED_TEST);
 
   const goToPage6 = (testResults) => {
     setLastTestResults(testResults);
-    setCurrentStep(steps.SPEED_TEST_RESULTS);
+    setCurrentStep(STEPS.SPEED_TEST_RESULTS);
   }
 
   const goToMapPage = () => goToAreaMap(userStepData.address.coordinates);
 
-  const goToNoInternetPage = () => setCurrentStep(steps.NO_INTERNET);
+  const goToNoInternetPage = () => setCurrentStep(STEPS.NO_INTERNET);
 
-  const goToConnectionAddress = () => setCurrentStep(steps.CONNECTION_ADDRESS);
+  const goToConnectionAddress = () => setCurrentStep(STEPS.CONNECTION_ADDRESS);
 
-  const goToConnectionPlacement = () => setCurrentStep(steps.CONNECTION_PLACEMENT);
+  const goToConnectionPlacement = () => setCurrentStep(STEPS.CONNECTION_PLACEMENT);
 
-  const goToConnectionType = () => setCurrentStep(steps.CONNECTION_TYPE);
+  const goToConnectionType = () => setCurrentStep(STEPS.CONNECTION_TYPE);
 
   const storeCoordinates = async (finalCoordinates) => {
-      try {
-        const address = await getAddressForCoordinates(finalCoordinates);
-        setAddress(address);
-        setCanProceedToStep2(true);
-        setConfirmedAddress(true);
-      } catch (e) {
-        setError(errors.SAVE_ERROR);
-      }
+    if(!finalCoordinates) {
+      setConfirmedAddress(false);
+      return;
+    }
+    try {
+      const address = await getAddressForCoordinates(finalCoordinates);
+      setAddress(address);
+      setCanProceedToStep2(true);
+      setConfirmedAddress(true);
+    } catch (e) {
+      setError(errors.SAVE_ERROR);
+    }
   }
 
   const getCurrentPage = () => {
     switch (currentStep) {
-      case steps.CONNECTION_ADDRESS:
+      case STEPS.CONNECTION_ADDRESS:
         return <LocationSearchStepPage confirmAddress={storeCoordinates}
                                        error={error}
                                        setAddress={setAddress}
@@ -180,14 +190,16 @@ const StepsPage = ({
                                        isModalOpen={isModalOpen}
                                        setIsModalOpen={setIsModalOpen}
                                        handleContinue={canProceedToStep2 ? goToPage2 : checkAndOpenModal}
+                                       checkAndOpenModal={checkAndOpenModal}
                                        currentAddress={userStepData.address}
                                        setGeolocationError={setGeolocationError}
                                        confirmedAddress={canProceedToStep2 && confirmedAddress}
                                        setSelectedSuggestion={setSelectedSuggestion}
                                        selectedSuggestion={selectedSuggestion}
                                        goToNextPage={canProceedToStep2 ? goToPage2 : undefined}
+                                       terms={userStepData.terms}
         />;
-      case steps.CONNECTION_PLACEMENT:
+      case STEPS.CONNECTION_PLACEMENT:
         return <ConnectionPlacementStepPage goForward={goToPage3}
                                             goBack={goToConnectionAddress}
                                             setSelectedOption={setNetworkLocation}
@@ -195,31 +207,31 @@ const StepsPage = ({
                                             address={userStepData.address.address}
                                             goToLastFlowStep={goToNoInternetPage}
         />;
-      case steps.CONNECTION_TYPE:
+      case STEPS.CONNECTION_TYPE:
         return <ConnectionTypeStepPage goForward={goToPage4}
                                        goBack={goToConnectionPlacement}
                                        selectedOption={userStepData.networkType}
                                        setSelectedOption={setNetworkType}
                                        warning={warning}
         />;
-      case steps.CONNECTION_COST:
+      case STEPS.CONNECTION_COST:
         return <ConnectionCostStepPage goForward={goToPage5}
                                        goBack={goToConnectionType}
                                        setCost={setNetworkCost}
                                        cost={userStepData.networkCost}
         />;
-      case steps.RUN_SPEED_TEST:
+      case STEPS.RUN_SPEED_TEST:
         return <SpeedTestStepPage userStepData={userStepData}
                                   goForward={goToPage6}
         />;
-      case steps.SPEED_TEST_RESULTS:
+      case STEPS.SPEED_TEST_RESULTS:
         return <SpeedTestResultsStepPage testResults={lastTestResults}
                                          userStepData={userStepData}
                                          goToAreaMap={goToMapPage}
                                          goToHistory={goToHistory}
                                          goToTestAgain={goToPage5}
         />;
-      case steps.NO_INTERNET:
+      case STEPS.NO_INTERNET:
         return <NoInternetStepPage goToMapPage={goToMapPage}/>
       default:
         return <LocationSearchStepPage confirmAddress={storeCoordinates}
@@ -242,7 +254,7 @@ const StepsPage = ({
   return (
     <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileStepsPageStyle : stepsPageStyle}>
       {
-        currentStep <= steps.CONNECTION_COST &&
+        currentStep <= STEPS.CONNECTION_COST &&
           <MyStepper activeStep={currentStep} isMobile={isMediumSizeScreen}/>
       }
       { getCurrentPage() }

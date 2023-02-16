@@ -1,12 +1,14 @@
 import {useState} from "react";
 import {DEFAULT_HEADER_BACKGROUND_COLOR, DEFAULT_HORIZONTAL_DIVIDER_BG_COLOR, WHITE} from '../../utils/colors';
 import { MyButton } from '../common/MyButton';
-import { STEPS } from '../../constants';
-import radarLogoLight from '../../assets/radar-logo-light.png';
+import { TABS } from '../../constants';
+import radarLogoLight from '../../assets/speedtest-logo.png';
 import MenuCloseButton from '../../assets/menu-close-button.png';
 import MenuOpenButton from '../../assets/menu-open-button.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import MyNavLink from "../common/MyNavLink";
+import {useHistory, useLocation} from "react-router-dom";
+import {useTabNavigation} from "../../hooks/useTabNavigation";
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -23,6 +25,7 @@ const mobileHeaderStyle = {
 
 const contentWrapperStyle = {
   width: '90%',
+  maxWidth: '1200px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
@@ -58,7 +61,7 @@ const menuCloseButtonStyle = {
 const collapsableContentStyle = {
   width: '100%',
   height: 'max-content',
-  minHeight: 200,
+  minHeight: 100,
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
   display: 'flex',
   flexDirection: 'column',
@@ -80,19 +83,34 @@ const horizontalDividerStyle = {
   marginBottom: 15,
 }
 
-const Header = ({ setStep }) => {
+const Header = ({ setStep, isOverviewPage }) => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const tabsNavigator = useTabNavigation();
 
   const goToHome = () => {
+    tabsNavigator(TABS.SPEED_TEST);
     if(isMenuOpen) setIsMenuOpen(false);
-    setStep(STEPS.SPEED_TEST);
+    setStep(TABS.SPEED_TEST);
+  }
+
+  const goToOverview = () => {
+    history.push('/overview');
+  }
+
+  const goToExplore = () => {
+    window.location.href = '/?tab=2';
   }
 
   const goToTestSpeed = () => {
-    if(isMenuOpen) setIsMenuOpen(false);
-    setStep(STEPS.SPEED_TEST);
+    if(isOverviewPage) {
+      history.push('/?tab=0');
+      return;
+    }
+    tabsNavigator(TABS.SPEED_TEST);
+    if (isMenuOpen) setIsMenuOpen(false);
+    setStep(TABS.SPEED_TEST);
   }
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -103,14 +121,15 @@ const Header = ({ setStep }) => {
         <div style={leftSideContainerStyle}>
           <img
             src={radarLogoLight}
-            alt={'Radar-logo=light'}
-            width={104}
-            height={25}
+            alt={'Radar Speedtest logo'}
+            width={170}
+            height={26}
             onClick={goToHome}
             style={!(isSmallSizeScreen || isMediumSizeScreen) ? radarLogoStyle : null}
           />
-          {!(isSmallSizeScreen || isMediumSizeScreen) && <MyNavLink text={'Home'} onClick={goToHome}/>}
-          {!(isSmallSizeScreen || isMediumSizeScreen) && <MyNavLink text={'About Us'}/>}
+          {!(isSmallSizeScreen || isMediumSizeScreen) && !isOverviewPage && <MyNavLink text={'Home'} onClick={goToHome}/>}
+          { !(isSmallSizeScreen || isMediumSizeScreen) && isOverviewPage && <MyNavLink text={'Overview'} onClick={goToOverview}/> }
+          { !(isSmallSizeScreen || isMediumSizeScreen) && isOverviewPage && <MyNavLink text={'Explore'} onClick={goToExplore}/> }
         </div>
         <div style={rightSideContainerStyle}>
           {
@@ -129,9 +148,9 @@ const Header = ({ setStep }) => {
       {
         (isMediumSizeScreen || isSmallSizeScreen) && isMenuOpen &&
         <div style={collapsableContentStyle}>
-          <MyNavLink text={'Home'} onClick={goToHome} isCollapsed/>
-          <div style={horizontalDividerStyle}></div>
-          <MyNavLink text={'About Us'} isCollapsed/>
+          { !isOverviewPage && <MyNavLink text={'Home'} onClick={goToHome} isCollapsed/> }
+          { isOverviewPage && <MyNavLink text={'Overview'} onClick={goToOverview} isCollapsed/> }
+          { isOverviewPage && <MyNavLink text={'Explore'} onClick={goToExplore} isCollapsed/> }
           <div style={horizontalDividerStyle}></div>
           <MyButton text={'Test your speed'} onClick={goToTestSpeed}/>
         </div>

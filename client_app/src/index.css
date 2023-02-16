@@ -40,6 +40,10 @@ code {
   font-family: MulishRegular, -apple-system, sans-serif;
 }
 
+.extra-bold {
+  font-family: MulishExtraBold, -apple-system, sans-serif;
+}
+
 .navlink--hoverable:hover {
   text-decoration: underline white;
   cursor: pointer;
@@ -70,8 +74,17 @@ code {
   color: white;
 }
 
+.blue-secondary-button--hoverable {
+  background-color: transparent;
+  color: #4b7be5;
+}
+
 .blue-button--hoverable:hover {
   background-color: #5a8bf8;
+}
+
+.blue-secondary-button--hoverable:hover {
+  opacity: 0.8;
 }
 
 .secondary-button--hoverable {
