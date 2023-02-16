@@ -221,7 +221,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: "/^v.*/"
+              only: "/^mobile-.*/"
       ## Upload Flavors to Storage
       - upload-android:
           requires: [build-android-dev, build-android-staging, build-android-prod]
@@ -241,7 +241,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: "/^v.*/"
+              only: "/^mobile-.*/"
     
       # iOS
       # Build Flavors
@@ -267,7 +267,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: "/^v.*/"
+              only: "/^mobile-.*/"
       ## Upload Flavors to Storage
       - upload-ios:
           requires: [build-ios-dev, build-ios-staging, build-ios-prod]
@@ -290,4 +290,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: "/^v.*/"
+              only: "/^mobile-.*/"
