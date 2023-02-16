@@ -196,6 +196,9 @@ workflows:
           name: "unit_test"
           app-dir: ~/project/mobile_client_app/client_mobile_app
           version: 3.3.1
+          filters:
+            tags:
+              only: /^mobile-.*/
       
       # Android
       # Build Flavors
