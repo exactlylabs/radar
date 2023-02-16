@@ -6,62 +6,58 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/exactlylabs/radar/agent/config"
 	"github.com/exactlylabs/radar/agent/internal/update"
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
 	"github.com/exactlylabs/radar/agent/services/tracing"
 	"github.com/exactlylabs/radar/agent/watchdog/display"
 )
 
 // Run is a blocking function that starts all routines related to the Watchdog.
-func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentCli display.AgentClient, pinger WatchdogPinger) {
+func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentCli display.AgentClient, cli WatchdogClient) {
 	go display.StartDisplayLoop(ctx, os.Stdout, agentCli, sysManager)
 	go StartScanLoop(ctx, sysManager)
-	timer := time.NewTicker(10 * time.Second)
+	cliChan := make(chan ServerMessage)
+	if err := cli.Connect(ctx, cliChan); err != nil {
+		panic(err)
+	}
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case <-timer.C:
-			checkUpdate(c, sysManager, pinger)
+		case msg := <-cliChan:
+			if msg.Update != nil {
+				handleUpdate(c, sysManager, *msg.Update)
+			}
 		}
 	}
 }
 
-func checkUpdate(c *config.Config, sysManager SystemManager, pinger WatchdogPinger) {
-	res, err := pinger.WatchdogPing(sysinfo.Metadata())
-	if err != nil {
-		log.Println(fmt.Errorf("watchdog.checkUpdate Ping: %w", err))
-		return
-	}
-	if res.Update != nil {
-		log.Printf("An Update for Watchdog Version %v is available\n", res.Update.Version)
-		err = UpdateWatchdog(res.Update.BinaryUrl)
-		if err != nil && (errors.Is(err, update.ErrInvalidCertificate) ||
-			errors.Is(err, update.ErrInvalidSignature) ||
-			errors.Is(err, update.ErrCRLInvalidSignature) ||
-			errors.Is(err, update.ErrCRLNotFound)) {
-			log.Printf("Existent update is invalid: %v\n", err)
-			tracing.NotifyErrorOnce(err, tracing.Context{
-				"Update Data": {
-					"version": res.Update.Version,
-					"url":     res.Update.BinaryUrl,
-				},
-			})
-		} else if errors.Is(err, update.ErrCRLExpired) {
-			log.Println(err)
-			// Notify ourselves to renew the CRL
-			tracing.NotifyErrorOnce(err, tracing.Context{})
-		} else if err != nil {
-			panic(err)
-		} else {
-			log.Println("Successfully Updated the Watchdog. Restarting the whole system")
-			if err := sysManager.Reboot(); err != nil {
-				panic(fmt.Errorf("watchdog.checkUpdate Reboot: %w", err))
-			}
-			os.Exit(1)
+func handleUpdate(c *config.Config, sysManager SystemManager, data BinaryUpdate) {
+	log.Printf("An Update for Watchdog Version %v is available\n", data.Version)
+	err := UpdateWatchdog(data.BinaryUrl)
+	if err != nil && (errors.Is(err, update.ErrInvalidCertificate) ||
+		errors.Is(err, update.ErrInvalidSignature) ||
+		errors.Is(err, update.ErrCRLInvalidSignature) ||
+		errors.Is(err, update.ErrCRLNotFound)) {
+		log.Printf("Existent update is invalid: %v\n", err)
+		tracing.NotifyErrorOnce(err, tracing.Context{
+			"Update Data": {
+				"version": data.Version,
+				"url":     data.BinaryUrl,
+			},
+		})
+	} else if errors.Is(err, update.ErrCRLExpired) {
+		log.Println(err)
+		// Notify ourselves to renew the CRL
+		tracing.NotifyErrorOnce(err, tracing.Context{})
+	} else if err != nil {
+		panic(err)
+	} else {
+		log.Println("Successfully Updated the Watchdog. Restarting the whole system")
+		if err := sysManager.Reboot(); err != nil {
+			panic(fmt.Errorf("watchdog.checkUpdate Reboot: %w", err))
 		}
+		os.Exit(1)
 	}
 }

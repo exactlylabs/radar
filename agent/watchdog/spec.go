@@ -1,6 +1,7 @@
 package watchdog
 
 import (
+	"context"
 	"time"
 
 	"github.com/exactlylabs/radar/agent/services/sysinfo"
@@ -46,9 +47,11 @@ type BinaryUpdate struct {
 	BinaryUrl string
 }
 
-type PingResponse struct {
+type ServerMessage struct {
 	Update *BinaryUpdate
 }
-type WatchdogPinger interface {
-	WatchdogPing(meta *sysinfo.ClientMeta) (*PingResponse, error)
+
+type WatchdogClient interface {
+	Connect(context.Context, chan<- ServerMessage) error
+	Close() error
 }
