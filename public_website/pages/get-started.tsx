@@ -11,10 +11,6 @@ const GetStarted = (): ReactElement => {
 
   const [hasSentEmail, setHasSentEmail] = useState(false);
 
-  useEffect(() => {
-    if(window) setHasSentEmail(window.location.href.includes('test'));
-  }, []);
-
   const handleSubmit = () => setHasSentEmail(true);
 
   return (
