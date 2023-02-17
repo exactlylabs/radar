@@ -80,7 +80,6 @@ const getConfigFromParams = () => {
       config.userLng = parseFloat(param.split('=')[1]);
     }
   });
-  console.log(config)
   return config;
 }
 
