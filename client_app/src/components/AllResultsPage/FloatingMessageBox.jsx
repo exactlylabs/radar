@@ -19,6 +19,11 @@ const floatingMessageBoxStyle = {
   padding: '12px 15px'
 }
 
+const floatingSpinnerBoxStyle = {
+  ...floatingMessageBoxStyle,
+  width: 'max-content',
+}
+
 const smallFloatingMessageBoxStyle = {
   ...floatingMessageBoxStyle,
   width: undefined,
@@ -30,9 +35,19 @@ const smallFloatingMessageBoxStyle = {
   padding: '10px'
 }
 
+const smallFloatingSpinnerBoxStyle = {
+  ...smallFloatingMessageBoxStyle,
+  width: 'max-content',
+}
+
 const smallFloatingMessageBoxAtBottomStyle = {
   ...smallFloatingMessageBoxStyle,
   bottom: '20px',
+}
+
+const smallFloatingSpinnerBoxAtBottomStyle = {
+  ...smallFloatingMessageBoxAtBottomStyle,
+  width: 'max-content'
 }
 
 const textStyle = {
@@ -54,8 +69,21 @@ const FloatingMessageBox = ({ icon, text, isBoxOpen }) => {
   const {isSmallSizeScreen, isMediumSizeScreen, isLargeSizeScreen} = useViewportSizes();
   const isSmall = isSmallSizeScreen || isMediumSizeScreen;
 
+  const getContainerStyle = () => {
+    if(isSmall && !!text) {
+      if (isBoxOpen) return smallFloatingMessageBoxStyle;
+      else return smallFloatingMessageBoxAtBottomStyle;
+    } else if(isSmall && !text) {
+      if(isBoxOpen) return smallFloatingSpinnerBoxStyle;
+      else return smallFloatingSpinnerBoxAtBottomStyle;
+    } else {
+      if(!text) return floatingSpinnerBoxStyle;
+      return floatingMessageBoxStyle;
+    }
+  }
+
   return (
-    <div style={ isSmall ? isBoxOpen ? smallFloatingMessageBoxStyle : smallFloatingMessageBoxAtBottomStyle : floatingMessageBoxStyle}>
+    <div style={ getContainerStyle() }>
       { icon }
       { !!text && <p style={isSmall ? smallTextStyle : textStyle}>{text}</p> }
     </div>
