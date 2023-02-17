@@ -120,7 +120,16 @@ const smallRightColumnStyle: CSSProperties = {
 }
 
 export const styles = {
-  BroadbandTestingMobile: (isSmall: boolean) => isSmall ? smallBroadbandTestingMobileStyle : broadbandTestingMobileStyle,
+  BroadbandTestingMobile: (isSmall: boolean, isLargeOnly: boolean) => {
+    let style;
+    if(isSmall) {
+      style = smallBroadbandTestingMobileStyle;
+      if(isLargeOnly) style = {...style, marginBottom: '85px'};
+    } else {
+      style = broadbandTestingMobileStyle;
+    }
+    return style;
+  },
   BroadbandTestingMobileContent: (isSmall: boolean) => isSmall ? smallBroadbandTestingMobileContentStyle : broadbandTestingMobileContentStyle,
   Illustration: (isSmall: boolean) => isSmall ? smallIllustrationStyle : illustrationStyle,
   Header: (isSmall: boolean) => isSmall ? smallHeaderStyle : headerStyle,

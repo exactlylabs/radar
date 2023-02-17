@@ -9,8 +9,8 @@ const ChevronRightWhite = "/assets/images/chevron-right-white.png";
 
 const BroadbandTestingSpeedtest = (): ReactElement => {
 
-  const {isSmallScreen, isMidScreen} = useViewportSizes();
-  const isSmall = isSmallScreen || isMidScreen;
+  const {isSmallScreen, isMidScreen, isLargeScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isMidScreen || isLargeScreen;
 
   const getSrc = () => `https://speedtest.staging.exactlylabs.com/?widgetMode=true&frameWidth=${isSmall ? '100%' : '600px'}&frameHeight=570px`
 
@@ -32,7 +32,7 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
           />
         </div>
         <div style={styles.RightColumn(isSmall)}>
-          <iframe style={styles.Iframe(isSmall)} src={getSrc()}/>
+          <iframe style={styles.Iframe(isSmall)} src={getSrc()} title={'Speedtest Widget'}/>
         </div>
       </div>
     </div>

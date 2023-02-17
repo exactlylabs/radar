@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/BroadbandTestingHeader.style";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import CustomButton from "../../common/CustomButton/CustomButton";
-import {AppRoutes, DEFAULT_MAIL_TO} from "../../../utils/navigation";
+import {AppRoutes} from "../../../utils/navigation";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const ChevronRightWhite = "/assets/images/chevron-right-white.png";

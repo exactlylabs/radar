@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/Footer.style";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
-import { AppRoutes, ExternalRoutes } from "../../../utils/navigation";
+import { AppRoutes } from "../../../utils/navigation";
 
 const RadarLogoGray = '/assets/images/radar-logo-gray.png';
 const ExactlyLogo = '/assets/images/exactly-logo.png';

@@ -2,7 +2,6 @@ import {ReactElement} from "react";
 import {styles} from "./styles/Frame.style";
 import Navbar from "./Navbar/Navbar";
 import Footer from "./Footer/Footer";
-import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 interface FrameProps {
   children: ReactElement;

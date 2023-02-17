@@ -2,7 +2,6 @@ import {ReactElement} from "react";
 import {ToolkitTabContentRowSubtitle, ToolkitTabContentRowTitle} from "../../types";
 import {styles} from "./styles/ToolkitTabContentRow.style";
 import {useViewportSizes} from "../../../../../../../hooks/useViewportSizes";
-import { AppRoutes } from "../../../../../../../utils/navigation";
 
 interface ToolkitTabContentRowProps {
   icon: ReactElement;

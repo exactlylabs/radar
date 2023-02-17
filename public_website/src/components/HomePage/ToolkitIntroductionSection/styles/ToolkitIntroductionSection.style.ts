@@ -176,14 +176,6 @@ const smallMapBgStyle: CSSProperties = {
   backgroundSize: 'cover'
 }
 
-const largeMapBgStyle: CSSProperties = {
-  ...mapBgStyle,
-}
-
-const xlMapgBgStyle: CSSProperties = {
-  ...mapBgStyle,
-}
-
 const whiteCircle: CSSProperties = {
   position: 'absolute',
   width: '100vw',

@@ -10,6 +10,8 @@ const footerStyle: CSSProperties = {
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'center',
+  position: 'relative',
+  zIndex: 5
 }
 
 const topRowStyle: CSSProperties = {
@@ -120,7 +122,9 @@ const smallFooterStyle: CSSProperties = {
   marginLeft: 'auto',
   marginRight: 'auto',
   paddingTop: '30px',
-  marginTop: '185px'
+  marginTop: '185px',
+  position: 'relative',
+  zIndex: 5
 }
 
 const smallTopRowStyle: CSSProperties = {

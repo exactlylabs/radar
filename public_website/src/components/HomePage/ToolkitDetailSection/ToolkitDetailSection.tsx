@@ -5,7 +5,6 @@ import {AppRoutes, ExternalRoutes, isProduction} from "../../../utils/navigation
 import {
   DEFAULT_PRIMARY_BUTTON,
   DEFAULT_PRIMARY_BUTTON_BOX_SHADOW,
-  DETAIL_SECTION_BG,
   WHITE
 } from "../../../utils/colors";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";

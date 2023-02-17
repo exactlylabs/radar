@@ -17,6 +17,7 @@ enum MailReply {
   ERROR = 'Unexpected error'
 }
 
+// eslint-disable-next-line
 export default async function (req: any, res: any) {
   try {
     const body: IMailBody = JSON.parse(req.body);
