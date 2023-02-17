@@ -1,11 +1,10 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Frame from "../Frame/Frame";
 import {TABS} from "../../constants";
 import {STEPS} from "../StepsPage/utils/steps";
 import StepsPage from "../StepsPage/StepsPage";
 import AllResultsPage from "../AllResultsPage/AllResultsPage";
 import HistoryPage from "../HistoryPage/HistoryPage";
-import {useHistory} from "react-router-dom";
 import {useTabNavigation} from "../../hooks/useTabNavigation";
 
 const MainPage = ({config}) => {
@@ -20,22 +19,26 @@ const MainPage = ({config}) => {
     }
   }
 
+  const getGivenLocationIfPresent = (userLat, userLng) => {
+    if(userLat === undefined || userLng === undefined) return null;
+    return [userLat, userLng];
+  }
+
   const [step, setStep] = useState(getConfigTab(config.tab) ?? TABS.SPEED_TEST);
   const [hasRecentTest, setHasRecentTest] = useState(false);
-  const [givenLocation, setGivenLocation] = useState(null);
+  const [givenLocation, setGivenLocation] = useState(getGivenLocationIfPresent(config.userLat, config.userLng));
   const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(STEPS.CONNECTION_ADDRESS);
   const tabNavigator = useTabNavigation();
 
   const goToMapPage = location => {
-    tabNavigator(TABS.ALL_RESULTS);
-    location && setGivenLocation(location);
+    let params = null;
+    if(location) {
+      params = {userLat: location[0], userLng: location[1]};
+      setGivenLocation(location);
+    }
+    tabNavigator(TABS.ALL_RESULTS, params);
     setStep(TABS.ALL_RESULTS);
   };
-
-  const goToAllResults = () => {
-    tabNavigator(TABS.ALL_RESULTS);
-    setStep(TABS.ALL_RESULTS);
-  }
 
   const goToHistory = (hasRecentTest) => {
     setHasRecentTest(!!hasRecentTest);

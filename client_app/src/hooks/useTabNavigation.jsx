@@ -1,4 +1,5 @@
 import {useHistory} from "react-router-dom";
+import {getParamsFromObject} from "../utils/naviagtion";
 
 const TabNumber = {
   speedTest: 0,
@@ -9,8 +10,10 @@ const TabNumber = {
 export const useTabNavigation = () => {
   const history = useHistory();
 
-  return (step) => {
+  return (step, params = null) => {
     let tabNumber = TabNumber[step];
-    history.replace(`/?tab=${tabNumber}`);
+    let paramString = '';
+    if(params) paramString = `${getParamsFromObject(params)}`
+    history.replace(`/?tab=${tabNumber}${paramString}`);
   };
 }

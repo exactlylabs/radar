@@ -25,6 +25,8 @@ export const baseInitConfig = {
   tab: 0,
   noZoomControl: false,
   webviewMode: false,
+  userLat: undefined,
+  userLng: undefined,
 }
 
 const checkConfig = config => {
@@ -72,8 +74,13 @@ const getConfigFromParams = () => {
       config.noZoomControl = param.split('=')[1] === 'true';
     } else if(param.includes('webviewMode')) {
       config.webviewMode = param.split('=')[1] === 'true';
+    } else if(param.includes('userLat')) {
+      config.userLat = parseFloat(param.split('=')[1]);
+    } else if(param.includes('userLng')) {
+      config.userLng = parseFloat(param.split('=')[1]);
     }
   });
+  console.log(config)
   return config;
 }
 

@@ -75,3 +75,5 @@ export const SUGGESTION_MODAL_ROW_BORDER = 'rgba(17, 14, 76, 0.2)';
 export const SELECTED_SUGGESTION_MODAL_ROW_BORDER = '#4b7be5';
 export const DATA_COLUMN_ICON_CONTAINER = 'rgba(75, 123, 229, 0.15)';
 export const DEFAULT_SECONDARY_TEXT = '#6d6a94';
+export const FLOATING_MESSAGE_BOX = 'rgba(255, 255, 255, 0.85)';
+export const FLOATING_MESSAGE_BOX_SHADOW = 'rgba(0, 0, 0, 0.4)';

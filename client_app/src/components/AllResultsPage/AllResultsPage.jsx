@@ -19,6 +19,11 @@ import {hasVisitedAllResults, setAlreadyVisitedCookieIfNotPresent} from "../../u
 import FirstTimeModal from "./FirstTimeModal";
 import ConfigContext from "../../context/ConfigContext";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import FloatingMessageBox from "./FloatingMessageBox";
+import searchIcon from '../../assets/search-icon.png';
+import MySpinner from "../common/MySpinner";
+import {DEFAULT_GRAY_BUTTON_TEXT_COLOR} from "../../utils/colors";
+import {addMetadataToResults} from "../../utils/metadata";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -26,9 +31,14 @@ const mapWrapperStyle = {
   height: '100%',
 }
 
+const searchIconStyle = {
+  width: '14px',
+  height: '14px',
+}
+
 const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
 
-  const [requestArea, setRequestArea] = useState([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
+  const [requestArea, setRequestArea] = useState(givenLocation ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
   const [shouldRecenter, setShouldRecenter] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(false);
@@ -37,6 +47,11 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [selectedFilterType, setSelectedFilterType] = useState('download');
   const [firstTimeModalOpen, setFirstTimeModalOpen] = useState(false);
   const [hasRecentered, setHasRecentered] = useState(false);
+  const [floatingBoxVisible, setFloatingBoxVisible] = useState(false);
+  const [fetchingResults, setFetchingResults] = useState(false);
+  const [currentFilterType, setCurrentFilterType] = useState(0);
+  const [selectedRangeIndexes, setSelectedRangeIndexes] = useState([]);
+  const [initialZoom, setInitialZoom] = useState(null);
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
@@ -44,11 +59,13 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
 
   useEffect(() => {
     const fetchSpeedTests = async () => {
-      const coordinates = await getUserApproximateCoordinates();
-      if(coordinates.length > 0) {
-        setRequestArea(coordinates);
-      } else {
-        setRequestArea([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
+      setFetchingResults(true);
+      if(requestArea) {
+        const [lat, lng] = requestArea;
+        // Create bounding box
+        const _southWest = {lat: lat - 1, lng: lng - 1};
+        const _northEast = {lat: lat + 1, lng: lng + 1};
+        fetchTestsWithBounds({_southWest, _northEast});
       }
     }
 
@@ -58,13 +75,6 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
         setRequestArea(coordinates);
       }
     }
-
-    fetchSpeedTests()
-      .catch(err => {
-        notifyError(err);
-        setError('Failed to fetch speed tests. Please try again later.');
-      })
-      .finally(() => setLoading(false));
 
     if(!givenLocation) {
       fetchUserApproximateCoordinates()
@@ -80,26 +90,37 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
       setRequestArea(givenLocation);
     }
 
+    fetchSpeedTests()
+      .catch(err => {
+        notifyError(err);
+        setError('Failed to fetch speed tests. Please try again later.');
+      })
+      .finally(() => setLoading(false));
+
     if(!hasVisitedAllResults()) {
       setAlreadyVisitedCookieIfNotPresent();
       openFirstTimeModal();
     }
   }, []);
 
-  const filterResults = (selectedTab, filters) => {
+  const filterResults = (selectedTab, filters, paramResults = null) => {
     let fullRange = [];
     setSelectedFilterType(selectedTab);
     fullRange = filters.map(filter => getCorrespondingFilterTag(selectedTab, filter));
     if(fullRange.length === 0) {
-      setResults(results.map(results => { return {...results, visible: true} }));
+      const handler = result => ({...result, visible: true});
+      if(paramResults) setResults(paramResults.map(handler));
+      else setResults(results.map(handler));
     } else {
-      setResults(results.map(result => {
+      const handler = result => {
         let tagToCheck = selectedTab === 'download' ? result.downloadFilterTag : result.uploadFilterTag;
         return {
           ...result,
           visible: fullRange.includes(tagToCheck)
         };
-      }));
+      };
+      if(paramResults) setResults(paramResults.map(handler));
+      else setResults(results.map(handler));
     }
   }
 
@@ -131,19 +152,28 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     setHasRecentered(false);
   }
 
+  const handleTestsWithBoundsResult = (res) => {
+    if ('msg' in res) notifyError(res.msg);
+    else {
+      if (res.length > 0) {
+        const modifiedResults = addMetadataToResults(res);
+        setFloatingBoxVisible(false);
+        filterResults(selectedFilterType, selectedRangeIndexes, modifiedResults);
+      } else {
+        setResults([]);
+        setFloatingBoxVisible(true);
+      }
+    }
+  }
+
   const fetchTestsWithBounds = (mapBounds) => {
     const {_northEast, _southWest} = mapBounds;
+    setFloatingBoxVisible(true);
+    setFetchingResults(true);
     getTestsWithBounds(_northEast, _southWest)
-      .then(res => {
-        if('msg' in res) notifyError(res.msg);
-        else {
-          if(res.length > 0) setResults(res);
-          else alert('no results in area')
-        }
-      })
-      .catch(err => {
-        notifyError(err);
-      })
+      .then(res => handleTestsWithBoundsResult(res))
+      .catch(err => notifyError(err))
+      .finally(() => setFetchingResults(false));
   }
 
   const userMapMovementHandler = (mapBounds) => {
@@ -162,6 +192,11 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     });
   }
 
+  const userOnMoveHandler = () => {
+    setFloatingBoxVisible(true);
+    setFetchingResults(true);
+  }
+
   const handleSetRecenter = (value) => setHasRecentered(value);
 
   return (
@@ -174,7 +209,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
           <MapContainer
             id={'all-results-page--map-container'}
             center={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}
-            zoom={10}
+            zoom={initialZoom ? initialZoom : 10}
             scrollWheelZoom
             style={{ height: getMapContainerHeight(), margin: 0, position: 'relative' }}
             zoomControl={(isMediumSizeScreen || isSmallSizeScreen || config.widgetMode) && !config.noZoomControl}
@@ -187,6 +222,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
                      onPopupOpen={forceRecenter}
                      userMapMovementHandler={userMapMovementHandler}
                      userZoomHandler={userZoomHandler}
+                     userOnMoveHandler={userOnMoveHandler}
               />
             <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
             {results?.map(measurement => (
@@ -197,7 +233,17 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
               />
             ))}
           </MapContainer>
-          <SpeedResultsBox setSelectedFilters={filterResults} />
+          <SpeedResultsBox setSelectedFilters={filterResults}
+                           currentFilterType={currentFilterType}
+                           setCurrentFilterType={setCurrentFilterType}
+                           selectedRangeIndexes={selectedRangeIndexes}
+                           setSelectedRangeIndexes={setSelectedRangeIndexes}
+          />
+          { floatingBoxVisible &&
+            <FloatingMessageBox icon={fetchingResults ? <MySpinner color={DEFAULT_GRAY_BUTTON_TEXT_COLOR} size={14}/> : <img src={searchIcon} style={searchIconStyle} alt={'search icon'}/>}
+                                text={fetchingResults ? null : 'No test results in this area. Try adjusting your search area or speed filters.'}
+            />
+          }
         </div>
       }
     </div>

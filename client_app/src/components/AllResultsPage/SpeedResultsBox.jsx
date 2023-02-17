@@ -57,19 +57,20 @@ const mobileFilterSwitcherContainerStyle = {
 const filterTypes = ['download', 'upload'];
 
 const SpeedResultsBox = ({
-  setSelectedFilters
+  setSelectedFilters,
+  setSelectedRangeIndexes,
+  selectedRangeIndexes,
+  currentFilterType,
+  setCurrentFilterType,
 }) => {
 
   const [isBoxOpen, setIsBoxOpen] = useState(true);
-  const [currentFilterType, setCurrentFilterType] = useState(0);
-  const [selectedRangeIndexes, setSelectedRangeIndexes] = useState([]);
 
   const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getSpeedResultsStyle = () => {
-    let style = isMediumSizeScreen || isSmallSizeScreen ? mobileFiltersWrapper : {};
-    return style;
+    return isMediumSizeScreen || isSmallSizeScreen ? mobileFiltersWrapper : {};
   }
 
   const handleFilterClick = filtersArray => {
@@ -109,7 +110,7 @@ const SpeedResultsBox = ({
   const getMobileVersion = () => {
     let style = mobileFilterListStyle;
     const element = document.getElementById('main-frame');
-    const {x, y, width, height} = element.getBoundingClientRect();
+    const {y, height} = element.getBoundingClientRect();
     if(config.webviewMode) {
       style = {...style, top: 'calc(100vh - 125px - 25px)' }
     } else {

@@ -11,7 +11,8 @@ export const MyMap = ({
   onPopupOpen,
   noZoomControl,
   userMapMovementHandler,
-  userZoomHandler
+  userZoomHandler,
+  userOnMoveHandler
 }) => {
   const map = useMap();
   map.zoomControl = noZoomControl === undefined ? true : !noZoomControl;
@@ -25,13 +26,15 @@ export const MyMap = ({
     map.flyTo(position, map.getZoom(), {animate: false});
     setHasRecentered(true);
   }
-  if(userMapMovementHandler) {
+  if(userMapMovementHandler && userZoomHandler && userOnMoveHandler) {
     const moveHandler = () => userMapMovementHandler(map.getBounds());
     const zoomHandler = () => userZoomHandler(map.getBounds());
     if(map.listens('dragend')) map.off('dragend');
     map.on('dragend', moveHandler);
     if(map.listens('zoomend')) map.off('zoomend');
     map.on('zoomend', zoomHandler);
+    if(map.listens('drag')) map.off('drag');
+    map.on('drag', userOnMoveHandler);
   }
   return null;
 };
