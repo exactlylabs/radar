@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/ToolkitRedirectionSection.style";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
-import { ExternalRoutes } from "../../../utils/navigation";
+import {ExternalRoutes, isProduction} from "../../../utils/navigation";
 
 const ChevronRightBlue = '/assets/images/chevron-right-blue.png';
 const RedirectArrowBlue = '/assets/images/redirect-arrow-blue.png';
@@ -52,7 +52,7 @@ const ToolkitRedirectionSection = (): ReactElement => {
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <a href={process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING} target={'_blank'} rel={'noreferrer'} className={'fw-bold'} style={styles.Link}>Explore the map</a>
+            <a href={isProduction ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING} target={'_blank'} rel={'noreferrer'} className={'fw-bold'} style={styles.Link}>Explore the map</a>
             <img src={RedirectArrowBlue} style={styles.LinkChevron} alt={'redirect-arrow-blue'}/>
           </div>
         </div>
@@ -68,7 +68,7 @@ const ToolkitRedirectionSection = (): ReactElement => {
             <img src={ChevronRightBlue} style={styles.LinkChevron} alt={'chevron-right-blue'}/>
           </div>
           <div className={'hover-opaque'} style={styles.LinkContainer(isSmall)}>
-            <a href={process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING} target={'_blank'} rel={'noreferrer'} className={'fw-bold'} style={styles.Link}>Explore the map</a>
+            <a href={isProduction ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING} target={'_blank'} rel={'noreferrer'} className={'fw-bold'} style={styles.Link}>Explore the map</a>
             <img src={RedirectArrowBlue} style={styles.LinkChevron} alt={'redirect-arrow-blue'}/>
           </div>
         </div>

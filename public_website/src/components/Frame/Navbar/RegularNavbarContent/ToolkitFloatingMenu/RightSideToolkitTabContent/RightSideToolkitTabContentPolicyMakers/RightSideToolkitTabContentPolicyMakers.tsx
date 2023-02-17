@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import ToolkitTabContentRow from "../ToolkitTabContentRow/ToolkitTabContentRow";
 import {ToolkitTabContentRowSubtitle, ToolkitTabContentRowTitle} from "../../types";
 import {commonStyles} from "../styles/common.style";
-import {AppRoutes, ExternalRoutes} from "../../../../../../../utils/navigation";
+import {AppRoutes, ExternalRoutes, isProduction} from "../../../../../../../utils/navigation";
 
 const SiteMonitoringIcon = '/assets/images/floating-toolkit-site-monitoring-icon.png';
 const BroadbandTestingIcon = '/assets/images/floating-toolkit-broadband-testing-icon.png';
@@ -27,7 +27,7 @@ const RightSideToolkitTabContentPolicyMakers = (): ReactElement => {
                             title={ToolkitTabContentRowTitle.MAPPING_TOOLS}
                             subtitle={ToolkitTabContentRowSubtitle.POLICY_MAKERS_MAPPING_TOOLS}
                             extraIcon={<img src={RedirectArrowGray} style={commonStyles.RedirectIcon} alt={'new-tab-icon'}/>}
-                            link={process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING}
+                            link={isProduction ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING}
                             openNewTab
       />
     </div>
