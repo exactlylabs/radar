@@ -24,11 +24,11 @@ export default async function (req: any, res: any) {
       return res.status(400).json({msg: MailReply.BAD_REQUEST, status: 400});
 
     const errorSendingEmailNotification = sendEmailNotification(body);
-    //const response = await sendDiscordNotification(body);
-    //const errorSendingDiscordNotification = response.status >= 400;
+    const response = await sendDiscordNotification(body);
+    const errorSendingDiscordNotification = response.status >= 400;
 
-    //if(errorSendingEmailNotification && errorSendingDiscordNotification)
-    //  return res.status(500).json({msg: MailReply.ERROR, status: 500});
+    if(errorSendingEmailNotification && errorSendingDiscordNotification)
+      return res.status(500).json({msg: MailReply.ERROR, status: 500});
 
     return res.status(201).json({msg: MailReply.OK, status: 201});
   } catch (e) {
