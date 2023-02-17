@@ -25,7 +25,7 @@ const MyCustomMarker = ({
     const { downloadFilterTag, uploadFilterTag, visible } = measurement;
     let pathOptions = {
       ...sharedMarkerProps,
-      opacity: visible ? 1.0 : 0.2,
+      opacity: visible ? 1.0 : 0.1,
       fillOpacity: visible ? 0.7 : 0.1,
     };
     const tagToCheck = currentFilterType === 'download' ? downloadFilterTag : uploadFilterTag;

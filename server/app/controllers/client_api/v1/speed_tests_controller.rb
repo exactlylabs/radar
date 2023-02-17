@@ -29,7 +29,7 @@ module ClientApi
         ne_lat = params[:ne_lat]
         ne_lng = params[:ne_lng]
         error = !sw_lat || !sw_lng || !ne_lat || !ne_lng
-        @speed_tests = ClientSpeedTest.all.where('latitude >= ? and latitude <= ? and longitude >= ? and longitude <= ?', sw_lat.to_i, ne_lat.to_i, sw_lng.to_i, ne_lng.to_i) if !error
+        @speed_tests = ClientSpeedTest.all.where('latitude >= ? and latitude <= ? and longitude >= ? and longitude <= ?', sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f) if !error
         respond_to do |format|
           if error
             format.json { render json: { msg: 'Missing map bounds!' }, status: :bad_request }
