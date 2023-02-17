@@ -17,6 +17,7 @@ import (
 	"github.com/exactlylabs/radar/agent/services/radar/cable"
 	"github.com/exactlylabs/radar/agent/services/radar/messages"
 	"github.com/exactlylabs/radar/agent/services/sysinfo"
+	"github.com/exactlylabs/radar/agent/services/tracing"
 )
 
 // firstPing since the service has started. It's set to false right after a successful ping
@@ -86,7 +87,14 @@ func (c *RadarClient) handleSubscriptionMessage(msg messages.SubscriptionMessage
 	} else if msg.Event == "version_changed" {
 		updateData := messages.VersionChangedSubscriptionPayload{}
 		if err := json.Unmarshal(msg.Payload, &updateData); err != nil {
-			log.Println(fmt.Errorf("radar.RadarClient#updateRequested Unmarshal: %w", err))
+			err = fmt.Errorf("radar.RadarClient#updateRequested Unmarshal: %w", err)
+			tracing.NotifyError(
+				err,
+				tracing.Context{
+					"Message": {"event": msg.Event, "payload": string(msg.Payload)},
+				},
+			)
+			log.Println(err)
 		}
 		c.agentCh <- &agent.ServerMessage{
 			Update: &agent.BinaryUpdate{
@@ -104,6 +112,13 @@ func (c *RadarClient) handleCustomMessage(msg messages.ServerMessage) {
 	case UpdateClient:
 		payload := &messages.VersionChangedSubscriptionPayload{}
 		if err := msg.DecodeMessage(payload); err != nil {
+			err = fmt.Errorf("radar.RadarClient#handleCustomMessage DecodeMessage: %w", err)
+			tracing.NotifyError(
+				err,
+				tracing.Context{
+					"Message": {"type": msg.Type, "message": msg.Message},
+				},
+			)
 			log.Println(err)
 			return
 		}

@@ -13,6 +13,7 @@ import (
 	"github.com/exactlylabs/radar/agent/services/radar/cable"
 	"github.com/exactlylabs/radar/agent/services/radar/messages"
 	"github.com/exactlylabs/radar/agent/services/sysinfo"
+	"github.com/exactlylabs/radar/agent/services/tracing"
 	"github.com/exactlylabs/radar/agent/watchdog"
 )
 
@@ -73,7 +74,14 @@ func (c *RadarWatchdogClient) handleSubscriptionMessage(msg messages.Subscriptio
 	if msg.Event == "version_changed" {
 		updateData := messages.VersionChangedSubscriptionPayload{}
 		if err := json.Unmarshal(msg.Payload, &updateData); err != nil {
-			log.Println(fmt.Errorf("radar.RadarWatchdogClient#updateRequested Unmarshal: %w", err))
+			err = fmt.Errorf("radar.RadarWatchdogClient#updateRequested Unmarshal: %w", err)
+			tracing.NotifyError(
+				err,
+				tracing.Context{
+					"Message": {"event": msg.Event, "payload": string(msg.Payload)},
+				},
+			)
+			log.Println(err)
 		}
 		c.returnCh <- watchdog.ServerMessage{
 			Update: &watchdog.BinaryUpdate{
@@ -89,6 +97,12 @@ func (c *RadarWatchdogClient) handleCustomMessage(msg messages.ServerMessage) {
 	case UpdateWatchdog:
 		payload := &messages.VersionChangedSubscriptionPayload{}
 		if err := msg.DecodeMessage(payload); err != nil {
+			err = fmt.Errorf("radar.RadarWatchdogClient#handleCustomMessage DecodeMessage: %w", err)
+			tracing.NotifyError(err,
+				tracing.Context{
+					"Message": {"type": msg.Type, "message": msg.Message},
+				},
+			)
 			log.Println(err)
 			return
 		}
