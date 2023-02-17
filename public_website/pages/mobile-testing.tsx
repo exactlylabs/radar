@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect} from "react";
+import React, {ReactElement} from "react";
 import {styles} from "../src/components/MobilePage/styles/MobilePage.style";
 import MobilePageHeader from "../src/components/MobilePage/MobilePageHeader/MobilePageHeader";
 import MobilePageCarrousel from "../src/components/MobilePage/MobilePageCarrousel/MobilePageCarrousel";

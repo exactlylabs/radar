@@ -2,6 +2,7 @@ import {ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "../styles/MobilePageCarrousel.style";
 import MobilePageCarrouselItem from "../MobilePageCarrouselItem/MobilePageCarrouselItem";
 import {CarrouselItem, carrouselItemSubtitles, carrouselItemTitles, itemImageSrc} from "../MobilePageCarrousel";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 const SpeedTestIcon = "/assets/images/carrousel-item-speed-test-icon.png";
 const CompareIcon = "/assets/images/carrousel-item-compare-icon.png";
@@ -27,6 +28,7 @@ const SmallMobilePageCarrousel = ({
 
   const [isScrolling, setIsScrolling] = useState(false);
   const [scrollPosition, setScrollPosition] = useState<ScrollPosition>({clientX: 0, scrollX: 0});
+  const {isLargeScreen} = useViewportSizes();
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,7 +60,7 @@ const SmallMobilePageCarrousel = ({
   return (
     <div style={styles.SmallCarrouselContainer}>
       <img src={itemImageSrc[currentItem]} style={styles.CarrouselImage(true)} alt={'mobile-app-carrousel'}/>
-      <div style={styles.HorizontalCarrousel}
+      <div style={styles.HorizontalCarrousel(isLargeScreen)}
            ref={sliderRef}
            id={'small-carrousel-scrollable-container'}
            className={'draggable-carrousel-container'}

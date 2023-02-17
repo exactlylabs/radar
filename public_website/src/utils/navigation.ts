@@ -12,8 +12,6 @@ export enum AppRoutes {
 export const DEFAULT_MAIL_TO = 'mailto:support@radartoolkit.com';
 
 export enum ExternalRoutes {
-  SPEED_TEST_PROD = 'https://speedtest.exactlylabs.com',
-  SPEED_TEST_STAGING = 'https://speedtest-staging.exactlylabs.com',
   MAPPING_APP_PROD = 'https://broadbandmapping.com',
   MAPPING_APP_STAGING = 'https://mapping.staging.exactlylabs.com',
 }
@@ -27,4 +25,3 @@ export const goToUrl = (url: string, anotherTab = false) => {
 }
 
 export const goToHome = () => goToUrl(AppRoutes.HOME);
-export const goToMobile = () => goToUrl(AppRoutes.MOBILE_TESTING);

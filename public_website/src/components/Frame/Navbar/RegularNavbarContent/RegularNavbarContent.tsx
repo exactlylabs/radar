@@ -8,13 +8,7 @@ import { useIsTouchDevice } from "../../../../hooks/useIsTouchDevice";
 const RadarLogo = "/assets/images/radar-logo.png";
 const ChevronRight = "/assets/images/chevron-right-dark.png";
 
-interface RegularNavbarContentProps {
-  goToGetStarted: () => void;
-}
-
-const RegularNavbarContent = ({
-  goToGetStarted
-}: RegularNavbarContentProps): ReactElement => {
+const RegularNavbarContent = (): ReactElement => {
 
   const isTouchDevice = useIsTouchDevice().current;
 
@@ -28,6 +22,7 @@ const RegularNavbarContent = ({
     return () => {
       if(isTouchDevice) window.removeEventListener('click', closeMenuIfClickOutside);
     }
+    // eslint-disable-next-line
   }, []);
 
   const closeMenuIfClickOutside = (e: any) => {

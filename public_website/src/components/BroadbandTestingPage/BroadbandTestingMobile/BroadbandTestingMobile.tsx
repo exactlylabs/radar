@@ -2,7 +2,7 @@ import {ReactElement} from "react";
 import {styles} from "./styles/BroadbandTestingMobile.style";
 import CustomButton from "../../common/CustomButton/CustomButton";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
-import {AppRoutes, goToMobile} from "../../../utils/navigation";
+import {AppRoutes} from "../../../utils/navigation";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const MobileAppIllustration = '/assets/images/mobile-app-illustration.png';
@@ -10,11 +10,11 @@ const ChevronRightWhite = "/assets/images/chevron-right-white.png";
 
 const BroadbandTestingMobile = (): ReactElement => {
 
-  const {isSmallScreen, isMidScreen} = useViewportSizes();
-  const isSmall = isSmallScreen || isMidScreen;
+  const {isSmallScreen, isMidScreen, isLargeScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isMidScreen || isLargeScreen;
 
   return (
-    <div style={styles.BroadbandTestingMobile(isSmall)}>
+    <div style={styles.BroadbandTestingMobile(isSmall, isLargeScreen)}>
       <div style={styles.BroadbandTestingMobileContent(isSmall)}>
         { !isSmall && <img src={MobileAppIllustration} style={styles.Illustration(isSmall)} alt={'mobile-app-illustration'}/> }
         <div style={styles.RightColumn(isSmall)}>

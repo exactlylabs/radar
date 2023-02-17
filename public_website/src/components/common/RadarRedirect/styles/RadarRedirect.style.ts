@@ -11,7 +11,8 @@ const radarRedirectStyle: CSSProperties = {
   marginLeft: 'auto',
   marginRight: 'auto',
   marginTop: '-175px',
-  position: 'relative'
+  position: 'relative',
+  zIndex: 10
 }
 
 const smallRadarRedirectStyle: CSSProperties = {
@@ -19,7 +20,8 @@ const smallRadarRedirectStyle: CSSProperties = {
   height: '285px',
   backgroundColor: INVESTMENT_SECTION_BLUE,
   position: 'relative',
-  marginBottom: '-25px'
+  marginBottom: '-25px',
+  zIndex: 10
 }
 
 const siteMonitoringRadarRedirectContentStyle: CSSProperties = {

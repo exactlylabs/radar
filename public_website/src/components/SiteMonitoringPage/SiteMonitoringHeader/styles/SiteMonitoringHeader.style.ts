@@ -1,6 +1,5 @@
 import {CSSProperties} from "react";
 import {DEFAULT_TEXT} from "../../../../utils/colors";
-import siteMonitoringHeader from "../SiteMonitoringHeader";
 
 const siteMonitoringHeaderStyle: CSSProperties = {
   width: '100%',
@@ -111,15 +110,6 @@ const chevronRightStyle: CSSProperties = {
   width: '14px',
   height: '14px',
   marginLeft: '5px',
-}
-
-const blueShapeStyle: CSSProperties = {
-  width: '1074px',
-  height: '545px',
-  position: 'absolute',
-  right: '75px',
-  top: '240px',
-  zIndex: 0
 }
 
 const siteMonitoringHeaderContentStyle: CSSProperties = {

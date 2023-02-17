@@ -26,8 +26,8 @@ const MobilePageCarrouselItem = ({
   isLast
 }: MobilePageCarrouselItemProps): ReactElement => {
 
-  const {isSmallScreen, isMidScreen} = useViewportSizes();
-  const isSmall = isSmallScreen || isMidScreen;
+  const {isSmallScreen, isMidScreen, isLargeScreen} = useViewportSizes();
+  const isSmall = isSmallScreen || isMidScreen || isLargeScreen;
 
   const [hovered, setHovered] = useState(false);
 

@@ -9,11 +9,9 @@ const Navbar = (): ReactElement => {
   const { isSmallScreen, isMidScreen } = useViewportSizes();
   const isSmallNavbar = isSmallScreen || isMidScreen;
 
-  const goToGetStarted = () => {}
-
   return (
     <div style={styles.Navbar(isSmallNavbar)}>
-      { isSmallNavbar ? <SmallNavbarContent /> : <RegularNavbarContent goToGetStarted={goToGetStarted}/> }
+      { isSmallNavbar ? <SmallNavbarContent /> : <RegularNavbarContent/> }
     </div>
   )
 }

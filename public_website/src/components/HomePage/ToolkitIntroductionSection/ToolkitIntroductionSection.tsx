@@ -15,7 +15,7 @@ const WhiteCircle = '/assets/images/white-circle.png';
 
 const ToolkitIntroductionSection = (): ReactElement => {
 
-  const {isSmallScreen, isMidScreen, isLargeScreen, isXLScreen} = useViewportSizes();
+  const {isSmallScreen, isMidScreen } = useViewportSizes();
 
   const isSmall = isSmallScreen || isMidScreen;
 

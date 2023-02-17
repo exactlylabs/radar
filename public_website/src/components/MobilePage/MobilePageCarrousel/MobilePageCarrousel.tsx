@@ -40,7 +40,7 @@ export const itemImageSrc: Array<string> = [
 
 const MobilePageCarrousel = (): ReactElement => {
 
-  const {isSmallScreen, isMidScreen} = useViewportSizes();
+  const {isSmallScreen, isMidScreen, isLargeScreen} = useViewportSizes();
   const isSmall = isSmallScreen || isMidScreen;
 
   const [currentItem, setCurrentItem] = useState(0);
@@ -69,13 +69,13 @@ const MobilePageCarrousel = (): ReactElement => {
 
   return (
     <div style={styles.MobilePageCarrousel}>
-      {!isSmall && <div style={styles.GradientBg}></div> }
+      { !isSmall && <div style={styles.GradientBg}></div> }
       <div style={styles.TextContainer(isSmall)}>
         <p className={'fw-bold'} style={styles.Header}>Radar for Mobile</p>
         <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Test your connectivity outdoors or your Wi-Fi at home.</p>
         <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Radar lets you run speed tests outdoors and indoors, compare results over time, and explore your neighborhood to get a better idea of how broadband looks like around you.</p>
       </div>
-      { isSmall ?
+      { isSmall || isLargeScreen ?
         <SmallMobilePageCarrousel currentItem={currentItem}
                                   handleManualSelect={handleManualSelect}
                                   progress={progress}

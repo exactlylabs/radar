@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect} from "react";
+import React, {ReactElement} from "react";
 import {styles} from "../src/components/BroadbandTestingPage/styles/BroadbandTestingPage.style";
 import RadarRedirect from "../src/components/common/RadarRedirect/RadarRedirect";
 import BroadbandTestingMobile from "../src/components/BroadbandTestingPage/BroadbandTestingMobile/BroadbandTestingMobile";
