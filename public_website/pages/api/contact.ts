@@ -105,7 +105,7 @@ const sendEmailNotification = (body: IMailBody) => {
     secure: true,
   });
   const mailData = {
-    from: 'no-reply@exactlylabs.com',
+    from: 'eugenio@exactlylabs.com',
     to: 'support@exactlylabs.com',
     subject: 'New Contact Submission',
     html: `<div>${newUserEmailBody}</div>`,
@@ -114,7 +114,7 @@ const sendEmailNotification = (body: IMailBody) => {
   let errorSendingEmail = false;
   transporter.sendMail(mailData, (err: any, info: any) => {
     if (err) {
-      console.log(err);
+      console.error(err);
       errorSendingEmail = true;
     }
   });
