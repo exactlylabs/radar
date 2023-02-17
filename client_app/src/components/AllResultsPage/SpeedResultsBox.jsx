@@ -62,9 +62,9 @@ const SpeedResultsBox = ({
   selectedRangeIndexes,
   currentFilterType,
   setCurrentFilterType,
+  isBoxOpen,
+  setIsBoxOpen
 }) => {
-
-  const [isBoxOpen, setIsBoxOpen] = useState(true);
 
   const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();

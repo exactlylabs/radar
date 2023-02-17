@@ -1,8 +1,9 @@
 import {DEFAULT_GRAY_BUTTON_TEXT_COLOR, FLOATING_MESSAGE_BOX, FLOATING_MESSAGE_BOX_SHADOW} from "../../utils/colors";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const floatingMessageBoxStyle = {
-  width: 'max-content',
-  height: '15px',
+  width: '45%',
+  maxWidth: '560px',
   backgroundColor: FLOATING_MESSAGE_BOX,
   borderRadius: '6px',
   position: 'absolute',
@@ -12,10 +13,26 @@ const floatingMessageBoxStyle = {
   boxShadow: `0 1px 6px -3px ${FLOATING_MESSAGE_BOX_SHADOW}`,
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   justifyContent: 'flex-start',
   zIndex: 1000,
   padding: '12px 15px'
+}
+
+const smallFloatingMessageBoxStyle = {
+  ...floatingMessageBoxStyle,
+  width: undefined,
+  maxWidth: '225px',
+  bottom: '165px',
+  left: '15px',
+  height: undefined,
+  alignItems: 'flex-start',
+  padding: '10px'
+}
+
+const smallFloatingMessageBoxAtBottomStyle = {
+  ...smallFloatingMessageBoxStyle,
+  bottom: '20px',
 }
 
 const textStyle = {
@@ -24,11 +41,23 @@ const textStyle = {
   marginLeft: '10px',
 }
 
-const FloatingMessageBox = ({ icon, text }) => {
+const smallTextStyle = {
+  fontSize: '15px',
+  color: DEFAULT_GRAY_BUTTON_TEXT_COLOR,
+  marginLeft: '10px',
+  width: 'calc(100% - 35px)',
+  textAlign: 'left',
+}
+
+const FloatingMessageBox = ({ icon, text, isBoxOpen }) => {
+
+  const {isSmallSizeScreen, isMediumSizeScreen, isLargeSizeScreen} = useViewportSizes();
+  const isSmall = isSmallSizeScreen || isMediumSizeScreen;
+
   return (
-    <div style={floatingMessageBoxStyle}>
+    <div style={ isSmall ? isBoxOpen ? smallFloatingMessageBoxStyle : smallFloatingMessageBoxAtBottomStyle : floatingMessageBoxStyle}>
       { icon }
-      { !!text && <p style={textStyle}>{text}</p> }
+      { !!text && <p style={isSmall ? smallTextStyle : textStyle}>{text}</p> }
     </div>
   )
 }

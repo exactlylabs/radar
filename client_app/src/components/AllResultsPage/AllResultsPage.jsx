@@ -34,6 +34,7 @@ const mapWrapperStyle = {
 const searchIconStyle = {
   width: '14px',
   height: '14px',
+  marginTop: '3px',
 }
 
 const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
@@ -52,8 +53,10 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [currentFilterType, setCurrentFilterType] = useState(0);
   const [selectedRangeIndexes, setSelectedRangeIndexes] = useState([]);
   const [initialZoom, setInitialZoom] = useState(null);
+  const [isBoxOpen, setIsBoxOpen] = useState(true);
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const isSmall = isSmallSizeScreen || isMediumSizeScreen;
   const config = useContext(ConfigContext);
   let timerId;
 
@@ -238,10 +241,13 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
                            setCurrentFilterType={setCurrentFilterType}
                            selectedRangeIndexes={selectedRangeIndexes}
                            setSelectedRangeIndexes={setSelectedRangeIndexes}
+                           isBoxOpen={isBoxOpen}
+                           setIsBoxOpen={setIsBoxOpen}
           />
           { floatingBoxVisible &&
             <FloatingMessageBox icon={fetchingResults ? <MySpinner color={DEFAULT_GRAY_BUTTON_TEXT_COLOR} size={14}/> : <img src={searchIcon} style={searchIconStyle} alt={'search icon'}/>}
                                 text={fetchingResults ? null : 'No test results in this area. Try adjusting your search area or speed filters.'}
+                                isBoxOpen={isBoxOpen}
             />
           }
         </div>
