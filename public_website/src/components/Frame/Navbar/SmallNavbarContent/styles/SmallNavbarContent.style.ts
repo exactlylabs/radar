@@ -11,7 +11,8 @@ const navbarContentWrapperStyle: CSSProperties = {
 const navbarContentWrapperWithShadowStyle: CSSProperties = {
   ...navbarContentWrapperStyle,
   boxShadow: `0 3px 30px -4px ${OPEN_NAVBAR_BOX_SHADOW}`,
-  backdropFilter: 'blur(15px)'
+  backdropFilter: 'blur(15px)',
+  backgroundColor: WHITE
 }
 
 const navbarContentStyle: CSSProperties = {

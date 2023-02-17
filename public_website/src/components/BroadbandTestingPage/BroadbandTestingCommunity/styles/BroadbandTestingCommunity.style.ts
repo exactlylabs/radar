@@ -3,7 +3,6 @@ import {DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT, ITEM_ICON_CONTAINER_BLUE} from "..
 
 const broadbandTestingCommunityStyle: CSSProperties = {
   width: '100vw',
-  height: '500px',
   marginTop: '80px',
   marginBottom: '100px',
 }
@@ -56,11 +55,10 @@ const smallTextContainerStyle: CSSProperties = {
 
 const rowStyle: CSSProperties = {
   width: '100%',
-  height: '200px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  alignItems: 'center',
+  alignItems: 'flex-start',
 }
 
 const columnStyle: CSSProperties = {

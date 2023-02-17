@@ -1,5 +1,4 @@
-import {createContext, ReactElement, useEffect, useRef, useState} from "react";
-import {Optional} from "../utils/types";
+import {createContext, ReactElement, useEffect, useState} from "react";
 
 /**
  * Custom context provider to expose screen size application-wide
@@ -19,6 +18,7 @@ interface ViewportContextProviderProps {
 export const ViewportContextProvider = ({children}: ViewportContextProviderProps) => {
   const [width, setWidth] = useState(0);
 
+  // eslint-disable-next-line
   useEffect(() => {
     if(!!window) {
       setWidth(window.innerWidth);

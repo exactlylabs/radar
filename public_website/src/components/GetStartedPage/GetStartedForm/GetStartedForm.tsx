@@ -125,8 +125,58 @@ const GetStartedForm = ({onSubmit}: GetStartedFormProps): ReactElement => {
   }
 
   const displayError = () => {
-
+    // TODO
   }
+
+  const columnInterests = () => (
+    <>
+      <div style={styles.CheckboxCell('175px')}>
+        <CustomCheckbox isChecked={checkboxes.siteMonitoring}
+                        setIsChecked={(value: boolean) => handleCheckboxChange(value, 'siteMonitoring')}
+        />
+        <p className={'fw-medium'} style={styles.CheckboxLabel}>Site Monitoring</p>
+      </div>
+      <div style={styles.CheckboxCell('max-content')}>
+        <CustomCheckbox isChecked={checkboxes.broadbandTesting} setIsChecked={(value: boolean) => handleCheckboxChange(value, 'broadbandTesting')}/>
+        <p className={'fw-medium'} style={styles.CheckboxLabel}>Consumer Broadband Testing</p>
+      </div>
+      <div style={styles.CheckboxCell('140px')}>
+        <CustomCheckbox isChecked={checkboxes.mappingTools} setIsChecked={(value: boolean) => handleCheckboxChange(value, 'mappingTools')}/>
+        <p className={'fw-medium'} style={styles.CheckboxLabel}>Mapping Tools</p>
+      </div>
+      <div style={styles.CheckboxCell('max-content')}>
+        <CustomCheckbox isChecked={checkboxes.other} setIsChecked={(value: boolean) => handleCheckboxChange(value, 'other')}/>
+        <p className={'fw-medium'} style={styles.CheckboxLabel}>Other</p>
+      </div>
+    </>
+  );
+
+  const rowInterests = () => (
+    <>
+      <div style={styles.CheckboxRow(false)}>
+        <div style={styles.CheckboxCell('175px')}>
+          <CustomCheckbox isChecked={checkboxes.siteMonitoring}
+                          setIsChecked={(value: boolean) => handleCheckboxChange(value, 'siteMonitoring')}
+          />
+          <p className={'fw-medium'} style={styles.CheckboxLabel}>Site Monitoring</p>
+        </div>
+        <div style={styles.CheckboxCell('max-content')}>
+          <CustomCheckbox isChecked={checkboxes.broadbandTesting} setIsChecked={(value: boolean) => handleCheckboxChange(value, 'broadbandTesting')}/>
+          <p className={'fw-medium'} style={styles.CheckboxLabel}>Consumer Broadband Testing</p>
+        </div>
+      </div>
+      <div style={styles.CheckboxRow(true)}>
+        <div style={styles.CheckboxCell('140px')}>
+          <CustomCheckbox isChecked={checkboxes.mappingTools} setIsChecked={(value: boolean) => handleCheckboxChange(value, 'mappingTools')}/>
+          <p className={'fw-medium'} style={styles.CheckboxLabel}>Mapping Tools</p>
+        </div>
+        <div style={styles.CheckboxCell('max-content')}>
+          <CustomCheckbox isChecked={checkboxes.other} setIsChecked={(value: boolean) => handleCheckboxChange(value, 'other')}/>
+          <p className={'fw-medium'} style={styles.CheckboxLabel}>Other</p>
+        </div>
+      </div>
+    </>
+  )
 
   return (
     <div style={styles.PageWrapper}>
@@ -174,28 +224,7 @@ const GetStartedForm = ({onSubmit}: GetStartedFormProps): ReactElement => {
           </div>
           <div style={styles.InterestsGroup}>
             <label className={'fw-medium'} htmlFor={'interests'} style={styles.Label}>I'm interested in...</label>
-            <div style={styles.CheckboxRow(false)}>
-              <div style={styles.CheckboxCell('175px')}>
-                <CustomCheckbox isChecked={checkboxes.siteMonitoring}
-                                setIsChecked={(value: boolean) => handleCheckboxChange(value, 'siteMonitoring')}
-                />
-                <p className={'fw-medium'} style={styles.CheckboxLabel}>Site Monitoring</p>
-              </div>
-              <div style={styles.CheckboxCell('max-content')}>
-                <CustomCheckbox isChecked={checkboxes.broadbandTesting} setIsChecked={(value: boolean) => handleCheckboxChange(value, 'broadbandTesting')}/>
-                <p className={'fw-medium'} style={styles.CheckboxLabel}>Consumer Broadband Testing</p>
-              </div>
-            </div>
-            <div style={styles.CheckboxRow(true)}>
-              <div style={styles.CheckboxCell('140px')}>
-                <CustomCheckbox isChecked={checkboxes.mappingTools} setIsChecked={(value: boolean) => handleCheckboxChange(value, 'mappingTools')}/>
-                <p className={'fw-medium'} style={styles.CheckboxLabel}>Mapping Tools</p>
-              </div>
-              <div style={styles.CheckboxCell('max-content')}>
-                <CustomCheckbox isChecked={checkboxes.other} setIsChecked={(value: boolean) => handleCheckboxChange(value, 'other')}/>
-                <p className={'fw-medium'} style={styles.CheckboxLabel}>Other</p>
-              </div>
-            </div>
+            { isSmall ? columnInterests() : rowInterests() }
             { checkboxes.other && <CustomInput name={'interest'} type={'text'} ref={interestRef} placeholder={'Tell us what you are interested in...'}/>}
             <div style={styles.ConsentTextContainer(checkboxes.other)}>
               <span style={styles.ConsentText}>By continuing, you are consenting to our <a href={'/privacy-policy'} className={'custom-link'}>Privacy Policy</a> and allowing us to contact you.</span>

@@ -193,7 +193,8 @@ const contactBg1Style: CSSProperties = {
   zIndex: 0,
   right: 0,
   top: '-80px',
-  maxHeight: '50vh'
+  maxHeight: '50vh',
+  opacity: 0.3
 }
 
 const contactBg2Style: CSSProperties = {
@@ -203,7 +204,8 @@ const contactBg2Style: CSSProperties = {
   zIndex: 0,
   left: '10%',
   top: '-55px',
-  maxHeight: '50vh'
+  maxHeight: '50vh',
+  opacity: 0.3
 }
 
 const contactWhiteCircleStyle: CSSProperties = {
@@ -212,13 +214,13 @@ const contactWhiteCircleStyle: CSSProperties = {
   height: 'auto',
   zIndex: 1,
   left: 0,
-  top: '-45px',
+  top: '75px',
   maxHeight: '50vh'
 }
 
 const smallContactWhiteCircleStyle: CSSProperties = {
   position: 'absolute',
-  width: '100vw',
+  width: '120vw',
   height: 'auto',
   zIndex: 1,
   left: 0,

@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect} from "react";
+import React, {ReactElement} from "react";
 import {styles} from "../src/components/SiteMonitoringPage/styles/SiteMonitoringPage.style";
 import SiteMonitoringHeader from "../src/components/SiteMonitoringPage/SiteMonitoringHeader/SiteMonitoringHeader";
 import SiteMonitoringNetworkIssues from "../src/components/SiteMonitoringPage/SiteMonitoringNetworkIssues/SiteMonitoringNetworkIssues";

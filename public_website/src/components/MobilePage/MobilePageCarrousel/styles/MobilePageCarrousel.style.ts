@@ -135,6 +135,11 @@ const horizontalCarrouselStyle: CSSProperties = {
   scrollBehavior: 'smooth'
 }
 
+const largeHorizontalCarrouselStyle: CSSProperties = {
+  ...horizontalCarrouselStyle,
+  width: 'calc(100% + 50px)',
+}
+
 const gradientBgStyle: CSSProperties = {
   width: '100vw',
   height: '100%',
@@ -157,6 +162,6 @@ export const styles = {
   CarrouselContainer: carrouselContainerStyle,
   LeftColumn: leftColumnStyle,
   RightColumn: rightColumnStyle,
-  HorizontalCarrousel: horizontalCarrouselStyle,
+  HorizontalCarrousel: (isLarge: boolean) => isLarge ? largeHorizontalCarrouselStyle : horizontalCarrouselStyle,
   GradientBg: gradientBgStyle
 }
