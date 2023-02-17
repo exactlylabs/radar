@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.toolkit.exactlylabs.com/sitemap.xml
-Sitemap: https://toolkit.exactlylabs.com/sitemap.xml
+Sitemap: https://www.radartoolkit.com/sitemap.xml
+Sitemap: https://radartoolkit.com/sitemap.xml
