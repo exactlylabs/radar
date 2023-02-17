@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { CircularProgress } from '@mui/material';
 import { MyButton } from '../common/MyButton';
-import {MapContainer, TileLayer} from 'react-leaflet';
+import {MapContainer, TileLayer, useMap} from 'react-leaflet';
 import { TABS } from '../../constants';
 import SpeedResultsBox from './SpeedResultsBox';
 import {getCorrespondingFilterTag} from '../../utils/speeds';
@@ -11,7 +11,7 @@ import {
   mapTileAttribution,
   mapTileUrl,
 } from '../../utils/map';
-import {getAllSpeedTests, getUserApproximateCoordinates} from '../../utils/apiRequests';
+import {getTestsWithBounds, getUserApproximateCoordinates} from '../../utils/apiRequests';
 import { MyMap } from '../common/MyMap';
 import MyCustomMarker from "./MyCustomMarker";
 import {notifyError} from "../../utils/errors";
@@ -19,8 +19,6 @@ import {hasVisitedAllResults, setAlreadyVisitedCookieIfNotPresent} from "../../u
 import FirstTimeModal from "./FirstTimeModal";
 import ConfigContext from "../../context/ConfigContext";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
-import {useHistory} from "react-router-dom";
-import {useTabNavigation} from "../../hooks/useTabNavigation";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -38,16 +36,20 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(true);
   const [selectedFilterType, setSelectedFilterType] = useState('download');
   const [firstTimeModalOpen, setFirstTimeModalOpen] = useState(false);
+  const [hasRecentered, setHasRecentered] = useState(false);
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
-  const tabsNavigator = useTabNavigation();
+  let timerId;
 
   useEffect(() => {
-
     const fetchSpeedTests = async () => {
-      const speedTests = await getAllSpeedTests();
-      setResults(speedTests);
+      const coordinates = await getUserApproximateCoordinates();
+      if(coordinates.length > 0) {
+        setRequestArea(coordinates);
+      } else {
+        setRequestArea([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
+      }
     }
 
     const fetchUserApproximateCoordinates = async () => {
@@ -101,11 +103,6 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     }
   }
 
-  const goToSpeedTest = () => {
-    tabsNavigator(TABS.SPEED_TEST);
-    setStep(TABS.SPEED_TEST);
-  }
-
   const getMapContainerHeight = () => {
     if(config.widgetMode) {
       const widgetHeight = config.frameStyle.height;
@@ -129,37 +126,70 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
 
   const forceRecenter = () => setShouldRecenter(true);
 
-  const disableRecenter = () => setShouldRecenter(false);
+  const disableRecenter = () => {
+    setShouldRecenter(false);
+    setHasRecentered(false);
+  }
+
+  const fetchTestsWithBounds = (mapBounds) => {
+    const {_northEast, _southWest} = mapBounds;
+    getTestsWithBounds(_northEast, _southWest)
+      .then(res => {
+        if('msg' in res) notifyError(res.msg);
+        else {
+          if(res.length > 0) setResults(res);
+          else alert('no results in area')
+        }
+      })
+      .catch(err => {
+        notifyError(err);
+      })
+  }
+
+  const userMapMovementHandler = (mapBounds) => {
+    if(!mapBounds) return;
+    if(timerId) clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      fetchTestsWithBounds(mapBounds);
+    });
+  }
+
+  const userZoomHandler = (mapBounds) => {
+    if(!mapBounds) return;
+    if(timerId) clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      fetchTestsWithBounds(mapBounds);
+    });
+  }
+
+  const handleSetRecenter = (value) => setHasRecentered(value);
 
   return (
     <div style={{ textAlign: 'center', height: '100%' }}>
       {(loading || centerCoordinatesLoading) && <CircularProgress size={25} />}
       {(!loading || !centerCoordinatesLoading) && error && <p>{error}</p>}
-      {!loading && results !== null && results.length === 0 && (
-        <div>
-          <p>No measurements taken so far!</p>
-          <MyButton text={'Test'} onClick={goToSpeedTest} />
-        </div>
-      )}
       <FirstTimeModal isOpen={firstTimeModalOpen} setIsOpen={setFirstTimeModalOpen}/>
       {!loading && !centerCoordinatesLoading &&
-        results !== null && results.length > 0 && (
         <div style={getMapWrapperStyle()}>
           <MapContainer
             id={'all-results-page--map-container'}
             center={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}
-            zoom={14}
+            zoom={10}
             scrollWheelZoom
             style={{ height: getMapContainerHeight(), margin: 0, position: 'relative' }}
             zoomControl={(isMediumSizeScreen || isSmallSizeScreen || config.widgetMode) && !config.noZoomControl}
           >
-            <MyMap position={requestArea}
-                   shouldRecenter={shouldRecenter}
-                   onPopupClose={disableRecenter}
-                   onPopupOpen={forceRecenter}
-            />
+              <MyMap position={requestArea}
+                     shouldRecenter={shouldRecenter}
+                     hasRecentered={hasRecentered}
+                     setHasRecentered={handleSetRecenter}
+                     onPopupClose={disableRecenter}
+                     onPopupOpen={forceRecenter}
+                     userMapMovementHandler={userMapMovementHandler}
+                     userZoomHandler={userZoomHandler}
+              />
             <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
-            {results.map(measurement => (
+            {results?.map(measurement => (
               <MyCustomMarker key={measurement.id}
                               measurement={measurement}
                               currentFilterType={selectedFilterType}
@@ -169,7 +199,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
           </MapContainer>
           <SpeedResultsBox setSelectedFilters={filterResults} />
         </div>
-      )}
+      }
     </div>
   );
 };

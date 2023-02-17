@@ -110,3 +110,9 @@ export const getAddressForCoordinates = async coordinates => {
 };
 
 export const getUserApproximateCoordinates = () => fetch(`${API_URL}/user_coordinates`).then(res => res.json());
+
+export const getTestsWithBounds = (northEast, southWest) => {
+  if(!northEast || !southWest) throw new Error('Missing bounds!');
+  const params = `?sw_lat=${southWest.lat}&sw_lng=${southWest.lng}&ne_lat=${northEast.lat}&ne_lng=${northEast.lng}`;
+  return fetch(`${API_URL}/tests_with_bounds${params}`).then(res => res.json());
+}
