@@ -1,4 +1,4 @@
-export const isProduction = process.env.NEXT_APP_ENV === 'production';
+export const isProduction = process.env.NEXT_PUBLIC_APP_ENV === 'production';
 
 export enum AppRoutes {
   HOME = '/',
