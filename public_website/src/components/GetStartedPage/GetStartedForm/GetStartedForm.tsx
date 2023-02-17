@@ -208,7 +208,7 @@ const GetStartedForm = ({onSubmit}: GetStartedFormProps): ReactElement => {
                             boxShadow={`0 4px 15px -2px ${DEFAULT_PRIMARY_BUTTON_BOX_SHADOW}`}
                             onClick={handleSubmit}
                             iconFirst
-                            icon={loading ? <ClipLoader color="#fff" size={'10'}/> : null}
+                            icon={loading ? <ClipLoader color="#fff" size={'10px'}/> : null}
               />
             </div>
           </div>
