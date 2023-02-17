@@ -19,7 +19,6 @@ export enum MailReply {
 }
 
 export const submitContactData = (mailBody: IMailBody): Promise<IContactSubmissionReply> => {
-  console.log(process.env.NEXT_APP_ENV, API_URL);
   return fetch(`${API_URL}/contact`, {
     method: 'POST',
     body: JSON.stringify(mailBody)
