@@ -7,7 +7,7 @@ import {ToolkitTabContentRowTitle} from "../../RegularNavbarContent/ToolkitFloat
 import {
   commonStyles
 } from "../../RegularNavbarContent/ToolkitFloatingMenu/RightSideToolkitTabContent/styles/common.style";
-import {AppRoutes, ExternalRoutes} from "../../../../../utils/navigation";
+import {AppRoutes, ExternalRoutes, isProduction} from "../../../../../utils/navigation";
 import CustomButton from "../../../../common/CustomButton/CustomButton";
 import {DEFAULT_PRIMARY_BUTTON, WHITE} from "../../../../../utils/colors";
 
@@ -39,7 +39,7 @@ const SmallNavbarContentOpen = (): ReactElement => {
         />
         <ToolkitTabContentRow icon={<img src={MappingToolsIcon} style={commonStyles.Icon} alt={'mapping-tools-icon'}/>}
                               title={ToolkitTabContentRowTitle.MAPPING_TOOLS}
-                              link={process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING}
+                              link={isProduction ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING}
                               openNewTab
                               extraIcon={<img src={RedirectArrowGray} style={commonStyles.RedirectIcon} alt={'new-tab-icon'}/>}
 

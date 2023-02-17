@@ -1,3 +1,5 @@
+export const isProduction = process.env.NEXT_APP_ENV === 'production';
+
 export enum AppRoutes {
   HOME = '/',
   SITE_MONITORING = '/site-monitoring',
@@ -25,9 +27,4 @@ export const goToUrl = (url: string, anotherTab = false) => {
 }
 
 export const goToHome = () => goToUrl(AppRoutes.HOME);
-export const goToSiteMonitoring = () => goToUrl(AppRoutes.SITE_MONITORING);
-export const goToBroadbandTesting = () => goToUrl(AppRoutes.BROADBAND_TESTING);
 export const goToMobile = () => goToUrl(AppRoutes.MOBILE_TESTING);
-export const goToSpeedTestWebsite = () => goToUrl(process.env.NODE_ENV === 'production' ? ExternalRoutes.SPEED_TEST_PROD : ExternalRoutes.SPEED_TEST_STAGING, true);
-export const goToMappingApp = () => goToUrl(process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING, true);
-export const emailContact = () => { window.open(DEFAULT_MAIL_TO); }

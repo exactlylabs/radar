@@ -1,8 +1,10 @@
 import {IMailBody} from "../../src/components/GetStartedPage/GetStartedForm/GetStartedForm";
 
+// Avoiding NODE_ENV due to:
+// https://nextjs.org/docs/messages/non-standard-node-env
 const API_URL =
-  process.env.NODE_ENV === 'production' ? 'https://radartoolkit.com/api' :
-  process.env.NODE_ENV === 'staging' ? 'https://toolkit.staging.exactlylabs.com/api' :
+  process.env.NEXT_APP_ENV === 'production' ? 'https://radartoolkit.com/api' :
+  process.env.NEXT_APP_ENV === 'staging' ? 'https://toolkit.staging.exactlylabs.com/api' :
   'http://localhost:3000/api';
 
 export interface IContactSubmissionReply {
@@ -17,7 +19,7 @@ export enum MailReply {
 }
 
 export const submitContactData = (mailBody: IMailBody): Promise<IContactSubmissionReply> => {
-  console.log(process.env.NODE_ENV, API_URL);
+  console.log(process.env.NEXT_APP_ENV, API_URL);
   return fetch(`${API_URL}/contact`, {
     method: 'POST',
     body: JSON.stringify(mailBody)
