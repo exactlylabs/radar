@@ -147,7 +147,7 @@ const smallToolkitSubtitleStyle: CSSProperties = {
 const heroGradientBgStyle: CSSProperties = {
   width: '100vw',
   height: '100%',
-  position: 'fixed',
+  position: 'absolute',
   top: '-156px',
   left: 0,
   background: 'linear-gradient(to top, rgb(234, 236, 255, 0%), rgb(145 151 204 / 44%))',
@@ -155,7 +155,8 @@ const heroGradientBgStyle: CSSProperties = {
 }
 
 const pageWrapperStyle: CSSProperties = {
-  width: '100vw'
+  width: '100vw',
+  position: 'relative',
 }
 
 export const styles = {
