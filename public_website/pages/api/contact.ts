@@ -106,7 +106,7 @@ const sendEmailNotification = (body: IMailBody) => {
   });
   const mailData = {
     from: 'eugenio@exactlylabs.com',
-    to: 'support@exactlylabs.com',
+    to: 'eugenio@exactlylabs.com',
     subject: 'New Contact Submission',
     html: `<div>${newUserEmailBody}</div>`,
     replyTo: body.email,
