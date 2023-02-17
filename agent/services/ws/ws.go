@@ -18,6 +18,7 @@ type ConnectionErrorCallback func(err error)
 type ConnectedCallback func()
 
 // Client is a Websocket client, that auto reconnects whenever an error occurs
+// ParameterType T is the struct that can Unmarshal a message from the server
 type Client[T any] struct {
 	url               string
 	header            http.Header
@@ -148,7 +149,9 @@ func (c *Client[T]) Connect() error {
 	go func() {
 		defer close(c.rCh)
 		defer close(c.wCh)
+
 		// Run immediately and retries infinitely in case of errors
+		// this call is blocking, it only leaves in case of error or context is closed
 		err := c.connectAndListen(ctx)
 		if err != nil {
 			if c.onConnectionError != nil {
