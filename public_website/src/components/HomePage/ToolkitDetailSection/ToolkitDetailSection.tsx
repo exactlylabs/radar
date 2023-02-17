@@ -1,7 +1,7 @@
 import {ReactElement} from "react";
 import {styles} from "./styles/ToolkitDetailSection.style";
 import CustomButton from "../../common/CustomButton/CustomButton";
-import {AppRoutes, ExternalRoutes} from "../../../utils/navigation";
+import {AppRoutes, ExternalRoutes, isProduction} from "../../../utils/navigation";
 import {
   DEFAULT_PRIMARY_BUTTON,
   DEFAULT_PRIMARY_BUTTON_BOX_SHADOW,
@@ -82,7 +82,7 @@ const ToolkitDetailSection = (): ReactElement => {
             <p className={'fw-bold'} style={styles.InformationBlockTitle(isSmall)}>Mapping Tools</p>
             <p className={'fw-medium'} style={styles.InformationBlockSubtitle(isSmall)}>Explore public data on an interactive map to learn more about how Internet connectivity varies between different geographies, providers and timeframes.</p>
             <CustomButton text={'Explore the map'}
-                          link={process.env.NODE_ENV === 'production' ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING}
+                          link={isProduction ? ExternalRoutes.MAPPING_APP_PROD : ExternalRoutes.MAPPING_APP_STAGING}
                           openNewTab
                           icon={<img src={RedirectArrowWhite} style={styles.RedirectArrow} alt={'new tab arrow white'}/>}
                           backgroundColor={DEFAULT_PRIMARY_BUTTON}
