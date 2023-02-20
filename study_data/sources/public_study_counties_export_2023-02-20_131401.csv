@@ -1,0 +1,26 @@
+state,state_code,county,fips,pop_2021
+Alaska,AK,Aleutians West Census Area,02016,5059
+Alaska,AK,Bristol Bay Borough,02060,838
+Alaska,AK,Dillingham Census Area,02070,4772
+Alaska,AK,Nome Census Area,02180,9865
+Alaska,AK,North Slope Borough,02185,10972
+Alaska,AK,Northwest Arctic Borough,02188,7560
+Michigan,MI,Gladwin County,26051,25485
+Michigan,MI,Manistee County,26101,25350
+Michigan,MI,Missaukee County,26113,15130
+Michigan,MI,Montmorency County,26119,9297
+Michigan,MI,Osceola County,26133,23105
+Michigan,MI,Oscoda County,26135,8311
+Texas,TX,Crosby County,48107,5106
+Texas,TX,Fisher County,48151,3706
+Texas,TX,Haskell County,48207,5411
+Texas,TX,Jones County,48253,19873
+Texas,TX,Lamb County,48279,12898
+Texas,TX,Mitchell County,48335,9070
+West Virginia,WV,Calhoun County,54013,6176
+West Virginia,WV,Clay County,54015,7892
+West Virginia,WV,Jackson County,54035,27738
+West Virginia,WV,Kanawha County,54039,177952
+West Virginia,WV,Nicholas County,54067,24300
+West Virginia,WV,Ritchie County,54085,8383
+West Virginia,WV,Roane County,54087,13898
