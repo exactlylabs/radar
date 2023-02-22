@@ -19,7 +19,7 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
         super(const SpeedTestState()) {
     _listenConnectivityState();
     _setVersionAndBuildNumber();
-    _getFTUEApp();
+    _getTerms();
   }
 
   final IResultsService _resultsService;
@@ -48,11 +48,6 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
 
   void setLocation(Location location) {
     emit(state.copyWith(location: location));
-    emit(state.copyWith(isStepValid: isStepValid(state.step)));
-  }
-
-  void setTermsAccepted(bool termsAccepted) {
-    emit(state.copyWith(termsAccepted: termsAccepted));
     emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
 
@@ -135,13 +130,17 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     });
   }
 
-  Future<void> _getFTUEApp() async {
-    await Future.delayed(const Duration(seconds: 1));
-    final ftue = _localStorage.getFTUEApp();
-    if (ftue) {
-      _localStorage.setFTUEApp();
+  Future<void> _getTerms() async {
+    if (!_localStorage.isLocalStorageOpen()) {
+      await _localStorage.openLocalStorage();
     }
-    emit(state.copyWith(isFTUEApp: ftue));
+    final termsAccepted = _localStorage.getTerms();
+    emit(state.copyWith(termsAccepted: termsAccepted));
+  }
+
+  void acceptTerms() {
+    _localStorage.setTerms();
+    emit(state.copyWith(termsAccepted: true));
   }
 
   Future<void> _listenConnectivityState() async {

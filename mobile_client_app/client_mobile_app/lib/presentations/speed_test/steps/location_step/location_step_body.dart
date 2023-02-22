@@ -7,7 +7,6 @@ import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/error_message.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/agree_to_terms.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/current_location_button.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
@@ -23,9 +22,7 @@ class LocationStepBody extends StatefulWidget {
     this.currentLocation,
     this.suggestedLocation,
     this.suggestions,
-    this.locationError,
-    this.termsError,
-    this.termsAccepted = false,
+    this.error,
     this.isLoading = false,
   }) : super(key: key);
 
@@ -33,9 +30,7 @@ class LocationStepBody extends StatefulWidget {
   final Location? currentLocation;
   final Location? suggestedLocation;
   final List<Location>? suggestions;
-  final String? locationError;
-  final String? termsError;
-  final bool termsAccepted;
+  final String? error;
   final bool isLoading;
 
   @override
@@ -90,19 +85,12 @@ class _LocationStepBodyState extends State<LocationStepBody> {
               }),
             ],
           ),
-          if (widget.locationError != null || widget.termsError != null) ...[
+          if (widget.error != null) ...[
             SpacerWithMax(size: height * 0.031, maxSize: 25.0),
-            ErrorMessage(message: widget.locationError ?? widget.termsError!),
+            ErrorMessage(message: widget.error!),
             SpacerWithMax(size: height * 0.053, maxSize: 45.0),
           ] else
             SpacerWithMax(size: height * 0.2, maxSize: 157.0),
-          AgreeToTerms(
-            agreed: widget.termsAccepted,
-            onAgreed: (value) {
-              context.read<LocationStepCubit>().setTermsAccepted(value ?? false);
-              context.read<SpeedTestCubit>().setTermsAccepted(value ?? false);
-            },
-          ),
           SpacerWithMax(size: height * 0.16, maxSize: 132.0),
         ],
       ),
@@ -110,9 +98,7 @@ class _LocationStepBodyState extends State<LocationStepBody> {
   }
 
   void _onContinuePressed(BuildContext context) {
-    if (!widget.termsAccepted) {
-      context.read<LocationStepCubit>().setTermsError();
-    } else if (widget.location != null) {
+    if (widget.location != null) {
       context.read<SpeedTestCubit>().setLocation(widget.location!);
       context.read<SpeedTestCubit>().nextStep();
     } else if ((widget.suggestions?.isNotEmpty ?? false) || widget.suggestedLocation != null) {

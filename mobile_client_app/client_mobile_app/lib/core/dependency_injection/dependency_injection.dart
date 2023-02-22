@@ -9,7 +9,7 @@ import 'package:network_connection_info/network_connection_info.dart';
 final sl = GetIt.instance;
 
 void registerDependencies(String baseUrl) {
-  sl.registerSingleton<LocalStorage>(LocalStorage());
+  sl.registerLazySingleton<LocalStorage>(() => LocalStorage());
 
   sl.registerLazySingleton<IHttpProvider>(() => HttpProvider());
 
