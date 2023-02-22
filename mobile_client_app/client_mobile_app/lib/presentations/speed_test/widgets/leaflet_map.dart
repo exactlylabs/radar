@@ -59,6 +59,8 @@ class _LeafletMapState extends State<LeafletMap> {
       options: MapOptions(
         center: _address,
         zoom: _zoom,
+        interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+        rotationWinGestures: MultiFingerGesture.none,
         onPositionChanged: (mapPosition, _) => mapPosition.center != null ? _updateAddress(mapPosition.center!) : null,
         onMapEvent: (event) {
           if (event is MapEventMoveStart || event is MapEventDoubleTapZoomStart) {

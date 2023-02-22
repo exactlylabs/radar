@@ -13,7 +13,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     Location? location,
     bool termsAccepted = false,
   })  : _locationsService = locationsService,
-        super(LocationStepState(location: location, termsAccepted: termsAccepted));
+        super(LocationStepState(location: location));
 
   final ILocationsService _locationsService;
 
@@ -57,7 +57,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       final permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.deniedForever) {
-        emit(state.copyWith(isLoading: false, loadingCurrentLocation: false, locationError: Strings.locationError));
+        emit(state.copyWith(isLoading: false, loadingCurrentLocation: false, error: Strings.locationError));
         return;
       }
     }
@@ -83,15 +83,11 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     }
   }
 
-  void setTermsAccepted(bool value) => emit(state.acceptTerms(value));
-
-  void setTermsError() => emit(state.copyWith(termsError: Strings.termsError));
-
-  void setLocationError() => emit(state.copyWith(locationError: Strings.locationMissingError));
+  void setLocationError() => emit(state.copyWith(error: Strings.locationMissingError));
 
   void setSuggestedLocation(Location location) => emit(state.copyWith(suggestedLocation: location));
 
-  void reset() => emit(LocationStepState(termsAccepted: state.termsAccepted));
+  void reset() => emit(const LocationStepState());
 
   void useCurrentLocation() {
     if (state.currentLocation == null) return;

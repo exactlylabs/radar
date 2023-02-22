@@ -13,25 +13,22 @@ class LocationStep extends StatelessWidget {
     Key? key,
     this.formHeight = 0.0,
     this.location,
-    this.termsAccepted = false,
   }) : super(key: key);
 
   final double formHeight;
   final Location? location;
-  final bool termsAccepted;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: BlocProvider(
         create: (_) => LocationStepCubit(
-          locationsService: context.read<ILocationsService>(),
           location: location,
-          termsAccepted: termsAccepted,
+          locationsService: context.read<ILocationsService>(),
         ),
         child: BlocListener<LocationStepCubit, LocationStepState>(
           listenWhen: (previous, current) =>
-              (previous.loadingCurrentLocation && !current.loadingCurrentLocation && current.locationError == null) ||
+              (previous.loadingCurrentLocation && !current.loadingCurrentLocation && current.error == null) ||
               (previous.suggestedLocation != null && current.location == previous.suggestedLocation),
           listener: (context, state) {
             if (state.location != null && state.location == state.suggestedLocation) {
@@ -46,9 +43,7 @@ class LocationStep extends StatelessWidget {
               return LocationStepBody(
                 location: state.location,
                 currentLocation: state.currentLocation,
-                locationError: state.locationError,
-                termsError: state.termsError,
-                termsAccepted: state.termsAccepted,
+                error: state.error,
                 isLoading: state.isLoading,
                 suggestedLocation: state.suggestedLocation,
                 suggestions: state.suggestions,

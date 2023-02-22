@@ -54,6 +54,7 @@ class App extends StatelessWidget {
         providers: [
           BlocProvider(create: (context) => NavigationCubit()),
           BlocProvider<SpeedTestCubit>(
+            lazy: false,
             create: (context) => SpeedTestCubit(
               resultsService: context.read<IResultsService>(),
               localStorage: localStorage,

@@ -13,7 +13,6 @@ class SpeedTestState {
     this.networkType,
     this.monthlyBillCost,
     this.networkLocation,
-    this.termsAccepted = false,
     this.isTestRunning = false,
     this.isLocationLoading = false,
     this.isFormEnded = false,
@@ -21,7 +20,7 @@ class SpeedTestState {
     this.buildNumber,
     this.onContinue,
     this.onBack,
-    this.isFTUEApp = false,
+    this.termsAccepted = true,
   });
 
   SpeedTestState copyWith({
@@ -36,14 +35,13 @@ class SpeedTestState {
     int? monthlyBillCost,
     String? networkLocation,
     bool? isTestRunning,
-    bool? termsAccepted,
     bool? isLocationLoading,
     bool? isFormEnded,
     String? versionNumber,
     String? buildNumber,
     VoidCallback? onContinue,
     VoidCallback? onBack,
-    bool? isFTUEApp,
+    bool? termsAccepted,
   }) =>
       SpeedTestState(
         step: step ?? this.step,
@@ -59,12 +57,11 @@ class SpeedTestState {
         isTestRunning: isTestRunning ?? this.isTestRunning,
         isLocationLoading: isLocationLoading ?? this.isLocationLoading,
         isFormEnded: isFormEnded ?? this.isFormEnded,
-        termsAccepted: termsAccepted ?? this.termsAccepted,
         onContinue: step != null && step != this.step ? null : onContinue ?? this.onContinue,
         onBack: step != null && step != this.step ? null : onBack ?? this.onBack,
         versionNumber: versionNumber ?? this.versionNumber,
         buildNumber: buildNumber ?? this.buildNumber,
-        isFTUEApp: isFTUEApp ?? this.isFTUEApp,
+        termsAccepted: termsAccepted ?? this.termsAccepted,
       );
 
   SpeedTestState resetSpecificStep(bool networkLocation, bool networkType, bool monthlyBillCost) => SpeedTestState(
@@ -83,10 +80,9 @@ class SpeedTestState {
         isFormEnded: isFormEnded,
         versionNumber: versionNumber,
         buildNumber: buildNumber,
-        termsAccepted: termsAccepted,
         onContinue: null,
         onBack: null,
-        isFTUEApp: isFTUEApp,
+        termsAccepted: termsAccepted,
       );
 
   SpeedTestState resetCallbacks() {
@@ -104,12 +100,11 @@ class SpeedTestState {
       isTestRunning: isTestRunning,
       isLocationLoading: isLocationLoading,
       isFormEnded: isFormEnded,
-      termsAccepted: termsAccepted,
       versionNumber: versionNumber,
       buildNumber: buildNumber,
       onContinue: null,
       onBack: null,
-      isFTUEApp: isFTUEApp,
+      termsAccepted: termsAccepted,
     );
   }
 
@@ -120,7 +115,6 @@ class SpeedTestState {
   final double? latency;
   final double? download;
   final Location? location;
-  final bool termsAccepted;
   final bool isTestRunning;
   final String? networkType;
   final bool isLocationLoading;
@@ -129,7 +123,7 @@ class SpeedTestState {
   final bool isFormEnded;
   final String? versionNumber;
   final String? buildNumber;
-  final bool isFTUEApp;
+  final bool termsAccepted;
   final VoidCallback? onContinue;
   final VoidCallback? onBack;
 }
