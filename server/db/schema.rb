@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_24_121602) do
+ActiveRecord::Schema.define(version: 2023_02_22_222316) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -224,6 +224,19 @@ ActiveRecord::Schema.define(version: 2023_02_24_121602) do
     t.index ["name", "client_version_id"], name: "index_distributions_on_name_and_client_version_id", unique: true
   end
 
+  create_table "events", force: :cascade do |t|
+    t.string "name"
+    t.datetime "timestamp"
+    t.string "aggregate_type"
+    t.bigint "aggregate_id"
+    t.jsonb "data"
+    t.bigint "version"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["aggregate_type", "aggregate_id"], name: "index_events_on_aggregate"
+    t.index ["version", "aggregate_id", "aggregate_type"], name: "index_events_on_version_and_aggregate_id_and_aggregate_type", unique: true
+  end
+
   create_table "invites", force: :cascade do |t|
     t.boolean "is_active", default: false
     t.string "first_name", null: false
@@ -323,6 +336,17 @@ ActiveRecord::Schema.define(version: 2023_02_24_121602) do
     t.index ["client_version_id"], name: "index_packages_on_client_version_id"
   end
 
+  create_table "snapshots", force: :cascade do |t|
+    t.bigint "event_id"
+    t.string "aggregate_type"
+    t.bigint "aggregate_id"
+    t.jsonb "state"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["aggregate_type", "aggregate_id"], name: "index_snapshots_on_aggregate"
+    t.index ["event_id"], name: "index_snapshots_on_event_id"
+  end
+
   create_table "update_groups", force: :cascade do |t|
     t.string "name"
     t.bigint "client_version_id"
@@ -410,6 +434,7 @@ ActiveRecord::Schema.define(version: 2023_02_24_121602) do
   add_foreign_key "measurements", "locations"
   add_foreign_key "measurements", "users", column: "measured_by_id"
   add_foreign_key "packages", "client_versions"
+  add_foreign_key "snapshots", "events"
   add_foreign_key "update_groups", "client_versions"
   add_foreign_key "update_groups", "watchdog_versions"
   add_foreign_key "users_accounts", "accounts"
