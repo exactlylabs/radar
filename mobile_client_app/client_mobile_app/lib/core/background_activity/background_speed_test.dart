@@ -88,7 +88,7 @@ class BackgroundSpeedTest {
 
           if (!_isTestingDownloadSpeed && !_isTestingUploadSpeed) {
             await _getCurrentLocation();
-            _sendSpeedTestResults();
+            await _sendSpeedTestResults();
           }
         } else if (data is ClientResponse) {
           _lastClientMeasurement = ResponsesParser.parseClientResponse(data);
@@ -126,8 +126,8 @@ class BackgroundSpeedTest {
     _longitude = position.longitude;
   }
 
-  void _sendSpeedTestResults() {
-    _httpProvider.postAndDecode(
+  Future<void> _sendSpeedTestResults() async {
+    await _httpProvider.postAndDecode(
       url: _restClient.speedTest,
       headers: {'Content-Type': 'application/json'},
       body: {
