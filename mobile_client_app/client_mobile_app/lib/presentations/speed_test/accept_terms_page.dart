@@ -1,4 +1,4 @@
-import 'package:client_mobile_app/presentations/speed_test/widgets/agree_to_terms.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
@@ -6,6 +6,7 @@ import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/error_message.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/agree_to_terms.dart';
 
 class AcceptTermsPage extends StatefulWidget {
   const AcceptTermsPage({
@@ -30,7 +31,7 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
   }
 
   void setError() {
-    setState(() => error = 'Please confirm that you agree to the Terms of Use and Privacy Policy before continuing.');
+    setState(() => error = Strings.acceptTermsError);
   }
 
   void acceptTerms(bool value) {
@@ -46,7 +47,7 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
         Image.asset(Images.speedtest, height: 150.0),
         const SizedBox(height: 20.0),
         Text(
-          'Test your Internet speed',
+          Strings.acceptTermsTitle,
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 22.0,
@@ -59,7 +60,7 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5.0),
           child: Text(
-            'We’ll ask you a few questions to better understand where and how you’re connected so we can learn more about your current service.',
+            Strings.acceptTermsSubtitle,
             textAlign: TextAlign.center,
             style: AppTextStyle(
               fontSize: 16.0,
@@ -93,7 +94,7 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Continue',
+                Strings.continueButtonLabel,
                 style: AppTextStyle(
                   fontSize: 16.0,
                   fontWeight: 700,
