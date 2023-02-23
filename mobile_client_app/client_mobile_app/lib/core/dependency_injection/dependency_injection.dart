@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/core/background_activity/app_state_handler.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/http_provider/implementation/http_provider.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
@@ -18,4 +19,6 @@ void registerDependencies(String baseUrl) {
   sl.registerLazySingleton<Ndt7Client>(() => Ndt7Client());
 
   sl.registerLazySingleton<NetworkConnectionInfo>(() => NetworkConnectionInfo());
+
+  sl.registerLazySingleton<AppStateHandler>(() => AppStateHandler());
 }
