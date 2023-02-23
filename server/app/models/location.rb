@@ -2,11 +2,30 @@ require "#{Rails.root}/lib/fips/fips_geocoder.rb"
 require "csv"
 
 class Location < ApplicationRecord
+include EventSourceable
+
+  module Events
+    NAME_CHANGED = "NAME_CHANGED"
+    ADDRESS_CHANGED = "ADDRESS_CHANGED"
+    LABEL_ADDED = "LABEL_ADDED"
+    LABEL_REMOVED = "LABEL_REMOVED"
+  end
+
+
+  # Event Hooks
+  notify_change :name, Location::Events::NAME_CHANGED
+  notify_change :address, Location::Events::ADDRESS_CHANGED
+
   validates :name, :address, presence: true
 
   belongs_to :user, foreign_key: 'created_by_id'
   belongs_to :location_group, optional: true
-  has_and_belongs_to_many :location_labels
+  has_and_belongs_to_many :location_labels, 
+    # Note: Rails only triggers when associating through << statement
+    # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks
+    :after_add => many_added_callback(:location_labels, Location::Events::LABEL_ADDED, applier: :apply_label_added), 
+    :after_remove => many_removed_callback(:location_labels, Location::Events::LABEL_REMOVED, applier: :apply_label_removed)
+  
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
   has_one :client_count_aggregate, :as => :aggregator
@@ -18,6 +37,23 @@ class Location < ApplicationRecord
   scope :where_offline, -> { left_joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) = 0") }
 
   scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
+
+  def apply_label_added(state, event)
+    if state["location_labels"].nil?
+      state["location_labels"] = []
+    end
+    label = LocationLabel.find event.data["id"]
+    state["location_labels"] << label.name
+  end
+
+  def apply_label_removed(state, event)
+    byebug
+    if state["location_labels"].nil?
+      state["location_labels"] = []
+    end
+    label = LocationLabel.find event.data["id"]
+    state["location_labels"].delete(label.name)
+  end
 
   # Create helper method as using [:symbol_1, :symbol_2] only runs
   # if and only if both are true, and we need an OR condition in this case

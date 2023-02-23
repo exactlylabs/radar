@@ -1,4 +1,28 @@
 class Client < ApplicationRecord
+  include EventSourceable
+  
+  module Events
+    CREATED = "CREATED"
+    WENT_ONLINE = "WENT_ONLINE"
+    WENT_OFFLINE = "WENT_OFFLINE"
+    SERVICE_STARTED = "SERVICE_STARTED"
+    LOCATION_CHANGED = "LOCATION_CHANGED"
+    ACCOUNT_CHANGED = "ACCOUNT_CHANGED"
+    IP_CHANGED = "IP_CHANGED"
+    AS_CHANGED = "AUTONOMOUS_SYSTEM_CHANGED"
+    IN_SERVICE = "IN_SERVICE"
+    NOT_IN_SERVICE = "NOT_IN_SERVICE"
+  end
+
+  # Event Hooks
+  notify_change :account_id, Client::Events::ACCOUNT_CHANGED
+  notify_change :location_id, Client::Events::LOCATION_CHANGED
+  notify_change :in_service, {true => Client::Events::IN_SERVICE, false => Client::Events::NOT_IN_SERVICE}
+  notify_change :ip, Client::Events::IP_CHANGED
+  notify_change :autonomous_system_id, Client::Events::AS_CHANGED
+  notify_change :online, {true => Client::Events::WENT_ONLINE, false => Client::Events::WENT_OFFLINE}
+  
+
   # TODO: New agents are 15 seconds, old were 30. Once all the legacy "script based" clients are gone, update this to 15
   PING_DURATION = 30
   enum data_cap_periodicity: { daily: 0, weekly: 1, monthly: 2}
@@ -19,7 +43,7 @@ class Client < ApplicationRecord
 
   before_create :create_ids
   after_save :send_event
-  after_create :send_created_event
+  after_create :send_created_event_old
   after_commit :check_ip_changed
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
@@ -72,7 +96,7 @@ class Client < ApplicationRecord
     end
   end
 
-  def send_created_event
+  def send_created_event_old
     ClientEventLog.created_event self, timestamp: self.created_at
   end
 
