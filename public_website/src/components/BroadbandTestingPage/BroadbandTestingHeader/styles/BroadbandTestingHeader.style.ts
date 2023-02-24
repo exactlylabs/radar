@@ -139,7 +139,7 @@ const heroGradientBgStyle: CSSProperties = {
   position: 'absolute',
   top: '-156px',
   left: 0,
-  background: 'linear-gradient(rgba(234, 236, 255, 1) -51%, rgba(145, 151, 204, 0.34), rgba(234, 236, 255, -0.1));',
+  background: 'linear-gradient(rgba(234, 236, 255, 1) -51%, rgba(145, 151, 204, 0.34), rgba(234, 236, 255, -0.1))',
   zIndex: 0
 }
 
