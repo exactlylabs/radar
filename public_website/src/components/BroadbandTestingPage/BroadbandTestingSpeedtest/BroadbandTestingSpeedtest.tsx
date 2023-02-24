@@ -1,4 +1,4 @@
-import {ReactElement} from "react";
+import {ReactElement, useEffect} from "react";
 import {styles} from "./styles/BroadbandTestingSpeedtest.style";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import CustomButton from "../../common/CustomButton/CustomButton";
@@ -12,7 +12,20 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
   const {isSmallScreen, isMidScreen, isLargeScreen} = useViewportSizes();
   const isSmall = isSmallScreen || isMidScreen || isLargeScreen;
 
-  const getSrc = () => `https://speedtest.staging.exactlylabs.com/?widgetMode=true&frameWidth=${isSmall ? '100%' : '600px'}&frameHeight=570px`
+  useEffect(() => {
+    // @ts-ignore
+    SpeedTest.config({
+      clientId: 'local',
+      widgetMode: true,
+      elementId: 'widget-root',
+      frameStyle: {
+        width: '100%',
+        height: '100%',
+      },
+    });
+    // @ts-ignore
+    SpeedTest.new().mount();
+  }, []);
 
   return (
     <div style={styles.BroadbandTestingSpeedtest(isSmall)}>
@@ -31,9 +44,7 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
                         boxShadow={`0 4px 15px -2px ${DEFAULT_PRIMARY_BUTTON_BOX_SHADOW}`}
           />
         </div>
-        <div style={styles.RightColumn(isSmall)}>
-          <iframe style={styles.Iframe(isSmall)} src={getSrc()} title={'Speedtest Widget'}/>
-        </div>
+        <div style={styles.RightColumn(isSmall)} id={'widget-root'}></div>
       </div>
     </div>
   );
