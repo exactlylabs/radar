@@ -10,6 +10,7 @@ class LocalStorage {
   static const String resultsKey = 'RESULTS';
   static const String ftueMapKey = 'FTUE_MAP';
   static const String termsKey = 'TERMS';
+  static const String backgroundSpeedTestKey = 'BACKGROUND_SPEED_TEST';
 
   Future<void> openLocalStorage() async {
     if (!Hive.isBoxOpen(boxName)) {
@@ -32,9 +33,12 @@ class LocalStorage {
   }
 
   bool getFTUEMap() {
-    final ftue = _box.get(ftueMapKey, defaultValue: [
-      {'value': true}
-    ])!;
+    final ftue = _box.get(
+      ftueMapKey,
+      defaultValue: [
+        {'value': true}
+      ],
+    )!;
     return ftue.first['value'] as bool;
   }
 
@@ -46,20 +50,37 @@ class LocalStorage {
   }
 
   bool getTerms() {
-    final ftue = _box.get(
+    final terms = _box.get(
       termsKey,
       defaultValue: [
         {'accepted': false}
       ],
     )!;
-    return ftue.first['accepted'] as bool;
+    return terms.first['accepted'] as bool;
   }
 
   Future<void> setTerms() async {
-    final ftue = [
+    final terms = [
       {'accepted': true}
     ];
-    await _box.put(termsKey, ftue);
+    await _box.put(termsKey, terms);
+  }
+
+  int getBackgroundSpeedTestDelay() {
+    final value = _box.get(
+      backgroundSpeedTestKey,
+      defaultValue: [
+        {'delay': -1}
+      ],
+    )!;
+    return value.first['delay'] as int;
+  }
+
+  Future<void> setBackgroundSpeedTestDelay(int delay) async {
+    final value = [
+      {'delay': delay}
+    ];
+    await _box.put(backgroundSpeedTestKey, value);
   }
 
   bool isLocalStorageOpen() {

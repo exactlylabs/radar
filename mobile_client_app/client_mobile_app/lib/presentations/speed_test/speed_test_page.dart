@@ -6,8 +6,6 @@ import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
 import 'package:client_mobile_app/presentations/speed_test/accept_terms_page.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/ftue_app_modal.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/steps_indicator.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/network_place_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/no_internet_connection_page.dart';
@@ -17,6 +15,7 @@ import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_step.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/app_info_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/take_speed_test_step.dart';
 
 class SpeedTestPage extends StatelessWidget {
@@ -144,21 +143,12 @@ class SpeedTestPage extends StatelessWidget {
   Future<void> _openInfoModal(BuildContext context, String? versionNumber, String? buildNumber) async {
     return modalWithTitle(
       context,
-      false,
+      true,
       Strings.emptyString,
       AppInfoModal(
         versionNumber: versionNumber ?? Strings.emptyString,
         buildNumber: buildNumber ?? Strings.emptyString,
       ),
-    );
-  }
-
-  Future<void> _openFTUEAppModal(BuildContext context) {
-    return modalWithTitle(
-      context,
-      true,
-      Strings.emptyString,
-      const FTUEAppModal(),
     );
   }
 }

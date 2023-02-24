@@ -7,8 +7,8 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
-import 'package:client_mobile_app/core/background_activity/app_state_handler.dart';
-import 'package:client_mobile_app/core/background_activity/background_speed_test.dart';
+import 'package:client_mobile_app/core/background_fetch/app_state_handler.dart';
+import 'package:client_mobile_app/core/background_fetch/background_speed_test.dart';
 
 class BackgroundFetchHandler {
   @pragma('vm:entry-point')
@@ -32,13 +32,23 @@ class BackgroundFetchHandler {
     BackgroundFetch.finish(taskId);
   }
 
-  void registerHeadleesTask() {
+  static void startBackgroundSpeedTest(int delay) {
+    _setBackgroundFetchPlugin();
+    _registerHeadleesTask();
+    _registerBackgroundSpeedTestTask(delay);
+  }
+
+  static void stopBackgroundSpeedTest() {
+    BackgroundFetch.stop(_BACKGROUND_SPEED_TEST_ID);
+  }
+
+  static void _registerHeadleesTask() {
     if (Platform.isAndroid) {
       BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
     }
   }
 
-  static Future<void> setBackgroundFetchPlugin() async {
+  static Future<void> _setBackgroundFetchPlugin() async {
     final appStateHandler = GetIt.I<AppStateHandler>();
     appStateHandler.initState();
     final status = await _initPlatformState();
@@ -84,11 +94,11 @@ class BackgroundFetchHandler {
     );
   }
 
-  static void registerBackgroundSpeedTestTask() {
+  static void _registerBackgroundSpeedTestTask(int delay) {
     BackgroundFetch.scheduleTask(
       TaskConfig(
         taskId: _BACKGROUND_SPEED_TEST_ID,
-        delay: 5000,
+        delay: delay,
         periodic: true,
         forceAlarmManager: true,
         stopOnTerminate: false,

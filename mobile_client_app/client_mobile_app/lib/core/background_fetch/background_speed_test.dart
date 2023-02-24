@@ -5,7 +5,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:ndt7_client/ndt7_client.dart';
 import 'package:ndt7_client/models/client_response.dart';
 import 'package:ndt7_client/models/server_response.dart';
-import 'package:client_mobile_app/resources/strings.dart';
 import 'package:ndt7_client/models/test_completed_event.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:network_connection_info/network_connection_info.dart';
@@ -41,7 +40,6 @@ class BackgroundSpeedTest {
   double? _latitude;
   double? _longitude;
 
-  // NDT7 SPEED TEST
   void startSpeedTest() => _startDownloadTest();
 
   void close() => _ndt7clientSubscription.cancel();
