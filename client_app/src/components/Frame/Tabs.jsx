@@ -13,8 +13,6 @@ import exploreMapIconInactive from '../../assets/explore-icon-inactive.png';
 import historyIconActive from '../../assets/history-icon-active.png';
 import historyIconInactive from '../../assets/history-icon-inactive.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
-import {useHistory} from "react-router-dom";
-import {useTabNavigation} from "../../hooks/useTabNavigation";
 
 const tabsWrapperStyle = {
   width: '100%',
@@ -104,7 +102,6 @@ const selectedTabUnderlineStyle = {
 const Tabs = ({ step, setStep }) => {
   const [selectedTab, setSelectedTab] = useState(TABS.SPEED_TEST);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
-  const tabsNavigator = useTabNavigation();
 
   useEffect(() => {
     if(step === TABS.HISTORY && selectedTab !== TABS.HISTORY) setSelectedTab(TABS.HISTORY);
@@ -113,19 +110,16 @@ const Tabs = ({ step, setStep }) => {
   }, [step]);
 
   const goToExploreMap = () => {
-    tabsNavigator(TABS.ALL_RESULTS);
     setSelectedTab(TABS.ALL_RESULTS);
     setStep(TABS.ALL_RESULTS);
   };
 
   const goToTestSpeed = () => {
-    tabsNavigator(TABS.SPEED_TEST);
     setSelectedTab(TABS.SPEED_TEST);
     setStep(TABS.SPEED_TEST);
   };
 
   const goToHistory = () => {
-    tabsNavigator(TABS.HISTORY);
     setSelectedTab(TABS.HISTORY);
     setStep(TABS.HISTORY);
   }

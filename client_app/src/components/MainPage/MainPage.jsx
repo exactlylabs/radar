@@ -1,11 +1,13 @@
-import {useEffect, useState} from "react";
+import {useContext, useState} from "react";
 import Frame from "../Frame/Frame";
 import {TABS} from "../../constants";
 import {STEPS} from "../StepsPage/utils/steps";
 import StepsPage from "../StepsPage/StepsPage";
 import AllResultsPage from "../AllResultsPage/AllResultsPage";
 import HistoryPage from "../HistoryPage/HistoryPage";
-import {useTabNavigation} from "../../hooks/useTabNavigation";
+import ConnectionContext from "../../context/ConnectionContext";
+import NoInternetModal from "../common/NoInternetModal";
+import OverviewPage from "../OverviewPage/OverviewPage";
 
 const MainPage = ({config}) => {
 
@@ -28,32 +30,24 @@ const MainPage = ({config}) => {
   const [hasRecentTest, setHasRecentTest] = useState(false);
   const [givenLocation, setGivenLocation] = useState(getGivenLocationIfPresent(config.userLat, config.userLng));
   const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(STEPS.CONNECTION_ADDRESS);
-  const tabNavigator = useTabNavigation();
+  const {noInternet, setNoInternet} = useContext(ConnectionContext);
 
   const goToMapPage = location => {
-    let params = null;
-    if(location) {
-      params = {userLat: location[0], userLng: location[1]};
-      setGivenLocation(location);
-    }
-    tabNavigator(TABS.ALL_RESULTS, params);
+    if(location) setGivenLocation(location);
     setStep(TABS.ALL_RESULTS);
   };
 
   const goToHistory = (hasRecentTest) => {
     setHasRecentTest(!!hasRecentTest);
-    tabNavigator(TABS.HISTORY);
     setStep(TABS.HISTORY);
   }
 
   const goToLastTest = () => {
-    tabNavigator(TABS.SPEED_TEST);
     setSpecificSpeedTestStep(STEPS.SPEED_TEST_RESULTS);
     setStep(TABS.SPEED_TEST);
   }
 
   const goToSpeedTest = () => {
-    tabNavigator(TABS.SPEED_TEST);
     setSpecificSpeedTestStep(STEPS.CONNECTION_ADDRESS);
     setStep(TABS.SPEED_TEST);
   }
@@ -77,6 +71,11 @@ const MainPage = ({config}) => {
                                goToLastTest={goToLastTest}
         />;
         break;
+      case TABS.OVERVIEW:
+        content = <OverviewPage goToExplore={goToMapPage}
+                                goToTest={goToSpeedTest}
+        />;
+        break;
       default:
         content = <StepsPage goToAreaMap={goToMapPage} goToHistory={goToHistory}/>;
         break;
@@ -86,8 +85,8 @@ const MainPage = ({config}) => {
 
   return (
     <Frame config={config} setStep={setStep} step={step}>
-
       {renderContent()}
+      <NoInternetModal isOpen={noInternet} closeModal={() => setNoInternet(false)}/>
     </Frame>
   )
 }

@@ -17,11 +17,12 @@ import {
 } from "../../../../utils/map";
 import {useContext, useEffect, useMemo, useRef, useState} from "react";
 import {getAddressForCoordinates, getSuggestions, getUserApproximateCoordinates} from "../../../../utils/apiRequests";
-import {notifyError} from "../../../../utils/errors";
+import {isNoConnectionError, notifyError} from "../../../../utils/errors";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 import ConfigContext from "../../../../context/ConfigContext";
 import {widgetModalFraming} from "../../../../utils/modals";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
+import ConnectionContext from "../../../../context/ConnectionContext";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -110,21 +111,34 @@ const MyMapModal = ({
   const [error, setError] = useState(null);
   const [addressCoordinates, setAddressCoordinates] = useState(address?.coordinates ?? []);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {setNoInternet} = useContext(ConnectionContext);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
       setError(null);
-      const suggestions = await getSuggestions(address.address);
-      if(suggestions.length > 0) {
-        setAddressCoordinates(suggestions[0].coordinates);
-      } else {
+      try {
+        const suggestions = await getSuggestions(address.address);
+        if (suggestions.length > 0) {
+          setAddressCoordinates(suggestions[0].coordinates);
+        } else {
+          setError(true);
+        }
+      } catch (e) {
+        if(isNoConnectionError(e)) setNoInternet(true);
+        notifyError(e);
         setError(true);
       }
     }
     const fetchUserCoordinates = async () => {
       setError(null);
-      const coords = await getUserApproximateCoordinates();
-      setAddressCoordinates(coords);
+      try {
+        const coords = await getUserApproximateCoordinates();
+        setAddressCoordinates(coords);
+      } catch (e) {
+        if(isNoConnectionError(e)) setNoInternet(true);
+        notifyError(e);
+        setError(true);
+      }
     }
     if (address?.coordinates) {
       setAddressCoordinates(address.coordinates);
@@ -133,7 +147,11 @@ const MyMapModal = ({
       if (!address) {
         setLoading(true);
         fetchUserCoordinates()
-          .catch(err => setError(err))
+          .catch(err => {
+            if(isNoConnectionError(err)) setNoInternet(true);
+            notifyError(err);
+            setError(err);
+          })
           .finally(() => setLoading(false));
         return;
       }
@@ -141,6 +159,7 @@ const MyMapModal = ({
         setLoading(true);
         fetchSuggestions()
           .catch(err => {
+            if(isNoConnectionError(err)) setNoInternet(true);
             notifyError(err);
           })
           .finally(() => setLoading(false));
@@ -179,17 +198,25 @@ const MyMapModal = ({
   }
 
   const confirmCoordinates = async () => {
-    const address = await getAddressForCoordinates(addressCoordinates);
-    setAddress(address);
-    confirmAddress(addressCoordinates);
-    closeModal();
+    try {
+      const address = await getAddressForCoordinates(addressCoordinates);
+      setAddress(address);
+      confirmAddress(addressCoordinates);
+      closeModal();
+    } catch (e) {
+      if(isNoConnectionError(e)) setNoInternet(true);
+      notifyError(e);
+    }
   }
 
   const handleContinue = () => {
     if(goToNextPage) {
       goToNextPage(true);
     } else {
-      confirmCoordinates().catch(err => notifyError(err));
+      confirmCoordinates().catch(err => {
+        if(isNoConnectionError(err)) setNoInternet(true);
+        notifyError(err);
+      });
     }
   }
 

@@ -1,12 +1,14 @@
-import SpeedGauge from "./SpeedGauge";
 import {useState} from "react";
+import SpeedGauge from "./SpeedGauge";
 import ConnectionInformation from "./ConnectionInformation";
 import StartTestPrompt from "./StartTestPrompt";
 import TestStatsTableContent from "./TestStatsTable";
 import {storeRunData} from "../../../../utils/storage";
+import {DEFAULT_FOOTER_FONT_COLOR} from "../../../../utils/colors";
 
 const footerStyle = {
   fontSize: 14,
+  color: DEFAULT_FOOTER_FONT_COLOR
 }
 
 const SpeedTestStepPage = ({
@@ -24,10 +26,10 @@ const SpeedTestStepPage = ({
   const storeRunResults = startTimestamp => {
     const results = {
       startTimestamp,
-      downloadValue,
-      uploadValue,
-      loss,
-      latency,
+      downloadValue: downloadValue ?? 0.0,
+      uploadValue: uploadValue ?? 0.0,
+      loss: loss ?? 0.0,
+      latency: latency ?? 0.0,
       networkType: userStepData.networkType?.text ?? null,
       networkLocation: userStepData.networkLocation?.text ?? null,
       location: userStepData.address.coordinates,

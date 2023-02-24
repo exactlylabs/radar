@@ -1,6 +1,6 @@
 import {
   DEFAULT_COST_INPUT_BACKGROUND_COLOR,
-  DEFAULT_COST_INPUT_BORDER_COLOR,
+  DEFAULT_COST_INPUT_BORDER_COLOR, DEFAULT_TEXT_COLOR,
   TRANSPARENT
 } from "../../../../../utils/colors";
 import {TextField} from "@mui/material";
@@ -31,6 +31,7 @@ const inputStyle = {
     textOverflow: 'ellipsis',
     overflow: 'hidden',
     backgroundColor: TRANSPARENT,
+    color: DEFAULT_TEXT_COLOR
   },
   disableUnderline: true,
   inputMode: 'numeric',
@@ -40,6 +41,7 @@ const inputStyle = {
 const currencyStyle = {
   fontSize: 15,
   marginRight: 15,
+  color: DEFAULT_TEXT_COLOR
 }
 
 const MyCostInput = ({

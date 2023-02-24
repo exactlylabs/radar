@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {DEFAULT_HEADER_BACKGROUND_COLOR, DEFAULT_HORIZONTAL_DIVIDER_BG_COLOR, WHITE} from '../../utils/colors';
+import {DEFAULT_HEADER_BACKGROUND_COLOR, DEFAULT_HORIZONTAL_DIVIDER_BG_COLOR} from '../../utils/colors';
 import { MyButton } from '../common/MyButton';
 import { TABS } from '../../constants';
 import radarLogoLight from '../../assets/speedtest-logo.png';
@@ -7,8 +7,6 @@ import MenuCloseButton from '../../assets/menu-close-button.png';
 import MenuOpenButton from '../../assets/menu-open-button.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import MyNavLink from "../common/MyNavLink";
-import {useHistory, useLocation} from "react-router-dom";
-import {useTabNavigation} from "../../hooks/useTabNavigation";
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -87,28 +85,21 @@ const Header = ({ setStep, isOverviewPage }) => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
-  const tabsNavigator = useTabNavigation();
 
   const goToHome = () => {
-    tabsNavigator(TABS.SPEED_TEST);
     if(isMenuOpen) setIsMenuOpen(false);
     setStep(TABS.SPEED_TEST);
   }
 
   const goToOverview = () => {
-    history.push('/overview');
+    setStep(TABS.OVERVIEW);
   }
 
   const goToExplore = () => {
-    window.location.href = '/?tab=2';
+    setStep(TABS.ALL_RESULTS);
   }
 
   const goToTestSpeed = () => {
-    if(isOverviewPage) {
-      history.push('/?tab=0');
-      return;
-    }
-    tabsNavigator(TABS.SPEED_TEST);
     if (isMenuOpen) setIsMenuOpen(false);
     setStep(TABS.SPEED_TEST);
   }
@@ -128,7 +119,7 @@ const Header = ({ setStep, isOverviewPage }) => {
             style={!(isSmallSizeScreen || isMediumSizeScreen) ? radarLogoStyle : null}
           />
           {!(isSmallSizeScreen || isMediumSizeScreen) && !isOverviewPage && <MyNavLink text={'Home'} onClick={goToHome}/>}
-          { !(isSmallSizeScreen || isMediumSizeScreen) && isOverviewPage && <MyNavLink text={'Overview'} onClick={goToOverview}/> }
+          { !(isSmallSizeScreen || isMediumSizeScreen) && <MyNavLink text={'Overview'} onClick={goToOverview}/> }
           { !(isSmallSizeScreen || isMediumSizeScreen) && isOverviewPage && <MyNavLink text={'Explore'} onClick={goToExplore}/> }
         </div>
         <div style={rightSideContainerStyle}>
@@ -149,7 +140,7 @@ const Header = ({ setStep, isOverviewPage }) => {
         (isMediumSizeScreen || isSmallSizeScreen) && isMenuOpen &&
         <div style={collapsableContentStyle}>
           { !isOverviewPage && <MyNavLink text={'Home'} onClick={goToHome} isCollapsed/> }
-          { isOverviewPage && <MyNavLink text={'Overview'} onClick={goToOverview} isCollapsed/> }
+          <MyNavLink text={'Overview'} onClick={goToOverview} isCollapsed/>
           { isOverviewPage && <MyNavLink text={'Explore'} onClick={goToExplore} isCollapsed/> }
           <div style={horizontalDividerStyle}></div>
           <MyButton text={'Test your speed'} onClick={goToTestSpeed}/>

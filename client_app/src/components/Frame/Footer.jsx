@@ -15,6 +15,7 @@ const footerStyle = {
 
 const contentWrapperStyle = {
   width: '90%',
+  maxWidth: '1200px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
@@ -77,18 +78,21 @@ const footerLinkStyle = (isSmall, isMedium) => {
   if(isSmall || isMedium) return {
     fontSize: 15,
     textDecoration: 'none',
-    margin: '0 0 15px 0'
+    margin: '0 0 15px 0',
+    color: DEFAULT_FOOTER_FONT_COLOR
   };
   return {
     fontSize: 15,
     textDecoration: 'none',
-    margin: '0'
+    margin: '0',
+    color: DEFAULT_FOOTER_FONT_COLOR
   }
 }
 
 const copyrightStyle = {
   fontSize: 14,
   marginBottom: 30,
+  color: DEFAULT_FOOTER_FONT_COLOR
 }
 
 const stylessLink = {

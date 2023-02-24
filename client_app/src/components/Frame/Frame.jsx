@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import Tabs from './Tabs';
@@ -6,16 +6,25 @@ import {DEFAULT_MAIN_SECTION_BACKGROUND_COLOR, WHITE} from '../../utils/colors';
 import {TABS} from "../../constants";
 import WidgetFooter from "./WidgetFooter";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
-import {baseInitConfig} from "../../index";
 
 const defaultMainWrapperStyle = {
   backgroundColor: DEFAULT_MAIN_SECTION_BACKGROUND_COLOR,
   overflowX: 'auto',
 };
 
+const defaultOverviewWrapperStyle = {
+  backgroundColor: WHITE,
+  overflowX: 'auto',
+}
+
+const defaultAllResultsWrapperStyle = {
+  overflow: 'hidden',
+}
+
 const widgetMainWrapperStyle = {
   backgroundColor: WHITE,
   overflowX: 'auto',
+  overflowY: 'hidden',
 }
 
 const childrenWrapperStyle = {
@@ -45,18 +54,21 @@ const overviewPageStyle = {
   height: 'auto',
 }
 
-const Frame = ({ config, children, step, setStep, isOverviewPage }) => {
+const Frame = ({ config, children, step, setStep }) => {
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const shouldShowTabs = !config.webviewMode && !isOverviewPage;
+  const isOverviewPage = step === TABS.OVERVIEW;
+  const isAllResultsPage = step === TABS.ALL_RESULTS;
 
   const getFrameStyleBasedOnCurrentTab = () => {
     if(isOverviewPage) return overviewPageStyle;
     if(step === TABS.ALL_RESULTS) {
-      if(config.widgetMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height} - 175px`};
+      if(config.widgetMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height} - 175px`, overflowY: isAllResultsPage ? 'hidden' : 'auto'};
       else if(config.webviewMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height}`};
       return isMediumSizeScreen || isSmallSizeScreen ? mobileFullWidthWrapperStyle : fullWidthWrapperStyle;
     } else {
+      if(config.widgetMode) return {...childrenWrapperStyle, height: `${config.frameStyle.height} - 110px`, overflowY: 'auto'};
       return childrenWrapperStyle;
     }
   }
@@ -64,6 +76,7 @@ const Frame = ({ config, children, step, setStep, isOverviewPage }) => {
   const getWrapperStyle = () => {
     let baseStyle;
     if(config.widgetMode || config.webviewMode) baseStyle = widgetMainWrapperStyle;
+    else if(isOverviewPage) baseStyle = defaultOverviewWrapperStyle;
     else baseStyle = defaultMainWrapperStyle;
     return {...baseStyle, ...config.frameStyle};
   }
@@ -71,7 +84,7 @@ const Frame = ({ config, children, step, setStep, isOverviewPage }) => {
   const getMinHeight = () => {
     if(isOverviewPage) return undefined;
     if(config.widgetMode) {
-      return `calc(${config.frameStyle.height} - 175px)`;
+      return `calc(${config.frameStyle.height} - 110px)`;
     } else if(config.webviewMode) {
       return `${config.frameStyle.height}`;
     } else {

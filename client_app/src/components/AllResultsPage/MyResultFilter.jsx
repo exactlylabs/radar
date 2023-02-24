@@ -47,7 +47,7 @@ const filterTextStyle = {
 
 const checkIconSX = {
   fontSize: 14,
-  color: 'white'
+  color: WHITE
 }
 
 const stateStyle = {

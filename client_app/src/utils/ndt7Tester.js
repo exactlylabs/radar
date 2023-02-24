@@ -24,7 +24,7 @@ export const uploadWorkerUrl = URL.createObjectURL(
 
 export const runnerConfig = {
   userAcceptedDataPolicy: true,
-  downloadWorkerFile: downloadWorkerUrl,
-  uploadWorkerFile: uploadWorkerUrl,
+  downloadworkerfile: downloadWorkerUrl,
+  uploadworkerfile: uploadWorkerUrl,
   metadata: { client_name: 'ndt7-client' },
 };

@@ -1,4 +1,14 @@
-import {DEFAULT_MAIN_SECTION_BACKGROUND_COLOR, DEFAULT_SECONDARY_TEXT, WHITE} from "../../../utils/colors";
+import {
+  DEFAULT_MAIN_SECTION_BACKGROUND_COLOR,
+  DEFAULT_SECONDARY_TEXT,
+  DEFAULT_TEXT_COLOR,
+  WHITE
+} from "../../../utils/colors";
+
+const fullContainerStyle = {
+  width: '100vw',
+  backgroundColor: WHITE,
+}
 
 const heroSectionStyle = {
   width: '100vw',
@@ -98,24 +108,28 @@ const heroTitleStyle = {
   lineHeight: '48px',
   letterSpacing: '-0.9px',
   margin: '0 0 13px 0',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const smallHeroTitleStyle = {
   fontSize: '24px',
   lineHeight: '30px',
   margin: '0 0 10px 0',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const heroSubtitleStyle = {
   fontSize: '18px',
   lineHeight: '28px',
   margin: '0 0 30px 0',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const smallHeroSubtitleStyle = {
   fontSize: '16px',
   lineHeight: '25px',
   margin: '0 0 20px 0',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const heroMapStyle = {
@@ -245,6 +259,7 @@ const dataTitle = {
   width: '100%',
   maxWidth: '576px',
   margin: '0 0 50px 0',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const smallDataTitle = {
@@ -252,6 +267,7 @@ const smallDataTitle = {
   lineHeight: '28px',
   width: '100%',
   margin: '0 0 30px 0',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const mobileSectionStyle = {
@@ -354,7 +370,8 @@ const mobileTitleStyle = {
   fontSize: '34px',
   lineHeight: '42px',
   letterSpacing: '-0.7px',
-  margin: '0 0 25px 0'
+  margin: '0 0 25px 0',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const smallMobileTitleStyle = {
@@ -362,12 +379,14 @@ const smallMobileTitleStyle = {
   lineHeight: '28px',
   margin: '0 0 10px 0',
   width: '100%',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const mobileTextStyle = {
   fontSize: '17px',
   lineHeight: '28px',
-  margin: '0 0 30px 0'
+  margin: '0 0 30px 0',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const smallMobileTextStyle = {
@@ -375,6 +394,7 @@ const smallMobileTextStyle = {
   lineHeight: '26px',
   margin: '0 0 30px 0',
   width: '100%',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const storesContainer = {
@@ -416,6 +436,7 @@ const smallGooglePlayStyle = {
 }
 
 export const overviewStyles = {
+  fullContainerStyle,
   heroSectionStyle,
   smallHeroSectionStyle,
   midHeroSectionStyle,

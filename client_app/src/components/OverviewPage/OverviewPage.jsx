@@ -18,22 +18,13 @@ import mobilePhones from '../../assets/mobile-image.png';
 import appStore from '../../assets/appstore.png';
 import googlePlay from '../../assets/googleplay.png';
 
-const OverviewPage = () => {
+const OverviewPage = ({goToExplore, goToTest}) => {
 
   const {isSmallSizeScreen, isMediumSizeScreen, isLargeSizeScreen, isXLSizeScreen} = useViewportSizes();
   const isSmall = isSmallSizeScreen || isMediumSizeScreen;
-  const history = useHistory();
-
-  const goToExplore = () => {
-    window.location.href = '/?tab=2';
-  }
-
-  const goToTest = () => {
-    history.push('/');
-  }
 
   return (
-    <Frame isOverviewPage config={baseInitConfig}>
+    <div style={overviewStyles.fullContainerStyle}>
       <div style={isSmall ? overviewStyles.smallHeroSectionStyle :
                   isLargeSizeScreen ? overviewStyles.midHeroSectionStyle :
                   overviewStyles.heroSectionStyle}
@@ -110,7 +101,7 @@ const OverviewPage = () => {
           { isSmall && <img src={mobilePhones} style={overviewStyles.smallMobileImageStyle} alt={'phones image'}/> }
         </div>
       </div>
-    </Frame>
+    </div>
   )
 }
 
