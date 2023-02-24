@@ -1,7 +1,6 @@
 import {
   DEFAULT_LINK_COLOR,
   DEFAULT_TITLE_COLOR,
-  SELECTED_SUGGESTION_MODAL_ROW_BORDER,
 } from "../../../../utils/colors";
 import SelectedIcon from '../../../../assets/location-icon-blue.png';
 import Icon from '../../../../assets/location-icon-gray.png';

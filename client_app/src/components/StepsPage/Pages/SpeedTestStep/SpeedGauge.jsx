@@ -83,11 +83,15 @@ const SpeedGauge = ({
   }, [loading, runningTest, startTimestamp]);
 
   const finishTestRun = (exitCode, error) => {
-    if (exitCode === 0) {
-      storeRunData(startTimestamp);
-      sendRawData(rawData, startTimestamp, userStepData);
-    } else {
-      notifyError(error);
+    try {
+      if (exitCode === 0) {
+        storeRunData(startTimestamp);
+        sendRawData(rawData, startTimestamp, userStepData);
+      } else {
+        notifyError(error);
+      }
+    } catch (e) {
+      notifyError(e);
     }
   };
 

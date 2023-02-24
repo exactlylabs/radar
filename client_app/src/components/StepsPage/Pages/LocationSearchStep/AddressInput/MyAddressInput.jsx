@@ -1,20 +1,20 @@
 import {
   DEFAULT_ADDRESS_INPUT_BACKGROUND_COLOR,
-  DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR,
+  DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR,
   RED, WHITE
 } from "../../../../../utils/colors";
 import {DEFAULT_FONT_FAMILY} from "../../../../../utils/fonts";
 import {TextField} from "@mui/material";
 import rightArrowWhite from '../../../../../assets/right-arrow-white.png';
 import LocationButtonSmall from '../../../../../assets/location-icon-small.png';
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import MySpinner from "../../../../common/MySpinner";
 import LocationSuggestionsList from "./LocationSuggestionsList";
 import {debounce} from "../../../../../utils/debouncer";
-import {getAddressForCoordinates, getGeocodedAddress, getSuggestions} from "../../../../../utils/apiRequests";
-import {notifyError} from "../../../../../utils/errors";
-import {errors} from "../../../../../utils/messages";
+import {getAddressForCoordinates, getSuggestions} from "../../../../../utils/apiRequests";
+import {isNoConnectionError, notifyError} from "../../../../../utils/errors";
 import {emptyAddress} from "../../../StepsPage";
+import ConnectionContext from "../../../../../context/ConnectionContext";
 
 const addressInputWrapperStyle = {
   width: '80%',
@@ -39,6 +39,7 @@ const addressInputStyle = {
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
+    color: DEFAULT_TEXT_COLOR
   },
   disableUnderline: true,
 }
@@ -115,24 +116,26 @@ const MyAddressInput = ({
   const [error, setError] = useState(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [suggestionsListOpen, setSuggestionsListOpen] = useState(false);
+  const {setNoInternet} = useContext(ConnectionContext);
 
   useEffect(() => {
     document.getElementById('address-input').value = currentAddress.address;
   }, [currentAddress]);
 
   const handleInputChange = debounce( async (e) => {
-    setAddress({address: e.target.value, coordinates: []});
     if(!e.target.value) {
       setSuggestionsListOpen(false);
       setSelectedSuggestion(false);
       setAddress(emptyAddress);
       setSuggestions([]);
     } else {
+      setAddress({address: e.target.value, coordinates: []});
       setLocationLoading(true);
       try {
         const suggestions = await getSuggestions(e.target.value);
         setSuggestions(suggestions);
       } catch (e) {
+        if(isNoConnectionError(e)) setNoInternet(true);
         notifyError(e);
         setError(e);
       }
@@ -158,16 +161,22 @@ const MyAddressInput = ({
   }
 
   const fetchAddress = async (coordinates) => {
-    const address = await getAddressForCoordinates(coordinates);
-    if(address.coordinates.length === 0) {
-      openGenericLocationModal();
-      return;
+    try {
+      const address = await getAddressForCoordinates(coordinates);
+      if (address.coordinates.length === 0) {
+        openGenericLocationModal();
+        return;
+      }
+      setSelectedSuggestion(true);
+      setAddress(address);
+      handleContinue(address.address, true);
+      const addressInputElement = document.getElementById('address-input');
+      addressInputElement.value = address.address;
+    } catch (e) {
+      if(isNoConnectionError(e)) setNoInternet(true);
+      notifyError(e);
+      setError(e);
     }
-    setSelectedSuggestion(true);
-    setAddress(address);
-    handleContinue(address.address, true);
-    const addressInputElement = document.getElementById('address-input');
-    addressInputElement.value = address.address;
   }
 
   const triggerAutoLocation = () => {

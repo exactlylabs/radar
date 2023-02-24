@@ -2,6 +2,7 @@ import DownloadIcon from '../../../../assets/small-download-icon.png';
 import DownloadIconDisabled from '../../../../assets/small-download-icon-disabled.png';
 import UploadIcon from '../../../../assets/small-upload-icon.png';
 import UploadIconDisabled from '../../../../assets/small-upload-icon-disabled.png';
+import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
 
 const gaugeInteriorStyle = {
   width: 150,
@@ -87,6 +88,7 @@ const currentValueStyle = {
   top: 60,
   left: '50%',
   transform: 'translateX(-50%)',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const mbpsStyle = {
@@ -95,6 +97,7 @@ const mbpsStyle = {
   top: 105,
   left: '50%',
   transform: 'translateX(-50%)',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const iconsWrapperStyle = {

@@ -1,6 +1,7 @@
 import {useEffect} from "react";
 import './styles/MyOption.css';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import {DEFAULT_TEXT_COLOR} from "../../utils/colors";
 
 const optionStyle = {
   width: 134,
@@ -47,6 +48,7 @@ const mobileOptionIconStyle = {
 
 const optionTextStyle = {
   fontSize: 16,
+  color: DEFAULT_TEXT_COLOR
 }
 
 /**

@@ -33,7 +33,11 @@ module.exports = {
         type: 'asset/resource',
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|ico)$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.(webmanifest|xml)$/i,
         type: 'asset/resource',
       }
     ]
@@ -46,16 +50,19 @@ module.exports = {
     // Output library name
     library: 'SpeedTest',
     libraryTarget: 'umd',
-    publicPath: publicPath,
+    publicPath: 'auto',
     libraryExport: 'default',
+    clean: true,
+    assetModuleFilename: 'assets/[name][ext]',
   },
   // https://webpack.js.org/configuration/dev-server/
   devServer: {
-    static: { directory: path.join(__dirname, '/') },
+    static: { directory: path.join(__dirname, '/public') },
     hot: true,
     compress: true,
     port: 9999,
     historyApiFallback: true,
+    headers: { "Access-Control-Allow-Origin": "*" }
   },
   // https://webpack.js.org/configuration/plugins/
   plugins: [
@@ -67,9 +74,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'widget.css',
       chunkFilename: 'widget.css'
-    }),
-    new CopyPlugin({
-      patterns: [{from: path.resolve(__dirname, '../src/ndt7'), to: './'}]
     })
   ],
   // https://webpack.js.org/configuration/optimization/

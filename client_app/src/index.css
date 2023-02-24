@@ -1,3 +1,4 @@
+@import url("./vendor/leaflet/leaflet.css");
 @import url("./resets.css");
 @import url("./leaflet-overrides.css");
 @import url("./mui-overrides.css");

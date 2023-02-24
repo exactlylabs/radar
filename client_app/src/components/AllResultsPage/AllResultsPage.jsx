@@ -14,7 +14,7 @@ import {
 import {getTestsWithBounds, getUserApproximateCoordinates} from '../../utils/apiRequests';
 import { MyMap } from '../common/MyMap';
 import MyCustomMarker from "./MyCustomMarker";
-import {notifyError} from "../../utils/errors";
+import {isNoConnectionError, notifyError} from "../../utils/errors";
 import {hasVisitedAllResults, setAlreadyVisitedCookieIfNotPresent} from "../../utils/cookies";
 import FirstTimeModal from "./FirstTimeModal";
 import ConfigContext from "../../context/ConfigContext";
@@ -24,6 +24,7 @@ import searchIcon from '../../assets/search-icon.png';
 import MySpinner from "../common/MySpinner";
 import {DEFAULT_GRAY_BUTTON_TEXT_COLOR} from "../../utils/colors";
 import {addMetadataToResults} from "../../utils/metadata";
+import ConnectionContext from "../../context/ConnectionContext";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -58,6 +59,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const isSmall = isSmallSizeScreen || isMediumSizeScreen;
   const config = useContext(ConfigContext);
+  const {setNoInternet} = useContext(ConnectionContext);
   let timerId;
 
   useEffect(() => {
@@ -73,15 +75,21 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     }
 
     const fetchUserApproximateCoordinates = async () => {
-      const coordinates = await getUserApproximateCoordinates();
-      if(coordinates.length > 0) {
-        setRequestArea(coordinates);
+      try {
+        const coordinates = await getUserApproximateCoordinates();
+        if (coordinates.length > 0) {
+          setRequestArea(coordinates);
+        }
+      } catch (e) {
+        if(isNoConnectionError(e)) setNoInternet(true);
+        notifyError(e);
       }
     }
 
     if(!givenLocation) {
       fetchUserApproximateCoordinates()
         .catch(err => {
+          if(isNoConnectionError(err)) setNoInternet(true);
           setRequestArea([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
           // Not setting UI error message, as we can default to fallback if this request fails
           // so the user still sees content, but unfortunately not centered around their coords.
@@ -95,6 +103,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
 
     fetchSpeedTests()
       .catch(err => {
+        if(isNoConnectionError(err)) setNoInternet(true);
         notifyError(err);
         setError('Failed to fetch speed tests. Please try again later.');
       })
@@ -175,7 +184,10 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     setFetchingResults(true);
     getTestsWithBounds(_northEast, _southWest)
       .then(res => handleTestsWithBoundsResult(res))
-      .catch(err => notifyError(err))
+      .catch(err => {
+        if(isNoConnectionError(err)) setNoInternet(true);
+        notifyError(err)
+      })
       .finally(() => setFetchingResults(false));
   }
 
@@ -214,7 +226,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
             center={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}
             zoom={initialZoom ? initialZoom : 10}
             scrollWheelZoom
-            style={{ height: getMapContainerHeight(), margin: 0, position: 'relative' }}
+            style={{ height: getMapContainerHeight(), margin: 0, position: 'relative', overflowY: 'hidden' }}
             zoomControl={(isMediumSizeScreen || isSmallSizeScreen || config.widgetMode) && !config.noZoomControl}
           >
               <MyMap position={requestArea}

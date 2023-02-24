@@ -1,6 +1,6 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import './SpeedResultsBox.css';
-import {BLACK, DEFAULT_SPEED_FILTER_BACKGROUND_COLOR, DEFAULT_SPEED_FILTER_BOX_SHADOW, WHITE} from "../../utils/colors";
+import {DEFAULT_SPEED_FILTER_BACKGROUND_COLOR, DEFAULT_SPEED_FILTER_BOX_SHADOW, WHITE} from "../../utils/colors";
 import MyFiltersSubtitle from "./MyFiltersSubtitle";
 import MyFiltersTitle from "./MyFiltersTitle";
 import MyFiltersTypeSwitcher from "./MyFiltersTypeSwitcher";
@@ -111,8 +111,10 @@ const SpeedResultsBox = ({
     let style = mobileFilterListStyle;
     const element = document.getElementById('main-frame');
     const {y, height} = element.getBoundingClientRect();
-    if(config.webviewMode) {
-      style = {...style, top: 'calc(100vh - 125px - 25px)' }
+    if (config.webviewMode) {
+      style = {...style, top: 'calc(100vh - 125px - 25px)'}
+    } if(config.widgetMode) {
+      style = {...style, top: `calc(${config.frameStyle.height} - 95px - 54px - 56px - 50px)` }
     } else {
       style = {...style, top: (y + height - 300)}
     }
@@ -141,7 +143,7 @@ const SpeedResultsBox = ({
   }
 
   return (
-    <div style={getSpeedResultsStyle()} id={'speed-resss'}>
+    <div style={getSpeedResultsStyle()} id={'speed-results-box--container'}>
       { isBoxOpen && (isMediumSizeScreen || isSmallSizeScreen) && getFloatingFilterTypeSwitch() }
       { isBoxOpen && getContent() }
       <FloatingExploreButton activeFiltersCount={selectedRangeIndexes.length}

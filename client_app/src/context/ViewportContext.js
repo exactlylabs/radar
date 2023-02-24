@@ -20,6 +20,8 @@ export const ViewportContextProvider = ({children}) => {
   }
 
   useEffect(() => {
+    const frameElement = document.getElementById('main-frame');
+    if(frameElement) setWidth(frameElement.getBoundingClientRect().width);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);

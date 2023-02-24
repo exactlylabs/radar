@@ -91,6 +91,7 @@ export default {
       if(!!init) init = { ...baseInitConfig, ...init, ...getConfigFromParams() };
       else init = {...baseInitConfig, ...getConfigFromParams()};
     }
+    if(!init) throw new Error(error);
   },
   new: () => {
     Sentry.setUser({ id: init.clientId });

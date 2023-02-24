@@ -1,4 +1,4 @@
-import {DATA_COLUMN_ICON_CONTAINER, DEFAULT_SECONDARY_TEXT} from "../../utils/colors";
+import {DATA_COLUMN_ICON_CONTAINER, DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT_COLOR} from "../../utils/colors";
 
 const dataColumnStyle = {
   width: '30%',
@@ -51,6 +51,7 @@ const titleStyle = {
   lineHeight: '26px',
   margin: '0 0 7px 0',
   width: '100%',
+  color: DEFAULT_TEXT_COLOR
 }
 
 const smallTitleStyle = {

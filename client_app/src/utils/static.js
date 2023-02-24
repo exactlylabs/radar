@@ -1,0 +1,1 @@
+export const getWorkerUrl = (filename) => `${REACT_APP_BASE_URL}${filename}`;
