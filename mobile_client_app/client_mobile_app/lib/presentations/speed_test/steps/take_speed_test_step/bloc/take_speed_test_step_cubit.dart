@@ -105,6 +105,9 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
           );
         }
       },
+      onError: (error) {
+        print(error);
+      },
     );
   }
 

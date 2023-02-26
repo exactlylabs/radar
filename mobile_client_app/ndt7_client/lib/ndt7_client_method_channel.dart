@@ -25,16 +25,18 @@ class MethodChannelNdt7Client extends Ndt7ClientPlatform {
   @override
   Stream<NDT7Response?> get data {
     ndt7Result = eventChannel.receiveBroadcastStream();
-    return ndt7Result.map((dynamic event) {
-      final jsonResponse = jsonDecode(event) as Map<String, dynamic>;
-      if (jsonResponse.length == 1 && jsonResponse.containsKey('test')) {
-        return TestCompletedEvent.fromJson(jsonResponse);
-      } else if (jsonResponse.containsKey('TCPInfo')) {
-        return ServerResponse.fromJson(jsonResponse);
-      } else {
-        return ClientResponse.fromJson(jsonResponse);
-      }
-    });
+    return ndt7Result.map(
+      (dynamic event) {
+        final jsonResponse = jsonDecode(event) as Map<String, dynamic>;
+        if (jsonResponse.length == 1 && jsonResponse.containsKey('test')) {
+          return TestCompletedEvent.fromJson(jsonResponse);
+        } else if (jsonResponse.containsKey('TCPInfo')) {
+          return ServerResponse.fromJson(jsonResponse);
+        } else {
+          return ClientResponse.fromJson(jsonResponse);
+        }
+      },
+    );
   }
 
   @override

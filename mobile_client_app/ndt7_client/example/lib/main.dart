@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
     try {
       // platformVersion = await _ndt7ClientPlugin.getPlatformVersion() ?? 'Unknown platform version';
       platformVersion = 'Unknown platform version';
-      await _ndt7ClientPlugin.startDownloadTest();
+      await _ndt7ClientPlugin.startUploadTest();
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -56,7 +56,12 @@ class _MyAppState extends State<MyApp> {
         body: Center(
             child: StreamBuilder<NDT7Response?>(
           stream: _ndt7ClientPlugin.data,
-          builder: (context, snapshot) => Text(snapshot.data.toString()),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            return Text(snapshot.data.toString());
+          },
         )),
       ),
     );
