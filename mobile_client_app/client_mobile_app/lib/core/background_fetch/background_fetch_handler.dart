@@ -34,7 +34,7 @@ class BackgroundFetchHandler {
 
   static void startBackgroundSpeedTest(int delay) {
     _setBackgroundFetchPlugin();
-    _registerHeadleesTask();
+    _registerHeadlessTask();
     _registerBackgroundSpeedTestTask(delay);
   }
 
@@ -42,7 +42,7 @@ class BackgroundFetchHandler {
     BackgroundFetch.stop(_BACKGROUND_SPEED_TEST_ID);
   }
 
-  static void _registerHeadleesTask() {
+  static void _registerHeadlessTask() {
     if (Platform.isAndroid) {
       BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
     }
