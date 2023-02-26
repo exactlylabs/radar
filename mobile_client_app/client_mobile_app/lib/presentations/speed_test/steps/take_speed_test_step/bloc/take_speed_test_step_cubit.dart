@@ -106,6 +106,8 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
         }
       },
       onError: (error) {
+        // If I don't do this, the app crashes.
+        // What should I do here?
         print(error);
       },
     );
