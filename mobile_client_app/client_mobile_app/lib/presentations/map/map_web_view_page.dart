@@ -14,7 +14,12 @@ import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 class MapWebViewPage extends StatelessWidget {
   MapWebViewPage({
     Key? key,
+    this.latitude,
+    this.longitude,
   }) : super(key: key);
+
+  final double? latitude;
+  final double? longitude;
 
   final CookieManager _cookieManager = CookieManager();
   final Completer<WebViewController> _controller = Completer<WebViewController>();
@@ -31,7 +36,7 @@ class MapWebViewPage extends StatelessWidget {
             children: [
               Expanded(
                 child: WebView(
-                  initialUrl: AppConfig.of(context)?.stringResource.WEB_ENDPOINT,
+                  initialUrl: _getWebViewUrl(context, latitude, longitude),
                   javascriptMode: JavascriptMode.unrestricted,
                   onWebViewCreated: (WebViewController webViewController) {
                     _controller.complete(webViewController);
@@ -56,6 +61,13 @@ class MapWebViewPage extends StatelessWidget {
       FTUEMapModal(onPressed: () => context.read<MapCubit>().setFTUEMap()),
       () => context.read<MapCubit>().setFTUEMap(),
     );
+  }
+
+  String? _getWebViewUrl(BuildContext context, double? latitude, double? longitude) {
+    if (latitude == null || longitude == null) {
+      return AppConfig.of(context)?.stringResource.WEB_ENDPOINT;
+    }
+    return '${AppConfig.of(context)?.stringResource.WEB_ENDPOINT}&userLat=$latitude&userLng=$longitude';
   }
 
   static const String _cookieName = 'visitedAllResults';

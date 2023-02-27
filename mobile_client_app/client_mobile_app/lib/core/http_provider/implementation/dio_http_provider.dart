@@ -1,20 +1,19 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:dartz/dartz.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/http_provider/models/http_response_model.dart';
 import 'package:client_mobile_app/core/http_provider/failures/http_provider_failure.dart';
 
-class HttpProvider implements IHttpProvider {
+class DioHttpProvider implements IHttpProvider {
   @override
   Future<Either<HttpProviderFailure, T>> getAndDecode<T>({
     required String url,
     required Map<String, String> headers,
     T Function(Map<String, dynamic> json)? fromJson,
   }) async {
-    final failureOrResponse = await _get(headers: headers, url: Uri.parse(url));
+    final failureOrResponse = await _get(headers: headers, url: url);
     return failureOrResponse.fold(
       (failure) => Left(failure),
       (response) => _decodeResponse<T>(response, fromJson),
@@ -28,7 +27,7 @@ class HttpProvider implements IHttpProvider {
     required dynamic body,
     T Function(Map<String, dynamic> json)? fromJson,
   }) async {
-    final failureOrResponse = await _post(url: Uri.parse(url), headers: headers, body: body);
+    final failureOrResponse = await _post(url: url, headers: headers, body: body);
     return failureOrResponse.fold(
       (failure) => Left(failure),
       (response) => _decodeResponse<T>(response, fromJson),
@@ -36,28 +35,33 @@ class HttpProvider implements IHttpProvider {
   }
 
   Future<Either<HttpProviderFailure, HttpResponseModel>> _get({
-    required Uri url,
+    required String url,
     required Map<String, String> headers,
   }) async =>
-      _httpCall(() => http.get(url, headers: headers));
+      _dioCall(() => Dio().get(url, options: Options(headers: headers, responseType: ResponseType.plain)));
 
   Future<Either<HttpProviderFailure, HttpResponseModel>> _post({
-    required Uri url,
+    required String url,
     required Map<String, String> headers,
     required dynamic body,
   }) async =>
-      _httpCall(() => http.post(url, headers: headers, body: body));
+      _dioCall(() => Dio().post(url, options: Options(headers: headers, responseType: ResponseType.plain), data: body));
 
-  Future<Either<HttpProviderFailure, HttpResponseModel>> _httpCall(Future<http.Response> Function() call) async {
+  Future<Either<HttpProviderFailure, HttpResponseModel>> _dioCall(Future<Response> Function() call) async {
     try {
       final response = await call();
-      final decodedBody = response.body;
+      final decodedBody = response.data as String;
       return Right(HttpResponseModel(statusCode: response.statusCode, body: decodedBody));
-    } on HttpException catch (error, stackTrace) {
+    } on DioError catch (dioError, stackTrace) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
       return Left(HttpProviderFailure(
-        exception: error.message,
+        exception: dioError.error,
+        stackTrace: stackTrace,
+      ));
+    } catch (exception, stackTrace) {
+      return Left(HttpProviderFailure(
+        exception: exception,
         stackTrace: stackTrace,
       ));
     }

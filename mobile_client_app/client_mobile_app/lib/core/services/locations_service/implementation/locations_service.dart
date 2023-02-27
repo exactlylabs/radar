@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:async/async.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/models/location.dart';
@@ -61,7 +63,7 @@ class LocationsService implements ILocationsService {
     final failureOrLocations = await _httpProvider.postAndDecode<List>(
       url: _restClient.suggestedLocations,
       headers: {'Content-Type': 'application/json'},
-      body: {'address': name},
+      body: jsonEncode({'address': name}),
     );
 
     return failureOrLocations.fold(

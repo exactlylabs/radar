@@ -13,7 +13,9 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     Location? location,
     bool termsAccepted = false,
   })  : _locationsService = locationsService,
-        super(LocationStepState(location: location));
+        super(LocationStepState(location: location)) {
+    search("");
+  }
 
   final ILocationsService _locationsService;
 

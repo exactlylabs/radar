@@ -23,6 +23,8 @@ class TestResultsStep extends StatelessWidget {
     required this.latency,
     required this.loss,
     this.networkQuality,
+    this.latitude,
+    this.longitude,
   }) : super(key: key);
 
   final double download;
@@ -30,6 +32,8 @@ class TestResultsStep extends StatelessWidget {
   final double latency;
   final double loss;
   final String? networkQuality;
+  final double? latitude;
+  final double? longitude;
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +138,7 @@ class TestResultsStep extends StatelessWidget {
   }
 
   void _onExploreYourAreaPressesd(BuildContext context) {
-    context.read<NavigationCubit>().changeTab(NavigationCubit.RESULTS_INDEX);
+    context.read<NavigationCubit>().changeTabWithArgs(NavigationCubit.MAP_INDEX, [latitude, longitude]);
     context.read<SpeedTestCubit>().resetForm();
     context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
   }

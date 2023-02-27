@@ -102,6 +102,8 @@ class SpeedTestPage extends StatelessWidget {
                                       networkType: state.networkType ?? Strings.emptyString,
                                       networkPlace: state.networkLocation ?? Strings.emptyString,
                                       address: state.location?.address ?? Strings.emptyString,
+                                      latitude: state.location?.lat,
+                                      longitude: state.location?.long,
                                     ),
                                 ],
                               ),
