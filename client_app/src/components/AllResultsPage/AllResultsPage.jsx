@@ -66,8 +66,8 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
       if(requestArea) {
         const [lat, lng] = requestArea;
         // Create bounding box
-        const _southWest = {lat: lat - 2, lng: lng - 2};
-        const _northEast = {lat: lat + 2, lng: lng + 2};
+        const _southWest = {lat: lat - 10, lng: lng - 10};
+        const _northEast = {lat: lat + 10, lng: lng + 10};
         fetchTestsWithBounds({_southWest, _northEast});
       }
     }
