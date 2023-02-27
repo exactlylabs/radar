@@ -19,15 +19,10 @@ module ClientApi
 
         if results.present?
           render json: results.filter {|match| match.city && match.street && match.state && match.postal_code && match.house_number}
-                              .map {|match| {
-            city: match.city,
-            street: match.street,
-            state: match.state,
-            postal_code: match.postal_code,
-            house_number: match.house_number,
-            address: "#{match.house_number} #{match.street}, #{match.city}, #{match.state} #{match.postal_code}", 
-            coordinates: match.coordinates
-          }}.first(3)
+                              .map {|match| Suggestion.new(match.city, match.street, match.state, match.postal_code, match.house_number, match.coordinates) }
+                              .first(3)
+                              .to_set
+                              .to_json
         else
           render json: []
         end
@@ -39,15 +34,14 @@ module ClientApi
         if results.first
           coordinates_array = params[:coordinates].split(",")
           match = results.first
-          render json: {
-            city: match.city,
-            street: match.street,
-            state: match.state,
-            postal_code: match.postal_code,
-            house_number: match.house_number,
-            address: "#{match.house_number} #{match.street}, #{match.city}, #{match.state} #{match.postal_code}", 
-            coordinates: coordinates_array
-          }
+          render json: Suggestion.new(
+            match.city,
+            match.street,
+            match.state,
+            match.postal_code,
+            match.house_number,
+            coordinates_array
+          )
         else
           render json: {coordinates: []}, status: :ok
         end

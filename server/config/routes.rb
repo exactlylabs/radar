@@ -154,6 +154,7 @@ Rails.application.routes.draw do
 
   namespace 'client_api' do
     namespace 'v1' do
+      match '*path', controller: 'api', action: 'check_allowed_origin', via: :options
       resources :speed_tests, controller: 'speed_tests', only: [:index, :create]
       get 'tests_with_bounds', to: 'speed_tests#tests_with_bounds'
       post 'geocode', to: 'geolocation#code'
