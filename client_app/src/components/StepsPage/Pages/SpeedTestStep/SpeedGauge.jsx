@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Donut} from '../../../../../vendor/lib/gauge';
 import * as ndt7 from "@m-lab/ndt7";
 import {sendRawData} from "../../../../utils/apiRequests";
@@ -7,6 +7,7 @@ import SpeedGaugeInterior from "./SpeedGaugeInterior";
 import {normalizeValue} from "./utils/normalizer";
 import {runnerConfig} from "../../../../utils/ndt7Tester";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
+import ConfigContext from "../../../../context/ConfigContext";
 
 const canvasWrapperStyle = {
   width: 250,
@@ -65,6 +66,8 @@ const SpeedGauge = ({
   const [isDownloading, setIsDownload] = useState(true);
   const [rawData, setRawData] = useState([]);
 
+  const config = useContext(ConfigContext);
+
   useEffect(() => {
     const downloadTarget = document.getElementById('gauge-canvas');
     downloadDonut = new Donut(downloadTarget).setOptions(downloadOptions);
@@ -86,7 +89,7 @@ const SpeedGauge = ({
     try {
       if (exitCode === 0) {
         storeRunData(startTimestamp);
-        sendRawData(rawData, startTimestamp, userStepData);
+        sendRawData(rawData, startTimestamp, userStepData, config.clientId);
       } else {
         notifyError(error);
       }

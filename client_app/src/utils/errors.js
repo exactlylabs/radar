@@ -8,4 +8,4 @@ export const notifyError = err => {
   }
 };
 
-export const isNoConnectionError = err => !!err.message && (err.message === 'Network request failed' || err.message === 'Failed to fetch');
+export const isNoConnectionError = err => !!err.message && (err.message === 'Network request failed');

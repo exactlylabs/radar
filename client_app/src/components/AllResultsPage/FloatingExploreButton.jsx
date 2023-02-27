@@ -50,7 +50,7 @@ const FloatingExploreButton = ({
     } else if(config.webviewMode) {
       return {...floatingButtonStyle, bottom: null, right: null, top: 'calc(100vh - 48px - 25px)', left: (width - 80)}
     } else {
-      if(isMediumSizeScreen || isSmallSizeScreen) return {...mobileFloatingButtonStyle, top: (height - 225)};
+      if(isMediumSizeScreen || isSmallSizeScreen) return {...mobileFloatingButtonStyle, top: (height - 205)};
       return { ...floatingButtonStyle, top: (height - 380), left: width - 80 };
     }
   }

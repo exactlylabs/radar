@@ -1,6 +1,7 @@
 import {ArrowBack, ArrowForward} from "@mui/icons-material";
 import {MyBackButton} from "../../common/MyBackButton";
 import {MyForwardButton} from "../../common/MyForwardButton";
+import iconLeftArrow from "../../../assets/icons-left-arrow.png";
 
 const stepSwitcherStyle = {
   width: '20%',
@@ -15,6 +16,13 @@ const stepSwitcherStyle = {
 const doubleButtonStepSwitcherStyle = {
   ...stepSwitcherStyle,
   justifyContent: 'space-between',
+}
+
+const arrowIconStyle = {
+  width: '14px',
+  height: '14px',
+  marginRight: '15px',
+  marginLeft: '-4px'
 }
 
 const MyStepSwitcher = ({
@@ -32,7 +40,7 @@ const MyStepSwitcher = ({
     <div style={getStyle()}>
       {
         goBack &&
-        <MyBackButton text={'Go back'} icon={<ArrowBack style={{marginRight: 15}}/>} iconFirst onClick={goBack} disabled={backDisabled}/>
+        <MyBackButton text={'Go back'} icon={<img src={iconLeftArrow} alt={'go back arrow icon'} style={arrowIconStyle}/>} iconFirst onClick={goBack} disabled={backDisabled}/>
       }
       {
         goForward &&

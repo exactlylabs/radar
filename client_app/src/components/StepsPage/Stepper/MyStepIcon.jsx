@@ -48,7 +48,7 @@ const MyStepIcon = ({
 
   return (
     <div style={getStyle()}>
-      { complete ? <Check fontSize={'inherit'}/> : step + 1 }
+      { complete ? <Check fontSize={'inherit'}/> : step }
     </div>
   );
 }

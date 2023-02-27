@@ -66,7 +66,7 @@ const smallColumnWithIconStyle = {
 
 const columnWithIconNarrowStyle = {
   ...columnWithIconStyle,
-  width: '14%',
+  width: '12%',
 }
 
 const iconStyle = {

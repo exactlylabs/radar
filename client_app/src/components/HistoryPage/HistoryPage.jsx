@@ -8,6 +8,7 @@ import {getStoredValues} from "../../utils/storage";
 import {useState} from "react";
 import MyMeasurementInfoModal from "./MyMeasurementInfoModal";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import iconLeftArrow from "../../assets/icons-left-arrow.png";
 
 const historyPageStyle = {
   width: '100%',
@@ -45,6 +46,13 @@ const emptyStateStyle = {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
+}
+
+const arrowIconStyle = {
+  width: '14px',
+  height: '14px',
+  marginRight: '15px',
+  marginLeft: '-4px'
 }
 
 const HistoryPage = ({
@@ -93,7 +101,7 @@ const HistoryPage = ({
         {
           hasRecentTest &&
           <MyBackButton text={'Go to last test'}
-                        icon={<ArrowBack style={{marginRight: 15}}/>}
+                        icon={<img src={iconLeftArrow} alt={'go back arrow icon'} style={arrowIconStyle}/>}
                         iconFirst
                         onClick={goToLastTest}
           />
