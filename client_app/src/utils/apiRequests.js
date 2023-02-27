@@ -3,7 +3,7 @@ import { notifyError } from './errors';
 import { DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE } from './map';
 import { getFilterTag } from './speeds';
 
-export const sendRawData = (rawData, startTimestamp, userStepData) => {
+export const sendRawData = (rawData, startTimestamp, userStepData, clientId) => {
   const { networkLocation, networkType, networkCost } = userStepData;
   const { address, city, state, house_number, street, postal_code } = userStepData.address;
   const location = userStepData.address.coordinates;
@@ -26,6 +26,7 @@ export const sendRawData = (rawData, startTimestamp, userStepData) => {
         network_type: networkType?.text ?? null,
         network_cost: networkCost,
       },
+      client_id: clientId,
     }),
   }).catch(notifyError);
 };
@@ -111,8 +112,8 @@ export const getAddressForCoordinates = async coordinates => {
 
 export const getUserApproximateCoordinates = () => fetch(`${API_URL}/user_coordinates`).then(res => res.json());
 
-export const getTestsWithBounds = (northEast, southWest) => {
+export const getTestsWithBounds = (northEast, southWest, clientId) => {
   if(!northEast || !southWest) throw new Error('Missing bounds!');
-  const params = `?sw_lat=${southWest.lat}&sw_lng=${southWest.lng}&ne_lat=${northEast.lat}&ne_lng=${northEast.lng}`;
+  const params = `?client_id=${clientId}&sw_lat=${southWest.lat}&sw_lng=${southWest.lng}&ne_lat=${northEast.lat}&ne_lng=${northEast.lng}`;
   return fetch(`${API_URL}/tests_with_bounds${params}`).then(res => res.json());
 }

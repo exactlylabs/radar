@@ -29,7 +29,7 @@ const MainPage = ({config}) => {
   const [step, setStep] = useState(getConfigTab(config.tab) ?? TABS.SPEED_TEST);
   const [hasRecentTest, setHasRecentTest] = useState(false);
   const [givenLocation, setGivenLocation] = useState(getGivenLocationIfPresent(config.userLat, config.userLng));
-  const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(STEPS.CONNECTION_ADDRESS);
+  const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(STEPS.INITIAL);
   const {noInternet, setNoInternet} = useContext(ConnectionContext);
 
   const goToMapPage = location => {
@@ -62,6 +62,7 @@ const MainPage = ({config}) => {
         content = <AllResultsPage givenLocation={givenLocation}
                                   setStep={setStep}
                                   maxHeight={config.frameStyle.height ?? 500}
+                                  givenZoom={config.zoom}
         />;
         break;
       case TABS.HISTORY:

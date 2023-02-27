@@ -116,7 +116,7 @@ const SpeedResultsBox = ({
     } if(config.widgetMode) {
       style = {...style, top: `calc(${config.frameStyle.height} - 95px - 54px - 56px - 50px)` }
     } else {
-      style = {...style, top: (y + height - 300)}
+      style = {...style, top: (y + height - 280)}
     }
     return (
       <div style={style} id={'speed-results-box--mobile-filters'}>

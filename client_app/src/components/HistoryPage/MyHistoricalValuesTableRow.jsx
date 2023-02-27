@@ -69,7 +69,7 @@ const ellipsisStyle = {
 
 const columnWithIconStyle = {
   ...commonRowStyle,
-  width: '13.5%',
+  width: '13%',
   color: HISTORICAL_VALUES_TABLE_ROW_DARK_VALUES_COLOR,
   justifyContent: 'flex-end',
 }
@@ -81,7 +81,7 @@ const midLatencyLossStyle = {
 
 const columnWithIconNarrowStyle = {
   ...columnWithIconStyle,
-  width: '14%',
+  width: '12%',
 }
 
 const infoIconColumnStyle = {

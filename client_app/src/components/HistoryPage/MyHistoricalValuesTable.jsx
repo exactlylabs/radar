@@ -6,6 +6,7 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const historicalValuesTableStyle = {
   width: '75%',
+  maxWidth: '1200px',
   margin: '35px auto'
 }
 

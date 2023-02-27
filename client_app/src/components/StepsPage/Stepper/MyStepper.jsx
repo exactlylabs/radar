@@ -79,7 +79,7 @@ const MyStepper = ({
   return (
     <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileStepperContainerStyle : stepperContainerStyle}>
       {
-        Object.values(STEPS).map(step => {
+        Object.values(STEPS).filter(s => s !== STEPS.INITIAL).map(step => {
           if(step < STEPS.RUN_SPEED_TEST) {
            return (
               <MyStep key={step}>

@@ -15,7 +15,7 @@ if (REACT_APP_ENV === 'production') {
 let init = null;
 let error = null;
 export const baseInitConfig = {
-  clientId: 'local',
+  clientId: 1,
   widgetMode: false,
   elementId: 'root-embedded',
   frameStyle: {
@@ -27,6 +27,7 @@ export const baseInitConfig = {
   webviewMode: false,
   userLat: undefined,
   userLng: undefined,
+  zoom: undefined,
 }
 
 const checkConfig = config => {
@@ -40,7 +41,7 @@ const checkConfig = config => {
   } else if (typeof elementId !== 'string') {
     error = 'elementId type is wrong';
     return false;
-  } else if (typeof clientId !== 'string') {
+  } else if (typeof clientId !== 'number') {
     error = 'clientId type is wrong';
     return false;
   }
@@ -53,7 +54,8 @@ const hasParams = () => {
     window.location.search.includes('frameHeight') ||
     window.location.search.includes('tab') ||
     window.location.search.includes('noZoomControl') ||
-    window.location.search.includes('webviewMode');
+    window.location.search.includes('webviewMode') ||
+    window.location.search.includes('zoom');
 }
 
 const getConfigFromParams = () => {
@@ -78,6 +80,8 @@ const getConfigFromParams = () => {
       config.userLat = parseFloat(param.split('=')[1]);
     } else if(param.includes('userLng')) {
       config.userLng = parseFloat(param.split('=')[1]);
+    } else if(param.includes('zoom')) {
+      config.zoom = parseInt(param.split('=')[1]);
     }
   });
   return config;

@@ -14,6 +14,7 @@ import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResu
 import {getLastStoredValue} from "../../utils/storage";
 import NoInternetStepPage from "./Pages/NoInternetStep/NoInternetStepPage";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import InitialStepPage from "./Pages/InitialStep/InitialStepPage";
 
 const stepsPageStyle = {
   width: '100%',
@@ -44,7 +45,7 @@ const StepsPage = ({
 }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(STEPS.CONNECTION_ADDRESS);
+  const [currentStep, setCurrentStep] = useState(STEPS.INITIAL);
   const [error, setError] = useState(null);
   const [warning, setWarning] = useState(null);
   const [userStepData, setUserStepData] = useState({
@@ -121,17 +122,24 @@ const StepsPage = ({
     }
   }
 
+  const goToInitialPage = () => {
+    setCurrentStep(STEPS.INITIAL);
+  }
+
+  const goToAddressPage = () => {
+    if(!userStepData.terms) {
+      setError(errors.NO_TERMS_ERROR);
+      return;
+    }
+    setCurrentStep(STEPS.CONNECTION_ADDRESS);
+  }
+
   const goToPage2 = async (isConfirmingAddress = false, shouldCheckFirst = false) => {
     if(shouldCheckFirst) {
       checkAndOpenModal(isConfirmingAddress);
       return;
     }
     try {
-      const { terms } = userStepData;
-      if(!terms) {
-        setError(errors.NO_TERMS_ERROR);
-        return;
-      }
       setError(null);
       if(!confirmedAddress && !isConfirmingAddress) {
         setIsModalOpen(true);
@@ -182,11 +190,16 @@ const StepsPage = ({
 
   const getCurrentPage = () => {
     switch (currentStep) {
+      case STEPS.INITIAL:
+        return <InitialStepPage terms={userStepData.terms}
+                                setTerms={setTerms}
+                                goToNextPage={goToAddressPage}
+                                error={error}
+        />;
       case STEPS.CONNECTION_ADDRESS:
         return <LocationSearchStepPage confirmAddress={storeCoordinates}
                                        error={error}
                                        setAddress={setAddress}
-                                       setTerms={setTerms}
                                        isModalOpen={isModalOpen}
                                        setIsModalOpen={setIsModalOpen}
                                        handleContinue={canProceedToStep2 ? goToPage2 : checkAndOpenModal}
@@ -197,7 +210,8 @@ const StepsPage = ({
                                        setSelectedSuggestion={setSelectedSuggestion}
                                        selectedSuggestion={selectedSuggestion}
                                        goToNextPage={canProceedToStep2 ? goToPage2 : undefined}
-                                       terms={userStepData.terms}
+                                       goBack={goToInitialPage}
+
         />;
       case STEPS.CONNECTION_PLACEMENT:
         return <ConnectionPlacementStepPage goForward={goToPage3}
@@ -234,19 +248,10 @@ const StepsPage = ({
       case STEPS.NO_INTERNET:
         return <NoInternetStepPage goToMapPage={goToMapPage}/>
       default:
-        return <LocationSearchStepPage confirmAddress={storeCoordinates}
-                                       error={error}
-                                       setAddress={setAddress}
-                                       setTerms={setTerms}
-                                       isModalOpen={isModalOpen}
-                                       setIsModalOpen={setIsModalOpen}
-                                       checkAndOpenModal={checkAndOpenModal}
-                                       handleContinue={canProceedToStep2 ? goToPage2 : checkAndOpenModal}
-                                       currentAddress={userStepData.address}
-                                       setGeolocationError={setGeolocationError}
-                                       confirmedAddress={canProceedToStep2}
-                                       setSelectedSuggestion={setSelectedSuggestion}
-                                       goToNextPage={canProceedToStep2 ? goToPage2 : undefined}
+        return <InitialStepPage terms={userStepData.terms}
+                                setTerms={setTerms}
+                                goToNextPage={goToAddressPage}
+                                error={error}
         />;
     }
   }
@@ -254,7 +259,7 @@ const StepsPage = ({
   return (
     <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileStepsPageStyle : stepsPageStyle}>
       {
-        currentStep <= STEPS.CONNECTION_COST &&
+        currentStep <= STEPS.CONNECTION_COST && currentStep !== STEPS.INITIAL &&
           <MyStepper activeStep={currentStep} isMobile={isMediumSizeScreen}/>
       }
       { getCurrentPage() }

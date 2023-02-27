@@ -42,7 +42,7 @@ const smallFloatingSpinnerBoxStyle = {
 
 const smallFloatingMessageBoxAtBottomStyle = {
   ...smallFloatingMessageBoxStyle,
-  bottom: '20px',
+  bottom: '25px',
 }
 
 const smallFloatingSpinnerBoxAtBottomStyle = {

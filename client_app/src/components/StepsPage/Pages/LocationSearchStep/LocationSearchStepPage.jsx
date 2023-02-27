@@ -3,9 +3,11 @@ import {MyTitle} from "../../../common/MyTitle";
 import MyAddressInput from "./AddressInput/MyAddressInput";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 import MyMapModal from "./MyMapModal";
-import {DEFAULT_LINK_COLOR, DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
-import MyCheckbox from "../../../common/MyCheckbox";
+import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
 import SuggestionsModal from "./SuggestionsModal";
+import {MyBackButton} from "../../../common/MyBackButton";
+import iconLeftArrow from '../../../../assets/icons-left-arrow.png';
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 
 const locationSearchStepStyle = {
   width: '100%',
@@ -13,33 +15,31 @@ const locationSearchStepStyle = {
   position: 'relative',
 }
 
-const termsStyle = {
-  display: 'flex',
-  width: 'max-content',
-  maxWidth: '90%',
-  margin: '30px auto 40px',
-  justifyContent: 'center',
-  alignItems: 'center'
-}
-
-const termsTextStyle = {
-  fontSize: 14,
-  color: DEFAULT_TEXT_COLOR
-}
-
 const subtitleStyle = {
   color: DEFAULT_TEXT_COLOR
 }
 
-const linkStyle = {
-  color: DEFAULT_LINK_COLOR,
+const backButtonContainer = {
+  width: 'max-content',
+  margin: '40px auto 0'
+}
+
+const smallBackButtonContainer = {
+  width: 'max-content',
+  margin: '30px auto 55px'
+}
+
+const arrowIconStyle = {
+  width: '14px',
+  height: '14px',
+  marginRight: '15px',
+  marginLeft: '-4px'
 }
 
 const LocationSearchStepPage = ({
   confirmAddress,
   error,
   setAddress,
-  setTerms,
   isModalOpen,
   setIsModalOpen,
   handleContinue,
@@ -49,14 +49,15 @@ const LocationSearchStepPage = ({
   setSelectedSuggestion,
   selectedSuggestion,
   goToNextPage,
-  terms
+  goBack
 }) => {
 
   const [isGenericLocationModalOpen, setIsGenericLocationModalOpen] = useState(false);
   const [isSuggestionsModalOpen, setIsSuggestionsModalOpen] = useState(false);
   const [suggestions, setSuggestions] = useState(null);
 
-  const handleSetTerms = checked => setTerms(checked);
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const isSmall = isSmallSizeScreen || isMediumSizeScreen;
 
   const openGenericLocationModal = () => setIsGenericLocationModalOpen(true);
   const openSuggestionsModal = () => setIsSuggestionsModalOpen(true);
@@ -91,10 +92,6 @@ const LocationSearchStepPage = ({
                       setSuggestions={setSuggestions}
       />
       { error && <MyMessageSnackbar type={'error'} message={error}/> }
-      <div style={termsStyle}>
-        <MyCheckbox onChange={handleSetTerms} isChecked={terms}/>
-        <p style={termsTextStyle}>I agree to the Radar’s <a className={'opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>.</p>
-      </div>
       <MyMapModal isOpen={isModalOpen}
                   setIsOpen={setIsModalOpen}
                   confirmAddress={confirmAddress}
@@ -115,6 +112,9 @@ const LocationSearchStepPage = ({
                         goToRegularMapModal={handleGoToMapModalFromSuggestion}
                         closeModal={closeSuggestionsModal}
       />
+      <div style={isSmall ? smallBackButtonContainer : backButtonContainer}>
+        <MyBackButton onClick={goBack} icon={<img src={iconLeftArrow} alt={'go back arrow icon'} style={arrowIconStyle}/> } text={'Go back'} iconFirst />
+      </div>
     </div>
   )
 }

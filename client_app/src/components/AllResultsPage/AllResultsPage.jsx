@@ -38,8 +38,7 @@ const searchIconStyle = {
   marginTop: '3px',
 }
 
-const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
-
+const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
   const [requestArea, setRequestArea] = useState(givenLocation ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
   const [shouldRecenter, setShouldRecenter] = useState(false);
   const [results, setResults] = useState(null);
@@ -53,11 +52,10 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
   const [fetchingResults, setFetchingResults] = useState(false);
   const [currentFilterType, setCurrentFilterType] = useState(0);
   const [selectedRangeIndexes, setSelectedRangeIndexes] = useState([]);
-  const [initialZoom, setInitialZoom] = useState(null);
+  const [initialZoom, setInitialZoom] = useState(givenZoom);
   const [isBoxOpen, setIsBoxOpen] = useState(true);
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
-  const isSmall = isSmallSizeScreen || isMediumSizeScreen;
   const config = useContext(ConfigContext);
   const {setNoInternet} = useContext(ConnectionContext);
   let timerId;
@@ -68,8 +66,8 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
       if(requestArea) {
         const [lat, lng] = requestArea;
         // Create bounding box
-        const _southWest = {lat: lat - 1, lng: lng - 1};
-        const _northEast = {lat: lat + 1, lng: lng + 1};
+        const _southWest = {lat: lat - 2, lng: lng - 2};
+        const _northEast = {lat: lat + 2, lng: lng + 2};
         fetchTestsWithBounds({_southWest, _northEast});
       }
     }
@@ -182,7 +180,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight }) => {
     const {_northEast, _southWest} = mapBounds;
     setFloatingBoxVisible(true);
     setFetchingResults(true);
-    getTestsWithBounds(_northEast, _southWest)
+    getTestsWithBounds(_northEast, _southWest, config.clientId)
       .then(res => handleTestsWithBoundsResult(res))
       .catch(err => {
         if(isNoConnectionError(err)) setNoInternet(true);

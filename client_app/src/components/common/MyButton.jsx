@@ -13,6 +13,8 @@ export const defaultButtonStyle = {
   justifyContent: 'center',
   alignItems: 'center',
   cursor: 'pointer',
+  position: 'relative',
+  zIndex: 5
 };
 
 export const MyButton = ({ text, onClick, disabled, icon, iconFirst, fullWidth }) => {
