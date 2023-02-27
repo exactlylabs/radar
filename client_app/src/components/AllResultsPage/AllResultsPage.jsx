@@ -61,31 +61,16 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
   let timerId;
 
   useEffect(() => {
-    const fetchSpeedTests = async () => {
-      setFetchingResults(true);
-      if(requestArea) {
-        const [lat, lng] = requestArea;
-        // Create bounding box
-        const _southWest = {lat: lat - 10, lng: lng - 10};
-        const _northEast = {lat: lat + 10, lng: lng + 10};
-        fetchTestsWithBounds({_southWest, _northEast});
-      }
-    }
-
-    const fetchUserApproximateCoordinates = async () => {
-      try {
-        const coordinates = await getUserApproximateCoordinates();
-        if (coordinates.length > 0) {
-          setRequestArea(coordinates);
-        }
-      } catch (e) {
-        if(isNoConnectionError(e)) setNoInternet(true);
-        notifyError(e);
-      }
-    }
+    const fetchUserApproximateCoordinates = async () => getUserApproximateCoordinates();
 
     if(!givenLocation) {
       fetchUserApproximateCoordinates()
+        .then(res => {
+          const coordinates = res;
+          if (coordinates.length > 0) {
+            setRequestArea(coordinates);
+          }
+        })
         .catch(err => {
           if(isNoConnectionError(err)) setNoInternet(true);
           setRequestArea([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
@@ -93,10 +78,28 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
           // so the user still sees content, but unfortunately not centered around their coords.
           notifyError(err);
         })
-        .finally(() => setCenterCoordinatesLoading(false));
+        .finally(() => {setCenterCoordinatesLoading(false);});
     } else {
       setCenterCoordinatesLoading(false);
       setRequestArea(givenLocation);
+    }
+
+    if(!hasVisitedAllResults()) {
+      setAlreadyVisitedCookieIfNotPresent();
+      openFirstTimeModal();
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchSpeedTests = async () => {
+      setFetchingResults(true);
+      if(requestArea) {
+        const [lat, lng] = requestArea;
+        // Create bounding box
+        const _southWest = {lat: lat - 2, lng: lng - 2};
+        const _northEast = {lat: lat + 2, lng: lng + 2};
+        fetchTestsWithBounds({_southWest, _northEast});
+      }
     }
 
     fetchSpeedTests()
@@ -106,12 +109,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
         setError('Failed to fetch speed tests. Please try again later.');
       })
       .finally(() => setLoading(false));
-
-    if(!hasVisitedAllResults()) {
-      setAlreadyVisitedCookieIfNotPresent();
-      openFirstTimeModal();
-    }
-  }, []);
+  }, [requestArea]);
 
   const filterResults = (selectedTab, filters, paramResults = null) => {
     let fullRange = [];
