@@ -18,6 +18,7 @@ const suggestionsContainerStyle = {
   left: '50%',
   transform: 'translate(-50%, -35px)',
   maxHeight: 250,
+  zIndex: 10
 }
 
 const emptySuggestionStyle = {
