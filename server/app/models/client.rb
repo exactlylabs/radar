@@ -14,12 +14,10 @@ class Client < ApplicationRecord
   has_many :measurements
   has_many :client_event_logs
 
-  geocoded_by :address
 
   validates :scheduling_amount_per_period, numericality: { only_integer: true, greater_than: 0 }
 
   before_create :create_ids
-  after_validation :geocode
   after_save :send_event
   after_create :send_created_event
   after_commit :check_ip_changed
