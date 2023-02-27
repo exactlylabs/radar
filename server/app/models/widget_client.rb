@@ -1,0 +1,2 @@
+class WidgetClient < ApplicationRecord
+end

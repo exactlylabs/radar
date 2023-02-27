@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_08_222343) do
+ActiveRecord::Schema.define(version: 2023_02_24_121602) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,9 +20,9 @@ ActiveRecord::Schema.define(version: 2023_02_08_222343) do
     t.string "name", null: false
     t.boolean "superaccount", default: false
     t.boolean "exportaccount", default: false
-    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
     t.string "token"
   end
 
@@ -123,6 +123,8 @@ ActiveRecord::Schema.define(version: 2023_02_08_222343) do
     t.float "longitude"
     t.float "download_avg"
     t.float "upload_avg"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "ip"
     t.string "token"
     t.string "download_id"
@@ -130,8 +132,6 @@ ActiveRecord::Schema.define(version: 2023_02_08_222343) do
     t.float "latency"
     t.float "loss"
     t.datetime "processed_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
     t.string "address"
     t.string "network_location"
     t.string "city"
@@ -144,6 +144,7 @@ ActiveRecord::Schema.define(version: 2023_02_08_222343) do
     t.jsonb "connection_data"
     t.string "version_number"
     t.string "build_number"
+    t.bigint "tested_by"
   end
 
   create_table "client_versions", force: :cascade do |t|
@@ -175,7 +176,9 @@ ActiveRecord::Schema.define(version: 2023_02_08_222343) do
     t.bigint "client_version_id"
     t.string "raw_version"
     t.bigint "update_group_id"
+    t.boolean "staging"
     t.string "distribution_name"
+    t.string "raw_secret"
     t.jsonb "network_interfaces"
     t.integer "account_id"
     t.bigint "watchdog_version_id"
@@ -195,9 +198,6 @@ ActiveRecord::Schema.define(version: 2023_02_08_222343) do
     t.boolean "custom_scheduling", default: false
     t.string "os_version"
     t.string "hardware_platform"
-    t.string "raw_secret"
-    t.boolean "staging"
-    t.boolean "using_websocket", default: false
     t.integer "data_cap_day_of_month", default: 1
     t.boolean "in_service", default: false
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
@@ -273,9 +273,9 @@ ActiveRecord::Schema.define(version: 2023_02_08_222343) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
+    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
-    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.float "download_avg"
@@ -358,10 +358,10 @@ ActiveRecord::Schema.define(version: 2023_02_08_222343) do
     t.bigint "account_id", null: false
     t.bigint "user_id", null: false
     t.datetime "joined_at", null: false
-    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
+    t.datetime "deleted_at"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
@@ -375,6 +375,13 @@ ActiveRecord::Schema.define(version: 2023_02_08_222343) do
     t.index ["version"], name: "index_watchdog_versions_on_version", unique: true
   end
 
+  create_table "widget_clients", force: :cascade do |t|
+    t.string "client_name"
+    t.string "client_urls", array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "autonomous_systems", "autonomous_system_orgs"
@@ -382,6 +389,7 @@ ActiveRecord::Schema.define(version: 2023_02_08_222343) do
   add_foreign_key "client_event_logs", "clients"
   add_foreign_key "client_online_logs", "accounts"
   add_foreign_key "client_online_logs", "clients"
+  add_foreign_key "client_speed_tests", "widget_clients", column: "tested_by"
   add_foreign_key "clients", "accounts"
   add_foreign_key "clients", "autonomous_systems"
   add_foreign_key "clients", "client_versions"
