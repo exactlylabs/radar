@@ -68,7 +68,10 @@ class HomePage extends StatelessWidget {
                 },
               ),
             ),
-            body: HomePageBody(pageIdx: state.currentIndex),
+            body: HomePageBody(
+              pageIdx: state.currentIndex,
+              args: state.args,
+            ),
           );
         },
       ),

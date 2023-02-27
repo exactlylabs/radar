@@ -14,11 +14,15 @@ class TakeSpeedTestStep extends StatelessWidget {
     required this.networkType,
     required this.networkPlace,
     required this.address,
+    this.latitude,
+    this.longitude,
   }) : super(key: key);
 
   final String networkType;
   final String networkPlace;
   final String address;
+  final double? latitude;
+  final double? longitude;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +58,8 @@ class TakeSpeedTestStep extends StatelessWidget {
                 latency: state.latency ?? 0,
                 loss: state.loss ?? 0,
                 networkQuality: state.networkQuality,
+                latitude: latitude,
+                longitude: longitude,
               );
             } else {
               return const StartSpeedTestStep();

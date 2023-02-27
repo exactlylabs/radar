@@ -7,9 +7,11 @@ class HomePageBody extends StatelessWidget {
   const HomePageBody({
     Key? key,
     required this.pageIdx,
+    this.args,
   }) : super(key: key);
 
   final int pageIdx;
+  final dynamic args;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +20,17 @@ class HomePageBody extends StatelessWidget {
     } else if (pageIdx == _YOUR_RESULTS_PAGE_IDX) {
       return const YourResultsPage();
     } else if (pageIdx == _MAP_PAGE_IDX) {
-      return MapWebViewPage();
+      if (args != null) {
+        List<double?> latLng = args as List<double?>;
+        return MapWebViewPage(
+          latitude: latLng[0],
+          longitude: latLng[1],
+        );
+      } else {
+        return MapWebViewPage();
+      }
     } else {
-      return const Center(child: Text('Speed Test'));
+      return const SpeedTestPage();
     }
   }
 

@@ -5,7 +5,11 @@ class NavigationCubit extends Cubit<NavigationState> {
   NavigationCubit() : super(NavigationState());
 
   void changeTab(int index) {
-    emit(state.copyWith(currentIndex: index));
+    emit(NavigationState(currentIndex: index));
+  }
+
+  void changeTabWithArgs(int index, dynamic args) {
+    emit(NavigationState(currentIndex: index, args: args));
   }
 
   static const SPEED_TEST_INDEX = 0;
