@@ -7,7 +7,12 @@
 
 puts 'Tested by column population seeder running....'
 
+w = WidgetClient.create
+w.client_name = 'ExactlyLabs'
+w.client_urls = ['https://speedtest.exactlylabs.com', 'https://speed.exactlylabs.com', 'https://speed.radartoolkit.com']
+w.save!
+
 ClientSpeedTest.all.each do |speed_test|
-  speed_test.widget_client = WidgetClient.first
+  speed_test.widget_client = WidgetClient.find_by_client_name('ExactlyLabs')
   speed_test.save!
 end
