@@ -24,6 +24,12 @@ const defaultAllResultsWrapperStyle = {
 const widgetMainWrapperStyle = {
   backgroundColor: WHITE,
   overflowX: 'auto',
+  overflowY: 'auto',
+}
+
+const webviewMainWrapperStyle = {
+  backgroundColor: WHITE,
+  overflowX: 'auto',
   overflowY: 'hidden',
 }
 
@@ -62,6 +68,7 @@ const Frame = ({ config, children, step, setStep }) => {
   const isAllResultsPage = step === TABS.ALL_RESULTS;
 
   const getFrameStyleBasedOnCurrentTab = () => {
+    console.log(step === TABS.ALL_RESULTS, config.widgetMode, isAllResultsPage ? 'hidden' : 'auto')
     if(isOverviewPage) return overviewPageStyle;
     if(step === TABS.ALL_RESULTS) {
       if(config.widgetMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height} - 175px`, overflowY: isAllResultsPage ? 'hidden' : 'auto'};
@@ -75,7 +82,8 @@ const Frame = ({ config, children, step, setStep }) => {
 
   const getWrapperStyle = () => {
     let baseStyle;
-    if(config.widgetMode || config.webviewMode) baseStyle = widgetMainWrapperStyle;
+    if(config.webviewMode) baseStyle = webviewMainWrapperStyle;
+    else if(config.widgetMode) baseStyle = widgetMainWrapperStyle
     else if(isOverviewPage) baseStyle = defaultOverviewWrapperStyle;
     else baseStyle = defaultMainWrapperStyle;
     return {...baseStyle, ...config.frameStyle};
