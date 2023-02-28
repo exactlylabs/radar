@@ -15,7 +15,8 @@ func startSpeedTestRunner(ctx context.Context, c *config.Config, runTestCh <-cha
 		for _, runner := range runners {
 			result, err := runner.Run(ctx)
 			if err != nil {
-				panic(err)
+				log.Println(fmt.Errorf("agent.startSpeedTestRunner failed running test, skipping it: %w", err))
+				continue
 			}
 			err = reporter.ReportMeasurement(c.ClientId, c.Secret, runner.Type(), result.Raw)
 			if err != nil {
