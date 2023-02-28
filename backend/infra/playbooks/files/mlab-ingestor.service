@@ -4,13 +4,12 @@ After = network-online.target
 Wants = network-online.target
 
 [Service]
-User=postgres
 ExecStart = /usr/local/bin/mlab-ingestor
 Restart = on-failure
 RestartSec = 10s
-Environment=DB_PORT=5432
+Environment=DB_PORT=9000
 Environment=DB_NAME=mlab-mapping
-Environment=DB_USER=ingestor
+Environment=DB_USER=mapping
 Environment=DB_PASSWORD=${DBPASSWORD}
 Environment=DB_HOST=localhost
 
