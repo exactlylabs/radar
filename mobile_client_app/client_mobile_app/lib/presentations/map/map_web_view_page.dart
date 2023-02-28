@@ -67,7 +67,7 @@ class MapWebViewPage extends StatelessWidget {
     if (latitude == null || longitude == null) {
       return AppConfig.of(context)?.stringResource.WEB_ENDPOINT;
     }
-    return '${AppConfig.of(context)?.stringResource.WEB_ENDPOINT}&userLat=$latitude&userLng=$longitude';
+    return '${AppConfig.of(context)?.stringResource.WEB_ENDPOINT}&userLat=$latitude&userLng=$longitude&zoom=10';
   }
 
   static const String _cookieName = 'visitedAllResults';
