@@ -15,7 +15,7 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
   useEffect(() => {
     // @ts-ignore
     SpeedTest.config({
-      clientId: 'local',
+      clientId: 1,
       widgetMode: true,
       elementId: 'widget-root',
       frameStyle: {
