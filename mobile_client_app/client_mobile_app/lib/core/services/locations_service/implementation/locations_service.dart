@@ -63,7 +63,7 @@ class LocationsService implements ILocationsService {
     final failureOrLocations = await _httpProvider.postAndDecode<List>(
       url: _restClient.suggestedLocations,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'address': name}),
+      body: {'address': name},
     );
 
     return failureOrLocations.fold(
