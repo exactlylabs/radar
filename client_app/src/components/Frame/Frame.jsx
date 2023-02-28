@@ -21,10 +21,16 @@ const defaultAllResultsWrapperStyle = {
   overflow: 'hidden',
 }
 
-const widgetMainWrapperStyle = {
+const webviewMainWrapperStyle = {
   backgroundColor: WHITE,
   overflowX: 'auto',
   overflowY: 'hidden',
+}
+
+const widgetMainWrapperStyle = {
+  backgroundColor: WHITE,
+  overflowX: 'auto',
+  overflowY: 'auto',
 }
 
 const childrenWrapperStyle = {
@@ -75,7 +81,8 @@ const Frame = ({ config, children, step, setStep }) => {
 
   const getWrapperStyle = () => {
     let baseStyle;
-    if(config.widgetMode || config.webviewMode) baseStyle = widgetMainWrapperStyle;
+    if(config.widgetMode) baseStyle = widgetMainWrapperStyle;
+    else if(config.widgetMode) baseStyle = webviewMainWrapperStyle;
     else if(isOverviewPage) baseStyle = defaultOverviewWrapperStyle;
     else baseStyle = defaultMainWrapperStyle;
     return {...baseStyle, ...config.frameStyle};
