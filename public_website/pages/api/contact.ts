@@ -1,3 +1,5 @@
+import {NextApiRequest, NextApiResponse} from "next";
+
 interface IDiscordBody {
   embeds: any[];
 }
@@ -18,7 +20,7 @@ enum MailReply {
 }
 
 // eslint-disable-next-line
-export default async function (req: any, res: any) {
+export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
     const body: IMailBody = JSON.parse(req.body);
     if (!body || !body.name || !body.email)
