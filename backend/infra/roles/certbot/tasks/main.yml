@@ -1,0 +1,27 @@
+# Installs Certbot in standalone mode (certbot starts a webserver to bind to port 80)
+# Make sure to allow http traffic in the instance you are connecting to
+
+- name: "Install Certbot for SSL/TLS Certificate"
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - certbot
+
+- name: "Request SSL Certificate"
+  become: true
+  shell: |
+    certbot certonly \
+    --standalone \
+    --agree-tos \
+    -n \
+    -m {{ acme_account_email }} \
+    -d {{ domain_name }}
+
+- name: "Set Renew Cron Job"
+  cron:
+    name: "Renew Certificates"
+    user: root
+    minute: "0"
+    hour: "12"
+    job: "/usr/bin/certbot renew --quiet"

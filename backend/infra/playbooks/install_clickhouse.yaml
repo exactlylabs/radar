@@ -1,10 +1,75 @@
+---
+- hosts: clickhousedb
+  become: true
+  vars:
+    acme_account_email: "devops@exactlylabs.com"
+    domain_name: "{{ inventory_hostname }}"
+  roles:
+    - certbot
+  
+- name: "Symlinks from LetsEncrypt to Clickhouse"
+  hosts: clickhousedb
+  tasks:
+    
+    - name: "Create Clickhouse User"
+      become: true
+      user:
+        authorization: ''
+        create_home: false
+        name: clickhouse
+        group: clickhouse
+        password: '*'
+        shell: /bin/false
+        state: present
+
+    - become: true
+      file:
+        path: '/etc/letsencrypt/{{ item.path }}'
+        state: '{{ item.state }}'
+        recurse: '{{ item.recurse }}'
+        owner: root
+        group: clickhouse
+        mode: '{{ item.mode }}'
+      loop:
+        - {path: "live", state: "directory", recurse: true, mode: '0640'}
+        - {path: "live", state: "directory", recurse: false, mode: '0750'}
+        - {path: "live/{{ inventory_hostname }}", state: "directory", recurse: false, mode: '0750'}
+        - {path: "archive", state: "directory", recurse: true, mode: '0640'}
+        - {path: "archive", state: "directory", recurse: false, mode: '0750'}
+        - {path: "archive/{{ inventory_hostname }}", state: "directory", recurse: false, mode: '0750'}
+
+- name: "Generate Password Hash"
+  hosts: clickhousedb
+  tasks:
+    - shell: echo -n "{{ db_password }}" | sha256sum | tr -d '-' | tr -d '[:space:]'
+      register: db_password_sha256
+    - set_fact:
+        db_password_sha256={{ db_password_sha256.stdout }}
+
 - name: "Install Clickhouse"
   hosts: clickhousedb
-  become: yes
-  vars:
+  become: true
+  vars:  
+    clickhouse_user: clickhouse
+    clickhouse_group: clickhouse
+    clickhouse_http_port:
+    clickhouse_tcp_port:
+    clickhouse_https_port: 8443
+    clickhouse_tcp_secure_port: 9440
+    clickhouse_ssl_server:
+      certificate_file: "/etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem"
+      private_key_file: "/etc/letsencrypt/live/{{ inventory_hostname }}/privkey.pem"
+      verification_mode: "none"
+      load_default_ca_file: "true"
+      cache_sessions: "true"
+      disable_protocols: "sslv2,sslv3"
+      prefer_server_ciphers: "true"
     clickhouse_users_custom:
       - name: "{{ db_user }}"
         password_sha256_hex: "{{ db_password_sha256 }}"
+        networks: 
+          - "::/0"
+          - "0.0.0.0/0"
         profile: mapping-profile
         quota: default
         dbs: ["{{ db_name }}"]
@@ -24,4 +89,4 @@
     clickhouse_listen_host:
       - "::"
   roles:
-    - alexeysetevoi.clickhouse
+    - install-clickhouse
