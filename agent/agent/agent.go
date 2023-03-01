@@ -2,7 +2,6 @@ package agent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -118,11 +117,7 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 			if pingResp.Update != nil {
 				log.Printf("An Update for version %v is Available\n", pingResp.Update.Version)
 				err := update.SelfUpdate(pingResp.Update.BinaryUrl)
-				if err != nil && (errors.Is(err, update.ErrInvalidCertificate) ||
-					errors.Is(err, update.ErrInvalidSignature) ||
-					errors.Is(err, update.ErrCRLInvalidSignature) ||
-					errors.Is(err, update.ErrCRLNotFound)) {
-
+				if update.IsValidationError(err) {
 					log.Printf("Existent update is invalid: %v\n", err)
 					tracing.NotifyErrorOnce(err, map[string]interface{}{
 						"Update Data": map[string]string{
@@ -130,10 +125,6 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 							"url":     pingResp.Update.BinaryUrl,
 						},
 					})
-				} else if errors.Is(err, update.ErrCRLExpired) {
-					log.Println(err)
-					// Notify ourselves to renew the CRL
-					tracing.NotifyErrorOnce(err, map[string]interface{}{})
 				} else if err != nil {
 					panic(err)
 				} else {
@@ -145,10 +136,7 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 			if pingResp.WatchdogUpdate != nil {
 				log.Printf("An Update for Watchdog Version %v is available\n", pingResp.WatchdogUpdate.Version)
 				err := watchdog.UpdateWatchdog(pingResp.WatchdogUpdate.BinaryUrl)
-				if err != nil && (errors.Is(err, update.ErrInvalidCertificate) ||
-					errors.Is(err, update.ErrInvalidSignature) ||
-					errors.Is(err, update.ErrCRLInvalidSignature) ||
-					errors.Is(err, update.ErrCRLNotFound)) {
+				if update.IsValidationError(err) {
 					log.Printf("Existent update is invalid: %v\n", err)
 					tracing.NotifyErrorOnce(err, map[string]interface{}{
 						"Update Data": map[string]string{
@@ -156,10 +144,6 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 							"url":     pingResp.Update.BinaryUrl,
 						},
 					})
-				} else if errors.Is(err, update.ErrCRLExpired) {
-					log.Println(err)
-					// Notify ourselves to renew the CRL
-					tracing.NotifyErrorOnce(err, map[string]interface{}{})
 				} else if err != nil {
 					panic(err)
 				} else {

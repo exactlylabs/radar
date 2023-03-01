@@ -34,5 +34,4 @@ certificate = $dir/rootCA.pem
 private_key = $dir/rootCA.key
 crl = $dir/rootCRL.crl.pem
 default_md = default
-default_crl_days=30
-
+default_crl_days=180
