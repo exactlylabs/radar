@@ -3,8 +3,8 @@ body {
 }
 
 #pod-label--label-frame {
-  width: 410px;
-  height: 295px;
+  width: 609px;
+  height: 406px;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -15,22 +15,21 @@ body {
   -webkit-align-items: flex-start;
   -webkit-box-align: start;
   align-items: flex-start;
-  padding: 25px 30px 30px;
+  padding: 30.45px 33.83px;
   p, div {
     font-family: Roboto, sans-serif;
   }
 }
 
 #pod-label--label-logo {
-  height: 34px;
-  width: auto;
-  margin-bottom: 32px;
-  margin-left: -8px;
+  height: auto;
+  width: 264px;
+  margin-bottom: 27px;
 }
 
 #pod-label--inputs-qr-container {
   width: 100%;
-  height: 165px;
+  height: 184px;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -44,7 +43,7 @@ body {
 }
 
 #pod-label--inputs-wrapper {
-  width: 240px;
+  width: 334px;
   height: 100%;
   display: -webkit-box;
   display: -webkit-flex;
@@ -56,11 +55,12 @@ body {
   -webkit-align-items: flex-start;
   -webkit-box-align: start;
   align-items: flex-start;
+  margin-right: 50px;
 }
 
 .pod-label--row {
   width: 100%;
-  height: 62px;
+  height: 80.52px;
   display: -webkit-box;
   display: -webkit-flex;
   display: flex;
@@ -75,20 +75,20 @@ body {
 }
 
 #pod-label--pod-id-container {
-  margin-bottom: 15px;
+  margin-bottom: 16.92px;
 }
 
 .pod-label--label {
-  font-size: 14px;
+  font-size: 18.13px;
   color: rgba(87, 87, 87, 0.5);
-  margin: 0 0 8px 0;
-  width: 100px;
+  margin: 0 0 9.5px 0;
+  width: 111.65px;
 }
 
 .pod-label--input {
   width: 100%;
-  height: 38px;
-  border-radius: 7.8px;
+  height: 49.4px;
+  border-radius: 6.76px;
   background-color: #f0f0f0;
   text-align: center;
   display: -webkit-box;
@@ -104,48 +104,48 @@ body {
 
 .pod-label--input-content {
   color: #181c32;
-  font-size: 18px;
-  letter-spacing: 2.12px;
-  margin: 8px auto;
-  width: 100%;
+  font-size: 23.34px;
+  letter-spacing: 2.75px;
+  margin: 8.8px auto 10.15px;
+  width: max-content;
   white-space: nowrap;
 }
 
 #pod-label--qr-wrapper {
-  width: 122px;
-  height: 122px;
-  margin-left: 30px;
-  border: solid 2px rgba(151, 151, 151, 0.19);
-  border-radius: 7.8px;
+  width: 158px;
+  height: 158px;
+  margin-top: 25.71px;
+  border: solid 1.35px rgba(151, 151, 151, 0.19);
+  border-radius: 10.05px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 #pod-label--qr {
-  width: 100px;
-  height: 100px;
+  width: 67%;
+  height: 67%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 11px;
+  margin-left: 12%;
+  margin-right: 12%;
+  margin-top: 12%;
 }
 
 #pod-label--footer-message {
-  font-size: 13px;
-  line-height: 16px;
+  font-size: 16.24px;
+  line-height: 20.3px;
   color: #8e8e8e;
-  margin: 15px 0 0 0;
+  margin: 17.6px 0 0 0;
   width: 100%;
 }
 
 #pod-label--footer-message-second-line {
-  font-size: 13px;
-  line-height: 16px;
+  font-size: 16.24px;
+  line-height: 20.3px;
   color: #8e8e8e;
-  margin: 10px 0 0 0;
+  margin: 13.5px 0 0 0;
   width: 100%;
 }
 
