@@ -286,13 +286,13 @@ class ClientsController < ApplicationController
 
   # GET /client/:unix_user/pdf_labels
   def get_client_label
-    client_path = request.base_url + "/check"
+    client_path = request.base_url + "/check/" + @client.unix_user
     qr = RQRCode::QRCode.new(client_path)
 
     qr_svg = qr.as_svg(
       color: "000",
       shape_rendering: "crispEdges",
-      module_size: 11,
+      module_size: 1,
       standalone: true,
       use_path: true,
       viewbox: true
@@ -374,12 +374,12 @@ class ClientsController < ApplicationController
     @clients = policy_scope(Client).where(unix_user: client_ids)
     @qrs = []
     @clients.each do |client|
-      client_path = request.base_url + "/clients/#{client.unix_user}"
+      client_path = request.base_url + "/check/" + client.unix_user
       qr = RQRCode::QRCode.new(client_path)
       qr_svg = qr.as_svg(
         color: "000",
         shape_rendering: "crispEdges",
-        module_size: 11,
+        module_size: 1,
         standalone: true,
         use_path: true,
         viewbox: true
@@ -387,13 +387,17 @@ class ClientsController < ApplicationController
       @qrs.append(qr_svg)
     end
 
+    zoom = 203.0/300.0
+
     respond_to do |format|
       format.pdf do
         render pdf: "Pod Labels",
-               page_width: "375px",
-               page_height: "280px",
+               page_width: "609px",
+               page_height: "406px",
                template: "client_labels/bulk_show.html.erb",
                layout: "client_label.html",
+               dpi: 203,
+               zoom: zoom,
                page_offset: 0,
                locals: { qrs: @qrs },
                margin: { top: 0, bottom: 0, left: 0, right: 0 },
