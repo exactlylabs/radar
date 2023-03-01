@@ -286,7 +286,7 @@ class ClientsController < ApplicationController
 
   # GET /client/:unix_user/pdf_labels
   def get_client_label
-    client_path = request.base_url + "/clients/#{@client.unix_user}"
+    client_path = request.base_url + "/check"
     qr = RQRCode::QRCode.new(client_path)
 
     qr_svg = qr.as_svg(
@@ -298,13 +298,17 @@ class ClientsController < ApplicationController
       viewbox: true
     )
 
+    zoom = 203.0/300.0
+
     respond_to do |format|
       format.pdf do
         render pdf: "#{@client.unix_user}",
-               page_width: "375px",
-               page_height: "280px",
+               page_width: "609px",
+               page_height: "406px",
                template: "client_labels/show.html.erb",
                layout: "client_label.html",
+               dpi: 203,
+               zoom: zoom,
                page_offset: 0,
                locals: { qr: qr_svg },
                margin: { top: 0, bottom: 0, left: 0, right: 0 },
