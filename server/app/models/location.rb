@@ -47,7 +47,6 @@ include EventSourceable
   end
 
   def apply_label_removed(state, event)
-    byebug
     if state["location_labels"].nil?
       state["location_labels"] = []
     end
