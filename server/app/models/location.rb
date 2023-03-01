@@ -97,16 +97,11 @@ class Location < ApplicationRecord
     end
   end
 
-  def self.to_csv_file(with_progress)
+  def self.to_csv_file()
     tmp_file = Tempfile.new("locations.csv")
-    if with_progress
-      count = Location.all.size
-      step = (12.0/count).round(2)
-    end
     File.open(tmp_file.path, 'w') do |file|
       to_csv_enumerator.each_with_index do |line, index|
         file.write(line)
-        ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: ((index + 1) * step).ceil(0)}) if with_progress
       end
     end
     tmp_file
