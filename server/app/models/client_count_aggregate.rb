@@ -1,5 +1,7 @@
 
 class ClientCountAggregate < ApplicationRecord
+    # Although the name Aggregate, this does not relate to an Aggregate from DDD. This is more akin to a projection in Event Sourcing terms
+    # this model counts the number of clients for a specific aggregator, such as the account, location and AS
     belongs_to :aggregator, polymorphic: true
     has_many :client_count_logs
     has_one :consumer_offset, as: :consumer
