@@ -52,10 +52,24 @@ class ClientCountAggregate < ApplicationRecord
         self.save!
     end
 
+    def self.trigger_replay!
+        begin
+            c = ConsumerOffset.find(consumer_id: "ClientCountAggregate")
+        rescue ActiveRecord::RecordNotFound
+            return
+        end
+        ClientCountAggregate.destroy_all
+        ClientCountLog.destroy_all
+        c.destroy
+    end
+
     def self.aggregate!
         # Consumes from the event stream from the last offset
         consumer_offset = ConsumerOffset.find_or_create_by!(consumer_id: "ClientCountAggregate")
-        events = ClientEventLog.where("client_event_logs.id > ?", consumer_offset.offset).order('client_event_logs.timestamp ASC')
+        events = Event.where(
+            "id > ? AND aggregate_type='Client'", 
+            consumer_offset.offset
+        ).order('timestamp ASC')
 
         # Load current state of all aggregators here, so we are able to do the increment/decrements
         # Create if it doesn't exists yet
@@ -67,7 +81,7 @@ class ClientCountAggregate < ApplicationRecord
 
         count_events = []
         events.each do |evt|
-            client = evt.data["state"]
+            client = evt.snapshot.state
             account_id = client["account_id"]
             location_id = client["location_id"]
             as_id = client["autonomous_system_id"]
@@ -82,45 +96,45 @@ class ClientCountAggregate < ApplicationRecord
 
             Client.transaction do
                 case evt.name
-                when ClientEventLog::CREATED
+                when Client::Events::CREATED
                     # Increase the count of all aggregates
                     aggregates.map{|agg| agg.new_client! client, evt if agg}
                     
-                when ClientEventLog::WENT_ONLINE
+                when Client::Events::WENT_ONLINE
                     # Increase the online count for all aggregates
                     aggregates.map{|agg| agg.client_online! client, evt if agg}
 
-                when ClientEventLog::WENT_OFFLINE
+                when Client::Events::WENT_OFFLINE
                     # Decrease the online count for all aggregates
                     aggregates.map{|agg| agg.client_offline! client, evt if agg}
 
-                when ClientEventLog::LOCATION_CHANGED
+                when Client::Events::LOCATION_CHANGED
                     # Increase the online count for the new location
                     # Decrease the online count for the old location
-                    from = evt.data["event_data"]["from"]
-                    to = evt.data["event_data"]["to"]
+                    from = evt.data["from"]
+                    to = evt.data["to"]
                     update_aggregator_change! client, evt, from, to, aggregators["location"], model=Location
 
-                when ClientEventLog::ACCOUNT_CHANGED
+                when Client::Events::ACCOUNT_CHANGED
                     # Increase the online count for the new account
                     # Decrease the online count for the old account
-                    from = evt.data["event_data"]["from"]
-                    to = evt.data["event_data"]["to"]
+                    from = evt.data["from"]
+                    to = evt.data["to"]
                     update_aggregator_change! client, evt, from, to, aggregators["account"], model=Account
 
-                when ClientEventLog::AS_CHANGED
+                when Client::Events::AS_CHANGED
                     # See if the organization is the same and if not:
                     # Increase the online count for the new AS organization
                     # Decrease the online count for the old AS organization
-                    from = evt.data["event_data"]["from"]
-                    to = evt.data["event_data"]["to"]
+                    from = evt.data["from"]
+                    to = evt.data["to"]
                     update_aggregator_change! client, evt, from, to, aggregators["as_org"] do |id|
                         AutonomousSystemOrg.joins(:autonomous_systems).find_by("autonomous_systems.id = ?", id)
                     end
-                when ClientEventLog::IN_SERVICE
+                when Client::Events::IN_SERVICE
                     aggregates.map{|agg| agg.client_in_service! client, evt if agg}
                     
-                when ClientEventLog::NOT_IN_SERVICE
+                when Client::Events::NOT_IN_SERVICE
                     aggregates.map{|agg| agg.client_not_in_service! client, evt if agg}
                 end
 
