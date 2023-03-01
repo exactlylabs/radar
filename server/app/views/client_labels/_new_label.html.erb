@@ -1,0 +1,27 @@
+<div id="pod-label--label-frame">
+  <span style="color: #FFFFFF; width: 0; height: 0">.</span>
+  <%= image_tag image_url('new-radar-label-logo.png'), id: 'pod-label--label-logo' %>
+  <div id="pod-label--inputs-qr-container">
+    <div id="pod-label--inputs-wrapper">
+      <div class="pod-label--row" id="pod-label--pod-id-container">
+        <p class="pod-label--label">Pod ID</p>
+        <div class="pod-label--input">
+          <p class="pod-label--input-content pod-label--ff-mono"><%= client.unix_user %></p>
+        </div>
+      </div>
+      <div class="pod-label--row" id="pod-label--mac-address-container">
+        <p class="pod-label--label">MAC Address</p>
+        <div class="pod-label--input">
+          <p class="pod-label--input-content pod-label--ff-mono"><%= client.get_mac_address %></p>
+        </div>
+      </div>
+    </div>
+    <div id="pod-label--qr-wrapper">
+      <div id="pod-label--qr">
+        <%= qr.html_safe %>
+      </div>
+    </div>
+  </div>
+  <p id="pod-label--footer-message">For more information about this Pod, scan the QR code above or access the website: <span class="pod-lab--footer-link">https://pods.radartoolkit.com/check/</span></p>
+  <p id="pod-label--footer-message-second-line">www.radartoolkit.com  |  support@radartoolkit.com</p>
+</div>
