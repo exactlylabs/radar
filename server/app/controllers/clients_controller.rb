@@ -69,14 +69,15 @@ class ClientsController < ApplicationController
 
   def check_claim
     @client_id = params[:id]
-    @client_secret = params[:secret]
-    @client = Client.where(unix_user: @client_id).first
+    @client = Client.find_by_unix_user(@client_id)
     respond_to do |format|
-      if @client && @client.authenticate_secret(@client_secret)
-        @client.user = current_user
-        format.json { render status: :ok, json: @client.to_json }
+      if !@client
+        format.json { render json: {msg: 'Client not found!'}, status: :not_found }
+      elsif @client.user.present?
+        format.json { render json: {msg: 'Client already claimed!'}, status: :bad_request }
+      elsif @client.user.nil?
+        format.json { render json: @client.to_json, status: :ok }
       else
-        @error = true
         format.json { render json: {}, status: :unprocessable_entity }
       end
     end
@@ -84,20 +85,19 @@ class ClientsController < ApplicationController
 
   def claim
     @client_id = params[:id]
-    @client_secret = params[:secret]
     @location_id = params[:location_id]
     @client_name = params[:name]
 
     location = policy_scope(Location).where(id: @location_id).first if @location_id.present?
-    @client = Client.where(unix_user: @client_id).first
+    @client = Client.find_by_unix_user(@client_id)
     respond_to do |format|
-      if @client && @client.authenticate_secret(@client_secret)
+      if @client
         @client.user = current_user
         @client.location = location
         @client.name = @client_name
         @client.account = current_account
         @client.save
-        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully created." }
+        format.turbo_stream
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
       else
         @error = true

@@ -39,7 +39,7 @@
           </thead>
           <!--end::Table head-->
           <!--begin::Table body-->
-          <tbody class="fw-bold text-gray-600">
+          <tbody class="fw-bold text-gray-600" id="clients_index_table">
             <% paginate_elements(clients, [], "LOWER(name) ASC").each do |client| %>
               <%= render partial: "clients_table_row", locals: { client: client, selected: false }%>
             <% end %>
