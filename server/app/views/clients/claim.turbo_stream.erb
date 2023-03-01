@@ -1,0 +1,7 @@
+<%= turbo_stream.prepend 'location_clients_table' do %>
+  <%= render partial: 'location_clients/location_clients_table_row', locals: {client: @client} %>
+<% end %>
+
+<%= turbo_stream.prepend 'clients_index_table' do %>
+  <%= render partial: 'clients/clients_table_row', locals: { client: @client, selected: false } %>
+<% end %>
