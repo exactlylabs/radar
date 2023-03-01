@@ -7,3 +7,4 @@
 # Whenever we add a new seed file, we need this file to get updated as well
 
 rails runner db/custom_seeds/seed_fill_tested_by.rb
+rails runner db/custom_seeds/seed_migrate_client_events.rb
