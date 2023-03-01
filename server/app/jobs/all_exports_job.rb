@@ -3,14 +3,14 @@ require 'zip'
 class AllExportsJob < ApplicationJob
   queue_as :default
 
-  def perform(user, filename)
+  def perform(user, filename, origin)
     # Setup files for compressing
     ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 0})
-    @locations = Location.all.to_csv_file true
-    @clients = Client.all.to_csv_file true
+    @locations = Location.all.to_csv_file
+    @clients = Client.all.to_csv_file
     ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 25})
-    @all_measurements = Measurement.all.to_csv_file true
-    @all_ndt7_measurements = Measurement.where(style: "NDT7").to_ndt7_csv_file true
+    @all_measurements = Measurement.all.to_csv_file
+    @all_ndt7_measurements = Measurement.where(style: "NDT7").to_ndt7_csv_file
     ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: 50})
     # Main zip for download
     Zip::File.open(filename, create: true) do |zip|
@@ -31,6 +31,7 @@ class AllExportsJob < ApplicationJob
 
     # Send back file url to client in case they are online, to fire an automatic download
     url = Rails.application.routes.url_helpers.rails_blob_path(user.downloads.last, only_path: true)
+    url = origin + url
     ExportsChannel.broadcast_to(CHANNELS[:exports], {url: url})
 
     # Send out complete progress indication once the url for the download has been exposed

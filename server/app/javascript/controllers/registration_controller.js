@@ -198,6 +198,7 @@ export default class extends Controller {
         }
       })
       .then(res => {
+        if(!res) return;
         if(res.error) this.errorTextTarget.innerText = res.error;
         else this.errorTextTarget.innerText = 'There has been an unexpected error. Please try again later.';
       })

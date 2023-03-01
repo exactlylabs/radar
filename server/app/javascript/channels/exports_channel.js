@@ -13,9 +13,13 @@ consumer.subscriptions.create({ channel: 'ExportsChannel' }, {
       const tooltipElement = document.getElementById('downloads-tooltip');
       if(progressElement && progressElement.style.display === 'block') progressElement.style.display = 'none';
       if(tooltipElement && tooltipElement.style.display !== 'none') tooltipElement.style.display = 'none';
-      const button = pending[0];
-      button.classList.remove('pending');
-      button.classList.remove('disabled');
+      if(pending && pending.length > 0) {
+        const button = pending[0];
+        if(button) {
+          button.classList.remove('pending');
+          button.classList.remove('disabled');
+        }
+      }
     } else if('progress' in data) {
       const progressContainer = document.getElementById('download-progress-bar-container');
       const progressBar = document.getElementById('download-progress-bar');
