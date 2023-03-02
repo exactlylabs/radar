@@ -2,6 +2,8 @@ package agent
 
 import (
 	"context"
+
+	"github.com/exactlylabs/radar/agent/services/sysinfo"
 )
 
 type BinaryUpdate struct {
@@ -25,16 +27,6 @@ type Measurement struct {
 	UploadMbps   float64
 }
 
-type Registerer interface {
-	// Register the pod on the server.
-	// If registrationToken is given, it uses it so the server knows who installed this pod
-	Register(registrationToken *string) (*RegisteredPod, error)
-}
-
-type MeasurementReporter interface {
-	SendMeasurement(ctx context.Context, testStyle string, measurement []byte) error
-}
-
 type Runner interface {
 	Run(ctx context.Context) (*Measurement, error)
 	Type() string
@@ -45,8 +37,10 @@ type Rebooter interface {
 }
 
 type RadarClient interface {
+	Register(registrationToken *string) (*RegisteredPod, error)
+	SendMeasurement(ctx context.Context, testStyle string, measurement []byte) error
+	Ping(meta *sysinfo.ClientMeta) (*ServerMessage, error)
 	Connect(ctx context.Context, ch chan<- *ServerMessage) error
+	Connected() bool
 	Close() error
-	MeasurementReporter
-	Registerer
 }

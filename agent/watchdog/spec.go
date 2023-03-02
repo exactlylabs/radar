@@ -53,5 +53,7 @@ type ServerMessage struct {
 
 type WatchdogClient interface {
 	Connect(context.Context, chan<- ServerMessage) error
+	WatchdogPing(meta *sysinfo.ClientMeta) (*ServerMessage, error)
+	Connected() bool
 	Close() error
 }

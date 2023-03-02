@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/exactlylabs/radar/agent/config"
 	"github.com/exactlylabs/radar/agent/internal/update"
+	"github.com/exactlylabs/radar/agent/services/sysinfo"
 	"github.com/exactlylabs/radar/agent/services/tracing"
 	"github.com/exactlylabs/radar/agent/watchdog/display"
 )
@@ -17,6 +19,7 @@ import (
 func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentCli display.AgentClient, cli WatchdogClient) {
 	go display.StartDisplayLoop(ctx, os.Stdout, agentCli, sysManager)
 	go StartScanLoop(ctx, sysManager)
+	timer := time.NewTicker(10 * time.Second)
 	cliChan := make(chan ServerMessage)
 	if err := cli.Connect(ctx, cliChan); err != nil {
 		panic(err)
@@ -29,8 +32,23 @@ func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentC
 			if msg.Update != nil {
 				handleUpdate(c, sysManager, *msg.Update)
 			}
+		case <-timer.C:
+			if !cli.Connected() {
+				res, err := cli.WatchdogPing(sysinfo.Metadata())
+				if err != nil {
+					log.Println(fmt.Errorf("watchdog.checkUpdate Ping: %w", err))
+					return
+				}
+				if res.Update != nil {
+					handleUpdate(c, sysManager, *res.Update)
+				}
+			}
 		}
 	}
+}
+
+func checkUpdate(c *config.Config) {
+
 }
 
 func handleUpdate(c *config.Config, sysManager SystemManager, data BinaryUpdate) {
