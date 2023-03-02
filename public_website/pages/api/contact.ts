@@ -26,7 +26,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     if (!body || !body.name || !body.email)
       return res.status(400).json({msg: MailReply.BAD_REQUEST, status: 400});
 
-    const errorSendingEmailNotification = sendEmailNotification(body);
+    const errorSendingEmailNotification = await sendEmailNotification(body);
     const response = await sendDiscordNotification(body);
     const errorSendingDiscordNotification = response.status >= 400;
 
@@ -35,7 +35,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 
     return res.status(201).json({msg: MailReply.OK, status: 201});
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return res.status(500).json({msg: MailReply.ERROR, status: 500});
   }
 }
@@ -89,37 +89,36 @@ const sendDiscordNotification = (body: IMailBody): Promise<any> => {
   });
 }
 
-const sendEmailNotification = (body: IMailBody) => {
-  const newUserEmailBody = `New Radar Contact Submission:<br/><br/>
+const sendEmailNotification = async (body: IMailBody) => {
+  try {
+    const newUserEmailBody = `New Radar Contact Submission:<br/><br/>
       * Name: ${body.name}<br/>
       * Email: ${body.email}<br/>
       ${body.company ? `* Company: ${body.company}<br/>` : ''}
       ${body.phoneNumber ? `* Phone Number: ${body.phoneNumber}<br/>` : ''}
       ${body.interests ? `* Interests: ${getInterests(body.interests, body.otherInterest)}<br/>` : ''}
     `;
-  const nodemailer = require('nodemailer');
-  const transporter = nodemailer.createTransport({
-    port: 465,
-    host: "smtp.gmail.com",
-    auth: {
-      user: process.env.SMTP_AUTH_USER,
-      pass: process.env.SMTP_AUTH_PASSWORD,
-    },
-    secure: true,
-  });
-  const mailData = {
-    from: 'eugenio@exactlylabs.com',
-    to: 'eugenio@exactlylabs.com',
-    subject: 'New Contact Submission',
-    html: `<div>${newUserEmailBody}</div>`,
-    replyTo: body.email,
-  }
-  let errorSendingEmail = false;
-  transporter.sendMail(mailData, (err: any, info: any) => {
-    if (err) {
-      console.error(err);
-      errorSendingEmail = true;
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      port: 465,
+      host: "smtp.gmail.com",
+      auth: {
+        user: process.env.SMTP_AUTH_USER,
+        pass: process.env.SMTP_AUTH_PASSWORD,
+      },
+      secure: true,
+    });
+    const mailData = {
+      from: 'eugenio@exactlylabs.com',
+      to: 'eugenio@exactlylabs.com',
+      subject: 'New Contact Submission',
+      html: `<div>${newUserEmailBody}</div>`,
+      replyTo: body.email,
     }
-  });
-  return errorSendingEmail;
+    await transporter.sendMail(mailData);
+    return false;
+  } catch (e) {
+    console.error(e);
+    return true;
+  }
 }
