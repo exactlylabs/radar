@@ -41,7 +41,7 @@ const DateRangeSelectorTabs = ({
            style={styles.Tab(selectedTab === DateTabs.HALF_YEAR)}
            onClick={selectHalfyear}
       >
-        Halfyear
+        Half-year
       </div>
     </div>
   )
