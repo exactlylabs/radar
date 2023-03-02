@@ -1,4 +1,4 @@
-package messages
+package cable
 
 import (
 	"encoding/json"
@@ -77,4 +77,10 @@ func (sm ServerMessage) EncodedMessage() ([]byte, error) {
 		return nil, fmt.Errorf("messages.ServerMessage#EncodedMessage Marshal: %w", err)
 	}
 	return data, nil
+}
+
+// SubscriptionMessage is the content a Subscription MessageType
+type SubscriptionMessage struct {
+	Event   string          `json:"event"`
+	Payload json.RawMessage `json:"payload"`
 }

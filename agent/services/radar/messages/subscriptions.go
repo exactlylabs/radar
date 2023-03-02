@@ -1,16 +1,8 @@
 package messages
 
 import (
-	"encoding/json"
-
 	"github.com/exactlylabs/radar/agent/agent"
 )
-
-// SubscriptionMessage is the content a Subscription MessageType
-type SubscriptionMessage struct {
-	Event   string          `json:"event"`
-	Payload json.RawMessage `json:"payload"`
-}
 
 // TestRequestedSubscriptionPayload has the payload sent from the server, when it asks for a test
 type TestRequestedSubscriptionPayload struct {
