@@ -2,10 +2,12 @@ package ws
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/exactlylabs/radar/agent/services/tracing"
 	"github.com/gorilla/websocket"
 )
 
@@ -17,32 +19,44 @@ type ConnectionErrorCallback func(err error)
 // Run any setup log, such as subscribing to topics, here
 type ConnectedCallback func()
 
+type MessageType int
+
+const (
+	TextMessage   MessageType = websocket.TextMessage
+	BinaryMessage MessageType = websocket.BinaryMessage
+)
+
+type ReceivedMessage struct {
+	Data        []byte
+	MessageType MessageType
+}
+
 // Client is a Websocket client, that auto reconnects whenever an error occurs
 // ParameterType T is the struct that can Unmarshal a message from the server
-type Client[T any] struct {
+type Client struct {
 	url               string
 	header            http.Header
 	conn              *websocket.Conn
 	wCh               chan any
-	rCh               chan T
+	rCh               chan ReceivedMessage
 	errCh             chan error
 	dialer            *websocket.Dialer
 	backoff           BackOff
 	cancel            context.CancelFunc
 	pingWait          time.Duration
 	onConnectionError ConnectionErrorCallback
-	onConnected       func(*Client[T])
+	onConnected       func(*Client)
 }
 
-func New[T any](url string, header http.Header, options ...Option[T]) *Client[T] {
-	c := &Client[T]{
+func New(url string, header http.Header, options ...Option) *Client {
+	c := &Client{
 		url:      url,
 		header:   header,
 		wCh:      make(chan any),
-		rCh:      make(chan T, 10),
+		rCh:      make(chan ReceivedMessage, 10),
 		errCh:    make(chan error),
 		dialer:   &websocket.Dialer{},
-		backoff:  NewExponentialBackOff(time.Millisecond*500, time.Second*15, 2.0),
+		backoff:  NewExponentialBackOff(time.Duration(time.Millisecond*500), time.Duration(time.Second*15), 2.0),
 		pingWait: time.Second * 5,
 	}
 	for _, opt := range options {
@@ -51,7 +65,7 @@ func New[T any](url string, header http.Header, options ...Option[T]) *Client[T]
 	return c
 }
 
-func (c *Client[T]) connectAndListen(ctx context.Context) error {
+func (c *Client) connectAndListen(ctx context.Context) error {
 	innerCtx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	conn, _, err := c.dialer.DialContext(ctx, c.url, c.header)
@@ -65,6 +79,7 @@ func (c *Client[T]) connectAndListen(ctx context.Context) error {
 	writerStopped := make(chan struct{})
 	go func() {
 		defer close(writerStopped)
+		defer tracing.NotifyPanic()
 		for {
 			select {
 			case <-innerCtx.Done():
@@ -73,7 +88,9 @@ func (c *Client[T]) connectAndListen(ctx context.Context) error {
 				err := conn.WriteJSON(msg)
 				if err != nil {
 					if !websocket.IsCloseError(err) {
-						log.Println("ws.Client#connectAndListen WriteJSON:", err)
+						log.Println(fmt.Errorf("ws.Client#connectAndListen WriteJSON: %w", err))
+					} else {
+						log.Println(fmt.Errorf("ws.CLient#connectAndListen WriteJSON: server closed: %w", err))
 					}
 					return
 				}
@@ -86,16 +103,18 @@ func (c *Client[T]) connectAndListen(ctx context.Context) error {
 	readerStopped := make(chan struct{})
 	go func() {
 		defer close(readerStopped)
+		defer tracing.NotifyPanic()
 		for {
-			obj := new(T)
-			err := conn.ReadJSON(obj)
+			mType, data, err := conn.ReadMessage()
 			if err != nil {
 				if !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
-					log.Println("ws.Client#connectAndListen ReadJSON:", err)
+					log.Println(fmt.Errorf("ws.Client#connectAndListen ReadJSON: %w", err))
+				} else {
+					log.Println(fmt.Errorf("ws.Client#connectAndListen ReadJSON: server closed: %w", err))
 				}
 				return
 			}
-			c.rCh <- *obj
+			c.rCh <- ReceivedMessage{Data: data, MessageType: MessageType(mType)}
 		}
 	}()
 
@@ -127,28 +146,29 @@ func (c *Client[T]) connectAndListen(ctx context.Context) error {
 }
 
 // Sender channel, where any message to the server is sent
-func (c *Client[T]) Sender() chan<- any {
+func (c *Client) Sender() chan<- any {
 	return c.wCh
 }
 
 // Receiver channel where any message from the server is sent
-func (c *Client[T]) Receiver() <-chan T {
+func (c *Client) Receiver() <-chan ReceivedMessage {
 	return c.rCh
 }
 
 // Close the connection. If you need to connect again, start a new instance of this structure
-func (c *Client[T]) Close() error {
+func (c *Client) Close() error {
 	c.cancel()
 	return nil
 }
 
 // Connect starts the websocket connection and handles reconnects when the connection closes unexpectedly
-func (c *Client[T]) Connect() error {
+func (c *Client) Connect() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	c.cancel = cancel
 	go func() {
 		defer close(c.rCh)
 		defer close(c.wCh)
+		defer tracing.NotifyPanic()
 
 		// Run immediately and retries infinitely in case of errors
 		// this call is blocking, it only leaves in case of error or context is closed
@@ -165,6 +185,7 @@ func (c *Client[T]) Connect() error {
 			case <-ctx.Done():
 				return
 			case <-c.backoff.Next():
+				log.Println("Retrying...")
 				err := c.connectAndListen(ctx)
 				if err != nil {
 					if c.onConnectionError != nil {

@@ -2,28 +2,28 @@ package ws
 
 import "time"
 
-type Option[T any] func(c *Client[T])
+type Option func(c *Client)
 
-func WithPingTimeout[T any](t time.Duration) Option[T] {
-	return func(c *Client[T]) {
+func WithPingTimeout(t time.Duration) Option {
+	return func(c *Client) {
 		c.pingWait = t
 	}
 }
 
-func WithOnConnected[T any](callback func(cli *Client[T])) Option[T] {
-	return func(c *Client[T]) {
+func WithOnConnected(callback func(cli *Client)) Option {
+	return func(c *Client) {
 		c.onConnected = callback
 	}
 }
 
-func WithConnectionErrorCallback[T any](callback ConnectionErrorCallback) Option[T] {
-	return func(c *Client[T]) {
+func WithConnectionErrorCallback(callback ConnectionErrorCallback) Option {
+	return func(c *Client) {
 		c.onConnectionError = callback
 	}
 }
 
-func WithBackOff[T any](backoff BackOff) Option[T] {
-	return func(c *Client[T]) {
+func WithBackOff(backoff BackOff) Option {
+	return func(c *Client) {
 		c.backoff = backoff
 	}
 }

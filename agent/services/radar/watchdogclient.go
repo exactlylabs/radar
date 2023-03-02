@@ -23,8 +23,10 @@ const (
 	WatchdogChannelName = "WatchdogChannel"
 )
 
+var WatchdogUserAgent = "RadarPodsWatchdog/" + sysinfo.Metadata().Version
+
 const (
-	UpdateWatchdog messages.MessageType = "update" // Custom Type, when requested, the agent should update itself
+	UpdateWatchdog cable.MessageType = "update" // Custom Type, when requested, the agent should update itself
 )
 
 // RadarWatchdogClient implements watchdog.WatchdogClient, connecting to the server using websocket
@@ -34,6 +36,7 @@ type RadarWatchdogClient struct {
 	secret    string
 	channel   *cable.ChannelClient
 	returnCh  chan<- watchdog.ServerMessage
+	connected bool
 }
 
 func NewWatchdogClient(serverURL, clientID, secret string) *RadarWatchdogClient {
@@ -46,31 +49,34 @@ func NewWatchdogClient(serverURL, clientID, secret string) *RadarWatchdogClient 
 
 func (c *RadarWatchdogClient) Connect(ctx context.Context, ch chan<- watchdog.ServerMessage) error {
 	h := http.Header{}
-	h.Set("watchdog", "true") // This tells the server connection to know this connection is not the agent client
+	h.Set("User-Agent", WatchdogUserAgent)
 	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), WatchdogChannelName, h)
 	c.returnCh = ch
 	c.channel.OnSubscriptionMessage = c.handleSubscriptionMessage
 	c.channel.OnCustomMessage = c.handleCustomMessage
+	c.channel.OnSubscribed = c.sendSync
 	c.channel.OnConnectionError = func(error) {
-		msg, err := c.WatchdogPing(sysinfo.Metadata())
-		if err != nil {
-			log.Println(err)
-		} else {
-			ch <- *msg
-		}
+		c.connected = false
 	}
-	c.channel.OnConnected = func() { log.Println("WatchdogChannel connected") }
+	c.channel.OnConnected = func() {
+		c.connected = true
+		log.Println("WatchdogChannel connected")
+	}
 	if err := c.channel.Connect(ctx); err != nil {
 		return fmt.Errorf("radar.RadarWatchdogClient#Connect Connect: %w", err)
 	}
 	return nil
 }
 
+func (c *RadarWatchdogClient) Connected() bool {
+	return c.connected
+}
+
 func (c *RadarWatchdogClient) Close() error {
 	return c.channel.Close()
 }
 
-func (c *RadarWatchdogClient) handleSubscriptionMessage(msg messages.SubscriptionMessage) {
+func (c *RadarWatchdogClient) handleSubscriptionMessage(msg cable.SubscriptionMessage) {
 	if msg.Event == "version_changed" {
 		updateData := messages.VersionChangedSubscriptionPayload{}
 		if err := json.Unmarshal(msg.Payload, &updateData); err != nil {
@@ -92,7 +98,7 @@ func (c *RadarWatchdogClient) handleSubscriptionMessage(msg messages.Subscriptio
 	}
 }
 
-func (c *RadarWatchdogClient) handleCustomMessage(msg messages.ServerMessage) {
+func (c *RadarWatchdogClient) handleCustomMessage(msg cable.ServerMessage) {
 	switch msg.Type {
 	case UpdateWatchdog:
 		payload := &messages.VersionChangedSubscriptionPayload{}
@@ -113,6 +119,13 @@ func (c *RadarWatchdogClient) handleCustomMessage(msg messages.ServerMessage) {
 			},
 		}
 	}
+}
+
+func (c *RadarWatchdogClient) sendSync() {
+	c.channel.SendAction(cable.CustomActionData{
+		Action:  Sync,
+		Payload: sysinfo.Metadata(), // this should be decoupled?
+	})
 }
 
 func (c *RadarWatchdogClient) WatchdogPing(meta *sysinfo.ClientMeta) (*watchdog.ServerMessage, error) {

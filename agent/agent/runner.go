@@ -10,7 +10,7 @@ import (
 	"github.com/exactlylabs/radar/agent/services/tracing"
 )
 
-func startSpeedTestRunner(ctx context.Context, c *config.Config, runTestCh <-chan bool, runners []Runner, reporter MeasurementReporter) {
+func startSpeedTestRunner(ctx context.Context, c *config.Config, runTestCh <-chan bool, runners []Runner, reporter RadarClient) {
 	for range runTestCh {
 		log.Println("Starting Speed Tests")
 		for _, runner := range runners {
