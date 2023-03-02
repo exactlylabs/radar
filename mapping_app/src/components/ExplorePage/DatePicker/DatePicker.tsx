@@ -75,7 +75,7 @@ const DatePicker = ({
     switch (selectedTab) {
       case DateTabs.MONTH:
         if(selectedRangeValue !== months[0]) {
-          dateObject.selectedMonth = getMonthNumberFromName(selectedRangeValue as string) + 1;
+          dateObject.selectedMonth = getMonthNumberFromName(selectedRangeValue as string);
         }
         break;
       case DateTabs.HALF_YEAR:

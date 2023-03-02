@@ -67,7 +67,7 @@ const InitialMenuContentCustomRange = ({
     switch (selectedTab) {
       case DateTabs.MONTH:
         if(innerValue !== months[0]) {
-          dateObject.selectedMonth = getMonthNumberFromName(innerValue as string) + 1;
+          dateObject.selectedMonth = getMonthNumberFromName(innerValue as string);
         }
         break;
       case DateTabs.HALF_YEAR:
