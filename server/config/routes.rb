@@ -146,7 +146,7 @@ Rails.application.routes.draw do
     namespace 'v1' do
       resources :clients do
         collection do
-          mount ActionCable.pods_server => '/ws'
+          mount ActionCable.server => '/ws'
         end
       end
       resources :client_versions, constraints: {id: /[^\/]+/} do
