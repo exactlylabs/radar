@@ -456,7 +456,6 @@ DEPENDENCIES
   image_processing (~> 1.2)
   ipaddr
   jbuilder (~> 2.7)
-  jwt
   listen (~> 3.3)
   lograge
   mini_magick
