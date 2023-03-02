@@ -91,7 +91,7 @@ class ClientsController < ApplicationController
     location = policy_scope(Location).where(id: @location_id).first if @location_id.present?
     @client = Client.find_by_unix_user(@client_id)
     respond_to do |format|
-      if @client
+      if @client && !@client.user
         @client.user = current_user
         @client.location = location
         @client.name = @client_name
