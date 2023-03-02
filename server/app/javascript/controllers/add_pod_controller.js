@@ -87,28 +87,43 @@ export default class extends Controller {
   }
   
   hideModal() {
+    this.restart();
     $(this.element).modal("hide");
   }
 
   submit(e) {
     const postPath = e.srcElement.attributes[0].nodeValue;
-    console.log('submit', postPath);
     if (e.detail.success) {
       if (postPath === "/clients/check_claim") this.gotoLocationModal();
       else this.hideModal();
+    } else {
+      this.goToErrorModal();
     }
   }
   
   restart() {
     this.step0Target.style.display = "block";
     this.step0FooterTarget.style.display = "flex";
+    if(this.podIdInputTargets) {
+      this.podIdInputTargets.forEach(input => input.value = null);
+    }
+    
+    if(this.step2Target.style.display !== 'none') {
+      this.step2Target.style.display = "none";
+      this.step2FooterTarget.style.display = "none";
+    }
+
     if(this.stepErrorTarget.style.display !== 'none') {
       this.stepErrorTarget.style.display = "none";
       this.stepErrorFooterTarget.style.display = "none";
-    } else if(this.stepAlreadyClaimedTarget.style.display !== 'none') {
+    }
+
+    if(this.stepAlreadyClaimedTarget.style.display !== 'none') {
       this.stepAlreadyClaimedTarget.style.display = "none";
       this.stepAlreadyClaimedFooterTarget.style.display = "none";
-    } else {
+    }
+
+    if(this.stepNotFoundTarget.style.display !== 'none') {
       this.stepNotFoundTarget.style.display = "none";
       this.stepNotFoundFooterTarget.style.display = "none";
     }
@@ -164,6 +179,8 @@ export default class extends Controller {
   handleSubmitEnd(e) {
     if(e.detail.success) {
       this.hideModal();
+    } else {
+      this.goToErrorModal();
     }
   }
   
