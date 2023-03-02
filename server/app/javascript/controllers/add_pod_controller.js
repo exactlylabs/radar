@@ -119,6 +119,9 @@ export default class extends Controller {
       this.addNewLocationWrapperTarget.style.display = "none";
       this.locationWrapperTarget.style.display = "none";
     }
+    $("#client-locations-dropdown").select2({
+      dropdownParent: $("#add_pod_modal_wizard"),
+    });
     const podId = this.getPodIdString();
     this.step2IdInputTarget.innerText = podId;
     this.step2IdInputHiddenTarget.value = podId;

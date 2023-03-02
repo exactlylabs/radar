@@ -58,7 +58,7 @@ export default class extends Controller {
         dropdownParent: $("#add_pod_step_1_existing"),
       });
     } else {
-      $("#add_pod_modal").modal("show");
+      $("#add_pod_modal_wizard").modal("show");
     }
   }
 
