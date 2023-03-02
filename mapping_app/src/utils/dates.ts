@@ -236,7 +236,7 @@ export const getMonthCalendar = (selectedYear: number, selectedMonth: number): A
 }
 
 export const getMonthNumberFromName = (monthName: string) => {
-  return monthNames.indexOf(monthName as MonthFullNames);
+  return monthNames.indexOf(monthName as MonthFullNames) + 1;
 }
 
 export const getDateFromString = (string: string, year: Optional<string>): Date => {
@@ -324,7 +324,7 @@ export const getInitialStateFromCalendarType = (calendarType: string): DatePicke
     const split: Array<string> = calendarType.split(' ');
     const month = getMonthNumberFromName(split[0]);
     const year = split.length > 1 ? split[1].split('(')[1].split(')')[0] : null;
-    pickerState.selectedRangeValue = months[month + 1];
+    pickerState.selectedRangeValue = months[month];
     if(year) pickerState.selectedYear = parseInt(year);
     pickerState.selectedTab = DateTabs.MONTH;
   } else if(isSpecificYear(calendarType)) {
