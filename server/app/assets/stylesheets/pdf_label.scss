@@ -16,9 +16,6 @@ body {
   -webkit-box-align: start;
   align-items: flex-start;
   padding: 30px 35px 25px;
-  p, div {
-    font-family: Roboto, sans-serif;
-  }
   span {
     font-family: Roboto, sans-serif;
     font-weight: 500;
@@ -90,6 +87,7 @@ body {
   width: 110px;
   white-space: nowrap;
   font-weight: 500;
+  font-family: "Roboto", sans-serif;
 }
 
 .pod-label--input {
@@ -102,13 +100,28 @@ body {
 }
 
 .pod-label--input-content {
-  width: 100%;
+  width: 250px;
   color: #181c32;
   font-size: 23px;
   letter-spacing: 2.75px;
   white-space: nowrap;
   font-weight: 500;
-  margin: 8px auto;
+  font-family: 'Roboto Mono', monospace;
+  margin-top: 8px;
+  margin-left: 36.5px;
+  text-align: center;
+}
+
+.pod-label--input-content-mac {
+  width: 250px;
+  color: #181c32;
+  font-size: 23px;
+  white-space: nowrap;
+  font-weight: 500;
+  margin-top: 8px;
+  font-family: 'Roboto Mono', monospace;
+  margin-left: 46.5px;
+  text-align: center;
 }
 
 #pod-label--qr-wrapper {
@@ -138,6 +151,7 @@ body {
   color: #000;
   margin: 27px 0 0 0;
   width: 100%;
+  font-family: "Roboto", sans-serif;
 }
 
 #pod-label--footer-message-second-line {
@@ -146,6 +160,7 @@ body {
   color: #000;
   margin: 10px 0 0 0;
   width: 100%;
+  font-family: "Roboto", sans-serif;
 }
 
 .pod-lab--footer-link {
@@ -153,9 +168,5 @@ body {
   line-height: 20px;
   color: #000;
   text-decoration: none;
-  text-underline: none;
-}
-
-.pod-label--ff-mono {
-  font-family: 'Roboto Mono', monospace;
+  font-family: "Roboto", sans-serif;
 }
