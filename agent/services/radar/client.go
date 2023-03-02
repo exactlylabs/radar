@@ -29,9 +29,16 @@ const (
 	RadarServerChannelName = "PodAgentChannel"
 )
 
+var AgentUserAgent = "RadarPodsAgent/" + sysinfo.Metadata().Version
+
 const (
-	RunTest      messages.MessageType = "run_test" // Custom Type, when requested, the agent should run a speed test
-	UpdateClient messages.MessageType = "update"   // Custom Type, when requested, the agent should update itself
+	Sync cable.CustomActionTypes = "sync"
+	Pong cable.CustomActionTypes = "pong"
+)
+
+const (
+	RunTest      cable.MessageType = "run_test" // Custom Type, when requested, the agent should run a speed test
+	UpdateClient cable.MessageType = "update"   // Custom Type, when requested, the agent should update itself
 )
 
 // RadarClient implements agent.RadarClient, connecting to the server using websocket
@@ -41,6 +48,7 @@ type RadarClient struct {
 	secret    string
 	channel   *cable.ChannelClient
 	agentCh   chan<- *agent.ServerMessage
+	connected bool
 }
 
 func NewClient(serverURL, clientID, secret string) *RadarClient {
@@ -57,21 +65,21 @@ func (c *RadarClient) Close() error {
 
 func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessage) error {
 	if c.clientID == "" || c.secret == "" {
-		return fmt.Errorf("radar.RadarClient#Connet: clientId and secret cannot be empty")
+		return fmt.Errorf("radar.RadarClient#Connect: clientId and secret cannot be empty")
 	}
-	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), RadarServerChannelName, http.Header{})
+	header := http.Header{}
+	header.Set("User-Agent", AgentUserAgent)
+	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), RadarServerChannelName, header)
 	c.agentCh = ch
 	c.channel.OnSubscriptionMessage = c.handleSubscriptionMessage
 	c.channel.OnCustomMessage = c.handleCustomMessage
-	c.channel.OnConnectionError = func(error) {
-		msg, err := c.Ping(sysinfo.Metadata())
-		if err != nil {
-			log.Println(err)
-		} else {
-			ch <- msg
-		}
+	c.channel.OnSubscribed = c.sendSync
+	c.channel.OnConnectionError = func(err error) {
+		log.Println(err)
+		c.connected = false
 	}
 	c.channel.OnConnected = func() {
+		c.connected = true
 		log.Println("PodAgentChannel Connected")
 	}
 	if err := c.channel.Connect(ctx); err != nil {
@@ -80,7 +88,11 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 	return nil
 }
 
-func (c *RadarClient) handleSubscriptionMessage(msg messages.SubscriptionMessage) {
+func (c *RadarClient) Connected() bool {
+	return c.connected
+}
+
+func (c *RadarClient) handleSubscriptionMessage(msg cable.SubscriptionMessage) {
 	if msg.Event == "test_requested" {
 		c.agentCh <- &agent.ServerMessage{TestRequested: true}
 
@@ -105,10 +117,14 @@ func (c *RadarClient) handleSubscriptionMessage(msg messages.SubscriptionMessage
 	}
 }
 
-func (c *RadarClient) handleCustomMessage(msg messages.ServerMessage) {
+func (c *RadarClient) handleCustomMessage(msg cable.ServerMessage) {
 	switch msg.Type {
+	case cable.Ping:
+		c.sendPong()
+
 	case RunTest:
 		c.agentCh <- &agent.ServerMessage{TestRequested: true}
+
 	case UpdateClient:
 		payload := &messages.VersionChangedSubscriptionPayload{}
 		if err := msg.DecodeMessage(payload); err != nil {
@@ -128,7 +144,21 @@ func (c *RadarClient) handleCustomMessage(msg messages.ServerMessage) {
 				BinaryUrl: c.serverURL + payload.BinaryUrl, // Websocket client only sends the path
 			},
 		}
+
 	}
+}
+
+func (c *RadarClient) sendSync() {
+	c.channel.SendAction(cable.CustomActionData{
+		Action:  Sync,
+		Payload: sysinfo.Metadata(), // this should be decoupled?
+	})
+}
+
+func (c *RadarClient) sendPong() {
+	c.channel.SendAction(cable.CustomActionData{
+		Action: Pong,
+	})
 }
 
 func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) (*agent.ServerMessage, error) {
@@ -146,7 +176,7 @@ func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) (*agent.ServerMessage, erro
 		return nil, fmt.Errorf("radarClient#Ping error marshalling NetInterfaces: %w", err)
 	}
 	form.Add("network_interfaces", string(ifaces))
-	req, err := NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
+	req, err := NewRequest(http.MethodPost, apiUrl, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +222,7 @@ func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) (*agent.ServerMessage, erro
 
 func (c *RadarClient) Register(registrationToken *string) (*agent.RegisteredPod, error) {
 	apiUrl := fmt.Sprintf("%s/clients", c.serverURL)
-	req, err := http.NewRequest("POST", apiUrl, nil)
+	req, err := http.NewRequest(http.MethodPost, apiUrl, nil)
 	if err != nil {
 		return nil, fmt.Errorf("radarCLient#Register error creating request: %w", err)
 	}
@@ -243,7 +273,7 @@ func (c *RadarClient) SendMeasurement(ctx context.Context, style string, measure
 	fW.Write(measurement)
 	w.Close()
 
-	req, err := NewRequest("POST", apiUrl, &b)
+	req, err := NewRequest(http.MethodPost, apiUrl, &b)
 	if err != nil {
 		return err
 	}

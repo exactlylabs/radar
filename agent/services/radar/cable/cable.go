@@ -2,36 +2,30 @@ package cable
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 
-	"github.com/exactlylabs/radar/agent/services/radar/messages"
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
 	"github.com/exactlylabs/radar/agent/services/ws"
 	"github.com/google/uuid"
 )
 
-const (
-	Sync messages.CustomActionTypes = "sync"
-	Pong messages.CustomActionTypes = "pong"
-)
-
 // SubscriptionCallback is called when receiving a message from the topic subscribed in the server
-type SubscriptionCallback func(messages.SubscriptionMessage)
+type SubscriptionCallback func(SubscriptionMessage)
 
 // CustomMessageCallback is called whenever a non subscription message is received
 // and it is not of a type that was expected by the client.
-type CustomMessageCallback func(messages.ServerMessage)
+type CustomMessageCallback func(ServerMessage)
 
 // ChannelClient subscribes to a specific channel and handles the default connection steps.
 // To process the subscription messages or other type of events, set the "On[XXX]" callback variables
 type ChannelClient struct {
 	ServerURL   string
 	Auth        string
-	cli         *ws.Client[messages.ServerMessage]
+	cli         *ws.Client
 	ChannelName string
-	identifier  messages.Identifier
+	identifier  Identifier
 	header      http.Header
 
 	// Callbacks
@@ -49,7 +43,7 @@ func NewChannel(serverUrl, auth, channelName string, customHeader http.Header) *
 		Auth:        auth,
 		ChannelName: channelName,
 		header:      customHeader,
-		identifier: messages.Identifier{
+		identifier: Identifier{
 			Channel: channelName,
 			Id:      uuid.NewString(),
 		},
@@ -70,7 +64,7 @@ func (c *ChannelClient) Connect(ctx context.Context) error {
 	wsUrl.Path = "/api/v1/clients/ws"
 	c.cli = ws.New(wsUrl.String(), c.header,
 		ws.WithOnConnected(c.onConnected),
-		ws.WithConnectionErrorCallback[messages.ServerMessage](c.onConnectionError),
+		ws.WithConnectionErrorCallback(c.onConnectionError),
 	)
 	if err := c.cli.Connect(); err != nil {
 		return fmt.Errorf("radar.RadarClient#Connect Connect: %w", err)
@@ -83,10 +77,10 @@ func (c *ChannelClient) Close() error {
 	return c.cli.Close()
 }
 
-func (c *ChannelClient) onConnected(cli *ws.Client[messages.ServerMessage]) {
+func (c *ChannelClient) onConnected(cli *ws.Client) {
 	// Subscribe to channels
-	c.cli.Sender() <- messages.ClientMessage{
-		Command:    messages.Subscribe,
+	c.cli.Sender() <- ClientMessage{
+		Command:    Subscribe,
 		Identifier: &c.identifier,
 	}
 	if c.OnConnected != nil {
@@ -102,20 +96,19 @@ func (c *ChannelClient) onConnectionError(err error) {
 
 // listenToMessages keeps reading from the Client channel, until it is closed.
 func (c *ChannelClient) listenToMessages() {
-	for msg := range c.cli.Receiver() {
+	for rcvMsg := range c.cli.Receiver() {
+		msg := ServerMessage{}
+		if err := json.Unmarshal(rcvMsg.Data, &msg); err != nil {
+			panic(fmt.Errorf("cable.ChannelClient#listenToMessages Unmarshal: %w", err))
+		}
 		switch msg.Type {
-		case messages.ConfirmSubscription:
-			c.sendSync()
+		case ConfirmSubscription:
 			if c.OnSubscribed != nil {
 				c.OnSubscribed()
 			}
-
-		case messages.Ping:
-			c.sendPong()
-
 		default:
 			if msg.Identifier != nil && c.OnSubscriptionMessage != nil {
-				msgData := messages.SubscriptionMessage{}
+				msgData := SubscriptionMessage{}
 				msg.DecodeMessage(&msgData)
 				c.OnSubscriptionMessage(msgData)
 			} else if c.OnCustomMessage != nil {
@@ -126,23 +119,10 @@ func (c *ChannelClient) listenToMessages() {
 	}
 }
 
-func (c *ChannelClient) SendAction(msg messages.CustomActionData) {
-	c.cli.Sender() <- messages.ClientMessage{
+func (c *ChannelClient) SendAction(msg CustomActionData) {
+	c.cli.Sender() <- ClientMessage{
 		Identifier: &c.identifier,
-		Command:    messages.Message,
+		Command:    Message,
 		ActionData: &msg,
 	}
-}
-
-func (c *ChannelClient) sendSync() {
-	c.SendAction(messages.CustomActionData{
-		Action:  Sync,
-		Payload: sysinfo.Metadata(), // this should be decoupled?
-	})
-}
-
-func (c *ChannelClient) sendPong() {
-	c.SendAction(messages.CustomActionData{
-		Action: Pong,
-	})
 }
