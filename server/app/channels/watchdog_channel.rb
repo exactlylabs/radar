@@ -7,7 +7,7 @@ class WatchdogChannel < ApplicationCable::Channel
     # Broadcast an update for each client
     update_group.clients.each do |client|
       if client.has_watchdog_update?
-        ActionCable.pods_server.broadcast(
+        ActionCable.server.broadcast(
           WatchdogChannel.watchdog_stream_name(client), 
           {
             event: "version_changed",
@@ -23,7 +23,7 @@ class WatchdogChannel < ApplicationCable::Channel
 
   def self.broadcast_watchdog_update_group_changed(client)
     if client.has_watchdog_update?
-      ActionCable.pods_server.broadcast(
+      ActionCable.server.broadcast(
         WatchdogChannel.watchdog_stream_name(client), 
         {
           event: "version_changed",
@@ -52,9 +52,6 @@ class WatchdogChannel < ApplicationCable::Channel
     if self.client.has_watchdog_update?
       update
     end
-  end
-
-  def pong(data)
   end
 
 

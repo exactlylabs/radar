@@ -4,12 +4,12 @@ module ApplicationCable
     rescue_from StandardError, with: :report_error
 
     def allow_request_origin?
-      return true if request.path == "/api/v1/clients/ws/"
+      return true if request.user_agent.starts_with? "RadarPodsAgent"
       super
     end
 
     def connect
-      if request.path == "/api/v1/clients/ws/"
+      if request.user_agent.starts_with? "RadarPodsAgent"
         load_client
         on_client_connected
       else
@@ -53,15 +53,15 @@ module ApplicationCable
     end
 
     def on_client_connected
-      if !request.headers.fetch("watchdog", nil)
+      if request.user_agent.starts_with? "RadarPodsAgent"
         self.client.online = true
-        self.client.ip = request.ip
+        self.client.ip = request.remote_ip
         self.client.save!
       end
     end
 
     def on_client_disconnected
-      if !request.headers.fetch("watchdog", nil)
+      if request.user_agent.starts_with? "RadarPodsAgent"
         self.client.online = false
         self.client.save!
       end

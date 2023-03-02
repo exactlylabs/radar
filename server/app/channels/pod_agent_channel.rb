@@ -6,7 +6,7 @@ class PodAgentChannel < ApplicationCable::Channel
   # Broadcasting Helpers
 
   def self.broadcast_test_requested(client)
-    ActionCable.pods_server.broadcast(
+    ActionCable.server.broadcast(
       PodAgentChannel.agent_stream_name(client), 
       {event: "test_requested", payload: {}}
     )
@@ -16,7 +16,7 @@ class PodAgentChannel < ApplicationCable::Channel
     # Broadcast an update for each client
     update_group.clients.each do |client|
       if client.has_update?
-        ActionCable.pods_server.broadcast(
+        ActionCable.server.broadcast(
           PodAgentChannel.agent_stream_name(client), 
           {
             event: "version_changed",
@@ -32,7 +32,7 @@ class PodAgentChannel < ApplicationCable::Channel
 
   def self.broadcast_client_update_group_changed(client)
     if client.has_update?
-      ActionCable.pods_server.broadcast(
+      ActionCable.server.broadcast(
         PodAgentChannel.agent_stream_name(client), 
         {
           event: "version_changed",
@@ -48,14 +48,14 @@ class PodAgentChannel < ApplicationCable::Channel
 
   # Actions called by the client'
 
-  def sync(client_data)
+  def sync(data)
     # Updates the data in the DB for this pod and starts the stream subscriptions
     # Action called by the agent, right after it has finished the connection + subscriptions setup
     # This syncs the current Client model with the data from the pod as well as checks if there are any outstanding speed test or updates
     # If there is, it publishes through the subscription a new test/update request
-    data = HashWithIndifferentAccess.new client_data["payload"]
+    
     # Check client Version Id
-    version_ids = ClientVersion.where(version: data[:version]).pluck(:id)
+    version_ids = ClientVersion.where(version: data["version"]).pluck(:id)
     if version_ids.length == 0
       # No version found
       version_id = nil
@@ -64,11 +64,11 @@ class PodAgentChannel < ApplicationCable::Channel
       version_id = version_ids[0]
     end
     self.client.update(
-      raw_version:  data[:version],
-      distribution_name: data[:distribution],
-      network_interfaces: data[:net_interfaces],
-      os_version: data[:os_version],
-      hardware_platform: data[:hardware_platform],
+      raw_version:  data["version"],
+      distribution_name: data["distribution"],
+      network_interfaces: data["net_interfaces"],
+      os_version: data["os_version"],
+      hardware_platform: data["hardware_platform"],
       client_version_id: version_id,
     )
     if self.client.has_update?
