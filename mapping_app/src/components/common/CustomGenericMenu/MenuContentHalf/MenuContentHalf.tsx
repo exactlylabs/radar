@@ -34,7 +34,7 @@ const MenuContentHalf = ({
            alt={'go-back'}
            onClick={goBack}
       />
-      <p className={'fw-medium'} style={styles.Title}>Choose halfyear</p>
+      <p className={'fw-medium'} style={styles.Title}>Choose half-year</p>
       <div style={styles.ItemsContainer}>
         <Option option={halves[0]} selected={innerValue === halves[0]} onClick={selectH1}/>
         <Option option={halves[1]} selected={innerValue === halves[1]} onClick={selectH2}/>
