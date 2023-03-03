@@ -1,18 +1,45 @@
-# Radar Project
+# Radar Toolkit
 
-The project contains multiple tools, each in its own folder:
+Open-sourced toolkit that allows you to analyze existing broadband data and collect unbiased information on Internet accessibility and affordability in your community.
 
-1. agent:
-    * A Golang project responsible to communicate with the webserver and aimed to be installed in the pods
+## Project Structure
 
-2. server:
-    * Ruby on Rails webservice with backend/frontend of the radar project
+Each directory consists of a tool of our toolkit
+
+1. Pods Agent:
+    
+    A Golang service that connects to Radar Pods and runs speed tests in the background, sending the measurements back to the server.
+
+2. Pods Server:
+    
+    Ruby on Rails webservice for Radar Pods.
+
+3. Broadband Mapping
+
+    React application that enables you to see how broadband speeds vary across the regions over time
+
+4. Speedtest
+
+    Speed Test while-label widget made with React, to embed a speed test in your website. It also includes a website that implements this widget.
+
+5. Speedtest Mobile
+
+    Flutter application, to test wi-fi and cellular connections.
+
+6. Toolkit Website
+
+    This toolkit's website, made with React.
+
+7. Scripts
+
+    This directory contains Miscellaneous scripts used by our CI, scripts to help generate and flash our self-managed pods image and scripts to setup and start our toolkit
+
+8. Fips Geocoder
+
+    Golang API that returns the county FIPS code that is located in the given latitude and longitude set. It's used by the Pods Server to locate study counties
 
 
-## Scripts
 
-* The first iteration of the agent is located at `setupscripts`. That folder has the shell scripts used to run both ping and speedtest, as well as the imageing process used at the time.
-* The new image generation process is located at `scripts` folder
 
 ## Run
 
