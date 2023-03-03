@@ -17,8 +17,14 @@ import (
 
 // Run is a blocking function that starts all routines related to the Watchdog.
 func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentCli display.AgentClient, cli WatchdogClient) {
-	go display.StartDisplayLoop(ctx, os.Stdout, agentCli, sysManager)
-	go StartScanLoop(ctx, sysManager)
+	go func() {
+		defer tracing.NotifyPanic()
+		display.StartDisplayLoop(ctx, os.Stdout, agentCli, sysManager)
+	}()
+	go func() {
+		defer tracing.NotifyPanic()
+		StartScanLoop(ctx, sysManager)
+	}()
 	timer := time.NewTicker(10 * time.Second)
 	cliChan := make(chan ServerMessage)
 	if err := cli.Connect(ctx, cliChan); err != nil {
@@ -45,10 +51,6 @@ func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentC
 			}
 		}
 	}
-}
-
-func checkUpdate(c *config.Config) {
-
 }
 
 func handleUpdate(c *config.Config, sysManager SystemManager, data BinaryUpdate) {

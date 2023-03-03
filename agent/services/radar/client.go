@@ -69,13 +69,16 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 	}
 	header := http.Header{}
 	header.Set("User-Agent", AgentUserAgent)
+	// Setting a header that is in the Forbidden Header Name -- Basically, any header starting with Sec-
+	// https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
+	header.Set("Sec-Radar-Tool", "true")
 	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), RadarServerChannelName, header)
 	c.agentCh = ch
 	c.channel.OnSubscriptionMessage = c.handleSubscriptionMessage
 	c.channel.OnCustomMessage = c.handleCustomMessage
 	c.channel.OnSubscribed = c.sendSync
 	c.channel.OnConnectionError = func(err error) {
-		log.Println(err)
+		log.Println(fmt.Errorf("radar.RadarClient#Connect: %w", err))
 		c.connected = false
 	}
 	c.channel.OnConnected = func() {
@@ -99,7 +102,7 @@ func (c *RadarClient) handleSubscriptionMessage(msg cable.SubscriptionMessage) {
 	} else if msg.Event == "version_changed" {
 		updateData := messages.VersionChangedSubscriptionPayload{}
 		if err := json.Unmarshal(msg.Payload, &updateData); err != nil {
-			err = fmt.Errorf("radar.RadarClient#updateRequested Unmarshal: %w", err)
+			err = fmt.Errorf("radar.RadarClient#handleSubscriptionMessage Unmarshal: %w", err)
 			tracing.NotifyError(
 				err,
 				tracing.Context{
