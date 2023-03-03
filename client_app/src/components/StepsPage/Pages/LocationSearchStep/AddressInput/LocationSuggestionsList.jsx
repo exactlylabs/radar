@@ -48,7 +48,7 @@ const LocationSuggestionsList = ({
 
   const clickOutsideContainerFunction = e => {
     const suggestionsListContainerElement = document.getElementById('address-input-wrapper');
-    if (!suggestionsListContainerElement.contains(e.target)) {
+    if (!suggestionsListContainerElement?.contains(e.target)) {
       setOpen(false);
     }
   }

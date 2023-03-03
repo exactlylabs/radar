@@ -114,12 +114,12 @@ const MyHistoricalValuesTableRow = ({
   }
 
   const getMsText = possibleValue => {
-    if(possibleValue === null) return '-';
+    if(!possibleValue) return '-';
     return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(0) : `${possibleValue.toFixed(0)} ms`;
   }
 
   const getPercentageText = possibleValue => {
-    if(possibleValue === null) return '-';
+    if(!possibleValue) return '-';
     return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(2) : `${possibleValue.toFixed(2)} %`;
   }
 

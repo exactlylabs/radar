@@ -99,16 +99,17 @@ export default {
   },
   new: () => {
     Sentry.setUser({ id: init.clientId });
+    let root;
     return {
       mount: () => {
         if (!init) {
           notifyError(new Error(`Initial config object missing. Reason(s): ${error}`));
           return;
         }
-        const root = ReactDOM.createRoot(document.getElementById(init.elementId));
+        root = ReactDOM.createRoot(document.getElementById(init.elementId));
         root.render(<App config={init} />);
       },
-      unmount: () => ReactDOM.unmountComponentAtNode(document.getElementById(init.elementId)),
+      unmount: () => root.unmount(document.getElementById(init.elementId)),
     };
   },
 };

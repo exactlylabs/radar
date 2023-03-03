@@ -68,15 +68,17 @@ const rightColumnStyle: CSSProperties = {
   height: '570px',
   backgroundColor: WHITE,
   boxShadow: `0 5px 10px 0 ${SPEED_TEST_BOX_SHADOW}`,
+  position: 'relative'
 }
 
 const smallRightColumnStyle: CSSProperties = {
-  width: '100vw',
+  width: '100%',
   maxWidth: '588px',
   height: '570px',
   backgroundColor: WHITE,
   boxShadow: `0 5px 10px 0 ${SPEED_TEST_BOX_SHADOW}`,
   marginTop: '50px',
+  position: 'relative'
 }
 
 const headerStyle: CSSProperties = {

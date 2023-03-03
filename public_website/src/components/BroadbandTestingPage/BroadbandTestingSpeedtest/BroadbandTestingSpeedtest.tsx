@@ -1,4 +1,4 @@
-import {ReactElement, useEffect} from "react";
+import {ReactElement, useEffect, useRef} from "react";
 import {styles} from "./styles/BroadbandTestingSpeedtest.style";
 import {DEFAULT_PRIMARY_BUTTON, DEFAULT_PRIMARY_BUTTON_BOX_SHADOW, WHITE} from "../../../utils/colors";
 import CustomButton from "../../common/CustomButton/CustomButton";
@@ -11,6 +11,7 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
 
   const {isSmallScreen, isMidScreen, isLargeScreen} = useViewportSizes();
   const isSmall = isSmallScreen || isMidScreen || isLargeScreen;
+  const speedTest = useRef(null);
 
   useEffect(() => {
     // @ts-ignore
@@ -19,13 +20,20 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
       widgetMode: true,
       elementId: 'widget-root',
       frameStyle: {
-        width: '100%',
-        height: '100%',
+        width: isSmall ? '100%' : '600px',
+        height: '570px',
       },
     });
     // @ts-ignore
-    SpeedTest.new().mount();
-  }, []);
+    speedTest.current = SpeedTest.new();
+    // @ts-ignore
+    if(speedTest.current) speedTest.current.mount();
+
+    return () => {
+      // @ts-ignore
+      if(speedTest.current) speedTest.current.unmount();
+    }
+  }, [isSmall]);
 
   return (
     <div style={styles.BroadbandTestingSpeedtest(isSmall)}>
