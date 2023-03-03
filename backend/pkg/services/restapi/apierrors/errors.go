@@ -5,10 +5,9 @@ var (
 		Message: "Internal Server Error",
 		Code:    "internal_error",
 	}
-	MissingFieldError FieldErrors = FieldErrors{
-		Errors: []*APIError{
-			{Message: "This field is required.", Code: "required"},
-		},
+	MissingFieldError APIError = APIError{
+		Message: "This field is required.",
+		Code:    "required",
 	}
 )
 
@@ -17,34 +16,17 @@ type APIError struct {
 	Code    string `json:"code"`
 }
 
-type FieldErrors struct {
-	Nested map[string]FieldErrors `json:"nested,omitempty"`
-	Errors []*APIError            `json:"errors"`
-}
-
-// ValidationError is returned when the API has errors associated to the request content
-type ValidationError struct {
-	// Errors has dictionary of errors for each field
-	Errors map[string]FieldErrors `json:"errors"`
-}
+type FieldErrors []APIError
 
 // RequestError is returned when the API has errors not associated with the request content
 type RequestError struct {
-	Errors []APIError `json:"errors"`
+	Message string                 `json:"message"`
+	Code    string                 `json:"status"`
+	Errors  map[string]FieldErrors `json:"errors,omitempty"`
 }
 
 func SingleFieldError(message, code string) FieldErrors {
 	return FieldErrors{
-		Errors: []*APIError{
-			{Message: message, Code: code},
-		},
-	}
-}
-
-func SingleRequestError(message, code string) RequestError {
-	return RequestError{
-		Errors: []APIError{
-			{Message: message, Code: code},
-		},
+		{Message: message, Code: code},
 	}
 }
