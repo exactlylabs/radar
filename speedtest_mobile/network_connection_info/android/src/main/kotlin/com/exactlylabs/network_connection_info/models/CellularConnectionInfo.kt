@@ -52,11 +52,11 @@ class CellularConnectionInfo(
             is CellIdentityLte -> {
                 json["bandwidth"] = cellIdentity.bandwidth
                 json["earfcn"] = cellIdentity.earfcn
-                json["ci"] = cellIdentity.ci
+                json["cid"] = cellIdentity.ci
                 json["pci"] = cellIdentity.pci
                 json["tac"] = cellIdentity.tac
-                json["mccString"] = cellIdentity.mccString
-                json["mncString"] = cellIdentity.mncString
+                json["mcc"] = cellIdentity.mccString
+                json["mnc"] = cellIdentity.mncString
                 json["mobileNetworkOperator"] = cellIdentity.mobileNetworkOperator
                 json["operatorAlphaLong"] = cellIdentity.operatorAlphaLong
                 json["operatorAlphaShort"] = cellIdentity.operatorAlphaShort
@@ -69,8 +69,8 @@ class CellularConnectionInfo(
                 json["lac"] = cellIdentity.lac
                 json["psc"] = cellIdentity.psc
                 json["uarfcn"] = cellIdentity.uarfcn
-                json["mccString"] = cellIdentity.mccString
-                json["mncString"] = cellIdentity.mncString
+                json["mcc"] = cellIdentity.mccString
+                json["mnc"] = cellIdentity.mncString
                 json["mobileNetworkOperator"] = cellIdentity.mobileNetworkOperator
                 json["operatorAlphaLong"] = cellIdentity.operatorAlphaLong
                 json["operatorAlphaShort"] = cellIdentity.operatorAlphaShort
@@ -80,14 +80,14 @@ class CellularConnectionInfo(
                 json["lac"] = cellIdentity.lac
                 json["cpid"] = cellIdentity.cpid
                 json["uarfcn"] = cellIdentity.uarfcn
-                json["mccString"] = cellIdentity.mccString
-                json["mncString"] = cellIdentity.mncString
+                json["mcc"] = cellIdentity.mccString
+                json["mcn"] = cellIdentity.mncString
                 json["mobileNetworkOperator"] = cellIdentity.mobileNetworkOperator
                 json["operatorAlphaLong"] = cellIdentity.operatorAlphaLong
                 json["operatorAlphaShort"] = cellIdentity.operatorAlphaShort
             }
             is CellIdentityCdma -> {
-                json["basestationId"] = cellIdentity.basestationId
+                json["bsic"] = cellIdentity.basestationId
                 json["latitude"] = cellIdentity.latitude
                 json["longitude"] = cellIdentity.longitude
                 json["networkId"] = cellIdentity.networkId
@@ -96,16 +96,16 @@ class CellularConnectionInfo(
                 json["operatorAlphaShort"] = cellIdentity.operatorAlphaShort
             }
             else -> {
-                json[""] = (cellIdentity as CellIdentityNr).nci
-                json[""] = cellIdentity.nrarfcn
-                json[""] = cellIdentity.pci
-                json[""] = cellIdentity.tac
-                json[""] = cellIdentity.mccString
-                json[""] = cellIdentity.mncString
+                json["nci"] = (cellIdentity as CellIdentityNr).nci
+                json["nrarfcn"] = cellIdentity.nrarfcn
+                json["pci"] = cellIdentity.pci
+                json["tac"] = cellIdentity.tac
+                json["mcc"] = cellIdentity.mccString
+                json["mnc"] = cellIdentity.mncString
                 json["operatorAlphaLong"] = cellIdentity.operatorAlphaLong
                 json["operatorAlphaShort"] = cellIdentity.operatorAlphaShort
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    json[""] = cellIdentity.bands
+                    json["bands"] = cellIdentity.bands
                 }
             }
         }
@@ -158,7 +158,6 @@ class CellularConnectionInfo(
                 json["evdoEcio"] = cellSignalStrength.evdoEcio
                 json["evdoLevel"] = cellSignalStrength.evdoLevel
                 json["evdoSnr"] = cellSignalStrength.evdoSnr
-                json["cdmaDbm"] = cellSignalStrength.cdmaDbm
                 json["asuLevel"] = cellSignalStrength.asuLevel
                 json["dbm"] = cellSignalStrength.dbm
                 json["level"] = cellSignalStrength.level
