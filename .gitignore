@@ -8,3 +8,4 @@ dist/
 .DS_Store
 .idea/
 dump.rdb
+node_modules
