@@ -2,14 +2,19 @@ package restapi
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"reflect"
 
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/dependencies"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/paginator"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/webcontext"
 	"github.com/gorilla/mux"
 )
 
-type RouteHandler func(ctx *WebContext)
+type DependencyProvider func(ctx *webcontext.Context) any
 
 type WebServer struct {
 	server             *http.Server
@@ -17,7 +22,9 @@ type WebServer struct {
 	recoveryMiddleware Middleware
 	loggerMiddleware   Middleware
 	router             *mux.Router
-	baseCtx            *WebContext
+	baseCtx            *webcontext.Context
+	routes             []any
+	dependencies       map[reflect.Type]DependencyProvider
 	setupCalled        bool
 }
 
@@ -27,7 +34,9 @@ func NewWebServer(options ...ServerOption) (*WebServer, error) {
 		recoveryMiddleware: RecoveryMiddleware,
 		loggerMiddleware:   RequestLoggerMiddleware,
 		router:             mux.NewRouter(),
-		baseCtx:            NewWebContext(),
+		routes:             make([]any, 0),
+		baseCtx:            webcontext.New(),
+		dependencies:       make(map[reflect.Type]DependencyProvider),
 	}
 	for _, opt := range options {
 		err := opt(server)
@@ -35,20 +44,52 @@ func NewWebServer(options ...ServerOption) (*WebServer, error) {
 			return nil, errors.Wrap(err, "restapi.NewWebServer %T", opt)
 		}
 	}
+	server.AddDependency(dependencies.PaginationArgsProvider, &paginator.PaginationArgs{})
 	return server, nil
 }
 
-func (w *WebServer) Route(endpoint string, route RouteHandler, methods ...string) {
+func (w *WebServer) validateRoute(route any) {
+	routeType := reflect.TypeOf(route)
+	if routeType.Kind() != reflect.Func {
+		panic(fmt.Errorf("restapi.WebServer#validateRoute Route must be a function"))
+	}
+	if routeType.NumIn() == 0 {
+		panic(fmt.Errorf("restapi.WebServer#validateroute Route must have at least one argument of type *WebContext"))
+	}
+	if routeType.In(0).Kind() != reflect.Ptr || routeType.In(0) == reflect.TypeOf(webcontext.Context{}) {
+		panic(fmt.Errorf("restapi.WebServer#validateRoute Route first argument must be of type *WebContext, got %s", routeType.In(0)))
+	}
+}
+
+func (w *WebServer) callRoute(ctx *webcontext.Context, route any) {
+	routeType := reflect.TypeOf(route)
+	args := []reflect.Value{reflect.ValueOf(ctx)}
+	for i := 1; i < routeType.NumIn(); i++ {
+		depType := routeType.In(i)
+		if depType.Kind() == reflect.Ptr {
+			depType = depType.Elem()
+		}
+		provider := w.dependencies[depType]
+		args = append(args, reflect.ValueOf(provider(ctx)))
+	}
+	reflect.ValueOf(route).Call(args)
+}
+
+// Register a new endpoint to be routed to the given route function
+func (w *WebServer) Route(endpoint string, route any, methods ...string) {
 	if len(methods) == 0 {
 		methods = []string{"GET"}
 	}
+	w.validateRoute(route)
 	w.router.HandleFunc(endpoint, func(writer http.ResponseWriter, r *http.Request) {
 		ctx := w.baseCtx.PrepareRequest(writer, r)
-		route(ctx)
+		w.callRoute(ctx, route)
+		//route(ctx)
 		if err := ctx.Commit(); err != nil {
 			panic(errors.Wrap(err, "WebServer#Route Commit"))
 		}
 	}).Methods(methods...)
+	w.routes = append(w.routes, route)
 }
 
 // AddMiddlewares adds layers of handler functions to an existing route.
@@ -59,7 +100,23 @@ func (w *WebServer) AddMiddlewares(middlewares ...Middleware) {
 	w.middlewares = append(w.middlewares, middlewares...)
 }
 
-func (w *WebServer) Setup() {
+func (w *WebServer) validateRoutesDependencies() {
+	for _, route := range w.routes {
+		routeType := reflect.TypeOf(route)
+		for i := 1; i < routeType.NumIn(); i++ {
+			argType := routeType.In(i)
+			if argType.Kind() == reflect.Ptr {
+				argType = argType.Elem()
+			}
+			if _, exists := w.dependencies[argType]; !exists {
+				panic(fmt.Errorf("restapi.WebServer validateRoutesDependencies type %s provider not found", argType))
+			}
+		}
+	}
+}
+
+func (w *WebServer) setup() {
+	w.validateRoutesDependencies()
 	var handler http.Handler = w.router
 	for _, middleware := range w.middlewares {
 		handler = middleware(handler)
@@ -74,7 +131,7 @@ func (w *WebServer) Setup() {
 
 func (w *WebServer) Run(addr string) error {
 	if !w.setupCalled {
-		w.Setup()
+		w.setup()
 	}
 	w.server.Addr = addr
 	log.Printf("Web Service Listening at address: %v\n", addr)
@@ -96,5 +153,16 @@ func (w *WebServer) Shutdown(ctx context.Context) error {
 }
 
 func (w *WebServer) AddToContext(key string, value any) {
-	w.baseCtx.AddValue(key, value)
+	w.baseCtx.SetValue(key, value)
+}
+
+func (w *WebServer) AddDependency(provider DependencyProvider, objProto any) {
+	dependencyType := reflect.TypeOf(objProto)
+	if dependencyType.Kind() == reflect.Ptr {
+		dependencyType = dependencyType.Elem()
+	}
+	if _, exists := w.dependencies[dependencyType]; exists {
+		panic(fmt.Errorf("restapi.WebServer#AddDependency %s already added", dependencyType))
+	}
+	w.dependencies[dependencyType] = provider
 }

@@ -1,4 +1,4 @@
-package restapi
+package webcontext
 
 import (
 	"bytes"
@@ -14,7 +14,7 @@ import (
 	"golang.org/x/sync/syncmap"
 )
 
-type WebContext struct {
+type Context struct {
 	tmpWriter    io.ReadWriter
 	Writer       http.ResponseWriter
 	Request      *http.Request
@@ -25,23 +25,23 @@ type WebContext struct {
 	URLParams    map[string]string
 }
 
-func NewWebContext() *WebContext {
-	return &WebContext{
+func New() *Context {
+	return &Context{
 		meta: syncmap.Map{},
 	}
 }
 
-func NewTestContext(writer http.ResponseWriter, r *http.Request) *WebContext {
-	wc := NewWebContext().PrepareRequest(writer, r)
+func NewTestContext(writer http.ResponseWriter, r *http.Request) *Context {
+	wc := New().PrepareRequest(writer, r)
 	return wc
 }
 
-func (wc *WebContext) PrepareRequest(w http.ResponseWriter, r *http.Request) *WebContext {
+func (wc *Context) PrepareRequest(w http.ResponseWriter, r *http.Request) *Context {
 	urlParams := mux.Vars(r)
 	if urlParams == nil {
 		urlParams = make(map[string]string)
 	}
-	return &WebContext{
+	return &Context{
 		meta:         wc.meta,
 		Writer:       w,
 		Request:      r,
@@ -52,16 +52,16 @@ func (wc *WebContext) PrepareRequest(w http.ResponseWriter, r *http.Request) *We
 	}
 }
 
-func (wc *WebContext) AddValue(key string, value any) {
+func (wc *Context) SetValue(key string, value any) {
 	wc.meta.Store(key, value)
 }
 
-func (wc *WebContext) GetValue(key string) (obj any, exists bool) {
+func (wc *Context) GetValue(key string) (obj any, exists bool) {
 	obj, exists = wc.meta.Load(key)
 	return
 }
 
-func (wc *WebContext) MustGetValue(key string) any {
+func (wc *Context) MustGetValue(key string) any {
 	obj, exists := wc.GetValue(key)
 	if !exists {
 		panic(fmt.Errorf("%v not found in the context", key))
@@ -69,21 +69,21 @@ func (wc *WebContext) MustGetValue(key string) any {
 	return obj
 }
 
-func (wc *WebContext) AddFieldError(field string, err apierrors.FieldErrors) {
+func (wc *Context) AddFieldError(field string, err apierrors.FieldErrors) {
 	wc.fieldsErrors[field] = err
 	wc.statusCode = http.StatusBadRequest
 }
 
-func (wc *WebContext) Reject(status int, err *apierrors.APIError) {
+func (wc *Context) Reject(status int, err *apierrors.APIError) {
 	wc.err = err
 	wc.statusCode = status
 }
 
-func (wc *WebContext) HasErrors() bool {
+func (wc *Context) HasErrors() bool {
 	return len(wc.fieldsErrors) > 0 || wc.err != nil
 }
 
-func (wc *WebContext) JSON(status int, response any) {
+func (wc *Context) JSON(status int, response any) {
 	wc.Writer.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(wc.tmpWriter).Encode(response); err != nil {
 		panic(errors.Wrap(err, "WebContext#JSON"))
@@ -91,7 +91,7 @@ func (wc *WebContext) JSON(status int, response any) {
 	wc.statusCode = status
 }
 
-func (wc *WebContext) Write(data []byte) (int, error) {
+func (wc *Context) Write(data []byte) (int, error) {
 	n, err := wc.tmpWriter.Write(data)
 	if err != nil {
 		return n, errors.Wrap(err, "WebContext#Write")
@@ -99,7 +99,7 @@ func (wc *WebContext) Write(data []byte) (int, error) {
 	return n, nil
 }
 
-func (wc *WebContext) Commit() error {
+func (wc *Context) Commit() error {
 	// WriteHeader should always be called before we Write to the ResponseWriter
 	// otherwise the statusCode is set to http.StatusOK and we get warnings
 	wc.Writer.WriteHeader(wc.statusCode)
@@ -126,18 +126,18 @@ func (wc *WebContext) Commit() error {
 	return nil
 }
 
-func (wc *WebContext) SetStatus(status int) {
+func (wc *Context) SetStatus(status int) {
 	wc.statusCode = status
 }
 
-func (wc *WebContext) ResponseHeader() http.Header {
+func (wc *Context) ResponseHeader() http.Header {
 	return wc.Writer.Header()
 }
 
-func (wc *WebContext) UrlParameters() map[string]string {
+func (wc *Context) UrlParameters() map[string]string {
 	return wc.URLParams
 }
 
-func (wc *WebContext) QueryParams() url.Values {
+func (wc *Context) QueryParams() url.Values {
 	return wc.Request.URL.Query()
 }

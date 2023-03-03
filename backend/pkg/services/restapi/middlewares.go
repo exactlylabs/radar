@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/webcontext"
 	"github.com/gorilla/mux"
 )
 
@@ -37,7 +38,7 @@ type recoveryMiddleware struct {
 func (rm *recoveryMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err := recover(); err != nil {
-			ctx := NewWebContext()
+			ctx := webcontext.New()
 			ctx = ctx.PrepareRequest(w, r)
 			ctx.Reject(http.StatusInternalServerError, &apierrors.InternalAPIError)
 

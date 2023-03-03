@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/webcontext"
 )
 
 const (
@@ -26,7 +26,7 @@ type PaginationArgs struct {
 	defaultOffset int
 }
 
-func (pa *PaginationArgs) Parse(c *restapi.WebContext) {
+func (pa *PaginationArgs) Parse(c *webcontext.Context) {
 	limit := pa.defaultLimit
 	defaultOffset := pa.defaultOffset
 	pa.Limit = &limit
@@ -71,7 +71,7 @@ func New[T any]() *Paginator[T] {
 // Paginate mounts a PaginatedResponse.
 // It expects a getPage function that receives limit and offset integers
 // and returns an iterator, the total of rows and an error
-func (pr *Paginator[T]) Paginate(c *restapi.WebContext, getPage func(limit, offset int) (Iterator[T], error)) (*PaginatedResponse[T], error) {
+func (pr *Paginator[T]) Paginate(c *webcontext.Context, getPage func(limit, offset int) (Iterator[T], error)) (*PaginatedResponse[T], error) {
 	args := &PaginationArgs{defaultLimit: pr.DefaultLimit, defaultOffset: pr.DefaultOffset}
 	args.Parse(c)
 	if c.HasErrors() {
@@ -100,7 +100,7 @@ func (pr *Paginator[T]) Paginate(c *restapi.WebContext, getPage func(limit, offs
 	return response, nil
 }
 
-func baseUrl(c *restapi.WebContext) *url.URL {
+func baseUrl(c *webcontext.Context) *url.URL {
 	u := *c.Request.URL
 	u.Host = c.Request.Host
 	if u.Scheme == "" {
@@ -113,7 +113,7 @@ func baseUrl(c *restapi.WebContext) *url.URL {
 	return &u
 }
 
-func paginationLink(c *restapi.WebContext, limit, offset int, count uint64) PaginationLinks {
+func paginationLink(c *webcontext.Context, limit, offset int, count uint64) PaginationLinks {
 	link := PaginationLinks{}
 
 	if count > uint64(limit+offset) {
