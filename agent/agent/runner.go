@@ -18,14 +18,14 @@ func startSpeedTestRunner(ctx context.Context, c *config.Config, runTestCh <-cha
 			if err != nil {
 				err = fmt.Errorf("agent.startSpeedTestRunner failed running test, skipping it: %w", err)
 				log.Println(err)
-				tracing.NotifyErrorOnce(err, map[string]interface{}{})
+				tracing.NotifyErrorOnce(err, tracing.Context{})
 				continue
 			}
 			err = reporter.SendMeasurement(ctx, runner.Type(), result.Raw)
 			if err != nil {
 				err = fmt.Errorf("agent.startSpeedTestRunner failed sending speedtest result: %w", err)
 				log.Println(err)
-				tracing.NotifyErrorOnce(err, map[string]interface{}{})
+				tracing.NotifyErrorOnce(err, tracing.Context{})
 				continue
 			}
 			c.LastTested = fmt.Sprintf("%d", time.Now().Unix())

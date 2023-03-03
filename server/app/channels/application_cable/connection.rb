@@ -4,12 +4,12 @@ module ApplicationCable
     rescue_from StandardError, with: :report_error
 
     def allow_request_origin?
-      return true if request.user_agent.starts_with? "RadarPodsAgent"
+      return true if request.headers["Sec-Radar-Tool"] == "true"
       super
     end
 
     def connect
-      if request.user_agent.starts_with? "RadarPodsAgent"
+      if request.user_agent.starts_with? "RadarPods"
         load_client
         on_client_connected
       else
