@@ -26,7 +26,7 @@ workflows:
           # If C is modified, then the jobs for both C and B (as a dependency) will run
           modules: |
             agent
-            mobile_client_app
+            speedtest_mobile
       
       - continuation/continue:
           name: "Setup Agent Tag Workflows"
@@ -39,7 +39,7 @@ workflows:
 
       - continuation/continue:
           name: "Setup Mobile App Tag Workflows"
-          configuration_path: mobile_client_app/.circleci/config.yml
+          configuration_path: speedtest_mobile/.circleci/config.yml
           filters:
             tags:
               only: "/^mobile-.*/"

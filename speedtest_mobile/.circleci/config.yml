@@ -27,17 +27,17 @@ commands:
         enum: ["dev","staging", "prod"]
     steps:
       - setup_keystores:
-          working_directory: ~/project/mobile_client_app/client_mobile_app/android
+          working_directory: ~/project/speedtest_mobile/client_mobile_app/android
       - flutter/install_sdk_and_pub:
           flutter_version: 3.3.1
-          app-dir: ~/project/mobile_client_app/client_mobile_app
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
       - flutter/install_android_gradle:
-          app-dir: ~/project/mobile_client_app/client_mobile_app
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
       - flutter/install_android_gem:
-          app-dir: ~/project/mobile_client_app/client_mobile_app
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
       - run: 
           command: ./scripts/build_android_<<  parameters.flavor >>.sh
-          working_directory: ~/project/mobile_client_app/client_mobile_app
+          working_directory: ~/project/speedtest_mobile/client_mobile_app
 
   setup_provisioning_profiles:
     steps:
@@ -67,7 +67,7 @@ jobs:
       - build-android:
           flavor: << parameters.flavor >>
       - persist_to_workspace:
-          root: ~/project/mobile_client_app/client_mobile_app/workspace
+          root: ~/project/speedtest_mobile/client_mobile_app/workspace
           paths:
             - android/*
 
@@ -94,12 +94,12 @@ jobs:
           at: ~/workspace
       - checkout
       - ruby/install-deps:
-          app-dir: ~/project/mobile_client_app/client_mobile_app/android
+          app-dir: ~/project/speedtest_mobile/client_mobile_app/android
           bundler-version: 2.2.33
           key: android-gems-v1
       - run:
           command: gem install fastlane
-          working_directory: ~/project/mobile_client_app/client_mobile_app/android
+          working_directory: ~/project/speedtest_mobile/client_mobile_app/android
       - run:
           command: echo ${FLUTTER_ANDROID_DEV_RELEASE_GCP_CREDENTIAL} | base64 -d > /tmp/android_staging_gcpkey.json
       - run:
@@ -109,7 +109,7 @@ jobs:
             ANDROID_AAB_PATH=$(ls ~/workspace/android/<< parameters.flavor >>/*.aab) \
             FASTLANE_GCP_JSONKEY_PATH="/tmp/android_<< parameters.flavor >>_gcpkey.json" \
             fastlane release_<< parameters.flavor >>
-          working_directory: ~/project/mobile_client_app/client_mobile_app/android
+          working_directory: ~/project/speedtest_mobile/client_mobile_app/android
 
   build-ios:
     working_directory: ~/project
@@ -125,19 +125,19 @@ jobs:
       - run: |
           P12_KEY_PATH=/tmp/distribution_<< parameters.flavor>>.p12 \
           CERT_PATH=/tmp/distribution_<< parameters.flavor>>.cer \
-          ~/project/mobile_client_app/client_mobile_app/scripts/setup_keychain.sh
+          ~/project/speedtest_mobile/client_mobile_app/scripts/setup_keychain.sh
       - flutter/install_sdk_and_pub:
           flutter_version: 3.3.1
-          app-dir: ~/project/mobile_client_app/client_mobile_app
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
       - flutter/install_ios_pod:
-          app-dir: ~/project/mobile_client_app/client_mobile_app
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
       - flutter/install_ios_gem:
-          app-dir: ~/project/mobile_client_app/client_mobile_app
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
       - run: 
           command: ./scripts/build_ios_<<  parameters.flavor >>.sh
-          working_directory: ~/project/mobile_client_app/client_mobile_app
+          working_directory: ~/project/speedtest_mobile/client_mobile_app
       - persist_to_workspace:
-          root: ~/project/mobile_client_app/client_mobile_app/workspace
+          root: ~/project/speedtest_mobile/client_mobile_app/workspace
           paths:
             - ios/*
 
@@ -173,20 +173,20 @@ jobs:
       - attach_workspace:
           at: ~/workspace
       - ruby/install-deps:
-          app-dir: ~/project/mobile_client_app/client_mobile_app/ios
+          app-dir: ~/project/speedtest_mobile/client_mobile_app/ios
       - run:
           command: gem install fastlane
-          working_directory: ~/project/mobile_client_app/client_mobile_app/ios
+          working_directory: ~/project/speedtest_mobile/client_mobile_app/ios
       - run:
-          command: cp ~/workspace/ios/<< parameters.flavor >>/*.ipa ~/project/mobile_client_app/client_mobile_app/ios/Runner.ipa
-          working_directory: ~/project/mobile_client_app/client_mobile_app/ios
+          command: cp ~/workspace/ios/<< parameters.flavor >>/*.ipa ~/project/speedtest_mobile/client_mobile_app/ios/Runner.ipa
+          working_directory: ~/project/speedtest_mobile/client_mobile_app/ios
       - run:
           command: |
             APP_STORE_CONNECT_API_KEY_ISSUER_ID=<< parameters.issuer_id >> \
             APP_STORE_CONNECT_API_KEY_KEY=<< parameters.key_key >> \
             APP_STORE_CONNECT_API_KEY_KEY_ID=<< parameters.key_id >> \
             fastlane release_<< parameters.flavor >>
-          working_directory: ~/project/mobile_client_app/client_mobile_app/ios
+          working_directory: ~/project/speedtest_mobile/client_mobile_app/ios
 
 
 workflows:
@@ -194,7 +194,7 @@ workflows:
     jobs:
       - flutter/unit_test:
           name: "unit_test"
-          app-dir: ~/project/mobile_client_app/client_mobile_app
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
           version: 3.3.1
           filters:
             tags:
