@@ -6,6 +6,9 @@ import MapPhoto from '../../assets/map-photo.png';
 import TooltipPhoto from '../../assets/map-tooltip.png';
 import {MyButton} from "../common/MyButton";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import {widgetModalFraming} from "../../utils/modals";
+import {useContext} from "react";
+import ConfigContext from "../../context/ConfigContext";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -113,13 +116,19 @@ const FirstTimeModal = ({
 }) => {
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const config = useContext(ConfigContext);
 
   const closeModal = () => setIsOpen(false);
+
+  const getStyle = () => {
+    if(config.widgetMode) return widgetModalFraming(config);
+    return (isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle
+  }
 
   return (
     <Modal open={isOpen}
            onClose={closeModal}
-           style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle}
+           style={getStyle()}
     >
       <Box sx={boxStyle}>
         <div style={closeButtonStyle} onClick={closeModal} className={'modal-dismiss--hoverable'}>
