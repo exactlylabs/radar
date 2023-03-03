@@ -1,11 +1,7 @@
 [clickhousedb]
-newdb.mapping.exactlylabs.com
-[clickhousedb:vars]
-db_name=mlab-mapping
+db.mapping.exactlylabs.com db_name=mlab-mapping
+
 
 [ingestor]
-newdb.mapping.exactlylabs.com
-[ingestor:vars]
-db_name=mlab-mapping
-db_host=127.0.0.1
-db_port=9000
+db.mapping.exactlylabs.com db_name=mlab-mappin db_host=127.0.0.1 db_port=9000
+
