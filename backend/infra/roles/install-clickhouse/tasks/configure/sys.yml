@@ -52,39 +52,6 @@
     mode: "ug=rw,o-rwx"
   become: true
 
-- name: Config | Generate remote_servers config
-  template:
-    src: remote_servers.j2
-    dest: "{{ clickhouse_path_configdir }}/config.d/clickhouse_remote_servers.xml"
-    owner: "{{ clickhouse_user | default('clickhouse') }}"
-    group: "{{ clickhouse_group | default('clickhouse') }}"
-    mode: "ug=rw,o-rwx"
-  notify: restart-ch
-  become: true
-  when: clickhouse_clusters is defined
-
-- name: Config | Generate macros config
-  template:
-    src: macros.j2
-    dest: "{{ clickhouse_path_configdir }}/config.d/macros.xml"
-    owner: "{{ clickhouse_user | default('clickhouse') }}"
-    group: "{{ clickhouse_group | default('clickhouse') }}"
-    mode: "ug=rw,o-rwx"
-  notify: restart-ch
-  become: true
-  when: clickhouse_macros is defined 
-
-- name: Config | Generate zookeeper servers config
-  template:
-    src: zookeeper-servers.j2
-    dest: "{{ clickhouse_path_configdir }}/config.d/zookeeper-servers.xml"
-    owner: "{{ clickhouse_user | default('clickhouse') }}"
-    group: "{{ clickhouse_group | default('clickhouse') }}"
-    mode: "u=rw,og=r"
-  notify: restart-ch
-  become: true
-  when: clickhouse_zookeeper_nodes is defined
-
 - name: Config | Fix interserver_http_port and intersever_https_port collision
   lineinfile:
     path: "{{ clickhouse_path_configdir }}/config.xml"
