@@ -16,7 +16,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ConnectionInfo? _platformVersion;
+  ConnectionInfo? _info;
   final _networkConnectionInfoPlugin = NetworkConnectionInfo();
 
   @override
@@ -27,13 +27,13 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    ConnectionInfo? platformVersion;
+    ConnectionInfo? info;
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-      platformVersion = await _networkConnectionInfoPlugin.getNetworkConnectionInfo();
+      info = await _networkConnectionInfoPlugin.getNetworkConnectionInfo();
     } catch (e) {
-      platformVersion = null;
+      info = null;
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _info = info;
     });
   }
 
@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: ${_platformVersion?.rssi}\n'),
+          child: Text('Running on: ${_info?.toJson()}\n'),
         ),
       ),
     );
