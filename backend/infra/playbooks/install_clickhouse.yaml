@@ -72,10 +72,10 @@
           - "0.0.0.0/0"
         profile: mapping-profile
         quota: default
-        dbs: ["{{ db_name }}"]
+        dbs: ["mlab-mapping"]
         comment: "Default User"
     clickhouse_dbs_custom:
-      - name: "{{ db_name }}"
+      - name: "mlab-mapping"
         state: present
     clickhouse_profiles_custom:
       mapping-profile:

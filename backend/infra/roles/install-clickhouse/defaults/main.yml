@@ -38,6 +38,8 @@ clickhouse_ssl_client:
   prefer_server_ciphers: "true"
   invalid_certificate_handler_name: "RejectCertificateHandler"
 
+clickhouse_path_base: "/var/lib"
+clickhouse_path_user_files: "{{ clickhouse_path_base }}/clickhouse/user_files/"
 
 clickhouse_ready_delay: 5
 

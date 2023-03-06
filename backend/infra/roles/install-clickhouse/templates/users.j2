@@ -15,6 +15,13 @@
 
     <!-- Users and ACL. -->
     <users>
+        <default>
+            <password></password>
+            <networks>
+                <ip>127.0.0.1</ip>
+            </networks>
+            <profile>default</profile>
+        </default>
     <!-- Custom users. -->
     {% for user in clickhouse_users_custom %}
     {% if user.comment is defined %}
