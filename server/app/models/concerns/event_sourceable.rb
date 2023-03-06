@@ -3,9 +3,6 @@ module EventSourceable
   
   module Hooks
     def notify_change(field, event_name, options={})
-      if self.observed_fields.nil?
-        self.observed_fields = []
-      end
       if options[:applier].nil?
         # set the default applier for this field
         define_method("#{field}_applier") do |state, event|
@@ -15,94 +12,37 @@ module EventSourceable
 
       end
       # Register the field to have its changes monitored
-      self.observed_fields << {
+      self._config[:observed_fields] << {
         field: field, 
         event: event_name,
         applier: options[:applier]
       }
     end
 
-    def many_added_callback(field, event_name, options={})
-      # the only way of being able to notify many relations
-      # is to generate a callback method and return a symbol referencing this new method
-      #
-      # usage: has_many :field_name, after_add => many_added_callback :field_name, "EventName"
-
-      # Create a default applier if not given
-      if options[:applier].nil?
-        # set the default applier for this field
-        define_method("#{field}_added_applier") do |state, event|
-          if state[field.to_s].nil?
-            state[field.to_s] = []
-          end
-          state[field.to_s] << event.data["id"]
-        end
-        options[:applier] = "#{field}_added_applier".to_sym
+    def on_create(opts={})
+      if opts[:applier].present?
+        self._config[:on_create][:applier] = opts[:applier]
       end
-
-      # Define the method in the class
-      define_method("#{field}_added") do |obj|
-        last_snap = Snapshot.last_from self
-        if last_snap.nil?
-          # We can only work with objects that have an initial state
-          # If this has happened, it means that an initial "Create" event is missing
-          return
-        end
-        # Send the Event and then update the snapshot
-        event_data = {
-          "id": obj.id
-        }
-
-        evt = self.class.new_event(self, event_name, event_data, timestamp=Time.now)
-        if options[:applier].present?
-          state = last_snap.state
-          self.method(options[:applier]).call(state, evt)
-          last_snap = Snapshot.create(aggregate: self, event: evt, state: state)
-        end
+      if opts[:event_name].present?
+        self._config[:on_create][:event] = opts[:event_name]
       end
-      return "#{field}_added".to_sym
+      if opts[:event_data].present?
+        self._config[:on_create][:event_data] = opts[:event_data]
+      end
     end
 
-    def many_removed_callback(field, event_name, options={})
-      # the only way of being able to notify many relations
-      # is to generate a callback method and return a symbol referencing this new method
-      #
-      # usage: has_many :field_name, after_remove => many_removed_callback :field_name, "EventName"
-      
-      # Create a default applier if not given
-      if options[:applier].nil?
-        # set the default applier for this field
-        define_method("#{field}_removed_applier") do |state, event|
-          if state[field.to_s].nil?
-            state[field.to_s] = []
-          end
-          state[field.to_s].delete(event.data["id"])
-        end
-        options[:applier] = "#{field}_removed_applier".to_sym
+    def on_destroy(opts={})
+      if opts[:applier].present?
+        self._config[:on_destroy][:applier] = opts[:applier]
       end
-
-      # Define the method in the class
-      define_method("#{field}_removed") do |obj|
-        last_snap = Snapshot.last_from self
-        if last_snap.nil?
-          # We can only work with objects that have an initial state
-          # If this has happened, it means that an initial "Create" event is missing
-          return
-        end
-        # Send the Event and then update the snapshot
-        event_data = {
-          "id": obj.id
-        }
-
-        evt = self.class.new_event(self, event_name, event_data, timestamp=Time.now)
-        if options[:applier].present?
-          state= last_snap.state
-          self.method(options[:applier]).call(state, evt)
-          last_snap = Snapshot.create(aggregate: self, event: evt, state: state)
-        end
+      if opts[:event_name].present?
+        self._config[:on_destroy][:event] = opts[:event_name]
       end
-      return "#{field}_removed".to_sym
+      if opts[:event_applier].present?
+        self._config[:on_destroy][:event_data] = opts[:event_data]
+      end
     end
+
   end
 
   module ClassMethods
@@ -113,7 +53,20 @@ module EventSourceable
   end
 
   included do |klass|
-    klass.send("cattr_accessor", :observed_fields)
+    klass.send("cattr_accessor", :_config)
+    klass._config = {
+      observed_fields: [],
+      on_create: {
+        event: "CREATED",
+        applier: :default_created_applier,
+        event_data: :default_created_event_data,
+      },
+      on_destroy: {
+        event: "DELETED",
+        applier: :default_destroyed_applier,
+        event_data: :default_destroyed_event_data,
+      },
+    }
     has_many :snapshots, as: :aggregate
     has_many :events, as: :aggregate
     after_save :send_change_events
@@ -122,28 +75,12 @@ module EventSourceable
     klass.extend(ClassMethods)
   end
 
-  def send_created_event()
-    evt = self.class.new_event(
-      self, "CREATED", self.as_json.transform_keys(&:to_sym), timestamp=self.created_at
-    )
-    
-    snap_state = {}
-    self.observed_fields.each do |field_data|
-      snap_state[field_data[:field]] = self.send(field_data[:field])
-    end
-    Snapshot.create aggregate: self, event: evt, state: snap_state
-    return evt
-  end
-
-  def send_destroyed_event()
-    evt = self.class.new_event(
-      self, "DELETED", {}, timestamp=Time.now
-    )
+  def create_snapshot_from_event(event, opts={}, &applier)
     last_snap = Snapshot.last_from self
-    if last_snap.present?
-      state = last_snap.state
-      state["deleted_at"] = evt.timestamp
-      Snapshot.create aggregate: self, event: evt, state: state
+    if last_snap.present? || opts[:is_created]
+      state = last_snap&.state || {}
+      applier.call(state, event)
+      Snapshot.create aggregate: self, event: event, state: state
     end
   end
 
@@ -152,13 +89,8 @@ module EventSourceable
       return self.send_created_event
     end
     t = Time.now
-    last_snap = Snapshot.last_from self
-    if last_snap.nil?
-      # We can only work with objects that have an initial state
-      # If this has happened, it means that an initial "Create" event is missing
-      return
-    end
-    self.observed_fields.each do |field_data|
+
+    self._config[:observed_fields].each do |field_data|
       if self.send("saved_change_to_#{field_data[:field]}")
         event_data = {
           "from":self.send("#{field_data[:field]}_before_last_save"),
@@ -173,11 +105,57 @@ module EventSourceable
 
         evt = self.class.new_event(self, event_name, event_data, timestamp=t)
         if field_data[:applier].present?
-          state = last_snap.state
-          self.method(field_data[:applier]).call(state, evt)
-          last_snap = Snapshot.create(aggregate: self, event: evt, state: state)
+          self.create_snapshot_from_event(evt, &self.method(field_data[:applier]))
         end
       end
     end
+  end
+
+  def send_created_event()
+    evt = self.class.new_event(
+      self, 
+      self._config[:on_create][:event], 
+      self.method(self._config[:on_create][:event_data]).call(), 
+      timestamp=self.created_at
+    )
+    self.create_snapshot_from_event(
+      evt, 
+      is_created: true, 
+      &self.method(self._config[:on_create][:applier])
+    )
+    return evt
+  end
+
+  def send_destroyed_event()
+    evt = self.class.new_event(
+      self, 
+      self._config[:on_destroy][:event], 
+      self.method(self._config[:on_destroy][:event_data]).call(), 
+      timestamp=Time.now
+    )
+    self.create_snapshot_from_event(
+      evt, 
+      &self.method(self._config[:on_destroy][:applier])
+    )
+  end
+
+  private
+
+  def default_created_applier(state, event)
+    self._config[:observed_fields].each do |field_data|
+      state[field_data[:field]] = self.send(field_data[:field])
+    end
+  end
+
+  def default_created_event_data()
+    self.as_json.transform_keys(&:to_sym)
+  end
+
+  def default_destroyed_applier(state, event)
+    state["deleted_at"] = event.timestamp
+  end
+
+  def default_destroyed_event_data()
+    return {}
   end
 end
