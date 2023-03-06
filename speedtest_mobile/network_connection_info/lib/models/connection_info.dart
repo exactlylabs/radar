@@ -16,8 +16,10 @@ class ConnectionInfo {
   }
   static int _getAndroidRSSI(Map<String, dynamic> json, bool isWifi) {
     if (isWifi) {
+      if (json['rssi'] == null) return -1;
       return json['rssi'] as int;
     } else {
+      if (json['signalStrength'] == null || json['signalStrength']['dbm']) return -1;
       return json['signalStrength']['dbm'];
     }
   }
