@@ -370,7 +370,7 @@ class Client < ApplicationRecord
       client_version: :update_groups
     ).where(
       "update_groups.id = ? AND distributions.name = ? AND client_versions.version != ?",
-      self.update_group_id, self.distribution_name, self.raw_version
+      self.update_group_id, self.distribution_name, self.raw_version || ''
     ).exists?
   end
 
@@ -380,7 +380,7 @@ class Client < ApplicationRecord
       :update_groups
     ).where(
       "update_groups.id = ? AND watchdog_versions.version != ?",
-      self.update_group_id, self.raw_watchdog_version
+      self.update_group_id, self.raw_watchdog_version || ''
     ).exists?
   end
 
