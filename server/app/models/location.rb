@@ -13,6 +13,7 @@ include EventSourceable
 
 
   # Event Hooks
+  on_create applier: :apply_on_create, event_data: :event_data
   notify_change :name, Location::Events::NAME_CHANGED
   notify_change :address, Location::Events::ADDRESS_CHANGED
 
@@ -23,8 +24,8 @@ include EventSourceable
   has_and_belongs_to_many :location_labels, 
     # Note: Rails only triggers when associating through << statement
     # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks
-    :after_add => many_added_callback(:location_labels, Location::Events::LABEL_ADDED, applier: :apply_label_added), 
-    :after_remove => many_removed_callback(:location_labels, Location::Events::LABEL_REMOVED, applier: :apply_label_removed)
+    :after_add => :after_label_added, 
+    :after_remove => :after_label_removed
   
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
@@ -38,20 +39,38 @@ include EventSourceable
 
   scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
 
-  def apply_label_added(state, event)
-    if state["location_labels"].nil?
-      state["location_labels"] = []
-    end
-    label = LocationLabel.find event.data["id"]
-    state["location_labels"] << label.name
+  def event_data()
+    data = self.as_json.transform_keys(&:to_sym)
+    data["labels"] = self.location_labels.map {|label| label.name}
+    return data
   end
 
-  def apply_label_removed(state, event)
-    if state["location_labels"].nil?
-      state["location_labels"] = []
+  def apply_on_create(state, event)
+    state.update({
+      name: self.name,
+      address: self.address,
+      labels: self.location_labels.map {|label| label.name},
+    })
+  end
+
+  def after_label_added(label)
+    event_data = {
+      id: label.id,
+    }
+    event = Location.new_event(self, Location::Events::LABEL_ADDED, event_data)
+    create_snapshot_from_event event do |state, event|
+      state["labels"] << label.name
     end
-    label = LocationLabel.find event.data["id"]
-    state["location_labels"].delete(label.name)
+  end
+
+  def after_label_removed(label)
+    event_data = {
+      id: label.id,
+    }
+    event = Location.new_event(self, Location::Events::LABEL_REMOVED, event_data)
+    create_snapshot_from_event event do |state, event|
+      state["labels"].delete(label.name)
+    end
   end
 
   # Create helper method as using [:symbol_1, :symbol_2] only runs
