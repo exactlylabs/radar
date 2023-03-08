@@ -10,6 +10,8 @@ class RestClient {
 
   String get userCoordinates => _combineUrl(_userCoordinates);
 
+  String get baseUrl => _baseUrl;
+
   String _combineUrl(String url) {
     return _baseUrl + url;
   }
