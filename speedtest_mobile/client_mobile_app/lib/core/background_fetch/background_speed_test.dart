@@ -127,7 +127,10 @@ class BackgroundSpeedTest {
   Future<void> _sendSpeedTestResults() async {
     await _httpProvider.postAndDecode(
       url: _restClient.speedTest,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Origin': _restClient.baseUrl,
+      },
       body: {
         'result': {'raw': _responses},
         'speed_test': {
