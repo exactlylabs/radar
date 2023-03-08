@@ -6,4 +6,10 @@ class Event < ApplicationRecord
     version = Event.where(aggregate: aggregate).order("version DESC").limit(1).pluck(:version)
     version.empty? ? 0 : version[0]
   end
+
+  def previous()
+    if self.version > 1
+      Event.find_by(aggregate: self.aggregate, version: self.version - 1)
+    end
+  end
 end
