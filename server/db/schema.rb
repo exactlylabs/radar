@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_22_222316) do
+ActiveRecord::Schema.define(version: 2023_03_06_211939) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -176,7 +176,9 @@ ActiveRecord::Schema.define(version: 2023_02_22_222316) do
     t.bigint "client_version_id"
     t.string "raw_version"
     t.bigint "update_group_id"
+    t.boolean "staging"
     t.string "distribution_name"
+    t.string "raw_secret"
     t.jsonb "network_interfaces"
     t.integer "account_id"
     t.bigint "watchdog_version_id"
@@ -196,8 +198,6 @@ ActiveRecord::Schema.define(version: 2023_02_22_222316) do
     t.boolean "custom_scheduling", default: false
     t.string "os_version"
     t.string "hardware_platform"
-    t.string "raw_secret"
-    t.boolean "staging"
     t.integer "data_cap_day_of_month", default: 1
     t.boolean "in_service", default: false
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
@@ -327,6 +327,21 @@ ActiveRecord::Schema.define(version: 2023_02_22_222316) do
     t.index ["measured_by_id"], name: "index_measurements_on_measured_by_id"
   end
 
+  create_table "online_client_count_projections", force: :cascade do |t|
+    t.bigint "account_id"
+    t.bigint "autonomous_system_id"
+    t.bigint "location_id"
+    t.integer "online", default: 0
+    t.integer "total", default: 0
+    t.integer "total_in_service", default: 0
+    t.datetime "timestamp"
+    t.bigint "event_id"
+    t.index ["account_id"], name: "index_online_client_count_projections_on_account_id"
+    t.index ["autonomous_system_id"], name: "index_online_client_count_projections_on_autonomous_system_id"
+    t.index ["event_id"], name: "index_online_client_count_projections_on_event_id"
+    t.index ["location_id"], name: "index_online_client_count_projections_on_location_id"
+  end
+
   create_table "packages", force: :cascade do |t|
     t.string "name"
     t.string "os"
@@ -345,6 +360,14 @@ ActiveRecord::Schema.define(version: 2023_02_22_222316) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["aggregate_type", "aggregate_id"], name: "index_snapshots_on_aggregate"
     t.index ["event_id"], name: "index_snapshots_on_event_id"
+  end
+
+  create_table "study_counties", id: false, force: :cascade do |t|
+    t.string "state"
+    t.string "state_code"
+    t.string "county"
+    t.string "fips"
+    t.integer "pop_2021"
   end
 
   create_table "update_groups", force: :cascade do |t|
@@ -433,6 +456,10 @@ ActiveRecord::Schema.define(version: 2023_02_22_222316) do
   add_foreign_key "measurements", "clients"
   add_foreign_key "measurements", "locations"
   add_foreign_key "measurements", "users", column: "measured_by_id"
+  add_foreign_key "online_client_count_projections", "accounts"
+  add_foreign_key "online_client_count_projections", "autonomous_systems"
+  add_foreign_key "online_client_count_projections", "events"
+  add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "snapshots", "events"
   add_foreign_key "update_groups", "client_versions"

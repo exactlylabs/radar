@@ -11,7 +11,14 @@ scheduler.every '3s' do
 end
 
 scheduler.every '1m' do
-  ClientCountAggregate.aggregate!
+  threads = []
+  threads << Thread.new do
+    ClientCountAggregate.aggregate!
+  end
+  threads << Thread.new do 
+    OnlineClientCountProjection.aggregate!
+  end
+  threads.map(&:join)
 end
 
 scheduler.every '1h' do

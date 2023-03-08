@@ -51,6 +51,9 @@ module HealthMonitor
     end
 
     def reachable?
+        if Rails.env.development?
+            return true
+        end
         begin
             uri = URI(url)
             http = Net::HTTP.new uri.host, uri.port
