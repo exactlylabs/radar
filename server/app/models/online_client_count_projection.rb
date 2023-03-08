@@ -85,6 +85,9 @@ class OnlineClientCountProjection < ApplicationRecord
     count.timestamp = event.timestamp
     count.event_id = event.id
     count.online += increment
-    count.save!
+    begin
+      count.save!
+    rescue
+    end
   end
 end
