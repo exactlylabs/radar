@@ -16,7 +16,7 @@ class OnlineClientCountProjection < ApplicationRecord
         OnlineClientCountProjection.transaction do 
           begin
             self.handle_client_event! event
-          rescue PG::ForeignKeyViolation
+          rescue ActiveRecord::InvalidForeignKey
           end
         end
       consumer_offset.offset = event.id
