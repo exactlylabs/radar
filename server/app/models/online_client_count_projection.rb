@@ -12,11 +12,15 @@ class OnlineClientCountProjection < ApplicationRecord
     ).order('timestamp ASC')
 
     events.each do |event|
-      OnlineClientCountProjection.transaction do 
-        self.handle_client_event! event
-        consumer_offset.offset = event.id
-        consumer_offset.save!
-      end
+      
+        OnlineClientCountProjection.transaction do 
+          begin
+            self.handle_client_event! event
+          rescue PG::ForeignKeyViolation
+          end
+        end
+      consumer_offset.offset = event.id
+      consumer_offset.save!
     end
     return nil
   end
@@ -85,9 +89,6 @@ class OnlineClientCountProjection < ApplicationRecord
     count.timestamp = event.timestamp
     count.event_id = event.id
     count.online += increment
-    begin
-      count.save!
-    rescue
-    end
+    count.save!
   end
 end
