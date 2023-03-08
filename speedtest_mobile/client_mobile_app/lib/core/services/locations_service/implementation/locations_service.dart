@@ -62,7 +62,10 @@ class LocationsService implements ILocationsService {
   Future<List<Location>> _suggestedLocationsRequest(String name) async {
     final failureOrLocations = await _httpProvider.postAndDecode<List>(
       url: _restClient.suggestedLocations,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Origin': _restClient.baseUrl,
+      },
       body: {'address': name},
     );
 
@@ -78,7 +81,10 @@ class LocationsService implements ILocationsService {
   Future<Location?> _locationByCoordinatesRequest(double latitude, double longitude) async {
     final failureOrLocation = await _httpProvider.postAndDecode(
       url: _restClient.locationByCoordinates,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Origin': _restClient.baseUrl,
+      },
       body: FormData.fromMap({'coordinates': "$latitude, $longitude"}),
       fromJson: (json) => Location.fromJsonWithDefaultValues(json),
     );
@@ -94,7 +100,10 @@ class LocationsService implements ILocationsService {
   Future<List<double>> _getUserCoordinates(String requestId) async {
     final failureOrLocation = await _httpProvider.getAndDecode<List>(
       url: _restClient.userCoordinates,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Origin': _restClient.baseUrl,
+      },
     );
     return failureOrLocation.fold(
       (failure) {

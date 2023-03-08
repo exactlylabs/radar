@@ -1,13 +1,10 @@
-import 'dart:convert';
-
-import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
-import 'package:client_mobile_app/core/local_storage/local_storage.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:network_connection_info/models/connection_info.dart';
 import 'package:client_mobile_app/core/models/test_result.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
+import 'package:client_mobile_app/core/local_storage/local_storage.dart';
+import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
-import 'package:dio/dio.dart';
-import 'package:network_connection_info/models/connection_info.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class ResultsService implements IResultsService {
   const ResultsService({
@@ -35,7 +32,10 @@ class ResultsService implements IResultsService {
     _httpProvider
         .postAndDecode(
       url: _restClient.speedTest,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Origin': _restClient.baseUrl,
+      },
       body: _buildBody(responses, result, connectionInfo),
     )
         .then((failureOrSuccess) {
