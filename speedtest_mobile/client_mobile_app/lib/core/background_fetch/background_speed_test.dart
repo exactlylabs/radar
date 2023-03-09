@@ -129,7 +129,7 @@ class BackgroundSpeedTest {
       url: _restClient.speedTest,
       headers: {
         'Content-Type': 'application/json',
-        'Origin': _restClient.baseUrl,
+        'Origin': 'https://speed.radartoolkit.com',
       },
       body: {
         'result': {'raw': _responses},
