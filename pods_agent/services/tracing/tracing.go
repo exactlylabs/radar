@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/config"
-	"github.com/exactlylabs/radar/agent/internal/info"
+	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/getsentry/sentry-go"
 )
 
@@ -32,7 +32,7 @@ func NotifyPanic() {
 			}
 			frames := e.Stacktrace.Frames[:0]
 			for _, frame := range e.Stacktrace.Frames {
-				if frame.Module == "github.com/exactlylabs/radar/agent/services/tracing" &&
+				if frame.Module == "github.com/exactlylabs/radar/pods_agent/services/tracing" &&
 					strings.HasPrefix(frame.Function, "NotifyPanic") {
 					continue
 				}

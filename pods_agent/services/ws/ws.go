@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/services/tracing"
+	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 	"github.com/gorilla/websocket"
 )
 

@@ -10,15 +10,15 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/exactlylabs/radar/agent/agent"
-	"github.com/exactlylabs/radar/agent/cmd/start_agent/internal/service"
-	"github.com/exactlylabs/radar/agent/config"
-	"github.com/exactlylabs/radar/agent/internal/info"
-	ndt7speedtest "github.com/exactlylabs/radar/agent/services/ndt7"
-	"github.com/exactlylabs/radar/agent/services/ookla"
-	"github.com/exactlylabs/radar/agent/services/radar"
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
-	"github.com/exactlylabs/radar/agent/services/tracing"
+	"github.com/exactlylabs/radar/pods_agent/agent"
+	"github.com/exactlylabs/radar/pods_agent/cmd/start_agent/internal/service"
+	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/internal/info"
+	ndt7speedtest "github.com/exactlylabs/radar/pods_agent/services/ndt7"
+	"github.com/exactlylabs/radar/pods_agent/services/ookla"
+	"github.com/exactlylabs/radar/pods_agent/services/radar"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 )
 
 var runners = []agent.Runner{

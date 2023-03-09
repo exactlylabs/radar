@@ -101,10 +101,10 @@ echo "Commit: $COMMIT"
 echo "Building Ookla binary"
 $SCRIPT_DIR/make_ookla.sh -s $GOOS -a $GOARCH
 
-LDFLAGS="-s -X 'github.com/exactlylabs/radar/agent/internal/info.version=$VERSION' 
--X 'github.com/exactlylabs/radar/agent/internal/info.commit=$COMMIT' 
--X 'github.com/exactlylabs/radar/agent/internal/info.builtAt=$BUILT_AT'
--X 'github.com/exactlylabs/radar/agent/internal/info.distribution=$DISTRIBUTION'"
+LDFLAGS="-s -X 'github.com/exactlylabs/radar/pods_agent/internal/info.version=$VERSION' 
+-X 'github.com/exactlylabs/radar/pods_agent/internal/info.commit=$COMMIT' 
+-X 'github.com/exactlylabs/radar/pods_agent/internal/info.builtAt=$BUILT_AT'
+-X 'github.com/exactlylabs/radar/pods_agent/internal/info.distribution=$DISTRIBUTION'"
 
 # Go to module root directory
 cd $SCRIPT_DIR/..

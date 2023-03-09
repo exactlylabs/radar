@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/config"
-	"github.com/exactlylabs/radar/agent/watchdog/mocks"
+	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/watchdog/mocks"
 )
 
 //go:generate docker run -v "$PWD/..:/src" -w /src vektra/mockery -r --name SystemManager --output ./watchdog/mocks

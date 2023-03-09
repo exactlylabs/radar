@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/config"
+	"github.com/exactlylabs/radar/pods_agent/config"
 )
 
 var connectionRegexp = regexp.MustCompile(`^(?P<month>\w+)\s+(?P<day>\d+)\s+(?P<time>[\d:]+).*?systemd-logind.*?user\s+(?P<user>\w+)`)

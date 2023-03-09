@@ -6,8 +6,8 @@ commands:
       - checkout
       - run: echo -n $PROVIDER_SIGNING_CERT | base64 -d > binCert.crt
       - run: echo -n $PROVIDER_SIGNING_KEY | base64 -d > binKey.key
-      - run: echo -n $ROOT_CA | base64 -d > agent/internal/update/rootCA.pem
-      - run: agent/scripts/make_ookla.sh
+      - run: echo -n $ROOT_CA | base64 -d > pods_agent/internal/update/rootCA.pem
+      - run: pods_agent/scripts/make_ookla.sh
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -119,12 +119,12 @@ jobs:
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
             BIN_NAME=radar-agent \
-            OUTPUT_DIR=~/repo/agent/dist
+            OUTPUT_DIR=~/repo/pods_agent/dist
 
       - store_artifacts:
-          path: ~/repo/agent/dist/radar-agent*.deb
+          path: ~/repo/pods_agent/dist/radar-agent*.deb
       - persist_to_workspace:
-          root: ~/repo/agent/dist
+          root: ~/repo/pods_agent/dist
           paths:
             - radar-agent*.deb
 
@@ -142,7 +142,7 @@ jobs:
     steps:
       - checkout
       - build_config
-      - run: ./agent/scripts/setup_rpm.sh
+      - run: ./pods_agent/scripts/setup_rpm.sh
       - run: |
           export PATH=$PATH:/usr/local/go/bin
           cd agent
@@ -150,12 +150,12 @@ jobs:
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
             BIN_NAME=radar-agent \
-            OUTPUT_DIR=~/repo/agent/dist
+            OUTPUT_DIR=~/repo/pods_agent/dist
 
       - store_artifacts:
-          path: ~/repo/agent/dist
+          path: ~/repo/pods_agent/dist
       - persist_to_workspace:
-          root: ~/repo/agent/dist/
+          root: ~/repo/pods_agent/dist/
           paths:
             - "*"
 
@@ -197,7 +197,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: PKG_PATH=$(ls /tmp/workspace/*.pkg | head -1) agent/scripts/notarize_pkg.sh
+      - run: PKG_PATH=$(ls /tmp/workspace/*.pkg | head -1) pods_agent/scripts/notarize_pkg.sh
 
   msi_package:
     working_directory: ~/repo

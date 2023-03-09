@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/internal/info"
+	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/joho/godotenv"
 )
 

@@ -6,10 +6,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/exactlylabs/radar/agent/agent"
-	"github.com/exactlylabs/radar/agent/config"
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
-	"github.com/exactlylabs/radar/agent/services/tracing"
+	"github.com/exactlylabs/radar/pods_agent/agent"
+	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 	"github.com/kardianos/service"
 )
 

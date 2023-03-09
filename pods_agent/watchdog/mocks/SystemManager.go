@@ -5,7 +5,7 @@ package mocks
 import (
 	time "time"
 
-	sysinfo "github.com/exactlylabs/radar/agent/services/sysinfo"
+	sysinfo "github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	mock "github.com/stretchr/testify/mock"
 )
 
