@@ -54,6 +54,7 @@ func (c *Config) LastTestedAt() *time.Time {
 
 var config *Config
 var basePath string
+var configFilePath string
 
 func mapConfigs(config *Config) map[string]reflect.Value {
 	configs := make(map[string]reflect.Value)
@@ -96,6 +97,17 @@ func hasOldBasePath() bool {
 		return false
 	}
 	return true
+}
+
+func SetConfigFilePath(path string) {
+	configFilePath = path
+}
+
+func ConfigFilePath() string {
+	if configFilePath == "" {
+		return Join("config.conf")
+	}
+	return configFilePath
 }
 
 func BasePath() string {
@@ -152,10 +164,7 @@ func Join(elements ...string) string {
 	return filepath.Join(BasePath(), filepath.Join(elements...))
 }
 
-// OpenFile returns a io.Writer interface that writes to the
-// filename at the application configuration directory
-func OpenFile(filename string, flag int, perm fs.FileMode) (*os.File, error) {
-	path := Join(filename)
+func openFile(path string, flag int, perm fs.FileMode) (*os.File, error) {
 	err := os.MkdirAll(filepath.Dir(path), 0755)
 	if err != nil {
 		return nil, err
@@ -165,6 +174,13 @@ func OpenFile(filename string, flag int, perm fs.FileMode) (*os.File, error) {
 		return nil, err
 	}
 	return f, nil
+}
+
+// OpenFile returns a io.Writer interface that writes to the
+// filename at the application configuration directory
+func OpenFile(filename string, flag int, perm fs.FileMode) (*os.File, error) {
+	path := Join(filename)
+	return openFile(path, flag, perm)
 }
 
 // NewFileLoader returns an io.Reader interface that loads the filename
@@ -188,11 +204,12 @@ func LoadConfig() *Config {
 	}
 
 	configValues := mapConfigs(config)
-	log.Printf("Loading config file at %v", Join("config.conf"))
-	f, err := NewFileLoader("config.conf")
+	log.Printf("Loading config file at %v", ConfigFilePath())
+	f, err := os.Open(ConfigFilePath())
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		panic(fmt.Errorf("config.LoadConfig error: %w", err))
 	} else if err == nil {
+		defer f.Close()
 		scanner := bufio.NewScanner(f)
 		for scanner.Scan() {
 			line := strings.Trim(strings.Trim(scanner.Text(), " "), "\t")
@@ -224,7 +241,7 @@ func Reload() *Config {
 
 // Save will store the current configuration into the .ini file
 func Save(conf *Config) error {
-	f, err := OpenFile("config.conf", os.O_WRONLY|os.O_CREATE, 0660)
+	f, err := openFile(ConfigFilePath(), os.O_WRONLY|os.O_CREATE, 0660)
 	if err != nil {
 		return fmt.Errorf("config.Save error opening file: %w", err)
 	}
