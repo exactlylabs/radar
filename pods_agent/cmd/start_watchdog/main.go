@@ -22,9 +22,13 @@ var radarPath = flag.String("radar-path", "/opt/radar/radar_agent", "Path to rad
 var confPath = flag.String("conf-path", "/home/radar/.config/radar", "Path to find radar config.conf file")
 var agentService = flag.String("agent-service", "radar_agent", "Name of the systemd service running the agent")
 var version = flag.Bool("v", false, "Print the watchdog version")
+var configFile = flag.String("c", "", "Path to the config.conf file to use. Defaults to the OS UserConfigDir/radar/config.conf")
 
 func main() {
 	flag.Parse()
+	if *configFile != "" {
+		config.SetConfigFilePath(*configFile)
+	}
 	if *version {
 		fmt.Print(info.BuildInfo().Version)
 		os.Exit(0)
