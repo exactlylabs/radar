@@ -4,8 +4,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/exactlylabs/radar/pods_agent/config"
-	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/getsentry/sentry-go"
 )
 
@@ -68,16 +66,16 @@ func NotifyPanic() {
 	}
 }
 
-func Setup(c *config.Config, build *info.Info) {
+func Setup(dsn, clientId, version string) {
 	err := sentry.Init(sentry.ClientOptions{
-		Dsn:     c.SentryDsn,
-		Release: build.Version,
+		Dsn:     dsn,
+		Release: version,
 	})
 	if err != nil {
 		panic(err)
 	}
 	sentry.ConfigureScope(func(scope *sentry.Scope) {
-		scope.SetUser(sentry.User{ID: c.ClientId})
+		scope.SetUser(sentry.User{ID: clientId})
 	})
 }
 

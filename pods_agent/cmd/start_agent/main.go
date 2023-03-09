@@ -49,7 +49,7 @@ func main() {
 	log.Println("Starting Radar Agent")
 	log.Println(info.BuildInfo())
 	c := config.LoadConfig()
-	tracing.Setup(c, info.BuildInfo())
+	tracing.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version)
 	defer tracing.NotifyPanic()
 
 	sigs := make(chan os.Signal)
