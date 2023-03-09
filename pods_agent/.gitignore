@@ -14,6 +14,7 @@ dist/
 *.changes
 *.buildinfo
 ookla
+!services/ookla
 radar-agent
 client_app
 .DS_Store
