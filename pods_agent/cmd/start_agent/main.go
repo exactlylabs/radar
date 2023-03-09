@@ -23,8 +23,11 @@ import (
 func main() {
 	version := flag.Bool("v", false, "Show Agent Version")
 	jsonVersion := flag.Bool("vv", false, "Show Agent Version in JSON format")
+	configFile := flag.String("c", "", "Path to the config.conf file to use. Defaults to the OS UserConfigDir/radar/config.conf")
 	flag.Parse()
-
+	if *configFile != "" {
+		config.SetConfigFilePath(*configFile)
+	}
 	if *version {
 		fmt.Println(sysinfo.Metadata())
 		os.Exit(0)
