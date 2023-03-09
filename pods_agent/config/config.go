@@ -90,6 +90,14 @@ func SetBasePath(path string) {
 	basePath = path
 }
 
+// hasOldBasePath checks if this agent is using an old directory as the config path
+func hasOldBasePath() bool {
+	if _, err := os.Stat(filepath.Join(os.Getenv("ProgramData"), "radar", "config.conf")); err != nil {
+		return false
+	}
+	return true
+}
+
 func BasePath() string {
 	if basePath != "" {
 		return basePath
@@ -106,15 +114,21 @@ func BasePath() string {
 	case "windows":
 		// For Windows, when running as a service, we end up not knowing how to get the correct AppData path,
 		// due to this, it's best if we just use the binary's directory
-		caller, err := os.Executable()
-		if err != nil {
-			err = fmt.Errorf("service.setupInstall err obtaining exec path: %w", err)
-			log.Println(err)
-			tracing.NotifyError(err, tracing.Context{})
-			// default to AppData
-			basePath = filepath.Join(os.Getenv("AppData"), "Exactlylabs", "Radar")
+		// But first, we need to see if this agent already has a config file in the old location.
+		// If it does, we use it instead
+		if hasOldBasePath() {
+			basePath = filepath.Join(os.Getenv("ProgramData"), "radar")
 		} else {
-			basePath = filepath.Dir(caller)
+			caller, err := os.Executable()
+			if err != nil {
+				err = fmt.Errorf("service.setupInstall err obtaining exec path: %w", err)
+				log.Println(err)
+				tracing.NotifyError(err, tracing.Context{})
+				// default to AppData
+				basePath = filepath.Join(os.Getenv("AppData"), "Exactlylabs", "Radar")
+			} else {
+				basePath = filepath.Dir(caller)
+			}
 		}
 
 	default:
