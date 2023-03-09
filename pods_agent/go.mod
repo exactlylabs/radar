@@ -1,4 +1,4 @@
-module github.com/exactlylabs/radar/agent
+module github.com/exactlylabs/radar/pods_agent
 
 go 1.18
 

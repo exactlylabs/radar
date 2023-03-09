@@ -3,7 +3,7 @@ package agent
 import (
 	"context"
 
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
 type BinaryUpdate struct {

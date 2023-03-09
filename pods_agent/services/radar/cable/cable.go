@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/exactlylabs/radar/agent/services/tracing"
-	"github.com/exactlylabs/radar/agent/services/ws"
+	"github.com/exactlylabs/radar/pods_agent/services/tracing"
+	"github.com/exactlylabs/radar/pods_agent/services/ws"
 	"github.com/google/uuid"
 )
 

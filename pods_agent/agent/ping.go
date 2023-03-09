@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
 func startPingLoop(ctx context.Context, respCh chan<- *ServerMessage, client RadarClient, pingFreq time.Duration) {

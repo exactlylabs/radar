@@ -10,11 +10,11 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/exactlylabs/radar/agent/services/radar/cable"
-	"github.com/exactlylabs/radar/agent/services/radar/messages"
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
-	"github.com/exactlylabs/radar/agent/services/tracing"
-	"github.com/exactlylabs/radar/agent/watchdog"
+	"github.com/exactlylabs/radar/pods_agent/services/radar/cable"
+	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/tracing"
+	"github.com/exactlylabs/radar/pods_agent/watchdog"
 )
 
 var _ watchdog.WatchdogClient = &RadarWatchdogClient{}

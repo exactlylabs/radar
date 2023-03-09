@@ -13,11 +13,11 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/exactlylabs/radar/agent/agent"
-	"github.com/exactlylabs/radar/agent/services/radar/cable"
-	"github.com/exactlylabs/radar/agent/services/radar/messages"
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
-	"github.com/exactlylabs/radar/agent/services/tracing"
+	"github.com/exactlylabs/radar/pods_agent/agent"
+	"github.com/exactlylabs/radar/pods_agent/services/radar/cable"
+	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 )
 
 // firstPing since the service has started. It's set to false right after a successful ping

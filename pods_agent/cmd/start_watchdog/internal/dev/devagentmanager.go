@@ -1,7 +1,7 @@
 package dev
 
 import (
-	"github.com/exactlylabs/radar/agent/watchdog/display"
+	"github.com/exactlylabs/radar/pods_agent/watchdog/display"
 )
 
 type DevAgentManager struct {

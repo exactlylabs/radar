@@ -1,7 +1,7 @@
 package messages
 
 import (
-	"github.com/exactlylabs/radar/agent/agent"
+	"github.com/exactlylabs/radar/pods_agent/agent"
 )
 
 // TestRequestedSubscriptionPayload has the payload sent from the server, when it asks for a test

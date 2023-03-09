@@ -6,8 +6,8 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/exactlylabs/radar/agent/internal/update"
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/internal/update"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
 func UpdateWatchdog(binaryUrl string) error {

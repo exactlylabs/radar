@@ -9,10 +9,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/config"
-	"github.com/exactlylabs/radar/agent/internal/update"
-	"github.com/exactlylabs/radar/agent/services/tracing"
-	"github.com/exactlylabs/radar/agent/watchdog"
+	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/internal/update"
+	"github.com/exactlylabs/radar/pods_agent/services/tracing"
+	"github.com/exactlylabs/radar/pods_agent/watchdog"
 )
 
 type Agent struct {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/exactlylabs/radar/agent/config"
+	"github.com/exactlylabs/radar/pods_agent/config"
 )
 
 // createOoklaBinary generates the embeded

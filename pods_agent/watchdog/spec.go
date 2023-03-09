@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
 // SystemManager interface provides methods for dealing with some

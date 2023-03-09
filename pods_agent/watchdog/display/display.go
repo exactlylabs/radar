@@ -10,9 +10,9 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/config"
-	"github.com/exactlylabs/radar/agent/internal/info"
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/internal/info"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
 type AgentClient interface {

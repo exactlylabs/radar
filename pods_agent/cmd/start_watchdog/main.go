@@ -8,13 +8,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/exactlylabs/radar/agent/cmd/start_watchdog/internal/dev"
-	"github.com/exactlylabs/radar/agent/config"
-	"github.com/exactlylabs/radar/agent/internal/info"
-	"github.com/exactlylabs/radar/agent/services/radar"
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
-	"github.com/exactlylabs/radar/agent/services/tracing"
-	"github.com/exactlylabs/radar/agent/watchdog"
+	"github.com/exactlylabs/radar/pods_agent/cmd/start_watchdog/internal/dev"
+	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/internal/info"
+	"github.com/exactlylabs/radar/pods_agent/services/radar"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/tracing"
+	"github.com/exactlylabs/radar/pods_agent/watchdog"
 	"github.com/joho/godotenv"
 )
 

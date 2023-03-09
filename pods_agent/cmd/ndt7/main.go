@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	ndt7speedtest "github.com/exactlylabs/radar/agent/services/ndt7"
+	ndt7speedtest "github.com/exactlylabs/radar/pods_agent/services/ndt7"
 )
 
 func main() {

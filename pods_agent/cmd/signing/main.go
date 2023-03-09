@@ -12,7 +12,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/exactlylabs/radar/agent/internal/update"
+	"github.com/exactlylabs/radar/pods_agent/internal/update"
 	"google.golang.org/protobuf/proto"
 )
 

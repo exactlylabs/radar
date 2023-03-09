@@ -7,7 +7,7 @@ import (
 	"log"
 	"os/exec"
 
-	"github.com/exactlylabs/radar/agent/agent"
+	"github.com/exactlylabs/radar/pods_agent/agent"
 )
 
 const DefaultMaxRetries int = 3

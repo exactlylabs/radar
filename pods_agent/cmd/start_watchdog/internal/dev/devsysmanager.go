@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
-	"github.com/exactlylabs/radar/agent/watchdog"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/watchdog"
 )
 
 type devSysManager struct {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/exactlylabs/radar/agent/config"
-	"github.com/exactlylabs/radar/agent/internal/info"
-	"github.com/exactlylabs/radar/agent/services/sysinfo/netroute"
+	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/internal/info"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/netroute"
 )
 
 func Metadata() *ClientMeta {

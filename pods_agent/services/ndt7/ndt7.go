@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/agent"
+	"github.com/exactlylabs/radar/pods_agent/agent"
 	"github.com/m-lab/ndt7-client-go"
 	"github.com/m-lab/ndt7-client-go/spec"
 	"golang.org/x/sys/cpu"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/exactlylabs/radar/agent/internal/update"
+	"github.com/exactlylabs/radar/pods_agent/internal/update"
 )
 
 func main() {

@@ -8,11 +8,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/exactlylabs/radar/agent/config"
-	"github.com/exactlylabs/radar/agent/internal/update"
-	"github.com/exactlylabs/radar/agent/services/sysinfo"
-	"github.com/exactlylabs/radar/agent/services/tracing"
-	"github.com/exactlylabs/radar/agent/watchdog/display"
+	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/internal/update"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/tracing"
+	"github.com/exactlylabs/radar/pods_agent/watchdog/display"
 )
 
 // Run is a blocking function that starts all routines related to the Watchdog.
