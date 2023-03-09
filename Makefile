@@ -26,14 +26,14 @@ client_version:
 	./scripts/create_version.sh
 
 agent:
-	$(MAKE) -C agent all
-	$(MAKE) -C agent sign
-	$(MAKE) -C agent validate
+	$(MAKE) -C pods_agent all
+	$(MAKE) -C pods_agent sign
+	$(MAKE) -C pods_agent validate
 
 watchdog:
-	$(MAKE) -C agent watchdog ARCH=arm64 OS=linux
-	$(MAKE) -C agent sign BIN_NAME=watchdog
-	$(MAKE) -C agent validate BIN_NAME=watchdog
+	$(MAKE) -C pods_agent watchdog ARCH=arm64 OS=linux
+	$(MAKE) -C pods_agent sign BIN_NAME=watchdog
+	$(MAKE) -C pods_agent validate BIN_NAME=watchdog
 
 upload_distribution:
 	./scripts/upload_distribution.sh ${VERSION} ${OUTPUT_DIR}/${BIN_NAME} ${DIST_NAME}
@@ -47,4 +47,4 @@ run:
 	./scripts/run.sh
 
 clean:
-	$(MAKE) -C agent clean
+	$(MAKE) -C pods_agent clean
