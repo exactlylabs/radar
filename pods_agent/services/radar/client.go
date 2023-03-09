@@ -29,7 +29,7 @@ const (
 	RadarServerChannelName = "PodAgentChannel"
 )
 
-var AgentUserAgent = "RadarPodsAgent/"
+const AgentUserAgent = "RadarPodsAgent/"
 
 const (
 	Sync cable.CustomActionTypes = "sync"
