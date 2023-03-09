@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
+	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 	"github.com/joho/godotenv"
 )
 
@@ -101,11 +102,21 @@ func BasePath() string {
 		return basePath
 	}
 	var err error
-	// For Windows, it is best to always store on AppData,
-	// since if running as a service, it will be sent to a system32 directory
 	switch runtime.GOOS {
 	case "windows":
-		basePath = os.Getenv("ProgramData")
+		// For Windows, when running as a service, we end up not knowing how to get the correct AppData path,
+		// due to this, it's best if we just use the binary's directory
+		caller, err := os.Executable()
+		if err != nil {
+			err = fmt.Errorf("service.setupInstall err obtaining exec path: %w", err)
+			log.Println(err)
+			tracing.NotifyError(err, tracing.Context{})
+			// default to AppData
+			basePath = filepath.Join(os.Getenv("AppData"), "Exactlylabs", "Radar")
+		} else {
+			basePath = filepath.Dir(caller)
+		}
+
 	default:
 		basePath, err = os.UserConfigDir()
 		if err != nil {
@@ -114,9 +125,9 @@ func BasePath() string {
 				panic(fmt.Errorf("config.BasePath error: %w", err))
 			}
 		}
+		basePath = filepath.Join(basePath, "radar")
 	}
 
-	basePath = filepath.Join(basePath, "radar")
 	os.Mkdir(basePath, 0775)
 	return basePath
 }

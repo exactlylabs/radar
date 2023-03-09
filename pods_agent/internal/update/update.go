@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 func SelfUpdate(binaryUrl string) error {
@@ -15,10 +16,11 @@ func SelfUpdate(binaryUrl string) error {
 	if err != nil {
 		return fmt.Errorf("update.SelfUpdate error obtaining binary path: %w", err)
 	}
-
-	binPath, err = filepath.EvalSymlinks(binPath)
-	if err != nil {
-		return fmt.Errorf("update.SelfUpdate error evaluating symlink: %w", err)
+	if runtime.GOOS != "windows" {
+		binPath, err = filepath.EvalSymlinks(binPath)
+		if err != nil {
+			return fmt.Errorf("update.SelfUpdate error evaluating symlink: %w", err)
+		}
 	}
 
 	return InstallFromUrl(binPath, binaryUrl)

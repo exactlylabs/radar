@@ -26,7 +26,8 @@ func setupLogging() *os.File {
 	p := path.Join(config.BasePath(), "logs.txt")
 	f, err := os.OpenFile(p, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatalf("error opening file: %v", err)
+		log.Println(fmt.Errorf("error opening file: %w", err))
+		panic(err)
 	}
 	log.SetOutput(&lumberjack.Logger{
 		Filename:   p,
