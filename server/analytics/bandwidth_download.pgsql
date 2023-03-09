@@ -22,8 +22,6 @@ WITH location_grouped AS (
 SELECT 
   time,
   percentile_disc(0.5) WITHIN GROUP (ORDER BY download_median) as "download_median",
-  avg(average) AS "average",
-  stddev(stdd) as "stdd"
 FROM location_grouped
 GROUP BY 1
 ORDER BY "time"
