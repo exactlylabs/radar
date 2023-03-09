@@ -11,20 +11,14 @@ import (
 	"syscall"
 
 	"github.com/exactlylabs/radar/pods_agent/agent"
+	"github.com/exactlylabs/radar/pods_agent/cmd/start_agent/internal/runners"
 	"github.com/exactlylabs/radar/pods_agent/cmd/start_agent/internal/service"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
-	ndt7speedtest "github.com/exactlylabs/radar/pods_agent/services/ndt7"
-	"github.com/exactlylabs/radar/pods_agent/services/ookla"
 	"github.com/exactlylabs/radar/pods_agent/services/radar"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 )
-
-var runners = []agent.Runner{
-	ndt7speedtest.New(),
-	ookla.New(),
-}
 
 func main() {
 	version := flag.Bool("v", false, "Show Agent Version")
@@ -74,7 +68,7 @@ func main() {
 	cli := radar.NewClient(c.ServerURL, c.ClientId, c.Secret)
 
 	// Initiate the agent, passing the requested interfaces and runners
-	agent := agent.NewAgent(cli, runners)
+	agent := agent.NewAgent(cli, runners.GetRunners())
 
 	svc := service.MakeService(agent, c, ctx, cancel)
 	sysManager := sysinfo.NewSystemManager()
