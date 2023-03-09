@@ -243,7 +243,7 @@ const decodeCustomDate = (customDate: string): string => {
 
 export const isSpecificMonth = (string: string): boolean => {
   const possibleMonth = string.split(' ')[0];
-  return getMonthNumberFromName(possibleMonth) !== -1;
+  return getMonthNumberFromName(possibleMonth) > 0;
 }
 
 export const isSpecificYear = (string: string): boolean => {
