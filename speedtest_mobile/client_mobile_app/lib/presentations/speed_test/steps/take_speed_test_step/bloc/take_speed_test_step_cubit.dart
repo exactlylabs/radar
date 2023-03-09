@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:ndt7_client/ndt7_client.dart';
 import 'package:ndt7_client/models/client_response.dart';
 import 'package:ndt7_client/models/server_response.dart';
@@ -28,9 +29,12 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
   Map<String, dynamic>? _lastServerMeasurement;
   Map<String, dynamic>? _lastClientMeasurement;
 
-  void startDownloadTest() {
-    emit(const TakeSpeedTestStepState(isTestingDownloadSpeed: true));
-    _ndt7client.startDownloadTest();
+  void startDownloadTest() async {
+    final permissionsGranted = await _checkPermissions();
+    if (permissionsGranted) {
+      emit(const TakeSpeedTestStepState(isTestingDownloadSpeed: true));
+      _ndt7client.startDownloadTest();
+    }
   }
 
   void startUploadTest() {
@@ -144,5 +148,12 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
       return bytesSent >= 51500 ? 1 : bytesSent / 51500;
     }
     return 0;
+  }
+
+  Future<bool> _checkPermissions() async {
+    if (await Permission.phone.request().isGranted) {
+      return true;
+    }
+    return false;
   }
 }
