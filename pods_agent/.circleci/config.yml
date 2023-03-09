@@ -18,7 +18,7 @@ jobs:
       - image: cimg/go:1.18.2
     steps:
       - build_config
-      - run: cd agent && go test ./...
+      - run: cd pods_agent && go test ./...
 
   create_version:
     docker:
@@ -114,7 +114,7 @@ jobs:
       - build_config
       - run: sudo apt update && sudo apt install dh-systemd
       - run: |
-          cd agent
+          cd pods_agent
           make deb \
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
@@ -145,7 +145,7 @@ jobs:
       - run: ./pods_agent/scripts/setup_rpm.sh
       - run: |
           export PATH=$PATH:/usr/local/go/bin
-          cd agent
+          cd pods_agent
           make rpm \
             VERSION=<<parameters.version>> \
             ARCH=<<parameters.arch>> \
@@ -175,7 +175,7 @@ jobs:
       - run: echo $APP_CERT_FILE | base64 -d > ~/repo/application.cer
       - run: echo $INSTALLER_CERT_FILE | base64 -d > ~/repo/installer.cer
       - run: |
-          cd agent
+          cd pods_agent
           make pkg VERSION=<<parameters.version>> \
             OUTPUT_DIR=~/repo/dist \
             INSTALLER_CERT_FILE_PATH=~/repo/installer.cer \
@@ -212,7 +212,7 @@ jobs:
       - run: echo $MSI_CERT_FILE | base64 -d > ~/repo/certificate.cer
       - run: echo $MSI_KEY_FILE | base64 -d > ~/repo/key.pem
       - run: |
-          cd agent
+          cd pods_agent
           make msi VERSION=<<parameters.version>> \
           ARCH=amd64 \
           SIGNING_CERT_FILE=~/repo/certificate.cer \
