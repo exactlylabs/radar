@@ -3,6 +3,7 @@ package ndt7speedtest
 import (
 	"context"
 	_ "embed"
+	"log"
 
 	"github.com/exactlylabs/radar/pods_agent/agent"
 )
@@ -23,6 +24,7 @@ func (r *Ndt7MockRunner) Type() string {
 }
 
 func (r *Ndt7MockRunner) Run(ctx context.Context) (*agent.Measurement, error) {
+	log.Println("Running Mock NDT7 Speedtest")
 	if r.Err != nil {
 		return nil, r.Err
 	}
