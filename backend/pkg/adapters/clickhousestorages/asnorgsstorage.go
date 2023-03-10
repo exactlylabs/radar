@@ -79,7 +79,7 @@ func (as *asnOrgStorage) queryASNs(query string, limit, offset *int, args ...any
 	if err != nil {
 		return nil, errors.Wrap(err, "asnOrgStorage#queryASNs Query")
 	}
-	return &asnIterator{rows: rows}, nil
+	return &iterator[*storages.ASNOrg]{rows: rows, scannRow: scanASNOrg}, nil
 }
 
 func (as *asnOrgStorage) All(limit *int, offset *int) (storages.Iterator[*storages.ASNOrg], error) {

@@ -103,7 +103,7 @@ func (gs *geospaceStorage) All(limit *int, offset *int) (storages.Iterator[*stor
 	if err != nil {
 		return nil, errors.Wrap(err, "geospaceStorage#All Query")
 	}
-	return &geospaceIterator{rows: rows}, nil
+	return &iterator[*storages.DetailedGeospace]{rows: rows, scannRow: scanDetailedGeospace}, nil
 }
 
 func (gs *geospaceStorage) AllFromNamespace(namespace namespaces.Namespace, limit *int, offset *int) (storages.Iterator[*storages.DetailedGeospace], error) {
@@ -121,7 +121,7 @@ func (gs *geospaceStorage) AllFromNamespace(namespace namespaces.Namespace, limi
 	if err != nil {
 		return nil, errors.Wrap(err, "geospaceStorage#AllFromNamespace Query")
 	}
-	return &geospaceIterator{rows: rows}, nil
+	return &iterator[*storages.DetailedGeospace]{rows: rows, scannRow: scanDetailedGeospace}, nil
 }
 
 func (*geospaceStorage) Open() error {
@@ -143,7 +143,7 @@ func (gs *geospaceStorage) Search(query string, limit *int, offset *int) (storag
 	if err != nil {
 		return nil, errors.Wrap(err, "geospaceStorage#Search Query")
 	}
-	return &geospaceIterator{rows: rows}, nil
+	return &iterator[*storages.DetailedGeospace]{rows: rows, scannRow: scanDetailedGeospace}, nil
 }
 
 func (gs *geospaceStorage) SearchFromNamespace(query string, namespace namespaces.Namespace, limit *int, offset *int) (storages.Iterator[*storages.DetailedGeospace], error) {
@@ -161,7 +161,7 @@ func (gs *geospaceStorage) SearchFromNamespace(query string, namespace namespace
 	if err != nil {
 		return nil, errors.Wrap(err, "geospaceStorage#SearchFromNamespace Query")
 	}
-	return &geospaceIterator{rows: rows}, nil
+	return &iterator[*storages.DetailedGeospace]{rows: rows, scannRow: scanDetailedGeospace}, nil
 }
 
 // Update implements storages.GeospaceStorage

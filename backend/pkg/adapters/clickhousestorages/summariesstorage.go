@@ -68,23 +68,6 @@ func (ss *summariesStorage) SummaryForGeoAndASN(geospaceId string, asnId string,
 			return nil, errors.Wrap(err, "summariesStorage#SummaryForGeoAndASN scanToSummaryResult")
 		}
 	}
-	// TODO: This should be moved to the application to handle.
-	// if res.Geospace.Id == "" {
-	// 	// No data, at least return the geospace data
-	// 	g, err := ss.getGeospace(geospaceId)
-	// 	if err != nil {
-	// 		return nil, errors.Wrap(err, "summariesStorage#SummaryForGeoAndASN getGeospace")
-	// 	}
-	// 	res.Geospace = *g
-	// }
-	// if res.ASNOrg == nil || res.ASNOrg.Id == "" {
-	// 	// Same as geospace data
-	// 	asn, err := ss.getASNOrg(asnId)
-	// 	if err != nil {
-	// 		return nil, errors.Wrap(err, "summariesStorage#SummaryForGeoAndASN getASN")
-	// 	}
-	// 	res.ASNOrg = asn
-	// }
 	return res, nil
 }
 
@@ -106,15 +89,6 @@ func (ss *summariesStorage) SummaryForGeospace(geospaceId string, filter storage
 			return nil, errors.Wrap(err, "summariesStorage#SummaryForGeospace scanToSummaryResult")
 		}
 	}
-	// TODO: This should be moved to the application to handle.
-	// if res.Geospace.Id == "" {
-	// 	// No data, at least return the geospace data
-	// 	g, err := ss.getGeospace(geospaceId)
-	// 	if err != nil {
-	// 		return nil, errors.Wrap(err, "summariesStorage#SummaryForGeospace getGeospace")
-	// 	}
-	// 	res.Geospace = *g
-	// }
 	return res, nil
 }
 

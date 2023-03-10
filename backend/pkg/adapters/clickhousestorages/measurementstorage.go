@@ -19,7 +19,6 @@ type measurementStorage struct {
 	jobCh    chan storages.MeasurementIterator
 	wg       *sync.WaitGroup
 	nWorkers int
-	swap     bool
 	truncate bool
 	started  bool
 }
@@ -31,10 +30,8 @@ func (ms *measurementStorage) Close() error {
 	}
 	close(ms.jobCh)
 	ms.wg.Wait()
-	if ms.swap {
-		if err := ms.swapTempTableBack(); err != nil {
-			return errors.Wrap(err, "measurementStorage#Close swapTempTableBack")
-		}
+	if err := ms.swapTempTableBack(); err != nil {
+		return errors.Wrap(err, "measurementStorage#Close swapTempTableBack")
 	}
 	ms.started = false
 	return nil
@@ -115,11 +112,9 @@ func (ms *measurementStorage) Open() error {
 		return nil
 	}
 	ms.jobCh = make(chan storages.MeasurementIterator)
-	if ms.swap {
-		err := ms.swapToTempTable()
-		if err != nil {
-			return errors.Wrap(err, "clickhouseStorage#Open swapToTempTable")
-		}
+	err := ms.swapToTempTable()
+	if err != nil {
+		return errors.Wrap(err, "clickhouseStorage#Open swapToTempTable")
 	}
 	if ms.truncate {
 		err := ms.truncateMeasurements()
@@ -139,10 +134,7 @@ func (ms *measurementStorage) Open() error {
 }
 
 func (ms *measurementStorage) measurementsTableName() string {
-	if ms.swap {
-		return "measurements_tmp"
-	}
-	return "measurements"
+	return "measurements_tmp"
 }
 
 func (cs *measurementStorage) truncateMeasurements() error {
@@ -204,9 +196,8 @@ func (ms *measurementStorage) prepareBatch() (driver.Batch, error) {
 }
 
 type MeasurementStorageOpts struct {
-	NWorkers  int
-	SwapTable bool
-	Truncate  bool
+	NWorkers int
+	Truncate bool
 }
 
 func NewMeasurementStorage(conn driver.Conn, opts *MeasurementStorageOpts) storages.MeasurementStorage {
@@ -214,7 +205,6 @@ func NewMeasurementStorage(conn driver.Conn, opts *MeasurementStorageOpts) stora
 		conn:     conn,
 		wg:       &sync.WaitGroup{},
 		nWorkers: opts.NWorkers,
-		swap:     opts.SwapTable,
 		truncate: opts.Truncate,
 	}
 }
