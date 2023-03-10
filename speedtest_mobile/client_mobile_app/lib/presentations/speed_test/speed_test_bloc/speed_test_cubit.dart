@@ -140,7 +140,7 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
 
   void acceptTerms() {
     _localStorage.setTerms();
-    emit(state.copyWith(termsAccepted: true));
+    emit(state.resetCallbacks().copyWith(termsAccepted: true));
   }
 
   Future<void> _listenConnectivityState() async {
