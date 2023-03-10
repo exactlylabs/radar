@@ -15,7 +15,6 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ingestor"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/clickhousedb"
 	"github.com/joho/godotenv"
 )
 
@@ -72,28 +71,9 @@ func main() {
 		nWorkers = n
 	}
 
-	db, err := clickhousedb.Open(clickhousedb.ChStorageOptions{
-		DBName:         conf.DBName,
-		Username:       conf.DBUser,
-		Password:       conf.DBPassword,
-		Host:           conf.DBHost,
-		Port:           conf.DBPort(),
-		MaxConnections: nWorkers + 5,
-	})
-	if err != nil {
-		panic(err)
-	}
+	db := clickhousestorages.DB(conf, nWorkers)
 	defer db.Close()
-	s := storages.IngestorAppStorages{
-		GeospaceStorage: clickhousestorages.NewGeospaceStorage(db),
-		ASNOrgStorage:   clickhousestorages.NewASNOrgStorage(db),
-		MeasurementStorage: clickhousestorages.NewMeasurementStorage(db, &clickhousestorages.MeasurementStorageOpts{
-			NWorkers:  nWorkers,
-			SwapTable: true,
-			Truncate:  false,
-		}),
-		SummariesStorage: clickhousestorages.NewSummariesStorage(db),
-	}
+	s := clickhousestorages.NewIngestorAppStorages(db, nWorkers, false)
 	// Run a first time then, run once every x hour
 	timer := time.NewTimer(time.Second)
 	for {
