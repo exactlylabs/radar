@@ -1,9 +1,6 @@
 # Took from https://github.com/AlexeySetevoi/ansible-clickhouse/blob/master/tasks/main.yml
 ---
 # tasks file for clickhouse
-- include_tasks: precheck.yml
-  tags: [always]
-
 - include_tasks:
     file: "install/apt.yml"
     apply:

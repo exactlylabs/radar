@@ -9,22 +9,61 @@ clickhouse_service_enable: true
 #Type of installation (package,source)
 clickhouse_setup: 'package'
 
-clickhouse_profiles_custom: {}
+# Installation Configs
+clickhouse_user: clickhouse
+clickhouse_group: clickhouse
 
-clickhouse_listen_host_default:
-  - "::1"
-  - "127.0.0.1"
 
-clickhouse_listen_host_custom: []
+# Configurations
 
-clickhouse_listen_host: "{{ clickhouse_listen_host_default + clickhouse_listen_host_custom }}"
+## Databases
 
+clickhouse_dbs_default: []
+clickhouse_dbs_custom:
+  - name: "mlab-mapping"
+    state: present
+
+clickhouse_dbs: "{{ clickhouse_dbs_default + clickhouse_dbs_custom }}"
+
+## Users
+
+clickhouse_profiles_custom:
+  mapping-profile:
+    max_memory_usage: 25000000000
+    max_bytes_before_external_group_by: 10000000000
+    use_uncompressed_cache: 0
+    load_balancing: random
+    max_partitions_per_insert_block: 100
+  readonly:
+    readonly: 1
+
+#Full form { name:'<username>', password: '<plainpassword>', password_sha256_hex: '<sha256password>',
+#   networks:"<{} with nets>", profile:'<profile>', quota:'<quota>', dbs: '{} with dbs', comment: '<some comment>'}
+#Req: name, password or password_256_hex
+clickhouse_users_custom:
+  - name: "{{ db_user }}"
+    password_sha256_hex: "{{ db_password_sha256 }}"
+    networks: 
+      - "::/0"
+      - "0.0.0.0/0"
+    profile: mapping-profile
+    quota: default
+    dbs: ["mlab-mapping"]
+    comment: "Default User"
+
+
+## Server Config
+
+clickhouse_listen_host:
+  - "::"
+
+clickhouse_tcp_port: 9000
 clickhouse_https_port: 8443
 clickhouse_tcp_secure_port: 9440
 
 clickhouse_ssl_server:
-  certificate_file: "/etc/clickhouse-server/server.crt"
-  private_key_file: "/etc/clickhouse-server/server.key"
+  certificate_file: "/etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem"
+  private_key_file: "/etc/letsencrypt/live/{{ inventory_hostname }}/privkey.pem"
   verification_mode: "none"
   load_default_ca_file: "true"
   cache_sessions: "true"
@@ -42,16 +81,6 @@ clickhouse_path_base: "/var/lib"
 clickhouse_path_user_files: "{{ clickhouse_path_base }}/clickhouse/user_files/"
 
 clickhouse_ready_delay: 5
-
-#Full form { name:'<username>', password: '<plainpassword>', password_sha256_hex: '<sha256password>',
-#   networks:"<{} with nets>", profile:'<profile>', quota:'<quota>', dbs: '{} with dbs', comment: '<some comment>'}
-#Req: name, password or password_256_hex
-clickhouse_users_custom: {}
-
-clickhouse_dbs_default: []
-clickhouse_dbs_custom: []
-
-clickhouse_dbs: "{{ clickhouse_dbs_default + clickhouse_dbs_custom }}"
 
 clickhouse_config:
   max_connections: 2048
