@@ -52,12 +52,14 @@ func Ingest(ctx context.Context, s storages.IngestorAppStorages, bucketName stri
 	if err := s.OpenAll(); err != nil {
 		panic(err)
 	}
-	defer func() {
-		s.GeospaceStorage.Close()
-		s.ASNOrgStorage.Close()
-		s.SummariesStorage.Close()
-		clearCache()
-	}()
+	defer s.CloseAll()
+	defer clearCache()
+	// defer func() {
+	// 	s.GeospaceStorage.Close()
+	// 	s.ASNOrgStorage.Close()
+	// 	s.SummariesStorage.Close()
+	// 	clearCache()
+	// }()
 	if err := loadCache(s.GeospaceStorage, s.ASNOrgStorage); err != nil {
 		return errors.Wrap(err, "ingestor.Ingest loadCache")
 	}
@@ -66,9 +68,8 @@ func Ingest(ctx context.Context, s storages.IngestorAppStorages, bucketName stri
 		return err
 	}
 	// Ensure that any outstanding insertion is finished before summarizing
-	s.MeasurementStorage.Close()
 	if summarize {
-		s.SummariesStorage.Summarize()
+		s.Summarize()
 	}
 	return nil
 }

@@ -11,12 +11,6 @@ type ASNOrg struct {
 	Organization string `json:"organization"`
 }
 
-type Iterator[T any] interface {
-	HasNext() bool
-	GetRow() (T, error)
-	Count() (uint64, error)
-}
-
 type ASNOrgStorage interface {
 	Open() error
 	Close() error

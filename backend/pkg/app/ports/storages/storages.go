@@ -1,5 +1,7 @@
 package storages
 
+import "github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
+
 // IngestorAppStorage holds the storages needed by the Ingestor application
 type IngestorAppStorages struct {
 	GeospaceStorage    GeospaceStorage
@@ -36,6 +38,16 @@ func (i *IngestorAppStorages) CloseAll() error {
 	}
 	if err := i.SummariesStorage.Close(); err != nil {
 		return err
+	}
+	return nil
+}
+
+func (i *IngestorAppStorages) Summarize() error {
+	if err := i.MeasurementStorage.Close(); err != nil {
+		return errors.Wrap(err, "storages.IngestorAppStorages#Summarize Close")
+	}
+	if err := i.SummariesStorage.Summarize(); err != nil {
+		return errors.Wrap(err, "storages.IngestorAppStorages#Summarize Summarize")
 	}
 	return nil
 }
