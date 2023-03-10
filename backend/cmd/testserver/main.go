@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/paginator"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/webcontext"
 )
 
 func main() {
@@ -31,7 +32,7 @@ func (i *it) HasNext() bool {
 	return i.c < 2
 }
 
-func Ping(c *restapi.WebContext) {
+func Ping(c *webcontext.Context) {
 	p := paginator.New[string]()
 	p.DefaultLimit = 2
 	p.DefaultOffset = 0
