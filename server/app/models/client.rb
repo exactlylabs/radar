@@ -325,7 +325,7 @@ class Client < ApplicationRecord
       if test_requested?
         "Test running"
       else
-        "Active"
+        "Online"
       end
     else
       "Offline"
@@ -497,7 +497,7 @@ class Client < ApplicationRecord
 
   def self.to_csv_enumerator
     @enumerator = Enumerator.new do |yielder|
-      yielder << CSV.generate_line(%w{id client_id user_id location_id name address latitude longitude pinged_at created_at})
+      yielder << CSV.generate_line(%w{id client_id user_id location_id name address latitude longitude pinged_at(UTC+0) created_at(UTC+0)})
       includes(:location, :user).find_each do |client|
         yielder << CSV.generate_line([
                                        client.id,
@@ -548,8 +548,10 @@ class Client < ApplicationRecord
   def get_mac_address
     return "Not Available" if self.network_interfaces.nil?
     default_interface = self.get_default_interface
-    if default_interface.size == 1
-      default_interface[0]["mac"]
+    if default_interface.size == 0
+      self.network_interfaces[0]["mac"] # Just defaulting to the first one if no actual default_interface present?
+    elsif default_interface.size == 1
+      default_interface[0]["mac"]  
     else
       possible_interface = self.network_interfaces.filter { |i| i.present? && is_eth?(i) }
       return possible_interface[0]["mac"] if possible_interface.size >= 1
@@ -578,6 +580,14 @@ class Client < ApplicationRecord
       else
         "Data usage will be reset every month on day #{day}."
     end
+  end
+
+  def in_service?
+    self.in_service
+  end
+
+  def get_in_service_action_label
+    "Mark as #{self.in_service? ? "not in servce" : "in service"}"
   end
 
   private

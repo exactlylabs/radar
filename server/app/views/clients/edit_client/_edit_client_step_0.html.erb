@@ -55,15 +55,16 @@
         <label class="required fs-6 fw-bold mb-2">Account</label>
         <select class="form-select"
                 data-controller="select2"
-                data-select2-blanks-value="true"
                 id="client-accounts-dropdown-edit"
                 data-placeholder="Select an account"
                 name="account_id"
                 data-select2-id="select2-data-account_id"
                 tabindex="-1"
-                data-action="select2-select->edit-pod#onAccountsSelectChange select2-clear->edit-pod#onAccountsSelectChange" data-edit-pod-target="accountsSelect">
-          <option value=""></option>
-          <% policy_scope(Account).not_deleted.each do |account|%>
+                data-remove-searchbar="true"
+                data-action="select2-select->edit-pod#onAccountsSelectChange select2-clear->edit-pod#onAccountsSelectChange"
+                data-edit-pod-target="accountsSelect"
+        >
+          <% current_user.accounts.not_deleted.each do |account|%>
             <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
           <% end %>
         </select>
@@ -73,12 +74,13 @@
         <label class="fs-6 fw-bold mb-2">Location</label>
         <select class="form-select"
                 data-controller="select2"
-                data-select2-blanks-value="true"
                 id="client-locations-dropdown-edit"
                 data-placeholder="Select a location"
                 name="location_id"
                 data-select2-id="select2-data-location_id"
                 tabindex="-1"
+                data-remove-searchbar="true"
+                data-select2-blanks-value="true"
         >
           <% policy_scope(Location).each do |location|%>
             <%= render partial: "clients/client_location", locals: { location: location, selected: location == @client.location } %>
@@ -125,12 +127,12 @@
           <label class="required fs-6 fw-bold mb-2">Release Group</label>
           <select class="form-select"
                   data-controller="select2"
-                  data-select2-blanks-value="true"
                   id="client-update-groups-dropdown-edit"
                   data-placeholder="Select a release group"
                   name="update_group_id"
                   data-select2-id="select2-data-update_group_id"
                   tabindex="-1"
+                  data-remove-searchbar="true"
           >
             <% UpdateGroup.all.each do |ug|%>
               <option value="<%= ug.id %>" label="<%= ug.name %>" <%= @client.update_group_id == ug.id ? "selected" : nil %>><%= ug.name %></option>

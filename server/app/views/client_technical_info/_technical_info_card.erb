@@ -8,31 +8,31 @@
     <div style="margin-top: 30px; width: 100%">
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder " style="width: 25%; min-width: 130px">Pod Type</div>
-        <div class="fw-bold d-flex flex-row" style="width: 75%; color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+        <div class="fw-bold d-flex flex-row" style="width: 75%; color: #5e6278; font-size: 14px; <%= client.raw_watchdog_version.nil? ? "color: #b5b5c3;" : "" %>">
           <%= client.raw_watchdog_version.nil? ? "Software Installed" : "Physical Pod" %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder" style="width: 25%; min-width: 130px">MAC address</div>
-        <div class="fw-bold d-flex flex-row" style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+        <div class="fw-bold d-flex flex-row" style="width: 75%;color: #5e6278; font-size: 14px; <%= client.network_interfaces.nil? ? "color: #b5b5c3;" : "" %>">
           <%= client.get_mac_address %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder" style="width: 25%; min-width: 130px">Agent Version</div>
-        <div class="fw-bold d-flex flex-row" style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+        <div class="fw-bold d-flex flex-row" style="width: 75%;color: #5e6278; font-size: 14px; <%= client.raw_version.nil? ? "color: #b5b5c3;" : "" %>">
           <%= client.raw_version.nil? ? "Not Available" : client.raw_version %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder" style="width: 25%; min-width: 130px">OS Version</div>
-        <div class="fw-bold d-flex flex-row " style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+        <div class="fw-bold d-flex flex-row " style="width: 75%;color: #5e6278; font-size: 14px; <%= client.os_version.nil? ? "color: #b5b5c3;" : "" %>">
           <%= client.os_version.nil? ? "Not Available" : pod_os_to_human(client.os_version) %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="fw-bolder" style="width: 25%; min-width: 130px">Hardware Platform</div>
-        <div class="fw-bold d-flex flex-row " style="width: 75%;color: #5e6278; font-size: 14px; <%= client.data_cap_max_usage.nil? ? "color: #b5b5c3;" : "" %>">
+        <div class="fw-bold d-flex flex-row " style="width: 75%;color: #5e6278; font-size: 14px; <%= client.hardware_platform.nil? ? "color: #b5b5c3;" : "" %>">
           <%= client.hardware_platform.nil? ? "Not Available" : client.hardware_platform %>
         </div>
       </div>

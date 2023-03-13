@@ -65,6 +65,7 @@ Rails.application.routes.draw do
       post 'watchdog_status'
       post 'run_test'
       post 'unstage'
+      post 'toggle_in_service'
       get 'pdf_label', to: 'clients#get_client_label'
     end
 
