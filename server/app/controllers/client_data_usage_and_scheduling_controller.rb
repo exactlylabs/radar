@@ -15,7 +15,7 @@ class ClientDataUsageAndSchedulingController < ApplicationController
       given_data_cap = nil
     end
 
-    wants_to_have_data_cap = params[:client][:wants_to_have_data_cap] === "on"
+    wants_to_have_data_cap = params[:client][:wants_to_have_data_cap] == "on"
 
     if given_data_cap.present? && wants_to_have_data_cap
       @client.data_cap_max_usage = (given_data_cap.to_i * (1024**2)).round(0) # save the value in B (frontend asks for MB)

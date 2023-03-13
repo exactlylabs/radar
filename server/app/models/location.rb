@@ -128,7 +128,7 @@ include EventSourceable
 
   def self.to_csv_enumerator
     @enumerator = Enumerator.new do |yielder|
-      yielder << CSV.generate_line(%w{id name address latitude longitude user_id created_at expected_mbps_up expected_mbps_down state county manual_lat_long state_fips county_fips automatic_location})
+      yielder << CSV.generate_line(%w{id name address latitude longitude user_id created_at(UTC+0) expected_mbps_up expected_mbps_down state county manual_lat_long state_fips county_fips automatic_location})
       includes(:user).find_each do |location|
         yielder << CSV.generate_line([
           location.id,

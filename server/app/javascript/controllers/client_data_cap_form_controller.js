@@ -29,7 +29,7 @@ export default class extends Controller {
     resetValueSelect.setAttribute('aria-disabled', 'true');
     resetValueSelect.setAttribute('disabled');
     resetDayValueSelect.setAttribute('aria-disabled', 'true');
-    resetDayValueSelect.setAttribute('disabled');
+    resetDayValueSelect.setAttribute('disabled', 'true');
     this.hideWarning();
   }
   

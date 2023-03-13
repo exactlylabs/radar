@@ -28,6 +28,9 @@
       style="font-size:14px; color: #b5b5c3; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
       id="client_<%= client.id %>_status_wrapper"
   >
+    <% unless client.in_service? %>
+      <span class="badge badge-light-dark" id="client_<%= client.id %>_in_service">Not in service</span>
+    <% end %>
     <span class="badge <%= client.status_style %>" id="client_<%= client.id %>_status"><%= client.status %></span>
     <% if client.has_pending_test %>
       <span class="badge badge-light-primary">Pending test</span>

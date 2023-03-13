@@ -61,6 +61,9 @@
       style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
       id="client_<%= client.id %>_status_wrapper"
   >
+    <% unless client.in_service? %>
+      <span class="badge badge-light-dark" id="client_<%= client.id %>_in_service">Not in service</span>
+    <% end %>
     <span class="badge <%= client.status_style %>" id="client_<%= client.id %>_status"><%= client.status %></span>
     <% if client.has_pending_test %>
       <span class="badge badge-light-primary">Pending test</span>
@@ -91,6 +94,9 @@
             <%= link_to "Mark as Live", unstage_client_path(client.unix_user), method: :post, class: "menu-link text-hover-gray-500 text-gray-700 px-3 py-2" %>
           </div>
         <% end %>
+        <div class="menu-item">
+          <%= link_to "#{client.get_in_service_action_label}", toggle_in_service_client_path(client.unix_user), method: :post, class: "menu-link text-hover-gray-500 text-gray-700 px-3 py-2" %>
+        </div>
         <div class="menu-item">
           <%= link_to "Run Test", run_test_client_path(client.unix_user), method: :post, class: "menu-link text-hover-gray-500 text-gray-700 px-3 py-2" %>
         </div>

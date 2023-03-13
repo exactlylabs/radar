@@ -47,7 +47,8 @@ export default class extends Controller {
       this.updatePodButtonTarget.classList.remove("disabled");
       fetch(`/locations/account/${currentSelectedAccountId}`)
         .then((res) => {
-          if (res.status === 200) return res.json();
+          if (res.ok) return res.json();
+          else throw new Error(res.statusText);
         })
         .then((res) => {
           const locationsDropdownSelector = $(
@@ -56,8 +57,6 @@ export default class extends Controller {
           // empty current locations dropdown
           locationsDropdownSelector.empty();
           // populate with new locations received
-          const emptyOption = new Option("", null, false, false);
-          locationsDropdownSelector.append(emptyOption);
           res.forEach((location) => {
             const currentLocationOption = new Option(
               location.text,
