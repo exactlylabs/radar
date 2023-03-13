@@ -273,6 +273,20 @@ ActiveRecord::Schema.define(version: 2023_03_06_211939) do
     t.index ["location_label_id"], name: "index_location_labels_locations_on_location_label_id"
   end
 
+  create_table "location_status_projections", force: :cascade do |t|
+    t.bigint "account_id"
+    t.bigint "autonomous_system_id"
+    t.bigint "location_id"
+    t.boolean "is_online", default: false
+    t.integer "count", default: 0
+    t.datetime "timestamp"
+    t.bigint "event_id"
+    t.index ["account_id"], name: "index_location_status_projections_on_account_id"
+    t.index ["autonomous_system_id"], name: "index_location_status_projections_on_autonomous_system_id"
+    t.index ["event_id"], name: "index_location_status_projections_on_event_id"
+    t.index ["location_id"], name: "index_location_status_projections_on_location_id"
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.string "address"
@@ -286,9 +300,9 @@ ActiveRecord::Schema.define(version: 2023_03_06_211939) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
+    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
-    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.float "download_avg"
@@ -360,14 +374,6 @@ ActiveRecord::Schema.define(version: 2023_03_06_211939) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["aggregate_type", "aggregate_id"], name: "index_snapshots_on_aggregate"
     t.index ["event_id"], name: "index_snapshots_on_event_id"
-  end
-
-  create_table "study_counties", id: false, force: :cascade do |t|
-    t.string "state"
-    t.string "state_code"
-    t.string "county"
-    t.string "fips"
-    t.integer "pop_2021"
   end
 
   create_table "update_groups", force: :cascade do |t|
@@ -448,6 +454,10 @@ ActiveRecord::Schema.define(version: 2023_03_06_211939) do
   add_foreign_key "invites", "accounts"
   add_foreign_key "invites", "users"
   add_foreign_key "location_groups", "accounts"
+  add_foreign_key "location_status_projections", "accounts"
+  add_foreign_key "location_status_projections", "autonomous_systems"
+  add_foreign_key "location_status_projections", "events"
+  add_foreign_key "location_status_projections", "locations"
   add_foreign_key "locations", "accounts"
   add_foreign_key "locations", "location_groups"
   add_foreign_key "locations", "users", column: "created_by_id"
