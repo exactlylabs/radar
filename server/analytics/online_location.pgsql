@@ -1,8 +1,8 @@
 WITH base_series AS (
   SELECT 
-    date_trunc('hour', dd) as "time"
+    date_trunc('$bucket', dd) as "time"
   FROM generate_series(
-    '2023-03-05T00:00:00.00Z'::timestamp , '2023-03-06T23:59:59.00Z'::timestamp, '1 hour'::interval
+    $__timeFrom()::timestamp , $__timeTo()::timestamp, '1 $bucket'::interval
   ) dd
 ), pods_with_location AS (
   SELECT 
@@ -18,7 +18,17 @@ WITH base_series AS (
   LEFT JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
   WHERE 
     location_id IS NOT NULL
-    AND account_id IN ('35')
+    AND account_id IN ($accounts)
+    AND CASE WHEN '${as_orgs:csv}' = '-1' THEN 
+      true
+    ELSE
+      autonomous_system_orgs.id IN ($as_orgs)
+    END
+    AND CASE WHEN '${locations:csv}' = '-1' THEN 
+      true
+    ELSE
+      location_id IN ($locations)
+    END
 
 ), online_status_changes AS (
   SELECT 
@@ -39,28 +49,28 @@ WITH base_series AS (
 ), count_right_before AS (
   SELECT *
   FROM accumulated_counts
-  WHERE time < '2023-03-05T00:00:00.00Z'
+  WHERE time < $__timeFrom()
   ORDER BY time DESC LIMIT 1
 ), count_at_end AS (
   SELECT *
   FROM accumulated_counts
-  WHERE time <= '2023-03-06T23:59:59.00Z'
+  WHERE time <= $__timeTo()
   ORDER BY time DESC LIMIT 1
 ), count_with_edges AS (
   SELECT
     * 
   FROM accumulated_counts
   WHERE
-    time BETWEEN '2023-03-05T00:00:00.00Z' AND '2023-03-06T23:59:59.00Z'
+    $__timeFilter("time")
   UNION
-  SELECT '2023-03-05T00:00:00.00Z'::timestamp, total_online 
+  SELECT $__timeFrom()::timestamp, total_online 
   FROM count_right_before
   UNION
-  SELECT '2023-03-06T23:59:59.00Z'::timestamp, total_online 
+  SELECT $__timeTo()::timestamp, total_online 
   FROM count_at_end
 ), count_by_hour AS (
   SELECT
-    date_trunc('hour', "time") as "time",
+    date_trunc('$bucket', "time") as "time",
     MAX(total_online) as "total_online"
   FROM count_with_edges
   GROUP BY 1

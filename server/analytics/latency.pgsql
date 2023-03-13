@@ -1,9 +1,9 @@
 WITH location_grouped AS (
   SELECT
     date_trunc('$bucket', processed_at) as "time",
-    percentile_disc(0.5) WITHIN GROUP (ORDER BY measurements.upload) as "median",
-    MIN(measurements.upload) AS "_min",
-    MAX(measurements.upload) AS "_max",
+    percentile_disc(0.5) WITHIN GROUP (ORDER BY measurements.latency) as "median",
+    MIN(measurements.latency) AS "_min",
+    MAX(measurements.latency) AS "_max",
     location_id
 
   FROM measurements
