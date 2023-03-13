@@ -18,16 +18,16 @@ with base_series AS (
   -- Filter by dimensions here
   WHERE 
     account_id IN ('9')
-    AND CASE WHEN '${as_orgs:csv}' = '-1' THEN 
-      true
-    ELSE
-      autonomous_system_orgs.id IN ($as_orgs)
-    END
-    AND CASE WHEN '${locations:csv}' = '-1' THEN 
-      true
-    ELSE
-      location_id IN ($locations)
-    END
+    -- AND CASE WHEN '${as_orgs:csv}' = '-1' THEN 
+    --   true
+    -- ELSE
+    --   autonomous_system_orgs.id IN ($as_orgs)
+    -- END
+    -- AND CASE WHEN '${locations:csv}' = '-1' THEN 
+    --   true
+    -- ELSE
+    --   location_id IN ($locations)
+    -- END
   -- This filter is enforcing that only pods that are claimed and belong to a location will be considered.
 ), accumulated_counts AS (
   SELECT 
