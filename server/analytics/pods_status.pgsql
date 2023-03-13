@@ -1,15 +1,16 @@
 WITH online_status AS (
   SELECT
   timestamp AS "time",
-  data->'state'->'online' as value
-  FROM client_event_logs
-  WHERE 
-    timestamp BETWEEN '2023-03-06T11:39:06.204Z' AND '2023-03-08T01:37:17.594Z'
-    AND client_id = 443
+  state->'online' as value
+  FROM snapshots
+  JOIN events ON events.id = snapshots.event_id
+  WHERE $__timeFilter(timestamp) AND events.aggregate_type = 'Client' AND events.aggregate_id = $clients
+  ORDER BY 1 
 ), initial_status AS (
-  SELECT data->'state'->'online' as value
-  FROM client_event_logs
-  WHERE timestamp < '2023-03-06T11:39:06.204Z' AND client_id = 443
+  SELECT state->'online' as value
+  FROM snapshots
+  JOIN events ON events.id = snapshots.event_id
+  WHERE timestamp < $__timeFrom() AND events.aggregate_type = 'Client' AND events.aggregate_id = $clients
   ORDER BY timestamp DESC 
   LIMIT 1
 )
@@ -20,6 +21,6 @@ FROM online_status
 
 UNION
 SELECT 
-  '2023-03-06T11:39:06.204Z'::timestamp as "time", value
+  $__timeFrom() as "time", value
 FROM initial_status
 ORDER BY time

@@ -1,11 +1,6 @@
-WITH location_grouped AS (
-  SELECT
-    date_trunc('$bucket', processed_at) as "time",
-    percentile_disc(0.5) WITHIN GROUP (ORDER BY measurements.upload) as "median",
-    MIN(measurements.upload) AS "_min",
-    MAX(measurements.upload) AS "_max",
-    location_id
-
+WITH measurements_with_ratios AS (
+  SELECT 
+    measurements.*
   FROM measurements
   JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
   JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
@@ -22,16 +17,13 @@ WITH location_grouped AS (
     ELSE
       location_id IN ($locations)
     END
-
-  GROUP BY 1, location_id
-  ORDER BY "time" ASC
 )
 
-SELECT 
-  time,
-  MAX(_max) AS "Max",
-  percentile_disc(0.5) WITHIN GROUP (ORDER BY median) as "Median",
-  MIN(_min) AS "Min"
-FROM location_grouped
+SELECT
+  extract (hour FROM "processed_at")::integer as "hour",
+  percentile_disc(0.5) WITHIN GROUP (ORDER BY latency) AS "Median",
+  MAX(latency) as "Max",
+  MIN(latency) as "Min"
+FROM measurements_with_ratios
 GROUP BY 1
-ORDER BY "time"
+ORDER BY 1
