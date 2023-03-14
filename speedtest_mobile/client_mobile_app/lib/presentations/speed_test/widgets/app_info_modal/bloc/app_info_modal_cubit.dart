@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_state.dart';
 
@@ -27,7 +28,7 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
     final delay = state.delay ?? -1;
     if (Platform.isAndroid) {
       if (delay < 1) {
-        emit(state.copyWith(warning: 'Minimum time interval should be 1 min.'));
+        emit(state.copyWith(warning: Strings.androidMinimumDelayError));
         return false;
       } else {
         emit(state.resetWarning());
@@ -35,7 +36,7 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
       }
     } else {
       if (delay < 15) {
-        emit(state.copyWith(warning: 'Minimum time interval should be 15 mins.'));
+        emit(state.copyWith(warning: Strings.iOSMinimumDelayError));
         return false;
       } else {
         emit(state.resetWarning());
