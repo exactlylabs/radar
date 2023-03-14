@@ -15,7 +15,7 @@
         <li class="breadcrumb-item text-muted">
           <a href="<%= clients_path %>" class="text-muted text-hover-primary">Pods</a>
         </li>
-        <li class="breadcrumb-item text-dark"><%= @client.name || 'Unnamed Pod' %></li>
+        <li class="breadcrumb-item text-dark"><%= @client.name.present? ? @client.name : "Unnamed Pod" %></li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
