@@ -47,7 +47,7 @@ class EnableWardrivingMode extends StatelessWidget {
               color: Theme.of(context).colorScheme.tertiary,
             ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 45),
           TimeIntervalInputField(
             delay: delay,
             onChanged: onChanged,
@@ -55,9 +55,9 @@ class EnableWardrivingMode extends StatelessWidget {
           if (warning != null) ...[
             const SizedBox(height: 20),
             ErrorMessage(message: warning!),
-            const SizedBox(height: 38),
+            const SizedBox(height: 20),
           ] else
-            const SizedBox(height: 101),
+            const SizedBox(height: 104),
           PrimaryButton(
             onPressed: onEnabled,
             child: Text(

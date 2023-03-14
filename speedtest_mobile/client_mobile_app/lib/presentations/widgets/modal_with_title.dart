@@ -1,16 +1,16 @@
-import 'package:client_mobile_app/presentations/widgets/close_rounded_button.dart';
-import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/presentations/widgets/close_rounded_button.dart';
 
 Future<void> modalWithTitle(BuildContext context, bool? isScrollControlled, String title, Widget body,
-    [VoidCallback? onPop, EdgeInsets? padding]) async {
+    [VoidCallback? onPop, EdgeInsets? padding, bool? enableDrag]) async {
   return showModalBottomSheet(
     context: context,
     backgroundColor: Theme.of(context).backgroundColor,
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0))),
     isScrollControlled: isScrollControlled ?? false,
+    enableDrag: enableDrag ?? true,
     builder: (context) => ModalWithTitle(
       title: title,
       body: body,
