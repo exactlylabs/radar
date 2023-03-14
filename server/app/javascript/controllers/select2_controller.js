@@ -3,6 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static values = {
     blanks: String,
+    dropdownParent: String,
   };
 
   connect() {
@@ -12,6 +13,11 @@ export default class extends Controller {
 
     if (this.blanksValue) {
       options.allowClear = true;
+    }
+
+    // This allows select2 to work properly inside modals
+    if (this.dropdownParentValue) {
+      options.dropdownParent = `#${this.dropdownParentValue}`
     }
 
     // Custom data attribute to be able to remove searchbar from select2 application-wide
