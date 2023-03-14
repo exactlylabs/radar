@@ -43,7 +43,7 @@ func (b *ExponentialBackOff) Next() <-chan time.Time {
 	b.current = next
 	// now add a randomness +-10%
 	next = time.Duration(float32(next) * (0.9 + b.Rand.Float32()*0.2))
-	log.Println(next)
+	log.Println("BackOff duration:", next)
 	return time.After(next)
 }
 

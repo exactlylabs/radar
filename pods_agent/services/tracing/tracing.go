@@ -1,7 +1,6 @@
 package tracing
 
 import (
-	"log"
 	"strings"
 	"time"
 
@@ -92,7 +91,6 @@ func NotifyError(err error, context Context) {
 
 func NotifyErrorOnce(err error, context Context) {
 	if _, exists := notifiedErrors[err]; !exists {
-		log.Println("Notifying!")
 		NotifyError(err, context)
 		notifiedErrors[err] = struct{}{}
 	}
