@@ -20,7 +20,7 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
     final backgroundSpeedTestDelay = _localStorage.getBackgroundSpeedTestDelay();
     if (backgroundSpeedTestDelay >= 0) {
       emit(BackgroundFetchState(delay: backgroundSpeedTestDelay, isEnabled: true));
-      BackgroundFetchHandler.startBackgroundSpeedTest(backgroundSpeedTestDelay);
+      BackgroundFetchHandler.startBackgroundSpeedTest(backgroundSpeedTestDelay * 60000);
     }
   }
 
@@ -29,7 +29,7 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
       emit(BackgroundFetchState(delay: state.delay, isEnabled: true));
       await _localStorage.setBackgroundSpeedTestDelay(state.delay);
       BackgroundFetchHandler.stopBackgroundSpeedTest();
-      BackgroundFetchHandler.startBackgroundSpeedTest(state.delay);
+      BackgroundFetchHandler.startBackgroundSpeedTest(state.delay * 60000);
     }
   }
 

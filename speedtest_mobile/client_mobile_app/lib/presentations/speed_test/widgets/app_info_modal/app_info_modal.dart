@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 import 'package:client_mobile_app/core/background_fetch/bloc/background_fetch_bloc.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/app_info.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/enable_wardriving_mode.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/wardriving_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_state.dart';
 
@@ -18,30 +20,28 @@ class AppInfoModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AppInfoModalCubit(),
+    return BlocListener<AppInfoModalCubit, AppInfoModalState>(
+      listenWhen: (previous, current) => !previous.enableWardrivingMode && current.enableWardrivingMode,
+      listener: (context, state) => _openWardrivingModal(context),
       child: BlocBuilder<AppInfoModalCubit, AppInfoModalState>(
-        builder: (context, state) {
-          return state.enableWardrivingMode
-              ? EnableWardrivingMode(
-                  onCancel: () => context.read<AppInfoModalCubit>().cancel(),
-                  onChanged: (delay) {
-                    context.read<AppInfoModalCubit>().updateDelay(delay);
-                    context.read<BackgroundFetchBloc>().setDelay(int.tryParse(delay) ?? -1);
-                  },
-                  onEnabled: () {
-                    context.read<BackgroundFetchBloc>().enableBackgroundSpeedTest();
-                    Navigator.of(context).pop();
-                  },
-                  warning: state.warning,
-                )
-              : AppInfo(
-                  buildAndVersionNumber: 'App version $versionNumber · Build $buildNumber',
-                  onEnabled: () => context.read<AppInfoModalCubit>().enableWardrivingMode(),
-                  onDisabled: () => context.read<BackgroundFetchBloc>().disableBackgroundSpeedTest(),
-                );
-        },
+        builder: (context, state) => AppInfo(
+          buildAndVersionNumber: 'App version $versionNumber · Build $buildNumber',
+          onEnabled: () => context.read<AppInfoModalCubit>().enableWardrivingMode(),
+          onDisabled: () => context.read<BackgroundFetchBloc>().disableBackgroundSpeedTest(),
+        ),
       ),
+    );
+  }
+
+  Future<void> _openWardrivingModal(BuildContext context) async {
+    return modalWithTitle(
+      context,
+      true,
+      Strings.emptyString,
+      const WardrivingModal(),
+      () => context.read<AppInfoModalCubit>().cancel(),
+      null,
+      false,
     );
   }
 }
