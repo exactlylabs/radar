@@ -8,7 +8,7 @@ module ClientApi
       after_action :set_cors_headers
 
       def check_allowed_origin
-        head(403) unless @widget_client.client_urls.include? request.origin
+        head(403) if request.origin && !@widget_client.client_urls.include?(request.origin) # If request has no origin, skip (could be a non-browser client)
         if request.request_method == "OPTIONS"
           set_cors_headers
           head(200)
