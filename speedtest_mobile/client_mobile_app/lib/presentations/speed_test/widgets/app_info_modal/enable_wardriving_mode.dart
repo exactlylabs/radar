@@ -13,12 +13,14 @@ class EnableWardrivingMode extends StatelessWidget {
     required this.onEnabled,
     required this.onChanged,
     required this.onCancel,
+    required this.onUnfocus,
   }) : super(key: key);
 
   final String? warning;
   final int? delay;
   final VoidCallback onEnabled;
   final VoidCallback onCancel;
+  final VoidCallback onUnfocus;
   final Function(String) onChanged;
 
   @override
@@ -51,6 +53,7 @@ class EnableWardrivingMode extends StatelessWidget {
           TimeIntervalInputField(
             delay: delay,
             onChanged: onChanged,
+            onUnfocus: onUnfocus,
           ),
           if (warning != null) ...[
             const SizedBox(height: 20),

@@ -41,7 +41,5 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
     }
   }
 
-  void setDelay(int delay) {
-    emit(BackgroundFetchState(delay: delay, isEnabled: state.isEnabled));
-  }
+  void setDelay(int delay) => emit(BackgroundFetchState(delay: delay, isEnabled: state.isEnabled));
 }

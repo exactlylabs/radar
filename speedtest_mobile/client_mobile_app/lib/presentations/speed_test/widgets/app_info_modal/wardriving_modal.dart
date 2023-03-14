@@ -18,14 +18,16 @@ class WardrivingModal extends StatelessWidget {
           context.read<AppInfoModalCubit>().cancel();
           Navigator.of(context).pop();
         },
-        onChanged: (delay) {
-          context.read<AppInfoModalCubit>().updateDelay(delay);
-          context.read<BackgroundFetchBloc>().setDelay(int.tryParse(delay) ?? -1);
-        },
+        onChanged: (delay) => context.read<AppInfoModalCubit>().updateDelay(delay),
         onEnabled: () {
-          context.read<BackgroundFetchBloc>().enableBackgroundSpeedTest();
-          Navigator.of(context).pop();
+          bool isValid = context.read<AppInfoModalCubit>().validateDelay();
+          if (isValid) {
+            context.read<BackgroundFetchBloc>().setDelay(state.delay ?? -1);
+            context.read<BackgroundFetchBloc>().enableBackgroundSpeedTest();
+            Navigator.of(context).pop();
+          }
         },
+        onUnfocus: () => context.read<AppInfoModalCubit>().validateDelay(),
         delay: state.delay,
         warning: state.warning,
       ),

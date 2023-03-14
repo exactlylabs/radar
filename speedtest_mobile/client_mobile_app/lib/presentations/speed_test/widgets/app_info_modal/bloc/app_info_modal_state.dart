@@ -1,7 +1,7 @@
 class AppInfoModalState {
   const AppInfoModalState({
     this.warning,
-    this.delay = 10,
+    this.delay = 15,
     this.enableWardrivingMode = false,
   });
 
