@@ -52,17 +52,16 @@
       </div>
 
       <div class="fv-row mb-7 fv-plugins-icon-container">
-        <label class="required fs-6 fw-bold mb-2">Account</label>
-        <select class="form-select"
+        <label class="required fs-6 fw-bold mb-2" for="client-accounts-dropdown-edit">Account</label>
+        <select class="form-select form-control"
                 data-controller="select2"
                 id="client-accounts-dropdown-edit"
                 data-placeholder="Select an account"
                 name="account_id"
                 data-select2-id="select2-data-account_id"
-                tabindex="-1"
-                data-remove-searchbar="true"
                 data-action="select2-select->edit-pod#onAccountsSelectChange select2-clear->edit-pod#onAccountsSelectChange"
                 data-edit-pod-target="accountsSelect"
+                data-select2-dropdown-parent-value="edit_pod_modal"
         >
           <% current_user.accounts.not_deleted.each do |account|%>
             <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
@@ -79,7 +78,7 @@
                 name="location_id"
                 data-select2-id="select2-data-location_id"
                 tabindex="-1"
-                data-remove-searchbar="true"
+                data-select2-dropdown-parent-value="edit_pod_modal"
                 data-select2-blanks-value="true"
         >
           <option></option>
@@ -134,7 +133,7 @@
                   name="update_group_id"
                   data-select2-id="select2-data-update_group_id"
                   tabindex="-1"
-                  data-remove-searchbar="true"
+                  data-select2-dropdown-parent-value="edit_pod_modal"
           >
             <% UpdateGroup.all.each do |ug|%>
               <option value="<%= ug.id %>" label="<%= ug.name %>" <%= @client.update_group_id == ug.id ? "selected" : nil %>><%= ug.name %></option>

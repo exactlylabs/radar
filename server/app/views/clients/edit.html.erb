@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "edit_client_modal" do %>
-  <%= form_with(model: @client, url: client_path(@client.unix_user), data: {"turbo-frame" => "_top", "controller" => "edit-pod"}) do |form| %>
+  <%= form_with(model: @client, url: client_path(@client.unix_user), data: {"turbo-frame" => "_top", "controller" => "edit-pod"}, id: 'testing-edit-form') do |form| %>
     <%= render partial: "clients/edit_client/edit_client_step_0", locals: { client: @client, form: form } %>
     <%= render partial: "clients/edit_client/edit_client_step_1", locals: { client: @client, form: form } %>
   <% end %>
