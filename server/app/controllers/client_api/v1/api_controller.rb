@@ -8,9 +8,11 @@ module ClientApi
       after_action :set_cors_headers
 
       def check_allowed_origin
-        head(403) if request.origin && !@widget_client.client_urls.include?(request.origin) # If request has no origin, skip (could be a non-browser client)
+        @allowed = true
+        if request.origin && !@widget_client.client_urls.include?(request.origin) # Just check for origin if present, else, skip
+          @allowed = false
+        end
         if request.request_method == "OPTIONS"
-          set_cors_headers
           head(200)
         end
       end
@@ -49,8 +51,13 @@ module ClientApi
       end
 
       def set_cors_headers
-        # By this point we already validated that the origin is allowed
-        response.set_header('Access-Control-Allow-Origin', request.origin)
+        if request.origin
+          if @allowed
+            response.set_header('Access-Control-Allow-Origin', request.origin)
+          else
+            response.set_header('Access-Control-Allow-Origin', @widget_client.client_urls[0]) # Defaulting to the first allowed url, would force CORS error on browser
+          end
+        end
         response.set_header('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT')
         response.set_header('Access-Control-Allow-Headers', 'Origin, Content-Type')
       end
