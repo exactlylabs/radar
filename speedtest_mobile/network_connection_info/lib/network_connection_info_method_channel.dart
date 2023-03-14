@@ -22,4 +22,15 @@ class MethodChannelNetworkConnectionInfo extends NetworkConnectionInfoPlatform {
       return null;
     }
   }
+
+  @override
+  Future<ConnectionInfo?> getCellularNetworkConnectionInfo() async {
+    final networkConnectionInfo = await methodChannel.invokeMethod<String>('getCellularNetworkConnectionInfo');
+    if (networkConnectionInfo != null) {
+      final jsonResponse = jsonDecode(networkConnectionInfo) as Map<String, dynamic>;
+      return ConnectionInfo.fromJson(jsonResponse);
+    } else {
+      return null;
+    }
+  }
 }

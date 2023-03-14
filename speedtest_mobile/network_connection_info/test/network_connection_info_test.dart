@@ -14,6 +14,12 @@ class MockNetworkConnectionInfoPlatform with MockPlatformInterfaceMixin implemen
     // TODO: implement getNetworkConnectionInfo
     throw UnimplementedError();
   }
+
+  @override
+  Future<ConnectionInfo?> getCellularNetworkConnectionInfo() {
+    // TODO: implement getCellularNetworkConnectionInfo
+    throw UnimplementedError();
+  }
 }
 
 void main() {
