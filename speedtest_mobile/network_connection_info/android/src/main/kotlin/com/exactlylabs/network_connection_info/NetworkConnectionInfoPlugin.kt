@@ -84,7 +84,7 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
             }
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
                 connectionInfoJson["connectionType"] = "CELLULAR"
-                connectionInfoJson["connectionInfo"] = getCellularConnectionInfo()?.toJson()
+                connectionInfoJson["connectionInfo"] = getCellularConnectionInfo()
                 return connectionInfoJson
             }
             else -> null
@@ -93,19 +93,19 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private fun getCellularConnectionInfo(): CellularConnectionInfo? {
+    private fun getCellularConnectionInfo(): Map<String, Any?> {
         telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         val cellInfoList = telephonyManager.allCellInfo
-        val cellInfo = cellInfoList.firstOrNull { it.isRegistered } ?: return null
+        val cellInfo = cellInfoList.firstOrNull { it.isRegistered }
         return CellularConnectionInfo(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) cellInfo.cellSignalStrength else null,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) cellInfo.cellIdentity else null,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) cellInfo?.cellSignalStrength else null,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) cellInfo?.cellIdentity else null,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) telephonyManager.networkSpecifier else null,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) telephonyManager.dataNetworkType else null,
             telephonyManager.phoneType,
             telephonyManager.networkCountryIso,
             telephonyManager.networkOperatorName,
             telephonyManager.networkOperator
-        )
+        ).toJson()
     }
 }
