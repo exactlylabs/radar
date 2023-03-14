@@ -98,5 +98,4 @@ class Strings {
   static const String appInfoEnableButtonLabel = 'Enable wardriving mode';
   static const String appInfoDescription =
       'Wardriving mode keeps running speed tests at specific time intervals in the background.';
-  static const String appInfoModalWarning = 'Minimum time interval should be 15 mins.';
 }

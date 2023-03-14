@@ -6,10 +6,12 @@ class TimeIntervalInputField extends StatefulWidget {
     Key? key,
     this.delay,
     this.onChanged,
+    this.onUnfocus,
   }) : super(key: key);
 
   final int? delay;
   final Function(String)? onChanged;
+  final VoidCallback? onUnfocus;
 
   @override
   State<TimeIntervalInputField> createState() => _TimeIntervalInputFieldState();
@@ -22,9 +24,18 @@ class _TimeIntervalInputFieldState extends State<TimeIntervalInputField> {
   @override
   void initState() {
     super.initState();
+    addListener();
     if (widget.delay != null) {
       _controller.text = widget.delay.toString();
     }
+  }
+
+  void addListener() {
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        widget.onUnfocus?.call();
+      }
+    });
   }
 
   @override

@@ -27,7 +27,10 @@ class AppInfoModal extends StatelessWidget {
         builder: (context, state) => AppInfo(
           buildAndVersionNumber: 'App version $versionNumber · Build $buildNumber',
           onEnabled: () => context.read<AppInfoModalCubit>().enableWardrivingMode(),
-          onDisabled: () => context.read<BackgroundFetchBloc>().disableBackgroundSpeedTest(),
+          onDisabled: () {
+            context.read<AppInfoModalCubit>().disableWardrivingMode();
+            context.read<BackgroundFetchBloc>().disableBackgroundSpeedTest();
+          },
         ),
       ),
     );
