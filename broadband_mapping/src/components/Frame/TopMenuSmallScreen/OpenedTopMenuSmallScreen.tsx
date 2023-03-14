@@ -6,7 +6,6 @@ import PinIcon from "../../../assets/pin-icon.png";
 import {buttonColors, buttonTextColors} from "../../../utils/buttons";
 import {WHITE} from "../../../styles/colors";
 import {useLocation} from "react-router-dom";
-import {handleError} from "../../../api";
 import SmallScreenTopMenuHorizontalDivider from "./SmallScreenTopMenuHorizontalDivider";
 import AnthcLogo from "../../../assets/anthc-logo.png";
 import ExactlyLogo from "../../../assets/exactly-logo.png";
@@ -14,13 +13,23 @@ import XlabLogo from "../../../assets/xlab-logo.png";
 import {goToExactlyLabsWebsite} from "../../../utils/redirects";
 import CustomButton from "../../common/CustomButton";
 import CustomSpinner from "../../common/CustomSpinner";
+import NoGeolocationAlert from "../NoGeolocationAlert/NoGeolocationAlert";
 
 interface OpenedTopMenuSmallScreenProps {
   centerOnUser: (center: Array<number>) => void;
   closeMenu: () => void;
+  setIsNoGeolocationAlertOpen: (value: boolean) => void;
+  setIsOpening: (value: boolean) => void;
+  setIsClosing: (value: boolean) => void;
 }
 
-const OpenedTopMenuSmallScreen = ({centerOnUser, closeMenu}: OpenedTopMenuSmallScreenProps): ReactElement => {
+const OpenedTopMenuSmallScreen = ({
+  centerOnUser,
+  closeMenu,
+  setIsNoGeolocationAlertOpen,
+  setIsOpening,
+  setIsClosing
+}: OpenedTopMenuSmallScreenProps): ReactElement => {
 
   const location = useLocation();
 
@@ -33,7 +42,8 @@ const OpenedTopMenuSmallScreen = ({centerOnUser, closeMenu}: OpenedTopMenuSmallS
 
   const onError = (err: GeolocationPositionError) => {
     setLoading(false);
-    handleError(new Error(err.message));
+    //handleError(new Error(err.message));
+    if(err.message === 'User denied Geolocation') openNoGeolocationAlert();
   }
 
   const centerOnUserPosition = () => {
@@ -44,12 +54,25 @@ const OpenedTopMenuSmallScreen = ({centerOnUser, closeMenu}: OpenedTopMenuSmallS
           const center: Array<number> = [pos.coords.latitude, pos.coords.longitude];
           centerOnUser(center);
           setLoading(false);
+          closeMenu();
         },
         onError,
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
     }
-    closeMenu();
+  }
+
+  const openNoGeolocationAlert = () => {
+    setIsOpening(true);
+    setTimeout(() => {
+      setIsOpening(false);
+      setIsNoGeolocationAlertOpen(true);
+    }, 1000);
+    setTimeout(() => { setIsClosing(true) }, 5000);
+    setTimeout(() => {
+      setIsClosing(false);
+      setIsNoGeolocationAlertOpen(false);
+    }, 6000);
   }
 
   return (
@@ -73,11 +96,14 @@ const OpenedTopMenuSmallScreen = ({centerOnUser, closeMenu}: OpenedTopMenuSmallS
                       color={buttonTextColors.WHITE}
                       iconFirst
                       onClick={centerOnUserPosition}
-                      className={'fw-medium hover-opaque'}
+                      className={'fw-medium hover-opaque region-button'}
             /> :
-            <CustomButton text={''} icon={<CustomSpinner color={WHITE}/>}
-                      backgroundColor={buttonColors.BLACK}
-                      color={buttonTextColors.WHITE}/>
+            <CustomButton text={''}
+                          icon={<CustomSpinner color={WHITE}/>}
+                          backgroundColor={buttonColors.BLACK}
+                          color={buttonTextColors.WHITE}
+                          className={'region-button'}
+            />
         }
       </div>
       <SmallScreenTopMenuHorizontalDivider/>

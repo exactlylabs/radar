@@ -49,3 +49,4 @@ export const GENERIC_MENU = 'rgba(255, 255, 255, 0.8)';
 export const DARKER_GENERIC_MENU = 'rgba(255, 255, 255, 0.95)';
 export const SELECTED_TABS = 'rgba(209, 209, 209, 0.7)';
 export const SHADOW_UNDERLAY = CLOSE_PANEL_BUTTON_SHADOW_RGBA;
+export const NO_GEOLOCATION_ALERT = '#3e4040';

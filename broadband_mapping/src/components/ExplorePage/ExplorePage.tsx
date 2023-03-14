@@ -254,11 +254,9 @@ const ExplorePage = ({userCenter}: ExplorePageProps): ReactElement => {
     setSelectedGeospaceId((geospace as GeospaceOverview).geospace.id);
     if(center) {
       setCurrentMapCenter([center.lat, center.lng]);
-      setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
     } else if((geospace as GeospaceOverview).geospace.centroid) {
       const centroid: Array<number> = (geospace as GeospaceOverview).geospace.centroid;
       setCurrentMapCenter([centroid[0], centroid[1]]);
-      setCurrentMapZoom(getZoomForNamespace((geospace as GeospaceOverview).geospace.namespace));
     }
     if(isSmallScreen) {
       setMenuContent(MenuContent.GEOSPACE);

@@ -2,7 +2,6 @@ import {CSSProperties} from "react";
 import {BLACK, DEFAULT_BUTTON_BOX_SHADOW_RGBA, WHITE} from "../../../styles/colors";
 
 const myButtonStyle: CSSProperties = {
-  width: 'max-content',
   paddingLeft: '15px',
   paddingRight: '15px',
   paddingTop: '14px',
