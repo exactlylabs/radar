@@ -1,13 +1,7 @@
 import {ChangeEvent, ReactElement, useEffect, useRef, useState} from "react";
-import {styles} from "./styles/TopSearchbar.style";
 import './styles/TopSearchbar.css';
-import SearchIcon from "../../../assets/search-icon.png";
-import ArrowRight from '../../../assets/arrow-right.png';
 import {debounce} from "../../../api/utils/debouncer";
 import {handleError} from "../../../api";
-import CustomSpinner from "../../common/CustomSpinner";
-import {WHITE} from "../../../styles/colors";
-import SuggestionsBox from "./SuggestionsBox";
 import {Optional} from "../../../utils/types";
 import {getGeospaces} from "../../../api/geospaces/requests";
 import {DetailedGeospace, GeospaceSearchResult} from "../../../api/geospaces/types";

@@ -219,6 +219,7 @@ export const addClickHandler = (ev: LeafletMouseEvent, map: L.Map, layer: any, s
 
 export const removeAllFeatureLayers = (map: L.Map) => {
   map.eachLayer((layer: any) => {
+    console.log(layer)
     if(!layer._url && !layer._loading) {
       layer.remove();
     }
