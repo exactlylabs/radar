@@ -25,6 +25,10 @@ abstract class NetworkConnectionInfoPlatform extends PlatformInterface {
   }
 
   Future<ConnectionInfo?> getNetworkConnectionInfo() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+    throw UnimplementedError('getNetworkConnectionInfo() has not been implemented.');
+  }
+
+  Future<ConnectionInfo?> getCellularNetworkConnectionInfo() {
+    throw UnimplementedError('getCellularNetworkConnectionInfo() has not been implemented.');
   }
 }

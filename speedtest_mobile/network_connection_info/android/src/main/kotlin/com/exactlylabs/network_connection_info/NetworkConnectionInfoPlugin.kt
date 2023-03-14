@@ -47,6 +47,10 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
                 val info = getConnectionInfo()
                 result.success(gson.toJson(info))
             }
+            "getCellularNetworkConnectionInfo" -> {
+                val info = forceCellularConnection()
+                result.success(gson.toJson(info))
+            }
             else -> {
                 result.notImplemented()
             }
@@ -61,35 +65,37 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
     private fun getConnectionInfo(): Map<String, Any?>? {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkCapabilities = connectivityManager.activeNetwork
-        val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return null
+        val network = connectivityManager.activeNetwork
+        val nwCap = connectivityManager.getNetworkCapabilities(network) ?: return null
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null;
         val connectionInfoJson: MutableMap<String, Any?> = HashMap()
         connectionInfoJson["platform"] = "Android"
-        return when {
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                val wifiConnectionInfo = WifiConnectionInfo(
-                    actNw.linkDownstreamBandwidthKbps,
-                    actNw.linkUpstreamBandwidthKbps,
-                    actNw.signalStrength,
-                    (actNw.transportInfo as WifiInfo).frequency,
-                    (actNw.transportInfo as WifiInfo).linkSpeed,
-                    (actNw.transportInfo as WifiInfo).rssi,
-                    (actNw.transportInfo as WifiInfo).rxLinkSpeedMbps,
-                    (actNw.transportInfo as WifiInfo).txLinkSpeedMbps,
-                )
+        when {
+            nwCap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
                 connectionInfoJson["connectionType"] = "WIFI"
-                connectionInfoJson["connectionInfo"] = wifiConnectionInfo.toJson()
-                return connectionInfoJson
+                connectionInfoJson["connectionInfo"] = getWifiConnectionInfo(nwCap).toJson()
             }
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+            nwCap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
                 connectionInfoJson["connectionType"] = "CELLULAR"
                 connectionInfoJson["connectionInfo"] = getCellularConnectionInfo()
                 return connectionInfoJson
             }
-            else -> null
         }
+        return connectionInfoJson
+    }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun getWifiConnectionInfo(nwCap: NetworkCapabilities): WifiConnectionInfo {
+        return WifiConnectionInfo(
+            nwCap.linkDownstreamBandwidthKbps,
+            nwCap.linkUpstreamBandwidthKbps,
+            nwCap.signalStrength,
+            (nwCap.transportInfo as WifiInfo).frequency,
+            (nwCap.transportInfo as WifiInfo).linkSpeed,
+            (nwCap.transportInfo as WifiInfo).rssi,
+            (nwCap.transportInfo as WifiInfo).rxLinkSpeedMbps,
+            (nwCap.transportInfo as WifiInfo).txLinkSpeedMbps,
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -107,5 +113,14 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
             telephonyManager.networkOperatorName,
             telephonyManager.networkOperator
         ).toJson()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun forceCellularConnection(): Map<String, Any?> {
+        val connectionInfoJson: MutableMap<String, Any?> = HashMap()
+        connectionInfoJson["platform"] = "Android"
+        connectionInfoJson["connectionType"] = "CELLULAR"
+        connectionInfoJson["connectionInfo"] = getCellularConnectionInfo()?.toJson()
+        return connectionInfoJson
     }
 }

@@ -5,4 +5,8 @@ class NetworkConnectionInfo {
   Future<ConnectionInfo?> getNetworkConnectionInfo() {
     return NetworkConnectionInfoPlatform.instance.getNetworkConnectionInfo();
   }
+
+  Future<ConnectionInfo?> getCellularNetworkConnectionInfo() {
+    return NetworkConnectionInfoPlatform.instance.getCellularNetworkConnectionInfo();
+  }
 }
