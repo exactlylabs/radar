@@ -51,8 +51,6 @@ class ProcessMeasurementJob < ApplicationJob
     measurement.save
     measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes + measurement.upload_total_bytes)
   
-    # Only update client's test_requested status once the actual measurement was already processed
-    measurement.client.update(test_requested: false)
     if measurement.location.present?
       measurement.location.recalculate_averages!
     end
