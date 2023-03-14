@@ -41,6 +41,8 @@ class ClientMeasurementsController < ApplicationController
     @measurement.ip = request.ip
     if @client.test_requested
       @client.schedule_next_test!
+      @client.test_requested = false
+      @client.save!
     end
 
     location = @client.location
