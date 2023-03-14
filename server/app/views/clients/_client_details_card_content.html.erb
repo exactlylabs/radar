@@ -21,7 +21,7 @@
     </div>
     <div class="card-title--title-content">
       <p class="fw-bolder" style="margin: 0 0 5px 0; font-size: 19px;" id="client_<%= client.id %>_name<%= small ? '_small' : ''%>">
-        <%= client.name %>
+        <%= client.name.present? ? client.name : "Unnamed Pod" %>
       </p>
       <div style="margin-bottom: 10px;color: #b5b5c3;font-size: 14px;">
         <%= client.unix_user %>

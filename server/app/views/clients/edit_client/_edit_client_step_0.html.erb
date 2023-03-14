@@ -82,6 +82,8 @@
                 data-remove-searchbar="true"
                 data-select2-blanks-value="true"
         >
+          <option></option>
+          <option>&nbsp;</option>
           <% policy_scope(Location).each do |location|%>
             <%= render partial: "clients/client_location", locals: { location: location, selected: location == @client.location } %>
           <% end %>

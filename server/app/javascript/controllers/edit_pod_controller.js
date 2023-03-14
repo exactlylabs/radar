@@ -57,6 +57,11 @@ export default class extends Controller {
           // empty current locations dropdown
           locationsDropdownSelector.empty();
           // populate with new locations received
+          const placeholderOption = document.createElement('option');
+          const emptyOption = document.createElement('option');
+          emptyOption.innerText = '\xA0';
+          locationsDropdownSelector.append(placeholderOption);
+          locationsDropdownSelector.append(emptyOption);
           res.forEach((location) => {
             const currentLocationOption = new Option(
               location.text,
