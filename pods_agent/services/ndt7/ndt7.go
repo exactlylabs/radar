@@ -11,14 +11,14 @@ import (
 	"time"
 
 	"github.com/exactlylabs/radar/pods_agent/agent"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/m-lab/ndt7-client-go"
 	"github.com/m-lab/ndt7-client-go/spec"
 	"golang.org/x/sys/cpu"
 )
 
 const (
-	clientName    string = "exactlylabs-radar"
-	clientVersion string = "0.0.1"
+	clientName string = "exactlylabs-radar-pods"
 )
 
 type measurementValue struct {
@@ -104,7 +104,7 @@ func (r *ndt7Runner) Type() string {
 func (r *ndt7Runner) Run(ctx context.Context) (*agent.Measurement, error) {
 	log.Println("NDT7 - Starting Speed Test")
 	log.Println("NDT7 - Starting Download Test")
-	client := ndt7.NewClient(clientName, clientVersion)
+	client := ndt7.NewClient(clientName, sysinfo.Metadata().Version)
 	client.Scheme = defaultSchemeForArch()
 	b := &bytes.Buffer{}
 	err := r.runTest(ctx, b, client.StartDownload)

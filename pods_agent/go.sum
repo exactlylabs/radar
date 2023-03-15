@@ -266,6 +266,8 @@ github.com/m-lab/ndt-server v0.20.10 h1:TxqpeTiiQ4tnBdGTLqUcAzhrTuNjtiythc/z3wFe
 github.com/m-lab/ndt-server v0.20.10/go.mod h1:SPxJ8N+fvvA1G1tw5vioVg/pzAsZqOiVUCe7Pz6kvhk=
 github.com/m-lab/ndt7-client-go v0.6.2 h1:kul0cvnbqnT0RZGdn4gYsmS9/WP5eKdLZhMlhFZmuGU=
 github.com/m-lab/ndt7-client-go v0.6.2/go.mod h1:6Gx02Kunote/IyCIYC4ctnrfAczFtQeANoz9wUWdLPI=
+github.com/m-lab/ndt7-client-go v0.7.0 h1:mQ4cl79U/NIrvO0O3+0lrlVfNicnjIfqf/oXwUvmh2k=
+github.com/m-lab/ndt7-client-go v0.7.0/go.mod h1:6Gx02Kunote/IyCIYC4ctnrfAczFtQeANoz9wUWdLPI=
 github.com/m-lab/tcp-info v1.5.2/go.mod h1:bkvI4qbjB6QVC2tsLSHqf5OnIYcmuLEVjo7+8YA56Kg=
 github.com/m-lab/tcp-info v1.5.3 h1:4IspTPcNc8D8LNRvuFnID8gDiz+hxPAtYvpKZaiGGe8=
 github.com/m-lab/tcp-info v1.5.3/go.mod h1:bkvI4qbjB6QVC2tsLSHqf5OnIYcmuLEVjo7+8YA56Kg=

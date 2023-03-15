@@ -49,32 +49,32 @@ done
 
 if [ $GOOS = "linux" ]; then
     if [ $GOARCH = "amd64" ]; then
-        URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1-linux-x86_64.tgz"
-        TARNAME="ookla-speedtest-1.1.1-linux-x86_64.tgz"
+        URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-x86_64.tgz"
+        TARNAME="ookla-speedtest-1.2.0-linux-x86_64.tgz"
 
     elif [ $GOARCH = "386" ]; then
-        URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1-linux-i386.tgz"
-        TARNAME="ookla-speedtest-1.1.1-linux-i386.tgz"
+        URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-i386.tgz"
+        TARNAME="ookla-speedtest-1.2.0-linux-i386.tgz"
 
     elif [ $GOARCH = "arm" ]; then
-        URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1-linux-armhf.tgz"
-        TARNAME="ookla-speedtest-1.1.1-linux-armhf.tgz"
+        URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-armhf.tgz"
+        TARNAME="ookla-speedtest-1.2.0-linux-armhf.tgz"
 
     elif [ $GOARCH = "arm64" ]; then
-        URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1-linux-aarch64.tgz"
-        TARNAME="ookla-speedtest-1.1.1-linux-aarch64.tgz"
+        URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-aarch64.tgz"
+        TARNAME="ookla-speedtest-1.2.0-linux-aarch64.tgz"
 
     fi
 
 elif [ $GOOS = "windows" ]; then
-    URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1-win64.zip"
+    URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-win64.zip"
     BIN_NAME="speedtest.exe"
     TARGET_NAME="ookla.exe"
-    TARNAME="ookla-speedtest-1.1.1-win64.zip"
+    TARNAME="ookla-speedtest-1.2.0-win64.zip"
 
 elif [ $GOOS = "darwin" ]; then
-    URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1.84-macosx-x86_64.tgz"
-    TARNAME="ookla-speedtest-1.1.1.84-macosx-x86_64.tgz"
+    URL="https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-macosx-universal.tgz"
+    TARNAME="ookla-speedtest-1.2.0.84-macosx-x86_64.tgz"
 fi
 
 if [ -z URL ]; then

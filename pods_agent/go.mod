@@ -9,7 +9,7 @@ require (
 	github.com/hectane/go-acl v0.0.0-20190604041725-da78bae5fc95
 	github.com/joho/godotenv v1.4.0
 	github.com/kardianos/service v1.2.1
-	github.com/m-lab/ndt7-client-go v0.6.2
+	github.com/m-lab/ndt7-client-go v0.7.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/stretchr/testify v1.8.0
 	golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec

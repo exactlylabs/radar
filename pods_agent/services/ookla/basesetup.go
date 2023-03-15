@@ -11,7 +11,7 @@ import (
 // executable for running the speedtest
 func createOoklaBinary() {
 	binary := ooklaBinary
-	f, err := config.OpenFile(binaryFilename, os.O_WRONLY|os.O_CREATE, 0755)
+	f, err := config.OpenFile(binaryFilename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		panic(fmt.Errorf("setup.validateOoklaBinary error opening bin file: %w", err))
 	}
