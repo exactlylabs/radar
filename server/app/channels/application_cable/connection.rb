@@ -56,6 +56,7 @@ module ApplicationCable
       if request.user_agent.starts_with? "RadarPodsAgent"
         self.client.online = true
         self.client.ip = request.remote_ip
+        self.client.pinged_at = Time.now
         self.client.save!
       end
     end
