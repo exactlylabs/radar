@@ -36,6 +36,15 @@ workflows:
               only: "/^agent-.*/"
             branches:
               ignore: "/^.*/"
+      
+      - continuation/continue:
+          name: "Setup Watchdog Tag Workflows"
+          configuration_path: pods_agent/.circleci/config.yml
+          filters:
+            tags:
+              only: "/^watchdog-.*/"
+            branches:
+              ignore: "/^.*/"
 
       - continuation/continue:
           name: "Setup Mobile App Tag Workflows"
