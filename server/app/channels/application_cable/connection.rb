@@ -63,8 +63,12 @@ module ApplicationCable
 
     def on_client_disconnected
       if request.user_agent.starts_with? "RadarPodsAgent"
-        self.client.online = false
-        self.client.save!
+        # if the connection is dropped, it's possible that this was already set to offline by our clock.rb process
+        self.client.reload
+        if self.client.online
+          self.client.online = false
+          self.client.save!
+        end
       end
     end
   end
