@@ -53,7 +53,7 @@ class PodAgentChannel < ApplicationCable::Channel
     # Action called by the agent, right after it has finished the connection + subscriptions setup
     # This syncs the current Client model with the data from the pod as well as checks if there are any outstanding speed test or updates
     # If there is, it publishes through the subscription a new test/update request
-    
+    data = data["payload"]
     # Check client Version Id
     version_ids = ClientVersion.where(version: data["version"]).pluck(:id)
     if version_ids.length == 0

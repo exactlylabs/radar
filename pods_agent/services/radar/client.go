@@ -152,9 +152,21 @@ func (c *RadarClient) handleCustomMessage(msg cable.ServerMessage) {
 }
 
 func (c *RadarClient) sendSync() {
+	meta := sysinfo.Metadata()
+	payload := messages.Sync{
+		OSVersion:         runtime.GOOS,
+		HardwarePlatform:  runtime.GOARCH,
+		ServiceFirstPing:  firstPing,
+		Distribution:      meta.Distribution,
+		Version:           meta.Version,
+		NetInterfaces:     meta.NetInterfaces,
+		WatchdogVersion:   meta.WatchdogVersion,
+		RegistrationToken: meta.RegistrationToken,
+	}
+
 	c.channel.SendAction(cable.CustomActionData{
 		Action:  Sync,
-		Payload: sysinfo.Metadata(), // this should be decoupled?
+		Payload: payload, // this should be decoupled?
 	})
 }
 

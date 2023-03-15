@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"runtime"
 	"strings"
 
 	"github.com/exactlylabs/radar/pods_agent/services/radar/cable"
@@ -125,9 +126,21 @@ func (c *RadarWatchdogClient) handleCustomMessage(msg cable.ServerMessage) {
 }
 
 func (c *RadarWatchdogClient) sendSync() {
+	meta := sysinfo.Metadata()
+	payload := messages.Sync{
+		OSVersion:         runtime.GOOS,
+		HardwarePlatform:  runtime.GOARCH,
+		ServiceFirstPing:  firstPing,
+		Distribution:      meta.Distribution,
+		Version:           meta.Version,
+		NetInterfaces:     meta.NetInterfaces,
+		WatchdogVersion:   meta.WatchdogVersion,
+		RegistrationToken: meta.RegistrationToken,
+	}
+
 	c.channel.SendAction(cable.CustomActionData{
 		Action:  Sync,
-		Payload: sysinfo.Metadata(), // this should be decoupled?
+		Payload: payload,
 	})
 }
 
