@@ -142,6 +142,7 @@ func (c *RadarWatchdogClient) sendSync() {
 		Action:  Sync,
 		Payload: payload,
 	})
+	firstPing = false
 }
 
 func (c *RadarWatchdogClient) WatchdogPing(meta *sysinfo.ClientMeta) (*watchdog.ServerMessage, error) {

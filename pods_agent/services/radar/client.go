@@ -168,6 +168,7 @@ func (c *RadarClient) sendSync() {
 		Action:  Sync,
 		Payload: payload, // this should be decoupled?
 	})
+	firstPing = false
 }
 
 func (c *RadarClient) sendPong() {
