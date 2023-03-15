@@ -5,7 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiInfo
 import android.os.Build
-import android.telephony.*
+import android.telephony.TelephonyManager
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import com.exactlylabs.network_connection_info.models.CellularConnectionInfo
@@ -29,6 +29,13 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
     private lateinit var channel: MethodChannel
     private lateinit var telephonyManager: TelephonyManager
     private lateinit var context: Context
+
+    private val WIFI = "WIFI"
+    private val ANDROID = "Android"
+    private val CELLULAR = "CELLULAR"
+    private val PLATFORM = "platform"
+    private val CONNECTION_TYPE = "connectionType"
+    private val CONNECTION_INFO = "connectionInfo"
 
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -69,15 +76,15 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
         val nwCap = connectivityManager.getNetworkCapabilities(network) ?: return null
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null;
         val connectionInfoJson: MutableMap<String, Any?> = HashMap()
-        connectionInfoJson["platform"] = "Android"
+        connectionInfoJson[PLATFORM] = ANDROID
         when {
             nwCap.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                connectionInfoJson["connectionType"] = "WIFI"
-                connectionInfoJson["connectionInfo"] = getWifiConnectionInfo(nwCap)
+                connectionInfoJson[CONNECTION_TYPE] = WIFI
+                connectionInfoJson[CONNECTION_INFO] = getWifiConnectionInfo(nwCap)
             }
             nwCap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                connectionInfoJson["connectionType"] = "CELLULAR"
-                connectionInfoJson["connectionInfo"] = getCellularConnectionInfo()
+                connectionInfoJson[CONNECTION_TYPE] = CELLULAR
+                connectionInfoJson[CONNECTION_INFO] = getCellularConnectionInfo()
                 return connectionInfoJson
             }
         }
@@ -118,9 +125,9 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun forceCellularConnection(): Map<String, Any?> {
         val connectionInfoJson: MutableMap<String, Any?> = HashMap()
-        connectionInfoJson["platform"] = "Android"
-        connectionInfoJson["connectionType"] = "CELLULAR"
-        connectionInfoJson["connectionInfo"] = getCellularConnectionInfo()
+        connectionInfoJson[PLATFORM] = ANDROID
+        connectionInfoJson[CONNECTION_TYPE] = CELLULAR
+        connectionInfoJson[CONNECTION_INFO] = getCellularConnectionInfo()
         return connectionInfoJson
     }
 }
