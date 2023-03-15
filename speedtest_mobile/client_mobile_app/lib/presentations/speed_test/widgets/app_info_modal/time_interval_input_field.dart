@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 
@@ -6,12 +7,12 @@ class TimeIntervalInputField extends StatefulWidget {
     Key? key,
     this.delay,
     this.onChanged,
-    this.onUnfocus,
+    this.onBlur,
   }) : super(key: key);
 
   final int? delay;
   final Function(String)? onChanged;
-  final VoidCallback? onUnfocus;
+  final VoidCallback? onBlur;
 
   @override
   State<TimeIntervalInputField> createState() => _TimeIntervalInputFieldState();
@@ -33,7 +34,7 @@ class _TimeIntervalInputFieldState extends State<TimeIntervalInputField> {
   void addListener() {
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
-        widget.onUnfocus?.call();
+        widget.onBlur?.call();
       }
     });
   }
@@ -86,7 +87,7 @@ class _TimeIntervalInputFieldState extends State<TimeIntervalInputField> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'mins',
+                Strings.timeIntervalInputSufix,
                 style: AppTextStyle(
                   fontSize: 15.0,
                   color: Theme.of(context).colorScheme.primary,

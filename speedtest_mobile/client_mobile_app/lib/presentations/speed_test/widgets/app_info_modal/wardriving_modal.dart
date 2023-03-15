@@ -27,7 +27,7 @@ class WardrivingModal extends StatelessWidget {
             Navigator.of(context).pop();
           }
         },
-        onUnfocus: () => context.read<AppInfoModalCubit>().validateDelay(),
+        onBlur: () => context.read<AppInfoModalCubit>().validateDelay(),
         delay: state.delay,
         warning: state.warning,
       ),
