@@ -29,7 +29,7 @@ const (
 	RadarServerChannelName = "PodAgentChannel"
 )
 
-var AgentUserAgent = "RadarPodsAgent/" + sysinfo.Metadata().Version
+var AgentUserAgent = "RadarPodsAgent/"
 
 const (
 	Sync cable.CustomActionTypes = "sync"
@@ -68,7 +68,7 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 		return fmt.Errorf("radar.RadarClient#Connect: clientId and secret cannot be empty")
 	}
 	header := http.Header{}
-	header.Set("User-Agent", AgentUserAgent)
+	header.Set("User-Agent", AgentUserAgent+sysinfo.Metadata().Version)
 	// Setting a header that is in the Forbidden Header Name -- Basically, any header starting with Sec-
 	// https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
 	header.Set("Sec-Radar-Tool", "true")

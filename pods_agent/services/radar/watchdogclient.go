@@ -23,7 +23,7 @@ const (
 	WatchdogChannelName = "WatchdogChannel"
 )
 
-var WatchdogUserAgent = "RadarPodsWatchdog/" + sysinfo.Metadata().Version
+var WatchdogUserAgent = "RadarPodsWatchdog/"
 
 const (
 	UpdateWatchdog cable.MessageType = "update" // Custom Type, when requested, the agent should update itself
@@ -49,7 +49,7 @@ func NewWatchdogClient(serverURL, clientID, secret string) *RadarWatchdogClient 
 
 func (c *RadarWatchdogClient) Connect(ctx context.Context, ch chan<- watchdog.ServerMessage) error {
 	h := http.Header{}
-	h.Set("User-Agent", WatchdogUserAgent)
+	h.Set("User-Agent", WatchdogUserAgent+sysinfo.Metadata().Version)
 	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), WatchdogChannelName, h)
 	c.returnCh = ch
 	c.channel.OnSubscriptionMessage = c.handleSubscriptionMessage
