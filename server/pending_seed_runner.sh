@@ -6,5 +6,3 @@
 # This script must be run from the root directory.
 # Whenever we add a new seed file, we need this file to get updated as well
 
-rails runner db/custom_seeds/seed_fill_location_events.rb
-rails runner db/custom_seeds/seed_migrate_client_events.rb
