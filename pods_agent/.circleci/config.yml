@@ -265,7 +265,7 @@ workflows:
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)/
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
 
@@ -274,7 +274,7 @@ workflows:
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)/
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
           matrix:
@@ -291,7 +291,7 @@ workflows:
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)/
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
           matrix:
@@ -306,7 +306,7 @@ workflows:
           workspace_file_name: radar-agent*amd64*.deb
           filters:
             tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)/
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
           requires: [deb_package-amd64]
@@ -321,7 +321,7 @@ workflows:
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)/
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
           matrix:
@@ -344,13 +344,13 @@ workflows:
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)/
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
       - notarize_pkg:
           filters:
             tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)/
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
           requires: [pkg_package]
@@ -373,7 +373,7 @@ workflows:
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           filters:
             tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)/
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
       - upload_package:
