@@ -406,6 +406,9 @@ class Client < ApplicationRecord
   end
 
   def has_watchdog_update?
+    if self.raw_watchdog_version == "Dev"
+      return false
+    end
     # This query bellow is an attempt to avoid deserializing UpdateGroup and WatchdogVersion objects when not necessary
     return WatchdogVersion.joins(
       :update_groups

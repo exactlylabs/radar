@@ -1,7 +1,7 @@
 class WatchdogVersion < ApplicationRecord
     has_many :clients, dependent: :nullify
     has_many :update_groups, dependent: :restrict_with_exception
-    validates :version, uniqueness: true, presence: true, format: {with: /\A(?:\d+\.){2}\d+\z/}
+    validates :version, uniqueness: true, presence: true, format: {with: /\A(?:\d+\.){2}\d+(?:r\d+)?\z/}
 
     has_one_attached :signed_binary
     has_one_attached :binary

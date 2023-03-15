@@ -3,7 +3,7 @@ class ClientVersion < ApplicationRecord
     has_many :update_groups, dependent: :restrict_with_exception
     has_many :distributions, dependent: :restrict_with_exception
     has_many :packages, dependent: :restrict_with_exception
-    validates :version, uniqueness: true, presence: true, format: {with: /\A(?:\d+\.){2}\d+\z/}
+    validates :version, uniqueness: true, presence: true, format: {with: /\A(?:\d+\.){2}\d+(?:r\d+)?\z/}
 
     def is_higher?(other)
         other.version.gsub(".", "").to_i < self.version.gsub(".", "").to_i
