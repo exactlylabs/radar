@@ -390,7 +390,7 @@ workflows:
           version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
           filters:
             tags:
-              only: /^watchdog-(?:\d+\.){2}\d+/
+              only: /^watchdog-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
 
@@ -399,6 +399,6 @@ workflows:
           version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
           filters:
             tags:
-              only: /^watchdog-(?:\d+\.){2}\d+/
+              only: /^watchdog-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
