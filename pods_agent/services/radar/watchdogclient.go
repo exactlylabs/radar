@@ -50,6 +50,9 @@ func NewWatchdogClient(serverURL, clientID, secret string) *RadarWatchdogClient 
 func (c *RadarWatchdogClient) Connect(ctx context.Context, ch chan<- watchdog.ServerMessage) error {
 	h := http.Header{}
 	h.Set("User-Agent", WatchdogUserAgent+sysinfo.Metadata().Version)
+	// Setting a header that is in the Forbidden Header Name -- Basically, any header starting with Sec-
+	// https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
+	h.Set("Sec-Radar-Tool", "true")
 	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), WatchdogChannelName, h)
 	c.returnCh = ch
 	c.channel.OnSubscriptionMessage = c.handleSubscriptionMessage
