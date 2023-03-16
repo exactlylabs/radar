@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {
   DEFAULT_BLUE_BUTTON_BACKGROUND_COLOR,
   TRANSPARENT, WHITE
@@ -13,6 +13,13 @@ const myCheckboxStyle = {
   backgroundColor: TRANSPARENT,
   marginRight: 10,
   cursor: 'pointer',
+}
+
+const myCheckedCheckboxStyle = {
+  ...myCheckboxStyle,
+  border: 'none',
+  height: 22,
+  width: 22,
 }
 
 const checkedInsideStyle = {
@@ -31,13 +38,17 @@ const MyCheckbox = ({onChange, isChecked}) => {
 
   const [selected, setSelected] = useState(isChecked);
 
+  useEffect(() => {
+    setSelected(isChecked);
+  }, [isChecked]);
+
   const handleOnChange = () => {
     onChange(!selected);
     setSelected(!selected);
   }
 
   return (
-    <div style={myCheckboxStyle} onClick={handleOnChange}>
+    <div style={isChecked ? myCheckedCheckboxStyle : myCheckboxStyle} onClick={handleOnChange}>
       {
         selected &&
         <div style={checkedInsideStyle}>

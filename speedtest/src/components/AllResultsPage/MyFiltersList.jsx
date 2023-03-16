@@ -40,19 +40,25 @@ const MyFiltersList = ({
                           onClick={toggleFilterWithZero}
                           state={'(Unserved)'}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(0)}
-                          range={DOWNLOAD_RANGES[0]}/>
+                          range={DOWNLOAD_RANGES[0]}
+                          filterTextWidth={'80px'}
+          />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_MID}
                           selected={selectedRangeIndexes.includes(1)}
                           onClick={toggleFilterWithOne}
                           state={'(Underserved)'}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(1)}
-                          range={DOWNLOAD_RANGES[1]}/>
+                          range={DOWNLOAD_RANGES[1]}
+                          filterTextWidth={'96px'}
+          />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_HIGH}
                           selected={selectedRangeIndexes.includes(2)}
                           onClick={toggleFilterWithTwo}
                           state={'(Other)'}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(2)}
-                          range={DOWNLOAD_RANGES[2]}/>
+                          range={DOWNLOAD_RANGES[2]}
+                          filterTextWidth={'78px'}
+          />
         </div>
       }
       {
@@ -63,19 +69,25 @@ const MyFiltersList = ({
                           onClick={toggleFilterWithZero}
                           state={'(Unserved)'}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(0)}
-                          range={UPLOAD_RANGES[0]}/>
+                          range={UPLOAD_RANGES[0]}
+                          filterTextWidth={'71px'}
+          />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_MID}
                           selected={selectedRangeIndexes.includes(1)}
                           onClick={toggleFilterWithOne}
                           state={'(Underserved)'}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(1)}
-                          range={UPLOAD_RANGES[1]}/>
+                          range={UPLOAD_RANGES[1]}
+                          filterTextWidth={'80px'}
+          />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_HIGH}
                           selected={selectedRangeIndexes.includes(2)}
                           onClick={toggleFilterWithTwo}
                           state={'(Other)'}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(2)}
-                          range={UPLOAD_RANGES[2]}/>
+                          range={UPLOAD_RANGES[2]}
+                          filterTextWidth={'70px'}
+          />
         </div>
       }
     </div>

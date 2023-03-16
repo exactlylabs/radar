@@ -7,6 +7,7 @@ import MenuCloseButton from '../../assets/menu-close-button.png';
 import MenuOpenButton from '../../assets/menu-open-button.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import MyNavLink from "../common/MyNavLink";
+import {CustomNarrowButton} from "../common/CustomNarrowButton";
 
 const headerStyle = {
   backgroundColor: DEFAULT_HEADER_BACKGROUND_COLOR,
@@ -132,7 +133,7 @@ const Header = ({ setStep, isOverviewPage }) => {
                    style={menuCloseButtonStyle}
                    onClick={toggleMenu}
               /> :
-              <MyButton text={'Test your speed'} onClick={goToTestSpeed}/>
+              <CustomNarrowButton text={'Test your speed'} onClick={goToTestSpeed}/>
           }
         </div>
       </div>
@@ -143,7 +144,7 @@ const Header = ({ setStep, isOverviewPage }) => {
           <MyNavLink text={'Overview'} onClick={goToOverview} isCollapsed/>
           { isOverviewPage && <MyNavLink text={'Explore'} onClick={goToExplore} isCollapsed/> }
           <div style={horizontalDividerStyle}></div>
-          <MyButton text={'Test your speed'} onClick={goToTestSpeed}/>
+          <CustomNarrowButton text={'Test your speed'} onClick={goToTestSpeed}/>
         </div>
       }
     </div>

@@ -63,7 +63,10 @@ const StepsPage = ({
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
-  const setAddress = address => setUserStepData(prevState => ({...prevState, address}));
+  const setAddress = address => {
+    setError(false);
+    setUserStepData(prevState => ({...prevState, address}));
+  }
   const setTerms = status => setUserStepData({...userStepData, terms: status});
   const setNetworkLocation = index => setUserStepData({ ...userStepData, networkLocation: placementOptions[index] });
   const setNetworkType = index => {
@@ -237,6 +240,7 @@ const StepsPage = ({
       case STEPS.RUN_SPEED_TEST:
         return <SpeedTestStepPage userStepData={userStepData}
                                   goForward={goToPage6}
+                                  goBack={goToPage4}
         />;
       case STEPS.SPEED_TEST_RESULTS:
         return <SpeedTestResultsStepPage testResults={lastTestResults}

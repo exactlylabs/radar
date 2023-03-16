@@ -13,7 +13,8 @@ const footerStyle = {
 
 const SpeedTestStepPage = ({
   userStepData,
-  goForward
+  goForward,
+  goBack
 }) => {
 
   const [disabled, setDisabled] = useState(true);
@@ -46,7 +47,9 @@ const SpeedTestStepPage = ({
       <ConnectionInformation disabled={disabled} progress={testProgress} userStepData={userStepData}/>
       {
         disabled &&
-        <StartTestPrompt startTest={enableContent}/>
+        <StartTestPrompt startTest={enableContent}
+                         goBack={goBack}
+        />
       }
       {
         !disabled &&

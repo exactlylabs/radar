@@ -45,10 +45,11 @@ const commonTabTextStyle = {
   alignItems: 'center',
   justifyContent: 'space-between',
   color: DEFAULT_UNSELECTED_TAB_COLOR,
-  height: '100%',
   paddingLeft: 30,
   paddingRight: 30,
   fontSize: 15,
+  marginBottom: 9,
+  marginTop: 'auto'
 };
 
 const commonResponsiveTabTextStyle = {
@@ -77,6 +78,7 @@ const mobileSelectedTabTextStyle = {
 
 const selectedContentStyle = {
   color: DEFAULT_SELECTED_TAB_COLOR,
+  margin: 0
 }
 
 const exploreMapTabStyle = {
@@ -144,7 +146,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.SPEED_TEST ? 'speed-active' : 'speed-inactive'}
             />
-            <div className={'bold tab-item--hoverable'} style={selectedTab === TABS.SPEED_TEST ? selectedContentStyle : null}>Speed Test</div>
+            <p className={'bold tab-item--hoverable'} style={selectedTab === TABS.SPEED_TEST ? selectedContentStyle : null}>Speed Test</p>
           </div>
           <div style={selectedTab === TABS.SPEED_TEST ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>

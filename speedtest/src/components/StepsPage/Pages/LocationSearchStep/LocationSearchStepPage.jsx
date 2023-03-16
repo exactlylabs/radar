@@ -78,7 +78,7 @@ const LocationSearchStepPage = ({
   return (
     <div style={locationSearchStepStyle}>
       <MyTitle text={'What is your location?'}/>
-      <div style={subtitleStyle}>We’ll show your speed test results on the map.</div>
+      <div style={subtitleStyle}>Your location is used to compare your results to others in your region.</div>
       <MyAddressInput setAddress={setAddress}
                       handleContinue={handleContinue}
                       currentAddress={currentAddress}

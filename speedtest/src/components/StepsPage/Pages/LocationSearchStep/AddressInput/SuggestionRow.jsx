@@ -1,7 +1,8 @@
-import LocationIcon from '../../../../../assets/location-icon.png';
 import './SuggestionRow.css';
 import {useEffect} from "react";
 import {DEFAULT_TEXT_COLOR} from "../../../../../utils/colors";
+import LocationIcon from '../../../../../assets/location-icon.png';
+import BlueArrow from '../../../../../assets/icons-arrow-right-blue.png';
 
 const suggestionRowStyle = {
   width: '100%',
@@ -17,16 +18,33 @@ const suggestionRowStyle = {
 }
 
 const locationIconStyle = {
-  marginLeft: 15,
-  marginRight: 15
+  width: '32px',
+  height: '32px',
+  minWidth: '32px',
+  minHeight: '32px',
+  maxWidth: '32px',
+  maxHeight: '32px',
+  marginLeft: '12px',
+  marginRight: '10px'
 }
 
 const suggestionTextStyle = {
-  maxWidth: '87%',
+  maxWidth: '70%',
   width: 'max-content',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   overflow: 'hidden',
+}
+
+const rightArrowStyle = {
+  width: '14px',
+  height: '14px',
+  minWidth: '14px',
+  minHeight: '14px',
+  maxWidth: '14px',
+  maxHeight: '14px',
+  marginRight: '16px',
+  marginLeft: 'auto'
 }
 
 const SuggestionRow = ({
@@ -84,6 +102,7 @@ const SuggestionRow = ({
     >
       <img src={LocationIcon} width={11} height={15} alt={'Location-icon'} style={locationIconStyle}/>
       <div style={suggestionTextStyle} id={`row-${index}-text`}>{suggestion.address}</div>
+      <img src={BlueArrow} alt={'right arrow'} style={rightArrowStyle}/>
     </div>
   );
 }

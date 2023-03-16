@@ -1,0 +1,9 @@
+#address-input-container {
+	border: none;
+	height: 56px;
+}
+
+#address-input-container.address-input-container--focused {
+	height: 52px;
+	border: solid 2px rgba(75, 123, 229, 0.4);
+}
