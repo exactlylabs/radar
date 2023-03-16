@@ -1,4 +1,5 @@
 import { useMap } from 'react-leaflet';
+import {useEffect} from "react";
 
 // The idea here is to remove the Ukranian flag from map's attribution
 // and re-center map on marker click
@@ -12,20 +13,33 @@ export const MyMap = ({
   noZoomControl,
   userMapMovementHandler,
   userZoomHandler,
-  userOnMoveHandler
+  userOnMoveHandler,
+  setMap
 }) => {
   const map = useMap();
-  map.zoomControl = noZoomControl === undefined ? true : !noZoomControl;
-  // Reference: https://github.com/Leaflet/Leaflet/pull/8109
-  // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
-  map.attributionControl.setPrefix('');
-  map.on('popupclose', onPopupClose);
-  map.on('popupopen', onPopupOpen);
+
+  useEffect(() => {
+    // Handy reference to map on parent component to handle
+    // new requests with bounding box. Cannot use the useMap
+    // hook in parent component as the useMap hook requires
+    // usage in a child component of <MapContainer>
+    if(map) {
+      setMap(map);
+      map.zoomControl = noZoomControl === undefined ? true : !noZoomControl;
+      // Reference: https://github.com/Leaflet/Leaflet/pull/8109
+      // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
+      map.attributionControl.setPrefix('');
+      map.on('popupclose', onPopupClose);
+      map.on('popupopen', onPopupOpen);
+    }
+  }, [map]);
+
   if(shouldRecenter && position && !hasRecentered) {
     // Docs: https://leafletjs.com/reference.html#map-flyto
     map.flyTo(position, map.getZoom(), {animate: false});
     setHasRecentered(true);
   }
+
   if(userMapMovementHandler && userZoomHandler && userOnMoveHandler) {
     const moveHandler = () => userMapMovementHandler(map.getBounds());
     const zoomHandler = () => userZoomHandler(map.getBounds());
@@ -36,5 +50,6 @@ export const MyMap = ({
     if(map.listens('drag')) map.off('drag');
     map.on('drag', userOnMoveHandler);
   }
+
   return null;
 };

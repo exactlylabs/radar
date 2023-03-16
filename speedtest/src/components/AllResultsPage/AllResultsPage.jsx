@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, {useEffect, useState, useContext, useRef} from 'react';
 import { CircularProgress } from '@mui/material';
 import { MyButton } from '../common/MyButton';
 import {MapContainer, TileLayer, useMap} from 'react-leaflet';
@@ -55,10 +55,13 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
   const [initialZoom, setInitialZoom] = useState(givenZoom);
   const [isBoxOpen, setIsBoxOpen] = useState(true);
 
+  const [map, setMap] = useState(null);
+
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
   const {setNoInternet} = useContext(ConnectionContext);
   let timerId;
+
 
   useEffect(() => {
     const fetchUserApproximateCoordinates = async () => getUserApproximateCoordinates();
@@ -93,12 +96,15 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
   useEffect(() => {
     const fetchSpeedTests = async () => {
       setFetchingResults(true);
-      if(requestArea) {
+      if(!map && requestArea) {
         const [lat, lng] = requestArea;
         // Create bounding box
         const _southWest = {lat: lat - 2, lng: lng - 2};
         const _northEast = {lat: lat + 2, lng: lng + 2};
         fetchTestsWithBounds({_southWest, _northEast});
+      } else {
+        // Way more precise way of getting current bounding box
+        fetchTestsWithBounds(map.getBounds());
       }
     }
 
@@ -109,7 +115,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
         setError('Failed to fetch speed tests. Please try again later.');
       })
       .finally(() => setLoading(false));
-  }, [requestArea]);
+  }, [requestArea, map]);
 
   const filterResults = (selectedTab, filters, paramResults = null) => {
     let fullRange = [];
@@ -234,6 +240,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
                      userMapMovementHandler={userMapMovementHandler}
                      userZoomHandler={userZoomHandler}
                      userOnMoveHandler={userOnMoveHandler}
+                     setMap={setMap}
               />
             <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
             {results?.map(measurement => (

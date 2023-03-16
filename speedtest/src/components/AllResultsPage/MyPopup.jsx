@@ -16,7 +16,7 @@ import {placementOptions} from "../../utils/placements";
 import {types} from "../../utils/networkTypes";
 
 const popupOptions = {
-  keepInView: true,
+  keepInView: false,
   closeButton: false,
   maxWidth: 285,
   maxHeight: 220,
