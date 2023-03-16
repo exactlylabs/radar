@@ -38,7 +38,6 @@ class AllExportsJob < ApplicationJob
 
     # Remove from pending downloads array, to keep track of missing processing
     user.update(pending_downloads: user.pending_downloads.delete(filename))
-    sleep 90
     # Send back file url to client in case they are online, to fire an automatic download
     url = Rails.application.routes.url_helpers.rails_blob_path(user.downloads.last, only_path: true)
     url = origin + url
