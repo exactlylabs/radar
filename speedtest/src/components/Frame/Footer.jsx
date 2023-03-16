@@ -1,6 +1,6 @@
 import {
   DEFAULT_FOOTER_BACKGROUND_COLOR,
-  DEFAULT_FOOTER_FONT_COLOR, DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR
+  DEFAULT_FOOTER_FONT_COLOR, DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR, FOOTER_BOX_SHADOW
 } from '../../utils/colors';
 import anthcLogo from '../../assets/anthc-logo.png';
 import exactlyLogo from '../../assets/exactly-logo.png';
@@ -11,6 +11,7 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 const footerStyle = {
   height: 173,
   backgroundColor: DEFAULT_FOOTER_BACKGROUND_COLOR,
+  boxShadow: `0 0 10px 0 ${FOOTER_BOX_SHADOW}`
 };
 
 const contentWrapperStyle = {
@@ -36,7 +37,7 @@ const rightSideContainerStyle = {
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-end',
-  margin: '35px 0 auto auto',
+  margin: '31px 0 auto auto',
   alignItems: 'center',
 };
 
@@ -92,6 +93,7 @@ const footerLinkStyle = (isSmall, isMedium) => {
 const copyrightStyle = {
   fontSize: 14,
   marginBottom: 30,
+  lineHeight: '25px',
   color: DEFAULT_FOOTER_FONT_COLOR
 }
 
@@ -115,6 +117,10 @@ const FooterHorizontalDivider = () => <div style={horizontalDividerStyle}></div>
 /*const anthcLogoStyle = {
   marginRight: 48,
 };*/
+
+const footerLogoStyle = {
+  marginRight: 60
+}
 
 const Footer = () => {
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
@@ -145,7 +151,7 @@ const Footer = () => {
       <div style={contentWrapperStyle}>
         <div style={leftSideContainerStyle}>
           <div className={'bold'} style={leftSideTopRowStyle}>
-            <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={{ marginRight: 20 }} />
+            <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={footerLogoStyle} />
             <a className={'bold regular-link--hoverable'}
                style={footerLinkStyle(isSmallSizeScreen, isMediumSizeScreen)}
                href={'https://radartoolkit.com/privacy-policy'}

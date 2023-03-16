@@ -5,7 +5,7 @@ import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const stepperContainerStyle = {
   width: '30%',
-  margin: '50px auto 20px',
+  margin: '10px auto 20px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',

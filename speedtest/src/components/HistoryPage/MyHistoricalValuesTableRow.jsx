@@ -105,7 +105,7 @@ const MyHistoricalValuesTableRow = ({
 
   const getNetworkTypeIcon = () => {
     const networkType = types.find(type => type.text === measurement.networkType);
-    return networkType.iconSelectedSrc;
+    return networkType.iconSelectedThickSrc;
   }
 
   const getMbpsText = possibleValue => {
@@ -143,6 +143,13 @@ const MyHistoricalValuesTableRow = ({
 
   const openInfoModal = () => openMeasurementInfoModal(measurement);
 
+  const getAddress = () => {
+    if(!measurement.city && !measurement.state) return 'Unavailable';
+    if(!measurement.city) return measurement.state;
+    if(!measurement.state) return measurement.city;
+    return `${measurement.city}, ${measurement.state}`
+  }
+
   return (
     <div style={{...historicalValuesTableRowStyle, backgroundColor: isEven ? HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR : TRANSPARENT}}>
       <div style={networkTypeColumStyle}>
@@ -176,7 +183,7 @@ const MyHistoricalValuesTableRow = ({
       {
         (!isSmallSizeScreen && !isMediumSizeScreen) &&
         <div style={locationColumnStyle}>
-          <p style={ellipsisStyle}>{`${measurement.city}, ${measurement.state}`}</p>
+          <p style={ellipsisStyle}>{getAddress()}</p>
         </div>
       }
       {

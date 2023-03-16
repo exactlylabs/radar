@@ -54,6 +54,7 @@ const termsStyle = {
   alignItems: 'center',
   position: 'relative',
   zIndex: 5,
+  cursor: 'pointer'
 }
 
 const termsTextStyle = {
@@ -162,6 +163,8 @@ const InitialStepPage = ({terms, setTerms, goToNextPage, error}) => {
 
   const handleSetTerms = checked => setTerms(checked);
 
+  const toggleTerms = () => setTerms(!terms);
+
   return (
     <div style={initialStepPageStyle}>
       <div style={isSmall ? smallContentWrapperStyle : contentWrapperStyle}>
@@ -169,7 +172,7 @@ const InitialStepPage = ({terms, setTerms, goToNextPage, error}) => {
           <img src={initialHeroIcon} alt={'initial screen hero icon'} style={heroIcon}/>
           <p className={'extra-bold'} style={isSmall ? smallTitleStyle : titleStyle}>Test your Internet speed</p>
           <p style={isSmall ? smallSubtitleStyle : subtitleStyle}>We’ll ask you a few questions to better understand where and how you’re connected so we can learn more about your current service.</p>
-          <div style={{...termsStyle, marginBottom: error ? '-10px' : '35px'}}>
+          <div style={{...termsStyle, marginBottom: error ? '-10px' : '35px'}} onClick={toggleTerms}>
             <MyCheckbox onChange={handleSetTerms} isChecked={terms}/>
             <p style={termsTextStyle}>I agree to the Radar’s <a className={'opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>.</p>
           </div>

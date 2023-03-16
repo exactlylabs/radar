@@ -21,7 +21,7 @@ const CostInputContainer = ({
 }) => {
 
   const subtractTen = () => {
-    if(cost === null || cost === undefined) return;
+    if(!cost || cost === '0.00') return;
     const newCost = parseFloat(cost) - 10;
     if(newCost < 0) setCost('');
     else setCost(newCost.toFixed(2));
@@ -29,7 +29,8 @@ const CostInputContainer = ({
 
   const addTen = () => {
     if(!cost) {
-      setCost(10);
+      const ten = 10;
+      setCost(ten.toFixed(2));
       return;
     }
     const newCost = parseFloat(cost) + 10;

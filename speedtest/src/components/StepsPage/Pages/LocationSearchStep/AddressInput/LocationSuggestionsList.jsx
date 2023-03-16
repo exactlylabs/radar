@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import SuggestionRow from "./SuggestionRow";
-import {WHITE} from "../../../../../utils/colors";
+import {DEFAULT_MODAL_BOX_SHADOW, WHITE} from "../../../../../utils/colors";
 
 const invisibleStyle = {
   display: 'none',
@@ -18,7 +18,8 @@ const suggestionsContainerStyle = {
   left: '50%',
   transform: 'translate(-50%, -35px)',
   maxHeight: 250,
-  zIndex: 10
+  zIndex: 10,
+  boxShadow: `0 4px 15px -2px ${DEFAULT_MODAL_BOX_SHADOW}`
 }
 
 const emptySuggestionStyle = {

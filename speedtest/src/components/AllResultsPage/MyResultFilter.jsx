@@ -62,7 +62,8 @@ const MyResultFilter = ({
   selected,
   onClick,
   state,
-  opaque
+  opaque,
+  filterTextWidth
 }) => {
 
   const getRangeText = () => {
@@ -79,7 +80,7 @@ const MyResultFilter = ({
           {selected && <Check sx={checkIconSX}/>}
         </div>
       </div>
-      <div className={selected ? 'bold' : ''} style={filterTextStyle}>{getRangeText()}</div>
+      <div className={selected ? 'bold' : ''} style={{...filterTextStyle, width: filterTextWidth}}>{getRangeText()}</div>
       <div style={stateStyle}>{state}</div>
     </div>
   )

@@ -15,17 +15,16 @@ import {getAddressForCoordinates, getSuggestions} from "../../../../../utils/api
 import {isNoConnectionError, notifyError} from "../../../../../utils/errors";
 import {emptyAddress} from "../../../StepsPage";
 import ConnectionContext from "../../../../../context/ConnectionContext";
+import './MyAddressInput.css';
 
 const addressInputWrapperStyle = {
   width: '80%',
   maxWidth: 400,
-  height: 56,
   display: 'flex',
   alignItems: 'center',
-  border: 'none',
   borderRadius: 16,
   backgroundColor: DEFAULT_ADDRESS_INPUT_BACKGROUND_COLOR,
-  margin: '30px auto 10px',
+  margin: '30px auto 15px',
   position: 'relative'
 }
 
@@ -154,6 +153,8 @@ const MyAddressInput = ({
   }
 
   const handleOpenSuggestions = () => {
+    const wrapperElement = document.getElementById('address-input-container');
+    if(wrapperElement) wrapperElement.classList.add('address-input-container--focused');
     const currentInputValue = document.getElementById('address-input').value;
     if(!!currentInputValue) {
       setSuggestionsListOpen(true);
@@ -214,9 +215,15 @@ const MyAddressInput = ({
     else return 'There has been an unexpected error. Please try again later.';
   }
 
+  const handleBlurInput = () => {
+    const wrapperElement = document.getElementById('address-input-container');
+    if(wrapperElement && wrapperElement.classList.contains('address-input-container--focused'))
+      wrapperElement.classList.remove('address-input-container--focused');
+  }
+
   return (
     <div id={'address-input-wrapper'}>
-      <div style={addressInputWrapperStyle}>
+      <div style={addressInputWrapperStyle} id={'address-input-container'}>
         <TextField placeholder={'Enter your address or zip code'}
                    id={'address-input'}
                    sx={{width: '90%'}}
@@ -224,6 +231,7 @@ const MyAddressInput = ({
                    error={!!error}
                    onChange={handleInputChange}
                    onFocus={handleOpenSuggestions}
+                   onBlur={handleBlurInput}
                    variant={'standard'}
         />
         <div className={!!currentAddress?.address ? 'opaque-hoverable' : ''}
@@ -249,12 +257,12 @@ const MyAddressInput = ({
            onClick={triggerAutoLocation}
       >
         <img src={LocationButtonSmall}
-             width={12}
-             height={12}
+             width={14}
+             height={14}
              alt={'location-button-icon-small'}
              style={smallIconStyle}
          />
-        <p className={'bold'} style={useLocationStyle}>Use my current location.</p>
+        <p className={'bold'} style={useLocationStyle}>Use my current location</p>
       </div>
       { error && <p style={errorMessageStyle}>{parseError(error)}</p> }
       <LocationSuggestionsList suggestions={suggestions}

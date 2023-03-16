@@ -1,0 +1,19 @@
+#cost-input-container {
+	border: none;
+	height: 56px;
+	width: 140px;
+}
+
+#cost-input-container.cost-input-container--focused {
+	border: solid 2px rgba(75, 123, 229, 0.4);
+	height: 52px;
+	width: 136px;
+}
+
+#my-cost-input-currency {
+	margin-right: 15px;
+}
+
+#my-cost-input-currency.my-cost-input-currency--focused {
+	margin-right: 13px;
+}
