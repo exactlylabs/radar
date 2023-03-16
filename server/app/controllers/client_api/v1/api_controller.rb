@@ -13,7 +13,8 @@ module ClientApi
           @allowed = false
         end
         if request.request_method == "OPTIONS"
-          head(200)
+          set_cors_headers
+          head(204)
         end
       end
 
