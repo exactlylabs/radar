@@ -33,7 +33,7 @@
   </td>
   <td class="text-gray-600 mb-1"
       style="font-size:14px; color: #7e8299">
-    <%= link_to "Resend invite", resend_invites_path(email: invitee.email), class: "btn btn-light-primary", style: "padding-left: 10px; padding-right: 10px;", method: :post %>
+    <%= link_to "Resend invite", resend_invites_path(id: invitee.id), class: "btn btn-light-primary", style: "padding-left: 10px; padding-right: 10px;", method: :post %>
   </td>
   <td class="text-end" style="padding-right: 30px">
     <button type="button"
