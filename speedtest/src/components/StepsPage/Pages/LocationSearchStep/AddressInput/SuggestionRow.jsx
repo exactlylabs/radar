@@ -29,7 +29,7 @@ const locationIconStyle = {
 }
 
 const suggestionTextStyle = {
-  maxWidth: '70%',
+  maxWidth: '75%',
   width: 'max-content',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',

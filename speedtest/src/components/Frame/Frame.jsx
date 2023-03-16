@@ -17,10 +17,6 @@ const defaultOverviewWrapperStyle = {
   overflowX: 'auto',
 }
 
-const defaultAllResultsWrapperStyle = {
-  overflow: 'hidden',
-}
-
 const webviewMainWrapperStyle = {
   backgroundColor: WHITE,
   overflowX: 'auto',
@@ -36,7 +32,7 @@ const widgetMainWrapperStyle = {
 const childrenWrapperStyle = {
   width: '90%',
   margin: '0 auto',
-  overflowY: 'auto',
+  overflowY: 'visible',
   height: 'auto',
 };
 
