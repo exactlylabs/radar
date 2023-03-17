@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_06_211939) do
+ActiveRecord::Schema.define(version: 2023_03_17_144957) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -350,6 +350,7 @@ ActiveRecord::Schema.define(version: 2023_03_06_211939) do
     t.integer "total_in_service", default: 0
     t.datetime "timestamp"
     t.bigint "event_id"
+    t.integer "increment"
     t.index ["account_id"], name: "index_online_client_count_projections_on_account_id"
     t.index ["autonomous_system_id"], name: "index_online_client_count_projections_on_autonomous_system_id"
     t.index ["event_id"], name: "index_online_client_count_projections_on_event_id"
