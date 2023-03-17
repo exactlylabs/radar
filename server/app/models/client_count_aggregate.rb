@@ -94,7 +94,7 @@ class ClientCountAggregate < ApplicationRecord
                 get_aggregate(as_id, aggregators["as_org"]) do |id|
                     AutonomousSystemOrg.joins(:autonomous_systems).find_by("autonomous_systems.id = ?", id)
                 end
-            ]
+            ].compact
 
             Client.transaction do
                 case evt.name
@@ -150,11 +150,14 @@ class ClientCountAggregate < ApplicationRecord
 
     def self.get_aggregate(id, aggregator_cache, model=nil, &block)
         if id.present? && aggregator_cache[id].nil?
-            if model.nil?
-                model_obj = block.call(id)
-            else
-                model_obj = model.find(id)
-            end
+            begin
+                if model.nil?
+                    model_obj = block.call(id)
+                else
+                    model_obj = model.find(id)
+                end
+            rescue
+                return nil
             aggregator_cache[id] = ClientCountAggregate.find_or_create_by(aggregator: model_obj)
         end
         return aggregator_cache[id]
