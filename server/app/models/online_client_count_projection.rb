@@ -9,7 +9,7 @@ class OnlineClientCountProjection < ApplicationRecord
     events = Event.where(
         "id > ? AND aggregate_type IN ('Client')", 
         consumer_offset.offset
-    ).order('timestamp ASC')
+    ).order('timestamp ASC, version ASC')
 
     events.each do |event|
       
