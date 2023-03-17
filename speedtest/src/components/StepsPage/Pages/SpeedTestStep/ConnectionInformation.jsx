@@ -145,11 +145,28 @@ const ConnectionInformation = ({
 
   const getPlacementOrTypeCellStyle = () => shouldTextAppear ?  placementRowStyle : withoutTextPlacementRowStyle;
 
+  const getTitle = () => {
+    const {house_number, street} = userStepData.address;
+    if((!house_number && !street) || (house_number && !street)) return 'Unavailable'; // makes no sense to just show the house number on its own
+    if(!house_number) return street;
+    return `${userStepData.address.house_number} ${userStepData.address.street}`;
+  }
+
+  const getSubtitle = () => {
+    const {city, state, postal_code} = userStepData.address;
+    if(!city && !state && !postal_code) return 'Unavailable';
+    let parsedCity = city ?? '';
+    let parsedState = state ?? '';
+    let parsedPostalCode = postal_code ?? '';
+    if(!!parsedCity && (!!parsedState || !!parsedPostalCode)) parsedCity += ','; // add comma only if there is going to be another field to separate from with it
+    return `${parsedCity} ${parsedState} ${parsedPostalCode}`;
+  }
+
   return (
     <div style={getStyle()}>
       <div style={columnsContainerStyle}>
-        <MyConnectionInformationTooltip title={`${userStepData.address.house_number} ${userStepData.address.street}`}
-                                        subtitle={`${userStepData.address.city}, ${userStepData.address.state} ${userStepData.address.postal_code}`}
+        <MyConnectionInformationTooltip title={getTitle()}
+                                        subtitle={getSubtitle()}
                                         shouldNotAppear={disabled}
         >
           <div className={'bold'} style={getAddressStyle()}>
