@@ -158,6 +158,7 @@ class ClientCountAggregate < ApplicationRecord
                 end
             rescue
                 return nil
+            end
             aggregator_cache[id] = ClientCountAggregate.find_or_create_by(aggregator: model_obj)
         end
         return aggregator_cache[id]
