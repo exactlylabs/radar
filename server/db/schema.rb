@@ -371,7 +371,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_144957) do
     t.string "fips"
     t.integer "pop_2021"
   end
-  
+
   create_table "update_groups", force: :cascade do |t|
     t.string "name"
     t.bigint "client_version_id"
