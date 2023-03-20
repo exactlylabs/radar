@@ -15,7 +15,7 @@ module ClientApi
       end
 
       def index
-        @speed_tests = ClientSpeedTest.all.where('tested_by = ? AND address IS NOT NULL AND city IS NOT NULL AND street IS NOT NULL AND state IS NOT NULL AND postal_code IS NOT NULL AND house_number IS NOT NULL', @widget_client.id)
+        @speed_tests = ClientSpeedTest.all.where('tested_by = ?', @widget_client.id)
         render json: @speed_tests
       end
 
@@ -31,9 +31,7 @@ module ClientApi
         ne_lng = params[:ne_lng]
         error = !sw_lat || !sw_lng || !ne_lat || !ne_lng
         @speed_tests = ClientSpeedTest.all.where(
-          'tested_by = ? AND latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?' +
-            ' AND address IS NOT NULL AND city IS NOT NULL AND street IS NOT NULL AND state IS NOT NULL' +
-            ' AND postal_code IS NOT NULL AND house_number IS NOT NULL',
+          'tested_by = ? AND latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
           @widget_client.id, sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f) unless error
         respond_to do |format|
           if error

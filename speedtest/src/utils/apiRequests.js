@@ -58,34 +58,6 @@ export const getGeocodedAddress = async (formData, setLoading) => {
   return response;
 };
 
-export const getAllSpeedTests = async () => {
-  return fetch(`${API_URL}/speed_tests`)
-    .then(res => res.json())
-    .then(res => {
-      return res
-        .filter(
-          measurement =>
-            measurement.latitude &&
-            measurement.longitude &&
-            measurement.download_avg &&
-            measurement.upload_avg &&
-            measurement.address
-        )
-        .map(measurement => {
-          return {
-            ...measurement,
-            uploadFilterTag: getFilterTag(measurement.upload_avg, 'upload'),
-            downloadFilterTag: getFilterTag(measurement.download_avg, 'download'),
-            visible: true,
-          };
-        });
-    })
-    .catch(err => {
-      notifyError(err);
-      throw new Error('Error fetching all speed test results. Please try again later.');
-    });
-};
-
 export const getSuggestions = async addressString => {
   const formData = new FormData();
   formData.append('address', addressString);
