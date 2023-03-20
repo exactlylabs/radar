@@ -24,7 +24,7 @@ export const MyMap = ({
     // hook in parent component as the useMap hook requires
     // usage in a child component of <MapContainer>
     if(map) {
-      setMap(map);
+      setMap && setMap(map);
       map.zoomControl = noZoomControl === undefined ? true : !noZoomControl;
       // Reference: https://github.com/Leaflet/Leaflet/pull/8109
       // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
