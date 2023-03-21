@@ -75,6 +75,18 @@
             Export NDT7 Extended
           </a>
         <% end %>
+        <%= render partial: "application/components/button", locals: {
+              type: "submit",
+              size: "bg",
+              order: "secondary",
+              light: true,
+              text: "Test",
+              disabled: false,
+              icon: nil,
+              icon_first: false,
+              href: full_ndt7_index_measurements_path(format: 'csv')
+            }
+        %>
       <% end %>
     </div>
   </div>

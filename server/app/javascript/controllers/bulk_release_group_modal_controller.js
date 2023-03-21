@@ -15,9 +15,9 @@ export default class extends Controller {
   }
 
   updateMessage() {
-    const selectedOption = this.releaseGroupOptionTargets.find(o => o.value === this.releaseGroupValueSelectTarget.value);
-    if(!selectedOption) return;
-    const selectLabel = selectedOption.label;
+    const selectFind = this.releaseGroupOptionTargets.find(o => o.value === this.releaseGroupValueSelectTarget.value);
+    if(!selectFind) return;
+    const selectLabel = selectFind.label;
     const amount = this.formCheckBoxInputTargets.filter(input => input.checked).length;
     this.releaseGroupMessageTarget.innerText = `${amount} Pod${amount > 1 ? 's' : ''} will be assigned to ${selectLabel}`;
   }

@@ -1,0 +1,30 @@
+<!-- Custom Button -- Start -->
+<% if href.present? %>
+  <a href="<%= href %>"
+     disabled="<%= disabled %>"
+    class="custom-button custom-button--<%= size %> <%= disabled ? 'custom-button--disabled' : '' %> custom-button--<%= order %><%= light.present? ? '-light' : ''%>"
+  >
+    <% if icon.present? && icon_first %>
+      <img src="<%= image_url(icon) %>" class="custom-button--icon custom-button--icon-start"/>
+    <% end %>
+    <%= text %>
+    <% if icon.present? && !icon_first %>
+      <img src="<%= image_url(icon) %>" class="custom-button--icon custom-button--icon-end"/>
+    <% end %>
+  </a>
+<% else %> 
+  <button
+    type="<%= type %>"
+    disabled="<%= disabled %>"
+    class="custom-button custom-button--<%= size %> <%= disabled ? 'custom-button--disabled' : '' %> custom-button--<%= order %><%= light.present? ? '-light' : ''%>"
+  >
+    <% if icon.present? && icon_first %>
+      <img src="<%= image_url(icon) %>" class="custom-button--icon custom-button--icon-start"/>
+    <% end %>
+    <%= text %>
+    <% if icon.present? && !icon_first %>
+      <img src="<%= image_url(icon) %>" class="custom-button--icon custom-button--icon-end"/>
+    <% end %>
+  </button>
+<% end %>
+<!-- Custom Button -- End -->
