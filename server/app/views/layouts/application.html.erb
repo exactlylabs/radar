@@ -99,7 +99,7 @@
                             data-action="click->accounts-drawer-menu#toggleMenu"
                     >
                       <!--begin::AccountIcon-->
-                      <div class="d-flex justify-content-center align-items-center"
+                      <div class="d-flex justify-content-center align-items-center fw-bold"
                            style="width: 40px; height: 40px; background-color: #dbf2ff; color: #00a3ff; font-size: 20px; border-radius: 8px">
                         <% if current_account.is_all_accounts? %>
                           <span class="svg-icon svg-icon-primary svg-icon-2x m-0">
@@ -144,7 +144,7 @@
                               <rect x="4.36396" y="11.364" width="16" height="2" rx="1" fill="black"/>
                             </svg>
                           </span>
-                          <p>Add new account</p>
+                          <p class="fw-semi-bold">Add new account</p>
                         </div>
                       </button>
                     </div>
@@ -155,7 +155,7 @@
                             data-bs-toggle="modal"
                             data-bs-target="#add_account_wizard"
                     >
-                      <div class="d-flex justify-content-center align-items-center fw-bolder"
+                      <div class="d-flex justify-content-center align-items-center fw-semi-bold"
                            style="width: 40px; height: 40px; background-color: #dbf2ff; color: #00a3ff; font-size: 20px; border-radius: 8px; border: 1px dashed rgba(0, 163, 255, 0.5)">
                         <span class="svg-icon svg-icon-primary svg-icon-2x" style="margin-right: 0">
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -164,7 +164,7 @@
                           </svg>
                         </span>
                       </div>
-                      <span class="menu-title sidebar--account-empty-title text-nowrap" style="margin-left: 15px;">Add new account</span>
+                      <span class="sidebar-item--text sidebar--account-empty-title text-nowrap fw-semi-bold" style="margin-left: 15px;">Add new account</span>
                     </button>
                   <% end %>
                   <div style="height: 1px; width: 40px; background-color: #edf0f4; margin-bottom: 15px; margin-top: 16px;"
@@ -185,7 +185,7 @@
                         </span>
                         <!--end::Svg Icon-->
                       </span>
-                      <span class="menu-title">Dashboard</span>
+                      <span class="menu-title sidebar-item--text <%= active_sidebar_item?(dashboard_path) %>">My Dashboard</span>
                     </a>
                   </div>
                   <% if current_account.present? %>
@@ -203,7 +203,7 @@
                             <!--end::Svg Icon-->
                           </span>
                         </span>
-                        <span class="menu-title">Pods</span>
+                        <span class="menu-title sidebar-item--text <%= active_sidebar_item?(clients_path) %>">Pods</span>
                       </a>
                     </div>
                     <div class="menu-item mb-5 ms-2">
@@ -218,7 +218,7 @@
                           </span>
                           <!--end::Svg Icon-->
                         </span>
-                        <span class="menu-title">Locations</span>
+                        <span class="menu-title sidebar-item--text <%= active_sidebar_item?(locations_path) %>">Locations</span>
                       </a>
                     </div>
                     <div class="menu-item mb-5 ms-2">
@@ -235,7 +235,7 @@
                           </span>
                           <!--end::Svg Icon-->
                         </span>
-                        <span class="menu-title">Users & Sharing</span>
+                        <span class="menu-title sidebar-item--text <%= active_sidebar_item?(users_account_index_path) %>">Users & Sharing</span>
                       </a>
                     </div>
                   <% end %>

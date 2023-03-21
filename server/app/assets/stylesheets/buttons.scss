@@ -1,0 +1,76 @@
+@import "colors";
+@import "text";
+
+.custom-button {
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  font-variation-settings: 'wght' $bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.custom-button--primary {
+  background-color: $blue;
+  color: $white;
+  box-shadow: 0 2px 10px -2px $primary-button--box-shadow;
+}
+
+.custom-button--primary:hover,
+.custom-button--primary:active {
+  background-color: $primary-button--hover;
+}
+
+.custom-button--secondary {
+  background-color: $secondary-button--background-color;
+  color: $dark-gray;
+  box-shadow: 0 2px 15px -2px $secondary-button--box-shadow;
+}
+
+.custom-button--secondary:hover:not(.custom-button--disabled),
+.custom-button--secondary:active:not(.custom-button--disabled) {
+  background-color: $subtle-gray;
+}
+
+.custom-button--secondary-light {
+  background-color: $white;
+  color: $dark-gray;
+  box-shadow: 0 2px 10px -2px $secondary-light-button--box-shadow;
+}
+
+.custom-button--secondary-light:hover:not(.custom-button--disabled),
+.custom-button--secondary-light:active:not(.custom-button--disabled) {
+  color: $gray;
+}
+
+.custom-button--disabled {
+  opacity: 50%;
+  cursor: default;
+}
+
+.custom-button--bg {
+  padding: 12px 24px;
+}
+
+.custom-button--sm {
+  padding: 12px 16px;
+}
+
+.custom-button--xs {
+  padding: 4px 6px;
+}
+
+.custom-button--icon {
+  width: 16px;
+  height: 16px;
+
+  &.custom-button--icon-start {
+    margin-right: 8px;
+  }
+
+  &.custom-button--icon-end {
+    margin-left: 8px;
+  }
+}
