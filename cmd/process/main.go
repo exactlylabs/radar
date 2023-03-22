@@ -18,7 +18,7 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/reversegeocoder"
 
 	gcpstorage "cloud.google.com/go/storage"
-	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/storagedatastore"
+	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/gcpdatastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 )
 
@@ -72,7 +72,7 @@ func main() {
 			panic(err)
 		}
 		bucket := cli.Bucket(config.GetConfig().UploadBucketName)
-		uploader := storagedatastore.NewUploader(bucket)
+		uploader := gcpdatastore.NewUploader(bucket)
 		defer uploader.Close()
 		dsProvider = flavors.NewAvroStorageDataStoreFactory(uploader)
 	}

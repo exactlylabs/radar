@@ -13,7 +13,7 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/measurementlinker"
 	"github.com/exactlylabs/mlab-processor/pkg/app/pipeline"
 	"github.com/exactlylabs/mlab-processor/pkg/app/reversegeocoder"
-	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/storagedatastore"
+	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/gcpdatastore"
 )
 
 var pipelineStr = []string{
@@ -30,7 +30,7 @@ func main() {
 		panic(err)
 	}
 	bucket := cli.Bucket(config.GetConfig().UploadBucketName)
-	uploader := storagedatastore.NewUploader(bucket)
+	uploader := gcpdatastore.NewUploader(bucket)
 	defer uploader.Close()
 	dsProvider := flavors.NewAvroStorageDataStoreFactory(uploader)
 	log.Println("Starting Processor Service")
