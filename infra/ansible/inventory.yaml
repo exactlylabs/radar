@@ -1,6 +1,0 @@
-all:
-  hosts:
-    processor:
-      ansible_host: mlab-processor.exactlylabs.com
-      ansible_connection: "ssh"
-

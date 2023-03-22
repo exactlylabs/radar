@@ -1,0 +1,64 @@
+---
+base_dir: "/var/mlab-processor"
+inputs_dir: "{{base_dir}}/input"
+
+ipv4_db_path: "{{inputs_dir}}/GeoLite2-City-Blocks-IPv4.csv"
+ipv6_db_path: "{{inputs_dir}}/GeoLite2-City-Blocks-IPv6.csv"
+asn_ipv4_db_path: "{{inputs_dir}}/GeoLite2-ASN-Blocks-IPv4.csv"
+asn_ipv6_db_path: "{{inputs_dir}}/GeoLite2-ASN-Blocks-IPv6.csv"
+asn2org_db_path: "{{inputs_dir}}/20221001.as-org2info.jsonl"
+
+us_states_shape_path: "{{inputs_dir}}/tl_2022_us_state.zip"
+us_counties_shape_path: "{{inputs_dir}}/tl_2022_us_county.zip"
+us_aiannh_shape_path: "{{inputs_dir}}/tl_2022_us_aiannh.zip"
+us_zip_codes_shape_path: "{{inputs_dir}}/tl_2022_us_zcta520.zip"
+
+asn_ip_files:
+  - name: IPV4_DB_PATH
+    path: "{{ ipv4_db_path }}"
+  
+  - name: IPV6_DB_PATH 
+    path: "{{ ipv6_db_path}}"
+  
+  - name: ASN_IPV4_DB_PATH 
+    path: "{{ asn_ipv4_db_path }}"
+  
+  - name: ASN_IPV6_DB_PATH
+    path: "{{ asn_ipv6_db_path}}"
+  
+  - name: ASN2ORG_DB_PATH
+    path: "{{ asn2org_db_path }}"
+
+
+shapes:
+  - name: US_STATES
+    path: "{{us_states_shape_path}}"
+
+  - name: US_COUNTIES
+    path: "{{us_counties_shape_path}}"
+
+  - name: US_AIANNH
+    path: "{{us_aiannh_shape_path}}"
+
+  - name: ZIP_CODES
+    path: "{{us_zip_codes_shape_path}}"
+
+shape_paths: "{% for s in shapes -%}{{ s.name }}={{ s.path }}{{ ';' if not loop.last else '' }}{%- endfor %}"
+tracts_shape_dir: "{{inputs_dir}}/tracts"
+
+service_variables:
+  - "IPV4_DB_PATH={{ ipv4_db_path }}"
+  - "IPV6_DB_PATH={{ ipv6_db_path }}"
+  - "ASN_IPV4_DB_PATH={{ asn_ipv4_db_path }}"
+  - "ASN_IPV6_DB_PATH={{ asn_ipv6_db_path }}"
+  - "ASN2ORG_DB_PATH={{ asn2org_db_path }}"
+  - "TRACTS_SHAPE_DIR={{ tracts_shape_dir }}"
+  - "SHAPE_PATHS={{ shape_paths }}"
+  - "EARLIEST_DATE={{ earliest_date }}"
+
+
+
+
+earliest_date: "2019-01-01"
+
+

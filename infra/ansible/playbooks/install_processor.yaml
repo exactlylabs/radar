@@ -1,23 +1,10 @@
 - name: Install Mlab Processor
   hosts: processor
+  vars_prompt:
+    - name: maxmind_key
+      prompt: Maxmind API Token
+      private: true
 
-  tasks:
-    - name: Copy binary to host
-      become: yes
-      ansible.builtin.copy:
-        src: ../../../mlab-processor
-        dest: /usr/local/bin/mlab-processor
-        mode: '0655'
-    - name: Copy systemd service file to host
-      become: yes
-      ansible.builtin.copy:
-        src: ./mlab-processor.service
-        dest: /etc/systemd/system/mlab-processor.service
-        mode: '0644'
-    - name: Reload Systemd
-      become: yes
-      ansible.builtin.systemd:
-        daemon_reload: true
-        enabled: true
-        name: mlab-processor
-        state: started
+  roles:
+    - install-input-files
+    - install-processor
