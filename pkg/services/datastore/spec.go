@@ -38,9 +38,9 @@ type DataStore interface {
 	Delete() error
 	// Exists returns whether the file exists in the filesystem
 	Exists() bool
-	// Commit should be called after you finish writing to the file.
+	// Flush should be called after you finish writing to the file.
 	// Things such as moving from a temporary location to a final destination should be placed here
-	Commit() error
+	Flush() error
 	// Clear removes any temporary files that might exist
 	Clear() error
 }

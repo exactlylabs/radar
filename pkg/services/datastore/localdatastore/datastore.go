@@ -84,8 +84,8 @@ func (ds *localDataStore) Exists() bool {
 	return true
 }
 
-// Commit is noop for this storage
-func (ds *localDataStore) Commit() error {
+// Flush is noop for this storage
+func (ds *localDataStore) Flush() error {
 	return nil
 }
 

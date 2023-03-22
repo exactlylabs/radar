@@ -1,6 +1,7 @@
 package asnmap_test
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -26,7 +27,7 @@ var db_missing_org = `
 
 func TestASNLoadOk(t *testing.T) {
 	reader := strings.NewReader(db_ok)
-	err := asnmap.LoadCAIDAJsonl(reader)
+	_, err := asnmap.New(reader)
 	if err != nil {
 		t.Fatalf("failed loading db_ok: %v", err)
 	}
@@ -34,10 +35,10 @@ func TestASNLoadOk(t *testing.T) {
 
 func TestASNLoadMissingOrg(t *testing.T) {
 	reader := strings.NewReader(db_missing_org)
-	err := asnmap.LoadCAIDAJsonl(reader)
+	_, err := asnmap.New(reader)
 	if err == nil {
 		t.Fatal("load_missing_org didn't return an error")
-	} else if err != asnmap.ErrMissingOrg {
+	} else if !errors.Is(err, asnmap.ErrMissingOrg) {
 		t.Fatalf("load_missing_org expected ErrMissingOrg, got %T", err)
 	}
 }

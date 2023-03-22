@@ -23,39 +23,43 @@ type ASN struct {
 	Organization *Organization
 }
 
-// Maps organization information by org_id
-var organizations map[string]*Organization
+type ASNMapper struct {
+	organizations map[string]*Organization
+	asns          map[string]*ASN
+	asnNamesMap   map[string]*ASN
+}
 
-// Maps ASN values to their Obj
-var asns map[string]*ASN
-
-// Maps ASN names to their Obj
-var asnNamesMap map[string]*ASN
-
-var loaded = false
+func New(file io.Reader) (*ASNMapper, error) {
+	am := &ASNMapper{}
+	err := am.loadCAIDAJsonl(file)
+	if err != nil {
+		return nil, fmt.Errorf("asnmap.New loadCAIDAJsonl: %w", err)
+	}
+	return am, nil
+}
 
 // LoadCAIDAJsonl opens a .jsonl file and parse it, loading the contents in memory
-func LoadCAIDAJsonl(file io.Reader) error {
-	organizations = make(map[string]*Organization)
-	asns = make(map[string]*ASN)
-	asnNamesMap = make(map[string]*ASN)
+func (am *ASNMapper) loadCAIDAJsonl(file io.Reader) error {
+	am.organizations = make(map[string]*Organization)
+	am.asns = make(map[string]*ASN)
+	am.asnNamesMap = make(map[string]*ASN)
 	decoder := json.NewDecoder(file)
 	i := 0
 	for decoder.More() {
 		row := make(map[string]string)
 		if err := decoder.Decode(&row); err != nil {
-			return fmt.Errorf("asnmap.LoadData error unmarshalling row %d: %w", i, err)
+			return fmt.Errorf("asnmap.ASNMapper#loadCAIDAJsonl Decode #%d: %w", i, err)
 		}
 
 		// First, we have organizations mapping
 		switch row["type"] {
 		case "Organization":
-			organizations[row["organizationId"]] = &Organization{
+			am.organizations[row["organizationId"]] = &Organization{
 				Id:   row["organizationId"],
 				Name: row["name"],
 			}
 		case "ASN":
-			org, exists := organizations[row["organizationId"]]
+			org, exists := am.organizations[row["organizationId"]]
 			if !exists {
 				return ErrMissingOrg
 			}
@@ -63,32 +67,25 @@ func LoadCAIDAJsonl(file io.Reader) error {
 				Asn:          row["asn"],
 				Organization: org,
 			}
-			asns[row["asn"]] = obj
-			asnNamesMap[row["name"]] = obj
+			am.asns[row["asn"]] = obj
+			am.asnNamesMap[row["name"]] = obj
 		}
 		i++
 	}
-	loaded = true
 	return nil
 }
 
 // Lookup an ASN object from an asn id
-func Lookup(asn string) (*ASN, error) {
-	if !loaded {
-		return nil, ErrNotInitialized
-	}
-	if asnObj, exists := asns[asn]; exists {
+func (am *ASNMapper) Lookup(asn string) (*ASN, error) {
+	if asnObj, exists := am.asns[asn]; exists {
 		return asnObj, nil
 	}
 	return nil, ErrASNNotFound
 }
 
 // Lookup an ASN object by its Name value
-func LookupByName(asnName string) (*ASN, error) {
-	if !loaded {
-		return nil, ErrNotInitialized
-	}
-	if asnObj, exists := asnNamesMap[asnName]; exists {
+func (am *ASNMapper) LookupByName(asnName string) (*ASN, error) {
+	if asnObj, exists := am.asnNamesMap[asnName]; exists {
 		return asnObj, nil
 	}
 	return nil, ErrASNNotFound

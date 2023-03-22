@@ -1,4 +1,4 @@
-package storagedatastore
+package gcpdatastore
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ func newItemWriter(file *os.File, encoder encoders.FileEncoder) datastore.ItemWr
 // Close implements datastore.ItemWriter
 func (lw *itemWriter) Close() error {
 	if err := lw.encoder.Flush(); err != nil {
-		return fmt.Errorf("localdatastore.itemWriter#Close Flush error: %w", err)
+		return fmt.Errorf("gcpdatastore.itemWriter#Close Flush: %w", err)
 	}
 	return nil
 }
@@ -28,7 +28,7 @@ func (lw *itemWriter) Close() error {
 // Write implements datastore.ItemWriter
 func (lw *itemWriter) Write(item any) error {
 	if err := lw.encoder.EncodeItem(item); err != nil {
-		return fmt.Errorf("localdatastore.itemWriter#Write EncodeItem error: %w", err)
+		return fmt.Errorf("gcpdatastore.itemWriter#Write EncodeItem: %w", err)
 	}
 	return nil
 }
