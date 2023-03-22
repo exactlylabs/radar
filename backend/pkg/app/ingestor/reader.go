@@ -27,7 +27,7 @@ type decodeResult struct {
 	err   error
 }
 
-type measurementIterator struct {
+type measurementReader struct {
 	geospaceStorage  storages.GeospaceStorage
 	asnOrgStorage    storages.ASNOrgStorage
 	decoder          *ocf.Decoder
@@ -38,14 +38,14 @@ type measurementIterator struct {
 	i                int
 }
 
-func newMeasurementIterator(
+func newMeasurementReader(
 	decoder *ocf.Decoder,
 	geoIndex map[string][]geodata,
 	ignoreTimeBefore *time.Time,
 	geospaceStorage storages.GeospaceStorage,
 	asnOrgStorage storages.ASNOrgStorage,
-) *measurementIterator {
-	return &measurementIterator{
+) *measurementReader {
+	return &measurementReader{
 		decoder:          decoder,
 		geoIndex:         geoIndex,
 		ignoreTimeBefore: ignoreTimeBefore,
@@ -54,35 +54,35 @@ func newMeasurementIterator(
 	}
 }
 
-func (mi *measurementIterator) startDecodeWorker() {
-	mi.ch = make(chan *decodeResult)
+func (mr *measurementReader) startDecodeWorker() {
+	mr.ch = make(chan *decodeResult)
 	go func() {
-		for mi.decoder.HasNext() {
+		for mr.decoder.HasNext() {
 			m := &models.IPGeocodeResult{}
-			if err := mi.decoder.Decode(m); err != nil {
-				mi.ch <- &decodeResult{err: nil}
+			if err := mr.decoder.Decode(m); err != nil {
+				mr.ch <- &decodeResult{err: nil}
 				continue
 			}
-			if mi.ignoreTimeBefore != nil && m.StartedAt < mi.ignoreTimeBefore.Unix() {
+			if mr.ignoreTimeBefore != nil && m.StartedAt < mr.ignoreTimeBefore.Unix() {
 				continue
 			}
-			if geospaces, ok := mi.geoIndex[m.Id]; ok {
+			if geospaces, ok := mr.geoIndex[m.Id]; ok {
 				for _, geospace := range geospaces {
 					ns, exists := geoNamespaceMap[geospace.namespace]
 					if !exists {
 						continue
 					}
-					gId, err := mi.getGeospace(ns, geospace.geoId)
+					gId, err := mr.getGeospace(ns, geospace.geoId)
 					if err != nil {
-						mi.ch <- &decodeResult{err: errors.Wrap(err, "measurementIterator#startDecodeWorker getOrCreateGeospace")}
+						mr.ch <- &decodeResult{err: errors.Wrap(err, "measurementIterator#startDecodeWorker getOrCreateGeospace")}
 						continue
 					}
 					if gId == "" {
 						continue
 					}
-					aId, err := mi.getOrCreateASNOrg(m.ASNOrg)
+					aId, err := mr.getOrCreateASNOrg(m.ASNOrg)
 					if err != nil {
-						mi.ch <- &decodeResult{err: errors.Wrap(err, "measurementIterator#startDecodeWorker getOrCreateASNOrg")}
+						mr.ch <- &decodeResult{err: errors.Wrap(err, "measurementIterator#startDecodeWorker getOrCreateASNOrg")}
 						continue
 					}
 					if aId == "" {
@@ -105,20 +105,20 @@ func (mi *measurementIterator) startDecodeWorker() {
 						HasAccessToken:     m.HasAccessToken,
 						AccessTokenSig:     m.AccessTokenSig,
 					}
-					mi.ch <- &decodeResult{value: value}
+					mr.ch <- &decodeResult{value: value}
 				}
 			}
 		}
-		mi.ch <- &decodeResult{}
+		mr.ch <- &decodeResult{}
 	}()
-	mi.started = true
+	mr.started = true
 }
 
-func (mi *measurementIterator) getGeospace(ns namespaces.Namespace, geoId string) (g string, err error) {
+func (mr *measurementReader) getGeospace(ns namespaces.Namespace, geoId string) (g string, err error) {
 	if g, exists := geospaceCache.Load(geospaceCacheKey(ns, geoId)); exists {
 		return g.(string), nil
 	}
-	dg, err := mi.geospaceStorage.GetByGeoId(ns, geoId)
+	dg, err := mr.geospaceStorage.GetByGeoId(ns, geoId)
 	if err == storages.ErrGeospaceNotFound {
 		// Call setup_shapes if this ns + geoId set is supposed to be in the DB
 		return "", nil
@@ -131,17 +131,17 @@ func (mi *measurementIterator) getGeospace(ns namespaces.Namespace, geoId string
 	return g, nil
 }
 
-func (mi *measurementIterator) getOrCreateASNOrg(orgName string) (a string, err error) {
+func (mr *measurementReader) getOrCreateASNOrg(orgName string) (a string, err error) {
 	if a, exists := asnOrgCache.Load(orgName); exists {
 		return a.(string), nil
 	}
-	aOrg, err := mi.asnOrgStorage.GetByOrgName(orgName)
+	aOrg, err := mr.asnOrgStorage.GetByOrgName(orgName)
 	if err == storages.ErrASNOrgNotFound {
 		// Create
 		aOrg = &storages.ASNOrg{
 			Organization: orgName,
 		}
-		if err := mi.asnOrgStorage.Create(aOrg); err != nil {
+		if err := mr.asnOrgStorage.Create(aOrg); err != nil {
 			return "", errors.Wrap(err, "measurementIterator#getOrCreateASNOrg Create")
 		}
 	} else if err != nil {
@@ -152,14 +152,14 @@ func (mi *measurementIterator) getOrCreateASNOrg(orgName string) (a string, err 
 	return a, nil
 }
 
-func (mi *measurementIterator) Next() (*storages.Measurement, error) {
-	if !mi.started {
-		mi.startDecodeWorker()
+func (mr *measurementReader) Next() (*storages.Measurement, error) {
+	if !mr.started {
+		mr.startDecodeWorker()
 	}
-	res := <-mi.ch
-	mi.i++
-	if mi.i%10000 == 0 {
-		log.Println("Rows:", mi.i)
+	res := <-mr.ch
+	mr.i++
+	if mr.i%10000 == 0 {
+		log.Println("Rows:", mr.i)
 	}
 	return res.value, res.err
 }

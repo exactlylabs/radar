@@ -34,7 +34,7 @@ func processDate(readers []io.ReadCloser, startTime time.Time, s storages.Ingest
 	}
 	revReader.Close()
 	if err := s.MeasurementStorage.Insert(
-		newMeasurementIterator(measDecoder, index, &startTime, s.GeospaceStorage, s.ASNOrgStorage),
+		newMeasurementReader(measDecoder, index, &startTime, s.GeospaceStorage, s.ASNOrgStorage),
 	); err != nil {
 		return err
 	}
