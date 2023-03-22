@@ -1,10 +1,14 @@
 package pipeline
 
-import "context"
+import (
+	"context"
+	"sync"
+)
 
 type PipelineContext struct {
 	context.Context
 	values map[string]any
+	ipMap  *sync.Map
 }
 
 func NewContext(ctx context.Context) *PipelineContext {
@@ -14,10 +18,13 @@ func NewContext(ctx context.Context) *PipelineContext {
 	}
 }
 
-func (c *PipelineContext) SetValue(key string, v any) {
-	c.values[key] = v
+func (c *PipelineContext) SetIPMap(m *sync.Map) {
+	c.ipMap = m
 }
 
-func (c *PipelineContext) GetValue(key string) any {
-	return c.values[key]
+func (c *PipelineContext) GetIPMap() *sync.Map {
+	if c.ipMap == nil {
+		c.SetIPMap(&sync.Map{})
+	}
+	return c.ipMap
 }

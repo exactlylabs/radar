@@ -11,8 +11,8 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/pipeline"
 	"github.com/exactlylabs/mlab-processor/pkg/app/reversegeocoder"
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
+	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/gcpdatastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/localdatastore"
-	"github.com/exactlylabs/mlab-processor/pkg/services/datastore/storagedatastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/encoders/avro"
 )
 
@@ -44,12 +44,12 @@ func AvroLocalDataStoreFactory(store string, date time.Time, obj any) (datastore
 }
 
 // NewAvroStorageDataStoreFactory builds a new DataStoreProvider for a given uploader
-func NewAvroStorageDataStoreFactory(uploader *storagedatastore.Uploader) pipeline.DataStoreProvider {
+func NewAvroStorageDataStoreFactory(uploader *gcpdatastore.Uploader) pipeline.DataStoreProvider {
 	return func(store string, date time.Time, obj any) (datastore.DataStore, error) {
 		filePath := fmt.Sprintf("%v/%v.avro", store, date.Format("2006-01-02"))
 		schema := getAvroStoreSchema(store)
 		encoderProvider := avro.NewAvroEncoderFactory(schema)
-		ds, err := storagedatastore.New(uploader, filePath, encoderProvider, avro.NewAvroDecoder, obj)
+		ds, err := gcpdatastore.New(uploader, filePath, encoderProvider, avro.NewAvroDecoder, obj)
 		if err != nil {
 			return nil, err
 		}

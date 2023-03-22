@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/exactlylabs/mlab-processor/pkg/app/datastorewriter"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
-	"github.com/exactlylabs/mlab-processor/pkg/app/writer"
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 )
@@ -28,7 +28,7 @@ func LinkMeasurements(ds datastore.DataStore, geocodeDS datastore.DataStore, dat
 	if err != nil {
 		panic(fmt.Errorf("measurementlinker.LinkMeasurements ItemReader: %w", err))
 	}
-	writer := writer.NewWriter(ds)
+	writer := datastorewriter.NewWriter(ds)
 	defer writer.Close()
 	for it.Next() {
 		next, err := func() (any, error) {

@@ -17,6 +17,7 @@ import (
 	"time"
 
 	gcpstorage "cloud.google.com/go/storage"
+	"github.com/exactlylabs/mlab-processor/pkg/app/datastorewriter"
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/ndt"
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/ndt5"
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher/ndt7"
@@ -24,7 +25,6 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
 	"github.com/gofrs/uuid"
 
-	"github.com/exactlylabs/mlab-processor/pkg/app/writer"
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 	"google.golang.org/api/iterator"
@@ -78,7 +78,7 @@ func accessSigFromClientMetadata(clientMetadata []ndt.NameValue) *string {
 	return nil
 }
 
-func innerNdt7GzipReader(writer *writer.DataStoreWriter, reader io.Reader, day time.Time) error {
+func innerNdt7GzipReader(writer *datastorewriter.DataStoreWriter, reader io.Reader, day time.Time) error {
 	gz, err := gzip.NewReader(reader)
 	if err != nil {
 		return fmt.Errorf("fetcher.innerNdt7GzipReader err: %v", err)
@@ -146,7 +146,7 @@ func innerNdt7GzipReader(writer *writer.DataStoreWriter, reader io.Reader, day t
 	return nil
 }
 
-func processNdt7Reader(writer *writer.DataStoreWriter, r io.Reader, day time.Time) error {
+func processNdt7Reader(writer *datastorewriter.DataStoreWriter, r io.Reader, day time.Time) error {
 	gzf, err := gzip.NewReader(r)
 	if err != nil {
 		return fmt.Errorf("fetcher.processNdt7Reader err: %v", err)
@@ -188,7 +188,7 @@ func processNdt7Reader(writer *writer.DataStoreWriter, r io.Reader, day time.Tim
 
 // innerNdt5Reader parses the NDT5 format and pushes two rows into the storage
 // one for upload and another for download data
-func innerNdt5Reader(writer *writer.DataStoreWriter, reader io.Reader, day time.Time) error {
+func innerNdt5Reader(writer *datastorewriter.DataStoreWriter, reader io.Reader, day time.Time) error {
 	b, rErr := ioutil.ReadAll(reader)
 	if rErr != nil {
 		return fmt.Errorf("fetcher.innerNdt5Reader rErr: %v", rErr)
@@ -249,7 +249,7 @@ func innerNdt5Reader(writer *writer.DataStoreWriter, reader io.Reader, day time.
 	return nil
 }
 
-func processNdt5Reader(writer *writer.DataStoreWriter, r io.Reader, day time.Time) error {
+func processNdt5Reader(writer *datastorewriter.DataStoreWriter, r io.Reader, day time.Time) error {
 	gzf, err := gzip.NewReader(r)
 	if err != nil {
 		return fmt.Errorf("fetcher.processNdt5Reader err: %v", err)
@@ -289,7 +289,7 @@ func processNdt5Reader(writer *writer.DataStoreWriter, r io.Reader, day time.Tim
 	return nil
 }
 
-func processWeb100Reader(writer *writer.DataStoreWriter, r io.Reader, day time.Time) error {
+func processWeb100Reader(writer *datastorewriter.DataStoreWriter, r io.Reader, day time.Time) error {
 	iterator, err := readTgz(r, ".c2s_snaplog", ".s2c_snaplog")
 	if err != nil {
 		return fmt.Errorf("fetcher.processWeb100Reader readTgz: %w", err)
@@ -342,7 +342,7 @@ func processWeb100Reader(writer *writer.DataStoreWriter, r io.Reader, day time.T
 	return nil
 }
 
-func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, writer *writer.DataStoreWriter, ch chan *fetchWorkItem) {
+func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, writer *datastorewriter.DataStoreWriter, ch chan *fetchWorkItem) {
 	defer wg.Done()
 
 	client, err := gcpstorage.NewClient(ctx, option.WithoutAuthentication())
@@ -386,7 +386,7 @@ func fetchingWorker(wg *sync.WaitGroup, ctx context.Context, writer *writer.Data
 	}
 }
 
-func newFetchingPool(ctx context.Context, writer *writer.DataStoreWriter) *fetchingPool {
+func newFetchingPool(ctx context.Context, writer *datastorewriter.DataStoreWriter) *fetchingPool {
 	wg := &sync.WaitGroup{}
 	ch := make(chan *fetchWorkItem, 100)
 
@@ -435,7 +435,7 @@ func web100SearchPrefix(day time.Time) string {
 }
 
 func processDate(ctx context.Context, client *gcpstorage.Client, ds datastore.DataStore, date time.Time) error {
-	writer := writer.NewWriter(ds)
+	writer := datastorewriter.NewWriter(ds)
 	defer writer.Close()
 	pool := newFetchingPool(ctx, writer)
 

@@ -8,13 +8,13 @@ import (
 	"path/filepath"
 )
 
-type itemIterator struct {
+type tgzReader struct {
 	r          *tar.Reader
 	extensions []string
 	gzreader   *gzip.Reader // minor improvement to avoid allocations
 }
 
-func (it *itemIterator) Next() (name string, r io.Reader, err error) {
+func (it *tgzReader) Next() (name string, r io.Reader, err error) {
 	for {
 		header, tErr := it.r.Next()
 
@@ -67,14 +67,14 @@ func (it *itemIterator) Next() (name string, r io.Reader, err error) {
 	return "", nil, nil
 }
 
-func readTgz(r io.Reader, extensions ...string) (*itemIterator, error) {
+func readTgz(r io.Reader, extensions ...string) (*tgzReader, error) {
 	gzf, err := gzip.NewReader(r)
 	if err != nil {
 		return nil, fmt.Errorf("fetcher.readTgz NewReader: %v", err)
 	}
 
 	tarReader := tar.NewReader(gzf)
-	return &itemIterator{
+	return &tgzReader{
 		r: tarReader, extensions: extensions,
 	}, nil
 

@@ -27,7 +27,7 @@ func RunPipeline(dsProvider DataStoreProvider, dateRange []time.Time, pipeline [
 			if ds == nil {
 				continue
 			}
-			err = ds.Commit()
+			err = ds.Flush()
 			if err != nil {
 				panic(err)
 			}

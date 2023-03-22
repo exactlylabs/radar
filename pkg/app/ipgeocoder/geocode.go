@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/exactlylabs/mlab-processor/pkg/app/config"
+	"github.com/exactlylabs/mlab-processor/pkg/app/datastorewriter"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
-	"github.com/exactlylabs/mlab-processor/pkg/app/writer"
 	"github.com/exactlylabs/mlab-processor/pkg/services/asnmap"
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/netmap"
@@ -22,6 +22,8 @@ import (
 )
 
 const StepName string = "ipgeocode"
+
+var asnMapper *asnmap.ASNMapper
 
 type ipgeocodeWorkItem struct {
 	fetchedResult *models.FetchedResult
@@ -173,11 +175,11 @@ func processItem(toProcess *ipgeocodeWorkItem) *models.GeocodedResult {
 	if asnInfoRaw != nil {
 		asnInfo := asnInfoRaw.(*asnInfo)
 		asn = asnInfo.asn
-		asnObj, err := asnmap.Lookup(fmt.Sprintf("%d", asn))
+		asnObj, err := asnMapper.Lookup(fmt.Sprintf("%d", asn))
 		if err != nil {
 			// Try checking the org name against the asnmap we have
 			// Sometimes the organization Name is actually the ASN name
-			if asnObj, err := asnmap.LookupByName(asnInfo.org); err == nil {
+			if asnObj, err := asnMapper.LookupByName(asnInfo.org); err == nil {
 				org = asnObj.Organization.Name
 				orgId = &asnObj.Organization.Id
 			} else {
@@ -208,12 +210,12 @@ func processItem(toProcess *ipgeocodeWorkItem) *models.GeocodedResult {
 	}
 }
 
-func storeGeocodedResult(writer *writer.DataStoreWriter, result *models.GeocodedResult) {
+func storeGeocodedResult(writer *datastorewriter.DataStoreWriter, result *models.GeocodedResult) {
 	defer timer.TimeIt(time.Now(), "GeocodeWriteRow")
 	writer.WriteItem(result)
 }
 
-func geocodingWorker(wg *sync.WaitGroup, writer *writer.DataStoreWriter, ch chan *ipgeocodeWorkItem) {
+func geocodingWorker(wg *sync.WaitGroup, writer *datastorewriter.DataStoreWriter, ch chan *ipgeocodeWorkItem) {
 	defer wg.Done()
 
 	for toProcess := range ch {
@@ -222,7 +224,7 @@ func geocodingWorker(wg *sync.WaitGroup, writer *writer.DataStoreWriter, ch chan
 	}
 }
 
-func newGeocodingPool(writer *writer.DataStoreWriter) *geocodingPool {
+func newGeocodingPool(writer *datastorewriter.DataStoreWriter) *geocodingPool {
 	ch := make(chan *ipgeocodeWorkItem)
 	wg := &sync.WaitGroup{}
 	// It appears to be consuming 50% of the CPUs with a pool of only NumCPU. With the double we get ~80%
@@ -270,20 +272,22 @@ func initializeNetMaps() {
 	if asnIpv6Err != nil {
 		log.Fatal(asnIpv6Err)
 	}
+}
 
+func initializeASNMapper() {
 	f, err := os.Open(config.GetConfig().Asn2OrgDBPath)
 	if err != nil {
-		log.Fatal(fmt.Errorf("ipgeocoder.Geocode error opening db file: %w", err))
+		log.Fatal(fmt.Errorf("ipgeocoder.initializeASNMapper Open: %w", err))
 	}
 	defer f.Close()
-	asnmapErr := asnmap.LoadCAIDAJsonl(f)
-	if asnmapErr != nil {
-		log.Fatal(asnmapErr)
+	asnMapper, err = asnmap.New(f)
+	if err != nil {
+		log.Fatal(fmt.Errorf("ipgeocoder.initializeASNMapper New: %w", err))
 	}
 }
 
 func processDate(ds datastore.DataStore, fetchDS datastore.DataStore, date time.Time) error {
-	writer := writer.NewWriter(ds)
+	writer := datastorewriter.NewWriter(ds)
 	defer writer.Close()
 	pool := newGeocodingPool(writer)
 	log.Printf("IPGeocoder - Getting Rows for %v\n", date)
@@ -313,6 +317,7 @@ func Geocode(ds datastore.DataStore, fetchDS datastore.DataStore, date time.Time
 	defer timer.TimeIt(time.Now(), "Geocode")
 	if !lookupInitialized {
 		initializeNetMaps()
+		initializeASNMapper()
 		lookupInitialized = true
 	}
 

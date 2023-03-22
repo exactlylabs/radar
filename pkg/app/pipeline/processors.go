@@ -1,7 +1,6 @@
 package pipeline
 
 import (
-	"sync"
 	"time"
 
 	"github.com/exactlylabs/mlab-processor/pkg/app/fetcher"
@@ -67,10 +66,7 @@ func runRevGeocoder(ctx *PipelineContext, dsProvider DataStoreProvider, date tim
 }
 
 func runMeasurementsLinker(ctx *PipelineContext, dsProvider DataStoreProvider, date time.Time) datastore.DataStore {
-	if ctx.GetValue("ipMap") == nil {
-		ctx.SetValue("ipMap", &sync.Map{})
-	}
-	ipMap := ctx.GetValue("ipMap").(*sync.Map)
+	ipMap := ctx.GetIPMap()
 	ipGeoDS, err := dsProvider(ipgeocoder.StepName, date, models.GeocodedResult{})
 	if err != nil {
 		panic(err)

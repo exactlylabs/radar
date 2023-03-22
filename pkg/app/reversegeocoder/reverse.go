@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/exactlylabs/mlab-processor/pkg/app/config"
+	"github.com/exactlylabs/mlab-processor/pkg/app/datastorewriter"
 	"github.com/exactlylabs/mlab-processor/pkg/app/models"
-	"github.com/exactlylabs/mlab-processor/pkg/app/writer"
 	"github.com/exactlylabs/mlab-processor/pkg/services/datastore"
 	"github.com/exactlylabs/mlab-processor/pkg/services/geo"
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
@@ -32,7 +32,7 @@ type geocodingPool struct {
 	ch chan *geocodeWorkItem
 }
 
-func geocodingWorker(wg *sync.WaitGroup, writer *writer.DataStoreWriter, ch chan *geocodeWorkItem) {
+func geocodingWorker(wg *sync.WaitGroup, writer *datastorewriter.DataStoreWriter, ch chan *geocodeWorkItem) {
 	defer wg.Done()
 
 	for toProcess := range ch {
@@ -53,7 +53,7 @@ func geocodingWorker(wg *sync.WaitGroup, writer *writer.DataStoreWriter, ch chan
 	}
 }
 
-func newGeocodingPool(writer *writer.DataStoreWriter) *geocodingPool {
+func newGeocodingPool(writer *datastorewriter.DataStoreWriter) *geocodingPool {
 	ch := make(chan *geocodeWorkItem)
 	wg := &sync.WaitGroup{}
 
@@ -169,7 +169,7 @@ func initIndex() {
 }
 
 func processDate(ds datastore.DataStore, geocodeDS datastore.DataStore, date time.Time) error {
-	writer := writer.NewWriter(ds)
+	writer := datastorewriter.NewWriter(ds)
 	defer writer.Close()
 	pool := newGeocodingPool(writer)
 
