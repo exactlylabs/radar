@@ -1,7 +1,9 @@
-package writer
+// datastorewriter package manages the writting of objects into a DataStore object in a separate goroutine.
+package datastorewriter
 
 import (
 	"fmt"
+	"runtime"
 	"sync"
 	"time"
 
@@ -9,6 +11,8 @@ import (
 	"github.com/exactlylabs/mlab-processor/pkg/services/timer"
 )
 
+// DataStoreWriter is used to write non-blocking to a DataStore.
+// It buffers up to NumCPU items to be written to it before starting blocking
 type DataStoreWriter struct {
 	ds datastore.DataStore
 	ch chan any
@@ -19,7 +23,7 @@ func NewWriter(ds datastore.DataStore) *DataStoreWriter {
 	w := &DataStoreWriter{
 		ds: ds,
 		wg: &sync.WaitGroup{},
-		ch: make(chan any),
+		ch: make(chan any, runtime.NumCPU()),
 	}
 	w.startWriterWorker(ds, w.ch)
 	return w
@@ -48,6 +52,7 @@ func (w *DataStoreWriter) writerWorker(ds datastore.DataStore, ch chan any) {
 
 func (w *DataStoreWriter) startWriterWorker(ds datastore.DataStore, ch chan any) {
 	w.wg.Add(1)
+
 	go func() {
 		defer w.wg.Done()
 		w.writerWorker(ds, ch)
