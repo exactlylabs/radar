@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/exactlylabs/radar/pods_agent/services/ookla"
+	ookla "github.com/exactlylabs/radar/pods_agent/services/ooklarunner"
 )
 
 func main() {
