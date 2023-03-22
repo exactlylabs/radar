@@ -1,5 +1,4 @@
-services/ookla/ookla
-services/ookla/ookla.exe
+ookla.exe
 config.conf
 dist/
 *.crt
@@ -14,7 +13,6 @@ dist/
 *.changes
 *.buildinfo
 ookla
-!services/ookla
 radar-agent
 client_app
 .DS_Store
