@@ -126,9 +126,9 @@ const Footer = () => {
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   return isMediumSizeScreen || isSmallSizeScreen ?
-    <div style={mobileFooterStyle} id={'footer--wrapper'}>
+    <div style={mobileFooterStyle} id={'speedtest--footer--wrapper'}>
       <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={{ marginBottom: 30, marginTop: 25 }} />
-      <a className={'bold regular-link--hoverable'}
+      <a className={'speedtest--bold speedtest--regular-link--hoverable'}
          style={footerLinkStyle(isSmallSizeScreen, isMediumSizeScreen)}
          href={'https://radartoolkit.com/privacy-policy'}
          target={'_blank'}
@@ -150,9 +150,9 @@ const Footer = () => {
     <div style={footerStyle}>
       <div style={contentWrapperStyle}>
         <div style={leftSideContainerStyle}>
-          <div className={'bold'} style={leftSideTopRowStyle}>
+          <div className={'speedtest--bold'} style={leftSideTopRowStyle}>
             <img src={radarLogoDark} alt={'Radar-logo-dark'} width={100} height={24} style={footerLogoStyle} />
-            <a className={'bold regular-link--hoverable'}
+            <a className={'speedtest--bold speedtest--regular-link--hoverable'}
                style={footerLinkStyle(isSmallSizeScreen, isMediumSizeScreen)}
                href={'https://radartoolkit.com/privacy-policy'}
                target={'_blank'}

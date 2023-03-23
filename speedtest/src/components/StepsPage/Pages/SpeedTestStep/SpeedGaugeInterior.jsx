@@ -121,7 +121,7 @@ const SpeedGaugeInterior = ({
 }) => {
 
   return (
-    <div className={'bold'} style={gaugeInteriorStyle}>
+    <div className={'speedtest--bold'} style={gaugeInteriorStyle}>
       <div style={zeroStyle}>0</div>
       <div style={fiveStyle}>5</div>
       <div style={tenStyle}>10</div>

@@ -8,6 +8,8 @@ import {Check} from "@mui/icons-material";
 const myCheckboxStyle = {
   width: 20,
   height: 20,
+  minWidth: 20,
+  minHeight: 20,
   borderRadius: 6,
   border: `solid 1px rgba(17, 14, 76, 0.3)`,
   backgroundColor: TRANSPARENT,

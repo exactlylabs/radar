@@ -45,7 +45,15 @@ const subtitleStyle = {
   width: '95%',
   margin: 'auto',
   fontSize: 16,
-  color: DEFAULT_TEXT_COLOR
+  color: DEFAULT_TEXT_COLOR,
+  fontFamily: 'MulishRegular',
+}
+
+const xsSubtitleStyle = {
+  ...subtitleStyle,
+  fontSize: 13,
+  lineHeight: '20px',
+  marginBottom: '10px'
 }
 
 const footerStyle = {
@@ -82,6 +90,14 @@ const mobileImageContainerStyle = {
   margin: '30px auto',
 }
 
+const xsImageContainerStyle = {
+  ...mobileImageContainerStyle,
+  width: '90%',
+  height: 'auto',
+  minWidth: undefined,
+  margin: '5px auto',
+}
+
 const mapPhotoStyle = {
   width: '100%',
   height: '100%',
@@ -110,12 +126,18 @@ const closeButtonStyle = {
   cursor: 'pointer',
 }
 
+const xsCloseButtonStyle = {
+  ...closeButtonStyle,
+  top: 10,
+  right: 10
+}
+
 const FirstTimeModal = ({
   isOpen,
   setIsOpen
 }) => {
 
-  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
 
   const closeModal = () => setIsOpen(false);
@@ -125,19 +147,24 @@ const FirstTimeModal = ({
     return (isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle
   }
 
+  const getImageContainerStyle = () => {
+    if(isExtraSmallSizeScreen) return xsImageContainerStyle;
+    return (isMediumSizeScreen || isSmallSizeScreen) ? mobileImageContainerStyle : imageContainerStyle
+  }
+
   return (
     <Modal open={isOpen}
            onClose={closeModal}
            style={getStyle()}
     >
       <Box sx={boxStyle}>
-        <div style={closeButtonStyle} onClick={closeModal} className={'modal-dismiss--hoverable'}>
+        <div style={isExtraSmallSizeScreen ? xsCloseButtonStyle : closeButtonStyle} onClick={closeModal} className={'speedtest--modal-dismiss--hoverable'}>
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
         <MyModalTitle text={'Explore Map'}/>
-        <div style={subtitleStyle}>Our map shows all speed tests taken across the country.
+        <div style={isExtraSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Our map shows all speed tests taken across the country.
           You can click a test to view more details or filter tests by speed results.</div>
-        <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileImageContainerStyle : imageContainerStyle}>
+        <div style={getImageContainerStyle()}>
           <img src={MapPhoto} style={mapPhotoStyle} alt={'map-photo'}/>
           <img src={TooltipPhoto} style={tooltipPhotoStyle} alt={'tooltip-photo'}/>
         </div>

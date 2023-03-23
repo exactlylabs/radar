@@ -14,11 +14,11 @@ const backButtonStyle = {
 
 export const MyBackButton = ({ text, onClick, disabled, icon, iconFirst, fullWidth }) => {
   return iconFirst ?
-    <button style={backButtonStyle} className={'bold secondary-button--hoverable'} onClick={onClick} disabled={disabled}>
+    <button style={backButtonStyle} className={'speedtest--bold speedtest--secondary-button--hoverable'} onClick={onClick} disabled={disabled}>
       {icon}
       {text}
     </button> :
-    <button style={backButtonStyle} className={'bold secondary-button--hoverable'} onClick={onClick} disabled={disabled}>
+    <button style={backButtonStyle} className={'speedtest--bold speedtest--secondary-button--hoverable'} onClick={onClick} disabled={disabled}>
       {text}
       {icon}
     </button>

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import MyStepper from "./Stepper/MyStepper";
 import LocationSearchStepPage from "./Pages/LocationSearchStep/LocationSearchStepPage";
 import ConnectionPlacementStepPage from "./Pages/ConnectionPlacementStep/ConnectionPlacementStepPage";
@@ -15,6 +15,7 @@ import {getLastStoredValue} from "../../utils/storage";
 import NoInternetStepPage from "./Pages/NoInternetStep/NoInternetStepPage";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import InitialStepPage from "./Pages/InitialStep/InitialStepPage";
+import ConfigContext from "../../context/ConfigContext";
 
 const stepsPageStyle = {
   width: '100%',
@@ -62,6 +63,7 @@ const StepsPage = ({
   const [confirmedAddress, setConfirmedAddress] = useState(false);
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const config = useContext(ConfigContext);
 
   const setAddress = address => {
     setError(false);
@@ -182,7 +184,7 @@ const StepsPage = ({
       return;
     }
     try {
-      const address = await getAddressForCoordinates(finalCoordinates);
+      const address = await getAddressForCoordinates(finalCoordinates, config.clientId);
       setAddress(address);
       setCanProceedToStep2(true);
       setConfirmedAddress(true);

@@ -69,12 +69,29 @@ const titleStyle = {
   width: '100%',
 }
 
+const xsTitleStyle = {
+  fontSize: '16px',
+  color: DEFAULT_TEXT_COLOR,
+  margin: '0 0 5px 0',
+  width: '100%',
+}
+
 const subtitleStyle = {
   width: '100%',
   margin: '0 auto 50px',
   fontSize: '16px',
   lineHeight: '25px',
-  color: DEFAULT_TEXT_COLOR
+  color: DEFAULT_TEXT_COLOR,
+  fontFamily: 'MulishRegular',
+}
+
+const xsSubtitleStyle = {
+  width: '100%',
+  margin: '0 auto 20px',
+  fontSize: '13px',
+  lineHeight: '20px',
+  color: DEFAULT_TEXT_COLOR,
+  fontFamily: 'MulishRegular',
 }
 
 const footerStyle = {
@@ -121,7 +138,7 @@ const NoInternetModal = ({
 }) => {
 
   const config = useContext(ConfigContext);
-  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const isSmall = isMediumSizeScreen || isSmallSizeScreen;
 
   const getStyle = () => {
@@ -135,7 +152,7 @@ const NoInternetModal = ({
            style={getStyle()}
     >
       <Box sx={isSmall ? smallBoxStyle : boxStyle}>
-        <div style={closeButtonStyle} onClick={closeModal} className={'modal-dismiss--hoverable'}>
+        <div style={closeButtonStyle} onClick={closeModal} className={'speedtest--modal-dismiss--hoverable'}>
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
         <div style={noInternetIconStyle}>
@@ -147,8 +164,8 @@ const NoInternetModal = ({
             </g>
           </svg>
         </div>
-        <p className={'extra-bold'} style={titleStyle}>No Internet connection</p>
-        <p style={subtitleStyle}>Please make sure your device is connected to the Internet before continuing.</p>
+        <p className={'speedtest--p speedtest--extra-bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>No Internet connection</p>
+        <p className={'speedtest--p'} style={isExtraSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Please make sure your device is connected to the Internet before continuing.</p>
         <div style={isSmall ? mobileFooterStyle : footerStyle}>
           <MyButton text={'Continue anyways'}
                     icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}

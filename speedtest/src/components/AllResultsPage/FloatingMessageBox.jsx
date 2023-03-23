@@ -85,7 +85,7 @@ const FloatingMessageBox = ({ icon, text, isBoxOpen }) => {
   return (
     <div style={ getContainerStyle() }>
       { icon }
-      { !!text && <p style={isSmall ? smallTextStyle : textStyle}>{text}</p> }
+      { !!text && <p className={'speedtest--p'} style={isSmall ? smallTextStyle : textStyle}>{text}</p> }
     </div>
   )
 }

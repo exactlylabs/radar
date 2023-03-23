@@ -15,12 +15,12 @@ export const ViewportContextProvider = ({children}) => {
   const [width, setWidth] = useState(window.innerWidth);
 
   const handleResize = () => {
-    const frameElement = document.getElementById('main-frame');
+    const frameElement = document.getElementById('speedtest--main-frame');
     setWidth(frameElement.getBoundingClientRect().width);
   }
 
   useEffect(() => {
-    const frameElement = document.getElementById('main-frame');
+    const frameElement = document.getElementById('speedtest--main-frame');
     if(frameElement) setWidth(frameElement.getBoundingClientRect().width);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);

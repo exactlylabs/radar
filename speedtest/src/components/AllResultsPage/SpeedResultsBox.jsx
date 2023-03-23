@@ -44,6 +44,17 @@ const mobileFilterListStyle = {
   height: 95,
 }
 
+const xsFilterListStyle = {
+  width: 'max-content',
+  borderRadius: 16,
+  padding: 8,
+  backgroundColor: DEFAULT_SPEED_FILTER_BACKGROUND_COLOR,
+  position: 'absolute',
+  left: 15,
+  zIndex: 2000,
+  height: 75,
+}
+
 const mobileFilterSwitcherContainerStyle = {
   width: '50%',
   position: 'absolute',
@@ -67,7 +78,7 @@ const SpeedResultsBox = ({
 }) => {
 
   const config = useContext(ConfigContext);
-  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getSpeedResultsStyle = () => {
     return isMediumSizeScreen || isSmallSizeScreen ? mobileFiltersWrapper : {};
@@ -87,7 +98,10 @@ const SpeedResultsBox = ({
   // Reset all selected filters & tab
   const toggleBox = () => setIsBoxOpen(!isBoxOpen);
 
-  const getContent = () => isMediumSizeScreen || isSmallSizeScreen ? getMobileVersion() : getDesktopVersion();
+  const getContent = () => {
+    if(isExtraSmallSizeScreen) return getExtraSmallVersion();
+    return (isMediumSizeScreen || isSmallSizeScreen) ? getMobileVersion() : getDesktopVersion();
+  }
 
   const getSpeedFiltersDesktopStyle = () => {
     return { ...speedFiltersBoxStyle, bottom: 35 , right: 26 };
@@ -107,19 +121,40 @@ const SpeedResultsBox = ({
     </div>
   );
 
+  const getExtraSmallVersion = () => {
+    let style = xsFilterListStyle;
+    const element = document.getElementById('speedtest--main-frame');
+    const {y, height} = element.getBoundingClientRect();
+    if (config.webviewMode) {
+      style = {...style, top: 'calc(100vh - 115px)'}
+    } else if(config.widgetMode) {
+      style = {...style, top: `calc(${config.frameStyle.height} - 60px - 54px - 56px - 50px)` }
+    } else {
+      style = {...style, top: (y + height - 280)}
+    }
+    return (
+      <div style={style} id={'speedtest--speed-results-box--mobile-filters'}>
+        <MyFiltersList currentFilter={filterTypes[currentFilterType]}
+                       selectedRangeIndexes={selectedRangeIndexes}
+                       setSelectedRangeIndexes={handleFilterClick}
+        />
+      </div>
+    )
+  }
+
   const getMobileVersion = () => {
     let style = mobileFilterListStyle;
-    const element = document.getElementById('main-frame');
+    const element = document.getElementById('speedtest--main-frame');
     const {y, height} = element.getBoundingClientRect();
     if (config.webviewMode) {
       style = {...style, top: 'calc(100vh - 125px - 25px)'}
-    } if(config.widgetMode) {
+    } else if(config.widgetMode) {
       style = {...style, top: `calc(${config.frameStyle.height} - 95px - 54px - 56px - 50px)` }
     } else {
       style = {...style, top: (y + height - 280)}
     }
     return (
-      <div style={style} id={'speed-results-box--mobile-filters'}>
+      <div style={style} id={'speedtest--speed-results-box--mobile-filters'}>
         <MyFiltersList currentFilter={filterTypes[currentFilterType]}
                        selectedRangeIndexes={selectedRangeIndexes}
                        setSelectedRangeIndexes={handleFilterClick}
@@ -131,7 +166,7 @@ const SpeedResultsBox = ({
   const getFloatingFilterTypeSwitch = () => {
     let style = mobileFilterSwitcherContainerStyle;
     if(config.widgetMode || config.webviewMode) {
-      style = {...style, position: 'absolute', bottom: null, top: 0, left: config.noZoomControl ? 15 : 50}
+      style = {...style, position: 'absolute', bottom: null, top: '-5px', left: config.noZoomControl ? 15 : 50}
     }
     return (
       <div style={style}>
@@ -143,7 +178,7 @@ const SpeedResultsBox = ({
   }
 
   return (
-    <div style={getSpeedResultsStyle()} id={'speed-results-box--container'}>
+    <div style={getSpeedResultsStyle()} id={'speedtest--speed-results-box--container'}>
       { isBoxOpen && (isMediumSizeScreen || isSmallSizeScreen) && getFloatingFilterTypeSwitch() }
       { isBoxOpen && getContent() }
       <FloatingExploreButton activeFiltersCount={selectedRangeIndexes.length}

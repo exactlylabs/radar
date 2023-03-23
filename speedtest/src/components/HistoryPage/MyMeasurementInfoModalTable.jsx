@@ -7,6 +7,7 @@ import {
 import {types} from "../../utils/networkTypes";
 import {placementOptions} from "../../utils/placements";
 import LocationIcon from '../../assets/address-icon-blue.png';
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const tableStyle = {
   width: '90%',
@@ -19,6 +20,11 @@ const tableStyle = {
   alignItems: 'center',
   justifyContent: 'space-around',
   position: 'relative',
+}
+
+const xsTableStyle = {
+  ...tableStyle,
+  margin: '5px auto',
 }
 
 const addressRowStyle = {
@@ -53,9 +59,19 @@ const addressTextStyle = {
   fontSize: 15,
 }
 
+const xsAddressTextStyle = {
+  ...addressTextStyle,
+  fontSize: 13
+}
+
 const networkTextStyle = {
   ...addressTextStyle,
   maxWidth: '55%',
+}
+
+const xsNetworkTextStyle = {
+  ...xsAddressTextStyle,
+  maxWidth: '55%'
 }
 
 const horizontalDividerStyle = {
@@ -91,6 +107,8 @@ const MyMeasurementInfoModalTable = ({
   networkLocation
 }) => {
 
+  const {isExtraSmallSizeScreen} = useViewportSizes();
+
   const getNetworkTypeIcon = () => {
     const type = types.find(placement => placement.text === networkType);
     return type.iconPopupSrc;
@@ -102,12 +120,12 @@ const MyMeasurementInfoModalTable = ({
   }
 
   return (
-    <div style={tableStyle}>
+    <div style={isExtraSmallSizeScreen ? xsTableStyle : tableStyle}>
       <div style={addressRowStyle}>
         <div style={locationIconContainerStyle}>
           <img src={LocationIcon} width={20} height={20} alt={'location-icon'}/>
         </div>
-        <div className={'bold'} style={addressTextStyle}>{address}</div>
+        <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsAddressTextStyle : addressTextStyle}>{address}</div>
       </div>
       {
         (networkLocation || networkType) &&
@@ -118,9 +136,9 @@ const MyMeasurementInfoModalTable = ({
           <div style={lowRowStyle}>
           {
             networkLocation &&
-            <div className={'bold'} style={addressRowStyle}>
-              <img src={getNetworkLocationIcon()} width={28} height={28} alt={'location-icon'} style={iconStyle}/>
-              <div style={networkTextStyle}>{networkLocation}</div>
+            <div className={'speedtest--bold'} style={addressRowStyle}>
+              <img src={getNetworkLocationIcon()} width={isExtraSmallSizeScreen ? 20 : 28} height={isExtraSmallSizeScreen ? 20 : 28} alt={'location-icon'} style={iconStyle}/>
+              <div style={isExtraSmallSizeScreen ? xsNetworkTextStyle : networkTextStyle}>{networkLocation}</div>
             </div>
           }
           {
@@ -129,9 +147,9 @@ const MyMeasurementInfoModalTable = ({
           }
           {
             networkType &&
-            <div className={'bold'} style={addressRowStyle}>
-              <img src={getNetworkTypeIcon()} width={28} height={28} alt={'location-icon'} style={iconStyle}/>
-              <div style={networkTextStyle}>{networkType}</div>
+            <div className={'speedtest--bold'} style={addressRowStyle}>
+              <img src={getNetworkTypeIcon()} width={isExtraSmallSizeScreen ? 20 : 28} height={isExtraSmallSizeScreen ? 20 : 28} alt={'location-icon'} style={iconStyle}/>
+              <div style={isExtraSmallSizeScreen ? xsNetworkTextStyle : networkTextStyle}>{networkType}</div>
             </div>
           }
         </div>

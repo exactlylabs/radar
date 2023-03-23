@@ -5,6 +5,7 @@ import {
   WHITE
 } from "../../utils/colors";
 import {Check} from "@mui/icons-material";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const resultFilterStyle = {
   display: 'flex',
@@ -66,6 +67,8 @@ const MyResultFilter = ({
   filterTextWidth
 }) => {
 
+  const {isExtraSmallSizeScreen} = useViewportSizes();
+
   const getRangeText = () => {
     if(range[1] === Number.MAX_VALUE) {
       return `> ${range[0]} Mbps`;
@@ -73,15 +76,21 @@ const MyResultFilter = ({
     return `${range[0]} - ${range[1]} Mbps`;
   }
 
+  const getRowStyle = () => {
+    let style = opaque ? opaqueResultFilterStyle : resultFilterStyle;
+    if(isExtraSmallSizeScreen) style = {...style, marginBottom: 5};
+    return style;
+  }
+
   return (
-    <div style={opaque ? opaqueResultFilterStyle : resultFilterStyle} onClick={onClick}>
+    <div style={getRowStyle()} onClick={onClick}>
       <div style={filterBulletWrapperStyle}>
         <div style={{...filterBulletStyle, backgroundColor: color}}>
           {selected && <Check sx={checkIconSX}/>}
         </div>
       </div>
-      <div className={selected ? 'bold' : ''} style={{...filterTextStyle, width: filterTextWidth}}>{getRangeText()}</div>
-      <div style={stateStyle}>{state}</div>
+      <div className={selected ? 'speedtest--bold' : ''} style={{...filterTextStyle, width: filterTextWidth}}>{getRangeText()}</div>
+      {!isExtraSmallSizeScreen && <div style={stateStyle}>{state}</div>}
     </div>
   )
 }

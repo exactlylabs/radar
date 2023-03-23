@@ -81,8 +81,8 @@ const Bullet = ({icon, title, subtitle}) => {
         {icon}
       </div>
       <div style={isSmall ? smallTextContainer : textContainer}>
-        <p className={'bold'} style={titleStyle}>{title}</p>
-        <p style={subtitleStyle}>{subtitle}</p>
+        <p className={'speedtest--p speedtest--bold'} style={titleStyle}>{title}</p>
+        <p className={'speedtest--p'} style={subtitleStyle}>{subtitle}</p>
       </div>
     </div>
   )

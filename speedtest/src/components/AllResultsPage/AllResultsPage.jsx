@@ -57,14 +57,14 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
 
   const [map, setMap] = useState(null);
 
-  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
   const {setNoInternet} = useContext(ConnectionContext);
   let timerId;
 
 
   useEffect(() => {
-    const fetchUserApproximateCoordinates = async () => getUserApproximateCoordinates();
+    const fetchUserApproximateCoordinates = async () => getUserApproximateCoordinates(config.clientId);
 
     if(!givenLocation) {
       fetchUserApproximateCoordinates()
@@ -184,7 +184,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
     const {_northEast, _southWest} = mapBounds;
     setFloatingBoxVisible(true);
     setFetchingResults(true);
-    getTestsWithBounds(_northEast, _southWest, config.clientId)
+    getTestsWithBounds(_northEast, _southWest, config.clientId, config.global)
       .then(res => handleTestsWithBoundsResult(res))
       .catch(err => {
         if(isNoConnectionError(err)) setNoInternet(true);
@@ -224,7 +224,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
       {!loading && !centerCoordinatesLoading &&
         <div style={getMapWrapperStyle()}>
           <MapContainer
-            id={'all-results-page--map-container'}
+            id={'speedtest--all-results-page--map-container'}
             center={requestArea ? requestArea : [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]}
             zoom={initialZoom ? initialZoom : 10}
             scrollWheelZoom
@@ -259,7 +259,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
                            isBoxOpen={isBoxOpen}
                            setIsBoxOpen={setIsBoxOpen}
           />
-          { floatingBoxVisible &&
+          { !isExtraSmallSizeScreen && floatingBoxVisible &&
             <FloatingMessageBox icon={fetchingResults ? <MySpinner color={DEFAULT_GRAY_BUTTON_TEXT_COLOR} size={14}/> : <img src={searchIcon} style={searchIconStyle} alt={'search icon'}/>}
                                 text={fetchingResults ? null : 'No test results in this area. Try adjusting your search area or speed filters.'}
                                 isBoxOpen={isBoxOpen}

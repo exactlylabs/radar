@@ -2,6 +2,8 @@ import { API_URL } from '../constants';
 import { notifyError } from './errors';
 import { DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE } from './map';
 import { getFilterTag } from './speeds';
+import {useContext} from "react";
+import ConfigContext from "../context/ConfigContext";
 
 export const sendRawData = (rawData, startTimestamp, userStepData, clientId) => {
   const { networkLocation, networkType, networkCost } = userStepData;
@@ -31,45 +33,20 @@ export const sendRawData = (rawData, startTimestamp, userStepData, clientId) => 
   }).catch(notifyError);
 };
 
-export const getGeocodedAddress = async (formData, setLoading) => {
-  let response;
-  fetch(`${API_URL}/geocode`, {
-    method: 'POST',
-    body: formData,
-  })
-    .then(res => res.json())
-    .then(res => {
-      if (res.length > 0) {
-        response = { name: formData.get('address'), coordinates: res };
-      } else {
-        response = {
-          name: formData.get('address'),
-          coordinates: [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE],
-        };
-      }
-    })
-    .catch(err => {
-      notifyError(err);
-      throw new Error('Error fetching address. Please try again later.');
-    })
-    .finally(() => {
-      setLoading(false);
-    });
-  return response;
-};
-
-export const getSuggestions = async addressString => {
+export const getSuggestions = async (addressString, clientId) => {
   const formData = new FormData();
   formData.append('address', addressString);
+  formData.append('client_id', clientId);
   return fetch(`${API_URL}/suggestions`, {
     method: 'POST',
     body: formData,
   }).then(res => res.json());
 };
 
-export const getAddressForCoordinates = async coordinates => {
+export const getAddressForCoordinates = async (coordinates, clientId) => {
   const formData = new FormData();
   formData.append('coordinates', coordinates);
+  formData.append('client_id', clientId);
   try {
     return fetch(`${API_URL}/coordinates`, {
       method: 'POST',
@@ -82,10 +59,10 @@ export const getAddressForCoordinates = async coordinates => {
   }
 };
 
-export const getUserApproximateCoordinates = () => fetch(`${API_URL}/user_coordinates`).then(res => res.json());
+export const getUserApproximateCoordinates = (clientId) => fetch(`${API_URL}/user_coordinates?client_id=${clientId}`).then(res => res.json());
 
-export const getTestsWithBounds = (northEast, southWest, clientId) => {
+export const getTestsWithBounds = (northEast, southWest, clientId, global) => {
   if(!northEast || !southWest) throw new Error('Missing bounds!');
-  const params = `?client_id=${clientId}&sw_lat=${southWest.lat}&sw_lng=${southWest.lng}&ne_lat=${northEast.lat}&ne_lng=${northEast.lng}`;
+  const params = `?${global ? 'global=true' : `client_id=${clientId}`}&sw_lat=${southWest.lat}&sw_lng=${southWest.lng}&ne_lat=${northEast.lat}&ne_lng=${northEast.lng}`;
   return fetch(`${API_URL}/tests_with_bounds${params}`).then(res => res.json());
 }

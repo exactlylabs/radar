@@ -43,12 +43,12 @@ const FloatingExploreButton = ({
   const config = useContext(ConfigContext);
 
   const getFloatingButtonStyle = () => {
-    const element = document.getElementById('main-frame');
+    const element = document.getElementById('speedtest--main-frame');
     const {x, y, width, height} = element.getBoundingClientRect();
     if(config.widgetMode) {
-      return {...floatingButtonStyle, bottom: null, right: null, top: (height - 180), left: (width - 80)}
+      return {...floatingButtonStyle, bottom: null, right: null, top: (height - 180), left: (width - 70)}
     } else if(config.webviewMode) {
-      return {...floatingButtonStyle, bottom: null, right: null, top: 'calc(100vh - 48px - 25px)', left: (width - 80)}
+      return {...floatingButtonStyle, bottom: null, right: null, top: 'calc(100vh - 48px - 25px)', left: (width - 70)}
     } else {
       if(isMediumSizeScreen || isSmallSizeScreen) return {...mobileFloatingButtonStyle, top: (height - 205)};
       return { ...floatingButtonStyle, top: (height - 380), left: width - 80 };
@@ -56,7 +56,7 @@ const FloatingExploreButton = ({
   }
 
   return (
-    <div className={'bold'} style={getFloatingButtonStyle()} id={'floating-explore-button--filters-button'} onClick={onClick}>
+    <div className={'speedtest--bold'} style={getFloatingButtonStyle()} id={'speedtest--floating-explore-button--filters-button'} onClick={onClick}>
       <img src={isBoxOpen ? FilterButtonOn : FilterButtonOff} width={68} height={68} alt={'filters-button'}/>
       {
         activeFiltersCount > 0 && !isBoxOpen &&

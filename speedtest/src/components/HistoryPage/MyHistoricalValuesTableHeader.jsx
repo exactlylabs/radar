@@ -102,7 +102,7 @@ const MyHistoricalValuesTableHeader = ({
   const getLatencyLossColumnStyle = () => isMediumSizeScreen ? midColumnWithIconStyle : columnWithIconNarrowStyle;
 
   return (
-    <div className={'bold'} style={historicalValuesTableHeaderStyle}>
+    <div className={'speedtest--bold'} style={historicalValuesTableHeaderStyle}>
       <div style={getNetworkTypeColumnStyle()}></div>
       <div style={getDateTimeColumnStyle()}>Date/Time</div>
       <div style={getDownUpColumnStyle()}>

@@ -56,11 +56,11 @@ const MyPopupGridItem = ({
     <div style={gridItemStyle}>
       <div style={gridItemTopRowStyle}>
         <img src={icon} width={16} height={16} alt={`${title}-icon`}/>
-        <div className={'bold'} style={gridItemTitleStyle}>{title}</div>
+        <div className={'speedtest--bold'} style={gridItemTitleStyle}>{title}</div>
       </div>
       <div style={gridItemBottomRowStyle}>
-        <p className={'bold'} style={gridItemValueStyle}>{value}</p>
-        <p style={gridItemUnitStyle}>{unit}</p>
+        <p className={'speedtest--p speedtest--bold'} style={gridItemValueStyle}>{value}</p>
+        <p className={'speedtest--p'} style={gridItemUnitStyle}>{unit}</p>
       </div>
     </div>
   )

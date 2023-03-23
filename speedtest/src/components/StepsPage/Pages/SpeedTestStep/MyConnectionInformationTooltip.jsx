@@ -65,10 +65,10 @@ const MyTooltipContent = ({
 
   return (
     <div style={tooltipStyle}>
-      {title && <p className={'bold'} style={titleStyle}>{title}</p>}
+      {title && <p className={'speedtest--p speedtest--bold'} style={titleStyle}>{title}</p>}
       <div style={title ? subtitleContainerStyle : onlySubtitleContainerStyle}>
-        <p className={'regular'} style={subtitleStyle}>{subtitle}</p>
-        <p className={'bold'} style={accentStyle}>{accent}</p>
+        <p className={'speedtest--p speedtest--regular'} style={subtitleStyle}>{subtitle}</p>
+        <p className={'speedtest--p speedtest--bold'} style={accentStyle}>{accent}</p>
       </div>
     </div>
   )

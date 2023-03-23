@@ -53,6 +53,11 @@ const titleStyle = {
   color: DEFAULT_STATS_TABLE_TEXT_COLOR
 }
 
+const xsTitleStyle = {
+  ...titleStyle,
+  fontSize: 11
+}
+
 const iconStyle = {
   marginRight: 5
 }
@@ -62,6 +67,12 @@ const valueStyle = {
   height: 33,
   color: DEFAULT_POPUP_VALUE_COLOR,
   margin: '5px auto'
+}
+
+const xsValueStyle = {
+  ...valueStyle,
+  fontSize: 16,
+  height: 'auto'
 }
 
 const unitStyle = {
@@ -117,7 +128,7 @@ const TestStatsTableContent = ({
   lossValue
 }) => {
 
-  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getStyle = () => {
     let style;
@@ -133,36 +144,36 @@ const TestStatsTableContent = ({
       <div style={columnStyle}>
         <div style={headerStyle}>
           <img style={iconStyle} src={DownloadIcon} width={16} height={16} alt={'download-icon'}/>
-          <div className={'bold'} style={titleStyle}>Download</div>
+          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Download</div>
         </div>
-        <div className={'bold'} style={valueStyle}>{downloadValue ? downloadValue : '-'}</div>
+        <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : valueStyle}>{downloadValue ? downloadValue : '-'}</div>
         <div style={unitStyle}>Mbps</div>
       </div>
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
           <img style={iconStyle} src={UploadIcon} width={16} height={16} alt={'upload-icon'}/>
-          <div className={'bold'} style={titleStyle}>Upload</div>
+          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Upload</div>
         </div>
-        <div className={'bold'} style={valueStyle}>{uploadValue ? uploadValue : '-'}</div>
+        <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : valueStyle}>{uploadValue ? uploadValue : '-'}</div>
         <div style={unitStyle}>Mbps</div>
       </div>
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
           <img style={iconStyle} src={LossIcon} width={16} height={16} alt={'loss-icon'}/>
-          <div className={'bold'} style={titleStyle}>Loss</div>
+          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Loss</div>
         </div>
-        <div className={'bold'} style={valueStyle}>{lossValue ? lossValue : '-'}</div>
+        <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : valueStyle}>{lossValue ? lossValue : '-'}</div>
         <div style={unitStyle}>%</div>
       </div>
       <MyStatsTableVerticalDivider />
       <div style={columnStyle}>
         <div style={headerStyle}>
           <img style={iconStyle} src={LatencyIcon} width={16} height={16} alt={'latency-icon'}/>
-          <div className={'bold'} style={titleStyle}>Latency</div>
+          <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Latency</div>
         </div>
-        <div className={'bold'} style={valueStyle}>{latencyValue ? latencyValue : '-'}</div>
+        <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : valueStyle}>{latencyValue ? latencyValue : '-'}</div>
         <div style={unitStyle}>ms</div>
       </div>
     </div>
@@ -174,10 +185,10 @@ const TestStatsTableContent = ({
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
             <img style={iconStyle} src={DownloadIcon} width={16} height={16} alt={'download-icon'}/>
-            <div className={'bold'} style={titleStyle}>Download</div>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Download</div>
           </div>
           <div style={mobileValuesStyle}>
-            <div className={'bold'} style={mobileValueStyle}>{downloadValue ? downloadValue : '-'}</div>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : mobileValueStyle}>{downloadValue ? downloadValue : '-'}</div>
             <div style={mobileUnitStyle}>Mbps</div>
           </div>
         </div>
@@ -185,10 +196,10 @@ const TestStatsTableContent = ({
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
             <img style={iconStyle} src={LossIcon} width={16} height={16} alt={'loss-icon'}/>
-            <div className={'bold'} style={titleStyle}>Loss</div>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Loss</div>
           </div>
           <div style={mobileValuesStyle}>
-            <div className={'bold'} style={mobileValueStyle}>{lossValue ? lossValue : '-'}</div>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : mobileValueStyle}>{lossValue ? lossValue : '-'}</div>
             <div style={mobileUnitStyle}>%</div>
           </div>
         </div>
@@ -197,10 +208,10 @@ const TestStatsTableContent = ({
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
             <img style={iconStyle} src={UploadIcon} width={16} height={16} alt={'upload-icon'}/>
-            <div className={'bold'} style={titleStyle}>Upload</div>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Upload</div>
           </div>
           <div style={mobileValuesStyle}>
-            <div className={'bold'} style={mobileValueStyle}>{uploadValue ? uploadValue : '-'}</div>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : mobileValueStyle}>{uploadValue ? uploadValue : '-'}</div>
             <div style={mobileUnitStyle}>Mbps</div>
           </div>
         </div>
@@ -208,10 +219,10 @@ const TestStatsTableContent = ({
         <div style={mobileColumnStyle}>
           <div style={headerStyle}>
             <img style={iconStyle} src={LatencyIcon} width={16} height={16} alt={'latency-icon'}/>
-            <div className={'bold'} style={titleStyle}>Latency</div>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>Latency</div>
           </div>
           <div style={mobileValuesStyle}>
-            <div className={'bold'} style={mobileValueStyle}>{latencyValue ? latencyValue : '-'}</div>
+            <div className={'speedtest--bold'} style={isExtraSmallSizeScreen ? xsValueStyle : mobileValueStyle}>{latencyValue ? latencyValue : '-'}</div>
             <div style={mobileUnitStyle}>ms</div>
           </div>
         </div>

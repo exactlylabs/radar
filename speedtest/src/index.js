@@ -9,6 +9,7 @@ if (REACT_APP_ENV === 'production') {
   Sentry.init({
     dsn: REACT_APP_SENTRY_DSN,
     environment: 'production',
+    tunnel: 'https://pods.radartoolkit.com/client_api/v1/sentry'
   });
 }
 
@@ -16,7 +17,7 @@ let init = null;
 let error = null;
 export const baseInitConfig = {
   clientId: 1,
-  widgetMode: false,
+  widgetMode: true,
   elementId: 'root-embedded',
   frameStyle: {
     width: '100vw',
@@ -28,6 +29,7 @@ export const baseInitConfig = {
   userLat: undefined,
   userLng: undefined,
   zoom: undefined,
+  global: false,
 }
 
 const checkConfig = config => {
@@ -60,7 +62,7 @@ const hasParams = () => {
 
 const getConfigFromParams = () => {
   const params = window.location.search.split('?')[1].split('&');
-  let config = { widgetMode: false };
+  let config = { widgetMode: true };
   params.forEach(param => {
     if(param.includes('widgetMode')) {
       config.widgetMode = param.split('=')[1] === 'true';
@@ -90,7 +92,7 @@ const getConfigFromParams = () => {
 export default {
   config: config => {
     init = null;
-    if (checkConfig(config)) init = config;
+    if (checkConfig(config)) init = {...baseInitConfig, frameStyle: baseInitConfig.frameStyle, ...config};
     if (hasParams()) {
       if(!!init) init = { ...baseInitConfig, ...init, ...getConfigFromParams() };
       else init = {...baseInitConfig, ...getConfigFromParams()};

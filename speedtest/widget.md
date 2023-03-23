@@ -36,12 +36,25 @@ The `configObject` is the configuration JSON object to setup the widget's initia
 To have the widget running correctly, these are the different fields that the
 `configObject` expects:
 
-| key        | type    | description                                                                                              | required |
-| ---------- | ------- |----------------------------------------------------------------------------------------------------------|----------|
-| widgetMode | boolean | Turn on if using in widget mode, embedded                                                                | false    |
-| elementId  | string  | DOM element id that should contain the widget                                                            | true     |
-| frameStyle | object  | JSON object with custom style for the main frame of the widget. The style is based on "CSS-in-JS" format. | false    |
-| clientId   | string  | Provided client id                                                | true     |
+| key        | type    | description                                                                                               | required | default |
+|------------|---------|-----------------------------------------------------------------------------------------------------------|----------|---------|
+| widgetMode | boolean | Turn on if using in widget mode, embedded                                                                 | false    | true    |
+| elementId  | string  | DOM element id that should contain the widget                                                             | true     | -       |
+| frameStyle | object  | JSON object with custom style for the main frame of the widget. The style is based on "CSS-in-JS" format. | false    | {}      |
+| clientId   | string  | Provided client id                                                                                        | true     | -       |
+| global     | boolean | Determine if widget instance is global (no test filtering by client id) or not                            | false    | false   |
+
+Particularly, the `frameStyle` object should at least include fields like `width` and `height`
+for the widget to render properly under your desired dimensions, so for example:
+
+```js
+frameStyle = {
+  width: '500px',
+  height: '500px'
+}
+```
+
+_* We would recommend at least `450px` for both width and height._
 
 So an example `configObject` could be:
 
@@ -53,6 +66,7 @@ configObject = {
   frameStyle: {
     width: '500px',
     height: '500px',
-  }
+  },
+  global: false
 }
 ```

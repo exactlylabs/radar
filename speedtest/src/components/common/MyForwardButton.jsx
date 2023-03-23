@@ -17,7 +17,7 @@ export const MyForwardButton = ({ text, onClick, disabled, icon, iconFirst }) =>
 
   return iconFirst ?
     <button style={getStyle()}
-            className={'bold blue-button--hoverable'}
+            className={'speedtest--bold speedtest--blue-button--hoverable'}
             onClick={onClick}
             disabled={disabled}
     >
@@ -25,7 +25,7 @@ export const MyForwardButton = ({ text, onClick, disabled, icon, iconFirst }) =>
       {text}
     </button> :
     <button style={getStyle()}
-            className={'bold blue-button--hoverable'}
+            className={'speedtest--bold speedtest--blue-button--hoverable'}
             onClick={onClick}
             disabled={disabled}
     >

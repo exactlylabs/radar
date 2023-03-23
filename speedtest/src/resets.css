@@ -1,14 +1,14 @@
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+input::-webkit-outer-spin-button.speedtest--custom-input-reset,
+input::-webkit-inner-spin-button.speedtest--custom-input-reset {
     -webkit-appearance: none;
     margin: 0;
 }
 
 /* Firefox */
-input[type=number] {
+input[type=number].speedtest--custom-input-reset {
     -moz-appearance: textfield;
 }
 
-p {
+.speedtest--p {
     margin: 0;
 }

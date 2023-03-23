@@ -139,7 +139,7 @@ const MyPopup = ({
       <div style={popupDivStyle}>
         <div style={popupHeaderStyle}>
           <div style={{...popupHeaderAddressContainerStyle, width: getAvailableWidth()}}>
-            <div className={'bold'} style={addressTitleStyle}>{measurement.street}</div>
+            <div className={'speedtest--bold'} style={addressTitleStyle}>{measurement.street}</div>
             <div style={addressSubtitleStyle}>{`${measurement.city}, ${measurement.state}`}</div>
           </div>
           {

@@ -183,7 +183,7 @@ const MyHistoricalValuesTableRow = ({
       {
         (!isSmallSizeScreen && !isMediumSizeScreen) &&
         <div style={locationColumnStyle}>
-          <p style={ellipsisStyle}>{getAddress()}</p>
+          <p className={'speedtest--p'} style={ellipsisStyle}>{getAddress()}</p>
         </div>
       }
       {

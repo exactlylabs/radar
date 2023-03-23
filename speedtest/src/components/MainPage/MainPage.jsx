@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import Frame from "../Frame/Frame";
 import {TABS} from "../../constants";
 import {STEPS} from "../StepsPage/utils/steps";
@@ -48,7 +48,7 @@ const MainPage = ({config}) => {
   }
 
   const goToSpeedTest = () => {
-    setSpecificSpeedTestStep(STEPS.CONNECTION_ADDRESS);
+    setSpecificSpeedTestStep(STEPS.INITIAL);
     setStep(TABS.SPEED_TEST);
   }
 

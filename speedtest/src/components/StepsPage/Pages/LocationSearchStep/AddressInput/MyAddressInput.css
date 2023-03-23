@@ -1,9 +1,24 @@
-#address-input-container {
+#speedtest--address-input-container {
 	border: none;
 	height: 56px;
+	width: 100%;
+	max-width: 400px;
 }
 
-#address-input-container.address-input-container--focused {
+#speedtest--address-input-container.speedtest--address-input-container--focused {
+	width: calc(100% - 4px);
 	height: 52px;
 	border: solid 2px rgba(75, 123, 229, 0.4);
+}
+
+#speedtest--address-input.speedtest--address-input--focused {
+	margin-left: -2px;
+}
+
+#speedtest--continue-button {
+	right: 10px;
+}
+
+#speedtest--continue-button.speedtest--continue-button--focused {
+	right: 8px;
 }

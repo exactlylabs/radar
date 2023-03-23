@@ -54,10 +54,6 @@ const boxStyle = {
   textAlign: 'center',
 }
 
-const headerStyle = {
-  height: 125
-}
-
 const mapContainerStyle = {
   height: 250,
 }
@@ -78,7 +74,10 @@ const footerStyle = {
 
 const smallFooterStyle = {
   ...footerStyle,
-  width: '95%',
+  height: undefined,
+  marginTop: '10px',
+  width: '90%',
+  maxWidth: 450
 }
 
 const mobileFooterStyle = {
@@ -92,7 +91,18 @@ const mobileFooterStyle = {
 }
 
 const subtitleStyle = {
-  color: DEFAULT_TEXT_COLOR
+  color: DEFAULT_TEXT_COLOR,
+  fontFamily: 'MulishRegular',
+  fontSize: 16,
+  lineHeight: '25px',
+  marginBottom: '20px'
+}
+
+const xsSubtitleStyle = {
+  ...subtitleStyle,
+  fontSize: 13,
+  lineHeight: '20px',
+  marginBottom: '10px'
 }
 
 const MyMapModal = ({
@@ -110,14 +120,14 @@ const MyMapModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [addressCoordinates, setAddressCoordinates] = useState(address?.coordinates ?? []);
-  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const {setNoInternet} = useContext(ConnectionContext);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
       setError(null);
       try {
-        const suggestions = await getSuggestions(address.address);
+        const suggestions = await getSuggestions(address.address, config.clientId);
         if (suggestions.length > 0) {
           setAddressCoordinates(suggestions[0].coordinates);
         } else {
@@ -132,7 +142,7 @@ const MyMapModal = ({
     const fetchUserCoordinates = async () => {
       setError(null);
       try {
-        const coords = await getUserApproximateCoordinates();
+        const coords = await getUserApproximateCoordinates(config.clientId);
         setAddressCoordinates(coords);
       } catch (e) {
         if(isNoConnectionError(e)) setNoInternet(true);
@@ -186,7 +196,7 @@ const MyMapModal = ({
   }
 
   const getFooterStyle = () => {
-    if(isSmallSizeScreen && config.widgetMode) return smallFooterStyle;
+    if(config.widgetMode) return smallFooterStyle;
     return isMediumSizeScreen || isSmallSizeScreen ? mobileFooterStyle : footerStyle
   }
 
@@ -199,7 +209,7 @@ const MyMapModal = ({
 
   const confirmCoordinates = async () => {
     try {
-      const address = await getAddressForCoordinates(addressCoordinates);
+      const address = await getAddressForCoordinates(addressCoordinates, config.clientId);
       setAddress(address);
       confirmAddress(addressCoordinates);
       closeModal();
@@ -226,9 +236,9 @@ const MyMapModal = ({
            style={getStyle()}
     >
       <Box sx={boxStyle}>
-        <div style={headerStyle}>
+        <div>
           <MyModalTitle text={isGeneric ? 'Tell us your location' : 'Confirm your location'}/>
-          <div style={subtitleStyle}>{isGeneric ? 'Zoom the map and drag the marker to tell us your current location.' : 'You can move the marker to your approximate location.'}</div>
+          <div style={isExtraSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{isGeneric ? 'Zoom the map and drag the marker to tell us your current location.' : 'You can move the marker to your approximate location.'}</div>
         </div>
         <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileMapContainerStyle : mapContainerStyle}>
           {
@@ -257,11 +267,11 @@ const MyMapModal = ({
           }
         </div>
         <div style={getFooterStyle()}>
-          <MyBackButton text={'Change address'}
+          <MyBackButton text={isExtraSmallSizeScreen ? 'Change' : 'Change address'}
                         onClick={handleChangeAddress}
           />
-          <MyForwardButton text={'Confirm location'}
-                           icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
+          <MyForwardButton text={isExtraSmallSizeScreen ? 'Confirm' : 'Confirm location'}
+                           icon={<ArrowForward style={{marginLeft: isExtraSmallSizeScreen ? 5 : 15}} fontSize={'small'}/>}
                            onClick={handleContinue}
           />
         </div>
