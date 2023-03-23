@@ -120,10 +120,10 @@ const SuggestionsModal = ({
 
   const config = useContext(ConfigContext);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config);
+    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen);
     return isMediumSizeScreen || isSmallSizeScreen ? mobileModalStyle : modalStyle
   }
 

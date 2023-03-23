@@ -8,6 +8,7 @@ import TestStatsTableContent from "../common/TestStatsTableContent";
 import MyMeasurementInfoModalTable from "./MyMeasurementInfoModalTable";
 import ConfigContext from "../../context/ConfigContext";
 import {widgetModalFraming} from "../../utils/modals";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const mobileModalStyle = {
   width: '90%',
@@ -51,11 +52,12 @@ const MyMeasurementInfoModal = ({
 }) => {
 
   const config = useContext(ConfigContext);
+  const {isExtraSmallSizeScreen} = useViewportSizes();
 
   const closeModal = () => setIsOpen(false);
 
   const getModalStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config);
+    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen);
     return mobileModalStyle;
   }
 
