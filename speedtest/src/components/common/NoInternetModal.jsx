@@ -142,7 +142,7 @@ const NoInternetModal = ({
   const isSmall = isMediumSizeScreen || isSmallSizeScreen;
 
   const getStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config);
+    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen);
     return isSmallSizeScreen ? mobileModalStyle : isMediumSizeScreen ? tabletModalStyle : modalStyle
   }
 

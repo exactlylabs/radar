@@ -191,7 +191,7 @@ const MyMapModal = ({
   )
 
   const getStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config);
+    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen);
     return isMediumSizeScreen || isSmallSizeScreen ? mobileModalStyle : modalStyle
   }
 

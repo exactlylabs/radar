@@ -13,6 +13,8 @@ import {MyForwardButton} from "../../../common/MyForwardButton";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import MySecondaryModalTitle from "../../../common/MySecondaryModalTitle";
 import {widgetModalFraming} from "../../../../utils/modals";
+import {useContext} from "react";
+import ConfigContext from "../../../../context/ConfigContext";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -52,6 +54,13 @@ const subtitleStyle = {
   marginBottom: 35,
 }
 
+const xsSubtitleStyle = {
+  ...subtitleStyle,
+  fontSize: 13,
+  lineHeight: '20px',
+  marginBottom: '10px'
+}
+
 const footerStyle = {
   display: 'flex',
   flexDirection: 'row',
@@ -69,6 +78,16 @@ const mobileFooterStyle = {
   justifyContent: 'space-between',
   alignItems: 'center',
   margin: 'auto',
+}
+
+const xsFooterStyle = {
+  display: 'flex',
+  flexDirection: 'row',
+  width: '90%',
+  maxWidth: '310px',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  margin: '5px auto',
 }
 
 const closeButtonStyle = {
@@ -113,12 +132,20 @@ const mobileAddressWrapperStyle = {
   margin: '0 auto 30px',
 }
 
+const xsAddressWrapperStyle = {
+  ...addressWrapperStyle,
+  maxWidth: '90%',
+  margin: '0 auto 10px',
+  padding: '5px 10px'
+}
+
 const locationPinIconStyle = {
   marginRight: 10,
 }
 
 const addressTextStyle = {
   maxWidth: 400,
+  color: DEFAULT_TEXT_COLOR,
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   overflow: 'hidden',
@@ -129,6 +156,11 @@ const mobileAddressTextStyle = {
   maxWidth: 250
 }
 
+const xsTextStyle = {
+  ...mobileAddressTextStyle,
+  fontSize: 12
+}
+
 const MyNoConnectionConfirmationModal = ({
   open,
   close,
@@ -136,11 +168,27 @@ const MyNoConnectionConfirmationModal = ({
   goToLastFlowStep
 }) => {
 
+  const config = useContext(ConfigContext);
   const {isExtraSmallSizeScreen, isMediumSizeScreen, isSmallSizeScreen} = useViewportSizes();
 
   const getModalStyle = () => {
-    if(isExtraSmallSizeScreen) return widgetModalFraming();
+    if(isExtraSmallSizeScreen) return widgetModalFraming(config, true);
     return (isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle;
+  }
+
+  const getFooterStyle = () => {
+    if(isExtraSmallSizeScreen) return xsFooterStyle;
+    return (isMediumSizeScreen || isSmallSizeScreen) ? mobileFooterStyle : footerStyle;
+  }
+
+  const getAddressWrapperStyle = () => {
+    if(isExtraSmallSizeScreen) return xsAddressWrapperStyle;
+    return (isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressWrapperStyle : addressWrapperStyle;
+  }
+
+  const getTextStyle = () => {
+    if(isExtraSmallSizeScreen) return xsTextStyle;
+    return (isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressTextStyle : addressTextStyle;
   }
 
   return (
@@ -154,16 +202,16 @@ const MyNoConnectionConfirmationModal = ({
         </div>
         <img style={noInternetIconStyle} src={NoInternetIconBlue} alt={'no-internet-icon'} width={42} height={42}/>
         <MySecondaryModalTitle text={'Confirm you don\'t have internet'}/>
-        <div style={subtitleStyle}>Are you sure you don’t have Internet at the address below?</div>
-        <div style={ (isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressWrapperStyle : addressWrapperStyle}>
+        <div style={isExtraSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Are you sure you don’t have Internet at the address below?</div>
+        <div style={getAddressWrapperStyle()}>
           <img style={locationPinIconStyle} src={LocationPinIcon} width={28} height={28} alt={'location-pin'}/>
-          <p className={'speedtest--p'} style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressTextStyle : addressTextStyle}>{address}</p>
+          <p className={'speedtest--p'} style={getTextStyle()}>{address}</p>
         </div>
-        <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileFooterStyle : footerStyle}>
+        <div style={getFooterStyle()}>
           <MyBackButton text={'Cancel'}
                         onClick={close}
           />
-          <MyForwardButton text={'I don\'t have internet'}
+          <MyForwardButton text={isExtraSmallSizeScreen ? 'Confirm' : 'I don\'t have internet'}
                            icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
                            onClick={goToLastFlowStep}
           />
