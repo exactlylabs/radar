@@ -39,6 +39,7 @@ class Client < ApplicationRecord
 
   has_many :measurements
   has_many :client_event_logs
+  has_many :ndt7_diagnose_reports
 
 
   validates :scheduling_amount_per_period, numericality: { only_integer: true, greater_than: 0 }

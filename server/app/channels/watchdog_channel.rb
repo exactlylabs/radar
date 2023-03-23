@@ -35,7 +35,16 @@ class WatchdogChannel < ApplicationCable::Channel
       )
     end
   end
-  
+
+  def self.broadcast_ndt7_diagnose_requested(client)
+    ActionCable.server.broadcast(
+      WatchdogChannel.watchdog_stream_name(client),
+      {
+        event: "ndt7_diagnose_requested", payload: {}
+      }
+    )
+  end
+
   # Actions called by the watchdog
 
   def sync(data)
@@ -52,6 +61,10 @@ class WatchdogChannel < ApplicationCable::Channel
     if self.client.has_watchdog_update?
       update
     end
+  end
+
+  def ndt7_diagnose_report(data)
+    Ndt7DiagnoseReport.create client: self.client, report: data["payload"]
   end
 
 
