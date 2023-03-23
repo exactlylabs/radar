@@ -37,7 +37,7 @@ func main() {
 	c := config.LoadConfig()
 
 	log.Println("Starting Radar POD Watchdog")
-	tracing.Setup(c, info.BuildInfo())
+	tracing.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version)
 	defer tracing.NotifyPanic()
 
 	sysManager := sysinfo.NewSystemManager()
