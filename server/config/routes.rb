@@ -167,6 +167,7 @@ Rails.application.routes.draw do
       post 'suggestions', to: 'geolocation#suggestions'
       post 'coordinates', to: 'geolocation#coordinates'
       get 'user_coordinates', to: 'geolocation#user_coordinates'
+      post 'sentry', to: 'sentry#tunnel'
     end
   end
 
