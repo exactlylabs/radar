@@ -1,6 +1,6 @@
 package storages
 
-import "github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
+import "github.com/exactlylabs/go-errors/pkg/errors"
 
 // IngestorAppStorage holds the storages needed by the Ingestor application
 type IngestorAppStorages struct {

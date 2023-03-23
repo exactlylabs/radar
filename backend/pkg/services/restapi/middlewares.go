@@ -6,8 +6,8 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/webcontext"
+	"github.com/exactlylabs/go-rest/pkg/restapi/apierrors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 	"github.com/gorilla/mux"
 )
 

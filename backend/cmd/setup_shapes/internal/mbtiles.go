@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 func GeoJSONToTilesets(src, dst string, layerName string, startingZoom, endZoom uint) error {

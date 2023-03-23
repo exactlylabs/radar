@@ -3,10 +3,10 @@ package routes
 import (
 	"net/http"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/paginator"
+	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/paginator"
 )
 
 // @Param id path string true "Geospace ID"
@@ -15,7 +15,7 @@ import (
 // @Success 200 {object} paginator.PaginatedResponse[storages.ASNOrg]
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /geospaces/{id}/asns [get]
-func GeospaceASNs(ctx *restapi.WebContext) {
+func GeospaceASNs(ctx *webcontext.Context) {
 	asns := ctx.MustGetValue("asnsStorage").(storages.ASNOrgStorage)
 	geospaceId := ctx.UrlParameters()["id"]
 	if ctx.HasErrors() {
@@ -40,7 +40,7 @@ func GeospaceASNs(ctx *restapi.WebContext) {
 // @Success 200 {object} paginator.PaginatedResponse[storages.ASNOrg]
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /asns [get]
-func ListASNs(ctx *restapi.WebContext) {
+func ListASNs(ctx *webcontext.Context) {
 	asns := ctx.MustGetValue("asnsStorage").(storages.ASNOrgStorage)
 	response, err := paginator.New[*storages.ASNOrg]().Paginate(ctx, func(limit, offset int) (paginator.Iterator[*storages.ASNOrg], error) {
 		query := ctx.QueryParams().Get("query")

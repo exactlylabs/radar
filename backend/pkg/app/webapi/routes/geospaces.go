@@ -1,10 +1,10 @@
 package routes
 
 import (
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/paginator"
+	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/paginator"
 )
 
 type ListNamespaceGeospacesResult struct {
@@ -15,7 +15,7 @@ type ListNamespaceGeospacesResult struct {
 // @Param query query string  false "text to filter for"
 // @Success 200 {object} ListNamespaceGeospacesResult
 // @Router /namespaces/{namespace}/geospaces [get]
-func ListNamespaceGeospaces(c *restapi.WebContext) {
+func ListNamespaceGeospaces(c *webcontext.Context) {
 	geospaces := c.MustGetValue("geospacesStorage").(storages.GeospaceStorage)
 	ns := c.UrlParameters()["namespace"]
 	validateNamespace(ns, c)
@@ -52,7 +52,7 @@ func ListNamespaceGeospaces(c *restapi.WebContext) {
 // @Param args query paginator.PaginationArgs false "pagination arguments"
 // @Success 200 {object} paginator.PaginatedResponse[storages.DetailedGeospace]
 // @Router /geospaces [get]
-func ListAllGeospaces(c *restapi.WebContext) {
+func ListAllGeospaces(c *webcontext.Context) {
 	geospaces := c.MustGetValue("geospacesStorage").(storages.GeospaceStorage)
 	p := paginator.New[*storages.DetailedGeospace]()
 	response, err := p.Paginate(c, func(limit int, offset int) (paginator.Iterator[*storages.DetailedGeospace], error) {

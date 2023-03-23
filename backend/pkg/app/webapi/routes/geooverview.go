@@ -4,19 +4,19 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/apierrors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
 )
 
-func toInt(ctx *restapi.WebContext, key string) *int {
+func toInt(ctx *webcontext.Context, key string) *int {
 	val := ctx.QueryParams().Get(key)
 	intVal, err := strconv.Atoi(val)
 	if err != nil {
 		ctx.AddFieldError(key, apierrors.FieldErrors{
-			Errors: []*apierrors.APIError{
-				{Message: "is not a valid integer", Code: "invalid_int"},
+			apierrors.APIError{
+				Message: "is not a valid integer", Code: "invalid_int",
 			},
 		})
 	}
@@ -29,7 +29,7 @@ func toInt(ctx *restapi.WebContext, key string) *int {
 // @Success 200 {object} storages.GeospaceSummaryResult
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /geospaces/{id}/overview [get]
-func GeospaceMeasurementsOverviewHandler(ctx *restapi.WebContext) {
+func GeospaceMeasurementsOverviewHandler(ctx *webcontext.Context) {
 	summaries := ctx.MustGetValue("summariesStorage").(storages.SummariesStorage)
 	geospaces := ctx.MustGetValue("geospacesStorage").(storages.GeospaceStorage)
 	asns := ctx.MustGetValue("asnsStorage").(storages.ASNOrgStorage)

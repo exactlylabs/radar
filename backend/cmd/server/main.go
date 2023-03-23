@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"sync"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/clickhousestorages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/adapters/geoprovider"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/geo"
@@ -17,7 +18,6 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/clickhousedb"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/joho/godotenv"
 )
 
@@ -79,7 +79,6 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		server.Setup()
 		if err := server.Run(*addr); err != nil {
 			panic(errors.Wrap(err, "Run error"))
 		}

@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/paginator"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/webcontext"
+	"github.com/exactlylabs/go-rest/pkg/restapi/paginator"
+	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 )
 
 func TestPaginationArgsProvider(t *testing.T) {

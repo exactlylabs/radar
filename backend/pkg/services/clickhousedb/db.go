@@ -6,7 +6,7 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 type ChStorageOptions struct {

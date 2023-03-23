@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/apierrors"
 	"github.com/gorilla/mux"
 	"golang.org/x/sync/syncmap"
 )

@@ -5,9 +5,9 @@ import (
 	"database/sql"
 
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/namespaces"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/google/uuid"
 )
 

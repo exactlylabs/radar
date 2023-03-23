@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/webcontext"
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/apierrors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 )
 
 const (

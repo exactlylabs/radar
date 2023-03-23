@@ -6,9 +6,9 @@ import (
 	"io"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ingestor/models"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/hamba/avro/ocf"
 )
 

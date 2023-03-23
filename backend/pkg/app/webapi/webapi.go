@@ -1,11 +1,11 @@
 package webapi
 
 import (
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	ports "github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/geo"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi/routes"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
 	"github.com/gorilla/handlers"
 )

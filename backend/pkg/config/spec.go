@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 type Config struct {

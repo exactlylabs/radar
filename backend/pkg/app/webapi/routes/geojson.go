@@ -6,14 +6,14 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/apierrors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/geo"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/namespaces"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/cache"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/apierrors"
 	"golang.org/x/exp/slices"
 )
 
@@ -31,7 +31,7 @@ type GeoJSONArgs struct {
 	storages.SummaryFilter
 }
 
-func (gja *GeoJSONArgs) Parse(c *restapi.WebContext) {
+func (gja *GeoJSONArgs) Parse(c *webcontext.Context) {
 	ns := c.QueryParams().Get("namespace")
 	asnOrgId := c.QueryParams().Get("asn_id")
 	if asnOrgId != "" {
@@ -58,7 +58,7 @@ func (gja *GeoJSONArgs) PortNamespace() namespaces.Namespace {
 // @Success 200 {object} geo.GeoJSON
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /geojson [get]
-func HandleGetGeoJSON(c *restapi.WebContext) {
+func HandleGetGeoJSON(c *webcontext.Context) {
 	conf := c.MustGetValue("config").(*config.Config)
 	cacheKey := c.Request.URL.String()
 	if v, exists := geojsonCache.Get(cacheKey); exists && conf.UseCache() {
@@ -121,7 +121,7 @@ func HandleGetGeoJSON(c *restapi.WebContext) {
 	geojsonCache.Set(cacheKey, data, time.Hour)
 }
 
-func validateTimeFilter(c *restapi.WebContext) storages.SummaryFilter {
+func validateTimeFilter(c *webcontext.Context) storages.SummaryFilter {
 	filter := storages.SummaryFilter{}
 	if c.QueryParams().Has("year") {
 		filter.Year = toInt(c, "year")
@@ -165,7 +165,7 @@ func validateTimeFilter(c *restapi.WebContext) storages.SummaryFilter {
 	return filter
 }
 
-func validateNamespace(ns string, c *restapi.WebContext) string {
+func validateNamespace(ns string, c *webcontext.Context) string {
 	if ns == "" {
 		c.AddFieldError("namespace", apierrors.MissingFieldError)
 		return ""
@@ -185,7 +185,7 @@ type ServeVectorTilesArgs struct {
 	storages.SummaryFilter
 }
 
-func (gja *ServeVectorTilesArgs) Parse(c *restapi.WebContext) {
+func (gja *ServeVectorTilesArgs) Parse(c *webcontext.Context) {
 	gja.SummaryFilter = validateTimeFilter(c)
 	asnId := c.QueryParams().Get("asn_id")
 	if asnId != "" {
@@ -215,7 +215,7 @@ func convertNamespace(ns string) namespaces.Namespace {
 // @Success 200 {string} string "encoded vector tile"
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /namespaces/{namespace}/tiles/{z}/{x}/{y} [get]
-func ServeVectorTiles(c *restapi.WebContext) {
+func ServeVectorTiles(c *webcontext.Context) {
 	start := time.Now()
 	conf := c.MustGetValue("config").(*config.Config)
 	servers := c.MustGetValue("tilesetServers").(*geo.TilesetServers)
@@ -303,7 +303,7 @@ func ServeVectorTiles(c *restapi.WebContext) {
 // @Success 200 {string} string "encoded vector tile"
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /tiles/{z}/{x}/{y} [get]
-func ServeMultiLayeredVectorTiles(c *restapi.WebContext) {
+func ServeMultiLayeredVectorTiles(c *webcontext.Context) {
 	start := time.Now()
 	conf := c.MustGetValue("config").(*config.Config)
 	servers := c.MustGetValue("tilesetServers").(*geo.TilesetServers)

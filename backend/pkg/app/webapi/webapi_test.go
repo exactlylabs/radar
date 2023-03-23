@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi/routes"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
 	"github.com/go-playground/assert/v2"
 	"github.com/stretchr/testify/suite"
 )
@@ -18,13 +18,13 @@ import (
 
 type TestSuite struct {
 	suite.Suite
-	context  *restapi.WebContext
+	context  *webcontext.Context
 	response *httptest.ResponseRecorder
 }
 
 func (s *TestSuite) SetupTest() {
 	s.response = httptest.NewRecorder()
-	s.context = restapi.NewTestContext(s.response, &http.Request{})
+	s.context = webcontext.NewTestContext(s.response, &http.Request{})
 }
 
 func (s *TestSuite) TestHealth() {

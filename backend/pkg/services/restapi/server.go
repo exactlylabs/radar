@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/dependencies"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/paginator"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi/webcontext"
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-rest/pkg/restapi/dependencies"
+	"github.com/exactlylabs/go-rest/pkg/restapi/paginator"
+	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 	"github.com/gorilla/mux"
 )
 

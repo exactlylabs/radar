@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/geo"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/namespaces"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/paulmach/orb/geojson"
 )
 

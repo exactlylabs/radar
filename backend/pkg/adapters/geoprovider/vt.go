@@ -3,10 +3,10 @@ package geoprovider
 import (
 	"database/sql"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/geo"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/namespaces"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
 	"github.com/paulmach/orb/encoding/mvt"
 	mbtiles "github.com/twpayne/go-mbtiles"
 	"golang.org/x/exp/slices"

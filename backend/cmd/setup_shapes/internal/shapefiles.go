@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/errors"
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 func DownloadShapeFile(dst string, url string) error {
