@@ -16,6 +16,7 @@ type Config struct {
 	DBPassword                string `config:"DB_PASSWORD"`
 	DBHost                    string `config:"DB_HOST"`
 	DBPortStr                 string `config:"DB_PORT"`
+	DBSecureTLSStr            string `config:"DB_SECURE_TLS"`
 	FilesBucketName           string `config:"FILES_BUCKET_NAME"`
 	CORSAllowedOrigins        string `config:"CORS_ALLOWED_ORIGINS"`
 	ClickhouseStorageNWorkers string `config:"CLICKHOUSE_STORAGE_NWORKERS"`
@@ -57,6 +58,14 @@ func (c *Config) UseCache() bool {
 
 func (c *Config) AllowedOrigins() []string {
 	return strings.Split(c.CORSAllowedOrigins, ",")
+}
+
+func (c *Config) DBSecureTLS() bool {
+	b, err := strconv.ParseBool(c.DBSecureTLSStr)
+	if err != nil {
+		panic(errors.Wrap(err, "config.Config#DBSecureTLS ParseBool"))
+	}
+	return b
 }
 
 var cachedConfig *Config
