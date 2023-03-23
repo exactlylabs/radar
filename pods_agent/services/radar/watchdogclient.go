@@ -11,6 +11,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/exactlylabs/radar/pods_agent/services/ndt7/ndt7diagnose"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/cable"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
@@ -23,6 +24,8 @@ var _ watchdog.WatchdogClient = &RadarWatchdogClient{}
 const (
 	WatchdogChannelName = "WatchdogChannel"
 )
+
+const NDT7DiagnoseReport cable.CustomActionTypes = "ndt7_diagnose_report"
 
 var WatchdogUserAgent = "RadarPodsWatchdog/"
 
@@ -99,6 +102,15 @@ func (c *RadarWatchdogClient) handleSubscriptionMessage(msg cable.SubscriptionMe
 				BinaryUrl: c.serverURL + updateData.BinaryUrl, // Websocket client only sends the path
 			},
 		}
+	} else if msg.Event == "ndt7_diagnose_requested" {
+		report, err := ndt7diagnose.RunDiagnose()
+		if err != nil {
+			err = fmt.Errorf("radar.RadarWatchdogClient#ndt7diagnoseRequested RunDiagnose: %w", err)
+			tracing.NotifyError(err, tracing.Context{"Message": {"event": msg.Event, "payload": string(msg.Payload)}})
+			log.Println(err)
+		} else {
+			c.sendNDT7Report(report)
+		}
 	}
 }
 
@@ -143,6 +155,13 @@ func (c *RadarWatchdogClient) sendSync() {
 		Payload: payload,
 	})
 	firstPing = false
+}
+
+func (c *RadarWatchdogClient) sendNDT7Report(report *ndt7diagnose.DiagnoseReport) {
+	c.channel.SendAction(cable.CustomActionData{
+		Action:  NDT7DiagnoseReport,
+		Payload: report,
+	})
 }
 
 func (c *RadarWatchdogClient) WatchdogPing(meta *sysinfo.ClientMeta) (*watchdog.ServerMessage, error) {
