@@ -1,6 +1,7 @@
 package clickhousedb
 
 import (
+	"crypto/tls"
 	"fmt"
 	"time"
 
@@ -16,10 +17,11 @@ type ChStorageOptions struct {
 	Port           int
 	DBName         string
 	MaxConnections int
+	SecureTLS      bool
 }
 
 func Open(opts ChStorageOptions) (driver.Conn, error) {
-	conn, err := clickhouse.Open(&clickhouse.Options{
+	chOpts := &clickhouse.Options{
 		Auth: clickhouse.Auth{
 			Database: opts.DBName,
 			Username: opts.Username,
@@ -28,7 +30,12 @@ func Open(opts ChStorageOptions) (driver.Conn, error) {
 		Addr:         []string{fmt.Sprintf("%s:%d", opts.Host, opts.Port)},
 		MaxOpenConns: opts.MaxConnections,
 		ReadTimeout:  time.Hour,
-	})
+	}
+	if opts.SecureTLS {
+		chOpts.TLS = &tls.Config{}
+	}
+	conn, err := clickhouse.Open(chOpts)
+
 	if err != nil {
 		return nil, errors.Wrap(err, "clickhouseStorage#Open Open")
 	}
