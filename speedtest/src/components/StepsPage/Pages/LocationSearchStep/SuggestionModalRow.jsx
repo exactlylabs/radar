@@ -59,7 +59,7 @@ const SuggestionModalRow = ({
 
   return (
     <div style={rowStyle}
-         className={`suggestion-modal-row ${selected ? 'suggestion-modal-row--selected' : ''}`}
+         className={`speedtest--suggestion-modal-row ${selected ? 'speedtest--suggestion-modal-row--selected' : ''}`}
          onClick={selectSuggestion}
     >
       <img src={selected ? SelectedIcon : Icon}
@@ -67,7 +67,7 @@ const SuggestionModalRow = ({
            style={IconStyle}
       />
       <div style={textContainerStyle}>
-        <p className={'bold'} style={titleStyle}>{`${suggestion.house_number} ${suggestion.street}`}</p>
+        <p className={'speedtest--p speedtest--bold'} style={titleStyle}>{`${suggestion.house_number} ${suggestion.street}`}</p>
         <p style={subtitleStyle}>{`${suggestion.city}, ${suggestion.state} ${suggestion.postal_code}`}</p>
       </div>
     </div>

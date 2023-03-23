@@ -41,12 +41,7 @@ const closeButtonStyle = {
 const dateStyle = {
   color: DEFAULT_POPUP_VALUE_COLOR,
   fontSize: 15,
-}
-
-const widgetStyle = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
+  fontFamily: 'MulishRegular',
 }
 
 const MyMeasurementInfoModal = ({
@@ -67,7 +62,7 @@ const MyMeasurementInfoModal = ({
   return measurement &&
     <Modal open={isOpen} style={getModalStyle()}>
       <Box sx={boxStyle}>
-        <div style={closeButtonStyle} onClick={closeModal} className={'modal-dismiss--hoverable'}>
+        <div style={closeButtonStyle} onClick={closeModal} className={'speedtest--modal-dismiss--hoverable'}>
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
         <MyModalTitle text={'Test details'}/>

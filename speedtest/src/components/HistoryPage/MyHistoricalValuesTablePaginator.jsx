@@ -61,7 +61,7 @@ const MyHistoricalValuesTablePaginator = ({
     }
     return pages.map(page => {
         return page ?
-        <p className={'bold'} key={page} style={currentPage === page ? selectedPageStyle : regularPageStyle}
+        <p className={'speedtest--p speedtest--bold'} key={page} style={currentPage === page ? selectedPageStyle : regularPageStyle}
            onClick={() => setCurrentPage(page)}
         >
           {page}

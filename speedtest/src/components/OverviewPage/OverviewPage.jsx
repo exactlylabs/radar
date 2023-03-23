@@ -31,8 +31,8 @@ const OverviewPage = ({goToExplore, goToTest}) => {
       >
         <div style={isSmall ? overviewStyles.smallHeroSectionContentStyle : overviewStyles.heroSectionContentStyle}>
           <div style={isSmall ? overviewStyles.smallHeroTextContainerStyle : overviewStyles.heroTextContainerStyle}>
-            <p className={'extra-bold'} style={isSmall ? overviewStyles.smallHeroTitleStyle : overviewStyles.heroTitleStyle}>Test and compare your internet speed to others in your area.</p>
-            <p style={isSmall ? overviewStyles.smallHeroSubtitleStyle : overviewStyles.heroSubtitleStyle}>Radar lets you run speed tests on your computer or mobile phone and compare your results to others in your community or in the country.</p>
+            <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? overviewStyles.smallHeroTitleStyle : overviewStyles.heroTitleStyle}>Test and compare your internet speed to others in your area.</p>
+            <p className={'speedtest--p'} style={isSmall ? overviewStyles.smallHeroSubtitleStyle : overviewStyles.heroSubtitleStyle}>Radar lets you run speed tests on your computer or mobile phone and compare your results to others in your community or in the country.</p>
             <div style={isSmall ? overviewStyles.smallHeroButtonsContainer : overviewStyles.heroButtonsContainer}>
               <div style={{width: 'max-content', marginTop: '15px'}}>
                 <MyButton text={'Test your speed'} icon={<img src={arrowRightWhite} style={overviewStyles.arrowStyle} alt={'arrow right blue'}/>} onClick={goToTest}/>
@@ -59,7 +59,7 @@ const OverviewPage = ({goToExplore, goToTest}) => {
       </div>
       <div style={isSmall ? overviewStyles.smallDataSectionStyle : overviewStyles.dataSectionStyle}>
         <div style={isSmall ? overviewStyles.smallDataSectionContentStyle : overviewStyles.dataSectionContentStyle}>
-          <p className={'extra-bold'} style={isSmall ? overviewStyles.smallDataTitle : overviewStyles.dataTitle}>We collect thousands of speed test results to understand how broadband varies across the country.</p>
+          <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? overviewStyles.smallDataTitle : overviewStyles.dataTitle}>We collect thousands of speed test results to understand how broadband varies across the country.</p>
           <div style={isSmall ? overviewStyles.smallDataSectionColumnsWrapperStyle : overviewStyles.dataSectionColumnsWrapperStyle}>
             <DataColumn iconSrc={communitiesIcon}
                         title={'Explore real data'}
@@ -90,9 +90,9 @@ const OverviewPage = ({goToExplore, goToTest}) => {
                       isLargeSizeScreen ? overviewStyles.largeTextContainerStyle:
                       overviewStyles.mobileTextContainerStyle}
           >
-            <p className={'bold'} style={isSmall ? overviewStyles.smallMobileIntroTextStyle : overviewStyles.mobileIntroTextStyle}>Radar for Mobile</p>
-            <p className={'extra-bold'} style={isSmall ? overviewStyles.smallMobileTitleStyle : overviewStyles.mobileTitleStyle}>Test your wifi and cellular connections with our mobile app.</p>
-            <p style={isSmall ? overviewStyles.smallMobileTextStyle : overviewStyles.mobileTextStyle}>Radar lets you run speed tests outdoors and indoors, compare results over time, and compare your results with your neighborhood to get a better idea of how broadband looks like around you.</p>
+            <p className={'speedtest--p speedtest--bold'} style={isSmall ? overviewStyles.smallMobileIntroTextStyle : overviewStyles.mobileIntroTextStyle}>Radar for Mobile</p>
+            <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? overviewStyles.smallMobileTitleStyle : overviewStyles.mobileTitleStyle}>Test your wifi and cellular connections with our mobile app.</p>
+            <p className={'speedtest--p'} style={isSmall ? overviewStyles.smallMobileTextStyle : overviewStyles.mobileTextStyle}>Radar lets you run speed tests outdoors and indoors, compare results over time, and compare your results with your neighborhood to get a better idea of how broadband looks like around you.</p>
             <div style={isSmall ? overviewStyles.smallStoresContainer : overviewStyles.storesContainer}>
               <img src={appStore} style={isSmall ? overviewStyles.smallAppStoreStyle : overviewStyles.appStoreStyle} alt={'app Store icon'}/>
               <img src={googlePlay} style={isSmall ? overviewStyles.smallGooglePlayStyle : overviewStyles.googlePlayStyle} alt={'Google Play icon'}/>

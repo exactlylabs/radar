@@ -14,7 +14,7 @@ const mobileNavElementStyle = {
 }
 
 const MyNavLink = ({text, onClick, isCollapsed}) =>
-  <p className={'bold navlink--hoverable'}
+  <p className={'speedtest--p speedtest--bold speedtest--navlink--hoverable'}
      onClick={onClick}
      style={isCollapsed ? mobileNavElementStyle : navElementStyle}>
     {text}

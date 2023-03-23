@@ -8,6 +8,7 @@ import {
   DEFAULT_DOWNLOAD_FILTER_LOW,
   DEFAULT_DOWNLOAD_FILTER_MID
 } from "../../utils/colors";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 
 const MyFiltersList = ({
@@ -15,6 +16,8 @@ const MyFiltersList = ({
   selectedRangeIndexes,
   setSelectedRangeIndexes
 }) => {
+
+  const {isExtraSmallSizeScreen} = useViewportSizes();
 
   const toggleFilter = index => {
     if(selectedRangeIndexes.includes(index)) {

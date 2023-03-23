@@ -16,10 +16,9 @@ import {isNoConnectionError, notifyError} from "../../../../../utils/errors";
 import {emptyAddress} from "../../../StepsPage";
 import ConnectionContext from "../../../../../context/ConnectionContext";
 import './MyAddressInput.css';
+import ConfigContext from "../../../../../context/ConfigContext";
 
 const addressInputWrapperStyle = {
-  width: '80%',
-  maxWidth: 400,
   display: 'flex',
   alignItems: 'center',
   borderRadius: 16,
@@ -30,7 +29,7 @@ const addressInputWrapperStyle = {
 
 const addressInputStyle = {
   style: {
-    width: '90%',
+    width: 'calc(100% - 65px)',
     paddingLeft: '20px',
     border: 'none',
     fontFamily: DEFAULT_FONT_FAMILY,
@@ -47,7 +46,6 @@ const inputAdornmentStyle = {
   width: 44,
   height: 44,
   position: 'absolute',
-  right: 10,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -116,9 +114,10 @@ const MyAddressInput = ({
   const [locationLoading, setLocationLoading] = useState(false);
   const [suggestionsListOpen, setSuggestionsListOpen] = useState(false);
   const {setNoInternet} = useContext(ConnectionContext);
+  const config = useContext(ConfigContext);
 
   useEffect(() => {
-    document.getElementById('address-input').value = currentAddress.address;
+    document.getElementById('speedtest--address-input').value = currentAddress.address;
   }, [currentAddress]);
 
   const handleInputChange = debounce( async (e) => {
@@ -131,7 +130,7 @@ const MyAddressInput = ({
       setAddress({address: e.target.value, coordinates: []});
       setLocationLoading(true);
       try {
-        const suggestions = await getSuggestions(e.target.value);
+        const suggestions = await getSuggestions(e.target.value, config.clientId);
         setSuggestions(suggestions);
       } catch (e) {
         if(isNoConnectionError(e)) setNoInternet(true);
@@ -143,8 +142,8 @@ const MyAddressInput = ({
   });
 
   const autofillInput = (id, selectedAddress) => {
-    const addressInputElement = document.getElementById('address-input');
-    const selectedRowText = document.getElementById(`row-${id}-text`);
+    const addressInputElement = document.getElementById('speedtest--address-input');
+    const selectedRowText = document.getElementById(`speedtest--row-${id}-text`);
     if(addressInputElement && selectedRowText) {
       addressInputElement.value = selectedRowText.innerText;
       setAddress(selectedAddress);
@@ -153,9 +152,13 @@ const MyAddressInput = ({
   }
 
   const handleOpenSuggestions = () => {
-    const wrapperElement = document.getElementById('address-input-container');
-    if(wrapperElement) wrapperElement.classList.add('address-input-container--focused');
-    const currentInputValue = document.getElementById('address-input').value;
+    const wrapperElement = document.getElementById('speedtest--address-input-container');
+    const textFieldElement = document.getElementById('speedtest--address-input');
+    const continueButtonElement = document.getElementById('speedtest--continue-button');
+    if(wrapperElement) wrapperElement.classList.add('speedtest--address-input-container--focused');
+    if(textFieldElement) textFieldElement.classList.add('speedtest--address-input--focused');
+    if(continueButtonElement) continueButtonElement.classList.add('speedtest--continue-button--focused');
+    const currentInputValue = document.getElementById('speedtest--address-input').value;
     if(!!currentInputValue) {
       setSuggestionsListOpen(true);
     }
@@ -163,7 +166,7 @@ const MyAddressInput = ({
 
   const fetchAddress = async (coordinates) => {
     try {
-      const address = await getAddressForCoordinates(coordinates);
+      const address = await getAddressForCoordinates(coordinates, config.clientId);
       if (address.coordinates.length === 0) {
         openGenericLocationModal();
         return;
@@ -171,7 +174,7 @@ const MyAddressInput = ({
       setSelectedSuggestion(true);
       setAddress(address);
       handleContinue(address.address, true);
-      const addressInputElement = document.getElementById('address-input');
+      const addressInputElement = document.getElementById('speedtest--address-input');
       addressInputElement.value = address.address;
     } catch (e) {
       if(isNoConnectionError(e)) setNoInternet(true);
@@ -216,17 +219,22 @@ const MyAddressInput = ({
   }
 
   const handleBlurInput = () => {
-    const wrapperElement = document.getElementById('address-input-container');
-    if(wrapperElement && wrapperElement.classList.contains('address-input-container--focused'))
-      wrapperElement.classList.remove('address-input-container--focused');
+    const wrapperElement = document.getElementById('speedtest--address-input-container');
+    const textFieldElement = document.getElementById('speedtest--address-input');
+    const continueButtonElement = document.getElementById('speedtest--continue-button');
+    if(wrapperElement && wrapperElement.classList.contains('speedtest--address-input-container--focused')) {
+      wrapperElement.classList.remove('speedtest--address-input-container--focused');
+      textFieldElement.classList.remove('speedtest--address-input--focused');
+      continueButtonElement.classList.remove('speedtest--continue-button--focused');
+    }
   }
 
   return (
-    <div id={'address-input-wrapper'}>
-      <div style={addressInputWrapperStyle} id={'address-input-container'}>
+    <div id={'speedtest--address-input-wrapper'}>
+      <div style={addressInputWrapperStyle} id={'speedtest--address-input-container'}>
         <TextField placeholder={'Enter your address or zip code'}
-                   id={'address-input'}
-                   sx={{width: '90%'}}
+                   id={'speedtest--address-input'}
+                   sx={{width: '100%'}}
                    InputProps={addressInputStyle}
                    error={!!error}
                    onChange={handleInputChange}
@@ -234,8 +242,9 @@ const MyAddressInput = ({
                    onBlur={handleBlurInput}
                    variant={'standard'}
         />
-        <div className={!!currentAddress?.address ? 'opaque-hoverable' : ''}
+        <div className={!!currentAddress?.address ? 'speedtest--opaque-hoverable' : ''}
              style={inputAdornmentStyle}
+             id={'speedtest--continue-button'}
              onClick={!!currentAddress?.address ? checkClickConditions : undefined}
         >
           <div style={!!currentAddress?.address ? continueButtonStyle : disabledContinueButtonStyle}>
@@ -252,7 +261,7 @@ const MyAddressInput = ({
           </div>
         </div>
       </div>
-      <div className={'opaque-hoverable'}
+      <div className={'speedtest--opaque-hoverable'}
            style={useCurrentLocationStyle}
            onClick={triggerAutoLocation}
       >
@@ -262,9 +271,9 @@ const MyAddressInput = ({
              alt={'location-button-icon-small'}
              style={smallIconStyle}
          />
-        <p className={'bold'} style={useLocationStyle}>Use my current location</p>
+        <p className={'speedtest--p speedtest--bold'} style={useLocationStyle}>Use my current location</p>
       </div>
-      { error && <p style={errorMessageStyle}>{parseError(error)}</p> }
+      { error && <p className={'speedtest--p'} style={errorMessageStyle}>{parseError(error)}</p> }
       <LocationSuggestionsList suggestions={suggestions}
                                autofillInput={autofillInput}
                                open={suggestionsListOpen}

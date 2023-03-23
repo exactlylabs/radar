@@ -22,11 +22,11 @@ export const defaultButtonStyle = {
 
 export const MyButton = ({ text, onClick, disabled, icon, iconFirst, fullWidth }) => {
   return iconFirst ?
-    <button className={'bold blue-button--hoverable'} style={fullWidth ? {...defaultButtonStyle, width: '100%'} : defaultButtonStyle} onClick={onClick} disabled={disabled}>
+    <button className={'speedtest--bold speedtest--blue-button--hoverable'} style={fullWidth ? {...defaultButtonStyle, width: '100%'} : defaultButtonStyle} onClick={onClick} disabled={disabled}>
       {icon}
       {text}
     </button> :
-    <button className={'bold blue-button--hoverable'} style={fullWidth ? {...defaultButtonStyle, width: '100%'} : defaultButtonStyle} onClick={onClick} disabled={disabled}>
+    <button className={'speedtest--bold speedtest--blue-button--hoverable'} style={fullWidth ? {...defaultButtonStyle, width: '100%'} : defaultButtonStyle} onClick={onClick} disabled={disabled}>
       {text}
       {icon}
     </button>

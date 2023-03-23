@@ -70,15 +70,18 @@ const Frame = ({ config, children, step, setStep }) => {
       else if(config.webviewMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height}`};
       return isMediumSizeScreen || isSmallSizeScreen ? mobileFullWidthWrapperStyle : fullWidthWrapperStyle;
     } else {
-      if(config.widgetMode) return {...childrenWrapperStyle, height: `${config.frameStyle.height} - 110px`, overflowY: 'auto'};
+      if(config.widgetMode) return {...childrenWrapperStyle, height: `${config.frameStyle.height} - 110px`};
       return childrenWrapperStyle;
     }
   }
 
   const getWrapperStyle = () => {
     let baseStyle;
-    if(config.widgetMode) baseStyle = widgetMainWrapperStyle;
-    else if(config.widgetMode) baseStyle = webviewMainWrapperStyle;
+    if(config.widgetMode) {
+      baseStyle = widgetMainWrapperStyle;
+      if(step === TABS.ALL_RESULTS) baseStyle = {...baseStyle, overflowY: 'hidden'};
+    }
+    else if(config.webviewMode) baseStyle = webviewMainWrapperStyle;
     else if(isOverviewPage) baseStyle = defaultOverviewWrapperStyle;
     else baseStyle = defaultMainWrapperStyle;
     return {...baseStyle, ...config.frameStyle};
@@ -96,10 +99,10 @@ const Frame = ({ config, children, step, setStep }) => {
   }
 
   return (
-    <div style={getWrapperStyle()} id={'main-frame'}>
+    <div style={getWrapperStyle()} id={'speedtest--main-frame'}>
       {!config.widgetMode && !config.webviewMode && <Header setStep={setStep} isOverviewPage={isOverviewPage}/>}
       {shouldShowTabs && <Tabs step={step} setStep={setStep}/> }
-      <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: getMinHeight() }} id={'frame--main-frame-wrapper'}>
+      <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: getMinHeight() }} id={'speedtest--frame--main-frame-wrapper'}>
         {children}
       </div>
       {!config.widgetMode && !config.webviewMode && <Footer />}

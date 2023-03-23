@@ -21,7 +21,7 @@
   font-weight: normal;
 }
 
-body {
+#speedtest--main-frame {
   margin: 0;
   font-family: MulishRegular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
     'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
@@ -29,89 +29,85 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
-.bold {
+.speedtest--bold {
   font-family: MulishBold, MulishRegular, -apple-system, sans-serif;
 }
 
-.regular {
+.speedtest--regular {
   font-family: MulishRegular, -apple-system, sans-serif;
 }
 
-.extra-bold {
+.speedtest--extra-bold {
   font-family: MulishExtraBold, -apple-system, sans-serif;
 }
 
-.navlink--hoverable:hover {
+.speedtest--navlink--hoverable:hover {
   text-decoration: underline white;
   cursor: pointer;
   color: #6d6a94;
 }
 
-.regular-link--hoverable {
+.speedtest--regular-link--hoverable {
   color: #6d6a94;
 }
 
-.regular-link--hoverable:hover {
+.speedtest--regular-link--hoverable:hover {
   color: #3f3c70;
   cursor: pointer;
 }
 
-.tab-item--hoverable {
+.speedtest--tab-item--hoverable {
   color: #6d6a95;
   cursor: pointer;
 }
 
-.tab-item--hoverable:hover {
+.speedtest--tab-item--hoverable:hover {
   color: #3f3c70;
 }
 
-.blue-button--hoverable {
+.speedtest--blue-button--hoverable {
   background-color: #4b7be5;
   box-shadow: 0 4px 15px -2px rgba(75, 123, 229, 0.5);
   color: white;
 }
 
-.blue-secondary-button--hoverable {
+.speedtest--blue-secondary-button--hoverable {
   background-color: transparent;
   color: #4b7be5;
 }
 
-.blue-button--hoverable:hover {
+.speedtest--blue-button--hoverable:hover {
   background-color: #5a8bf8;
 }
 
-.blue-secondary-button--hoverable:hover {
+.speedtest--blue-secondary-button--hoverable:hover {
   opacity: 0.8;
 }
 
-.secondary-button--hoverable {
+.speedtest--secondary-button--hoverable {
   box-shadow: 0 4px 15px -2px rgba(75, 123, 229, 0.1);
   color: #3f3c70;
 }
 
-.secondary-button--hoverable:hover {
+.speedtest--secondary-button--hoverable:hover {
   box-shadow: 0 4px 20px -2px rgba(75, 123, 229, 0.2);
   color: #524e92;
 }
 
-.modal-dismiss--hoverable {
+.speedtest--modal-dismiss--hoverable {
   background-color: #dedce8;
 }
 
-.modal-dismiss--hoverable:hover {
+.speedtest--modal-dismiss--hoverable:hover {
   background-color: #e8e8ed;
 }
 
-.opaque-hoverable {
+.speedtest--opaque-hoverable {
   opacity: 1;
   cursor: pointer;
 }
 
-.opaque-hoverable:hover {
+.speedtest--opaque-hoverable:hover {
   opacity: 0.8;
   cursor: pointer;
 }

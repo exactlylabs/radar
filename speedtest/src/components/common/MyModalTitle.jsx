@@ -1,4 +1,5 @@
 import {DEFAULT_TITLE_COLOR} from "../../utils/colors";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const titleStyle = {
   fontFamily: 'MulishExtraBold',
@@ -8,9 +9,19 @@ const titleStyle = {
   paddingTop: 30,
 }
 
+const xsTitleStyle = {
+  ...titleStyle,
+  fontSize: 16,
+  paddingTop: 15,
+  marginBottom: 5
+}
+
 export const MyModalTitle = ({ text }) => {
+
+  const {isExtraSmallSizeScreen} = useViewportSizes();
+
   return (
-    <div style={titleStyle}>
+    <div style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>
       {text}
     </div>
   );

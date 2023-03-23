@@ -37,13 +37,13 @@ const PreferNotToAnswer = ({
   const hoverOff = () => setHovered(false);
 
   return (
-    <div className={'bold'}
+    <div className={'speedtest--bold'}
          style={isMediumSizeScreen ? mobileTextStyle : textStyle}
          onClick={goForward}
          onMouseEnter={hoverOn}
          onMouseLeave={hoverOff}
     >
-      <p className={'regular-link--hoverable'}>Skip this question</p>
+      <p className={'speedtest--p speedtest--regular-link--hoverable'}>Skip this question</p>
       {
         hovered ?
           <img src={ArrowRightIconHovered} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/> :

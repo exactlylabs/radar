@@ -25,7 +25,7 @@ const MyFilterTab = ({
 }) => {
 
   return (
-    <div className={'bold'} style={selected ? selectedFilterTabStyle : filterTabStyle}
+    <div className={'speedtest--bold'} style={selected ? selectedFilterTabStyle : filterTabStyle}
          onClick={onClick}>
       {label}
     </div>

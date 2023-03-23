@@ -7,7 +7,7 @@ const invisibleStyle = {
 }
 
 const suggestionsContainerStyle = {
-  width: '80%',
+  width: '100%',
   maxWidth: 390,
   alignItems: 'center',
   backgroundColor: WHITE,
@@ -48,7 +48,7 @@ const LocationSuggestionsList = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const clickOutsideContainerFunction = e => {
-    const suggestionsListContainerElement = document.getElementById('address-input-wrapper');
+    const suggestionsListContainerElement = document.getElementById('speedtest--address-input-wrapper');
     if (!suggestionsListContainerElement?.contains(e.target)) {
       setOpen(false);
     }
@@ -87,7 +87,7 @@ const LocationSuggestionsList = ({
   }, [suggestions]);
 
   return (
-    <div id={'suggestions-list-container'} style={open ? suggestionsContainerStyle : invisibleStyle}>
+    <div id={'speedtest--suggestions-list-container'} style={open ? suggestionsContainerStyle : invisibleStyle}>
       <div style={scrollableContainerStyle}>
         {
           !!suggestions &&

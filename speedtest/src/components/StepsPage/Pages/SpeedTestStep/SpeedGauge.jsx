@@ -69,7 +69,7 @@ const SpeedGauge = ({
   const config = useContext(ConfigContext);
 
   useEffect(() => {
-    const downloadTarget = document.getElementById('gauge-canvas');
+    const downloadTarget = document.getElementById('speedtest--gauge-canvas');
     downloadDonut = new Donut(downloadTarget).setOptions(downloadOptions);
     downloadDonut.maxValue = 100;
     downloadDonut.setMinValue(0);
@@ -190,7 +190,7 @@ const SpeedGauge = ({
 
   return (
     <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileCanvasWrapperStyle : canvasWrapperStyle}>
-      <canvas id={'gauge-canvas'} width={250} height={250}></canvas>
+      <canvas id={'speedtest--gauge-canvas'} width={250} height={250}></canvas>
       <SpeedGaugeInterior currentValue={isDownloading ? downloadValue?.toFixed(2) : uploadValue?.toFixed(2)} isDownloading={isDownloading}/>
     </div>
   )

@@ -78,9 +78,9 @@ const SpeedTestResultsStepPage = ({
     <div style={speedTestResultsContainerStyle}>
       <MyTitle text={'Your test results'}/>
       <div style={getExploreAreaTextStyle()} onClick={goToAreaMap}>
-        <p style={regularTextStyle}>See how you compare to others.</p>
+        <p className={'speedtest--p'} style={regularTextStyle}>See how you compare to others.</p>
         <div style={exploreAreaLinkStyle}>
-          <div className={'bold opaque-hoverable'} style={textStyle}>Explore your area</div>
+          <div className={'speedtest--bold speedtest--opaque-hoverable'} style={textStyle}>Explore your area</div>
           <img src={ArrowRightBlue} style={{marginLeft: 7}} width={14} height={14} alt={'blue-arrow-right'}/>
         </div>
       </div>

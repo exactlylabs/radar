@@ -85,7 +85,8 @@ const mobileFooterStyle = {
 }
 
 const subtitleStyle = {
-  color: DEFAULT_TEXT_COLOR
+  color: DEFAULT_TEXT_COLOR,
+  fontFamily: 'MulishRegular',
 }
 
 const notListedTextContainerStyle = {
@@ -158,10 +159,10 @@ const SuggestionsModal = ({
                                selectedSuggestionIndex={selectedIndex}
           />
           <div style={notListedTextContainerStyle}
-               className={'opaque-hoverable'}
+               className={'speedtest--opaque-hoverable'}
                onClick={goToGenericModal}
           >
-            <p className={'bold'} style={notListedTextStyle}>My address is not listed</p>
+            <p className={'speedtest--p speedtest--bold'} style={notListedTextStyle}>My address is not listed</p>
             <img src={SmallRightArrow} alt={'small right arrow'} style={smallRightArrowStyle}/>
           </div>
         </div>

@@ -8,11 +8,11 @@ import {
 import {ArrowForward, Close} from "@mui/icons-material";
 import NoInternetIconBlue from '../../../../assets/icon-location-nointernet-selected.png';
 import LocationPinIcon from '../../../../assets/address-icon-rounded.png';
-import {MyModalTitle} from "../../../common/MyModalTitle";
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import MySecondaryModalTitle from "../../../common/MySecondaryModalTitle";
+import {widgetModalFraming} from "../../../../utils/modals";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -136,15 +136,20 @@ const MyNoConnectionConfirmationModal = ({
   goToLastFlowStep
 }) => {
 
-  const {isMediumSizeScreen, isSmallSizeScreen} = useViewportSizes();
+  const {isExtraSmallSizeScreen, isMediumSizeScreen, isSmallSizeScreen} = useViewportSizes();
+
+  const getModalStyle = () => {
+    if(isExtraSmallSizeScreen) return widgetModalFraming();
+    return (isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle;
+  }
 
   return (
     <Modal open={open}
            onClose={close}
-           style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle}
+           style={getModalStyle()}
     >
       <Box sx={boxStyle}>
-        <div style={closeButtonStyle} onClick={close} className={'modal-dismiss--hoverable'}>
+        <div style={closeButtonStyle} onClick={close} className={'speedtest--modal-dismiss--hoverable'}>
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
         <img style={noInternetIconStyle} src={NoInternetIconBlue} alt={'no-internet-icon'} width={42} height={42}/>
@@ -152,7 +157,7 @@ const MyNoConnectionConfirmationModal = ({
         <div style={subtitleStyle}>Are you sure you don’t have Internet at the address below?</div>
         <div style={ (isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressWrapperStyle : addressWrapperStyle}>
           <img style={locationPinIconStyle} src={LocationPinIcon} width={28} height={28} alt={'location-pin'}/>
-          <p style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressTextStyle : addressTextStyle}>{address}</p>
+          <p className={'speedtest--p'} style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressTextStyle : addressTextStyle}>{address}</p>
         </div>
         <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileFooterStyle : footerStyle}>
           <MyBackButton text={'Cancel'}

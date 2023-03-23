@@ -103,7 +103,7 @@ const selectedTabUnderlineStyle = {
 
 const Tabs = ({ step, setStep }) => {
   const [selectedTab, setSelectedTab] = useState(TABS.SPEED_TEST);
-  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {isSmallSizeScreen, isMediumSizeScreen, isExtraSmallSizeScreen} = useViewportSizes();
 
   useEffect(() => {
     if(step === TABS.HISTORY && selectedTab !== TABS.HISTORY) setSelectedTab(TABS.HISTORY);
@@ -135,7 +135,7 @@ const Tabs = ({ step, setStep }) => {
   }
 
   return (
-    <div style={tabsWrapperStyle} id={'tabs--wrapper'}>
+    <div style={tabsWrapperStyle} id={'speedtest--tabs--wrapper'}>
       <div style={tabsContentWrapperStyle}>
         <div style={testSpeedTabStyle} onClick={goToTestSpeed}>
           <div style={getTabStyle(TABS.SPEED_TEST)}>
@@ -146,7 +146,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.SPEED_TEST ? 'speed-active' : 'speed-inactive'}
             />
-            <p className={'bold tab-item--hoverable'} style={selectedTab === TABS.SPEED_TEST ? selectedContentStyle : null}>Speed Test</p>
+            <p className={'speedtest--p speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.SPEED_TEST ? selectedContentStyle : null}>{isExtraSmallSizeScreen ? 'Test' : 'Speed Test'}</p>
           </div>
           <div style={selectedTab === TABS.SPEED_TEST ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
@@ -160,12 +160,12 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.HISTORY ? 'history-active' : 'history-inactive'}
             />
-            <div className={'bold tab-item--hoverable'} style={selectedTab === TABS.HISTORY ? selectedContentStyle : null}>Your History</div>
+            <div className={'speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.HISTORY ? selectedContentStyle : null}>{isExtraSmallSizeScreen ? 'History' : 'Your History'}</div>
           </div>
           <div style={selectedTab === TABS.HISTORY ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>
 
-        <div style={exploreMapTabStyle} onClick={goToExploreMap} id={'tabs--explore-map-button'}>
+        <div style={exploreMapTabStyle} onClick={goToExploreMap} id={'speedtest--tabs--explore-map-button'}>
           <div style={getTabStyle(TABS.ALL_RESULTS)}>
             <img
               src={selectedTab === TABS.ALL_RESULTS ? exploreMapIconActive : exploreMapIconInactive}
@@ -174,7 +174,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.ALL_RESULTS ? 'explore-active' : 'explore-inactive'}
             />
-            <div className={'bold tab-item--hoverable'} style={selectedTab === TABS.ALL_RESULTS ? selectedContentStyle : null}>{ isMediumSizeScreen || isSmallSizeScreen ? 'Map' : 'Explore the Map'}</div>
+            <div className={'speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.ALL_RESULTS ? selectedContentStyle : null}>{ isMediumSizeScreen || isSmallSizeScreen ? 'Map' : 'Explore the Map'}</div>
           </div>
           <div style={selectedTab === TABS.ALL_RESULTS ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>

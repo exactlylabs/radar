@@ -73,33 +73,33 @@ const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) 
   const isCurrentOption = () => selectedOption?.id === index;
 
   const pickOption = () => {
-    const allOptions = document.getElementsByClassName('my-option');
+    const allOptions = document.getElementsByClassName('speedtest--my-option');
     let previouslyPickedOption;
     for(let i = 0 ; i < allOptions.length ; i++) {
       const currentElem = allOptions[i];
-      if(currentElem.classList.contains('picked'))
+      if(currentElem.classList.contains('speedtest--picked'))
         previouslyPickedOption = currentElem;
     }
-    if(previouslyPickedOption) previouslyPickedOption.classList.remove('picked');
-    const currentOption = document.getElementById(`option-${index}`);
-    currentOption.classList.add('picked');
+    if(previouslyPickedOption) previouslyPickedOption.classList.remove('speedtest--picked');
+    const currentOption = document.getElementById(`speedtest--option-${index}`);
+    currentOption.classList.add('speedtest--picked');
     setSelectedOption(index);
   }
 
   return isMediumSizeScreen || isSmallSizeScreen?
     <div style={mobileOptionStyle}
-         className={'my-option'}
+         className={'speedtest--my-option'}
          onClick={pickOption}
-         id={`option-${index}`}
+         id={`speedtest--option-${index}`}
     >
       <div style={optionTextStyle}>{option.text}</div>
       <img src={isCurrentOption() ? option.iconSelectedSrc : option.iconSrc} width={28} height={28} style={mobileOptionIconStyle} alt={`${option.text}-icon`}/>
     </div>
     :
     <div style={isLast ? lastOptionStyle : optionStyle}
-         className={'my-option'}
+         className={'speedtest--my-option'}
          onClick={pickOption}
-         id={`option-${index}`}
+         id={`speedtest--option-${index}`}
     >
       <img src={isCurrentOption() ? option.iconSelectedSrc : option.iconSrc} width={32} height={32} style={optionIconStyle} alt={`${option.text}-icon`}/>
       <div style={optionTextStyle}>{option.text}</div>

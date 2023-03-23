@@ -85,8 +85,8 @@ const DataColumn = ({
       <div style={iconContainerStyle}>
         <img src={iconSrc} style={iconStyle} alt={'data column icon'}/>
       </div>
-      <p className={'bold'} style={isStacked ? smallTitleStyle : titleStyle}>{title}</p>
-      <p style={isStacked ? smallTextStyle : textStyle}>{text}</p>
+      <p className={'speedtest--p speedtest--bold'} style={isStacked ? smallTitleStyle : titleStyle}>{title}</p>
+      <p className={'speedtest--p'} style={isStacked ? smallTextStyle : textStyle}>{text}</p>
     </div>
   )
 }

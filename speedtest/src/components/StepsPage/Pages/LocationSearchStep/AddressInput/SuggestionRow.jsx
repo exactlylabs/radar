@@ -59,9 +59,9 @@ const SuggestionRow = ({
   useEffect(() => {
     if(suggestion) {
       // always set first element as 'selected'
-      const firstElement = document.getElementById('row-0');
-      if(firstElement) firstElement.classList.add('selected');
-      else document.getElementById('row--1').classList.add('selected');
+      const firstElement = document.getElementById('speedtest--row-0');
+      if(firstElement) firstElement.classList.add('speedtest--selected');
+      else document.getElementById('speedtest--row--1').classList.add('speedtest--selected');
     }
   }, [suggestion]);
 
@@ -71,18 +71,18 @@ const SuggestionRow = ({
 
   const setHovered = () => {
     setSelected && setSelected(index);
-    const thisRow = document.getElementById(`row-${index}`);
-    const hoveredElements = document.getElementsByClassName('selected');
+    const thisRow = document.getElementById(`speedtest--row-${index}`);
+    const hoveredElements = document.getElementsByClassName('speedtest--selected');
     if(hoveredElements.length > 0) {
       const currentElementHovered = hoveredElements[0]; // should only be one
-      currentElementHovered.classList.remove('selected');
+      currentElementHovered.classList.remove('speedtest--selected');
     }
-    thisRow.classList.add('selected');
+    thisRow.classList.add('speedtest--selected');
   }
 
   const unsetHovered = () => {
-    const thisRow = document.getElementById(`row-${index}`);
-    thisRow.classList.remove('selected');
+    const thisRow = document.getElementById(`speedtest--row-${index}`);
+    thisRow.classList.remove('speedtest--selected');
   }
 
   const autofillInputAndCloseSuggestions = () => {
@@ -94,14 +94,14 @@ const SuggestionRow = ({
 
   return (
     <div style={suggestionRowStyle}
-         id={`row-${index}`}
-         className={`suggestion-row ${selected ? 'suggestion-row--selected' : ''}`}
+         id={`speedtest--row-${index}`}
+         className={`speedtest--suggestion-row ${selected ? 'speedtest--suggestion-row--selected' : ''}`}
          onMouseOver={setHovered}
          onMouseLeave={unsetHovered}
          onClick={autofillInputAndCloseSuggestions}
     >
       <img src={LocationIcon} width={11} height={15} alt={'Location-icon'} style={locationIconStyle}/>
-      <div style={suggestionTextStyle} id={`row-${index}-text`}>{suggestion.address}</div>
+      <div style={suggestionTextStyle} id={`speedtest--row-${index}-text`}>{suggestion.address}</div>
       <img src={BlueArrow} alt={'right arrow'} style={rightArrowStyle}/>
     </div>
   );

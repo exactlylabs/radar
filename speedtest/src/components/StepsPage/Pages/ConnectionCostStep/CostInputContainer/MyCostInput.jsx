@@ -59,29 +59,29 @@ const MyCostInput = ({
 
   const handleFocus = () => {
     setFocus(true);
-    const containerElement = document.getElementById('cost-input-container');
-    const currencyElement = document.getElementById('my-cost-input-currency');
+    const containerElement = document.getElementById('speedtest--cost-input-container');
+    const currencyElement = document.getElementById('speedtest--my-cost-input-currency');
     if(containerElement && currencyElement) {
-      containerElement.classList.add('cost-input-container--focused');
-      currencyElement.classList.add('my-cost-input-currency--focused');
+      containerElement.classList.add('speedtest--cost-input-container--focused');
+      currencyElement.classList.add('speedtest--my-cost-input-currency--focused');
     }
   }
 
   const handleBlur = () => {
     setFocus(false);
-    const containerElement = document.getElementById('cost-input-container');
-    const currencyElement = document.getElementById('my-cost-input-currency');
-    if(containerElement && containerElement.classList.contains('cost-input-container--focused')) {
-      containerElement.classList.remove('cost-input-container--focused');
+    const containerElement = document.getElementById('speedtest--cost-input-container');
+    const currencyElement = document.getElementById('speedtest--my-cost-input-currency');
+    if(containerElement && containerElement.classList.contains('speedtest--cost-input-container--focused')) {
+      containerElement.classList.remove('speedtest--cost-input-container--focused');
     }
 
-    if(currencyElement && currencyElement.classList.contains('my-cost-input-currency--focused')) {
-      currencyElement.classList.remove('my-cost-input-currency--focused');
+    if(currencyElement && currencyElement.classList.contains('speedtest--my-cost-input-currency--focused')) {
+      currencyElement.classList.remove('speedtest--my-cost-input-currency--focused');
     }
   }
 
   return (
-    <div style={costInputWrapperStyle} id={'cost-input-container'}>
+    <div style={costInputWrapperStyle} id={'speedtest--cost-input-container'}>
       <TextField variant={'standard'}
                  sx={{width: '60%'}}
                  InputProps={focus ? focusInputStyle : inputStyle}
@@ -90,8 +90,9 @@ const MyCostInput = ({
                  onChange={handleChange}
                  onFocus={handleFocus}
                  onBlur={handleBlur}
+                 className={'speedtest--custom-input-reset'}
       />
-      <div id={'my-cost-input-currency'} style={currencyStyle}>US $</div>
+      <div id={'speedtest--my-cost-input-currency'} style={currencyStyle}>US $</div>
     </div>
   )
 }

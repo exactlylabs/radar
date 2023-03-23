@@ -17,11 +17,11 @@ export const defaultSecondaryButtonStyle = {
 
 export const CustomSecondaryButton = ({ text, onClick, disabled, icon, iconFirst, fullWidth }) => {
   return iconFirst ?
-    <button className={'bold blue-secondary-button--hoverable'} style={fullWidth ? {...defaultSecondaryButtonStyle, width: '100%'} : defaultSecondaryButtonStyle} onClick={onClick} disabled={disabled}>
+    <button className={'speedtest--bold speedtest--blue-secondary-button--hoverable'} style={fullWidth ? {...defaultSecondaryButtonStyle, width: '100%'} : defaultSecondaryButtonStyle} onClick={onClick} disabled={disabled}>
       {icon}
       {text}
     </button> :
-    <button className={'bold blue-secondary-button--hoverable'} style={fullWidth ? {...defaultSecondaryButtonStyle, width: '100%'} : defaultSecondaryButtonStyle} onClick={onClick} disabled={disabled}>
+    <button className={'speedtest--bold speedtest--blue-secondary-button--hoverable'} style={fullWidth ? {...defaultSecondaryButtonStyle, width: '100%'} : defaultSecondaryButtonStyle} onClick={onClick} disabled={disabled}>
       {text}
       {icon}
     </button>
