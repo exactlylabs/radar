@@ -1,9 +1,9 @@
 /*
 Set up shapes for the following Namespaces
-	* US_STATE
-	* US_COUNTIES
-	* US_TRIBAL_TRACTS
-	* MULTI_LAYERED
+  - US_STATE
+  - US_COUNTIES
+  - US_TRIBAL_TRACTS
+  - MULTI_LAYERED
 
 The shapes are in .geojson and .mbtiles formats. Additionally, this binary inserts the Features of these shapes into the DB as Geospace objects
 */
@@ -110,8 +110,6 @@ func main() {
 	ttractMBTilesPath := mbtilesPath(string(namespaces.US_TTRACT))
 	ttractLayerName := string(namespaces.US_TTRACT)
 
-	multiMBTilesPath := mbtilesPath(string(namespaces.MULTI_LAYERED))
-
 	// States zoom 0 to 12
 	if err := internal.GeoJSONToTilesets(stateGeoJSONPath, stateMBTilesPath, stateLayerName, 0, 12); err != nil {
 		panic(err)
@@ -130,10 +128,6 @@ func main() {
 	}
 	// Tribal Tracts zoom 0 to 12
 	if err := internal.GeoJSONToTilesets(ttractGeoJSONPath, ttractMBTilesPath, ttractLayerName, 0, 12); err != nil {
-		panic(err)
-	}
-
-	if err := internal.MergeTilesets(multiMBTilesPath, stateMBTilesMultiPath, countyMBTilesMultiPath); err != nil {
 		panic(err)
 	}
 

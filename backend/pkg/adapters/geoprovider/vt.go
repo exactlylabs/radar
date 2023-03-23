@@ -90,10 +90,9 @@ func NewTilesetServer(c *config.Config, ns namespaces.Namespace) geo.TilesetServ
 	return &tilesetServer{
 		namespace: ns,
 		tilesetFiles: map[namespaces.Namespace]string{
-			namespaces.US_STATE:      c.StatesMBTilesFile,
-			namespaces.US_COUNTY:     c.CountiesMBTilesFile,
-			namespaces.US_TTRACT:     c.TribalTractsMBTilesFile,
-			namespaces.MULTI_LAYERED: c.MultiLayeredMBTilesFile,
+			namespaces.US_STATE:  c.StatesMBTilesFile,
+			namespaces.US_COUNTY: c.CountiesMBTilesFile,
+			namespaces.US_TTRACT: c.TribalTractsMBTilesFile,
 		},
 		layersMap: map[string]namespaces.Namespace{
 			c.StatesLayerName:       namespaces.US_STATE,

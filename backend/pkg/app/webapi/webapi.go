@@ -42,7 +42,6 @@ func NewMappingAPI(
 	)
 
 	api.Route("/health", routes.HealthCheck)
-	api.Route("/api/v1/tiles/{z}/{x}/{y}", routes.ServeMultiLayeredVectorTiles)
 	api.Route("/api/v1/namespaces/{namespace}/tiles/{z}/{x}/{y}", routes.ServeVectorTiles)
 	api.Route("/api/v1/geospaces", routes.ListAllGeospaces)
 	api.Route("/api/v1/geospaces/{id}/overview", routes.GeospaceMeasurementsOverviewHandler)

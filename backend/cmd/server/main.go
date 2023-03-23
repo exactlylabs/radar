@@ -66,7 +66,6 @@ func main() {
 		States:       geoprovider.NewTilesetServer(conf, namespaces.US_STATE),
 		Counties:     geoprovider.NewTilesetServer(conf, namespaces.US_COUNTY),
 		TribalTracts: geoprovider.NewTilesetServer(conf, namespaces.US_TTRACT),
-		MultiLayered: geoprovider.NewTilesetServer(conf, namespaces.MULTI_LAYERED),
 	}
 	storages := &storages.MappingAppStorages{
 		GeospacesStorage: clickhousestorages.NewGeospaceStorage(db),

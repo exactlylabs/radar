@@ -94,8 +94,6 @@ type TilesetServers struct {
 	Counties TilesetServer
 	// Single layer (US_TTRACT Namespace) TilesetServer
 	TribalTracts TilesetServer
-	// Multiple layers that appear based on the zoom level
-	MultiLayered TilesetServer
 }
 
 // Get the TilesetServer based on the namespace or return ErrWrongNamespace in case of no match
@@ -107,8 +105,6 @@ func (gs *TilesetServers) Get(namespace namespaces.Namespace) (server TilesetSer
 		server = gs.Counties
 	case namespaces.US_TTRACT:
 		server = gs.TribalTracts
-	case namespaces.MULTI_LAYERED:
-		server = gs.MultiLayered
 	default:
 		return nil, ErrWrongNamespace
 	}
@@ -123,9 +119,6 @@ func (gs *TilesetServers) LoadAll() error {
 		return err
 	}
 	if err := gs.TribalTracts.Load(); err != nil {
-		return err
-	}
-	if err := gs.MultiLayered.Load(); err != nil {
 		return err
 	}
 	return nil
