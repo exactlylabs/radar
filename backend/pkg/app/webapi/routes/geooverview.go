@@ -29,10 +29,7 @@ func toInt(ctx *webcontext.Context, key string) *int {
 // @Success 200 {object} storages.GeospaceSummaryResult
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /geospaces/{id}/overview [get]
-func GeospaceMeasurementsOverviewHandler(ctx *webcontext.Context) {
-	summaries := ctx.MustGetValue("summariesStorage").(storages.SummariesStorage)
-	geospaces := ctx.MustGetValue("geospacesStorage").(storages.GeospaceStorage)
-	asns := ctx.MustGetValue("asnsStorage").(storages.ASNOrgStorage)
+func GeospaceMeasurementsOverviewHandler(ctx *webcontext.Context, summaries storages.SummariesStorage, geospaces storages.GeospaceStorage, asns storages.ASNOrgStorage) {
 	geospaceId := ctx.UrlParameters()["id"]
 	filter := validateTimeFilter(ctx)
 	if ctx.HasErrors() {

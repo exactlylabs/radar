@@ -58,16 +58,13 @@ func (gja *GeoJSONArgs) PortNamespace() namespaces.Namespace {
 // @Success 200 {object} geo.GeoJSON
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /geojson [get]
-func HandleGetGeoJSON(c *webcontext.Context) {
-	conf := c.MustGetValue("config").(*config.Config)
+func HandleGetGeoJSON(c *webcontext.Context, conf *config.Config, servers *geo.GeoJSONServers, summaries storages.SummariesStorage) {
 	cacheKey := c.Request.URL.String()
 	if v, exists := geojsonCache.Get(cacheKey); exists && conf.UseCache() {
 		c.ResponseHeader().Add("Content-Encoding", "gzip")
 		c.Write(v.([]byte))
 		return
 	}
-	servers := c.MustGetValue("geoJSONServers").(*geo.GeoJSONServers)
-	summaries := c.MustGetValue("summariesStorage").(storages.SummariesStorage)
 	args := &GeoJSONArgs{}
 	args.Parse(c)
 	if c.HasErrors() {
@@ -215,11 +212,8 @@ func convertNamespace(ns string) namespaces.Namespace {
 // @Success 200 {string} string "encoded vector tile"
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /namespaces/{namespace}/tiles/{z}/{x}/{y} [get]
-func ServeVectorTiles(c *webcontext.Context) {
+func ServeVectorTiles(c *webcontext.Context, conf *config.Config, servers *geo.TilesetServers, summaries storages.SummariesStorage) {
 	start := time.Now()
-	conf := c.MustGetValue("config").(*config.Config)
-	servers := c.MustGetValue("tilesetServers").(*geo.TilesetServers)
-	summaries := c.MustGetValue("summariesStorage").(storages.SummariesStorage)
 	args := &ServeVectorTilesArgs{}
 	args.Parse(c)
 	ns := c.UrlParameters()["namespace"]

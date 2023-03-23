@@ -2,11 +2,12 @@ package webapi
 
 import (
 	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-rest/pkg/restapi"
+	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 	ports "github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/geo"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi/routes"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/restapi"
 	"github.com/gorilla/handlers"
 )
 
@@ -41,6 +42,13 @@ func NewMappingAPI(
 		),
 	)
 
+	// simply inject the object given to it when the provider is called
+	injector := func(obj any) restapi.DependencyProvider {
+		return func(c *webcontext.Context) any {
+			return obj
+		}
+	}
+
 	api.Route("/health", routes.HealthCheck)
 	api.Route("/api/v1/namespaces/{namespace}/tiles/{z}/{x}/{y}", routes.ServeVectorTiles)
 	api.Route("/api/v1/geospaces", routes.ListAllGeospaces)
@@ -51,12 +59,13 @@ func NewMappingAPI(
 	api.Route("/api/v1/geojson", routes.HandleGetGeoJSON)
 	api.Route("/swagger.json", routes.HandleSwaggerSpec)
 	api.Route("/swagger", routes.HandleSwaggerUI)
-	api.AddToContext("summariesStorage", storages.SummariesStorage)
-	api.AddToContext("asnsStorage", storages.ASNOrgsStorage)
-	api.AddToContext("geospacesStorage", storages.GeospacesStorage)
-	api.AddToContext("config", conf)
-	api.AddToContext("geoJSONServers", geoJSONServers)
-	api.AddToContext("tilesetServers", tilesetServers)
+	api.AddDependency(injector(storages.SummariesStorage), storages.SummariesStorage)
+	api.AddDependency(injector(storages.ASNOrgsStorage), storages.ASNOrgsStorage)
+	api.AddDependency(injector(storages.GeospacesStorage), storages.GeospacesStorage)
+	api.AddDependency(injector(conf), conf)
+	api.AddDependency(injector(geoJSONServers), geoJSONServers)
+	api.AddDependency(injector(tilesetServers), tilesetServers)
+
 	if err := geoJSONServers.LoadAll(); err != nil {
 		panic(errors.Wrap(err, "webapi.NewMappingAPI geoJSONServers.LoadAll"))
 	}

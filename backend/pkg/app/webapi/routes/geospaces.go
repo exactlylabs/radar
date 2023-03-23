@@ -15,8 +15,7 @@ type ListNamespaceGeospacesResult struct {
 // @Param query query string  false "text to filter for"
 // @Success 200 {object} ListNamespaceGeospacesResult
 // @Router /namespaces/{namespace}/geospaces [get]
-func ListNamespaceGeospaces(c *webcontext.Context) {
-	geospaces := c.MustGetValue("geospacesStorage").(storages.GeospaceStorage)
+func ListNamespaceGeospaces(c *webcontext.Context, geospaces storages.GeospaceStorage) {
 	ns := c.UrlParameters()["namespace"]
 	validateNamespace(ns, c)
 	if c.HasErrors() {
@@ -52,8 +51,7 @@ func ListNamespaceGeospaces(c *webcontext.Context) {
 // @Param args query paginator.PaginationArgs false "pagination arguments"
 // @Success 200 {object} paginator.PaginatedResponse[storages.DetailedGeospace]
 // @Router /geospaces [get]
-func ListAllGeospaces(c *webcontext.Context) {
-	geospaces := c.MustGetValue("geospacesStorage").(storages.GeospaceStorage)
+func ListAllGeospaces(c *webcontext.Context, geospaces storages.GeospaceStorage) {
 	p := paginator.New[*storages.DetailedGeospace]()
 	response, err := p.Paginate(c, func(limit int, offset int) (paginator.Iterator[*storages.DetailedGeospace], error) {
 		query := c.QueryParams().Get("query")

@@ -15,8 +15,7 @@ import (
 // @Success 200 {object} paginator.PaginatedResponse[storages.ASNOrg]
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /geospaces/{id}/asns [get]
-func GeospaceASNs(ctx *webcontext.Context) {
-	asns := ctx.MustGetValue("asnsStorage").(storages.ASNOrgStorage)
+func GeospaceASNs(ctx *webcontext.Context, asns storages.ASNOrgStorage) {
 	geospaceId := ctx.UrlParameters()["id"]
 	if ctx.HasErrors() {
 		return
@@ -40,8 +39,7 @@ func GeospaceASNs(ctx *webcontext.Context) {
 // @Success 200 {object} paginator.PaginatedResponse[storages.ASNOrg]
 // @Failure 400 {object} restapi.FieldsValidationError
 // @Router /asns [get]
-func ListASNs(ctx *webcontext.Context) {
-	asns := ctx.MustGetValue("asnsStorage").(storages.ASNOrgStorage)
+func ListASNs(ctx *webcontext.Context, asns storages.ASNOrgStorage) {
 	response, err := paginator.New[*storages.ASNOrg]().Paginate(ctx, func(limit, offset int) (paginator.Iterator[*storages.ASNOrg], error) {
 		query := ctx.QueryParams().Get("query")
 		if query != "" {

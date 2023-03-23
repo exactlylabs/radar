@@ -51,6 +51,7 @@ func main() {
 		Host:           conf.DBHost,
 		Port:           conf.DBPort(),
 		MaxConnections: runtime.NumCPU() + 5,
+		SecureTLS:      conf.DBSecureTLS(),
 	})
 	if err != nil {
 		panic(errors.Wrap(err, "DB Open error"))
