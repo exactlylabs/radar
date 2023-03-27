@@ -18,10 +18,10 @@ const xsTitleStyle = {
 
 export const MyModalTitle = ({ text }) => {
 
-  const {isExtraSmallSizeScreen} = useViewportSizes();
+  const {isExtraSmallSizeScreen, isSmallSizeScreen} = useViewportSizes();
 
   return (
-    <div style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>
+    <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsTitleStyle : titleStyle}>
       {text}
     </div>
   );

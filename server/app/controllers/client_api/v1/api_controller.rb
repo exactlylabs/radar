@@ -7,14 +7,17 @@ module ClientApi
       before_action :check_allowed_origin
       after_action :set_cors_headers
 
+      def check_preflight
+        if request.request_method == "OPTIONS"
+          set_client
+          set_cors_headers
+        end
+      end
+
       def check_allowed_origin
         @allowed = true
         if request.origin && !@widget_client.client_urls.include?(request.origin) # Just check for origin if present, else, skip
           @allowed = false
-        end
-        if request.request_method == "OPTIONS"
-          set_cors_headers
-          head(204)
         end
       end
 

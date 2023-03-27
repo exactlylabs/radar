@@ -17,7 +17,7 @@ const ConnectionCostStepPage = ({
 
   return (
     <div>
-      <MyTitle text={'What’s your estimated monthly bill cost?'}/>
+      <MyTitle text={`What's your estimated monthly bill cost?`}/>
       <div style={subtitleStyle}>This helps us understand the average internet cost in your area.</div>
       <CostInput setCost={setCost} cost={cost}/>
       <MyStepSwitcher goForward={goForward} goBack={goBack} forwardDisabled={cost === null || cost === undefined}/>

@@ -62,6 +62,14 @@ const mobileMapContainerStyle = {
   height: '45%'
 }
 
+const smallMapContainerStyle = {
+  height: '55%'
+}
+
+const xsMapContainerStyle = {
+  height: '65%'
+}
+
 const footerStyle = {
   height: 110,
   display: 'flex',
@@ -77,17 +85,18 @@ const smallFooterStyle = {
   height: undefined,
   marginTop: '10px',
   width: '90%',
+  justifyContent: 'center',
   maxWidth: 450
 }
 
 const mobileFooterStyle = {
   display: 'flex',
-  height: 120,
-  flexDirection: 'column',
-  width: '70%',
-  justifyContent: 'space-between',
+  height: 'max-content',
+  flexDirection: 'row',
+  width: '90%',
+  justifyContent: 'center',
   alignItems: 'center',
-  margin: '30px auto',
+  margin: '15px auto',
 }
 
 const subtitleStyle = {
@@ -191,7 +200,7 @@ const MyMapModal = ({
   )
 
   const getStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen);
+    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen || isSmallSizeScreen);
     return isMediumSizeScreen || isSmallSizeScreen ? mobileModalStyle : modalStyle
   }
 
@@ -230,6 +239,17 @@ const MyMapModal = ({
     }
   }
 
+  const getMapWrapperStyle = () => {
+
+    let style;
+    if(isExtraSmallSizeScreen) style = xsMapContainerStyle;
+    else if(isSmallSizeScreen) style = smallMapContainerStyle;
+    else if(isMediumSizeScreen) style = mobileMapContainerStyle;
+    else style = mapContainerStyle;
+
+    return style;
+  }
+
   return (
     <Modal open={isOpen}
            onClose={closeModal}
@@ -238,9 +258,9 @@ const MyMapModal = ({
       <Box sx={boxStyle}>
         <div>
           <MyModalTitle text={isGeneric ? 'Tell us your location' : 'Confirm your location'}/>
-          <div style={isExtraSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{isGeneric ? 'Zoom the map and drag the marker to tell us your current location.' : 'You can move the marker to your approximate location.'}</div>
+          <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{isGeneric ? 'Zoom the map and drag the marker to tell us your current location.' : 'You can move the marker to your approximate location.'}</div>
         </div>
-        <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileMapContainerStyle : mapContainerStyle}>
+        <div style={getMapWrapperStyle()}>
           {
             !loading && addressCoordinates.length > 0 &&
             <MapContainer
@@ -267,10 +287,10 @@ const MyMapModal = ({
           }
         </div>
         <div style={getFooterStyle()}>
-          <MyBackButton text={isExtraSmallSizeScreen ? 'Change' : 'Change address'}
+          <MyBackButton text={isSmallSizeScreen || isExtraSmallSizeScreen ? 'Change' : 'Change address'}
                         onClick={handleChangeAddress}
           />
-          <MyForwardButton text={isExtraSmallSizeScreen ? 'Confirm' : 'Confirm location'}
+          <MyForwardButton text={isSmallSizeScreen || isExtraSmallSizeScreen ? 'Confirm' : 'Confirm location'}
                            icon={<ArrowForward style={{marginLeft: isExtraSmallSizeScreen ? 5 : 15}} fontSize={'small'}/>}
                            onClick={handleContinue}
           />

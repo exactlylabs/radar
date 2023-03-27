@@ -172,7 +172,7 @@ const MyNoConnectionConfirmationModal = ({
   const {isExtraSmallSizeScreen, isMediumSizeScreen, isSmallSizeScreen} = useViewportSizes();
 
   const getModalStyle = () => {
-    if(isExtraSmallSizeScreen) return widgetModalFraming(config, true);
+    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen || isSmallSizeScreen);
     return (isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle;
   }
 
@@ -202,7 +202,7 @@ const MyNoConnectionConfirmationModal = ({
         </div>
         <img style={noInternetIconStyle} src={NoInternetIconBlue} alt={'no-internet-icon'} width={42} height={42}/>
         <MySecondaryModalTitle text={'Confirm you don\'t have internet'}/>
-        <div style={isExtraSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Are you sure you don’t have Internet at the address below?</div>
+        <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Are you sure you don't have Internet at the address below?</div>
         <div style={getAddressWrapperStyle()}>
           <img style={locationPinIconStyle} src={LocationPinIcon} width={28} height={28} alt={'location-pin'}/>
           <p className={'speedtest--p'} style={getTextStyle()}>{address}</p>

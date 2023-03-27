@@ -259,7 +259,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
                            isBoxOpen={isBoxOpen}
                            setIsBoxOpen={setIsBoxOpen}
           />
-          { !isExtraSmallSizeScreen && floatingBoxVisible &&
+          { (!isExtraSmallSizeScreen && !isSmallSizeScreen) && floatingBoxVisible &&
             <FloatingMessageBox icon={fetchingResults ? <MySpinner color={DEFAULT_GRAY_BUTTON_TEXT_COLOR} size={14}/> : <img src={searchIcon} style={searchIconStyle} alt={'search icon'}/>}
                                 text={fetchingResults ? null : 'No test results in this area. Try adjusting your search area or speed filters.'}
                                 isBoxOpen={isBoxOpen}
