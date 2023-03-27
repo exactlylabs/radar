@@ -1,0 +1,8 @@
+@import "text";
+@import "colors";
+
+.tables--title {
+  font-variation-settings: 'wght' $bold !important;
+  color: $gray !important;
+  font-size: 0.812rem !important;
+}

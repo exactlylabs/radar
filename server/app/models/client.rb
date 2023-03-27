@@ -348,11 +348,11 @@ class Client < ApplicationRecord
 
   def status_style
     if self.online? && !self.test_running?
-      "badge-light-success"
+      "custom-badge--online"
     elsif self.test_running?
-      "badge-light-primary"
+      "custom-badge--running"
     else
-      "badge-light-danger"
+      "custom-badge--offline"
     end
   end
 

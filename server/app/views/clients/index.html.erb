@@ -4,27 +4,25 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title my-1 fs-2">Pods 
+      <h1 class="page-main-title">Pods 
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item text-muted"><%= current_account.name %>
-          <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
+        <li class="breadcrumb-item page-sub-title"><%= current_account.name %>
         </li>
-        <li class="breadcrumb-item text-dark">Pods</li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
       <% if current_user.super_user %>
-        <a href="<%= update_groups_path %>" class="btn btn-secondary me-5">Manage Release Group</a>
+        <a href="<%= update_groups_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Manage Release Group</a>
       <% end %>
       <% if current_account.superaccount %>
-        <a href="<%= staging_clients_path %>" class="btn btn-secondary me-5">Staging Pods</a>
+        <a href="<%= staging_clients_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Staging Pods</a>
       <% end %>
-      <button type="button" class="btn btn-primary <%= current_account.nil? ? 'disabled' : '' %>" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard">Add Pod</button>
+      <button type="button" class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled' : '' %>" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard">Add Pod</button>
     </div>
   </div>
 </div>

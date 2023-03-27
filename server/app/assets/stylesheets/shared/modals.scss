@@ -1,0 +1,41 @@
+@import "colors";
+@import "text";
+
+.modals--title {
+  font-variation-settings: 'wght' $bold;
+  font-size: 0.938rem;
+  line-height: 1.5rem;
+  color: $deep-blue;
+  letter-spacing: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modals--header {
+  height: 56px !important;
+  padding: 16px !important;
+}
+
+.modals--main-title {
+  font-variation-settings: 'wght' $bold;
+  font-size: 1.062rem;
+  color: $deep-blue;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modals--footer {
+  height: 76px !important;
+  display: flex;
+  flex-direction: row !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  padding: 16px !important;
+  * {
+    margin: 0 !important;
+  }
+}
+
+.modals--body {
+  padding: 24px 40px 32px !important;
+}

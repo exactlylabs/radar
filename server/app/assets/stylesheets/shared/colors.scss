@@ -1,0 +1,35 @@
+// General
+$white: #fff;
+$black: #000;
+$error-red: #e54b4b;
+
+// Primaries
+$blue: #4b7be5;
+$deep-blue: #110e4c;
+
+// Secondaries
+$gray: #6d6a94;
+$light-gray: #a09fb7;
+$dark-gray: #3f3c70;
+$subtle-gray: #f6f7fa;
+$mid-light-gray: #bcbbc7;
+$title-gray : #8e8cb1;
+
+// Buttons
+$primary-button--box-shadow: #4b7be550;
+$primary-button--hover: #5789f6;
+$secondary-button--background-color: #bcbbc725;
+$secondary-button--box-shadow: #a09fb715;
+$secondary-light-button--box-shadow: #a09fb720;
+
+// Badges
+$badge--green-color: #31b36c;
+$badge--green-background-color: rgba(49, 179, 108, 0.1);
+$badge--red-color: #f1416c;
+$badge--red-background-color: rgba(241, 65, 108, 0.1);
+$badge--gray-color: $gray;
+$badge--gray-background-color: $subtle-gray;
+$badge--blue-color: $blue;
+$badge--blue-background-color: rgba(75, 123, 229, 0.1);
+$badge--orange-color: #f18f41;
+$badge--orange-background-color: rgba(241, 143, 65, 0.1);

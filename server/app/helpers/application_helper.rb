@@ -1,5 +1,13 @@
 module ApplicationHelper
 
+  def is_active_path?(path)
+    request.path.starts_with? path
+  end
+
+  def is_active_full_path?(path)
+    is_active_path?(path) && request.path == path
+  end
+
   def active_path?(path)
     "active" if request.path.starts_with?(path)
   end

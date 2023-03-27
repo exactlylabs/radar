@@ -83,10 +83,18 @@ export default class extends Controller {
   toggleButtonState() {
     const nextButtonClassList = this.finalButtonTarget.classList;
     if (this.isComplete()) {
+      nextButtonClassList.remove("custom-button--disabled");
       nextButtonClassList.remove("disabled");
     } else {
+      nextButtonClassList.add("custom-button--disabled");
       nextButtonClassList.add("disabled");
     }
+  }
+
+  forceDisable() {
+    const nextButtonClassList = this.finalButtonTarget.classList;
+    nextButtonClassList.add("custom-button--disabled");
+    nextButtonClassList.add("disabled");
   }
 
   getPodIdString() {

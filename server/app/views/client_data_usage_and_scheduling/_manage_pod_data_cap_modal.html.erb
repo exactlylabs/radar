@@ -1,146 +1,115 @@
 <%= form_with(model: client, url: client_data_usage_path(client.unix_user), method: :put, data: {"turbo-frame" => "_top"}) do |form| %>
 <div class="modal-dialog" data-controller="client-data-cap-form">
   <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" style="font-size: 20px">Manage Data Cap</h5>
-      <!--begin::Close-->
-      <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-        <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-        <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
-              <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
-              <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
-          </svg>
-      </span>
-        <!--end::Svg Icon-->
-      </div>
-      <!--end::Close-->
-    </div>
-    <div class="modal-body">
-      <div class="row">
-        <div class="col-lg-6 mb-10 mb-lg-0 w-100">
-          <div class="fv-row mb-7 fv-plugins-icon-container">
-            <label class="fs-6 fw-bold mb-2">Status</label>
-            <div class="form-check form-switch form-check-custom form-check-solid">
-              <input class="form-check-input"
-                     type="checkbox"
-                     role="switch"
-                     id="flexSwitchCheckDefault"
-                     name="client[wants_to_have_data_cap]"
-                     <%= client.data_cap_max_usage.present? ? "checked" : nil %>
-                     data-action="input->client-data-cap-form#onSwitchChange"
-                />
-              <label class="form-check-label" for="flexSwitchCheckDefault">Use a data cap on this Pod</label>
-            </div>
-          </div>
-          <div class="fv-row mb-5 fv-plugins-icon-container  <%= client.data_cap_max_usage.nil? ? 'form-custom-opaque' : '' %>"
-               data-client-data-cap-form-target="formRowContainer"
-          >
-            <label class="required fs-6 fw-bold mb-2">Monthly Data Cap</label>
-            <div class="d-flex flex-row justify-content-between align-items-center w-100">
-              <div class="input-group" style="width: 47.5%">
-                <input value="<%= (client.data_cap_max_usage.nil? ? client.get_suggested_data_cap : (client.data_cap_max_usage / (1024**2)).round(0)) %>"
-                       name="client[data_cap_max_usage]"
-                       min="1"
-                       step="1"
-                       class="conditional form-control form-control-solid <%= client.data_cap_max_usage.present? ? '' : 'text-muted'%>"
-                       <%= client.data_cap_max_usage.nil? ? "readonly" : nil %>
-                       placeholder="0"
-                       data-client-data-cap-form-target="dataCapValueInput"
-                       data-action="input->client-data-cap-form#onInputChange"
-                       data-client-average-usage="<%= (client.data_cap_current_period_usage / (1024**2)).ceil(0) %>"
-                  />
-                <span class="input-group-text" style="background-color: #f5f8fa; border: none; color: #a1a5b7">MB</span>
-              </div>
-            </div>
-          </div>
-          <div id="data-cap-warning"
-               data-client-data-cap-form-target="dataCapWarning"
-               class="flex-row justify-content-start align-items-start mb-3"
-               style="width: 100%; min-height: 62px; padding: 10px; background-color: rgba(248, 156, 71, 0.05); border: dashed 1px #f89c47; border-radius: 6px; display: <%= client.data_cap_max_usage.present? && client.get_data_cap_percentage_usage == 100 ? 'flex' : 'none' %>; "
-          >
-            <span class="svg-icon svg-icon-warning svg-icon-2hx me-3">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="currentColor"/>
-                <rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)" fill="currentColor"/>
-                <rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)" fill="currentColor"/>
-              </svg>
-            </span>
-            <div class="w-100">
-              <p class="w-100 m-0"
-                 style="font-weight: 500; font-size: 14px; line-height: 21px; color: #3f4254"
-                 data-client-data-cap-form-target="dataCapWarningText"
-              >Current month usage (<%= (client.data_cap_current_period_usage / (1024**2)).round(0) %> MB) is over the entered data cap. No more tests will be run this monthly cycle.</p>
-            </div>
-          </div>
-          <p class="fw-bold" style="width: 100%; font-size: 14px; letter-spacing: 0.1px; color: #a2a5b7">A data cap limits the amount of data this Pod will use for speed tests.</p>
-          <div class="fv-row mb-5 fv-plugins-icon-container  <%= client.data_cap_max_usage.nil? ? 'form-custom-opaque' : '' %>"
-               data-client-data-cap-form-target="formRowContainer"
-          >
-            <label class="required fs-6 fw-bold mb-2">Monthly usage resets on...</label>
-            <div class="d-flex flex-row justify-content-between align-items-center w-100">
-              <div class="input-group" style="width: 47.5%">
-                <select id="client_data_cap_reset"
-                        class="form-select select2-hidden-accessible <%= client.data_cap_max_usage.nil? ? 'select2-custom-disabled' : '' %>"
-                        data-placeholder="Choose reset"
-                        tabindex="-1"
-                        data-controller="select2"
-                        style="background-color: #f5f8fa;"
-                        aria-disabled="<%= client.data_cap_max_usage.nil? %>"
-                        <%= client.data_cap_max_usage.present? ? nil : "disabled" %>
-                        data-client-data-cap-form-target="monthlyResetValueSelect"
-                        name="client[data_cap_reset]"
-                        data-remove-searchbar="true"
-                        data-action="select2-select->client-data-cap-form#onSelectChange"
-                >
-                  <option value="1"  label="First day of month" <%= client.data_cap_max_usage.present? && client.data_cap_day_of_month == 1 ? "selected" : nil %>>First day of month</option>
-                  <option value="-1" label="Last day of month" <%= client.data_cap_max_usage.present? && client.data_cap_day_of_month == -1 ? "selected" : nil %>>Last day of month</option>
-                  <option value="2"  label="Choose specific day..." <%= client.data_cap_max_usage.present? && client.data_cap_day_of_month != -1 && client.data_cap_day_of_month != 1 ? "selected" : nil %>>Choose specific day...</option>
-                </select>
-              </div>
-              <div class="input-group"
-                   style="width: 47.5%;  display: <%= client.data_cap_max_usage.present? && client.data_cap_day_of_month != 1 && client.data_cap_day_of_month != -1 ? 'block' : 'none' %>"
-                   data-client-data-cap-form-target="resetDayInputGroup"
-              >
-                <select id="client_data_cap_reset_day"
-                        class="form-select select2-hidden-accessible"
-                        data-placeholder="Choose reset day"
-                        tabindex="-1"
-                        data-controller="select2"
-                        style="background-color: #f5f8fa;"
-                        aria-disabled="<%= client.data_cap_max_usage.nil? %>"
-                        data-client-data-cap-form-target="monthlyResetDayValueSelect"
-                        name="client[data_cap_day_of_month]"
-                        data-remove-searchbar="true"
-                        data-action="select2-select->client-data-cap-form#onDaySelectChange"
-                >
-                  <% (1..31).each {|day|  %>
-                    <option value="<%= day %>"  label="Day <%= day %>" <%= client.data_cap_max_usage.present? && client.data_cap_day_of_month == day ? "selected" : nil %>>Day <%= day %></option>
-                  <% } %>
-                </select>
-              </div>
-            </div>
-          </div>
-          <p class="fw-bold"
-             style="width: 100%; font-size: 14px; letter-spacing: 0.1px; color: #a2a5b7"
-             data-client-data-cap-form-target="testFrequencyText"
-          ><%= client.get_frequency_text %></p>
+    <%= render partial: "application/components/modals/modal_header", locals: {title: "Manage Data Cap"} %>
+    <div class="modal-body modals--body">
+      <div class="forms--row">
+        <label class="forms--label mb-2">Status</label>
+        <div class="form-check form-switch form-check-custom form-check-solid">
+          <input class="form-check-input forms--checkbox"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                  name="client[wants_to_have_data_cap]"
+                  <%= client.data_cap_max_usage.present? ? "checked" : nil %>
+                  data-action="input->client-data-cap-form#onSwitchChange"
+            />
+          <label class="form-check-label regular-text" for="flexSwitchCheckDefault">Use a data cap on this Pod</label>
         </div>
       </div>
+      <div class="forms--row  <%= client.data_cap_max_usage.nil? ? 'form-custom-opaque' : '' %>"
+            data-client-data-cap-form-target="formRowContainer">
+        <label class="required forms--label mb-2">Monthly Data Cap</label>
+        <div class="d-flex flex-row justify-content-between align-items-center w-100">
+          <div class="input-group forms--input-group">
+            <input value="<%= (client.data_cap_max_usage.nil? ? client.get_suggested_data_cap : (client.data_cap_max_usage / (1024**2)).round(0)) %>"
+                    name="client[data_cap_max_usage]"
+                    min="1"
+                    step="1"
+                    class="conditional form-control form-control-solid <%= client.data_cap_max_usage.present? ? '' : 'text-muted'%> forms--text-input forms--text-input-with-decoration"
+                    <%= client.data_cap_max_usage.nil? ? "readonly" : nil %>
+                    placeholder="0"
+                    data-client-data-cap-form-target="dataCapValueInput"
+                    data-action="input->client-data-cap-form#onInputChange"
+                    data-client-average-usage="<%= (client.data_cap_current_period_usage / (1024**2)).ceil(0) %>"
+              />
+            <span class="forms--input-decoration">MB</span>
+          </div>
+        </div>
+      </div>
+      <div id="data-cap-warning"
+            data-client-data-cap-form-target="dataCapWarning"
+            class="flex-row justify-content-start align-items-start mb-3"
+            style="width: 100%; min-height: 62px; padding: 10px; background-color: rgba(248, 156, 71, 0.05); border: dashed 1px #f89c47; border-radius: 6px; display: <%= client.data_cap_max_usage.present? && client.get_data_cap_percentage_usage == 100 ? 'flex' : 'none' %>; "
+      >
+        <span class="svg-icon svg-icon-warning svg-icon-2hx me-3">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="currentColor"/>
+            <rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)" fill="currentColor"/>
+            <rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)" fill="currentColor"/>
+          </svg>
+        </span>
+        <div class="w-100">
+          <p class="w-100 m-0 warning-text"
+              data-client-data-cap-form-target="dataCapWarningText"
+          >Current month usage (<%= (client.data_cap_current_period_usage / (1024**2)).round(0) %> MB) is over the entered data cap. No more tests will be run this monthly cycle.</p>
+        </div>
+      </div>
+      <p class="help-text">A data cap limits the amount of data this Pod will use for speed tests.</p>
+      <div class="forms--row  <%= client.data_cap_max_usage.nil? ? 'form-custom-opaque' : '' %>"
+            data-client-data-cap-form-target="formRowContainer"
+      >
+        <label class="required forms--label mb-2">Monthly usage resets on...</label>
+        <div class="d-flex flex-row justify-content-between align-items-center w-100">
+          <div class="input-group forms--input-group">
+            <select id="client_data_cap_reset"
+                    class="forms--select form-select select2-hidden-accessible <%= client.data_cap_max_usage.nil? ? 'select2-custom-disabled' : '' %>"
+                    data-placeholder="Choose reset"
+                    tabindex="-1"
+                    data-controller="select2"
+                    style="background-color: #f5f8fa;"
+                    aria-disabled="<%= client.data_cap_max_usage.nil? %>"
+                    <%= client.data_cap_max_usage.present? ? nil : "disabled" %>
+                    data-client-data-cap-form-target="monthlyResetValueSelect"
+                    name="client[data_cap_reset]"
+                    data-remove-searchbar="true"
+                    data-action="select2-select->client-data-cap-form#onSelectChange"
+            >
+              <option value="1"  label="First day of month" <%= client.data_cap_max_usage.present? && client.data_cap_day_of_month == 1 ? "selected" : nil %>>First day of month</option>
+              <option value="-1" label="Last day of month" <%= client.data_cap_max_usage.present? && client.data_cap_day_of_month == -1 ? "selected" : nil %>>Last day of month</option>
+              <option value="2"  label="Choose specific day..." <%= client.data_cap_max_usage.present? && client.data_cap_day_of_month != -1 && client.data_cap_day_of_month != 1 ? "selected" : nil %>>Choose specific day...</option>
+            </select>
+          </div>
+          <div class="input-group forms--input-group"
+                style="display: <%= client.data_cap_max_usage.present? && client.data_cap_day_of_month != 1 && client.data_cap_day_of_month != -1 ? 'block' : 'none' %>"
+                data-client-data-cap-form-target="resetDayInputGroup"
+          >
+            <select id="client_data_cap_reset_day"
+                    class="forms--select form-select select2-hidden-accessible"
+                    data-placeholder="Choose reset day"
+                    tabindex="-1"
+                    data-controller="select2"
+                    style="background-color: #f5f8fa;"
+                    aria-disabled="<%= client.data_cap_max_usage.nil? %>"
+                    data-client-data-cap-form-target="monthlyResetDayValueSelect"
+                    name="client[data_cap_day_of_month]"
+                    data-remove-searchbar="true"
+                    data-action="select2-select->client-data-cap-form#onDaySelectChange"
+            >
+              <% (1..31).each {|day|  %>
+                <option value="<%= day %>"  label="Day <%= day %>" <%= client.data_cap_max_usage.present? && client.data_cap_day_of_month == day ? "selected" : nil %>>Day <%= day %></option>
+              <% } %>
+            </select>
+          </div>
+        </div>
+      </div>
+      <p class="help-text" data-client-data-cap-form-target="testFrequencyText"><%= client.get_frequency_text %></p>
     </div>
-    <div class="modal-footer d-flex flex-row justify-content-end">
-      <!--begin::LaterButton-->
-      <button type="button"
-              class="btn btn-light"
-              data-bs-dismiss="modal"
-              style="height: 48px;"
-      >Cancel</button>
-      <!--end::LaterButton-->
+    <div class="modal-footer modals--footer">
+      <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
       <!--begin::ContinueButton-->
       <button type="submit"
-              class="btn btn-primary <%= client.data_cap_current_period_usage.nil? ? 'disabled' : '' %>"
-              style="height: 48px;"
+              class="custom-button custom-button--primary custom-button--sm <%= client.data_cap_current_period_usage.nil? ? 'disabled custom-button--disabled' : '' %>"
       >Save</button>
       <!--end::ContinueButton-->
     </div>

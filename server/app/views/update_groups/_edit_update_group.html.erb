@@ -1,50 +1,57 @@
 <%= form_with(model: update_group, url: update_group_path(update_group.id), method: :put, data: { "turbo-frame" => "_top" }) do |form| %>
-  <div class="modal-body">
-    <div class="fv-row mb-7 fv-plugins-icon-container">
+  <div class="modal-body modals--body">
+    <div class="forms--row">
       <!--begin::Label-->
-      <label class="required fs-6 fw-bold mb-2">Group Name</label>
+      <label class="required forms--label mb-2">Group Name</label>
       <!--end::Label-->
       <!--begin::Input-->
-      <%= form.text_field :name, class: "form-control form-control-solid", value: update_group.name %>
+      <%= form.text_field :name, class: "forms--text-input form-control form-control-solid", value: update_group.name %>
       <!--end::Input-->
       <div class="fv-plugins-message-container invalid-feedback"></div>
     </div>
 
-    <div class="fv-row mb-7 fv-plugins-icon-container">
-      <label class="required fs-6 fw-bold mb-2">Release Version</label>
-      <select class="form-select"
-              data-controller="select2"
-              data-select2-blanks-value="true"
-              id="update-group-version-dropdown-edit"
-              data-placeholder="Select a version"
-              name="update_group[client_version_id]"
-              data-select2-id="select2-data-client_version_id"
-              tabindex="-1">
-        <% policy_scope(ClientVersion).each do |cv| %>
-          <option value="<%= cv.id %>" label="<%= cv.version %>" <%= update_group.client_version.present? && update_group.client_version.id == cv.id ? "selected" : nil %>><%= cv.version %></option>
-        <% end %>
-      </select>
+    <div class="forms--row">
+      <label class="required forms--label mb-2">Release Version</label>
+      <div class="forms--input-group">
+        <select class="form-select forms--select"
+                data-controller="select2"
+                data-select2-blanks-value="true"
+                id="update-group-version-dropdown-edit"
+                data-placeholder="Select a version"
+                name="update_group[client_version_id]"
+                data-select2-id="select2-data-client_version_id"
+                tabindex="-1">
+          <% policy_scope(ClientVersion).each do |cv| %>
+            <option value="<%= cv.id %>" label="<%= cv.version %>" <%= update_group.client_version.present? && update_group.client_version.id == cv.id ? "selected" : nil %>><%= cv.version %></option>
+          <% end %>
+        </select>
+      </div>
     </div>
 
-    <div class="fv-row mb-7 fv-plugins-icon-container">
-      <label class="required fs-6 fw-bold mb-2">Watchdog Version</label>
-      <select class="form-select"
-              data-controller="select2"
-              data-select2-blanks-value="true"
-              id="update-group-watchdog-version-dropdown-edit"
-              data-placeholder="Select a version"
-              name="update_group[watchdog_version_id]"
-              data-select2-id="select2-data-watchdog_version_id"
-              tabindex="-1">
-        <% policy_scope(WatchdogVersion).each do |wv|%>
-          <option value="<%= wv.id %>" label="<%= wv.version %>" <%= update_group.watchdog_version.present? && update_group.watchdog_version.id == wv.id ? "selected" : nil %>><%= wv.version %></option>
-        <% end %>
-      </select>
+    <div class="forms--row">
+      <label class="required forms--label mb-2">Watchdog Version</label>
+      <div class="forms--input-group">
+        <select class="form-select forms--select"
+                data-controller="select2"
+                data-select2-blanks-value="true"
+                id="update-group-watchdog-version-dropdown-edit"
+                data-placeholder="Select a version"
+                name="update_group[watchdog_version_id]"
+                data-select2-id="select2-data-watchdog_version_id"
+                tabindex="-1">
+          <% policy_scope(WatchdogVersion).each do |wv|%>
+            <option value="<%= wv.id %>" label="<%= wv.version %>" <%= update_group.watchdog_version.present? && update_group.watchdog_version.id == wv.id ? "selected" : nil %>><%= wv.version %></option>
+          <% end %>
+        </select>
+      </div>
     </div>
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-    <button type="submit" class="btn btn-primary" id="continue-button">Update</button>
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
+    <button type="submit"
+            class="custom-button custom-button--primary custom-button--sm"
+            id="continue-button"
+    >Update</button>
   </div>
 <% end %>

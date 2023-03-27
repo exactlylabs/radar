@@ -1,52 +1,46 @@
-<div class="card">
-    <!--begin::Card body-->
-    <div class="card-body pt-0 px-0">
+<div class="card w-100" style="height:max-content; margin: 20px auto;">
+  <!--begin::Card body-->
+  <div class="card-body pt-0 px-0">
     <!--begin::Table-->
     <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-        <div class="table-responsive">
-            <table class="table table-row-bordered align-middle fs-6 gy-5 dataTable 
-                          no-footer table-rounded" id="kt_customers_table">
-                <!--begin::Table head-->
-                <thead>
-                    <tr class="text-start fs-1 fw-bolder">
-                        <th class="py-7 ps-10" style="font-size: 20px;"><%= locations.size %> Locations</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                    <!--begin::Table row-->
-                    <tr class="text-start fw-bolder gs-0" 
-                        style="background-color: rgba(245, 248, 250, 0.6);font-size: 15px;">
-                        <th class="sorting ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
-                            rowspan="1" colspan="1" aria-label="Location Name">Name</th>
-                        <% if current_account.is_all_accounts? %>
-                            <th class="sorting ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
-                            rowspan="1" colspan="1" aria-label="Location Name">Account</th>
-                        <% else %>
-                            <th class="sorting_disabled" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
-                            rowspan="1" colspan="1" aria-label="Location Categories">Category</th>
-                        <% end %>
-                        <th class="sorting_disabled" style="width: 10vw" tabindex="0" aria-controls="kt_customers_table" 
-                            rowspan="1" colspan="1" aria-label="Avg. Download Speed">Avg./Exp. Download</th>
-                        <th class="sorting_disabled" style="width: 10vw" tabindex="0" aria-controls="kt_customers_table" 
-                            rowspan="1" colspan="1" aria-label="Avg. Upload Speed">Avg./Exp. Upload</th>
-                        <th class="text-end sorting_disabled" style="width: 10vw" rowspan="1"
-                            colspan="1" aria-label="Actions"></th>
-                    </tr>
-                    <!--end::Table row-->
-                </thead>
-                <!--end::Table head-->
-                <!--begin::Table body-->
-                <tbody class="fw-bold text-gray-600" id="locations_table">
-                    <% locations.order("LOWER(name)").each_with_index do |location, index| %>
-                        <%= render partial: "locations_table_row", locals: { location: location, row: index } %>
-                    <% end %>
-                </tbody>
-                <!--end::Table body-->
-            </table>
+      <div class="table-responsive">
+        <table class="table table-row-bordered align-middle fs-6 gy-5 dataTable 
+                      no-footer table-rounded" id="kt_customers_table">
+          <!--begin::Table head-->
+          <thead>
+            <!--begin::Table row-->
+            <tr class="text-start fw-bolder gs-0" 
+                style="font-size: 12px; height: 65px;">
+              <th class="tables--title ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                  rowspan="1" colspan="1" aria-label="Location Name">Name</th>
+              <% if current_account.is_all_accounts? %>
+                <th class="tables--title sorting ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                rowspan="1" colspan="1" aria-label="Location Name">Account</th>
+              <% end %>
+              <th class="tables--title sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" tabindex="0" aria-controls="kt_customers_table" 
+                  rowspan="1" colspan="1" aria-label="Avg. Download Speed">Avg./Exp. Download</th>
+              <th class="tables--title sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" tabindex="0" aria-controls="kt_customers_table" 
+                  rowspan="1" colspan="1" aria-label="Avg. Upload Speed">Avg./Exp. Upload</th>
+              <th class="tables--title right-aligned sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" rowspan="1"
+                  colspan="1" aria-label="Actions"></th>
+            </tr>
+            <!--end::Table row-->
+          </thead>
+          <!--end::Table head-->
+          <!--begin::Table body-->
+          <tbody class="fw-bold text-gray-600" id="locations_table">
+            <% paginate_elements(locations, [], "LOWER(name) ASC").each do |location| %>
+              <%= render partial: "locations_table_row", locals: { location: location } %>
+            <% end %>
+          </tbody>
+            <!--end::Table body-->
+        </table>
+        <div class="d-flex flex-row justify-content-between align-items-center px-7 <%= locations.size == 1 ? "pt-15 pb-7" : "pt-10" %>">
+          <%= pagination_footer %>
         </div>
+      </div>
     </div>
     <!--end::Table-->
-    </div>
-    <!--end::Card body-->
+  </div>
+  <!--end::Card body-->
 </div>
