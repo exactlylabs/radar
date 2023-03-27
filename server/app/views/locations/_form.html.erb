@@ -64,6 +64,25 @@
             </select>
           </div>
         <% end %>
+
+        <% if current_account.is_all_accounts? %>
+          <div class="fv-row mb-7 fv-plugins-icon-container">
+            <label class="fs-6 fw-bold mb-2 required">Account</label>
+            <select class="form-select"
+                    data-controller="select2"
+                    id="client-accounts-dropdown"
+                    data-placeholder="Select an account"
+                    name="location[account_id]"
+                    data-select2-id="select2-data-account_id"
+                    tabindex="-1"
+            >
+              <% policy_scope(Account).each_with_index do |account, index|%>
+                <%= render partial: "clients/client_select_option", locals: { option: account, selected: index === 0} %>
+              <% end %> 
+            </select>
+          </div>
+        <% end %>
+
         <div class="forms--row">
           <!--begin::Label-->
           <label class="required forms--label mb-2">Address</label>

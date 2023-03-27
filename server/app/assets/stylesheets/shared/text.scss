@@ -137,6 +137,14 @@ $extra-bold: 800;
   white-space: normal;
 }
 
+.warning-text {
+  font-variation-settings: 'wght' $medium;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  color: #3f4254;
+  white-space: break-spaces;
+}
+
 .ellipsis {
   text-overflow: ellipsis;
   overflow: hidden;

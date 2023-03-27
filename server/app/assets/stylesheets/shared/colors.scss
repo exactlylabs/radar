@@ -45,6 +45,18 @@ $alert--primary-color: #055d2a;
 $alert--danger-background-color: #f0c2c2;
 $alert--danger-color: #5d0505;
 
+// Badges
+$badge--green-color: #31b36c;
+$badge--green-background-color: rgba(49, 179, 108, 0.1);
+$badge--red-color: #f1416c;
+$badge--red-background-color: rgba(241, 65, 108, 0.1);
+$badge--gray-color: $gray;
+$badge--gray-background-color: $subtle-gray;
+$badge--blue-color: $blue;
+$badge--blue-background-color: rgba(75, 123, 229, 0.1);
+$badge--orange-color: #f18f41;
+$badge--orange-background-color: rgba(241, 143, 65, 0.1);
+
 .transparent {
   background-color: transparent;
 }
