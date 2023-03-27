@@ -11,6 +11,7 @@ import performanceIcon from '../../../../assets/performance-icon.png';
 import mapIcon from '../../../../assets/map-icon.png';
 import speedTestsIcon from '../../../../assets/speedtests-icon.png';
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
+import {useEffect} from "react";
 
 const initialStepPageStyle = {
   width: '100%',
@@ -171,10 +172,10 @@ const InitialStepPage = ({terms, setTerms, goToNextPage, error}) => {
         <div style={isSmall ? smallTextContainer : textContainer}>
           <img src={initialHeroIcon} alt={'initial screen hero icon'} style={heroIcon}/>
           <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? smallTitleStyle : titleStyle}>Test your Internet speed</p>
-          <p className={'speedtest--p'} style={isSmall ? smallSubtitleStyle : subtitleStyle}>We’ll ask you a few questions to better understand where and how you’re connected so we can learn more about your current service.</p>
+          <p className={'speedtest--p'} style={isSmall ? smallSubtitleStyle : subtitleStyle}>We'll ask you a few questions to better understand where and how you're connected so we can learn more about your current service.</p>
           <div style={{...termsStyle, marginBottom: error ? '-10px' : '35px'}} onClick={toggleTerms}>
             <MyCheckbox onChange={handleSetTerms} isChecked={terms}/>
-            <p className={'speedtest--p'} style={termsTextStyle}>I agree to the Radar’s <a className={'speedtest--opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>.</p>
+            <p className={'speedtest--p'} style={termsTextStyle}>I agree to the Radar's <a className={'speedtest--opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>.</p>
           </div>
           { error && <MyMessageSnackbar type={'error'} message={error}/> }
           <MyForwardButton text={'Take the test'} icon={<img src={rightArrowWhite} style={rightArrowStyle} alt={'location-button-icon'} width={14} height={14}/>} onClick={goToNextPage}/>

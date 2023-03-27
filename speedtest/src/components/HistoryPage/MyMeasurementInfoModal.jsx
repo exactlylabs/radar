@@ -52,12 +52,12 @@ const MyMeasurementInfoModal = ({
 }) => {
 
   const config = useContext(ConfigContext);
-  const {isExtraSmallSizeScreen} = useViewportSizes();
+  const {isExtraSmallSizeScreen, isSmallSizeScreen} = useViewportSizes();
 
   const closeModal = () => setIsOpen(false);
 
   const getModalStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen);
+    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen || isSmallSizeScreen);
     return mobileModalStyle;
   }
 

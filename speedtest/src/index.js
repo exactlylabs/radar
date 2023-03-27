@@ -5,14 +5,6 @@ import App from './App';
 import { notifyError } from './utils/errors';
 import * as Sentry from '@sentry/react';
 
-if (REACT_APP_ENV === 'production') {
-  Sentry.init({
-    dsn: REACT_APP_SENTRY_DSN,
-    environment: 'production',
-    tunnel: 'https://pods.radartoolkit.com/client_api/v1/sentry'
-  });
-}
-
 let init = null;
 let error = null;
 export const baseInitConfig = {
@@ -20,8 +12,8 @@ export const baseInitConfig = {
   widgetMode: true,
   elementId: 'root-embedded',
   frameStyle: {
-    width: '100vw',
-    height: '100vh',
+    width: '100%',
+    height: '100%',
   },
   tab: 0,
   noZoomControl: false,
@@ -92,7 +84,7 @@ const getConfigFromParams = () => {
 export default {
   config: config => {
     init = null;
-    if (checkConfig(config)) init = {...baseInitConfig, frameStyle: baseInitConfig.frameStyle, ...config};
+    if (checkConfig(config)) init = {...baseInitConfig, ...config, frameStyle: {...baseInitConfig.frameStyle, ...config.frameStyle}};
     if (hasParams()) {
       if(!!init) init = { ...baseInitConfig, ...init, ...getConfigFromParams() };
       else init = {...baseInitConfig, ...getConfigFromParams()};
@@ -100,7 +92,14 @@ export default {
     if(!init) throw new Error(error);
   },
   new: () => {
-    Sentry.setUser({ id: init.clientId });
+    if (REACT_APP_ENV === 'production') {
+      Sentry.init({
+        dsn: REACT_APP_SENTRY_DSN,
+        environment: 'production',
+        tunnel: `https://pods.radartoolkit.com/client_api/v1/sentry?client_id=${init.clientId}`
+      });
+      Sentry.setUser({ id: init.clientId });
+    }
     let root;
     return {
       mount: () => {

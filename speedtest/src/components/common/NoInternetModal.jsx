@@ -142,7 +142,7 @@ const NoInternetModal = ({
   const isSmall = isMediumSizeScreen || isSmallSizeScreen;
 
   const getStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen);
+    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen || isSmallSizeScreen);
     return isSmallSizeScreen ? mobileModalStyle : isMediumSizeScreen ? tabletModalStyle : modalStyle
   }
 
@@ -165,7 +165,7 @@ const NoInternetModal = ({
           </svg>
         </div>
         <p className={'speedtest--p speedtest--extra-bold'} style={isExtraSmallSizeScreen ? xsTitleStyle : titleStyle}>No Internet connection</p>
-        <p className={'speedtest--p'} style={isExtraSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Please make sure your device is connected to the Internet before continuing.</p>
+        <p className={'speedtest--p'} style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Please make sure your device is connected to the Internet before continuing.</p>
         <div style={isSmall ? mobileFooterStyle : footerStyle}>
           <MyButton text={'Continue anyways'}
                     icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}

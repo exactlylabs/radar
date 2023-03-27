@@ -48,7 +48,7 @@ const NoInternetStepPage = ({
     <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileNoInternetStepPageStyle : noInternetStepPageStyle}>
       <img style={checkIconStyle} src={CheckIcon} width={42} height={42} alt={'check-icon'}/>
       <MyTitle text={'Thanks for letting us know.'}/>
-      <div style={firstLineStyle}>While we cannot run a speed test at your location as you don’t have Internet, we do appreciate your information that helps us learn more about which areas are currently not served.</div>
+      <div style={firstLineStyle}>While we cannot run a speed test at your location as you don't have Internet, we do appreciate your information that helps us learn more about which areas are currently not served.</div>
       <div style={secondLineStyle}>You can explore the map to see how others compare to you.</div>
       <div style={buttonWrapperStyle}>
         <MyForwardButton text={'Explore the map'}

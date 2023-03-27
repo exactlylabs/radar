@@ -123,7 +123,7 @@ const SuggestionsModal = ({
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen);
+    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen || isSmallSizeScreen);
     return isMediumSizeScreen || isSmallSizeScreen ? mobileModalStyle : modalStyle
   }
 

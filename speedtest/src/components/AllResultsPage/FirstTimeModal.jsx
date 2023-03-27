@@ -143,7 +143,7 @@ const FirstTimeModal = ({
   const closeModal = () => setIsOpen(false);
 
   const getStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen);
+    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen || isSmallSizeScreen);
     return (isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle
   }
 
@@ -162,7 +162,7 @@ const FirstTimeModal = ({
           <Close fontSize={'small'} color={'disabled'}/>
         </div>
         <MyModalTitle text={'Explore Map'}/>
-        <div style={isExtraSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Our map shows all speed tests taken across the country.
+        <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Our map shows all speed tests taken across the country.
           You can click a test to view more details or filter tests by speed results.</div>
         <div style={getImageContainerStyle()}>
           <img src={MapPhoto} style={mapPhotoStyle} alt={'map-photo'}/>

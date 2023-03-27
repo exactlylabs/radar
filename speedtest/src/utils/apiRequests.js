@@ -1,15 +1,11 @@
 import { API_URL } from '../constants';
 import { notifyError } from './errors';
-import { DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE } from './map';
-import { getFilterTag } from './speeds';
-import {useContext} from "react";
-import ConfigContext from "../context/ConfigContext";
 
 export const sendRawData = (rawData, startTimestamp, userStepData, clientId) => {
   const { networkLocation, networkType, networkCost } = userStepData;
   const { address, city, state, house_number, street, postal_code } = userStepData.address;
   const location = userStepData.address.coordinates;
-  fetch(`${API_URL}/speed_tests`, {
+  fetch(`${API_URL}/speed_tests?client_id=${clientId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -27,8 +23,7 @@ export const sendRawData = (rawData, startTimestamp, userStepData, clientId) => 
         network_location: networkLocation?.text ?? null,
         network_type: networkType?.text ?? null,
         network_cost: networkCost,
-      },
-      client_id: clientId,
+      }
     }),
   }).catch(notifyError);
 };
