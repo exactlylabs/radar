@@ -1,5 +1,5 @@
 <div class="card-header d-flex align-items-center" style="height: 65px">
-  <div class="card-title fw-bolder" style="font-size: 20px; color: #3f4254">
+  <div class="dialog-main-title">
     Measurements
   </div>
 </div>
@@ -13,7 +13,7 @@
       <div class="dropdown-container">
         <div class="btn-group">
           <a href="#"
-             class="btn btn-sm <%= params[:range] ? 'btn-light-primary' : 'btn-light' %> btn-active-light-primary px-2"
+             class="custom-button custom-button--sm custom-button--secondary px-2"
              data-bs-toggle="dropdown"
              aria-expanded="false"
              style="border-radius: 6px"
@@ -61,7 +61,7 @@
         <!--end::Menu-->
         <div class="btn-group">
           <a href="#"
-             class="btn btn-sm <%= params[:style] ? 'btn-light-primary' : 'btn-light' %> btn-active-light-primary ms-5 px-2"
+             class="custom-button custom-button--sm custom-button--secondary ms-5 px-2"
              style="border-radius: 6px"
              data-bs-toggle="dropdown"
              aria-expanded="false"
@@ -89,29 +89,13 @@
           </div>
         </div>
         <!--end::Menu-->
-        <% if params[:style] or params[:range] %>
-          <a class="btn btn-sm btn-light btn-active-light-primary ms-3 px-2"
-             href="<%= client_measurements_path(client.unix_user) %>"
-             style="height: max-content">
-                    <span class="svg-icon svg-icon-light svg-icon-4" style="margin-right: 3px">
-                      <svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
-                        <g transform="translate(2 2)" fill="none" fill-rule="evenodd">
-                            <circle stroke="#B5B5C3" stroke-width="1.5" cx="5" cy="5" r="5.75"/>
-                            <g transform="rotate(45 2.44 6.06)" fill="#B5B5C3">
-                                <rect x="2.75" width="1.5" height="7" rx=".75"/>
-                                <rect transform="rotate(90 3.5 3.5)" x="2.75" width="1.5" height="7" rx=".75"/>
-                            </g>
-                        </g>
-                      </svg>
-                    </span>
-            Clear filters
-          </a>
-        <% end %>
       </div>
       <div class="export-container">
         <!--begin::Export-->
-        <a href="<%= client_measurements_path(client.unix_user, style: params[:style], range: params[:range], format: 'csv') %>" class="btn btn-primary me-3">Export
-          Measurements</a>
+        <a href="<%= client_measurements_path(client.unix_user, style: params[:style], range: params[:range], format: 'csv') %>"
+           class="custom-button custom-button--sm custom-button--primary me-3"
+          >Export Measurements
+        </a>
         <!--end::Export-->
       </div>
     </div>
@@ -125,22 +109,22 @@
         <thead>
         <!--begin::Table row-->
         <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-          <th class="min-w-125px sorting pe-3 d-flex align-items-center" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 30%">
+          <th class="table-header min-w-125px sorting pe-3 d-flex align-items-center" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 30%">
             Time
             <%= render partial: "application/timezone_tooltip" %>
           </th>
-          <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Style</th>
-          <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
+          <th class="table-header min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Style</th>
+          <th class="table-header min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
             <img alt="download icon" src="<%= image_url('download-icon.png') %>" width="14" height="14">
             Download
           </th>
-          <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
+          <th class="table-header min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
             <img alt="upload icon" src="<%= image_url('upload-icon.png') %>" width="14" height="14">
             Upload
           </th>
-          <th class="min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Latency</th>
-          <th class="min-w-125px sorting pe-0" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 10%">Jitter</th>
-          <th class="min-w-125px sorting pe-0" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 10%"></th>
+          <th class="table-header min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Latency</th>
+          <th class="table-header min-w-125px sorting pe-0" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 10%">Jitter</th>
+          <th class="table-header min-w-125px sorting pe-0" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 10%"></th>
         </tr>
         <!--end::Table row-->
         </thead>

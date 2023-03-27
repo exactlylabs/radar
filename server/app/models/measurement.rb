@@ -185,4 +185,12 @@ class Measurement < ApplicationRecord
     end
   end
 
+  def get_location
+    if self.location.present?
+      "#{self.location.latitude}, #{self.location.longitude}"
+    else
+      "Unavailable"
+    end
+  end
+
 end

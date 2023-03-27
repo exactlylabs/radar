@@ -1,94 +1,59 @@
 <div class="modal-dialog" data-edit-pod-target="step0Content">
   <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" style="font-size: 20px">Edit Pod</h5>
-
-      <!--begin::Close-->
-      <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-        <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-        <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
-                  <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
-                  <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
-              </svg>
-          </span>
-        <!--end::Svg Icon-->
-      </div>
-      <!--end::Close-->
-    </div>
-
-    <div class="modal-body">
-      <div class="modal-body--icon-client-id d-flex" style="margin-bottom: 30px">
-        <div class="modal-body--icon d-flex align-items-center justify-content-center"
-             style="height: 60px; width: 60px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
-          <span class="svg-icon svg-icon-3x svg-icon-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M12.4409 22C13.5455 22 14.4409 21.1046 14.4409 20C14.4409 18.8954 13.5455 18 12.4409 18C11.3364 18 10.4409 18.8954 10.4409 20C10.4409 21.1046 11.3364 22 12.4409 22Z" fill="black"/>
-              <path opacity="0.3" d="M9.04095 14.8L9.94095 16.1C10.6409 15.6 11.5409 15.3 12.4409 15.3C13.3409 15.3 14.2409 15.6 14.9409 16.1L15.8409 14.8C16.1409 14.3 16.0409 13.6 15.4409 13.4C14.5409 13 13.5409 12.7 12.4409 12.7C11.3409 12.7 10.3409 12.9 9.44095 13.4C8.84095 13.6 8.74095 14.3 9.04095 14.8Z" fill="black"/>
-              <path opacity="0.3" d="M3.14096 5.80005L4.04095 7.19995C6.44095 5.59995 9.34094 4.69995 12.4409 4.69995C15.5409 4.69995 18.4409 5.59995 20.8409 7.19995L21.7409 5.80005C22.0409 5.30005 21.8409 4.70002 21.3409 4.40002C18.7409 2.90002 15.6409 2 12.4409 2C9.24094 2 6.14095 2.90002 3.54095 4.40002C3.04095 4.70002 2.84096 5.30005 3.14096 5.80005Z" fill="black"/>
-              <path opacity="0.3" d="M6.14097 10.3L7.04096 11.7C8.64096 10.7 10.441 10.1 12.541 10.1C14.641 10.1 16.441 10.7 18.041 11.7L18.941 10.3C19.241 9.80005 19.141 9.10002 18.541 8.90002C16.741 7.90002 14.741 7.40002 12.541 7.40002C10.341 7.40002 8.34096 7.90002 6.54096 8.90002C5.94096 9.10002 5.74097 9.80005 6.14097 10.3Z" fill="black"/>
-            </svg>
-          </span>
-        </div>
-        <div class="modal-body--id-date d-flex flex-column align-items-start justify-content-center">
-          <div class="client-id fw-bold" style="font-size: 16px; color: #3f4254; margin-bottom: 2px">
-            <%= @client.unix_user %>
-          </div>
-          <div class="client-date" style="font-size: 13px; color: #b5b5c3;">
-            <%= "Added on #{pretty_print_date(@client.created_at)}" %>
-          </div>
-        </div>
-      </div>
-
-      <div class="fv-row mb-7 fv-plugins-icon-container">
+    <%= render partial: "application/components/modals/modal_header", locals: {title: "Edit Pod"} %>
+    <div class="modal-body modals--body">
+      <%= render partial: "clients/components/modals/modal_body_head", locals: {client: @client, with_status: true} %>
+      <div class="forms--row">
         <!--begin::Label-->
-        <label class="fs-6 fw-bold mb-2">Name</label>
+        <label class="forms--label mb-2">Name</label>
         <!--end::Label-->
         <!--begin::Input-->
-        <%= form.text_field :name, class: "form-control form-control-solid", value: @client.name %>
+        <%= form.text_field :name, class: "forms--text-input form-control form-control-solid", value: @client.name %>
         <!--end::Input-->
         <div class="fv-plugins-message-container invalid-feedback"></div>
       </div>
 
-      <div class="fv-row mb-7 fv-plugins-icon-container">
-        <label class="required fs-6 fw-bold mb-2" for="client-accounts-dropdown-edit">Account</label>
-        <select class="form-select form-control"
-                data-controller="select2"
-                id="client-accounts-dropdown-edit"
-                data-placeholder="Select an account"
-                name="account_id"
-                data-select2-id="select2-data-account_id"
-                data-action="select2-select->edit-pod#onAccountsSelectChange select2-clear->edit-pod#onAccountsSelectChange"
-                data-edit-pod-target="accountsSelect"
-                data-select2-dropdown-parent-value="edit_pod_modal"
-        >
-          <% policy_scope(Account).each do |account|%>
-            <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
-          <% end %>
-        </select>
+      <div class="forms--row">
+        <label class="required forms--label mb-2" for="client-accounts-dropdown-edit">Account</label>
+        <div class="forms--input-group">
+          <select class="forms--select form-select form-control"
+                  data-controller="select2"
+                  id="client-accounts-dropdown-edit"
+                  data-placeholder="Select an account"
+                  name="account_id"
+                  data-select2-id="select2-data-account_id"
+                  data-action="select2-select->edit-pod#onAccountsSelectChange select2-clear->edit-pod#onAccountsSelectChange"
+                  data-edit-pod-target="accountsSelect"
+                  data-select2-dropdown-parent-value="edit_pod_modal"
+          >
+            <% policy_scope(Account).each do |account|%>
+              <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
+            <% end %>
+          </select>
+        </div>
       </div>
 
-      <div class="fv-row mb-7 fv-plugins-icon-container">
-        <label class="fs-6 fw-bold mb-2">Location</label>
-        <select class="form-select"
-                data-controller="select2"
-                id="client-locations-dropdown-edit"
-                data-placeholder="Select a location"
-                name="location_id"
-                data-select2-id="select2-data-location_id"
-                tabindex="-1"
-                data-select2-dropdown-parent-value="edit_pod_modal"
-                data-select2-blanks-value="true"
-        >
-          <option></option>
-          <option>&nbsp;</option>
-          <% policy_scope(Location).each do |location|%>
-            <%= render partial: "clients/client_select_option", locals: { option: location, selected: location == @client.location } %>
-          <% end %>
-        </select>
+      <div class="forms--row">
+        <label class="forms--label mb-2">Location</label>
+        <div class="forms--input-group">
+          <select class="forms--select form-select"
+                  data-controller="select2"
+                  id="client-locations-dropdown-edit"
+                  data-placeholder="Select a location"
+                  name="location_id"
+                  data-select2-id="select2-data-location_id"
+                  tabindex="-1"
+                  data-select2-dropdown-parent-value="edit_pod_modal"
+                  data-select2-blanks-value="true"
+          >
+            <option></option>
+            <option>&nbsp;</option>
+            <% policy_scope(Location).each do |location|%>
+              <%= render partial: "clients/client_select_option", locals: { option: location, selected: location == @client.location } %>
+            <% end %>
+          </select>
+        </div>
       </div>
-
       <div id="location-created-snackbar-edit" class="d-none w-100 d-flex flex-row align-items-center justify-content-start fw-bold"
            style="display: none; background-color: #f1faff; height: 45px; color: #00a3ff; font-size: 14px; border-radius: 6px; margin-top: 15px; margin-bottom: 15px">
         <svg style="margin: 0 8px 0 12px" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -109,9 +74,8 @@
       </div>
 
 
-      <a class="d-flex align-items-center fw-bold"
+      <a class="d-flex align-items-center fw-bold regular-link mb-2"
          href="#"
-         style="color: #00a3ff; font-size: 12px;"
          data-bs-toggle="modal"
          data-bs-target="#new_location_modal-edit">
         Add new location
@@ -124,29 +88,36 @@
       </a>
 
       <% if current_user.super_user %>
-        <div class="fv-row my-7 fv-plugins-icon-container">
-          <label class="required fs-6 fw-bold mb-2">Release Group</label>
-          <select class="form-select"
-                  data-controller="select2"
-                  id="client-update-groups-dropdown-edit"
-                  data-placeholder="Select a release group"
-                  name="update_group_id"
-                  data-select2-id="select2-data-update_group_id"
-                  tabindex="-1"
-                  data-select2-dropdown-parent-value="edit_pod_modal"
-          >
-            <% UpdateGroup.all.each do |ug|%>
-              <option value="<%= ug.id %>" label="<%= ug.name %>" <%= @client.update_group_id == ug.id ? "selected" : nil %>><%= ug.name %></option>
-            <% end %>
-          </select>
+        <div class="forms--row">
+          <label class="required forms--label mb-2">Release Group</label>
+          <div class="forms--input-group">
+            <select class="forms--select form-select"
+                    data-controller="select2"
+                    id="client-update-groups-dropdown-edit"
+                    data-placeholder="Select a release group"
+                    name="update_group_id"
+                    data-select2-id="select2-data-update_group_id"
+                    tabindex="-1"
+                    data-select2-dropdown-parent-value="edit_pod_modal"
+            >
+              <% UpdateGroup.all.each do |ug|%>
+                <option value="<%= ug.id %>" label="<%= ug.name %>" <%= @client.update_group_id == ug.id ? "selected" : nil %>><%= ug.name %></option>
+              <% end %>
+            </select>
+          </div>
         </div>
       <% end %>
 
     </div>
 
-    <div class="modal-footer">
-      <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-      <button type="submit" class="btn btn-primary" id="continue-button" data-action="click->edit-pod#submit" data-edit-pod-target="updatePodButton">Update Pod</button>
+    <div class="modal-footer modals--footer">
+      <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
+      <button type="submit"
+              class="custom-button custom-button--primary custom-button--sm"
+              id="continue-button"
+              data-action="click->edit-pod#submit"
+              data-edit-pod-target="updatePodButton"
+      >Update Pod</button>
     </div>
   </div>
 </div>

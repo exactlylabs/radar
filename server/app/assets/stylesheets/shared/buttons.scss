@@ -10,6 +10,10 @@
   justify-content: center;
   align-items: center;
   text-align: center;
+  text-decoration: none;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  width: max-content;
 }
 
 .custom-button--primary {
@@ -18,8 +22,9 @@
   box-shadow: 0 2px 10px -2px $primary-button--box-shadow;
 }
 
-.custom-button--primary:hover,
-.custom-button--primary:active {
+.custom-button--primary:hover:not(.custom-button--disabled),
+.custom-button--primary:active:not(.custom-button--disabled) {
+  color: $white;
   background-color: $primary-button--hover;
 }
 
@@ -31,6 +36,7 @@
 
 .custom-button--secondary:hover:not(.custom-button--disabled),
 .custom-button--secondary:active:not(.custom-button--disabled) {
+  color: $dark-gray;
   background-color: $subtle-gray;
 }
 
@@ -48,9 +54,19 @@
 .custom-button--disabled {
   opacity: 50%;
   cursor: default;
+  text-decoration: none;
+
+  &.custom-button--primary {
+    color: $white;
+  }
+
+  &.custom-button--secondary,
+  &.custom-button--secondary-light {
+    color: $dark-gray;
+  }
 }
 
-.custom-button--bg {
+.custom-button--lg {
   padding: 12px 24px;
 }
 
@@ -73,4 +89,15 @@
   &.custom-button--icon-end {
     margin-left: 8px;
   }
+}
+
+.custom-close-button {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  position: absolute;
+  right: 1rem;
 }

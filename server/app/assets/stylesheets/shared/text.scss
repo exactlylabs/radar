@@ -1,0 +1,123 @@
+@import "colors";
+
+$light: 300;
+$medium: 500;
+$semi-bold: 600;
+$bold: 700;
+$extra-bold: 800;
+
+.text--primary {
+  color: $black;
+}
+
+.text--secondary {
+  color: $gray;
+}
+
+.fw-light {
+  font-variation-settings: 'wght' $light;
+}
+
+.fw-medium {
+  font-variation-settings: 'wght' $medium;
+}
+
+.fw-semi-bold {
+  font-variation-settings: 'wght' $semi-bold;
+}
+
+.fw-bold {
+  font-variation-settings: 'wght' $bold;
+}
+
+.fw-extra-bold {
+  font-variation-settings: 'wght' $extra-bold;
+}
+
+.card-main-title {
+  font-variation-settings: 'wght' $bold;
+  font-size: 1rem;
+  color: $deep-blue;
+}
+
+.page-main-title {
+  font-variation-settings: 'wght' $extra-bold;
+  font-size: 1.375rem;
+  color: $deep-blue;
+}
+
+.dialog-main-title {
+  font-variation-settings: 'wght' $bold;
+  font-size: 1.25rem;
+  color: $deep-blue;
+}
+
+.dialog-sub-title {
+  font-variation-settings: 'wght' $medium;
+  font-size: 15px;
+  color: $dark-gray;
+}
+
+.page-sub-title {
+  font-variation-settings: 'wght' $medium;
+  font-size: 14px;
+  color: $title-gray;
+}
+
+.table-header {
+  font-variation-settings: 'wght' $bold !important;
+  font-size: 0.812rem !important;
+  color: $gray !important;
+}
+
+.sidebar-item--text {
+  font-variation-settings: 'wght' $semi-bold;
+  font-size: 0.938rem;
+  color: $dark-gray;
+}
+
+.sidebar-item--text-active {
+  font-variation-settings: 'wght' $bold;
+  color: $blue;
+}
+
+.sidebar-item--text:hover {
+  color: $blue;
+}
+
+.additional-text {
+  font-variation-settings: 'wght' $medium;
+  font-size: 0.875rem;
+  color: $gray;
+}
+
+.regular-text {
+  font-variation-settings: 'wght' $medium !important;
+  font-size: 0.875rem !important;
+  color: $deep-blue !important;
+}
+
+.regular-link {
+  font-variation-settings: 'wght' $bold;
+  font-size: 0.875rem;
+  line-height: 1.312rem;
+  color: $blue;
+  text-decoration: none;
+}
+
+.help-text {
+  font-variation-settings: 'wght' $medium;
+  font-size: 0.812rem;
+  line-height: 1.188rem;
+  letter-spacing: 0;
+  color: $gray;
+  margin-bottom: 16px;
+}
+
+.warning-text {
+  font-variation-settings: 'wght' $medium;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  color: #3f4254;
+  white-space: break-spaces;
+}

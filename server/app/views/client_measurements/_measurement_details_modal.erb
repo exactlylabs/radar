@@ -1,74 +1,55 @@
 <%= turbo_frame_tag "measurement_details_modal" do %>
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" style="font-size: 20px">Measurement Details</h5>
-        <!--begin::Close-->
-        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-          <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-          <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
-              <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
-              <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
-          </svg>
-          </span>
-          <!--end::Svg Icon-->
-        </div>
-        <!--end::Close-->
-      </div>
+      <%= render partial: "application/components/modals/modal_header", locals: {title: "Measurement Details"} %>
       <div class="modal-body">
-        <div class="map-container" style="width: 100%; height: inherit;">
-          <div style="height:100%; min-height: 260px" data-location-form-target="map" data-action="modal:shown->location#display" data-controller="location" data-location-latitude-value="<%= latitude %>" data-location-longitude-value="<%= longitude %>"></div>
+        <div class="map-container client-measurement-details--map-container">
+          <div class="client-measurement-details--map"
+               data-location-form-target="map"
+               data-action="modal:shown->location#display"
+               data-controller="location"
+               data-location-latitude-value="<%= latitude %>"
+               data-location-longitude-value="<%= longitude %>"
+          ></div>
         </div>
         <div class="info-container">
-          <div class="row pt-5">
-            <div class="col-5">
-              <p class="mb-0" style="color: #191c31; font-size: 14px; font-weight: 500;">Date/Time</p>
-              <p data-controller="localtime" style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= measurement.created_at %></p>
-            </div>
-            <div class="col">
-              <p class="mb-0" style="color: #191c31; font-size: 14px; font-weight: 500">Style</p>
-              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= measurement.style %></p>
-            </div>
-            <div class="col-5">
-              <p class="mb-0" style="color: #191c31; font-size: 14px; font-weight: 500">Location</p>
-              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= latitude %>, <%= longitude %></p>
-            </div>
+          <div class="row d-flex flex-row mb-1">
+            <p class="forms--label w-25">Test type</p>
+            <p class="regular-text w-75"><%= measurement.style %></p>
           </div>
-          <div class="row pt-5">
-            <div class="col">
-              <div class="d-flex flex-row align-items-center justify-content-start flex-wrap">
-                <img alt="download icon" src="<%= image_url('download-icon.png') %>" width="14" height="14">
-                <p class="mb-0 ms-1" style="color: #191c31; font-size: 14px; font-weight: 500">Download</p>
-              </div>
-              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= measurement.get_download %></p>
-            </div>
-            <div class="col">
-              <div class="d-flex flex-row align-items-center justify-content-start flex-wrap">
-                <img alt="upload icon" src="<%= image_url('upload-icon.png') %>" width="14" height="14">
-                <p class="mb-0 ms-1" style="color: #191c31; font-size: 14px; font-weight: 500">Upload</p>
-              </div>
-              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= measurement.get_upload %></p>
-            </div>
-            <div class="col">
-              <p class="mb-0" style="color: #191c31; font-size: 14px; font-weight: 500">Latency</p>
-              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= measurement.get_latency %></p>
-            </div>
-            <div class="col">
-              <p class="mb-0" style="color: #191c31; font-size: 14px; font-weight: 500">Jitter</p>
-              <p style="color: #5e6278; font-size: 14px; font-weight: 500;"><%= measurement.get_jitter %></p>
-            </div>
+          <div class="row d-flex flex-row mb-1">
+            <p class="forms--label w-25">Location</p>
+            <p class="regular-text w-75"><%= measurement.get_location %></p>
+          </div>
+          <div class="row d-flex flex-row mb-1">
+            <p class="forms--label w-25">Date/Time</p>
+            <p class="regular-text w-75" data-controller="localtime"><%= measurement.created_at %></p>
+          </div>
+          <div class="row d-flex flex-row mb-1">
+            <p class="forms--label w-25">Download</p>
+            <p class="regular-text w-75"><%= measurement.get_download %></p>
+          </div>
+          <div class="row d-flex flex-row mb-1">
+            <p class="forms--label w-25">Upload</p>
+            <p class="regular-text w-75"><%= measurement.get_upload %></p>
+          </div>
+          <div class="row d-flex flex-row mb-1">
+            <p class="forms--label w-25">Latency</p>
+            <p class="regular-text w-75"><%= measurement.get_latency %></p>
+          </div>
+          <div class="row d-flex flex-row mb-1">
+            <p class="forms--label w-25">Jitter</p>
+            <p class="regular-text w-75"><%= measurement.get_jitter %></p>
           </div>
         </div>
       </div>
-      <div class="modal-footer d-flex flex-row justify-content-end">
+      <div class="modal-footer modals--footer">
         <!--begin::LaterButton-->
         <button type="button"
-                class="btn btn-light"
+                class="custom-button custom-button--primary custom-button--sm"
                 data-bs-dismiss="modal"
-                style="height: 48px;"
-        >Close
+        >
+          Close
         </button>
       </div>
     </div>

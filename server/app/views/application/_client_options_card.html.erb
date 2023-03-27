@@ -1,6 +1,6 @@
 <li class="list-group-item border-0 mb-5 p-0 d-flex justify-content-start">
   <a href="<%= client_path(@client.unix_user) %>"
-     class="btn btn-active-light btn-active-color-primary
+     class="btn btn-active-light btn-active-color-primary option-item-primary--hoverable
             btn-active-icon-primary text-start px-3 w-100
             d-flex justify-content-start align-items-center flex-row
             <%= active_full_path?(client_path(@client.unix_user)) %>">
@@ -11,12 +11,12 @@
         <rect id="Rectangle" x="1" y="2" width="12" height="2" rx="1" fill="black"/>
     </svg>
     </span>
-    <div class="d-md-none d-xl-block ms-3">Overview</div>
+    <span class="d-md-none d-xl-block ms-3 forms--label <%= is_active_full_path?(client_path(@client.unix_user)) ? 'forms--label-selected' : nil %>">Overview</span>
   </a>
 </li>
 <li class="list-group-item border-0 mb-5 p-0 d-flex justify-content-start">
   <a href="<%= client_measurements_path(@client.unix_user) %>"
-     class="btn btn-active-light btn-active-color-primary
+     class="btn btn-active-light btn-active-color-primary option-item-primary--hoverable
             btn-active-icon-primary text-start px-3 w-100
             d-flex justify-content-start align-items-center flex-row
             <%= active_full_path?(client_measurements_path(@client.unix_user)) %>">
@@ -30,12 +30,12 @@
       </svg>
     </span>
     <!--end::Svg Icon-->
-    <div class="d-md-none d-xl-block ms-3 me-5">Measurements</div>
+    <span class="d-md-none d-xl-block ms-3 me-5 forms--label <%= is_active_full_path?(client_measurements_path(@client.unix_user)) ? 'forms--label-selected' : nil %>">Measurements</span>
   </a>
 </li>
 <li class="list-group-item border-0 mb-5 p-0 d-flex justify-content-start">
   <a href="<%= client_data_usage_and_scheduling_path(@client.unix_user) %>"
-     class="btn btn-active-light btn-active-color-primary
+     class="btn btn-active-light btn-active-color-primary option-item-primary--hoverable
             btn-active-icon-primary text-start px-3 w-100
             d-flex justify-content-start align-items-center flex-row
             <%= active_full_path?(client_data_usage_and_scheduling_path(@client.unix_user)) %>">
@@ -47,12 +47,12 @@
       </svg>
     </span>
     <!--end::Svg Icon-->
-    <div class="d-md-none d-xl-block ms-3 me-5">Data Usage & Scheduling</div>
+    <span class="d-md-none d-xl-block ms-3 me-5 forms--label forms--label-hoverable <%= is_active_full_path?(client_data_usage_and_scheduling_path(@client.unix_user)) ? 'forms--label-selected' : nil %>">Data Usage & Scheduling</span>
   </a>
 </li>
 <li class="list-group-item border-0 p-0 d-flex justify-content-start">
   <a href="<%= client_technical_info_path(@client.unix_user) %>"
-     class="btn btn-active-light btn-active-color-primary
+     class="btn btn-active-light btn-active-color-primary option-item-primary--hoverable
             btn-active-icon-primary text-start px-3 w-100
             d-flex justify-content-start align-items-center flex-row
             <%= active_full_path?(client_technical_info_path(@client.unix_user)) %>">
@@ -64,6 +64,6 @@
       </svg>
     </span>
     <!--end::Svg Icon-->
-    <div class="d-md-none d-xl-block ms-3 me-5">Technical Info</div>
+    <span class="d-md-none d-xl-block ms-3 me-5 forms--label forms--label-hoverable <%= is_active_full_path?(client_technical_info_path(@client.unix_user)) ? 'forms--label-selected' : nil %>">Technical Info</span>
   </a>
 </li>

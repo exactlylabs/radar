@@ -1,0 +1,36 @@
+@import "text";
+@import "colors";
+
+.custom-badge {
+  padding: 6px 8px;
+  font-size: 0.812rem;
+  letter-spacing: 0;
+  font-variation-settings: 'wght' $bold;
+  border-radius: 6px;
+  width: max-content;
+}
+
+.custom-badge--online {
+  color: $badge--green-color;
+  background-color: $badge--green-background-color;
+}
+
+.custom-badge--offline {
+  color: $badge--red-color;
+  background-color: $badge--red-background-color;
+}
+
+.custom-badge--not-in-service {
+  color: $badge--gray-color;
+  background-color: $badge--gray-background-color;
+}
+
+.custom-badge--pending {
+  color: $badge--orange-color;
+  background-color: $badge--orange-background-color;
+}
+
+.custom-badge--running {
+  color: $badge--blue-color;
+  background-color: $badge--blue-background-color;
+}

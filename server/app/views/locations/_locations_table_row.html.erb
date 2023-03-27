@@ -11,12 +11,12 @@
         </span>
       </div>
       <div class="d-flex flex-column align-items-left justify-content-start">
-        <a class="text-gray-800 text-hover-primary fw-bolder"
+        <a class="forms--label text-hover-primary"
            style="font-size:15px; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
            href="<%= location_path(location)%>" data-turbo-frame="_top">
             <%= location.name %>
         </a>
-        <div style="font-size: 13px; color: #b5b5c3"><%= location.address %></div>
+        <div class="additional-text"><%= location.address %></div>
       </div>
     </div>
   </td>
@@ -28,8 +28,7 @@
         <%= render partial: "location_categories/table_cell", locals: {categories: location.categories, shows_tooltip: true, row: row} %>
     </td>
   <% end %>
-  <td class="text-gray-600 mb-1"
-      style="font-size:14px; color: #b5b5c3;">
+  <td class="regular-text mb-1">
       <span>
         <%= location.download_avg.present? ? "#{location.download_avg} Mbps / " : 'Not available / ' %>
       </span>
@@ -41,7 +40,7 @@
         <%= location.download_diff.present? ? location.download_diff : '' %>
       </span>
   </td>
-  <td class="text-gray-600 mb-1"
+  <td class="regular-text mb-1"
       style="font-size:14px; color: #b5b5c3;">
     <span>
         <%= location.upload_avg.present? ?  "#{location.upload_avg} Mbps / " : 'Not available / '%>
@@ -54,37 +53,36 @@
         <%= location.upload_diff.present? ? location.upload_diff : '' %>
       </span>
   </td>
-  <td class="text-end" style="padding-right: 30px">
+  <td class="align-right" style="padding-right: 30px">
     <div class="btn-group">
       <button type="button"
-              class="btn btn-sm btn-light btn-active-light-primary dropwdown-toggle"
+              class="custom-button custom-button--secondary custom-button--sm dropwdown-toggle"
               data-bs-toggle="dropdown"
               aria-expanded="false"
-              style="border-radius: 6px; display: flex; justify-content: center; align-items: center"
               id="<%= "options-button-#{location.id}" %>"
       >
         Options
-        <span class="svg-icon svg-icon-5 m-0">
+        <span class="svg-icon svg-icon-5 m-0 custom-button--icon custom-button--icon-end">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
           </svg>
         </span>
       </button>
-      <div class="dropdown-menu fw-bold fs-7 w-125px py-4"
+      <div class="dropdown-menu fw-bold fs-7 py-4 px-2"
            aria-labelledby="<%= "options-button-#{location.id}" %>">
         <!--begin::Menu item-->
         <div class="menu-item">
-          <%= link_to "View", location_path(location), class: "menu-link text-hover-gray-500 text-gray-700 px-3", data: {"turbo-frame" => "_top"} %>
+          <%= link_to "View", location_path(location), class: "dropdowns--option option-item-primary--hoverable menu-link px-3", data: {"turbo-frame" => "_top"} %>
         </div>
         <!--end::Menu item-->
         <!--begin::Menu item-->
         <div class="menu-item">
-          <%= link_to "Edit", edit_location_path(location), { class: "menu-link text-hover-gray-500 text-gray-700 px-3", data: { "turbo-frame" => "edit_location_modal" } } %>
+          <%= link_to "Edit", edit_location_path(location), { class: "dropdowns--option option-item-primary--hoverable menu-link px-3", data: { "turbo-frame" => "edit_location_modal" } } %>
         </div>
         <!--end::Menu item-->
         <!--begin::Menu item-->
         <div class="menu-item">
-          <%= link_to 'Delete', location_path(location), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link text-hover-gray-500 text-gray-700 px-3" %>
+          <%= link_to 'Delete', location_path(location), method: :delete, data: { confirm: 'Are you sure?' }, class: "dropdowns--option menu-link px-3" %>
         </div>
         <!--end::Menu item-->
       </div>

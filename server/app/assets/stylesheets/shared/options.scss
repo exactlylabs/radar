@@ -1,0 +1,15 @@
+@import "colors";
+@import "text";
+
+.dropdowns--option {
+  font-size: 0.875rem;
+  font-variation-settings: 'wght' $semi-bold;
+  letter-spacing: 0;
+  color: $dark-gray;
+}
+
+.option-item-primary--hoverable:hover {
+  span {
+    color: $blue;
+  }
+}

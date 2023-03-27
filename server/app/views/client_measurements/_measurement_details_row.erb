@@ -1,12 +1,12 @@
-<td data-controller="localtime" style="color: #5e6278; width: 30%"><%= measurement.created_at %></td>
-<td style="color: #5e6278"><%= measurement.style %></td>
-<td style="color: #5e6278"><%= measurement.get_download %></td>
-<td style="color: #5e6278"><%= measurement.get_upload %></td>
-<td style="color: #5e6278"><%= measurement.get_latency %></td>
-<td style="color: #5e6278"><%= measurement.get_jitter %></td>
+<td class="regular-text" data-controller="localtime" style="width: 30%"><%= measurement.created_at %></td>
+<td class="regular-text"><%= measurement.style %></td>
+<td class="regular-text"><%= measurement.get_download %></td>
+<td class="regular-text"><%= measurement.get_upload %></td>
+<td class="regular-text"><%= measurement.get_latency %></td>
+<td class="regular-text"><%= measurement.get_jitter %></td>
 <td>
   <%= link_to "View Details",
               client_measurement_path(id: measurement.id),
-              class: "btn btn-sm btn-light btn-active-light-primary px-3",
+              class: "custom-button custom-button--secondary custom-button--sm px-3",
               data: { turbo_frame: "measurement_details_modal" } %>
 </td>

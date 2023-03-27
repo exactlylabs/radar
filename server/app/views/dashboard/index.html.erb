@@ -4,15 +4,15 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="text-dark fw-bolder my-1 fs-2">Dashboard 
+      <h1 class="page-main-title">Dashboard 
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Home
+        <li class="breadcrumb-item text--secondary">Home
           <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
         </li>
-        <li class="breadcrumb-item text-dark">Dashboard</li>
+        <li class="breadcrumb-item text--primary fw-bold">Dashboard</li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
@@ -21,11 +21,11 @@
       <% if @onboard_step < 0 %>
         <% if policy(:export).all? %>
           <button type="button"
-                  class="btn bg-body btn-color-gray-700 btn-active-primary me-4 <%= current_user.has_all_data_pending_download ? 'disabled pending' : '' %>"
+                  class="custom-button custom-button--secondary-light custom-button--lg me-4 <%= current_user.has_all_data_pending_download ? 'custom-button--disabled pending' : '' %>"
                   data-controller="exports"
                   data-action="click->exports#exportAll"
           >
-            <span class="svg-icon svg-icon-2">
+            <span class="svg-icon custom-button--icon custom-button--icon-start">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <rect opacity="0.3" x="12.75" y="4.25" width="12" height="2" rx="1" transform="rotate(90 12.75 4.25)" fill="black"></rect>
                 <path d="M12.0573 6.11875L13.5203 7.87435C13.9121 8.34457 14.6232 8.37683 15.056 7.94401C15.4457 7.5543 15.4641 6.92836 15.0979 6.51643L12.4974 3.59084C12.0996 3.14332 11.4004 3.14332 11.0026 3.59084L8.40206 6.51643C8.0359 6.92836 8.0543 7.5543 8.44401 7.94401C8.87683 8.37683 9.58785 8.34458 9.9797 7.87435L11.4427 6.11875C11.6026 5.92684 11.8974 5.92684 12.0573 6.11875Z" fill="black"></path>
@@ -36,9 +36,9 @@
           </button>
         <% end %>
         <a href="<%= measurements_path(format: 'csv') %>"
-           class="btn bg-body btn-color-gray-700 btn-active-primary me-4 <%= current_user.has_measurements_pending_download ? 'disabled pending' : '' %>"
+           class="custom-button custom-button--secondary-light custom-button--lg me-4 <%= current_user.has_measurements_pending_download ? 'custom-button--disabled pending' : '' %>"
         >
-          <span class="svg-icon svg-icon-2">
+          <span class="svg-icon custom-button--icon custom-button--icon-start">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
               <rect opacity="0.3" x="12.75" y="4.25" width="12" height="2" rx="1" transform="rotate(90 12.75 4.25)" fill="black"></rect>
               <path d="M12.0573 6.11875L13.5203 7.87435C13.9121 8.34457 14.6232 8.37683 15.056 7.94401C15.4457 7.5543 15.4641 6.92836 15.0979 6.51643L12.4974 3.59084C12.0996 3.14332 11.4004 3.14332 11.0026 3.59084L8.40206 6.51643C8.0359 6.92836 8.0543 7.5543 8.44401 7.94401C8.87683 8.37683 9.58785 8.34458 9.9797 7.87435L11.4427 6.11875C11.6026 5.92684 11.8974 5.92684 12.0573 6.11875Z" fill="black"></path>
@@ -49,9 +49,9 @@
         </a>
         <% if policy(:measurement).full_index? %>
           <a href="<%= full_index_measurements_path(format: 'csv') %>"
-             class="btn bg-body btn-color-gray-700 btn-active-primary me-4 <%= current_user.has_all_measurements_pending_download ? 'disabled' : '' %>"
+             class="custom-button custom-button--secondary-light custom-button--lg me-4 <%= current_user.has_all_measurements_pending_download ? 'custom-button--disabled' : '' %>"
           >
-            <span class="svg-icon svg-icon-2">
+            <span class="svg-icon custom-button--icon custom-button--icon-start">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <rect opacity="0.3" x="12.75" y="4.25" width="12" height="2" rx="1" transform="rotate(90 12.75 4.25)" fill="black"></rect>
                 <path d="M12.0573 6.11875L13.5203 7.87435C13.9121 8.34457 14.6232 8.37683 15.056 7.94401C15.4457 7.5543 15.4641 6.92836 15.0979 6.51643L12.4974 3.59084C12.0996 3.14332 11.4004 3.14332 11.0026 3.59084L8.40206 6.51643C8.0359 6.92836 8.0543 7.5543 8.44401 7.94401C8.87683 8.37683 9.58785 8.34458 9.9797 7.87435L11.4427 6.11875C11.6026 5.92684 11.8974 5.92684 12.0573 6.11875Z" fill="black"></path>
@@ -63,9 +63,9 @@
         <% end %>
         <% if policy(:measurement).full_ndt7_index? %>
           <a href="<%= full_ndt7_index_measurements_path(format: 'csv') %>"
-             class="btn bg-body btn-color-gray-700 btn-active-primary me-4 <%= current_user.has_ndt7_pending_download ? 'disabled' : '' %>"
+             class="custom-button custom-button--secondary-light custom-button--lg me-4 <%= current_user.has_ndt7_pending_download ? 'custom-button--disabled' : '' %>"
           >
-            <span class="svg-icon svg-icon-2">
+            <span class="svg-icon custom-button--icon custom-button--icon-start">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <rect opacity="0.3" x="12.75" y="4.25" width="12" height="2" rx="1" transform="rotate(90 12.75 4.25)" fill="black"></rect>
                 <path d="M12.0573 6.11875L13.5203 7.87435C13.9121 8.34457 14.6232 8.37683 15.056 7.94401C15.4457 7.5543 15.4641 6.92836 15.0979 6.51643L12.4974 3.59084C12.0996 3.14332 11.4004 3.14332 11.0026 3.59084L8.40206 6.51643C8.0359 6.92836 8.0543 7.5543 8.44401 7.94401C8.87683 8.37683 9.58785 8.34458 9.9797 7.87435L11.4427 6.11875C11.6026 5.92684 11.8974 5.92684 12.0573 6.11875Z" fill="black"></path>
@@ -75,18 +75,6 @@
             Export NDT7 Extended
           </a>
         <% end %>
-        <%= render partial: "application/components/button", locals: {
-              type: "submit",
-              size: "bg",
-              order: "secondary",
-              light: true,
-              text: "Test",
-              disabled: false,
-              icon: nil,
-              icon_first: false,
-              href: full_ndt7_index_measurements_path(format: 'csv')
-            }
-        %>
       <% end %>
     </div>
   </div>
@@ -108,20 +96,20 @@
               <div class="card-header">
                 <div class="my-6 d-flex justify-content-between align-items-center w-100">
                   <div class="d-flex flex-column">
-                    <div class="text-dark fw-bolder my-1 fs-2">Locations</div>
-                    <div class="text-muted"><%= @locations.length %> locations</div>
+                    <div class="text--primary fw-bold dialog-main-title my-1">Locations</div>
+                    <div class="text--secondary dialog-sub-title"><%= @locations.length %> locations</div>
                   </div>
                   <div>
                     <div class="btn-group">
                       <a href="#"
-                         class="btn btn-sm <%= params[:filter] ? 'btn-light-primary' : 'btn-light' %> btn-active-light-primary"
+                         class="custom-button custom-button--sm custom-button--secondary"
                          data-bs-toggle="dropdown"
                          aria-expanded="false"
                          style="border-radius: 6px"
                          id="filters-button"
                       >
                         <%= location_filter_name_to_human(params[:filter]) %>
-                        <span class="svg-icon svg-icon-5 m-0">
+                        <span class="svg-icon custom-button--icon custom-button--icon-end m-0">
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
                           </svg>
@@ -130,18 +118,18 @@
                       <div class="dropdown-menu fw-bold fs-7 py-4"
                         aria-labelledby="schedule-button">
                         <a href="<%= params[:filter] == 'all' ? dashboard_path : dashboard_path(filter: 'all') %>"
-                          class="menu-item text-hover-gray-500 <%= params[:filter].nil? || params[:filter] == 'all' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                          class="dropdowns--option menu-item text-hover-gray-500 <%= params[:filter].nil? || params[:filter] == 'all' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                           All locations
                         </a>
                         <!--begin::Menu item-->
                         <a href="<%= params[:filter] == 'active' ? dashboard_path : dashboard_path(filter: 'active') %>"
-                          class="menu-item text-hover-gray-500 <%= params[:filter] == 'active' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                          class="dropdowns--option menu-item text-hover-gray-500 <%= params[:filter] == 'active' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                           Active locations
                         </a>
                         <!--end::Menu item-->
                         <!--begin::Menu item-->
                         <a href="<%= params[:filter] == 'inactive' ? dashboard_path : dashboard_path(filter: 'inactive') %>"
-                          class="menu-item text-hover-gray-500 <%= params[:filter] == 'inactive' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                          class="dropdowns--option menu-item text-hover-gray-500 <%= params[:filter] == 'inactive' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                           Inactive locations
                         </a>
                       </div>
