@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_144957) do
+ActiveRecord::Schema.define(version: 2023_03_28_190555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "tablefunc"
+  enable_extension "postgis"
 
   create_table "accounts", force: :cascade do |t|
     t.integer "account_type", default: 0, null: false
@@ -238,6 +238,16 @@ ActiveRecord::Schema.define(version: 2023_03_17_144957) do
     t.index ["version", "aggregate_id", "aggregate_type"], name: "index_events_on_version_and_aggregate_id_and_aggregate_type", unique: true
   end
 
+  create_table "geospaces", force: :cascade do |t|
+    t.string "name"
+    t.string "namespace"
+    t.geometry "geom", limit: {:srid=>0, :type=>"geometry"}
+    t.string "geoid"
+    t.integer "gid"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "invites", force: :cascade do |t|
     t.boolean "is_active", default: false
     t.string "first_name", null: false
@@ -274,6 +284,20 @@ ActiveRecord::Schema.define(version: 2023_03_17_144957) do
     t.index ["location_label_id"], name: "index_location_labels_locations_on_location_label_id"
   end
 
+  create_table "location_status_projections", force: :cascade do |t|
+    t.bigint "account_id"
+    t.bigint "autonomous_system_id"
+    t.bigint "location_id"
+    t.boolean "is_online", default: false
+    t.integer "count", default: 0
+    t.datetime "timestamp"
+    t.bigint "event_id"
+    t.index ["account_id"], name: "index_location_status_projections_on_account_id"
+    t.index ["autonomous_system_id"], name: "index_location_status_projections_on_autonomous_system_id"
+    t.index ["event_id"], name: "index_location_status_projections_on_event_id"
+    t.index ["location_id"], name: "index_location_status_projections_on_location_id"
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.string "address"
@@ -287,14 +311,15 @@ ActiveRecord::Schema.define(version: 2023_03_17_144957) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
+    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
-    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.float "download_avg"
     t.float "upload_avg"
     t.bigint "location_group_id"
+    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
     t.index ["location_group_id"], name: "index_locations_on_location_group_id"
   end
@@ -328,6 +353,14 @@ ActiveRecord::Schema.define(version: 2023_03_17_144957) do
     t.index ["measured_by_id"], name: "index_measurements_on_measured_by_id"
   end
 
+  create_table "ndt7_diagnose_reports", force: :cascade do |t|
+    t.bigint "client_id"
+    t.jsonb "report"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["client_id"], name: "index_ndt7_diagnose_reports_on_client_id"
+  end
+
   create_table "online_client_count_projections", force: :cascade do |t|
     t.bigint "account_id"
     t.bigint "autonomous_system_id"
@@ -337,7 +370,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_144957) do
     t.integer "total_in_service", default: 0
     t.datetime "timestamp"
     t.bigint "event_id"
-    t.integer "incr"
+    t.integer "increment"
     t.index ["account_id"], name: "index_online_client_count_projections_on_account_id"
     t.index ["autonomous_system_id"], name: "index_online_client_count_projections_on_autonomous_system_id"
     t.index ["event_id"], name: "index_online_client_count_projections_on_event_id"
@@ -362,14 +395,6 @@ ActiveRecord::Schema.define(version: 2023_03_17_144957) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["aggregate_type", "aggregate_id"], name: "index_snapshots_on_aggregate"
     t.index ["event_id"], name: "index_snapshots_on_event_id"
-  end
-
-  create_table "study_counties", id: false, force: :cascade do |t|
-    t.string "state"
-    t.string "state_code"
-    t.string "county"
-    t.string "fips"
-    t.integer "pop_2021"
   end
 
   create_table "update_groups", force: :cascade do |t|
@@ -450,6 +475,10 @@ ActiveRecord::Schema.define(version: 2023_03_17_144957) do
   add_foreign_key "invites", "accounts"
   add_foreign_key "invites", "users"
   add_foreign_key "location_groups", "accounts"
+  add_foreign_key "location_status_projections", "accounts"
+  add_foreign_key "location_status_projections", "autonomous_systems"
+  add_foreign_key "location_status_projections", "events"
+  add_foreign_key "location_status_projections", "locations"
   add_foreign_key "locations", "accounts"
   add_foreign_key "locations", "location_groups"
   add_foreign_key "locations", "users", column: "created_by_id"
@@ -458,6 +487,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_144957) do
   add_foreign_key "measurements", "clients"
   add_foreign_key "measurements", "locations"
   add_foreign_key "measurements", "users", column: "measured_by_id"
+  add_foreign_key "ndt7_diagnose_reports", "clients"
   add_foreign_key "online_client_count_projections", "accounts"
   add_foreign_key "online_client_count_projections", "autonomous_systems"
   add_foreign_key "online_client_count_projections", "events"
