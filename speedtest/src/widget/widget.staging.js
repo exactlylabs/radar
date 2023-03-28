@@ -88,7 +88,7 @@ const Widget = {
         iframe.style.height = init.frameStyle.height;
         iframe.style.border = 'none';
         iframe.src = getSrcWithParams(init);
-        iframe.setAttribute('allow', `geolocation 'src'`);
+        iframe.setAttribute('allow', `geolocation https://speedtest-staging.exactlylabs.com`);
         root.appendChild(iframe);
       },
       unmount: () => {
