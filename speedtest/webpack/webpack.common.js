@@ -58,10 +58,7 @@ module.exports = (env) => {
       hot: true,
       compress: true,
       port: 9999,
-      historyApiFallback: true,
-      headers: {
-        'Feature-Policy': 'geolocation http://localhost:9999'
-      }
+      historyApiFallback: true
     },
     // https://webpack.js.org/configuration/plugins/
     plugins: [
