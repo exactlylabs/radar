@@ -26,7 +26,6 @@ include EventSourceable
     # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks
     :after_add => :after_label_added, 
     :after_remove => :after_label_removed
-  has_and_belongs_to_many :geospaces
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
   has_one :client_count_aggregate, :as => :aggregator
