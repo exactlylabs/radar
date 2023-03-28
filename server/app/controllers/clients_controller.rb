@@ -152,8 +152,9 @@ class ClientsController < ApplicationController
       @client.schedule_next_test!
     end
     ClientEventLog.service_started_event @client if params[:service_first_ping].present? && params[:service_first_ping] == "true"
+    @client.compute_ping!
     @client.save!
-    
+
     respond_to do |format|
       format.json { render :status, status: :ok }
     end

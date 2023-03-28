@@ -25,6 +25,8 @@ class Client < ApplicationRecord
 
   # TODO: New agents are 15 seconds, old were 30. Once all the legacy "script based" clients are gone, update this to 15
   PING_DURATION = 30
+  REDIS_PING_SET_NAME = "pods_status"
+
   enum data_cap_periodicity: { daily: 0, weekly: 1, monthly: 2}
   enum scheduling_periodicity: { scheduler_hourly: 0, scheduler_daily: 1, scheduler_weekly: 2, scheduler_monthly: 3 }
   belongs_to :user, optional: true, foreign_key: 'claimed_by_id'
@@ -47,7 +49,7 @@ class Client < ApplicationRecord
   after_commit :check_ip_changed
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
-  scope :where_outdated_online, -> { where("online = true AND (pinged_at < ? OR pinged_at IS NULL)", (PING_DURATION * 1.5).second.ago) }
+  scope :where_outdated_online, -> { where.not(id: REDIS.zrangebyscore(Client::REDIS_PING_SET_NAME, (PING_DURATION * 1.5).second.ago.to_i, Time.now.to_i))}
   scope :where_test_should_be_requested, -> { where("test_scheduled_at <= ? OR test_scheduled_at IS NULL AND test_requested = false AND in_service = true", Time.now) }
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
@@ -89,11 +91,25 @@ class Client < ApplicationRecord
     end
   end
 
+  def compute_ping!
+    REDIS.zadd Client::REDIS_PING_SET_NAME, Time.now.to_i, self.id
+  end
+
+  def disconnected!
+    REDIS.zrem Client::REDIS_PING_SET_NAME, self.id
+    self.online = false
+    self.save!
+  end
+
   def self.update_outdated_online!
-    Client.where_outdated_online.each do |c|
-      c.online = false
-      c.save!
-    end
+    # Correct clients online status based on their registered pings
+    client_ids = REDIS.zrangebyscore(
+      Client::REDIS_PING_SET_NAME, 
+      (PING_DURATION * 1.5).second.ago.to_i, 
+      Time.now.to_i
+    )
+    Client.where.not(id: client_ids).update(online: false)
+    Client.where(id: client_ids).update(online: true)
   end
 
   def send_created_event_old

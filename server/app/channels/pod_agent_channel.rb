@@ -80,8 +80,7 @@ class PodAgentChannel < ApplicationCable::Channel
   end
 
   def pong(data)
-    # Response from this connection's ping
-    self.client.update(pinged_at: Time.now, online: true)
+    self.client.compute_ping!
   end
 
   private

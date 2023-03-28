@@ -83,6 +83,9 @@ class ClientCountAggregate < ApplicationRecord
 
         count_events = []
         events.each do |evt|
+            if evt.snapshot.nil?
+                next
+            end
             client = evt.snapshot.state
             account_id = client["account_id"]
             location_id = client["location_id"]

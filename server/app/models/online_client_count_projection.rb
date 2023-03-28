@@ -26,6 +26,9 @@ class OnlineClientCountProjection < ApplicationRecord
   end
 
   def self.handle_client_event!(event)
+    if event.snapshot.nil?
+      return
+    end
     state = event.snapshot.state
     
     last_count = self.latest_for state["account_id"], state["autonomous_system_id"], state["location_id"]
