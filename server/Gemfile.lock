@@ -47,6 +47,9 @@ GEM
     activerecord (6.1.6.1)
       activemodel (= 6.1.6.1)
       activesupport (= 6.1.6.1)
+    activerecord-postgis-adapter (7.1.1)
+      activerecord (~> 6.1)
+      rgeo-activerecord (~> 7.0.0)
     activestorage (6.1.6.1)
       actionpack (= 6.1.6.1)
       activejob (= 6.1.6.1)
@@ -82,6 +85,7 @@ GEM
     concurrent-ruby (1.1.10)
     connection_pool (2.3.0)
     crass (1.0.6)
+    dbf (4.2.2)
     declarative (0.0.20)
     devise (4.8.1)
       bcrypt (~> 3.0)
@@ -112,6 +116,9 @@ GEM
     faraday-retry (2.0.0)
       faraday (~> 2.0)
     ffi (1.15.5)
+    ffi-compiler (1.0.1)
+      ffi (>= 1.0.0)
+      rake
     foreman (0.87.2)
     fugit (1.7.2)
       et-orbi (~> 1, >= 1.2.7)
@@ -211,9 +218,15 @@ GEM
       rails (>= 6.0.0)
       stimulus-rails
       turbo-rails
+    http (5.1.1)
+      addressable (~> 2.8)
+      http-cookie (~> 1.0)
+      http-form_data (~> 2.2)
+      llhttp-ffi (~> 0.4.0)
     http-accept (1.7.0)
     http-cookie (1.0.5)
       domain_name (~> 0.5)
+    http-form_data (2.3.0)
     httpclient (2.8.3)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
@@ -228,6 +241,9 @@ GEM
     listen (3.7.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    llhttp-ffi (0.4.0)
+      ffi-compiler (~> 1.0)
+      rake (~> 13.0)
     lograge (0.12.0)
       actionpack (>= 4)
       activesupport (>= 4)
@@ -329,6 +345,13 @@ GEM
       netrc (~> 0.8)
     retriable (3.1.2)
     rexml (3.2.5)
+    rgeo (3.0.0)
+    rgeo-activerecord (7.0.1)
+      activerecord (>= 5.0)
+      rgeo (>= 1.0.0)
+    rgeo-shapefile (3.0.0)
+      dbf (~> 4.0)
+      rgeo (>= 1.0)
     rqrcode (2.1.2)
       chunky_png (~> 1.0)
       rqrcode_core (~> 1.0)
@@ -442,6 +465,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activerecord-postgis-adapter
   bcrypt (~> 3.1.7)
   bootsnap (>= 1.4.4)
   byebug
@@ -453,6 +477,7 @@ DEPENDENCIES
   google-cloud-storage
   grpc (= 1.47)
   hotwire-rails
+  http
   image_processing (~> 1.2)
   ipaddr
   jbuilder (~> 2.7)
@@ -466,6 +491,8 @@ DEPENDENCIES
   rack-mini-profiler (~> 2.0)
   rails (~> 6.1.4, >= 6.1.4.1)
   redis (~> 4.0)
+  rgeo
+  rgeo-shapefile
   rqrcode
   ruby-prof-flamegraph
   rubyzip
