@@ -2,115 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import { notifyError } from './utils/errors';
 import * as Sentry from '@sentry/react';
+import {getConfigFromParams} from "./utils/params";
 
-let init = null;
-let error = null;
-export const baseInitConfig = {
-  clientId: 1,
-  widgetMode: true,
-  elementId: 'root-embedded',
-  frameStyle: {
-    width: '100%',
-    height: '100%',
-  },
-  tab: 0,
-  noZoomControl: false,
-  webviewMode: false,
-  userLat: undefined,
-  userLng: undefined,
-  zoom: undefined,
-  global: false,
-}
-
-const checkConfig = config => {
-  const { elementId, clientId } = config;
-  if (!elementId || elementId.length === 0) {
-    error = 'elementId is missing';
-    return false;
-  } else if (!clientId || clientId.length === 0) {
-    error = 'clientId is missing';
-    return false;
-  } else if (typeof elementId !== 'string') {
-    error = 'elementId type is wrong';
-    return false;
-  } else if (typeof clientId !== 'number') {
-    error = 'clientId type is wrong';
-    return false;
-  }
-  return true;
-};
-
-const hasParams = () => {
-  return window.location.search.includes('widgetMode') ||
-    window.location.search.includes('frameWidth') ||
-    window.location.search.includes('frameHeight') ||
-    window.location.search.includes('tab') ||
-    window.location.search.includes('noZoomControl') ||
-    window.location.search.includes('webviewMode') ||
-    window.location.search.includes('zoom');
-}
-
-const getConfigFromParams = () => {
-  const params = window.location.search.split('?')[1].split('&');
-  let config = { widgetMode: true };
-  params.forEach(param => {
-    if(param.includes('widgetMode')) {
-      config.widgetMode = param.split('=')[1] === 'true';
-    } else if(param.includes('frameWidth')) {
-      if(!config.frameStyle) config.frameStyle = {};
-      config.frameStyle.width = param.split('=')[1];
-    } else if(param.includes('frameHeight')) {
-      if(!config.frameStyle) config.frameStyle = {};
-      config.frameStyle.height = param.split('=')[1];
-    } else if(param.includes('tab')) {
-      config.tab = parseInt(param.split('=')[1]);
-    } else if(param.includes('noZoomControl')) {
-      config.noZoomControl = param.split('=')[1] === 'true';
-    } else if(param.includes('webviewMode')) {
-      config.webviewMode = param.split('=')[1] === 'true';
-    } else if(param.includes('userLat')) {
-      config.userLat = parseFloat(param.split('=')[1]);
-    } else if(param.includes('userLng')) {
-      config.userLng = parseFloat(param.split('=')[1]);
-    } else if(param.includes('zoom')) {
-      config.zoom = parseInt(param.split('=')[1]);
-    }
+if (REACT_APP_ENV === 'production') {
+  Sentry.init({
+    dsn: REACT_APP_SENTRY_DSN,
+    environment: 'production',
+    tunnel: `https://pods.radartoolkit.com/client_api/v1/sentry?client_id=${init.clientId}`
   });
-  return config;
+  Sentry.setUser({ id: init.clientId });
 }
 
-export default {
-  config: config => {
-    init = null;
-    if (checkConfig(config)) init = {...baseInitConfig, ...config, frameStyle: {...baseInitConfig.frameStyle, ...config.frameStyle}};
-    if (hasParams()) {
-      if(!!init) init = { ...baseInitConfig, ...init, ...getConfigFromParams() };
-      else init = {...baseInitConfig, ...getConfigFromParams()};
-    }
-    if(!init) throw new Error(error);
-  },
-  new: () => {
-    if (REACT_APP_ENV === 'production') {
-      Sentry.init({
-        dsn: REACT_APP_SENTRY_DSN,
-        environment: 'production',
-        tunnel: `https://pods.radartoolkit.com/client_api/v1/sentry?client_id=${init.clientId}`
-      });
-      Sentry.setUser({ id: init.clientId });
-    }
-    let root;
-    return {
-      mount: () => {
-        if (!init) {
-          notifyError(new Error(`Initial config object missing. Reason(s): ${error}`));
-          return;
-        }
-        root = ReactDOM.createRoot(document.getElementById(init.elementId));
-        root.render(<App config={init} />);
-      },
-      unmount: () => root.unmount(document.getElementById(init.elementId)),
-    };
-  },
-};
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App config={getConfigFromParams()} />);

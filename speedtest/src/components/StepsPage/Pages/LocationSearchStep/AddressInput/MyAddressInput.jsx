@@ -199,6 +199,7 @@ const MyAddressInput = ({
             .finally(() => setLocationLoading(false));
         },
         (err) => {
+          console.error(err);
           setGeolocationError(true);
           setLocationLoading(false);
         },
