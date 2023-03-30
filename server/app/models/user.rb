@@ -41,6 +41,19 @@ class User < ApplicationRecord
     has_pending_download_key 'measurements'
   end
 
+  def get_letter_for_icon
+    if self.first_name == '' && self.last_name == '' && self.email == ''
+      return "-"
+    end
+    if self.first_name != ''
+      self.first_name[0].upcase
+    elsif self.last_name != ''
+      self.last_name[0].upcase
+    else
+      self.email[0].upcase
+    end
+  end
+
   private
   def has_pending_download_key(key)
     self.pending_downloads.filter { |p| p.include? key }.size > 0
