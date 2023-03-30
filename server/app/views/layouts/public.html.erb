@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Radar</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
+    <script
+      src="https://browser.sentry-cdn.com/7.9.0/bundle.min.js"
+      integrity="sha384-4Q6VnoFQcxYhNxg1ic5R+RRx0fam6rRf9PFAE3oTZhtTV2S8IM7uyl8Bg2z3AFi9"
+      crossorigin="anonymous"
+    ></script>
+    <% if Rails.env.production? %>
+      <script>
+        // based on sentry.rb file config
+        Sentry.init({
+          dsn: "https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151",
+          tracesSampleRate: 0.0,
+          environment: "production",
+        });
+        <% if current_account.present? %>
+          Sentry.setContext("account", { id: <%= current_account.id %>, name: "<%= current_account.name %>" });
+        <% end %>
+        <% if user_signed_in? %>
+          Sentry.setUser({
+            id: <%= current_user.id %>,
+            email: "<%= current_user.email %>"
+          });
+        <% end %>
+      </script>
+    <% end %>
+    <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+  </head>
+  <body id="public--body">
+    <main id="public--main" data-controller="public-page">
+      <section id="public--logo-section">
+        <%= image_tag image_url('new-radar-logo.png'), id: 'public--logo' %>
+      </section>
+      <section id="public--card-section">
+        <%= yield %>
+      </section>
+      <section id="public--learn-section">
+        <p class="public--additional-text public--learn-more">New to Radar Pods? Monitor your internet connection at your home or at your organization. <span><a href="#" class="public--regular-link">Learn more <%= image_tag image_url('new-tab-icon.png'), id: 'public--new-tab-icon' %></a></span></span></p>
+      </section>
+      <footer id="public--footer">
+        <div id="public--footer-first-row">
+          <a href="https://radartoolkit.com/privacy-policy" class="public--footer-link">Privacy Policy</a>
+          <a href="mailto:support@radartoolkit.com" class="public--footer-link">Support</a>
+        </div>
+        <div id="public--footer-second-row">
+          <p id="public--footer-rights">© 2023 Radar. All rights reserved.</p>
+        </div>
+      </footer>
+    </main>
+    <div class="modal fade" tabindex="-1" id="pod_id_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
+      <%= render partial: "public_pod/pod_id_modal" %>
+    </div>
+    <div class="modal fade" tabindex="-1" id="pod_setup_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
+      <%= render partial: "public_pod/setup_pod_modal" %>
+    </div>
+  </body>
+</html>

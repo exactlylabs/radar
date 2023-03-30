@@ -2,7 +2,6 @@ import { Controller } from "@hotwired/stimulus";
 import handleError from "./error_handler_controller";
 
 const POD_ID_LENGTH = 12;
-const POD_SECRET_LENGTH = 11;
 
 export default class extends Controller {
   static targets = [
@@ -44,10 +43,19 @@ export default class extends Controller {
 
   checkBackspace(e) {
     const element = e.srcElement;
-    if (e.key === "Backspace" && element.value.length === 0) {
-      element.previousElementSibling && element.previousElementSibling.focus();
-      return;
+    if (e.key === "Backspace") {
+      this.forceDisable();
+      if(element.value.length === 0) {
+        element.previousElementSibling && element.previousElementSibling.focus();
+        return;
+      }
     }
+  }
+
+  forceDisable() {
+    const nextButtonClassList = this.finalButtonTarget.classList;
+    nextButtonClassList.add("custom-button--disabled");
+    nextButtonClassList.add("disabled");
   }
 
   switchInput(e) {

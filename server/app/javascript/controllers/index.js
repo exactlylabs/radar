@@ -90,3 +90,6 @@ application.register("bulk-release-group-modal", BulkReleaseGroupModal);
 
 import ExportsController from './exports_controller';
 application.register("exports", ExportsController);
+
+import PublicPageController from './public_page_controller';
+application.register("public-page", PublicPageController);

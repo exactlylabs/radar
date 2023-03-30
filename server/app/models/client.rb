@@ -348,6 +348,18 @@ class Client < ApplicationRecord
     end
   end
 
+  def status_suffix
+    if self.online?
+      if test_requested?
+        "running"
+      else
+        "online"
+      end
+    else
+      "offline"
+    end
+  end
+
   def status_style
     if self.online? && !self.test_running?
       "badge-light-success"
@@ -607,6 +619,16 @@ class Client < ApplicationRecord
 
   def get_in_service_action_label
     "Mark as #{self.in_service? ? "not in servce" : "in service"}"
+  end
+
+  def get_status_timestamp
+    evt = self.client_event_logs.where("name = 'WENT_ONLINE' OR name = 'WENT_OFFLINE'").order("id DESC").limit(1).pluck(:timestamp)
+    if evt.length > 0
+      if evt[0].nil?
+        return "-"
+      end
+      "Since #{evt[0].strftime('%b %d, %Y')}"
+    end
   end
 
   private

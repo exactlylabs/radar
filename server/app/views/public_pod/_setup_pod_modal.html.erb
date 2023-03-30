@@ -1,0 +1,37 @@
+<div class="modal-dialog public--modal-dialog-setup">
+    <div class="modal-content public--modal-content-setup">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-size: 20px">Set up new pod</h5>
+        <!--begin::Close-->
+        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+          <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+          <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
+              <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
+              <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
+          </svg>
+          </span>
+          <!--end::Svg Icon-->
+        </div>
+        <!--end::Close-->
+      </div>
+      <div class="modal-body public--modal-body public--modal-body-setup">
+          <div id="public--pod-icon-container">
+            <%= image_tag image_url('users-icon.png'), id: 'public--users-icon' %>
+          </div>
+          <p class="public--card-title">Set up with a Radar account</p>
+          <p class="public--card-subtitle">You need a Radar account to set up this pod.</p>
+          <div id="public--buttons-container">
+            <a href="users/sign_up" class="btn public--custom-setup-button mb-3">
+              <span>Create a new account</span>
+              <%= image_tag image_url('arrow-blue-right-icon.png'), id: 'public--button-arrow' %>
+            </a>
+            <a href="users/sign_in" class="btn public--custom-setup-button">
+              <span>Sign in to my account</span>
+              <%= image_tag image_url('arrow-blue-right-icon.png'), id: 'public--button-arrow' %>
+            </a>
+          </div>
+      </div>
+    </div>
+  </div>
