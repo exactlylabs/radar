@@ -171,6 +171,12 @@ Rails.application.routes.draw do
     end
   end
 
+  # Public access pages - Pod status from labels
+  get 'check', to: 'public_pod#index'
+  post 'check_id', to: 'public_pod#check_id'
+  get 'setup', to: 'public_pod#setup'
+  get 'status', to: 'public_pod#status'
+
   # root to: 'home#home'
   root to: redirect('/users/sign_in')
 end

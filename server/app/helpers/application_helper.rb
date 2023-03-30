@@ -15,6 +15,13 @@ module ApplicationHelper
     date.strftime('%b %d, %Y')
   end
 
+  def pretty_print_date_with_time(date_time)
+    if date_time.nil?
+      return "-"
+    end
+    date_time.strftime('%b %d, %Y %I:%M %p')
+  end
+
   def empty_search_params?
     # controller & action
     params.values.length == 2
