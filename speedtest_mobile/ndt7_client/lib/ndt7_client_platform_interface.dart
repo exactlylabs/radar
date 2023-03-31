@@ -28,7 +28,7 @@ abstract class Ndt7ClientPlatform extends PlatformInterface {
     throw UnimplementedError('data() has not been implemented.');
   }
 
-  Future<void> startDownloadTest() {
+  Future<void> startDownloadTest(String dir) {
     throw UnimplementedError('startDownloadTest() has not been implemented.');
   }
 

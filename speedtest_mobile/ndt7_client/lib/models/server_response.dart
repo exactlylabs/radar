@@ -1,29 +1,55 @@
 import 'package:ndt7_client/models/ndt7_response.dart';
 
 class ServerResponse implements NDT7Response {
-  ServerResponse(this.bbrInfo, this.connectionInfo, this.tcpInfo, this.test);
+  ServerResponse(
+    this.data,
+    this.source,
+    this.testType,
+  );
 
+  @override
   Map<String, dynamic> toJson() => {
-        'BBRInfo': bbrInfo.toJson(),
-        'ConnectionInfo': connectionInfo.toJson(),
-        'TCPInfo': tcpInfo.toJson(),
-        'Test': test,
+        'Data': data.toJson(),
+        'Source': source,
+        'TestType': testType,
       };
 
-  factory ServerResponse.fromJson(Map<String, dynamic> json) => ServerResponse(
-        BBRInfo.fromJson(json['BBRInfo'] as Map<String, dynamic>),
-        ConnectionInfo.fromJson(json['ConnectionInfo'] as Map<String, dynamic>),
-        TCPInfo.fromJson(json['TCPInfo'] as Map<String, dynamic>),
-        json['Test'] as String,
+  factory ServerResponse.fromJson(String testType, Map<String, dynamic> json) => ServerResponse(
+        Data.fromJson(json['Data'] as Map<String, dynamic>),
+        json['Source'] as String,
+        testType,
       );
 
   @override
   String toString() => 'ServerResponse: ${toJson()}';
 
+  final Data data;
+  final String source;
+  final String testType;
+}
+
+class Data {
+  Data(
+    this.bbrInfo,
+    this.connectionInfo,
+    this.tcpInfo,
+  );
+
+  Map<String, dynamic> toJson() => {
+        'BBRInfo': bbrInfo.toJson(),
+        'ConnectionInfo': connectionInfo.toJson(),
+        'TCPInfo': tcpInfo.toJson(),
+      };
+
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+        BBRInfo.fromJson(json['BBRInfo'] as Map<String, dynamic>),
+        ConnectionInfo.fromJson(json['ConnectionInfo'] as Map<String, dynamic>),
+        TCPInfo.fromJson(json['TCPInfo'] as Map<String, dynamic>),
+      );
+
   final BBRInfo bbrInfo;
   final ConnectionInfo connectionInfo;
   final TCPInfo tcpInfo;
-  final String test;
 }
 
 class BBRInfo {

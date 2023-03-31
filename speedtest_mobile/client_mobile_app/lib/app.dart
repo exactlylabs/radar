@@ -1,4 +1,3 @@
-import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:ndt7_client/ndt7_client.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +15,7 @@ import 'package:client_mobile_app/core/services/locations_service/i_locations_se
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/core/services/results_service/implementation/results_service.dart';
 import 'package:client_mobile_app/core/services/locations_service/implementation/locations_service.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_cubit.dart';
 
 class App extends StatelessWidget {

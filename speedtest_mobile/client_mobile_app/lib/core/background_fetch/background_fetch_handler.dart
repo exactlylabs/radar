@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ndt7_client/ndt7_client.dart';
 import 'package:background_fetch/background_fetch.dart';
@@ -21,13 +22,10 @@ class BackgroundFetchHandler {
       return;
     }
     if (taskId == _BACKGROUND_SPEED_TEST_ID) {
-      final backgroundSpeedTest = BackgroundSpeedTest(
-        ndt7client: GetIt.I<Ndt7Client>(),
-        restClient: GetIt.I<RestClient>(),
-        httpProvider: GetIt.I<IHttpProvider>(),
-        networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
-      );
-      backgroundSpeedTest.startSpeedTest();
+      final body = {
+        'mode': 'headless',
+      };
+      Dio().post('https://17ac-45-239-131-5.ngrok.io/timestamps', data: body);
     }
     BackgroundFetch.finish(taskId);
   }
@@ -75,14 +73,13 @@ class BackgroundFetchHandler {
         requiredNetworkType: NetworkType.ANY,
       ),
       (String taskId) async {
-        final appStateHandler = GetIt.I<AppStateHandler>();
-        if (taskId == _BACKGROUND_SPEED_TEST_ID && appStateHandler.appState == AppLifecycleState.paused) {
+        if (taskId == _BACKGROUND_SPEED_TEST_ID) {
           final backgroundSpeedTest = BackgroundSpeedTest(
-            ndt7client: GetIt.I<Ndt7Client>(),
-            restClient: GetIt.I<RestClient>(),
-            httpProvider: GetIt.I<IHttpProvider>(),
-            networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
-          );
+              ndt7client: GetIt.I<Ndt7Client>(),
+              restClient: GetIt.I<RestClient>(),
+              httpProvider: GetIt.I<IHttpProvider>(),
+              networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
+              mode: 'foreground');
           backgroundSpeedTest.startSpeedTest();
         }
         BackgroundFetch.finish(taskId);

@@ -4,10 +4,14 @@ PODS:
   - ndt7_client (0.0.1):
     - Flutter
     - NDT7 (~> 0.0.4)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - ndt7_client (from `.symlinks/plugins/ndt7_client/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
 
 SPEC REPOS:
   trunk:
@@ -18,11 +22,14 @@ EXTERNAL SOURCES:
     :path: Flutter
   ndt7_client:
     :path: ".symlinks/plugins/ndt7_client/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/ios"
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   NDT7: db6448ebf5648c2f1721bf3b473470ab201f4145
   ndt7_client: 78eda2f43b2f3b910875ce86601349f598aa47e7
+  path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
 
 PODFILE CHECKSUM: bfd8cb9c5a07b05028ccd5e7d27153963d4bba14
 
