@@ -5,6 +5,8 @@ PODS:
     - Flutter
     - ReachabilitySwift
   - Flutter (1.0.0)
+  - flutter_webview_plugin (0.0.1):
+    - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
   - NDT7 (0.0.4)
@@ -34,6 +36,7 @@ DEPENDENCIES:
   - background_fetch (from `.symlinks/plugins/background_fetch/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - Flutter (from `Flutter`)
+  - flutter_webview_plugin (from `.symlinks/plugins/flutter_webview_plugin/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - ndt7_client (from `.symlinks/plugins/ndt7_client/ios`)
   - network_connection_info (from `.symlinks/plugins/network_connection_info/ios`)
@@ -57,6 +60,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   Flutter:
     :path: Flutter
+  flutter_webview_plugin:
+    :path: ".symlinks/plugins/flutter_webview_plugin/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   ndt7_client:
@@ -80,6 +85,7 @@ SPEC CHECKSUMS:
   background_fetch: 9a9963128952bfdd197e21786983c7c7a30e1478
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_webview_plugin: ed9e8a6a96baf0c867e90e1bce2673913eeac694
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   NDT7: db6448ebf5648c2f1721bf3b473470ab201f4145
   ndt7_client: 78eda2f43b2f3b910875ce86601349f598aa47e7

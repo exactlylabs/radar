@@ -1,1 +1,3 @@
-abstract class NDT7Response {}
+abstract class NDT7Response {
+  Map<String, dynamic> toJson();
+}
