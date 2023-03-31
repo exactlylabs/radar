@@ -349,6 +349,10 @@ class Client < ApplicationRecord
     end
   end
 
+  def status_without_running
+    return self.online? ? "Online" : "Offline"
+  end
+
   def status_suffix
     if self.online?
       if test_requested?
@@ -359,6 +363,10 @@ class Client < ApplicationRecord
     else
       "offline"
     end
+  end
+
+  def status_suffix_without_running
+    return self.online? ? "online" : "offline"
   end
 
   def status_style

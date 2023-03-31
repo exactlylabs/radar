@@ -10,6 +10,9 @@ class PublicPodController < ActionController::Base
   def index
   end
 
+  def find_pod
+  end
+
   def check_id
     pod_id = params[:pod_id]
     possible_pod = Client.find_by_unix_user(pod_id)
@@ -17,9 +20,9 @@ class PublicPodController < ActionController::Base
       if !possible_pod
         format.json { render json: { msg: 'Client not found!' }, status: :not_found }
       elsif !possible_pod.claimed_by_id
-        format.html { redirect_to "/setup?pod_id=#{possible_pod.unix_user}" }
+        format.html { redirect_to "/setup/#{possible_pod.unix_user}" }
       else
-        format.html { redirect_to "/status?pod_id=#{possible_pod.unix_user}" }
+        format.html { redirect_to "/check/#{possible_pod.unix_user}" }
       end
     end
   end
@@ -27,7 +30,7 @@ class PublicPodController < ActionController::Base
   def setup
     if @client.claimed_by_id
       respond_to do |format|
-        format.html { redirect_to "/status?pod_id=#{@client.unix_user}" }
+        format.html { redirect_to "/check/#{@client.unix_user}" }
       end
     end
   end
@@ -35,7 +38,7 @@ class PublicPodController < ActionController::Base
   def status
     if !@client.claimed_by_id
       respond_to do |format|
-        format.html { redirect_to "/setup?pod_id=#{@client.unix_user}" }
+        format.html { redirect_to "/setup/#{@client.unix_user}" }
       end
     end
   end

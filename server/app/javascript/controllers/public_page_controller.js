@@ -5,9 +5,12 @@ const POD_ID_LENGTH = 12;
 
 export default class extends Controller {
 
-  static targets = ["podIdInput", "continueButton", "alert"];
+  static targets = ["podIdInput", "continueButton", "alert", "inputsContainer"];
 
-  connect() {}
+  connect() {
+    const firstInput = document.getElementById('public--card-input-first');
+    if(firstInput) firstInput.focus();
+  }
 
   async insertFromPaste(e) {
     const data = await e.clipboardData.getData("text");
@@ -21,6 +24,27 @@ export default class extends Controller {
     inputs[i - 1].focus();
     this.toggleButtonState();
     return;
+  }
+
+  focusInput(e) {
+    const previousFocusedElement = this.findFocusedInput();
+    if(previousFocusedElement) previousFocusedElement.removeAttribute('focused');
+    this.inputsContainerTarget.classList.add('public--card-inputs-container-focus');
+    e.target.setAttribute('focused', 'true');
+  }
+
+  findFocusedInput() {
+    return this.podIdInputTargets.find(i => this.isFocused(i));
+  }
+
+  isFocused(input) {
+    return !!input.getAttribute('focused');
+  }
+
+  blurInput(e) {
+    e.target.removeAttribute('focused');
+    const focusedInput = this.findFocusedInput();
+    if(!focusedInput) this.inputsContainerTarget.classList.remove('public--card-inputs-container-focus');
   }
 
   checkBackspace(e) {
@@ -118,7 +142,6 @@ export default class extends Controller {
       body: data
     })
     .then(res => {
-      console.log(res);
       if(res.ok && res.redirected) {
         window.location.href = res.url;
         return;
@@ -133,5 +156,18 @@ export default class extends Controller {
       handleError(err, this.identifier);
       this.showErrorAlert();
     });
+  }
+
+  runPublicTest() {
+    const podId = window.location.pathname.split('/check/')[1];
+    const token = document.getElementsByName("csrf-token")[0].content;
+    fetch(`/clients/${podId}/run_public_test`, {
+      method: 'POST',
+      headers: { "X-CSRF-Token": token },
+    })
+    .then(res => {
+      if(res.ok) window.location.reload();
+    })
+    .catch(err => { handleError(err); });
   }
 }

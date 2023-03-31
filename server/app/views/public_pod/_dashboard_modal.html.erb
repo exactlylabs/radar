@@ -1,7 +1,7 @@
 <div class="modal-dialog public--modal-dialog-setup">
     <div class="modal-content public--modal-content-setup">
       <div class="modal-header">
-        <h5 class="modal-title" style="font-size: 20px">Set up new pod</h5>
+        <h5 class="modal-title" style="font-size: 20px">Go to dashboard</h5>
         <!--begin::Close-->
         <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
           <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
@@ -17,21 +17,16 @@
         <!--end::Close-->
       </div>
       <div class="modal-body public--modal-body public--modal-body-setup">
-          <div id="public--pod-icon-container">
-            <%= image_tag image_url('users-icon.png'), id: 'public--users-icon' %>
-          </div>
-          <p class="public--card-title">Set up with a Radar account</p>
-          <p class="public--card-subtitle">You need a Radar account to set up this pod.</p>
-          <div id="public--buttons-container">
-            <a href="/users/sign_up" class="btn public--custom-setup-button mb-3">
-              <span>Create a new account</span>
-              <%= image_tag image_url('arrow-blue-right-icon.png'), id: 'public--button-arrow' %>
-            </a>
-            <a href="/users/sign_in" class="btn public--custom-setup-button">
-              <span>Sign in to my account</span>
-              <%= image_tag image_url('arrow-blue-right-icon.png'), id: 'public--button-arrow' %>
-            </a>
-          </div>
+        <div id="public--pod-icon-container">
+          <%= image_tag image_url('users-icon.png'), id: 'public--users-icon' %>
+        </div>
+        <p class="public--card-title">Sign in with a Radar account</p>
+        <p class="public--card-subtitle">If you own this pod and are responsible for managing it, you can go to your dashboard using your Radar account.</p>
+        
+        <a href="/users/sign_in" class="btn public--custom-setup-button mx-auto">
+          <span>Sign in to my account</span>
+          <%= image_tag image_url('arrow-blue-right-icon.png'), id: 'public--button-arrow' %>
+        </a>
       </div>
     </div>
   </div>

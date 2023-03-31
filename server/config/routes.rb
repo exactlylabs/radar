@@ -67,6 +67,7 @@ Rails.application.routes.draw do
       post 'unstage'
       post 'toggle_in_service'
       get 'pdf_label', to: 'clients#get_client_label'
+      post 'run_public_test'
     end
 
     collection do
@@ -174,8 +175,9 @@ Rails.application.routes.draw do
   # Public access pages - Pod status from labels
   get 'check', to: 'public_pod#index'
   post 'check_id', to: 'public_pod#check_id'
-  get 'setup', to: 'public_pod#setup'
-  get 'status', to: 'public_pod#status'
+  get '/setup/:pod_id', to: 'public_pod#setup'
+  get '/check/:pod_id', to: 'public_pod#status'
+  get 'find_pod', to: 'public_pod#find_pod'
 
   # root to: 'home#home'
   root to: redirect('/users/sign_in')

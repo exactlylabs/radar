@@ -47,7 +47,7 @@
         <%= yield %>
       </section>
       <section id="public--learn-section">
-        <p class="public--additional-text public--learn-more">New to Radar Pods? Monitor your internet connection at your home or at your organization. <span><a href="#" class="public--regular-link">Learn more <%= image_tag image_url('new-tab-icon.png'), id: 'public--new-tab-icon' %></a></span></span></p>
+        <p class="public--additional-text public--learn-more">New to Radar Pods? <span><a href="https://pods.radartoolkit.com" class="public--regular-link">Learn more <%= image_tag image_url('new-tab-icon.png'), id: 'public--new-tab-icon' %></a></span></span></p>
       </section>
       <footer id="public--footer">
         <div id="public--footer-first-row">
@@ -64,6 +64,9 @@
     </div>
     <div class="modal fade" tabindex="-1" id="pod_setup_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
       <%= render partial: "public_pod/setup_pod_modal" %>
+    </div>
+    <div class="modal fade" tabindex="-1" id="dashboard_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
+      <%= render partial: "public_pod/dashboard_modal" %>
     </div>
   </body>
 </html>
