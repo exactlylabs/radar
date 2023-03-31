@@ -10,7 +10,7 @@
 </div>
 
 <p class="public--pod-id"><%= @client.name || "Unnamed Pod" %></p>
-<div class="public--custom-badge public--custom-badge-<%= @client.status_suffix %>"><%= @client.status %></div>
+<div class="public--custom-badge public--custom-badge-<%= @client.status_suffix_without_running %>"><%= @client.status_without_running %></div>
 
 <div class="public--horizontal-divider"></div>
 
@@ -34,7 +34,13 @@
     <p class="public--additional-text">No measurement available</p>
   </div>
 <% elsif @client.status == "Test running" %>
-  <div class="public--custom-badge public--custom-badge-<%= @client.status_suffix %>"><%= @client.status %></div>
+  <div class="public--custom-badge public--custom-badge-<%= @client.status_suffix %> mb-2">
+    <div class="spinner-border spinner-border-sm me-1 public--custom-spinner" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <%= @client.status %>
+  </div>
+  <p class="public--additional-text mb-7">Right now</p>
 <% else %>
   <div class="public--no-measurement-container">
     <div class="public--no-measurement-icons-container">
@@ -55,8 +61,8 @@
   <div id="public--status-card-status">
     <p class="public--label">Status</p>
     <div id="public--status-card-status-date">
-      <div class="public--custom-badge public--custom-badge-<%= @client.status_suffix %> mb-0 me-2"><%= @client.status %></div>
-      <p class="public--additional-text m-0"><%= @client.status == "Test running" ? "Just now" : @client.get_status_timestamp %></p>
+      <div class="public--custom-badge public--custom-badge-<%= @client.status_suffix_without_running %> mb-0 me-2"><%= @client.status_without_running %></div>
+      <p class="public--additional-text m-0"><%= @client.get_status_timestamp %></p>
     </div>
   </div>
   <div class="public--vertical-divider-conditional"></div>
@@ -84,4 +90,23 @@
   </div>
 </div>
 
-<a href="/clients/<%= @client.unix_user %>" class="btn btn-primary public--manage-pod-button">Manage pod</a>
+
+<% if @client.status == "Test running" %>
+  <span class="public--tooltip-wrapper" data-bs-custom-class="public--custom-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="A speed test is already running or you need to wait a few minutes before taking another one.">
+    <a class="btn btn-primary public--manage-pod-button disabled">
+      <%= image_tag image_url('run-speed-test-icon.png'), id: 'public--run-speed-test-icon' %>
+      Run speed test
+    </a>
+  </span>
+<% else %>
+  <button class="btn btn-primary public--manage-pod-button" data-action="click->public-page#runPublicTest">
+    <%= image_tag image_url('run-speed-test-icon.png'), id: 'public--run-speed-test-icon' %>
+    Run speed test
+  </button>
+<% end %>
+
+<% if user_signed_in? %>
+  <p class="public--additional-text mt-6 w-100 mx-0 public--text-center public--max-width-none">You can run a new speed test or if you are responsible for managing this pod, you can <a href="/dashboard">go to your dashboard.</a></p>
+<% else %>
+  <p class="public--additional-text mt-6 w-100 mx-0 public--text-center public--max-width-none">You can run a new speed test or if you are responsible for managing this pod, you can <a class="public--regular-link" href="#" data-bs-target="#dashboard_modal" data-bs-toggle="modal">go to your dashboard.</a></p>
+<% end %>

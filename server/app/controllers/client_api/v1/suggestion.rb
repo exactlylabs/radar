@@ -17,7 +17,7 @@ module ClientApi
       end
 
       def hash
-        @address.hash
+        self.address.hash
       end
     end
   end

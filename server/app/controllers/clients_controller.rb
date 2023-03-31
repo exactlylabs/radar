@@ -2,7 +2,7 @@ require "sshkey"
 require "rqrcode"
 
 class ClientsController < ApplicationController
-  before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test ]
+  before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test public_run_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
   before_action :set_client, only: %i[ release show edit destroy unstage get_client_label toggle_in_service ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
@@ -42,6 +42,24 @@ class ClientsController < ApplicationController
   def claim_form
     @client = Client.new
     @location_id = params[:location_id] || nil
+  end
+
+  # Endpoint to be called from the public pod status page
+  # allowing to run a test without the need for being authenticated
+  # at all
+  def run_public_test
+    client_id = params[:id]
+    @client = Client.find_by_unix_user(client_id)
+    
+    if !@client
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])  
+    end
+
+    @client.update(test_requested: true)
+
+    respond_to do |format|
+      format.html { redirect_back fallback_location: root_path }
+    end
   end
 
   def run_test
