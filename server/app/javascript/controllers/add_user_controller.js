@@ -41,4 +41,15 @@ export default class extends Controller {
       this.submitButtonTarget.classList.add("disabled");
     }
   }
+
+  fieldsAreIncomplete() {
+    return !this.userData.firstName || !this.userData.lastName || !this.userData.email;
+  }
+
+  handleKeydown(e) {
+    if(e.key === 'Enter' && this.fieldsAreIncomplete()) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
 }
