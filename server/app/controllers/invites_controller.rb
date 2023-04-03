@@ -3,12 +3,20 @@ class InvitesController < ApplicationController
   before_action :check_user_is_allowed
 
   def create
+    invite = params[:invite]
+    if invite[:first_name].blank? || invite[:last_name].blank? || invite[:email].blank?
+      respond_to do |format|
+        format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity, notice: "Error processing new invite request. Please try again." }
+      end
+      return # Required to stop method execution from proceeding
+    end
+    
     # Need to check if there is already an invite created for this 
     # account with the given email and prevent dups as well as already
     # registered users in the account (invite was used)
     duplicate_invite_error = false
-    already_created_invite = policy_scope(Invite).find_by_email(params[:invite][:email])
-    already_added_user = policy_scope(UsersAccount).joins(:user).where(user: { email: params[:invite][:email] })
+    already_created_invite = policy_scope(Invite).find_by_email(invite[:email])
+    already_added_user = policy_scope(UsersAccount).joins(:user).where(user: { email: invite[:email] })
     if already_created_invite.present? || already_added_user.present?
       duplicate_invite_error = true
     end

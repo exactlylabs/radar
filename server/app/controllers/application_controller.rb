@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  include Pundit
+  include Pundit::Authorization # updated due to DEPRECATION WARNING from console
   include Turbo::Redirection
 
   before_action :set_sentry_user
