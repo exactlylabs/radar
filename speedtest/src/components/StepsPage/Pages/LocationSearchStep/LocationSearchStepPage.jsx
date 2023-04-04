@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {MyTitle} from "../../../common/MyTitle";
 import MyAddressInput from "./AddressInput/MyAddressInput";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
@@ -8,6 +8,7 @@ import SuggestionsModal from "./SuggestionsModal";
 import {MyBackButton} from "../../../common/MyBackButton";
 import iconLeftArrow from '../../../../assets/icons-left-arrow.png';
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
+import UserDataContext from "../../../../context/UserData";
 
 const locationSearchStepStyle = {
   width: '100%',
@@ -43,7 +44,6 @@ const LocationSearchStepPage = ({
   isModalOpen,
   setIsModalOpen,
   handleContinue,
-  currentAddress,
   setGeolocationError,
   confirmedAddress,
   setSelectedSuggestion,
@@ -79,9 +79,7 @@ const LocationSearchStepPage = ({
     <div style={locationSearchStepStyle}>
       <MyTitle text={'What is your location?'}/>
       <div style={subtitleStyle}>Your location is used to compare your results to others in your region.</div>
-      <MyAddressInput setAddress={setAddress}
-                      handleContinue={handleContinue}
-                      currentAddress={currentAddress}
+      <MyAddressInput handleContinue={handleContinue}
                       setGeolocationError={setGeolocationError}
                       openGenericLocationModal={openGenericLocationModal}
                       confirmedAddress={confirmedAddress}
@@ -95,7 +93,6 @@ const LocationSearchStepPage = ({
       <MyMapModal isOpen={isModalOpen}
                   setIsOpen={setIsModalOpen}
                   confirmAddress={confirmAddress}
-                  address={currentAddress}
                   setAddress={setAddress}
                   goToNextPage={goToNextPage}
       />
@@ -105,6 +102,7 @@ const LocationSearchStepPage = ({
                   address={null}
                   isGeneric
                   setAddress={setAddress}
+                  goToNextPage={goToNextPage}
       />
       <SuggestionsModal isOpen={isSuggestionsModalOpen}
                         suggestions={suggestions}

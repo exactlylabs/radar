@@ -3,6 +3,7 @@ import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material';
 import {ViewportContextProvider} from "./context/ViewportContext";
 import {ConnectionContextProvider} from "./context/ConnectionContext";
 import MainPage from "./components/MainPage/MainPage";
+import {UserDataContextProvider} from "./context/UserData";
 
 // Application entry point, would hold all logic for state management
 // of multistep process
@@ -15,7 +16,9 @@ const App = ({ config }) => {
       <ConfigContextProvider value={config}>
         <ThemeProvider theme={theme}>
           <ConnectionContextProvider>
-            <MainPage config={config}/>
+            <UserDataContextProvider>
+              <MainPage config={config}/>
+            </UserDataContextProvider>
           </ConnectionContextProvider>
         </ThemeProvider>
       </ConfigContextProvider>

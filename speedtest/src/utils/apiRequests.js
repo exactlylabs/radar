@@ -1,10 +1,10 @@
 import { API_URL } from '../constants';
 import { notifyError } from './errors';
 
-export const sendRawData = (rawData, startTimestamp, userStepData, clientId) => {
-  const { networkLocation, networkType, networkCost } = userStepData;
-  const { address, city, state, house_number, street, postal_code } = userStepData.address;
-  const location = userStepData.address.coordinates;
+export const sendRawData = (rawData, startTimestamp, userData, clientId) => {
+  const { networkLocation, networkType, networkCost, accuracy, addressProvider } = userData;
+  const { address, city, state, house_number, street, postal_code } = userData.address;
+  const location = userData.address.coordinates;
   fetch(`${API_URL}/speed_tests?client_id=${clientId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -23,6 +23,8 @@ export const sendRawData = (rawData, startTimestamp, userStepData, clientId) => 
         network_location: networkLocation?.text ?? null,
         network_type: networkType?.text ?? null,
         network_cost: networkCost,
+        accuracy,
+        address_provider: addressProvider
       }
     }),
   }).catch(notifyError);

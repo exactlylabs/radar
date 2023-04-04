@@ -35,6 +35,7 @@ const horizontalDividerOptionStyle = {
  * @param needsDivider: boolean. Indicates if carrousel requires a vertical divider.
  * @param setSelectedOption: number. Current selected option index.
  * @param setSelectedOption: func. State setter passed down from wrapper element to choose an option.
+ * @param selectedOption: number. Indicates which option is currently selected.
  * @param dividerIndex: number. Indicates which option's index comes prepended with a divider.
  * --> Example: {options, needsDivider: true, dividerIndex: 2} ==> render: [Option0] [Option1] | [Option2] ... [OptionN]
  * @returns {JSX.Element}

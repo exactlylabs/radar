@@ -23,6 +23,8 @@ import ConfigContext from "../../../../context/ConfigContext";
 import {widgetModalFraming} from "../../../../utils/modals";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import ConnectionContext from "../../../../context/ConnectionContext";
+import {ADDRESS_PROVIDER} from "../../../../utils/userMetadata";
+import UserDataContext from "../../../../context/UserData";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -118,34 +120,35 @@ const MyMapModal = ({
   isOpen,
   setIsOpen,
   confirmAddress,
-  address,
   isGeneric,
-  setAddress,
   goToNextPage
 }) => {
 
   const config = useContext(ConfigContext);
-  const markerRef = useRef(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [addressCoordinates, setAddressCoordinates] = useState(address?.coordinates ?? []);
+  const {userData, setUserData} = useContext(UserDataContext);
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const {setNoInternet} = useContext(ConnectionContext);
+  const markerRef = useRef(null);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [addressCoordinates, setAddressCoordinates] = useState(userData.address?.coordinates ?? []);
+  const [positionedManually, setPositionedManually] = useState(false);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
       setError(null);
       try {
-        const suggestions = await getSuggestions(address.address, config.clientId);
+        const suggestions = await getSuggestions(userData.address.address, config.clientId);
         if (suggestions.length > 0) {
           setAddressCoordinates(suggestions[0].coordinates);
         } else {
-          setError(true);
+          setError('There has been an error finding suggestions for given marker position. Please try again later.');
         }
       } catch (e) {
         if(isNoConnectionError(e)) setNoInternet(true);
         notifyError(e);
-        setError(true);
+        setError('There has been an unexpected error. Please try again later.');
       }
     }
     const fetchUserCoordinates = async () => {
@@ -156,14 +159,14 @@ const MyMapModal = ({
       } catch (e) {
         if(isNoConnectionError(e)) setNoInternet(true);
         notifyError(e);
-        setError(true);
+        setError('There has been an error finding position for given marker position. Please try again later.');
       }
     }
-    if (address?.coordinates) {
-      setAddressCoordinates(address.coordinates);
+    if (userData.address?.coordinates) {
+      setAddressCoordinates(userData.address.coordinates);
     }
     if(isOpen) {
-      if (!address) {
+      if (!userData.address || userData.address.coordinates.length === 0) {
         setLoading(true);
         fetchUserCoordinates()
           .catch(err => {
@@ -172,9 +175,8 @@ const MyMapModal = ({
             setError(err);
           })
           .finally(() => setLoading(false));
-        return;
       }
-      if (address.coordinates.length === 0) {
+      /*if (userData.address.coordinates.length === 0) {
         setLoading(true);
         fetchSuggestions()
           .catch(err => {
@@ -182,17 +184,18 @@ const MyMapModal = ({
             notifyError(err);
           })
           .finally(() => setLoading(false));
-      }
+      }*/
     }
-  }, [isOpen, address?.coordinates]);
+  }, [isOpen, userData.address?.coordinates]);
 
   const eventHandlers = useMemo(
     () => ({
       dragend() {
         const marker = markerRef.current;
-        if(marker !== null) {
+        if (marker !== null) {
           const {lat, lng} = marker.getLatLng();
           setAddressCoordinates([lat, lng]);
+          setPositionedManually(true);
         }
       }
     }),
@@ -219,8 +222,8 @@ const MyMapModal = ({
   const confirmCoordinates = async () => {
     try {
       const address = await getAddressForCoordinates(addressCoordinates, config.clientId);
-      setAddress(address);
       confirmAddress(addressCoordinates);
+      setUserData({...userData, address, accuracy: null, altitude: null, addressProvider: ADDRESS_PROVIDER.MANUAL});
       closeModal();
     } catch (e) {
       if(isNoConnectionError(e)) setNoInternet(true);
@@ -229,13 +232,16 @@ const MyMapModal = ({
   }
 
   const handleContinue = () => {
+    console.log(goToNextPage);
     if(goToNextPage) {
       goToNextPage(true);
-    } else {
-      confirmCoordinates().catch(err => {
-        if(isNoConnectionError(err)) setNoInternet(true);
-        notifyError(err);
-      });
+      if(positionedManually) {
+        confirmCoordinates()
+          .catch(err => {
+            if(isNoConnectionError(err)) setNoInternet(true);
+            notifyError(err);
+          });
+      }
     }
   }
 

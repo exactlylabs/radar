@@ -13,10 +13,11 @@ import LocationSuggestionsList from "./LocationSuggestionsList";
 import {debounce} from "../../../../../utils/debouncer";
 import {getAddressForCoordinates, getSuggestions} from "../../../../../utils/apiRequests";
 import {isNoConnectionError, notifyError} from "../../../../../utils/errors";
-import {emptyAddress} from "../../../StepsPage";
 import ConnectionContext from "../../../../../context/ConnectionContext";
 import './MyAddressInput.css';
 import ConfigContext from "../../../../../context/ConfigContext";
+import UserDataContext, {emptyAddress} from "../../../../../context/UserData";
+import {ADDRESS_PROVIDER} from "../../../../../utils/userMetadata";
 
 const addressInputWrapperStyle = {
   display: 'flex',
@@ -97,9 +98,7 @@ const disabledContinueButtonStyle = {
 }
 
 const MyAddressInput = ({
-  setAddress,
   handleContinue,
-  currentAddress,
   setGeolocationError,
   openGenericLocationModal,
   confirmedAddress,
@@ -115,10 +114,11 @@ const MyAddressInput = ({
   const [suggestionsListOpen, setSuggestionsListOpen] = useState(false);
   const {setNoInternet} = useContext(ConnectionContext);
   const config = useContext(ConfigContext);
+  const {userData, setUserData, setAddress} = useContext(UserDataContext);
 
   useEffect(() => {
-    document.getElementById('speedtest--address-input').value = currentAddress.address;
-  }, [currentAddress]);
+    document.getElementById('speedtest--address-input').value = userData.address.address;
+  }, [userData.address]);
 
   const handleInputChange = debounce( async (e) => {
     if(!e.target.value) {
@@ -164,15 +164,16 @@ const MyAddressInput = ({
     }
   }
 
-  const fetchAddress = async (coordinates) => {
+  const fetchAddress = async (position) => {
     try {
+      const coordinates = [position.coords.latitude, position.coords.longitude];
       const address = await getAddressForCoordinates(coordinates, config.clientId);
       if (address.coordinates.length === 0) {
         openGenericLocationModal();
         return;
       }
       setSelectedSuggestion(true);
-      setAddress(address);
+      setUserData({...userData, address: address, accuracy: position.accuracy, altitude: position.altitude, addressProvider: ADDRESS_PROVIDER.BROWSER_GPS});
       handleContinue(address.address, true);
       const addressInputElement = document.getElementById('speedtest--address-input');
       addressInputElement.value = address.address;
@@ -191,7 +192,7 @@ const MyAddressInput = ({
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         pos => {
-          fetchAddress([pos.coords.latitude, pos.coords.longitude])
+          fetchAddress(pos)
             .catch(err => {
               notifyError(err);
               setError(err);
@@ -243,12 +244,12 @@ const MyAddressInput = ({
                    onBlur={handleBlurInput}
                    variant={'standard'}
         />
-        <div className={!!currentAddress?.address ? 'speedtest--opaque-hoverable' : ''}
+        <div className={!!userData.address?.address ? 'speedtest--opaque-hoverable' : ''}
              style={inputAdornmentStyle}
              id={'speedtest--continue-button'}
-             onClick={!!currentAddress?.address ? checkClickConditions : undefined}
+             onClick={!!userData.address?.address ? checkClickConditions : undefined}
         >
-          <div style={!!currentAddress?.address ? continueButtonStyle : disabledContinueButtonStyle}>
+          <div style={!!userData.address?.address ? continueButtonStyle : disabledContinueButtonStyle}>
             {
               locationLoading ?
                 <MySpinner color={WHITE}/> :
@@ -279,7 +280,7 @@ const MyAddressInput = ({
                                autofillInput={autofillInput}
                                open={suggestionsListOpen}
                                setOpen={setSuggestionsListOpen}
-                               currentInputValue={currentAddress.address}
+                               currentInputValue={userData.address.address}
       />
     </div>
   )

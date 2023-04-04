@@ -53,7 +53,7 @@ module ClientApi
       private
 
       def speed_test_params
-        params.require(:speed_test).permit(:latitude, :longitude, :tested_at, :address, :network_location, :network_type, :network_cost, :city, :state, :street, :house_number, :postal_code, :connection_data, :version_number, :build_number)
+        params.require(:speed_test).permit(:latitude, :longitude, :tested_at, :address, :network_location, :network_type, :network_cost, :city, :state, :street, :house_number, :postal_code, :connection_data, :version_number, :build_number, :altitude, :accuracy, :address_provider)
       end
     end
   end

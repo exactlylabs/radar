@@ -6,8 +6,10 @@ import {placementOptions} from "../../../../utils/placements";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 import {warnings} from "../../../../utils/messages";
 import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import MyNoConnectionConfirmationModal from "./MyNoConnectionConfirmationModal";
+import userData from "../../../../context/UserData";
+import UserDataContext from "../../../../context/UserData";
 
 const subtitleStyle = {
   color: DEFAULT_TEXT_COLOR
@@ -16,15 +18,13 @@ const subtitleStyle = {
 const ConnectionPlacementStepPage = ({
   goForward,
   goBack,
-  selectedOption,
-  setSelectedOption,
   warning,
-  address,
   goToLastFlowStep
 }) => {
 
   const [shouldExecuteAlt, setShouldExecuteAlt] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const {userData, setNetworkLocation} = useContext(UserDataContext);
 
   const handleSelectOption = index => {
     if(index === 3) {
@@ -32,7 +32,7 @@ const ConnectionPlacementStepPage = ({
     } else {
       setShouldExecuteAlt(false);
     }
-    setSelectedOption(index);
+    setNetworkLocation(placementOptions[index]);
   }
 
   const openConfirmationModal = () => setIsConfirmationModalOpen(true);
@@ -46,20 +46,20 @@ const ConnectionPlacementStepPage = ({
       <MyOptionPicker options={placementOptions}
                       needsDivider
                       dividerIndex={3}
-                      selectedOption={selectedOption}
+                      selectedOption={userData.networkLocation}
                       setSelectedOption={handleSelectOption}
       />
       { warning && <MyMessageSnackbar message={warnings.NOT_ENOUGH_DATA} type={'warning'}/> }
       <MyStepSwitcher goForward={goForward}
                       goBack={goBack}
-                      forwardDisabled={selectedOption === null}
+                      forwardDisabled={userData.networkLocation === null}
                       altForward={openConfirmationModal}
                       shouldExecuteAlt={shouldExecuteAlt}
       />
       <PreferNotToAnswer goForward={goForward}/>
       <MyNoConnectionConfirmationModal open={isConfirmationModalOpen}
                                        close={closeConfirmationModal}
-                                       address={address}
+                                       address={userData.address}
                                        goToLastFlowStep={goToLastFlowStep}
       />
     </div>
