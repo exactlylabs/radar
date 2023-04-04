@@ -21,8 +21,8 @@ destination page, in the following order:
         ...
         <script type="text/javascript" src="https://speed.radartoolkit.com/widget.js"></script>
         <script>
-            Widget.config(configObject);
-            Widget.new().mount();
+            RadarSpeedWidget.config(configObject);
+            RadarSpeedWidget.new().mount();
         </script>
     </body>
 </html>
