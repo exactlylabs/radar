@@ -10,5 +10,4 @@ type Sync struct {
 	RegistrationToken *string                 `json:"registration_token"`
 	OSVersion         string                  `json:"os_version"`
 	HardwarePlatform  string                  `json:"hardware_platform"`
-	ServiceFirstPing  bool                    `json:"service_first_ping"`
 }

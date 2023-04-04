@@ -72,6 +72,7 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 	// Setting a header that is in the Forbidden Header Name -- Basically, any header starting with Sec-
 	// https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
 	header.Set("Sec-Radar-Tool", "true")
+	header.Set("Sec-Radar-Service-Started", fmt.Sprintf("%t", firstPing))
 	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), RadarServerChannelName, header)
 	c.agentCh = ch
 	c.channel.OnSubscriptionMessage = c.handleSubscriptionMessage
@@ -92,6 +93,7 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 }
 
 func (c *RadarClient) Connected() bool {
+	firstPing = false
 	return c.connected
 }
 
@@ -156,7 +158,6 @@ func (c *RadarClient) sendSync() {
 	payload := messages.Sync{
 		OSVersion:         runtime.GOOS,
 		HardwarePlatform:  runtime.GOARCH,
-		ServiceFirstPing:  firstPing,
 		Distribution:      meta.Distribution,
 		Version:           meta.Version,
 		NetInterfaces:     meta.NetInterfaces,
@@ -168,7 +169,6 @@ func (c *RadarClient) sendSync() {
 		Action:  Sync,
 		Payload: payload, // this should be decoupled?
 	})
-	firstPing = false
 }
 
 func (c *RadarClient) sendPong() {
