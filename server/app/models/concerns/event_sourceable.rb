@@ -45,13 +45,6 @@ module EventSourceable
 
   end
 
-  module ClassMethods
-    def new_event(obj, name, data, timestamp=nil)
-      timestamp = timestamp or Time.now
-      evt = Event.create(aggregate: obj, name: name, data: data, timestamp: timestamp, version: Event.last_version_from(obj) + 1)
-    end
-  end
-
   included do |klass|
     klass.send("cattr_accessor", :_config)
     klass._config = {
@@ -72,7 +65,6 @@ module EventSourceable
     after_save :send_change_events
     after_destroy :send_destroyed_event
     klass.extend(Hooks)
-    klass.extend(ClassMethods)
   end
 
   def create_snapshot_from_event(event, opts={}, &applier)
@@ -92,51 +84,82 @@ module EventSourceable
 
     self._config[:observed_fields].each do |field_data|
       if self.send("saved_change_to_#{field_data[:field]}")
-        event_data = {
-          "from":self.send("#{field_data[:field]}_before_last_save"),
-          "to": self.read_attribute(field_data[:field])
-        }
-        
-        # event name could be a hash, mapping the value to the correct event name
-        event_name = field_data[:event]
-        if event_name.is_a?(Hash)
-          event_name = event_name.fetch(self.read_attribute(field_data[:field]), event_name[:default])
-        end
-
-        evt = self.class.new_event(self, event_name, event_data, timestamp=t)
-        if field_data[:applier].present?
-          self.create_snapshot_from_event(evt, &self.method(field_data[:applier]))
-        end
+        self.send_field_changed_event(
+          field_data[:field], 
+          self.send("#{field_data[:field]}_before_last_save"), 
+          self.read_attribute(field_data[:field]),
+          t
+        )
       end
     end
   end
 
-  def send_created_event()
-    evt = self.class.new_event(
-      self, 
-      self._config[:on_create][:event], 
-      self.method(self._config[:on_create][:event_data]).call(), 
-      timestamp=self.created_at
+  def send_field_changed_event(field, from, to, timestamp)
+    field_data = self.get_field_data(field)
+    event_data = {
+      "from":from,
+      "to": to
+    }
+
+    # event name could be a hash, mapping the value to the correct event name
+    event_name = field_data[:event]
+    if event_name.is_a?(Hash)
+      event_name = event_name.fetch(self.read_attribute(field_data[:field]), event_name[:default])
+    end
+    applier = self.respond_to?(field_data[:applier]) ? self.method(field_data[:applier]) : nil
+    self.record_event(
+      event_name, 
+      event_data, 
+      timestamp, 
+      &applier
     )
-    self.create_snapshot_from_event(
-      evt, 
-      is_created: true, 
+  end
+
+  def send_created_event()
+    self.record_event(
+      self._config[:on_create][:event],
+      self.method(self._config[:on_create][:event_data]).call(),
+      self.created_at,
+      is_created: true,
       &self.method(self._config[:on_create][:applier])
     )
-    return evt
   end
 
   def send_destroyed_event()
-    evt = self.class.new_event(
-      self, 
-      self._config[:on_destroy][:event], 
+    self.record_event(
+      self._config[:on_destroy][:event],
       self.method(self._config[:on_destroy][:event_data]).call(), 
-      timestamp=Time.now
-    )
-    self.create_snapshot_from_event(
-      evt, 
+      Time.now,
       &self.method(self._config[:on_destroy][:applier])
     )
+  end
+
+  def record_event(event_name, data, timestamp, **options, &applier)
+    evt = self.new_event(
+      event_name, 
+      data, 
+      timestamp=get_event_timestamp(event_name, timestamp)
+    )
+    if evt && applier.present?
+      self.create_snapshot_from_event(
+        evt, 
+        **options,
+        &applier
+      )
+    end
+    return evt
+  end
+
+  def new_event(name, data, timestamp=nil)
+    timestamp = timestamp or Time.now
+    if Event.where(aggregate: self, name: name, data: data).where("timestamp >= ?", timestamp - 1.second).exists?
+      return 
+    end
+    evt = Event.create(aggregate: self, name: name, data: data, timestamp: timestamp, version: Event.last_version_from(obj) + 1)
+  end
+
+  def get_event_timestamp(event_name, original_timestamp)
+    original_timestamp
   end
 
   private
@@ -157,5 +180,9 @@ module EventSourceable
 
   def default_destroyed_event_data()
     return {}
+  end
+
+  def get_field_data(field)
+    self._config[:observed_fields].find{|f| f[:field] == field}
   end
 end
