@@ -1,98 +1,110 @@
-const baseUrl = 'https://speed.radartoolkit.com/';
+const radarUtilities = (function() {
 
-const baseConfig = {
-  clientId: 1,
-  elementId: 'widget-root',
-  frameStyle: {
-    width: '100%',
-    height: '100%',
-  },
-  tab: 0,
-  noZoomControl: false,
-  webviewMode: false,
-  userLat: undefined,
-  userLng: undefined,
-  zoom: undefined,
-  global: false,
-};
+  const baseUrl = 'https://speed.radartoolkit.com/';
 
-let error = null;
-let init = null;
-
-const checkConfig = config => {
-  const { elementId, clientId } = config;
-  if (!elementId || elementId.length === 0) {
-    error = 'elementId is missing';
-    return false;
-  } else if (!clientId || clientId.length === 0) {
-    error = 'clientId is missing';
-    return false;
-  } else if (typeof elementId !== 'string') {
-    error = 'elementId type is wrong';
-    return false;
-  } else if (typeof clientId !== 'number') {
-    error = 'clientId type is wrong';
-    return false;
-  }
-  return true;
-};
-
-const mergeConfig = (config) => {
-  return {
-    ...baseConfig,
-    ...config,
+  const baseConfig = {
+    clientId: 1,
+    elementId: 'widget-root',
     frameStyle: {
-      ...baseConfig.frameStyle,
-      ...config.frameStyle
-    }
+      width: '100%',
+      height: '100%',
+    },
+    tab: 0,
+    noZoomControl: false,
+    webviewMode: false,
+    userLat: undefined,
+    userLng: undefined,
+    zoom: undefined,
+    global: false,
   };
-}
 
-const capitalize = word => `${word[0].toUpperCase()}${word.slice(1)}`;
+  let error = null;
+  let init = null;
 
-const getSrcWithParams = (config) => {
-  let params = '';
-  Object.keys(config).forEach(key => {
-    if(!!config[key]) {
-      if(key === 'frameStyle') {
-        let frameStyleParams = '';
-        Object.keys(config[key]).forEach(cssProp => {
-          const key = `frame${capitalize(cssProp)}`;
-          frameStyleParams += `${key}=${config.frameStyle[cssProp]}&`;
-        });
-        params += frameStyleParams;
-      } else {
-        params += `${key}=${config[key]}&`;
+  return {
+    checkConfig(config) {
+      const {elementId, clientId} = config;
+      if (!elementId || elementId.length === 0) {
+        error = 'elementId is missing';
+        return false;
+      } else if (!clientId || clientId.length === 0) {
+        error = 'clientId is missing';
+        return false;
+      } else if (typeof elementId !== 'string') {
+        error = 'elementId type is wrong';
+        return false;
+      } else if (typeof clientId !== 'number') {
+        error = 'clientId type is wrong';
+        return false;
       }
-    }
-  });
-  return encodeURI(`${baseUrl}?widgetMode=true&${params}`);
-}
+      return true;
+    },
 
-const Widget = {
+    mergeAndSetConfig(config) {
+      init = {
+        ...baseConfig,
+        ...config,
+        frameStyle: {
+          ...baseConfig.frameStyle,
+          ...config.frameStyle
+        }
+      };
+    },
+
+    capitalize(word) { return `${word[0].toUpperCase()}${word.slice(1)}` },
+
+    getSrcWithParams() {
+      let params = '';
+      Object.keys(init).forEach(key => {
+        if (!!init[key]) {
+          if (key === 'frameStyle') {
+            let frameStyleParams = '';
+            Object.keys(init[key]).forEach(cssProp => {
+              const key = `frame${this.capitalize(cssProp)}`;
+              frameStyleParams += `${key}=${init.frameStyle[cssProp]}&`;
+            });
+            params += frameStyleParams;
+          } else {
+            params += `${key}=${init[key]}&`;
+          }
+        }
+      });
+      return encodeURI(`${baseUrl}?widgetMode=true&${params}`);
+    },
+    hasInit() { return init !== null; },
+    getError() { return error; },
+    getElementId() { return init.elementId; },
+    getFrameStyle() { return init.frameStyle; }
+  }
+})();
+
+const RadarSpeedWidget = {
   config: config => {
-    if(checkConfig(config)) {
-      init = mergeConfig(config);
+    if(radarUtilities.checkConfig(config)) {
+      radarUtilities.mergeAndSetConfig(config);
     }
-    if(!init) throw new Error(error);
+    if(!radarUtilities.hasInit()) throw new Error(radarUtilities.getError());
   },
   new: () => {
-    if(!init) throw new Error(`Initial config object missing. Reason(s): ${error}`);
+    const error = radarUtilities.getError();
+    const hasInit = radarUtilities.hasInit();
+    if(!hasInit) throw new Error(`Initial config object missing. Reason(s): ${error}`);
     return {
       mount: () => {
-        if(!init) throw new Error(`Initial config object missing. Reason(s): ${error}`);
-        const root = document.getElementById(init.elementId);
+        if(!hasInit) throw new Error(`Initial config object missing. Reason(s): ${error}`);
+        const frameStyle = radarUtilities.getFrameStyle();
+        const root = document.getElementById(radarUtilities.getElementId());
         const iframe = document.createElement('iframe');
         iframe.id = 'speedtest-widget--iframe';
-        iframe.style.width = init.frameStyle.width;
-        iframe.style.height = init.frameStyle.height;
+        iframe.style.width = frameStyle.width;
+        iframe.style.height = frameStyle.height;
         iframe.style.border = 'none';
-        iframe.src = getSrcWithParams(init);
+        iframe.src = radarUtilities.getSrcWithParams();
         iframe.setAttribute('allow', 'geolocation');
         root.appendChild(iframe);
       },
       unmount: () => {
-        const root = document.getElementById(init.elementId);
+        const root = document.getElementById(radarUtilities.getElementId());
         const iframe = document.getElementById('speedtest-widget--iframe');
         if(root && iframe) root.removeChild(iframe);
       }
