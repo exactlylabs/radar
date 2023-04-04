@@ -171,6 +171,7 @@ class ClientsController < ApplicationController
     if @client.test_scheduled_at.nil?
       @client.schedule_next_test!
     end
+    @client.record_event(Client::Events::SERVICE_STARTED, {}, self.pinged_at) if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     ClientEventLog.service_started_event @client if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     @client.compute_ping!
     @client.save!
