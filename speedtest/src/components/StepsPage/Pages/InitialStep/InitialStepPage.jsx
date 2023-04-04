@@ -3,6 +3,9 @@ import {DEFAULT_LINK_COLOR, DEFAULT_SECONDARY_TEXT, DEFAULT_TEXT_COLOR} from "..
 import {MyForwardButton} from "../../../common/MyForwardButton";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 import Bullet from "./Bullet";
+import {useViewportSizes} from "../../../../hooks/useViewportSizes";
+import {useContext} from "react";
+import UserDataContext from "../../../../context/UserData";
 
 import rightArrowWhite from "../../../../assets/right-arrow-white.png";
 import initialHeroIcon from '../../../../assets/initial-page-hero-icon.png';
@@ -10,8 +13,6 @@ import initialPageShadow from '../../../../assets/initial-page-shadow.png';
 import performanceIcon from '../../../../assets/performance-icon.png';
 import mapIcon from '../../../../assets/map-icon.png';
 import speedTestsIcon from '../../../../assets/speedtests-icon.png';
-import {useViewportSizes} from "../../../../hooks/useViewportSizes";
-import {useEffect} from "react";
 
 const initialStepPageStyle = {
   width: '100%',
@@ -157,14 +158,15 @@ const iconStyle = {
   minHeight: '30px',
 }
 
-const InitialStepPage = ({terms, setTerms, goToNextPage, error}) => {
+const InitialStepPage = ({goToNextPage, error}) => {
 
+  const {userData, setTerms} = useContext(UserDataContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const isSmall = isSmallSizeScreen || isMediumSizeScreen;
 
   const handleSetTerms = checked => setTerms(checked);
 
-  const toggleTerms = () => setTerms(!terms);
+  const toggleTerms = () => setTerms(!userData.terms);
 
   return (
     <div style={initialStepPageStyle}>
@@ -174,7 +176,7 @@ const InitialStepPage = ({terms, setTerms, goToNextPage, error}) => {
           <p className={'speedtest--p speedtest--extra-bold'} style={isSmall ? smallTitleStyle : titleStyle}>Test your Internet speed</p>
           <p className={'speedtest--p'} style={isSmall ? smallSubtitleStyle : subtitleStyle}>We'll ask you a few questions to better understand where and how you're connected so we can learn more about your current service.</p>
           <div style={{...termsStyle, marginBottom: error ? '-10px' : '35px'}} onClick={toggleTerms}>
-            <MyCheckbox onChange={handleSetTerms} isChecked={terms}/>
+            <MyCheckbox onChange={handleSetTerms} isChecked={userData.terms}/>
             <p className={'speedtest--p'} style={termsTextStyle}>I agree to the Radar's <a className={'speedtest--opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>.</p>
           </div>
           { error && <MyMessageSnackbar type={'error'} message={error}/> }

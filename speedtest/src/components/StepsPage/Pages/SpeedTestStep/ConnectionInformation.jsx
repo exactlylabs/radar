@@ -8,10 +8,11 @@ import MyConnectionInformationVerticalDivider from "./MyConnectionInformationVer
 import AddressIcon from '../../../../assets/address-icon.png';
 import HomeIconLight from '../../../../assets/icon-location-home-light.png';
 import WifiIconLight from '../../../../assets/icon-connection-wifi-light.png';
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {CONNECTION_INFORMATION_MIN_WIDTH} from "../../../../utils/breakpoints";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import MyConnectionInformationTooltip from "./MyConnectionInformationTooltip";
+import UserDataContext from "../../../../context/UserData";
 
 const connectionInformationStyle = {
   width: '100%',
@@ -111,11 +112,11 @@ const addressStyle = {
 const ConnectionInformation = ({
   disabled,
   progress = 0,
-  userStepData,
   integratedToStatsTable
 }) => {
 
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {userData} = useContext(UserDataContext);
   const [shouldTextAppear, setShouldTextAppear] = useState(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH && !isExtraSmallSizeScreen);
 
   useEffect(() => {
@@ -146,14 +147,14 @@ const ConnectionInformation = ({
   const getPlacementOrTypeCellStyle = () => shouldTextAppear ?  placementRowStyle : withoutTextPlacementRowStyle;
 
   const getTitle = () => {
-    const {house_number, street} = userStepData.address;
+    const {house_number, street} = userData.address;
     if((!house_number && !street) || (house_number && !street)) return 'Unavailable'; // makes no sense to just show the house number on its own
     if(!house_number) return street;
-    return `${userStepData.address.house_number} ${userStepData.address.street}`;
+    return `${userData.address.house_number} ${userData.address.street}`;
   }
 
   const getSubtitle = () => {
-    const {city, state, postal_code} = userStepData.address;
+    const {city, state, postal_code} = userData.address;
     if(!city && !state && !postal_code) return 'Unavailable';
     let parsedCity = city ?? '';
     let parsedState = state ?? '';
@@ -171,35 +172,35 @@ const ConnectionInformation = ({
         >
           <div className={'speedtest--bold'} style={getAddressStyle()}>
             <img style={iconStyle} src={AddressIcon} width={22} height={22} alt={'address-icon'}/>
-            <div style={addressStyle}>{userStepData.address.address}</div>
+            <div style={addressStyle}>{userData.address.address}</div>
           </div>
         </MyConnectionInformationTooltip>
         <MyConnectionInformationVerticalDivider disabled={disabled}/>
         {
-          !!userStepData.networkLocation &&
+          !!userData.networkLocation &&
           <MyConnectionInformationTooltip subtitle={'You are connected at '}
-                                          accent={`${userStepData.networkLocation.text}.`}
+                                          accent={`${userData.networkLocation.text}.`}
                                           shouldNotAppear={disabled}
           >
             <div className={'speedtest--bold'} style={getPlacementOrTypeCellStyle()}>
               <img style={iconStyle}
-                   src={userStepData.networkLocation ? userStepData.networkLocation.iconLightSrc : HomeIconLight}
+                   src={userData.networkLocation ? userData.networkLocation.iconLightSrc : HomeIconLight}
                    width={22} height={22} alt={'address-icon'}/>
-              {shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkLocation)}</div>}
+              {shouldTextAppear && <div style={addressStyle}>{getText(userData.networkLocation)}</div>}
             </div>
           </MyConnectionInformationTooltip>
         }
         {
-          !!userStepData.networkType &&
+          !!userData.networkType &&
           <>
             <MyConnectionInformationVerticalDivider disabled={disabled}/>
             <MyConnectionInformationTooltip subtitle={'You are connected via '}
-                                            accent={`${userStepData.networkType.text}.`}
+                                            accent={`${userData.networkType.text}.`}
                                             shouldNotAppear={disabled}
             >
               <div className={'speedtest--bold'} style={getPlacementOrTypeCellStyle()}>
-                <img style={iconStyle} src={userStepData.networkType ? userStepData.networkType.iconLightSrc : WifiIconLight} width={22} height={22} alt={'address-icon'}/>
-                { shouldTextAppear && <div style={addressStyle}>{getText(userStepData.networkType)}</div> }
+                <img style={iconStyle} src={userData.networkType ? userData.networkType.iconLightSrc : WifiIconLight} width={22} height={22} alt={'address-icon'}/>
+                { shouldTextAppear && <div style={addressStyle}>{getText(userData.networkType)}</div> }
               </div>
             </MyConnectionInformationTooltip>
           </>

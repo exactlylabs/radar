@@ -5,6 +5,8 @@ import ArrowRightBlue from '../../../../assets/icons-arrow-right-blue.png';
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
+import {useContext} from "react";
+import UserDataContext from "../../../../context/UserData";
 
 const speedTestResultsContainerStyle = {
   marginTop: 25,
@@ -63,7 +65,6 @@ const exploreAreaLinkStyle = {
 
 const SpeedTestResultsStepPage = ({
   testResults,
-  userStepData,
   goToAreaMap,
   goToHistory,
   goToTestAgain
@@ -89,7 +90,6 @@ const SpeedTestResultsStepPage = ({
                              downloadValue={testResults.downloadValue.toFixed(2)}
                              uploadValue={testResults.uploadValue.toFixed(2)}
                              lossValue={testResults.loss.toFixed(2)}
-                             userStepData={userStepData}
       />
       <div style={isMediumSizeScreen ? mobileButtonFooterStyle : buttonFooterStyle}>
         <MyBackButton text={'Test again'} onClick={goToTestAgain}/>

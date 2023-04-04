@@ -2,6 +2,8 @@ import {DEFAULT_STATS_TABLE_BOX_SHADOW_RGBA, WHITE} from "../../../../utils/colo
 import ConnectionInformation from "./ConnectionInformation";
 import TestStatsTableContent from "../../../common/TestStatsTableContent";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
+import {useContext} from "react";
+import UserDataContext from "../../../../context/UserData";
 
 const tableStyle = {
   width: '100%',
@@ -58,7 +60,6 @@ const TestStatsTable = ({
   uploadValue,
   lossValue,
   latencyValue,
-  userStepData,
 }) => {
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
@@ -78,7 +79,7 @@ const TestStatsTable = ({
         extended ?
           <>
             <div>
-              <ConnectionInformation userStepData={userStepData} integratedToStatsTable={extended}/>
+              <ConnectionInformation integratedToStatsTable={extended}/>
             </div>
             <div>
               <TestStatsTableContent disabled={disabled}

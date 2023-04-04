@@ -16,6 +16,7 @@ import NoInternetStepPage from "./Pages/NoInternetStep/NoInternetStepPage";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import InitialStepPage from "./Pages/InitialStep/InitialStepPage";
 import ConfigContext from "../../context/ConfigContext";
+import UserDataContext from "../../context/UserData";
 
 const stepsPageStyle = {
   width: '100%',
@@ -29,16 +30,6 @@ const mobileStepsPageStyle = {
   paddingTop: 0,
 }
 
-export const emptyAddress = {
-  address: '',
-  coordinates: [],
-  city: '',
-  street: '',
-  state: '',
-  postal_code: '',
-  house_number: ''
-};
-
 const StepsPage = ({
   goToAreaMap,
   goToHistory,
@@ -49,13 +40,6 @@ const StepsPage = ({
   const [currentStep, setCurrentStep] = useState(STEPS.INITIAL);
   const [error, setError] = useState(null);
   const [warning, setWarning] = useState(null);
-  const [userStepData, setUserStepData] = useState({
-    address: emptyAddress,
-    terms: false,
-    networkLocation: null,
-    networkType: null,
-    networkCost: '', // init with empty string to prevent console error regarding controlled vs. uncontrolled input value change
-  });
   const [lastTestResults, setLastTestResults] = useState(null);
   const [canProceedToStep2, setCanProceedToStep2] = useState(false);
   const [geolocationError, setGeolocationError] = useState(false);
@@ -64,23 +48,7 @@ const StepsPage = ({
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
-
-  const setAddress = address => {
-    setError(false);
-    setUserStepData(prevState => ({...prevState, address}));
-  }
-  const setTerms = status => setUserStepData({...userStepData, terms: status});
-  const setNetworkLocation = index => setUserStepData({ ...userStepData, networkLocation: placementOptions[index] });
-  const setNetworkType = index => {
-    const chosenOption = types[index];
-    if(chosenOption.text === 'Cellular') {
-      setWarning(warnings.NOT_ENOUGH_DATA);
-    } else {
-      setWarning(null);
-    }
-    setUserStepData({ ...userStepData, networkType: chosenOption});
-  };
-  const setNetworkCost = cost => setUserStepData({ ...userStepData, networkCost: cost });
+  const {userData, setUserData, setAddress, setTerms, setNetworkType, setNetworkLocation, setNetworkCost} = useContext(UserDataContext);
 
   useEffect(() => {
     if(specificStep) {
@@ -89,8 +57,8 @@ const StepsPage = ({
         const lastTestTaken = getLastStoredValue();
         const networkLocation = placementOptions.find(placement => placement.text === lastTestTaken.networkLocation);
         const networkType = types.find(type => type.text === lastTestTaken.networkType);
-        setUserStepData({
-          ...userStepData,
+        setUserData({
+          ...userData,
           address: {
             coordinates: [lastTestTaken.lat, lastTestTaken.long],
             ...lastTestTaken,
@@ -119,7 +87,7 @@ const StepsPage = ({
 
   const checkAndOpenModal = (addressSync = null) => {
     setError(null);
-    const { address } = userStepData;
+    const { address } = userData;
     if(address.address === '' && !addressSync) {
       setError(errors.NO_LOCATION_ERROR);
     } else if(!!address.address && !canProceedToStep2 && selectedSuggestion) {
@@ -132,7 +100,7 @@ const StepsPage = ({
   }
 
   const goToAddressPage = () => {
-    if(!userStepData.terms) {
+    if(!userData.terms) {
       setError(errors.NO_TERMS_ERROR);
       return;
     }
@@ -168,7 +136,7 @@ const StepsPage = ({
     setCurrentStep(STEPS.SPEED_TEST_RESULTS);
   }
 
-  const goToMapPage = () => goToAreaMap(userStepData.address.coordinates);
+  const goToMapPage = () => goToAreaMap(userData.address.coordinates);
 
   const goToNoInternetPage = () => setCurrentStep(STEPS.NO_INTERNET);
 
@@ -178,6 +146,25 @@ const StepsPage = ({
 
   const goToConnectionType = () => setCurrentStep(STEPS.CONNECTION_TYPE);
 
+  const handleSetAddress = (address) => {
+    setError(false);
+    setAddress(address);
+  }
+
+  const handleSetNetworkType = index => {
+    const chosenOption = types[index];
+    if(chosenOption.text === 'Cellular') {
+      setWarning(warnings.NOT_ENOUGH_DATA);
+    } else {
+      setWarning(null);
+    }
+    setNetworkType(chosenOption);
+  };
+
+  const handleSetNetworkLocation = index => {
+    setNetworkLocation(placementOptions[index]);
+  }
+
   const storeCoordinates = async (finalCoordinates) => {
     if(!finalCoordinates) {
       setConfirmedAddress(false);
@@ -185,7 +172,7 @@ const StepsPage = ({
     }
     try {
       const address = await getAddressForCoordinates(finalCoordinates, config.clientId);
-      setAddress(address);
+      handleSetAddress(address);
       setCanProceedToStep2(true);
       setConfirmedAddress(true);
     } catch (e) {
@@ -196,57 +183,46 @@ const StepsPage = ({
   const getCurrentPage = () => {
     switch (currentStep) {
       case STEPS.INITIAL:
-        return <InitialStepPage terms={userStepData.terms}
-                                setTerms={setTerms}
-                                goToNextPage={goToAddressPage}
+        return <InitialStepPage goToNextPage={goToAddressPage}
                                 error={error}
         />;
       case STEPS.CONNECTION_ADDRESS:
         return <LocationSearchStepPage confirmAddress={storeCoordinates}
                                        error={error}
-                                       setAddress={setAddress}
+                                       setAddress={handleSetAddress}
                                        isModalOpen={isModalOpen}
                                        setIsModalOpen={setIsModalOpen}
                                        handleContinue={canProceedToStep2 ? goToPage2 : checkAndOpenModal}
                                        checkAndOpenModal={checkAndOpenModal}
-                                       currentAddress={userStepData.address}
                                        setGeolocationError={setGeolocationError}
                                        confirmedAddress={canProceedToStep2 && confirmedAddress}
                                        setSelectedSuggestion={setSelectedSuggestion}
                                        selectedSuggestion={selectedSuggestion}
-                                       goToNextPage={canProceedToStep2 ? goToPage2 : undefined}
+                                       goToNextPage={goToPage2}
                                        goBack={goToInitialPage}
 
         />;
       case STEPS.CONNECTION_PLACEMENT:
         return <ConnectionPlacementStepPage goForward={goToPage3}
                                             goBack={goToConnectionAddress}
-                                            setSelectedOption={setNetworkLocation}
-                                            selectedOption={userStepData.networkLocation}
-                                            address={userStepData.address.address}
                                             goToLastFlowStep={goToNoInternetPage}
         />;
       case STEPS.CONNECTION_TYPE:
         return <ConnectionTypeStepPage goForward={goToPage4}
                                        goBack={goToConnectionPlacement}
-                                       selectedOption={userStepData.networkType}
-                                       setSelectedOption={setNetworkType}
+                                       setSelectedOption={handleSetNetworkType}
                                        warning={warning}
         />;
       case STEPS.CONNECTION_COST:
         return <ConnectionCostStepPage goForward={goToPage5}
                                        goBack={goToConnectionType}
-                                       setCost={setNetworkCost}
-                                       cost={userStepData.networkCost}
         />;
       case STEPS.RUN_SPEED_TEST:
-        return <SpeedTestStepPage userStepData={userStepData}
-                                  goForward={goToPage6}
+        return <SpeedTestStepPage goForward={goToPage6}
                                   goBack={goToPage4}
         />;
       case STEPS.SPEED_TEST_RESULTS:
         return <SpeedTestResultsStepPage testResults={lastTestResults}
-                                         userStepData={userStepData}
                                          goToAreaMap={goToMapPage}
                                          goToHistory={goToHistory}
                                          goToTestAgain={goToPage5}
@@ -254,8 +230,7 @@ const StepsPage = ({
       case STEPS.NO_INTERNET:
         return <NoInternetStepPage goToMapPage={goToMapPage}/>
       default:
-        return <InitialStepPage terms={userStepData.terms}
-                                setTerms={setTerms}
+        return <InitialStepPage setTerms={setTerms}
                                 goToNextPage={goToAddressPage}
                                 error={error}
         />;

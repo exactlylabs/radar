@@ -8,6 +8,7 @@ import {normalizeValue} from "./utils/normalizer";
 import {runnerConfig} from "../../../../utils/ndt7Tester";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import ConfigContext from "../../../../context/ConfigContext";
+import UserDataContext from "../../../../context/UserData";
 
 const canvasWrapperStyle = {
   width: 250,
@@ -53,7 +54,6 @@ const SpeedGauge = ({
   setUploadValue,
   uploadValue,
   storeRunData,
-  userStepData,
 }) => {
 
   let counter = 0;
@@ -67,6 +67,7 @@ const SpeedGauge = ({
   const [rawData, setRawData] = useState([]);
 
   const config = useContext(ConfigContext);
+  const {userData} = useContext(UserDataContext);
 
   useEffect(() => {
     const downloadTarget = document.getElementById('speedtest--gauge-canvas');
@@ -89,7 +90,7 @@ const SpeedGauge = ({
     try {
       if (exitCode === 0) {
         storeRunData(startTimestamp);
-        sendRawData(rawData, startTimestamp, userStepData, config.clientId);
+        sendRawData(rawData, startTimestamp, userData, config.clientId);
       } else {
         notifyError(error);
       }

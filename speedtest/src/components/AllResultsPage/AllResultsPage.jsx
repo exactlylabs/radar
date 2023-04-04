@@ -212,6 +212,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
   const userOnMoveHandler = () => {
     setFloatingBoxVisible(true);
     setFetchingResults(true);
+    map.closePopup();
   }
 
   const handleSetRecenter = (value) => setHasRecentered(value);

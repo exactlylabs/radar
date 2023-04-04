@@ -1,0 +1,4 @@
+export const ADDRESS_PROVIDER = {
+  MANUAL: 'MANUAL',
+  BROWSER_GPS: 'BROWSER_GPS',
+}
