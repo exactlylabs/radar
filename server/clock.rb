@@ -2,7 +2,7 @@ require 'rufus-scheduler'
 
 scheduler = Rufus::Scheduler.new
 
-scheduler.every '3s' do
+scheduler.every '3s', overlap: false do
   if Rails.application.healthy? && !Rails.application.transient?
     Client.update_outdated_online!
   end
@@ -10,12 +10,12 @@ scheduler.every '3s' do
   Rails.application.heartbeat!
 end
 
-scheduler.every '1m' do
+scheduler.every '1m', overlap: false do
   ClientCountAggregate.aggregate!
   OnlineClientCountProjection.aggregate!
 end
 
-scheduler.every '1h' do
+scheduler.every '1h', overlap: false do
   Client.refresh_outdated_data_usage!
 end
 
