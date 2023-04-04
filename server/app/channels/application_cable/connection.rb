@@ -54,6 +54,9 @@ module ApplicationCable
 
     def on_client_connected
       if request.user_agent.starts_with? "RadarPodsAgent"
+        if request.headers["Sec-Radar-Service-Started"] == "true"
+          self.client.record_event(Client::Events::SERVICE_STARTED, {}, Time.now)
+        end
         self.client.online = true
         self.client.ip = request.remote_ip
         self.client.pinged_at = Time.now

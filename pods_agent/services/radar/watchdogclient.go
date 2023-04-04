@@ -142,7 +142,6 @@ func (c *RadarWatchdogClient) sendSync() {
 	payload := messages.Sync{
 		OSVersion:         runtime.GOOS,
 		HardwarePlatform:  runtime.GOARCH,
-		ServiceFirstPing:  firstPing,
 		Distribution:      meta.Distribution,
 		Version:           meta.Version,
 		NetInterfaces:     meta.NetInterfaces,
@@ -154,7 +153,6 @@ func (c *RadarWatchdogClient) sendSync() {
 		Action:  Sync,
 		Payload: payload,
 	})
-	firstPing = false
 }
 
 func (c *RadarWatchdogClient) sendNDT7Report(report *ndt7diagnose.DiagnoseReport) {
