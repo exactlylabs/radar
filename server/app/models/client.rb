@@ -97,20 +97,32 @@ class Client < ApplicationRecord
   end
 
   def disconnected!
+    if UpdateGroup.joins(:events).where(
+      "events.timestamp > ? AND events.name IN (?)",
+      5.minute.ago, [UpdateGroup::Events::CLIENT_VERSION_CHANGED, UpdateGroup::Events::WATCHDOG_VERSION_CHANGED]
+    ).present?
+      return
+    end
+
     REDIS.zrem Client::REDIS_PING_SET_NAME, self.id
     self.online = false
     self.save!
   end
 
   def self.update_outdated_online!
-    # Correct clients online status based on their registered pings
+    # Fix online status based on their registered pings
+
     client_ids = REDIS.zrangebyscore(
       Client::REDIS_PING_SET_NAME, 
       (PING_DURATION * 1.5).second.ago.to_i, 
       Time.now.to_i
     )
-    Client.where.not(id: client_ids).update(online: false)
-    Client.where(id: client_ids).update(online: true)
+    query = Client.joins(:update_group => :events).where.not(
+      "events.timestamp > ? AND events.name IN (?)",
+      5.minute.ago, [UpdateGroup::Events::CLIENT_VERSION_CHANGED, UpdateGroup::Events::WATCHDOG_VERSION_CHANGED]
+    )
+    query.where.not(id: client_ids).update(online: false)
+    query.where(id: client_ids).update(online: true)
   end
 
   def send_created_event_old
