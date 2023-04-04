@@ -127,7 +127,7 @@ chmod +x ${TMP_DIR}/$PROJECT_DIR/$BINARY_NAME
 
 # Move Pod Watchdog .service and the binary to the image
 WATCHDOG_BINARY_PATH="/$PROJECT_DIR/$WATCHDOG_BINARY_NAME"
-cp ${SCRIPT_DIR}/../agent/watchdog/osfiles/etc/systemd/system/podwatchdog@.service ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
+cp ${SCRIPT_DIR}/../pods_agent/watchdog/osfiles/etc/systemd/system/podwatchdog@.service ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
 sed -i -r 's|^(ExecStart=).*|\1'"${WATCHDOG_BINARY_PATH}"'|' ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
 cp ${BUILD_DIR}/$WATCHDOG_BINARY_NAME ${TMP_DIR}/$PROJECT_DIR/$WATCHDOG_BINARY_NAME
 chmod +x ${TMP_DIR}/$PROJECT_DIR/$WATCHDOG_BINARY_NAME
@@ -171,6 +171,6 @@ losetup -d $LOOP_DEV
 
 mkdir -p ${SCRIPT_DIR}/dist
 mv ${BUILD_DIR}/$VERSION ${SCRIPT_DIR}/dist/$IMAGE_FILENAME
-zip ${SCRIPT_DIR}/dist/$IMAGE_FILENAME.zip ${SCRIPT_DIR}/dist/$IMAGE_FILENAME
+zip -j ${SCRIPT_DIR}/dist/$IMAGE_FILENAME.zip ${SCRIPT_DIR}/dist/$IMAGE_FILENAME
 
 rm -r ${BUILD_DIR}
