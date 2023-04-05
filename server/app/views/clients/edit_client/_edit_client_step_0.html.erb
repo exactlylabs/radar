@@ -63,7 +63,7 @@
                 data-edit-pod-target="accountsSelect"
                 data-select2-dropdown-parent-value="edit_pod_modal"
         >
-          <% current_user.accounts.not_deleted.each do |account|%>
+          <% policy_scope(Account).not_deleted.each do |account|%>
             <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
           <% end %>
         </select>
