@@ -43,6 +43,8 @@ export const getConfigFromParams = () => {
         config.zoom = parseInt(param.split('=')[1]);
       } else if (param.includes('clientId')) {
         config.clientId = parseInt(param.split('=')[1]);
+      } else if(param.includes('global')) {
+        config.global = param.split('=')[1] === 'true';
       }
     });
   } else {

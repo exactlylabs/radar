@@ -22,6 +22,7 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
         width: isSmall ? '100%' : '600px',
         height: '570px',
       },
+      global: true,
     });
     // @ts-ignore
     speedTest.current = RadarSpeedWidget.new();
