@@ -9,21 +9,21 @@
                         <!--begin::Table head-->
                         <thead>
                             <tr class="text-start fs-1 fw-bolder">
-                                <th class="py-7 ps-10 d-flex flex-column" style="font-size: 20px; color: #3f4254">
+                                <th class="py-7 ps-10 d-flex flex-column dialog-main-title">
                                     Pods
-                                    <span style="font-size: 14px; color: #b5b5c3"><%= clients.length %> total pods</span>
+                                    <span class="additional-text"><%= clients.length %> total pods</span>
                                 </th>
                                 <th></th>
                                 <th class="text-center" style="display: table-cell; vertical-align: middle">
-                                    <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#add_pod_modal_step_0">Add Pod</button>
+                                    <button type="button" class="custom-button custom-button--primary custom-button--lg w-100" data-bs-toggle="modal" data-bs-target="#add_pod_modal_step_0">Add Pod</button>
                                 </th>
                             </tr>
                             <!--begin::Table row-->
                             <tr class="text-start fw-bolder gs-0" 
                                 style="background-color: rgba(245, 248, 250, 0.6);font-size: 15px;">
-                                <th class="sorting ps-10" style="width: 20vw" tabindex="0" aria-controls="kt_customers_table" 
+                                <th class="tables--title sorting ps-10" style="width: 20vw" tabindex="0" aria-controls="kt_customers_table" 
                                     aria-label="Pod Name">Pod Name</th>
-                                <th class="sorting" style="width: 68vw" tabindex="0" aria-controls="kt_customers_table" 
+                                <th class="tables--title sorting" style="width: 68vw" tabindex="0" aria-controls="kt_customers_table" 
                                     aria-label="Status">Status</th>
                                 <th class="text-end sorting_disabled" style="width: 12vw" aria-label="Actions"></th>
                             </tr>
