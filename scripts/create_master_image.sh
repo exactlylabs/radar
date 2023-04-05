@@ -24,7 +24,7 @@ Optional Arguments:
 }
 
 ENABLE_SSH=0
-RADAR_SERVER_URL="https://radar.exactlylabs.com"
+RADAR_SERVER_URL="https://pods.radartoolkit.com"
 
 while :; do
     case $1 in
@@ -72,8 +72,8 @@ mkdir -p ${TMP_DIR}
 
 apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip unzip
 
-curl --output ${BUILD_DIR}/$BINARY_NAME $RADAR_AGENT_BIN_URL
-curl --output ${BUILD_DIR}/$WATCHDOG_BINARY_NAME $RADAR_WATCHDOG_BIN_URL
+curl -L --output ${BUILD_DIR}/$BINARY_NAME $RADAR_AGENT_BIN_URL
+curl -L --output ${BUILD_DIR}/$WATCHDOG_BINARY_NAME $RADAR_WATCHDOG_BIN_URL
 
 #### NOTE: Images after 2022-01-28 appear to use .xz and before use .zip
 # Decompress the .xz file
