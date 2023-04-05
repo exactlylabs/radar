@@ -28,5 +28,4 @@ export const goToUrl = (url: string, anotherTab = false) => {
 
 export const goToHome = () => goToUrl(AppRoutes.HOME);
 
-export const widgetCssUrl = isProduction ? `${ExternalRoutes.SPEEDTEST_APP_PROD}/widget.css` : `${ExternalRoutes.SPEEDTEST_APP_STAGING}/widget.css`;
 export const widgetJsUrl = isProduction ? `${ExternalRoutes.SPEEDTEST_APP_PROD}/widget.js` : `${ExternalRoutes.SPEEDTEST_APP_STAGING}/widget.js`;

@@ -15,9 +15,8 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
 
   useEffect(() => {
     // @ts-ignore
-    SpeedTest.config({
+    RadarSpeedWidget.config({
       clientId: 1,
-      widgetMode: true,
       elementId: 'widget-root',
       frameStyle: {
         width: isSmall ? '100%' : '600px',
@@ -25,7 +24,7 @@ const BroadbandTestingSpeedtest = (): ReactElement => {
       },
     });
     // @ts-ignore
-    speedTest.current = SpeedTest.new();
+    speedTest.current = RadarSpeedWidget.new();
     // @ts-ignore
     if(speedTest.current) speedTest.current.mount();
 
