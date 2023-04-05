@@ -40,10 +40,6 @@ export const UserDataContextProvider = ({children}) => {
     accuracy: null, // provided by browser geolocation API
   });
 
-  useEffect(() => {
-    console.log('useEffect', userData);
-  }, [userData]);
-
   const setAddress = address => setUserData(prev => ({...prev, address}));
   const setTerms = status => setUserData(prev => ({...prev, terms: status}));
   const setNetworkLocation = location => setUserData(prev => ({...prev, networkLocation: location }));

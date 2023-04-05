@@ -223,7 +223,6 @@ const MyMapModal = ({
   }
 
   const handleContinue = () => {
-    console.log(goToNextPage);
     if(goToNextPage) {
       goToNextPage(true);
       if(positionedManually) {
