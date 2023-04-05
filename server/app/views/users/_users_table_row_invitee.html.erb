@@ -8,26 +8,26 @@
         </span>
       </div>
       <div class="d-flex flex-column">
-        <a class="text-gray-800 text-hover-primary fw-bolder"
-           style="font-size:15px; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
+        <a class="forms--label"
+           style="max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
            href="<%= users_account_path(invitee, type: invitee.class.name)%>"
            data-turbo-frame="_top"
         >
           <%= "#{invitee.first_name} #{invitee.last_name}" %>
         </a>
-        <div class="text-gray-600" style="font-size: 13px"><%= invitee.email %></div>
+        <div class="additional-text"><%= invitee.email %></div>
       </div>
     </div>
   </td>
   <% if current_account.is_all_accounts? %>
-    <td class="text-gray-600 mb-1"
-        style="font-size:14px; color: #b5b5c3; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+    <td class="forms--label"
+        style="max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
       <span style="color: #5e6278;"><%= invitee.account.name %></span>
     </td>
   <% end %>
-  <td class="text-gray-600 mb-1"
-      style="font-size:14px; color: #b5b5c3; max-width: <%= current_account.is_all_accounts? ? '10vw' : '15vw' %>;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-    <span style="color: #5e6278;"><%= pretty_print_date(invitee.sent_at) %></span>
+  <td class="forms--label"
+      style="max-width: <%= current_account.is_all_accounts? ? '10vw' : '15vw' %>;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+    <span><%= pretty_print_date(invitee.sent_at) %></span>
   </td>
   <td class="text-gray-600 mb-1"
       style="font-size:14px; max-width: <%= current_account.is_all_accounts? ? '10vw' : '15vw' %>;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
@@ -35,39 +35,40 @@
   </td>
   <td class="mb-1"
       style="font-size:14px;">
-    <span class="badge <%= invitee.get_badge_style %>"><%= invitee.status_to_human %></span>
+    <span class="custom-badge custom-badge--pending"><%= invitee.status_to_human %></span>
   </td>
-  <td class="text-gray-600 mb-1"
-      style="font-size:14px; color: #7e8299">
-    <%= link_to "Resend invite", resend_invites_path(id: invitee.id), class: "btn btn-light-primary", style: "padding-left: 10px; padding-right: 10px;", method: :post %>
+  <td>
+    <%= link_to "Resend invite", resend_invites_path(id: invitee.id), class: "custom-button custom-button--primary-light custom-button--sm", style: "padding-left: 10px; padding-right: 10px;", method: :post %>
   </td>
   <td class="text-end" style="padding-right: 30px">
-    <button type="button"
-            class="btn btn-sm btn-light btn-active-light-primary dropwdown-toggle"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            style="border-radius: 6px"
-            id="<%= "options-button-#{invitee.id}" %>"
-    >
-      Options
-      <span class="svg-icon svg-icon-5 m-0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
-          </svg>
-        </span>
-    </button>
-    <div class="dropdown-menu fw-bold fs-7 w-125px py-4"
-         aria-labelledby="<%= "options-button-#{invitee.id}" %>">
-      <!--begin::Menu item-->
-      <div class="menu-item">
-        <%= link_to "View", users_account_path(invitee, type: invitee.class.name), { class: "menu-link text-hover-gray-500 text-gray-700 px-3" } %>
+    <div class="btn-group">
+      <button type="button"
+              class="custom-button custom-button--secondary custom-button--sm dropwdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              style="border-radius: 6px"
+              id="<%= "options-button-#{invitee.id}" %>"
+      >
+        Options
+        <span class="svg-icon svg-icon-5 custom-button--icon custom-button--icon-end">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+            </svg>
+          </span>
+      </button>
+      <div class="dropdown-menu fw-bold fs-7 w-125px py-4"
+          aria-labelledby="<%= "options-button-#{invitee.id}" %>">
+        <!--begin::Menu item-->
+        <div class="dropdowns--option menu-item">
+          <%= link_to "View", users_account_path(invitee, type: invitee.class.name), { class: "menu-link text-hover-gray-500 text-gray-700 px-3" } %>
+        </div>
+        <!--end::Menu item-->
+        <!--begin::Menu item-->
+        <div class="dropdowns--option menu-item">
+          <%= link_to 'Remove', users_account_path(invitee, type: invitee.class.name), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link text-hover-gray-500 text-gray-700 px-3" %>
+        </div>
+        <!--end::Menu item-->
       </div>
-      <!--end::Menu item-->
-      <!--begin::Menu item-->
-      <div class="menu-item">
-        <%= link_to 'Remove', users_account_path(invitee, type: invitee.class.name), method: :delete, data: { confirm: 'Are you sure?' }, class: "menu-link text-hover-gray-500 text-gray-700 px-3" %>
-      </div>
-      <!--end::Menu item-->
     </div>
   </td>
 </tr>

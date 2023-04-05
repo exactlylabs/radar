@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card w-100">
   <!--begin::Card body-->
   <div class="card-body pt-0 px-0">
     <!--begin::Table-->
@@ -9,22 +9,22 @@
           <thead>
           <!--begin::Table row-->
           <tr class="text-start fw-bolder gs-0"
-              style="background-color: rgba(245, 248, 250, 0.6);font-size: 15px;">
-            <th class="sorting ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table"
+              style="font-size: 12px; height: 65px;">
+            <th class="tables--title ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Location Name">User</th>
             <% if current_account.is_all_accounts? %>
-              <th class="sorting" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table"
+              <th class="tables--title" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Invited">Account</th>
             <% end %>
-            <th class="sorting" style="<%= current_account.is_all_accounts? ? 'width: 10vw' : 'width: 15vw'%>" tabindex="0" aria-controls="kt_customers_table"
+            <th class="tables--title" style="<%= current_account.is_all_accounts? ? 'width: 10vw' : 'width: 15vw'%>" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Invited">Invited</th>
-            <th class="sorting_disabled" style="<%= current_account.is_all_accounts? ? 'width: 10vw' : 'width: 15vw'%>" tabindex="0" aria-controls="kt_customers_table"
+            <th class="tables--title" style="<%= current_account.is_all_accounts? ? 'width: 10vw' : 'width: 15vw'%>" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Join Date">Join Date</th>
-            <th class="sorting_disabled" style="<%= current_account.is_all_accounts? ? 'width: 10vw' : 'width: 15vw'%>" tabindex="0" aria-controls="kt_customers_table"
+            <th class="tables--title" style="<%= current_account.is_all_accounts? ? 'width: 10vw' : 'width: 15vw'%>" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Status">Status</th>
-            <th class="sorting_disabled" style="width: 8vw" tabindex="0" aria-controls="kt_customers_table"
+            <th class="tables--title" style="width: 8vw" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Resend invite"></th>
-            <th class="text-end sorting_disabled" style="width: 8vw" rowspan="1"
+            <th class="text-end tables--title" style="width: 8vw" rowspan="1"
                 colspan="1" aria-label="Actions"></th>
           </tr>
           <!--end::Table row-->
