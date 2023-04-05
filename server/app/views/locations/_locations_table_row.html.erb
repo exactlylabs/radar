@@ -71,17 +71,17 @@
       <div class="dropdown-menu fw-bold fs-7 py-4 px-2"
            aria-labelledby="<%= "options-button-#{location.id}" %>">
         <!--begin::Menu item-->
-        <div class="menu-item">
+        <div class="dropdowns--option menu-item">
           <%= link_to "View", location_path(location), class: "dropdowns--option option-item-primary--hoverable menu-link px-3", data: {"turbo-frame" => "_top"} %>
         </div>
         <!--end::Menu item-->
         <!--begin::Menu item-->
-        <div class="menu-item">
+        <div class="dropdowns--option menu-item">
           <%= link_to "Edit", edit_location_path(location), { class: "dropdowns--option option-item-primary--hoverable menu-link px-3", data: { "turbo-frame" => "edit_location_modal" } } %>
         </div>
         <!--end::Menu item-->
         <!--begin::Menu item-->
-        <div class="menu-item">
+        <div class="dropdowns--option menu-item">
           <%= link_to 'Delete', location_path(location), method: :delete, data: { confirm: 'Are you sure?' }, class: "dropdowns--option menu-link px-3" %>
         </div>
         <!--end::Menu item-->

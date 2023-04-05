@@ -13,12 +13,12 @@
         </span>
       </div>
       <div class="pod-name--container">
-        <a class="text-gray-800 text-hover-primary fw-bolder"
-            style="font-size:15px; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
+        <a class="forms--label text-hover-primary"
+            style="max-width: 15vw;"
             href="<%= client_path(client.unix_user)%>" data-turbo-frame="_top">
             <%= client.name.present? ? client.name : "Unnamed Pod" %>
         </a>
-        <div class="pod-name--subtitle">
+        <div class="additional-text">
             <%= client.unix_user %>
         </div>
       </div>
@@ -29,16 +29,16 @@
       id="client_<%= client.id %>_status_wrapper"
   >
     <% unless client.in_service? %>
-      <span class="badge badge-light-dark" id="client_<%= client.id %>_in_service">Not in service</span>
+      <span class="custom-badge custom-badge--not-in-service" id="client_<%= client.id %>_in_service">Not in service</span>
     <% end %>
-    <span class="badge <%= client.status_style %>" id="client_<%= client.id %>_status"><%= client.status %></span>
+    <span class="custom-badge <%= client.status_style %>" id="client_<%= client.id %>_status"><%= client.status %></span>
     <% if client.has_pending_test %>
-      <span class="badge badge-light-primary">Pending test</span>
+      <span class="custom-badge custom-badge--pending">Pending test</span>
     <% end %>
   </td>
   <td class="text-end" style="padding-right: 30px">
     <a href="<%= client_path(client.unix_user) %>" 
-       class="btn btn-primary d-flex align-items-center justify-content-center px-0"
+       class="custom-button custom-button--secondary custom-button--sm d-flex align-items-center justify-content-center px-0"
        style="height: 35px; width:90%;">View Details</a>
   </td>
 </tr>

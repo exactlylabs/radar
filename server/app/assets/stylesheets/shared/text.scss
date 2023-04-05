@@ -86,9 +86,9 @@ $extra-bold: 800;
 }
 
 .additional-text {
-  font-variation-settings: 'wght' $medium;
-  font-size: 0.875rem;
-  color: $gray;
+  font-variation-settings: 'wght' $medium !important;
+  font-size: 0.875rem !important;
+  color: $gray !important;
 }
 
 .regular-text {

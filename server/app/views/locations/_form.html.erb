@@ -71,10 +71,10 @@
           <!--begin::Input-->
           <div class="forms--input-group input-group" data-location-form-target="addressWrapper">
             <input class="forms--text-input forms--text-input-with-decoration form-control form-control-solid" placeholder="Your location address" data-location-form-target="address" data-action="input->location-form#onAddressChange" type="text" name="location[address]" id="location_address" value="<%= @location&.address %>"/>
-            <div class="d-none input-group-text" style="border: none; border-radius: 6px" data-location-form-target="spinner">
-              <div class="spinner-border text-primary" role="status"></div>
+            <div class="d-none forms--input-decoration" data-location-form-target="spinner">
+              <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
             </div>
-            <span class="input-group-text svg-icon svg-icon-primary svg-icon-2" style="border: none; cursor: pointer;" data-action="click->location-form#autofillGeoData" data-location-form-target="geoIcon">
+            <span class="svg-icon svg-icon-primary svg-icon-2 forms--input-decoration forms--input-decoration-clickable" data-action="click->location-form#autofillGeoData" data-location-form-target="geoIcon">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path opacity="0.3" d="M21 11H18.9C18.5 7.9 16 5.49998 13 5.09998V3C13 2.4 12.6 2 12 2C11.4 2 11 2.4 11 3V5.09998C7.9 5.49998 5.50001 8 5.10001 11H3C2.4 11 2 11.4 2 12C2 12.6 2.4 13 3 13H5.10001C5.50001 16.1 8 18.4999 11 18.8999V21C11 21.6 11.4 22 12 22C12.6 22 13 21.6 13 21V18.8999C16.1 18.4999 18.5 16 18.9 13H21C21.6 13 22 12.6 22 12C22 11.4 21.6 11 21 11ZM12 17C9.2 17 7 14.8 7 12C7 9.2 9.2 7 12 7C14.8 7 17 9.2 17 12C17 14.8 14.8 17 12 17Z" fill="black"/>
                 <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" fill="black"/>
@@ -99,12 +99,12 @@
         <div class="row mb-7">
           <div class="col-6 fv-plugins-icon-container">
             <!--begin::Label-->
-            <label data-location-form-target="conditional" class="fs-6 fw-bold mb-2 <%= @location&.manual_lat_long ? '' : 'text-muted'%>">Latitude</label>
+            <label data-location-form-target="conditional" class="forms--label mb-2 <%= @location&.manual_lat_long ? '' : 'text-muted'%>">Latitude</label>
             <!--end::Label-->
             <!--begin::Input-->
             <%= form.text_field :latitude,
                 name: "location[latitude]", 
-                class: "conditional form-control form-control-solid #{@location&.manual_lat_long ? '' : 'text-muted'}", 
+                class: "conditional form-control form-control-solid #{@location&.manual_lat_long ? '' : 'text-muted'} forms--text-input", 
                 readonly: !@location&.manual_lat_long, 
                 data: { "location-form-target" => "latitude", action: "input->location-form#onLatitudeChange" } 
             %>
@@ -114,12 +114,12 @@
 
           <div class="col-6 fv-plugins-icon-container">
             <!--begin::Label-->
-            <label data-location-form-target="conditional" class="fs-6 fw-bold mb-2 <%= @location&.manual_lat_long ? '' : 'text-muted' %>">Longitude</label>
+            <label data-location-form-target="conditional" class="forms--label mb-2 <%= @location&.manual_lat_long ? '' : 'text-muted' %>">Longitude</label>
             <!--end::Label-->
             <!--begin::Input-->
             <%= form.text_field :longitude, 
                 name: "location[longitude]",
-                class: "conditional form-control form-control-solid #{@location&.manual_lat_long ? '' : 'text-muted'}", 
+                class: "conditional form-control form-control-solid #{@location&.manual_lat_long ? '' : 'text-muted'} forms--text-input", 
                 readonly: !@location&.manual_lat_long, 
                 data: { "location-form-target" => "longitude", action: "input->location-form#onLongitudeChange" } 
             %>
@@ -131,20 +131,20 @@
         <div class="row mb-7">
           <div class="col-6 fv-plugins-icon-container">
             <!--begin::Label-->
-            <label class="fs-6 fw-bold mb-2 required">Expected Mbps Up</label>
+            <label class="forms--label mb-2 required">Expected Mbps Up</label>
             <!--end::Label-->
             <!--begin::Input-->
-            <%= form.text_field :expected_mbps_up, name: "location[expected_mbps_up]", class: "form-control form-control-solid", data: { "location-form-target" => "expectedUpload" } %>
+            <%= form.text_field :expected_mbps_up, name: "location[expected_mbps_up]", class: "form-control form-control-solid forms--text-input", data: { "location-form-target" => "expectedUpload" } %>
             <!--end::Input-->
             <div class="fv-plugins-message-container invalid-feedback"></div>
           </div>
 
           <div class="col-6 fv-plugins-icon-container">
             <!--begin::Label-->
-            <label class="fs-6 fw-bold mb-2 required">Expected Mbps Down</label>
+            <label class="forms--label mb-2 required">Expected Mbps Down</label>
             <!--end::Label-->
             <!--begin::Input-->
-            <%= form.text_field :expected_mbps_down, name: "location[expected_mbps_down]", class: "form-control form-control-solid", data: { "location-form-target" => "expectedDownload" }%>
+            <%= form.text_field :expected_mbps_down, name: "location[expected_mbps_down]", class: "form-control form-control-solid forms--text-input", data: { "location-form-target" => "expectedDownload" }%>
             <!--end::Input-->
             <div class="fv-plugins-message-container invalid-feedback"></div>
           </div>

@@ -70,10 +70,19 @@
   font-size: 0.85rem;
   color: $gray;
   font-variation-settings: 'wght' $medium;
+  padding: 5px;
+  border: none;
+
+  &.forms--input-decoration-clickable:hover {
+    cursor: pointer;
+    opacity: 0.75;
+  }
 }
 
 .forms--text-input-with-decoration {
   padding-right: 50px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }
 
 .forms--select {
