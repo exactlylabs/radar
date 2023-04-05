@@ -176,15 +176,6 @@ const MyMapModal = ({
           })
           .finally(() => setLoading(false));
       }
-      /*if (userData.address.coordinates.length === 0) {
-        setLoading(true);
-        fetchSuggestions()
-          .catch(err => {
-            if(isNoConnectionError(err)) setNoInternet(true);
-            notifyError(err);
-          })
-          .finally(() => setLoading(false));
-      }*/
     }
   }, [isOpen, userData.address?.coordinates]);
 
