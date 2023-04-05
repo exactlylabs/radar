@@ -1,22 +1,9 @@
 <div class="modal-dialog" style="position: relative; top: 20%; max-width: 620px">
     <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" style="font-size: 20px">Add Pod to <%= location.name %></h5>
-        <!--begin::Close-->
-        <a href="#">
-            <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
-                    <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
-                    <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
-                </svg>
-            </span>
-        </a>
-        <!--end::Close-->
-    </div>
+    <%= render partial: "application/components/modals/modal_header", locals: {title: "Add Pod to #{location.name}"} %>
 
     <div class="modal-body text-center d-flex flex-column justify-content-center align-items-center">
-        <div class="fw-bolder" style="font-size: 20px; color: #181c32">
+        <div class="modals--title">
             What would you like to do?
         </div>
         <div class="modal-body--options-container d-flex flex-column align-items-center justify-content-center w-75">
