@@ -1,69 +1,58 @@
 <div class="modal-dialog" style="position: relative; top: 20%; max-width: 620px" data-controller="add-client-to-location">
 	<div class="modal-content">
-		<div class="modal-header">
-			<h5 class="modal-title" style="font-size: 20px" id="add-pod-title">Add Pod to <%= location.name %></h5>
-			<!--begin::Close-->
-			<a href="#">
-				<span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-						<rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
-						<rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
-						<rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
-					</svg>
-				</span>
-			</a>
-			<!--end::Close-->
-		</div>
+		<div class="d-none m-0 p-0" id="add-pod-title" data-location-name="<%= location.name %>"></div>
+		<%= render partial: "application/components/modals/modal_header", locals: {title: "Add Pod to #{location.name}"} %>
 
-    <div class="modal-body d-flex flex-column justify-content-start">
+    <div class="modal-body modals--body d-flex flex-column justify-content-start">
 			<div class="fv-row mb-7 fv-plugins-icon-container">
-				<label class="required fs-6 fw-bold mb-1">Choose an existing Pod</label>
-				<select id="client_id"
-					class="form-select select2-hidden-accessible"
-					data-placeholder="Choose a Pod"
-					tabindex="-1"
-					data-controller="select2"
-					data-action="select2-select->add-client-to-location#checkClientLocation"
-					data-add-client-to-location-blanks-value="true"
-					data-add-client-to-location-id="add-client-to-location-data-client_id"
-					data-select2-custom-theme-value="custom-move-pod"
-					data-select2-dropdown-parent-value="add_pod_step_1_existing"
-					data-select2-custom-matcher-value="custom-pod-matcher"
-				>
-					<option value=""></option>
-					<% policy_scope(Client).each do |client| %>
-						<!-- using 'picked' attribute instead of reserved word 'selected' to prevent defaulting a value -->
-						<option value="<%= client.unix_user %>"
-							picked="false"
-							data-location-name="<%= client.location&.name %>"
-							data-location-id="<%= client.location&.id %>"
-							class="add-pod--custom-select-option"
-						>
-								<%= client.name.blank? ? "Unnamed Pod" : client.name %>
-						</option>
-					<% end %>
-				</select>
+				<label class="required forms--label mb-1">Choose an existing Pod</label>
+				<div class="input-group forms--input-group">
+					<select id="client_id"
+						class="form-select forms--select select2-hidden-accessible"
+						data-placeholder="Choose a Pod"
+						tabindex="-1"
+						data-controller="select2"
+						data-action="select2-select->add-client-to-location#checkClientLocation"
+						data-add-client-to-location-blanks-value="true"
+						data-add-client-to-location-id="add-client-to-location-data-client_id"
+						data-select2-custom-theme-value="custom-move-pod"
+						data-select2-dropdown-parent-value="add_pod_step_1_existing"
+						data-select2-custom-matcher-value="custom-pod-matcher"
+					>
+						<option value=""></option>
+						<% policy_scope(Client).each do |client| %>
+							<!-- using 'picked' attribute instead of reserved word 'selected' to prevent defaulting a value -->
+							<option value="<%= client.unix_user %>"
+								picked="false"
+								data-location-name="<%= client.location&.name %>"
+								data-location-id="<%= client.location&.id %>"
+								class="add-pod--custom-select-option"
+							>
+									<%= client.name.blank? ? "Unnamed Pod" : client.name %>
+							</option>
+						<% end %>
+					</select>
+				</div>
 				<div class="d-none d-flex flex-row justify-content-start mt-5 align-items-center"
 							id="warning-client-location"
-								style="border: dashed 1px #f89c47; height: 65px; width: 100%; border-radius: 6px; background-color: #fff9f4; padding-right: 15px">
-					<div style="width: 24px; height: 24px; margin-left: 15px; margin-right: 15px;">
-						<span class="svg-icon svg-icon-warning svg-icon-2x">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-								<rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="black"/>
-								<rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)" fill="black"/>
-								<rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)" fill="black"/>
-							</svg>
-						</span>
-					</div>
-					<div class="fw-bold" style="font-size: 14px;" id="warning-text">
+							style="border: dashed 1px #f89c47; height: 65px; width: 100%; border-radius: 6px; background-color: #fff9f4; padding-right: 15px"
+				>
+					<span class="svg-icon svg-icon-warning svg-icon-2hx me-3 ms-2">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+							<rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="black"/>
+							<rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)" fill="black"/>
+							<rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)" fill="black"/>
+						</svg>
+					</span>
+					<div class="warning-text" id="warning-text">
 					</div>
 				</div>
 			</div>
     </div>
 
-		<div class="modal-footer">
-			<button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-			<button id="change-name-button" class="btn btn-primary disabled" data-action="click->add-client-to-location#continueToChangeName">Move Pod</button>
+		<div class="modal-footer modals--footer">
+			<%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
+			<button id="change-name-button" class="custom-button custom-button--primary custom-button--sm disabled custom-button--disabled" data-action="click->add-client-to-location#continueToChangeName">Move Pod</button>
 		</div>
 	</div>
 </div>

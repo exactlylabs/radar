@@ -1,32 +1,19 @@
 <div class="modal-dialog" style="max-width: 620px; position: relative; top: 20%;" data-controller="add-client-to-location">
     <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" style="font-size: 20px">Add Pod to <%= location.name %></h5>
-        <!--begin::Close-->
-        <a href="#">
-            <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
-                    <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
-                    <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
-                </svg>
-            </span>
-        </a>
-        <!--end::Close-->
-    </div>
-
-    <div class="modal-body d-flex flex-column justify-content-start">
-        <div class="fv-row mb-7 fv-plugins-icon-container">
-            <label class="required fs-6 fw-bold mb-1">Would you like to update your Pod name?</label>
-            <input type="hidden" name="id" id="client-id" value="" data-add-client-to-location-target="clientIdInput"/>
-            <input type="hidden" name="location_id" id="location-id" value="" data-add-client-to-location-target="locationIdInput" />
-            <input name="name" id="client-name" type="text" class="form-control form-control-solid" placeholder="Insert new Pod name" value="" data-client-id="" data-add-client-to-location-target="clientNameInput"/>
+        <%= render partial: "application/components/modals/modal_header", locals: {title: "Add Pod to #{location.name}"} %>
+        
+        <div class="modal-body modals--body d-flex flex-column justify-content-start">
+            <div class="fv-row mb-7 fv-plugins-icon-container">
+                <label class="required forms--label mb-1">Would you like to update your Pod name?</label>
+                <input type="hidden" name="id" id="client-id" value="" data-add-client-to-location-target="clientIdInput"/>
+                <input type="hidden" name="location_id" id="location-id" value="" data-add-client-to-location-target="locationIdInput" />
+                <input name="name" id="client-name" type="text" class="forms--text-input form-control form-control-solid" placeholder="Insert new Pod name" value="" data-client-id="" data-add-client-to-location-target="clientNameInput"/>
+            </div>
         </div>
-    </div>
 
-    <div class="modal-footer">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" data-action="click->add-client-to-location#moveClient">Done</button>
-    </div>
+        <div class="modal-footer modals--footer">
+            <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
+            <button type="button" class="custom-button custom-button--primary custom-button--sm" data-action="click->add-client-to-location#moveClient">Done</button>
+        </div>
     </div>
 </div>

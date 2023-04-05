@@ -2,15 +2,15 @@
     <div class="modal-content">
     <%= render partial: "application/components/modals/modal_header", locals: {title: "Add Pod to #{location.name}"} %>
 
-    <div class="modal-body text-center d-flex flex-column justify-content-center align-items-center">
+    <div class="modal-body modals--body text-center d-flex flex-column justify-content-center align-items-center">
         <div class="modals--title">
             What would you like to do?
         </div>
-        <div class="modal-body--options-container d-flex flex-column align-items-center justify-content-center w-75">
+        <div class="modal-body--options-container d-flex flex-column align-items-center justify-content-center w-100">
             <div id="old-pod-option"
                  data-add-client-to-location-target="oldPodOption"
-                 class="option d-flex flex-row justify-content-start mb-5 mt-10 align-items-center" 
-                 style="height: 100px; width: 500px; border-radius: 6px;"
+                 class="option d-flex flex-row justify-content-start mb-5 mt-5 align-items-center" 
+                 style="height: 100px; max-width: 500px; width: 100%; border-radius: 6px;"
                  data-action="click->add-client-to-location#chooseMoveOption">
                 <div class="d-flex justify-content-center align-items-center" 
                      style="border-radius: 50%; background-color: #e4f2fc; margin-left: 25px; margin-right: 20px; height: 40px; width: 40px;">
@@ -22,14 +22,14 @@
                     </span>
                 </div>
                 <div class="text-start">
-                    <div class="fw-bolder" style="color: #181c32; font-size: 18px;">Move an existing Pod to this location</div>
-                    <div class="" style="color: #b5b5c3; font-size: 14px;">Choose an existing Pod to add to this location</div>
+                    <div class="card-main-title">Move an existing Pod to this location</div>
+                    <div class="additional-text">Choose an existing Pod to add to this location</div>
                 </div>
             </div>
             <div id="new-pod-option"
                  data-add-client-to-location-target="newPodOption"
                  class="option d-flex flex-row justify-content-start mb-10 align-items-center" 
-                 style="height: 100px; width: 500px; border-radius: 6px;"
+                 style="height: 100px; max-width: 500px; width: 100%; border-radius: 6px;"
                  data-action="click->add-client-to-location#chooseNewOption">
                 <div class="d-flex justify-content-center align-items-center" 
                      style="border-radius: 50%; background-color: #e4f2fc; margin-left: 25px; margin-right: 20px; height: 40px; width: 40px;">
@@ -41,16 +41,16 @@
                     </span>
                 </div>
                 <div class="text-start">
-                    <div class="fw-bolder" style="color: #181c32; font-size: 18px;">Set up a new Pod</div>
-                    <div class="" style="color: #b5b5c3; font-size: 14px;">Configure a new Pod to add to this location</div>
+                    <div class="card-main-title">Set up a new Pod</div>
+                    <div class="additional-text">Configure a new Pod to add to this location</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal-footer">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-        <button data-add-client-to-location-target="continueButton" id="continue-button" type="button" class="btn btn-primary disabled" data-action="click->add-client-to-location#continueToNextStep">Continue</button>
+    <div class="modal-footer modals--footer">
+        <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
+        <button data-add-client-to-location-target="continueButton" id="continue-button" type="button" class="custom-button custom-button--primary custom-button--sm disabled custom-button--disabled" data-action="click->add-client-to-location#continueToNextStep">Continue</button>
     </div>
     </div>
 </div>

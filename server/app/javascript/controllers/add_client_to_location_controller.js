@@ -30,9 +30,13 @@ export default class extends Controller {
     if (
       oldOptionButtonClassList.contains("clicked") ||
       newOptionButtonClassList.contains("clicked")
-    )
+    ) {
       this.continueButtonTarget.classList.remove("disabled");
-    else this.continueButtonTarget.classList.add("disabled");
+      this.continueButtonTarget.classList.remove("custom-button--disabled");
+    } else {
+      this.continueButtonTarget.classList.add("disabled");
+      this.continueButtonTarget.classList.add("custom-button--disabled");
+    }
   }
 
   chooseNewOption(e) {
@@ -44,9 +48,13 @@ export default class extends Controller {
     if (
       oldOptionButtonClassList.contains("clicked") ||
       newOptionButtonClassList.contains("clicked")
-    )
+    ) {
       this.continueButtonTarget.classList.remove("disabled");
-    else this.continueButtonTarget.classList.add("disabled");
+      this.continueButtonTarget.classList.remove("custom-button--disabled");
+    } else {
+      this.continueButtonTarget.classList.add("disabled");
+      this.continueButtonTarget.classList.add("custom-button--disabled");
+    }
   }
 
   continueToNextStep(e) {
@@ -129,6 +137,7 @@ export default class extends Controller {
     const currentClientSelectedId = e.target.value;
     if (!currentClientSelectedId) {
       document.querySelector("#change-name-button").classList.add("disabled");
+      document.querySelector("#change-name-button").classList.remove("custom-button--disabled");
       return;
     }
     const optionSelected = document.querySelector(
@@ -143,9 +152,7 @@ export default class extends Controller {
       .split("/")[0];
     const warningElement = document.querySelector("#warning-client-location");
     if (currentLocationId !== optionLocationId) {
-      const currentLocationName = document
-        .querySelector("#add-pod-title")
-        .innerText.split("Add Pod to ")[1];
+      const currentLocationName = document.querySelector("#add-pod-title").getAttribute('data-location-name');
       const warningText = document.querySelector("#warning-text");
       warningElement.classList.remove("d-none");
       warningText.innerText = `This Pod belongs to ${optionLocationName}. If you continue, it will be moved to ${currentLocationName}.`;
@@ -153,5 +160,6 @@ export default class extends Controller {
       warningElement.classList.add("d-none");
     }
     document.querySelector("#change-name-button").classList.remove("disabled");
+    document.querySelector("#change-name-button").classList.remove("custom-button--disabled");
   }
 }

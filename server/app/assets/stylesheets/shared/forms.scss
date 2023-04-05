@@ -2,11 +2,11 @@
 @import "text";
 
 .forms--label {
-  font-size: 0.875rem;
-  letter-spacing: 0;
-  color: $deep-blue;
-  font-variation-settings: 'wght' $bold;
-  margin-bottom: 0;
+  font-size: 0.875rem !important;
+  letter-spacing: 0 !important;
+  color: $deep-blue !important;
+  font-variation-settings: 'wght' $bold !important;
+  margin-bottom: 0 !important;
 }
 
 .forms--label-selected {
