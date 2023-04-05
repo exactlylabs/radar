@@ -48,7 +48,7 @@ module ClientApi
       end
 
       def user_coordinates
-        results = Geocoder.search("190.16.247.136")
+        results = Geocoder.search(request.ip)
         if results.first
           return render json: results.first.coordinates
         end
