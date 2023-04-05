@@ -14,15 +14,16 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "tablefunc"
 
   create_table "accounts", force: :cascade do |t|
     t.integer "account_type", default: 0, null: false
     t.string "name", null: false
     t.boolean "superaccount", default: false
     t.boolean "exportaccount", default: false
+    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "deleted_at"
     t.string "token"
   end
 
@@ -123,8 +124,6 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
     t.float "longitude"
     t.float "download_avg"
     t.float "upload_avg"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
     t.string "ip"
     t.string "token"
     t.string "download_id"
@@ -132,6 +131,8 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
     t.float "latency"
     t.float "loss"
     t.datetime "processed_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "address"
     t.string "network_location"
     t.string "city"
@@ -303,10 +304,9 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
-    t.boolean "manual_lat_long", default: false
-    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
+    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.float "download_avg"
@@ -389,6 +389,14 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
     t.index ["event_id"], name: "index_snapshots_on_event_id"
   end
 
+  create_table "study_counties", id: false, force: :cascade do |t|
+    t.string "state"
+    t.string "state_code"
+    t.string "county"
+    t.string "fips"
+    t.integer "pop_2021"
+  end
+
   create_table "update_groups", force: :cascade do |t|
     t.string "name"
     t.bigint "client_version_id"
@@ -424,10 +432,10 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
     t.bigint "account_id", null: false
     t.bigint "user_id", null: false
     t.datetime "joined_at", null: false
+    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
-    t.datetime "deleted_at"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
