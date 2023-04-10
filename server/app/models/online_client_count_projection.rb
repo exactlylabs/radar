@@ -7,8 +7,8 @@ class OnlineClientCountProjection < ApplicationRecord
     # Consumes from the event stream from the last offset
     consumer_offset = ConsumerOffset.find_or_create_by!(consumer_id: "OnlineClientCountProjection")
     events = Event.where(
-        "id > ? AND (aggregate_type = 'Client' OR aggregate_type = 'SystemOutage')", 
-        consumer_offset.offset
+        "id > ? AND (aggregate_type = ? OR aggregate_type = ?)", 
+        consumer_offset.offset, 'Client', 'SystemOutage'
     ).order('timestamp ASC, version ASC')
 
     events.each do |event|
@@ -99,7 +99,7 @@ class OnlineClientCountProjection < ApplicationRecord
             (state->>'autonomous_system_id')::bigint as autonomous_system_id
           FROM snapshots
           JOIN events ON snapshots.event_id = events.id
-          WHERE snapshots.aggregate_type = 'Client'
+          WHERE snapshots.aggregate_type = :client_aggregate_type
           AND timestamp < :start_time
           ORDER BY snapshots.aggregate_id, timestamp DESC
         ), state_right_before_ending AS (
@@ -111,7 +111,7 @@ class OnlineClientCountProjection < ApplicationRecord
             (state->>'autonomous_system_id')::bigint as autonomous_system_id
           FROM snapshots
           JOIN events ON snapshots.event_id = events.id
-          WHERE snapshots.aggregate_type = 'Client'
+          WHERE snapshots.aggregate_type = :client_aggregate_type
           AND timestamp < :end_time
           ORDER BY snapshots.aggregate_id, timestamp DESC
         )
@@ -131,7 +131,7 @@ class OnlineClientCountProjection < ApplicationRecord
         WHERE f.online != t.online
       }
       records = ActiveRecord::Base.connection.execute(
-        ApplicationRecord.sanitize_sql([sql, { start_time: outage["start_time"], end_time: outage["end_time"] }])
+        ApplicationRecord.sanitize_sql([sql, { start_time: outage["start_time"], end_time: outage["end_time"], client_aggregate_type: 'Client' }])
       )
       records.each do |record|
         if record["from_online"]
