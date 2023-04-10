@@ -100,7 +100,7 @@ module EventSourceable
         # event name could be a hash, mapping the value to the correct event name
         event_name = field_data[:event]
         if event_name.is_a?(Hash)
-          event_name = event_name[self.read_attribute(field_data[:field])]
+          event_name = event_name.fetch(self.read_attribute(field_data[:field]), event_name[:default])
         end
 
         evt = self.class.new_event(self, event_name, event_data, timestamp=t)

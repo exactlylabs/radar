@@ -9,6 +9,8 @@ include EventSourceable
     ADDRESS_CHANGED = "ADDRESS_CHANGED"
     LABEL_ADDED = "LABEL_ADDED"
     LABEL_REMOVED = "LABEL_REMOVED"
+    DELETED = "DELETED"
+    RESTORED = "RESTORED"
   end
 
 
@@ -16,6 +18,7 @@ include EventSourceable
   on_create applier: :apply_on_create, event_data: :event_data
   notify_change :name, Location::Events::NAME_CHANGED
   notify_change :address, Location::Events::ADDRESS_CHANGED
+  notify_change :deleted_at, {nil => Location::Events::RESTORED, :default => Location::Events::DELETED}
 
   validates :name, :address, presence: true
 
@@ -32,6 +35,8 @@ include EventSourceable
   has_one :client_count_aggregate, :as => :aggregator
 
   after_validation :custom_geocode, if: :lat_long_changed?
+
+  scope :not_deleted, -> { where(deleted_at: nil) }
 
   scope :where_online, -> { left_joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) >= 1") }
 
