@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_03_185326) do
+ActiveRecord::Schema.define(version: 2023_04_10_204444) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "postgis"
   enable_extension "tablefunc"
 
   create_table "accounts", force: :cascade do |t|
@@ -216,6 +217,7 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
   create_table "consumer_offsets", force: :cascade do |t|
     t.string "consumer_id"
     t.integer "offset", default: 0
+    t.jsonb "state", default: {}
     t.index ["consumer_id"], name: "index_consumer_offsets_on_consumer_id", unique: true
   end
 
@@ -277,20 +279,6 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
     t.index ["location_label_id"], name: "index_location_labels_locations_on_location_label_id"
   end
 
-  create_table "location_status_projections", force: :cascade do |t|
-    t.bigint "account_id"
-    t.bigint "autonomous_system_id"
-    t.bigint "location_id"
-    t.boolean "is_online", default: false
-    t.integer "count", default: 0
-    t.datetime "timestamp"
-    t.bigint "event_id"
-    t.index ["account_id"], name: "index_location_status_projections_on_account_id"
-    t.index ["autonomous_system_id"], name: "index_location_status_projections_on_autonomous_system_id"
-    t.index ["event_id"], name: "index_location_status_projections_on_event_id"
-    t.index ["location_id"], name: "index_location_status_projections_on_location_id"
-  end
-
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.string "address"
@@ -312,6 +300,7 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
     t.float "download_avg"
     t.float "upload_avg"
     t.bigint "location_group_id"
+    t.datetime "deleted_at"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
     t.index ["location_group_id"], name: "index_locations_on_location_group_id"
   end
@@ -362,7 +351,7 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
     t.integer "total_in_service", default: 0
     t.datetime "timestamp"
     t.bigint "event_id"
-    t.integer "increment"
+    t.integer "incr"
     t.index ["account_id"], name: "index_online_client_count_projections_on_account_id"
     t.index ["autonomous_system_id"], name: "index_online_client_count_projections_on_autonomous_system_id"
     t.index ["event_id"], name: "index_online_client_count_projections_on_event_id"
@@ -389,12 +378,28 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
     t.index ["event_id"], name: "index_snapshots_on_event_id"
   end
 
+  create_table "spatial_ref_sys", primary_key: "srid", id: :integer, default: nil, force: :cascade do |t|
+    t.string "auth_name", limit: 256
+    t.integer "auth_srid"
+    t.string "srtext", limit: 2048
+    t.string "proj4text", limit: 2048
+    t.check_constraint "(srid > 0) AND (srid <= 998999)", name: "spatial_ref_sys_srid_check"
+  end
+
   create_table "study_counties", id: false, force: :cascade do |t|
     t.string "state"
     t.string "state_code"
     t.string "county"
     t.string "fips"
     t.integer "pop_2021"
+  end
+
+  create_table "system_outages", force: :cascade do |t|
+    t.string "description"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "update_groups", force: :cascade do |t|
@@ -475,10 +480,6 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
   add_foreign_key "invites", "accounts"
   add_foreign_key "invites", "users"
   add_foreign_key "location_groups", "accounts"
-  add_foreign_key "location_status_projections", "accounts"
-  add_foreign_key "location_status_projections", "autonomous_systems"
-  add_foreign_key "location_status_projections", "events"
-  add_foreign_key "location_status_projections", "locations"
   add_foreign_key "locations", "accounts"
   add_foreign_key "locations", "location_groups"
   add_foreign_key "locations", "users", column: "created_by_id"
@@ -491,7 +492,6 @@ ActiveRecord::Schema.define(version: 2023_04_03_185326) do
   add_foreign_key "online_client_count_projections", "accounts"
   add_foreign_key "online_client_count_projections", "autonomous_systems"
   add_foreign_key "online_client_count_projections", "events"
-  add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "snapshots", "events"
   add_foreign_key "update_groups", "client_versions"
