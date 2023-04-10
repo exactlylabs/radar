@@ -36,7 +36,7 @@ include EventSourceable
 
   after_validation :custom_geocode, if: :lat_long_changed?
 
-  scope :not_deleted, -> { where(deleted_at: nil) }
+  default_scope { where(deleted_at: nil) }
 
   scope :where_online, -> { left_joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) >= 1") }
 
@@ -164,6 +164,14 @@ include EventSourceable
       end
     end
     tmp_file
+  end
+
+  def soft_delete
+    ActiveRecord::Base.transaction do
+      self.deleted_at = Time.now
+      self.save!
+      self.clients.update(location_id: nil)
+    end
   end
 
   private
