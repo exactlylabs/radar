@@ -23,15 +23,64 @@ const popupOptions = {
   offset: new Point(160, 215),
 }
 
+const emptyPopupOptions = {
+  keepInView: false,
+  closeButton: false,
+  maxWidth: 285,
+  maxHeight: 180,
+  offset: new Point(160, 150),
+}
+
+const halfPopupOptions = {
+  keepInView: false,
+  closeButton: false,
+  maxWidth: 285,
+  maxHeight: 200,
+  offset: new Point(160, 175),
+}
+
 const popupDivStyle = {
   width: 275,
   height: 220,
   position: 'relative',
 }
 
+const emptyPopupDivStyle = {
+  width: 275,
+  height: 140,
+  position: 'relative',
+}
+
+const halfPopupDivStyle = {
+  width: 275,
+  height: 180,
+  position: 'relative',
+}
+
 const popupHeaderStyle = {
   width: 'calc(100% - 30px)',
   height: 45,
+  backgroundColor: DEFAULT_MAP_POPUP_HEADER_BACKGROUND_COLOR,
+  borderTopLeftRadius: '12px',
+  borderTopRightRadius: '12px',
+  display: 'flex',
+  flexDirection: 'row',
+  paddingTop: 10,
+  paddingBottom: 10,
+  paddingLeft: 15,
+  paddingRight: 15,
+  borderBottom: 'solid 1px #e2e2e8',
+}
+
+const emptyPopupHeaderStyle = {
+  borderTopLeftRadius: '12px',
+  borderTopRightRadius: '12px',
+  height: 0,
+}
+
+const halfPopupHeaderStyle = {
+  width: 'calc(100% - 30px)',
+  height: 25,
   backgroundColor: DEFAULT_MAP_POPUP_HEADER_BACKGROUND_COLOR,
   borderTopLeftRadius: '12px',
   borderTopRightRadius: '12px',
@@ -66,6 +115,16 @@ const popupContentContainerStyle = {
   alignItems: 'center',
   width: '100%',
   marginTop: 15,
+}
+
+const halfPopupContentContainerStyle = {
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%',
+  marginTop: 7,
 }
 
 const addressTitleStyle = {
@@ -133,14 +192,52 @@ const MyPopup = ({
     return networkType.iconPopupSrc;
   }
 
+  const getCityStateText = () => {
+    if(!measurement.city && !measurement.state) return 'Not available';
+    else if(!measurement.city) return measurement.state;
+    else if(!measurement.state) return measurement.city;
+    else return `${measurement.city}, ${measurement.state}`;
+  }
+
+  const getPopupHeaderStyle = () => {
+    if(!measurement.street && !measurement.city && !measurement.state) return emptyPopupHeaderStyle;
+    if((!measurement.street && (measurement.city || measurement.state)) ||
+       (measurement.street && (!measurement.city && !measurement.state)))
+      return halfPopupHeaderStyle;
+    return popupHeaderStyle;
+  }
+
+  const getPopupDivStyle = () => {
+    if(!measurement.street && !measurement.city && !measurement.state) return emptyPopupDivStyle;
+    if((!measurement.street && (measurement.city || measurement.state)) ||
+      (measurement.street && (!measurement.city && !measurement.state)))
+      return halfPopupDivStyle;
+    return popupDivStyle;
+  }
+
+  const getPopupOptions = () => {
+    if(!measurement.street && !measurement.city && !measurement.state) return emptyPopupOptions;
+    if((!measurement.street && (measurement.city || measurement.state)) ||
+      (measurement.street && (!measurement.city && !measurement.state)))
+      return halfPopupOptions;
+    return popupOptions
+  }
+
+  const getPopupContentContainerStyle = () => {
+    if((!measurement.street && (measurement.city || measurement.state)) ||
+      (measurement.street && (!measurement.city && !measurement.state)))
+      return halfPopupContentContainerStyle;
+    return popupContentContainerStyle;
+  }
+
   return (
-    <Popup {...popupOptions}>
+    <Popup {...getPopupOptions()}>
       <div style={leftPointingArrowStyle}></div>
-      <div style={popupDivStyle}>
-        <div style={popupHeaderStyle}>
+      <div style={getPopupDivStyle()}>
+        <div style={getPopupHeaderStyle()}>
           <div style={{...popupHeaderAddressContainerStyle, width: getAvailableWidth()}}>
-            <div className={'speedtest--bold'} style={addressTitleStyle}>{measurement.street}</div>
-            <div style={addressSubtitleStyle}>{`${measurement.city}, ${measurement.state}`}</div>
+            { !!measurement.street && <div className={'speedtest--bold'} style={addressTitleStyle}>{measurement.street}</div> }
+            { (!!measurement.city || !!measurement.state) && <div style={addressSubtitleStyle}>{getCityStateText()}</div> }
           </div>
           {
             (measurement.network_type || measurement.network_location) &&
@@ -156,7 +253,7 @@ const MyPopup = ({
             </div>
           }
         </div>
-        <div style={popupContentContainerStyle}>
+        <div style={getPopupContentContainerStyle()}>
           <MyPopupGridItem icon={DownloadIcon}
                            title={'Download'}
                            value={measurement.download_avg ? measurement.download_avg.toFixed(2) : '-'}
