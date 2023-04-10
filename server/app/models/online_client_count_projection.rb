@@ -7,7 +7,7 @@ class OnlineClientCountProjection < ApplicationRecord
     # Consumes from the event stream from the last offset
     consumer_offset = ConsumerOffset.find_or_create_by!(consumer_id: "OnlineClientCountProjection")
     events = Event.where(
-        "id > ? AND aggregate_type IN ('Client', 'SystemOutage')", 
+        "id > ? AND (aggregate_type = 'Client' OR aggregate_type = 'SystemOutage')", 
         consumer_offset.offset
     ).order('timestamp ASC, version ASC')
 
