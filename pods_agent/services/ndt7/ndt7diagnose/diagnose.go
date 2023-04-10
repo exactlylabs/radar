@@ -52,12 +52,14 @@ func RunDiagnose() (*DiagnoseReport, error) {
 		u, err := url.Parse(testUrl)
 		if err != nil {
 			test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose Parse: %w", err)
+			report.ConnectionTests = append(report.ConnectionTests, test)
 			continue
 		}
 
 		conn, err := doConnect(ctx, u.String())
 		if err != nil {
 			test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose doConnect: %w", err)
+			report.ConnectionTests = append(report.ConnectionTests, test)
 			continue
 		}
 		conn.Close()
