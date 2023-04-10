@@ -41,29 +41,31 @@ func RunDiagnose() (*DiagnoseReport, error) {
 	}
 	report.Targets = targets
 	for _, target := range targets {
-		test := TargetConnectionTest{TargetMachine: target.Machine}
+		for _, testUrl := range target.URLs {
+			test := TargetConnectionTest{TargetMachine: target.Machine}
 
-		// from https://github.com/m-lab/ndt7-client-go/blob/main/ndt7.go#L184
-		// resource has the format scheme://downloadTestURL or scheme://uploadTestURL
-		// our tests use a `ws` scheme
-		testUrl := target.URLs["ws:///ndt/v7/download"]
-		test.SelectedURL = testUrl
+			// from https://github.com/m-lab/ndt7-client-go/blob/main/ndt7.go#L184
+			// resource has the format scheme://downloadTestURL or scheme://uploadTestURL
+			// our tests use a `ws` scheme
+			// testUrl := target.URLs["ws:///ndt/v7/download"]
+			test.SelectedURL = testUrl
 
-		u, err := url.Parse(testUrl)
-		if err != nil {
-			test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose Parse: %w", err).Error()
+			u, err := url.Parse(testUrl)
+			if err != nil {
+				test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose Parse: %w", err).Error()
+				report.ConnectionTests = append(report.ConnectionTests, test)
+				continue
+			}
+
+			conn, err := doConnect(ctx, u.String())
+			if err != nil {
+				test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose doConnect: %w", err).Error()
+				report.ConnectionTests = append(report.ConnectionTests, test)
+				continue
+			}
+			conn.Close()
 			report.ConnectionTests = append(report.ConnectionTests, test)
-			continue
 		}
-
-		conn, err := doConnect(ctx, u.String())
-		if err != nil {
-			test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose doConnect: %w", err).Error()
-			report.ConnectionTests = append(report.ConnectionTests, test)
-			continue
-		}
-		conn.Close()
-		report.ConnectionTests = append(report.ConnectionTests, test)
 	}
 	return report, nil
 }
