@@ -19,7 +19,7 @@ const clientName = "exactlylabs-radar-pods"
 type TargetConnectionTest struct {
 	TargetMachine string `json:"target_machine"`
 	SelectedURL   string `json:"selected_url"`
-	Error         error  `json:"error"`
+	Error         string `json:"error"`
 }
 
 type DiagnoseReport struct {
@@ -51,14 +51,14 @@ func RunDiagnose() (*DiagnoseReport, error) {
 
 		u, err := url.Parse(testUrl)
 		if err != nil {
-			test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose Parse: %w", err)
+			test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose Parse: %w", err).Error()
 			report.ConnectionTests = append(report.ConnectionTests, test)
 			continue
 		}
 
 		conn, err := doConnect(ctx, u.String())
 		if err != nil {
-			test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose doConnect: %w", err)
+			test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose doConnect: %w", err).Error()
 			report.ConnectionTests = append(report.ConnectionTests, test)
 			continue
 		}
