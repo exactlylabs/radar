@@ -70,7 +70,7 @@ class LocationsController < ApplicationController
 
   # DELETE /locations/1 or /locations/1.json
   def destroy
-    @location.update(deleted_at: Time.now)
+    @location.soft_delete
     respond_to do |format|
       format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }
       format.json { head :no_content }
