@@ -6,13 +6,12 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
-import 'package:client_mobile_app/core/background_fetch/app_state_handler.dart';
 import 'package:client_mobile_app/core/background_fetch/background_speed_test.dart';
 import 'package:client_mobile_app/core/dependency_injection/dependency_injection.dart' as DI;
 
 class BackgroundFetchHandler {
   @pragma('vm:entry-point')
-  static void backgroundFetchHeadlessTask(HeadlessTask task) async {
+  static void backgroundFetchHeadlessTask(HeadlessTask task) {
     String taskId = task.taskId;
     bool isTimeout = task.timeout;
     if (isTimeout) {
@@ -50,8 +49,6 @@ class BackgroundFetchHandler {
   }
 
   static Future<void> _setBackgroundFetchPlugin() async {
-    final appStateHandler = GetIt.I<AppStateHandler>();
-    appStateHandler.initState();
     final status = await _initPlatformState();
 
     if (status == BackgroundFetch.STATUS_RESTRICTED) {
@@ -75,7 +72,7 @@ class BackgroundFetchHandler {
         requiresDeviceIdle: false,
         requiredNetworkType: NetworkType.ANY,
       ),
-      (String taskId) async {
+      (String taskId) {
         if (taskId == _BACKGROUND_SPEED_TEST_ID) {
           final backgroundSpeedTest = BackgroundSpeedTest(
             restClient: GetIt.I<RestClient>(),
@@ -86,7 +83,7 @@ class BackgroundFetchHandler {
         }
         BackgroundFetch.finish(taskId);
       },
-      (String taskId) async {
+      (String taskId) {
         print("[BackgroundFetch] TASK TIMEOUT taskId: $taskId");
         BackgroundFetch.finish(taskId);
       },
