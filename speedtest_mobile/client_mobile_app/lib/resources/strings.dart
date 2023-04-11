@@ -91,13 +91,13 @@ class Strings {
   static const String acceptTermsTitle = 'Test your Internet speed';
   static const String acceptTermsSubtitle =
       'We’ll ask you a few questions to better understand where and how you’re connected so we can learn more about your current service.';
-  static const String enableWardriveModalTitle = 'Wardriving mode';
+  static const String enableWardriveModalTitle = 'Background mode';
   static const String enableWardriveModalSubtitle = 'Choose a time interval you want to run your speed tests on.';
-  static const String enableWardriveModalButtonLabel = 'Enable wardriving mode';
-  static const String appInfoDisableButtonLabel = 'Disable wardriving mode';
-  static const String appInfoEnableButtonLabel = 'Enable wardriving mode';
+  static const String enableWardriveModalButtonLabel = 'Enable background mode';
+  static const String appInfoDisableButtonLabel = 'Disable background mode';
+  static const String appInfoEnableButtonLabel = 'Enable background mode';
   static const String appInfoDescription =
-      'Wardriving mode keeps running speed tests at specific time intervals in the background.';
+      'Background mode keeps running speed tests at specific time intervals in the background.';
   static const String androidMinimumDelayError = 'Minimum time interval should be 1 min.';
   static const String iOSMinimumDelayError = 'Minimum time interval should be 15 mins.';
   static const String timeIntervalInputSufix = 'mins';

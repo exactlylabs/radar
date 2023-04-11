@@ -14,8 +14,10 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   SpeedTestCubit({
     required IResultsService resultsService,
     required LocalStorage localStorage,
+    required Connectivity connectivity,
   })  : _resultsService = resultsService,
         _localStorage = localStorage,
+        _connectivity = connectivity,
         super(const SpeedTestState()) {
     _listenConnectivityState();
     _setVersionAndBuildNumber();
@@ -23,6 +25,7 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   }
 
   final IResultsService _resultsService;
+  final Connectivity _connectivity;
   final LocalStorage _localStorage;
 
   bool isStepValid(int step) {
@@ -66,7 +69,11 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     emit(state.copyWith(isStepValid: isStepValid(state.step)));
   }
 
-  void resetForm() => emit(const SpeedTestState());
+  void resetForm() {
+    emit(SpeedTestState(networkType: state.networkType));
+  }
+
+  void resetCallbacks() => emit(state.resetCallbacks());
 
   void preferNotToAnswer() {
     if (state.step == NETWORK_LOCATION_STEP) {
@@ -144,7 +151,7 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   }
 
   Future<void> _listenConnectivityState() async {
-    Connectivity().onConnectivityChanged.listen(
+    _connectivity.onConnectivityChanged.listen(
       (connectivity) {
         if (connectivity == ConnectivityResult.wifi) {
           _setNetworkType(Strings.wifiConnectionType);

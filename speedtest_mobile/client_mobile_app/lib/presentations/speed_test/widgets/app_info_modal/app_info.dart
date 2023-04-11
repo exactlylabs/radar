@@ -72,7 +72,7 @@ class AppInfo extends StatelessWidget {
                       ? RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            text: 'Wardriving mode is ',
+                            text: 'Background mode is ',
                             style: AppTextStyle(
                               fontSize: 14.0,
                               fontWeight: 200,

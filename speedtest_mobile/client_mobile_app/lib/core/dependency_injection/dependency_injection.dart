@@ -1,5 +1,4 @@
 import 'package:get_it/get_it.dart';
-import 'package:ndt7_client/ndt7_client.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
@@ -10,15 +9,22 @@ import 'package:client_mobile_app/core/http_provider/implementation/dio_http_pro
 final sl = GetIt.instance;
 
 void registerDependencies(String baseUrl) {
-  sl.registerLazySingleton<LocalStorage>(() => LocalStorage());
+  if (!sl.isRegistered<LocalStorage>()) {
+    sl.registerLazySingleton<LocalStorage>(() => LocalStorage());
+  }
+  if (!sl.isRegistered<IHttpProvider>()) {
+    sl.registerLazySingleton<IHttpProvider>(() => DioHttpProvider());
+  }
 
-  sl.registerLazySingleton<IHttpProvider>(() => DioHttpProvider());
+  if (!sl.isRegistered<RestClient>()) {
+    sl.registerLazySingleton<RestClient>(() => RestClient(baseUrl: baseUrl));
+  }
 
-  sl.registerLazySingleton<RestClient>(() => RestClient(baseUrl: baseUrl));
+  if (!sl.isRegistered<NetworkConnectionInfo>()) {
+    sl.registerLazySingleton<NetworkConnectionInfo>(() => NetworkConnectionInfo());
+  }
 
-  sl.registerLazySingleton<Ndt7Client>(() => Ndt7Client());
-
-  sl.registerLazySingleton<NetworkConnectionInfo>(() => NetworkConnectionInfo());
-
-  sl.registerLazySingleton<AppStateHandler>(() => AppStateHandler());
+  if (!sl.isRegistered<AppStateHandler>()) {
+    sl.registerLazySingleton<AppStateHandler>(() => AppStateHandler());
+  }
 }
