@@ -50,7 +50,7 @@ class DioHttpProvider implements IHttpProvider {
   Future<Either<HttpProviderFailure, HttpResponseModel>> _dioCall(Future<Response> Function() call) async {
     try {
       final response = await call();
-      final decodedBody = response.data as String;
+      final decodedBody = (response.data != null) ? response.data as String : '';
       return Right(HttpResponseModel(statusCode: response.statusCode, body: decodedBody));
     } on DioError catch (dioError, stackTrace) {
       // The request was made and the server responded with a status code

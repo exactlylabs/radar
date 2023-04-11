@@ -42,12 +42,12 @@ class Data {
       };
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-        json['ElapsedTime'] as double,
+        json['ElapsedTime'] as int,
         json['NumBytes'] as int,
         json['MeanClientMbps'] as double,
       );
 
-  final double elapsedTime;
+  final int elapsedTime;
   final int numBytes;
   final double meanClientMbps;
 }

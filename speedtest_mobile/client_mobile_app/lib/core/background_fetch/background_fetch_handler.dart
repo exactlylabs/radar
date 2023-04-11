@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
-import 'package:ndt7_client/ndt7_client.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/background_fetch/app_state_handler.dart';
 import 'package:client_mobile_app/core/background_fetch/background_speed_test.dart';
+import 'package:client_mobile_app/core/dependency_injection/dependency_injection.dart' as DI;
 
 class BackgroundFetchHandler {
   @pragma('vm:entry-point')
@@ -22,10 +21,14 @@ class BackgroundFetchHandler {
       return;
     }
     if (taskId == _BACKGROUND_SPEED_TEST_ID) {
-      final body = {
-        'mode': 'headless',
-      };
-      Dio().post('https://17ac-45-239-131-5.ngrok.io/timestamps', data: body);
+      const url = String.fromEnvironment('BASE_URL', defaultValue: '');
+      DI.registerDependencies(url);
+      final backgroundSpeedTest = BackgroundSpeedTest(
+        restClient: GetIt.I<RestClient>(),
+        httpProvider: GetIt.I<IHttpProvider>(),
+        networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
+      );
+      backgroundSpeedTest.startSpeedTest();
     }
     BackgroundFetch.finish(taskId);
   }
@@ -75,11 +78,10 @@ class BackgroundFetchHandler {
       (String taskId) async {
         if (taskId == _BACKGROUND_SPEED_TEST_ID) {
           final backgroundSpeedTest = BackgroundSpeedTest(
-              ndt7client: GetIt.I<Ndt7Client>(),
-              restClient: GetIt.I<RestClient>(),
-              httpProvider: GetIt.I<IHttpProvider>(),
-              networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
-              mode: 'foreground');
+            restClient: GetIt.I<RestClient>(),
+            httpProvider: GetIt.I<IHttpProvider>(),
+            networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
+          );
           backgroundSpeedTest.startSpeedTest();
         }
         BackgroundFetch.finish(taskId);

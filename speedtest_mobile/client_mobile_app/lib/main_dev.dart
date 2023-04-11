@@ -1,5 +1,4 @@
 import 'package:get_it/get_it.dart';
-import 'package:ndt7_client/ndt7_client.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/app.dart';
 import 'package:client_mobile_app/main_common.dart';
@@ -21,7 +20,6 @@ void main() async {
       restClient: GetIt.I<RestClient>(),
       localStorage: GetIt.I<LocalStorage>(),
       httpProvider: GetIt.I<IHttpProvider>(),
-      ndt7client: GetIt.I<Ndt7Client>(),
       networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
     ),
   );

@@ -50,9 +50,6 @@ class TakeSpeedTestStep extends StatelessWidget {
                 latency: state.latency,
                 isDownloadTest: state.isTestingDownloadSpeed,
                 progress: state.isTestingDownloadSpeed ? state.downloadProgress : state.uploadProgress,
-                onTestComplete: context.read<TakeSpeedTestStepCubit>().onTestComplete,
-                onTestMeasurement: context.read<TakeSpeedTestStepCubit>().onTestMeasurement,
-                onTestError: context.read<TakeSpeedTestStepCubit>().onTestError,
               );
             } else if (state.finishedTesting) {
               return TestResultsStep(

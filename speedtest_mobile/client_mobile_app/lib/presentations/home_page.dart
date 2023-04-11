@@ -6,6 +6,7 @@ import 'package:client_mobile_app/presentations/home_page_body.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
 import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
+import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
 
 class HomePage extends StatelessWidget {
@@ -62,6 +63,9 @@ class HomePage extends StatelessWidget {
                 onTap: (index) {
                   if (index != NavigationCubit.MAP_INDEX || InheritedConnectivityStatus.of(context).isConnected) {
                     context.read<NavigationCubit>().changeTab(index);
+                    if (index == NavigationCubit.SPEED_TEST_INDEX) {
+                      context.read<SpeedTestCubit>().resetCallbacks();
+                    }
                   } else {
                     openNoInternetConnectionModal(context, () => context.read<NavigationCubit>().changeTab(index));
                   }
