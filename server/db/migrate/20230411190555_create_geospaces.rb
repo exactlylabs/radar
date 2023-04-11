@@ -9,9 +9,9 @@ class CreateGeospaces < ActiveRecord::Migration[6.1]
       t.timestamps
     end
     add_column :locations, :lonlat, :st_point, geographic: true
-    Location.all.each do |location|
-      location.lonlat = "POINT(#{location.longitude} #{location.latitude})"
-      location.save!
+    create_join_table :geospaces, :locations do |t|
+      t.index :geospace_id
+      t.index :location_id
     end
   end
 end

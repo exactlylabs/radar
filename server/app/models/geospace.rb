@@ -1,9 +1,10 @@
 class Geospace < ApplicationRecord
-  scope :where_county, -> { where(namespace: "county") }
-  scope :where_census_place, -> { where(namespace: "census_place") }
-  scope :with_locations, -> { joins("JOIN locations ON ST_INTERSECTS(ST_SetSRID(locations.lonlat, 4326)::geometry, ST_SetSRID(geospaces.geom, 4326)::geometry)")}
+  has_and_belongs_to_many :geospaces
 
-  def locations
-    Location.with_geospaces.where("geospaces.id = ?", self.id)
-  end
+  scope :states, -> { where(namespace: "state") }
+  scope :counties, -> { where(namespace: "county") }
+  scope :census_places, -> { where(namespace: "census_place") }
+
+  scope :containing_lonlat, -> (lonlat) { where("ST_Contains(ST_SetSRID(geom, 4326), ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326))") }
+  scope :excluding_lonlat, -> (lonlat) { where("NOT ST_Contains(ST_SetSRID(geom, 4326), ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326))") }
 end
