@@ -1,11 +1,6 @@
-# Inheriting from ActionController::Base as this entire controller
-# lives outside the regular authentication flow as it is meant for
-# public access
-class PublicPodController < ActionController::Base
+class PublicPodController < PublicApplicationController
 
   before_action :set_client, only: [:setup, :status]
-
-  layout "public"
 
   def index
   end

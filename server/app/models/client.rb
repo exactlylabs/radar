@@ -639,6 +639,10 @@ class Client < ApplicationRecord
     end
   end
 
+  def request_test!
+    self.update(test_requested: true)
+  end
+
   private
 
   def create_ids
