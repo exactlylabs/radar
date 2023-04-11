@@ -4,7 +4,7 @@ module ClientApi
       def create
         @speed_test = ClientSpeedTest.new speed_test_params
         @speed_test.connection_data = params[:connection_data]
-        @speed_test.tested_by = @widget_client.id
+        @speed_test.tested_by = params[:client_id]
         filename = "speed-test-#{params[:timestamp]}.json"
         json_content = params[:result].to_json
         @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: "application/json")
