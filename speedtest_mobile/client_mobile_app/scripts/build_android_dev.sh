@@ -5,12 +5,12 @@
 #############################################
 set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
+BASE_URL=${BASE_URL:-https://radar-staging.exactlylabs.com}
 WORKSPACE=${SCRIPT_DIR}/../workspace
 APPDIR=${SCRIPT_DIR}/..
 
 BUILD=$(date +%s)
-( cd ${APPDIR} && flutter build appbundle --build-number ${BUILD} --release --flavor dev -t lib/main_dev.dart )
+( cd ${APPDIR} && flutter build appbundle --build-number ${BUILD} --release --flavor dev -t lib/main_dev.dart --dart-define=BASE_URL=$BASE_URL )
 
 mkdir -p ${WORKSPACE}/android/dev
 
