@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
@@ -33,7 +32,6 @@ class MethodChannelNdt7Client extends Ndt7ClientPlatform {
         return ServerResponse.fromJson(jsonResponse);
       } else {
         return ClientResponse.fromJson(jsonResponse);
-        ;
       }
     });
   }
