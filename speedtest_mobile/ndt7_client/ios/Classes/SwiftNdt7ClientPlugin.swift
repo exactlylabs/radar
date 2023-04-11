@@ -1,13 +1,11 @@
 import Flutter
 import UIKit
 import NDT7
-import WebKit
 
 public class SwiftNdt7ClientPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     
     private var eventSink: FlutterEventSink?
     private var ndt7Test: NDT7Test?
-    private var webviewController: WebViewController?
     
     
     public override init() {
@@ -28,8 +26,7 @@ public class SwiftNdt7ClientPlugin: NSObject, FlutterPlugin, FlutterStreamHandle
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch(call.method) {
         case "startDownloadTest":
-            let dir = call.arguments as! String
-            result(openWebview(dir: dir))
+            result(startDownloadTest())
         case "startUploadTest":
             result(startUploadTest())
             break
@@ -39,14 +36,6 @@ public class SwiftNdt7ClientPlugin: NSObject, FlutterPlugin, FlutterStreamHandle
         default:
             break
         }
-    }
-    
-    private func openWebview(dir: String) -> FlutterError? {
-        webviewController = WebViewController(dir: dir)
-        let navigationController = UINavigationController(rootViewController: webviewController!)
-        navigationController.modalPresentationStyle = .fullScreen
-        UIApplication.shared.keyWindow?.rootViewController?.present(navigationController, animated: true, completion: nil)
-        return nil
     }
     
     private func startDownloadTest() -> FlutterError? {

@@ -90,9 +90,6 @@ flutter:
     - assets/images/3.0x/
     - assets/icons/
     - assets/icons/2.0x/
-    - assets/icons/3.0x/
-    - assets/files/
-    - assets/files/src/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

@@ -2,34 +2,24 @@ import 'package:ndt7_client/models/ndt7_response.dart';
 
 class ClientResponse implements NDT7Response {
   const ClientResponse(
-    this.data,
-    this.source,
-    this.testType,
+    this.appInfo,
+    this.origin,
+    this.test,
   );
 
-  @override
-  Map<String, dynamic> toJson() => {
-        'Data': data.toJson(),
-        'Source': source,
-        'TestType': testType,
-      };
-
-  factory ClientResponse.fromJson(String testType, Map<String, dynamic> json) => ClientResponse(
-        Data.fromJson(json['Data'] as Map<String, dynamic>),
-        json['Source'] as String,
-        testType,
+  factory ClientResponse.fromJson(Map<String, dynamic> json) => ClientResponse(
+        AppInfo.fromJson(json['AppInfo'] as Map<String, dynamic>),
+        json['Origin'] as String,
+        json['Test'] as String,
       );
 
-  @override
-  String toString() => 'ClientResponse: ${toJson()}';
-
-  final Data data;
-  final String source;
-  final String testType;
+  final AppInfo appInfo;
+  final String origin;
+  final String test;
 }
 
-class Data {
-  Data(
+class AppInfo {
+  AppInfo(
     this.elapsedTime,
     this.numBytes,
     this.meanClientMbps,
@@ -41,11 +31,19 @@ class Data {
         'MeanClientMbps': meanClientMbps,
       };
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory AppInfo.fromJson(Map<String, dynamic> json) => AppInfo(
         json['ElapsedTime'] as int,
         json['NumBytes'] as int,
-        json['MeanClientMbps'] as double,
+        _meanMbps(json['ElapsedTime'] as int, json['NumBytes'] as int),
       );
+
+  static double _meanMbps(int elapsedTime, int numBytes) {
+    final time = elapsedTime / 1e6;
+    double speed = numBytes / time;
+    speed *= 8;
+    speed /= 1e6;
+    return speed;
+  }
 
   final int elapsedTime;
   final int numBytes;
