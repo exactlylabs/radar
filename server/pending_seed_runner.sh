@@ -5,5 +5,3 @@
 # running the seed files more than once.
 # This script must be run from the root directory.
 # Whenever we add a new seed file, we need this file to get updated as well
-
-rails runner db/custom_seeds/seed_fill_update_group_events.rb
