@@ -8,16 +8,16 @@ class OnlineClientCountProjection < ApplicationRecord
     consumer_offset = ConsumerOffset.find_or_create_by!(consumer_id: "OnlineClientCountProjection")
     events = Event.where(
         "id > ? AND (aggregate_type = ? OR aggregate_type = ?)", 
-        consumer_offset.offset, 'Client', 'SystemOutage'
+        consumer_offset.offset, Client.name, SystemOutage.name
     ).order('timestamp ASC, version ASC')
 
     events.each do |event|
       
         OnlineClientCountProjection.transaction do 
           begin
-            if event.aggregate_type == 'Client'
+            if event.aggregate_type == Client.name
               self.handle_client_event! event
-            elsif event.aggregate_type == 'SystemOutage'
+            elsif event.aggregate_type == SystemOutage.name
               self.handle_system_outage_event! event
             end
           rescue ActiveRecord::InvalidForeignKey
@@ -131,7 +131,13 @@ class OnlineClientCountProjection < ApplicationRecord
         WHERE f.online != t.online
       }
       records = ActiveRecord::Base.connection.execute(
-        ApplicationRecord.sanitize_sql([sql, { start_time: outage["start_time"], end_time: outage["end_time"], client_aggregate_type: 'Client' }])
+        ApplicationRecord.sanitize_sql(
+          [sql, {
+             start_time: outage["start_time"], 
+             end_time: outage["end_time"], 
+             client_aggregate_type: Client.name
+          }]
+        )
       )
       records.each do |record|
         if record["from_online"]
