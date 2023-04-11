@@ -25,7 +25,7 @@ development:
   <<: *default
   database: radar_development
   <% if ENV["DATABASE_URL"].present? %> 
-  url: <%= ENV["DATABASE_URL"] %>
+  url: <%= ENV["DATABASE_URL"].sub(/^postgres/, "postgis") %>
   <% end %>
 
   # The specified database role being used to connect to postgres.

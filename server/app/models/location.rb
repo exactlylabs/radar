@@ -32,8 +32,10 @@ include EventSourceable
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
   has_one :client_count_aggregate, :as => :aggregator
+  has_and_belongs_to_many :geospaces
 
   after_validation :custom_geocode, if: :lat_long_changed?
+  after_save :link_to_geospaces
 
   default_scope { where(deleted_at: nil) }
   scope :with_deleted, -> { unscope(where: :deleted_at) }
@@ -175,10 +177,6 @@ include EventSourceable
     end
   end
   
-  def geospaces
-    Geospace.with_locations.where("locations.id = ?", self.id)
-  end
-
   private
 
   def custom_geocode
@@ -199,5 +197,15 @@ include EventSourceable
     end
   end
 
+  def link_to_geospaces
+    if saved_change_to_lonlat? && self.lonlat
+      self.geospaces.excluding_lonlat(self.lonlat).each do |geospace|
+        self.geospaces.delete geospace
+      end
+      Geospace.containing_lonlat(self.lonlat).each do |geospace|
+        self.geospaces << geospace unless self.geospaces.include? geospace
+      end
+    end
+  end
 
 end

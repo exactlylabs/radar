@@ -54,3 +54,9 @@ end
 
 url="https://www2.census.gov/geo/tiger/TIGER2022/COUNTY/tl_2022_us_county.zip"
 import_from_url("tl_2022_us_county", "county", url)
+
+
+# States
+
+url="https://www2.census.gov/geo/tiger/TIGER2022/STATE/tl_2022_us_state.zip"
+import_from_url("tl_2022_us_state", "state", url)
