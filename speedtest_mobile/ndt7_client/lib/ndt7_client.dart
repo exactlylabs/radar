@@ -11,8 +11,8 @@ import 'ndt7_client_platform_interface.dart';
 class Ndt7Client {
   Stream<NDT7Response?> get data => Ndt7ClientPlatform.instance.data;
 
-  Future<void> startDownloadTest(String dir) {
-    return Ndt7ClientPlatform.instance.startDownloadTest(dir);
+  Future<void> startDownloadTest() {
+    return Ndt7ClientPlatform.instance.startDownloadTest();
   }
 
   Future<void> startUploadTest() {

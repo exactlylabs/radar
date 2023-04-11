@@ -4,6 +4,9 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
+import 'package:ndt7_client/models/client_response.dart';
+import 'package:ndt7_client/models/server_response.dart';
+import 'package:ndt7_client/models/test_completed_event.dart';
 import 'ndt7_client_platform_interface.dart';
 import 'package:ndt7_client/models/ndt7_response.dart';
 
@@ -25,21 +28,20 @@ class MethodChannelNdt7Client extends Ndt7ClientPlatform {
     return ndt7Result.map((dynamic event) {
       final jsonResponse = jsonDecode(event) as Map<String, dynamic>;
       if (jsonResponse.length == 1 && jsonResponse.containsKey('test')) {
-        // return TestCompletedEvent.fromJson(jsonResponse);
-      } else if (jsonResponse['Source'] == 'server') {
-        // return ServerResponse.fromJson(jsonResponse);
-      } else if (jsonResponse['Source'] == 'client') {
-        // return ClientResponse.fromJson(jsonResponse);
+        return TestCompletedEvent.fromJson(jsonResponse);
+      } else if (jsonResponse.containsKey('TCPInfo')) {
+        return ServerResponse.fromJson(jsonResponse);
       } else {
-        return null;
+        return ClientResponse.fromJson(jsonResponse);
+        ;
       }
     });
   }
 
   @override
-  Future<void> startDownloadTest(String dir) async {
+  Future<void> startDownloadTest() async {
     ndt7Result = eventChannel.receiveBroadcastStream();
-    await methodChannel.invokeMethod('startDownloadTest', dir);
+    await methodChannel.invokeMethod('startDownloadTest');
   }
 
   @override

@@ -6,7 +6,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockNdt7ClientPlatform with MockPlatformInterfaceMixin implements Ndt7ClientPlatform {
   @override
-  Future<void> startDownloadTest(String dir) {
+  Future<void> startDownloadTest() {
     // TODO: implement startDownloadTest
     throw UnimplementedError();
   }

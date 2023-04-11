@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -35,6 +33,7 @@ class _MyAppState extends State<MyApp> {
     try {
       // platformVersion = await _ndt7ClientPlugin.getPlatformVersion() ?? 'Unknown platform version';
       platformVersion = 'Unknown platform version';
+      await _ndt7ClientPlugin.startDownloadTest();
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
