@@ -115,11 +115,14 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
     return null;
   }
 
-  double _calculteProgress(int bytesSent) {
+  double _calculteProgress(int bytes) {
+    const int maxDownloadBytes = 125000000;
+    const int maxUploadBytes = 35190155;
+    const double maxProgress = 1.0;
     if (state.isTestingDownloadSpeed) {
-      return bytesSent >= 125000000 ? 1 : bytesSent / 125000000;
+      return bytes >= maxDownloadBytes ? maxProgress : bytes / maxDownloadBytes;
     } else if (state.isTestingUploadSpeed) {
-      return bytesSent >= 35190155 ? 1 : bytesSent / 35190155;
+      return bytes >= maxUploadBytes ? maxProgress : bytes / maxUploadBytes;
     }
     return 0;
   }
