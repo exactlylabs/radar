@@ -44,11 +44,7 @@ module ClientApi
       end
 
       def set_client
-        if params[:client_id]
-          @widget_client = WidgetClient.find(params[:client_id])
-        else
-          @widget_client = WidgetClient.find_by_client_name('ExactlyLabs') # Default ExactlyLabs client
-        end
+        @widget_client = WidgetClient.find_by_client_name('ExactlyLabs') # Default ExactlyLabs client
         unless @widget_client
           raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:client_id]}", WidgetClient.name, params[:client_id])
         end
