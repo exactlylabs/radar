@@ -135,6 +135,14 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'users_account/shared', to: 'users_account#shared'
+
+  resources :shared_users_accounts do
+    collection do
+      post 'delegate', to: 'shared_users_account#delegate_access'
+    end
+  end
+
   resources :users_account do
   end
 

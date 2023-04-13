@@ -112,6 +112,10 @@
                       <% current_user.accounts.not_deleted.order("LOWER(name)").each do |account| %>
                         <%= render partial: "accounts/sidebar_account_item", locals: { account: account } %>
                       <% end %>
+                      <p>Shared</p>
+                      <% current_account.shared_accounts.not_deleted.order("LOWER(name)").each do |account| %>
+                        <%= render partial: "accounts/sidebar_account_item", locals: { account: account } %>
+                      <% end %>
                       <button type="button"
                               class="sidebar--account-add-button"
                               data-bs-toggle="modal"
@@ -215,7 +219,7 @@
                           </span>
                           <!--end::Svg Icon-->
                         </span>
-                        <span class="menu-title">Users</span>
+                        <span class="menu-title">Users & Sharing</span>
                       </a>
                     </div>
                   <% end %>
