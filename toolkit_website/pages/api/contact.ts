@@ -1,4 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
+import Cors from 'cors';
 
 interface IDiscordBody {
   embeds: any[];
@@ -19,9 +20,24 @@ enum MailReply {
   ERROR = 'Unexpected error'
 }
 
+const cors = Cors({ origin: false });
+
+// https://nextjs.org/docs/api-routes/request-helpers
+const corsMiddleware = async (req: NextApiRequest, res: NextApiResponse, fn: Function) => {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result: any) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
+    })
+  })
+}
+
 // eslint-disable-next-line
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
+    await corsMiddleware(req, res, cors);
     const body: IMailBody = JSON.parse(req.body);
     if (!body || !body.name || !body.email)
       return res.status(400).json({msg: MailReply.BAD_REQUEST, status: 400});
