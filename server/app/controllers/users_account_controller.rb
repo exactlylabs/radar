@@ -11,6 +11,12 @@ class UsersAccountController < ApplicationController
     end
   end
 
+  def shared
+    respond_to do |format|
+      format.html { render "users/shared" }
+    end
+  end
+
   def show
     entity_type = params[:type]
     if entity_type == 'UsersAccount'

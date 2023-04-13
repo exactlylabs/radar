@@ -1,0 +1,57 @@
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="text-dark fw-bolder my-1 fs-2">Users
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <!--end::Title-->
+      <!--begin::Breadcrumb-->
+      <ul class="breadcrumb fw-bold fs-base my-1">
+        <li class="breadcrumb-item text-muted"><%= current_account.name %>
+          <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
+        </li>
+        <li class="breadcrumb-item text-muted">Users</li>
+      </ul>
+      <!--end::Breadcrumb-->
+    </div>
+    <!--end::Info-->
+  </div>
+</div>
+<!--end::Toolbar-->
+<div class="post fs-6 d-flex flex-column" id="kt_post">
+  <div class="container-fluid">
+    <div class="card">
+      <!--begin::Card body-->
+      <div class="card-body pt-8 px-6 d-flex flex-column">
+        <p style="color: #6d6a94; font-size: 14px; max-width: 630px;">Account Sharing allows you to delegate access to your account to everyone from another account. Members will inherit their roles when accessing the shared account.</p>
+        <%= form_with url: delegate_shared_users_accounts_path, method: :post do |form| %>
+          <div class="fv-row mb-5 fv-plugins-icon-container">
+            <label class="required fs-6 fw-bold mb-2">Share account with...</label>
+            <div class="d-flex flex-row justify-content-between align-items-center w-100">
+              <div class="input-group" style="width: 50%">
+                <select id=""
+                        class="form-select select2-hidden-accessible"
+                        data-placeholder="Do not share"
+                        tabindex="-1"
+                        data-controller="select2"
+                        style="background-color: #f5f8fa;"
+                        multiple="true"
+                        name="share_to[]"
+                >
+                  <% policy_scope(Account).not_deleted.each do |account| %>
+                    <option value="<%= account.id %>"  label="<%= account.name %>"><%= account.name %></option>
+                  <% end %>
+                </select>
+              </div>
+            </div>
+          <% end %>
+          <p class="mt-1 mb-10" style="color: #6d6a94; font-size: 13px;"><%= current_account.name %> is not shared with anyone else.</p>
+          <button type="submit" class="btn btn-primary w-25">Save settings</button>
+        </form>
+      </div>
+      <!--end::Card body-->
+    </div>
+  </div>
+</div>

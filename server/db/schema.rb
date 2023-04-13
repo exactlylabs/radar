@@ -14,17 +14,15 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "postgis"
-  enable_extension "tablefunc"
 
   create_table "accounts", force: :cascade do |t|
     t.integer "account_type", default: 0, null: false
     t.string "name", null: false
     t.boolean "superaccount", default: false
     t.boolean "exportaccount", default: false
-    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
     t.string "token"
   end
 
@@ -132,6 +130,8 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.float "longitude"
     t.float "download_avg"
     t.float "upload_avg"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "ip"
     t.string "token"
     t.string "download_id"
@@ -139,8 +139,6 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.float "latency"
     t.float "loss"
     t.datetime "processed_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
     t.string "address"
     t.string "network_location"
     t.string "city"
@@ -325,9 +323,9 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
+    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
-    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.float "download_avg"
@@ -403,6 +401,19 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.index ["client_version_id"], name: "index_packages_on_client_version_id"
   end
 
+  create_table "shared_users_accounts", force: :cascade do |t|
+    t.bigint "original_account_id", null: false
+    t.bigint "shared_to_account_id", null: false
+    t.bigint "shared_to_user_id", null: false
+    t.datetime "deleted_at"
+    t.datetime "shared_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["original_account_id"], name: "index_shared_users_accounts_on_original_account_id"
+    t.index ["shared_to_account_id"], name: "index_shared_users_accounts_on_shared_to_account_id"
+    t.index ["shared_to_user_id"], name: "index_shared_users_accounts_on_shared_to_user_id"
+  end
+
   create_table "snapshots", force: :cascade do |t|
     t.bigint "event_id"
     t.string "aggregate_type"
@@ -412,76 +423,6 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["aggregate_type", "aggregate_id"], name: "index_snapshots_on_aggregate"
     t.index ["event_id"], name: "index_snapshots_on_event_id"
-  end
-
-  create_table "study_aggregates", force: :cascade do |t|
-    t.string "name"
-    t.bigint "parent_aggregate_id"
-    t.bigint "geospace_id"
-    t.bigint "autonomous_system_org_id"
-    t.string "level"
-    t.boolean "study_aggregate", default: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["autonomous_system_org_id"], name: "index_study_aggregates_on_autonomous_system_org_id"
-    t.index ["geospace_id"], name: "index_study_aggregates_on_geospace_id"
-    t.index ["parent_aggregate_id"], name: "index_study_aggregates_on_parent_aggregate_id"
-  end
-
-  create_table "study_counties", id: false, force: :cascade do |t|
-    t.string "state"
-    t.string "state_code"
-    t.string "county"
-    t.string "fips"
-    t.integer "pop_2021"
-  end
-
-  create_table "study_level_measurements_projections", force: :cascade do |t|
-    t.datetime "timestamp"
-    t.bigint "parent_aggregate_id"
-    t.bigint "study_aggregate_id"
-    t.bigint "autonomous_system_org_id"
-    t.bigint "location_id"
-    t.bigint "measurement_id"
-    t.string "level"
-    t.integer "tests_count", default: 0
-    t.index ["autonomous_system_org_id"], name: "idx_meas_proj_as_org_id"
-    t.index ["location_id"], name: "index_study_level_measurements_projections_on_location_id"
-    t.index ["measurement_id"], name: "index_study_level_measurements_projections_on_measurement_id"
-    t.index ["parent_aggregate_id"], name: "idx_meas_proj_parrent_agg_id"
-    t.index ["study_aggregate_id"], name: "idx_meas_proj_study_agg_id"
-  end
-
-  create_table "study_level_projections", force: :cascade do |t|
-    t.datetime "timestamp"
-    t.bigint "parent_aggregate_id"
-    t.bigint "study_aggregate_id"
-    t.bigint "autonomous_system_org_id"
-    t.bigint "location_id"
-    t.bigint "event_id"
-    t.bigint "measurement_id"
-    t.bigint "client_speed_test_id"
-    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
-    t.string "level"
-    t.integer "online_count", default: 0
-    t.integer "incr", default: 0
-    t.boolean "location_online", default: false
-    t.integer "location_online_incr", default: 0
-    t.integer "measurement_count", default: 0
-    t.integer "measurement_incr", default: 0
-    t.integer "points_with_tests_count", default: 0
-    t.integer "points_with_tests_incr", default: 0
-    t.integer "days_online_count", default: 0
-    t.integer "completed_locations_count", default: 0
-    t.integer "completed_locations_incr", default: 0
-    t.boolean "location_completed", default: false
-    t.index ["autonomous_system_org_id"], name: "index_study_level_projections_on_autonomous_system_org_id"
-    t.index ["client_speed_test_id"], name: "index_study_level_projections_on_client_speed_test_id"
-    t.index ["event_id"], name: "index_study_level_projections_on_event_id"
-    t.index ["location_id"], name: "index_study_level_projections_on_location_id"
-    t.index ["measurement_id"], name: "index_study_level_projections_on_measurement_id"
-    t.index ["parent_aggregate_id"], name: "index_study_level_projections_on_parent_aggregate_id"
-    t.index ["study_aggregate_id"], name: "index_study_level_projections_on_study_aggregate_id"
   end
 
   create_table "system_outages", force: :cascade do |t|
@@ -539,10 +480,10 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.bigint "account_id", null: false
     t.bigint "user_id", null: false
     t.datetime "joined_at", null: false
-    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
+    t.datetime "deleted_at"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
@@ -596,7 +537,11 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
   add_foreign_key "online_client_count_projections", "autonomous_systems"
   add_foreign_key "online_client_count_projections", "events"
   add_foreign_key "online_client_count_projections", "locations"
+  add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
+  add_foreign_key "shared_users_accounts", "accounts", column: "original_account_id"
+  add_foreign_key "shared_users_accounts", "accounts", column: "shared_to_account_id"
+  add_foreign_key "shared_users_accounts", "users", column: "shared_to_user_id"
   add_foreign_key "snapshots", "events"
   add_foreign_key "study_aggregates", "autonomous_system_orgs"
   add_foreign_key "study_aggregates", "geospaces"
