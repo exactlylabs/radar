@@ -32,7 +32,7 @@ def import_from_url(filename, ns, url)
           next
         end
         Geospace.create(
-          name: record.attributes["NAME"],
+          name: record.attributes.include?('NAMELSAD') ? record.attributes["NAMELSAD"] : record.attributes["NAME"],
           namespace: ns,
           geom: record.geometry,
           geoid: record.attributes["GEOID"],
@@ -42,21 +42,27 @@ def import_from_url(filename, ns, url)
   end
 end
 
-# Census Places
+# US
 
-(1..78).each do |fips|
-  fips = fips.to_s.rjust(2, "0")
-  url="https://www2.census.gov/geo/tiger/TIGER2022/PLACE/tl_2022_#{fips}_place.zip"
-  import_from_url("tl_2022_#{fips}_place", "census_place", url)  
-end
+url="https://www2.census.gov/geo/tiger/GENZ2022/shp/cb_2022_us_nation_5m.zip"
+import_from_url("cb_2022_us_nation_5m", "country", url)
 
-# Counties
+# # States
 
-url="https://www2.census.gov/geo/tiger/TIGER2022/COUNTY/tl_2022_us_county.zip"
-import_from_url("tl_2022_us_county", "county", url)
+# url="https://www2.census.gov/geo/tiger/TIGER2022/STATE/tl_2022_us_state.zip"
+# import_from_url("tl_2022_us_state", "state", url)
+
+# # Counties
+
+# url="https://www2.census.gov/geo/tiger/TIGER2022/COUNTY/tl_2022_us_county.zip"
+# import_from_url("tl_2022_us_county", "county", url)
 
 
-# States
+# # Census Places
 
-url="https://www2.census.gov/geo/tiger/TIGER2022/STATE/tl_2022_us_state.zip"
-import_from_url("tl_2022_us_state", "state", url)
+# (1..78).each do |fips|
+#   fips = fips.to_s.rjust(2, "0")
+#   url="https://www2.census.gov/geo/tiger/TIGER2022/PLACE/tl_2022_#{fips}_place.zip"
+#   import_from_url("tl_2022_#{fips}_place", "census_place", url)  
+# end
+
