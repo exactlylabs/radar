@@ -14,6 +14,8 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "postgis"
+  enable_extension "tablefunc"
 
   create_table "accounts", force: :cascade do |t|
     t.integer "account_type", default: 0, null: false
