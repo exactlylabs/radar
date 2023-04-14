@@ -14,6 +14,8 @@ ActiveRecord::Schema.define(version: 2023_04_11_134319) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "postgis"
+  enable_extension "tablefunc"
 
   create_table "accounts", force: :cascade do |t|
     t.integer "account_type", default: 0, null: false
@@ -375,6 +377,22 @@ ActiveRecord::Schema.define(version: 2023_04_11_134319) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["aggregate_type", "aggregate_id"], name: "index_snapshots_on_aggregate"
     t.index ["event_id"], name: "index_snapshots_on_event_id"
+  end
+
+  create_table "spatial_ref_sys", primary_key: "srid", id: :integer, default: nil, force: :cascade do |t|
+    t.string "auth_name", limit: 256
+    t.integer "auth_srid"
+    t.string "srtext", limit: 2048
+    t.string "proj4text", limit: 2048
+    t.check_constraint "(srid > 0) AND (srid <= 998999)", name: "spatial_ref_sys_srid_check"
+  end
+
+  create_table "study_counties", id: false, force: :cascade do |t|
+    t.string "state"
+    t.string "state_code"
+    t.string "county"
+    t.string "fips"
+    t.integer "pop_2021"
   end
 
   create_table "system_outages", force: :cascade do |t|
