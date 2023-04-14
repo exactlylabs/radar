@@ -493,7 +493,6 @@ ActiveRecord::Schema.define(version: 2023_04_11_134319) do
   add_foreign_key "online_client_count_projections", "accounts"
   add_foreign_key "online_client_count_projections", "autonomous_systems"
   add_foreign_key "online_client_count_projections", "events"
-  add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "snapshots", "events"
   add_foreign_key "update_groups", "client_versions"
