@@ -64,7 +64,7 @@ class LocationsService implements ILocationsService {
       url: _restClient.suggestedLocations,
       headers: {
         'Content-Type': 'application/json',
-        'Origin': 'https://speed.radartoolkit.com',
+        'Origin': 'https://radartoolkit.com',
       },
       body: {'address': name},
     );
@@ -83,7 +83,7 @@ class LocationsService implements ILocationsService {
       url: _restClient.locationByCoordinates,
       headers: {
         'Content-Type': 'application/json',
-        'Origin': 'https://speed.radartoolkit.com',
+        'Origin': 'https://radartoolkit.com',
       },
       body: FormData.fromMap({'coordinates': "$latitude, $longitude"}),
       fromJson: (json) => Location.fromJsonWithDefaultValues(json),
@@ -102,7 +102,7 @@ class LocationsService implements ILocationsService {
       url: _restClient.userCoordinates,
       headers: {
         'Content-Type': 'application/json',
-        'Origin': 'https://speed.radartoolkit.com',
+        'Origin': 'https://radartoolkit.com',
       },
     );
     return failureOrLocation.fold(

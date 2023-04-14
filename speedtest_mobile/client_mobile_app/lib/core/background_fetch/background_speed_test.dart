@@ -97,6 +97,7 @@ class BackgroundSpeedTest {
           'longitude': _longitude,
         },
         'connection_data': _connectionInfo?.toJson(),
+        'background_mode': true,
       },
     );
   }
