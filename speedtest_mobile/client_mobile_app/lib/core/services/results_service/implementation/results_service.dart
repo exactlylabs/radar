@@ -51,6 +51,9 @@ class ResultsService implements IResultsService {
       'result': {'raw': responses},
       'speed_test': result.toJsonServer(),
       'connection_data': connectionInfo?.toJson(),
+      'client_id': CLIENT_ID,
     };
   }
+
+  static const int CLIENT_ID = 1;
 }
