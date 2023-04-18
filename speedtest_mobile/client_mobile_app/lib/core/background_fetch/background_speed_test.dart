@@ -97,8 +97,11 @@ class BackgroundSpeedTest {
           'longitude': _longitude,
         },
         'connection_data': _connectionInfo?.toJson(),
+        'client_id': CLIENT_ID,
         'background_mode': true,
       },
     );
   }
+
+  static const int CLIENT_ID = 1;
 }
