@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_10_204444) do
+ActiveRecord::Schema.define(version: 2023_04_11_134319) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -150,6 +150,7 @@ ActiveRecord::Schema.define(version: 2023_04_10_204444) do
     t.float "accuracy"
     t.float "altitude"
     t.string "address_provider"
+    t.boolean "background_mode", default: false
   end
 
   create_table "client_versions", force: :cascade do |t|

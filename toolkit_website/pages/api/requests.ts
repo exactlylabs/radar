@@ -3,7 +3,7 @@ import {IMailBody} from "../../src/components/GetStartedPage/GetStartedForm/GetS
 // Avoiding NODE_ENV due to:
 // https://nextjs.org/docs/messages/non-standard-node-env
 const API_URL =
-  process.env.NEXT_PUBLIC_APP_ENV === 'production' ? 'https://radartoolkit.com/api' :
+  process.env.NEXT_PUBLIC_APP_ENV === 'production' ? 'https://www.radartoolkit.com/api' :
   process.env.NEXT_PUBLIC_APP_ENV === 'staging' ? 'https://toolkit.staging.exactlylabs.com/api' :
   'http://localhost:3000/api';
 

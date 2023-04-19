@@ -56,7 +56,7 @@ class DioHttpProvider implements IHttpProvider {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
       return Left(HttpProviderFailure(
-        exception: dioError.error,
+        exception: dioError.error ?? dioError.message,
         stackTrace: stackTrace,
       ));
     } catch (exception, stackTrace) {

@@ -34,7 +34,6 @@ class ResultsService implements IResultsService {
       url: _restClient.speedTest,
       headers: {
         'Content-Type': 'application/json',
-        'Origin': 'https://speed.radartoolkit.com',
       },
       body: _buildBody(responses, result, connectionInfo),
     )
@@ -52,6 +51,9 @@ class ResultsService implements IResultsService {
       'result': {'raw': responses},
       'speed_test': result.toJsonServer(),
       'connection_data': connectionInfo?.toJson(),
+      'client_id': CLIENT_ID,
     };
   }
+
+  static const int CLIENT_ID = 1;
 }
