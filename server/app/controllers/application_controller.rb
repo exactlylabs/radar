@@ -17,8 +17,23 @@ class ApplicationController < ActionController::Base
   end
 
   def set_user_account(new_account)
-    @current_account = new_account
-    @current_user_account = current_user.users_accounts.find_by_account_id(new_account.id)
+    assign_user_account(new_account.id)
+  end
+
+  def set_all_accounts
+    @current_user_account = AllAccountsUser.new current_user.id
+    @current_account = AllAccountsAccount.new
+  end
+
+  def assign_user_account(account_id)
+    if account_id == -1 || account_id == "-1"
+      set_all_accounts
+    else
+      is_account_accessible_through_share = current_user.shared_accounts.distinct.where(id: account_id).count == 1
+      @current_user_account = is_account_accessible_through_share ? ShareGrantUser.new(account_id, current_user.id) : current_user.users_accounts.not_deleted.find_by_account_id(account_id)
+      @current_account = current_user.accounts.where(id: account_id).first # Using where.first to avoid ActiveRecord::RecordNotFound exception
+      @current_account = current_user.shared_accounts.where(id: account_id).first if !@current_account
+    end
   end
 
   def clear_user_account_and_cookie
@@ -43,16 +58,17 @@ class ApplicationController < ActionController::Base
     account_id = get_cookie(:radar_current_account_id)
     begin
       if account_id
-        @current_user_account = current_user.users_accounts.not_deleted.find_by_account_id(account_id)
-
+        if account_id == -1 || account_id == "-1"
+          set_all_accounts
+          return
+        end
+        assign_user_account(account_id)
         # If @current_user_account is nil could be because:
         # 1. account_id is not present in users_accounts list
         # 2. user_account with given id exists but was soft deleted
         # So then, replace it with the first available option for the user
         if !@current_user_account
           get_first_user_account_and_set_cookie
-        else
-          @current_account = current_user.accounts.find(account_id)
         end
       elsif current_user.users_accounts.not_deleted.length > 0
         get_first_user_account_and_set_cookie

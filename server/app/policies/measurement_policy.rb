@@ -5,7 +5,11 @@ class MeasurementPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       if @user_account.present?
-        scope.where(account_id: @user_account.account_id).where('download IS NOT NULL') # Prevent from seeing tests from different accounts where the test wasn't taken
+        if @user_account.is_all_accounts?
+          scope.where('download IS NOT NULL')
+        else
+          scope.where(account_id: @user_account.account_id).where('download IS NOT NULL') # Prevent from seeing tests from different accounts where the test wasn't taken
+        end
       else
         scope.none
       end
@@ -13,14 +17,17 @@ class MeasurementPolicy < ApplicationPolicy
   end
 
   def index?
+    return false if @user_account.is_all_accounts?
     true
   end
 
   def full_index?
+    return false if @user_account.is_all_accounts?
     @user_account.account.superaccount || @user_account.account.exportaccount
   end
 
   def full_ndt7_index?
+    return false if @user_account.is_all_accounts?
     @user_account.account.superaccount || @user_account.account.exportaccount
   end
 end

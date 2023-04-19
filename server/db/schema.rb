@@ -404,14 +404,12 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
   create_table "shared_users_accounts", force: :cascade do |t|
     t.bigint "original_account_id", null: false
     t.bigint "shared_to_account_id", null: false
-    t.bigint "shared_to_user_id", null: false
     t.datetime "deleted_at"
     t.datetime "shared_at", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["original_account_id"], name: "index_shared_users_accounts_on_original_account_id"
     t.index ["shared_to_account_id"], name: "index_shared_users_accounts_on_shared_to_account_id"
-    t.index ["shared_to_user_id"], name: "index_shared_users_accounts_on_shared_to_user_id"
   end
 
   create_table "snapshots", force: :cascade do |t|
@@ -541,7 +539,6 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
   add_foreign_key "packages", "client_versions"
   add_foreign_key "shared_users_accounts", "accounts", column: "original_account_id"
   add_foreign_key "shared_users_accounts", "accounts", column: "shared_to_account_id"
-  add_foreign_key "shared_users_accounts", "users", column: "shared_to_user_id"
   add_foreign_key "snapshots", "events"
   add_foreign_key "study_aggregates", "autonomous_system_orgs"
   add_foreign_key "study_aggregates", "geospaces"

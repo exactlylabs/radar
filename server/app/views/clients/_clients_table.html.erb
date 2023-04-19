@@ -15,7 +15,7 @@
                 aria-label="Checkbox"></th>
             <th class="fw-bold ps-10" style="width: <%= current_user.super_user ?  20 : 25%>vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                 aria-label="Pod Name">NAME</th>
-            <% if current_user.super_user %>
+            <% if current_account.is_all_accounts? %>
               <th class="fw-bold"
                   style="width: 20vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px"
                   tabindex="0"
@@ -24,6 +24,8 @@
                   colspan="1"
                   rowspan="1"
                   aria-label="Pod Name">ACCOUNT</th>
+            <% end %>
+            <% if current_user.super_user %>
               <th class="fw-bold" style="width: 10vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                   aria-label="Status">ENVIRONMENT</th>
               <th class="fw-bold" style="width: 10vw; color: #b5b5c3; font-size: 12px; letter-spacing: 0.36px" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
@@ -40,15 +42,12 @@
           <!--end::Table head-->
           <!--begin::Table body-->
           <tbody class="fw-bold text-gray-600" id="clients_index_table">
-            <% paginate_elements(clients, [], "LOWER(name) ASC").each do |client| %>
+            <% clients.order("LOWER(name) ASC").each do |client| %>
               <%= render partial: "clients_table_row", locals: { client: client, selected: false }%>
             <% end %>
           </tbody>
           <!--end::Table body-->
         </table>
-        <div class="d-flex flex-row justify-content-between align-items-center px-7 <%= clients.size == 1 ? "pt-15 pb-7" : "pt-10" %>">
-          <%= pagination_footer %>
-        </div>
       </div>
     </div>
     <!--end::Table-->

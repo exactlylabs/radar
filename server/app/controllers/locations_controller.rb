@@ -4,7 +4,13 @@ class LocationsController < ApplicationController
 
   # GET /locations or /locations.json
   def index
-    @locations = policy_scope(Location)
+    account_id = params[:account_id]
+    if account_id
+      @locations = policy_scope(Location).where(account_id: account_id)
+    else
+      @locations = policy_scope(Location)
+    end
+    @locations
   end
 
   # GET /locations/1 or /locations/1.json
@@ -25,7 +31,7 @@ class LocationsController < ApplicationController
     @location = Location.new(location_params)
 
     @location.user = current_user
-    @location.account_id = current_account.id
+    @location.account_id = current_account.is_all_accounts? ? params[:location][:account_id] : current_account.id
 
     # TODO: Is there a better UX for this?
     current_clients = policy_scope(Client)
@@ -100,6 +106,6 @@ class LocationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def location_params
-      params.require(:location).permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude, :manual_lat_long, :automatic_location)
+      params.require(:location).permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude, :manual_lat_long, :automatic_location, :account_id)
     end
 end

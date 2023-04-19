@@ -19,12 +19,18 @@
       </div>
     </div>
   </td>
+  <% if current_account.is_all_accounts? %>
   <td class="text-gray-600 mb-1"
       style="font-size:14px; color: #b5b5c3; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+    <span style="color: #5e6278;"><%= user_account.account.name %></span>
+  </td>
+  <% end %>
+  <td class="text-gray-600 mb-1"
+      style="font-size:14px; color: #b5b5c3; max-width: <%= current_account.is_all_accounts? ? '10vw' : '15vw' %>;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
     <span style="color: #5e6278;"><%= pretty_print_date(user_account.invited_at) %></span>
   </td>
   <td class="text-gray-600 mb-1"
-      style="font-size:14px; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+      style="font-size:14px; max-width: <%= current_account.is_all_accounts? ? '10vw' : '15vw' %>;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
     <span style="color: #5e6278;"><%= pretty_print_date(user_account.joined_at) %></span>
   </td>
   <td class="mb-1"

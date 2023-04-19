@@ -24,6 +24,7 @@ include EventSourceable
 
   belongs_to :user, foreign_key: 'created_by_id'
   belongs_to :location_group, optional: true
+  belongs_to :account
   has_and_belongs_to_many :location_labels, 
     # Note: Rails only triggers when associating through << statement
     # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks

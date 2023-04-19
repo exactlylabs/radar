@@ -34,9 +34,9 @@
     <div class="container-fluid">
       <!--begin::DisplaySwitcher-->
         <div class="d-flex flex-row w-100 px-5 mb-10" style="height: max-content">
-          <a href="<%= locations_path(display: 'grid') %>" 
+          <a href="<%= locations_path(account_id: params[:account_id], display: 'grid') %>" 
             class="btn btn-light btn-active-light-dark btn-active-icon-primary py-2 px-3 me-3
-                    <%= params[:display].nil? || params[:display] == 'grid' ? 'active' : '' %>" 
+                    <%= params[:display] == 'grid' ? 'active' : '' %>" 
             style="height:max-content">
             <span class="svg-icon svg-icon-muted svg-icon-2 m-0">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -45,9 +45,9 @@
               </svg>
             </span>
           </a>
-           <a href="<%= locations_path(display: 'table') %>" 
+           <a href="<%= locations_path(account_id: params[:account_id], display: 'table') %>" 
             class="btn btn-light btn-active-light-dark btn-active-icon-primary py-2 px-3 
-                    <%= params[:display] == 'table' ? 'active' : '' %>"
+                    <%= params[:display].nil? || params[:display] == 'table' ? 'active' : '' %>"
             style="height:max-content">
             <span class="svg-icon svg-icon-muted svg-icon-2 m-0">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -58,10 +58,13 @@
           </a>
         </div>
       <!--end::DisplaySwitcher-->
+        <% if current_account.is_all_accounts? %>
+          <%= render partial: "locations/locations_table_filters" %>
+        <% end %>
       <!--begin::Container-->
         <div class="container-auto px-5">
           <!--begin::Card-->
-          <% if params[:display] == 'table' %>
+          <% if params[:display].nil? || params[:display] == 'table' %>
             <%= render partial: 'locations_table', locals: { locations: @locations } %>
           <% else %>
             <%= render partial: 'locations_grid', locals: { locations: @locations } %>

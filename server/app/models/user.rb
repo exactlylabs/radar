@@ -15,8 +15,7 @@ class User < ApplicationRecord
   has_many :users_accounts
   has_many :accounts, through: :users_accounts
   
-  has_many :shared_users_accounts, foreign_key: :shared_to_user_id
-  has_many :shared_accounts, through: :shared_users_accounts, source: :account
+  has_many :shared_accounts, through: :accounts
 
   after_save :check_pending_downloads
 

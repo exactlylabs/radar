@@ -13,7 +13,12 @@ class ClientsController < ApplicationController
   def index
     @status = params[:status]
     @environment = params[:environment]
-    @clients = policy_scope(Client)
+    @account_id = params[:account_id]
+    if @account_id
+      @clients = policy_scope(Client).where(account_id: @account_id)
+    else
+      @clients = policy_scope(Client)
+    end
     if @status
       @clients = @clients.where_online if @status == 'online'
       @clients = @clients.where_offline if @status == 'offline'
@@ -107,6 +112,7 @@ class ClientsController < ApplicationController
     @client_id = params[:id]
     @location_id = params[:location_id]
     @client_name = params[:name]
+    @account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
 
     location = policy_scope(Location).where(id: @location_id).first if @location_id.present?
     @client = Client.find_by_unix_user(@client_id)
@@ -115,7 +121,7 @@ class ClientsController < ApplicationController
         @client.user = current_user
         @client.location = location
         @client.name = @client_name
-        @client.account = current_account
+        @client.account = @account
         @client.save
         format.turbo_stream
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
@@ -147,7 +153,6 @@ class ClientsController < ApplicationController
   end
 
   def status
-    
     @client.pinged_at = Time.now
     @client.online = true
     @client.raw_version = params[:version]
@@ -238,9 +243,19 @@ class ClientsController < ApplicationController
     name = params[:client][:name]
     account_id = params[:account_id]
     location_id = params[:location_id]
+
+    # not doing policy_scope because when selecting another account
+    # different to current_account, running policy_scope(Client) would throw
+    client = Client.find_by_unix_user(params[:id])
+
     # defaulting to current_account. UI does not
     # allow account to be empty anyways
-    account = current_account
+    if current_account.is_all_accounts?
+      account = client.account
+    else
+      account = current_account
+    end
+
     location = nil
     if account_id
       account = policy_scope(Account).find(account_id) if account_id != current_account.id
@@ -250,11 +265,8 @@ class ClientsController < ApplicationController
         location = Location.where(id: location_id, account_id: account_id).first
       end
     else
-      location = policy_scope(Location).find(params[:location_id]) if location_id
+      location = policy_scope(Location).find(location_id) if location_id
     end
-    # not doing policy_scope because when selecting another account
-    # different to current_account, running policy_scope(Client) would throw
-    client = Client.find_by_unix_user(params[:id])
     if params[:update_group_id]
       update_group = policy_scope(UpdateGroup).find(params[:update_group_id])
     else

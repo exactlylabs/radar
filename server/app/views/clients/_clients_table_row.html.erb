@@ -39,11 +39,13 @@
       </div>
     </div>
   </td>
-  <% if current_user.super_user %>
+  <% if current_account.is_all_accounts? %>
     <td class="mb-1"
         style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
       <%= client.account.name %>
     </td>
+  <% end %>
+  <% if current_user.super_user %>
     <td class="mb-1"
         style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
       <%= client.staging ? "Staging" : "Live" %>

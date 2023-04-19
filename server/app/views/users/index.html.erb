@@ -30,6 +30,10 @@
 <!--end::Toolbar-->
 <div class="post fs-6 d-flex flex-column" id="kt_post">
   <div class="container-fluid">
+    <% if current_account.id != -1 %>
+      <%= render partial: "users/members_sharing_tabs" %>
+    <% end %>
+    <%= render partial: "users/users_table_filters" %>
     <!--begin::Container-->
     <%= render partial: "users/users_table", locals: { users_accounts: users_accounts, invited_users: invited_users } %>
     <!--end::Container-->

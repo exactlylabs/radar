@@ -77,19 +77,19 @@
       </a>
       <div class="dropdown-menu fw-bold fs-7 py-4"
            aria-labelledby="schedule-button">
-        <a href="<%= clients_path(status: params[:status]) %>"
+        <a href="<%= clients_path(status: params[:status], account_id: params[:account_id]) %>"
            style="padding-left: 11px"
            class="menu-item text-hover-gray-500 <%= params[:environment].nil? ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
           All environments
         </a>
         <!--begin::Menu item-->
-        <a href="<%= params[:environment] == 'live' ? clients_path : clients_path(params.permit([:status, :environment]).merge(environment: 'live')) %>"
+        <a href="<%= params[:environment] == 'live' ? clients_path(status: params[:status], account_id: params[:account_id]) : clients_path(params.permit([:status, :environment, :account_id]).merge(environment: 'live')) %>"
            class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:environment] == 'live' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
           Live
         </a>
         <!--end::Menu item-->
         <!--begin::Menu item-->
-        <a href="<%= params[:status] == 'staging' ? clients_path : clients_path(params.permit([:status, :environment]).merge(environment: 'staging')) %>"
+        <a href="<%= params[:status] == 'staging' ? clients_path(status: params[:status], account_id: params[:account_id]) : clients_path(params.permit([:status, :environment, :account_id]).merge(environment: 'staging')) %>"
            class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:environment] == 'staging' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
           Staging
         </a>
@@ -116,20 +116,20 @@
     </a>
     <div class="dropdown-menu fw-bold fs-7 py-4"
       aria-labelledby="schedule-button">
-      <a href="<%= clients_path(environment: params[:environment]) %>"
+      <a href="<%= clients_path(environment: params[:environment], account_id: params[:account_id]) %>"
         style="padding-left: 11px"
         class="menu-item text-hover-gray-500 <%= params[:status].nil? ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
         All Pods
       </a>
       <!--begin::Menu item-->
-      <a href="<%= params[:status] == 'online' ? clients_path : clients_path(params.permit([:status, :environment]).merge(status: 'online')) %>"
+      <a href="<%= params[:status] == 'online' ? clients_path(environment: params[:environment], account_id: params[:account_id]) : clients_path(params.permit([:status, :environment, :account_id]).merge(status: 'online')) %>"
         class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:status] == 'online' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
         <div class="green-cirle" style="width:6px; height: 6px; background-color:#50cd89; border-radius: 50%; margin-right: 7px;"></div>
         Online
       </a>
       <!--end::Menu item-->
       <!--begin::Menu item-->
-      <a href="<%= params[:status] == 'offline' ? clients_path : clients_path(params.permit([:status, :environment]).merge(status: 'offline')) %>"
+      <a href="<%= params[:status] == 'offline' ? clients_path(environment: params[:environment], account_id: params[:account_id]) : clients_path(params.permit([:status, :environment, :account_id]).merge(status: 'offline')) %>"
         class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:status] == 'offline' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
         <div class="green-cirle" style="width:6px; height: 6px; background-color:#f1416c; border-radius: 50%; margin-right: 7px;"></div>
         Offline
@@ -137,8 +137,41 @@
     </div>
   </div>
   <!-- Status filter end -->
+  <% if current_account.is_all_accounts? %>
+     <div class="btn-group me-2">
+      <a href="#"
+          class="btn btn-sm <%= params[:account_id].present? ? 'btn-light-primary' : 'btn-white' %> btn-active-light-primary"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          style="border-radius: 6px"
+      >
+        <%= params[:account_id].present? ? policy_scope(Account).find(params[:account_id]).name : "All Accounts" %>
+        <span class="svg-icon svg-icon-5 m-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+          </svg>
+        </span>
+      </a>
+      <div class="dropdown-menu fw-bold fs-7 py-4"
+        aria-labelledby="schedule-button">
+        <a href="<%= clients_path(environment: params[:environment], status: params[:status]) %>"
+          style="padding-left: 11px"
+          class="menu-item text-hover-gray-500 <%= params[:account_id].nil? ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
+          All Accounts
+        </a>
+        <% policy_scope(Account).each do |account| %>
+          <!--begin::Menu item-->
+          <a href="<%= params[:account_id] == account.id ? clients_path(environment: params[:environment], status: params[:status]) : clients_path(params.permit([:status, :environment, :account_id]).merge(account_id: account.id)) %>"
+            class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:account_id] == account.id ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+            <%= account.name %>
+          </a>
+        <!--end::Menu item-->
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 
-  <% if params[:status] || params[:environment] %>
+  <% if params[:status] || params[:environment] || params[:account_id] %>
     <a class="btn btn-sm btn-light btn-active-light-primary ms-3 px-2" 
         href="<%= clients_path %>"
         style="height: max-content">

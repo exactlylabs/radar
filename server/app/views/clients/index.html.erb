@@ -50,8 +50,9 @@
   <!--end::Container-->
 </div>
 
-<div class="modal fade" tabindex="-1" id="add_pod_modal_wizard" data-controller="add-pod" data-action="turbo:submit-end->add-pod#handleSubmitEnd">
-  <%= render partial: "clients/add_pod_wizard/add_pod_modal_wizard" %>
+<div class="modal fade" tabindex="-1" id="add_pod_modal_wizard" data-controller="modal add-pod" data-action="turbo:submit-end->add-pod#handleSubmitEnd">
+  <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path do %>
+  <% end %>
 </div>
 
 <div class="modal fade" tabindex="-1" id="edit_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
