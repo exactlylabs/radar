@@ -20,9 +20,9 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.string "name", null: false
     t.boolean "superaccount", default: false
     t.boolean "exportaccount", default: false
+    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "deleted_at"
     t.string "token"
   end
 
@@ -130,8 +130,6 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.float "longitude"
     t.float "download_avg"
     t.float "upload_avg"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
     t.string "ip"
     t.string "token"
     t.string "download_id"
@@ -139,6 +137,8 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.float "latency"
     t.float "loss"
     t.datetime "processed_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "address"
     t.string "network_location"
     t.string "city"
@@ -323,9 +323,9 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
-    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
+    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.float "download_avg"
@@ -423,6 +423,22 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.index ["event_id"], name: "index_snapshots_on_event_id"
   end
 
+  create_table "spatial_ref_sys", primary_key: "srid", id: :integer, default: nil, force: :cascade do |t|
+    t.string "auth_name", limit: 256
+    t.integer "auth_srid"
+    t.string "srtext", limit: 2048
+    t.string "proj4text", limit: 2048
+    t.check_constraint "(srid > 0) AND (srid <= 998999)", name: "spatial_ref_sys_srid_check"
+  end
+
+  create_table "study_counties", id: false, force: :cascade do |t|
+    t.string "state"
+    t.string "state_code"
+    t.string "county"
+    t.string "fips"
+    t.integer "pop_2021"
+  end
+
   create_table "system_outages", force: :cascade do |t|
     t.string "description"
     t.datetime "start_time"
@@ -478,10 +494,10 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.bigint "account_id", null: false
     t.bigint "user_id", null: false
     t.datetime "joined_at", null: false
+    t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
-    t.datetime "deleted_at"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
@@ -534,8 +550,6 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
   add_foreign_key "online_client_count_projections", "accounts"
   add_foreign_key "online_client_count_projections", "autonomous_systems"
   add_foreign_key "online_client_count_projections", "events"
-  add_foreign_key "online_client_count_projections", "locations"
-  add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "shared_users_accounts", "accounts", column: "original_account_id"
   add_foreign_key "shared_users_accounts", "accounts", column: "shared_to_account_id"
