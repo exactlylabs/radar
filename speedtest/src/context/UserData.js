@@ -38,6 +38,9 @@ export const UserDataContextProvider = ({children}) => {
     addressProvider: ADDRESS_PROVIDER.MANUAL,
     altitude: null, // provided by browser geolocation API
     accuracy: null, // provided by browser geolocation API
+    altitudeAccuracy: null, // provided by browser geolocation API
+    speed: null, // provided by browser geolocation API
+    heading: null, // provided by browser geolocation API
   });
 
   const setAddress = address => setUserData(prev => ({...prev, address}));
@@ -45,6 +48,10 @@ export const UserDataContextProvider = ({children}) => {
   const setNetworkLocation = location => setUserData(prev => ({...prev, networkLocation: location }));
   const setNetworkType = chosenOption => setUserData(prev => ({...prev, networkType: chosenOption}));
   const setNetworkCost = cost => setUserData(prev => ({...prev, networkCost: cost }));
+
+  useEffect(() => {
+    console.log(userData);
+  }, [userData.addressProvider])
 
   return (
     <UserDataContext.Provider value={{userData, setUserData, setAddress, setTerms, setNetworkLocation, setNetworkType, setNetworkCost}}>
