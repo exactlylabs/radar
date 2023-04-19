@@ -214,7 +214,15 @@ const MyMapModal = ({
     try {
       const address = await getAddressForCoordinates(addressCoordinates, config.clientId);
       confirmAddress(addressCoordinates);
-      setUserData({...userData, address, accuracy: null, altitude: null, addressProvider: ADDRESS_PROVIDER.MANUAL});
+      setUserData({...userData,
+        address,
+        accuracy: null,
+        altitude: null,
+        altitudeAccuracy: null,
+        speed: null,
+        heading: null,
+        addressProvider: ADDRESS_PROVIDER.MANUAL
+      });
       closeModal();
     } catch (e) {
       if(isNoConnectionError(e)) setNoInternet(true);

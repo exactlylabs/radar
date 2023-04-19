@@ -164,16 +164,25 @@ const MyAddressInput = ({
     }
   }
 
-  const fetchAddress = async (position) => {
+  const fetchAddress = async (coords) => {
     try {
-      const coordinates = [position.coords.latitude, position.coords.longitude];
+      const coordinates = [coords.latitude, coords.longitude];
       const address = await getAddressForCoordinates(coordinates, config.clientId);
       if (address.coordinates.length === 0) {
         openGenericLocationModal();
         return;
       }
       setSelectedSuggestion(true);
-      setUserData({...userData, address: address, accuracy: position.accuracy, altitude: position.altitude, addressProvider: ADDRESS_PROVIDER.BROWSER_GPS});
+      setUserData({
+        ...userData,
+        address,
+        accuracy: coords.accuracy,
+        altitude: coords.altitude,
+        altitudeAccuracy: coords.altitudeAccuracy,
+        speed: coords.speed,
+        heading: coords.heading,
+        addressProvider: ADDRESS_PROVIDER.BROWSER_GPS,
+      });
       handleContinue(address.address, true);
       const addressInputElement = document.getElementById('speedtest--address-input');
       addressInputElement.value = address.address;
@@ -192,7 +201,7 @@ const MyAddressInput = ({
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         pos => {
-          fetchAddress(pos)
+          fetchAddress(pos.coords)
             .catch(err => {
               notifyError(err);
               setError(err);
