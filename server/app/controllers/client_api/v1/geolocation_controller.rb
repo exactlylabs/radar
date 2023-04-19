@@ -48,7 +48,10 @@ module ClientApi
       end
 
       def user_coordinates
-        results = Geocoder.search(request.ip)
+        # By using remote_ip we would get the actual client ip even
+        # after going through proxies/nginx.
+        # https://stackoverflow.com/questions/10997005/whats-the-difference-between-request-remote-ip-and-request-ip-in-rails#:~:text=request.remote_ip%20is%20smarter%20and%20gets%20the%20actual%20client%20ip.%20This%20can%20only%20be%20done%20if%20the%20all%20the%20proxies%20along%20the%20way%20set%20the%20X%2DForwarded%2DFor%20header.
+        results = Geocoder.search(request.remote_ip)
         if results.first
           return render json: results.first.coordinates
         end
