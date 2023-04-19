@@ -49,10 +49,6 @@ export const UserDataContextProvider = ({children}) => {
   const setNetworkType = chosenOption => setUserData(prev => ({...prev, networkType: chosenOption}));
   const setNetworkCost = cost => setUserData(prev => ({...prev, networkCost: cost }));
 
-  useEffect(() => {
-    console.log(userData);
-  }, [userData.addressProvider])
-
   return (
     <UserDataContext.Provider value={{userData, setUserData, setAddress, setTerms, setNetworkLocation, setNetworkType, setNetworkCost}}>
       {children}
