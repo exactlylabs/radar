@@ -1,0 +1,35 @@
+<% if current_account.is_all_accounts? %>
+  <div class="filters-container px-5 d-flex flex-row mb-4">
+     <div class="btn-group me-2">
+      <a href="#"
+          class="btn btn-sm <%= params[:account_id].present? ? 'btn-light-primary' : 'btn-white' %> btn-active-light-primary"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          style="border-radius: 6px"
+      >
+        <%= params[:account_id].present? ? policy_scope(Account).find(params[:account_id]).name : "All Accounts" %>
+        <span class="svg-icon svg-icon-5 m-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+          </svg>
+        </span>
+      </a>
+      <div class="dropdown-menu fw-bold fs-7 py-4"
+        aria-labelledby="schedule-button">
+        <a href="<%= users_account_index_path %>"
+          style="padding-left: 11px"
+          class="menu-item text-hover-gray-500 <%= params[:account_id].nil? ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
+          All Accounts
+        </a>
+        <% policy_scope(Account).each do |account| %>
+          <!--begin::Menu item-->
+          <a href="<%= params[:account_id] == account.id ? locations_path : locations_path(account_id: account.id) %>"
+            class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:account_id] == account.id ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+            <%= account.name %>
+          </a>
+        <!--end::Menu item-->
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

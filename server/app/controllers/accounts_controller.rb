@@ -74,12 +74,21 @@ class AccountsController < ApplicationController
     set_cookie(:radar_current_account_id, new_account_id)
   end
 
+  def all_accounts
+    set_all_accounts
+    set_cookie(:radar_current_account_id, -1)
+  end
+
   private
   def account_params
     params.require(:account).permit(:name, :account_type)
   end
 
   def set_account
-    @account = policy_scope(Account).find(params[:id])
+    if params[:id].nil? || params[:id] == -1
+      @account = nil
+    else
+      @account = policy_scope(Account).find(params[:id])
+    end
   end
 end

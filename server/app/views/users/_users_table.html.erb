@@ -12,11 +12,15 @@
               style="background-color: rgba(245, 248, 250, 0.6);font-size: 15px;">
             <th class="sorting ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Location Name">User</th>
-            <th class="sorting" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table"
+            <% if current_account.is_all_accounts? %>
+              <th class="sorting" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table"
+                rowspan="1" colspan="1" aria-label="Invited">Account</th>
+            <% end %>
+            <th class="sorting" style="<%= current_account.is_all_accounts? ? 'width: 10vw' : 'width: 15vw'%>" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Invited">Invited</th>
-            <th class="sorting_disabled" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table"
+            <th class="sorting_disabled" style="<%= current_account.is_all_accounts? ? 'width: 10vw' : 'width: 15vw'%>" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Join Date">Join Date</th>
-            <th class="sorting_disabled" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table"
+            <th class="sorting_disabled" style="<%= current_account.is_all_accounts? ? 'width: 10vw' : 'width: 15vw'%>" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Status">Status</th>
             <th class="sorting_disabled" style="width: 8vw" tabindex="0" aria-controls="kt_customers_table"
                 rowspan="1" colspan="1" aria-label="Resend invite"></th>

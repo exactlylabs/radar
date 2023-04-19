@@ -12,4 +12,12 @@ class UsersAccount < ApplicationRecord
   def status_to_human
     "Active"
   end
+
+  def is_shared?
+    false
+  end
+
+  def is_all_accounts?
+    false
+  end
 end

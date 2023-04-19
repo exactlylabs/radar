@@ -12,7 +12,7 @@
         <li class="breadcrumb-item text-muted"><%= current_account.name %>
           <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
         </li>
-        <li class="breadcrumb-item text-muted">Users</li>
+        <li class="breadcrumb-item text-dark">Users</li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
@@ -22,6 +22,7 @@
 <!--end::Toolbar-->
 <div class="post fs-6 d-flex flex-column" id="kt_post">
   <div class="container-fluid">
+    <%= render partial: "users/members_sharing_tabs" %>
     <div class="card">
       <!--begin::Card body-->
       <div class="card-body pt-8 px-6 d-flex flex-column">
@@ -40,14 +41,16 @@
                         multiple="true"
                         name="share_to[]"
                 >
-                  <% policy_scope(Account).not_deleted.each do |account| %>
-                    <option value="<%= account.id %>"  label="<%= account.name %>"><%= account.name %></option>
+                  <% policy_scope(Account).each do |account| %>
+                    <% if current_account.id != account.id %>
+                      <option value="<%= account.id %>" label="<%= account.name %>" <%= policy_scope(SharedUsersAccount).where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
+                    <% end %>
                   <% end %>
                 </select>
               </div>
             </div>
           <% end %>
-          <p class="mt-1 mb-10" style="color: #6d6a94; font-size: 13px;"><%= current_account.name %> is not shared with anyone else.</p>
+          <p class="mt-1 mb-10" style="color: #6d6a94; font-size: 13px;"><%= current_account.get_share_state_string(policy_scope(SharedUsersAccount)) %></p>
           <button type="submit" class="btn btn-primary w-25">Save settings</button>
         </form>
       </div>

@@ -63,7 +63,7 @@
                 data-edit-pod-target="accountsSelect"
                 data-select2-dropdown-parent-value="edit_pod_modal"
         >
-          <% policy_scope(Account).not_deleted.each do |account|%>
+          <% policy_scope(Account).each do |account|%>
             <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
           <% end %>
         </select>
@@ -84,7 +84,7 @@
           <option></option>
           <option>&nbsp;</option>
           <% policy_scope(Location).each do |location|%>
-            <%= render partial: "clients/client_location", locals: { location: location, selected: location == @client.location } %>
+            <%= render partial: "clients/client_select_option", locals: { option: location, selected: location == @client.location } %>
           <% end %>
         </select>
       </div>

@@ -22,7 +22,9 @@ export default class extends Controller {
     "stepAlreadyClaimed",
     "stepAlreadyClaimedFooter",
     "stepNotFound",
-    "stepNotFoundFooter"
+    "stepNotFoundFooter",
+    "accountsSelect",
+    "addPodButton"
   ];
 
   connect() {}
@@ -95,7 +97,6 @@ export default class extends Controller {
   }
   
   hideModal() {
-    this.restart();
     $(this.element).modal("hide");
   }
 
@@ -110,8 +111,11 @@ export default class extends Controller {
   }
   
   restart() {
-    this.step0Target.style.display = "block";
-    this.step0FooterTarget.style.display = "flex";
+    if(!!this.step0Target) {
+      this.step0Target.style.display = "block";
+      this.step0FooterTarget.style.display = "flex";
+    }
+
     if(this.podIdInputTargets) {
       this.podIdInputTargets.forEach(input => input.value = null);
     }
@@ -227,5 +231,41 @@ export default class extends Controller {
         this.goToErrorModal();
         handleError(err, this.identifier);
       });
+  }
+
+  onAccountsSelectChange(e) {
+    const currentSelectedAccountId = this.accountsSelectTarget.value;
+    if (currentSelectedAccountId) {
+      fetch(`/locations/account/${currentSelectedAccountId}`)
+        .then((res) => {
+          if (res.ok) return res.json();
+          else throw new Error(res.statusText);
+        })
+        .then((res) => {
+          const locationsDropdownSelector = $(
+            "#client-locations-dropdown"
+          );
+          // empty current locations dropdown
+          locationsDropdownSelector.empty();
+          // populate with new locations received
+          const placeholderOption = document.createElement('option');
+          const emptyOption = document.createElement('option');
+          emptyOption.innerText = '\xA0';
+          locationsDropdownSelector.append(placeholderOption);
+          locationsDropdownSelector.append(emptyOption);
+          res.forEach((location) => {
+            const currentLocationOption = new Option(
+              location.text,
+              location.id,
+              false,
+              false
+            );
+            locationsDropdownSelector.append(currentLocationOption);
+          });
+          // clear default selection
+          locationsDropdownSelector.val(null);
+        })
+        .catch((err) => console.error(err));
+    }
   }
 }

@@ -3,33 +3,31 @@ class SharedUsersAccountController < ApplicationController
 
   def delegate_access
     error = false
-    shared_to_account = policy_scope(Account).not_deleted.find(params[:share_to])
-    if shared_to_account.present?
-      if shared_to_account.kind_of?(Array)
-        shared_to_account.each do |account|
-          account.users.each do |account_user|
-            SharedUsersAccount.transaction do
-              new_shared_account = SharedUsersAccount.new
-              new_shared_account.original_account_id = current_account.id
-              new_shared_account.shared_to_account_id = account.id
-              new_shared_account.shared_to_user_id = account_user.id
-              new_shared_account.shared_at = Time.now
-              new_shared_account.save!
-            end
-          end
-        end
-      else
-        shared_to_account.users.each do |account_user|
-          SharedUsersAccount.transaction do
-            new_shared_account = SharedUsersAccount.new
-            new_shared_account.original_account_id = current_account.id
-            new_shared_account.shared_to_account_id = shared_to_account.id
-            new_shared_account.shared_to_user_id = account_user.id
-            new_shared_account.shared_at = Time.now
-            new_shared_account.save!
-          end
-        end
+    new_selected_ids = params[:share_to].present? ? [*params[:share_to]] : []
+    
+    current_shared_accounts_ids = policy_scope(SharedUsersAccount).where(original_account_id: current_account.id).map {|a| a.id}
+    
+    # find new ids to add (prevent adding dups)
+    account_ids_to_add = new_selected_ids - current_shared_accounts_ids
+    
+    # find ids which are no longer present (deleted)
+    account_ids_to_delete = current_shared_accounts_ids - new_selected_ids
+  
+    # Add all new ones
+    account_ids_to_add.each do |id|
+      SharedUsersAccount.transaction do
+        new_shared_account = SharedUsersAccount.new
+        new_shared_account.original_account_id = current_account.id
+        new_shared_account.shared_to_account_id = id
+        new_shared_account.shared_at = Time.now
+        new_shared_account.save!
       end
+    end
+
+    SharedUsersAccount.delete(account_ids_to_delete)
+
+    respond_to do |format|
+      format.html { redirect_back fallback_location: root_path, notice: "Account sharing correctly saved!" }
     end
   end
 

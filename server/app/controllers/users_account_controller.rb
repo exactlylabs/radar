@@ -4,8 +4,14 @@ class UsersAccountController < ApplicationController
   def index
     # Sorting here instead of in the view because I want users to appear first, then invites
     # each of those lists individually sorted by first_name
-    users_accounts = policy_scope(UsersAccount).includes(:user).order("users.first_name")
-    invited_users = policy_scope(Invite).order("LOWER(first_name)")
+    account_id = params[:account_id]
+    if account_id
+      users_accounts = policy_scope(UsersAccount).includes(:user).where(account_id: account_id).order("users.first_name")
+      invited_users = policy_scope(Invite).where(account_id: account_id).order("LOWER(first_name)")
+    else
+      users_accounts = policy_scope(UsersAccount).includes(:user).order("users.first_name")
+      invited_users = policy_scope(Invite).order("LOWER(first_name)")
+    end
     respond_to do |format|
       format.html { render "users/index", locals: { users_accounts: users_accounts, invited_users: invited_users } }
     end
@@ -37,19 +43,18 @@ class UsersAccountController < ApplicationController
   end
 
   def destroy
-    current_account_id = current_account.id
     entity_to_remove_id = params[:id]
     entity_type = params[:type]
     if entity_type == 'UsersAccount'
-      entity_to_remove = policy_scope(UsersAccount).where(id: entity_to_remove_id, account_id: current_account_id).first
+      entity_to_remove = policy_scope(UsersAccount).find(entity_to_remove_id)
     else
-      entity_to_remove = policy_scope(Invite).where(id: entity_to_remove_id, account_id: current_account_id).first
+      entity_to_remove = policy_scope(Invite).find(entity_to_remove_id)
     end
     respond_to do |format|
       if entity_to_remove.destroy
         # If the user is removing itself from the users table
         # then reassign the current_account to the first available if any
-        if entity_type == 'UsersAccount' && entity_to_remove.user_id == current_user.id
+        if entity_type == 'UsersAccount' && entity_to_remove.user_id == current_user.id && !current_account.is_all_accounts?
           get_first_user_account_and_set_cookie
           format.html { redirect_to "/dashboard", locals: { notice: "User removed successfully" } }
         else

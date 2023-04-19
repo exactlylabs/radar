@@ -128,6 +128,7 @@ Rails.application.routes.draw do
   resources :accounts do
     collection do
       post 'switch', to: "accounts#switch"
+      post 'all_accounts', to: "accounts#all_accounts"
     end
     member do
       post :edit

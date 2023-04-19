@@ -1,10 +1,40 @@
 import { Controller } from "@hotwired/stimulus";
+import handleError from "./error_handler_controller";
 
 export default class extends Controller {
-  static targets = ["menuIcon"];
+  static targets = ["menuIcon", "allAccountsIcon"];
 
   connect() {
     KTMenu.createInstances();
+  }
+
+  selectAllAccounts(e) {
+    // prevent <i> or <a> from switching account on click
+    if (e.target.localName === "i" || e.target.localName === "a") {
+      return false;
+    }
+    const cookieArray = document.cookie.split(";");
+    let currentAccount;
+    cookieArray.forEach((cookie) => {
+      if (cookie.trim().includes("radar_current_account_id")) {
+        currentAccount = cookie.split("=")[1];
+      }
+    });
+    if (!currentAccount || currentAccount === -1) {
+      window.location.href = "/dashboard";
+    } else {
+      const token = document.getElementsByName("csrf-token")[0].content;
+      fetch(`/accounts/all_accounts`, {
+        method: "POST",
+        headers: { "X-CSRF-Token": token },
+      }).then((res) => {
+        if (res.ok) {
+          window.location.href = "/dashboard";
+        } else {
+          handleError(res);
+        }
+      });
+    }
   }
 
   selectAccount(e) {
@@ -31,8 +61,7 @@ export default class extends Controller {
         if (res.ok) {
           window.location.href = "/dashboard";
         } else {
-          // TODO: add Sentry logging once integrated
-          console.error(res);
+          handleError(res);
         }
       });
     }
@@ -41,14 +70,16 @@ export default class extends Controller {
   showMoreOptionsIcon(e) {
     const accountId = e.target.id.split("@")[1];
     const menuIcon = this.getSpecificIcon(accountId);
-    menuIcon.style.display = "block";
+    if(menuIcon) menuIcon.style.display = "block";
   }
 
   hideMoreOptionsIcon(e) {
     const accountId = e.target.id.split("@")[1];
     const menuIcon = this.getSpecificIcon(accountId);
-    menuIcon.style.display = "none";
-    menuIcon.classList.remove("selected");
+    if(menuIcon) {
+      menuIcon.style.display = "none";
+      menuIcon.classList.remove("selected");
+    }
   }
 
   getSpecificIcon(id) {
@@ -60,6 +91,18 @@ export default class extends Controller {
   setMenuIconAsSelected(e) {
     const accountId = e.target.id.split("@")[1];
     const menuIcon = this.getSpecificIcon(accountId);
-    menuIcon.classList.add("selected");
+    if(menuIcon) menuIcon.classList.add("selected");
+  }
+
+  primaryAllAccounts() {
+    this.allAccountsIconTarget.classList.remove('svg-icon-muted');
+    this.allAccountsIconTarget.classList.add('svg-icon-primary');
+  }
+
+  primaryOffAllAccounts() {
+    if(!this.allAccountsIconTarget.classList.contains('all-accounts--selected')) {
+      this.allAccountsIconTarget.classList.remove('svg-icon-primary');
+      this.allAccountsIconTarget.classList.add('svg-icon-muted');
+    }
   }
 }

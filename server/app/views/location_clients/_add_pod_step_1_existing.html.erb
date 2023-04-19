@@ -28,7 +28,7 @@
 								 data-controller="select2"
 				>
 					<option value=""></option>
-					<% current_account.clients.each do |client| %>
+					<% policy_scope(Client).each do |client| %>
 						<!-- using 'picked' attribute instead of reserved word 'selected' to prevent defaulting a value -->
 						<option value="<%= client.unix_user %>" picked="false" data-location-name="<%= client.location&.name %>" data-location-id="<%= client.location&.id %>">
 								<%= client.name || "Unnamed Pod" %>

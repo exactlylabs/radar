@@ -19,11 +19,15 @@
                         style="background-color: rgba(245, 248, 250, 0.6);font-size: 15px;">
                         <th class="sorting ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
                             rowspan="1" colspan="1" aria-label="Location Name">Name</th>
-                        <th class="sorting_disabled" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                        <% if current_account.is_all_accounts? %>
+                            <th class="sorting ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                            rowspan="1" colspan="1" aria-label="Location Name">Account</th>
+                        <% end %>
+                        <th class="sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" tabindex="0" aria-controls="kt_customers_table" 
                             rowspan="1" colspan="1" aria-label="Avg. Download Speed">Avg./Exp. Download</th>
-                        <th class="sorting_disabled" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                        <th class="sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" tabindex="0" aria-controls="kt_customers_table" 
                             rowspan="1" colspan="1" aria-label="Avg. Upload Speed">Avg./Exp. Upload</th>
-                        <th class="text-end sorting_disabled" style="width: 15vw" rowspan="1"
+                        <th class="text-end sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" rowspan="1"
                             colspan="1" aria-label="Actions"></th>
                     </tr>
                     <!--end::Table row-->
