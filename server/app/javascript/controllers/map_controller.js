@@ -13,9 +13,13 @@ export default class extends Controller {
 
   connect() {
     if (!document.querySelector("#map")) return; // don't try to initialize a map if the <div id="map"> is not present on the screen
-    if (!map) { // only initialize the map if it has not been yet
-      map = L.map("map").setView([51.505, -0.09], 13);
+    
+    // Try and prevent having a re-initialization of the map
+    if(map) {
+      map.off();
+      map.remove();
     }
+    map = L.map("map").setView([51.505, -0.09], 13);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -142,7 +146,8 @@ export default class extends Controller {
       if (
         entries.length > 0 &&
         entries[0].contentRect.width > 0 &&
-        entries[0].contentRect.height > 0
+        entries[0].contentRect.height > 0 &&
+        !!map
       ) {
         if(!!group) map.fitBounds(group.getBounds());
         else map.fitBounds(bounds);

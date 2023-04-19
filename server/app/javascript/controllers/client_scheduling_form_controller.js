@@ -31,16 +31,11 @@ export default class extends Controller {
     }
   }
 
-
-
   onInputChange(e) {
-    let newInputValue = e.target.value;
-    if(!newInputValue) {
-      this.schedulingValueInputTarget.value = 1;
-      newInputValue = 1
-    }
+    const newInputValue = e.target.value;
+    const safeInputValue = !newInputValue ? 0 : newInputValue;
     const currentSelectValue = Periodicity[parseInt(this.schedulingValueSelectTarget.value)];
-    this.podPeriodicityStringTarget.innerText = `Tests are set to run ${newInputValue} ${parseInt(newInputValue) === 1 ? 'time' : 'times'} ${currentSelectValue}.`;
+    this.podPeriodicityStringTarget.innerText = `Tests are set to run ${safeInputValue} ${parseInt(newInputValue) === 1 ? 'time' : 'times'} ${currentSelectValue}.`;
   }
 
   onSelectChange(e) {
