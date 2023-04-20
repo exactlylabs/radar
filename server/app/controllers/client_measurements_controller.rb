@@ -38,6 +38,7 @@ class ClientMeasurementsController < ApplicationController
     @measurement.network_interfaces = @client.network_interfaces
     @measurement.account = @client.account if @client.account.present?
     @measurement.location = @client.location if @client.location.present?
+    @measurement.lonlat = @client.location.lonlat if @client.location.present?
     @measurement.ip = request.ip
     if @client.test_requested
       @client.schedule_next_test!

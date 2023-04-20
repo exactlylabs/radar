@@ -1,163 +1,186 @@
-WITH base_series AS (
+with base_series AS (
   SELECT 
-    date_trunc('$bucket', dd) as "time"
+    date_trunc('d', dd) as "time"
   FROM generate_series(
-    $__timeFrom()::timestamp , $__timeTo()::timestamp, '1 $bucket'::interval
+    $__timeFrom() , $__timeTo(), '1 $bucket'::interval
   ) dd
-), top_level AS (
-  SELECT 
-    id, geom, geoid, name
-  FROM geospaces
-  WHERE id IN ($top_level)
-
-), top_level_aggregators AS (
-  SELECT
-    geospaces.id, 
-    ST_INTERSECTION(geospaces.geom, top_level.geom) as geom, 
-    geospaces.geoid, 
-    geospaces.name, 
-    top_level.id as top_level_id
-  FROM geospaces
-  JOIN top_level ON ST_INTERSECTS(top_level.geom, geospaces.geom)
-  WHERE geospaces.namespace = '$level'
-
-), study_counties_ext AS (
-  SELECT
-    study_counties.*, geospaces.geom, geospaces.id as geom_id
-  FROM study_counties
-  JOIN geospaces ON geospaces.namespace = 'county' AND study_counties.fips = geospaces.geoid
-
 ), selected_ids AS (
   SELECT 
-    UNNEST('{ ${aggregator:csv} }'::text[]) as id
+    UNNEST('{ ${aggregates:csv} }'::text[]) as id
 
-), other_ids AS (
+), selected_study_aggregate_ids AS (
+  SELECT
+      id::bigint
+    FROM selected_ids
+    WHERE LEFT(id, 6) != 'other_'
+), selected_other_ids AS (
   SELECT
     REPLACE(id, 'other_', '')::bigint as id
   FROM selected_ids
   WHERE LEFT(id, 6) = 'other_'
-
-), aggregator_ids AS (
+), selected_other AS (
   SELECT
-    id::bigint
-  FROM selected_ids
-  WHERE LEFT(id, 6) != 'other_'
-
-), aggregators AS (
+    study_aggregates.*, 
+    CONCAT('Other (', name, ')') as extended_name
+  FROM study_aggregates
+  WHERE id IN (SELECT id FROM selected_other_ids)
+), aggregates AS (
   SELECT 
-    top_level_aggregators.id, 
-    top_level_aggregators.geoid, 
-    top_level_aggregators.name,
-    top_level_aggregators.top_level_id,
-    top_level_aggregators.geom
-  FROM top_level_aggregators
-  JOIN aggregator_ids ON aggregator_ids.id = top_level_aggregators.id
-
-), non_study_aggregators AS (
-  -- inside aggregators, there's fake ids with the format other_<top_level_id>
-  SELECT
-    aggr.id, 
-    aggr.geoid, 
-    aggr.name,
-    aggr.top_level_id,
-    geom
-  FROM top_level_aggregators aggr
+    study_aggregates.*,
+    CASE WHEN parent.name IS NOT NULL THEN
+      CONCAT(study_aggregates.name, ' (', parent.name, ')')
+    ELSE
+      study_aggregates.name
+    END as extended_name
+  FROM study_aggregates
+  LEFT JOIN study_aggregates parent ON parent.id = study_aggregates.parent_aggregate_id
   WHERE 
-    aggr.top_level_id IN (SELECT id FROM other_ids)
-    AND aggr.id NOT IN (SELECT id FROM aggregators)
+  study_aggregates.level = '$level'
+  AND (
+    study_aggregates.id IN (SELECT id FROM selected_study_aggregate_ids) 
+    OR (study_aggregates.study_aggregate=false AND study_aggregates.parent_aggregate_id IN (SELECT id FROM selected_other_ids))
+  )
 
-), all_aggregators AS (
-  SELECT * FROM aggregators
-  UNION
-  SELECT * FROM non_study_aggregators
+), study_only_aggregates AS (
+  SELECT *     
+  FROM aggregates
+  WHERE study_aggregate = true
+
+), non_study_aggregates AS (
+  SELECT *
+  FROM aggregates
+  WHERE 
+    study_aggregate = false
 
 ), filtered_dimensions AS (
-  SELECT 
-    online_client_count_projections.id,
-    online,
-    CASE WHEN online > 0 AND COALESCE(LAG(online, 1) OVER lag_window, 0) <= 0 THEN 
-      1 
-    WHEN online <= 0 AND COALESCE(LAG(online, 1) OVER lag_window, 0) > 0 THEN
-      -1
-    ELSE 
-      0
-    END AS incr,
-    online_client_count_projections.account_id, 
-    autonomous_system_id, 
-    location_id, 
-    locations.lonlat,
-    all_aggregators.id as aggregator_id,
-    all_aggregators.top_level_id as top_level_id,
-    timestamp as "time"
-  FROM online_client_count_projections
-  LEFT JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
-  LEFT JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
-  JOIN locations ON locations.id = location_id
-  JOIN all_aggregators ON ST_CONTAINS(ST_SetSRID(all_aggregators.geom, 4326), locations.lonlat::geometry)
-  WINDOW lag_window AS (PARTITION BY (online_client_count_projections.account_id, autonomous_system_id, location_id) ORDER BY online_client_count_projections.id)
-
-), windowed_sum AS (
+  SELECT
+    "timestamp" as "time",
+    location_online,
+    location_online_diff,
+    location_id,
+    event_id,
+    extended_name,
+    study_level_projections.autonomous_system_org_id,
+    aggregates.id as aggregate_id,
+    aggregates.parent_aggregate_id
+  FROM study_level_projections
+  JOIN aggregates ON aggregates.id = study_level_projections.study_aggregate_id
+  WHERE CASE WHEN '${as_orgs:csv}' != '-1' THEN
+    study_level_projections.autonomous_system_org_id IN ($as_orgs)
+  ELSE 
+    true 
+  END
+), initial_values AS (
+  SELECT
+    DISTINCT ON (aggregate_id, location_id, autonomous_system_org_id) aggregate_id, location_id, autonomous_system_org_id,
+    extended_name,
+    parent_aggregate_id,
+    "time",
+    location_online::int
+  FROM filtered_dimensions
+  WHERE
+    "time" < $__timeFrom()
+  ORDER BY aggregate_id, location_id, autonomous_system_org_id, time DESC
+), study_initial_values AS (
   SELECT
     "time",
-    aggregator_id,
-    top_level_id,
-    SUM(incr) OVER (PARTITION BY (aggregator_id, top_level_id) ORDER BY "time") as "total_online"
-  FROM filtered_dimensions
-  WHERE aggregator_id IN (SELECT id FROM aggregator_ids)
-
-), non_study_grouped AS (
+    aggregate_id,
+    extended_name,
+    SUM(location_online) as online_locations
+  FROM initial_values
+  WHERE aggregate_id IN (SELECT id FROM study_only_aggregates)
+  GROUP BY 1, 2, 3
+), non_study_initial_values AS (
   SELECT
     "time",
-    top_level_id,
-    SUM(incr) OVER (PARTITION BY top_level_id ORDER BY "time") as "total_online"
-  FROM filtered_dimensions
-  WHERE aggregator_id IN (SELECT id FROM non_study_aggregators)
-
-), table_with_base_series  AS (
-  SELECT 
-    "time", 
-    aggregators.id as aggregator_id, 
-    aggregators.top_level_id,
-    NULL as total_online 
-  FROM base_series, aggregators
+    parent_aggregate_id,
+    SUM(location_online) as online_locations
+  FROM initial_values
+  WHERE aggregate_id IN (SELECT id FROM non_study_aggregates)
+  GROUP BY 1, 2
+  
+), with_initial_count AS (
+  -- Initial Values for Study Counties
+  SELECT
+    $__timeFrom()::timestamp with time zone as "time",
+    aggregate_id,
+    extended_name,
+    online_locations as incr
+  FROM study_initial_values
   
   UNION
 
-  SELECT "time", aggregator_id as aggregator_id, top_level_id, total_online FROM windowed_sum
+  -- Initial Values for each "Other" parent aggregator
+  SELECT
+    $__timeFrom()::timestamp with time zone as "time",
+    non_study_initial_values.parent_aggregate_id as aggregate_id,
+    selected_other.extended_name,
+    online_locations as incr
+  FROM non_study_initial_values
+  JOIN selected_other ON selected_other.id = non_study_initial_values.parent_aggregate_id
 
-  UNION 
-
-  SELECT "time", -1 as aggregator_id, top_level_id, total_online FROM non_study_grouped
+  UNION
+  
+  -- Timestamped values for study counties
+  SELECT
+    "time",
+    aggregate_id,
+    extended_name,
+    location_online_diff as incr
+  FROM filtered_dimensions
+  WHERE
+    $__timeFilter("time")
+    AND aggregate_id IN (SELECT id FROM study_only_aggregates)
 
   UNION
 
-  SELECT "time", -1 as aggregator_id, top_level_id, NULL as total_online FROM base_series, non_study_aggregators
-  
-), completed_table AS (
-  SELECT 
+  -- Timestamped values for "Other" parent aggregators
+  SELECT
     "time",
-    aggregator_id,
-    top_level_id,
-    -- Whenever we find a NULL online field, we get the first value of online field, partitioned by the non_null_count column
-    -- Since that count always change when there's a valid value, first_value returns the last valid value
-    COALESCE(total_online, FIRST_VALUE(total_online) OVER (PARTITION BY aggregator_id, top_level_id, non_null_count ORDER BY "time")) as "total_online"
+    filtered_dimensions.parent_aggregate_id as aggregate_id,
+    selected_other.extended_name,
+    location_online_diff as incr
+  FROM filtered_dimensions
+  JOIN selected_other ON selected_other.id = filtered_dimensions.parent_aggregate_id
+  WHERE
+    $__timeFilter("time")
+    AND filtered_dimensions.aggregate_id IN (SELECT id FROM non_study_aggregates)
+
+  UNION
+
+  -- Empty increments for each date for each study county
+  -- to make sure all dates are present
+  SELECT
+    base_series."time",
+    study_only_aggregates.id,
+    study_only_aggregates.extended_name,
+    0 AS incr
+  FROM base_series, study_only_aggregates
+
+  UNION
+
+  SELECT
+    base_series."time",
+    selected_other.id as aggregate_id,
+    selected_other.extended_name,
+    0 AS incr
+  FROM base_series, selected_other
+
+), sum_over AS (
+  SELECT
+    "time",
+    aggregate_id,
+    extended_name,
+    SUM(incr) OVER (PARTITION BY aggregate_id ORDER BY "time" ASC) total_online
   FROM (
-    -- Create a new column with the window count of the online value
-    -- This count will keep its value until there's a non-null value in the online field, in which it increases by one
-    SELECT *, COUNT(total_online) OVER (PARTITION BY aggregator_id, top_level_id ORDER BY "time") as non_null_count
-    FROM table_with_base_series
+    SELECT 
+      "time", aggregate_id, extended_name, SUM(incr) as incr
+    FROM with_initial_count
+    GROUP BY 1, 2, 3
   ) t
 )
 
 SELECT 
-  "time", 
-  COALESCE(total_online, 0) as " ", 
-  CASE WHEN completed_table.aggregator_id = -1 THEN
-    CONCAT('Other', ' (', top_level.name, ')')
-  ELSE
-    CONCAT(aggregators.name, ' (', top_level.name, ')')
-  END as "county" 
-FROM completed_table
-LEFT JOIN aggregators ON aggregators.id = completed_table.aggregator_id
-LEFT JOIN top_level ON top_level.id = completed_table.top_level_id::bigint
+  "time", extended_name, total_online as " "
+FROM sum_over 
 ORDER BY "time" ASC

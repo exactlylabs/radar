@@ -2,6 +2,7 @@ class ProcessSpeedTestJob < ApplicationJob
   queue_as :default
 
   def perform(measurement)
+    FindAsnByIp.perform_now measurement
     if measurement.result.attached?
       json = JSON.parse(measurement.result.download)
       json["raw"].each do |result_measurement|

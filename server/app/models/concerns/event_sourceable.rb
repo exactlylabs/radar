@@ -71,7 +71,7 @@ module EventSourceable
     last_snap = Snapshot.last_from self
     if last_snap.present? || opts[:is_created]
       state = last_snap&.state || {}
-      applier.call(state, event)
+      applier.call(state, event) if applier.present?
       Snapshot.create aggregate: self, event: event, state: state
     end
   end

@@ -66,6 +66,13 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.index ["org_id"], name: "index_autonomous_system_orgs_on_org_id", unique: true
   end
 
+  create_table "autonomous_system_orgs_geospaces", id: false, force: :cascade do |t|
+    t.bigint "geospace_id", null: false
+    t.bigint "autonomous_system_org_id", null: false
+    t.index ["autonomous_system_org_id"], name: "idx_geospaces_as_orgs_as_org_id"
+    t.index ["geospace_id"], name: "idx_geospaces_as_orgs_geospace_id"
+  end
+
   create_table "autonomous_systems", force: :cascade do |t|
     t.string "name"
     t.string "asn"
@@ -156,6 +163,8 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.float "heading"
     t.float "speed"
     t.float "speed_accuracy"
+    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.bigint "autonomous_system_id"
   end
 
   create_table "client_versions", force: :cascade do |t|
@@ -352,6 +361,7 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.string "ip"
     t.bigint "autonomous_system_id"
     t.float "loss_rate"
+    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
     t.index ["autonomous_system_id"], name: "index_measurements_on_autonomous_system_id"
     t.index ["client_id"], name: "index_measurements_on_client_id"
     t.index ["location_id"], name: "index_measurements_on_location_id"
@@ -402,13 +412,68 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.index ["event_id"], name: "index_snapshots_on_event_id"
   end
 
+  create_table "study_aggregates", force: :cascade do |t|
+    t.string "name"
+    t.bigint "parent_aggregate_id"
+    t.bigint "geospace_id"
+    t.bigint "autonomous_system_org_id"
+    t.string "level"
+    t.boolean "study_aggregate", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["autonomous_system_org_id"], name: "index_study_aggregates_on_autonomous_system_org_id"
+    t.index ["geospace_id"], name: "index_study_aggregates_on_geospace_id"
+    t.index ["parent_aggregate_id"], name: "index_study_aggregates_on_parent_aggregate_id"
+  end
+
   create_table "study_counties", id: false, force: :cascade do |t|
     t.string "state"
     t.string "state_code"
     t.string "county"
     t.string "fips"
     t.integer "pop_2021"
-    t.string "state_fips"
+  end
+
+  create_table "study_level_measurements_projections", force: :cascade do |t|
+    t.datetime "timestamp"
+    t.bigint "parent_aggregate_id"
+    t.bigint "study_aggregate_id"
+    t.bigint "autonomous_system_org_id"
+    t.bigint "location_id"
+    t.bigint "measurement_id"
+    t.string "level"
+    t.integer "tests_count", default: 0
+    t.index ["autonomous_system_org_id"], name: "idx_meas_proj_as_org_id"
+    t.index ["location_id"], name: "index_study_level_measurements_projections_on_location_id"
+    t.index ["measurement_id"], name: "index_study_level_measurements_projections_on_measurement_id"
+    t.index ["parent_aggregate_id"], name: "idx_meas_proj_parrent_agg_id"
+    t.index ["study_aggregate_id"], name: "idx_meas_proj_study_agg_id"
+  end
+
+  create_table "study_level_projections", force: :cascade do |t|
+    t.datetime "timestamp"
+    t.bigint "parent_aggregate_id"
+    t.bigint "study_aggregate_id"
+    t.bigint "autonomous_system_org_id"
+    t.bigint "location_id"
+    t.bigint "event_id"
+    t.bigint "measurement_id"
+    t.bigint "client_speed_test_id"
+    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.string "level"
+    t.integer "online_count", default: 0
+    t.integer "incr", default: 0
+    t.boolean "location_online", default: false
+    t.integer "location_online_diff", default: 0
+    t.integer "measurement_count", default: 0
+    t.integer "measurement_diff", default: 0
+    t.index ["autonomous_system_org_id"], name: "index_study_level_projections_on_autonomous_system_org_id"
+    t.index ["client_speed_test_id"], name: "index_study_level_projections_on_client_speed_test_id"
+    t.index ["event_id"], name: "index_study_level_projections_on_event_id"
+    t.index ["location_id"], name: "index_study_level_projections_on_location_id"
+    t.index ["measurement_id"], name: "index_study_level_projections_on_measurement_id"
+    t.index ["parent_aggregate_id"], name: "index_study_level_projections_on_parent_aggregate_id"
+    t.index ["study_aggregate_id"], name: "index_study_level_projections_on_study_aggregate_id"
   end
 
   create_table "system_outages", force: :cascade do |t|
@@ -497,6 +562,7 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
   add_foreign_key "client_event_logs", "clients"
   add_foreign_key "client_online_logs", "accounts"
   add_foreign_key "client_online_logs", "clients"
+  add_foreign_key "client_speed_tests", "autonomous_systems"
   add_foreign_key "client_speed_tests", "widget_clients", column: "tested_by"
   add_foreign_key "clients", "accounts"
   add_foreign_key "clients", "autonomous_systems"
@@ -524,6 +590,19 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
   add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "snapshots", "events"
+  add_foreign_key "study_aggregates", "autonomous_system_orgs"
+  add_foreign_key "study_aggregates", "geospaces"
+  add_foreign_key "study_aggregates", "study_aggregates", column: "parent_aggregate_id"
+  add_foreign_key "study_level_measurements_projections", "autonomous_system_orgs"
+  add_foreign_key "study_level_measurements_projections", "locations"
+  add_foreign_key "study_level_measurements_projections", "measurements"
+  add_foreign_key "study_level_projections", "autonomous_system_orgs"
+  add_foreign_key "study_level_projections", "client_speed_tests"
+  add_foreign_key "study_level_projections", "events"
+  add_foreign_key "study_level_projections", "locations"
+  add_foreign_key "study_level_projections", "measurements"
+  add_foreign_key "study_level_projections", "study_aggregates"
+  add_foreign_key "study_level_projections", "study_aggregates", column: "parent_aggregate_id"
   add_foreign_key "update_groups", "client_versions"
   add_foreign_key "update_groups", "watchdog_versions"
   add_foreign_key "users_accounts", "accounts"

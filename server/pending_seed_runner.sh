@@ -8,3 +8,4 @@
 
 rails runner db/custom_seeds/seed_fill_geospaces.rb
 rails runner db/custom_seeds/seed_fill_lonlat.rb
+rails runner db/custom_seeds/seed_fill_measurement_lonlat.rb

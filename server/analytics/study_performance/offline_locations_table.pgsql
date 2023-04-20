@@ -1,90 +1,58 @@
-WITH top_level AS (
+WITH selected_ids AS (
   SELECT 
-    id, geom, geoid, name
-  FROM geospaces
-  WHERE id IN ($top_level)
-
-), top_level_aggregators AS (
+    UNNEST('{ ${aggregates:csv} }'::text[]) as id
+), selected_study_aggregate_ids AS (
   SELECT
-    geospaces.id, 
-    ST_INTERSECTION(geospaces.geom, top_level.geom) as geom, 
-    geospaces.geoid, 
-    geospaces.name, 
-    top_level.id as top_level_id,
-    top_level.name as top_level_name
-  FROM geospaces
-  JOIN top_level ON ST_INTERSECTS(top_level.geom, geospaces.geom)
-  WHERE geospaces.namespace = '$level'
-
-), study_counties_ext AS (
-  SELECT
-    study_counties.*, geospaces.geom, geospaces.id as geom_id
-  FROM study_counties
-  JOIN geospaces ON geospaces.namespace = 'county' AND study_counties.fips = geospaces.geoid
-
-), selected_ids AS (
-  SELECT 
-    UNNEST('{ ${aggregator:csv} }'::text[]) as id
-
-), other_ids AS (
+      id::bigint
+    FROM selected_ids
+    WHERE LEFT(id, 6) != 'other_'
+), selected_other_ids AS (
   SELECT
     REPLACE(id, 'other_', '')::bigint as id
   FROM selected_ids
   WHERE LEFT(id, 6) = 'other_'
-
-), aggregator_ids AS (
-  SELECT
-    id::bigint
-  FROM selected_ids
-  WHERE LEFT(id, 6) != 'other_'
-
-), aggregators AS (
+), aggregates AS (
   SELECT 
-    top_level_aggregators.id, 
-    top_level_aggregators.geoid, 
-    top_level_aggregators.name,
-    top_level_aggregators.top_level_id,
-    top_level_aggregators.top_level_name,
-    top_level_aggregators.geom
-  FROM top_level_aggregators
-  JOIN aggregator_ids ON aggregator_ids.id = top_level_aggregators.id
-
-), non_study_aggregators AS (
-  -- inside aggregators, there's fake ids with the format other_<top_level_id>
-  SELECT
-    aggr.id, 
-    aggr.geoid, 
-    aggr.name,
-    aggr.top_level_id,
-    aggr.top_level_name,
+    CASE WHEN parent.name IS NOT NULL THEN
+      CONCAT(study_aggregates.name, ' (', parent.name, ')')
+    ELSE
+      study_aggregates.name
+    END as name,
+    study_aggregates.id,
     geom
-  FROM top_level_aggregators aggr
-  WHERE 
-    aggr.top_level_id IN (SELECT id FROM other_ids)
-    AND aggr.id NOT IN (SELECT id FROM aggregators)
 
-), all_aggregators AS (
-  SELECT * FROM aggregators
-  UNION
-  SELECT * FROM non_study_aggregators
+  FROM study_aggregates
+  LEFT JOIN study_aggregates parent ON parent.id = study_aggregates.parent_aggregate_id
+  JOIN geospaces ON geospaces.id = study_aggregates.geospace_id
+  WHERE 
+    study_aggregates.level = '$level'
+    AND (
+      study_aggregates.id IN (SELECT id FROM selected_study_aggregate_ids) 
+      OR (study_aggregates.study_aggregate=false AND study_aggregates.parent_aggregate_id IN (SELECT id FROM selected_other_ids))
+    )
+), matched_locations AS (
+  SELECT
+    DISTINCT location_id
+  FROM study_level_projections
+  JOIN aggregates ON aggregates.id = study_level_projections.study_aggregate_id
+  WHERE CASE WHEN '${as_orgs:csv}' != '-1' THEN
+    study_level_projections.autonomous_system_org_id IN ($as_orgs)
+  ELSE 
+    true 
+  END
 )
 
 SELECT
-    accounts.name AS account_name,
-    locations.name AS location_name,
-    all_aggregators.name,
-    all_aggregators.top_level_name
-    --locations.id AS location_id
-FROM locations
-JOIN accounts ON locations.account_id = accounts.id
--- Exclude locations without any clients
+	accounts.name as "Account",
+  locations.name as "Location Name",
+  aggregates.name as "Aggregate"
+
+FROM matched_locations
+JOIN locations ON locations.id = matched_locations.location_id
 JOIN clients ON clients.location_id = locations.id
-JOIN all_aggregators ON ST_CONTAINS(ST_SetSRID(all_aggregators.geom, 4326), locations.lonlat::geometry)
-WHERE 
-  CASE WHEN '$include_other' = 'no' THEN 
-    all_aggregators.id IN (SELECT id FROM aggregator_ids) 
-  ELSE
-    true
-  END
-GROUP BY locations.id, locations.name, all_aggregators.name, all_aggregators.top_level_name, accounts.name
+JOIN accounts ON locations.account_id = accounts.id
+JOIN aggregates ON ST_CONTAINS(ST_SetSRID(aggregates.geom, 4326), locations.lonlat::geometry)
+GROUP BY
+	1, 2, 3
 HAVING COUNT(*) FILTER (WHERE clients.online) = 0
+ORDER BY accounts.name ASC, aggregates.name ASC
