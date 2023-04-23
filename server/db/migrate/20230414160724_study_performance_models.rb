@@ -22,12 +22,29 @@ class StudyPerformanceModels < ActiveRecord::Migration[6.1]
       t.references :client_speed_test, foreign_key: true
       t.column :lonlat, :st_point, geographic: true
       t.string :level
+      
+      # Online Pods Metric: Number of pods online
       t.integer :online_count, default: 0
       t.integer :incr, default: 0
+      
+      # Online Locations Metric:
       t.boolean :location_online, default: false
-      t.integer :location_online_diff, default: 0
+      t.integer :location_online_incr, default: 0
+      
+      # Tests Metric: Number of measurements taken
       t.integer :measurement_count, default: 0
-      t.integer :measurement_diff, default: 0
+      t.integer :measurement_incr, default: 0
+      
+      # Locations Metric: Number of unique locations (lonlat) with at least one speed test (from widget or pods)
+      t.integer :points_with_tests_count, default: 0
+      t.integer :points_with_tests_incr, default: 0
+
+      # Completed Locations Metric: Number of locations with at least one pod that summed 90 days online
+      t.integer :days_online_count, default: 0
+      t.integer :completed_locations_count, default: 0
+      t.integer :completed_locations_incr, default: 0
+      t.boolean :location_completed, default: false
+      
     end
     add_foreign_key :study_level_projections, :study_aggregates, column: :parent_aggregate_id, primary_key: :id
     create_join_table :geospaces, :autonomous_system_orgs, name: "geospaces_as_orgs" do |t|
@@ -37,7 +54,9 @@ class StudyPerformanceModels < ActiveRecord::Migration[6.1]
 
     add_column :measurements, :lonlat, :st_point, geographic: true
     add_column :client_speed_tests, :lonlat, :st_point, geographic: true
-    
+    add_index :measurements, :lonlat
+    add_index :client_speed_tests, :lonlat
+
     add_column :client_speed_tests, :autonomous_system_id, :bigint
     add_foreign_key :client_speed_tests, :autonomous_systems
   end

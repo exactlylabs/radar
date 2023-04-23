@@ -158,13 +158,14 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.float "altitude"
     t.string "address_provider"
     t.boolean "background_mode", default: false
+    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.bigint "autonomous_system_id"
     t.float "alt_accuracy"
     t.float "floor"
     t.float "heading"
     t.float "speed"
     t.float "speed_accuracy"
-    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
-    t.bigint "autonomous_system_id"
+    t.index ["lonlat"], name: "index_client_speed_tests_on_lonlat"
   end
 
   create_table "client_versions", force: :cascade do |t|
@@ -365,6 +366,7 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.index ["autonomous_system_id"], name: "index_measurements_on_autonomous_system_id"
     t.index ["client_id"], name: "index_measurements_on_client_id"
     t.index ["location_id"], name: "index_measurements_on_location_id"
+    t.index ["lonlat"], name: "index_measurements_on_lonlat"
     t.index ["measured_by_id"], name: "index_measurements_on_measured_by_id"
   end
 
@@ -464,9 +466,15 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.integer "online_count", default: 0
     t.integer "incr", default: 0
     t.boolean "location_online", default: false
-    t.integer "location_online_diff", default: 0
+    t.integer "location_online_incr", default: 0
     t.integer "measurement_count", default: 0
-    t.integer "measurement_diff", default: 0
+    t.integer "measurement_incr", default: 0
+    t.integer "points_with_tests_count", default: 0
+    t.integer "points_with_tests_incr", default: 0
+    t.integer "days_online_count", default: 0
+    t.integer "completed_locations_count", default: 0
+    t.integer "completed_locations_incr", default: 0
+    t.boolean "location_completed", default: false
     t.index ["autonomous_system_org_id"], name: "index_study_level_projections_on_autonomous_system_org_id"
     t.index ["client_speed_test_id"], name: "index_study_level_projections_on_client_speed_test_id"
     t.index ["event_id"], name: "index_study_level_projections_on_event_id"
