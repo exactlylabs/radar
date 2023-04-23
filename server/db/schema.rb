@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_11_134319) do
+ActiveRecord::Schema.define(version: 2023_04_19_170313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -151,6 +151,11 @@ ActiveRecord::Schema.define(version: 2023_04_11_134319) do
     t.float "altitude"
     t.string "address_provider"
     t.boolean "background_mode", default: false
+    t.float "alt_accuracy"
+    t.float "floor"
+    t.float "heading"
+    t.float "speed"
+    t.float "speed_accuracy"
   end
 
   create_table "client_versions", force: :cascade do |t|
@@ -244,6 +249,23 @@ ActiveRecord::Schema.define(version: 2023_04_11_134319) do
     t.index ["version", "aggregate_id", "aggregate_type"], name: "index_events_on_version_and_aggregate_id_and_aggregate_type", unique: true
   end
 
+  create_table "geospaces", force: :cascade do |t|
+    t.string "name"
+    t.string "namespace"
+    t.geometry "geom", limit: {:srid=>0, :type=>"geometry"}
+    t.string "geoid"
+    t.integer "gid"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "geospaces_locations", id: false, force: :cascade do |t|
+    t.bigint "geospace_id", null: false
+    t.bigint "location_id", null: false
+    t.index ["geospace_id"], name: "index_geospaces_locations_on_geospace_id"
+    t.index ["location_id"], name: "index_geospaces_locations_on_location_id"
+  end
+
   create_table "invites", force: :cascade do |t|
     t.boolean "is_active", default: false
     t.string "first_name", null: false
@@ -302,6 +324,7 @@ ActiveRecord::Schema.define(version: 2023_04_11_134319) do
     t.float "upload_avg"
     t.bigint "location_group_id"
     t.datetime "deleted_at"
+    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
     t.index ["location_group_id"], name: "index_locations_on_location_group_id"
   end
@@ -379,20 +402,13 @@ ActiveRecord::Schema.define(version: 2023_04_11_134319) do
     t.index ["event_id"], name: "index_snapshots_on_event_id"
   end
 
-  create_table "spatial_ref_sys", primary_key: "srid", id: :integer, default: nil, force: :cascade do |t|
-    t.string "auth_name", limit: 256
-    t.integer "auth_srid"
-    t.string "srtext", limit: 2048
-    t.string "proj4text", limit: 2048
-    t.check_constraint "(srid > 0) AND (srid <= 998999)", name: "spatial_ref_sys_srid_check"
-  end
-
   create_table "study_counties", id: false, force: :cascade do |t|
     t.string "state"
     t.string "state_code"
     t.string "county"
     t.string "fips"
     t.integer "pop_2021"
+    t.string "state_fips"
   end
 
   create_table "system_outages", force: :cascade do |t|
@@ -412,6 +428,18 @@ ActiveRecord::Schema.define(version: 2023_04_11_134319) do
     t.boolean "default", default: false
     t.index ["client_version_id"], name: "index_update_groups_on_client_version_id"
     t.index ["watchdog_version_id"], name: "index_update_groups_on_watchdog_version_id"
+  end
+
+  create_table "us_counties", primary_key: "fips", id: :string, force: :cascade do |t|
+    t.string "name"
+    t.string "state_fips"
+    t.string "state"
+    t.string "state_code"
+  end
+
+  create_table "us_states", primary_key: "state_fips", id: :string, force: :cascade do |t|
+    t.string "state_code"
+    t.string "name"
   end
 
   create_table "users", force: :cascade do |t|
@@ -493,6 +521,7 @@ ActiveRecord::Schema.define(version: 2023_04_11_134319) do
   add_foreign_key "online_client_count_projections", "accounts"
   add_foreign_key "online_client_count_projections", "autonomous_systems"
   add_foreign_key "online_client_count_projections", "events"
+  add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "snapshots", "events"
   add_foreign_key "update_groups", "client_versions"

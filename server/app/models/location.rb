@@ -29,12 +29,13 @@ include EventSourceable
     # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks
     :after_add => :after_label_added, 
     :after_remove => :after_label_removed
-  
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
   has_one :client_count_aggregate, :as => :aggregator
+  has_and_belongs_to_many :geospaces
 
   after_validation :custom_geocode, if: :lat_long_changed?
+  after_save :link_to_geospaces
 
   default_scope { where(deleted_at: nil) }
   scope :with_deleted, -> { unscope(where: :deleted_at) }
@@ -43,6 +44,8 @@ include EventSourceable
   scope :where_offline, -> { left_joins(:clients).group(:id).having("sum(case when clients.pinged_at > (now() - interval '1 minute') then 1 else 0 end) = 0") }
 
   scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
+
+  scope :with_geospaces,  -> { joins("JOIN geospaces ON ST_INTERSECTS(ST_SetSRID(locations.lonlat, 4326)::geometry, ST_SetSRID(geospaces.geom, 4326)::geometry)") }
 
   def event_data()
     data = self.as_json.transform_keys(&:to_sym)
@@ -173,7 +176,7 @@ include EventSourceable
       self.clients.update(location_id: nil)
     end
   end
-
+  
   private
 
   def custom_geocode
@@ -190,8 +193,19 @@ include EventSourceable
       self.longitude = geo.longitude unless self.longitude
       self.state = geo.state
       self.county = geo.county
+      self.lonlat = "POINT(#{geo.longitude} #{geo.latitude})"
     end
   end
 
+  def link_to_geospaces
+    if saved_change_to_lonlat? && self.lonlat
+      self.geospaces.excluding_lonlat(self.lonlat).each do |geospace|
+        self.geospaces.delete geospace
+      end
+      Geospace.containing_lonlat(self.lonlat).each do |geospace|
+        self.geospaces << geospace unless self.geospaces.include? geospace
+      end
+    end
+  end
 
 end

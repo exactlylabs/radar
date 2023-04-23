@@ -86,3 +86,7 @@ gem 'wkhtmltopdf-binary'
 gem "rqrcode"
 gem "sidekiq"
 gem 'discordrb'
+gem 'activerecord-postgis-adapter'
+gem 'rgeo'
+gem 'rgeo-shapefile'
+gem 'http'

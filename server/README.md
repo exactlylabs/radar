@@ -28,6 +28,17 @@ you also need to run a script that is going to download some necessary files
 In order for Image Processing to work correctly, you need to install ImageMagick
 locally on the computer running the app. Installation instructions [here](https://imagemagick.org/script/download.php).
 
+#### RGeo and PostGIS
+
+We use RGeo, along with Postgis to handle geographic filters. There's some dependencies that you need to make sure that are installed in order for this feature to work
+
+* [GEOS](https://github.com/rgeo/rgeo/blob/main/doc/Installing-GEOS.md)
+
+* [PostGIS](https://postgis.net/install/)
+  * You don't need to run the `CREATE EXTENSION part`, only install the plugin so that your postgres is aware of it
+
+
+
 ### Running
 
 To Run, simply call `foreman start -f Procfile.dev`

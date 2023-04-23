@@ -15,7 +15,7 @@
 # gem 'pg'
 #
 default: &default
-  adapter: postgresql
+  adapter: postgis
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
@@ -23,7 +23,10 @@ default: &default
 
 development:
   <<: *default
-  url: <%= ENV["DATABASE_URL"] ? ENV["DATABASE_URL"] : "postgres://localhost/radar_development" %>
+  database: radar_development
+  <% if ENV["DATABASE_URL"].present? %> 
+  url: <%= ENV["DATABASE_URL"].sub(/^postgres/, "postgis") %>
+  <% end %>
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.

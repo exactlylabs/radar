@@ -2,7 +2,7 @@ import { API_URL } from '../constants';
 import { notifyError } from './errors';
 
 export const sendRawData = (rawData, startTimestamp, userData, clientId) => {
-  const { networkLocation, networkType, networkCost, accuracy, altitude, addressProvider } = userData;
+  const { networkLocation, networkType, networkCost, accuracy, altitude, addressProvider, altitudeAccuracy, speed, heading } = userData;
   const { address, city, state, house_number, street, postal_code } = userData.address;
   const location = userData.address.coordinates;
   fetch(`${API_URL}/speed_tests?client_id=${clientId}`, {
@@ -25,7 +25,10 @@ export const sendRawData = (rawData, startTimestamp, userData, clientId) => {
         network_cost: networkCost,
         altitude,
         accuracy,
-        address_provider: addressProvider
+        address_provider: addressProvider,
+        alt_accuracy: altitudeAccuracy,
+        speed,
+        heading
       }
     }),
   }).catch(notifyError);

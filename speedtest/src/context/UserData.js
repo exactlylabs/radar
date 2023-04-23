@@ -38,6 +38,9 @@ export const UserDataContextProvider = ({children}) => {
     addressProvider: ADDRESS_PROVIDER.MANUAL,
     altitude: null, // provided by browser geolocation API
     accuracy: null, // provided by browser geolocation API
+    altitudeAccuracy: null, // provided by browser geolocation API
+    speed: null, // provided by browser geolocation API
+    heading: null, // provided by browser geolocation API
   });
 
   const setAddress = address => setUserData(prev => ({...prev, address}));
