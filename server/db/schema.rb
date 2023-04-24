@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_19_170313) do
+ActiveRecord::Schema.define(version: 2023_04_24_112703) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "postgis"
 
   create_table "accounts", force: :cascade do |t|
     t.integer "account_type", default: 0, null: false
@@ -323,9 +324,9 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
+    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
-    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.float "download_avg"
@@ -401,15 +402,15 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.index ["client_version_id"], name: "index_packages_on_client_version_id"
   end
 
-  create_table "shared_users_accounts", force: :cascade do |t|
+  create_table "shared_accounts", force: :cascade do |t|
     t.bigint "original_account_id", null: false
     t.bigint "shared_to_account_id", null: false
     t.datetime "deleted_at"
     t.datetime "shared_at", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["original_account_id"], name: "index_shared_users_accounts_on_original_account_id"
-    t.index ["shared_to_account_id"], name: "index_shared_users_accounts_on_shared_to_account_id"
+    t.index ["original_account_id"], name: "index_shared_accounts_on_original_account_id"
+    t.index ["shared_to_account_id"], name: "index_shared_accounts_on_shared_to_account_id"
   end
 
   create_table "snapshots", force: :cascade do |t|
@@ -423,20 +424,50 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.index ["event_id"], name: "index_snapshots_on_event_id"
   end
 
-  create_table "spatial_ref_sys", primary_key: "srid", id: :integer, default: nil, force: :cascade do |t|
-    t.string "auth_name", limit: 256
-    t.integer "auth_srid"
-    t.string "srtext", limit: 2048
-    t.string "proj4text", limit: 2048
-    t.check_constraint "(srid > 0) AND (srid <= 998999)", name: "spatial_ref_sys_srid_check"
+  create_table "study_aggregates", force: :cascade do |t|
+    t.string "name"
+    t.bigint "parent_aggregate_id"
+    t.bigint "geospace_id"
+    t.bigint "autonomous_system_org_id"
+    t.string "level"
+    t.boolean "study_aggregate", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["autonomous_system_org_id"], name: "index_study_aggregates_on_autonomous_system_org_id"
+    t.index ["geospace_id"], name: "index_study_aggregates_on_geospace_id"
+    t.index ["parent_aggregate_id"], name: "index_study_aggregates_on_parent_aggregate_id"
   end
 
-  create_table "study_counties", id: false, force: :cascade do |t|
-    t.string "state"
-    t.string "state_code"
-    t.string "county"
-    t.string "fips"
-    t.integer "pop_2021"
+  create_table "study_level_projections", force: :cascade do |t|
+    t.datetime "timestamp"
+    t.bigint "parent_aggregate_id"
+    t.bigint "study_aggregate_id"
+    t.bigint "autonomous_system_org_id"
+    t.bigint "location_id"
+    t.bigint "event_id"
+    t.bigint "measurement_id"
+    t.bigint "client_speed_test_id"
+    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.string "level"
+    t.integer "online_count", default: 0
+    t.integer "incr", default: 0
+    t.boolean "location_online", default: false
+    t.integer "location_online_incr", default: 0
+    t.integer "measurement_count", default: 0
+    t.integer "measurement_incr", default: 0
+    t.integer "points_with_tests_count", default: 0
+    t.integer "points_with_tests_incr", default: 0
+    t.integer "days_online_count", default: 0
+    t.integer "completed_locations_count", default: 0
+    t.integer "completed_locations_incr", default: 0
+    t.boolean "location_completed", default: false
+    t.index ["autonomous_system_org_id"], name: "index_study_level_projections_on_autonomous_system_org_id"
+    t.index ["client_speed_test_id"], name: "index_study_level_projections_on_client_speed_test_id"
+    t.index ["event_id"], name: "index_study_level_projections_on_event_id"
+    t.index ["location_id"], name: "index_study_level_projections_on_location_id"
+    t.index ["measurement_id"], name: "index_study_level_projections_on_measurement_id"
+    t.index ["parent_aggregate_id"], name: "index_study_level_projections_on_parent_aggregate_id"
+    t.index ["study_aggregate_id"], name: "index_study_level_projections_on_study_aggregate_id"
   end
 
   create_table "system_outages", force: :cascade do |t|
@@ -456,18 +487,6 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
     t.boolean "default", default: false
     t.index ["client_version_id"], name: "index_update_groups_on_client_version_id"
     t.index ["watchdog_version_id"], name: "index_update_groups_on_watchdog_version_id"
-  end
-
-  create_table "us_counties", primary_key: "fips", id: :string, force: :cascade do |t|
-    t.string "name"
-    t.string "state_fips"
-    t.string "state"
-    t.string "state_code"
-  end
-
-  create_table "us_states", primary_key: "state_fips", id: :string, force: :cascade do |t|
-    t.string "state_code"
-    t.string "name"
   end
 
   create_table "users", force: :cascade do |t|
@@ -550,16 +569,14 @@ ActiveRecord::Schema.define(version: 2023_04_19_170313) do
   add_foreign_key "online_client_count_projections", "accounts"
   add_foreign_key "online_client_count_projections", "autonomous_systems"
   add_foreign_key "online_client_count_projections", "events"
+  add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
-  add_foreign_key "shared_users_accounts", "accounts", column: "original_account_id"
-  add_foreign_key "shared_users_accounts", "accounts", column: "shared_to_account_id"
+  add_foreign_key "shared_accounts", "accounts", column: "original_account_id"
+  add_foreign_key "shared_accounts", "accounts", column: "shared_to_account_id"
   add_foreign_key "snapshots", "events"
   add_foreign_key "study_aggregates", "autonomous_system_orgs"
   add_foreign_key "study_aggregates", "geospaces"
   add_foreign_key "study_aggregates", "study_aggregates", column: "parent_aggregate_id"
-  add_foreign_key "study_level_measurements_projections", "autonomous_system_orgs"
-  add_foreign_key "study_level_measurements_projections", "locations"
-  add_foreign_key "study_level_measurements_projections", "measurements"
   add_foreign_key "study_level_projections", "autonomous_system_orgs"
   add_foreign_key "study_level_projections", "client_speed_tests"
   add_foreign_key "study_level_projections", "events"

@@ -14,10 +14,18 @@ class User < ApplicationRecord
   has_many :measurements
   has_many :users_accounts
   has_many :accounts, through: :users_accounts
-  
-  has_many :shared_accounts, through: :accounts
 
   after_save :check_pending_downloads
+
+  def shared_accounts
+    raw_query = "SELECT a.* FROM accounts a " +
+      "WHERE a.id IN (" +
+      "SELECT sa.original_account_id FROM accounts joined_account " +
+      "JOIN shared_accounts sa ON joined_account.id = sa.shared_to_account_id " +
+      "WHERE sa.shared_to_account_id IN (?))"
+    query = ActiveRecord::Base.sanitize_sql([raw_query, self.accounts.map {|a| a.id}])
+    Account.where(id: ActiveRecord::Base.connection.execute(query).map {|r| r["id"]})
+  end
 
   def has_pending_downloads
     self.pending_downloads.present? && self.pending_downloads.size > 0

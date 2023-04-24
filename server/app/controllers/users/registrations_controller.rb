@@ -54,9 +54,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
         @user = User.create! user_params
         # Link account and new user together
         @user_account = UsersAccount.create!(user_id: @user.id, account_id: @invite[:account_id], joined_at: Time.now, invited_at: @invite[:sent_at])
-        
-        # TODO: check if this invite belongs to an account which was shared, if so, add a new SharedUserAccount entry as well
-        
         @invite.destroy!
       end
     rescue ActiveRecord::RecordInvalid => invalid
