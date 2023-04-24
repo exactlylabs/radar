@@ -156,7 +156,7 @@ func initIndex() {
 			}
 		}
 
-		for _, path := range config.GetConfig().TractShapesByStateId() {
+		for _, path := range tractShapesByStateId(config.GetConfig().TractsShapeDir) {
 			err := addShapeToIndex(index, "CENSUS_TRACTS", path)
 			if err != nil {
 				panic(err)
