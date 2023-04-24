@@ -8,13 +8,11 @@ class Account < ApplicationRecord
   has_many :measurements
   has_one :client_count_aggregate, :as => :aggregator
 
-  has_many :shared_users_accounts, foreign_key: :shared_to_account_id
-  has_many :shared_accounts, through: :shared_users_accounts, source: :account
+  has_many :shared_accounts, foreign_key: :shared_to_account_id
 
   enum account_type: [ :personal, :organization ]
 
   scope :not_deleted, -> { where(deleted_at: nil) }
-  scope :shared_to_accounts, -> (id) { joins(:shared_users_account).where(original_account_id: id) }
 
   def is_organization?
     self.account_type == "organization"

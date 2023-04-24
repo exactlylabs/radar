@@ -1,4 +1,4 @@
-class SharedUsersAccount < ApplicationRecord
+class SharedAccount < ApplicationRecord
   belongs_to :account, foreign_key: :shared_to_account_id
   belongs_to :account, foreign_key: :original_account_id
 

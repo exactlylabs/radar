@@ -43,14 +43,14 @@
                 >
                   <% policy_scope(Account).each do |account| %>
                     <% if current_account.id != account.id %>
-                      <option value="<%= account.id %>" label="<%= account.name %>" <%= policy_scope(SharedUsersAccount).where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
+                      <option value="<%= account.id %>" label="<%= account.name %>" <%= policy_scope(SharedAccount).where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
                     <% end %>
                   <% end %>
                 </select>
               </div>
             </div>
           <% end %>
-          <p class="mt-1 mb-10" style="color: #6d6a94; font-size: 13px;"><%= current_account.get_share_state_string(policy_scope(SharedUsersAccount)) %></p>
+          <p class="mt-1 mb-10" style="color: #6d6a94; font-size: 13px;"><%= current_account.get_share_state_string(policy_scope(SharedAccount)) %></p>
           <button type="submit" class="btn btn-primary w-25">Save settings</button>
         </form>
       </div>
