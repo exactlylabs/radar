@@ -146,8 +146,8 @@ func initIndex() {
 	if !indexInitialized {
 		log.Println("ReverseGeocoder - Loading Index")
 		index = geo.NewIndex()
-
-		files := config.GetConfig().ShapePathEntries()
+		conf := config.GetConfig()
+		files := shapePathEntries(conf)
 		for namespace, path := range files {
 			log.Printf("ReverseGeocoder - Loading %s from file %s\n", namespace, path)
 			err := addShapeToIndex(index, namespace, path)
@@ -156,7 +156,7 @@ func initIndex() {
 			}
 		}
 
-		for _, path := range tractShapesByStateId(config.GetConfig().TractsShapeDir) {
+		for _, path := range tractShapesByStateId(conf) {
 			err := addShapeToIndex(index, "CENSUS_TRACTS", path)
 			if err != nil {
 				panic(err)

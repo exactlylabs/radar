@@ -29,16 +29,6 @@ func GetConfig() *ProcessorConfig {
 	return cachedConfig
 }
 
-func (c *ProcessorConfig) ShapePathEntries() map[string]string {
-	paths := make(map[string]string)
-	for _, path := range strings.Split(c.ShapePaths, ";") {
-		parts := strings.Split(path, ":")
-		paths[parts[0]] = parts[1]
-	}
-
-	return paths
-}
-
 func processConfig() *ProcessorConfig {
 	config := &ProcessorConfig{}
 

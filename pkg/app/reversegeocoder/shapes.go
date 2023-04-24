@@ -5,12 +5,24 @@ import (
 	"io/fs"
 	"path/filepath"
 	"strings"
+
+	"github.com/exactlylabs/mlab-processor/pkg/app/config"
 )
 
-func tractShapesByStateId(tractsDir string) map[string]string {
+func shapePathEntries(conf *config.ProcessorConfig) map[string]string {
+	paths := make(map[string]string)
+	for _, path := range strings.Split(conf.ShapePaths, ";") {
+		parts := strings.Split(path, ":")
+		paths[parts[0]] = parts[1]
+	}
+
+	return paths
+}
+
+func tractShapesByStateId(conf *config.ProcessorConfig) map[string]string {
 	paths := make(map[string]string)
 
-	err := filepath.WalkDir(tractsDir, func(path string, d fs.DirEntry, err error) error {
+	err := filepath.WalkDir(conf.TractsShapeDir, func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() {
 			return nil
 		}
