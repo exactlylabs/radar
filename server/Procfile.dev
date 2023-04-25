@@ -1,2 +1,3 @@
 web: bundle exec rails s
 clock: bundle exec rails runner clock.rb
+consumers: bundle exec rails runner consumers.rb
