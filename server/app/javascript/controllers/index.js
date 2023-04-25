@@ -96,3 +96,6 @@ application.register("public-page", PublicPageController);
 
 import CategoriesController from './categories_controller';
 application.register("categories", CategoriesController);
+
+import SearchController from './search_controller';
+application.register("search", SearchController);

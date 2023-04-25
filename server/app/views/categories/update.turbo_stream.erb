@@ -1,8 +1,5 @@
-<%= turbo_stream.remove @category do %>
-<% end %>
-
-<%= turbo_stream.update 'notice-container' do %>
-  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<%= turbo_stream.replace @category do %>
+  <%= render partial: "categories/list_item", locals: {category: @category} %>
 <% end %>
 
 <% @locations.each do |location| %>

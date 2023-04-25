@@ -1,0 +1,6 @@
+<div class="category--search-container" data-controller="categories" data-categories-target="searchInput">
+  <%= image_tag image_url("search.png"), class: "category--search-icon" %>
+  <%= form_with(url: categories_path, method: :get, data: { controller: "search", "turbo_frame" => "categories" }) do |form| %>
+    <%= form.text_field :query, placeholder: "Filter categories...", class: "category--search-input", "data-action" => "input->search#search focus->categories#focusInput blur->categories#blurInput" %>
+  <% end %>
+</div>

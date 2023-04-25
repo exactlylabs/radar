@@ -19,11 +19,15 @@
     </div>
 
     <div class="modal-body d-flex flex-column justify-content-center align-items-center">
-      <div class="category--list-container">
-        <% policy_scope(Category).each do |category| %>
+      <div class="category--search-add-container">
+        <%= render partial: "categories/search_input" %>
+        <%= render partial: "categories/add_category_button" %>
+      </div>
+      <%= turbo_frame_tag "categories", class: "category--list-container" do %>
+        <% categories.each do |category| %>
           <%= render partial: "categories/list_item", locals: {category: category} %>
         <% end %>
-      </div>
+      <% end %>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>

@@ -8,6 +8,7 @@ class CreateCategoriesTableAndCreateLocationCategoriesTable < ActiveRecord::Migr
     rename_column :categories_locations, :location_label_id, :category_id
 
     change_table :categories do |t|
+      t.references :account
       t.string :color_hex, null: false
     end
     

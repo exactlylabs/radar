@@ -3,6 +3,11 @@ class CategoriesController < ApplicationController
   before_action :set_category, except: [:index]
 
   def index
+    if params[:query]
+      @categories = policy_scope(Category).where("LOWER(name) LIKE ?", "%#{params[:query].downcase}%")
+    else
+      @categories = policy_scope(Category)
+    end
   end
 
   def delete
@@ -19,8 +24,10 @@ class CategoriesController < ApplicationController
 
   def update
     respond_to do |format|
-      if @category.update(name: params[:category][:name])
+      if @category.update(name: params[:category][:name], color_hex: params[:category][:color_hex])
         @notice = "Category updated successfully."
+        locations_by_category = policy_scope(CategoriesLocation).where(category_id: @category.id).pluck(:location_id)
+        @locations = policy_scope(Location).where(id: locations_by_category)
         format.turbo_stream
         format.html { render partial: "categories/list_item", locals: {category: @category} }
       else
