@@ -44,6 +44,9 @@ module StudyLevelHandler
             aggs << {"level" => "census_place", "aggregate_id" => agg.id, "parent_id" => county_agg.id, "name" => agg.name, "geospace_id" => agg.geospace_id}
           end
         end
+
+        to_store = aggs.filter {|g| g["level"] != 'isp_county'}
+        @study_aggregates[lonlat] = to_store.dup
               
       elsif as_org_id.present?
         county_agg = aggs.find {|a| a["level"] == "county"}

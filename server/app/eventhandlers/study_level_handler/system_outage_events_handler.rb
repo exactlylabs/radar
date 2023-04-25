@@ -5,7 +5,11 @@ module StudyLevelHandler
     private
 
     def handle_system_outage_event!(event)
-      if event.name == SystemOutage::Events::FINISHED
+      if event.name == SystemOutage::Events::CREATED
+        @in_outage = true
+
+      elsif event.name == SystemOutage::Events::FINISHED
+        @in_outage = false
         outage = event.snapshot.state
         # Once a system outage is finished, we search for 
         # pods whose state differs from the state before the outage.

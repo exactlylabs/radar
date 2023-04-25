@@ -12,7 +12,7 @@ module StudyLevelHandler
       end
 
       def handle_client_event!(event)    
-        if event.snapshot.nil? || SystemOutage.at(event.timestamp).exists?
+        if event.snapshot.nil? || @in_outage
           return
         end
         
@@ -71,16 +71,21 @@ module StudyLevelHandler
         as_org_id, as_org_name = self.as_org_info(autonomous_system_id)
         self.get_aggregates(location.lonlat, as_org_id, as_org_name).each do |aggregate|
           parent_id = aggregate["parent_id"]
-          projection = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location.id
-          if projection.nil?
-            projection = self.new_projection(
+          key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location.id}-#{location.lonlat.longitude}-#{location.lonlat.latitude}"
+          last_obj = @cached_projections[key]
+          if last_obj.nil?
+            last_obj = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location.id
+          end
+          if last_obj.nil?
+            last_obj = self.new_projection(
               aggregate, location.lonlat, as_org_id: as_org_id,
               location_id: location.id, event_id: event.id
             )
           end
 
-          if projection.present?
-            self.new_record_from_event!(projection, event, increment=increment)
+          if last_obj.present?
+            obj = self.new_record_from_event!(last_obj, event, increment=increment)
+            @cached_projections[key] = obj
           end
         end
       end

@@ -7,7 +7,11 @@ module StudyLevelHandler
       def handle_measurement(id, location_id, lonlat, timestamp, as_org_id, as_org_name)
         self.get_aggregates(lonlat, as_org_id, as_org_name).each do |aggregate|
           parent_id = aggregate["parent_id"]
-          last_obj = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location_id
+          key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location_id}-#{lonlat.longitude}-#{lonlat.latitude}"
+          last_obj = @cached_projections[key]
+          if last_obj.nil?
+            last_obj = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location_id
+          end
           if last_obj.nil?
             last_obj = self.new_projection(
               aggregate, lonlat, as_org_id: as_org_id, 
@@ -15,14 +19,19 @@ module StudyLevelHandler
             )    
           end
 
-          self.new_record_from_measurement! id, timestamp, last_obj
+          obj = self.new_record_from_measurement! id, timestamp, last_obj
+          @cached_projections[key] = obj
         end
       end
 
       def handle_speed_test(id, lonlat, timestamp, as_org_id, as_org_name)
         self.get_aggregates(lonlat, as_org_id, as_org_name).each do |aggregate|
           parent_id = aggregate["parent_id"]
-          last_obj = StudyLevelProjection.latest_for_with_lonlat aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, lonlat
+          key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{nil}-#{lonlat.longitude}-#{lonlat.latitude}"
+          last_obj = @cached_projections[key]
+          if last_obj.nil?
+            last_obj = StudyLevelProjection.latest_for_with_lonlat aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, lonlat
+          end
           if last_obj.nil?
             last_obj = self.new_projection(
               aggregate, lonlat, as_org_id: as_org_id, 
@@ -30,7 +39,8 @@ module StudyLevelHandler
             )  
           end
 
-          self.new_record_from_client_speed_test! id, timestamp, last_obj
+          obj = self.new_record_from_client_speed_test! id, timestamp, last_obj
+          @cached_projections[key] = obj
         end
 
       end

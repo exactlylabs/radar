@@ -30,15 +30,19 @@ module StudyLevelHandler
           end
 
           self.get_aggregates(location.lonlat, as_org_id, as_org_name).each do |aggregate|
-            dimension_key = "#{aggregate["level"]}_#{aggregate["parent_id"]}_#{aggregate["aggregate_id"]}_#{as_org_id}_#{location.lonlat.longitude}_#{location.lonlat.latitude}"
-            last_obj = StudyLevelProjection.latest_for(aggregate['level'], aggregate['parent_id'], aggregate['aggregate_id'], as_org_id, location.id)
+            key = "#{aggregate["level"]}-#{aggregate["parent_id"]}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location.id}-#{location.lonlat.longitude}-#{location.lonlat.latitude}"
+            last_obj = @cached_projections[key]
+            if last_obj.nil?
+              last_obj = StudyLevelProjection.latest_for(aggregate['level'], aggregate['parent_id'], aggregate['aggregate_id'], as_org_id, location.id)
+            end
             if last_obj.nil?
               last_obj = self.new_projection(
                 aggregate, location.lonlat, as_org_id: as_org_id,
                 location_id: location.id
               )
             end
-            record_from_daily_trigger(last_obj, date)
+            obj = record_from_daily_trigger(last_obj, date)
+            @cached_projections[key] = obj
           end
           online_locations.add(client["location_id"])
         end
@@ -55,6 +59,7 @@ module StudyLevelHandler
         obj.location_completed = true
       end
       obj.save!(validate: false)
+      return obj
     end
   end
 end

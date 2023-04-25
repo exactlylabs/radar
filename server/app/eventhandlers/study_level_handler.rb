@@ -18,6 +18,8 @@ module StudyLevelHandler
 
     def initialize()
       @study_aggregates = {}
+      @cached_projections = {}
+      @in_outage = nil
 
       Location.where("lonlat IS NOT NULL").each do |location|
         aggs = self.get_aggregates(location.lonlat, nil, nil)
@@ -46,6 +48,9 @@ module StudyLevelHandler
         pending_elements.sort_by! { |x| x[2] }
 
         source, source_data, timestamp, consumer_offset = pending_elements[0]
+        if @in_outage.nil?
+          @in_outage = SystemOutage.at(Time.at(timestamp)).exists?
+        end
         StudyLevelProjection.transaction do
           if source == "event"
             self.handle_event source_data
