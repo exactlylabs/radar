@@ -38,7 +38,6 @@ class StudyLevelProjection < ActiveRecord::Base
       study_aggregate_id: aggregate_id, 
       autonomous_system_org_id: as_org_id, 
       lonlat: lonlat,
-      location_id: nil,
     ).last
   end
 

@@ -30,10 +30,11 @@ module StudyLevelHandler
           end
 
           self.get_aggregates(location.lonlat, as_org_id, as_org_name).each do |aggregate|
+            dimension_key = "#{aggregate["level"]}_#{aggregate["parent_id"]}_#{aggregate["aggregate_id"]}_#{as_org_id}_#{location.lonlat.longitude}_#{location.lonlat.latitude}"
             last_obj = StudyLevelProjection.latest_for(aggregate['level'], aggregate['parent_id'], aggregate['aggregate_id'], as_org_id, location.id)
             if last_obj.nil?
               last_obj = self.new_projection(
-                aggregate, as_org_id: as_org_id, lonlat: location.lonlat, 
+                aggregate, location.lonlat, as_org_id: as_org_id,
                 location_id: location.id
               )
             end

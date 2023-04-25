@@ -17,9 +17,7 @@ module StudyLevelHandler
     include StudyLevelHandler::DailyTriggerHandler
 
     def initialize()
-      @last_objs = {}
       @study_aggregates = {}
-      @locations_with_tests = {}
 
       Location.where("lonlat IS NOT NULL").each do |location|
         aggs = self.get_aggregates(location.lonlat, nil, nil)

@@ -71,11 +71,10 @@ module StudyLevelHandler
         as_org_id, as_org_name = self.as_org_info(autonomous_system_id)
         self.get_aggregates(location.lonlat, as_org_id, as_org_name).each do |aggregate|
           parent_id = aggregate["parent_id"]
-          
           projection = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location.id
           if projection.nil?
             projection = self.new_projection(
-              aggregate, as_org_id: as_org_id, lonlat: location.lonlat, 
+              aggregate, location.lonlat, as_org_id: as_org_id,
               location_id: location.id, event_id: event.id
             )
           end
@@ -112,7 +111,6 @@ module StudyLevelHandler
           obj.location_online_incr = 0
         end
 
-        # TODO: Implement completed locations logic here as well in the future
         obj.save!(:validate => false)
         return obj
       end

@@ -58,7 +58,7 @@ module StudyLevelHandler
       return aggs
     end
 
-    def new_projection(aggregate, **opts)
+    def new_projection(aggregate, lonlat, **opts)
       StudyLevelProjection.new(
         level: aggregate["level"],
         parent_aggregate_id: aggregate["parent_id"],
