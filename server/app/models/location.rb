@@ -32,11 +32,11 @@ include EventSourceable
   belongs_to :account
   belongs_to :location_group, optional: true
   belongs_to :account
-  has_and_belongs_to_many :location_labels, 
+  has_and_belongs_to_many :categories,
     # Note: Rails only triggers when associating through << statement
     # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks
-    :after_add => :after_label_added, 
-    :after_remove => :after_label_removed
+    #after_add: :after_category_added, 
+    #after_remove: :after_category_removed
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
   has_one :client_count_aggregate, :as => :aggregator
@@ -58,7 +58,7 @@ include EventSourceable
 
   def event_data()
     data = self.as_json.transform_keys(&:to_sym)
-    data["labels"] = self.location_labels.map {|label| label.name}
+    data["labels"] = self.categories.map {|label| label.name}
     return data
   end
 
@@ -66,7 +66,7 @@ include EventSourceable
     state.update({
       name: self.name,
       address: self.address,
-      labels: self.location_labels.map {|label| label.name},
+      labels: self.categories.map {|label| label.name},
     })
   end
 

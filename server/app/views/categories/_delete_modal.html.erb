@@ -1,0 +1,17 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-body d-flex flex-column justify-content-center align-items-center text-center">
+      <p class="category--delete-modal-title">Are you sure you want to delete "<%= @category.name %>"?</p>
+      <p class="category--delete-modal-subtitle">This category is currently used by <%= @category.locations.count %> locations.</p>
+      <p class="category--delete-modal-subtitle">Your locations will not be deleted.</p>
+    </div>
+    <div class="modal-footer">
+      <a class="btn btn-light"
+         data-action="click->categories#closeDeleteModal"
+         href="<%= categories_path %>"
+         data-turbo-frame="categories_modal"
+      >Cancel</a>
+      <%= link_to "Delete", category_path(id: @category.id), method: :delete, class: "btn btn-light-danger", "data-action" => "click->categories#handleSubmitDelete" %>
+    </div>
+  </div>
+</div>

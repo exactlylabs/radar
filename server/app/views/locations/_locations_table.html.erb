@@ -22,12 +22,15 @@
                         <% if current_account.is_all_accounts? %>
                             <th class="sorting ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
                             rowspan="1" colspan="1" aria-label="Location Name">Account</th>
+                        <% else %>
+                            <th class="sorting_disabled" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                            rowspan="1" colspan="1" aria-label="Location Categories">Category</th>
                         <% end %>
-                        <th class="sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" tabindex="0" aria-controls="kt_customers_table" 
+                        <th class="sorting_disabled" style="width: 10vw" tabindex="0" aria-controls="kt_customers_table" 
                             rowspan="1" colspan="1" aria-label="Avg. Download Speed">Avg./Exp. Download</th>
-                        <th class="sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" tabindex="0" aria-controls="kt_customers_table" 
+                        <th class="sorting_disabled" style="width: 10vw" tabindex="0" aria-controls="kt_customers_table" 
                             rowspan="1" colspan="1" aria-label="Avg. Upload Speed">Avg./Exp. Upload</th>
-                        <th class="text-end sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" rowspan="1"
+                        <th class="text-end sorting_disabled" style="width: 10vw" rowspan="1"
                             colspan="1" aria-label="Actions"></th>
                     </tr>
                     <!--end::Table row-->

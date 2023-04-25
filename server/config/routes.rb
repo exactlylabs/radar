@@ -153,6 +153,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :categories, param: :id do
+  end
+  get '/categories/:id/delete', to: 'categories#delete', as: 'category_delete'
+  get '/categories/:id/edit', to: 'categories#edit', as: 'category_edit'
+  get '/categories/:id/cancel', to: 'categories#cancel_edit', as: 'category_cancel_edit'
+
   namespace 'api' do
     namespace 'v1' do
       resources :clients do

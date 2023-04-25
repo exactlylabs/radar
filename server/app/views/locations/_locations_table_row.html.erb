@@ -25,6 +25,10 @@
   <% end %>
   <td class="text-gray-600 mb-1"
       style="font-size:14px; color: #b5b5c3;">
+      <%= render partial: "location_categories/table_cell", locals: {categories: location.categories} %>
+  </td>
+  <td class="text-gray-600 mb-1"
+      style="font-size:14px; color: #b5b5c3;">
       <span>
         <%= location.download_avg.present? ? "#{location.download_avg} Mbps / " : 'Not available / ' %>
       </span>
