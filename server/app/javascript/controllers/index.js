@@ -93,3 +93,6 @@ application.register("exports", ExportsController);
 
 import PublicPageController from './public_page_controller';
 application.register("public-page", PublicPageController);
+
+import CategoriesController from './categories_controller';
+application.register("categories", CategoriesController);

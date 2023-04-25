@@ -4,13 +4,16 @@ class LocationsController < ApplicationController
 
   # GET /locations or /locations.json
   def index
+    category_id = params[:category]
     account_id = params[:account_id]
-    if account_id
-      @locations = policy_scope(Location).where(account_id: account_id)
-    else
-      @locations = policy_scope(Location)
+    @locations = policy_scope(Location)
+    if category_id
+      locations_by_category = policy_scope(CategoriesLocation).where(category_id: category_id).pluck(:location_id)
+      @locations = @locations.where(id: locations_by_category)
     end
-    @locations
+    if account_id
+      @locations = @locations.where(account_id: account_id)
+    end
   end
 
   # GET /locations/1 or /locations/1.json

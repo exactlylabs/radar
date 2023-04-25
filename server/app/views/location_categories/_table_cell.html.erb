@@ -1,0 +1,19 @@
+<% if categories.count == 0 %>
+  <p class="m-0">No categories</p>
+<% elsif categories.count == 1 %>
+  <div class="d-flex flex-row justify-content-start align-items-center">
+    <div class="category--marker" style="background-color: <%= categories[0].color_hex %>"></div>
+    <p class="m-0"><%= categories[0].name %></p>
+  </div>
+<% else %>
+  <div class="d-flex flex-row justify-content-start align-items-center">
+    <div class="category--multi-dot-container">
+      <div class="category--marker category--marker-level0" style="background-color: <%= categories[0].color_hex %>"></div>
+      <div class="category--marker category--marker-level1" style="background-color: <%= categories[1].color_hex %>"></div>
+      <% if categories.count > 2 %>
+        <div class="category--marker category--marker-level2" style="background-color: <%= categories[2].color_hex %>"></div>
+      <% end %>
+    </div>
+    <p class="m-0"><%= categories.count %> categories</p>
+  </div>
+<% end %>

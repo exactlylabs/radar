@@ -84,6 +84,22 @@ ActiveRecord::Schema.define(version: 2023_05_09_183706) do
     t.index ["autonomous_system_org_id"], name: "index_autonomous_systems_on_autonomous_system_org_id"
   end
 
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "color_hex", null: false
+  end
+
+  create_table "categories_locations", id: false, force: :cascade do |t|
+    t.bigint "category_id", null: false
+    t.bigint "location_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["category_id"], name: "index_categories_locations_on_category_id"
+    t.index ["location_id"], name: "index_categories_locations_on_location_id"
+  end
+
   create_table "client_count_aggregates", force: :cascade do |t|
     t.string "aggregator_type"
     t.bigint "aggregator_id"
@@ -301,19 +317,6 @@ ActiveRecord::Schema.define(version: 2023_05_09_183706) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["account_id"], name: "index_location_groups_on_account_id"
-  end
-
-  create_table "location_labels", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "location_labels_locations", id: false, force: :cascade do |t|
-    t.bigint "location_label_id", null: false
-    t.bigint "location_id", null: false
-    t.index ["location_id"], name: "index_location_labels_locations_on_location_id"
-    t.index ["location_label_id"], name: "index_location_labels_locations_on_location_label_id"
   end
 
   create_table "locations", force: :cascade do |t|
