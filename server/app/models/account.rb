@@ -6,8 +6,7 @@ class Account < ApplicationRecord
   has_many :clients
   has_many :locations
   has_many :measurements
-  has_many :categories_locations
-  has_many :categories, through: :categories_locations
+  has_many :categories
   has_one :client_count_aggregate, :as => :aggregator
 
   has_many :shared_accounts, foreign_key: :shared_to_account_id

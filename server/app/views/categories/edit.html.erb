@@ -3,6 +3,17 @@
     <div class="category--list-item-edit" data-controller="categories">
       <div class="category--list-item-text-container-edit">
         <%= form.text_field :name, class: "category--list-item-input", placeholder: "Category name", autofocus: true %>
+        <%= form.hidden_field :color_hex, "data-categories-target" => "hiddenHexInput" %>
+        <div class="category--markers-container">
+          <% ["#4b7be5", "#f7aa5a", "#98cb87", "#f75a5a", "#9c65e5", "#f24084"].each do |hex| %>
+            <div class="category--marker category--marker-hoverable <%= hex == @category.color_hex ? "category--marker-selected" : nil%>"
+                 style="background-color: <%= hex %>"
+                 data-categories-hex-value="<%= hex %>"
+                 data-action="click->categories#pickColor"
+                 data-categories-target="colorBall"
+            ></div>
+          <% end %>
+        </div>
       </div>
       <div class="category--list-item-options-container">
         <%= link_to category_cancel_edit_path(@category), class: "category--edit-button category--edit-cancel-button" do %>
