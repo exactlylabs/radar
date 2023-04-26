@@ -3,7 +3,7 @@ module ClientApi
     class SpeedTestsController < ApiController
       def create
         @speed_test = ClientSpeedTest.new speed_test_params
-        @speed_test.lonlat = "POINT(#{params[:longitude]} #{params[:latitude]})"
+        @speed_test.lonlat = "POINT(#{@speed_test.longitude} #{@speed_test.latitude})"
         @speed_test.connection_data = params[:connection_data]
         @speed_test.tested_by = params[:client_id]
         filename = "speed-test-#{params[:timestamp]}.json"
