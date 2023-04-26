@@ -24,6 +24,24 @@ scheduler.every '1h', overlap: false do
   end
 end
 
+scheduler.every '5m', overlap: false do
+  begin
+    FillClientCountProjection.perform_later
+  rescue => e
+    Sentry.capture_exception(e)
+    raise e
+  end
+end
+
+scheduler.every '5m', overlap: false do
+  begin
+    FillStudyLevelProjection.perform_later
+  rescue => e
+    Sentry.capture_exception(e)
+    raise e
+end
+end
+
 begin
   scheduler.join
 rescue Interrupt

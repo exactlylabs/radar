@@ -3,4 +3,5 @@ production:
     :concurrency: 5
 
 :queues:
-    - default
+    - [default, 2]
+    - study_projection
