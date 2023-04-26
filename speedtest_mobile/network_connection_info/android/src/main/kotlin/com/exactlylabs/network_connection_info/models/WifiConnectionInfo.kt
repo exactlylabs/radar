@@ -4,11 +4,11 @@ class WifiConnectionInfo(
     private val mLinkDownBandwidthKbps: Int,
     private val mLinkUpBandwidthKbps: Int,
     private val mSignalStrength: Int,
-    private val mFrequency: Int,
-    private val mLinkSpeed: Int,
-    private val mRssi: Int,
-    private val mRxLinkSpeed: Int,
-    private val mTxLinkSpeed: Int,
+    private val mFrequency: Int?,
+    private val mLinkSpeed: Int?,
+    private val mRssi: Int?,
+    private val mRxLinkSpeed: Int?,
+    private val mTxLinkSpeed: Int?,
 ) {
 
     fun toJson(): Map<String, Any?> {
