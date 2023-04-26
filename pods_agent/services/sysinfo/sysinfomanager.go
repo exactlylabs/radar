@@ -72,6 +72,10 @@ func (si *SysInfoManager) GetLogindConf() ([]byte, error) {
 	return si.readFile("/etc/systemd/logind.conf")
 }
 
+func (si *SysInfoManager) GetWatchdogServiceFile() ([]byte, error) {
+	return si.readFile("/etc/systemd/system/podwatchdog@.service")
+}
+
 // GetRCLocal implements SystemManager
 func (si *SysInfoManager) GetRCLocal() ([]byte, error) {
 	return si.readFile("/etc/rc.local")
@@ -112,6 +116,10 @@ func (si *SysInfoManager) SetHostname(hostname string) error {
 // SetLogindConf implements SystemManager
 func (si *SysInfoManager) SetLogindConf(data []byte) error {
 	return si.writeFile("/etc/systemd/logind.conf", data)
+}
+
+func (si *SysInfoManager) SetWatchdogServiceFile(data []byte) error {
+	return si.writeFile("/etc/systemd/system/podwatchdog@.service", data)
 }
 
 // SetRCLocal implements SystemManager

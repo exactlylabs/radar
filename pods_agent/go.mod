@@ -3,7 +3,7 @@ module github.com/exactlylabs/radar/pods_agent
 go 1.18
 
 require (
-	github.com/getsentry/sentry-go v0.19.0
+	github.com/getsentry/sentry-go v0.20.0
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/hectane/go-acl v0.0.0-20190604041725-da78bae5fc95
@@ -14,7 +14,7 @@ require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/stretchr/testify v1.8.2
 	golang.org/x/sys v0.6.0
-	google.golang.org/protobuf v1.28.1
+	google.golang.org/protobuf v1.29.1
 )
 
 require (
