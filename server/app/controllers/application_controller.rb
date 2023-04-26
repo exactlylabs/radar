@@ -1,5 +1,64 @@
+class AllAccountsAccount
+  attr_reader :id
+
+  def initialize
+    @id = -1
+  end
+
+  def name
+    "All accounts"
+  end
+
+  def superaccount
+    false
+  end
+end
+
+class AuthenticationHolder
+  attr_reader :user, :account
+
+  def initialize(user, is_all_accounts=false, is_shared_account=false)
+    @user, @is_all_accounts, @is_shared_account = user, is_all_accounts, is_shared_account
+  end
+
+  def is_all_accounts?
+    @is_all_accounts
+  end
+
+  def is_shared_account?
+    @is_shared_account
+  end
+
+  def set_all_accounts
+    @is_all_accounts = true
+    @account = AllAccountsAccount.new
+    unset_shared_account
+  end
+
+  def unset_all_accounts
+    @is_all_accounts = false
+  end
+
+  def set_shared_account
+    @is_shared_account = true
+    unset_all_accounts
+  end
+
+  def unset_shared_account
+    @is_shared_account = false
+  end
+
+  def set_user(user)
+    @user = user
+  end
+
+  def set_account(account)
+    @account = account
+  end
+end
+
 class ApplicationController < ActionController::Base
-  include Pundit::Authorization # updated due to DEPRECATION WARNING from console
+  include Pundit::Authorization
   include Turbo::Redirection
 
   before_action :set_sentry_user
@@ -11,34 +70,44 @@ class ApplicationController < ActionController::Base
 
   def current_account
     cookie_account_id = get_cookie(:radar_current_account_id)
-    return @current_account if @current_account&.id == cookie_account_id
+    return @auth_holder.account if @auth_holder&.account&.id == cookie_account_id
     get_or_set_account_from_cookie
-    @current_account
+    @auth_holder.account
   end
 
-  def set_user_account(new_account)
-    assign_user_account(new_account.id)
+  def set_new_account(new_account)
+    assign_account(new_account.id)
   end
 
   def set_all_accounts
-    @current_user_account = AllAccountsUser.new current_user.id
-    @current_account = AllAccountsAccount.new
+    @auth_holder = AuthenticationHolder
+    AuthorizationHolder.new(current_user) unless @auth_holder
+    @auth_holder.set_all_accounts
   end
 
-  def assign_user_account(account_id)
-    if account_id == -1 || account_id == "-1"
+  def assign_account(account_id)
+    if is_all_accounts_id(account_id)
       set_all_accounts
     else
+      # Check if user has acces to given account, and define if it is an active user
+      # or it can access due to account delegation
       is_account_accessible_through_share = current_user.shared_accounts.distinct.where(id: account_id).count == 1
-      @current_user_account = is_account_accessible_through_share ? ShareGrantUser.new(account_id, current_user.id) : current_user.users_accounts.not_deleted.find_by_account_id(account_id)
-      @current_account = current_user.accounts.where(id: account_id).first # Using where.first to avoid ActiveRecord::RecordNotFound exception
-      @current_account = current_user.shared_accounts.where(id: account_id).first if !@current_account
+      can_access_account =  is_account_accessible_through_share || current_user.accounts.where(id: account_id).count == 1
+      
+      raise Pundit::NotAuthorizedError, "Access denied" unless can_access_account
+      
+      @auth_holder.set_user(current_user) if @auth_holder.user.nil?
+      @auth_holder.set_account(Account.find(account_id))
+      if is_account_accessible_through_share
+        @auth_holder.set_shared_account
+      else
+        @auth_holder.unset_shared_account
+      end
     end
   end
 
-  def clear_user_account_and_cookie
-    @current_account = nil
-    @current_user_account = nil
+  def clear_account_and_cookie
+    @auth_holder = nil
     cookies.delete :radar_current_account_id
   end
 
@@ -54,20 +123,25 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def is_all_accounts_id(account_id)
+    account_id == -1 || account_id == "-1"
+  end
+
   def get_or_set_account_from_cookie
     account_id = get_cookie(:radar_current_account_id)
     begin
+      @auth_holder = AuthorizationHolder.new(current_user, false, false) unless @auth_holder
       if account_id
-        if account_id == -1 || account_id == "-1"
+        if is_all_accounts_id(account_id)
           set_all_accounts
           return
         end
-        assign_user_account(account_id)
-        # If @current_user_account is nil could be because:
+        assign_account(account_id)
+        # If @auth_holder.account is nil could be because:
         # 1. account_id is not present in users_accounts list
         # 2. user_account with given id exists but was soft deleted
         # So then, replace it with the first available option for the user
-        if !@current_user_account
+        if !@auth_holder.account
           get_first_user_account_and_set_cookie
         end
       elsif current_user.users_accounts.not_deleted.length > 0
@@ -75,18 +149,18 @@ class ApplicationController < ActionController::Base
       else
         # We fall into this case if the current_user has no record
         # of a user_account association in the DB (empty account state).
-        clear_user_account_and_cookie
+        clear_account_and_cookie
       end
     rescue ActiveRecord::RecordNotFound
-      clear_user_account_and_cookie
+      clear_account_and_cookie
     end
   end
 
   def pundit_user
     return nil unless current_user
-    return @current_user_account if @current_user_account
+    return @auth_holder if @auth_holder
     get_or_set_account_from_cookie
-    @current_user_account
+    @auth_holder
   end
 
   def set_sentry_user
@@ -99,12 +173,12 @@ class ApplicationController < ActionController::Base
   end
 
   def get_first_user_account_and_set_cookie
-    @current_user_account = current_user.users_accounts.not_deleted.first
-    if @current_user_account.nil?
-      clear_user_account_and_cookie
+    first_user_account = current_user.users_accounts.not_deleted.first
+    if first_user_account.nil?
+      clear_account_and_cookie
     else
-      @current_account = current_user.accounts.find(@current_user_account.account_id)
-      set_cookie(:radar_current_account_id, @current_user_account.account_id)
+      @auth_holder.set_account(current_user.accounts.find(first_user_account.account_id))
+      set_cookie(:radar_current_account_id, first_user_account.account_id)
     end
   end
 

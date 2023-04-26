@@ -106,7 +106,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # DELETE /custom_sign_out
   def custom_sign_out
-    clear_user_account_and_cookie
+    clear_account_and_cookie
     sign_out
     respond_to do |format|
       format.html { redirect_to root_path }

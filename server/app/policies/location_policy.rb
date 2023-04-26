@@ -1,8 +1,8 @@
 class LocationPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if @user_account&.is_all_accounts?
-        user = User.find(@user_account.user_id)
+      if @auth_holder&.is_all_accounts?
+        user = @auth_holder.user
         all_locations = []
         user.accounts.not_deleted.each do |account|
           all_locations.append(*account.locations.map{|l| l.id})

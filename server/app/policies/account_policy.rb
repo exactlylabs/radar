@@ -1,8 +1,8 @@
 class AccountPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if @user_account.present?
-        user = User.find(@user_account.user_id)
+      if @auth_holder.present?
+        user = @auth_holder.user
         if user.super_user?
           scope.all.not_deleted
         else
