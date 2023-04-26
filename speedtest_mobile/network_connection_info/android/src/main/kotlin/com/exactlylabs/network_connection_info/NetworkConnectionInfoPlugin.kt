@@ -97,11 +97,11 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
             nwCap.linkDownstreamBandwidthKbps,
             nwCap.linkUpstreamBandwidthKbps,
             nwCap.signalStrength,
-            (nwCap.transportInfo as WifiInfo).frequency,
-            (nwCap.transportInfo as WifiInfo).linkSpeed,
-            (nwCap.transportInfo as WifiInfo).rssi,
-            (nwCap.transportInfo as WifiInfo).rxLinkSpeedMbps,
-            (nwCap.transportInfo as WifiInfo).txLinkSpeedMbps,
+            (nwCap.transportInfo as? WifiInfo)?.frequency,
+            (nwCap.transportInfo as? WifiInfo)?.linkSpeed,
+            (nwCap.transportInfo as? WifiInfo)?.rssi,
+            (nwCap.transportInfo as? WifiInfo)?.rxLinkSpeedMbps,
+            (nwCap.transportInfo as? WifiInfo)?.txLinkSpeedMbps,
         ).toJson()
     }
 
