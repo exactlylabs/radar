@@ -70,7 +70,7 @@ class AccountsController < ApplicationController
   def switch
     new_account_id = params[:id]
     new_account = policy_scope(Account).find(new_account_id)
-    set_user_account new_account if new_account
+    set_new_account new_account if new_account
     set_cookie(:radar_current_account_id, new_account_id)
   end
 

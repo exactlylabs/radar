@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class ApplicationPolicy
-  attr_reader :user_account, :record
+  attr_reader :auth_holder, :record
 
-  def initialize(user_account, record)
-    @user_account = user_account
+  def initialize(auth_holder, record)
+    @auth_holder = auth_holder
     @record = record
   end
 
@@ -37,14 +37,14 @@ class ApplicationPolicy
   end
 
   class Scope
-    def initialize(user_account, scope)
-      @user_account = user_account
+    def initialize(auth_holder, scope)
+      @auth_holder = auth_holder
       @scope = scope
     end
 
     def resolve
-      if @user_account
-        scope.where(account_id: @user_account.account_id)
+      if @auth_holder&.account
+        scope.where(account_id: @auth_holder.account.id)
       else
         # The only time we could hit this condition is if
         # the current_user has no account associated to it
@@ -58,6 +58,6 @@ class ApplicationPolicy
 
     private
 
-    attr_reader :user_account, :scope
+    attr_reader :auth_holder, :scope
   end
 end

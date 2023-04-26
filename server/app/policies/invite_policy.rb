@@ -1,9 +1,9 @@
 class InvitePolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if @user_account.present?
-        if @user_account.is_all_accounts?
-          user = User.find(@user_account.user_id)
+      if @auth_holder.present?
+        if @auth_holder.is_all_accounts?
+          user = @auth_holder.user
           all_invites = []
           user.accounts.not_deleted.each do |account|
             all_invites.append(*account.invites.map{|l| l.id})
@@ -13,7 +13,7 @@ class InvitePolicy < ApplicationPolicy
           end
           scope.where(id: all_invites)
         else
-          scope.where(account_id: @user_account.account_id)
+          scope.where(account_id: @auth_holder.account.id)
         end
       else
         scope.none
