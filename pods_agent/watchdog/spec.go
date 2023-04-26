@@ -22,6 +22,10 @@ type SystemManager interface {
 	GetLogindConf() ([]byte, error)
 	// SetLogindConf replaces the contents of logind.conf file
 	SetLogindConf([]byte) error
+	// GetWatchdogServiceFile retrieves the contents of podwatchdog@.service file
+	GetWatchdogServiceFile() ([]byte, error)
+	// SetWatchdogServiceFile replaces the contents of podwatchdog@.service file
+	SetWatchdogServiceFile([]byte) error
 	// GetBootConfig retrieves the contents of config file from boot partition
 	GetBootConfig() ([]byte, error)
 	// SetBootConfig replaces the contents of config file from boot partition

@@ -4,7 +4,7 @@ Welcome to your Radar Pod
  - Pod ID: {{.podId}}
  - Radar OS Version: {{.podOsVersion}}
  - Pod Client Version: {{.podAgentVersion}}
- - Agent Status: {{if .isRunning}}{{green}}Running{{else}}{{red}}Not Running{{end}}{{resetColor}}
+ - Agent Status: {{if .isRunning}}{{green}}Running{{else if not .runningErr}}{{yellow}}Starting{{else}}{{red}}Not Running{{end}}{{resetColor}}
 {{if not .isRunning}} - Error Message: {{.runningErr}}{{end}}
 
 {{bold}}Network Interfaces:{{resetColor}}

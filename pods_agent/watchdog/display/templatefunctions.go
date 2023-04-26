@@ -6,6 +6,7 @@ var funcMap = template.FuncMap{
 	"bold":       bold,
 	"red":        red,
 	"green":      green,
+	"yellow":     yellow,
 	"resetColor": resetColor,
 }
 
@@ -19,6 +20,10 @@ func resetColor() string {
 
 func green() string {
 	return "\033[32m"
+}
+
+func yellow() string {
+	return "\033[1;33m"
 }
 
 func red() string {

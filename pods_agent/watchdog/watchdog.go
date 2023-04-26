@@ -43,9 +43,7 @@ func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentC
 				res, err := cli.WatchdogPing(sysinfo.Metadata())
 				if err != nil {
 					log.Println(fmt.Errorf("watchdog.checkUpdate Ping: %w", err))
-					return
-				}
-				if res.Update != nil {
+				} else if res.Update != nil {
 					handleUpdate(c, sysManager, *res.Update)
 				}
 			}

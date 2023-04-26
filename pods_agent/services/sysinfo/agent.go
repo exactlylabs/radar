@@ -71,7 +71,9 @@ func (am *AgentInfoManager) GetVersion() (string, error) {
 func (am *AgentInfoManager) IsRunning() (bool, error) {
 	// Check from systemd
 	out, err := exec.Command("systemctl", "check", am.serviceName).Output()
-	if err != nil {
+	if exiterr, ok := err.(*exec.ExitError); ok && exiterr.ExitCode() == 3 && bytes.Contains(out, []byte("activating")) {
+		return false, nil
+	} else if err != nil {
 		return false, fmt.Errorf("%v: %w", strings.TrimRight(string(out), "\n"), err)
 	}
 	if string(bytes.Trim(out, "\n")) != "active" {

@@ -173,6 +173,29 @@ func (_m *SystemManager) GetSysTimezone() (*time.Location, error) {
 	return r0, r1
 }
 
+// GetWatchdogServiceFile provides a mock function with given fields:
+func (_m *SystemManager) GetWatchdogServiceFile() ([]byte, error) {
+	ret := _m.Called()
+
+	var r0 []byte
+	if rf, ok := ret.Get(0).(func() []byte); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]byte)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Interfaces provides a mock function with given fields:
 func (_m *SystemManager) Interfaces() ([]sysinfo.NetInterface, error) {
 	ret := _m.Called()
@@ -286,6 +309,20 @@ func (_m *SystemManager) SetSysTimezone(_a0 *time.Location) error {
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(*time.Location) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// SetWatchdogServiceFile provides a mock function with given fields: _a0
+func (_m *SystemManager) SetWatchdogServiceFile(_a0 []byte) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func([]byte) error); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Error(0)

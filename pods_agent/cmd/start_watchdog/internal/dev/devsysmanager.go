@@ -9,14 +9,15 @@ import (
 )
 
 type devSysManager struct {
-	BootConfig  []byte
-	CMDConfig   []byte
-	Hostname    string
-	LogindConf  []byte
-	RCLocal     []byte
-	Interfaces_ []sysinfo.NetInterface
-	AuthLogFile []byte
-	Tz          *time.Location
+	BootConfig          []byte
+	CMDConfig           []byte
+	Hostname            string
+	LogindConf          []byte
+	WatchdogServiceFile []byte
+	RCLocal             []byte
+	Interfaces_         []sysinfo.NetInterface
+	AuthLogFile         []byte
+	Tz                  *time.Location
 }
 
 func NewDevSysManager() watchdog.SystemManager {
@@ -42,6 +43,10 @@ func (dm *devSysManager) GetHostname() (string, error) {
 // GetLogindConf implements watchdog.SystemManager
 func (dm *devSysManager) GetLogindConf() ([]byte, error) {
 	return dm.LogindConf, nil
+}
+
+func (dm *devSysManager) GetWatchdogServiceFile() ([]byte, error) {
+	return dm.WatchdogServiceFile, nil
 }
 
 // GetRCLocal implements watchdog.SystemManager
@@ -76,6 +81,11 @@ func (dm *devSysManager) SetHostname(data string) error {
 // SetLogindConf implements watchdog.SystemManager
 func (dm *devSysManager) SetLogindConf(data []byte) error {
 	dm.LogindConf = data
+	return nil
+}
+
+func (dm *devSysManager) SetWatchdogServiceFile(data []byte) error {
+	dm.WatchdogServiceFile = data
 	return nil
 }
 

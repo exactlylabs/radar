@@ -31,10 +31,14 @@ func StartScanLoop(ctx context.Context, sysEditor SystemManager) {
 			hasChanges, err := ScanSystem(c, sysEditor)
 			if err != nil {
 				// Panic?
+				err = fmt.Errorf("watchdog.StartScanLoop ScanSystem: %w", err)
+				tracing.NotifyErrorOnce(err, tracing.Context{})
 				log.Println(err)
 			} else if hasChanges {
 				if err := sysEditor.Reboot(); err != nil {
 					// Panic?
+					err = fmt.Errorf("watchdog.StartScanLoop Reboot: %w", err)
+					tracing.NotifyErrorOnce(err, tracing.Context{})
 					log.Println(err)
 				}
 			}
@@ -89,6 +93,13 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 
 	// Validate logind.conf
 	changed, err = checkAndReplace("osfiles/etc/systemd/logind.conf", sysManager.GetLogindConf, sysManager.SetLogindConf)
+	if err != nil {
+		return false, err
+	}
+	hasChanges |= changed
+
+	// Validate podwatchdog@.service
+	changed, err = checkAndReplace("osfiles/etc/systemd/system/podwatchdog@.service", sysManager.GetWatchdogServiceFile, sysManager.SetWatchdogServiceFile)
 	if err != nil {
 		return false, err
 	}
