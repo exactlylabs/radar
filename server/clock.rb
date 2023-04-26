@@ -1,7 +1,5 @@
 require 'rufus-scheduler'
 
-#Sentry.configuration.background_worker_threads = 0
-
 scheduler = Rufus::Scheduler.new
 
 scheduler.every '3s', overlap: false do
