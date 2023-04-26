@@ -37,7 +37,6 @@ require (
 	github.com/prometheus/client_golang v1.12.2 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
-	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/api v0.108.0 // indirect
