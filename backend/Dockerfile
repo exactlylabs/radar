@@ -8,7 +8,11 @@ RUN apk add git gcc g++
 
 COPY go.mod go.sum ./
 
+RUN go get ./...
+
 COPY .  ./
+
+RUN go generate ./...
 RUN go build -o start_server ./cmd/server/main.go
 
 #---------------------------------------------------------#
