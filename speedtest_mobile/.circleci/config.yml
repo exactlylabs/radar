@@ -114,8 +114,7 @@ jobs:
   build-ios:
     working_directory: ~/project
     macos:
-      xcode: 14.3.0
-    resource_class: "macos.x86.medium.gen2"
+      xcode: 14.2.0
     parameters:
       flavor:
         type: enum
@@ -155,8 +154,7 @@ jobs:
   release-ios:
     working_directory: ~/project
     macos:
-      xcode: 14.3.0
-    resource_class: "macos.x86.medium.gen2"
+      xcode: 14.2.0
     parameters:
       flavor:
         type: enum
