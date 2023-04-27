@@ -1,0 +1,8 @@
+<clickhouse>
+    <profiles>
+        <default>
+            <max_bytes_before_external_group_by>10000000000</max_bytes_before_external_group_by>
+            <max_memory_usage>25000000000</max_memory_usage>
+        </default>
+    </profiles>
+</clickhouse>
