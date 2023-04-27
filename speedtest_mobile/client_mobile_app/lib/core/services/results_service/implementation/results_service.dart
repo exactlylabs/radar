@@ -31,7 +31,7 @@ class ResultsService implements IResultsService {
     _localStorage.addResult(result.toJson());
     _httpProvider
         .postAndDecode(
-      url: _restClient.speedTest,
+      url: '${_restClient.speedTest}?client_id=$CLIENT_ID',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -51,7 +51,7 @@ class ResultsService implements IResultsService {
       'result': {'raw': responses},
       'speed_test': result.toJsonServer(),
       'connection_data': connectionInfo?.toJson(),
-      'client_id': CLIENT_ID,
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }
 

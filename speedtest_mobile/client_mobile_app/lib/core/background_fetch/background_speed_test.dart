@@ -88,7 +88,7 @@ class BackgroundSpeedTest {
 
   void _sendSpeedTestResults() {
     _httpProvider.postAndDecode(
-      url: _restClient.speedTest,
+      url: '${_restClient.speedTest}?client_id=$CLIENT_ID',
       headers: {'Content-Type': 'application/json'},
       body: {
         'result': {'raw': _responses},
@@ -97,7 +97,7 @@ class BackgroundSpeedTest {
           'longitude': _longitude,
         },
         'connection_data': _connectionInfo?.toJson(),
-        'client_id': CLIENT_ID,
+        'timestamp': DateTime.now().toUtc().toIso8601String(),
         'background_mode': true,
       },
     );
