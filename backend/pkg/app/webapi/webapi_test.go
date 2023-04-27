@@ -9,6 +9,8 @@ import (
 	"testing"
 
 	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
+	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi/mocks"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi/routes"
 	"github.com/go-playground/assert/v2"
 	"github.com/stretchr/testify/suite"
@@ -33,7 +35,19 @@ func (s *TestSuite) TestHealth() {
 	req.URL.RawQuery = q.Encode()
 
 	s.context.Request = req
-	routes.HealthCheck(s.context)
+	geoStorage := mocks.NewGeospaceStorage(s.T())
+	geoStorage.On("Connected").Return(true)
+	asOrgStorage := mocks.NewASNOrgStorage(s.T())
+	asOrgStorage.On("Connected").Return(true)
+	summaryStorage := mocks.NewSummariesStorage(s.T())
+	summaryStorage.On("Connected").Return(true)
+	appStorages := &storages.MappingAppStorages{
+		GeospacesStorage: geoStorage,
+		ASNOrgsStorage:   asOrgStorage,
+		SummariesStorage: summaryStorage,
+	}
+
+	routes.HealthCheck(s.context, appStorages)
 	s.context.Commit()
 
 	res := s.response.Result()
@@ -46,7 +60,7 @@ func (s *TestSuite) TestHealth() {
 		s.FailNow("failed to unmarshal response: %w", err)
 	}
 	assert.Equal(s.T(), res.StatusCode, 200)
-	assert.Equal(s.T(), resObj, routes.HealthCheckResponse{Status: "ok"})
+	assert.Equal(s.T(), resObj, routes.HealthCheckResponse{Status: "OK"})
 }
 
 func TestAPI(t *testing.T) {

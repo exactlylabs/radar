@@ -13,6 +13,7 @@ import (
 
 //go:generate swag init -g webapi.go --parseDependency
 
+// To edit the swagger doc, see: https://github.com/swaggo/swag
 // @title       Broadband Mapping API
 // @version     0.1.0
 // @description This api provides a summary of broadband measurements for the US based on geolocations (geospaces)
@@ -42,10 +43,11 @@ func NewMappingAPI(
 		),
 	)
 
-	// simply inject the object given to it when the provider is called
-	injector := func(obj any) restapi.DependencyProvider {
-		return func(c *webcontext.Context) any {
-			return obj
+	injectAsDependency := func(objects ...any) {
+		for _, obj := range objects {
+			api.AddDependency(func(c *webcontext.Context) any {
+				return obj
+			}, obj)
 		}
 	}
 
@@ -57,14 +59,19 @@ func NewMappingAPI(
 	api.Route("/api/v1/asns", routes.ListASNs)
 	api.Route("/api/v1/namespaces/{namespace}/geospaces", routes.ListNamespaceGeospaces)
 	api.Route("/api/v1/geojson", routes.HandleGetGeoJSON)
-	api.Route("/swagger.json", routes.HandleSwaggerSpec)
-	api.Route("/swagger", routes.HandleSwaggerUI)
-	api.AddDependency(injector(storages.SummariesStorage), storages.SummariesStorage)
-	api.AddDependency(injector(storages.ASNOrgsStorage), storages.ASNOrgsStorage)
-	api.AddDependency(injector(storages.GeospacesStorage), storages.GeospacesStorage)
-	api.AddDependency(injector(conf), conf)
-	api.AddDependency(injector(geoJSONServers), geoJSONServers)
-	api.AddDependency(injector(tilesetServers), tilesetServers)
+	if conf.Environment != config.ProdConfig.Environment {
+		api.Route("/swagger.json", routes.HandleSwaggerSpec)
+		api.Route("/swagger", routes.HandleSwaggerUI)
+	}
+	injectAsDependency(
+		storages.SummariesStorage,
+		storages.ASNOrgsStorage,
+		storages.GeospacesStorage,
+		conf,
+		geoJSONServers,
+		tilesetServers,
+		storages,
+	)
 
 	if err := geoJSONServers.LoadAll(); err != nil {
 		panic(errors.Wrap(err, "webapi.NewMappingAPI geoJSONServers.LoadAll"))
