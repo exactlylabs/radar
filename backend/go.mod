@@ -10,7 +10,7 @@ require (
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/exactlylabs/go-errors v0.0.2
 	github.com/exactlylabs/go-monitor v0.0.5
-	github.com/exactlylabs/go-rest v0.0.4
+	github.com/exactlylabs/go-rest v0.0.5
 	github.com/go-playground/assert/v2 v2.2.0
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/handlers v1.5.1

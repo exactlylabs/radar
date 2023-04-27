@@ -3,7 +3,6 @@ package webapi
 import (
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-rest/pkg/restapi"
-	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
 	ports "github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/geo"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/webapi/routes"
@@ -11,7 +10,7 @@ import (
 	"github.com/gorilla/handlers"
 )
 
-//go:generate swag init -g webapi.go --parseDependency
+//go:generate swag init -g webapi.go -o "./" --parseDependency
 
 // To edit the swagger doc, see: https://github.com/swaggo/swag
 // @title       Broadband Mapping API
@@ -43,14 +42,6 @@ func NewMappingAPI(
 		),
 	)
 
-	injectAsDependency := func(objects ...any) {
-		for _, obj := range objects {
-			api.AddDependency(func(c *webcontext.Context) any {
-				return obj
-			}, obj)
-		}
-	}
-
 	api.Route("/health", routes.HealthCheck)
 	api.Route("/api/v1/namespaces/{namespace}/tiles/{z}/{x}/{y}", routes.ServeVectorTiles)
 	api.Route("/api/v1/geospaces", routes.ListAllGeospaces)
@@ -63,7 +54,8 @@ func NewMappingAPI(
 		api.Route("/swagger.json", routes.HandleSwaggerSpec)
 		api.Route("/swagger", routes.HandleSwaggerUI)
 	}
-	injectAsDependency(
+
+	api.InjectAsDependency(
 		storages.SummariesStorage,
 		storages.ASNOrgsStorage,
 		storages.GeospacesStorage,

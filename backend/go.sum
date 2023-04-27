@@ -50,8 +50,8 @@ github.com/exactlylabs/go-errors v0.0.2 h1:1027rcDf8/0nRdooF5yllNV+BtAg6Lr9qS3NH
 github.com/exactlylabs/go-errors v0.0.2/go.mod h1:T1BpfYWTYfnolGrSw/nT4S6PZ+TC4uXCKqvjfCj/OTc=
 github.com/exactlylabs/go-monitor v0.0.5 h1:bHwGW3QBegBP1fO5X6RM8XMc5GmCHOEhBTfkz9PLEEY=
 github.com/exactlylabs/go-monitor v0.0.5/go.mod h1:5OD/11amMP3+8JfBupmx4G4CUOhbyOnuaAdLaFpf5ZQ=
-github.com/exactlylabs/go-rest v0.0.4 h1:vAFWhRrMISYyHi2ICCS6ByhE1wbt6kXny7GzOPdnWkw=
-github.com/exactlylabs/go-rest v0.0.4/go.mod h1:xmLo8I75JpowwKfUiRmFbSMYwha2tTTGh/0/Hn/9Cag=
+github.com/exactlylabs/go-rest v0.0.5 h1:KZ3Em0feFZ/0nVr5aF7JE/5ek3rXuzsqmeGsFUTp7qg=
+github.com/exactlylabs/go-rest v0.0.5/go.mod h1:xmLo8I75JpowwKfUiRmFbSMYwha2tTTGh/0/Hn/9Cag=
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/felixge/httpsnoop v1.0.3 h1:s/nj+GCswXYzN5v2DpNMuMQYe+0DDwt5WVCU6CWBdXk=
 github.com/felixge/httpsnoop v1.0.3/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=

@@ -8,11 +8,12 @@ RUN apk add git gcc g++
 
 COPY go.mod go.sum ./
 
+RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN go get ./...
 
 COPY .  ./
 
-RUN go generate ./...
+RUN go generate ./pkg/app/webapi/webapi.go
 RUN go build -o start_server ./cmd/server/main.go
 
 #---------------------------------------------------------#

@@ -62,6 +62,9 @@ func (c *Config) AllowedOrigins() []string {
 }
 
 func (c *Config) DBSecureTLS() bool {
+	if c.DBSecureTLSStr == "" {
+		return false
+	}
 	b, err := strconv.ParseBool(c.DBSecureTLSStr)
 	if err != nil {
 		panic(errors.Wrap(err, "config.Config#DBSecureTLS ParseBool"))
