@@ -6,6 +6,7 @@ import (
 )
 
 var DevConfig = &Config{
+	Environment:               "DEV",
 	DBName:                    "default",
 	DBUser:                    "default",
 	DBPassword:                "",

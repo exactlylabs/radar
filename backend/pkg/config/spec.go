@@ -11,6 +11,7 @@ import (
 )
 
 type Config struct {
+	Environment               string
 	DBName                    string `config:"DB_NAME"`
 	DBUser                    string `config:"DB_USER"`
 	DBPassword                string `config:"DB_PASSWORD"`

@@ -6,6 +6,7 @@ import (
 )
 
 var ProdConfig = &Config{
+	Environment:               "PROD",
 	DBUser:                    "",
 	DBPassword:                "",
 	DBHost:                    "",

@@ -275,56 +275,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/namespaces/{namespace}/geospaces/{geoid}/asns": {
-            "get": {
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Geospace's namespace",
-                        "name": "namespace",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "GEOID that belongs to the namespace",
-                        "name": "geoid",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "text to filter for",
-                        "name": "query",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "offset",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/paginator.PaginatedResponse-storages_ASNOrg"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/apierrors.RequestError"
-                        }
-                    }
-                }
-            }
-        },
         "/namespaces/{namespace}/tiles/{z}/{x}/{y}": {
             "get": {
                 "produces": [

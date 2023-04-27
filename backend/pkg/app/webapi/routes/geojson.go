@@ -93,13 +93,13 @@ func HandleGetGeoJSON(ctx *webcontext.Context, conf *config.Config, servers *geo
 		return
 	}
 	args := &GeoJSONArgs{}
-	args.Parse(c)
-	if c.HasErrors() {
+	args.Parse(ctx)
+	if ctx.HasErrors() {
 		return
 	}
 	geoJsonServer, err := servers.Get(args.PortNamespace())
 	if err == geo.ErrWrongNamespace {
-		c.Reject(http.StatusBadRequest, &apierrors.APIError{
+		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
 			Message: "provided namespace is not supported",
 			Code:    "namespace_not_found",
 		})
@@ -112,7 +112,7 @@ func HandleGetGeoJSON(ctx *webcontext.Context, conf *config.Config, servers *geo
 		panic(errors.Wrap(err, "routes.HandleGetGeoJSON GetGeoJSON"))
 	}
 	if collection == nil {
-		c.Reject(http.StatusBadRequest, &apierrors.APIError{
+		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
 			Message: "no available geojson for this query",
 			Code:    "geojson_not_available",
 		})

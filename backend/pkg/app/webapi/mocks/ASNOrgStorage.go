@@ -3,8 +3,6 @@
 package mocks
 
 import (
-	context "context"
-
 	storages "github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -14,13 +12,13 @@ type ASNOrgStorage struct {
 	mock.Mock
 }
 
-// All provides a mock function with given fields: ctx, limit, offset
-func (_m *ASNOrgStorage) All(ctx context.Context, limit *int, offset *int) (storages.Iterator[*storages.ASNOrg], error) {
-	ret := _m.Called(ctx, limit, offset)
+// All provides a mock function with given fields: limit, offset
+func (_m *ASNOrgStorage) All(limit *int, offset *int) (storages.Iterator[*storages.ASNOrg], error) {
+	ret := _m.Called(limit, offset)
 
 	var r0 storages.Iterator[*storages.ASNOrg]
-	if rf, ok := ret.Get(0).(func(context.Context, *int, *int) storages.Iterator[*storages.ASNOrg]); ok {
-		r0 = rf(ctx, limit, offset)
+	if rf, ok := ret.Get(0).(func(*int, *int) storages.Iterator[*storages.ASNOrg]); ok {
+		r0 = rf(limit, offset)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(storages.Iterator[*storages.ASNOrg])
@@ -28,8 +26,8 @@ func (_m *ASNOrgStorage) All(ctx context.Context, limit *int, offset *int) (stor
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *int, *int) error); ok {
-		r1 = rf(ctx, limit, offset)
+	if rf, ok := ret.Get(1).(func(*int, *int) error); ok {
+		r1 = rf(limit, offset)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -37,13 +35,13 @@ func (_m *ASNOrgStorage) All(ctx context.Context, limit *int, offset *int) (stor
 	return r0, r1
 }
 
-// AllFromGeospace provides a mock function with given fields: ctx, geospaceId, limit, offset
-func (_m *ASNOrgStorage) AllFromGeospace(ctx context.Context, geospaceId string, limit *int, offset *int) (storages.Iterator[*storages.ASNOrg], error) {
-	ret := _m.Called(ctx, geospaceId, limit, offset)
+// AllFromGeospace provides a mock function with given fields: geospaceId, limit, offset
+func (_m *ASNOrgStorage) AllFromGeospace(geospaceId string, limit *int, offset *int) (storages.Iterator[*storages.ASNOrg], error) {
+	ret := _m.Called(geospaceId, limit, offset)
 
 	var r0 storages.Iterator[*storages.ASNOrg]
-	if rf, ok := ret.Get(0).(func(context.Context, string, *int, *int) storages.Iterator[*storages.ASNOrg]); ok {
-		r0 = rf(ctx, geospaceId, limit, offset)
+	if rf, ok := ret.Get(0).(func(string, *int, *int) storages.Iterator[*storages.ASNOrg]); ok {
+		r0 = rf(geospaceId, limit, offset)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(storages.Iterator[*storages.ASNOrg])
@@ -51,8 +49,8 @@ func (_m *ASNOrgStorage) AllFromGeospace(ctx context.Context, geospaceId string,
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string, *int, *int) error); ok {
-		r1 = rf(ctx, geospaceId, limit, offset)
+	if rf, ok := ret.Get(1).(func(string, *int, *int) error); ok {
+		r1 = rf(geospaceId, limit, offset)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -88,13 +86,13 @@ func (_m *ASNOrgStorage) Connected() error {
 	return r0
 }
 
-// Create provides a mock function with given fields: ctx, a
-func (_m *ASNOrgStorage) Create(ctx context.Context, a *storages.ASNOrg) error {
-	ret := _m.Called(ctx, a)
+// Create provides a mock function with given fields: a
+func (_m *ASNOrgStorage) Create(a *storages.ASNOrg) error {
+	ret := _m.Called(a)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *storages.ASNOrg) error); ok {
-		r0 = rf(ctx, a)
+	if rf, ok := ret.Get(0).(func(*storages.ASNOrg) error); ok {
+		r0 = rf(a)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -102,13 +100,13 @@ func (_m *ASNOrgStorage) Create(ctx context.Context, a *storages.ASNOrg) error {
 	return r0
 }
 
-// Get provides a mock function with given fields: ctx, id
-func (_m *ASNOrgStorage) Get(ctx context.Context, id string) (*storages.ASNOrg, error) {
-	ret := _m.Called(ctx, id)
+// Get provides a mock function with given fields: id
+func (_m *ASNOrgStorage) Get(id string) (*storages.ASNOrg, error) {
+	ret := _m.Called(id)
 
 	var r0 *storages.ASNOrg
-	if rf, ok := ret.Get(0).(func(context.Context, string) *storages.ASNOrg); ok {
-		r0 = rf(ctx, id)
+	if rf, ok := ret.Get(0).(func(string) *storages.ASNOrg); ok {
+		r0 = rf(id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*storages.ASNOrg)
@@ -116,8 +114,8 @@ func (_m *ASNOrgStorage) Get(ctx context.Context, id string) (*storages.ASNOrg, 
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, id)
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -125,13 +123,13 @@ func (_m *ASNOrgStorage) Get(ctx context.Context, id string) (*storages.ASNOrg, 
 	return r0, r1
 }
 
-// GetByOrgName provides a mock function with given fields: ctx, name
-func (_m *ASNOrgStorage) GetByOrgName(ctx context.Context, name string) (*storages.ASNOrg, error) {
-	ret := _m.Called(ctx, name)
+// GetByOrgName provides a mock function with given fields: name
+func (_m *ASNOrgStorage) GetByOrgName(name string) (*storages.ASNOrg, error) {
+	ret := _m.Called(name)
 
 	var r0 *storages.ASNOrg
-	if rf, ok := ret.Get(0).(func(context.Context, string) *storages.ASNOrg); ok {
-		r0 = rf(ctx, name)
+	if rf, ok := ret.Get(0).(func(string) *storages.ASNOrg); ok {
+		r0 = rf(name)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*storages.ASNOrg)
@@ -139,8 +137,8 @@ func (_m *ASNOrgStorage) GetByOrgName(ctx context.Context, name string) (*storag
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, name)
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(name)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -162,13 +160,13 @@ func (_m *ASNOrgStorage) Open() error {
 	return r0
 }
 
-// Search provides a mock function with given fields: ctx, query, limit, offset
-func (_m *ASNOrgStorage) Search(ctx context.Context, query string, limit *int, offset *int) (storages.Iterator[*storages.ASNOrg], error) {
-	ret := _m.Called(ctx, query, limit, offset)
+// Search provides a mock function with given fields: query, limit, offset
+func (_m *ASNOrgStorage) Search(query string, limit *int, offset *int) (storages.Iterator[*storages.ASNOrg], error) {
+	ret := _m.Called(query, limit, offset)
 
 	var r0 storages.Iterator[*storages.ASNOrg]
-	if rf, ok := ret.Get(0).(func(context.Context, string, *int, *int) storages.Iterator[*storages.ASNOrg]); ok {
-		r0 = rf(ctx, query, limit, offset)
+	if rf, ok := ret.Get(0).(func(string, *int, *int) storages.Iterator[*storages.ASNOrg]); ok {
+		r0 = rf(query, limit, offset)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(storages.Iterator[*storages.ASNOrg])
@@ -176,8 +174,8 @@ func (_m *ASNOrgStorage) Search(ctx context.Context, query string, limit *int, o
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string, *int, *int) error); ok {
-		r1 = rf(ctx, query, limit, offset)
+	if rf, ok := ret.Get(1).(func(string, *int, *int) error); ok {
+		r1 = rf(query, limit, offset)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -185,13 +183,13 @@ func (_m *ASNOrgStorage) Search(ctx context.Context, query string, limit *int, o
 	return r0, r1
 }
 
-// SearchFromGeospace provides a mock function with given fields: ctx, query, geospaceId, limit, offset
-func (_m *ASNOrgStorage) SearchFromGeospace(ctx context.Context, query string, geospaceId string, limit *int, offset *int) (storages.Iterator[*storages.ASNOrg], error) {
-	ret := _m.Called(ctx, query, geospaceId, limit, offset)
+// SearchFromGeospace provides a mock function with given fields: query, geospaceId, limit, offset
+func (_m *ASNOrgStorage) SearchFromGeospace(query string, geospaceId string, limit *int, offset *int) (storages.Iterator[*storages.ASNOrg], error) {
+	ret := _m.Called(query, geospaceId, limit, offset)
 
 	var r0 storages.Iterator[*storages.ASNOrg]
-	if rf, ok := ret.Get(0).(func(context.Context, string, string, *int, *int) storages.Iterator[*storages.ASNOrg]); ok {
-		r0 = rf(ctx, query, geospaceId, limit, offset)
+	if rf, ok := ret.Get(0).(func(string, string, *int, *int) storages.Iterator[*storages.ASNOrg]); ok {
+		r0 = rf(query, geospaceId, limit, offset)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(storages.Iterator[*storages.ASNOrg])
@@ -199,8 +197,8 @@ func (_m *ASNOrgStorage) SearchFromGeospace(ctx context.Context, query string, g
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string, string, *int, *int) error); ok {
-		r1 = rf(ctx, query, geospaceId, limit, offset)
+	if rf, ok := ret.Get(1).(func(string, string, *int, *int) error); ok {
+		r1 = rf(query, geospaceId, limit, offset)
 	} else {
 		r1 = ret.Error(1)
 	}
