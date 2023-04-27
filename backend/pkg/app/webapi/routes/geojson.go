@@ -1,11 +1,14 @@
 package routes
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/allegro/bigcache/v3"
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-rest/pkg/restapi/apierrors"
 	"github.com/exactlylabs/go-rest/pkg/restapi/webcontext"
@@ -13,16 +16,27 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/namespaces"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/services/cache"
 	"golang.org/x/exp/slices"
 )
 
-var summariesCache cache.Cache
-var geojsonCache cache.Cache
+var summariesCache *bigcache.BigCache
+var geojsonCache *bigcache.BigCache
 
 func init() {
-	summariesCache = cache.New()
-	geojsonCache = cache.New()
+	summariesCacheConf := bigcache.DefaultConfig(5 * time.Minute)
+	summariesCacheConf.HardMaxCacheSize = 100e6 // 100MB
+	var err error
+	summariesCache, err = bigcache.New(context.Background(), summariesCacheConf)
+	if err != nil {
+		panic(err)
+	}
+
+	geojsonCacheConf := bigcache.DefaultConfig(1 * time.Hour)
+	geojsonCacheConf.HardMaxCacheSize = 100e6 // 100MB
+	geojsonCache, err = bigcache.New(context.Background(), geojsonCacheConf)
+	if err != nil {
+		panic(err)
+	}
 }
 
 type GeoJSONArgs struct {
@@ -34,11 +48,14 @@ type GeoJSONArgs struct {
 func (gja *GeoJSONArgs) Parse(c *webcontext.Context) {
 	ns := c.QueryParams().Get("namespace")
 	asnOrgId := c.QueryParams().Get("asn_id")
+	if !validateNamespace(ns, c) {
+		return
+	}
 	if asnOrgId != "" {
 		gja.ASNOrgId = &asnOrgId
 	}
-	gja.Namespace = validateNamespace(ns, c)
-	gja.SummaryFilter = validateTimeFilter(c)
+	gja.Namespace = ns
+	gja.SummaryFilter = parseSummaryFilter(c)
 }
 
 func (gja *GeoJSONArgs) PortNamespace() namespaces.Namespace {
@@ -54,15 +71,25 @@ func (gja *GeoJSONArgs) PortNamespace() namespaces.Namespace {
 	}
 }
 
+// To edit the swagger doc, see: https://github.com/swaggo/swag
 // @Param args query GeoJSONArgs true "query params"
 // @Success 200 {object} geo.GeoJSON
-// @Failure 400 {object} restapi.FieldsValidationError
+// @Failure 400 {object} apierrors.RequestError
 // @Router /geojson [get]
-func HandleGetGeoJSON(c *webcontext.Context, conf *config.Config, servers *geo.GeoJSONServers, summaries storages.SummariesStorage) {
-	cacheKey := c.Request.URL.String()
-	if v, exists := geojsonCache.Get(cacheKey); exists && conf.UseCache() {
-		c.ResponseHeader().Add("Content-Encoding", "gzip")
-		c.Write(v.([]byte))
+func HandleGetGeoJSON(ctx *webcontext.Context, conf *config.Config, servers *geo.GeoJSONServers, summaries storages.SummariesStorage) {
+	useGzip := gzipAllowed(ctx)
+	cacheKey := fmt.Sprintf("%s_%t", ctx.Request.URL.String(), useGzip)
+	for _, encoding := range ctx.Request.Header.Values("Accept-Encoding") {
+		if encoding == "gzip" {
+			useGzip = true
+			break
+		}
+	}
+	if v, err := geojsonCache.Get(cacheKey); err == nil && conf.UseCache() {
+		if useGzip {
+			ctx.ResponseHeader().Add("Content-Encoding", "gzip")
+		}
+		ctx.Write(v)
 		return
 	}
 	args := &GeoJSONArgs{}
@@ -109,31 +136,33 @@ func HandleGetGeoJSON(c *webcontext.Context, conf *config.Config, servers *geo.G
 			feature.SetProperty("summary", summary)
 		}
 	}
-	data, err := collection.Marshal(true)
+	data, err := collection.Marshal(useGzip)
 	if err != nil {
 		panic(errors.Wrap(err, "routes.HandleGetGeoJSON MarshalJSON"))
 	}
-	c.ResponseHeader().Add("Content-Encoding", "gzip")
-	c.Write(data)
-	geojsonCache.Set(cacheKey, data, time.Hour)
+	if useGzip {
+		ctx.ResponseHeader().Add("Content-Encoding", "gzip")
+	}
+	ctx.Write(data)
+	geojsonCache.Set(cacheKey, data)
 }
 
-func validateTimeFilter(c *webcontext.Context) storages.SummaryFilter {
+func parseSummaryFilter(c *webcontext.Context) storages.SummaryFilter {
 	filter := storages.SummaryFilter{}
 	if c.QueryParams().Has("year") {
-		filter.Year = toInt(c, "year")
+		filter.Year = queryParamAsInt(c, "year")
 	}
 	if c.QueryParams().Has("semester") {
-		filter.Semester = toInt(c, "semester")
+		filter.Semester = queryParamAsInt(c, "semester")
 	}
 	if c.QueryParams().Has("quarter") {
-		filter.Quarter = toInt(c, "quarter")
+		filter.Quarter = queryParamAsInt(c, "quarter")
 	}
 	if c.QueryParams().Has("month") {
-		filter.Month = toInt(c, "month")
+		filter.Month = queryParamAsInt(c, "month")
 	}
 	if c.QueryParams().Has("week") {
-		filter.Week = toInt(c, "week")
+		filter.Week = queryParamAsInt(c, "week")
 	}
 	if filter.Semester != nil && filter.Year == nil {
 		c.AddFieldError("year", apierrors.SingleFieldError(
@@ -162,19 +191,19 @@ func validateTimeFilter(c *webcontext.Context) storages.SummaryFilter {
 	return filter
 }
 
-func validateNamespace(ns string, c *webcontext.Context) string {
+func validateNamespace(ns string, c *webcontext.Context) bool {
 	if ns == "" {
 		c.AddFieldError("namespace", apierrors.MissingFieldError)
-		return ""
+		return false
 	}
 	if !slices.Contains([]string{"states", "counties", "tribal_tracts"}, ns) {
 		c.AddFieldError("namespace", apierrors.SingleFieldError(
 			"is not a valid choice. Choose between [states, counties, tribal_tracts]",
 			"invalid_choice",
 		))
-		return ""
+		return false
 	}
-	return ns
+	return true
 }
 
 type ServeVectorTilesArgs struct {
@@ -183,7 +212,7 @@ type ServeVectorTilesArgs struct {
 }
 
 func (gja *ServeVectorTilesArgs) Parse(c *webcontext.Context) {
-	gja.SummaryFilter = validateTimeFilter(c)
+	gja.SummaryFilter = parseSummaryFilter(c)
 	asnId := c.QueryParams().Get("asn_id")
 	if asnId != "" {
 		gja.ASNOrgId = &asnId
@@ -203,6 +232,7 @@ func convertNamespace(ns string) namespaces.Namespace {
 	}
 }
 
+// To edit the swagger doc, see: https://github.com/swaggo/swag
 // @Param namespace path string true "Namespace to return the tiles"
 // @Param z path int true "zoom level"
 // @Param x path int true "tile x position"
@@ -210,49 +240,67 @@ func convertNamespace(ns string) namespaces.Namespace {
 // @Param args query ServeVectorTilesArgs true "query args"
 // @Produce application/vnd.mapbox-vector-tile
 // @Success 200 {string} string "encoded vector tile"
-// @Failure 400 {object} restapi.FieldsValidationError
+// @Failure 400 {object} apierrors.RequestError
 // @Router /namespaces/{namespace}/tiles/{z}/{x}/{y} [get]
-func ServeVectorTiles(c *webcontext.Context, conf *config.Config, servers *geo.TilesetServers, summaries storages.SummariesStorage) {
-	start := time.Now()
+func ServeVectorTiles(ctx *webcontext.Context, conf *config.Config, servers *geo.TilesetServers, summaries storages.SummariesStorage) {
+	useGzip := gzipAllowed(ctx)
 	args := &ServeVectorTilesArgs{}
-	args.Parse(c)
-	ns := c.UrlParameters()["namespace"]
-	validateNamespace(ns, c)
-	if c.HasErrors() {
+	args.Parse(ctx)
+	ns := ctx.UrlParameters()["namespace"]
+	validateNamespace(ns, ctx)
+	if ctx.HasErrors() {
 		return
 	}
 	namespace := convertNamespace(ns)
 	tilesetServer, err := servers.Get(namespace)
 	if err != nil {
-		c.Reject(http.StatusBadRequest, &apierrors.APIError{
+		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
 			Message: "provided namespace is not supported",
 			Code:    "namespace_not_found",
 		})
+		return
 	}
-	urlParams := c.UrlParameters()
+	urlParams := ctx.UrlParameters()
 	xStr := urlParams["x"]
 	yStr := urlParams["y"]
 	zStr := urlParams["z"]
-	x, _ := strconv.ParseUint(xStr, 10, 64)
-	y, _ := strconv.ParseUint(yStr, 10, 64)
-	z, _ := strconv.ParseUint(zStr, 10, 64)
-	fmt.Println("Time for validation:", time.Since(start))
-	start = time.Now()
+	x, err := strconv.ParseUint(xStr, 10, 64)
+	if err != nil {
+		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
+			Message: "x must be an integer",
+			Code:    "invalid_type_integer",
+		})
+		return
+	}
+	y, err := strconv.ParseUint(yStr, 10, 64)
+	if err != nil {
+		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
+			Message: "x must be an integer",
+			Code:    "invalid_type_integer",
+		})
+		return
+	}
+	z, err := strconv.ParseUint(zStr, 10, 64)
+	if err != nil {
+		ctx.Reject(http.StatusBadRequest, &apierrors.APIError{
+			Message: "x must be an integer",
+			Code:    "invalid_type_integer",
+		})
+		return
+	}
+
 	vt, err := tilesetServer.Get(x, y, z)
 	if err == geo.ErrEmptyTile {
 		return
 	} else if err != nil {
 		panic(errors.Wrap(err, "routes.ServeVectorTiles GetVectorTile"))
 	}
-	fmt.Println("Time to load VT:", time.Since(start))
-	start = time.Now()
+
 	summaryMap, err := getSummary(summaries, namespace, args.ASNOrgId, args.SummaryFilter, conf.UseCache())
 	if err != nil {
 		panic(errors.Wrap(err, "routes.ServeVectorTiles getSummary"))
 	}
 
-	fmt.Println("Time to load summary results:", time.Since(start))
-	start = time.Now()
 	features, err := vt.GetFeatures(namespace)
 	if err != nil {
 		panic(errors.Wrap(err, "routes.ServeVectorTiles GetFeatures"))
@@ -273,26 +321,27 @@ func ServeVectorTiles(c *webcontext.Context, conf *config.Config, servers *geo.T
 			})
 		}
 	}
-	fmt.Println("Time to add properies:", time.Since(start))
-	start = time.Now()
-	vtData, err := vt.Marshal(true)
+
+	vtData, err := vt.Marshal(useGzip)
 	if err != nil {
 		panic(errors.Wrap(err, "routes.ServeVectorTiles Marshal"))
 	}
-	fmt.Println("Time to encode:", time.Since(start))
-	start = time.Now()
-	c.ResponseHeader().Add("Content-Type", "application/vnd.mapbox-vector-tile")
-	c.ResponseHeader().Add("Content-Length", fmt.Sprintf("%d", len(vtData)))
-	c.ResponseHeader().Add("Content-Encoding", "gzip")
-	c.Write(vtData)
-	fmt.Println("Time to write", time.Since(start))
+
+	ctx.ResponseHeader().Add("Content-Type", "application/vnd.mapbox-vector-tile")
+	ctx.ResponseHeader().Add("Content-Length", fmt.Sprintf("%d", len(vtData)))
+	if useGzip {
+		ctx.ResponseHeader().Add("Content-Encoding", "gzip")
+	}
+	ctx.Write(vtData)
 }
 
 func getSummary(summaries storages.SummariesStorage, namespace namespaces.Namespace, asnOrgId *string, filter storages.SummaryFilter, useCache bool) (map[string]storages.GeospaceSummaryResult, error) {
 	summaryMap := make(map[string]storages.GeospaceSummaryResult)
 	key := cacheKey(namespace, asnOrgId, filter)
-	if v, exists := summariesCache.Get(key); exists && useCache {
-		summaryMap = v.(map[string]storages.GeospaceSummaryResult)
+	if v, err := summariesCache.Get(key); err == nil && useCache {
+		if err := json.Unmarshal(v, &summaryMap); err != nil {
+			panic(errors.W(err))
+		}
 	} else {
 		var err error
 		var namespaceSummary []storages.GeospaceSummaryResult
@@ -309,7 +358,11 @@ func getSummary(summaries storages.SummariesStorage, namespace namespaces.Namesp
 		for _, summary := range namespaceSummary {
 			summaryMap[summary.Geospace.Id] = summary
 		}
-		summariesCache.Set(key, summaryMap, time.Minute*5)
+		summaryMapJson, err := json.Marshal(summaryMap)
+		if err != nil {
+			panic(errors.W(err))
+		}
+		summariesCache.Set(key, summaryMapJson)
 	}
 	return summaryMap, nil
 }
@@ -320,4 +373,26 @@ func cacheKey(ns namespaces.Namespace, asn *string, filter storages.SummaryFilte
 		asnStr = *asn
 	}
 	return fmt.Sprintf("%s-%s-%s", ns, asnStr, filter)
+}
+
+func queryParamAsInt(ctx *webcontext.Context, key string) *int {
+	val := ctx.QueryParams().Get(key)
+	intVal, err := strconv.Atoi(val)
+	if err != nil {
+		ctx.AddFieldError(key, apierrors.FieldErrors{
+			apierrors.APIError{
+				Message: "is not a valid integer", Code: "invalid_int",
+			},
+		})
+	}
+	return &intVal
+}
+
+func gzipAllowed(ctx *webcontext.Context) bool {
+	for _, encoding := range ctx.Request.Header.Values("Accept-Encoding") {
+		if encoding == "gzip" {
+			return true
+		}
+	}
+	return false
 }

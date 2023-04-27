@@ -84,3 +84,11 @@ func (m *MappingAppStorages) CloseAll() error {
 	}
 	return nil
 }
+
+func (m *MappingAppStorages) Connected() []error {
+	return []error{
+		m.GeospacesStorage.Connected(),
+		m.ASNOrgsStorage.Connected(),
+		m.SummariesStorage.Connected(),
+	}
+}

@@ -15,6 +15,7 @@ type ASNOrgStorage interface {
 	Open() error
 	Close() error
 	Create(a *ASNOrg) error
+	Connected() error
 	// Get returns an ASNOrg by Id or returns ErrASNOrgNotFound if not found
 	Get(id string) (*ASNOrg, error)
 	// GetByOrgName tries to find a single match for a given name. returns ErrASNOrgNotFound if not found

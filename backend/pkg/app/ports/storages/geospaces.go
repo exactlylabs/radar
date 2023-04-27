@@ -46,6 +46,7 @@ func (dg *DetailedGeospace) AsGeospace() *Geospace {
 type GeospaceStorage interface {
 	Open() error
 	Close() error
+	Connected() error
 	Create(g *Geospace) error
 	Update(g *Geospace) error
 	// Get a geospace by its ID. If not found, ErrGeospaceNotFound is returned

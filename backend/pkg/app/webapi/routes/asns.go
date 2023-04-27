@@ -9,11 +9,12 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 )
 
+// To edit the swagger doc, see: https://github.com/swaggo/swag
 // @Param id path string true "Geospace ID"
 // @Param query query string  false "text to filter for"
 // @Param args query paginator.PaginationArgs false "pagination arguments"
 // @Success 200 {object} paginator.PaginatedResponse[storages.ASNOrg]
-// @Failure 400 {object} restapi.FieldsValidationError
+// @Failure 400 {object} apierrors.RequestError
 // @Router /geospaces/{id}/asns [get]
 func GeospaceASNs(ctx *webcontext.Context, asns storages.ASNOrgStorage) {
 	geospaceId := ctx.UrlParameters()["id"]
@@ -37,7 +38,7 @@ func GeospaceASNs(ctx *webcontext.Context, asns storages.ASNOrgStorage) {
 // @Param query query string  false "text to filter for"
 // @Param args query paginator.PaginationArgs false "pagination arguments"
 // @Success 200 {object} paginator.PaginatedResponse[storages.ASNOrg]
-// @Failure 400 {object} restapi.FieldsValidationError
+// @Failure 400 {object} apierrors.RequestError
 // @Router /asns [get]
 func ListASNs(ctx *webcontext.Context, asns storages.ASNOrgStorage) {
 	response, err := paginator.New[*storages.ASNOrg]().Paginate(ctx, func(limit, offset int) (paginator.Iterator[*storages.ASNOrg], error) {

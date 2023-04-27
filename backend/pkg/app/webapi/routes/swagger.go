@@ -13,7 +13,7 @@ func HandleSwaggerSpec(c *webcontext.Context) {
 }
 
 func HandleSwaggerUI(c *webcontext.Context) {
-	data, err := public.Public.ReadFile("swagger.html")
+	data, err := public.HTMLs.ReadFile("swagger.html")
 	if err != nil {
 		panic(err)
 	}

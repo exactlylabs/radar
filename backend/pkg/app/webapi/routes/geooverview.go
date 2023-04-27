@@ -2,7 +2,6 @@ package routes
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-rest/pkg/restapi/apierrors"
@@ -10,28 +9,16 @@ import (
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/storages"
 )
 
-func toInt(ctx *webcontext.Context, key string) *int {
-	val := ctx.QueryParams().Get(key)
-	intVal, err := strconv.Atoi(val)
-	if err != nil {
-		ctx.AddFieldError(key, apierrors.FieldErrors{
-			apierrors.APIError{
-				Message: "is not a valid integer", Code: "invalid_int",
-			},
-		})
-	}
-	return &intVal
-}
-
+// To edit the swagger doc, see: https://github.com/swaggo/swag
 // @Param id path string true "Geospace ID"
 // @Param asn_id query string false "Additionally filter by an ASN"
 // @Param time query storages.SummaryFilter false "filters by time"
 // @Success 200 {object} storages.GeospaceSummaryResult
-// @Failure 400 {object} restapi.FieldsValidationError
+// @Failure 400 {object} apierrors.RequestError
 // @Router /geospaces/{id}/overview [get]
 func GeospaceMeasurementsOverviewHandler(ctx *webcontext.Context, summaries storages.SummariesStorage, geospaces storages.GeospaceStorage, asns storages.ASNOrgStorage) {
 	geospaceId := ctx.UrlParameters()["id"]
-	filter := validateTimeFilter(ctx)
+	filter := parseSummaryFilter(ctx)
 	if ctx.HasErrors() {
 		return
 	}

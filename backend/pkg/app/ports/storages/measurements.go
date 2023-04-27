@@ -29,6 +29,7 @@ type MeasurementIterator interface {
 type MeasurementStorage interface {
 	Open() error
 	Close() error
+	Connected() error
 	Insert(it MeasurementIterator) error
 	LastDate() (*time.Time, error)
 }

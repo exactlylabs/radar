@@ -11,6 +11,7 @@ type ListNamespaceGeospacesResult struct {
 	Results []storages.DetailedGeospace `json:"results"`
 }
 
+// To edit the swagger doc, see: https://github.com/swaggo/swag
 // @Param namespace path string  true "namespace to list"
 // @Param query query string  false "text to filter for"
 // @Success 200 {object} ListNamespaceGeospacesResult
@@ -47,6 +48,7 @@ func ListNamespaceGeospaces(c *webcontext.Context, geospaces storages.GeospaceSt
 	c.JSON(200, response)
 }
 
+// To edit the swagger doc, see: https://github.com/swaggo/swag
 // @Param query query string  false "text to filter for"
 // @Param args query paginator.PaginationArgs false "pagination arguments"
 // @Success 200 {object} paginator.PaginatedResponse[storages.DetailedGeospace]

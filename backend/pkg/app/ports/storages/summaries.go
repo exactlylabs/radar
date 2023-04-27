@@ -64,6 +64,7 @@ func (sf SummaryFilter) String() string {
 type SummariesStorage interface {
 	Open() error
 	Close() error
+	Connected() error
 	// Summarize is called when new data is ready to be summarized by this interface
 	Summarize() error
 	SummaryForGeospace(geospaceId string, filter SummaryFilter) (*GeospaceSummaryResult, error)

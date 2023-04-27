@@ -38,7 +38,7 @@ type VectorTile interface {
 	Range(func(layer namespaces.Namespace, feature Feature) (bool, error)) error
 }
 
-// GeoJSONServer has memthods to work with a GeoJSON file
+// GeoJSONServer has methods to work with a GeoJSON file
 type GeoJSONServer interface {
 	Load() error
 	Get() (GeoJSON, error)
