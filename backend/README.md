@@ -2,7 +2,7 @@
 
 ## Setup
 
-The only requirements is to have docker installed and then run `./scripts/start_db.sh` script.
+You need to have [Docker and Docker Compose](https://docs.docker.com/engine/install/), [GDAL's `ogr2ogr`](https://gdal.org/index.html), and [Tippecanoe](https://github.com/mapbox/tippecanoe) installed and then run `./scripts/start_db.sh` script.
 
 After the DB is started and migrations were done, you just have to call: `go run cmd/setup_shapes/main`. This command will download all necessary shape files as well as import the geospaces information into the DB. It is important to run this, because the ingestor will skip all measurements that doesn't have an known geospace.
 
@@ -76,13 +76,8 @@ Code: 241. DB::Exception: Received from localhost:9000. DB::Exception: Memory li
 
 Make sure you have configured the following settings:
 
-> Note that these commands are session-wise
+> Note that if you use our start_db.sh script, you can change this value by editing `./scripts/files/clickhouse-users.xml`
 
-```sql
-set max_memory_usage=16000000000;
-set max_bytes_before_external_group_by = 5000000000;
-set join_algorithm = 'partial_merge';
-```
 
 To enable this by default, you need to go to clickhouse's user configuration XML file located at `/etc/clickhouse-server/users.xml` and add the following inside the <default> element of <profiles>
 
