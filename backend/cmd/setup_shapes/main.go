@@ -71,7 +71,7 @@ func main() {
 		log.Println("Downloading files for Namespace", ns)
 		shapeFile := shapePath(string(ns))
 		geoJsonFile := geoJSONPath(string(ns))
-		if err := internal.DownloadShapeFile(shapeFile, shapeUrls[ns]); err != nil {
+		if err := internal.DownloadToPath(shapeFile, shapeUrls[ns]); err != nil {
 			panic(err)
 		}
 		log.Println("Shapefile stored at", shapeFile)

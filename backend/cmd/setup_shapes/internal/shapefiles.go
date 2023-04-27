@@ -8,7 +8,7 @@ import (
 	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
-func DownloadShapeFile(dst string, url string) error {
+func DownloadToPath(path string, url string) error {
 	res, err := http.Get(url)
 	if err != nil {
 		if err != nil {
@@ -19,7 +19,7 @@ func DownloadShapeFile(dst string, url string) error {
 		return errors.New("internal.DownloadShapeFile invalid status %d", res.StatusCode)
 	}
 	defer res.Body.Close()
-	f, err := os.OpenFile(dst, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0664)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0664)
 	if err != nil {
 		return errors.Wrap(err, "internal.DownloadShapeFile OpenFile")
 	}
