@@ -72,6 +72,7 @@ func (am *AgentInfoManager) IsRunning() (bool, error) {
 	// Check from systemd
 	out, err := exec.Command("systemctl", "check", am.serviceName).Output()
 	if exiterr, ok := err.(*exec.ExitError); ok && exiterr.ExitCode() == 3 && bytes.Contains(out, []byte("activating")) {
+		// Systemctl is starting the service, so it's not running, but there's no error in the service configuration either
 		return false, nil
 	} else if err != nil {
 		return false, fmt.Errorf("%v: %w", strings.TrimRight(string(out), "\n"), err)
