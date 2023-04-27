@@ -56,7 +56,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                            "$ref": "#/definitions/apierrors.RequestError"
                         }
                     }
                 }
@@ -110,7 +110,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                            "$ref": "#/definitions/apierrors.RequestError"
                         }
                     }
                 }
@@ -183,7 +183,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                            "$ref": "#/definitions/apierrors.RequestError"
                         }
                     }
                 }
@@ -242,7 +242,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                            "$ref": "#/definitions/apierrors.RequestError"
                         }
                     }
                 }
@@ -270,6 +270,56 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/routes.ListNamespaceGeospacesResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/namespaces/{namespace}/geospaces/{geoid}/asns": {
+            "get": {
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Geospace's namespace",
+                        "name": "namespace",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "GEOID that belongs to the namespace",
+                        "name": "geoid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "text to filter for",
+                        "name": "query",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/paginator.PaginatedResponse-storages_ASNOrg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apierrors.RequestError"
                         }
                     }
                 }
@@ -310,81 +360,9 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "name": "month",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "quarter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "semester",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Weeks of the Year.",
-                        "name": "week",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "year",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "encoded vector tile",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/restapi.FieldsValidationError"
-                        }
-                    }
-                }
-            }
-        },
-        "/tiles/{z}/{x}/{y}": {
-            "get": {
-                "produces": [
-                    "application/vnd.mapbox-vector-tile"
-                ],
-                "parameters": [
-                    {
                         "type": "string",
-                        "description": "Namespace to return the tiles",
-                        "name": "namespace",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "zoom level",
-                        "name": "z",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "tile x position",
-                        "name": "x",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "tile y position",
-                        "name": "y",
-                        "in": "path",
-                        "required": true
+                        "name": "asn_id",
+                        "in": "query"
                     },
                     {
                         "type": "integer",
@@ -423,7 +401,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/restapi.FieldsValidationError"
+                            "$ref": "#/definitions/apierrors.RequestError"
                         }
                     }
                 }
@@ -431,6 +409,37 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "apierrors.APIError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "apierrors.RequestError": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/apierrors.APIError"
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "paginator.PaginatedResponse-storages_ASNOrg": {
             "type": "object",
             "properties": {
@@ -473,46 +482,6 @@ const docTemplate = `{
                 },
                 "previous": {
                     "type": "string"
-                }
-            }
-        },
-        "restapi.APIError": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "restapi.FieldErrors": {
-            "type": "object",
-            "properties": {
-                "errors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restapi.APIError"
-                    }
-                },
-                "nested": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/restapi.FieldErrors"
-                    }
-                }
-            }
-        },
-        "restapi.FieldsValidationError": {
-            "type": "object",
-            "properties": {
-                "errors": {
-                    "description": "Errors has dictionary of errors for each field",
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/restapi.FieldErrors"
-                    }
                 }
             }
         },

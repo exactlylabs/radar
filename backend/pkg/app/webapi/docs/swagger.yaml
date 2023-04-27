@@ -2,6 +2,26 @@ basePath: /api/v1
 consumes:
 - application/json
 definitions:
+  apierrors.APIError:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  apierrors.RequestError:
+    properties:
+      errors:
+        additionalProperties:
+          items:
+            $ref: '#/definitions/apierrors.APIError'
+          type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   paginator.PaginatedResponse-storages_ASNOrg:
     properties:
       _links:
@@ -30,32 +50,6 @@ definitions:
         type: string
       previous:
         type: string
-    type: object
-  restapi.APIError:
-    properties:
-      code:
-        type: string
-      message:
-        type: string
-    type: object
-  restapi.FieldErrors:
-    properties:
-      errors:
-        items:
-          $ref: '#/definitions/restapi.APIError'
-        type: array
-      nested:
-        additionalProperties:
-          $ref: '#/definitions/restapi.FieldErrors'
-        type: object
-    type: object
-  restapi.FieldsValidationError:
-    properties:
-      errors:
-        additionalProperties:
-          $ref: '#/definitions/restapi.FieldErrors'
-        description: Errors has dictionary of errors for each field
-        type: object
     type: object
   routes.ListNamespaceGeospacesResult:
     properties:
@@ -165,7 +159,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/restapi.FieldsValidationError'
+            $ref: '#/definitions/apierrors.RequestError'
   /geojson:
     get:
       parameters:
@@ -198,7 +192,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/restapi.FieldsValidationError'
+            $ref: '#/definitions/apierrors.RequestError'
   /geospaces:
     get:
       parameters:
@@ -243,7 +237,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/restapi.FieldsValidationError'
+            $ref: '#/definitions/apierrors.RequestError'
   /geospaces/{id}/overview:
     get:
       parameters:
@@ -280,7 +274,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/restapi.FieldsValidationError'
+            $ref: '#/definitions/apierrors.RequestError'
   /namespaces/{namespace}/geospaces:
     get:
       parameters:
@@ -298,6 +292,38 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/routes.ListNamespaceGeospacesResult'
+  /namespaces/{namespace}/geospaces/{geoid}/asns:
+    get:
+      parameters:
+      - description: Geospace's namespace
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: GEOID that belongs to the namespace
+        in: path
+        name: geoid
+        required: true
+        type: string
+      - description: text to filter for
+        in: query
+        name: query
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: offset
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/paginator.PaginatedResponse-storages_ASNOrg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apierrors.RequestError'
   /namespaces/{namespace}/tiles/{z}/{x}/{y}:
     get:
       parameters:
@@ -322,55 +348,8 @@ paths:
         required: true
         type: integer
       - in: query
-        name: month
-        type: integer
-      - in: query
-        name: quarter
-        type: integer
-      - in: query
-        name: semester
-        type: integer
-      - description: Weeks of the Year.
-        in: query
-        name: week
-        type: integer
-      - in: query
-        name: year
-        type: integer
-      produces:
-      - application/vnd.mapbox-vector-tile
-      responses:
-        "200":
-          description: encoded vector tile
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/restapi.FieldsValidationError'
-  /tiles/{z}/{x}/{y}:
-    get:
-      parameters:
-      - description: Namespace to return the tiles
-        in: path
-        name: namespace
-        required: true
+        name: asn_id
         type: string
-      - description: zoom level
-        in: path
-        name: z
-        required: true
-        type: integer
-      - description: tile x position
-        in: path
-        name: x
-        required: true
-        type: integer
-      - description: tile y position
-        in: path
-        name: "y"
-        required: true
-        type: integer
       - in: query
         name: month
         type: integer
@@ -397,7 +376,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/restapi.FieldsValidationError'
+            $ref: '#/definitions/apierrors.RequestError'
 produces:
 - application/json
 swagger: "2.0"

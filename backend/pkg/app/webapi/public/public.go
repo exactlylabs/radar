@@ -2,5 +2,5 @@ package public
 
 import "embed"
 
-//go:embed *
-var Public embed.FS
+//go:embed html/*
+var HTMLs embed.FS
