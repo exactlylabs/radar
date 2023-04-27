@@ -25,6 +25,10 @@ func (*asnOrgStorage) Close() error {
 	return nil // noop
 }
 
+func (as *asnOrgStorage) Connected() error {
+	return errors.Wrap(as.conn.Ping(context.Background()), "asnOrgStorage#Connected")
+}
+
 // Create implements storages.ASNOrgStorage
 func (as *asnOrgStorage) Create(a *storages.ASNOrg) error {
 	query := `INSERT INTO asn_orgs(id, name) VALUES ($1, $2)`

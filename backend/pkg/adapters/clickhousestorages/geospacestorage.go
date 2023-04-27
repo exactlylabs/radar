@@ -32,6 +32,10 @@ func (*geospaceStorage) Close() error {
 	return nil // noop
 }
 
+func (gs *geospaceStorage) Connected() error {
+	return errors.Wrap(gs.conn.Ping(context.Background()), "geospaceStorage#Connected")
+}
+
 func (gs *geospaceStorage) Create(g *storages.Geospace) error {
 	id := uuid.New()
 	var parent *string = g.ParentId

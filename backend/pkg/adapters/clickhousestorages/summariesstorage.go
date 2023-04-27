@@ -25,6 +25,10 @@ func (*summariesStorage) Open() error {
 	return nil
 }
 
+func (ss *summariesStorage) Connected() error {
+	return errors.Wrap(ss.conn.Ping(context.Background()), "summariesStorage#Connected")
+}
+
 // Summarize implements storages.SummariesStorage
 func (ss *summariesStorage) Summarize() error {
 	log.Println("summariesStorage#Summarize Starting Updating Views")

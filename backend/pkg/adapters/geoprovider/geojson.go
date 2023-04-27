@@ -8,17 +8,15 @@ import (
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/geo"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/app/ports/namespaces"
-	"github.com/exactlylabs/mlab-mapping/backend/pkg/config"
 	"github.com/paulmach/orb/geojson"
 )
 
 type GeoJSON struct {
-	geojson.FeatureCollection
+	fc geojson.FeatureCollection
 }
 
 func (gj *GeoJSON) Marshal(gziped bool) ([]byte, error) {
-	encoded, err := gj.MarshalJSON()
+	encoded, err := gj.fc.MarshalJSON()
 	if err != nil {
 		return nil, errors.Wrap(err, "GeoJSON#Marshal MarshalJSON")
 	}
@@ -35,7 +33,7 @@ func (gj *GeoJSON) Marshal(gziped bool) ([]byte, error) {
 }
 
 func (gj *GeoJSON) FindFeatureByProperty(key string, value any) geo.Feature {
-	for _, f := range gj.Features {
+	for _, f := range gj.fc.Features {
 		if v, exists := f.Properties[key]; exists && v == value {
 			return &Feature{f}
 		}
@@ -45,50 +43,11 @@ func (gj *GeoJSON) FindFeatureByProperty(key string, value any) geo.Feature {
 
 func (gj *GeoJSON) GetFeatures() []geo.Feature {
 	// since it's a slice, we need to "cast" each element
-	features := make([]geo.Feature, len(gj.Features))
-	for i := range gj.Features {
-		features[i] = &Feature{gj.Features[i]}
+	features := make([]geo.Feature, len(gj.fc.Features))
+	for i := range gj.fc.Features {
+		features[i] = &Feature{gj.fc.Features[i]}
 	}
 	return features
-}
-
-type geoJSONServer struct {
-	namespace    namespaces.Namespace
-	geojson      *GeoJSON
-	geoJSONFiles map[namespaces.Namespace]string
-}
-
-func NewGeoJSONServer(c *config.Config, ns namespaces.Namespace) geo.GeoJSONServer {
-	return &geoJSONServer{
-		namespace: ns,
-		geoJSONFiles: map[namespaces.Namespace]string{
-			namespaces.US_STATE:  c.StatesGeoJSONFile,
-			namespaces.US_COUNTY: c.CountiesGeoJSONFile,
-			namespaces.US_TTRACT: c.TribalTractsGeoJSONFile,
-		},
-	}
-}
-
-func (gs *geoJSONServer) Load() error {
-	g, err := readGeoJSON(gs.geoJSONFiles[gs.namespace])
-	if err != nil {
-		return errors.Wrap(err, "geoJSONServer#Load readGeoJSON")
-	}
-	gs.geojson = g
-	return nil
-}
-
-func (gs *geoJSONServer) Get() (geo.GeoJSON, error) {
-	// We should return a copy of all elements to avoid concurrency
-	g := &GeoJSON{}
-	g.BBox = gs.geojson.BBox
-	g.ExtraMembers = gs.geojson.ExtraMembers
-	g.Type = gs.geojson.Type
-	g.Features = make([]*geojson.Feature, len(gs.geojson.Features))
-	for i := range g.Features {
-		g.Features[i] = copyFeature(gs.geojson.Features[i])
-	}
-	return g, nil
 }
 
 func readGeoJSON(path string) (*GeoJSON, error) {
@@ -105,7 +64,7 @@ func readGeoJSON(path string) (*GeoJSON, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "geo#readGeoJSON UnmarshalJSON")
 	}
-	return &GeoJSON{FeatureCollection: *fc}, nil
+	return &GeoJSON{fc: *fc}, nil
 }
 
 func copyFeature(f *geojson.Feature) *geojson.Feature {

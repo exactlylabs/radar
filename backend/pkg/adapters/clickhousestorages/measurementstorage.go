@@ -37,6 +37,10 @@ func (ms *measurementStorage) Close() error {
 	return nil
 }
 
+func (ms *measurementStorage) Connected() error {
+	return errors.Wrap(ms.conn.Ping(context.Background()), "measurementStorage#Connected")
+}
+
 func (ms *measurementStorage) insertInBatch(batch driver.Batch, it storages.MeasurementIterator) error {
 	i := 0
 	for m, err := it.Next(); m != nil || err != nil; m, err = it.Next() {
