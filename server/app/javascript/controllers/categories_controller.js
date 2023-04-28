@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { emitCustomEvent } from "../eventsEmitter";
 
 export default class extends Controller {
   static targets = [
@@ -6,15 +7,68 @@ export default class extends Controller {
     "openCategoriesModalButton",
     "searchInput",
     "hiddenHexInput",
-    "colorBall"
+    "colorBall",
+    "categoryCheckbox",
+    "selectClickableContainer",
+    "hiddenCategoriesInput"
   ];
 
   static values = {
-    hex: String
+    hex: String,
+    locationId: Number,
   }
 
   connect() {
     KTMenu.createInstances();
+    this.categories = [];
+  }
+
+  initialize() {
+    if(this.categoryCheckboxTargets) {
+      let categoryIds = [];
+      this.categoryCheckboxTargets.forEach(checkbox => {
+        if(checkbox.getAttribute('checked')) {
+          const categoryId = checkbox.id.split('check-box-')[1];
+          categoryIds.push(categoryId);
+        }
+      });
+      this.categories = categoryIds;
+    }
+  }
+
+  initializeCategories() {
+    if(this.hiddenCategoriesInputTarget) {
+      this.categories = this.hiddenCategoriesInputTarget.value.split(',');
+    }
+  }
+
+  onCheckBoxChange(e) {
+    if(e.target.checked) e.target.setAttribute('checked', 'true');
+    else e.target.removeAttribute('checked');
+
+    const selectedCategoryId = e.target.id.split('check-box-')[1];
+    
+    if(this.categories.includes(selectedCategoryId)) {
+      const index = this.categories.indexOf(selectedCategoryId);
+      this.categories.splice(index, 1);
+    } else {
+      this.categories.push(selectedCategoryId);
+    }
+    
+    const categoriesHiddenInput = document.getElementById('location_categories');
+    if(categoriesHiddenInput) categoriesHiddenInput.setAttribute('value', this.categories.join(','));
+
+    const formData = new FormData();
+    formData.append('categories', this.categories);
+    const token = document.getElementsByName("csrf-token")[0].content;
+    fetch('/location_categories/selected_categories', {
+      method: "PUT",
+      headers: { "X-CSRF-Token": token },
+      body: formData
+    })
+    .then (response => response.text())
+    .then(html => Turbo.renderStreamMessage(html))
+    .catch((err) => { handleError(err, this.identifier) });
   }
 
   fetchBaseModal() {
@@ -43,6 +97,8 @@ export default class extends Controller {
   }
 
   pickColor(e) {
+    e.preventDefault();
+    e.stopPropagation();
     const attributeKey = 'data-categories-hex-value';
     const selectedColor = e.target.getAttribute(attributeKey);
     this.hiddenHexInputTarget.value = selectedColor;
@@ -53,5 +109,41 @@ export default class extends Controller {
         elem.classList.remove('category--marker-selected');
       }
     });
+  }
+
+  toggleCategoriesDropdown(shouldOpen) {
+    const url = shouldOpen ? `/location_categories/open_dropdown${!!this.locationIdValue ? `?location_id=${this.locationIdValue}` : ''}` : '/location_categories/close_dropdown';
+    const token = document.getElementsByName("csrf-token")[0].content;
+    fetch(url, {
+      method: "GET",
+      headers: { "X-CSRF-Token": token },
+    })
+      .then (response => response.text())
+      .then(html => {
+        Turbo.renderStreamMessage(html);
+        if(shouldOpen) emitCustomEvent('handleCategorySearch');
+      })
+      .catch((err) => {
+        handleError(err, this.identifier);
+      });
+  }
+
+  toggleFocus() {
+    if(this.selectClickableContainerTarget.classList.contains('category--location-select-container-focus')) {
+      this.selectClickableContainerTarget.classList.remove('category--location-select-container-focus');
+      this.toggleCategoriesDropdown(false);
+    } else {
+      this.selectClickableContainerTarget.classList.add('category--location-select-container-focus');
+      this.toggleCategoriesDropdown(true);
+    }
+  }
+
+  handleCategorySearchResponse() {
+    this.categoryCheckboxTargets.forEach(checkbox => {
+      const currentCheckboxId = checkbox.id.split('check-box-')[1];
+      if(this.categories.includes(currentCheckboxId)) {
+        checkbox.setAttribute('checked', 'true');
+      }
+    })
   }
 }

@@ -1,0 +1,9 @@
+<%= turbo_stream.update "location-categories" do %>
+  <% if @categories.count > 0 %>
+    <% @categories.each do |category| %>
+      <%= render partial: "location_categories/category_list_item", locals: { category: category, selected: false } %>
+    <% end %>
+  <% else %>
+    <%= render partial: "location_categories/inline_add_item", locals: { query: @query } %>
+  <% end %>
+<% end %>

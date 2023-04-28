@@ -1,0 +1,14 @@
+<div class="category--location-select-list-item">
+  <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
+  <input id="check-box-<%= category.id %>"
+          class="form-check-input custom-multi-row-input-checkbox me-3"
+          type="checkbox" 
+          value="1"
+          data-categories-target="categoryCheckbox"
+          data-action="input->categories#onCheckBoxChange"
+          <%= selected ? 'checked="true"' : nil %>
+  />
+  </div>
+  <div class="category--marker" style="background-color: <%= category.color_hex %>"></div>
+  <p class="category--list-item-title"><%= category.name %></p>
+</div>

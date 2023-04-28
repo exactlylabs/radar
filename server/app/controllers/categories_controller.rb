@@ -1,12 +1,38 @@
 class CategoriesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_category, except: [:index]
+  before_action :set_category, except: [:index, :new, :cancel_new, :create]
 
   def index
     if params[:query]
       @categories = policy_scope(Category).where("LOWER(name) LIKE ?", "%#{params[:query].downcase}%")
     else
       @categories = policy_scope(Category)
+    end
+  end
+
+  def new
+    @category = Category.new
+  end
+
+  def create
+    error = nil
+    begin
+      Category.transaction do
+        @category = Category.new category_params
+        @category.color_hex = "#4b7be5" if @category.color_hex.empty?
+        @category.account = current_account
+        @category.save!
+      end
+    rescue Exception => e
+      error = e
+    end
+    respond_to do |format|
+      if error.nil?
+        @categories = policy_scope(Category)
+        format.turbo_stream
+      else
+        format.html { render "/locations", notice: "Error creating new Category. Please try again later." }
+      end
     end
   end
 
@@ -19,6 +45,18 @@ class CategoriesController < ApplicationController
   def cancel_edit
     respond_to do |format|
       format.html { render partial: "categories/list_item", locals: {category: @category} }
+    end
+  end
+
+  def cancel_new
+    categories = policy_scope(Category)
+    puts categories
+    respond_to do |format|
+      if categories.count > 0
+        format.html { render partial: "categories/empty_list_item" }
+      else
+        format.html { render partial: "categories/empty_list" }
+      end
     end
   end
 
@@ -39,8 +77,11 @@ class CategoriesController < ApplicationController
   def destroy
     locations_by_category = policy_scope(CategoriesLocation).where(category_id: @category.id).pluck(:location_id)
     @locations = policy_scope(Location).where(id: locations_by_category)
+    ## MIRAR ESTO
+    ## @locations.categories.delete(@category)
     respond_to do |format|
       if @category.delete
+        @categories = policy_scope(Category)
         @notice = "Category deleted successfully."
         format.turbo_stream
       else
@@ -55,5 +96,9 @@ class CategoriesController < ApplicationController
     if !@category
       raise ActiveRecord::NotFound("Couldn't find Category with 'id'=#{params[:id]}", Category.name, params[:id])
     end
+  end
+
+  def category_params
+    params.require(:category).permit(:name, :color_hex)
   end
 end

@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(version: 2023_05_09_183706) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "account_id"
     t.string "color_hex", null: false
+    t.boolean "locked", default: false
     t.index ["account_id"], name: "index_categories_on_account_id"
   end
 

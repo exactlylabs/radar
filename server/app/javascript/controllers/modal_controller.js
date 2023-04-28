@@ -26,7 +26,9 @@ export default class extends Controller {
   }
 
   submit(e) {
-    if (e.detail.success) {
+    const search = e.detail.formSubmission.fetchRequest.url.search;
+    const shouldKeepModal = search.includes('keep_in_view');
+    if (e.detail.success && !shouldKeepModal) {
       this.hideModal();
     }
   }

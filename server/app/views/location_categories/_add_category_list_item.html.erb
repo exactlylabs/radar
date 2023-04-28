@@ -1,0 +1,7 @@
+<div class="category--location-select-list-item">
+  <%= image_tag image_url("search.png"), class: "category--search-icon" %>
+  <%= form_with(url: location_category_search_path, method: :get, class: "category--location-select-form", id: "search-form", data: { controller: "search", "turbo_frame" => "location-categories", "fetch-url" => location_category_search_path, turbo: true, "event-key" => "handleCategorySearch"}) do |form| %>
+    <%= form.text_field :query, placeholder: "Add a category...", class: "category--search-input", "data-action" => "input->search#search" %>
+  <% end %>
+  <%= image_tag image_url("cancel.png"), id: "category--clear-icon-ref", class: "category--search-clear-icon invisible", data: { controller: "search", action: "click->search#clearSearch" } %>
+</div>

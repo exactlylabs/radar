@@ -1,0 +1,14 @@
+<%= turbo_stream.append "categories" do %>
+  <%= render partial: "categories/list_item", locals: {category: @category} %>
+<% end %>
+
+<%= turbo_stream.replace "new-category" do %>
+  <%= turbo_frame_tag "new-category" do %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "location-categories" do %>
+  <% policy_scope(Category).each do |category| %>
+    <%= render partial: "location_categories/category_list_item", locals: { category: category, selected: false } %>
+  <% end %>
+<% end %>

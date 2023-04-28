@@ -1,0 +1,11 @@
+<%= turbo_frame_tag "location-categories-dropdown" do %>
+  <div class="category--location-select-list">
+    <%= render partial: "location_categories/add_category_list_item" %>
+    <div class="category--horizontal-divider"></div>
+    <%= turbo_frame_tag "location-categories" do %>
+      <% categories.each do |category| %>
+        <%= render partial: "location_categories/category_list_item", locals: { category: category, selected: location.present? ? location.categories.where(id: category.id).count == 1 : false } %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
