@@ -44,8 +44,16 @@ if (stagingKeystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion rootProject.ext.compileSdkVersion
     ndkVersion flutter.ndkVersion
+
+    split {
+        abi {
+            enable true
+            exclude 'x86',
+            universalApk true
+        }
+    }
 
 
     compileOptions {
