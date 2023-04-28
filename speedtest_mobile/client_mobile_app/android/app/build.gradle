@@ -47,10 +47,9 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
-    split {
+    splits {
         abi {
-            enable true
-            exclude 'x86',
+            exclude 'x86'
             universalApk true
         }
     }
