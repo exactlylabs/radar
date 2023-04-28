@@ -1,0 +1,8 @@
+<%= turbo_frame_tag "new-category" do %>
+  <div class="category--empty-state-container">
+    <p class="category--empty-state-text">No categories found.</p>
+    <div class="category--add-button-container">
+      <%= render partial: "categories/add_category_button" %>
+    </div>
+  </div>
+<% end %>

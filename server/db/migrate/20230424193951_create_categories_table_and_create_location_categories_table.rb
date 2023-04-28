@@ -10,6 +10,7 @@ class CreateCategoriesTableAndCreateLocationCategoriesTable < ActiveRecord::Migr
     change_table :categories do |t|
       t.references :account
       t.string :color_hex, null: false
+      t.boolean :locked, default: false
     end
     
     change_table :categories_locations do |t|

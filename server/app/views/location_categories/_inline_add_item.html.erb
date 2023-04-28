@@ -1,0 +1,11 @@
+<%= form_with(model: Category, url: categories_path(keep_in_view: true), method: :post, data: {"turbo-frame": "location-categories"}) do |form| %>
+  <%= form.hidden_field :name, value: @query %>
+  <%= form.hidden_field :color_hex, "data-categories-target" => "hiddenHexInput" %>
+  <button type="submit" class="category--location-select-new-button category--location-select-list-item cursor-pointer">
+    <div class="category--location-select-new-button-text">
+      <%= image_tag image_url("dark-plus.png"), class: "category--location-select-new-button-icon" %>
+      Add "<%= @query %>"
+    </div>
+    <%= render partial: "categories/color_picker", locals: {category: Category.new(color_hex: '#4b7be5')} %>
+  </div>
+<% end %>

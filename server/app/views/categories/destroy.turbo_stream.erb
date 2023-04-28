@@ -10,3 +10,9 @@
     <%= render partial: 'locations/locations_table_row', locals: {location: location} %>
   <% end %>
 <% end %>
+
+<% if @categories.count == 0 %>
+  <%= turbo_stream.replace "new-category" do %>
+    <%= render partial: "categories/empty_list" %>
+  <% end %>
+<% end %>

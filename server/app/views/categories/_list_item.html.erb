@@ -6,27 +6,29 @@
     <p class="category--list-item-subtitle"><%= category.locations.count %> <%= category.locations.count == 1 ? "location" : "locations" %></p>
   </div>
   <div class="category--list-item-options-container">
-    <a class="category--more-options-icon-container" href="<%= category_edit_path(category.id) %>">
-      <%= image_tag image_url('edit-pencil.png'), id: 'category--edit-pencil-icon' %>
-    </a>
-    <div class="category--more-options-icon-container" data-kt-menu-trigger="click" data-kt-menu-placement="right-start">
-      <i class="fas fa-ellipsis-v text-gray-700" id="category--list-item-menu-icon@<%= category.id %>"></i>
-    </div>
-    <div class="menu menu-sub menu-sub-dropdown category--options-menu"
-         data-kt-menu="true"
-         data-categories-target="menuIcon"
-         id="categoy--list-item-more-options@<%= category.id %>"
-    >
-      <a class="category--options-menu-item"
-         href="<%= category_edit_path(category.id) %>"
-         data-turbo-frame="category--<%= category.id %>"
-      >Edit category</a>
-      <a class="category--options-menu-item"
-         href="<%= category_delete_path(category.id) %>"
-         data-turbo-frame="delete_category_modal"
-         data-action="click->categories#closeBaseModal"
-      >Delete category</a>
-    </div>
+    <% if !category.locked %>
+      <a class="category--more-options-icon-container" href="<%= category_edit_path(category.id) %>">
+        <%= image_tag image_url('edit-pencil.png'), id: 'category--edit-pencil-icon' %>
+      </a>
+      <div class="category--more-options-icon-container" data-kt-menu-trigger="click" data-kt-menu-placement="right-start">
+        <i class="fas fa-ellipsis-v text-gray-700" id="category--list-item-menu-icon@<%= category.id %>"></i>
+      </div>
+      <div class="menu menu-sub menu-sub-dropdown category--options-menu"
+          data-kt-menu="true"
+          data-categories-target="menuIcon"
+          id="categoy--list-item-more-options@<%= category.id %>"
+      >
+        <a class="category--options-menu-item"
+          href="<%= category_edit_path(category.id) %>"
+          data-turbo-frame="category--<%= category.id %>"
+        >Edit category</a>
+        <a class="category--options-menu-item"
+          href="<%= category_delete_path(category.id) %>"
+          data-turbo-frame="delete_category_modal"
+          data-action="click->categories#closeBaseModal"
+        >Delete category</a>
+      </div>
+    <% end %>
   </div>
 </div>
 <% end %>

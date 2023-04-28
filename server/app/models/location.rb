@@ -32,7 +32,7 @@ include EventSourceable
   belongs_to :account
   belongs_to :location_group, optional: true
   belongs_to :account
-  has_and_belongs_to_many :categories,
+  has_and_belongs_to_many :categories
     # Note: Rails only triggers when associating through << statement
     # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks
     #after_add: :after_category_added, 

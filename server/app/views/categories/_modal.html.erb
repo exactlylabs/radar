@@ -1,5 +1,5 @@
-<div class="modal-dialog">
-  <div class="modal-content">
+<div class="modal-dialog category--modal-dialog">
+  <div class="modal-content category--modal-content">
     <div class="modal-header">
       <h5 class="modal-title" style="font-size: 20px">Manage location categories</h5>
 
@@ -18,14 +18,20 @@
       <!--end::Close-->
     </div>
 
-    <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+    <div class="modal-body d-flex flex-column justify-content-center align-items-center category--modal-body">
       <div class="category--search-add-container">
-        <%= render partial: "categories/search_input" %>
+        <%= render partial: "categories/search_input", locals: { url: categories_path, turbo_frame: "categories" } %>
         <%= render partial: "categories/add_category_button" %>
       </div>
       <%= turbo_frame_tag "categories", class: "category--list-container" do %>
-        <% categories.each do |category| %>
-          <%= render partial: "categories/list_item", locals: {category: category} %>
+        <% if categories.count > 0  %>
+          <% categories.each do |category| %>
+            <%= render partial: "categories/list_item", locals: {category: category} %>
+          <% end %>
+        <% elsif params[:query].present? %>
+          <p class="category--empty-state-text">No categories found for "<%= params[:query] %>".</p>
+        <% else %>
+          <%= render partial: "categories/empty_list" %>
         <% end %>
       <% end %>
     </div>

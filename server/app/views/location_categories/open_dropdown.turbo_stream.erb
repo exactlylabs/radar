@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "location-categories-dropdown" do %>
+  <%= render partial: "location_categories/categories_dropdown", locals: {categories: @categories, location: @location} %>
+<% end %>

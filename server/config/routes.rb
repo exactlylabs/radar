@@ -153,11 +153,18 @@ Rails.application.routes.draw do
     end
   end
 
+  put '/location_categories/selected_categories', to: 'location_categories#change_selected_categories', as: 'location_category_update_categories'
+  get '/location_categories/search', to: 'location_categories#search', as: 'location_category_search'
+  get '/location_categories/open_dropdown', to: 'location_categories#open_dropdown', as: 'categories_open_dropdown'
+  get '/location_categories/close_dropdown', to: 'location_categories#close_dropdown', as: 'categories_close_dropdown'
+
+  get '/categories/cancel_new', to: 'categories#cancel_new', as: 'category_cancel_new'
   resources :categories, param: :id do
   end
   get '/categories/:id/delete', to: 'categories#delete', as: 'category_delete'
   get '/categories/:id/edit', to: 'categories#edit', as: 'category_edit'
   get '/categories/:id/cancel', to: 'categories#cancel_edit', as: 'category_cancel_edit'
+
 
   namespace 'api' do
     namespace 'v1' do
