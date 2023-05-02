@@ -47,13 +47,6 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
-    splits {
-        abi {
-            exclude 'x86'
-            universalApk true
-        }
-    }
-
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -143,6 +136,9 @@ android {
         release {
             shrinkResources false
             minifyEnabled false
+            ndk {
+                abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+            }
         }
     }
 }
