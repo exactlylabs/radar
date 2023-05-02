@@ -1,24 +1,23 @@
 
-WITH duplicated_events AS (
+WITH client_events AS (
+  SELECT * FROM events WHERE aggregate_type='Client' AND name IN ('WENT_ONLINE', 'WENT_OFFLINE')
+), with_previous AS (
   SELECT
-    *
-  FROM (
-  SELECT
-    *, 
-    LAG(name, 1) OVER (PARTITION BY aggregate_id ORDER BY timestamp ASC) as prev_event,
-    LAG(aggregate_id, 1) OVER (PARTITION BY aggregate_id ORDER BY timestamp ASC) as prev_agg,
-    LAG(id, 1) OVER (PARTITION BY aggregate_id ORDER BY timestamp ASC) as prev_event_id,
-    LAG(data, 1) OVER (PARTITION BY aggregate_id ORDER BY timestamp ASC) as prev_data
-  FROM events
-  ) t
+      client_events.*, 
+      LAG(name, 1) OVER (PARTITION BY aggregate_id, aggregate_type ORDER BY timestamp ASC) as prev_event
+      
+    FROM client_events
+), duplicates AS (
+  SELECT id, name, prev_event, aggregate_id, timestamp
+  FROM with_previous
   WHERE 
-    aggregate_type = 'Client'
-    AND name = prev_event AND aggregate_id = prev_agg AND data = prev_data
-    AND name IN ('WENT_ONLINE', 'WENT_OFFLINE', 'LOCATION_CHANGED', 'AUTONOMOUS_SYSTEM_CHANGED', 'CREATED')
+    name = prev_event
 )
-SELECT * FROM duplicated_events
 
--- DELETE FROM snapshots WHERE event_id IN (SELECT id FROM duplicated_events);
--- DELETE FROM online_client_count_projections WHERE event_id IN (SELECT id FROM duplicated_events);
--- DELETE FROM study_level_projections WHERE event_id IN (SELECT id FROM duplicated_events)
--- DELETE FROM events WHERE ID IN (SELECT id FROM duplicated_events)
+SELECT * FROM duplicates
+ORDER BY timestamp ASC
+
+-- DELETE FROM snapshots WHERE event_id IN (SELECT id FROM duplicates);
+-- DELETE FROM online_client_count_projections WHERE event_id IN (SELECT id FROM duplicates);
+-- DELETE FROM study_level_projections WHERE event_id IN (SELECT id FROM duplicates)
+-- DELETE FROM events WHERE ID IN (SELECT id FROM duplicates)
