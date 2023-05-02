@@ -119,8 +119,9 @@ class Client < ApplicationRecord
       "events.id IS NOT NULL AND events.timestamp > ? AND (events.name = ? OR events.name = ?)",
       5.minute.ago, UpdateGroup::Events::CLIENT_VERSION_CHANGED, UpdateGroup::Events::WATCHDOG_VERSION_CHANGED
     ).where.not(id: client_ids).distinct
-
     clients.update(online: false)
+
+    Client.where(id: client_ids).update(online: true)
   end
 
   def send_event
