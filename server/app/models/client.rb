@@ -46,8 +46,7 @@ class Client < ApplicationRecord
 
   before_create :create_ids
   after_save :send_event
-  after_create :send_created_event_old
-  after_commit :check_ip_changed
+  after_save :check_ip_changed
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, -> { where.not(id: REDIS.zrangebyscore(Client::REDIS_PING_SET_NAME, (PING_DURATION * 1.5).second.ago.to_i, Time.now.to_i))}
@@ -111,39 +110,20 @@ class Client < ApplicationRecord
 
   def self.update_outdated_online!
     # Fix online status based on their registered pings
-
     client_ids = REDIS.zrangebyscore(
       Client::REDIS_PING_SET_NAME, 
-      (PING_DURATION * 1.5).second.ago.to_i, 
+      (Client::PING_DURATION * 1.5).second.ago.to_i, 
       Time.now.to_i
     )
-    query = Client.joins(:update_group => :events).where.not(
-      "events.timestamp > ? AND (events.name = ? OR events.name = ?)",
+    clients = Client.left_joins(:update_group => :events).where.not(
+      "events.id IS NOT NULL AND events.timestamp > ? AND (events.name = ? OR events.name = ?)",
       5.minute.ago, UpdateGroup::Events::CLIENT_VERSION_CHANGED, UpdateGroup::Events::WATCHDOG_VERSION_CHANGED
-    )
-    query.where.not(id: client_ids).update(online: false)
-    query.where(id: client_ids).update(online: true)
-  end
+    ).where.not(id: client_ids).distinct
 
-  def send_created_event_old
-    ClientEventLog.created_event self, timestamp: self.created_at
+    clients.update(online: false)
   end
 
   def send_event
-    if saved_change_to_account_id
-      ClientEventLog.account_changed_event self, account_id_before_last_save, self.account_id
-    end
-    if saved_change_to_location_id
-      ClientEventLog.location_changed_event self, location_id_before_last_save, self.location_id
-    end
-
-    if saved_change_to_online
-      if online
-        ClientEventLog.went_online_event self
-      else
-        ClientEventLog.went_offline_event self
-      end
-    end
 
     if saved_change_to_online || saved_change_to_test_requested
       PodStatusChannel.broadcast_to(CHANNELS[:clients_status], self)
@@ -151,22 +131,6 @@ class Client < ApplicationRecord
 
     if saved_change_to_test_requested && test_requested
       PodAgentChannel.broadcast_test_requested self
-    end
-
-    if saved_change_to_ip
-      ClientEventLog.ip_changed_event self, ip_before_last_save, self.ip
-    end
-
-    if saved_change_to_autonomous_system_id
-      ClientEventLog.autonomous_system_changed_event self, autonomous_system_id_before_last_save, self.autonomous_system_id
-    end
-
-    if saved_change_to_in_service
-      if in_service
-        ClientEventLog.in_service_event self
-      else
-        ClientEventLog.not_in_service_event self
-      end
     end
 
     if saved_change_to_update_group_id
