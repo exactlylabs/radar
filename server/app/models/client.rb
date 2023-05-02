@@ -121,7 +121,7 @@ class Client < ApplicationRecord
     ).where.not(id: client_ids).distinct
     clients.update(online: false)
 
-    Client.where(id: client_ids).update(online: true)
+    Client.where(online: false, id: client_ids).update(online: true)
   end
 
   def send_event
