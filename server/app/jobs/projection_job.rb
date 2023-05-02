@@ -7,7 +7,7 @@ class ProjectionJob < ActiveJob::Base
     # Check Sidekiq API and see if this job is already running/enqueued
     already_enqueued = false
     Sidekiq::Queue.new("study_projection").each do |j|
-      if j.args[0]["job_class"] = self.class.name
+      if j.args[0]["job_class"] == self.class.name
         already_enqueued = true
       end
     end
