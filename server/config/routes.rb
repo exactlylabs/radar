@@ -187,6 +187,7 @@ Rails.application.routes.draw do
   get '/setup/:pod_id', to: 'public_pod#setup'
   get '/check/:pod_id', to: 'public_pod#status'
   get 'find_pod', to: 'public_pod#find_pod'
+  get '/update_public_page/:pod_id', to: 'public_pod#update_public_page'
 
   # root to: 'home#home'
   root to: redirect('/users/sign_in')
