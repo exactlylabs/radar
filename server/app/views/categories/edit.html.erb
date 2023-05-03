@@ -1,8 +1,8 @@
 <%= turbo_frame_tag dom_id(@category) do %>
   <%= form_with(model: @category, url: category_path(@category.id), method: :put) do |form| %>
-    <div class="category--list-item-edit" data-controller="categories">
+    <div class="category--list-item-edit">
       <div class="category--list-item-text-container-edit">
-        <%= form.text_field :name, class: "category--list-item-input", placeholder: "Category name", autofocus: true %>
+        <%= form.text_field :name, class: "category--list-item-input", placeholder: "Category name", autofocus: true, data: {action: "input->categories#checkCategoryName", "category-id": @category.id} %>
         <%= form.hidden_field :color_hex, "data-categories-target" => "hiddenHexInput" %>
         <%= render partial: "categories/color_picker", locals: {category: @category} %>
       </div>
@@ -10,7 +10,7 @@
         <%= link_to category_cancel_edit_path(@category), class: "category--edit-button category--edit-cancel-button" do %>
           <%= image_tag image_url('cancel.png'), class: 'category--edit-button-icon' %>
         <% end %>
-        <button type="submit" class="category--edit-button category--edit-confirm-button">
+        <button id="category--submit-<%= @category.id %>" type="submit" class="category--edit-button category--edit-confirm-button">
           <%= image_tag image_url('white-checkmark.png'), class: 'category--edit-button-icon' %>
         </button>
       </div>

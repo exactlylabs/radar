@@ -2,34 +2,9 @@
   <%= form_with(model: Category.new, url: categories_path, method: :post) do |form| %>
     <div class="category--list-item-edit">
       <div class="category--list-item-text-container-edit">
-        <%= form.text_field :name, class: "category--list-item-input", placeholder: "New Category name", autofocus: true %>
+        <%= form.text_field :name, class: "category--list-item-input", placeholder: "New Category name", autofocus: true, data: { action: "input->categories#checkCategoryName", "category-id": "-1" } %>
         <%= form.hidden_field :color_hex, value: "#4b7be5", "data-categories-target" => "hiddenHexInput" %>
-        <div class="category--marker-caret-container cursor-pointer"
-             data-categories-target="colorPickerCaret"
-        >
-          <div class="category--marker-big me-1" 
-              style="background-color: #4b7be5"              
-              data-categories-target="currentPickedColor"
-          ></div>
-          <span class="svg-icon svg-icon-5 m-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
-            </svg>
-          </span>
-        </div>
-        <div class="category--markers-container invisible"
-             data-categories-target="colorPicker"
-             id="category--color-picker-ref"
-        >
-          <% ["#4b7be5", "#f7aa5a", "#98cb87", "#f75a5a", "#9c65e5", "#f24084"].each do |hex| %>
-            <div class="category--marker-big category--marker-hoverable <%= hex == '#4b7be5' ? 'category--marker-selected' : nil %>" 
-                 style="background-color: <%= hex %>"
-                 data-categories-hex-value="<%= hex %>"
-                 data-action="click->categories#pickColor"
-                 data-categories-target="colorBall"
-            ></div>
-          <% end %>
-        </div>
+        <%= render partial: "categories/color_picker", locals: {category: Category.new} %>
       </div>
       <div class="category--list-item-options-container">
         <button type="button"
@@ -40,7 +15,7 @@
         >
           <%= image_tag image_url('cancel.png'), class: 'category--edit-button-icon' %>
         </button>
-        <button type="submit" class="category--edit-button category--edit-confirm-button">
+        <button id="category--submit--1" type="submit" class="category--edit-button category--edit-confirm-button">
           <%= image_tag image_url('white-checkmark.png'), class: 'category--edit-button-icon' %>
         </button>
       </div>

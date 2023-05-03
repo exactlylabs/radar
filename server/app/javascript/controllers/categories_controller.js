@@ -171,4 +171,31 @@ export default class extends Controller {
       else this.closeColorPicker();
     }
   }
+
+  disableSubmitButton(categoryId) {
+    const submitButton = document.getElementById(`category--submit-${categoryId}`);
+    if(submitButton) {
+      submitButton.classList.add('disabled');
+      submitButton.setAttribute('disabled', 'true');
+      submitButton.type = 'button';
+    }
+  }
+
+  enableSubmitButton(categoryId) {
+    const submitButton = document.getElementById(`category--submit-${categoryId}`);
+    if (submitButton) {
+      submitButton.classList.remove('disabled');
+      submitButton.removeAttribute('disabled');
+      submitButton.type = 'submit';
+    }
+  }
+
+  checkCategoryName(e) {
+    const categoryId = e.target.getAttribute('data-category-id');
+    if(!e.target.value) {
+      this.disableSubmitButton(categoryId);
+    } else {
+      this.enableSubmitButton(categoryId);
+    }
+  }
 }
