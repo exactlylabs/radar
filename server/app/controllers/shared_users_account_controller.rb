@@ -14,17 +14,16 @@ class SharedUsersAccountController < ApplicationController
     account_ids_to_delete = current_shared_accounts_ids - new_selected_ids
   
     # Add all new ones
-    account_ids_to_add.each do |id|
-      SharedAccount.transaction do
+    SharedAccount.transaction do
+      account_ids_to_add.each do |id|
         new_shared_account = SharedAccount.new
         new_shared_account.original_account_id = current_account.id
         new_shared_account.shared_to_account_id = id
         new_shared_account.shared_at = Time.now
         new_shared_account.save!
       end
+      SharedAccount.destroy(account_ids_to_delete)
     end
-
-    SharedAccount.delete(account_ids_to_delete)
 
     respond_to do |format|
       format.html { redirect_back fallback_location: root_path, notice: "Account sharing correctly saved!" }
