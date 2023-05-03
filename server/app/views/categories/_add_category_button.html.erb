@@ -1,4 +1,9 @@
-<%= link_to new_category_path, class:"category--add-button", "data-turbo-frame" => "new-category" do %>
+<button type="button"
+  data-controller="fetch"
+  class="category--add-button"
+  data-url="<%= new_category_path %>"
+  data-action="click->fetch#fetchTurbo"
+>
   <%= image_tag image_url("white-plus.png"), class: "category--add-icon" %>
   Add category
-<% end %>
+</button>

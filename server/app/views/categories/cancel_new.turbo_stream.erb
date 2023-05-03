@@ -1,0 +1,6 @@
+<%= turbo_stream.update "new-category" do %>  
+  <% if @categories.count > 0 %>
+  <% else %>
+    <%= render partial: "categories/empty_list" %>
+  <% end %>
+<% end %>

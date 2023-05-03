@@ -1,9 +1,11 @@
 <%= turbo_frame_tag dom_id(category), class: "category--turbo-frame" do %>
 <div class="category--list-item" data-controller="categories" id="<%= dom_id(category) %>">
-  <div class="category--list-item-text-container">
-    <div class="category--marker" style="background-color: <%= category.color_hex %>"></div>
-    <p class="category--list-item-title"><%= category.name %></p>
-    <p class="category--list-item-subtitle"><%= category.locations.count %> <%= category.locations.count == 1 ? "location" : "locations" %></p>
+  <div class="category--list-item-left-container">
+    <div class="category--marker category--marker-list" style="background-color: <%= category.color_hex %>"></div>
+    <div class="category--list-item-text-container">
+      <p class="category--list-item-title"><%= category.name %></p>
+      <p class="category--list-item-subtitle"><%= category.locations.count %> <%= category.locations.count == 1 ? "location" : "locations" %></p>
+    </div>
   </div>
   <div class="category--list-item-options-container">
     <% if !category.locked %>

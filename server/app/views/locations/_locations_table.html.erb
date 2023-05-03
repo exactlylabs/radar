@@ -38,8 +38,8 @@
                 <!--end::Table head-->
                 <!--begin::Table body-->
                 <tbody class="fw-bold text-gray-600" id="locations_table">
-                    <% locations.order("LOWER(name)").each do |location| %>
-                        <%= render partial: "locations_table_row", locals: { location: location } %>
+                    <% locations.order("LOWER(name)").each_with_index do |location, index| %>
+                        <%= render partial: "locations_table_row", locals: { location: location, row: index } %>
                     <% end %>
                 </tbody>
                 <!--end::Table body-->

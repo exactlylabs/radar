@@ -17,12 +17,16 @@
       </div>
       <!--end::Close-->
     </div>
-
-    <div class="modal-body d-flex flex-column justify-content-center align-items-center category--modal-body">
+    <div class="modal-body d-flex flex-column justify-content-center align-items-center category--modal-body"
+         data-controller="categories"
+         data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker"
+    >
       <div class="category--search-add-container">
         <%= render partial: "categories/search_input", locals: { url: categories_path, turbo_frame: "categories" } %>
         <%= render partial: "categories/add_category_button" %>
       </div>
+      <%= turbo_frame_tag "new-category" do %>
+      <% end %>
       <%= turbo_frame_tag "categories", class: "category--list-container" do %>
         <% if categories.count > 0  %>
           <% categories.each do |category| %>

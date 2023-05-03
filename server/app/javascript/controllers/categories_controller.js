@@ -10,7 +10,10 @@ export default class extends Controller {
     "colorBall",
     "categoryCheckbox",
     "selectClickableContainer",
-    "hiddenCategoriesInput"
+    "hiddenCategoriesInput",
+    "colorPicker",
+    "currentPickedColor",
+    "colorPickerCaret"
   ];
 
   static values = {
@@ -109,6 +112,7 @@ export default class extends Controller {
         elem.classList.remove('category--marker-selected');
       }
     });
+    this.currentPickedColorTarget.style.backgroundColor = selectedColor;
   }
 
   toggleCategoriesDropdown(shouldOpen) {
@@ -145,5 +149,26 @@ export default class extends Controller {
         checkbox.setAttribute('checked', 'true');
       }
     })
+  }
+
+  toggleColorPicker() {
+    const classList = this.colorPickerTarget.classList;
+    if(classList.contains('invisible')) {
+      classList.remove('invisible');
+    } else {
+      classList.add('invisible');
+    }
+  }
+
+  closeColorPicker() {
+    this.colorPickerTarget.classList.add('invisible');
+  }
+
+  checkCloseColorPicker(e) {
+    if(!document.getElementById('category--color-picker-ref')) return;
+    if(e.type === 'click') {
+      if(this.colorPickerCaretTarget.contains(e.target)) this.toggleColorPicker();
+      else this.closeColorPicker();
+    }
   }
 }

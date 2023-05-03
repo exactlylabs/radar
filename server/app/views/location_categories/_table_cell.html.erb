@@ -7,13 +7,32 @@
   </div>
 <% else %>
   <div class="d-flex flex-row justify-content-start align-items-center">
-    <div class="category--multi-dot-container">
-      <div class="category--marker category--marker-level0" style="background-color: <%= categories[0].color_hex %>"></div>
-      <div class="category--marker category--marker-level1" style="background-color: <%= categories[1].color_hex %>"></div>
-      <% if categories.count > 2 %>
-        <div class="category--marker category--marker-level2" style="background-color: <%= categories[2].color_hex %>"></div>
-      <% end %>
+    <div class="category--table-cell-container <%= shows_tooltip ? 'cursor-pointer' : nil %>"
+         data-controller="category-tooltip"
+         data-action="mouseenter->category-tooltip#showTooltip mouseleave->category-tooltip#hideTooltip"
+         data-row-number="<%= row %>"
+    >
+      <div class="category--multi-dot-container">
+        <div class="category--marker category--marker-level0" style="background-color: <%= categories[0].color_hex %>"></div>
+        <div class="category--marker category--marker-level1" style="background-color: <%= categories[1].color_hex %>"></div>
+        <% if categories.count > 2 %>
+          <div class="category--marker category--marker-level2" style="background-color: <%= categories[2].color_hex %>"></div>
+        <% end %>
+        <% if shows_tooltip %>
+          <div class="category--tooltip invisible"
+              id="category--tooltip@<%= row %>"
+          >
+            <div class="category--tooltip-point"></div>
+            <% categories.each do |category| %>
+              <div class="d-flex flex-row justify-content-start align-items-center">
+                <div class="category--marker" style="background-color: <%= category.color_hex %>"></div>
+                <p class="m-0"><%= category.name %></p>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <p class="m-0"><%= categories.count %> categories</p>
     </div>
-    <p class="m-0"><%= categories.count %> categories</p>
   </div>
 <% end %>

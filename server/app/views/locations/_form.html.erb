@@ -36,7 +36,7 @@
                 data-categories-location-id-value="<%= @location.id.nil? ? nil : @location.id %>" 
             > 
               <%= turbo_frame_tag "selected-categories" do %>
-                <%= render partial: "location_categories/table_cell", locals: {categories: @location.categories} %>
+                <%= render partial: "location_categories/table_cell", locals: {categories: @location.categories, shows_tooltip: false, row: -1} %>
               <% end %>
               <span class="svg-icon svg-icon-5 m-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

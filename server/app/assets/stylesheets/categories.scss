@@ -1,7 +1,7 @@
 .modal-dialog {
   &.category--modal-dialog {
     width: 450px;
-    height: 475px;
+    height: 515px;
   }
 }
 
@@ -23,6 +23,10 @@
   border-radius: 50%;
   margin-right: 8px;
   border: solid 1px white;
+
+  &.category--marker-list {
+    margin-top: 5px; 
+  }
 
   &.category--marker-level0 {
     position: absolute;
@@ -54,6 +58,23 @@
   }
 }
 
+.category--marker-big {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+
+  &.category--marker-selected {
+    outline: solid 2px rgba(75, 123, 229, 0.5);
+    outline-offset: 2px;
+  }
+
+  &.category--marker-hoverable:hover {
+    outline: solid 2px rgba(75, 123, 229, 0.5);
+    outline-offset: 2px;
+    cursor: pointer;
+  }
+}
+
 .category--multi-dot-container {
   display: flex;
   flex-direction: row;
@@ -62,6 +83,45 @@
   position: relative;
   width: 16px;
   margin-right: 8px;
+  position: relative;
+}
+
+.category--tooltip {
+  position: absolute;
+  padding: 8px 13px;
+  background-color: white;
+  display: flex;
+  left: 120px;
+  border: solid 1px rgba(188, 187, 199, 0.2);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px -2px rgba(160, 159, 183, 0.4);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+
+  &.invisible {
+    display: none;
+  }
+
+  .category--tooltip-point {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    margin-top: -5px;
+    rotate: 45deg;
+    background-color: white;
+  }
+}
+
+.category--table-cell-container {
+  width: max-content;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .category--list-container {
@@ -82,30 +142,36 @@
 
 .category--list-item {
   width: 100%;
-  height: 38px;
+  height: 64px;
   border: solid 1px #e3e3e8;
   border-radius: 6px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding-left: 12px;
-  padding-right: 8px;
-  margin-bottom: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.category--list-item-left-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .category--list-item-text-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .category--list-item-title {
   font-size: 14px;
   letter-spacing: 0;
   color: #3f3c70;
-  margin: 0 4px 0;
+  margin: 0;
   font-weight: 500;
 }
 
@@ -202,7 +268,7 @@
 
 .category--list-item-edit {
   width: 100%;
-  height: 38px;
+  height: 40px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -221,9 +287,11 @@
   border-radius: 6px;
   margin-right: 15px;
   border: solid 2px #4b7be5;
+  position: relative;
 }
 
 .category--list-item-input {
+  width: calc(100% - 50px);
   outline: none;
   border: none;
   padding-left: 16px;
@@ -231,6 +299,15 @@
   color: #110e4c;
   line-height: 20px;
   margin-right: auto;
+}
+
+.category--marker-caret-container {
+  width: max-content;
+  margin-right: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .category--list-item-options-container {
@@ -331,15 +408,24 @@
 }
 
 .category--markers-container {
+  width: 100%;
+  height: 48px;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  max-width: 115px;
+  position: absolute;
+  top: 40px;
+  background-color: white;
+  border-radius: 6px;
+  border: solid 1px rgba(188, 187, 199, 0.1);
+  box-shadow: 0 4px 20px -2px rgba(160, 159, 183, 0.4);
 }
 
 #new-category {
-  width: 100%;
+  width: calc(100% - 24px);
+  margin-left: auto;
+  margin-right: auto;
 
   .category--empty-state-container {
     width: 100%;
