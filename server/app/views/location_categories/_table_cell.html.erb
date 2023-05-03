@@ -26,7 +26,7 @@
             <% categories.each do |category| %>
               <div class="d-flex flex-row justify-content-start align-items-center">
                 <div class="category--marker" style="background-color: <%= category.color_hex %>"></div>
-                <p class="m-0"><%= category.name %></p>
+                <p class="m-0 category--tooltip-name"><%= category.name %></p>
               </div>
             <% end %>
           </div>

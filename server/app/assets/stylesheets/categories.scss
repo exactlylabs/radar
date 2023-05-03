@@ -20,6 +20,8 @@
 .category--marker {
   width: 10px;
   height: 10px;
+  min-width: 10px;
+  min-height: 10px;
   border-radius: 50%;
   margin-right: 8px;
   border: solid 1px white;
@@ -87,6 +89,8 @@
 }
 
 .category--tooltip {
+  width: max-content;
+  max-width: 150px;
   position: absolute;
   padding: 8px 13px;
   background-color: white;
@@ -114,6 +118,13 @@
     margin-top: -5px;
     rotate: 45deg;
     background-color: white;
+  }
+
+  .category--tooltip-name {
+    max-width: 100px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap
   }
 }
 
@@ -173,6 +184,10 @@
   color: #3f3c70;
   margin: 0;
   font-weight: 500;
+  max-width: 230px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .category--list-item-subtitle {
@@ -331,6 +346,11 @@
   &:hover {
     opacity: 0.75;
   }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
 }
 
 .category--edit-cancel-button {
@@ -464,6 +484,10 @@
     color: white;
     opacity: 0.75;
   }
+
+  &.show-sm-flex {
+    flex-wrap: nowrap;
+  }
 }
 
 .category--add-icon {
@@ -558,4 +582,33 @@
   color: #3f3c70;
   letter-spacing: 0;
   text-align: left;
+}
+
+@media (max-width: 500px) {
+  .modal-dialog {
+    &.category--modal-dialog {
+      width: 100vw !important;
+      height: 100vh;
+      margin: 0;
+      left: 50% !important;
+      margin-left: -50vw !important;
+    }
+  }
+  
+  .modal-content {
+    &.category--modal-content {
+      height: 100%;
+    }
+  }
+
+  .modal-body {
+    &.category--modal-body {
+      height: calc(100% - 80px - 90px);
+      justify-content: flex-start !important;
+    }
+  }
+
+  .category--list-container {
+    height: auto;
+  }
 }

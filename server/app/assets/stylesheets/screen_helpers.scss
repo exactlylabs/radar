@@ -1,0 +1,127 @@
+$lg-max-width: 1080px;
+$lg-min-width: 769px;
+$md-max-width: 768px;
+$md-min-width: 501px;
+$sm-max-width: 500px;
+$sm-min-width: 351px;
+$xs-max-width: 350px;
+
+@media (min-width: $lg-max-width) {
+  .show-lg-or-less,
+  .show-lg-or-less-flex,
+  .show-md-or-less,
+  .show-md-or-less-flex,
+  .show-sm-or-less,
+  .show-sm-or-less-flex,
+  .show-xs-or-less,
+  .show-xs-or-less-flex {
+    display: none;
+  }
+}
+
+@media (min-width: $lg-min-width) 
+and (max-width: $lg-max-width) {
+  .show-xs-or-more,
+  .show-sm-or-more,
+  .show-md-or-more,
+  .show-lg-or-more {
+    display: block;
+  }
+
+  .show-xs-or-more-flex,
+  .show-sm-or-more-flex,
+  .show-md-or-more-flex,
+  .show-lg-or-more-flex {
+    display: flex;
+  }
+
+  .show-md-or-less,
+  .show-md-or-less-flex,
+  .show-sm-or-less,
+  .show-sm-or-less-flex,
+  .show-xs-or-less,
+  .show-xs-or-less-flex {
+    display: none;
+  }
+}
+
+@media (min-width: $md-min-width) 
+and (max-width: $md-max-width) {
+  .show-md-or-less,
+  .show-lg-or-less,
+  .show-xs-or-more,
+  .show-sm-or-more,
+  .show-md-or-more {
+    display: block;
+  }
+
+  .show-md-or-less-flex,
+  .show-lg-or-less-flex,
+  .show-xs-or-more-flex,
+  .show-sm-or-more-flex,
+  .show-md-or-more-flex {
+    display: flex;
+  }
+
+  .show-lg-or-more,
+  .show-lg-or-more-flex,
+  .show-sm-or-less,
+  .show-sm-or-less-flex,
+  .show-xs-or-less,
+  .show-xs-or-less-flex {
+    display: none;
+  }
+}
+
+// sm size screen
+@media (min-width: $sm-min-width)
+and (max-width: $sm-max-width) {
+  .show-sm-or-less,
+  .show-md-or-less,
+  .show-lg-or-less,
+  .show-sm-or-more,
+  .show-xs-or-more {
+    display: block;
+  }
+
+  .show-sm-or-less-flex,
+  .show-md-or-less-flex,
+  .show-lg-or-less-flex,
+  .show-sm-or-more-flex,
+  .show-xs-or-more-flex {
+    display: flex;
+  }
+
+  .show-lg-or-more,
+  .show-lg-or-more-flex,
+  .show-md-or-more,
+  .show-md-or-more-flex {
+    display: none;
+  }
+}
+
+// xs size screen
+@media (max-width: $xs-max-width) {
+  .show-xs-or-less,
+  .show-sm-or-less,
+  .show-md-or-less,
+  .show-lg-or-less {
+    display: block;
+  }
+
+  .show-xs-or-less-flex,
+  .show-sm-or-less-flex,
+  .show-md-or-less-flex,
+  .show-lg-or-less-flex {
+    display: flex;
+  }
+
+  .show-lg-or-more,
+  .show-lg-or-more-flex,
+  .show-md-or-more,
+  .show-md-or-more-flex,
+  .show-sm-or-more,
+  .show-sm-or-more-flex {
+    display: none;
+  }
+}
