@@ -72,13 +72,9 @@ class CategoriesController < ApplicationController
   end
 
   def destroy
-    locations_by_category = policy_scope(CategoriesLocation).where(category_id: @category.id).pluck(:location_id)
-    @locations = policy_scope(Location).where(id: locations_by_category)
-    ## MIRAR ESTO
-    ## @locations.categories.delete(@category)
+    policy_scope(CategoriesLocation).where(category_id: @category.id).delete_all
     respond_to do |format|
       if @category.delete
-        @categories = policy_scope(Category)
         @notice = "Category deleted successfully."
         format.turbo_stream
       else
