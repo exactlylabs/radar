@@ -99,3 +99,9 @@ application.register("categories", CategoriesController);
 
 import SearchController from './search_controller';
 application.register("search", SearchController);
+
+import CategoryTooltipController from './category_tooltip_controller';
+application.register("category-tooltip", CategoryTooltipController);
+
+import FetchController from './fetch_controller';
+application.register("fetch", FetchController);

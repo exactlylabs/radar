@@ -3,8 +3,8 @@
 <% end %>
 
 <%= turbo_stream.update "locations_table" do %>
-  <% @locations.order("LOWER(name)").each do |location| %>
-    <%= render partial: "locations_table_row", locals: {location: location} %>
+  <% @locations.order("LOWER(name)").each_with_index do |location, index| %>
+    <%= render partial: "locations_table_row", locals: {location: location, shows_tooltip: true, row: index} %>
   <% end %>
 <% end %>
 

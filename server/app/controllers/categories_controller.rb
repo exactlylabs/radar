@@ -11,7 +11,9 @@ class CategoriesController < ApplicationController
   end
 
   def new
-    @category = Category.new
+    respond_to do |format|
+      format.turbo_stream
+    end
   end
 
   def create
@@ -49,14 +51,9 @@ class CategoriesController < ApplicationController
   end
 
   def cancel_new
-    categories = policy_scope(Category)
-    puts categories
+    @categories = policy_scope(Category)
     respond_to do |format|
-      if categories.count > 0
-        format.html { render partial: "categories/empty_list_item" }
-      else
-        format.html { render partial: "categories/empty_list" }
-      end
+      format.turbo_stream
     end
   end
 

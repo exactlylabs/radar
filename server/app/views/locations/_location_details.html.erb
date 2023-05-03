@@ -57,7 +57,7 @@
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
           <div class="fw-bolder w-50" style="min-width: 130px;"><%= location.categories.count == 1 ? "Category" : "Categories" %></div>
           <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
-            <%= render partial: "location_categories/table_cell", locals: { categories: location.categories } %>
+            <%= render partial: "location_categories/table_cell", locals: { categories: location.categories, shows_tooltip: true, row: 0 } %>
           </div>
         </div>
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">

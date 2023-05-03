@@ -1,3 +1,3 @@
 <%= turbo_stream.update "selected-categories" do %>
-  <%= render partial: "location_categories/table_cell", locals: {categories: @categories} %>
+  <%= render partial: "location_categories/table_cell", locals: {categories: @categories, shows_tooltip: false, row: -1} %>
 <% end %>

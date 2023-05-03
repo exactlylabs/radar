@@ -35,7 +35,7 @@
   <!--end:Container-->
 </div>
 <!--begin::LocationModal-->
-<div class="modal fade" tabindex="-1" id="edit_location_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit">
+<div class="modal fade" tabindex="-1" id="edit_location_modal" data-controller="modal categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->modal#submit turbo:frame-render->categories#initializeCategories">
   <%= turbo_frame_tag "edit_location_modal", src: edit_location_path(@location) do %>
   <% end %>
 </div>

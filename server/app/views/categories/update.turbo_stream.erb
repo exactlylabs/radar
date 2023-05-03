@@ -2,8 +2,8 @@
   <%= render partial: "categories/list_item", locals: {category: @category} %>
 <% end %>
 
-<% @locations.each do |location| %>
+<% @locations.each_with_index do |location, index| %>
   <%= turbo_stream.replace location do %>
-    <%= render partial: 'locations/locations_table_row', locals: {location: location} %>
+    <%= render partial: 'locations/locations_table_row', locals: {location: location, shows_tooltip: true, row: index} %>
   <% end %>
 <% end %>
