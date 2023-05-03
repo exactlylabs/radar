@@ -12,6 +12,8 @@ module ApplicationCable
       if request.user_agent.starts_with? "RadarPods"
         load_client
         on_client_connected
+      elsif cookies['radar_current_account_id'].nil? # we need some features to work when we are logged out
+        self.current_account = nil
       else
         self.current_account = identify_account
       end

@@ -1,0 +1,3 @@
+<%= turbo_stream.update "public-page-#{@client.unix_user}" do %>
+  <%= render partial: "public_pod/status_page", locals: {client: @client} %>
+<% end %>

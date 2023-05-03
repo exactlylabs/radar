@@ -1,6 +1,6 @@
 class PublicPodController < PublicApplicationController
 
-  before_action :set_client, only: [:setup, :status]
+  before_action :set_client, only: [:setup, :status, :update_public_page]
 
   def index
   end
@@ -35,6 +35,12 @@ class PublicPodController < PublicApplicationController
       respond_to do |format|
         format.html { redirect_to "/setup/#{@client.unix_user}" }
       end
+    end
+  end
+
+  def update_public_page
+    respond_to do |format|
+      format.turbo_stream
     end
   end
 
