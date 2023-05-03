@@ -439,17 +439,6 @@ ActiveRecord::Schema.define(version: 2023_05_09_183706) do
     t.index ["client_version_id"], name: "index_packages_on_client_version_id"
   end
 
-  create_table "shared_accounts", force: :cascade do |t|
-    t.bigint "original_account_id", null: false
-    t.bigint "shared_to_account_id", null: false
-    t.datetime "deleted_at"
-    t.datetime "shared_at", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["original_account_id"], name: "index_shared_accounts_on_original_account_id"
-    t.index ["shared_to_account_id"], name: "index_shared_accounts_on_shared_to_account_id"
-  end
-
   create_table "snapshots", force: :cascade do |t|
     t.bigint "event_id"
     t.string "aggregate_type"
@@ -481,6 +470,22 @@ ActiveRecord::Schema.define(version: 2023_05_09_183706) do
     t.string "county"
     t.string "fips"
     t.integer "pop_2021"
+  end
+
+  create_table "study_level_measurements_projections", force: :cascade do |t|
+    t.datetime "timestamp"
+    t.bigint "parent_aggregate_id"
+    t.bigint "study_aggregate_id"
+    t.bigint "autonomous_system_org_id"
+    t.bigint "location_id"
+    t.bigint "measurement_id"
+    t.string "level"
+    t.integer "tests_count", default: 0
+    t.index ["autonomous_system_org_id"], name: "idx_meas_proj_as_org_id"
+    t.index ["location_id"], name: "index_study_level_measurements_projections_on_location_id"
+    t.index ["measurement_id"], name: "index_study_level_measurements_projections_on_measurement_id"
+    t.index ["parent_aggregate_id"], name: "idx_meas_proj_parrent_agg_id"
+    t.index ["study_aggregate_id"], name: "idx_meas_proj_study_agg_id"
   end
 
   create_table "study_level_projections", force: :cascade do |t|
@@ -631,12 +636,13 @@ ActiveRecord::Schema.define(version: 2023_05_09_183706) do
   add_foreign_key "online_client_count_projections", "events"
   add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
-  add_foreign_key "shared_accounts", "accounts", column: "original_account_id"
-  add_foreign_key "shared_accounts", "accounts", column: "shared_to_account_id"
-  add_foreign_key "snapshots", "events", on_delete: :cascade
+  add_foreign_key "snapshots", "events"
   add_foreign_key "study_aggregates", "autonomous_system_orgs"
   add_foreign_key "study_aggregates", "geospaces"
   add_foreign_key "study_aggregates", "study_aggregates", column: "parent_aggregate_id"
+  add_foreign_key "study_level_measurements_projections", "autonomous_system_orgs"
+  add_foreign_key "study_level_measurements_projections", "locations"
+  add_foreign_key "study_level_measurements_projections", "measurements"
   add_foreign_key "study_level_projections", "autonomous_system_orgs"
   add_foreign_key "study_level_projections", "client_speed_tests"
   add_foreign_key "study_level_projections", "events"
