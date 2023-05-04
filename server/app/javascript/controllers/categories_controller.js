@@ -113,6 +113,7 @@ export default class extends Controller {
       }
     });
     this.currentPickedColorTarget.style.backgroundColor = selectedColor;
+    this.closeColorPicker();
   }
 
   toggleCategoriesDropdown(shouldOpen) {
@@ -167,7 +168,11 @@ export default class extends Controller {
   checkCloseColorPicker(e) {
     if(!document.getElementById('category--color-picker-ref')) return;
     if(e.type === 'click') {
-      if(this.colorPickerCaretTarget.contains(e.target)) this.toggleColorPicker();
+      if(this.colorPickerCaretTarget.contains(e.target)){
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleColorPicker();
+      }
       else this.closeColorPicker();
     }
   }
@@ -196,6 +201,18 @@ export default class extends Controller {
       this.disableSubmitButton(categoryId);
     } else {
       this.enableSubmitButton(categoryId);
+    }
+  }
+
+  clearSearchInput() {
+    const input = document.getElementById('query');
+    if(input) input.value = null;
+  }
+
+  handleCategoryCreated(e) {
+    if(e.detail.formSubmission.location.pathname === '/categories' && e.detail.success) {
+      this.clearSearchInput();
+      setTimeout(() => emitCustomEvent('handleCategorySearch'), 100); // need to add a little delay to let turbo re-render components on screen
     }
   }
 }

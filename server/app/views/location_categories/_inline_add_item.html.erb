@@ -6,6 +6,6 @@
       <%= image_tag image_url("dark-plus.png"), class: "category--location-select-new-button-icon" %>
       Add "<%= @query %>"
     </div>
-    <%= render partial: "categories/color_picker", locals: {category: Category.new(color_hex: '#4b7be5')} %>
+    <%= render partial: "categories/color_picker", locals: {category: Category.new} %>
   </div>
 <% end %>

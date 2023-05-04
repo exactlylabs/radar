@@ -1,8 +1,14 @@
-<%= turbo_stream.append "categories" do %>
-  <%= render partial: "categories/list_item", locals: {category: @category} %>
+<% if policy_scope(Category).count == 1 %>
+  <%= turbo_stream.update "categories" do %>
+    <%= render partial: "categories/list_item", locals: {category: @category} %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.append "categories" do %>
+    <%= render partial: "categories/list_item", locals: {category: @category} %>
+  <% end %>
 <% end %>
 
-<%= turbo_stream.replace "new-category" do %>
+<%= turbo_stream.update "new-category" do %>
   <%= turbo_frame_tag "new-category" do %>
   <% end %>
 <% end %>

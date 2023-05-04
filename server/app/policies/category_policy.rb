@@ -1,8 +1,8 @@
 class CategoryPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if @user_account.present?
-        scope.where(account_id: @user_account.account.id)
+      if @auth_holder.present?
+        scope.where(account_id: @auth_holder.account.id)
       else
         scope.none
       end

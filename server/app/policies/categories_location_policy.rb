@@ -1,8 +1,8 @@
 class CategoriesLocationPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if @user_account.present?
-        scope.where(category_id: @user_account.account.categories)
+      if @auth_holder.present?
+        scope.where(category_id: @auth_holder.account.categories)
       else
         scope.none
       end
