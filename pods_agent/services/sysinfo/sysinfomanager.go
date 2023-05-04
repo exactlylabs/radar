@@ -1,6 +1,7 @@
 package sysinfo
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -155,9 +156,10 @@ func (si SysInfoManager) GetAuthLogFile() ([]byte, error) {
 }
 
 func (si SysInfoManager) GetSysTimezone() (*time.Location, error) {
-	out, err := exec.Command("timedatectl", "--value", "-p", "Timezone", "show").Output()
+
+	out, err := si.runCommand(exec.Command("timedatectl", "--value", "-p", "Timezone", "show"))
 	if err != nil {
-		return nil, fmt.Errorf("SysInfoManager#GetSysTimezone Output: %v: %w", strings.TrimRight(string(out), "\n"), err)
+		return nil, fmt.Errorf("SysInfoManager#GetSysTimezone: %w", err)
 	}
 	loc, err := time.LoadLocation(strings.Trim(strings.TrimSpace(string(out)), "\n"))
 	if err != nil {
@@ -167,9 +169,22 @@ func (si SysInfoManager) GetSysTimezone() (*time.Location, error) {
 }
 
 func (si SysInfoManager) SetSysTimezone(tz *time.Location) error {
-	out, err := exec.Command("timedatectl", "set-timezone", tz.String()).Output()
+	_, err := si.runCommand(exec.Command("timedatectl", "set-timezone", tz.String()))
 	if err != nil {
-		return fmt.Errorf("SysInfoManager#SetSysTimezone %v: %w", strings.TrimRight(string(out), "\n"), err)
+		return fmt.Errorf("SysInfoManager#SetSysTimezone %w", err)
 	}
 	return nil
+}
+
+func (si SysInfoManager) runCommand(cmd *exec.Cmd) ([]byte, error) {
+	stdout := bytes.NewBuffer(nil)
+	stderr := bytes.NewBuffer(nil)
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+	if err := cmd.Run(); err != nil {
+		errMsg := fmt.Sprintf("Stderr: %s", strings.TrimRight(stderr.String(), "\n"))
+		errMsg += fmt.Sprintf(" Stdout: %v", strings.TrimRight(stdout.String(), "\n"))
+		return nil, fmt.Errorf("SysInfoManager#runCommand %w: %s", err, errMsg)
+	}
+	return stdout.Bytes(), nil
 }
