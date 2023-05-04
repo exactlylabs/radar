@@ -67,6 +67,10 @@ module StudyLevelHandler
         rescue ActiveRecord::RecordNotFound
           return
         end
+        if location.lonlat.nil? && location.longitude.present? && location.latitude.present?
+          location.lonlat = "POINT(#{location.longitude} #{location.latitude})"
+        end
+        return if location.lonlat.nil?
 
         as_org_id, as_org_name = self.as_org_info(autonomous_system_id)
         self.get_aggregates(location.lonlat, as_org_id, as_org_name).each do |aggregate|
