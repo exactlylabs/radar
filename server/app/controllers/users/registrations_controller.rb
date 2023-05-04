@@ -31,13 +31,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     rescue ActiveRecord::RecordInvalid => invalid
       error = invalid.record.errors
     end
+    if !error
+      AccountNotificationJobs::NewAccountNotification.perform_later(@account, @user)
+    end
     respond_to do |format|
       if !error
-        begin
-          EventsNotifier.notify_new_account(@account, @user)
-        rescue StandardError => exc
-          Sentry.capture_exception(exc)
-        end
         sign_in @user
         format.html { redirect_to dashboard_path, notice: "Registered successfully" }
       else
@@ -60,6 +58,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
       error = invalid
     rescue ActiveRecord::RecordNotDestroyed => invalid
       error = invalid
+    end
+    if !error
+      AccountNotificationJobs::InviteAcceptedNotification.perform_later(@user_account.account, @user)
     end
     respond_to do |format|
       if !error
