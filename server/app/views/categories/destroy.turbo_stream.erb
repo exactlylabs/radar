@@ -12,7 +12,7 @@
 <% end %>
 
 <% if policy_scope(Category).count == 0 %>
-  <%= turbo_stream.replace "new-category" do %>
+  <%= turbo_stream.update "categories" do %>
     <%= render partial: "categories/empty_list" %>
   <% end %>
 <% end %>

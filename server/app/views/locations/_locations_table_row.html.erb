@@ -22,11 +22,12 @@
   </td>
   <% if current_account.is_all_accounts? %>
     <td style="padding-left: 30px"><%= location.account.name %></td>
+  <% else %>
+    <td class="text-gray-600 mb-1"
+        style="font-size:14px; color: #b5b5c3;">
+        <%= render partial: "location_categories/table_cell", locals: {categories: location.categories, shows_tooltip: true, row: row} %>
+    </td>
   <% end %>
-  <td class="text-gray-600 mb-1"
-      style="font-size:14px; color: #b5b5c3;">
-      <%= render partial: "location_categories/table_cell", locals: {categories: location.categories, shows_tooltip: true, row: row} %>
-  </td>
   <td class="text-gray-600 mb-1"
       style="font-size:14px; color: #b5b5c3;">
       <span>

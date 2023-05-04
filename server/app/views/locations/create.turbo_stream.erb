@@ -1,5 +1,5 @@
 <%= turbo_stream.append 'locations_table' do %>
-  <%= render partial: 'locations_table_row', locals: {location: @location} %>
+  <%= render partial: 'locations_table_row', locals: {location: @location, shows_tooltip: true, row: policy_scope(Location).count} %>
 <% end %>
 
 <%= turbo_stream.append 'locations_grid' do %>
