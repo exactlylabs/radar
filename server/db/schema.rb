@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_24_112703) do
+ActiveRecord::Schema.define(version: 2023_05_03_161542) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -266,6 +266,7 @@ ActiveRecord::Schema.define(version: 2023_04_24_112703) do
     t.integer "gid"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "study_geospace", default: false
   end
 
   create_table "geospaces_locations", id: false, force: :cascade do |t|
@@ -334,6 +335,9 @@ ActiveRecord::Schema.define(version: 2023_04_24_112703) do
     t.bigint "location_group_id"
     t.datetime "deleted_at"
     t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.integer "days_online", default: 0
+    t.datetime "offline_since"
+    t.boolean "online", default: false
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
     t.index ["location_group_id"], name: "index_locations_on_location_group_id"
   end
@@ -375,6 +379,16 @@ ActiveRecord::Schema.define(version: 2023_04_24_112703) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["client_id"], name: "index_ndt7_diagnose_reports_on_client_id"
+  end
+
+  create_table "notified_study_goals", force: :cascade do |t|
+    t.bigint "geospace_id"
+    t.bigint "autonomous_system_org_id"
+    t.integer "goal"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["autonomous_system_org_id"], name: "index_notified_study_goals_on_autonomous_system_org_id"
+    t.index ["geospace_id"], name: "index_notified_study_goals_on_geospace_id"
   end
 
   create_table "online_client_count_projections", force: :cascade do |t|
