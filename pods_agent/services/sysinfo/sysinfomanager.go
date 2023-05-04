@@ -171,7 +171,7 @@ func (si SysInfoManager) GetSysTimezone() (*time.Location, error) {
 func (si SysInfoManager) SetSysTimezone(tz *time.Location) error {
 	_, err := si.runCommand(exec.Command("timedatectl", "set-timezone", tz.String()))
 	if err != nil {
-		return fmt.Errorf("SysInfoManager#SetSysTimezone %w", err)
+		return fmt.Errorf("SysInfoManager#SetSysTimezone: %w", err)
 	}
 	return nil
 }
