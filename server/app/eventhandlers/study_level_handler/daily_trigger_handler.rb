@@ -28,7 +28,10 @@ module StudyLevelHandler
           rescue ActiveRecord::RecordNotFound
             next
           end
-
+          if location.lonlat.nil? && location.longitude.present? && location.latitude.present?
+            location.lonlat = "POINT(#{location.longitude} #{location.latitude})"
+          end
+          return if location.lonlat.nil?
           self.get_aggregates(location.lonlat, as_org_id, as_org_name).each do |aggregate|
             key = "#{aggregate["level"]}-#{aggregate["parent_id"]}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location.id}-#{location.lonlat.longitude}-#{location.lonlat.latitude}"
             last_obj = @cached_projections[key]
