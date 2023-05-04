@@ -74,29 +74,9 @@
               </svg>
             </span>
           </a>
-          <% if !current_account.is_all_accounts? %>
-            <div class="dropdown-menu fw-bold fs-7 py-4">
-              <a href="<%= locations_path %>"
-                style="padding-left: 11px"
-                class="menu-item text-hover-gray-500 <%= params[:category].nil? ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
-                All Categories
-              </a>
-              <% policy_scope(Category).each do |category| %>
-                <!--begin::Menu item-->
-                <a href="<%= params[:category] == category.id ? locations_path : locations_path(category: category.id) %>"
-                  class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:category] == category.id ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
-                  <div class="category--marker" style="background-color: <%= category.color_hex %>"></div>
-                  <%= category.name %>
-                </a>
-                <!--end::Menu item-->
-              <% end %>
-            </div>
-          <% end %>
         </div>
       <!--end::DisplaySwitcher-->
-        <% if current_account.is_all_accounts? %>
-          <%= render partial: "locations/locations_table_filters" %>
-        <% end %>
+      <%= render partial: "locations/locations_table_filters" %>
       <!--begin::Container-->
         <div class="container-auto px-5">
           <!--begin::Card-->
