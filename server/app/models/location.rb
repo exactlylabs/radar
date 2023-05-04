@@ -4,6 +4,10 @@ require "csv"
 class Location < ApplicationRecord
 include EventSourceable
 
+  LOCATIONS_PER_COUNTY_GOAL = 25
+  LOCATIONS_PER_PLACE_GOAL = 3
+  LOCATIONS_PER_ISP_PER_COUNTY_GOAL = 3
+  
   module Events
     NAME_CHANGED = "NAME_CHANGED"
     ADDRESS_CHANGED = "ADDRESS_CHANGED"
@@ -11,18 +15,21 @@ include EventSourceable
     LABEL_REMOVED = "LABEL_REMOVED"
     DELETED = "DELETED"
     RESTORED = "RESTORED"
+    WENT_ONLINE = "LOCATION_WENT_ONLINE"
+    WENT_OFFLINE = "LOCATION_WENT_OFFLINE"
   end
-
 
   # Event Hooks
   on_create applier: :apply_on_create, event_data: :event_data
   notify_change :name, Location::Events::NAME_CHANGED
   notify_change :address, Location::Events::ADDRESS_CHANGED
+  notify_change :online, {false => Location::Events::WENT_OFFLINE, true => Location::Events::WENT_ONLINE}
   notify_change :deleted_at, {nil => Location::Events::RESTORED, :default => Location::Events::DELETED}
 
   validates :name, :address, presence: true
 
   belongs_to :user, foreign_key: 'created_by_id'
+  belongs_to :account
   belongs_to :location_group, optional: true
   belongs_to :account
   has_and_belongs_to_many :location_labels, 
@@ -37,6 +44,7 @@ include EventSourceable
 
   after_validation :custom_geocode, if: :lat_long_changed?
   after_save :link_to_geospaces
+  after_save :send_notifications
 
   default_scope { where(deleted_at: nil) }
   scope :with_deleted, -> { unscope(where: :deleted_at) }
@@ -99,10 +107,6 @@ include EventSourceable
 
   def latest_measurement
     self.measurements.order(created_at: :desc).first
-  end
-
-  def online?
-    clients.where(online: true).any?
   end
 
   def diff_to_human(diff, expected_value)
@@ -177,6 +181,40 @@ include EventSourceable
       self.clients.update(location_id: nil)
     end
   end
+
+  def self.update_online_status!()
+    # Go through all locations and update their online/offline status + other metadata
+    Location.joins(:clients).group("locations.id").having("BOOL_OR(clients.online) AND offline_since IS NOT NULL OR online = false").update(online: true, offline_since: nil)
+    Location.joins(:clients).group(:id).having("BOOL_AND(NOT clients.online) AND locations.offline_since IS NULL AND online = true").each do |location|
+      offline_since = Event.from_aggregate(location.clients).where_name_is("WENT_OFFLINE").order("timestamp DESC").last&.timestamp
+      location.offline_since = offline_since
+      if offline_since < 1.hour.ago
+        location.online = false
+      end
+      location.save!
+    end
+    Location.where("offline_since < ? AND online=true", 1.hour.ago).update(online: false)
+  end
+
+  def study_state?
+    self.state_geospace.study_geospace
+  end
+
+  def study_county?
+    self.county_geospace.study_geospace
+  end
+
+  def state_geospace
+    self.geospaces.states.first
+  end
+
+  def county_geospace
+    self.geospaces.counties.first
+  end
+
+  def place_geospace
+    self.geospaces.census_places.first
+  end
   
   private
 
@@ -206,6 +244,21 @@ include EventSourceable
       Geospace.containing_lonlat(self.lonlat).each do |geospace|
         self.geospaces << geospace unless self.geospaces.include? geospace
       end
+    end
+  end
+
+  def send_notifications
+    if saved_change_to_online?
+      if self.online
+        LocationNotificationJobs::NotifyLocationOnline.perform_later self, Time.now
+      else
+        LocationNotificationJobs::NotifyLocationOffline.perform_later self, self.offline_since
+      end
+    end
+
+    if id_previously_changed?
+      # Notify location created
+      LocationNotificationJobs::NotifyLocationCreated.perform_later self
     end
   end
 
