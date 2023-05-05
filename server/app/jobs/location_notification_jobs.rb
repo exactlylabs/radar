@@ -61,10 +61,7 @@ module LocationNotificationJobs
   class NotifyLocationOffline < LocationNotificationJob
     def perform(location, at)
       at ||= Time.now
-      if at < 1.day.ago
-        # There's no reason to notify old events
-        return
-      end
+      return if at <  1.day.ago
 
       as_org = location.clients.order("updated_at DESC").first&.autonomous_system&.autonomous_system_org
       location_info = location_info(location, as_org=as_org)
