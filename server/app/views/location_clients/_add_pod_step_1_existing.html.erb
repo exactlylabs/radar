@@ -19,19 +19,27 @@
 			<div class="fv-row mb-7 fv-plugins-icon-container">
 				<label class="required fs-6 fw-bold mb-1">Choose an existing Pod</label>
 				<select id="client_id"
-								 class="form-select select2-hidden-accessible"
-								 data-add-client-to-location-blanks-value="true"
-								 data-placeholder="Choose a Pod"
-								 data-action="select2-select->add-client-to-location#checkClientLocation"
-								 tabindex="-1"
-								 data-add-client-to-location-id="add-client-to-location-data-client_id"
-								 data-controller="select2"
+					class="form-select select2-hidden-accessible"
+					data-placeholder="Choose a Pod"
+					tabindex="-1"
+					data-controller="select2"
+					data-action="select2-select->add-client-to-location#checkClientLocation"
+					data-add-client-to-location-blanks-value="true"
+					data-add-client-to-location-id="add-client-to-location-data-client_id"
+					data-select2-custom-theme-value="custom-move-pod"
+					data-select2-dropdown-parent-value="add_pod_step_1_existing"
+					data-select2-custom-matcher-value="custom-pod-matcher"
 				>
 					<option value=""></option>
 					<% policy_scope(Client).each do |client| %>
 						<!-- using 'picked' attribute instead of reserved word 'selected' to prevent defaulting a value -->
-						<option value="<%= client.unix_user %>" picked="false" data-location-name="<%= client.location&.name %>" data-location-id="<%= client.location&.id %>">
-								<%= client.name || "Unnamed Pod" %>
+						<option value="<%= client.unix_user %>"
+							picked="false"
+							data-location-name="<%= client.location&.name %>"
+							data-location-id="<%= client.location&.id %>"
+							class="add-pod--custom-select-option"
+						>
+								<%= client.name.blank? ? "Unnamed Pod" : client.name %>
 						</option>
 					<% end %>
 				</select>

@@ -54,9 +54,6 @@ export default class extends Controller {
     const oldOptionButtonClassList = this.oldPodOptionTarget.classList;
     if (oldOptionButtonClassList.contains("clicked")) {
       $("#add_pod_step_1_existing").modal("show");
-      $("#client_id").select2({
-        dropdownParent: $("#add_pod_step_1_existing"),
-      });
     } else {
       $("#add_pod_modal_wizard").modal("show");
     }
