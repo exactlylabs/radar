@@ -4,6 +4,8 @@ export default class extends Controller {
   static values = {
     blanks: String,
     dropdownParent: String,
+    customTheme: String,
+    customMatcher: String,
   };
 
   connect() {
@@ -13,6 +15,14 @@ export default class extends Controller {
 
     if (this.blanksValue) {
       options.allowClear = true;
+    }
+
+    if(this.customThemeValue) {
+      if(this.customThemeValue === 'custom-move-pod') options.templateResult = this.customMovePodTemplate;
+    }
+
+    if(this.customMatcherValue) {
+      if(this.customMatcherValue === 'custom-pod-matcher') options.matcher = this.customPodSearchMatcher
     }
 
     // This allows select2 to work properly inside modals
@@ -35,5 +45,27 @@ export default class extends Controller {
       let event = new Event("select2-clear", { bubbles: true }); // fire a native event
       this.dispatchEvent(event);
     });
+  }
+
+  customMovePodTemplate(state) {
+    if (!state.id) return state.text;
+    const podName = state.text.replace(/[\t\n\r]/gm, '');
+    var $state = $(
+      '<div class="add-pod--custom-move-option-container">' +
+        `<span class="add-pod--custom-move-option-pod-name">${podName}</span>` + 
+        `<span class="add-pod--custom-move-option-pod-id">${state.id}</span>` +
+      '</div>'
+    );
+    return $state;
+  }
+
+  customPodSearchMatcher(params, data) {
+    if(!params.term?.trim()) return data;
+    if (typeof data.text === 'undefined') return null;
+
+    const term = params.term.trim().toLowerCase();
+    const podName = data.text.trim().toLowerCase();
+    const podId = data.id.trim().toLowerCase();
+    return (podName.indexOf(term) > -1 || podId.indexOf(term) > -1) ? data : null;
   }
 }
