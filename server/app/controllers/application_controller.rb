@@ -81,7 +81,7 @@ class ApplicationController < ActionController::Base
 
   def set_all_accounts
     @auth_holder = AuthenticationHolder
-    AuthorizationHolder.new(current_user) unless @auth_holder
+    AuthenticationHolder.new(current_user) unless @auth_holder
     @auth_holder.set_all_accounts
   end
 
@@ -130,7 +130,7 @@ class ApplicationController < ActionController::Base
   def get_or_set_account_from_cookie
     account_id = get_cookie(:radar_current_account_id)
     begin
-      @auth_holder = AuthorizationHolder.new(current_user, false, false) unless @auth_holder
+      @auth_holder = AuthenticationHolder.new(current_user, false, false) unless @auth_holder
       if account_id
         if is_all_accounts_id(account_id)
           set_all_accounts
