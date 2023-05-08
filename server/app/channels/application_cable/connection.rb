@@ -12,8 +12,6 @@ module ApplicationCable
       if request.user_agent.starts_with? "RadarPods"
         load_client
         on_client_connected
-      elsif cookies['radar_current_account_id'].nil? # we need some features to work when we are logged out
-        self.current_account = nil
       else
         self.current_account = identify_account
       end
@@ -29,7 +27,12 @@ module ApplicationCable
     
     def identify_account
       # TODO: check this verification method when we implement multi-account views
-      if(verified_account = Account.find_by(id: cookies['radar_current_account_id']))
+      
+      current_account_id = cookies['radar_current_account_id']
+      # we need some features to work when we are logged out
+      if current_account_id.nil?
+        self.current_account = nil
+      elsif(verified_account = Account.find_by(id: current_account_id))
         verified_account
       else
         reject_unauthorized_connection

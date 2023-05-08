@@ -12,6 +12,10 @@ class AllAccountsAccount
   def superaccount
     false
   end
+
+  def is_all_accounts?
+    true
+  end
 end
 
 class AuthenticationHolder
@@ -80,8 +84,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_all_accounts
-    @auth_holder = AuthenticationHolder
-    AuthenticationHolder.new(current_user) unless @auth_holder
+    @auth_holder = AuthenticationHolder.new(current_user) unless @auth_holder
     @auth_holder.set_all_accounts
   end
 
