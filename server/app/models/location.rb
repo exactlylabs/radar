@@ -184,8 +184,8 @@ include EventSourceable
 
   def self.update_online_status!()
     # Go through all locations and update their online/offline status + other metadata
-    Location.joins(:clients).group("locations.id").having("BOOL_OR(clients.online) AND offline_since IS NOT NULL OR online = false").update(online: true, offline_since: nil)
-    Location.joins(:clients).group(:id).having("BOOL_AND(NOT clients.online) AND locations.offline_since IS NULL AND online = true").each do |location|
+    Location.joins(:clients).group("locations.id").having("BOOL_OR(clients.online) AND offline_since IS NOT NULL OR locations.online = false").update(online: true, offline_since: nil)
+    Location.joins(:clients).group(:id).having("BOOL_AND(NOT clients.online) AND locations.offline_since IS NULL AND locations.online = true").each do |location|
       offline_since = Event.from_aggregate(location.clients).where_name_is("WENT_OFFLINE").order("timestamp DESC").last&.timestamp
       location.offline_since = offline_since
       if offline_since < 1.hour.ago
