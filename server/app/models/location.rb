@@ -187,7 +187,7 @@ include EventSourceable
     Location.joins(:clients).group("locations.id").having("BOOL_OR(clients.online) AND offline_since IS NOT NULL OR locations.online = false").update(online: true, offline_since: nil)
     Location.joins(:clients).group(:id).having("BOOL_AND(NOT clients.online) AND locations.offline_since IS NULL AND locations.online = true").each do |location|
       offline_since = Event.from_aggregate(location.clients).where_name_is("WENT_OFFLINE").order("timestamp DESC").last&.timestamp
-      location.offline_since = offline_since
+      location.offline_since = offline_since || location.created_at
       if offline_since < 1.hour.ago
         location.online = false
       end
@@ -197,11 +197,11 @@ include EventSourceable
   end
 
   def study_state?
-    self.state_geospace.study_geospace
+    self.state_geospace&.study_geospace
   end
 
   def study_county?
-    self.county_geospace.study_geospace
+    self.county_geospace&.study_geospace
   end
 
   def state_geospace

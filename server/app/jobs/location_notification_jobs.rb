@@ -50,9 +50,9 @@ module LocationNotificationJobs
         EventsNotifier.notify_study_goal_reached(location_info.place, Location::LOCATIONS_PER_PLACE_GOAL)
         NotifiedStudyGoal.create!(geospace: location_info.place)
       end
-      if location_info.extra[:locations_per_isp_county_count] && location_info.extra[:locations_per_isp_county_count] >= Location::LOCATIONS_PER_ISP_COUNTY_GOAL &&
+      if location_info.extra[:locations_per_isp_county_count] && location_info.extra[:locations_per_isp_county_count] >= Location::LOCATIONS_PER_ISP_PER_COUNTY_GOAL &&
           !NotifiedStudyGoal.where(geospace: location_info.county, autonomous_system_org: as_org).exists?
-        EventsNotifier.notify_study_goal_reached(location_info.county, Location::LOCATIONS_PER_ISP_COUNTY_GOAL, as_org=as_org)
+        EventsNotifier.notify_study_goal_reached(location_info.county, Location::LOCATIONS_PER_ISP_PER_COUNTY_GOAL, as_org=as_org)
         NotifiedStudyGoal.create!(geospace: location_info.county, autonomous_system_org: as_org)
       end
     end
