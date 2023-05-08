@@ -188,7 +188,7 @@ include EventSourceable
     Location.joins(:clients).group(:id).having("BOOL_AND(NOT clients.online) AND locations.offline_since IS NULL AND locations.online = true").each do |location|
       offline_since = Event.from_aggregate(location.clients).where_name_is("WENT_OFFLINE").order("timestamp DESC").last&.timestamp
       location.offline_since = offline_since || location.created_at
-      if offline_since < 1.hour.ago
+      if location.offline_since < 1.hour.ago
         location.online = false
       end
       location.save!
