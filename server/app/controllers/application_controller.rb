@@ -74,9 +74,9 @@ class ApplicationController < ActionController::Base
 
   def current_account
     cookie_account_id = get_cookie(:radar_current_account_id)
-    return @auth_holder.account if @auth_holder&.account&.id == cookie_account_id
+    return @auth_holder.account if cookie_account_id.present? && @auth_holder&.account&.id == cookie_account_id
     get_or_set_account_from_cookie
-    @auth_holder.account
+    @auth_holder&.account
   end
 
   def set_new_account(new_account)
