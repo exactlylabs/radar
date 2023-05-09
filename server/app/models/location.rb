@@ -17,6 +17,8 @@ include EventSourceable
     RESTORED = "RESTORED"
     WENT_ONLINE = "LOCATION_WENT_ONLINE"
     WENT_OFFLINE = "LOCATION_WENT_OFFLINE"
+    CATEGORY_ADDED = "CATEGORY_ADDED"
+    CATEGORY_REMOVED = "CATEGORY_REMOVED"
   end
 
   # Event Hooks
@@ -32,11 +34,11 @@ include EventSourceable
   belongs_to :account
   belongs_to :location_group, optional: true
   belongs_to :account
-  has_and_belongs_to_many :categories
+  has_and_belongs_to_many :categories,
     # Note: Rails only triggers when associating through << statement
     # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks
-    #after_add: :after_category_added, 
-    #after_remove: :after_category_removed
+    after_add: :after_category_added, 
+    after_remove: :after_category_removed
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
   has_one :client_count_aggregate, :as => :aggregator
@@ -70,23 +72,26 @@ include EventSourceable
     })
   end
 
-  def after_label_added(label)
+  def after_category_added(category)
     event_data = {
-      id: label.id,
+      id: category.id,
     }
-    event = Location.new_event(self, Location::Events::LABEL_ADDED, event_data)
+    event = Location.new_event(self, Location::Events::CATEGORY_ADDED, event_data)
     create_snapshot_from_event event do |state, event|
-      state["labels"] << label.name
+      state["categories"] ||= []
+      state["categories"] << category.name
     end
   end
 
-  def after_label_removed(label)
+  def after_category_removed(category)
     event_data = {
-      id: label.id,
+      id: category.id,
     }
-    event = Location.new_event(self, Location::Events::LABEL_REMOVED, event_data)
-    create_snapshot_from_event event do |state, event|
-      state["labels"].delete(label.name)
+    self.record_event Location::Events::CATEGORY_REMOVED, event_data, Time.now do |state, event|
+       # doing nested if for a bit better readability
+      if state["categories"].present? && state["categories"].include?(category.name)
+        state["categories"].delete(category.name) 
+      end
     end
   end
 

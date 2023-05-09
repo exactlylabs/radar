@@ -8,8 +8,7 @@ class LocationsController < ApplicationController
     account_id = params[:account_id]
     @locations = policy_scope(Location)
     if category_id
-      locations_by_category = policy_scope(CategoriesLocation).where(category_id: category_id).pluck(:location_id)
-      @locations = @locations.where(id: locations_by_category)
+      @locations = @locations.joins(:categories_locations).where(categories_locations: {category_id: category_id})
     end
     if account_id
       @locations = @locations.where(account_id: account_id)

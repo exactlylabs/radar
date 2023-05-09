@@ -4,7 +4,7 @@ class CategoriesController < ApplicationController
 
   def index
     if params[:query]
-      @categories = policy_scope(Category).where("LOWER(name) LIKE ?", "%#{params[:query].downcase}%")
+      @categories = policy_scope(Category).where("name ILIKE ?", "%#{params[:query]}%")
     else
       @categories = policy_scope(Category)
     end
@@ -61,8 +61,7 @@ class CategoriesController < ApplicationController
     respond_to do |format|
       if @category.update(name: params[:category][:name], color_hex: params[:category][:color_hex])
         @notice = "Category updated successfully."
-        locations_by_category = policy_scope(CategoriesLocation).where(category_id: @category.id).pluck(:location_id)
-        @locations = policy_scope(Location).where(id: locations_by_category)
+        @locations = policy_scope(Location).joins(:categories_locations).where(categories_locations: {category_id: @category.id})
         format.turbo_stream
         format.html { render partial: "categories/list_item", locals: {category: @category} }
       else
@@ -72,9 +71,9 @@ class CategoriesController < ApplicationController
   end
 
   def destroy
-    policy_scope(CategoriesLocation).where(category_id: @category.id).delete_all
+    policy_scope(CategoriesLocation).where(category_id: @category.id).destroy_all
     respond_to do |format|
-      if @category.delete
+      if @category.destroy
         @notice = "Category deleted successfully."
         format.turbo_stream
       else
@@ -86,9 +85,6 @@ class CategoriesController < ApplicationController
   private
   def set_category
     @category = policy_scope(Category).find(params[:id])
-    if !@category
-      raise ActiveRecord::NotFound("Couldn't find Category with 'id'=#{params[:id]}", Category.name, params[:id])
-    end
   end
 
   def category_params

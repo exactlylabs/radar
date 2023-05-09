@@ -24,24 +24,26 @@
         href="<%= new_location_path %>" 
         data-turbo-frame="new_location_modal"
       >Add Location</a>
-      <a href="#"
-          class="btn d-flex justify-content-center align-items-center px-4"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          style="border-radius: 6px; background-color: white"
-          id="options-button"
-      >
-        <span class="svg-icon svg-icon-muted svg-icon-2x m-0">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="10" width="4" height="4" rx="2" fill="currentColor"/>
-            <rect x="10" y="3" width="4" height="4" rx="2" fill="currentColor"/>
-            <rect x="10" y="17" width="4" height="4" rx="2" fill="currentColor"/>
-          </svg>
-        </span>
-      </a>
-      <div class="dropdown-menu dropdown-menu-light fw-bold fs-7 py-4 bg-hover-light">
-        <%= link_to "Manage location categories", categories_path, { class: "px-3 py-2", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
-      </div>
+      <% if !current_account.is_all_accounts? %>
+        <a href="#"
+            class="btn d-flex justify-content-center align-items-center px-4"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            style="border-radius: 6px; background-color: white"
+            id="options-button"
+        >
+          <span class="svg-icon svg-icon-muted svg-icon-2x m-0">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="10" width="4" height="4" rx="2" fill="currentColor"/>
+              <rect x="10" y="3" width="4" height="4" rx="2" fill="currentColor"/>
+              <rect x="10" y="17" width="4" height="4" rx="2" fill="currentColor"/>
+            </svg>
+          </span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-light fw-bold fs-7 py-4 bg-hover-light">
+          <%= link_to "Manage location categories", categories_path, { class: "px-3 py-2", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
