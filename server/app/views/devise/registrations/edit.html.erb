@@ -4,17 +4,9 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="text-dark fw-bolder my-1 fs-2">User Settings 
+      <h1 class="page-main-title">Settings 
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
-      <!--begin::Breadcrumb-->
-      <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item text-muted">Home
-          <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
-        </li>
-        <li class="breadcrumb-item text-dark">Settings</li>
-      </ul>
-      <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
   </div>
@@ -23,78 +15,46 @@
 
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
   <!--begin::Container-->
-  <div class="container-xxl">
-    <div class="d-flex flex-column flex-lg-row">
+  <div class="container-fluid">
+    <div class="d-flex flex-column">
       <!--begin::Aside-->
-      <div class="flex-column flex-md-row-auto w-100 w-lg-250px w-xxl-275px">
-        <!--begin::Nav-->
-        <div class="card mb-6 mb-xl-9" data-kt-sticky="true" data-kt-sticky-name="account-settings" data-kt-sticky-offset="{default: false, lg: 300}" data-kt-sticky-width="{lg: '250px', xxl: '275px'}" data-kt-sticky-left="auto" data-kt-sticky-top="100px" data-kt-sticky-zindex="95">
-          <!--begin::Card body-->
-          <div class="card-body py-10 px-6">
-            <!--begin::Menu-->
-            <ul id="kt_account_settings" class="nav nav-flush menu menu-column menu-rounded menu-title-gray-600 menu-bullet-gray-300 menu-state-bg menu-state-bullet-primary fw-bold fs-6 mb-2">
-              <li class="menu-item px-3 pt-0 pb-1">
-                <a href="#kt_account_settings_signin_method" data-kt-scroll-toggle="true" class="menu-link px-3 nav-link">
-                  <span class="menu-bullet">
-                    <span class="bullet bullet-vertical"></span>
-                  </span>
-                  <span class="menu-title">Sign-in Method</span>
-                </a>
-              </li>
-              <li class="menu-item px-3 pt-0 pb-1">
-                <a href="#kt_account_settings_info" data-kt-scroll-toggle="true" class="menu-link px-3 nav-link">
-                  <span class="menu-bullet">
-                    <span class="bullet bullet-vertical"></span>
-                  </span>
-                  <span class="menu-title">Basic Information</span>
-                </a>
-              </li>
-            </ul>
-            <!--end::Menu-->
-          </div>
-          <!--end::Card body-->
-        </div>
-        <!--end::Nav-->
-      </div>
       <!--end::Aside-->
       <!--begin::Layout-->
-      <div class="flex-md-row-fluid ms-lg-12">
+      <div class="flex-md-row-fluid">
         <!--begin::Sign-in Method-->
         <div class="card mb-5 mb-xl-10" id="kt_account_settings_signin_method" data-kt-scroll-offset="{default: 100, md: 125}">
           <!--begin::Card header-->
-          <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_account_signin_method">
-            <div class="card-title m-0">
-              <h3 class="fw-boldest m-0">Sign-in Method</h3>
-            </div>
+          <div class="cards--header card-header align-items-center">
+            <div class="card-main-title">Account</div>
           </div>
           <!--end::Card header-->
           <!--begin::Content-->
           <div id="kt_account_signin_method" class="collapse show">
             <!--begin::Card body-->
-            <div class="card-body border-top p-9">
+            <div class="card-body border-top px-6 py-8">
               <!--begin::Email Address-->
               <%= turbo_frame_tag "change_email" do %>
               <div class="d-flex flex-wrap align-items-center mb-8">
                 <div id="kt_signin_email">
-                  <div class="fs-4 fw-boldest mb-1">Email Address</div>
-                  <div class="fs-6 fw-bold text-gray-600"><%= current_user.email %></div>
+                  <div class="forms--label">Email Address</div>
+                  <div class="regular-text"><%= current_user.email %></div>
                 </div>
                 
                 <div id="kt_signin_email_button" class="ms-auto">
-                  <%= link_to "Change Email", edit_user_email_path, class: "btn btn-light fw-boldest px-6" %>
+                  <%= link_to "Change Email", edit_user_email_path, class: "custom-button custom-button--secondary custom-button--sm" %>
                 </div>
               </div>
               <% end %>
               <!--end::Email Address-->
               <!--begin::Password-->
               <%= turbo_frame_tag "change_password" do %>
-              <div class="d-flex flex-wrap align-items-center mb-8">
+              <div class="d-flex flex-wrap align-items-center">
                 <div id="kt_signin_password">
-                  <div class="fs-4 fw-boldest mb-1">Password</div>
-                  <div class="fs-6 fw-bold text-gray-600">************</div>
+                  <div class="forms--label">Password</div>
+                  <div class="regular-text">************</div>
                 </div>
                 <div id="kt_signin_password_button" class="ms-auto">
-                  <a href="<%= edit_authed_user_password_path %>" class="btn btn-light fw-boldest">Change Password</a>
+                  <a href="<%= edit_authed_user_password_path %>" class="custom-button custom-button--secondary custom-button--sm">Change Password</a>
                 </div>
               </div>
               <% end %>
@@ -108,12 +68,8 @@
         <!--begin::Basic info-->
         <div class="card mb-5 mb-xl-10" id="kt_account_settings_info" data-kt-scroll-offset="{default: 100, md: 125}">
           <!--begin::Card header-->
-          <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_account_basic_info" aria-expanded="true" aria-controls="kt_account_basic_info">
-            <!--begin::Card title-->
-            <div class="card-title m-0">
-              <h3 class="fw-boldest m-0">Basic Info</h3>
-            </div>
-            <!--end::Card title-->
+          <div class="cards--header card-header align-items-center">
+            <div class="card-main-title">Profile</div>
           </div>
           <!--begin::Card header-->
           <!--begin::Content-->
@@ -126,45 +82,43 @@
                          class: "form fv-plugins-bootstrap5 fv-plugins-framework",
                          novalidate: "novalidate" do |f| %>
               <div class="card-body border-top p-9">
-                <div class="row mb-6">
-                  <label class="col-lg-4 col-form-label fw-bold fs-6">Profile picture</label>
-                  <div class="col-lg-8">
-                    <div class="row">
-                      <div class="col-lg-6 fv-row fv-plugins-icon-container">
-                        <div class="sign-up--custom-input d-flex justify-content-center align-items-center"
-                             style="width: 120px; height: 120px; border: dashed 1px #00a3ff; background-color: #f1faff; border-radius: 12px; margin-bottom: 20px"
-                             data-bs-toggle="modal"
-                             data-bs-target="#edit_profile_picture_wizard"
-                        >
-                          <img src="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_limit: [118, 118])) : nil %>"
-                               width="118"
-                               height="118"
-                               style="display: <%= current_user.avatar.attached? ? 'block' : 'none'%>; margin: auto; border-radius: inherit"
-                            />
-                          <span class="svg-icon svg-icon-primary svg-icon-2hx" style="display: <%= current_user.avatar.attached? ? 'none' : 'block'%>">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                              <path d="M21 13H3C2.4 13 2 12.6 2 12C2 11.4 2.4 11 3 11H21C21.6 11 22 11.4 22 12C22 12.6 21.6 13 21 13Z" fill="black"/>
-                              <path d="M12 22C11.4 22 11 21.6 11 21V3C11 2.4 11.4 2 12 2C12.6 2 13 2.4 13 3V21C13 21.6 12.6 22 12 22Z" fill="black"/>
-                            </svg>
-                          </span>
-                        </div>
-                        <% if current_user.avatar.attached? %>
-                          <div class="d-flex justify-content-center align-items-center"
-                               style="cursor: pointer; border-radius: 6px; width: 28px; height: 28px; position: relative; bottom: 37px; right: -85px; background-color: white;  box-shadow: 0 0 10px 0 rgba(74, 80, 102, 0.14);"
-                               data-bs-toggle="modal"
-                               data-bs-target="#edit_profile_picture_wizard"
-                          >
-                            <%= image_tag "edit.png", width: 12, height: 12 %>
-                          </div>
-                        <% end %>
-                      </div>
-                    </div>
+                <div class="fv-row fv-plugins-icon-container" data-controller="edit-profile">
+                  <div class="sign-up--avatar-container"
+                        data-bs-toggle="modal"
+                        data-bs-target="#edit_profile_picture_wizard"
+                  >
+                    <%= f.file_field "avatar", data: { action: "input->edit-profile-picture#handleFileUpload", "edit-profile-picture-target" => "userAvatarInput" }, style: "display: none" %>
+                    <% if current_user.avatar.attached? %>
+                      <img src="<%= url_for(current_user.avatar.variant(resize_to_limit: [104, 104])) %>"
+                        width="104"
+                        height="104"
+                        class="sign-up--avatar-image"
+                        style="display: 'block'; margin: auto; border-radius: inherit"
+                      />
+                    <% else %>
+                      <p><%= current_user.first_name[0].upcase %></p>
+                    <% end %>
+                  </div>
+                  <div class="d-flex flex-row my-4">
+                    <button type="button"
+                      class="custom-button custom-button--sm custom-button--secondary me-4"
+                      data-action="click->edit-profile#handleFileZoneClicked"  
+                    >
+                      Upload photo
+                    </button>
+                    <% if current_user.avatar.attached? %>
+                      <button type="button"
+                        class="custom-button custom-button--sm custom-button--secondary-light-danger"
+                        data-action="click->edit-profile-picture#deleteCurrentPicture"
+                        data-edit-profile-picture-target="deleteButton"
+                      >Remove photo</button>
+                    <% end %>
                   </div>
                 </div>
                 <!--begin::Input group-->
                 <div class="row mb-6">
                   <!--begin::Label-->
-                  <label class="col-lg-4 col-form-label required fw-bold fs-6">Full Name</label>
+                  <label class="forms--label required">Full Name</label>
                   <!--end::Label-->
                   <!--begin::Col-->
                   <div class="col-lg-8">

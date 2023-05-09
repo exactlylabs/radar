@@ -1,3 +1,4 @@
+@import "./shared/colors.scss";
 // Place all the styles related to the Locations controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
@@ -20,4 +21,22 @@
 
 .sign-up--custom-input:hover {
   cursor: pointer;
+}
+
+.sign-up--avatar-container {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: $avatar-blue;
+  p {
+    color: $blue;
+    font-size: 2rem;
+    line-height: 3rem;
+    letter-spacing: 0;
+    margin: 0;
+  }
 }

@@ -140,7 +140,7 @@
   <% if current_account.is_all_accounts? %>
      <div class="btn-group me-2">
       <a href="#"
-          class="btn btn-sm <%= params[:account_id].present? ? 'btn-light-primary' : 'btn-white' %> btn-active-light-primary"
+          class="custom-button custom-button--sm custom-button--secondary-light"
           data-bs-toggle="dropdown"
           aria-expanded="false"
           style="border-radius: 6px"
@@ -156,13 +156,13 @@
         aria-labelledby="schedule-button">
         <a href="<%= clients_path(environment: params[:environment], status: params[:status]) %>"
           style="padding-left: 11px"
-          class="menu-item text-hover-gray-500 <%= params[:account_id].nil? ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
+          class="dropdowns--option menu-item text-hover-gray-500 <%= params[:account_id].nil? ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
           All Accounts
         </a>
         <% policy_scope(Account).each do |account| %>
           <!--begin::Menu item-->
           <a href="<%= params[:account_id] == account.id ? clients_path(environment: params[:environment], status: params[:status]) : clients_path(params.permit([:status, :environment, :account_id]).merge(account_id: account.id)) %>"
-            class="d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:account_id] == account.id ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+            class="dropdowns--option d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:account_id] == account.id ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
             <%= account.name %>
           </a>
         <!--end::Menu item-->

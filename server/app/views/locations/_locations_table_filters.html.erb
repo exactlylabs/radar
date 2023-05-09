@@ -1,9 +1,8 @@
-
-<div class="filters-container px-5 d-flex flex-row mb-4">
-  <% if current_account.is_all_accounts? %>
+<% if current_account.is_all_accounts? %>
+  <div class="filters-container d-flex flex-row">
     <div class="btn-group me-2">
       <a href="#"
-          class="btn btn-sm <%= params[:account_id].present? ? 'btn-light-primary' : 'btn-white' %> btn-active-light-primary"
+          class="custom-button custom-button--sm custom-button--secondary-light"
           data-bs-toggle="dropdown"
           aria-expanded="false"
           style="border-radius: 6px"

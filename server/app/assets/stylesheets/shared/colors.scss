@@ -2,10 +2,12 @@
 $white: #fff;
 $black: #000;
 $error-red: #e54b4b;
+$danger: #f1416c;
 
 // Primaries
 $blue: #4b7be5;
 $deep-blue: #110e4c;
+$avatar-blue: rgba(75, 123, 229, 0.2);
 
 // Secondaries
 $gray: #6d6a94;
@@ -21,6 +23,8 @@ $primary-button--hover: #5789f6;
 $secondary-button--background-color: #bcbbc725;
 $secondary-button--box-shadow: #a09fb715;
 $secondary-light-button--box-shadow: #a09fb720;
+$secondary-light-danger--background-color: rgba(241, 65, 108, 0.1);
+$secondary-light-danger--box-shadow: rgba(241, 65, 108, 0.35);
 
 // Badges
 $badge--green-color: #31b36c;

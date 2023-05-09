@@ -121,3 +121,10 @@ $extra-bold: 800;
   color: #3f4254;
   white-space: break-spaces;
 }
+
+.wrap {
+  word-break: normal;
+  text-overflow: clip;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
