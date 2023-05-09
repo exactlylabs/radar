@@ -131,6 +131,7 @@ class ApplicationController < ActionController::Base
   end
 
   def get_or_set_account_from_cookie
+    return nil unless current_user
     account_id = get_cookie(:radar_current_account_id)
     begin
       @auth_holder = AuthenticationHolder.new(current_user, false, false) unless @auth_holder
