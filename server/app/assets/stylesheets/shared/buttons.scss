@@ -51,6 +51,18 @@
   color: $gray;
 }
 
+
+.custom-button--secondary-light-danger {
+  background-color: $secondary-light-danger--background-color;
+  color: $danger;
+  box-shadow: 0 2px 4px -2px $secondary-light-danger--box-shadow;
+}
+
+.custom-button--secondary-light-danger:hover:not(.custom-button--disabled),
+.custom-button--secondary-light-danger:active:not(.custom-button--disabled) {
+  color: $danger;
+}
+
 .custom-button--disabled {
   opacity: 50%;
   cursor: default;

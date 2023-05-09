@@ -94,6 +94,12 @@
   font-size: 0.938rem !important;
   line-height: 1.25rem;
   color: $deep-blue !important;
+  display: flex !important;
+  align-items: center !important;
+
+  &[data-is-multi="true"] {
+    height: 50px !important;
+  }
 }
 
 .forms--row {

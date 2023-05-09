@@ -4,15 +4,14 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="text-dark fw-bolder my-1 fs-2">Users
+      <h1 class="page-main-title">Users
         <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item text-muted"><%= current_account.name %>
+        <li class="breadcrumb-item page-sub-title"><%= current_account.name %>
           <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
         </li>
-        <li class="breadcrumb-item text-dark">Users</li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
@@ -26,20 +25,21 @@
     <div class="card">
       <!--begin::Card body-->
       <div class="card-body pt-8 px-6 d-flex flex-column">
-        <p style="color: #6d6a94; font-size: 14px; max-width: 630px;">Account Sharing allows you to delegate access to your account to everyone from another account. Members will inherit their roles when accessing the shared account.</p>
+        <p class="additional-text wrap" style="max-width: 635px">Account Sharing allows you to delegate access to your account to everyone from another account. Members will inherit their roles when accessing the shared account.</p>
         <%= form_with url: delegate_shared_users_accounts_path, method: :post do |form| %>
-          <div class="fv-row mb-5 fv-plugins-icon-container">
-            <label class="required fs-6 fw-bold mb-2">Share account with...</label>
+          <div class="fv-row fv-plugins-icon-container">
+            <label class="forms--label">Share account with...</label>
             <div class="d-flex flex-row justify-content-between align-items-center w-100">
-              <div class="input-group" style="width: 50%">
+              <div class="input-group forms--input-group" style="width: 50%; max-width: 400px">
                 <select id=""
-                        class="form-select select2-hidden-accessible"
+                        class="forms--select form-select select2-hidden-accessible"
                         data-placeholder="Do not share"
                         tabindex="-1"
                         data-controller="select2"
                         style="background-color: #f5f8fa;"
                         multiple="true"
                         name="share_to[]"
+                        data-is-multi="true"
                 >
                   <% policy_scope(Account).each do |account| %>
                     <% if current_account.id != account.id %>
@@ -49,10 +49,10 @@
                 </select>
               </div>
             </div>
-          <% end %>
-          <p class="mt-1 mb-10" style="color: #6d6a94; font-size: 13px;"><%= current_account.get_share_state_string(policy_scope(SharedAccount)) %></p>
-          <button type="submit" class="btn btn-primary w-25">Save settings</button>
-        </form>
+            <p class="mt-2 mb-10 help-text"><%= current_account.get_share_state_string(policy_scope(SharedAccount)) %></p>
+            <button type="submit" class="custom-button custom-button--primary custom-button--sm">Save settings</button>
+          </div>
+        <% end %>
       </div>
       <!--end::Card body-->
     </div>

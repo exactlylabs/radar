@@ -28,7 +28,7 @@
 <!--end::Toolbar-->
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
   <div class="container-fluid">
-    <% if current_account.id != -1 %>
+    <% if !current_account.is_all_accounts? %>
       <%= render partial: "users/members_sharing_tabs" %>
     <% end %>
     <%= render partial: "users/users_table_filters" %>

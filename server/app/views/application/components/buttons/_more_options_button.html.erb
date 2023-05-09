@@ -1,0 +1,11 @@
+<!-- Allow for optional local "props" -->
+<% id = nil unless local_assigns[:id].present? %>
+
+<button  type="button"
+  class="custom-button custom-button--xs custom-button--secondary dropwdown-toggle"
+  data-bs-toggle="dropdown"
+  aria-expanded="false"
+  id="<%= id.present? ? id : nil %>"
+>
+  <%= image_tag image_url("options-icon.png"), class: "tables--options-icon" %>
+</button>
