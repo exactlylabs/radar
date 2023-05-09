@@ -4,8 +4,8 @@ class LocationCategoriesController < ApplicationController
   def search
     @location = policy_scope(Location).find(params[:location_id]) if params[:location_id]
     @query = params[:query]
-    if !@query.blank?
-      @categories = policy_scope(Category).where("LOWER(name) LIKE ?", "%#{@query.downcase}%")
+    if @query.present?
+      @categories = policy_scope(Category).where("name ILIKE ?", "%#{@query}%")
     else
       @categories = policy_scope(Category)
     end
@@ -26,10 +26,19 @@ class LocationCategoriesController < ApplicationController
 
   def open_dropdown
     @categories = policy_scope(Category)
-    @location = policy_scope(Location).where(id: params[:location_id]).first if params[:location_id].present?
+    notice = nil
+    begin
+      @location = policy_scope(Location).find(params[:location_id]) if params[:location_id].present?
+    rescue ActiveRecord::RecordNotFound => e
+      notice = "There is no location with given ID."
+    end
     respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to "/locations" }
+      if notice.nil?
+        format.turbo_stream
+        format.html { redirect_to "/locations" }
+      else
+        format.html { redirect_to "/locations", notice: notice }
+      end
     end
   end
 
