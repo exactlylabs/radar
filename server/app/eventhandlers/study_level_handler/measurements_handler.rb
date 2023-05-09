@@ -10,7 +10,7 @@ module StudyLevelHandler
           key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location_id}-#{lonlat.longitude}-#{lonlat.latitude}"
           last_obj = @cached_projections[key]
           if last_obj.nil?
-            last_obj = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location_id
+            last_obj = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location_id, "measurements"
           end
           if last_obj.nil?
             last_obj = self.new_projection(
@@ -30,7 +30,7 @@ module StudyLevelHandler
           key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{nil}-#{lonlat.longitude}-#{lonlat.latitude}"
           last_obj = @cached_projections[key]
           if last_obj.nil?
-            last_obj = StudyLevelProjection.latest_for_with_lonlat aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, lonlat
+            last_obj = StudyLevelProjection.latest_for_with_lonlat aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, lonlat, "measurements"
           end
           if last_obj.nil?
             last_obj = self.new_projection(
@@ -51,6 +51,7 @@ module StudyLevelHandler
         obj.timestamp = timestamp
         obj.measurement_count += 1
         obj.measurement_incr = 1
+        obj.metric_type = "measurements"
         if last_obj.measurement_count == 0
           obj.points_with_tests_count += 1
           obj.points_with_tests_incr = 1
@@ -65,6 +66,7 @@ module StudyLevelHandler
         obj.timestamp = timestamp
         obj.measurement_count += 1
         obj.measurement_incr = 1
+        obj.metric_type = "measurements"
         if last_obj.measurement_count == 0
           obj.points_with_tests_count += 1
           obj.points_with_tests_incr = 1

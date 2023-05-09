@@ -21,23 +21,25 @@ class StudyLevelProjection < ActiveRecord::Base
     )
   end
 
-  def self.latest_for(level, parent_id, aggregate_id, as_org_id, location_id)
+  def self.latest_for(level, parent_id, aggregate_id, as_org_id, location_id, metric_type)
     self.where(
       level: level, 
       parent_aggregate_id: parent_id, 
       study_aggregate_id: aggregate_id, 
       autonomous_system_org_id: as_org_id, 
       location_id: location_id,
+      metric_type: metric_type,
     ).order("timestamp DESC").first
   end
 
-  def self.latest_for_with_lonlat(level, parent_id, aggregate_id, as_org_id, lonlat)
+  def self.latest_for_with_lonlat(level, parent_id, aggregate_id, as_org_id, lonlat, metric_type)
     self.where(
       level: level, 
       parent_aggregate_id: parent_id, 
       study_aggregate_id: aggregate_id, 
       autonomous_system_org_id: as_org_id, 
       lonlat: lonlat,
+      metric_type: metric_type,
     ).last
   end
 

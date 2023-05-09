@@ -78,7 +78,7 @@ module StudyLevelHandler
           key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location.id}-#{location.lonlat.longitude}-#{location.lonlat.latitude}"
           last_obj = @cached_projections[key]
           if last_obj.nil?
-            last_obj = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location.id
+            last_obj = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location.id, "clients_events"
           end
           if last_obj.nil?
             last_obj = self.new_projection(
@@ -110,6 +110,7 @@ module StudyLevelHandler
         obj.timestamp = event.timestamp
         obj.online_count += increment
         obj.incr = increment
+        obj.metric_type = "clients_events"
         if obj.online_count > 0 && !obj.location_online
           obj.location_online = true
           obj.location_online_incr = 1
