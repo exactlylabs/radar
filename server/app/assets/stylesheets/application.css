@@ -68,3 +68,7 @@ p {
 .select2-container--bootstrap5 .select2-selection--multiple:not(.form-select-sm):not(.form-select-lg) .select2-selection__choice {
   margin: 0 !important;
 }
+
+.invisible {
+  display: none;
+}

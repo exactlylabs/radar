@@ -114,6 +114,23 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  def update_name_and_avatar
+    user_params = params.require(:user).permit(:first_name, :last_name, :avatar)
+    # If avatar is not present in request params, it's because the user deleted it,
+    # then default to nil so db removes it
+    user_params[:avatar] ||= nil 
+    
+    respond_to do |format|
+      if current_user.update(user_params)
+        format.html { redirect_to edit_user_registration_path, notice: "Profile successfully updated." }
+        format.json { render :edit, status: :ok }
+      else
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: current_user.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   def update_name
     user_params = params.require(:user).permit(:first_name, :last_name)
 
@@ -195,7 +212,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     else
       clean_up_passwords resource
       set_minimum_password_length
-      render action: 'edit_email'
+      render action: 'edited_email'
     end
   end
 

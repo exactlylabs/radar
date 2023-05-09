@@ -1,0 +1,12 @@
+<%= turbo_frame_tag "change_email" do %>
+  <div class="d-flex flex-wrap align-items-center mb-8">
+    <div id="kt_signin_email">
+      <div class="forms--label">Email Address</div>
+      <div class="regular-text my-2"><%= current_user.email %></div>
+    </div>
+    
+    <div id="kt_signin_email_button" class="ms-auto">
+      <%= link_to "Change Email", edit_user_email_path, class: "custom-button custom-button--secondary custom-button--sm" %>
+    </div>
+  </div>
+<% end %>

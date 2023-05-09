@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
     patch 'users/edit_name' => 'users/registrations#update_name', as: :update_authed_user_name
     patch 'users/edit_avatar' => 'users/registrations#update_avatar', as: :update_authed_avatar
+    patch 'users/edit_name_and_avatar' => 'users/registrations#update_name_and_avatar', as: :update_authed_name_and_avatar
 
     get 'users/invite_sign_up' => 'users/registrations#render_invite_sign_up'
     post 'users/register_from_invite' => 'users/registrations#create_from_invite'

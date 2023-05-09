@@ -14,6 +14,10 @@ $extra-bold: 800;
   color: $gray;
 }
 
+.text--error {
+  color: $error-red;
+}
+
 .fw-light {
   font-variation-settings: 'wght' $light;
 }
