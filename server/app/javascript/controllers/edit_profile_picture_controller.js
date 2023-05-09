@@ -7,7 +7,8 @@ export default class extends Controller {
     "dropzone",
     "userAvatarInput",
     "deleteButton",
-    "fileFormatErrorMessage"
+    "fileFormatErrorMessage",
+    "firstLetter",
   ];
 
   connect() {
@@ -30,16 +31,16 @@ export default class extends Controller {
     if(this.userAvatarInputTarget.files.length === 0) return;
     const file = this.userAvatarInputTarget.files[0];
     if(!this.isAnImage(file)) {
-      this.fileFormatErrorMessageTarget.style.display = 'block';
+      this.fileFormatErrorMessageTarget.classList.remove('invisible');
       this.userAvatarInputTarget.value = ""; // clear input from storing file with wrong type
       return;
     } else {
-      this.fileFormatErrorMessageTarget.style.display = 'none';
+      this.fileFormatErrorMessageTarget.classList.add('invisible');
     }
     this.avatarPreviewTarget.src = URL.createObjectURL(file);
-    this.avatarPreviewTarget.style.display = "block";
-    this.plusIconTarget.style.display = "none";
-    this.deleteButtonTarget.style.display = "block";
+    this.avatarPreviewTarget.classList.remove('invisible');
+    this.deleteButtonTarget.classList.remove('invisible');
+    this.firstLetterTarget.classList.add('invisible');
   }
 
   deleteCurrentPicture() {
@@ -48,9 +49,9 @@ export default class extends Controller {
     // GET request to something like /users/{null|undefined} => 404
     // If user decides to save, the logic for removing the avatar
     // will be done correctly though.
-    this.avatarPreviewTarget.style.display = "none";
-    this.plusIconTarget.style.display = "block";
-    this.deleteButtonTarget.style.display = "none";
+    this.avatarPreviewTarget.classList.add('invisible');
+    this.deleteButtonTarget.classList.add('invisible');
+    this.firstLetterTarget.classList.remove('invisible');
     // Need to explicitly clear value in order for the input
     // to be triggered if a new image wants to be added after
     // deleting the current one.

@@ -32,6 +32,8 @@
   align-items: center;
   text-align: center;
   background-color: $avatar-blue;
+  overflow: hidden;
+
   p {
     color: $blue;
     font-size: 2rem;
