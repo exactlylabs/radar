@@ -76,8 +76,7 @@ include EventSourceable
     event_data = {
       id: category.id,
     }
-    event = Location.new_event(self, Location::Events::CATEGORY_ADDED, event_data)
-    create_snapshot_from_event event do |state, event|
+    self.record_event Location::Events::CATEGORY_ADDED, event_data, Time.now do |state, event|
       state["categories"] ||= []
       state["categories"] << category.name
     end
