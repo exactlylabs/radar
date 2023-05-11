@@ -131,8 +131,8 @@ class DiscordNotifier < EventsNotifier::Notifier
     fieldset.add_field(name: "Name", value: location_info.location.name)
     fieldset.add_field(name: "Address", value: location_info.location.address)
     fieldset.add_field(name: "Account", value: location_info.location.account.name)
-    fieldset.add_field(name: "State", value: location_info.state.name)
-    fieldset.add_field(name: "County", value: location_info.county.name)
+    fieldset.add_field(name: "State", value: location_info.state.name) if location_info.state
+    fieldset.add_field(name: "County", value: location_info.county.name) if location_info.county
     fieldset.add_field(name: "Place", value: location_info.place.name) if location_info.place
   end
 
@@ -148,8 +148,8 @@ class DiscordNotifier < EventsNotifier::Notifier
   def fill_study_online_notification_fieldset(location_info, fieldset)
     self.fill_default_study_location_fieldset(location_info, fieldset)
     fieldset.add_field(name: "ISP", value: location_info.extra[:as_org]&.name) if location_info.extra[:as_org]
-    fieldset.add_field(name: "Total in County", value: "#{location_info.extra[:locations_per_county_count]} out of #{Location::LOCATIONS_PER_COUNTY_GOAL} goal")
-    fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]} out of #{Location::LOCATIONS_PER_PLACE_GOAL} goal") if location_info.extra[:locations_per_place_count]
+    fieldset.add_field(name: "Total in County", value: "#{location_info.extra[:locations_per_county_count]} out of #{Location::LOCATIONS_PER_COUNTY_GOAL} goal") if location_info.county.present?
+    fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]} out of #{Location::LOCATIONS_PER_PLACE_GOAL} goal") if location_info.place.present? && location_info.extra[:locations_per_place_count]
     fieldset.add_field(name: "Total in ISP in the County", value: "#{location_info.extra[:locations_per_isp_county_count]} out of #{Location::LOCATIONS_PER_ISP_PER_COUNTY_GOAL}") if location_info.extra[:locations_per_isp_county_count]
   end
 
@@ -157,7 +157,7 @@ class DiscordNotifier < EventsNotifier::Notifier
     self.add_default_location_info(location_info, fieldset)
     fieldset.add_field(name: "ISP", value: location_info.extra[:as_org]&.name) if location_info.extra[:as_org]
     fieldset.add_field(name: "Total in County", value: "#{location_info.extra[:locations_per_county_count]}")
-    fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]}") if location_info.extra[:locations_per_place_count]
+    fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]}") if location_info.place.present? && location_info.extra[:locations_per_place_count]
     fieldset.add_field(name: "Total in ISP", value: "#{location_info.extra[:locations_per_isp_count]}") if location_info.extra[:locations_per_isp_count]
   end
 end
