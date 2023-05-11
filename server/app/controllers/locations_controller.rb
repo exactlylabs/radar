@@ -34,7 +34,7 @@ class LocationsController < ApplicationController
 
     @location.user = current_user
     @location.account_id = current_account.is_all_accounts? ? params[:location][:account_id] : current_account.id
-    @location.categories = policy_scope(Category).where(id: params[:location][:categories].split(",")).distinct
+    @location.categories << policy_scope(Category).where(id: params[:location][:categories].split(",")).distinct
     # TODO: Is there a better UX for this?
     current_clients = policy_scope(Client)
     if current_clients.count == 1
@@ -64,7 +64,19 @@ class LocationsController < ApplicationController
   # PATCH/PUT /locations/1 or /locations/1.json
   def update
     respond_to do |format|
-      @location.categories = policy_scope(Category).where(id: params[:location][:categories].split(","))
+      # By getting the specific locations that get added/deleted
+      # we can emit the exact events for each location
+      current_categories_ids = @location.categories.map {|c| c.id}
+      latest_categories_ids = params[:location][:categories].split(",").map {|id| id.to_i}
+      
+      new_categories_ids = latest_categories_ids - current_categories_ids
+      to_delete_categories_ids = current_categories_ids - latest_categories_ids
+
+      to_delete_categories_ids.each do |id|
+        @location.categories.delete(id) # This delete method does trigger callbacks
+      end
+      @location.categories << policy_scope(Category).where(id: new_categories_ids)
+      
       if @location.save && @location.update(location_params)
         @locations = policy_scope(Location)
         format.turbo_stream
@@ -80,6 +92,7 @@ class LocationsController < ApplicationController
   # DELETE /locations/1 or /locations/1.json
   def destroy
     @location.soft_delete
+    policy_scope(CategoriesLocation).where(location_id: @location.id).destroy_all
     respond_to do |format|
       format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }
       format.json { head :no_content }

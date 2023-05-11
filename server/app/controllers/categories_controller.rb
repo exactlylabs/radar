@@ -65,7 +65,7 @@ class CategoriesController < ApplicationController
         format.turbo_stream
         format.html { render partial: "categories/list_item", locals: {category: @category} }
       else
-        format.html { redirect_to "/locations", notice: "Error updating your category. Please try again." }
+        format.html { redirect_to "/locations", notice: "Error updating your category. Please try again later." }
       end
     end
   end
@@ -77,7 +77,7 @@ class CategoriesController < ApplicationController
         @notice = "Category deleted successfully."
         format.turbo_stream
       else
-        format.html { redirect_to "/locations", notice: "Error deleting your category. Please try again." }
+        format.html { redirect_to "/locations", notice: "Error deleting your category. Please try again later." }
       end
     end
   end
