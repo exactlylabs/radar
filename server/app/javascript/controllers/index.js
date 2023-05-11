@@ -105,3 +105,6 @@ application.register("category-tooltip", CategoryTooltipController);
 
 import FetchController from './fetch_controller';
 application.register("fetch", FetchController);
+
+import AlertController from './alert_controller';
+application.register("alert", AlertController);

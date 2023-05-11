@@ -361,8 +361,8 @@
                             <!--end::Avatar-->
                             <!--begin::Username-->
                             <div class="d-flex flex-column">
-                              <div class="fw-bolder d-flex align-items-center fs-5">Hello, <%= current_user.first_name %></div>
-                              <span class="fw-bold text-muted fs-7" style="max-width: 180px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><%= current_user.email %></span>
+                              <div class="card-main-title d-flex align-items-center">Hello, <%= current_user.first_name %></div>
+                              <span class="additional-text ellipsis" style="max-width: 180px;"><%= current_user.email %></span>
                             </div>
                             <!--end::Username-->
                           </div>
@@ -373,7 +373,7 @@
                         <!--end::Menu separator-->
                         <!--begin::Menu item-->
                         <div class="menu-item px-5">
-                          <a href="<%= edit_user_registration_path %>" class="menu-link px-2">
+                          <a href="<%= edit_user_registration_path %>" class="regular-text menu-link px-2">
                             <%= image_tag "user-icon.png", size: "16x16", style: "margin-right: 13px" %>
                             My Profile
                           </a>
@@ -384,7 +384,7 @@
                         <!--end::Menu separator-->
                         <!--begin::Menu item-->
                         <div class="menu-item px-2">
-                          <a class="menu-link px-5" rel="nofollow" data-method="delete" href="/users/custom_sign_out">
+                          <a class="regular-text menu-link px-5" rel="nofollow" data-method="delete" href="/users/custom_sign_out">
                             <%= image_tag "logout-icon.png", size: "16x16", style: "margin-right: 13px" %>
                             Sign Out
                           </a>

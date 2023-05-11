@@ -1,37 +1,20 @@
 <%= form_with(model: Account, url: account_path(@account.id), method: :put, data: {"turbo-frame" => "_top"}) do |form| %>
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" style="font-size: 20px">Edit account</h5>
-
-        <!--begin::Close-->
-        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-          <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-          <span class="svg-icon svg-icon-muted svg-icon-2hx" data-bs-dismiss="modal" aria-label="Close">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="black"/>
-                  <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="black"/>
-                  <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="black"/>
-              </svg>
-            </span>
-          <!--end::Svg Icon-->
-        </div>
-        <!--end::Close-->
-      </div>
-
+      <%= render partial: "application/components/modals/modal_header", locals: {title: "Edit account"} %>
       <div class="modal-body">
-        <div class="fv-row mb-7 fv-plugins-icon-container">
+        <div class="d-flex flex-column text-start mb-7">
           <!--begin::Label-->
-          <label class="required fs-6 fw-bold mb-2"><%= "#{@account.is_personal? ? 'Account' : 'Organization'} Name" %></label>
+          <label class="forms--label mb-2 required"><%= "#{@account.is_personal? ? 'Account' : 'Organization'} Name" %></label>
           <!--end::Label-->
           <!--begin::Input-->
-          <%= form.text_field :name, class: "form-control form-control-solid", value: @account.name %>
+          <%= form.text_field :name, class: "forms--text-input", value: @account.name %>
           <!--end::Input-->
           <div class="fv-plugins-message-container invalid-feedback"></div>
         </div>
 
-        <div class="fv-row mb-7 fv-plugins-icon-container">
-          <label class="required fs-6 fw-bold mb-2">Account type</label>
+        <div class="d-flex flex-column text-start mb-7">
+          <label class="forms--label mb-2 required">Account type</label>
           <div class="d-flex flex-row justify-content-start">
             <div class="form-check form-check-custom form-check-solid me-5">
               <input class="form-check-input me-2"
@@ -41,7 +24,7 @@
                      <%= @account.is_personal? ? "checked=checked" : nil %>
                      id="personal-radio"
                 />
-              <label for="personal-radio" style="font-weight: 500; font-size: 14px; color: #5e6278">Personal</label>
+              <label class="regular-text" for="personal-radio">Personal</label>
             </div>
             <div class="form-check form-check-custom form-check-solid">
               <input class="form-check-input me-2"
@@ -51,15 +34,15 @@
                      <%= @account.is_organization? ? "checked=checked" : nil %>
                      id="organization-radio"
                 />
-              <label for="organization-radio" style="font-weight: 500; font-size: 14px; color: #5e6278">Organization</label>
+              <label class="regular-text" for="organization-radio">Organization</label>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-        <%= form.submit "Save", class: "btn btn-primary" %>
+      <div class="modal-footer modals--footer">
+        <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
+        <%= form.submit "Save", class: "custom-button custom-button--sm custom-button--primary" %>
       </div>
     </div>
   </div>

@@ -2,10 +2,10 @@
      data-registration-target="step2Wrapper"
      style="display: none"
 >
-  <h1 class="text-dark mb-3">How do you want to use Radar?</h1>
+  <h1 class="page-main-title">How do you want to use Radar?</h1>
   <!--end::Title-->
   <!--begin::Subtitle-->
-  <div class="text-gray-400 fw-bold fs-4" style="margin-bottom: 40px">
+  <div class="additional-text mb-8">
     Radar is great for both personal user and for organizations.
   </div>
   <!--end::Subtitle-->
@@ -27,8 +27,8 @@
         </span>
       </div>
       <div>
-        <div class="fw-bolder fs-4 text-start">Personal use</div>
-        <div class="text-gray-400 fw-bold fs-6 text-start">Use Radar at your home or a similar place.</div>
+        <div class="card-main-title text-start">Personal use</div>
+        <div class="additional-text text-start">Use Radar at your home or a similar place.</div>
       </div>
     </div>
     <div class="sign-up--account-type-box d-flex flex-row justify-content-start align-items-center"
@@ -47,27 +47,25 @@
           </span>
       </div>
       <div>
-        <div class="fw-bolder fs-4 text-start">Use for an organization</div>
-        <div class="text-gray-400 fw-bold fs-6 text-start">Use Radar at your company or organization.</div>
+        <div class="card-main-title text-start">Use for an organization</div>
+        <div class="additional-text text-start">Use Radar at your company or organization.</div>
       </div>
     </div>
   </div>
   <!--end::TypePicker-->
   <!--begin::ButtonsContainer-->
-  <div class="d-flex flex-row justify-content-between" style="width: 100%; margin: 0 auto">
+  <div class="w-100 my-0 mx-auto d-flex flex-row justify-content-between">
     <!--begin::LaterButton-->
     <button type="button"
-            class="btn btn-secondary"
+            class="custom-button custom-button--lg custom-button--secondary"
             data-action="click->registration#backToStep1"
-            style="height: 48px;"
     >Back</button>
     <!--end::LaterButton-->
     <!--begin::ContinueButton-->
     <button type="button"
-            class="btn btn-primary disabled"
+            class="custom-button custom-button--lg custom-button--primary custom-button--disabled disabled"
             data-action="click->registration#saveAccountTypeAndContinue"
             data-registration-target="continueToNameButton"
-            style="height: 48px; width: 172px;"
     >Continue</button>
     <!--end::ContinueButton-->
   </div>

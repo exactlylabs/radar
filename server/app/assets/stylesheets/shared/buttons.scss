@@ -76,6 +76,10 @@
   &.custom-button--secondary-light {
     color: $dark-gray;
   }
+
+  &:hover {
+    cursor: default;
+  }
 }
 
 .custom-button--lg {

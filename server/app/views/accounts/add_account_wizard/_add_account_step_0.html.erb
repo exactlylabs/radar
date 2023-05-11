@@ -1,7 +1,7 @@
-<div class="modal-body" style="width: max-content; padding-left: 60px; padding-right: 60px" data-add-account-target="step0">
+<div class="modal-body modals--body" data-add-account-target="step0">
   <div class="d-flex flex-column align-items-center justify-content-center">
     <!--begin::Title-->
-    <h1 class="text-dark mb-10">How do you want to use Radar?</h1>
+    <h1 class="modals--main-title mb-8">How do you want to use Radar?</h1>
     <!--end::Title-->
     <!--begin::TypePicker-->
     <div class="sign-up--account-type-container"
@@ -21,8 +21,8 @@
         </span>
         </div>
         <div>
-          <div class="fw-bolder fs-4 text-start">Personal use</div>
-          <div class="text-gray-400 fw-bold fs-6 text-start">Use Radar at your home or a similar place.</div>
+          <div class="card-main-title text-start">Personal use</div>
+          <div class="additional-text text-start">Use Radar at your home or a similar place.</div>
         </div>
       </div>
       <div class="sign-up--account-type-box d-flex flex-row justify-content-start align-items-center"
@@ -41,8 +41,8 @@
           </span>
         </div>
         <div>
-          <div class="fw-bolder fs-4 text-start">Use for an organization</div>
-          <div class="text-gray-400 fw-bold fs-6 text-start">Use Radar at your company or organization.</div>
+          <div class="card-main-title text-start">Use for an organization</div>
+          <div class="additional-text text-start">Use Radar at your company or organization.</div>
         </div>
       </div>
     </div>
@@ -50,23 +50,18 @@
     <!--begin::ButtonsContainer-->
   </div>
 </div>
-<div class="modal-footer flex-row justify-content-end"
+<div class="modal-footer modals--footer"
      data-add-account-target="step0Footer"
      style="display: flex"
 >
   <!--begin::LaterButton-->
-  <button type="button"
-          class="btn btn-light"
-          data-bs-dismiss="modal"
-          style="height: 48px;"
-  >Cancel</button>
+  <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
   <!--end::LaterButton-->
   <!--begin::ContinueButton-->
   <button type="button"
-          class="btn btn-primary disabled"
+          class="custom-button custom-button--primary custom-button--sm custom-button--disabled disabled"
           data-action="click->add-account#saveAccountTypeAndContinue"
           data-add-account-target="continueToNameButton"
-          style="height: 48px;"
   >Continue</button>
   <!--end::ContinueButton-->
 </div>

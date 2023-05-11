@@ -1,0 +1,28 @@
+@import "colors";
+
+.custom-alert {
+  width: max-content;
+  padding: 1rem;
+  position: fixed;
+  bottom: 75px;
+  left: 140px;
+  z-index: 5;
+  background-color: $alert--primary-background-color;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 6px;
+
+  &.custom-alert--danger {
+    background-color: $alert--danger-background-color;
+  }
+
+  h4 {
+    color: $alert--primary-color !important;
+
+    &.alert--text-danger {
+      color: $alert--danger-color !important;
+    }
+  }
+}

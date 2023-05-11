@@ -37,8 +37,12 @@ export default class extends Controller {
       !!this.userData.email
     ) {
       this.submitButtonTarget.classList.remove("disabled");
+      this.submitButtonTarget.classList.remove("custom-button--disabled");
+      this.submitButtonTarget.setAttribute('type', 'submit');
     } else {
       this.submitButtonTarget.classList.add("disabled");
+      this.submitButtonTarget.classList.add("custom-button--disabled");
+      this.submitButtonTarget.setAttribute('type', 'button');
     }
   }
 

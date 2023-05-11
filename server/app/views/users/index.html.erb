@@ -9,7 +9,7 @@
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item page-sub-title"><%= current_account.name %>
+        <li class="breadcrumb-item page-sub-title"><%= current_account.is_all_accounts? ? "All accounts" : current_account.name %>
         </li>
       </ul>
       <!--end::Breadcrumb-->

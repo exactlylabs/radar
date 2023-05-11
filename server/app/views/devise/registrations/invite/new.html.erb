@@ -5,27 +5,27 @@
       <!--begin::Heading-->
       <div class="mb-10 text-center">
         <!--begin::Title-->
-        <h1 class="text-dark mb-3">Join <%= account.name %></h1>
+        <h1 class="page-main-title">Join <%= account.name %></h1>
         <!--end::Title-->
         <!--begin::Link-->
-        <div class="text-gray-400 fw-bold fs-4">Already have an account?
-          <%= link_to "Sign in here", users_invite_sign_in_path(token: params[:token]), class: "link-primary fw-bolder" %>
+        <div class="additional-text">Already have an account?
+          <%= link_to "Sign in here", users_invite_sign_in_path(token: params[:token]), class: "regular-link" %>
         </div>
         <!--end::Link-->
       </div>
       <!--end::Heading-->
       <!--begin::Input group-->
       <div class="row fv-row mb-7 fv-plugins-icon-container">
-        <p style="color: red" data-registration-target="errorText"></p>
+        <p class="text--error" data-registration-target="errorText"></p>
         <!--begin::Col-->
-        <div class="col-xl-6">
-          <label class="form-label fw-bolder text-dark fs-6 required">First Name</label>
+        <div class="col-xl-6 d-flex flex-column">
+          <label class="forms--label mb-2 required">First Name</label>
           <input type="text"
                  id="first_name"
                  name="first_name"
                  autofocus="true"
                  autocomplete="off"
-                 class="form-control form-control-lg form-control-solid"
+                 class="forms--text-input"
                  data-action="input->registration#handleInputChange"
                  data-registration-target="firstNameInput"
                  value="<%= first_name %>"
@@ -33,13 +33,13 @@
         </div>
         <!--end::Col-->
         <!--begin::Col-->
-        <div class="col-xl-6">
-          <label class="form-label fw-bolder text-dark fs-6 required">Last Name</label>
+        <div class="col-xl-6 d-flex flex-column">
+          <label class="forms--label mb-2 required">Last Name</label>
           <input type="text"
                  id="last_name"
                  name="last_name"
                  autocomplete="off"
-                 class="form-control form-control-lg form-control-solid"
+                 class="forms--text-input"
                  data-action="input->registration#handleInputChange"
                  data-registration-target="lastNameInput"
                  value="<%= last_name %>"
@@ -49,13 +49,13 @@
       </div>
       <!--end::Input group-->
       <!--begin::Input group-->
-      <div class="fv-row mb-7 fv-plugins-icon-container">
-        <label class="form-label fw-bolder text-dark fs-6 required">Email address</label>
+      <div class="forms--input-group d-flex flex-column mb-7">
+        <label class="forms--label mb-2 required">Email address</label>
         <input type="email"
                id="email"
                name="email"
                autocomplete="off"
-               class="form-control form-control-lg form-control-solid"
+               class="forms--text-input"
                data-action="input->registration#handleInputChange"
                data-registration-target="emailInput"
                value="<%= email %>"
@@ -63,11 +63,11 @@
       </div>
       <!--end::Input group-->
       <!--begin::Input group-->
-      <div class="mb-10 fv-row fv-plugins-icon-container" data-kt-password-meter="true" data-controller="password">
+      <div class="mb-7 fv-row fv-plugins-icon-container" data-kt-password-meter="true" data-controller="password">
         <!--begin::Wrapper-->
         <div class="mb-1">
           <!--begin::Label-->
-          <label class="form-label fw-bolder text-dark fs-6 required">Password</label>
+          <label class="forms--label mb-2 required">Password</label>
           <!--end::Label-->
           <!--begin::Input wrapper-->
           <div class="position-relative mb-3" data-controller="password-reveal">
@@ -76,7 +76,7 @@
                    name="password"
                    autofocus="true"
                    autocomplete="off"
-                   class="form-control form-control-lg form-control-solid"
+                   class="forms--text-input forms--text-input-with-decoration w-100"
                    data-action="input->registration#handleInputChange"
                    data-registration-target="passwordInput"
                    data-password-reveal-target="passwordInput"
@@ -102,14 +102,14 @@
       </div>
       <!--end::Input group=-->
       <!--begin::Input group-->
-      <div class="fv-row mb-5 fv-plugins-icon-container">
-        <label class="form-label fw-bolder text-dark fs-6 required">Confirm Password</label>
+      <div class="fv-row mb-7 fv-plugins-icon-container">
+        <label class="forms--label mb-2 required">Confirm Password</label>
         <div class="position-relative mb-3" data-controller="password-reveal">
           <input type="password"
                  id="password_confirmation"
                  name="password_confirmation"
                  autocomplete="off"
-                 class="form-control form-control-lg form-control-solid"
+                 class="forms--text-input forms--text-input-with-decoration w-100"
                  data-action="input->registration#handleInputChange"
                  data-registration-target="passwordCheckInput"
                  data-password-reveal-target="passwordConfirmationInput"
@@ -124,7 +124,7 @@
       <!--end::Input group-->
       <!--begin::Input group-->
       <div class="fv-row mb-10 fv-plugins-icon-container">
-        <label class="form-check form-check-custom form-check-inline form-check-solid">
+        <label class="forms--checkbox form-check form-check-custom form-check-inline form-check-solid">
           <input type="checkbox"
                  id="terms"
                  name="terms"
@@ -133,24 +133,24 @@
                  data-action="input->registration#handleInputChange"
                  data-registration-target="termsInput"
             />
-          <span class="form-check-label fw-bold text-gray-700 fs-6">I Agree to the
-          <a href="#" class="ms-1 link-primary">Terms and conditions</a>.</span>
+          <span class="ms-2 forms--label">I Agree to the
+          <a href="#" class="regular-link">Terms and conditions</a>.</span>
         </label>
       </div>
       <!--end::Input group-->
       <!--begin::Actions-->
       <div class="text-center">
-        <button class="btn btn-lg btn-primary disabled"
+        <button class="custom-button custom-button--primary custom-button--lg custom-button--disabled disabled m-auto"
                 type="button"
                 data-action="click->registration#finishRegistrationWithInvite"
                 data-registration-target="continueButton"
         >Finish</button>
         <button type="button"
-                class="btn btn-primary disabled"
-                style="height: 48px; display: none;"
+                class="custom-button custom-button--primary custom-button--lg custom-button--disabled disabled m-auto"
+                style="height: 44px; display: none;"
                 data-registration-target="finishButtonLoading"
         >
-          <div class="spinner-border text-light m-auto" role="status"></div>
+          <div class="spinner-border spinner-border-sm text-light m-auto" role="status"></div>
         </button>
       </div>
     </div>

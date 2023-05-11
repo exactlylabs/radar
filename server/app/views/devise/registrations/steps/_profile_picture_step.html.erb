@@ -2,10 +2,10 @@
      data-registration-target="step1Wrapper"
      style="display: none; width: max-content; margin: 0 auto;"
 >
-  <h1 class="text-dark mb-3">Add a profile picture</h1>
+  <h1 class="page-main-title">Add a profile picture</h1>
   <!--end::Title-->
   <!--begin::Subtitle-->
-  <div class="text-gray-400 fw-bold fs-4" style="margin-bottom: 40px">
+  <div class="additional-text mb-8">
     Let's just add a picture to you profile
   </div>
   <!--end::Subtitle-->
@@ -19,19 +19,18 @@
     />
   <!--begin::HiddenInput-->
   <!--begin::AccountTypeContainer-->
-  <div class="sign-up--custom-input d-flex justify-content-center align-items-center"
-       style="width: 160px; height: 160px; border: dashed 1px #00a3ff; background-color: #f1faff; border-radius: 12px; margin-bottom: 20px"
+  <div class="sign-up--avatar-container"     
        draggable="true"
        data-action="click->registration#handleFileZoneClicked drop->registration#handleFileDrop dragenter->registration#preventDefault dragleave->registration#preventDefault dragover->registration#preventDefault"
        data-registration-target="dropzone"
   >
     <img src=""
-         width="158"
-         height="158"
+         width="104"
+         height="104"
          data-registration-target="avatarPreview"
          style="display: none; margin: auto; border-radius: inherit"
       />
-    <span class="svg-icon svg-icon-primary svg-icon-2hx" data-registration-target="plusIcon">
+    <span class="svg-icon svg-icon-primary svg-icon-2x" data-registration-target="plusIcon">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
         <path d="M21 13H3C2.4 13 2 12.6 2 12C2 11.4 2.4 11 3 11H21C21.6 11 22 11.4 22 12C22 12.6 21.6 13 21 13Z" fill="black"/>
         <path d="M12 22C11.4 22 11 21.6 11 21V3C11 2.4 11.4 2 12 2C12.6 2 13 2.4 13 3V21C13 21.6 12.6 22 12 22Z" fill="black"/>
@@ -40,23 +39,21 @@
   </div>
   <!--end::AccountTypeContainer-->
   <!--begin::AvatarInputLabel-->
-  <div class="text-primary fw-bolder fs-4" style="margin-bottom: 40px">Upload a picture</div>
+  <div class="regular-text fw-bold mt-4 mb-8">Upload a picture</div>
   <!--end::AvatarInputLabel-->
   <!--begin::ButtonsContainer-->
-  <div style="width: 100%; margin: 0 auto; display: flex; justify-content: space-between">
+  <div class="w-100 my-0 mx-auto d-flex justify-content-between">
     <!--begin::LaterButton-->
     <button type="button"
-            class="btn btn-secondary"
+            class="custom-button custom-button--lg custom-button--secondary"
             data-action="click->registration#backToStep0"
-            style="height: 48px; margin-right: 20px;"
     >Back</button>
     <!--end::LaterButton-->
     <!--begin::ContinueButton-->
     <button type="button"
-            class="btn btn-primary"
+            class="custom-button custom-button--lg custom-button--primary"
             data-registration-target="avatarContinueButton"
             data-action="click->registration#saveAvatarAndContinue"
-            style="height: 48px; width: 172px;"
     >Continue</button>
     <!--end::ContinueButton-->
   </div>

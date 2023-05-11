@@ -1,10 +1,6 @@
-<div class="card" style="width: 85%; height: max-content; margin: auto" id="client-details">
-  <!--begin::Card header-->
-  <div class="card-header align-items-center" style="height: 65px">
-    <div class="fw-bolder mb-0" style="font-size: 20px; color: #3f4254">Overview</div>
-  </div>
+<div class="card w-100" id="client-details">
   <!--begin::Card title-->
-  <div class="card-title-container d-flex flex-row justify-content-between align-items-center"
+  <div class="card-title-container p-6 d-flex flex-row justify-content-between align-items-center"
        style="height: 90px;padding-left: 30px;padding-right: 30px;margin-top: 20px;margin-bottom: 50px;">
     <div class="card-title--wrapper d-flex flow-row align-items-center">
       <div class="card-title--icon d-flex align-items-center justify-content-center"
@@ -14,17 +10,17 @@
         </span>
       </div>
       <div class="card-title--title-content">
-        <div class="fw-bolder" style="margin-bottom: 5px;font-size: 19px;">
+        <div class="card-main-title">
           <%= "#{invitee.first_name} #{invitee.last_name}" %>
         </div>
-        <div style="margin-bottom: 10px;color: #b5b5c3;font-size: 14px;">
+        <div class="additional-text">
           <%= invitee.email %>
         </div>
       </div>
     </div>
     <div class="d-flex flex-row flex-wrap justify-content-evenly">
-      <%= link_to "Resend invite", resend_invites_path(email: invitee.email), class: "btn btn-light-primary", style: "padding-left: 10px; padding-right: 10px; margin-right: 10px;", method: :post %>
-      <%= link_to 'Remove User', users_account_path(invitee, type: 'Invite'), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-light-danger" %>
+      <%= link_to "Resend invite", resend_invites_path(email: invitee.email), class: "custom-button custom-button--sm custom-button--primary-light px-2 me-3", method: :post %>
+      <%= link_to 'Remove User', users_account_path(invitee, type: 'Invite'), method: :delete, data: { confirm: 'Are you sure?' }, class: "custom-button custom-button--sm custom-button--secondary-light-danger" %>
     </div>
   </div>
   <!--end::Card title-->
@@ -33,14 +29,14 @@
   <div class="card-body pt-0 d-flex flex-row">
     <div class="client-data" style="width: 30%">
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-        <div class="fw-bolder w-50" style="min-width: 130px">Status</div>
-        <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
-          <span class="badge <%= invitee.get_badge_style %>"><%= invitee.status_to_human %></span>
+        <div class="forms--label w-50">Status</div>
+        <div class="d-flex flex-row w-100 w-xl-50">
+          <span class="custom-badge <%= invitee.get_badge_style %>"><%= invitee.status_to_human %></span>
         </div>
       </div>
-      <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-        <div class="fw-bolder w-50" style="min-width: 130px">Join Date</div>
-        <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
+      <div class="location-data--row d-flex flex-row align-items-center justify-content-between flex-wrap">
+        <div class="forms--label w-50">Join Date</div>
+        <div class="regular-text d-flex flex-row w-100 w-xl-50">
           -
         </div>
       </div>

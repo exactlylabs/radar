@@ -9,11 +9,11 @@
       <!--begin::Heading-->
       <div class="text-center mb-10">
         <!--begin::Title-->
-        <h1 class="text-dark mb-3">Sign In to Radar</h1>
+        <h1 class="page-main-title">Sign In to Radar</h1>
         <!--end::Title-->
         <!--begin::Link-->
-          <div class="text-gray-400 fw-bold fs-4">New Here?
-            <a href="<%= users_invite_sign_up_path(token: params[:token]) %>" class="link-primary fw-bolder">Create an Account</a>
+          <div class="additional-text">New Here?
+            <a href="<%= users_invite_sign_up_path(token: params[:token]) %>" class="regular-link">Create an Account</a>
           </div>
         <!--end::Link-->
       </div>
@@ -24,22 +24,22 @@
         <%- end -%>
       </div>
       <!--begin::Input group-->
-      <div class="fv-row mb-10 fv-plugins-icon-container">
+      <div class="d-flex flex-column mb-7">
         <p data-sign-in-target="errorMessage" style="color: red"></p>
         <!--begin::Label-->
-        <label class="form-label fs-6 fw-bolder text-dark">Email</label>
+        <label class="forms--label mb-2 required">Email</label>
         <!--end::Label-->
         <!--begin::Input-->
-        <input type="email" autofocus="true" autocomplete="email" class="form-control form-control-lg form-control-solid" tabindex="1" data-sign-in-target="emailInput"/>
+        <input type="email" autofocus="true" autocomplete="email" class="forms--text-input" tabindex="1" data-sign-in-target="emailInput"/>
         <!--end::Input-->
         <div class="fv-plugins-message-container invalid-feedback"></div></div>
       <!--end::Input group-->
       <!--begin::Input group-->
-      <div class="fv-row mb-10 fv-plugins-icon-container">
+      <div class="forms--input-group d-flex flex-column mb-7">
         <!--begin::Wrapper-->
         <div class="d-flex flex-stack mb-2">
           <!--begin::Label-->
-          <label class="form-label fw-bolder text-dark fs-6 mb-0">Password</label>
+          <label class="forms--label mb-2 required">Password</label>
           <!--end::Label-->
         </div>
         <!--end::Wrapper-->
@@ -49,12 +49,12 @@
                  autocomplete="true"
                  id="current-password"
                  name="current_password"
-                 class="form-control form-control-lg form-control-solid"
+                 class="forms--text-input forms--text-input-with-decoration w-100"
                  tabindex="2"
                  data-sign-in-target="passwordInput"
                  data-password-reveal-target="passwordInput"
           />
-          <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
+          <span class="forms--input-decoration btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
                 data-action="click->password-reveal#toggleVisibility">
 						<i data-password-reveal-target="eyeSlashIcon" class="bi bi-eye-slash fs-2"></i>
 						<i data-password-reveal-target="eyeIcon" class="bi bi-eye fs-2 d-none"></i>
@@ -67,7 +67,7 @@
       <div class="text-center">
         <!--begin::Submit button-->
         <button type="button"
-                class="btn btn-lg btn-primary fw-bolder me-3 my-2"
+                class="custom-button custom-button--lg custom-button--primary mx-auto my-2"
                 tabindex="3"
                 data-action="click->sign-in#finishSignInFromInvite"
                 data-registration-target="signInSubmitButton">
