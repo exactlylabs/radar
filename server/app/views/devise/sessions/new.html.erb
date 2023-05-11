@@ -7,12 +7,12 @@
 			<!--begin::Heading-->
 			<div class="text-center mb-10">
 				<!--begin::Title-->
-				<h1 class="text-dark mb-3">Sign In to Radar</h1>
+				<h1 class="page-main-title">Sign In to Radar</h1>
 				<!--end::Title-->
 				<!--begin::Link-->
 				<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-				<div class="text-gray-400 fw-bold fs-4">New Here?
-				<a href="<%= new_registration_path(resource_name) %>" class="link-primary fw-bolder">Create an Account</a></div>
+				<div class="additional-text">New Here?
+				<a href="<%= new_registration_path(resource_name) %>" class="regular-link">Create an Account</a></div>
 				<% end %>
 				<!--end::Link-->
 			</div>
@@ -23,34 +23,34 @@
 				<%- end -%>
 			</div>
 			<!--begin::Input group-->
-			<div class="fv-row mb-10 fv-plugins-icon-container">
+			<div class="forms--input-group d-flex flex-column mb-4">
 				<!--begin::Label-->
-				<label class="form-label fs-6 fw-bolder text-dark">Email</label>
+				<label class="forms--label mb-2 required">Email</label>
 				<!--end::Label-->
 				<!--begin::Input-->
-				<%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control form-control-lg form-control-solid", tabindex: 1 %>
+				<%= f.email_field :email, autofocus: true, autocomplete: "email", class: "forms--text-input", tabindex: 1 %>
 				<!--end::Input-->
 			<div class="fv-plugins-message-container invalid-feedback"></div></div>
 			<!--end::Input group-->
 			<!--begin::Input group-->
-			<div class="fv-row mb-10 fv-plugins-icon-container">
+			<div class="forms--input-group d-flex flex-column mb-4">
 				<!--begin::Wrapper-->
 				<div class="d-flex flex-stack mb-2">
 					<!--begin::Label-->
-					<label class="form-label fw-bolder text-dark fs-6 mb-0">Password</label>
+					<label class="forms--label mb-2 required">Password</label>
 					<!--end::Label-->
 					<!--begin::Link-->
 					<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-					<a href="<%= new_password_path(resource_name) %>" class="link-primary fs-6 fw-bolder" tabindex="4">Forgot Password ?</a>
+					<a href="<%= new_password_path(resource_name) %>" class="regular-link" tabindex="4">Forgot Password ?</a>
 					<% end %>
 					<!--end::Link-->
 				</div>
 				<!--end::Wrapper-->
 				<div class="position-relative mb-3" data-controller="password-reveal">
 					<!--begin::Input-->
-					<%= f.password_field :password, autocomplete: "current-password", class: "form-control form-control-lg form-control-solid", tabindex: 2, data: { "password-reveal-target" => "passwordInput" } %>
+					<%= f.password_field :password, autocomplete: "current-password", class: "forms--text-input forms--text-input-with-decoration w-100", tabindex: 2, data: { "password-reveal-target" => "passwordInput" } %>
 					<!--end::Input-->
-					<span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
+					<span class="forms--input-decoration btn btn-sm btn-icon"
 								data-action="click->password-reveal#toggleVisibility">
 						<i data-password-reveal-target="eyeSlashIcon" class="bi bi-eye-slash fs-2"></i>
 						<i data-password-reveal-target="eyeIcon" class="bi bi-eye fs-2 d-none"></i>
@@ -61,7 +61,7 @@
 			<!--begin::Actions-->
 			<div class="text-center">
 				<!--begin::Submit button-->
-				<%= f.submit "Sign In", class: "btn btn-lg btn-primary fw-bolder me-3 my-2", tabindex: 3 %>
+				<%= f.submit "Sign In", class: "custom-button custom-button--lg custom-button--primary mx-auto my-2", tabindex: 3 %>
 				<!--end::Submit button-->
 				<!--begin::Google link-->
 				<!--<a href="#" class="btn btn-light-primary btn-lg fw-bolder my-2">-->

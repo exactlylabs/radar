@@ -75,7 +75,7 @@
             <div class="regular-text ms-1">
               <%= location.expected_mbps_down.present? ? " / #{location.expected_mbps_down} Mbps" : ''%>
             </div>
-            <div class="regular-text ms-2" style="color: <%= location.download_diff.present? ? location.download_diff.start_with?('+') ? '#50cd89' : '#f1416c' : '#b5b5c3' %>;">
+            <div class="<%= location.download_diff.present? ? location.download_diff.start_with?('+') ? 'text--success' : 'text--error' : nil %> regular-text ms-2">
               <%= location.expected_mbps_down.present? ? location.download_diff : ''%>
             </div>
           </div>
@@ -89,22 +89,23 @@
             <div class="regular-text ms-1">
               <%= location.expected_mbps_up.present? ? " / #{location.expected_mbps_up} Mbps" : ''%>
             </div>
-            <div class="regular-text ms-2" style="color: <%= location.download_diff.present? ? location.download_diff.start_with?('+') ? '#50cd89' : '#f1416c' : '#b5b5c3' %>;">
+            <div
+              class="<%= location.upload_diff.present? ? location.upload_diff.start_with?('+') ? 'text--success' : 'text--error' : nil %> regular-text ms-2">
               <%= location.expected_mbps_up.present? ? location.upload_diff : ''%>
             </div>
           </div>
         </div>
         <div class="location-data--row mt-6 mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
           <div class="forms--label" style="min-width: 130px;">Latitude</div>
-          <div class="text-start w-100 w-xl-50 regular-text" style="color: #5e6278; font-size: 14px;"><%= location.latitude %></div>
+          <div class="text-start w-100 w-xl-50 regular-text"><%= location.latitude %></div>
         </div>
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
           <div class="forms--label" style="min-width: 130px;">Longitude</div>
-          <div class="text-start w-100 w-xl-50 regular-text" style="color: #5e6278; font-size: 14px;"><%= location.longitude %></div>
+          <div class="text-start w-100 w-xl-50 regular-text"><%= location.longitude %></div>
         </div>
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
           <div class="forms--label" style="min-width: 130px;">Current Pods</div>
-          <div class="text-start w-100 w-xl-50 regular-text" style="color: #5e6278; font-size: 14px;"><%= location.clients.length %></div>
+          <div class="text-start w-100 w-xl-50 regular-text"><%= location.clients.length %></div>
         </div>
       </div>
       <div class="map-container" style="width: 50%; height: inherit;">

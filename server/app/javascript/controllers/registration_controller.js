@@ -78,8 +78,10 @@ export default class extends Controller {
   handleInputChange(e) {
     if (this.anyInputIsIncomplete()) {
       this.continueButtonTarget.classList.add("disabled");
+      this.continueButtonTarget.classList.add("custom-button--disabled");
     } else {
       this.continueButtonTarget.classList.remove("disabled");
+      this.continueButtonTarget.classList.remove("custom-button--disabled");
     }
   }
 
@@ -89,8 +91,10 @@ export default class extends Controller {
       e.target.value !== undefined &&
       e.target.value !== ""
     ) {
+      this.finishButtonTarget.classList.remove("custom-button--disabled");
       this.finishButtonTarget.classList.remove("disabled");
     } else {
+      this.finishButtonTarget.classList.add("custom-button--disabled");
       this.finishButtonTarget.classList.add("disabled");
     }
   }
@@ -284,6 +288,7 @@ export default class extends Controller {
       otherClassList.remove("selected");
     }
     classList.add("selected");
+    this.continueToNameButtonTarget.classList.remove("custom-button--disabled");
     this.continueToNameButtonTarget.classList.remove("disabled");
     this.selectType("personal");
   }
@@ -295,6 +300,7 @@ export default class extends Controller {
       otherClassList.remove("selected");
     }
     classList.add("selected");
+    this.continueToNameButtonTarget.classList.remove("custom-button--disabled");
     this.continueToNameButtonTarget.classList.remove("disabled");
     this.selectType("organization");
   }
@@ -302,6 +308,7 @@ export default class extends Controller {
   clearTypes() {
     this.organizationBoxTarget.classList.remove("selected");
     this.personalBoxTarget.classList.remove("selected");
+    this.continueToNameButtonTarget.classList.add("custom-button--disabled");
     this.continueToNameButtonTarget.classList.add("disabled");
   }
 

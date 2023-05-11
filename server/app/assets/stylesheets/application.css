@@ -72,3 +72,7 @@ p {
 .invisible {
   display: none;
 }
+
+.right-0 {
+  right: 0;
+}

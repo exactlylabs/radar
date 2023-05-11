@@ -2,11 +2,11 @@
   <!--begin::Heading-->
   <div class="mb-10 text-center">
     <!--begin::Title-->
-    <h1 class="text-dark mb-3">Create an Account</h1>
+    <h1 class="page-main-title">Create an Account</h1>
     <!--end::Title-->
     <!--begin::Link-->
-    <div class="text-gray-400 fw-bold fs-4">Already have an account?
-      <%= link_to "Sign in here", new_session_path(resource_name), class: "link-primary fw-bolder" %>
+    <div class="additional-text">Already have an account?
+      <%= link_to "Sign in here", new_session_path(resource_name), class: "regular-link" %>
     </div>
     <!--end::Link-->
   </div>
@@ -14,14 +14,14 @@
   <!--begin::Input group-->
   <div class="row fv-row mb-7 fv-plugins-icon-container">
     <!--begin::Col-->
-    <div class="col-xl-6">
-      <label class="form-label fw-bolder text-dark fs-6 required">First Name</label>
+    <div class="col-xl-6 d-flex flex-column">
+      <label class="forms--label mb-2 required">First Name</label>
       <input type="text"
              id="first_name"
              name="first_name"
              autofocus="true"
              autocomplete="off"
-             class="form-control form-control-lg form-control-solid"
+             class="forms--text-input"
              data-action="input->registration#handleInputChange"
              data-registration-target="firstNameInput"
         />
@@ -31,13 +31,13 @@
     </div>
     <!--end::Col-->
     <!--begin::Col-->
-    <div class="col-xl-6">
-      <label class="form-label fw-bolder text-dark fs-6 required">Last Name</label>
+    <div class="col-xl-6 d-flex flex-column">
+      <label class="forms--label required">Last Name</label>
       <input type="text"
              id="last_name"
              name="last_name"
              autocomplete="off"
-             class="form-control form-control-lg form-control-solid"
+             class="forms--text-input"
              data-action="input->registration#handleInputChange"
              data-registration-target="lastNameInput"
         />
@@ -49,13 +49,13 @@
   </div>
   <!--end::Input group-->
   <!--begin::Input group-->
-  <div class="fv-row mb-7 fv-plugins-icon-container">
-    <label class="form-label fw-bolder text-dark fs-6 required">Email address</label>
+  <div class="forms--input-group d-flex flex-column">
+    <label class="forms--label mb-2 required">Email address</label>
     <input type="email"
            id="email"
            name="email"
            autocomplete="off"
-           class="form-control form-control-lg form-control-solid"
+           class="forms--text-input"
            data-action="input->registration#handleInputChange"
            data-registration-target="emailInput"
       />
@@ -66,11 +66,11 @@
   </div>
   <!--end::Input group-->
   <!--begin::Input group-->
-  <div class="mb-10 fv-row fv-plugins-icon-container" data-kt-password-meter="true">
+  <div class="mb-6 fv-row fv-plugins-icon-container" data-kt-password-meter="true">
     <!--begin::Wrapper-->
     <div class="mb-1">
       <!--begin::Label-->
-      <label class="form-label fw-bolder text-dark fs-6 required">Password</label>
+      <label class="forms--label mb-2 required">Password</label>
       <!--end::Label-->
       <!--begin::Input wrapper-->
       <div class="position-relative mb-3" data-controller="password-reveal">
@@ -79,7 +79,7 @@
                name="password"
                autofocus="true"
                autocomplete="off"
-               class="form-control form-control-lg form-control-solid"
+               class="forms--text-input forms--text-input-with-decoration w-100"
                data-action="input->registration#handleInputChange"
                data-registration-target="passwordInput"
                data-password-reveal-target="passwordInput"
@@ -103,7 +103,7 @@
     <!--end::Wrapper-->
     <!--begin::Hint-->
     <% if @minimum_password_length %>
-      <div class="text-muted">Use <%= @minimum_password_length %> or more characters with a mix of letters, numbers &amp; symbols.</div>
+      <div class="additional-text">Use <%= @minimum_password_length %> or more characters with a mix of letters, numbers &amp; symbols.</div>
     <% end %>
     <!--end::Hint-->
     <% if resource.errors[:password] %>
@@ -112,14 +112,14 @@
   </div>
   <!--end::Input group=-->
   <!--begin::Input group-->
-  <div class="fv-row mb-5 fv-plugins-icon-container">
-    <label class="form-label fw-bolder text-dark fs-6 required">Confirm Password</label>
+  <div class="forms--input-group">
+    <label class="forms--label required">Confirm Password</label>
     <div class="position-relative mb-3" data-controller="password-reveal">
       <input type="password"
              id="password_confirmation"
              name="password_confirmation"
              autocomplete="off"
-             class="form-control form-control-lg form-control-solid"
+             class="forms--text-input forms--text-input-with-decoration w-100"
              data-action="input->registration#handleInputChange"
              data-registration-target="passwordCheckInput"
              data-password-reveal-target="passwordConfirmationInput"
@@ -136,8 +136,8 @@
   </div>
   <!--end::Input group-->
   <!--begin::Input group-->
-  <div class="fv-row mb-10 fv-plugins-icon-container">
-    <label class="form-check form-check-custom form-check-inline form-check-solid">
+  <div class="forms--input-group my-6">
+    <label class="forms--checkbox form-check form-check-custom form-check-inline form-check-solid">
       <input type="checkbox"
              id="terms"
              name="terms"
@@ -146,8 +146,8 @@
              data-action="input->registration#handleInputChange"
              data-registration-target="termsInput"
         />
-      <span class="form-check-label fw-bold text-gray-700 fs-6">I Agree to the
-          <a href="#" class="ms-1 link-primary">Terms and conditions</a>.</span>
+      <span class="ms-2 forms--label">I Agree to the
+          <a href="#" class="regular-link">Terms and conditions</a>.</span>
     </label>
     <% if resource.errors[:terms] %>
       <div class="fv-plugins-message-container invalid-feedback"><%= resource.errors[:terms].join(", ") %></div>
@@ -157,14 +157,14 @@
   <!--begin::Actions-->
   <p style="color: red" data-registration-target="generalErrorText"></p>
   <div class="text-center">
-    <button class="btn btn-lg btn-primary disabled m-auto"
+    <button class="custom-button custom-button--primary custom-button--lg custom-button--disabled disabled m-auto"
             type="button"
             data-action="click->registration#handleContinue"
             data-registration-target="continueButton"
     >Continue</button>
     <button type="button"
-            class="btn btn-lg btn-primary disabled m-auto"
-            style="height: 48px; display: none"
+            class="custom-button custom-button--primary custom-button--lg custom-button--disabled disabled m-auto"
+            style="display: none"
             data-registration-target="continueButtonLoading"
     >
       <div class="spinner-border text-light m-auto" role="status"></div>

@@ -11,7 +11,7 @@
      data-location-expected-download="<%= location.expected_mbps_down %>"
      data-location-expected-upload="<%= location.expected_mbps_up %>"
 >
-  <div class="d-flex">
+  <div class="d-flex w-75">
     <div class="card-title--icon d-flex align-items-center justify-content-center" 
                style="min-width: 36px; height: 36px; width: 36px; background-color: <%= location.online? ? '#f1faff' : '#fff5f7' %>; border-radius: 50%; margin-right: 20px">
       <span class="svg-icon svg-icon-2x <%= location.online? ? "svg-icon-primary" : "svg-icon-danger" %>">
@@ -21,19 +21,12 @@
         </svg>
       </span>
     </div>
-    <!--<img src="" class="w-30px me-6" alt="">-->
-    <div class="d-flex flex-column">
-      <div class="forms--label"><%= location.name %></div>
+    <div class="d-flex flex-column" style="width: 85%">
+      <div class="forms--label ellipsis" style="max-width: 95%"><%= location.name %></div>
       <div class="help-text mb-0"><% total_pods = location.clients.size %><%= total_pods %> pod<%= total_pods != 1 ? "s" : "" %></div>
     </div>
   </div>
-  <div class="d-flex justify-content-end">
-    <!--begin::Switch-->
-    <!--<label class="form-check form-switch form-switch-sm form-check-custom form-check-solid">
-      <input class="form-check-input" name="google" type="checkbox" value="1" id="kt_modal_connected_accounts_google" checked="checked">
-      <span class="form-check-label fw-bold text-muted" for="kt_modal_connected_accounts_google"></span>
-    </label>-->
-    <!--end::Switch-->
+  <div class="d-flex justify-content-end w-25">
     <a href="<%= location_path(location) %>" class="custom-button custom-button--secondary custom-button--xs">Details</a>
   </div>
 </div>

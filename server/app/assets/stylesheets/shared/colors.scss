@@ -3,6 +3,7 @@ $white: #fff;
 $black: #000;
 $error-red: #e54b4b;
 $danger: #f1416c;
+$success-green: #50cd89;
 
 // Primaries
 $blue: #4b7be5;
@@ -37,3 +38,13 @@ $badge--blue-color: $blue;
 $badge--blue-background-color: rgba(75, 123, 229, 0.1);
 $badge--orange-color: #f18f41;
 $badge--orange-background-color: rgba(241, 143, 65, 0.1);
+
+// Alerts
+$alert--primary-background-color: #c2f0dd;
+$alert--primary-color: #055d2a;
+$alert--danger-background-color: #f0c2c2;
+$alert--danger-color: #5d0505;
+
+.transparent {
+  background-color: transparent;
+}

@@ -7,15 +7,19 @@ $bold: 700;
 $extra-bold: 800;
 
 .text--primary {
-  color: $black;
+  color: $black !important;
 }
 
 .text--secondary {
-  color: $gray;
+  color: $gray !important;
 }
 
 .text--error {
-  color: $error-red;
+  color: $error-red !important;
+}
+
+.text--success {
+  color: $success-green !important;
 }
 
 .fw-light {
@@ -52,8 +56,8 @@ $extra-bold: 800;
 
 .dialog-main-title {
   font-variation-settings: 'wght' $bold;
-  font-size: 1.25rem;
-  color: $deep-blue;
+  font-size: 1.25rem !important;
+  color: $deep-blue !important;
 }
 
 .dialog-sub-title {
@@ -98,7 +102,7 @@ $extra-bold: 800;
 .regular-text {
   font-variation-settings: 'wght' $medium !important;
   font-size: 0.875rem !important;
-  color: $deep-blue !important;
+  color: $deep-blue;
 }
 
 .regular-link {
@@ -131,4 +135,10 @@ $extra-bold: 800;
   text-overflow: clip;
   overflow-wrap: break-word;
   white-space: normal;
+}
+
+.ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap
 }

@@ -10,23 +10,23 @@
       <!--begin::Heading-->
       <div class="text-center mb-10">
         <!--begin::Title-->
-        <h1 class="text-dark mb-3">Forgot Password ?</h1>
+        <h1 class="page-main-title">Forgot Password ?</h1>
         <!--end::Title-->
         <!--begin::Link-->
-        <div class="text-gray-400 fw-bold fs-4">Enter your email to reset your password.</div>
+        <div class="additional-text">Enter your email to reset your password.</div>
         <!--end::Link-->
       </div>
       <!--begin::Heading-->
       <!--begin::Input group-->
-      <div class="fv-row mb-10 fv-plugins-icon-container">
-        <label class="form-label fw-bolder text-gray-900 fs-6">Email</label>
-        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control form-control-solid" %>
+      <div class="forms--input-group d-flex flex-column mb-8">
+        <label class="forms--label mb-2 required">Email</label>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "forms--text-input" %>
       <div class="fv-plugins-message-container invalid-feedback"></div></div>
       <!--end::Input group-->
       <!--begin::Actions-->
       <div class="d-flex flex-wrap justify-content-center pb-lg-0">
-        <%= f.submit "Submit", class: "btn btn-lg btn-primary fw-bolder me-4" %>
-        <a href="<%= new_session_path(resource_name) %>" class="btn btn-lg btn-light-primary fw-bolder">Cancel</a>
+        <a href="<%= new_session_path(resource_name) %>" class="custom-button custom-button--lg custom-button--secondary me-4">Cancel</a>
+        <%= f.submit "Submit", class: "custom-button custom-button--lg custom-button--primary" %>
       </div>
       <!--end::Actions-->
     <div></div>

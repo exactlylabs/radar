@@ -38,6 +38,7 @@ export default class extends Controller {
       otherClassList.remove("selected");
     }
     classList.add("selected");
+    this.continueToNameButtonTarget.classList.remove("custom-button--disabled");
     this.continueToNameButtonTarget.classList.remove("disabled");
     this.selectType("personal");
   }
@@ -49,6 +50,7 @@ export default class extends Controller {
       otherClassList.remove("selected");
     }
     classList.add("selected");
+    this.continueToNameButtonTarget.classList.remove("custom-button--disabled");
     this.continueToNameButtonTarget.classList.remove("disabled");
     this.selectType("organization");
   }
@@ -99,8 +101,10 @@ export default class extends Controller {
       e.target.value !== undefined &&
       e.target.value !== ""
     ) {
+      this.finishButtonTarget.classList.remove("custom-button--disabled");
       this.finishButtonTarget.classList.remove("disabled");
     } else {
+      this.finishButtonTarget.classList.add("custom-button--disabled");
       this.finishButtonTarget.classList.add("disabled");
     }
   }

@@ -2,8 +2,7 @@
   <!--begin::Wrapper-->
   <div class="w-100 text-center">
     <!--begin::Heading-->
-    <div class="pb-10 pb-lg-15">
-
+    <div class="pb-6">
       <div class="card-title--icon d-flex align-items-center justify-content-center" 
           style="height: 70px; width: 70px; background-color: #f1faff; border-radius: 50%; margin: 0 auto 34px">
         <span class="svg-icon svg-icon-3x svg-icon-primary">
@@ -15,27 +14,21 @@
       </div>
 
       <!--begin::Title-->
-      <h2 class="fs-2x fw-bolder mb-0">Let's give your Pod a new location</h2>
+      <h2 class="page-main-title">Let's give your Pod a new location</h2>
       <!--end::Title-->
       <!--begin::Notice-->
-      <p class="text-gray-400 fs-4 fw-bold py-7">Pods keep connected to your Internet network and perform various tests throughout the day or at your request.</p>
+      <p class="additional-text">Pods keep connected to your Internet network and perform various tests throughout the day or at your request.</p>
       <!--end::Notice-->
     </div>
     <!--end::Heading-->
     <!--begin::Input group-->
-    <div class="fv-row fv-plugins-icon-container">
-      <!--begin::Row-->
-      <div class="row">
-        <div class="col-12">
-          <a 
-            type="button" 
-            class="btn btn-primary" 
-            href="<%= new_location_path %>"
-            data-turbo-frame="new_location_modal"
-          >Add a Location</a>
-        </div>
-      </div>
-      <!--end::Row-->
+    <div class="d-flex align-items-center justify-content-center">
+      <a 
+        type="button" 
+        class="custom-button custom-button--lg custom-button--primary" 
+        href="<%= new_location_path %>"
+        data-turbo-frame="new_location_modal"
+      >Add a Location</a>
     </div>
     <!--end::Input group-->
   </div>

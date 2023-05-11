@@ -9,10 +9,7 @@
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item text--secondary">Home
-          <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
-        </li>
-        <li class="breadcrumb-item text--primary fw-bold">Dashboard</li>
+        <li class="breadcrumb-item page-sub-title"><%= current_account.is_all_accounts? ? "All accounts" : current_account.name %>
       </ul>
       <!--end::Breadcrumb-->
     </div>

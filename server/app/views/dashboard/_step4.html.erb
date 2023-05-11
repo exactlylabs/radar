@@ -2,25 +2,20 @@
   <!--begin::Wrapper-->
   <div class="w-100 text-center">
     <!--begin::Heading-->
-    <div>
-      <%= image_tag "17.png", size: "200x200" %>
+    <div class="pb-6">
+      <%= image_tag "17.png", size: "200x200", style: "margin-top: -50px; transform: scaleX(-1)" %>
       <!--begin::Title-->
-      <h2 class="fs-2x fw-bolder mb-0">You're all set!</h2>
+      <h2 class="page-main-title mt-4">You're all set!</h2>
       <!--end::Title-->
       <!--begin::Notice-->
-      <p class="text-gray-700 fs-4 fw-bold py-7">You can now view your Dashboard with your locations and Pods.</p>
+      <p class="additional-text">You can now view your Dashboard with your locations and Pods.</p>
       <!--end::Notice-->
     </div>
     <!--end::Heading-->
     <!--begin::Input group-->
-    <div class="fv-row fv-plugins-icon-container">
-      <!--begin::Row-->
-      <div class="row">
-        <div class="col-12">
-          <a href="#" class="btn btn-primary" data-action="onboard#complete">View my Dashboard</a>
-        </div>
-      </div>
-      <p class="text-gray-400 fs-4 fw-bold py-7">You can always manage your Pods and Locations from the left side menu.</p>
+    <div class="d-flex flex-column justify-content-center align-items-center">
+      <a href="#" class="custom-button custom-button--lg custom-button--primary" data-action="onboard#complete">View my Dashboard</a>
+      <p class="additional-text pt-4">You can always manage your Pods and Locations from the left side menu.</p>
       <!--end::Row-->
     </div>
     <!--end::Input group-->
