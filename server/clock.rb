@@ -49,12 +49,12 @@ scheduler.every '5m', overlap: false do
 end
 
 scheduler.every '1m', overlap: false do
-  begin
-    Location.update_online_status!
-  rescue => e
-    Sentry.capture_exception(e)
-    raise e
-  end
+  # begin
+  #   Location.update_online_status!
+  # rescue => e
+  #   Sentry.capture_exception(e)
+  #   raise e
+  # end
 end
 
 begin

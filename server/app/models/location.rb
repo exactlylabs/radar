@@ -186,9 +186,9 @@ include EventSourceable
     # Go through all locations and update their online/offline status + other metadata
     Location.joins(:clients).group("locations.id").having("BOOL_OR(clients.online) AND (offline_since IS NOT NULL OR locations.online = false)").update(online: true, offline_since: nil)
     Location.joins(:clients).group(:id).having("BOOL_AND(NOT clients.online) AND locations.offline_since IS NULL AND locations.online = true").each do |location|
-      offline_since = Event.from_aggregate(location.clients).where_name_is(Client::Events::WENT_OFFLINE).order("timestamp DESC").first&.timestamp
+      offline_since = Event.from_aggregate(location.clients).where_name_is(Client::Events::WENT_OFFLINE).last&.timestamp
       location.offline_since = offline_since || location.created_at
-      if location.offline_since < 1.hour.ago
+      if location.offline_since.before? 1.hour.ago
         location.online = false
       end
       location.save!
@@ -237,7 +237,7 @@ include EventSourceable
   end
 
   def link_to_geospaces
-    if saved_change_to_lonlat? && self.lonlat
+    if saved_change_to_lonlat? && self.lonlat.present?
       self.geospaces.excluding_lonlat(self.lonlat).each do |geospace|
         self.geospaces.delete geospace
       end
