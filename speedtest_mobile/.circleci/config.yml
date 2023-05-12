@@ -127,6 +127,7 @@ jobs:
           P12_KEY_PATH=/tmp/distribution_<< parameters.flavor>>.p12 \
           CERT_PATH=/tmp/distribution_<< parameters.flavor>>.cer \
           ~/project/speedtest_mobile/client_mobile_app/scripts/setup_keychain.sh
+      - run: sudo port install gnupg gnupg2
       - ruby/install:
           version: "3.0.2"
       - macos/switch-ruby:
