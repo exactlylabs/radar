@@ -213,52 +213,52 @@ workflows:
       
       # Android
       # Build Flavors
-      - build-android:
-          name: "build-android-dev"
-          requires: [unit_test]
-          flavor: dev
-          filters:
-            branches:
-              ignore: ["master"]
-      - build-android:
-          name: "build-android-staging"
-          requires: [unit_test]
-          flavor: staging
-          filters:
-            branches:
-              only: "master"
-      - build-android:
-          name: "build-android-prod"
-          requires: [unit_test]
-          flavor: prod
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^mobile-.*/
-      ## Upload Flavors to Storage
-      - upload-android:
-          requires: [build-android-dev, build-android-staging, build-android-prod]
-          filters:
-            tags:
-              only: /^mobile-.*/
-      ## Release Stag/Prod Flavors
-      - release-android:
-          name: "release-android-staging"
-          requires: [build-android-staging]
-          flavor: staging
-          filters:
-            branches:
-              only: "master"
-      - release-android:
-          name: "release-android-prod"
-          requires: [build-android-prod]
-          flavor: prod
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^mobile-.*/
+      # - build-android:
+      #     name: "build-android-dev"
+      #     requires: [unit_test]
+      #     flavor: dev
+      #     filters:
+      #       branches:
+      #         ignore: ["master"]
+      # - build-android:
+      #     name: "build-android-staging"
+      #     requires: [unit_test]
+      #     flavor: staging
+      #     filters:
+      #       branches:
+      #         only: "master"
+      # - build-android:
+      #     name: "build-android-prod"
+      #     requires: [unit_test]
+      #     flavor: prod
+      #     filters:
+      #       branches:
+      #         ignore: /.*/
+      #       tags:
+      #         only: /^mobile-.*/
+      # ## Upload Flavors to Storage
+      # - upload-android:
+      #     requires: [build-android-dev, build-android-staging, build-android-prod]
+      #     filters:
+      #       tags:
+      #         only: /^mobile-.*/
+      # ## Release Stag/Prod Flavors
+      # - release-android:
+      #     name: "release-android-staging"
+      #     requires: [build-android-staging]
+      #     flavor: staging
+      #     filters:
+      #       branches:
+      #         only: "master"
+      # - release-android:
+      #     name: "release-android-prod"
+      #     requires: [build-android-prod]
+      #     flavor: prod
+      #     filters:
+      #       branches:
+      #         ignore: /.*/
+      #       tags:
+      #         only: /^mobile-.*/
     
       # iOS
       # Build Flavors
