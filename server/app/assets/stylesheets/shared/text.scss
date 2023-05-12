@@ -80,18 +80,24 @@ $extra-bold: 800;
 }
 
 .sidebar-item--text {
+  font-variation-settings: 'wght' $bold;
+  font-size: 0.938rem;
+  color: $dark-gray;
+  line-height: 1.25rem;
+
+  &.sidebar-item--text-active {
+    color: $blue;
+  }
+
+  &:hover {
+    color: $blue;
+  }
+}
+
+.sidebar-item--profile-text {
   font-variation-settings: 'wght' $semi-bold;
   font-size: 0.938rem;
   color: $dark-gray;
-}
-
-.sidebar-item--text-active {
-  font-variation-settings: 'wght' $bold;
-  color: $blue;
-}
-
-.sidebar-item--text:hover {
-  color: $blue;
 }
 
 .additional-text {

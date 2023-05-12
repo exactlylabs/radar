@@ -16,6 +16,10 @@
  *= require style.bundle
  */
 
+:root {
+  --global-background-color: #f6f7fa;
+}
+
 @font-face {
   font-family: 'Mulish';
   src: local('Mulish'), url('/assets/Mulish-VariableFont_wght.ttf') format('truetype-variations');
@@ -36,6 +40,22 @@ p {
 
 p {
   margin: 0;
+}
+
+.application--main-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.application--content-container {
+  width: calc(100vw - 260px);
+  height: 100vh;
+  padding: 2rem 5rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: var(--global-background-color);
 }
 
 .location--online path {

@@ -73,7 +73,7 @@
                     />
                     <p class="<%= current_user.avatar.attached? ? 'invisible' : nil %>"
                       data-edit-profile-picture-target="firstLetter"
-                    ><%= current_user.first_name[0].upcase %></p>
+                    ><%=  current_user.first_name[0].upcase %></p>
                   </div>
                   <p class="invisible text--error m-0 mb-4"
                     data-edit-profile-picture-target="fileFormatErrorMessage"
