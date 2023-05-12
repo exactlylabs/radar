@@ -127,6 +127,8 @@ jobs:
           P12_KEY_PATH=/tmp/distribution_<< parameters.flavor>>.p12 \
           CERT_PATH=/tmp/distribution_<< parameters.flavor>>.cer \
           ~/project/speedtest_mobile/client_mobile_app/scripts/setup_keychain.sh
+      - ruby/install:
+          version: "3.0.2"
       - macos/switch-ruby:
           version: "3.0.2"
       - run:
@@ -178,6 +180,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/workspace
+      - ruby/install:
+          version: "3.0.2"
       - macos/switch-ruby:
           version: "3.0.2"
       - run:
