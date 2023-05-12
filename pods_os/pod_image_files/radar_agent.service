@@ -1,0 +1,14 @@
+[Unit]
+Description=Radar Agent
+After=network.target auditd.service
+
+[Service]
+ExecStart=${AGENT_BINARY_PATH}
+KillMode=process
+Restart=always
+RestartSec=5
+User=radar
+Group=radar
+
+[Install]
+WantedBy=multi-user.target
