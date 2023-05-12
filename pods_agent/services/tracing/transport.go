@@ -2,7 +2,9 @@ package tracing
 
 import (
 	"context"
+	"errors"
 	"math/rand"
+	"net"
 	"net/http"
 	"time"
 )
@@ -13,9 +15,8 @@ func newEnsureTransport() *ensureTransport {
 	}
 }
 
-// ensureTransport is an HTTPTransport that keeps trying to send a request until it is successful
-// no response is returned to the caller besides an empty 202 Accepted.
-// Sentry doesn't care for responses, so there's no problem with this
+// ensureTransport is an HTTPTransport that retries with an exponential backoff failed requests if they failed during Dialing,
+// which means that there was an issue with the connection, not with the server.
 type ensureTransport struct {
 	http.RoundTripper
 }
@@ -36,11 +37,12 @@ func (at *ensureTransport) ensureIsSent(req *http.Request) {
 }
 
 func (at *ensureTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	go at.ensureIsSent(req)
-	resp := &http.Response{
-		StatusCode: http.StatusAccepted,
+	resp, err := at.RoundTripper.RoundTrip(req)
+	var netErr *net.OpError
+	if errors.As(err, &netErr) && netErr.Op == "dial" {
+		go at.ensureIsSent(req)
 	}
-	return resp, nil
+	return resp, err
 }
 
 // exponential backoff
