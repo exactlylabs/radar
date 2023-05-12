@@ -129,6 +129,9 @@ jobs:
           ~/project/speedtest_mobile/client_mobile_app/scripts/setup_keychain.sh
       - macos/switch-ruby:
           version: "3.0.2"
+      - run:
+          name: Set Ruby Version
+          command: rbenv global 3.0.2 && rbenv rehash
       - flutter/install_sdk_and_pub:
           flutter_version: 3.7.9
           app-dir: ~/project/speedtest_mobile/client_mobile_app
@@ -177,6 +180,9 @@ jobs:
           at: ~/workspace
       - macos/switch-ruby:
           version: "3.0.2"
+      - run:
+          name: Set Ruby Version
+          command: rbenv global 3.0.2 && rbenv rehash
       - ruby/install-deps:
           app-dir: ~/project/speedtest_mobile/client_mobile_app/ios
       - run:
