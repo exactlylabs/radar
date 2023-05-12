@@ -3,7 +3,7 @@ module github.com/exactlylabs/radar/pods_agent
 go 1.18
 
 require (
-	github.com/getsentry/sentry-go v0.20.0
+	github.com/getsentry/sentry-go v0.21.0
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/hectane/go-acl v0.0.0-20190604041725-da78bae5fc95
