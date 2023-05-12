@@ -127,14 +127,8 @@ jobs:
           P12_KEY_PATH=/tmp/distribution_<< parameters.flavor>>.p12 \
           CERT_PATH=/tmp/distribution_<< parameters.flavor>>.cer \
           ~/project/speedtest_mobile/client_mobile_app/scripts/setup_keychain.sh
-      - run: sudo port install gnupg gnupg2
-      - ruby/install:
-          version: "3.0.2"
       - macos/switch-ruby:
-          version: "3.0.2"
-      - run:
-          name: Set Ruby Version
-          command: rbenv global 3.0.2 && rbenv rehash
+          version: "3.0"
       - flutter/install_sdk_and_pub:
           flutter_version: 3.7.9
           app-dir: ~/project/speedtest_mobile/client_mobile_app
@@ -181,13 +175,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/workspace
-      - ruby/install:
-          version: "3.0.2"
       - macos/switch-ruby:
-          version: "3.0.2"
-      - run:
-          name: Set Ruby Version
-          command: rbenv global 3.0.2 && rbenv rehash
+          version: "3.0"
       - ruby/install-deps:
           app-dir: ~/project/speedtest_mobile/client_mobile_app/ios
       - run:
