@@ -1,0 +1,40 @@
+<div class="sidebar--main-container" data-controller="sidebar">
+  <a href="<%= dashboard_path %>">
+    <img alt="Logo" src="<%= image_url('new-radar-logo.png') %>" width="150" class="sidebar--logo">
+  </a>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "dashboard-icon",
+      title: "My Dashboard",
+      url: dashboard_path,
+      sidebar_item_id: "dashboard"
+    }
+  %>
+  <div class="sidebar--horizontal-divider"></div>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "pods-icon",
+      title: "Pods",
+      url: clients_path,
+      sidebar_item_id: "pods"
+    }
+  %>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "locations-icon",
+      title: "Locations",
+      url: locations_path,
+      sidebar_item_id: "locations"
+    }
+  %>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "members-icon",
+      title: "Members & Sharing",
+      url: users_account_index_path,
+      sidebar_item_id: "members"
+    }
+  %>
+
+  <%= render partial: "application/components/sidebar/profile_item" %>
+</div>

@@ -1,0 +1,11 @@
+<a class="sidebar--item <%= active_path?(url) ? "sidebar--item-active" : nil %>"
+  href="<%= url %>"
+  data-item-id="<%= sidebar_item_id %>"
+  data-action="mouseover->sidebar#handleItemHover mouseleave->sidebar#handleItemHoverOff"
+>
+  <%= image_tag image_url("#{icon}-active.png"), id: "#{sidebar_item_id}-icon-active", width: "24", height: "24", class: "sidebar--item-icon #{active_path?(url) ? nil : "invisible"}" %>
+  <%= image_tag image_url("#{icon}.png"), id: "#{sidebar_item_id}-icon", width: "24", height: "24", class: "sidebar--item-icon #{active_path?(url) ? "invisible" : nil}" %>
+  <p id="<%= sidebar_item_id %>-text"
+    class="sidebar-item--text <%= active_path?(url) == "active" ? "sidebar-item--text-active" : nil %> m-0"
+  ><%= title %></p>
+</a>

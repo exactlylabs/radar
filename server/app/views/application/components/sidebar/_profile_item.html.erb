@@ -1,0 +1,11 @@
+<a class="sidebar--profile-item" href="<%= edit_user_registration_path %>">
+  <div class="sidebar--profile-item-avatar-container">
+    <img src="<%= url_for(current_user.avatar.variant(resize_to_limit: [36, 36])) %>"
+      width="36"
+      height="36"
+      class="<%= current_user.avatar.attached? ? nil : 'invisible' %> sign-up--avatar-image"
+    />
+    <p class="sidebar--profile-item-initial <%= current_user.avatar.attached? ? 'invisible' : nil %>"><%=  current_user.first_name[0].upcase %></p>
+  </div>
+  <p class="sidebar-item--profile-text sidebar--profile-item-name"><%= current_user.first_name %> <%= current_user.last_name %></p>
+</a>
