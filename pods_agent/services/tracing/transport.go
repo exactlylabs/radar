@@ -21,7 +21,7 @@ type ensureTransport struct {
 	http.RoundTripper
 }
 
-func (at *ensureTransport) ensureIsSent(req *http.Request) {
+func (t *ensureTransport) ensureIsSent(req *http.Request) {
 	b := &backoff{
 		initial:    1 * time.Second,
 		maximum:    60 * time.Second,
@@ -29,18 +29,18 @@ func (at *ensureTransport) ensureIsSent(req *http.Request) {
 		Rand:       rand.New(rand.NewSource(time.Now().Unix())),
 	}
 
-	_, err := at.RoundTripper.RoundTrip(req.Clone(context.Background()))
+	_, err := t.RoundTripper.RoundTrip(req.Clone(context.Background()))
 	for err != nil {
 		<-b.Next()
-		_, err = at.RoundTripper.RoundTrip(req.Clone(context.Background()))
+		_, err = t.RoundTripper.RoundTrip(req.Clone(context.Background()))
 	}
 }
 
-func (at *ensureTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	resp, err := at.RoundTripper.RoundTrip(req)
+func (t *ensureTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	resp, err := t.RoundTripper.RoundTrip(req)
 	var netErr *net.OpError
 	if errors.As(err, &netErr) && netErr.Op == "dial" {
-		go at.ensureIsSent(req)
+		go t.ensureIsSent(req)
 	}
 	return resp, err
 }
