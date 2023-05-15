@@ -69,7 +69,7 @@ class DiscordNotifier < EventsNotifier::Notifier
         embed.timestamp = location_info.location.created_at
         embed.color = 0x23C552
         add_fieldset embed, "" do |fieldset|
-          self.add_default_study_location_info(location_info, fieldset)
+          self.fill_default_study_location_fieldset(location_info, fieldset)
           fieldset.add_field(name: "Account", value: location_info.location.account.name)
           fieldset.add_field(name: "Created By", value: "#{location_info.location.created_by.first_name}  #{location_info.location.created_by.last_name}")
         end
@@ -127,7 +127,7 @@ class DiscordNotifier < EventsNotifier::Notifier
 
   private  
 
-  def add_default_location_info(location_info, fieldset)
+  def fill_default_location_info(location_info, fieldset)
     fieldset.add_field(name: "Name", value: location_info.location.name)
     fieldset.add_field(name: "Address", value: location_info.location.address)
     fieldset.add_field(name: "Account", value: location_info.location.account.name)
@@ -154,7 +154,7 @@ class DiscordNotifier < EventsNotifier::Notifier
   end
 
   def fill_online_notification_fieldset(location_info, fieldset)
-    self.add_default_location_info(location_info, fieldset)
+    self.fill_default_location_info(location_info, fieldset)
     fieldset.add_field(name: "ISP", value: location_info.extra[:as_org]&.name) if location_info.extra[:as_org]
     fieldset.add_field(name: "Total in County", value: "#{location_info.extra[:locations_per_county_count]}") if location_info.county
     fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]}") if location_info.place && location_info.extra[:locations_per_place_count]
