@@ -37,8 +37,9 @@ module LocationNotificationJobs
     def perform(location, at)
       as_org = location.clients.order("updated_at DESC").first&.autonomous_system&.autonomous_system_org
       location_info = location_info(location, as_org=as_org)
-      EventsNotifier.notify_location_online(location_info)
-
+      EventsNotifier.notify_location_online(location_info) if location.notified_when_online
+      location.update(notified_when_online: true)
+      
       # Notify Goals if reached
       if location_info.extra[:locations_per_county_count] && location_info.extra[:locations_per_county_count] >= Location::LOCATIONS_PER_COUNTY_GOAL &&
          !NotifiedStudyGoal.where(geospace: location_info.county, autonomous_system_org: nil).exists?
