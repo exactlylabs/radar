@@ -24,13 +24,12 @@
       >Add Location</a>
       <% if !current_account.is_all_accounts? %>
         <a href="#"
-            class="btn d-flex justify-content-center align-items-center px-4"
+            class="ms-4 custom-button custom-button--secondary-light custom-button--sm d-flex justify-content-center align-items-center"
             data-bs-toggle="dropdown"
             aria-expanded="false"
-            style="border-radius: 6px; background-color: white"
             id="options-button"
         >
-          <span class="svg-icon svg-icon-muted svg-icon-2x m-0">
+          <span class="svg-icon svg-icon-muted svg-icon-2 m-0">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="10" y="10" width="4" height="4" rx="2" fill="currentColor"/>
               <rect x="10" y="3" width="4" height="4" rx="2" fill="currentColor"/>
@@ -39,7 +38,7 @@
           </span>
         </a>
         <div class="dropdown-menu dropdown-menu-light fw-bold fs-7 py-4 bg-hover-light">
-          <%= link_to "Manage location categories", categories_path, { class: "px-3 py-2", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
+          <%= link_to "Manage location categories", categories_path, { class: "px-3 py-2 regular-link", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
         </div>
       <% end %>
     </div>

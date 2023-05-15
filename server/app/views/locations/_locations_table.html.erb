@@ -14,14 +14,17 @@
               <th class="tables--title ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
                   rowspan="1" colspan="1" aria-label="Location Name">Name</th>
               <% if current_account.is_all_accounts? %>
-                <th class="tables--title sorting ps-10" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
-                rowspan="1" colspan="1" aria-label="Location Name">Account</th>
+                <th class="tables--title sorting" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                rowspan="1" colspan="1" aria-label="Account">Account</th>
+              <% else %>
+                <th class="tables--title sorting" style="width: 15vw" tabindex="0" aria-controls="kt_customers_table" 
+                  rowspan="1" colspan="1" aria-label="Category">Category</th>
               <% end %>
-              <th class="tables--title sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" tabindex="0" aria-controls="kt_customers_table" 
+              <th class="tables--title sorting_disabled" style="width: 10vw" tabindex="0" aria-controls="kt_customers_table" 
                   rowspan="1" colspan="1" aria-label="Avg. Download Speed">Avg./Exp. Download</th>
-              <th class="tables--title sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" tabindex="0" aria-controls="kt_customers_table" 
+              <th class="tables--title sorting_disabled" style="width: 10vw" tabindex="0" aria-controls="kt_customers_table" 
                   rowspan="1" colspan="1" aria-label="Avg. Upload Speed">Avg./Exp. Upload</th>
-              <th class="tables--title right-aligned sorting_disabled" style="width: <%= current_account.is_all_accounts? ? 10 : 15 %>vw" rowspan="1"
+              <th class="tables--title right-aligned sorting_disabled" style="width: 10vw" rowspan="1"
                   colspan="1" aria-label="Actions"></th>
             </tr>
             <!--end::Table row-->
@@ -29,8 +32,8 @@
           <!--end::Table head-->
           <!--begin::Table body-->
           <tbody class="fw-bold text-gray-600" id="locations_table">
-            <% paginate_elements(locations, [], "LOWER(name) ASC").each do |location| %>
-              <%= render partial: "locations_table_row", locals: { location: location } %>
+            <% paginate_elements(locations, [], "LOWER(name) ASC").each_with_index do |location, index| %>
+              <%= render partial: "locations_table_row", locals: { location: location, row: index } %>
             <% end %>
           </tbody>
             <!--end::Table body-->
