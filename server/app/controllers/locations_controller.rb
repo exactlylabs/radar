@@ -34,7 +34,6 @@ class LocationsController < ApplicationController
 
     @location.user = current_user
     @location.account_id = current_account.is_all_accounts? ? params[:location][:account_id] : current_account.id
-    @location.categories << policy_scope(Category).where(id: params[:location][:categories].split(",")).distinct
     # TODO: Is there a better UX for this?
     current_clients = policy_scope(Client)
     if current_clients.count == 1
@@ -43,6 +42,7 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       if @location.save
+        @location.categories << policy_scope(Category).where(id: params[:location][:categories].split(",")).distinct if params[:location][:categories].present?
         format.turbo_stream
         format.html { redirect_to locations_path, notice: "Location was successfully created." }
         format.json { render :show, status: :created, location: @location }
