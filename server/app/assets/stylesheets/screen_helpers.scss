@@ -15,7 +15,7 @@ $xs-max-width: 350px;
   .show-sm-or-less-flex,
   .show-xs-or-less,
   .show-xs-or-less-flex {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -41,7 +41,7 @@ and (max-width: $lg-max-width) {
   .show-sm-or-less-flex,
   .show-xs-or-less,
   .show-xs-or-less-flex {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -69,7 +69,7 @@ and (max-width: $md-max-width) {
   .show-sm-or-less-flex,
   .show-xs-or-less,
   .show-xs-or-less-flex {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -96,7 +96,7 @@ and (max-width: $sm-max-width) {
   .show-lg-or-more-flex,
   .show-md-or-more,
   .show-md-or-more-flex {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -122,6 +122,6 @@ and (max-width: $sm-max-width) {
   .show-md-or-more-flex,
   .show-sm-or-more,
   .show-sm-or-more-flex {
-    display: none;
+    display: none !important;
   }
 }

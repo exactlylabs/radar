@@ -1,9 +1,9 @@
 <% if categories.count == 0 %>
-  <p class="m-0">No categories</p>
+  <p class="m-0 regular-text">No categories</p>
 <% elsif categories.count == 1 %>
   <div class="d-flex flex-row justify-content-start align-items-center">
     <div class="category--marker" style="background-color: <%= categories[0].color_hex %>"></div>
-    <p class="m-0"><%= categories[0].name %></p>
+    <p class="m-0 regular-text"><%= categories[0].name %></p>
   </div>
 <% else %>
   <div class="d-flex flex-row justify-content-start align-items-center">
@@ -32,7 +32,7 @@
           </div>
         <% end %>
       </div>
-      <p class="m-0"><%= categories.count %> categories</p>
+      <p class="m-0 regular-text"><%= categories.count %> categories</p>
     </div>
   </div>
 <% end %>
