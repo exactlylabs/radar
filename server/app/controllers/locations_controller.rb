@@ -64,20 +64,22 @@ class LocationsController < ApplicationController
   # PATCH/PUT /locations/1 or /locations/1.json
   def update
     respond_to do |format|
+      # By getting the specific locations that get added/deleted
+      # we can emit the exact events for each location
+      current_categories_ids = @location.categories.map {|c| c.id}
       if params[:location][:categories].present?
-        # By getting the specific locations that get added/deleted
-        # we can emit the exact events for each location
-        current_categories_ids = @location.categories.map {|c| c.id}
         latest_categories_ids = params[:location][:categories].split(",").map {|id| id.to_i}
-        
-        new_categories_ids = latest_categories_ids - current_categories_ids
-        to_delete_categories_ids = current_categories_ids - latest_categories_ids
+      else
+        latest_categories_ids = []
+      end  
+      
+      new_categories_ids = latest_categories_ids - current_categories_ids
+      to_delete_categories_ids = current_categories_ids - latest_categories_ids
 
-        to_delete_categories_ids.each do |id|
-          @location.categories.delete(id) # This delete method does trigger callbacks
-        end
-        @location.categories << policy_scope(Category).where(id: new_categories_ids)
+      to_delete_categories_ids.each do |id|
+        @location.categories.delete(id) # This delete method does trigger callbacks
       end
+      @location.categories << policy_scope(Category).where(id: new_categories_ids)
       if @location.save && @location.update(location_params)
         @locations = policy_scope(Location)
         format.turbo_stream
