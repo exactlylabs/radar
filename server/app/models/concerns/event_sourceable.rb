@@ -155,7 +155,11 @@ module EventSourceable
     if Event.where(aggregate: self, name: name, data: data).where("timestamp >= ?", timestamp - 1.second).exists?
       return 
     end
-    evt = Event.create(aggregate: self, name: name, data: data, timestamp: timestamp, version: Event.last_version_from(self) + 1)
+    Event.transaction do
+      last_event = Event.from_aggregate(self).lock.last
+      version = last_event&.version || 0
+      evt = Event.create(aggregate: self, name: name, data: data, timestamp: timestamp, version: version + 1)
+    end
   end
 
   def get_event_timestamp(event_name, original_timestamp)
