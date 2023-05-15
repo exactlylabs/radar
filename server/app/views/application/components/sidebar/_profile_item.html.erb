@@ -22,9 +22,12 @@
     <p class="sidebar-item--profile-text sidebar--profile-item-name ellipsis">My Profile</p>
   </a>
   <a class="sidebar--profile-item invisible"
+    rel="nofollow"
+    data-method="delete"
+    href="<%= users_custom_sign_out_path %>"
     data-sidebar-target="profileMenuOption"
-    href="<%= edit_user_registration_path %>">
+  >
     <%= image_tag image_url("logout-icon.png"), width: "24", height: "24", class: "sidebar--hidden-option-icon" %>
-    <p class="sidebar-item--profile-text sidebar--profile-item-name ellipsis">Logout</p>
+    <p class="sidebar-item--profile-text sidebar--profile-item-name ellipsis">Sign out</p>
   </a>
 </div>

@@ -29,9 +29,6 @@
 .custom-button--primary:hover:not(.custom-button--disabled),
 .custom-button--primary:active:not(.custom-button--disabled) {
   color: $white;
-.custom-button--primary:hover:not(.custom-button--disabled),
-.custom-button--primary:active:not(.custom-button--disabled) {
-  color: $white;
   background-color: $primary-button--hover;
 }
 

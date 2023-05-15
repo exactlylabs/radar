@@ -1,0 +1,12 @@
+<div class="sidebar--accounts-menu-container">
+  <p class="sidebar--accounts-menu-title help-text"><%= current_user.super_user ? "Management view" : "Accounts" %></p>
+  <%= render partial: "application/components/sidebar/account_item", 
+      locals: {
+        has_options: false,
+        text: 'All accounts',
+        has_icon: true,
+        icon: 'all_accounts'
+      }
+  %>
+  <div class="sidebar--horizontal-divider"></div>
+</div>
