@@ -109,7 +109,93 @@
   }
 }
 
+.sidebar--accounts-item-container {
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  background-color: white;
+  outline: solid 1px $sidebar--accounts-item-outline;
+  box-shadow: 0 2px 4px -2px $sidebar--accounts-item-box-shadow;
+  padding: 6px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 1.5rem;
+  position: relative;
 
+  .sidebar--accounts-item-icon-container {
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    border-radius: 8px;
+    background-color: $subtle-gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+
+    .sidebar--accounts-item-icon-initial {
+      margin: 0;
+    }
+
+    .sidebar--accounts-name {
+      max-width: 130px;
+    }
+  }
+
+  .sidebar--accounts-caret {
+    margin-right: 0;
+    margin-left: auto;
+  }
+}
+
+.sidebar--accounts-menu-container {
+  width: 252px;
+  padding: 12px 4px 0;
+  position: absolute;
+  top: 52px;
+  left: 0;
+  z-index: 25;
+  background-color: white;
+  border-radius: 6px;
+  outline: solid 1px $sidebar--accounts-item-outline;
+  box-shadow: 0 2px 4px -2px $sidebar--accounts-item-box-shadow;
+  backdrop-filter: blur(20px);
+
+  .sidebar--accounts-menu-title {
+    margin: 0 0 8px 8px;
+  }
+}
+
+.sidebar--account-item-container {
+  width: 100%;
+  height: 44px;
+  padding: 6px;
+  border-radius: 6px;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+
+  &:hover {
+    background-color: $subtle-gray;
+  }
+
+  .sidebar--account-item-icon-container {
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    border-radius: 8px;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
 
 /////////////////////////////////////////////
 

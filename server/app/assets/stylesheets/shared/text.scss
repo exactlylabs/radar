@@ -94,6 +94,13 @@ $extra-bold: 800;
   }
 }
 
+.sidebar-item--text-static {
+  font-variation-settings: 'wght' $semi-bold;
+  font-size: 0.938rem;
+  color: $dark-gray;
+  line-height: 1.25rem;
+}
+
 .sidebar-item--profile-text {
   font-variation-settings: 'wght' $semi-bold;
   font-size: 0.938rem;
@@ -126,7 +133,6 @@ $extra-bold: 800;
   line-height: 1.188rem;
   letter-spacing: 0;
   color: $gray;
-  margin-bottom: 16px;
 }
 
 .warning-text {
