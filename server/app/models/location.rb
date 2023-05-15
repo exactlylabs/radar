@@ -252,13 +252,13 @@ include EventSourceable
   end
 
   def send_notifications
-    # if saved_change_to_online?
-    #   if self.online
-    #     LocationNotificationJobs::NotifyLocationOnline.perform_later self, Time.now
-    #   else
-    #     LocationNotificationJobs::NotifyLocationOffline.perform_later self, self.offline_since
-    #   end
-    # end
+    if saved_change_to_online?
+      if self.online
+        LocationNotificationJobs::NotifyLocationOnline.perform_later self, Time.now
+      # else # Deactivated for now due too noisy alerts
+      #   LocationNotificationJobs::NotifyLocationOffline.perform_later self, self.offline_since
+      end
+    end
 
     if id_previously_changed?
       # Notify location created
