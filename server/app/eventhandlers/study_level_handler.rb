@@ -20,12 +20,6 @@ module StudyLevelHandler
       @study_aggregates = {}
       @cached_projections = {}
       @in_outage = nil
-
-      Location.where("lonlat IS NOT NULL").each do |location|
-        aggs = self.get_aggregates(location.lonlat, nil, nil)
-        @study_aggregates[location.lonlat] = aggs
-      end
-      
     end
 
     def aggregate!()
