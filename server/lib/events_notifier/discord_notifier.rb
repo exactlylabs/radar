@@ -71,7 +71,7 @@ class DiscordNotifier < EventsNotifier::Notifier
         add_fieldset embed, "" do |fieldset|
           self.fill_default_study_location_fieldset(location_info, fieldset)
           fieldset.add_field(name: "Account", value: location_info.location.account.name)
-          fieldset.add_field(name: "Created By", value: "#{location_info.location.created_by.first_name}  #{location_info.location.created_by.last_name}")
+          fieldset.add_field(name: "Created By", value: "#{location_info.location.user.first_name}  #{location_info.location.user.last_name}")
         end
       end
     end
