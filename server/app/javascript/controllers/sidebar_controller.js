@@ -2,6 +2,12 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
 
+  static targets = [
+    'profileMenuToggle',
+    'profileMenuOption',
+    'profileMenuContainer'
+  ]
+
   connect() {}
 
   getItemElements(itemId) {
@@ -32,7 +38,30 @@ export default class extends Controller {
     const { icon, activeIcon, text } = this.getItemElements(itemId);
     icon.classList.remove('invisible');
     activeIcon.classList.add('invisible');
-    text.classList.remove('sidebar-item--text-active');
-    
+    text.classList.remove('sidebar-item--text-active');  
+  }
+
+  openProfileMenu() {
+    this.profileMenuContainerTarget.style.height = '9rem';
+    this.profileMenuToggleTarget.setAttribute('data-menu-state', 'open');
+    this.profileMenuToggleTarget.classList.add('sidebar--profile-menu-toggle-open');
+    const caret = document.getElementById('sidebar--profile-menu-caret');
+    caret.style.transform = 'rotate(180deg)';
+    this.profileMenuOptionTargets.forEach(o => o.classList.remove('invisible'))
+  }
+
+  closeProfileMenu() {
+    this.profileMenuContainerTarget.style.height = '3rem';
+    this.profileMenuToggleTarget.setAttribute('data-menu-state', 'closed');
+    this.profileMenuToggleTarget.classList.remove('sidebar--profile-menu-toggle-open');
+    const caret = document.getElementById('sidebar--profile-menu-caret');
+    caret.style.transform = 'none';
+    this.profileMenuOptionTargets.forEach(o => o.classList.add('invisible'))
+  }
+
+  toggleProfileMenu() {
+    const currentState = this.profileMenuToggleTarget.getAttribute('data-menu-state');
+    if(currentState === 'closed') this.openProfileMenu();
+    else this.closeProfileMenu();
   }
 }

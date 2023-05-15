@@ -86,7 +86,7 @@ p {
 }
 
 .hoverable:hover {
-  opacity: 50%;
+  opacity: 75%;
   cursor: pointer;
 }
 
