@@ -87,7 +87,7 @@
       </div>
       <% if @locations.exists? || params[:filter].present? %>
       <div class="row h-100 w-100">
-        <div class="col-4 h-100 pe-6">
+        <div class="col-5 h-100 pe-6">
           <div class="" style="max-height: 100%; overflow: scroll">
             <div class="card" style="min-height: 200px;">
               <div class="card-header">
@@ -144,7 +144,7 @@
             </div>
           </div>
         </div>
-        <div class="col-8 h-100 position-relative min-h-500px">
+        <div class="col-7 h-100 position-relative min-h-500px">
           <div class="position-absolute top-0 bottom-0 start-0 end-0 <%= @onboard_step > 0 ? "d-none" : "" %>" data-onboard-target="map"  id="map"></div>
         </div>
       </div>
