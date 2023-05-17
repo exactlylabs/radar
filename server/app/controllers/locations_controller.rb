@@ -68,10 +68,14 @@ class LocationsController < ApplicationController
       # we can emit the exact events for each location
       current_categories_ids = @location.categories.map {|c| c.id}
       if params[:location][:categories].present?
+      # By getting the specific locations that get added/deleted
+      # we can emit the exact events for each location
+      current_categories_ids = @location.categories.map {|c| c.id}
+      if params[:location][:categories].present?
         latest_categories_ids = params[:location][:categories].split(",").map {|id| id.to_i}
       else
         latest_categories_ids = []
-      end  
+      end
       
       new_categories_ids = latest_categories_ids - current_categories_ids
       to_delete_categories_ids = current_categories_ids - latest_categories_ids

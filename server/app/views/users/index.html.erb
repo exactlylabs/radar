@@ -1,6 +1,6 @@
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar">
-  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
@@ -26,22 +26,21 @@
   </div>
 </div>
 <!--end::Toolbar-->
-<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
-  <div class="container-fluid">
-    <% if !current_account.is_all_accounts? %>
-      <%= render partial: "users/members_sharing_tabs" %>
-    <% end %>
-    <%= render partial: "users/users_table_filters" %>
-    <!--begin::Container-->
-    <%= render partial: "users/users_table", locals: { users_accounts: users_accounts, invited_users: invited_users } %>
-    <!--end::Container-->
-  </div>
+<div class="post fs-6 d-flex flex-column" id="kt_post">
+  <% if !current_account.is_all_accounts? %>
+    <%= render partial: "users/members_sharing_tabs" %>
+  <% end %>
+  <%= render partial: "users/users_table_filters" %>
+  <!--begin::Container-->
+  <%= render partial: "users/users_table", locals: { users_accounts: users_accounts, invited_users: invited_users } %>
+  <!--end::Container-->
 </div>
 
 <div class="modal fade"
      tabindex="-1"
      id="add_user_wizard"
-     data-controller="add-user"
+     data-controller="add-user modal"
+     data-action="turbo:submit-end->modal#submit"
 >
   <%= render partial: "users/add_user_wizard/add_user_wizard" %>
 </div>

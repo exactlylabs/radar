@@ -1,5 +1,5 @@
 <div class="sidebar--profile-container" data-sidebar-target="profileMenuContainer">
-  <div class="sidebar--profile-item hoverable"
+  <div class="sidebar--profile-item cursor-pointer"
     data-sidebar-target="profileMenuToggle"
     data-action="click->sidebar#toggleProfileMenu"
     data-menu-state="closed"
@@ -13,21 +13,6 @@
       <p class="sidebar--profile-item-initial <%= current_user.avatar.attached? ? 'invisible' : nil %>"><%=  current_user.first_name[0].upcase %></p>
     </div>
     <p class="sidebar-item--profile-text sidebar--profile-item-name ellipsis"><%= current_user.first_name %> <%= current_user.last_name %></p>
-    <%= image_tag image_url("caret.png"), width: "16", height: "16", id: "sidebar--profile-menu-caret" %>
+    <%= render partial: "application/components/sidebar/profile_data_popover" %>
   </div>
-  <a class="sidebar--profile-item invisible"
-    data-sidebar-target="profileMenuOption"
-    href="<%= edit_user_registration_path %>">
-    <%= image_tag image_url("user-icon.png"), width: "24", height: "24", class: "sidebar--hidden-option-icon" %>
-    <p class="sidebar-item--profile-text sidebar--profile-item-name ellipsis">My Profile</p>
-  </a>
-  <a class="sidebar--profile-item invisible"
-    rel="nofollow"
-    data-method="delete"
-    href="<%= users_custom_sign_out_path %>"
-    data-sidebar-target="profileMenuOption"
-  >
-    <%= image_tag image_url("logout-icon.png"), width: "24", height: "24", class: "sidebar--hidden-option-icon" %>
-    <p class="sidebar-item--profile-text sidebar--profile-item-name ellipsis">Sign out</p>
-  </a>
 </div>

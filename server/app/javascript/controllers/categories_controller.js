@@ -40,8 +40,10 @@ export default class extends Controller {
   }
 
   initializeCategories() {
-    if(this.hiddenCategoriesInputTarget) {
-      this.categories = this.hiddenCategoriesInputTarget.value.split(',');
+    if (document.getElementById('location_categories')) {
+      if(this.hiddenCategoriesInputTarget) {
+        this.categories = this.hiddenCategoriesInputTarget.value.split(',');
+      }
     }
   }
 

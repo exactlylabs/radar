@@ -1,16 +1,15 @@
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar" data-controller="map">
-  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title">Dashboard 
       <h1 class="page-main-title">Dashboard 
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item page-sub-title"><%= current_account.is_all_accounts? ? "All accounts" : current_account.name %>
+        <li class="breadcrumb-item page-sub-title"><%= current_account.nil? ? 'No accounts' : current_account.is_all_accounts? ? "All accounts" : current_account.name %>
       </ul>
       <!--end::Breadcrumb-->
     </div>
@@ -79,10 +78,10 @@
 </div>
 <!--end::Toolbar-->
 <!--begin::Post-->
-<div class="post fs-6 d-flex flex-column-fluid" id="kt_post" style="max-height: 68vh">
+<div class="post fs-6 d-flex" id="kt_post" style="max-height: 560px">
   <!--begin::Container-->
   <% if current_account.present? %>
-    <div class="container-xxl w-100 mw-100" data-controller="onboard" data-onboard-step-value="<%= @onboard_step %>">
+    <div class="w-100 mw-100" data-controller="onboard" data-onboard-step-value="<%= @onboard_step %>">
       <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
         <%= render partial: "onboard", locals: { step: @onboard_step } %>
       </div>
@@ -145,14 +144,14 @@
             </div>
           </div>
         </div>
-        <div class="col-8 h-100 position-relative">
+        <div class="col-8 h-100 position-relative min-h-500px">
           <div class="position-absolute top-0 bottom-0 start-0 end-0 <%= @onboard_step > 0 ? "d-none" : "" %>" data-onboard-target="map"  id="map"></div>
         </div>
       </div>
       <% end %>
     </div>
   <% else %>
-    <div class="container-xxl w-100 mw-100">
+    <div class="w-100 mw-100">
       <div class="h-100">
         <%= render partial: "create_account" %>
       </div>

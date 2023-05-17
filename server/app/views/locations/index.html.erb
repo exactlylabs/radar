@@ -1,6 +1,6 @@
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar">
-  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
@@ -48,12 +48,10 @@
 
 <%= turbo_frame_tag "locations_display" do %>
   <div class="post fs-6 d-flex flex-column" id="kt_post">
-    <div class="container-fluid">
-      <% if current_account.is_all_accounts? %>
-        <%= render partial: "locations/locations_table_filters" %>
-      <% end %>
-      <%= render partial: 'locations_table', locals: { locations: @locations } %>
-    </div>
+    <% if current_account.is_all_accounts? %>
+      <%= render partial: "locations/locations_table_filters" %>
+    <% end %>
+    <%= render partial: 'locations_table', locals: { locations: @locations } %>
   </div>
 <% end %>
 

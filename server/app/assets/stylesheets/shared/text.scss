@@ -32,7 +32,7 @@ $extra-bold: 800;
 }
 
 .fw-semi-bold {
-  font-variation-settings: 'wght' $semi-bold;
+  font-variation-settings: 'wght' $semi-bold !important;
 }
 
 .fw-bold {
@@ -91,6 +91,10 @@ $extra-bold: 800;
 
   &:hover {
     color: $blue;
+  }
+
+  &[data-disabled="true"] {
+    opacity: 0.3;
   }
 }
 
