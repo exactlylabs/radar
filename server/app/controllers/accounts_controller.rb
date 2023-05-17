@@ -37,7 +37,7 @@ class AccountsController < ApplicationController
       if @account.update(deleted_at: now) && users_accounts.update_all(deleted_at: now)
         # If user decides to delete currently selected account
         # then automatically switch over to a different available one
-        if @account == current_account
+        if @account == current_account || current_account.is_all_accounts?
           get_first_user_account_and_set_cookie
         end
         format.turbo_stream { render turbo_stream: turbo_stream.remove(@account) }
@@ -54,6 +54,13 @@ class AccountsController < ApplicationController
       format.turbo_stream {
         render turbo_stream: turbo_stream.update('edit_account_modal', partial: "accounts/edit_modal", locals: { account: @account })
       }
+    end
+  end
+
+  def add_member
+    respond_to do |format|
+      format.html
+      format.turbo_stream
     end
   end
 

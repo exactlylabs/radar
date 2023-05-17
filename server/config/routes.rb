@@ -134,6 +134,7 @@ Rails.application.routes.draw do
     member do
       post :edit
       get :delete
+      get :add_member
     end
   end
 

@@ -46,23 +46,7 @@
               />
             <div class="additional-text mt-2">An email invite will be sent to this address</div>
           </div>
-          <% if current_account.is_all_accounts? %>
-            <div class="forms--input-group forms--row d-flex flex-column w-100">
-              <label class="forms--label required">Account</label>
-              <select class="form-select forms--select"
-                      data-controller="select2"
-                      id="client-accounts-dropdown"
-                      data-placeholder="Select an account"
-                      name="invite[account_id]"
-                      data-select2-id="select2-data-account_id"
-                      tabindex="-1"
-              >
-                <% policy_scope(Account).each do |account|%>
-                  <%= render partial: "clients/client_select_option", locals: { option: account, selected: params[:account_id]&.to_i == account.id} %>
-                <% end %> 
-              </select>
-            </div>
-          <% end %>
+          <input hidden name="invite[account_id]" value="<%= account.id %>" />
         </div>
       </div>
       <div class="modal-footer modals--footer">

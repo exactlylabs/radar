@@ -1,6 +1,6 @@
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar">
-  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
@@ -9,10 +9,10 @@
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item text--secondary"><%= current_account.name %>
+        <li class="breadcrumb-item page-sub-title"><%= current_account.name %>
           <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
         </li>
-        <li class="breadcrumb-item text--secondary">Pods</li>
+        <li class="breadcrumb-item page-sub-title">Pods</li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
@@ -23,7 +23,7 @@
 
 <div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-  <div class="container-xxl w-100 d-flex" style="max-width: none;">
+  <div class="w-100 d-flex" style="max-width: none;">
     <%= render partial: "options_card", locals: { client: @client.unix_user, location: nil, style: 'clients' } %>
     <div class="d-flex flex-column d-xl-block d-md-none" style="width: calc(100% - 16% - 30px)">
       <%= render partial: "technical_info_card", locals: { client: @client } %>

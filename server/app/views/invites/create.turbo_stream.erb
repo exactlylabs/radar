@@ -1,0 +1,8 @@
+<%= turbo_frame_tag "add_member_modal" do %>
+<% end %>
+
+<% if current_account.is_all_accounts? || current_account.id == @new_invite.account.id %>
+  <%= turbo_stream.append "users_table" do %>
+    <%= render partial: "users/users_table_row_invitee", locals: { invitee: @new_invite, is_even: false } %>
+  <% end %>
+<% end %>

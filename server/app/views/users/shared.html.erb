@@ -1,6 +1,6 @@
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar">
-  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
@@ -20,41 +20,39 @@
 </div>
 <!--end::Toolbar-->
 <div class="post fs-6 d-flex flex-column" id="kt_post">
-  <div class="container-fluid">
-    <%= render partial: "users/members_sharing_tabs" %>
-    <div class="card">
-      <!--begin::Card body-->
-      <div class="card-body pt-8 px-6 d-flex flex-column">
-        <p class="additional-text wrap" style="max-width: 635px">Account Sharing allows you to delegate access to your account to everyone from another account. Members will inherit their roles when accessing the shared account.</p>
-        <%= form_with url: delegate_shared_users_accounts_path, method: :post do |form| %>
-          <div class="fv-row fv-plugins-icon-container">
-            <label class="forms--label">Share account with...</label>
-            <div class="d-flex flex-row justify-content-between align-items-center w-100">
-              <div class="input-group forms--input-group" style="width: 50%; max-width: 400px">
-                <select id=""
-                        class="forms--select form-select select2-hidden-accessible"
-                        data-placeholder="Do not share"
-                        tabindex="-1"
-                        data-controller="select2"
-                        style="background-color: #f5f8fa;"
-                        multiple="true"
-                        name="share_to[]"
-                        data-is-multi="true"
-                >
-                  <% policy_scope(Account).each do |account| %>
-                    <% if current_account.id != account.id %>
-                      <option value="<%= account.id %>" label="<%= account.name %>" <%= policy_scope(SharedAccount).where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
-                    <% end %>
+  <%= render partial: "users/members_sharing_tabs" %>
+  <div class="card">
+    <!--begin::Card body-->
+    <div class="card-body pt-8 px-6 d-flex flex-column">
+      <p class="additional-text wrap" style="max-width: 635px">Account Sharing allows you to delegate access to your account to everyone from another account. Members will inherit their roles when accessing the shared account.</p>
+      <%= form_with url: delegate_shared_users_accounts_path, method: :post do |form| %>
+        <div class="fv-row fv-plugins-icon-container">
+          <label class="forms--label">Share account with...</label>
+          <div class="d-flex flex-row justify-content-between align-items-center w-100">
+            <div class="input-group forms--input-group" style="width: 50%; max-width: 400px">
+              <select id=""
+                      class="forms--select form-select select2-hidden-accessible"
+                      data-placeholder="Do not share"
+                      tabindex="-1"
+                      data-controller="select2"
+                      style="background-color: #f5f8fa;"
+                      multiple="true"
+                      name="share_to[]"
+                      data-is-multi="true"
+              >
+                <% policy_scope(Account).each do |account| %>
+                  <% if current_account.id != account.id %>
+                    <option value="<%= account.id %>" label="<%= account.name %>" <%= policy_scope(SharedAccount).where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
                   <% end %>
-                </select>
-              </div>
+                <% end %>
+              </select>
             </div>
-            <p class="mt-2 mb-10 help-text"><%= current_account.get_share_state_string(policy_scope(SharedAccount)) %></p>
-            <button type="submit" class="custom-button custom-button--primary custom-button--sm">Save settings</button>
           </div>
-        <% end %>
-      </div>
-      <!--end::Card body-->
+          <p class="mt-2 mb-10 help-text"><%= current_account.get_share_state_string(policy_scope(SharedAccount)) %></p>
+          <button type="submit" class="custom-button custom-button--primary custom-button--sm">Save settings</button>
+        </div>
+      <% end %>
     </div>
+    <!--end::Card body-->
   </div>
 </div>

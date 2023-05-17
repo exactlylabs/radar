@@ -1,4 +1,4 @@
-<div class="sidebar--main-container" data-controller="sidebar">
+<div class="sidebar--main-container" data-controller="sidebar switch-account">
   <a href="<%= dashboard_path %>">
     <img alt="Logo" src="<%= image_url('new-radar-logo.png') %>" width="150" class="sidebar--logo ms-2">
   </a>
@@ -7,17 +7,25 @@
       icon: "dashboard-icon",
       title: "My Dashboard",
       url: dashboard_path,
-      sidebar_item_id: "dashboard"
+      sidebar_item_id: "dashboard",
+      disabled: false
     }
   %>
-  <%= render partial: "application/components/sidebar/accounts_item" %>
+  <% if current_account.present? %>
+    <%= render partial: "application/components/sidebar/accounts_item" %>
+  <% else %>
+    <%= render partial: "application/components/sidebar/add_account_item", 
+        locals: { only_item: true }
+    %>
+  <% end %>
   <div class="sidebar--horizontal-divider"></div>
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
       icon: "pods-icon",
       title: "Pods",
       url: clients_path,
-      sidebar_item_id: "pods"
+      sidebar_item_id: "pods",
+      disabled: current_account.nil?
     }
   %>
   <%= render partial: "application/components/sidebar/sidebar_item",
@@ -25,7 +33,8 @@
       icon: "locations-icon",
       title: "Locations",
       url: locations_path,
-      sidebar_item_id: "locations"
+      sidebar_item_id: "locations",
+      disabled: current_account.nil?
     }
   %>
   <%= render partial: "application/components/sidebar/sidebar_item",
@@ -33,7 +42,8 @@
       icon: "members-icon",
       title: "Members & Sharing",
       url: users_account_index_path,
-      sidebar_item_id: "members"
+      sidebar_item_id: "members",
+      disabled: current_account.nil?
     }
   %>
 

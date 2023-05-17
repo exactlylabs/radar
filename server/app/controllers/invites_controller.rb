@@ -20,19 +20,21 @@ class InvitesController < ApplicationController
     if already_created_invite.present? || already_added_user.present?
       duplicate_invite_error = true
     end
-    account_to_use = current_account.is_all_accounts? ? policy_scope(Account).find(invite[:account_id]) : current_account
+    account_to_use = current_account.is_all_accounts? || invite[:account_id].present? ? policy_scope(Account).find(invite[:account_id]) : current_account
     if !duplicate_invite_error
-      new_invite = Invite.new invite_params
-      new_invite.account = account_to_use
-      new_invite.sent_at = Time.now
+      @new_invite = Invite.new invite_params
+      @new_invite.account = account_to_use
+      @new_invite.sent_at = Time.now
       secret = SecretsHelper.create_secret(16)
-      new_invite.token = secret
+      @new_invite.token = secret
     end
     respond_to do |format|
-      if !duplicate_invite_error && new_invite.save
-        token = "#{new_invite.id}#{secret}"
-        InviteMailer.with(invite: new_invite, account: account_to_use, token: token).invite_email.deliver_later
-        format.html { redirect_back fallback_location: root_path, notice: "Invite was successfully created." }
+      if !duplicate_invite_error && @new_invite.save
+        token = "#{@new_invite.id}#{secret}"
+        InviteMailer.with(invite: @new_invite, account: account_to_use, token: token).invite_email.deliver_later
+        @notice = "Invite was successfully created."
+        format.turbo_stream
+        format.html { redirect_back fallback_location: root_path, notice: @notice }
       else
         format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity, notice: duplicate_invite_error ? "Error: There is already an Invite with the given email!" : "There has been an error creating the Invite! Please try again later." }
       end

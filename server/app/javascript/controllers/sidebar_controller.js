@@ -4,8 +4,10 @@ export default class extends Controller {
 
   static targets = [
     'profileMenuToggle',
-    'profileMenuOption',
-    'profileMenuContainer'
+    'profileDataPopover',
+    'profileMenuContainer',
+    'accountOptionsMenu',
+    'accountsMenu'
   ]
 
   connect() {}
@@ -42,26 +44,95 @@ export default class extends Controller {
   }
 
   openProfileMenu() {
-    this.profileMenuContainerTarget.style.height = '9rem';
     this.profileMenuToggleTarget.setAttribute('data-menu-state', 'open');
     this.profileMenuToggleTarget.classList.add('sidebar--profile-menu-toggle-open');
-    const caret = document.getElementById('sidebar--profile-menu-caret');
-    caret.style.transform = 'rotate(180deg)';
-    this.profileMenuOptionTargets.forEach(o => o.classList.remove('invisible'))
+    this.profileDataPopoverTarget.classList.remove('invisible');
   }
 
   closeProfileMenu() {
-    this.profileMenuContainerTarget.style.height = '3rem';
     this.profileMenuToggleTarget.setAttribute('data-menu-state', 'closed');
     this.profileMenuToggleTarget.classList.remove('sidebar--profile-menu-toggle-open');
-    const caret = document.getElementById('sidebar--profile-menu-caret');
-    caret.style.transform = 'none';
-    this.profileMenuOptionTargets.forEach(o => o.classList.add('invisible'))
+    this.profileDataPopoverTarget.classList.add('invisible');
   }
 
   toggleProfileMenu() {
     const currentState = this.profileMenuToggleTarget.getAttribute('data-menu-state');
     if(currentState === 'closed') this.openProfileMenu();
     else this.closeProfileMenu();
+  }
+
+  hoverAccount(e) {
+    e.target.classList.add('sidebar--account-item-container-active');
+    const accountId = this.getAccountId(e.target);
+    if (accountId === '-1') return;
+    
+    const isShared = e.target.getAttribute('data-is-shared') === 'true';
+    const iconId = `sidebar--account-item-options-icon${isShared ? '-shared' : ''}@${accountId}`;
+    const iconElement = document.getElementById(iconId);
+    if(iconElement) iconElement.classList.remove('invisible');
+  }
+
+  blurAccount(e) {
+    const element = e.target;
+    if (element.getAttribute('data-is-active') !== 'true')
+      element.classList.remove('sidebar--account-item-container-active');
+    
+    const accountId = this.getAccountId(element);
+    if(accountId === '-1') return;
+
+    const isShared = element.getAttribute('data-is-shared') === 'true';
+    const optionsMenuId = `sidebar--account-item-options-menu${isShared ? '-shared' : ''}@${accountId}`;
+    const optionsMenu = document.getElementById(optionsMenuId);
+    if (optionsMenu && !optionsMenu.classList.contains('invisible')) return;
+    
+    const iconId = `sidebar--account-item-options-icon${isShared ? '-shared' : ''}@${accountId}`;
+    const iconElement = document.getElementById(iconId);
+    if (iconElement) iconElement.classList.add('invisible');
+  }
+
+  getAccountId(target) {
+    return target.id.split('@')[1];
+  }
+
+  closeAnyOtherMenu(elementToOpen) {
+    this.accountOptionsMenuTargets.forEach(om => {
+      if (!om.classList.contains('invisible') && this.getAccountId(elementToOpen) !== this.getAccountId(om)) {
+        om.classList.add('invisible');
+      }
+    });
+  }
+
+  toggleOptionsMenu(e) {
+    e.stopPropagation();
+    const element = e.target;
+    const accountId = this.getAccountId(element);
+    const isShared = element.id.includes('-shared');
+    const optionsMenuId = `sidebar--account-item-options-menu${isShared ? '-shared' : ''}@${accountId}`;
+    const optionsMenuElement = document.getElementById(optionsMenuId);
+    if (optionsMenuElement) {
+      this.closeAnyOtherMenu(optionsMenuElement);
+      if (optionsMenuElement.classList.contains('invisible')) {
+        optionsMenuElement.classList.remove('invisible');
+      } else {
+        optionsMenuElement.classList.add('invisible');
+      }
+    }
+  }
+
+  openAccountsMenu() {
+    this.accountsMenuTarget.classList.remove('invisible');
+  }
+
+  closeAccountsMenu() {
+    this.accountOptionsMenuTargets.forEach(t => t.classList.add('invisible'));
+    this.accountsMenuTarget.classList.add('invisible');
+  }
+
+  toggleAccountsMenu(e) {
+    if (this.accountsMenuTarget.classList.contains('invisible')) {
+      this.openAccountsMenu();
+    } else {
+      this.closeAccountsMenu();
+    }
   }
 }

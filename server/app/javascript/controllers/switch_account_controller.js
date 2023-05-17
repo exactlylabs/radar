@@ -38,10 +38,9 @@ export default class extends Controller {
   }
 
   selectAccount(e) {
-    // prevent <i> or <a> from switching account on click
-    if (e.target.localName === "i" || e.target.localName === "a") {
-      return false;
-    }
+    // prevent <img> from switching account on click
+    // as it is the options menu toggler
+    if (e.target.localName === "img" || e.target.localName === "a") return false;
     const selectedAccountId = e.target.id.split("@")[1];
     const cookieArray = document.cookie.split(";");
     let currentAccount;
@@ -70,15 +69,15 @@ export default class extends Controller {
   showMoreOptionsIcon(e) {
     const accountId = e.target.id.split("@")[1];
     const menuIcon = this.getSpecificIcon(accountId);
-    if(menuIcon) menuIcon.style.display = "block";
+    if(menuIcon) menuIcon.classList.remove('invisible');
   }
 
   hideMoreOptionsIcon(e) {
     const accountId = e.target.id.split("@")[1];
     const menuIcon = this.getSpecificIcon(accountId);
     if(menuIcon) {
-      menuIcon.style.display = "none";
       menuIcon.classList.remove("selected");
+      menuIcon.classList.add("invisible");
     }
   }
 

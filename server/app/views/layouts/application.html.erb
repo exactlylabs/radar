@@ -56,7 +56,14 @@
       >
         <%= render partial: "accounts/add_account_wizard/add_account_wizard" %>
       </div>
-
+    <div class="modal fade"
+         tabindex="-1"
+         data-controller="modal"
+         data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal"
+    >
+      <%= turbo_frame_tag "add_member_modal" do %>
+      <% end %>
+    </div>
     <div class="modal fade"
          tabindex="-1"
          data-controller="modal"

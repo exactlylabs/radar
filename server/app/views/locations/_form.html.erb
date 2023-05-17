@@ -24,7 +24,7 @@
           <div class="fv-plugins-message-container invalid-feedback"></div>
         </div>
 
-        <% if !current_account.is_all_accounts? %>
+        <% if !current_account&.is_all_accounts? %>
           <div class="fv-row mb-7 fv-plugins-icon-container position-relative">
             <!--begin::Label-->
             <label class="forms--label mb-2">Categories</label>
@@ -51,24 +51,6 @@
           <div class="forms--row d-flex flex-column">
             <label class="forms--label mb-2 required">Account</label>
             <select class="form-select forms--select"
-                    data-controller="select2"
-                    id="client-accounts-dropdown"
-                    data-placeholder="Select an account"
-                    name="location[account_id]"
-                    data-select2-id="select2-data-account_id"
-                    tabindex="-1"
-            >
-              <% policy_scope(Account).each_with_index do |account, index|%>
-                <%= render partial: "clients/client_select_option", locals: { option: account, selected: index === 0} %>
-              <% end %> 
-            </select>
-          </div>
-        <% end %>
-
-        <% if current_account.is_all_accounts? %>
-          <div class="fv-row mb-7 fv-plugins-icon-container">
-            <label class="fs-6 fw-bold mb-2 required">Account</label>
-            <select class="form-select"
                     data-controller="select2"
                     id="client-accounts-dropdown"
                     data-placeholder="Select an account"
