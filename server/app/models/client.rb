@@ -12,6 +12,8 @@ class Client < ApplicationRecord
     AS_CHANGED = "AUTONOMOUS_SYSTEM_CHANGED"
     IN_SERVICE = "IN_SERVICE"
     NOT_IN_SERVICE = "NOT_IN_SERVICE"
+    CLIENT_REQUESTED_TO_UPDATE = "CLIENT_REQUESTED_TO_UPDATE"
+    WATCHDOG_REQUESTED_TO_UPDATE = "WATCHDOG_REQUESTED_TO_UPDATE"
   end
 
   # Event Hooks
@@ -21,6 +23,8 @@ class Client < ApplicationRecord
   notify_change :ip, Client::Events::IP_CHANGED
   notify_change :autonomous_system_id, Client::Events::AS_CHANGED
   notify_change :online, {true => Client::Events::WENT_ONLINE, false => Client::Events::WENT_OFFLINE}
+  notify_change :target_client_version_id, Client::Events::CLIENT_REQUESTED_TO_UPDATE
+  notify_change :target_watchdog_version_id, Client::Events::WATCHDOG_REQUESTED_TO_UPDATE
   
 
   # TODO: New agents are 15 seconds, old were 30. Once all the legacy "script based" clients are gone, update this to 15
@@ -32,9 +36,11 @@ class Client < ApplicationRecord
   belongs_to :user, optional: true, foreign_key: 'claimed_by_id'
   belongs_to :location, optional: true
   belongs_to :client_version, optional: true
+  belongs_to :target_client_version, optional: true, class_name: 'ClientVersion'
   belongs_to :update_group, optional: true
   belongs_to :account, optional: true
   belongs_to :watchdog_version, optional: true
+  belongs_to :target_watchdog_version, optional: true, class_name: 'WatchdogVersion'
   belongs_to :autonomous_system, optional: true
 
   has_many :measurements
@@ -47,6 +53,7 @@ class Client < ApplicationRecord
   before_create :create_ids
   after_save :send_event
   after_save :check_ip_changed
+  after_save :update_versions, if: :saved_change_to_update_group_id?
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, -> { where.not(id: REDIS.zrangebyscore(Client::REDIS_PING_SET_NAME, (PING_DURATION * 1.5).second.ago.to_i, Time.now.to_i))}
@@ -97,9 +104,9 @@ class Client < ApplicationRecord
   end
 
   def disconnected!
-    if UpdateGroup.joins(:events).where(
+    if self.events.where(
       "events.timestamp > ? AND (events.name = ? OR events.name = ?)",
-      5.minute.ago, UpdateGroup::Events::CLIENT_VERSION_CHANGED, UpdateGroup::Events::WATCHDOG_VERSION_CHANGED
+      5.minute.ago, Client::Events::CLIENT_REQUESTED_TO_UPDATE, Client::Events::WATCHDOG_REQUESTED_TO_UPDATE
     ).present?
       return
     end
@@ -116,9 +123,9 @@ class Client < ApplicationRecord
       (Client::PING_DURATION * 1.5).second.ago.to_i, 
       Time.now.to_i
     )
-    clients = Client.left_joins(:update_group => :events).where.not(
+    clients = Client.left_joins(:events).where.not(
       "events.id IS NOT NULL AND events.timestamp > ? AND (events.name = ? OR events.name = ?)",
-      5.minute.ago, UpdateGroup::Events::CLIENT_VERSION_CHANGED, UpdateGroup::Events::WATCHDOG_VERSION_CHANGED
+      5.minute.ago, Client::Events::CLIENT_REQUESTED_TO_UPDATE, Client::Events::WATCHDOG_REQUESTED_TO_UPDATE
     ).where.not(id: client_ids).distinct
     clients.update(online: false)
 
@@ -130,14 +137,16 @@ class Client < ApplicationRecord
     if saved_change_to_online || saved_change_to_test_requested
       PodStatusChannel.broadcast_to(CHANNELS[:clients_status], self)
     end
-
+    
     if saved_change_to_test_requested && test_requested
       PodAgentChannel.broadcast_test_requested self
     end
 
-    if saved_change_to_update_group_id
-      PodAgentChannel.broadcast_client_update_group_changed self
-      WatchdogChannel.broadcast_watchdog_update_group_changed self
+    if saved_change_to_target_client_version_id
+      PodAgentChannel.broadcast_version_changed self
+    end
+    if saved_change_to_target_watchdog_version_id
+      WatchdogChannel.broadcast_version_changed self
     end
   end
 
@@ -362,17 +371,11 @@ class Client < ApplicationRecord
   end
 
   def to_update_version
-    if self.raw_version != "Dev" &&
-      !self.update_group.nil?
-      self.update_group.client_version
-    end
+    self.target_client_version unless self.raw_version == "Dev"
   end
 
   def to_update_watchdog_version
-    if self.raw_watchdog_version != "Dev" &&
-      !self.update_group.nil?
-      self.update_group.watchdog_version
-    end
+    self.target_watchdog_version unless self.raw_version == "Dev"
   end
 
   def to_update_distribution
@@ -411,26 +414,12 @@ class Client < ApplicationRecord
   end
 
   def has_update?
-    # This query bellow is an attempt to avoid deserializing Distribution, UpdateGroup and ClientVersion objects when not necessary
-    return Distribution.joins(
-      client_version: :update_groups
-    ).where(
-      "update_groups.id = ? AND distributions.name = ? AND client_versions.version != ?",
-      self.update_group_id, self.distribution_name, self.raw_version || ''
-    ).exists?
+    self.target_client_version_id.present? && self.client_version_id != self.target_client_version_id
   end
 
   def has_watchdog_update?
-    if self.raw_watchdog_version == "Dev"
-      return false
-    end
-    # This query bellow is an attempt to avoid deserializing UpdateGroup and WatchdogVersion objects when not necessary
-    return WatchdogVersion.joins(
-      :update_groups
-    ).where(
-      "update_groups.id = ? AND watchdog_versions.version != ?",
-      self.update_group_id, self.raw_watchdog_version || ''
-    ).exists?
+    self.watchdog_version_id != self.target_watchdog_version_id && 
+      self.raw_watchdog_version != "Dev"
   end
 
   def latest_measurement
@@ -628,5 +617,10 @@ class Client < ApplicationRecord
     o = [('a'..'z'), (0..9)].map(&:to_a).flatten - [0, 1, "o", "l"]
     string = (0...11).map { o[rand(o.length)] }.join
     self.unix_user = "r#{string}"
+  end
+
+  def update_versions
+    self.update_group&.ensure_client_rollout_percentage!
+    self.update_group&.ensure_watchdog_rollout_percentage!
   end
 end
