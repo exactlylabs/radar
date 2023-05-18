@@ -27,7 +27,7 @@ export default class extends Controller {
     resetDayValueSelect.classList.add('select2-custom-disable');
     formRows.forEach(fr => fr.classList.add('form-custom-opaque'));
     resetValueSelect.setAttribute('aria-disabled', 'true');
-    resetValueSelect.setAttribute('disabled');
+    resetValueSelect.setAttribute('disabled', 'true');
     resetDayValueSelect.setAttribute('aria-disabled', 'true');
     resetDayValueSelect.setAttribute('disabled', 'true');
     this.hideWarning();
