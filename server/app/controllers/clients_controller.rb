@@ -193,6 +193,7 @@ class ClientsController < ApplicationController
 
   def watchdog_status
     @client.raw_watchdog_version = params[:version]
+    @client.has_watchdog = true unless @client.has_watchdog
     if params[:version]
       # Check client Version Id
       wv_ids = WatchdogVersion.where(version: params[:version]).pluck(:id)
@@ -222,6 +223,7 @@ class ClientsController < ApplicationController
     # set the pod as a staging pod
     if @account&.superaccount?
       @client.staging = true
+      @client.has_watchdog = true
       @client.raw_secret = @secret
 
       # TODO: For future releases, it's interesting
