@@ -12,21 +12,18 @@ class PodAgentChannel < ApplicationCable::Channel
     )
   end
 
-  def self.broadcast_update_group_version_changed(update_group)
-    # Broadcast an update for each client
-    update_group.clients.each do |client|
-      if client.has_update?
-        ActionCable.server.broadcast(
-          PodAgentChannel.agent_stream_name(client), 
-          {
-            event: "version_changed",
-            payload: {
-              version: update_group.client_version.version,
-              binary_url: PodAgentChannel.blob_path(client.to_update_signed_binary),
-            }
+  def self.broadcast_version_changed(client)
+    if client.has_update? && client.to_update_signed_binary.present?
+      ActionCable.server.broadcast(
+        PodAgentChannel.agent_stream_name(client), 
+        {
+          event: "version_changed",
+          payload: {
+            version: client.target_client_version.version,
+            binary_url: PodAgentChannel.blob_path(client.to_update_signed_binary),
           }
-        )
-      end
+        }
+      )
     end
   end
 

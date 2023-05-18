@@ -3,6 +3,21 @@ class WatchdogChannel < ApplicationCable::Channel
     stream_from WatchdogChannel.watchdog_stream_name self.client
   end
 
+  def self.broadcast_version_changed(client)
+    if client.has_watchdog_update? && client.target_watchdog_version.signed_binary.present?
+      ActionCable.server.broadcast(
+        WatchdogChannel.watchdog_stream_name(client), 
+        {
+          event: "version_changed",
+          payload: {
+            version: client.target_watchdog_version.version,
+            binary_url: WatchdogChannel.blob_path(client.target_watchdog_version.signed_binary),
+          }
+        }
+      )
+    end
+  end
+
   def self.broadcast_update_group_version_changed(update_group)
     # Broadcast an update for each client
     update_group.clients.each do |client|
@@ -56,6 +71,7 @@ class WatchdogChannel < ApplicationCable::Channel
     end
     self.client.update(
       raw_watchdog_version: data[:version],
+      has_watchdog: true,
       watchdog_version_id: version_id,
     )
     if self.client.has_watchdog_update?
