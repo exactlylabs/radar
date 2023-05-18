@@ -6,6 +6,7 @@ export default class extends Controller {
     dropdownParent: String,
     customTheme: String,
     customMatcher: String,
+    allowClear: String,
   };
 
   connect() {
@@ -13,7 +14,7 @@ export default class extends Controller {
       dir: document.body.getAttribute("direction"),
     };
 
-    if (this.blanksValue) {
+    if (this.blanksValue && this.blanksValue === 'true') {
       options.allowClear = true;
     }
 
@@ -28,6 +29,10 @@ export default class extends Controller {
     // This allows select2 to work properly inside modals
     if (this.dropdownParentValue) {
       options.dropdownParent = `#${this.dropdownParentValue}`
+    }
+
+    if (this.allowClearValue) {
+      options.allowClear = this.allowClearValue === 'true';
     }
 
     // Custom data attribute to be able to remove searchbar from select2 application-wide

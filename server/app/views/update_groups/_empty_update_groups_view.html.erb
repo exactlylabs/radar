@@ -14,12 +14,10 @@
           </svg>
           </span>
       </div>
-      <div class="fw-bolder" style="margin-bottom: 20px; font-size: 20px">
+      <div class="dialog-main-title mb-6">
           There are no Release Groups set up yet, create one.
       </div>
-      <div style="max-width: 80%; margin-bottom: 30px; font-size: 14px; color: #b5b5c3">
-        <%= link_to "Create Release Group", new_update_group_path, { class: "btn btn-primary", data: { "turbo-frame" => "create_update_group_modal" } } %>
-      </div>
+      <%= link_to "Create Release Group", new_update_group_path, { class: "mb-6 mx-auto custom-button custom-button--primary custom-button--lg", data: { "turbo-frame" => "create_update_group_modal" } } %>
     </div>
   </div>
 </div>

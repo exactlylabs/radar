@@ -15,7 +15,11 @@ class ClientsController < ApplicationController
     @environment = params[:environment]
     @account_id = params[:account_id]
     if @account_id
-      @clients = policy_scope(Client).where(account_id: @account_id)
+      if @account_id == 'none'
+        @clients = policy_scope(Client).where_no_account
+      else
+        @clients = policy_scope(Client).where(account_id: @account_id)
+      end
     else
       @clients = policy_scope(Client)
     end

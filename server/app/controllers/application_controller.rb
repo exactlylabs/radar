@@ -16,6 +16,10 @@ class AllAccountsAccount
   def is_all_accounts?
     true
   end
+
+  def get_share_state_string(scoped_shared_users_accounts)
+    "N/A"
+  end
 end
 
 class AuthenticationHolder
@@ -95,8 +99,12 @@ class ApplicationController < ActionController::Base
       # Check if user has acces to given account, and define if it is an active user
       # or it can access due to account delegation
       is_account_accessible_through_share = current_user.shared_accounts.distinct.where(id: account_id).count == 1
-      can_access_account =  is_account_accessible_through_share || current_user.accounts.where(id: account_id).count == 1
-      
+      if current_user.super_user
+        can_access_account = true
+      else
+        can_access_account =  is_account_accessible_through_share || current_user.accounts.where(id: account_id).count == 1  
+      end
+
       raise Pundit::NotAuthorizedError, "Access denied" unless can_access_account
       
       @auth_holder.set_user(current_user) if @auth_holder.user.nil?
