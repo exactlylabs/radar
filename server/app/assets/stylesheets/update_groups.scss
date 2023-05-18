@@ -1,0 +1,38 @@
+@import "shared/colors.scss";
+
+.rollout--progress-bar {
+  height: 20px;
+  border: 1px solid #ccc;
+  position: relative;
+  width: 100%;
+  background-color: $light-gray;
+  cursor: pointer;
+}
+
+.rollout--progress-bar--fill {
+  height: 100%;
+  top: 30px;
+  background-color: $blue;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.rollout--progress-bar--handle {
+  width: 20px;
+  height: 20px;
+  background-color: #000000;
+  z-index: 2;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 0;
+  border-radius: 50%;
+  cursor: grab;
+}
+
+.rollout--progress-bar--text {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
