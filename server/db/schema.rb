@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_15_174726) do
+ActiveRecord::Schema.define(version: 2023_05_16_184829) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pageinspect"
@@ -241,10 +241,15 @@ ActiveRecord::Schema.define(version: 2023_05_15_174726) do
     t.string "hardware_platform"
     t.integer "data_cap_day_of_month", default: 1
     t.boolean "in_service", default: false
+    t.bigint "target_client_version_id"
+    t.bigint "target_watchdog_version_id"
+    t.boolean "has_watchdog", default: false
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
     t.index ["location_id"], name: "index_clients_on_location_id"
+    t.index ["target_client_version_id"], name: "index_clients_on_target_client_version_id"
+    t.index ["target_watchdog_version_id"], name: "index_clients_on_target_watchdog_version_id"
     t.index ["unix_user"], name: "index_clients_on_unix_user", unique: true
     t.index ["update_group_id"], name: "index_clients_on_update_group_id"
     t.index ["watchdog_version_id"], name: "index_clients_on_watchdog_version_id"
@@ -534,7 +539,13 @@ ActiveRecord::Schema.define(version: 2023_05_15_174726) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "watchdog_version_id"
     t.boolean "default", default: false
+    t.bigint "old_client_version_id"
+    t.bigint "old_watchdog_version_id"
+    t.integer "client_version_rollout_percentage", default: 100
+    t.integer "watchdog_version_rollout_percentage", default: 100
     t.index ["client_version_id"], name: "index_update_groups_on_client_version_id"
+    t.index ["old_client_version_id"], name: "index_update_groups_on_old_client_version_id"
+    t.index ["old_watchdog_version_id"], name: "index_update_groups_on_old_watchdog_version_id"
     t.index ["watchdog_version_id"], name: "index_update_groups_on_watchdog_version_id"
   end
 
@@ -610,10 +621,12 @@ ActiveRecord::Schema.define(version: 2023_05_15_174726) do
   add_foreign_key "clients", "accounts"
   add_foreign_key "clients", "autonomous_systems"
   add_foreign_key "clients", "client_versions"
+  add_foreign_key "clients", "client_versions", column: "target_client_version_id"
   add_foreign_key "clients", "locations"
   add_foreign_key "clients", "update_groups"
   add_foreign_key "clients", "users", column: "claimed_by_id"
   add_foreign_key "clients", "watchdog_versions"
+  add_foreign_key "clients", "watchdog_versions", column: "target_watchdog_version_id"
   add_foreign_key "distributions", "client_versions"
   add_foreign_key "invites", "accounts"
   add_foreign_key "invites", "users"
@@ -646,7 +659,9 @@ ActiveRecord::Schema.define(version: 2023_05_15_174726) do
   add_foreign_key "study_level_projections", "study_aggregates"
   add_foreign_key "study_level_projections", "study_aggregates", column: "parent_aggregate_id"
   add_foreign_key "update_groups", "client_versions"
+  add_foreign_key "update_groups", "client_versions", column: "old_client_version_id"
   add_foreign_key "update_groups", "watchdog_versions"
+  add_foreign_key "update_groups", "watchdog_versions", column: "old_watchdog_version_id"
   add_foreign_key "users_accounts", "accounts"
   add_foreign_key "users_accounts", "users"
 end
