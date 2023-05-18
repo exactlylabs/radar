@@ -93,7 +93,7 @@ export default class extends Controller {
       this.marker = L.marker([this.latitudeValue, this.longitudeValue], {icon});
     }
     this.marker.addTo(this.map);
-    this.map.setView([this.latitudeValue, this.longitudeValue], 13);
+    this.map.setView([this.latitudeValue, this.longitudeValue], this.map.zoom);
   }
 
   updateMapPosition(e) {

@@ -44,7 +44,7 @@
   <% if current_account.is_all_accounts? %>
     <td class="regular-text mb-1"
         style="max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-      <%= client.account.name %>
+      <%= client.account.present? ? client.account.name : "No account" %>
     </td>
   <% end %>
   <% if current_user.super_user %>

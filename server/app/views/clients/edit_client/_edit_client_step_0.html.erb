@@ -25,7 +25,13 @@
                   data-action="select2-select->edit-pod#onAccountsSelectChange select2-clear->edit-pod#onAccountsSelectChange"
                   data-edit-pod-target="accountsSelect"
                   data-select2-dropdown-parent-value="edit_pod_modal"
+                  data-select2-blanks-value="<%= current_user.super_user %>"
+                  data-select2-allow-clear-value="false"
           >
+            <% if current_user.super_user && @client.account.nil? %>
+              <option></option>
+              <option>&nbsp;</option>
+            <% end %>
             <% policy_scope(Account).each do |account|%>
               <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
             <% end %>

@@ -58,6 +58,7 @@ class Client < ApplicationRecord
   scope :where_staging, -> { where(staging: true) }
   scope :where_in_service, -> { where(in_service: true)}
   scope :where_not_in_service, -> { where(in_service: false)}
+  scope :where_no_account, -> { where("account_id IS NULL") }
 
   def secret=(unencrypted_secret)
     # Manually set secret, to use our custom cost on BCrypt hasher
