@@ -7,11 +7,11 @@ Open-sourced toolkit that allows you to analyze existing broadband data and coll
 Each directory consists of a tool of our toolkit
 
 1. Pods Agent:
-    
+
     A Golang service that connects to Radar Pods and runs speed tests in the background, sending the measurements back to the server.
 
 2. Pods Server:
-    
+
     Ruby on Rails webservice for Radar Pods.
 
 3. Broadband Mapping
@@ -32,11 +32,15 @@ Each directory consists of a tool of our toolkit
 
 7. Scripts
 
-    This directory contains Miscellaneous scripts used by our CI, scripts to help generate and flash our self-managed pods image and scripts to setup and start our toolkit
+    This directory contains Miscellaneous scripts used by our CI, and scripts to setup and start our toolkit
 
 8. Fips Geocoder
 
     Golang API that returns the county FIPS code that is located in the given latitude and longitude set. It's used by the Pods Server to locate study counties
+
+9. Pods OS
+
+    Directory having all scripts to generate a POD OS image as well as to configure it for development purposes and emulate, using QEMU
 
 
 
