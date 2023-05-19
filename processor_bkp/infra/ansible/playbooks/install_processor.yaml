@@ -1,0 +1,10 @@
+- name: Install Mlab Processor
+  hosts: processor
+  vars_prompt:
+    - name: maxmind_key
+      prompt: Maxmind API Token
+      private: true
+
+  roles:
+    - install-input-files
+    - install-processor
