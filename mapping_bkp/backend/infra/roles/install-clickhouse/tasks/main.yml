@@ -1,0 +1,31 @@
+# Took from https://github.com/AlexeySetevoi/ansible-clickhouse/blob/master/tasks/main.yml
+---
+# tasks file for clickhouse
+- include_tasks:
+    file: "install/apt.yml"
+    apply:
+      tags: [install]
+  tags: [install]
+
+- include_tasks: 
+    file: configure/sys.yml
+    apply:
+      tags: [config, config_sys]
+  tags: [config, config_sys]
+
+- name: "Notify Handlers Now"
+  meta: flush_handlers
+
+- include_tasks: service.yml
+  tags: [always]
+
+- name: "Wait for Clickhouse Server to Become Ready"
+  wait_for:
+    port: "{{ clickhouse_tcp_secure_port | default(clickhouse_tcp_port) }}"
+    delay: "{{ clickhouse_ready_delay }}"
+
+- include_tasks:
+    file: configure/db.yml
+    apply:
+      tags: [config, config_db]
+  tags: [config, config_db]

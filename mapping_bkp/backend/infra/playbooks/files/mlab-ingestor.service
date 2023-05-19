@@ -1,0 +1,17 @@
+[Unit]
+Description = Mlab Ingestor
+After = network-online.target
+Wants = network-online.target
+
+[Service]
+ExecStart = /usr/local/bin/mlab-ingestor
+Restart = on-failure
+RestartSec = 10s
+Environment=DB_PORT=9000
+Environment=DB_NAME=mlab-mapping
+Environment=DB_USER=mapping
+Environment=DB_PASSWORD=${DBPASSWORD}
+Environment=DB_HOST=localhost
+
+[Install]
+WantedBy = multi-user.target

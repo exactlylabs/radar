@@ -1,0 +1,6 @@
+---
+
+acme_dir: "/etc/letsencrypt"
+acme_keys_dir: "{{ acme_dir }}/keys"
+acme_certs_dir: "{{ acme_dir }}/certs"
+domain_name: "{{ inventory_hostname }}"
