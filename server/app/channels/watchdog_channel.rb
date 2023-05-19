@@ -4,9 +4,9 @@ class WatchdogChannel < ApplicationCable::Channel
   end
 
   def self.broadcast_version_changed(client)
-    if client.has_watchdog_update? && client.target_watchdog_version.signed_binary.present?
+    if client.has_watchdog_update? && client&.target_watchdog_version&.signed_binary.present?
       ActionCable.server.broadcast(
-        WatchdogChannel.watchdog_stream_name(client), 
+        WatchdogChannel.watchdog_stream_name(client),
         {
           event: "version_changed",
           payload: {
@@ -23,7 +23,7 @@ class WatchdogChannel < ApplicationCable::Channel
     update_group.clients.each do |client|
       if client.has_watchdog_update?
         ActionCable.server.broadcast(
-          WatchdogChannel.watchdog_stream_name(client), 
+          WatchdogChannel.watchdog_stream_name(client),
           {
             event: "version_changed",
             payload: {
@@ -39,7 +39,7 @@ class WatchdogChannel < ApplicationCable::Channel
   def self.broadcast_watchdog_update_group_changed(client)
     if client.has_watchdog_update?
       ActionCable.server.broadcast(
-        WatchdogChannel.watchdog_stream_name(client), 
+        WatchdogChannel.watchdog_stream_name(client),
         {
           event: "version_changed",
           payload: {
@@ -84,8 +84,8 @@ class WatchdogChannel < ApplicationCable::Channel
   end
 
 
-  private 
-  
+  private
+
   # Commands to the watchdog -- Called only during the sync process at the beginning of the connection
 
   def update()
