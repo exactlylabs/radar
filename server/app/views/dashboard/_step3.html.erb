@@ -35,7 +35,12 @@
   <!--end::Wrapper-->
 </div>
 
-<div class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:frame-render->modal#showModal turbo:submit-end->modal#submit turbo:submit-end->onboard#ifSuccessGoto4">
+<div class="modal fade"
+  tabindex="-1"
+  data-controller="modal"
+  data-action="turbo:frame-render->modal#showModal turbo:submit-end->modal#submit turbo:submit-end->onboard#ifSuccessGoto4"
+  data-clear-turbo-id="new_location_modal"  
+>
   <%= turbo_frame_tag "new_location_modal" do %>
   <% end %>
 </div>

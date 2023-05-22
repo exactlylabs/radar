@@ -83,7 +83,8 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.update(test_requested: true)
-        format.html { redirect_to request.env['HTTP_REFERER'], notice: "Client test requested." }
+        format.turbo_stream {}
+        format.html { redirect_back fallback_location: root_path, notice: "Client test requested." }
         format.json { render :show, status: :ok, location: clients_path(@client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }

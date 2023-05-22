@@ -30,10 +30,10 @@ consumer.subscriptions.create({ channel: 'PodStatusChannel' }, {
     const clientStatusElement = document.getElementById(`client_${client.id}_status${idSuffix}`);
     const currentStatus = client.online ? client.test_requested ? 'Test running' : 'Online' : 'Offline';
     const currentStatusBadgeColor =
-      currentStatus === 'Test running' ? 'badge-light-primary' :
-        currentStatus === 'Online' ? 'badge-light-success' :
-          'badge-light-danger';
-    const currentStatusClass = `badge ${currentStatusBadgeColor}`;
+      currentStatus === 'Test running' ? 'custom-badge--running' :
+        currentStatus === 'Online' ? 'custom-badge--online' :
+          'custom-badge--offline';
+    const currentStatusClass = `custom-badge  ${currentStatusBadgeColor}`;
     if(clientStatusElement) {
       clientStatusElement.innerText = currentStatus;
       clientStatusElement.setAttribute('class', currentStatusClass);
@@ -42,7 +42,7 @@ consumer.subscriptions.create({ channel: 'PodStatusChannel' }, {
       !!document.getElementById(`client_${client.id}_status_pending`);
     if(currentStatus === 'Offline' && client.test_requested && !hasPendingBadgeAlready) {
       const wrapper = document.getElementById(`client_${client.id}_status_wrapper${idSuffix}`);
-      const pendingTestBadge = '<span class="badge badge-light-primary">Pending test</span>';
+      const pendingTestBadge = '<span class="ms-2 custom-badge custom-badge--pending">Pending test</span>';
       if(wrapper) wrapper.insertAdjacentHTML( 'beforeend', pendingTestBadge);
     }
   },

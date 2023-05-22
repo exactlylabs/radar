@@ -62,7 +62,7 @@
         </div>
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
           <div class="forms--label" style="min-width: 130px;">Avg./Exp. Download</div>
-          <div class="d-flex flex-row w-100 w-xl-50">
+          <div class="d-flex flex-row w-50 flex-wrap">
             <div class="regular-text">
               <%= location.download_avg.present? ? "#{location.download_avg} Mbps" : 'N/A'%>
             </div>
@@ -76,7 +76,7 @@
         </div>
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
           <div class="forms--label" style="min-width: 130px;">Avg./Exp. Upload</div>
-          <div class="d-flex flex-row w-100 w-xl-50">
+          <div class="d-flex flex-row w-50 flex-wrap">
             <div class="regular-text">
               <%= location.upload_avg.present? ? "#{location.upload_avg} Mbps" : 'N/A'%>
             </div>
