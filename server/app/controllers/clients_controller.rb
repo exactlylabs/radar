@@ -61,9 +61,9 @@ class ClientsController < ApplicationController
     # policy_scope(Client) will not work
     client_id = params[:id]
     @client = Client.find_by_unix_user(client_id)
-    
+
     if !@client
-      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])  
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])
     end
 
     @client.request_test!
@@ -193,14 +193,14 @@ class ClientsController < ApplicationController
 
   def watchdog_status
     @client.raw_watchdog_version = params[:version]
-    @client.has_watchdog = true unless @client.has_watchdog
+    @client.has_watchdog = true
     if params[:version]
       # Check client Version Id
       wv_ids = WatchdogVersion.where(version: params[:version]).pluck(:id)
       if wv_ids.length > 0
         @client.watchdog_version_id = wv_ids[0]
       end
-      
+
     end
     @client.save
     respond_to do |format|
