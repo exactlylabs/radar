@@ -57,12 +57,22 @@
   </div>
 <% end %>
 
-<div class="modal fade" tabindex="-1" data-controller="modal categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
+<div class="modal fade"
+  tabindex="-1"
+  data-controller="modal categories"
+  data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->modal#submit turbo:frame-render->modal#showModal"
+  data-clear-turbo-id="new_location_modal"
+>
   <%= turbo_frame_tag "new_location_modal" do %>
   <% end %>
 </div>
 
-<div class="modal fade" tabindex="-1" data-controller="modal categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated turbo:submit-end->modal#submit turbo:frame-render->modal#showModal turbo:frame-render->categories#initializeCategories">
+<div class="modal fade"
+  tabindex="-1"
+  data-controller="modal categories"
+  data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated turbo:submit-end->modal#submit turbo:frame-render->modal#showModal turbo:frame-render->categories#initializeCategories"
+  data-clear-turbo-id="edit_location_modal"  
+>
   <%= turbo_frame_tag "edit_location_modal" do %>
   <% end %>
 </div>

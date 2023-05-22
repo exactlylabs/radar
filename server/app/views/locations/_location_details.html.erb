@@ -55,20 +55,14 @@
     <div class="card-body pt-0 d-flex flex-row justify-content-between">
       <div class="location-data" style="width: 40%;">
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-          <div class="fw-bolder w-50" style="min-width: 130px;"><%= location.categories.count == 1 ? "Category" : "Categories" %></div>
-          <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
-            <%= render partial: "location_categories/table_cell", locals: { categories: location.categories, shows_tooltip: true, row: 0 } %>
-          </div>
-        </div>
-        <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-          <div class="fw-bolder w-50" style="min-width: 130px;"><%= location.categories.count == 1 ? "Category" : "Categories" %></div>
+          <div class="forms--label" style="min-width: 130px;"><%= location.categories.count == 1 ? "Category" : "Categories" %></div>
           <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
             <%= render partial: "location_categories/table_cell", locals: { categories: location.categories, shows_tooltip: true, row: 0 } %>
           </div>
         </div>
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
           <div class="forms--label" style="min-width: 130px;">Avg./Exp. Download</div>
-          <div class="d-flex flex-row w-100 w-xl-50">
+          <div class="d-flex flex-row w-50 flex-wrap">
             <div class="regular-text">
               <%= location.download_avg.present? ? "#{location.download_avg} Mbps" : 'N/A'%>
             </div>
@@ -82,7 +76,7 @@
         </div>
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
           <div class="forms--label" style="min-width: 130px;">Avg./Exp. Upload</div>
-          <div class="d-flex flex-row w-100 w-xl-50">
+          <div class="d-flex flex-row w-50 flex-wrap">
             <div class="regular-text">
               <%= location.upload_avg.present? ? "#{location.upload_avg} Mbps" : 'N/A'%>
             </div>

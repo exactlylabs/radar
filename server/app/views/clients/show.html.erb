@@ -39,7 +39,13 @@
   <% end %>
 </div>
 
-<div class="modal fade" tabindex="-1" id="new_location_modal-edit" data-controller="edit-pod" data-action="turbo:submit-start->edit-pod#handleSubmitStart turbo:submit-end->edit-pod#handleNewLocationFromClientModal">
+<div class="modal fade"
+  tabindex="-1"
+  id="new_location_modal-edit"
+  data-controller="edit-pod"
+  data-action="turbo:submit-start->edit-pod#handleSubmitStart turbo:submit-end->edit-pod#handleNewLocationFromClientModal"
+  data-clear-turbo-id="new_location_modal"
+>
   <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "edit-pod-modal", modal_target: "edit_pod_modal") do %>
   <% end %>
 </div>
