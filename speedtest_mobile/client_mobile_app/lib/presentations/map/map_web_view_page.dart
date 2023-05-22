@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:client_mobile_app/core/flavors/app_config.dart';
@@ -11,8 +12,8 @@ import 'package:client_mobile_app/presentations/map/bloc/map_state.dart';
 import 'package:client_mobile_app/presentations/map/widgets/ftue_map_modal.dart';
 import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 
-class MapWebViewPage extends StatelessWidget {
-  MapWebViewPage({
+class MapWebViewPage extends StatefulWidget {
+  const MapWebViewPage({
     Key? key,
     this.latitude,
     this.longitude,
@@ -21,8 +22,33 @@ class MapWebViewPage extends StatelessWidget {
   final double? latitude;
   final double? longitude;
 
+  @override
+  State<MapWebViewPage> createState() => _MapWebViewPageState();
+
+  static const String _cookieName = 'visitedAllResults';
+  static const String _cookieValue = 'true';
+  static const String _cookieDomain = 'speedtest-staging.exactlylabs.com';
+  static const String _cookiePath = '/';
+}
+
+class _MapWebViewPageState extends State<MapWebViewPage> {
   final CookieManager _cookieManager = CookieManager();
   final Completer<WebViewController> _controller = Completer<WebViewController>();
+  late String initialUrl;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    initialUrl = _getWebViewUrl(context, widget.latitude, widget.longitude);
+    if (widget.latitude == null && widget.longitude == null) {
+      getCurrentLocation();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +62,27 @@ class MapWebViewPage extends StatelessWidget {
             children: [
               Expanded(
                 child: WebView(
-                  initialUrl: _getWebViewUrl(context, latitude, longitude),
+                  key: ValueKey(initialUrl),
+                  initialUrl: initialUrl,
                   javascriptMode: JavascriptMode.unrestricted,
                   onWebViewCreated: (WebViewController webViewController) {
-                    _controller.complete(webViewController);
-                    _cookieManager.clearCookies();
+                    if (!_controller.isCompleted) {
+                      _controller.complete(webViewController);
+                      _cookieManager.clearCookies();
+                    }
                   },
                   onPageStarted: (String url) => _cookieManager.setCookie(const WebViewCookie(
-                      name: _cookieName, value: _cookieValue, domain: _cookieDomain, path: _cookiePath)),
+                      name: MapWebViewPage._cookieName,
+                      value: MapWebViewPage._cookieValue,
+                      domain: MapWebViewPage._cookieDomain,
+                      path: MapWebViewPage._cookiePath)),
+                  navigationDelegate: (NavigationRequest request) {
+                    final validRequestUrl = AppConfig.of(context)?.stringResource.WEB_ENDPOINT;
+                    if (validRequestUrl == null || !request.url.contains(validRequestUrl)) {
+                      return NavigationDecision.prevent;
+                    }
+                    return NavigationDecision.navigate;
+                  },
                 ),
               ),
             ],
@@ -63,15 +102,24 @@ class MapWebViewPage extends StatelessWidget {
     );
   }
 
-  String? _getWebViewUrl(BuildContext context, double? latitude, double? longitude) {
+  String _getWebViewUrl(BuildContext context, double? latitude, double? longitude) {
+    final webEndpoint = AppConfig.of(context)?.stringResource.WEB_ENDPOINT;
     if (latitude == null || longitude == null) {
-      return AppConfig.of(context)?.stringResource.WEB_ENDPOINT;
+      return webEndpoint!;
     }
-    return '${AppConfig.of(context)?.stringResource.WEB_ENDPOINT}&userLat=$latitude&userLng=$longitude&zoom=10';
+    return '$webEndpoint&userLat=$latitude&userLng=$longitude&zoom=20';
   }
 
-  static const String _cookieName = 'visitedAllResults';
-  static const String _cookieValue = 'true';
-  static const String _cookieDomain = 'speedtest-staging.exactlylabs.com';
-  static const String _cookiePath = '/';
+  Future<void> getCurrentLocation() async {
+    final webEndpoint = AppConfig.of(context)?.stringResource.WEB_ENDPOINT;
+    final permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      final permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.deniedForever) {
+        setState(() => initialUrl = webEndpoint!);
+      }
+    }
+    final position = await Geolocator.getCurrentPosition();
+    setState(() => initialUrl = '$webEndpoint&userLat=${position.latitude}&userLng=${position.longitude}&zoom=17');
+  }
 }

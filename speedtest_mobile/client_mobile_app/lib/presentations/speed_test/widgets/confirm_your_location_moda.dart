@@ -1,12 +1,11 @@
-import 'package:client_mobile_app/core/models/location.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/address_not_listed_button.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/location_option_card.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/prefer_not_to_answer_button.dart';
-import 'package:client_mobile_app/resources/app_colors.dart';
-import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:client_mobile_app/resources/strings.dart';
-import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/app_colors.dart';
+import 'package:client_mobile_app/core/models/location.dart';
+import 'package:client_mobile_app/widgets/primary_button.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/location_option_card.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/address_not_listed_button.dart';
 
 class ConfirmYourLocationModal extends StatefulWidget {
   const ConfirmYourLocationModal({

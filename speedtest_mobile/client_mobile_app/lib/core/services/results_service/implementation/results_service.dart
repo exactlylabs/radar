@@ -38,10 +38,9 @@ class ResultsService implements IResultsService {
       body: _buildBody(responses, result, connectionInfo),
     )
         .then((failureOrSuccess) {
-      failureOrSuccess.fold(
-        (failure) => Sentry.captureException(failure.exception, stackTrace: failure.stackTrace),
-        (_) => _,
-      );
+      if (failureOrSuccess.failure != null) {
+        Sentry.captureException(failureOrSuccess.failure!.exception, stackTrace: failureOrSuccess.failure!.stackTrace);
+      }
     });
   }
 
