@@ -17,6 +17,8 @@ class UpdateWatchdogVersionsJob < ApplicationJob
     increment = target - updated_count
     updated_ids = []
 
+    return unless increment != 0
+
     if increment.positive?
       query = clients
               .where(has_watchdog: true)
@@ -40,7 +42,6 @@ class UpdateWatchdogVersionsJob < ApplicationJob
       updated_ids = query.pluck(:id)
       query.update(target_watchdog_version_id: update_group.old_watchdog_version_id)
     end
-    return unless increment != 0
 
     clients
       .where(id: updated_ids)
