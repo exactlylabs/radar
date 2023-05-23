@@ -37,8 +37,9 @@ const (
 )
 
 const (
-	RunTest      cable.MessageType = "run_test" // Custom Type, when requested, the agent should run a speed test
-	UpdateClient cable.MessageType = "update"   // Custom Type, when requested, the agent should update itself
+	RunTest             cable.MessageType = "run_test"        // Custom Type, when requested, the agent should run a speed test
+	UpdateClient        cable.MessageType = "update"          // Custom Type, when requested, the agent should update itself
+	AgentUpdateWatchdog cable.MessageType = "update_watchdog" // Custom Type, when requested, the agent should update the watchdog binary
 )
 
 // RadarClient implements agent.RadarClient, connecting to the server using websocket
@@ -98,10 +99,11 @@ func (c *RadarClient) Connected() bool {
 }
 
 func (c *RadarClient) handleSubscriptionMessage(msg cable.SubscriptionMessage) {
+	log.Println("Received Message from Server: ", msg.Event)
 	if msg.Event == "test_requested" {
 		c.agentCh <- &agent.ServerMessage{TestRequested: true}
 
-	} else if msg.Event == "version_changed" {
+	} else if msg.Event == "version_changed" || msg.Event == "watchdog_version_changed" {
 		updateData := messages.VersionChangedSubscriptionPayload{}
 		if err := json.Unmarshal(msg.Payload, &updateData); err != nil {
 			err = fmt.Errorf("radar.RadarClient#handleSubscriptionMessage Unmarshal: %w", err)
@@ -113,12 +115,18 @@ func (c *RadarClient) handleSubscriptionMessage(msg cable.SubscriptionMessage) {
 			)
 			log.Println(err)
 		}
-		c.agentCh <- &agent.ServerMessage{
-			Update: &agent.BinaryUpdate{
-				Version:   updateData.Version,
-				BinaryUrl: c.serverURL + updateData.BinaryUrl, // Websocket client only sends the path
-			},
+		binUpdate := &agent.BinaryUpdate{
+			Version:   updateData.Version,
+			BinaryUrl: c.serverURL + updateData.BinaryUrl, // Websocket client only sends the path
 		}
+
+		serverMsg := &agent.ServerMessage{}
+		if msg.Event == "version_changed" {
+			serverMsg.Update = binUpdate
+		} else if msg.Event == "watchdog_version_changed" {
+			serverMsg.WatchdogUpdate = binUpdate
+		}
+		c.agentCh <- serverMsg
 	}
 }
 
@@ -149,7 +157,25 @@ func (c *RadarClient) handleCustomMessage(msg cable.ServerMessage) {
 				BinaryUrl: c.serverURL + payload.BinaryUrl, // Websocket client only sends the path
 			},
 		}
-
+	case AgentUpdateWatchdog:
+		payload := &messages.VersionChangedSubscriptionPayload{}
+		if err := msg.DecodeMessage(payload); err != nil {
+			err = fmt.Errorf("radar.RadarClient#handleCustomMessage DecodeMessage: %w", err)
+			tracing.NotifyError(
+				err,
+				tracing.Context{
+					"Message": {"type": msg.Type, "message": msg.Message},
+				},
+			)
+			log.Println(err)
+			return
+		}
+		c.agentCh <- &agent.ServerMessage{
+			WatchdogUpdate: &agent.BinaryUpdate{
+				Version:   payload.Version,
+				BinaryUrl: c.serverURL + payload.BinaryUrl, // Websocket client only sends the path
+			},
+		}
 	}
 }
 

@@ -11,6 +11,7 @@ import (
 
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/update"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 	"github.com/exactlylabs/radar/pods_agent/watchdog"
 )
@@ -114,45 +115,10 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 				maybeSendChannel(a.runTestCh)
 			}
 			if pingResp.Update != nil {
-				log.Printf("An Update for version %v is Available\n", pingResp.Update.Version)
-				err := update.SelfUpdate(pingResp.Update.BinaryUrl)
-				if update.IsValidationError(err) {
-					log.Printf("Existent update is invalid: %v\n", err)
-					tracing.NotifyErrorOnce(err, tracing.Context{
-						"Update Data": {
-							"version": pingResp.Update.Version,
-							"url":     pingResp.Update.BinaryUrl,
-						},
-					})
-				} else if err != nil {
-					panic(err)
-				} else {
-					log.Println("Successfully Updated the Binary. Exiting current version.")
-					cancel()
-					os.Exit(1)
-				}
+				updateAgent(*pingResp.Update, cancel)
 			}
 			if pingResp.WatchdogUpdate != nil {
-				log.Printf("An Update for Watchdog Version %v is available\n", pingResp.WatchdogUpdate.Version)
-				err := watchdog.UpdateWatchdog(pingResp.WatchdogUpdate.BinaryUrl)
-				if update.IsValidationError(err) {
-					log.Printf("Existent update is invalid: %v\n", err)
-					tracing.NotifyErrorOnce(err, tracing.Context{
-						"Update Data": {
-							"version": pingResp.Update.Version,
-							"url":     pingResp.Update.BinaryUrl,
-						},
-					})
-				} else if err != nil {
-					panic(err)
-				} else {
-					log.Println("Successfully Updated the Watchdog. Restarting the whole system")
-					if err := rebooter.Reboot(); err != nil {
-						panic(fmt.Errorf("agent.Start Reboot: %w", err))
-					}
-					cancel()
-					os.Exit(1)
-				}
+				updateWatchdogIfNeeded(*pingResp.WatchdogUpdate, rebooter, cancel)
 			}
 		}
 	}
@@ -190,4 +156,50 @@ func pingFrequency(c *config.Config) time.Duration {
 	pingFreqStr := c.PingFreq
 	pingFreq := strToDuration(pingFreqStr, time.Second)
 	return pingFreq
+}
+
+func updateAgent(bu BinaryUpdate, cancel context.CancelFunc) {
+	log.Printf("An Update for version %v is Available\n", bu.Version)
+	err := update.SelfUpdate(bu.BinaryUrl)
+	if update.IsValidationError(err) {
+		log.Printf("Existent update is invalid: %v\n", err)
+		tracing.NotifyErrorOnce(err, tracing.Context{
+			"Update Data": {
+				"version": bu.Version,
+				"url":     bu.BinaryUrl,
+			},
+		})
+	} else if err != nil {
+		panic(err)
+	} else {
+		log.Println("Successfully Updated the Binary. Exiting current version.")
+		cancel()
+		os.Exit(1)
+	}
+}
+
+// updateWatchdogIfNeeded verifies if the watchdog is running, and in case it's not, it updates it.
+func updateWatchdogIfNeeded(bu BinaryUpdate, rebooter Rebooter, cancel context.CancelFunc) {
+	if !sysinfo.WatchdogIsRunning() {
+		log.Printf("An Update for Watchdog Version %v is available\n", bu.Version)
+		err := watchdog.UpdateWatchdog(bu.BinaryUrl)
+		if update.IsValidationError(err) {
+			log.Printf("Existent update is invalid: %v\n", err)
+			tracing.NotifyErrorOnce(err, tracing.Context{
+				"Update Data": {
+					"version": bu.Version,
+					"url":     bu.BinaryUrl,
+				},
+			})
+		} else if err != nil {
+			panic(err)
+		} else {
+			log.Println("Successfully Updated the Watchdog. Restarting the whole system")
+			if err := rebooter.Reboot(); err != nil {
+				panic(fmt.Errorf("agent.Start Reboot: %w", err))
+			}
+			cancel()
+			os.Exit(1)
+		}
+	}
 }

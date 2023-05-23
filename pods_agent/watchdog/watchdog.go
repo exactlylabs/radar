@@ -2,7 +2,6 @@ package watchdog
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -54,10 +53,7 @@ func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentC
 func handleUpdate(c *config.Config, sysManager SystemManager, data BinaryUpdate) {
 	log.Printf("An Update for Watchdog Version %v is available\n", data.Version)
 	err := UpdateWatchdog(data.BinaryUrl)
-	if err != nil && (errors.Is(err, update.ErrInvalidCertificate) ||
-		errors.Is(err, update.ErrInvalidSignature) ||
-		errors.Is(err, update.ErrCRLInvalidSignature) ||
-		errors.Is(err, update.ErrCRLNotFound)) {
+	if update.IsValidationError(err) {
 		log.Printf("Existent update is invalid: %v\n", err)
 		tracing.NotifyErrorOnce(err, tracing.Context{
 			"Update Data": {
@@ -65,10 +61,6 @@ func handleUpdate(c *config.Config, sysManager SystemManager, data BinaryUpdate)
 				"url":     data.BinaryUrl,
 			},
 		})
-	} else if errors.Is(err, update.ErrCRLExpired) {
-		log.Println(err)
-		// Notify ourselves to renew the CRL
-		tracing.NotifyErrorOnce(err, tracing.Context{})
 	} else if err != nil {
 		panic(err)
 	} else {
