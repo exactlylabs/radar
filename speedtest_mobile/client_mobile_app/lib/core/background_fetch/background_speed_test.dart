@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:network_connection_info/models/connection_info.dart' as CI;
@@ -64,7 +65,9 @@ class BackgroundSpeedTest {
         startUploadTest();
       } else if (_isTestingUploadSpeed) {
         if (Platform.isAndroid) {
-          _connectionInfo = await _networkConnectionInfo.getNetworkConnectionInfo();
+          if (await Permission.phone.request().isGranted) {
+            _connectionInfo = await _networkConnectionInfo.getNetworkConnectionInfo();
+          }
         }
         _isTestingUploadSpeed = false;
         await _getCurrentLocation();
