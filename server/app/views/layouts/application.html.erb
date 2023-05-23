@@ -38,7 +38,6 @@
     <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
   </head>
-
   <body>
     <% if content_for?(:content) %>
       <%= yield(:content) %>
@@ -81,9 +80,6 @@
       <% end %>
     </div>
     <% end %>
-    <div id="notice-container" style="position: fixed; bottom: 75px; left: 140px; z-index: 5">
-
-    </div>
     <% if notice %>
       <%= render partial: "application/notice_alert", locals: {notice: notice} %>
     <% end %>

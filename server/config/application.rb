@@ -30,7 +30,7 @@ module Radar
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    config.assets.paths << Rails.root.join("vendor", "assets", "javascripts")
+    config.assets.paths << Rails.root.join("vendor", "assets", "javascripts", "fonts")
 
     if ENV["CPU_PROFILER"].present?
       # call ./scripts/flamegraph.sh to generate flamegraphs from the dumps
