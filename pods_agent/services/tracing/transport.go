@@ -191,7 +191,6 @@ func (t *bufferedTransport) RoundTrip(req *http.Request) (*http.Response, error)
 }
 
 func (t *bufferedTransport) Flush() {
-	fmt.Println("Closing")
 	close(t.retryCh)
 	<-t.loopClosed
 	if len(t.memBuffer) > 0 {
