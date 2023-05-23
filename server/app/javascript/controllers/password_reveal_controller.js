@@ -29,11 +29,11 @@ export default class PasswordRevealController extends Controller {
   }
 
   togglePasswordConfirmationVisibility(e) {
-    this.eyeSlashIconConfirmationTarget.classList.toggle("d-none");
-    this.eyeIconConfirmationTarget.classList.toggle("d-none");
+    this.eyeSlashIconConfirmationTarget.classList.toggle("invisible");
+    this.eyeIconConfirmationTarget.classList.toggle("invisible");
     if (
       e.target.getAttribute("data-password-reveal-target") ===
-      "eyeSlashIconConfirmation"
+      "eyeIconConfirmation"
     ) {
       this.passwordConfirmationInputTarget.setAttribute("type", "text");
     } else {
@@ -42,10 +42,10 @@ export default class PasswordRevealController extends Controller {
   }
 
   togglePasswordVisibility(e) {
-    this.eyeSlashIconTarget.classList.toggle("d-none");
-    this.eyeIconTarget.classList.toggle("d-none");
+    this.eyeSlashIconTarget.classList.toggle("invisible");
+    this.eyeIconTarget.classList.toggle("invisible");
     if (
-      e.target.getAttribute("data-password-reveal-target") === "eyeSlashIcon"
+      e.target.getAttribute("data-password-reveal-target") === "eyeIcon"
     ) {
       this.passwordInputTarget.setAttribute("type", "text");
     } else {

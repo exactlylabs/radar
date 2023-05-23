@@ -11,6 +11,12 @@ export default class extends Controller {
 
   connect() {}
 
+  handleSignInLoading() {
+    this.element.innerHTML = `<div class="spinner-border spinner-border-sm text-light m-auto" role="status"></div>`;
+    this.element.classList.add('custom-button--disabled');
+    this.element.classList.add('disabled');
+  }
+
   finishSignInFromInvite() {
     const token = document.getElementsByName("csrf-token")[0].content;
     const accountToken = window.location.href.split("?token=")[1];

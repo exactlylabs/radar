@@ -2,57 +2,28 @@
 <!-- checking with the actual request path I can get the expected output -->
 <% if request.original_fullpath != "/users/edit" && action_name != "update_name" %>
 <% content_for :content do %>
-	<div class="d-flex flex-column flex-root">
-		<!--begin::Authentication - Sign-in -->
-		<div class="d-flex flex-column flex-lg-row flex-column-fluid">
-			<!--begin::Aside-->
-			<div class="d-flex flex-column flex-lg-row-auto bg-primary w-xl-600px positon-xl-relative">
-				<!--begin::Wrapper-->
-				<div class="d-flex flex-column position-xl-fixed top-0 bottom-0 w-xl-600px scroll-y">
-					<!--begin::Header-->
-					<div class="d-flex flex-row-fluid flex-column text-center p-10 pt-lg-20 mt-lg-20">
-						<!--begin::Logo-->
-						<a href="/" class="py-9 pt-lg-20">
-						<img alt="Logo" src="<%= image_url('new-radar-logo-white.png')%>" width="186" height="35">
-						</a>
-						<!--end::Logo-->
-						<!--begin::Title-->
-						<h1 class="page-main-title text-white pb-5 pb-md-10">Welcome to Radar</h1>
-						<!--end::Title-->
-						<!--begin::Description-->
-						<p class="dialog-sub-title text-white">Learn about your community&#8217;s
-						<br>access to broadband</p>
-						<!--end::Description-->
-					</div>
-					<!--end::Header-->
-					<!--begin::Illustration-->
-					<!--div class="d-flex flex-row-auto bgi-no-repeat bgi-position-x-center bgi-size-contain bgi-position-y-bottom min-h-100px min-h-lg-350px" style="background-image: url(app/assets/images/17.png)"></div-->
-					<img alt="Logo" src="<%= image_url('sign_up_img.svg')%>" style="width: 56%; height: auto" class="mx-auto">
-					<!--end::Illustration-->
-				</div>
-				<!--end::Wrapper-->
-			</div>
-			<!--begin::Aside-->
-			<!--begin::Body-->
-			<div class="d-flex flex-column flex-lg-row-fluid py-10">
-				<!--begin::Content-->
-				<%= yield %>
-				<!--end::Content-->
-				<!--begin::Footer-->
-				<div class="d-flex flex-center flex-wrap fs-6 p-5 pb-0">
-					<!--begin::Links-->
-					<div class="d-flex flex-center fw-bold fs-6">
-						<a href="#" class="additional-text text-hover-primary px-2" target="_blank">About</a>
-						<a href="#" class="additional-text text-hover-primary px-2" target="_blank">Support</a>
-					</div>
-					<!--end::Links-->
-				</div>
-				<!--end::Footer-->
-			</div>
-			<!--end::Body-->
-		</div>
-		<!--end::Authentication - Sign-in-->
-	</div>
+	<body id="public--body">
+    <main id="public--main">
+      <section id="public--logo-section">
+        <%= image_tag image_url('new-radar-logo.png'), id: 'public--logo' %>
+      </section>
+      <section id="public--card-section" class="public--devise">
+        <%= yield %>
+      </section>
+      <section id="public--learn-section">
+        <p class="public--additional-text public--learn-more">New to Radar Pods? <span><a href="https://pods.radartoolkit.com" class="public--regular-link">Learn more <%= image_tag image_url('new-tab-icon.png'), id: 'public--new-tab-icon' %></a></span></span></p>
+      </section>
+      <footer id="public--footer">
+        <div id="public--footer-first-row">
+          <a href="https://radartoolkit.com/privacy-policy" class="public--footer-link">Privacy Policy</a>
+          <a href="mailto:support@radartoolkit.com" class="public--footer-link">Support</a>
+        </div>
+        <div id="public--footer-second-row">
+          <p id="public--footer-rights">© 2023 Radar. All rights reserved.</p>
+        </div>
+      </footer>
+    </main>
+	</body>
 <% end %>
 <% end %>
 <%= render template: "layouts/application" %>

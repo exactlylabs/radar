@@ -68,6 +68,12 @@ $sidebar--accounts-item-outline: rgba(188, 187, 199, 0.3);
 $sidebar--accounts-item-box-shadow: rgba(160, 159, 183, 0.35);
 $sidebar--accounts-options-box-shadow: rgba(160, 159, 183, 0.4);
 
+// Snackbar
+$snackbar--danger-background-color: rgba(250, 176, 176, 0.2);
+$snackbar--danger-color: #e54b4b;
+$snackbar--notice-background-color: rgba(75, 123, 229, 0.2);
+$snackbar--notice-color: $blue;
+
 .transparent {
   background-color: transparent;
 }

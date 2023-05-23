@@ -1,37 +1,36 @@
 <%= render "devise/shared/error_messages", resource: resource %>
 
-<div class="d-flex flex-center flex-column flex-column-fluid">
+<div class="d-flex flex-center flex-column flex-column-fluid devise--sign-in-container">
   <!--begin::Wrapper-->
-  <div class="w-lg-500px p-10 p-lg-15 mx-auto">
+  <div class="w-100">
     <!--begin::Form-->
     <!-- data-turbo: false is needed to prevent "Nil location provided. Can't build URI. on Password reset" -->
     <!-- reference: https://stackoverflow.com/questions/36214082/rails-devise-nil-location-provided-cant-build-uri-on-password-reset -->
     <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, novalidate: "novalidate", class: "form w-100 fv-plugins-bootstrap5 fv-plugins-framework", "data-turbo" => "false" }) do |f| %>
       <!--begin::Heading-->
-      <div class="text-center mb-10">
+      <div class="w-100 text-center mb-10">
         <!--begin::Title-->
-        <h1 class="page-main-title">Forgot Password ?</h1>
+        <h1 class="page-main-title">Reset password</h1>
         <!--end::Title-->
         <!--begin::Link-->
-        <div class="additional-text">Enter your email to reset your password.</div>
+        <div class="additional-text wrap">Enter your email address and we'll send you a link to reset your password.</div>
         <!--end::Link-->
       </div>
       <!--begin::Heading-->
       <!--begin::Input group-->
       <div class="forms--input-group d-flex flex-column mb-8">
-        <label class="forms--label mb-2 required">Email</label>
-        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "forms--text-input" %>
-      <div class="fv-plugins-message-container invalid-feedback"></div></div>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "forms--text-input forms--text-input-focusable", placeholder: "Email address" %>
+        <div class="fv-plugins-message-container invalid-feedback"></div>
+      </div>
       <!--end::Input group-->
       <!--begin::Actions-->
-      <div class="d-flex flex-wrap justify-content-center pb-lg-0">
-        <a href="<%= new_session_path(resource_name) %>" class="custom-button custom-button--lg custom-button--secondary me-4">Cancel</a>
-        <%= f.submit "Submit", class: "custom-button custom-button--lg custom-button--primary" %>
+      <div class="d-flex flex-wrap justify-content-center mb-6">
+        <%= button_tag "Send", type: "submit", class: "custom-button custom-button--lg custom-button--primary w-100", data: { controller: "sign-in", action: "click->sign-in#handleSignInLoading" } %>
       </div>
       <!--end::Actions-->
-    <div></div>
     <% end %>
     <!--end::Form-->
+    <%= link_to 'Back to log in', new_session_path(resource_name), class: "regular-link" %>
   </div>
   <!--end::Wrapper-->
 </div>
