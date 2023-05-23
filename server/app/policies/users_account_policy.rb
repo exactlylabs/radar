@@ -9,10 +9,10 @@ class UsersAccountPolicy < ApplicationPolicy
             user = @auth_holder.user
             all_ua = []
             user.accounts.not_deleted.each do |account|
-              all_ua.append(*account.users_accounts.map{|l| l.id})
+              all_ua.append(*account.users_accounts.pluck(:id))
             end
             user.shared_accounts.not_deleted.each do |account|
-              all_ua.append(*account.users_accounts.map{|l| l.id})
+              all_ua.append(*account.users_accounts.pluck(:id))
             end
             scope.where(id: all_ua)
           end
