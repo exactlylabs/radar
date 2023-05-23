@@ -54,7 +54,7 @@ type bufferedTransport struct {
 }
 
 func (t *bufferedTransport) bufferLoop() {
-	timer := time.NewTicker(5 * time.Second)
+	timer := time.NewTicker(60 * time.Second)
 	defer close(t.loopClosed)
 	// Receiver Loop adds requests to the buffer
 	for {
