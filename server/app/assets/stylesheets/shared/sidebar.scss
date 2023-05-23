@@ -306,6 +306,12 @@
   }
 }
 
+#sidebar--accounts-list-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .sidebar--add-account-button {
   outline: none;
   border: none;
@@ -324,9 +330,7 @@
 
 .sidebar--account-item-options-menu-container {
   width: 158px;
-  position: absolute;
-  top: 35px;
-  left: 220px;
+  position: fixed;
   background-color: white;
   z-index: 50;
   border-radius: 6px;

@@ -40,7 +40,7 @@
                       name="share_to[]"
                       data-is-multi="true"
               >
-                <% policy_scope(Account).each do |account| %>
+                <% current_user.accounts.each do |account| %>
                   <% if current_account.id != account.id %>
                     <option value="<%= account.id %>" label="<%= account.name %>" <%= policy_scope(SharedAccount).where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
                   <% end %>

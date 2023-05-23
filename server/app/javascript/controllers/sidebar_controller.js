@@ -102,6 +102,26 @@ export default class extends Controller {
     });
   }
 
+  closeMenusOnScroll() {
+    this.accountOptionsMenuTargets.forEach(om => {
+      if (!om.classList.contains('invisible')) {
+        om.classList.add('invisible');
+      }
+    });
+  }
+
+  /**
+   * Need to control submenu position manually because of the way the sidebar is built,
+   * mainly related to overflow and scrolling.
+   * @param {HTMLElement} optionsMenuElement
+   */
+  openOptionsMenu(wrapperElement, optionsMenuElement) {
+    optionsMenuElement.classList.remove('invisible');
+    const box = wrapperElement.getBoundingClientRect();
+    optionsMenuElement.style.top = (box.y - 185) + 'px';
+    optionsMenuElement.style.left = wrapperElement.offsetLeft + wrapperElement.offsetWidth + 'px';
+  }
+
   toggleOptionsMenu(e) {
     e.stopPropagation();
     const element = e.target;
@@ -112,7 +132,8 @@ export default class extends Controller {
     if (optionsMenuElement) {
       this.closeAnyOtherMenu(optionsMenuElement);
       if (optionsMenuElement.classList.contains('invisible')) {
-        optionsMenuElement.classList.remove('invisible');
+        const wrapper = document.getElementById(`sidebar--account-container${isShared ? '-shared' : ''}@${accountId}`);
+        this.openOptionsMenu(wrapper, optionsMenuElement);
       } else {
         optionsMenuElement.classList.add('invisible');
       }
