@@ -142,9 +142,10 @@ class Client < ApplicationRecord
     PodAgentChannel.broadcast_test_requested self if saved_change_to_test_requested && test_requested
 
     PodAgentChannel.broadcast_version_changed self if saved_change_to_target_client_version_id
-    return unless saved_change_to_target_watchdog_version_id
-
-    WatchdogChannel.broadcast_version_changed self
+    # Notify both agent and watchdog when there's an update to the watchdog
+    # The agent will know if it should update or leave it to the watchdog.
+    PodAgentChannel.broadcast_watchdog_version_changed self if saved_change_to_target_watchdog_version_id
+    WatchdogChannel.broadcast_version_changed self if saved_change_to_target_watchdog_version_id
   end
 
   def latest_download
@@ -413,8 +414,8 @@ class Client < ApplicationRecord
   end
 
   def has_watchdog_update?
-    watchdog_version_id != target_watchdog_version_id &&
-      raw_watchdog_version != 'Dev'
+    target_watchdog_version_id.present? && watchdog_version_id != target_watchdog_version_id &&
+      raw_watchdog_version != 'Dev' && has_watchdog?
   end
 
   def latest_measurement
