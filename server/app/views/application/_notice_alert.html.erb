@@ -6,7 +6,7 @@
       <rect x="11" y="9" width="2" height="2" rx="1" transform="rotate(-90 11 9)" fill="currentColor"/>
     </svg>
   </span>
-  <h4 class="card-main-title <%= notice =~ /error/i ? "alert--text-danger" : nil %> mb-0"><%= notice %></h4>
+  <h4 class="card-main-title wrap <%= notice =~ /error/i ? "alert--text-danger" : nil %> mb-0"><%= notice %></h4>
   <button type="button"
     class="custom-button transparent custom-close-button hoverable ms-6 position-relative right-0"
     data-action="click->alert#closeAlert"

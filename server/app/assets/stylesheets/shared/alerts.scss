@@ -2,11 +2,12 @@
 
 .custom-alert {
   width: max-content;
+  max-width: 700px;
   padding: 1rem;
   position: fixed;
-  top: 25px;
-  right: 25px;
-  z-index: 5;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 100;
   background-color: $alert--primary-background-color;
   display: flex;
   flex-direction: row;
@@ -24,5 +25,22 @@
     &.alert--text-danger {
       color: $alert--danger-color !important;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .custom-alert {
+    width: calc(100vw - 32px);
+    padding: 1rem;
+    position: fixed;
+    bottom: 2rem;
+    left: 1rem;
+    z-index: 5;
+    background-color: $alert--primary-background-color;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 6px;
   }
 }

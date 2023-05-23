@@ -1,0 +1,28 @@
+@import "../shared/colors.scss";
+@import "../shared/text.scss";
+
+.devise--sign-in-container {
+  width: 100%;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.devise--alert {
+  width: 100%;
+  padding: .75rem 1rem;
+  border-radius: 6px;
+  font-variation-settings: 'wght'$semi-bold;
+  font-size: 0.875rem;
+  line-height: 1.312rem;
+
+  &[data-alert-type="alert"] {
+    background-color: $snackbar--danger-background-color;
+    color: $snackbar--danger-color;
+  }
+
+  &[data-alert-type="notice"] {
+    background-color: $snackbar--notice-background-color;
+    color: $snackbar--notice-color;
+  }
+}

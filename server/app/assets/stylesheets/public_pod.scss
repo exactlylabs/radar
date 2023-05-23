@@ -50,6 +50,11 @@
   text-align: center;
   display: flex;
   flex-direction: column;
+
+  &.public--devise {
+    max-width: 415px;
+    padding: 1.5rem 2rem;
+  }
 }
 
 #public--learn-section {
