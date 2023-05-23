@@ -8,10 +8,10 @@ class ClientPolicy < ApplicationPolicy
         else
           all_pods = []
           user.accounts.not_deleted.each do |account|
-            all_pods.append(*account.clients.map{|l| l.id})
+            all_pods.append(*account.clients.pluck(:id))
           end
           user.shared_accounts.not_deleted.each do |account|
-            all_pods.append(*account.clients.map{|l| l.id})
+            all_pods.append(*account.clients.pluck(:id))
           end
           scope.where(id: all_pods)
         end
