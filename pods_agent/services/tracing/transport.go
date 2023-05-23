@@ -1,5 +1,11 @@
 package tracing
 
+/*
+* Note for the Reader:
+* All errors in this transporter are puporsefully being logged only, since this is the transporter
+* for sentry and if it fails, there's nowhere to notify. Additionally, we don't want this to break the application in any way.
+ */
+
 import (
 	"bufio"
 	"bytes"
