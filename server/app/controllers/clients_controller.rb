@@ -4,7 +4,7 @@ require "rqrcode"
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
-  before_action :set_client, only: %i[ release show edit destroy unstage get_client_label toggle_in_service ]
+  before_action :set_client, only: %i[ release show edit destroy get_client_label toggle_in_service ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
@@ -82,7 +82,8 @@ class ClientsController < ApplicationController
     # If no secret, then we need to authenticate
     if !@client
       authenticate_user!
-      @client = policy_scope(Client).find_by_unix_user(params[:id])
+      clients = current_user.super_user? ? Client : policy_scope(Client)
+      @client = clients.find_by_unix_user(params[:id])
     end
 
     respond_to do |format|
@@ -220,14 +221,10 @@ class ClientsController < ApplicationController
     end
 
     # If it's registered with a superaccount token
-    # set the pod as a staging pod
+    # set the pod as having a watchdog (physical pod)
     if @account&.superaccount?
-      @client.staging = true
       @client.has_watchdog = true
-      @client.raw_secret = @secret
 
-      # TODO: For future releases, it's interesting
-      # if we could auto-claim the pod if it's already authenticated.
     end
 
     respond_to do |format|
@@ -295,19 +292,6 @@ class ClientsController < ApplicationController
     @client.destroy
     respond_to do |format|
       format.html { redirect_back fallback_location: root_path, notice: "Client was successfully destroyed." }
-      format.json { head :no_content }
-    end
-  end
-
-  def unstage
-    @client.staging = false
-    if @client.save
-      notice = "Client was successfully set as live."
-    else
-      notice = "Error setting client as live."
-    end
-    respond_to do |format|
-      format.html { redirect_back fallback_location: root_path, notice: notice }
       format.json { head :no_content }
     end
   end
@@ -461,11 +445,19 @@ class ClientsController < ApplicationController
     end
   end
 
+  def unclaimed
+    if !current_account.superaccount
+      head(403)
+    end
+    @clients = Client.where(account: nil).where_online
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
   def set_client
-    @client = policy_scope(Client).find_by_unix_user(params[:id])
+    clients = current_user.super_user? ? Client : policy_scope(Client)
+    @client = clients.find_by_unix_user(params[:id])
     if !@client
       raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])
     end

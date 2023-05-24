@@ -4,50 +4,41 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title">Pods
-      <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <h1 class="page-main-title">Unclaimed Pods
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item page-sub-title"><%= current_account.name %>
+        <li class="breadcrumb-item text-muted page-sub-title"><%= current_account.name %>
+          <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
         </li>
+        <a href="/clients" class="breadcrumb-item page-sub-title text-active-dark">Pods</a>
+        <li class="breadcrumb-item text-dark page-sub-title">Unclaimed Pods</li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
-    <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-      <% if current_user.super_user %>
-        <a href="<%= update_groups_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Manage Release Group</a>
-      <% end %>
-      <% if current_account.superaccount %>
-        <a href="<%= unclaimed_clients_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Unclaimed Pods</a>
-      <% end %>
-      <button type="button" class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled' : '' %>" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard">Add Pod</button>
-    </div>
   </div>
+  <a href="<%= clients_path %>" class="custom-button custom-button--secondary custom-button--sm ps-3 pe-4-4 py-3 ms-8 mt-3">
+    <span class="svg-icon svg-icon-gray custom-button--icon custom-button--icon-start">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect opacity="0.5" x="6" y="11" width="13" height="2" rx="1" fill="currentColor"/>
+        <path d="M8.56569 11.4343L12.75 7.25C13.1642 6.83579 13.1642 6.16421 12.75 5.75C12.3358 5.33579 11.6642 5.33579 11.25 5.75L5.70711 11.2929C5.31658 11.6834 5.31658 12.3166 5.70711 12.7071L11.25 18.25C11.6642 18.6642 12.3358 18.6642 12.75 18.25C13.1642 17.8358 13.1642 17.1642 12.75 16.75L8.56569 12.5657C8.25327 12.2533 8.25327 11.7467 8.56569 11.4343Z" fill="currentColor"/>
+      </svg>
+    </span>
+    Back to Pods
+  </a>
 </div>
 <!--end::Toolbar-->
 
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
   <!--begin::Container-->
   <div id="clients-table-wrapper" class="d-flex flex-column w-100" data-controller="multi-row-table bulk-release-group-modal">
-    <% if (empty_search_params? && @clients.length > 0) || (!empty_search_params?)%>
-      <%= render partial: "clients_table_filters" %>
-    <% end %>
-    <%= render partial: "clients_index_content", locals: { clients: @clients } %>
-    <% if current_user.super_user %>
-      <div class="modal fade" tabindex="-1" id="bulk_change_release_group" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
-        <%= render partial: "clients/bulk_change_release_group_modal" %>
-      </div>
-    <% end %>
+    <%= render partial: "unclaimed_pods_table", locals: {clients: @clients} %>
   </div>
   <!--end::Container-->
 </div>
 
-<div class="modal fade" tabindex="-1" id="add_pod_modal_wizard" data-controller="modal add-pod" data-action="turbo:submit-end->add-pod#handleSubmitEnd">
-  <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path do %>
-  <% end %>
-</div>
 
 <div class="modal fade" tabindex="-1" id="edit_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
   <%= turbo_frame_tag "edit_client_modal", target: "add_pod_step_2", modal_target: "new_location_modal-edit" do %>
