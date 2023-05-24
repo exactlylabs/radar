@@ -27,8 +27,6 @@
             <% end %>
             <% if current_user.super_user %>
               <th class="tables--title" style="width: 10vw;" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
-                  aria-label="Status">Environment</th>
-              <th class="tables--title" style="width: 10vw;" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                   aria-label="Status">Release</th>
             <% end %>
             <th class="tables--title" style="width: <%= current_user.super_user ?  10 : 25%>vw;" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
