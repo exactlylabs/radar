@@ -12,7 +12,6 @@ class ClientsController < ApplicationController
   # GET /clients or /clients.json
   def index
     @status = params[:status]
-    @environment = params[:environment]
     @account_id = params[:account_id]
     if @account_id
       if @account_id == 'none'
@@ -26,10 +25,6 @@ class ClientsController < ApplicationController
     if @status
       @clients = @clients.where_online if @status == 'online'
       @clients = @clients.where_offline if @status == 'offline'
-    end
-    if @environment
-      @clients = @clients.where_live if @environment == 'live'
-      @clients = @clients.where_staging if @environment == 'staging'
     end
     @clients
   end
