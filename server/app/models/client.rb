@@ -63,8 +63,6 @@ class Client < ApplicationRecord
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where('location_id IS NULL') }
-  scope :where_live, -> { where('staging=false OR staging IS NULL') }
-  scope :where_staging, -> { where(staging: true) }
   scope :where_in_service, -> { where(in_service: true)}
   scope :where_not_in_service, -> { where(in_service: false)}
   scope :where_no_account, -> { where("account_id IS NULL") }

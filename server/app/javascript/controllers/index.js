@@ -4,9 +4,6 @@
 
 import { application } from "./application";
 
-import StagingClientsController from "./staging_clients_controller.js";
-application.register("staging-clients", StagingClientsController);
-
 import HelloController from "./hello_controller.js";
 application.register("hello", HelloController);
 
