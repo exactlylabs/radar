@@ -65,7 +65,6 @@ Rails.application.routes.draw do
       post 'status'
       post 'watchdog_status'
       post 'run_test'
-      post 'unstage'
       post 'toggle_in_service'
       get 'pdf_label', to: 'clients#get_client_label'
       post 'run_public_test'
@@ -82,12 +81,7 @@ Rails.application.routes.draw do
       delete 'bulk_delete'
       post 'bulk_update_release_group'
       get 'bulk_pdf_labels'
-    end
-  end
-
-  resources :staging_clients do
-    member do
-      post 'publish'
+      get 'unclaimed'
     end
   end
 
