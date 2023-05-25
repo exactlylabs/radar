@@ -1,0 +1,25 @@
+<div class="w-100" data-registration-target="emailStep">
+  <div class="text-center mb-10">
+    <!--begin::Title-->
+    <h1 class="page-main-title">Sign up</h1>
+    <!--end::Title-->
+    <!--begin::Link-->
+    
+    <div class="additional-text">Already have an account?
+    <a href="<%= invite ? users_invite_sign_in_path(token: params[:token]) : new_session_path(resource_name) %>" class="regular-link">Log in</a></div>
+    <!--end::Link-->
+  </div>
+
+  <div class="forms--input-group d-flex flex-column">
+    <!--begin::Input-->
+    <input type="email" 
+      autofocus="true"
+      autocomplete="email"
+      class="forms--text-input forms--text-input-focusable"
+      tabindex="1"
+      placeholder="Email address" 
+      data-registration-target="emailInput"
+    />
+    <!--end::Input-->
+  </div>
+</div>

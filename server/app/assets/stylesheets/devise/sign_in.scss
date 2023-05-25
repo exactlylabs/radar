@@ -25,4 +25,9 @@
     background-color: $snackbar--notice-background-color;
     color: $snackbar--notice-color;
   }
+
+  &[data-alert-type="warning"] {
+    background-color: $snackbar--warning-background-color;
+    color: $snackbar--warning-color;
+  }
 }

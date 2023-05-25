@@ -1,10 +1,57 @@
-<div class="d-flex flex-center flex-column flex-column-fluid">
+<div class="d-flex flex-center flex-column flex-column-fluid devise--sign-up-container">
   <!--begin::Wrapper-->
-  <div class="w-lg-600px p-10 p-lg-15 mx-auto" data-controller="registration">
-    <%= render partial: "devise/registrations/steps/initial_step" %>
-    <%= render partial: "devise/registrations/steps/profile_picture_step" %>
-    <%= render partial: "devise/registrations/steps/account_type_step" %>
-    <%= render partial: "devise/registrations/steps/account_name_step" %>
+  <div class="w-100" data-controller="registration" data-action="keydown->registration#checkEnter">
+    <%= render partial: "devise/registrations/steps/email_step",
+        locals: { invite: false } 
+    %>
+    <%= render partial: "devise/registrations/steps/password_step" %>
+    <%= render partial: "devise/registrations/steps/profile_step",
+        locals: { account: nil, invite: false }
+    %>
+    
+    <div class="mt-2 devise--alert wrap invisible"
+      data-alert-type="warning"
+      data-registration-target="duplicatedEmailAlert"
+    >
+      This email address is already being used. You can <a href="<%= new_session_path(resource_name) %>" class="warning-link">log in</a> in instead.
+    </div>
+
+    <div class="mt-2 devise--alert wrap invisible"
+      data-registration-target="alert"
+      data-alert-type="alert"
+    ></div>
+
+    <div class="text-center mt-8">
+      <!--begin::Submit button-->
+      <%= button_tag "Continue", 
+        type: "button",
+        class: "custom-button custom-button--lg custom-button--primary mx-auto w-100",
+        tabindex: 3,
+        data: { 
+          controller: "sign-up",
+          action: "click->registration#continue",
+          "registration-target" => "continueButton",
+          "is-invite" => "false"
+        }
+      %>
+      <!--end::Submit button-->
+      <button type="button"
+        class="invisible custom-button custom-button--lg custom-button--primary custom-button--disabled disabled mx-auto w-100"
+        disabled="true"
+        data-registration-target="continueButtonSpinner"
+      >
+        <div class="spinner-border spinner-border-sm text-light m-auto" role="status"></div>
+      </button>
+    </div>
+
+    <p class="text-center mt-6 mb-0 mx-auto wrap w-100 additional-text" data-registration-target="privacyPolicy">
+      By continuing you agree to the
+      <a href="https://radartoolkit.com/privacy-policy"
+        follow="nofollow"
+        target="_blank"
+        class="secondary-link">Privacy Policy</a>.
+    </p>
+
   </div>
   <!--end::Wrapper-->
 </div>
