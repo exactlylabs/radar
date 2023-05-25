@@ -14,7 +14,9 @@ commands:
           netcat \
           iproute2 \
           arping
-      - run: ./scripts/test_setup.sh
+      - run: |
+          cd pods_os
+          ./scripts/test_setup.sh
 
   configure_image:
     steps:
