@@ -22,13 +22,11 @@ export default class extends Controller {
   }
 
   connect() {
-    console.log('connect')
     KTMenu.createInstances();
     this.categories = [];
   }
 
   initialize() {
-    console.log('initialize')
     if(this.categoryCheckboxTargets) {
       let categoryIds = [];
       this.categoryCheckboxTargets.forEach(checkbox => {
