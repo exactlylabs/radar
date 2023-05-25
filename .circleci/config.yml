@@ -27,7 +27,8 @@ workflows:
           modules: |
             pods_agent
             speedtest_mobile
-      
+            pods_os
+
       - continuation/continue:
           name: "Setup Agent Tag Workflows"
           configuration_path: pods_agent/.circleci/config.yml
@@ -36,7 +37,7 @@ workflows:
               only: "/^agent-.*/"
             branches:
               ignore: "/^.*/"
-      
+
       - continuation/continue:
           name: "Setup Watchdog Tag Workflows"
           configuration_path: pods_agent/.circleci/config.yml
