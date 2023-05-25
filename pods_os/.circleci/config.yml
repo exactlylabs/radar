@@ -20,7 +20,7 @@ commands:
     steps:
       - run: sudo ./scripts/create_master_image.sh $POD_OS_ACCOUNT_TOKEN
       - run: echo $POD_OS_CONFIG_FILE | base64 -d > ./config.conf
-      - run: "ssh-keygen -q -t rsa -N '' -f ./tests/keys/id_rsa \<<<y > /dev/null 2>&1"
+      - run: ssh-keygen -q -t rsa -N '' -f ./tests/keys/id_rsa \<<<y > /dev/null 2>&1
       - run: sudo ./scripts/dev_img.sh -c ./config.conf ./dist/radar.img ./tests/keys/id_rsa.pub
 
 jobs:
