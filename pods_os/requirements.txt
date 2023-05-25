@@ -2,6 +2,7 @@ aexpect==1.7.0
 avocado-framework==101.0
 avocado-framework-plugin-vt @ git+https://github.com/avocado-framework/avocado-vt@e9140f0f8bc411363b69243ce57622c819ca8cfc
 netifaces==0.11.0
-qemu @ file://./qemu-stable-7.2-python/python
+qemu-stable-7.2-python/python
 six==1.16.0
 ujson==5.7.0
+pycdlib
