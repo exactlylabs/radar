@@ -4,22 +4,22 @@ commands:
   install_python_deps:
     steps:
       - run: |
-        sudo apt update && \
-        sudo apt install -y \
-        curl \
-        python3 \
-        python3-pip \
-        git \
-        tcpdump \
-        netcat \
-        iproute2 \
-        arping
+          sudo apt update && \
+          sudo apt install -y \
+          curl \
+          python3 \
+          python3-pip \
+          git \
+          tcpdump \
+          netcat \
+          iproute2 \
+          arping
       - run: ./scripts/test_setup.sh
 
   configure_image:
     steps:
       - run: sudo ./scripts/create_master_image.sh $POD_OS_ACCOUNT_TOKEN
-      - run: echo $POD_OS_CONFIG_FILE > ./config.conf
+      - run: echo $POD_OS_CONFIG_FILE | base64 -d > ./config.conf
       - run: ssh-keygen -q -t rsa -N '' -f ./tests/keys/id_rsa <<<y > /dev/null 2>&1
       - run: sudo ./scripts/dev_img.sh -c ./config.conf ./dist/radar.img ./tests/keys/id_rsa.pub
 
