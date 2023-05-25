@@ -25,4 +25,7 @@ jobs:
 workflows:
   main_flow:
     jobs:
-      - test
+      - test:
+          filters:
+            branches:
+              only: "/.*/"
