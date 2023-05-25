@@ -22,11 +22,13 @@ export default class extends Controller {
   }
 
   connect() {
+    console.log('connect')
     KTMenu.createInstances();
     this.categories = [];
   }
 
   initialize() {
+    console.log('initialize')
     if(this.categoryCheckboxTargets) {
       let categoryIds = [];
       this.categoryCheckboxTargets.forEach(checkbox => {
@@ -216,5 +218,9 @@ export default class extends Controller {
       this.clearSearchInput();
       setTimeout(() => emitCustomEvent('handleCategorySearch'), 100); // need to add a little delay to let turbo re-render components on screen
     }
+  }
+
+  clearCategories() {
+    this.categories = [];
   }
 }
