@@ -151,6 +151,20 @@ $extra-bold: 800;
   text-decoration: none;
 }
 
+.secondary-link {
+  font-variation-settings: 'wght'$medium !important;
+  font-size: 0.875rem !important;
+  color: $gray !important;
+  text-decoration: underline;
+}
+
+.warning-link {
+  font-variation-settings: 'wght' $bold !important;
+  font-size: 0.875rem !important;
+  color: $snackbar--warning-color !important;
+  text-decoration: underline;
+}
+
 .help-text {
   font-variation-settings: 'wght' $medium;
   font-size: 0.812rem;

@@ -18,22 +18,18 @@ class Users::RegistrationsController < Devise::RegistrationsController
     begin
       User.transaction do
         @user = User.create! user_params
-        @account = Account.create! account_params
         # Nit: no need to actually call @user.avatar.attach
         # because it actually already does it in the create statement.
         # What's more, it actually creates a PurgeJob if you do both
         # create() with avatar + attach(), so it ends up deleting the attachment.
-
-        # Link account and new user together
-        now = Time.now
-        @user_account = UsersAccount.create!(user_id: @user.id, account_id: @account.id, joined_at: now, invited_at: now)
       end
     rescue ActiveRecord::RecordInvalid => invalid
       error = invalid.record.errors
     end
-    if !error
-      AccountNotificationJobs::NewAccountNotification.perform_later(@account, @user)
-    end
+    # TODO: check if this is still needed
+    # if !error
+    #   AccountNotificationJobs::NewAccountNotification.perform_later(@account, @user)
+    # end
     respond_to do |format|
       if !error
         sign_in @user
@@ -95,6 +91,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         sign_in @user
         format.html { redirect_to dashboard_path(invite: true), notice: "Registered successfully" }
       else
+        format.json { render json: { msg: error }, status: :unprocessable_entity }
         format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity, error: error }
       end
     end
@@ -238,11 +235,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
     render template: "devise/sessions/invite/new", locals: { account: account, first_name: first_name, last_name: last_name, email: email }
   end
 
-  def check_email_uniqueness_on_cold_sign_up
+  def check_email_uniqueness
     email = params[:user][:email]
     possible_user = User.find_by_email(email)
     respond_to do |format|
-      if !possible_user
+      if email.blank?
+        format.json { render json: { status: 400, msg: 'The email is required.' } }
+      elsif possible_user.nil?
         format.json { render json: { status: 200 } }
       else
         format.json { render json: { status: 422, msg: 'A user with the given email already exists.' } }
