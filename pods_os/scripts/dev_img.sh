@@ -15,6 +15,8 @@ Usage: $0 [OPTIONS] <img_zipfile_path> <ssh_pub_key_path>
   -c | --config-path   Set the path to the config file to use
   -u | --user          Set this if you want to add a linux user in the image (helps getting in through QEMU terminal)
   -p | --password      Set the password for the linux user
+  -w | --watchdog      Set the path to the watchdog binary
+  -a | --agent         Set the path to the radar agent binary
   """
 }
 
