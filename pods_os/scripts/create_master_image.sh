@@ -70,7 +70,7 @@ mkdir -p ${TMP_DIR}
 
 ## Start ##
 
-apt-get install -y qemu qemu-user-static binfmt-support systemd-container zip unzip
+apt-get install -y binfmt-support systemd-container zip unzip
 
 curl -L --output ${BUILD_DIR}/$BINARY_NAME $RADAR_AGENT_BIN_URL
 curl -L --output ${BUILD_DIR}/$WATCHDOG_BINARY_NAME $RADAR_WATCHDOG_BIN_URL
@@ -144,7 +144,6 @@ envsubst < ${FILES_DIR}/config.conf > ${TMP_DIR}/home/radar/.config/radar/config
 chown -R 1000:1000 ${TMP_DIR}/home/radar/
 
 # Create Chroot
-cp /usr/bin/qemu-aarch64-static ${TMP_DIR}/usr/bin
 cp ${FILES_DIR}/withinnewimage.sh ${TMP_DIR}/root
 systemd-nspawn -D ${TMP_DIR} /root/withinnewimage.sh
 
