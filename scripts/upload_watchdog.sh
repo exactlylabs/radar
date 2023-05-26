@@ -27,7 +27,6 @@ fi
 
 VERSION=$1
 FILE_PATH=$2
-DIST_NAME=$3
 
 AUTH="Token ${RADAR_TOKEN}"
 STATUS_CODE=$(curl -s -XPOST \
