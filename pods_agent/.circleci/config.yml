@@ -499,6 +499,7 @@ jobs:
     steps:
       - checkout:
           path: ~/repo
+      - run: sudo apt install curl
       - run: mkdir dist
       - run: curl -o dist/radar.img https://storage.googleapis.com/radar-disk-images/staging/radar.img
       - run: ./scripts/test_setup
