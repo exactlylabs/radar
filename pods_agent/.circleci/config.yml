@@ -26,9 +26,13 @@ jobs:
     parameters:
       version:
         type: string
+      url:
+        type: string
+      token:
+        type: string
     steps:
       - checkout
-      - run: make client_version VERSION=<<parameters.version>> RADAR_URL=${RADAR_URL} RADAR_TOKEN=${RADAR_TOKEN}
+      - run: make client_version VERSION=<<parameters.version>> RADAR_URL=<<parameters.url>> RADAR_TOKEN=<<parameters.token>>
 
   build_and_upload:
     working_directory: ~/repo
@@ -47,6 +51,10 @@ jobs:
       binName:
         default: "radar_agent"
         type: string
+      url:
+        type: string
+      token:
+        type: string
 
     steps:
       - build_config
@@ -57,7 +65,9 @@ jobs:
             ARCH=<<parameters.arch>> \
             BIN_NAME=<<parameters.binName>> \
             PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
-            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key RADAR_URL=${RADAR_URL} RADAR_TOKEN=${RADAR_TOKEN}
+            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key \
+            RADAR_URL=<<parameters.url>> \
+            RADAR_TOKEN=<<parameters.token>>
 
   build_watchdog:
     working_directory: ~/repo
@@ -66,6 +76,10 @@ jobs:
       - image: cimg/go:1.18.2
     parameters:
       version:
+        type: string
+      url:
+        type: string
+      token:
         type: string
 
     steps:
@@ -77,7 +91,9 @@ jobs:
             ARCH=arm64 \
             BIN_NAME=watchdog \
             PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
-            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key
+            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key \
+            RADAR_URL=<<parameters.url>> \
+            RADAR_TOKEN=<<parameters.token>>
 
       - persist_to_workspace:
           root: ~/repo/dist/
@@ -91,11 +107,21 @@ jobs:
     parameters:
       version:
         type: string
+      url:
+        type: string
+      token:
+        type: string
+
     steps:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: ./scripts/upload_watchdog.sh <<parameters.version>> /tmp/workspace/watchdog
+      - run: |
+          RADAR_URL=<<parameters.url>> \
+          RADAR_TOKEN=<<parameters.token>> \
+          ./scripts/upload_watchdog.sh
+          <<parameters.version>> \
+          /tmp/workspace/watchdog
 
   deb_package:
     working_directory: ~/repo
@@ -259,10 +285,52 @@ workflows:
             branches:
               only: "/.*/"
 
+      - create_version:
+          requires: [ run_unit_tests ]
+          version: "${$(git rev-parse HEAD):0:7}"
+          url: ${RADAR_STAGING_URL}
+          token: ${RADAR_STAGING_TOKEN}
+          filters:
+            branches:
+              only: "/.*/" # TODO: change to master
+
+      - build_and_upload:
+          requires: [ create_version ]
+          version: "${$(git rev-parse HEAD):0:7}"
+          url: ${RADAR_STAGING_URL}
+          token: ${RADAR_STAGING_TOKEN}
+          filters:
+            branches:
+              only: "/.*/" # TODO: change to master
+          matrix:
+            parameters:
+              os: [ "linux" ]
+              arch: [ "amd64", "arm64" ]
+
+      - build_watchdog:
+          requires: [ create_version ]
+          version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
+          url: ${RADAR_STAGING_URL}
+          token: ${RADAR_STAGING_TOKEN}
+          filters:
+            branches:
+              only: "/.*/" # TODO: change to master
+
+      - upload_watchdog:
+          requires: [ build_watchdog ]
+          version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
+          url: ${RADAR_STAGING_URL}
+          token: ${RADAR_STAGING_TOKEN}
+          filters:
+            branches:
+              only: "/.*/" # TODO: change to master
+
   build_distributions:
     jobs:
       - create_version:
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
+          url: ${RADAR_URL}
+          token: ${RADAR_TOKEN}
           filters:
             tags:
               only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
@@ -272,6 +340,8 @@ workflows:
       - build_and_upload:
           requires: [create_version]
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
+          url: ${RADAR_URL}
+          token: ${RADAR_TOKEN}
           filters:
             tags:
               only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
@@ -388,6 +458,8 @@ workflows:
     jobs:
       - build_watchdog:
           version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
+          url: ${RADAR_URL}
+          token: ${RADAR_TOKEN}
           filters:
             tags:
               only: /^watchdog-(?:\d+\.){2}\d+(?:r\d+)?/
@@ -397,6 +469,8 @@ workflows:
       - upload_watchdog:
           requires: [build_watchdog]
           version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
+          url: ${RADAR_URL}
+          token: ${RADAR_TOKEN}
           filters:
             tags:
               only: /^watchdog-(?:\d+\.){2}\d+(?:r\d+)?/
