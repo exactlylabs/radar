@@ -509,7 +509,7 @@ workflows:
 
       - deploy_agent_distribution:
           requires: [ run_unit_tests ]
-          version: "${$(git rev-parse HEAD):0:7}"
+          version: $(${$(git rev-parse HEAD):0:7})
           os: "linux"
           arch: "arm64"
           url: ${RADAR_STAGING_URL}
@@ -520,7 +520,7 @@ workflows:
 
       - deploy_watchdog:
           requires: [ run_unit_tests ]
-          version: "${$(git rev-parse HEAD):0:7}"
+          version: $(${$(git rev-parse HEAD):0:7})
           url: ${RADAR_STAGING_URL}
           token: ${RADAR_STAGING_TOKEN}
           filters:
