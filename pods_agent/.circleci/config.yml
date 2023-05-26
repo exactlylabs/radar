@@ -494,9 +494,10 @@ jobs:
 
   run_pi_os_tests:
     working_directory: ~/repo/pods_agent/pods_os
-    docker: tianon/qemu:7.2-bullseye
+    docker:
+      - image: tianon/qemu:7.2-bullseye
     steps:
-      - checkout
+      - checkout:
           path: ~/repo
       - run: mkdir dist
       - run: curl -o dist/radar.img https://storage.googleapis.com/radar-disk-images/staging/radar.img
@@ -546,6 +547,12 @@ workflows:
           url: ${RADAR_STAGING_URL}
           token: ${RADAR_STAGING_TOKEN}
           update_group_id: 3
+
+      - run_pi_os_tests:
+          # requires: [ update_update_group ] TODO: Uncomment this
+          filters:
+            branches:
+              only: "/.*/" # TODO: change to master
 
   prod_build_distributions:
     jobs:
