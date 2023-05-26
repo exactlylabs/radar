@@ -28,7 +28,9 @@
   <body id="public--body" >
     <main id="public--main" data-controller="public-page">
       <section id="public--logo-section">
+        <a href="/" class="m-0">
         <%= image_tag image_url('new-radar-logo.png'), id: 'public--logo' %>
+        </a>
       </section>
       <section id="public--card-section">
         <%= yield %>
