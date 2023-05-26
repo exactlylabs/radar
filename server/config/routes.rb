@@ -180,6 +180,7 @@ Rails.application.routes.draw do
         resources :packages
       end
       resources :watchdog_versions, constraints: { id: /[^\/]+/ }
+      resources :update_groups
     end
   end
 
