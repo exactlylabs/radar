@@ -9,6 +9,259 @@ commands:
       - run: echo -n $ROOT_CA | base64 -d > pods_agent/internal/update/rootCA.pem
       - run: pods_agent/scripts/make_ookla.sh
 
+  run_tests:
+    steps:
+      - run:
+          working_directory: pods_agent
+          command: go test ./...
+
+  build_agent:
+    parameters:
+      version:
+        type: string
+      os:
+        default: "linux"
+        type: string
+      arch:
+        default: "amd64"
+        type: string
+      binName:
+        default: "radar_agent"
+        type: string
+      output_dir:
+        type: string
+    steps:
+      - run: |
+          make agent \
+            VERSION=<<parameters.version>> \
+            OS=<<parameters.os>> \
+            ARCH=<<parameters.arch>> \
+            BIN_NAME=<<parameters.binName>> \
+            OUTPUT_DIR=<<parameters.output_dir>> \
+            PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
+            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key
+
+  build_watchdog:
+    parameters:
+      version:
+        type: string
+      output_dir:
+        type: string
+    steps:
+      - run: |
+          make watchdog \
+          VERSION=<<parameters.version>> \
+          OS=linux \
+          ARCH=arm64 \
+          OUTPUT_DIR=<<parameters.output_dir>> \
+          BIN_NAME=watchdog \
+          PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
+          PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key
+
+  package_for_debian:
+    parameters:
+      version:
+        type: string
+      arch:
+        default: "amd64"
+        type: string
+      output_dir:
+        default: ./pods_agent/dist
+        type: string
+    steps:
+      - run: sudo apt update && sudo apt install dh-systemd
+      - run:
+          working_directory: pods_agent
+          command: |
+            make deb \
+              VERSION=<<parameters.version>> \
+              ARCH=<<parameters.arch>> \
+              BIN_NAME=radar-agent \
+              OUTPUT_DIR=<<parameters.output_dir>>
+
+  package_for_rpm:
+    parameters:
+      version:
+        type: string
+      arch:
+        default: "amd64"
+        type: string
+      output_dir:
+        default: ./pods_agent/dist
+        type: string
+    steps:
+      - run: ./pods_agent/scripts/setup_rpm.sh
+      - run:
+          working_directory: pods_agent
+          command: |
+            export PATH=$PATH:/usr/local/go/bin
+            make rpm \
+              VERSION=<<parameters.version>> \
+              ARCH=<<parameters.arch>> \
+              BIN_NAME=radar-agent \
+              OUTPUT_DIR=<<parameters.output_dir>>
+
+  package_for_mac:
+    parameters:
+      version:
+        type: string
+      output_dir:
+        default: ./dist
+        type: string
+      app_key_file:
+        type: string
+      app_cert_file:
+        type: string
+      installer_key_file:
+        type: string
+      installer_cert_file:
+        type: string
+    steps:
+      - run: curl -L https://go.dev/dl/go1.18.3.darwin-amd64.pkg --output go1.18.3.darwin-amd64.pkg
+      - run: sudo installer -pkg go1.18.3.darwin-amd64.pkg -target /
+      - run: echo <<parameters.app_key_file>> | base64 -d > ~/repo/application.p12
+      - run: echo <<parameters.installer_key_file>> | base64 -d > ~/repo/installer.p12
+      - run: echo <<parameters.app_cert_file>> | base64 -d > ~/repo/application.cer
+      - run: echo <<parameters.installer_cert_file>> | base64 -d > ~/repo/installer.cer
+      - run:
+          working_directory: pods_agent
+          command: |
+            make pkg \
+              VERSION=<<parameters.version>> \
+              OUTPUT_DIR=<<parameters.output_dir>> \
+              INSTALLER_CERT_FILE_PATH=~/repo/installer.cer \
+              APP_CERT_FILE_PATH=~/repo/application.cer \
+              INSTALLER_P12_FILE_PATH=~/repo/installer.p12 \
+              APP_P12_FILE_PATH=~/repo/application.p12
+
+  notarize_package:
+    parameters:
+      package:
+        type: string
+    steps:
+      - run: PKG_PATH=<<parameters.package>> pods_agent/scripts/notarize_pkg.sh
+
+  package_for_windows:
+    parameters:
+      version:
+        type: string
+      cert_file:
+        type: string
+      key_file:
+        type: string
+      output_dir:
+        type: string
+    steps:
+      - run: sudo apt update && sudo apt install -y msitools wixl osslsigncode
+      - run: echo <<parameters.cert_file>> | base64 -d > <<parameters.output_dir>>/certificate.cer
+      - run: echo <<parameters.key_file>> | base64 -d > <<parameters.output_dir>>/key.pem
+      - run:
+          working_directory: pods_agent
+          command: |
+            make msi VERSION=<<parameters.version>> \
+            ARCH=amd64 \
+            SIGNING_CERT_FILE=<<parameters.output_dir>>/certificate.cer \
+            SIGNING_KEY_FILE=<<parameters.output_dir>>/key.pem \
+            OUTPUT_DIR=<<parameters.output_dir>>
+
+  upload_distribution:
+    parameters:
+      version:
+        type: string
+      os:
+        default: "linux"
+        type: string
+      arch:
+        default: "amd64"
+        type: string
+      binName:
+        default: "radar_agent"
+        type: string
+      output_dir:
+        type: string
+      url:
+        type: string
+      token:
+        type: string
+    steps:
+      - run: |
+          make upload_distribution \
+            VERSION=<<parameters.version>> \
+            OS=<<parameters.os>> \
+            ARCH=<<parameters.arch>> \
+            BIN_NAME=<<parameters.binName>> \
+            OUTPUT_DIR=<<parameters.output_dir>> \
+            RADAR_URL=<<parameters.url>> \
+            RADAR_TOKEN=<<parameters.token>>
+
+  upload_watchdog:
+    parameters:
+      version:
+        type: string
+      url:
+        type: string
+      token:
+        type: string
+      path:
+        type: string
+    steps:
+      - run: |
+          RADAR_URL=<<parameters.url>> \
+          RADAR_TOKEN=<<parameters.token>> \
+          ./scripts/upload_watchdog.sh
+          <<parameters.version>> \
+          <<parameters.path>>
+
+  upload_package:
+    parameters:
+      version:
+        type: string
+      os:
+        type: string
+      arch:
+        type: string
+      path:
+        type: string
+      url:
+        type: string
+      token:
+        type: string
+    steps:
+      - run: |
+          make upload_package \
+          VERSION=<<parameters.version>> \
+          FILE_PATH=<<parameters.path>> \
+          OS=<<parameters.os>> \
+          ARCH=<<parameters.arch>> \
+          RADAR_URL=<<parameters.url>> \
+          RADAR_TOKEN=<<parameters.token>>
+
+  create_version:
+    parameters:
+      version:
+        type: string
+      url:
+        type: string
+      token:
+        type: string
+    steps:
+      - run: make client_version VERSION=<<parameters.version>> RADAR_URL=<<parameters.url>> RADAR_TOKEN=<<parameters.token>>
+
+  update_update_group:
+    parameters:
+      url:
+        type: string
+      token:
+        type: string
+      update_group_id:
+        type: integer
+
+    steps:
+      - run: |
+          ./scripts/update_group_group.sh \
+          -s <<parameters.url>> <<parameters.update_group_id>> <<parameters.token>>
+
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -18,26 +271,11 @@ jobs:
       - image: cimg/go:1.18.2
     steps:
       - build_config
-      - run: cd pods_agent && go test ./...
+      - run_tests
 
-  create_version:
-    docker:
-      - image: cimg/base:2022.05
-    parameters:
-      version:
-        type: string
-      url:
-        type: string
-      token:
-        type: string
-    steps:
-      - checkout
-      - run: make client_version VERSION=<<parameters.version>> RADAR_URL=<<parameters.url>> RADAR_TOKEN=<<parameters.token>>
-
-  build_and_upload:
+  deploy_agent_distribution:
     working_directory: ~/repo
     docker:
-      # Available Images: https://circleci.com/developer/images/image/cimg/go
       - image: cimg/go:1.18.2
     parameters:
       version:
@@ -55,24 +293,31 @@ jobs:
         type: string
       token:
         type: string
-
     steps:
+      - checkout
       - build_config
-      - run: |
-          make agent_distribution \
-            VERSION=<<parameters.version>> \
-            OS=<<parameters.os>> \
-            ARCH=<<parameters.arch>> \
-            BIN_NAME=<<parameters.binName>> \
-            PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
-            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key \
-            RADAR_URL=<<parameters.url>> \
-            RADAR_TOKEN=<<parameters.token>>
+      - create_version:
+          version: <<parameters.version>>
+          url: <<parameters.url>>
+          token: <<parameters.token>>
+      - build_agent:
+          version: <<parameters.version>>
+          os: <<parameters.os>>
+          arch: <<parameters.arch>>
+          binName: <<parameters.binName>>
+          output_dir: ~/repo/dist
+      - upload_distribution:
+          version: <<parameters.version>>
+          os: <<parameters.os>>
+          arch: <<parameters.arch>>
+          binName: <<parameters.binName>>
+          output_dir: ~/repo/dist
+          url: <<parameters.url>>
+          token: <<parameters.token>>
 
-  build_watchdog:
+  deploy_watchdog:
     working_directory: ~/repo
     docker:
-      # Available Images: https://circleci.com/developer/images/image/cimg/go
       - image: cimg/go:1.18.2
     parameters:
       version:
@@ -81,52 +326,21 @@ jobs:
         type: string
       token:
         type: string
-
-    steps:
-      - build_config
-      - run: |
-          make watchdog \
-            VERSION=<<parameters.version>> \
-            OS=linux \
-            ARCH=arm64 \
-            BIN_NAME=watchdog \
-            PROVIDER_SIGNING_CERT_PATH=~/repo/binCert.crt \
-            PROVIDER_SIGNING_KEY_PATH=~/repo/binKey.key \
-            RADAR_URL=<<parameters.url>> \
-            RADAR_TOKEN=<<parameters.token>>
-
-      - persist_to_workspace:
-          root: ~/repo/dist/
-          paths:
-            - "*"
-
-  upload_watchdog:
-    working_directory: ~/repo
-    docker:
-      - image: cimg/base:2022.05
-    parameters:
-      version:
-        type: string
-      url:
-        type: string
-      token:
-        type: string
-
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - run: |
-          RADAR_URL=<<parameters.url>> \
-          RADAR_TOKEN=<<parameters.token>> \
-          ./scripts/upload_watchdog.sh
-          <<parameters.version>> \
-          /tmp/workspace/watchdog
+      - build_config
+      - build_watchdog:
+          version: <<parameters.version>>
+          output_dir: ~/repo/dist
+      - upload_watchdog:
+          version: <<parameters.version>>
+          path: ~/repo/dist/watchdog
+          url: <<parameters.url>>
+          token: <<parameters.token>>
 
-  deb_package:
+  deploy_debian_package:
     working_directory: ~/repo
     docker:
-      # Available Images: https://circleci.com/developer/images/image/cimg/go
       - image: cimg/go:1.18.2
     parameters:
       version:
@@ -134,27 +348,26 @@ jobs:
       arch:
         default: "amd64"
         type: string
-
+      url:
+        type: string
+      token:
+        type: string
     steps:
       - checkout
       - build_config
-      - run: sudo apt update && sudo apt install dh-systemd
-      - run: |
-          cd pods_agent
-          make deb \
-            VERSION=<<parameters.version>> \
-            ARCH=<<parameters.arch>> \
-            BIN_NAME=radar-agent \
-            OUTPUT_DIR=~/repo/pods_agent/dist
+      - package_for_debian:
+          version: <<parameters.version>>
+          arch: <<parameters.arch>>
+          output_dir: ~/repo/pods_agent/dist
+      - upload_package:
+          version: <<parameters.version>>
+          os: linux
+          arch: <<parameters.arch>>
+          path: ~/repo/pods_agent/dist/radar-agent*<<parameters.arch>>*.deb
+          url: <<parameters.url>>
+          token: <<parameters.token>>
 
-      - store_artifacts:
-          path: ~/repo/pods_agent/dist/radar-agent*.deb
-      - persist_to_workspace:
-          root: ~/repo/pods_agent/dist
-          paths:
-            - radar-agent*.deb
-
-  rpm_package:
+  deploy_rpm_package:
     working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
@@ -165,127 +378,147 @@ jobs:
       arch:
         default: "amd64"
         type: string
+      url:
+        type: string
+      token:
+        type: string
     steps:
       - checkout
       - build_config
-      - run: ./pods_agent/scripts/setup_rpm.sh
-      - run: |
-          export PATH=$PATH:/usr/local/go/bin
-          cd pods_agent
-          make rpm \
-            VERSION=<<parameters.version>> \
-            ARCH=<<parameters.arch>> \
-            BIN_NAME=radar-agent \
-            OUTPUT_DIR=~/repo/pods_agent/dist
+      - package_for_rpm:
+          version: <<parameters.version>>
+          arch: <<parameters.arch>>
+          output_dir: ~/repo/pods_agent/dist
+      - upload_package:
+          version: <<parameters.version>>
+          os: linux
+          arch: <<parameters.arch>>
+          path: ~/repo/pods_agent/dist/radar-agent*<<parameters.arch>>*.rpm
+          url: <<parameters.url>>
+          token: <<parameters.token>>
 
-      - store_artifacts:
-          path: ~/repo/pods_agent/dist
-      - persist_to_workspace:
-          root: ~/repo/pods_agent/dist/
-          paths:
-            - "*"
-
-  pkg_package:
+  deploy_mac_package:
     working_directory: ~/repo
     macos:
       xcode: 13.4.1
     parameters:
       version:
         type: string
-    steps:
-      - build_config
-      - run: curl -L https://go.dev/dl/go1.18.3.darwin-amd64.pkg --output go1.18.3.darwin-amd64.pkg
-      - run: sudo installer -pkg go1.18.3.darwin-amd64.pkg -target /
-      - run: echo $APP_P12_FILE | base64 -d > ~/repo/application.p12
-      - run: echo $INSTALLER_P12_FILE | base64 -d > ~/repo/installer.p12
-      - run: echo $APP_CERT_FILE | base64 -d > ~/repo/application.cer
-      - run: echo $INSTALLER_CERT_FILE | base64 -d > ~/repo/installer.cer
-      - run: |
-          cd pods_agent
-          make pkg VERSION=<<parameters.version>> \
-            OUTPUT_DIR=~/repo/dist \
-            INSTALLER_CERT_FILE_PATH=~/repo/installer.cer \
-            APP_CERT_FILE_PATH=~/repo/application.cer \
-            INSTALLER_P12_FILE_PATH=~/repo/installer.p12 \
-            APP_P12_FILE_PATH=~/repo/application.p12
-      - store_artifacts:
-          path: ~/repo/dist/
-      - persist_to_workspace:
-          root: ~/repo/dist/
-          paths:
-            - radar-agent*.pkg
-
-  notarize_pkg:
-    working_directory: ~/repo
-    macos:
-      xcode: 13.4.1
+      app_key_file:
+        type: string
+      app_cert_file:
+        type: string
+      installer_key_file:
+        type: string
+      installer_cert_file:
+        type: string
+      url:
+        type: string
+      token:
+        type: string
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - run: PKG_PATH=$(ls /tmp/workspace/*.pkg | head -1) pods_agent/scripts/notarize_pkg.sh
+      - build_config
+      - package_for_mac:
+          version: <<parameters.version>>
+          output_dir: ~/repo/pods_agent/dist
+          app_key_file: <<parameters.app_key_file>>
+          app_cert_file: <<parameters.app_cert_file>>
+          installer_key_file: <<parameters.installer_key_file>>
+          installer_cert_file: <<parameters.installer_cert_file>>
+      - notarize_package:
+          package: ~/repo/pods_agent/dist/radar-agent*.pkg
+      - upload_package:
+          version: <<parameters.version>>
+          os: darwin
+          arch: amd64
+          path: ~/repo/pods_agent/dist/radar-agent*.pkg
+          url: <<parameters.url>>
+          token: <<parameters.token>>
+      - upload_package:
+          version: <<parameters.version>>
+          os: darwin
+          arch: arm64
+          path: ~/repo/pods_agent/dist/radar-agent*.pkg
+          url: <<parameters.url>>
+          token: <<parameters.token>>
 
-  msi_package:
+  deploy_windows_package:
     working_directory: ~/repo
     docker:
       - image: cimg/go:1.18.2
     parameters:
       version:
         type: string
+      cert_file:
+        type: string
+      key_file:
+        type: string
+      url:
+        type: string
+      token:
+        type: string
     steps:
+      - checkout
       - build_config
-      - run: sudo apt update && sudo apt install -y msitools wixl osslsigncode
-      - run: echo $MSI_CERT_FILE | base64 -d > ~/repo/certificate.cer
-      - run: echo $MSI_KEY_FILE | base64 -d > ~/repo/key.pem
-      - run: |
-          cd pods_agent
-          make msi VERSION=<<parameters.version>> \
-          ARCH=amd64 \
-          SIGNING_CERT_FILE=~/repo/certificate.cer \
-          SIGNING_KEY_FILE=~/repo/key.pem \
-          OUTPUT_DIR=~/repo/dist
-      - store_artifacts:
-          path: ~/repo/dist/
-      - persist_to_workspace:
-          root: ~/repo/dist/
-          paths:
-            - RadarAgent.msi
+      - package_for_windows:
+          version: <<parameters.version>>
+          cert_file: <<parameters.cert_file>>
+          key_file: <<parameters.key_file>>
+          output_dir: ~/repo/pods_agent/dist
+      - upload_package:
+          version: <<parameters.version>>
+          os: windows
+          arch: amd64
+          path: ~/repo/pods_agent/dist/RadarAgent.msi
+          url: <<parameters.url>>
+          token: <<parameters.token>>
 
-  upload_package:
+  update_update_group:
     docker:
       - image: cimg/base:2022.05
     parameters:
-      version:
+      url:
         type: string
-      os:
+      token:
         type: string
-      arch:
-        type: string
-      workspace_file_name:
-        type: string
+      update_group_id:
+        type: integer
 
     steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/workspace
       - run: |
-          make upload_package \
-            VERSION=<<parameters.version>> \
-            FILE_PATH=/tmp/workspace/<<parameters.workspace_file_name>> \
-            OS=<<parameters.os>> \
-            ARCH=<<parameters.arch>> RADAR_URL=${RADAR_URL} RADAR_TOKEN=${RADAR_TOKEN}
+          ./scripts/update_group_group.sh \
+          -s <<parameters.url>> <<parameters.update_group_id>> <<parameters.token>>
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  test:
+  all_branches_test:
     jobs:
       - run_unit_tests:
           filters:
             branches:
               only: "/.*/"
 
-      - create_version:
+  master_tests:
+    jobs:
+      - run_unit_tests:
+          filters:
+            branches:
+              only: "/.*/" # TODO: change to master
+
+      - deploy_agent_distribution:
+          requires: [ run_unit_tests ]
+          version: "${$(git rev-parse HEAD):0:7}"
+          os: "linux"
+          arch: "arm64"
+          url: ${RADAR_STAGING_URL}
+          token: ${RADAR_STAGING_TOKEN}
+          filters:
+            branches:
+              only: "/.*/" # TODO: change to master
+
+      - deploy_watchdog:
           requires: [ run_unit_tests ]
           version: "${$(git rev-parse HEAD):0:7}"
           url: ${RADAR_STAGING_URL}
@@ -294,51 +527,15 @@ workflows:
             branches:
               only: "/.*/" # TODO: change to master
 
-      - build_and_upload:
-          requires: [ create_version ]
-          version: "${$(git rev-parse HEAD):0:7}"
+      - update_update_group:
+          requires: [ deploy_agent_distribution, deploy_watchdog ]
           url: ${RADAR_STAGING_URL}
           token: ${RADAR_STAGING_TOKEN}
-          filters:
-            branches:
-              only: "/.*/" # TODO: change to master
-          matrix:
-            parameters:
-              os: [ "linux" ]
-              arch: [ "amd64", "arm64" ]
+          update_group_id: 3
 
-      - build_watchdog:
-          requires: [ create_version ]
-          version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
-          url: ${RADAR_STAGING_URL}
-          token: ${RADAR_STAGING_TOKEN}
-          filters:
-            branches:
-              only: "/.*/" # TODO: change to master
-
-      - upload_watchdog:
-          requires: [ build_watchdog ]
-          version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
-          url: ${RADAR_STAGING_URL}
-          token: ${RADAR_STAGING_TOKEN}
-          filters:
-            branches:
-              only: "/.*/" # TODO: change to master
-
-  build_distributions:
+  prod_build_distributions:
     jobs:
-      - create_version:
-          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
-          url: ${RADAR_URL}
-          token: ${RADAR_TOKEN}
-          filters:
-            tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
-            branches:
-              ignore: "/.*/"
-
-      - build_and_upload:
-          requires: [create_version]
+      - deploy_agent_distribution:
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
           url: ${RADAR_URL}
           token: ${RADAR_TOKEN}
@@ -355,119 +552,63 @@ workflows:
               - os: "windows"
                 arch: "arm64"
 
-  build_packages:
+  prod_build_packages:
     jobs:
-      - deb_package:
+      - deploy_debian_package:
           version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
-          filters:
-            tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
-            branches:
-              ignore: "/.*/"
-          matrix:
-            parameters:
-              arch: ["amd64", "arm64"]
-
-      - upload_package: &upload_anchor
-          name: upload_debian_amd64
-          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
-          os: linux
-          arch: amd64
-          workspace_file_name: radar-agent*amd64*.deb
-          filters:
-            tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
-            branches:
-              ignore: "/.*/"
-          requires: [deb_package-amd64]
-      - upload_package:
-          <<: *upload_anchor
-          name: upload_debian_arm64
-          arch: arm64
-          workspace_file_name: radar-agent*arm64*.deb
-          requires: [deb_package-arm64]
-
-      - rpm_package:
-          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
-          filters:
-            tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
-            branches:
-              ignore: "/.*/"
-          matrix:
-            parameters:
-              arch: ["amd64", "arm64"]
-      - upload_package:
-          <<: *upload_anchor
-          name: upload_rpm_arm64
-          arch: arm64
-          workspace_file_name: radar-agent*aarch64*.rpm
-          requires: [rpm_package-arm64]
-      - upload_package:
-          <<: *upload_anchor
-          name: upload_rpm_amd64
-          arch: amd64
-          workspace_file_name: radar-agent*x86_64*.rpm
-          requires: [rpm_package-amd64]
-
-      - pkg_package:
-          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
-          filters:
-            tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
-            branches:
-              ignore: "/.*/"
-      - notarize_pkg:
-          filters:
-            tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
-            branches:
-              ignore: "/.*/"
-          requires: [pkg_package]
-      - upload_package:
-          <<: *upload_anchor
-          name: upload_darwin_amd64
-          os: darwin
-          arch: amd64
-          workspace_file_name: radar-agent*.pkg
-          requires: [notarize_pkg]
-      - upload_package:
-          <<: *upload_anchor
-          name: upload_darwin_arm64
-          os: darwin
-          arch: arm64
-          workspace_file_name: radar-agent*.pkg
-          requires: [notarize_pkg]
-
-      - msi_package:
-          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
-          filters:
-            tags:
-              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
-            branches:
-              ignore: "/.*/"
-      - upload_package:
-          <<: *upload_anchor
-          name: upload_windows_amd64
-          os: windows
-          arch: amd64
-          workspace_file_name: RadarAgent.msi
-          requires: [msi_package]
-
-  build_watchdog:
-    jobs:
-      - build_watchdog:
-          version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
           url: ${RADAR_URL}
           token: ${RADAR_TOKEN}
           filters:
             tags:
-              only: /^watchdog-(?:\d+\.){2}\d+(?:r\d+)?/
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
+            branches:
+              ignore: "/.*/"
+          matrix:
+            parameters:
+              arch: ["amd64", "arm64"]
+
+      - deploy_rpm_package:
+          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
+          url: ${RADAR_URL}
+          token: ${RADAR_TOKEN}
+          filters:
+            tags:
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
+            branches:
+              ignore: "/.*/"
+          matrix:
+            parameters:
+              arch: ["amd64", "arm64"] # TODO: Fix amd64 -> x86_64, arm64 -> aarch64
+
+      - deploy_mac_package:
+          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
+          app_key_file: $APP_P12_FILE
+          app_cert_file: $APP_CERT_FILE
+          installer_key_file: $INSTALLER_P12_FILE
+          installer_cert_file: $INSTALLER_CERT_FILE
+          url: ${RADAR_URL}
+          token: ${RADAR_TOKEN}
+          filters:
+            tags:
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
             branches:
               ignore: "/.*/"
 
-      - upload_watchdog:
-          requires: [build_watchdog]
+      - deploy_windows_package:
+          version: $(echo $CIRCLE_TAG | sed -r "s/agent-//")
+          url: ${RADAR_URL}
+          token: ${RADAR_TOKEN}
+          cert_file: $MSI_CERT_FILE
+          key_file: $MSI_KEY_FILE
+          filters:
+            tags:
+              only: /^agent-(?:\d+\.){2}\d+(?:r\d+)?/
+            branches:
+              ignore: "/.*/"
+
+  prod_build_watchdog:
+    jobs:
+      - deploy_watchdog:
           version: $(echo $CIRCLE_TAG | sed -r "s/watchdog-//")
           url: ${RADAR_URL}
           token: ${RADAR_TOKEN}
