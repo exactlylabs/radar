@@ -122,7 +122,7 @@ def pick_default_qemu_bin(bin_prefix='qemu-system-', arch=None):
         arch = 'ppc64'
     qemu_bin_name = bin_prefix + arch
     qemu_bin_paths = [
-        os.path.join(".", qemu_bin_name),
+        os.path.join("", qemu_bin_name),
         os.path.join(BUILD_DIR, qemu_bin_name),
         os.path.join(BUILD_DIR, "build", qemu_bin_name),
     ]

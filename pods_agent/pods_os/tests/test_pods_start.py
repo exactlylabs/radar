@@ -8,7 +8,6 @@ import time
 import avocado
 from avocado.utils import ssh, datadrainer, cloudinit
 from qemu.machine import QEMUMachine
-from qemu.utils import get_info_usernet_hostfwd_port
 
 import settings
 
