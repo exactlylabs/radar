@@ -208,7 +208,7 @@ commands:
       - run: |
           RADAR_URL=<<parameters.url>> \
           RADAR_TOKEN=<<parameters.token>> \
-          ./scripts/upload_watchdog.sh
+          ./scripts/upload_watchdog.sh \
           <<parameters.version>> \
           <<parameters.path>>
 
