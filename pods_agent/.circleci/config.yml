@@ -499,6 +499,9 @@ jobs:
     steps:
       - checkout:
           path: ~/repo
+      - run: echo $POD_OS_TEST_SSH_KEY | base64 -d  > tests/keys/id_rsa
+      - run: echo $POD_OS_TEST_SSH_PUB_KEY | base64 -d  > tests/keys/id_rsa.pub
+      - run: cp tests/keys/id_rsa ~/.ssh/id_rsa
       - run: apt update && apt install -y curl
       - run: mkdir dist
       - run: curl -o dist/radar.img https://storage.googleapis.com/radar-disk-images/staging/radar.img
