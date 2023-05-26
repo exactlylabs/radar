@@ -509,7 +509,7 @@ workflows:
 
       - deploy_agent_distribution:
           requires: [ run_unit_tests ]
-          version: "0.$CIRCLE_BUILD_NUM"
+          version: $CIRCLE_BUILD_NUM.0.0
           os: "linux"
           arch: "arm64"
           url: ${RADAR_STAGING_URL}
@@ -520,7 +520,7 @@ workflows:
 
       - deploy_watchdog:
           requires: [ run_unit_tests ]
-          version: "0.$CIRCLE_BUILD_NUM"
+          version: $CIRCLE_BUILD_NUM.0.0
           url: ${RADAR_STAGING_URL}
           token: ${RADAR_STAGING_TOKEN}
           filters:
