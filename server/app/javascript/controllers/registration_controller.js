@@ -78,7 +78,7 @@ export default class extends Controller {
   }
 
   handleFileDrop(e) {
-    e.preventDefault();
+    this.handleDragLeave(e);
     const dataTransfer = e.dataTransfer;
     const files = dataTransfer.files;
     const avatar = files[0];
@@ -88,6 +88,16 @@ export default class extends Controller {
     this.avatarPreviewTarget.src = url;
     this.avatarPreviewTarget.classList.remove("invisible");
     this.cameraIconTarget.classList.add('invisible');
+  }
+
+  handleDragEnter(e) {
+    e.preventDefault();
+    this.dropzoneTarget.classList.add("dropzone--active");
+  }
+
+  handleDragLeave(e) {
+    e.preventDefault();
+    this.dropzoneTarget.classList.remove("dropzone--active");
   }
 
   // Required to prevent defaults for drag-drop to work:

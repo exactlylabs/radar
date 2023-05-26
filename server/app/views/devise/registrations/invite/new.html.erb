@@ -2,7 +2,7 @@
   <!--begin::Wrapper-->
   <div class="w-100" data-controller="registration" data-action="keydown->registration#checkEnter">
     <%= render partial: "devise/registrations/steps/email_step",
-        locals: { invite: true }
+        locals: { account: account, invite: true }
     %>
     <%= render partial: "devise/registrations/steps/password_step" %>
     <%= render partial: "devise/registrations/steps/profile_step",

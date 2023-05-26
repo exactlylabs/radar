@@ -1,21 +1,24 @@
 <div class="w-100" data-registration-target="emailStep">
-  <div class="text-center mb-10">
+  <div class="text-center mb-6">
     <!--begin::Title-->
-    <h1 class="page-main-title">Sign up</h1>
+    <h1 class="page-main-title"><%= invite ? "Join #{account.name}" : "Sign up" %></h1>
     <!--end::Title-->
     <!--begin::Link-->
-    
+    <% if invite %>
+    <div class="additional-text mb-4 wrap mw-90 mx-auto">You were invited to join the <%= account.name %> account.</div>
+    <% end %>
     <div class="additional-text">Already have an account?
     <a href="<%= invite ? users_invite_sign_in_path(token: params[:token]) : new_session_path(resource_name) %>" class="regular-link">Log in</a></div>
     <!--end::Link-->
   </div>
 
-  <div class="forms--input-group d-flex flex-column">
+  <div class="forms--input-group d-flex flex-column justify-content-start align-items-start w-100">
+    <label class="forms--label mb-2">Email</label>
     <!--begin::Input-->
     <input type="email" 
       autofocus="true"
       autocomplete="email"
-      class="forms--text-input forms--text-input-focusable"
+      class="forms--text-input forms--text-input-focusable w-100"
       tabindex="1"
       placeholder="Email address" 
       data-registration-target="emailInput"

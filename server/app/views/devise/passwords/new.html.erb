@@ -8,7 +8,7 @@
     <!-- reference: https://stackoverflow.com/questions/36214082/rails-devise-nil-location-provided-cant-build-uri-on-password-reset -->
     <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, novalidate: "novalidate", class: "form w-100 fv-plugins-bootstrap5 fv-plugins-framework", "data-turbo" => "false" }) do |f| %>
       <!--begin::Heading-->
-      <div class="w-100 text-center mb-10">
+      <div class="w-100 text-center mb-6">
         <!--begin::Title-->
         <h1 class="page-main-title">Reset password</h1>
         <!--end::Title-->
@@ -18,8 +18,9 @@
       </div>
       <!--begin::Heading-->
       <!--begin::Input group-->
-      <div class="forms--input-group d-flex flex-column mb-8">
-        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "forms--text-input forms--text-input-focusable", placeholder: "Email address" %>
+      <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-8">
+        <label class="forms--label mb-2">Email</label>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "forms--text-input forms--text-input-focusable w-100", placeholder: "Email address" %>
         <div class="fv-plugins-message-container invalid-feedback"></div>
       </div>
       <!--end::Input group-->

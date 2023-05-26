@@ -9,10 +9,11 @@
       accept-charset="UTF-8"
       method="post"
     >
-			<div class="text-center mb-10">
+			<div class="text-center mb-6">
 				<!--begin::Title-->
-				<h1 class="page-main-title">Log in</h1>
+				<h1 class="page-main-title">Join <%= @invite.account.name %></h1>
 				<!--end::Title-->
+    		<div class="additional-text mb-4 wrap mw-90 mx-auto">You were invited to join the <%= account.name %> account.</div>
 				<!--begin::Link-->
 				<div class="additional-text">Don't have an account?
 				<a href="<%= users_invite_sign_up_path(token: params[:token]) %>" class="regular-link">Sign up</a></div>
