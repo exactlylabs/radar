@@ -475,6 +475,7 @@ jobs:
           token: <<parameters.token>>
 
   update_update_group:
+    working_directory: ~/repo
     docker:
       - image: cimg/base:2022.05
     parameters:
@@ -486,9 +487,22 @@ jobs:
         type: integer
 
     steps:
+      - checkout
       - run: |
           ./scripts/update_group_group.sh \
           -s <<parameters.url>> <<parameters.update_group_id>> <<parameters.token>>
+
+  run_pi_os_tests:
+    working_directory: ~/repo/pods_agent/pods_os
+    docker: tianon/qemu:7.2-bullseye
+    steps:
+      - checkout
+          path: ~/repo
+      - run: mkdir dist
+      - run: curl -o dist/radar.img https://storage.googleapis.com/radar-disk-images/staging/radar.img
+      - run: ./scripts/test_setup
+      - run: avocado run tests
+
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
