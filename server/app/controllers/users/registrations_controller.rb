@@ -26,10 +26,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
     rescue ActiveRecord::RecordInvalid => invalid
       error = invalid.record.errors
     end
-    # TODO: check if this is still needed
-    # if !error
-    #   AccountNotificationJobs::NewAccountNotification.perform_later(@account, @user)
-    # end
     respond_to do |format|
       if !error
         sign_in @user
