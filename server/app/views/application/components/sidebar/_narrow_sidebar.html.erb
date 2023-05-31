@@ -1,0 +1,61 @@
+<div class="sidebar--narrow-container">
+  <a href="<%= dashboard_path %>">
+    <img alt="Logo" src="<%= image_url('narrow-radar-logo.png') %>" width="32" class="sidebar--logo ms-2">
+  </a>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "dashboard-icon",
+      title: "",
+      url: dashboard_path,
+      sidebar_item_id: "dashboard",
+      disabled: false
+    }
+  %>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "search-icon",
+      title: "",
+      url: nil,
+      sidebar_item_id: "search",
+      disabled: false
+    }
+  %>
+  <% if current_account.present? %>
+    <%= render partial: "application/components/sidebar/accounts_item",
+        locals: { narrow: true } %>
+  <% else %>
+    <%= render partial: "application/components/sidebar/add_account_item", 
+        locals: { only_item: true, narrow: true }
+    %>
+  <% end %>
+  <div class="sidebar--horizontal-divider"></div>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "pods-icon",
+      title: "",
+      url: clients_path,
+      sidebar_item_id: "pods",
+      disabled: current_account.nil?
+    }
+  %>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "locations-icon",
+      title: "",
+      url: locations_path,
+      sidebar_item_id: "locations",
+      disabled: current_account.nil?
+    }
+  %>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "members-icon",
+      title: "",
+      url: users_account_index_path,
+      sidebar_item_id: "members",
+      disabled: current_account.nil?
+    }
+  %>
+
+  <%= render partial: "application/components/sidebar/profile_item", locals: { narrow: true } %>
+</div>

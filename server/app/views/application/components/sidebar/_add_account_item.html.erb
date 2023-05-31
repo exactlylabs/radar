@@ -7,5 +7,7 @@
   <div class="sidebar--account-item-icon-container transparent me-1">
     <%= image_tag image_url(only_item ? "blue-plus.png" : "dark-plus.png"), width: "16", height: "16", class: "sidebar--account-item-icon" %>
   </div>
-  <p class="m-0 sidebar-item--text-static sidebar--account-item-name ellipsis">Create an account</p>
+  <% if !narrow %>
+    <p class="m-0 sidebar-item--text-static sidebar--account-item-name ellipsis">Create an account</p>
+  <% end %>
 </button>

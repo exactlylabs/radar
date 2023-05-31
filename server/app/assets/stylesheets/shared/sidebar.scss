@@ -94,6 +94,8 @@
   .sidebar--profile-item-avatar-container {
     width: 36px;
     height: 36px;
+    min-width: 36px;
+    min-height: 36px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -484,4 +486,73 @@
 .sidebar--menu-icon:hover,
 .sidebar--menu-icon.selected {
   color: #5f6278;
+}
+
+.sidebar--narrow-search-container {
+  height: 100vh;
+  position: relative;
+  padding: 1.5rem;
+  width: 92px;
+  margin-right: 168px;
+  z-index: 5;
+  border-right: solid 1px #ebeef5;
+  background-color: white;
+}
+
+.sidebar--narrow-container {
+  width: 100%;
+  height: 100%;
+}
+
+.sidebar--search-panel-container {
+  width: 344px;
+  height: 100%;
+  overflow: hidden;
+  background-color: white;
+  z-index: 50;
+  position: absolute;
+  left: 92px;
+  top: 0;
+  padding: 2rem 1.5rem;
+}
+
+.sidebar--search-remainder {
+  height: 100vh;
+  width: calc(100vw - 436px);
+  position: absolute;
+  top: 0;
+  left: 436px;
+  z-index: 50;
+  background-color: rgba(172, 172, 175, 0.7);
+}
+
+.sidebar--recents-container {
+  width: 100%;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  .sidebar--recent-item {
+    width: 100%;
+    padding: 6px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 6px;
+
+    &:hover {
+      background-color: $subtle-gray;
+    }
+
+    .sidebar--icon-container {
+      width: 2rem;
+      aspect-ratio: 1 / 1;
+      background-color: $icon-container-gray;
+    }
+  }
 }
