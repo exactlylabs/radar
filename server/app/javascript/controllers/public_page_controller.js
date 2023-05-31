@@ -87,8 +87,10 @@ export default class extends Controller {
   toggleButtonState() {
     const nextButtonClassList = this.continueButtonTarget.classList;
     if (this.isComplete()) {
+      nextButtonClassList.remove('custom-button--disabled');
       nextButtonClassList.remove("disabled");
     } else {
+      nextButtonClassList.add('custom-button--disabled');
       nextButtonClassList.add("disabled");
     }
   }
@@ -119,12 +121,14 @@ export default class extends Controller {
   }
 
   showSpinner() {
+    this.continueButtonTarget.classList.add('custom-button--disabled');
     this.continueButtonTarget.classList.add('disabled');
-    const spinner = `<div class="spinner-border text-light m-auto" role="status"></div>`;
+    const spinner = `<div class="spinner-border spinner-border-sm text-light m-auto" role="status"></div>`;
     this.continueButtonTarget.innerHTML = spinner;
   }
 
   hideSpinner() {
+    this.continueButtonTarget.classList.remove('custom-button--disabled');
     this.continueButtonTarget.classList.remove('disabled');
     this.continueButtonTarget.innerHTML = 'Continue';
   }

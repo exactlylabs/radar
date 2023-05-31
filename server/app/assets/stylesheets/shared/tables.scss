@@ -13,3 +13,10 @@
   min-width: 1rem;
   min-height: 1rem;
 }
+
+// Override
+.table-responsive {
+  &.overflow-visible {
+    overflow: visible !important;
+  }
+}

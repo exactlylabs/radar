@@ -2,6 +2,10 @@
   <%= render partial: 'location_clients/location_clients_table_row', locals: {client: @client} %>
 <% end %>
 
-<%= turbo_stream.prepend 'clients_index_table' do %>
-  <%= render partial: 'clients/clients_table_row', locals: { client: @client, selected: false } %>
+<%= turbo_stream.update "clients_index_content" do %>
+  <% if policy_scope(Client).count > 0 %>
+    <%= render partial: "clients_table", locals: {clients: policy_scope(Client)} %>
+  <% else %>
+    <%= render partial: "empty_pods_view" %>
+  <% end %>
 <% end %>
