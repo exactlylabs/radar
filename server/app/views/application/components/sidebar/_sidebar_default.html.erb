@@ -38,6 +38,25 @@
   %>
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
+      icon: "search-icon",
+      title: "Search",
+      url: nil,
+      sidebar_item_id: "search",
+      disabled: false
+    }
+  %>
+  <% if current_account.present? %>
+    <%= render partial: "application/components/sidebar/accounts_item",
+        locals: { narrow: false }
+    %>
+  <% else %>
+    <%= render partial: "application/components/sidebar/add_account_item", 
+        locals: { only_item: true, narrow: false }
+    %>
+  <% end %>
+  <div class="sidebar--horizontal-divider"></div>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
       icon: "pods-icon",
       title: "Pods",
       url: clients_path,
