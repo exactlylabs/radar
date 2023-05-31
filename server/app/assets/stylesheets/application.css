@@ -117,3 +117,7 @@ p {
 .toolbar {
   margin-bottom: 2rem;
 }
+
+.circle {
+  border-radius: 50%;
+}

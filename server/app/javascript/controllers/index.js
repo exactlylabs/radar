@@ -112,5 +112,8 @@ application.register("sidebar", SidebarController);
 import UpdateGroupController from './update_group_controller';
 application.register("update-group", UpdateGroupController);
 
+import AppSearchController from './app_search_controller';
+application.register("app-search", AppSearchController);
+
 import BannerController from './banner_controller';
 application.register("banner", BannerController);

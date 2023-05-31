@@ -7,10 +7,14 @@ export default class extends Controller {
     'profileDataPopover',
     'profileMenuContainer',
     'accountOptionsMenu',
-    'accountsMenu'
+    'accountsMenu',
+    'defaultSidebar',
+    'searchSidebar'
   ]
 
-  connect() {}
+  connect() {
+    this.isNarrow = false;
+  }
 
   getItemElements(itemId) {
     const icon = document.getElementById(`${itemId}-icon`);
@@ -155,5 +159,26 @@ export default class extends Controller {
     } else {
       this.closeAccountsMenu();
     }
+  }
+
+  handleToggleSearch(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if(this.isNarrow) {
+      this.defaultSidebarTarget.classList.remove('invisible');
+      this.searchSidebarTarget.classList.add('invisible');
+    } else {
+      this.closeAccountsMenu();
+      this.defaultSidebarTarget.classList.add('invisible');
+      this.searchSidebarTarget.classList.remove('invisible');
+    }
+    this.isNarrow = !this.isNarrow;
+  }
+
+  closeSearchIfOpen() {
+    if(!this.isNarrow) return;
+    this.defaultSidebarTarget.classList.remove('invisible');
+    this.searchSidebarTarget.classList.add('invisible');
+    this.isNarrow = false;
   }
 }
