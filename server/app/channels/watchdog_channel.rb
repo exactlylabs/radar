@@ -64,11 +64,8 @@ class WatchdogChannel < ApplicationCable::Channel
 
   def sync(data)
     data = HashWithIndifferentAccess.new data["payload"]
-    wv_ids = WatchdogVersion.where(version: data[:version]).pluck(:id)
-    version_id = nil
-    if wv_ids.length > 0
-      version_id = wv_ids[0]
-    end
+    version_id = WatchdogVersion.where(version: data[:version]).pluck(:id).first
+
     self.client.update(
       raw_watchdog_version: data[:version],
       has_watchdog: true,

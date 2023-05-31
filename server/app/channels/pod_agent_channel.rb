@@ -28,7 +28,7 @@ class PodAgentChannel < ApplicationCable::Channel
   end
 
   def self.broadcast_watchdog_version_changed(client)
-    if client.has_watchdog_update? && client&.target_watchdog_version&.signed_binary.present?
+    if client.has_watchdog_update? && client.target_watchdog_version&.signed_binary.present?
       ActionCable.server.broadcast(
         PodAgentChannel.agent_stream_name(client),
         {
@@ -67,20 +67,8 @@ class PodAgentChannel < ApplicationCable::Channel
     # If there is, it publishes through the subscription a new test/update request
     data = data["payload"]
     # Check client Version Id
-    version_ids = ClientVersion.where(version: data["version"]).pluck(:id)
-    if version_ids.length == 0
-      # No version found
-      version_id = nil
-    else
-      # pluck returns an array
-      version_id = version_ids[0]
-    end
-    watchdog_version_ids = WatchdogVersion.where(version: data["watchdog_version"]).pluck(:id)
-    if watchdog_version_ids.length == 0
-      watchdog_version_id = nil
-    else
-      watchdog_version_id = watchdog_version_ids[0]
-    end
+    version_id = ClientVersion.where(version: data["version"]).pluck(:id).first
+    watchdog_version_id = WatchdogVersion.where(version: data["watchdog_version"]).pluck(:id).first
     self.client.update(
       raw_version:  data["version"],
       raw_watchdog_version: data["watchdog_version"],
