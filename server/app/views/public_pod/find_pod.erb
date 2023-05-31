@@ -9,8 +9,8 @@
   </span>
 </div>
 
-<p class="public--card-title">Enter your pod ID</p>
-<p class="public--card-subtitle">You can find your 12-digit ID printed on your pod.</p>
+<p class="dialog-main-title">Enter your pod ID</p>
+<p class="additional-text">You can find your 12-digit ID printed on your pod.</p>
 
 <div id="public--card-inputs-container" data-public-page-target="inputsContainer">
   <input data-public-page-target="podIdInput" data-action="blur->public-page#blurInput focus->public-page#focusInput input->public-page#switchInput paste->public-page#switchInput keydown->public-page#checkBackspace" type="text" class="public--card-input" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" maxlength="1" placeholder="-" id="public--card-input-first" focused="true"/>
@@ -27,16 +27,16 @@
   <input data-public-page-target="podIdInput" data-action="blur->public-page#blurInput focus->public-page#focusInput input->public-page#switchInput paste->public-page#switchInput keydown->public-page#checkBackspace" type="text" class="public--card-input" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" maxlength="1" placeholder="-"/>
 </div>
 
-<div id="public--alert" class="invisible" data-public-page-target="alert"></div>
+<div id="public--alert" class="invisible wrap text--error regular-text" data-public-page-target="alert"></div>
 
-<a href="#" class="public--regular-link public--help-pod-id" data-bs-target="#pod_id_modal" data-bs-toggle="modal">Need help finding your pod ID?</a>
-
-<button class="btn btn-primary public--continue-button disabled"
+<button class="w-100 custom-button custom-button--primary custom-button--lg public--check-continue-button custom-button--disabled disabled"
         data-public-page-target="continueButton"
         data-action="click->public-page#checkPodId"
 >Continue</button>
 
+<a href="#" class="regular-link mb-6" data-bs-target="#pod_id_modal" data-bs-toggle="modal">Need help finding your pod ID?</a>
+
 <div class="public--horizontal-divider"></div>
 
-<p class="public--additional-title">What's a pod?</p>
-<p class="public--additional-text">Pods are small devices that keep connected to your network and let you monitor your internet connectivity by running speed tests.</p>
+<p class="additional-text fw-bold">What's a pod?</p>
+<p class="additional-text wrap">Pods are small devices that keep connected to your network and let you monitor your internet connectivity by running speed tests.</p>

@@ -21,7 +21,7 @@
       <label class="forms--label mb-2">Name</label>
       <!--end::Label-->
       <!--begin::Input-->
-      <%= form.text_field :name, class: "forms--text-input form-control form-control-solid" %>
+      <%= form.text_field :name, class: "forms--text-input form-control form-control-solid", data: { "add-pod-target" => "podNameInput" } %>
       <!--end::Input-->
       <div class="fv-plugins-message-container invalid-feedback"></div>
     </div>
@@ -59,6 +59,7 @@
                 data-select2-id="select2-data-location_id"
                 tabindex="-1"
                 data-select2-dropdown-parent-value="add_pod_modal"
+                data-add-pod-target="locationsSelect"
       >
           <option></option>
           <option>&nbsp;</option>

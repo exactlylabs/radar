@@ -10,18 +10,18 @@
     </span>
   </div>
 
-  <p class="public--pod-id"><%= client.name || "Unnamed Pod" %></p>
-  <div class="public--custom-badge public--custom-badge-<%= client.status_suffix_without_running %>"><%= client.status_without_running %></div>
+  <p class="card-main-title mt-2 mb-3"><%= client.name || "Unnamed Pod" %></p>
+  <div class="mx-auto mb-5 custom-badge custom-badge--<%= client.status_suffix_without_running %>"><%= client.status_without_running %></div>
 
   <div class="public--horizontal-divider"></div>
 
-  <p id="public--pod-setup-title">This pod belongs to <%= client.account.name %></p>
-  <p class="public--additional-text mb-5">This pod is monitoring the quality of the internet connection</p>
+  <p class="dialog-main-title mb-2">This pod belongs to <%= client.account.name %></p>
+  <p class="additional-text mb-6">This pod is monitoring the quality of the internet connection</p>
 
   <div class="public--horizontal-divider"></div>
 
   <% if client.latest_measurement.nil? %>
-    <div class="public--no-measurement-container">
+    <div class="public--no-measurement-container mb-8">
       <div class="public--no-measurement-icons-container">
         <div class="public--no-measurement-icon-container me-4">
           <%= image_tag image_url('download-icon-blue.png') %>
@@ -32,16 +32,16 @@
           <span class="public--additional-text">-</span>
         </div>
       </div>
-      <p class="public--additional-text">No measurement available</p>
+      <p class="additional-text m-0">No measurement available</p>
     </div>
   <% elsif client.status == "Test running" %>
-    <div class="public--custom-badge public--custom-badge-<%= client.status_suffix %> mb-2">
+    <div class="mx-auto d-flex flex-row justify-content-center align-items-center custom-badge custom-badge--<%= client.status_suffix %> mb-2">
       <div class="spinner-border spinner-border-sm me-1 public--custom-spinner" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
       <%= client.status %>
     </div>
-    <p class="public--additional-text mb-7">Right now</p>
+    <p class="additional-text mb-7">Right now</p>
   <% else %>
     <div class="public--no-measurement-container">
       <div class="public--no-measurement-icons-container">
@@ -60,17 +60,17 @@
 
   <div class="public--status-card">
     <div id="public--status-card-status">
-      <p class="public--label">Status</p>
+      <p class="regular-bold-text mb-1">Status</p>
       <div id="public--status-card-status-date">
-        <div class="public--custom-badge public--custom-badge-<%= client.status_suffix_without_running %> mb-0 me-2"><%= client.status_without_running %></div>
+        <div class="custom-badge custom-badge--<%= client.status_suffix_without_running %> mb-0 me-2"><%= client.status_without_running %></div>
         <p class="public--additional-text m-0"><%= client.get_status_timestamp %></p>
       </div>
     </div>
     <div class="public--vertical-divider-conditional"></div>
     <div class="public--horizontal-divider-conditional"></div>
     <div id="public--status-card-isp">
-      <p class="public--label">Internet provider</p>
-      <p class="public--additional-text m-0"><%= client.autonomous_system.nil? ? "Not available" : client.autonomous_system.autonomous_system_org.name %></p>
+      <p class="regular-bold-text mb-1">Internet provider</p>
+      <p class="additional-text m-0"><%= client.autonomous_system.nil? ? "Not available" : client.autonomous_system.autonomous_system_org.name %></p>
     </div> 
   </div>
 
@@ -78,37 +78,37 @@
     <div class="public--status-card half">
       <div class="public--status-card-speed">
         <%= image_tag image_url('download-icon-blue.png'), class: "public--arrow-icon" %>
-        <p class="public--label">Avg Download Speed</p>
-        <p class="public--additional-text m-0 public--text-left"><%= client.latest_measurement.nil? ? "N/A" : "#{client.measurements.average(:download).round(1)} Mbps" %></p>
+        <p class="regular-bold-text mb-1">Avg Download Speed</p>
+        <p class="additional-text m-0 text-left"><%= client.latest_measurement.nil? ? "N/A" : "#{client.measurements.average(:download).round(1)} Mbps" %></p>
       </div>
     </div>
     <div class="public--status-card half">
       <div class="public--status-card-speed">
         <%= image_tag image_url('upload-icon-blue.png'), class: "public--arrow-icon" %>
-        <p class="public--label">Avg Upload Speed</p>
-        <p class="public--additional-text m-0 public--text-left"><%= client.latest_measurement.nil? ? "N/A" : "#{client.measurements.average(:upload).round(1)} Mbps" %></p>
+        <p class="regular-bold-text mb-1">Avg Upload Speed</p>
+        <p class="additional-text m-0 text-left"><%= client.latest_measurement.nil? ? "N/A" : "#{client.measurements.average(:upload).round(1)} Mbps" %></p>
       </div>
     </div>
   </div>
 
 
   <% if client.status == "Test running" %>
-    <span class="public--tooltip-wrapper" data-bs-custom-class="public--custom-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="A speed test is already running or you need to wait a few minutes before taking another one.">
-      <a class="btn btn-primary public--manage-pod-button disabled">
+    <span class="public--tooltip-wrapper additional-text wrap" data-bs-custom-class="additional-text wrap public--custom-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="A speed test is already running or you need to wait a few minutes before taking another one.">
+      <a class="custom-button custom-button--primary custom-button--lg custom-button--disabled public--manage-pod-button disabled">
         <%= image_tag image_url('run-speed-test-icon.png'), id: 'public--run-speed-test-icon' %>
         Run speed test
       </a>
     </span>
   <% else %>
-    <button class="btn btn-primary public--manage-pod-button" data-action="click->public-page#runPublicTest">
+    <button class="custom-button custom-button--primary custom-button--lg public--manage-pod-button" data-action="click->public-page#runPublicTest">
       <%= image_tag image_url('run-speed-test-icon.png'), id: 'public--run-speed-test-icon' %>
       Run speed test
     </button>
   <% end %>
 
   <% if user_signed_in? %>
-    <p class="public--additional-text mt-6 w-100 mx-0 public--text-center public--max-width-none">You can run a new speed test or if you are responsible for managing this pod, you can <a href="/dashboard">go to your dashboard.</a></p>
+    <p class="additional-text w-100 mt-6 mb-0 mx-0 text-center wrap">You can run a new speed test or if you are responsible for managing this pod, you can <a href="<%= dashboard_path %>" data-turbo-frame="_top" class="regular-link">go to your dashboard.</a></p>
   <% else %>
-    <p class="public--additional-text mt-6 w-100 mx-0 public--text-center public--max-width-none">You can run a new speed test or if you are responsible for managing this pod, you can <a class="public--regular-link" href="#" data-bs-target="#dashboard_modal" data-bs-toggle="modal">go to your dashboard.</a></p>
+    <p class="additional-text w-100 mt-6 mb-0 mx-0 text-center wrap">You can run a new speed test or if you are responsible for managing this pod, you can <a class="regular-link mb-0" href="#" data-bs-target="#dashboard_modal" data-bs-toggle="modal">go to your dashboard.</a></p>
   <% end %>
 <% end %>

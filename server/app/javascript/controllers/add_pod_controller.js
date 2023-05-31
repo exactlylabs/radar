@@ -19,6 +19,8 @@ export default class extends Controller {
     "locationWrapper",
     "finalButton",
     "podIdInput",
+    "podNameInput",
+    "locationsSelect",
     "stepAlreadyClaimed",
     "stepAlreadyClaimedFooter",
     "stepNotFound",
@@ -127,6 +129,14 @@ export default class extends Controller {
     if(this.podIdInputTargets) {
       this.podIdInputTargets.forEach(input => input.value = null);
     }
+
+    if (this.podNameInputTarget) {
+      this.podNameInputTarget.value = null;
+    }
+
+    if (this.locationsSelectTarget) {
+      this.locationsSelectTarget.value = null;
+    }
     
     if(this.step2Target.style.display !== 'none') {
       this.step2Target.style.display = "none";
@@ -198,6 +208,7 @@ export default class extends Controller {
   
   handleSubmitEnd(e) {
     if(e.detail.success) {
+      this.restart();
       this.hideModal();
     } else {
       this.goToErrorModal();

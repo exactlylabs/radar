@@ -34,11 +34,7 @@
     <% if (empty_search_params? && @clients.length > 0) || (!empty_search_params?)%>
       <%= render partial: "clients_table_filters" %>
     <% end %>
-    <% if @clients.blank? %>
-      <%= render partial: "empty_pods_view" %>
-    <% else %>
-      <%= render partial: "clients_table", locals: {clients: @clients} %>
-    <% end %>
+    <%= render partial: "clients_index_content", locals: { clients: @clients } %>
     <% if current_user.super_user %>
       <div class="modal fade" tabindex="-1" id="bulk_change_release_group" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
         <%= render partial: "clients/bulk_change_release_group_modal" %>

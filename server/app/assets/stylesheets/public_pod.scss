@@ -122,7 +122,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  margin: 0 auto 16px;
+  margin: 0 auto;
 }
 
 #public--check-welcome-icon {
@@ -157,11 +157,11 @@
   margin: 0 auto 25px;
   background-color: #f6f7fa;
   border-radius: 6px;
-  padding: 10px 25px;
+  padding: 10px 10px;
 
   &.public--card-inputs-container-focus {
-    padding: 8px 23px;
-    border: solid 2px #4b7be5;
+    padding: 10px 10px;
+    outline: solid 2px #4b7be5;
   }
 }
 
@@ -183,7 +183,7 @@
     background-color: #e3e3e8;
     position: relative;
     top: -0.25rem;
-    left: 0.25rem;
+    left: .35rem;
   }
 }
 
@@ -377,13 +377,14 @@
     opacity: 0.75;
     cursor: pointer;
   }
+}
 
-  #public--button-arrow {
-    width: 14px;
-    height: 14px;
-    min-width: 14px;
-    min-height: 14px;
-  }
+#public--button-arrow {
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  min-height: 14px;
+  margin-left: 1rem;
 }
 
 .public--status-card {
@@ -563,6 +564,10 @@
   padding: 8px 16px;
   border-radius: 2px;
   .tooltip-inner {
+    word-break: normal;
+    text-overflow: clip;
+    overflow-wrap: break-word;
+    white-space: normal;
     width: 100%;
     max-width: 350px;
     background-color: #fff;

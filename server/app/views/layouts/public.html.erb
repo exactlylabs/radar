@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html style="font-size: 16px !important;">
   <head>
     <title>Radar</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
 
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
     <script
@@ -27,9 +24,8 @@
     <% end %>
     <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
   </head>
-  <body id="public--body">
+  <body id="public--body" >
     <main id="public--main" data-controller="public-page">
       <section id="public--logo-section">
         <%= image_tag image_url('new-radar-logo.png'), id: 'public--logo' %>
@@ -38,7 +34,7 @@
         <%= yield %>
       </section>
       <section id="public--learn-section">
-        <p class="public--additional-text public--learn-more">New to Radar Pods? <span><a href="https://pods.radartoolkit.com" class="public--regular-link">Learn more <%= image_tag image_url('new-tab-icon.png'), id: 'public--new-tab-icon' %></a></span></span></p>
+        <p class="public--additional-text public--learn-more">New to Radar Pods? <span><a href="https://pods.radartoolkit.com" class="regular-link">Learn more <%= image_tag image_url('new-tab-icon.png'), id: 'public--new-tab-icon' %></a></span></span></p>
       </section>
       <footer id="public--footer">
         <div id="public--footer-first-row">
