@@ -44,7 +44,8 @@ class BaseTest(avocado.Test):
     ssh_user = "radar"
 
     def tearDown(self):
-        self.vm.shutdown(hard=True)
+        if hasattr(self, "vm"):
+            self.vm.shutdown(hard=True)
 
     def setUp(self) -> None:
         self.binary = f"/usr/local/bin/qemu-system-{self.arch}"
@@ -97,33 +98,7 @@ class BaseTest(avocado.Test):
         shutil.copyfile(
             ssh_key, target_private_key
         )
-        os.chmod(target_private_key, 0o600)
         return (ssh_pub_key, target_private_key)
-
-    def set_up_cloudinit(self, ssh_pubkey=None):
-        self.phone_server = cloudinit.PhoneHomeServer(('0.0.0.0', 0),
-                                                      self.name)
-        cloudinit_iso = self.prepare_cloudinit(ssh_pubkey)
-        self.vm.add_args('-drive', 'file=%s,format=raw' % cloudinit_iso)
-
-    def prepare_cloudinit(self, ssh_pubkey=None):
-        self.log.info('Preparing cloudinit image')
-        try:
-            cloudinit_iso = os.path.join(self.workdir, 'cloudinit.iso')
-            pubkey_content = None
-            if ssh_pubkey:
-                with open(ssh_pubkey) as pubkey:
-                    pubkey_content = pubkey.read()
-            cloudinit.iso(cloudinit_iso, self.name,
-                          username=self.username,
-                          password=self.password,
-                          # QEMU's hard coded usermode router address
-                          phone_home_host='10.0.2.2',
-                          phone_home_port=self.phone_server.server_port,
-                          authorized_key=pubkey_content)
-        except Exception:
-            self.cancel('Failed to prepare the cloudinit image')
-        return cloudinit_iso
 
     def _get_vm(self):
         self.socket_dir = tempfile.mkdtemp(prefix="pods_os")
@@ -177,7 +152,9 @@ class TestPods(BaseTest):
     def test_binaries_are_present(self):
         self.launch_and_wait(set_up_ssh_connection=False)
         session = self.ssh(self.ssh_key, self.ssh_user)
+        self.log.info("SSH Connect RES OK")
         res = session.cmd("ls /opt/radar")
+        self.log.info("ssh ret: %s -- %s ", res.stdout.decode(), res.stderr.decode())
         self.assertEqual(res.exit_status, 0)
         self.assertTrue("radar_agent" in res.stdout.decode())
         self.assertTrue("watchdog" in res.stdout.decode())
