@@ -8,7 +8,8 @@
       title: "My Dashboard",
       url: dashboard_path,
       sidebar_item_id: "dashboard",
-      disabled: false
+      disabled: false,
+      narrow: false
     }
   %>
   <%= render partial: "application/components/sidebar/sidebar_item",
@@ -17,7 +18,8 @@
       title: "Search",
       url: nil,
       sidebar_item_id: "search",
-      disabled: false
+      disabled: false,
+      narrow: false
     }
   %>
   <% if current_account.present? %>
@@ -36,7 +38,8 @@
       title: "Pods",
       url: clients_path,
       sidebar_item_id: "pods",
-      disabled: current_account.nil?
+      disabled: current_account.nil?,
+      narrow: false
     }
   %>
   <%= render partial: "application/components/sidebar/sidebar_item",
@@ -45,7 +48,8 @@
       title: "Locations",
       url: locations_path,
       sidebar_item_id: "locations",
-      disabled: current_account.nil?
+      disabled: current_account.nil?,
+      narrow: false
     }
   %>
   <%= render partial: "application/components/sidebar/sidebar_item",
@@ -54,7 +58,8 @@
       title: "Members & Sharing",
       url: users_account_index_path,
       sidebar_item_id: "members",
-      disabled: current_account.nil?
+      disabled: current_account.nil?,
+      narrow: false
     }
   %>
 

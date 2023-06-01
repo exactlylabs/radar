@@ -190,6 +190,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'search', to: 'search#index'
+
   # Public access pages - Pod status from labels
   get 'check', to: 'public_pod#index'
   post 'check_id', to: 'public_pod#check_id'

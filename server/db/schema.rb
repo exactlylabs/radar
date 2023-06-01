@@ -448,6 +448,17 @@ ActiveRecord::Schema.define(version: 2023_06_12_164917) do
     t.index ["client_version_id"], name: "index_packages_on_client_version_id"
   end
 
+  create_table "recent_searches", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "location_id"
+    t.bigint "client_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["client_id"], name: "index_recent_searches_on_client_id"
+    t.index ["location_id"], name: "index_recent_searches_on_location_id"
+    t.index ["user_id"], name: "index_recent_searches_on_user_id"
+  end
+
   create_table "shared_accounts", force: :cascade do |t|
     t.bigint "original_account_id", null: false
     t.bigint "shared_to_account_id", null: false
@@ -628,6 +639,9 @@ ActiveRecord::Schema.define(version: 2023_06_12_164917) do
   add_foreign_key "online_client_count_projections", "events"
   add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
+  add_foreign_key "recent_searches", "clients"
+  add_foreign_key "recent_searches", "locations"
+  add_foreign_key "recent_searches", "users"
   add_foreign_key "shared_accounts", "accounts", column: "original_account_id"
   add_foreign_key "shared_accounts", "accounts", column: "shared_to_account_id"
   add_foreign_key "snapshots", "events"

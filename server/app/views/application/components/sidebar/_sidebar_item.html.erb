@@ -8,6 +8,7 @@
     href="<%= url.present? ? url : '#' %>"
     data-item-id="<%= sidebar_item_id %>"
     data-action="mouseover->sidebar#handleItemHover mouseleave->sidebar#handleItemHoverOff <%= sidebar_item_id == "search" ? "click->sidebar#handleToggleSearch" : "click->sidebar#closeSearchIfOpen" %>"
+    data-narrow="<%= narrow %>"
   >
     <% if sidebar_item_id != "search" %>
       <%= image_tag image_url("#{icon}-active.png"), id: "#{sidebar_item_id}-icon-active", width: "24", height: "24", class: "sidebar--item-icon #{active_path?(url) ? nil : "invisible"}" %>

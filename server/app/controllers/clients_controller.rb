@@ -4,6 +4,7 @@ require "rqrcode"
 class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
+  before_action :check_request_origin, only: %i[ show ]
   before_action :set_client, only: %i[ release show edit destroy get_client_label toggle_in_service ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group ]
@@ -486,5 +487,41 @@ class ClientsController < ApplicationController
   def set_clients
     client_ids = JSON.parse(params[:ids])
     @clients = policy_scope(Client).where(unix_user: client_ids)
+  end
+
+  def check_request_origin
+    is_from_search = params[:origin].present? && params[:origin] == 'search'
+    return if !is_from_search
+    unix_user = params[:id]
+    if current_account.is_all_accounts?
+      possible_client = policy_scope(Client).find_by_unix_user(params[:id])
+    else
+      possible_client = current_account.clients.find_by_unix_user(params[:id])
+    end
+    if possible_client.present?
+      store_recent_search(possible_client.id)
+      return
+    else
+      # Client isn't present in the current account scope so we
+      # switch to that specific acocunt automatically
+      client = Client.find_by_unix_user(params[:id])
+      if client.present?
+        set_new_account policy_scope(Account).find(client.account_id)
+        store_recent_search(client.id)
+      end
+    end
+  end
+
+  def store_recent_search(client_id)
+    current_recents = policy_scope(RecentSearch)
+    return if current_recents.find_by_client_id(client_id).present?
+
+    @recent_search = RecentSearch.new(user: current_user)
+    @recent_search.client_id = client_id
+    @recent_search.save!
+
+    if current_recents.count > 8
+      current_recents.first.destroy
+    end
   end
 end

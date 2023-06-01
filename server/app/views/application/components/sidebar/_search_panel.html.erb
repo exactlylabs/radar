@@ -8,13 +8,10 @@
       <%= image_tag image_url('arrow-left-dark.png'), width: 16, height: 16 %>
     </button>
   </div>
-  <input class="w-100 forms--text-input forms--text-input-focusable" placeholder="Search for pods, locations..."/>
-  <% if true %>
-    <p class="help-text m-0 mt-6 ms-2 mb-2">Recent</p>
-    <div class="sidebar--recents-container">
-      <%= render partial: "application/components/sidebar/recent_search_item" %>
-      <%= render partial: "application/components/sidebar/recent_search_item" %>
-      <%= render partial: "application/components/sidebar/recent_search_item" %>
+  <%= render partial: "application/components/sidebar/search_input" %>
+  <%= turbo_frame_tag "search-panel-results", class: "sidebar--results-container" do %>
+    <div class="sidebar--results-container">
+      <%= render partial: "application/components/sidebar/recents_section" %>
     </div>
   <% end %>
 </div>

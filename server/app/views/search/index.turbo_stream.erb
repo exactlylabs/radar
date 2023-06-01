@@ -1,0 +1,11 @@
+<%= turbo_stream.update "search-panel-results" do %>
+  <div class="sidebar--results-container">
+    <% if @query.present? %>
+      <%= render partial: "application/components/sidebar/search_results",
+          locals: { results: @results, query: @query }
+      %>
+    <% else %>
+      <%= render partial: "application/components/sidebar/recents_section" %>
+    <% end %>
+  </div>
+<% end %>
