@@ -193,14 +193,22 @@ jobs:
             fastlane release_<< parameters.flavor >>
           working_directory: ~/project/speedtest_mobile/client_mobile_app/ios
 
+  - run_unit_tests:
+      working_directory: ~/project
+      steps:
+        - checkout
+        - flutter/install_sdk_and_pub:
+            version: 3.3.1
+        - run: flutter upgrade
+        - flutter/unit_test:
+            app-dir: ~/project/speedtest_mobile/client_mobile_app
+
 
 workflows:
   mobile_app:
     jobs:
-      - flutter/unit_test:
+      - run_unit_tests:
           name: "unit_test"
-          app-dir: ~/project/speedtest_mobile/client_mobile_app
-          version: 3.3.1
           filters:
             tags:
               only: /^mobile-.*/
