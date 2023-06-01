@@ -3,6 +3,7 @@
   data-bs-toggle="modal"
   data-bs-target="#add_account_wizard"
   data-only-item="<%= only_item %>"
+  data-action="<%= narrow ? 'click->sidebar#closeSearchIfOpen' : nil %>"
 >
   <div class="sidebar--account-item-icon-container transparent me-1">
     <%= image_tag image_url(only_item ? "blue-plus.png" : "dark-plus.png"), width: "16", height: "16", class: "sidebar--account-item-icon" %>

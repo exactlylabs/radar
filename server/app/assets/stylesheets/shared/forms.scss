@@ -83,6 +83,13 @@
     cursor: pointer;
     opacity: 0.75;
   }
+
+  &[data-size="small"] {
+    height: 1rem !important;
+    width: 1rem !important;
+    top: .75rem;
+    right: 1rem;
+  }
 }
 
 .forms--text-input-with-decoration {

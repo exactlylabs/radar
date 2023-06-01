@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { emitCustomEvent } from "../eventsEmitter";
 
 export default class extends Controller {
 
@@ -9,7 +10,8 @@ export default class extends Controller {
     'accountOptionsMenu',
     'accountsMenu',
     'defaultSidebar',
-    'searchSidebar'
+    'searchSidebar',
+    'searchInput'
   ]
 
   connect() {
@@ -168,7 +170,7 @@ export default class extends Controller {
       this.defaultSidebarTarget.classList.remove('invisible');
       this.searchSidebarTarget.classList.add('invisible');
     } else {
-      this.closeAccountsMenu();
+      if(this.hasAccountsMenuTarget) this.closeAccountsMenu();
       this.defaultSidebarTarget.classList.add('invisible');
       this.searchSidebarTarget.classList.remove('invisible');
     }
@@ -177,8 +179,16 @@ export default class extends Controller {
 
   closeSearchIfOpen() {
     if(!this.isNarrow) return;
+    this.resetPanel();
     this.defaultSidebarTarget.classList.remove('invisible');
     this.searchSidebarTarget.classList.add('invisible');
     this.isNarrow = false;
+  }
+
+  resetPanel() {
+    if (this.hasSearchInputTarget) {
+      this.searchInputTarget.value = '';
+      emitCustomEvent('debouncedSearch');
+    }
   }
 }

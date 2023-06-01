@@ -1,0 +1,27 @@
+<% if results[:pods].count == 0 && results[:locations].count == 0 %>
+  <p class="additional-text">No results found for "<%= query %>".</p>
+<% else %>
+  <% if results[:pods].count > 0 %>
+    <p class="help-text m-0 ms-2 mb-2">Pods</p>
+    <div class="sidebar--recents-container">
+      <% results[:pods].each do |pod| %>
+        <%= render partial: "application/components/sidebar/result_item",
+            locals: { item: pod, type: 'pods', url: client_path(pod.unix_user, origin: 'search') }
+        %>
+      <% end %>
+    </div>
+  <% end %>
+  <% if results[:pods].count > 0 && results[:locations].count > 0 %>
+    <div class="sidebar--horizontal-divider"></div>
+  <% end %>
+  <% if results[:locations].count > 0 %>
+    <p class="help-text m-0 ms-2 mb-2">Locations</p>
+    <div class="sidebar--recents-container">
+      <% results[:locations].each do |location| %>
+        <%= render partial: "application/components/sidebar/result_item",
+            locals: { item: location, type: 'locations', url: location_path(location, origin: 'search') }
+        %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,5 +1,6 @@
 <div class="sidebar--accounts-item-container cursor-pointer"
-  data-action="<%= narrow ? 'click->sidebar#closeSearchIfOpen' : 'click->sidebar#toggleAccountsMenu' %>"
+  data-action="<%= narrow ? 'click->sidebar#closeSearchIfOpen' : nil %> click->sidebar#toggleAccountsMenu"
+  data-narrow="<%= narrow %>"
 >
   <div class="sidebar--accounts-item-icon-container">
     <% if current_account.is_all_accounts? %>

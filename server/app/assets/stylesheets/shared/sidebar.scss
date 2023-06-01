@@ -47,6 +47,10 @@
     cursor: default;
     background-color: transparent;
   }
+
+  &[data-narrow="true"] {
+    width: 44px;
+  }
 }
 
 .sidebar--horizontal-divider {
@@ -78,6 +82,10 @@
   &:hover {
     background-color: $subtle-gray;
   }
+
+  &[data-narrow="true"] {
+    width: 48px;
+  }
 }
 
 .sidebar--profile-item {
@@ -88,7 +96,7 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 9px 10px;
+  padding: 6px;
   position: relative;
 
   .sidebar--profile-item-avatar-container {
@@ -167,6 +175,10 @@
   .sidebar--accounts-caret {
     margin-right: 0;
     margin-left: auto;
+  }
+
+  [data-narrow="true"] {
+    width: 44px;
   }
 }
 
@@ -551,8 +563,24 @@
 
     .sidebar--icon-container {
       width: 2rem;
+      min-width: 2rem;
       aspect-ratio: 1 / 1;
       background-color: $icon-container-gray;
     }
+
+    .sidebar--recent-text {
+      max-width: 20ch;
+    }
+
+    .sidebar--recent-account {
+      max-width: 20ch;
+    }
   }
+}
+
+.sidebar--results-container {
+  max-height: 85%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 1.5rem;
 }

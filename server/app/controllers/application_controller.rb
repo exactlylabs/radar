@@ -90,6 +90,7 @@ class ApplicationController < ActionController::Base
   def set_all_accounts
     @auth_holder = AuthenticationHolder.new(current_user) unless @auth_holder
     @auth_holder.set_all_accounts
+    set_cookie(:radar_current_account_id, -1)
   end
 
   def assign_account(account_id)
@@ -107,6 +108,7 @@ class ApplicationController < ActionController::Base
 
       raise Pundit::NotAuthorizedError, "Access denied" unless can_access_account
       
+      set_cookie(:radar_current_account_id, account_id)
       @auth_holder.set_user(current_user) if @auth_holder.user.nil?
       @auth_holder.set_account(Account.find(account_id))
       if is_account_accessible_through_share

@@ -1,7 +1,10 @@
-<div class="sidebar--profile-container" data-sidebar-target="profileMenuContainer">
+<div class="sidebar--profile-container"
+  data-sidebar-target="profileMenuContainer"
+  data-narrow="<%= narrow %>"
+>
   <div class="sidebar--profile-item cursor-pointer"
     data-sidebar-target="profileMenuToggle"
-    data-action="click->sidebar#toggleProfileMenu"
+    data-action="<%= narrow ? 'click->sidebar#closeSearchIfOpen' : nil %> click->sidebar#toggleProfileMenu"
     data-menu-state="closed"
   >
     <div class="sidebar--profile-item-avatar-container">
