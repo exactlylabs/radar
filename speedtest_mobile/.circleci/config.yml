@@ -63,6 +63,7 @@ jobs:
     executor:
       name: android/android-docker
       tag: 2022.09.1
+    resource_class: large
     steps:
       - checkout
       - build-android:
