@@ -193,13 +193,23 @@ jobs:
             fastlane release_<< parameters.flavor >>
           working_directory: ~/project/speedtest_mobile/client_mobile_app/ios
 
+  run_unit_tests:
+    docker:
+      - image: ghcr.io/cirruslabs/flutter:3.10.2
+    steps:
+      - checkout
+      - flutter/install_pub:
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
+      - run:
+          command: flutter test
+          name: Run Unit Test
+          working_directory: ~/project/speedtest_mobile/client_mobile_app
+
+
 workflows:
   mobile_app:
     jobs:
-      - flutter/unit_test:
-          name: "unit_test"
-          app-dir: ~/project/speedtest_mobile/client_mobile_app
-          version: 3.10.1
+      - run_unit_tests:
           filters:
             tags:
               only: /^mobile-.*/
