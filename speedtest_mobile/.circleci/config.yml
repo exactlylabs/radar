@@ -210,6 +210,7 @@ workflows:
   mobile_app:
     jobs:
       - run_unit_tests:
+          name: "unit_test"
           filters:
             tags:
               only: /^mobile-.*/
