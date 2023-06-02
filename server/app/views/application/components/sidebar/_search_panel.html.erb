@@ -1,4 +1,4 @@
-<div class="sidebar--search-panel-container">
+<div class="sidebar--search-panel-container" data-controller="app-search">
   <div class="d-flex flex-row justify-content-between align-items-baseline mb-7">
     <h3 class="page-main-title">Search</h3>
     <button type="button"
@@ -9,7 +9,11 @@
     </button>
   </div>
   <%= render partial: "application/components/sidebar/search_input" %>
-  <%= turbo_frame_tag "search-panel-results", class: "sidebar--results-container" do %>
+  <div class="invisible spinner-border text-primary sidebar--search-spinner m-0 mt-3 ms-1"
+    role="status"
+    data-app-search-target="spinner"
+  ></div>
+  <%= turbo_frame_tag "search-panel-results", data: { "app-search-target" => "resultsList" } do %>
     <div class="sidebar--results-container">
       <%= render partial: "application/components/sidebar/recents_section" %>
     </div>

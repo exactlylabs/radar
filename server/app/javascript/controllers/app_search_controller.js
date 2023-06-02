@@ -5,12 +5,15 @@ export default class extends Controller {
 
   static targets = [
     'searchInput',
-    'spinner'
+    'spinner',
+    'resultsList'
   ];
 
+  // ALL COMMENTED CODE IS FOR FUTURE IMPLEMENTATION
   connect() {
     this.debounceTimeoutId = null;
     this.accountIdFilter = -1;
+    //this.shouldShowSpinner = true;
   }
 
   debouncedSearch() {
@@ -21,7 +24,12 @@ export default class extends Controller {
 
   search() {
     const query = this.searchInputTarget.value;
-    this.showSpinner();
+    // TODO: test in production how much time loading takes to evaluate
+    // using this logic, should stay commented
+    {/*if (query.length === 0 || this.shouldShowSpinner) {
+      this.showSpinner(); 
+      this.hideResultsList();
+    }*/}
     const token = document.querySelector('meta[name="csrf-token"]').content;
     fetch(`/search?q=${query}&account_id=${this.accountIdFilter}`, {
       method: 'GET',
@@ -31,8 +39,22 @@ export default class extends Controller {
     })
       .then(response => response.text())
       .then(html => Turbo.renderStreamMessage(html))
-      .catch((err) => handleError(err, this.identifier))
-      .finally(() => this.hideSpinner());
+      .catch((err) => handleError(err, this.identifier));
+      // TODO: test in production how much time loading takes to evaluate
+      // using this logic, should stay commented
+      /*.finally(() => {
+        this.hideSpinner();
+        this.showResultsList();
+      });*/
+  }
+
+  showResultsList() {
+    this.resultsListTarget.classList.remove('invisible');
+  }
+
+  hideResultsList() {
+    //this.shouldShowSpinner = false;
+    this.resultsListTarget.classList.add('invisible');
   }
 
   showSpinner() {
