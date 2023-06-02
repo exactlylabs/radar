@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { emitCustomEvent } from "../eventsEmitter";
 
 export default class extends Controller {
 
@@ -9,18 +10,20 @@ export default class extends Controller {
 
   connect() {
     this.debounceTimeoutId = null;
+    this.accountIdFilter = -1;
   }
 
   debouncedSearch() {
     clearTimeout(this.debounceTimeoutId);
     this.debounceTimeoutId = setTimeout(this.search.bind(this), 500);
+    emitCustomEvent('closeAccountsFilter');
   }
 
   search() {
     const query = this.searchInputTarget.value;
     this.showSpinner();
     const token = document.querySelector('meta[name="csrf-token"]').content;
-    fetch(`/search?q=${query}`, {
+    fetch(`/search?q=${query}&account_id=${this.accountIdFilter}`, {
       method: 'GET',
       headers: {
         'X-CSRF-Token': token,
@@ -38,5 +41,19 @@ export default class extends Controller {
 
   hideSpinner() {
     this.spinnerTarget.classList.add('invisible');
+  }
+
+  selectAccount(e) {
+    const element = e.target;
+    if(!element) return;
+    const newAccountId = element.getAttribute('data-account-id');
+    if(this.accountIdFilter === newAccountId) return;
+    this.accountIdFilter = newAccountId;
+    emitCustomEvent('selectAccountFilter', {
+      detail: {
+        accountName: element.getAttribute('data-account-name')
+      }
+    });
+    if(this.searchInputTarget.value.length > 0) this.search();
   }
 }

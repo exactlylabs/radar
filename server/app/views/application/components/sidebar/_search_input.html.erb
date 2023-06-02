@@ -3,11 +3,21 @@
     placeholder="Search for pods, locations..."
     data-app-search-target="searchInput"
     data-sidebar-target="searchInput"
-    data-action="input->app-search#debouncedSearch debouncedSearch@window->app-search#debouncedSearch"
+    data-action="focus->sidebar#closeAccountsFilter input->sidebar#toggleClear input->app-search#debouncedSearch debouncedSearch@window->app-search#debouncedSearch"
+    data-narrow="true"
   />
+  <%= image_tag image_url('clear-input-icon.png'), width: 16, height: 16, class: "invisible hoverable sidebar--clear-input-icon", data: { action: "click->sidebar#clearInput", "sidebar-target" => "clearInput" } %>
   <div class="invisible forms--input-decoration spinner-border spinner-border-sm text-primary m-auto"
     role="status"
     data-app-search-target="spinner"
     data-size="small"
+    data-x-translate="true"
   ></div>
+  <div class="sidebar--account-filter-container hoverable m-auto"
+    data-action="selectAccountFilter@window->sidebar#selectAccountFilter click->sidebar#toggleAccountsFilter closeAccountsFilter@window->sidebar#closeAccountsFilter"
+    data-sidebar-target="accountFilterContainer"
+  >
+    <%= image_tag image_url('all-accounts-icon-selected.png'), width: 24, height: 24, data: { "sidebar-target" => "allAccountsIconImage" } %>
+  </div>
+  <%= render partial: "application/components/sidebar/search_accounts_filter" %>
 </div>

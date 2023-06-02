@@ -11,7 +11,11 @@ export default class extends Controller {
     'accountsMenu',
     'defaultSidebar',
     'searchSidebar',
-    'searchInput'
+    'searchInput',
+    'clearInput',
+    'accountsFilter',
+    'accountFilterContainer',
+    'allAccountsIconImage'
   ]
 
   connect() {
@@ -171,6 +175,7 @@ export default class extends Controller {
       this.searchSidebarTarget.classList.add('invisible');
     } else {
       if(this.hasAccountsMenuTarget) this.closeAccountsMenu();
+      if(this.hasAccountsFilterTarget) this.closeAccountsFilter();
       this.defaultSidebarTarget.classList.add('invisible');
       this.searchSidebarTarget.classList.remove('invisible');
     }
@@ -189,6 +194,56 @@ export default class extends Controller {
     if (this.hasSearchInputTarget) {
       this.searchInputTarget.value = '';
       emitCustomEvent('debouncedSearch');
+      this.closeAccountsFilter();
     }
+  }
+
+  toggleClear() {
+    if (this.hasSearchInputTarget && this.searchInputTarget.value.length > 0) {
+      this.showClear();
+    } else {
+      this.hideClear();
+    }
+  }
+
+  showClear() {
+    this.clearInputTarget.classList.remove('invisible');
+  }
+
+  hideClear() {
+    this.clearInputTarget.classList.add('invisible');
+  }
+
+  clearInput() {
+    this.searchInputTarget.value = '';
+    this.searchInputTarget.focus();
+    emitCustomEvent('debouncedSearch');
+    this.hideClear();
+  }
+
+  toggleAccountsFilter() {
+    this.accountsFilterTarget.classList.toggle('invisible');
+  }
+
+  closeAccountsFilter() {
+    this.accountsFilterTarget.classList.add('invisible');
+  }
+
+  selectAccountFilter(e) {
+    const selectedAccountName = e.detail.accountName;
+    if(selectedAccountName !== 'All accounts') {
+      this.allAccountsIconImageTarget.classList.add('invisible');
+      console.log(this.accountFilterContainerTarget.childElementCount);
+      if (this.accountFilterContainerTarget.childElementCount == 2) this.accountFilterContainerTarget.removeChild(this.accountFilterContainerTarget.lastChild);
+      const div = document.createElement('div');
+      const newSpan = `<span class="m-0 sidebar-item--text-static">${selectedAccountName[0].toUpperCase()}</span>`
+      div.innerHTML = newSpan.trim();
+      const newItem = div.firstChild;
+      this.accountFilterContainerTarget.appendChild(newItem);
+    } else {
+      this.allAccountsIconImageTarget.classList.remove('invisible');
+      if (this.accountFilterContainerTarget.childElementCount == 2) this.accountFilterContainerTarget.removeChild(this.accountFilterContainerTarget.lastChild);
+    }
+    this.closeAccountsFilter();
   }
 }
