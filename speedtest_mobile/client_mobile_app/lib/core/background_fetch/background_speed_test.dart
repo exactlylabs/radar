@@ -64,10 +64,8 @@ class BackgroundSpeedTest {
       if (_isTestingDownloadSpeed) {
         startUploadTest();
       } else if (_isTestingUploadSpeed) {
-        if (Platform.isAndroid) {
-          if (await Permission.phone.request().isGranted) {
-            _connectionInfo = await _networkConnectionInfo.getNetworkConnectionInfo();
-          }
+        if (Platform.isAndroid && await Permission.phone.request().isGranted) {
+          _connectionInfo = await _networkConnectionInfo.getNetworkConnectionInfo();
         }
         _isTestingUploadSpeed = false;
         await _getCurrentLocation();
