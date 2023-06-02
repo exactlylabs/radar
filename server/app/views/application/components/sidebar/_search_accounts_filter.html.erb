@@ -1,0 +1,26 @@
+<div class="sidebar--accounts-filter-container invisible" data-sidebar-target="accountsFilter">
+  <span class="help-text ms-2">Search in...</span>
+  <div class="w-100 mt-2">
+    <%= render partial: "application/components/sidebar/account_filter_row", locals: { account: AllAccountsAccount.new, selected: true } %>
+  </div>
+  <% accounts = policy_scope(Account) %>
+  <% shared_accounts = current_user.shared_accounts %>
+  <% if accounts.count > 0 %>
+    <div class="sidebar--horizontal-divider"></div>
+    <span class="help-text ms-2">My accounts</span>
+    <div class="w-100 mt-2">
+      <% accounts.each do |account| %>
+        <%= render partial: "application/components/sidebar/account_filter_row", locals: { account: account, selected: false } %>
+      <% end %>
+    </div>
+  <% end %>
+  <% if shared_accounts.count > 0 %>
+    <div class="sidebar--horizontal-divider"></div>
+    <span class="help-text ms-2">Shared with me</span>
+    <div class="w-100 mt-2">
+      <% shared_accounts.each do |account| %>
+        <%= render partial: "application/components/sidebar/account_filter_row", locals: { account: account, selected: false } %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

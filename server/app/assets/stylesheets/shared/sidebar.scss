@@ -519,9 +519,8 @@
 .sidebar--search-panel-container {
   width: 344px;
   height: 100%;
-  overflow: hidden;
   background-color: white;
-  z-index: 50;
+  z-index: 51;
   position: absolute;
   left: 92px;
   top: 0;
@@ -547,33 +546,43 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+}
 
-  .sidebar--recent-item {
-    width: 100%;
-    padding: 6px;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
+.sidebar--recent-item {
+  width: 100%;
+  padding: 6px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: $subtle-gray;
+  }
+
+  .sidebar--icon-container {
+    width: 2rem;
+    min-width: 2rem;
+    aspect-ratio: 1 / 1;
+    background-color: $icon-container-gray;
     border-radius: 6px;
+  }
 
-    &:hover {
-      background-color: $subtle-gray;
-    }
+  .sidebar--recent-text {
+    max-width: 20ch;
+  }
 
-    .sidebar--icon-container {
-      width: 2rem;
-      min-width: 2rem;
-      aspect-ratio: 1 / 1;
-      background-color: $icon-container-gray;
-    }
+  .sidebar--recent-account {
+    max-width: 20ch;
+  }
+
+  &[data-selected="true"] {
+    background-color: $subtle-gray;
 
     .sidebar--recent-text {
-      max-width: 20ch;
-    }
-
-    .sidebar--recent-account {
-      max-width: 20ch;
+      color: $blue;
+      font-variation-settings: 'wght' $bold;
     }
   }
 }
@@ -583,4 +592,42 @@
   overflow-y: auto;
   overflow-x: hidden;
   margin-top: 1.5rem;
+}
+
+.sidebar--clear-input-icon {
+  position: absolute;
+  right: 2.75rem;
+  top: .75rem;
+}
+
+.sidebar--account-filter-container {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: .5rem;
+  background-color: $icon-container-gray;
+  position: absolute;
+  right: .25rem;
+  top: .25rem;
+}
+
+.sidebar--accounts-filter-container {
+  width: 252px;
+  padding: .75rem .25rem;
+  position: absolute;
+  top: 0;
+  left: 300px;
+  background-color: white;
+  border-radius: 6px;
+  border: solid 1px $sidebar--main-container-border;
+  box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
+  backdrop-filter: blur(10px);
+}
+
+.sidebar--account-filter-row {
+  img, p, div {
+    pointer-events: none;
+  }
 }

@@ -46,6 +46,10 @@
   &.forms--text-input-focusable:focus {
     outline: solid 2px $blue !important;
   }
+
+  &[data-narrow="true"] {
+    padding-right: 4.25rem !important;
+  }
 }
 
 .forms--text-input::placeholder {
@@ -89,6 +93,10 @@
     width: 1rem !important;
     top: .75rem;
     right: 1rem;
+  }
+
+  &[data-x-translate="true"] {
+    right: 2.75rem;
   }
 }
 

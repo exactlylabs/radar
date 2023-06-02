@@ -1,0 +1,15 @@
+<div class="sidebar--recent-item sidebar--account-filter-row cursor-pointer"
+  data-action="click->app-search#selectAccount"
+  data-selected="<%= selected %>"
+  data-account-id="<%= account.id %>"
+  data-account-name="<%= account.name %>"
+>
+  <div class="circle d-flex justify-content-center align-items-center sidebar--icon-container me-2">
+    <% if account.is_all_accounts? %>
+      <%= image_tag image_url("all-accounts-icon#{selected ? '-selected' : ''}.png"), width: 22, height: 22 %>
+    <% else %>
+      <p class="m-0 sidebar-item--text"><%= account.name[0].upcase %></p>
+    <% end %>
+  </div>
+  <p class="sidebar-item--text sidebar--recent-text m-0 ellipsis me-1"><%= account.name %></p>
+</div>

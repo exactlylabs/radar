@@ -266,6 +266,7 @@ class ClientsController < ApplicationController
       end
     else
       location = policy_scope(Location).find(location_id) if location_id
+      account = location.account if location
     end
     if params[:update_group_id]
       update_group = policy_scope(UpdateGroup).find(params[:update_group_id])
