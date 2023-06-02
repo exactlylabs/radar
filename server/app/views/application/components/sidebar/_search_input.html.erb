@@ -1,4 +1,4 @@
-<div class="w-100 position-relative" data-controller="app-search">
+<div class="w-100 position-relative">
   <input class="w-100 forms--text-input forms--text-input-focusable forms--text-input-with-decoration"
     placeholder="Search for pods, locations..."
     data-app-search-target="searchInput"
@@ -7,12 +7,6 @@
     data-narrow="true"
   />
   <%= image_tag image_url('clear-input-icon.png'), width: 16, height: 16, class: "invisible hoverable sidebar--clear-input-icon", data: { action: "click->sidebar#clearInput", "sidebar-target" => "clearInput" } %>
-  <div class="invisible forms--input-decoration spinner-border spinner-border-sm text-primary m-auto"
-    role="status"
-    data-app-search-target="spinner"
-    data-size="small"
-    data-x-translate="true"
-  ></div>
   <div class="sidebar--account-filter-container hoverable m-auto"
     data-action="selectAccountFilter@window->sidebar#selectAccountFilter click->sidebar#toggleAccountsFilter closeAccountsFilter@window->sidebar#closeAccountsFilter"
     data-sidebar-target="accountFilterContainer"

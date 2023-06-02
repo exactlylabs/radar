@@ -107,7 +107,8 @@ p {
 }
 
 .invisible {
-  display: none;
+  display: none !important;
+  visibility: hidden !important;
 }
 
 .right-0 {
