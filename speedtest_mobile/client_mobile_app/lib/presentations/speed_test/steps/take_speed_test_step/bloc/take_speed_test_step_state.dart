@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:network_connection_info/models/connection_info.dart';
 
 class TakeSpeedTestStepState {
@@ -17,6 +18,8 @@ class TakeSpeedTestStepState {
     this.isTestingUploadSpeed = false,
     this.networkQuality,
     this.connectionInfo,
+    this.positionBeforeSpeedTest,
+    this.positionAfterSpeedTest,
   });
 
   TakeSpeedTestStepState copyWith({
@@ -35,6 +38,8 @@ class TakeSpeedTestStepState {
     List<Map<String, dynamic>>? responses,
     String? networkQuality,
     ConnectionInfo? connectionInfo,
+    Position? positionBeforeSpeedTest,
+    Position? positionAfterSpeedTest,
   }) {
     return TakeSpeedTestStepState(
       finishedTesting: finishedTesting ?? this.finishedTesting,
@@ -52,6 +57,8 @@ class TakeSpeedTestStepState {
       uploadProgress: uploadProgress ?? this.uploadProgress,
       networkQuality: networkQuality ?? this.networkQuality,
       connectionInfo: connectionInfo ?? this.connectionInfo,
+      positionBeforeSpeedTest: positionBeforeSpeedTest ?? this.positionBeforeSpeedTest,
+      positionAfterSpeedTest: positionAfterSpeedTest ?? this.positionAfterSpeedTest,
     );
   }
 
@@ -70,4 +77,6 @@ class TakeSpeedTestStepState {
   final double uploadProgress;
   final String? networkQuality;
   final ConnectionInfo? connectionInfo;
+  final Position? positionBeforeSpeedTest;
+  final Position? positionAfterSpeedTest;
 }
