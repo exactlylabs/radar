@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
@@ -19,6 +20,10 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
   final NetworkConnectionInfo _networkConnectionInfo;
 
   void startTest() async {
+    final positionBeforeSpeedTest = await _getCurrentLocation();
+    if (positionBeforeSpeedTest != null) {
+      emit(state.copyWith(positionBeforeSpeedTest: positionBeforeSpeedTest));
+    }
     await test(
       config: {'protocol': 'wss'},
       onMeasurement: (data) => onTestMeasurement(data),
@@ -35,23 +40,15 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
     }
   }
 
-  void startUploadTest() {
-    emit(state.copyWith(isTestingUploadSpeed: true));
-  }
+  void startUploadTest() => emit(state.copyWith(isTestingUploadSpeed: true));
 
-  void onTestComplete(Map<String, dynamic> testResult) {
-    print(testResult);
-    _parse(testResult);
-  }
+  void onTestComplete(Map<String, dynamic> testResult) => _parse(testResult);
 
-  void onTestMeasurement(Map<String, dynamic> testResult) {
-    print(testResult);
-    _parse(testResult);
-  }
+  void onTestMeasurement(Map<String, dynamic> testResult) => _parse(testResult);
 
   void onTestError(String error) => Sentry.captureException(error);
 
-  void _parse(Map<String, dynamic> response) {
+  void _parse(Map<String, dynamic> response) async {
     final updatedResponses = List<Map<String, dynamic>>.from(state.responses)..add(response);
     if (response.containsKey('Source') && response['Source'] == 'server') {
       final bytes = (response['type'] == 'download') ? 'BytesSent' : 'BytesReceived';
@@ -92,9 +89,11 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
                 networkQuality: connectionInfo != null ? _getNetworkQuality(connectionInfo.rssi) : null,
               )));
         } else {
+          final positionAfterSpeedTest = await _getCurrentLocation();
           emit(state.copyWith(
             isTestingUploadSpeed: false,
             finishedTesting: true,
+            positionAfterSpeedTest: positionAfterSpeedTest,
             responses: updatedResponses,
           ));
         }
@@ -133,5 +132,17 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
       return true;
     }
     return false;
+  }
+
+  Future<Position?> _getCurrentLocation() async {
+    final permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      final permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.deniedForever) {
+        return null;
+      }
+    }
+    final position = await Geolocator.getCurrentPosition();
+    return position;
   }
 }

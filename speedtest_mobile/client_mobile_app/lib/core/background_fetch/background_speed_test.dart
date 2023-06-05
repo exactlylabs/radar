@@ -1,59 +1,50 @@
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
+import 'package:network_connection_info/network_connection_info.dart';
 import 'package:network_connection_info/models/connection_info.dart' as CI;
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/ndt7-client-dart/ndt7_client_dart.dart';
 
 class BackgroundSpeedTest {
   BackgroundSpeedTest({
-    required NetworkConnectionInfo networkConnectionInfo,
-    required IHttpProvider httpProvider,
     required RestClient restClient,
-  })  : _httpProvider = httpProvider,
-        _restClient = restClient,
+    required IHttpProvider httpProvider,
+    required NetworkConnectionInfo networkConnectionInfo,
+  })  : _restClient = restClient,
+        _httpProvider = httpProvider,
         _networkConnectionInfo = networkConnectionInfo;
 
-  final NetworkConnectionInfo _networkConnectionInfo;
-  final IHttpProvider _httpProvider;
   final RestClient _restClient;
+  final IHttpProvider _httpProvider;
+  final NetworkConnectionInfo _networkConnectionInfo;
 
-  double? _latitude;
-  double? _longitude;
   CI.ConnectionInfo? _connectionInfo;
-  bool _isTestingUploadSpeed = false;
-  bool _isTestingDownloadSpeed = false;
   List<Map<String, dynamic>> _responses = [];
+  Position? _positionBeforeSpeedTest;
+  Position? _positionAfterSpeedTest;
+  ({bool isTestingDownloadSpeed, bool isTestingUploadSpeed}) _testingState =
+      (isTestingDownloadSpeed: false, isTestingUploadSpeed: false);
 
-  void startSpeedTest() {
-    _isTestingDownloadSpeed = true;
+  Future<void> startSpeedTest() async {
+    _positionBeforeSpeedTest = await _getCurrentLocation();
+    _testingState = (isTestingDownloadSpeed: true, isTestingUploadSpeed: false);
     test(
-      config: {
-        'protocol': 'wss',
-      },
+      config: {'protocol': 'wss'},
       onMeasurement: (data) => _onTestMeasurement(data),
       onCompleted: (data) => _onTestComplete(data),
       onError: (data) => _onTestError(jsonEncode(data)),
     );
   }
 
-  void startUploadTest() {
-    _isTestingDownloadSpeed = false;
-    _isTestingUploadSpeed = true;
-  }
+  void startUploadTest() => _testingState = (isTestingDownloadSpeed: false, isTestingUploadSpeed: true);
 
-  void _onTestComplete(Map<String, dynamic> testResult) {
-    _parse(testResult);
-  }
+  void _onTestComplete(Map<String, dynamic> testResult) => _parse(testResult);
 
-  void _onTestMeasurement(Map<String, dynamic> testResult) {
-    _parse(testResult);
-  }
+  void _onTestMeasurement(Map<String, dynamic> testResult) => _parse(testResult);
 
   void _onTestError(String error) => print(error);
 
@@ -61,30 +52,29 @@ class BackgroundSpeedTest {
     final updatedResponses = List<Map<String, dynamic>>.from(_responses)..add(response);
     _responses = updatedResponses;
     if (response.containsKey('LastClientMeasurement') && response.containsKey('LastServerMeasurement')) {
-      if (_isTestingDownloadSpeed) {
+      if (_testingState.isTestingDownloadSpeed) {
         startUploadTest();
-      } else if (_isTestingUploadSpeed) {
+      } else if (_testingState.isTestingUploadSpeed) {
         if (Platform.isAndroid && await Permission.phone.request().isGranted) {
           _connectionInfo = await _networkConnectionInfo.getNetworkConnectionInfo();
         }
-        _isTestingUploadSpeed = false;
-        await _getCurrentLocation();
+        _testingState = (isTestingDownloadSpeed: false, isTestingUploadSpeed: false);
+        _positionAfterSpeedTest = await _getCurrentLocation();
         _sendSpeedTestResults();
       }
     }
   }
 
-  Future<void> _getCurrentLocation() async {
+  Future<Position?> _getCurrentLocation() async {
     final permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       final permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.deniedForever) {
-        return;
+        return null;
       }
     }
     final position = await Geolocator.getCurrentPosition();
-    _latitude = position.latitude;
-    _longitude = position.longitude;
+    return position;
   }
 
   void _sendSpeedTestResults() {
@@ -94,8 +84,8 @@ class BackgroundSpeedTest {
       body: {
         'result': {'raw': _responses},
         'speed_test': {
-          'latitude': _latitude,
-          'longitude': _longitude,
+          'before_speed_test': _positionBeforeSpeedTest?.toJson(),
+          'after_speed_test': _positionAfterSpeedTest?.toJson(),
         },
         'connection_data': _connectionInfo?.toJson(),
         'timestamp': DateTime.now().toUtc().toIso8601String(),
