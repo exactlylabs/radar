@@ -9,7 +9,6 @@ import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_m
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/prefer_not_to_answer_button.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/horizontal_dashed_separator.dart';
 
 class NetworkPlaceStep extends StatelessWidget {
   const NetworkPlaceStep({
@@ -45,12 +44,6 @@ class NetworkPlaceStep extends StatelessWidget {
             separatorBuilder: (context, index) {
               if (index < 2) {
                 return SpacerWithMax(size: height * 0.012, maxSize: 10.0);
-              } else if (index == 2) {
-                final horizontal = height * 0.025 < 20.0 ? height * 0.025 : 20.0;
-                return Padding(
-                  padding: EdgeInsets.only(left: horizontal, right: horizontal, bottom: 14.5, top: 15.5),
-                  child: HorizontalDashedSeparator(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
-                );
               } else {
                 return const SizedBox(height: 30);
               }
@@ -107,6 +100,5 @@ class NetworkPlaceStep extends StatelessWidget {
     Strings.homeNetworkLocation: Images.locationHome,
     Strings.workNetworkLocation: Images.locationWork,
     Strings.otherNetworkLocation: Images.locationOther,
-    Strings.iDontHaveNetworkLocation: Images.locationNoInternet,
   };
 }
