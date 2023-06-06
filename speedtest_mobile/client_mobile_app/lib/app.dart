@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:client_mobile_app/resources/theme.dart';
 import 'package:client_mobile_app/core/flavors/app_config.dart';
 import 'package:client_mobile_app/presentations/home_page.dart';
@@ -25,12 +26,14 @@ class App extends StatelessWidget {
     required this.localStorage,
     required this.httpProvider,
     required this.networkConnectionInfo,
+    required this.configurationMonitoring,
   }) : super(key: key);
 
   final RestClient restClient;
   final LocalStorage localStorage;
   final IHttpProvider httpProvider;
   final NetworkConnectionInfo networkConnectionInfo;
+  final ConfigurationMonitoring configurationMonitoring;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +63,10 @@ class App extends StatelessWidget {
           ),
           BlocProvider<BackgroundFetchBloc>(
             lazy: false,
-            create: (context) => BackgroundFetchBloc(localStorage: localStorage),
+            create: (context) => BackgroundFetchBloc(
+              localStorage: localStorage,
+              configurationMonitoring: configurationMonitoring,
+            ),
           ),
           BlocProvider<SpeedTestCubit>(
             lazy: false,
