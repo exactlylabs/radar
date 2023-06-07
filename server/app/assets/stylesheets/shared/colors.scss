@@ -43,8 +43,17 @@ $badge--orange-color: #f18f41;
 $badge--orange-background-color: rgba(241, 143, 65, 0.1);
 
 // Alerts
+$alerts--box-shadow: rgba(0, 0, 0, 0.18);
 $alert--primary-background-color: #272730;
 $alert--primary-color: #fff;
+$alert--error-background-color: #feecf0;
+$alert--error-color: $deep-blue;
+$alert--error-border-color: rgba(229, 75, 75, 0.3);
+$alert--error-icon-container-background-color: rgba(229, 75, 75, 0.7);
+$alert--success-background-color: #ebf8f0;
+$alert--success-color: $deep-blue;
+$alert--success-border-color: rgba(49, 179, 108, 0.3);
+$alert--success-icon-container-background-color: rgba(49, 179, 108, 0.7);
 
 // Badges
 $badge--green-color: #31b36c;
