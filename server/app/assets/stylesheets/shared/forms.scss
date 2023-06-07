@@ -15,6 +15,41 @@
   color: $blue;
 }
 
+.forms--checkbox {
+  width: 30px !important;
+  height: 20px !important;
+}
+
+.forms--input-group {
+  width: 100% !important;
+  position: relative;
+}
+
+.forms--text-input {
+  padding: 10px 16px !important;
+  height: 40px !important;
+  background-color: $subtle-gray !important;
+  border-radius: 6px !important;
+  font-variation-settings: 'wght' $medium !important;
+  font-size: 0.938rem !important;
+  line-height: 1.25rem;
+  color: $deep-blue !important;
+  border: none !important;
+  outline: none !important;
+
+  &.forms--text-input-focusable:focus {
+    outline: solid 2px $blue !important;
+  }
+
+  &[data-narrow="true"] {
+    padding-right: 6rem !important;
+  }
+}
+
+.forms--text-input::placeholder {
+  color: $mid-light-gray !important;
+}
+
 .forms--text-input::-webkit-search-cancel-button {
   -webkit-appearance: searchfield-cancel-button;
 }
