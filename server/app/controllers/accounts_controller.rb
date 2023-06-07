@@ -79,6 +79,10 @@ class AccountsController < ApplicationController
     new_account = policy_scope(Account).find(new_account_id)
     set_new_account new_account if new_account
     set_cookie(:radar_current_account_id, new_account_id)
+    @notice = "You are now viewing #{new_account.name} account."
+    respond_to do |format|
+      format.html { redirect_back fallback_location: root_path, notice: @notice }
+    end
   end
 
   def all_accounts
