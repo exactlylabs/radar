@@ -1,4 +1,20 @@
-<div class="custom-alert" data-controller="alert">
+<% is_error = notice =~ /error/i %>
+<% is_account_switch = notice =~ /You are now viewing/i %>
+<% alert_type = is_error ? 'error' : is_account_switch ? 'account' : 'success' %>
+
+<div class="custom-alert"
+  data-controller="alert"
+  data-alert-type="<%= alert_type %>"
+>
+  <% if is_error %>
+    <div class="alerts--icon-container" data-type="error">
+      <%= image_tag image_url('alert-error-icon.png'), width: 16, height: 16 %>
+    </div>
+  <% elsif !is_account_switch %>
+    <div class="alerts--icon-container" data-type="success">
+      <%= image_tag image_url('white-checkmark.png'), width: 16, height: 16 %>
+    </div>
+  <% end %>
   <h4 class="card-main-title mb-0 me-4"><%= notice %></h4>
   <button type="button"
     class="custom-button transparent hoverable position-relative"

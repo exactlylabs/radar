@@ -15,6 +15,8 @@
   justify-content: flex-start;
   align-items: center;
   border-radius: 6px;
+  box-shadow: 0 4px 20px -6px $alerts--box-shadow;
+  backdrop-filter: blur(10px);
 
   h4 {
     font-size: 0.938rem;
@@ -23,8 +25,55 @@
     color: $alert--primary-color !important;
   }
 
-  .alerts--close-icon {
+  &[data-alert-type="error"] {
+    background-color: $alert--error-background-color;
+    h4 {
+      color: $alert--error-color !important;
+    }
+    outline: solid 1px $alert--error-border-color;
+  }
 
+  &[data-alert-type="success"] {
+    background-color: $alert--success-background-color;
+
+    h4 {
+      color: $alert--success-color !important;
+    }
+
+    outline: solid 1px $alert--success-border-color;
+  }
+
+  &.closing {
+    animation: alert-closing 0.3s forwards ease-in;
+  }
+}
+
+@keyframes alert-closing {
+  0% {
+    opacity: 1;
+    bottom: 3rem;
+  }
+  100% {
+    opacity: 0;
+    bottom: 2rem;
+  }
+}
+
+.alerts--icon-container {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0.75rem;
+  border-radius: 6px;
+  
+  &[data-type="error"] {
+    background-color: $alert--error-icon-container-background-color;
+  }
+
+  &[data-type="success"] {
+    background-color: $alert--success-icon-container-background-color;
   }
 }
 
