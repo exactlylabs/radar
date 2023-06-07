@@ -1,16 +1,14 @@
-<% if policy_scope(Client).count > 0 %>
-    <p class="help-text m-0 ms-2 mb-2">Recent</p>
-    <div class="sidebar--recents-container">
-      <% policy_scope(RecentSearch).order(created_at: :desc).limit(8).each do |search| %>
-        <% if search.client_id.present? %>
-          <% client = Client.find(search.client_id) %>
-          <%= render partial: "application/components/sidebar/result_item",
-              locals: { item: client, type: 'pods', url: client_path(client.unix_user, origin: 'search') } %>
-        <% else %>
-          <% location = Location.find(search.location_id) %>
-          <%= render partial: "application/components/sidebar/result_item",
-              locals: { item: location, type: 'locations', url: location_path(location, origin: 'search') } %>
-        <% end %>
-      <% end %>
-    </div>
+<p class="help-text m-0 ms-2 mb-2">Recent</p>
+<div class="sidebar--recents-container">
+  <% policy_scope(RecentSearch).order(created_at: :desc).limit(8).each do |search| %>
+    <% if search.client_id.present? %>
+      <% client = Client.find(search.client_id) %>
+      <%= render partial: "application/components/sidebar/result_item",
+          locals: { item: client, type: 'pods', url: client_path(client.unix_user, origin: 'search') } %>
+    <% else %>
+      <% location = Location.find(search.location_id) %>
+      <%= render partial: "application/components/sidebar/result_item",
+          locals: { item: location, type: 'locations', url: location_path(location, origin: 'search') } %>
+    <% end %>
   <% end %>
+</div>

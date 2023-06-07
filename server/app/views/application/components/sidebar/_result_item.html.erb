@@ -6,6 +6,8 @@
   <div class="circle d-flex justify-content-center align-items-center sidebar--icon-container me-2">
     <%= image_tag image_url("#{type}-icon-active.png"), width: 18, height: 18 %>
   </div>
-  <p class="sidebar-item--text sidebar--recent-text m-0 ellipsis me-1"><%= item.name %></p>
-  <p class="help-text m-0 me-0 ms-auto sidebar--recent-account ellipsis"><%= item.account.name %></p>
+  <div class="d-flex flex-column justify-content-start align-items-start">
+    <p class="sidebar-item--text sidebar--recent-text m-0 ellipsis"><%= item.name %></p>
+    <p class="help-text m-0 sidebar--recent-account ellipsis"><%= item.account.name %></p>
+  </div>
 </a>

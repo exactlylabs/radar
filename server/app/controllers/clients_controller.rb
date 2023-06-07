@@ -507,8 +507,10 @@ class ClientsController < ApplicationController
       # switch to that specific acocunt automatically
       client = Client.find_by_unix_user(params[:id])
       if client.present?
-        set_new_account policy_scope(Account).find(client.account_id)
+        new_account = policy_scope(Account).find(client.account_id)
+        set_new_account new_account
         store_recent_search(client.id)
+        @notice = "You are now viewing #{new_account.name} account." 
       end
     end
   end

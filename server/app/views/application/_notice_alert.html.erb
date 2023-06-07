@@ -1,22 +1,9 @@
-<div class="custom-alert <%= notice =~ /error/i ? "custom-alert--danger" : nil %>" data-controller="alert">
-  <span class="svg-icon <%= notice =~ /error/i ? "svg-icon-danger" : "svg-icon-success" %> svg-icon-2x me-3">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="currentColor"/>
-      <rect x="11" y="17" width="7" height="2" rx="1" transform="rotate(-90 11 17)" fill="currentColor"/>
-      <rect x="11" y="9" width="2" height="2" rx="1" transform="rotate(-90 11 9)" fill="currentColor"/>
-    </svg>
-  </span>
-  <h4 class="card-main-title wrap <%= notice =~ /error/i ? "alert--text-danger" : nil %> mb-0"><%= notice %></h4>
+<div class="custom-alert" data-controller="alert">
+  <h4 class="card-main-title mb-0 me-4"><%= notice %></h4>
   <button type="button"
-    class="custom-button transparent custom-close-button hoverable ms-6 position-relative right-0"
+    class="custom-button transparent hoverable position-relative"
     data-action="click->alert#closeAlert"
   >
-    <span class="svg-icon <%= notice =~ /error/i ? "svg-icon-danger" : "svg-icon-success" %> svg-icon-2">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="currentColor"/>
-        <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="currentColor"/>
-        <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="currentColor"/>
-      </svg>
-    </span>
+    <%= image_tag image_url('close-alert-icon.png'), width: 16, height: 16, class: 'alerts--close-icon' %>
   </button>
 </div>

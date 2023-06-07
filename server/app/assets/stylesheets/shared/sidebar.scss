@@ -13,6 +13,35 @@
   box-shadow: 0 2px 10px -2px $sidebar--main-container-box-shadow;
   z-index: 5;
   position: relative;
+
+  &.default-closing {
+    animation: default-closing 0.25s ease-in forwards;
+    overflow-x: hidden;
+  }
+
+  &.default-opening {
+    animation: default-opening 0.2s ease-in forwards;
+  }
+}
+
+@keyframes default-closing {
+  0% {
+    width: 260px;
+  }
+
+  100% {
+    width: 92px;
+  }
+}
+
+@keyframes default-opening {
+  0% {
+    width: 92px;
+  }
+
+  100% {
+    width: 260px;
+  }
 }
 
 .sidebar--logo {
@@ -51,6 +80,55 @@
   &[data-narrow="true"] {
     width: 44px;
   }
+
+  &[data-item-id="search"] {
+    background-color: $subtle-gray;
+    p {
+      color: $gray;
+        font-variation-settings: 'wght'$semi-bold;
+    }
+  }
+
+  &.opening {
+    animation: sidebar-item-opening 0.2s ease-in forwards;
+  }
+
+  &.closing {
+    animation: sidebar-item-closing 0.25s ease-in forwards;
+  }
+}
+
+@keyframes sidebar-item-closing {
+  0% {
+    width: 100%;
+    opacity: 1;
+  }
+
+  50% {
+    width: 168px;
+    opacity: 0;
+  }
+
+  100% {
+    width: 92px;
+    opacity: 0;
+  }
+}
+
+@keyframes sidebar-item-opening {
+  0% {
+    width: 92px;
+    opacity: 0;
+  }
+
+  50% {
+    width: 168px;
+    opacity: 1;
+  }
+
+  100% {
+    width: 100%;
+  }
 }
 
 .sidebar--horizontal-divider {
@@ -61,7 +139,7 @@
   margin-top: 12px;
   margin-bottom: 12px;
 
-  &[data-narrow="true"] {
+  &[data-less-margin="true"] {
     margin-top: 4px;
     margin-bottom: 4px;
   }
@@ -117,6 +195,10 @@
       font-size: 0.938rem;
       letter-spacing: 0;
       font-variation-settings: 'wght' $bold;
+    }
+
+    div, img, p {
+      pointer-events: none;
     }
   }
 
@@ -216,6 +298,10 @@
     background-color: $subtle-gray;
   }
 
+  .sidebar--account-item-name {
+    max-width: 18ch;
+  }
+
   .sidebar--account-item-icon-container {
     width: 2rem;
     height: 2rem;
@@ -231,10 +317,6 @@
 
     &.transparent {
       background-color: transparent;
-    }
-
-    .sidebar--account-item-name {
-      max-width: 175px;
     }
 
     .sidebar--account-item-icon-shared-container {
@@ -502,13 +584,28 @@
 
 .sidebar--narrow-search-container {
   height: 100vh;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   padding: 1.5rem;
   width: 92px;
-  margin-right: 168px;
-  z-index: 5;
+  z-index: 4;
   border-right: solid 1px #ebeef5;
   background-color: white;
+
+  &.opening {
+    animation: opening-narrow 0.2s ease-in forwards;
+  }
+}
+
+@keyframes opening-narrow {
+  0% {
+    width: 92px;
+  }
+
+  100% {
+    width: 252px;
+  }
 }
 
 .sidebar--narrow-container {
@@ -525,16 +622,48 @@
   left: 92px;
   top: 0;
   padding: 2rem 1.5rem;
+  box-shadow: 2px 0 20px 0 $sidebar--search-panel-box-shadow, 1px 0 0 0 $sidebar--horizontal-divider-background-color inset;
+  animation: opening 0.2s ease-in forwards;
+
+  &.closing {
+    animation: closing 0.3s ease-in forwards;
+  }
 }
 
-.sidebar--search-remainder {
-  height: 100vh;
-  width: calc(100vw - 436px);
-  position: absolute;
-  top: 0;
-  left: 436px;
-  z-index: 50;
-  background-color: rgba(172, 172, 175, 0.7);
+@keyframes opening {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 344px;
+  }
+}
+
+@keyframes closing {
+  0% {
+    width: 344px;
+    opacity: 1;
+  }
+
+  30% {
+    width: 242px;
+    opacity: 0.2;
+  }
+
+  50% {
+    width: 167px;
+    opacity: 0.1;
+  }
+
+  75% {
+    width: 86px;
+    opacity: 0;
+  }
+
+  100% {
+    width: 0;
+    opacity: 0;
+  }
 }
 
 .sidebar--recents-container {
@@ -567,14 +696,19 @@
     aspect-ratio: 1 / 1;
     background-color: $icon-container-gray;
     border-radius: 6px;
+
+    &.circle {
+      border-radius: 50%;
+    }
   }
 
   .sidebar--recent-text {
-    max-width: 20ch;
+    max-width: 30ch;
+    margin-bottom: 2px;
   }
 
   .sidebar--recent-account {
-    max-width: 20ch;
+    max-width: 30ch;
   }
 
   &[data-selected="true"] {
@@ -596,21 +730,33 @@
 
 .sidebar--clear-input-icon {
   position: absolute;
-  right: 2.75rem;
+  right: 4.375rem;
   top: .75rem;
 }
 
 .sidebar--account-filter-container {
-  width: 2rem;
+  width: 50px;
   height: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: .5rem;
-  background-color: $icon-container-gray;
   position: absolute;
   right: .25rem;
   top: .25rem;
+
+  &:hover {
+    background-color: $icon-container-gray;
+  }
+}
+
+.sidebar--input-vertical-divider {
+  width: 1px;
+  height: 1.25rem;
+  background-color: $sidebar--vertical-divider-background-color;
+  position: absolute;
+  right: 3.625rem;
+  top: 0.625rem;
 }
 
 .sidebar--accounts-filter-container {
@@ -624,6 +770,16 @@
   border: solid 1px $sidebar--main-container-border;
   box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
   backdrop-filter: blur(10px);
+}
+
+.sidebar--account-filter-letter {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  background-color: $sidebar--initial-box-background-color;
 }
 
 .sidebar--account-filter-row {

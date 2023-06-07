@@ -7,11 +7,13 @@
     data-narrow="true"
   />
   <%= image_tag image_url('clear-input-icon.png'), width: 16, height: 16, class: "invisible hoverable sidebar--clear-input-icon", data: { action: "click->sidebar#clearInput", "sidebar-target" => "clearInput" } %>
+  <div class="sidebar--input-vertical-divider"></div>
   <div class="sidebar--account-filter-container hoverable m-auto"
     data-action="selectAccountFilter@window->sidebar#selectAccountFilter click->sidebar#toggleAccountsFilter closeAccountsFilter@window->sidebar#closeAccountsFilter"
     data-sidebar-target="accountFilterContainer"
   >
-    <%= image_tag image_url('all-accounts-icon-selected.png'), width: 24, height: 24, data: { "sidebar-target" => "allAccountsIconImage" } %>
+    <%= image_tag image_url('all-accounts-icon.png'), width: 24, height: 24, data: { "sidebar-target" => "allAccountsIconImage" } %>
+    <%= image_tag image_url('arrow-down-dark.png'), width: 16, height: 16 %>
   </div>
   <%= render partial: "application/components/sidebar/search_accounts_filter" %>
 </div>

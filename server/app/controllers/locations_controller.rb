@@ -146,8 +146,10 @@ class LocationsController < ApplicationController
         # switch to that specific acocunt automatically
         location = Location.where(id: params[:id]).first # don't want this to throw
         if location.present?
-          set_new_account policy_scope(Account).find(location.account_id)
+          new_account = policy_scope(Account).find(location.account_id)
+          set_new_account new_account
           store_recent_search(location.id)
+          @notice = "You are now viewing #{new_account.name} account."
         end
       end
     end

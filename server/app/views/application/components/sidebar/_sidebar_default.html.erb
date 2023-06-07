@@ -1,17 +1,10 @@
-<div class="sidebar--main-container" data-controller="switch-account" data-sidebar-target="defaultSidebar">
+<div class="sidebar--main-container"
+  data-controller="switch-account"
+  data-sidebar-target="defaultSidebar"
+>
   <a href="<%= dashboard_path %>">
     <img alt="Logo" src="<%= image_url('new-radar-logo.png') %>" width="150" class="sidebar--logo ms-2">
   </a>
-  <%= render partial: "application/components/sidebar/sidebar_item",
-    locals: {
-      icon: "dashboard-icon",
-      title: "My Dashboard",
-      url: dashboard_path,
-      sidebar_item_id: "dashboard",
-      disabled: false,
-      narrow: false
-    }
-  %>
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
       icon: "search-icon",
@@ -22,16 +15,27 @@
       narrow: false
     }
   %>
-  <% if current_account.present? %>
-    <%= render partial: "application/components/sidebar/accounts_item",
-        locals: { narrow: false }
-    %>
-  <% else %>
-    <%= render partial: "application/components/sidebar/add_account_item", 
-        locals: { only_item: true, narrow: false }
-    %>
-  <% end %>
-  <div class="sidebar--horizontal-divider"></div>
+  <div class="w-100 mb-3">
+    <% if current_account.present? %>
+      <%= render partial: "application/components/sidebar/accounts_item",
+          locals: { narrow: false }
+      %>
+    <% else %>
+      <%= render partial: "application/components/sidebar/add_account_item", 
+          locals: { only_item: true, narrow: false }
+      %>
+    <% end %>
+  </div>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "dashboard-icon",
+      title: "My Dashboard",
+      url: dashboard_path,
+      sidebar_item_id: "dashboard",
+      disabled: false,
+      narrow: false
+    }
+  %>
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
       icon: "pods-icon",
