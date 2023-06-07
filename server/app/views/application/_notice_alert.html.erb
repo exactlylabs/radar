@@ -2,7 +2,7 @@
 <% is_account_switch = notice =~ /You are now viewing/i %>
 <% alert_type = is_error ? 'error' : is_account_switch ? 'account' : 'success' %>
 
-<div class="custom-alert"
+<div class="custom-alert opening"
   data-controller="alert"
   data-alert-type="<%= alert_type %>"
 >
