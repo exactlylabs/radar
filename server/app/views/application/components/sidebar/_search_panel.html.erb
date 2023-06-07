@@ -1,8 +1,12 @@
-<div class="sidebar--search-panel-container" data-controller="app-search">
+<div id="sidebar--open-search-panel"
+  class="sidebar--search-panel-container"
+  data-controller="app-search"
+  data-sidebar-target="searchPanel"
+>
   <div class="d-flex flex-row justify-content-between align-items-baseline mb-7">
     <h3 class="page-main-title">Search</h3>
     <button type="button"
-      class="custom-button custom-button--secondary p-2 d-flex justify-content-center align-items-center"
+      class="hoverable custom-button custom-button--secondary p-2 d-flex justify-content-center align-items-center"
       data-action="click->sidebar#closeSearchIfOpen"
     >
       <%= image_tag image_url('arrow-left-dark.png'), width: 16, height: 16 %>

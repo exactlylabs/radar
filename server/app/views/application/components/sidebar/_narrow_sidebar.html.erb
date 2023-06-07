@@ -4,16 +4,6 @@
   </a>
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
-      icon: "dashboard-icon",
-      title: "",
-      url: dashboard_path,
-      sidebar_item_id: "dashboard",
-      disabled: false,
-      narrow: true
-    }
-  %>
-  <%= render partial: "application/components/sidebar/sidebar_item",
-    locals: {
       icon: "search-icon",
       title: "",
       url: nil,
@@ -22,6 +12,7 @@
       narrow: true
     }
   %>
+  <div class="w-100 mb-3">
   <% if current_account.present? %>
     <%= render partial: "application/components/sidebar/accounts_item",
         locals: { narrow: true } %>
@@ -30,7 +21,17 @@
         locals: { only_item: true, narrow: true }
     %>
   <% end %>
-  <div class="sidebar--horizontal-divider"></div>
+  </div>
+  <%= render partial: "application/components/sidebar/sidebar_item",
+    locals: {
+      icon: "dashboard-icon",
+      title: "",
+      url: dashboard_path,
+      sidebar_item_id: "dashboard",
+      disabled: false,
+      narrow: true
+    }
+  %>
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
       icon: "pods-icon",

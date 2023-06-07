@@ -47,6 +47,7 @@ p {
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
+  background-color: var(--global-background-color) !important;
 }
 
 .application--content-container {
@@ -56,6 +57,9 @@ p {
   overflow-x: hidden;
   overflow-y: auto;
   background-color: var(--global-background-color);
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .application--unsupported-browser-notice {

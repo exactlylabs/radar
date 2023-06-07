@@ -43,10 +43,8 @@ $badge--orange-color: #f18f41;
 $badge--orange-background-color: rgba(241, 143, 65, 0.1);
 
 // Alerts
-$alert--primary-background-color: #c2f0dd;
-$alert--primary-color: #055d2a;
-$alert--danger-background-color: #f0c2c2;
-$alert--danger-color: #5d0505;
+$alert--primary-background-color: #272730;
+$alert--primary-color: #fff;
 
 // Badges
 $badge--green-color: #31b36c;
@@ -67,6 +65,9 @@ $sidebar--horizontal-divider-background-color: rgba(188, 187, 199, 0.25);
 $sidebar--accounts-item-outline: rgba(188, 187, 199, 0.3);
 $sidebar--accounts-item-box-shadow: rgba(160, 159, 183, 0.35);
 $sidebar--accounts-options-box-shadow: rgba(160, 159, 183, 0.4);
+$sidebar--search-panel-box-shadow: rgba(160, 159, 183, 0.25);
+$sidebar--vertical-divider-background-color: rgba(17, 14, 76, 0.1);
+$sidebar--initial-box-background-color: rgba(109, 106, 148, 0.1);
 
 // Snackbar
 $snackbar--danger-background-color: rgba(250, 176, 176, 0.2);

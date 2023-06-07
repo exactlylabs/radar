@@ -9,7 +9,7 @@
     <%= image_tag image_url("add-member-icon.png"), width: "16", height: "16", class: "sidebar--account-item-options-menu-item-icon"%>
     Add member
   </a>
-  <div class="sidebar--horizontal-divider" data-narrow="true"></div>
+  <div class="sidebar--horizontal-divider" data-less-margin="true"></div>
   <a href="<%= edit_account_path(account_id) %>"
     class="sidebar--account-item-options-menu-item regular-text m-0"
     data-turbo-frame="edit_account_modal"
@@ -17,7 +17,7 @@
     <%= image_tag image_url("edit-account-icon.png"), width: "16", height: "16", class: "sidebar--account-item-options-menu-item-icon"%>
     Edit settings
   </a>
-  <div class="sidebar--horizontal-divider" data-narrow="true"></div>
+  <div class="sidebar--horizontal-divider" data-less-margin="true"></div>
   <a href="<%= delete_account_path(account_id) %>"
     class="sidebar--account-item-options-menu-item regular-text m-0"
     data-turbo-frame="delete_account_modal"

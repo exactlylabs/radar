@@ -1,13 +1,16 @@
 <% if disabled %>
-  <div class="sidebar--item" data-disabled="true">
+  <div class="sidebar--item" data-disabled="true" data-sidebar-target="sidebarItem">
     <%= image_tag image_url("#{icon}-disabled.png"), id: "#{sidebar_item_id}-icon-active", width: "24", height: "24", class: "sidebar--item-icon" %>
-    <p class="sidebar-item--text m-0" data-disabled="true"><%= title %></p>
+    <p class="sidebar-item--text m-0"
+      data-disabled="true"
+      data-sidebar-target="<%= narrow ? 'narrowSidebarItem' : 'sidebarItem' %>"
+    ><%= title %></p>
   </div>
 <% else %>
-  <a class="sidebar--item <%= url.present? && active_path?(url) ? "sidebar--item-active" : nil %>"
+  <a class="w-100 ellipsis sidebar--item <%= url.present? && active_path?(url) ? "sidebar--item-active" : "hoverable" %>"
     href="<%= url.present? ? url : '#' %>"
     data-item-id="<%= sidebar_item_id %>"
-    data-action="mouseover->sidebar#handleItemHover mouseleave->sidebar#handleItemHoverOff <%= sidebar_item_id == "search" ? "click->sidebar#handleToggleSearch" : "click->sidebar#closeSearchIfOpen" %>"
+    data-action="mouseover->sidebar#handleItemHover mouseleave->sidebar#handleItemHoverOff <%= sidebar_item_id == "search" && !narrow ? "click->sidebar#handleToggleSearch" : "click->sidebar#closeSearchIfOpen" %>"
     data-narrow="<%= narrow %>"
   >
     <% if sidebar_item_id != "search" %>
@@ -18,6 +21,7 @@
     <%= image_tag image_url("#{icon}.png"), id: "#{sidebar_item_id}-icon", width: "24", height: "24", class: "sidebar--item-icon #{url.present? && active_path?(url) ? "invisible" : nil}" %>
     <p id="<%= sidebar_item_id %>-text"
       class="sidebar-item--text <%= url.present? && active_path?(url) == "active" ? "sidebar-item--text-active" : nil %> m-0"
+      data-sidebar-target="<%= narrow ? 'narrowSidebarItem' : 'sidebarItem' %>"
     ><%= title %></p>
   </a>
 <% end %>

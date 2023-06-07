@@ -15,7 +15,9 @@ export default class extends Controller {
     'clearInput',
     'accountsFilter',
     'accountFilterContainer',
-    'allAccountsIconImage'
+    'allAccountsIconImage',
+    'searchPanel',
+    'sidebarItem'
   ]
 
   connect() {
@@ -57,12 +59,21 @@ export default class extends Controller {
     this.profileMenuToggleTarget.setAttribute('data-menu-state', 'open');
     this.profileMenuToggleTarget.classList.add('sidebar--profile-menu-toggle-open');
     this.profileDataPopoverTarget.classList.remove('invisible');
+    document.addEventListener('click', this.closeProfileMenuOnClick.bind(this), {capture: true});
   }
 
   closeProfileMenu() {
     this.profileMenuToggleTarget.setAttribute('data-menu-state', 'closed');
     this.profileMenuToggleTarget.classList.remove('sidebar--profile-menu-toggle-open');
     this.profileDataPopoverTarget.classList.add('invisible');
+  }
+
+  closeProfileMenuOnClick(e) {
+    const clickTarget = e.target;
+    const popoverElement = document.getElementById('sidebar--profile-popover-regular');
+    if(popoverElement && !popoverElement.classList.contains('invisible') && !popoverElement.contains(clickTarget)) {
+      this.closeProfileMenu();
+    }
   }
 
   toggleProfileMenu() {
@@ -128,7 +139,7 @@ export default class extends Controller {
   openOptionsMenu(wrapperElement, optionsMenuElement) {
     optionsMenuElement.classList.remove('invisible');
     const box = wrapperElement.getBoundingClientRect();
-    optionsMenuElement.style.top = (box.y - 185) + 'px';
+    optionsMenuElement.style.top = (box.y - 200) + 'px';
     optionsMenuElement.style.left = wrapperElement.offsetLeft + wrapperElement.offsetWidth + 'px';
   }
 
@@ -152,11 +163,20 @@ export default class extends Controller {
 
   openAccountsMenu() {
     this.accountsMenuTarget.classList.remove('invisible');
+    document.addEventListener('click', this.closeAccountMenuIfClickOutside.bind(this), { capture: true });
   }
 
   closeAccountsMenu() {
     this.accountOptionsMenuTargets.forEach(t => t.classList.add('invisible'));
     this.accountsMenuTarget.classList.add('invisible');
+  }
+
+  closeAccountMenuIfClickOutside(e) {
+    const clickTarget = e.target;
+    const menuElement = document.getElementById('sidebar--accounts-container-default');
+    if(menuElement && !menuElement.classList.contains('invisible') && !menuElement.contains(clickTarget)) {
+      this.closeAccountsMenu();
+    }
   }
 
   toggleAccountsMenu(e) {
@@ -167,26 +187,51 @@ export default class extends Controller {
     }
   }
 
+  closeMenuIfClickOutside(e) {
+    const clickTarget = e.target;
+    const menuElement = document.getElementById('sidebar--open-search-panel');
+    if(menuElement && !menuElement.classList.contains('invisible') && !menuElement.contains(clickTarget)) {
+      this.closeSearchIfOpen();
+      document.removeEventListener('click', this.closeMenuIfClickOutside.bind(this));
+    }
+  }
+
   handleToggleSearch(e) {
     e.preventDefault();
     e.stopPropagation();
-    if(this.isNarrow) {
-      this.defaultSidebarTarget.classList.remove('invisible');
-      this.searchSidebarTarget.classList.add('invisible');
-    } else {
-      if(this.hasAccountsMenuTarget) this.closeAccountsMenu();
-      if(this.hasAccountsFilterTarget) this.closeAccountsFilter();
+    if(this.isNarrow) return;
+    document.addEventListener('click', this.closeMenuIfClickOutside.bind(this), { capture: true });
+    if(this.hasAccountsMenuTarget) this.closeAccountsMenu();
+    if(this.hasAccountsFilterTarget) this.closeAccountsFilter();
+    this.defaultSidebarTarget.classList.add('default-closing');
+    this.sidebarItemTargets.forEach(t => t.classList.add('closing'));
+    this.searchSidebarTarget.classList.remove('invisible');
+    this.searchPanelTarget.classList.add('opening');
+    setTimeout(() => {
+      this.defaultSidebarTarget.classList.remove('default-closing');
       this.defaultSidebarTarget.classList.add('invisible');
-      this.searchSidebarTarget.classList.remove('invisible');
-    }
-    this.isNarrow = !this.isNarrow;
+    }, 250);
+    setTimeout(() => {
+      this.searchPanelTarget.classList.remove('opening');
+    }, 500);
+    this.isNarrow = true;
   }
 
   closeSearchIfOpen() {
     if(!this.isNarrow) return;
     this.resetPanel();
-    this.defaultSidebarTarget.classList.remove('invisible');
-    this.searchSidebarTarget.classList.add('invisible');
+    this.searchPanelTarget.classList.add('closing');
+    setTimeout(() => {
+      this.defaultSidebarTarget.classList.add('default-opening');
+      this.defaultSidebarTarget.classList.remove('invisible');
+    }, 50);
+    setTimeout(() => {
+      this.searchPanelTarget.classList.remove('closing');
+      this.searchSidebarTarget.classList.add('invisible');
+    }, 300);
+    setTimeout(() => {
+      this.defaultSidebarTarget.classList.remove('default-opening');
+    }, 450);
     this.isNarrow = false;
   }
 
@@ -223,26 +268,34 @@ export default class extends Controller {
 
   toggleAccountsFilter() {
     this.accountsFilterTarget.classList.toggle('invisible');
+    document.addEventListener('click', this.closeAccountsFilterIfClickOutside.bind(this), { capture: true });
   }
 
   closeAccountsFilter() {
     this.accountsFilterTarget.classList.add('invisible');
+    document.removeEventListener('click', this.closeAccountsFilterIfClickOutside.bind(this));
+  }
+
+  closeAccountsFilterIfClickOutside(e) {
+    const clickTarget = e.target;
+    if (this.hasAccountsFilterTarget && !this.accountsFilterTarget.classList.contains('invisible') && !this.accountsFilterTarget.contains(clickTarget)) {
+      this.closeAccountsFilter();
+    }
   }
 
   selectAccountFilter(e) {
     const selectedAccountName = e.detail.accountName;
     if(selectedAccountName !== 'All accounts') {
       this.allAccountsIconImageTarget.classList.add('invisible');
-      console.log(this.accountFilterContainerTarget.childElementCount);
-      if (this.accountFilterContainerTarget.childElementCount == 2) this.accountFilterContainerTarget.removeChild(this.accountFilterContainerTarget.lastChild);
+      if (this.accountFilterContainerTarget.childElementCount == 3) this.accountFilterContainerTarget.removeChild(this.accountFilterContainerTarget.firstChild);
       const div = document.createElement('div');
-      const newSpan = `<span class="m-0 sidebar-item--text-static">${selectedAccountName[0].toUpperCase()}</span>`
+      const newSpan = `<div class="sidebar--account-filter-letter sidebar-item--text-static">${selectedAccountName[0].toUpperCase()}</div>`
       div.innerHTML = newSpan.trim();
       const newItem = div.firstChild;
-      this.accountFilterContainerTarget.appendChild(newItem);
+      this.accountFilterContainerTarget.prepend(newItem);
     } else {
       this.allAccountsIconImageTarget.classList.remove('invisible');
-      if (this.accountFilterContainerTarget.childElementCount == 2) this.accountFilterContainerTarget.removeChild(this.accountFilterContainerTarget.lastChild);
+      if (this.accountFilterContainerTarget.childElementCount == 3) this.accountFilterContainerTarget.removeChild(this.accountFilterContainerTarget.firstChild);
     }
     this.closeAccountsFilter();
   }
