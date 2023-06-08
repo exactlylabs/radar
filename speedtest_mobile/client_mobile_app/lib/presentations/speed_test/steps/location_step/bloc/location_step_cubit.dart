@@ -92,9 +92,6 @@ class LocationStepCubit extends Cubit<LocationStepState> {
   }
 
   Future<Location?> getLocationByLatLng(double lat, double lng) async {
-    (state.isUsingGeolocation!)
-        ? emit(state.copyWith(isGeolocationLoading: true))
-        : emit(state.copyWith(isLocationLoading: true));
     emit(state.copyWith(isGeolocationLoading: true));
     final location = await _locationsService.getLocationByCoordinates(lat, lng);
     return location;
