@@ -40,8 +40,7 @@ class BackgroundSpeedTest {
     );
   }
 
-  void startUploadTest() =>
-      _testingState = (isTestingDownloadSpeed: false, isTestingUploadSpeed: true);
+  void startUploadTest() => _testingState = (isTestingDownloadSpeed: false, isTestingUploadSpeed: true);
 
   void _onTestComplete(Map<String, dynamic> testResult) => _parse(testResult);
 
@@ -52,8 +51,7 @@ class BackgroundSpeedTest {
   Future<void> _parse(Map<String, dynamic> response) async {
     final updatedResponses = List<Map<String, dynamic>>.from(_responses)..add(response);
     _responses = updatedResponses;
-    if (response.containsKey('LastClientMeasurement') &&
-        response.containsKey('LastServerMeasurement')) {
+    if (response.containsKey('LastClientMeasurement') && response.containsKey('LastServerMeasurement')) {
       if (_testingState.isTestingDownloadSpeed) {
         startUploadTest();
       } else if (_testingState.isTestingUploadSpeed) {
