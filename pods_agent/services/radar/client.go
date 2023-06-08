@@ -94,7 +94,6 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 }
 
 func (c *RadarClient) Connected() bool {
-	firstPing = false
 	return c.connected
 }
 
