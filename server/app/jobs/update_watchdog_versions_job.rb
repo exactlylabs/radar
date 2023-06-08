@@ -20,31 +20,27 @@ class UpdateWatchdogVersionsJob < ApplicationJob
     return unless increment != 0
 
     if increment.positive?
-      query = clients
-              .where(has_watchdog: true)
-              .where.not(
-                'target_watchdog_version_id IS NOT NULL AND target_watchdog_version_id = ?',
-                update_group.watchdog_version_id
-              )
-              .order('RANDOM()')
-              .limit(increment)
-      updated_ids = query.pluck(:id)
-      query.update(target_watchdog_version_id: update_group.watchdog_version_id)
+      clients
+        .where(has_watchdog: true)
+        .where.not(
+          'target_watchdog_version_id IS NOT NULL AND target_watchdog_version_id = ?',
+          update_group.watchdog_version_id
+        )
+        .order('RANDOM()')
+        .limit(increment)
+        .each { |client| client.(target_watchdog_version_id: update_group.watchdog_version_id) }
+      return
     elsif increment.negative?
       query = clients
-              .where(has_watchdog: true)
-              .where(
-                'target_watchdog_version_id IS NULL OR target_watchdog_version_id = ?',
-                update_group.watchdog_version_id
-              )
-              .order('RANDOM()')
-              .limit(increment.abs)
-      updated_ids = query.pluck(:id)
-      query.update(target_watchdog_version_id: update_group.old_watchdog_version_id)
+        .where(has_watchdog: true)
+        .where(
+          'target_watchdog_version_id IS NULL OR target_watchdog_version_id = ?',
+          update_group.watchdog_version_id
+        )
+        .order('RANDOM()')
+        .limit(increment.abs)
+        .each { |client| client.update(target_watchdog_version_id: update_group.old_watchdog_version_id) }
+      return
     end
-
-    clients
-      .where(id: updated_ids)
-      .each { |client| WatchdogChannel.broadcast_version_changed(client) }
   end
 end

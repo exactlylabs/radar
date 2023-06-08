@@ -15,30 +15,25 @@ class UpdateClientVersionsJob < ApplicationJob
     updated_ids = []
 
     if increment.positive?
-      query = clients
-              .where.not(
-                'target_client_version_id IS NOT NULL AND target_client_version_id = ?',
-                update_group.client_version_id
-              )
-              .order('RANDOM()')
-              .limit(increment)
-      updated_ids = query.pluck(:id)
-      query.update_all(target_client_version_id: update_group.client_version_id)
+      clients
+        .where.not(
+          'target_client_version_id IS NOT NULL AND target_client_version_id = ?',
+          update_group.client_version_id
+        )
+        .order('RANDOM()')
+        .limit(increment)
+        .each { |client| client.update(target_client_version_id: update_group.client_version_id)}
+      return
     elsif increment.negative?
-      query = clients
-              .where(
-                'target_client_version_id IS NULL OR target_client_version_id = ?',
-                update_group.client_version_id
-              )
-              .order('RANDOM()')
-              .limit(increment.abs)
-      updated_ids = query.pluck(:id)
-      query.update_all(target_client_version_id: update_group.old_client_version_id)
+      clients
+        .where(
+          'target_client_version_id IS NULL OR target_client_version_id = ?',
+          update_group.client_version_id
+        )
+        .order('RANDOM()')
+        .limit(increment.abs)
+        .each { |client| client.update(target_client_version_id: update_group.old_client_version_id) }
+      return
     end
-    return if updated_ids.empty?
-
-    clients
-      .where(id: updated_ids)
-      .each { |client| PodAgentChannel.broadcast_version_changed(client) }
   end
 end
