@@ -49,15 +49,11 @@ scheduler.every '5m', overlap: false do
   end
 end
 
-require 'memory_profiler'
 
-report = MemoryProfiler.report do
-  begin
-    scheduler.join
-  rescue Interrupt
+begin
+  scheduler.join
+rescue Interrupt
 
-  rescue SignalException
+rescue SignalException
 
-  end
 end
-report.pretty_print(to_file: 'memory_profiler.txt')
