@@ -12,8 +12,8 @@ class Location {
 
   factory Location.empty(String address) {
     return Location(
-      lat: 0.0,
-      long: 0.0,
+      lat: 39.8282,
+      long: -98.5696,
       city: '',
       state: '',
       street: '',

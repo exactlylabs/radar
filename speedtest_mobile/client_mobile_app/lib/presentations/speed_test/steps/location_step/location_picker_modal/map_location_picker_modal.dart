@@ -12,13 +12,13 @@ class MapLocationPickerBody extends StatelessWidget {
   const MapLocationPickerBody({
     Key? key,
     required this.onChanged,
-    required this.onConfirmed,
+    this.onConfirmed,
     required this.onChangeAddress,
     this.initialLocation,
   }) : super(key: key);
 
   final Location? initialLocation;
-  final VoidCallback onConfirmed;
+  final VoidCallback? onConfirmed;
   final Function(double, double) onChanged;
   final VoidCallback onChangeAddress;
 
@@ -45,7 +45,7 @@ class MapLocationPickerBody extends StatelessWidget {
                 address: initialLocation != null ? LatLng(initialLocation!.lat, initialLocation!.long) : null,
                 onLocationSelected: (latlng) => onChanged(latlng.latitude, latlng.longitude),
               ),
-              if (initialLocation != null)
+              if (initialLocation != null && initialLocation!.address.isNotEmpty)
                 Container(
                   margin: const EdgeInsets.all(15.0),
                   padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
@@ -77,10 +77,12 @@ class MapLocationPickerBody extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: PrimaryButton(
-            onPressed: () {
-              onConfirmed();
-              Navigator.of(context).pop();
-            },
+            onPressed: onConfirmed != null
+                ? () {
+                    onConfirmed!();
+                    Navigator.of(context).pop();
+                  }
+                : null,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

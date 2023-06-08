@@ -1,7 +1,7 @@
-import 'package:client_mobile_app/presentations/your_results/your_results_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client_mobile_app/presentations/map/map_web_view_page.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_page.dart';
+import 'package:client_mobile_app/presentations/your_results/your_results_page.dart';
 
 class HomePageBody extends StatelessWidget {
   const HomePageBody({

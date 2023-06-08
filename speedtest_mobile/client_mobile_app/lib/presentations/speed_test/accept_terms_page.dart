@@ -7,14 +7,13 @@ import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/error_message.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/agree_to_terms.dart';
+import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AcceptTermsPage extends StatefulWidget {
   const AcceptTermsPage({
     Key? key,
-    required this.onTermsAccepted,
   }) : super(key: key);
-
-  final VoidCallback onTermsAccepted;
 
   @override
   State<AcceptTermsPage> createState() => _AcceptTermsPageState();
@@ -85,7 +84,7 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
           shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
           onPressed: () {
             if (termsAccepted) {
-              widget.onTermsAccepted();
+              context.read<SpeedTestCubit>().acceptTerms();
             } else {
               setError();
             }

@@ -31,7 +31,7 @@ class _ConfirmYourLocationModalState extends State<ConfirmYourLocationModal> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Confirm your location',
+          Strings.confirmYourLocation,
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 20.0,
@@ -42,7 +42,7 @@ class _ConfirmYourLocationModalState extends State<ConfirmYourLocationModal> {
         ),
         const SizedBox(height: 10.0),
         Text(
-          'Please select your address from the list below.',
+          Strings.pickLocationFromList,
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 16.0,

@@ -5,13 +5,13 @@ import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
+import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
-import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
-import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_cubit.dart';
 
 class NoInternetConnectionPage extends StatelessWidget {
   const NoInternetConnectionPage({
@@ -47,22 +47,18 @@ class NoInternetConnectionPage extends StatelessWidget {
               ],
             ),
           ),
-          PrimaryButton(
-            child: Text(
-              Strings.exploreTheMapButtonLabel,
-              style: AppTextStyle(
-                fontSize: 16.0,
-                fontWeight: 600,
-                color: Theme.of(context).colorScheme.onPrimary,
+          BlocBuilder<NavigationCubit, NavigationState>(
+            builder: (context, state) => PrimaryButton(
+              onPressed: onExploreTheMapPressed(context, state.canNavigate),
+              child: Text(
+                Strings.exploreTheMapButtonLabel,
+                style: AppTextStyle(
+                  fontSize: 16.0,
+                  fontWeight: 600,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
             ),
-            onPressed: () {
-              if (InheritedConnectivityStatus.of(context).isConnected) {
-                _onExploreTheMapButtonPressed(context);
-              } else {
-                openNoInternetConnectionModal(context, () => _onExploreTheMapButtonPressed(context));
-              }
-            },
           ),
           SpacerWithMax(size: height * 0.025, maxSize: 20.0),
           PrimaryButton(
@@ -86,9 +82,13 @@ class NoInternetConnectionPage extends StatelessWidget {
     );
   }
 
-  void _onExploreTheMapButtonPressed(BuildContext context) {
-    context.read<NavigationCubit>().changeTab(NavigationCubit.MAP_INDEX);
-    context.read<SpeedTestCubit>().resetForm();
-    context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
+  VoidCallback onExploreTheMapPressed(BuildContext context, bool canNavigate) {
+    onCanNavigate() {
+      context.read<NavigationCubit>().changeTab(NavigationCubit.MAP_INDEX);
+      context.read<SpeedTestCubit>().resetForm();
+      context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
+    }
+
+    return canNavigate ? onCanNavigate : () => openNoInternetConnectionModal(context, onCanNavigate);
   }
 }
