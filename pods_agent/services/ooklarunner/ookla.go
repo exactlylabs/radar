@@ -38,19 +38,9 @@ func (r *ooklaRunner) Type() string {
 	return "OOKLA"
 }
 
-func (r *ooklaRunner) Run(ctx context.Context) (*agent.Measurement, error) {
-	log.Println("Ookla - Starting Speed Test")
-	var res []byte
-	var err error
-	for i := 0; i < r.MaxRetries; i++ {
-		log.Printf("Ookla - Attempt %d of %d", i+1, r.MaxRetries)
-		cmd := exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json")
-		res, err = cmd.Output()
-		if err == nil {
-			break
-		}
-		log.Println("Ookla - Run Failed:", err)
-	}
+func (r *ooklaRunner) run(ctx context.Context) (*agent.Measurement, error) {
+	cmd := exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json")
+	res, err := cmd.Output()
 	if err != nil {
 		return nil, fmt.Errorf("ookla.ooklaRunner#Run error executing the binary: %w", err)
 	}
@@ -59,10 +49,23 @@ func (r *ooklaRunner) Run(ctx context.Context) (*agent.Measurement, error) {
 	if err := json.Unmarshal(res, result); err != nil {
 		return nil, fmt.Errorf("ookla.ooklaRunner#Run Unmarshal: %w", err)
 	}
-	log.Println("Ookla - Finished Speed Test")
 	return &agent.Measurement{
 		Raw:          res,
 		DownloadMbps: 8 * (float64(result.Download.Bandwidth) / (1000.0 * 1000.0)),
 		UploadMbps:   8 * (float64(result.Upload.Bandwidth) / (1000.0 * 1000.0)),
 	}, nil
+}
+
+func (r *ooklaRunner) Run(ctx context.Context) (res *agent.Measurement, err error) {
+	log.Println("Ookla - Starting Speed Test")
+	for i := 0; i < r.MaxRetries; i++ {
+		log.Printf("Ookla - Attempt %d of %d", i+1, r.MaxRetries)
+		res, err = r.run(ctx)
+		if err == nil {
+			log.Println("Ookla - Finished Speed Test")
+			return
+		}
+		log.Printf("Ookla - Error running speed test: %v\n", err)
+	}
+	return nil, err
 }
