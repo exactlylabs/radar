@@ -6,6 +6,7 @@ scheduler.every '5s', overlap: false do
   begin
     if Rails.application.healthy? && !Rails.application.transient?
       Client.update_outdated_online!
+      Location.update_online_status!
     end
   rescue => e
     Sentry.capture_exception(e)
@@ -48,19 +49,15 @@ scheduler.every '5m', overlap: false do
   end
 end
 
-scheduler.every '1m', overlap: false do
+require 'memory_profiler'
+
+report = MemoryProfiler.report do
   begin
-    Location.update_online_status!
-  rescue => e
-    Sentry.capture_exception(e)
-    raise e
+    scheduler.join
+  rescue Interrupt
+
+  rescue SignalException
+
   end
 end
-
-begin
-  scheduler.join
-rescue Interrupt
-  return
-rescue SignalException
-  return
-end
+report.pretty_print(to_file: 'memory_profiler.txt')
