@@ -6,7 +6,7 @@ Future<void> modalWithTitle(BuildContext context, bool? isScrollControlled, Stri
     [VoidCallback? onPop, EdgeInsets? padding, bool? enableDrag]) async {
   return showModalBottomSheet(
     context: context,
-    backgroundColor: Theme.of(context).backgroundColor,
+    backgroundColor: Theme.of(context).colorScheme.background,
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0))),
     isScrollControlled: isScrollControlled ?? false,
