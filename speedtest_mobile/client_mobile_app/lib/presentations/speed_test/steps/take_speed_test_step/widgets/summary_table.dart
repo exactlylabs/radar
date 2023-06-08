@@ -7,15 +7,15 @@ class SummaryTable extends StatelessWidget {
   const SummaryTable({
     Key? key,
     this.networkQuality,
-    required this.address,
-    required this.networkType,
-    required this.networkPlace,
+    this.address,
+    this.networkType,
+    this.networkPlace,
     this.progress = 0.0,
   }) : super(key: key);
 
-  final String address;
-  final String networkPlace;
-  final String networkType;
+  final String? address;
+  final String? networkPlace;
+  final String? networkType;
   final String? networkQuality;
   final double progress;
 
@@ -33,7 +33,7 @@ class SummaryTable extends StatelessWidget {
         children: [
           IconWithText(
             icon: Images.roundedPinAddress,
-            text: address,
+            text: address ?? Strings.notAvailable,
             alignment: MainAxisAlignment.center,
           ),
           Container(
@@ -49,8 +49,8 @@ class SummaryTable extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconWithText(
-                      icon: _getNetworkLocationIcon(networkPlace),
-                      text: networkPlace,
+                      icon: _getNetworkLocationIcon(networkPlace ?? Strings.notAvailable),
+                      text: networkPlace ?? Strings.notAvailable,
                       alignment: MainAxisAlignment.end,
                     ),
                     VerticalDivider(
@@ -60,8 +60,8 @@ class SummaryTable extends StatelessWidget {
                       color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
                     ),
                     IconWithText(
-                      icon: _getNetworkTypeIcon(networkType),
-                      text: networkType,
+                      icon: _getNetworkTypeIcon(networkType ?? Strings.notAvailable),
+                      text: networkType ?? Strings.notAvailable,
                       alignment: MainAxisAlignment.center,
                     ),
                     if (networkQuality != null) ...[
@@ -72,7 +72,7 @@ class SummaryTable extends StatelessWidget {
                         color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
                       ),
                       IconWithText(
-                        icon: _getNetworkQualityIcon(networkQuality!),
+                        icon: _getNetworkQualityIcon(networkQuality ?? Strings.notAvailable),
                         text: networkQuality!,
                         alignment: MainAxisAlignment.start,
                       ),
@@ -80,7 +80,7 @@ class SummaryTable extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
+              SizedBox(
                 width: MediaQuery.of(context).size.width - 30.0,
                 child: LinearProgressIndicator(
                   value: progress,

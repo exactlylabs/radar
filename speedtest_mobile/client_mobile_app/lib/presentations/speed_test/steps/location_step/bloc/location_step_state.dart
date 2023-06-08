@@ -2,76 +2,87 @@ import 'package:client_mobile_app/core/models/location.dart';
 
 class LocationStepState {
   const LocationStepState({
-    this.isLoading = false,
-    this.loadingCurrentLocation = false,
     this.loadingSuggestions = false,
-    this.currentLocation,
-    this.suggestedLocation,
-    this.location,
     this.suggestions,
     this.query,
-    this.error,
+    this.isGeolocationEnabled,
+    this.isGeolocationLoading = false,
+    this.isLocationLoading = false,
+    this.isLocationConfirmed = false,
+    this.needsToConfirmLocation = false,
+    this.isUsingGeolocation,
+    this.geolocation,
+    this.location,
+    this.failure,
   });
 
   LocationStepState copyWith({
     String? query,
-    String? error,
-    bool? isLoading,
-    bool? loadingCurrentLocation,
     bool? loadingSuggestions,
-    Location? currentLocation,
-    Location? suggestedLocation,
-    Location? location,
     List<Location>? suggestions,
+    bool? isGeolocationEnabled,
+    bool? isGeolocationLoading,
+    bool? isUsingGeolocation,
+    bool? isLocationLoading,
+    bool? isLocationConfirmed,
+    bool? needsToConfirmLocation,
+    Location? geolocation,
+    Location? location,
+    String? failure,
   }) {
     return LocationStepState(
       query: query ?? this.query,
-      error: error ?? this.error,
-      isLoading: isLoading ?? this.isLoading,
-      loadingCurrentLocation: loadingCurrentLocation ?? this.loadingCurrentLocation,
       loadingSuggestions: loadingSuggestions ?? this.loadingSuggestions,
-      currentLocation: currentLocation ?? this.currentLocation,
-      suggestedLocation: suggestedLocation ?? this.suggestedLocation,
-      location: location ?? this.location,
       suggestions: suggestions ?? this.suggestions,
+      isGeolocationEnabled: isGeolocationEnabled ?? this.isGeolocationEnabled,
+      isGeolocationLoading: isGeolocationLoading ?? this.isGeolocationLoading,
+      geolocation: geolocation ?? this.geolocation,
+      location: location ?? this.location,
+      isLocationLoading: isLocationLoading ?? this.isLocationLoading,
+      isUsingGeolocation: isUsingGeolocation ?? this.isUsingGeolocation,
+      isLocationConfirmed: isLocationConfirmed ?? this.isLocationConfirmed,
+      needsToConfirmLocation: needsToConfirmLocation ?? this.needsToConfirmLocation,
+      failure: failure ?? this.failure,
     );
   }
 
-  LocationStepState setLocation(Location newLocation) {
+  LocationStepState searchingForNewLocation(String query) {
     return LocationStepState(
       query: query,
-      error: null,
-      isLoading: isLoading,
-      loadingCurrentLocation: loadingCurrentLocation,
-      loadingSuggestions: loadingSuggestions,
-      currentLocation: currentLocation,
-      suggestedLocation: suggestedLocation,
-      location: newLocation,
+      loadingSuggestions: true,
       suggestions: suggestions,
+      isGeolocationEnabled: isGeolocationEnabled,
+      isGeolocationLoading: isGeolocationLoading,
+      geolocation: geolocation,
+      location: null,
+      isLocationLoading: true,
+      isUsingGeolocation: isUsingGeolocation,
+      isLocationConfirmed: false,
+      needsToConfirmLocation: false,
+      failure: failure,
     );
   }
 
   LocationStepState clearErrors() {
     return LocationStepState(
       query: query,
-      error: null,
-      isLoading: isLoading,
-      loadingCurrentLocation: loadingCurrentLocation,
       loadingSuggestions: loadingSuggestions,
-      currentLocation: currentLocation,
-      suggestedLocation: suggestedLocation,
       location: location,
       suggestions: suggestions,
     );
   }
 
   final String? query;
-  final String? error;
-  final bool isLoading;
-  final List<Location>? suggestions;
-  final Location? currentLocation;
-  final Location? suggestedLocation;
   final Location? location;
-  final bool loadingCurrentLocation;
+  final List<Location>? suggestions;
   final bool loadingSuggestions;
+
+  final String? failure;
+  final Location? geolocation;
+  final bool isGeolocationLoading;
+  final bool isLocationLoading;
+  final bool? isGeolocationEnabled;
+  final bool? isUsingGeolocation;
+  final bool isLocationConfirmed;
+  final bool needsToConfirmLocation;
 }

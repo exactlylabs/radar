@@ -13,11 +13,9 @@ class SuggestionsListLocationPickerBody extends StatefulWidget {
     required this.onPressed,
     required this.suggestions,
     required this.onAddressIsNotListed,
-    this.suggestedLocation,
   }) : super(key: key);
 
   final List<Location> suggestions;
-  final Location? suggestedLocation;
   final Function(Location) onPressed;
   final VoidCallback onAddressIsNotListed;
 
@@ -58,11 +56,11 @@ class _SuggestionsListLocationPickerBodyState extends State<SuggestionsListLocat
           ),
           const SizedBox(height: 20.0),
           SizedBox(
-            height: (66.0 * (widget.suggestions.length - 1)),
+            height: (66.0 * (widget.suggestions.length)),
             child: ListView.separated(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: (widget.suggestions.length - 1),
+              itemCount: widget.suggestions.length,
               separatorBuilder: (context, index) => const SizedBox(height: 10.0),
               itemBuilder: (context, index) {
                 final suggestion = widget.suggestions[index];

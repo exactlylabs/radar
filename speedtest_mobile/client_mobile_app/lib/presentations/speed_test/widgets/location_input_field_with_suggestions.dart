@@ -1,28 +1,26 @@
+import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/location_input_field.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/location_option_card.dart';
-import 'package:client_mobile_app/resources/app_colors.dart';
-import 'package:client_mobile_app/resources/strings.dart';
-import 'package:flutter/material.dart';
 
 class LocationInputFieldWithSuggestions extends StatelessWidget {
   const LocationInputFieldWithSuggestions({
     Key? key,
-    this.onSelected,
     this.location,
-    this.currentLocation,
-    this.suggestedLocation,
     this.suggestions,
     this.isLoading = false,
+    this.query,
+    required this.onSelected,
     required this.suggestionsCallback,
   }) : super(key: key);
 
-  final Function(Location)? onSelected;
-  final Location? location;
-  final Location? currentLocation;
-  final Location? suggestedLocation;
-  final List<Location>? suggestions;
   final bool isLoading;
+  final String? query;
+  final Location? location;
+  final List<Location>? suggestions;
+  final Function(Location, bool) onSelected;
   final Function(String) suggestionsCallback;
 
   @override
@@ -31,26 +29,18 @@ class LocationInputFieldWithSuggestions extends StatelessWidget {
       fieldViewBuilder: (context, controller, focusNode, function) {
         if (location != null) {
           controller.text = location!.address;
-        } else if (currentLocation != null && currentLocation == location) {
-          controller.text = currentLocation!.address;
-        } else if (currentLocation == null &&
-            suggestedLocation == null &&
-            location == null &&
-            suggestions == null &&
-            !isLoading) {
+          controller.selection = TextSelection.fromPosition(TextPosition(offset: controller.text.length));
+        } else if (location == null && suggestions == null && !isLoading) {
           controller.text = Strings.emptyString;
         }
         if (focusNode.hasFocus) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Scrollable.ensureVisible(context);
-          });
+          WidgetsBinding.instance.addPostFrameCallback((_) => Scrollable.ensureVisible(context));
         }
         return LocationInputField(controller: controller, focusNode: focusNode, isLoading: isLoading);
       },
       displayStringForOption: (option) => option.address,
       optionsBuilder: (value) async => await suggestionsCallback(value.text),
-      onSelected: onSelected,
-      optionsViewBuilder: (context, onSelected, options) {
+      optionsViewBuilder: (context, _, options) {
         return Padding(
           padding: const EdgeInsets.only(top: 10.0),
           child: Align(
@@ -78,7 +68,7 @@ class LocationInputFieldWithSuggestions extends StatelessWidget {
                     Location option = options.elementAt(index);
                     return LocationOptionCard(
                       location: option,
-                      onPressed: () => onSelected(option),
+                      onPressed: () => onSelected(option, index != options.length - 1),
                     );
                   },
                 ),

@@ -76,7 +76,7 @@ class _ResultsListState extends State<ResultsList> {
             onTap: () => _infoModal(context, widget.results[index]),
             color: index % 2 == 0
                 ? Theme.of(context).colorScheme.primary.withOpacity(0.05)
-                : Theme.of(context).backgroundColor,
+                : Theme.of(context).colorScheme.background,
           );
         },
       ),

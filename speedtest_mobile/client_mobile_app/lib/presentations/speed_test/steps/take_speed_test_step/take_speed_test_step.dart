@@ -11,60 +11,65 @@ import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test
 class TakeSpeedTestStep extends StatelessWidget {
   const TakeSpeedTestStep({
     Key? key,
-    required this.networkType,
-    required this.networkPlace,
-    required this.address,
+    this.networkType,
+    this.networkPlace,
+    this.address,
     this.latitude,
     this.longitude,
   }) : super(key: key);
 
-  final String networkType;
-  final String networkPlace;
-  final String address;
+  final String? networkType;
+  final String? networkPlace;
+  final String? address;
   final double? latitude;
   final double? longitude;
 
   @override
   Widget build(BuildContext context) {
-    return InheritedFormInformation(
-      networkType: networkType,
-      networkPlace: networkPlace,
-      address: address,
-      child: BlocListener<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
-        listenWhen: (previous, current) => current.finishedTesting,
-        listener: (context, state) => context.read<SpeedTestCubit>().saveResults(
-            state.downloadSpeed!,
-            state.uploadSpeed!,
-            state.latency!,
-            state.loss!,
-            state.networkQuality,
-            state.connectionInfo,
-            state.responses),
-        child: BlocBuilder<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
-          builder: (context, state) {
-            if (state.isTestingDownloadSpeed || state.isTestingUploadSpeed) {
-              return TestingSpeedStep(
-                upload: state.uploadSpeed,
-                download: state.downloadSpeed,
-                loss: state.loss,
-                latency: state.latency,
-                isDownloadTest: state.isTestingDownloadSpeed,
-                progress: state.isTestingDownloadSpeed ? state.downloadProgress : state.uploadProgress,
-              );
-            } else if (state.finishedTesting) {
-              return TestResultsStep(
-                download: state.downloadSpeed ?? 0,
-                upload: state.uploadSpeed ?? 0,
-                latency: state.latency ?? 0,
-                loss: state.loss ?? 0,
-                networkQuality: state.networkQuality,
-                latitude: latitude,
-                longitude: longitude,
-              );
-            } else {
-              return const StartSpeedTestStep();
-            }
-          },
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: InheritedFormInformation(
+          networkType: networkType,
+          networkPlace: networkPlace,
+          address: address,
+          child: BlocListener<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
+            listenWhen: (previous, current) => current.finishedTesting,
+            listener: (context, state) => context.read<SpeedTestCubit>().saveResults(
+                state.downloadSpeed!,
+                state.uploadSpeed!,
+                state.latency!,
+                state.loss!,
+                state.networkQuality,
+                state.connectionInfo,
+                state.responses),
+            child: BlocBuilder<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
+              builder: (context, state) {
+                if (state.isTestingDownloadSpeed || state.isTestingUploadSpeed) {
+                  return TestingSpeedStep(
+                    upload: state.uploadSpeed,
+                    download: state.downloadSpeed,
+                    loss: state.loss,
+                    latency: state.latency,
+                    isDownloadTest: state.isTestingDownloadSpeed,
+                    progress: state.isTestingDownloadSpeed ? state.downloadProgress : state.uploadProgress,
+                  );
+                } else if (state.finishedTesting) {
+                  return TestResultsStep(
+                    download: state.downloadSpeed ?? 0,
+                    upload: state.uploadSpeed ?? 0,
+                    latency: state.latency ?? 0,
+                    loss: state.loss ?? 0,
+                    networkQuality: state.networkQuality,
+                    latitude: latitude,
+                    longitude: longitude,
+                  );
+                } else {
+                  return const StartSpeedTestStep();
+                }
+              },
+            ),
+          ),
         ),
       ),
     );
