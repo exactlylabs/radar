@@ -78,7 +78,7 @@
 </div>
 <!--end::Toolbar-->
 <!--begin::Post-->
-<div class="post fs-6 d-flex" id="kt_post" style="max-height: 560px">
+<div class="post fs-6 d-flex border-solid" id="kt_post">
   <!--begin::Container-->
   <% if current_account.present? %>
     <div class="w-100 mw-100" data-controller="onboard" data-onboard-step-value="<%= @onboard_step %>">
@@ -86,9 +86,9 @@
         <%= render partial: "onboard", locals: { step: @onboard_step } %>
       </div>
       <% if @locations.exists? || params[:filter].present? %>
-      <div class="row h-100 w-100">
-        <div class="col-5 h-100 pe-6">
-          <div class="" style="max-height: 100%; overflow: scroll">
+      <div class="dashboard--content-container">
+        <div class="dashboard--locations-container">
+          <div class="overflow-y-auto overflow-x-hidden">
             <div class="card" style="min-height: 200px;">
               <div class="card-header">
                 <div class="my-6 d-flex justify-content-between align-items-center w-100">
@@ -134,18 +134,16 @@
                   </div>
                 </div>
               </div>
-              <div class="card-body">
-                <div style="max-height: 100%; overflow: scroll">
-                  <% @locations.each do |location| %>
-                    <%= render "location_row", location: location %>
-                  <% end %>
-                </div>
+              <div class="card-body overflow-x-hidden">
+                <% @locations.each do |location| %>
+                  <%= render "location_row", location: location %>
+                <% end %>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-7 h-100 position-relative min-h-500px">
-          <div class="position-absolute top-0 bottom-0 start-0 end-0 <%= @onboard_step > 0 ? "d-none" : "" %>" data-onboard-target="map"  id="map"></div>
+        <div class="dashboard--map-container">
+          <div class="dashboard--map <%= @onboard_step > 0 ? "invisible" : "" %>" data-onboard-target="map"  id="map"></div>
         </div>
       </div>
       <% end %>

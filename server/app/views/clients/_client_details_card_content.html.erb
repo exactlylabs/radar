@@ -19,16 +19,16 @@
         </svg>
       </span>
     </div>
-    <div class="d-flex flex-row justify-content-start align-items-center">
-      <div>
-        <p class="card-main-title mb-0" id="client_<%= client.id %>_name<%= small ? '_small' : ''%>">
+    <div class="d-flex flex-column justify-content-start align-items-start">
+      <div class="d-flex flex-column justify-content-start align-items-start">
+        <p class="card-main-title ms-0 mb-0" id="client_<%= client.id %>_name<%= small ? '_small' : ''%>">
           <%= client.name.present? ? client.name : "Unnamed Pod" %>
         </p>
-        <div class="additional-text">
+        <div class="additional-text ms-0">
           <%= client.unix_user %>
         </div>
       </div>
-      <div class="d-flex flex-row justify-content-start align-items-center ms-4 mt-2" id="client_<%= client.id %>_status_wrapper<%= small ? '_small' : ''%>">
+      <div class="d-flex flex-row justify-content-start align-items-center mt-2" id="client_<%= client.id %>_status_wrapper<%= small ? '_small' : ''%>">
         <% unless client.in_service? %>
           <div id="client_<%= client.id %>_in_service<%= small ? '_small' : ''%>" 
                class="custom-badge custom-badge--not-in-service me-2">
@@ -50,8 +50,8 @@
       </div>
     </div>
   </div>
-  <div class="d-flex flex-row flex-wrap justify-content-start align-items-start mt-2 ms-2" style="gap: 10px">
-    <div class="actions-menu d-lg-block d-xl-none" style="width:max-content">
+  <div class="d-flex flex-row flex-wrap justify-content-end align-items-start mt-2 ms-2" style="gap: 10px">
+    <div class="actions-menu d-md-block d-xl-none" style="width:max-content">
       <a href="#" class="custom-button custom-button--secondary custom-button--lg me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
         Actions
         <span class="svg-icon svg-icon-5 m-0">
@@ -79,11 +79,11 @@
       </div>
     </div>
     <% if current_user.super_user %>
-      <%= link_to "Print Label", pdf_label_client_path(@client.unix_user, format: :pdf), { class: "custom-button custom-button--lg custom-button--secondary me-3 d-md-none d-xl-flex", target: "_blank" } %>
+      <%= link_to "Print Label", pdf_label_client_path(@client.unix_user, format: :pdf), { class: "custom-button custom-button--lg custom-button--secondary me-1 clients--cta", target: "_blank" } %>
     <% end %>
-    <%= link_to "Edit Pod", edit_client_path(@client.unix_user), { class: "custom-button custom-button--lg custom-button--secondary me-3 d-md-none d-xl-flex", data: { "turbo-frame" => "edit_client_modal" } } %>
-    <%= link_to "#{client.get_in_service_action_label}", toggle_in_service_client_path(client.unix_user), method: :post, class: "custom-button custom-button--lg custom-button--secondary me-3 d-md-none d-xl-flex" %>
-    <%= link_to "Run Test", @client.test_requested ? '#' : run_test_client_path(@client.unix_user), method: :post, class: "custom-button custom-button--lg custom-button--primary #{@client.test_requested ? "disabled custom-button--disabled" : ""} d-md-none d-xl-block" %>
+    <%= link_to "Edit Pod", edit_client_path(@client.unix_user), { class: "custom-button custom-button--lg custom-button--secondary clients--cta me-1", data: { "turbo-frame" => "edit_client_modal" } } %>
+    <%= link_to "#{client.get_in_service_action_label}", toggle_in_service_client_path(client.unix_user), method: :post, class: "custom-button custom-button--lg custom-button--secondary me-1 clients--cta" %>
+    <%= link_to "Run Test", @client.test_requested ? '#' : run_test_client_path(@client.unix_user), method: :post, class: "custom-button custom-button--lg custom-button--primary #{@client.test_requested ? "disabled custom-button--disabled" : ""} clients--cta" %>
   </div>
 </div>
 <!--end::Card title-->
@@ -93,15 +93,15 @@
   <div class="client-data" style="width: 100%">
     <% if current_user.super_user %>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-        <div class="forms--label" style="width: 15%; min-width: 130px">Account</div>
-        <div class="d-flex flex-row regular-text" style="width: 85%;">
+        <div class="forms--label clients--data-label">Account</div>
+        <div class="d-flex flex-row regular-text ms-2 me-auto">
           <%= client.account.name %>
         </div>
       </div>
     <% end %>
     <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-      <div class="forms--label" style="width: 15%; min-width: 130px">Location</div>
-      <div class="d-flex flex-row regular-text" style="width: 85%;">
+      <div class="forms--label clients--data-label">Location</div>
+      <div class="d-flex flex-row regular-text ms-2 me-auto">
         <% if client.location != nil %>
           <a class="regular-link" href="<%= location_path(client.location) %>"><%= client.location.name %></a>
         <% else %>
@@ -110,26 +110,26 @@
       </div>
     </div>
     <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-      <div class="forms--label" style="width: 15%; min-width: 130px">Added on</div>
-      <div class="d-flex flex-row regular-text" style="width: 85%;">
+      <div class="forms--label clients--data-label">Added on</div>
+      <div class="d-flex flex-row regular-text ms-2 me-auto">
         <%= pretty_print_date(client.created_at) %>
       </div>
     </div>
     <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-      <div class="forms--label" style="width: 15%; min-width: 130px">Total tests</div>
-      <div class="d-flex flex-row regular-text" style="width: 85%">
+      <div class="forms--label clients--data-label">Total tests</div>
+      <div class="d-flex flex-row regular-text ms-2 me-auto">
         <%= policy_scope(client.measurements).size %>
       </div>
     </div>
     <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-      <div class="forms--label" style="width: 15%; min-width: 130px">Data Cap</div>
-      <div class="d-flex flex-row <%= client.data_cap_max_usage.nil? ? 'additional-text' : 'regular-text' %>" style="width: 85%">
+      <div class="forms--label clients--data-label">Data Cap</div>
+      <div class="d-flex flex-row ms-2 me-auto <%= client.data_cap_max_usage.nil? ? 'additional-text' : 'regular-text' %>">
         <%= client.data_cap_max_usage.nil? ? "Disabled" : "#{(client.data_cap_max_usage / (1024**2)).round(0)} MB per #{client.get_periodicity_period}" %>
       </div>
     </div>
     <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-      <div class="forms--label" style="width: 15%; min-width: 130px"><%= client.data_cap_periodicity.capitalize() %> Usage</div>
-      <div class="d-flex flex-row <%= client.data_cap_current_period_usage.nil? ? 'additional-text' : 'regular-text' %>" style="width: 85%;">
+      <div class="forms--label clients--data-label"><%= client.data_cap_periodicity.capitalize() %> Usage</div>
+      <div class="d-flex flex-row ms-2 me-auto <%= client.data_cap_current_period_usage.nil? ? 'additional-text' : 'regular-text' %>">
         <% if client.data_cap_max_usage.nil?%>
           <%= client.data_cap_current_period_usage.nil? ? "N/A" : "#{(client.data_cap_current_period_usage / (1024**2)).round(0)} MB" %>
         <% else %>
@@ -143,14 +143,14 @@
       </div>
     </div>
     <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-      <div class="forms--label" style="width: 15%; min-width: 130px">Custom Scheduling</div>
-      <div class="d-flex flex-row <%= !client.custom_scheduling ? 'additional-text' : 'regular-text' %>" style="width: 85%;">
+      <div class="forms--label clients--data-label">Custom Scheduling</div>
+      <div class="d-flex flex-row ms-2 me-auto <%= !client.custom_scheduling ? 'additional-text' : 'regular-text' %>">
         <%= !client.custom_scheduling ? "Disabled" : client.get_scheduling_periodicity_string %>
       </div>
     </div>
     <div class="location-data--row mb-6 d-flex flex-nowrap flex-row align-items-start justify-content-between flex-wrap">
-      <div class="forms--label" style="width: 15%; min-width: 130px; max-width: 200px">Last Measurement</div>
-      <div class="d-flex flex-column align-items-start justify-content-start" style="width: 85%;">
+      <div class="forms--label clients--data-label">Last Measurement</div>
+      <div class="d-flex flex-column align-items-start justify-content-start ms-2 me-auto">
         <p class="mb-2 <%= client.latest_measurement.nil? ? 'additional-text' : 'regular-text' %>"><%= client.latest_measurement.nil? ? "N/A" : pretty_print_date(client.latest_measurement.created_at) %></p>
         <% if client.latest_measurement.present? %>
           <div class="d-flex flex-row align-items-center justify-content-start">
