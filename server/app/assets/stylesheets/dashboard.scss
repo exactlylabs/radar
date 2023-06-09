@@ -1,0 +1,53 @@
+.dashboard--content-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .dashboard--locations-container {
+    width: 40%;
+    aspect-ratio: 1 / 2;
+    overflow-y: auto;
+    margin-right: 1rem;
+  }
+
+  .dashboard--map-container {
+    width: 60%;
+    aspect-ratio: 1;
+
+    .dashboard--map {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .dashboard--content-container {
+    flex-direction: column;
+
+    .dashboard--locations-container {
+      width: 100%;
+      aspect-ratio: 1;
+      max-height: 500px;
+      margin-bottom: 2rem;
+    }
+
+    .dashboard--map-container {
+      width: 100%;
+      aspect-ratio: 2 / 1;
+    }
+  }
+}
+
+.dashboard--location-row-name {
+  max-width: calc(min(20ch, 80%));
+}
+
+@media (max-width: 1200px) {
+  .dashboard--location-row-name {
+    max-width: calc(min(40ch, 100%));
+  }
+}

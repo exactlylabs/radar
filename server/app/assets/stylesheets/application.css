@@ -70,6 +70,18 @@ p {
   z-index: 1000;
 }
 
+@media (max-width: 1200px) {
+  .application--content-container {
+    padding: 2rem 2rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .application--content-container {
+    padding: 2rem 2rem;
+  }
+}
+
 .location--online path {
   fill: #006299;
 }
@@ -103,4 +115,16 @@ p {
 
 .circle {
   border-radius: 50%;
+}
+
+.overflow-x-hidden {
+  overflow-x: hidden !important;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden !important;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
 }
