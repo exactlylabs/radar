@@ -52,7 +52,8 @@ class LocationStepBody extends StatelessWidget {
         location: geolocation,
         onLocationInputPressed: () => context.read<LocationStepCubit>().useInputLocationOption(),
         onLocationConfirmed: () => context.read<LocationStepCubit>().confirmGeolocation(),
-        onLocationChanged: (lat, long) => context.read<LocationStepCubit>().accurateGeolocation(lat, long),
+        onLocationChanged: (lat, long) =>
+            context.read<LocationStepCubit>().accurateGeolocation(lat, long),
       );
     }
   }

@@ -48,7 +48,7 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
 
   void onTestError(String error) => Sentry.captureException(error);
 
-  void _parse(Map<String, dynamic> response) async {
+  Future<void> _parse(Map<String, dynamic> response) async {
     final updatedResponses = List<Map<String, dynamic>>.from(state.responses)..add(response);
     if (response.containsKey('Source') && response['Source'] == 'server') {
       final bytes = (response['type'] == 'download') ? 'BytesSent' : 'BytesReceived';
@@ -68,7 +68,8 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
           uploadSpeed: response['type'] == 'upload' ? meanMbps : state.uploadSpeed,
         ),
       );
-    } else if (response.containsKey('LastClientMeasurement') && response.containsKey('LastServerMeasurement')) {
+    } else if (response.containsKey('LastClientMeasurement') &&
+        response.containsKey('LastServerMeasurement')) {
       if (response['type'] == 'download' && state.isTestingDownloadSpeed) {
         emit(
           state.copyWith(
@@ -80,21 +81,25 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
         );
         startUploadTest();
       } else if (response['type'] == 'upload' && state.isTestingUploadSpeed) {
+        final positionAfterSpeedTest = await _getCurrentLocation();
         if (Platform.isAndroid) {
-          _networkConnectionInfo.getNetworkConnectionInfo().then((connectionInfo) => emit(state.copyWith(
-                isTestingUploadSpeed: false,
-                finishedTesting: true,
-                responses: updatedResponses,
-                connectionInfo: connectionInfo,
-                networkQuality: connectionInfo != null ? _getNetworkQuality(connectionInfo.rssi) : null,
-              )));
+          _networkConnectionInfo
+              .getNetworkConnectionInfo()
+              .then((connectionInfo) => emit(state.copyWith(
+                    isTestingUploadSpeed: false,
+                    finishedTesting: true,
+                    responses: updatedResponses,
+                    connectionInfo: connectionInfo,
+                    positionAfterSpeedTest: positionAfterSpeedTest,
+                    networkQuality:
+                        connectionInfo != null ? _getNetworkQuality(connectionInfo.rssi) : null,
+                  )));
         } else {
-          final positionAfterSpeedTest = await _getCurrentLocation();
           emit(state.copyWith(
-            isTestingUploadSpeed: false,
             finishedTesting: true,
-            positionAfterSpeedTest: positionAfterSpeedTest,
+            isTestingUploadSpeed: false,
             responses: updatedResponses,
+            positionAfterSpeedTest: positionAfterSpeedTest,
           ));
         }
       }

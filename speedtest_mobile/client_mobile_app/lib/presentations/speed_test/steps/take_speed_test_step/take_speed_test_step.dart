@@ -34,15 +34,24 @@ class TakeSpeedTestStep extends StatelessWidget {
           networkPlace: networkPlace,
           address: address,
           child: BlocListener<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
-            listenWhen: (previous, current) => current.finishedTesting,
-            listener: (context, state) => context.read<SpeedTestCubit>().saveResults(
-                state.downloadSpeed!,
-                state.uploadSpeed!,
-                state.latency!,
-                state.loss!,
-                state.networkQuality,
-                state.connectionInfo,
-                state.responses),
+            listenWhen: (previous, current) =>
+                (previous.isTestingUploadSpeed && !current.isTestingUploadSpeed) ||
+                current.finishedTesting,
+            listener: (context, state) {
+              if (state.finishedTesting) {
+                context.read<SpeedTestCubit>().saveResults(
+                      state.downloadSpeed!,
+                      state.uploadSpeed!,
+                      state.latency!,
+                      state.loss!,
+                      state.networkQuality,
+                      state.connectionInfo,
+                      state.responses,
+                      state.positionBeforeSpeedTest,
+                      state.positionAfterSpeedTest,
+                    );
+              }
+            },
             child: BlocBuilder<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
               builder: (context, state) {
                 if (state.isTestingDownloadSpeed || state.isTestingUploadSpeed) {
@@ -52,7 +61,9 @@ class TakeSpeedTestStep extends StatelessWidget {
                     loss: state.loss,
                     latency: state.latency,
                     isDownloadTest: state.isTestingDownloadSpeed,
-                    progress: state.isTestingDownloadSpeed ? state.downloadProgress : state.uploadProgress,
+                    progress: state.isTestingDownloadSpeed
+                        ? state.downloadProgress
+                        : state.uploadProgress,
                   );
                 } else if (state.finishedTesting) {
                   return TestResultsStep(

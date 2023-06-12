@@ -30,8 +30,11 @@ class MapLocationPickerBody extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: TitleAndSubtitle(
-            title: initialLocation == null ? Strings.noLocationModalTitle : Strings.locationModalTitle,
-            subtitle: initialLocation == null ? Strings.noLocationModalSubtitle : Strings.locationModalSubtitle,
+            title:
+                initialLocation == null ? Strings.noLocationModalTitle : Strings.locationModalTitle,
+            subtitle: initialLocation == null
+                ? Strings.noLocationModalSubtitle
+                : Strings.locationModalSubtitle,
             subtitleHeight: 1.5,
           ),
         ),
@@ -42,10 +45,12 @@ class MapLocationPickerBody extends StatelessWidget {
             alignment: Alignment.topCenter,
             children: [
               LeafletMap(
-                address: initialLocation != null ? LatLng(initialLocation!.lat, initialLocation!.long) : null,
+                address: initialLocation != null
+                    ? LatLng(initialLocation!.latitude!, initialLocation!.longitude!)
+                    : null,
                 onLocationSelected: (latlng) => onChanged(latlng.latitude, latlng.longitude),
               ),
-              if (initialLocation != null && initialLocation!.address.isNotEmpty)
+              if (initialLocation != null && (initialLocation!.address?.isNotEmpty ?? false))
                 Container(
                   margin: const EdgeInsets.all(15.0),
                   padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
@@ -62,7 +67,7 @@ class MapLocationPickerBody extends StatelessWidget {
                     ],
                   ),
                   child: Text(
-                    initialLocation!.address,
+                    initialLocation!.address!,
                     style: AppTextStyle(
                       color: AppColors.darkLavender,
                       fontSize: 14,

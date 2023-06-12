@@ -19,7 +19,7 @@ class LocationOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hideSubtitle = (location.houseNumber.isEmpty || location.street.isEmpty);
+    final hideSubtitle = (location.houseNumber!.isEmpty || location.street!.isEmpty);
     return ListTile(
       onTap: onPressed,
       selected: isSelected,
@@ -42,7 +42,7 @@ class LocationOptionCard extends StatelessWidget {
         ],
       ),
       title: Text(
-        hideSubtitle ? location.address : '${location.houseNumber} ${location.street}',
+        hideSubtitle ? location.address! : '${location.houseNumber} ${location.street}',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: AppTextStyle(

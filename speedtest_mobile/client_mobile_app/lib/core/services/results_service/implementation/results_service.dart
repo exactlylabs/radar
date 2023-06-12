@@ -27,19 +27,19 @@ class ResultsService implements IResultsService {
   }
 
   @override
-  void addResult(List<Map<String, dynamic>> responses, TestResult result, ConnectionInfo? connectionInfo) {
+  void addResult(
+      List<Map<String, dynamic>> responses, TestResult result, ConnectionInfo? connectionInfo) {
     _localStorage.addResult(result.toJson());
     _httpProvider
         .postAndDecode(
-      url: '${_restClient.speedTest}?client_id=$CLIENT_ID',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      url: '${_restClient.speedTest}?client_id=$CLIENT_ID&mobile=true',
+      headers: {'Content-Type': 'application/json'},
       body: _buildBody(responses, result, connectionInfo),
     )
         .then((failureOrSuccess) {
       if (failureOrSuccess.failure != null) {
-        Sentry.captureException(failureOrSuccess.failure!.exception, stackTrace: failureOrSuccess.failure!.stackTrace);
+        Sentry.captureException(failureOrSuccess.failure!.exception,
+            stackTrace: failureOrSuccess.failure!.stackTrace);
       }
     });
   }

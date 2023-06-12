@@ -44,8 +44,8 @@ class SpeedTestFormBody extends StatelessWidget {
           networkType: networkType,
           networkPlace: networkLocation,
           address: location?.address,
-          latitude: location?.lat,
-          longitude: location?.long,
+          latitude: location?.latitude,
+          longitude: location?.longitude,
         );
       default:
         return Container();

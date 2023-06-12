@@ -1,16 +1,10 @@
 import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/core/models/location.dart';
 
 class TestResult {
   TestResult({
-    required this.latitude,
-    required this.longitude,
+    required this.location,
     required this.testedAt,
-    required this.address,
-    required this.city,
-    required this.street,
-    required this.state,
-    required this.postalCode,
-    required this.houseNumber,
     required this.networkType,
     required this.networkLocation,
     required this.networkCost,
@@ -21,18 +15,23 @@ class TestResult {
     required this.latency,
     required this.versionNumber,
     required this.buildNumber,
+    this.locationBefore,
+    this.locationAfter,
   });
 
   factory TestResult.fromJson(Map<String, dynamic> json) => TestResult(
-        latitude: json['latitude'] ?? 0.0,
-        longitude: json['longitude'] ?? 0.0,
+        location: Location(
+          latitude: json['latitude'] as double?,
+          longitude: json['longitude'] as double?,
+          altitude: json['altitude'] as double?,
+          address: json['address'] as String?,
+          city: json['city'] as String?,
+          street: json['street'] as String?,
+          state: json['state'] as String?,
+          postalCode: json['postal_code'] as String?,
+          houseNumber: json['house_number'] as String?,
+        ),
         testedAt: DateTime.parse(json['tested_at'] ?? json['dateTime']),
-        address: json['address'],
-        city: json['city'],
-        street: json['street'],
-        state: json['state'],
-        postalCode: json['postal_code'],
-        houseNumber: json['house_number'],
         networkType: json['network_type'] ?? json['networkType'],
         networkLocation: json['network_location'] ?? json['networkLocation'],
         networkCost: json['network_cost'],
@@ -47,38 +46,65 @@ class TestResult {
 
   Map<String, dynamic> toJsonServer() {
     return {
-      "latitude": latitude,
-      "longitude": longitude,
       'tested_at': testedAt.toString(),
-      'address': address,
-      "city": city,
-      "street": street,
-      "state": state,
-      "postal_code": postalCode,
-      "house_number": houseNumber,
+      'latitude': location.latitude,
+      'longitude': location.longitude,
+      'altitude': location.altitude,
+      'accuracy': location.accuracy,
+      'floor': location.floor,
+      'heading': location.heading,
+      'speed': location.speed,
+      'speed_accuracy': location.speedAccuracy,
+      'address': location.address,
+      'city': location.city,
+      'street': location.street,
+      'state': location.state,
+      'postal_code': location.postalCode,
+      'house_number': location.houseNumber,
       'network_type': networkType,
       'network_location': networkLocation,
       'network_cost': networkCost,
       'version_number': versionNumber,
       'build_number': buildNumber,
+      'latitude_before': locationBefore?.latitude,
+      'longitude_before': locationBefore?.longitude,
+      'altitude_before': locationBefore?.altitude,
+      'accuracy_before': locationBefore?.accuracy,
+      'floor_before': locationBefore?.floor,
+      'heading_before': locationBefore?.heading,
+      'speed_before': locationBefore?.speed,
+      'speed_accuracy_before': locationBefore?.speedAccuracy,
+      'latitude_after': locationAfter?.latitude,
+      'longitude_after': locationAfter?.longitude,
+      'altitude_after': locationAfter?.altitude,
+      'accuracy_after': locationAfter?.accuracy,
+      'floor_after': locationAfter?.floor,
+      'heading_after': locationAfter?.heading,
+      'speed_after': locationAfter?.speed,
+      'speed_accuracy_after': locationAfter?.speedAccuracy,
     };
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "download": download,
-      "upload": upload,
-      "loss": loss,
-      "latency": latency,
-      "latitude": latitude,
-      "longitude": longitude,
       'tested_at': testedAt.toString(),
-      'address': address,
-      "city": city,
-      "street": street,
-      "state": state,
-      "postal_code": postalCode,
-      "house_number": houseNumber,
+      'download': download,
+      'upload': upload,
+      'loss': loss,
+      'latency': latency,
+      'latitude': location.latitude,
+      'longitude': location.longitude,
+      'altitude': location.altitude,
+      'floor': location.floor,
+      'heading': location.heading,
+      'speed': location.speed,
+      'speedAccuracy': location.speedAccuracy,
+      'address': location.address,
+      'city': location.city,
+      'street': location.street,
+      'state': location.state,
+      'postal_code': location.postalCode,
+      'house_number': location.houseNumber,
       'network_type': networkType,
       'network_location': networkLocation,
       'network_cost': networkCost,
@@ -88,15 +114,7 @@ class TestResult {
     };
   }
 
-  final double latitude;
-  final double longitude;
   final DateTime testedAt;
-  final String address;
-  final String? city;
-  final String? street;
-  final String? state;
-  final String? postalCode;
-  final String? houseNumber;
   final String networkType;
   final String networkLocation;
   final String? networkCost;
@@ -107,4 +125,7 @@ class TestResult {
   final double latency;
   final String versionNumber;
   final String buildNumber;
+  final Location location;
+  final Location? locationBefore;
+  final Location? locationAfter;
 }

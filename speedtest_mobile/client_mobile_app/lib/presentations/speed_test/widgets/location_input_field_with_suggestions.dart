@@ -28,17 +28,19 @@ class LocationInputFieldWithSuggestions extends StatelessWidget {
     return Autocomplete<Location>(
       fieldViewBuilder: (context, controller, focusNode, function) {
         if (location != null) {
-          controller.text = location!.address;
-          controller.selection = TextSelection.fromPosition(TextPosition(offset: controller.text.length));
+          controller.text = location!.address!;
+          controller.selection =
+              TextSelection.fromPosition(TextPosition(offset: controller.text.length));
         } else if (location == null && suggestions == null && !isLoading) {
           controller.text = Strings.emptyString;
         }
         if (focusNode.hasFocus) {
           WidgetsBinding.instance.addPostFrameCallback((_) => Scrollable.ensureVisible(context));
         }
-        return LocationInputField(controller: controller, focusNode: focusNode, isLoading: isLoading);
+        return LocationInputField(
+            controller: controller, focusNode: focusNode, isLoading: isLoading);
       },
-      displayStringForOption: (option) => option.address,
+      displayStringForOption: (option) => option.address!,
       optionsBuilder: (value) async => await suggestionsCallback(value.text),
       optionsViewBuilder: (context, _, options) {
         return Padding(

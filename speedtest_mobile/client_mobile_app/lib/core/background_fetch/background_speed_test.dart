@@ -40,7 +40,8 @@ class BackgroundSpeedTest {
     );
   }
 
-  void startUploadTest() => _testingState = (isTestingDownloadSpeed: false, isTestingUploadSpeed: true);
+  void startUploadTest() =>
+      _testingState = (isTestingDownloadSpeed: false, isTestingUploadSpeed: true);
 
   void _onTestComplete(Map<String, dynamic> testResult) => _parse(testResult);
 
@@ -51,7 +52,8 @@ class BackgroundSpeedTest {
   Future<void> _parse(Map<String, dynamic> response) async {
     final updatedResponses = List<Map<String, dynamic>>.from(_responses)..add(response);
     _responses = updatedResponses;
-    if (response.containsKey('LastClientMeasurement') && response.containsKey('LastServerMeasurement')) {
+    if (response.containsKey('LastClientMeasurement') &&
+        response.containsKey('LastServerMeasurement')) {
       if (_testingState.isTestingDownloadSpeed) {
         startUploadTest();
       } else if (_testingState.isTestingUploadSpeed) {
@@ -84,14 +86,14 @@ class BackgroundSpeedTest {
       body: {
         'result': {'raw': _responses},
         'speed_test': {
-          'longitude': _positionBeforeSpeedTest?.longitude,
-          'latitude': _positionBeforeSpeedTest?.latitude,
-          'accuracy': _positionBeforeSpeedTest?.accuracy,
-          'altitude': _positionBeforeSpeedTest?.altitude,
-          'floor': _positionBeforeSpeedTest?.floor,
-          'heading': _positionBeforeSpeedTest?.heading,
-          'speed': _positionBeforeSpeedTest?.speed,
-          'speed_accuracy': _positionBeforeSpeedTest?.speedAccuracy,
+          'latitude_before': _positionBeforeSpeedTest?.latitude,
+          'longitude_before': _positionBeforeSpeedTest?.longitude,
+          'accuracy_before': _positionBeforeSpeedTest?.accuracy,
+          'altitude_before': _positionBeforeSpeedTest?.altitude,
+          'floor_before': _positionBeforeSpeedTest?.floor,
+          'heading_before': _positionBeforeSpeedTest?.heading,
+          'speed_before': _positionBeforeSpeedTest?.speed,
+          'speed_accuracy_before': _positionBeforeSpeedTest?.speedAccuracy,
           'longitude_after': _positionAfterSpeedTest?.longitude,
           'latitude_after': _positionAfterSpeedTest?.latitude,
           'accuracy_after': _positionAfterSpeedTest?.accuracy,
