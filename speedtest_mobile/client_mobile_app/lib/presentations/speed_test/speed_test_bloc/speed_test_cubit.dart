@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -84,21 +85,35 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     emit(state.copyWith(step: state.step + 1));
   }
 
-  void saveResults(double downloadSpeed, double uploadSpeed, double latency, double loss, String? networkQuality,
-      ConnectionInfo? connectionInfo, List<Map<String, dynamic>> responses) {
+  void saveResults(
+      double downloadSpeed,
+      double uploadSpeed,
+      double latency,
+      double loss,
+      String? networkQuality,
+      ConnectionInfo? connectionInfo,
+      List<Map<String, dynamic>> responses,
+      Position? positionBefore,
+      Position? positionAfter) {
+    Location? locationBefore;
+    Location? locationAfter;
+
+    if (positionBefore != null) {
+      locationBefore = Location.fromPosition(positionBefore);
+    }
+
+    if (positionAfter != null) {
+      locationAfter = Location.fromPosition(positionAfter);
+    }
+
     final result = TestResult(
       download: downloadSpeed,
       upload: uploadSpeed,
       latency: latency,
       loss: loss,
-      latitude: state.location?.lat ?? 0.0,
-      longitude: state.location?.long ?? 0.0,
-      address: state.location?.address ?? Strings.emptyString,
-      city: state.location?.city ?? Strings.emptyString,
-      state: state.location?.state ?? Strings.emptyString,
-      street: state.location?.street ?? Strings.emptyString,
-      houseNumber: state.location?.houseNumber ?? Strings.emptyString,
-      postalCode: state.location?.postalCode ?? Strings.emptyString,
+      location: state.location!,
+      locationBefore: locationBefore,
+      locationAfter: locationAfter,
       testedAt: DateTime.now(),
       networkType: state.networkType ?? Strings.emptyString,
       networkLocation: state.networkLocation ?? Strings.emptyString,
@@ -115,7 +130,9 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     VoidCallback? onContinueCallback;
     VoidCallback? onBackCallback;
 
-    if (onContinue != null && state.onContinue == null && (state.isStepValid || state.step == LOCATION_STEP)) {
+    if (onContinue != null &&
+        state.onContinue == null &&
+        (state.isStepValid || state.step == LOCATION_STEP)) {
       onContinueCallback = onContinue;
     }
 
@@ -133,7 +150,8 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
 
   void _setVersionAndBuildNumber() {
     PackageInfo.fromPlatform().then((packageInfo) {
-      emit(state.copyWith(versionNumber: packageInfo.version, buildNumber: packageInfo.buildNumber));
+      emit(
+          state.copyWith(versionNumber: packageInfo.version, buildNumber: packageInfo.buildNumber));
     });
   }
 

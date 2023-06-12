@@ -26,14 +26,16 @@ class LocationsService implements ILocationsService {
 
   @override
   Future<Location?> getLocationByCoordinates(double latitude, double longitude) async {
-    return _uniqueRequest<Location?>((requestId) => _getLocationByCoordinates(requestId, latitude, longitude));
+    return _uniqueRequest<Location?>(
+        (requestId) => _getLocationByCoordinates(requestId, latitude, longitude));
   }
 
   Future<List<Location>> _getSuggestedLocations(String requestId, String query) async {
     final userCoordinates = await _getUserCoordinates(requestId);
     Location userLocation = Location.empty(query);
     if (userCoordinates.latitude != null && userCoordinates.longitude != null) {
-      userLocation = userLocation.copyWith(lat: userCoordinates.latitude, long: userCoordinates.longitude);
+      userLocation = userLocation.copyWith(
+          latitude: userCoordinates.latitude, longitude: userCoordinates.longitude);
     }
     return _suggestedLocationsRequest(query).then((locations) {
       List<Location> suggestions;
@@ -47,7 +49,8 @@ class LocationsService implements ILocationsService {
     });
   }
 
-  Future<Location?> _getLocationByCoordinates(String requestId, double latitude, double longitude) async {
+  Future<Location?> _getLocationByCoordinates(
+      String requestId, double latitude, double longitude) async {
     return _locationByCoordinatesRequest(latitude, longitude).then((location) {
       if (requestId == _lastRequestId) {
         return location;
@@ -85,7 +88,8 @@ class LocationsService implements ILocationsService {
       fromJson: (json) => Location.fromJsonWithDefaultValues(json),
     );
     if (failureOrLocation.failure != null) {
-      Sentry.captureException(failureOrLocation.failure!.exception, stackTrace: failureOrLocation.failure!.stackTrace);
+      Sentry.captureException(failureOrLocation.failure!.exception,
+          stackTrace: failureOrLocation.failure!.stackTrace);
       return null;
     } else {
       return failureOrLocation.response;
@@ -101,10 +105,14 @@ class LocationsService implements ILocationsService {
     );
 
     if (failureOrLocation.failure != null) {
-      Sentry.captureException(failureOrLocation.failure!.exception, stackTrace: failureOrLocation.failure!.stackTrace);
+      Sentry.captureException(failureOrLocation.failure!.exception,
+          stackTrace: failureOrLocation.failure!.stackTrace);
       return (latitude: null, longitude: null);
     } else {
-      return (latitude: failureOrLocation.response![0] as double, longitude: failureOrLocation.response![1] as double);
+      return (
+        latitude: failureOrLocation.response![0] as double,
+        longitude: failureOrLocation.response![1] as double
+      );
     }
   }
 

@@ -99,7 +99,7 @@ class _ResultsListState extends State<ResultsList> {
       TestResultInfoModal(
         date: _dateFromDateTime(result.testedAt),
         time: _timeFromDateTime(result.testedAt),
-        address: result.address,
+        address: result.location.address!,
         networkPlace: result.networkLocation,
         networkType: result.networkType,
         networkQuality: result.networkQuality,

@@ -87,7 +87,14 @@ class LocationStepCubit extends Cubit<LocationStepState> {
       final position = await Geolocator.getCurrentPosition();
       final location = await getLocationByLatLng(position.latitude, position.longitude);
       if (location != null) {
-        emit(state.copyWith(isGeolocationLoading: false, geolocation: location));
+        final geolocation = location.copyWith(
+          altitude: position.altitude,
+          heading: position.heading,
+          floor: position.floor,
+          speed: position.speed,
+          speedAccuracy: position.speedAccuracy,
+        );
+        emit(state.copyWith(isGeolocationLoading: false, geolocation: geolocation));
       } else {
         emit(state.copyWith(isGeolocationLoading: false, failure: Strings.locationError));
       }
@@ -115,7 +122,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
   }
 
   void accurateGeolocation(double lat, double long) {
-    final accurateGeolocation = state.geolocation!.copyWith(lat: lat, long: long);
+    final accurateGeolocation = state.geolocation!.copyWith(latitude: lat, longitude: long);
     emit(state.copyWith(geolocation: accurateGeolocation));
   }
 
@@ -124,7 +131,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     if (!state.isGeolocationEnabled! && state.location == null) {
       accurateLocation = Location.empty(state.query ?? '');
     } else {
-      accurateLocation = state.location!.copyWith(lat: lat, long: long);
+      accurateLocation = state.location!.copyWith(latitude: lat, longitude: long);
     }
     emit(state.copyWith(location: accurateLocation));
   }
