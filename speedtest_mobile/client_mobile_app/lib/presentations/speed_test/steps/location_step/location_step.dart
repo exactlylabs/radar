@@ -9,6 +9,7 @@ import 'package:client_mobile_app/presentations/speed_test/steps/location_step/l
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/bloc/location_step_state.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/bloc/location_step_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_picker_modal/location_picker_modal.dart';
+import 'package:client_mobile_app/presentations/speed_test/steps/location_step/widgets/location_permission_dialog.dart';
 
 class LocationStep extends StatelessWidget {
   const LocationStep({
@@ -30,15 +31,23 @@ class LocationStep extends StatelessWidget {
         ),
         child: BlocListener<LocationStepCubit, LocationStepState>(
           listenWhen: (previous, current) =>
+              (!previous.requestLocationPermission && current.requestLocationPermission) ||
               (!previous.isLocationConfirmed && current.isLocationConfirmed) ||
               (!previous.needsToConfirmLocation && current.needsToConfirmLocation),
           listener: (context, state) {
             if (state.isLocationConfirmed) {
-              final locationConfirmed = state.isUsingGeolocation! ? state.geolocation : state.location;
+              final locationConfirmed =
+                  state.isUsingGeolocation! ? state.geolocation : state.location;
               context.read<SpeedTestCubit>().setLocation(locationConfirmed!);
               context.read<SpeedTestCubit>().nextStep();
             } else if (state.needsToConfirmLocation) {
               _openConfirmYoutLocationModal(context);
+            } else if (state.requestLocationPermission) {
+              showLocationPermissionDialog(
+                context,
+                onAccept: () => context.read<LocationStepCubit>().requestLocationPermission(),
+                onDeny: () => context.read<LocationStepCubit>().cancelLocationPermissionRequest(),
+              );
             }
           },
           child: BlocBuilder<LocationStepCubit, LocationStepState>(
@@ -52,7 +61,8 @@ class LocationStep extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: TitleAndSubtitle(
                       title: Strings.locationStepTitle,
-                      subtitle: _getSubtitle(state.isUsingGeolocation ?? false, state.isGeolocationLoading),
+                      subtitle: _getSubtitle(
+                          state.isUsingGeolocation ?? false, state.isGeolocationLoading),
                       subtitleHeight: 1.56,
                       titleHeight: 1.81,
                     ),

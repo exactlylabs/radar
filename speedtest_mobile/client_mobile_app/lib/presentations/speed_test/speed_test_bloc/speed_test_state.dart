@@ -1,5 +1,4 @@
 import 'package:client_mobile_app/core/models/location.dart';
-import 'package:flutter/material.dart';
 
 class SpeedTestState {
   const SpeedTestState({
@@ -18,9 +17,8 @@ class SpeedTestState {
     this.isFormEnded = false,
     this.versionNumber,
     this.buildNumber,
-    this.onContinue,
-    this.onBack,
     this.termsAccepted = true,
+    this.isLoadingTerms = true,
   });
 
   SpeedTestState copyWith({
@@ -39,9 +37,8 @@ class SpeedTestState {
     bool? isFormEnded,
     String? versionNumber,
     String? buildNumber,
-    VoidCallback? onContinue,
-    VoidCallback? onBack,
     bool? termsAccepted,
+    bool? isLoadingTerms,
   }) =>
       SpeedTestState(
         step: step ?? this.step,
@@ -57,14 +54,14 @@ class SpeedTestState {
         isTestRunning: isTestRunning ?? this.isTestRunning,
         isLocationLoading: isLocationLoading ?? this.isLocationLoading,
         isFormEnded: isFormEnded ?? this.isFormEnded,
-        onContinue: step != null && step != this.step ? null : onContinue ?? this.onContinue,
-        onBack: step != null && step != this.step ? null : onBack ?? this.onBack,
         versionNumber: versionNumber ?? this.versionNumber,
         buildNumber: buildNumber ?? this.buildNumber,
         termsAccepted: termsAccepted ?? this.termsAccepted,
+        isLoadingTerms: isLoadingTerms ?? this.isLoadingTerms,
       );
 
-  SpeedTestState resetSpecificStep(bool networkLocation, bool networkType, bool monthlyBillCost) => SpeedTestState(
+  SpeedTestState resetSpecificStep(bool networkLocation, bool networkType, bool monthlyBillCost) =>
+      SpeedTestState(
         step: step,
         isStepValid: isStepValid,
         loss: loss,
@@ -80,33 +77,9 @@ class SpeedTestState {
         isFormEnded: isFormEnded,
         versionNumber: versionNumber,
         buildNumber: buildNumber,
-        onContinue: null,
-        onBack: null,
         termsAccepted: termsAccepted,
+        isLoadingTerms: isLoadingTerms,
       );
-
-  SpeedTestState resetCallbacks() {
-    return SpeedTestState(
-      step: step,
-      isStepValid: isStepValid,
-      loss: loss,
-      upload: upload,
-      latency: latency,
-      location: location,
-      download: download,
-      networkType: networkType,
-      monthlyBillCost: monthlyBillCost,
-      networkLocation: networkLocation,
-      isTestRunning: isTestRunning,
-      isLocationLoading: isLocationLoading,
-      isFormEnded: isFormEnded,
-      versionNumber: versionNumber,
-      buildNumber: buildNumber,
-      onContinue: null,
-      onBack: null,
-      termsAccepted: termsAccepted,
-    );
-  }
 
   final int step;
   final bool isStepValid;
@@ -124,6 +97,5 @@ class SpeedTestState {
   final String? versionNumber;
   final String? buildNumber;
   final bool termsAccepted;
-  final VoidCallback? onContinue;
-  final VoidCallback? onBack;
+  final bool isLoadingTerms;
 }

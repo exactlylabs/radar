@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -74,8 +73,6 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     emit(SpeedTestState(networkType: state.networkType));
   }
 
-  void resetCallbacks() => emit(state.resetCallbacks());
-
   void preferNotToAnswer() {
     if (state.step == NETWORK_LOCATION_STEP) {
       emit(state.resetSpecificStep(true, false, false));
@@ -126,24 +123,6 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     _resultsService.addResult(responses, result, connectionInfo);
   }
 
-  void setOnContinueAndOnGoBackPressed(VoidCallback? onContinue, [VoidCallback? onBack]) {
-    VoidCallback? onContinueCallback;
-    VoidCallback? onBackCallback;
-
-    if (onContinue != null &&
-        state.onContinue == null &&
-        (state.isStepValid || state.step == LOCATION_STEP)) {
-      onContinueCallback = onContinue;
-    }
-
-    if (onBack != null && state.onBack == null) {
-      onBackCallback = onBack;
-    }
-
-    if (onContinueCallback == null && onBackCallback == null) return;
-    emit(state.copyWith(onContinue: onContinueCallback, onBack: onBackCallback));
-  }
-
   void endForm() {
     emit(state.copyWith(isFormEnded: true));
   }
@@ -160,12 +139,12 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
       await _localStorage.openLocalStorage();
     }
     final termsAccepted = _localStorage.getTerms();
-    emit(state.copyWith(termsAccepted: termsAccepted));
+    emit(state.copyWith(termsAccepted: termsAccepted, isLoadingTerms: false));
   }
 
   void acceptTerms() {
     _localStorage.setTerms();
-    emit(state.resetCallbacks().copyWith(termsAccepted: true));
+    emit(state.copyWith(termsAccepted: true));
   }
 
   Future<void> _listenConnectivityState() async {

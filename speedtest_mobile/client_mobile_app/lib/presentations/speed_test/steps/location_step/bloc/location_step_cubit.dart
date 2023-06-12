@@ -65,21 +65,33 @@ class LocationStepCubit extends Cubit<LocationStepState> {
   Future<void> loadGeolocation() async {
     final geolocationEnabled = await isGeolocationEnabled();
     emit(state.copyWith(isGeolocationEnabled: geolocationEnabled));
-    if (geolocationEnabled) {
+    if (geolocationEnabled ?? false) {
       await getGeolocation();
     }
   }
 
-  Future<bool> isGeolocationEnabled() async {
+  Future<bool?> isGeolocationEnabled() async {
     final permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      final permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.deniedForever) {
-        return false;
-      }
+    if (permission == LocationPermission.deniedForever) {
+      return false;
+    } else if (permission == LocationPermission.denied) {
+      emit(state.copyWith(requestLocationPermission: true));
+      return null;
     }
     return true;
   }
+
+  Future<void> requestLocationPermission() async {
+    final permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      emit(state.copyWith(requestLocationPermission: true, isGeolocationEnabled: false));
+    } else {
+      emit(state.copyWith(requestLocationPermission: false, isGeolocationEnabled: true));
+      await getGeolocation();
+    }
+  }
+
+  void cancelLocationPermissionRequest() => emit(state.copyWith(requestLocationPermission: false));
 
   Future<void> getGeolocation() async {
     if (state.isGeolocationEnabled ?? false) {
@@ -96,7 +108,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
         );
         emit(state.copyWith(isGeolocationLoading: false, geolocation: geolocation));
       } else {
-        emit(state.copyWith(isGeolocationLoading: false, failure: Strings.locationError));
+        useInputLocationOption();
       }
     }
   }
