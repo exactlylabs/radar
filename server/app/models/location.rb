@@ -7,7 +7,7 @@ include EventSourceable
   LOCATIONS_PER_COUNTY_GOAL = 25
   LOCATIONS_PER_PLACE_GOAL = 3
   LOCATIONS_PER_ISP_PER_COUNTY_GOAL = 3
-  
+
   module Events
     NAME_CHANGED = "NAME_CHANGED"
     ADDRESS_CHANGED = "ADDRESS_CHANGED"
@@ -37,7 +37,7 @@ include EventSourceable
   has_and_belongs_to_many :categories,
     # Note: Rails only triggers when associating through << statement
     # See: https://guides.rubyonrails.org/association_basics.html#association-callbacks
-    after_add: :after_category_added, 
+    after_add: :after_category_added,
     after_remove: :after_category_removed
   has_many :measurements, dependent: :nullify
   has_many :clients, dependent: :nullify
@@ -89,7 +89,7 @@ include EventSourceable
     self.record_event Location::Events::CATEGORY_REMOVED, event_data, Time.now do |state, event|
        # doing nested if for a bit better readability
       if state["categories"].present? && state["categories"].include?(category.name)
-        state["categories"].delete(category.name) 
+        state["categories"].delete(category.name)
       end
     end
   end
@@ -219,7 +219,7 @@ include EventSourceable
   def place_geospace
     self.geospaces.census_places.first
   end
-  
+
   private
 
   def custom_geocode
@@ -252,18 +252,18 @@ include EventSourceable
   end
 
   def send_notifications
-    # if saved_change_to_online?
-    #   if self.online
-    #     LocationNotificationJobs::NotifyLocationOnline.perform_later self, Time.now
-    #   # else # Deactivated for now due too noisy alerts
-    #   #   LocationNotificationJobs::NotifyLocationOffline.perform_later self, self.offline_since
-    #   end
-    # end
+    if saved_change_to_online?
+      if self.online
+        LocationNotificationJobs::NotifyLocationOnline.perform_later self, Time.now
+      # else # Deactivated for now due too noisy alerts
+      #   LocationNotificationJobs::NotifyLocationOffline.perform_later self, self.offline_since
+      end
+    end
 
-    # if id_previously_changed?
-    #   # Notify location created
-    #   LocationNotificationJobs::NotifyLocationCreated.perform_later self
-    # end
+    if id_previously_changed?
+      # Notify location created
+      LocationNotificationJobs::NotifyLocationCreated.perform_later self
+    end
   end
 
 end
