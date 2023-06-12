@@ -3,11 +3,11 @@ module ClientApi
     class SpeedTestsController < ApiController
       def create
         is_mobile = params[:mobile].present? && params[:mobile] == 'true'
-        @speed_test = if is_mobile
-                        ClientSpeedTest.new mobile_speed_test_params
-                      else
-                        ClientSpeedTest.new speed_test_params
-                      end
+        if is_mobile
+          @speed_test = ClientSpeedTest.new mobile_speed_test_params
+        else
+          @speed_test = ClientSpeedTest.new speed_test_params
+        end
         @speed_test.lonlat = "POINT(#{params[:speed_test][:longitude]} #{params[:speed_test][:latitude]})"
         @speed_test.connection_data = params[:connection_data]
         @speed_test.tested_by = params[:client_id]
