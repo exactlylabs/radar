@@ -1,6 +1,26 @@
+require 'sidekiq/api'
+
 module LocationNotificationJobs
 
   class LocationNotificationJob < ApplicationJob
+    queue_as :notifications
+    sidekiq_options retry: false
+    around_enqueue do |_job, block|
+      # Check Sidekiq API and see if this job is already running/enqueued
+      already_enqueued = false
+      Sidekiq::Queue.new("notifications").each do |j|
+        if j.args[0]["job_class"] == self.class.name
+          already_enqueued = true
+        end
+      end
+      Sidekiq::WorkSet.new.each do |process_id, thread_id, work|
+        if JSON.parse(work["payload"])["args"][0]["job_class"] == self.class.name
+          already_enqueued = true
+        end
+      end
+      block.call unless already_enqueued
+    end
+
     def location_info(location, as_org=nil)
       state = location.state_geospace
       county = location.county_geospace
@@ -16,10 +36,10 @@ module LocationNotificationJobs
       end
 
       EventsNotifier::LocationInfo.new(
-        location, state, county, place, 
+        location, state, county, place,
         as_org: as_org,
-        locations_per_county_count: per_county_count, 
-        locations_per_place_count: per_place_count, 
+        locations_per_county_count: per_county_count,
+        locations_per_place_count: per_place_count,
         locations_per_isp_county_count: per_isp_county_count,
         locaions_per_isp_count: per_isp_count
       )
@@ -37,9 +57,11 @@ module LocationNotificationJobs
     def perform(location, at)
       as_org = location.clients.order("updated_at DESC").first&.autonomous_system&.autonomous_system_org
       location_info = location_info(location, as_org=as_org)
-      EventsNotifier.notify_location_online(location_info) if location.notified_when_online
+      EventsNotifier.notify_location_online(location_info) unless location.notified_when_online?
       location.update(notified_when_online: true)
-      
+
+      return unless location_info&.state&.study_geospace?
+
       # Notify Goals if reached
       if location_info.extra[:locations_per_county_count] && location_info.extra[:locations_per_county_count] >= Location::LOCATIONS_PER_COUNTY_GOAL &&
          !NotifiedStudyGoal.where(geospace: location_info.county, autonomous_system_org: nil).exists?
