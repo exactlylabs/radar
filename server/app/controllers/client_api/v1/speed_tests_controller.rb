@@ -2,13 +2,18 @@ module ClientApi
   module V1
     class SpeedTestsController < ApiController
       def create
-        @speed_test = ClientSpeedTest.new speed_test_params
+        is_mobile = params[:mobile].present? && params[:mobile] == 'true'
+        @speed_test = if is_mobile
+                        ClientSpeedTest.new mobile_speed_test_params
+                      else
+                        ClientSpeedTest.new speed_test_params
+                      end
         @speed_test.lonlat = "POINT(#{params[:speed_test][:longitude]} #{params[:speed_test][:latitude]})"
         @speed_test.connection_data = params[:connection_data]
         @speed_test.tested_by = params[:client_id]
         filename = "speed-test-#{params[:timestamp]}.json"
         json_content = params[:result].to_json
-        @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: "application/json")
+        @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: 'application/json')
         @speed_test.save!
         # Call process to parse JSON and seed measurement
         ProcessSpeedTestJob.perform_later @speed_test
@@ -32,15 +37,15 @@ module ClientApi
         ne_lng = params[:ne_lng]
         error = !sw_lat || !sw_lng || !ne_lat || !ne_lng
         if !error
-          if is_global
-            @speed_tests = ClientSpeedTest.all.where(
-              'latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
-              sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f)
-          else
-            @speed_tests = ClientSpeedTest.all.where(
-              'tested_by = ? AND latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
-              @widget_client.id, sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f)
-          end
+          @speed_tests = if is_global
+                           ClientSpeedTest.all.where(
+                             'latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
+                             sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f)
+                         else
+                           ClientSpeedTest.all.where(
+                             'tested_by = ? AND latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
+                             @widget_client.id, sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f)
+                         end
         end
         respond_to do |format|
           if error
@@ -54,7 +59,21 @@ module ClientApi
       private
 
       def speed_test_params
-        params.require(:speed_test).permit(:latitude, :longitude, :tested_at, :address, :network_location, :network_type, :network_cost, :city, :state, :street, :house_number, :postal_code, :connection_data, :version_number, :build_number, :altitude, :accuracy, :address_provider, :background_mode, :alt_accuracy, :floor, :heading, :speed, :speed_accuracy)
+        params.require(:speed_test).permit(
+          :latitude, :longitude, :tested_at, :address, :network_location, :network_type, :network_cost, :city,
+          :state, :street, :house_number, :postal_code, :connection_data, :version_number, :build_number, :altitude,
+          :accuracy, :address_provider, :background_mode, :alt_accuracy, :floor, :heading, :speed, :speed_accuracy
+        )
+      end
+
+      def mobile_speed_test_params
+        params.require(:speed_test).permit(
+          :tested_at, :address, :network_location, :network_type, :network_cost, :city, :state, :street,
+          :house_number, :postal_code, :connection_data, :version_number, :build_number, :address_provider,
+          :background_mode, :latitude, :latitude_after, :longitude, :longitude_after, :altitude, :altitude_after,
+          :accuracy, :accuracy_after, :alt_accuracy, :alt_accuracy_after, :floor, :floor_after, :heading,
+          :heading_after, :speed, :speed_after, :speed_accuracy, :speed_accuracy_after
+        )
       end
     end
   end

@@ -1,7 +1,7 @@
-import 'package:client_mobile_app/resources/app_colors.dart';
-import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/app_colors.dart';
 
 class LocationIndicator extends StatelessWidget {
   const LocationIndicator({

@@ -35,8 +35,8 @@ class LocationStepCubit extends Cubit<LocationStepState> {
       return [];
     }
     _completer = Completer<List<Location>>();
-    _delayedSearchTimer =
-        Timer(const Duration(milliseconds: 400), () async => _completer!.complete(await _search(query)));
+    _delayedSearchTimer = Timer(
+        const Duration(milliseconds: 400), () async => _completer!.complete(await _search(query)));
     return _completer!.future;
   }
 
@@ -45,7 +45,8 @@ class LocationStepCubit extends Cubit<LocationStepState> {
       if (_delayedSearchTimer != null) _delayedSearchTimer!.cancel();
       emit(state.searchingForNewLocation(query));
       final locations = await _locationsService.getSuggestedLocations(query);
-      emit(state.copyWith(suggestions: locations, isLocationLoading: false, loadingSuggestions: false));
+      emit(state.copyWith(
+          suggestions: locations, isLocationLoading: false, loadingSuggestions: false));
       return locations;
     }
     return [];
@@ -56,7 +57,9 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     final isUsingGeolocation = state.isUsingGeolocation;
     final geolocation = state.geolocation;
     emit(LocationStepState(
-        isGeolocationEnabled: isGeolocationEnabled, isUsingGeolocation: isUsingGeolocation, geolocation: geolocation));
+        isGeolocationEnabled: isGeolocationEnabled,
+        isUsingGeolocation: isUsingGeolocation,
+        geolocation: geolocation));
   }
 
   Future<void> loadGeolocation() async {
@@ -92,7 +95,6 @@ class LocationStepCubit extends Cubit<LocationStepState> {
   }
 
   Future<Location?> getLocationByLatLng(double lat, double lng) async {
-    emit(state.copyWith(isGeolocationLoading: true));
     final location = await _locationsService.getLocationByCoordinates(lat, lng);
     return location;
   }
@@ -139,6 +141,9 @@ class LocationStepCubit extends Cubit<LocationStepState> {
 
   void confirmInputLocation(Location location) {
     emit(state.copyWith(
-        isUsingGeolocation: false, isLocationConfirmed: true, needsToConfirmLocation: false, location: location));
+        isUsingGeolocation: false,
+        isLocationConfirmed: true,
+        needsToConfirmLocation: false,
+        location: location));
   }
 }
