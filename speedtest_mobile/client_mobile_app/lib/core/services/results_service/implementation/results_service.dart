@@ -27,8 +27,7 @@ class ResultsService implements IResultsService {
   }
 
   @override
-  void addResult(
-      List<Map<String, dynamic>> responses, TestResult result, ConnectionInfo? connectionInfo) {
+  void addResult(List<Map<String, dynamic>> responses, TestResult result, ConnectionInfo? connectionInfo) {
     _localStorage.addResult(result.toJson());
     _httpProvider
         .postAndDecode(
@@ -38,8 +37,7 @@ class ResultsService implements IResultsService {
     )
         .then((failureOrSuccess) {
       if (failureOrSuccess.failure != null) {
-        Sentry.captureException(failureOrSuccess.failure!.exception,
-            stackTrace: failureOrSuccess.failure!.stackTrace);
+        Sentry.captureException(failureOrSuccess.failure!.exception, stackTrace: failureOrSuccess.failure!.stackTrace);
       }
     });
   }
