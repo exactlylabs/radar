@@ -540,7 +540,6 @@ ActiveRecord::Schema.define(version: 2023_06_12_164917) do
     t.index ["parent_aggregate_id"], name: "index_study_level_projections_on_parent_aggregate_id"
     t.index ["study_aggregate_id"], name: "index_study_level_projections_on_study_aggregate_id"
     t.index ["timestamp"], name: "test_study_level_projs_timestamp", order: :desc
-
   end
 
   create_table "system_outages", force: :cascade do |t|
