@@ -32,7 +32,7 @@ class ResultsService implements IResultsService {
     _localStorage.addResult(result.toJson());
     _httpProvider
         .postAndDecode(
-      url: '${_restClient.speedTest}?client_id=$CLIENT_ID&mobile=true',
+      url: _restClient.speedTest,
       headers: {'Content-Type': 'application/json'},
       body: _buildBody(responses, result, connectionInfo),
     )

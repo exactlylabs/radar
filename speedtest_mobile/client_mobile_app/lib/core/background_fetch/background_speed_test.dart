@@ -81,7 +81,7 @@ class BackgroundSpeedTest {
 
   void _sendSpeedTestResults() {
     _httpProvider.postAndDecode(
-      url: '${_restClient.speedTest}&client_id=$CLIENT_ID',
+      url: _restClient.speedTest,
       headers: {'Content-Type': 'application/json'},
       body: {
         'result': {'raw': _responses},
@@ -109,6 +109,4 @@ class BackgroundSpeedTest {
       },
     );
   }
-
-  static const int CLIENT_ID = 1;
 }
