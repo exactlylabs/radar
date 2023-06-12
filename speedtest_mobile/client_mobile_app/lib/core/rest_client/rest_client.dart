@@ -17,7 +17,7 @@ class RestClient {
   }
 
   // Add here the paths for the different services:
-  static const String _speedTest = '/client_api/v1/speed_tests?mobile=true';
+  static const String _speedTest = '/client_api/v1/speed_tests?client_id=$_CLIENT_ID&mobile=true';
 
   static const String _suggestedLocations = '/client_api/v1/suggestions';
 
@@ -26,4 +26,6 @@ class RestClient {
   static const String _userCoordinates = '/client_api/v1/user_coordinates';
 
   final String _baseUrl;
+
+  static const int _CLIENT_ID = 1;
 }
