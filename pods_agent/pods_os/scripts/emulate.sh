@@ -75,6 +75,7 @@ qemu-system-aarch64 \
   -serial stdio \
   -netdev user,id=net1,hostfwd=tcp::2222-:22 \
   -device usb-net,netdev=net1 \
-  -netdev bridge,id=net0 \
-  -device usb-net,netdev=net0,mac=cc:9a:1d:1f:cf:0b \
   -append "rw earlyprintk loglevel=8 console=ttyAMA0,115200 console=tty1 dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2 rootdelay=1"
+  # -netdev bridge,id=net0 \
+  # -device usb-net,netdev=net0,mac=cc:9a:1d:1f:cf:0b \
+
