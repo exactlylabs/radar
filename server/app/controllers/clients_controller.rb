@@ -77,8 +77,8 @@ class ClientsController < ApplicationController
     # If no secret, then we need to authenticate
     if !@client
       authenticate_user!
-      clients = current_user.super_user? ? Client : policy_scope(Client)
-      @client = clients.find_by_unix_user(params[:id])
+      @client = Client.find_by_unix_user(params[:id])
+      authorize @client, :can_run_test?
     end
 
     respond_to do |format|
@@ -444,15 +444,16 @@ class ClientsController < ApplicationController
     if !current_account.superaccount
       head(403)
     end
-    @clients = Client.where(account: nil).where_online
+    @clients = Client.where_no_account.where_online
   end
 
   private
 
   # Use callbacks to share common setup or constraints between actions.
   def set_client
-    clients = current_user.super_user? ? Client : policy_scope(Client)
-    @client = clients.find_by_unix_user(params[:id])
+    @client = Client.find_by_unix_user(params[:id])
+    authorize @client, :can_edit_client?
+
     if !@client
       raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])
     end

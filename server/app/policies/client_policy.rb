@@ -20,4 +20,14 @@ class ClientPolicy < ApplicationPolicy
       end
     end
   end
+
+  def can_run_test?
+    scope = Scope.new(@auth_holder, Client)
+    @auth_holder&.account.superaccount? || scope.resolve.find(@record.id).exists?
+  end
+
+  def can_edit_client?
+    scope = Scope.new(@auth_holder, Client)
+    @auth_holder&.account.superaccount? || scope.resolve.find(@record.id).exists?
+  end
 end
