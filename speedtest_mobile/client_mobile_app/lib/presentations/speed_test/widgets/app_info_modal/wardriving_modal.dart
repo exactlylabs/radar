@@ -13,24 +13,26 @@ class WardrivingModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppInfoModalCubit, AppInfoModalState>(
-      builder: (context, state) => EnableWardrivingMode(
-        onCancel: () {
-          context.read<AppInfoModalCubit>().cancel();
-          Navigator.of(context).pop();
-        },
-        onChanged: (delay) => context.read<AppInfoModalCubit>().updateDelay(delay),
-        onEnabled: () {
-          bool isValid = context.read<AppInfoModalCubit>().validateDelay();
-          if (isValid) {
-            context.read<BackgroundFetchBloc>().setDelay(state.delay ?? -1);
-            context.read<BackgroundFetchBloc>().enableBackgroundSpeedTest();
+      builder: (context, state) {
+        return EnableWardrivingMode(
+          onCancel: () {
+            context.read<AppInfoModalCubit>().cancel();
             Navigator.of(context).pop();
-          }
-        },
-        onBlur: () => context.read<AppInfoModalCubit>().validateDelay(),
-        delay: state.delay,
-        warning: state.warning,
-      ),
+          },
+          onChanged: (delay) => context.read<AppInfoModalCubit>().updateDelay(delay),
+          onEnabled: () {
+            bool isValid = context.read<AppInfoModalCubit>().validateDelay();
+            if (isValid) {
+              context.read<BackgroundFetchBloc>().setDelay(state.delay ?? -1);
+              context.read<BackgroundFetchBloc>().enableBackgroundSpeedTest();
+              Navigator.of(context).pop();
+            }
+          },
+          onBlur: () => context.read<AppInfoModalCubit>().validateDelay(),
+          delay: state.delay,
+          warning: state.warning,
+        );
+      },
     );
   }
 }

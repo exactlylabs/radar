@@ -33,7 +33,9 @@ class SpeedTestPage extends StatelessWidget {
                 ),
               ],
             ),
-            if (!state.termsAccepted)
+            if (state.isLoadingTerms)
+              Container()
+            else if (!state.termsAccepted)
               const AcceptTermsPage()
             else if (state.isFormEnded)
               const NoInternetConnectionPage()
@@ -52,7 +54,8 @@ class SpeedTestPage extends StatelessWidget {
     );
   }
 
-  Future<void> _openInfoModal(BuildContext context, String? versionNumber, String? buildNumber) async {
+  Future<void> _openInfoModal(
+      BuildContext context, String? versionNumber, String? buildNumber) async {
     return modalWithTitle(
       context,
       true,

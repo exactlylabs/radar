@@ -1,14 +1,20 @@
 import 'dart:io';
 
-import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_state.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AppInfoModalCubit extends Cubit<AppInfoModalState> {
   AppInfoModalCubit() : super(const AppInfoModalState());
 
-  void enableWardrivingMode() {
-    emit(state.copyWith(enableWardrivingMode: true));
+  Future<void> enableWardrivingMode() async {
+    final updateSettings = await shouldUpdateLocationSettings();
+    if (updateSettings) {
+      emit(state.copyWith(locationSettingsShouldBeUpdated: true));
+    } else {
+      emit(state.copyWith(enableWardrivingMode: true, locationSettingsShouldBeUpdated: false));
+    }
   }
 
   void disableWardrivingMode() {
@@ -43,5 +49,20 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
         return true;
       }
     }
+  }
+
+  Future<bool> shouldUpdateLocationSettings() async {
+    final permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.always) {
+      return false;
+    } else if (permission == LocationPermission.denied) {
+      final permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.always) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return true;
   }
 }

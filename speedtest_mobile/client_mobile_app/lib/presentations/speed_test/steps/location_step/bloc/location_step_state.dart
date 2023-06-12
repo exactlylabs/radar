@@ -10,6 +10,7 @@ class LocationStepState {
     this.isLocationLoading = false,
     this.isLocationConfirmed = false,
     this.needsToConfirmLocation = false,
+    this.requestLocationPermission = false,
     this.isUsingGeolocation,
     this.geolocation,
     this.location,
@@ -26,6 +27,7 @@ class LocationStepState {
     bool? isLocationLoading,
     bool? isLocationConfirmed,
     bool? needsToConfirmLocation,
+    bool? requestLocationPermission,
     Location? geolocation,
     Location? location,
     String? failure,
@@ -42,6 +44,7 @@ class LocationStepState {
       isUsingGeolocation: isUsingGeolocation ?? this.isUsingGeolocation,
       isLocationConfirmed: isLocationConfirmed ?? this.isLocationConfirmed,
       needsToConfirmLocation: needsToConfirmLocation ?? this.needsToConfirmLocation,
+      requestLocationPermission: requestLocationPermission ?? this.requestLocationPermission,
       failure: failure ?? this.failure,
     );
   }
@@ -60,6 +63,7 @@ class LocationStepState {
       isLocationConfirmed: false,
       needsToConfirmLocation: false,
       failure: failure,
+      requestLocationPermission: requestLocationPermission,
     );
   }
 
@@ -85,4 +89,5 @@ class LocationStepState {
   final bool? isUsingGeolocation;
   final bool isLocationConfirmed;
   final bool needsToConfirmLocation;
+  final bool requestLocationPermission;
 }
