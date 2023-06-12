@@ -14,13 +14,7 @@
         </span>
       </div>
       <div class="pod-name--container">
-        <a class="forms--label"
-            style="max-width: 15vw"
-            href="<%= client_path(client.unix_user)%>" data-turbo-frame="_top"
-           id="client_<%= client.id %>_name"
-        >
-            <%= client.name.present? ? client.name : "Unnamed Pod" %>
-        </a>
+          <%= client.name.present? ? client.name : "Unnamed Pod" %>
         <div class="help-text mb-0">
             <%= client.unix_user %>
         </div>
