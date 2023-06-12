@@ -17,7 +17,7 @@ class RestClient {
   }
 
   // Add here the paths for the different services:
-  static const String _speedTest = '/client_api/v1/speed_tests';
+  static const String _speedTest = '/client_api/v1/speed_tests?mobile=true';
 
   static const String _suggestedLocations = '/client_api/v1/suggestions';
 

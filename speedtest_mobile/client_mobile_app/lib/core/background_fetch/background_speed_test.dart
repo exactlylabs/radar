@@ -79,13 +79,27 @@ class BackgroundSpeedTest {
 
   void _sendSpeedTestResults() {
     _httpProvider.postAndDecode(
-      url: '${_restClient.speedTest}?client_id=$CLIENT_ID',
+      url: '${_restClient.speedTest}&client_id=$CLIENT_ID',
       headers: {'Content-Type': 'application/json'},
       body: {
         'result': {'raw': _responses},
         'speed_test': {
-          'before_speed_test': _positionBeforeSpeedTest?.toJson(),
-          'after_speed_test': _positionAfterSpeedTest?.toJson(),
+          'longitude': _positionBeforeSpeedTest?.longitude,
+          'latitude': _positionBeforeSpeedTest?.latitude,
+          'accuracy': _positionBeforeSpeedTest?.accuracy,
+          'altitude': _positionBeforeSpeedTest?.altitude,
+          'floor': _positionBeforeSpeedTest?.floor,
+          'heading': _positionBeforeSpeedTest?.heading,
+          'speed': _positionBeforeSpeedTest?.speed,
+          'speed_accuracy': _positionBeforeSpeedTest?.speedAccuracy,
+          'longitude_after': _positionAfterSpeedTest?.longitude,
+          'latitude_after': _positionAfterSpeedTest?.latitude,
+          'accuracy_after': _positionAfterSpeedTest?.accuracy,
+          'altitude_after': _positionAfterSpeedTest?.altitude,
+          'floor_after': _positionAfterSpeedTest?.floor,
+          'heading_after': _positionAfterSpeedTest?.heading,
+          'speed_after': _positionAfterSpeedTest?.speed,
+          'speed_accuracy_after': _positionAfterSpeedTest?.speedAccuracy,
         },
         'connection_data': _connectionInfo?.toJson(),
         'timestamp': DateTime.now().toUtc().toIso8601String(),
