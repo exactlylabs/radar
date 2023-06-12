@@ -28,7 +28,7 @@ class UpdateWatchdogVersionsJob < ApplicationJob
         )
         .order('RANDOM()')
         .limit(increment)
-        .each { |client| client.(target_watchdog_version_id: update_group.watchdog_version_id) }
+        .each { |client| client.update(target_watchdog_version_id: update_group.watchdog_version_id) }
       return
     elsif increment.negative?
       query = clients
