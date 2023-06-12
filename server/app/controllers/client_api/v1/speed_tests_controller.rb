@@ -13,7 +13,7 @@ module ClientApi
         @speed_test.tested_by = params[:client_id]
         filename = "speed-test-#{params[:timestamp]}.json"
         json_content = params[:result].to_json
-        @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: "application/json")
+        @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: 'application/json')
         @speed_test.save!
         # Call process to parse JSON and seed measurement
         ProcessSpeedTestJob.perform_later @speed_test
@@ -37,15 +37,15 @@ module ClientApi
         ne_lng = params[:ne_lng]
         error = !sw_lat || !sw_lng || !ne_lat || !ne_lng
         if !error
-          if is_global
-            @speed_tests = ClientSpeedTest.all.where(
-              'latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
-              sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f)
-          else
-            @speed_tests = ClientSpeedTest.all.where(
-              'tested_by = ? AND latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
-              @widget_client.id, sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f)
-          end
+          @speed_tests = if is_global
+                           ClientSpeedTest.all.where(
+                             'latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
+                             sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f)
+                         else
+                           ClientSpeedTest.all.where(
+                             'tested_by = ? AND latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
+                             @widget_client.id, sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f)
+                         end
         end
         respond_to do |format|
           if error
