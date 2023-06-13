@@ -23,7 +23,7 @@ class PublicPodController < PublicApplicationController
   end
 
   def setup
-    if @client.claimed_by_id
+    if @client.account.present?
       respond_to do |format|
         format.html { redirect_to "/check/#{@client.unix_user}" }
       end
@@ -31,7 +31,7 @@ class PublicPodController < PublicApplicationController
   end
 
   def status
-    if !@client.claimed_by_id
+    if @client.account.nil?
       respond_to do |format|
         format.html { redirect_to "/setup/#{@client.unix_user}" }
       end
