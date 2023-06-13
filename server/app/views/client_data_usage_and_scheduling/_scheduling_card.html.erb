@@ -1,4 +1,4 @@
-<div class="card" style="width: 100%; height: max-content">
+<div class="card w-100">
   <div class="card-header d-flex align-items-center" style="height: 65px">
     <div class="dialog-main-title">Scheduling</div>
   </div>
@@ -10,7 +10,7 @@
           <p class="mb-4 <%= !client.custom_scheduling ? "additional-text" : "regular-text" %>">
             <%= client.custom_scheduling ? "Enabled" : "Disabled" %>
           </p>
-          <p class="regular-text">
+          <p class="regular-text text-wrap">
             <%= client.get_scheduling_periodicity_string %>
           </p>
           <% if !client.custom_scheduling %>
@@ -35,10 +35,16 @@
     </div>
     <div class="d-flex justify-content-end align-items-start" style="width: 40%; margin-top: 30px;">
       <button type="button"
-              class="custom-button custom-button--primary custom-button--lg"
+              class="clients--manage-button custom-button custom-button--primary custom-button--lg"
               data-bs-target="#manage_pod_scheduling_modal"
               data-bs-toggle="modal"
       >Manage Custom Scheduling
+      </button>
+      <button type="button"
+              class="clients--manage-button-small custom-button custom-button--primary custom-button--lg"
+              data-bs-target="#manage_pod_scheduling_modal"
+              data-bs-toggle="modal"
+      >Manage
       </button>
     </div>
   </div>

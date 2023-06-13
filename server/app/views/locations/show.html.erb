@@ -23,9 +23,18 @@
 
 <div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-    <div class="w-100 d-flex" style="max-width: none;">
+    <div class="clients--details-container">
+
       <!--begin::OptionsCard-->
-        <%= render partial: "options_card", locals: { location: @location, style: 'locations' } %>
+        <%= render partial: "application/components/tabs/page_tabs",
+          locals: {
+            tabs: [
+              { text: 'Overview', path: location_path(@location) },
+              { text: 'Pods', path: location_clients_path(@location.id) },
+              { text: 'Measurements', path: location_measurements_path(@location.id) },
+            ]
+          }
+        %>
       <!--end::OptionsCard-->
       <!--begin::LocationCard-->
         <%= render partial: "location_details", locals: { location: @location } %>

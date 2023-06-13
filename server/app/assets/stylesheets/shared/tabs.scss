@@ -1,0 +1,24 @@
+@import "colors.scss";
+
+.page-tabs--container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-left: 1rem;
+  border-bottom: solid 1px rgba(188, 187, 199, 0.3);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.page-tabs--tab {
+  padding: .5rem 1.5rem;
+}
+
+.page-tabs--tab-link {
+  font-size: 1rem;
+  color: $dark-gray;
+  text-decoration: none;
+}

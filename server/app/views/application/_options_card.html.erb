@@ -1,9 +1,11 @@
 <div class="clients--options-card-container">
-  <div class="clients--options-card-list">
+  <div class="clients--options-card-list"
+    data-type="<%= style %>"
+  >
     <% if style == 'clients' %>
-      <%= render partial: "client_options_card", locals: {client: client} %>
+      <%= render partial: "client_options_card", locals: {client: client, style: style} %>
     <% else %>
-      <%= render partial: "location_options_card", locals: {location: location} %>
+      <%= render partial: "location_options_card", locals: {location: location, style: style} %>
     <% end %>
   </div>
 </div>

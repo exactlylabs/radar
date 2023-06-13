@@ -1,0 +1,9 @@
+<div class="page-tabs--container">
+  <% tabs.each do |tab| %>
+    <div class="page-tabs--tab" style="<%= active_full_path?(tab[:path]) ? "border-bottom: solid 2px #4b7be5" : nil %>">
+      <a href="<%= tab[:path] %>"
+        class="<%= active_full_path?(tab[:path]) ? "fw-bold" : nil %> page-tabs--tab-link"
+      ><%= tab[:text] %></a>
+    </div>
+  <% end %>
+</div>

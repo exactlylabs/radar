@@ -1,26 +1,23 @@
-<li class="list-group-item border-0 mb-5 p-0 d-flex justify-content-start">
-  <a href="<%= location_path(location) %>"
-      class="btn btn-active-light btn-active-color-primary
-            btn-active-icon-primary text-start px-3 w-100
-            d-flex justify-content-start align-items-center flex-row
-            <%= active_full_path?(location_path(location)) %>">
-    <span class="svg-icon mx-0" style="height: 14px; width: 14px;">
+<div class="clients--options-card-row"
+  data-is-active="<%= active_full_path?(location_path(location)) %>"
+  data-type="<%= style %>"
+>
+  <a href="<%= location_path(location) %>" class="ellipsis clients--options-card-row-button">
+    <span class="svg-icon mx-0 svg-icon-2h <%= active_full_path?(location_path(location)) ? 'svg-icon-primary' : nil %>">
       <svg width="14px" height="14px" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" fill="none">
         <rect id="Rectangle" opacity="0.3" x="1" y="6" width="12" height="2" rx="1" fill="black"/>
         <rect id="Rectangle" opacity="0.3" x="1" y="10" width="6" height="2" rx="1" fill="black"/>
         <rect id="Rectangle" x="1" y="2" width="12" height="2" rx="1" fill="black"/>
     </svg>
     </span>
-    <div class="d-md-none d-xl-block ms-3 forms--label <%= is_active_full_path?(location_path(location.id)) ? 'forms--label-selected' : nil %>">Overview</div>
+    <span class="ellipisis ms-2 forms--label <%= is_active_full_path?(location_path(location.id)) ? 'forms--label-selected' : nil %>">Overview</span>
   </a>
-</li>
-<li class="list-group-item border-0 mb-5 p-0 d-flex justify-content-start">
-  <a href="<%= location_clients_path(location) %>" 
-      class="btn btn-active-light btn-active-color-primary 
-            btn-active-icon-primary text-start px-3 w-100
-            d-flex justify-content-start align-items-center flex-row
-            <%= active_full_path?(location_clients_path(location)) %>">
-    <span class="svg-icon mx-0" style="height: 14px; width: 14px;">
+</div>
+<div class="clients--options-card-row"
+  data-is-active="<%= active_full_path?(location_clients_path(location)) %>"
+>
+  <a href="<%= location_clients_path(location) %>" class="ellipsis clients--options-card-row-button">
+    <span class="svg-icon mx-0 svg-icon-2h <%= is_active_full_path?(location_clients_path(location.id)) ? 'svg-icon-primary' : nil %>">
       <!--begin::Svg Icon | path: assets/media/icons/duotune/electronics/elc007.svg-->    
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">          
         <path d="M12.4409 22C13.5455 22 14.4409 21.1046 14.4409 20C14.4409 18.8954 13.5455 18 12.4409 18C11.3364 18 10.4409 18.8954 10.4409 20C10.4409 21.1046 11.3364 22 12.4409 22Z" fill="black"/>
@@ -30,17 +27,15 @@
       </svg>
       <!--end::Svg Icon-->
     </span>
-    <div class="d-md-none d-xl-block ms-3 forms--label <%= is_active_full_path?(location_clients_path(location.id)) ? 'forms--label-selected' : nil %>"">Pods</div>
+    <span class="ellipisis ms-2 forms--label <%= is_active_full_path?(location_clients_path(location.id)) ? 'forms--label-selected' : nil %>"">Pods</span>
   </a>
-</li>
-<li class="list-group-item border-0 p-0 d-flex justify-content-start">
-  <a href="<%= location_measurements_path(location) %>"
-      class="btn btn-active-light btn-active-color-primary 
-            btn-active-icon-primary text-start px-3 w-100
-            d-flex justify-content-start align-items-center flex-row
-            <%= active_full_path?(location_measurements_path(location)) %>">
+</div>
+<div class="clients--options-card-row"
+  data-is-active="<%= active_full_path?(location_measurements_path(location)) %>"
+>
+  <a href="<%= location_measurements_path(location) %>" class="ellipsis clients--options-card-row-button">
     <!--begin::Svg Icon | path: assets/media/icons/duotune/general/gen032.svg-->
-    <span class="svg-icon mx-0" style="height: 14px; width: 14px;">
+    <span class="svg-icon mx-0 svg-icon-2h <%= is_active_full_path?(location_measurements_path(location.id)) ? 'svg-icon-primary' : nil %>">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
         <rect x="8" y="9" width="3" height="10" rx="1.5" fill="black"/>
         <rect opacity="0.5" x="13" y="5" width="3" height="14" rx="1.5" fill="black"/>
@@ -49,6 +44,6 @@
       </svg>
     </span>
     <!--end::Svg Icon-->
-    <div class="d-md-none d-xl-block ms-3 me-5 forms--label <%= is_active_full_path?(location_measurements_path(location.id)) ? 'forms--label-selected' : nil %>"">Measurements</div>
+    <span class="ellipisis ms-2 forms--label <%= is_active_full_path?(location_measurements_path(location.id)) ? 'forms--label-selected' : nil %>">Measurements</span>
   </a>
-</li>
+</div>

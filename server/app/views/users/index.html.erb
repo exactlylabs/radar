@@ -28,7 +28,14 @@
 <!--end::Toolbar-->
 <div class="post fs-6 d-flex flex-column" id="kt_post">
   <% if !current_account.is_all_accounts? %>
-    <%= render partial: "users/members_sharing_tabs" %>
+    <%= render partial: "application/components/tabs/page_tabs",
+        locals: {
+          tabs: [
+            { text: 'Members', path: users_account_index_path },
+            { text: 'Account Sharing', path: users_account_shared_path }
+          ]
+        }
+     %>
   <% end %>
   <%= render partial: "users/users_table_filters" %>
   <!--begin::Container-->
