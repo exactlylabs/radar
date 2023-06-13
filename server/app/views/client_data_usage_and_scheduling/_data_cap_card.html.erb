@@ -1,4 +1,4 @@
-<div class="card" style="width: 100%; height: max-content; margin-bottom: 25px">
+<div class="card w-100 mb-6">
   <div class="card-header d-flex align-items-center" style="height: 65px">
     <div class="dialog-main-title">Data Usage</div>
   </div>
@@ -6,13 +6,13 @@
     <div style="margin-top: 30px; width: 60%">
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="forms--label w-50" style="min-width: 130px">Avg. Data Usage</div>
-        <div class="d-flex flex-row w-100 w-xl-50 <%= client.data_cap_max_usage.nil? ? "additional-text" : "regular-text" %>">
+        <div class="ellipsis mw-xl-50 w-100 w-xl-50 <%= client.data_cap_max_usage.nil? ? "additional-text" : "regular-text" %>">
           <%= client.get_measurement_data(total_avg) %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-start justify-content-between flex-wrap">
         <div class="forms--label w-50" style="min-width: 130px">Data Cap</div>
-        <div class="d-flex flex-column w-100 w-xl-50 <%= client.data_cap_max_usage.nil? ? "additional-text" : "regular-text" %>">
+        <div class="ellipsis d-flex flex-column w-100 w-xl-50 <%= client.data_cap_max_usage.nil? ? "additional-text" : "regular-text" %>">
           <%= client.data_cap_max_usage.nil? ? "Disabled" : "#{(client.data_cap_max_usage / (1024 ** 2)).round(0)} MB per #{client.get_periodicity_period}" %>
           <% if client.data_cap_max_usage.nil? %>
             <div class="d-flex flex-row justify-content-start align-items-center text-hover-light-primary mt-2" style="cursor: pointer">
@@ -51,10 +51,16 @@
     </div>
     <div class="d-flex justify-content-end align-items-start" style="width: 40%; margin-top: 30px;">
       <button type="button"
-              class="custom-button custom-button--primary custom-button--lg"
+              class="clients--manage-button custom-button custom-button--primary custom-button--lg"
               data-bs-target="#manage_pod_data_cap_modal"
               data-bs-toggle="modal"
       >Manage Data Cap
+      </button>
+      <button type="button"
+              class="clients--manage-button-small custom-button custom-button--primary custom-button--lg"
+              data-bs-target="#manage_pod_data_cap_modal"
+              data-bs-toggle="modal"
+      >Manage
       </button>
     </div>
   </div>

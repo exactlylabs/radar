@@ -25,7 +25,16 @@
   <!--begin::Container-->
   <div class="clients--details-container">
     <!--begin::OptionsCard-->
-    <%= render partial: "options_card", locals: { client: @client, location: nil, style: 'clients' } %>
+    <%= render partial: "application/components/tabs/page_tabs",
+      locals: {
+        tabs: [
+          { text: 'Overview', path: client_path(@client.unix_user) },
+          { text: 'Measurements', path: client_measurements_path(@client.unix_user) },
+          { text: 'Data Usage & Scheduling', path: client_data_usage_and_scheduling_path(@client.unix_user) },
+          { text: 'Technical Info', path: client_technical_info_path(@client.unix_user) },
+        ]
+      }
+    %>
     <!--end::OptionsCard-->
     <!--begin::Card-->
     <%= render partial: "client_details", locals: { client: @client, total_bytes: @total_avg } %>

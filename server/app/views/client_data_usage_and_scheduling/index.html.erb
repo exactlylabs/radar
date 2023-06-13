@@ -23,17 +23,18 @@
 
 <div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-  <div class="w-100 d-flex" style="max-width: none;">
-    <%= render partial: "options_card", locals: { client: @client.unix_user, location: nil, style: 'clients' } %>
-    <div class="d-flex flex-column d-xl-block d-md-none" style="width: calc(100% - 16% - 30px)">
-      <!--begin::Data Cap Card-->
-      <%= render partial: "data_cap_card", locals: {client: @client, total_avg: @total_avg} %>
-      <!--end::Data Cap Card-->
-      <!--begin::Scheduling Card-->
-      <%= render partial: "scheduling_card", locals: {client: @client} %>
-      <!--end::Scheduling Card-->
-    </div>
-    <div class="d-flex flex-column d-xl-none d-md-block" style="width: calc(100% - 8% - 30px)">
+  <div class="clients--details-container">
+    <%= render partial: "application/components/tabs/page_tabs",
+      locals: {
+        tabs: [
+          { text: 'Overview', path: client_path(@client.unix_user) },
+          { text: 'Measurements', path: client_measurements_path(@client.unix_user) },
+          { text: 'Data Usage & Scheduling', path: client_data_usage_and_scheduling_path(@client.unix_user) },
+          { text: 'Technical Info', path: client_technical_info_path(@client.unix_user) },
+        ]
+      }
+    %>
+    <div class="d-flex flex-column clients--detail-card">
       <!--begin::Data Cap Card-->
       <%= render partial: "data_cap_card", locals: {client: @client, total_avg: @total_avg} %>
       <!--end::Data Cap Card-->

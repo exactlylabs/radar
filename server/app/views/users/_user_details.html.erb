@@ -1,6 +1,6 @@
 <div class="card w-100" id="client-details">
   <!--begin::Card title-->
-  <div class="card-title-container p-6 d-flex flex-row justify-content-between align-items-center">
+  <div class="card-title-container p-6 d-flex flex-row flex-wrap justify-content-between align-items-center">
     <div class="card-title--wrapper d-flex flow-row align-items-center">
       <div class="card-title--icon d-flex align-items-center justify-content-center"
           style="height: 70px; width: 70px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
@@ -9,10 +9,10 @@
         </span>
       </div>
       <div class="card-title--title-content">
-        <div class="card-main-title">
+        <div class="card-main-title ellipis">
           <%= "#{user_account.user.first_name} #{user_account.user.last_name}" %>
         </div>
-        <div class="additional-text">
+        <div class="additional-text ellipsis">
           <%= user_account.user.email %>
         </div>
       </div>

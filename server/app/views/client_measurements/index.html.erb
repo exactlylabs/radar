@@ -23,13 +23,19 @@
 
 <div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-  <div class="w-100 d-flex" style="max-width: none;">
-    <%= render partial: "options_card", locals: { client: @client.unix_user, location: nil, style: 'clients' } %>
+  <div class="clients--details-container">
+    <%= render partial: "application/components/tabs/page_tabs",
+      locals: {
+        tabs: [
+          { text: 'Overview', path: client_path(@client.unix_user) },
+          { text: 'Measurements', path: client_measurements_path(@client.unix_user) },
+          { text: 'Data Usage & Scheduling', path: client_data_usage_and_scheduling_path(@client.unix_user) },
+          { text: 'Technical Info', path: client_technical_info_path(@client.unix_user) },
+        ]
+      }
+    %>
     <!--begin::Card-->
-    <div class="card d-md-none d-xl-block" style="width: calc(100% - 16% - 30px); height: max-content">
-      <%= render partial: "client_measurements/measurements_table", locals: {client: @client, measurements: @measurements} %>
-    </div>
-    <div class="card d-md-block d-xl-none" style="width: calc(100% - 8% - 30px); height: max-content">
+    <div class="card clients--detail-card">
       <%= render partial: "client_measurements/measurements_table", locals: {client: @client, measurements: @measurements} %>
     </div>
     <!--end::Card-->

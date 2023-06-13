@@ -20,7 +20,14 @@
 </div>
 <!--end::Toolbar-->
 <div class="post fs-6 d-flex flex-column" id="kt_post">
-  <%= render partial: "users/members_sharing_tabs" %>
+  <%= render partial: "application/components/tabs/page_tabs",
+        locals: {
+          tabs: [
+            { text: 'Members', path: users_account_index_path },
+            { text: 'Account Sharing', path: users_account_shared_path }
+          ]
+        }
+     %>
   <div class="card">
     <!--begin::Card body-->
     <div class="card-body pt-8 px-6 d-flex flex-column">
