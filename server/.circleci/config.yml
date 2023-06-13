@@ -1,0 +1,66 @@
+version: 2.1
+
+orbs:
+  ruby: circleci/ruby@2.0.1
+
+commands:
+  tests:
+    steps:
+      - run:
+          command: bundle exec rails test
+          working_directory: server
+
+  system_tests:
+    steps:
+      - run:
+          command: bundle exec rails test:system
+          working_directory: server
+
+  setup_db:
+    steps:
+      - run:
+          command: |
+            bundle exec rake db:create
+            bundle exec rake db:structure:load
+          working_directory: server
+          name: Setup DB
+
+  wait_psql:
+    steps:
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          working_directory: server
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+jobs:
+  run_tests:
+    docker:
+      - image: cimg/ruby:3.0-node
+        environment:
+          DATABASE_URL: 'postgis://postgres:postgres@localhost:5432/radar_test'
+      - image: cimg/postgres:13.10-postgis
+        environment:
+          POSTGRES_DB: radar_test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+
+    steps:
+      - checkout
+      - wait_psql
+      - ruby/install-deps:
+          app-dir: server
+          bundler-version: '2.2.33'
+      - setup_db
+      - tests
+      - system_tests
+
+
+workflows:
+  pods_server_commit_jobs: # jobs to run on every commit
+    jobs:
+      - run_tests
