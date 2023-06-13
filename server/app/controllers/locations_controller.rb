@@ -1,4 +1,5 @@
 class LocationsController < ApplicationController
+  include Recents
   before_action :authenticate_user!
   before_action :check_request_origin, only: %i[ show ]
   before_action :set_location, only: %i[ show edit update destroy request_test ]
@@ -132,38 +133,6 @@ class LocationsController < ApplicationController
     def check_request_origin
       is_from_search = params[:origin].present? && params[:origin] == 'search'
       return if !is_from_search
-      location_id = params[:id]
-      if current_account.is_all_accounts?
-        possible_location = policy_scope(Location).where(id: params[:id]).first # don't want this to throw
-      else
-        possible_location = current_account.locations.where(id: params[:id]).first # don't want this to throw
-      end
-      if possible_location.present?
-        store_recent_search(possible_location.id)
-        return
-      else
-        # Client isn't present in the current account scope so we
-        # switch to that specific acocunt automatically
-        location = Location.where(id: params[:id]).first # don't want this to throw
-        if location.present?
-          new_account = policy_scope(Account).find(location.account_id)
-          set_new_account new_account
-          store_recent_search(location.id)
-          @notice = "You are now viewing #{new_account.name} account."
-        end
-      end
-    end
-
-    def store_recent_search(location_id)
-      current_recents = policy_scope(RecentSearch)
-      return if current_recents.find_by_location_id(location_id).present?
-
-      @recent_search = RecentSearch.new(user: current_user)
-      @recent_search.location_id = location_id
-      @recent_search.save!
-
-      if current_recents.count > 8
-        current_recents.first.destroy
-      end
+      store_recent_search(params[:id], Recents::RecentTypes::LOCATION)
     end
 end
