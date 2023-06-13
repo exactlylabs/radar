@@ -34,6 +34,12 @@
         <% end %>
       </script>
     <% end %>
+    <script defer>
+      const userAgent = window.navigator.userAgent;
+      if(userAgent && /MSIE|Trident/.test(userAgent)) {
+        document.getElementById("unsupported-browser-notice").classList.remove('invisble');
+      }
+    </script>
     <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
@@ -43,6 +49,7 @@
       <%= yield(:content) %>
     <% elsif user_signed_in? %>
       <div class="application--main-container">
+        <div id="unsupported-browser-notice" class="invisible application--unsupported-browser-notice">For a more pleasant experience please use a more modern broswer such as Chrome, Firefox, Safari, Opera or Edge.</div>
         <%= render partial: "application/components/sidebar/new_sidebar" %>
         <div class="application--content-container">
           <%= yield %>
