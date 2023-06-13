@@ -237,19 +237,8 @@
   margin: 0 auto 8px;
 }
 
-.public--modal-dialog-setup,
-.public--modal-content-setup {
-  width: max-content !important;
-}
-
 .public--modal-body {
-  padding: 32px 40px !important;
-  text-align: center;
-
-  &.public--modal-body-setup {
-    width: max-content !important;
-    padding: 24px 64px 40px !important;
-  }
+  text-align: center
 }
 
 #public--pod-id-modal-image {
@@ -369,13 +358,6 @@
 }
 
 .public--custom-setup-button {
-  background-color: #f6f7fa !important;
-  color: #4b7be5 !important; 
-  font-size: 15px !important;
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: space-between !important;
-  align-items: center !important;
   width: 275px;
 
   &:hover {
@@ -598,26 +580,6 @@
   #public--pod-setup-title {
     font-size: 20px;
     line-height: 25px;
-  }
-
-  .modal-dialog,
-  .public--modal-dialog-setup {
-    width: calc(100vw - 32px) !important;
-    position: absolute !important;
-    left: 50% !important;
-    margin-left: calc(16px - 50vw) !important;
-  }
-
-  .public--modal-content-setup {
-    width: calc(100vw - 32px) !important;
-  }
-
-
-  .public--modal-body {
-    &.public--modal-body-setup {
-      width: calc(100vw - 32px) !important;
-      padding: 24px 35px 40px !important;
-    }
   }
 
   .public--status-card {

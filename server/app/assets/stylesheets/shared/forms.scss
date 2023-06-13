@@ -1,13 +1,7 @@
 @import "colors";
 @import "text";
 
-.forms--label {
-  font-size: 0.875rem !important;
-  letter-spacing: 0 !important;
-  color: $deep-blue !important;
-  font-variation-settings: 'wght' $bold !important;
-  margin-bottom: 0 !important;
-}
+
 
 .forms--label-selected {
   font-size: 0.875rem;
@@ -21,41 +15,6 @@
   color: $blue;
 }
 
-.forms--checkbox {
-  width: 30px !important;
-  height: 20px !important;
-}
-
-.forms--input-group {
-  width: 100% !important;
-  position: relative;
-}
-
-.forms--text-input {
-  padding: 10px 16px !important;
-  height: 40px !important;
-  background-color: $subtle-gray !important;
-  border-radius: 6px !important;
-  font-variation-settings: 'wght' $medium !important;
-  font-size: 0.938rem !important;
-  line-height: 1.25rem;
-  color: $deep-blue !important;
-  border: none !important;
-  outline: none !important;
-
-  &.forms--text-input-focusable:focus {
-    outline: solid 2px $blue !important;
-  }
-
-  &[data-narrow="true"] {
-    padding-right: 6rem !important;
-  }
-}
-
-.forms--text-input::placeholder {
-  color: $mid-light-gray !important;
-}
-
 .forms--text-input::-webkit-search-cancel-button {
   -webkit-appearance: searchfield-cancel-button;
 }
@@ -67,8 +26,6 @@
 }
 
 .forms--input-decoration {
-  height: 40px !important;
-  width: 40px !important;
   position: absolute;
   right: 0;
   top: 0;
@@ -89,35 +46,12 @@
   }
 
   &[data-size="small"] {
-    height: 1rem !important;
-    width: 1rem !important;
     top: .75rem;
     right: 1rem;
   }
 
   &[data-x-translate="true"] {
     right: 2.75rem;
-  }
-}
-
-.forms--text-input-with-decoration {
-  padding-right: 50px !important;
-}
-
-.forms--select {
-  padding: 10px 16px !important;
-  height: 40px !important;
-  background-color: $subtle-gray !important;
-  border-radius: 6px !important;
-  font-variation-settings: 'wght' $medium !important;
-  font-size: 0.938rem !important;
-  line-height: 1.25rem;
-  color: $deep-blue !important;
-  display: flex !important;
-  align-items: center !important;
-
-  &[data-is-multi="true"] {
-    height: 50px !important;
   }
 }
 

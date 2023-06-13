@@ -588,11 +588,8 @@
 @media (max-width: 500px) {
   .modal-dialog {
     &.category--modal-dialog {
-      width: 100vw !important;
       height: 100vh;
       margin: 0;
-      left: 50% !important;
-      margin-left: -50vw !important;
     }
   }
   
@@ -605,7 +602,6 @@
   .modal-body {
     &.category--modal-body {
       height: calc(100% - 80px - 90px);
-      justify-content: flex-start !important;
     }
   }
 
