@@ -40,7 +40,9 @@ showUpdateLocationSettingsDialog(BuildContext context) {
                       fontWeight: 600,
                       color: Colors.blue,
                     )),
-                const TextSpan(text: " to get the most accurate results."),
+                const TextSpan(
+                    text:
+                        " to provide you with the locations where wireless quality is being measured on your phone as you move around."),
               ],
             )),
           ],

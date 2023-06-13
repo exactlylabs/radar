@@ -1,6 +1,6 @@
-import 'package:client_mobile_app/core/flavors/app_config.dart';
-import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/core/flavors/app_config.dart';
 
 showLocationPermissionDialog(BuildContext context,
     {required VoidCallback onAccept, required VoidCallback onDeny}) {
@@ -39,7 +39,7 @@ showLocationPermissionDialog(BuildContext context,
                     )),
                 const TextSpan(
                     text:
-                        "collects location data to enable running background speed tests even when the app is closed or not in use"),
+                        "collects location data to provide you with locations where wireless quality is being measured as you move around even when the app is closed or not in use"),
               ],
             )),
           ],
