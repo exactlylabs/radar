@@ -11,11 +11,11 @@ class NavigationCubit extends Cubit<NavigationState> {
   final Connectivity _connectivity = Connectivity();
 
   void changeTab(int index) {
-    emit(NavigationState(currentIndex: index));
+    emit(state.copyWith(currentIndex: index));
   }
 
   void changeTabWithArgs(int index, dynamic args) {
-    emit(NavigationState(currentIndex: index, args: args));
+    emit(NavigationState(currentIndex: index, args: args, canNavigate: state.canNavigate));
   }
 
   Future<void> _getConnectionStatus() async {
