@@ -504,7 +504,7 @@ class ClientsController < ApplicationController
       return
     else
       # Client isn't present in the current account scope so we
-      # switch to that specific acocunt automatically
+      # switch to that specific account automatically
       client = Client.find_by_unix_user(params[:id])
       if client.present?
         new_account = policy_scope(Account).find(client.account_id)

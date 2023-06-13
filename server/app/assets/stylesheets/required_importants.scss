@@ -1,0 +1,293 @@
+// The idea for this file is that once Bootstrap gets removed
+// entirely, then we can go through all these classes/overrides
+// and remove !important usages. This is a temporary solution.
+@import "./shared/colors.scss";
+@import "./shared/text.scss";
+
+html,
+body {
+  font-size: 16px !important;
+}
+
+.application--main-container {
+  background-color: var(--global-background-color) !important;
+}
+
+.select2-selection {
+  background-color: #f5f8fa !important;
+  border: none !important;
+}
+
+.select2-selection__rendered {
+  color: #5E6278 !important;
+}
+
+.select2-container--bootstrap5 .select2-selection--multiple:not(.form-select-sm):not(.form-select-lg) .select2-selection__choice {
+  margin: 0 !important;
+}
+
+.invisible {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+@media (max-width: 500px) {
+  .modal-dialog {
+    &.category--modal-dialog {
+      width: 100vw !important;
+      left: 50% !important;
+      margin-left: -50vw !important;
+    }
+  }
+  .modal-body {
+    &.category--modal-body {
+      justify-content: flex-start !important;
+    }
+  }
+}
+
+.public--modal-dialog-setup,
+.public--modal-content-setup {
+  width: max-content !important;
+}
+
+.public--modal-body {
+  padding: 32px 40px !important;
+  &.public--modal-body-setup {
+    width: max-content !important;
+    padding: 24px 64px 40px !important;
+  }
+}
+
+.public--custom-setup-button {
+  background-color: #f6f7fa !important;
+  color: #4b7be5 !important;
+  font-size: 15px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+@media (max-width: 550px) {
+  .modal-dialog,
+  .public--modal-dialog-setup {
+    width: calc(100vw - 32px) !important;
+    position: absolute !important;
+    left: 50% !important;
+    margin-left: calc(16px - 50vw) !important;
+  }
+
+  .public--modal-content-setup {
+    width: calc(100vw - 32px) !important;
+  }
+
+
+  .public--modal-body {
+    &.public--modal-body-setup {
+      width: calc(100vw - 32px) !important;
+      padding: 24px 35px 40px !important;
+    }
+  }
+}
+
+.custom-alert {
+  h4 {
+    color: $alert--primary-color !important;
+  }
+
+  &[data-alert-type="error"] {
+    h4 {
+      color: $alert--error-color !important;
+    }
+  }
+
+  &[data-alert-type="success"] {
+    h4 {
+      color: $alert--success-color !important;
+    }
+  }
+}
+
+.card-header {
+  &.cards--header {
+    padding: 1rem 1.5rem !important;
+    min-height: 55px !important;
+  }
+}
+
+.forms--label {
+  font-size: 0.875rem !important;
+  letter-spacing: 0 !important;
+  color: $deep-blue !important;
+  font-variation-settings: 'wght'$bold !important;
+  margin-bottom: 0 !important;
+}
+
+.forms--checkbox {
+  width: 30px !important;
+  height: 20px !important;
+}
+
+.forms--input-group {
+  width: 100% !important;
+  position: relative;
+}
+
+.forms--text-input {
+  padding: 10px 16px !important;
+  height: 40px !important;
+  background-color: $subtle-gray !important;
+  border-radius: 6px !important;
+  font-variation-settings: 'wght'$medium !important;
+  font-size: 0.938rem !important;
+  line-height: 1.25rem;
+  color: $deep-blue !important;
+  border: none !important;
+  outline: none !important;
+
+  &.forms--text-input-focusable:focus {
+    outline: solid 2px $blue !important;
+  }
+
+  &[data-narrow="true"] {
+    padding-right: 6rem !important;
+  }
+}
+
+.forms--text-input::placeholder {
+  color: $mid-light-gray !important;
+}
+
+.forms--input-decoration {
+  height: 40px !important;
+  width: 40px !important;
+
+  &[data-size="small"] {
+    height: 1rem !important;
+    width: 1rem !important;
+  }
+}
+
+.forms--text-input-with-decoration {
+  padding-right: 50px !important;
+}
+
+.forms--select {
+  padding: 10px 16px !important;
+  height: 40px !important;
+  background-color: $subtle-gray !important;
+  border-radius: 6px !important;
+  font-variation-settings: 'wght'$medium !important;
+  font-size: 0.938rem !important;
+  line-height: 1.25rem;
+  color: $deep-blue !important;
+  display: flex !important;
+  align-items: center !important;
+
+  &[data-is-multi="true"] {
+    height: 50px !important;
+  }
+}
+
+.modals--header {
+  height: 56px !important;
+  padding: 16px !important;
+}
+
+.modals--footer {
+  height: 76px !important;
+  display: flex;
+  flex-direction: row !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  padding: 16px !important;
+
+  * {
+    margin: 0 !important;
+  }
+}
+
+.modals--body {
+  padding: 24px 40px 32px !important;
+}
+
+.sidebar--search-spinner {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+}
+
+.tables--title {
+  font-variation-settings: 'wght'$bold !important;
+  color: $gray !important;
+  font-size: 0.812rem !important;
+}
+
+.table-responsive {
+  &.overflow-visible {
+    overflow: visible !important;
+  }
+}
+
+.text--primary {
+  color: $black !important;
+  color: $black !important;
+}
+
+.text--secondary {
+  color: $gray !important;
+}
+
+.text--error {
+  color: $error-red !important;
+}
+
+.text--success {
+  color: $success-green !important;
+}
+
+.fw-semi-bold {
+  font-variation-settings: 'wght'$semi-bold !important;
+}
+
+.fw-bold {
+  font-variation-settings: 'wght'$bold !important;
+}
+
+.dialog-main-title {
+  font-variation-settings: 'wght'$bold;
+  font-size: 1.25rem !important;
+  color: $deep-blue !important;
+}
+
+.table-header {
+  font-variation-settings: 'wght'$bold !important;
+  font-size: 0.812rem !important;
+  color: $gray !important;
+}
+
+.additional-text {
+  font-variation-settings: 'wght'$medium !important;
+  font-size: 0.875rem !important;
+  color: $gray !important;
+}
+
+.regular-text {
+  font-variation-settings: 'wght'$medium !important;
+  font-size: 0.875rem !important;
+  color: $deep-blue;
+}
+
+.secondary-link {
+  font-variation-settings: 'wght'$medium !important;
+  font-size: 0.875rem !important;
+  color: $gray !important;
+  text-decoration: underline;
+}
+
+.warning-link {
+  font-variation-settings: 'wght'$bold !important;
+  font-size: 0.875rem !important;
+  color: $snackbar--warning-color !important;
+  text-decoration: underline;
+}

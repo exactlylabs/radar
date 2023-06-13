@@ -33,10 +33,6 @@
   white-space: nowrap;
 }
 
-html, body {
-  font-size: 16px !important;
-}
-
 p {
   margin: 0;
   white-space: nowrap;
@@ -47,7 +43,6 @@ p {
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
-  background-color: var(--global-background-color) !important;
 }
 
 .application--content-container {
@@ -84,15 +79,6 @@ p {
   fill: #3c559b;
 }
 
-.select2-selection {
-  background-color: #f5f8fa !important;
-  border: none !important;
-}
-
-.select2-selection__rendered {
-  color: #5E6278 !important;
-}
-
 .form-custom-opaque {
   opacity: 0.4;
 }
@@ -104,15 +90,6 @@ p {
 .hoverable:hover {
   opacity: 75%;
   cursor: pointer;
-}
-
-.select2-container--bootstrap5 .select2-selection--multiple:not(.form-select-sm):not(.form-select-lg) .select2-selection__choice {
-  margin: 0 !important;
-}
-
-.invisible {
-  display: none !important;
-  visibility: hidden !important;
 }
 
 .right-0 {
