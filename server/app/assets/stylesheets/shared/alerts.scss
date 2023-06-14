@@ -44,3 +44,10 @@
     border-radius: 6px;
   }
 }
+
+.banner--close-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}

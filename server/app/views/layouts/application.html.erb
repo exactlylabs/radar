@@ -15,6 +15,7 @@
       integrity="sha384-4Q6VnoFQcxYhNxg1ic5R+RRx0fam6rRf9PFAE3oTZhtTV2S8IM7uyl8Bg2z3AFi9"
       crossorigin="anonymous"
     ></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <% if Rails.env.production? %>
       <script>
         // based on sentry.rb file config
@@ -34,22 +35,26 @@
         <% end %>
       </script>
     <% end %>
-    <script defer>
-      const userAgent = window.navigator.userAgent;
-      if(userAgent && /MSIE|Trident/.test(userAgent)) {
-        document.getElementById("unsupported-browser-notice").classList.remove('invisble');
-      }
+    <script>
+      window.onload = function() {
+        const userAgent = window.navigator.userAgent;
+        if(userAgent && /MSIE|Trident/.test(userAgent)) {
+          // need to use className as classList might not be supported yet in old browsers
+          const banner = document.getElementById("unsupported-browser-notice");
+          banner.className = banner.className.replace("invisible", "");
+          console.log(document.getElementById("unsupported-browser-notice").className);
+        }
+      };
     </script>
     <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
   </head>
   <body>
     <% if content_for?(:content) %>
       <%= yield(:content) %>
     <% elsif user_signed_in? %>
       <div class="application--main-container">
-        <div id="unsupported-browser-notice" class="invisible application--unsupported-browser-notice">For a more pleasant experience please use a more modern broswer such as Chrome, Firefox, Safari, Opera or Edge.</div>
+        <%= render partial: "application/components/misc/supported_browsers_banner" %>
         <%= render partial: "application/components/sidebar/new_sidebar" %>
         <div class="application--content-container">
           <%= yield %>
