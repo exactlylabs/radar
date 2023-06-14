@@ -78,7 +78,7 @@ class ClientsController < ApplicationController
     if !@client
       authenticate_user!
       @client = Client.find_by_unix_user(params[:id])
-      authorize @client, :can_run_test?
+      authorize @client, :superaccount_or_in_scope?
     end
 
     respond_to do |format|
@@ -452,11 +452,10 @@ class ClientsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_client
     @client = Client.find_by_unix_user(params[:id])
-    authorize @client, :can_edit_client?
-
     if !@client
       raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])
     end
+    authorize @client, :superaccount_or_in_scope?
   end
 
   # Only allow a list of trusted parameters through.
