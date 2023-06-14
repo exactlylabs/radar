@@ -22,10 +22,17 @@
         });
       </script>
     <% end %>
+    <script defer>
+      const userAgent = window.navigator.userAgent;
+      if(userAgent && /MSIE|Trident/.test(userAgent)) {
+        document.getElementById("unsupported-browser-notice").classList.remove('invisble');
+      }
+    </script>
     <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
   </head>
   <body id="public--body" >
+    <%= render partial: "application/components/misc/supported_browsers_banner" %>
     <main id="public--main" data-controller="public-page">
       <section id="public--logo-section">
         <a href="/" class="m-0">

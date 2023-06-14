@@ -1,0 +1,8 @@
+<div id="unsupported-browser-notice"
+  class="invisible regular-text application--unsupported-browser-notice"
+  data-controller="banner"
+  data-banner-target="banner"
+>
+  For a more pleasant experience please use a browser from our <a class="regular-link" href="/supported-browsers">list of supported browsers</a>
+  <%= image_tag image_url('close-alert-icon.png'), width: 16, height: 16, class: "hoverable banner--close-icon", data: { action: "click->banner#closeBanner" } %>
+</div>
