@@ -22,11 +22,15 @@
         });
       </script>
     <% end %>
-    <script defer>
-      const userAgent = window.navigator.userAgent;
-      if(userAgent && /MSIE|Trident/.test(userAgent)) {
-        document.getElementById("unsupported-browser-notice").classList.remove('invisble');
-      }
+    <script>
+      window.onload = function() {
+        const userAgent = window.navigator.userAgent;
+        if(userAgent && /MSIE|Trident/.test(userAgent)) {
+          // need to use className as classList might not be supported yet in old browsers
+          const banner = document.getElementById("unsupported-browser-notice");
+          banner.className = banner.className.replace("invisible", "");
+        }
+      };
     </script>
     <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
