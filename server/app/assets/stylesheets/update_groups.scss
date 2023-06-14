@@ -1,0 +1,45 @@
+@import "shared/colors.scss";
+
+.rollout--progress-bar {
+  height: 30px;
+  // overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  border: none;
+  position: relative;
+  width: 100%;
+  background-color: $subtle-gray;
+  cursor: pointer;
+}
+
+.rollout--progress-bar--fill {
+  height: 100%;
+  top: 30px;
+  background: rgb(17,14,76);
+  background: linear-gradient(90deg, rgba(0,212,255,1) 0%, rgba(75,123,229,1) 50%,  rgba(17,14,76,1) 100%);
+  border-radius: 6px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.rollout--progress-bar--handle {
+  width: 20px;
+  height: 20px;
+  background-color: #8e8cb1;
+  z-index: 2;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 0;
+  border-radius: 50%;
+  cursor: grab;
+}
+
+.rollout--progress-bar--text {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}

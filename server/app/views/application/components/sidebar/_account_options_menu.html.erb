@@ -1,0 +1,28 @@
+<div class="sidebar--account-item-options-menu-container invisible"
+  id="sidebar--account-item-options-menu<%= is_shared ? '-shared' : '' %>@<%= account_id %>"
+  data-sidebar-target="accountOptionsMenu"
+>
+  <a href="<%= add_member_account_path(account_id) %>"
+    class="sidebar--account-item-options-menu-item regular-text m-0"
+    data-turbo-frame="add_member_modal"
+  >
+    <%= image_tag image_url("add-member-icon.png"), width: "16", height: "16", class: "sidebar--account-item-options-menu-item-icon"%>
+    Add member
+  </a>
+  <div class="sidebar--horizontal-divider" data-narrow="true"></div>
+  <a href="<%= edit_account_path(account_id) %>"
+    class="sidebar--account-item-options-menu-item regular-text m-0"
+    data-turbo-frame="edit_account_modal"
+  >
+    <%= image_tag image_url("edit-account-icon.png"), width: "16", height: "16", class: "sidebar--account-item-options-menu-item-icon"%>
+    Edit settings
+  </a>
+  <div class="sidebar--horizontal-divider" data-narrow="true"></div>
+  <a href="<%= delete_account_path(account_id) %>"
+    class="sidebar--account-item-options-menu-item regular-text m-0"
+    data-turbo-frame="delete_account_modal"
+  >
+    <%= image_tag image_url("delete-account-icon.png"), width: "16", height: "16", class: "sidebar--account-item-options-menu-item-icon"%>
+    Delete
+  </a>
+</div>

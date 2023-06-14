@@ -1,0 +1,37 @@
+<div class="sidebar--account-item-container <%= active ? 'sidebar--account-item-container-active' : nil %>"
+     data-action="<%= account_id == -1 ? 'click->switch-account#selectAllAccounts' : 'click->switch-account#selectAccount' %> mouseenter->sidebar#hoverAccount mouseleave->sidebar#blurAccount"
+     data-is-active="<%= active %>"
+     data-is-shared="<%= is_shared %>"
+     id="sidebar--account-container<%= is_shared ? '-shared' : ''%>@<%= account_id %>"
+>
+  <div class="sidebar--account-item-icon-container <%= has_icon ? 'transparent' : nil %>">
+    <% if has_icon %>
+      <%= image_tag image_url("#{icon}.png"), width: "24", height: "24", class: "sidebar--account-item-icon" %>
+    <% else %>
+      <p class="m-0 sidebar-item--text"><%= text[0].upcase %></p>
+    <% end %>
+    <% if is_shared %>
+      <div class="sidebar--account-item-icon-shared-container">
+        <%= image_tag image_url("shared-account-icon.png"), width: "10", height: "10", class: "sidebar--account-item-icon-shared" %>
+      </div>
+    <% end %>
+  </div>
+  <p class="m-0 sidebar-item--text-static sidebar--account-item-name ellipsis"
+    id="sidebar--account-container-text<%= is_shared ? '-shared' : ''%>@<%= account_id %>"
+  ><%= text %></p>
+  <% if account_id != -1 && !is_shared %>
+    <%= image_tag image_url("options-icon.png"), 
+        id: "sidebar--account-item-options-icon#{is_shared ? '-shared' : ''}@#{account_id}",
+        width: "16",
+        height: "16",
+        class: "invisible hoverable sidebar--account-item-options-icon",
+        data: { action: "click->sidebar#toggleOptionsMenu" }
+    %>
+    <%= render partial: "application/components/sidebar/account_options_menu", 
+        locals: {
+          account_id: account_id,
+          is_shared: is_shared
+        }
+    %>
+  <% end %>
+</div>

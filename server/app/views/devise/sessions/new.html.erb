@@ -1,71 +1,64 @@
 
-<div class="d-flex flex-center flex-column flex-column-fluid">
+<div class="d-flex flex-center flex-column flex-column-fluid devise--sign-in-container">
 	<!--begin::Wrapper-->
-	<div class="w-lg-500px p-10 p-lg-15 mx-auto">
+	<div class="w-100">
 		<!--begin::Form-->
 		<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { data: { turbo: false }, class: "form w-100 fv-plugins-bootstrap5 fv-plugins-framework" }) do |f| %>
-			<!--begin::Heading-->
-			<div class="text-center mb-10">
+			<div class="text-center mb-6">
 				<!--begin::Title-->
-				<h1 class="page-main-title">Sign In to Radar</h1>
+				<h1 class="page-main-title">Log in</h1>
 				<!--end::Title-->
 				<!--begin::Link-->
 				<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-				<div class="additional-text">New Here?
-				<a href="<%= new_registration_path(resource_name) %>" class="regular-link">Create an Account</a></div>
+				<div class="additional-text">Don't have an account?
+				<a href="<%= new_registration_path(resource_name) %>" class="regular-link">Sign up</a></div>
 				<% end %>
 				<!--end::Link-->
 			</div>
-			<!--begin::Heading-->
-			<div class="fv-plugins-message-container invalid-feedback">
-				<%- flash.each do |name, msg| -%>
-				<%= content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String) %>
-				<%- end -%>
-			</div>
 			<!--begin::Input group-->
-			<div class="forms--input-group d-flex flex-column mb-4">
-				<!--begin::Label-->
-				<label class="forms--label mb-2 required">Email</label>
-				<!--end::Label-->
+			<div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-4 w-100">
+				<label class="forms--label mb-2">Email</label>
 				<!--begin::Input-->
-				<%= f.email_field :email, autofocus: true, autocomplete: "email", class: "forms--text-input", tabindex: 1 %>
+				<%= f.email_field :email, autofocus: true, autocomplete: "email", class: "forms--text-input forms--text-input-focusable w-100", tabindex: 1, placeholder: "Email address" %>
 				<!--end::Input-->
-			<div class="fv-plugins-message-container invalid-feedback"></div></div>
+			</div>
 			<!--end::Input group-->
 			<!--begin::Input group-->
 			<div class="forms--input-group d-flex flex-column mb-4">
 				<!--begin::Wrapper-->
-				<div class="d-flex flex-stack mb-2">
-					<!--begin::Label-->
-					<label class="forms--label mb-2 required">Password</label>
-					<!--end::Label-->
-					<!--begin::Link-->
-					<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-					<a href="<%= new_password_path(resource_name) %>" class="regular-link" tabindex="4">Forgot Password ?</a>
-					<% end %>
-					<!--end::Link-->
-				</div>
 				<!--end::Wrapper-->
-				<div class="position-relative mb-3" data-controller="password-reveal">
+				<div class="position-relative mb-3 d-flex flex-column justify-content-start align-items-start" data-controller="password-reveal">
+					<label class="forms--label mb-2">Password</label>
 					<!--begin::Input-->
-					<%= f.password_field :password, autocomplete: "current-password", class: "forms--text-input forms--text-input-with-decoration w-100", tabindex: 2, data: { "password-reveal-target" => "passwordInput" } %>
-					<!--end::Input-->
-					<span class="forms--input-decoration btn btn-sm btn-icon"
-								data-action="click->password-reveal#toggleVisibility">
-						<i data-password-reveal-target="eyeSlashIcon" class="bi bi-eye-slash fs-2"></i>
-						<i data-password-reveal-target="eyeIcon" class="bi bi-eye fs-2 d-none"></i>
-        	</span>
+					<div class="position-relative mb-3 w-100">
+						<%= f.password_field :password, autocomplete: "current-password", class: "forms--text-input forms--text-input-focusable forms--text-input-with-decoration w-100", tabindex: 2, placeholder: "Password", data: { "password-reveal-target" => "passwordInput" } %>
+						<!--end::Input-->
+						<span class="forms--input-decoration btn btn-sm btn-icon"
+									data-action="click->password-reveal#toggleVisibility">
+							<%= image_tag image_url("hidden-password-icon.png"), class: "invisible", width: "16", height: "16", data: { "password-reveal-target" => "eyeSlashIcon" }%>
+							<%= image_tag image_url("visible-password-icon.png"), class: "", width: "16", height: "16", data: { "password-reveal-target" => "eyeIcon" }%>
+						</span>
+					</div>
 				</div>
-			<div class="fv-plugins-message-container invalid-feedback"></div></div>
+			</div>
 			<!--end::Input group-->
+			<div class="fv-plugins-message-container invalid-feedback mt-2 mb-6">
+				<%- flash.each do |name, msg| -%>
+					<%= content_tag :div, msg, class: "devise--alert wrap", data: { "alert-type" => name }, :id => "flash_#{name}" if msg.is_a?(String) %>
+				<%- end -%>
+			</div>
 			<!--begin::Actions-->
 			<div class="text-center">
 				<!--begin::Submit button-->
-				<%= f.submit "Sign In", class: "custom-button custom-button--lg custom-button--primary mx-auto my-2", tabindex: 3 %>
+				<%= button_tag "Log in", type: "submit", class: "custom-button custom-button--lg custom-button--primary mx-auto my-2 w-100", tabindex: 3, data: { controller: "sign-in", action: "click->sign-in#handleSignInLoading" } %>
 				<!--end::Submit button-->
-				<!--begin::Google link-->
-				<!--<a href="#" class="btn btn-light-primary btn-lg fw-bolder my-2">-->
-				<!--end::Google link-->
+				<div class="d-flex flex-stack mb-2 mt-6 mx-auto text-center">
+					<!--begin::Link-->
+					<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+						<a href="<%= new_password_path(resource_name) %>" class="regular-link w-100 text-center" tabindex="4">Forgot your password?</a>
+					<% end %>
+					<!--end::Link-->
+				</div>
 			</div>
 			<!--end::Actions-->
 		<div></div><% end %>

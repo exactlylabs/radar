@@ -19,7 +19,7 @@ const BroadbandTestingHeader = (): ReactElement => {
       {!isSmall && <div style={styles.HeroGradientBg}></div> }
       <div style={styles.BroadbandTestingHeaderContent}>
         <div style={styles.TextContainer(isSmall)}>
-          <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Where are the gaps in you broadband maps?</p>
+          <p className={'fw-extra-bold'} style={styles.Title(isSmall)}>Where are the gaps in your broadband maps?</p>
           <p className={'fw-medium'} style={styles.Subtitle(isSmall)}>Discover the neighborhoods and streets with the most needs and make the most out of your investment.</p>
           <CustomButton text={'Get started'}
                         link={AppRoutes.GET_STARTED}

@@ -1,6 +1,6 @@
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar">
-  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
@@ -9,10 +9,10 @@
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item text--secondary"><%= current_account.name %>
+        <li class="breadcrumb-item page-sub-title"><%= current_account.name %>
           <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
         </li>
-        <li class="breadcrumb-item text--secondary">Pods</li>
+        <li class="breadcrumb-item page-sub-title">Pods</li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
@@ -23,7 +23,7 @@
 
 <div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-  <div class="container-xxl w-100 d-flex" style="max-width: none;">
+  <div class="w-100 d-flex">
     <!--begin::OptionsCard-->
     <%= render partial: "options_card", locals: { client: @client, location: nil, style: 'clients' } %>
     <!--end::OptionsCard-->
@@ -39,7 +39,13 @@
   <% end %>
 </div>
 
-<div class="modal fade" tabindex="-1" id="new_location_modal-edit" data-controller="edit-pod" data-action="turbo:submit-start->edit-pod#handleSubmitStart turbo:submit-end->edit-pod#handleNewLocationFromClientModal">
+<div class="modal fade"
+  tabindex="-1"
+  id="new_location_modal-edit"
+  data-controller="edit-pod"
+  data-action="turbo:submit-start->edit-pod#handleSubmitStart turbo:submit-end->edit-pod#handleNewLocationFromClientModal"
+  data-clear-turbo-id="new_location_modal"
+>
   <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "edit-pod-modal", modal_target: "edit_pod_modal") do %>
   <% end %>
 </div>

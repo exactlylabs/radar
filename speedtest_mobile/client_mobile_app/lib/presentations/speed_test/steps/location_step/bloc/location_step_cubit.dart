@@ -14,7 +14,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     bool termsAccepted = false,
   })  : _locationsService = locationsService,
         super(LocationStepState(location: location)) {
-    search("");
+    loadGeolocation();
   }
 
   final ILocationsService _locationsService;
@@ -28,76 +28,117 @@ class LocationStepCubit extends Cubit<LocationStepState> {
       _completer = null;
     }
     if (query.isEmpty) {
-      reset();
       return [];
     }
-    if (state.currentLocation?.address == query ||
-        state.location?.address == query ||
+    if (state.location?.address == query ||
         (state.suggestions?.any((suggestion) => suggestion.address == query) ?? false)) {
       return [];
     }
     _completer = Completer<List<Location>>();
     _delayedSearchTimer =
-        Timer(const Duration(milliseconds: 400), () async => _completer!.complete(await search(query)));
+        Timer(const Duration(milliseconds: 400), () async => _completer!.complete(await _search(query)));
     return _completer!.future;
   }
 
-  Future<List<Location>> search(String query, [bool? searchInWrite]) async {
+  Future<List<Location>> _search(String query) async {
     if (query.isNotEmpty) {
       if (_delayedSearchTimer != null) _delayedSearchTimer!.cancel();
-      emit(state.copyWith(query: query, isLoading: true, loadingSuggestions: true));
+      emit(state.searchingForNewLocation(query));
       final locations = await _locationsService.getSuggestedLocations(query);
-      emit(state.copyWith(suggestions: locations, isLoading: false, loadingSuggestions: false));
+      emit(state.copyWith(suggestions: locations, isLocationLoading: false, loadingSuggestions: false));
       return locations;
     }
     return [];
   }
 
-  Future<void> getCurrentLocation() async {
-    emit(state.copyWith(isLoading: true, loadingCurrentLocation: true));
+  void reset() {
+    final isGeolocationEnabled = state.isGeolocationEnabled;
+    final isUsingGeolocation = state.isUsingGeolocation;
+    final geolocation = state.geolocation;
+    emit(LocationStepState(
+        isGeolocationEnabled: isGeolocationEnabled, isUsingGeolocation: isUsingGeolocation, geolocation: geolocation));
+  }
+
+  Future<void> loadGeolocation() async {
+    final geolocationEnabled = await isGeolocationEnabled();
+    emit(state.copyWith(isGeolocationEnabled: geolocationEnabled));
+    if (geolocationEnabled) {
+      await getGeolocation();
+    }
+  }
+
+  Future<bool> isGeolocationEnabled() async {
     final permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       final permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.deniedForever) {
-        emit(state.copyWith(isLoading: false, loadingCurrentLocation: false, error: Strings.locationError));
-        return;
+        return false;
       }
     }
-    final position = await Geolocator.getCurrentPosition();
-    getLocationByLatLng(position.latitude, position.longitude, false);
+    return true;
   }
 
-  Future<void> getLocationByLatLng(double lat, double lng, bool isSuggestedLocation) async {
-    emit(state.copyWith(isLoading: true));
+  Future<void> getGeolocation() async {
+    if (state.isGeolocationEnabled ?? false) {
+      emit(state.copyWith(isGeolocationLoading: true));
+      final position = await Geolocator.getCurrentPosition();
+      final location = await getLocationByLatLng(position.latitude, position.longitude);
+      if (location != null) {
+        emit(state.copyWith(isGeolocationLoading: false, geolocation: location));
+      } else {
+        emit(state.copyWith(isGeolocationLoading: false, failure: Strings.locationError));
+      }
+    }
+  }
+
+  Future<Location?> getLocationByLatLng(double lat, double lng) async {
+    emit(state.copyWith(isGeolocationLoading: true));
     final location = await _locationsService.getLocationByCoordinates(lat, lng);
-    emit(state.clearErrors());
-    if (isSuggestedLocation) {
-      emit(state.copyWith(suggestedLocation: location, isLoading: false));
+    return location;
+  }
+
+  void useInputLocationOption() => emit(state.copyWith(isUsingGeolocation: false));
+
+  void useGeolocationOption() {
+    if (!(state.isGeolocationEnabled ?? false)) {
+      emit(state.copyWith(failure: Strings.locationMissingError));
+      return;
+    }
+    emit(state.copyWith(isUsingGeolocation: true));
+  }
+
+  void confirmGeolocation() {
+    if (state.geolocation == null) return;
+    emit(state.copyWith(isUsingGeolocation: true, isLocationConfirmed: true));
+  }
+
+  void accurateGeolocation(double lat, double long) {
+    final accurateGeolocation = state.geolocation!.copyWith(lat: lat, long: long);
+    emit(state.copyWith(geolocation: accurateGeolocation));
+  }
+
+  void accurateLocation(double lat, double long) {
+    Location? accurateLocation;
+    if (!state.isGeolocationEnabled! && state.location == null) {
+      accurateLocation = Location.empty(state.query ?? '');
     } else {
-      emit(state.copyWith(currentLocation: location, isLoading: false, loadingCurrentLocation: false));
+      accurateLocation = state.location!.copyWith(lat: lat, long: long);
     }
+    emit(state.copyWith(location: accurateLocation));
   }
 
-  Future<void> updateLocationLatLng(double lat, double lng) async {
-    if (state.currentLocation != null) {
-      Location newLocation = state.currentLocation!.copyWith(lat: lat, long: lng);
-      emit(state.copyWith(currentLocation: newLocation, loadingCurrentLocation: false));
-    }
+  void chooseLocationOption([Location? location, bool canUseLocation = true]) {
+    final locationEval = (location == null || !canUseLocation) ? null : location;
+    emit(state.copyWith(
+        isUsingGeolocation: false,
+        isLocationConfirmed: false,
+        needsToConfirmLocation: true,
+        location: locationEval,
+        query: location != null ? '' : null));
   }
 
-  void setLocationError() => emit(state.copyWith(error: Strings.locationMissingError));
-
-  void setSuggestedLocation(Location location) => emit(state.copyWith(suggestedLocation: location));
-
-  void reset() => emit(const LocationStepState());
-
-  void useCurrentLocation() {
-    if (state.currentLocation == null) return;
-    emit(state.setLocation(state.currentLocation!));
-  }
-
-  void useSuggestedLocation() {
-    if (state.suggestedLocation == null) return;
-    emit(state.setLocation(state.suggestedLocation!));
+  void confirmInputLocation(Location location) {
+    emit(state.copyWith(
+        isUsingGeolocation: false, isLocationConfirmed: true, needsToConfirmLocation: false, location: location));
   }
 }

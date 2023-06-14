@@ -5,8 +5,6 @@ import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/presentations/home_page_body.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
-import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
-import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
 
 class HomePage extends StatelessWidget {
@@ -16,69 +14,64 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InheritedConnectivityStatus(
-      child: BlocBuilder<NavigationCubit, NavigationState>(
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: Theme.of(context).backgroundColor,
-            bottomNavigationBar: SizedBox(
-              child: BottomNavigationBar(
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Container(
-                      margin: const EdgeInsets.only(bottom: 5.0),
-                      child: Image.asset(Images.speedTest),
-                    ),
-                    activeIcon: Container(
-                      margin: const EdgeInsets.only(bottom: 5.0),
-                      child: Image.asset(Images.speedTestSelected),
-                    ),
-                    label: Strings.speedTestLabel,
+    return BlocBuilder<NavigationCubit, NavigationState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.background,
+          bottomNavigationBar: SizedBox(
+            child: BottomNavigationBar(
+              items: [
+                BottomNavigationBarItem(
+                  icon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.speedTest),
                   ),
-                  BottomNavigationBarItem(
-                    icon: Container(
-                      margin: const EdgeInsets.only(bottom: 5.0),
-                      child: Image.asset(Images.yourResults),
-                    ),
-                    activeIcon: Container(
-                      margin: const EdgeInsets.only(bottom: 5.0),
-                      child: Image.asset(Images.yourResultsSelected),
-                    ),
-                    label: Strings.yourResultsLabel,
+                  activeIcon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.speedTestSelected),
                   ),
-                  BottomNavigationBarItem(
-                    icon: Container(
-                      margin: const EdgeInsets.only(bottom: 5.0),
-                      child: Image.asset(Images.map),
-                    ),
-                    activeIcon: Container(
-                      margin: const EdgeInsets.only(bottom: 5.0),
-                      child: Image.asset(Images.mapSelected),
-                    ),
-                    label: Strings.mapLabel,
+                  label: Strings.speedTestLabel,
+                ),
+                BottomNavigationBarItem(
+                  icon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.yourResults),
                   ),
-                ],
-                type: BottomNavigationBarType.fixed,
-                currentIndex: state.currentIndex,
-                onTap: (index) {
-                  if (index != NavigationCubit.MAP_INDEX || InheritedConnectivityStatus.of(context).isConnected) {
-                    context.read<NavigationCubit>().changeTab(index);
-                    if (index == NavigationCubit.SPEED_TEST_INDEX) {
-                      context.read<SpeedTestCubit>().resetCallbacks();
-                    }
-                  } else {
-                    openNoInternetConnectionModal(context, () => context.read<NavigationCubit>().changeTab(index));
-                  }
-                },
-              ),
+                  activeIcon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.yourResultsSelected),
+                  ),
+                  label: Strings.yourResultsLabel,
+                ),
+                BottomNavigationBarItem(
+                  icon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.map),
+                  ),
+                  activeIcon: Container(
+                    margin: const EdgeInsets.only(bottom: 5.0),
+                    child: Image.asset(Images.mapSelected),
+                  ),
+                  label: Strings.mapLabel,
+                ),
+              ],
+              type: BottomNavigationBarType.fixed,
+              currentIndex: state.currentIndex,
+              onTap: (index) {
+                if (index != NavigationCubit.MAP_INDEX || state.canNavigate) {
+                  context.read<NavigationCubit>().changeTab(index);
+                } else {
+                  openNoInternetConnectionModal(context, () => context.read<NavigationCubit>().changeTab(index));
+                }
+              },
             ),
-            body: HomePageBody(
-              pageIdx: state.currentIndex,
-              args: state.args,
-            ),
-          );
-        },
-      ),
+          ),
+          body: HomePageBody(
+            pageIdx: state.currentIndex,
+            args: state.args,
+          ),
+        );
+      },
     );
   }
 }

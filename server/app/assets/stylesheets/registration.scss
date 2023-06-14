@@ -1,4 +1,5 @@
 @import "./shared/colors.scss";
+@import "./shared/colors.scss";
 // Place all the styles related to the Locations controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
@@ -24,8 +25,8 @@
 }
 
 .sign-up--avatar-container {
-  width: 104px;
-  height: 104px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -34,6 +35,7 @@
   background-color: $avatar-blue;
   overflow: hidden;
   cursor: pointer;
+  box-shadow: 0 0 4px -1px $avatar-blue;
 
   p {
     color: $blue;
@@ -41,5 +43,9 @@
     line-height: 3rem;
     letter-spacing: 0;
     margin: 0;
+  }
+
+  &.dropzone--active {
+    outline: 1px dashed $avatar-dash-blue;
   }
 }

@@ -17,3 +17,11 @@ func GetWatchdogVersion() string {
 	}
 	return string(out)
 }
+
+func WatchdogIsRunning() bool {
+	out, err := exec.Command("systemctl", "check", "podwatchdog@tty1").Output()
+	if err != nil {
+		return false
+	}
+	return string(out) == "active\n"
+}

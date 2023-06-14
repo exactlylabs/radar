@@ -1,0 +1,487 @@
+// Place all the styles related to the clients controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: https://sass-lang.com/
+@import "colors";
+@import "text";
+
+.sidebar--main-container {
+  width: 260px;
+  height: 100vh;
+  background-color: white;
+  padding: 1.5rem;
+  border-right: solid 1px $sidebar--main-container-border;
+  box-shadow: 0 2px 10px -2px $sidebar--main-container-box-shadow;
+  z-index: 5;
+  position: relative;
+}
+
+.sidebar--logo {
+  margin-bottom: 2rem;
+}
+
+.sidebar--item {
+  width: 100%;
+  height: 42px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: .5rem;
+
+  img, p {
+    pointer-events: none;
+  }
+
+  .sidebar--item-icon {
+    margin-right: 14px;
+  }
+
+  &.sidebar--item-active,
+  &:hover {
+    background-color: $badge--blue-background-color;
+  }
+
+  &[data-disabled="true"] {
+    cursor: default;
+    background-color: transparent;
+  }
+}
+
+.sidebar--horizontal-divider {
+  width: 100%;
+  height: 1px;
+  border-radius: 2px;
+  background-color: $sidebar--horizontal-divider-background-color;
+  margin-top: 12px;
+  margin-bottom: 12px;
+
+  &[data-narrow="true"] {
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+}
+
+.sidebar--profile-container {
+  width: calc(100% - 3rem);
+  height: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: $subtle-gray;
+  }
+}
+
+.sidebar--profile-item {
+  width: 100%;
+  height: 3rem;
+  min-height: 3rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 9px 10px;
+  position: relative;
+
+  .sidebar--profile-item-avatar-container {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: $avatar-blue;
+
+    .sidebar--profile-item-initial {
+      margin: 0;
+      color: $blue;
+      font-size: 0.938rem;
+      letter-spacing: 0;
+      font-variation-settings: 'wght' $bold;
+    }
+  }
+
+  .sidebar--profile-item-name {
+    margin: 0 auto 0 12px;
+    max-width: 130px;
+  }
+
+  .sidebar--hidden-option-icon {
+    margin-left: .75rem;
+    margin-right: .5rem;
+  }
+
+  &.sidebar--profile-menu-toggle-open {
+    background-color: $subtle-gray;
+    border-radius: 10px;
+  }
+}
+
+.sidebar--accounts-item-container {
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  background-color: white;
+  outline: solid 1px $sidebar--accounts-item-outline;
+  box-shadow: 0 2px 4px -2px $sidebar--accounts-item-box-shadow;
+  padding: 6px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 1.5rem;
+  position: relative;
+
+  .sidebar--accounts-item-icon-container {
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    border-radius: 8px;
+    background-color: $subtle-gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+
+    .sidebar--accounts-item-icon-initial {
+      margin: 0;
+    }
+
+    .sidebar--accounts-name {
+      max-width: 130px;
+    }
+  }
+
+  .sidebar--accounts-caret {
+    margin-right: 0;
+    margin-left: auto;
+  }
+}
+
+.sidebar--accounts-menu-container {
+  width: 252px;
+  padding: 12px 4px 0;
+  position: absolute;
+  top: 52px;
+  left: 0;
+  z-index: 25;
+  background-color: white;
+  border-radius: 6px;
+  outline: solid 1px $sidebar--accounts-item-outline;
+  box-shadow: 0 2px 20px -2px $sidebar--accounts-item-box-shadow;
+  backdrop-filter: blur(10px);
+
+  .sidebar--accounts-menu-title {
+    margin: 0 0 8px 8px;
+  }
+}
+
+.sidebar--account-item-container {
+  width: 100%;
+  height: 44px;
+  padding: 6px;
+  border-radius: 6px;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+
+  &:hover {
+    background-color: $subtle-gray;
+  }
+
+  .sidebar--account-item-icon-container {
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $icon-container-gray;
+    margin-right: .5rem;
+    position: relative;
+
+    &.transparent {
+      background-color: transparent;
+    }
+
+    .sidebar--account-item-name {
+      max-width: 175px;
+    }
+
+    .sidebar--account-item-icon-shared-container {
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      background-color: $subtle-gray;
+      position: absolute;
+      bottom: -5px;
+      right: -5px;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  &.sidebar--account-item-container-active {
+    background-color: $subtle-gray;
+
+    .sidebar-item--text,
+    .sidebar--account-item-name {
+      color: $blue;
+      font-variation-settings: 'wght'$bold;
+    }
+  }
+
+  .sidebar--account-item-options-icon {
+    position: absolute;
+    right: 12px;
+  }
+}
+
+.sidebar--profile-popover-container {
+  width: 273px;
+  position: absolute;
+  bottom: 55px;
+  left: 0;
+  z-index: 50;
+  outline: solid 1px $sidebar--main-container-border;
+  box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
+  backdrop-filter: blur(10px);
+  border-radius: 6px;
+  background-color: white;
+  overflow: hidden;
+
+  .sidebar--profile-popover-info-container {
+    width: 100%;
+    height: 80px;
+    background-color: $subtle-gray;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    box-sizing: border-box;
+    padding: .75rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    .sidebar--profile-popover-image-container {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background-color: $avatar-blue;
+      margin-right: .75rem;
+    
+      .sidebar--profile-popover-initial {
+        margin: 0;
+        color: $blue;
+        font-size: 0.938rem;
+        letter-spacing: 0;
+        font-variation-settings: 'wght'$bold;
+      }
+    }
+
+    .sidebar--profile-popover-text {
+      max-width: 170px;
+    }
+  }
+}
+
+#sidebar--accounts-list-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar--add-account-button {
+  outline: none;
+  border: none;
+
+  &[data-only-item="true"] {
+    margin-top: 1.5rem;
+    outline: solid 1px $sidebar--accounts-item-outline;
+    box-shadow: 0 2px 4px -2px $sidebar--accounts-item-box-shadow;
+
+    p {
+      font-variation-settings: 'wght'$bold;
+      color: $blue;
+    }
+  }
+}
+
+.sidebar--account-item-options-menu-container {
+  width: 158px;
+  position: fixed;
+  background-color: white;
+  z-index: 50;
+  border-radius: 6px;
+  box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
+  backdrop-filter: blur(10px);
+  outline: solid 1px $sidebar--accounts-item-outline;
+  padding: 4px;
+  box-sizing: content-box;
+
+  .sidebar--account-item-options-menu-item {
+    width: 100%;
+    height: 34px;
+    border-radius: 6px;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: .5rem;
+    text-decoration: none;
+
+    &:hover {
+      background-color: $subtle-gray;
+    }
+
+    .sidebar--account-item-options-menu-item-icon {
+      margin-right: .5rem;
+    }
+  }
+}
+
+/////////////////////////////////////////////
+
+.sidebar--account-selected-title {
+  font-size: 15px;
+  color: #7e8299;
+  margin-right: 10px;
+}
+
+.sidebar--account-empty-title {
+  font-size: 15px;
+  color: #00a3ff;
+  margin-right: 10px;
+}
+
+.accounts-collapse-open {
+  span {
+    color: #00a3ff;
+  }
+}
+
+.sidebar--add-account-row {
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 14px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 6px;
+  margin-bottom: 25px;
+  p {
+    margin: 0;
+  }
+}
+
+.sidebar--account-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 6px;
+  p {
+    margin: 0;
+  }
+}
+
+.sidebar--circular-marker {
+  width: 5px;
+  height: 5px;
+  border: solid 1px #b5b5c3;
+  border-radius: 50%;
+  background-color: #b5b5c3;
+  margin-left: 17.5px;
+  margin-right: 13px;
+}
+
+.sidebar--all-accounts-icon-container {
+  width: 32px;
+  height: 32px;
+  background-color: #ebeef5;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 13px;
+  margin-left: 5px;
+}
+
+.sidebar--account-row-all-accounts:hover {
+  opacity: 0.75;
+}
+
+.sidebar--account-add-icon {
+  margin-left: 6.5px;
+  margin-right: 7px;
+}
+
+.sidebar--account-row:hover {
+  cursor: pointer;
+  p {
+    color: #5f6278;
+  }
+}
+.sidebar--account-row.active {
+  cursor: pointer;
+  background-color: #f5f8fa;
+  p {
+    color: #3f4254;
+  }
+  .sidebar--circular-marker {
+    border-color: #00a3ff;
+    background-color: #00a3ff;
+  }
+}
+
+.sidebar--add-account-row:hover {
+  font-weight: bold;
+}
+
+.sidebar--caret {
+  position: absolute;
+  right: 45px;
+}
+
+.sidebar--account-add-button {
+  background: transparent;
+  border: none;
+}
+
+.sidebar--menu-icon {
+  color: #7f8299;
+  position: absolute;
+  right: 12px;
+}
+
+.sidebar--menu-icon:hover,
+.sidebar--menu-icon.selected {
+  color: #5f6278;
+}

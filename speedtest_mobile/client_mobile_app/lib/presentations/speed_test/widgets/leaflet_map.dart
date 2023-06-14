@@ -28,8 +28,8 @@ class _LeafletMapState extends State<LeafletMap> {
   @override
   void initState() {
     super.initState();
-    _address = widget.address ?? LatLng(30, 40);
-    _zoom = widget.address != null ? 16.0 : 5.0;
+    _address = widget.address ?? LatLng(39.8282, -98.5696);
+    _zoom = widget.address != null ? 16.0 : 3.0;
     _circleMarkerVisible = true;
   }
 

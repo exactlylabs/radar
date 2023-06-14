@@ -3,7 +3,6 @@ import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 
 final theme = ThemeData(
-  backgroundColor: AppColors.paleLilac,
   appBarTheme: const AppBarTheme(
     backgroundColor: AppColors.paleLilac,
     titleTextStyle: TextStyle(

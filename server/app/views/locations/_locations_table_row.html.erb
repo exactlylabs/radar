@@ -12,6 +12,7 @@
       </div>
       <div class="d-flex flex-column align-items-left justify-content-start">
         <a class="forms--label text-hover-primary"
+        <a class="forms--label text-hover-primary"
            style="font-size:15px; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"
            href="<%= location_path(location)%>" data-turbo-frame="_top">
             <%= location.name %>
@@ -21,38 +22,33 @@
     </div>
   </td>
   <% if current_account.is_all_accounts? %>
-    <td class="regular-text mb-1"><%= location.account.name %></td>
+    <td class="regular-text mb-1" style="width: 15vw"><%= location.account.name %></td>
   <% else %>
-    <td class="regular-text mb-1">
+    <td class="regular-text mb-1" style="width: 15vw">
       <%= render partial: "location_categories/table_cell", locals: {categories: location.categories, shows_tooltip: true, row: row} %>
     </td>
   <% end %>
-  <td class="regular-text mb-1">
-      <span>
-        <%= location.download_avg.present? ? "#{location.download_avg} Mbps / " : 'Not available / ' %>
-      </span>
-      <span>
-        <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} Mbps" : 'Not available' %>
-      </span>
-      <span class="ms-2"
-            style="color: <%= location.download_diff.present? && location.download_diff.start_with?('+') ? "#50cd89" : "#f1416c" %>">
-        <%= location.download_diff.present? ? location.download_diff : '' %>
-      </span>
-  </td>
-  <td class="regular-text mb-1"
-      style="font-size:14px; color: #b5b5c3;">
+  <td class="regular-text mb-1 wrap text-end" style="width: 12.5vw">
     <span>
-        <%= location.upload_avg.present? ?  "#{location.upload_avg} Mbps / " : 'Not available / '%>
-      </span>
-      <span>
-        <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up} Mbps" : 'Not available' %>
-      </span>
-      <span class="ms-2"
-            style="color: <%= location.upload_diff.present? && location.upload_diff.start_with?('+') ? "#50cd89" : "#f1416c" %>">
-        <%= location.upload_diff.present? ? location.upload_diff : '' %>
-      </span>
+      <%= location.download_avg.present? ? "#{location.download_avg} Mbps / " : 'Not available / ' %>
+      <%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} Mbps" : 'Not available' %>
+    </span>
+    <span class="ms-2"
+          style="color: <%= location.download_diff.present? && location.download_diff.start_with?('+') ? "#50cd89" : "#f1416c" %>">
+      <%= location.download_diff.present? ? location.download_diff : '' %>
+    </span>
   </td>
-  <td class="align-right" style="padding-right: 30px">
+  <td class="regular-text mb-1 wrap text-end" style="width: 12.5vw">
+    <span>
+      <%= location.upload_avg.present? ?  "#{location.upload_avg} Mbps / " : 'Not available / '%>
+      <%= location.expected_mbps_up.present? ? "#{location.expected_mbps_up} Mbps" : 'Not available' %>
+    </span>
+    <span class="ms-2"
+          style="color: <%= location.upload_diff.present? && location.upload_diff.start_with?('+') ? "#50cd89" : "#f1416c" %>">
+      <%= location.upload_diff.present? ? location.upload_diff : '' %>
+    </span>
+  </td>
+  <td class="align-right" style="width: 5vw; padding-right: 30px">
     <div class="btn-group dropend">
       <%= render partial: "application/components/buttons/more_options_button", locals: { id: "options-button-#{location.id}" } %>
       <div class="dropdown-menu fw-bold fs-7 py-4 px-2"

@@ -7,11 +7,19 @@ export default class extends Controller {
     "emailInput",
     "passwordInput",
     "errorMessage",
+    "alert"
   ];
 
   connect() {}
 
-  finishSignInFromInvite() {
+  handleSignInLoading() {
+    this.element.innerHTML = `<div class="spinner-border spinner-border-sm text-light m-auto" role="status"></div>`;
+    this.element.classList.add('custom-button--disabled');
+    this.element.classList.add('disabled');
+  }
+
+  finishSignInFromInvite(e) {
+    e.preventDefault();
     const token = document.getElementsByName("csrf-token")[0].content;
     const accountToken = window.location.href.split("?token=")[1];
     let formData = new FormData();
@@ -28,7 +36,7 @@ export default class extends Controller {
         if (res.redirected) {
           window.location.href = res.url;
         } else if (res.status === 422) {
-          this.errorMessageTarget.innerText = "Invalid email or password.";
+          this.showGenericError("Invalid email or password");
         } else if (res.status === 500) {
           throw new Error(`Error in sign in process from invite, user email: ${this.emailInputTarget.value}`);
         }
@@ -38,5 +46,10 @@ export default class extends Controller {
           "There was an unexpected error. Please try again later.";
         handleError(err, this.identifier);
       });
+  }
+
+  showGenericError(message) {
+    this.alertTarget.classList.remove('invisible');
+    this.alertTarget.innerText = message;
   }
 }

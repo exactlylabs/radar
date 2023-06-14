@@ -1,0 +1,7 @@
+<%= turbo_frame_tag "clients_index_content" do %>
+  <% if @clients.blank? %>
+    <%= render partial: "empty_pods_view" %>
+  <% else %>
+    <%= render partial: "clients_table", locals: {clients: @clients} %>
+  <% end %>
+<% end %>

@@ -29,6 +29,19 @@
     </div>
 
     <div class="forms--row">
+      <label class="required forms--label mb-2">Version Roll-Out</label>
+      <div class="forms--input-group">
+        <div class="rollout--progress-bar" data-controller="update-group" data-update-group-target="bar">
+          <div class="rollout--progress-bar--fill" data-update-group-target="fill" style="width: <%= update_group.client_version_rollout_percentage%>%;"></div>
+          <div class="rollout--progress-bar--handle" data-update-group-target="handle" style="left: <%= update_group.client_version_rollout_percentage%>%;" data-action="mousedown->update-group#onMouseDown"></div>
+          <div class="rollout--progress-bar--text" style="color: <%= update_group.client_version_rollout_percentage > 50 ? "white" : "black" %>" data-update-group-target="text"><%= update_group.client_version_rollout_percentage %>%</div>
+          <input name="update_group[client_version_rollout_percentage]" type="number" value="<%= update_group.client_version_rollout_percentage %>" data-update-group-target="input" hidden>
+        </div>
+        <div id="posX"></div>
+      </div>
+    </div>
+
+    <div class="forms--row">
       <label class="required forms--label mb-2">Watchdog Version</label>
       <div class="forms--input-group">
         <select class="form-select forms--select"
@@ -45,6 +58,19 @@
         </select>
       </div>
     </div>
+
+    <div class="forms--row">
+    <label class="required forms--label mb-2">Watchdog Version Roll-Out</label>
+    <div class="forms--input-group">
+      <div class="rollout--progress-bar" data-controller="update-group" data-update-group-target="bar">
+          <div class="rollout--progress-bar--fill" data-update-group-target="fill" style="width: <%= update_group.watchdog_version_rollout_percentage%>%;"></div>
+          <div class="rollout--progress-bar--handle" data-update-group-target="handle" style="left: <%= update_group.watchdog_version_rollout_percentage%>%;" data-action="mousedown->update-group#onMouseDown"></div>
+          <div class="rollout--progress-bar--text" style="color: <%= update_group.watchdog_version_rollout_percentage > 50 ? "white" : "black" %>" data-update-group-target="text"><%= update_group.watchdog_version_rollout_percentage %>%</div>
+          <input name="update_group[watchdog_version_rollout_percentage]" type="number" value="<%= update_group.watchdog_version_rollout_percentage %>" data-update-group-target="input" hidden>
+        </div>
+      <div id="posX"></div>
+    </div>
+  </div>
   </div>
 
   <div class="modal-footer">

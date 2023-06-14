@@ -1,6 +1,6 @@
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar">
-  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
@@ -30,15 +30,11 @@
 
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
   <!--begin::Container-->
-  <div id="clients-table-wrapper" class="container-xxl d-flex flex-column" style="max-width: none;" data-controller="multi-row-table bulk-release-group-modal">
+  <div id="clients-table-wrapper" class="d-flex flex-column w-100" data-controller="multi-row-table bulk-release-group-modal">
     <% if (empty_search_params? && @clients.length > 0) || (!empty_search_params?)%>
       <%= render partial: "clients_table_filters" %>
     <% end %>
-    <% if @clients.blank? %>
-      <%= render partial: "empty_pods_view" %>
-    <% else %>
-      <%= render partial: "clients_table", locals: {clients: @clients} %>
-    <% end %>
+    <%= render partial: "clients_index_content", locals: { clients: @clients } %>
     <% if current_user.super_user %>
       <div class="modal fade" tabindex="-1" id="bulk_change_release_group" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
         <%= render partial: "clients/bulk_change_release_group_modal" %>

@@ -16,9 +16,13 @@
  *= require style.bundle
  */
 
+:root {
+  --global-background-color: #f6f7fa;
+}
+
 @font-face {
   font-family: 'Mulish';
-  src: local('Mulish'), url('/assets/Mulish-VariableFont_wght.ttf') format('truetype-variations');
+  src: local('Mulish'), url('Mulish-VariableFont_wght.ttf') format('truetype-variations');
   font-weight: 100 1000;
 }
 
@@ -29,8 +33,29 @@
   white-space: nowrap;
 }
 
+html, body {
+  font-size: 16px !important;
+}
+
 p {
   margin: 0;
+  white-space: nowrap;
+}
+
+.application--main-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.application--content-container {
+  width: calc(100vw - 260px);
+  height: 100vh;
+  padding: 2rem 5rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: var(--global-background-color);
 }
 
 .location--online path {
@@ -61,7 +86,7 @@ p {
 }
 
 .hoverable:hover {
-  opacity: 50%;
+  opacity: 75%;
   cursor: pointer;
 }
 
@@ -75,4 +100,8 @@ p {
 
 .right-0 {
   right: 0;
+}
+
+.toolbar {
+  margin-bottom: 2rem;
 }

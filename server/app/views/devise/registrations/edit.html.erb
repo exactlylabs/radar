@@ -1,6 +1,6 @@
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar">
-  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
@@ -13,120 +13,118 @@
 </div>
 <!--end::Toolbar-->
 
-<div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
+<div class="post fs-6 d-flex flex-column" id="kt_post">
   <!--begin::Container-->
-  <div class="container-fluid">
-    <div class="d-flex flex-column">
-      <!--begin::Aside-->
-      <!--end::Aside-->
-      <!--begin::Layout-->
-      <div class="flex-md-row-fluid">
-        <!--begin::Sign-in Method-->
-        <div class="card mb-5 mb-xl-10" id="kt_account_settings_signin_method" data-kt-scroll-offset="{default: 100, md: 125}">
-          <!--begin::Card header-->
-          <div class="cards--header card-header align-items-center">
-            <div class="card-main-title">Account</div>
-          </div>
-          <!--end::Card header-->
-          <!--begin::Content-->
-          <div id="kt_account_signin_method" class="collapse show">
-            <!--begin::Card body-->
-            <div class="card-body border-top px-6 py-8">
-              <!--begin::Email Address-->
-              <%= render partial: "devise/registrations/email_form_row" %>
-              <!--end::Email Address-->
-              <!--begin::Password-->
-              <%= render partial: "devise/registrations/password_form_row" %>
-              <!--end::Password-->
-            </div>
-            <!--end::Card body-->
-          </div>
-          <!--end::Content-->
+  <div class="d-flex flex-column">
+    <!--begin::Aside-->
+    <!--end::Aside-->
+    <!--begin::Layout-->
+    <div class="flex-md-row-fluid">
+      <!--begin::Sign-in Method-->
+      <div class="card mb-5 mb-xl-10" id="kt_account_settings_signin_method" data-kt-scroll-offset="{default: 100, md: 125}">
+        <!--begin::Card header-->
+        <div class="cards--header card-header align-items-center">
+          <div class="card-main-title">Account</div>
         </div>
-        <!--end::Sign-in Method-->
-        <!--begin::Basic info-->
-        <div class="card mb-5 mb-xl-10" id="kt_account_settings_info" data-kt-scroll-offset="{default: 100, md: 125}">
-          <!--begin::Card header-->
-          <div class="cards--header card-header align-items-center">
-            <div class="card-main-title">Profile</div>
+        <!--end::Card header-->
+        <!--begin::Content-->
+        <div id="kt_account_signin_method" class="collapse show">
+          <!--begin::Card body-->
+          <div class="card-body border-top px-6 py-8">
+            <!--begin::Email Address-->
+            <%= render partial: "devise/registrations/email_form_row" %>
+            <!--end::Email Address-->
+            <!--begin::Password-->
+            <%= render partial: "devise/registrations/password_form_row" %>
+            <!--end::Password-->
           </div>
-          <!--begin::Card header-->
-          <!--begin::Content-->
-          <div id="kt_account_basic_info" class="collapse show">
-            <!--begin::Card body-->
-            <!--begin::Form-->
-            <%= form_for current_user,
-                url: update_authed_name_and_avatar_path,
-                id: "kt_account_basic_info_form",
-                class: "form fv-plugins-bootstrap5 fv-plugins-framework",
-                novalidate: "novalidate" do |f| %>
-              <div class="card-body border-top p-9">
-                <div class="fv-row fv-plugins-icon-container" data-controller="edit-profile-picture">
-                  <div class="sign-up--avatar-container mb-4">
-                    <%= f.file_field "avatar", data: { action: "input->edit-profile-picture#handleFileUpload", "edit-profile-picture-target" => "userAvatarInput" }, style: "display: none" %>
-                    <img src="<%= url_for(current_user.avatar.variant(resize_to_limit: [104, 104])) %>"
-                      width="104"
-                      height="104"
-                      class="<%= current_user.avatar.attached? ? nil : 'invisible' %> sign-up--avatar-image"
-                      data-edit-profile-picture-target="avatarPreview"
-                    />
-                    <p class="<%= current_user.avatar.attached? ? 'invisible' : nil %>"
-                      data-edit-profile-picture-target="firstLetter"
-                    ><%= current_user.first_name[0].upcase %></p>
-                  </div>
-                  <p class="invisible text--error m-0 mb-4"
-                    data-edit-profile-picture-target="fileFormatErrorMessage"
-                  >File must be an image!</p>
-                  <div class="d-flex flex-row mb-4">
-                    <button type="button"
-                      class="custom-button custom-button--sm custom-button--secondary me-4"
-                      data-action="click->edit-profile-picture#handleFileZoneClicked"  
-                    >
-                      Upload photo
-                    </button>
-                    <button type="button"
-                      class="<%= current_user.avatar.attached? ? nil : 'invisible' %> custom-button custom-button--sm custom-button--secondary-light-danger"
-                      data-action="click->edit-profile-picture#deleteCurrentPicture"
-                      data-edit-profile-picture-target="deleteButton"
-                    >Remove photo</button>
-                  </div>
+          <!--end::Card body-->
+        </div>
+        <!--end::Content-->
+      </div>
+      <!--end::Sign-in Method-->
+      <!--begin::Basic info-->
+      <div class="card mb-5 mb-xl-10" id="kt_account_settings_info" data-kt-scroll-offset="{default: 100, md: 125}">
+        <!--begin::Card header-->
+        <div class="cards--header card-header align-items-center">
+          <div class="card-main-title">Profile</div>
+        </div>
+        <!--begin::Card header-->
+        <!--begin::Content-->
+        <div id="kt_account_basic_info" class="collapse show">
+          <!--begin::Card body-->
+          <!--begin::Form-->
+          <%= form_for current_user,
+              url: update_authed_name_and_avatar_path,
+              id: "kt_account_basic_info_form",
+              class: "form fv-plugins-bootstrap5 fv-plugins-framework",
+              novalidate: "novalidate" do |f| %>
+            <div class="card-body border-top p-9">
+              <div class="fv-row fv-plugins-icon-container" data-controller="edit-profile-picture">
+                <div class="sign-up--avatar-container mb-4">
+                  <%= f.file_field "avatar", data: { action: "input->edit-profile-picture#handleFileUpload", "edit-profile-picture-target" => "userAvatarInput" }, style: "display: none" %>
+                  <img src="<%= url_for(current_user.avatar.variant(resize_to_limit: [104, 104])) %>"
+                    width="104"
+                    height="104"
+                    class="<%= current_user.avatar.attached? ? nil : 'invisible' %> sign-up--avatar-image"
+                    data-edit-profile-picture-target="avatarPreview"
+                  />
+                  <p class="<%= current_user.avatar.attached? ? 'invisible' : nil %>"
+                    data-edit-profile-picture-target="firstLetter"
+                  ><%=  current_user.first_name[0].upcase %></p>
                 </div>
-                <!--begin::Input group-->
-                <div class="forms--row forms--input-group ">
-                  <!--begin::Label-->
-                  <label class="forms--label required">Full Name</label>
-                  <!--end::Label-->
-                  <!--begin::Col-->
-                  <%= f.text_field "first_name", class: "form-control forms--text-input w-25", placeholder: "First name" %>
-                  <% if current_user.errors[:first_name] %>
-                    <div class="fv-plugins-message-container invalid-feedback"><%= current_user.errors[:first_name].join(", ") %></div>
-                  <% end %>
-                </div>
-                <div class="forms--row forms--input-group ">
-                  <label class="forms--label required">Full Name</label>
-                  <%= f.text_field "last_name", class: "form-control forms--text-input w-25", placeholder: "Last name" %>
-                  <% if current_user.errors[:last_name] %>
-                    <div class="fv-plugins-message-container invalid-feedback"><%= current_user.errors[:last_name].join(", ") %></div>
-                  <% end %>
-                </div>
-                <!--end::Input group-->
-                <div class="forms--input-group mt-8">
-                  <button type="submit"
-                    class="custom-button custom-button--sm custom-button--primary"
-                    id="kt_account_basic_info_submit"
-                  >Update profile</button>
+                <p class="invisible text--error m-0 mb-4"
+                  data-edit-profile-picture-target="fileFormatErrorMessage"
+                >File must be an image!</p>
+                <div class="d-flex flex-row mb-4">
+                  <button type="button"
+                    class="custom-button custom-button--sm custom-button--secondary me-4"
+                    data-action="click->edit-profile-picture#handleFileZoneClicked"  
+                  >
+                    Upload photo
+                  </button>
+                  <button type="button"
+                    class="<%= current_user.avatar.attached? ? nil : 'invisible' %> custom-button custom-button--sm custom-button--secondary-light-danger"
+                    data-action="click->edit-profile-picture#deleteCurrentPicture"
+                    data-edit-profile-picture-target="deleteButton"
+                  >Remove photo</button>
                 </div>
               </div>
-            <% end %>
-            <!--/form-->
-            <!--end::Form-->
-          </div>
-          <!--end::Content-->
+              <!--begin::Input group-->
+              <div class="forms--row forms--input-group ">
+                <!--begin::Label-->
+                <label class="forms--label required">Full Name</label>
+                <!--end::Label-->
+                <!--begin::Col-->
+                <%= f.text_field "first_name", class: "form-control forms--text-input w-25", placeholder: "First name" %>
+                <% if current_user.errors[:first_name] %>
+                  <div class="fv-plugins-message-container invalid-feedback"><%= current_user.errors[:first_name].join(", ") %></div>
+                <% end %>
+              </div>
+              <div class="forms--row forms--input-group ">
+                <label class="forms--label required">Full Name</label>
+                <%= f.text_field "last_name", class: "form-control forms--text-input w-25", placeholder: "Last name" %>
+                <% if current_user.errors[:last_name] %>
+                  <div class="fv-plugins-message-container invalid-feedback"><%= current_user.errors[:last_name].join(", ") %></div>
+                <% end %>
+              </div>
+              <!--end::Input group-->
+              <div class="forms--input-group mt-8">
+                <button type="submit"
+                  class="custom-button custom-button--sm custom-button--primary"
+                  id="kt_account_basic_info_submit"
+                >Update profile</button>
+              </div>
+            </div>
+          <% end %>
+          <!--/form-->
+          <!--end::Form-->
         </div>
-        <!--end::Basic info-->
+        <!--end::Content-->
       </div>
-      <!--end::Layout-->
+      <!--end::Basic info-->
     </div>
+    <!--end::Layout-->
   </div>
   <!--end::Container-->
 </div>

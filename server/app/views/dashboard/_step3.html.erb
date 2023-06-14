@@ -17,7 +17,7 @@
       <h2 class="page-main-title">Let's give your Pod a new location</h2>
       <!--end::Title-->
       <!--begin::Notice-->
-      <p class="additional-text">Pods keep connected to your Internet network and perform various tests throughout the day or at your request.</p>
+      <p class="additional-text wrap">Pods keep connected to your Internet network and perform various tests throughout the day or at your request.</p>
       <!--end::Notice-->
     </div>
     <!--end::Heading-->
@@ -35,7 +35,11 @@
   <!--end::Wrapper-->
 </div>
 
-<div class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:frame-render->modal#showModal turbo:submit-end->modal#submit turbo:submit-end->onboard#ifSuccessGoto4">
+<div class="modal fade"
+  tabindex="-1"
+  data-controller="modal categories"
+  data-action="turbo:frame-render->modal#showModal turbo:submit-end->modal#submit turbo:submit-end->onboard#ifSuccessGoto4 handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated"
+>
   <%= turbo_frame_tag "new_location_modal" do %>
   <% end %>
 </div>

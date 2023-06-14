@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/services/locations_service/i_locations_service.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_step_body.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/bloc/location_step_state.dart';
@@ -28,25 +30,45 @@ class LocationStep extends StatelessWidget {
         ),
         child: BlocListener<LocationStepCubit, LocationStepState>(
           listenWhen: (previous, current) =>
-              (previous.loadingCurrentLocation && !current.loadingCurrentLocation && current.error == null) ||
-              (previous.suggestedLocation != null && current.location == previous.suggestedLocation),
+              (!previous.isLocationConfirmed && current.isLocationConfirmed) ||
+              (!previous.needsToConfirmLocation && current.needsToConfirmLocation),
           listener: (context, state) {
-            if (state.location != null && state.location == state.suggestedLocation) {
-              context.read<SpeedTestCubit>().setLocation(state.location!);
+            if (state.isLocationConfirmed) {
+              final locationConfirmed = state.isUsingGeolocation! ? state.geolocation : state.location;
+              context.read<SpeedTestCubit>().setLocation(locationConfirmed!);
               context.read<SpeedTestCubit>().nextStep();
-            } else {
-              _openConfirmYoutLocationModal(context, state.currentLocation);
+            } else if (state.needsToConfirmLocation) {
+              _openConfirmYoutLocationModal(context);
             }
           },
           child: BlocBuilder<LocationStepCubit, LocationStepState>(
             builder: (context, state) {
-              return LocationStepBody(
-                location: state.location,
-                currentLocation: state.currentLocation,
-                error: state.error,
-                isLoading: state.isLoading,
-                suggestedLocation: state.suggestedLocation,
-                suggestions: state.suggestions,
+              if (state.isGeolocationEnabled == null) {
+                return Container();
+              }
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: TitleAndSubtitle(
+                      title: Strings.locationStepTitle,
+                      subtitle: _getSubtitle(state.isUsingGeolocation ?? false, state.isGeolocationLoading),
+                      subtitleHeight: 1.56,
+                      titleHeight: 1.81,
+                    ),
+                  ),
+                  LocationStepBody(
+                    query: state.query,
+                    failure: state.failure,
+                    location: state.location,
+                    geolocation: state.geolocation,
+                    suggestions: state.suggestions,
+                    isUsingGeolocation: state.isUsingGeolocation,
+                    isGeolocationLoading: state.isGeolocationLoading,
+                    isGeolocationEnabled: state.isGeolocationEnabled!,
+                    isLocationLoading: state.isLocationLoading,
+                  ),
+                ],
               );
             },
           ),
@@ -55,12 +77,20 @@ class LocationStep extends StatelessWidget {
     );
   }
 
-  Future<void> _openConfirmYoutLocationModal(BuildContext context, Location? location) {
+  Future<void> _openConfirmYoutLocationModal(BuildContext context) {
     return mapModal(
       context,
       true,
       true,
       () => context.read<LocationStepCubit>().reset(),
     );
+  }
+
+  String _getSubtitle(bool isUsingGeolocation, bool isGeolocationLoading) {
+    if (isUsingGeolocation && !isGeolocationLoading) {
+      return Strings.locationStepSubtitleGeolocation;
+    } else {
+      return Strings.locationStepSubtitle;
+    }
   }
 }

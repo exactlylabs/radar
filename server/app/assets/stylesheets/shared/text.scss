@@ -8,6 +8,7 @@ $extra-bold: 800;
 
 .text--primary {
   color: $black !important;
+  color: $black !important;
 }
 
 .text--secondary {
@@ -31,15 +32,22 @@ $extra-bold: 800;
 }
 
 .fw-semi-bold {
-  font-variation-settings: 'wght' $semi-bold;
+  font-variation-settings: 'wght' $semi-bold !important;
 }
 
 .fw-bold {
-  font-variation-settings: 'wght' $bold;
+  font-variation-settings: 'wght' $bold !important;
 }
 
 .fw-extra-bold {
   font-variation-settings: 'wght' $extra-bold;
+}
+
+.card-big-title {
+  font-variation-settings: 'wght'$bold;
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+  color: $deep-blue;
 }
 
 .card-main-title {
@@ -78,19 +86,42 @@ $extra-bold: 800;
   color: $gray !important;
 }
 
+.modal-main-title {
+  font-variation-settings: 'wght' $bold;
+  font-size: 1.062rem;
+  color: $deep-blue;
+}
+
 .sidebar-item--text {
+  font-variation-settings: 'wght' $bold;
+  font-size: 0.938rem;
+  color: $dark-gray;
+  line-height: 1.25rem;
+
+  &.sidebar-item--text-active {
+    color: $blue;
+  }
+
+  &:hover {
+    color: $blue;
+  }
+
+  &[data-disabled="true"] {
+    opacity: 0.3;
+  }
+}
+
+.sidebar-item--text-static {
   font-variation-settings: 'wght' $semi-bold;
   font-size: 0.938rem;
   color: $dark-gray;
+  line-height: 1.25rem;
 }
 
-.sidebar-item--text-active {
-  font-variation-settings: 'wght' $bold;
-  color: $blue;
-}
-
-.sidebar-item--text:hover {
-  color: $blue;
+.sidebar-item--profile-text {
+  font-variation-settings: 'wght' $semi-bold;
+  font-size: 0.938rem;
+  color: $dark-gray;
 }
 
 .additional-text {
@@ -105,6 +136,13 @@ $extra-bold: 800;
   color: $deep-blue;
 }
 
+.regular-bold-text {
+  font-variation-settings: 'wght' $bold;
+  font-size: 0.875rem;
+  line-height: 1.312rem;
+  color: $deep-blue;
+}
+
 .regular-link {
   font-variation-settings: 'wght' $bold;
   font-size: 0.875rem;
@@ -113,13 +151,26 @@ $extra-bold: 800;
   text-decoration: none;
 }
 
+.secondary-link {
+  font-variation-settings: 'wght'$medium !important;
+  font-size: 0.875rem !important;
+  color: $gray !important;
+  text-decoration: underline;
+}
+
+.warning-link {
+  font-variation-settings: 'wght' $bold !important;
+  font-size: 0.875rem !important;
+  color: $snackbar--warning-color !important;
+  text-decoration: underline;
+}
+
 .help-text {
   font-variation-settings: 'wght' $medium;
   font-size: 0.812rem;
   line-height: 1.188rem;
   letter-spacing: 0;
   color: $gray;
-  margin-bottom: 16px;
 }
 
 .warning-text {
@@ -135,6 +186,14 @@ $extra-bold: 800;
   text-overflow: clip;
   overflow-wrap: break-word;
   white-space: normal;
+}
+
+.warning-text {
+  font-variation-settings: 'wght' $medium;
+  font-size: 0.875rem;
+  line-height: 1.3125rem;
+  color: #3f4254;
+  white-space: break-spaces;
 }
 
 .ellipsis {

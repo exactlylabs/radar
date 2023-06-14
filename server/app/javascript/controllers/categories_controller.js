@@ -40,8 +40,10 @@ export default class extends Controller {
   }
 
   initializeCategories() {
-    if(this.hiddenCategoriesInputTarget) {
-      this.categories = this.hiddenCategoriesInputTarget.value.split(',');
+    if (document.getElementById('location_categories')) {
+      if(this.hiddenCategoriesInputTarget) {
+        this.categories = this.hiddenCategoriesInputTarget.value.split(',');
+      }
     }
   }
 
@@ -214,5 +216,9 @@ export default class extends Controller {
       this.clearSearchInput();
       setTimeout(() => emitCustomEvent('handleCategorySearch'), 100); // need to add a little delay to let turbo re-render components on screen
     }
+  }
+
+  clearCategories() {
+    this.categories = [];
   }
 }

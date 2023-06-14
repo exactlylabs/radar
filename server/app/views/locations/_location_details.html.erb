@@ -1,74 +1,68 @@
 <div class="card" style="width: 90%" id="location-details">
   <!--begin::Card header-->
-    <div class="card-header align-items-center" style="height: 65px">
-      <div class="dialog-main-title">Overview</div>
-    </div>
+  <div class="card-header align-items-center" style="height: 65px">
+    <div class="dialog-main-title">Overview</div>
+  </div>
   <!--end::Card header-->
   <!--begin::Card body-->
     <!--begin::Card title-->
-      <div class="card-title-container d-flex flex-row justify-content-between align-items-center"
-           style="height: 90px;padding-left: 30px;padding-right: 30px;margin-top: 20px;margin-bottom: 50px;">
-        <div class="card-title--wrapper d-flex flow-row align-items-center">
-          <div class="card-title--icon d-flex align-items-center justify-content-center" 
-               style="height: 56px; width: 56px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
-            <span class="svg-icon svg-icon-2x svg-icon-primary">
+    <div class="card-title-container d-flex flex-row justify-content-between align-items-center"
+          style="height: 90px;padding-left: 30px;padding-right: 30px;margin-top: 20px;margin-bottom: 50px;">
+      <div class="card-title--wrapper d-flex flow-row align-items-center">
+        <div class="card-title--icon d-flex align-items-center justify-content-center" 
+              style="height: 56px; width: 56px; background-color: #f1faff; border-radius: 50%; margin-right: 20px">
+          <span class="svg-icon svg-icon-2x svg-icon-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path opacity="0.3" d="M18.0624 15.3453L13.1624 20.7453C12.5624 21.4453 11.5624 21.4453 10.9624 20.7453L6.06242 15.3453C4.56242 13.6453 3.76242 11.4453 4.06242 8.94534C4.56242 5.34534 7.46242 2.44534 11.0624 2.04534C15.8624 1.54534 19.9624 5.24534 19.9624 9.94534C20.0624 12.0453 19.2624 13.9453 18.0624 15.3453Z" fill="black"/>
               <path d="M12.0624 13.0453C13.7193 13.0453 15.0624 11.7022 15.0624 10.0453C15.0624 8.38849 13.7193 7.04535 12.0624 7.04535C10.4056 7.04535 9.06241 8.38849 9.06241 10.0453C9.06241 11.7022 10.4056 13.0453 12.0624 13.0453Z" fill="black"/>
             </svg>
           </span>
-          </div>
-          <div class="card-title--title-content">
-            <div class="card-main-title mb-0">
-              <%= location.name %>
-            </div>
-            <div class="additional-text">
-              <%= location.address %>
-            </div>
-          </div>
         </div>
-        <div class="d-flex flex-row flex-wrap justify-content-start align-items-start mt-2 ms-2" style="gap: 10px">
-          <div class="actions-menu d-lg-block d-xl-none" style="width:max-content">
-            <a href="#" class="custom-button custom-button--secondary custom-button--lg me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-              Actions
-              <span class="svg-icon svg-icon-5 m-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
-                </svg>
-              </span>
-            </a>
-            <div class="menu menu-sub menu-sub-dropdown menu-rounded menu-gray-600 menu-state-bg-light-primary" 
-                 style="width: inherit"
-                 data-kt-menu="true" 
-                 data-controller="menu">
-              <div class="menu-item">
-                <a href="#" data-bs-toggle="modal" data-bs-target="#edit_location_modal" class="btn btn-light me-3">Edit Location</a>
-              </div>
-            </div>
+        <div class="card-title--title-content">
+          <div class="card-main-title mb-0">
+            <%= location.name %>
           </div>
-          <a href="#" class="custom-button custom-button--lg custom-button--secondary me-3 d-md-none d-xl-flex" data-bs-toggle="modal" data-bs-target="#add_pod_modal_step_0">Add Pod</a>
-          <a href="#" data-bs-toggle="modal" data-bs-target="#edit_location_modal" class="custom-button custom-button--lg custom-button--secondary me-3 d-md-none d-xl-flex">Edit</a>
-          <a href="<%= location_measurements_path(location) %>" class="custom-button custom-button--lg custom-button--primary me-3 d-md-none d-xl-flex">View Measurements</a>
+          <div class="additional-text">
+            <%= location.address %>
+          </div>
         </div>
       </div>
+      <div class="d-flex flex-row flex-wrap justify-content-start align-items-start mt-2 ms-2" style="gap: 10px">
+        <div class="actions-menu d-lg-block d-xl-none" style="width:max-content">
+          <a href="#" class="custom-button custom-button--secondary custom-button--lg me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+            Actions
+            <span class="svg-icon svg-icon-5 m-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+              </svg>
+            </span>
+          </a>
+          <div class="menu menu-sub menu-sub-dropdown menu-rounded menu-gray-600 menu-state-bg-light-primary" 
+                style="width: inherit"
+                data-kt-menu="true" 
+                data-controller="menu">
+            <div class="menu-item">
+              <a href="#" data-bs-toggle="modal" data-bs-target="#edit_location_modal" class="btn btn-light me-3">Edit Location</a>
+            </div>
+          </div>
+        </div>
+        <a href="#" class="custom-button custom-button--lg custom-button--secondary me-3 d-md-none d-xl-flex" data-bs-toggle="modal" data-bs-target="#add_pod_modal_step_0">Add Pod</a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#edit_location_modal" class="custom-button custom-button--lg custom-button--secondary me-3 d-md-none d-xl-flex">Edit</a>
+        <a href="<%= location_measurements_path(location) %>" class="custom-button custom-button--lg custom-button--primary me-3 d-md-none d-xl-flex">View Measurements</a>
+      </div>
+    </div>
     <!--end::Card title-->
     <div class="card-body pt-0 d-flex flex-row justify-content-between">
       <div class="location-data" style="width: 40%;">
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-          <div class="fw-bolder w-50" style="min-width: 130px;"><%= location.categories.count == 1 ? "Category" : "Categories" %></div>
-          <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
-            <%= render partial: "location_categories/table_cell", locals: { categories: location.categories, shows_tooltip: true, row: 0 } %>
-          </div>
-        </div>
-        <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
-          <div class="fw-bolder w-50" style="min-width: 130px;"><%= location.categories.count == 1 ? "Category" : "Categories" %></div>
+          <div class="forms--label" style="min-width: 130px;"><%= location.categories.count == 1 ? "Category" : "Categories" %></div>
           <div class="d-flex flex-row w-100 w-xl-50" style="font-size: 14px">
             <%= render partial: "location_categories/table_cell", locals: { categories: location.categories, shows_tooltip: true, row: 0 } %>
           </div>
         </div>
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
           <div class="forms--label" style="min-width: 130px;">Avg./Exp. Download</div>
-          <div class="d-flex flex-row w-100 w-xl-50">
+          <div class="d-flex flex-row w-50 flex-wrap">
             <div class="regular-text">
               <%= location.download_avg.present? ? "#{location.download_avg} Mbps" : 'N/A'%>
             </div>
@@ -82,7 +76,7 @@
         </div>
         <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
           <div class="forms--label" style="min-width: 130px;">Avg./Exp. Upload</div>
-          <div class="d-flex flex-row w-100 w-xl-50">
+          <div class="d-flex flex-row w-50 flex-wrap">
             <div class="regular-text">
               <%= location.upload_avg.present? ? "#{location.upload_avg} Mbps" : 'N/A'%>
             </div>

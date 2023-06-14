@@ -1,35 +1,78 @@
-<div class="d-flex flex-center flex-column flex-column-fluid">
+<div class="d-flex flex-center flex-column flex-column-fluid devise--sign-in-container" data-controller="registration password-reveal">
   <!--begin::Wrapper-->
-  <div class="w-lg-500px p-10 p-lg-15 mx-auto">
-    <div class="text-center mb-10">
-      <h1 class="text-dark mb-3">Change your password</h1>
+  <div class="w-100">
+    <div class="text-center mb-6">
+      <h1 class="page-main-title">Change your password</h1>
     </div>
-    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, data: { "registration-target" => "passwordChangeForm" } }) do |f| %>
       <%= f.hidden_field :reset_password_token %>
 
-      <div class="field fv-row mb-10 fv-plugins-icon-container">
-        <% if resource.errors[:password] %>
-          <div class="fv-plugins-message-container invalid-feedback"><%= resource.errors[:password].join(", ") %></div>
-        <% end %>
-        <%= f.label :password, "New password" %><br />
-        <% if @minimum_password_length %>
-          <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-        <% end %>
-        <%= f.password_field :password, autofocus: true, autocomplete: "off", class: "form-control form-control-lg form-control-solid" %>
+      <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-4">
+        <label class="forms--label mb-2">New password</label>
+        <div class="position-relative w-100">
+          <%= f.password_field :password,
+              autofocus: true,
+              autocomplete: "off",
+              class: "w-100 forms--text-input forms--text-input-focusable forms--text-input-with-decoration",
+              tabindex: 1,
+              placeholder: "New password",
+              data: {
+                "password-reveal-target" => "passwordInput",
+                "registration-target" => "passwordInput"
+              }
+          %>
+          <span class="forms--input-decoration btn btn-sm btn-icon"
+            data-action="click->password-reveal#toggleVisibility">
+            <%= image_tag image_url("hidden-password-icon.png"), class: "invisible", width: "16", height: "16", data: { "password-reveal-target" => "eyeSlashIcon" }%>
+            <%= image_tag image_url("visible-password-icon.png"), class: "", width: "16", height: "16", data: { "password-reveal-target" => "eyeIcon" }%>
+          </span>
+        </div>
       </div>
 
-      <div class="field fv-row mb-10 fv-plugins-icon-container">
-        <% if resource.errors[:password_confirmation] %>
-          <div class="fv-plugins-message-container invalid-feedback"><%= resource.errors[:password_confirmation].join(", ") %></div>
-        <% end %>
-        <%= f.label :password_confirmation, "Confirm new password" %><br />
-        <%= f.password_field :password_confirmation, autocomplete: "off", class: "form-control form-control-lg form-control-solid" %>
+      <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-4">
+        <label class="forms--label mb-2">Confirm new password</label>
+        <div class="position-relative w-100">
+          <%= f.password_field :password_confirmation,
+            autocomplete: "off",
+            class: "w-100 forms--text-input forms--text-input-focusable forms--text-input-with-decoration",
+            tabindex: 2,
+            placeholder: "Confirm new password",
+            data: { 
+              "password-reveal-target" => "passwordConfirmationInput",
+              "registration-target" => "passwordCheckInput"
+            }
+          %>
+          <span class="password-confirmation forms--input-decoration btn btn-sm btn-icon"
+            data-action="click->password-reveal#toggleVisibility">
+            <%= image_tag image_url("hidden-password-icon.png"), class: "invisible password-confirmation", width: "16", height: "16", data: { "password-reveal-target" => "eyeSlashIconConfirmation" }%>
+            <%= image_tag image_url("visible-password-icon.png"), class: "password-confirmation", width: "16", height: "16", data: { "password-reveal-target" => "eyeIconConfirmation" }%>
+          </span>
+        </div>
       </div>
 
-      <div class="actions d-flex flex-wrap justify-content-center pb-lg-0">
-        <%= f.submit "Change my password", class: "btn btn-lg btn-primary" %>
+      <div class="mt-2 devise--alert wrap invisible"
+        data-registration-target="alert"
+        data-alert-type="alert"
+      ></div>
+
+      <p class="additional-text mt-6 mb-8 wrap">Your password must be at least 8 characters with letters, numbers and symbols.</p>
+
+      <div class="text-center mt-8">
+        <button type="button"
+          class="custom-button custom-button--lg custom-button--primary mx-auto my-2 w-100"
+          data-action="click->registration#checkPasswordChange"
+          data-registration-target="continueButton"
+        >
+          Reset password
+        </button>
       </div>
+      <button type="button"
+        class="invisible custom-button custom-button--lg custom-button--primary custom-button--disabled disabled mx-auto w-100"
+        disabled="true"
+        data-registration-target="continueButtonSpinner"
+      >
+        <div class="spinner-border spinner-border-sm text-light m-auto" role="status"></div>
+      </button>
     <% end %>
-    <%= render "devise/shared/links" %>
   </div>
 </div>

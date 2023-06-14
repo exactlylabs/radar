@@ -1,6 +1,6 @@
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar">
-  <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
@@ -48,21 +48,29 @@
 
 <%= turbo_frame_tag "locations_display" do %>
   <div class="post fs-6 d-flex flex-column" id="kt_post">
-    <div class="container-fluid">
-      <% if current_account.is_all_accounts? %>
-        <%= render partial: "locations/locations_table_filters" %>
-      <% end %>
-      <%= render partial: 'locations_table', locals: { locations: @locations } %>
-    </div>
+    <% if current_account.is_all_accounts? %>
+      <%= render partial: "locations/locations_table_filters" %>
+    <% end %>
+    <%= render partial: 'locations_table', locals: { locations: @locations } %>
   </div>
 <% end %>
 
-<div class="modal fade" tabindex="-1" data-controller="modal categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
+<div class="modal fade"
+  tabindex="-1"
+  data-controller="modal categories"
+  data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#clearCategories turbo:submit-end->modal#submit turbo:frame-render->modal#showModal"
+  data-clear-turbo-id="new_location_modal"
+>
   <%= turbo_frame_tag "new_location_modal" do %>
   <% end %>
 </div>
 
-<div class="modal fade" tabindex="-1" data-controller="modal categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated turbo:submit-end->modal#submit turbo:frame-render->modal#showModal turbo:frame-render->categories#initializeCategories">
+<div class="modal fade"
+  tabindex="-1"
+  data-controller="modal categories"
+  data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated turbo:submit-end->modal#submit turbo:frame-render->modal#showModal turbo:frame-render->categories#initializeCategories"
+  data-clear-turbo-id="edit_location_modal"  
+>
   <%= turbo_frame_tag "edit_location_modal" do %>
   <% end %>
 </div>

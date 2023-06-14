@@ -4,11 +4,13 @@ $black: #000;
 $error-red: #e54b4b;
 $danger: #f1416c;
 $success-green: #50cd89;
+$success-green: #50cd89;
 
 // Primaries
 $blue: #4b7be5;
 $deep-blue: #110e4c;
 $avatar-blue: rgba(75, 123, 229, 0.2);
+$avatar-dash-blue: rgba(75, 123, 229, 0.5);
 
 // Secondaries
 $gray: #6d6a94;
@@ -17,6 +19,7 @@ $dark-gray: #3f3c70;
 $subtle-gray: #f6f7fa;
 $mid-light-gray: #bcbbc7;
 $title-gray : #8e8cb1;
+$icon-container-gray: #ebeef5;
 
 // Buttons
 $primary-button--box-shadow: #4b7be550;
@@ -44,6 +47,34 @@ $alert--primary-background-color: #c2f0dd;
 $alert--primary-color: #055d2a;
 $alert--danger-background-color: #f0c2c2;
 $alert--danger-color: #5d0505;
+
+// Badges
+$badge--green-color: #31b36c;
+$badge--green-background-color: rgba(49, 179, 108, 0.1);
+$badge--red-color: #f1416c;
+$badge--red-background-color: rgba(241, 65, 108, 0.1);
+$badge--gray-color: $gray;
+$badge--gray-background-color: $subtle-gray;
+$badge--blue-color: $blue;
+$badge--blue-background-color: rgba(75, 123, 229, 0.1);
+$badge--orange-color: #f18f41;
+$badge--orange-background-color: rgba(241, 143, 65, 0.1);
+
+// Sidebar
+$sidebar--main-container-border: rgba(188, 187, 199, 0.1);
+$sidebar--main-container-box-shadow: rgba(188, 187, 199, 0.15);
+$sidebar--horizontal-divider-background-color: rgba(188, 187, 199, 0.25);
+$sidebar--accounts-item-outline: rgba(188, 187, 199, 0.3);
+$sidebar--accounts-item-box-shadow: rgba(160, 159, 183, 0.35);
+$sidebar--accounts-options-box-shadow: rgba(160, 159, 183, 0.4);
+
+// Snackbar
+$snackbar--danger-background-color: rgba(250, 176, 176, 0.2);
+$snackbar--danger-color: #e54b4b;
+$snackbar--notice-background-color: rgba(75, 123, 229, 0.2);
+$snackbar--notice-color: $blue;
+$snackbar--warning-background-color: rgba(245, 134, 0, 0.1);
+$snackbar--warning-color: #f58600;
 
 .transparent {
   background-color: transparent;

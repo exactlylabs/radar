@@ -46,10 +46,11 @@ func main() {
 	log.Println("Starting Radar Agent")
 	log.Println(info.BuildInfo())
 	c := config.LoadConfig()
-	tracing.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version)
+	tracing.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version, os.TempDir())
+	defer tracing.FlushBuffer()
 	defer tracing.NotifyPanic()
 
-	sigs := make(chan os.Signal)
+	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT)
 	ctx, cancel := context.WithCancel(context.Background())
 	interrupts := 0

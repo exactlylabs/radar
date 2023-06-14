@@ -1,69 +1,69 @@
-import 'dart:convert';
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:dartz/dartz.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/http_provider/models/http_response_model.dart';
 import 'package:client_mobile_app/core/http_provider/failures/http_provider_failure.dart';
 
 class HttpProvider implements IHttpProvider {
   @override
-  Future<Either<HttpProviderFailure, T>> getAndDecode<T>({
+  Future<({HttpProviderFailure? failure , T? response})> getAndDecode<T>({
     required String url,
     required Map<String, String> headers,
     T Function(Map<String, dynamic> json)? fromJson,
   }) async {
-    final failureOrResponse = await _get(headers: headers, url: Uri.parse(url));
-    return failureOrResponse.fold(
-      (failure) => Left(failure),
-      (response) => _decodeResponse<T>(response, fromJson),
-    );
+    final ({HttpProviderFailure? failure, HttpResponseModel? httpResponse}) response = await _get(headers: headers, url: Uri.parse(url));
+
+    if(response.failure != null) {
+      return (failure: response.failure, response: null);
+    }
+    return _decodeResponse<T>(response.httpResponse!, fromJson);
   }
 
   @override
-  Future<Either<HttpProviderFailure, T>> postAndDecode<T>({
+  Future<({HttpProviderFailure? failure , T? response})> postAndDecode<T>({
     required String url,
     required Map<String, String> headers,
     required dynamic body,
     T Function(Map<String, dynamic> json)? fromJson,
   }) async {
-    final failureOrResponse = await _post(url: Uri.parse(url), headers: headers, body: body);
-    return failureOrResponse.fold(
-      (failure) => Left(failure),
-      (response) => _decodeResponse<T>(response, fromJson),
-    );
+    final ({HttpProviderFailure? failure, HttpResponseModel? httpResponse}) response = await _post(url: Uri.parse(url), headers: headers, body: body);
+    if(response.failure != null) {
+      return (failure: response.failure, response: null);
+    }
+    return _decodeResponse<T>(response.httpResponse!, fromJson);      
   }
 
-  Future<Either<HttpProviderFailure, HttpResponseModel>> _get({
+  Future<({HttpProviderFailure? failure , HttpResponseModel? httpResponse})> _get({
     required Uri url,
     required Map<String, String> headers,
   }) async =>
       _httpCall(() => http.get(url, headers: headers));
 
-  Future<Either<HttpProviderFailure, HttpResponseModel>> _post({
+  Future<({HttpProviderFailure? failure , HttpResponseModel? httpResponse})> _post({
     required Uri url,
     required Map<String, String> headers,
     required dynamic body,
   }) async =>
       _httpCall(() => http.post(url, headers: headers, body: body));
 
-  Future<Either<HttpProviderFailure, HttpResponseModel>> _httpCall(Future<http.Response> Function() call) async {
+  Future<({HttpProviderFailure? failure , HttpResponseModel? httpResponse})> _httpCall(Future<http.Response> Function() call) async {
     try {
       final response = await call();
       final decodedBody = response.body;
-      return Right(HttpResponseModel(statusCode: response.statusCode, body: decodedBody));
+      final responseModel = HttpResponseModel(statusCode: response.statusCode, body: decodedBody);
+      return (failure: null, httpResponse: responseModel);
     } on HttpException catch (error, stackTrace) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx and is also not 304.
-      return Left(HttpProviderFailure(
+      final failure = HttpProviderFailure(
         exception: error.message,
         stackTrace: stackTrace,
-      ));
+      );
+      return (failure: failure, httpResponse: null);
     }
   }
 
-  Either<HttpProviderFailure, T> _decodeResponse<T>(
+  ({HttpProviderFailure? failure , T? response}) _decodeResponse<T>(
       HttpResponseModel response, T Function(Map<String, dynamic> json)? fromJson) {
     try {
       T t = fromJson != null
@@ -71,12 +71,13 @@ class HttpProvider implements IHttpProvider {
           : response.body.isNotEmpty
               ? json.decode(response.body)
               : response.body as T;
-      return Right(t);
+      return (failure: null, response: t);
     } catch (exception, stackTrace) {
-      return Left(HttpProviderFailure(
+      final failure = HttpProviderFailure(
         exception: exception,
         stackTrace: stackTrace,
-      ));
+      );
+      return (failure: failure, response: null);
     }
   }
 }

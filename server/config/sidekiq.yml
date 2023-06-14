@@ -5,3 +5,4 @@ production:
 :queues:
     - [default, 2]
     - study_projection
+    - notifications

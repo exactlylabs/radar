@@ -4,7 +4,6 @@ class Strings {
   static const String yourResultsLabel = 'Your Results';
   static const String mapLabel = 'Map';
   static const String locationStepTitle = "What's your location?";
-  static const String locationStepSubtitle = "We’ll show your speed test results on the map.";
   static const String networkPlaceStepTitle = 'Where do you have Internet?';
   static const String networkPlaceStepSubtitle = 'Choose the option that best applies.';
   static const String networkTypeStepTitle = 'How are you connected?';
@@ -26,6 +25,7 @@ class Strings {
   static const String speedgaugeSpeedLabel = ' speed...';
   static const String emptyOption = '-';
   static const String optionNotAnswered = 'N/A';
+  static const String notAvailable = 'N/A';
   static const String emptyString = '';
   static const String downloadResultsLabel = 'Download';
   static const String downloadResultsUnit = 'Mbps';
@@ -55,6 +55,10 @@ class Strings {
       'While we cannot run a speed test at your location as you don’t have Internet, we do appreciate your information that helps us learn more about which areas are currently not served.';
   static const String noInternetConnectionDescription = 'You can explore the map to see how others compare to you.';
   static const String okButtonLabel = 'OK';
+  static const String noInternetConnection = 'No Internet connection';
+  static const String checkInternetConnection =
+      'Please make sure your device is connected to the Internet before continuing.';
+  static const String tryAgain = 'Try again';
   static const String noInternetConnectionModalTitle = 'Are you sure that you don’t have Internet?';
   static const String noInternetConnectionModalSubtitle =
       'Please confirm that you don’t have Internet at the address below:';
@@ -68,7 +72,8 @@ class Strings {
   static const String addressNotListedButtonLabel = 'My address is not listed';
   static const String locationError =
       'We could not detect your current location. Please enter your address or zip code before continuing.';
-  static const String locationMissingError = 'Please enter your address or zip code before continuing.';
+  static const String locationMissingError =
+      'We could not detect your current location. Make sure you enable location access in your device settings.';
   static const String termsError =
       'Please confirm that you agree to the Terms of Use and Privacy Policy before continuing.';
   static const String noLocationModalTitle = 'Tell us your location';
@@ -101,4 +106,11 @@ class Strings {
   static const String androidMinimumDelayError = 'Minimum time interval should be 1 min.';
   static const String iOSMinimumDelayError = 'Minimum time interval should be 15 mins.';
   static const String timeIntervalInputSufix = 'mins';
+  static const String locationStepSubtitleGeolocation =
+      'Confirm your location by dragging the marker and zooming the map.';
+  static const String locationStepSubtitle = 'Your location is used to compare your results to others in your region.';
+  static const String confirmYourLocation = 'Confirm your location';
+  static const String pickLocationFromList = 'Please select your address from the list below.';
+  static const String useMyCurrentLocationButtonLabel = 'Use my current location';
+  static const String enterAddressManuallyButtonLabel = 'Enter my address manually';
 }

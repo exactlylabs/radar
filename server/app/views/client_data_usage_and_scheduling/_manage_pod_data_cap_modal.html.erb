@@ -55,7 +55,7 @@
           >Current month usage (<%= (client.data_cap_current_period_usage / (1024**2)).round(0) %> MB) is over the entered data cap. No more tests will be run this monthly cycle.</p>
         </div>
       </div>
-      <p class="help-text">A data cap limits the amount of data this Pod will use for speed tests.</p>
+      <p class="help-text mb-4">A data cap limits the amount of data this Pod will use for speed tests.</p>
       <div class="forms--row  <%= client.data_cap_max_usage.nil? ? 'form-custom-opaque' : '' %>"
             data-client-data-cap-form-target="formRowContainer"
       >
@@ -103,7 +103,7 @@
           </div>
         </div>
       </div>
-      <p class="help-text" data-client-data-cap-form-target="testFrequencyText"><%= client.get_frequency_text %></p>
+      <p class=" mb-4" data-client-data-cap-form-target="testFrequencyText"><%= client.get_frequency_text %></p>
     </div>
     <div class="modal-footer modals--footer">
       <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>

@@ -20,7 +20,7 @@ Rails.application.routes.draw do
 
     delete 'users/custom_sign_out' => 'users/registrations#custom_sign_out'
 
-    post 'users/check_email_uniqueness_on_cold_sign_up' => 'users/registrations#check_email_uniqueness_on_cold_sign_up'
+    post 'users/check_email_uniqueness' => 'users/registrations#check_email_uniqueness'
   end
 
   resources :measurements, only: [:index] do
@@ -134,6 +134,7 @@ Rails.application.routes.draw do
     member do
       post :edit
       get :delete
+      get :add_member
     end
   end
 

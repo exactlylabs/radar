@@ -7,7 +7,7 @@ import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
-import 'package:client_mobile_app/core/utils/inherited_connectivity_status.dart';
+import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
 import 'package:client_mobile_app/presentations/your_results/bloc/your_results_cubit.dart';
 import 'package:client_mobile_app/presentations/your_results/bloc/your_results_state.dart';
 import 'package:client_mobile_app/presentations/your_results/widgets/results_list.dart';
@@ -48,24 +48,19 @@ class YourResultsPage extends StatelessWidget {
                 SpacerWithMax(size: height * 0.025, maxSize: 20.0),
                 const ResultsHeader(),
                 Expanded(child: ResultsList(results: state.results ?? [])),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: PrimaryButton(
-                    child: Text(
-                      Strings.exploreTheMapButtonLabel,
-                      style: AppTextStyle(
-                        fontSize: 16.0,
-                        fontWeight: 700,
+                BlocBuilder<NavigationCubit, NavigationState>(
+                  builder: (context, state) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: PrimaryButton(
+                      onPressed: onExploreTheMapPressed(context, state.canNavigate),
+                      child: Text(
+                        Strings.exploreTheMapButtonLabel,
+                        style: AppTextStyle(
+                          fontSize: 16.0,
+                          fontWeight: 700,
+                        ),
                       ),
                     ),
-                    onPressed: () {
-                      if (InheritedConnectivityStatus.of(context).isConnected) {
-                        context.read<NavigationCubit>().changeTab(NavigationCubit.MAP_INDEX);
-                      } else {
-                        openNoInternetConnectionModal(
-                            context, () => context.read<NavigationCubit>().changeTab(NavigationCubit.MAP_INDEX));
-                      }
-                    },
                   ),
                 ),
                 SpacerWithMax(size: height * 0.037, maxSize: 25.0),
@@ -75,5 +70,11 @@ class YourResultsPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  VoidCallback onExploreTheMapPressed(BuildContext context, bool canNavigate) {
+    onCanNavigate() => context.read<NavigationCubit>().changeTab(NavigationCubit.MAP_INDEX);
+
+    return canNavigate ? onCanNavigate : () => openNoInternetConnectionModal(context, onCanNavigate);
   }
 }

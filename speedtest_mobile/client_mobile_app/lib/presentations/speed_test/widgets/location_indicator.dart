@@ -16,7 +16,7 @@ class LocationIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
       decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
         border: Border.all(color: Theme.of(context).colorScheme.surface.withOpacity(0.21)),
         borderRadius: BorderRadius.circular(16.0),
       ),

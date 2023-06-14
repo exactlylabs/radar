@@ -71,7 +71,7 @@ class LocationsController < ApplicationController
         latest_categories_ids = params[:location][:categories].split(",").map {|id| id.to_i}
       else
         latest_categories_ids = []
-      end  
+      end
       
       new_categories_ids = latest_categories_ids - current_categories_ids
       to_delete_categories_ids = current_categories_ids - latest_categories_ids

@@ -62,14 +62,16 @@ func NotifyPanic() {
 		// to capture multiple panics and still crash the program
 		// afterwards, you need to coordinate error reporting and
 		// termination differently.
+		FlushBuffer()
 		panic(x)
 	}
 }
 
-func Setup(dsn, clientId, version string) {
+func Setup(dsn, clientId, version string, bufferDir string) {
 	err := sentry.Init(sentry.ClientOptions{
-		Dsn:     dsn,
-		Release: version,
+		Dsn:           dsn,
+		Release:       version,
+		HTTPTransport: newBufferedTransport(bufferDir, dsn),
 	})
 	if err != nil {
 		panic(err)
@@ -77,6 +79,11 @@ func Setup(dsn, clientId, version string) {
 	sentry.ConfigureScope(func(scope *sentry.Scope) {
 		scope.SetUser(sentry.User{ID: clientId})
 	})
+}
+
+func FlushBuffer() {
+	sentry.CurrentHub().Flush(2 * time.Second)
+	sentry.CurrentHub().Client().Options().HTTPTransport.(*bufferedTransport).Flush()
 }
 
 func NotifyError(err error, context Context) {

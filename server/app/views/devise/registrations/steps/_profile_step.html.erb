@@ -1,0 +1,64 @@
+<div class="w-100 invisible" data-registration-target="profileStep">
+  <div class="text-center mb-6">
+    <!--begin::Title-->
+    <h1 class="page-main-title">Complete your profile</h1>
+    <!--end::Title-->
+  </div>
+
+  <input type="file"
+         hidden="true"
+         id="profile_picture"
+         name="profile_picture"
+         data-registration-target="userAvatarInput"
+         data-action="input->registration#handleFileUpload"
+    />
+  <!--begin::HiddenInput-->
+  <!--begin::AccountTypeContainer-->
+  <div class="sign-up--avatar-container mx-auto"     
+    draggable="true"
+    data-action="click->registration#handleFileZoneClicked drop->registration#handleFileDrop dragenter->registration#handleDragEnter dragleave->registration#handleDragLeave dragover->registration#preventDefault"
+    data-registration-target="dropzone"
+    data-with-drag-style="true"
+  >
+    <img src=""
+      width="96"
+      height="96"
+      data-registration-target="avatarPreview"
+      class="invisible m-auto"
+    />
+    <%= image_tag image_url("blue-plus.png"), width: "24", height: "24", data: { "registration-target" => "cameraIcon" } %>
+  </div>
+  <!--end::AccountTypeContainer-->
+  <!--begin::AvatarInputLabel-->
+  <div class="regular-link cursor-pointer mt-2 mb-6" data-action="click->registration#handleFileZoneClicked">Add picture</div>
+  <!--end::AvatarInputLabel-->
+
+  <% if invite %>
+    <input hidden="true" name="account[id]" data-registration-target="accountIdInput" value="<%= account.id %>"/>
+  <% end %>
+
+  <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-4">
+    <label class="forms--label mb-2">First name</label>
+    <!--begin::Input-->
+    <input type="text" 
+      autofocus="true"
+      class="w-100 forms--text-input forms--text-input-focusable"
+      tabindex="1"
+      placeholder="First name" 
+      data-registration-target="firstNameInput"
+    />
+    <!--end::Input-->
+  </div>
+
+  <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-4">
+    <label class="forms--label mb-2">Last name</label>
+    <!--begin::Input-->
+    <input type="text" 
+      class="w-100 forms--text-input forms--text-input-focusable"
+      tabindex="2"
+      placeholder="Last name"
+      data-registration-target="lastNameInput"
+    />
+    <!--end::Input-->
+  </div>
+</div>

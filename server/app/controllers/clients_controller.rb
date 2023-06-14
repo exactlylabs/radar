@@ -15,7 +15,11 @@ class ClientsController < ApplicationController
     @environment = params[:environment]
     @account_id = params[:account_id]
     if @account_id
-      @clients = policy_scope(Client).where(account_id: @account_id)
+      if @account_id == 'none'
+        @clients = policy_scope(Client).where_no_account
+      else
+        @clients = policy_scope(Client).where(account_id: @account_id)
+      end
     else
       @clients = policy_scope(Client)
     end
@@ -57,9 +61,9 @@ class ClientsController < ApplicationController
     # policy_scope(Client) will not work
     client_id = params[:id]
     @client = Client.find_by_unix_user(client_id)
-    
+
     if !@client
-      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])  
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])
     end
 
     @client.request_test!
@@ -83,7 +87,8 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.update(test_requested: true)
-        format.html { redirect_to request.env['HTTP_REFERER'], notice: "Client test requested." }
+        format.turbo_stream {}
+        format.html { redirect_back fallback_location: root_path, notice: "Client test requested." }
         format.json { render :show, status: :ok, location: clients_path(@client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -188,13 +193,14 @@ class ClientsController < ApplicationController
 
   def watchdog_status
     @client.raw_watchdog_version = params[:version]
+    @client.has_watchdog = true
     if params[:version]
       # Check client Version Id
       wv_ids = WatchdogVersion.where(version: params[:version]).pluck(:id)
       if wv_ids.length > 0
         @client.watchdog_version_id = wv_ids[0]
       end
-      
+
     end
     @client.save
     respond_to do |format|
@@ -217,6 +223,7 @@ class ClientsController < ApplicationController
     # set the pod as a staging pod
     if @account&.superaccount?
       @client.staging = true
+      @client.has_watchdog = true
       @client.raw_secret = @secret
 
       # TODO: For future releases, it's interesting

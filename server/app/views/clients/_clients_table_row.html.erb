@@ -28,6 +28,8 @@
       <div class="pod-name--container">
         <a class="forms--label"
             style="max-width: 15vw"
+        <a class="forms--label"
+            style="max-width: 15vw"
             href="<%= client_path(client.unix_user)%>" data-turbo-frame="_top"
            id="client_<%= client.id %>_name"
         >
@@ -42,7 +44,7 @@
   <% if current_account.is_all_accounts? %>
     <td class="regular-text mb-1"
         style="max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-      <%= client.account.name %>
+      <%= client.account.present? ? client.account.name : "No account" %>
     </td>
   <% end %>
   <% if current_user.super_user %>

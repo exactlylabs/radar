@@ -25,9 +25,20 @@ export default class extends Controller {
     }
   }
 
+  clearTurboReferences(elementToClearId) {
+    const turboFrame = document.getElementById(elementToClearId);
+    if (turboFrame) {
+      turboFrame.innerHTML = null;
+    }
+  }
+
   submit(e) {
     const search = e.detail.formSubmission.fetchRequest.url.search;
     const shouldKeepModal = search.includes('keep_in_view');
+
+    const possibleTurboFrameToClear = this.element.getAttribute('data-clear-turbo-id');
+    if (!!possibleTurboFrameToClear && !shouldKeepModal) this.clearTurboReferences(possibleTurboFrameToClear);
+
     if (e.detail.success && !shouldKeepModal) {
       this.hideModal();
     }

@@ -42,6 +42,10 @@
   color: $deep-blue !important;
   border: none !important;
   outline: none !important;
+
+  &.forms--text-input-focusable:focus {
+    outline: solid 2px $blue !important;
+  }
 }
 
 .forms--text-input::placeholder {

@@ -1,13 +1,11 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:async/async.dart';
-import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
-import 'package:client_mobile_app/core/services/locations_service/i_locations_service.dart';
+import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/presentations/speed_test/utils/utils.dart';
-import 'package:dio/dio.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:client_mobile_app/core/services/locations_service/i_locations_service.dart';
 
 class LocationsService implements ILocationsService {
   LocationsService({
@@ -34,8 +32,8 @@ class LocationsService implements ILocationsService {
   Future<List<Location>> _getSuggestedLocations(String requestId, String query) async {
     final userCoordinates = await _getUserCoordinates(requestId);
     Location userLocation = Location.empty(query);
-    if (userCoordinates.length == 2) {
-      userLocation = userLocation.copyWith(lat: userCoordinates[0], long: userCoordinates[1]);
+    if (userCoordinates.latitude != null && userCoordinates.longitude != null) {
+      userLocation = userLocation.copyWith(lat: userCoordinates.latitude, long: userCoordinates.longitude);
     }
     return _suggestedLocationsRequest(query).then((locations) {
       List<Location> suggestions;
@@ -68,13 +66,13 @@ class LocationsService implements ILocationsService {
       body: {'address': name},
     );
 
-    return failureOrLocations.fold(
-      (failure) {
-        Sentry.captureException(failure.exception, stackTrace: failure.stackTrace);
-        return [];
-      },
-      (locations) => locations.map((location) => Location.fromJson(location)).toList(),
-    );
+    if (failureOrLocations.failure != null) {
+      Sentry.captureException(failureOrLocations.failure!.exception,
+          stackTrace: failureOrLocations.failure!.stackTrace);
+      return [];
+    } else {
+      return failureOrLocations.response!.map((location) => Location.fromJson(location)).toList();
+    }
   }
 
   Future<Location?> _locationByCoordinatesRequest(double latitude, double longitude) async {
@@ -86,29 +84,28 @@ class LocationsService implements ILocationsService {
       body: FormData.fromMap({'coordinates': "$latitude, $longitude"}),
       fromJson: (json) => Location.fromJsonWithDefaultValues(json),
     );
-    return failureOrLocation.fold(
-      (failure) {
-        Sentry.captureException(failure.exception, stackTrace: failure.stackTrace);
-        return null;
-      },
-      (location) => location,
-    );
+    if (failureOrLocation.failure != null) {
+      Sentry.captureException(failureOrLocation.failure!.exception, stackTrace: failureOrLocation.failure!.stackTrace);
+      return null;
+    } else {
+      return failureOrLocation.response;
+    }
   }
 
-  Future<List<double>> _getUserCoordinates(String requestId) async {
+  Future<({double? latitude, double? longitude})> _getUserCoordinates(String requestId) async {
     final failureOrLocation = await _httpProvider.getAndDecode<List>(
       url: _restClient.userCoordinates,
       headers: {
         'Content-Type': 'application/json',
       },
     );
-    return failureOrLocation.fold(
-      (failure) {
-        Sentry.captureException(failure.exception, stackTrace: failure.stackTrace);
-        return [];
-      },
-      (coordinates) => coordinates.map((coordinate) => coordinate as double).toList(),
-    );
+
+    if (failureOrLocation.failure != null) {
+      Sentry.captureException(failureOrLocation.failure!.exception, stackTrace: failureOrLocation.failure!.stackTrace);
+      return (latitude: null, longitude: null);
+    } else {
+      return (latitude: failureOrLocation.response![0] as double, longitude: failureOrLocation.response![1] as double);
+    }
   }
 
   Future<T> _uniqueRequest<T>(Future<T> Function(String) result) async {

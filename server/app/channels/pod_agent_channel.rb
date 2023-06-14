@@ -1,4 +1,4 @@
-class PodAgentChannel < ApplicationCable::Channel  
+class PodAgentChannel < ApplicationCable::Channel
   def subscribed
     stream_from PodAgentChannel.agent_stream_name self.client
   end
@@ -7,33 +7,45 @@ class PodAgentChannel < ApplicationCable::Channel
 
   def self.broadcast_test_requested(client)
     ActionCable.server.broadcast(
-      PodAgentChannel.agent_stream_name(client), 
+      PodAgentChannel.agent_stream_name(client),
       {event: "test_requested", payload: {}}
     )
   end
 
-  def self.broadcast_update_group_version_changed(update_group)
-    # Broadcast an update for each client
-    update_group.clients.each do |client|
-      if client.has_update?
-        ActionCable.server.broadcast(
-          PodAgentChannel.agent_stream_name(client), 
-          {
-            event: "version_changed",
-            payload: {
-              version: update_group.client_version.version,
-              binary_url: PodAgentChannel.blob_path(client.to_update_signed_binary),
-            }
+  def self.broadcast_version_changed(client)
+    if client.has_update? && client.to_update_signed_binary.present?
+      ActionCable.server.broadcast(
+        PodAgentChannel.agent_stream_name(client),
+        {
+          event: "version_changed",
+          payload: {
+            version: client.target_client_version.version,
+            binary_url: PodAgentChannel.blob_path(client.to_update_signed_binary),
           }
-        )
-      end
+        }
+      )
+    end
+  end
+
+  def self.broadcast_watchdog_version_changed(client)
+    if client.has_watchdog_update? && client.target_watchdog_version&.signed_binary.present?
+      ActionCable.server.broadcast(
+        PodAgentChannel.agent_stream_name(client),
+        {
+          event: "watchdog_version_changed",
+          payload: {
+            version: client.target_watchdog_version.version,
+            binary_url: PodAgentChannel.blob_path(client.target_watchdog_version.signed_binary),
+          }
+        }
+      )
     end
   end
 
   def self.broadcast_client_update_group_changed(client)
     if client.has_update?
       ActionCable.server.broadcast(
-        PodAgentChannel.agent_stream_name(client), 
+        PodAgentChannel.agent_stream_name(client),
         {
           event: "version_changed",
           payload: {
@@ -44,7 +56,7 @@ class PodAgentChannel < ApplicationCable::Channel
       )
     end
   end
-  
+
 
   # Actions called by the client'
 
@@ -55,24 +67,23 @@ class PodAgentChannel < ApplicationCable::Channel
     # If there is, it publishes through the subscription a new test/update request
     data = data["payload"]
     # Check client Version Id
-    version_ids = ClientVersion.where(version: data["version"]).pluck(:id)
-    if version_ids.length == 0
-      # No version found
-      version_id = nil
-    else
-      # pluck returns an array
-      version_id = version_ids[0]
-    end
+    version_id = ClientVersion.where(version: data["version"]).pluck(:id).first
+    watchdog_version_id = WatchdogVersion.where(version: data["watchdog_version"]).pluck(:id).first
     self.client.update(
       raw_version:  data["version"],
+      raw_watchdog_version: data["watchdog_version"],
       distribution_name: data["distribution"],
       network_interfaces: data["net_interfaces"],
       os_version: data["os_version"],
       hardware_platform: data["hardware_platform"],
       client_version_id: version_id,
+      watchdog_version_id: watchdog_version_id,
     )
     if self.client.has_update?
       update
+    end
+    if self.client.has_watchdog_update?
+      update_watchdog
     end
     if self.client.test_requested?
       run_test
@@ -102,6 +113,18 @@ class PodAgentChannel < ApplicationCable::Channel
         message: {
           version: self.client.to_update_version.version,
           binary_url: PodAgentChannel.blob_path(self.client.to_update_signed_binary)
+        },
+      }
+    )
+  end
+
+  def update_watchdog()
+    self.connection.transmit(
+      {
+        type: "update_watchdog",
+        message: {
+          version: self.client.to_update_watchdog_version.version,
+          binary_url: PodAgentChannel.blob_path(self.client.to_update_watchdog_signed_binary)
         },
       }
     )

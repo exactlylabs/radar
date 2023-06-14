@@ -1,4 +1,4 @@
-<div class="filters-container d-flex flex-row">
+<div class="filters-container d-flex flex-row mb-6">
   <div id="multi-row-actions" class="btn-group me-2" style="display: none">
       <a href="#"
          class="custom-button custom-button--sm custom-button--secondary-light"
@@ -145,7 +145,7 @@
           aria-expanded="false"
           style="border-radius: 6px"
       >
-        <%= params[:account_id].present? ? policy_scope(Account).find(params[:account_id]).name : "All Accounts" %>
+        <%= params[:account_id].present? ? params[:account_id] == 'none' ? "No account" : policy_scope(Account).find(params[:account_id]).name : "All Accounts" %>
         <span class="svg-icon svg-icon-5 m-0">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
@@ -158,6 +158,11 @@
           style="padding-left: 11px"
           class="dropdowns--option menu-item text-hover-gray-500 <%= params[:account_id].nil? ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
           All Accounts
+        </a>
+        <a href="<%= params[:account_id] == 'none' ? clients_path(environment: params[:environment], status: params[:status]) : clients_path(params.permit([:status, :environment, :account_id]).merge(account_id: 'none')) %>"
+          style="padding-left: 11px"
+          class="dropdowns--option menu-item text-hover-gray-500 <%= params[:account_id] == 'none' ? 'text-primary' : 'text-gray-700' %> py-2 pe-3">
+          No account
         </a>
         <% policy_scope(Account).each do |account| %>
           <!--begin::Menu item-->
