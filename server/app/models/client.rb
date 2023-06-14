@@ -112,8 +112,10 @@ class Client < ApplicationRecord
     end
 
     REDIS.zrem Client::REDIS_PING_SET_NAME, id
-    self.online = false
-    save!
+    Client.transaction do
+      Client.where(id: id).lock(true).update(online: false)
+    end
+    self.reload
   end
 
   def self.update_outdated_online!
@@ -127,8 +129,10 @@ class Client < ApplicationRecord
       'events.id IS NOT NULL AND events.timestamp > ? AND (events.name = ? OR events.name = ?)',
       5.minute.ago, Client::Events::CLIENT_REQUESTED_TO_UPDATE, Client::Events::WATCHDOG_REQUESTED_TO_UPDATE
     ).where.not(id: client_ids).distinct
-    clients.update(online: false)
-
+    # Adding locks to avoid concurrency between this and disconnected!
+    Client.transaction do
+      Client.where(id: clients).lock().update(online: false)
+    end
     Client.where(online: false, id: client_ids).update(online: true)
   end
 
