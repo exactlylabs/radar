@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/core/flavors/app_config.dart';
 
@@ -14,7 +15,7 @@ showLocationPermissionDialog(BuildContext context,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Use your location",
+              Strings.useYourLocation,
               style: AppTextStyle(
                 fontSize: 20.0,
                 fontWeight: 500,
@@ -37,9 +38,7 @@ showLocationPermissionDialog(BuildContext context,
                       fontWeight: 600,
                       color: Colors.blue,
                     )),
-                const TextSpan(
-                    text:
-                        "collects location data to provide you with locations where wireless quality is being measured as you move around even when the app is closed or not in use"),
+                const TextSpan(text: Strings.useYourLocationSubtitle),
               ],
             )),
           ],
@@ -47,7 +46,7 @@ showLocationPermissionDialog(BuildContext context,
         actions: <Widget>[
           TextButton(
             child: Text(
-              "Deny",
+              Strings.denyButtonLabel,
               style: AppTextStyle(
                 fontSize: 14.0,
                 fontWeight: 600,
@@ -61,7 +60,7 @@ showLocationPermissionDialog(BuildContext context,
           ),
           TextButton(
             child: Text(
-              "Accept",
+              Strings.acceptButtonLabel,
               style: AppTextStyle(
                 fontSize: 14.0,
                 fontWeight: 600,

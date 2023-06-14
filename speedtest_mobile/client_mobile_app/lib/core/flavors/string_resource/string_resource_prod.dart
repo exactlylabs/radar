@@ -2,7 +2,7 @@ import 'package:client_mobile_app/core/flavors/string_resource/i_string_resource
 
 class StringResourceProd implements IStringResource {
   @override
-  String SERVER_ENDPOINT = 'https://radar.exactlylabs.com';
+  String SERVER_ENDPOINT = 'https://pods.radartoolkit.com';
 
   @override
   String APP_NAME = 'Radar';
@@ -11,7 +11,8 @@ class StringResourceProd implements IStringResource {
   String APP_NAME_PREFIX = '[Radar-Prod]';
 
   @override
-  String SENTRY_FLUTTER_KEY = 'https://78243fce78ad4aef8db5b419d03fa6e2@o1197382.ingest.sentry.io/4504327976386560';
+  String SENTRY_FLUTTER_KEY =
+      'https://78243fce78ad4aef8db5b419d03fa6e2@o1197382.ingest.sentry.io/4504327976386560';
 
   @override
   String WEB_ENDPOINT =
