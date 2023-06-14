@@ -15,7 +15,7 @@ class StringResourceProd implements IStringResource {
 
   @override
   String WEB_ENDPOINT =
-      'https://speedtest.exactlylabs.com/?webviewMode=true&tab=2&noZoomControl=true&global=true&client_id=1';
+      'https://speed.radartoolkit.com/?webviewMode=true&tab=2&noZoomControl=true&global=true&client_id=1';
 
   @override
   String ENVIRONMENT = 'production';
