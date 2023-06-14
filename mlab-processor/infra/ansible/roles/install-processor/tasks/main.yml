@@ -1,0 +1,26 @@
+---
+
+- name: Install Systemd Service File
+  template:
+    src: mlab-processor.service.j2
+    dest: "/etc/systemd/system/mlab-processor.service"
+    mode: "ug=rw,o-rwx"
+  become: true
+  register: install_service
+
+- name: Copy binary to host
+  become: yes
+  ansible.builtin.copy:
+    src: ../../../mlab-processor
+    dest: /usr/local/bin/mlab-processor
+    mode: '0655'
+  register: install_binary
+
+- name: Reload Systemd
+  become: yes
+  ansible.builtin.systemd:
+    daemon_reload: true
+    enabled: true
+    name: mlab-processor
+    state: started
+  when: install_service.changed or install_binary.changed

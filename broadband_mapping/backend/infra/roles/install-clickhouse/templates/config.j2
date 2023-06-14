@@ -1,0 +1,57 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+<?xml version="1.0"?>
+{{ ansible_managed | comment('xml') }} 
+<clickhouse>
+
+
+    <https_port>{{ clickhouse_https_port }}</https_port>
+    <tcp_port_secure>{{ clickhouse_tcp_secure_port }}</tcp_port_secure>
+
+
+    <!-- Used with https_port and tcp_port_secure. Full ssl options list: https://github.com/ClickHouse-Extras/poco/blob/master/NetSSL_OpenSSL/include/Poco/Net/SSLManager.h#L71 -->
+    <openSSL>
+        <server> <!-- Used for https server AND secure tcp port -->
+            <!-- openssl req -subj "/CN=localhost" -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/clickhouse-server/server.key -out /etc/clickhouse-server/server.crt -->
+            <certificateFile>{{ clickhouse_ssl_server.certificate_file }}</certificateFile>
+            <privateKeyFile>{{ clickhouse_ssl_server.private_key_file }}</privateKeyFile>
+            <!-- openssl dhparam -out /etc/clickhouse-server/dhparam.pem 4096 -->
+            {% if clickhouse_ssl_server.dh_params_file is defined %}<dhParamsFile>{{ clickhouse_ssl_server.dh_params_file }}</dhParamsFile>{% endif %}
+            <verificationMode>{{ clickhouse_ssl_server.verification_mode }}</verificationMode>
+            <loadDefaultCAFile>{{ clickhouse_ssl_server.load_default_ca_file }}</loadDefaultCAFile>
+            <cacheSessions>{{ clickhouse_ssl_server.cache_sessions }}</cacheSessions>
+            <disableProtocols>{{ clickhouse_ssl_server.disable_protocols }}</disableProtocols>
+            <preferServerCiphers>{{ clickhouse_ssl_server.prefer_server_ciphers }}</preferServerCiphers>
+        </server>
+
+        <client> <!-- Used for connecting to https dictionary source -->
+            <loadDefaultCAFile>{{ clickhouse_ssl_client.load_default_ca_file }}</loadDefaultCAFile>
+            <cacheSessions>{{ clickhouse_ssl_client.cache_sessions }}</cacheSessions>
+            <disableProtocols>{{ clickhouse_ssl_client.disable_protocols }}</disableProtocols>
+            <preferServerCiphers>{{ clickhouse_ssl_client.prefer_server_ciphers }}</preferServerCiphers>
+            <!-- Use for self-signed: <verificationMode>none</verificationMode> -->
+            <invalidCertificateHandler>
+                <!-- Use for self-signed: <name>AcceptCertificateHandler</name> -->
+                <name>{{ clickhouse_ssl_client.invalid_certificate_handler_name }}</name>
+            </invalidCertificateHandler>
+        </client>
+    </openSSL>
+
+{% for host in clickhouse_listen_host %}
+    <listen_host>{{ host }}</listen_host>
+{% endfor %}
+
+    <max_connections>{{ clickhouse_config.max_connections }}</max_connections>
+    <keep_alive_timeout>{{ clickhouse_config.keep_alive_timeout }}</keep_alive_timeout>
+
+    <!-- Maximum number of concurrent queries. -->
+    <max_concurrent_queries>{{ clickhouse_config.max_concurrent_queries }}</max_concurrent_queries>
+
+    <!-- Maximum session timeout, in seconds. Default: 3600. -->
+    <max_session_timeout>{{ clickhouse_config.max_session_timeout }}</max_session_timeout>
+
+    <!-- Default session timeout, in seconds. Default: 60. -->
+    <default_session_timeout>{{ clickhouse_config.default_session_timeout }}</default_session_timeout>
+
+
+
+</clickhouse>

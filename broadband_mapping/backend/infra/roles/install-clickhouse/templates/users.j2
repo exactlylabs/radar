@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+{{ ansible_managed | comment('xml') }} 
+<clickhouse>
+   <profiles>
+    <!-- Custom profiles. -->
+    {% for dict_item in clickhouse_profiles_custom %}
+    <{{ dict_item }}>
+    {% for item in clickhouse_profiles_custom[dict_item] %}
+        <{{ item }}>{{ clickhouse_profiles_custom[dict_item][item] }}</{{ item }}>
+    {% endfor %}
+    </{{ dict_item }}>
+    {% endfor %}
+    <!-- Custom profiles end. -->
+    </profiles>
+
+    <!-- Users and ACL. -->
+    <users>
+        <default>
+            <password></password>
+            <networks>
+                <ip>127.0.0.1</ip>
+            </networks>
+            <profile>default</profile>
+        </default>
+    <!-- Custom users. -->
+    {% for user in clickhouse_users_custom %}
+    {% if user.comment is defined %}
+    <!-- {{user.comment}} -->
+    {% endif %}
+    <{{ user.name }}>
+        {% if user.password is defined and user.password_sha256_hex is not defined %}
+        <password>{{ user.password }}</password>
+        {% elif user.password_sha256_hex is defined %}
+        <password_sha256_hex>{{ user.password_sha256_hex }}</password_sha256_hex>
+        {% endif %}
+        <networks incl="networks" replace="replace">
+        {% for net in user.networks %}
+        <ip>{{ net }}</ip>
+        {% endfor %}
+        </networks>
+        <profile>{{ user.profile }}</profile>
+        <quota>{{ user.quota }}</quota>
+        {% if user.dbs is defined %}
+         <allow_databases>
+        {% for db in user.dbs %}
+            <database>{{ db }}</database>
+        {% endfor %}
+        </allow_databases>
+        {% endif %}
+        {% if user.ldap_server is defined %}
+        <ldap><server>{{  user.ldap_server  }}</server></ldap>
+        {% endif %}
+        {% if user.access_management is defined %}
+        <access_management>{{ user.access_management }}</access_management>
+        {% endif %}
+    </{{ user.name }}>
+    {% endfor %}
+    </users>
+ 
+</clickhouse>

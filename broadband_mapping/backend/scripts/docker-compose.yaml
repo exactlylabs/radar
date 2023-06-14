@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  clickhousedb:
+    image: yandex/clickhouse-server
+    ports:
+      - 9001:9000
+    ulimits:
+      nofile:
+        soft: "262144"
+        hard: "262144"
+    volumes:
+      - ./clickhouse-users.xml:/etc/clickhouse-server/users.d/users-config.xml

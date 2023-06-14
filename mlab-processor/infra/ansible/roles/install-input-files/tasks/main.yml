@@ -1,0 +1,69 @@
+
+- name: Create var directory
+  become: yes
+  ansible.builtin.file:
+    path: /var/mlab-processor
+    state: directory
+    mode: '0655'
+
+- name: Validate ASN files
+  become: yes
+  find:
+    paths: "{{inputs_dir}}"
+    patterns:
+      - "{{ipv4_db_path.split('/')[-1]}}"
+      - "{{ipv6_db_path.split('/')[-1]}}"
+      - "{{asn_ipv4_db_path.split('/')[-1]}}"
+      - "{{asn_ipv6_db_path.split('/')[-1]}}"
+      - "{{asn2org_db_path.split('/')[-1]}}"
+
+    file_type: file
+  register: find_asn_files
+
+- name: Validate Shape Files
+  become: yes
+  find:
+    paths: "{{inputs_dir}}"
+    patterns:
+      - "{{us_states_shape_path.split('/')[-1]}}"
+      - "{{us_counties_shape_path.split('/')[-1]}}"
+      - "{{us_aiannh_shape_path.split('/')[-1]}}"
+      - "{{us_zip_codes_shape_path.split('/')[-1]}}"
+    file_type: file
+  register: find_shape_files
+
+- name: Validate TTRACT Directory
+  become: yes
+  find:
+    paths: "{{tracts_shape_dir}}"
+    patterns: "*.zip"
+    file_type: file
+  register: find_ttract_shapes
+
+- name: Installing APT dependencies
+  apt:
+    pkg:
+      - curl
+      - unzip
+  become: true
+
+- name: Run download_asn_maps.sh
+  # The script does the validation if it should download or not
+  become: yes
+  ansible.builtin.script:
+    chdir: /var/mlab-processor
+    cmd: ../../../scripts/download_asn_maps.sh
+  when: asn_ip_files|length != find_asn_files.matched
+  environment:
+    MAXMIND_KEY: "{{ maxmind_key }}"
+    TARGET_DIR: /var/mlab-processor/input
+  
+- name: Run download_shapes.sh
+  # The script does the validation if it should download or not
+  become: yes
+  ansible.builtin.script:
+    chdir: /var/mlab-processor
+    cmd: ../../../scripts/download_shapes.sh
+  when: "shapes|length != find_shape_files.matched and find_ttract_shapes.matched > 0"
+  environment:
+    TARGET_DIR: /var/mlab-processor/input

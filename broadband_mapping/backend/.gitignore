@@ -1,0 +1,9 @@
+*.shp
+*.env
+scripts/input
+mlab-ingestor
+infra/vars.yml
+migrations/migrated_files
+geos/
+go.work
+go.work.sum

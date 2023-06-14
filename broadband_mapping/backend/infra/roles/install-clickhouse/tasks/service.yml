@@ -1,0 +1,11 @@
+---
+
+- name: >-
+    Ensure {{ clickhouse_service }}
+    is enabled
+    and state: started
+  service:
+    name: "{{ clickhouse_service }}"
+    enabled: "true"
+    state: "started"
+  become: true
