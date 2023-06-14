@@ -9,7 +9,8 @@ class Strings {
   static const String networkTypeStepTitle = 'How are you connected?';
   static const String networkTypeStepSubtitle = 'Choose how you are connected to the internet.';
   static const String monthlyBillCostStepTitle = "What’s your estimated monthly bill cost?";
-  static const String monthlyBillCostStepSubtitle = "This helps us understand the average internet cost in your area.";
+  static const String monthlyBillCostStepSubtitle =
+      "This helps us understand the average internet cost in your area.";
   static const String startSpeedTestStepTitle = "You’re ready to start.";
   static const String startSpeedTestStepSubtitle =
       "For more accurate results, please make sure you are not currently making heavy use of your internet connection.";
@@ -53,7 +54,8 @@ class Strings {
   static const String noInternetConnectionTitle = 'Thanks for letting us know.';
   static const String noInternetConnectionSubtitle =
       'While we cannot run a speed test at your location as you don’t have Internet, we do appreciate your information that helps us learn more about which areas are currently not served.';
-  static const String noInternetConnectionDescription = 'You can explore the map to see how others compare to you.';
+  static const String noInternetConnectionDescription =
+      'You can explore the map to see how others compare to you.';
   static const String okButtonLabel = 'OK';
   static const String noInternetConnection = 'No Internet connection';
   static const String checkInternetConnection =
@@ -64,8 +66,10 @@ class Strings {
       'Please confirm that you don’t have Internet at the address below:';
   static const String iDontHaveInternetButtonLabel = 'I don’t have Internet';
   static const String cancelButttonLabel = 'Cancel';
-  static const String cellularConnectionModalTitle = 'Are you sure you want to run a speedtest on cellular?';
-  static const String cellularConnectionModalSubtitle = 'Please note that your current data plan may have a data cap.';
+  static const String cellularConnectionModalTitle =
+      'Are you sure you want to run a speedtest on cellular?';
+  static const String cellularConnectionModalSubtitle =
+      'Please note that your current data plan may have a data cap.';
   static const String yesContinueButtonLabel = 'Yes, continue';
   static const String continueButtonLabel = 'Continue';
   static const String testResultsModalTitle = 'Test details';
@@ -77,7 +81,8 @@ class Strings {
   static const String termsError =
       'Please confirm that you agree to the Terms of Use and Privacy Policy before continuing.';
   static const String noLocationModalTitle = 'Tell us your location';
-  static const String noLocationModalSubtitle = 'Zoom the map and drag the marker to tell us your current location.';
+  static const String noLocationModalSubtitle =
+      'Zoom the map and drag the marker to tell us your current location.';
   static const String locationModalTitle = 'Confirm your location';
   static const String locationModalSubtitle =
       'Please confirm your location by moving the marker to the correct place. You can zoom the map and drag the marker.';
@@ -97,7 +102,8 @@ class Strings {
   static const String acceptTermsSubtitle =
       'We’ll ask you a few questions to better understand where and how you’re connected so we can learn more about your current service.';
   static const String enableWardriveModalTitle = 'Background mode';
-  static const String enableWardriveModalSubtitle = 'Choose a time interval you want to run your speed tests on.';
+  static const String enableWardriveModalSubtitle =
+      'Choose a time interval you want to run your speed tests on.';
   static const String enableWardriveModalButtonLabel = 'Enable background mode';
   static const String appInfoDisableButtonLabel = 'Disable background mode';
   static const String appInfoEnableButtonLabel = 'Enable background mode';
@@ -108,9 +114,22 @@ class Strings {
   static const String timeIntervalInputSufix = 'mins';
   static const String locationStepSubtitleGeolocation =
       'Confirm your location by dragging the marker and zooming the map.';
-  static const String locationStepSubtitle = 'Your location is used to compare your results to others in your region.';
+  static const String locationStepSubtitle =
+      'Your location is used to compare your results to others in your region.';
   static const String confirmYourLocation = 'Confirm your location';
   static const String pickLocationFromList = 'Please select your address from the list below.';
   static const String useMyCurrentLocationButtonLabel = 'Use my current location';
   static const String enterAddressManuallyButtonLabel = 'Enter my address manually';
+  static const String updateLocationSettingsTitle = 'Update location settings';
+  static const String updateLocationSettingsSubtitle1 = 'Allow us to access your location ';
+  static const String allTheTimeLocation = 'all the time';
+  static const String updateLocationSettingsSubtitle2 =
+      ' to provide you with the locations where wireless quality is being measured on your phone as you move around.';
+  static const String noThanksButtonLabel = 'No thanks';
+  static const String updateSettings = 'Update Settings';
+  static const String useYourLocation = 'Use your location';
+  static const String useYourLocationSubtitle =
+      'collects location data to provide you with locations where wireless quality is being measured as you move around even when the app is closed or not in use';
+  static const String denyButtonLabel = 'Deny';
+  static const String acceptButtonLabel = 'Accept';
 }
