@@ -125,6 +125,11 @@ class LocationStepCubit extends Cubit<LocationStepState> {
       emit(state.copyWith(failure: Strings.locationMissingError));
       return;
     }
+    if (state.geolocation == null) {
+      emit(const LocationStepState());
+      loadGeolocation();
+      return;
+    }
     emit(state.copyWith(isUsingGeolocation: true));
   }
 

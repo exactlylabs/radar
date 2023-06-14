@@ -19,7 +19,8 @@ class LocationOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hideSubtitle = (location.houseNumber!.isEmpty || location.street!.isEmpty);
+    final hideSubtitle =
+        ((location.houseNumber?.isEmpty ?? true) || (location.street?.isEmpty ?? true));
     return ListTile(
       onTap: onPressed,
       selected: isSelected,
