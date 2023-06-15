@@ -23,7 +23,7 @@ class ClientPolicy < ApplicationPolicy
 
   def superaccount_or_in_scope?
     scope = Scope.new(@auth_holder, Client)
-    @auth_holder&.account.superaccount? || scope.resolve.find(@record.id).exists?
+    @auth_holder&.account.superaccount? || scope.resolve.find(@record.id).present?
   end
 
 end
