@@ -113,7 +113,7 @@ class Client < ApplicationRecord
 
     REDIS.zrem Client::REDIS_PING_SET_NAME, id
     Client.transaction do
-      Client.where(id: id).lock(true).update(online: false)
+      Client.where(id: id).lock().update(online: false)
     end
     self.reload
   end
