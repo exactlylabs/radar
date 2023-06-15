@@ -84,7 +84,9 @@ class LocationStepCubit extends Cubit<LocationStepState> {
   Future<void> requestLocationPermission() async {
     final permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      emit(state.copyWith(requestLocationPermission: true, isGeolocationEnabled: false));
+      emit(state.copyWith(
+          requestLocationPermission: permission == LocationPermission.denied,
+          isGeolocationEnabled: false));
     } else {
       emit(state.copyWith(requestLocationPermission: false, isGeolocationEnabled: true));
       await getGeolocation();
