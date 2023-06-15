@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_state.dart';
-import 'package:geolocator/geolocator.dart';
 
 class AppInfoModalCubit extends Cubit<AppInfoModalState> {
   AppInfoModalCubit() : super(const AppInfoModalState());
@@ -57,11 +57,7 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
       return false;
     } else if (permission == LocationPermission.denied) {
       final permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.always) {
-        return true;
-      } else {
-        return false;
-      }
+      return permission != LocationPermission.always;
     }
     return true;
   }
