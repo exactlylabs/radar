@@ -45,7 +45,7 @@ class UsersTest < ApplicationSystemTestCase
 
     assert_current_path dashboard_path
 
-    page.find(id: "sidebar-profile-toggle").click
+    page.find(id: "sidebar--profile-popover-regular").click
     click_link("sign-out-link")
 
     assert_current_path new_user_session_path
