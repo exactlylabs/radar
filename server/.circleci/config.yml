@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   ruby: circleci/ruby@2.0.1
+  node: circleci/node@16.15
   browser-tools: circleci/browser-tools@1.4.1
 
 commands:
@@ -56,6 +57,9 @@ jobs:
       - ruby/install-deps:
           app-dir: server
           bundler-version: '2.2.33'
+      - node/install-packages:
+          pkg-manager: npm
+          cache-key: packages.lock
       - setup_db
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
