@@ -1,0 +1,13 @@
+user1:
+  first_name: User1
+  last_name: Test
+  email: user1@e.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'user1test1234') %>
+  super_user: false
+
+superuser1:
+  first_name: SuperUser1
+  last_name: Test
+  email: superuser1@e.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'superusertest1234') %>
+  super_user: true
