@@ -13,7 +13,6 @@ void registerDependencies(String baseUrl) {
   if (!sl.isRegistered<LocalStorage>()) {
     sl.registerLazySingleton<LocalStorage>(() => LocalStorage());
   }
-
   if (!sl.isRegistered<IHttpProvider>()) {
     sl.registerLazySingleton<IHttpProvider>(() => DioHttpProvider());
   }
