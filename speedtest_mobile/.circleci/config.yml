@@ -216,7 +216,6 @@ workflows:
             tags:
               only: /^mobile-.*/
 
-
       # Android
       # Build Flavors
       - build-android:
