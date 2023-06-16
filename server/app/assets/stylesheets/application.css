@@ -117,14 +117,6 @@ p {
   border-radius: 50%;
 }
 
-.overflow-x-hidden {
-  overflow-x: hidden !important;
-}
-
-.overflow-y-hidden {
-  overflow-y: hidden !important;
-}
-
 .overflow-y-auto {
   overflow-y: auto;
 }

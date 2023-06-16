@@ -19,17 +19,6 @@
   display: flex;
 }
 
-@media (max-width: 1200px) {
-  .clients--cta {
-    visibility: hidden !important;
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-}
-
 .clients--data-label {
   width: 30%;
 }
@@ -38,23 +27,6 @@
   .clients--data-label {
     width: 40%;
     min-width: 150px;
-  }
-}
-  
-.clients--manage-button-small {
-  display: none !important;
-  visibility: hidden !important;
-}
-
-@media (max-width: 768px) {
-  .clients--manage-button {
-    display: none !important;
-    visibility: hidden !important;
-  }
-
-  .clients--manage-button-small {
-    display: block !important;
-    visibility: visible !important;
   }
 }
 
