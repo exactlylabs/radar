@@ -57,9 +57,10 @@ jobs:
       - ruby/install-deps:
           app-dir: server
           bundler-version: '2.2.33'
+      - node/install:
+          node-version: '16.15'
       - node/install-packages:
-          pkg-manager: npm
-          cache-key: packages.lock
+          app-dir: server
       - setup_db
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
