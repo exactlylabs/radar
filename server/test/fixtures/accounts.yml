@@ -1,0 +1,17 @@
+root:
+  name: Root Account
+  account_type: organization
+  superaccount: false
+  exportaccount: false
+
+superaccount:
+  name: Super Account
+  account_type: organization
+  superaccount: true
+  exportaccount: false
+
+exportaccount:
+  name: Super Account
+  account_type: organization
+  superaccount: false
+  exportaccount: true
