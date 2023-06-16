@@ -179,11 +179,8 @@ jobs:
       - macos/switch-ruby:
           version: "3.0"
       - ruby/install-deps:
-          app-dir: ~/project/speedtest_mobile/client_mobile_app/ios
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
           bundler-version: '2.2.33'
-      - run:
-          command: gem install fastlane
-          working_directory: ~/project/speedtest_mobile/client_mobile_app/ios
       - run:
           command: cp ~/workspace/ios/<< parameters.flavor >>/*.ipa ~/project/speedtest_mobile/client_mobile_app/ios/Runner.ipa
           working_directory: ~/project/speedtest_mobile/client_mobile_app/ios
