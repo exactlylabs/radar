@@ -13,7 +13,7 @@ module ClientApi
         @speed_test.tested_by = params[:client_id]
         filename = "speed-test-#{params[:timestamp]}.json"
         json_content = params[:result].to_json
-        @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: "application/json")
+        @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: 'application/json')
         @speed_test.save!
         # Call process to parse JSON and seed measurement
         ProcessSpeedTestJob.perform_later @speed_test
