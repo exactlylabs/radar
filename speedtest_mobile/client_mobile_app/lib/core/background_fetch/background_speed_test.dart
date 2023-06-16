@@ -8,36 +8,43 @@ import 'package:network_connection_info/network_connection_info.dart';
 import 'package:network_connection_info/models/connection_info.dart' as CI;
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/ndt7-client-dart/ndt7_client_dart.dart';
+import 'package:client_mobile_app/core/local_storage/sqlite_local_storage.dart';
 
 class BackgroundSpeedTest {
   BackgroundSpeedTest({
     required RestClient restClient,
+    required SQLiteLocalStorage localStorage,
     required IHttpProvider httpProvider,
     required NetworkConnectionInfo networkConnectionInfo,
   })  : _restClient = restClient,
+        _localStorage = localStorage,
         _httpProvider = httpProvider,
         _networkConnectionInfo = networkConnectionInfo;
 
   final RestClient _restClient;
+  final SQLiteLocalStorage _localStorage;
   final IHttpProvider _httpProvider;
   final NetworkConnectionInfo _networkConnectionInfo;
 
+  Position? _positionAfterSpeedTest;
+  Position? _positionBeforeSpeedTest;
   CI.ConnectionInfo? _connectionInfo;
   List<Map<String, dynamic>> _responses = [];
-  Position? _positionBeforeSpeedTest;
-  Position? _positionAfterSpeedTest;
+
   ({bool isTestingDownloadSpeed, bool isTestingUploadSpeed}) _testingState =
       (isTestingDownloadSpeed: false, isTestingUploadSpeed: false);
 
   Future<void> startSpeedTest() async {
     _positionBeforeSpeedTest = await _getCurrentLocation();
     _testingState = (isTestingDownloadSpeed: true, isTestingUploadSpeed: false);
-    test(
+    await test(
       config: {'protocol': 'wss'},
       onMeasurement: (data) => _onTestMeasurement(data),
       onCompleted: (data) => _onTestComplete(data),
       onError: (data) => _onTestError(jsonEncode(data)),
     );
+    _positionAfterSpeedTest = await _getCurrentLocation();
+    _sendSpeedTestResults();
   }
 
   void startUploadTest() =>
@@ -61,8 +68,6 @@ class BackgroundSpeedTest {
           _connectionInfo = await _networkConnectionInfo.getNetworkConnectionInfo();
         }
         _testingState = (isTestingDownloadSpeed: false, isTestingUploadSpeed: false);
-        _positionAfterSpeedTest = await _getCurrentLocation();
-        _sendSpeedTestResults();
       }
     }
   }
@@ -79,34 +84,65 @@ class BackgroundSpeedTest {
     return position;
   }
 
-  void _sendSpeedTestResults() {
-    _httpProvider.postAndDecode(
+  Future<void> _sendSpeedTestResults() async {
+    final speedTestResult = getSpeedTestResult();
+    final result = await _httpProvider.postAndDecode(
       url: _restClient.speedTest,
       headers: {'Content-Type': 'application/json'},
-      body: {
-        'result': {'raw': _responses},
-        'speed_test': {
-          'latitude_before': _positionBeforeSpeedTest?.latitude,
-          'longitude_before': _positionBeforeSpeedTest?.longitude,
-          'accuracy_before': _positionBeforeSpeedTest?.accuracy,
-          'altitude_before': _positionBeforeSpeedTest?.altitude,
-          'floor_before': _positionBeforeSpeedTest?.floor,
-          'heading_before': _positionBeforeSpeedTest?.heading,
-          'speed_before': _positionBeforeSpeedTest?.speed,
-          'speed_accuracy_before': _positionBeforeSpeedTest?.speedAccuracy,
-          'longitude_after': _positionAfterSpeedTest?.longitude,
-          'latitude_after': _positionAfterSpeedTest?.latitude,
-          'accuracy_after': _positionAfterSpeedTest?.accuracy,
-          'altitude_after': _positionAfterSpeedTest?.altitude,
-          'floor_after': _positionAfterSpeedTest?.floor,
-          'heading_after': _positionAfterSpeedTest?.heading,
-          'speed_after': _positionAfterSpeedTest?.speed,
-          'speed_accuracy_after': _positionAfterSpeedTest?.speedAccuracy,
-        },
-        'connection_data': _connectionInfo?.toJson(),
-        'timestamp': DateTime.now().toUtc().toIso8601String(),
-        'background_mode': true,
-      },
+      body: speedTestResult,
     );
+    if (result.failure != null) {
+      final encodedSpeedTestResult = jsonEncode(speedTestResult);
+      if (!_localStorage.isLocalStorageOpen()) {
+        await _localStorage.openLocalStorage();
+      }
+      _localStorage.saveOfflineReport(encodedSpeedTestResult);
+    } else {
+      await _uploadOfflineReports();
+    }
+  }
+
+  Future<void> _uploadOfflineReports() async {
+    if (!_localStorage.isLocalStorageOpen()) {
+      await _localStorage.openLocalStorage();
+    }
+    final offlineTests = await _localStorage.getOfflineReports();
+    for (final offlineTest in offlineTests) {
+      final response = await _httpProvider.postAndDecode(
+        url: _restClient.speedTest,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonDecode(offlineTest['report']) as Map<String, dynamic>,
+      );
+      if (response.failure == null) {
+        await _localStorage.deleteOfflineReport(offlineTest['id']);
+      }
+    }
+  }
+
+  Map<String, dynamic> getSpeedTestResult() {
+    return {
+      'result': _responses.isNotEmpty ? {'raw': _responses} : null,
+      'speed_test': {
+        'latitude_before': _positionBeforeSpeedTest?.latitude,
+        'longitude_before': _positionBeforeSpeedTest?.longitude,
+        'accuracy_before': _positionBeforeSpeedTest?.accuracy,
+        'altitude_before': _positionBeforeSpeedTest?.altitude,
+        'floor_before': _positionBeforeSpeedTest?.floor,
+        'heading_before': _positionBeforeSpeedTest?.heading,
+        'speed_before': _positionBeforeSpeedTest?.speed,
+        'speed_accuracy_before': _positionBeforeSpeedTest?.speedAccuracy,
+        'longitude_after': _positionAfterSpeedTest?.longitude,
+        'latitude_after': _positionAfterSpeedTest?.latitude,
+        'accuracy_after': _positionAfterSpeedTest?.accuracy,
+        'altitude_after': _positionAfterSpeedTest?.altitude,
+        'floor_after': _positionAfterSpeedTest?.floor,
+        'heading_after': _positionAfterSpeedTest?.heading,
+        'speed_after': _positionAfterSpeedTest?.speed,
+        'speed_accuracy_after': _positionAfterSpeedTest?.speedAccuracy,
+      },
+      'connection_data': _connectionInfo?.toJson(),
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
+      'background_mode': true,
+    };
   }
 }

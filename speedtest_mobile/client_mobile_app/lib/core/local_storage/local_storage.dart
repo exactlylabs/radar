@@ -2,8 +2,6 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
 class LocalStorage {
-  LocalStorage();
-
   late Box<List> _box;
 
   static const String boxName = 'local_storage';

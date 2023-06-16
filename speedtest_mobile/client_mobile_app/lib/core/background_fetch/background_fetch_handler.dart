@@ -6,6 +6,7 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
+import 'package:client_mobile_app/core/local_storage/sqlite_local_storage.dart';
 import 'package:client_mobile_app/core/background_fetch/background_speed_test.dart';
 import 'package:client_mobile_app/core/dependency_injection/dependency_injection.dart' as DI;
 
@@ -24,6 +25,7 @@ class BackgroundFetchHandler {
       DI.registerDependencies(url);
       final backgroundSpeedTest = BackgroundSpeedTest(
         restClient: GetIt.I<RestClient>(),
+        localStorage: GetIt.I<SQLiteLocalStorage>(),
         httpProvider: GetIt.I<IHttpProvider>(),
         networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
       );
@@ -76,6 +78,7 @@ class BackgroundFetchHandler {
         if (taskId == _BACKGROUND_SPEED_TEST_ID) {
           final backgroundSpeedTest = BackgroundSpeedTest(
             restClient: GetIt.I<RestClient>(),
+            localStorage: GetIt.I<SQLiteLocalStorage>(),
             httpProvider: GetIt.I<IHttpProvider>(),
             networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
           );
