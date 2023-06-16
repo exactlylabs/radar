@@ -180,6 +180,7 @@ jobs:
           version: "3.0"
       - ruby/install-deps:
           app-dir: ~/project/speedtest_mobile/client_mobile_app/ios
+          bundler-version: '2.2.33'
       - run:
           command: gem install fastlane
           working_directory: ~/project/speedtest_mobile/client_mobile_app/ios
