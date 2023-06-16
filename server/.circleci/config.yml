@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   ruby: circleci/ruby@2.0.1
+  browser-tools: circleci/browser-tools@1.4.1
 
 commands:
   tests:
@@ -56,6 +57,8 @@ jobs:
           app-dir: server
           bundler-version: '2.2.33'
       - setup_db
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - tests
       - system_tests
 
