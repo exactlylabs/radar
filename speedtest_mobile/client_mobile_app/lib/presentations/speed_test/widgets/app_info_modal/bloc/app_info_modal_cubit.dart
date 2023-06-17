@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:configuration_monitoring/configuration_monitoring.dart';
+import 'package:configuration_monitoring/models/configuration_status.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -7,7 +10,16 @@ import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_state.dart';
 
 class AppInfoModalCubit extends Cubit<AppInfoModalState> {
-  AppInfoModalCubit() : super(const AppInfoModalState());
+  AppInfoModalCubit({
+    required ConfigurationMonitoring configurationMonitoring,
+  })  : _configurationMonitoring = configurationMonitoring,
+        super(const AppInfoModalState()) {
+    _listenToConfigurationMonitoring();
+    _loadConfigurationMonitoring();
+  }
+
+  final ConfigurationMonitoring _configurationMonitoring;
+  late final StreamSubscription<ConfigurationStatus> _configurationMonitoringSubscription;
 
   Future<void> enableWardrivingMode() async {
     final updateSettings = await shouldUpdateLocationSettings();
@@ -69,5 +81,46 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
     if (!phoneStatePermissionGranted) {
       await Permission.phone.request();
     }
+  }
+
+  Future<void> _loadConfigurationMonitoring() async {
+    final config = <String, ConfigurationStatus>{};
+    final gpsProvider = await _configurationMonitoring.getGPSProviderStatus();
+    if (!gpsProvider.status) config[gpsProvider.name] = gpsProvider;
+    final powerModeSave = await _configurationMonitoring.getPowerModeSaveStatus();
+    if (powerModeSave.status) config[powerModeSave.name] = powerModeSave;
+    final airplaneMode = await _configurationMonitoring.getAirplaneModeStatus();
+    if (airplaneMode.status) {
+      config[airplaneMode.name] = airplaneMode;
+      disableBackgroundNetworkConnectionInfo();
+    }
+    if (config.isNotEmpty) emit(state.copyWith(configuration: config));
+  }
+
+  void _listenToConfigurationMonitoring() {
+    _configurationMonitoringSubscription = _configurationMonitoring.listener.listen(
+      (event) {
+        final isWarning = ((event.name == GPS_PROVIDER_MODE_EVENT && !event.status) ||
+            (event.name == POWER_SAVE_MODE_EVENT && event.status) ||
+            (event.name == AIRPLANE_MODE_EVENT && event.status));
+        if (state.configuration == null && isWarning) {
+          emit(state.copyWith(configuration: {event.name: event}));
+        } else {
+          Map<String, ConfigurationStatus> configuration =
+              (state.configuration ?? <String, ConfigurationStatus>{});
+          if (!isWarning && configuration.containsKey(event.name)) {
+            configuration.remove(event.name);
+          } else {
+            configuration[event.name] = event;
+          }
+          emit(state.copyWith(configuration: configuration));
+        }
+        if (event.name == AIRPLANE_MODE_EVENT) {
+          event.status
+              ? disableBackgroundNetworkConnectionInfo()
+              : enableBackgroundNetworkConnectionInfo();
+        }
+      },
+    );
   }
 }

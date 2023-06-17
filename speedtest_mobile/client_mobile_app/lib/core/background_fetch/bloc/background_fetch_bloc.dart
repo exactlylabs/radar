@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
@@ -33,6 +34,7 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
   }
 
   Future<void> _loadConfigurationMonitoring() async {
+    if (Platform.isAndroid) {}
     final airplaneMode = await _configurationMonitoring.getAirplaneModeStatus();
     if (airplaneMode.status) {
       disableBackgroundSpeedTest();
