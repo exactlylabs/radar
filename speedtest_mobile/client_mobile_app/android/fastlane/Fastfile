@@ -27,10 +27,9 @@ platform :android do
       merge_commit_filtering: 'exclude_merges'
     )
     upload_to_play_store(
-      track: "internal", 
-      metadata_path: "./fastlane/metadata", 
+      track: "internal",
+      metadata_path: "./fastlane/metadata",
       aab_paths: ENV["ANDROID_AAB_PATH"],
-      release_status: "draft" # As soon as the app is released, we can remove this.
     )
   end
 
@@ -40,7 +39,7 @@ platform :android do
       merge_commit_filtering: 'exclude_merges'
     )
     upload_to_play_store(
-      metadata_path: "./fastlane/metadata", 
+      metadata_path: "./fastlane/metadata",
       aab_paths: ENV["ANDROID_AAB_PATH"],
       release_status: "draft" # As soon as the app is released, we can remove this.
     )

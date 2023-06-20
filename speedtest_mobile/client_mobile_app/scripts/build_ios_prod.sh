@@ -8,7 +8,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BASE_URL=${BASE_URL:-https://pods.radartoolkit.com}
 WORKSPACE=${SCRIPT_DIR}/../workspace
 APPDIR=${SCRIPT_DIR}/..
-BUILD=$(date +%s)
+BUILD=${BUILD:-$(date +%s)}
 
 ( cd ${APPDIR} && flutter build ipa --build-number ${BUILD} --flavor prod -t lib/main_prod.dart --release --no-codesign --dart-define=BASE_URL=$BASE_URL )
 mkdir -p ${WORKSPACE}/ios/prod

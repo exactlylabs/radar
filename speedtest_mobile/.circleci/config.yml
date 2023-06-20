@@ -37,7 +37,7 @@ commands:
       - flutter/install_android_gem:
           app-dir: ~/project/speedtest_mobile/client_mobile_app
       - run:
-          command: ./scripts/build_android_<<  parameters.flavor >>.sh
+          command: BUILD=${CIRCLE_SHA1} ./scripts/build_android_<<  parameters.flavor >>.sh
           working_directory: ~/project/speedtest_mobile/client_mobile_app
 
   setup_provisioning_profiles:
@@ -138,7 +138,7 @@ jobs:
       - flutter/install_ios_gem:
           app-dir: ~/project/speedtest_mobile/client_mobile_app
       - run:
-          command: ./scripts/build_ios_<<  parameters.flavor >>.sh
+          command: BUILD=${CIRCLE_SHA1} ./scripts/build_ios_<<  parameters.flavor >>.sh
           working_directory: ~/project/speedtest_mobile/client_mobile_app
       - persist_to_workspace:
           root: ~/project/speedtest_mobile/client_mobile_app/workspace
