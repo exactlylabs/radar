@@ -37,7 +37,7 @@ commands:
       - flutter/install_android_gem:
           app-dir: ~/project/speedtest_mobile/client_mobile_app
       - run:
-          command: BUILD=<< pipeline.trigger_parameters.circleci.event_time >> ./scripts/build_android_<<  parameters.flavor >>.sh
+          command: ./scripts/build_android_<<  parameters.flavor >>.sh
           working_directory: ~/project/speedtest_mobile/client_mobile_app
 
   setup_provisioning_profiles:
@@ -60,6 +60,8 @@ jobs:
       flavor:
         type: enum
         enum: ["dev", "staging", "prod"]
+    environment:
+      BUILD: << pipeline.trigger_parameters.circleci.event_time >>
     executor:
       name: android/android-docker
       tag: 2022.09.1
@@ -117,6 +119,8 @@ jobs:
     working_directory: ~/project
     macos:
       xcode: 14.2.0
+    environment:
+      BUILD: << pipeline.trigger_parameters.circleci.event_time >>
     parameters:
       flavor:
         type: enum
@@ -138,7 +142,7 @@ jobs:
       - flutter/install_ios_gem:
           app-dir: ~/project/speedtest_mobile/client_mobile_app
       - run:
-          command: BUILD=<< pipeline.trigger_parameters.circleci.event_time >> ./scripts/build_ios_<<  parameters.flavor >>.sh
+          command: ./scripts/build_ios_<<  parameters.flavor >>.sh
           working_directory: ~/project/speedtest_mobile/client_mobile_app
       - persist_to_workspace:
           root: ~/project/speedtest_mobile/client_mobile_app/workspace
