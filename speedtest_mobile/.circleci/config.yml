@@ -21,25 +21,6 @@ commands:
       - run: echo ${FLUTTER_ANDROID_PROD_KEYSTORE} | base64 -d > << parameters.working_directory >>/upload-prod-keystore.jks
       - run: echo ${FLUTTER_ANDROID_PROD_KEY_PROPERTIES} | base64 -d > << parameters.working_directory >>/key.properties
 
-  build-android:
-    parameters:
-      flavor:
-        type: enum
-        enum: ["dev","staging", "prod"]
-    steps:
-      - setup_keystores:
-          working_directory: ~/project/speedtest_mobile/client_mobile_app/android
-      - flutter/install_sdk_and_pub:
-          version: 3.10.1
-          app-dir: ~/project/speedtest_mobile/client_mobile_app
-      - flutter/install_android_gradle_dependencies:
-          app-dir: ~/project/speedtest_mobile/client_mobile_app
-      - flutter/install_android_gem:
-          app-dir: ~/project/speedtest_mobile/client_mobile_app
-      - run:
-          command: ./scripts/build_android_<<  parameters.flavor >>.sh
-          working_directory: ~/project/speedtest_mobile/client_mobile_app
-
   setup_provisioning_profiles:
     steps:
       - run: sudo mkdir -p "/Library/MobileDevice/Provisioning Profiles"
@@ -54,22 +35,42 @@ commands:
       - run: echo ${ANTHC_FLUTTER_IOS_DISTRIBUTION_KEY} | base64 -d > /tmp/distribution_prod.p12
 
 jobs:
+  generate_build_number:
+    docker:
+      - image: 'cimg/base'
+    steps:
+      - run: echo $(date +%s) > ./build_number
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./build_number
+
   build-android:
     working_directory: ~/project
     parameters:
       flavor:
         type: enum
         enum: ["dev", "staging", "prod"]
-    environment:
-      BUILD: << pipeline.trigger_parameters.circleci.event_time >>
     executor:
       name: android/android-docker
       tag: 2022.09.1
     resource_class: large
     steps:
       - checkout
-      - build-android:
-          flavor: << parameters.flavor >>
+      - attach_workspace:
+          at: ~/project/speedtest_mobile/client_mobile_app/workspace
+      - setup_keystores:
+          working_directory: ~/project/speedtest_mobile/client_mobile_app/android
+      - flutter/install_sdk_and_pub:
+          version: 3.10.1
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
+      - flutter/install_android_gradle_dependencies:
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
+      - flutter/install_android_gem:
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
+      - run:
+          command: BUILD=$(cat ~/project/speedtest_mobile/client_mobile_app/workspace/build_number) ./scripts/build_android_<<  parameters.flavor >>.sh
+          working_directory: ~/project/speedtest_mobile/client_mobile_app
       - persist_to_workspace:
           root: ~/project/speedtest_mobile/client_mobile_app/workspace
           paths:
@@ -119,8 +120,6 @@ jobs:
     working_directory: ~/project
     macos:
       xcode: 14.2.0
-    environment:
-      BUILD: << pipeline.trigger_parameters.circleci.event_time >>
     parameters:
       flavor:
         type: enum
@@ -141,8 +140,10 @@ jobs:
           app-dir: ~/project/speedtest_mobile/client_mobile_app
       - flutter/install_ios_gem:
           app-dir: ~/project/speedtest_mobile/client_mobile_app
+      - attach_workspace:
+          at: ~/project/speedtest_mobile/client_mobile_app/workspace
       - run:
-          command: ./scripts/build_ios_<<  parameters.flavor >>.sh
+          command: BUILD=$(cat ~/project/speedtest_mobile/client_mobile_app/workspace/build_number) ./scripts/build_ios_<<  parameters.flavor >>.sh
           working_directory: ~/project/speedtest_mobile/client_mobile_app
       - persist_to_workspace:
           root: ~/project/speedtest_mobile/client_mobile_app/workspace
@@ -218,25 +219,33 @@ workflows:
             tags:
               only: /^mobile-.*/
 
+      - generate_build_number:
+          requires: [unit_test]
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /^mobile-.*/
+
       # Android
       # Build Flavors
       - build-android:
           name: "build-android-dev"
-          requires: [unit_test]
+          requires: [generate_build_number]
           flavor: dev
           filters:
             branches:
               ignore: ["master"]
       - build-android:
           name: "build-android-staging"
-          requires: [unit_test]
+          requires: [generate_build_number]
           flavor: staging
           filters:
             branches:
               only: "master"
       - build-android:
           name: "build-android-prod"
-          requires: [unit_test]
+          requires: [generate_build_number]
           flavor: prod
           filters:
             branches:
@@ -271,21 +280,21 @@ workflows:
       # Build Flavors
       - build-ios:
           name: "build-ios-dev"
-          requires: [unit_test]
+          requires: [generate_build_number]
           flavor: dev
           filters:
             branches:
               ignore: "master"
       - build-ios:
           name: "build-ios-staging"
-          requires: [unit_test]
+          requires: [generate_build_number]
           flavor: staging
           filters:
             branches:
               only: "master"
       - build-ios:
           name: "build-ios-prod"
-          requires: [unit_test]
+          requires: [generate_build_number]
           flavor: prod
           filters:
             branches:
