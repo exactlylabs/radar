@@ -53,9 +53,10 @@ platform :ios do
       merge_commit_filtering: 'exclude_merges'
     )
     upload_to_testflight(
-      distribute_external: true,
-      notify_external_testers: true,
+      distribute_external: false,
+      notify_external_testers: false,
       groups: ["ANTHC", "ExactlyLabs"],
+      submit_beta_review: false,
     )
   end
 end
