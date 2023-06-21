@@ -9,7 +9,7 @@ BASE_URL=${BASE_URL:-https://pods.radartoolkit.com}
 WORKSPACE=${SCRIPT_DIR}/../workspace
 APPDIR=${SCRIPT_DIR}/..
 BUILD=${BUILD:-$(date +%s)}
-( cd ${APPDIR} && flutter build appbundle --build-number ${BUILD} --release --flavor prod -t lib/main_dev.dart --dart-define=BASE_URL=$BASE_URL )
+( cd ${APPDIR} && flutter build appbundle --build-number ${BUILD} --release --flavor prod -t lib/main_prod.dart --dart-define=BASE_URL=$BASE_URL )
 
 mkdir -p ${WORKSPACE}/android/prod
 
