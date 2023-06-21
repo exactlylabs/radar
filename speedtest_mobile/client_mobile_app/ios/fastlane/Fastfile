@@ -9,11 +9,11 @@ platform :ios do
       skip_build_archive: true,
       scheme: "dev",
       archive_path: "../build/ios/archive/Runner.xcarchive",
-      export_team_id: "MQYTP6VS48",    
+      export_team_id: "MQYTP6VS48",
       export_method: "ad-hoc",
   )
   end
-  
+
   lane :sign_staging do
     # Use the compiled .xarchive and just sign it to transform into an .ipa
     build_app(
@@ -49,11 +49,13 @@ platform :ios do
 
   lane :release_prod do
     app_store_connect_api_key
-    upload_to_app_store(
-      submit_for_review: true,
-      automatic_release: false,
-      skip_screenshots: true,
-
+    changelog_from_git_commits(
+      merge_commit_filtering: 'exclude_merges'
+    )
+    upload_to_testflight(
+      distribute_external: true,
+      notify_external_testers: true,
+      groups: ["ANTHC", "ExactlyLabs"],
     )
   end
 end
