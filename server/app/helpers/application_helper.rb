@@ -2,7 +2,6 @@ module ApplicationHelper
 
   def is_super_user_disabled?
     possible_cookie = cookies[:radar_super_user_disabled]
-    puts "COOKIE: #{possible_cookie} --> #{possible_cookie.present? && possible_cookie == "true"}"
     possible_cookie.present? && possible_cookie == "true"
   end
 
