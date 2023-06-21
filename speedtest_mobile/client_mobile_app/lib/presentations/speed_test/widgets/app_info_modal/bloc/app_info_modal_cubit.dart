@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_state.dart';
 
@@ -13,6 +14,7 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
     if (updateSettings) {
       emit(state.copyWith(locationSettingsShouldBeUpdated: true));
     } else {
+      await shouldRequestPhoneStatePermission();
       emit(state.copyWith(enableWardrivingMode: true, locationSettingsShouldBeUpdated: false));
     }
   }
@@ -60,5 +62,12 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
       return permission != LocationPermission.always;
     }
     return true;
+  }
+
+  Future<void> shouldRequestPhoneStatePermission() async {
+    final phoneStatePermissionGranted = await Permission.phone.isGranted;
+    if (!phoneStatePermissionGranted) {
+      await Permission.phone.request();
+    }
   }
 }
