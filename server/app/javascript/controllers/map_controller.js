@@ -9,17 +9,21 @@ export default class extends Controller {
   disconnect() {
     // clear map so it can get properly initialized on re-render
     map = null;
+    map.off();
+    map.remove();
   }
 
   connect() {
     if (!document.querySelector("#map")) return; // don't try to initialize a map if the <div id="map"> is not present on the screen
     
     // Try and prevent having a re-initialization of the map
-    if(map) {
-      map.off();
-      map.remove();
+    if(!!map) {
+      L.map("map").off();
+      L.map("map").remove();
+      map = L.map("map").setView([51.505, -0.09], 13);
+    } else {
+      map = L.map("map").setView([51.505, -0.09], 13);
     }
-    map = L.map("map").setView([51.505, -0.09], 13);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
