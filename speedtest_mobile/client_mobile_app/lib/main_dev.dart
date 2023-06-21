@@ -12,7 +12,7 @@ import 'package:client_mobile_app/core/flavors/string_resource/string_resource_d
 
 void main() async {
   final devStringResources = StringResourceDev();
-  mainCommon(devStringResources.SERVER_ENDPOINT);
+  await mainCommon(devStringResources.SERVER_ENDPOINT);
 
   final devConfig = AppConfig(
     appName: devStringResources.APP_NAME,

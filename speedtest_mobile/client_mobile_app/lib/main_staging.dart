@@ -14,7 +14,7 @@ import 'package:client_mobile_app/core/flavors/string_resource/string_resources_
 
 Future<void> main() async {
   final stgStringResources = StringResourceStg();
-  mainCommon(stgStringResources.SERVER_ENDPOINT);
+  await mainCommon(stgStringResources.SERVER_ENDPOINT);
 
   final stgConfig = AppConfig(
     appName: stgStringResources.APP_NAME,

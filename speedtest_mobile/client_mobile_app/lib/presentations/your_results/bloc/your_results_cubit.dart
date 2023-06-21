@@ -1,21 +1,19 @@
-import 'package:client_mobile_app/core/local_storage/local_storage.dart';
-import 'package:client_mobile_app/core/models/test_result.dart';
-import 'package:client_mobile_app/presentations/your_results/bloc/your_results_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
+import 'package:client_mobile_app/presentations/your_results/bloc/your_results_state.dart';
 
 class YourResultsCubit extends Cubit<YourResultsState> {
   YourResultsCubit({
-    required LocalStorage localStorage,
-  })  : _localStorage = localStorage,
+    required IResultsService resultsService,
+  })  : _resultsService = resultsService,
         super(const YourResultsState()) {
     _loadResults();
   }
 
-  final LocalStorage _localStorage;
+  final IResultsService _resultsService;
 
   void _loadResults() {
-    final results = _localStorage.getResults();
-    final parsedResults = results.map((result) => TestResult.fromJson(result)).toList();
-    emit(state.copyWith(results: parsedResults));
+    final results = _resultsService.getResults();
+    emit(state.copyWith(results: results));
   }
 }

@@ -18,6 +18,9 @@ class StringResourceDev implements IStringResource {
       'https://speedtest-staging.exactlylabs.com/?webviewMode=true&tab=2&noZoomControl=true&global=true&client_id=1';
 
   @override
+  String WEB_ENDPOINT_COOKIE_DOMAIN = 'speedtest-staging.exactlylabs.com';
+
+  @override
   String ENVIRONMENT = 'development';
 
   @override

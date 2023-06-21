@@ -19,6 +19,9 @@ class StringResourceProd implements IStringResource {
       'https://speed.radartoolkit.com/?webviewMode=true&tab=2&noZoomControl=true&global=true&client_id=1';
 
   @override
+  String WEB_ENDPOINT_COOKIE_DOMAIN = 'speed.radartoolkit.com';
+
+  @override
   String ENVIRONMENT = 'production';
 
   @override

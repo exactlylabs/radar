@@ -1,7 +1,8 @@
-import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:client_mobile_app/resources/images.dart';
-import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/app_colors.dart';
+import 'package:client_mobile_app/widgets/primary_button.dart';
 
 class FTUEMapModal extends StatelessWidget {
   const FTUEMapModal({
@@ -17,13 +18,23 @@ class FTUEMapModal extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
+          'Explore Map',
+          textAlign: TextAlign.center,
+          style: AppTextStyle(
+            fontSize: 20.0,
+            fontWeight: 800,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const SizedBox(height: 15.0),
+        Text(
           'Our map shows all speed tests taken across the country. Tap a test to view more details or filter tests by speed results.',
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 16.0,
-            fontWeight: 700,
+            fontWeight: 200,
             height: 1.5,
-            color: Theme.of(context).colorScheme.primary,
+            color: AppColors.darkGrey,
           ),
         ),
         const SizedBox(height: 30.0),

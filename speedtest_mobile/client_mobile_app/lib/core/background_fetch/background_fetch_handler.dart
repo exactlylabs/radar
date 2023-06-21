@@ -5,14 +5,14 @@ import 'package:get_it/get_it.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:network_connection_info/network_connection_info.dart';
+import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
-import 'package:client_mobile_app/core/local_storage/sqlite_local_storage.dart';
 import 'package:client_mobile_app/core/background_fetch/background_speed_test.dart';
 import 'package:client_mobile_app/core/dependency_injection/dependency_injection.dart' as DI;
 
 class BackgroundFetchHandler {
   @pragma('vm:entry-point')
-  static void backgroundFetchHeadlessTask(HeadlessTask task) {
+  static void backgroundFetchHeadlessTask(HeadlessTask task) async {
     String taskId = task.taskId;
     bool isTimeout = task.timeout;
     if (isTimeout) {
@@ -23,9 +23,10 @@ class BackgroundFetchHandler {
     if (taskId == _BACKGROUND_SPEED_TEST_ID) {
       const url = String.fromEnvironment('BASE_URL', defaultValue: '');
       DI.registerDependencies(url);
+      await GetIt.I<LocalStorage>().setLocalStorage();
       final backgroundSpeedTest = BackgroundSpeedTest(
         restClient: GetIt.I<RestClient>(),
-        localStorage: GetIt.I<SQLiteLocalStorage>(),
+        localStorage: GetIt.I<LocalStorage>(),
         httpProvider: GetIt.I<IHttpProvider>(),
         networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
       );
@@ -78,7 +79,7 @@ class BackgroundFetchHandler {
         if (taskId == _BACKGROUND_SPEED_TEST_ID) {
           final backgroundSpeedTest = BackgroundSpeedTest(
             restClient: GetIt.I<RestClient>(),
-            localStorage: GetIt.I<SQLiteLocalStorage>(),
+            localStorage: GetIt.I<LocalStorage>(),
             httpProvider: GetIt.I<IHttpProvider>(),
             networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
           );

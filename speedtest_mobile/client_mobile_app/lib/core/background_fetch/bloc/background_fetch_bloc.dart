@@ -25,10 +25,7 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
   late final StreamSubscription<ConfigurationStatus> _configurationMonitoringSubscription;
 
   Future<void> _loadPreferences() async {
-    if (!_localStorage.isLocalStorageOpen()) {
-      await _localStorage.openLocalStorage();
-    }
-    final backgroundSpeedTestDelay = _localStorage.getBackgroundSpeedTestDelay();
+    final backgroundSpeedTestDelay = _localStorage.getBackgroundModeFrequency();
     if (backgroundSpeedTestDelay >= 0) {
       emit(BackgroundFetchState(delay: backgroundSpeedTestDelay, isEnabled: true));
       BackgroundFetchHandler.startBackgroundSpeedTest(backgroundSpeedTestDelay * 60000);
@@ -45,7 +42,7 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
   Future<void> enableBackgroundSpeedTest() async {
     if (!state.isAirplaneModeOn && (!state.isEnabled && state.delay >= 0)) {
       emit(BackgroundFetchState(delay: state.delay, isEnabled: true));
-      await _localStorage.setBackgroundSpeedTestDelay(state.delay);
+      await _localStorage.setBackgroundModeFrequency(state.delay);
       BackgroundFetchHandler.stopBackgroundSpeedTest();
       BackgroundFetchHandler.startBackgroundSpeedTest(state.delay * 60000);
     }
@@ -53,8 +50,9 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
 
   Future<void> disableBackgroundSpeedTest() async {
     if (state.isEnabled) {
-      emit(BackgroundFetchState(delay: state.isAirplaneModeOn ? state.delay : -1, isEnabled: false));
-      await _localStorage.setBackgroundSpeedTestDelay(-1);
+      emit(
+          BackgroundFetchState(delay: state.isAirplaneModeOn ? state.delay : -1, isEnabled: false));
+      await _localStorage.setBackgroundModeFrequency(-1);
       BackgroundFetchHandler.stopBackgroundSpeedTest();
     }
   }

@@ -27,7 +27,7 @@ class HomePageBody extends StatelessWidget {
           longitude: latLng[1],
         );
       } else {
-        return MapWebViewPage();
+        return const MapWebViewPage();
       }
     } else {
       return const SpeedTestPage();
