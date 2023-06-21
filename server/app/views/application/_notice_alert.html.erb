@@ -2,9 +2,11 @@
 <% is_account_switch = notice =~ /You are now viewing/i %>
 <% alert_type = is_error ? 'error' : is_account_switch ? 'account' : 'success' %>
 
-<div class="custom-alert opening"
+<div class="custom-alert <%= placeholder ? 'invisible' : 'opening' %>"
   data-controller="alert"
   data-alert-type="<%= alert_type %>"
+  <%= placeholder ? 'data-alert-target=placeholderAlert' : nil %>
+  <%= placeholder ? 'data-action=renderAlert@window->alert#renderAlert' : nil %>
 >
   <% if is_error %>
     <div class="alerts--icon-container" data-type="error">
@@ -15,7 +17,7 @@
       <%= image_tag image_url('white-checkmark.png'), width: 16, height: 16 %>
     </div>
   <% end %>
-  <h4 class="card-main-title mb-0 me-4"><%= notice %></h4>
+  <h4 class="card-main-title mb-0 me-4" data-alert-target="notice"><%= notice %></h4>
   <button type="button"
     class="custom-button transparent hoverable position-relative"
     data-action="click->alert#closeAlert"

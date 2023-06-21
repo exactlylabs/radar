@@ -70,7 +70,7 @@
         <div class="menu-item">
           <%= link_to "Run Test", run_test_client_path(@client.unix_user), method: :post, class: "menu-link p-5 #{@client.test_requested ? "disabled" : ""}" %>
         </div>
-        <% if current_user.super_user %>
+        <% if current_user.super_user && !is_super_user_disabled? %>
           <%= link_to "Print Label", pdf_label_client_path(@client.unix_user, format: :pdf), { class: "menu-link p-5", target: "_blank" } %>
         <% end %>
         <div class="menu-item">
@@ -78,8 +78,8 @@
         </div>
       </div>
     </div>
-    <% if current_user.super_user %>
-      <%= link_to "Print Label", pdf_label_client_path(@client.unix_user, format: :pdf), { class: "custom-button custom-button--lg custom-button--secondary me-1 clients--cta", target: "_blank" } %>
+    <% if current_user.super_user && !is_super_user_disabled? %>
+      <%= link_to "Print Label", pdf_label_client_path(@client.unix_user, format: :pdf), { class: "custom-button custom-button--lg custom-button--secondary me-3 d-md-none d-xl-flex", target: "_blank" } %>
     <% end %>
     <%= link_to "Edit Pod", edit_client_path(@client.unix_user), { class: "custom-button custom-button--lg custom-button--secondary clients--cta me-1", data: { "turbo-frame" => "edit_client_modal" } } %>
     <%= link_to "#{client.get_in_service_action_label}", toggle_in_service_client_path(client.unix_user), method: :post, class: "custom-button custom-button--lg custom-button--secondary me-1 clients--cta" %>
@@ -91,7 +91,7 @@
 <!--begin::Card body-->
 <div class="card-body pt-0 d-flex flex-row">
   <div class="client-data" style="width: 100%">
-    <% if current_user.super_user %>
+    <% if current_user.super_user && !is_super_user_disabled? %>
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="forms--label clients--data-label">Account</div>
         <div class="d-flex flex-row regular-text ms-2 me-auto">

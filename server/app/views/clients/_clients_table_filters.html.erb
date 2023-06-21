@@ -23,7 +23,7 @@
         >
           Run Test
         </a>
-        <% if current_user.super_user %>
+        <% if current_user.super_user && !is_super_user_disabled? %>
           <!--begin::Menu item-->
           <a href="#"
              class="menu-item text-hover-gray-500 text-gray-700 py-2 pe-3 text-nowrap"

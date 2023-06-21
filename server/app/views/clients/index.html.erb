@@ -16,7 +16,7 @@
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-      <% if current_user.super_user %>
+      <% if current_user.super_user && !is_super_user_disabled? %>
         <a href="<%= update_groups_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Manage Release Group</a>
       <% end %>
       <% if current_account.superaccount %>
@@ -35,7 +35,7 @@
       <%= render partial: "clients_table_filters" %>
     <% end %>
     <%= render partial: "clients_index_content", locals: { clients: @clients } %>
-    <% if current_user.super_user %>
+    <% if current_user.super_user && !is_super_user_disabled? %>
       <div class="modal fade" tabindex="-1" id="bulk_change_release_group" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
         <%= render partial: "clients/bulk_change_release_group_modal" %>
       </div>
@@ -54,12 +54,12 @@
   <% end %>
 </div>
 
-<div class="modal fade" tabindex="-1" id="new_location_modal" data-controller="add-pod" data-action="turbo:submit-start->add-pod#handleSubmitStart turbo:submit-end->add-pod#handleNewLocationFromClientModal">
+<div class="modal fade" tabindex="-1" id="new_location_modal" data-controller="add-pod categories" data-action="turbo:submit-start->add-pod#handleSubmitStart turbo:submit-end->add-pod#handleNewLocationFromClientModal">
   <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "create-pod-modal", modal_target: "add_pod_modal_wizard")  do %>
   <% end %>
 </div>
 
-<div class="modal fade" tabindex="-1" id="new_location_modal-edit" data-controller="edit-pod" data-action="turbo:submit-start->edit-pod#handleSubmitStart turbo:submit-end->edit-pod#handleNewLocationFromClientModal">
+<div class="modal fade" tabindex="-1" id="new_location_modal-edit" data-controller="edit-pod categories" data-action="turbo:submit-start->edit-pod#handleSubmitStart turbo:submit-end->edit-pod#handleNewLocationFromClientModal">
   <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "edit-pod-modal", modal_target: "edit_pod_modal") do %>
   <% end %>
 </div>
