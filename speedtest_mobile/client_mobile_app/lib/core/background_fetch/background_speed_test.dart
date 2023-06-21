@@ -3,17 +3,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:client_mobile_app/core/rest_client/rest_client.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:network_connection_info/models/connection_info.dart' as CI;
+import 'package:client_mobile_app/core/rest_client/rest_client.dart';
+import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/ndt7-client-dart/ndt7_client_dart.dart';
-import 'package:client_mobile_app/core/local_storage/sqlite_local_storage.dart';
 
 class BackgroundSpeedTest {
   BackgroundSpeedTest({
     required RestClient restClient,
-    required SQLiteLocalStorage localStorage,
+    required LocalStorage localStorage,
     required IHttpProvider httpProvider,
     required NetworkConnectionInfo networkConnectionInfo,
   })  : _restClient = restClient,
@@ -22,10 +23,11 @@ class BackgroundSpeedTest {
         _networkConnectionInfo = networkConnectionInfo;
 
   final RestClient _restClient;
-  final SQLiteLocalStorage _localStorage;
+  final LocalStorage _localStorage;
   final IHttpProvider _httpProvider;
   final NetworkConnectionInfo _networkConnectionInfo;
 
+  PackageInfo? _packageInfo;
   Position? _positionAfterSpeedTest;
   Position? _positionBeforeSpeedTest;
   CI.ConnectionInfo? _connectionInfo;
@@ -36,6 +38,7 @@ class BackgroundSpeedTest {
 
   Future<void> startSpeedTest() async {
     _positionBeforeSpeedTest = await _getCurrentLocation();
+    _packageInfo = await PackageInfo.fromPlatform();
     _testingState = (isTestingDownloadSpeed: true, isTestingUploadSpeed: false);
     await test(
       config: {'protocol': 'wss'},
@@ -92,29 +95,22 @@ class BackgroundSpeedTest {
       body: speedTestResult,
     );
     if (result.failure != null) {
-      final encodedSpeedTestResult = jsonEncode(speedTestResult);
-      if (!_localStorage.isLocalStorageOpen()) {
-        await _localStorage.openLocalStorage();
-      }
-      _localStorage.saveOfflineReport(encodedSpeedTestResult);
+      _localStorage.addPendingSpeedTestResult(speedTestResult);
     } else {
       await _uploadOfflineReports();
     }
   }
 
   Future<void> _uploadOfflineReports() async {
-    if (!_localStorage.isLocalStorageOpen()) {
-      await _localStorage.openLocalStorage();
-    }
-    final offlineTests = await _localStorage.getOfflineReports();
-    for (final offlineTest in offlineTests) {
+    final pendingSpeedTestResultsMap = _localStorage.getPendingSpeedTestResults();
+    for (final pendingSpeedTestResultsKey in pendingSpeedTestResultsMap.keys) {
       final response = await _httpProvider.postAndDecode(
         url: _restClient.speedTest,
         headers: {'Content-Type': 'application/json'},
-        body: jsonDecode(offlineTest['report']) as Map<String, dynamic>,
+        body: pendingSpeedTestResultsMap[pendingSpeedTestResultsKey],
       );
       if (response.failure == null) {
-        await _localStorage.deleteOfflineReport(offlineTest['id']);
+        await _localStorage.removePendingSpeedTestResult(pendingSpeedTestResultsKey);
       }
     }
   }
@@ -139,6 +135,8 @@ class BackgroundSpeedTest {
         'heading_after': _positionAfterSpeedTest?.heading,
         'speed_after': _positionAfterSpeedTest?.speed,
         'speed_accuracy_after': _positionAfterSpeedTest?.speedAccuracy,
+        'version_number': _packageInfo?.version,
+        'build_number': _packageInfo?.buildNumber,
       },
       'connection_data': _connectionInfo?.toJson(),
       'timestamp': DateTime.now().toUtc().toIso8601String(),

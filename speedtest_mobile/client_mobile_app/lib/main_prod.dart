@@ -14,7 +14,7 @@ import 'package:client_mobile_app/core/flavors/string_resource/string_resource_p
 
 Future<void> main() async {
   final prodStringResources = StringResourceProd();
-  mainCommon(prodStringResources.SERVER_ENDPOINT);
+  await mainCommon(prodStringResources.SERVER_ENDPOINT);
 
   final prodConfig = AppConfig(
     appName: prodStringResources.APP_NAME,

@@ -70,7 +70,7 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   }
 
   void resetForm() {
-    emit(SpeedTestState(networkType: state.networkType));
+    emit(SpeedTestState(networkType: state.networkType, isLoadingTerms: state.isLoadingTerms));
   }
 
   void preferNotToAnswer() {
@@ -135,9 +135,6 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   }
 
   Future<void> _getTerms() async {
-    if (!_localStorage.isLocalStorageOpen()) {
-      await _localStorage.openLocalStorage();
-    }
     final termsAccepted = _localStorage.getTerms();
     emit(state.copyWith(termsAccepted: termsAccepted, isLoadingTerms: false));
   }

@@ -2,86 +2,70 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
 class LocalStorage {
-  late Box<List> _box;
+  late Box<bool> _preferencesBox;
+  late Box<int> _backgroundModeSettingsBox;
+  late Box<Map> _speedTestResultsBox;
+  late Box<Map> _pendingSpeedTestResultsBox;
 
-  static const String boxName = 'local_storage';
-  static const String resultsKey = 'RESULTS';
-  static const String ftueMapKey = 'FTUE_MAP';
-  static const String termsKey = 'TERMS';
-  static const String backgroundSpeedTestKey = 'BACKGROUND_SPEED_TEST';
+  static const String _preferencesBoxName = 'preferences';
+  static const String _backgroundModeSettingsBoxName = 'background_mode_settings';
+  static const String _speedTestResultsBoxName = 'speed_test_results';
+  static const String _pendingSpeedTestResultsBoxName = 'pending_speed_test_results';
 
-  Future<void> openLocalStorage() async {
-    if (!Hive.isBoxOpen(boxName)) {
-      final directory = await getApplicationDocumentsDirectory();
-      Hive.init(directory.path);
-    }
-    _box = await Hive.openBox<List>(boxName);
+  static const String _preferencesFTUEMap = 'preferences_ftue_map';
+  static const String _preferencesTermsAccepted = 'preferences_terms_accepted';
+
+  static const String _backgroundModeSettingsFrequency = 'background_mode_settings_frequency';
+
+  Future<void> setLocalStorage() async {
+    final directory = await getApplicationDocumentsDirectory();
+    Hive.init(directory.path);
+    await _openBoxes();
   }
 
-  Future<List<Map<String, dynamic>>> addResult(Map<String, dynamic> value) async {
-    final results = getResults();
-    final newResults = [value, ...results];
-    await _box.put(resultsKey, newResults);
-    return newResults;
+  Future<void> _openBoxes() async {
+    _preferencesBox = await Hive.openBox(_preferencesBoxName);
+    _speedTestResultsBox = await Hive.openBox(_speedTestResultsBoxName);
+    _backgroundModeSettingsBox = await Hive.openBox(_backgroundModeSettingsBoxName);
+    _pendingSpeedTestResultsBox = await Hive.openBox(_pendingSpeedTestResultsBoxName);
   }
 
-  List<Map<String, dynamic>> getResults() {
-    List<dynamic> results = _box.get(resultsKey, defaultValue: [])!;
-    return results.map((result) => Map<String, dynamic>.from(result)).toList();
-  }
+  bool getFTUEMap() => _preferencesBox.get(_preferencesFTUEMap, defaultValue: true)!;
 
-  bool getFTUEMap() {
-    final ftue = _box.get(
-      ftueMapKey,
-      defaultValue: [
-        {'value': true}
-      ],
-    )!;
-    return ftue.first['value'] as bool;
+  bool getTerms() => _preferencesBox.get(_preferencesTermsAccepted, defaultValue: false)!;
+
+  int getBackgroundModeFrequency() =>
+      _backgroundModeSettingsBox.get(_backgroundModeSettingsFrequency, defaultValue: -1)!;
+
+  List<Map> getSpeedTestResults() => _speedTestResultsBox.values.toList();
+
+  Map<dynamic, Map<dynamic, dynamic>> getPendingSpeedTestResults() {
+    return _pendingSpeedTestResultsBox.toMap();
   }
 
   Future<void> setFTUEMap() async {
-    final ftue = [
-      {'value': false}
-    ];
-    await _box.put(ftueMapKey, ftue);
-  }
-
-  bool getTerms() {
-    final terms = _box.get(
-      termsKey,
-      defaultValue: [
-        {'accepted': false}
-      ],
-    )!;
-    return terms.first['accepted'] as bool;
+    const ftueMap = false;
+    await _preferencesBox.put(_preferencesFTUEMap, ftueMap);
   }
 
   Future<void> setTerms() async {
-    final terms = [
-      {'accepted': true}
-    ];
-    await _box.put(termsKey, terms);
+    const termsAccepted = true;
+    await _preferencesBox.put(_preferencesTermsAccepted, termsAccepted);
   }
 
-  int getBackgroundSpeedTestDelay() {
-    final value = _box.get(
-      backgroundSpeedTestKey,
-      defaultValue: [
-        {'delay': -1}
-      ],
-    )!;
-    return value.first['delay'] as int;
+  Future<void> addSpeedTestResult(Map<String, dynamic> speedTestResult) async {
+    await _speedTestResultsBox.add(speedTestResult);
   }
 
-  Future<void> setBackgroundSpeedTestDelay(int delay) async {
-    final value = [
-      {'delay': delay}
-    ];
-    await _box.put(backgroundSpeedTestKey, value);
+  Future<void> setBackgroundModeFrequency(int frequency) async {
+    await _backgroundModeSettingsBox.put(_backgroundModeSettingsFrequency, frequency);
   }
 
-  bool isLocalStorageOpen() {
-    return Hive.isBoxOpen(boxName);
+  Future<void> addPendingSpeedTestResult(Map<String, dynamic> speedTestResult) async {
+    await _pendingSpeedTestResultsBox.add(speedTestResult);
+  }
+
+  Future<void> removePendingSpeedTestResult(dynamic key) async {
+    await _pendingSpeedTestResultsBox.delete(key);
   }
 }
