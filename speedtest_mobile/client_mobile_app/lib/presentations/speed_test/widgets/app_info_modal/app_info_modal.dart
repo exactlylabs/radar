@@ -24,7 +24,7 @@ class AppInfoModal extends StatelessWidget {
     return BlocListener<AppInfoModalCubit, AppInfoModalState>(
       listenWhen: (previous, current) =>
           current.locationSettingsShouldBeUpdated ||
-          (previous.enableWardrivingMode != current.enableWardrivingMode),
+          (!previous.enableWardrivingMode && current.enableWardrivingMode),
       listener: (context, state) {
         if (state.locationSettingsShouldBeUpdated) {
           showUpdateLocationSettingsDialog(context);
