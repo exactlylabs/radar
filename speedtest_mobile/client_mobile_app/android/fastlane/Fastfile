@@ -30,6 +30,7 @@ platform :android do
       track: "internal",
       metadata_path: "./fastlane/metadata",
       aab_paths: ENV["ANDROID_AAB_PATH"],
+      release_status: "draft"
     )
   end
 
