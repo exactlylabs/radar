@@ -3,7 +3,7 @@ class UsersAccountPolicy < ApplicationPolicy
     def resolve
       if @auth_holder.present?
         if @auth_holder.is_all_accounts?
-          if @auth_holder.user.super_user
+          if @auth_holder.user.super_user && !@auth_holder.is_super_user_disabled?
             scope.all.not_deleted
           else
             user = @auth_holder.user

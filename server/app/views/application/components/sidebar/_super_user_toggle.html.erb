@@ -1,0 +1,12 @@
+<div class="form-check form-switch form-check-custom form-check-solid sidebar--super-user-container">
+  <input type="checkbox"
+    id="super_user"
+    name="user[super_user]"
+    <%= cookies[:radar_super_user_disabled].nil? || cookies[:radar_super_user_disabled] == "false" ? 'checked="true"' : nil %>
+    data-controller="super-user"
+    data-action="click->super-user#handleToggleSuperUserStatus"
+    class="form-check-input forms--checkbox me-3"
+    data-super-user-target="superUserToggle"
+  />
+  <label class="forms--label">Super User Mode</label>
+</div>

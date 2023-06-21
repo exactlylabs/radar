@@ -117,3 +117,6 @@ application.register("app-search", AppSearchController);
 
 import BannerController from './banner_controller';
 application.register("banner", BannerController);
+
+import SuperUserController from './super_user_controller';
+application.register("super-user", SuperUserController);

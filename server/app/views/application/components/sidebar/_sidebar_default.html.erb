@@ -67,5 +67,9 @@
     }
   %>
 
+  <% if current_user.super_user %>
+    <%= render partial: "application/components/sidebar/super_user_toggle" %>
+  <% end %>
+
   <%= render partial: "application/components/sidebar/profile_item", locals: { narrow: false } %>
 </div>

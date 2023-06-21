@@ -27,7 +27,7 @@
       <%= client.account.present? ? client.account.name : "No account" %>
     </td>
   <% end %>
-  <% if current_user.super_user %>
+  <% if current_user.super_user && !is_super_user_disabled? %>
     <td class="mb-1"
         style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
       <%= client.update_group_id.present? ? UpdateGroup.find(client.update_group_id).name : "N/A" %>

@@ -3,7 +3,7 @@ class ClientPolicy < ApplicationPolicy
     def resolve
       if @auth_holder&.is_all_accounts?
         user = @auth_holder.user
-        if user.super_user
+        if user.super_user && !@auth_holder.is_super_user_disabled?
           scope.all
         else
           all_pods = []

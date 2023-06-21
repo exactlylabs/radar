@@ -25,10 +25,10 @@
                   data-action="select2-select->edit-pod#onAccountsSelectChange select2-clear->edit-pod#onAccountsSelectChange"
                   data-edit-pod-target="accountsSelect"
                   data-select2-dropdown-parent-value="edit_pod_modal"
-                  data-select2-blanks-value="<%= current_user.super_user %>"
+                  data-select2-blanks-value="<%= current_user.super_user && !is_super_user_disabled? %>"
                   data-select2-allow-clear-value="false"
           >
-            <% if current_user.super_user && @client.account.nil? %>
+            <% if current_user.super_user && !is_super_user_disabled? && @client.account.nil? %>
               <option></option>
               <option>&nbsp;</option>
             <% end %>
@@ -93,7 +93,7 @@
         </span>
       </a>
 
-      <% if current_user.super_user %>
+      <% if current_user.super_user && !is_super_user_disabled? %>
         <div class="forms--row">
           <label class="required forms--label mb-2">Release Group</label>
           <div class="forms--input-group">

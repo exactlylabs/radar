@@ -93,7 +93,7 @@
               <!--begin::Input group-->
               <div class="forms--row forms--input-group">
                 <!--begin::Label-->
-                <label class="forms--label required">Full Name</label>
+                <label class="forms--label required">First Name</label>
                 <!--end::Label-->
                 <!--begin::Col-->
                 <%= f.text_field "first_name", class: "form-control forms--text-input w-xs-100 w-sm-75 w-md-50 w-lg-25", placeholder: "First name" %>
@@ -102,8 +102,8 @@
                 <% end %>
               </div>
               <div class="forms--row forms--input-group ">
-                <label class="forms--label required">Full Name</label>
-                <%= f.text_field "last_name", class: "form-control forms--text-input w-xs-100 w-sm-75 w-md-50 w-lg-25", placeholder: "Last name" %>
+                <label class="forms--label required">Last Name</label>
+                <%= f.text_field "last_name", class: "form-control forms--text-input w-25", placeholder: "Last name" %>
                 <% if current_user.errors[:last_name] %>
                   <div class="fv-plugins-message-container invalid-feedback"><%= current_user.errors[:last_name].join(", ") %></div>
                 <% end %>

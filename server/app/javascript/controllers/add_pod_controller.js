@@ -200,7 +200,8 @@ export default class extends Controller {
   handleSubmitStart(e) {
     this.hideModal();
     $("#add_pod_modal_wizard").modal("show");
-    document.querySelector("#loading-container").classList.remove("d-none");
+    const loadingContainer = document.getElementById("loading-container");
+    if(loadingContainer) loadingContainer.classList.remove("d-none");
     $("#client-locations-dropdown").select2({
       dropdownParent: $("#add_pod_modal_wizard"),
     });

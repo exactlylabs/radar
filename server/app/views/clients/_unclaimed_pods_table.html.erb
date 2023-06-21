@@ -11,7 +11,7 @@
           <!--begin::Table row-->
           <tr class="text-start fw-bolder gs-0"
               style="font-size: 12px; height: 65px">
-            <th class="tables--title" style="width: <%= current_user.super_user ?  20 : 25%>vw;" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
+            <th class="tables--title" style="width: <%= current_user.super_user && !is_super_user_disabled? ?  20 : 25%>vw;" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                 aria-label="Pod Name">Name</th>
             <% if current_account.is_all_accounts? %>
               <th class="tables--title"
@@ -23,15 +23,15 @@
                   rowspan="1"
                   aria-label="Pod Name">Account</th>
             <% end %>
-            <% if current_user.super_user %>
+            <% if current_user.super_user && !is_super_user_disabled? %>
               <th class="tables--title" style="width: 10vw;" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                   aria-label="Status">Release</th>
             <% end %>
-            <th class="tables--title" style="width: <%= current_user.super_user ?  10 : 25%>vw;" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
+            <th class="tables--title" style="width: <%= current_user.super_user && !is_super_user_disabled? ?  10 : 25%>vw;" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                 aria-label="Status">Added</th>
-            <th class="tables--title" style="width: <%= current_user.super_user ?  10 : 25%>vw;" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
+            <th class="tables--title" style="width: <%= current_user.super_user && !is_super_user_disabled? ?  10 : 25%>vw;" tabindex="0" aria-controls="kt_customers_table" colspan="1" rowspan="1"
                 aria-label="Status">Status</th>
-            <th class="text-end sorting_disabled" style="width: <%= current_user.super_user ?  20 : 25%>vw" colspan="1" rowspan="1" aria-label="Options"></th>
+            <th class="text-end sorting_disabled" style="width: <%= current_user.super_user && !is_super_user_disabled? ?  20 : 25%>vw" colspan="1" rowspan="1" aria-label="Options"></th>
           </tr>
           <!--end::Table row-->
           </thead>

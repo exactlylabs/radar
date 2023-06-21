@@ -47,7 +47,7 @@
       <%= client.account.present? ? client.account.name : "No account" %>
     </td>
   <% end %>
-  <% if current_user.super_user %>
+  <% if current_user.super_user && !is_super_user_disabled? %>
     <td class="mb-1"
         style="font-size:15px; color: #5e6278; max-width: 15vw;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
       <%= client.update_group_id.present? ? UpdateGroup.find(client.update_group_id).name : "N/A" %>
@@ -92,7 +92,7 @@
           <%= link_to "Edit", edit_client_path(client.unix_user), { class: "menu-link text-hover-gray-500 text-gray-700 px-3 py-2", data: { "turbo-frame" => "edit_client_modal" } } %>
         </div>
         <!--end::Menu item-->
-        <% if current_user.super_user %>
+        <% if current_user.super_user && !is_super_user_disabled? %>
         <!--begin::Menu item-->
         <div class="dropdowns--option menu-item">
           <%= link_to "Print Label", pdf_label_client_path(client.unix_user, format: :pdf), { class: "menu-link text-hover-gray-500 text-gray-700 px-3", target: "_blank" } %>
