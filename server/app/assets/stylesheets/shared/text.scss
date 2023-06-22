@@ -133,6 +133,18 @@ $extra-bold: 800;
   white-space: break-spaces;
 }
 
+.table-title {
+  font-variation-settings: 'wght' $bold;
+  font-size: 0.875rem;
+  color: $gray;
+}
+
+.table-footer {
+  font-size: 0.875rem;
+  color: $gray;
+  line-height: 1.312rem;
+}
+
 .ellipsis {
   text-overflow: ellipsis;
   overflow: hidden;

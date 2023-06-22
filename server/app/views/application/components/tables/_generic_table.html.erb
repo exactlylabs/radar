@@ -1,0 +1,18 @@
+<% width_sum = widths.map { |w| w.split('%')[0].to_i }.sum %>
+<% raise 'Table width is not 100%' if width_sum != 100 %>
+
+<div class="tables--table-container">
+  <%= render partial: "application/components/tables/table_titles",
+      locals: { titles: titles, widths: widths }
+  %>
+  <div class="tables--rows-container">
+    <% rows.each do |row| %>
+      <%= render partial: "application/components/tables/table_row",
+          locals: { row: row, type: type, widths: widths }
+      %>
+    <% end %>
+  </div>
+  <%= render partial: "application/components/tables/table_footer", 
+      locals: { count: rows.count, type: type }
+  %>
+</div>

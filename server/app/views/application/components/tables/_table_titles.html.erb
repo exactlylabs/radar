@@ -1,0 +1,10 @@
+<div class="tables--titles-container">
+  <% titles.each_with_index do |title, index| %>
+    <div class="tables--title table-title" style="width: <%= widths[index] %>">
+      <%= title[:hidden] ? '' : title[:text] %>
+      <% if title[:sort] %>
+        <i class="fas fa-sort"></i>
+      <% end %>
+    </div>
+  <% end %>
+</div>

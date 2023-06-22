@@ -12,8 +12,15 @@ class UsersAccountController < ApplicationController
       users_accounts = policy_scope(UsersAccount).includes(:user).order("users.first_name")
       invited_users = policy_scope(Invite).order("LOWER(first_name)")
     end
+
+    # Array-based pagination
+    elements = [*users_accounts, *invited_users]
+    page_size = params[:page_size].present? ? params[:page_size].to_i : 10
+    page = params[:page].present? ? (params[:page].to_i - 1) : 0
+    elements = elements.drop(page * page_size).first(page_size)
+
     respond_to do |format|
-      format.html { render "users/index", locals: { users_accounts: users_accounts, invited_users: invited_users } }
+      format.html { render "users/index", locals: { elements: elements } }
     end
   end
 
