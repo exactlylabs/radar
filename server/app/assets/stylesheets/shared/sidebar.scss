@@ -772,6 +772,8 @@
   border: solid 1px $sidebar--main-container-border;
   box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
   backdrop-filter: blur(10px);
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .sidebar--account-filter-letter {
