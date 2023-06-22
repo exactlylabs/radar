@@ -67,7 +67,7 @@ class BackgroundSpeedTest {
       if (_testingState.isTestingDownloadSpeed) {
         startUploadTest();
       } else if (_testingState.isTestingUploadSpeed) {
-        if (Platform.isAndroid && await Permission.phone.request().isGranted) {
+        if (Platform.isAndroid && await Permission.phone.isGranted) {
           _connectionInfo = await _networkConnectionInfo.getNetworkConnectionInfo();
         }
         _testingState = (isTestingDownloadSpeed: false, isTestingUploadSpeed: false);
@@ -119,6 +119,9 @@ class BackgroundSpeedTest {
     return {
       'result': _responses.isNotEmpty ? {'raw': _responses} : null,
       'speed_test': {
+        'tested_at': DateTime.now().toUtc().toIso8601String(),
+        'latitude': _positionBeforeSpeedTest?.latitude,
+        'longitude': _positionBeforeSpeedTest?.longitude,
         'latitude_before': _positionBeforeSpeedTest?.latitude,
         'longitude_before': _positionBeforeSpeedTest?.longitude,
         'accuracy_before': _positionBeforeSpeedTest?.accuracy,
@@ -137,10 +140,10 @@ class BackgroundSpeedTest {
         'speed_accuracy_after': _positionAfterSpeedTest?.speedAccuracy,
         'version_number': _packageInfo?.version,
         'build_number': _packageInfo?.buildNumber,
+        'background_mode': true,
       },
       'connection_data': _connectionInfo?.toJson(),
       'timestamp': DateTime.now().toUtc().toIso8601String(),
-      'background_mode': true,
     };
   }
 }
