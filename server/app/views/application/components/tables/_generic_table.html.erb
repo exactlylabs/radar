@@ -1,14 +1,16 @@
 <% width_sum = widths.map { |w| w.split('%')[0].to_i }.sum %>
 <% raise 'Table width is not 100%' if width_sum != 100 %>
 
-<div class="tables--table-container">
+<div class="tables--table-container"
+  data-controller="multi-row-table"
+>
   <%= render partial: "application/components/tables/table_titles",
       locals: { titles: titles, widths: widths }
   %>
   <div class="tables--rows-container">
     <% rows.each_with_index do |row, index| %>
       <%= render partial: "application/components/tables/table_row",
-          locals: { row: row, type: type, widths: widths, even: index.even? }
+          locals: { row: row, type: type, widths: widths, index: index }
       %>
     <% end %>
   </div>

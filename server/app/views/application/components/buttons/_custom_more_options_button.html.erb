@@ -1,0 +1,14 @@
+<div class="tables--more-options-button-container">
+  <button type="button"
+    class="custom-button custom-button--xs custom-button--transparent dropwdown-toggle"
+    data-controller="more-options-button"
+    data-action="click->more-options-button#toggleMenu"
+    aria-expanded="false"
+    id="options-button-<%= index %>"
+  >
+    <%= image_tag image_url("options-icon.png"), class: "tables--options-icon" %>
+  </button>
+  <%= render partial: "application/components/tables/more_options_menu",
+      locals: { type: type, row: row, index: index }
+  %>
+</div>

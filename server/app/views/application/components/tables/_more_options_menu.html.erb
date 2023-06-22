@@ -1,0 +1,7 @@
+<div class="tables--options-menu invisible"
+  id="more-options-menu-<%= index %>"
+>
+  <% if type == UsersAccount.name %>
+    <%= render partial: "users/components/table_row_options", locals: { row: row } %>
+  <% end %>
+</div>

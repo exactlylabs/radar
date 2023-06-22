@@ -8,6 +8,37 @@ export default class extends Controller {
 
   connect() {}
 
+  onSelectAll(e) {
+    if(!e.target.checked) {
+      this.deselectAll();
+    } else {
+      this.selectAll();
+    }
+  }
+
+  selectAll() {
+    this.formCheckBoxInputTargets.forEach((input) => {
+      input.checked = true;
+      input.setAttribute('checked', 'true');
+    });
+    // const multiRowActionsId = "multi-row-actions";
+    // const rowAmountSelectedSpan = "row-amount-selected-span";
+    // const amount = this.formCheckBoxInputTargets.length;
+    // if (amount >= 1) {
+    //   document.getElementById(multiRowActionsId).style.display = "block";
+    //   document.getElementById(rowAmountSelectedSpan).innerText = `${amount} selected`;
+    // } else {
+    //   document.getElementById(multiRowActionsId).style.display = "none";
+    // }
+  }
+
+  deselectAll() {
+    this.formCheckBoxInputTargets.forEach((input) => {
+      input.checked = false;
+      input.removeAttribute('checked');
+    });
+  }
+
   onCheckBoxChange(e) {
     const multiRowActionsId = "multi-row-actions";
     const rowAmountSelectedSpan = "row-amount-selected-span";
@@ -23,8 +54,7 @@ export default class extends Controller {
     if(amount >= 1) {
       document.getElementById(multiRowActionsId).style.display = "block";
       document.getElementById(rowAmountSelectedSpan).innerText = `${amount} selected`;
-    }
-    else {
+    } else {
       document.getElementById(multiRowActionsId).style.display = "none";
     }
   }

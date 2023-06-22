@@ -123,3 +123,6 @@ application.register("super-user", SuperUserController);
 
 import PaginationController from './pagination_controller';
 application.register("pagination", PaginationController);
+
+import MoreOptionsButtonController from './more_options_button_controller';
+application.register("more-options-button", MoreOptionsButtonController);
