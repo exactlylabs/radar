@@ -1,0 +1,15 @@
+<% if type == UsersAccount.name %>
+  <%= render partial: "users/components/user_row", 
+      locals: {
+        row: row,
+        widths: widths
+      }
+  %>
+<% else %>
+  <%= render partial: "users/components/invitee_row", 
+      locals: {
+        row: row,
+        widths: widths
+      }
+  %>
+<% end %>

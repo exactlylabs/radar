@@ -1,5 +1,103 @@
 @import "text";
 @import "colors";
+@import "misc";
+
+.tables--table-container {
+  width: 100%;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  border-radius: $border-radius;
+  background-color: $white;
+  padding: 2rem 1.5rem;
+}
+
+.tables--titles-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+  border-bottom: solid 1px $sidebar--horizontal-divider-background-color;
+
+  .tables--title {
+    padding-bottom: 1rem;
+  }
+}
+
+.tables--footer-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+
+  .tables--footer-page-select {
+    margin-left: .5rem;
+    padding: .25rem 1.25rem .25rem 0.25rem;
+    border: none;
+    font-variation-settings: 'wght' $semi-bold;
+    font-size: 0.875rem;
+    color: $dark-gray;
+    line-height: 1.312rem;
+    letter-spacing: 0;
+    appearance: none;
+    background-image: url("arrow-down-dark.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 1rem;
+
+    &:hover {
+      cursor: pointer;
+      opacity: .75;
+    }
+  }
+}
+
+.tables--page-selector-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 1rem;
+
+  .tables--page-change-button {
+    span {
+      font-variation-settings: 'wght' $bold;
+      font-size: 0.875rem;
+      color: $dark-gray;
+      line-height: 1.312rem;
+      letter-spacing: 0;
+    }
+
+    &:hover {
+      cursor: pointer;
+      opacity: .75;
+    }
+  }
+}
+
+.tables--rows-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  .tables--row-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1rem 0;
+    border-bottom: solid 1px $sidebar--horizontal-divider-background-color;
+  }
+}
 
 .tables--options-icon {
   width: 1rem;

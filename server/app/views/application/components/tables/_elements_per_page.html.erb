@@ -1,0 +1,12 @@
+  <div>
+    <span class="table-footer"><%= type %> per page</span>
+    <select class="tables--footer-page-select"
+      data-controller="pagination"
+      data-action="change->pagination#handleChangePageSize"
+    >
+      <option value="10" <%= params[:page_size].nil? || (params[:page_size].present? && params[:page_size].to_i == 10) ? 'selected' : nil %>>10</option>
+      <option value="25" <%= params[:page_size].present? && params[:page_size].to_i == 25 ? 'selected' : nil %>>25</option>
+      <option value="50" <%= params[:page_size].present? && params[:page_size].to_i == 50 ? 'selected' : nil %>>50</option>
+      <option value="100" <%= params[:page_size].present? && params[:page_size].to_i == 100 ? 'selected' : nil %>>100</option>
+    </select>
+  </div>

@@ -39,7 +39,22 @@
   <% end %>
   <%= render partial: "users/users_table_filters" %>
   <!--begin::Container-->
-  <%= render partial: "users/users_table", locals: { users_accounts: users_accounts, invited_users: invited_users } %>
+  <!-- render partial: "users/users_table", locals: { users_accounts: users_accounts, invited_users: invited_users } -->
+  <%= render partial: "application/components/tables/generic_table",
+      locals: {
+        type: TablesHelper::TableTypes::MEMBERS,
+        titles: [
+          { text: 'Checkbox', hidden: true},
+          { text: 'Name', sort: 'name' },
+          { text: 'Invited' },
+          { text: 'Join date' },
+          { text: 'Resend', hidden: true },
+          { text: 'Actions', hidden: true}
+        ],
+        widths: ['5%', '45%', '15%', '15%', '15%', '5%'],
+        rows: elements
+      }
+  %>
   <!--end::Container-->
 </div>
 
