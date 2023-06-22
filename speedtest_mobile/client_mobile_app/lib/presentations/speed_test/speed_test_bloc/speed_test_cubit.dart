@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:client_mobile_app/core/models/warning.dart';
+import 'package:client_mobile_app/core/services/warnings_service/i_warnings_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -15,18 +19,25 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
     required IResultsService resultsService,
     required LocalStorage localStorage,
     required Connectivity connectivity,
+    required IWarningsService warningsService,
   })  : _resultsService = resultsService,
         _localStorage = localStorage,
         _connectivity = connectivity,
+        _warningsService = warningsService,
         super(const SpeedTestState()) {
     _listenConnectivityState();
+    _listenWarnings();
     _setVersionAndBuildNumber();
     _getTerms();
+    _loadWarnings();
   }
 
   final IResultsService _resultsService;
   final Connectivity _connectivity;
   final LocalStorage _localStorage;
+  final IWarningsService _warningsService;
+
+  late StreamSubscription<List<Warning>> _warningsSubscription;
 
   bool isStepValid(int step) {
     switch (step) {
@@ -158,6 +169,20 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
         }
       },
     );
+  }
+
+  Future<void> _loadWarnings() async => await _warningsService.getWarnings();
+
+  void _listenWarnings() {
+    _warningsSubscription = _warningsService.warnings.listen((warnings) {
+      emit(state.copyWith(hasWarnings: warnings.isNotEmpty));
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _warningsSubscription.cancel();
+    return super.close();
   }
 
   static const LOCATION_STEP = 0;

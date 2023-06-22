@@ -1,3 +1,5 @@
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/config_warning_card.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/view_models/warning_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/images.dart';
@@ -10,6 +12,7 @@ import 'package:client_mobile_app/core/background_fetch/bloc/background_fetch_st
 class AppInfo extends StatelessWidget {
   const AppInfo({
     Key? key,
+    this.configWarning,
     required this.onDisabled,
     required this.onEnabled,
     required this.buildAndVersionNumber,
@@ -17,6 +20,7 @@ class AppInfo extends StatelessWidget {
 
   final VoidCallback onDisabled;
   final VoidCallback onEnabled;
+  final WarningViewModel? configWarning;
   final String buildAndVersionNumber;
 
   @override
@@ -56,7 +60,9 @@ class AppInfo extends StatelessWidget {
                         ? const EdgeInsets.all(14.0)
                         : const EdgeInsets.fromLTRB(25.0, 14.0, 25.0, 14.0),
                     child: Text(
-                      state.isEnabled ? Strings.appInfoDisableButtonLabel : Strings.appInfoEnableButtonLabel,
+                      state.isEnabled
+                          ? Strings.appInfoDisableButtonLabel
+                          : Strings.appInfoEnableButtonLabel,
                       style: AppTextStyle(
                         fontSize: 16.0,
                         fontWeight: 400,
@@ -84,7 +90,8 @@ class AppInfo extends StatelessWidget {
                                 text: 'enabled',
                                 style: AppTextStyle(fontWeight: 600),
                               ),
-                              const TextSpan(text: ' and will run speed tests in the background every '),
+                              const TextSpan(
+                                  text: ' and will run speed tests in the background every '),
                               TextSpan(
                                 text: '${state.delay} minutes.',
                                 style: AppTextStyle(fontWeight: 600),
@@ -102,7 +109,9 @@ class AppInfo extends StatelessWidget {
                             color: Theme.of(context).colorScheme.tertiary,
                           ),
                         ),
-                )
+                ),
+                if (state.isEnabled && configWarning != null)
+                  ConfigWarningCard(warning: configWarning!)
               ],
             );
           },

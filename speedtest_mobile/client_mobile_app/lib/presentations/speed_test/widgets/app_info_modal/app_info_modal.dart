@@ -34,6 +34,9 @@ class AppInfoModal extends StatelessWidget {
       },
       child: BlocBuilder<AppInfoModalCubit, AppInfoModalState>(
         builder: (context, state) => AppInfo(
+          configWarning: state.configWarnings != null && state.configWarnings!.isNotEmpty
+              ? state.configWarnings!.first
+              : null,
           buildAndVersionNumber: 'App version $versionNumber · Build $buildNumber',
           onEnabled: () => context.read<AppInfoModalCubit>().enableWardrivingMode(),
           onDisabled: () {
