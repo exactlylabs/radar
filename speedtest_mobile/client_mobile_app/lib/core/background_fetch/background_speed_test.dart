@@ -117,7 +117,7 @@ class BackgroundSpeedTest {
 
   Map<String, dynamic> getSpeedTestResult() {
     return {
-      'result': _responses.isNotEmpty ? {'raw': _responses} : null,
+      'result': {'raw': _responses},
       'speed_test': {
         'tested_at': DateTime.now().toUtc().toIso8601String(),
         'latitude': _positionBeforeSpeedTest?.latitude,
