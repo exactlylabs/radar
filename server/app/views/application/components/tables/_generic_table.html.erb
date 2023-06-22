@@ -6,9 +6,9 @@
       locals: { titles: titles, widths: widths }
   %>
   <div class="tables--rows-container">
-    <% rows.each do |row| %>
+    <% rows.each_with_index do |row, index| %>
       <%= render partial: "application/components/tables/table_row",
-          locals: { row: row, type: type, widths: widths }
+          locals: { row: row, type: type, widths: widths, even: index.even? }
       %>
     <% end %>
   </div>

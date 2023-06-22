@@ -2,14 +2,16 @@
   <%= render partial: "users/components/user_row", 
       locals: {
         row: row,
-        widths: widths
+        widths: widths,
+        even: even
       }
   %>
 <% else %>
   <%= render partial: "users/components/invitee_row", 
       locals: {
         row: row,
-        widths: widths
+        widths: widths,
+        even: even
       }
   %>
 <% end %>

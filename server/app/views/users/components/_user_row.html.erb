@@ -2,22 +2,27 @@
 
 </div>
 
-<div class="" style="width: <%= widths[1] %>">
-  <span><%= row.user.first_name %></span>
+<div class="tables--name-container" style="width: <%= widths[1] %>">
+  <div class="tables--name-initial-container" data-even="<%= even %>">
+    <span class=""><%= row.user.get_letter_for_icon %></span>
+  </div>
+  <div class="tables--name-email-container">
+    <span class="tables--full-name table-full-name ellipsis "><%= row.user.first_name %> <%= row.user.last_name %></span>
+    <span class="tables--email help-text ellipsis"><%= row.user.email %></span>
+  </div>
 </div>
 
 <div class="" style="width: <%= widths[2] %>">
-
+  <span class="ellipsis table-cell"><%= pretty_print_date(row.invited_at) %></span>
 </div>
 
 <div class="" style="width: <%= widths[3] %>">
-
+  <span class="ellipsis table-cell"><%= pretty_print_date(row.joined_at) %></span>
 </div>
 
 <div class="" style="width: <%= widths[4] %>">
-
 </div>
 
 <div class="" style="width: <%= widths[5] %>">
-
+  options
 </div>
