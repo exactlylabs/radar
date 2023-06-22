@@ -20,7 +20,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  margin-bottom: 1rem;
   border-bottom: solid 1px $sidebar--horizontal-divider-background-color;
 
   .tables--title {
@@ -96,6 +95,56 @@
     justify-content: flex-start;
     padding: 1rem 0;
     border-bottom: solid 1px $sidebar--horizontal-divider-background-color;
+  }
+}
+
+.tables--name-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.tables--name-email-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+
+  .tables--full-name {
+    max-width: 40ch;
+  }
+
+  .tables--email {
+    max-width: 40ch;
+  }
+}
+
+.tables--name-initial-container {
+  width: 2.25rem;
+  min-width: 2.25rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: $table--even-row-background-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0.75rem;
+
+  &[data-even="false"] {
+    background-color: $table--odd-row-background-color;
+    span {
+      color: $table--odd-row-color;
+    }
+  }
+
+  span {
+    font-variation-settings: 'wght' $bold;
+    font-size: 0.938rem;
+    letter-spacing: 0;
+    color: $table--even-row-color;
   }
 }
 
