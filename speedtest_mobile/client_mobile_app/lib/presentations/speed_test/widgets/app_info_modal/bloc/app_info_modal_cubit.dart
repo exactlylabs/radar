@@ -1,25 +1,27 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:configuration_monitoring/configuration_monitoring.dart';
-import 'package:configuration_monitoring/models/configuration_status.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:client_mobile_app/resources/strings.dart';
+import 'package:client_mobile_app/core/models/warning.dart';
+import 'package:client_mobile_app/core/services/warnings_service/i_warnings_service.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_state.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/view_models/warning_view_model.dart';
 
 class AppInfoModalCubit extends Cubit<AppInfoModalState> {
   AppInfoModalCubit({
-    required ConfigurationMonitoring configurationMonitoring,
-  })  : _configurationMonitoring = configurationMonitoring,
+    required IWarningsService warningsService,
+  })  : _warningsService = warningsService,
         super(const AppInfoModalState()) {
-    _listenToConfigurationMonitoring();
-    _loadConfigurationMonitoring();
+    _listenToWarnings();
   }
 
-  final ConfigurationMonitoring _configurationMonitoring;
-  late final StreamSubscription<ConfigurationStatus> _configurationMonitoringSubscription;
+  final IWarningsService _warningsService;
+  late StreamSubscription<List<Warning>>? _warningsSubscription;
 
   Future<void> enableWardrivingMode() async {
     final updateSettings = await shouldUpdateLocationSettings();
@@ -48,18 +50,18 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
     final delay = state.delay ?? -1;
     if (Platform.isAndroid) {
       if (delay < 1) {
-        emit(state.copyWith(warning: Strings.androidMinimumDelayError));
+        emit(state.copyWith(delayWarning: Strings.androidMinimumDelayError));
         return false;
       } else {
-        emit(state.resetWarning());
+        emit(state.resetDelayWarning());
         return true;
       }
     } else {
       if (delay < 15) {
-        emit(state.copyWith(warning: Strings.iOSMinimumDelayError));
+        emit(state.copyWith(delayWarning: Strings.iOSMinimumDelayError));
         return false;
       } else {
-        emit(state.resetWarning());
+        emit(state.resetDelayWarning());
         return true;
       }
     }
@@ -83,44 +85,43 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
     }
   }
 
-  Future<void> _loadConfigurationMonitoring() async {
-    final config = <String, ConfigurationStatus>{};
-    final gpsProvider = await _configurationMonitoring.getGPSProviderStatus();
-    if (!gpsProvider.status) config[gpsProvider.name] = gpsProvider;
-    final powerModeSave = await _configurationMonitoring.getPowerModeSaveStatus();
-    if (powerModeSave.status) config[powerModeSave.name] = powerModeSave;
-    final airplaneMode = await _configurationMonitoring.getAirplaneModeStatus();
-    if (airplaneMode.status) {
-      config[airplaneMode.name] = airplaneMode;
-      disableBackgroundNetworkConnectionInfo();
-    }
-    if (config.isNotEmpty) emit(state.copyWith(configuration: config));
+  Future<void> _loadWarnings() async {
+    await _warningsService.getWarnings();
   }
 
-  void _listenToConfigurationMonitoring() {
-    _configurationMonitoringSubscription = _configurationMonitoring.listener.listen(
+  void _listenToWarnings() {
+    _warningsSubscription = _warningsService.warnings.listen(
       (event) {
-        final isWarning = ((event.name == GPS_PROVIDER_MODE_EVENT && !event.status) ||
-            (event.name == POWER_SAVE_MODE_EVENT && event.status) ||
-            (event.name == AIRPLANE_MODE_EVENT && event.status));
-        if (state.configuration == null && isWarning) {
-          emit(state.copyWith(configuration: {event.name: event}));
-        } else {
-          Map<String, ConfigurationStatus> configuration =
-              (state.configuration ?? <String, ConfigurationStatus>{});
-          if (!isWarning && configuration.containsKey(event.name)) {
-            configuration.remove(event.name);
-          } else {
-            configuration[event.name] = event;
-          }
-          emit(state.copyWith(configuration: configuration));
-        }
-        if (event.name == AIRPLANE_MODE_EVENT) {
-          event.status
-              ? disableBackgroundNetworkConnectionInfo()
-              : enableBackgroundNetworkConnectionInfo();
-        }
+        final parsedWarnings = event.map((warning) => _parseWarningToViewModel(warning)).toList();
+        emit(state.copyWith(configWarnings: parsedWarnings));
       },
     );
+  }
+
+  @override
+  Future<void> close() {
+    _warningsSubscription?.cancel();
+    return super.close();
+  }
+
+  WarningViewModel _parseWarningToViewModel(Warning warning) {
+    return WarningViewModel(
+      title: warning.name,
+      description: warning.description,
+      onPressed: _openSettingsByName(warning.name),
+    );
+  }
+
+  VoidCallback? _openSettingsByName(String name) {
+    switch (name) {
+      case IWarningsService.gpsProviderWarningName:
+        return () => AppSettings.openLocationSettings();
+      case IWarningsService.airplaneModeWarningName:
+        return () => AppSettings.openDeviceSettings();
+      case IWarningsService.powerModeSaveWarningName:
+        return () => AppSettings.openBatteryOptimizationSettings();
+      default:
+        return () => AppSettings.openAppSettings();
+    }
   }
 }

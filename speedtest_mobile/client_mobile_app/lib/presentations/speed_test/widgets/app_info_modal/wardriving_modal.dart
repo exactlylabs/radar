@@ -30,7 +30,7 @@ class WardrivingModal extends StatelessWidget {
           },
           onBlur: () => context.read<AppInfoModalCubit>().validateDelay(),
           delay: state.delay,
-          warning: state.warning,
+          warning: state.delayWarning,
         );
       },
     );

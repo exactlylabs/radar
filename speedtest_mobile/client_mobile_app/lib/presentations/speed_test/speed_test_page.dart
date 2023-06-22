@@ -1,3 +1,5 @@
+import 'package:client_mobile_app/resources/app_colors.dart';
+import 'package:client_mobile_app/widgets/dot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/images.dart';
@@ -27,9 +29,26 @@ class SpeedTestPage extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.background,
               title: Image.asset(Images.logoGrey, fit: BoxFit.contain),
               actions: [
-                InkWell(
-                  child: Image.asset(Images.infoGreyIcon),
-                  onTap: () => _openInfoModal(context, state.versionNumber, state.buildNumber),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: InkWell(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset(Images.infoGreyIcon),
+                        SizedBox(
+                          width: 20.0,
+                          height: 20.0,
+                          child: Align(
+                            alignment: const Alignment(1.2, 1),
+                            child:
+                                Dot(color: state.hasWarnings ? AppColors.rockfish : AppColors.blue),
+                          ),
+                        ),
+                      ],
+                    ),
+                    onTap: () => _openInfoModal(context, state.versionNumber, state.buildNumber),
+                  ),
                 ),
               ],
             ),

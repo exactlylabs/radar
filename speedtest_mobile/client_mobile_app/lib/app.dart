@@ -1,3 +1,5 @@
+import 'package:client_mobile_app/core/services/warnings_service/i_warnings_service.dart';
+import 'package:client_mobile_app/core/services/warnings_service/implementation/warnings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -52,6 +54,11 @@ class App extends StatelessWidget {
             httpProvider: httpProvider,
           ),
         ),
+        RepositoryProvider<IWarningsService>(
+          create: (_) => WarningService(
+            configurationMonitoring: configurationMonitoring,
+          ),
+        ),
         RepositoryProvider<Connectivity>(
           create: (_) => Connectivity(),
         ),
@@ -73,6 +80,7 @@ class App extends StatelessWidget {
             create: (context) => SpeedTestCubit(
               resultsService: context.read<IResultsService>(),
               connectivity: context.read<Connectivity>(),
+              warningsService: context.read<IWarningsService>(),
               localStorage: localStorage,
             ),
           ),
@@ -81,7 +89,11 @@ class App extends StatelessWidget {
               networkConnectionInfo: networkConnectionInfo,
             ),
           ),
-          BlocProvider(create: (context) => AppInfoModalCubit())
+          BlocProvider(
+            create: (context) => AppInfoModalCubit(
+              warningsService: context.read<IWarningsService>(),
+            ),
+          )
         ],
         child: const AppBuilder(),
       ),
