@@ -148,6 +148,46 @@
   }
 }
 
+.tables--more-options-button-container {
+  width: 1.5rem;
+  min-width: 1.5rem;
+  position: relative;
+}
+
+.tables--options-menu {
+  min-width: 130px;
+  padding: .25rem;
+  border-radius: $border-radius;
+  position: absolute;
+  right: 0;
+  top: 1.5rem;
+  z-index: 10;
+  background-color: white;
+  box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  .tables--row-option {
+    min-width: 130px;
+    padding: .5rem .75rem;
+    text-align: left;
+    margin-bottom: .25rem;
+    border-radius: $border-radius;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &:hover {
+      background-color: $subtle-gray;
+      cursor: pointer;
+    }
+  }
+}
+
 .tables--options-icon {
   width: 1rem;
   height: 1rem;

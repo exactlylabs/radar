@@ -5,6 +5,16 @@
       <% if title[:sort] %>
         <i class="fas fa-sort"></i>
       <% end %>
+      <% if title[:text] == 'Checkbox' %>
+        <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
+          <input id="check-box-select-all"
+            class="form-check-input custom-multi-row-input-checkbox"
+            type="checkbox"
+            value="1"
+            data-action="input->multi-row-table#onSelectAll"
+          />
+        </div>
+      <% end %>
     </div>
   <% end %>
 </div>

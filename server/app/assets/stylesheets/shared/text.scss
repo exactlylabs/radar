@@ -145,6 +145,13 @@ $extra-bold: 800;
   color: $deep-blue;
 }
 
+.table-menu-option {
+  font-variation-settings: 'wght' $semi-bold;
+  font-size: 0.875rem;
+  color: $deep-blue;
+  letter-spacing: 0;
+}
+
 .table-full-name {
   font-variation-settings: 'wght' $bold;
   font-size: 0.875rem;

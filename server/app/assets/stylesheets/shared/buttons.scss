@@ -77,6 +77,12 @@
   color: $danger;
 }
 
+.custom-button--transparent {
+  background-color: transparent;
+  color: $dark-gray;
+  box-shadow: none;
+}
+
 .custom-button--disabled {
   opacity: 50%;
   cursor: default;
