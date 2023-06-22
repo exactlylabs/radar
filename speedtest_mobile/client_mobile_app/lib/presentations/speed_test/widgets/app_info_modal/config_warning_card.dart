@@ -34,7 +34,27 @@ class ConfigWarningCard extends StatelessWidget {
           ),
           TextButton(
             onPressed: warning.onPressed,
-            child: 
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Go to device settings',
+                  style: AppTextStyle(
+                    fontSize: 14.0,
+                    fontWeight: 500,
+                    height: 1.150,
+                    letterSpacing: 0.25,
+                    color: AppColors.rockfish,
+                  ),
+                ),
+                const SizedBox(width: 4.0),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14.0,
+                  color: AppColors.rockfish,
+                ),
+              ],
+            ),
           )
         ],
       ),
