@@ -113,7 +113,22 @@ class Client < ApplicationRecord
 
     REDIS.zrem Client::REDIS_PING_SET_NAME, id
     Client.transaction do
-      Client.where(id: id).lock().update(online: false)
+      c = Client.where(id: id).lock()
+      if c.online
+        c.online = false
+        c.save!
+    end
+    self.reload
+  end
+
+  def connected!
+    REDIS.zadd Client::REDIS_PING_SET_NAME, Time.now.to_i, id
+    Client.transaction do
+      c = Client.where(id: id).lock()
+      if !c.online
+        c.online = true
+        c.save!
+      end
     end
     self.reload
   end
@@ -131,9 +146,18 @@ class Client < ApplicationRecord
     ).where.not(id: client_ids).distinct
     # Adding locks to avoid concurrency between this and disconnected!
     Client.transaction do
-      Client.where(id: clients).lock().update(online: false)
+      c = Client.where(id: clients).lock()
+      if c.online
+        c.online = false
+        c.save!
+      end
+      Client.where(online: false, id: client_ids).lock().each do |client|
+        if !client.online
+          client.online = true
+          client.save!
+        end
+      end
     end
-    Client.where(online: false, id: client_ids).update(online: true)
   end
 
   def send_event
