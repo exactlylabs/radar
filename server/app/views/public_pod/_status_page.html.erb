@@ -20,7 +20,7 @@
 
   <div class="public--horizontal-divider"></div>
 
-  <% if client.latest_measurement.nil? %>
+  <% if client.location.nil? || client.location.latest_measurement.nil? %>
     <div class="public--no-measurement-container mb-8">
       <div class="public--no-measurement-icons-container">
         <div class="public--no-measurement-icon-container me-4">
@@ -47,14 +47,14 @@
       <div class="public--no-measurement-icons-container">
         <div class="public--no-measurement-icon-container me-4">
           <%= image_tag image_url('download-icon-blue.png') %>
-          <span class="public--speed-text"><%= client.latest_measurement.download.round(2) %> <span class="public--speed-text-unit">Mbps</span></span>
+          <span class="public--speed-text"><%= client.location.latest_measurement.download.round(2) %> <span class="public--speed-text-unit">Mbps</span></span>
         </div>
         <div class="public--no-measurement-icon-container">
           <%= image_tag image_url('upload-icon-blue.png') %>
-          <span class="public--speed-text"><%= client.latest_measurement.upload.round(2) %> <span class="public--speed-text-unit">Mbps</span></span>
+          <span class="public--speed-text"><%= client.location.latest_measurement.upload.round(2) %> <span class="public--speed-text-unit">Mbps</span></span>
         </div>
       </div>
-      <p class="public--additional-text"><%= "Last measurement on #{pretty_print_date_with_time(client.latest_measurement.created_at)}" %></p>
+      <p class="public--additional-text"><%= "Last measurement on #{pretty_print_date_with_time(client.location.latest_measurement.created_at)}" %></p>
     </div>
   <% end %>
 
@@ -79,14 +79,14 @@
       <div class="public--status-card-speed">
         <%= image_tag image_url('download-icon-blue.png'), class: "public--arrow-icon" %>
         <p class="regular-bold-text mb-1">Avg Download Speed</p>
-        <p class="additional-text m-0 text-left"><%= client.latest_measurement.nil? ? "N/A" : "#{client.measurements.average(:download).round(1)} Mbps" %></p>
+        <p class="additional-text m-0 text-left"><%= client.location.nil? || client.location.latest_measurement.nil? ? "N/A" : "#{client.location.measurements.average(:download).round(1)} Mbps" %></p>
       </div>
     </div>
     <div class="public--status-card half">
       <div class="public--status-card-speed">
         <%= image_tag image_url('upload-icon-blue.png'), class: "public--arrow-icon" %>
         <p class="regular-bold-text mb-1">Avg Upload Speed</p>
-        <p class="additional-text m-0 text-left"><%= client.latest_measurement.nil? ? "N/A" : "#{client.measurements.average(:upload).round(1)} Mbps" %></p>
+        <p class="additional-text m-0 text-left"><%= client.location.nil? || client.location.latest_measurement.nil? ? "N/A" : "#{client.location.measurements.average(:upload).round(1)} Mbps" %></p>
       </div>
     </div>
   </div>
