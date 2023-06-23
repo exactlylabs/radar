@@ -24,10 +24,10 @@ module ApplicationCable
     end
 
     private
-    
+
     def identify_account
       # TODO: check this verification method when we implement multi-account views
-      
+
       current_account_id = cookies['radar_current_account_id']
       # we need some features to work when we are logged out
       if current_account_id.nil?
@@ -62,18 +62,16 @@ module ApplicationCable
         if request.headers["Sec-Radar-Service-Started"] == "true"
           self.client.record_event(Client::Events::SERVICE_STARTED, {}, Time.now)
         end
-        self.client.online = true
         self.client.ip = request.remote_ip
         self.client.pinged_at = Time.now
         self.client.save!
+        self.client.connected!
       end
     end
 
     def on_client_disconnected
       if request.user_agent.starts_with? "RadarPodsAgent"
-        # if the connection is dropped, it's possible that this was already set to offline by our clock.rb process
-        self.client.reload
-        self.client.disconnected! if self.client.online
+        self.client.disconnected!
       end
     end
   end

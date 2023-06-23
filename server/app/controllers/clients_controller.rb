@@ -157,7 +157,6 @@ class ClientsController < ApplicationController
 
   def status
     @client.pinged_at = Time.now
-    @client.online = true
     @client.raw_version = params[:version]
     @client.distribution_name = params[:distribution]
     @client.ip = request.ip
@@ -183,6 +182,9 @@ class ClientsController < ApplicationController
     ClientEventLog.service_started_event @client if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     @client.compute_ping!
     @client.save!
+    if !@client.online
+      @client.connected!
+    end
 
     respond_to do |format|
       format.json { render :status, status: :ok }
