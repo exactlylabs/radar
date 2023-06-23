@@ -114,12 +114,30 @@
   text-align: left;
 
   .tables--full-name {
-    max-width: 40ch;
+    max-width: 25ch;
   }
 
   .tables--email {
     max-width: 40ch;
   }
+}
+
+.tables--checkbox-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.tables--invitee-icon-container {
+  width: 2.25rem;
+  min-width: 2.25rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: $avatar-blue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0.75rem;
 }
 
 .tables--name-initial-container {

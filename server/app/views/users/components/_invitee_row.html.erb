@@ -1,3 +1,40 @@
-<div>
-  invitee
+<div class="tables--checkbox-container" style="width: <%= widths[0] %>">
+  <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
+    <input id="check-box-user-<%=index %>"
+            class="form-check-input custom-multi-row-input-checkbox"
+            type="checkbox"
+            value="1"
+            data-multi-row-table-target="formCheckBoxInput"
+            data-bulk-release-group-modal-target="formCheckBoxInput"
+            data-action="input->multi-row-table#onCheckBoxChange input->bulk-release-group-modal#onCheckBoxChange"
+    />
+  </div>
+</div>
+
+<div class="tables--name-container" style="width: <%= widths[1] %>">
+  <div class="tables--invitee-icon-container">
+    <%= image_tag image_url('invitee-icon.png'), width: 16, height: 16%>
+  </div>
+  <div class="tables--name-email-container">
+    <a href="<%= users_account_path(row, type: row.class.name) %>" class="tables--full-name table-full-name ellipsis "><%= row.first_name %> <%= row.last_name %></a>
+    <span class="tables--email help-text ellipsis"><%= row.email %></span>
+  </div>
+</div>
+
+<div class="" style="width: <%= widths[2] %>">
+  <span class="ellipsis table-cell"><%= pretty_print_date(row.sent_at) %></span>
+</div>
+
+<div class="" style="width: <%= widths[3] %>">
+  <div class="custom-badge custom-badge--pending">Pending</div>
+</div>
+
+<div class="" style="width: <%= widths[4] %>">
+  <%= link_to "Resend invite", resend_invites_path(id: row.id), class: "custom-button custom-button--primary-light custom-button--sm", method: :post %>
+</div>
+
+<div class="" style="width: <%= widths[5] %>">
+  <%= render partial: "application/components/buttons/custom_more_options_button",
+      locals: { index: index, type: Invite.name, row: row }
+  %>
 </div>

@@ -3,6 +3,7 @@
 // You can use Sass (SCSS) here: https://sass-lang.com/
 @import "colors";
 @import "text";
+@import "../screen_helpers.scss";
 
 .sidebar--main-container {
   width: 260px;
@@ -21,6 +22,13 @@
 
   &.default-opening {
     animation: default-opening 0.2s ease-in forwards;
+  }
+}
+
+@media (max-width: $lg-max-width) {
+  .sidebar--main-container {
+    visibility: hidden;
+    display: none;
   }
 }
 

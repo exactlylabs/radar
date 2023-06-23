@@ -13,29 +13,25 @@ export default class extends Controller {
     const rowIndex = buttonId.split(buttonPrefix)[1];
     const menuId = menuPrefix + rowIndex;
     const menu = document.getElementById(menuId);
-    if(menu) {
-      if(menu.classList.contains('invisible')) {
-        this.openMenu(menu);
-      } else {
-        this.closeMenu(menu);
-      }
+    if(menu.id === this.currentMenuOpen?.id) {
+      this.closeMenu(menu);
+    } else {
+      this.openMenu(menu);
     }
   }
 
   openMenu(menuElement) {
     this.currentMenuOpen = menuElement;
     menuElement.classList.remove('invisible');
-    //document.addEventListener('click', this.checkClickOutsideMenu.bind(this), { capture: true });
+    document.addEventListener('click', this.checkClickOutsideMenu.bind(this), { capture: true });
   }
 
   checkClickOutsideMenu(e) {
     if(!this.currentMenuOpen) {
-      //document.removeEventListener('click', this.checkClickOutsideMenu.bind(this));
+      document.removeEventListener('click', this.checkClickOutsideMenu.bind(this));
       return;
     }
-    if(!this.currentMenuOpen.contains(e.target)) {
-      this.closeMenu(this.currentMenuOpen);
-    }
+    this.closeMenu(this.currentMenuOpen);
   }
 
   closeMenu(menuElement) {
