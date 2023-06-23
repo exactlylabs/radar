@@ -70,7 +70,13 @@
     <div class="public--horizontal-divider-conditional"></div>
     <div id="public--status-card-isp">
       <p class="regular-bold-text mb-1">Internet provider</p>
-      <p class="additional-text m-0"><%= client.autonomous_system.nil? ? "Not available" : client.autonomous_system.autonomous_system_org.name %></p>
+      <p class="additional-text m-0">
+        <%= client.location.nil? ||
+            client.location.latest_measurement.nil? ||
+            client.location.latest_measurement.autonomous_system.nil? ? 
+          "Not available" : 
+          client.location.latest_measurement.autonomous_system.autonomous_system_org.name %>
+      </p>
     </div> 
   </div>
 
