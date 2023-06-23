@@ -13,6 +13,10 @@ class AllAccountsAccount
     false
   end
 
+  def superaccount?
+    superaccount
+  end
+
   def is_all_accounts?
     true
   end

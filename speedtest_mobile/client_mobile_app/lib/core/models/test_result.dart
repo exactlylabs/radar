@@ -46,7 +46,7 @@ class TestResult {
 
   Map<String, dynamic> toJsonServer() {
     return {
-      'tested_at': testedAt.toString(),
+      'tested_at': testedAt.toUtc().toIso8601String(),
       'latitude': location.latitude,
       'longitude': location.longitude,
       'altitude': location.altitude,
