@@ -145,11 +145,17 @@ $extra-bold: 800;
   color: $deep-blue;
 }
 
-.table-menu-option {
+.table-menu-option,
+.table-filter-option {
   font-variation-settings: 'wght' $semi-bold;
   font-size: 0.875rem;
   color: $deep-blue;
   letter-spacing: 0;
+}
+
+.table-filter-option.active {
+  color: $blue;
+  font-variation-settings: 'wght' $bold;
 }
 
 .table-full-name {

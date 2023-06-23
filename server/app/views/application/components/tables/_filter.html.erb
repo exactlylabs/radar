@@ -1,0 +1,27 @@
+<% current_filter_label = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:label] : default_label %>
+<% current_filter_value = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:value] : default_value %>
+
+<div class="tables--filters-button-container"
+  data-controller="filters"
+  data-action="click->filters#toggleFiltersMenu"
+  data-menu-id="<%= menu_id %>"
+>
+  <button type="button"
+    class="custom-button custom-button--secondary-light custom-button--sm"
+  >
+    <%= current_filter_label %>
+    <%= image_tag image_url('caret.png'), width: 16, height: 16, class: "ms-1" %>
+  </button>
+  <div class="tables--filters-menu-container invisible"
+    data-filters-target="filtersMenu"
+    id="<%= menu_id %>"
+  >
+    <% options.each do |option| %>
+      <a href="<%= url_for(request.query_parameters.merge({ "#{key}" => option[:value] })) %>"
+        class="tables--filters-menu-item table-filter-option <%= current_filter_value == option[:value] ? 'active' : '' %>"
+      >
+        <%= option[:label] %>
+      </a>
+    <% end %>
+  </div>
+</div>

@@ -5,22 +5,27 @@ class UsersAccountController < ApplicationController
     # Sorting here instead of in the view because I want users to appear first, then invites
     # each of those lists individually sorted by first_name
     account_id = params[:account_id]
+    status = params[:status]
     if account_id
-      users_accounts = policy_scope(UsersAccount).includes(:user).where(account_id: account_id).order("users.first_name")
-      invited_users = policy_scope(Invite).where(account_id: account_id).order("LOWER(first_name)")
+      users_accounts = policy_scope(UsersAccount).includes(:user).where(account_id: account_id).order("users.first_name") unless status == 'pending'
+      invited_users = policy_scope(Invite).where(account_id: account_id).order("LOWER(first_name)") unless status == 'joined'
     else
-      users_accounts = policy_scope(UsersAccount).includes(:user).order("users.first_name")
-      invited_users = policy_scope(Invite).order("LOWER(first_name)")
+      users_accounts = policy_scope(UsersAccount).includes(:user).order("users.first_name") unless status == 'pending'
+      invited_users = policy_scope(Invite).order("LOWER(first_name)") unless status == 'joined'
     end
 
     # Array-based pagination
     elements = [*users_accounts, *invited_users]
+    
+    # Get total variable for pagination
+    total_elements = elements.count
+
     page_size = params[:page_size].present? ? params[:page_size].to_i : 10
     page = params[:page].present? ? (params[:page].to_i - 1) : 0
     elements = elements.drop(page * page_size).first(page_size)
 
     respond_to do |format|
-      format.html { render "users/index", locals: { elements: elements } }
+      format.html { render "users/index", locals: { elements: elements, total: total_elements } }
     end
   end
 

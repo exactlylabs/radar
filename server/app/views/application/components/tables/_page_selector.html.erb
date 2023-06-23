@@ -1,16 +1,20 @@
 <% page_size = params[:page_size].present? ? params[:page_size].to_i : 10 %>
+<% current_page = params[:page].present? ? params[:page].to_i : 1 %>
 <% page_count = (total / page_size).ceil %>
 <% page_count = 1 if page_count == 0 %>
 
-
-<div class="tables--page-selector-container">
-  <div class="tables--page-change-button">
+<div class="tables--page-selector-container"
+  data-controller="pagination"
+>
+  <div class="tables--page-change-button"
+    data-disabled="<%= current_page == 1 %>"
+    data-action="click->pagination#previousPage"
+  >
     <%= image_tag image_url('arrow-left-dark.png'), width: 16, height: 16 %>
     <span>Prev</span>
   </div>
   <div>
     <select class="tables--footer-page-select"
-      data-controller="pagination"
       data-action="change->pagination#handleChangePage"
     >
       <% (1..page_count).each do |page| %>
@@ -21,8 +25,11 @@
     </select>
     <span class="table-footer">of <%= page_count %></span>
   </div>
-  <div class="tables--page-change-button">
+  <div class="tables--page-change-button"
+    data-disabled="<%= current_page == page_count %>"
+    data-action="click->pagination#nextPage"
+  >
     <span>Next</span>
-    <%= image_tag image_url('arrow-left-dark.png'), width: 16, height: 16 %>
+    <%= image_tag image_url('arrow-right-dark.png'), width: 16, height: 16 %>
   </div>
 </div>

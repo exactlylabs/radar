@@ -126,3 +126,9 @@ application.register("pagination", PaginationController);
 
 import MoreOptionsButtonController from './more_options_button_controller';
 application.register("more-options-button", MoreOptionsButtonController);
+
+import TableController from './table_controller';
+application.register("table", TableController);
+
+import FiltersController from './filters_controller';
+application.register("filters", FiltersController);

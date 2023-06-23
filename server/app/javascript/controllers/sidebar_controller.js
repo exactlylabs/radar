@@ -22,40 +22,6 @@ export default class extends Controller {
     'sidebarItem'
   ]
 
-  connect() {
-    this.isNarrow = window.innerWidth < NARROW_WIDTH;
-    if(this.isNarrow) this.setNarrowSidebar();
-    window.addEventListener('resize', this.handleResize.bind(this));
-  }
-
-  disconnect() {
-    window.removeEventListener('resize', this.handleResize.bind(this));
-  }
-
-  handleResize(e) {
-    const isCurrentlyNarrow = window.innerWidth < NARROW_WIDTH;
-
-    if (isCurrentlyNarrow && !this.isNarrow) {
-      this.setNarrowSidebar();
-    } else if(!isCurrentlyNarrow && this.isNarrow){
-      this.setWideSidebar();
-    }
-  }
-
-  setNarrowSidebar() {
-    this.isNarrow = true;
-    this.defaultSidebarTarget.classList.add('invisible');
-    this.searchSidebarTarget.classList.remove('invisible');
-    this.searchPanelTarget.classList.add('invisible');
-  }
-
-  setWideSidebar() {
-    this.isNarrow = false;
-    this.defaultSidebarTarget.classList.remove('invisible');
-    this.searchSidebarTarget.classList.add('invisible');
-    this.searchPanelTarget.classList.remove('invisible');
-  }
-
   getItemElements(itemId) {
     const icon = document.getElementById(`${itemId}-icon`);
     const activeIcon = document.getElementById(`${itemId}-icon-active`);
@@ -229,10 +195,8 @@ export default class extends Controller {
   }
 
   handleToggleSearch(e) {
-    if(e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+    e.preventDefault();
+    e.stopPropagation();
     if(this.isNarrow) return;
     document.addEventListener('click', this.closeMenuIfClickOutside.bind(this), { capture: true });
     if(this.hasAccountsMenuTarget) this.closeAccountsMenu();
@@ -251,6 +215,12 @@ export default class extends Controller {
     this.isNarrow = true;
   }
 
+  toggleSearchOnly() {
+    const isSearchPanelClosed = this.searchPanelTarget.classList.contains('invisible');
+    if(isSearchPanelClosed) this.openSearchOnly();
+    else this.closeSearchOnly();
+  }
+
   openSearchOnly() {
     this.searchPanelTarget.classList.remove('invisible');
     this.searchPanelTarget.classList.add('opening');
@@ -259,12 +229,16 @@ export default class extends Controller {
     }, 500);
   }
 
+  closeSearchOnly() {
+    this.searchPanelTarget.classList.add('closing');
+    setTimeout(() => {
+      this.searchPanelTarget.classList.remove('closing');
+      this.searchPanelTarget.classList.add('invisible');
+    }, 300);
+  }
+
   closeSearchIfOpen() {
     if(!this.isNarrow) return;
-    if (this.searchPanelTarget.classList.contains('invisible')) {
-      this.openSearchOnly();
-      return;
-    }
     this.resetPanel();
     this.searchPanelTarget.classList.add('closing');
     setTimeout(() => {

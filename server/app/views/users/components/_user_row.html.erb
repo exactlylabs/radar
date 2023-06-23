@@ -11,7 +11,12 @@
   </div>
 </div>
 
-<div class="tables--name-container" style="width: <%= widths[1] %>">
+<div class="tables--name-container tables--grows-on-small"
+  style="width: <%= widths[1] %>"
+  data-controller="table"
+  data-url="<%= users_account_path(row, type: row.class.name) %>"
+  data-action="click->table#goToDetails"
+>
   <div class="tables--name-initial-container" data-even="<%= index.even? %>">
     <span class=""><%= row.user.get_letter_for_icon %></span>
   </div>
@@ -21,19 +26,32 @@
   </div>
 </div>
 
-<div class="" style="width: <%= widths[2] %>">
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[2] %>; display: <%= current_account.is_all_accounts? ? 'block' : 'none' %>"
+>
+  <span class="ellipsis table-cell"><%= row.account.name %></span>
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[3] %>">
   <span class="ellipsis table-cell"><%= pretty_print_date(row.invited_at) %></span>
 </div>
 
-<div class="" style="width: <%= widths[3] %>">
+<div class="tables--hides-on-small" style="width: <%= widths[4] %>">
   <span class="ellipsis table-cell"><%= pretty_print_date(row.joined_at) %></span>
 </div>
 
-<div class="" style="width: <%= widths[4] %>">
+<div class="tables--hides-on-small" style="width: <%= widths[5] %>">
 </div>
 
-<div class="" style="width: <%= widths[5] %>">
+<div class="tables--hides-on-small" style="width: <%= widths[6] %>">
   <%= render partial: "application/components/buttons/custom_more_options_button",
       locals: { index: index, type: UsersAccount.name, row: row }
   %>
 </div>
+
+<a href="<%= users_account_path(row, type: row.class.name) %>"
+  class="tables--appears-on-small"
+  style="width: 5%"
+>
+  <%= image_tag image_url('caret-right.png'), width: 16, height: 16 %>
+</a>

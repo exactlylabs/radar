@@ -58,12 +58,6 @@ p {
   top: 0;
 }
 
-@media (max-width: 1080px) {
-  .application--content-container {
-    width: calc(100vw - 92px);
-  }
-}
-  
 .application--unsupported-browser-notice {
   width: 100vw;
   padding: 1rem;

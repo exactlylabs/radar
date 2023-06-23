@@ -11,10 +11,8 @@
     <% end %>
   </div>
   <% if !narrow %>
-  <% if !narrow %>
-  <p class="m-0 sidebar-item--profile-text sidebar--accounts-name ellipsis"><%= current_account.name %></p>
-  <%= image_tag image_url("caret-multi.png"), width: "16", height: "16", class: "sidebar--accounts-caret" %>
-  <%= render partial: "application/components/sidebar/accounts_menu" %>
-  <% end %>
+    <p class="m-0 sidebar-item--profile-text sidebar--accounts-name ellipsis"><%= current_account.name %></p>
+    <%= image_tag image_url("caret-multi.png"), width: "16", height: "16", class: "sidebar--accounts-caret" %>
+    <%= render partial: "application/components/sidebar/accounts_menu" %>
   <% end %>
 </div>
