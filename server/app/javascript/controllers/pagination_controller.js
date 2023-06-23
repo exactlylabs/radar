@@ -15,12 +15,10 @@ export default class extends Controller {
   }
 
   handleChangePage(e) {
-    console.log(e.target.value);
     this.changePage(e.target.value);
   }
 
   handleChangePageSize(e) {
-    console.log(e.target.value);
     this.changePageSize(e.target.value);
   }
 
@@ -29,7 +27,7 @@ export default class extends Controller {
     let newPath = window.location.href;
     if (!newPath.includes('page=')) {
       if (!newPath.includes('?')) newPath += '?';
-      newPath += `page=${newPage}`;
+      newPath += `&page=${newPage}`;
     } else {
       newPath = newPath.replace(`page=${this.page}`, `page=${newPage}`);
     }
@@ -41,10 +39,11 @@ export default class extends Controller {
     let newPath = window.location.href;
     if(!newPath.includes('page_size=')) {
       if(!newPath.includes('?')) newPath += '?';
-      newPath += `page_size=${newPageSize}`;
+      newPath += `&page_size=${newPageSize}`;
     } else {
       newPath = newPath.replace(`page_size=${this.pageSize}`, `page_size=${newPageSize}`);  
     }
+    newPath = newPath.replace(`page=${this.page}`, `page=1`);
     window.location.href = newPath;
   }
 

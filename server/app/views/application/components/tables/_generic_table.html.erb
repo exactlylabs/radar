@@ -1,5 +1,5 @@
 <% width_sum = widths.map { |w| w.split('%')[0].to_i }.sum %>
-<% raise 'Table width is not 100%' if width_sum != 100 %>
+<% raise "Table width is not 100%. Val: #{width_sum}" if width_sum != 100 %>
 
 <div class="tables--table-container"
   data-controller="multi-row-table"
@@ -15,6 +15,6 @@
     <% end %>
   </div>
   <%= render partial: "application/components/tables/table_footer", 
-      locals: { count: rows.count, type: type }
+      locals: { count: total, type: type }
   %>
 </div>
