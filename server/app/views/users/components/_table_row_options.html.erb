@@ -1,3 +1,2 @@
-<p><%= row.class.name %></p>
 <%= link_to "View details", users_account_path(row, type: row.class.name), class: "tables--row-option table-menu-option ellipsis", data: {"turbo-frame" => "_top", "no-turbolink" => true}%>
 <%= link_to "Remove", users_account_path(row, type: row.class.name), method: :delete, data: { confirm: 'Are you sure?' }, class: "tables--row-option table-menu-option ellipsis" %>

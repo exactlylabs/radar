@@ -32,6 +32,16 @@
   background-color: $primary-button--hover;
 }
 
+.custom-button--primary-light,
+.custom-button--primary-light:active:not(.custom-button--disabled) {
+  background-color: $subtle-gray;
+  color: $blue;
+}
+
+.custom-button--primary-light:hover:not(.custom-button--disabled) {
+  opacity: 0.75;
+}
+
 .custom-button--secondary {
   background-color: $secondary-button--background-color;
   color: $dark-gray;
