@@ -117,6 +117,7 @@ class Client < ApplicationRecord
       if c.online
         c.online = false
         c.save!
+      end
     end
     self.reload
   end
