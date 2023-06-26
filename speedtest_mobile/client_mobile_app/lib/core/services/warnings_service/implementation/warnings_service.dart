@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:async';
 
 import 'package:client_mobile_app/core/models/warning.dart';
@@ -20,6 +21,7 @@ class WarningService implements IWarningsService {
 
   @override
   Future<void> getWarnings() async {
+    if (!Platform.isAndroid) return;
     final warnings = <Warning>[];
 
     final gpsProvider = await _configurationMonitoring.getGPSProviderStatus();
@@ -40,12 +42,19 @@ class WarningService implements IWarningsService {
       warnings.add(airplaneModeWarning);
     }
 
+    final batteryOptimizationMode = await _configurationMonitoring.getBatteryOptimizationStatus();
+    final batteryOptimizationWarning = _parseConfigurationStatusToWarning(batteryOptimizationMode);
+    if (batteryOptimizationWarning != null) {
+      warnings.add(batteryOptimizationWarning);
+    }
+
     _currentWarnings.clear();
     _currentWarnings.addAll(warnings);
     _warningsStreamController.sink.add(_currentWarnings);
   }
 
   void _addListenerToConfigurationMonitoring() {
+    if (!Platform.isAndroid) return;
     _configurationMonitoring.listener.listen(
       (configurationStatus) {
         final warning = _parseConfigurationStatusToWarning(configurationStatus);
@@ -84,6 +93,14 @@ class WarningService implements IWarningsService {
                 name: configurationStatus.name,
                 description:
                     'Background speed tests will not run while your device is in airplane mode. Make sure you disable it in your device settings.',
+              )
+            : null;
+      case IWarningsService.batteryUsageUnrestrictedWarningName:
+        return !configurationStatus.status
+            ? Warning(
+                name: configurationStatus.name,
+                description:
+                    'Your current battery usage settings might impact your background speed tests. Make sure to enable unrestricted battery usage.',
               )
             : null;
       default:

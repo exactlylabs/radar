@@ -8,4 +8,5 @@ abstract class IWarningsService {
   static const String gpsProviderWarningName = 'GPS_PROVIDER_MODE';
   static const String powerModeSaveWarningName = 'POWER_SAVE_MODE';
   static const String airplaneModeWarningName = 'AIRPLANE_MODE';
+  static const String batteryUsageUnrestrictedWarningName = 'BATTERY_USAGE_UNRESTRICTED';
 }

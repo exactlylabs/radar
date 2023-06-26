@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
@@ -34,12 +34,11 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
   }
 
   Future<void> _loadConfigurationMonitoring() async {
-    if (Platform.isAndroid) {
-      final airplaneMode = await _configurationMonitoring.getAirplaneModeStatus();
-      if (airplaneMode.status) {
-        emit(state.copyWith(isAirplaneModeOn: true));
-        disableBackgroundSpeedTest();
-      }
+    if (!Platform.isAndroid) return;
+    final airplaneMode = await _configurationMonitoring.getAirplaneModeStatus();
+    if (airplaneMode.status) {
+      emit(state.copyWith(isAirplaneModeOn: true));
+      disableBackgroundSpeedTest();
     }
   }
 
@@ -64,20 +63,19 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
   }
 
   void _listenToConfigurationMonitoring() {
-    if (Platform.isAndroid) {
-      _configurationMonitoringSubscription = _configurationMonitoring.listener.listen(
-        (event) {
-          if (event.name == AIRPLANE_MODE_EVENT) {
-            emit(state.copyWith(isAirplaneModeOn: event.status));
-            if (event.status) {
-              disableBackgroundSpeedTest();
-            } else if (!state.isEnabled && state.delay >= 0) {
-              enableBackgroundSpeedTest();
-            }
+    if (!Platform.isAndroid) return;
+    _configurationMonitoringSubscription = _configurationMonitoring.listener.listen(
+      (event) {
+        if (event.name == AIRPLANE_MODE_EVENT) {
+          emit(state.copyWith(isAirplaneModeOn: event.status));
+          if (event.status) {
+            disableBackgroundSpeedTest();
+          } else if (!state.isEnabled && state.delay >= 0) {
+            enableBackgroundSpeedTest();
           }
-        },
-      );
-    }
+        }
+      },
+    );
   }
 
   void setDelay(int delay) => emit(state.copyWith(delay: delay));
