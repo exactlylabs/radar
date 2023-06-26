@@ -79,7 +79,6 @@ class App extends StatelessWidget {
             create: (context) => SpeedTestCubit(
               resultsService: context.read<IResultsService>(),
               connectivity: context.read<Connectivity>(),
-              warningsService: context.read<IWarningsService>(),
               localStorage: localStorage,
             ),
           ),
