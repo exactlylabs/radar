@@ -2,43 +2,54 @@ import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_moda
 
 class AppInfoModalState {
   const AppInfoModalState({
-    this.delayWarning,
+    required this.isEnabled,
+    this.setDelay = false,
+    required this.isBackgroundModeEnabled,
     this.delay = 15,
-    this.enableWardrivingMode = false,
-    this.locationSettingsShouldBeUpdated = false,
+    this.delayWarning,
     this.configWarnings,
+    this.locationSettingsShouldBeUpdated = false,
   });
 
   AppInfoModalState copyWith({
-    String? delayWarning,
-    bool? enableWardrivingMode,
     int? delay,
+    bool? isEnabled,
+    bool? showWarnings,
+    String? delayWarning,
+    bool? setDelay,
+    bool? isBackgroundModeEnabled,
     bool? locationSettingsShouldBeUpdated,
     List<WarningViewModel>? configWarnings,
   }) {
     return AppInfoModalState(
-      delayWarning: delayWarning ?? this.delayWarning,
       delay: delay ?? this.delay,
+      setDelay: setDelay ?? this.setDelay,
+      isEnabled: isEnabled ?? this.isEnabled,
+      delayWarning: delayWarning ?? this.delayWarning,
+      configWarnings: configWarnings ?? this.configWarnings,
       locationSettingsShouldBeUpdated:
           locationSettingsShouldBeUpdated ?? this.locationSettingsShouldBeUpdated,
-      enableWardrivingMode: enableWardrivingMode ?? this.enableWardrivingMode,
-      configWarnings: configWarnings ?? this.configWarnings,
+      isBackgroundModeEnabled: isBackgroundModeEnabled ?? this.isBackgroundModeEnabled,
     );
   }
 
   AppInfoModalState resetDelayWarning() {
     return AppInfoModalState(
-      delayWarning: null,
       delay: delay,
-      locationSettingsShouldBeUpdated: locationSettingsShouldBeUpdated,
-      enableWardrivingMode: enableWardrivingMode,
+      delayWarning: null,
+      setDelay: setDelay,
+      isEnabled: isEnabled,
       configWarnings: configWarnings,
+      isBackgroundModeEnabled: isBackgroundModeEnabled,
+      locationSettingsShouldBeUpdated: locationSettingsShouldBeUpdated,
     );
   }
 
-  final String? delayWarning;
   final int? delay;
+  final String? delayWarning;
+  final bool isEnabled;
+  final bool setDelay;
+  final bool isBackgroundModeEnabled;
   final bool locationSettingsShouldBeUpdated;
-  final bool enableWardrivingMode;
   final List<WarningViewModel>? configWarnings;
 }

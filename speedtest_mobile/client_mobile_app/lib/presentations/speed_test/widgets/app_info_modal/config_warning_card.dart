@@ -1,7 +1,9 @@
-import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/view_models/warning_view_model.dart';
-import 'package:client_mobile_app/resources/app_colors.dart';
-import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/app_colors.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/view_models/warning_view_model.dart';
 
 class ConfigWarningCard extends StatelessWidget {
   const ConfigWarningCard({
@@ -14,9 +16,9 @@ class ConfigWarningCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14.0),
+      padding: const EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 16.0),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+        color: AppColors.rockfish.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Column(
@@ -27,8 +29,8 @@ class ConfigWarningCard extends StatelessWidget {
             style: AppTextStyle(
               fontSize: 14.0,
               fontWeight: 200,
-              height: 1.150,
-              letterSpacing: 0.25,
+              height: 1.50,
+              letterSpacing: 0.75,
               color: AppColors.rockfish,
             ),
           ),
@@ -38,21 +40,21 @@ class ConfigWarningCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Go to device settings',
+                  Strings.goToSettingsButtonLabel,
                   style: AppTextStyle(
-                    fontSize: 14.0,
-                    fontWeight: 500,
-                    height: 1.150,
-                    letterSpacing: 0.25,
+                    fontSize: 15.0,
+                    fontWeight: 800,
+                    height: 1.50,
+                    letterSpacing: 0.75,
                     color: AppColors.rockfish,
                   ),
                 ),
                 const SizedBox(width: 4.0),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14.0,
+                Image.asset(
+                  Images.rightArrow,
+                  height: 12.0,
                   color: AppColors.rockfish,
-                ),
+                )
               ],
             ),
           )

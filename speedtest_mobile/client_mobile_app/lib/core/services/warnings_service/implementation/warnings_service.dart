@@ -82,7 +82,8 @@ class WarningService implements IWarningsService {
         return configurationStatus.status
             ? Warning(
                 name: configurationStatus.name,
-                description: '',
+                description:
+                    'Background speed tests will not run while your device is in airplane mode. Make sure you disable it in your device settings.',
               )
             : null;
       default:

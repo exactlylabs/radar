@@ -132,4 +132,5 @@ class Strings {
       'collects location data to provide you with locations where wireless quality is being measured as you move around even when the app is closed or not in use';
   static const String denyButtonLabel = 'Deny';
   static const String acceptButtonLabel = 'Accept';
+  static const String goToSettingsButtonLabel = 'Go to device settings';
 }
