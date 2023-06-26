@@ -136,6 +136,8 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
         return () => AppSettings.openDeviceSettings();
       case IWarningsService.powerModeSaveWarningName:
         return () => AppSettings.openBatteryOptimizationSettings();
+      case IWarningsService.batteryUsageUnrestrictedWarningName:
+        return () => AppSettings.openAppSettings();
       default:
         return () => AppSettings.openAppSettings();
     }
