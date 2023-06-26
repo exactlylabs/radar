@@ -108,7 +108,9 @@ class LocationStepCubit extends Cubit<LocationStepState> {
           speed: position.speed,
           speedAccuracy: position.speedAccuracy,
         );
-        emit(state.copyWith(isGeolocationLoading: false, geolocation: geolocation));
+        if (!isClosed) {
+          emit(state.copyWith(isGeolocationLoading: false, geolocation: geolocation));
+        }
       } else {
         useInputLocationOption();
       }
@@ -120,7 +122,11 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     return location;
   }
 
-  void useInputLocationOption() => emit(state.copyWith(isUsingGeolocation: false));
+  void useInputLocationOption() {
+    if (!isClosed) {
+      emit(state.copyWith(isUsingGeolocation: false));
+    }
+  }
 
   void useGeolocationOption() {
     if (!(state.isGeolocationEnabled ?? false)) {
