@@ -23,8 +23,11 @@ class WardrivingModal extends StatelessWidget {
           onEnabled: () {
             bool isValid = context.read<AppInfoModalCubit>().validateDelay();
             if (isValid) {
-              context.read<BackgroundFetchBloc>().setDelay(state.delay ?? -1);
-              context.read<BackgroundFetchBloc>().enableBackgroundSpeedTest();
+              if (!state.isBackgroundModeEnabled) {
+                context.read<BackgroundFetchBloc>().setDelay(state.delay ?? -1);
+                context.read<BackgroundFetchBloc>().enableBackgroundSpeedTest();
+                context.read<AppInfoModalCubit>().setWardrivingModeEnabled();
+              }
               Navigator.of(context).pop();
             }
           },

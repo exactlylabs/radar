@@ -28,22 +28,24 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
   Future<void> _loadPreferences() async {
     final backgroundSpeedTestDelay = _localStorage.getBackgroundModeFrequency();
     if (backgroundSpeedTestDelay >= 0) {
-      emit(BackgroundFetchState(delay: backgroundSpeedTestDelay, isEnabled: true));
+      emit(state.copyWith(delay: backgroundSpeedTestDelay, isEnabled: true));
       BackgroundFetchHandler.startBackgroundSpeedTest(backgroundSpeedTestDelay * 60000);
     }
   }
 
   Future<void> _loadConfigurationMonitoring() async {
-    if (Platform.isAndroid) {}
-    final airplaneMode = await _configurationMonitoring.getAirplaneModeStatus();
-    if (airplaneMode.status) {
-      disableBackgroundSpeedTest();
+    if (Platform.isAndroid) {
+      final airplaneMode = await _configurationMonitoring.getAirplaneModeStatus();
+      if (airplaneMode.status) {
+        emit(state.copyWith(isAirplaneModeOn: true));
+        disableBackgroundSpeedTest();
+      }
     }
   }
 
   Future<void> enableBackgroundSpeedTest() async {
-    if (!state.isAirplaneModeOn && (!state.isEnabled && state.delay >= 0)) {
-      emit(BackgroundFetchState(delay: state.delay, isEnabled: true));
+    if (!(state.isAirplaneModeOn || state.isEnabled)) {
+      emit(state.copyWith(isEnabled: true));
       await _localStorage.setBackgroundModeFrequency(state.delay);
       BackgroundFetchHandler.stopBackgroundSpeedTest();
       BackgroundFetchHandler.startBackgroundSpeedTest(state.delay * 60000);
@@ -52,29 +54,39 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
 
   Future<void> disableBackgroundSpeedTest() async {
     if (state.isEnabled) {
-      emit(
-          BackgroundFetchState(delay: state.isAirplaneModeOn ? state.delay : -1, isEnabled: false));
+      final delay = state.isAirplaneModeOn ? state.delay : -1;
+      emit(state.copyWith(delay: delay, isEnabled: false));
       await _localStorage.setBackgroundModeFrequency(-1);
       BackgroundFetchHandler.stopBackgroundSpeedTest();
+    } else {
+      emit(state.copyWith(delay: -1));
     }
   }
 
   void _listenToConfigurationMonitoring() {
-    _configurationMonitoringSubscription = _configurationMonitoring.listener.listen(
-      (event) {
-        if (event.name == AIRPLANE_MODE_EVENT) {
-          emit(state.copyWith(isAirplaneModeOn: event.status));
-          event.status ? disableBackgroundSpeedTest() : enableBackgroundSpeedTest();
-        }
-      },
-    );
+    if (Platform.isAndroid) {
+      _configurationMonitoringSubscription = _configurationMonitoring.listener.listen(
+        (event) {
+          if (event.name == AIRPLANE_MODE_EVENT) {
+            emit(state.copyWith(isAirplaneModeOn: event.status));
+            if (event.status) {
+              disableBackgroundSpeedTest();
+            } else if (!state.isEnabled && state.delay >= 0) {
+              enableBackgroundSpeedTest();
+            }
+          }
+        },
+      );
+    }
   }
 
-  void setDelay(int delay) => emit(BackgroundFetchState(delay: delay, isEnabled: state.isEnabled));
+  void setDelay(int delay) => emit(state.copyWith(delay: delay));
 
   @override
   Future<void> close() {
-    _configurationMonitoringSubscription.cancel();
+    if (Platform.isAndroid) {
+      _configurationMonitoringSubscription.cancel();
+    }
     return super.close();
   }
 

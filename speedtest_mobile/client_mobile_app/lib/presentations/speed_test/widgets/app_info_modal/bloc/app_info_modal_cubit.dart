@@ -15,9 +15,14 @@ import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_moda
 class AppInfoModalCubit extends Cubit<AppInfoModalState> {
   AppInfoModalCubit({
     required IWarningsService warningsService,
+    required bool isBackgroundModeEnabled,
   })  : _warningsService = warningsService,
-        super(const AppInfoModalState()) {
+        super(AppInfoModalState(
+          isBackgroundModeEnabled: isBackgroundModeEnabled,
+          isEnabled: isBackgroundModeEnabled,
+        )) {
     _listenToWarnings();
+    _loadWarnings();
   }
 
   final IWarningsService _warningsService;
@@ -29,16 +34,23 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
       emit(state.copyWith(locationSettingsShouldBeUpdated: true));
     } else {
       await shouldRequestPhoneStatePermission();
-      emit(state.copyWith(enableWardrivingMode: true, locationSettingsShouldBeUpdated: false));
+      emit(state.copyWith(locationSettingsShouldBeUpdated: false, setDelay: true));
     }
   }
 
+  void setWardrivingModeEnabled() {
+    emit(state.copyWith(isEnabled: true, showWarnings: true));
+  }
+
   void disableWardrivingMode() {
-    emit(state.copyWith(enableWardrivingMode: false));
+    emit(state.copyWith(isEnabled: false, showWarnings: false, setDelay: false));
   }
 
   void cancel() {
-    emit(const AppInfoModalState());
+    emit(AppInfoModalState(
+      isBackgroundModeEnabled: state.isBackgroundModeEnabled,
+      isEnabled: state.isBackgroundModeEnabled,
+    ));
   }
 
   void updateDelay(String delay) {
@@ -83,6 +95,10 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
     if (!phoneStatePermissionGranted) {
       await Permission.phone.request();
     }
+  }
+
+  void updateBackgroundMode(bool isEnabled) {
+    emit(state.copyWith(isBackgroundModeEnabled: isEnabled));
   }
 
   Future<void> _loadWarnings() async {
