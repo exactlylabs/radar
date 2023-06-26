@@ -13,7 +13,7 @@ class InvitePolicy < ApplicationPolicy
           end
           scope.where(id: all_invites)
         else
-          scope.where(account_id: @auth_holder.account.id)
+          super
         end
       else
         scope.none

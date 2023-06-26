@@ -8,7 +8,9 @@ export default class extends Controller {
   }
 
   getParam(name, defaultValue) {
-    let possibleValue = window.location.href.split(`${name}=`)[1]?.split('&')[0];
+    const currentHref = window.location.href;
+    const url = new URL(currentHref);
+    let possibleValue = url.searchParams.get(name);
     if(possibleValue) possibleValue = parseInt(possibleValue);
     else possibleValue = defaultValue;
     return possibleValue;
@@ -24,27 +26,19 @@ export default class extends Controller {
 
   changePage(newPage) {
     if (newPage == this.page) return;
-    let newPath = window.location.href;
-    if (!newPath.includes('page=')) {
-      if (!newPath.includes('?')) newPath += '?';
-      newPath += `&page=${newPage}`;
-    } else {
-      newPath = newPath.replace(`page=${this.page}`, `page=${newPage}`);
-    }
-    window.location.href = newPath;
+    const currentHref = window.location.href;
+    const url = new URL(currentHref);
+    url.searchParams.set('page', newPage);
+    window.location.href = url;
   }
 
   changePageSize(newPageSize) {
     if(newPageSize == this.pageSize) return;
-    let newPath = window.location.href;
-    if(!newPath.includes('page_size=')) {
-      if(!newPath.includes('?')) newPath += '?';
-      newPath += `&page_size=${newPageSize}`;
-    } else {
-      newPath = newPath.replace(`page_size=${this.pageSize}`, `page_size=${newPageSize}`);  
-    }
-    newPath = newPath.replace(`page=${this.page}`, `page=1`);
-    window.location.href = newPath;
+    const currentHref = window.location.href;
+    const url = new URL(currentHref);
+    url.searchParams.set('page_size', newPageSize);
+    url.searchParams.set('page', 1);
+    window.location.href = url;
   }
 
   previousPage() {

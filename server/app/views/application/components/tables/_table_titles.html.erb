@@ -1,9 +1,15 @@
+<% current_sort_order_icon_name = params[:order].present? ? params[:order] == 'asc' ? 'sort-icon-up.png' : 'sort-icon-down.png' : 'sort-icon-full.png' %>
+
 <div class="tables--titles-container">
   <% titles.each_with_index do |title, index| %>
-    <div class="tables--title table-title" style="width: <%= widths[index] %>">
+    <div class="tables--title table-title"
+      style="width: <%= widths[index] %>"
+      data-action="<%= title[:sort] ? title[:sort_action] : nil %>"
+      data-sortable="<%= title[:sort].present? %>"
+    >
       <%= title[:hidden] ? '' : title[:text] %>
       <% if title[:sort] %>
-        <i class="fas fa-sort"></i>
+        <%= image_tag image_url(current_sort_order_icon_name), width: 16, height: 16 %>
       <% end %>
       <% if title[:text] == 'Checkbox' %>
         <div class="form-check form-check-sm form-check-custom form-check-solid tables--checkbox-container" >
@@ -12,6 +18,7 @@
             type="checkbox"
             value="1"
             data-action="input->multi-row-table#onSelectAll"
+            data-multi-row-table-target="selectAllFormCheckBoxInput"
           />
         </div>
       <% end %>

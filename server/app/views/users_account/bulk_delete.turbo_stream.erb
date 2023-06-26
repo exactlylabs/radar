@@ -1,0 +1,13 @@
+<% @users_to_delete_ids.each do |c| %>
+  <%= turbo_stream.remove "users_account_#{c}" do %>
+  <% end %>
+<% end %>
+
+<% @invites_to_delete_ids.each do |c| %>
+  <%= turbo_stream.remove "invite_#{c}" do %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% end %>

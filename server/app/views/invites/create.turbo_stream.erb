@@ -3,6 +3,14 @@
 
 <% if current_account.is_all_accounts? || current_account.id == @new_invite.account.id %>
   <%= turbo_stream.append "users_table" do %>
-    <%= render partial: "users/users_table_row_invitee", locals: { invitee: @new_invite, is_even: false } %>
+    <%= render partial: "application/components/tables/table_row",
+        locals: {
+          row: @new_invite,
+          type: TablesHelper::TableTypes::MEMBERS,
+          widths: TablesHelper.widths(TablesHelper::TableTypes::MEMBERS, current_account.is_all_accounts?),
+          index: "#{@new_invite.id}-#{@new_invite.account.id}",
+          even: false
+        }
+    %>
   <% end %>
 <% end %>

@@ -141,6 +141,9 @@ Rails.application.routes.draw do
   end
 
   resources :users_account do
+    collection do
+      delete 'bulk_delete'
+    end
   end
 
   resources :invites do

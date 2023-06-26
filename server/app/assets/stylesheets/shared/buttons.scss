@@ -15,9 +15,13 @@
   line-height: 1.25rem;
   width: max-content;
   text-decoration: none;
+}
+
+.custom-button--mutli-row-span {
   font-size: 0.875rem;
   line-height: 1.25rem;
-  width: max-content;
+  font-variation-settings: 'wght'$bold;
+  color: $blue;
 }
 
 .custom-button--primary {

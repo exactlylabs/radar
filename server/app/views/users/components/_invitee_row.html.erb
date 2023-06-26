@@ -6,14 +6,14 @@
             value="1"
             data-multi-row-table-target="formCheckBoxInput"
             data-bulk-release-group-modal-target="formCheckBoxInput"
-            data-action="input->multi-row-table#onCheckBoxChange input->bulk-release-group-modal#onCheckBoxChange"
+            data-action="input->multi-row-table#onCheckBoxChange"
+            data-row-type="<%= row.class.name %>"
     />
   </div>
 </div>
 
 <div class="tables--name-container tables--grows-on-small"
   style="width: <%= widths[1] %>"
-  data-controller="table"
   data-url="<%= users_account_path(row, type: row.class.name) %>"
   data-action="click->table#goToDetails"
 >

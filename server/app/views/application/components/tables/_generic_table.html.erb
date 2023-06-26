@@ -1,19 +1,23 @@
 <% width_sum = widths.map { |w| w.split('%')[0].to_i }.sum %>
 <% raise "Table width is not 100%. Val: #{width_sum}" if width_sum != 100 %>
 
-<div class="tables--table-container"
-  data-controller="multi-row-table"
->
+<div class="tables--table-container" data-controller="table">
   <%= render partial: "application/components/tables/table_titles",
       locals: { titles: titles, widths: widths }
   %>
-  <div class="tables--rows-container">
+  <%= turbo_frame_tag table_id, class: "tables--rows-container" do %>
     <% rows.each_with_index do |row, index| %>
       <%= render partial: "application/components/tables/table_row",
-          locals: { row: row, type: type, widths: widths, index: index }
+          locals: {
+            row: row,
+            type: type,
+            widths: widths,
+            index: "#{row.id}-#{row.account.id}",
+            even: index.even?
+          }
       %>
     <% end %>
-  </div>
+  <% end %>
   <%= render partial: "application/components/tables/table_footer", 
       locals: { count: total, type: type }
   %>

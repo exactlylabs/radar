@@ -3,6 +3,7 @@ require "rqrcode"
 
 class ClientsController < ApplicationController
   include Recents
+  before_action :check_account_presence, only: %i[ index show ]
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
   before_action :check_request_origin, only: %i[ show ]
@@ -497,5 +498,11 @@ class ClientsController < ApplicationController
     is_from_search = params[:origin].present? && params[:origin] == 'search'
     return if !is_from_search
     store_recent_search(params[:id], Recents::RecentTypes::CLIENT)
+  end
+
+  def check_account_presence
+    if !current_account
+      redirect_to "/dashboard", notice: "Error: You have no accounts! Start by creating one."
+    end
   end
 end
