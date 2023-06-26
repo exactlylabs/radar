@@ -19,7 +19,6 @@ class SpeedTestState {
     this.buildNumber,
     this.termsAccepted = true,
     this.isLoadingTerms = true,
-    this.hasWarnings = false,
   });
 
   SpeedTestState copyWith({
@@ -60,7 +59,6 @@ class SpeedTestState {
         buildNumber: buildNumber ?? this.buildNumber,
         termsAccepted: termsAccepted ?? this.termsAccepted,
         isLoadingTerms: isLoadingTerms ?? this.isLoadingTerms,
-        hasWarnings: hasWarnings ?? this.hasWarnings,
       );
 
   SpeedTestState resetSpecificStep(bool networkLocation, bool networkType, bool monthlyBillCost) =>
@@ -82,7 +80,6 @@ class SpeedTestState {
         buildNumber: buildNumber,
         termsAccepted: termsAccepted,
         isLoadingTerms: isLoadingTerms,
-        hasWarnings: hasWarnings,
       );
 
   final int step;
@@ -102,5 +99,4 @@ class SpeedTestState {
   final String? buildNumber;
   final bool termsAccepted;
   final bool isLoadingTerms;
-  final bool hasWarnings;
 }

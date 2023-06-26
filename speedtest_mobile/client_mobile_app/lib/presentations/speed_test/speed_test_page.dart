@@ -15,6 +15,7 @@ import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/app_info_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_cubit.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/bloc/app_info_modal_state.dart';
 
 class SpeedTestPage extends StatelessWidget {
   const SpeedTestPage({
@@ -33,59 +34,65 @@ class SpeedTestPage extends StatelessWidget {
         listener: (context, state) {
           context.read<AppInfoModalCubit>().updateBackgroundMode(state.isEnabled);
         },
-        child: BlocBuilder<SpeedTestCubit, SpeedTestState>(
-          builder: (context, state) {
-            return Column(
-              children: [
-                AppBar(
-                  centerTitle: true,
-                  toolbarHeight: 50.0,
-                  backgroundColor: Theme.of(context).colorScheme.background,
-                  title: Image.asset(Images.logoGrey, fit: BoxFit.contain),
-                  actions: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: InkWell(
-                        onTap: () =>
-                            _openInfoModal(context, state.versionNumber, state.buildNumber),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(Images.infoGreyIcon),
-                            SizedBox(
-                              width: 20.0,
-                              height: 20.0,
-                              child: Align(
-                                alignment: const Alignment(1.2, 1),
-                                child: Dot(
-                                  color: state.hasWarnings ? AppColors.rockfish : AppColors.blue,
+        child: BlocBuilder<AppInfoModalCubit, AppInfoModalState>(
+          builder: (context, appInfoModalState) => BlocBuilder<SpeedTestCubit, SpeedTestState>(
+            builder: (context, state) {
+              return Column(
+                children: [
+                  AppBar(
+                    centerTitle: true,
+                    toolbarHeight: 50.0,
+                    backgroundColor: Theme.of(context).colorScheme.background,
+                    title: Image.asset(Images.logoGrey, fit: BoxFit.contain),
+                    actions: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: InkWell(
+                          onTap: () =>
+                              _openInfoModal(context, state.versionNumber, state.buildNumber),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(Images.infoGreyIcon),
+                              if (appInfoModalState.isEnabled &&
+                                  appInfoModalState.configWarnings != null)
+                                SizedBox(
+                                  width: 20.0,
+                                  height: 20.0,
+                                  child: Align(
+                                    alignment: const Alignment(1.2, 1),
+                                    child: Dot(
+                                      color: appInfoModalState.configWarnings!.isNotEmpty
+                                          ? AppColors.rockfish
+                                          : AppColors.blue,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                if (state.isLoadingTerms)
-                  Container()
-                else if (!state.termsAccepted)
-                  const AcceptTermsPage()
-                else if (state.isFormEnded)
-                  const NoInternetConnectionPage()
-                else
-                  SpeedTestForm(
-                    step: state.step,
-                    location: state.location,
-                    isStepValid: state.isStepValid,
-                    networkType: state.networkType,
-                    networkLocation: state.networkLocation,
-                    monthlyBillCost: state.monthlyBillCost,
-                  )
-              ],
-            );
-          },
+                    ],
+                  ),
+                  if (state.isLoadingTerms)
+                    Container()
+                  else if (!state.termsAccepted)
+                    const AcceptTermsPage()
+                  else if (state.isFormEnded)
+                    const NoInternetConnectionPage()
+                  else
+                    SpeedTestForm(
+                      step: state.step,
+                      location: state.location,
+                      isStepValid: state.isStepValid,
+                      networkType: state.networkType,
+                      networkLocation: state.networkLocation,
+                      monthlyBillCost: state.monthlyBillCost,
+                    )
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
