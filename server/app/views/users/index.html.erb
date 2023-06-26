@@ -26,7 +26,7 @@
   </div>
 </div>
 <!--end::Toolbar-->
-<div class="post fs-6 d-flex flex-column" id="kt_post">
+<div class="post fs-6 d-flex flex-column" id="kt_post" data-controller="multi-row-table">
   <% if !current_account.is_all_accounts? %>
     <%= render partial: "application/components/tabs/page_tabs",
         locals: {
@@ -42,25 +42,18 @@
   <!-- render partial: "users/users_table", locals: { users_accounts: users_accounts, invited_users: invited_users } -->
   <%= render partial: "application/components/tables/generic_table",
       locals: {
+        table_id: "users_table",
         type: TablesHelper::TableTypes::MEMBERS,
         titles: [
-          { text: 'Checkbox', hidden: true},
-          { text: 'Name', sort: 'name' },
+          { text: 'Checkbox', hidden: true },
+          { text: 'Name', sort: 'name', sort_action: 'click->table#sortByName' },
           { text: 'Account', hidden: !current_account.is_all_accounts? },
           { text: 'Invited' },
           { text: 'Join date' },
           { text: 'Resend', hidden: true },
           { text: 'Actions', hidden: true}
         ],
-        widths: [
-          '4%',
-          current_account.is_all_accounts? ? '31%' : '46%',
-          current_account.is_all_accounts? ? '15%' : '0%',
-          '15%',
-          '15%',
-          '15%',
-          '5%'
-        ],
+        widths: TablesHelper.widths(TablesHelper::TableTypes::MEMBERS, current_account.is_all_accounts?),
         rows: elements,
         total: total
       }

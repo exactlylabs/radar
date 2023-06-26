@@ -31,6 +31,15 @@
 
   .tables--title {
     padding-bottom: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    &[data-sortable="true"]:hover {
+      cursor: pointer;
+      opacity: .75;
+    }
   }
 }
 
@@ -161,6 +170,14 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+
+  * {
+    pointer-events: none;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .tables--name-email-container {
@@ -307,6 +324,11 @@
     padding: .5rem .75rem;
     text-align: left;
     border-radius: $border-radius;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 
     &:hover {
       color: $deep-blue;

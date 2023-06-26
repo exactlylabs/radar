@@ -1,0 +1,27 @@
+<div class="tables--filters-button-container invisible"
+  data-controller="filters"
+  data-action="window@closeMultiRowMenu->filters#closeFiltersMenu click->filters#toggleFiltersMenu"
+  data-menu-id="<%= menu_id %>"
+  id="multi-row-actions"
+>
+  <button type="button"
+    class="custom-button custom-button--secondary-light custom-button--sm"
+  >
+    <span id="row-amount-selected-span" class="custom-button--mutli-row-span"></span>
+    <%= image_tag image_url('caret.png'), width: 16, height: 16, class: "ms-1" %>
+  </button>
+  <div class="tables--filters-menu-container invisible"
+    data-filters-target="filtersMenu"
+    id="<%= menu_id %>"
+  >
+    <% options.each_with_index do |option, index| %>
+      <a href="#"
+        data-action="<%= actions[index] %>"
+        class="tables--filters-menu-item table-filter-option"
+        data-url="<%= urls[index] %>"
+      >
+        <%= option %>
+      </a>
+    <% end %>
+  </div>
+</div>

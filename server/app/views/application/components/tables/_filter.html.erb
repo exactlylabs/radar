@@ -17,10 +17,13 @@
     id="<%= menu_id %>"
   >
     <% options.each do |option| %>
-      <a href="<%= url_for(request.query_parameters.merge({ "#{key}" => option[:value] })) %>"
+      <a href="<%= url_for(request.query_parameters.merge({ page: 1, "#{key}" => option[:value] })) %>"
         class="tables--filters-menu-item table-filter-option <%= current_filter_value == option[:value] ? 'active' : '' %>"
       >
         <%= option[:label] %>
+        <% if current_filter_value == option[:value] %>
+          <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
+        <% end %>
       </a>
     <% end %>
   </div>

@@ -1,6 +1,6 @@
 <% page_size = params[:page_size].present? ? params[:page_size].to_i : 10 %>
 <% current_page = params[:page].present? ? params[:page].to_i : 1 %>
-<% page_count = (total / page_size).ceil %>
+<% page_count = (total.to_f / page_size.to_f).ceil %>
 <% page_count = 1 if page_count == 0 %>
 
 <div class="tables--page-selector-container"

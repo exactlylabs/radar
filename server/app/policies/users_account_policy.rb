@@ -17,7 +17,7 @@ class UsersAccountPolicy < ApplicationPolicy
             scope.where(id: all_ua)
           end
         else
-          scope.where(account_id: @auth_holder.account.id)
+          super
         end
       else
         scope.none

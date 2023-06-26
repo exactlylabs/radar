@@ -119,22 +119,24 @@ class ApplicationController < ActionController::Base
         can_access_account =  is_account_accessible_through_share || current_user.accounts.where(id: account_id).count == 1  
       end
 
-      raise Pundit::NotAuthorizedError, "Access denied" unless can_access_account
-      
-      set_cookie(:radar_current_account_id, account_id)
-      @auth_holder.set_user(current_user) if @auth_holder.user.nil?
-      @auth_holder.set_account(Account.find(account_id))
-      @auth_holder.set_super_user_disabled(get_super_user_disabled_value) if current_user.super_user
-      if is_account_accessible_through_share
-        @auth_holder.set_shared_account
+      if !can_access_account
+        get_first_user_account_and_set_cookie
       else
-        @auth_holder.unset_shared_account
+        set_cookie(:radar_current_account_id, account_id)
+        @auth_holder.set_user(current_user) if @auth_holder.user.nil?
+        @auth_holder.set_account(Account.find(account_id))
+        @auth_holder.set_super_user_disabled(get_super_user_disabled_value) if current_user.super_user
+        if is_account_accessible_through_share
+          @auth_holder.set_shared_account
+        else
+          @auth_holder.unset_shared_account
+        end
       end
     end
   end
 
   def clear_account_and_cookie
-    @auth_holder = nil
+    @auth_holder.set_account(nil)
     cookies.delete :radar_current_account_id
   end
 

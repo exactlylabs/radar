@@ -95,5 +95,7 @@
       <%= render partial: "application/notice_alert", locals: {notice: notice.present? ? notice : @notice, placeholder: false} %>
     <% end %>
     <%= render partial: "application/notice_alert", locals: {notice: '', placeholder: true} %>
+    <%= turbo_frame_tag 'realtime-notice' do %>
+    <% end %>
   </body>
 </html>
