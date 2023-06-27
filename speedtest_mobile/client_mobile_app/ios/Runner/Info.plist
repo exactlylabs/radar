@@ -36,9 +36,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open.</string>
+	<string>Your location is used to compare your results to others in your region.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Radar needs access to location always</string>
+	<string>Your location is used for more accurate speed tests when background mode is enabled.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

@@ -33,7 +33,7 @@ class GeolocationOption extends StatelessWidget {
           child: LeafletMap(
             onLocationSelected: (location) =>
                 onLocationChanged(location.latitude, location.longitude),
-            address: LatLng(location!.latitude!, location!.longitude!),
+            address: location != null ? LatLng(location!.latitude!, location!.longitude!) : null,
           ),
         ),
         SpacerWithMax(size: height * 0.05, maxSize: 40.0),
@@ -42,8 +42,7 @@ class GeolocationOption extends StatelessWidget {
           child: Column(
             children: [
               PrimaryButton(
-                shadowColor:
-                    Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
                 onPressed: onLocationConfirmed,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

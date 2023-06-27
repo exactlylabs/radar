@@ -41,7 +41,7 @@ class LocationStepBody extends StatelessWidget {
         suggestions: suggestions,
         isLoading: isLocationLoading,
       );
-    } else if (isUsingGeolocation == null) {
+    } else if (isUsingGeolocation == null || (isUsingGeolocation! && isGeolocationLoading)) {
       return LocationStepOptions(
         isGeolocationLoading: isGeolocationLoading,
         onLocationInputPressed: () => context.read<LocationStepCubit>().useInputLocationOption(),
