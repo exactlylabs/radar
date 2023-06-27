@@ -1,6 +1,6 @@
-import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
@@ -21,7 +21,8 @@ class LocationStepOptions extends StatefulWidget {
   State<LocationStepOptions> createState() => _LocationStepOptionsState();
 }
 
-class _LocationStepOptionsState extends State<LocationStepOptions> with SingleTickerProviderStateMixin {
+class _LocationStepOptionsState extends State<LocationStepOptions>
+    with SingleTickerProviderStateMixin {
   late Animation _animation;
   late AnimationController _animationController;
 

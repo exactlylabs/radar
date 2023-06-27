@@ -14,7 +14,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     bool termsAccepted = false,
   })  : _locationsService = locationsService,
         super(LocationStepState(location: location)) {
-    loadGeolocation();
+    isGeolocationDenied();
   }
 
   final ILocationsService _locationsService;
@@ -62,14 +62,6 @@ class LocationStepCubit extends Cubit<LocationStepState> {
         geolocation: geolocation));
   }
 
-  Future<void> loadGeolocation() async {
-    final geolocationEnabled = await isGeolocationEnabled();
-    emit(state.copyWith(isGeolocationEnabled: geolocationEnabled));
-    if (geolocationEnabled ?? false) {
-      await getGeolocation();
-    }
-  }
-
   Future<bool?> isGeolocationEnabled() async {
     final permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
@@ -81,12 +73,21 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     return true;
   }
 
+  Future<void> isGeolocationDenied() async {
+    final permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.deniedForever) {
+      emit(state.copyWith(isGeolocationEnabled: false));
+    }
+    emit(state.copyWith(isGeolocationEnabled: true));
+  }
+
   Future<void> requestLocationPermission() async {
     final permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       emit(state.copyWith(
           requestLocationPermission: permission == LocationPermission.denied,
-          isGeolocationEnabled: false));
+          isGeolocationEnabled: false,
+          failure: Strings.locationMissingError));
     } else {
       emit(state.copyWith(requestLocationPermission: false, isGeolocationEnabled: true));
       await getGeolocation();
@@ -96,22 +97,20 @@ class LocationStepCubit extends Cubit<LocationStepState> {
   void cancelLocationPermissionRequest() => emit(state.copyWith(requestLocationPermission: false));
 
   Future<void> getGeolocation() async {
-    if (state.isGeolocationEnabled ?? false) {
-      emit(state.copyWith(isGeolocationLoading: true));
-      final position = await Geolocator.getCurrentPosition();
-      final location = await getLocationByLatLng(position.latitude, position.longitude);
-      if (location != null) {
-        final geolocation = location.copyWith(
-          altitude: position.altitude,
-          heading: position.heading,
-          floor: position.floor,
-          speed: position.speed,
-          speedAccuracy: position.speedAccuracy,
-        );
-        emit(state.copyWith(isGeolocationLoading: false, geolocation: geolocation));
-      } else {
-        useInputLocationOption();
-      }
+    final position = await Geolocator.getCurrentPosition();
+    final location = await getLocationByLatLng(position.latitude, position.longitude);
+    if (location != null) {
+      final geolocation = location.copyWith(
+        altitude: position.altitude,
+        heading: position.heading,
+        floor: position.floor,
+        speed: position.speed,
+        speedAccuracy: position.speedAccuracy,
+      );
+      emit(state.copyWith(isGeolocationLoading: false, geolocation: geolocation));
+    } else {
+      emit(state.copyWith(isGeolocationLoading: false));
+      useInputLocationOption();
     }
   }
 
@@ -122,17 +121,17 @@ class LocationStepCubit extends Cubit<LocationStepState> {
 
   void useInputLocationOption() => emit(state.copyWith(isUsingGeolocation: false));
 
-  void useGeolocationOption() {
-    if (!(state.isGeolocationEnabled ?? false)) {
-      emit(state.copyWith(failure: Strings.locationMissingError));
-      return;
+  Future<void> useGeolocationOption() async {
+    emit(state.copyWith(isGeolocationLoading: true));
+    final isEnabled = await isGeolocationEnabled();
+    if (isEnabled == null) {
+      emit(state.copyWith(requestLocationPermission: true));
+    } else {
+      emit(state.copyWith(requestLocationPermission: false, isUsingGeolocation: isEnabled));
+      if (isEnabled) {
+        await getGeolocation();
+      }
     }
-    if (state.geolocation == null) {
-      emit(const LocationStepState());
-      loadGeolocation();
-      return;
-    }
-    emit(state.copyWith(isUsingGeolocation: true));
   }
 
   void confirmGeolocation() {
