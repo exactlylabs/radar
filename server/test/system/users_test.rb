@@ -1,13 +1,11 @@
 require "application_system_test_case"
 
 class UsersTest < ApplicationSystemTestCase
-  # Usefull links:
+  # Useful links:
   # https://www.rubydoc.info/gems/capybara/Capybara/Minitest/Assertions < assertions on the elements in the browser
   # https://guides.rubyonrails.org/v6.1/testing.html#system-testing
 
   setup do
-    now = Time.now
-    UsersAccount.create!(user: users(:user1), account: accounts(:root), joined_at: now, invited_at: now)
   end
 
   test "anonymous user redirected to log in" do
