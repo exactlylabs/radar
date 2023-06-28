@@ -59,6 +59,10 @@ dependencies:
   background_fetch: ^1.1.5
   permission_handler: ^10.2.0
   app_settings: ^4.2.0
+  firebase_messaging: ^14.4.1
+  firebase_core: ^2.10.0
+  flutter_local_notifications: ^13.0.0
+
 
 
 
