@@ -99,6 +99,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
   void cancelLocationPermissionRequest() => emit(state.copyWith(requestLocationPermission: false));
 
   Future<void> getGeolocation() async {
+    emit(state.copyWith(isUsingGeolocation: true));
     final position = await Geolocator.getCurrentPosition();
     final location = await getLocationByLatLng(position.latitude, position.longitude);
     if (location != null) {
@@ -123,15 +124,23 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     return location;
   }
 
-  void useInputLocationOption() => emit(state.copyWith(isUsingGeolocation: false));
+  void useInputLocationOption() {
+    if (!isClosed) {
+      emit(state.copyWith(isUsingGeolocation: false));
+    }
+  }
 
   Future<void> useGeolocationOption() async {
+    if (state.geolocation != null) {
+      emit(state.copyWith(isUsingGeolocation: true));
+      return;
+    }
     emit(state.copyWith(isGeolocationLoading: true));
     final isEnabled = await isGeolocationEnabled();
     if (isEnabled == null) {
       emit(state.copyWith(requestLocationPermission: true));
     } else {
-      emit(state.copyWith(requestLocationPermission: false, isUsingGeolocation: isEnabled));
+      emit(state.copyWith(requestLocationPermission: false));
       if (isEnabled) {
         await getGeolocation();
       }
@@ -150,7 +159,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
 
   void accurateLocation(double lat, double long) {
     Location? accurateLocation;
-    if (!state.isGeolocationEnabled! && state.location == null) {
+    if (state.location == null) {
       accurateLocation = Location.empty(state.query ?? '');
     } else {
       accurateLocation = state.location!.copyWith(latitude: lat, longitude: long);

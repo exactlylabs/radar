@@ -6,13 +6,14 @@ import 'package:client_mobile_app/presentations/speed_test/steps/location_step/b
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_picker_modal/map_location_picker_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_picker_modal/suggestions_list_location_picker_body.dart';
 
-Future<void> mapModal(
-    BuildContext context, bool? isScrollControlled, bool isUsingCurrentLocation, VoidCallback onPop) async {
+Future<void> mapModal(BuildContext context, bool? isScrollControlled, bool isUsingCurrentLocation,
+    VoidCallback onPop) async {
   return showModalBottomSheet(
     context: context,
     backgroundColor: Theme.of(context).colorScheme.background,
     shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0))),
+        borderRadius:
+            BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0))),
     isScrollControlled: isScrollControlled ?? false,
     builder: (_) => BlocProvider.value(
       value: BlocProvider.of<LocationStepCubit>(context),
@@ -63,7 +64,8 @@ class _LocationPickerModalState extends State<LocationPickerModal> {
           return SuggestionsListLocationPickerBody(
             suggestions: state.suggestions!,
             onAddressIsNotListed: () => setAddressIsNotListed(),
-            onPressed: (location) => context.read<LocationStepCubit>().chooseLocationOption(location),
+            onPressed: (location) =>
+                context.read<LocationStepCubit>().chooseLocationOption(location),
           );
         }
       },

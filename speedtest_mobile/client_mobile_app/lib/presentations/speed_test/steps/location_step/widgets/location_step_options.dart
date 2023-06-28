@@ -114,7 +114,7 @@ class _LocationStepOptionsState extends State<LocationStepOptions>
                 fontWeight: 600,
               ),
             ),
-          )
+          ),
         ],
       ),
     );

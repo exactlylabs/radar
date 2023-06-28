@@ -53,7 +53,7 @@ class AppInfoModal extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       enableDrag: true,
-      isScrollControlled: false,
+      isScrollControlled: true,
       backgroundColor: Theme.of(context).colorScheme.background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(

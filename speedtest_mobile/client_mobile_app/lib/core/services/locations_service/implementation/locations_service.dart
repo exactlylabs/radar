@@ -85,7 +85,13 @@ class LocationsService implements ILocationsService {
         'Content-Type': 'application/json',
       },
       body: FormData.fromMap({'coordinates': "$latitude, $longitude"}),
-      fromJson: (json) => Location.fromJsonWithDefaultValues(json),
+      fromJson: (json) {
+        if (json.containsKey('coordinates') && (json['coordinates'] as List).length == 2) {
+          return Location.fromJsonWithDefaultValues(json);
+        } else {
+          return null;
+        }
+      },
     );
     if (failureOrLocation.failure != null) {
       Sentry.captureException(failureOrLocation.failure!.exception,
