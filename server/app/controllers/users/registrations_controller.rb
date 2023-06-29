@@ -261,6 +261,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
       invite_id = token[0..-17]
       invite_secret = token[-16..-1]
       @invite = Invite.find(invite_id).authenticate_token(invite_secret)
+    else
+      raise ArgumentError.new("Couldn't find token")
     end
     if !@invite
       raise ActiveRecord::RecordNotFound.new("Couldn't find Invite", Invite.name)
