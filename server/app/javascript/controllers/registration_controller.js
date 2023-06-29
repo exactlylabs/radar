@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import handleError from "./error_handler_controller";
+import { validatePasswordFields } from '../password';
 
 const steps = {
   'email': 0,
@@ -306,7 +307,11 @@ export default class extends Controller {
   }
 
   checkPasswordChange(e) {
-    if(!this.validatePasswordFields()) return;
+    const validatePasswordsRes = validatePasswordFields(this.passwordInputTarget, this.passwordCheckInputTarget);
+    if(validatePasswordsRes) {
+      this.showGenericError(validatePasswordsRes);
+      return;
+    } 
     this.continueButtonTarget.classList.add('invisible');
     this.continueButtonSpinnerTarget.classList.remove('invisible');
     this.passwordChangeFormTarget.submit();
@@ -314,31 +319,12 @@ export default class extends Controller {
 
   checkPassword() {
     this.clearAlerts();
-    if(!this.validatePasswordFields()) return;
+    const validatePasswordsRes = validatePasswordFields(this.passwordInputTarget, this.passwordCheckInputTarget);
+    if (validatePasswordsRes) {
+      this.showGenericError(validatePasswordsRes);
+      return;
+    } 
     this.goToProfileStep();
-  }
-
-  validatePasswordFields() {
-    if (!this.passwordComplies()) {
-      this.showGenericError("Password must be 8 characters long and contain symbols and numbers");
-      return false ;
-    }
-    if (!this.passwordsMatch()) {
-      this.showGenericError("Passwords don't match");
-      return false;
-    }
-    return true;
-  }
-
-  passwordComplies() {
-    const password = this.passwordInputTarget.value;
-    return password.length >= 8 && /\d/.test(password) && /[!@#$%^&*]/.test(password);
-  }
-
-  passwordsMatch() {
-    const password = this.passwordInputTarget.value;
-    const passwordConfirmation = this.passwordCheckInputTarget.value;
-    return password === passwordConfirmation;
   }
 
   goToProfileStep() {

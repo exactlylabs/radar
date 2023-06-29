@@ -1,0 +1,168 @@
+@import "./shared/text.scss";
+@import "./shared/colors.scss";
+
+.accounts--delete-modal-content-container {
+  max-width: 40ch;
+  text-align: center;
+
+  h3, p {
+    margin: 0;
+  }
+
+  h3 {
+    margin-bottom: .5rem;
+  }
+}
+
+@media (max-width: 450px) {
+  .accounts--delete-modal-content-container {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.accounts--edit-modal-content-container {
+  max-width: 400px;
+  width: 90vw;
+}
+
+@media (max-width: 450px) {
+  .accounts--edit-modal-content-container {
+    width: 100%;
+
+  }
+}
+
+.accounts--modal-head-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  text-align: center;
+
+  .accounts--modal-head-initial-container {
+    width: 3.75rem;
+    aspect-ratio: 1;
+    border-radius: .5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $subtle-gray;
+    font-size: 1.25rem;
+    color: $gray;
+    letter-spacing: 0;
+    font-variation-settings: 'wght' $bold;
+    margin-bottom: .75rem;
+  }
+}
+
+.accounts--modal-title {
+  font-variation-settings: 'wght' $bold;
+  font-size: 1rem;
+  color: $deep-blue;
+  margin: 0 auto .25rem;
+}
+
+.accounts--radio-input-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: .5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.accounts--organization-icon-container {
+  width: 3.75rem;
+  min-width: 3.75rem;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $circular-icon-container-gray;
+  border-radius: 50%;
+  margin-inline: auto;
+  margin-bottom: 1rem;
+}
+
+.accounts--account-type-rows-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: .5rem;
+}
+
+.accounts--account-type-row-container {
+  min-width: 400px;
+  width: 100%;
+  background-color: $subtle-gray;
+  border-radius: .5rem;
+  padding: 0.875rem 1.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+
+  &.accounts--account-type-row-container-active {
+    outline: solid 2px $blue;
+    background-color: $badge--blue-background-color;
+  }
+
+  .accounts--account-type-title {
+    font-variation-settings: 'wght'$bold;
+    font-size: 0.938rem;
+    color: $deep-blue;
+    margin: 0;
+  }
+
+  * {
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 450px) {
+  .accounts--account-type-row-container {
+    max-width: 100%;
+    min-width: unset;
+  }
+}
+
+.accounts--account-type-row-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.125rem;
+}
+
+.accounts--account-name-input-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .5rem;
+
+  input {
+    width: 100%;
+  }
+}
+
+#accounts--create-account-button-loading {
+  height: 44px;
+  width: 133px;
+}
+
+@media (max-width: 450px) {
+  #accounts--create-account-button-loading {
+    width: 100%;
+  }
+}

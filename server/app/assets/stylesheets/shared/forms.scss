@@ -1,8 +1,6 @@
 @import "colors";
 @import "text";
 
-
-
 .forms--label-selected {
   font-size: 0.875rem;
   letter-spacing: 0;
@@ -53,8 +51,19 @@
   &[data-x-translate="true"] {
     right: 2.75rem;
   }
+
+  * {
+    pointer-events: none;
+  }
 }
 
 .forms--row {
   margin-bottom: 16px;
+}
+
+.forms--radio-input {
+  accent-color: $blue;
+  width: 1.125rem;
+  aspect-ratio: 1;
+  background-color: transparent;
 }

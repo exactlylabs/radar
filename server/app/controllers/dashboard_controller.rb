@@ -3,6 +3,10 @@ class DashboardController < ApplicationController
 
   # GET /dashboard or /dashboard.json
   def index
+    if params[:new_account].present? && params[:new_account] == 'true'
+      new_account_name = policy_scope(Account).last.name
+      @notice = "#{new_account_name} was successfully created."
+    end
     @clients = policy_scope(Client)
     locations_to_filter = policy_scope(Location)
     @locations = get_filtered_locations(locations_to_filter, params[:filter])

@@ -1,7 +1,6 @@
-<button type="button"
+<a href="<%= new_account_path %>"
   class="sidebar--account-item-container sidebar--add-account-button mb-1"
-  data-bs-toggle="modal"
-  data-bs-target="#add_account_wizard"
+  data-turbo-frame="create_account_modal"
   data-only-item="<%= only_item %>"
   data-action="<%= narrow ? 'click->sidebar#closeSearchIfOpen' : nil %>"
 >
@@ -11,4 +10,4 @@
   <% if !narrow %>
     <p class="m-0 sidebar-item--text-static sidebar--account-item-name ellipsis">Create an account</p>
   <% end %>
-</button>
+</a>

@@ -132,3 +132,11 @@
 <div class="modal fade" tabindex="-1" id="edit_profile_picture_wizard">
   <%= render partial: "devise/registrations/edit_profile_picture/edit_profile_picture_wizard" %>
 </div>
+
+<%= render partial: "application/components/modals/turbo_modal", 
+    locals: { turbo_frame_tag_id: "change_password_modal" }
+%>
+
+<% if params[:updated_password].present? && params[:updated_password] == "true" %>
+  <%= render partial: "application/notice_alert", locals: {notice: "Your password has been updated successfully."} %>
+<% end %>

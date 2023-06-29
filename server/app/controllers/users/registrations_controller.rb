@@ -176,11 +176,15 @@ class Users::RegistrationsController < Devise::RegistrationsController
     if resource_updated
       set_flash_message_for_update(resource, prev_unconfirmed_email)
       bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
-
-      respond_with resource, location: edit_user_registration_path
+      @notice = "Password was successfully updated."
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to edit_user_registration_path, notice: @notice }
+      end
     else
       clean_up_passwords resource
       set_minimum_password_length
+      @error = "There was an error updating your password. Please, try again."
       render action: 'edit_password'
     end
   end

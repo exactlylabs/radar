@@ -5,6 +5,7 @@ $error-red: #e54b4b;
 $danger: #f1416c;
 $success-green: #50cd89;
 $success-green: #50cd89;
+$circular-icon-container-gray: #ecf2fc;
 
 // Primaries
 $blue: #4b7be5;
@@ -94,6 +95,9 @@ $table--invitee-row-background-color: rgba(188, 187, 199, 0.05);
 $table--even-row-color: #5533a5;
 $table--odd-row-color: #e565bb;
 $table--invitee-row-color: rgba(188, 187, 199, 0.05);
+
+// Modals
+$modals--underlay-background-color: rgba(35, 34, 52, 0.5);
 
 .transparent {
   background-color: transparent;

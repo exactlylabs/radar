@@ -22,7 +22,10 @@
       <!--begin::Row-->
       <div class="row">
         <div class="col-12">
-          <a href="#" class="custom-button custom-button--primary custom-button--lg mx-auto" data-bs-toggle="modal" data-bs-target="#add_account_wizard">Add new account</a>
+          <a href="<%= new_account_path %>"
+            class="custom-button custom-button--primary custom-button--lg mx-auto"
+            data-turbo-frame="create_account_modal"
+          >Add new account</a>
         </div>
       </div>
       <!--end::Row-->

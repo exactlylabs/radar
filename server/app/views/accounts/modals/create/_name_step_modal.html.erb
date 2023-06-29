@@ -1,0 +1,39 @@
+<div class="invisible" data-add-account-target="step1">
+  <%= render partial: "application/components/modals/modal_header",
+      locals: {
+        title: "Create an account",
+        is_custom: true,
+        goes_back: true,
+        go_back_action: "click->add-account#goToTypeStep"
+      }
+  %>
+  <div class="modals--content-container" data-type="full">
+
+    <div class="accounts--organization-icon-container">
+      <%= image_tag image_url('organization-blue-icon.png'), width: 32, height: 32 %>
+    </div>
+
+    <h1 class="modals--main-title mb-8 text-center">Let's set up your new account.</h1>
+
+    <div class="accounts--account-name-input-container">
+      <label class="forms--label required"
+        data-add-account-target="accountNameLabel"
+      ></label>
+      <input type="text"
+        class="forms--text-input forms--text-input-focusable"
+        data-action="input->add-account#handleAccountNameChange"
+        data-add-account-target="accountNameInput"
+      />
+      <p class="additional-text wrap">Anyone you share your account with will see this name.</p>
+    </div>
+  </div>
+
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
+    <button type="button"
+      class="custom-button custom-button--primary custom-button--sm custom-button--disabled disabled"
+      data-action="click->add-account#goToShareStep"
+      data-add-account-target="continueToShareButton"
+    >Continue</button>
+  </div>
+</div>

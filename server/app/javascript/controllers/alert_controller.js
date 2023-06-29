@@ -7,7 +7,6 @@ export const AlertTypes = {
 }
 
 export default class extends Controller {
-
   static targets = [
     "alertMessage",
     "alertSuccessIcon",

@@ -50,6 +50,11 @@ export default class extends Controller {
       let event = new Event("select2-clear", { bubbles: true }); // fire a native event
       this.dispatchEvent(event);
     });
+    $(this.element).on("select2:unselect", function () {
+      let event = new Event("select2-unselect", { bubbles: true }); // fire a native event
+      this.dispatchEvent(event);
+    });
+    
   }
 
   customMovePodTemplate(state) {

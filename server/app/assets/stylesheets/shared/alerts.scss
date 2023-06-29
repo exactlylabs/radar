@@ -5,16 +5,11 @@
 .custom-alert {
   width: max-content;
   padding: 0.75rem;
-  padding: 0.75rem;
   position: fixed;
   bottom: 3rem;
-  right: 50%;
-  transform: translateX(50%);
-  z-index: 5;
-  bottom: 3rem;
-  right: 50%;
-  transform: translateX(50%);
-  z-index: 5;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999; // ALWAYS first layer
   background-color: $alert--primary-background-color;
   display: flex;
   flex-direction: row;
@@ -27,7 +22,7 @@
   h4 {
     font-size: 0.938rem;
     line-height: 1.375rem;
-    font-variation-settings: 'wght'$medium;
+    font-variation-settings: 'wght' $medium;
   }
   
   &[data-alert-type="error"] {
@@ -46,6 +41,12 @@
   
   &.opening {
     animation: alert-opening 0.3s forwards ease-in;
+  }
+}
+
+@media (max-width: 768px) {
+  .custom-alert {
+    max-width: calc(100vw - 32px);
   }
 }
   
@@ -75,7 +76,8 @@
   
 .alerts--icon-container {
   width: 1.5rem;
-  height: 1.5rem;
+  min-width: 1.5rem;
+  aspect-ratio: 1;
   display: flex;
   justify-content: center;
   align-items: center;
