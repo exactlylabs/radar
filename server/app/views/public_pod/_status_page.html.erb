@@ -20,7 +20,7 @@
 
   <div class="public--horizontal-divider"></div>
 
-  <% if client.location.nil? || client.location.latest_measurement.nil? %>
+  <% if client.location&.latest_measurement.nil? %>
     <div class="public--no-measurement-container mb-8">
       <div class="public--no-measurement-icons-container">
         <div class="public--no-measurement-icon-container me-4">
@@ -71,9 +71,7 @@
     <div id="public--status-card-isp">
       <p class="regular-bold-text mb-1">Internet provider</p>
       <p class="additional-text m-0">
-        <%= client.location.nil? ||
-            client.location.latest_measurement.nil? ||
-            client.location.latest_measurement.autonomous_system.nil? ? 
+        <%= client.location&.latest_measurement&.autonomous_system.nil? ? 
           "Not available" : 
           client.location.latest_measurement.autonomous_system.autonomous_system_org.name %>
       </p>
@@ -85,14 +83,14 @@
       <div class="public--status-card-speed">
         <%= image_tag image_url('download-icon-blue.png'), class: "public--arrow-icon" %>
         <p class="regular-bold-text mb-1">Avg Download Speed</p>
-        <p class="additional-text m-0 text-left"><%= client.location.nil? || client.location.latest_measurement.nil? ? "N/A" : "#{client.location.measurements.average(:download).round(1)} Mbps" %></p>
+        <p class="additional-text m-0 text-left"><%= client.location&.latest_measurement.nil? ? "N/A" : "#{client.location.measurements.average(:download).round(1)} Mbps" %></p>
       </div>
     </div>
     <div class="public--status-card half">
       <div class="public--status-card-speed">
         <%= image_tag image_url('upload-icon-blue.png'), class: "public--arrow-icon" %>
         <p class="regular-bold-text mb-1">Avg Upload Speed</p>
-        <p class="additional-text m-0 text-left"><%= client.location.nil? || client.location.latest_measurement.nil? ? "N/A" : "#{client.location.measurements.average(:upload).round(1)} Mbps" %></p>
+        <p class="additional-text m-0 text-left"><%= client.location&.latest_measurement.nil? ? "N/A" : "#{client.location.measurements.average(:upload).round(1)} Mbps" %></p>
       </div>
     </div>
   </div>
