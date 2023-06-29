@@ -26,13 +26,13 @@ module LocationNotificationJobs
       county = location.county_geospace
       place = location.place_geospace
 
-      per_county_count = county&.locations&.count || 0
-      per_place_count = place&.locations&.count || 0
+      per_county_count = county&.locations&.where_online&.count || 0
+      per_place_count = place&.locations&.where_online&.count || 0
       per_isp_county_count = nil
       per_isp_count = nil
       if as_org.present?
-        per_isp_county_count = county&.locations&.joins(:clients => :autonomous_system)&.where("autonomous_systems.autonomous_system_org_id": as_org.id)&.count("DISTINCT(locations.id)") || 0
-        per_isp_count = Client.joins(:autonomous_system).where("autonomous_systems.autonomous_system_org_id": as_org.id).count || 0
+        per_isp_county_count = county&.locations&.where_online&.joins(:clients => :autonomous_system)&.where("autonomous_systems.autonomous_system_org_id": as_org.id)&.count("DISTINCT(locations.id)") || 0
+        per_isp_count = Client.where_online.joins(:autonomous_system).where("autonomous_systems.autonomous_system_org_id": as_org.id).count || 0
       end
 
       EventsNotifier::LocationInfo.new(
@@ -41,7 +41,7 @@ module LocationNotificationJobs
         locations_per_county_count: per_county_count,
         locations_per_place_count: per_place_count,
         locations_per_isp_county_count: per_isp_county_count,
-        locaions_per_isp_count: per_isp_count
+        locations_per_isp_count: per_isp_count
       )
     end
   end

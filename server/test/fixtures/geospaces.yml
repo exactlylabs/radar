@@ -1,0 +1,22 @@
+state1:
+  name: State 1
+  namespace: state
+  geoid: s01
+
+
+state2:
+  name: State 2
+  namespace: state
+  geoid: s02
+
+
+county1:
+  name: County 1
+  namespace: county
+  geoid: c01
+
+
+county2:
+  name: County 2
+  namespace: county
+  geoid: c02
