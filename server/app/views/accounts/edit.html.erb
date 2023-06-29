@@ -1,3 +1,10 @@
 <%= turbo_frame_tag "edit_account_modal" do %>
-  <%= render partial: "accounts/edit_modal", locals: {account: @account} %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+      locals: {
+        modal_title: 'Account settings',
+        modal_partial_path: "accounts/modals/edit/edit_modal",
+        resource: @account,
+        custom_submit_end_handler: nil,
+      }
+  %>
 <% end %>

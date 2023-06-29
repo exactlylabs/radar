@@ -1,14 +1,30 @@
 class AccountsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_account, except: %i[ create ]
+  before_action :set_account, except: %i[ create, new ]
+
+  def new
+    @account = Account.new
+    respond_to do |format|
+      format.html
+      format.turbo_stream { render turbo_stream: turbo_stream.update('create_account_modal', partial: "accounts/create/create_modal", locals: { account: @account }) }
+    end
+  end
 
   def create
     error = false
+    shared_to_accounts_ids = params[:shared_to_accounts_ids].present? ? JSON.parse(params[:shared_to_accounts_ids]) : []
     begin
       Account.transaction do
         @account = Account.create! account_params
         now = Time.now
         @user_account = UsersAccount.create!(user_id: current_user.id, account_id: @account.id, joined_at: now, invited_at: now)
+        shared_to_accounts_ids.each do |id|
+          new_shared_account = SharedAccount.new
+          new_shared_account.original_account_id = @account.id
+          new_shared_account.shared_to_account_id = id.to_i
+          new_shared_account.shared_at = Time.now
+          new_shared_account.save!
+        end
       end
     rescue Exception => e
       error = e.message
@@ -24,9 +40,7 @@ class AccountsController < ApplicationController
   def delete
     respond_to do |format|
       format.html
-      format.turbo_stream {
-        render turbo_stream: turbo_stream.update('delete_account_modal', partial: "accounts/delete_modal", locals: { account: @account })
-      }
+      format.turbo_stream { render turbo_stream: turbo_stream.update('delete_account_modal', partial: "accounts/delete/delete_modal", locals: { account: @account }) }
     end
   end
 
@@ -37,13 +51,14 @@ class AccountsController < ApplicationController
       if @account.update(deleted_at: now) && users_accounts.update_all(deleted_at: now)
         # If user decides to delete currently selected account
         # then automatically switch over to a different available one
-        if @account == current_account || current_account.is_all_accounts?
+        if @account == current_account && !current_account.is_all_accounts?
           get_first_user_account_and_set_cookie
         end
-        format.turbo_stream { render turbo_stream: turbo_stream.remove(@account) }
-        format.html { redirect_to "/dashboard", notice: "Account was successfully deleted." }
+        @notice = "Account was successfully deleted."
+        format.turbo_stream
+        format.html { redirect_to "/dashboard", notice: @notice }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { redirect_back fallback_location: root_path, notice: "Error removing account. Please try again later." }
       end
     end
   end
@@ -51,9 +66,7 @@ class AccountsController < ApplicationController
   def edit
     respond_to do |format|
       format.html
-      format.turbo_stream {
-        render turbo_stream: turbo_stream.update('edit_account_modal', partial: "accounts/edit_modal", locals: { account: @account })
-      }
+      format.turbo_stream { render turbo_stream: turbo_stream.update('edit_account_modal', partial: "accounts/edit/edit_modal", locals: { account: @account }) }
     end
   end
 

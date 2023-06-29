@@ -59,43 +59,27 @@
           <%= yield %>
         </div>
       </div>
+      
       <div class="modal fade"
-           tabindex="-1"
-           id="add_account_wizard"
-           data-controller="add-account"
+        tabindex="-1"
+        data-controller="modal"
+        data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal"
       >
-        <%= render partial: "accounts/add_account_wizard/add_account_wizard" %>
+        <%= turbo_frame_tag "add_member_modal" do %>
+        <% end %>
       </div>
-    <div class="modal fade"
-         tabindex="-1"
-         data-controller="modal"
-         data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal"
-    >
-      <%= turbo_frame_tag "add_member_modal" do %>
-      <% end %>
-    </div>
-    <div class="modal fade"
-         tabindex="-1"
-         data-controller="modal"
-         data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal"
-    >
-      <%= turbo_frame_tag "edit_account_modal" do %>
-      <% end %>
-    </div>
-    <div class="modal fade"
-         tabindex="-1"
-         data-controller="modal"
-         data-action="turbo:submit-end->modal#redirectHomeOnSuccess turbo:frame-render->modal#showModal"
-    >
-      <%= turbo_frame_tag "delete_account_modal" do %>
-      <% end %>
-    </div>
+      <%= render partial: "application/components/modals/turbo_modal",
+        locals: { turbo_frame_tag_id: "create_account_modal" }
+      %>
+      <%= render partial: "application/components/modals/turbo_modal",
+          locals: { turbo_frame_tag_id: "edit_account_modal" }
+      %>
+      <%= render partial: "application/components/modals/turbo_modal",
+          locals: { turbo_frame_tag_id: "delete_account_modal" }
+      %>
     <% end %>
     <%= render partial: "application/notice_alert", locals: {notice: notice.present? ? notice : @notice} %>
     <%= render partial: "application/components/alerts/empty_notice_alert", locals: {notice: notice.present? ? notice : @notice} %>
-    <%= turbo_frame_tag 'realtime-notice' do %>
-    <% end %>
-    <%= render partial: "application/notice_alert", locals: {notice: '', placeholder: true} %>
     <%= turbo_frame_tag 'realtime-notice' do %>
     <% end %>
   </body>

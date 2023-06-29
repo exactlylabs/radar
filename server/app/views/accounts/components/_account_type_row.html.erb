@@ -1,0 +1,16 @@
+<div class="accounts--account-type-row-container <%= account_type == 'personal' ? 'accounts--account-type-row-container-active' : nil %>"
+  data-account-type="<%= account_type %>"
+  data-action="click->add-account#handleAccountTypeClick"
+  data-add-account-target="<%= account_type %>AccountRow"
+>
+  <input class="forms--radio-input me-2"
+    type="radio"
+    value="<%= account_type %>"
+    data-add-account-target="<%= account_type %>Radio"
+    <%= account_type == 'personal' ? "checked=checked" : nil %>
+  />
+  <div class="accounts--account-type-row-text-container">
+    <p class="accounts--account-type-title wrap"><%= title %></p>
+    <p class="additional-text wrap m-0"><%= subtitle %></p>
+  </div>
+</div>

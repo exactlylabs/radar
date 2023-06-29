@@ -1,5 +1,9 @@
+<% # Need this to progressively migrate to custom modals and not break previous Bootstrap ones %>
+<% is_custom = local_assigns[:is_custom].present? %>
+
 <button
   type="button"
   class="custom-button custom-button--secondary custom-button--sm me-4"
-  data-bs-dismiss="modal"
+  data-bs-dismiss="<%= is_custom ? nil : 'modal'%>"
+  data-action="<%= is_custom ? 'click->custom-modal#closeModal' : nil%>"
 ><%= text %></button>

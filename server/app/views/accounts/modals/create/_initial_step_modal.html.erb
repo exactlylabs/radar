@@ -1,0 +1,38 @@
+<div data-add-account-target="step0">
+  <%= render partial: "application/components/modals/modal_header",
+      locals: { title: "Create an account", is_custom: true }
+  %>
+  <div class="modals--content-container" data-type="full">
+
+    <div class="accounts--organization-icon-container">
+    <%= image_tag image_url('organization-blue-icon.png'), width: 32, height: 32 %>
+    </div>
+
+    <h1 class="modals--main-title mb-8 text-center">What is your account for?</h1>
+
+    <div class="accounts--account-type-rows-container">
+      <%= render partial: "accounts/components/account_type_row",
+          locals: {
+            account_type: "personal",
+            title: "For personal use",
+            subtitle: "Use Radar at your home or a similar place."
+          }
+      %>
+      <%= render partial: "accounts/components/account_type_row",
+          locals: {
+            account_type: "organization",
+            title: "For my organization",
+            subtitle: "Use at your company or organization."
+          }
+      %>
+    </div>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
+    <button type="button"
+      class="custom-button custom-button--primary custom-button--sm"
+      data-action="click->add-account#goToNameStep"
+      data-add-account-target="continueToNameButton"
+    >Continue</button>
+  </div>
+</div>

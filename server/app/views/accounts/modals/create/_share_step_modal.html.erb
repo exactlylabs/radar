@@ -1,0 +1,59 @@
+<div class="invisible" data-add-account-target="step2">
+  <%= render partial: "application/components/modals/modal_header",
+      locals: {
+        title: "Create an account",
+        is_custom: true,
+        goes_back: true,
+        go_back_action: "click->add-account#goToNameStep"
+      }
+  %>
+
+  <div class="modals--content-container" data-type="full">
+
+    <div class="accounts--organization-icon-container">
+      <%= image_tag image_url('share-blue-icon.png'), width: 32, height: 32 %>
+    </div>
+
+    <h1 class="modals--main-title mb-2 text-center wrap" data-add-account-target="shareTitle"></h1>
+    <p class="additional-text mb-8 text-center wrap" data-add-account-target="shareSubtitle"></p>
+
+    <div class="w-100 d-flex flex-column justify-content-start align-items-start">
+      <label class="forms--label mb-2">Share account with...</label>
+      <select id=""
+        class="forms--select form-select select2-hidden-accessible"
+        data-placeholder="Do not share"
+        tabindex="-1"
+        data-controller="select2"
+        style="background-color: #f5f8fa;"
+        multiple="true"
+        name="share_to[]"
+        data-is-multi="true"
+        data-action="select2-select->add-account#handleSharedToAccountSelect select2-unselect->add-account#handleSharedToAccountSelect"
+      >
+        <% current_user.accounts.not_deleted.distinct.where.not(id: current_account.id).each do |account| %>
+          <option value="<%= account.id %>"
+            label="<%= account.name %>"
+            data-add-account-target="shareOption"
+          ><%= account.name %></option>
+        <% end %>
+      </select>
+      <p class="mt-2 mb-10 help-text wrap" data-add-account-target="accessText">Your account won't be shared with anyone else.</p>
+    </div>
+  </div>
+
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
+    <button type="button"
+      class="custom-button custom-button--primary custom-button--sm"
+      data-action="click->add-account#createAccount"
+      data-add-account-target="createAccountButton"
+    >Create account</button>
+    <button type="button"
+      id="accounts--create-account-button-loading"
+      class="invisible custom-button custom-button--primary custom-button--sm"
+      data-add-account-target="createAccountButtonLoading"
+    >
+      <div class="spinner-border spinner-border-sm text-light m-auto" role="status"></div>
+    </button>
+  </div>
+</div>

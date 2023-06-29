@@ -1,5 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 
+const EYE_SLASH_ICON_SUFFIX = '_eye_slash_icon';
+const EYE_ICON_SUFFIX = '_eye_icon';
+
 export default class PasswordRevealController extends Controller {
   static targets = [
     "eyeSlashIcon",
@@ -11,6 +14,30 @@ export default class PasswordRevealController extends Controller {
   ];
 
   connect() {}
+
+  newToggleVisibility(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const inputRefId = e.target.dataset.inputRef;
+    const inputRef = document.getElementById(inputRefId);
+    const eyeIconRef = document.getElementById(`${inputRefId}${EYE_ICON_SUFFIX}`);
+    const eyeSlashIconRef = document.getElementById(`${inputRefId}${EYE_SLASH_ICON_SUFFIX}`);
+    if(inputRef && eyeIconRef && eyeSlashIconRef) {
+      const hasToBeVisible = eyeIconRef.classList.contains('invisible');
+      this.handleVisibility(inputRef, eyeIconRef, eyeSlashIconRef, hasToBeVisible);
+    }
+  }
+
+  handleVisibility(input, eyeIcon, eyeSlashIcon, hasToBeVisible) {
+    input.setAttribute("type", hasToBeVisible ? "text" : "password");
+    if(hasToBeVisible) {
+      eyeIcon.classList.remove('invisible');
+      eyeSlashIcon.classList.add('invisible');
+    } else {
+      eyeIcon.classList.add('invisible');
+      eyeSlashIcon.classList.remove('invisible');
+    }
+  }
 
   // Doing the visibility control programmatically as the
   // default template component usage was sometimes broken

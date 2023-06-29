@@ -1,0 +1,10 @@
+<%= turbo_frame_tag "create_account_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+      locals: {
+        modal_title: "Create an account",
+        modal_partial_path: "accounts/modals/create/create_modal",
+        resource: @account,
+        custom_submit_end_handler: "turbo:submit-end->accounts#createAccount"
+      }
+  %>
+<% end %>

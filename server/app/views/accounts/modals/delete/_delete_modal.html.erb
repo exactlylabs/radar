@@ -1,0 +1,18 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: { title: "Delete account", is_custom: true }
+%>
+<div class="modals--content-container" data-type="full">
+  <div class="accounts--delete-modal-content-container">
+    <h3 class="modal-main-title wrap">Are you sure you want to leave "<%= resource.name %>" account?</h3>
+    <p class="additional-text wrap">If you choose to leave this account, you'll need to be re-invited to access it again.</p>
+  </div>
+</div>
+<div class="modals--footer-container">
+  <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+  <%= button_to "Delete", 
+    account_path(resource), 
+    method: :delete,
+    class: "custom-button custom-button--secondary-light-danger custom-button--lg",
+    data: { turbo: false }
+  %>
+</div>

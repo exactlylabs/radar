@@ -1,0 +1,12 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: { title: "Account settings", is_custom: true }
+%>
+<%= form_with(model: Account, url: account_path(resource.id), method: :put, data: {"turbo-frame" => "_top"}) do |form| %>
+  <div class="modals--content-container" data-type="full">
+    <%= render partial: "accounts/modals/edit/edit_modal_content", locals: { account: resource, form: form } %>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true} %>
+    <%= form.submit "Save", class: "custom-button custom-button--sm custom-button--primary" %>
+  </div>
+<% end %>

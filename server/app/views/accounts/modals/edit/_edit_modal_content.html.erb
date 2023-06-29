@@ -1,0 +1,50 @@
+<div class="accounts--edit-modal-content-container">
+  <section class="accounts--modal-head-container">
+    <div class="accounts--modal-head-initial-container"><%= account.name[0].upcase %></div>
+    <h3 class="accounts--modal-title"><%= account.name %></h3>
+    <p class="help-text m-0"><%= account.users.count %> members</p>
+  </section>
+
+  <section>
+    <div class="d-flex flex-column text-start mb-7">
+      <label class="forms--label mb-2 required">Account name</label>
+      <%= form.text_field :name, class: "forms--text-input forms--text-input-focusable", value: account.name, autofocus: true %>
+    </div>
+    <div class="d-flex flex-column text-start"
+      data-controller="edit-account"
+      data-account-type="<%= account.is_personal? ? 'personal' : 'organization'%>"
+    >
+      <label class="forms--label mb-2">Account purpose</label>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+            type="radio"
+            value="personal"
+            name="account[account_type]"
+            <%= account.is_personal? ? "checked=checked" : nil %>
+            id="personal-radio"
+            data-action="change->edit-account#handleChangeAccountType"
+            />
+          <label class="<%= account.is_personal? ? 'regular-bold-text' : 'regular-text' %>"
+            for="personal-radio"
+            data-edit-account-target="personalLabel"
+          >Personal</label>
+        </div>
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+            type="radio"
+            value="organization"
+            name="account[account_type]"
+            <%= @account.is_organization? ? "checked=checked" : nil %>
+            id="organization-radio"
+            data-action="change->edit-account#handleChangeAccountType"
+            />
+          <label class="<%= !account.is_personal? ? 'regular-bold-text' : 'regular-text' %>"
+            for="organization-radio"
+            data-edit-account-target="organizationLabel"
+          >Organization</label>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

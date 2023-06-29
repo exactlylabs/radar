@@ -38,19 +38,17 @@
           <div class="d-flex flex-row justify-content-between align-items-center w-100">
             <div class="input-group forms--input-group" style="width: 50%; max-width: 400px">
               <select id=""
-                      class="forms--select form-select select2-hidden-accessible"
-                      data-placeholder="Do not share"
-                      tabindex="-1"
-                      data-controller="select2"
-                      style="background-color: #f5f8fa;"
-                      multiple="true"
-                      name="share_to[]"
-                      data-is-multi="true"
+                class="forms--select form-select select2-hidden-accessible"
+                data-placeholder="Do not share"
+                tabindex="-1"
+                data-controller="select2"
+                style="background-color: #f5f8fa;"
+                multiple="true"
+                name="share_to[]"
+                data-is-multi="true"
               >
-                <% current_user.accounts.each do |account| %>
-                  <% if current_account.id != account.id %>
-                    <option value="<%= account.id %>" label="<%= account.name %>" <%= policy_scope(SharedAccount).where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
-                  <% end %>
+                <% current_user.accounts.not_deleted.distinct.where.not(id: current_account.id).each do |account| %>
+                  <option value="<%= account.id %>" label="<%= account.name %>" <%= policy_scope(SharedAccount).where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
                 <% end %>
               </select>
             </div>

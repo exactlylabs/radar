@@ -1,0 +1,23 @@
+<% is_headless = local_assigns[:modal_title].nil? %>
+<% submit_end_handler = local_assigns[:custom_submit_end_handler].present? ? local_assigns[:custom_submit_end_handler] : "turbo:submit-end->custom-modal#submit" %>
+
+<div class="modals--main-container"
+  data-controller="custom-modal"
+  data-modal-type="<%= is_headless ? 'headless' : 'full' %>"
+  data-action="<%= submit_end_handler %> keydown.esc->custom-modal#closeModal"
+>
+  <div class="modals--underlay" data-action="click->custom-modal#closeModal"></div>
+  <div id="<%= is_headless ? 'headless-modal' : 'full-modal' %>" class="modals--container opening">
+    <% if !is_headless %>
+      <%= render partial: "application/components/modals/modal_header",
+          locals: { title: modal_title, is_custom: true }
+      %>
+    <% end %>
+    <div class="modals--content-container" data-type="<%= is_headless ? 'headless' : 'full' %>">
+      <%= render partial: content_partial_path, locals: { resource: resource } %>
+    </div>
+    <div class="modals--footer-container">
+      <%= render partial: footer_partial_path, locals: { resource: resource }  %>
+    </div>
+  </div>
+</div>
