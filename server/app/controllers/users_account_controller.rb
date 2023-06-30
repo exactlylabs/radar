@@ -118,11 +118,4 @@ class UsersAccountController < ApplicationController
       end
     end
   end
-
-  private
-  def check_account_presence
-    if !current_account
-      redirect_to "/dashboard", notice: "Error: You have no accounts! Start by creating one."
-    end
-  end
 end

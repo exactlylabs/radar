@@ -499,10 +499,4 @@ class ClientsController < ApplicationController
     return if !is_from_search
     store_recent_search(params[:id], Recents::RecentTypes::CLIENT)
   end
-
-  def check_account_presence
-    if !current_account
-      redirect_to "/dashboard", notice: "Error: You have no accounts! Start by creating one."
-    end
-  end
 end

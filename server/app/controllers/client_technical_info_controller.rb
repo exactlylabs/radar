@@ -1,5 +1,6 @@
 class ClientTechnicalInfoController < ApplicationController
   before_action :authenticate_user!
+  before_action :check_account_presence, only: %i[ index ]
   before_action :set_client
 
   def index
