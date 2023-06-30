@@ -1,7 +1,7 @@
 module StudyLevelHandler
 
   module SystemOutageEventsHandler
-      
+
     private
 
     def handle_system_outage_event!(event)
@@ -11,12 +11,12 @@ module StudyLevelHandler
       elsif event.name == SystemOutage::Events::FINISHED
         @in_outage = false
         outage = event.snapshot.state
-        # Once a system outage is finished, we search for 
+        # Once a system outage is finished, we search for
         # pods whose state differs from the state before the outage.
         sql = %{
           WITH state_before_outage AS (
-            SELECT 
-              DISTINCT ON (snapshots.aggregate_id) snapshots.aggregate_id, 
+            SELECT
+              DISTINCT ON (snapshots.aggregate_id) snapshots.aggregate_id,
               (state->>'online')::boolean as online,
               (state->>'account_id')::bigint as account_id,
               (state->>'location_id')::bigint as location_id,
@@ -28,7 +28,7 @@ module StudyLevelHandler
             ORDER BY snapshots.aggregate_id, timestamp DESC
           ), state_right_before_ending AS (
             SELECT
-              DISTINCT ON (snapshots.aggregate_id) snapshots.aggregate_id, 
+              DISTINCT ON (snapshots.aggregate_id) snapshots.aggregate_id,
               (state->>'online')::boolean as online,
               (state->>'account_id')::bigint as account_id,
               (state->>'location_id')::bigint as location_id,
@@ -39,7 +39,7 @@ module StudyLevelHandler
             AND timestamp < :end_time
             ORDER BY snapshots.aggregate_id, timestamp DESC
           )
-          
+
           SELECT
             f.online as from_online,
             f.account_id as from_account_id,
@@ -49,7 +49,7 @@ module StudyLevelHandler
             t.account_id as to_account_id,
             t.location_id as to_location_id,
             t.autonomous_system_id as to_autonomous_system_id
-          
+
           FROM state_before_outage f
           RIGHT JOIN state_right_before_ending t ON f.aggregate_id = t.aggregate_id
           WHERE f.online != t.online
@@ -57,8 +57,8 @@ module StudyLevelHandler
         records = ActiveRecord::Base.connection.execute(
           ApplicationRecord.sanitize_sql(
             [sql, {
-              start_time: outage["start_time"], 
-              end_time: outage["end_time"], 
+              start_time: outage["start_time"],
+              end_time: outage["end_time"],
               client_aggregate_type: Client.name
             }]
           )

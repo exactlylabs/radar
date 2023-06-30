@@ -1,22 +1,22 @@
 module StudyLevelHandler
 
   module MeasurementsHandler
-      
+
       private
 
       def handle_measurement(id, location_id, lonlat, timestamp, as_org_id, as_org_name)
         self.get_aggregates(lonlat, as_org_id, as_org_name).each do |aggregate|
           parent_id = aggregate["parent_id"]
-          key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location_id}-#{lonlat.longitude}-#{lonlat.latitude}"
+          key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location_id}-#{lonlat.longitude}-#{lonlat.latitude}-measurements"
           last_obj = @cached_projections[key]
           if last_obj.nil?
             last_obj = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location_id, "measurements"
           end
           if last_obj.nil?
             last_obj = self.new_projection(
-              aggregate, lonlat, as_org_id: as_org_id, 
+              aggregate, lonlat, as_org_id: as_org_id,
               location_id: location_id, measurement_id: id
-            )    
+            )
           end
 
           obj = self.new_record_from_measurement! id, timestamp, last_obj
@@ -27,16 +27,16 @@ module StudyLevelHandler
       def handle_speed_test(id, lonlat, timestamp, as_org_id, as_org_name)
         self.get_aggregates(lonlat, as_org_id, as_org_name).each do |aggregate|
           parent_id = aggregate["parent_id"]
-          key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{nil}-#{lonlat.longitude}-#{lonlat.latitude}"
+          key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{nil}-#{lonlat.longitude}-#{lonlat.latitude}-measurements"
           last_obj = @cached_projections[key]
           if last_obj.nil?
             last_obj = StudyLevelProjection.latest_for_with_lonlat aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, lonlat, "measurements"
           end
           if last_obj.nil?
             last_obj = self.new_projection(
-              aggregate, lonlat, as_org_id: as_org_id, 
+              aggregate, lonlat, as_org_id: as_org_id,
               client_speed_test_id: id
-            )  
+            )
           end
 
           obj = self.new_record_from_client_speed_test! id, timestamp, last_obj

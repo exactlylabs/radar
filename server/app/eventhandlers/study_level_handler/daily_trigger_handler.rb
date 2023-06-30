@@ -12,12 +12,12 @@ module StudyLevelHandler
       .order("snapshots.aggregate_id, timestamp DESC")
       .select('DISTINCT ON ("snapshots".aggregate_id) snapshots.*, "events".timestamp')
       .each do |snapshot|
-        
+
         client = snapshot.state
         if client["location_id"].nil? || online_locations.include?(client["location_id"])
           next
         end
-        
+
         as_org_id, as_org_name = self.as_org_info(client["autonomous_system_id"])
         if StudyLevelProjection.where(
           autonomous_system_org_id: as_org_id,
@@ -33,7 +33,7 @@ module StudyLevelHandler
           end
           return if location.lonlat.nil?
           self.get_aggregates(location.lonlat, as_org_id, as_org_name).each do |aggregate|
-            key = "#{aggregate["level"]}-#{aggregate["parent_id"]}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location.id}-#{location.lonlat.longitude}-#{location.lonlat.latitude}"
+            key = "#{aggregate["level"]}-#{aggregate["parent_id"]}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location.id}-#{location.lonlat.longitude}-#{location.lonlat.latitude}-daily_trigger"
             last_obj = @cached_projections[key]
             if last_obj.nil?
               last_obj = StudyLevelProjection.latest_for(aggregate['level'], aggregate['parent_id'], aggregate['aggregate_id'], as_org_id, location.id, "daily_trigger")

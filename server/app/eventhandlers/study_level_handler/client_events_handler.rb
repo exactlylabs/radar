@@ -1,6 +1,6 @@
 module StudyLevelHandler
   module ClientEventsHandler
-      
+
       private
 
       def handle_event(event)
@@ -11,11 +11,11 @@ module StudyLevelHandler
         end
       end
 
-      def handle_client_event!(event)    
+      def handle_client_event!(event)
         if event.snapshot.nil? || @in_outage
           return
         end
-        
+
         state = event.snapshot.state
         case event.name
         when Client::Events::CREATED
@@ -32,7 +32,7 @@ module StudyLevelHandler
           self.on_offline_event(event, state)
         end
       end
-      
+
       def on_online_event(event, state)
         self.update_online_count_for_event(event, state["location_id"], state["autonomous_system_id"], 1)
       end
@@ -50,7 +50,7 @@ module StudyLevelHandler
 
       def on_location_changed_event(event, state)
         if state["online"]
-          
+
           if event.data["from"].present?
             self.update_online_count_for_event(event, event.data["from"], state["autonomous_system_id"], -1)
           end
@@ -75,7 +75,7 @@ module StudyLevelHandler
         as_org_id, as_org_name = self.as_org_info(autonomous_system_id)
         self.get_aggregates(location.lonlat, as_org_id, as_org_name).each do |aggregate|
           parent_id = aggregate["parent_id"]
-          key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location.id}-#{location.lonlat.longitude}-#{location.lonlat.latitude}"
+          key = "#{aggregate["level"]}-#{parent_id}-#{aggregate["aggregate_id"]}-#{as_org_id}-#{location.id}-#{location.lonlat.longitude}-#{location.lonlat.latitude}-clients_events"
           last_obj = @cached_projections[key]
           if last_obj.nil?
             last_obj = StudyLevelProjection.latest_for aggregate["level"], parent_id, aggregate["aggregate_id"], as_org_id, location.id, "clients_events"
@@ -106,7 +106,7 @@ module StudyLevelHandler
 
       def new_record_from_event!(last_obj, event, increment=0)
         obj = StudyLevelProjection.from_previous_obj(last_obj)
-        obj.event_id = event.id    
+        obj.event_id = event.id
         obj.timestamp = event.timestamp
         obj.online_count += increment
         obj.incr = increment
