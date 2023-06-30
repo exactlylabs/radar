@@ -1,5 +1,6 @@
 class ClientMeasurementsController < ApplicationController
   before_action :authenticate_user!, except: %i[ create ]
+  before_action :check_account_presence, only: %i[ index show ndt7_index ]
   before_action :set_client
   before_action :set_measurement, only: [:show]
   skip_forgery_protection only: %i[ create ]

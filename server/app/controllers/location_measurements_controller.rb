@@ -1,5 +1,6 @@
 class LocationMeasurementsController < ApplicationController
   before_action :authenticate_user!
+  before_action :check_account_presence, only: %i[ index ndt7_index ]
   before_action :set_location
   skip_forgery_protection only: %i[ create ]
 

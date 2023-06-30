@@ -136,7 +136,7 @@ class ApplicationController < ActionController::Base
   end
 
   def clear_account_and_cookie
-    @auth_holder.set_account(nil)
+    @auth_holder.set_account(nil) if @auth_holder
     cookies.delete :radar_current_account_id
   end
 
@@ -216,6 +216,12 @@ class ApplicationController < ActionController::Base
   def get_super_user_disabled_value
     possible_cookie = cookies[:radar_super_user_disabled]
     return possible_cookie.present? && possible_cookie == "true"
+  end
+
+  def check_account_presence
+    if !current_account
+      redirect_to "/dashboard", notice: "Error: You have no accounts! Start by creating one."
+    end
   end
 
 end
