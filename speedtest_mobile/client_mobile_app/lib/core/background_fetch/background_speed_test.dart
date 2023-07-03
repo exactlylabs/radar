@@ -79,7 +79,8 @@ class BackgroundSpeedTest {
     final permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       final permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
         return null;
       }
     }
