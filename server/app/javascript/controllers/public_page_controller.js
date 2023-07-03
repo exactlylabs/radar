@@ -8,6 +8,8 @@ export default class extends Controller {
   static targets = ["podIdInput", "continueButton", "alert", "inputsContainer"];
 
   connect() {
+    this.isInManagementMode = window.location.search.includes('management_mode=true');
+    if (this.isInManagementMode) alert('Management mode turned on!');
     const firstInput = document.getElementById('public--card-input-first');
     if(firstInput) firstInput.focus();
   }

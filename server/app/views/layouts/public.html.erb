@@ -68,5 +68,6 @@
     <div class="modal fade" tabindex="-1" id="dashboard_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
       <%= render partial: "public_pod/dashboard_modal" %>
     </div>
+    <%= render partial: "application/notice_alert", locals: {notice: '', placeholder: true} %>
   </body>
 </html>

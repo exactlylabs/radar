@@ -1,4 +1,4 @@
-<% is_error = notice =~ /error/i %>
+<% is_error = notice =~ /error/i || notice =~ /oops/i %>
 <% is_account_switch = notice =~ /You are now viewing/i %>
 <% alert_type = is_error ? 'error' : is_account_switch ? 'account' : 'success' %>
 
@@ -8,7 +8,20 @@
   <%= placeholder ? 'data-alert-target=placeholderAlert' : nil %>
   <%= placeholder ? 'data-action=renderAlert@window->alert#renderAlert' : nil %>
 >
-  <% if is_error %>
+  <% if placeholder %>
+    <div class="invisible alerts--icon-container" 
+      data-alert-target="errorIcon"
+      data-type="error"
+    >
+      <%= image_tag image_url('alert-error-icon.png'), width: 16, height: 16 %>
+    </div>
+    <div class="invisible alerts--icon-container"
+      data-alert-target="successIcon"
+      data-type="success"
+    >
+      <%= image_tag image_url('white-checkmark.png'), width: 16, height: 16 %>
+    </div>
+  <% elsif is_error %>
     <div class="alerts--icon-container" data-type="error">
       <%= image_tag image_url('alert-error-icon.png'), width: 16, height: 16 %>
     </div>
@@ -17,9 +30,9 @@
       <%= image_tag image_url('white-checkmark.png'), width: 16, height: 16 %>
     </div>
   <% end %>
-  <h4 class="card-main-title mb-0 me-4" data-alert-target="notice"><%= notice %></h4>
+  <h4 class="card-main-title mb-0 me-4 wrap" data-alert-target="notice"><%= notice %></h4>
   <button type="button"
-    class="custom-button transparent hoverable position-relative"
+    class="custom-button transparent hoverable alerts--close-button"
     data-action="click->alert#closeAlert"
   >
     <%= image_tag image_url('close-alert-icon.png'), width: 16, height: 16, class: 'alerts--close-icon' %>

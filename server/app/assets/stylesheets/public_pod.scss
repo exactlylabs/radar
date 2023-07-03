@@ -1,3 +1,5 @@
+@import './shared/colors.scss';
+
 #public--body {
   background-color: #f6f7fa;
   width: 100vw;
@@ -628,5 +630,58 @@
 
   .public--check-continue-button {
     max-width: none;
+  }
+}
+
+.public--qr-canvas {
+  width: 95vw;
+  max-width: 500px;
+  height: 80vh;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5000;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px -2px rgba(160, 159, 183, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.public--qr-canvas-underlay {
+  width: 100vw;
+  height: 100vh;
+  z-index: 4999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: $modals--underlay-background-color;
+  overflow: hidden;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.public--close-canvas-icon {
+  width: 95vw;
+  max-width: 500px;
+  height: 5vh;
+  position: fixed;
+  top: 10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5001;
+  cursor: pointer;
+  background-color: white;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  box-shadow: 0 4px 20px -2px rgba(160, 159, 183, 0.4);
+
+  img {
+    position: fixed;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }

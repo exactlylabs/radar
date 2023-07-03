@@ -1,8 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
+const ALERT_TYPES = {
+  ERROR: 'error',
+  SUCCESS: 'success',
+  ACCOUNT_SWITCH: 'account_switch'
+}
+
 export default class extends Controller {
 
-  static targets = ["placeholderAlert", "notice"];
+  static targets = ["placeholderAlert", "notice", "errorIcon", "successIcon"];
 
   connect() {
     setTimeout(this.removeOpening.bind(this), 500);
@@ -23,6 +29,13 @@ export default class extends Controller {
       const { alertType, message } = e.detail;
       this.placeholderAlertTarget.setAttribute('data-alert-type', alertType);
       this.noticeTarget.innerText = message;
+      if (alertType === ALERT_TYPES.ERROR) {
+        this.successIconTarget.classList.add('invisible');
+        this.errorIconTarget.classList.remove('invisible');
+      } else if (alertType === ALERT_TYPES.SUCCESS) {
+        this.errorIconTarget.classList.add('invisible');
+        this.successIconTarget.classList.remove('invisible');
+      }
       this.placeholderAlertTarget.classList.remove('invisible');
       this.placeholderAlertTarget.classList.add('opening');
     }

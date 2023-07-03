@@ -110,6 +110,28 @@
     </button>
   <% end %>
 
+  
+  <div data-controller="qr">
+    <button type="button"
+      class="my-4 mx-auto custom-button custom-button--primary custom-button--lg"
+      data-action="click->qr#openVideoSource"
+    >Open QR Code Analyzer</button>
+    <div data-qr-target="canvasUnderlay"
+      class="public--qr-canvas-underlay"
+      data-action="click->qr#close"
+      hidden
+    ></div>
+    <canvas data-qr-target="canvas" class="public--qr-canvas" hidden></canvas>
+    <div data-qr-target="closeCanvas"
+      class="public--close-canvas-icon"
+      hidden
+      data-action="click->qr#close"
+    >
+      <%= image_tag image_url('close-alert-icon'), width: 32, height: 32 %>
+    </div>
+  </div>
+  
+
   <% if user_signed_in? %>
     <p class="additional-text w-100 mt-6 mb-0 mx-0 text-center wrap">You can run a new speed test or if you are responsible for managing this pod, you can <a href="<%= dashboard_path %>" data-turbo-frame="_top" class="regular-link">go to your dashboard.</a></p>
   <% else %>

@@ -120,3 +120,6 @@ application.register("banner", BannerController);
 
 import SuperUserController from './super_user_controller';
 application.register("super-user", SuperUserController);
+
+import QrController from './qr_controller';
+application.register("qr", QrController);
