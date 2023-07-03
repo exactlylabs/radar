@@ -117,8 +117,10 @@ class _MapWebViewPageState extends State<MapWebViewPage> {
     final permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       final permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
         setState(() => initialUrl = webEndpoint!);
+        return;
       }
     }
     final position = await Geolocator.getCurrentPosition();
