@@ -399,7 +399,6 @@ export default class extends Controller {
     setTimeout(() => {
       this.searchPanelTarget.classList.remove('opening');
     }, 500);
-    this.isSearchOpen = true;
   }
 
   toggleSearchOnly() {
