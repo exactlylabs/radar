@@ -1,4 +1,7 @@
-<div class="sidebar--profile-popover-container invisible" data-sidebar-target="profileDataPopover">
+<div class="sidebar--profile-popover-container invisible"
+  data-sidebar-target="<%= header ? 'headerProfileDataPopover' : 'profileDataPopover' %>"
+  data-is-header="<%= header %>"
+>
   <div class="sidebar--profile-popover-info-container">
     <div class="sidebar--profile-popover-image-container">
       <img src="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_limit: [56, 56])) : nil %>"

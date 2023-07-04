@@ -18,7 +18,7 @@
     </div>
     <% if !narrow %>
       <p class="sidebar-item--profile-text sidebar--profile-item-name ellipsis"><%= current_user.first_name %> <%= current_user.last_name %></p>
-      <%= render partial: "application/components/sidebar/profile_data_popover" %>
+      <%= render partial: "application/components/sidebar/profile_data_popover", locals: { header: false } %>
     <% end %>
   </div>
 </div>

@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import { emitCustomEvent } from "../eventsEmitter";
+import { AlertTypes } from "./alert_controller";
 
 export default class extends Controller {
 
@@ -11,7 +12,7 @@ export default class extends Controller {
       document.cookie = "radar_show_super_user_alert=true;path=/;expires=Thu, 01 Jan 1970 00:00:00 UTC;"; // delete cookie
       emitCustomEvent('renderAlert', {
         detail: {
-          alertType: 'success',
+          alertType: AlertTypes.ACCOUNT_SWITCH,
           message: `Super User mode ${this.superUserDisabled ? 'disabled' : 'enabled'}.`
         }
       });

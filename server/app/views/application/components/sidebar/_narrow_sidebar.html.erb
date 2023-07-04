@@ -1,11 +1,13 @@
-<div class="sidebar--narrow-container">
+<div class="sidebar--narrow-container"
+  data-sidebar-target="narrowSidebar"
+>
   <a href="<%= dashboard_path %>">
     <img alt="Logo" src="<%= image_url('narrow-radar-logo.png') %>" width="32" class="sidebar--logo ms-2">
   </a>
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
       icon: "search-icon",
-      title: "",
+      title: "Search",
       url: nil,
       sidebar_item_id: "search",
       disabled: false,
@@ -25,7 +27,7 @@
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
       icon: "dashboard-icon",
-      title: "",
+      title: "Dashboard",
       url: dashboard_path,
       sidebar_item_id: "dashboard",
       disabled: false,
@@ -35,7 +37,7 @@
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
       icon: "pods-icon",
-      title: "",
+      title: "Pods",
       url: clients_path,
       sidebar_item_id: "pods",
       disabled: current_account.nil?,
@@ -45,7 +47,7 @@
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
       icon: "locations-icon",
-      title: "",
+      title: "Locations",
       url: locations_path,
       sidebar_item_id: "locations",
       disabled: current_account.nil?,
@@ -55,7 +57,7 @@
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
       icon: "members-icon",
-      title: "",
+      title: "Members & Sharing",
       url: users_account_index_path,
       sidebar_item_id: "members",
       disabled: current_account.nil?,
@@ -63,5 +65,11 @@
     }
   %>
 
-  <%= render partial: "application/components/sidebar/profile_item", locals: { narrow: true } %>
+  <% if current_user.super_user %>
+    <%= render partial: "application/components/sidebar/super_user_toggle", locals: { narrow: true } %>
+  <% end %>
+
+  <%= render partial: "application/components/sidebar/profile_item",
+      locals: { narrow: true, header: false } 
+  %>
 </div>

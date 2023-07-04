@@ -1,4 +1,9 @@
 <div data-controller="sidebar">
   <%= render partial: "application/components/sidebar/sidebar_search" %>
   <%= render partial: "application/components/sidebar/sidebar_default" %>
+  <%= render partial: "application/components/sidebar/responsive_header" %>
+  <div class="sidebar--underlay invisible"
+    data-sidebar-target="underlay"
+    data-action="click->sidebar#closeFullSearch">
+  </div>
 </div>

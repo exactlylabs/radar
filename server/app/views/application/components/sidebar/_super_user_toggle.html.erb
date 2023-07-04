@@ -8,5 +8,7 @@
     class="form-check-input forms--checkbox me-3"
     data-super-user-target="superUserToggle"
   />
-  <label class="forms--label">Super User Mode</label>
+  <% if !narrow %>
+    <label class="forms--label sidebar--super-user-toggle-label">Super User Mode</label>
+  <% end %>
 </div>
