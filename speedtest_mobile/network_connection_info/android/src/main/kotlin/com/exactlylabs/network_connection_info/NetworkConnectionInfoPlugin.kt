@@ -85,7 +85,6 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
             nwCap.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
                 connectionInfoJson[CONNECTION_TYPE] = CELLULAR
                 connectionInfoJson[CONNECTION_INFO] = getCellularConnectionInfo()
-                return connectionInfoJson
             }
         }
         return connectionInfoJson
