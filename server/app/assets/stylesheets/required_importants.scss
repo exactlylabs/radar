@@ -124,11 +124,6 @@ body {
   margin-bottom: 0 !important;
 }
 
-.forms--checkbox {
-  width: 30px !important;
-  height: 20px !important;
-}
-
 .forms--input-group {
   width: 100% !important;
   position: relative;
@@ -316,7 +311,7 @@ body {
   visibility: hidden !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 990px) {
   .clients--manage-button {
     display: none !important;
     visibility: hidden !important;
@@ -331,6 +326,10 @@ body {
 .forms--checkbox {
   width: 30px !important;
   height: 20px !important;
+
+  &:checked {
+    background-color: $blue !important;
+  }
 }
 
 .forms--input-group {

@@ -2,9 +2,17 @@
   data-controller="switch-account"
   data-sidebar-target="defaultSidebar"
 >
-  <a href="<%= dashboard_path %>">
+  <a href="<%= dashboard_path %>" id="sidebar--big-logo">
     <img alt="Logo" src="<%= image_url('new-radar-logo.png') %>" width="150" class="sidebar--logo ms-2">
   </a>
+  <div class="sidebar--small-logo-container"
+    data-sidebar-target="smallSidebarHeader"
+  >
+    <a href="<%= dashboard_path %>" id="sidebar--small-logo">
+      <img alt="Logo" src="<%= image_url('new-radar-logo-mini.png') %>" width="32" class="sidebar--logo">
+    </a>
+    <%= image_tag image_url('close-alert-icon.png'), width: 28, height: 28, data: { action: "click->sidebar#closeSmallSidebar" } %>
+  </div>
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
       icon: "search-icon",
@@ -68,8 +76,10 @@
   %>
 
   <% if current_user.super_user %>
-    <%= render partial: "application/components/sidebar/super_user_toggle" %>
+    <%= render partial: "application/components/sidebar/super_user_toggle", locals: { narrow: false } %>
   <% end %>
 
-  <%= render partial: "application/components/sidebar/profile_item", locals: { narrow: false } %>
+  <%= render partial: "application/components/sidebar/profile_item",
+      locals: { narrow: false, header: false }
+  %>
 </div>

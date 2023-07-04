@@ -7,11 +7,12 @@
     ><%= title %></p>
   </div>
 <% else %>
-  <a class="w-100 ellipsis sidebar--item <%= url.present? && active_path?(url) ? "sidebar--item-active" : "hoverable" %>"
+  <a class="w-100 sidebar--item <%= url.present? && active_path?(url) ? "sidebar--item-active" : "hoverable" %>"
     href="<%= url.present? ? url : '#' %>"
     data-item-id="<%= sidebar_item_id %>"
-    data-action="mouseover->sidebar#handleItemHover mouseleave->sidebar#handleItemHoverOff <%= sidebar_item_id == "search" && !narrow ? "click->sidebar#handleToggleSearch" : "click->sidebar#closeSearchIfOpen" %>"
+    data-action="mouseover->sidebar#handleItemHover mouseleave->sidebar#handleItemHoverOff <%= sidebar_item_id == "search" ? "click->sidebar#handleToggleSearch" : "click->sidebar#closeSearchIfOpen" %>"
     data-narrow="<%= narrow %>"
+    data-tooltip-ref="<%= sidebar_item_id %>-tooltip"
   >
     <% if sidebar_item_id != "search" %>
       <%= image_tag image_url("#{icon}-active.png"), id: "#{sidebar_item_id}-icon-active", width: "24", height: "24", class: "sidebar--item-icon #{active_path?(url) ? nil : "invisible"}" %>
@@ -22,6 +23,9 @@
     <p id="<%= sidebar_item_id %>-text"
       class="sidebar-item--text <%= url.present? && active_path?(url) == "active" ? "sidebar-item--text-active" : nil %> m-0"
       data-sidebar-target="<%= narrow ? 'narrowSidebarItem' : 'sidebarItem' %>"
-    ><%= title %></p>
+    ><%= narrow ? '' : title %></p>
+    <% if narrow %>
+      <%= render partial: "application/components/sidebar/sidebar_item_tooltip", locals: { sidebar_item_id: sidebar_item_id, title: title } %>
+    <% end %>
   </a>
 <% end %>

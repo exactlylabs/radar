@@ -1,16 +1,23 @@
 <div id="sidebar--open-search-panel"
-  class="sidebar--search-panel-container"
+  class="invisible sidebar--search-panel-container"
   data-controller="app-search"
   data-sidebar-target="searchPanel"
 >
-  <div class="d-flex flex-row justify-content-between align-items-baseline mb-7">
+  <div class="sidebar--search-panel-header">
     <h3 class="page-main-title">Search</h3>
     <button type="button"
-      class="hoverable custom-button custom-button--secondary p-2 d-flex justify-content-center align-items-center"
-      data-action="click->sidebar#closeSearchIfOpen"
+      id="sidebar--search-shrink-button"
+      class="hoverable custom-button custom-button--secondary p-2 justify-content-center align-items-center"
+      data-action="click->sidebar#handleToggleSearch"
     >
       <%= image_tag image_url('arrow-left-dark.png'), width: 16, height: 16 %>
     </button>
+    <div id="sidebar--small-search-close-button"
+      class="custom-close-button hoverable"
+      data-action="click->sidebar#closeFullSearch"
+    >
+      <%= image_tag image_url('close-modal-icon.png'), width: 24, height: 24 %>
+    </div>
   </div>
   <%= render partial: "application/components/sidebar/search_input" %>
   <div class="invisible spinner-border text-primary sidebar--search-spinner m-0 mt-3 ms-1"

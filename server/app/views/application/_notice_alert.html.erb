@@ -1,27 +1,27 @@
-<% is_error = notice =~ /error/i %>
-<% is_account_switch = notice =~ /You are now viewing/i %>
-<% alert_type = is_error ? 'error' : is_account_switch ? 'account' : 'success' %>
+<% if notice.present? %>
+  <% is_error = notice =~ /error/i || notice =~ /oops/i %>
+  <% is_account_switch = notice =~ /You are now viewing/i || notice =~ /super user/i%>
+  <% alert_type = is_error ? 'error' : is_account_switch ? 'account' : 'success' %>
 
-<div class="custom-alert <%= placeholder ? 'invisible' : 'opening' %>"
-  data-controller="alert"
-  data-alert-type="<%= alert_type %>"
-  <%= placeholder ? 'data-alert-target=placeholderAlert' : nil %>
-  <%= placeholder ? 'data-action=renderAlert@window->alert#renderAlert' : nil %>
->
-  <% if is_error %>
-    <div class="alerts--icon-container" data-type="error">
-      <%= image_tag image_url('alert-error-icon.png'), width: 16, height: 16 %>
-    </div>
-  <% elsif !is_account_switch %>
-    <div class="alerts--icon-container" data-type="success">
-      <%= image_tag image_url('white-checkmark.png'), width: 16, height: 16 %>
-    </div>
-  <% end %>
-  <h4 class="card-main-title mb-0 me-4" data-alert-target="notice"><%= notice %></h4>
-  <button type="button"
-    class="custom-button transparent hoverable position-relative"
-    data-action="click->alert#closeAlert"
+  <div class="custom-alert opening"
+    data-controller="alert"
+    data-alert-type="<%= alert_type %>"
   >
-    <%= image_tag image_url('close-alert-icon.png'), width: 16, height: 16, class: 'alerts--close-icon' %>
-  </button>
-</div>
+    <% if is_error %>
+      <div class="alerts--icon-container" data-type="error">
+        <%= image_tag image_url('alert-error-icon.png'), width: 16, height: 16 %>
+      </div>
+    <% elsif !is_account_switch %>
+      <div class="alerts--icon-container" data-type="success">
+        <%= image_tag image_url('white-checkmark.png'), width: 16, height: 16 %>
+      </div>
+    <% end %>
+    <h4 class="card-main-title mb-0 wrap"><%= notice %></h4>
+    <button type="button"
+      class="custom-button transparent hoverable position-relative"
+      data-action="click->alert#closeAlert"
+    >
+      <%= image_tag image_url('close-alert-icon.png'), width: 16, height: 16, class: 'alerts--close-icon' %>
+    </button>
+  </div>
+<% end %>
