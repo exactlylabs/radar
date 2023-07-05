@@ -135,5 +135,5 @@ class Strings {
   static const String goToSettingsButtonLabel = 'Go to device settings';
   static const String backgroundModeNotificaitonTitle = 'Background mode enabled';
   static const String backgroundModeNotificaitonSubtitle =
-      'Speed tests will be running in the background.';
+      'Speed tests will run in the background.';
 }
