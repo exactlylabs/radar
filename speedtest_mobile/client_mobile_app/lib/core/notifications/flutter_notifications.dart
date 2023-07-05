@@ -1,6 +1,3 @@
-import 'package:client/firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
@@ -12,10 +9,8 @@ late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 bool isFlutterLocalNotificationsInitialized = false;
 
 @pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+Future<void> firebaseMessagingBackgroundHandler() async {
   await setupFlutterNotifications();
-  showRemoteFlutterNotification(message);
 }
 
 Future<void> setupFlutterNotifications() async {
@@ -34,22 +29,6 @@ Future<void> setupFlutterNotifications() async {
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
-
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-
-  isFlutterLocalNotificationsInitialized = true;
-}
-
-void showRemoteFlutterNotification(RemoteMessage message) {
-  RemoteNotification? notification = message.notification;
-  AndroidNotification? android = message.notification?.android;
-  if (notification != null && android != null) {
-    showLocalFlutterNotification(notification.hashCode, notification.title, notification.body);
-  }
 }
 
 void showLocalFlutterNotification(int id, String? title, String? body) {
@@ -70,4 +49,8 @@ void showLocalFlutterNotification(int id, String? title, String? body) {
       ),
     ),
   );
+}
+
+Future<void> cancelLocalFlutterNotification(int id) async {
+  await flutterLocalNotificationsPlugin.cancel(id);
 }
