@@ -50,7 +50,7 @@ jobs:
           POSTGRES_DB: radar_test
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
-
+      - image: cimg/redis:6.2.6
     steps:
       - checkout
       - wait_psql
