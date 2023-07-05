@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:configuration_monitoring/models/configuration_status.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
+import 'package:client_mobile_app/core/notifications/flutter_notifications.dart';
 import 'package:client_mobile_app/core/background_fetch/background_fetch_handler.dart';
 import 'package:client_mobile_app/core/background_fetch/bloc/background_fetch_state.dart';
 
@@ -48,6 +49,8 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
       await _localStorage.setBackgroundModeFrequency(state.delay);
       BackgroundFetchHandler.stopBackgroundSpeedTest();
       BackgroundFetchHandler.startBackgroundSpeedTest(state.delay * 60000);
+      showLocalFlutterNotification(
+          0, 'Background mode enabled', 'Speed tests will be running in the background.');
     }
   }
 
@@ -57,6 +60,7 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
       emit(state.copyWith(delay: delay, isEnabled: false));
       await _localStorage.setBackgroundModeFrequency(-1);
       BackgroundFetchHandler.stopBackgroundSpeedTest();
+      await cancelLocalFlutterNotification(0);
     } else {
       emit(state.copyWith(delay: -1));
     }

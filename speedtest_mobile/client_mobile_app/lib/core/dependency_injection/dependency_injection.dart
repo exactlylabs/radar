@@ -5,6 +5,7 @@ import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/background_fetch/app_state_handler.dart';
+import 'package:client_mobile_app/core/notifications/flutter_notifications_handler.dart';
 import 'package:client_mobile_app/core/http_provider/implementation/dio_http_provider.dart';
 
 final sl = GetIt.instance;
@@ -31,5 +32,9 @@ void registerDependencies(String baseUrl) {
 
   if (!sl.isRegistered<ConfigurationMonitoring>()) {
     sl.registerLazySingleton<ConfigurationMonitoring>(() => ConfigurationMonitoring());
+  }
+
+  if (!sl.isRegistered<FlutterNotificationsHanlder>()) {
+    sl.registerLazySingleton<FlutterNotificationsHanlder>(() => FlutterNotificationsHanlder());
   }
 }
