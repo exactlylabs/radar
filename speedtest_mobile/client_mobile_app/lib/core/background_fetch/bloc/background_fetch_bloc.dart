@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:configuration_monitoring/models/configuration_status.dart';
@@ -50,7 +51,7 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
       BackgroundFetchHandler.stopBackgroundSpeedTest();
       BackgroundFetchHandler.startBackgroundSpeedTest(state.delay * 60000);
       showLocalFlutterNotification(
-          0, 'Background mode enabled', 'Speed tests will be running in the background.');
+          0, Strings.backgroundModeNotificaitonTitle, Strings.backgroundModeNotificaitonSubtitle);
     }
   }
 

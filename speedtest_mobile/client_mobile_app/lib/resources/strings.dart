@@ -133,4 +133,7 @@ class Strings {
   static const String denyButtonLabel = 'Deny';
   static const String acceptButtonLabel = 'Accept';
   static const String goToSettingsButtonLabel = 'Go to device settings';
+  static const String backgroundModeNotificaitonTitle = 'Background mode enabled';
+  static const String backgroundModeNotificaitonSubtitle =
+      'Speed tests will be running in the background.';
 }
