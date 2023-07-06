@@ -8,7 +8,10 @@ export default class extends Controller {
 
   disconnect() {
     // clear map so it can get properly initialized on re-render
-    map = null;
+    if (map) {
+      map.off();
+      map.remove();
+    }
   }
 
   connect() {

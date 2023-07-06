@@ -43,6 +43,8 @@ export default class extends Controller {
       input.checked = false;
       input.removeAttribute('checked');
     });
+    const multiRowActionsId = "multi-row-actions";
+    document.getElementById(multiRowActionsId).classList.add('invisible');
   }
 
   onCheckBoxChange(e) {
