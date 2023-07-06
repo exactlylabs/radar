@@ -22,18 +22,25 @@
         <label class="required forms--label mb-2">Monthly Data Cap</label>
         <div class="d-flex flex-row justify-content-between align-items-center w-100">
           <div class="input-group forms--input-group">
-            <input value="<%= (client.data_cap_max_usage.nil? ? client.get_suggested_data_cap : (client.data_cap_max_usage / (1024**2)).round(0)) %>"
+            <input value="<%= client.data_cap_max_usage.nil? ? client.get_suggested_data_cap(method(:get_value_in_preferred_unit)) : get_value_in_preferred_unit(client.data_cap_max_usage).round(0) %>"
                     name="client[data_cap_max_usage]"
                     min="1"
                     step="1"
-                    class="conditional form-control form-control-solid <%= client.data_cap_max_usage.present? ? '' : 'text-muted'%> forms--text-input forms--text-input-with-decoration"
+                    class="forms--text-input forms--text-input-focusable conditional <%= client.data_cap_max_usage.present? ? '' : 'text-muted'%> w-50 me-2"
                     <%= client.data_cap_max_usage.nil? ? "readonly" : nil %>
                     placeholder="0"
                     data-client-data-cap-form-target="dataCapValueInput"
                     data-action="input->client-data-cap-form#onInputChange"
-                    data-client-average-usage="<%= (client.data_cap_current_period_usage / (1024**2)).ceil(0) %>"
+                    data-client-average-usage="<%= get_value_in_preferred_unit(client.data_cap_current_period_usage).ceil(0) %>"
               />
-            <span class="forms--input-decoration">MB</span>
+            <select class="forms--select <%= client.data_cap_max_usage.nil? ? "disabled" : nil %>%"
+              data-client-data-cap-form-target="dataUnitSelect"
+              data-action="change->client-data-cap-form#onUnitChange"
+              name="user[data_cap_unit]"
+            >
+              <option label="MB" value="mb" <%= current_user.prefers_gb_unit ? nil : 'selected' %>>MB</option>
+              <option label="GB" value="gb" <%= current_user.prefers_gb_unit ? 'selected' : nil %>>GB</option>
+            </select>
           </div>
         </div>
       </div>
@@ -52,10 +59,10 @@
         <div class="w-100">
           <p class="w-100 m-0 warning-text"
               data-client-data-cap-form-target="dataCapWarningText"
-          >Current month usage (<%= (client.data_cap_current_period_usage / (1024**2)).round(0) %> MB) is over the entered data cap. No more tests will be run this monthly cycle.</p>
+          >Current month usage (<%= "#{get_value_in_preferred_unit(client.data_cap_current_period_usage).round(0)} #{current_user.data_cap_unit}" %>) is over the entered data cap. No more tests will be run this monthly cycle.</p>
         </div>
       </div>
-      <p class="help-text mb-4">A data cap limits the amount of data this Pod will use for speed tests.</p>
+      <p class="help-text mb-4 wrap">A data cap limits the amount of data this Pod will use for speed tests.</p>
       <div class="forms--row  <%= client.data_cap_max_usage.nil? ? 'form-custom-opaque' : '' %>"
             data-client-data-cap-form-target="formRowContainer"
       >
@@ -103,7 +110,7 @@
           </div>
         </div>
       </div>
-      <p class=" mb-4" data-client-data-cap-form-target="testFrequencyText"><%= client.get_frequency_text %></p>
+      <p class="help-text wrap mb-4" data-client-data-cap-form-target="testFrequencyText"><%= client.get_frequency_text %></p>
     </div>
     <div class="modal-footer modals--footer">
       <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>

@@ -9,10 +9,28 @@ export default class extends Controller {
     "formRowContainer",
     "dataCapWarning",
     "dataCapWarningText",
-    "testFrequencyText"
+    "testFrequencyText",
+    "dataUnitSelect"
   ];
 
-  connect() {}
+  connect() {
+    this.intialDataUnit = this.dataUnitSelectTarget.value.toUpperCase();
+    this.dataUnit = this.dataUnitSelectTarget.value.toUpperCase();
+  }
+
+  onUnitChange(e) {
+    this.dataUnit = e.target.value.toUpperCase();
+    const value = parseInt(this.dataCapValueInputTarget.value);
+    if (isNaN(value)) return;
+    const valueInBytes = value * this.getCorrectMultiplier();
+    const currentUsage = parseInt(this.dataCapValueInputTarget.getAttribute('data-client-average-usage'));
+    const currentUsageInBytes = currentUsage * this.getCorrectInitialMultiplier();
+    if (valueInBytes <= currentUsageInBytes) {
+      this.displayWarning(currentUsage);
+    } else {
+      this.hideWarning();
+    }
+  }
 
   disableComponents() {
     const inputTarget = this.dataCapValueInputTarget;
@@ -20,6 +38,7 @@ export default class extends Controller {
     const resetDayValueSelect = this.monthlyResetDayValueSelectTarget;
     const resetDayInputGroup = this.resetDayInputGroupTarget;
     const formRows = this.formRowContainerTargets;
+    const dataUnitSelect = this.dataUnitSelectTarget;
     inputTarget.setAttribute('readonly', 'true');
     inputTarget.classList.add('text-muted');
     resetDayInputGroup.style.display = 'none';
@@ -30,6 +49,7 @@ export default class extends Controller {
     resetValueSelect.setAttribute('disabled', 'true');
     resetDayValueSelect.setAttribute('aria-disabled', 'true');
     resetDayValueSelect.setAttribute('disabled', 'true');
+    dataUnitSelect.classList.add('disabled');
     this.hideWarning();
   }
   
@@ -39,6 +59,7 @@ export default class extends Controller {
     const resetDayValueSelect = this.monthlyResetDayValueSelectTarget;
     const resetDayInputGroup = this.resetDayInputGroupTarget;
     const formRows = this.formRowContainerTargets;
+    const dataUnitSelect = this.dataUnitSelectTarget;
     inputTarget.removeAttribute('readonly');
     inputTarget.classList.remove('text-muted');
     if(resetValueSelect.value === 2) resetDayInputGroup.style.display = 'block';
@@ -47,6 +68,7 @@ export default class extends Controller {
     resetValueSelect.removeAttribute('disabled');
     resetDayValueSelect.removeAttribute('aria-disabled');
     resetDayValueSelect.removeAttribute('disabled');
+    dataUnitSelect.classList.remove('disabled');
   }
   
   onSwitchChange(e) {
@@ -60,7 +82,7 @@ export default class extends Controller {
   
   displayWarning(realCurrentUsage) {
     this.dataCapWarningTarget.style.display = 'flex';
-    this.dataCapWarningTextTarget.innerText = `Current month usage (${realCurrentUsage} MB) is over the entered data cap. No more tests will be run this monthly cycle.`;
+    this.dataCapWarningTextTarget.innerText = `Current month usage (${realCurrentUsage} ${this.intialDataUnit}) is over the entered data cap. No more tests will be run this monthly cycle.`;
   }
   
   hideWarning() {
@@ -70,12 +92,22 @@ export default class extends Controller {
   onInputChange(e) {
     const value = parseInt(e.target.value);
     if(isNaN(value)) return;
+    const valueInBytes = value * this.getCorrectMultiplier();
     const currentUsage = parseInt(this.dataCapValueInputTarget.getAttribute('data-client-average-usage'));
-    if(value <= currentUsage) {
+    const currentUsageInBytes = currentUsage * this.getCorrectInitialMultiplier();
+    if(valueInBytes <= currentUsageInBytes) {
       this.displayWarning(currentUsage);
     } else {
       this.hideWarning();
     }
+  }
+
+  getCorrectMultiplier() {
+    return this.dataUnit === 'GB' ? (1024 ** 3) : (1024 ** 2);
+  }
+
+  getCorrectInitialMultiplier() {
+    return this.intialDataUnit === 'GB' ? (1024 ** 3) : (1024 ** 2);
   }
   
   showDaysSelect() {

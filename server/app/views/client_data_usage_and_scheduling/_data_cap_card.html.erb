@@ -7,13 +7,13 @@
       <div class="location-data--row mb-6 d-flex flex-row align-items-center justify-content-between flex-wrap">
         <div class="forms--label w-50" style="min-width: 130px">Avg. Data Usage</div>
         <div class="ellipsis mw-xl-50 w-100 w-xl-50 <%= client.data_cap_max_usage.nil? ? "additional-text" : "regular-text" %>">
-          <%= client.get_measurement_data(total_avg) %>
+          <%= client.get_measurement_data(total_avg, method(:get_value_in_preferred_unit), current_user.data_cap_unit) %>
         </div>
       </div>
       <div class="location-data--row mb-6 d-flex flex-row align-items-start justify-content-between flex-wrap">
         <div class="forms--label w-50" style="min-width: 130px">Data Cap</div>
         <div class="ellipsis d-flex flex-column w-100 w-xl-50 <%= client.data_cap_max_usage.nil? ? "additional-text" : "regular-text" %>">
-          <%= client.data_cap_max_usage.nil? ? "Disabled" : "#{(client.data_cap_max_usage / (1024 ** 2)).round(0)} MB per #{client.get_periodicity_period}" %>
+          <%= client.data_cap_max_usage.nil? ? "Disabled" : "#{get_value_in_preferred_unit(client.data_cap_max_usage).round(0)} #{current_user.data_cap_unit} per #{client.get_periodicity_period}" %>
           <% if client.data_cap_max_usage.nil? %>
             <div class="d-flex flex-row justify-content-start align-items-center text-hover-light-primary mt-2" style="cursor: pointer">
               <a  href="#"
@@ -37,13 +37,13 @@
         <div class="forms--label w-50" style="min-width: 130px"><%= client.data_cap_periodicity.capitalize() %> Usage</div>
         <div class="d-flex flex-row w-100 w-xl-50 regular-text">
           <% if client.data_cap_max_usage.nil? %>
-            <%= client.data_cap_current_period_usage.nil? ? "N/A" : "#{(client.data_cap_current_period_usage / (1024 ** 2)).round(0)} MB" %>
+            <%= client.data_cap_current_period_usage.nil? ? "N/A" : "#{get_value_in_preferred_unit(client.data_cap_current_period_usage).round(0)} #{current_user.data_cap_unit}" %>
           <% else %>
             <div class="d-flex flex-row align-items-center justify-content-center">
               <div class="w-100px h-5px d-flex justify-content-start align-items-center" style="border-radius: 6.5px; background-color: <%= client.get_data_cap_percentage_usage >= 80 ? "#fff3f6" : "#e7f6ff" %>">
                 <div class="h-5px" style="width: <%= "#{client.get_data_cap_percentage_usage}%" %>; background-color: <%= client.get_data_cap_percentage_usage >= 80 ? "#f1416c" : "#00a3ff" %>; border-radius: 5px"></div>
               </div>
-              <p class="ms-3 mt-0 mb-0 me-0"><%= "#{(client.data_cap_current_period_usage / (1024 ** 2)).round(0)} MB (#{client.get_data_cap_percentage_usage}% used)" %></p>
+              <p class="ms-3 mt-0 mb-0 me-0"><%= "#{get_value_in_preferred_unit(client.data_cap_current_period_usage).round(0)} #{current_user.data_cap_unit} (#{client.get_data_cap_percentage_usage}% used)" %></p>
             </div>
           <% end %>
         </div>

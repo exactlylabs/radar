@@ -451,10 +451,10 @@ class Client < ApplicationRecord
     measurements.order(created_at: :desc).where('download IS NOT NULL AND upload IS NOT NULL').first
   end
 
-  def get_measurement_data(total_bytes)
+  def get_measurement_data(total_bytes, correct_unit_fn = method(:get_value_in_preferred_unit), correct_unit)
     data_string = ''
-    data_string += "~#{(total_bytes / (1024**2)).round(0)} MB per test (" if total_bytes > 0
-    data_string += "#{(data_cap_current_period_usage / (1024**2)).round(0)} MB this month"
+    data_string += "~#{correct_unit_fn.call(total_bytes).round(0)} #{correct_unit} per test (" if total_bytes > 0
+    data_string += "#{correct_unit_fn.call(data_cap_current_period_usage).round(0)} #{correct_unit} this month"
     data_string += ')' if total_bytes > 0
     data_string
   end
@@ -598,8 +598,8 @@ class Client < ApplicationRecord
   # We suggest the nearest 10K based rounding up.
   # E.g. client's current data usage is 5302 MB ==> we suggest 10K MB
   # E.g. client's current data usage is 13451 MB ==> we suggest 20K MB
-  def get_suggested_data_cap
-    current_data_cap = (data_cap_current_period_usage / (1024**2)).ceil(0)
+  def get_suggested_data_cap(correct_unit_fn = method(:get_value_in_preferred_unit))
+    current_data_cap = correct_unit_fn.call(data_cap_current_period_usage).ceil(0)
     (current_data_cap / 10_000.0).ceil(0) * 10_000
   end
 
