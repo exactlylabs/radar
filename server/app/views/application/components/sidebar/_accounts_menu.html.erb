@@ -28,7 +28,7 @@
           }
       %>
     <% end %>
-    <% current_user.shared_accounts.distinct.each do |account| %>
+    <% current_user.shared_accounts.not_deleted.distinct.each do |account| %>
       <%= render partial: "application/components/sidebar/account_item", 
           locals: {
             is_shared: true,

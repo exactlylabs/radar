@@ -5,7 +5,7 @@ class SearchController < ApplicationController
     @query = params[:q]
     @account_id = params[:account_id].to_i || -1
     @results = Hash.new
-    current_user_accounts_ids = @account_id > -1 ?  [@account_id] : current_user.accounts.pluck(:id)
+    current_user_accounts_ids = @account_id > -1 ?  [@account_id] : policy_scope(Account).pluck(:id)
     if @query.present?
       if current_user_accounts_ids.count == 1
         @results[:pods] = Client.where("(name ILIKE ? OR unix_user ILIKE ?) AND account_id = ?", "%#{@query}%", "%#{@query}%", current_user_accounts_ids[0])

@@ -9,11 +9,10 @@ export default class extends Controller {
     'resultsList'
   ];
 
-  // ALL COMMENTED CODE IS FOR FUTURE IMPLEMENTATION
   connect() {
     this.debounceTimeoutId = null;
     this.accountIdFilter = -1;
-    //this.shouldShowSpinner = true;
+    this.selectedAccountElement = document.querySelector('.sidebar--account-filter-row[data-account-id="-1"]'); // starts with All accounts by default
   }
 
   debouncedSearch() {
@@ -24,12 +23,6 @@ export default class extends Controller {
 
   search() {
     const query = this.searchInputTarget.value;
-    // TODO: test in production how much time loading takes to evaluate
-    // using this logic, should stay commented
-    {/*if (query.length === 0 || this.shouldShowSpinner) {
-      this.showSpinner(); 
-      this.hideResultsList();
-    }*/}
     const token = document.querySelector('meta[name="csrf-token"]').content;
     fetch(`/search?q=${query}&account_id=${this.accountIdFilter}`, {
       method: 'GET',
@@ -40,12 +33,6 @@ export default class extends Controller {
       .then(response => response.text())
       .then(html => Turbo.renderStreamMessage(html))
       .catch((err) => handleError(err, this.identifier));
-      // TODO: test in production how much time loading takes to evaluate
-      // using this logic, should stay commented
-      /*.finally(() => {
-        this.hideSpinner();
-        this.showResultsList();
-      });*/
   }
 
   showResultsList() {
@@ -76,6 +63,9 @@ export default class extends Controller {
         accountName: element.getAttribute('data-account-name')
       }
     });
+    this.selectedAccountElement.setAttribute('data-selected', 'false');
+    this.selectedAccountElement = element;
+    this.selectedAccountElement.setAttribute('data-selected', 'true');
     if(this.searchInputTarget.value.length > 0) this.search();
   }
 }

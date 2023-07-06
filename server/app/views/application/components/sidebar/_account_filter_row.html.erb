@@ -6,7 +6,7 @@
 >
   <div class="d-flex justify-content-center align-items-center sidebar--icon-container me-2">
     <% if account.is_all_accounts? %>
-      <%= image_tag image_url("all-accounts-icon#{selected ? '-selected' : ''}.png"), width: 22, height: 22 %>
+      <%= image_tag image_url("all-accounts-icon.png"), width: 22, height: 22 %>
     <% else %>
       <p class="m-0 sidebar-item--text"><%= account.name[0].upcase %></p>
     <% end %>

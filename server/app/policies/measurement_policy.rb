@@ -17,7 +17,6 @@ class MeasurementPolicy < ApplicationPolicy
   end
 
   def index?
-    return false if @auth_holder.is_all_accounts?
     true
   end
 
