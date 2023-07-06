@@ -17,6 +17,10 @@ class User < ApplicationRecord
 
   after_save :check_pending_downloads
 
+  def prefers_gb_unit
+    self.data_cap_unit == "GB"
+  end
+
   def shared_accounts
     raw_query = %{
       SELECT a.* FROM accounts a 

@@ -23,6 +23,32 @@
   background-color: black;
 }
 
+.forms--select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+  background-image: url("arrow-down-dark.png");
+  background-repeat: no-repeat;
+  background-position-x: 80%;
+  background-position-y: center;
+  background-size: 1rem;
+
+  &:focus,
+  &:active {
+    outline: solid 2px $blue;
+  }
+
+  &.disabled {
+    background-color: $subtle-gray;
+    color: $gray;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
 .forms--input-decoration {
   position: absolute;
   right: 0;

@@ -10,6 +10,7 @@ class ClientDataUsageAndSchedulingController < ApplicationController
 
   # PUT clients/:unix_user/data_usage
   def edit_data_cap
+    given_data_cap_unit = params[:user][:data_cap_unit]
     given_data_cap = params[:client][:data_cap_max_usage]
     # Quick way to check if given value is a valid number
     if given_data_cap.to_i.to_s != given_data_cap
@@ -19,7 +20,7 @@ class ClientDataUsageAndSchedulingController < ApplicationController
     wants_to_have_data_cap = params[:client][:wants_to_have_data_cap] == "on"
 
     if given_data_cap.present? && wants_to_have_data_cap
-      @client.data_cap_max_usage = (given_data_cap.to_i * (1024**2)).round(0) # save the value in B (frontend asks for MB)
+      @client.data_cap_max_usage = get_value_in_bytes(given_data_cap.to_i, given_data_cap_unit.upcase).round(0) # save the value in B (frontend asks for MB)
       given_reset = params[:client][:data_cap_reset].to_i # 1 for first day, -1 for last, 2 for specific day
       if given_reset == -1
         @client.data_cap_day_of_month = -1
@@ -34,6 +35,11 @@ class ClientDataUsageAndSchedulingController < ApplicationController
     # Just in case something isn't set to monthly by this point
     if @client.data_cap_periodicity != Client.data_cap_periodicities[:monthly]
       @client.data_cap_periodicity = Client.data_cap_periodicities[:monthly]
+    end
+
+    if given_data_cap_unit.upcase != current_user.data_cap_unit
+      current_user.data_cap_unit = given_data_cap_unit.upcase
+      current_user.save!
     end
 
     if @client.save
@@ -107,6 +113,16 @@ class ClientDataUsageAndSchedulingController < ApplicationController
     @client = policy_scope(Client).find_by_unix_user(params[:client_id])
     if !@client
       raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:client_id]}", Client.name, params[:client_id])
+    end
+  end
+
+  def get_value_in_bytes(value, unit)
+    gb_multiplier = (1024**3)
+    mb_multiplier = (1024**2)
+    if (unit.present? && unit == "GB")
+      value * gb_multiplier
+    else
+      value * mb_multiplier
     end
   end
 end

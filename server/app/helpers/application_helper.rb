@@ -1,5 +1,24 @@
 module ApplicationHelper
 
+  GB_MULTIPLIER = 1024**3
+  MB_MULTIPLIER = 1024**2
+
+  def get_value_in_bytes(value)
+    if current_user.prefers_gb_unit
+      value * GB_MULTIPLIER
+    else
+      value * MB_MULTIPLIER
+    end
+  end
+
+  def get_value_in_preferred_unit(value)
+    if current_user.prefers_gb_unit
+      value / GB_MULTIPLIER
+    else
+      value / MB_MULTIPLIER
+    end
+  end
+
   def is_super_user_disabled?
     possible_cookie = cookies[:radar_super_user_disabled]
     possible_cookie.present? && possible_cookie == "true"
