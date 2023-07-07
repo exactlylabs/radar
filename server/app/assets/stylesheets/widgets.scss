@@ -1,0 +1,45 @@
+@import "./shared/colors.scss";
+
+.widgets--widget {
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 8px;
+  border: solid 1px $widget--border-color;
+  box-shadow: 0 2px 8px -2px $widget--box-shadow;
+
+  &[data-widget-type="locations_map"] {
+    width: 100%;
+    min-width: 100%;
+  }
+}
+
+.widgets--widget-content {
+  width: 100%;
+}
+
+.widgets--locations-map-container {
+  width: 100%;
+  height: 400px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.widgets--locations-list-container {
+  width: calc(33% - .75rem);
+  height: 100%;
+  border: solid 1px black;
+}
+
+.widgets--map-container {
+  width: calc(66% - .75rem);
+  height: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+
+  .widgets--map {
+    width: 100%;
+    height: 100%;
+  }
+}

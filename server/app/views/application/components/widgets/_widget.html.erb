@@ -1,0 +1,13 @@
+<div class="widgets--widget" data-widget-type="<%= type %>">
+  <% if type != WidgetsHelper::WidgetTypes::LOCATIONS_MAP %>
+    <%= render partial: "application/components/widgets/widget_header", locals: { type: type } %>
+  <% end %>
+  <div class="widgets--widget-content">
+    <% case type %>
+    <% when WidgetsHelper::WidgetTypes::LOCATIONS_MAP %>
+      <%= render partial: "application/components/widgets/locations_map" %>
+    <% else %>
+      <%= render partial: "application/components/widgets/locations_map" %>
+    <% end %>
+  </div>
+</div>

@@ -4,6 +4,11 @@ import { Controller } from "@hotwired/stimulus";
 //`Map container is already initialized`
 let map;
 
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiZXVnZWRhbW0iLCJhIjoiY2xqcmpxNGltMGR4MDNzbzdxYmpyd3R0NCJ9.UoaaSYGn1xA9wlT8Rr0BLw';
+const MAPBOX_STYLE_URL = 'https://api.mapbox.com/styles/v1/eugedamm/cljrixdvb00v301qvb4m73x62/tiles/{z}/{x}/{y}';
+
+const MAPBOX_URL = `${MAPBOX_STYLE_URL}?access_token=${MAPBOX_ACCESS_TOKEN}`;
+
 export default class extends Controller {
 
   connect() {
@@ -16,7 +21,7 @@ export default class extends Controller {
     }
     map = L.map("map").setView([51.505, -0.09], 13);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    L.tileLayer(MAPBOX_URL, {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
