@@ -8,10 +8,10 @@
     <div style="margin-top: 30px; width: 100%">
       <div class="location-data--row mb-6 d-flex flex-row align-items-start justify-content-between flex-wrap">
         <div class="forms--label" style="width: 25%; min-width: 130px">Pod Version</div>
-        <div class="fw-bold d-flex flex-column <%= client.target_client_version.nil? ? "additional-text" : "regular-text" %>" style="width: 75%;">
-          <%= client.target_client_version.nil? ? "-" : client.target_client_version.version %>
-          <% if client.target_client_version.present? %>
-            <span class="additional-text"><%= client.target_client_version.is_stable ? "Latest version" : "Outdated version" %></span>
+        <div class="fw-bold d-flex flex-column <%= client.target_client_version.nil? || client.client_version.nil? ? "additional-text" : "regular-text" %>" style="width: 75%;">
+          <%= client.client_version.nil? ? "-" : client.client_version.version %>
+          <% if client.target_client_version.present? && client.client_version.present? %>
+            <span class="additional-text"><%= client.target_client_version.version == client.client_version.version ? "Latest version" : "Outdated version" %></span>
           <% end %>
         </div>
       </div>
