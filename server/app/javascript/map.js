@@ -23,8 +23,8 @@ export function getPopupElement(location) {
   } = location.dataset;
 
   const online = locationOnline === 'true';
-  const downloadAvg = !!locationDownload ? parseFloat(locationDownload) : -1;
-  const uploadAvg = !!locationUpload ? parseFloat(locationUpload) : -1;
+  const downloadAvg = !!locationDownload ? parseFloat(locationDownload).toFixed(2) : -1;
+  const uploadAvg = !!locationUpload ? parseFloat(locationUpload).toFixed(2) : -1;
   const expectedDownload = !!locationExpectedDownload ? parseFloat(locationExpectedDownload) : -1;
   const expectedUpload = !!locationExpectedUpload ? parseFloat(locationExpectedUpload) : -1;
   const downloadDiff = !!locationDownloadDiff ? locationDownloadDiff : '-';
