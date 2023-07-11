@@ -80,7 +80,6 @@ p {
     height: calc(100dvh - var(--responsive-header-height)); /* dynamic view height for mobile browsers safe area */
     padding: 2rem 1rem;
     top: var(--responsive-header-height);
-    /* margin-top: var(--responsive-header-height); */
   }
 }
   
