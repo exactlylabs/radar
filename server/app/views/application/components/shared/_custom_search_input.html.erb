@@ -1,0 +1,20 @@
+<% turbo_frame_on = local_assigns[:turbo_frame].present? && local_assigns[:turbo_frame] == true %>
+<% controller = local_assigns[:controller].present? ? local_assigns[:controller] : 'search' %>
+<% method_for_action = local_assigns[:method].present? ? local_assigns[:method] : 'search' %>
+
+<div class="forms--custom-search-input">
+  <%= image_tag image_url("search.png"), class: "forms--search-icon" %>
+  <%= form_with(url: url, method: :get, id: "search-form", 
+      data: {
+        turbo_frame: turbo_frame,
+        turbo: turbo_frame_on,
+        fetch_url: url
+      },
+      html: { 
+        class: "forms--search-form" 
+      }
+    ) do |form| %>
+    <%= form.text_field :query, placeholder: "Search...", "data-action" => "input->#{controller}##{method_for_action}" %>
+  <% end %>
+  <%= image_tag image_url("cancel.png"), id: "category--clear-icon-ref", class: "forms--search-clear-icon invisible", data: { controller: controller, action: "click->#{controller}#clearSearch" } %>
+</div>

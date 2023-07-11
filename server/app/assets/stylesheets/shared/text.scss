@@ -110,6 +110,22 @@ $extra-bold: 800;
   color: $gray;
 }
 
+.help-dark-text {
+  font-variation-settings: 'wght' $semi-bold;
+  font-size: 0.812rem;
+  line-height: 1.188rem;
+  letter-spacing: 0;
+  color: $dark-gray;
+}
+
+.help-small-text {
+  font-variation-settings: 'wght' $medium;
+  font-size: 0.75rem;
+  line-height: 1.188rem;
+  letter-spacing: 0;
+  color: $gray;
+}
+
 .warning-text {
   font-variation-settings: 'wght' $medium;
   font-size: 0.875rem;
@@ -174,4 +190,10 @@ $extra-bold: 800;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap
+}
+
+.widget-location-title {
+  font-variation-settings: 'wght' $semi-bold;
+  font-size: 0.938rem;
+  color: $deep-blue;
 }

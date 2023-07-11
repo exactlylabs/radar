@@ -1,10 +1,11 @@
 <div class="widgets--locations-map-container">
   <div class="widgets--locations-list-container">
-
+    <%= render partial: "application/components/widgets/locations_map/locations_list" %>
   </div>
   <div class="widgets--map-container">
     <div class="widgets--map"
       data-onboard-target="map"
+      data-action="renderLocationsMap@window->map#renderLocationsMap"
       id="map"
     ></div>
   </div>

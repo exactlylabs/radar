@@ -1,0 +1,9 @@
+<%= turbo_stream.update "locations_map_widget_list" do %>
+  <% if @locations.length > 0 %>
+    <% @locations.each do |location| %>
+      <%= render "application/components/widgets/locations_map/location_row", location: location %>
+    <% end %>
+  <% else %>
+    <p class="additional-text text-center mt-2">No locations match that criteria.</p>
+  <% end%>
+<% end %>

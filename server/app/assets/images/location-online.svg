@@ -1,0 +1,26 @@
+<svg width="30" height="36" viewBox="0 0 30 36" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="aen686yutc">
+            <stop stop-opacity="0" offset="0%"/>
+            <stop offset="100%"/>
+        </linearGradient>
+        <filter x="-2.4%" y="-3.2%" width="104.8%" height="107.5%" filterUnits="objectBoundingBox" id="67w7ejl5jb">
+            <feMorphology radius="1" in="SourceAlpha" result="shadowSpreadOuter1"/>
+            <feOffset dy="2" in="shadowSpreadOuter1" result="shadowOffsetOuter1"/>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"/>
+            <feColorMatrix values="0 0 0 0 0.62745098 0 0 0 0 0.623529412 0 0 0 0 0.717647059 0 0 0 0.15 0" in="shadowBlurOuter1" result="shadowMatrixOuter1"/>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        <path d="M17.21 35.02c-1.126 1.307-3.005 1.307-4.132 0L3.874 24.93C1.056 21.755-.446 17.645.117 12.975 1.057 6.25 6.504.832 13.267.085c9.016-.934 16.717 5.978 16.717 14.758.188 3.923-1.315 7.473-3.569 10.088L17.211 35.02z" id="eeac95epqa"/>
+        <mask id="9vktdtf3ad" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="30" height="36" fill="#fff">
+            <use xlink:href="#eeac95epqa"/>
+        </mask>
+    </defs>
+    <g filter="url(#67w7ejl5jb)" transform="translate(-234 -58)" fill="#31B36C" fill-rule="evenodd">
+        <use mask="url(#9vktdtf3ad)" xlink:href="#eeac95epqa" opacity=".3" stroke-dasharray="0,0" fill-rule="nonzero" stroke="url(#aen686yutc)" stroke-width="1.998" transform="translate(234 58)"/>
+        <path d="M249.145 79.207c-3.113 0-5.636-2.578-5.636-5.76 0-3.18 2.523-5.76 5.636-5.76 3.112 0 5.635 2.58 5.635 5.76 0 3.182-2.523 5.76-5.635 5.76z"/>
+    </g>
+</svg>

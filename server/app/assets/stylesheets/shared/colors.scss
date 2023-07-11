@@ -56,18 +56,6 @@ $alert--success-color: $deep-blue;
 $alert--success-border-color: rgba(49, 179, 108, 0.3);
 $alert--success-icon-container-background-color: rgba(49, 179, 108, 0.7);
 
-// Badges
-$badge--green-color: #31b36c;
-$badge--green-background-color: rgba(49, 179, 108, 0.1);
-$badge--red-color: #f1416c;
-$badge--red-background-color: rgba(241, 65, 108, 0.1);
-$badge--gray-color: $gray;
-$badge--gray-background-color: $subtle-gray;
-$badge--blue-color: $blue;
-$badge--blue-background-color: rgba(75, 123, 229, 0.1);
-$badge--orange-color: #f18f41;
-$badge--orange-background-color: rgba(241, 143, 65, 0.1);
-
 // Sidebar
 $sidebar--main-container-border: rgba(188, 187, 199, 0.1);
 $sidebar--main-container-box-shadow: rgba(188, 187, 199, 0.15);
@@ -102,6 +90,10 @@ $dashboard--no-accounts-card-box-shadow: rgba(160, 159, 183, 0.15);
 // Widgets
 $widget--border-color: rgba(188, 187, 199, 0.1);
 $widget--box-shadow: rgba(160, 159, 183, 0.15);
+$widget--location-popup-header-background-color: rgba(246, 247, 250, 0.3);
+
+// Forms
+$forms--search-box-shadow: rgba(160, 159, 183, 0.05);
 
 // Modals
 $modals--underlay-background-color: rgba(35, 34, 52, 0.5);

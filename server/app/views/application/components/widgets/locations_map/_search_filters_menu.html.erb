@@ -1,0 +1,36 @@
+<div class="tables--filters-button-container"
+  data-controller="filters"
+  data-action="click->filters#toggleFiltersMenu pickFilter@window->filters#closeFiltersMenu"
+  data-menu-id="locations-map-filter-menu"
+>
+  <button type="button"
+    class="custom-button custom-button--sm custom-button--secondary"
+  >
+    <%= image_tag image_url('filters-icon.png'), width: 16, height: 16 %>
+    <%= image_tag image_url('caret.png'), width: 16, height: 16, class: "ms-1" %>
+  </button>
+  <div class="tables--filters-menu-container overflow-visible invisible"
+    data-filters-target="filtersMenu"
+    id="locations-map-filter-menu"
+  >
+    <%= render partial: "application/components/tables/client_filter",
+      locals: {
+        menu_id: 'status-filter-menu',
+        key: 'status',
+        default_value: 'all',
+        default_label: 'All statuses',
+        controller: 'locations-map-widget',
+        method: 'selectStatusFilter',
+        options: [
+          { label: 'All statuses', value: 'all'},
+          { label: 'Online', value: 'online' },
+          { label: 'Offline', value: 'offline' }
+        ]
+      }
+    %>
+  </div>
+</div>
+
+<!-- 
+
+-->

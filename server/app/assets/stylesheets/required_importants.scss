@@ -287,6 +287,10 @@ body {
   text-decoration: underline;
 }
 
+.overflow-visible {
+  overflow: visible !important;
+}
+
 .overflow-x-hidden {
   overflow-x: hidden !important;
 }
@@ -360,4 +364,8 @@ body {
 
 .forms--text-input::placeholder {
   color: $mid-light-gray !important;
+}
+
+.leaflet-popup-content {
+  width: max-content !important;
 }
