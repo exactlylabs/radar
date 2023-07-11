@@ -9,7 +9,7 @@ class DashboardController < ApplicationController
     end
     @clients = policy_scope(Client)
     locations_to_filter = policy_scope(Location)
-    @locations = get_filtered_locations(locations_to_filter, params[:filter])
+    @locations = get_filtered_locations(locations_to_filter, params[:status])
     if @locations.exists? || params[:filter].present?
       @onboard_step = -1
     elsif @clients.exists?
@@ -19,13 +19,24 @@ class DashboardController < ApplicationController
     end
   end
 
+  def search_locations
+    query = params[:query]
+    status = params[:status]
+    @locations = policy_scope(Location)
+    @locations = @locations.where("name ILIKE ?", "%#{query}%") if query
+    @locations = get_filtered_locations(@locations, status)
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
   private
 
   def get_filtered_locations(locations, filter)
     case filter
     when nil, 'all'
       locations
-    when 'active'
+    when 'online'
       locations.where_online
     else
       locations.where_offline

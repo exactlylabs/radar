@@ -98,6 +98,11 @@ class LocationsController < ApplicationController
   # DELETE /locations/1 or /locations/1.json
   def destroy
     @location.soft_delete
+
+    # Check if there is a reference to the client in the recents list to delete
+    possible_recent_search = policy_scope(RecentSearch).find_by_location_id(@location.id)
+    possible_recent_search.destroy if possible_recent_search.present?
+
     policy_scope(CategoriesLocation).where(location_id: @location.id).destroy_all
     respond_to do |format|
       format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }

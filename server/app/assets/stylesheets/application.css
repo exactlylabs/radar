@@ -95,14 +95,16 @@ p {
   z-index: 1000;
 }
 
-.location--online path {
-  fill: #006299;
+@media (max-width: 1200px) {
+  .application--content-container {
+    padding: 2rem 2rem;
+  }
 }
-.location--offline path {
-  fill: #852f41;
-}
-.location--standard path {
-  fill: #3c559b;
+
+@media (max-width: 1200px) {
+  .application--content-container {
+    padding: 2rem 2rem;
+  }
 }
 
 .form-custom-opaque {

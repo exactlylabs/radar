@@ -1,0 +1,22 @@
+<div class="widgets--locations-map-search-filter-container"
+  data-controller="locations-map-widget"
+>
+  <%= render partial: "application/components/shared/custom_search_input",
+      locals: { 
+        turbo_frame: true,
+        url: search_locations_path,
+        controller: 'locations-map-widget',
+        method: 'handleInputChange'
+      }
+  %>
+  <%= render partial: "application/components/widgets/locations_map/search_filters_menu" %>
+</div>
+<%= turbo_frame_tag "locations_map_widget_list" do %>
+  <% if @locations.length > 0 %>
+    <% @locations.each do |location| %>
+      <%= render "application/components/widgets/locations_map/location_row", location: location %>
+    <% end %>
+  <% else %>
+    <p class="additional-text text-center mt-2">No locations found.</p>
+  <% end %>
+<% end %>

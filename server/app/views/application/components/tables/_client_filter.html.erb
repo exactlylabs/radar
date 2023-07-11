@@ -1,6 +1,9 @@
 <% current_filter_label = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:label] : default_label %>
 <% current_filter_value = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:value] : default_value %>
 <% is_dark = local_assigns[:dark].present? && local_assigns[:dark] == true %>
+<% custom_extra_controller = local_assigns[:controller].present? ? local_assigns[:controller] : nil %>
+<% custom_extra_method = local_assigns[:method].present? ? local_assigns[:method] : nil %>
+<% raise "Missing custom method" if custom_extra_controller.present? && custom_extra_method.nil? %>
 
 <div class="tables--filters-button-container"
   data-controller="filters"
@@ -10,7 +13,7 @@
   <button type="button"
     class="custom-button custom-button--sm <%= is_dark ? 'custom-button--secondary' : 'custom-button--secondary-light' %>"
   >
-    <%= current_filter_label %>
+    <span class="table-filter-option" <%= custom_extra_controller.present? ? "data-#{custom_extra_controller}-target=filterButton" : nil %>><%= current_filter_label %></span>
     <%= image_tag image_url('caret.png'), width: 16, height: 16, class: "ms-1" %>
   </button>
   <div class="tables--filters-menu-container invisible"
@@ -18,14 +21,19 @@
     id="<%= menu_id %>"
   >
     <% options.each do |option| %>
-      <a href="<%= url_for(request.query_parameters.merge({ page: 1, "#{key}" => option[:value] })) %>"
+      <div data-action="<%= custom_extra_controller.present? ? "click->#{custom_extra_controller}##{custom_extra_method}": nil %>"
         class="tables--filters-menu-item table-filter-option <%= current_filter_value == option[:value] ? 'active' : '' %>"
+        data-value="<%= option[:value] %>"
+        data-label="<%= option[:label] %>"
       >
         <%= option[:label] %>
-        <% if current_filter_value == option[:value] %>
-          <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
-        <% end %>
-      </a>
+        <%= image_tag image_url('checkmark-blue-icon.png'),
+            width: 16,
+            height: 16,
+            class: current_filter_value == option[:value] ? nil : "invisible",
+            data: { "#{custom_extra_controller}_target": "#{option[:value]}Checkmark" }
+        %>
+      </div>
     <% end %>
   </div>
 </div>

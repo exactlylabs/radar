@@ -1,4 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
+import { MAPBOX_URL } from "../map";
+import neutralLocationIcon from '../../assets/images/location-neutral-icon.png';
 
 export default class extends Controller {
   static values = {
@@ -46,7 +48,7 @@ export default class extends Controller {
     this.map.setMinZoom(3);
     this.map.on('drag', () => {this.map.panInsideBounds(bounds, {animate: false})});
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    L.tileLayer(MAPBOX_URL, {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.map);
@@ -68,19 +70,11 @@ export default class extends Controller {
       this.longitudeValue = -97.264547;
     }
 
-    const icon = L.divIcon({
-      html: `<?xml version="1.0" encoding="utf-8"?>
-            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-            <span class="svg-icon svg-icon-2hx">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" enable-background="new 0 0 365 560">
-                <path style="fill: #4b7be5" opacity="1" d="M18.0624 15.3453L13.1624 20.7453C12.5624 21.4453 11.5624 21.4453 10.9624 20.7453L6.06242 15.3453C4.56242 13.6453 3.76242 11.4453 4.06242 8.94534C4.56242 5.34534 7.46242 2.44534 11.0624 2.04534C15.8624 1.54534 19.9624 5.24534 19.9624 9.94534C20.0624 12.0453 19.2624 13.9453 18.0624 15.3453Z"/>
-                <path style="white: transparent" d="M12.0624 13.0453C13.7193 13.0453 15.0624 11.7022 15.0624 10.0453C15.0624 8.38849 13.7193 7.04535 12.0624 7.04535C10.4056 7.04535 9.06241 8.38849 9.06241 10.0453C9.06241 11.7022 10.4056 13.0453 12.0624 13.0453Z"/>
-              </svg>
-            </span>`,
-      className: "location--standard",
-      iconSize: [36, 43],
+    const icon = L.icon({
+      iconUrl: neutralLocationIcon,
+      iconSize: [30, 36],
       iconAnchor: [10, 30],
-      popupAnchor: [0, -30],
+      popupAnchor: [7, -30],
     });
 
     if (this.element.getAttribute("data-draggable") === "true") {

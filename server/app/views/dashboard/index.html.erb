@@ -1,5 +1,5 @@
 <!--begin::Toolbar-->
-<div class="toolbar" id="kt_toolbar" data-controller="map">
+<div class="toolbar" id="kt_toolbar">
   <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
@@ -81,7 +81,7 @@
 <div class="post fs-6 d-flex border-solid" id="kt_post">
   <!--begin::Container-->
   <% if current_account.present? %>
-    <div class="w-100 mw-100" data-controller="onboard" data-onboard-step-value="<%= @onboard_step %>">
+    <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
       <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
         <%= render partial: "onboard", locals: { step: @onboard_step } %>
       </div>

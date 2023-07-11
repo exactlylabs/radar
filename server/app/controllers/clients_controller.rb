@@ -291,6 +291,11 @@ class ClientsController < ApplicationController
   # DELETE /clients/1 or /clients/1.json
   def destroy
     @client.destroy
+
+    # Check if there is a reference to the client in the recents list to delete
+    possible_recent_search = policy_scope(RecentSearch).find_by_client_id(@client.id)
+    possible_recent_search.destroy if possible_recent_search.present?
+
     respond_to do |format|
       format.html { redirect_back fallback_location: root_path, notice: "Client was successfully destroyed." }
       format.json { head :no_content }

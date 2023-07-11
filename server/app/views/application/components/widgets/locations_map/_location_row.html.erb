@@ -1,0 +1,36 @@
+<a class="widgets--location-row-container"
+  href="<%= location_path(location) %>"
+  data-turbo-frame="_top"
+  data-map-target="locationRow"
+  data-location-id="<%= location.id %>"
+  data-location-name="<%= location.name %>"
+  data-location-download="<%= location.download_avg.present? ? location.download_avg : nil %>"
+  data-location-upload="<%= location.upload_avg.present? ? location.upload_avg : nil %>"
+  data-location-online="<%= location.online? %>"
+  data-location-latitude="<%= location.latitude %>"
+  data-location-longitude="<%= location.longitude %>"
+  data-location-download-diff="<%= location.download_diff.present? ? location.download_diff : nil %>"
+  data-location-upload-diff="<%= location.upload_diff.present? ? location.upload_diff : nil %>"
+  data-location-expected-download="<%= location.expected_mbps_down %>"
+  data-location-expected-upload="<%= location.expected_mbps_up %>"
+>
+  <div class="widgets--location-row-text-pin-container">
+    <div class="widgets--location-pin-container"
+      data-online="<%= location.online %>"
+    >
+      <%= image_tag image_url(location.online ? 'location-online-icon.png' : 'location-offline-icon.png'), width: 20, height: 20 %>
+    </div>
+    <div class="widgets--location-text-container">
+      <p class="widget-location-title ellipsis"><%= location.name %></p>
+      <div class="widgets--location-avg-container">
+        <span class="help-dark-text"><%= location.download_avg.present? ? "#{location.download_avg} Mbps" : 'Not available' %></span>
+        <span class="help-small-text mx-1">/</span>
+        <span class="help-small-text"><%= location.expected_mbps_down.present? ? "#{location.expected_mbps_down} Mbps" : 'Not available' %></span>
+        <span class="widgets--location-diff-text"
+          data-negative="<%= location.download_diff.present? && location.download_diff.include?('-') %>"
+        ><%= location.download_diff.present? ? location.download_diff : '-' %></span>
+      </div>
+    </div>
+  </div>
+  <%= image_tag image_url('caret-right.png'), width: 16, height: 16 %>
+</a>
