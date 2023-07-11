@@ -15,7 +15,7 @@
   padding: 2rem 1.5rem;
 }
 
-@media (max-width: $lg-max-width) {
+@media (max-width: $md-max-width) {
   .tables--table-container {
     padding: .5rem 1rem;
   }
@@ -43,7 +43,7 @@
   }
 }
 
-@media (max-width: $lg-max-width) {
+@media (max-width: $md-max-width) {
   .tables--titles-container {
     visibility: hidden;
     display: none;
@@ -80,7 +80,7 @@
   }
 }
 
-@media (max-width: $lg-max-width) {
+@media (max-width: $md-max-width) {
   .tables--footer-container {
     flex-direction: column-reverse;
     align-items: center;
@@ -134,7 +134,7 @@
   }
 }
 
-@media (max-width: $lg-max-width) {
+@media (max-width: $md-max-width) {
   .tables--hides-on-small {
     display: none;
     visibility: hidden;
@@ -146,7 +146,7 @@
   visibility: hidden;
 }
 
-@media (max-width: $lg-max-width) {
+@media (max-width: $md-max-width) {
   .tables--appears-on-small {
     min-width: 2rem;
     display: block;
@@ -154,7 +154,7 @@
   }
 }
 
-@media (max-width: $lg-max-width) {
+@media (max-width: $md-max-width) {
   .tables--grows-on-small {
     width: calc(100% - 4rem) !important;
 
@@ -193,7 +193,7 @@
   }
 }
 
-@media (max-width: $lg-max-width) {
+@media (max-width: $md-max-width) {
   .tables--name-email-container {
     width: 100%;
     .tables--full-name,
