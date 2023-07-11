@@ -5,33 +5,37 @@ import { MAPBOX_URL, getPopupElement } from "../map";
 
 //Using a global variable to prevent console error:
 //`Map container is already initialized`
-let map;
+
 
 export default class extends Controller {
 
   static targets = ["locationRow"];
 
+  initialize() {
+    this.map = null;
+    this.markers = null;
+  }
+
   connect() {
     if (!document.querySelector("#map")) return; // don't try to initialize a map if the <div id="map"> is not present on the screen
     
     // Try and prevent having a re-initialization of the map
-    if(map) {
-      map.off();
-      map.remove();
+    if(!!this.map) {
+      this.map.off();
+      this.map.remove();
     }
-    map = L.map("map", { zoomControl: false }).setView([51.505, -0.09], 13);
+
+    this.map = L.map("map", { zoomControl: false }).setView([51.505, -0.09], 13);
 
     // Add zoom control in desired position
     L.control.zoom({
       position: 'bottomleft'
-    }).addTo(map);
+    }).addTo(this.map);
 
     L.tileLayer(MAPBOX_URL, {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
-
-    this.markers = null;
+    }).addTo(this.map);
 
     this.populateLocationsMap();
 
@@ -43,24 +47,24 @@ export default class extends Controller {
     let group;
     if(this.markers.length > 0) {
       group = new L.featureGroup(this.markers);
-      map.fitBounds(group.getBounds());
+      this.map.fitBounds(group.getBounds());
     } else {
-      map.fitBounds(bounds);
+      this.map.fitBounds(bounds);
     }
 
-    map.setMaxBounds(bounds);
-    map.setMinZoom(3);
-    map.on('drag', () => {map.panInsideBounds(bounds, {animate: false})});
+    this.map.setMaxBounds(bounds);
+    this.map.setMinZoom(3);
+    this.map.on('drag', () => { this.map.panInsideBounds(bounds, {animate: false}) });
 
     this.observer = new ResizeObserver((entries) => {
       if (
         entries.length > 0 &&
         entries[0].contentRect.width > 0 &&
         entries[0].contentRect.height > 0 &&
-        !!map
+        !!this.map
       ) {
-        if(!!group) map.fitBounds(group.getBounds());
-        else map.fitBounds(bounds);
+        if (!!group) this.map.fitBounds(group.getBounds());
+        else this.map.fitBounds(bounds);
       }
     });
 
@@ -68,14 +72,14 @@ export default class extends Controller {
   }
 
   renderLocationsMap() {
-    if (!document.querySelector("#map") || !map) return;
+    if (!document.querySelector("#map") || !this.map) return;
     this.populateLocationsMap();
   }
 
   populateLocationsMap() {
     // clear map so it can get properly initialized on re-render
-    if(map && this.markers) {
-      this.markers.forEach(m => map.removeLayer(m));
+    if (this.map && this.markers) {
+      this.markers.forEach(m => this.map.removeLayer(m));
     }
 
     this.markers = [];
@@ -103,7 +107,7 @@ export default class extends Controller {
 
       const marker = L
         .marker([locationLatitude, locationLongitude], { icon: icon })
-        .addTo(map)
+        .addTo(this.map)
         .bindPopup(popupElement);
 
       this.markers.push(marker);
