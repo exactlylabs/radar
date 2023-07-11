@@ -133,21 +133,6 @@ application.register("table", TableController);
 import FiltersController from './filters_controller';
 application.register("filters", FiltersController);
 
-import SuperUserController from './super_user_controller';
-application.register("super-user", SuperUserController);
-
-import PaginationController from './pagination_controller';
-application.register("pagination", PaginationController);
-
-import MoreOptionsButtonController from './more_options_button_controller';
-application.register("more-options-button", MoreOptionsButtonController);
-
-import TableController from './table_controller';
-application.register("table", TableController);
-
-import FiltersController from './filters_controller';
-application.register("filters", FiltersController);
-
 import CustomModalController from './custom_modal_controller';
 application.register("custom-modal", CustomModalController);
 
