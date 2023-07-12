@@ -51,7 +51,9 @@ class UsersTest < ApplicationSystemTestCase
     assert_current_path dashboard_path
 
     previous_path = page.current_path
+    wait.until { page.has_selector?(id: "sidebar--profile-popover-regular") }
     page.find(id: "sidebar--profile-popover-regular").click
+    wait.until { page.has_selector?(id: "sign-out-link") }
     click_link("sign-out-link")
     wait.until { page.current_path != previous_path }
 
