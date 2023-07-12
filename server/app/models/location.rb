@@ -260,10 +260,6 @@ include EventSourceable
       end
     end
 
-    if id_previously_changed?
-      # Notify location created
-      LocationNotificationJobs::NotifyLocationCreated.perform_later self
-    end
   end
 
 end
