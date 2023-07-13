@@ -1,0 +1,166 @@
+{
+  "raw": [
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 18359,
+        "NumBytes": 8192,
+        "MeanClientMbps": 0.003569693338417125
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 19243,
+        "NumBytes": 16384,
+        "MeanClientMbps": 0.006811411942004885
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 19452,
+        "NumBytes": 24576,
+        "MeanClientMbps": 0.010107341147439853
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 19602,
+        "NumBytes": 32768,
+        "MeanClientMbps": 0.01337332925211713
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 19712,
+        "NumBytes": 40960,
+        "MeanClientMbps": 0.016623376623376623
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 19746,
+        "NumBytes": 49152,
+        "MeanClientMbps": 0.019913704041324826
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 22447,
+        "NumBytes": 106496,
+        "MeanClientMbps": 0.03795464872811511
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 23540,
+        "NumBytes": 114688,
+        "MeanClientMbps": 0.038976380628717076
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 23705,
+        "NumBytes": 122880,
+        "MeanClientMbps": 0.041469732124024467
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 23908,
+        "NumBytes": 131072,
+        "MeanClientMbps": 0.04385879203613853
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 24592,
+        "NumBytes": 147456,
+        "MeanClientMbps": 0.04796877033181522
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 24935,
+        "NumBytes": 163840,
+        "MeanClientMbps": 0.05256547022257871
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 25348,
+        "NumBytes": 180224,
+        "MeanClientMbps": 0.05687991163010888
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 27812,
+        "NumBytes": 294912,
+        "MeanClientMbps": 0.0848301452610384
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 28320,
+        "NumBytes": 327680,
+        "MeanClientMbps": 0.09256497175141243
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 28977,
+        "NumBytes": 360448,
+        "MeanClientMbps": 0.09951285502294922
+      },
+      "type": "download"
+    },
+    {
+      "LastClientMeasurement": {
+        "ElapsedTime": 28977,
+        "NumBytes": 360448,
+        "MeanClientMbps": 0.09951285502294922
+      },
+      "LastServerMeasurement": {},
+      "type": "download"
+    },
+    {
+      "LastClientMeasurement": {
+        "ElapsedTime": 198,
+        "NumBytes": 925696,
+        "MeanClientMbps": 37.401858585858584
+      },
+      "LastServerMeasurement": {},
+      "type": "upload"
+    }
+  ]
+}

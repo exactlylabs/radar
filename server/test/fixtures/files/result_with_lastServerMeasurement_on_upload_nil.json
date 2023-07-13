@@ -1,0 +1,462 @@
+{
+  "client_id": 1,
+  "raw": [
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 18359,
+        "NumBytes": 8192,
+        "MeanClientMbps": 0.003569693338417125
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 19243,
+        "NumBytes": 16384,
+        "MeanClientMbps": 0.006811411942004885
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 19452,
+        "NumBytes": 24576,
+        "MeanClientMbps": 0.010107341147439853
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 19602,
+        "NumBytes": 32768,
+        "MeanClientMbps": 0.01337332925211713
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 19712,
+        "NumBytes": 40960,
+        "MeanClientMbps": 0.016623376623376623
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 19746,
+        "NumBytes": 49152,
+        "MeanClientMbps": 0.019913704041324826
+      },
+      "type": "download"
+    },
+    {
+      "Source": "server",
+      "Data": {
+        "ConnectionInfo": {
+          "Client": "[2600:1000:b05b:eaf4:0:60:3352:8101]:35872",
+          "Server": "[2001:438:fffd:2b::229]:443",
+          "UUID": "ndt-bx8km_1685156513_0000000000340D1E"
+        },
+        "BBRInfo": {
+          "BW": 0,
+          "MinRTT": 668811,
+          "PacingGain": 0,
+          "CwndGain": 0,
+          "ElapsedTime": 56066
+        },
+        "TCPInfo": {
+          "State": 1,
+          "CAState": 0,
+          "Retransmits": 0,
+          "Probes": 0,
+          "Backoff": 0,
+          "Options": 7,
+          "WScale": 120,
+          "AppLimited": 1,
+          "RTO": 24772000,
+          "ATO": 40000,
+          "SndMSS": 1356,
+          "RcvMSS": 877,
+          "Unacked": 9,
+          "Sacked": 0,
+          "Lost": 0,
+          "Retrans": 0,
+          "Fackets": 0,
+          "LastDataSent": 56,
+          "LastAckSent": 0,
+          "LastDataRecv": 64,
+          "LastAckRecv": 432,
+          "PMTU": 1500,
+          "RcvSsThresh": 64096,
+          "RTT": 6132550,
+          "RTTVar": 4659285,
+          "SndSsThresh": 2147483647,
+          "SndCwnd": 10,
+          "AdvMSS": 1428,
+          "Reordering": 3,
+          "RcvRTT": 0,
+          "RcvSpace": 14400,
+          "TotalRetrans": 3,
+          "PacingRate": 6236,
+          "MaxPacingRate": -1,
+          "BytesAcked": 4696,
+          "BytesReceived": 1458,
+          "SegsOut": 16,
+          "SegsIn": 11,
+          "NotsentBytes": 37968,
+          "MinRTT": 668811,
+          "DataSegsIn": 3,
+          "DataSegsOut": 13,
+          "DeliveryRate": 7987,
+          "BusyTime": 740000,
+          "RWndLimited": 0,
+          "SndBufLimited": 0,
+          "Delivered": 5,
+          "DeliveredCE": 0,
+          "BytesSent": 14516,
+          "BytesRetrans": 0,
+          "DSackDups": 0,
+          "ReordSeen": 0,
+          "RcvOooPack": 0,
+          "SndWnd": 75008,
+          "ElapsedTime": 56066
+        }
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 22447,
+        "NumBytes": 106496,
+        "MeanClientMbps": 0.03795464872811511
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 23540,
+        "NumBytes": 114688,
+        "MeanClientMbps": 0.038976380628717076
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 23705,
+        "NumBytes": 122880,
+        "MeanClientMbps": 0.041469732124024467
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 23908,
+        "NumBytes": 131072,
+        "MeanClientMbps": 0.04385879203613853
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 24592,
+        "NumBytes": 147456,
+        "MeanClientMbps": 0.04796877033181522
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 24935,
+        "NumBytes": 163840,
+        "MeanClientMbps": 0.05256547022257871
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 25348,
+        "NumBytes": 180224,
+        "MeanClientMbps": 0.05687991163010888
+      },
+      "type": "download"
+    },
+    {
+      "Source": "server",
+      "Data": {
+        "ConnectionInfo": {
+          "Client": "[2600:1000:b05b:eaf4:0:60:3352:8101]:35872",
+          "Server": "[2001:438:fffd:2b::229]:443",
+          "UUID": "ndt-bx8km_1685156513_0000000000340D1E"
+        },
+        "BBRInfo": {
+          "BW": 41058,
+          "MinRTT": 63303,
+          "PacingGain": 739,
+          "CwndGain": 739,
+          "ElapsedTime": 1500122
+        },
+        "TCPInfo": {
+          "State": 1,
+          "CAState": 0,
+          "Retransmits": 0,
+          "Probes": 0,
+          "Backoff": 0,
+          "Options": 7,
+          "WScale": 120,
+          "AppLimited": 0,
+          "RTO": 14952000,
+          "ATO": 40000,
+          "SndMSS": 1356,
+          "RcvMSS": 877,
+          "Unacked": 5,
+          "Sacked": 0,
+          "Lost": 0,
+          "Retrans": 0,
+          "Fackets": 0,
+          "LastDataSent": 4,
+          "LastAckSent": 0,
+          "LastDataRecv": 1508,
+          "LastAckRecv": 32,
+          "PMTU": 1500,
+          "RcvSsThresh": 64096,
+          "RTT": 656839,
+          "RTTVar": 1044943,
+          "SndSsThresh": 2147483647,
+          "SndCwnd": 18,
+          "AdvMSS": 1428,
+          "Reordering": 3,
+          "RcvRTT": 0,
+          "RcvSpace": 14400,
+          "TotalRetrans": 3,
+          "PacingRate": 117339,
+          "MaxPacingRate": -1,
+          "BytesAcked": 29432,
+          "BytesReceived": 1458,
+          "SegsOut": 32,
+          "SegsIn": 30,
+          "NotsentBytes": 147804,
+          "MinRTT": 63303,
+          "DataSegsIn": 3,
+          "DataSegsOut": 29,
+          "DeliveryRate": 41114,
+          "BusyTime": 2184000,
+          "RWndLimited": 0,
+          "SndBufLimited": 0,
+          "Delivered": 25,
+          "DeliveredCE": 0,
+          "BytesSent": 36212,
+          "BytesRetrans": 0,
+          "DSackDups": 0,
+          "ReordSeen": 0,
+          "RcvOooPack": 0,
+          "SndWnd": 129280,
+          "ElapsedTime": 1500122
+        }
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 27812,
+        "NumBytes": 294912,
+        "MeanClientMbps": 0.0848301452610384
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 28320,
+        "NumBytes": 327680,
+        "MeanClientMbps": 0.09256497175141243
+      },
+      "type": "download"
+    },
+    {
+      "Source": "client",
+      "Data": {
+        "ElapsedTime": 28977,
+        "NumBytes": 360448,
+        "MeanClientMbps": 0.09951285502294922
+      },
+      "type": "download"
+    },
+    {
+      "Source": "server",
+      "Data": {
+        "ConnectionInfo": {
+          "Client": "[2600:1000:b05b:eaf4:0:60:3352:8101]:35872",
+          "Server": "[2001:438:fffd:2b::229]:443",
+          "UUID": "ndt-bx8km_1685156513_0000000000340D1E"
+        },
+        "BBRInfo": {
+          "BW": 43564,
+          "MinRTT": 63303,
+          "PacingGain": 192,
+          "CwndGain": 512,
+          "ElapsedTime": 7865326
+        },
+        "TCPInfo": {
+          "State": 1,
+          "CAState": 0,
+          "Retransmits": 0,
+          "Probes": 0,
+          "Backoff": 0,
+          "Options": 7,
+          "WScale": 120,
+          "AppLimited": 0,
+          "RTO": 1736000,
+          "ATO": 40000,
+          "SndMSS": 1356,
+          "RcvMSS": 877,
+          "Unacked": 12,
+          "Sacked": 0,
+          "Lost": 0,
+          "Retrans": 0,
+          "Fackets": 0,
+          "LastDataSent": 0,
+          "LastAckSent": 0,
+          "LastDataRecv": 208,
+          "LastAckRecv": 0,
+          "PMTU": 1500,
+          "RcvSsThresh": 64096,
+          "RTT": 319202,
+          "RTTVar": 36425,
+          "SndSsThresh": 6,
+          "SndCwnd": 12,
+          "AdvMSS": 1428,
+          "Reordering": 3,
+          "RcvRTT": 0,
+          "RcvSpace": 14400,
+          "TotalRetrans": 3,
+          "PacingRate": 32346,
+          "MaxPacingRate": -1,
+          "BytesAcked": 198932,
+          "BytesReceived": 1599,
+          "SegsOut": 166,
+          "SegsIn": 158,
+          "NotsentBytes": 128820,
+          "MinRTT": 63303,
+          "DataSegsIn": 6,
+          "DataSegsOut": 161,
+          "DeliveryRate": 40185,
+          "BusyTime": 8548000,
+          "RWndLimited": 0,
+          "SndBufLimited": 0,
+          "Delivered": 150,
+          "DeliveredCE": 0,
+          "BytesSent": 215204,
+          "BytesRetrans": 0,
+          "DSackDups": 0,
+          "ReordSeen": 0,
+          "RcvOooPack": 0,
+          "SndWnd": 468224,
+          "ElapsedTime": 7865326
+        }
+      },
+      "type": "download"
+    },
+    {
+      "LastClientMeasurement": {
+        "ElapsedTime": 28977,
+        "NumBytes": 360448,
+        "MeanClientMbps": 0.09951285502294922
+      },
+      "LastServerMeasurement": {
+        "ConnectionInfo": {
+          "Client": "[2600:1000:b05b:eaf4:0:60:3352:8101]:35872",
+          "Server": "[2001:438:fffd:2b::229]:443",
+          "UUID": "ndt-bx8km_1685156513_0000000000340D1E"
+        },
+        "BBRInfo": {
+          "BW": 43564,
+          "MinRTT": 63303,
+          "PacingGain": 192,
+          "CwndGain": 512,
+          "ElapsedTime": 7865326
+        },
+        "TCPInfo": {
+          "State": 1,
+          "CAState": 0,
+          "Retransmits": 0,
+          "Probes": 0,
+          "Backoff": 0,
+          "Options": 7,
+          "WScale": 120,
+          "AppLimited": 0,
+          "RTO": 1736000,
+          "ATO": 40000,
+          "SndMSS": 1356,
+          "RcvMSS": 877,
+          "Unacked": 12,
+          "Sacked": 0,
+          "Lost": 0,
+          "Retrans": 0,
+          "Fackets": 0,
+          "LastDataSent": 0,
+          "LastAckSent": 0,
+          "LastDataRecv": 208,
+          "LastAckRecv": 0,
+          "PMTU": 1500,
+          "RcvSsThresh": 64096,
+          "RTT": 319202,
+          "RTTVar": 36425,
+          "SndSsThresh": 6,
+          "SndCwnd": 12,
+          "AdvMSS": 1428,
+          "Reordering": 3,
+          "RcvRTT": 0,
+          "RcvSpace": 14400,
+          "TotalRetrans": 3,
+          "PacingRate": 32346,
+          "MaxPacingRate": -1,
+          "BytesAcked": 198932,
+          "BytesReceived": 1599,
+          "SegsOut": 166,
+          "SegsIn": 158,
+          "NotsentBytes": 128820,
+          "MinRTT": 63303,
+          "DataSegsIn": 6,
+          "DataSegsOut": 161,
+          "DeliveryRate": 40185,
+          "BusyTime": 8548000,
+          "RWndLimited": 0,
+          "SndBufLimited": 0,
+          "Delivered": 150,
+          "DeliveredCE": 0,
+          "BytesSent": 215204,
+          "BytesRetrans": 0,
+          "DSackDups": 0,
+          "ReordSeen": 0,
+          "RcvOooPack": 0,
+          "SndWnd": 468224,
+          "ElapsedTime": 7865326
+        }
+      },
+      "type": "download"
+    },
+    {
+      "LastClientMeasurement": {
+        "ElapsedTime": 198,
+        "NumBytes": 925696,
+        "MeanClientMbps": 37.401858585858584
+      },
+      "LastServerMeasurement": {},
+      "type": "upload"
+    }
+  ]
+}
