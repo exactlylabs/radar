@@ -13,30 +13,48 @@
 
 <div class="tables--name-container tables--grows-on-small"
   style="width: <%= widths[1] %>"
-  data-url="<%= users_account_path(row, type: row.class.name) %>"
+  data-url="<%= current_account.is_all_accounts? ? profile_users_account_index_path(email: row.user.present? ? row.user.email : row.email) : users_account_path(row, type: row.class.name)%>"
   data-action="click->table#goToDetails"
 >
   <div class="tables--name-initial-container" data-even="<%= even %>">
-    <span class=""><%= row.user.get_letter_for_icon %></span>
+    <% if row.user.present? %>
+      <span class=""><%= row.user.get_letter_for_icon %></span>
+    <% else %>
+      <span><%= row.email[0].upcase %></span>
+    <% end %>
   </div>
   <div class="tables--name-email-container">
-    <a href="<%= users_account_path(row, type: row.class.name) %>" class="tables--full-name table-full-name ellipsis "><%= row.user.first_name %> <%= row.user.last_name %></a>
-    <span class="tables--email help-text ellipsis"><%= row.user.email %></span>
+    <% if row.user.present? %>
+      <a href="<%= profile_users_account_index_path(email: row.user.email) %>" class="tables--full-name table-full-name ellipsis "><%= row.user.first_name %> <%= row.user.last_name %></a>
+      <span class="tables--email help-text ellipsis"><%= row.user.email %></span>
+    <% else %>
+      <a href="<%= profile_users_account_index_path(email: row.email) %>" class="tables--full-name table-full-name ellipsis "><%= row.email %></a>
+    <% end %>
   </div>
 </div>
 
-<div class="tables--hides-on-small ellipsis"
-  style="width: <%= widths[2] %>; display: <%= current_account.is_all_accounts? ? 'block' : 'none' %>"
->
-  <span class="ellipsis table-cell"><%= row.account.name %></span>
-</div>
+<% if row.class.name == UnifiedMember.name %>
+  <div class="tables--hides-on-small"
+    style="width: <%= widths[2] %>;"
+  >
+    <%= render partial: "users/components/accounts_cell_with_tooltip",
+        locals: { accounts: row.accounts, index: index }
+    %>
+  </div>
+<% else %>
+  <div class="tables--hides-on-small ellipsis"
+    style="width: <%= widths[2] %>;"
+  >
+    <span class="ellipsis table-cell"><%= row.account.name %></span>
+  </div>
+<% end %>
 
 <div class="tables--hides-on-small" style="width: <%= widths[3] %>">
-  <span class="ellipsis table-cell"><%= pretty_print_date(row.invited_at) %></span>
+  <span class="ellipsis table-cell"><%= should_ignore_cell ? '' : pretty_print_date(row.invited_at) %></span>
 </div>
 
 <div class="tables--hides-on-small" style="width: <%= widths[4] %>">
-  <span class="ellipsis table-cell"><%= pretty_print_date(row.joined_at) %></span>
+  <span class="ellipsis table-cell"><%= should_ignore_cell ? '' : pretty_print_date(row.joined_at) %></span>
 </div>
 
 <div class="tables--hides-on-small" style="width: <%= widths[5] %>">
@@ -44,7 +62,7 @@
 
 <div class="tables--hides-on-small" style="width: <%= widths[6] %>">
   <%= render partial: "application/components/buttons/custom_more_options_button",
-      locals: { index: index, type: UsersAccount.name, row: row }
+      locals: { index: index, type: TablesHelper::OptionsMenuType::MEMBER, row: row }
   %>
 </div>
 

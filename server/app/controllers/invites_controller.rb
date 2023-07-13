@@ -11,16 +11,16 @@ class InvitesController < ApplicationController
       return # Required to stop method execution from proceeding
     end
     
+    account_to_use = current_account.is_all_accounts? || invite[:account_id].present? ? policy_scope(Account).find(invite[:account_id]) : current_account
     # Need to check if there is already an invite created for this 
     # account with the given email and prevent dups as well as already
     # registered users in the account (invite was used)
     duplicate_invite_error = false
-    already_created_invite = policy_scope(Invite).find_by_email(invite[:email])
-    already_added_user = policy_scope(UsersAccount).joins(:user).where(user: { email: invite[:email] })
+    already_created_invite = policy_scope(Invite).where(account_id: account_to_use.id).find_by_email(invite[:email])
+    already_added_user = policy_scope(UsersAccount).joins(:user).where(user: { email: invite[:email] }, account_id: account_to_use.id)
     if already_created_invite.present? || already_added_user.present?
       duplicate_invite_error = true
     end
-    account_to_use = current_account.is_all_accounts? || invite[:account_id].present? ? policy_scope(Account).find(invite[:account_id]) : current_account
     if !duplicate_invite_error
       @new_invite = Invite.new invite_params
       @new_invite.account = account_to_use

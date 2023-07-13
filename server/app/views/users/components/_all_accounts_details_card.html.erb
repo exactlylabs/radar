@@ -1,0 +1,25 @@
+<div class="users--details-card">
+  <div class="users--details-name-container">
+    <div class="users--details-initial-container">
+      <span><%= user_data[:first_name].present? ? user_data[:first_name][0].upcase : user_data[:email][0].upcase %></span>
+    </div>
+    <div class="users--details-data-container">
+      <span class="users--details-card-title">
+        <%= user_data[:first_name].nil? && user_data[:last_name].nil? ? user_data[:email] : "#{user_data[:first_name]} #{user_data[:last_name]} "%>
+      </span>
+      <% if user_data[:first_name].present? || user_data[:last_name].present? %>
+        <span class="users--details-card-subtitle">
+          <%= user_data[:email] %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+  <div class="users--details-cells-container">
+    <div class="users--details-account-cell">
+      <span class="forms--label">Account(s)</span>
+      <%= render partial: "users/components/accounts_cell_with_tooltip",
+          locals: { accounts: accounts, left: true }
+      %>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-<div class="tables--row-container" id="<%= dom_id(row) %>">
+<div class="tables--row-container" id="<%= row.class.name == UnifiedMember.name ? "member_#{row.email}" : dom_id(row) %>">
   <% if type == TablesHelper::TableTypes::MEMBERS %>
     <%= render partial: "users/components/member_row",
         locals: {
@@ -7,6 +7,15 @@
           type: row.class.name,
           index: index,
           even: even
+        }
+    %>
+  <% elsif type == TablesHelper::TableTypes::ALL_ACCOUNTS_MEMBERS %>
+    <%= render partial: "users/components/all_accounts_row",
+        locals: {
+          row: row,
+          widths: widths,
+          type: row.class.name,
+          index: index,
         }
     %>
   <% end %>

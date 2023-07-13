@@ -1,0 +1,31 @@
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="page-main-title"><%= user_data[:first_name].nil? && user_data[:last_name].nil? ? user_data[:email] : "#{user_data[:first_name]} #{user_data[:last_name]} "%>
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <!--end::Title-->
+      <!--begin::Breadcrumb-->
+      <ul class="breadcrumb fw-bold fs-base my-1">
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= users_account_index_path %>" class="text-muted page-sub-title">All accounts</a>
+        </li>
+        <li class="breadcrumb-item page-sub-title">Members & Sharing</li>
+      </ul>
+      <!--end::Breadcrumb-->
+    </div>
+    <!--end::Info-->
+  </div>
+</div>
+<!--end::Toolbar-->
+
+<div class="users--all-accounts-content-container">
+  <%= render partial: "users/components/all_accounts_details_card",
+      locals: { user_data: user_data, accounts: accounts }
+  %>
+  <%= render partial: "users/components/all_accounts_table",
+      locals: { elements: elements, total_count: total_count }
+  %>
+</div>

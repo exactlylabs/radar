@@ -1,7 +1,8 @@
 <% width_sum = widths.map { |w| w.split('%')[0].to_i }.sum %>
 <% raise "Table width is not 100%. Val: #{width_sum}" if width_sum != 100 %>
+<% paddingless = local_assigns[:no_padding].present? %>
 
-<div class="tables--table-container" data-controller="table">
+<div class="tables--table-container <%= paddingless ? 'paddingless' : nil %>" data-controller="table">
   <%= render partial: "application/components/tables/table_titles",
       locals: { titles: titles, widths: widths }
   %>
@@ -12,7 +13,7 @@
             row: row,
             type: type,
             widths: widths,
-            index: "#{row.id}-#{row.account.id}",
+            index: row.is_a?(UnifiedMember) && current_account.is_all_accounts? ? "#{row.email}" : "#{row.id}-#{row.account.id}",
             even: index.even?
           }
       %>

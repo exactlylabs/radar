@@ -1,0 +1,22 @@
+<% id = local_assigns[:index].present? ? index : 0 %>
+<% direction = local_assigns[:left].present? ? 'left' : 'right' %>
+
+<% if accounts.count > 1 %>
+<div class="table-cell tables--cell-with-tooltip"
+  data-tooltip-id="tooltip-<%= id %>"
+  data-controller="tooltip"
+  data-action="mouseover->tooltip#showAccountsTooltip mouseout->tooltip#hideAccountsTooltip"
+>
+  <%= "#{accounts.count} accounts" %>
+  <div class="tables--cell-tooltip invisible"
+    data-direction="<%= direction %>"
+    id="tooltip-<%= id %>"
+  >
+    <% accounts.each do |account| %>
+      <span><%= account.name %></span>
+    <% end %>
+  </div>  
+</div>
+<% else %>
+  <span class="ellipsis table-cell"><%= accounts[0].name %></span>
+<% end %>

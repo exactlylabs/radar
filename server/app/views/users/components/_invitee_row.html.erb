@@ -27,7 +27,7 @@
 </div>
 
 <div class="tables--hides-on-small ellipsis"
-  style="width: <%= widths[2] %>; display: <%= current_account.is_all_accounts? ? 'block' : 'none' %>"
+  style="width: <%= widths[2] %> "
 >
   <span class="ellipsis table-cell"><%= row.account.name %></span>
 </div>
@@ -46,7 +46,7 @@
 
 <div class="tables--hides-on-small" style="width: <%= widths[6] %>">
   <%= render partial: "application/components/buttons/custom_more_options_button",
-      locals: { index: index, type: Invite.name, row: row }
+      locals: { index: index, type: TablesHelper::OptionsMenuType::INVITEE, row: row }
   %>
 </div>
 

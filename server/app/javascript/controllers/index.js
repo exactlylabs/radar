@@ -141,3 +141,6 @@ application.register("edit-account", EditAccountController);
 
 import EditPasswordController from './edit_password_controller';
 application.register("edit-password", EditPasswordController);
+
+import TooltipController from './tooltip_controller';
+application.register("tooltip", TooltipController);

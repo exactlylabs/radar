@@ -1,5 +1,9 @@
 module ApplicationHelper
 
+  def is_super_user?
+    current_user.super_user && !is_super_user_disabled?
+  end
+
   def is_super_user_disabled?
     possible_cookie = cookies[:radar_super_user_disabled]
     possible_cookie.present? && possible_cookie == "true"

@@ -1,0 +1,84 @@
+@import './shared/misc.scss';
+@import './shared/text.scss';
+@import './shared/colors.scss';
+
+.users--all-accounts-content-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1.5rem;
+}
+
+.users--details-card {
+  width: 100%;
+  padding: 1.5rem;
+  border-radius: $border-radius;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.users--details-account-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .25rem;
+}
+
+.users--details-name-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.users--details-initial-container {
+  width: 3.5rem;
+  min-width: 3.5rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $table--odd-row-background-color;
+  span {
+    color: $table--odd-row-color;
+    font-size: 1.25rem;
+    letter-spacing: 0;
+    font-variation-settings: 'wght' $bold;
+  }
+}
+
+.users--details-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .125rem;
+
+  .users--details-card-title {
+    font-size: 1rem;
+    color: $deep-blue;
+    font-variation-settings: 'wght' $bold;
+  }
+
+  .users--details-card-subtitle {
+    font-size: 0.875rem;
+    line-height: 1.312rem;
+    color: $gray;
+    font-variation-settings: 'wght' $medium;
+  }
+}
+
+.users--all-accounts-table-header {
+  width: 100%;
+  padding-top: -.5rem;
+  padding-bottom: 1rem;
+  text-align: left;
+}

@@ -142,6 +142,7 @@ Rails.application.routes.draw do
 
   resources :users_account do
     collection do
+      get '/profile', to: 'users_account#all_accounts_profile'
       delete 'bulk_delete'
     end
   end

@@ -1,0 +1,34 @@
+<div class="tables--name-container tables--full-width-on-small"
+  style="width: <%= widths[0] %>"
+>
+  <div class="tables--account-initial-container">
+    <span><%= row.account.name[0].upcase %></span>
+  </div>
+  <div class="tables--account-container">
+    <span class="tables--full-name table-full-name ellipsis"><%= row.account.name %></span>
+  </div>
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[1] %>">
+  <span class="ellipsis table-cell"><%= row.is_a?(UsersAccount) ? pretty_print_date(row.invited_at) : pretty_print_date(row.sent_at) %></span>
+</div>
+
+<div class="<%= row.is_a?(UsersAccount) ? 'tables--hides-on-small' : nil %>" style="width: <%= widths[2] %>">
+  <% if row.is_a?(UsersAccount) %>
+    <span class="ellipsis table-cell"><%= pretty_print_date(row.joined_at) %></span>
+  <% else %>
+    <div class="custom-badge custom-badge--pending">Pending</div>
+  <% end %>
+</div>
+
+<div class="tables--hides-on-small tables--resend-invite-cell" style="width: <%= widths[3] %>">
+  <% if row.is_a?(Invite) %>
+    <%= link_to "Resend invite", resend_invites_path(id: row.id), class: "custom-button custom-button--primary-light custom-button--sm", method: :post %>
+  <% end %>
+</div>
+
+<div class="d-flex justify-content-center" style="width: <%= widths[4] %>">
+  <%= render partial: "application/components/buttons/custom_more_options_button",
+      locals: { index: index, type: TablesHelper::OptionsMenuType::ALL_ACCOUNTS_MEMBER, row: row }
+  %>
+</div>

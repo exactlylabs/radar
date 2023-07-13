@@ -5,7 +5,7 @@
 
 .tables--table-container {
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -13,6 +13,10 @@
   border-radius: $border-radius;
   background-color: $white;
   padding: 2rem 1.5rem;
+
+  &.paddingless {
+    padding: 0;
+  }
 }
 
 @media (max-width: $lg-max-width) {
@@ -136,8 +140,8 @@
 
 @media (max-width: $lg-max-width) {
   .tables--hides-on-small {
-    display: none;
-    visibility: hidden;
+    display: none !important;
+    visibility: hidden !important;
   }
 }
 
@@ -161,6 +165,12 @@
     &:hover {
       cursor: pointer;
     }
+  }
+}
+
+@media (max-width: $lg-max-width) {
+  .tables--full-width-on-small {
+    width: 100% !important;
   }
 }
 
@@ -201,6 +211,10 @@
       max-width: calc(95% - 4rem);
     }
   }
+}
+
+.tables--account-container {
+  max-width: 60ch;
 }
 
 .tables--checkbox-container {
@@ -245,6 +259,25 @@
     font-size: 0.938rem;
     letter-spacing: 0;
     color: $table--even-row-color;
+  }
+}
+
+.tables--account-initial-container {
+  width: 2rem;
+  min-width: 2rem;
+  aspect-ratio: 1;
+  border-radius: .5rem;
+  background-color: $subtle-gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0.75rem;
+
+  span {
+    font-variation-settings: 'wght' $bold;
+    font-size: 0.938rem;
+    letter-spacing: 0;
+    color: $deep-blue;
   }
 }
 
@@ -347,4 +380,58 @@
   height: 1rem;
   min-width: 1rem;
   min-height: 1rem;
+}
+
+.tables--cell-with-tooltip {
+  width: max-content;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+}
+
+.tables--cell-tooltip {
+  background-color: white;
+  padding: .5rem .75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .25rem;
+  position: absolute;
+  left: calc(100% + 1rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  font-size: 0.875rem;
+  color: $deep-blue;
+  line-height: 1.312rem;
+  box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
+  border: solid 1px $sidebar--search-panel-box-shadow;
+  border-radius: 6px;
+
+  &::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  &[data-direction="left"] {
+    left: unset;
+    right: calc(100% + 1rem);
+
+    &::before {
+      left: unset;
+      right: -5px;
+    }
+  }
+}
+
+.tables--resend-invite-cell {
+  display: flex;
+  justify-content: flex-end;
 }

@@ -1,10 +1,13 @@
-<% if type == UsersAccount.name %>
+<% require "./app/controllers/helpers/unified_member.rb" %>
+
+<% if type == UsersAccount.name || type == UnifiedMember.name %>
   <%= render partial: "users/components/user_row", 
       locals: {
         row: row,
         widths: widths,
         index: index,
-        even: even
+        even: even,
+        should_ignore_cell: row.is_a?(UnifiedMember)
       }
   %>
 <% else %>

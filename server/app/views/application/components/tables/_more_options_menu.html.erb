@@ -1,7 +1,9 @@
 <div class="tables--options-menu invisible"
   id="more-options-menu-<%= index %>"
 >
-  <% if type == UsersAccount.name || type == Invite.name %>
+  <% if type == TablesHelper::OptionsMenuType::MEMBER || type == TablesHelper::OptionsMenuType::MEMBER %>
     <%= render partial: "users/components/table_row_options", locals: { row: row } %>
+  <% elsif type == TablesHelper::OptionsMenuType::ALL_ACCOUNTS_MEMBER %>
+    <%= render partial: "users/components/all_accounts_table_row_options", locals: { row: row } %>
   <% end %>
 </div>

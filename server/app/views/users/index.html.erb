@@ -38,27 +38,16 @@
      %>
   <% end %>
   <%= render partial: "users/users_table_filters" %>
-  <!--begin::Container-->
-  <!-- render partial: "users/users_table", locals: { users_accounts: users_accounts, invited_users: invited_users } -->
   <%= render partial: "application/components/tables/generic_table",
       locals: {
         table_id: "users_table",
         type: TablesHelper::TableTypes::MEMBERS,
-        titles: [
-          { text: 'Checkbox', hidden: true },
-          { text: 'Name', sort: 'name', sort_action: 'click->table#sortByName' },
-          { text: 'Account', hidden: !current_account.is_all_accounts? },
-          { text: 'Invited' },
-          { text: 'Join date' },
-          { text: 'Resend', hidden: true },
-          { text: 'Actions', hidden: true}
-        ],
-        widths: TablesHelper.widths(TablesHelper::TableTypes::MEMBERS, current_account.is_all_accounts?),
+        titles: TablesHelper.titles(TablesHelper::TableTypes::MEMBERS, current_account.is_all_accounts?, is_super_user?),
+        widths: TablesHelper.widths(TablesHelper::TableTypes::MEMBERS, current_account.is_all_accounts?, is_super_user?),
         rows: elements,
         total: total
       }
   %>
-  <!--end::Container-->
 </div>
 
 <div class="modal fade"

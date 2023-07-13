@@ -1,0 +1,17 @@
+<div class="cards--full-width">
+  <div class="users--all-accounts-table-header">
+    <span class="card-main-title">Accounts</span>
+  </div>
+  <div class="cards--full-width-divider mb-6"></div>
+  <%= render partial: "application/components/tables/generic_table",
+      locals: {
+        table_id: "all_accounts_table",
+        type: TablesHelper::TableTypes::ALL_ACCOUNTS_MEMBERS,
+        titles: TablesHelper.titles(TablesHelper::TableTypes::ALL_ACCOUNTS_MEMBERS, current_account.is_all_accounts?, is_super_user?),
+        widths: TablesHelper.widths(TablesHelper::TableTypes::ALL_ACCOUNTS_MEMBERS, current_account.is_all_accounts?, is_super_user?),
+        rows: elements,
+        total: total_count,
+        no_padding: true
+      }
+  %>
+</div>
