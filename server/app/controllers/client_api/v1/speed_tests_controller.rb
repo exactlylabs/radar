@@ -8,6 +8,7 @@ module ClientApi
         else
           @speed_test = ClientSpeedTest.new speed_test_params
         end
+        @speed_test.ip = request.remote_ip
         @speed_test.lonlat = "POINT(#{params[:speed_test][:longitude]} #{params[:speed_test][:latitude]})"
         @speed_test.connection_data = params[:connection_data]
         @speed_test.tested_by = params[:client_id]
