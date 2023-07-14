@@ -1,13 +1,11 @@
 import {Box, Modal} from "@mui/material";
 import {
-  DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR,
   DEFAULT_MAP_MODAL_BACKGROUND_COLOR,
   DEFAULT_MODAL_BOX_SHADOW,
-  DEFAULT_TEXT_COLOR
+  DEFAULT_TEXT_COLOR,
 } from "../../../../utils/colors";
 import {ArrowForward, Close} from "@mui/icons-material";
 import NoInternetIconBlue from '../../../../assets/icon-location-nointernet-selected.png';
-import LocationPinIcon from '../../../../assets/address-icon-rounded.png';
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
@@ -40,16 +38,18 @@ const mobileModalStyle = {
 
 const boxStyle = {
   width: '100%',
-  height: '100%',
+  height: '85%',
   backgroundColor: DEFAULT_MAP_MODAL_BACKGROUND_COLOR,
   borderRadius: '16px',
   textAlign: 'center',
 }
 
 const subtitleStyle = {
-  width: '95%',
+  width: '80%',
   margin: 'auto',
+  fontFamily: 'MulishRegular',
   fontSize: 16,
+  lineHeight: '25px',
   color: DEFAULT_TEXT_COLOR,
   marginBottom: 35,
 }
@@ -107,64 +107,9 @@ const noInternetIconStyle = {
   marginTop: 40,
 }
 
-const addressWrapperStyle = {
-  width: 'max-content',
-  maxWidth: 485,
-  margin: '0 auto 50px',
-  display: 'flex',
-  flexDirection: 'row',
-  paddingLeft: 20,
-  paddingRight: 20,
-  paddingTop: 12,
-  paddingBottom: 12,
-  border: `solid 1px ${DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR}`,
-  borderRadius: 16,
-  justifyContent: 'center',
-  alignItems: 'center',
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
-  overflow: 'hidden',
-}
-
-const mobileAddressWrapperStyle = {
-  ...addressWrapperStyle,
-  maxWidth: 350,
-  margin: '0 auto 30px',
-}
-
-const xsAddressWrapperStyle = {
-  ...addressWrapperStyle,
-  maxWidth: '90%',
-  margin: '0 auto 10px',
-  padding: '5px 10px'
-}
-
-const locationPinIconStyle = {
-  marginRight: 10,
-}
-
-const addressTextStyle = {
-  maxWidth: 400,
-  color: DEFAULT_TEXT_COLOR,
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
-  overflow: 'hidden',
-}
-
-const mobileAddressTextStyle = {
-  ...addressTextStyle,
-  maxWidth: 250
-}
-
-const xsTextStyle = {
-  ...mobileAddressTextStyle,
-  fontSize: 12
-}
-
 const MyNoConnectionConfirmationModal = ({
   open,
   close,
-  address,
   goToLastFlowStep
 }) => {
 
@@ -181,16 +126,6 @@ const MyNoConnectionConfirmationModal = ({
     return (isMediumSizeScreen || isSmallSizeScreen) ? mobileFooterStyle : footerStyle;
   }
 
-  const getAddressWrapperStyle = () => {
-    if(isExtraSmallSizeScreen) return xsAddressWrapperStyle;
-    return (isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressWrapperStyle : addressWrapperStyle;
-  }
-
-  const getTextStyle = () => {
-    if(isExtraSmallSizeScreen) return xsTextStyle;
-    return (isMediumSizeScreen || isSmallSizeScreen) ? mobileAddressTextStyle : addressTextStyle;
-  }
-
   return (
     <Modal open={open}
            onClose={close}
@@ -202,11 +137,7 @@ const MyNoConnectionConfirmationModal = ({
         </div>
         <img style={noInternetIconStyle} src={NoInternetIconBlue} alt={'no-internet-icon'} width={42} height={42}/>
         <MySecondaryModalTitle text={'Confirm you don\'t have internet'}/>
-        <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Are you sure you don't have Internet at the address below?</div>
-        <div style={getAddressWrapperStyle()}>
-          <img style={locationPinIconStyle} src={LocationPinIcon} width={28} height={28} alt={'location-pin'}/>
-          <p className={'speedtest--p'} style={getTextStyle()}>{address}</p>
-        </div>
+        <p style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Are you sure you don’t have an Internet connection at your current location?</p>
         <div style={getFooterStyle()}>
           <MyBackButton text={'Cancel'}
                         onClick={close}

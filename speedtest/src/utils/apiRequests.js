@@ -34,6 +34,10 @@ export const sendRawData = (rawData, startTimestamp, userData, clientId) => {
   }).catch(notifyError);
 };
 
+export const sendSpeedTestFormInformation = (userData, clientId) => {
+  sendRawData({}, new Date().toISOString(), userData, clientId);
+};
+
 export const getSuggestions = async (addressString, clientId) => {
   const formData = new FormData();
   formData.append('address', addressString);
