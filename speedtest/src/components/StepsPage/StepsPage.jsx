@@ -9,7 +9,7 @@ import {errors, warnings} from "../../utils/messages";
 import {STEPS} from "./utils/steps";
 import {placementOptions} from "../../utils/placements";
 import {types} from "../../utils/networkTypes";
-import {getAddressForCoordinates} from "../../utils/apiRequests";
+import {getAddressForCoordinates, sendSpeedTestFormInformation} from "../../utils/apiRequests";
 import SpeedTestResultsStepPage from "./Pages/SpeedTestResultsStep/SpeedTestResultsStepPage";
 import {getLastStoredValue} from "../../utils/storage";
 import NoInternetStepPage from "./Pages/NoInternetStep/NoInternetStepPage";
@@ -138,7 +138,10 @@ const StepsPage = ({
 
   const goToMapPage = () => goToAreaMap(userData.address.coordinates);
 
-  const goToNoInternetPage = () => setCurrentStep(STEPS.NO_INTERNET);
+  function goToNoInternetPage() {
+    sendSpeedTestFormInformation(userData, config.clientId)
+    setCurrentStep(STEPS.NO_INTERNET);
+  }
 
   const goToConnectionAddress = () => setCurrentStep(STEPS.CONNECTION_ADDRESS);
 
