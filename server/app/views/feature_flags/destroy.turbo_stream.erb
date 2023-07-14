@@ -1,0 +1,6 @@
+<%= turbo_stream.remove "feature_flag_#{@ff_id}" do %>
+<% end %>
+
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% end %>

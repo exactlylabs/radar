@@ -1,0 +1,7 @@
+private_ff:
+  name: 'Feature_Flag_1'
+  generally_available: false
+
+public_ff:
+  name: 'Feature_Flag_2'
+  generally_available: true

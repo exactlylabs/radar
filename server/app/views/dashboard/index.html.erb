@@ -12,6 +12,12 @@
         <li class="breadcrumb-item page-sub-title"><%= current_account.nil? ? 'No accounts' : current_account.is_all_accounts? ? "All accounts" : current_account.name %>
       </ul>
       <!--end::Breadcrumb-->
+      <% if FeatureFlagHelper.is_available('Feature_Flag_1', current_user) %>
+        <div id="ff-test-element">HIDDEN FEATURE</div>
+      <% end %>
+      <% if FeatureFlagHelper.is_available('Feature_Flag_2', current_user) %>
+        <div id="ff-public-test-element">PUBLIC FEATURE</div>
+      <% end %>
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">

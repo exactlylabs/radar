@@ -142,5 +142,8 @@ application.register("edit-account", EditAccountController);
 import EditPasswordController from './edit_password_controller';
 application.register("edit-password", EditPasswordController);
 
+import FeatureFlagsController from './feature_flags_controller';
+application.register("feature-flags", FeatureFlagsController);
+
 import LocationsMapWidget from './locations_map_widget_controller';
 application.register("locations-map-widget", LocationsMapWidget);

@@ -153,6 +153,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :feature_flags do
+    member do
+      get :delete
+    end
+  end
+
   put '/location_categories/selected_categories', to: 'location_categories#change_selected_categories', as: 'location_category_update_categories'
   get '/location_categories/search', to: 'location_categories#search', as: 'location_category_search'
   get '/location_categories/open_dropdown', to: 'location_categories#open_dropdown', as: 'categories_open_dropdown'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_06_121902) do
+ActiveRecord::Schema.define(version: 2023_07_13_205625) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -296,6 +296,22 @@ ActiveRecord::Schema.define(version: 2023_07_06_121902) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["aggregate_type", "aggregate_id"], name: "index_events_on_aggregate"
     t.index ["version", "aggregate_id", "aggregate_type"], name: "index_events_on_version_and_aggregate_id_and_aggregate_type", unique: true
+  end
+
+  create_table "feature_flags", force: :cascade do |t|
+    t.string "name", null: false
+    t.boolean "generally_available", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "feature_flags_users", force: :cascade do |t|
+    t.bigint "feature_flag_id"
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["feature_flag_id"], name: "index_feature_flags_users_on_feature_flag_id"
+    t.index ["user_id"], name: "index_feature_flags_users_on_user_id"
   end
 
   create_table "geospaces", force: :cascade do |t|
@@ -584,6 +600,7 @@ ActiveRecord::Schema.define(version: 2023_07_06_121902) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
+    t.integer "role", default: 2
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end

@@ -1,0 +1,7 @@
+<%= turbo_stream.update dom_id(@ff) do %>
+  <%= render partial: "feature_flags/components/row", locals: { ff: @ff } %>
+<% end %>
+
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% end %>

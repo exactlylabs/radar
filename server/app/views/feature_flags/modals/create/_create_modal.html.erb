@@ -1,0 +1,35 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: { title: "Add feature flag", is_custom: true }
+%>
+<%= form_with(model: resource, url: feature_flags_path(), method: :post, data: {"turbo-frame" => "_top"}) do |form| %>
+  <div class="modals--content-container" data-type="full">
+    <div class="w-100 d-flex flex-column justify-content-start align-items-start">
+      <label name="name" class="forms--label mb-2">Name</label>
+      <input class="w-100 forms--text-input forms--text-input-focusable" name="feature_flag[name]"/>
+    </div>
+    <div class="mt-4 w-100 d-flex flex-column justify-content-start align-items-start">
+      <label name="users" class="forms--label mb-2">Users</label>
+      <select id=""
+        class="forms--select form-select select2-hidden-accessible"
+        data-placeholder="No one selected"
+        tabindex="-1"
+        data-controller="select2"
+        style="background-color: #f5f8fa;"
+        multiple="true"
+        name="users[]"
+        data-is-multi="true"
+      >
+        <% User.where(super_user: true).each do |user| %>
+          <option value="<%= user.id %>"
+            label="<%= user.first_name %>"
+          ><%= user.first_name %></option>
+        <% end %>
+      </select>
+      <p class="mt-2 mb-10 help-text wrap">Any item protected by this feature flag will ONLY be visible to the chosen users. Alternatively, the feature flag can be set to generally available.</p>
+    </div>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true} %>
+    <%= form.submit "Save", class: "custom-button custom-button--sm custom-button--primary" %>
+  </div>
+<% end %>
