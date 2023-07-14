@@ -95,7 +95,7 @@ void _runUploadIsolate(List<dynamic> args) async {
   final url = args[1] as String;
   final completer = Completer<void>();
   final socket = await WebSocket.connect(url, protocols: protocols);
-  DateTime startTime = DateTime.now();
+  final startTime = DateTime.now();
 
   socket.listen(
     (ev) {
@@ -131,8 +131,8 @@ Future<void> _upload(
   final completer = Completer();
   final receivePort = ReceivePort();
 
-  final isolate =
-      await Isolate.spawn<List<dynamic>>(_runUploadIsolate, [receivePort.sendPort, url], debugName: 'UploadIsolate');
+  final isolate = await Isolate.spawn<List<dynamic>>(_runUploadIsolate, [receivePort.sendPort, url],
+      debugName: 'UploadIsolate');
   receivePort.listen(
     (data) {
       if (data is Map<String, dynamic>) {
@@ -165,7 +165,8 @@ Future<void> _download(
   final completer = Completer();
   final receivePort = ReceivePort();
 
-  final isolate = await Isolate.spawn<List<dynamic>>(_runDownloadIsolate, [receivePort.sendPort, url],
+  final isolate = await Isolate.spawn<List<dynamic>>(
+      _runDownloadIsolate, [receivePort.sendPort, url],
       debugName: 'DownloadIsolate');
   receivePort.listen(
     (data) {

@@ -74,8 +74,9 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
         emit(
           state.copyWith(
             isTestingDownloadSpeed: false,
+            downloadSpeed: response['LastClientMeasurement']['MeanClientMbps'],
             latency: (state.minRtt ?? 0) / 1000,
-            loss: (state.bytesRetrans ?? 0) / (state.bytesSent ?? 0) * 100,
+            loss: (state.bytesRetrans ?? 0) / (state.bytesSent ?? 1) * 100,
             responses: updatedResponses,
           ),
         );
@@ -87,6 +88,7 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
               .getNetworkConnectionInfo()
               .then((connectionInfo) => emit(state.copyWith(
                     isTestingUploadSpeed: false,
+                    uploadSpeed: response['LastClientMeasurement']['MeanClientMbps'],
                     finishedTesting: true,
                     responses: updatedResponses,
                     connectionInfo: connectionInfo,
@@ -100,6 +102,7 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
             isTestingUploadSpeed: false,
             responses: updatedResponses,
             positionAfterSpeedTest: positionAfterSpeedTest,
+            uploadSpeed: response['LastClientMeasurement']['MeanClientMbps'],
           ));
         }
       }
