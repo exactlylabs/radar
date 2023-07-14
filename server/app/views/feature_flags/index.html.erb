@@ -1,0 +1,52 @@
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="page-main-title">Feature Flags</h1>
+    </div>
+    <!--end::Info-->
+    <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
+      <%= link_to "Add Feature Flag", new_feature_flag_path(), { class: "custom-button custom-button--primary custom-button--lg", "data-turbo-frame" => "create_feature_flag_modal" } %>
+    </div>
+  </div>
+</div>
+<!--end::Toolbar-->
+
+<%= turbo_frame_tag "feature_flags_container", class: "feature-flags--main-container", data: { controller: "feature-flags" } do %>
+  <% FeatureFlag.all.order("LOWER(name) ASC").each do |ff| %>
+    <%= turbo_frame_tag dom_id(ff) do %>
+      <%= render partial: "feature_flags/components/row", locals: { ff: ff } %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if FeatureFlagHelper.is_available('a', current_user) %>
+  <div class="mt-8">
+    A IS NOW VISIBLE
+  </div>
+<% end %>
+<% if FeatureFlagHelper.is_available('b', current_user) %>
+  <div class="mt-8">
+    B IS NOW VISIBLE
+  </div>
+<% end %>
+<% if FeatureFlagHelper.is_available('c', current_user) %>
+  <div class="mt-8">
+    C IS NOW VISIBLE
+  </div>
+<% end %>
+<% if FeatureFlagHelper.is_available('d', current_user) %>
+  <div class="mt-8">
+    D IS NOW VISIBLE
+  </div>
+<% end %>
+
+<%= render partial: "application/components/modals/turbo_modal",
+  locals: { turbo_frame_tag_id: "create_feature_flag_modal" }
+%>
+
+<%= render partial: "application/components/modals/turbo_modal",
+  locals: { turbo_frame_tag_id: "delete_feature_flag_modal" }
+%>

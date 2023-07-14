@@ -1,0 +1,10 @@
+<%= turbo_frame_tag "delete_feature_flag_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+      locals: {
+        modal_title: "Delete feature flag",
+        modal_partial_path: "feature_flags/modals/delete/delete_modal",
+        resource: @ff,
+        custom_submit_end_handler: nil,
+      }
+  %>
+<% end %>

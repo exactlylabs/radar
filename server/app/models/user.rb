@@ -14,6 +14,8 @@ class User < ApplicationRecord
   has_many :measurements
   has_many :users_accounts
   has_many :accounts, through: :users_accounts
+  has_many :feature_flags_users
+  has_many :feature_flags, through: :feature_flags_users
 
   after_save :check_pending_downloads
 

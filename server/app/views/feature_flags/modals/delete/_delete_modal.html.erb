@@ -1,0 +1,18 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: { title: "Delete feature flag", is_custom: true }
+%>
+<div class="modals--content-container" data-type="full">
+  <div class="accounts--delete-modal-content-container">
+    <h3 class="modal-main-title wrap">Are you sure you want to delete "<%= resource.name %>"?</h3>
+    <p class="additional-text wrap">If you choose to delete this feature flag, any component protected by it WON'T be shown anywhere. Please first make sure to delete any reference to this feature flag in the codebase.</p>
+  </div>
+</div>
+<div class="modals--footer-container">
+  <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+  <%= button_to "Delete", 
+    feature_flag_path(resource), 
+    method: :delete,
+    class: "custom-button custom-button--secondary-light-danger custom-button--lg",
+    data: { turbo: true }
+  %>
+</div>

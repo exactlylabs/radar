@@ -1,0 +1,37 @@
+<div class="feature-flags--ff-row">
+  <%= form_for(ff, as: 'ff', url: feature_flag_path(ff), html: { method: :put, class: "feature-flags--form" }) do |f| %>
+    <div class="d-flex flex-row w-25">
+      <span class="card-main-title me-4 feature-flags--name"><%= ff.name %></span>
+      <div class="feature-flags--user-cell">
+        <input type="checkbox"
+          name="generally_available" <%= ff.generally_available ? "checked" : nil %>
+          data-action="click->feature-flags#togglePublic"
+          data-select-id="select-<%= ff.id %>"
+        />
+        <label>Public</label>
+      </div>
+    </div>
+    <div class="w-25 <%= ff.generally_available ? "invisible" : nil %>" id="select-<%= ff.id %>">
+      <select class="forms--select select2-hidden-accessible"
+        data-placeholder="No one selected"
+        tabindex="-1"
+        data-controller="select2"
+        style="background-color: #f5f8fa;"
+        multiple="true"
+        name="users[]"
+        data-is-multi="true"
+      >
+        <% User.where(super_user: true).each do |user| %>
+          <option value="<%= user.id %>"
+            label="<%= user.first_name %>"
+            <%= ff.users.include?(user) ? "selected" : "" %>
+          ><%= user.first_name %></option>
+        <% end %>
+      </select>
+    </div>
+    <div class="d-flex flex-row w-50">
+      <button type="submit" class="me-2 custom-button custom-button--primary-light custom-button--lg">Save</button>
+      <%= link_to "Delete", delete_feature_flag_path(ff.id), { class: "custom-button custom-button--lg custom-button--danger", "data-turbo-frame" => "delete_feature_flag_modal" }%>
+    </div>
+  <% end %>
+</div>

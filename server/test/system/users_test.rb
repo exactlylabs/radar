@@ -9,6 +9,7 @@ class UsersTest < ApplicationSystemTestCase
   wait = Selenium::WebDriver::Wait.new(timeout: 10)
 
   setup do
+    sign_out :user
   end
 
   test "anonymous user redirected to log in" do

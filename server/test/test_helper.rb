@@ -16,10 +16,6 @@ class ActiveSupport::TestCase
   include Warden::Test::Helpers
 
   def sign_in_as(user)
-    if integration_test?
-      login_as(user, :scope => :user)
-    else
-      sign_in(user)
-    end
+    sign_in(user)
   end
 end
