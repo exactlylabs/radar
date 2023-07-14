@@ -7,13 +7,13 @@ class ProcessSpeedTestJobTest < ActiveJob::TestCase
   setup do
     measurement = client_speed_tests(:measurement1)
     measurement.tested_by = 1
-    measurement.save
+    measurement.save!
   end
 
   def measurement_with_result(measurement, result_file)
     json_content = file_fixture(result_file).read
     measurement.result.attach(io: StringIO.new(json_content), filename: result_file, content_type: 'application/json')
-    measurement.save
+    measurement.save!
     ProcessSpeedTestJob.perform_now(measurement)
   end
 
@@ -61,29 +61,18 @@ class ProcessSpeedTestJobTest < ActiveJob::TestCase
     assert_equal measurement.upload_id, 'ndt-879bs_1679080442_000000000010762D'
   end
 
-  test 'When_LastServerMeasurement_nil_Expect_id_to_be_nil' do
+  test 'When_LastServerMeasurement_nil_Expect_id_loss_and_latency_to_be_nil' do
     result_measurement = {}
     assert_nil ProcessSpeedTestJob.new.get_id(result_measurement)
-  end
-
-  test 'When_ConnectionInfo_on_LastServerMeasurement_nil_Expect_id_to_be_nil' do
-    result_measurement = {
-      'LastServerMeasurement' => {}
-    }
     assert_nil ProcessSpeedTestJob.new.get_latency(result_measurement)
     assert_nil ProcessSpeedTestJob.new.get_loss(result_measurement)
   end
 
-  test 'When_LastServerMeasurement_on_download_nil_Expect_loss_and_latency_to_be_nil' do
-    result_measurement = {}
-    assert_nil ProcessSpeedTestJob.new.get_latency(result_measurement)
-    assert_nil ProcessSpeedTestJob.new.get_loss(result_measurement)
-  end
-
-  test 'When_TCPInfo_on_LastServerMeasurement_nil_Expect_loss_and_latency_to_be_nil' do
+  test 'When_ConnectionInfo_and_TCPInfo_on_LastServerMeasurement_Expect_id_loss_and_latency_to_be_nil' do
     result_measurement = {
       'LastServerMeasurement' => {}
     }
+    assert_nil ProcessSpeedTestJob.new.get_id(result_measurement)
     assert_nil ProcessSpeedTestJob.new.get_latency(result_measurement)
     assert_nil ProcessSpeedTestJob.new.get_loss(result_measurement)
   end
