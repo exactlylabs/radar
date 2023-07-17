@@ -75,6 +75,7 @@ $snackbar--notice-background-color: rgba(75, 123, 229, 0.2);
 $snackbar--notice-color: $blue;
 $snackbar--warning-background-color: rgba(245, 134, 0, 0.1);
 $snackbar--warning-color: #f58600;
+$snackbar--warning-border-color: rgba(245, 134, 0, 0.5);
 
 // Tables
 $table--even-row-background-color: rgba(85, 51, 165, 0.2);
@@ -97,6 +98,9 @@ $forms--search-box-shadow: rgba(160, 159, 183, 0.05);
 
 // Modals
 $modals--underlay-background-color: rgba(35, 34, 52, 0.5);
+
+// Cards
+$cards--default-box-shadow: rgba(160, 159, 183, 0.15);
 
 .transparent {
   background-color: transparent;

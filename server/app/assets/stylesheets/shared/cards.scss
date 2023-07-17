@@ -1,5 +1,25 @@
+@import './colors.scss';
+@import './text.scss';
+
 .card-header {
   &.cards--header {
     height: 55px;
+  }
+}
+
+.cards--default {
+  padding: 2.5rem 90px;
+  background-color: white;
+  text-align: center;
+  margin-inline: auto;
+  border-radius: 10px;
+  border: solid 1px $sidebar--main-container-border;
+  box-shadow: 0 2px 8px -2px $cards--default-box-shadow;
+}
+
+@media (max-width: 768px) {
+  .cards--default {
+    width: 100%;
+    padding: 2rem 1.5rem;
   }
 }

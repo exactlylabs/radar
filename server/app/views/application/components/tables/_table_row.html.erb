@@ -9,5 +9,9 @@
           even: even
         }
     %>
+  <% elsif type == TablesHelper::TableTypes::NETWORKS %>
+    <%= render partial: "networks/components/network_row",
+        locals: { row: row, widths: widths, index: index }
+    %>
   <% end %>
 </div>

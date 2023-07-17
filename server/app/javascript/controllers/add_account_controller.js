@@ -182,7 +182,7 @@ export default class extends Controller {
         else throw new Error(`There was an error creating an account: ${res.msg}`);
       })
       .catch((err) => {
-        emitCustomEvent('newAlert', {
+        emitCustomEvent('renderAlert', {
           detail: {
             message: err.message,
             type: AlertTypes.ERROR

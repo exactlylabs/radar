@@ -4,7 +4,7 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title">Locations 
+      <h1 class="page-main-title"><%= FeatureFlagHelper.is_available('networks', current_user) ? 'Networks' : 'Locations' %>
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
@@ -16,13 +16,15 @@
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-      <a 
-        type="button" 
-        class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled custom-button--disabled' : '' %>"
-        href="<%= new_location_path %>" 
-        data-turbo-frame="new_location_modal"
-      >Add Location</a>
-      <% if !current_account.is_all_accounts? %>
+      <% if !FeatureFlagHelper.is_available('networks', current_user) %>
+        <a 
+          type="button" 
+          class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled custom-button--disabled' : '' %>"
+          href="<%= new_location_path %>" 
+          data-turbo-frame="new_location_modal"
+        >Add Location</a>
+      <% end %>
+      <% if !current_account.is_all_accounts? && !FeatureFlagHelper.is_available('networks', current_user) %>
         <a href="#"
             class="ms-4 custom-button custom-button--secondary-light custom-button--sm d-flex justify-content-center align-items-center"
             data-bs-toggle="dropdown"
@@ -40,30 +42,85 @@
         <div class="dropdown-menu dropdown-menu-light fw-bold fs-7 py-4 bg-hover-light">
           <%= link_to "Manage location categories", categories_path, { class: "px-3 py-2 regular-link", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
         </div>
+      <% elsif FeatureFlagHelper.is_available('networks', current_user) %>
+        <a href="#"
+            class="ms-4 custom-button custom-button--secondary-light custom-button--sm d-flex justify-content-center align-items-center"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            id="options-button"
+        >
+          <%= image_tag image_url('more-options-icon.png'), width: 16, height: 16 %>
+        </a>
+        <div class="dropdown-menu dropdown-menu-light fw-bold fs-7 py-4">
+          <%= link_to "Create new network", new_location_path, { class: "menu-item px-3 py-2 regular-link", "data-turbo-frame" => "new_location_modal" } %>
+          <% if !current_account.is_all_accounts? %>
+            <%= link_to "Manage location categories", categories_path, { class: "menu-item px-3 py-2 regular-link", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
+          <% end %>
+        </div>
       <% end %>
     </div>
   </div>
 </div>
 <!--end::Toolbar-->
 
+<% if FeatureFlagHelper.is_available('networks', current_user) && are_there_unassigned_pods? %>
+  <div class="networks--unassigned-pods-banner">
+    <%= image_tag image_url('warning-icon'), width: 20, height: 20 %>
+    <div class="networks--unassigned-pods-banner-text-container">
+      <% pod_count = policy_scope(Client).where(location: nil).count %>
+      <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>
+      <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
+    </div>
+  </div>
+<% end %>
+
 <%= turbo_frame_tag "locations_display" do %>
   <div class="post fs-6 d-flex flex-column" id="kt_post">
     <% if current_account.is_all_accounts? %>
       <%= render partial: "locations/locations_table_filters" %>
     <% end %>
-    <%= render partial: 'locations_table', locals: { locations: @locations } %>
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <% if @locations.count > 0 %>
+        <%= render partial: "application/components/tables/generic_table",
+            locals: {
+              table_id: "networks_table",
+              type: TablesHelper::TableTypes::NETWORKS,
+              titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
+              widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
+              rows: @locations,
+              total: @total
+            }
+        %>
+      <% else %>
+        <%= render partial: "networks/components/empty_networks_card",
+            locals: { has_pods: policy_scope(Client).count > 0 }
+        %>
+      <% end %>
+    <% else %>
+      <%= render partial: 'locations_table', locals: { locations: @locations } %>
+    <% end %>
   </div>
 <% end %>
 
-<div class="modal fade"
-  tabindex="-1"
-  data-controller="modal categories"
-  data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#clearCategories turbo:submit-end->modal#submit turbo:frame-render->modal#showModal"
-  data-clear-turbo-id="new_location_modal"
->
-  <%= turbo_frame_tag "new_location_modal" do %>
-  <% end %>
-</div>
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <%= render partial: "application/components/modals/turbo_modal",
+    locals: {
+      turbo_frame_tag_id: "new_location_modal",
+      optional_added_controllers: "categories",
+      optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse"
+    }
+  %>
+<% else %>
+  <div class="modal fade"
+    tabindex="-1"
+    data-controller="modal categories"
+    data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#clearCategories turbo:submit-end->modal#submit turbo:frame-render->modal#showModal"
+    data-clear-turbo-id="new_location_modal"
+  >
+    <%= turbo_frame_tag "new_location_modal" do %>
+    <% end %>
+  </div>
+<% end %>
 
 <div class="modal fade"
   tabindex="-1"

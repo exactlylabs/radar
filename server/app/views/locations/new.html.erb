@@ -1,8 +1,19 @@
 <%= turbo_frame_tag "new_location_modal" do %>
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <%= render partial: "application/components/modals/modal_header", locals: {title: "Add Location"} %>
-      <%= render 'form', location: @location, submit_name: "Create", data_target: params[:data_target], modal_target: params[:modal_target] %>
+  <% if FeatureFlagHelper.is_available('networks', current_user) %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+        locals: {
+          modal_title: 'Create a network',
+          modal_partial_path: "networks/modals/create/create_modal",
+          resource: @location,
+          custom_submit_end_handler: nil,
+        }
+    %>
+  <% else %>
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <%= render partial: "application/components/modals/modal_header", locals: {title: "Add Location"} %>
+        <%= render 'form', location: @location, submit_name: "Create", data_target: params[:data_target], modal_target: params[:modal_target] %>
+      </div>
     </div>
-  </div>
+  <% end %>
 <% end %>
