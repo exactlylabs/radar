@@ -290,14 +290,14 @@ workflows:
           filters:
             branches:
               ignore: ["master"]
-      - build-android:
+      - build-android-apk:
           name: "build-android-apk-staging"
           requires: [generate_build_number]
           flavor: staging
           filters:
             branches:
               only: "master"
-      - build-android:
+      - build-android-apk:
           name: "build-android-apk-prod"
           requires: [generate_build_number]
           flavor: prod
@@ -315,14 +315,14 @@ workflows:
       ## Release Stag/Prod Flavors
       - release-android:
           name: "release-android-staging"
-          requires: [build-android-staging]
+          requires: [build-android-bundle-staging]
           flavor: staging
           filters:
             branches:
               only: "master"
       - release-android:
           name: "release-android-prod"
-          requires: [build-android-prod]
+          requires: [build-android-bundle-prod]
           flavor: prod
           filters:
             branches:
