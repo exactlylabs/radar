@@ -51,6 +51,17 @@ Rails.application.routes.draw do
 
   get 'locations/account/:account_id', to: 'locations#get_by_account_id'
 
+  resources :networks, controller: :locations do
+    resources :measurements, controller: 'location_measurements', only: [:index] do
+      collection do
+        get 'ndt7_index'
+      end
+    end
+    resources :pods, controller: 'location_clients', only: [:index]
+  end
+
+  get 'networks/account/:account_id', to: 'locations#get_by_account_id'
+
   resources :clients do
     resources :measurements, controller: 'client_measurements', only: [:index, :create, :show] do
       collection do
