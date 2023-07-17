@@ -6,14 +6,6 @@ let map;
 
 export default class extends Controller {
 
-  disconnect() {
-    // clear map so it can get properly initialized on re-render
-    if (map) {
-      map.off();
-      map.remove();
-    }
-  }
-
   connect() {
     if (!document.querySelector("#map")) return; // don't try to initialize a map if the <div id="map"> is not present on the screen
     
