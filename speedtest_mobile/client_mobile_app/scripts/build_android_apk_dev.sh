@@ -12,7 +12,7 @@ APPDIR=${SCRIPT_DIR}/..
 BUILD=${BUILD:-$(date +%s)}
 ( cd ${APPDIR} && flutter build apk --build-number ${BUILD} --release --flavor dev -t lib/main_dev.dart --dart-define=BASE_URL=$BASE_URL )
 
+export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -nre 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/\1/p')
 mkdir -p ${WORKSPACE}/android/dev/${VERSION_NAME}+${BUILD}/
 
-export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -nre 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/\1/p')
 cp ${SCRIPT_DIR}/../build/app/outputs/flutter-apk/app-dev-debug.apk ${WORKSPACE}/android/dev/${VERSION_NAME}+${BUILD}/app_${VERSION_NAME}+${BUILD}-debug.apk
