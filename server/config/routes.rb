@@ -54,6 +54,17 @@ Rails.application.routes.draw do
 
   get 'locations/account/:account_id', to: 'locations#get_by_account_id'
 
+  resources :networks, controller: :locations do
+    resources :measurements, controller: 'location_measurements', only: [:index] do
+      collection do
+        get 'ndt7_index'
+      end
+    end
+    resources :pods, controller: 'location_clients', only: [:index]
+  end
+
+  get 'networks/account/:account_id', to: 'locations#get_by_account_id'
+
   resources :clients do
     resources :measurements, controller: 'client_measurements', only: [:index, :create, :show] do
       collection do
@@ -95,6 +106,45 @@ Rails.application.routes.draw do
       post 'bulk_remove_from_network'
       get 'bulk_move_to_network', to: 'clients#get_bulk_move_to_network'
       post 'bulk_move_to_network'
+    end
+  end
+
+  resources :pods, controller: :clients do
+    resources :measurements, controller: 'client_measurements', only: [:index, :create, :show] do
+      collection do
+        get 'ndt7_index'
+      end
+    end
+
+    get 'technical_info', to: 'client_technical_info#index'
+    get 'data_usage_and_scheduling', to: 'client_data_usage_and_scheduling#index'
+    put 'data_usage', to: 'client_data_usage_and_scheduling#edit_data_cap'
+    put 'scheduling', to: 'client_data_usage_and_scheduling#edit_scheduling'
+    put 'enable_scheduling', to: 'client_data_usage_and_scheduling#enable_custom_scheduling'
+    put 'enable_data_cap', to: 'client_data_usage_and_scheduling#enable_data_cap'
+
+    member do
+      delete 'release'
+      post 'status'
+      post 'watchdog_status'
+      post 'run_test'
+      post 'toggle_in_service'
+      get 'pdf_label', to: 'clients#get_client_label'
+      post 'run_public_test'
+    end
+
+    collection do
+      get 'status', to: 'clients#public_status'
+      post 'status', to: 'clients#check_public_status'
+      post 'claim'
+      get 'claim', to: 'clients#claim_form'
+      get 'check_claim', to: 'clients#check_claim_form'
+      post 'check_claim', to: 'clients#check_claim'
+      post 'bulk_run_tests'
+      delete 'bulk_delete'
+      post 'bulk_update_release_group'
+      get 'bulk_pdf_labels'
+      get 'unclaimed'
     end
   end
 

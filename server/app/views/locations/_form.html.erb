@@ -165,7 +165,7 @@
   <div class="modal-footer modals--footer">
     <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
     <% if data_target.present? %>
-      <%= form.submit submit_name, class: "custom-button custom-button--primary custom-button--sm", data: { "target": "modal.#{data_target}", "bs-toggle" => "modal", "bs-target" => modal_target } %>
+      <%= form.submit submit_name, class: "custom-button custom-button--primary custom-button--sm", data: { "target": "modal.#{data_target_val}", "bs-toggle" => "modal", "bs-target" => modal_target } %>
     <% else %>
       <%= form.submit submit_name, class: "custom-button custom-button--primary custom-button--sm" %>
     <% end %>
