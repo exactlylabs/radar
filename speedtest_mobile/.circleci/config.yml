@@ -319,7 +319,7 @@ workflows:
           flavor: staging
           filters:
             branches:
-              only: "/.*/"
+              only: "/^.*/"
       - release-android:
           name: "release-android-prod"
           requires: [build-android-bundle-prod]
