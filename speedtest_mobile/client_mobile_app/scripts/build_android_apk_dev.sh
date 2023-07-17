@@ -15,4 +15,4 @@ BUILD=${BUILD:-$(date +%s)}
 export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -nre 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/\1/p')
 mkdir -p ${WORKSPACE}/android/dev/${VERSION_NAME}+${BUILD}/
 
-cp ${SCRIPT_DIR}/../build/app/outputs/flutter-apk/app-dev-debug.apk ${WORKSPACE}/android/dev/${VERSION_NAME}+${BUILD}/app_${VERSION_NAME}+${BUILD}-debug.apk
+cp ${SCRIPT_DIR}/../build/app/outputs/flutter-apk/app-dev-release.apk ${WORKSPACE}/android/dev/${VERSION_NAME}+${BUILD}/app_${VERSION_NAME}+${BUILD}-release.apk
