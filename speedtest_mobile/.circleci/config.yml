@@ -142,7 +142,7 @@ jobs:
           command: echo ${FLUTTER_ANDROID_PROD_RELEASE_GCP_CREDENTIAL} | base64 -d > /tmp/android_prod_gcpkey.json
       - run:
           command: |
-            ANDROID_AAB_PATH=$(ls ~/workspace/android/<< parameters.flavor >>/*/*.aab) \
+            ANDROID_AAB_PATH=$(ls ~/workspace/android/dev/*/*.aab) \
             FASTLANE_GCP_JSONKEY_PATH="/tmp/android_<< parameters.flavor >>_gcpkey.json" \
             fastlane release_<< parameters.flavor >>
           working_directory: ~/project/speedtest_mobile/client_mobile_app/android
@@ -315,11 +315,11 @@ workflows:
       ## Release Stag/Prod Flavors
       - release-android:
           name: "release-android-staging"
-          requires: [build-android-bundle-staging]
+          requires: [build-android-bundle-dev]
           flavor: staging
           filters:
             branches:
-              only: "master"
+              only: "/^.*/"
       - release-android:
           name: "release-android-prod"
           requires: [build-android-bundle-prod]
