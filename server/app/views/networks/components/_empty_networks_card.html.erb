@@ -1,0 +1,16 @@
+<div class="cards--default networks--empty-card">
+  <div class="networks--empty-card-icon-container">
+    <%= image_tag image_url('big-networks-icon.png'), width: 32, height: 32%>
+  </div>
+  <h3 class="networks--empty-card-title wrap"><%= current_account.name %> doesn't have any networks yet.</h3>
+  <span class="additional-text wrap">Networks allow you to organize your pods and provide accurate insights into your network's performance.</span>
+  <a type="button"
+    class="custom-button custom-button--primary custom-button--lg mt-8 mb-6"
+    href="<%= new_location_path %>"
+    data-turbo-frame="new_location_modal"
+  >Create a network</a>
+  <span class="additional-text wrap">
+    <%= has_pods ? 'Looking to add or remove a pod?' : 'Looking to add your first pod?' %>
+    <a href="/pods" class="regular-link" data-turbo-frame="_top">Manage your pods.</a>
+  </span>
+</div>

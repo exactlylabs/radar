@@ -1,0 +1,47 @@
+<div class="tables--checkbox-container" style="width: <%= widths[0] %>">
+  <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
+    <input id="check-box-network-<%= index %>"
+            class="form-check-input custom-multi-row-input-checkbox"
+            type="checkbox"
+            value="1"
+            data-multi-row-table-target="formCheckBoxInput"
+            data-action="input->multi-row-table#onCheckBoxChange"
+            data-row-type="Network"
+    />
+  </div>
+</div>
+
+<div class="tables--name-container tables--grows-on-small"
+  style="width: <%= widths[1] %>"
+  data-url="<%= network_path(row) %>"
+  data-action="click->table#goToDetails"
+>
+  <%= row.name %>
+</div>
+
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[2] %>; %>"
+>
+  CAT
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[3] %>">
+  DOWN
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[4] %>">
+  UP
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[5] %>">
+  <%= render partial: "application/components/buttons/custom_more_options_button",
+      locals: { index: index, type: Location.name, row: row }
+  %>
+</div>
+
+<a href="<%= network_path(row) %>"
+  class="tables--appears-on-small"
+  style="width: 5%"
+>
+  <%= image_tag image_url('caret-right.png'), width: 16, height: 16 %>
+</a>

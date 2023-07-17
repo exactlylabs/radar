@@ -1,7 +1,10 @@
 module ApplicationHelper
-
   GB_MULTIPLIER = 1024**3
   MB_MULTIPLIER = 1024**2
+
+  def are_there_unassigned_pods?
+    policy_scope(Client).where(location: nil).count > 0
+  end
 
   def get_value_in_preferred_unit(value)
     if current_user.prefers_gb_unit

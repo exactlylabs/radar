@@ -48,7 +48,7 @@
     <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
   </head>
-  <body>
+  <body data-controller="hello">
     <% if content_for?(:content) %>
       <%= yield(:content) %>
     <% elsif user_signed_in? %>

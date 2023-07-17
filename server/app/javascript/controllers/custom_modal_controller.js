@@ -47,7 +47,7 @@ export default class extends Controller {
     this.closeModal();
     if(!e.detail.success) {
       const { statusText } = e.detail.fetchResponse.response;
-      emitCustomEvent('newAlert', {
+      emitCustomEvent('renderAlert', {
         detail: {
           message: statusText,
           type: AlertTypes.ERROR

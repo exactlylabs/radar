@@ -1,7 +1,7 @@
 class FeatureFlagsController < ApplicationController
   before_action :authenticate_user!
   before_action :check_super_user!
-  before_action :set_feature_flag, only: %i[ update delete destroy ]
+  before_action :set_feature_flag, only: %i[ update delete destroy toggle ]
 
   def index
   end
@@ -51,6 +51,23 @@ class FeatureFlagsController < ApplicationController
     end
   end
 
+  def toggle
+    return head(403) if !current_user.super_user
+    is_user_in_list = @ff.users.where(id: current_user.id).present?
+    if is_user_in_list
+      @ff.users.delete(current_user)
+    else
+      @ff.users << current_user
+    end
+    respond_to do |format|
+      if @ff.save!
+        format.json { render json: { status: :ok } }
+      else
+        format.json { render json: { status: :unprocessable_entity } }
+      end
+    end
+  end
+
   def delete
     respond_to do |format|
       format.html
@@ -85,6 +102,12 @@ class FeatureFlagsController < ApplicationController
   end
 
   def set_feature_flag
-    @ff = FeatureFlag.find(params[:id])
+    # check if id is a number
+    is_number = params[:id].to_i != 0
+    if is_number
+      @ff = FeatureFlag.find(params[:id])
+    else
+      @ff = FeatureFlag.find_by_name(params[:id])
+    end
   end
 end

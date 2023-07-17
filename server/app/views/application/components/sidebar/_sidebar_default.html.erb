@@ -36,7 +36,7 @@
   </div>
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
-      icon: "dashboard-icon",
+      icon: FeatureFlagHelper.is_available('networks', current_user) ? "hollow-dashboard-icon" : "dashboard-icon",
       title: "My Dashboard",
       url: dashboard_path,
       sidebar_item_id: "dashboard",
@@ -44,29 +44,42 @@
       narrow: false
     }
   %>
+  <% if FeatureFlagHelper.is_available('networks', current_user) %>
+    <%= render partial: "application/components/sidebar/sidebar_item",
+      locals: {
+        icon: "hollow-networks-icon",
+        title: "Networks",
+        url: networks_path,
+        sidebar_item_id: "networks",
+        disabled: current_account.nil?,
+        narrow: false
+      }
+    %>
+  <% else %>
+    <%= render partial: "application/components/sidebar/sidebar_item",
+      locals: {
+        icon: "pods-icon",
+        title: "Pods",
+        url: clients_path,
+        sidebar_item_id: "pods",
+        disabled: current_account.nil?,
+        narrow: false
+      }
+    %>
+    <%= render partial: "application/components/sidebar/sidebar_item",
+      locals: {
+        icon: "locations-icon",
+        title: "Locations",
+        url: locations_path,
+        sidebar_item_id: "locations",
+        disabled: current_account.nil?,
+        narrow: false
+      }
+    %>
+  <% end %>
   <%= render partial: "application/components/sidebar/sidebar_item",
     locals: {
-      icon: "pods-icon",
-      title: "Pods",
-      url: clients_path,
-      sidebar_item_id: "pods",
-      disabled: current_account.nil?,
-      narrow: false
-    }
-  %>
-  <%= render partial: "application/components/sidebar/sidebar_item",
-    locals: {
-      icon: "locations-icon",
-      title: "Locations",
-      url: locations_path,
-      sidebar_item_id: "locations",
-      disabled: current_account.nil?,
-      narrow: false
-    }
-  %>
-  <%= render partial: "application/components/sidebar/sidebar_item",
-    locals: {
-      icon: "members-icon",
+      icon: FeatureFlagHelper.is_available('networks', current_user) ? "hollow-members-icon" : "members-icon",
       title: "Members & Sharing",
       url: users_account_index_path,
       sidebar_item_id: "members",

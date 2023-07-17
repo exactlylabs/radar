@@ -1,5 +1,6 @@
 class LocationsController < ApplicationController
   include Recents
+  include Paginator
   before_action :authenticate_user!
   before_action :check_account_presence, only: %i[ index show ]
   before_action :check_request_origin, only: %i[ show ]
@@ -16,6 +17,8 @@ class LocationsController < ApplicationController
     if account_id
       @locations = @locations.where(account_id: account_id)
     end
+    @total = @locations.count
+    @locations = paginate(@locations, params[:page], params[:page_size])
   end
 
   # GET /locations/1 or /locations/1.json
@@ -25,6 +28,12 @@ class LocationsController < ApplicationController
   # GET /locations/new
   def new
     @location = Location.new
+    if FeatureFlagHelper.is_available('networks', current_user)
+      respond_to do |format|
+        format.html
+        format.turbo_stream { render turbo_stream: turbo_stream.update('new_location_modal', partial: "locations/new", locals: { location: @location }) }
+      end
+    end
   end
 
   # GET /locations/1/edit
