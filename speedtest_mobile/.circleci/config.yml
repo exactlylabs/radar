@@ -315,7 +315,7 @@ workflows:
       ## Release Stag/Prod Flavors
       - release-android:
           name: "release-android-staging"
-          requires: [build-android-bundle-staging]
+          requires: [build-android-bundle-dev]
           flavor: staging
           filters:
             branches:
