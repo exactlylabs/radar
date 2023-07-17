@@ -260,22 +260,45 @@ workflows:
 
       # Android
       # Build Flavors
-      - build-android:
-          name: "build-android-dev"
+      - build-android-bundle:
+          name: "build-android-bundle-dev"
+          requires: [generate_build_number]
+          flavor: dev
+          filters:
+            branches:
+              ignore: ["master"]
+      - build-android-bundle:
+          name: "build-android-bundle-staging"
+          requires: [generate_build_number]
+          flavor: staging
+          filters:
+            branches:
+              only: "master"
+      - build-android-bundle:
+          name: "build-android-bundle-prod"
+          requires: [generate_build_number]
+          flavor: prod
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^mobile-.*/
+      - build-android-apk:
+          name: "build-android-apk-dev"
           requires: [generate_build_number]
           flavor: dev
           filters:
             branches:
               ignore: ["master"]
       - build-android:
-          name: "build-android-staging"
+          name: "build-android-apk-staging"
           requires: [generate_build_number]
           flavor: staging
           filters:
             branches:
               only: "master"
       - build-android:
-          name: "build-android-prod"
+          name: "build-android-apk-prod"
           requires: [generate_build_number]
           flavor: prod
           filters:
@@ -285,7 +308,7 @@ workflows:
               only: /^mobile-.*/
       ## Upload Flavors to Storage
       - upload-android:
-          requires: [build-android-dev, build-android-staging, build-android-prod]
+          requires: [build-android-bundle-dev, build-android-bundle-staging, build-android-bundle-prod, build-android-apk-dev, build-android-apk-staging, build-android-apk-prod]
           filters:
             tags:
               only: /^mobile-.*/
