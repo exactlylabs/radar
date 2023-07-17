@@ -18,6 +18,10 @@ module ApplicationHelper
     policy_scope(Client).where(location: nil).count > 0
   end
 
+  def are_there_unassigned_pods?
+    policy_scope(Client).where(location: nil).count > 0
+  end
+
   def is_super_user_disabled?
     possible_cookie = cookies[:radar_super_user_disabled]
     possible_cookie.present? && possible_cookie == "true"
