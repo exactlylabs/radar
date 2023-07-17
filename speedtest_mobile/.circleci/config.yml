@@ -315,11 +315,11 @@ workflows:
       ## Release Stag/Prod Flavors
       - release-android:
           name: "release-android-staging"
-          requires: [build-android-bundle-dev]
+          requires: [build-android-bundle-staging]
           flavor: staging
           filters:
             branches:
-              only: "/^.*/"
+              only: "master"
       - release-android:
           name: "release-android-prod"
           requires: [build-android-bundle-prod]
