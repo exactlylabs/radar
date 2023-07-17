@@ -45,7 +45,7 @@ jobs:
           paths:
             - ./build_number
 
-  build-android:
+  build-android-bundle:
     working_directory: ~/project
     parameters:
       flavor:
@@ -69,7 +69,38 @@ jobs:
       - flutter/install_android_gem:
           app-dir: ~/project/speedtest_mobile/client_mobile_app
       - run:
-          command: BUILD=$(cat ~/project/speedtest_mobile/client_mobile_app/workspace/build_number) ./scripts/build_android_<<  parameters.flavor >>.sh
+          command: BUILD=$(cat ~/project/speedtest_mobile/client_mobile_app/workspace/build_number) ./scripts/build_android_bundle_<<  parameters.flavor >>.sh
+          working_directory: ~/project/speedtest_mobile/client_mobile_app
+      - persist_to_workspace:
+          root: ~/project/speedtest_mobile/client_mobile_app/workspace
+          paths:
+            - android/*
+
+  build-android-apk:
+    working_directory: ~/project
+    parameters:
+      flavor:
+        type: enum
+        enum: ["dev", "staging", "prod"]
+    executor:
+      name: android/android-docker
+      tag: 2022.09.1
+    resource_class: large
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project/speedtest_mobile/client_mobile_app/workspace
+      - setup_keystores:
+          working_directory: ~/project/speedtest_mobile/client_mobile_app/android
+      - flutter/install_sdk_and_pub:
+          version: 3.10.1
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
+      - flutter/install_android_gradle_dependencies:
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
+      - flutter/install_android_gem:
+          app-dir: ~/project/speedtest_mobile/client_mobile_app
+      - run:
+          command: BUILD=$(cat ~/project/speedtest_mobile/client_mobile_app/workspace/build_number) ./scripts/build_android_apk_<<  parameters.flavor >>.sh
           working_directory: ~/project/speedtest_mobile/client_mobile_app
       - persist_to_workspace:
           root: ~/project/speedtest_mobile/client_mobile_app/workspace
