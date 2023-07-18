@@ -22,27 +22,6 @@
   <% end %>
 <% end %>
 
-<% if FeatureFlagHelper.is_available('a', current_user) %>
-  <div class="mt-8">
-    A IS NOW VISIBLE
-  </div>
-<% end %>
-<% if FeatureFlagHelper.is_available('b', current_user) %>
-  <div class="mt-8">
-    B IS NOW VISIBLE
-  </div>
-<% end %>
-<% if FeatureFlagHelper.is_available('c', current_user) %>
-  <div class="mt-8">
-    C IS NOW VISIBLE
-  </div>
-<% end %>
-<% if FeatureFlagHelper.is_available('d', current_user) %>
-  <div class="mt-8">
-    D IS NOW VISIBLE
-  </div>
-<% end %>
-
 <%= render partial: "application/components/modals/turbo_modal",
   locals: { turbo_frame_tag_id: "create_feature_flag_modal" }
 %>

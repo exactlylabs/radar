@@ -13,9 +13,11 @@
       </ul>
       <!--end::Breadcrumb-->
       <% if FeatureFlagHelper.is_available('Feature_Flag_1', current_user) %>
+        <!-- This div is only meant for system testing -->
         <div id="ff-test-element">HIDDEN FEATURE</div>
       <% end %>
       <% if FeatureFlagHelper.is_available('Feature_Flag_2', current_user) %>
+        <!-- This div is only meant for system testing -->
         <div id="ff-public-test-element">PUBLIC FEATURE</div>
       <% end %>
     </div>
