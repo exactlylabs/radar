@@ -1,8 +1,19 @@
 <%= turbo_frame_tag "edit_location_modal" do %>
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <%= render partial: "application/components/modals/modal_header", locals: {title: "Edit Location"} %>
-      <%= render 'form', location: @location, submit_name: "Update", data_target: nil %>
+  <% if FeatureFlagHelper.is_available('networks', current_user) %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+        locals: {
+          modal_title: 'Edit network',
+          modal_partial_path: "networks/modals/edit/edit_modal",
+          resource: @location,
+          custom_submit_end_handler: nil,
+        }
+    %>
+  <% else %>
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <%= render partial: "application/components/modals/modal_header", locals: {title: "Edit Location"} %>
+        <%= render 'form', location: @location, submit_name: "Update", data_target: nil %>
+      </div>
     </div>
-  </div>
+  <% end %>
 <% end %>

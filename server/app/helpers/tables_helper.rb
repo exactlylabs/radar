@@ -37,10 +37,10 @@ module TablesHelper
     when TableTypes::NETWORKS
       [
         '4%',
-        '46%',
-        '15%',
-        '15%',
-        '15%',
+        '33%',
+        '16%',
+        '21%',
+        '21%',
         '5%'
       ]
     end
@@ -78,8 +78,8 @@ module TablesHelper
         { text: 'Checkbox', hidden: true },
         { text: 'Network', sort: 'name', sort_action: 'click->table#sortByName' },
         { text: 'Category' },
-        { text: 'Avg. download' },
-        { text: 'Avg. upload' },
+        { text: 'Avg. download', icon_before: 'download-icon.png' },
+        { text: 'Avg. upload', icon_before: 'upload-icon.png' },
         { text: 'Actions', hidden: true}
       ]
     end

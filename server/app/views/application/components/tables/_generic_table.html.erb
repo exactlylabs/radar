@@ -1,24 +1,39 @@
 <% width_sum = widths.map { |w| w.split('%')[0].to_i }.sum %>
 <% raise "Table width is not 100%. Val: #{width_sum}" if width_sum != 100 %>
 
-<div class="tables--table-container" data-controller="table">
-  <%= render partial: "application/components/tables/table_titles",
-      locals: { titles: titles, widths: widths }
-  %>
-  <%= turbo_frame_tag table_id, class: "tables--rows-container" do %>
-    <% rows.each_with_index do |row, index| %>
-      <%= render partial: "application/components/tables/table_row",
-          locals: {
-            row: row,
-            type: type,
-            widths: widths,
-            index: "#{row.id}-#{row.account.id}",
-            even: index.even?
-          }
-      %>
+<% if rows.length > 0 %>
+  <div class="tables--table-container" data-controller="table">
+    <%= render partial: "application/components/tables/table_titles",
+        locals: { titles: titles, widths: widths }
+    %>
+    <%= turbo_frame_tag table_id, class: "tables--rows-container" do %>
+      <% rows.each_with_index do |row, index| %>
+        <%= render partial: "application/components/tables/table_row",
+            locals: {
+              row: row,
+              type: type,
+              widths: widths,
+              index: "#{row.id}-#{row.account.id}",
+              even: index.even?
+            }
+        %>
+      <% end %>
     <% end %>
-  <% end %>
-  <%= render partial: "application/components/tables/table_footer", 
-      locals: { count: total, type: type }
-  %>
-</div>
+    <%= render partial: "application/components/tables/table_footer", 
+        locals: { count: total, type: type }
+    %>
+  </div>
+<% elsif rows.length == 0 && request.query_parameters.count > 0 %>
+  <div class="tables--empty-table-container">
+    <%= image_tag image_url('search.png'), width: 24, height: 24, class: 'mb-3' %>
+    <h4 class="card-main-title mb-2">No results found</h4>
+    <span class="additional-text mb-6">Try adjusting your search criteria.</span>
+    <a type="button"
+      href="<%= request.path %>"
+      data-turbo-frame="_top"
+      class="custom-button custom-button--secondary custom-button--xs"
+    >
+      Clear all filters
+    </a>
+  </div>
+<% end %>

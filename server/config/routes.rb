@@ -31,6 +31,11 @@ Rails.application.routes.draw do
   end
 
   resources :locations do
+
+    collection do
+      delete 'bulk_destroy', to: 'locations#bulk_destroy'
+    end
+
     member do
       post 'request_test'
     end
@@ -45,17 +50,6 @@ Rails.application.routes.draw do
   end
 
   get 'locations/account/:account_id', to: 'locations#get_by_account_id'
-
-  resources :networks, controller: :locations do
-    resources :measurements, controller: 'location_measurements', only: [:index] do
-      collection do
-        get 'ndt7_index'
-      end
-    end
-    resources :pods, controller: 'location_clients', only: [:index]
-  end
-
-  get 'networks/account/:account_id', to: 'locations#get_by_account_id'
 
   resources :clients do
     resources :measurements, controller: 'client_measurements', only: [:index, :create, :show] do

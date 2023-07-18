@@ -7,6 +7,9 @@
       data-action="<%= title[:sort] ? title[:sort_action] : nil %>"
       data-sortable="<%= title[:sort].present? %>"
     >
+      <% if title[:icon_before] %>
+        <%= image_tag image_url(title[:icon_before]), width: 16, height: 16, class: "me-1" %>
+      <% end %>
       <%= title[:hidden] ? '' : title[:text] %>
       <% if title[:sort] %>
         <%= image_tag image_url(current_sort_order_icon_name), width: 16, height: 16 %>

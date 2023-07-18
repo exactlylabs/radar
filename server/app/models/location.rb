@@ -183,6 +183,8 @@ include EventSourceable
       self.deleted_at = Time.now
       self.save!
       self.clients.update(location_id: nil)
+      CategoriesLocation.where(location_id: self.id).destroy_all
+      RecentSearch.where(location_id: self.id).destroy_all
     end
   end
 

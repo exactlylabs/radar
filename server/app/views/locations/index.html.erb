@@ -75,12 +75,21 @@
 <% end %>
 
 <%= turbo_frame_tag "locations_display" do %>
-  <div class="post fs-6 d-flex flex-column" id="kt_post">
-    <% if current_account.is_all_accounts? %>
-      <%= render partial: "locations/locations_table_filters" %>
+  <div class="post fs-6 d-flex flex-column" id="kt_post"
+    <%= FeatureFlagHelper.is_available('networks', current_user) ? 'data-controller=multi-row-table' : nil %>
+  >
+    <% if FeatureFlagHelper.is_available('networks', current_user) && 
+      @locations.count != 0 ||
+      ( @locations.count == 0 && request.query_parameters.count > 0 )
+    %>
+      <%= render partial: "networks/components/table_filters" %>
+    <% else %>
+      <% if current_account.is_all_accounts? %>
+        <%= render partial: "locations/locations_table_filters" %>
+      <% end %>
     <% end %>
     <% if FeatureFlagHelper.is_available('networks', current_user) %>
-      <% if @locations.count > 0 %>
+      <% if @locations.count > 0 || (@locations.count == 0 && request.query_parameters.count > 0) %>
         <%= render partial: "application/components/tables/generic_table",
             locals: {
               table_id: "networks_table",
@@ -93,7 +102,10 @@
         %>
       <% else %>
         <%= render partial: "networks/components/empty_networks_card",
-            locals: { has_pods: policy_scope(Client).count > 0 }
+            locals: {
+              has_pods: policy_scope(Client).count > 0,
+              empty_search: params[:status].present? || params[:category].present? || params[:account_id].present?
+            }
         %>
       <% end %>
     <% else %>
@@ -110,6 +122,14 @@
       optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse"
     }
   %>
+
+  <%= render partial: "application/components/modals/turbo_modal",
+    locals: {
+      turbo_frame_tag_id: "edit_location_modal",
+      optional_added_controllers: "categories",
+      optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse turbo:frame-render->categories#initializeCategories"
+    }
+  %>
 <% else %>
   <div class="modal fade"
     tabindex="-1"
@@ -120,17 +140,17 @@
     <%= turbo_frame_tag "new_location_modal" do %>
     <% end %>
   </div>
-<% end %>
 
-<div class="modal fade"
-  tabindex="-1"
-  data-controller="modal categories"
-  data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated turbo:submit-end->modal#submit turbo:frame-render->modal#showModal turbo:frame-render->categories#initializeCategories"
-  data-clear-turbo-id="edit_location_modal"  
->
-  <%= turbo_frame_tag "edit_location_modal" do %>
-  <% end %>
-</div>
+  <div class="modal fade"
+    tabindex="-1"
+    data-controller="modal categories"
+    data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated turbo:submit-end->modal#submit turbo:frame-render->modal#showModal turbo:frame-render->categories#initializeCategories"
+    data-clear-turbo-id="edit_location_modal"  
+  >
+    <%= turbo_frame_tag "edit_location_modal" do %>
+    <% end %>
+  </div>
+<% end %>
 
 <div id="categories_modal_ref" class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
   <%= turbo_frame_tag "categories_modal" do %>

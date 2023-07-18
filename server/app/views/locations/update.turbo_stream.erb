@@ -2,14 +2,24 @@
   <%= render partial: 'locations/location_details', locals: {location: @location} %>
 <% end %>
 
-<%= turbo_stream.update "locations_table" do %>
-  <% @locations.order("LOWER(name)").each_with_index do |location, index| %>
-    <%= render partial: "locations_table_row", locals: {location: location, shows_tooltip: true, row: index} %>
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <%= turbo_stream.update "networks_table" do %>
+    <% @locations.each_with_index do |row, index| %>
+      <%= render partial: "application/components/tables/table_row",
+          locals: {
+            row: row,
+            type: TablesHelper::TableTypes::NETWORKS,
+            widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
+            index: "#{row.id}-#{row.account.id}",
+            even: index.even?
+          }
+      %>
+    <% end %>
   <% end %>
-<% end %>
-
-<%= turbo_stream.update "locations_grid" do %>
-  <% @locations.order("LOWER(name)").each do |location| %>
-    <%= render partial: "locations_grid_card", locals: {location: location} %>
+<% else %>
+  <%= turbo_stream.update "locations_table" do %>
+    <% @locations.order("LOWER(name)").each_with_index do |location, index| %>
+      <%= render partial: "locations_table_row", locals: {location: location, shows_tooltip: true, row: index} %>
+    <% end %>
   <% end %>
 <% end %>

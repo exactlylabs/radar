@@ -2,10 +2,6 @@
   <%= render partial: 'locations_table_row', locals: {location: @location, shows_tooltip: true, row: policy_scope(Location).count} %>
 <% end %>
 
-<%= turbo_stream.append 'locations_grid' do %>
-  <%= render partial: 'locations_grid_card', locals: {location: @location} %>
-<% end %>
-
 <%= turbo_stream.prepend 'client-locations-dropdown' do %>
   <%= render partial: "clients/client_select_option", locals: { option: @location, selected: true } %>
 <% end %>
