@@ -1,0 +1,4 @@
+pod1:
+  account: root
+  unix_user: "r1234"
+  name: Pod 1
