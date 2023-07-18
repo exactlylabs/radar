@@ -2,7 +2,7 @@ import {Box, Modal} from "@mui/material";
 import {
   DEFAULT_MAP_MODAL_BACKGROUND_COLOR,
   DEFAULT_MODAL_BOX_SHADOW,
-  DEFAULT_TEXT_COLOR,
+  DEFAULT_TEXT_COLOR
 } from "../../../../utils/colors";
 import {ArrowForward, Close} from "@mui/icons-material";
 import NoInternetIconBlue from '../../../../assets/icon-location-nointernet-selected.png';
