@@ -97,7 +97,7 @@ class Strings {
       'We’ll ask you a few questions to better understand where and how you’re connected so we can learn more about your current service.';
   static const String ftueAppModalButtonLabel = 'Get started';
   static const String acceptTermsError =
-      'Please confirm that you agree to the Terms of Use and Privacy Policy before continuing.';
+      'Please confirm that you agree to the Privacy Policy before continuing.';
   static const String acceptTermsTitle = 'Test your Internet speed';
   static const String acceptTermsSubtitle =
       'We’ll ask you a few questions to better understand where and how you’re connected so we can learn more about your current service.';
