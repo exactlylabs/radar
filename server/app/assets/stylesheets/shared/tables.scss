@@ -357,3 +357,43 @@
   min-width: 1rem;
   min-height: 1rem;
 }
+
+.tables--network-icon-container {
+  width: 2.25rem;
+  min-width: 2.25rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $subtle-gray;
+
+  &[data-network-status='online'] {
+    background-color: $circular-icon-container-gray;
+  }
+
+}
+
+.tables--network-name-pod-count-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0;
+
+  .tables--network-name {
+    font-size: 0.938rem;
+    line-height: 1.312rem;
+    font-variation-settings: 'wght' $bold;
+    color: $deep-blue;
+    max-width: 40ch;
+  }
+
+  .tables--network-pod-count {
+    font-size: 0.875rem;
+    line-height: 1.312rem;
+    color: $dark-gray;
+    font-variation-settings: 'wght' $medium;
+    max-width: 40ch;
+  }
+}

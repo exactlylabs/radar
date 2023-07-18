@@ -1,5 +1,8 @@
 <% if categories.count == 0 %>
-  <p class="m-0 regular-text">No categories</p>
+  <div class="d-flex flex-row justify-content-start align-items-center">
+    <div class="category--marker" style="background-color: white; border: solid 2px #bcbbc7"></div>
+    <p class="m-0 regular-text">No categories</p>
+  </div>
 <% elsif categories.count == 1 %>
   <div class="d-flex flex-row justify-content-start align-items-center">
     <div class="category--marker" style="background-color: <%= categories[0].color_hex %>"></div>
