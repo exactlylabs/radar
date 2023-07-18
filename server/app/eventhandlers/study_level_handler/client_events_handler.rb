@@ -12,7 +12,7 @@ module StudyLevelHandler
       end
 
       def handle_client_event!(event)
-        if event.snapshot.nil? || @in_outage
+        if @in_outage
           return
         end
 
