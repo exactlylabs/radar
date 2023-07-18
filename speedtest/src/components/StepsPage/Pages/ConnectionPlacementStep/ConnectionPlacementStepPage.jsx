@@ -59,7 +59,6 @@ const ConnectionPlacementStepPage = ({
       <PreferNotToAnswer goForward={goForward}/>
       <MyNoConnectionConfirmationModal open={isConfirmationModalOpen}
                                        close={closeConfirmationModal}
-                                       address={userData.address}
                                        goToLastFlowStep={goToLastFlowStep}
       />
     </div>
