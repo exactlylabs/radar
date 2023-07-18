@@ -1,6 +1,6 @@
 module EventSourceable
   extend ActiveSupport::Concern
-  
+
   module Hooks
     def notify_change(field, event_name, options={})
       if options[:applier].nil?
@@ -13,7 +13,7 @@ module EventSourceable
       end
       # Register the field to have its changes monitored
       self._config[:observed_fields] << {
-        field: field, 
+        field: field,
         event: event_name,
         applier: options[:applier]
       }
@@ -68,7 +68,7 @@ module EventSourceable
   end
 
   def create_snapshot_from_event(event, opts={}, &applier)
-    last_snap = Snapshot.last_from self
+    last_snap = Snapshot.from_aggregate(self).prior_to(event.timestamp).last
     if last_snap.present? || opts[:is_created]
       state = last_snap&.state || {}
       applier.call(state, event) if applier.present?
@@ -85,8 +85,8 @@ module EventSourceable
     self._config[:observed_fields].each do |field_data|
       if self.send("saved_change_to_#{field_data[:field]}")
         self.send_field_changed_event(
-          field_data[:field], 
-          self.send("#{field_data[:field]}_before_last_save"), 
+          field_data[:field],
+          self.send("#{field_data[:field]}_before_last_save"),
           self.read_attribute(field_data[:field]),
           t
         )
@@ -108,9 +108,9 @@ module EventSourceable
     end
     applier = self.respond_to?(field_data[:applier]) ? self.method(field_data[:applier]) : nil
     self.record_event(
-      event_name, 
-      event_data, 
-      timestamp, 
+      event_name,
+      event_data,
+      timestamp,
       &applier
     )
   end
@@ -128,32 +128,20 @@ module EventSourceable
   def send_destroyed_event()
     self.record_event(
       self._config[:on_destroy][:event],
-      self.method(self._config[:on_destroy][:event_data]).call(), 
+      self.method(self._config[:on_destroy][:event_data]).call(),
       Time.now,
       &self.method(self._config[:on_destroy][:applier])
     )
   end
 
-  def record_event(event_name, data, timestamp, **options, &applier)
-    evt = self.new_event(
-      event_name, 
-      data, 
-      timestamp=get_event_timestamp(event_name, timestamp)
-    )
-    if evt && applier.present?
-      self.create_snapshot_from_event(
-        evt, 
-        **options,
-        &applier
-      )
-    end
-    return evt
+  def get_event_timestamp(event_name, original_timestamp)
+    original_timestamp
   end
 
   def new_event(name, data, timestamp=nil)
     timestamp = timestamp or Time.now
     if Event.where(aggregate: self, name: name, data: data).where("timestamp >= ?", timestamp - 1.second).exists?
-      return 
+      return
     end
     Event.transaction do
       last_event = Event.from_aggregate(self).lock.last
@@ -162,8 +150,20 @@ module EventSourceable
     end
   end
 
-  def get_event_timestamp(event_name, original_timestamp)
-    original_timestamp
+  def record_event(event_name, data, timestamp, **options, &applier)
+    evt = self.new_event(
+      event_name,
+      data,
+      timestamp=get_event_timestamp(event_name, timestamp)
+    )
+    if evt.present?
+      self.create_snapshot_from_event(
+        evt,
+        **options,
+        &applier
+      )
+    end
+    return evt
   end
 
   private
