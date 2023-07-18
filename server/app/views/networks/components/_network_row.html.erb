@@ -16,13 +16,22 @@
   data-url="<%= network_path(row) %>"
   data-action="click->table#goToDetails"
 >
-  <%= row.name %>
+  <div class="tables--network-icon-container me-2"
+    data-network-status="<%= row.online ? 'online' : 'offline'%>"
+  >
+    <%= image_tag image_url(row.online ? 'network-online-icon.png' : 'hollow-networks-icon.png'), width: 24, height: 24 %>
+  </div>
+  <div class="tables--network-name-pod-count-container">
+    <span class="tables--network-name ellipsis"><%= row.name %></span>
+    <% pod_count = row.clients.count %>
+    <span class="tables--network-pod-count ellipsis"><%= pod_count %> pod<%= pod_count != 1 ? 's' : '' %></span>
+  </div>
 </div>
 
-<div class="tables--hides-on-small ellipsis"
-  style="width: <%= widths[2] %>; %>"
+<div class="tables--hides-on-small"
+  style="width: <%= widths[2] %>"
 >
-  CAT
+  <%= render partial: "location_categories/table_cell", locals: { categories: row.categories, shows_tooltip: true, row: index } %>
 </div>
 
 <div class="tables--hides-on-small" style="width: <%= widths[3] %>">
