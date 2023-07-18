@@ -102,6 +102,17 @@ $modals--underlay-background-color: rgba(35, 34, 52, 0.5);
 // Cards
 $cards--default-box-shadow: rgba(160, 159, 183, 0.15);
 
+// Dashboard
+$dashboard--no-accounts-card-box-shadow: rgba(160, 159, 183, 0.15);
+
+// Widgets
+$widget--border-color: rgba(188, 187, 199, 0.1);
+$widget--box-shadow: rgba(160, 159, 183, 0.15);
+$widget--location-popup-header-background-color: rgba(246, 247, 250, 0.3);
+
+// Forms
+$forms--search-box-shadow: rgba(160, 159, 183, 0.05);
+
 .transparent {
   background-color: transparent;
 }

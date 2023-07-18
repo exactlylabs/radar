@@ -3,5 +3,7 @@
 >
   <% if type == UsersAccount.name || type == Invite.name %>
     <%= render partial: "users/components/table_row_options", locals: { row: row } %>
+  <% elsif type == Location.name %>
+    <%= render partial: "networks/components/table_row_options", locals: { row: row } %>
   <% end %>
 </div>

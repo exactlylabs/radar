@@ -1,0 +1,59 @@
+<div class="tables--filters-container">
+  <%= render partial: "application/components/tables/multi_row_actions", 
+      locals: {
+        menu_id: 'members-multi-row-actions-menu',
+        options: [
+          'Delete'
+        ],
+        actions: [
+          'click->multi-row-table#bulkDeleteNetworks',
+        ],
+        urls: [
+          bulk_destroy_locations_path
+        ]
+      }
+  %>
+
+  <% if current_account.is_all_accounts? %>
+    <%= render partial: "application/components/tables/filter",
+      locals: {
+        menu_id: 'account-filter-menu',
+        key: 'account_id',
+        default_value: '-1',
+        default_label: 'All accounts',
+        options: [
+          { label: 'All accounts', value: '-1'},
+          *policy_scope(Account).map {|account| { label: account.name , value: "#{account.id}" }}
+        ],
+      }
+    %>
+  <% else %>
+    <%= render partial: "application/components/tables/filter",
+      locals: {
+        menu_id: 'categories-filter-menu',
+        key: 'category',
+        default_value: nil,
+        default_label: 'All categories',
+        options: [
+          { label: 'All categories', value: nil},
+          *policy_scope(Category).map {|category| { label: category.name , value: "#{category.id}" }}
+        ],
+      }
+    %>  
+  <% end %>
+
+  <%= render partial: "application/components/tables/filter",
+      locals: {
+        menu_id: 'status-filter-menu',
+        key: 'status',
+        default_value: nil,
+        default_label: 'All statuses',
+        options: [
+          { label: 'All statuses', value: nil},
+          { label: 'Online', value: 'online' },
+          { label: 'Offline', value: 'offline' }
+        ],
+      }
+  %>
+
+</div>

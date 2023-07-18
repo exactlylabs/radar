@@ -1,0 +1,7 @@
+<% @deleted_networks_ids.each do |id| %>
+  <%= turbo_stream.remove "location_#{id}" %>
+<% end %>
+
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% end %>

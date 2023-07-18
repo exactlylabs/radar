@@ -319,6 +319,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+  z-index: 1000;
   overflow-y: auto;
   
   .tables--filters-menu-item {
@@ -367,11 +368,23 @@
   align-items: center;
   justify-content: center;
   background-color: $subtle-gray;
+  position: relative;
 
   &[data-network-status='online'] {
     background-color: $circular-icon-container-gray;
   }
 
+  .tables--network-online-dot {
+    width: 7px;
+    min-width: 7px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    outline: solid 2px $white;
+    background-color: $badge--green-color;
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+  }
 }
 
 .tables--network-name-pod-count-container {
@@ -396,4 +409,18 @@
     font-variation-settings: 'wght' $medium;
     max-width: 40ch;
   }
+}
+
+.tables--empty-table-container {
+  width: 100%;
+  background-color: white;
+  border: solid 1px $sidebar--main-container-border;
+  box-shadow: 0 2px 8px -2px $cards--default-box-shadow;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+
 }

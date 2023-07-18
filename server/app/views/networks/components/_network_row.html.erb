@@ -13,13 +13,16 @@
 
 <div class="tables--name-container tables--grows-on-small"
   style="width: <%= widths[1] %>"
-  data-url="<%= network_path(row) %>"
+  data-url="<%= location_path(row) %>"
   data-action="click->table#goToDetails"
 >
   <div class="tables--network-icon-container me-2"
     data-network-status="<%= row.online ? 'online' : 'offline'%>"
   >
     <%= image_tag image_url(row.online ? 'network-online-icon.png' : 'hollow-networks-icon.png'), width: 24, height: 24 %>
+    <% if row.online %>
+      <div class="tables--network-online-dot"></div>
+    <% end %>
   </div>
   <div class="tables--network-name-pod-count-container">
     <span class="tables--network-name ellipsis"><%= row.name %></span>
@@ -35,11 +38,29 @@
 </div>
 
 <div class="tables--hides-on-small" style="width: <%= widths[3] %>">
-  DOWN
+  <div class="widgets--location-avg-container">
+    <span class="help-dark-text"><%= row.download_avg.present? ? "#{row.download_avg.round(2)} Mbps" : 'N/A' %></span>
+    <span class="help-small-text mx-1">/</span>
+    <span class="help-small-text"><%= row.expected_mbps_down.present? ? "#{row.expected_mbps_down.round(2)} Mbps" : 'N/A' %></span>
+  </div>
+  <% if row.download_diff.present? %>
+    <span class="widgets--location-diff-text"
+      data-negative="<%= row.download_diff.present? && row.download_diff.include?('-') %>"
+    ><%= row.download_diff.present? ? row.download_diff : '-' %></span>
+  <% end %>
 </div>
 
 <div class="tables--hides-on-small" style="width: <%= widths[4] %>">
-  UP
+  <div class="widgets--location-avg-container">
+    <span class="help-dark-text"><%= row.upload_avg.present? ? "#{row.upload_avg.round(2)} Mbps" : 'N/A' %></span>
+    <span class="help-small-text mx-1">/</span>
+    <span class="help-small-text"><%= row.expected_mbps_up.present? ? "#{row.expected_mbps_up.round(2)} Mbps" : 'N/A' %></span>
+  </div>
+  <% if row.upload_diff.present? %>
+    <span class="widgets--location-diff-text"
+      data-negative="<%= row.upload_diff.present? && row.upload_diff.include?('-') %>"
+    ><%= row.upload_diff.present? ? row.upload_diff : '-' %></span>
+  <% end %>
 </div>
 
 <div class="tables--hides-on-small" style="width: <%= widths[5] %>">
@@ -48,7 +69,7 @@
   %>
 </div>
 
-<a href="<%= network_path(row) %>"
+<a href="<%= location_path(row) %>"
   class="tables--appears-on-small"
   style="width: 5%"
 >

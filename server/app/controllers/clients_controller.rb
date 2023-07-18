@@ -297,7 +297,7 @@ class ClientsController < ApplicationController
     possible_recent_search.destroy if possible_recent_search.present?
 
     respond_to do |format|
-      format.html { redirect_back fallback_location: root_path, notice: "Client was successfully destroyed." }
+      format.html { redirect_back fallback_location: root_path, notice: "Client was successfully deleted." }
       format.json { head :no_content }
     end
   end

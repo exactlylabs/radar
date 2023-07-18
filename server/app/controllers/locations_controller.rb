@@ -5,6 +5,7 @@ class LocationsController < ApplicationController
   before_action :check_account_presence, only: %i[ index show ]
   before_action :check_request_origin, only: %i[ show ]
   before_action :set_location, only: %i[ show edit update destroy request_test ]
+  before_action :set_locations, only: %i[ bulk_destroy ]
 
   # GET /locations or /locations.json
   def index
@@ -14,11 +15,17 @@ class LocationsController < ApplicationController
     if category_id
       @locations = @locations.joins(:categories_locations).where(categories_locations: {category_id: category_id})
     end
-    if account_id
+    if account_id && account_id.to_i != -1
       @locations = @locations.where(account_id: account_id)
     end
-    @total = @locations.count
-    @locations = paginate(@locations, params[:page], params[:page_size])
+    if FeatureFlagHelper.is_available('networks' , current_user)
+      if params[:status].present? && params[:status] != 'all'
+        status_filter = params[:status] == 'online'
+        @locations = @locations.where(online: status_filter)
+      end
+      @total = @locations.count
+      @locations = paginate(@locations, params[:page], params[:page_size])
+    end
   end
 
   # GET /locations/1 or /locations/1.json
@@ -38,6 +45,12 @@ class LocationsController < ApplicationController
 
   # GET /locations/1/edit
   def edit
+    if FeatureFlagHelper.is_available('networks', current_user)
+      respond_to do |format|
+        format.html
+        format.turbo_stream { render turbo_stream: turbo_stream.update('edit_location_modal', partial: "locations/new", locals: { location: @location }) }
+      end
+    end
   end
 
   # POST /locations or /locations.json
@@ -94,6 +107,10 @@ class LocationsController < ApplicationController
       @location.categories << policy_scope(Category).where(id: new_categories_ids)
       if @location.save && @location.update(location_params)
         @locations = policy_scope(Location)
+        if FeatureFlagHelper.is_available('networks', current_user)
+          @total = @locations.count
+          @locations = paginate(@locations, params[:page], params[:page_size])
+        end
         format.turbo_stream
         format.html { redirect_to locations_path, notice: "Location was successfully updated." }
         format.json { render :show, status: :ok, location: @location }
@@ -112,9 +129,10 @@ class LocationsController < ApplicationController
     possible_recent_search = policy_scope(RecentSearch).find_by_location_id(@location.id)
     possible_recent_search.destroy if possible_recent_search.present?
 
-    policy_scope(CategoriesLocation).where(location_id: @location.id).destroy_all
+    policy_scope(CategoriesLocation).where(location_id: @location.id).destroy_all    
+    @notice = FeatureFlagHelper.is_available('networks', current_user) ? "Network was successfully deleted." : "Location was successfully deleted."
     respond_to do |format|
-      format.html { redirect_to locations_url, notice: "Location was successfully destroyed." }
+      format.html { redirect_to locations_url, notice: @notice }
       format.json { head :no_content }
     end
   end
@@ -134,6 +152,31 @@ class LocationsController < ApplicationController
     end
   end
 
+  def bulk_destroy
+    error = nil
+    @deleted_networks_ids = []
+    Location.transaction do
+      @locations.each do |location|
+        puts "current loc -> #{location.id}"
+        @deleted_networks_ids << location.id
+        location.soft_delete
+      end
+    rescue Exception => e
+      error = e.message
+    end
+    puts "deleted ids -> #{@deleted_networks_ids}"
+    if !error
+      @notice = "Networks were successfully deleted."
+    else
+      @notice = "Error deleting networks."
+    end
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_back fallback_location: root_path, notice: @notice }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_location
@@ -149,5 +192,10 @@ class LocationsController < ApplicationController
       is_from_search = params[:origin].present? && params[:origin] == 'search'
       return if !is_from_search
       store_recent_search(params[:id], Recents::RecentTypes::LOCATION)
+    end
+
+    def set_locations
+      location_ids = JSON.parse(params[:ids])
+      @locations = policy_scope(Location).where(id: location_ids)
     end
 end
