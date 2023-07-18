@@ -13,13 +13,13 @@
               row: row,
               type: type,
               widths: widths,
-              index: type == TablesHelper::TableTypes::NETWORK_PODS ? row.unix_user : "#{row.id}-#{row.account.id}",
+              index: "#{row.id}-#{row.account.id}",
               even: index.even?
             }
         %>
       <% end %>
     <% end %>
-    <%= render partial: "application/components/tables/table_footer", 
+    <%= render partial: "application/components/tables/table_footer",
         locals: { count: total, type: type }
     %>
   </div>

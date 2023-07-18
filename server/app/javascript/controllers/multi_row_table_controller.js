@@ -175,6 +175,34 @@ export default class extends Controller {
       });
   }
 
+  runCustomNetworksBulkDelete(url, thenFunction = undefined) {
+    const networksToDelete = this.getIds('network-', '-');
+    const token = document.getElementsByName("csrf-token")[0].content;
+    let formData = new FormData();
+    formData.append("ids", JSON.stringify(networksToDelete));
+    fetch(url, {
+      method: "DELETE",
+      redirect: "follow",
+      headers: { "X-CSRF-Token": token },
+      body: formData,
+    })
+      .then(response => {
+        if (response.redirected) {
+          window.location.href = response.url;
+        } else {
+          this.deselectAll();
+          return response.text();
+        }
+      })
+      .then(html => {
+        Turbo.renderStreamMessage(html);
+        if (thenFunction) thenFunction();
+      })
+      .catch((err) => {
+        handleError(err, this.identifier);
+      });
+  }
+
   runCustomMembersBulkDelete(url, thenFunction = undefined) {
     const ids = this.getIds('check-box-user-', '-');
     const types = this.getRowTypes();
