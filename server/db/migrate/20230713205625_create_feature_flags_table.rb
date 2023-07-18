@@ -6,10 +6,6 @@ class CreateFeatureFlagsTable < ActiveRecord::Migration[6.1]
       t.timestamps
     end
 
-    create_table :feature_flags_users do |t|
-      t.references :feature_flag
-      t.references :user
-      t.timestamps
-    end
+    create_join_table :feature_flags, :users, table_name: :feature_flags_users
   end
 end

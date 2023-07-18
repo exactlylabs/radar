@@ -305,13 +305,9 @@ ActiveRecord::Schema.define(version: 2023_07_13_205625) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "feature_flags_users", force: :cascade do |t|
-    t.bigint "feature_flag_id"
-    t.bigint "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["feature_flag_id"], name: "index_feature_flags_users_on_feature_flag_id"
-    t.index ["user_id"], name: "index_feature_flags_users_on_user_id"
+  create_table "feature_flags_users", id: false, force: :cascade do |t|
+    t.bigint "feature_flag_id", null: false
+    t.bigint "user_id", null: false
   end
 
   create_table "geospaces", force: :cascade do |t|
