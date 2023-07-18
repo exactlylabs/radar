@@ -45,7 +45,7 @@ jobs:
           paths:
             - ./build_number
 
-  build-android-bundle:
+  build-android:
     working_directory: ~/project
     parameters:
       flavor:
@@ -71,34 +71,6 @@ jobs:
       - run:
           command: BUILD=$(cat ~/project/speedtest_mobile/client_mobile_app/workspace/build_number) ./scripts/build_android_bundle_<<  parameters.flavor >>.sh
           working_directory: ~/project/speedtest_mobile/client_mobile_app
-      - persist_to_workspace:
-          root: ~/project/speedtest_mobile/client_mobile_app/workspace
-          paths:
-            - android/*
-
-  build-android-apk:
-    working_directory: ~/project
-    parameters:
-      flavor:
-        type: enum
-        enum: ["dev", "staging", "prod"]
-    executor:
-      name: android/android-docker
-      tag: 2022.09.1
-    resource_class: large
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/project/speedtest_mobile/client_mobile_app/workspace
-      - setup_keystores:
-          working_directory: ~/project/speedtest_mobile/client_mobile_app/android
-      - flutter/install_sdk_and_pub:
-          version: 3.10.1
-          app-dir: ~/project/speedtest_mobile/client_mobile_app
-      - flutter/install_android_gradle_dependencies:
-          app-dir: ~/project/speedtest_mobile/client_mobile_app
-      - flutter/install_android_gem:
-          app-dir: ~/project/speedtest_mobile/client_mobile_app
       - run:
           command: BUILD=$(cat ~/project/speedtest_mobile/client_mobile_app/workspace/build_number) ./scripts/build_android_apk_<<  parameters.flavor >>.sh
           working_directory: ~/project/speedtest_mobile/client_mobile_app
@@ -260,45 +232,22 @@ workflows:
 
       # Android
       # Build Flavors
-      - build-android-bundle:
-          name: "build-android-bundle-dev"
+      - build-android:
+          name: "build-android-dev"
           requires: [generate_build_number]
           flavor: dev
           filters:
             branches:
               ignore: ["master"]
-      - build-android-bundle:
-          name: "build-android-bundle-staging"
+      - build-android:
+          name: "build-android-staging"
           requires: [generate_build_number]
           flavor: staging
           filters:
             branches:
               only: "master"
-      - build-android-bundle:
-          name: "build-android-bundle-prod"
-          requires: [generate_build_number]
-          flavor: prod
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^mobile-.*/
-      - build-android-apk:
-          name: "build-android-apk-dev"
-          requires: [generate_build_number]
-          flavor: dev
-          filters:
-            branches:
-              ignore: ["master"]
-      - build-android-apk:
-          name: "build-android-apk-staging"
-          requires: [generate_build_number]
-          flavor: staging
-          filters:
-            branches:
-              only: "master"
-      - build-android-apk:
-          name: "build-android-apk-prod"
+      - build-android:
+          name: "build-android-prod"
           requires: [generate_build_number]
           flavor: prod
           filters:
@@ -308,21 +257,21 @@ workflows:
               only: /^mobile-.*/
       ## Upload Flavors to Storage
       - upload-android:
-          requires: [build-android-bundle-dev, build-android-bundle-staging, build-android-bundle-prod, build-android-apk-dev, build-android-apk-staging, build-android-apk-prod]
+          requires: [build-android-dev, build-android-staging, build-android-prod]
           filters:
             tags:
               only: /^mobile-.*/
       ## Release Stag/Prod Flavors
       - release-android:
           name: "release-android-staging"
-          requires: [build-android-bundle-staging]
+          requires: [build-android-staging]
           flavor: staging
           filters:
             branches:
               only: "master"
       - release-android:
           name: "release-android-prod"
-          requires: [build-android-bundle-prod]
+          requires: [build-android-prod]
           flavor: prod
           filters:
             branches:
