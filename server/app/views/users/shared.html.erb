@@ -47,7 +47,7 @@
                 name="share_to[]"
                 data-is-multi="true"
               >
-                <% current_user.accounts.not_deleted.distinct.where.not(id: current_account.id).each do |account| %>
+                <% policy_scope(Account).not_deleted.distinct.where.not(id: current_account.id).each do |account| %>
                   <option value="<%= account.id %>" label="<%= account.name %>" <%= policy_scope(SharedAccount).where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
                 <% end %>
               </select>

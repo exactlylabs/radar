@@ -26,7 +26,7 @@ class SharedUsersAccountController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_back fallback_location: root_path, notice: "Account sharing correctly saved!" }
+      format.html { redirect_back fallback_location: root_path, notice: "Account sharing updated successfully." }
     end
   end
 
