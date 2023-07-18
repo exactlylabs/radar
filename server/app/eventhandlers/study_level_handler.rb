@@ -6,9 +6,9 @@ require 'study_level_handler/system_outage_events_handler'
 require 'study_level_handler/daily_trigger_handler'
 
 module StudyLevelHandler
-  
 
-  class Handler    
+
+  class Handler
     include StudyLevelHandler::Base
     include StudyLevelHandler::ClientEventsHandler
     include StudyLevelHandler::Fetchers
@@ -19,6 +19,7 @@ module StudyLevelHandler
     def initialize()
       @study_aggregates = {}
       @cached_projections = {}
+      @last_event_of_aggregate = {}
       @in_outage = nil
     end
 
@@ -32,7 +33,7 @@ module StudyLevelHandler
       measurement, measurement_co = self.next_or_nil(measurements)
       speed_test, speed_test_co = self.next_or_nil(speed_tests)
       next_date, daily_trigger_co = self.next_or_nil(daily_triggers)
-      
+
       while event.present? || measurement.present? || speed_test.present?
         pending_elements = []
         pending_elements << ["event", event, event.timestamp.to_i, event_co] if event.present?
@@ -47,26 +48,34 @@ module StudyLevelHandler
         end
         StudyLevelProjection.transaction do
           if source == "event"
-            self.handle_event source_data
+
+            # Only process if it's not a duplicate
+            last_event_key = "#{source_data.aggregate_type}_#{source_data.aggregate_id}"
+            last_event = @last_event_of_aggregate[last_event_key]
+            if last_event&.name != source_data.name || ![Client::Events::WENT_ONLINE, Client::Events::WENT_OFFLINE].include?(last_event&.name)
+              self.handle_event source_data
+            end
+
+            @last_event_of_aggregate[last_event_key] = source_data
             consumer_offset.offset = source_data.id
             event, event_co = self.next_or_nil(events)
-          
+
           elsif source == "measurement"
             self.handle_measurement *source_data
             consumer_offset.offset = source_data[0]
             measurement, measurement_co = self.next_or_nil(measurements)
-          
+
           elsif source == "speed_test"
             self.handle_speed_test *source_data
             consumer_offset.offset = source_data[0]
             speed_test, speed_test_co = self.next_or_nil(speed_tests)
-          
+
           elsif source == 'daily_trigger'
             self.handle_daily_trigger source_data
             consumer_offset.offset = timestamp.to_i
             next_date, daily_trigger_co = self.next_or_nil(daily_triggers)
           end
-          
+
           consumer_offset.save
         end
       end
