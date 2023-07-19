@@ -1,0 +1,4 @@
+<%= link_to "Create new network", new_location_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "new_location_modal" } %>
+<% if !current_account.is_all_accounts? %>
+  <%= link_to "Manage categories", categories_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
+<% end %>

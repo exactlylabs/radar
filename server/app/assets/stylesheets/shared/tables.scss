@@ -5,7 +5,7 @@
 
 .tables--table-container {
   width: 100%;
-  overflow-x: auto;
+  overflow: auto unset;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -252,6 +252,10 @@
   width: 1.5rem;
   min-width: 1.5rem;
   position: relative;
+
+  &.big {
+    width: max-content;
+  }
 }
 
 .tables--options-menu {
@@ -270,7 +274,12 @@
   justify-content: flex-start;
   align-items: flex-start;
 
+  &.big {
+    top: 3rem;
+  }
+
   .tables--row-option {
+    width: 100%;
     min-width: 130px;
     padding: .5rem .75rem;
     text-align: left;

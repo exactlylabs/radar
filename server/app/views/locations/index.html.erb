@@ -15,50 +15,43 @@
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
-    <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-      <% if !FeatureFlagHelper.is_available('networks', current_user) %>
+    <% if !FeatureFlagHelper.is_available('networks', current_user) %>
+      <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
         <a 
           type="button" 
           class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled custom-button--disabled' : '' %>"
           href="<%= new_location_path %>" 
           data-turbo-frame="new_location_modal"
         >Add Location</a>
+        <% if !current_account.is_all_accounts? %>
+          <a href="#"
+              class="ms-4 custom-button custom-button--secondary-light custom-button--sm d-flex justify-content-center align-items-center"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              id="options-button"
+          >
+            <span class="svg-icon svg-icon-muted svg-icon-2 m-0">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="10" width="4" height="4" rx="2" fill="currentColor"/>
+                <rect x="10" y="3" width="4" height="4" rx="2" fill="currentColor"/>
+                <rect x="10" y="17" width="4" height="4" rx="2" fill="currentColor"/>
+              </svg>
+            </span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-light fw-bold fs-7 py-4 bg-hover-light">
+            <%= link_to "Manage location categories", categories_path, { class: "px-3 py-2 regular-link", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+        <%= render partial: "application/components/buttons/custom_more_options_button",
+            locals: {
+              type: TablesHelper::OptionsMenuType::NETWORKS_INDEX,
+              with_bg: true,
+              big: true
+            }
+        %>
       <% end %>
-      <% if !current_account.is_all_accounts? && !FeatureFlagHelper.is_available('networks', current_user) %>
-        <a href="#"
-            class="ms-4 custom-button custom-button--secondary-light custom-button--sm d-flex justify-content-center align-items-center"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            id="options-button"
-        >
-          <span class="svg-icon svg-icon-muted svg-icon-2 m-0">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="10" y="10" width="4" height="4" rx="2" fill="currentColor"/>
-              <rect x="10" y="3" width="4" height="4" rx="2" fill="currentColor"/>
-              <rect x="10" y="17" width="4" height="4" rx="2" fill="currentColor"/>
-            </svg>
-          </span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-light fw-bold fs-7 py-4 bg-hover-light">
-          <%= link_to "Manage location categories", categories_path, { class: "px-3 py-2 regular-link", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
-        </div>
-      <% elsif FeatureFlagHelper.is_available('networks', current_user) %>
-        <a href="#"
-            class="ms-4 custom-button custom-button--secondary-light custom-button--sm d-flex justify-content-center align-items-center"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            id="options-button"
-        >
-          <%= image_tag image_url('more-options-icon.png'), width: 16, height: 16 %>
-        </a>
-        <div class="dropdown-menu dropdown-menu-light fw-bold fs-7 py-4">
-          <%= link_to "Create new network", new_location_path, { class: "menu-item px-3 py-2 regular-link", "data-turbo-frame" => "new_location_modal" } %>
-          <% if !current_account.is_all_accounts? %>
-            <%= link_to "Manage location categories", categories_path, { class: "menu-item px-3 py-2 regular-link", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
   </div>
 </div>
 <!--end::Toolbar-->
@@ -78,35 +71,38 @@
   <div class="post fs-6 d-flex flex-column" id="kt_post"
     <%= FeatureFlagHelper.is_available('networks', current_user) ? 'data-controller=multi-row-table' : nil %>
   >
-    <% if FeatureFlagHelper.is_available('networks', current_user) && 
-      @locations.count != 0 ||
-      ( @locations.count == 0 && request.query_parameters.count > 0 )
-    %>
-      <%= render partial: "networks/components/table_filters" %>
+    <% if FeatureFlagHelper.is_available('networks', current_user)%>
+      <%= turbo_frame_tag "networks-table-filters-wrapper" do %>
+        <% if @locations.count != 0 || ( @locations.count == 0 && request.query_parameters.count > 0 ) %>
+          <%= render partial: "networks/components/table_filters" %>
+        <% end %>
+      <% end %>
     <% else %>
       <% if current_account.is_all_accounts? %>
         <%= render partial: "locations/locations_table_filters" %>
       <% end %>
     <% end %>
     <% if FeatureFlagHelper.is_available('networks', current_user) %>
-      <% if @locations.count > 0 || (@locations.count == 0 && request.query_parameters.count > 0) %>
-        <%= render partial: "application/components/tables/generic_table",
-            locals: {
-              table_id: "networks_table",
-              type: TablesHelper::TableTypes::NETWORKS,
-              titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
-              widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
-              rows: @locations,
-              total: @total
-            }
-        %>
-      <% else %>
-        <%= render partial: "networks/components/empty_networks_card",
-            locals: {
-              has_pods: policy_scope(Client).count > 0,
-              empty_search: params[:status].present? || params[:category].present? || params[:account_id].present?
-            }
-        %>
+      <%= turbo_frame_tag "networks-content-wrapper" do %>
+        <% if @locations.count > 0 || (@locations.count == 0 && request.query_parameters.count > 0) %>
+          <%= render partial: "application/components/tables/generic_table",
+              locals: {
+                table_id: "networks_table",
+                type: TablesHelper::TableTypes::NETWORKS,
+                titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
+                widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
+                rows: @locations,
+                total: @total
+              }
+          %>
+        <% else %>
+          <%= render partial: "networks/components/empty_networks_card",
+              locals: {
+                has_pods: policy_scope(Client).count > 0,
+                empty_search: params[:status].present? || params[:category].present? || params[:account_id].present?
+              }
+          %>
+        <% end %>
       <% end %>
     <% else %>
       <%= render partial: 'locations_table', locals: { locations: @locations } %>

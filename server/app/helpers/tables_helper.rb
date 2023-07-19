@@ -10,6 +10,7 @@ module TablesHelper
     INVITEE = "Invitee"
     ALL_ACCOUNTS_MEMBER = "AllAccountsMember"
     NETWORK = "Network"
+    NETWORKS_INDEX = "NetworksIndex"
   end
 
   def self.get_footer_label(type)

@@ -9,3 +9,36 @@
 <%= turbo_stream.prepend 'client-locations-dropdown-edit' do %>
   <%= render partial: "clients/client_select_option", locals: { option: @location, selected: true } %>
 <% end %>
+
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <% if policy_scope(Location).count == 1 %>
+    <%= turbo_stream.update "networks-content-wrapper" do %>
+      <%= render partial: "application/components/tables/generic_table",
+          locals: {
+            table_id: "networks_table",
+            type: TablesHelper::TableTypes::NETWORKS,
+            titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
+            widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
+            rows: [@location],
+            total: 1
+          }
+      %>
+    <% end %>
+
+    <%= turbo_stream.update "networks-table-filters-wrapper" do %>
+      <%= render partial: "networks/components/table_filters" %>
+    <% end %>
+  <% else %>
+    <%= turbo_stream.append "networks_table" do %>
+      <%= render partial: "application/components/tables/table_row",
+          locals: {
+            row: @location,
+            type: TablesHelper::TableTypes::NETWORKS,
+            widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
+            index: "#{@location.id}-#{@location.account.id}",
+            even: false
+          }
+      %>
+    <% end %>
+  <% end%>
+<% end %>

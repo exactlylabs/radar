@@ -1,9 +1,14 @@
-<div class="tables--options-menu invisible"
-  id="more-options-menu-<%= index %>"
+<% idx = local_assigns[:index].present? ? local_assigns[:index] : ''%>
+<% big = local_assigns[:big].present? && local_assigns[:big] == true %>
+
+<div class="tables--options-menu invisible <%= big ? 'big' : '' %>"
+  id="more-options-menu-<%= idx %>"
 >
   <% if type == UsersAccount.name || type == Invite.name %>
     <%= render partial: "users/components/table_row_options", locals: { row: row } %>
   <% elsif type == Location.name %>
     <%= render partial: "networks/components/table_row_options", locals: { row: row } %>
+  <% elsif type == TablesHelper::OptionsMenuType::NETWORKS_INDEX %>
+    <%= render partial: "networks/components/index_more_options" %>
   <% end %>
 </div>

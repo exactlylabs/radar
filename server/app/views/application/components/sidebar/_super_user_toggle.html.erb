@@ -5,7 +5,7 @@
     <%= cookies[:radar_super_user_disabled].nil? || cookies[:radar_super_user_disabled] == "false" ? 'checked="true"' : nil %>
     data-controller="super-user"
     data-action="click->super-user#handleToggleSuperUserStatus"
-    class="form-check-input forms--checkbox me-3"
+    class="form-check-input forms--toggle me-3"
     data-super-user-target="superUserToggle"
   />
   <% if !narrow %>

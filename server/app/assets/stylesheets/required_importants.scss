@@ -122,6 +122,15 @@ body {
   color: $deep-blue !important;
   font-variation-settings: 'wght'$bold !important;
   margin-bottom: 0 !important;
+
+  &.optional::after {
+    content: '(optional)';
+    font-variation-settings: 'wght' $medium !important;
+    font-size: 0.875rem;
+    line-height: 1.312rem;
+    color: $gray;
+    margin-left: .25rem;
+  }
 }
 
 .forms--input-group {
@@ -334,9 +343,18 @@ body {
   }
 }
 
-.forms--checkbox {
+.forms--toggle {
   width: 30px !important;
   height: 20px !important;
+
+  &:checked {
+    background-color: $blue !important;
+  }
+}
+
+.forms--checkbox {
+  width: 18px !important;
+  height: 18px !important;
 
   &:checked {
     background-color: $blue !important;
