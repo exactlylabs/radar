@@ -9,6 +9,7 @@ export default class extends Controller {
   }
 
   handleKeydown(e) {
+    if(e.target !== document.body) return; // Only apply shortcut if not typing in an input or any other regular keyboard interaction
     if (e.shiftKey && e.key === 'N') {
       e.preventDefault();
       fetch('/feature_flags/networks/toggle', {
