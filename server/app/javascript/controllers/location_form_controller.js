@@ -15,10 +15,11 @@ export default class extends Controller {
     "spinner",
     "conditional",
     "addressWrapper",
-    "locationErrorMessage"
+    "manualLatLongWrapper"
   ];
 
   connect() {
+    this.address = this.addressTarget.value;
     if (!this.latitudeTarget?.value && !this.longitudeTarget?.value) {
       fetch("/geocode", { method: "POST" })
         .then((res) => res.json())
@@ -48,7 +49,6 @@ export default class extends Controller {
     clearTimeout(this.addressTimeout);
     this.addressWrapperTarget.style.border = 'none';
     this.addressWrapperTarget.style.borderRadius = 'none';
-    this.locationErrorMessageTarget.innerText = '';
     this.addressTimeout = setTimeout(
       function () {
         let formData = new FormData();
@@ -74,7 +74,6 @@ export default class extends Controller {
   autofillGeoData() {
     this.addressWrapperTarget.style.border = 'none';
     this.addressWrapperTarget.style.borderRadius = 'none';
-    this.locationErrorMessageTarget.innerText = '';
     this.spinnerTarget.classList.remove("d-none");
     this.geoIconTarget.classList.add("d-none");
     if ("geolocation" in navigator) {
@@ -97,49 +96,47 @@ export default class extends Controller {
   }
 
   fetchGeoData(address) {
-    let that = this;
+    this.address = address;
     clearTimeout(this.addressTimeout);
-    this.addressTimeout = setTimeout(
-      function () {
-        let formData = new FormData();
-        formData.append("address", address);
-        fetch("/geocode", {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            // fallback location to center of the US
-            const defaultLatitude = 40.566296;
-            const defaultLongitude = -97.264547;
-            let coordinates = [defaultLatitude, defaultLongitude];
-            if(data.length > 0) {
-              this.addressWrapperTarget.style.border = 'none';
-              this.addressWrapperTarget.style.borderRadius = 'none';
-              this.locationErrorMessageTarget.innerText = '';
-              coordinates = data;
-            } else {
-              this.locationErrorMessageTarget.innerText = 'The address returned no results. Try a different one.';
-              this.addressWrapperTarget.style.border = 'solid 1px red';
-              this.addressWrapperTarget.style.borderRadius = '6px';
-            }
-            that.mapTarget.setAttribute(
-              "data-location-latitude-value",
-              coordinates[0]
-            );
-            that.mapTarget.setAttribute(
-              "data-location-longitude-value",
-              coordinates[1]
-            );
-            this.latitudeTarget.value = coordinates[0];
-            this.longitudeTarget.value = coordinates[1];
-          })
-          .catch((err) => {
-            handleError(err, this.identifier);
-          });
-      }.bind(this),
-      1000
-    );
+    this.addressTimeout = setTimeout(this.fetch.bind(this), 1000);
+  }
+
+  fetch() {
+    let formData = new FormData();
+    formData.append("address", this.address);
+    fetch("/geocode", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // fallback location to center of the US
+        const defaultLatitude = 40.566296;
+        const defaultLongitude = -97.264547;
+        let coordinates = [defaultLatitude, defaultLongitude];
+        if (data.length > 0) {
+          this.addressWrapperTarget.style.border = 'none';
+          this.addressWrapperTarget.style.borderRadius = 'none';
+          coordinates = data;
+        } else {
+          this.addressWrapperTarget.style.border = 'solid 1px red';
+          this.addressWrapperTarget.style.borderRadius = '6px';
+        }
+        this.mapTarget.setAttribute(
+          "data-location-latitude-value",
+          coordinates[0]
+        );
+        this.mapTarget.setAttribute(
+          "data-location-longitude-value",
+          coordinates[1]
+        );
+        this.latitudeTarget.value = coordinates[0];
+        this.longitudeTarget.value = coordinates[1];
+      })
+      .catch((err) => {
+        console.error(err);
+        handleError(err, this.identifier);
+      });
   }
 
   onAddressChange(e) {
@@ -195,6 +192,22 @@ export default class extends Controller {
         element.removeAttribute("readonly");
       }
     });
+  }
+
+  networksOnManualChange(e) {
+    if(e.target.checked) {
+      this.showLatLngFields();
+    } else {
+      this.hideLatLngFields();
+    }
+  }
+
+  showLatLngFields() {
+    this.manualLatLongWrapperTarget.removeAttribute("hidden");
+  }
+
+  hideLatLngFields() {
+    this.manualLatLongWrapperTarget.setAttribute("hidden", true);
   }
 
   clearLocationModalAndClose() {

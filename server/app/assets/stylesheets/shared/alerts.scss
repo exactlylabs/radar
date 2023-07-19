@@ -93,23 +93,6 @@
   }
 }
 
-@media (max-width: 990px) {
-  .custom-alert {
-    width: calc(100vw - 32px);
-    padding: 1rem;
-    position: fixed;
-    bottom: 2rem;
-    left: 1rem;
-    z-index: 5;
-    background-color: $alert--primary-background-color;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    border-radius: 6px;
-  }
-}
-
 .banner--close-icon {
   position: absolute;
   right: 1rem;

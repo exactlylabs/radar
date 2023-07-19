@@ -1,14 +1,19 @@
-<div class="tables--more-options-button-container">
+<% idx = local_assigns[:index].present? ? local_assigns[:index] : ''%>
+<% local_row = local_assigns[:row].present? ? local_assigns[:row] : nil %>
+<% bg_on = local_assigns[:with_bg].present? && local_assigns[:with_bg] == true %>
+<% big = local_assigns[:big].present? && local_assigns[:big] == true %>
+
+<div class="tables--more-options-button-container <%= big ? 'big' : '' %>">
   <button type="button"
-    class="custom-button custom-button--xs custom-button--transparent dropwdown-toggle"
+    class="custom-button <%= bg_on ? 'custom-button--secondary-light custom-button--lg' : 'custom-button--transparent custom-button--xs' %> dropwdown-toggle"
     data-controller="more-options-button"
     data-action="click->more-options-button#toggleMenu"
     aria-expanded="false"
-    id="options-button-<%= index %>"
+    id="options-button-<%= idx %>"
   >
     <%= image_tag image_url("options-icon.png"), class: "tables--options-icon" %>
   </button>
   <%= render partial: "application/components/tables/more_options_menu",
-      locals: { type: type, row: row, index: index }
+      locals: { type: type, row: local_row, index: idx, big: big }
   %>
 </div>
