@@ -38,7 +38,7 @@ const OverviewPage = ({goToExplore, goToTest}) => {
                 <MyButton text={'Test your speed'} icon={<img src={arrowRightWhite} style={overviewStyles.arrowStyle} alt={'arrow right blue'}/>} onClick={goToTest}/>
               </div>
               <div style={{width: 'max-content', marginTop: '15px'}}>
-                <CustomSecondaryButton text={'Explore the map'} icon={<img src={arrowRightBlue} style={overviewStyles.arrowStyle} alt={'arrow right white'}/>} onClick={goToExplore}/>
+                <CustomSecondaryButton text={'Explore the map'} icon={<img src={arrowRightBlue} style={overviewStyles.arrowStyle} alt={'arrow right white'}/>} onClick={() => goToExplore()}/>
               </div>
             </div>
           </div>
