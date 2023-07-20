@@ -9,6 +9,7 @@ import radarLogoDark from '../../assets/radar-logo-dark.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const footerStyle = {
+  height: 239,
   backgroundColor: DEFAULT_FOOTER_BACKGROUND_COLOR,
   boxShadow: `0 0 10px 0 ${FOOTER_BOX_SHADOW}`
 };
