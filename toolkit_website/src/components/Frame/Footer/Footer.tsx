@@ -44,6 +44,7 @@ const Footer = ({isDifferentColor, height, margin, smallFooterMarginTop}: Footer
         </div>
         <div style={styles.BottomRow}>
           <p className={'fw-regular'} style={styles.Copyright}>{`Copyright © ${new Date().getFullYear()} Radar. All rights reserved.`}</p>
+          <p className={'fw-regular'} style={styles.DeveloperInfo}>This project was developed as part of the Telehealth Broadband Pilot Program.<br/>The Telehealth Broadband Pilot Program is made possible by grant #GA540183 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS.</p>
         </div>
       </div>
     </div>
@@ -70,6 +71,7 @@ const Footer = ({isDifferentColor, height, margin, smallFooterMarginTop}: Footer
         </a>
       </div>
       <p className={'fw-regular'} style={styles.Copyright}>{`Copyright © ${new Date().getFullYear()} Radar. All rights reserved.`}</p>
+      <p className={'fw-regular'} style={styles.DeveloperInfo}>This project was developed as part of the Telehealth Broadband Pilot Program.<br/>The Telehealth Broadband Pilot Program is made possible by grant #GA540183 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS.</p>
     </div>
   )
 
