@@ -108,7 +108,14 @@ const smallExactlyLogoStyle: CSSProperties = {
 const copyrightStyle: CSSProperties = {
   fontSize: '14px',
   lineHeight: '25px',
-  margin: '0 0 30px 0',
+  margin: '0 0 24px 0',
+  color: DEFAULT_SECONDARY_TEXT,
+}
+
+const defInfoStyle: CSSProperties = {
+  fontSize: '14px',
+  lineHeight: '25px',
+  margin: '0 0 40px 0',
   color: DEFAULT_SECONDARY_TEXT,
 }
 
@@ -203,6 +210,7 @@ export const styles = {
   SmallXLabLogo: smallXLabLogoStyle,
   SmallExactlyLogo: smallExactlyLogoStyle,
   Copyright: copyrightStyle,
+  DeveloperInfo: defInfoStyle,
   SmallFooter: (isDifferentColor?: boolean, marginTop?: string) => {
     let style = smallFooterStyle;
     if(isDifferentColor) style = {...style, backgroundColor: SPECIAL_FOOTER, marginTop: marginTop ?? '160px'};
