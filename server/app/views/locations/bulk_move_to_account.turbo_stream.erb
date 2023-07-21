@@ -1,0 +1,22 @@
+<% if !current_account.is_all_accounts? %>
+  <% @locations_to_move_ids.each do |id| %>
+    <%= turbo_stream.remove "location_#{id}" %>
+  <% end %>
+
+  <% if policy_scope(Location).count == 0 %>
+    <%= turbo_stream.update "networks-content-wrapper" do %>
+      <%= render partial: "networks/components/empty_networks_card",
+          locals: {
+            has_pods: policy_scope(Client).count > 0,
+            empty_search: false
+          }
+      %>
+    <% end %>
+    <%= turbo_stream.update "networks-table-filters-wrapper" do %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% end %>

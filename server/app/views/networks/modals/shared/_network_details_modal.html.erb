@@ -41,7 +41,7 @@
               tabindex="-1"
       >
         <% policy_scope(Account).each_with_index do |account, index|%>
-          <%= render partial: "clients/client_select_option", locals: { option: account, selected: index === 0} %>
+          <%= render partial: "clients/client_select_option", locals: { option: account, selected: type == "edit" ? account.id == @location&.account.id : index == 0} %>
         <% end %> 
       </select>
     <% end %>
@@ -104,7 +104,7 @@
     <div class="d-flex align-items-center justify-content-start">
       <%= form.check_box :manual_lat_long,
         name: "location[manual_lat_long]",
-        class: "form-check-input forms--checkbox me-2",
+        class: "forms--checkbox me-2",
         data: {
           "location-form-target" => "manualLatLong",
           action: "input->location-form#networksOnManualChange"

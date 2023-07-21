@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import { emitCustomEvent } from '../eventsEmitter';
-import { AlertTypes } from "./alert_controller";
+import { AlertTypes } from "../alerts";
 
 const ModalTypes = {
   HEADLESS: 'headless',

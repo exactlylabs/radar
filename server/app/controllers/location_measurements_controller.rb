@@ -6,7 +6,7 @@ class LocationMeasurementsController < ApplicationController
 
   # GET /measurements or /measurements.json
   def index
-    @measurements = @location.measurements
+    @measurements = @location.measurements.where(account_id: @location.account_id).order(created_at: :desc) # only show measurements tied with current location's account
     
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements } }

@@ -34,6 +34,8 @@ Rails.application.routes.draw do
 
     collection do
       delete 'bulk_destroy', to: 'locations#bulk_destroy'
+      get 'move_to_account', to: 'locations#move_to_account'
+      post 'bulk_move_networks', to: 'locations#bulk_move_to_account'
     end
 
     member do

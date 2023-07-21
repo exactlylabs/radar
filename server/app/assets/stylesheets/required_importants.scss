@@ -352,15 +352,6 @@ body {
   }
 }
 
-.forms--checkbox {
-  width: 18px !important;
-  height: 18px !important;
-
-  &:checked {
-    background-color: $blue !important;
-  }
-}
-
 .forms--input-group {
   width: 100% !important;
   position: relative;

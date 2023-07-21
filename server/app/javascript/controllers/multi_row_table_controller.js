@@ -5,7 +5,10 @@ import { emitCustomEvent } from "../eventsEmitter";
 export default class extends Controller {
   static targets = [
     "formCheckBoxInput",
-    "selectAllFormCheckBoxInput"
+    "selectAllFormCheckBoxInput",
+    "testMovingCheckbox",
+    "networkAccountSelectedSelect",
+    "hiddenNetworkIds"
   ]
 
   connect() {}
@@ -197,6 +200,65 @@ export default class extends Controller {
       .then(html => {
         Turbo.renderStreamMessage(html);
         if (thenFunction) thenFunction();
+      })
+      .catch((err) => {
+        handleError(err, this.identifier);
+      });
+  }
+
+  handleBulkMoveNetworks(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const networksToDelete = this.getIds('network-', '-');
+    const token = document.getElementsByName("csrf-token")[0].content;
+    const baseUrl = window.location.origin;
+    const url = new URL(`${baseUrl}${e.target.getAttribute('data-url')}`);
+    url.searchParams.append('ids', JSON.stringify(networksToDelete));
+    fetch(url, {
+      method: "GET",
+      headers: { "X-CSRF-Token": token },
+    })
+      .then(response => {
+        if (response.ok) return response.text();
+        else throw new Error(`There was an error moving networks: ${response.statusText}`);
+      })
+      .then(html => {
+        emitCustomEvent('closeMultiRowMenu');
+        Turbo.renderStreamMessage(html);
+      })
+      .catch((err) => { handleError(err, this.identifier); });
+  }
+
+  bulkMoveNetworks(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const token = document.getElementsByName("csrf-token")[0].content;
+    const ids = JSON.stringify(
+      this.hiddenNetworkIdsTarget
+      .getAttribute('data-network-ids')
+      .replace(/\[/g, '')
+      .replace(/\]/g, '')
+      .split(',')
+    );
+    const wantsToMoveTests = this.testMovingCheckboxTarget.checked;
+    const networkAccountSelected = this.networkAccountSelectedSelectTarget.value;
+    let formData = new FormData();
+    formData.append("ids", ids);
+    formData.append("account_id", networkAccountSelected);
+    formData.append("wants_to_move_tests", wantsToMoveTests);
+    fetch('/locations/bulk_move_networks', {
+      method: "POST",
+      headers: { "X-CSRF-Token": token },
+      body: formData,
+    })
+      .then(response => {
+        if (response.ok) return response.text();
+        else throw new Error(`Oops! There has been an error moving your network(s). Please try again later.`);
+      })
+      .then(html => {
+        emitCustomEvent('closeCustomModal');
+        this.deselectAll();
+        Turbo.renderStreamMessage(html);
       })
       .catch((err) => {
         handleError(err, this.identifier);

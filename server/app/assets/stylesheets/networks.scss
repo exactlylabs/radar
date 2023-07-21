@@ -50,6 +50,19 @@
   }
 }
 
+.networks--move-tests-banner {
+  width: 100%;
+  padding: .75rem 1rem;
+  border-radius: 6px;
+  background-color: $badge--blue-background-color;
+  border: solid 1px $circular-icon-container-gray;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .5rem;
+}
+
 @media (max-width: 450px) {
   .networks--modal-form {
     height: calc(100vh - 56px); 

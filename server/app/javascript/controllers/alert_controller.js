@@ -1,10 +1,5 @@
-import { Controller } from "@hotwired/stimulus"
-
-export const AlertTypes = {
-  ERROR: 'error',
-  SUCCESS: 'success',
-  ACCOUNT_SWITCH: 'account'
-}
+import { Controller } from "@hotwired/stimulus";
+import { AlertTypes } from "../alerts";
 
 export default class extends Controller {
   static targets = [
