@@ -150,3 +150,25 @@
   aspect-ratio: 1;
   background-color: transparent;
 }
+
+.forms--checkbox {
+  // remove all basic styles for checkbox
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+  -ms-appearance: none;
+  width: 18px;
+  height: 18px;
+  outline: none;
+  border-radius: 6px;
+  background-color: $checkbox-gray;
+  cursor: pointer;
+
+  &:checked {
+    background: url(asset-path('white-checkmark-icon.png')), $blue;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 14px;
+  }
+}

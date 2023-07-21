@@ -3,13 +3,20 @@
       locals: {
         menu_id: 'members-multi-row-actions-menu',
         options: [
+          'Move to account...',
           'Delete'
         ],
         actions: [
-          'click->multi-row-table#bulkDeleteNetworks',
+          'click->multi-row-table#handleBulkMoveNetworks',
+          'click->multi-row-table#bulkDeleteNetworks'
         ],
         urls: [
+          move_to_account_locations_path,
           bulk_destroy_locations_path
+        ],
+        data_turbo_frames: [
+          'move_networks_modal',
+          nil
         ]
       }
   %>

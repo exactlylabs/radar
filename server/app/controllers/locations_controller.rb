@@ -5,7 +5,7 @@ class LocationsController < ApplicationController
   before_action :check_account_presence, only: %i[ index show ]
   before_action :check_request_origin, only: %i[ show ]
   before_action :set_location, only: %i[ show edit update destroy request_test ]
-  before_action :set_locations, only: %i[ bulk_destroy ]
+  before_action :set_locations, only: %i[ bulk_destroy move_to_account bulk_move_to_account ]
 
   # GET /locations or /locations.json
   def index
@@ -157,14 +157,13 @@ class LocationsController < ApplicationController
     @deleted_networks_ids = []
     Location.transaction do
       @locations.each do |location|
-        puts "current loc -> #{location.id}"
         @deleted_networks_ids << location.id
         location.soft_delete
       end
     rescue Exception => e
       error = e.message
     end
-    puts "deleted ids -> #{@deleted_networks_ids}"
+    
     if !error
       @notice = "Networks were successfully deleted."
     else
@@ -174,6 +173,42 @@ class LocationsController < ApplicationController
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_back fallback_location: root_path, notice: @notice }
+    end
+  end
+
+  def move_to_account
+    respond_to do |format|
+      format.turbo_stream
+      format.html
+    end
+  end
+
+  def bulk_move_to_account
+    error = false
+    @locations_to_move_ids = @locations.map(&:id)
+    Location.transaction do
+      account_id = params[:account_id]
+      account = policy_scope(Account).find(account_id)
+      wants_to_move_tests = params[:wants_to_move_tests] == "true"
+
+      @locations.each do |location|
+        location.clients.update_all(account_id: account.id)
+        location.measurements.update_all(account_id: account.id) if wants_to_move_tests
+      end
+      @locations.update_all(account_id: account.id)
+    rescue Exception => e
+      puts e.message
+      error = e.message
+    end
+
+    respond_to do |format|
+      if !error
+        @notice = "Networks were successfully moved."
+        format.turbo_stream
+        format.html
+      else
+        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error moving your network(s). Please try again later.", status: :unprocessable_entity }
+      end
     end
   end
 

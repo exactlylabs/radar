@@ -1,0 +1,50 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: { title: "Move network(s)", is_custom: true }
+%>
+<div class="modals--content-container" data-type="full">
+  <div hidden data-network-ids="<%= resource.map(&:id) %>" data-multi-row-table-target="hiddenNetworkIds"></div>
+  <div class="modals--form-row mb-2">
+    <label class="forms--label">Move network(s) to...</label>
+    <select class="form-select forms--select"
+              data-controller="select2"
+              id="network-accounts-dropdown"
+              data-placeholder="Choose an account"
+              name="account_id"
+              data-select2-id="select2-data-account_id"
+              data-multi-row-table-target="networkAccountSelectedSelect"
+              tabindex="-1"
+    >
+      <% policy_scope(Account).where.not(id: current_account.id).each_with_index do |account, index|%>
+        <%= render partial: "clients/client_select_option", locals: { option: account, selected: index === 0} %>
+      <% end %> 
+    </select>
+  </div>
+
+  <div class="modals--form-row mb-6">
+    <div class="d-flex align-items-center justify-content-start">
+      <input type="checkbox"
+        id="move_tests"
+        name="move_tests"
+        class="forms--checkbox me-2"
+        data-multi-row-table-target="testMovingCheckbox"
+      />
+      <label class="additional-text">
+          Keep all the existing measurements
+      </label>
+    </div>
+  </div>
+
+
+  <div class="networks--move-tests-banner">
+    <%= image_tag image_url('info-icon'), width: 20, height: 20, class: "mt-1" %>
+    <span class="additional-text wrap">When your network(s) are moved, their pods move along with them.</span>
+  </div>
+</div>
+<div class="modals--footer-container">
+  <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
+  <button type="button"
+    data-move-networks-target="submitButton"
+    class="custom-button custom-button--primary custom-button--lg"
+    data-action="click->multi-row-table#bulkMoveNetworks"
+  >Move network(s)</button>
+</div>

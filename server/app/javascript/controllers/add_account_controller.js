@@ -1,7 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
 import handleError from "./error_handler_controller";
-import { emitCustomEvent } from "../eventsEmitter";
-import { AlertTypes } from "./alert_controller";
 
 const STEPS = {
   ACCOUNT_TYPE: 0,
@@ -182,12 +180,6 @@ export default class extends Controller {
         else throw new Error(`There was an error creating an account: ${res.msg}`);
       })
       .catch((err) => {
-        emitCustomEvent('renderAlert', {
-          detail: {
-            message: err.message,
-            type: AlertTypes.ERROR
-          }
-        });
         handleError(err, this.identifier);
       })
       .finally(() => {

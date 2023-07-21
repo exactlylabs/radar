@@ -126,6 +126,10 @@
       optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse turbo:frame-render->categories#initializeCategories"
     }
   %>
+
+  <%= render partial: "application/components/modals/turbo_modal",
+    locals: { turbo_frame_tag_id: "move_networks_modal", optional_added_controllers: "multi-row-table", }
+  %>
 <% else %>
   <div class="modal fade"
     tabindex="-1"
