@@ -8,8 +8,8 @@ import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_step_body.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/bloc/location_step_state.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/bloc/location_step_cubit.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/permission_modals/manage_location_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_picker_modal/location_picker_modal.dart';
-import 'package:client_mobile_app/presentations/speed_test/steps/location_step/widgets/location_permission_dialog.dart';
 
 class LocationStep extends StatelessWidget {
   const LocationStep({
@@ -43,10 +43,10 @@ class LocationStep extends StatelessWidget {
             } else if (state.needsToConfirmLocation) {
               _openConfirmYoutLocationModal(context);
             } else if (state.requestLocationPermission) {
-              showLocationPermissionDialog(
+              openManageLocationModal(
                 context,
-                onAccept: () => context.read<LocationStepCubit>().requestLocationPermission(),
-                onDeny: () => context.read<LocationStepCubit>().cancelLocationPermissionRequest(),
+                onPressed: () => context.read<LocationStepCubit>().requestLocationPermission(),
+                onClosed: () => context.read<LocationStepCubit>().cancelLocationPermissionRequest(),
               );
             }
           },

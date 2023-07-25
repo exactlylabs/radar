@@ -87,7 +87,7 @@ class AppInfo extends StatelessWidget {
                       ),
                       const TextSpan(text: ' and will run speed tests in the background every '),
                       TextSpan(
-                        text: '${delay} minutes.',
+                        text: '$delay minutes.',
                         style: AppTextStyle(fontWeight: 600),
                       ),
                     ],
@@ -118,6 +118,18 @@ class AppInfo extends StatelessWidget {
           style: AppTextStyle(
             fontSize: 14.0,
             fontWeight: 200,
+            height: 1.5,
+            color: AppColors.darkLavender,
+          ),
+        ),
+        const SizedBox(height: 12.0),
+        Text(
+          Strings.devInfo,
+          textAlign: TextAlign.center,
+          style: AppTextStyle(
+            fontSize: 14.0,
+            fontWeight: 200,
+            height: 1.5,
             color: AppColors.darkLavender,
           ),
         ),

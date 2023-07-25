@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
-import 'package:client_mobile_app/resources/app_style.dart';
-import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_cubit.dart';
 import 'package:client_mobile_app/core/navigation_bloc/navigation_state.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/title_and_subtitle.dart';
+import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/goback_and_continue_buttons.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/no_internet_connection_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/results_table.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/widgets/summary_table.dart';
@@ -40,16 +40,10 @@ class StartSpeedTestStep extends StatelessWidget {
         BlocBuilder<NavigationCubit, NavigationState>(
           builder: (context, state) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5.0),
-            child: PrimaryButton(
-              onPressed: onContinuePressed(context, state.canNavigate),
-              child: Text(
-                Strings.startSpeedTestButtonLabel,
-                style: AppTextStyle(
-                  fontSize: 16.0,
-                  fontWeight: 600,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
+            child: GoBackAndContinueButtons(
+              continueLabel: Strings.startSpeedTestButtonLabel,
+              onContinuePressed: onContinuePressed(context, state.canNavigate),
+              onGoBackPressed: () => context.read<SpeedTestCubit>().previousStep(),
             ),
           ),
         ),
@@ -62,6 +56,8 @@ class StartSpeedTestStep extends StatelessWidget {
 
   onContinuePressed(BuildContext context, bool canNavigate) {
     onCanNavigate() => context.read<TakeSpeedTestStepCubit>().startDownloadTest();
-    return canNavigate ? onCanNavigate : () => openNoInternetConnectionModal(context, onCanNavigate);
+    return canNavigate
+        ? onCanNavigate
+        : () => openNoInternetConnectionModal(context, onCanNavigate);
   }
 }

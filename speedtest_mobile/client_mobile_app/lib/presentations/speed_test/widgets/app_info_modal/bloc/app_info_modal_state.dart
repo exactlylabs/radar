@@ -3,22 +3,24 @@ import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_moda
 class AppInfoModalState {
   const AppInfoModalState({
     required this.isEnabled,
-    this.setDelay = false,
     required this.isBackgroundModeEnabled,
     this.delay = 15,
     this.delayWarning,
     this.configWarnings,
-    this.locationSettingsShouldBeUpdated = false,
+    this.setDelay = false,
+    this.isGeolocationEnabled,
+    this.updateGeolocationToAlways,
   });
 
   AppInfoModalState copyWith({
     int? delay,
+    bool? setDelay,
     bool? isEnabled,
     bool? showWarnings,
     String? delayWarning,
-    bool? setDelay,
+    bool? isGeolocationEnabled,
     bool? isBackgroundModeEnabled,
-    bool? locationSettingsShouldBeUpdated,
+    bool? updateGeolocationToAlways,
     List<WarningViewModel>? configWarnings,
   }) {
     return AppInfoModalState(
@@ -27,9 +29,9 @@ class AppInfoModalState {
       isEnabled: isEnabled ?? this.isEnabled,
       delayWarning: delayWarning ?? this.delayWarning,
       configWarnings: configWarnings ?? this.configWarnings,
-      locationSettingsShouldBeUpdated:
-          locationSettingsShouldBeUpdated ?? this.locationSettingsShouldBeUpdated,
+      isGeolocationEnabled: isGeolocationEnabled ?? this.isGeolocationEnabled,
       isBackgroundModeEnabled: isBackgroundModeEnabled ?? this.isBackgroundModeEnabled,
+      updateGeolocationToAlways: updateGeolocationToAlways ?? this.updateGeolocationToAlways,
     );
   }
 
@@ -40,16 +42,18 @@ class AppInfoModalState {
       setDelay: setDelay,
       isEnabled: isEnabled,
       configWarnings: configWarnings,
+      isGeolocationEnabled: isGeolocationEnabled,
       isBackgroundModeEnabled: isBackgroundModeEnabled,
-      locationSettingsShouldBeUpdated: locationSettingsShouldBeUpdated,
+      updateGeolocationToAlways: updateGeolocationToAlways,
     );
   }
 
   final int? delay;
-  final String? delayWarning;
-  final bool isEnabled;
   final bool setDelay;
+  final bool isEnabled;
+  final String? delayWarning;
+  final bool? isGeolocationEnabled;
   final bool isBackgroundModeEnabled;
-  final bool locationSettingsShouldBeUpdated;
+  final bool? updateGeolocationToAlways;
   final List<WarningViewModel>? configWarnings;
 }

@@ -53,4 +53,6 @@ class Images {
   static const pinMarker = 'assets/icons/pin_marker.png';
   static const circleMarker = 'assets/icons/circle_marker.png';
   static const speedtest = 'assets/images/speedtest.png';
+  static const managePhoneCalls = 'assets/images/manage_phone_calls.png';
+  static const manageLocation = 'assets/images/manage_location.png';
 }

@@ -23,7 +23,7 @@ class AppInfoModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AppInfoModalCubit, AppInfoModalState>(
       listenWhen: (previous, current) =>
-          current.locationSettingsShouldBeUpdated || (!previous.setDelay && current.setDelay),
+          current.updateGeolocationToAlways || (!previous.setDelay && current.setDelay),
       listener: (context, state) {
         if (state.locationSettingsShouldBeUpdated) {
           showUpdateLocationSettingsDialog(context);
