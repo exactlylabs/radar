@@ -1,4 +1,5 @@
 import consumer from "./consumer";
+import { emitCustomEvent } from "../eventsEmitter";
 
 consumer.subscriptions.create({ channel: 'ExportsChannel' }, {
   // Called when there is an incoming message on the queue
@@ -21,15 +22,8 @@ consumer.subscriptions.create({ channel: 'ExportsChannel' }, {
         }
       }
     } else if('progress' in data) {
-      const progressContainer = document.getElementById('download-progress-bar-container');
-      const progressBar = document.getElementById('download-progress-bar');
-      if(progressContainer && progressBar) {
-        const {progress} = data;
-        progressContainer.setAttribute('aria-valuenow', `${progress}`);
-        const progressText = `${progress}%`;
-        progressBar.style.width = progressText;
-        progressBar.innerText = progressText;
-      }
+      const {progress} = data;
+      emitCustomEvent('showProgress', { detail: { progress } });
     } else if('url' in data){
       // Fire an automatic download once the file's url is available
       const link = document.createElement("a");

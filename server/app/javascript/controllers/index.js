@@ -147,3 +147,6 @@ application.register("feature-flags", FeatureFlagsController);
 
 import LocationsMapWidget from './locations_map_widget_controller';
 application.register("locations-map-widget", LocationsMapWidget);
+
+import DownloadsController from './downloads_controller';
+application.register("downloads", DownloadsController);

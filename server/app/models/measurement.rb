@@ -8,6 +8,17 @@ class Measurement < ApplicationRecord
   belongs_to :autonomous_system, optional: true
   has_one_attached :result
 
+  GB_MULTIPLIER = 1024**3
+  MB_MULTIPLIER = 1024**2
+
+  def get_value_in_preferred_unit(user, value)
+    if user.prefers_gb_unit
+      value / GB_MULTIPLIER
+    else
+      value / MB_MULTIPLIER
+    end
+  end
+
   def self.to_ndt7_csv
     info_attributes = %w{id client_id account location_name latitude longitude address loss_rate}
     attributes = %w{style upload download avg_data_used jitter latency created_at(UTC+0)}
@@ -146,7 +157,7 @@ class Measurement < ApplicationRecord
 
   def avg_data_used
     if self.download_total_bytes && self.upload_total_bytes
-      mbytes = get_value_in_preferred_unit(self.download_total_bytes + self.upload_total_bytes).round(0)
+      mbytes = ((self.download_total_bytes + self.upload_total_bytes) / (1024 ** 2)).round(0)
       "#{mbytes} MB"
     else
       "N/A"
