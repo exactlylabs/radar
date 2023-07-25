@@ -1,0 +1,15 @@
+<div class="downloads--progress-container invisible"
+  data-downloads-target="progressCard"
+  data-action="showProgress@window->downloads#showProgressCard"
+>
+  <div class="downloads--icon-container">
+    <%= image_tag image_url('downloads-icon.png'), width: 24, height: 24 %>
+  </div>
+  <div class="downloads--text-container">
+    <h4 class="forms--label wrap">Your measurements are getting prepared...</h4>
+    <span class="additional-text wrap">We'll notify you and start the download once they are ready.</span>
+    <div class="downloads--progress-bar-wrapper mt-3">
+      <div data-downloads-target="progressCardBar"></div>
+    </div>
+  </div>
+</div>

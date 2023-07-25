@@ -82,5 +82,10 @@
     <%= render partial: "application/components/alerts/empty_notice_alert", locals: {notice: notice.present? ? notice : @notice} %>
     <%= turbo_frame_tag 'realtime-notice' do %>
     <% end %>
+    <div data-controller="downloads">
+      <%= render partial: "application/components/downloads/download_progress_alert" %>
+      <%= render partial: "application/components/downloads/download_complete_alert" %>
+      <%= render partial: "application/components/downloads/download_error_alert" %>
+    </div>
   </body>
 </html>
