@@ -8,8 +8,10 @@ class GoBackAndContinueButtons extends StatelessWidget {
     super.key,
     this.onGoBackPressed,
     this.onContinuePressed,
+    this.continueLabel,
   });
 
+  final String? continueLabel;
   final VoidCallback? onGoBackPressed;
   final VoidCallback? onContinuePressed;
 
@@ -54,7 +56,7 @@ class GoBackAndContinueButtons extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Continue',
+                    continueLabel ?? 'Continue',
                     style: AppTextStyle(
                       fontSize: 16.0,
                       fontWeight: 700,

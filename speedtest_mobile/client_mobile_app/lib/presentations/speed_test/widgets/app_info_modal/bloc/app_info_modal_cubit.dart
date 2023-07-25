@@ -31,10 +31,10 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
   Future<void> enableWardrivingMode() async {
     final updateSettings = await shouldUpdateLocationSettings();
     if (updateSettings) {
-      emit(state.copyWith(locationSettingsShouldBeUpdated: true));
+      emit(state.copyWith(updateGeolocationToAlways: true));
     } else {
       await shouldRequestPhoneStatePermission();
-      emit(state.copyWith(locationSettingsShouldBeUpdated: false, setDelay: true));
+      emit(state.copyWith(updateGeolocationToAlways: false, setDelay: true));
     }
   }
 
@@ -79,13 +79,30 @@ class AppInfoModalCubit extends Cubit<AppInfoModalState> {
     }
   }
 
-  Future<bool> shouldUpdateLocationSettings() async {
+  void manageLocationAlways() {
+    if ((state.isGeolocationEnabled ?? false) && (!(state.updateGeolocationToAlways ?? false))) {
+      emit(state.copyWith(updateGeolocationToAlways: true));
+    }
+  }
+
+  Future<void> manageLocationPermission() async {
     final permission = await Geolocator.checkPermission();
+
     if (permission == LocationPermission.always) {
       return false;
     } else if (permission == LocationPermission.denied) {
       final permission = await Geolocator.requestPermission();
       return permission != LocationPermission.always;
+    }
+    return true;
+  }
+
+  Future<bool?> isGeolocationEnabled() async {
+    final permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.deniedForever) {
+      return false;
+    } else if (permission == LocationPermission.denied) {
+      return null;
     }
     return true;
   }
