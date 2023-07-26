@@ -1,5 +1,6 @@
 class MeasurementsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_measurement, only: [:show]
 
   def index
     @measurements = policy_scope(Measurement)
@@ -37,5 +38,13 @@ class MeasurementsController < ApplicationController
         self.response_body = @measurements.to_ndt7_csv_enumerator
       end
     end
+  end
+
+  def show
+  end
+
+  private
+  def set_measurement
+    @measurement = policy_scope(Measurement).find(params[:id])
   end
 end

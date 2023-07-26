@@ -1,0 +1,35 @@
+<div class="networks--speed-filters-container" data-controller="speed-filters">
+  <%= render partial: "networks/components/speed_filters_dropdown", locals: { network: network } %>
+  <a href="<%= speed_average_location_path(network) %>"
+    class="networks--speed-filter selected"
+    data-turbo-frame="speed-cells"
+    data-action="click->speed-filters#switchFilter"
+    data-filter="all_time"
+  >
+    All time
+  </a>
+  <a href="<%= speed_average_location_path(id: network.id, type: 'year') %>" 
+    class="networks--speed-filter"
+    data-turbo-frame="speed-cells"
+    data-action="click->speed-filters#switchFilter"
+    data-filter="this_year"
+  >
+    This year
+  </a>
+  <a href="<%= speed_average_location_path(id: network.id, type: 'month') %>"
+    class="networks--speed-filter"
+    data-turbo-frame="speed-cells"
+    data-action="click->speed-filters#switchFilter"
+    data-filter="this_month"
+  >
+    This month
+  </a>
+  <a href="<%= speed_average_location_path(id: network.id, type: 'today') %>"
+    class="networks--speed-filter"
+    data-turbo-frame="speed-cells"
+    data-action="click->speed-filters#switchFilter"
+    data-filter="today"
+  >
+    Today
+  </a>
+</div>

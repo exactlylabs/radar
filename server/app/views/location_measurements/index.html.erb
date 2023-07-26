@@ -33,177 +33,181 @@
         ]
       }
     %>
-    <!--end::OptionsCard-->
-    <!--begin::Card-->
-    <div class="card clients--detail-card">
-      <div class="card-header d-flex align-items-center" style="height: 65px">
-        <div class="dialog-main-title">Measurements</div>
-      </div>
-      <!--end::Card toolbar-->
-      <!--begin::Card body-->
-      <div class="card-body pt-0">
-        <!--begin::Card toolbar-->
-        <div class="card-toolbar my-8">
-          <!--begin::Toolbar-->
-          <div class="d-flex justify-content-between" data-kt-customer-table-toolbar="base">
-            <div class="dropdown-container">
-                <div class="btn-group">
-                  <a href="#" 
-                    class="custom-button custom-button--secondary custom-button--sm px-2" 
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    style="border-radius: 6px"
-                    id="schedule-button">
-                    <%= params[:range] ? parse_param_to_human(params[:range]) : 'All time ranges' %>
-                    <span class="svg-icon svg-icon-5 m-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
-                      </svg>
-                    </span>
-                  </a>
-                  <!--begin::Menu-->
-                  <div class="dropdown-menu fw-bold fs-7 py-4"
-                      aria-labelledby="schedule-button">
-                    <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-week') %>" 
-                      class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-week' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
-                      Last week
-                    </a>
-                    <!--begin::Menu item-->
-                    <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-month') %>" 
-                      class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-month' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
-                      Last month
-                    </a>
-                    <!--end::Menu item-->
-                    <!--begin::Menu item-->
-                    <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-6-months') %>" 
-                      class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-6-months' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
-                      Last 6 months
-                    </a>
-                    <!--end::Menu item-->
-                    <!--begin::Menu item-->
-                    <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-year') %>" 
-                      class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-year' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
-                      Last year
-                    </a>
-                    <!--end::Menu item-->
-                    <!--begin::Menu item-->
-                    <a href="<%= location_measurements_path(@location, style: params[:style], range: 'all-time') %>" 
-                      class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'all-time' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
-                      All time
-                    </a>
-                    <!--end::Menu item-->
-                  </div>
-                </div>
-                <!--end::Menu-->
-                <div class="btn-group">
-                  <a href="#" 
-                    class="custom-button custom-button--secondary custom-button--sm px-2 ms-5" 
-                    style="border-radius: 6px"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    id="style-button">
-                      <%= params[:style] ? parse_param_to_human(params[:style]) : 'All test styles' %>
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <%= render partial: "network_measurements/main_content", locals: { network: @location } %>
+    <% else %>
+      <!--end::OptionsCard-->
+      <!--begin::Card-->
+      <div class="card clients--detail-card">
+        <div class="card-header d-flex align-items-center" style="height: 65px">
+          <div class="dialog-main-title">Measurements</div>
+        </div>
+        <!--end::Card toolbar-->
+        <!--begin::Card body-->
+        <div class="card-body pt-0">
+          <!--begin::Card toolbar-->
+          <div class="card-toolbar my-8">
+            <!--begin::Toolbar-->
+            <div class="d-flex justify-content-between" data-kt-customer-table-toolbar="base">
+              <div class="dropdown-container">
+                  <div class="btn-group">
+                    <a href="#" 
+                      class="custom-button custom-button--secondary custom-button--sm px-2" 
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      style="border-radius: 6px"
+                      id="schedule-button">
+                      <%= params[:range] ? parse_param_to_human(params[:range]) : 'All time ranges' %>
                       <span class="svg-icon svg-icon-5 m-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                           <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
                         </svg>
                       </span>
-                  </a>
-                  <!--begin::Menu-->
-                  <div class="dropdown-menu dropup fw-bold fs-7 py-4"
-                      aria-labelledby="style-button">
-                    <a href="<%= location_measurements_path(@location, style: 'NDT7', range: params[:range]) %>" 
-                      class="dropdowns--option menu-item text-hover-gray-500 <%= params[:style] == 'NDT7' ? 'text-primary' : 'text-gray-700' %> p-3">
-                      NDT
                     </a>
-                    <!--begin::Menu item-->
-                    <a href="<%= location_measurements_path(@location, style: 'OOKLA', range: params[:range]) %>" 
-                      class="dropdowns--option menu-item text-hover-gray-500 <%= params[:style] == 'OOKLA' ? 'text-primary' : 'text-gray-700' %> p-3">
-                      Ookla
-                    </a>
-                    <a href="<%= location_measurements_path(@location, range: params[:range]) %>" 
-                      class="dropdowns--option menu-item text-hover-gray-500 <%= !params[:style] ? 'text-primary' : 'text-gray-700' %> p-3">
-                      All test styles
-                    </a>
-                    <!--end::Menu item-->
+                    <!--begin::Menu-->
+                    <div class="dropdown-menu fw-bold fs-7 py-4"
+                        aria-labelledby="schedule-button">
+                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-week') %>" 
+                        class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-week' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                        Last week
+                      </a>
+                      <!--begin::Menu item-->
+                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-month') %>" 
+                        class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-month' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                        Last month
+                      </a>
+                      <!--end::Menu item-->
+                      <!--begin::Menu item-->
+                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-6-months') %>" 
+                        class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-6-months' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                        Last 6 months
+                      </a>
+                      <!--end::Menu item-->
+                      <!--begin::Menu item-->
+                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-year') %>" 
+                        class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-year' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                        Last year
+                      </a>
+                      <!--end::Menu item-->
+                      <!--begin::Menu item-->
+                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'all-time') %>" 
+                        class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'all-time' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+                        All time
+                      </a>
+                      <!--end::Menu item-->
+                    </div>
                   </div>
-                </div>
-                <!--end::Menu-->
+                  <!--end::Menu-->
+                  <div class="btn-group">
+                    <a href="#" 
+                      class="custom-button custom-button--secondary custom-button--sm px-2 ms-5" 
+                      style="border-radius: 6px"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      id="style-button">
+                        <%= params[:style] ? parse_param_to_human(params[:style]) : 'All test styles' %>
+                        <span class="svg-icon svg-icon-5 m-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+                          </svg>
+                        </span>
+                    </a>
+                    <!--begin::Menu-->
+                    <div class="dropdown-menu dropup fw-bold fs-7 py-4"
+                        aria-labelledby="style-button">
+                      <a href="<%= location_measurements_path(@location, style: 'NDT7', range: params[:range]) %>" 
+                        class="dropdowns--option menu-item text-hover-gray-500 <%= params[:style] == 'NDT7' ? 'text-primary' : 'text-gray-700' %> p-3">
+                        NDT
+                      </a>
+                      <!--begin::Menu item-->
+                      <a href="<%= location_measurements_path(@location, style: 'OOKLA', range: params[:range]) %>" 
+                        class="dropdowns--option menu-item text-hover-gray-500 <%= params[:style] == 'OOKLA' ? 'text-primary' : 'text-gray-700' %> p-3">
+                        Ookla
+                      </a>
+                      <a href="<%= location_measurements_path(@location, range: params[:range]) %>" 
+                        class="dropdowns--option menu-item text-hover-gray-500 <%= !params[:style] ? 'text-primary' : 'text-gray-700' %> p-3">
+                        All test styles
+                      </a>
+                      <!--end::Menu item-->
+                    </div>
+                  </div>
+                  <!--end::Menu-->
+              </div>
+              <div class="export-container">
+                <!--begin::Export-->
+                <a href="<%= location_measurements_path(@location, style: params[:style], range: params[:range], format: 'csv') %>" class="custom-button custom-button--primary custom-button--sm me-3">Export Measurements</a>
+                <!--end::Export-->
+              </div>
             </div>
-            <div class="export-container">
-              <!--begin::Export-->
-              <a href="<%= location_measurements_path(@location, style: params[:style], range: params[:range], format: 'csv') %>" class="custom-button custom-button--primary custom-button--sm me-3">Export Measurements</a>
-              <!--end::Export-->
-            </div>
+            <!--end::Toolbar-->
           </div>
-          <!--end::Toolbar-->
+          <!--begin::Table-->
+          <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+            <div class="table-responsive">
+              <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
+            <!--begin::Table head-->
+            <thead>
+              <!--begin::Table row-->
+              <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                <th class="tables--title min-w-125px sorting pe-3 d-flex align-items-center" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 30%">
+                  Time
+                  <%= render partial: "application/timezone_tooltip" %>
+                </th>
+                <th class="tables--title min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Style</th>
+                <th class="tables--title min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
+                  Download
+                </th>
+                <th class="tables--title min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
+                  Upload
+                </th>
+                <th class="tables--title min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Latency</th>
+                <th class="tables--title min-w-125px sorting pe-0" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 10%">Jitter</th>
+              <!--end::Table row-->
+            </thead>
+            <!--end::Table head-->
+            <!--begin::Table body-->
+            <tbody class="fw-bold text-gray-600">
+            <% paginate_elements(@measurements, [:range, :style]).each do |measurement| %>
+              <tr>
+                <td class="regular-text" data-controller="localtime"><%= measurement.created_at %></td>
+                <td class="regular-text"><%= measurement.style %></td>
+                <td class="<%= measurement.download.present? ? 'regular-text' : 'additional-text' %>">
+                  <span class="svg-icon svg-icon-primary svg-icon-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <rect opacity="0.5" x="11" y="18" width="13" height="2" rx="1" transform="rotate(-90 11 18)" fill="black"/>
+                      <path d="M11.4343 15.4343L7.25 11.25C6.83579 10.8358 6.16421 10.8358 5.75 11.25C5.33579 11.6642 5.33579 12.3358 5.75 12.75L11.2929 18.2929C11.6834 18.6834 12.3166 18.6834 12.7071 18.2929L18.25 12.75C18.6642 12.3358 18.6642 11.6642 18.25 11.25C17.8358 10.8358 17.1642 10.8358 16.75 11.25L12.5657 15.4343C12.2533 15.7467 11.7467 15.7467 11.4343 15.4343Z" fill="black"/>
+                    </svg>
+                  </span>
+                  <%= measurement.download.present? ? number_with_precision(measurement.download, precision: 3) : "N/A" %>
+                </td>
+                <td class="<%= measurement.upload.present? ? 'regular-text' : 'additional-text' %>">
+                  <span class="svg-icon svg-icon-primary svg-icon-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <rect opacity="0.5" x="13" y="6" width="13" height="2" rx="1" transform="rotate(90 13 6)" fill="black"/>
+                    <path d="M12.5657 8.56569L16.75 12.75C17.1642 13.1642 17.8358 13.1642 18.25 12.75C18.6642 12.3358 18.6642 11.6642 18.25 11.25L12.7071 5.70711C12.3166 5.31658 11.6834 5.31658 11.2929 5.70711L5.75 11.25C5.33579 11.6642 5.33579 12.3358 5.75 12.75C6.16421 13.1642 6.83579 13.1642 7.25 12.75L11.4343 8.56569C11.7467 8.25327 12.2533 8.25327 12.5657 8.56569Z" fill="black"/>
+                    </svg>
+                  </span>
+                  <%= measurement.upload.present? ? number_with_precision(measurement.upload, precision: 3) : "N/A" %>
+                </td>
+                <td class="<%= measurement.latency.present? ? 'regular-text' : 'additional-text' %>"><%= measurement.latency.present? ? number_with_precision(measurement.latency, precision: 3) : "N/A" %></td>
+                <td class="<%= measurement.jitter.present? ? 'regular-text' : 'additional-text' %>"><%= measurement.jitter.present? ? number_with_precision(measurement.jitter, precision: 3) : "N/A" %></td>
+              </tr>
+            <% end %>
+            </tbody>
+            <!--end::Table body-->
+            <!--begin::Pagination-->
+            <!--end::Pagination-->
+          </table>
+          </div></div>
+          <!--end::Table-->
+          <div class="pagination-container d-flex justify-content-between align-items-center mt-5">
+            <%= pagination_footer %>
+          </div>
         </div>
-        <!--begin::Table-->
-        <div id="kt_customers_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-          <div class="table-responsive">
-            <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer" id="kt_customers_table">
-          <!--begin::Table head-->
-          <thead>
-            <!--begin::Table row-->
-            <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-              <th class="tables--title min-w-125px sorting pe-3 d-flex align-items-center" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 30%">
-                Time
-                <%= render partial: "application/timezone_tooltip" %>
-              </th>
-              <th class="tables--title min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Style</th>
-              <th class="tables--title min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
-                Download
-              </th>
-              <th class="tables--title min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">
-                Upload
-              </th>
-              <th class="tables--title min-w-125px sorting pe-3" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 15%">Latency</th>
-              <th class="tables--title min-w-125px sorting pe-0" tabindex="0" aria-controls="kt_customers_table" rowspan="1" colspan="1" style="width: 10%">Jitter</th>
-            <!--end::Table row-->
-          </thead>
-          <!--end::Table head-->
-          <!--begin::Table body-->
-          <tbody class="fw-bold text-gray-600">
-          <% paginate_elements(@measurements, [:range, :style]).each do |measurement| %>
-            <tr>
-              <td class="regular-text" data-controller="localtime"><%= measurement.created_at %></td>
-              <td class="regular-text"><%= measurement.style %></td>
-              <td class="<%= measurement.download.present? ? 'regular-text' : 'additional-text' %>">
-                <span class="svg-icon svg-icon-primary svg-icon-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <rect opacity="0.5" x="11" y="18" width="13" height="2" rx="1" transform="rotate(-90 11 18)" fill="black"/>
-                    <path d="M11.4343 15.4343L7.25 11.25C6.83579 10.8358 6.16421 10.8358 5.75 11.25C5.33579 11.6642 5.33579 12.3358 5.75 12.75L11.2929 18.2929C11.6834 18.6834 12.3166 18.6834 12.7071 18.2929L18.25 12.75C18.6642 12.3358 18.6642 11.6642 18.25 11.25C17.8358 10.8358 17.1642 10.8358 16.75 11.25L12.5657 15.4343C12.2533 15.7467 11.7467 15.7467 11.4343 15.4343Z" fill="black"/>
-                  </svg>
-                </span>
-                <%= measurement.download.present? ? number_with_precision(measurement.download, precision: 3) : "N/A" %>
-              </td>
-              <td class="<%= measurement.upload.present? ? 'regular-text' : 'additional-text' %>">
-                <span class="svg-icon svg-icon-primary svg-icon-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <rect opacity="0.5" x="13" y="6" width="13" height="2" rx="1" transform="rotate(90 13 6)" fill="black"/>
-                  <path d="M12.5657 8.56569L16.75 12.75C17.1642 13.1642 17.8358 13.1642 18.25 12.75C18.6642 12.3358 18.6642 11.6642 18.25 11.25L12.7071 5.70711C12.3166 5.31658 11.6834 5.31658 11.2929 5.70711L5.75 11.25C5.33579 11.6642 5.33579 12.3358 5.75 12.75C6.16421 13.1642 6.83579 13.1642 7.25 12.75L11.4343 8.56569C11.7467 8.25327 12.2533 8.25327 12.5657 8.56569Z" fill="black"/>
-                  </svg>
-                </span>
-                <%= measurement.upload.present? ? number_with_precision(measurement.upload, precision: 3) : "N/A" %>
-              </td>
-              <td class="<%= measurement.latency.present? ? 'regular-text' : 'additional-text' %>"><%= measurement.latency.present? ? number_with_precision(measurement.latency, precision: 3) : "N/A" %></td>
-              <td class="<%= measurement.jitter.present? ? 'regular-text' : 'additional-text' %>"><%= measurement.jitter.present? ? number_with_precision(measurement.jitter, precision: 3) : "N/A" %></td>
-            </tr>
-          <% end %>
-          </tbody>
-          <!--end::Table body-->
-          <!--begin::Pagination-->
-          <!--end::Pagination-->
-        </table>
-        </div></div>
-        <!--end::Table-->
-        <div class="pagination-container d-flex justify-content-between align-items-center mt-5">
-          <%= pagination_footer %>
-        </div>
+        <!--end::Card body-->
       </div>
-      <!--end::Card body-->
-    </div>
-    <!--end::Card-->
+      <!--end::Card-->
+    <% end %>
   </div>
   <!--end::Container-->
 </div>

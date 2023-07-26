@@ -1,0 +1,12 @@
+<%= turbo_frame_tag "measurement_details_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+      locals: {
+        modal_title: "Measurement details",
+        modal_partial_path: "measurements/modals/show/details_modal",
+        resource: @measurement,
+        custom_submit_end_handler: nil
+      }
+  %>
+<% end %>
+
+

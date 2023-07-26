@@ -1,0 +1,13 @@
+<div class="networks--card-with-header">
+  <div class="networks--card-header">
+    <span>Network location</span>
+  </div>
+  <div class="networks--card-with-header-content-container">
+    <div class="networks--map-card-map"
+      data-action="modal:shown->location#display"
+      data-controller="location"
+      data-location-latitude-value="<%= network.latitude %>"
+      data-location-longitude-value="<%= network.longitude %>">
+    </div>
+  </div>
+</div>

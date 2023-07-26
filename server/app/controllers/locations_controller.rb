@@ -4,7 +4,7 @@ class LocationsController < ApplicationController
   before_action :authenticate_user!
   before_action :check_account_presence, only: %i[ index show ]
   before_action :check_request_origin, only: %i[ show ]
-  before_action :set_location, only: %i[ show edit update destroy request_test ]
+  before_action :set_location, only: %i[ show edit update destroy request_test speed_average ]
   before_action :set_locations, only: %i[ bulk_destroy move_to_account bulk_move_to_account ]
 
   # GET /locations or /locations.json
@@ -224,6 +224,45 @@ class LocationsController < ApplicationController
         format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error moving your network(s). Please try again later.", status: :unprocessable_entity }
       end
     end
+  end
+
+  def speed_average
+    type = params[:type]
+    start_date = nil
+    end_date = Time.zone.now
+    if type == 'today'
+      start_date = Time.zone.now.beginning_of_day
+    elsif type == 'month'
+      start_date = Time.zone.now.beginning_of_month
+    elsif type == 'year'
+      start_date = Time.zone.now.beginning_of_year
+    end
+    filtered_measurements = @location.measurements.where(created_at: start_date..end_date)
+    if filtered_measurements.count > 0
+      download_avg = filtered_measurements.average(:download).round(3)
+      upload_avg = filtered_measurements.average(:upload).round(3)
+    else
+      download_avg = nil
+      upload_avg = nil
+    end
+    
+    download_diff = @location.download_diff(download_avg.present? ? download_avg : -1)
+    upload_diff = @location.upload_diff(upload_avg.present? ? upload_avg : -1)
+
+    respond_to do |format|
+      format.html { 
+        render partial: "networks/components/speed_cells",
+        locals: {
+          download_avg: download_avg.present? ? "#{download_avg.round(2)} Mbps" : 'N/A',
+          download_expected: @location.expected_mbps_down.present? ? "#{@location.expected_mbps_down.round(2)} Mbps" : 'N/A',
+          download_diff: download_diff.present? ? download_diff : "-",
+          upload_avg: upload_avg.present? ? "#{upload_avg.round(2)} Mbps" : 'N/A',
+          upload_expected: @location.expected_mbps_up.present? ? "#{@location.expected_mbps_up.round(2)} Mbps" : 'N/A',
+          upload_diff: upload_diff.present? ? upload_diff : "-",
+        }
+    }
+    end
+
   end
 
   private

@@ -147,6 +147,10 @@
   &[data-negative="true"] {
     color: $error-red;
   }
+
+  &[data-neutral="true"] {
+    color: $gray;
+  }
 }
 
 .widgets--locations-map-search-filter-container {

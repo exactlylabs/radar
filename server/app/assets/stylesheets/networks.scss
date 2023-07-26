@@ -68,3 +68,225 @@
     height: calc(100vh - 56px); 
   }
 }
+
+.networks--details-content-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1.5rem;
+}
+
+.networks--top-info-card {
+  width: 100%;
+  padding: 1.125rem 1.5rem;
+  background-color: white;
+  border: solid 1px $sidebar--main-container-border;
+  box-shadow: 0 2px 8px -2px $cards--default-box-shadow;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  gap: 3rem;
+}
+
+@media (max-width: 768px) {
+  .networks--top-info-card {
+    gap: 1rem 2rem;
+  }
+}
+
+.networks--info-cell {
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .375rem;
+
+  .networks--info-cell-subtitle {
+    max-width: 30ch;
+  }
+}
+
+@media (max-width: 450px) {
+  .networks--info-cell {
+    max-width: 100%;
+    .networks--info-cell-subtitle {
+      max-width: 100%;
+    }
+  }
+}
+
+.networks--content-cards-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-grow: 1;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .networks--content-cards-container {
+    flex-direction: column-reverse;
+  }
+}
+
+.networks--card-with-header {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  border-radius: 6px;
+  border: solid 1px $sidebar--main-container-border;
+  box-shadow: 0 2px 8px -2px $cards--default-box-shadow;
+  min-width: 275px;
+}
+
+@media (max-width: 768px) {
+  .networks--card-with-header {
+    min-width: 100%;
+  }
+}
+
+.networks--card-header {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-bottom: solid 1px $sidebar--accounts-item-outline;
+  text-align: left;
+  
+  span {
+    font-size: 1rem;
+    color: $deep-blue;
+    font-variation-settings: 'wght' $bold;
+  }
+}
+
+.networks--card-with-header-content-container {
+  width: 100%;
+  height: calc(100% - 59px);
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+.networks--speed-cells-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .75rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.networks--speed-cell {
+  min-width: 200px;
+  border: solid 1px $checkbox-gray;
+  border-radius: .5rem;
+  padding: 1rem;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.networks--speed-filters-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .5rem;
+}
+
+.networks--speed-filter {
+  text-decoration: none;
+  padding: .25rem .75rem;
+  background-color: $subtle-gray;
+  font-size: 0.812rem;
+  line-height: 1.25rem;
+  letter-spacing: 0;
+  color: $gray;
+  border-radius: 6px;
+  font-variation-settings: 'wght'$bold;
+
+  &.selected {
+    background-color: $blue;
+    color: white;
+  }
+}
+
+@media (max-width: 1200px) {
+  .networks--speed-filter {
+    display: none;
+    visibility: hidden;   
+  }
+}
+
+.networks--speed-filters-dropdown {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+@media (max-width: 1200px) {
+  .networks--speed-filters-dropdown {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+
+.select2.select2-container.select2-container--bootstrap5 {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+@media (max-width: 1200px) {
+  .select2.select2-container.select2-container--bootstrap5 {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+
+.networks--map-card-map {
+  width: 100%;
+  height: 100%;
+  min-height: 230px;
+  border-radius: 8px;
+}
+
+.networks--speed-cell-title {
+  max-width: 100%;
+}
+
+.networks--measurements-main-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.networks--measurement-small-row-cell-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  .networks--measurement-small-row-cell-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .networks--small-row-cell-speed {
+    font-size: 0.938rem;
+    color: $deep-blue;
+  }
+}
