@@ -1,4 +1,5 @@
 <div class="networks--measurements-main-container">
+  <% if @total > 0 %>
   <%= render partial: "network_measurements/table_filters" %>
   <%= render partial: "application/components/tables/generic_table",
           locals: {
@@ -10,6 +11,9 @@
             total: @total
           }
       %>
+  <% else %>
+    <%= render partial: "network_measurements/components/empty_measurements_card" %>
+  <% end %>
 </div>
 
 <%= render partial: "application/components/modals/turbo_modal", 
