@@ -37,7 +37,11 @@
         %>
       <!--end::OptionsCard-->
       <!--begin::LocationCard-->
+      <% if FeatureFlagHelper.is_available('networks', current_user) %>
+        <%= render partial: "networks/network_details", locals: { network: @location } %>
+      <% else %>
         <%= render partial: "location_details", locals: { location: @location } %>
+      <% end %>
       <!--end::LocationCard-->
     </div>
   <!--end:Container-->

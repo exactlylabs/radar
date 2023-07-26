@@ -1,0 +1,19 @@
+<div class="networks--card-with-header">
+  <div class="networks--card-header">
+    <span>Average speeds</span>
+  </div>
+  <div class="networks--card-with-header-content-container">
+    <%= render partial: "networks/components/speed_filters", locals: { network: network } %>
+    <%= render partial: "networks/components/speed_cells", 
+        locals: {
+          download_avg: network.download_avg.present? ? "#{network.download_avg.round(2)} Mbps" : 'N/A',
+          download_expected: network.expected_mbps_down.present? ? "#{network.expected_mbps_down.round(2)} Mbps" : 'N/A',
+          download_diff: network.download_diff.present? ? network.download_diff : "-",
+          upload_avg: network.upload_avg.present? ? "#{network.upload_avg.round(2)} Mbps" : 'N/A',
+          upload_expected: network.expected_mbps_up.present? ? "#{network.expected_mbps_up.round(2)} Mbps" : 'N/A',
+          upload_diff: network.upload_diff.present? ? network.upload_diff : "-",
+        }
+    %>
+    <%= link_to "View all measurements", location_measurements_path(network), class: "w-100 custom-button custom-button--secondary custom-button--lg" %>
+  </div>
+</div>

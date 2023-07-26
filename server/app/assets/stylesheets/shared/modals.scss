@@ -72,6 +72,7 @@
 
     &[data-modal-type="full"] {
       height: 100vh;
+      overflow-y: auto;
     }
 
     &.opening {
@@ -181,6 +182,10 @@
     max-height: 500px;
     overflow-y: auto;
   }
+
+  &[data-resource="measurement"] {
+    min-width: 480px;
+  }
 }
 
 @media (max-width: 450px) {
@@ -197,6 +202,9 @@
     }
     &[data-resource="networks"] {
       max-height: calc(100% - 75px);
+    }
+    &[data-resource="measurement"] {
+      min-width: unset;
     }
   }
 }

@@ -2,6 +2,7 @@ module TablesHelper
   module TableTypes
     MEMBERS = "Members"
     NETWORKS = "Networks"
+    NETWORK_MEASUREMENTS = "NetworkMeasurements"
     ALL_ACCOUNTS_MEMBERS = "AllAccountsMembers"
   end
 
@@ -20,10 +21,12 @@ module TablesHelper
       'Members'
     when TableTypes::NETWORKS
       'Networks'
+    when TableTypes::NETWORK_MEASUREMENTS
+      'Measurements'
     end
   end
 
-  def self.widths(table_type, is_all_accounts)
+  def self.widths(table_type, is_all_accounts = false)
     case table_type
     when TableTypes::MEMBERS
       [
@@ -44,10 +47,21 @@ module TablesHelper
         '21%',
         '5%'
       ]
+    when TableTypes::NETWORK_MEASUREMENTS
+      [
+        '15%',
+        '10%',
+        '15%',
+        '15%',
+        '11%',
+        '11%',
+        '11%',
+        '12%',
+      ]
     end
   end
 
-  def self.titles(table_type, is_all_accounts, is_super_user = false)
+  def self.titles(table_type, is_all_accounts = false, is_super_user = false)
     rows = []
     case table_type
     when TableTypes::MEMBERS
@@ -81,6 +95,18 @@ module TablesHelper
         { text: 'Category' },
         { text: 'Avg. download', icon_before: 'download-icon.png' },
         { text: 'Avg. upload', icon_before: 'upload-icon.png' },
+        { text: 'Actions', hidden: true}
+      ]
+    when TableTypes::NETWORK_MEASUREMENTS
+      rows = [
+        *rows,
+        { text: 'Time' },
+        { text: 'Type' },
+        { text: 'Download', icon_before: 'download-icon.png' },
+        { text: 'Upload', icon_before: 'upload-icon.png' },
+        { text: 'Latency' },
+        { text: 'Loss' },
+        { text: 'Jitter' },
         { text: 'Actions', hidden: true}
       ]
     end

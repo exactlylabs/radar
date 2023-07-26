@@ -1,0 +1,51 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: { title: "Measurement details", is_custom: true }
+%>
+<div class="modals--content-container"
+  data-type="full"
+  data-resource="measurement"
+>
+  <div class="map-container client-measurement-details--map-container">
+    <div class="client-measurement-details--map"
+          data-location-form-target="map"
+          data-action="modal:shown->location#display"
+          data-controller="location"
+          data-location-latitude-value="<%= @measurement.location&.latitude %>"
+          data-location-longitude-value="<%= @measurement.location&.longitude %>"
+    ></div>
+  </div>
+  <div class="info-container">
+    <div class="row d-flex flex-row mb-1">
+      <p class="forms--label w-25">Test type</p>
+      <p class="regular-text w-75"><%= @measurement.style %></p>
+    </div>
+    <div class="row d-flex flex-row mb-1">
+      <p class="forms--label w-25">Location</p>
+      <p class="regular-text w-75"><%= @measurement.get_location %></p>
+    </div>
+    <div class="row d-flex flex-row mb-1">
+      <p class="forms--label w-25">Date/Time</p>
+      <p class="regular-text w-75" data-controller="localtime"><%= @measurement.created_at %></p>
+    </div>
+    <div class="row d-flex flex-row mb-1">
+      <p class="forms--label w-25">Download</p>
+      <p class="regular-text w-75"><%= @measurement.get_download %></p>
+    </div>
+    <div class="row d-flex flex-row mb-1">
+      <p class="forms--label w-25">Upload</p>
+      <p class="regular-text w-75"><%= @measurement.get_upload %></p>
+    </div>
+    <div class="row d-flex flex-row mb-1">
+      <p class="forms--label w-25">Latency</p>
+      <p class="regular-text w-75"><%= @measurement.get_latency %></p>
+    </div>
+    <div class="row d-flex flex-row mb-1">
+      <p class="forms--label w-25">Jitter</p>
+      <p class="regular-text w-75"><%= @measurement.get_jitter %></p>
+    </div>
+  </div>
+</div>
+
+<div class="modals--footer-container">
+  <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Close", is_custom: true} %>
+</div>

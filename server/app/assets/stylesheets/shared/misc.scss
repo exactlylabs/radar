@@ -1,1 +1,11 @@
+@import "./colors.scss";
+
 $border-radius: 6px;
+
+.small-divot {
+  width: 2px;
+  min-width: 2px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: $light-gray;
+}

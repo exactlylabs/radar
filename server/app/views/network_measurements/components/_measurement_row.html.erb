@@ -1,0 +1,79 @@
+<div class="tables--appears-on-small networks--measurement-small-row-cell-container" style="width: calc(100% - 1rem)">
+  <div class="networks--measurement-small-row-cell-row">
+    <%= image_tag 'download-icon.png', width: 16, height: 16, class: "me-1" %>
+    <span class="networks--small-row-cell-speed me-4"><%= row.download.present? ? "#{row.download.round(3)} Mbps" : "N/A" %></span>
+    <%= image_tag 'upload-icon.png', width: 16, height: 16, class: "me-1" %>
+    <span class="networks--small-row-cell-speed"><%= row.upload.present? ? "#{row.upload.round(3)} Mbps" : "N/A" %></span>
+  </div>
+  <div class="networks--measurement-small-row-cell-row">
+    <span class="additional-text"><%= pretty_print_date_with_time(row.created_at) %></span>
+    <div class="mx-2 small-divot"></div>
+    <span class="additional-text"><%= row.style.titlecase %></span>
+  </div>
+</div>
+
+<div class="tables--appears-on-small" style="width: 1rem;">
+  <a href="<%= measurement_path(row) %>" data-turbo-frame="measurement_details_modal">
+    <%= image_tag 'info-icon.png', width: 16, height: 16 %>
+  </a>
+</div>
+
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[0] %>;"
+>
+  <span class="ellipsis table-cell"><%= pretty_print_date(row.created_at) %></span>
+</div>
+
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[1] %>;"
+>
+  <span class="ellipsis table-cell"><%= row.style.titlecase %></span>
+</div>
+
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[2] %>;"
+>
+  <span class="ellipsis table-cell">
+    <%= row.download.present? ? "#{row.download.round(3)} Mbps" : "N/A" %>
+  </span>
+</div>
+
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[3] %>;"
+>
+  <span class="ellipsis table-cell">
+    <%= row.upload.present? ? "#{row.upload.round(3)} Mbps" : "N/A" %>
+  </span>
+</div>
+
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[4] %>;"
+>
+  <span class="ellipsis table-cell">
+    <%= row.latency.present? ? "#{row.latency.round(2)} ms" : "N/A" %>
+  </span>
+</div>
+
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[5] %>;"
+>
+  <span class="ellipsis table-cell">
+    <%= row.loss_rate.present? ? "#{row.loss_rate.round(2)}%" : "0.00%" %>
+  </span>
+</div>
+
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[6] %>;"
+>
+  <span class="ellipsis table-cell">
+    <%= row.jitter.present? ? "#{row.jitter.round(2)} ms" : "N/A" %>
+  </span>
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[7] %>">
+  <%= link_to "View details",
+      measurement_path(row),
+      class: "custom-button custom-button--secondary custom-button--xs",
+      data: { turbo_frame: "measurement_details_modal" }
+  %>
+</div>

@@ -123,8 +123,11 @@ include EventSourceable
     "#{sign}#{rounded_percentage}%"
   end
 
-  def download_diff
-    avg = self.download_avg
+  def download_diff(calculated_avg = nil)
+    if calculated_avg == -1
+      return "-"
+    end
+    avg = calculated_avg.present? ? calculated_avg : self.download_avg
     if avg.nil? || self.expected_mbps_down.nil?
       return nil
     end
@@ -132,8 +135,11 @@ include EventSourceable
     diff_to_human(diff, self.expected_mbps_down)
   end
 
-  def upload_diff
-    avg = self.upload_avg
+  def upload_diff(calculated_avg = nil)
+    if calculated_avg == -1
+      return "-"
+    end
+    avg = calculated_avg.present? ? calculated_avg : self.upload_avg
     if avg.nil? || self.expected_mbps_up.nil?
       return nil
     end

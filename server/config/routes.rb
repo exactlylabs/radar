@@ -23,7 +23,7 @@ Rails.application.routes.draw do
     post 'users/check_email_uniqueness' => 'users/registrations#check_email_uniqueness'
   end
 
-  resources :measurements, only: [:index] do
+  resources :measurements, only: [:index, :show] do
     collection do
       get 'full_index'
       get 'full_ndt7_index'
@@ -40,6 +40,7 @@ Rails.application.routes.draw do
 
     member do
       post 'request_test'
+      get 'speed_average'
     end
 
     resources :measurements, controller: 'location_measurements', only: [:index] do

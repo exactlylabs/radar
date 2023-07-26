@@ -1,0 +1,17 @@
+<div class="networks--measurements-main-container">
+  <%= render partial: "network_measurements/table_filters" %>
+  <%= render partial: "application/components/tables/generic_table",
+          locals: {
+            table_id: "network_measurements_table",
+            type: TablesHelper::TableTypes::NETWORK_MEASUREMENTS,
+            titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORK_MEASUREMENTS),
+            widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORK_MEASUREMENTS),
+            rows: @measurements,
+            total: @total
+          }
+      %>
+</div>
+
+<%= render partial: "application/components/modals/turbo_modal", 
+    locals: { turbo_frame_tag_id: "measurement_details_modal" }
+%>

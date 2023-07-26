@@ -1,5 +1,5 @@
   <div>
-    <span class="table-footer"><%= type %> per page</span>
+    <span class="table-footer"><%= TablesHelper.get_footer_label(type) %> per page</span>
     <select class="tables--footer-page-select"
       data-controller="pagination"
       data-action="change->pagination#handleChangePageSize"

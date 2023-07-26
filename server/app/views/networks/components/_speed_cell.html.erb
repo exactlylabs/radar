@@ -1,0 +1,13 @@
+<div class="networks--speed-cell">
+  <%= image_tag image_url("#{type}-cell-icon.png"), width: 16, height: 16 %>
+  <span class="forms--label ellipsis mt-3 networks--speed-cell-title"><%= "Avg. #{type} speed" %></span>
+  <div class="widgets--location-avg-container wrap">
+    <span class="help-dark-text"><%= avg %></span>
+    <span class="help-small-text mx-1">/</span>
+    <span class="help-small-text"><%= expected %></span>
+  </div>
+  <span class="widgets--location-diff-text"
+    data-negative="<%= diff.include?('-') %>"
+    data-neutral="<%= diff == "-" %>"
+  ><%= diff %></span>
+</div>

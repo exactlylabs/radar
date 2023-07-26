@@ -145,6 +145,9 @@ application.register("edit-password", EditPasswordController);
 import FeatureFlagsController from './feature_flags_controller';
 application.register("feature-flags", FeatureFlagsController);
 
+import SpeedFiltersController from './speed_filters_controller';
+application.register("speed-filters", SpeedFiltersController);
+
 import LocationsMapWidget from './locations_map_widget_controller';
 application.register("locations-map-widget", LocationsMapWidget);
 
