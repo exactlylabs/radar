@@ -35,7 +35,13 @@
     %>
     <!--end::OptionsCard-->
     <!--begin::Card-->
-    <%= render partial: "location_clients_table", locals: { clients: @clients } %>
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <% if @clients.count == 0 %>
+        <%= render partial: "network_pods/empty_view" %>
+      <% end %>
+    <% else %>
+      <%= render partial: "location_clients_table", locals: { clients: @clients } %>
+    <% end %>
   </div>
   <!--end::Container-->
 </div>

@@ -1,0 +1,14 @@
+<div class="cards--default networks--empty-card"
+  id="empty-network-pods-card"
+>
+  <div class="networks--empty-card-icon-container">
+    <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32%>
+  </div>
+  <h3 class="networks--empty-card-title wrap">You currently have no pods assigned to this network.</h3>
+  <span class="additional-text wrap">Add your first pod to this network to start monitoring your broadband performance.</span>
+  <a type="button"
+    class="custom-button custom-button--primary custom-button--lg mt-8 mb-6"
+    href="<%= new_location_path %>"
+    data-turbo-frame="new_location_modal"
+  >Add a pod</a>
+</div>>
