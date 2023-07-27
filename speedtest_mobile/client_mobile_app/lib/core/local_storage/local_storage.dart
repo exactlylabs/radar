@@ -14,6 +14,8 @@ class LocalStorage {
 
   static const String _preferencesFTUEMap = 'preferences_ftue_map';
   static const String _preferencesTermsAccepted = 'preferences_terms_accepted';
+  static const String _preferencesEverAskedForLocationAllTime =
+      'preferences_ever_asked_for_location_all_time';
 
   static const String _backgroundModeSettingsFrequency = 'background_mode_settings_frequency';
 
@@ -34,6 +36,9 @@ class LocalStorage {
 
   bool getTerms() => _preferencesBox.get(_preferencesTermsAccepted, defaultValue: false)!;
 
+  bool getEverAskedForLocationAllTime() =>
+      _preferencesBox.get(_preferencesEverAskedForLocationAllTime, defaultValue: false)!;
+
   int getBackgroundModeFrequency() =>
       _backgroundModeSettingsBox.get(_backgroundModeSettingsFrequency, defaultValue: -1)!;
 
@@ -51,6 +56,11 @@ class LocalStorage {
   Future<void> setTerms() async {
     const termsAccepted = true;
     await _preferencesBox.put(_preferencesTermsAccepted, termsAccepted);
+  }
+
+  Future<void> setEverAskedForLocationAllTime() async {
+    const everAskedForLocationAllTime = true;
+    await _preferencesBox.put(_preferencesEverAskedForLocationAllTime, everAskedForLocationAllTime);
   }
 
   Future<void> addSpeedTestResult(Map<String, dynamic> speedTestResult) async {

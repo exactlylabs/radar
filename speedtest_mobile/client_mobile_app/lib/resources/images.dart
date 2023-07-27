@@ -55,4 +55,7 @@ class Images {
   static const speedtest = 'assets/images/speedtest.png';
   static const managePhoneCalls = 'assets/images/manage_phone_calls.png';
   static const manageLocation = 'assets/images/manage_location.png';
+  static const optionalPermissions = 'assets/icons/optional_permissions.png';
+  static const tickOn = 'assets/icons/tick_on.png';
+  static const tickOff = 'assets/icons/tick_off.png';
 }

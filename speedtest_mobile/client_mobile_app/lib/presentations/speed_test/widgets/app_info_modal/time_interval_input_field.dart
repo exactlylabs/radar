@@ -1,16 +1,16 @@
-import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 
 class TimeIntervalInputField extends StatefulWidget {
   const TimeIntervalInputField({
     Key? key,
-    this.delay,
+    this.frequency,
     this.onChanged,
     this.onBlur,
   }) : super(key: key);
 
-  final int? delay;
+  final int? frequency;
   final Function(String)? onChanged;
   final VoidCallback? onBlur;
 
@@ -26,8 +26,8 @@ class _TimeIntervalInputFieldState extends State<TimeIntervalInputField> {
   void initState() {
     super.initState();
     addListener();
-    if (widget.delay != null) {
-      _controller.text = widget.delay.toString();
+    if (widget.frequency != null) {
+      _controller.text = widget.frequency.toString();
     }
   }
 

@@ -109,8 +109,7 @@ class Strings {
   static const String enableWardriveModalButtonLabel = 'Enable background mode';
   static const String appInfoDisableButtonLabel = 'Disable background mode';
   static const String appInfoEnableButtonLabel = 'Enable background mode';
-  static const String appInfoDescription =
-      'Background mode keeps running speed tests at specific time intervals in the background.';
+  static const String appInfoDescription = 'Background mode is currently disabled.';
   static const String androidMinimumDelayError = 'Minimum time interval should be 1 min.';
   static const String iOSMinimumDelayError = 'Minimum time interval should be 15 mins.';
   static const String timeIntervalInputSufix = 'mins';
@@ -138,4 +137,24 @@ class Strings {
   static const String backgroundModeNotificaitonTitle = 'Background mode enabled';
   static const String backgroundModeNotificaitonSubtitle =
       'Speed tests will run in the background.';
+  static const String locationPermissionWarningDescription =
+      'Background mode is currently not available. Make sure you enable location access at all times in your device settings.';
+  static const String phoneStatePermissionWarningDescription =
+      'Your speed test results will be more accurate if you give access to more details about your cellular and wifi reception.';
+  static const String notificationPermissionWarningDescription =
+      'Turn on notifications so you can know when background mode is running and when it stops.';
+  static const String locationAllTimeTitle = 'Allow access to your location';
+  static const String locationAllTimeSubtitle =
+      'Background mode needs access to your location even when the app is closed, so we can provide you with the locations where wireless quality is being measured on your phone as you move around.';
+  static const String locationAllTimeButtonLabel = 'Update location settings';
+  static const String optionalPermissionsTitle = 'Enable background mode';
+  static const String optionalPermissionsSubtitle =
+      'Improve your test results by allowing access to the following permissions:';
+  static const String phoneStatePermissionTitle = 'Access to cellular and wifi reception';
+  static const String phoneStatePermissionSubtitle = 'For more accurate speed test results.';
+  static const String notificationPermissionTitle = 'Access to notifications';
+  static const String notificationPermissionSubtitle =
+      'To let you know when background mode is running and when it stops.';
+  static const String optionalPermissionsAllowAccessButtonLabel = 'Allow access';
+  static const String optionalPermissionsNotNowButtonLabel = 'Not now';
 }

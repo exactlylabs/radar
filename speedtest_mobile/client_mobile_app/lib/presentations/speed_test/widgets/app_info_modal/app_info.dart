@@ -9,20 +9,22 @@ import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_moda
 class AppInfo extends StatelessWidget {
   const AppInfo({
     Key? key,
-    this.configWarning,
-    required this.delay,
+    this.onEnabled,
+    this.warning,
+    required this.buildNumber,
+    required this.versionNumber,
+    required this.frequency,
     required this.isEnabled,
     required this.onDisabled,
-    required this.onEnabled,
-    required this.buildAndVersionNumber,
   }) : super(key: key);
 
   final bool isEnabled;
-  final int? delay;
+  final int? frequency;
   final VoidCallback onDisabled;
-  final VoidCallback onEnabled;
-  final WarningViewModel? configWarning;
-  final String buildAndVersionNumber;
+  final VoidCallback? onEnabled;
+  final WarningViewModel? warning;
+  final String buildNumber;
+  final String versionNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,7 @@ class AppInfo extends StatelessWidget {
         Image.asset(Images.logoBig, height: 32.0),
         const SizedBox(height: 30.0),
         Text(
-          buildAndVersionNumber,
+          'App version $versionNumber · Build $buildNumber',
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 14.0,
@@ -44,12 +46,14 @@ class AppInfo extends StatelessWidget {
         ),
         const SizedBox(height: 56.0),
         ElevatedButton(
-          onPressed: isEnabled ? onDisabled : onEnabled,
+          onPressed: isEnabled ? onDisabled : (onEnabled ?? () {}),
           style: ElevatedButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.secondary,
             backgroundColor: isEnabled
                 ? Theme.of(context).colorScheme.onPrimary
-                : Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+                : onEnabled == null
+                    ? Theme.of(context).colorScheme.secondary.withOpacity(0.05)
+                    : Theme.of(context).colorScheme.secondary.withOpacity(0.2),
             elevation: 0,
           ),
           child: Padding(
@@ -61,7 +65,9 @@ class AppInfo extends StatelessWidget {
               style: AppTextStyle(
                 fontSize: 16.0,
                 fontWeight: 400,
-                color: Theme.of(context).colorScheme.secondary,
+                color: onEnabled == null
+                    ? Theme.of(context).colorScheme.secondary.withOpacity(0.3)
+                    : Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),
@@ -69,26 +75,21 @@ class AppInfo extends StatelessWidget {
         const SizedBox(height: 16.0),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: isEnabled && delay != null
+          child: isEnabled && frequency != null
               ? RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
-                    text: 'Background mode is ',
+                    text: 'Background mode is enabled and will run speed tests in the background ',
                     style: AppTextStyle(
                       fontSize: 14.0,
-                      fontWeight: 200,
+                      fontWeight: 400,
                       height: 1.5,
                       color: Theme.of(context).colorScheme.tertiary,
                     ),
                     children: [
                       TextSpan(
-                        text: 'enabled',
-                        style: AppTextStyle(fontWeight: 600),
-                      ),
-                      const TextSpan(text: ' and will run speed tests in the background every '),
-                      TextSpan(
-                        text: '$delay minutes.',
-                        style: AppTextStyle(fontWeight: 600),
+                        text: 'every $frequency ${frequency == 1 ? 'minute' : 'minutes'}.',
+                        style: AppTextStyle(fontWeight: 700),
                       ),
                     ],
                   ),
@@ -104,10 +105,11 @@ class AppInfo extends StatelessWidget {
                   ),
                 ),
         ),
-        if (isEnabled && configWarning != null)
+        if (warning != null &&
+            ((warning!.isOptional && isEnabled) || (!warning!.isOptional && !isEnabled)))
           Padding(
             padding: const EdgeInsets.only(top: 30.0),
-            child: ConfigWarningCard(warning: configWarning!),
+            child: ConfigWarningCard(warning: warning!),
           ),
         const SizedBox(height: 50.0),
         Image.asset(Images.anthcBlueLogo, height: 35.0),
