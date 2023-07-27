@@ -47,14 +47,14 @@ module ApplicationHelper
     if date.nil?
       return "-"
     end
-    date.strftime('%b %d, %Y')
+    date.localtime.strftime('%b %d, %Y')
   end
 
   def pretty_print_date_with_time(date_time)
     if date_time.nil?
       return "-"
     end
-    date_time.strftime('%b %d, %Y %I:%M %p')
+    date_time.localtime.strftime('%b %d, %Y %I:%M %p')
   end
 
   def empty_search_params?

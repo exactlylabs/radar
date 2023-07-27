@@ -1,0 +1,7 @@
+<%= link_to "Run speed test", run_test_client_path(row.unix_user), method: :post, class: "tables--row-option table-menu-option ellipsis" %>
+<%= link_to "View details", client_path(row.unix_user), class: "tables--row-option table-menu-option ellipsis", data: {"turbo-frame" => "_top", "no-turbolink" => true}%>
+<%= link_to "Edit", edit_client_path(row.unix_user), { class: "tables--row-option table-menu-option ellipsis", data: { "turbo-frame" => "edit_client_modal" } } %>
+<% if current_user.super_user && !is_super_user_disabled? %>
+  <%= link_to "Print Label", pdf_label_client_path(row.unix_user, format: :pdf), { class: "tables--row-option table-menu-option ellipsis", target: "_blank" } %>
+<% end %>
+<%= link_to 'Delete', release_client_path(row.unix_user), method: :delete, data: { confirm: 'Are you sure?' }, class: "tables--row-option table-menu-option ellipsis" %>

@@ -259,6 +259,8 @@ ActiveRecord::Schema.define(version: 2023_07_27_185256) do
     t.bigint "target_client_version_id"
     t.bigint "target_watchdog_version_id"
     t.boolean "has_watchdog", default: false
+    t.float "download_avg"
+    t.float "upload_avg"
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"

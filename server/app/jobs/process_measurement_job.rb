@@ -54,5 +54,8 @@ class ProcessMeasurementJob < ApplicationJob
     if measurement.location.present?
       measurement.location.recalculate_averages!
     end
+    if measurement.client.present?
+      measurement.client.recalculate_averages!
+    end
   end
 end

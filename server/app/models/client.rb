@@ -52,6 +52,7 @@ class Client < ApplicationRecord
   after_save :send_event
   after_save :check_ip_changed
   after_save :update_versions, if: :saved_change_to_update_group_id?
+  after_save :recalculate_averages!, if: :saved_change_to_location_id? || :saved_change_to_account_id?
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, lambda {
@@ -633,6 +634,43 @@ class Client < ApplicationRecord
 
   def request_test!
     update(test_requested: true)
+  end
+
+  def recalculate_averages!
+    if self.location.nil? || self.account.nil?
+      self.download_avg = nil
+      self.upload_avg = nil
+    else
+      measurements = self.measurements.where(location_id: self.location.id, account_id: self.account.id)
+      if measurements.count > 0
+        self.download_avg = measurements.average(:download).round(3)
+        self.upload_avg = measurements.average(:upload).round(3)
+      else
+        self.download_avg = nil
+        self.upload_avg = nil
+      end
+    end
+    self.save!
+  end
+
+  def download_diff
+    return "-" if self.location&.expected_mbps_down.nil?
+    return "-" if self.download_avg.nil?
+    diff = self.download_avg - self.location.expected_mbps_down
+    diff_to_human(diff, self.location.expected_mbps_down)
+  end
+
+  def upload_diff
+    return "-" if self.location&.expected_mbps_up.nil?
+    return "-" if self.upload_avg.nil?
+    diff = self.upload_avg - self.location.expected_mbps_up
+    diff_to_human(diff, self.location.expected_mbps_up)
+  end
+
+  def diff_to_human(diff, expected_value)
+    sign = diff > 0 ? "+" : "" # Don't need the - for negative values as it will come in the actual calculation
+    rounded_percentage = ((diff / expected_value) * 100).round(2)
+    "#{sign}#{rounded_percentage}%"
   end
 
   private

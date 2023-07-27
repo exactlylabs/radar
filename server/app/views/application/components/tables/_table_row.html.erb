@@ -17,5 +17,9 @@
     <%= render partial: "network_measurements/components/measurement_row",
         locals: { row: row, widths: widths, index: index }
     %>
+  <% elsif type == TablesHelper::TableTypes::NETWORK_PODS %>
+    <%= render partial: "network_pods/components/pod_row",
+        locals: { row: row, widths: widths, index: index }
+    %>
   <% end %>
 </div>

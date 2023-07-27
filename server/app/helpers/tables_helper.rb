@@ -3,6 +3,7 @@ module TablesHelper
     MEMBERS = "Members"
     NETWORKS = "Networks"
     NETWORK_MEASUREMENTS = "NetworkMeasurements"
+    NETWORK_PODS = "NetworkPods"
     ALL_ACCOUNTS_MEMBERS = "AllAccountsMembers"
   end
 
@@ -23,6 +24,8 @@ module TablesHelper
       'Networks'
     when TableTypes::NETWORK_MEASUREMENTS
       'Measurements'
+    when TableTypes::NETWORK_PODS
+      'Pods'
     end
   end
 
@@ -57,6 +60,15 @@ module TablesHelper
         '11%',
         '11%',
         '12%',
+      ]
+    when TableTypes::NETWORK_PODS
+      [
+        '4%',
+        '40%',
+        '17%',
+        '17%',
+        '17%',
+        '5%'
       ]
     end
   end
@@ -107,6 +119,16 @@ module TablesHelper
         { text: 'Latency' },
         { text: 'Loss' },
         { text: 'Jitter' },
+        { text: 'Actions', hidden: true}
+      ]
+    when TableTypes::NETWORK_PODS
+      rows = [
+        *rows,
+        { text: 'Checkbox', hidden: true },
+        { text: 'Pod ID' },
+        { text: 'Avg. download', icon_before: 'download-icon.png' },
+        { text: 'Avg. upload', icon_before: 'upload-icon.png' },
+        { text: 'Last measurement' },
         { text: 'Actions', hidden: true}
       ]
     end

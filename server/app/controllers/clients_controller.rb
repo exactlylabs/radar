@@ -9,7 +9,7 @@ class ClientsController < ApplicationController
   before_action :check_request_origin, only: %i[ show ]
   before_action :set_client, only: %i[ release show edit destroy get_client_label toggle_in_service ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
-  before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group ]
+  before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_remove_from_network bulk_remove_from_network ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 
   # GET /clients or /clients.json
@@ -29,7 +29,10 @@ class ClientsController < ApplicationController
       @clients = @clients.where_online if @status == 'online'
       @clients = @clients.where_offline if @status == 'offline'
     end
-    @clients
+
+    if FeatureFlagHelper.is_available('networks', current_user)
+      @total = @clients.count
+    end
   end
 
   # GET /clients/1 or /clients/1.json
@@ -456,6 +459,23 @@ class ClientsController < ApplicationController
       head(403)
     end
     @clients = Client.where_no_account.where_online
+  end
+
+  def get_bulk_remove_from_network
+    respond_to do |format|
+      format.turbo_stream
+      format.html
+    end
+  end
+
+  def bulk_remove_from_network
+    respond_to do |format|
+      if @clients.update_all(location: nil)
+        format.turbo_stream
+      else
+        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error removing pod(s) from their network(s)." }
+      end
+    end
   end
 
   private
