@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:configuration_monitoring/models/configuration_status.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
@@ -30,8 +31,11 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
   Future<void> _loadPreferences() async {
     final backgroundSpeedTestDelay = _localStorage.getBackgroundModeFrequency();
     if (backgroundSpeedTestDelay >= 0) {
-      emit(state.copyWith(delay: backgroundSpeedTestDelay, isEnabled: true));
-      BackgroundFetchHandler.startBackgroundSpeedTest(backgroundSpeedTestDelay * 60000);
+      final hasAccessToLocationAllTime = await Permission.locationAlways.isGranted;
+      if (hasAccessToLocationAllTime) {
+        emit(state.copyWith(delay: backgroundSpeedTestDelay, isEnabled: true));
+        BackgroundFetchHandler.startBackgroundSpeedTest(backgroundSpeedTestDelay * 60000);
+      }
     }
   }
 

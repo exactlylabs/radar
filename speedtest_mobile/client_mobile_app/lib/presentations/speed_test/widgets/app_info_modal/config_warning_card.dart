@@ -18,7 +18,9 @@ class ConfigWarningCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 16.0),
       decoration: BoxDecoration(
-        color: AppColors.rockfish.withOpacity(0.1),
+        color: warning.isOptional
+            ? AppColors.rockfish.withOpacity(0.1)
+            : AppColors.error.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Column(
@@ -31,7 +33,7 @@ class ConfigWarningCard extends StatelessWidget {
               fontWeight: 200,
               height: 1.50,
               letterSpacing: 0.75,
-              color: AppColors.rockfish,
+              color: warning.isOptional ? AppColors.rockfish : AppColors.error,
             ),
           ),
           TextButton(
@@ -46,14 +48,14 @@ class ConfigWarningCard extends StatelessWidget {
                     fontWeight: 800,
                     height: 1.50,
                     letterSpacing: 0.75,
-                    color: AppColors.rockfish,
+                    color: warning.isOptional ? AppColors.rockfish : AppColors.error,
                   ),
                 ),
                 const SizedBox(width: 4.0),
                 Image.asset(
                   Images.rightArrow,
                   height: 12.0,
-                  color: AppColors.rockfish,
+                  color: warning.isOptional ? AppColors.rockfish : AppColors.error,
                 )
               ],
             ),
