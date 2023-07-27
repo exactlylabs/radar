@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_13_205625) do
+ActiveRecord::Schema.define(version: 2023_07_27_185256) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -201,6 +201,7 @@ ActiveRecord::Schema.define(version: 2023_07_13_205625) do
     t.float "heading_before"
     t.float "speed_before"
     t.float "speed_accuracy_before"
+    t.string "session_id"
     t.index ["lonlat"], name: "index_client_speed_tests_on_lonlat"
   end
 

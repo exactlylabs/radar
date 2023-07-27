@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:network_connection_info/models/connection_info.dart' as CI;
+import 'package:client_mobile_app/core/utils/id_generator.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
@@ -158,16 +158,8 @@ class BackgroundSpeedTest {
       return sessionId;
     }
 
-    final id = _generateId();
+    final id = generateId();
     await _localStorage.setSessionId(id);
     return id;
   }
-
-  String _generateId() {
-    return String.fromCharCodes(
-        Iterable.generate(10, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
-  }
-
-  static final Random _rnd = Random();
-  static const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
 }
