@@ -33,8 +33,8 @@ class ProcessSpeedTestJobTest < ActiveJob::TestCase
                                             'result_with_lastServerMeasurement_on_upload_nil.json')
     measurement = ClientSpeedTest.last
     assert has_performed
-    assert_equal measurement.loss, 0
-    assert_equal measurement.latency, 63.0
+    assert_equal measurement.loss, 0.0
+    assert_equal measurement.latency, 63.303
     assert_equal measurement.download_id, 'ndt-bx8km_1685156513_0000000000340D1E'
     assert_nil measurement.upload_id
   end
@@ -55,8 +55,8 @@ class ProcessSpeedTestJobTest < ActiveJob::TestCase
                                             'result_with_lastServerMeasurement_on_download_and_upload.json')
     measurement = ClientSpeedTest.last
     assert has_performed
-    assert_equal measurement.loss, 0
-    assert_equal measurement.latency, 4
+    assert_equal measurement.loss, 0.0
+    assert_equal measurement.latency, 4.276
     assert_equal measurement.download_id, 'ndt-879bs_1679080442_000000000010F49A'
     assert_equal measurement.upload_id, 'ndt-879bs_1679080442_000000000010762D'
   end

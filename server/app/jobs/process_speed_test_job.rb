@@ -31,7 +31,7 @@ class ProcessSpeedTestJob < ApplicationJob
 
     bytes_retrans = tcp_info.fetch('BytesRetrans', 0)
     bytes_sent = tcp_info.fetch('BytesSent', 0)
-    bytes_retrans / (bytes_sent * 100) if bytes_sent.positive?
+    (bytes_retrans / (bytes_sent * 100.0)).round(2) if bytes_sent.positive?
   end
 
   def get_latency(result)
@@ -39,6 +39,6 @@ class ProcessSpeedTestJob < ApplicationJob
     return if tcp_info.nil?
 
     min_rtt = tcp_info.fetch('MinRTT', nil)
-    min_rtt / 1000 unless min_rtt.nil?
+    min_rtt / 1000.0 unless min_rtt.nil?
   end
 end
