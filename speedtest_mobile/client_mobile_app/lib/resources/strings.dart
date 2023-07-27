@@ -165,4 +165,5 @@ class Strings {
   static const String manageLocationModalTitle = 'Allow access to your location';
   static const String manageLocationModalSubtitle =
       'Radar collects location data to provide you with locations where wireless quality is being measured as you move around even when the app is closed or not in use.';
+  static const String goBackButtonLabel = 'Go back';
 }
