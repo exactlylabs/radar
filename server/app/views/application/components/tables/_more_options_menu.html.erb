@@ -10,5 +10,7 @@
     <%= render partial: "networks/components/table_row_options", locals: { row: row } %>
   <% elsif type == TablesHelper::OptionsMenuType::NETWORKS_INDEX %>
     <%= render partial: "networks/components/index_more_options" %>
+  <% elsif type == Client.name %>
+    <%= render partial: "network_pods/components/table_row_options", locals: { row: row } %>
   <% end %>
 </div>

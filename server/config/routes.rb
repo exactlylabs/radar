@@ -90,6 +90,8 @@ Rails.application.routes.draw do
       post 'bulk_update_release_group'
       get 'bulk_pdf_labels'
       get 'unclaimed'
+      get 'get_bulk_remove_from_network'
+      post 'bulk_remove_from_network'
     end
   end
 

@@ -1,0 +1,18 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: { title: "Remove from network", is_custom: true }
+%>
+<%= form_with(model: Client, url: bulk_remove_from_network_clients_path(), method: :post) do |form| %>
+  <div class="modals--content-container"
+    data-type="full"
+    data-resource="bulk-remove-from-network"
+  >
+    <input hidden type="text" name="client_ids[]" value="<%= @clients.map(&:unix_user) %>"/>
+    <h3 class="modal-main-title wrap">Are you sure you want to remove these pods from their network?</h3>
+    <p class="additional-text wrap">You can reassign your pods to networks in the future to get insights into your networks' performance.</p>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <button type="submit" class="custom-button custom-button--secondary-light-danger custom-button--lg"
+    >Remove from network</button>
+  </div>
+<% end %>

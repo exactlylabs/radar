@@ -1,0 +1,71 @@
+<div class="tables--checkbox-container" style="width: <%= widths[0] %>">
+  <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
+    <input id="check-box-<%= index %>"
+            class="form-check-input custom-multi-row-input-checkbox"
+            type="checkbox"
+            value="1"
+            data-multi-row-table-target="formCheckBoxInput"
+            data-action="input->multi-row-table#onCheckBoxChange"
+            data-row-type="pod"
+    />
+  </div>
+</div>
+
+<div class="tables--name-container tables--grows-on-small"
+  style="width: <%= widths[1] %>"
+  data-url="<%= client_path(row.unix_user) %>"
+  data-action="click->table#goToDetails"
+>
+  <div class="tables--network-icon-container me-2"
+    data-pod-status="<%= row.location.nil? ? 'unassigned' : row.online ? 'online' : 'offline' %>"
+  >
+    <%= image_tag image_url(row.location.nil? ? 'pod-unassigned-icon.png' : row.online ? 'pod-online-icon.png' : 'pod-offline-icon.png'), width: 24, height: 24 %>
+    <% if row.online %>
+      <div class="tables--network-online-dot"></div>
+    <% end %>
+  </div>
+  <div class="tables--network-name-pod-count-container">
+    <span class="tables--network-name ellipsis"><%= row.unix_user %></span>
+  </div>
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[2] %>">
+  <span class="ellipsis table-cell">
+    <%= row.download_avg.present? ? "#{row.download_avg.round(3)} Mbps" : "-" %>
+  </span>
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[3] %>">
+  <span class="ellipsis table-cell">
+    <%= row.upload_avg.present? ? "#{row.upload_avg.round(3)} Mbps" : "-" %>
+  </span>
+</div>
+
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[4] %>;"
+>
+  <% if row.has_pending_test %>
+    <div class="custom-badge custom-badge--pending">
+      Pending test
+    </div>
+  <% elsif row.test_running?%>
+    <div class="custom-badge custom-badge--running">
+      Test running
+    </div>
+  <% else %>
+    <span class="ellipsis table-cell"><%= row.latest_measurement.present? ? pretty_print_date_with_time(row.latest_measurement.created_at) : "-" %></span>
+  <% end %>
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[5] %>">
+  <%= render partial: "application/components/buttons/custom_more_options_button",
+      locals: { index: index, type: Client.name, row: row }
+  %>
+</div>
+
+<a href="<%= location_path(row) %>"
+  class="tables--appears-on-small"
+  style="width: 5%"
+>
+  <%= image_tag image_url('caret-right.png'), width: 16, height: 16 %>
+</a>

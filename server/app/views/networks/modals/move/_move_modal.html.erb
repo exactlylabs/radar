@@ -6,13 +6,13 @@
   <div class="modals--form-row mb-2">
     <label class="forms--label">Move network(s) to...</label>
     <select class="form-select forms--select"
-              data-controller="select2"
-              id="network-accounts-dropdown"
-              data-placeholder="Choose an account"
-              name="account_id"
-              data-select2-id="select2-data-account_id"
-              data-multi-row-table-target="networkAccountSelectedSelect"
-              tabindex="-1"
+      data-controller="select2"
+      id="network-accounts-dropdown"
+      data-placeholder="Choose an account"
+      name="account_id"
+      data-select2-id="select2-data-account_id"
+      data-multi-row-table-target="networkAccountSelectedSelect"
+      tabindex="-1"
     >
       <% policy_scope(Account).where.not(id: current_account.id).each_with_index do |account, index|%>
         <%= render partial: "clients/client_select_option", locals: { option: account, selected: index === 0} %>

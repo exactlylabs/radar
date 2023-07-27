@@ -1,3 +1,5 @@
+<% turbo_frames = local_assigns[:data_turbo_frames].present? ? local_assigns[:data_turbo_frames] : [] %>
+
 <div class="tables--filters-button-container invisible"
   data-controller="filters"
   data-action="closeMultiRowMenu@window->filters#closeFiltersMenu click->filters#toggleFiltersMenu"
@@ -15,10 +17,11 @@
     id="<%= menu_id %>"
   >
     <% options.each_with_index do |option, index| %>
-      <a href="#"
+      <a href="<%= turbo_frames[index].present? ? urls[index] : '#' %>"
         data-action="<%= actions[index] %>"
         class="tables--filters-menu-item table-filter-option"
         data-url="<%= urls[index] %>"
+        data-turbo-frame="<%= turbo_frames[index] %>"
       >
         <%= option %>
       </a>

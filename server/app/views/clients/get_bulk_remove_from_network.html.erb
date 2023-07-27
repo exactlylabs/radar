@@ -1,0 +1,10 @@
+<%= turbo_frame_tag "bulk_remove_from_network_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+      locals: {
+        modal_title: "Remove from network(s)",
+        modal_partial_path: "network_pods/modals/bulk/remove_from_networks_modal",
+        custom_submit_end_handler: nil,
+        resource: ''
+      }
+  %>
+<% end %>

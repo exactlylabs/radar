@@ -186,6 +186,11 @@
   &[data-resource="measurement"] {
     min-width: 480px;
   }
+
+  &[data-resource="bulk-remove-from-network"] {
+    min-width: 450px;
+    text-align: center;
+  }
 }
 
 @media (max-width: 450px) {
@@ -203,7 +208,8 @@
     &[data-resource="networks"] {
       max-height: calc(100% - 75px);
     }
-    &[data-resource="measurement"] {
+    &[data-resource="measurement"],
+    &[data-resource="bulk-remove-from-network"] {
       min-width: unset;
     }
   }

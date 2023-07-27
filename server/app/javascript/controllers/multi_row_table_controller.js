@@ -11,7 +11,9 @@ export default class extends Controller {
     "hiddenNetworkIds"
   ]
 
-  connect() {}
+  connect() {
+    this.token = document.getElementsByName("csrf-token")[0].content;
+  }
 
   onSelectAll(e) {
     if(!e.target.checked) {
@@ -77,6 +79,7 @@ export default class extends Controller {
   bulkPdfLabels(e) {
     e.stopPropagation();
     e.preventDefault();
+    emitCustomEvent('closeMultiRowMenu');
     const ids = this.getIds();
     window.open(`/clients/bulk_pdf_labels.pdf?ids=${ids}`, '_blank').focus();
   }
@@ -84,6 +87,7 @@ export default class extends Controller {
   bulkRunTests(e) {
     e.stopPropagation();
     e.preventDefault();
+    emitCustomEvent('closeMultiRowMenu');
     const url = "/clients/bulk_run_tests";
     this.runBulkRequest(url, "POST");
   }
@@ -94,6 +98,7 @@ export default class extends Controller {
     const idsLength = this.getIds().length;
     const userConfirmation = confirm(`Are you sure you want to delete ${idsLength > 1 ? `these ${idsLength} of pods` : 'this pod'}?`);
     if(!userConfirmation) return;
+    emitCustomEvent('closeMultiRowMenu');
     const url = "/clients/bulk_delete";
     this.runBulkRequest(url, "DELETE", this.clearSelection);
   }
@@ -123,13 +128,12 @@ export default class extends Controller {
   runBulkRequest(url, method, thenFunction = undefined) {
     const ids = this.getIds();
     const selectedTestIds = JSON.stringify(ids);
-    const token = document.getElementsByName("csrf-token")[0].content;
     let formData = new FormData();
     formData.append("ids", selectedTestIds);
     fetch(url, {
       method: method,
       redirect: "follow",
-      headers: { "X-CSRF-Token": token },
+      headers: { "X-CSRF-Token": this.token },
       body: formData,
     })
     .then (response => response.text())
@@ -210,13 +214,12 @@ export default class extends Controller {
     e.preventDefault();
     e.stopPropagation();
     const networksToDelete = this.getIds('network-', '-');
-    const token = document.getElementsByName("csrf-token")[0].content;
     const baseUrl = window.location.origin;
     const url = new URL(`${baseUrl}${e.target.getAttribute('data-url')}`);
     url.searchParams.append('ids', JSON.stringify(networksToDelete));
     fetch(url, {
       method: "GET",
-      headers: { "X-CSRF-Token": token },
+      headers: { "X-CSRF-Token": this.token },
     })
       .then(response => {
         if (response.ok) return response.text();
@@ -232,7 +235,7 @@ export default class extends Controller {
   bulkMoveNetworks(e) {
     e.preventDefault();
     e.stopPropagation();
-    const token = document.getElementsByName("csrf-token")[0].content;
+    
     const ids = JSON.stringify(
       this.hiddenNetworkIdsTarget
       .getAttribute('data-network-ids')
@@ -263,6 +266,36 @@ export default class extends Controller {
       .catch((err) => {
         handleError(err, this.identifier);
       });
+  }
+
+  handleBulkRemoveFromNetworks(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const networksToRemove = this.getIds();
+    const baseUrl = window.location.origin;
+    const url = new URL(`${baseUrl}${e.target.getAttribute('data-url')}`);
+    url.searchParams.append('ids', JSON.stringify(networksToRemove));
+    fetch(url, {
+      method: "GET",
+      headers: { "X-CSRF-Token": this.token },
+    })
+      .then(response => {
+        if (response.ok) return response.text();
+        else throw new Error(`Oops! There has been an error moving your pods. Please try again later.`);
+      })
+      .then(html => {
+        emitCustomEvent('closeMultiRowMenu');
+        Turbo.renderStreamMessage(html);
+      })
+      .catch((err) => { handleError(err, this.identifier); });
+  }
+
+  bulkRemoveFromNetwork(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    emitCustomEvent('closeMultiRowMenu');
+    const url = "/clients/bulk_remove_from_network";
+    this.runBulkRequest(url, "POST");
   }
 
   getIds(customPrefix = undefined, customExtraDelimiter = undefined) {
