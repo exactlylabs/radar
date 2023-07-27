@@ -35,8 +35,11 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
   void startDownloadTest() async {
     final permissionsGranted = await _checkPermissions();
     if (permissionsGranted) {
-      emit(const TakeSpeedTestStepState(isTestingDownloadSpeed: true));
+      emit(const TakeSpeedTestStepState(
+          isTestingDownloadSpeed: true, requestPhonePermission: false));
       startTest();
+    } else {
+      emit(state.copyWith(requestPhonePermission: true));
     }
   }
 
@@ -136,10 +139,12 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
 
   Future<bool> _checkPermissions() async {
     if (Platform.isIOS) return true;
-    if (await Permission.phone.request().isGranted) {
-      return true;
-    }
-    return false;
+    return await Permission.phone.isGranted;
+  }
+
+  Future<void> requestPhonePermission() async {
+    await Permission.phone.request();
+    startDownloadTest();
   }
 
   Future<Position?> _getCurrentLocation() async {

@@ -26,7 +26,7 @@ class ManageLocationModal extends StatelessWidget {
         Image.asset(Images.manageLocation, height: 50.0),
         const SizedBox(height: 30.0),
         Text(
-          'Allow access to your location',
+          Strings.manageLocationModalTitle,
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 20.0,
@@ -36,7 +36,7 @@ class ManageLocationModal extends StatelessWidget {
         ),
         const SizedBox(height: 15.0),
         Text(
-          'Radar collects location data to provide you with locations where wireless quality is being measured as you move around even when the app is closed or not in use.',
+          Strings.manageLocationModalSubtitle,
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 16.0,
@@ -55,7 +55,7 @@ class ManageLocationModal extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Allow',
+                Strings.allowButtonLabel,
                 style: AppTextStyle(
                   fontSize: 16.0,
                   fontWeight: 700,
@@ -75,7 +75,7 @@ class ManageLocationModal extends StatelessWidget {
           color: Theme.of(context).colorScheme.onPrimary,
           shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
           child: Text(
-            'Deny',
+            Strings.denyButtonLabel,
             style: AppTextStyle(
               fontSize: 16.0,
               fontWeight: 700,

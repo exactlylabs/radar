@@ -132,6 +132,7 @@ class Strings {
   static const String useYourLocationSubtitle =
       'collects location data to provide you with locations where wireless quality is being measured as you move around even when the app is closed or not in use';
   static const String denyButtonLabel = 'Deny';
+  static const String allowButtonLabel = 'Allow';
   static const String acceptButtonLabel = 'Accept';
   static const String goToSettingsButtonLabel = 'Go to device settings';
   static const String backgroundModeNotificaitonTitle = 'Background mode enabled';
@@ -156,5 +157,12 @@ class Strings {
   static const String notificationPermissionSubtitle =
       'To let you know when background mode is running and when it stops.';
   static const String optionalPermissionsAllowAccessButtonLabel = 'Allow access';
-  static const String optionalPermissionsNotNowButtonLabel = 'Not now';
+  static const String notNowButtonLabel = 'Not now';
+  static const String managePhoneCallsModalTitle = 'Improve your test accuracy';
+  static const String managePhoneCallsModalSubtitle =
+      'Your speed test results will be more accurate if you give access to more details about your cellular and wifi reception.';
+  static const String managePhoneCallsModalButtonLabel = 'Allow access to cellular';
+  static const String manageLocationModalTitle = 'Allow access to your location';
+  static const String manageLocationModalSubtitle =
+      'Radar collects location data to provide you with locations where wireless quality is being measured as you move around even when the app is closed or not in use.';
 }

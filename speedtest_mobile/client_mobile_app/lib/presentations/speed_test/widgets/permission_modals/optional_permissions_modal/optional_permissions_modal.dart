@@ -83,7 +83,7 @@ class OptionalPermissionsModal extends StatelessWidget {
             color: Theme.of(context).colorScheme.onPrimary,
             shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
             child: Text(
-              Strings.optionalPermissionsNotNowButtonLabel,
+              Strings.notNowButtonLabel,
               style: AppTextStyle(
                 fontSize: 16.0,
                 fontWeight: 700,

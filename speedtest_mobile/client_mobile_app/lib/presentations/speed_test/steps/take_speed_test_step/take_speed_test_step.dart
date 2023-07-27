@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/presentations/speed_test/widgets/permission_modals/manage_phone_calls_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
@@ -36,8 +37,16 @@ class TakeSpeedTestStep extends StatelessWidget {
           child: BlocListener<TakeSpeedTestStepCubit, TakeSpeedTestStepState>(
             listenWhen: (previous, current) =>
                 (previous.isTestingUploadSpeed && !current.isTestingUploadSpeed) ||
+                (!previous.requestPhonePermission && current.requestPhonePermission) ||
                 current.finishedTesting,
             listener: (context, state) {
+              if (state.requestPhonePermission) {
+                openManagePhoneCallsModal(
+                  context,
+                  () => context.read<TakeSpeedTestStepCubit>().requestPhonePermission(),
+                  () => context.read<TakeSpeedTestStepCubit>().startDownloadTest(),
+                );
+              }
               if (state.finishedTesting) {
                 context.read<SpeedTestCubit>().saveResults(
                       state.downloadSpeed!,

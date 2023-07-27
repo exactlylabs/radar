@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/presentations/speed_test/widgets/permission_modals/manage_location_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:client_mobile_app/resources/strings.dart';
@@ -8,7 +9,6 @@ import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_step_body.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/bloc/location_step_state.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/bloc/location_step_cubit.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/permission_modals/manage_location_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/location_step/location_picker_modal/location_picker_modal.dart';
 
 class LocationStep extends StatelessWidget {
