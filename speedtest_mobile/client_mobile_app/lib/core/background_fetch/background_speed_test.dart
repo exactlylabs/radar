@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -31,6 +32,7 @@ class BackgroundSpeedTest {
   Position? _positionAfterSpeedTest;
   Position? _positionBeforeSpeedTest;
   CI.ConnectionInfo? _connectionInfo;
+  String? _sessionId;
   List<Map<String, dynamic>> _responses = [];
 
   ({bool isTestingDownloadSpeed, bool isTestingUploadSpeed}) _testingState =
@@ -47,6 +49,7 @@ class BackgroundSpeedTest {
       onError: (data) => _onTestError(jsonEncode(data)),
     );
     _positionAfterSpeedTest = await _getCurrentLocation();
+    _sessionId = await _getSessionId();
     _sendSpeedTestResults();
   }
 
@@ -141,10 +144,30 @@ class BackgroundSpeedTest {
         'speed_accuracy_after': _positionAfterSpeedTest?.speedAccuracy,
         'version_number': _packageInfo?.version,
         'build_number': _packageInfo?.buildNumber,
+        'session_id': _sessionId,
         'background_mode': true,
       },
       'connection_data': _connectionInfo?.toJson(),
       'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }
+
+  Future<String> _getSessionId() async {
+    final sessionId = _localStorage.getSessionId();
+    if (sessionId != null) {
+      return sessionId;
+    }
+
+    final id = _generateId();
+    await _localStorage.setSessionId(id);
+    return id;
+  }
+
+  String _generateId() {
+    return String.fromCharCodes(
+        Iterable.generate(10, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+  }
+
+  static final Random _rnd = Random();
+  static const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
 }

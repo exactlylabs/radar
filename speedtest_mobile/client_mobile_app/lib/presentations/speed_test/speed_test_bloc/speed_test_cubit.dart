@@ -11,23 +11,28 @@ import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/core/models/test_result.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/services/results_service/i_results_service.dart';
+import 'package:client_mobile_app/core/services/device_info_service/i_device_info_service.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
 
 class SpeedTestCubit extends Cubit<SpeedTestState> {
   SpeedTestCubit({
     required IResultsService resultsService,
+    required IDeviceInfoService deviceInfoService,
     required LocalStorage localStorage,
     required Connectivity connectivity,
   })  : _resultsService = resultsService,
+        _deviceInfoService = deviceInfoService,
         _localStorage = localStorage,
         _connectivity = connectivity,
         super(const SpeedTestState()) {
     _listenConnectivityState();
     _setVersionAndBuildNumber();
     _getTerms();
+    _getSessionId();
   }
 
   final IResultsService _resultsService;
+  final IDeviceInfoService _deviceInfoService;
   final Connectivity _connectivity;
   final LocalStorage _localStorage;
 
@@ -123,6 +128,7 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
       networkQuality: networkQuality,
       versionNumber: state.versionNumber ?? Strings.emptyString,
       buildNumber: state.buildNumber ?? Strings.emptyString,
+      sessionId: state.sessionId ?? Strings.emptyString,
     );
 
     _resultsService.addResult(responses, result, connectionInfo);
@@ -142,6 +148,11 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   Future<void> _getTerms() async {
     final termsAccepted = _localStorage.getTerms();
     emit(state.copyWith(termsAccepted: termsAccepted, isLoadingTerms: false));
+  }
+
+  Future<void> _getSessionId() async {
+    final sessionId = await _deviceInfoService.getSessionId();
+    emit(state.copyWith(sessionId: sessionId));
   }
 
   void acceptTerms() {

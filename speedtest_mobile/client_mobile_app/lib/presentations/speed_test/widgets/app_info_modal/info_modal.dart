@@ -13,10 +13,12 @@ class InfoModal extends StatefulWidget {
     Key? key,
     required this.buildNumber,
     required this.versionNumber,
+    required this.sessionId,
   }) : super(key: key);
 
   final String buildNumber;
   final String versionNumber;
+  final String sessionId;
 
   @override
   State<InfoModal> createState() => _InfoModalState();
@@ -71,6 +73,7 @@ class _InfoModalState extends State<InfoModal> with WidgetsBindingObserver {
             warning: warning,
             buildNumber: widget.buildNumber,
             versionNumber: widget.versionNumber,
+            sessionId: widget.sessionId,
             onEnabled: (warning?.isOptional ?? true)
                 ? () => context.read<BackgroundModeCubit>().enableBackgroundMode()
                 : null,

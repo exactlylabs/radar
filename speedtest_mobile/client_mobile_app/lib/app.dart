@@ -1,3 +1,4 @@
+import 'package:client_mobile_app/core/services/device_info_service/implementation/device_info_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -58,6 +59,11 @@ class App extends StatelessWidget {
             configurationMonitoring: configurationMonitoring,
           ),
         ),
+        RepositoryProvider<DeviceInfoService>(
+          create: (_) => DeviceInfoService(
+            localStorage: localStorage,
+          ),
+        ),
         RepositoryProvider<Connectivity>(
           create: (_) => Connectivity(),
         ),
@@ -77,6 +83,7 @@ class App extends StatelessWidget {
           BlocProvider<SpeedTestCubit>(
             lazy: false,
             create: (context) => SpeedTestCubit(
+              deviceInfoService: context.read<DeviceInfoService>(),
               resultsService: context.read<IResultsService>(),
               connectivity: context.read<Connectivity>(),
               localStorage: localStorage,
@@ -105,7 +112,7 @@ class AppBuilder extends StatelessWidget {
     return MaterialApp(
       title: config != null ? config.appName : 'Radar',
       theme: theme,
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }

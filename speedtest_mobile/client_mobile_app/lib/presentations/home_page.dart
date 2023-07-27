@@ -61,7 +61,8 @@ class HomePage extends StatelessWidget {
                 if (index != NavigationCubit.MAP_INDEX || state.canNavigate) {
                   context.read<NavigationCubit>().changeTab(index);
                 } else {
-                  openNoInternetConnectionModal(context, () => context.read<NavigationCubit>().changeTab(index));
+                  openNoInternetConnectionModal(
+                      context, () => context.read<NavigationCubit>().changeTab(index));
                 }
               },
             ),
