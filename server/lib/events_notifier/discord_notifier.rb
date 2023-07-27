@@ -3,10 +3,10 @@ require 'discordrb/webhooks'
 
 class DiscordNotifier < EventsNotifier::Notifier
 
-  def initialize(webhook_url, tbp_alerts_webhook_url, tbp_general_webhook_url)
+  def initialize(webhook_url, tbp_alerts_webhook_url=nil, tbp_general_webhook_url=nil)
     @client = Discordrb::Webhooks::Client.new(url: webhook_url)
-    @tbp_alerts_client = Discordrb::Webhooks::Client.new(url: tbp_alerts_webhook_url)
-    @tbp_general_client = Discordrb::Webhooks::Client.new(url: tbp_general_webhook_url)
+    @tbp_alerts_client = tbp_alerts_webhook_url ? Discordrb::Webhooks::Client.new(url: tbp_alerts_webhook_url) : nil
+    @tbp_general_client = tbp_general_webhook_url ? Discordrb::Webhooks::Client.new(url: tbp_general_webhook_url) : nil
   end
 
   def add_fieldset(embed, title, &block)
@@ -39,7 +39,7 @@ class DiscordNotifier < EventsNotifier::Notifier
     @client.execute do |builder|
       builder.add_embed do |embed|
         embed.title = ":new: == New User from Invite == :new:"
-        embed.description = "A new user has just signed up in Radar Pods from an invite from #{account.name} Account" 
+        embed.description = "A new user has just signed up in Radar Pods from an invite from #{account.name} Account"
         embed.timestamp = Time.now
         embed.color = 0x23C552
         add_fieldset embed, "Account Information" do |fieldset|
@@ -88,7 +88,7 @@ class DiscordNotifier < EventsNotifier::Notifier
         embed.color = 0x23C552
         add_fieldset embed, "Location Info" do |fieldset|
           fill_fn.call(location_info, fieldset)
-        end    
+        end
       end
     end
   end
@@ -125,7 +125,33 @@ class DiscordNotifier < EventsNotifier::Notifier
     end
   end
 
-  private  
+  def notify_heartbeat_missing(since)
+    @client.execute do |builder|
+      builder.add_embed do |embed|
+        embed.title = ":boom: == Application Heartbeat Missing == :boom:"
+        embed.description = %{
+          The application heartbeat is missing since #{since}
+        }
+        embed.timestamp = Time.now
+        embed.color = 0xF84F31
+      end
+    end
+  end
+
+  def notify_heartbeat_recovered
+    @client.execute do |builder|
+      builder.add_embed do |embed|
+        embed.title = ":white_check_mark: == Application Heartbeat Recovered! == :white_check_mark:"
+        embed.description = %{
+          Be Prepared! :saluting_face:
+        }
+        embed.timestamp = Time.now
+        embed.color = 0x23C552
+      end
+    end
+  end
+
+  private
 
   def fill_default_location_info(location_info, fieldset)
     fieldset.add_field(name: "Name", value: location_info.location.name)
