@@ -47,8 +47,8 @@ class SpeedTestPage extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       child: InkWell(
-                        onTap: () =>
-                            _openInfoModal(context, state.versionNumber, state.buildNumber),
+                        onTap: () => _openInfoModal(
+                            context, state.versionNumber, state.buildNumber, state.sessionId),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -96,7 +96,8 @@ class SpeedTestPage extends StatelessWidget {
     );
   }
 
-  Future<void> _openInfoModal(BuildContext context, String? versionNumber, String? buildNumber) {
+  Future<void> _openInfoModal(
+      BuildContext context, String? versionNumber, String? buildNumber, String? sessionId) {
     return showModalBottomSheet(
       context: context,
       enableDrag: true,
@@ -115,6 +116,7 @@ class SpeedTestPage extends StatelessWidget {
           body: InfoModal(
             versionNumber: versionNumber ?? Strings.emptyString,
             buildNumber: buildNumber ?? Strings.emptyString,
+            sessionId: sessionId ?? Strings.emptyString,
           ),
         ),
       ),

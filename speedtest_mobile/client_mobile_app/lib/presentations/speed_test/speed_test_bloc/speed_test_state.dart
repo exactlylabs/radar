@@ -17,6 +17,7 @@ class SpeedTestState {
     this.isFormEnded = false,
     this.versionNumber,
     this.buildNumber,
+    this.sessionId,
     this.termsAccepted = true,
     this.isLoadingTerms = true,
   });
@@ -37,6 +38,7 @@ class SpeedTestState {
     bool? isFormEnded,
     String? versionNumber,
     String? buildNumber,
+    String? sessionId,
     bool? termsAccepted,
     bool? isLoadingTerms,
     bool? hasWarnings,
@@ -57,6 +59,7 @@ class SpeedTestState {
         isFormEnded: isFormEnded ?? this.isFormEnded,
         versionNumber: versionNumber ?? this.versionNumber,
         buildNumber: buildNumber ?? this.buildNumber,
+        sessionId: sessionId ?? this.sessionId,
         termsAccepted: termsAccepted ?? this.termsAccepted,
         isLoadingTerms: isLoadingTerms ?? this.isLoadingTerms,
       );
@@ -78,6 +81,7 @@ class SpeedTestState {
         isFormEnded: isFormEnded,
         versionNumber: versionNumber,
         buildNumber: buildNumber,
+        sessionId: sessionId,
         termsAccepted: termsAccepted,
         isLoadingTerms: isLoadingTerms,
       );
@@ -97,6 +101,7 @@ class SpeedTestState {
   final bool isFormEnded;
   final String? versionNumber;
   final String? buildNumber;
+  final String? sessionId;
   final bool termsAccepted;
   final bool isLoadingTerms;
 }

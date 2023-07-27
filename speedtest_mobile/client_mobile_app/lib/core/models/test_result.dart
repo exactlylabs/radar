@@ -15,6 +15,7 @@ class TestResult {
     required this.latency,
     required this.versionNumber,
     required this.buildNumber,
+    required this.sessionId,
     this.locationBefore,
     this.locationAfter,
   });
@@ -42,6 +43,7 @@ class TestResult {
         latency: json['latency'],
         versionNumber: json['version_number'] ?? Strings.emptyString,
         buildNumber: json['build_number'] ?? Strings.emptyString,
+        sessionId: json['session_id'] ?? Strings.emptyString,
       );
 
   Map<String, dynamic> toJsonServer() {
@@ -66,6 +68,7 @@ class TestResult {
       'network_cost': networkCost,
       'version_number': versionNumber,
       'build_number': buildNumber,
+      'session_id': sessionId,
       'latitude_before': locationBefore?.latitude,
       'longitude_before': locationBefore?.longitude,
       'altitude_before': locationBefore?.altitude,
@@ -111,6 +114,7 @@ class TestResult {
       'network_quality': networkQuality,
       'version_number': versionNumber,
       'build_number': buildNumber,
+      'session_id': sessionId,
     };
   }
 
@@ -125,6 +129,7 @@ class TestResult {
   final double latency;
   final String versionNumber;
   final String buildNumber;
+  final String sessionId;
   final Location location;
   final Location? locationBefore;
   final Location? locationAfter;

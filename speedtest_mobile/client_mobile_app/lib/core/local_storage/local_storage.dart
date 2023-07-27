@@ -4,11 +4,13 @@ import 'package:path_provider/path_provider.dart';
 class LocalStorage {
   late Box<bool> _preferencesBox;
   late Box<int> _backgroundModeSettingsBox;
+  late Box<String> _deviceInfoBox;
   late Box<Map> _speedTestResultsBox;
   late Box<Map> _pendingSpeedTestResultsBox;
 
   static const String _preferencesBoxName = 'preferences';
   static const String _backgroundModeSettingsBoxName = 'background_mode_settings';
+  static const String _deviceInfoBoxName = 'device_info';
   static const String _speedTestResultsBoxName = 'speed_test_results';
   static const String _pendingSpeedTestResultsBoxName = 'pending_speed_test_results';
 
@@ -16,6 +18,8 @@ class LocalStorage {
   static const String _preferencesTermsAccepted = 'preferences_terms_accepted';
   static const String _preferencesEverAskedForLocationAllTime =
       'preferences_ever_asked_for_location_all_time';
+
+  static const String _deviceInfoSessionId = 'device_info_session_id';
 
   static const String _backgroundModeSettingsFrequency = 'background_mode_settings_frequency';
 
@@ -26,6 +30,7 @@ class LocalStorage {
   }
 
   Future<void> _openBoxes() async {
+    _deviceInfoBox = await Hive.openBox(_deviceInfoBoxName);
     _preferencesBox = await Hive.openBox(_preferencesBoxName);
     _speedTestResultsBox = await Hive.openBox(_speedTestResultsBoxName);
     _backgroundModeSettingsBox = await Hive.openBox(_backgroundModeSettingsBoxName);
@@ -38,6 +43,7 @@ class LocalStorage {
 
   bool getEverAskedForLocationAllTime() =>
       _preferencesBox.get(_preferencesEverAskedForLocationAllTime, defaultValue: false)!;
+  String? getSessionId() => _deviceInfoBox.get(_deviceInfoSessionId);
 
   int getBackgroundModeFrequency() =>
       _backgroundModeSettingsBox.get(_backgroundModeSettingsFrequency, defaultValue: -1)!;
@@ -61,6 +67,10 @@ class LocalStorage {
   Future<void> setEverAskedForLocationAllTime() async {
     const everAskedForLocationAllTime = true;
     await _preferencesBox.put(_preferencesEverAskedForLocationAllTime, everAskedForLocationAllTime);
+  }
+
+  Future<void> setSessionId(String id) async {
+    await _deviceInfoBox.put(_deviceInfoSessionId, id);
   }
 
   Future<void> addSpeedTestResult(Map<String, dynamic> speedTestResult) async {
