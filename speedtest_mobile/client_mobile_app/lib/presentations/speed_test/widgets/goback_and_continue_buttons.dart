@@ -1,5 +1,6 @@
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,7 @@ class GoBackAndContinueButtons extends StatelessWidget {
                   ),
                   const SizedBox(width: 15.0),
                   Text(
-                    'Go back',
+                    Strings.goBackButtonLabel,
                     style: AppTextStyle(
                       fontSize: 16.0,
                       fontWeight: 700,
@@ -56,7 +57,7 @@ class GoBackAndContinueButtons extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    continueLabel ?? 'Continue',
+                    continueLabel ?? Strings.continueButtonLabel,
                     style: AppTextStyle(
                       fontSize: 16.0,
                       fontWeight: 700,
@@ -81,7 +82,7 @@ class GoBackAndContinueButtons extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Continue',
+              Strings.continueButtonLabel,
               style: AppTextStyle(
                 fontSize: 16.0,
                 fontWeight: 700,
