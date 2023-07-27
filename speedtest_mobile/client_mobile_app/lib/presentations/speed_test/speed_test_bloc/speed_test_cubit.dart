@@ -80,7 +80,13 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   }
 
   void resetForm() {
-    emit(SpeedTestState(networkType: state.networkType, isLoadingTerms: state.isLoadingTerms));
+    emit(SpeedTestState(
+      networkType: state.networkType,
+      isLoadingTerms: state.isLoadingTerms,
+      buildNumber: state.buildNumber,
+      versionNumber: state.versionNumber,
+      sessionId: state.sessionId,
+    ));
   }
 
   void preferNotToAnswer() {

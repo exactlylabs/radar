@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
@@ -36,6 +38,7 @@ class AppInfo extends StatefulWidget {
 class _AppInfoState extends State<AppInfo> {
   late bool showSnackbar;
   late String snackbarText;
+  Timer? snackbarTimer;
 
   @override
   void initState() {
@@ -43,30 +46,38 @@ class _AppInfoState extends State<AppInfo> {
     showSnackbar = false;
   }
 
+  @override
+  void dispose() {
+    snackbarTimer?.cancel();
+    super.dispose();
+  }
+
   void showSessionIdCopiedSnackbar() {
-    if (!showSnackbar) {
-      if (mounted) {
-        setState(() {
-          showSnackbar = true;
-          snackbarText = 'Session ID copied to clipboard';
-        });
-      }
-      Future.delayed(
-          const Duration(seconds: 5), () => mounted ? setState(() => showSnackbar = false) : null);
+    if (mounted) {
+      setState(() {
+        showSnackbar = true;
+        snackbarText = Strings.snackbarSessionId;
+      });
     }
+    if (snackbarTimer != null) {
+      snackbarTimer!.cancel();
+    }
+    snackbarTimer = Timer(
+        const Duration(seconds: 5), () => mounted ? setState(() => showSnackbar = false) : null);
   }
 
   void showVersionAndBuildNumberCopiedSnackbar() {
-    if (!showSnackbar) {
-      if (mounted) {
-        setState(() {
-          showSnackbar = true;
-          snackbarText = 'App version copied to clipboard';
-        });
-      }
-      Future.delayed(
-          const Duration(seconds: 5), () => mounted ? setState(() => showSnackbar = false) : null);
+    if (mounted) {
+      setState(() {
+        showSnackbar = true;
+        snackbarText = Strings.snackbarAppVersion;
+      });
     }
+    if (snackbarTimer != null) {
+      snackbarTimer!.cancel();
+    }
+    snackbarTimer = Timer(
+        const Duration(seconds: 5), () => mounted ? setState(() => showSnackbar = false) : null);
   }
 
   @override

@@ -166,4 +166,6 @@ class Strings {
   static const String manageLocationModalSubtitle =
       'Radar collects location data to provide you with locations where wireless quality is being measured as you move around even when the app is closed or not in use.';
   static const String goBackButtonLabel = 'Go back';
+  static const snackbarSessionId = 'Session ID copied to clipboard.';
+  static const snackbarAppVersion = 'App version copied to clipboard.';
 }
