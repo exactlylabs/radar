@@ -16,6 +16,7 @@ class TakeSpeedTestStepState {
     this.finishedTesting = false,
     this.isTestingDownloadSpeed = false,
     this.isTestingUploadSpeed = false,
+    this.requestPhonePermission = false,
     this.networkQuality,
     this.connectionInfo,
     this.positionBeforeSpeedTest,
@@ -26,6 +27,7 @@ class TakeSpeedTestStepState {
     bool? finishedTesting,
     bool? isTestingDownloadSpeed,
     bool? isTestingUploadSpeed,
+    bool? requestPhonePermission,
     double? downloadSpeed,
     double? uploadSpeed,
     double? latency,
@@ -52,6 +54,7 @@ class TakeSpeedTestStepState {
       bytesSent: bytesSent ?? this.bytesSent,
       isTestingDownloadSpeed: isTestingDownloadSpeed ?? this.isTestingDownloadSpeed,
       isTestingUploadSpeed: isTestingUploadSpeed ?? this.isTestingUploadSpeed,
+      requestPhonePermission: requestPhonePermission ?? this.requestPhonePermission,
       responses: responses ?? this.responses,
       downloadProgress: downloadProgress ?? this.downloadProgress,
       uploadProgress: uploadProgress ?? this.uploadProgress,
@@ -65,6 +68,7 @@ class TakeSpeedTestStepState {
   final bool finishedTesting;
   final bool isTestingDownloadSpeed;
   final bool isTestingUploadSpeed;
+  final bool requestPhonePermission;
   final double? downloadSpeed;
   final double? uploadSpeed;
   final double? latency;

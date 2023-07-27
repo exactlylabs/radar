@@ -1,10 +1,10 @@
-import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
-import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
+import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 
 class ManagePhoneCallsModal extends StatelessWidget {
   const ManagePhoneCallsModal({
@@ -26,7 +26,7 @@ class ManagePhoneCallsModal extends StatelessWidget {
         Image.asset(Images.managePhoneCalls, height: 50.0),
         const SizedBox(height: 30.0),
         Text(
-          'Improve your test accuracy',
+          Strings.managePhoneCallsModalTitle,
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 20.0,
@@ -36,7 +36,7 @@ class ManagePhoneCallsModal extends StatelessWidget {
         ),
         const SizedBox(height: 15.0),
         Text(
-          'Your speed test results will be more accurate if you give access to more details about your cellular and wifi reception.',
+          Strings.managePhoneCallsModalSubtitle,
           textAlign: TextAlign.center,
           style: AppTextStyle(
             fontSize: 16.0,
@@ -48,14 +48,14 @@ class ManagePhoneCallsModal extends StatelessWidget {
         const SizedBox(height: 50.0),
         PrimaryButton(
           onPressed: () {
-            onPressed();
             Navigator.of(context).pop();
+            onPressed();
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Allow access to cellular',
+                Strings.managePhoneCallsModalButtonLabel,
                 style: AppTextStyle(
                   fontSize: 16.0,
                   fontWeight: 700,
@@ -75,7 +75,7 @@ class ManagePhoneCallsModal extends StatelessWidget {
           color: Theme.of(context).colorScheme.onPrimary,
           shadowColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
           child: Text(
-            'Not now',
+            Strings.notNowButtonLabel,
             style: AppTextStyle(
               fontSize: 16.0,
               fontWeight: 700,
@@ -83,8 +83,8 @@ class ManagePhoneCallsModal extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            onClosed();
             Navigator.of(context).pop();
+            onClosed();
           },
         ),
         const SizedBox(height: 16.0),
@@ -93,7 +93,8 @@ class ManagePhoneCallsModal extends StatelessWidget {
   }
 }
 
-Future<void> openManagePhoneCallsModal(BuildContext context) {
+Future<void> openManagePhoneCallsModal(
+    BuildContext context, VoidCallback onPressed, VoidCallback onCancel) {
   return showModalBottomSheet(
     context: context,
     enableDrag: true,
@@ -108,8 +109,8 @@ Future<void> openManagePhoneCallsModal(BuildContext context) {
     builder: (_) => ModalWithTitle(
       title: Strings.emptyString,
       body: ManagePhoneCallsModal(
-        onPressed: () {},
-        onClosed: () {},
+        onPressed: onPressed,
+        onClosed: onCancel,
       ),
     ),
   );
