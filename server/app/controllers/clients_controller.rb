@@ -482,6 +482,7 @@ class ClientsController < ApplicationController
   end
 
   def bulk_remove_from_network
+    @pods_to_remove_ids = @clients.map(&:unix_user)
     respond_to do |format|
       if @clients.update_all(location_id: nil)
         format.turbo_stream
