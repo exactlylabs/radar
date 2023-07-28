@@ -3,6 +3,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
+import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:client_mobile_app/core/models/location.dart';
 import 'package:client_mobile_app/widgets/primary_button.dart';
 import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
@@ -28,13 +29,41 @@ class GeolocationOption extends StatelessWidget {
     return Column(
       children: [
         SpacerWithMax(size: height * 0.037, maxSize: 30.0),
-        SizedBox(
-          height: 258,
-          child: LeafletMap(
-            onLocationSelected: (location) =>
-                onLocationChanged(location.latitude, location.longitude),
-            address: location != null ? LatLng(location!.latitude!, location!.longitude!) : null,
-          ),
+        Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            SizedBox(
+              height: 258,
+              child: LeafletMap(
+                onLocationSelected: (location) =>
+                    onLocationChanged(location.latitude, location.longitude),
+                address:
+                    location != null ? LatLng(location!.latitude!, location!.longitude!) : null,
+              ),
+            ),
+            if (location != null)
+              Positioned(
+                top: 15,
+                child: Container(
+                  padding: const EdgeInsets.all(6.0),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6.0),
+                    color: AppColors.snow.withOpacity(0.85),
+                  ),
+                  child: Text(
+                    '${location!.address}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyle(
+                      fontSize: 14.0,
+                      fontWeight: 200.0,
+                      color: AppColors.darkLavender,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
         SpacerWithMax(size: height * 0.05, maxSize: 40.0),
         Padding(
