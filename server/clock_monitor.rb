@@ -44,6 +44,8 @@ scheduler.every '5s', overlap: false do
   end
 end
 
+my_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkyIiwibmFtZSI6IkhleWEiLCJpYXQiOjE1MTYyMzkwMjJ9.6X9pDM5RhmOKjygba2qzRAWNQ3E7Fe8V3yKhuN0tXa0"
+
 Sentry.init do |config|
   config.dsn = 'https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151'
   config.breadcrumbs_logger = [:sentry_logger, :http_logger]
