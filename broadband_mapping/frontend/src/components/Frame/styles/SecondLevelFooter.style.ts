@@ -7,7 +7,7 @@ const secondLevelFooterStyle: CSSProperties = {
   borderTop: `1px solid ${DEFAULT_CONTEXT_DIVIDER}`,
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'start',
+  alignItems: 'flex-start',
   padding: '32px 0px 32px 0px',
 }
 
@@ -25,7 +25,7 @@ const copyrightTextStyle: CSSProperties = {
 const devInfoTextStyle: CSSProperties = {
   fontSize: '15px',
   maxWidth: '629px',
-  paddingTop: 24,
+  paddingTop: '24px',
   color: FOOTER_TEXT,
 }
 
