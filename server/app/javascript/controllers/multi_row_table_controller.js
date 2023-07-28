@@ -333,6 +333,13 @@ export default class extends Controller {
       });
   }
 
+  bulkRemoveFromNetwork(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    const url = "/clients/bulk_remove_from_network";
+    this.runBulkRequest(url, "POST");
+  }
+
   getIds(customPrefix = undefined, customExtraDelimiter = undefined) {
     const prefix = customPrefix ?? "check-box-";
     

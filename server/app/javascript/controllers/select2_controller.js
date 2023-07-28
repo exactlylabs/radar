@@ -41,7 +41,6 @@ export default class extends Controller {
       options.minimumResultsForSearch = Infinity;
     }
 
-    console.log($(this.element).select2(options));
     $(this.element).select2(options);
     $(this.element).on("select2:select", function () {
       let event = new Event("select2-select", { bubbles: true }); // fire a native event
