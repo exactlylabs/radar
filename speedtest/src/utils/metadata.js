@@ -5,9 +5,7 @@ export const addMetadataToResults = (originalResults) => {
     .filter(
       measurement =>
         measurement.latitude &&
-        measurement.longitude &&
-        measurement.download_avg &&
-        measurement.upload_avg
+        measurement.longitude
     )
     .map(measurement => {
       return {

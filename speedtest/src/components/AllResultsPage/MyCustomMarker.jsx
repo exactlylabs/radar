@@ -4,6 +4,7 @@ import {
   UPLOAD_FILTER_TAGS,
 } from "../../utils/speeds";
 import {
+  DEFAULT_DOWNLOAD_FILTER_NONE,
   DEFAULT_DOWNLOAD_FILTER_HIGH,
   DEFAULT_DOWNLOAD_FILTER_LOW,
   DEFAULT_DOWNLOAD_FILTER_MID
@@ -30,13 +31,19 @@ const MyCustomMarker = ({
     };
     const tagToCheck = currentFilterType === 'download' ? downloadFilterTag : uploadFilterTag;
     const thresholdToConsider = currentFilterType === 'download' ? DOWNLOAD_FILTER_TAGS : UPLOAD_FILTER_TAGS;
-    if (tagToCheck === thresholdToConsider[0])
+    if (tagToCheck === thresholdToConsider[0]) 
+      return {
+        ...pathOptions,
+        color: DEFAULT_DOWNLOAD_FILTER_NONE,
+        fillColor: DEFAULT_DOWNLOAD_FILTER_NONE,
+      }
+    else if (tagToCheck === thresholdToConsider[1])
       return {
         ...pathOptions,
         color: DEFAULT_DOWNLOAD_FILTER_LOW,
         fillColor: DEFAULT_DOWNLOAD_FILTER_LOW,
     };
-    else if (tagToCheck === thresholdToConsider[1])
+    else if (tagToCheck === thresholdToConsider[2])
       return {
         ...pathOptions,
         color: DEFAULT_DOWNLOAD_FILTER_MID,
