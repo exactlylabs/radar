@@ -86,13 +86,11 @@
           <div class="fv-plugins-message-container invalid-feedback" data-location-form-target="locationErrorMessage"></div>
         </div>
 
-        <div class="forms--rowfv-row mb-7 fv-plugins-icon-container">
-          <div class="form-check form-switch form-check-custom form-check-solid">
-            <%= form.check_box :manual_lat_long, name: "location[manual_lat_long]",class: "form-check-input forms--checkbox me-3", data: { "location-form-target" => "manualLatLong", action: "input->location-form#onManualChange" } %>
-            <label class="regular-text" for="flexSwitchDefault">
-                Adjust coordinates manually
-            </label>
-          </div>
+        <div class="forms--row fv-row mb-7 fv-plugins-icon-container d-flex align-items-center">
+          <%= form.check_box :manual_lat_long, name: "location[manual_lat_long]",class: "form-check-input forms--checkbox me-2", data: { "location-form-target" => "manualLatLong", action: "input->location-form#onManualChange" } %>
+          <label class="regular-text" for="flexSwitchDefault">
+              Adjust coordinates manually
+          </label>
         </div>
 
         <input id="automatic_location" name="location[automatic_location]" data-location-form-target="automaticLocation" style="display:none" value="<%= @location&.automatic_location || false %>"/>
