@@ -1,8 +1,8 @@
-<%= turbo_stream.update "bulk_remove_from_network_modal" do %>
+<%= turbo_stream.update "bulk_change_release_group_modal" do %>
   <%= render partial: "application/components/modals/empty_custom_modal",
       locals: {
-        modal_title: "Remove from network(s)",
-        modal_partial_path: "network_pods/modals/bulk/remove_from_networks_modal",
+        modal_title: "Change release group",
+        modal_partial_path: "network_pods/modals/bulk/change_release_group_modal",
         custom_submit_end_handler: "turbo:submit-end->multi-row-table#deselectAll turbo:submit-end->custom-modal#closeModal",
         resource: ''
       }

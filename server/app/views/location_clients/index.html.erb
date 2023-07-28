@@ -36,21 +36,32 @@
     <!--end::OptionsCard-->
     <!--begin::Card-->
     <% if FeatureFlagHelper.is_available('networks', current_user) %>
-      <% if @clients.count == 0 && request.query_parameters.size == 0 %>
-        <%= render partial: "network_pods/components/empty_pods_card" %>
-      <% else %>
-        <%= render partial: "network_pods/components/table_filters" %>
-        <%= render partial: "application/components/tables/generic_table",
-            locals: {
-              table_id: "network_pods_table",
-              type: TablesHelper::TableTypes::NETWORK_PODS,
-              titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORK_PODS),
-              widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORK_PODS),
-              rows: @clients,
-              total: @total
-            }
-        %>
+      <%= turbo_frame_tag "network_pods_table_container" do %>
+        <% if @clients.count == 0 && request.query_parameters.size == 0 %>
+          <%= render partial: "network_pods/components/empty_pods_card" %>
+        <% else %>
+          <%= render partial: "network_pods/components/table_filters", locals: { network: @location } %>
+          <%= render partial: "application/components/tables/generic_table",
+              locals: {
+                table_id: "network_pods_table",
+                type: TablesHelper::TableTypes::NETWORK_PODS,
+                titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORK_PODS),
+                widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORK_PODS),
+                rows: @clients,
+                total: @total
+              }
+          %>
+        <% end %>
       <% end %>
+      <%= render partial: "application/components/modals/turbo_modal", 
+          locals: { turbo_frame_tag_id: "bulk_remove_from_network_modal" }
+      %>
+      <%= render partial: "application/components/modals/turbo_modal", 
+          locals: { turbo_frame_tag_id: "bulk_change_release_group_modal" }
+      %>
+      <%= render partial: "application/components/modals/turbo_modal", 
+          locals: { turbo_frame_tag_id: "bulk_move_to_network_modal" }
+      %>
     <% else %>
       <%= render partial: "location_clients_table", locals: { clients: @clients } %>
     <% end %>
@@ -74,7 +85,3 @@
 <div class="modal fade" tabindex="-1" id="add_pod_step_2_existing">
     <%= render partial: 'add_pod_step_2_existing', locals: { location: @location } %>
 </div>
-
-<%= render partial: "application/components/modals/turbo_modal", 
-  locals: { turbo_frame_tag_id: "bulk_remove_from_network_modal" }
-%>

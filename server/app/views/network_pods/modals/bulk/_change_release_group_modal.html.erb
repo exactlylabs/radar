@@ -1,0 +1,28 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: { title: "Change release group", is_custom: true }
+%>
+<%= form_with(model: Client, url: bulk_update_release_group_clients_path(), method: :post) do |form| %>
+  <div class="modals--content-container" data-type="full">
+    <input hidden type="text" name="ids" value="<%= @clients.map(&:unix_user).to_s %>"/>
+    <div class="modals--form-row mb-2">
+      <label class="forms--label mb-2">Release Group</label>
+      <select id="release_group_select"
+        class="form-select forms--select"
+        data-placeholder="Choose a Release Group"
+        tabindex="-1"
+        data-controller="select2"
+        name="update_group_id"
+        data-remove-searchbar="true"
+      >
+        <% policy_scope(UpdateGroup).each do |ug| %>
+          <option value="<%= ug.id %>" label="<%= ug.name %>"><%= ug.name %></option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <button type="submit" class="custom-button custom-button--primary custom-button--lg">Change release group</button>
+  </div>
+<% end %>

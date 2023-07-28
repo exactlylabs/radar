@@ -9,7 +9,7 @@ class ClientsController < ApplicationController
   before_action :check_request_origin, only: %i[ show ]
   before_action :set_client, only: %i[ release show edit destroy get_client_label toggle_in_service ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
-  before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_remove_from_network bulk_remove_from_network ]
+  before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_change_release_group get_bulk_remove_from_network bulk_remove_from_network get_bulk_move_to_network bulk_move_to_network]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 
   # GET /clients or /clients.json
@@ -89,8 +89,14 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.update(test_requested: true)
-        format.turbo_stream {}
-        format.html { redirect_back fallback_location: root_path, notice: "Client test requested." }
+        if FeatureFlagHelper.is_available('networks', current_user)
+          @notice = "Pod speed test requested successfully."
+          format.turbo_stream
+        else
+          @notice = "Client test requested."
+          format.turbo_stream {}
+        end
+        format.html { redirect_back fallback_location: root_path, notice: @notice }
         format.json { render :show, status: :ok, location: clients_path(@client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -367,7 +373,11 @@ class ClientsController < ApplicationController
 
   def bulk_run_tests
     if @clients.update_all(test_requested: true)
-      @notice = "Test was successfully requested for selected clients."
+      if FeatureFlagHelper.is_available('networks', current_user)
+        @notice = "Pod speed tests successfully requested."
+      else
+        @notice = "Test was successfully requested for selected clients."
+      end
     else
       @notice = "Error requesting test for selected clients."
     end
@@ -395,7 +405,7 @@ class ClientsController < ApplicationController
     if error.nil?
       @notice = "Clients were successfully deleted."
     else
-      @notice = "Error deleting clients."
+      @notice = "Oops! There has been an error deleting your clients."
     end
 
     respond_to do |format|
@@ -404,12 +414,15 @@ class ClientsController < ApplicationController
     end
   end
 
+  def get_bulk_change_release_group
+  end
+
   def bulk_update_release_group
     update_group_id = params[:update_group_id].to_i
     if @clients.update_all(update_group_id: update_group_id)
-      @notice = "Clients' Release Group was successfully updated."
+      @notice = "Clients' release group was successfully updated."
     else
-      @notice = "Error updating Clients' Release Group."
+      @notice = "Oops! There has been an error updating your clients' release group."
     end
     respond_to do |format|
       format.turbo_stream
@@ -469,9 +482,28 @@ class ClientsController < ApplicationController
   end
 
   def bulk_remove_from_network
-    @pods_to_remove_ids = @clients.map(&:unix_user)
     respond_to do |format|
       if @clients.update_all(location_id: nil)
+        format.turbo_stream
+      else
+        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error removing pod(s) from their network(s)." }
+      end
+    end
+  end
+
+  def get_bulk_move_to_network
+    @location = policy_scope(Location).find(params[:current_network_id]) if params[:current_network_id].to_i != -1
+  end
+
+  def bulk_move_to_network
+    @location = policy_scope(Location).find(params[:current_network_id]) if params[:current_network_id].to_i != -1
+    new_location = policy_scope(Location).find(params[:location_id])
+    if @location.present? && @location.id != params[:location_id].to_i
+      @clients_to_remove = @clients
+    end
+    respond_to do |format|
+      if @clients.update_all(location_id: params[:location_id])
+        @notice = "Your pods have been moved to #{new_location.name}."
         format.turbo_stream
       else
         format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error removing pod(s) from their network(s)." }
