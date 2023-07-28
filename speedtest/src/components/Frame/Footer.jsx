@@ -9,7 +9,7 @@ import radarLogoDark from '../../assets/radar-logo-dark.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const footerStyle = {
-  height: 239,
+  height: '239px`',
   backgroundColor: DEFAULT_FOOTER_BACKGROUND_COLOR,
   boxShadow: `0 0 10px 0 ${FOOTER_BOX_SHADOW}`
 };
@@ -21,7 +21,6 @@ const contentWrapperStyle = {
   flexDirection: 'column',
   justifyContent: 'space-between',
   alignItems: 'stretch',
-  // padding: '30px 0',
   margin: '0 auto',
 };
 
@@ -40,7 +39,7 @@ const leftSideContainerStyle = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
-  minWidth: 300,
+  minWidth: '300px',
 };
 
 const rightSideContainerStyle = {
@@ -53,38 +52,38 @@ const rightSideContainerStyle = {
 };
 
 const leftSideTopRowStyle = {
-  height: 30,
+  height: '30px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'center',
   margin: '35px auto 40px 0',
   width: '100%',
-  fontSize: 15,
+  fontSize: '15px',
   color: DEFAULT_FOOTER_FONT_COLOR,
 };
 
 const leftSideBottomRowStyle = {
   width: '100%',
-  fontSize: 14,
+  fontSize: '14px',
   color: DEFAULT_FOOTER_FONT_COLOR,
 };
 
 const bottomParagraphStyle = {
   width: '100%',
-  fontSize: 14,
+  fontSize: '14px',
   lineHeight: '21px',
   color: DEFAULT_FOOTER_FONT_COLOR,
-  paddingBottom: 36,
+  paddingBottom: '36px',
 };
 
 const mobileBottomParagraphStyle = {
   width: '100%',
-  fontSize: 14,
+  fontSize: '14px',
   color: DEFAULT_FOOTER_FONT_COLOR,
   lineHeight: '21px',
   textAlign: 'center',
-  paddingBottom: 40,
+  paddingBottom: '40px',
 };
 
 const mobileFooterStyle = {
@@ -98,20 +97,20 @@ const mobileFooterStyle = {
 
 const horizontalDividerStyle = {
   width: '90%',
-  height: 1,
+  height: '1px',
   backgroundColor: DEFAULT_FOOTER_HORIZONTAL_DIVIDER_BG_COLOR,
-  marginBottom: 15,
+  marginBottom: '15px',
 }
 
 const footerLinkStyle = (isSmall, isMedium) => {
   if(isSmall || isMedium) return {
-    fontSize: 15,
+    fontSize: '15px',
     textDecoration: 'none',
     margin: '0 0 15px 0',
     color: DEFAULT_FOOTER_FONT_COLOR
   };
   return {
-    fontSize: 15,
+    fontSize: '15px',
     textDecoration: 'none',
     margin: '0',
     color: DEFAULT_FOOTER_FONT_COLOR
@@ -119,8 +118,8 @@ const footerLinkStyle = (isSmall, isMedium) => {
 }
 
 const copyrightStyle = {
-  fontSize: 14,
-  marginBottom: 30,
+  fontSize: '14px',
+  marginBottom: '30px',
   lineHeight: '25px',
   color: DEFAULT_FOOTER_FONT_COLOR
 }
@@ -147,7 +146,7 @@ const FooterHorizontalDivider = () => <div style={horizontalDividerStyle}></div>
 };*/
 
 const footerLogoStyle = {
-  marginRight: 60
+  marginRight: '60px'
 }
 
 const Footer = () => {
