@@ -11,7 +11,7 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const speedFiltersBoxStyle = {
   width: 255,
-  height: 220,
+  height: 240,
   borderRadius: 16,
   backgroundColor: DEFAULT_SPEED_FILTER_BACKGROUND_COLOR,
   boxShadow: DEFAULT_SPEED_FILTER_BOX_SHADOW,

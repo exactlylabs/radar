@@ -89,7 +89,7 @@ const MyResultFilter = ({
           {selected && <Check sx={checkIconSX}/>}
         </div>
       </div>
-      <div className={selected ? 'speedtest--bold' : ''} style={{...filterTextStyle, width: filterTextWidth}}>{getRangeText()}</div>
+      {range && <div className={selected ? 'speedtest--bold' : ''} style={{...filterTextStyle, width: filterTextWidth}}>{getRangeText()}</div>}
       {!isExtraSmallSizeScreen && <div style={stateStyle}>{state}</div>}
     </div>
   )

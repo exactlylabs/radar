@@ -46,6 +46,7 @@ export const DEFAULT_SPEED_FILTER_BOX_SHADOW = 'rgba(17 14 76 / 40%)';
 export const DEFAULT_FILTERS_SUBTITLE_COLOR = '#a09fb7';
 export const DEFAULT_FILTERS_TABS_BACKGROUND_COLOR = 'rgba(17 14 76 / 85%)';
 export const DEFAULT_SELECTED_FILTER_TAB_COLOR = '#4b7be5';
+export const DEFAULT_DOWNLOAD_FILTER_NONE = '#a09fb7'
 export const DEFAULT_DOWNLOAD_FILTER_LOW = '#f8aa6b';
 export const DEFAULT_DOWNLOAD_FILTER_MID = '#ce5db8';
 export const DEFAULT_DOWNLOAD_FILTER_HIGH = '#6e48ca';
