@@ -275,6 +275,7 @@ const MyPopup = ({
                            unit={'ms'}
           />
         </div>
+        <p>{measurement.autonomous_system ? measurement.autonomous_system.autonomous_system_org ? measurement.autonomous_system.autonomous_system_org.name : '-' : '-'}</p>
       </div>
     </Popup>
   )
