@@ -255,6 +255,34 @@
   }
 }
 
+.networks--speed-filters-dropdown {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+@media (max-width: 1200px) {
+  .networks--speed-filters-dropdown {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+
+.networks--card-with-header-content-container {
+  .select2.select2-container.select2-container--bootstrap5 {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .networks--card-with-header-content-container {
+    .select2.select2-container.select2-container--bootstrap5 {
+      display: block !important;
+      visibility: visible !important;
+    }
+  }
+}
+
 .networks--map-card-map {
   width: 100%;
   height: 100%;

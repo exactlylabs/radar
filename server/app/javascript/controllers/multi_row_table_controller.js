@@ -281,19 +281,22 @@ export default class extends Controller {
     })
       .then(response => {
         if (response.ok) return response.text();
-        else throw new Error(`Oops! There has been an error moving your pods. Please try again later.`);
+        else throw new Error(response.statusText);
       })
       .then(html => {
-        emitCustomEvent('closeMultiRowMenu');
         Turbo.renderStreamMessage(html);
       })
-      .catch((err) => { handleError(err, this.identifier); });
+      .catch((err) => { 
+        handleError(err, this.identifier);
+      })
+      .finally(() => {
+        emitCustomEvent('closeMultiRowMenu');
+      });
   }
 
   bulkRemoveFromNetwork(e) {
     e.stopPropagation();
     e.preventDefault();
-    emitCustomEvent('closeMultiRowMenu');
     const url = "/clients/bulk_remove_from_network";
     this.runBulkRequest(url, "POST");
   }
