@@ -20,6 +20,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
   final ILocationsService _locationsService;
 
   Timer? _delayedSearchTimer;
+  Timer? _geolocationSearchTimer;
   Completer<List<Location>>? _completer;
 
   Future<List<Location>> delayedSearch(String query) async {
@@ -143,8 +144,35 @@ class LocationStepCubit extends Cubit<LocationStepState> {
     emit(state.copyWith(isUsingGeolocation: true, isLocationConfirmed: true));
   }
 
-  void accurateGeolocation(double lat, double long) {
+  void accurateGeolocation(double lat, double long) async {
+    if (_geolocationSearchTimer != null) {
+      _geolocationSearchTimer!.cancel();
+    }
+    _geolocationSearchTimer = Timer(
+      const Duration(milliseconds: 400),
+      () async => updateAddressOnAccurateGeolocation(lat, long),
+    );
     final accurateGeolocation = state.geolocation!.copyWith(latitude: lat, longitude: long);
+    emit(state.copyWith(geolocation: accurateGeolocation));
+  }
+
+  Future<void> updateAddressOnAccurateGeolocation(double lat, double long) async {
+    final location = await getLocationByLatLng(lat, long);
+    final accurateGeolocation = state.geolocation!.copyWith(
+      latitude: lat,
+      longitude: long,
+      altitude: location?.altitude,
+      heading: location?.heading,
+      floor: location?.floor,
+      speed: location?.speed,
+      speedAccuracy: location?.speedAccuracy,
+      address: location?.address,
+      city: location?.city,
+      state: location?.state,
+      houseNumber: location?.houseNumber,
+      street: location?.street,
+      postalCode: location?.postalCode,
+    );
     emit(state.copyWith(geolocation: accurateGeolocation));
   }
 
@@ -174,5 +202,12 @@ class LocationStepCubit extends Cubit<LocationStepState> {
         isLocationConfirmed: true,
         needsToConfirmLocation: false,
         location: location));
+  }
+
+  @override
+  Future<void> close() {
+    _delayedSearchTimer?.cancel();
+    _geolocationSearchTimer?.cancel();
+    return super.close();
   }
 }
