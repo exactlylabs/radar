@@ -82,6 +82,7 @@ export default class extends Controller {
     emitCustomEvent('closeMultiRowMenu');
     const ids = this.getIds();
     window.open(`/clients/bulk_pdf_labels.pdf?ids=${ids}`, '_blank').focus();
+    this.deselectAll();
   }
 
   bulkRunTests(e) {
@@ -143,7 +144,8 @@ export default class extends Controller {
     })
     .catch((err) => {
       handleError(err, this.identifier);
-    });
+    })
+    .finally(() => { this.deselectAll(); })
   }
 
   runCustomNetworksBulkDelete(url, thenFunction = undefined) {
@@ -268,13 +270,24 @@ export default class extends Controller {
       });
   }
 
-  handleBulkRemoveFromNetworks(e) {
+  handleBulkAction(e) {
     e.preventDefault();
     e.stopPropagation();
     const networksToRemove = this.getIds();
     const baseUrl = window.location.origin;
     const url = new URL(`${baseUrl}${e.target.getAttribute('data-url')}`);
     url.searchParams.append('ids', JSON.stringify(networksToRemove));
+    this.turboGetRequest(url);
+  }
+
+  bulkRemoveFromNetwork(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    const url = "/clients/bulk_remove_from_network";
+    this.runBulkRequest(url, "POST");
+  }
+
+  turboGetRequest(url) {
     fetch(url, {
       method: "GET",
       headers: { "X-CSRF-Token": this.token },
@@ -286,19 +299,12 @@ export default class extends Controller {
       .then(html => {
         Turbo.renderStreamMessage(html);
       })
-      .catch((err) => { 
+      .catch((err) => {
         handleError(err, this.identifier);
       })
       .finally(() => {
         emitCustomEvent('closeMultiRowMenu');
       });
-  }
-
-  bulkRemoveFromNetwork(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    const url = "/clients/bulk_remove_from_network";
-    this.runBulkRequest(url, "POST");
   }
 
   getIds(customPrefix = undefined, customExtraDelimiter = undefined) {

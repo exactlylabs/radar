@@ -1,0 +1,8 @@
+<% @clients_to_remove.each do |client| %>
+  <%= turbo_stream.remove client do %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% end %>

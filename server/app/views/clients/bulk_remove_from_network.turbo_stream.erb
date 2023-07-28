@@ -1,0 +1,4 @@
+<% @clients.each do |client| %>
+  <%= turbo_stream.remove client do %>
+  <% end %>
+<% end %>

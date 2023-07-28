@@ -1,6 +1,5 @@
-<% base_bulk_options = ['Run speed test','Move to account...', 'Remove from network', 'Delete'] %>
-<% super_user_bulk_options = ['Run speed test', 'Move to account...', 'Remove from network', 'Change release group(s)', 'Print labels', 'Delete']%>
-
+<% base_bulk_options = ['Run speed test','Move to network...', 'Remove from network', 'Delete'] %>
+<% super_user_bulk_options = ['Run speed test', 'Move to network...', 'Remove from network', 'Change release group(s)', 'Print labels', 'Delete']%>
 
 <div class="tables--filters-container">
   <%= render partial: "application/components/tables/multi_row_actions", 
@@ -9,25 +8,25 @@
         options: current_user.super_user && !is_super_user_disabled? ? super_user_bulk_options : base_bulk_options,
         actions: [
           'click->multi-row-table#bulkRunTests',
-          'click->multi-row-table#handleBulkMovePods',
-          'click->multi-row-table#handleBulkRemoveFromNetworks',
-          nil,
+          'click->multi-row-table#handleBulkAction',
+          'click->multi-row-table#handleBulkAction',
+          'click->multi-row-table#handleBulkAction',
           'click->multi-row-table#bulkPdfLabels',
           'click->multi-row-table#bulkDeletes'
         ],
         urls: [
-          move_to_account_locations_path,
-          bulk_destroy_locations_path,
-          get_bulk_remove_from_network_clients_path,
           nil,
+          bulk_move_to_network_clients_path(current_network_id: network.id),
+          get_bulk_remove_from_network_clients_path,
+          bulk_update_release_group_clients_path,
           nil,
           nil
         ],
         data_turbo_frames: [
           nil,
-          nil,
+          'bulk_move_to_network_modal',
           'bulk_remove_from_network_modal',
-          'bulk_change_release_group',
+          'bulk_change_release_group_modal',
           nil,
           nil
         ]
