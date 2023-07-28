@@ -134,7 +134,6 @@ export default class extends Controller {
         this.longitudeTarget.value = coordinates[1];
       })
       .catch((err) => {
-        console.error(err);
         handleError(err, this.identifier);
       });
   }
