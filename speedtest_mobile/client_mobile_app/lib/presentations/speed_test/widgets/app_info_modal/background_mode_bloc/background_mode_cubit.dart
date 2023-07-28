@@ -53,14 +53,10 @@ class BackgroundModeCubit extends Cubit<BackgroundModeState> {
         warnings.remove(phoneStateWarning);
         warnings.remove(notificationsWarning);
         if (!hasAccessToPhoneState) {
-          if (!warnings.contains(phoneStateWarning)) {
-            warnings.add(phoneStateWarning);
-          }
+          warnings.add(phoneStateWarning);
         }
         if (!hasAccessToNotifications) {
-          if (!warnings.contains(notificationsWarning)) {
-            warnings.add(notificationsWarning);
-          }
+          warnings.add(notificationsWarning);
         }
       } else {
         warnings.add(locationAllTimeWarning);
@@ -91,9 +87,7 @@ class BackgroundModeCubit extends Cubit<BackgroundModeState> {
       final warning = WarningViewModel.phoneStatePermissionWarning();
       warnings.remove(warning);
       if (!hasAccessToPhoneState) {
-        if (!warnings.contains(warning)) {
-          warnings.add(warning);
-        }
+        warnings.add(warning);
       }
       warnings.sort((a, b) => a.priority.compareTo(b.priority));
       emit(state.copyWith(
@@ -109,9 +103,7 @@ class BackgroundModeCubit extends Cubit<BackgroundModeState> {
       final warning = WarningViewModel.notificationPermissionWarning();
       warnings.remove(warning);
       if (!hasAccessToNotifications) {
-        if (!warnings.contains(warning)) {
-          warnings.add(warning);
-        }
+        warnings.add(warning);
       }
       warnings.sort((a, b) => a.priority.compareTo(b.priority));
       emit(state.copyWith(
