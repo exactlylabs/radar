@@ -51,9 +51,6 @@
             }
         %>
       <% end %>
-      <%= render partial: "application/components/modals/turbo_modal", 
-          locals: { turbo_frame_tag_id: "bulk_remove_from_network_modal" }
-      %>
     <% else %>
       <%= render partial: "location_clients_table", locals: { clients: @clients } %>
     <% end %>
@@ -77,3 +74,7 @@
 <div class="modal fade" tabindex="-1" id="add_pod_step_2_existing">
     <%= render partial: 'add_pod_step_2_existing', locals: { location: @location } %>
 </div>
+
+<%= render partial: "application/components/modals/turbo_modal", 
+  locals: { turbo_frame_tag_id: "bulk_remove_from_network_modal" }
+%>

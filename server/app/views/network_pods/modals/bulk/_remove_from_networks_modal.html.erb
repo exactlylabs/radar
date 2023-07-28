@@ -6,7 +6,7 @@
     data-type="full"
     data-resource="bulk-remove-from-network"
   >
-    <input hidden type="text" name="client_ids[]" value="<%= @clients.map(&:unix_user) %>"/>
+    <input hidden type="text" name="ids" value="<%= @clients.map(&:unix_user).to_s %>"/>
     <h3 class="modal-main-title wrap">Are you sure you want to remove these pods from their network?</h3>
     <p class="additional-text wrap">You can reassign your pods to networks in the future to get insights into your networks' performance.</p>
   </div>

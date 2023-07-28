@@ -469,8 +469,9 @@ class ClientsController < ApplicationController
   end
 
   def bulk_remove_from_network
+    @pods_to_remove_ids = @clients.map(&:unix_user)
     respond_to do |format|
-      if @clients.update_all(location: nil)
+      if @clients.update_all(location_id: nil)
         format.turbo_stream
       else
         format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error removing pod(s) from their network(s)." }
