@@ -4,7 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"log"
-
+	"time"
 	"github.com/exactlylabs/radar/pods_agent/agent"
 )
 
@@ -28,6 +28,7 @@ func (r *OoklaMockRunner) Run(ctx context.Context) (*agent.Measurement, error) {
 	if r.Err != nil {
 		return nil, r.Err
 	}
+	time.Sleep(10 * time.Second)
 
 	return &agent.Measurement{
 		Raw:          mockResult,
