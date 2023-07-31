@@ -5,6 +5,7 @@ module TablesHelper
     NETWORK_MEASUREMENTS = "NetworkMeasurements"
     NETWORK_PODS = "NetworkPods"
     ALL_ACCOUNTS_MEMBERS = "AllAccountsMembers"
+    PODS = "Pods"
   end
 
   module OptionsMenuType
@@ -13,6 +14,7 @@ module TablesHelper
     ALL_ACCOUNTS_MEMBER = "AllAccountsMember"
     NETWORK = "Network"
     NETWORKS_INDEX = "NetworksIndex"
+    PODS = "Pods"
   end
 
   def self.get_footer_label(type)
@@ -25,11 +27,12 @@ module TablesHelper
     when TableTypes::NETWORK_MEASUREMENTS
       'Measurements'
     when TableTypes::NETWORK_PODS
+    when TableTypes::PODS
       'Pods'
     end
   end
 
-  def self.widths(table_type, is_all_accounts = false)
+  def self.widths(table_type, is_all_accounts = false, is_super_user = false)
     case table_type
     when TableTypes::MEMBERS
       [
@@ -67,6 +70,15 @@ module TablesHelper
         '40%',
         '17%',
         '17%',
+        '17%',
+        '5%'
+      ]
+    when TableTypes::PODS
+      [
+        '4%',
+        get_pod_id_width(is_all_accounts, is_super_user),
+        is_all_accounts ? '17%' : '0%',
+        is_super_user ? '17%' : '0%',
         '17%',
         '5%'
       ]
@@ -131,7 +143,29 @@ module TablesHelper
         { text: 'Last measurement' },
         { text: 'Actions', hidden: true}
       ]
+    when TableTypes::PODS
+      rows = [
+        *rows,
+        { text: 'Checkbox', hidden: true },
+        { text: 'Pod ID' },
+        { text: 'Account', hidden: !is_all_accounts },
+        { text: 'Release', hidden: !is_super_user },
+        { text: 'Last measurement' },
+        { text: 'Actions', hidden: true}
+      ]
     end
     rows
+  end
+
+  private
+  def self.get_pod_id_width(is_all_accounts, is_super_user)
+    width = '74%'
+    if (is_all_accounts && !is_super_user) ||
+      (!is_all_accounts && is_super_user)
+      width = '57%'
+    elsif (is_all_accounts && is_super_user)
+      width = '40%'
+    end
+    width
   end
 end

@@ -1,7 +1,24 @@
 <%= turbo_frame_tag "clients_index_content" do %>
-  <% if @clients.blank? %>
-    <%= render partial: "empty_pods_view" %>
+  <% if @clients.blank? && empty_search_params? %>
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <%= render partial: "pods/components/empty_pods_card"%>
+    <% else %>
+      <%= render partial: "empty_pods_view" %>
+    <% end %>
   <% else %>
-    <%= render partial: "clients_table", locals: {clients: @clients} %>
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <%= render partial: "application/components/tables/generic_table",
+          locals: {
+            table_id: "pods_table",
+            type: TablesHelper::TableTypes::PODS,
+            titles: TablesHelper.titles(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+            widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+            rows: @clients,
+            total: @total
+          }
+      %>
+    <% else %>
+      <%= render partial: "clients_table", locals: {clients: @clients} %>
+    <% end %>
   <% end %>
 <% end %>

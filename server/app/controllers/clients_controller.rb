@@ -31,6 +31,7 @@ class ClientsController < ApplicationController
     end
 
     if FeatureFlagHelper.is_available('networks', current_user)
+      @clients = @clients.where(update_group_id: params[:update_group_id]) if params[:update_group_id].present? && params[:update_group_id].to_i != -1
       @total = @clients.count
     end
   end

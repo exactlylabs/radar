@@ -1,0 +1,29 @@
+@import './shared/colors.scss';
+@import './shared/text.scss';
+
+.pods--empty-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 600px;
+}
+
+.pods--empty-card-icon-container {
+  width: 60px;
+  min-width: 60px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $circular-icon-container-gray;
+  border-radius: 50%;
+}
+
+.pods--empty-card-title {
+  font-size: 1.25rem;
+  color: $deep-blue;
+  margin-top: 1rem;
+  margin-bottom: .75rem;
+  font-variation-settings: 'wght'$bold;
+}

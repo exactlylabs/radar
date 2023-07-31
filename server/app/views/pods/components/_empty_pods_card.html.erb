@@ -1,0 +1,14 @@
+<div class="cards--default pods--empty-card"
+  id="empty-networks-card"
+>
+  <div class="pods--empty-card-icon-container">
+    <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32 %>
+  </div>
+  <h3 class="pods--empty-card-title wrap"><%= current_account.name %> doesn't have any pods yet.</h3>
+  <span class="additional-text wrap">Pods stay connected to your Internet network and perform various tests throughout the day or at your request.</span>
+  <a type="button"
+    class="custom-button custom-button--primary custom-button--lg mt-8 mb-6"
+    href="<%= new_location_path %>"
+    data-turbo-frame="new_location_modal"
+  >Add a pod</a>
+</div>
