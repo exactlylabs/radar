@@ -13,7 +13,7 @@
               row: row,
               type: type,
               widths: widths,
-              index: type == TablesHelper::TableTypes::NETWORK_PODS ? row.unix_user : "#{row.id}-#{row.account.id}",
+              index: type == TablesHelper::TableTypes::NETWORK_PODS || type == TablesHelper::TableTypes::PODS ? row.unix_user : "#{row.id}-#{row.account.id}",
               even: index.even?
             }
         %>

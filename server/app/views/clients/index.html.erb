@@ -9,8 +9,10 @@
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
-        <li class="breadcrumb-item page-sub-title"><%= current_account.name %>
-        </li>
+        <li class="breadcrumb-item page-sub-title"><%= current_account.name %></li>
+        <% if FeatureFlagHelper.is_available('networks', current_user) %>
+          <li class="breadcrumb-item page-sub-title">Networks</li>
+        <% end %>
       </ul>
       <!--end::Breadcrumb-->
     </div>
@@ -28,11 +30,26 @@
 </div>
 <!--end::Toolbar-->
 
+<% if FeatureFlagHelper.is_available('networks', current_user) && are_there_unassigned_pods? %>
+  <div class="networks--unassigned-pods-banner">
+    <%= image_tag image_url('warning-icon'), width: 20, height: 20 %>
+    <div class="networks--unassigned-pods-banner-text-container">
+      <% pod_count = policy_scope(Client).where(location: nil).count %>
+      <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>
+      <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
+    </div>
+  </div>
+<% end %>
+
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post">
   <!--begin::Container-->
   <div id="clients-table-wrapper" class="d-flex flex-column w-100" data-controller="multi-row-table bulk-release-group-modal">
-    <% if (empty_search_params? && @clients.length > 0) || (!empty_search_params?)%>
-      <%= render partial: "clients_table_filters" %>
+    <% if (empty_search_params? && @clients.length > 0) || (!empty_search_params?) %>
+      <% if FeatureFlagHelper.is_available('networks', current_user) %>
+        <%= render partial: "pods/components/table_filters" %>
+      <% else %>
+        <%= render partial: "clients_table_filters" %>
+      <% end %>
     <% end %>
     <%= render partial: "clients_index_content", locals: { clients: @clients } %>
     <% if current_user.super_user && !is_super_user_disabled? %>

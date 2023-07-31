@@ -36,7 +36,12 @@ module ApplicationHelper
   end
 
   def active_path?(path)
-    "active" if request.path.starts_with?(path)
+    if path == locations_path && FeatureFlagHelper.is_available('networks', current_user)
+      "active" if request.path.starts_with?(path) || request.path.starts_with?(clients_path)
+    else
+      "active" if request.path.starts_with?(path)
+    end
+    
   end
 
   def active_sidebar_item?(path)

@@ -12,12 +12,12 @@
   justify-content: flex-start;
   border-radius: $border-radius;
   background-color: $white;
-  padding: 2rem 1.5rem;
+  padding: 2rem 0;
 }
 
 @media (max-width: $md-max-width) {
   .tables--table-container {
-    padding: .5rem 1rem;
+    padding: .5rem 0;
   }
 }
 
@@ -28,6 +28,7 @@
   align-items: center;
   justify-content: flex-start;
   border-bottom: solid 1px $sidebar--horizontal-divider-background-color;
+  padding-inline: 1.5rem;
 
   .tables--title {
     padding-bottom: 1rem;
@@ -57,6 +58,7 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 1.5rem;
+  padding-inline: 1.5rem;
 
   .tables--footer-page-select {
     margin-left: .5rem;
@@ -85,6 +87,7 @@
     flex-direction: column-reverse;
     align-items: center;
     justify-content: center;
+    padding-inline: 1rem;
   }
 }
 
@@ -129,8 +132,21 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    padding: 1rem 0;
+    padding: 1rem 1.5rem;
     border-bottom: solid 1px $sidebar--horizontal-divider-background-color;
+
+    &[data-is-unassigned-pod="true"] {
+      box-shadow: inset 4px 0 0 0 $snackbar--warning-color;
+      background-color: $table--unassigned-pod-background-color;
+    }
+  }
+}
+
+@media (max-width: $lg-max-width) {
+  .tables--rows-container {
+    .tables--row-container {
+      padding: 1rem;
+    }
   }
 }
 
