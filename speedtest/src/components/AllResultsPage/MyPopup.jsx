@@ -6,11 +6,13 @@ import {
   DEFAULT_MAP_POPUP_ADDRESS_SUBTITLE_COLOR,
   DEFAULT_MAP_POPUP_ADDRESS_TITLE_COLOR,
   DEFAULT_MAP_POPUP_HEADER_BACKGROUND_COLOR,
+  DEFAULT_MAP_POPUP_FOOTER_BACKGROUND_COLOR
 } from "../../utils/colors";
 import DownloadIcon from '../../assets/small-download-icon.png';
 import UploadIcon from '../../assets/small-upload-icon.png';
 import LossIcon from '../../assets/loss-icon.png';
 import LatencyIcon from '../../assets/latency-icon.png';
+import ProviderIcon from '../../assets/provider-icon.png';
 import MyPopupGridItem from "./MyPopupGridItem";
 import {placementOptions} from "../../utils/placements";
 import {types} from "../../utils/networkTypes";
@@ -21,6 +23,14 @@ const popupOptions = {
   maxWidth: 285,
   maxHeight: 220,
   offset: new Point(160, 215),
+}
+
+const popupOptionsWithFooter = {
+  keepInView: false,
+  closeButton: false,
+  maxWidth: 285,
+  maxHeight: 300,
+  offset: new Point(160, 255),
 }
 
 const emptyPopupOptions = {
@@ -70,6 +80,22 @@ const popupHeaderStyle = {
   paddingLeft: 15,
   paddingRight: 15,
   borderBottom: 'solid 1px #e2e2e8',
+}
+
+const popupFooterStyle = {
+  width: 'calc(100% - 30px)',
+  height: 20,
+  backgroundColor: DEFAULT_MAP_POPUP_FOOTER_BACKGROUND_COLOR,
+  borderBottomLeftRadius: '12px',
+  borderBottomRightRadius: '12px',
+  display: 'flex',
+  flexDirection: 'row',
+  paddingTop: 10,
+  paddingBottom: 10,
+  paddingLeft: 15,
+  paddingRight: 15,
+  borderTop: 'solid 1px #e2e2e8',
+  alignItems: 'center',
 }
 
 const emptyPopupHeaderStyle = {
@@ -162,6 +188,14 @@ const leftPointingArrowStyle = {
   borderLeft: DEFAULT_MAP_LEFT_ARROW_BORDER_COLOR
 }
 
+const providerNameStyle = {
+  fontSize: 14,
+  color: DEFAULT_MAP_POPUP_ADDRESS_SUBTITLE_COLOR,
+  marginLeft: 5,
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+}
+
 const MyPopup = ({
                    measurement
                  }) => {
@@ -220,6 +254,7 @@ const MyPopup = ({
     if((!measurement.street && (measurement.city || measurement.state)) ||
       (measurement.street && (!measurement.city && !measurement.state)))
       return halfPopupOptions;
+    if(measurement.autonomous_system && measurement.autonomous_system.autonomous_system_org)  return popupOptionsWithFooter;
     return popupOptions
   }
 
@@ -275,8 +310,13 @@ const MyPopup = ({
                            unit={'ms'}
           />
         </div>
-        <p>{measurement.autonomous_system ? measurement.autonomous_system.autonomous_system_org ? measurement.autonomous_system.autonomous_system_org.name : '-' : '-'}</p>
       </div>
+      {(measurement.autonomous_system && measurement.autonomous_system.autonomous_system_org) && 
+        <div style={popupFooterStyle}>
+          <img src={ProviderIcon} height={20} width={20} alt={'provider-icon'}/>
+          <div className={'speedtest--bold'} style={providerNameStyle}>{measurement.autonomous_system.autonomous_system_org.name}</div>
+        </div>
+      }
     </Popup>
   )
 }
