@@ -132,6 +132,9 @@ func (ds *gcpDataStore) Flush() error {
 }
 
 func (ds *gcpDataStore) Clear() error {
+	if !ds.existsLocally() {
+		return nil
+	}
 	if err := os.Remove(ds.localPath()); err != nil {
 		return fmt.Errorf("gcpdatastore.gcpDataStore#Clear Remove: %w", err)
 	}
