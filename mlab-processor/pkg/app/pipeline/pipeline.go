@@ -10,9 +10,7 @@ import (
 
 func RunPipeline(dsProvider DataStoreProvider, dateRange []time.Time, pipeline []string, rerun bool) {
 	maxLocalFiles := 2 // amount of latest files to keep locally if upload is enabled
-	defer func() {
-		ClearDataStores(dsProvider, dateRange)
-	}()
+	defer ClearDataStores(dsProvider, dateRange)
 	files := make(map[string][]datastore.DataStore)
 	ctx := NewContext(context.Background())
 	for _, date := range dateRange {
