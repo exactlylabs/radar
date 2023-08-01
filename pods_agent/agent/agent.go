@@ -160,7 +160,7 @@ func pingFrequency(c *config.Config) time.Duration {
 
 func updateAgent(bu BinaryUpdate, cancel context.CancelFunc) {
 	log.Printf("An Update for version %v is Available\n", bu.Version)
-	err := update.SelfUpdate(bu.BinaryUrl)
+	err := update.SelfUpdate(bu.BinaryUrl, bu.Version)
 	if update.IsValidationError(err) {
 		log.Printf("Existent update is invalid: %v\n", err)
 		tracing.NotifyErrorOnce(err, tracing.Context{
@@ -182,7 +182,7 @@ func updateAgent(bu BinaryUpdate, cancel context.CancelFunc) {
 func updateWatchdogIfNeeded(bu BinaryUpdate, rebooter Rebooter, cancel context.CancelFunc) {
 	if !sysinfo.WatchdogIsRunning() {
 		log.Printf("An Update for Watchdog Version %v is available\n", bu.Version)
-		err := watchdog.UpdateWatchdog(bu.BinaryUrl)
+		err := watchdog.UpdateWatchdog(bu.BinaryUrl, bu.Version)
 		if update.IsValidationError(err) {
 			log.Printf("Existent update is invalid: %v\n", err)
 			tracing.NotifyErrorOnce(err, tracing.Context{

@@ -10,8 +10,8 @@ import (
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
-func UpdateWatchdog(binaryUrl string) error {
-	err := update.InstallFromUrl(sysinfo.WatchdogPath, binaryUrl)
+func UpdateWatchdog(binaryUrl string, expectedVersion string) error {
+	err := update.InstallFromUrl(sysinfo.WatchdogPath, binaryUrl, expectedVersion)
 	if err != nil {
 		return err
 	}

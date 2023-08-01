@@ -52,7 +52,7 @@ func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentC
 
 func handleUpdate(c *config.Config, sysManager SystemManager, data BinaryUpdate) {
 	log.Printf("An Update for Watchdog Version %v is available\n", data.Version)
-	err := UpdateWatchdog(data.BinaryUrl)
+	err := UpdateWatchdog(data.BinaryUrl, data.Version)
 	if update.IsValidationError(err) {
 		log.Printf("Existent update is invalid: %v\n", err)
 		tracing.NotifyErrorOnce(err, tracing.Context{

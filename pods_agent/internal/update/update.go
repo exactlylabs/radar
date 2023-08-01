@@ -11,7 +11,7 @@ import (
 	"runtime"
 )
 
-func SelfUpdate(binaryUrl string) error {
+func SelfUpdate(binaryUrl string, expectedVersion string) error {
 	binPath, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("update.SelfUpdate error obtaining binary path: %w", err)
@@ -23,10 +23,10 @@ func SelfUpdate(binaryUrl string) error {
 		}
 	}
 
-	return InstallFromUrl(binPath, binaryUrl)
+	return InstallFromUrl(binPath, binaryUrl, expectedVersion)
 }
 
-func InstallFromUrl(binPath, url string) error {
+func InstallFromUrl(binPath, url, expectedVersion string) error {
 	res, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("update.InstallFromUrl Get: %w", err)
@@ -39,18 +39,30 @@ func InstallFromUrl(binPath, url string) error {
 	if err != nil {
 		return err
 	}
-	if err := Install(binPath, binary); err != nil {
+	if err := Install(binPath, binary, expectedVersion); err != nil {
 		return fmt.Errorf("update.InstallFromUrl Install: %w", err)
 	}
 	return nil
 }
 
 // Install adds or replaces the binary into the OS
-func Install(binPath string, binary []byte) error {
-	if _, err := os.Stat(binPath); errors.Is(err, os.ErrNotExist) {
-		return addBinary(binPath, binary)
+func Install(binPath string, binary []byte, expectedVersion string) (err error) {
+	tmpBinPath := fmt.Sprintf("%s_tmp", binPath)
+	if _, err = os.Stat(tmpBinPath); errors.Is(err, os.ErrNotExist) {
+		err = addBinary(tmpBinPath, binary)
+	} else {
+		err = replaceBinary(tmpBinPath, binary)
 	}
-	return replaceBinary(binPath, binary)
+	if err != nil {
+		return fmt.Errorf("update.Install temp binary: %w", err)
+	}
+	if err := validateBinaryVersion(tmpBinPath, expectedVersion); err != nil {
+		return fmt.Errorf("update.Install validateBinaryVersion: %w", err)
+	}
+	if err := os.Rename(tmpBinPath, binPath); err != nil {
+		return fmt.Errorf("update.Install Rename: %w", err)
+	}
+	return nil
 }
 
 func addBinary(binPath string, binary []byte) error {
@@ -69,6 +81,14 @@ func addBinary(binPath string, binary []byte) error {
 func replaceBinary(binPath string, binary []byte) error {
 	tmpFile := fmt.Sprintf("%s_tmp", binPath)
 	oldFile := fmt.Sprintf("%s_old", binPath)
+	movedToOld := false
+	defer func() {
+		if r := recover(); r != nil {
+			if movedToOld {
+				os.Rename(oldFile, binPath)
+			}
+		}
+	}()
 	f, err := os.OpenFile(tmpFile, os.O_CREATE|os.O_RDWR, 0776)
 	if err != nil {
 		return fmt.Errorf("update.replaceBinary OpenFile: %w", err)
@@ -83,6 +103,7 @@ func replaceBinary(binPath string, binary []byte) error {
 	if err = os.Rename(binPath, oldFile); err != nil {
 		return fmt.Errorf("update.replaceBinary Rename: %w", err)
 	}
+	movedToOld = true
 	// // Replace existing binary with new one
 	if err = os.Rename(tmpFile, binPath); err != nil {
 		os.Rename(oldFile, binPath)
