@@ -87,6 +87,7 @@ func replaceBinary(binPath string, binary []byte) error {
 			if movedToOld {
 				os.Rename(oldFile, binPath)
 			}
+			panic(r)
 		}
 	}()
 	f, err := os.OpenFile(tmpFile, os.O_CREATE|os.O_RDWR, 0776)
