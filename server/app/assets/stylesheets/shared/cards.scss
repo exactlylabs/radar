@@ -23,3 +23,63 @@
     padding: 2rem 1.5rem;
   }
 }
+
+.cards--card-with-header {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  border-radius: 6px;
+  border: solid 1px $sidebar--main-container-border;
+  box-shadow: 0 2px 8px -2px $cards--default-box-shadow;
+  min-width: 275px;
+}
+
+@media (max-width: 768px) {
+  .cards--card-with-header {
+    min-width: 100%;
+  }
+}
+
+.cards--card-header {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-bottom: solid 1px $sidebar--accounts-item-outline;
+  text-align: left;
+
+  span {
+    font-size: 1rem;
+    color: $deep-blue;
+    font-variation-settings: 'wght'$bold;
+  }
+}
+
+.cards--card-with-header-content-container {
+  width: 100%;
+  height: calc(100% - 59px);
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+.cards--info-row {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  .forms--label,
+  .cards--info-row-value {
+    width: 50%;
+  }
+}
+
+@media (max-width: 1200px) {
+  .cards--info-row {
+    flex-direction: column;
+    gap: .25rem;
+
+    .forms--label,
+    .cards--info-row-value {
+      width: 100%;
+    }
+  }
+}

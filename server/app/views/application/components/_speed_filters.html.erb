@@ -1,0 +1,35 @@
+<div class="application--speed-filters-container" data-controller="speed-filters">
+  <a href="<%= speed_average_path.call(id: resource_id) %>"
+    class="application--speed-filter selected"
+    data-turbo-frame="speed-cells"
+    data-action="click->speed-filters#switchFilter"
+    data-filter="all_time"
+  >
+    All time
+  </a>
+  <a href="<%= speed_average_path.call(id: resource_id, type: 'year') %>" 
+    class="application--speed-filter"
+    data-turbo-frame="speed-cells"
+    data-action="click->speed-filters#switchFilter"
+    data-filter="this_year"
+  >
+    This year
+  </a>
+  <a href="<%= speed_average_path.call(id: resource_id, type: 'month') %>"
+    class="application--speed-filter"
+    data-turbo-frame="speed-cells"
+    data-action="click->speed-filters#switchFilter"
+    data-filter="this_month"
+  >
+    This month
+  </a>
+  <a href="<%= speed_average_path.call(id: resource_id, type: 'today') %>"
+    class="application--speed-filter"
+    data-turbo-frame="speed-cells"
+    data-action="click->speed-filters#switchFilter"
+    data-filter="today"
+  >
+    Today
+  </a>
+  <%= render partial: "application/components/speed_filters_dropdown" %>
+</div>

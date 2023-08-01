@@ -13,7 +13,7 @@
   <div class="modals--form-row mb-6 forms--input-group">
     <% if !current_account&.is_all_accounts? %>
       <label class="forms--label optional">Categories</label>
-      <input name="location[categories]" autocomplete="off" type="hidden" value="<%= @location.categories.map{|c| c.id}.join(",") %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
+      <input name="categories" autocomplete="off" type="hidden" value="<%= @location.categories.map{|c| c.id}.join(",") %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
       <div class="category--location-select-container"
           data-categories-target="selectClickableContainer"
           data-action="click->categories#toggleFocus"

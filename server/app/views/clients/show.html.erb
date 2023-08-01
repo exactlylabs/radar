@@ -37,7 +37,11 @@
     %>
     <!--end::OptionsCard-->
     <!--begin::Card-->
-    <%= render partial: "client_details", locals: { client: @client, total_bytes: @total_avg } %>
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <%= render partial: "pods/pod_details", locals: { pod: @client } %>
+    <% else %>
+      <%= render partial: "client_details", locals: { client: @client, total_bytes: @total_avg } %>
+    <% end %>
     <!--end::Card-->
   </div>
   <!--end::Container-->

@@ -23,6 +23,17 @@ module Recents extend ActiveSupport::Concern
     end
   end
 
+  def remove_recent_search(resource_id, resource_type)
+    if resource_type == RecentTypes::CLIENT
+      possible_searches = RecentSearch.where(client_id: resource_id)
+    else
+      possible_searches = RecentSearch.where(location_id: resource_id)
+    end
+    if possible_searches.present?
+      possible_searches.destroy_all
+    end
+  end
+
   private
 
   def get_resource_anonimously(resource_id, resource_type)
@@ -42,7 +53,7 @@ module Recents extend ActiveSupport::Concern
   end
 
   def save_recent_search(resource_id, resource_type)
-    current_recents = policy_scope(RecentSearch)
+    current_recents = RecentSearch.where(user_id: current_user.id)
     if resource_type == RecentTypes::CLIENT
       return if current_recents.find_by_client_id(resource_id).present?
     else

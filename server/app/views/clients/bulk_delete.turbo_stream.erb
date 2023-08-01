@@ -1,8 +1,16 @@
-<% @clients.each do |c| %>
-  <%= turbo_stream.remove c do %>
+<% if !current_user.super_user || is_super_user_disabled? %>
+  <% @clients.each do |c| %>
+    <%= turbo_stream.remove c do %>
+    <% end %>
   <% end %>
 <% end %>
 
-<%= turbo_stream.update 'notice-container' do %>
-  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <%= turbo_stream.append 'realtime-notice' do %>
+    <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.update 'notice-container' do %>
+    <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+  <% end %>
 <% end %>

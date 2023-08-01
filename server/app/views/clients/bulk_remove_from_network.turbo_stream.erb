@@ -1,4 +1,22 @@
-<% @clients.each do |client| %>
-  <%= turbo_stream.remove client do %>
+<% origin = request.path.start_with?(clients_path) ? 'pods' : 'network' %>
+
+<% if origin == 'network' %>
+  <% @clients.each do |client| %>
+    <%= turbo_stream.remove client do %>
+    <% end %>
+  <% end %>
+<% else %>
+  <% @clients.each do |client| %>
+    <%= turbo_stream.replace client do %>
+      <%= render partial: "application/components/tables/table_row",
+          locals: {
+            row: client,
+            type: TablesHelper::TableTypes::PODS,
+            widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+            index: client.unix_user,
+            even: false
+          }
+      %>
+    <% end %>
   <% end %>
 <% end %>

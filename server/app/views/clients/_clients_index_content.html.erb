@@ -22,3 +22,15 @@
     <% end %>
   <% end %>
 <% end %>
+
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <%= render partial: "application/components/modals/turbo_modal", 
+    locals: { turbo_frame_tag_id: "bulk_remove_from_network_modal" }
+  %>
+  <%= render partial: "application/components/modals/turbo_modal", 
+    locals: { turbo_frame_tag_id: "bulk_change_release_group_modal" }
+  %>
+  <%= render partial: "application/components/modals/turbo_modal", 
+    locals: { turbo_frame_tag_id: "bulk_move_to_network_modal" }
+  %>
+<% end %>

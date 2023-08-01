@@ -64,6 +64,7 @@ class Client < ApplicationRecord
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where('location_id IS NULL') }
+  scope :where_assigned, -> { where('location_id IS NOT NULL') }
   scope :where_in_service, -> { where(in_service: true)}
   scope :where_not_in_service, -> { where(in_service: false)}
   scope :where_no_account, -> { where("account_id IS NULL") }
@@ -625,7 +626,7 @@ class Client < ApplicationRecord
   end
 
   def get_status_timestamp
-    evt = client_event_logs.where("name = 'WENT_ONLINE' OR name = 'WENT_OFFLINE'").order('id DESC').limit(1).pluck(:timestamp)
+    evt = self.client_event_logs.where("name = 'WENT_ONLINE' OR name = 'WENT_OFFLINE'").order('id DESC').limit(1).pluck(:timestamp)
     return unless evt.length > 0
     return '-' if evt[0].nil?
 
@@ -671,6 +672,13 @@ class Client < ApplicationRecord
     sign = diff > 0 ? "+" : "" # Don't need the - for negative values as it will come in the actual calculation
     rounded_percentage = ((diff / expected_value) * 100).round(2)
     "#{sign}#{rounded_percentage}%"
+  end
+
+  def get_current_usage(current_user)
+    unit = current_user&.data_cap_unit || 'MB'
+    multiplier = 1024 ** (unit == 'MB' ? 2 : 3)
+    amount = (self.data_cap_current_period_usage / multiplier).round(0)
+    "#{amount} #{unit}"
   end
 
   private

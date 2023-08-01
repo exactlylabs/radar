@@ -1,0 +1,42 @@
+<div class="cards--card-with-header">
+  <div class="cards--card-header">
+    <span>Test & usage</span>
+  </div>
+  <div class="cards--card-with-header-content-container">
+    <div class="cards--info-row mb-4">
+      <label class="forms--label">Last measurement</label>
+      <% if pod.latest_measurement.present? %>
+        <%= render partial: "pods/components/measurement_averages_cell_info", locals: { pod: pod } %>
+      <% else %>
+        <span class="cards--info-row-value additional-text">-</span>
+      <% end %>
+    </div>
+    <div class="cards--info-row mb-4">
+      <label class="forms--label">Total tests</label>
+      <span class="regular-text"><%= pod.measurements.count %> <%= pod.measurements.count == 1 ? "test" : "tests" %></span>
+    </div>
+    <div class="cards--info-row mb-4">
+      <label class="forms--label">Data cap</label>
+      <% if pod.data_cap_max_usage.nil? %>
+        <span class="additional-text cards--info-row-value">Disabled</span>
+      <% else %>
+        <div class="cards--info-row-value d-flex flex-column align-items-start justify-content-start">
+          <div class="w-100px h-5px d-flex justify-content-start align-items-center mb-2" style="border-radius: 6.5px; background-color: #e7f6ff">
+            <div class="h-5px" style="width: <%= "#{pod.get_data_cap_percentage_usage}%" %>; background-color: #00a3ff; border-radius: 5px"></div>
+          </div>
+          <span class="regular-text my-0"><%= "#{pod.get_current_usage(current_user)} (#{pod.get_data_cap_percentage_usage}% used)" %></span>
+        </div>
+      <% end %>
+    </div>
+    <div class="cards--info-row mb-4">
+      <label class="forms--label">Current month usage</label>
+      <span class="regular-text cards--info-row-value"><%= pod.get_current_usage(current_user) %></span>
+    </div>
+    <div class="cards--info-row mb-4">
+      <label class="forms--label">Custom scheduling</label>
+      <span class="cards--info-row-value wrap <%= !pod.custom_scheduling ? 'additional-text' : 'regular-text' %>">
+        <%= !pod.custom_scheduling ? "Disabled" : pod.get_scheduling_periodicity_string %>
+      </span>
+    </div>
+  </div>
+</div>

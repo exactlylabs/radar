@@ -1,18 +1,14 @@
 <%= turbo_frame_tag "speed-cells", class: "application--speed-cells-container" do %>
-  <%= render partial: "networks/components/speed_cell", 
+  <%= render partial: "pods/components/speed_cell", 
       locals: {
         type: 'download',
         avg: download_avg,
-        expected: download_expected,
-        diff: download_diff
       }
   %>
-  <%= render partial: "networks/components/speed_cell", 
+  <%= render partial: "pods/components/speed_cell", 
       locals: {
         type: 'upload',
         avg: upload_avg,
-        expected: upload_expected,
-        diff: upload_diff
       }
   %>
 <% end %>

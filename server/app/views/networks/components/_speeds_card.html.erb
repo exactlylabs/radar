@@ -1,9 +1,14 @@
-<div class="networks--card-with-header">
-  <div class="networks--card-header">
+<div class="cards--card-with-header">
+  <div class="cards--card-header">
     <span>Average speeds</span>
   </div>
-  <div class="networks--card-with-header-content-container">
-    <%= render partial: "networks/components/speed_filters", locals: { network: network } %>
+  <div class="cards--card-with-header-content-container">
+    <%= render partial: "application/components/speed_filters",
+        locals: {
+          resource_id: network.id,
+          speed_average_path: method(:speed_average_location_path)
+        }
+    %>
     <%= render partial: "networks/components/speed_cells", 
         locals: {
           download_avg: network.download_avg.present? ? "#{network.download_avg.round(2)} Mbps" : 'N/A',

@@ -3,6 +3,7 @@ require "csv"
 
 class Location < ApplicationRecord
 include EventSourceable
+include Recents
 
   LOCATIONS_PER_COUNTY_GOAL = 25
   LOCATIONS_PER_PLACE_GOAL = 3
@@ -201,7 +202,7 @@ include EventSourceable
       self.save!
       self.clients.update(location_id: nil)
       CategoriesLocation.where(location_id: self.id).destroy_all
-      RecentSearch.where(location_id: self.id).destroy_all
+      remove_recent_search(self.id, Recents::RecentTypes::LOCATION)
     end
   end
 
