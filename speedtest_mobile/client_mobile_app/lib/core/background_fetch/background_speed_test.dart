@@ -6,7 +6,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:network_connection_info/models/connection_info.dart' as CI;
-import 'package:client_mobile_app/core/utils/id_generator.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
@@ -49,7 +48,7 @@ class BackgroundSpeedTest {
       onError: (data) => _onTestError(jsonEncode(data)),
     );
     _positionAfterSpeedTest = await _getCurrentLocation();
-    _sessionId = await _getSessionId();
+    _sessionId = _localStorage.getSessionId();
     _sendSpeedTestResults();
   }
 
@@ -150,16 +149,5 @@ class BackgroundSpeedTest {
       'connection_data': _connectionInfo?.toJson(),
       'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
-  }
-
-  Future<String> _getSessionId() async {
-    final sessionId = _localStorage.getSessionId();
-    if (sessionId != null) {
-      return sessionId;
-    }
-
-    final id = generateId();
-    await _localStorage.setSessionId(id);
-    return id;
   }
 }

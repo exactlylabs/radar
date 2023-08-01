@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:client_mobile_app/core/utils/id_generator.dart';
 
 class LocalStorage {
   late Box<bool> _preferencesBox;
@@ -43,7 +44,17 @@ class LocalStorage {
 
   bool getEverAskedForLocationAllTime() =>
       _preferencesBox.get(_preferencesEverAskedForLocationAllTime, defaultValue: false)!;
-  String? getSessionId() => _deviceInfoBox.get(_deviceInfoSessionId);
+
+  String getSessionId() {
+    final sessionId = _deviceInfoBox.get(_deviceInfoSessionId);
+    if (sessionId != null) {
+      return sessionId;
+    }
+
+    final id = generateId();
+    _deviceInfoBox.put(_deviceInfoSessionId, id);
+    return id;
+  }
 
   int getBackgroundModeFrequency() =>
       _backgroundModeSettingsBox.get(_backgroundModeSettingsFrequency, defaultValue: -1)!;
@@ -67,10 +78,6 @@ class LocalStorage {
   Future<void> setEverAskedForLocationAllTime() async {
     const everAskedForLocationAllTime = true;
     await _preferencesBox.put(_preferencesEverAskedForLocationAllTime, everAskedForLocationAllTime);
-  }
-
-  Future<void> setSessionId(String id) async {
-    await _deviceInfoBox.put(_deviceInfoSessionId, id);
   }
 
   Future<void> addSpeedTestResult(Map<String, dynamic> speedTestResult) async {
