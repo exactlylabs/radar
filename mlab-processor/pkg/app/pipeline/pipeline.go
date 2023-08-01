@@ -10,6 +10,9 @@ import (
 
 func RunPipeline(dsProvider DataStoreProvider, dateRange []time.Time, pipeline []string, rerun bool) {
 	maxLocalFiles := 2 // amount of latest files to keep locally if upload is enabled
+	defer func() {
+		ClearDataStores(dsProvider, dateRange)
+	}()
 	files := make(map[string][]datastore.DataStore)
 	ctx := NewContext(context.Background())
 	for _, date := range dateRange {
@@ -42,6 +45,20 @@ func RunPipeline(dsProvider DataStoreProvider, dateRange []time.Time, pipeline [
 				files[stepName] = files[stepName][1:]
 			}
 			files[stepName] = append(files[stepName], ds)
+		}
+	}
+}
+
+// ClearDataStores removes all datastores for the given date range
+func ClearDataStores(dsProvider DataStoreProvider, dateRange []time.Time) {
+	for _, date := range dateRange {
+		for stepName := range availableProcessors {
+			ds, err := dsProvider(stepName, date, nil)
+			if err != nil {
+				panic(err)
+			}
+			log.Printf("Clearing %v\n", ds)
+			ds.Clear()
 		}
 	}
 }
