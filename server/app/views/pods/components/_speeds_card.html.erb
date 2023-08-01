@@ -1,0 +1,20 @@
+<div class="cards--card-with-header">
+  <div class="cards--card-header">
+    <span>Average speeds</span>
+  </div>
+  <div class="cards--card-with-header-content-container">
+    <%= render partial: "application/components/speed_filters",
+        locals: {
+          resource_id: pod.unix_user,
+          speed_average_path: method(:speed_average_client_path)
+        }
+    %>
+    <%= render partial: "pods/components/speed_cells", 
+        locals: {
+          download_avg: pod.measurements.count > 0 ? pod.measurements.average(:download).round(2) : 'N/A',
+          upload_avg: pod.measurements.count > 0 ? pod.measurements.average(:upload).round(2) : 'N/A',
+        }
+    %>
+    <%= link_to "View all measurements", client_measurements_path(pod.unix_user), class: "w-100 custom-button custom-button--secondary custom-button--lg" %>
+  </div>
+</div>

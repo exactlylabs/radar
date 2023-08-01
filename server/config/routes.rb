@@ -76,6 +76,7 @@ Rails.application.routes.draw do
       post 'toggle_in_service'
       get 'pdf_label', to: 'clients#get_client_label'
       post 'run_public_test'
+      get 'speed_average', to: 'clients#speed_average', as: 'speed_average'
     end
 
     collection do

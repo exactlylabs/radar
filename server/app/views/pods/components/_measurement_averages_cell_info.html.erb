@@ -1,0 +1,13 @@
+<div class="cards--info-row-value pods--averages-cell-info-container">
+  <div class="pods--averages-first-row-container">
+    <div class="pods--average-container">
+      <img alt="download icon" src="<%= image_url('download-icon.png')%>" width="12" height="12">
+      <span class="regular-text"><%= pod.latest_measurement.download.round(2) %> Mbps</span>
+    </div>
+    <div class="pods--average-container">
+      <img alt="upload icon" src="<%= image_url('upload-icon.png')%>" width="12" height="12">
+      <span class="regular-text"><%= pod.latest_measurement.upload.round(2) %> Mbps</span>
+    </div>
+  </div>
+  <span class="help-text"><%= pretty_print_date(pod.latest_measurement.created_at) %></span>
+</div>

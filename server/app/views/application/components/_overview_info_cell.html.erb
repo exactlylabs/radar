@@ -1,11 +1,11 @@
 <% possible_partial = local_assigns[:partial].present? ? local_assigns[:partial] : nil %>
 <% possible_partial_locals = local_assigns[:partial_locals].present? ? local_assigns[:partial_locals] : nil %>
 
-<div class="networks--info-cell">
+<div class="application--info-cell">
   <span class="forms--label"><%= title %></span>
   <% if subtitle.present? %>
-    <span class="additional-text networks--info-cell-subtitle ellipsis"><%= subtitle %></span>
-  <% else %>
+    <span class="regular-text application--info-cell-subtitle ellipsis"><%= subtitle %></span>
+  <% elsif possible_partial.present? %>
     <%= render partial: possible_partial, locals: possible_partial_locals %>
   <% end %>
 </div>

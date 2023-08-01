@@ -54,7 +54,7 @@
           >
             <option></option>
             <option>&nbsp;</option>
-            <% policy_scope(Location).each do |location|%>
+            <% policy_scope(Location).where(account_id: @client.account.id).each do |location|%>
               <%= render partial: "clients/client_select_option", locals: { option: location, selected: location == @client.location } %>
             <% end %>
           </select>

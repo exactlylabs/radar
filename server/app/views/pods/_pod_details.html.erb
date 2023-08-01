@@ -1,0 +1,38 @@
+<div class="pods--details-content-container">
+  <div class="pods--top-info-card">
+    <%= render partial: "application/components/overview_info_cell", 
+        locals: {
+          title: 'Status',
+          subtitle: nil,
+          partial: "pods/components/pod_status_cell",
+          partial_locals: { pod: pod }
+        }
+    %>
+    <%= render partial: "application/components/overview_info_cell", 
+        locals: {
+          title: 'Pod type',
+          subtitle: nil,
+          partial: "pods/components/pod_type_cell",
+        }
+    %>
+    <%= render partial: "application/components/overview_info_cell", 
+        locals: {
+          title: 'Network',
+          subtitle: nil,
+          partial: "pods/components/pod_network_cell",
+          partial_locals: { pod: pod }
+        }
+    %>
+    <%= render partial: "application/components/overview_info_cell", 
+        locals: {
+          title: 'Internet Provider',
+          subtitle: pod.autonomous_system.nil? ? "Not available" : pod.autonomous_system.autonomous_system_org.name
+        }
+    %>
+  </div>
+
+  <div class="application--content-cards-container">
+    <%= render partial: "pods/components/test_and_usage_card", locals: { pod: pod } %>
+    <%= render partial: "pods/components/speeds_card", locals: { pod: pod } %>
+  </div>
+</div>

@@ -1,35 +1,60 @@
 <% base_bulk_options = ['Run speed test','Move to network...', 'Remove from network', 'Delete'] %>
 <% super_user_bulk_options = ['Run speed test', 'Move to network...', 'Remove from network', 'Change release group(s)', 'Print labels', 'Delete']%>
 
+<% base_bulk_actions = [
+  'click->multi-row-table#bulkRunTests',
+  'click->multi-row-table#handleBulkAction',
+  'click->multi-row-table#handleBulkAction',
+  'click->multi-row-table#bulkDeletes'
+] %>
+<% super_user_bulk_actions = [
+  'click->multi-row-table#bulkRunTests',
+  'click->multi-row-table#handleBulkAction',
+  'click->multi-row-table#handleBulkAction',
+  'click->multi-row-table#handleBulkAction',
+  'click->multi-row-table#bulkPdfLabels',
+  'click->multi-row-table#bulkDeletes'
+] %>
+
+<% base_bulk_urls = [
+  nil,
+  bulk_move_to_network_clients_path(current_network_id: -1),
+  get_bulk_remove_from_network_clients_path,
+  bulk_update_release_group_clients_path,
+] %>
+<% super_user_bulk_urls = [
+  nil,
+  bulk_move_to_network_clients_path(current_network_id: -1),
+  get_bulk_remove_from_network_clients_path,
+  bulk_update_release_group_clients_path,
+  nil,
+  nil
+] %>
+
+<% base_bulk_frames = [
+  nil,
+  'bulk_move_to_network_modal',
+  'bulk_remove_from_network_modal',
+  nil
+] %>
+<% super_user_bulk_frames = [
+  nil,
+  'bulk_move_to_network_modal',
+  'bulk_remove_from_network_modal',
+  'bulk_change_release_group_modal',
+  nil,
+  nil
+] %>
+
+
 <div class="tables--filters-container">
   <%= render partial: "application/components/tables/multi_row_actions", 
       locals: {
         menu_id: 'network-pods-multi-row-actions-menu',
         options: current_user.super_user && !is_super_user_disabled? ? super_user_bulk_options : base_bulk_options,
-        actions: [
-          'click->multi-row-table#bulkRunTests',
-          'click->multi-row-table#handleBulkAction',
-          'click->multi-row-table#handleBulkAction',
-          'click->multi-row-table#handleBulkAction',
-          'click->multi-row-table#bulkPdfLabels',
-          'click->multi-row-table#bulkDeletes'
-        ],
-        urls: [
-          nil,
-          bulk_move_to_network_clients_path(current_network_id: -1),
-          get_bulk_remove_from_network_clients_path,
-          bulk_update_release_group_clients_path,
-          nil,
-          nil
-        ],
-        data_turbo_frames: [
-          nil,
-          'bulk_move_to_network_modal',
-          'bulk_remove_from_network_modal',
-          'bulk_change_release_group_modal',
-          nil,
-          nil
-        ]
+        actions: current_user.super_user && !is_super_user_disabled? ? super_user_bulk_actions : base_bulk_actions,
+        urls: current_user.super_user && !is_super_user_disabled? ? super_user_bulk_urls : base_bulk_urls,
+        data_turbo_frames: current_user.super_user && !is_super_user_disabled? ? super_user_bulk_frames : base_bulk_frames
       }
   %>
   <%= render partial: "application/components/tables/filter",

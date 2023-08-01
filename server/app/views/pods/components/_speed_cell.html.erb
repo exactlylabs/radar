@@ -1,0 +1,8 @@
+<div class="application--speed-cell">
+  <%= image_tag image_url("#{type}-cell-icon.png"), width: 16, height: 16 %>
+  <span class="forms--label ellipsis mt-3 application--speed-cell-title"><%= "Avg. #{type} speed" %></span>
+  <span class="<%= avg != 'N/A' ? 'pods--average-speed-cell-text' : 'additional-text' %>"><%= avg %></span>
+  <% if avg != 'N/A' %>
+    <span class="additional-text">Mbps</span>
+  <% end %>
+</div>

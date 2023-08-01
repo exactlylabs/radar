@@ -1,4 +1,5 @@
 <% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <% row_type = request.path.start_with?(clients_path) ? TablesHelper::TableTypes::PODS : TablesHelper::TableTypes::NETWORK_PODS %>
   <%= turbo_stream.append 'realtime-notice' do %>
     <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
   <% end %>
@@ -6,8 +7,8 @@
     <%= render partial: "application/components/tables/table_row",
         locals: {
           row: @client,
-          type: TablesHelper::TableTypes::NETWORK_PODS,
-          widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORK_PODS),
+          type: row_type,
+          widths: TablesHelper.widths(row_type, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
           index: @client.unix_user,
           even: false
         }

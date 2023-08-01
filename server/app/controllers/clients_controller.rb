@@ -3,11 +3,12 @@ require "rqrcode"
 
 class ClientsController < ApplicationController
   include Recents
+  include Paginator
   before_action :check_account_presence, only: %i[ index show ]
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
   before_action :check_request_origin, only: %i[ show ]
-  before_action :set_client, only: %i[ release show edit destroy get_client_label toggle_in_service ]
+  before_action :set_client, only: %i[ release show edit destroy get_client_label toggle_in_service speed_average ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_change_release_group get_bulk_remove_from_network bulk_remove_from_network get_bulk_move_to_network bulk_move_to_network]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
@@ -16,7 +17,7 @@ class ClientsController < ApplicationController
   def index
     @status = params[:status]
     @account_id = params[:account_id]
-    if @account_id
+    if @account_id && @account_id.to_i != -1
       if @account_id == 'none'
         @clients = policy_scope(Client).where_no_account
       else
@@ -33,6 +34,8 @@ class ClientsController < ApplicationController
     if FeatureFlagHelper.is_available('networks', current_user)
       @clients = @clients.where(update_group_id: params[:update_group_id]) if params[:update_group_id].present? && params[:update_group_id].to_i != -1
       @total = @clients.count
+      @clients = @clients.sort { |x| x.location_id.nil? ? -1 : 1 } # Show pods without network first
+      @clients = paginate(@clients, params[:page], params[:page_size])
     end
   end
 
@@ -150,6 +153,7 @@ class ClientsController < ApplicationController
   def release
     respond_to do |format|
       if @client.update(user: nil, location: nil, account: nil)
+        remove_recent_search(@client.id, Recents::RecentTypes::CLIENT)
         format.html { redirect_back fallback_location: root_path, notice: "Client was successfully deleted." }
         format.json { head :no_content }
       end
@@ -405,6 +409,9 @@ class ClientsController < ApplicationController
     end
     if error.nil?
       @notice = "Clients were successfully deleted."
+      @clients.each do |c|
+        remove_recent_search(c.id, Recents::RecentTypes::CLIENT)
+      end
     else
       @notice = "Oops! There has been an error deleting your clients."
     end
@@ -498,18 +505,50 @@ class ClientsController < ApplicationController
   end
 
   def bulk_move_to_network
-    @location = policy_scope(Location).find(params[:current_network_id]) if params[:current_network_id].to_i != -1
+    current_network_id = !params[:current_network_id].blank? ? params[:current_network_id] : nil
+    @location = policy_scope(Location).find(params[:current_network_id]) if current_network_id
     new_location = policy_scope(Location).find(params[:location_id])
-    if @location.present? && @location.id != params[:location_id].to_i
+    if @location.present? && @location.id != new_location.id
       @clients_to_remove = @clients
     end
     respond_to do |format|
-      if @clients.update_all(location_id: params[:location_id])
+      if @clients.update_all(location_id: new_location.id, account_id: new_location.account&.id)
         @notice = "Your pods have been moved to #{new_location.name}."
         format.turbo_stream
       else
-        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error removing pod(s) from their network(s)." }
+        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error removing pod(s) from their network(s).", status: :unprocessable_entity }
       end
+    end
+  end
+
+  def speed_average
+    type = params[:type]
+    start_date = nil
+    end_date = Time.zone.now
+    if type == 'today'
+      start_date = Time.zone.now.beginning_of_day
+    elsif type == 'month'
+      start_date = Time.zone.now.beginning_of_month
+    elsif type == 'year'
+      start_date = Time.zone.now.beginning_of_year
+    end
+    filtered_measurements = @client.measurements.where(created_at: start_date..end_date)
+    if filtered_measurements.count > 0
+      download_avg = filtered_measurements.average(:download).round(3)
+      upload_avg = filtered_measurements.average(:upload).round(3)
+    else
+      download_avg = nil
+      upload_avg = nil
+    end
+
+    respond_to do |format|
+      format.html {
+        render partial: "pods/components/speed_cells",
+        locals: {
+          download_avg: download_avg.present? ? "#{download_avg.round(2)} Mbps" : 'N/A',
+          upload_avg: upload_avg.present? ? "#{upload_avg.round(2)} Mbps" : 'N/A',
+        }
+    }
     end
   end
 

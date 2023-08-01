@@ -40,7 +40,7 @@
 <div class="tables--hides-on-small" style="width: <%= widths[3] %>">
   <% if widths[3] != '0%' %>
     <span class="ellipsis table-cell">
-      <%= row.update_group_id.present? ? UpdateGroup.find(row.update_group_id).name : "N/A" %>
+      <%= row.update_group_id.present? ? UpdateGroup.find(row.update_group_id).name : "-" %>
     </span>
   <% end %>
 </div>

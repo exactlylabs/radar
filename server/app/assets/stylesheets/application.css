@@ -18,6 +18,10 @@
 
 :root {
   --global-background-color: #f6f7fa;
+  --blue: #4b7be5;
+  --subtle-gray: #f6f7fa;
+  --gray: #6d6a94;
+  --checkbox-gray: #e3e3e8;
 }
 
 @font-face {
@@ -138,4 +142,120 @@ p {
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.application--info-cell {
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .375rem;
+
+  .application--info-cell-subtitle {
+    max-width: 30ch;
+  }
+}
+
+@media (max-width: 450px) {
+  .application--info-cell {
+    max-width: 100%;
+
+    .application--info-cell-subtitle {
+      max-width: 100%;
+    }
+  }
+}
+
+.application--cell-icon-text-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.application--speed-filters-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .5rem;
+}
+
+.application--speed-filter {
+  text-decoration: none;
+  padding: .25rem .75rem;
+  background-color: var(--subtle-gray);
+  font-size: 0.812rem;
+  line-height: 1.25rem;
+  letter-spacing: 0;
+  color: var(--gray);
+  border-radius: 6px;
+  font-variation-settings: 'wght' 700;
+}
+
+.application--speed-filter.selected {
+  background-color: var(--blue);
+  color: white;
+}
+
+@media (max-width: 1200px) {
+  .application--speed-filter {
+    display: none;
+    visibility: hidden;
+  }
+}
+
+.application--speed-filters-dropdown {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+@media (max-width: 1200px) {
+  .application--speed-filters-dropdown {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+
+.application--card-with-header-content-container..select2.select2-container.select2-container--bootstrap5 {
+  display: none !important;
+  visibility: hidden !important; 
+}
+
+@media (max-width: 1200px) {
+  .application--card-with-header-content-container.select2.select2-container.select2-container--bootstrap5 {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+
+.application--speed-cells-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .75rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.application--speed-cell {
+  min-width: 200px;
+  border: solid 1px var(--checkbox-gray);
+  border-radius: .5rem;
+  padding: 1rem;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.application--speed-cell-title {
+  max-width: 100%;
 }

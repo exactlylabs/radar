@@ -3,7 +3,7 @@
 %>
 <%= form_with(model: Client, url: bulk_move_to_network_clients_path(), method: :post) do |form| %>
   <div class="modals--content-container" data-type="full">
-    <input hidden type="text" name="current_network_id" value="<%= @location.id %>"/>
+    <input hidden type="text" name="current_network_id" value="<%= @location&.id %>"/>
     <input hidden type="text" name="ids" value="<%= @clients.map(&:unix_user).to_s %>"/>
     <div class="modals--form-row mb-2">
       <label class="forms--label mb-2">Move pods to...</label>
@@ -14,7 +14,7 @@
         data-controller="select2"
         name="location_id"
       >
-        <% policy_scope(Location).where.not(id: @location.id).each do |location| %>
+        <% policy_scope(Location).where.not(id: @location&.id).each do |location| %>
           <option value="<%= location.id %>" label="<%= location.name %>"><%= location.name %></option>
         <% end %>
       </select>
