@@ -219,7 +219,7 @@ p {
   }
 }
 
-.application--card-with-header-content-container..select2.select2-container.select2-container--bootstrap5 {
+.application--card-with-header-content-container.select2.select2-container.select2-container--bootstrap5 {
   display: none !important;
   visibility: hidden !important; 
 }

@@ -34,14 +34,22 @@
         ]
       }
     %>
-    <div class="d-flex flex-column clients--detail-card">
-      <!--begin::Data Cap Card-->
-      <%= render partial: "data_cap_card", locals: {client: @client, total_avg: @total_avg} %>
-      <!--end::Data Cap Card-->
-      <!--begin::Scheduling Card-->
-      <%= render partial: "scheduling_card", locals: {client: @client} %>
-      <!--end::Scheduling Card-->
-    </div>
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <div class="pods--usage-cards-container">
+        <%= render partial: "pod_usage/components/data_usage_card", locals: { pod: @client, total_avg: @total_avg } %>
+        <%= render partial: "pod_usage/components/data_cap_card", locals: { pod: @client } %>
+        <%= render partial: "pod_usage/components/scheduling_card", locals: { pod: @client } %>
+      </div>
+    <% else %>
+      <div class="d-flex flex-column clients--detail-card">
+        <!--begin::Data Cap Card-->
+        <%= render partial: "data_cap_card", locals: {client: @client, total_avg: @total_avg} %>
+        <!--end::Data Cap Card-->
+        <!--begin::Scheduling Card-->
+        <%= render partial: "scheduling_card", locals: {client: @client} %>
+        <!--end::Scheduling Card-->
+      </div>
+    <% end %>
   </div>
   <!--end::Container-->
 </div>

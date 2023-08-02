@@ -1,0 +1,31 @@
+<div class="tables--filters-container">
+  <%= render partial: "application/components/tables/filter",
+      locals: {
+        menu_id: 'range-filter-menu',
+        key: 'range',
+        default_value: 'all',
+        default_label: 'All time',
+        options: [
+          { label: 'Last week', value: 'last-week' },
+          { label: 'Last month', value: 'last-month' },
+          { label: 'Last 6 months', value: 'last-6-months' },
+          { label: 'Last year', value: 'last-year' },
+          { label: 'All time', value: 'all-time' },
+        ],
+      }
+  %>
+  <%= render partial: "application/components/tables/filter",
+      locals: {
+        menu_id: 'types-filter-menu',
+        key: 'style',
+        default_value: 'all',
+        default_label: 'All types',
+        options: [
+          { label: 'All types', value: 'all'},
+          { label: 'Ndt7', value: 'ndt7' },
+          { label: 'Ookla', value: 'ookla' }
+        ],
+      }
+  %>
+
+</div>

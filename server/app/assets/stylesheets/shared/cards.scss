@@ -72,8 +72,25 @@
   }
 }
 
+.cards--info-row-full-width {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  .forms--label {
+    width: 15%;
+  }
+
+  .cards--info-row-value {
+    width: 85%;
+  }
+}
+
 @media (max-width: 1200px) {
-  .cards--info-row {
+  .cards--info-row,
+  .cards--info-row-full-width {
     flex-direction: column;
     gap: .25rem;
 
@@ -83,3 +100,4 @@
     }
   }
 }
+

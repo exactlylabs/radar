@@ -5,7 +5,8 @@ class ClientDataUsageAndSchedulingController < ApplicationController
 
   # GET /clients/:unix_user/data_usage_and_scheduling
   def index
-    @total_avg = @client.get_speed_averages(current_account.id)
+    account_id = current_account.id == -1 ? nil : current_account.id
+    @total_avg = @client.get_speed_averages(account_id)
   end
 
   # PUT clients/:unix_user/data_usage

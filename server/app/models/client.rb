@@ -490,10 +490,17 @@ class Client < ApplicationRecord
   end
 
   def get_speed_averages(account_id)
-    raw_query = 'SELECT AVG(download_total_bytes) as download, AVG(upload_total_bytes) as upload FROM ' +
-                '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ? AND account_id = ? ' +
-                'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
-    query = ActiveRecord::Base.sanitize_sql([raw_query, id, account_id])
+    if account_id.present?
+      raw_query = 'SELECT AVG(download_total_bytes) as download, AVG(upload_total_bytes) as upload FROM ' +
+                  '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ? AND account_id = ? ' +
+                  'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
+      query = ActiveRecord::Base.sanitize_sql([raw_query, id, account_id])
+    else
+      raw_query = 'SELECT AVG(download_total_bytes) as download, AVG(upload_total_bytes) as upload FROM ' +
+                  '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ?' +
+                  'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
+      query = ActiveRecord::Base.sanitize_sql([raw_query, id])
+    end
     averages = ActiveRecord::Base.connection.execute(query)[0]
     download_avg = averages['download'] || 0
     upload_avg = averages['upload'] || 0
