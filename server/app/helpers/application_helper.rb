@@ -71,6 +71,13 @@ module ApplicationHelper
     params.values.length == 2
   end
 
+  def get_bytes_with_user_units(bytes, user)
+    unit = current_user&.data_cap_unit || 'MB'
+    multiplier = 1024 ** (unit == 'MB' ? 2 : 3)
+    amount = (bytes / multiplier).round(0)
+    "#{amount} #{unit}"
+  end
+
   ##### PAGINATION METHODS #####
 
   def get_date_range(range)

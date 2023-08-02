@@ -3,9 +3,16 @@
     <span>Data usage</span>
   </div>
   <div class="cards--card-with-header-content-container">
-    <div class="cards--info-row-full-width">
+    <div class="cards--info-row-full-width mb-4">
       <label class="forms--label">Average usage</label>
-      <span class="cards--info-row-value regular-text"><%= pod.get_measurement_data(total_avg) %></span>
+      <span class="cards--info-row-value regular-text"><%= "~#{get_bytes_with_user_units(total_avg, current_user)} per test" %></span>
+    </div>
+    <div class="cards--info-row-full-width">
+      <label class="forms--label">Monthly usage</label>
+      <div class="cards--info-column">
+        <span class="help-text">Current month</span>
+        <span class="regular-text"><%= pod.data_cap_current_period_usage.nil? ? "N/A" : pod.get_current_usage(current_user) %></span>
+      </div>
     </div>
   </div>
 </div>

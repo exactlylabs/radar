@@ -131,3 +131,44 @@
   justify-content: flex-start;
   gap: 1.5rem;
 }
+
+.pods--card-right-button-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .pods--card-right-button-container {
+    margin-top: 1rem;
+    justify-content: flex-start;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+.pods--data-cap-percentage-container {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: .5rem;
+}
+
+.pods--percentage-bar {
+  width: 100px;
+  height: 5px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  overflow: hidden;
+
+  .pods--percentage-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+  }
+}

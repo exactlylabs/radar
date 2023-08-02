@@ -1,6 +1,6 @@
 module FeatureFlagHelper
 
-  def self.is_available(flag_name, user = User.find_by(id: session[:user]))
+  def self.is_available(flag_name, user)
     flag = FeatureFlag.find_by_name(flag_name)
     return false if !flag
     return true if flag.generally_available

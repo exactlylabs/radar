@@ -3,6 +3,34 @@
     <span>Data cap</span>
   </div>
   <div class="cards--card-with-header-content-container">
-    
+    <div class="cards--info-row-full-width">
+      <div class="cards--info-column">
+        <span class="mb-4 <%= pod.data_cap_max_usage.nil? ? 'additional-text' : 'regular-text' %>"><%= pod.data_cap_max_usage.nil? ? "Disabled" : "#{pod.get_max_usage(current_user)} per #{pod.get_periodicity_period}" %></span>
+        <% if pod.data_cap_max_usage.nil? %>
+          <a  href="#"
+              class="regular-link"
+              data-bs-target="#manage_pod_data_cap_modal" 
+              data-bs-toggle="modal"
+          >
+            Enable data cap
+            <%= image_tag image_url('caret-right-blue.png'), width: 16, height: 16 %>
+          </a>
+        <% else %>
+          <div class="pods--data-cap-percentage-container">
+            <div class="pods--percentage-bar" style="background-color: <%= pod.get_data_cap_percentage_usage >= 80 ? "#fff3f6" : "#e7f6ff" %>">
+              <div class="pods--percentage-bar-fill" style="width: <%= "#{pod.get_data_cap_percentage_usage}%" %>; background-color: <%= pod.get_data_cap_percentage_usage >= 80 ? "#f1416c" : "#00a3ff" %>; border-radius: 5px"></div>
+            </div>
+            <span class="regular-text"><%= "#{pod.get_current_usage(current_user)} (#{pod.get_data_cap_percentage_usage}% used)" %></p>
+          </div>
+        <% end %>
+      </div>
+      <div class="pods--card-right-button-container">
+        <button type="button"
+                class="custom-button custom-button--secondary custom-button--lg"
+                data-bs-target="#manage_pod_data_cap_modal"
+                data-bs-toggle="modal"
+        >Manage data cap</button>
+      </div>
+    </div>
   </div>
 </div>

@@ -688,6 +688,13 @@ class Client < ApplicationRecord
     "#{amount} #{unit}"
   end
 
+  def get_max_usage(current_user)
+    unit = current_user&.data_cap_unit || 'MB'
+    multiplier = 1024 ** (unit == 'MB' ? 2 : 3)
+    amount = (self.data_cap_max_usage / multiplier).round(0)
+    "#{amount} #{unit}"
+  end
+
   private
 
   def create_ids
