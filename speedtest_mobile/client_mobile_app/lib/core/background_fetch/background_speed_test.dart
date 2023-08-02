@@ -6,7 +6,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:network_connection_info/models/connection_info.dart' as CI;
-import 'package:client_mobile_app/core/utils/id_generator.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
