@@ -1,12 +1,12 @@
-<div class="networks--measurements-main-container">
+<div class="measurements--main-table-container">
   <% if @total > 0 %>
     <%= render partial: "network_measurements/table_filters" %>
     <%= render partial: "application/components/tables/generic_table",
             locals: {
               table_id: "network_measurements_table",
-              type: TablesHelper::TableTypes::NETWORK_MEASUREMENTS,
-              titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORK_MEASUREMENTS),
-              widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORK_MEASUREMENTS),
+              type: TablesHelper::TableTypes::MEASUREMENTS,
+              titles: TablesHelper.titles(TablesHelper::TableTypes::MEASUREMENTS),
+              widths: TablesHelper.widths(TablesHelper::TableTypes::MEASUREMENTS),
               rows: @measurements,
               total: @total
             }

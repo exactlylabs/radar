@@ -2,7 +2,7 @@ module TablesHelper
   module TableTypes
     MEMBERS = "Members"
     NETWORKS = "Networks"
-    NETWORK_MEASUREMENTS = "NetworkMeasurements"
+    MEASUREMENTS = "Measurements"
     NETWORK_PODS = "NetworkPods"
     ALL_ACCOUNTS_MEMBERS = "AllAccountsMembers"
     PODS = "Pods"
@@ -24,7 +24,7 @@ module TablesHelper
       'Members'
     when TableTypes::NETWORKS
       'Networks'
-    when TableTypes::NETWORK_MEASUREMENTS
+    when TableTypes::MEASUREMENTS
       'Measurements'
     when TableTypes::NETWORK_PODS
     when TableTypes::PODS
@@ -53,7 +53,7 @@ module TablesHelper
         '21%',
         '5%'
       ]
-    when TableTypes::NETWORK_MEASUREMENTS
+    when TableTypes::MEASUREMENTS
       [
         '15%',
         '10%',
@@ -121,7 +121,7 @@ module TablesHelper
         { text: 'Avg. upload', icon_before: 'upload-icon.png' },
         { text: 'Actions', hidden: true}
       ]
-    when TableTypes::NETWORK_MEASUREMENTS
+    when TableTypes::MEASUREMENTS
       rows = [
         *rows,
         { text: 'Time' },

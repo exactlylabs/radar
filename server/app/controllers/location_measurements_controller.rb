@@ -16,7 +16,7 @@ class LocationMeasurementsController < ApplicationController
         @measurements = @measurements.where(created_at: range[0]..range[1])
       end
       @total = @measurements.count
-      @measurements = paginate(@measurements, params[:page], params[:page_size])
+      @measurements = paginate(@measurements, params[:page], params[:page_size]) unless request.format.csv?
     end
     
     respond_to do |format|

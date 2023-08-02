@@ -41,7 +41,8 @@ class ClientsController < ApplicationController
 
   # GET /clients/1 or /clients/1.json
   def show
-    @total_avg = @client.get_speed_averages(current_account.id)
+    account_id = current_account.id == -1 ? nil : current_account.id
+    @total_avg = @client.get_speed_averages(account_id)
   end
 
   # GET /clients/new
