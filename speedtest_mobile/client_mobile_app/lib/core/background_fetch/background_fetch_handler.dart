@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'dart:io';
+import 'dart:async';
 
 import 'package:get_it/get_it.dart';
 import 'package:background_fetch/background_fetch.dart';
