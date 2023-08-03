@@ -3,6 +3,30 @@
     <span>Scheduling</span>
   </div>
   <div class="cards--card-with-header-content-container">
-    
+    <div class="cards--info-row-full-width">
+      <div class="cards--info-column w-100">
+        <% if !pod.custom_scheduling %>
+          <span class="mb-2 additional-text">Disabled</span>
+        <% end %>
+        <span class="regular-text wrap"><%= pod.get_scheduling_periodicity_string %></span>
+        <% if !pod.custom_scheduling %>
+          <a href="#"
+            class="regular-link mt-2"
+            data-bs-target="#manage_pod_scheduling_modal"
+            data-bs-toggle="modal"
+          >
+            Enable Custom Scheduling
+            <%= image_tag image_url('caret-right-blue.png'), width: 16, height: 16 %>
+          </a>
+        <% end %>
+      </div>
+      <div class="pods--card-right-button-container">
+        <button type="button"
+          class="custom-button custom-button--secondary custom-button--lg"
+          data-bs-target="#manage_pod_scheduling_modal"
+          data-bs-toggle="modal"
+        >Manage Custom Scheduling</button>
+      </div>
+    </div>
   </div>
 </div>

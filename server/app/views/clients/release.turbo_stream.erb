@@ -1,0 +1,24 @@
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <% # add new pod to network pods table if it's being remove from inside the network pods page %>
+  <% is_in_network_pods_view = request.referrer.include?(locations_path) %>
+  
+  <% if is_in_network_pods_view %>
+    <% if @location_before_release.clients.count == 0 %>
+      <%= turbo_stream.replace "network_pods_table_container" do %>
+        <%= render partial: "network_pods/components/empty_pods_card" %>
+      <% end %>
+    <% else %>
+      <%= turbo_stream.remove dom_id(@client) do %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <% if policy_scope(Client).count == 0 %>
+      <%= turbo_stream.update "clients_index_content" do %>
+        <%= render partial: "pods/components/empty_pods_card"%>
+      <% end %>
+    <% else %>
+      <%= turbo_stream.remove dom_id(@client) do %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

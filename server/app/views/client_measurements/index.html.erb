@@ -4,7 +4,11 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %> 
+      <% if FeatureFlagHelper.is_available('networks', current_user) %>
+        <h1 class="page-main-title"><%= @client.unix_user %>
+      <% else %>
+        <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %> 
+      <% end %>
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->

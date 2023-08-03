@@ -4,7 +4,11 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %> 
+      <% if FeatureFlagHelper.is_available('networks', current_user) %>
+        <h1 class="page-main-title"><%= @client.unix_user %>
+      <% else %>
+        <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %> 
+      <% end %>
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
@@ -17,6 +21,25 @@
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <div class="pods--header-options-container">
+      <a class="custom-button custom-button--primary custom-button--lg <%= @client.test_requested ? 'custom-button--disabled' : '' %>"
+        rel="nofollow"
+        data-method="post"
+        href="<%= @client.test_requested ? '#' : run_test_client_path(@client.unix_user) %>"
+      >
+        <%= image_tag image_url('run-speed-test-icon.png'), width: 16, height: 16, class: "me-2" %>
+        Run speed test
+      </a>
+      <%= render partial: "application/components/buttons/custom_more_options_button",
+          locals: {
+            type: TablesHelper::OptionsMenuType::POD_OVERVIEW,
+            with_bg: true,
+            big: true
+          }
+        %>
+      </div>
+    <% end %>
   </div>
 </div>
 <!--end::Toolbar-->

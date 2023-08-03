@@ -581,7 +581,7 @@ class Client < ApplicationRecord
   end
 
   def get_default_interface
-    network_interfaces.filter { |i| i.present? && i[:default_route] == true }
+    network_interfaces.filter { |i| i.present? && i["default_route"] == true }
   end
 
   def get_mac_address
@@ -589,18 +589,18 @@ class Client < ApplicationRecord
 
     default_interface = get_default_interface
     if default_interface.size == 0
-      network_interfaces[0]['mac'] # Just defaulting to the first one if no actual default_interface present?
+      network_interfaces[0]['mac'].upcase # Just defaulting to the first one if no actual default_interface present?
     elsif default_interface.size == 1
-      default_interface[0]['mac']
+      default_interface[0]['mac'].upcase
     else
       possible_interface = network_interfaces.filter { |i| i.present? && is_eth?(i) }
-      return possible_interface[0]['mac'] if possible_interface.size >= 1
+      return possible_interface[0]['mac'].upcase if possible_interface.size >= 1
 
       possible_interface = network_interfaces.filter { |i| i.present? && is_en?(i) }
-      return possible_interface[0]['mac'] if possible_interface.size >= 1
+      return possible_interface[0]['mac'].upcase if possible_interface.size >= 1
 
       possible_interface = network_interfaces.filter { |i| i.present? && is_enps?(i) }
-      possible_interface[0]['mac'] # if we get to this point, we don't need to check for the length of filter result because it must be enps type
+      possible_interface[0]['mac'].upcase # if we get to this point, we don't need to check for the length of filter result because it must be enps type
     end
   end
 

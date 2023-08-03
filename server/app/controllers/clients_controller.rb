@@ -152,10 +152,16 @@ class ClientsController < ApplicationController
   end
 
   def release
+    @location_before_release = @client.location
     respond_to do |format|
       if @client.update(user: nil, location: nil, account: nil)
         remove_recent_search(@client.id, Recents::RecentTypes::CLIENT)
-        format.html { redirect_back fallback_location: root_path, notice: "Client was successfully deleted." }
+        if request.referrer.include?(client_path(@client.unix_user))
+          format.html { redirect_to clients_path, notice: "Client was successfully deleted." }  
+        else
+          format.html { redirect_back fallback_location: root_path, notice: "Client was successfully deleted." }
+        end
+        format.turbo_stream
         format.json { head :no_content }
       end
     end
@@ -294,7 +300,12 @@ class ClientsController < ApplicationController
     end
     respond_to do |format|
       if client.update(name: name, location: location, account: account, update_group: update_group)
-        format.html { redirect_to clients_path, notice: "Client was successfully updated.", status: :see_other }
+        if FeatureFlagHelper.is_available('networks', current_user)
+          format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated." }
+        else
+          format.html { redirect_to clients_path, notice: "Client was successfully updated.", status: :see_other }
+        end
+        
         format.json { render :show, status: :ok, location: client_path(client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }

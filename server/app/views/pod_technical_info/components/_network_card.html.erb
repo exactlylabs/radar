@@ -1,0 +1,25 @@
+<div class="cards--card-with-header">
+  <div class="cards--card-header">
+    <span>Network</span>
+  </div>
+  <div class="cards--card-with-header-content-container">
+    <div class="cards--info-row-full-width mb-4">
+      <label class="forms--label">MAC address</label>
+      <span class="cards--info-row-value <%= pod.network_interfaces.nil? ? 'additional-text' : 'regular-text' %>">
+        <%= pod.get_mac_address %>
+      </span>
+    </div>
+    <div class="cards--info-row-full-width mb-4">
+      <label class="forms--label">IP address</label>
+      <span class="cards--info-row-value <%= pod.ip.nil? ? 'additional-text' : 'regular-text' %>">
+        <%= pod.ip.nil? ? 'Not available' : pod.ip %>
+      </span>
+    </div>
+    <div class="cards--info-row-full-width mb-4">
+      <label class="forms--label">Internet provider</label>
+      <span class="cards--info-row-value <%= pod.location&.latest_measurement&.autonomous_system.nil? ? 'additional-text' : 'regular-text' %>">
+        <%= pod.location&.latest_measurement&.autonomous_system.nil? ? "Not available" : pod.location.latest_measurement.autonomous_system.autonomous_system_org.name %>
+      </span>
+    </div>
+  </div>
+</div>

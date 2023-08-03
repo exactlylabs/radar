@@ -4,7 +4,11 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %> 
+      <% if FeatureFlagHelper.is_available('networks', current_user) %>
+        <h1 class="page-main-title"><%= @client.unix_user %>
+      <% else %>
+        <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %> 
+      <% end %>
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
@@ -34,9 +38,16 @@
         ]
       }
     %>
-    <div class="d-flex flex-column clients--detail-card">
-      <%= render partial: "technical_info_card", locals: { client: @client } %>
-    </div>
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <div class="pods--usage-cards-container">
+        <%= render partial: "pod_technical_info/components/information_card", locals: { pod: @client }%>
+        <%= render partial: "pod_technical_info/components/network_card", locals: { pod: @client }%>
+      </div>
+    <% else %>
+      <div class="d-flex flex-column clients--detail-card">
+        <%= render partial: "technical_info_card", locals: { client: @client } %>
+      </div>
+    <% end %>
   </div>
   <!--end::Container-->
 </div>

@@ -1,0 +1,5 @@
+<%= link_to "Edit", edit_client_path(@client.unix_user), { class: "tables--row-option table-menu-option ellipsis", data: { "turbo-frame" => "edit_client_modal" } } %>
+<% if current_user.super_user && !is_super_user_disabled? %>
+  <%= link_to "Print Label", pdf_label_client_path(@client.unix_user, format: :pdf), { class: "tables--row-option table-menu-option ellipsis", target: "_blank" } %>
+<% end %>
+<%= link_to 'Delete', release_client_path(@client.unix_user), method: :delete, data: { confirm: 'Are you sure?' }, class: "tables--row-option table-menu-option ellipsis" %>
