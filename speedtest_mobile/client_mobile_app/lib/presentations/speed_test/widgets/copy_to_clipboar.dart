@@ -38,7 +38,11 @@ class CopyToClipboard extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
-              child: Icon(Icons.copy, size: 16.0, color: Theme.of(context).colorScheme.secondary),
+              child: Icon(
+                Icons.copy,
+                size: 16.0,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
             ),
           ],
         ),

@@ -113,6 +113,7 @@ class SpeedTestPage extends StatelessWidget {
         value: context.read<BackgroundModeCubit>(),
         child: ModalWithTitle(
           title: Strings.emptyString,
+          padding: EdgeInsets.zero,
           body: InfoModal(
             versionNumber: versionNumber ?? Strings.emptyString,
             buildNumber: buildNumber ?? Strings.emptyString,

@@ -126,16 +126,22 @@ class TestResultsStep extends StatelessWidget {
 
   VoidCallback onStartTestPressed(BuildContext context, bool canNavigate) {
     onCanNavigate() => context.read<TakeSpeedTestStepCubit>().startDownloadTest();
-    return canNavigate ? onCanNavigate : () => openNoInternetConnectionModal(context, onCanNavigate);
+    return canNavigate
+        ? onCanNavigate
+        : () => openNoInternetConnectionModal(context, onCanNavigate);
   }
 
   VoidCallback onExploreYourAreaPressed(BuildContext context, bool canNavigate) {
     onCanNavigate() {
-      context.read<NavigationCubit>().changeTabWithArgs(NavigationCubit.MAP_INDEX, [latitude, longitude]);
+      context
+          .read<NavigationCubit>()
+          .changeTabWithArgs(NavigationCubit.MAP_INDEX, [latitude, longitude]);
       context.read<SpeedTestCubit>().resetForm();
       context.read<TakeSpeedTestStepCubit>().resetSpeedTest();
     }
 
-    return canNavigate ? onCanNavigate : () => openNoInternetConnectionModal(context, onCanNavigate);
+    return canNavigate
+        ? onCanNavigate
+        : () => openNoInternetConnectionModal(context, onCanNavigate);
   }
 }
