@@ -5,6 +5,9 @@ class StringResourceDev implements IStringResource {
   String SERVER_ENDPOINT = 'http://localhost:3000';
 
   @override
+  String SERVER_NAME = 'Radar Dev';
+
+  @override
   String APP_NAME = 'Radar Dev';
 
   @override

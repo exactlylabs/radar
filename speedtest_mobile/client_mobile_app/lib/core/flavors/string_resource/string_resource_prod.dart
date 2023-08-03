@@ -5,6 +5,9 @@ class StringResourceProd implements IStringResource {
   String SERVER_ENDPOINT = 'https://pods.radartoolkit.com';
 
   @override
+  String SERVER_NAME = 'Radar Prod';
+
+  @override
   String APP_NAME = 'Radar';
 
   @override

@@ -5,6 +5,9 @@ class StringResourceStg implements IStringResource {
   String SERVER_ENDPOINT = 'https://radar-staging.exactlylabs.com';
 
   @override
+  String SERVER_NAME = 'Radar Stg';
+
+  @override
   String APP_NAME = 'Radar Stg';
 
   @override

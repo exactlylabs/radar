@@ -1,5 +1,6 @@
 abstract class IStringResource {
   late String SERVER_ENDPOINT;
+  late String SERVER_NAME;
   late String WEB_ENDPOINT;
   late String WEB_ENDPOINT_COOKIE_DOMAIN;
   late String APP_NAME;

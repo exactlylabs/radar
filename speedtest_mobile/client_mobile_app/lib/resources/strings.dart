@@ -167,5 +167,15 @@ class Strings {
       'Radar collects location data to provide you with locations where wireless quality is being measured as you move around even when the app is closed or not in use.';
   static const String goBackButtonLabel = 'Go back';
   static const snackbarSessionId = 'Session ID copied to clipboard.';
-  static const snackbarAppVersion = 'App version copied to clipboard.';
+  static const snackbarVersionNumber = 'Version number copied to clipboard.';
+  static const snackbarBuildNumber = 'Build number copied to clipboard.';
+  static const snackbarServer = 'Server copied to clipboard';
+  static const aboutTab = 'About';
+  static const backgroundModeTab = 'Background mode';
+  static const backgroundModeTabTitle =
+      'Background mode lets you run speed tests at specific time intervals in the background.';
+  static const appVersionInfoTitle = 'App version';
+  static const buildInfoTitle = 'Build';
+  static const sessionIdInfoTitle = 'Session ID';
+  static const serverInfoTitle = 'Server';
 }
