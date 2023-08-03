@@ -12,5 +12,7 @@
     <%= render partial: "networks/components/index_more_options" %>
   <% elsif type == Client.name %>
     <%= render partial: "network_pods/components/table_row_options", locals: { row: row } %>
+  <% elsif type == TablesHelper::OptionsMenuType::POD_OVERVIEW%>
+    <%= render partial: "pods/components/overview_options" %>
   <% end %>
 </div>

@@ -68,6 +68,10 @@
 
   .forms--label,
   .cards--info-row-value {
+    word-break: normal;
+    text-overflow: clip;
+    overflow-wrap: break-word;
+    white-space: normal;
     width: 50%;
   }
 }
@@ -80,16 +84,35 @@
   justify-content: flex-start;
 
   .forms--label {
-    width: 15%;
+    width: 20%;
   }
 
   .cards--info-row-value {
-    width: 85%;
+    width: 80%;
+  }
+
+  .forms--label,
+  .cards--info-row-value {
+    word-break: normal;
+    text-overflow: clip;
+    overflow-wrap: break-word;
+    white-space: normal;
   }
 }
 
 @media (max-width: 1200px) {
-  .cards--info-row,
+  .cards--info-row {
+    flex-direction: column;
+    gap: .25rem;
+
+    .forms--label,
+    .cards--info-row-value {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 768px) {
   .cards--info-row-full-width {
     flex-direction: column;
     gap: .25rem;

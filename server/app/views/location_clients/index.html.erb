@@ -17,6 +17,14 @@
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <button type="button"
+        class="custom-button custom-button--primary custom-button--lg"
+        data-bs-toggle="modal"
+        data-bs-target="#add_pod_modal_step_0">
+        Add Pod
+      </button>
+    <% end %>
   </div>
 </div>
 <!--end::Toolbar-->
@@ -84,6 +92,11 @@
 
 <div class="modal fade" tabindex="-1" id="add_pod_step_2_existing">
     <%= render partial: 'add_pod_step_2_existing', locals: { location: @location } %>
+</div>
+
+<div class="modal fade" tabindex="-1" id="edit_pod_modal" data-controller="modal" data-action="turbo:submit-end->modal#submit turbo:frame-render->modal#showModal">
+  <%= turbo_frame_tag "edit_client_modal", target: "add_pod_step_2", modal_target: "new_location_modal-edit" do %>
+  <% end %>
 </div>
 
 <%= render partial: "application/components/modals/turbo_modal",

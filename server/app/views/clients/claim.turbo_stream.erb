@@ -1,11 +1,75 @@
-<%= turbo_stream.prepend 'location_clients_table' do %>
-  <%= render partial: 'location_clients/location_clients_table_row', locals: {client: @client} %>
-<% end %>
-
-<%= turbo_stream.update "clients_index_content" do %>
-  <% if policy_scope(Client).count > 0 %>
-    <%= render partial: "clients_table", locals: {clients: policy_scope(Client)} %>
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <% clients = policy_scope(Client) %>
+  <% if clients.count == 1 %>
+    <%= turbo_stream.update "clients_index_content" do %>
+      <%= render partial: "application/components/tables/generic_table",
+          locals: {
+            table_id: "pods_table",
+            type: TablesHelper::TableTypes::PODS,
+            titles: TablesHelper.titles(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+            widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+            rows: clients,
+            total: 1
+          }
+      %>
+    <% end %>
   <% else %>
-    <%= render partial: "empty_pods_view" %>
+    <%= turbo_stream.append "pods_table" do %>
+      <%= render partial: "application/components/tables/table_row",
+          locals: {
+            row: @client,
+            type: TablesHelper::TableTypes::PODS,
+            widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?),
+            index: "#{@client.unix_user}",
+          }
+      %>
+    <% end %>
+  <% end %>
+
+  <% # add new pod to network pods table if it's being added inside the network pods page %>
+  <% has_network_attached = @client.location.present? %>
+  <% is_in_network_pods_view = has_network_attached && request.referrer.include?(locations_path) %>
+  <% is_for_current_network = is_in_network_pods_view && request.referrer.include?(location_clients_path(@client.location.id)) %>
+
+  <% if is_for_current_network %>
+    <% if @client.location.clients.count == 1 %>
+      <%= turbo_stream.update "network_pods_table_container" do %>
+        <%= render partial: "network_pods/components/table_filters", locals: { network: @client.location } %>
+        <%= render partial: "application/components/tables/generic_table",
+            locals: {
+              table_id: "network_pods_table",
+              type: TablesHelper::TableTypes::NETWORK_PODS,
+              titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORK_PODS),
+              widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORK_PODS),
+              rows: [@client],
+              total: 1
+            }
+        %>
+      <% end %>
+    <% else %>
+      <%= turbo_stream.append "network_pods_table" do %>
+        <%= render partial: "application/components/tables/table_row",
+            locals: {
+              row: @client,
+              type: TablesHelper::TableTypes::NETWORK_PODS,
+              widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORK_PODS, current_account.is_all_accounts?),
+              index: "#{@client.unix_user}",
+            }
+        %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+<% else %>
+  <%= turbo_stream.prepend 'location_clients_table' do %>
+    <%= render partial: 'location_clients/location_clients_table_row', locals: {client: @client} %>
+  <% end %>
+
+  <%= turbo_stream.update "clients_index_content" do %>
+    <% if policy_scope(Client).count > 0 %>
+      <%= render partial: "clients_table", locals: {clients: policy_scope(Client)} %>
+    <% else %>
+      <%= render partial: "empty_pods_view" %>
+    <% end %>
   <% end %>
 <% end %>

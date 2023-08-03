@@ -5,7 +5,7 @@
   <div class="cards--card-with-header-content-container">
     <div class="cards--info-row-full-width">
       <div class="cards--info-column">
-        <span class="mb-4 <%= pod.data_cap_max_usage.nil? ? 'additional-text' : 'regular-text' %>"><%= pod.data_cap_max_usage.nil? ? "Disabled" : "#{pod.get_max_usage(current_user)} per #{pod.get_periodicity_period}" %></span>
+        <span class="mb-2 <%= pod.data_cap_max_usage.nil? ? 'additional-text' : 'regular-text' %>"><%= pod.data_cap_max_usage.nil? ? "Disabled" : "#{pod.get_max_usage(current_user)} per #{pod.get_periodicity_period}" %></span>
         <% if pod.data_cap_max_usage.nil? %>
           <a  href="#"
               class="regular-link"

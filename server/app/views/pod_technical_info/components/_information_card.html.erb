@@ -1,0 +1,38 @@
+<div class="cards--card-with-header">
+  <div class="cards--card-header">
+    <span>Pod information</span>
+  </div>
+  <div class="cards--card-with-header-content-container">
+    <div class="cards--info-row-full-width mb-4">
+      <label class="forms--label">Pod type</label>
+      <span class="cards--info-row-value regular-text"><%= pod.raw_watchdog_version.nil? ? "Software Installed" : "Physical" %></span>
+    </div>
+    <div class="cards--info-row-full-width mb-4">
+      <label class="forms--label">Pod ID</label>
+      <span class="cards--info-row-value regular-text"><%= pod.unix_user %></span>
+    </div>
+    <div class="cards--info-row-full-width mb-4">
+      <label class="forms--label">Pod version</label>
+      <div class="cards--info-row-value pods--version-container">
+        <span class="<%= pod.client_version.nil? ? 'additional-text' : 'regular-text' %>"><%= pod.client_version.nil? ? "Not Available" : pod.client_version.version %></span>
+        <% if pod.target_client_version.present? && pod.client_version.present? %>
+          <span class="additional-text">
+            <%= pod.target_client_version.version == pod.client_version.version ? "Latest version" : "Outdated version" %>
+          </span>
+        <% end %>
+      </div>
+    </div>
+    <div class="cards--info-row-full-width mb-4">
+      <label class="forms--label">OS version</label>
+      <span class="cards--info-row-value <%= pod.os_version.nil? ? 'additional-text' : 'regular-text' %>">
+        <%= pod.os_version.nil? ? "Not Available" : pod_os_to_human(pod.os_version) %>
+      </span>
+    </div>
+    <div class="cards--info-row-full-width mb-4">
+      <label class="forms--label">Hardware platform</label>
+      <span class="cards--info-row-value <%= pod.hardware_platform.nil? ? 'additional-text' : 'regular-text' %>">
+        <%= pod.hardware_platform.nil? ? "Not Available" : pod.hardware_platform.upcase %>
+      </span>
+    </div>
+  </div>
+</div>
