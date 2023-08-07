@@ -11,7 +11,6 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 
 const speedFiltersBoxStyle = {
   width: 255,
-  height: 240,
   borderRadius: 16,
   backgroundColor: DEFAULT_SPEED_FILTER_BACKGROUND_COLOR,
   boxShadow: DEFAULT_SPEED_FILTER_BOX_SHADOW,
@@ -35,14 +34,11 @@ const mobileFilterListStyle = {
   borderRadius: 16,
   paddingLeft: 15,
   paddingRight: 15,
-  paddingTop: 15,
-  paddingBottom: 15,
   backgroundColor: DEFAULT_SPEED_FILTER_BACKGROUND_COLOR,
   position: 'absolute',
   left: 15,
   zIndex: 2000,
-  height: 95,
-}
+ }
 
 const xsFilterListStyle = {
   width: 'max-content',
@@ -52,7 +48,6 @@ const xsFilterListStyle = {
   position: 'absolute',
   left: 15,
   zIndex: 2000,
-  height: 75,
 }
 
 const mobileFilterSwitcherContainerStyle = {
@@ -126,11 +121,11 @@ const SpeedResultsBox = ({
     const element = document.getElementById('speedtest--main-frame');
     const {y, height} = element.getBoundingClientRect();
     if (config.webviewMode) {
-      style = {...style, top: 'calc(100vh - 115px)'}
+      style = {...style, top: 'calc(100vh - 125px - 45px)'}
     } else if(config.widgetMode) {
-      style = {...style, top: `calc(${config.frameStyle.height} - 60px - 54px - 56px - 50px)` }
+      style = {...style, top: `calc(${config.frameStyle.height} - 60px - 54px - 56px - 70px)` }
     } else {
-      style = {...style, top: (y + height - 280)}
+      style = {...style, top: (y + height - 300)}
     }
     return (
       <div style={style} id={'speedtest--speed-results-box--mobile-filters'}>
@@ -147,11 +142,11 @@ const SpeedResultsBox = ({
     const element = document.getElementById('speedtest--main-frame');
     const {y, height} = element.getBoundingClientRect();
     if (config.webviewMode) {
-      style = {...style, top: 'calc(100vh - 125px - 25px)'}
+      style = {...style, top: 'calc(100vh - 125px - 45px)'}
     } else if(config.widgetMode) {
-      style = {...style, top: `calc(${config.frameStyle.height} - 95px - 54px - 56px - 50px)` }
+      style = {...style, top: `calc(${config.frameStyle.height} - 95px - 54px - 56px - 70px)` }
     } else {
-      style = {...style, top: (y + height - 280)}
+      style = {...style, top: (y + height - 300)}
     }
     return (
       <div style={style} id={'speedtest--speed-results-box--mobile-filters'}>

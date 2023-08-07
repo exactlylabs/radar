@@ -83,26 +83,26 @@ const MyFiltersList = ({
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(0)}
           />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_LOW}
-                          selected={selectedRangeIndexes.includes(0)}
-                          onClick={toggleFilterWithZero}
+                          selected={selectedRangeIndexes.includes(1)}
+                          onClick={toggleFilterWithOne}
                           state={'(Unserved)'}
-                          opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(0)}
+                          opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(1)}
                           range={UPLOAD_RANGES[0]}
                           filterTextWidth={'71px'}
           />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_MID}
-                          selected={selectedRangeIndexes.includes(1)}
-                          onClick={toggleFilterWithOne}
+                          selected={selectedRangeIndexes.includes(2)}
+                          onClick={toggleFilterWithTwo}
                           state={'(Underserved)'}
-                          opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(1)}
+                          opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(2)}
                           range={UPLOAD_RANGES[1]}
                           filterTextWidth={'80px'}
           />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_HIGH}
-                          selected={selectedRangeIndexes.includes(2)}
-                          onClick={toggleFilterWithTwo}
+                          selected={selectedRangeIndexes.includes(3)}
+                          onClick={toggleFilterWithThree}
                           state={'(Other)'}
-                          opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(2)}
+                          opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(3)}
                           range={UPLOAD_RANGES[2]}
                           filterTextWidth={'70px'}
           />
