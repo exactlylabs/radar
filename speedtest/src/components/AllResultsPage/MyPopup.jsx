@@ -240,15 +240,12 @@ const MyPopup = ({
   }
 
   const getPopupOptions = () => {
-    // empty
     if((!measurement.street && !measurement.city && !measurement.state) && (!measurement.autonomous_system && !(measurement.autonomous_system?.autonomous_system_org))) {
       return emptyPopupOptions;
     }
-    // just address
     if(!measurement.autonomous_system && !(measurement.autonomous_system?.autonomous_system_org)) {
       return popupOptionsWithHeader;
     }
-    // just footer
     if (!measurement.street && !measurement.city && !measurement.state) {
       return popupOptionsWithFooter;
     }
