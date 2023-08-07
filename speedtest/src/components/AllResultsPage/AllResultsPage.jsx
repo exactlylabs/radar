@@ -41,7 +41,7 @@ const searchIconStyle = {
 const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
   const [requestArea, setRequestArea] = useState(givenLocation ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
   const [shouldRecenter, setShouldRecenter] = useState(false);
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [centerCoordinatesLoading, setCenterCoordinatesLoading] = useState(true);

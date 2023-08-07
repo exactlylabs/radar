@@ -12,6 +12,7 @@ const resultFilterStyle = {
   flexDirection: 'row',
   width: '100%',
   marginBottom: 15,
+  marginTop: 15,
   cursor: 'pointer'
 }
 
@@ -90,7 +91,7 @@ const MyResultFilter = ({
         </div>
       </div>
       {range && <div className={selected ? 'speedtest--bold' : ''} style={{...filterTextStyle, width: filterTextWidth}}>{getRangeText()}</div>}
-      {!isExtraSmallSizeScreen && <div style={stateStyle}>{state}</div>}
+      {(!isExtraSmallSizeScreen || !range) && <div style={stateStyle}>{state}</div>}
     </div>
   )
 }

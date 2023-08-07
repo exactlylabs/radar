@@ -21,55 +21,47 @@ const popupOptions = {
   keepInView: false,
   closeButton: false,
   maxWidth: 285,
-  maxHeight: 220,
-  offset: new Point(160, 215),
+  offset: new Point(160, 240),
 }
 
 const popupOptionsWithFooter = {
   keepInView: false,
   closeButton: false,
   maxWidth: 285,
-  maxHeight: 300,
-  offset: new Point(160, 255),
+  offset: new Point(160, 180),
 }
 
 const emptyPopupOptions = {
   keepInView: false,
   closeButton: false,
   maxWidth: 285,
-  maxHeight: 180,
-  offset: new Point(160, 150),
+  offset: new Point(160, 140),
 }
 
-const halfPopupOptions = {
+const popupOptionsWithHeader = {
   keepInView: false,
   closeButton: false,
   maxWidth: 285,
-  maxHeight: 200,
-  offset: new Point(160, 175),
+  offset: new Point(160, 200),
 }
 
 const popupDivStyle = {
   width: 275,
-  height: 220,
   position: 'relative',
 }
 
 const emptyPopupDivStyle = {
   width: 275,
-  height: 140,
   position: 'relative',
 }
 
 const halfPopupDivStyle = {
   width: 275,
-  height: 180,
   position: 'relative',
 }
 
 const popupHeaderStyle = {
   width: 'calc(100% - 30px)',
-  height: 45,
   backgroundColor: DEFAULT_MAP_POPUP_HEADER_BACKGROUND_COLOR,
   borderTopLeftRadius: '12px',
   borderTopRightRadius: '12px',
@@ -84,7 +76,6 @@ const popupHeaderStyle = {
 
 const popupFooterStyle = {
   width: 'calc(100% - 30px)',
-  height: 20,
   backgroundColor: DEFAULT_MAP_POPUP_FOOTER_BACKGROUND_COLOR,
   borderBottomLeftRadius: '12px',
   borderBottomRightRadius: '12px',
@@ -106,7 +97,6 @@ const emptyPopupHeaderStyle = {
 
 const halfPopupHeaderStyle = {
   width: 'calc(100% - 30px)',
-  height: 25,
   backgroundColor: DEFAULT_MAP_POPUP_HEADER_BACKGROUND_COLOR,
   borderTopLeftRadius: '12px',
   borderTopRightRadius: '12px',
@@ -250,11 +240,18 @@ const MyPopup = ({
   }
 
   const getPopupOptions = () => {
-    if(!measurement.street && !measurement.city && !measurement.state) return emptyPopupOptions;
-    if((!measurement.street && (measurement.city || measurement.state)) ||
-      (measurement.street && (!measurement.city && !measurement.state)))
-      return halfPopupOptions;
-    if(measurement.autonomous_system && measurement.autonomous_system.autonomous_system_org)  return popupOptionsWithFooter;
+    // empty
+    if((!measurement.street && !measurement.city && !measurement.state) && (!measurement.autonomous_system && !(measurement.autonomous_system?.autonomous_system_org))) {
+      return emptyPopupOptions;
+    }
+    // just address
+    if(!measurement.autonomous_system && !(measurement.autonomous_system?.autonomous_system_org)) {
+      return popupOptionsWithHeader;
+    }
+    // just footer
+    if (!measurement.street && !measurement.city && !measurement.state) {
+      return popupOptionsWithFooter;
+    }
     return popupOptions
   }
 
