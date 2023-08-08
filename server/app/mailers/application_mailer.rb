@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'no-reply@radar.exactlylabs.com'
+  default from: 'no-reply@pods.radartoolkit.com'
   layout 'mailer'
 end

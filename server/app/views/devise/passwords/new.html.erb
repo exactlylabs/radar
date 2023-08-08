@@ -31,7 +31,11 @@
       <!--end::Actions-->
     <% end %>
     <!--end::Form-->
-    <%= link_to 'Back to log in', new_session_path(resource_name), class: "regular-link" %>
+    <% if params[:token].present? %>
+      <%= link_to 'Back to log in', users_invite_sign_in_path(token: params[:token]), class: "regular-link" %>
+    <% else %>
+      <%= link_to 'Back to log in', new_session_path(resource_name), class: "regular-link" %>
+    <% end %>
   </div>
   <!--end::Wrapper-->
 </div>

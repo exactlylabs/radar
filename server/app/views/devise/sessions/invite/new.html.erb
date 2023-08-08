@@ -73,9 +73,7 @@
 				<!--end::Submit button-->
 				<div class="d-flex flex-stack mb-2 mt-6 mx-auto text-center">
 					<!--begin::Link-->
-					<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-						<a href="<%= new_password_path(resource_name) %>" class="regular-link w-100 text-center" tabindex="4">Forgot your password?</a>
-					<% end %>
+					<a href="<%= new_password_path(resource_name, token: params[:token]) %>" class="regular-link w-100 text-center" tabindex="4">Forgot your password?</a>
 					<!--end::Link-->
 				</div>
 			</div>
