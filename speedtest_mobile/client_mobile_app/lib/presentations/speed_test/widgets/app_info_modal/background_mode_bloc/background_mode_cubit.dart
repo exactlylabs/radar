@@ -177,6 +177,7 @@ class BackgroundModeCubit extends Cubit<BackgroundModeState> {
 
   Future<bool> _requestAccessToNotifications() async =>
       await Permission.notification.request().isGranted;
+
   Future<void> _loadWarnings() => _warningsService.getWarnings();
 
   void _listenToWarnings() {

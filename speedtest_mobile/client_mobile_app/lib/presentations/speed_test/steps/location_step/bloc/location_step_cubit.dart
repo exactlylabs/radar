@@ -173,6 +173,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
       street: location?.street,
       postalCode: location?.postalCode,
     );
+    if (isClosed) return;
     emit(state.copyWith(geolocation: accurateGeolocation));
   }
 
