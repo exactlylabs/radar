@@ -11,7 +11,7 @@ class ClientsController < ApplicationController
   before_action :check_request_origin, only: %i[ show ]
   before_action :set_client, only: %i[ release show edit destroy get_client_label toggle_in_service speed_average ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
-  before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_change_release_group get_bulk_remove_from_network bulk_remove_from_network get_bulk_move_to_network bulk_move_to_network]
+  before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_change_release_group get_bulk_remove_from_network bulk_remove_from_network get_bulk_move_to_network bulk_move_to_network ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 
   # GET /clients or /clients.json
@@ -557,6 +557,57 @@ class ClientsController < ApplicationController
     end
   end
 
+  def get_add_pod_modal
+    @unix_user = params[:unix_user]
+  end
+
+  def check_claim_new_pod
+    # Not using set_client as we don't want to throw here
+    @unix_user = params[:pod_id]
+    @client = Client.find_by_unix_user(@unix_user)
+    @error = nil
+    if !@client
+      @error = ErrorsHelper::PodClaimErrors::PodNotFound
+    elsif @client.user.present?
+      @error = ErrorsHelper::PodClaimErrors::PodAlreadyClaimed
+    else
+      @location = Location.new
+    end
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
+  def claim_new_pod
+    pod_assignment_type = params[:network_assignment_type]
+    @client = Client.find_by_unix_user(params[:id])
+    raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless @client.present?
+    account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
+    @client.user = current_user
+    @client.account = account
+    if pod_assignment_type == 'no_network'
+      @client.location = nil
+    elsif pod_assignment_type == 'existing_network'
+      @client.location = policy_scope(Location).find(params[:network_id])
+    elsif pod_assignment_type == 'new_network'
+      new_location = Location.new
+      @location = Location.new(location_params)
+      @location.user = current_user
+      @location.account_id = account.id
+      @location.clients << @client
+      @location.categories << policy_scope(Category).where(id: params[:categories].split(",")).distinct if params[:categories].present?
+      @location.save!
+      @client.location = @location
+    end
+    respond_to do |format|
+      if @client.save!
+        format.turbo_stream
+      else
+        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error adding your new pod. Please try again later." }
+      end
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -571,6 +622,10 @@ class ClientsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def client_params
     params.require(:client).permit(:name, :address, :location_id)
+  end
+
+  def location_params
+    params.require(:location).permit(:name, :address, :expected_mbps_up, :expected_mbps_down, :latitude, :longitude, :manual_lat_long, :automatic_location, :account_id)
   end
 
   def authenticate_client!

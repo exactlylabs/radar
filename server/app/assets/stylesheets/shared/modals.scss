@@ -173,6 +173,8 @@
   max-width: 480px;
   min-width: 400px;
   padding: 40px;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
 
   &[data-type="full"] {
     padding: 1.5rem 40px 2rem;
@@ -190,6 +192,10 @@
   &[data-resource="bulk-remove-from-network"] {
     min-width: 450px;
     text-align: center;
+  }
+
+  &.contained {
+    padding: 1rem;
   }
 }
 
@@ -267,4 +273,59 @@
   width: 100%;
   height: 250px;
   border-radius: .5rem;
+}
+
+.modals--big-icon-container {
+  width: 60px;
+  min-width: 60px;
+  aspect-ratio: 1;
+  background-color: $circular-icon-container-gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-inline: auto;
+}
+
+.modals--add-pod-options-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.modals--banner {
+  width: 100%;
+  padding: .75rem 1rem;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.312rem;
+  font-variation-settings: 'wght' $semi-bold;
+  word-break: normal;
+  text-overflow: clip;
+  overflow-wrap: break-word;
+  white-space: normal;
+
+  &[data-type="warning"] {
+    background-color: $snackbar--warning-background-color;
+    color: $snackbar--warning-color;
+  }
+
+  &[data-type="danger"] {
+    background-color: $snackbar--danger-background-color;
+    color: $snackbar--danger-color;
+  }
+}
+
+.modals--move-pod-modal {
+  width: 480px;
+}
+
+@media (max-width: 768px) {
+  .modals--move-pod-modal {
+    width: 100%;
+  }
 }

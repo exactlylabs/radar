@@ -52,7 +52,17 @@ Rails.application.routes.draw do
     resources :clients, controller: 'location_clients', only: [:index]
   end
 
+  get 'location/:location_id/clients/add_pod_to_network_modal', to: 'location_clients#get_add_pod_to_network_modal', as: :get_add_pod_to_network_modal
+  get 'location/:location_id/clients/add_new_pod_to_network_modal', to: 'location_clients#get_add_new_pod_to_network_modal', as: :get_add_new_pod_to_network_modal
+  post 'location/:location_id/clients/add_new_pod_to_network', to: 'location_clients#add_new_pod_to_network', as: :add_new_pod_to_network
+  get 'location/:location_id/clients/add_existing_pod_to_network_modal', to: 'location_clients#get_add_existing_pod_to_network_modal', as: :get_add_existing_pod_to_network_modal
+  post 'location/:location_id/clients/add_existing_pod_to_network', to: 'location_clients#add_existing_pod_to_network', as: :add_existing_pod_to_network
+
   get 'locations/account/:account_id', to: 'locations#get_by_account_id'
+
+  get 'clients/get_add_pod_modal', to: 'clients#get_add_pod_modal', as: :get_add_pod_modal
+  post 'clients/check_claim_new_pod', to: 'clients#check_claim_new_pod', as: :check_claim_new_pod
+  post 'clients/claim_new_pod', to: 'clients#claim_new_pod', as: :claim_new_pod
 
   resources :clients do
     resources :measurements, controller: 'client_measurements', only: [:index, :create, :show] do

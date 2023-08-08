@@ -1,0 +1,10 @@
+<%= turbo_frame_tag "add_pod_to_network_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+      locals: {
+        modal_title: "Add pod to network",
+        modal_partial_path: "network_pods/modals/add_pod/initial_step",
+        custom_submit_end_handler: nil,
+        resource: @location
+      }
+  %>
+<% end %>

@@ -2,11 +2,14 @@
 <% is_custom = local_assigns[:is_custom].present? %>
 <% goes_back = local_assigns[:goes_back].present? %>
 <% go_back_action = local_assigns[:go_back_action].present? ? local_assigns[:go_back_action] : nil %>
-<% raise "Missing go back action" if goes_back && !go_back_action %>
+<% go_back_url = local_assigns[:go_back_url].present? ? local_assigns[:go_back_url] : nil %>
+<% raise "Missing go back params: " if goes_back && !go_back_action && !go_back_url %>
 
 <div class="modal-header modals--header">
-  <% if goes_back %>
-    <%= image_tag image_url('arrow-left-dark.png'), width: 24, height: 24, class: "hoverable", data: { action: go_back_action } %>
+  <% if goes_back && go_back_action %>
+    <%= image_tag image_url('arrow-left-dark.png'), width: 24, height: 24, class: "hoverable", data: { action: go_back_action, url: go_back_url } %>
+  <% elsif goes_back && !go_back_action && go_back_url %>
+    <a href="<%= go_back_url %>"><%= image_tag image_url('arrow-left-dark.png'), width: 24, height: 24 %></a>
   <% end %>
   <h5 class="modals--title"><%= title %></h5>
   <!--begin::Close-->

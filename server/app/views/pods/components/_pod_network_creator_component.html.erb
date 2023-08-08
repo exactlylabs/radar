@@ -1,0 +1,16 @@
+<% invisible = local_assigns[:starts_invisible].present? ? local_assigns[:starts_invisible] : false %>
+
+<div class="pods--create-network-component-container <%= invisible ? 'invisible' : nil %>"
+  data-pod-account-and-network-target="newNetworkComponent"
+  data-controller="categories"
+  >
+  <%= render partial: "networks/modals/shared/network_details_modal",
+      locals: {
+        type: "create",
+        form: form,
+        footerless: true,
+        contained: true,
+        is_account_fixed: true
+      }
+  %>
+</div>

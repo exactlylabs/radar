@@ -198,3 +198,10 @@
   justify-content: flex-end;
   gap: 1rem;
 }
+
+.pods--create-network-component-container {
+  width: 100%;
+  border-radius: 6px;
+  border: solid 1px $modals--network-creation-component-border;
+  margin-top: 1.5rem;
+}

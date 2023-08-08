@@ -18,12 +18,13 @@
     </div>
     <!--end::Info-->
     <% if FeatureFlagHelper.is_available('networks', current_user) %>
-      <button type="button"
+      <a href="<%= get_add_pod_to_network_modal_path %>"
+        data-turbo-frame="add_pod_to_network_modal"
         class="custom-button custom-button--primary custom-button--lg"
-        data-bs-toggle="modal"
-        data-bs-target="#add_pod_modal_step_0">
-        Add Pod
-      </button>
+      >
+        <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: "me-2" %>
+        Add pod
+      </a>
     <% end %>
   </div>
 </div>
@@ -70,6 +71,9 @@
       <%= render partial: "application/components/modals/turbo_modal",
           locals: { turbo_frame_tag_id: "bulk_move_to_network_modal" }
       %>
+      <%= render partial: "application/components/modals/turbo_modal",
+          locals: { turbo_frame_tag_id: "add_pod_to_network_modal", optional_added_controllers: "add-pod-to-network pod-id-step" }
+      %>
     <% else %>
       <%= render partial: "location_clients_table", locals: { clients: @clients } %>
     <% end %>
@@ -102,3 +106,7 @@
 <%= render partial: "application/components/modals/turbo_modal",
   locals: { turbo_frame_tag_id: "bulk_remove_from_network_modal" }
 %>
+
+<div class="modal fade" tabindex="-1" id="pod_id_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
+  <%= render partial: "public_pod/pod_id_modal" %>
+</div>

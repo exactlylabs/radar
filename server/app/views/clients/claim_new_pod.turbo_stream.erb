@@ -1,0 +1,39 @@
+<% clients = policy_scope(Client) %>
+<% if clients.count == 1 %>
+  <%= turbo_stream.update "clients_index_content" do %>
+    <%= render partial: "application/components/tables/generic_table",
+        locals: {
+          table_id: "pods_table",
+          type: TablesHelper::TableTypes::PODS,
+          titles: TablesHelper.titles(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+          widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+          rows: clients,
+          total: 1
+        }
+    %>
+  <% end %>
+<% else %>
+  <% if @client.location.nil? %>
+    <%= turbo_stream.prepend "pods_table" do %>
+      <%= render partial: "application/components/tables/table_row",
+          locals: {
+            row: @client,
+            type: TablesHelper::TableTypes::PODS,
+            widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?),
+            index: "#{@client.unix_user}",
+          }
+      %>
+    <% end %>
+  <% else %>
+    <%= turbo_stream.append "pods_table" do %>
+      <%= render partial: "application/components/tables/table_row",
+          locals: {
+            row: @client,
+            type: TablesHelper::TableTypes::PODS,
+            widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?),
+            index: "#{@client.unix_user}",
+          }
+      %>
+    <% end %>
+  <% end %>
+<% end %>

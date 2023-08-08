@@ -69,6 +69,14 @@
   }
 }
 
+@media (max-width: 450px) {
+  .pods--create-network-component-container {
+    .networks--modal-form {
+      height: unset;
+    }
+  }
+}
+
 .networks--details-content-container {
   width: 100%;
   display: flex;
@@ -316,5 +324,51 @@
   .networks--small-row-cell-speed {
     font-size: 0.938rem;
     color: $deep-blue;
+  }
+}
+
+.networks--add-pod-option-container {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background-color: $subtle-gray;
+  border-radius: .5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .75rem;
+  cursor: pointer;
+
+  span,
+  div {
+    pointer-events: none;
+  }
+
+  input[type="radio"] {
+    color: $blue;
+    fill: $blue;
+  }
+
+  .networks--add-pod-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: .25rem;
+    text-align: left;
+  }
+
+  .networks--add-pod-option-title {
+    font-size: 0.938rem;
+    color: $dark-gray;
+    font-variation-settings: 'wght' $bold;
+  }
+
+  &[data-is-selected="true"] {
+    outline: solid 2px $blue;
+
+    .networks--add-pod-option-title {
+      color: $deep-blue;
+    }
   }
 }
