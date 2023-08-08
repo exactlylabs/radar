@@ -1,0 +1,10 @@
+<%= turbo_stream.update "add_pod_to_network_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+      locals: {
+        modal_title: "Add existing pod to network",
+        modal_partial_path: "network_pods/modals/add_pod/new/add_new_pod_modal",
+        custom_submit_end_handler: nil,
+        resource: @location
+      }
+  %>
+<% end %>

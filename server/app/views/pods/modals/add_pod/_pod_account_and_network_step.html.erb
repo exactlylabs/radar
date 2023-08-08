@@ -1,0 +1,69 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: {
+      title: "Add a new pod",
+      is_custom: true,
+      goes_back: true,
+      go_back_url: get_add_pod_modal_path(unix_user: @unix_user),
+    }
+%>
+<%= form_with(url: claim_new_pod_path, method: :post) do |form| %>
+  <div class="modals--content-container modals--move-pod-modal text-center" data-type="full" data-controller="pod-account-and-network">
+    <div class="modals--big-icon-container mb-4">
+      <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32 %>
+    </div>
+    <h3 class="modal-main-title mb-6"><%= @unix_user %></h3>
+    <input hidden name="id" value="<%= @unix_user %>"/>
+    
+    <% if current_account.is_all_accounts? %>
+      <div class="modals--form-row mb-4">
+        <label class="required forms--label">Account</label>
+        <select class="forms--select form-select"
+          id="new-pod-account-select"
+          data-controller="select2"
+          data-placeholder="Select an account"
+          name="account_id"
+          data-pod-account-and-network-target="accountsSelect"
+          data-select2-dropdown-parent-value="add_pod_modal"
+          data-select2-blanks-value="<%= current_user.super_user && !is_super_user_disabled? %>"
+          data-select2-allow-clear-value="<%= current_user.super_user && !is_super_user_disabled? %>"
+          data-action="select2-select->pod-account-and-network#onAccountsSelectChange"
+        >
+          <% if current_user.super_user && !is_super_user_disabled? %>
+            <option></option>
+            <option>&nbsp;</option>
+          <% end %>
+          <% policy_scope(Account).each_with_index do |account, index|%>
+            <%= render partial: "clients/client_account", locals: { account: account, selected: index == 0 } %>
+          <% end %>
+        </select>
+      </div>
+    <% end %>
+
+    <div class="modals--form-row">
+      <label class="forms--label">Network</label>
+      <select class="forms--select form-select"
+        data-controller="select2"
+        tabindex="-1"
+        data-remove-searchbar="true"
+        data-action="select2-select->pod-account-and-network#handleNetworkAssignmentTypeSelect"
+        name="network_assignment_type"
+      >
+        <option value="no_network" label="Do not assign to a network" selected>Do not assign to a network</option>
+        <option value="existing_network" label="Assign to an existing network">Assign to an existing network</option>
+        <option value="new_network" label="Assign to a new network">Assign to a new network</option>
+      </select>
+
+      <span class="additional-text mt-1 wrap" data-pod-account-and-network-target="networkSubtitle">Assign your pods to a network to keep them organized.</span>
+      <%= render partial: "pods/components/pod_creation_network_select" %>
+      <%= render partial: "pods/components/pod_network_creator_component", locals: { starts_invisible: true, form: form } %>
+    </div>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <!--begin::ContinueButton-->
+    <button type="submit"
+      class="custom-button custom-button--lg custom-button--primary"
+    >Add pod</button>
+    <!--end::ContinueButton-->
+  </div>
+<% end %>

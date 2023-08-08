@@ -1,0 +1,18 @@
+<select class="forms--select form-select"
+  data-controller="select2"
+  data-placeholder="Choose a network"
+  name="network_id"
+  tabindex="-1"
+  id="pod-existing-network-select"
+  data-pod-account-and-network-target="existingNetworkSelect"
+>
+  <% initial_locations = policy_scope(Location) %>
+  <% if current_account.is_all_accounts? %>
+    <% initial_locations = initial_locations.where(account_id: policy_scope(Account).first.id) %>
+  <% else %>
+    <% initial_locations = initial_locations.where(account_id: current_account.id) %>
+  <% end %>
+  <% initial_locations.each do |location|%>
+    <%= render partial: "clients/client_select_option", locals: { option: location, selected: location == @client.location } %>
+  <% end %>
+</select>

@@ -1,0 +1,26 @@
+<% if @client.location.clients.count == 1 %>
+  <%= turbo_stream.update "network_pods_table_container" do %>
+    <%= render partial: "network_pods/components/table_filters", locals: { network: @client.location } %>
+    <%= render partial: "application/components/tables/generic_table",
+        locals: {
+          table_id: "network_pods_table",
+          type: TablesHelper::TableTypes::NETWORK_PODS,
+          titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORK_PODS),
+          widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORK_PODS),
+          rows: [@client],
+          total: 1
+        }
+    %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.append "network_pods_table" do %>
+    <%= render partial: "application/components/tables/table_row",
+        locals: {
+          row: @client,
+          type: TablesHelper::TableTypes::NETWORK_PODS,
+          widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORK_PODS, current_account.is_all_accounts?),
+          index: "#{@client.unix_user}",
+        }
+    %>
+  <% end %>
+<% end %>

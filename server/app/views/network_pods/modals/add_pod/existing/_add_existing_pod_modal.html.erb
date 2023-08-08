@@ -1,0 +1,43 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: {
+      title: "Move pod to \"#{@location.name}\"",
+      is_custom: true,
+      goes_back: true,
+      go_back_action: "click->add-pod-to-network#goToInitialStep",
+      go_back_url: get_add_pod_to_network_modal_path(add_type: 'existing_pod'),
+    }
+%>
+<%= form_with(url: add_existing_pod_to_network_path(location_id: @location.id), method: :post) do |form| %>
+  <div class="modals--content-container modals--move-pod-modal" data-type="full">
+    <div class="modals--form-row">
+      <label class="forms--label mb-2">Choose a pod to move</label>
+      <select class="form-select forms--select"
+        data-placeholder="Choose a pod"
+        tabindex="-1"
+        data-controller="select2"
+        data-select2-blanks-value="true"
+        name="pod_id"
+        data-action="select2-select->add-pod-to-network#selectExistingPod select2-clear->add-pod-to-network#clearPod"
+      >
+        <option></option>
+        <option>&nbsp;</option>
+        <% policy_scope(Client).where.not(location_id: @location.id).each do |pod| %>
+          <option value="<%= pod.unix_user %>"
+            label="<%= pod.unix_user %>"
+            data-location-name="<%= pod.location&.name %>"
+          ><%= pod.unix_user %></option>
+        <% end %>
+      </select>
+    </div>
+    <div class="modals--banner mt-6 invisible" data-type="warning" data-add-pod-to-network-target="warningBanner"></div>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <!--begin::ContinueButton-->
+    <button type="submit"
+      class="custom-button custom-button--lg custom-button--primary custom-button--disabled"
+      data-add-pod-to-network-target="moveExistingPodButton"
+    >Move pod</button>
+    <!--end::ContinueButton-->
+  </div>
+<% end %>

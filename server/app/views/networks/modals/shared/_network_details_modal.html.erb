@@ -1,4 +1,8 @@
-<div class="modals--content-container"
+<% footerless = local_assigns[:footerless].present? ? local_assigns[:footerless] : false %>
+<% contained = local_assigns[:contained].present? ? local_assigns[:contained] : false %>
+<% is_account_fixed = local_assigns[:is_account_fixed] ? local_assigns[:is_account_fixed] : false %>
+
+<div class="modals--content-container <%= contained ? 'contained' : '' %>"
   data-controller="location-form"
   data-type="full"
   data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker"
@@ -13,7 +17,7 @@
   <div class="modals--form-row mb-6 forms--input-group">
     <% if !current_account&.is_all_accounts? %>
       <label class="forms--label optional">Categories</label>
-      <input name="categories" autocomplete="off" type="hidden" value="<%= @location.categories.map{|c| c.id}.join(",") %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
+      <input name="categories" autocomplete="off" type="hidden" value="<%= @location.categories&.map{|c| c.id}.join(",") || [] %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
       <div class="category--location-select-container"
           data-categories-target="selectClickableContainer"
           data-action="click->categories#toggleFocus"
@@ -33,12 +37,13 @@
     <% else %>
       <label class="forms--label">Account</label>
       <select class="form-select forms--select"
-              data-controller="select2"
-              id="client-accounts-dropdown"
-              data-placeholder="Select an account"
-              name="location[account_id]"
-              data-select2-id="select2-data-account_id"
-              tabindex="-1"
+        data-controller="select2"
+        id="new-network-accounts-dropdown"
+        data-placeholder="Select an account"
+        name="location[account_id]"
+        data-select2-id="select2-data-account_id"
+        tabindex="-1"
+        data-action="select2-select->pod-account-and-network#handleAccountChangeOnNewNetwork"
       >
         <% policy_scope(Account).each_with_index do |account, index|%>
           <%= render partial: "clients/client_select_option", locals: { option: account, selected: type == "edit" ? account.id == @location&.account.id : index == 0} %>
@@ -119,6 +124,7 @@
 
   <div class="modals--half-width-row mb-6"
     data-location-form-target="manualLatLongWrapper"
+    id="hidden_lat_lng_wrapper"
     <%= @location&.manual_lat_long ? '' : 'hidden' %>
   >
     <div class="modals--form-row">
@@ -139,8 +145,9 @@
     </div>
   </div>
 </div>
-
-<div class="modal-footer modals--footer">
-  <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true} %>
-  <%= form.submit "#{type == 'create' ? 'Create network' : 'Update'}", class: "custom-button custom-button--primary custom-button--sm" %>
-</div>
+<% if !footerless %>
+  <div class="modal-footer modals--footer">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true} %>
+    <%= form.submit "#{type == 'create' ? 'Create network' : 'Update'}", class: "custom-button custom-button--primary custom-button--sm" %>
+  </div>
+<% end %>

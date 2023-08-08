@@ -1,0 +1,36 @@
+<%= render partial: "application/components/modals/modal_header",
+    locals: { title: "Add pod to \"#{@location.name}\"", is_custom: true }
+%>
+<div class="modals--content-container text-center" data-type="full">
+  <div class="modals--big-icon-container mb-4">
+    <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32 %>
+  </div>
+  <h3 class="modal-main-title mb-8">How do you want to add a pod?</h3>
+  <input hidden value="<%= @add_type %>" name="pod_addition_type" data-add-pod-to-network-target="hiddenTypeInput"/>
+  <input hidden value="<%= @location.name %>" name="location_name" data-add-pod-to-network-target="hiddenNetworkNameInput"/>
+  <div class="modals--add-pod-options-container">
+    <%= render partial: "network_pods/components/add_pod_option", 
+        locals: {
+          title: "Set up a new pod",
+          description: "Configure a new pod to add to this network.",
+          value: "new_pod",
+          url: get_add_new_pod_to_network_modal_path
+        }
+    %>
+    <%= render partial: "network_pods/components/add_pod_option", 
+        locals: {
+          title: "Move an existing pod to this network",
+          description: "Choose an existing pod to add to this network.",
+          value: "existing_pod",
+          url: get_add_existing_pod_to_network_modal_path
+        }
+    %>
+  </div>
+</div>
+<div class="modals--footer-container">
+  <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+  <button type="button"
+    class="custom-button custom-button--primary custom-button--lg"
+    data-action="click->add-pod-to-network#continueToSpecificFlow"
+  >Continue</button>
+</div>

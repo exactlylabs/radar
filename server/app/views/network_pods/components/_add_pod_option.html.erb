@@ -1,0 +1,21 @@
+<div class="networks--add-pod-option-container"
+  data-is-selected="<%= @add_type == value ? 'true' : 'false' %>"
+  data-action="click->add-pod-to-network#selectOption"
+  data-type="<%= value %>"
+  data-add-pod-to-network-target="<%= value == 'new_pod' ? 'newPodOption' : 'existingPodOption' %>"
+  data-next-step-url="<%= url %>"
+>
+  <input type="radio"
+    name="add_pod_option"
+    class="mt-1"
+    value="<%= value %>"
+    data-type="<%= value %>"
+    data-action="input->add-pod-to-network#selectOption"
+    data-add-pod-to-network-target="<%= value == 'new_pod' ? 'newPodRadio' : 'existingPodRadio' %>"
+    <%= @add_type == value ? 'checked' : nil %>
+  />
+  <div class="networks--add-pod-text-container">
+    <span class="networks--add-pod-option-title wrap"><%= title %></span>
+    <span class="additional-text wrap"><%= description %></span>
+  </div>
+</div>
