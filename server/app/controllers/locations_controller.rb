@@ -193,7 +193,7 @@ class LocationsController < ApplicationController
 
       @locations.each do |location|
         location.clients.update_all(account_id: account.id)
-        location.measurements.update_all(account_id: account.id) if wants_to_move_tests
+        MeasurementMigrationJob.perform_later(location, account) if wants_to_move_tests
       end
       @locations.update_all(account_id: account.id)
     rescue Exception => e

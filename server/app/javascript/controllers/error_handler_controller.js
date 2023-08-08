@@ -14,9 +14,12 @@ import { AlertTypes } from "../alerts";
   Other context data is set globally prior to this execution.
  */
 export default function handleError(error, controllerName) {
-  console.error(error);
-  Sentry.setContext("controller", { name: controllerName });
-  Sentry.captureException(error);
+  if(document.body.dataset.environment === 'development') {
+    console.error(error);
+  } else {
+    Sentry.setContext("controller", { name: controllerName });
+    Sentry.captureException(error);
+  }
   emitCustomEvent('renderAlert', {
     detail: {
       message: "Oops! There has been an unexpected error. Please try again later.",
