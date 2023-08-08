@@ -30,8 +30,7 @@
         data-is-multi="true"
         data-action="select2-select->add-account#handleSharedToAccountSelect select2-unselect->add-account#handleSharedToAccountSelect"
       >
-      
-        <% policy_scope(Account).not_deleted.distinct.where.not(id: current_account.id).each do |account| %>
+        <% policy_scope(Account).not_deleted.distinct.where.not(id: current_account&.id).each do |account| %>
           <option value="<%= account.id %>"
             label="<%= account.name %>"
             data-add-account-target="shareOption"

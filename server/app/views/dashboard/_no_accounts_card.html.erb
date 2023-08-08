@@ -4,5 +4,8 @@
   </div>
   <h2 class="dialog-main-title mb-3 wrap">You haven't set up an account yet.</h2>
   <p class="text-wrap additional-text wrap w-100 mb-8">Radar is great for both personal use and for organizations. Let’s set up a new account so you can get started.</p>
-  <a href="#" class="custom-button custom-button--primary custom-button--lg mx-auto" data-bs-toggle="modal" data-bs-target="#add_account_wizard">Add new account</a>
+  <a href="<%= new_account_path %>"
+    class="custom-button custom-button--primary custom-button--lg mx-auto"
+    data-turbo-frame="create_account_modal"
+  >Create an account</a>
 </div>
