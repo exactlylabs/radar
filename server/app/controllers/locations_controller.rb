@@ -97,7 +97,7 @@ class LocationsController < ApplicationController
       else
         latest_categories_ids = []
       end
-      
+
       new_categories_ids = latest_categories_ids - current_categories_ids
       to_delete_categories_ids = current_categories_ids - latest_categories_ids
 
@@ -129,7 +129,7 @@ class LocationsController < ApplicationController
     possible_recent_search = policy_scope(RecentSearch).find_by_location_id(@location.id)
     possible_recent_search.destroy if possible_recent_search.present?
 
-    policy_scope(CategoriesLocation).where(location_id: @location.id).destroy_all    
+    policy_scope(CategoriesLocation).where(location_id: @location.id).destroy_all
     @notice = FeatureFlagHelper.is_available('networks', current_user) ? "Network was successfully deleted." : "Location was successfully deleted."
     respond_to do |format|
       format.html { redirect_to locations_url, notice: @notice }
@@ -163,7 +163,7 @@ class LocationsController < ApplicationController
     rescue Exception => e
       error = e.message
     end
-    
+
     if !error
       @notice = "Networks were successfully deleted."
     else
@@ -192,12 +192,22 @@ class LocationsController < ApplicationController
       wants_to_move_tests = params[:wants_to_move_tests] == "true"
 
       @locations.each do |location|
+        old_account = location.account
         location.clients.update_all(account_id: account.id)
-        MeasurementMigrationJob.perform_later(location, account) if wants_to_move_tests
+        location.update(account_id: account.id)
+        if wants_to_move_tests
+          location.record_event(
+            Location::Events::DATA_MIGRATION_REQUESTED, {
+              from: old_account.id,
+              to: account.id
+            },
+            Time.now
+          )
+          MeasurementMigrationJob.perform_later(location, old_account, account)
+        end
       end
-      @locations.update_all(account_id: account.id)
     rescue Exception => e
-      puts e.message
+      Sentry.capture_exception(e)
       error = e.message
     end
 

@@ -19,6 +19,8 @@ include EventSourceable
     WENT_OFFLINE = "LOCATION_WENT_OFFLINE"
     CATEGORY_ADDED = "CATEGORY_ADDED"
     CATEGORY_REMOVED = "CATEGORY_REMOVED"
+    ACCOUNT_CHANGED = "NETWORK_ACCOUNT_CHANGED"
+    DATA_MIGRATION_REQUESTED = "DATA_MIGRATION_REQUESTED"
   end
 
   # Event Hooks
@@ -27,6 +29,7 @@ include EventSourceable
   notify_change :address, Location::Events::ADDRESS_CHANGED
   notify_change :online, {false => Location::Events::WENT_OFFLINE, true => Location::Events::WENT_ONLINE}
   notify_change :deleted_at, {nil => Location::Events::RESTORED, :default => Location::Events::DELETED}
+  notify_change :account_id, Location::Events::ACCOUNT_CHANGED
 
   validates :name, :address, presence: true
 

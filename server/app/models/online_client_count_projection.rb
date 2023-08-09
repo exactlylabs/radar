@@ -7,18 +7,20 @@ class OnlineClientCountProjection < ApplicationRecord
     # Consumes from the event stream from the last offset
     consumer_offset = ConsumerOffset.find_or_create_by!(consumer_id: "OnlineClientCountProjection")
     events = Event.where(
-        "id > ? AND (aggregate_type = ? OR aggregate_type = ?)", 
-        consumer_offset.offset, Client.name, SystemOutage.name
+        "id > ? AND (aggregate_type = ? OR aggregate_type = ? OR aggregate_type = ?)",
+        consumer_offset.offset, Client.name, SystemOutage.name, Location.name
     ).order('timestamp ASC, version ASC')
 
     events.each do |event|
-      
-        OnlineClientCountProjection.transaction do 
+
+        OnlineClientCountProjection.transaction do
           begin
             if event.aggregate_type == Client.name
               self.handle_client_event! event
             elsif event.aggregate_type == SystemOutage.name
               self.handle_system_outage_event! event
+            elsif event.aggregate_type == Location.name
+              self.handle_location_event! event
             end
           rescue ActiveRecord::InvalidForeignKey
           end
@@ -34,12 +36,12 @@ class OnlineClientCountProjection < ApplicationRecord
       return
     end
     state = event.snapshot.state
-    
+
     last_count = self.latest_for state["account_id"], state["autonomous_system_id"], state["location_id"]
     if last_count.nil?
       last_count = OnlineClientCountProjection.new(
-        account_id: state["account_id"], 
-        autonomous_system_id: state["autonomous_system_id"], 
+        account_id: state["account_id"],
+        autonomous_system_id: state["autonomous_system_id"],
         location_id: state["location_id"]
       )
     end
@@ -48,7 +50,7 @@ class OnlineClientCountProjection < ApplicationRecord
       if state["online"]
         self.new_record!(last_count, event, increment=1)
       end
-    
+
     when Client::Events::ACCOUNT_CHANGED
       if state["online"]
         old_account_count = self.latest_for event.data["from"], state["autonomous_system_id"], state["location_id"]
@@ -57,7 +59,7 @@ class OnlineClientCountProjection < ApplicationRecord
           self.new_record!(old_account_count, event, increment=-1)
         end
       end
-      
+
     when Client::Events::LOCATION_CHANGED
       if state["online"]
         old_location_count = self.latest_for state["account_id"], state["autonomous_system_id"], event.data["from"]
@@ -87,12 +89,12 @@ class OnlineClientCountProjection < ApplicationRecord
   def self.handle_system_outage_event!(event)
     if event.name == SystemOutage::Events::FINISHED
       outage = event.snapshot.state
-      # Once a system outage is finished, we search for 
+      # Once a system outage is finished, we search for
       # pods whose state differs from the state before the outage.
       sql = %{
         WITH state_before_outage AS (
-          SELECT 
-            DISTINCT ON (snapshots.aggregate_id) snapshots.aggregate_id, 
+          SELECT
+            DISTINCT ON (snapshots.aggregate_id) snapshots.aggregate_id,
             (state->>'online')::boolean as online,
             (state->>'account_id')::bigint as account_id,
             (state->>'location_id')::bigint as location_id,
@@ -104,7 +106,7 @@ class OnlineClientCountProjection < ApplicationRecord
           ORDER BY snapshots.aggregate_id, timestamp DESC
         ), state_right_before_ending AS (
           SELECT
-            DISTINCT ON (snapshots.aggregate_id) snapshots.aggregate_id, 
+            DISTINCT ON (snapshots.aggregate_id) snapshots.aggregate_id,
             (state->>'online')::boolean as online,
             (state->>'account_id')::bigint as account_id,
             (state->>'location_id')::bigint as location_id,
@@ -115,7 +117,7 @@ class OnlineClientCountProjection < ApplicationRecord
           AND timestamp < :end_time
           ORDER BY snapshots.aggregate_id, timestamp DESC
         )
-        
+
         SELECT
           f.online as from_online,
           f.account_id as from_account_id,
@@ -125,7 +127,7 @@ class OnlineClientCountProjection < ApplicationRecord
           t.account_id as to_account_id,
           t.location_id as to_location_id,
           t.autonomous_system_id as to_autonomous_system_id
-        
+
         FROM state_before_outage f
         RIGHT JOIN state_right_before_ending t ON f.aggregate_id = t.aggregate_id
         WHERE f.online != t.online
@@ -133,8 +135,8 @@ class OnlineClientCountProjection < ApplicationRecord
       records = ActiveRecord::Base.connection.execute(
         ApplicationRecord.sanitize_sql(
           [sql, {
-             start_time: outage["start_time"], 
-             end_time: outage["end_time"], 
+             start_time: outage["start_time"],
+             end_time: outage["end_time"],
              client_aggregate_type: Client.name
           }]
         )
@@ -149,6 +151,14 @@ class OnlineClientCountProjection < ApplicationRecord
           self.new_record!(new_count, event, increment=1)
         end
       end
+    end
+  end
+
+  def self.handle_location_event!(event)
+    if event.name == Location::Events::DATA_MIGRATION_REQUESTED
+      OnlineClientCountProjection.where(
+        location_id: event.aggregate_id, account_id: event.data["from"]
+      ).update_all(account_id: event.data["to"])
     end
   end
 
