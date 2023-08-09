@@ -142,8 +142,14 @@ include EventSourceable
   end
 
   def recalculate_averages!
-    self.download_avg = self.measurements.average(:download).round(3) if self.measurements.count.positive?
-    self.upload_avg = self.measurements.average(:upload).round(3) if self.measurements.count.positive?
+    measurements = self.measurements.where(account_id: self.account.id)
+    if measurements.count > 0
+      self.download_avg = measurements.average(:download).to_f.round(3) if self.measurements.count.positive?
+      self.upload_avg = measurements.average(:upload).to_f.round(3) if self.measurements.count.positive?
+    else
+      self.download_avg = nil
+      self.upload_avg = nil
+    end
     self.save!
   end
 

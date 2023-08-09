@@ -204,6 +204,10 @@ class LocationsController < ApplicationController
             Time.now
           )
           MeasurementMigrationJob.perform_later(location, old_account, account)
+        else
+          # Not calling this after because in the case the user wants to move tests,
+          # we need to recalculate after reassigning the account
+          location.recalculate_averages!
         end
       end
     rescue Exception => e
