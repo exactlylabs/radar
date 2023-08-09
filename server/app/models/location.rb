@@ -72,6 +72,7 @@ include EventSourceable
       name: self.name,
       address: self.address,
       labels: self.categories.map {|label| label.name},
+      account_id: self.account_id,
     })
   end
 
