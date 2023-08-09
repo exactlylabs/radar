@@ -150,13 +150,12 @@ export default class extends Controller {
 
   runCustomNetworksBulkDelete(url, thenFunction = undefined) {
     const networksToDelete = this.getIds('network-', '-');
-    const token = document.getElementsByName("csrf-token")[0].content;
     let formData = new FormData();
     formData.append("ids", JSON.stringify(networksToDelete));
     fetch(url, {
       method: "DELETE",
       redirect: "follow",
-      headers: { "X-CSRF-Token": token },
+      headers: { "X-CSRF-Token": this.token },
       body: formData,
     })
       .then(response => {
@@ -185,14 +184,13 @@ export default class extends Controller {
       if(type === 'UsersAccount') usersToDelete.push(ids[index]);
       else invitesToDelete.push(ids[index]);
     });
-    const token = document.getElementsByName("csrf-token")[0].content;
     let formData = new FormData();
     formData.append("users_ids", JSON.stringify(usersToDelete));
     formData.append("invites_ids", JSON.stringify(invitesToDelete));
     fetch(url, {
       method: "DELETE",
       redirect: "follow",
-      headers: { "X-CSRF-Token": token },
+      headers: { "X-CSRF-Token": this.token },
       body: formData,
     })
       .then(response => {
@@ -253,7 +251,7 @@ export default class extends Controller {
     formData.append("wants_to_move_tests", wantsToMoveTests);
     fetch('/locations/bulk_move_networks', {
       method: "POST",
-      headers: { "X-CSRF-Token": token },
+      headers: { "X-CSRF-Token": this.token },
       body: formData,
     })
       .then(response => {

@@ -50,7 +50,7 @@ include EventSourceable
   after_validation :custom_geocode, if: :lat_long_changed?
   after_save :link_to_geospaces
   after_save :send_notifications
-  after_save :recalculate_averages!, if: :saved_change_to_account?
+  after_save :recalculate_averages!, if: :saved_change_to_account_id?
 
   default_scope { where(deleted_at: nil) }
   scope :with_deleted, -> { unscope(where: :deleted_at) }
