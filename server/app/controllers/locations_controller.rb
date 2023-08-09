@@ -239,8 +239,8 @@ class LocationsController < ApplicationController
     end
     filtered_measurements = @location.measurements.where(created_at: start_date..end_date)
     if filtered_measurements.count > 0
-      download_avg = filtered_measurements.average(:download).round(3)
-      upload_avg = filtered_measurements.average(:upload).round(3)
+      download_avg = filtered_measurements.average(:download).to_f.round(2)
+      upload_avg = filtered_measurements.average(:upload).to_f.round(2)
     else
       download_avg = nil
       upload_avg = nil
@@ -253,10 +253,10 @@ class LocationsController < ApplicationController
       format.html { 
         render partial: "networks/components/speed_cells",
         locals: {
-          download_avg: download_avg.present? ? "#{download_avg.round(2)} Mbps" : 'N/A',
+          download_avg: download_avg.present? ? "#{download_avg} Mbps" : 'N/A',
           download_expected: @location.expected_mbps_down.present? ? "#{@location.expected_mbps_down.round(2)} Mbps" : 'N/A',
           download_diff: download_diff.present? ? download_diff : "-",
-          upload_avg: upload_avg.present? ? "#{upload_avg.round(2)} Mbps" : 'N/A',
+          upload_avg: upload_avg.present? ? "#{upload_avg} Mbps" : 'N/A',
           upload_expected: @location.expected_mbps_up.present? ? "#{@location.expected_mbps_up.round(2)} Mbps" : 'N/A',
           upload_diff: upload_diff.present? ? upload_diff : "-",
         }
