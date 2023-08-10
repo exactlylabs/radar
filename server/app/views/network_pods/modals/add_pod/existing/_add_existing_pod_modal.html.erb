@@ -15,13 +15,12 @@
         data-placeholder="Choose a pod"
         tabindex="-1"
         data-controller="select2"
-        data-select2-blanks-value="true"
         name="pod_id"
         data-action="select2-select->add-pod-to-network#selectExistingPod select2-clear->add-pod-to-network#clearPod"
       >
         <option></option>
         <option>&nbsp;</option>
-        <% policy_scope(Client).where.not(location_id: @location.id).each do |pod| %>
+        <% policy_scope(Client).where('location_id IS NULL OR location_id != ?', @location.id).each do |pod| %>
           <option value="<%= pod.unix_user %>"
             label="<%= pod.unix_user %>"
             data-location-name="<%= pod.location&.name %>"

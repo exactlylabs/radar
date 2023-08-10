@@ -194,7 +194,6 @@ export default class extends Controller {
   }
 
   networksOnManualChange(e) {
-    console.log(e.target);
     if(e.target.checked) {
       this.showLatLngFields();
     } else {
