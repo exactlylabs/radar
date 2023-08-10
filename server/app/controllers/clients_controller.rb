@@ -4,6 +4,7 @@ require "rqrcode"
 class ClientsController < ApplicationController
   include Recents
   include Paginator
+  include RangeEvaluator
   before_action :check_account_presence, only: %i[ index show ]
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
@@ -534,16 +535,8 @@ class ClientsController < ApplicationController
   end
 
   def speed_average
-    type = params[:type]
-    start_date = nil
+    start_date = get_range_start_date(params[:type])
     end_date = Time.zone.now
-    if type == 'today'
-      start_date = Time.zone.now.beginning_of_day
-    elsif type == 'month'
-      start_date = Time.zone.now.beginning_of_month
-    elsif type == 'year'
-      start_date = Time.zone.now.beginning_of_year
-    end
     filtered_measurements = @client.measurements.where(created_at: start_date..end_date)
     if filtered_measurements.count > 0
       download_avg = filtered_measurements.average(:download).round(3)
