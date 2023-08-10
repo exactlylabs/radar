@@ -6,7 +6,15 @@ class MeasurementPolicy < ApplicationPolicy
     def resolve
       if @auth_holder.present?
         if @auth_holder.is_all_accounts?
-          scope.where('download IS NOT NULL')
+          user = @auth_holder.user
+          all_measurements = []
+          user.accounts.not_deleted.each do |account|
+            all_measurements.append(*account.measurements.where.not(download: nil).pluck(:id))
+          end
+          user.shared_accounts.not_deleted.each do |account|
+            all_measurements.append(*account.measurements.where.not(download: nil).pluck(:id))
+          end
+          scope.where(id: all_measurements)
         else
           scope.where(account_id: @auth_holder.account.id).where('download IS NOT NULL') # Prevent from seeing tests from different accounts where the test wasn't taken
         end
