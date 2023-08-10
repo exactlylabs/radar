@@ -1,4 +1,4 @@
-<% origin = request.path.start_with?(clients_path) ? 'pods' : 'network' %>
+<% origin = request.referrer.include?(locations_path) ? 'network' : 'pods' %>
 
 <% if origin == 'network' %>
   <% @clients.each do |client| %>

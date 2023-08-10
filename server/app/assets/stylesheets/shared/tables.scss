@@ -375,6 +375,12 @@
     left: unset;
     right: 0;
   }
+  #multi-row-actions {
+    .tables--filters-menu-container {
+      left: 0;
+      right: unset;
+    }
+  }
 }
 
 .tables--options-icon {

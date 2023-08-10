@@ -21,6 +21,7 @@ module TablesHelper
   def self.get_footer_label(type)
     case type
     when TableTypes::MEMBERS
+      'Members'
     when TableTypes::ALL_ACCOUNTS_MEMBERS
       'Members'
     when TableTypes::NETWORKS
@@ -28,6 +29,7 @@ module TablesHelper
     when TableTypes::MEASUREMENTS
       'Measurements'
     when TableTypes::NETWORK_PODS
+      'Pods'
     when TableTypes::PODS
       'Pods'
     end
