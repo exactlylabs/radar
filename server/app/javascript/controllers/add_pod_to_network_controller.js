@@ -79,7 +79,6 @@ export default class extends Controller {
     e.preventDefault();
     e.stopPropagation();
     const goBackTarget = e.target;
-    console.log(goBackTarget);
     const initialStepUrl = goBackTarget.dataset.url;
     fetch(initialStepUrl, {
       headers: { 'X-CSRF-Token': this.token }
