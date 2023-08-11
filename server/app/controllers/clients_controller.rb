@@ -590,7 +590,6 @@ class ClientsController < ApplicationController
     elsif pod_assignment_type == 'existing_network'
       @client.location = policy_scope(Location).find(params[:network_id])
     elsif pod_assignment_type == 'new_network'
-      new_location = Location.new
       @location = Location.new(location_params)
       @location.user = current_user
       @location.account_id = account.id
