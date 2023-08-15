@@ -23,11 +23,11 @@ const MyCustomMarker = ({
 }) => {
 
   const getPathOptions = () => {
-    const { downloadFilterTag, uploadFilterTag, visible } = measurement;
+    const { downloadFilterTag, uploadFilterTag } = measurement;
     let pathOptions = {
       ...sharedMarkerProps,
-      opacity: visible ? 1.0 : 0.1,
-      fillOpacity: visible ? 0.7 : 0.1,
+      opacity: 1.0,
+      fillOpacity: 0.7,
     };
     const tagToCheck = currentFilterType === 'download' ? downloadFilterTag : uploadFilterTag;
     const thresholdToConsider = currentFilterType === 'download' ? DOWNLOAD_FILTER_TAGS : UPLOAD_FILTER_TAGS;
@@ -55,6 +55,8 @@ const MyCustomMarker = ({
       fillColor: DEFAULT_DOWNLOAD_FILTER_HIGH
     };
   };
+
+  if(!measurement.visible) return;
 
   return (
     <CircleMarker

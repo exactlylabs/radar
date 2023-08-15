@@ -6,12 +6,11 @@ import Footer from "./Footer/Footer";
 interface FrameProps {
   children: ReactElement;
   isDifferentColorFooter?: boolean;
-  footerHeight?: string;
   footerMargin?: string;
   smallFooterMarginTop?: string;
 }
 
-const Frame = ({ children, isDifferentColorFooter, footerHeight,  footerMargin, smallFooterMarginTop }: FrameProps): ReactElement => {
+const Frame = ({ children, isDifferentColorFooter,  footerMargin, smallFooterMarginTop }: FrameProps): ReactElement => {
   return (
     <div style={styles.Frame}>
       <Navbar/>
@@ -19,7 +18,6 @@ const Frame = ({ children, isDifferentColorFooter, footerHeight,  footerMargin, 
         {children}
       </div>
       <Footer isDifferentColor={isDifferentColorFooter}
-              height={footerHeight}
               margin={footerMargin}
               smallFooterMarginTop={smallFooterMarginTop}
       />
