@@ -10,8 +10,7 @@ const PrivacyPolicyContent = (): ReactElement => {
 
   return (
     <Frame isDifferentColorFooter
-           footerHeight={!isSmall ? '188px' : undefined}
-           footerMargin={!isSmall ? '35px auto auto' : undefined}
+          footerMargin={!isSmall ? '35px auto auto' : undefined}
     >
       <div style={styles.PrivacyPolicyPage(isSmall)}>
         <div style={styles.PrivacyPolicyPageContent(isSmall)}>

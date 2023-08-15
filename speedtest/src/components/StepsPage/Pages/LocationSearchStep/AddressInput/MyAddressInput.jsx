@@ -185,7 +185,9 @@ const MyAddressInput = ({
       });
       handleContinue(address.address, true);
       const addressInputElement = document.getElementById('speedtest--address-input');
-      addressInputElement.value = address.address;
+      if(addressInputElement) {
+        addressInputElement.value = address.address;
+      }
     } catch (e) {
       if(isNoConnectionError(e)) setNoInternet(true);
       notifyError(e);
