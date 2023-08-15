@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
@@ -38,7 +39,8 @@ class BackgroundSpeedTest {
       (isTestingDownloadSpeed: false, isTestingUploadSpeed: false);
 
   Future<void> startSpeedTest() async {
-    _positionBeforeSpeedTest = await _getCurrentLocation();
+    _positionBeforeSpeedTest = await _getPosition();
+    if (_positionBeforeSpeedTest == null) return;
     _packageInfo = await PackageInfo.fromPlatform();
     _testingState = (isTestingDownloadSpeed: true, isTestingUploadSpeed: false);
     await test(
@@ -47,7 +49,7 @@ class BackgroundSpeedTest {
       onCompleted: (data) => _onTestComplete(data),
       onError: (data) => _onTestError(jsonEncode(data)),
     );
-    _positionAfterSpeedTest = await _getCurrentLocation();
+    _positionAfterSpeedTest = await _getPosition();
     _sessionId = _localStorage.getSessionId();
     _sendSpeedTestResults();
   }
@@ -77,7 +79,7 @@ class BackgroundSpeedTest {
     }
   }
 
-  Future<Position?> _getCurrentLocation() async {
+  Future<Position?> _getPosition() async {
     final permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       final permission = await Geolocator.requestPermission();
@@ -86,8 +88,33 @@ class BackgroundSpeedTest {
         return null;
       }
     }
-    final position = await Geolocator.getCurrentPosition();
-    return position;
+
+    return _getCurrentLocation();
+  }
+
+  Future<Position?> _getCurrentLocation() async {
+    const timeLimit = Duration(seconds: 3);
+    try {
+      final position = await Geolocator.getCurrentPosition(
+        timeLimit: timeLimit,
+        forceAndroidLocationManager: true,
+      );
+      return position;
+    } catch (exception, stackTrace) {
+      if (exception is TimeoutException) {
+        try {
+          final position = await Geolocator.getCurrentPosition(
+            timeLimit: timeLimit,
+            forceAndroidLocationManager: false,
+          );
+          return position;
+        } catch (exception, stackTrace) {
+          Sentry.captureException(exception, stackTrace: stackTrace);
+        }
+      }
+      Sentry.captureException(exception, stackTrace: stackTrace);
+    }
+    return null;
   }
 
   Future<void> _sendSpeedTestResults() async {

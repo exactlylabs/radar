@@ -17,13 +17,13 @@ interface FooterProps {
 
 // Not doing 2 different components for viewport changes as they are
 // pretty small components on their own and quite a lot of shared styles.
-const Footer = ({isDifferentColor, height, margin, smallFooterMarginTop}: FooterProps): ReactElement => {
+const Footer = ({isDifferentColor, margin, smallFooterMarginTop}: FooterProps): ReactElement => {
 
   const {isSmallScreen, isMidScreen} = useViewportSizes();
   const isSmall = isSmallScreen || isMidScreen;
 
   const regularFooter = (
-    <div style={styles.Footer(isDifferentColor, height)}>
+    <div style={styles.Footer(isDifferentColor)}>
       <div style={styles.FooterContent(margin)}>
         <div style={styles.TopRow}>
           <div style={styles.LeftColumn}>
@@ -42,6 +42,7 @@ const Footer = ({isDifferentColor, height, margin, smallFooterMarginTop}: Footer
             </a>
           </div>
         </div>
+        <div style={styles.FooterHorizontalDivider}></div>
         <div style={styles.BottomRow}>
           <p className={'fw-regular'} style={styles.Copyright}>{`Copyright © ${new Date().getFullYear()} Radar. All rights reserved.`}</p>
           <p className={'fw-regular'} style={styles.DeveloperInfo}>This project was developed as part of the Telehealth Broadband Pilot Program.<br/>The Telehealth Broadband Pilot Program is made possible by grant #GA540183 from the Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS.</p>

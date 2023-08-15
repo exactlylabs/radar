@@ -3,7 +3,6 @@ import {DEFAULT_SECONDARY_TEXT, HORIZONTAL_DIVIDER, SPECIAL_FOOTER} from "../../
 
 const footerStyle: CSSProperties = {
   width: '100vw',
-  height: '375px',
   marginLeft: 'auto',
   marginRight: 'auto',
   display: 'flex',
@@ -166,10 +165,10 @@ const smallBottomRowStyle: CSSProperties = {
 }
 
 const footerHorizontalDividerStyle: CSSProperties = {
-  width: '100vw',
+  width: '100%',
   height: '1px',
   backgroundColor: HORIZONTAL_DIVIDER,
-  marginTop: '20px',
+  marginTop: '40px',
   marginBottom: '40px',
 }
 
@@ -184,10 +183,9 @@ const footerContentStyle: CSSProperties = {
 }
 
 export const styles = {
-  Footer: (isDifferentColor?: boolean, height?: string) => {
+  Footer: (isDifferentColor?: boolean) => {
     let style = footerStyle;
     if(isDifferentColor) style = {...style, backgroundColor: SPECIAL_FOOTER};
-    if(height) style = {...style, height};
     return style;
   },
   FooterContent: (margin?: string) => {
