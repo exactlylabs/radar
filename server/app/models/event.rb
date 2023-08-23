@@ -5,6 +5,7 @@ class Event < ApplicationRecord
   scope :of, ->(model) { where(aggregate_type: model.name) }
   scope :from_aggregate, -> (obj) { where(aggregate: obj)}
   scope :prior_to_or_at, ->(timestamp) { where("timestamp <= ?", timestamp) }
+  scope :prior_to, ->(timestamp) { where("timestamp < ?", timestamp) }
   scope :at, -> (timestamp) { where("timestamp = ?", timestamp) }
   scope :where_name_is, -> (*names) { where(name: names)}
 

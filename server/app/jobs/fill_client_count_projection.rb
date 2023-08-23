@@ -1,6 +1,6 @@
 class FillClientCountProjection < ProjectionJob
 
   def perform()
-    OnlineClientCountProjection.aggregate!
+    OnlineClientCountHandler.new.aggregate!
   end
 end

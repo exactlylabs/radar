@@ -170,7 +170,7 @@ module EventSourceable
 
   def default_created_applier(state, event)
     self._config[:observed_fields].each do |field_data|
-      state[field_data[:field]] = self.send(field_data[:field])
+      state[field_data[:field]] = event.data.fetch(field_data[:field].to_s, nil)
     end
   end
 
