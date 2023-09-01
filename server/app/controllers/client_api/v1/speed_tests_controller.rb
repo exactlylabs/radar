@@ -38,14 +38,12 @@ module ClientApi
         ne_lng = params[:ne_lng]
         error = !sw_lat || !sw_lng || !ne_lat || !ne_lng
         if !error
-          if is_global
-            @speed_tests = ClientSpeedTest.all.where(
-              'latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
-              sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f)
-          else
-            @speed_tests = ClientSpeedTest.all.where(
-              'tested_by = ? AND latitude >= ? AND latitude <= ? AND longitude >= ? AND longitude <= ?',
-              @widget_client.id, sw_lat.to_f, ne_lat.to_f, sw_lng.to_f, ne_lng.to_f)
+          longs = [sw_lng, ne_lng].sort
+          lats = [sw_lat, ne_lat].sort
+          bbox = [longs[0], lats[0], longs[1], lats[1]]
+          @speed_tests = ClientSpeedTest.preload(:autonomous_system => :autonomous_system_org).in_bbox(bbox)
+          if !is_global
+            @speed_tests = @speed_tests.where('tested_by = ?', @widget_client.id)
           end
         end
         respond_to do |format|
