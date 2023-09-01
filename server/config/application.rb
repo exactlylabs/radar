@@ -36,5 +36,11 @@ module Radar
       # call ./scripts/flamegraph.sh to generate flamegraphs from the dumps
       config.middleware.use StackProf::Middleware, enabled: true, interval: 1000, save_every: 1, mode: :cpu, raw: true
     end
+
+    def inspect
+      # Radar.application's default inspect is too large to the point it's using the whole console when printed.
+      # Add here only the attributes that are useful for debugging.
+      return "Radar::Application"
+    end
   end
 end

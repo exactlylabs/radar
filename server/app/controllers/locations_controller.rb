@@ -92,8 +92,8 @@ class LocationsController < ApplicationController
       # By getting the specific locations that get added/deleted
       # we can emit the exact events for each location
       current_categories_ids = @location.categories.map {|c| c.id}
-      if params[:location][:categories].present?
-        latest_categories_ids = params[:location][:categories].split(",").map {|id| id.to_i}
+      if params[:categories].present?
+        latest_categories_ids = params[:categories].split(",").map {|id| id.to_i}
       else
         latest_categories_ids = []
       end
@@ -237,12 +237,12 @@ class LocationsController < ApplicationController
       download_avg = nil
       upload_avg = nil
     end
-    
+
     download_diff = @location.download_diff(download_avg.present? ? download_avg : -1)
     upload_diff = @location.upload_diff(upload_avg.present? ? upload_avg : -1)
 
     respond_to do |format|
-      format.html { 
+      format.html {
         render partial: "networks/components/speed_cells",
         locals: {
           download_avg: download_avg.present? ? "#{download_avg} Mbps" : 'N/A',

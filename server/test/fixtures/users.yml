@@ -6,6 +6,7 @@ user1:
   super_user: false
 
 superuser1:
+  id: 1
   first_name: SuperUser1
   last_name: Test
   email: superuser1@e.com

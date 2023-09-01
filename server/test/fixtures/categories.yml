@@ -1,0 +1,10 @@
+category1:
+  name: "Category 1"
+  color_hex: "#0000ff"
+  account: root
+
+
+category2:
+  name: "Category 2"
+  color_hex: "#ff0000"
+  account: root
