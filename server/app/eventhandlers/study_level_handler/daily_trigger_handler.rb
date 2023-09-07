@@ -14,15 +14,36 @@ module StudyLevelHandler
       .each do |snapshot|
 
         client = snapshot.state
-        if client["location_id"].nil? || online_locations.include?(client["location_id"])
+        if client["location_id"].nil? || online_locations.include?("#{date.to_s}#{client["location_id"]}")
           next
         end
 
         as_org_id, as_org_name = self.as_org_info(client["autonomous_system_id"])
-        if StudyLevelProjection.where(
-          autonomous_system_org_id: as_org_id,
-          location_id: client["location_id"]
-        ).where("DATE(timestamp) = ? AND location_online = true", date.prev_day).exists?
+        sql = %{
+        SELECT * FROM (
+          SELECT DATE("timestamp") as dt, MAX(location_online::int)
+          FROM study_level_projections
+          WHERE
+            location_id=:location_id
+            AND metric_type='clients_events'
+            AND autonomous_system_org_id=:as_org_id
+          GROUP BY 1
+        ) t
+        WHERE dt < :date
+        ORDER BY dt DESC LIMIT 1
+        }
+        records = ActiveRecord::Base.connection.execute(
+          ApplicationRecord.sanitize_sql(
+            [sql, {
+              location_id: client["location_id"],
+              as_org_id: as_org_id,
+              date: date.prev_day,
+            }]
+          )
+        )
+
+
+        if records.count != 0 && records[0]["max"] == 1
           begin
             location = Location.with_deleted.find(client["location_id"])
           rescue ActiveRecord::RecordNotFound
@@ -47,7 +68,7 @@ module StudyLevelHandler
             obj = record_from_daily_trigger(last_obj, date)
             @cached_projections[key] = obj
           end
-          online_locations.add(client["location_id"])
+          online_locations.add("#{date.to_s}#{client["location_id"]}")
         end
       end
     end
