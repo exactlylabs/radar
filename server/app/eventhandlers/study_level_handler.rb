@@ -34,7 +34,7 @@ module StudyLevelHandler
       speed_test, speed_test_co = self.next_or_nil(speed_tests)
       next_date, daily_trigger_co = self.next_or_nil(daily_triggers)
 
-      while event.present? || measurement.present? || speed_test.present?
+      while event.present? || measurement.present? || speed_test.present? || next_date.present?
         pending_elements = []
         pending_elements << ["event", event, event.timestamp.to_i, event_co] if event.present?
         pending_elements << ["measurement", measurement, measurement[3].to_i, measurement_co] if measurement.present?
