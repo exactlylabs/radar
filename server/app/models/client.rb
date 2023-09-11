@@ -455,8 +455,8 @@ class Client < ApplicationRecord
 
   def get_measurement_data(total_bytes, correct_unit_fn = method(:get_value_in_preferred_unit), correct_unit)
     data_string = ''
-    data_string += "~#{float_without_zero_decimals(correct_unit_fn.call(total_bytes))} #{correct_unit} per test (" if total_bytes > 0
-    data_string += "#{float_without_zero_decimals(correct_unit_fn.call(data_cap_current_period_usage))} #{correct_unit} this month"
+    data_string += "~#{float_without_trailing_zeroes(correct_unit_fn.call(total_bytes))} #{correct_unit} per test (" if total_bytes > 0
+    data_string += "#{float_without_trailing_zeroes(correct_unit_fn.call(data_cap_current_period_usage))} #{correct_unit} this month"
     data_string += ')' if total_bytes > 0
     data_string
   end
@@ -708,7 +708,7 @@ class Client < ApplicationRecord
     UpdateWatchdogVersionsJob.perform_later update_group
   end
 
-  def float_without_zero_decimals(num)
+  def float_without_trailing_zeroes(num)
     num == num.to_i ? num.to_i : num.round(2)
   end
 end
