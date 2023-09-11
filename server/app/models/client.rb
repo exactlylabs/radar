@@ -65,8 +65,8 @@ class Client < ApplicationRecord
   scope :where_offline, -> { where(online: false) }
   scope :where_no_location, -> { where('location_id IS NULL') }
   scope :where_assigned, -> { where('location_id IS NOT NULL') }
-  scope :where_in_service, -> { where(in_service: true)}
-  scope :where_not_in_service, -> { where(in_service: false)}
+  scope :where_in_service, -> { where(in_service: true) }
+  scope :where_not_in_service, -> { where(in_service: false) }
   scope :where_no_account, -> { where("account_id IS NULL") }
 
   def secret=(unencrypted_secret)
@@ -455,8 +455,8 @@ class Client < ApplicationRecord
 
   def get_measurement_data(total_bytes, correct_unit_fn = method(:get_value_in_preferred_unit), correct_unit)
     data_string = ''
-    data_string += "~#{correct_unit_fn.call(total_bytes).round(0)} #{correct_unit} per test (" if total_bytes > 0
-    data_string += "#{correct_unit_fn.call(data_cap_current_period_usage).round(0)} #{correct_unit} this month"
+    data_string += "~#{float_without_zero_decimals(correct_unit_fn.call(total_bytes))} #{correct_unit} per test (" if total_bytes > 0
+    data_string += "#{float_without_zero_decimals(correct_unit_fn.call(data_cap_current_period_usage))} #{correct_unit} this month"
     data_string += ')' if total_bytes > 0
     data_string
   end
@@ -492,13 +492,13 @@ class Client < ApplicationRecord
   def get_speed_averages(account_id)
     if account_id.present?
       raw_query = 'SELECT AVG(download_total_bytes) as download, AVG(upload_total_bytes) as upload FROM ' +
-                  '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ? AND account_id = ? ' +
-                  'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
+        '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ? AND account_id = ? ' +
+        'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
       query = ActiveRecord::Base.sanitize_sql([raw_query, id, account_id])
     else
       raw_query = 'SELECT AVG(download_total_bytes) as download, AVG(upload_total_bytes) as upload FROM ' +
-                  '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ?' +
-                  'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
+        '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ?' +
+        'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
       query = ActiveRecord::Base.sanitize_sql([raw_query, id])
     end
     averages = ActiveRecord::Base.connection.execute(query)[0]
@@ -706,5 +706,9 @@ class Client < ApplicationRecord
   def update_versions
     UpdateClientVersionsJob.perform_later update_group
     UpdateWatchdogVersionsJob.perform_later update_group
+  end
+
+  def float_without_zero_decimals(num)
+    num == num.to_i ? num.to_i : num.round(2)
   end
 end
