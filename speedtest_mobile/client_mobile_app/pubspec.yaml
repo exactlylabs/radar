@@ -36,9 +36,15 @@ dependencies:
     path: ../network_connection_info
   
   configuration_monitoring:
-      git:
-        url: https://github.com/exactlylabs/configuration_monitoring.git
-        ref: main
+    git:
+      url: https://github.com/exactlylabs/configuration_monitoring.git
+      ref: main
+        
+  endless_service:
+    git:
+      url: https://github.com/exactlylabs/endless_service.git
+      ref: main
+
 
   flutter_bloc: ^8.1.1
   animations: ^2.0.7
@@ -52,7 +58,7 @@ dependencies:
   flutter_map: ^3.0.0
   async: ^2.9.0
   geolocator: ^9.0.2
-  sentry_flutter: ^6.18.1
+  sentry_flutter: ^7.10.1
   package_info_plus: ^3.0.2
   url_launcher: ^6.1.8
   connectivity_plus: ^3.0.2

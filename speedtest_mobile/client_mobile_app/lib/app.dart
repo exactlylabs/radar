@@ -1,6 +1,6 @@
-import 'package:client_mobile_app/core/services/device_info_service/implementation/device_info_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:endless_service/endless_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:client_mobile_app/resources/theme.dart';
@@ -19,6 +19,7 @@ import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed
 import 'package:client_mobile_app/core/services/results_service/implementation/results_service.dart';
 import 'package:client_mobile_app/core/services/warnings_service/implementation/warnings_service.dart';
 import 'package:client_mobile_app/core/services/locations_service/implementation/locations_service.dart';
+import 'package:client_mobile_app/core/services/device_info_service/implementation/device_info_service.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_cubit.dart';
 
 class App extends StatelessWidget {
@@ -27,6 +28,7 @@ class App extends StatelessWidget {
     required this.restClient,
     required this.localStorage,
     required this.httpProvider,
+    required this.endlessService,
     required this.networkConnectionInfo,
     required this.configurationMonitoring,
   }) : super(key: key);
@@ -34,6 +36,7 @@ class App extends StatelessWidget {
   final RestClient restClient;
   final LocalStorage localStorage;
   final IHttpProvider httpProvider;
+  final EndlessService endlessService;
   final NetworkConnectionInfo networkConnectionInfo;
   final ConfigurationMonitoring configurationMonitoring;
 
@@ -77,6 +80,10 @@ class App extends StatelessWidget {
             lazy: false,
             create: (context) => BackgroundFetchBloc(
               localStorage: localStorage,
+              restClient: restClient,
+              httpProvider: httpProvider,
+              endlessService: endlessService,
+              networkConnectionInfo: networkConnectionInfo,
               configurationMonitoring: configurationMonitoring,
             ),
           ),
