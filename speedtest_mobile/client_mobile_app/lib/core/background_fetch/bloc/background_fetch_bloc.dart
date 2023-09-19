@@ -55,9 +55,9 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
         emit(state.copyWith(delay: backgroundSpeedTestDelay, isEnabled: true));
         await _endlessServiceHandler.configure(
           frequency: backgroundSpeedTestDelay * 60000,
-          onAction: () => onAction(),
-          onLog: (log) => onLog(log),
-          onFailure: (error) => onFailure(error),
+          onAction: onAction,
+          onLog: onLog,
+          onFailure: onFailure,
         );
         await _endlessServiceHandler.start();
         // BackgroundFetchHandler.startBackgroundSpeedTest(backgroundSpeedTestDelay * 60000);

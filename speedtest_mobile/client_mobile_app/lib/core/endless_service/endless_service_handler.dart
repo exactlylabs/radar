@@ -11,8 +11,8 @@ class EndlessServiceHandler {
 
   StreamSubscription? _subscription;
   Function? _onAction;
-  Function? _onLog;
-  Function? _onError;
+  Function(String)? _onLog;
+  Function(String)? _onError;
 
   static const _MIN_TO_MILLIS = 60 * 1000;
 
@@ -25,6 +25,11 @@ class EndlessServiceHandler {
     _onLog = onLog;
     _onError = onFailure;
     _onAction = onAction;
+
+    if (_subscription != null) {
+      await _subscription!.cancel();
+      _subscription = null;
+    }
     _subscription = _endlessService.listener.listen((event) {
       final parsedEvent = _parseEvents(Map<String, String>.from(event));
       if (parsedEvent == null) return;
