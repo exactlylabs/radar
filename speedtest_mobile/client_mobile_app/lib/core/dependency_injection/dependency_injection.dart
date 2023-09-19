@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:endless_service/endless_service.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
@@ -36,5 +37,9 @@ void registerDependencies(String baseUrl) {
 
   if (!sl.isRegistered<FlutterNotificationsHanlder>()) {
     sl.registerLazySingleton<FlutterNotificationsHanlder>(() => FlutterNotificationsHanlder());
+  }
+
+  if (!sl.isRegistered<EndlessService>()) {
+    sl.registerLazySingleton<EndlessService>(() => EndlessService());
   }
 }
