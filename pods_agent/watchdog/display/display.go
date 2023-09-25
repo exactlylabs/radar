@@ -1,18 +1,14 @@
 package display
 
 import (
-	"bufio"
 	"context"
 	_ "embed"
-	"fmt"
 	"io"
-	"log"
-	"text/template"
 	"time"
 
-	"github.com/exactlylabs/radar/pods_agent/config"
-	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/mdp/qrterminal/v3"
+	"github.com/rivo/tview"
 )
 
 type AgentClient interface {
@@ -24,65 +20,74 @@ type PodInfoProvider interface {
 	Interfaces() ([]sysinfo.NetInterface, error)
 }
 
-//go:embed logo160x38.txt
-var logo []byte
+type containers interface {
+	Update()
+	Primitive() tview.Primitive
+}
 
-//go:embed displaytemplate.txt
-var templ string
-
-func Refresh(w io.Writer, c *config.Config, agentCli AgentClient, podProber PodInfoProvider) {
-	t := template.Must(template.New("display").Funcs(funcMap).Parse(templ))
-	v, err := agentCli.GetVersion()
-	if err != nil {
-		log.Println(fmt.Errorf("display.StartDisplayLoop getVersion: %w", err))
-		v = "N/A"
+func generateQrCode(podUrl string, w io.Writer) {
+	config := qrterminal.Config{
+		Level:          qrterminal.H,
+		Writer:         w,
+		HalfBlocks:     true,
+		BlackChar:      qrterminal.BLACK_BLACK,
+		WhiteBlackChar: qrterminal.WHITE_BLACK,
+		WhiteChar:      qrterminal.WHITE_WHITE,
+		BlackWhiteChar: qrterminal.BLACK_WHITE,
+		QuietZone:      4,
 	}
-	info := info.BuildInfo()
-	ifaces, err := podProber.Interfaces()
-	if err != nil {
-		log.Println(fmt.Errorf("display.Refresh Interfaces: %w", err))
-		ifaces = make([]sysinfo.NetInterface, 0)
-	}
-
-	isRunning, runningErr := agentCli.IsRunning()
-	lastTestedAt := c.LastTestedAt()
-	lastTestedStr := ""
-	if lastTestedAt != nil {
-		// Format set to mm/dd/yyyy HH:MM TZ
-		lastTestedStr = lastTestedAt.Format("01/02/2006 15:04 MST")
-	}
-	args := map[string]interface{}{
-		"podId":                   c.ClientId,
-		"podOsVersion":            info.Version,
-		"podAgentVersion":         v,
-		"netInterfaces":           ifaces,
-		"lastMeasurementTime":     lastTestedStr,
-		"lastMeasurementDownload": c.LastDownloadSpeed,
-		"lastMeasurementUpload":   c.LastUploadSpeed,
-		"isRunning":               isRunning,
-		"runningErr":              runningErr,
-		"lastDisplayUpdate":       time.Now().Format("01/02/2006 15:04 MST"),
-	}
-	b := bufio.NewWriter(w)
-	b.WriteString("\033[H\033[2J")
-	b.Write(logo)
-	if err := t.Execute(b, args); err != nil {
-		panic(fmt.Errorf("display.Execute: %w", err))
-	}
-	b.Flush()
+	qrterminal.GenerateWithConfig(podUrl, config)
 }
 
 // StartDisplayLoop is a blocking function, that keeps sending the current display info to a Writer interface
 func StartDisplayLoop(ctx context.Context, w io.Writer, agentCli AgentClient, podProber PodInfoProvider) {
+	drawUI(ctx, w, agentCli, podProber)
+}
+
+func drawUI(ctx context.Context, w io.Writer, agentCli AgentClient, podProber PodInfoProvider) {
+	infoContainer := newInfoContainer(agentCli)
+	networkContainer := newNetworkContainer(podProber)
+	speedtestContainer := newSpeedtestContainer()
+	qrcodeContainer := NewQrCodeContainer()
+
+	containers := []containers{
+		infoContainer,
+		networkContainer,
+		speedtestContainer,
+		qrcodeContainer,
+	}
+
+	infoGrid := tview.NewGrid().
+		SetRows(0, 0, 0).
+		AddItem(infoContainer, 0, 0, 1, 1, 0, 0, false).
+		AddItem(networkContainer, 1, 0, 1, 1, 0, 0, false).
+		AddItem(speedtestContainer, 2, 0, 1, 1, 0, 0, false)
+
+	app := tview.NewApplication()
+	grid := tview.NewGrid().
+		SetColumns(-50, -50).
+		AddItem(infoGrid, 0, 0, 1, 1, 0, 0, true).
+		AddItem(qrcodeContainer, 0, 1, 1, 1, 0, 0, false)
+	grid.SetBorder(true).SetTitle("Radar POD")
+	go func() {
+		if err := app.SetRoot(grid, true).Run(); err != nil {
+			panic(err)
+		}
+	}()
 	timer := time.NewTimer(time.Second)
+LOOP:
 	for {
 		select {
-		case <-ctx.Done():
-			return
 		case <-timer.C:
-			c := config.Reload()
-			Refresh(w, c, agentCli, podProber)
+			app.QueueUpdateDraw(func() {
+				for _, c := range containers {
+					c.Update()
+				}
+			})
 			timer.Reset(time.Minute)
+		case <-ctx.Done():
+			app.Stop()
+			break LOOP
 		}
 	}
 }

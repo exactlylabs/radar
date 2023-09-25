@@ -1,0 +1,4 @@
+{{range $idx, $iface := .netInterfaces}} - {{.Name}}:
+   - MAC: {{.MAC}}
+   - IPs: {{.IPs}}
+{{end}}

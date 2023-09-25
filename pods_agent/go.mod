@@ -11,9 +11,11 @@ require (
 	github.com/kardianos/service v1.2.1
 	github.com/m-lab/locate v0.8.3
 	github.com/m-lab/ndt7-client-go v0.7.0
+	github.com/mdp/qrterminal/v3 v3.1.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
+	github.com/rivo/tview v0.0.0-20230916092115-0ad06c2ea3dd
 	github.com/stretchr/testify v1.8.2
-	golang.org/x/sys v0.6.0
+	golang.org/x/sys v0.8.0
 	google.golang.org/protobuf v1.29.1
 )
 
@@ -25,19 +27,25 @@ require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
+	github.com/gdamore/encoding v1.0.0 // indirect
+	github.com/gdamore/tcell/v2 v2.6.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.7.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
+	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/m-lab/go v0.1.48 // indirect
 	github.com/m-lab/ndt-server v0.20.10 // indirect
 	github.com/m-lab/tcp-info v1.5.3 // indirect
 	github.com/m-lab/uuid v1.0.0 // indirect
 	github.com/m-lab/uuid-annotator v0.4.7 // indirect
+	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/oschwald/geoip2-golang v1.7.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.12.2 // indirect
+	github.com/rivo/uniseg v0.4.3 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783 // indirect
+	golang.org/x/term v0.5.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/api v0.108.0 // indirect
 	google.golang.org/genproto v0.0.0-20230125152338-dcaf20b6aeaa // indirect
@@ -45,4 +53,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	rsc.io/qr v0.2.0 // indirect
 )
