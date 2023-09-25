@@ -8,7 +8,7 @@ import SuggestionsModal from "./SuggestionsModal";
 import {MyBackButton} from "../../../common/MyBackButton";
 import iconLeftArrow from '../../../../assets/icons-left-arrow.png';
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
-import UserDataContext from "../../../../context/UserData";
+import emptyAddress from "../../../../../context/UserData";
 
 const locationSearchStepStyle = {
   width: '100%',
@@ -73,6 +73,18 @@ const LocationSearchStepPage = ({
     setIsModalOpen(true);
   }
 
+  const onConfirmAddress = (coordinates) => {
+    if(coordinates) {
+      confirmAddress(coordinates);
+    } else {
+      const addressInputElement = document.getElementById('speedtest--address-input');
+      if (addressInputElement) {
+        addressInputElement.value = null;
+        setAddress(emptyAddress);
+      }
+    }
+  }
+
   const closeSuggestionsModal = () => setIsSuggestionsModalOpen(false);
 
   return (
@@ -82,6 +94,7 @@ const LocationSearchStepPage = ({
       <MyAddressInput handleContinue={handleContinue}
                       setGeolocationError={setGeolocationError}
                       openGenericLocationModal={openGenericLocationModal}
+                      openCurrentLocationModal={setIsModalOpen}
                       confirmedAddress={confirmedAddress}
                       setSelectedSuggestion={setSelectedSuggestion}
                       openSuggestionsModal={openSuggestionsModal}
@@ -92,13 +105,13 @@ const LocationSearchStepPage = ({
       { error && <MyMessageSnackbar type={'error'} message={error}/> }
       <MyMapModal isOpen={isModalOpen}
                   setIsOpen={setIsModalOpen}
-                  confirmAddress={confirmAddress}
+                  confirmAddress={onConfirmAddress}
                   setAddress={setAddress}
                   goToNextPage={goToNextPage}
       />
       <MyMapModal isOpen={isGenericLocationModalOpen}
                   setIsOpen={setIsGenericLocationModalOpen}
-                  confirmAddress={confirmAddress}
+                  confirmAddress={onConfirmAddress}
                   address={null}
                   isGeneric
                   setAddress={setAddress}
