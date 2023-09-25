@@ -1,0 +1,6 @@
+Pod ID: {{.podId}}
+Radar OS Version: {{.podOsVersion}}
+Pod Client Version: {{.podAgentVersion}}
+Agent Status: {{if .isRunning}}[green]Running{{else if not .runningErr}}[yellow]Starting{{else}}[red]Not Running{{end}}[white]
+{{if not .isRunning}} - Error Message: {{.runningErr}}{{end}}
+Display Last Update: {{.lastDisplayUpdate}}

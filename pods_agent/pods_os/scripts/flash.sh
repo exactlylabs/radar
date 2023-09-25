@@ -4,7 +4,7 @@ set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-IMAGE_LOCATION=${SCRIPT_DIR}/dist/radar.img
+IMAGE_LOCATION=${SCRIPT_DIR}/../dist/radar.img
 
 if [[ ! -f "$IMAGE_LOCATION" ]]; then
     echo "Image not found at '$IMAGE_LOCATION' as expected"

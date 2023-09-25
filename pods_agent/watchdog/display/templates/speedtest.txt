@@ -1,0 +1,3 @@
+- Time: {{.lastMeasurementTime}}
+- Download Mbps: {{.lastMeasurementDownload}}
+- Upload Mbps: {{.lastMeasurementUpload}}
