@@ -101,6 +101,7 @@ const MyAddressInput = ({
   handleContinue,
   setGeolocationError,
   openGenericLocationModal,
+  openCurrentLocationModal,
   confirmedAddress,
   setSelectedSuggestion,
   selectedSuggestion,
@@ -164,7 +165,7 @@ const MyAddressInput = ({
     }
   }
 
-  const fetchAddress = async (coords) => {
+  const fetchAddress = async (coords, isGeolocation = false) => {
     try {
       const coordinates = [coords.latitude, coords.longitude];
       const address = await getAddressForCoordinates(coordinates, config.clientId);
@@ -172,7 +173,12 @@ const MyAddressInput = ({
         openGenericLocationModal();
         return;
       }
-      setSelectedSuggestion(true);
+      if (isGeolocation) { 
+        openCurrentLocationModal(true); 
+      } else { 
+        setSelectedSuggestion(true); 
+      }
+
       setUserData({
         ...userData,
         address,
@@ -203,7 +209,7 @@ const MyAddressInput = ({
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         pos => {
-          fetchAddress(pos.coords)
+          fetchAddress(pos.coords, true)
             .catch(err => {
               notifyError(err);
               setError(err);
@@ -246,52 +252,52 @@ const MyAddressInput = ({
     <div id={'speedtest--address-input-wrapper'}>
       <div style={addressInputWrapperStyle} id={'speedtest--address-input-container'}>
         <TextField placeholder={'Enter your address or zip code'}
-                   id={'speedtest--address-input'}
-                   sx={{width: '100%'}}
-                   InputProps={addressInputStyle}
-                   error={!!error}
-                   onChange={handleInputChange}
-                   onFocus={handleOpenSuggestions}
-                   onBlur={handleBlurInput}
-                   variant={'standard'}
+          id={'speedtest--address-input'}
+          sx={{width: '100%'}}
+          InputProps={addressInputStyle}
+          error={!!error}
+          onChange={handleInputChange}
+          onFocus={handleOpenSuggestions}
+          onBlur={handleBlurInput}
+          variant={'standard'}
         />
         <div className={!!userData.address?.address ? 'speedtest--opaque-hoverable' : ''}
-             style={inputAdornmentStyle}
-             id={'speedtest--continue-button'}
-             onClick={!!userData.address?.address ? checkClickConditions : undefined}
+          style={inputAdornmentStyle}
+          id={'speedtest--continue-button'}
+          onClick={!!userData.address?.address ? checkClickConditions : undefined}
         >
           <div style={!!userData.address?.address ? continueButtonStyle : disabledContinueButtonStyle}>
             {
               locationLoading ?
                 <MySpinner color={WHITE}/> :
                 <img src={rightArrowWhite}
-                     style={rightArrowStyle}
-                     alt={'location-button-icon'}
-                     width={32}
-                     height={32}
+                  style={rightArrowStyle}
+                  alt={'location-button-icon'}
+                  width={32}
+                  height={32}
                 />
             }
           </div>
         </div>
       </div>
       <div className={'speedtest--opaque-hoverable'}
-           style={useCurrentLocationStyle}
-           onClick={triggerAutoLocation}
+        style={useCurrentLocationStyle}
+        onClick={triggerAutoLocation}
       >
         <img src={LocationButtonSmall}
-             width={14}
-             height={14}
-             alt={'location-button-icon-small'}
-             style={smallIconStyle}
-         />
+          width={14}
+          height={14}
+          alt={'location-button-icon-small'}
+          style={smallIconStyle}
+        />
         <p className={'speedtest--p speedtest--bold'} style={useLocationStyle}>Use my current location</p>
       </div>
       { error && <p className={'speedtest--p'} style={errorMessageStyle}>{parseError(error)}</p> }
       <LocationSuggestionsList suggestions={suggestions}
-                               autofillInput={autofillInput}
-                               open={suggestionsListOpen}
-                               setOpen={setSuggestionsListOpen}
-                               currentInputValue={userData.address.address}
+        autofillInput={autofillInput}
+        open={suggestionsListOpen}
+        setOpen={setSuggestionsListOpen}
+        currentInputValue={userData.address.address}
       />
     </div>
   )
