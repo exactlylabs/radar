@@ -1,6 +1,9 @@
 <% footerless = local_assigns[:footerless].present? ? local_assigns[:footerless] : false %>
 <% contained = local_assigns[:contained].present? ? local_assigns[:contained] : false %>
 <% is_account_fixed = local_assigns[:is_account_fixed] ? local_assigns[:is_account_fixed] : false %>
+<% onboarding = local_assigns[:is_onboarding].present? ? local_assigns[:is_onboarding] : false %>
+<% name_is_empty = @location.errors.full_messages.include?("Name can't be blank") %>
+<% address_is_empty = @location.errors.full_messages.include?("Address can't be blank") %>
 
 <div class="modals--content-container <%= contained ? 'contained' : '' %>"
   data-controller="location-form"
@@ -8,10 +11,15 @@
   data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker"
   data-resource="networks"
 >
-  
+  <% if FeatureFlagHelper.is_available('networks', current_user) && onboarding %>
+    <input hidden="hidden" name="onboarding" value="true" />
+  <% end %>
   <div class="modals--form-row mb-6">
     <label class="forms--label">Name</label>
-    <%= form.text_field :name, name: "location[name]" ,class: "w-100 forms--text-input forms--text-input-focusable", placeholder: 'Enter your network name', data: { "location-form-target" => "name" } %>
+    <%= form.text_field :name, name: "location[name]" ,class: "w-100 forms--text-input forms--text-input-focusable", placeholder: 'Enter your network name', data: { "location-form-target" => "name", error: name_is_empty } %>
+    <% if name_is_empty %>
+      <p class="text--error">Name is required.</p>
+    <% end %>
   </div>
 
   <div class="modals--form-row mb-6 forms--input-group">
@@ -83,6 +91,7 @@
         name="location[address]"
         id="location_address"
         value="<%= @location&.address %>"
+        data-error="<%= address_is_empty %>"
       />
       <div class="d-none forms--input-decoration" data-location-form-target="spinner">
         <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
@@ -94,6 +103,9 @@
         <%= image_tag image_url('auto-location-icon.png'), width: 16, height: 16 %>
       </div>
     </div>
+    <% if address_is_empty %>
+      <p class="text--error">Address is required.</p>
+    <% end %>
   </div>
 
   <div class="modals--network-map mb-6"
@@ -148,6 +160,12 @@
 <% if !footerless %>
   <div class="modal-footer modals--footer">
     <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true} %>
-    <%= form.submit "#{type == 'create' ? 'Create network' : 'Update'}", class: "custom-button custom-button--primary custom-button--sm" %>
+    <button type="submit"
+            class="custom-button custom-button--primary custom-button--sm"
+            data-controller="loading-feedback"
+            data-action="click->loading-feedback#replaceContent"
+    >
+      <%= type == 'create' ? 'Create network' : 'Update network' %>
+    </button>
   </div>
 <% end %>

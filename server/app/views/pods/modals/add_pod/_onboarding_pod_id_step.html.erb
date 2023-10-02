@@ -1,0 +1,53 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: {
+             title: "Add a new pod",
+             is_custom: true,
+             goes_back: true,
+             go_back_url: onboarding_step_3_path,
+             go_back_action: "click->onboard#goToOnboardingStep"
+           }
+%>
+<%= form_with(url: check_claim_new_pod_path, method: :post) do |form| %>
+  <div class="modals--content-container modals--move-pod-modal text-center" data-type="full">
+    <div class="modals--big-icon-container mb-4">
+      <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32 %>
+    </div>
+    <input hidden="hidden" name="onboarding" value="true"/>
+    <h3 class="modal-main-title mb-2">Enter your pod ID</h3>
+    <span class="additional-text wrap mb-6">You can find your 12-digit ID printed on your pod.</span>
+    <input hidden
+           type="text"
+           name="pod_id"
+           value="<%= @unix_user %>"
+           data-action="fillHiddenInput@window->pod-id-step#fillHiddenInput"
+           data-pod-id-step-target="hiddenPodIdInput"
+      />
+    <%= render partial: "application/components/pod_id_input",
+               locals: { unix_user: @unix_user }
+    %>
+
+    <% if @error %>
+      <div class="modals--banner mb-6" data-type="<%= @error == ErrorsHelper::PodClaimErrors::PodNotFound ? 'danger' : 'warning' %>">
+        <% if @error == ErrorsHelper::PodClaimErrors::PodNotFound %>
+          The pod ID you entered is invalid. Please note that the ID is case sensitive.
+        <% elsif @error == ErrorsHelper::PodClaimErrors::PodAlreadyClaimed %>
+          The pod you're trying to add appears to have already been claimed by someone else. If you think this could be an error, please <a href="mailto:support@radartoolkit.com" class="warning-link">contact us</a>.
+        <% end %>
+      </div>
+    <% end %>
+
+    <a href="#" class="regular-link wrap" data-bs-target="#pod_id_modal" data-bs-toggle="modal">Need help finding your pod ID?</a>
+
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <!--begin::ContinueButton-->
+    <button type="submit"
+            class="custom-button custom-button--lg custom-button--primary <%= @unix_user.present? ? '' : 'custom-button--disabled' %>"
+            data-pod-id-step-target="submitIdButton"
+            data-controller="loading-feedback"
+            data-action="disableButton@window->pod-id-step#disableButton enableButton@window->pod-id-step#enableButton click->loading-feedback#replaceContent"
+    >Continue</button>
+    <!--end::ContinueButton-->
+  </div>
+<% end %>

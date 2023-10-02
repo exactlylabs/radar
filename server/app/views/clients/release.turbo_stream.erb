@@ -4,8 +4,8 @@
   
   <% if is_in_network_pods_view %>
     <% if @location_before_release.clients.count == 0 %>
-      <%= turbo_stream.replace "network_pods_table_container" do %>
-        <%= render partial: "network_pods/components/empty_pods_card" %>
+      <%= turbo_stream.update "network_pods_table_container" do %>
+        <%= render partial: "network_pods/components/empty_pods_card", locals: { network: @location_before_release } %>
       <% end %>
     <% else %>
       <%= turbo_stream.remove dom_id(@client) do %>

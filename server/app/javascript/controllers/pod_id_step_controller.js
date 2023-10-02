@@ -1,7 +1,4 @@
 import { Controller } from "@hotwired/stimulus";
-import { ADD_POD_TYPE } from "./add_pod_to_network_controller";
-
-const POD_ID_LENGTH = 12;
 
 export default class extends Controller {
 

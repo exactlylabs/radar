@@ -1,0 +1,10 @@
+<%= turbo_stream.update "ftue_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+             locals: {
+               modal_title: "Create an account",
+               modal_partial_path: "accounts/modals/create/onboarding_create_modal",
+               resource: @account,
+               custom_submit_end_handler: nil
+             }
+  %>
+<% end %>

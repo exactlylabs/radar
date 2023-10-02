@@ -1,4 +1,5 @@
 @import "./shared/colors.scss";
+@import "./required_importants";
 
 .dashboard--content-container {
   height: 100%;
@@ -90,4 +91,84 @@
 
 .dashboard--widget-container {
 
+}
+
+.dashboard--stepper {
+  width: 100%;
+  max-width: calc(400px - 36px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-inline: auto;
+}
+
+.dashboard--step-numbers-container {
+  width: 100%;
+  padding: 0 2.375rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  margin-bottom: .5rem;
+}
+
+.dashboard--step-divider {
+  height: 1px;
+  width: 100%;
+  background-color: $avatar-blue;
+}
+
+.dashboard--text-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  p {
+    font-size: 0.875rem;
+    color: $gray;
+    line-height: 1.312;
+    width: 100px;
+    text-wrap: initial;
+    text-align: center;
+    @extend .fw-medium;
+
+    &[data-active="true"] {
+      color: $dark-gray;
+      @extend .fw-semi-bold;
+    }
+
+
+  }
+}
+
+.dashboard--number {
+  width: 1.5rem;
+  height: 1.5rem;
+  min-width: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  color: $blue;
+  font-size: 0.875rem;
+  text-align: center;
+  outline: solid 1px $avatar-blue;
+
+  @extend .fw-bold;
+
+  &[data-active="true"] {
+    background-color: $blue;
+    color: white;
+    outline: none;
+  }
+
+  &[data-complete="true"] {
+    background-color: $avatar-blue;
+    outline: none;
+  }
 }

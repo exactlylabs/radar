@@ -1,0 +1,20 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: "Welcome to Radar", is_custom: true }
+%>
+
+<div class="modals--content-container text-center" data-type="full">
+  <div class="modals--big-icon-container mb-4">
+    <%= image_tag image_url('big-accounts-icon.png'), width: 32, height: 32 %>
+  </div>
+  <h3 class="modal-main-title mb-2">Let's set up your new account.</h3>
+  <p class="additional-text wrap mb-8">Radar lets you monitor your internet connectivity and identify issues quickly in your home or in your organization network. We'll help you get started.</p>
+  <%= render partial: "dashboard/components/stepper", locals: { active: [true, false, false], complete: [false, false, false] } %>
+</div>
+<div class="modals--footer-container">
+  <button
+    type="button"
+    class="custom-button custom-button--secondary custom-button--sm me-4"
+    data-action="click->custom-modal#closeModal click->onboard#disableOnboardingCookie"
+  >Not now</button>
+  <%= link_to "Continue", new_account_onboarding_accounts_path, data: {turbo_method: :post, turbo_frame: "ftue_modal", turbo_stream: "true"}, class: "custom-button custom-button--primary custom-button--lg" %>
+</div>

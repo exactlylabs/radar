@@ -51,6 +51,13 @@ class ClientsController < ApplicationController
     @client = Client.new
   end
 
+  def new_pod_onboarding
+    @client = Client.new
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
   # GET /clients/1/edit
   def edit
   end
@@ -149,6 +156,28 @@ class ClientsController < ApplicationController
         format.html { render :claim_form, status: :unprocessable_entity }
         format.json { render json: {}, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def claim_pod_onboarding
+    @client_id = params[:id]
+    @location_id = params[:location_id]
+    @client_name = params[:name]
+    @account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
+
+    location = policy_scope(Location).where(id: @location_id).first if @location_id.present?
+    @client = Client.find_by_unix_user(@client_id)
+    if @client && !@client.user
+      @client.user = current_user
+      @client.location = location
+      @client.name = @client_name
+      @client.account = @account
+      @client.save
+    else
+      @error = true
+    end
+    respond_to do |format|
+      format.turbo_stream
     end
   end
 
@@ -566,6 +595,10 @@ class ClientsController < ApplicationController
     @unix_user = params[:pod_id]
     @client = Client.find_by_unix_user(@unix_user)
     @error = nil
+    if FeatureFlagHelper.is_available('networks', current_user) && params[:onboarding].present?
+      @onboarding = true
+      @network = policy_scope(Location).last
+    end
     if !@client
       @error = ErrorsHelper::PodClaimErrors::PodNotFound
     elsif @client.user.present?
@@ -597,6 +630,10 @@ class ClientsController < ApplicationController
       @location.categories << policy_scope(Category).where(id: params[:categories].split(",")).distinct if params[:categories].present?
       @location.save!
       @client.location = @location
+    end
+    if FeatureFlagHelper.is_available('networks', current_user)
+      @onboarding = params[:onboarding].present?
+      @locations = policy_scope(Location)
     end
     respond_to do |format|
       if @client.save!

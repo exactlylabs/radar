@@ -1,0 +1,10 @@
+<%= turbo_stream.update "ftue_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+             locals: {
+               modal_title: 'Welcome to Radar',
+               modal_partial_path: "dashboard/modals/onboarding/initial_step",
+               resource: nil,
+               custom_submit_end_handler: nil,
+             }
+  %>
+<% end %>

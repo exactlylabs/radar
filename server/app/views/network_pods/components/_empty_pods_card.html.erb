@@ -6,7 +6,7 @@
   </div>
   <h3 class="networks--empty-card-title wrap">You currently have no pods assigned to this network.</h3>
   <span class="additional-text wrap">Add your first pod to this network to start monitoring your broadband performance.</span>
-  <a href="<%= get_add_pod_to_network_modal_path %>"
+  <a href="<%= get_add_pod_to_network_modal_path(network.id) %>"
     data-turbo-frame="add_pod_to_network_modal"
     class="custom-button custom-button--primary custom-button--lg mt-8"
   >

@@ -1,0 +1,32 @@
+<div class="dashboard--stepper">
+  <div class="dashboard--step-numbers-container">
+    <div class="dashboard--number" data-active="<%= active[0] %>" data-complete="<%= complete[0] %>">
+      <% if complete[0] %>
+        <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
+      <% else %>
+        1
+      <% end %>
+    </div>
+    <div class="dashboard--step-divider"></div>
+    <div class="dashboard--number" data-active="<%= active[1] %>" data-complete="<%= complete[1] %>">
+      <% if complete[1] %>
+        <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
+      <% else %>
+        2
+      <% end %>
+    </div>
+    <div class="dashboard--step-divider"></div>
+    <div class="dashboard--number" data-active="<%= active[2] %>" data-complete="<%= complete[2] %>">
+      <% if complete[2] %>
+        <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
+      <% else %>
+        3
+      <% end %>
+    </div>
+  </div>
+  <div class="dashboard--text-container">
+    <p data-active="<%= active[0] && !complete[0] %>">Set up your account</p>
+    <p data-active="<%= active[1] && !complete[1] %>">Create a network</p>
+    <p data-active="<%= active[2] && !complete[2] %>">Set up your pods</p>
+  </div>
+</div>

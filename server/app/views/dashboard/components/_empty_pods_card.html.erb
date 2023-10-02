@@ -1,0 +1,16 @@
+<div class="cards--default pods--empty-card"
+     id="empty-networks-card"
+>
+  <div class="pods--empty-card-icon-container">
+    <%= image_tag image_url('big-dashboard-icon.png'), width: 32, height: 32 %>
+  </div>
+  <h3 class="pods--empty-card-title wrap">Your dashboard is still empty.</h3>
+  <span class="additional-text wrap">Add a pod to your network to start collecting data and building up your dashboard.</span>
+  <a href="<%= get_add_pod_modal_path %>"
+     data-turbo-frame="add_pod_modal"
+     class="custom-button custom-button--primary custom-button--lg mt-8"
+  >
+    <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: "me-2" %>
+    Add pod
+  </a>
+</div>

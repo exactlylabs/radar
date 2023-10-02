@@ -15,7 +15,9 @@ export default class extends Controller {
     "spinner",
     "conditional",
     "addressWrapper",
-    "manualLatLongWrapper"
+    "manualLatLongWrapper",
+    "submitButton",
+    "spinnerButton"
   ];
 
   connect() {

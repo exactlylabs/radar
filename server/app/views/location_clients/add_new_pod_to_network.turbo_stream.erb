@@ -12,7 +12,7 @@
 <% else %>
   <% if @location.clients.count == 1 %>
     <%= turbo_stream.update "network_pods_table_container" do %>
-      <%= render partial: "network_pods/components/table_filters", locals: { network: @client.location } %>
+      <%= render partial: "network_pods/components/table_filters", locals: { network: @location } %>
       <%= render partial: "application/components/tables/generic_table",
           locals: {
             table_id: "network_pods_table",

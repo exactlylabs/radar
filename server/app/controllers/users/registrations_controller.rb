@@ -22,6 +22,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     respond_to do |format|
       if !error
         sign_in @user
+        set_cookie(:ftue_onboarding_modal, true)
         format.html { redirect_to dashboard_path, notice: "Registered successfully" }
       else
         format.json { render json: { error: error, status: :unprocessable_entity } }
@@ -94,6 +95,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # DELETE /custom_sign_out
   def custom_sign_out
     clear_account_and_cookie
+    clear_ftue_cookie
     sign_out
     respond_to do |format|
       format.html { redirect_to root_path }

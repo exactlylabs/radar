@@ -157,6 +157,10 @@ body {
   &[data-narrow="true"] {
     padding-right: 6rem !important;
   }
+
+  &[data-error="true"] {
+    outline: solid 2px $error-red !important;
+  }
 }
 
 .forms--text-input::placeholder {

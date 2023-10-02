@@ -1,4 +1,4 @@
-<% if @error %>
+<% if @error && !@onboarding %>
   <%= turbo_stream.update "add_pod_modal" do %>
     <%= render partial: "application/components/modals/empty_custom_modal",
         locals: {
@@ -7,6 +7,28 @@
           custom_submit_end_handler: nil,
           resource: nil
         }
+    %>
+  <% end %>
+<% elsif @error && @onboarding %>
+  <%= turbo_stream.update "ftue_modal" do %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: "Add a new pod",
+                 modal_partial_path: "pods/modals/add_pod/onboarding_pod_id_step",
+                 custom_submit_end_handler: nil,
+                 resource: nil
+               }
+    %>
+  <% end %>
+<% elsif @onboarding %>
+  <%= turbo_stream.update "ftue_modal" do %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: "Add a new pod",
+                 modal_partial_path: "pods/modals/add_pod/onboarding_pod_account_and_network_step",
+                 custom_submit_end_handler: nil,
+                 resource: @network
+               }
     %>
   <% end %>
 <% else %>

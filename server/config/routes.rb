@@ -36,6 +36,7 @@ Rails.application.routes.draw do
       delete 'bulk_destroy', to: 'locations#bulk_destroy'
       get 'move_to_account', to: 'locations#move_to_account'
       post 'bulk_move_networks', to: 'locations#bulk_move_to_account'
+      post 'new_network_onboarding', to: 'locations#new_network_onboarding', as: 'new_network_onboarding'
     end
 
     member do
@@ -106,6 +107,8 @@ Rails.application.routes.draw do
       post 'bulk_remove_from_network'
       get 'bulk_move_to_network', to: 'clients#get_bulk_move_to_network'
       post 'bulk_move_to_network'
+      post 'new_pod_onboarding', to: 'clients#new_pod_onboarding', as: 'new_pod_onboarding'
+      post 'claim_pod_onboarding', to: 'clients#claim_pod_onboarding', as: 'claim_pod_onboarding'
     end
   end
 
@@ -177,6 +180,9 @@ Rails.application.routes.draw do
   post 'reverse_geocode', to: 'geocode#reverse_code'
   get 'dashboard', to: 'dashboard#index'
   get 'search_locations', to: 'dashboard#search_locations'
+  get 'onboarding_step_1', to: 'dashboard#onboarding_step_1'
+  get 'onboarding_step_2', to: 'dashboard#onboarding_step_2'
+  get 'onboarding_step_3', to: 'dashboard#onboarding_step_3'
 
   resources :exports do
     collection do
@@ -188,6 +194,8 @@ Rails.application.routes.draw do
     collection do
       post 'switch', to: "accounts#switch"
       post 'all_accounts', to: "accounts#all_accounts"
+      post 'new_account_onboarding', to: "accounts#new_account_onboarding", as: 'new_account_onboarding'
+      post 'onboarding_account', to: "accounts#onboarding_account", as: 'onboarding_account'
     end
     member do
       post :edit

@@ -165,3 +165,6 @@ application.register("pod-id-step", PodIdStepController);
 
 import PodAccountAndNetworkController from "./pod_account_and_network_controller";
 application.register("pod-account-and-network", PodAccountAndNetworkController);
+
+import LoadingFeedbackController from "./loading_feedback_controller";
+application.register("loading-feedback", LoadingFeedbackController);
