@@ -66,7 +66,7 @@ func Install(binPath string, binary []byte, expectedVersion string) (err error) 
 }
 
 func addBinary(binPath string, binary []byte) error {
-	f, err := os.OpenFile(binPath, os.O_CREATE|os.O_RDWR, 0776)
+	f, err := os.OpenFile(binPath, os.O_CREATE|os.O_RDWR, 0755)
 	if err != nil {
 		return fmt.Errorf("update.addBinary OpenFile: %w", err)
 	}
@@ -90,7 +90,7 @@ func replaceBinary(binPath string, binary []byte) error {
 			panic(r)
 		}
 	}()
-	f, err := os.OpenFile(tmpFile, os.O_CREATE|os.O_RDWR, 0776)
+	f, err := os.OpenFile(tmpFile, os.O_CREATE|os.O_RDWR, 0755)
 	if err != nil {
 		return fmt.Errorf("update.replaceBinary OpenFile: %w", err)
 	}
@@ -111,6 +111,6 @@ func replaceBinary(binPath string, binary []byte) error {
 		return fmt.Errorf("update.replaceBinary Rename: %w", err)
 	}
 	os.Remove(oldFile)
-	os.Chmod(binPath, 0776)
+	os.Chmod(binPath, 0755)
 	return nil
 }
