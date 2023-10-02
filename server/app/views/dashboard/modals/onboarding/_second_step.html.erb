@@ -1,0 +1,20 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: "Welcome to Radar", is_custom: true }
+%>
+
+<div class="modals--content-container text-center" data-type="full">
+  <div class="modals--big-icon-container mb-4">
+    <%= image_tag image_url('checkmark-blue-icon.png'), width: 32, height: 32 %>
+  </div>
+  <h3 class="modal-main-title mb-2">Your account <%= policy_scope(Account).last.name %> has been created.</h3>
+  <p class="additional-text wrap mb-8">Next, let's set up your network, so you can organize your pods and get accurate insights about your network's performance.</p>
+  <%= render partial: "dashboard/components/stepper", locals: { active: [false, true, false], complete: [true, false, false] } %>
+</div>
+<div class="modals--footer-container">
+  <button
+    type="button"
+    class="custom-button custom-button--secondary custom-button--sm me-4"
+    data-action="click->custom-modal#closeModal click->onboard#disableOnboardingCookie"
+  >Not now</button>
+  <%= link_to "Continue", new_network_onboarding_locations_path, data: {turbo_method: :post, turbo_frame: "ftue_modal", turbo_stream: "true"}, class: "custom-button custom-button--primary custom-button--lg" %>
+</div>

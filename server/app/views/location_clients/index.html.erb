@@ -47,7 +47,7 @@
     <% if FeatureFlagHelper.is_available('networks', current_user) %>
       <%= turbo_frame_tag "network_pods_table_container" do %>
         <% if @clients.count == 0 && request.query_parameters.size == 0 %>
-          <%= render partial: "network_pods/components/empty_pods_card" %>
+          <%= render partial: "network_pods/components/empty_pods_card", locals: { network: @location } %>
         <% else %>
           <%= render partial: "network_pods/components/table_filters", locals: { network: @location } %>
           <%= render partial: "application/components/tables/generic_table",

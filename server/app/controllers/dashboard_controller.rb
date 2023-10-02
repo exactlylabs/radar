@@ -17,6 +17,40 @@ class DashboardController < ApplicationController
     else
       @onboard_step = 1
     end
+    if FeatureFlagHelper.is_available('networks', current_user)
+      cookie = get_cookie(:ftue_onboarding_modal)
+      if current_user.ftue_disabled
+        if cookie.nil?
+          set_cookie(:ftue_onboarding_modal, false)
+        end
+      else
+        has_no_accounts = policy_scope(Account).count == 0
+        cookie_is_turned_on = cookie.present? && cookie == 'true'
+        if cookie.nil?
+          set_cookie(:ftue_onboarding_modal, has_no_accounts)
+          cookie_is_turned_on = has_no_accounts
+        end
+        @show_ftue = cookie_is_turned_on && has_no_accounts
+      end
+    end
+  end
+
+  def onboarding_step_1
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
+  def onboarding_step_2
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
+  def onboarding_step_3
+    respond_to do |format|
+      format.turbo_stream
+    end
   end
 
   def search_locations

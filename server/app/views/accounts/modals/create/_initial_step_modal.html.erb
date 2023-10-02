@@ -1,6 +1,13 @@
+<% onboarding = local_assigns[:is_onboarding].present? ? local_assigns[:is_onboarding] : false %>
+
 <div data-add-account-target="step0">
   <%= render partial: "application/components/modals/modal_header",
-      locals: { title: "Create an account", is_custom: true }
+      locals: { title: "Create an account",
+                is_custom: true,
+                goes_back: onboarding,
+                go_back_url: onboarding ? onboarding_step_1_path : nil,
+                go_back_action: onboarding ? "click->onboard#goToOnboardingStep" : nil
+      }
   %>
   <div class="modals--content-container" data-type="full">
 

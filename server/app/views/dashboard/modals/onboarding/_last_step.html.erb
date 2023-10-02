@@ -1,0 +1,15 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: "Welcome to Radar", is_custom: true }
+%>
+
+<div class="modals--content-container text-center" data-type="full">
+  <div class="modals--big-icon-container mb-4">
+    <%= image_tag image_url('checkmark-blue-icon.png'), width: 32, height: 32 %>
+  </div>
+  <h3 class="modal-main-title mb-2">Your pod has been added.</h3>
+  <p class="additional-text wrap mb-8">You're all set. Soon, your network insights will be available on your dashboard.</p>
+  <%= render partial: "dashboard/components/stepper", locals: { active: [false, false, false], complete: [true, true, true] } %>
+</div>
+<div class="modals--footer-container">
+  <a href="<%= client_path(@client.unix_user) %>" target="_top" class="custom-button custom-button--primary custom-button--lg">View my pod</a>
+</div>

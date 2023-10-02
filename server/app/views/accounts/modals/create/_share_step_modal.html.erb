@@ -1,3 +1,5 @@
+<% onboarding = local_assigns[:is_onboarding].present? ? local_assigns[:is_onboarding] : false %>
+
 <div class="invisible" data-add-account-target="step2">
   <%= render partial: "application/components/modals/modal_header",
       locals: {
@@ -45,7 +47,7 @@
     <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
     <button type="button"
       class="custom-button custom-button--primary custom-button--sm"
-      data-action="click->add-account#createAccount"
+      data-action="<%= onboarding ? 'click->add-account#createOnboardingAccount' : 'click->add-account#createAccount' %>"
       data-add-account-target="createAccountButton"
     >Create account</button>
     <button type="button"

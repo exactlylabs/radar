@@ -83,14 +83,14 @@
       <div class="public--status-card-speed">
         <%= image_tag image_url('download-icon-blue.png'), class: "public--arrow-icon" %>
         <p class="regular-bold-text mb-1">Avg Download Speed</p>
-        <p class="additional-text m-0 text-left wrap"><%= client.location&.measurements.count == 0 ? "N/A" : "#{client.location.measurements.average(:download).to_f.round(1)} Mbps" %></p>
+        <p class="additional-text m-0 text-left wrap"><%= (client.location&.measurements&.count || 0) == 0  ? "N/A" : "#{client.location.measurements.average(:download).to_f.round(1)} Mbps" %></p>
       </div>
     </div>
     <div class="public--status-card half">
       <div class="public--status-card-speed">
         <%= image_tag image_url('upload-icon-blue.png'), class: "public--arrow-icon" %>
         <p class="regular-bold-text mb-1">Avg Upload Speed</p>
-        <p class="additional-text m-0 text-left wrap"><%= client.location&.measurements.count == 0 ? "N/A" : "#{client.location.measurements.average(:upload).to_f.round(1)} Mbps" %></p>
+        <p class="additional-text m-0 text-left wrap"><%= (client.location&.measurements&.count || 0) == 0 ? "N/A" : "#{client.location.measurements.average(:upload).to_f.round(1)} Mbps" %></p>
       </div>
     </div>
   </div>

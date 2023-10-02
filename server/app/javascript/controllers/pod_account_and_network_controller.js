@@ -16,12 +16,22 @@ export default class extends Controller {
   ]
 
   connect() {
-    this.networkAssignmentType = NETWORK_SELECT_STATUS.NO_NETWORK;
+    const { onboarding } = this.element.dataset;
+    this.networkAssignmentType = !!onboarding ? NETWORK_SELECT_STATUS.EXISTING_NETWORK : NETWORK_SELECT_STATUS.NO_NETWORK;
+    if(this.networkAssignmentType === NETWORK_SELECT_STATUS.EXISTING_NETWORK) {
+      this.removeNetworkSubtitle();
+      this.removeNewNetworkComponent();
+      this.showExistingNetworkSelect();
+    }
   }
   
   existingNetworkSelectTargetConnected(e) {
     this.existingNetworkSelect = $('#pod-existing-network-select');
-    setTimeout(() => { this.removeExistingNetworkSelect() }, 5);
+    if(e.dataset.onboarding !== 'true') {
+      setTimeout(() => {
+        this.removeExistingNetworkSelect()
+      }, 5);
+    }
   }
   
   handleNetworkAssignmentTypeSelect(e) {

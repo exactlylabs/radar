@@ -87,22 +87,77 @@
 <!--end::Toolbar-->
 <!--begin::Post-->
 <div class="post fs-6 d-flex border-solid" id="kt_post">
-  <!--begin::Container-->
-  <% if current_account.present? %>
-    <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
-      <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
-        <%= render partial: "onboard", locals: { step: @onboard_step } %>
-      </div>
-      <% if @locations.exists? || params[:filter].present? %>
-        <!-- REMOVE -->
-        <%= render partial: "application/components/widgets/widget",
-            locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
-        %>
+  <% if FeatureFlagHelper.is_available('networks', current_user) %>
+    <%= turbo_frame_tag "dashboard-main-content" do %>
+      <% if current_account.nil? && policy_scope(Account).count == 0 %>
+        <%= render partial: "dashboard/components/empty_accounts_card" %>
+      <% elsif policy_scope(Location).count == 0 %>
+        <div class="d-flex flex-column w-100">
+          <% if are_there_unassigned_pods? %>
+            <div class="networks--unassigned-pods-banner">
+              <%= image_tag image_url('warning-icon'), width: 20, height: 20 %>
+              <div class="networks--unassigned-pods-banner-text-container">
+                <% pod_count = policy_scope(Client).where(location: nil).count %>
+                <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>
+                <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
+              </div>
+            </div>
+          <% end %>
+          <%= render partial: "dashboard/components/empty_networks_card" %>
+        </div>
+      <% elsif policy_scope(Client).count == 0 %>
+        <%= render partial: "dashboard/components/empty_pods_card" %>
+      <% else %>
+        <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
+          <%= render partial: "application/components/widgets/widget",
+                     locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
+          %>
+        </div>
       <% end %>
-    </div>
+    <% end %>
   <% else %>
-    <%= render partial: "dashboard/no_accounts_card" %>
+    <!--begin::Container-->
+    <% if current_account.present? %>
+      <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
+        <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
+          <%= render partial: "onboard", locals: { step: @onboard_step } %>
+        </div>
+        <% if @locations.exists? || params[:filter].present? %>
+          <!-- REMOVE -->
+          <%= render partial: "application/components/widgets/widget",
+              locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
+          %>
+        <% end %>
+      </div>
+    <% else %>
+      <%= render partial: "dashboard/no_accounts_card" %>
+    <% end %>
+    <!--end::Container-->
   <% end %>
-  <!--end::Container-->
 </div>
 <!--end::Post-->
+
+<% if @show_ftue %>
+  <%= turbo_frame_tag "ftue_modal", class: "overflow-hidden", data: {controller: "onboard categories pod-id-step"} do %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: 'Welcome to Radar',
+                 modal_partial_path: "dashboard/modals/onboarding/initial_step",
+                 resource: nil,
+                 custom_submit_end_handler: nil,
+               }
+    %>
+  <% end %>
+<% end %>
+
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "create_account_modal" }
+  %>
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "pod-id-step" }
+  %>
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "new_location_modal", optional_added_controllers: "categories" }
+  %>
+<% end %>

@@ -62,7 +62,9 @@
     <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
     <!--begin::ContinueButton-->
     <button type="submit"
-      class="custom-button custom-button--lg custom-button--primary"
+            class="custom-button custom-button--lg custom-button--primary"
+            data-controller="loading-feedback"
+            data-action="click->loading-feedback#replaceContent"
     >Add pod</button>
     <!--end::ContinueButton-->
   </div>

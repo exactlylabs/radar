@@ -41,7 +41,8 @@
     <button type="submit"
       class="custom-button custom-button--lg custom-button--primary <%= @unix_user.present? ? '' : 'custom-button--disabled' %>"
       data-pod-id-step-target="submitIdButton"
-      data-action="disableButton@window->pod-id-step#disableButton enableButton@window->pod-id-step#enableButton"
+      data-controller="loading-feedback"
+      data-action="disableButton@window->pod-id-step#disableButton enableButton@window->pod-id-step#enableButton click->loading-feedback#replaceContent"
     >Continue</button>
     <!--end::ContinueButton-->
   </div>

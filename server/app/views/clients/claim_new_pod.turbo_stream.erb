@@ -12,6 +12,16 @@
         }
     %>
   <% end %>
+
+  <% if FeatureFlagHelper.is_available('networks', current_user) %>
+    <%= turbo_stream.update "dashboard-main-content" do %>
+      <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
+        <%= render partial: "application/components/widgets/widget",
+                   locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
+        %>
+      </div>
+    <% end %>
+  <% end %>
 <% else %>
   <% if @client.location.nil? %>
     <%= turbo_stream.prepend "pods_table" do %>
@@ -35,5 +45,25 @@
           }
       %>
     <% end %>
+  <% end %>
+<% end %>
+
+<% if @onboarding %>
+  <%= turbo_stream.update "ftue_modal" do %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: 'Welcome to Radar',
+                 modal_partial_path: "dashboard/modals/onboarding/last_step",
+                 resource: nil,
+                 custom_submit_end_handler: nil,
+               }
+    %>
+  <% end %>
+  <%= turbo_stream.update "dashboard-main-content" do %>
+    <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
+      <%= render partial: "application/components/widgets/widget",
+                 locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
+      %>
+    </div>
   <% end %>
 <% end %>

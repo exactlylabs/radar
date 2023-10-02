@@ -20,7 +20,7 @@
         <a 
           type="button" 
           class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled custom-button--disabled' : '' %>"
-          href="<%= new_location_path %>" 
+          href="<%= new_location_path %>"
           data-turbo-frame="new_location_modal"
         >Add Location</a>
         <% if !current_account.is_all_accounts? %>

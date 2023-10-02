@@ -160,6 +160,23 @@ export default class extends Controller {
       this.accessTextTarget.innerText = `Everyone at ${accountNamesString} will be able to access ${this.newAccountData.account_name}.`;
     }
   }
+  
+  createOnboardingAccount() {
+    const token = document.getElementsByName("csrf-token")[0].content;
+    const formData = new FormData();
+    formData.append("account[name]", this.newAccountData.account_name);
+    formData.append("account[account_type]", this.newAccountData.account_type);
+    formData.append("shared_to_accounts_ids", JSON.stringify(this.newAccountData.shared_to_accounts_ids));
+    this.createAccountButtonTarget.classList.add('invisible');
+    this.createAccountButtonLoadingTarget.classList.remove('invisible');
+    fetch("/accounts/onboarding_account", {
+      method: "POST",
+      headers: { "X-CSRF-Token": token },
+      body: formData,
+    })
+      .then(res => res.text())
+      .then(html => Turbo.renderStreamMessage(html));
+  }
 
   createAccount() {
     const token = document.getElementsByName("csrf-token")[0].content;

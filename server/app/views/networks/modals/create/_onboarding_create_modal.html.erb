@@ -1,0 +1,12 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: "Create new network", is_custom: true, goes_back: true, go_back_url: onboarding_step_2_path, go_back_action: "click->onboard#goToOnboardingStep" }
+%>
+<%= form_with model: @location, class: "networks--modal-form" do |form| %>
+  <%= render partial: "networks/modals/shared/network_details_modal",
+             locals: {
+               type: "create",
+               form: form,
+               is_onboarding: true
+             }
+  %>
+<% end %>

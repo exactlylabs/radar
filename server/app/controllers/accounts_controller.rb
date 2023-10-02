@@ -10,6 +10,42 @@ class AccountsController < ApplicationController
     end
   end
 
+  def new_account_onboarding
+    @account = Account.new
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
+  end
+
+  def onboarding_account
+    @error = false
+    shared_to_accounts_ids = params[:shared_to_accounts_ids].present? ? JSON.parse(params[:shared_to_accounts_ids]) : []
+    begin
+      Account.transaction do
+        @account = Account.create! account_params
+        now = Time.now
+        @user_account = UsersAccount.create!(user_id: current_user.id, account_id: @account.id, joined_at: now, invited_at: now)
+        shared_to_accounts_ids.each do |id|
+          new_shared_account = SharedAccount.new
+          new_shared_account.original_account_id = @account.id
+          new_shared_account.shared_to_account_id = id.to_i
+          new_shared_account.shared_at = Time.now
+          new_shared_account.save!
+        end
+      end
+    rescue Exception => e
+      @error = e.message
+    end
+    if !@error
+      current_user.update(ftue_disabled: true)
+      set_cookie(:radar_current_account_id, @account.id)
+    end
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
   def create
     error = false
     shared_to_accounts_ids = params[:shared_to_accounts_ids].present? ? JSON.parse(params[:shared_to_accounts_ids]) : []

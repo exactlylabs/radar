@@ -11,6 +11,7 @@ export default class extends Controller {
   }
 
   connect() {
+    this.token = document.querySelector('meta[name="csrf-token"]').content;
     switch(this.stepValue) {
       case 1:
         this.goto1();
@@ -115,5 +116,20 @@ export default class extends Controller {
     this.stepper2TitleTarget.classList.remove("text-dark");
     this.stepper3TitleTarget.classList.remove("text-dark");
     this.stepper4TitleTarget.classList.remove("text-dark");
+  }
+  
+  goToOnboardingStep(e) {
+    e.preventDefault();
+    const initialStepUrl = e.target.dataset.url;
+    fetch(initialStepUrl, {
+      headers: { "X-CSRF-Token": this.token },
+    })
+    .then(response => response.text())
+    .then(html => Turbo.renderStreamMessage(html));
+  }
+  
+  disableOnboardingCookie() {
+    document.cookie = "ftue_onboarding_modal=false; path=/";
+    window.location.reload();
   }
 }

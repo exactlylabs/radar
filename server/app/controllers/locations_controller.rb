@@ -44,6 +44,16 @@ class LocationsController < ApplicationController
     end
   end
 
+  def new_network_onboarding
+    @location = Location.new
+    if FeatureFlagHelper.is_available('networks', current_user)
+      respond_to do |format|
+        format.html
+        format.turbo_stream
+      end
+    end
+  end
+
   # GET /locations/1/edit
   def edit
     if FeatureFlagHelper.is_available('networks', current_user)
@@ -65,6 +75,8 @@ class LocationsController < ApplicationController
       @location.clients << current_clients.first
     end
 
+    @is_onboarding = params[:onboarding] == "true" if FeatureFlagHelper.is_available('networks', current_user)
+
     respond_to do |format|
       if @location.save
         @location.categories << policy_scope(Category).where(id: params[:categories].split(",")).distinct if params[:categories].present?
@@ -72,6 +84,8 @@ class LocationsController < ApplicationController
         format.html { redirect_to locations_path, notice: "Location was successfully created." }
         format.json { render :show, status: :created, location: @location }
       else
+        @error = true
+        format.turbo_stream
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @location.errors, status: :unprocessable_entity }
       end

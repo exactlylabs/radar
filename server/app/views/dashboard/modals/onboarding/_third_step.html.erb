@@ -1,0 +1,20 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: "Welcome to Radar", is_custom: true }
+%>
+
+<div class="modals--content-container text-center" data-type="full">
+  <div class="modals--big-icon-container mb-4">
+    <%= image_tag image_url('checkmark-blue-icon.png'), width: 32, height: 32 %>
+  </div>
+  <h3 class="modal-main-title mb-2">Your network <%= policy_scope(Location).last.name %> has been created.</h3>
+  <p class="additional-text wrap mb-8">Now you can add a pod to your network. Pods keep connected to your Internet network and perform various tests throughout the day or at your request.</p>
+  <%= render partial: "dashboard/components/stepper", locals: { active: [false, false, true], complete: [true, true, false] } %>
+</div>
+<div class="modals--footer-container">
+  <button
+    type="button"
+    class="custom-button custom-button--secondary custom-button--sm me-4"
+    data-action="click->custom-modal#closeModal click->onboard#disableOnboardingCookie"
+  >Not now</button>
+  <%= link_to "Continue", new_pod_onboarding_clients_path, data: {turbo_method: :post, turbo_frame: "ftue_modal", turbo_stream: "true"}, class: "custom-button custom-button--primary custom-button--lg" %>
+</div>
