@@ -66,8 +66,9 @@ func drawUI(ctx context.Context, w io.Writer, agentCli AgentClient, podProber Po
 	app := tview.NewApplication()
 	grid := tview.NewGrid().
 		SetColumns(-50, -50).
-		AddItem(infoGrid, 0, 0, 1, 1, 0, 0, true).
-		AddItem(qrcodeContainer, 0, 1, 1, 1, 0, 0, false)
+		SetRows(-10, -90).
+		AddItem(infoGrid, 1, 0, 1, 1, 0, 0, true).
+		AddItem(qrcodeContainer, 1, 1, 1, 1, 0, 0, false)
 	grid.SetBorder(true).SetTitle("Radar POD")
 	go func() {
 		if err := app.SetRoot(grid, true).Run(); err != nil {
