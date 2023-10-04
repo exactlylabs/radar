@@ -1,11 +1,11 @@
-import 'package:client_mobile_app/core/flavors/app_config.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/app_info_tab.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/background_mode_tab.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/modal_tabs.dart';
-import 'package:client_mobile_app/resources/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_mobile_app/resources/images.dart';
+import 'package:client_mobile_app/core/flavors/app_config.dart';
 import 'package:client_mobile_app/core/background_fetch/bloc/background_fetch_bloc.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/modal_tabs.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/app_info_tab.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/background_mode_tab.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/permission_modals/location_all_time_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/background_mode_frequency_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/background_mode_bloc/background_mode_cubit.dart';

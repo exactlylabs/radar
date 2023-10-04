@@ -61,7 +61,7 @@ class BackgroundSpeedTest {
 
   void _onTestMeasurement(Map<String, dynamic> testResult) => _parse(testResult);
 
-  void _onTestError(String error) => print(error);
+  void _onTestError(String error) => Sentry.captureException(error);
 
   Future<void> _parse(Map<String, dynamic> response) async {
     final updatedResponses = List<Map<String, dynamic>>.from(_responses)..add(response);
@@ -112,6 +112,7 @@ class BackgroundSpeedTest {
           Sentry.captureException(exception, stackTrace: stackTrace);
         }
       }
+      // TODO: handle exception
       Sentry.captureException(exception, stackTrace: stackTrace);
     }
     return null;
@@ -124,6 +125,7 @@ class BackgroundSpeedTest {
       headers: {'Content-Type': 'application/json'},
       body: speedTestResult,
     );
+
     if (result.failure != null) {
       _localStorage.addPendingSpeedTestResult(speedTestResult);
     } else {

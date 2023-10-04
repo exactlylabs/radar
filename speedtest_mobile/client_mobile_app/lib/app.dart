@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:endless_service/endless_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:client_mobile_app/resources/theme.dart';
@@ -28,7 +27,6 @@ class App extends StatelessWidget {
     required this.restClient,
     required this.localStorage,
     required this.httpProvider,
-    required this.endlessService,
     required this.networkConnectionInfo,
     required this.configurationMonitoring,
   }) : super(key: key);
@@ -36,7 +34,6 @@ class App extends StatelessWidget {
   final RestClient restClient;
   final LocalStorage localStorage;
   final IHttpProvider httpProvider;
-  final EndlessService endlessService;
   final NetworkConnectionInfo networkConnectionInfo;
   final ConfigurationMonitoring configurationMonitoring;
 
@@ -82,7 +79,6 @@ class App extends StatelessWidget {
               localStorage: localStorage,
               restClient: restClient,
               httpProvider: httpProvider,
-              endlessService: endlessService,
               networkConnectionInfo: networkConnectionInfo,
               configurationMonitoring: configurationMonitoring,
             ),
@@ -119,7 +115,7 @@ class AppBuilder extends StatelessWidget {
     return MaterialApp(
       title: config != null ? config.appName : 'Radar',
       theme: theme,
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }

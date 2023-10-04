@@ -1,5 +1,6 @@
-import 'package:client_mobile_app/resources/strings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/resources/images.dart';
 import 'package:client_mobile_app/resources/app_style.dart';
 import 'package:client_mobile_app/resources/app_colors.dart';
@@ -8,7 +9,6 @@ import 'package:client_mobile_app/presentations/widgets/spacer_with_max.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/error_message.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/agree_to_terms.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AcceptTermsPage extends StatefulWidget {
   const AcceptTermsPage({

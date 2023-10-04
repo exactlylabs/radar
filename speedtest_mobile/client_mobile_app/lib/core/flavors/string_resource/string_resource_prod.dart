@@ -2,7 +2,7 @@ import 'package:client_mobile_app/core/flavors/string_resource/i_string_resource
 
 class StringResourceProd implements IStringResource {
   @override
-  String SERVER_ENDPOINT = 'https://pods.radartoolkit.com';
+  String SERVER_ENDPOINT = 'https://radar-staging.exactlylabs.com';
 
   @override
   String SERVER_NAME = 'Radar Prod';
@@ -19,7 +19,7 @@ class StringResourceProd implements IStringResource {
 
   @override
   String WEB_ENDPOINT =
-      'https://speed.radartoolkit.com/?webviewMode=true&tab=2&noZoomControl=true&global=true&client_id=1';
+      'https://speedtest-staging.exactlylabs.com/?webviewMode=true&tab=2&noZoomControl=true&global=true&client_id=1';
 
   @override
   String WEB_ENDPOINT_COOKIE_DOMAIN = 'speed.radartoolkit.com';

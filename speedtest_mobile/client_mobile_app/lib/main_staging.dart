@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:get_it/get_it.dart';
-import 'package:endless_service/endless_service.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:client_mobile_app/app.dart';
@@ -24,7 +23,6 @@ Future<void> main() async {
       restClient: GetIt.I<RestClient>(),
       localStorage: GetIt.I<LocalStorage>(),
       httpProvider: GetIt.I<IHttpProvider>(),
-      endlessService: GetIt.I<EndlessService>(),
       networkConnectionInfo: GetIt.I<NetworkConnectionInfo>(),
       configurationMonitoring: GetIt.I<ConfigurationMonitoring>(),
     ),
