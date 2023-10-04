@@ -1,6 +1,8 @@
 require 'zip'
 
 class AllExportsJob < ApplicationJob
+  include Exceptions::Handler
+
   queue_as :default
 
   def perform(user, filename, origin)
@@ -47,7 +49,7 @@ class AllExportsJob < ApplicationJob
       ExportsMailer.with(user: user, url: url).export_ready_email.deliver_later
     rescue Exception => e
       ExportsChannel.broadcast_to(CHANNELS[:exports], {progress: -1})
-      Sentry.capture_exception(e)
+      handle_exception(e, user)
       if user.downloads.last
         download_id = user.downloads.last.id 
         PurgeDownloadJob.perform_later(user, download_id)

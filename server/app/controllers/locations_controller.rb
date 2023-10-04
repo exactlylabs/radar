@@ -204,7 +204,6 @@ class LocationsController < ApplicationController
       account_id = params[:account_id]
       account = policy_scope(Account).find(account_id)
       wants_to_move_tests = params[:wants_to_move_tests] == "true"
-
       @locations.each do |location|
         old_account = location.account
         location.clients.update_all(account_id: account.id)
@@ -225,7 +224,7 @@ class LocationsController < ApplicationController
         end
       end
     rescue Exception => e
-      Sentry.capture_exception(e)
+      handle_exception(e, current_user)
       error = e.message
     end
 

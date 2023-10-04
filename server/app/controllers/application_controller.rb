@@ -80,8 +80,10 @@ end
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include Turbo::Redirection
+  include Exceptions::Handler
 
-  rescue_from Exception, with: :set_sentry_user
+  before_action :set_sentry_user
+  rescue_from Exception, with: :handle_controller_exception
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   def after_sign_in_path_for(resource)
@@ -198,21 +200,12 @@ class ApplicationController < ActionController::Base
     @auth_holder
   end
 
-  def set_sentry_user(e)
-    if current_user.present?
-      Sentry.set_user(id: current_user.id, email: current_user.email)
-      Sentry.configure_scope do |scope|
-        user_ffs = {}
-        current_ffs_ids = current_user.feature_flags.pluck(:id)
-        FeatureFlag.all.each do |ff|
-          user_ffs.merge!({ff.name => current_ffs_ids.include?(ff.id)})
-        end
-        scope.set_context('Feature Flags', user_ffs)
-        scope.set_context('User Metadata', { 'Super User' => current_user.super_user })
-      end
-    end
-    Sentry.capture_exception(e)
-    raise e
+  def set_sentry_user
+    Sentry.set_user(id: current_user.id, email: current_user.email) if current_user.present?
+  end
+
+  def handle_controller_exception(e)
+    handle_exception(e, current_user)
   end
 
   def configure_permitted_parameters
