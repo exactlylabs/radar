@@ -36,6 +36,13 @@ class FindAsnByIp < ApplicationJob
             )
         end
 
+        # If this obj has a location, grab all geospaces and link them to the AS org
+        if obj.location.present?
+            obj.location.geospaces.each do |gs|
+                gs.autonomous_system_orgs << as.autonomous_system_org unless gs.autonomous_system_orgs.include? as.autonomous_system_org
+            end
+        end
+
         obj.autonomous_system = as
         obj.save!
     end
