@@ -5,11 +5,11 @@
 #############################################
 set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-BASE_URL=${BASE_URL:-https://pods.radartoolkit.com}
+FLAVOR=${FLAVOR:-prod}
 WORKSPACE=${SCRIPT_DIR}/../workspace
 APPDIR=${SCRIPT_DIR}/..
 BUILD=${BUILD:-$(date +%s)}
-( cd ${APPDIR} && flutter build appbundle --build-number ${BUILD} --release --flavor prod -t lib/main_prod.dart --dart-define=BASE_URL=$BASE_URL )
+( cd ${APPDIR} && flutter build appbundle --build-number ${BUILD} --release --flavor prod -t lib/main_prod.dart --dart-define=FLAVOR=$FLAVOR )
 
 export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -nre 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/\1/p')
 mkdir -p ${WORKSPACE}/android/prod/${VERSION_NAME}+${BUILD}/

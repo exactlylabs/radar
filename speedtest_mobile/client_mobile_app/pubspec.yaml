@@ -46,6 +46,7 @@ dependencies:
       ref: main
 
 
+
   flutter_bloc: ^8.1.1
   animations: ^2.0.7
   get_it: ^7.2.0
@@ -62,7 +63,6 @@ dependencies:
   package_info_plus: ^3.0.2
   url_launcher: ^6.1.8
   connectivity_plus: ^3.0.2
-  background_fetch: ^1.1.5
   permission_handler: ^10.2.0
   app_settings: ^4.2.0
   flutter_local_notifications: ^13.0.0

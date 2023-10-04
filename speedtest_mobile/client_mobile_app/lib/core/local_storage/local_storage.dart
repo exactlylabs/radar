@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:client_mobile_app/core/utils/id_generator.dart';
@@ -25,7 +26,8 @@ class LocalStorage {
   static const String _backgroundModeSettingsFrequency = 'background_mode_settings_frequency';
 
   Future<void> setLocalStorage() async {
-    final directory = await getApplicationDocumentsDirectory();
+    WidgetsFlutterBinding.ensureInitialized();
+    final directory = await getApplicationCacheDirectory();
     Hive.init(directory.path);
     await _openBoxes();
   }

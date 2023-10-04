@@ -263,7 +263,7 @@ Future<void> test({
 }) async {
   var results = await _discoverServerURLs(config ?? {});
   if (results == null) {
-    // use onError callback
+    if (onError != null) onError(_getError('Could not discover server URLs'));
     return;
   }
 

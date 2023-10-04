@@ -1,49 +1,37 @@
 import 'dart:io';
 import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:endless_service/endless_service.dart';
-import 'package:network_connection_info/network_connection_info.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:network_connection_info/network_connection_info.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:configuration_monitoring/models/configuration_status.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
-import 'package:client_mobile_app/core/notifications/flutter_notifications.dart';
-import 'package:client_mobile_app/core/background_fetch/background_speed_test.dart';
-import 'package:client_mobile_app/core/endless_service/endless_service_handler.dart';
+import 'package:client_mobile_app/core/background_fetch/background_fetch_handler.dart';
 import 'package:client_mobile_app/core/background_fetch/bloc/background_fetch_state.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-// import 'package:client_mobile_app/core/background_fetch/background_fetch_handler.dart';
 
 class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
   BackgroundFetchBloc({
-    required LocalStorage localStorage,
-    required ConfigurationMonitoring configurationMonitoring,
-    required EndlessService endlessService,
     required RestClient restClient,
-    required NetworkConnectionInfo networkConnectionInfo,
+    required LocalStorage localStorage,
     required IHttpProvider httpProvider,
+    required NetworkConnectionInfo networkConnectionInfo,
+    required ConfigurationMonitoring configurationMonitoring,
   })  : _localStorage = localStorage,
+        _httpProvider = httpProvider,
+        _restClient = restClient,
         _configurationMonitoring = configurationMonitoring,
-        _endlessServiceHandler = EndlessServiceHandler(endlessService: endlessService),
-        _backgroundSpeedTest = BackgroundSpeedTest(
-          restClient: restClient,
-          localStorage: localStorage,
-          httpProvider: httpProvider,
-          networkConnectionInfo: networkConnectionInfo,
-        ),
         super(const BackgroundFetchState()) {
     _listenToConfigurationMonitoring();
     _loadPreferences();
     _loadConfigurationMonitoring();
   }
 
+  final RestClient _restClient;
   final LocalStorage _localStorage;
+  final IHttpProvider _httpProvider;
   final ConfigurationMonitoring _configurationMonitoring;
-  final EndlessServiceHandler _endlessServiceHandler;
-  final BackgroundSpeedTest _backgroundSpeedTest;
 
   late final StreamSubscription<ConfigurationStatus> _configurationMonitoringSubscription;
 
@@ -53,14 +41,10 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
       final hasAccessToLocationAllTime = await Permission.locationAlways.isGranted;
       if (hasAccessToLocationAllTime) {
         emit(state.copyWith(delay: backgroundSpeedTestDelay, isEnabled: true));
-        await _endlessServiceHandler.configure(
-          frequency: backgroundSpeedTestDelay * 60000,
-          onAction: onAction,
-          onLog: onLog,
-          onFailure: onFailure,
-        );
-        await _endlessServiceHandler.start();
-        // BackgroundFetchHandler.startBackgroundSpeedTest(backgroundSpeedTestDelay * 60000);
+        final started = await BackgroundFetchHandler.setupAndStart(backgroundSpeedTestDelay);
+        if (!started) {
+          disableBackgroundSpeedTest();
+        }
       }
     }
   }
@@ -76,31 +60,22 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
 
   Future<void> enableBackgroundSpeedTest() async {
     if (!(state.isAirplaneModeOn || state.isEnabled)) {
-      emit(state.copyWith(isEnabled: true));
-      await _localStorage.setBackgroundModeFrequency(state.delay);
-      // _endlessService.stopEndlessService();
-      _endlessServiceHandler.configure(
-        frequency: state.delay * 60000,
-        onAction: onAction,
-        onLog: onLog,
-        onFailure: onFailure,
-      );
-      _endlessServiceHandler.start();
-      // BackgroundFetchHandler.stopBackgroundSpeedTest();
-      // BackgroundFetchHandler.startBackgroundSpeedTest(state.delay * 60000);
-      // showLocalFlutterNotification(
-      //     0, Strings.backgroundModeNotificaitonTitle, Strings.backgroundModeNotificaitonSubtitle);
+      final started = await BackgroundFetchHandler.setupAndStart(state.delay);
+      if (started) {
+        emit(state.copyWith(isEnabled: true));
+        await _localStorage.setBackgroundModeFrequency(state.delay);
+      }
     }
   }
 
   Future<void> disableBackgroundSpeedTest() async {
     if (state.isEnabled) {
-      final delay = state.isAirplaneModeOn ? state.delay : -1;
-      emit(state.copyWith(delay: delay, isEnabled: false));
-      await _localStorage.setBackgroundModeFrequency(-1);
-      _endlessServiceHandler.stop();
-      // BackgroundFetchHandler.stopBackgroundSpeedTest();
-      await cancelLocalFlutterNotification(0);
+      final stopped = await BackgroundFetchHandler.stop();
+      if (stopped) {
+        final delay = state.isAirplaneModeOn ? state.delay : -1;
+        emit(state.copyWith(delay: delay, isEnabled: false));
+        await _localStorage.setBackgroundModeFrequency(-1);
+      }
     } else {
       emit(state.copyWith(delay: -1));
     }
@@ -124,18 +99,11 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
 
   void setDelay(int delay) => emit(state.copyWith(delay: delay));
 
-  void onAction() => _backgroundSpeedTest.startSpeedTest();
-
-  void onLog(String log) => print(log);
-
-  void onFailure(String error) => Sentry.captureException(error);
-
   @override
   Future<void> close() {
     if (Platform.isAndroid) {
       _configurationMonitoringSubscription.cancel();
     }
-    _endlessServiceHandler.close();
     return super.close();
   }
 

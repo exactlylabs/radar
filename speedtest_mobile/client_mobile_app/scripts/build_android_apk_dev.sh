@@ -5,11 +5,11 @@
 #############################################
 set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-BASE_URL=${BASE_URL:-https://radar-staging.exactlylabs.com}
+FLAVOR=${FLAVOR:-dev}
 WORKSPACE=${SCRIPT_DIR}/../workspace
 APPDIR=${SCRIPT_DIR}/..
 BUILD=${BUILD:-$(date +%s)}
-( cd ${APPDIR} && flutter build apk --build-number ${BUILD} --release --flavor dev -t lib/main_dev.dart --dart-define=BASE_URL=$BASE_URL )
+( cd ${APPDIR} && flutter build apk --build-number ${BUILD} --release --flavor dev -t lib/main_dev.dart --dart-define=FLAVOR=$FLAVOR )
 
 export VERSION_NAME=$(cat ${APPDIR}/pubspec.yaml | sed -nre 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/\1/p')
 mkdir -p ${WORKSPACE}/android/dev/${VERSION_NAME}+${BUILD}/
