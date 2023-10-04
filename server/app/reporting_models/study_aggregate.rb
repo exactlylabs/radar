@@ -6,6 +6,8 @@ class StudyAggregate < ActiveRecord::Base
   has_many :study_level_projections
   has_many :study_level_measurements_projections
 
+  scope :having_location_id, ->(location_id) { joins(:geospace => :locations).where("locations.id = ?", location_id) }
+
 
   def self.populate_from_geospaces!
     fips = ActiveRecord::Base.connection.execute("SELECT fips FROM study_counties").values.flatten
@@ -14,16 +16,16 @@ class StudyAggregate < ActiveRecord::Base
     Geospace.where(geoid: state_fips).each do |state|
       state_agg = StudyAggregate.find_or_create_by!(
         name: state.name,
-        geospace: state, 
+        geospace: state,
         level: 'state'
       )
       # Do it outside find_or_create_by, because it could have been already created
       state_agg.update(study_aggregate: true)
-      
+
       Geospace.where(geoid: fips, namespace: 'county').where(geospaces[:geom].st_intersects(state.geom)).each do |county|
         county_agg = StudyAggregate.find_or_create_by!(
           name: county.name,
-          geospace: county, 
+          geospace: county,
           level: 'county',
           parent_aggregate: state_agg
         )
@@ -31,14 +33,14 @@ class StudyAggregate < ActiveRecord::Base
         Geospace.where(namespace: 'census_place').where(geospaces[:geom].st_intersects(county.geom)).each do |place|
           place_agg = StudyAggregate.find_or_create_by!(
             name: place.name,
-            geospace: place, 
+            geospace: place,
             level: 'census_place',
             parent_aggregate: county_agg
           )
           place_agg.update(study_aggregate: true)
         end
         GeoTools.get_county_as_orgs(county.geoid).each do |org|
-          as_org = AutonomousSystemOrg.find_or_create_by!(name: org.name)  
+          as_org = AutonomousSystemOrg.find_or_create_by!(name: org.name)
           isp_county_agg = StudyAggregate.find_or_create_by!(
             name: "#{org.name} -> #{county.name}",
             autonomous_system_org_id: as_org.id,
@@ -49,7 +51,7 @@ class StudyAggregate < ActiveRecord::Base
           isp_county_agg.update(study_aggregate: true)
         end
       end
-    end 
+    end
   end
 end
 
