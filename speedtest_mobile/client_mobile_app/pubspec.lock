@@ -135,7 +135,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: ad1f61714d2e01b2974c2319a104d61a24c0746c
+      resolved-ref: "7aa749472ac65900ae6314be940049bf6f78ab58"
       url: "https://github.com/exactlylabs/endless_service.git"
     source: git
     version: "0.0.1"
