@@ -82,13 +82,13 @@ class WarningViewModel {
   static VoidCallback? _callbackByName(String name) {
     switch (name) {
       case IWarningsService.gpsProviderWarningName:
-        return () => AppSettings.openLocationSettings();
+        return () => AppSettings.openAppSettings(type: AppSettingsType.location);
       case IWarningsService.locationPermissionWarningName:
         return () => AppSettings.openAppSettings();
       case IWarningsService.airplaneModeWarningName:
-        return () => AppSettings.openDeviceSettings();
+        return () => AppSettings.openAppSettings(type: AppSettingsType.wireless);
       case IWarningsService.powerModeSaveWarningName:
-        return () => AppSettings.openBatteryOptimizationSettings();
+        return () => AppSettings.openAppSettings(type: AppSettingsType.batteryOptimization);
       case IWarningsService.batteryUsageUnrestrictedWarningName:
         return () => AppSettings.openAppSettings();
       case IWarningsService.phoneStatePermissionWarningName:
