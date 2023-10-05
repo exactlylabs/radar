@@ -9,6 +9,8 @@ module MetricsProjectionProcessor
     include MetricsProjectionProcessor::DailyTriggerProcessor
     include MetricsProjectionProcessor::Fetchers
 
+    MAX_QUEUE_SIZE = 50000
+
     def initialize
       @insertion_queue = []
       @projections = {}
@@ -59,7 +61,7 @@ module MetricsProjectionProcessor
           self.close_finished_buckets(timestamp)
           self.push_projections_to_queue(timestamp) if @projection_updated
 
-          if @insertion_queue.size > 50000
+          if @insertion_queue.size > MAX_QUEUE_SIZE
             self.flush_insertion_queue
           end
         end

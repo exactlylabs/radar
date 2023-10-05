@@ -1,17 +1,20 @@
 module MetricsProjectionProcessor
   module Fetchers
-    def fetch_from_events()
+    DEFAULT_BATCH_SIZE = 10000
+
+    def fetch_from_events(**opts)
+      batch_size = opts[:batch_size] || DEFAULT_BATCH_SIZE
       offset = @consumer_offset.state["events_offset"] || 0
       Enumerator.new { |g|
         events = Event.where(
           "id > ? AND (aggregate_type = ? OR aggregate_type = ?)", offset, Client.name, SystemOutage.name
-        ).order('timestamp ASC, version ASC').find_each(batch_size: 10000) do |event|
+        ).order('timestamp ASC, version ASC').find_each(batch_size: batch_size) do |event|
           g.yield event
         end
       }
     end
 
-    def fetch_from_measurements()
+    def fetch_from_measurements(**opts)
       offset = @consumer_offset.state["measurements_offset"] || 0
       attrs = %w(
         measurements.id
@@ -29,14 +32,14 @@ module MetricsProjectionProcessor
         autonomous_system_org_id
         autonomous_system_org_name
       )
-
+      batch_size = opts[:batch_size] || DEFAULT_BATCH_SIZE
       Enumerator.new { |g|
         measurements = Measurement.joins(:autonomous_system => [:autonomous_system_org]).where(
           "processed = true AND measurements.id > ? AND lonlat IS NOT NULL AND location_id IS NOT NULL",
           offset
         ).order(
           "processed_at ASC, measurements.id ASC"
-        ).in_batches(of: 10000) do |measurements|
+        ).in_batches(of: batch_size) do |measurements|
           measurements.pluck(*attrs).each do |measurement|
             g.yield attrs_name.zip(measurement).to_h
           end
@@ -61,12 +64,13 @@ module MetricsProjectionProcessor
         autonomous_system_org_id
         autonomous_system_org_name
       )
+      batch_size = opts[:batch_size] || DEFAULT_BATCH_SIZE
       speed_tests = ClientSpeedTest.joins(:autonomous_system => [:autonomous_system_org]).where(
         "processed_at IS NOT NULL AND client_speed_tests.id > ? AND lonlat IS NOT NULL",
         offset
       ).order("processed_at ASC, client_speed_tests.id ASC")
       Enumerator.new { |g|
-        speed_tests.in_batches(of: 10000) do |speed_tests|
+        speed_tests.in_batches(of: batch_size) do |speed_tests|
           speed_tests.pluck(*attrs).each do |speed_test|
             g.yield attrs_name.zip(speed_test).to_h
           end
