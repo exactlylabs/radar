@@ -69,14 +69,14 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     address:              'smtp.postmarkapp.com',
     port:                 587,
-    domain:               'radar.exactlylabs.com',
+    domain:               'pods.radartoolkit.com',
     user_name:            ENV["SMTP_PASSWORD"],
     password:             ENV["SMTP_PASSWORD"],
     authentication:       'plain',
     enable_starttls_auto: true
   }
   config.action_mailer.default_url_options = {
-    host: 'radar.exactlylabs.com',
+    host: 'pods.radartoolkit.com',
     protocol: 'https'
   }
 
