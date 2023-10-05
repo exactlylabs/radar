@@ -23,7 +23,7 @@ import 'package:endless_service/models/android_notification_options/notification
 
 @pragma('vm:entry-point')
 void callback() async {
-  const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'staging');
+  const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'dev');
   IStringResource stringResource = _loadStringResource(flavor);
   DI.registerDependencies(stringResource.SERVER_ENDPOINT);
 
