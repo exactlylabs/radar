@@ -8,7 +8,7 @@ import SuggestionsModal from "./SuggestionsModal";
 import {MyBackButton} from "../../../common/MyBackButton";
 import iconLeftArrow from '../../../../assets/icons-left-arrow.png';
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
-import emptyAddress from "../../../../../context/UserData";
+import emptyAddress from "../../../../context/UserData";
 
 const locationSearchStepStyle = {
   width: '100%',
