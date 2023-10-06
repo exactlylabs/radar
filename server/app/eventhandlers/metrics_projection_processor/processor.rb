@@ -7,7 +7,7 @@ module MetricsProjectionProcessor
     include MetricsProjectionProcessor::MeasurementsProcessor
     include MetricsProjectionProcessor::EventsProcessor
     include MetricsProjectionProcessor::DailyTriggerProcessor
-    include MetricsProjectionProcessor::Fetchers
+    include EventHandlers::Fetchers
 
     MAX_QUEUE_SIZE = 50000
 
@@ -28,10 +28,16 @@ module MetricsProjectionProcessor
       Rails.logger.info "Starting Processor"
       conn = ActiveRecord::Base.connection_pool.checkout
       loaded = false
+      offsets = {
+        events_offset: @consumer_offset.state["events_offset"] || 0,
+        measurements_offset: @consumer_offset.state["measurements_offset"] || 0,
+        speed_tests_offset: @consumer_offset.state["speed_tests_offset"] || 0,
+        daily_trigger_offset: @consumer_offset.state["daily_trigger_offset"] || 0,
+      }
 
       begin
         @raw = conn.raw_connection
-        self.sources_iterator.each do |source, value|
+        self.sources_iterator(**offsets).each do |source, value|
           self.load_distinct_projections if !loaded
           loaded = true
           @projection_updated = false
