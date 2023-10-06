@@ -1,6 +1,6 @@
-module MetricsProjectionProcessor
+module StudyMetricsProjectionProcessor
   module MeasurementsProcessor
-    include MetricsProjectionProcessor::Common
+    include StudyMetricsProjectionProcessor::Common
 
     def handle_measurement(id, location_id, lonlat, timestamp, as_org_id, as_org_name)
       self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: location_id).each do |aggregate|
