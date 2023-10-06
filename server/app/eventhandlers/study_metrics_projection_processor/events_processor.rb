@@ -1,6 +1,6 @@
-module MetricsProjectionProcessor
+module StudyMetricsProjectionProcessor
   module EventsProcessor
-    include MetricsProjectionProcessor::Common
+    include StudyMetricsProjectionProcessor::Common
 
     def handle_event(event)
       if event.aggregate_type == Client.name

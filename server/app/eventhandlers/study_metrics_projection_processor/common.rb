@@ -1,4 +1,4 @@
-module MetricsProjectionProcessor
+module StudyMetricsProjectionProcessor
   module Common
     def as_org_info(autonomous_system_id)
       if autonomous_system_id.nil?

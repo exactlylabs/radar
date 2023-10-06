@@ -1,6 +1,6 @@
-module MetricsProjectionProcessor
+module StudyMetricsProjectionProcessor
   module DailyTriggerProcessor
-    include MetricsProjectionProcessor::Common
+    include StudyMetricsProjectionProcessor::Common
 
     def handle_daily_trigger(date)
       self.process_completed_locations(date)

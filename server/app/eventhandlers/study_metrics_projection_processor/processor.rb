@@ -1,7 +1,7 @@
 require 'pg'
 
 
-module MetricsProjectionProcessor
+module StudyMetricsProjectionProcessor
   class Processor
     include MetricsProjectionProcessor::Common
     include MetricsProjectionProcessor::MeasurementsProcessor
