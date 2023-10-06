@@ -449,6 +449,15 @@ ActiveRecord::Schema.define(version: 2023_10_10_142650) do
     t.integer "online_pods_count", default: 0
     t.integer "online_locations_count", default: 0
     t.integer "measurements_count", default: 0
+    t.float "download_med"
+    t.float "download_min"
+    t.float "download_max"
+    t.float "upload_med"
+    t.float "upload_min"
+    t.float "upload_max"
+    t.float "latency_med"
+    t.float "latency_min"
+    t.float "latency_max"
     t.integer "points_with_tests_count", default: 0
     t.integer "completed_locations_count", default: 0
     t.index ["autonomous_system_org_id"], name: "index_metrics_projections_on_autonomous_system_org_id"
@@ -544,8 +553,10 @@ ActiveRecord::Schema.define(version: 2023_10_10_142650) do
     t.boolean "study_aggregate", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "location_id"
     t.index ["autonomous_system_org_id"], name: "index_study_aggregates_on_autonomous_system_org_id"
     t.index ["geospace_id"], name: "index_study_aggregates_on_geospace_id"
+    t.index ["location_id"], name: "index_study_aggregates_on_location_id"
     t.index ["parent_aggregate_id"], name: "index_study_aggregates_on_parent_aggregate_id"
   end
 
@@ -745,6 +756,9 @@ ActiveRecord::Schema.define(version: 2023_10_10_142650) do
   add_foreign_key "online_client_count_projections", "events"
   add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
+  add_foreign_key "pods_metrics_projection", "accounts"
+  add_foreign_key "pods_metrics_projection", "autonomous_system_orgs"
+  add_foreign_key "pods_metrics_projection", "locations"
   add_foreign_key "recent_searches", "clients"
   add_foreign_key "recent_searches", "locations"
   add_foreign_key "recent_searches", "users"
@@ -753,6 +767,7 @@ ActiveRecord::Schema.define(version: 2023_10_10_142650) do
   add_foreign_key "snapshots", "events", on_delete: :cascade
   add_foreign_key "study_aggregates", "autonomous_system_orgs"
   add_foreign_key "study_aggregates", "geospaces"
+  add_foreign_key "study_aggregates", "locations"
   add_foreign_key "study_aggregates", "study_aggregates", column: "parent_aggregate_id"
   add_foreign_key "study_level_projections", "autonomous_system_orgs"
   add_foreign_key "study_level_projections", "client_speed_tests"
