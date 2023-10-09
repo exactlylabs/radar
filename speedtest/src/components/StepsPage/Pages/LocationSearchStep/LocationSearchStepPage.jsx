@@ -55,7 +55,6 @@ const LocationSearchStepPage = ({
   const [isGenericLocationModalOpen, setIsGenericLocationModalOpen] = useState(false);
   const [isSuggestionsModalOpen, setIsSuggestionsModalOpen] = useState(false);
   const [suggestions, setSuggestions] = useState(null);
-  
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const isSmall = isSmallSizeScreen || isMediumSizeScreen;
 
@@ -77,11 +76,11 @@ const LocationSearchStepPage = ({
     if(coordinates) {
       confirmAddress(coordinates);
     } else {
-        const addressInputElement = document.getElementById('speedtest--address-input');
+      const addressInputElement = document.getElementById('speedtest--address-input');
       if (addressInputElement) {
         addressInputElement.value = null;
         setAddress(emptyAddress);
-    }
+      }
   }
 }
 
@@ -101,7 +100,7 @@ const LocationSearchStepPage = ({
                       selectedSuggestion={selectedSuggestion}
                       suggestions={suggestions}
                       setSuggestions={setSuggestions}
-                            />
+      />
       { error && <MyMessageSnackbar type={'error'} message={error}/> }
       <MyMapModal isOpen={isModalOpen}
                   setIsOpen={setIsModalOpen}
