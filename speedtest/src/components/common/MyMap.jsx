@@ -29,8 +29,12 @@ export const MyMap = ({
       // Reference: https://github.com/Leaflet/Leaflet/pull/8109
       // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
       map.attributionControl.setPrefix('');
-      map.on('popupclose', onPopupClose);
-      map.on('popupopen', onPopupOpen);
+      if(onPopupClose) {
+        map.on('popupclose', onPopupClose);
+      }
+      if(onPopupOpen) {
+        map.on('popupopen', onPopupOpen);
+      }
     }
   }, [map]);
 
