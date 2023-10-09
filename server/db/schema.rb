@@ -544,8 +544,10 @@ ActiveRecord::Schema.define(version: 2023_10_10_142650) do
     t.boolean "study_aggregate", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "location_id"
     t.index ["autonomous_system_org_id"], name: "index_study_aggregates_on_autonomous_system_org_id"
     t.index ["geospace_id"], name: "index_study_aggregates_on_geospace_id"
+    t.index ["location_id"], name: "index_study_aggregates_on_location_id"
     t.index ["parent_aggregate_id"], name: "index_study_aggregates_on_parent_aggregate_id"
   end
 
@@ -753,6 +755,7 @@ ActiveRecord::Schema.define(version: 2023_10_10_142650) do
   add_foreign_key "snapshots", "events", on_delete: :cascade
   add_foreign_key "study_aggregates", "autonomous_system_orgs"
   add_foreign_key "study_aggregates", "geospaces"
+  add_foreign_key "study_aggregates", "locations"
   add_foreign_key "study_aggregates", "study_aggregates", column: "parent_aggregate_id"
   add_foreign_key "study_level_projections", "autonomous_system_orgs"
   add_foreign_key "study_level_projections", "client_speed_tests"
@@ -767,4 +770,189 @@ ActiveRecord::Schema.define(version: 2023_10_10_142650) do
   add_foreign_key "update_groups", "watchdog_versions", column: "old_watchdog_version_id"
   add_foreign_key "users_accounts", "accounts"
   add_foreign_key "users_accounts", "users"
+
+  create_view "study_daily_aggregate", materialized: true, sql_definition: <<-SQL
+      WITH extended AS (
+           SELECT study_level_projections."timestamp",
+              study_level_projections.location_id,
+              study_level_projections.lonlat,
+              study_level_projections.autonomous_system_org_id,
+              study_level_projections.study_aggregate_id,
+              study_level_projections.points_with_tests_count,
+              study_level_projections.online_count,
+              study_level_projections.location_online,
+              study_level_projections.measurement_count,
+              study_level_projections.completed_locations_count,
+              last_value(study_level_projections.points_with_tests_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_points_with_tests_count,
+              first_value(study_level_projections.points_with_tests_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_points_with_tests_count,
+              last_value(study_level_projections.online_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_online_count,
+              first_value(study_level_projections.online_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_online_count,
+              last_value(study_level_projections.location_online) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_location_online,
+              first_value(study_level_projections.location_online) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_location_online,
+              last_value(study_level_projections.measurement_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_measurement_count,
+              first_value(study_level_projections.measurement_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_measurement_count,
+              last_value(study_level_projections.completed_locations_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_completed_locations_count,
+              first_value(study_level_projections.completed_locations_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_completed_locations_count
+             FROM study_level_projections
+          )
+   SELECT (floor((date_part('epoch'::text, extended."timestamp") / (86400)::double precision)) * (86400)::double precision) AS "time",
+      extended.location_id,
+      extended.lonlat,
+      extended.autonomous_system_org_id,
+      extended.study_aggregate_id,
+      max(extended.end_points_with_tests_count) AS end_points_with_tests_count,
+      max(extended.start_points_with_tests_count) AS start_points_with_tests_count,
+      max(extended.end_online_count) AS end_online_count,
+      max(extended.start_online_count) AS start_online_count,
+      max((extended.end_location_online)::integer) AS end_location_online,
+      max((extended.start_location_online)::integer) AS start_location_online,
+      max(extended.end_measurement_count) AS end_measurement_count,
+      max(extended.start_measurement_count) AS start_measurement_count,
+      max(extended.end_completed_locations_count) AS end_completed_locations_count,
+      max(extended.start_completed_locations_count) AS start_completed_locations_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.points_with_tests_count)::double precision)) AS median_points_with_tests_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.online_count)::double precision)) AS median_online_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY (((extended.location_online)::integer)::double precision)) AS median_location_online,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.measurement_count)::double precision)) AS median_measurement_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.completed_locations_count)::double precision)) AS median_completed_locations_count
+     FROM extended
+    GROUP BY (floor((date_part('epoch'::text, extended."timestamp") / (86400)::double precision)) * (86400)::double precision), extended.location_id, extended.lonlat, extended.autonomous_system_org_id, extended.study_aggregate_id;
+  SQL
+  create_view "as_orgs_aggregate_link", materialized: true, sql_definition: <<-SQL
+      SELECT DISTINCT study_level_projections.autonomous_system_org_id,
+      study_level_projections.study_aggregate_id
+     FROM study_level_projections;
+  SQL
+  create_view "study_hourly_aggregate", materialized: true, sql_definition: <<-SQL
+      WITH extended AS (
+           SELECT study_level_projections."timestamp",
+              study_level_projections.location_id,
+              study_level_projections.lonlat,
+              study_level_projections.autonomous_system_org_id,
+              study_level_projections.study_aggregate_id,
+              study_level_projections.points_with_tests_count,
+              study_level_projections.online_count,
+              study_level_projections.location_online,
+              study_level_projections.measurement_count,
+              study_level_projections.completed_locations_count,
+              last_value(study_level_projections.points_with_tests_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_points_with_tests_count,
+              first_value(study_level_projections.points_with_tests_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_points_with_tests_count,
+              last_value(study_level_projections.online_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_online_count,
+              first_value(study_level_projections.online_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_online_count,
+              last_value(study_level_projections.location_online) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_location_online,
+              first_value(study_level_projections.location_online) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_location_online,
+              last_value(study_level_projections.measurement_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_measurement_count,
+              first_value(study_level_projections.measurement_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_measurement_count,
+              last_value(study_level_projections.completed_locations_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_completed_locations_count,
+              first_value(study_level_projections.completed_locations_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_completed_locations_count
+             FROM study_level_projections
+          )
+   SELECT (floor((date_part('epoch'::text, extended."timestamp") / (3600)::double precision)) * (3600)::double precision) AS "time",
+      extended.location_id,
+      extended.lonlat,
+      extended.autonomous_system_org_id,
+      extended.study_aggregate_id,
+      max(extended.end_points_with_tests_count) AS end_points_with_tests_count,
+      max(extended.start_points_with_tests_count) AS start_points_with_tests_count,
+      max(extended.end_online_count) AS end_online_count,
+      max(extended.start_online_count) AS start_online_count,
+      max((extended.end_location_online)::integer) AS end_location_online,
+      max((extended.start_location_online)::integer) AS start_location_online,
+      max(extended.end_measurement_count) AS end_measurement_count,
+      max(extended.start_measurement_count) AS start_measurement_count,
+      max(extended.end_completed_locations_count) AS end_completed_locations_count,
+      max(extended.start_completed_locations_count) AS start_completed_locations_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.points_with_tests_count)::double precision)) AS median_points_with_tests_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.online_count)::double precision)) AS median_online_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY (((extended.location_online)::integer)::double precision)) AS median_location_online,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.measurement_count)::double precision)) AS median_measurement_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.completed_locations_count)::double precision)) AS median_completed_locations_count
+     FROM extended
+    GROUP BY (floor((date_part('epoch'::text, extended."timestamp") / (3600)::double precision)) * (3600)::double precision), extended.location_id, extended.lonlat, extended.autonomous_system_org_id, extended.study_aggregate_id;
+  SQL
+  create_view "study_minute_aggregate", materialized: true, sql_definition: <<-SQL
+      WITH extended AS (
+           SELECT study_level_projections."timestamp",
+              study_level_projections.location_id,
+              study_level_projections.lonlat,
+              study_level_projections.autonomous_system_org_id,
+              study_level_projections.study_aggregate_id,
+              study_level_projections.points_with_tests_count,
+              study_level_projections.online_count,
+              study_level_projections.location_online,
+              study_level_projections.measurement_count,
+              study_level_projections.completed_locations_count,
+              last_value(study_level_projections.points_with_tests_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_points_with_tests_count,
+              first_value(study_level_projections.points_with_tests_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_points_with_tests_count,
+              last_value(study_level_projections.online_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_online_count,
+              first_value(study_level_projections.online_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_online_count,
+              last_value(study_level_projections.location_online) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_location_online,
+              first_value(study_level_projections.location_online) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_location_online,
+              last_value(study_level_projections.measurement_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_measurement_count,
+              first_value(study_level_projections.measurement_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_measurement_count,
+              last_value(study_level_projections.completed_locations_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS end_completed_locations_count,
+              first_value(study_level_projections.completed_locations_count) OVER (PARTITION BY (date(study_level_projections."timestamp")), study_level_projections.location_id, study_level_projections.lonlat, study_level_projections.autonomous_system_org_id, study_level_projections.study_aggregate_id ORDER BY study_level_projections."timestamp") AS start_completed_locations_count
+             FROM study_level_projections
+          )
+   SELECT (floor((date_part('epoch'::text, extended."timestamp") / (60)::double precision)) * (60)::double precision) AS "time",
+      extended.location_id,
+      extended.lonlat,
+      extended.autonomous_system_org_id,
+      extended.study_aggregate_id,
+      max(extended.end_points_with_tests_count) AS end_points_with_tests_count,
+      max(extended.start_points_with_tests_count) AS start_points_with_tests_count,
+      max(extended.end_online_count) AS end_online_count,
+      max(extended.start_online_count) AS start_online_count,
+      max((extended.end_location_online)::integer) AS end_location_online,
+      max((extended.start_location_online)::integer) AS start_location_online,
+      max(extended.end_measurement_count) AS end_measurement_count,
+      max(extended.start_measurement_count) AS start_measurement_count,
+      max(extended.end_completed_locations_count) AS end_completed_locations_count,
+      max(extended.start_completed_locations_count) AS start_completed_locations_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.points_with_tests_count)::double precision)) AS median_points_with_tests_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.online_count)::double precision)) AS median_online_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY (((extended.location_online)::integer)::double precision)) AS median_location_online,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.measurement_count)::double precision)) AS median_measurement_count,
+      percentile_cont((0.5)::double precision) WITHIN GROUP (ORDER BY ((extended.completed_locations_count)::double precision)) AS median_completed_locations_count
+     FROM extended
+    GROUP BY (floor((date_part('epoch'::text, extended."timestamp") / (60)::double precision)) * (60)::double precision), extended.location_id, extended.lonlat, extended.autonomous_system_org_id, extended.study_aggregate_id;
+  SQL
+  create_view "aggregated_measurements_by_hours", materialized: true, sql_definition: <<-SQL
+      SELECT date_trunc('h'::text, measurements.processed_at) AS "time",
+      measurements.account_id,
+      autonomous_systems.autonomous_system_org_id,
+      measurements.location_id,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
+      min(measurements.download) AS download_min,
+      max(measurements.download) AS download_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
+      min(measurements.upload) AS upload_min,
+      max(measurements.upload) AS upload_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
+      min(measurements.latency) AS latency_min,
+      max(measurements.latency) AS latency_max
+     FROM (measurements
+       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
+    GROUP BY (date_trunc('h'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
+    ORDER BY (date_trunc('h'::text, measurements.processed_at));
+  SQL
+  create_view "aggregated_measurements_by_days", materialized: true, sql_definition: <<-SQL
+      SELECT date_trunc('d'::text, measurements.processed_at) AS "time",
+      measurements.account_id,
+      autonomous_systems.autonomous_system_org_id,
+      measurements.location_id,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
+      min(measurements.download) AS download_min,
+      max(measurements.download) AS download_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
+      min(measurements.upload) AS upload_min,
+      max(measurements.upload) AS upload_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
+      min(measurements.latency) AS latency_min,
+      max(measurements.latency) AS latency_max
+     FROM (measurements
+       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
+    GROUP BY (date_trunc('d'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
+    ORDER BY (date_trunc('d'::text, measurements.processed_at));
+  SQL
 end
