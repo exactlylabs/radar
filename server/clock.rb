@@ -43,6 +43,14 @@ end
 scheduler.every '5m', overlap: false do
   begin
     FillStudyLevelProjection.perform_later
+  rescue => e
+    Sentry.capture_exception(e)
+    raise e
+  end
+end
+
+scheduler.every '1h', overlap: false do
+  begin
     MetricsProjectionJob.perform_later
   rescue => e
     Sentry.capture_exception(e)
