@@ -1,13 +1,14 @@
 require 'pg'
+require './app/eventhandlers/fetchers.rb'
 
 
 module StudyMetricsProjectionProcessor
   class Processor
-    include MetricsProjectionProcessor::Common
-    include MetricsProjectionProcessor::MeasurementsProcessor
-    include MetricsProjectionProcessor::EventsProcessor
-    include MetricsProjectionProcessor::DailyTriggerProcessor
-    include EventHandlers::Fetchers
+    include StudyMetricsProjectionProcessor::Common
+    include StudyMetricsProjectionProcessor::MeasurementsProcessor
+    include StudyMetricsProjectionProcessor::EventsProcessor
+    include StudyMetricsProjectionProcessor::DailyTriggerProcessor
+    include Fetchers
 
     MAX_QUEUE_SIZE = 50000
 
