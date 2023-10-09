@@ -69,9 +69,9 @@ func NotifyPanic() {
 
 func Setup(dsn, clientId, version string, bufferDir string) {
 	err := sentry.Init(sentry.ClientOptions{
-		Dsn:           dsn,
-		Release:       version,
-		HTTPTransport: newBufferedTransport(bufferDir, dsn),
+		Dsn:     dsn,
+		Release: version,
+		// HTTPTransport: newBufferedTransport(bufferDir, dsn),
 	})
 	if err != nil {
 		panic(err)
