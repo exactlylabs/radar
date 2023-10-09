@@ -10,6 +10,7 @@ class CreateAggregatedMeasurements < ActiveRecord::Migration[6.1]
   def change
     create_view :aggregated_measurements_by_hours, materialized: true
     create_view :aggregated_measurements_by_days, materialized: true
+    add_reference :study_aggregates, :location, foreign_key: true
 
     reversible do |dir|
       dir.up do
