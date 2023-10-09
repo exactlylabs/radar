@@ -1,13 +1,11 @@
 package sysinfo
 
 import (
-	"fmt"
 	"net"
 
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/netroute"
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 )
 
 func Metadata() *ClientMeta {
@@ -22,13 +20,14 @@ func Metadata() *ClientMeta {
 }
 
 func macAddresses() []NetInterfaces {
-	defaultRoute, err := netroute.DefaultRoute()
-	if err != nil {
-		tracing.NotifyErrorOnce(fmt.Errorf("sysinfo.macAddresses DefaultRoute: %w", err), tracing.Context{})
-	}
+	defaultRoute, _ := netroute.DefaultRoute()
+	// if err != nil {
+
+	// tracing.NotifyErrorOnce(fmt.Errorf("sysinfo.macAddresses DefaultRoute: %w", err), tracing.Context{})
+	// }
 	ifaces, err := net.Interfaces()
 	if err != nil {
-		tracing.NotifyErrorOnce(fmt.Errorf("sysinfo.macAddresses DefaultRoute: %w", err), tracing.Context{})
+		// tracing.NotifyErrorOnce(fmt.Errorf("sysinfo.macAddresses DefaultRoute: %w", err), tracing.Context{})
 		return nil
 	}
 	addresses := make([]NetInterfaces, 0)
