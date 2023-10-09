@@ -47,7 +47,7 @@ module MetricsProjectionProcessor
       }
     end
 
-    def fetch_from_speed_tests()
+    def fetch_from_speed_tests(**opts)
       offset = @consumer_offset.state["speed_tests_offset"] || 0
       attrs = %w(
         client_speed_tests.id
