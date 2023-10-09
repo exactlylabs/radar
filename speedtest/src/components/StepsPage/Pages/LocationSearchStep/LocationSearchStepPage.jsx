@@ -81,8 +81,8 @@ const LocationSearchStepPage = ({
         addressInputElement.value = null;
         setAddress(emptyAddress);
       }
+    }
   }
-}
 
   const closeSuggestionsModal = () => setIsSuggestionsModalOpen(false);
 
