@@ -154,11 +154,7 @@ const MyAddressInput = ({
 
   const handleOpenSuggestions = () => {
     const wrapperElement = document.getElementById('speedtest--address-input-container');
-    const textFieldElement = document.getElementById('speedtest--address-input');
-    const continueButtonElement = document.getElementById('speedtest--continue-button');
     if(wrapperElement) wrapperElement.classList.add('speedtest--address-input-container--focused');
-    if(textFieldElement) textFieldElement.classList.add('speedtest--address-input--focused');
-    if(continueButtonElement) continueButtonElement.classList.add('speedtest--continue-button--focused');
     const currentInputValue = document.getElementById('speedtest--address-input').value;
     if(!!currentInputValue) {
       setSuggestionsListOpen(true);
@@ -229,6 +225,7 @@ const MyAddressInput = ({
   const checkClickConditions = () => {
     if(suggestions?.length === 0 && !confirmedAddress) openGenericLocationModal();
     else if(suggestions && suggestions.length > 0 && !confirmedAddress && !selectedSuggestion) openSuggestionsModal();
+    else if(userData.address?.address && !confirmedAddress) openCurrentLocationModal(true);
     else handleContinue();
   }
 
@@ -239,12 +236,8 @@ const MyAddressInput = ({
 
   const handleBlurInput = () => {
     const wrapperElement = document.getElementById('speedtest--address-input-container');
-    const textFieldElement = document.getElementById('speedtest--address-input');
-    const continueButtonElement = document.getElementById('speedtest--continue-button');
     if(wrapperElement && wrapperElement.classList.contains('speedtest--address-input-container--focused')) {
       wrapperElement.classList.remove('speedtest--address-input-container--focused');
-      textFieldElement.classList.remove('speedtest--address-input--focused');
-      continueButtonElement.classList.remove('speedtest--continue-button--focused');
     }
   }
 
