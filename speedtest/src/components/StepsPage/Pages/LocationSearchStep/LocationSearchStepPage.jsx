@@ -8,7 +8,7 @@ import SuggestionsModal from "./SuggestionsModal";
 import {MyBackButton} from "../../../common/MyBackButton";
 import iconLeftArrow from '../../../../assets/icons-left-arrow.png';
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
-import emptyAddress from "../../../../../context/UserData";
+import {emptyAddress} from "../../../../context/UserData";
 
 const locationSearchStepStyle = {
   width: '100%',
@@ -55,7 +55,7 @@ const LocationSearchStepPage = ({
   const [isGenericLocationModalOpen, setIsGenericLocationModalOpen] = useState(false);
   const [isSuggestionsModalOpen, setIsSuggestionsModalOpen] = useState(false);
   const [suggestions, setSuggestions] = useState(null);
-
+  
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const isSmall = isSmallSizeScreen || isMediumSizeScreen;
 
@@ -77,13 +77,13 @@ const LocationSearchStepPage = ({
     if(coordinates) {
       confirmAddress(coordinates);
     } else {
-      const addressInputElement = document.getElementById('speedtest--address-input');
+        const addressInputElement = document.getElementById('speedtest--address-input');
       if (addressInputElement) {
         addressInputElement.value = null;
         setAddress(emptyAddress);
-      }
     }
   }
+}
 
   const closeSuggestionsModal = () => setIsSuggestionsModalOpen(false);
 
@@ -101,7 +101,7 @@ const LocationSearchStepPage = ({
                       selectedSuggestion={selectedSuggestion}
                       suggestions={suggestions}
                       setSuggestions={setSuggestions}
-      />
+                            />
       { error && <MyMessageSnackbar type={'error'} message={error}/> }
       <MyMapModal isOpen={isModalOpen}
                   setIsOpen={setIsModalOpen}
