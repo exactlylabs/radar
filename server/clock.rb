@@ -25,6 +25,8 @@ end
 scheduler.every '1h', overlap: false do
   begin
     Client.refresh_outdated_data_usage!
+    ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY aggregated_measurements_by_hours")
+    ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY aggregated_measurements_by_days")
   rescue => e
     Sentry.capture_exception(e)
     raise e
