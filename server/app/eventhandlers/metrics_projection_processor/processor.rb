@@ -160,7 +160,7 @@ module MetricsProjectionProcessor
         @consumer_offset.save!
         @raw.exec("COPY metrics_projections (timestamp, study_aggregate_id, parent_aggregate_id, autonomous_system_org_id, online_pods_count, online_locations_count, measurements_count, points_with_tests_count, completed_locations_count, bucket_name) FROM STDIN CSV")
         @insertion_queue.each do |row|
-          @raw.put_copy_data("#{row["timestamp"].iso8601},#{row["study_aggregate_id"]},#{row["parent_aggregate_id"]},#{row["autonomous_system_org_id"]},#{row["online_pods_count"]},#{row["online_locations_count"]},#{row["measurements_count"]},#{row["points_with_tests_count"]},#{row["completed_locations_count"]},#{row["bucket_name"]}\n")
+          @raw.put_copy_data("#{row["timestamp"].iso8601(9)},#{row["study_aggregate_id"]},#{row["parent_aggregate_id"]},#{row["autonomous_system_org_id"]},#{row["online_pods_count"]},#{row["online_locations_count"]},#{row["measurements_count"]},#{row["points_with_tests_count"]},#{row["completed_locations_count"]},#{row["bucket_name"]}\n")
         end
         @raw.put_copy_end
         while res = @raw.get_result do
