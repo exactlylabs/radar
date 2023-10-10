@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_09_29_105840) do
+ActiveRecord::Schema.define(version: 2023_10_10_142650) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pageinspect"
@@ -204,7 +204,6 @@ ActiveRecord::Schema.define(version: 2023_09_29_105840) do
     t.float "speed_before"
     t.float "speed_accuracy_before"
     t.string "session_id"
-    t.index ["lonlat"], name: "client_speed_tests_gist_lonlat", using: :gist
     t.index ["lonlat"], name: "index_client_speed_tests_on_lonlat"
   end
 
@@ -264,6 +263,9 @@ ActiveRecord::Schema.define(version: 2023_09_29_105840) do
     t.boolean "has_watchdog", default: false
     t.float "download_avg"
     t.float "upload_avg"
+    t.bigint "measurements_count", default: 0
+    t.float "measurements_download_sum", default: 0.0
+    t.float "measurements_upload_sum", default: 0.0
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
@@ -327,7 +329,6 @@ ActiveRecord::Schema.define(version: 2023_09_29_105840) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "study_geospace", default: false
-    t.index "st_setsrid(geom, 4326)", name: "geospaces_gist_geom", using: :gist
     t.index "st_setsrid(geom, 4326)", name: "index_geospaces_on_st_setsrid_geom_4326", using: :gist
   end
 
@@ -387,6 +388,9 @@ ActiveRecord::Schema.define(version: 2023_09_29_105840) do
     t.datetime "offline_since"
     t.boolean "online", default: false
     t.boolean "notified_when_online", default: false
+    t.bigint "measurements_count", default: 0
+    t.float "measurements_download_sum", default: 0.0
+    t.float "measurements_upload_sum", default: 0.0
     t.index ["account_id"], name: "index_locations_on_account_id"
     t.index ["account_id"], name: "test_locations_on_account_id"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
@@ -450,6 +454,7 @@ ActiveRecord::Schema.define(version: 2023_09_29_105840) do
     t.index ["autonomous_system_org_id"], name: "index_metrics_projections_on_autonomous_system_org_id"
     t.index ["parent_aggregate_id"], name: "index_metrics_projections_on_parent_aggregate_id"
     t.index ["study_aggregate_id", "autonomous_system_org_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_asn_bucket_timestamp_desc_idx", order: { timestamp: :desc }
+    t.index ["study_aggregate_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_bucket_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id", "timestamp"], name: "metrics_projections_agg_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id"], name: "index_metrics_projections_on_study_aggregate_id"
   end
@@ -495,33 +500,6 @@ ActiveRecord::Schema.define(version: 2023_09_29_105840) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["client_version_id"], name: "index_packages_on_client_version_id"
-  end
-
-  create_table "projections_tmp", id: false, force: :cascade do |t|
-    t.bigint "id"
-    t.datetime "timestamp"
-    t.bigint "parent_aggregate_id"
-    t.bigint "study_aggregate_id"
-    t.bigint "autonomous_system_org_id"
-    t.bigint "location_id"
-    t.bigint "event_id"
-    t.bigint "measurement_id"
-    t.bigint "client_speed_test_id"
-    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
-    t.string "level"
-    t.integer "online_count"
-    t.integer "incr"
-    t.boolean "location_online"
-    t.integer "location_online_incr"
-    t.integer "measurement_count"
-    t.integer "measurement_incr"
-    t.integer "points_with_tests_count"
-    t.integer "points_with_tests_incr"
-    t.integer "days_online_count"
-    t.integer "completed_locations_count"
-    t.integer "completed_locations_incr"
-    t.boolean "location_completed"
-    t.string "metric_type"
   end
 
   create_table "recent_searches", force: :cascade do |t|

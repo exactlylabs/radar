@@ -644,16 +644,44 @@ class Client < ApplicationRecord
     update(test_requested: true)
   end
 
+  def process_new_measurement!(measurement)
+    query = %{
+      UPDATE clients SET
+        measurements_count = measurements_count + 1,
+        measurements_download_sum = measurements_download_sum + :download,
+        measurements_upload_sum = measurements_upload_sum + :upload,
+        download_avg = (measurements_download_sum + :download) / (measurements_count + 1),
+        upload_avg = (measurements_upload_sum + :upload) / (measurements_count + 1)
+      WHERE id = :client_id
+    }
+    ActiveRecord::Base.connection.execute(
+      ApplicationRecord.sanitize_sql([query, {
+        download: measurement.download,
+        upload: measurement.upload,
+        client_id: self.id
+      }])
+    )
+  end
+
   def recalculate_averages!
     if self.location.nil? || self.account.nil?
       self.download_avg = nil
       self.upload_avg = nil
     else
+      model = Measurement.arel_table
       measurements = self.measurements.where(location_id: self.location.id, account_id: self.account.id)
-      if measurements.count > 0
-        self.download_avg = measurements.average(:download).round(3)
-        self.upload_avg = measurements.average(:upload).round(3)
+      count, download, upload = measurements.pluck(model[:id].count, model[:download].sum, model[:upload].sum).first
+      if count > 0
+        self.lock!
+        self.measurements_count = count
+        self.measurements_download_sum = download
+        self.measurements_upload_sum = upload
+        self.download_avg = (self.measurements_download_sum / self.measurements_count).round(3)
+        self.upload_avg = (self.measurements_upload_sum / self.measurements_count).round(3)
       else
+        self.measurements_count = 0
+        self.measurements_download_sum = 0
+        self.measurements_upload_sum = 0
         self.download_avg = nil
         self.upload_avg = nil
       end

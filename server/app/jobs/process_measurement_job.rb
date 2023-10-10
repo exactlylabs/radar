@@ -32,7 +32,7 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.upload = result["Upload"]["Value"]
       measurement.latency = result["MinRTT"]["Value"]
       measurement.extended_info = extended_info
-      
+
     when "OOKLA"
       result = JSON.parse(measurement.result.download)
 
@@ -42,7 +42,7 @@ class ProcessMeasurementJob < ApplicationJob
       measurement.jitter = result["ping"]["jitter"]
       measurement.download_total_bytes = result["download"]["bytes"] * 1.1 # From tests, it seems that the real value is 3-10% of what the test returns
       measurement.upload_total_bytes = result["upload"]["bytes"] * 1.1 # From tests, it seems that the real value is 5-10% of what the test returns
-  
+
     end
     measurement.processed = true
     measurement.processed_at = measurement.processed_at ? measurement.processed_at : Time.now
@@ -50,12 +50,12 @@ class ProcessMeasurementJob < ApplicationJob
     measurement.upload_total_bytes = 0 if measurement.upload_total_bytes.nil?
     measurement.save
     measurement.client.add_bytes!(measurement.created_at, measurement.download_total_bytes + measurement.upload_total_bytes)
-  
+
     if measurement.location.present?
-      measurement.location.recalculate_averages!
+      measurement.location.process_new_measurement!(measurement)
     end
     if measurement.client.present?
-      measurement.client.recalculate_averages!
+      measurement.client.process_new_measurement!(measurement)
     end
   end
 end
