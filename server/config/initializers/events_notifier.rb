@@ -11,10 +11,12 @@ EventsNotifier.configure do |config|
       DiscordNotifier.new(webhook_url, tbp_alerts_webhook_url, tbp_general_webhook_url)
     ]
 
-  else
+  elsif Rails.env.development?
     config.notifiers = [
       LocalNotifier.new
     ]
+  else
+    config.notifiers = []
 
   end
 end

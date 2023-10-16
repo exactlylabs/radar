@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class LocationNotificationTest < ActiveJob::TestCase
+  self.use_transactional_tests = true
+
   setup do
     l1 = locations(:online1)
     l1.geospaces << [geospaces(:state1), geospaces(:county1)]
@@ -11,6 +13,7 @@ class LocationNotificationTest < ActiveJob::TestCase
     l3 = locations(:offline1)
     l3.geospaces << [geospaces(:state1), geospaces(:county2)]
     l3.save!
+
   end
 
   def location_info(location)
@@ -75,6 +78,79 @@ class LocationNotificationTest < ActiveJob::TestCase
     EventsNotifier.stub :notify_location_online, -> (l_info){ raise "notify_location_online shouldn't be called" } do
      LocationNotificationJobs::NotifyLocationOnline.perform_now(locations(:online1), Time.now)
     end
+
+  end
+
+  test "When_notify_location_online_job_is_called_and_county_goal_reached_Expect_job_to_notify_about_it" do
+    locations = []
+    (1..Location::LOCATIONS_PER_COUNTY_GOAL).each do |i|
+      l = Location.create!(
+        name: "Loc #{i}", address: "Loc #{i}", account: accounts(:root), created_by_id: 1, lonlat: "POINT(#{i} #{i})",
+        online: true
+      )
+      l.geospaces << [geospaces(:study_state), geospaces(:study_county), geospaces(:study_place)]
+      l.save!
+      locations << l
+    end
+
+    mock = Minitest::Mock.new
+    mock.expect :call, :nil, [geospaces(:study_county), Location::LOCATIONS_PER_COUNTY_GOAL]
+    mock.expect :call, :nil, [geospaces(:study_place), Location::LOCATIONS_PER_PLACE_GOAL]
+
+    EventsNotifier.stub :notify_study_goal_reached, mock do
+     LocationNotificationJobs::NotifyLocationOnline.perform_now(locations[-1], Time.now)
+    end
+
+    mock.verify
+  end
+
+  test "When_notify_location_job_is_called_and_study_aggregates_with_custom_goal_reached_Expect_job_to_notify_about_it" do
+    locations = []
+    study_aggregates(:study_county).update(locations_goal: 4)
+    study_aggregates(:study_place).update(locations_goal: 1)
+    (1..4).each do |i|
+      l = Location.create!(
+        name: "Loc #{i}", address: "Loc #{i}", account: accounts(:root), created_by_id: 1, lonlat: "POINT(#{i} #{i})",
+        online: true
+      )
+      l.geospaces << [geospaces(:study_state), geospaces(:study_county), geospaces(:study_place)]
+      l.save!
+      locations << l
+    end
+    mock = Minitest::Mock.new
+    mock.expect :call, :nil, [geospaces(:study_county), 4]
+    mock.expect :call, :nil, [geospaces(:study_place), 1]
+
+    EventsNotifier.stub :notify_study_goal_reached, mock do
+     LocationNotificationJobs::NotifyLocationOnline.perform_now(locations[-1], Time.now)
+    end
+
+    mock.verify
+
+  end
+
+  test "When_notify_location_job_is_called_and_study_aggregates_with_custom_goal_not_reached_Expect_job_to_not_notify_about_it" do
+    locations = []
+    study_aggregates(:study_county).update(locations_goal: 4)
+    study_aggregates(:study_place).update(locations_goal: 1)
+    (1..2).each do |i|
+      l = Location.create!(
+        name: "Loc #{i}", address: "Loc #{i}", account: accounts(:root), created_by_id: 1, lonlat: "POINT(#{i} #{i})",
+        online: true
+      )
+      l.geospaces << [geospaces(:study_state), geospaces(:study_county), geospaces(:study_place)]
+      l.save!
+      locations << l
+    end
+
+    mock = Minitest::Mock.new
+    mock.expect :call, :nil, [geospaces(:study_place), 1]
+
+    EventsNotifier.stub :notify_study_goal_reached, mock do
+     LocationNotificationJobs::NotifyLocationOnline.perform_now(locations[-1], Time.now)
+    end
+
+    mock.verify
 
   end
 end

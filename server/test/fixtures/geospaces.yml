@@ -3,6 +3,11 @@ state1:
   namespace: state
   geoid: s01
 
+study_state:
+  name: State 1
+  namespace: state
+  geoid: s01
+  study_geospace: true
 
 state2:
   name: State 2
@@ -15,8 +20,24 @@ county1:
   namespace: county
   geoid: c01
 
+study_county:
+  name: County 1
+  namespace: county
+  geoid: c01
+  study_geospace: true
 
 county2:
   name: County 2
   namespace: county
   geoid: c02
+
+place1:
+  name: Place 1
+  namespace: census_place
+  geoid: p01
+
+study_place:
+  name: Place 1
+  namespace: census_place
+  geoid: p01
+  study_geospace: true

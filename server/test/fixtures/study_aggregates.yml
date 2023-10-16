@@ -1,0 +1,35 @@
+state_non_study:
+  name: State 1
+  level: state
+  study_aggregate: false
+  geospace: state1
+
+study_state:
+  name: State 1
+  level: state
+  study_aggregate: true
+  geospace: study_state
+
+county_non_study:
+  name: County 1
+  level: county
+  study_aggregate: false
+  geospace: county1
+
+study_county:
+  name: County 1
+  level: county
+  study_aggregate: true
+  geospace: study_county
+
+place_non_study:
+  name: Place 1
+  level: census_place
+  study_aggregate: false
+  geospace: place1
+
+study_place:
+  name: Place 1
+  level: census_place
+  study_aggregate: true
+  geospace: study_place
