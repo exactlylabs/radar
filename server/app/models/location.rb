@@ -169,6 +169,7 @@ include Recents
   end
 
   def recalculate_averages!
+    model = Measurement.arel_table
     measurements = self.measurements.where(account_id: self.account.id)
     count, download, upload = measurements.pluck(model[:id].count, model[:download].sum, model[:upload].sum).first
 
