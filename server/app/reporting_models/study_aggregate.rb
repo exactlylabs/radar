@@ -1,5 +1,5 @@
 class StudyAggregate < ActiveRecord::Base
-  belongs_to :geospace
+  belongs_to :geospace, optional: true
   belongs_to :autonomous_system_org, optional: true
   belongs_to :parent_aggregate, class_name: 'StudyAggregate', optional: true
   has_many :study_aggregates, foreign_key: :parent_aggregate_id
@@ -14,6 +14,7 @@ class StudyAggregate < ActiveRecord::Base
     state_fips = ActiveRecord::Base.connection.execute("SELECT DISTINCT(state_fips) FROM us_states JOIN study_counties ON study_counties.state_code = us_states.state_code ").values.flatten
     geospaces = Geospace.arel_table
     Geospace.where(geoid: state_fips).each do |state|
+      state.update(study_geospace: true)
       state_agg = StudyAggregate.find_or_create_by!(
         name: state.name,
         geospace: state,
@@ -23,6 +24,7 @@ class StudyAggregate < ActiveRecord::Base
       state_agg.update(study_aggregate: true)
 
       Geospace.where(geoid: fips, namespace: 'county').where(geospaces[:geom].st_intersects(state.geom)).each do |county|
+        county.update(study_geospace: true)
         county_agg = StudyAggregate.find_or_create_by!(
           name: county.name,
           geospace: county,
@@ -31,6 +33,7 @@ class StudyAggregate < ActiveRecord::Base
         )
         county_agg.update(study_aggregate: true)
         Geospace.where(namespace: 'census_place').where(geospaces[:geom].st_intersects(county.geom)).each do |place|
+          place.update(study_geospace: true)
           place_agg = StudyAggregate.find_or_create_by!(
             name: place.name,
             geospace: place,

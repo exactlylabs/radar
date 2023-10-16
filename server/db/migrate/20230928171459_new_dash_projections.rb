@@ -26,6 +26,7 @@ class NewDashProjections < ActiveRecord::Migration[6.1]
     add_foreign_key :metrics_projections, :study_aggregates, column: :parent_aggregate_id, primary_key: :id
     add_index :metrics_projections, [:study_aggregate_id, :timestamp], order: {timestamp: :desc}, name: 'metrics_projections_agg_timestamp_desc_idx'
     add_index :metrics_projections, [:study_aggregate_id, :autonomous_system_org_id, :bucket_name, :timestamp], order: {timestamp: :desc}, name: 'metrics_projections_agg_asn_bucket_timestamp_desc_idx'
+    add_index :metrics_projections, [:study_aggregate_id, :bucket_name, :timestamp], order: {timestamp: :desc}, name: 'metrics_projections_agg_bucket_timestamp_desc_idx'
     add_index :geospaces, "st_setsrid(geom, 4326)", using: 'GIST'
 
   end

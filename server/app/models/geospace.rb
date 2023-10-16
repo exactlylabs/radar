@@ -10,6 +10,7 @@ class Geospace < ApplicationRecord
   has_and_belongs_to_many :locations
   has_and_belongs_to_many :autonomous_system_orgs
   has_many :notified_study_goals
+  has_many :study_aggregates
 
   scope :states, -> { where(namespace: "state") }
   scope :counties, -> { where(namespace: "county") }
@@ -31,5 +32,9 @@ class Geospace < ApplicationRecord
     Geospace.all.each do |geospace|
       geospace.link_to_locations
     end
+  end
+
+  def study_aggregate_by_level(level)
+    self.study_aggregates.where(level: level).first
   end
 end
