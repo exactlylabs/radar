@@ -3,14 +3,24 @@ module StudyMetricsProjectionProcessor
     include StudyMetricsProjectionProcessor::Common
 
     def handle_measurement(id, location_id, lonlat, timestamp, as_org_id, as_org_name)
-      self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: location_id).each do |aggregate|
+      aggs = self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: location_id)
+      study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
+      aggs.each do |aggregate|
+        if aggregate.level == 'state' && !study_county
+          next
+        end
         update_measurements_count(aggregate, as_org_id, timestamp)
         update_unique_locations_count(aggregate, as_org_id, lonlat)
       end
     end
 
     def handle_speed_test(id, lonlat, timestamp, as_org_id, as_org_name)
-      self.get_aggregates_for_point(lonlat, as_org_id, as_org_name).each do |aggregate|
+      aggs = self.get_aggregates_for_point(lonlat, as_org_id, as_org_name)
+      study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
+      aggs.each do |aggregate|
+        if aggregate.level == 'state' && !study_county
+          next
+        end
         update_measurements_count(aggregate, as_org_id, timestamp)
         update_unique_locations_count(aggregate, as_org_id, lonlat)
       end

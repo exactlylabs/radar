@@ -14,11 +14,16 @@ module StudyMetricsProjectionProcessor
 
     def initialize
       @insertion_queue = []
-      @projections = {}
       @consumer_offset = ConsumerOffset.find_or_create_by!(consumer_id: "MetricsProjectionProcessor")
       @last_event_of_aggregate = {}
 
+      # Initialize states in case of first run.
       @consumer_offset.state["open_buckets"] ||= {}
+      @consumer_offset.state["locations_online_days_count"] ||= {}
+      @consumer_offset.state["projections"] ||= {}
+      @consumer_offset.state["locations_state"] ||= {}
+
+      @lonlats ||= {}
     end
 
     def inspect()
@@ -28,7 +33,7 @@ module StudyMetricsProjectionProcessor
     def process()
       Rails.logger.info "Starting Processor"
       conn = ActiveRecord::Base.connection_pool.checkout
-      loaded = false
+      # loaded = false
       offsets = {
         events_offset: @consumer_offset.state["events_offset"] || 0,
         measurements_offset: @consumer_offset.state["measurements_offset"] || 0,
@@ -39,8 +44,8 @@ module StudyMetricsProjectionProcessor
       begin
         @raw = conn.raw_connection
         self.sources_iterator(**offsets).each do |source, value|
-          self.load_distinct_projections if !loaded
-          loaded = true
+          # self.load_distinct_projections if !loaded
+          # loaded = true
           @projection_updated = false
           timestamp = nil
           case source
@@ -96,30 +101,12 @@ module StudyMetricsProjectionProcessor
     end
 
     def push_projections_to_queue(timestamp, **opts)
-      @projections.values.each do |projection|
+      @consumer_offset.state["projections"].values.each do |projection|
         obj = projection.dup
         obj["timestamp"] = timestamp
         obj["bucket_name"] = opts[:bucket_name]
         @insertion_queue << obj
       end
-    end
-
-    def load_distinct_projections()
-      Rails.logger.info "Loading distinct projections"
-      # Loads all distinct projections to be propagated whith every new metric increment
-      query = %{
-        SELECT DISTINCT ON (study_aggregate_id, autonomous_system_org_id) study_aggregate_id, autonomous_system_org_id,
-          parent_aggregate_id, online_pods_count, online_locations_count, measurements_count, points_with_tests_count,
-          completed_locations_count
-        FROM metrics_projections
-        ORDER BY study_aggregate_id, autonomous_system_org_id, timestamp DESC
-      }
-
-      records = ActiveRecord::Base.connection.execute(query)
-      records.each do |projection|
-        @projections["#{projection["study_aggregate_id"]}-#{projection["autonomous_system_org_id"]}"] = projection
-      end
-      Rails.logger.info "Projections Pre-loaded"
     end
 
     def update_projection(study_aggregate, as_org_id, metric_type, incr, **opts)
@@ -139,7 +126,7 @@ module StudyMetricsProjectionProcessor
     private
 
     def get_projection(study_aggregate_id, parent_aggregate_id, as_org_id)
-      proj = @projections["#{study_aggregate_id}-#{as_org_id}"]
+      proj = @consumer_offset.state["projections"]["#{study_aggregate_id}-#{as_org_id}"]
       if proj.nil?
         proj = {
           "parent_aggregate_id" => parent_aggregate_id,
@@ -150,8 +137,9 @@ module StudyMetricsProjectionProcessor
           "measurements_count" => 0,
           "points_with_tests_count" => 0,
           "completed_locations_count" => 0,
+          "completed_and_online_locations_count" => 0,
         }
-        @projections["#{study_aggregate_id}-#{as_org_id}"] = proj
+        @consumer_offset.state["projections"]["#{study_aggregate_id}-#{as_org_id}"] = proj
       end
       return proj
     end
@@ -165,9 +153,10 @@ module StudyMetricsProjectionProcessor
         Rails.logger.info "Flushing insertion queue with #{@insertion_queue.size} elements"
         t = Time.now
         @consumer_offset.save!
-        @raw.exec("COPY metrics_projections (timestamp, study_aggregate_id, parent_aggregate_id, autonomous_system_org_id, online_pods_count, online_locations_count, measurements_count, points_with_tests_count, completed_locations_count, bucket_name) FROM STDIN CSV")
+        @raw.exec("COPY metrics_projections (timestamp, study_aggregate_id, parent_aggregate_id, autonomous_system_org_id, online_pods_count, online_locations_count, measurements_count, points_with_tests_count, completed_locations_count, completed_and_online_locations_count, bucket_name) FROM STDIN CSV")
         @insertion_queue.each do |row|
-          @raw.put_copy_data("#{row["timestamp"].iso8601(9)},#{row["study_aggregate_id"]},#{row["parent_aggregate_id"]},#{row["autonomous_system_org_id"]},#{row["online_pods_count"]},#{row["online_locations_count"]},#{row["measurements_count"]},#{row["points_with_tests_count"]},#{row["completed_locations_count"]},#{row["bucket_name"]}\n")
+          @raw.put_copy_data(
+            "#{row["timestamp"].iso8601(9)},#{row["study_aggregate_id"]},#{row["parent_aggregate_id"]},#{row["autonomous_system_org_id"]},#{row["online_pods_count"]},#{row["online_locations_count"]},#{row["measurements_count"]},#{row["points_with_tests_count"]},#{row["completed_locations_count"]},#{row["completed_and_online_locations_count"]},#{row["bucket_name"]}\n")
         end
         @raw.put_copy_end
         while res = @raw.get_result do

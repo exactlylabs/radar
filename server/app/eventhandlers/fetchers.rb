@@ -6,7 +6,7 @@ module Fetchers
     Enumerator.new { |g|
       events = Event.where(
         "id > ? AND (aggregate_type = ? OR aggregate_type = ?)", offset, Client.name, SystemOutage.name
-      ).order('timestamp ASC, version ASC').find_each(batch_size: batch_size) do |event|
+      ).order('timestamp ASC, version ASC').preload(:snapshot).find_each(batch_size: batch_size) do |event|
         g.yield event
       end
     }
@@ -79,8 +79,8 @@ module Fetchers
     offset = Event.first.timestamp.to_date.to_time.to_i if offset == 0
 
     Enumerator.new { |g|
-      Time.at(offset).to_date.next_day.upto(Date.yesterday).each do |date|
-        g.yield date
+      Time.at(offset).to_date.next_day.upto(Date.today).each do |date|
+        g.yield date.at_beginning_of_day
       end
     }
 
