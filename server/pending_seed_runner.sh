@@ -6,5 +6,4 @@
 # This script must be run from the root directory.
 # Whenever we add a new seed file, we need this file to get updated as well
 
-rails runner db/custom_seeds/seed_fill_location_measurements_avg.rb
-rails runner db/custom_seeds/seed_fill_pod_measurements_avg.rb
+rails runner db/custom_seeds/fill_study_goals.rb
