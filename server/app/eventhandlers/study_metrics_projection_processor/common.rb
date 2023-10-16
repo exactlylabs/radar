@@ -35,32 +35,17 @@ module StudyMetricsProjectionProcessor
 
         @aggregates_cache["#{lonlat.latitude}-#{lonlat.longitude}-#{as_org_id}"] = aggs
       end
-      if opts[:location_id].present?
-        agg = @aggregates_cache["location-#{opts[:location_id]}"]
-        agg = load_location_aggregate(opts[:location_id], aggs.find { |a| a.level = 'census_place'}) if agg.nil?
-        aggs << agg if agg.present?
-      end
       return aggs
     end
 
     private
 
-    def load_location_aggregate(location_id, place_agg)
-      begin
-        location = Location.find(location_id)
-      rescue ActiveRecord::RecordNotFound
-        return nil
-      end
-      return nil if place_agg.nil?
-      StudyAggregate.find_or_create_by!(
-        name: location.name, level: 'location', parent_aggregate: place_agg, location_id: location_id,
-      )
-    end
-
     def load_state_aggregate(geospaces)
       state = geospaces.find {|g| g["ns"] == "state"}
       if state
-        return StudyAggregate.find_or_create_by!(name: state["name"], level: 'state', geospace_id: state["id"])
+        return StudyAggregate.find_or_create_by!(
+          name: state["name"], level: 'state', geospace_id: state["id"], study_aggregate: state["study_geospace"]
+        )
       end
       return nil
     end
@@ -69,7 +54,8 @@ module StudyMetricsProjectionProcessor
       county = geospaces.find {|g| g["ns"] == "county"}
       if county && state_agg
         return StudyAggregate.find_or_create_by!(
-          name: county["name"], level: 'county', parent_aggregate: state_agg, geospace_id: county["id"]
+          name: county["name"], level: 'county', parent_aggregate: state_agg, geospace_id: county["id"],
+          study_aggregate: county["study_geospace"]
         )
       end
       return nil
@@ -81,7 +67,7 @@ module StudyMetricsProjectionProcessor
         if county && state_agg
           return StudyAggregate.find_or_create_by!(
             name: "#{as_org_name} -> #{county["name"]}", level: 'isp_county', autonomous_system_org_id: as_org_id,
-            parent_aggregate: state_agg, geospace_id: county["id"]
+            parent_aggregate: state_agg, geospace_id: county["id"], study_aggregate: county["study_geospace"],
           )
         end
       end
@@ -92,7 +78,8 @@ module StudyMetricsProjectionProcessor
       census_place = geospaces.find {|g| g["ns"] == "census_place"}
       if census_place && county_agg
         return StudyAggregate.find_or_create_by!(
-          name: census_place["name"], level: 'census_place', parent_aggregate: county_agg, geospace_id: census_place["id"]
+          name: census_place["name"], level: 'census_place', parent_aggregate: county_agg, geospace_id: census_place["id"],
+          study_aggregate: county_agg["study_aggregate"]
         )
       end
       return nil
@@ -102,15 +89,21 @@ module StudyMetricsProjectionProcessor
       geospaces = []
       if opts[:location].present?
         opts[:location].geospaces.each do |geospace|
-          geospaces << {"id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name}
+          geospaces << {
+            "id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name, "study_geospace" => geospace.study_geospace
+          }
         end
       elsif opts[:location_id].present?
         Geospace.joins(:locations).where("locations.id = ?", opts[:location_id]).each do |geospace|
-          geospaces << {"id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name}
+          geospaces << {
+            "id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name, "study_geospace" => geospace.study_geospace
+          }
         end
       else
         Geospace.containing_lonlat(lonlat).each do |geospace|
-          geospaces << {"id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name}
+          geospaces << {
+            "id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name, "study_geospace" => geospace.study_geospace
+          }
         end
       end
       return geospaces

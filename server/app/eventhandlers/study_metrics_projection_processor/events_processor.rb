@@ -136,7 +136,6 @@ module StudyMetricsProjectionProcessor
     end
 
     def update_online_count_for_location(location_id, autonomous_system_id, incr)
-      @lonlats ||= {}
       if @lonlats[location_id].nil?
         begin
           location = Location.with_deleted.find(location_id)
@@ -149,19 +148,65 @@ module StudyMetricsProjectionProcessor
 
       as_org_id, as_org_name = self.as_org_info(autonomous_system_id)
 
-      @consumer_offset.state["locations_online_pods_count"] ||= {}
-      @consumer_offset.state["locations_online_pods_count"]["#{location_id}-#{as_org_id}"] ||= 0
-      location_was_online = @consumer_offset.state["locations_online_pods_count"]["#{location_id}-#{as_org_id}"] > 0
-      @consumer_offset.state["locations_online_pods_count"]["#{location_id}-#{as_org_id}"] += incr
-      location_is_online = @consumer_offset.state["locations_online_pods_count"]["#{location_id}-#{as_org_id}"] > 0
+      # Update the location's state.
+      # Since our locations snapshots weren't tracking online events, it's safer to derive state from clients snapshots.
+      # Given we're storing this as a json object, all keys MUST be strings.
+      if @consumer_offset.state["locations_state"][location_id.to_s].nil?
+        @consumer_offset.state["locations_state"][location_id.to_s] = {}
+      end
+      location_state = @consumer_offset.state["locations_state"][location_id.to_s]
+      if location_state["online_pods_count_by_asn"].nil?
+        location_state["online_pods_count_by_asn"] = {}
+      end
+      # @consumer_offset.state["locations_state"][location_id]["online_pods_count_by_asn"] ||= {}
 
+      if location_state["online_pods_count_by_asn"][as_org_id.to_s].nil?
+        location_state["online_pods_count_by_asn"][as_org_id.to_s] = 0
+      end
+      # @consumer_offset.state["locations_state"][location_id]["online_pods_count_by_asn"][as_org_id.to_s] ||= 0
 
-      self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: location_id).each do |aggregate|
+      asn_location_was_online = location_state["online_pods_count_by_asn"][as_org_id.to_s] > 0
+
+      location_state["online_pods_count_by_asn"][as_org_id.to_s] += incr
+
+      asn_location_is_online = location_state["online_pods_count_by_asn"][as_org_id.to_s] > 0
+
+      if location_state["state_by_asn"].nil?
+        location_state["state_by_asn"] ||= {}
+      end
+      if location_state["state_by_asn"][as_org_id.to_s].nil?
+        location_state["state_by_asn"][as_org_id.to_s] = {}
+      end
+      location_asn_state = location_state["state_by_asn"][as_org_id.to_s]
+
+      location_asn_state["online?"] = asn_location_is_online
+      location_asn_state["online_at_least_once"] = asn_location_is_online || location_asn_state.fetch("online_at_least_once", false)
+      location_asn_state["as_org_name"] = as_org_name
+
+      aggs = self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: location_id)
+      study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
+      aggs.each do |aggregate|
+        # Filter out "other" counties from the state level
+        if aggregate.level == 'state' && !study_county
+          next
+        end
+
         self.update_projection(aggregate, as_org_id, "online_pods_count", incr)
-        if location_was_online && !location_is_online
+        if asn_location_was_online && !asn_location_is_online
           self.update_projection(aggregate, as_org_id, "online_locations_count", -1)
-        elsif !location_was_online && location_is_online
+
+          # completed_and_online_locations_count should only be decreased if the location's goal isn't completed yet
+          if !location_asn_state.fetch("90_day_goal_reached", false)
+            self.update_projection(aggregate, as_org_id, "completed_and_online_locations_count", -1)
+          end
+
+        elsif !asn_location_was_online && asn_location_is_online
           self.update_projection(aggregate, as_org_id, "online_locations_count", 1)
+
+          # completed_and_online_locations_count should only be increased if the location's goal isn't completed yet'
+          if !location_asn_state.fetch("90_day_goal_reached", false)
+            self.update_projection(aggregate, as_org_id, "completed_and_online_locations_count", 1)
+          end
         end
       end
     end
