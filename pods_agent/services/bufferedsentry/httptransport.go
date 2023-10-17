@@ -1,4 +1,4 @@
-package tracing
+package bufferedsentry
 
 /*
 * Note for the Reader:
@@ -10,7 +10,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -20,6 +19,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/getsentry/sentry-go"
 )
 
@@ -28,7 +28,7 @@ const bufferName = "tracing_buffer"
 func newBufferedTransport(bufferDir string, dsnStr string) *bufferedTransport {
 	dsn, err := sentry.NewDsn(dsnStr)
 	if err != nil {
-		log.Println(fmt.Errorf("tracing.ensureTransport#newBufferedTransport NewDsn: %w", err))
+		log.Println(errors.Wrap(err, "failed to parse dsn %s", dsn))
 		dsn = nil
 	}
 	t := &bufferedTransport{
