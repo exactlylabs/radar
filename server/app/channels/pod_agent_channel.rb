@@ -115,7 +115,7 @@ class PodAgentChannel < ApplicationCable::Channel
           binary_url: PodAgentChannel.blob_path(self.client.to_update_signed_binary)
         },
       }
-    )
+    ) if self.client.to_update_version.present?
   end
 
   def update_watchdog()
@@ -127,7 +127,7 @@ class PodAgentChannel < ApplicationCable::Channel
           binary_url: PodAgentChannel.blob_path(self.client.to_update_watchdog_signed_binary)
         },
       }
-    )
+    ) if self.client.to_update_version.present?
   end
 
   # Streams
