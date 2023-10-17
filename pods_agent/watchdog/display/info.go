@@ -2,11 +2,11 @@ package display
 
 import (
 	_ "embed"
-	"fmt"
 	"log"
 	"text/template"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/rivo/tview"
@@ -39,7 +39,7 @@ func (ic *infoContainer) Update() {
 	info := info.BuildInfo()
 	v, err := ic.agentCli.GetVersion()
 	if err != nil {
-		log.Println(fmt.Errorf("display.StartDisplayLoop getVersion: %w", err))
+		log.Println(errors.W(err))
 		v = "N/A"
 	}
 	isRunning, runningErr := ic.agentCli.IsRunning()

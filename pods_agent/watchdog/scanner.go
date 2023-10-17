@@ -7,8 +7,9 @@ import (
 	"log"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 )
 
 var cmdLineCommands = []string{
@@ -31,14 +32,14 @@ func StartScanLoop(ctx context.Context, sysEditor SystemManager) {
 			hasChanges, err := ScanSystem(c, sysEditor)
 			if err != nil {
 				// Panic?
-				err = fmt.Errorf("watchdog.StartScanLoop ScanSystem: %w", err)
-				tracing.NotifyErrorOnce(err, tracing.Context{})
+				err = errors.W(err)
+				sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
 				log.Println(err)
 			} else if hasChanges {
 				if err := sysEditor.Reboot(); err != nil {
 					// Panic?
-					err = fmt.Errorf("watchdog.StartScanLoop Reboot: %w", err)
-					tracing.NotifyErrorOnce(err, tracing.Context{})
+					err = errors.W(err)
+					sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
 					log.Println(err)
 				}
 			}
@@ -52,19 +53,16 @@ var previousAuthLogTime time.Time = time.Now()
 // verifying and modifying files based on the expected state.
 // It returns True if any file was changed
 func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
-	errMsg := func(err error, call string) error {
-		return fmt.Errorf("watchog.ScanSystem %v: %w", call, err)
-	}
 	hasChanges := 0
 
 	// Validate Hostname
 	hostname, err := sysManager.GetHostname()
 	if err != nil {
-		return false, errMsg(err, "GeHostname")
+		return false, errors.W(err)
 	}
 	if c.ClientId != "" && hostname != c.ClientId {
 		if err := sysManager.SetHostname(c.ClientId); err != nil {
-			return false, errMsg(err, "SetHostname")
+			return false, errors.W(err)
 		}
 		log.Printf("Hostname replaced to %s due to it being different from the expected\n", c.ClientId)
 		hasChanges = 1
@@ -80,59 +78,59 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 	// // Validate config.txt file
 	changed, err = checkAndReplace("osfiles/boot/config.txt", sysManager.GetBootConfig, sysManager.SetBootConfig)
 	if err != nil {
-		return false, err
+		return false, errors.W(err)
 	}
 	hasChanges |= changed
 
 	// // Validate cmdline.txt
 	changed, err = checkAndUpdateCMDLine(sysManager, cmdLineCommands)
 	if err != nil {
-		return false, err
+		return false, errors.W(err)
 	}
 	hasChanges |= changed
 
 	// Validate logind.conf
 	changed, err = checkAndReplace("osfiles/etc/systemd/logind.conf", sysManager.GetLogindConf, sysManager.SetLogindConf)
 	if err != nil {
-		return false, err
+		return false, errors.W(err)
 	}
 	hasChanges |= changed
 
 	// Validate podwatchdog@.service
 	changed, err = checkAndReplace("osfiles/etc/systemd/system/podwatchdog@.service", sysManager.GetWatchdogServiceFile, sysManager.SetWatchdogServiceFile)
 	if err != nil {
-		return false, err
+		return false, errors.W(err)
 	}
 	hasChanges |= changed
 
 	// Validate that the system is set to UTC
 	tz, err := sysManager.GetSysTimezone()
 	if err != nil {
-		return false, err
+		return false, errors.W(err)
 	}
 	if tz.String() != "UTC" {
 		if err := sysManager.SetSysTimezone(utc); err != nil {
-			return false, err
+			return false, errors.W(err)
 		}
 		hasChanges = 1
 	}
 
 	authLog, err := sysManager.GetAuthLogFile()
 	if err != nil {
-		return false, fmt.Errorf("watchdog.ScanSystem GetAuthLogFile: %w", err)
+		return false, errors.W(err)
 	}
 	loginEvents, err := scanAuthLog(c, authLog, previousAuthLogTime)
 	if err != nil {
-		return false, err
+		return false, errors.W(err)
 	}
 	for _, evt := range loginEvents {
 		if previousAuthLogTime.Before(evt.Time) {
 			previousAuthLogTime = evt.Time
 		}
 		log.Printf("New Login Detected at %v, notifying through tracing\n", evt.Time)
-		tracing.NotifyError(
-			fmt.Errorf("new Login Detected in the Pod"),
-			tracing.Context{
+		sentry.NotifyError(
+			errors.NewWithType("new Login Detected in the Pod", "Login Detected"),
+			map[string]sentry.Context{
 				"Login Info": {"User": evt.User, "Time": evt.Time, "Unix User": c.ClientId},
 			},
 		)
@@ -145,7 +143,7 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 func checkAndUpdateCMDLine(sysManager SystemManager, arguments []string) (int, error) {
 	cmdLine, err := sysManager.GetCMDLine()
 	if err != nil {
-		return 0, fmt.Errorf("watchdog.checkAndUpdateCMDLine GetCMDLine: %w", err)
+		return 0, errors.W(err)
 	}
 
 	commands := bytes.Split(bytes.Trim(cmdLine, "\n"), []byte(" "))
@@ -175,20 +173,17 @@ func isIn(target []byte, arr [][]byte) bool {
 }
 
 func checkAndReplace(filePath string, getter func() ([]byte, error), setter func([]byte) error) (int, error) {
-	errMsg := func(err error, call string) error {
-		return fmt.Errorf("watchog.ScanSystem %v: %w", call, err)
-	}
 	expected, err := OSFS.ReadFile(filePath)
 	if err != nil {
-		return 0, errMsg(err, "ReadFile")
+		return 0, errors.Wrap(err, "error reading file").WithMetadata(errors.Metadata{"filePath": filePath})
 	}
 	current, err := getter()
 	if err != nil {
-		return 0, errMsg(err, "getter")
+		return 0, errors.W(err)
 	}
 	if !bytes.Equal(current, expected) {
 		if err := setter(expected); err != nil {
-			return 0, errMsg(err, "setter")
+			return 0, errors.W(err)
 		}
 		log.Printf("File %s was replaced due to it being different from the expected\n", filePath)
 		return 1, nil

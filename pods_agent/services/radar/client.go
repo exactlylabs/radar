@@ -13,11 +13,12 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/agent"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/cable"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 )
 
 // firstPing since the service has started. It's set to false right after a successful ping
@@ -66,7 +67,7 @@ func (c *RadarClient) Close() error {
 
 func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessage) error {
 	if c.clientID == "" || c.secret == "" {
-		return fmt.Errorf("radar.RadarClient#Connect: clientId and secret cannot be empty")
+		return errors.New("clientId and secret cannot be empty")
 	}
 	header := http.Header{}
 	header.Set("User-Agent", AgentUserAgent+sysinfo.Metadata().Version)
@@ -80,7 +81,7 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 	c.channel.OnCustomMessage = c.handleCustomMessage
 	c.channel.OnSubscribed = c.sendSync
 	c.channel.OnConnectionError = func(err error) {
-		log.Println(fmt.Errorf("radar.RadarClient#Connect: %w", err))
+		log.Println(errors.W(err))
 		c.connected = false
 	}
 	c.channel.OnConnected = func() {
@@ -88,7 +89,7 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 		log.Println("PodAgentChannel Connected")
 	}
 	if err := c.channel.Connect(ctx); err != nil {
-		return fmt.Errorf("radar.RadarClient#Connect Connect: %w", err)
+		return errors.W(err)
 	}
 	return nil
 }
@@ -105,10 +106,10 @@ func (c *RadarClient) handleSubscriptionMessage(msg cable.SubscriptionMessage) {
 	} else if msg.Event == "version_changed" || msg.Event == "watchdog_version_changed" {
 		updateData := messages.VersionChangedSubscriptionPayload{}
 		if err := json.Unmarshal(msg.Payload, &updateData); err != nil {
-			err = fmt.Errorf("radar.RadarClient#handleSubscriptionMessage Unmarshal: %w", err)
-			tracing.NotifyError(
+			err = errors.Wrap(err, "json.Unmarshal failed")
+			sentry.NotifyError(
 				err,
-				tracing.Context{
+				map[string]sentry.Context{
 					"Message": {"event": msg.Event, "payload": string(msg.Payload)},
 				},
 			)
@@ -140,10 +141,10 @@ func (c *RadarClient) handleCustomMessage(msg cable.ServerMessage) {
 	case UpdateClient:
 		payload := &messages.VersionChangedSubscriptionPayload{}
 		if err := msg.DecodeMessage(payload); err != nil {
-			err = fmt.Errorf("radar.RadarClient#handleCustomMessage DecodeMessage: %w", err)
-			tracing.NotifyError(
+			err = errors.W(err)
+			sentry.NotifyError(
 				err,
-				tracing.Context{
+				map[string]sentry.Context{
 					"Message": {"type": msg.Type, "message": msg.Message},
 				},
 			)
@@ -159,10 +160,10 @@ func (c *RadarClient) handleCustomMessage(msg cable.ServerMessage) {
 	case AgentUpdateWatchdog:
 		payload := &messages.VersionChangedSubscriptionPayload{}
 		if err := msg.DecodeMessage(payload); err != nil {
-			err = fmt.Errorf("radar.RadarClient#handleCustomMessage DecodeMessage: %w", err)
-			tracing.NotifyError(
+			err = errors.W(err)
+			sentry.NotifyError(
 				err,
-				tracing.Context{
+				map[string]sentry.Context{
 					"Message": {"type": msg.Type, "message": msg.Message},
 				},
 			)
@@ -214,12 +215,12 @@ func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) (*agent.ServerMessage, erro
 	form.Add("service_first_ping", fmt.Sprintf("%t", firstPing))
 	ifaces, err := json.Marshal(meta.NetInterfaces)
 	if err != nil {
-		return nil, fmt.Errorf("radarClient#Ping error marshalling NetInterfaces: %w", err)
+		return nil, errors.Wrap(err, "marshalling NetInterfaces failed").WithMetadata(errors.Metadata{"interfaces": fmt.Sprintf("%v", meta.NetInterfaces)})
 	}
 	form.Add("network_interfaces", string(ifaces))
 	req, err := NewRequest(http.MethodPost, apiUrl, strings.NewReader(form.Encode()))
 	if err != nil {
-		return nil, err
+		return nil, errors.W(err)
 	}
 	req.Header.Add("Accept", "application/json")
 	if meta.RegistrationToken != nil {
@@ -228,20 +229,20 @@ func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) (*agent.ServerMessage, erro
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("radarClient#Ping request error: %w", err)
+		return nil, errors.Wrap(err, "request failed")
 	}
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("radarClient#Ping wrong status code %d", resp.StatusCode)
+		return nil, errors.New("radarClient#Ping wrong status code %d", resp.StatusCode)
 	}
 	firstPing = false
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("radarClient#Ping error reading response: %w", err)
+		return nil, errors.Wrap(err, "error reading response")
 	}
 	podConfig := &PodConfigs{}
 	if err := json.Unmarshal(body, podConfig); err != nil {
-		return nil, fmt.Errorf("radarClient#Ping error unmarshalling: %w", err)
+		return nil, errors.Wrap(err, "error unmarshalling").WithMetadata(errors.Metadata{"body": string(body)})
 	}
 	res := &agent.ServerMessage{
 		TestRequested: podConfig.TestRequested,
@@ -265,7 +266,7 @@ func (c *RadarClient) Register(registrationToken *string) (*agent.RegisteredPod,
 	apiUrl := fmt.Sprintf("%s/clients", c.serverURL)
 	req, err := http.NewRequest(http.MethodPost, apiUrl, nil)
 	if err != nil {
-		return nil, fmt.Errorf("radarCLient#Register error creating request: %w", err)
+		return nil, errors.Wrap(err, "http.NewRequest failed")
 	}
 	req.Header.Add("Accept", "application/json")
 	if registrationToken != nil {
@@ -273,19 +274,19 @@ func (c *RadarClient) Register(registrationToken *string) (*agent.RegisteredPod,
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("radarClient#Register request error: %w", err)
+		return nil, errors.Wrap(err, "request failed")
 	}
 	if resp.StatusCode != 201 {
-		return nil, fmt.Errorf("radarClient#Register wrong status code %d", resp.StatusCode)
+		return nil, errors.New("radarClient#Register wrong status code %d", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("radarClient#Register error reading response: %w", err)
+		return nil, errors.Wrap(err, "error reading response")
 	}
 	p := &Pod{}
 	if err := json.Unmarshal(body, p); err != nil {
-		return nil, fmt.Errorf("radarClient#Register error unmarshalling: %w", err)
+		return nil, errors.Wrap(err, "error unmarshalling").WithMetadata(errors.Metadata{"body": string(body)})
 	}
 	c.clientID = p.ClientId
 	c.secret = p.Secret
@@ -316,15 +317,15 @@ func (c *RadarClient) SendMeasurement(ctx context.Context, style string, measure
 
 	req, err := NewRequest(http.MethodPost, apiUrl, &b)
 	if err != nil {
-		return err
+		return errors.W(err)
 	}
 	req.Header.Add("Content-Type", w.FormDataContentType())
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("radar.radarClient#SendMeasurement request error: %w", err)
+		return errors.Wrap(err, "request failed").WithMetadata(errors.Metadata{"url": req.URL, "method": req.Method})
 	}
 	if resp.StatusCode != 201 {
-		return fmt.Errorf("radar.radarClient#SendMeasurement wrong status code: %d", resp.StatusCode)
+		return errors.New("radar.radarClient#SendMeasurement wrong status code: %d", resp.StatusCode)
 	}
 	return nil
 }

@@ -11,11 +11,12 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/services/ndt7/ndt7diagnose"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/cable"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 	"github.com/exactlylabs/radar/pods_agent/watchdog"
 )
 
@@ -70,7 +71,7 @@ func (c *RadarWatchdogClient) Connect(ctx context.Context, ch chan<- watchdog.Se
 		log.Println("WatchdogChannel connected")
 	}
 	if err := c.channel.Connect(ctx); err != nil {
-		return fmt.Errorf("radar.RadarWatchdogClient#Connect Connect: %w", err)
+		return errors.Wrap(err, "failed to connect to channel")
 	}
 	return nil
 }
@@ -87,10 +88,10 @@ func (c *RadarWatchdogClient) handleSubscriptionMessage(msg cable.SubscriptionMe
 	if msg.Event == "version_changed" {
 		updateData := messages.VersionChangedSubscriptionPayload{}
 		if err := json.Unmarshal(msg.Payload, &updateData); err != nil {
-			err = fmt.Errorf("radar.RadarWatchdogClient#updateRequested Unmarshal: %w", err)
-			tracing.NotifyError(
+			err = errors.W(err)
+			sentry.NotifyError(
 				err,
-				tracing.Context{
+				map[string]sentry.Context{
 					"Message": {"event": msg.Event, "payload": string(msg.Payload)},
 				},
 			)
@@ -105,8 +106,8 @@ func (c *RadarWatchdogClient) handleSubscriptionMessage(msg cable.SubscriptionMe
 	} else if msg.Event == "ndt7_diagnose_requested" {
 		report, err := ndt7diagnose.RunDiagnose()
 		if err != nil {
-			err = fmt.Errorf("radar.RadarWatchdogClient#ndt7diagnoseRequested RunDiagnose: %w", err)
-			tracing.NotifyError(err, tracing.Context{"Message": {"event": msg.Event, "payload": string(msg.Payload)}})
+			err = errors.W(err)
+			sentry.NotifyError(err, map[string]sentry.Context{"Message": {"event": msg.Event, "payload": string(msg.Payload)}})
 			log.Println(err)
 		} else {
 			c.sendNDT7Report(report)
@@ -119,9 +120,9 @@ func (c *RadarWatchdogClient) handleCustomMessage(msg cable.ServerMessage) {
 	case UpdateWatchdog:
 		payload := &messages.VersionChangedSubscriptionPayload{}
 		if err := msg.DecodeMessage(payload); err != nil {
-			err = fmt.Errorf("radar.RadarWatchdogClient#handleCustomMessage DecodeMessage: %w", err)
-			tracing.NotifyError(err,
-				tracing.Context{
+			err = errors.W(err)
+			sentry.NotifyError(err,
+				map[string]sentry.Context{
 					"Message": {"type": msg.Type, "message": msg.Message},
 				},
 			)
@@ -169,7 +170,7 @@ func (c *RadarWatchdogClient) WatchdogPing(meta *sysinfo.ClientMeta) (*watchdog.
 	form.Add("version", meta.Version)
 	req, err := NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
 	if err != nil {
-		return nil, err
+		return nil, errors.W(err)
 	}
 	req.Header.Add("Accept", "application/json")
 	if meta.RegistrationToken != nil {
@@ -178,19 +179,19 @@ func (c *RadarWatchdogClient) WatchdogPing(meta *sysinfo.ClientMeta) (*watchdog.
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("radarClient#WatchdogPing request error: %w", err)
+		return nil, errors.Wrap(err, "request failed").WithMetadata(errors.Metadata{"url": req.URL, "method": req.Method})
 	}
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("radarClient#WatchdogPing wrong status code %d", resp.StatusCode)
+		return nil, errors.New("radarClient#WatchdogPing wrong status code %d", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("radarClient#WatchdogPing error reading response: %w", err)
+		return nil, errors.Wrap(err, "failed to read response body")
 	}
 	podConfig := &WatchdogStatusResponse{}
 	if err := json.Unmarshal(body, podConfig); err != nil {
-		return nil, fmt.Errorf("radarClient#WatchdogPing error unmarshalling: %w", err)
+		return nil, errors.Wrap(err, "failed to unmarshal response body").WithMetadata(errors.Metadata{"body": string(body)})
 	}
 	res := &watchdog.ServerMessage{}
 	if podConfig.Update != nil {

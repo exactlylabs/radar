@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 type buildTime string
@@ -17,7 +19,7 @@ func (b buildTime) Time() time.Time {
 	}
 	t, err := time.Parse("200601021504", string(b))
 	if err != nil {
-		panic(fmt.Errorf("wrong build time: %w", err))
+		panic(errors.Wrap(err, "failed to parse build time").WithMetadata(errors.Metadata{"build_time": b}))
 	}
 	return t
 }
@@ -61,12 +63,12 @@ func (i *Info) getVersionCategory(cat string) int {
 	matches := r.FindStringSubmatch(i.Version)
 	idx := r.SubexpIndex(cat)
 	if idx == -1 {
-		panic(fmt.Errorf("%v category not found in the regexp for %s", cat, i.Version))
+		panic(errors.New("%v category not found in the regexp for %s", cat, i.Version))
 	}
 	strNumber := matches[idx]
 	num, err := strconv.Atoi(strNumber)
 	if err != nil {
-		panic(fmt.Errorf("wrong %v version %v: %w", cat, strNumber, err))
+		panic(errors.Wrap(err, "wrong %v version %v", cat, strNumber))
 	}
 	return num
 }

@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
-	"strings"
+
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 const AgentPath = "/opt/radar/agent"
@@ -48,14 +49,25 @@ func NewAgentInfoManager(binaryPath, serviceName string) *AgentInfoManager {
 // AgentMetadata should call the installed radar agent and get his version
 func (am *AgentInfoManager) AgentMetadata() (*ClientMeta, error) {
 	cmd := exec.Command(am.binPath, "-vv")
+	stderr := new(bytes.Buffer)
+	cmd.Stderr = stderr
 	metaBytes, err := cmd.Output()
 	if err != nil {
-		return nil, fmt.Errorf("pod.AgentMetadata Output: %w", err)
+		return nil, errors.Wrap(err, "error executing the binary").WithMetadata(
+			errors.Metadata{
+				"output": string(metaBytes),
+				"stderr": stderr.String(),
+				"binary": am.binPath,
+			})
 	}
 
 	meta := &ClientMeta{}
 	if err := json.Unmarshal(metaBytes, meta); err != nil {
-		return nil, fmt.Errorf("pod.AgentMetadata Unmarshal: %w", err)
+		return nil, errors.Wrap(err, "error unmarshalling the binary output").WithMetadata(errors.Metadata{
+			"output": string(metaBytes),
+			"stderr": stderr.String(),
+			"binary": []string{am.binPath, "-vv"},
+		})
 	}
 	return meta, nil
 }
@@ -63,22 +75,29 @@ func (am *AgentInfoManager) AgentMetadata() (*ClientMeta, error) {
 func (am *AgentInfoManager) GetVersion() (string, error) {
 	meta, err := am.AgentMetadata()
 	if err != nil {
-		return "", err
+		return "", errors.W(err)
 	}
 	return meta.Version, nil
 }
 
 func (am *AgentInfoManager) IsRunning() (bool, error) {
 	// Check from systemd
-	out, err := exec.Command("systemctl", "check", am.serviceName).Output()
+	cmd := exec.Command("systemctl", "check", am.serviceName)
+	stderr := new(bytes.Buffer)
+	cmd.Stderr = stderr
+	out, err := cmd.Output()
 	if exiterr, ok := err.(*exec.ExitError); ok && exiterr.ExitCode() == 3 && bytes.Contains(out, []byte("activating")) {
 		// Systemctl is starting the service, so it's not running, but there's no error in the service configuration either
 		return false, nil
 	} else if err != nil {
-		return false, fmt.Errorf("%v: %w", strings.TrimRight(string(out), "\n"), err)
+		return false, errors.Wrap(err, "error checking service status").WithMetadata(errors.Metadata{
+			"output": string(out),
+			"stderr": stderr.String(),
+			"binary": []string{"systemctl", "check", am.serviceName},
+		})
 	}
 	if string(bytes.Trim(out, "\n")) != "active" {
-		return false, fmt.Errorf("unexpected status: %v", string(out))
+		return false, errors.New("unexpected status: %v", string(out))
 	}
 	return true, nil
 }

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/config"
 )
 
@@ -26,7 +27,9 @@ func parseDateFromAuthLog(month, day, t string) (time.Time, error) {
 		d,
 	)
 	if err != nil {
-		return time.Time{}, fmt.Errorf("watchdog.parseDateFromAuthLog Parse: %w", err)
+		return time.Time{}, errors.Wrap(err, "failed to parse date from auth.log").WithMetadata(errors.Metadata{
+			"date": d, "format": "2006 Jan 2 15:04:05",
+		})
 	}
 	return matchTime, nil
 }
@@ -44,7 +47,7 @@ func scanAuthLog(c *config.Config, authLog []byte, lastTime time.Time) ([]LoginE
 		if len(match) == 5 {
 			t, err = parseDateFromAuthLog(match[1], match[2], match[3])
 			if err != nil {
-				return nil, err
+				return nil, errors.W(err)
 			}
 
 			if t.Equal(lastTime) || t.Before(lastTime) {
@@ -58,13 +61,13 @@ func scanAuthLog(c *config.Config, authLog []byte, lastTime time.Time) ([]LoginE
 			if len(match) == 4 {
 				t, err = parseDateFromAuthLog(match[1], match[2], match[3])
 				if err != nil {
-					return nil, err
+					return nil, errors.W(err)
 				}
 				if t.Equal(lastTime) || t.Before(lastTime) {
 					continue
 				}
 			} else {
-				return nil, fmt.Errorf("watchdog.scanAuthLog no matches for '%v'. Found %v", text, match)
+				return nil, errors.Wrap(err, "no matches for '%v'. Found %v", text, match)
 			}
 		}
 	}

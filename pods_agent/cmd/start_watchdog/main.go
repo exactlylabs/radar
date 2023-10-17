@@ -8,12 +8,13 @@ import (
 	"log"
 	"os"
 
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/cmd/start_watchdog/internal/dev"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
+	"github.com/exactlylabs/radar/pods_agent/services/bufferedsentry"
 	"github.com/exactlylabs/radar/pods_agent/services/radar"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 	"github.com/exactlylabs/radar/pods_agent/watchdog"
 	"github.com/joho/godotenv"
 )
@@ -41,9 +42,8 @@ func main() {
 	c := config.LoadConfig()
 
 	log.Println("Starting Radar POD Watchdog")
-	tracing.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version, os.TempDir())
-	defer tracing.FlushBuffer()
-	defer tracing.NotifyPanic()
+	bufferedsentry.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version, c.Environment, "Pods Watchdog", os.TempDir())
+	defer sentry.NotifyIfPanic()
 
 	sysManager := sysinfo.NewSystemManager()
 	cli := radar.NewWatchdogClient(c.ServerURL, c.ClientId, c.Secret)

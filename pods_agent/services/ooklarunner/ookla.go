@@ -1,12 +1,13 @@
 package ookla
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os/exec"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/agent"
 )
 
@@ -40,14 +41,21 @@ func (r *ooklaRunner) Type() string {
 
 func (r *ooklaRunner) run(ctx context.Context) (*agent.Measurement, error) {
 	cmd := exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json")
+	stderr := new(bytes.Buffer)
+	cmd.Stderr = stderr
 	res, err := cmd.Output()
+
 	if err != nil {
-		return nil, fmt.Errorf("ookla.ooklaRunner#Run error executing the binary: %w", err)
+		return nil, errors.Wrap(err, "error executing the binary").WithMetadata(
+			errors.Metadata{
+				"output": string(res),
+				"stderr": stderr.String(),
+			})
 	}
 	// parsing the result's expected schema
 	result := &testResult{}
 	if err := json.Unmarshal(res, result); err != nil {
-		return nil, fmt.Errorf("ookla.ooklaRunner#Run Unmarshal: %w", err)
+		return nil, errors.Wrap(err, "Unmarshal failed")
 	}
 	return &agent.Measurement{
 		Raw:          res,
@@ -67,5 +75,5 @@ func (r *ooklaRunner) Run(ctx context.Context) (res *agent.Measurement, err erro
 		}
 		log.Printf("Ookla - Error running speed test: %v\n", err)
 	}
-	return nil, err
+	return nil, errors.W(err)
 }

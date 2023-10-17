@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
@@ -22,7 +23,7 @@ func startPingLoop(ctx context.Context, respCh chan<- *ServerMessage, client Rad
 				log.Println("Pinging server...")
 				resp, err := client.Ping(meta)
 				if err != nil {
-					log.Println(err)
+					log.Println(errors.W(err))
 					continue
 				}
 				respCh <- resp

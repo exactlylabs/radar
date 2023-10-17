@@ -2,7 +2,6 @@ package config
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -15,8 +14,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 	"github.com/joho/godotenv"
 )
 
@@ -46,7 +46,7 @@ func (c *Config) LastTestedAt() *time.Time {
 	}
 	intVal, err := strconv.ParseInt(c.LastTested, 10, 64)
 	if err != nil {
-		panic(fmt.Errorf("config#LastTestedAt Atoi: %v", err))
+		panic(errors.Wrap(err, "strconv.ParseInt failed to parse %s", c.LastTested))
 	}
 	t := time.Unix(intVal, 0)
 	return &t
@@ -117,7 +117,7 @@ func BasePath() string {
 	if info.IsDev() {
 		basePath, err := os.Getwd()
 		if err != nil {
-			panic(fmt.Errorf("config.BasePath error: %w", err))
+			panic(errors.Wrap(err, "os.Getwd failed"))
 		}
 		return basePath
 	}
@@ -133,9 +133,9 @@ func BasePath() string {
 		} else {
 			caller, err := os.Executable()
 			if err != nil {
-				err = fmt.Errorf("service.setupInstall err obtaining exec path: %w", err)
+				err = errors.Wrap(err, "os.Executable failed")
 				log.Println(err)
-				tracing.NotifyError(err, tracing.Context{})
+				sentry.NotifyError(err, map[string]sentry.Context{})
 				// default to AppData
 				basePath = filepath.Join(os.Getenv("AppData"), "Exactlylabs", "Radar")
 			} else {
@@ -148,7 +148,7 @@ func BasePath() string {
 		if err != nil {
 			basePath, err = os.Getwd()
 			if err != nil {
-				panic(fmt.Errorf("config.BasePath error: %w", err))
+				panic(errors.Wrap(err, "os.Getwd failed"))
 			}
 		}
 		basePath = filepath.Join(basePath, "radar")
@@ -167,11 +167,11 @@ func Join(elements ...string) string {
 func openFile(path string, flag int, perm fs.FileMode) (*os.File, error) {
 	err := os.MkdirAll(filepath.Dir(path), 0755)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to create directory").WithMetadata(errors.Metadata{"dir": filepath.Dir(path)})
 	}
 	f, err := os.OpenFile(path, flag, perm)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to open file").WithMetadata(errors.Metadata{"path": path})
 	}
 	return f, nil
 }
@@ -180,15 +180,20 @@ func openFile(path string, flag int, perm fs.FileMode) (*os.File, error) {
 // filename at the application configuration directory
 func OpenFile(filename string, flag int, perm fs.FileMode) (*os.File, error) {
 	path := Join(filename)
-	return openFile(path, flag, perm)
+	f, err := openFile(path, flag, perm)
+	if err != nil {
+		return nil, errors.W(err)
+	}
+	return f, nil
 }
 
 // NewFileLoader returns an io.Reader interface that loads the filename
 // from the application configuration directory
 func NewFileLoader(filename string) (io.Reader, error) {
-	f, err := os.Open(filepath.Join(BasePath(), filename))
+	p := filepath.Join(BasePath(), filename)
+	f, err := os.Open(p)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to open file").WithMetadata(errors.Metadata{"path": p})
 	}
 	return f, nil
 }
@@ -207,7 +212,7 @@ func LoadConfig() *Config {
 	log.Printf("Loading config file at %v", ConfigFilePath())
 	f, err := os.Open(ConfigFilePath())
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
-		panic(fmt.Errorf("config.LoadConfig error: %w", err))
+		panic(errors.Wrap(err, "failed to open config file").WithMetadata(errors.Metadata{"path": ConfigFilePath()}))
 	} else if err == nil {
 		defer f.Close()
 		scanner := bufio.NewScanner(f)
@@ -243,7 +248,7 @@ func Reload() *Config {
 func Save(conf *Config) error {
 	f, err := openFile(ConfigFilePath(), os.O_WRONLY|os.O_CREATE, 0660)
 	if err != nil {
-		return fmt.Errorf("config.Save error opening file: %w", err)
+		return errors.Wrap(err, "failed to open file").WithMetadata(errors.Metadata{"path": ConfigFilePath()})
 	}
 	defer f.Close()
 	confVal := reflect.ValueOf(conf).Elem()

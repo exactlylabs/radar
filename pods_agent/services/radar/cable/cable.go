@@ -3,11 +3,11 @@ package cable
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/services/ws"
 	"github.com/google/uuid"
 )
@@ -54,7 +54,7 @@ func NewChannel(serverUrl, auth, channelName string, customHeader http.Header) *
 func (c *ChannelClient) Connect(ctx context.Context) error {
 	u, err := url.Parse(c.ServerURL)
 	if err != nil {
-		return fmt.Errorf("radar.RadarClient#Connect Parse: %w", err)
+		return errors.Wrap(err, "url.Parse failed")
 	}
 	wsUrl := u
 	if u.Scheme == "http" {
@@ -68,10 +68,10 @@ func (c *ChannelClient) Connect(ctx context.Context) error {
 		ws.WithConnectionErrorCallback(c.onConnectionError),
 	)
 	if err := c.cli.Connect(); err != nil {
-		return fmt.Errorf("radar.RadarClient#Connect Connect: %w", err)
+		return errors.Wrap(err, "websocket client failed to connect")
 	}
 	go func() {
-		defer tracing.NotifyPanic()
+		defer sentry.NotifyIfPanic()
 		c.listenToMessages()
 	}()
 	return nil
@@ -103,7 +103,7 @@ func (c *ChannelClient) listenToMessages() {
 	for rcvMsg := range c.cli.Receiver() {
 		msg := ServerMessage{}
 		if err := json.Unmarshal(rcvMsg.Data, &msg); err != nil {
-			panic(fmt.Errorf("cable.ChannelClient#listenToMessages Unmarshal: %w", err))
+			panic(errors.Wrap(err, "json.Unmarshal failed"))
 		}
 		switch msg.Type {
 		case ConfirmSubscription:
