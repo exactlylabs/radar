@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"strings"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/agent"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/m-lab/ndt7-client-go"
@@ -53,7 +53,7 @@ func (r *ndt7Runner) runTest(ctx context.Context, w io.Writer, testFn func(conte
 	for m := range measurementsCh {
 		data, err := json.Marshal(measurementValue{Key: "measurement", Value: m})
 		if err != nil {
-			return fmt.Errorf("ndt7.ndt7Runner#runTest failed marshalling row: %w", err)
+			return errors.Wrap(err, "failed marshalling row")
 		}
 		w.Write(data)
 		w.Write([]byte("\n"))
@@ -91,7 +91,7 @@ func (r *ndt7Runner) writeSummary(w io.Writer, client *ndt7.Client) (*summary, e
 
 	data, err := json.Marshal(s)
 	if err != nil {
-		return nil, fmt.Errorf("ndt7.ndt7Runner#writeSummary error marshaling: %w", err)
+		return nil, errors.Wrap(err, "error marshaling")
 	}
 	w.Write(data)
 	return s, nil
@@ -117,7 +117,7 @@ func (r *ndt7Runner) Run(ctx context.Context) (*agent.Measurement, error) {
 		}
 		if err != nil {
 			// There is still an error. return the error
-			return nil, fmt.Errorf("ndt7speedtest.ndt7Runner#Run download error: %w", err)
+			return nil, errors.W(err).WithMetadata(errors.Metadata{"type": "ndt7", "test": "download"})
 		}
 
 	}
@@ -131,17 +131,17 @@ func (r *ndt7Runner) Run(ctx context.Context) (*agent.Measurement, error) {
 			err = r.runTest(ctx, b, client.StartUpload)
 		}
 		if err != nil {
-			return nil, fmt.Errorf("ndt7speedtest.ndt7Runner#Run upload error: %w", err)
+			return nil, errors.W(err).WithMetadata(errors.Metadata{"type": "ndt7", "test": "upload"})
 		}
 	}
 	summary, err := r.writeSummary(b, client)
 	if err != nil {
-		return nil, fmt.Errorf("ndt7speedtest.ndt7Runner")
+		return nil, errors.W(err)
 	}
 	log.Println("NDT7 - Speed Test Finished")
 	res, err := io.ReadAll(b)
 	if err != nil {
-		return nil, fmt.Errorf("ndt7speedtest.ndt7Runner#Run failed reading buffer: %w", err)
+		return nil, errors.Wrap(err, "reading buffer")
 	}
 	return &agent.Measurement{
 		Raw:          res,

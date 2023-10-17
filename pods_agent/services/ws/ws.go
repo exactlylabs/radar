@@ -2,12 +2,12 @@ package ws
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/gorilla/websocket"
 )
 
@@ -70,7 +70,7 @@ func (c *Client) connectAndListen(ctx context.Context) error {
 	defer cancel()
 	conn, _, err := c.dialer.DialContext(ctx, c.url, c.header)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "dialer failed").WithMetadata(errors.Metadata{"url": c.url, "headers": c.header})
 	}
 	defer conn.Close()
 	c.conn = conn
@@ -79,7 +79,7 @@ func (c *Client) connectAndListen(ctx context.Context) error {
 	writerStopped := make(chan struct{})
 	go func() {
 		defer close(writerStopped)
-		defer tracing.NotifyPanic()
+		defer sentry.NotifyIfPanic()
 		for {
 			select {
 			case <-innerCtx.Done():
@@ -88,9 +88,9 @@ func (c *Client) connectAndListen(ctx context.Context) error {
 				err := conn.WriteJSON(msg)
 				if err != nil {
 					if !websocket.IsCloseError(err) {
-						log.Println(fmt.Errorf("ws.Client#connectAndListen WriteJSON: %w", err))
+						log.Println(errors.Wrap(err, "WriteJSON failed"))
 					} else {
-						log.Println(fmt.Errorf("ws.CLient#connectAndListen WriteJSON: server closed: %w", err))
+						log.Println(errors.Wrap(err, "server closed connection"))
 					}
 					return
 				}
@@ -103,14 +103,14 @@ func (c *Client) connectAndListen(ctx context.Context) error {
 	readerStopped := make(chan struct{})
 	go func() {
 		defer close(readerStopped)
-		defer tracing.NotifyPanic()
+		defer sentry.NotifyIfPanic()
 		for {
 			mType, data, err := conn.ReadMessage()
 			if err != nil {
 				if !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
-					log.Println(fmt.Errorf("ws.Client#connectAndListen ReadJSON: %w", err))
+					log.Println(errors.Wrap(err, "ReadJSON failed"))
 				} else {
-					log.Println(fmt.Errorf("ws.Client#connectAndListen ReadJSON: server closed: %w", err))
+					log.Println(errors.Wrap(err, "server closed connection"))
 				}
 				return
 			}
@@ -168,16 +168,17 @@ func (c *Client) Connect() error {
 	go func() {
 		defer close(c.rCh)
 		defer close(c.wCh)
-		defer tracing.NotifyPanic()
+		defer sentry.NotifyIfPanic()
 
 		// Run immediately and retries infinitely in case of errors
 		// this call is blocking, it only leaves in case of error or context is closed
 		err := c.connectAndListen(ctx)
 		if err != nil {
+			err = errors.Wrap(err, "websocket connection failed")
 			if c.onConnectionError != nil {
 				c.onConnectionError(err)
 			}
-			log.Printf("ws.Client#Connect: Connection failed with error: %v\n", err)
+			log.Println(err)
 			log.Println("Waiting until retrying to connect...")
 		}
 		for {
@@ -188,10 +189,11 @@ func (c *Client) Connect() error {
 				log.Println("Retrying...")
 				err := c.connectAndListen(ctx)
 				if err != nil {
+					err = errors.Wrap(err, "websocket connection failed")
 					if c.onConnectionError != nil {
 						c.onConnectionError(err)
 					}
-					log.Printf("ws.Client#Connect: Connection failed with error: %v\n", err)
+					log.Println(err)
 					log.Println("Waiting until retrying to connect...")
 				}
 			}

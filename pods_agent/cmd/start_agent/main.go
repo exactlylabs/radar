@@ -10,14 +10,15 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/agent"
 	"github.com/exactlylabs/radar/pods_agent/cmd/start_agent/internal/runners"
 	"github.com/exactlylabs/radar/pods_agent/cmd/start_agent/internal/service"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
+	"github.com/exactlylabs/radar/pods_agent/services/bufferedsentry"
 	"github.com/exactlylabs/radar/pods_agent/services/radar"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 )
 
 func main() {
@@ -46,9 +47,8 @@ func main() {
 	log.Println("Starting Radar Agent")
 	log.Println(info.BuildInfo())
 	c := config.LoadConfig()
-	tracing.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version, os.TempDir())
-	defer tracing.FlushBuffer()
-	defer tracing.NotifyPanic()
+	bufferedsentry.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version, c.Environment, "Pods Agent", os.TempDir())
+	defer sentry.NotifyIfPanic()
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT)

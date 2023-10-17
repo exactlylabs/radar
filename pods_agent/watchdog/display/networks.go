@@ -2,10 +2,10 @@ package display
 
 import (
 	_ "embed"
-	"fmt"
 	"log"
 	"text/template"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/rivo/tview"
 )
@@ -35,7 +35,7 @@ func (nc *networkContainer) Update() {
 	nc.Clear()
 	ifaces, err := nc.prober.Interfaces()
 	if err != nil {
-		log.Println(fmt.Errorf("display.Refresh Interfaces: %w", err))
+		log.Println(errors.W(err))
 		ifaces = make([]sysinfo.NetInterface, 0)
 	}
 	args := map[string]interface{}{

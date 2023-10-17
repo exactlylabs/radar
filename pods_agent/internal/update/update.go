@@ -2,45 +2,50 @@ package update
 
 import (
 	_ "embed"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
+
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 func SelfUpdate(binaryUrl string, expectedVersion string) error {
 	binPath, err := os.Executable()
 	if err != nil {
-		return fmt.Errorf("update.SelfUpdate error obtaining binary path: %w", err)
+		return errors.Wrap(err, "os.Executable failed")
 	}
 	if runtime.GOOS != "windows" {
 		binPath, err = filepath.EvalSymlinks(binPath)
 		if err != nil {
-			return fmt.Errorf("update.SelfUpdate error evaluating symlink: %w", err)
+			return errors.Wrap(err, "filepath.EvalSymlinks failed").WithMetadata(errors.Metadata{"binPath": binPath})
 		}
 	}
 
-	return InstallFromUrl(binPath, binaryUrl, expectedVersion)
+	err = InstallFromUrl(binPath, binaryUrl, expectedVersion)
+	if err != nil {
+		return errors.W(err)
+	}
+	return nil
 }
 
 func InstallFromUrl(binPath, url, expectedVersion string) error {
 	res, err := http.Get(url)
 	if err != nil {
-		return fmt.Errorf("update.InstallFromUrl Get: %w", err)
+		return errors.Wrap(err, "request failed").WithMetadata(errors.Metadata{"url": url})
 	}
 	if res.StatusCode != 200 {
-		return fmt.Errorf("update.InstallFromUrl unexpected status code: %w", err)
+		return errors.New("update.InstallFromUrl unexpected status code: %d", res.StatusCode)
 	}
 	defer res.Body.Close()
 	binary, err := ParseUpdateFile(res.Body)
 	if err != nil {
-		return err
+		return errors.W(err)
 	}
 	if err := Install(binPath, binary, expectedVersion); err != nil {
-		return fmt.Errorf("update.InstallFromUrl Install: %w", err)
+		return errors.W(err)
 	}
 	return nil
 }
@@ -54,13 +59,15 @@ func Install(binPath string, binary []byte, expectedVersion string) (err error) 
 		err = replaceBinary(tmpBinPath, binary)
 	}
 	if err != nil {
-		return fmt.Errorf("update.Install temp binary: %w", err)
+		return errors.W(err)
 	}
 	if err := validateBinaryVersion(tmpBinPath, expectedVersion); err != nil {
-		return fmt.Errorf("update.Install validateBinaryVersion: %w", err)
+		return errors.W(err)
 	}
 	if err := os.Rename(tmpBinPath, binPath); err != nil {
-		return fmt.Errorf("update.Install Rename: %w", err)
+		return errors.Wrap(err, "failed to rename file").WithMetadata(errors.Metadata{
+			"from": tmpBinPath, "to": binPath,
+		})
 	}
 	return nil
 }
@@ -68,12 +75,12 @@ func Install(binPath string, binary []byte, expectedVersion string) (err error) 
 func addBinary(binPath string, binary []byte) error {
 	f, err := os.OpenFile(binPath, os.O_CREATE|os.O_RDWR, 0755)
 	if err != nil {
-		return fmt.Errorf("update.addBinary OpenFile: %w", err)
+		return errors.Wrap(err, "failed to open file").WithMetadata(errors.Metadata{"path": binPath})
 	}
 	defer f.Close()
 	_, err = f.Write(binary)
 	if err != nil {
-		return fmt.Errorf("update.addBinary Write: %w", err)
+		return errors.Wrap(err, "failed to write file").WithMetadata(errors.Metadata{"path": binPath})
 	}
 	return nil
 }
@@ -92,23 +99,27 @@ func replaceBinary(binPath string, binary []byte) error {
 	}()
 	f, err := os.OpenFile(tmpFile, os.O_CREATE|os.O_RDWR, 0755)
 	if err != nil {
-		return fmt.Errorf("update.replaceBinary OpenFile: %w", err)
+		return errors.Wrap(err, "failed to open temp. file").WithMetadata(errors.Metadata{"path": tmpFile})
 	}
 	defer f.Close()
 	n, err := f.Write(binary)
 	if err != nil {
-		return fmt.Errorf("update.replaceBinary Write: %w", err)
+		return errors.Wrap(err, "failed to write to temp. file").WithMetadata(errors.Metadata{"path": tmpFile})
 	}
 	log.Printf("Copied %d Bytes\n", n)
 	f.Close()
 	if err = os.Rename(binPath, oldFile); err != nil {
-		return fmt.Errorf("update.replaceBinary Rename: %w", err)
+		return errors.Wrap(err, "failed to rename file").WithMetadata(errors.Metadata{
+			"from": binPath, "to": oldFile,
+		})
 	}
 	movedToOld = true
 	// // Replace existing binary with new one
 	if err = os.Rename(tmpFile, binPath); err != nil {
 		os.Rename(oldFile, binPath)
-		return fmt.Errorf("update.replaceBinary Rename: %w", err)
+		return errors.Wrap(err, "failed to rename file").WithMetadata(errors.Metadata{
+			"from": tmpFile, "to": binPath,
+		})
 	}
 	os.Remove(oldFile)
 	os.Chmod(binPath, 0755)

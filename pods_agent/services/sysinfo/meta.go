@@ -1,8 +1,11 @@
 package sysinfo
 
 import (
+	"log"
 	"net"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/netroute"
@@ -20,14 +23,15 @@ func Metadata() *ClientMeta {
 }
 
 func macAddresses() []NetInterfaces {
-	defaultRoute, _ := netroute.DefaultRoute()
-	// if err != nil {
-
-	// tracing.NotifyErrorOnce(fmt.Errorf("sysinfo.macAddresses DefaultRoute: %w", err), tracing.Context{})
-	// }
+	defaultRoute, err := netroute.DefaultRoute()
+	if err != nil {
+		log.Println(errors.W(err))
+		sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{})
+	}
 	ifaces, err := net.Interfaces()
 	if err != nil {
-		// tracing.NotifyErrorOnce(fmt.Errorf("sysinfo.macAddresses DefaultRoute: %w", err), tracing.Context{})
+		log.Println(errors.W(err))
+		sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{})
 		return nil
 	}
 	addresses := make([]NetInterfaces, 0)

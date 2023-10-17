@@ -2,12 +2,12 @@ package ndt7diagnose
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"runtime"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/gorilla/websocket"
 	"github.com/m-lab/locate/api/locate"
@@ -37,7 +37,7 @@ func RunDiagnose() (*DiagnoseReport, error) {
 	locator := locate.NewClient(clientName + "/" + sysinfo.Metadata().Version)
 	targets, err := locator.Nearest(ctx, "ndt/ndt7")
 	if err != nil {
-		return nil, fmt.Errorf("ndt7speedtest.RunDiagnose Nearest: %w", err)
+		return nil, errors.Wrap(err, "locator.Nearest failed")
 	}
 	report.Targets = targets
 	for _, target := range targets {
@@ -51,13 +51,13 @@ func RunDiagnose() (*DiagnoseReport, error) {
 
 		u, err := url.Parse(testUrl)
 		if err != nil {
-			test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose Parse: %w", err)
+			test.Error = errors.Wrap(err, "url.Parse failed")
 			continue
 		}
 
 		conn, err := doConnect(ctx, u.String())
 		if err != nil {
-			test.Error = fmt.Errorf("ndt7diagnose.RunDiagnose doConnect: %w", err)
+			test.Error = errors.W(err)
 			continue
 		}
 		conn.Close()
@@ -83,5 +83,5 @@ func doConnect(ctx context.Context, serviceURL string) (*websocket.Conn, error) 
 	headers.Add("Sec-WebSocket-Protocol", "net.measurementlab.ndt.v7")
 	headers.Add("User-Agent", clientName+"/"+sysinfo.Metadata().Version)
 	conn, _, err := dialer.DialContext(ctx, URL.String(), headers)
-	return conn, err
+	return conn, errors.Wrap(err, "dialer.DialContext failed").WithMetadata(errors.Metadata{"url": URL.String()})
 }

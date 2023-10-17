@@ -1,6 +1,10 @@
 package cable
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/exactlylabs/go-errors/pkg/errors"
+)
 
 // CommandType accepted by ActionCable protocol
 type CommandType string
@@ -26,7 +30,7 @@ func (mc CustomActionData) MarshalJSON() ([]byte, error) {
 	v := map[string]interface{}{"action": mc.Action, "payload": mc.Payload}
 	data, err := json.Marshal(v)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "json.Marshal failed")
 	}
 	return json.Marshal(string(data))
 }

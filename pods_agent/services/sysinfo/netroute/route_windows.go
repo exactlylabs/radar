@@ -3,24 +3,31 @@ package netroute
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"net"
 	"os/exec"
 	"strings"
+
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 func DefaultRoute() (r Route, err error) {
 	cmd := exec.Command("route", "print", "0.0.0.0")
+	stderr := new(bytes.Buffer)
+	cmd.Stderr = stderr
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return r, fmt.Errorf("netroute.DefaultRoute CombinedOutput: %w", err)
+		return r, errors.Wrap(err, "failed to run fetch gateway route: %s", string(out)).WithMetadata(errors.Metadata{
+			"stderr": stderr.String(), "stdout": string(out),
+		})
 	}
-
+	routeContent := ""
 	// windows doesn't have a good format to parse
 	// so we need to infer based on the number of columns and if our parsings don't fail
 	scanner := bufio.NewScanner(bytes.NewReader(out))
 	for scanner.Scan() {
-		fields := strings.Fields(scanner.Text())
+		row := scanner.Text()
+		routeContent += row + "\n"
+		fields := strings.Fields(row)
 		if len(fields) == 5 {
 			// possible match, check if we can convert the gateway col to an IP
 			r.GatewayIp = net.ParseIP(fields[2])
@@ -35,25 +42,25 @@ func DefaultRoute() (r Route, err error) {
 			}
 			iface, err := interfaceByIP(interfaceIp)
 			if err != nil {
-				return r, err
+				return r, errors.W(err).WithMetadata(errors.Metadata{"content": routeContent, "interfaceIp": interfaceIp.String()})
 			}
 			r.Interface = &iface
 			return r, nil
 		}
 	}
-	return r, fmt.Errorf("netroute.DefaultRoute: gateway not found")
+	return r, errors.New("failed to find default route").WithMetadata(errors.Metadata{"content": routeContent})
 }
 
 func interfaceByIP(ip net.IP) (net.Interface, error) {
 	// as seen, we don't have the interface name, but the IP this interface has
 	ifaces, err := net.Interfaces()
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, "net.Interfaces failed"))
 	}
 	for _, iface := range ifaces {
 		addrs, err := iface.Addrs()
 		if err != nil {
-			panic(err)
+			panic(errors.Wrap(err, "failed to grab addresses for interface").WithMetadata(errors.Metadata{"interface": iface.Name}))
 		}
 		for _, addr := range addrs {
 			addrClean := strings.Split(addr.String(), "/")[0]
@@ -62,5 +69,5 @@ func interfaceByIP(ip net.IP) (net.Interface, error) {
 			}
 		}
 	}
-	return net.Interface{}, fmt.Errorf("netroute.interfaceByIP: interface not found")
+	return net.Interface{}, errors.New("interface not found").WithMetadata(errors.Metadata{"interfaces": ifaces})
 }

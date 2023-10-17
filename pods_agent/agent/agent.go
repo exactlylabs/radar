@@ -2,17 +2,17 @@ package agent
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
 	"sync"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/update"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 	"github.com/exactlylabs/radar/pods_agent/watchdog"
 )
 
@@ -44,7 +44,9 @@ func (a *Agent) registerAgent(ctx context.Context, c *config.Config) *Registered
 		log.Println("Registering the pod to the server")
 		pod, err := a.client.Register(c.RegistrationToken)
 		if err != nil {
+			err = errors.Wrap(err, "failed to register pod to server")
 			log.Println(err)
+			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
 			log.Printf("Waiting %v before retrying\n", retryPeriod)
 		}
 		if pod != nil {
@@ -76,7 +78,7 @@ func (a *Agent) Setup(ctx context.Context, c *config.Config) {
 	}
 	err := config.Save(c)
 	if err != nil {
-		panic(err)
+		panic(errors.W(err))
 	}
 }
 
@@ -89,12 +91,12 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 	a.wg.Add(2)
 	go func() {
 		defer a.wg.Done()
-		defer tracing.NotifyPanic() // always add this to each new goroutine
+		defer sentry.NotifyIfPanic() // always add this to each new goroutine
 		startSpeedTestRunner(agentCtx, c, a.runTestCh, a.runners, a.client)
 	}()
 	go func() {
 		defer a.wg.Done()
-		defer tracing.NotifyPanic() // always add this to each new goroutine
+		defer sentry.NotifyIfPanic() // always add this to each new goroutine
 		startPingLoop(agentCtx, a.pingRespCh, a.client, pingFrequency(c))
 	}()
 
@@ -147,7 +149,7 @@ func maybeSendChannel(ch chan<- bool) {
 func strToDuration(freqStr string, base time.Duration) time.Duration {
 	freqInt, err := strconv.Atoi(freqStr)
 	if err != nil {
-		panic(fmt.Errorf("unable to convert %v to integer", freqStr))
+		panic(errors.Wrap(err, "unable to convert %v to integer", freqStr))
 	}
 	return time.Duration(freqInt) * base
 }
@@ -163,14 +165,14 @@ func updateAgent(bu BinaryUpdate, cancel context.CancelFunc) {
 	err := update.SelfUpdate(bu.BinaryUrl, bu.Version)
 	if update.IsValidationError(err) {
 		log.Printf("Existent update is invalid: %v\n", err)
-		tracing.NotifyErrorOnce(err, tracing.Context{
+		sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{
 			"Update Data": {
 				"version": bu.Version,
 				"url":     bu.BinaryUrl,
 			},
 		})
 	} else if err != nil {
-		panic(err)
+		panic(errors.W(err))
 	} else {
 		log.Println("Successfully Updated the Binary. Exiting current version.")
 		cancel()
@@ -185,18 +187,18 @@ func updateWatchdogIfNeeded(bu BinaryUpdate, rebooter Rebooter, cancel context.C
 		err := watchdog.UpdateWatchdog(bu.BinaryUrl, bu.Version)
 		if update.IsValidationError(err) {
 			log.Printf("Existent update is invalid: %v\n", err)
-			tracing.NotifyErrorOnce(err, tracing.Context{
+			sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{
 				"Update Data": {
 					"version": bu.Version,
 					"url":     bu.BinaryUrl,
 				},
 			})
 		} else if err != nil {
-			panic(err)
+			panic(errors.W(err))
 		} else {
 			log.Println("Successfully Updated the Watchdog. Restarting the whole system")
 			if err := rebooter.Reboot(); err != nil {
-				panic(fmt.Errorf("agent.Start Reboot: %w", err))
+				panic(errors.Wrap(err, "Reboot failed"))
 			}
 			cancel()
 			os.Exit(1)

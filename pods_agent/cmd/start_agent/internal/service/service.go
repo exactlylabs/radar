@@ -6,10 +6,10 @@ import (
 	"log"
 	"os"
 
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/agent"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 	"github.com/kardianos/service"
 )
 
@@ -49,7 +49,7 @@ type agentSvc struct {
 
 func (svc *agentSvc) Start(s service.Service) error {
 	go func() {
-		defer tracing.NotifyPanic()
+		defer sentry.NotifyIfPanic()
 		sysManager := sysinfo.NewSystemManager()
 		svc.agent.Start(svc.ctx, svc.c, sysManager)
 	}()

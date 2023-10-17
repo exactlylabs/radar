@@ -2,7 +2,8 @@ package cable
 
 import (
 	"encoding/json"
-	"fmt"
+
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 // MessageType tells us which type of message the server is sending to us
@@ -31,7 +32,7 @@ func (i *Identifier) MarshalJSON() ([]byte, error) {
 	}
 	data, err := json.Marshal(v)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "json.Marshal failed")
 	}
 	return json.Marshal(string(data))
 }
@@ -40,11 +41,11 @@ func (i *Identifier) MarshalJSON() ([]byte, error) {
 func (i *Identifier) UnmarshalJSON(data []byte) error {
 	strJSON := ""
 	if err := json.Unmarshal(data, &strJSON); err != nil {
-		return err
+		return errors.Wrap(err, "json.Unmarshal failed")
 	}
 	v := make(map[string]interface{})
 	if err := json.Unmarshal([]byte(strJSON), &v); err != nil {
-		return err
+		return errors.Wrap(err, "json.Unmarshal failed")
 	}
 	i.Channel = v["channel"].(string)
 	i.Id = v["id"].(string)
@@ -62,10 +63,10 @@ type ServerMessage struct {
 func (sm ServerMessage) DecodeMessage(obj interface{}) error {
 	data, err := sm.EncodedMessage()
 	if err != nil {
-		return err
+		return errors.W(err)
 	}
 	if err := json.Unmarshal(data, obj); err != nil {
-		return fmt.Errorf("messages.ServerMessage#DecodeMessage Unmarshal: %w", err)
+		return errors.Wrap(err, "json.Unmarshal failed").WithMetadata(errors.Metadata{"message": string(data)})
 	}
 	return nil
 }
@@ -74,7 +75,7 @@ func (sm ServerMessage) DecodeMessage(obj interface{}) error {
 func (sm ServerMessage) EncodedMessage() ([]byte, error) {
 	data, err := json.Marshal(sm.Message)
 	if err != nil {
-		return nil, fmt.Errorf("messages.ServerMessage#EncodedMessage Marshal: %w", err)
+		return nil, errors.Wrap(err, "json.Marshal failed")
 	}
 	return data, nil
 }

@@ -5,11 +5,12 @@ package netroute
 import (
 	"bufio"
 	"encoding/binary"
-	"fmt"
 	"net"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
 type gatewayInfo struct {
@@ -20,11 +21,14 @@ type gatewayInfo struct {
 func DefaultRoute() (r Route, err error) {
 	info, err := getGatewayFromNetRoute()
 	if err != nil {
-		return r, fmt.Errorf("netroute.DefaultRoute getGatewayFromNetRoute: %w", err)
+		return r, errors.W(err)
 	}
 	iface, err := net.InterfaceByName(info.Interface)
 	if err != nil {
-		return r, fmt.Errorf("netroute.DefaultRoute InterfaceByName: %w", err)
+		return r, errors.Wrap(err, "net.InterfaceByName failed").WithMetadata(errors.Metadata{
+			"interface":  info.Interface,
+			"gateway-ip": info.Gateway.String(),
+		})
 	}
 	return Route{Interface: iface, GatewayIp: info.Gateway}, nil
 }
@@ -32,24 +36,32 @@ func DefaultRoute() (r Route, err error) {
 func getGatewayFromNetRoute() (*gatewayInfo, error) {
 	f, err := os.Open("/proc/net/route")
 	if err != nil {
-		return nil, fmt.Errorf("netroute.getGatewayFromNetRoute Open: %w", err)
+		return nil, errors.Wrap(err, "failed to open /proc/net/route")
 	}
 	defer f.Close()
+	routeContent := ""
 	scanner := bufio.NewScanner(f)
 	headers := make(map[string]int)
 	if !scanner.Scan() {
-		return nil, fmt.Errorf("netroute.getGatewayFromNetRoute Scan: %w", scanner.Err())
+		return nil, errors.Wrap(scanner.Err(), "failed to scan /proc/net/route")
 	}
 	// Populate Headers
-	columns := strings.Split(scanner.Text(), "\t")
+	row := scanner.Text()
+	routeContent += row + "\n"
+	columns := strings.Split(row, "\t")
 	for i, c := range columns {
 		headers[strings.TrimSpace(c)] = i
 	}
+
 	for scanner.Scan() {
-		columns := strings.Split(scanner.Text(), "\t")
+		row = scanner.Text()
+		routeContent += row + "\n"
+		columns := strings.Split(row, "\t")
 		gatewayAddr, err := strconv.ParseInt("0x"+columns[headers["Gateway"]], 0, 64)
 		if err != nil {
-			return nil, fmt.Errorf("netroute.getGatewayFromNetRoute ParseInt: %w", err)
+			return nil, errors.Wrap(err, "failed to parse int from hex").WithMetadata(errors.Metadata{
+				"gateway": columns[headers["Gateway"]],
+			})
 		}
 
 		if gatewayAddr == 0 {
@@ -64,7 +76,7 @@ func getGatewayFromNetRoute() (*gatewayInfo, error) {
 			Gateway:   ip,
 		}, nil
 	}
-	return nil, fmt.Errorf("netroute.getGatewayFromNetRoute: gateway not found")
+	return nil, errors.New("failed to find gateway in /proc/net/route").WithMetadata(errors.Metadata{"content": routeContent})
 }
 
 func inet_ntoa(ipnr int64) net.IP {

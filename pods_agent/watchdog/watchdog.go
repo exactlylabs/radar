@@ -2,26 +2,26 @@ package watchdog
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"time"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/update"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
-	"github.com/exactlylabs/radar/pods_agent/services/tracing"
 	"github.com/exactlylabs/radar/pods_agent/watchdog/display"
 )
 
 // Run is a blocking function that starts all routines related to the Watchdog.
 func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentCli display.AgentClient, cli WatchdogClient) {
 	go func() {
-		defer tracing.NotifyPanic()
+		defer sentry.NotifyIfPanic()
 		display.StartDisplayLoop(ctx, os.Stdout, agentCli, sysManager)
 	}()
 	go func() {
-		defer tracing.NotifyPanic()
+		defer sentry.NotifyIfPanic()
 		StartScanLoop(ctx, sysManager)
 	}()
 	timer := time.NewTicker(10 * time.Second)
@@ -41,7 +41,7 @@ func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentC
 			if !cli.Connected() {
 				res, err := cli.WatchdogPing(sysinfo.Metadata())
 				if err != nil {
-					log.Println(fmt.Errorf("watchdog.checkUpdate Ping: %w", err))
+					log.Println(errors.W(err))
 				} else if res.Update != nil {
 					handleUpdate(c, sysManager, *res.Update)
 				}
@@ -55,7 +55,7 @@ func handleUpdate(c *config.Config, sysManager SystemManager, data BinaryUpdate)
 	err := UpdateWatchdog(data.BinaryUrl, data.Version)
 	if update.IsValidationError(err) {
 		log.Printf("Existent update is invalid: %v\n", err)
-		tracing.NotifyErrorOnce(err, tracing.Context{
+		sentry.NotifyErrorOnce(err, map[string]sentry.Context{
 			"Update Data": {
 				"version": data.Version,
 				"url":     data.BinaryUrl,
@@ -66,7 +66,7 @@ func handleUpdate(c *config.Config, sysManager SystemManager, data BinaryUpdate)
 	} else {
 		log.Println("Successfully Updated the Watchdog. Restarting the whole system")
 		if err := sysManager.Reboot(); err != nil {
-			panic(fmt.Errorf("watchdog.checkUpdate Reboot: %w", err))
+			panic(err)
 		}
 		os.Exit(1)
 	}
