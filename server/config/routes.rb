@@ -283,6 +283,9 @@ Rails.application.routes.draw do
   get '/update_public_page/:pod_id', to: 'public_pod#update_public_page'
   get '/supported-browsers', to: 'public#supported_browsers'
 
+  get '/TTUHSC', to: 'mailer#redirect_to_ttuhsc'
+  get '/TTUHSC/:id', to: 'mailer#redirect_campaign_to_ttuhsc'
+
   # root to: 'home#home'
   root to: redirect('/users/sign_in')
 end
