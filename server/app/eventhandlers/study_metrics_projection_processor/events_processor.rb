@@ -158,12 +158,10 @@ module StudyMetricsProjectionProcessor
       if location_state["online_pods_count_by_asn"].nil?
         location_state["online_pods_count_by_asn"] = {}
       end
-      # @consumer_offset.state["locations_state"][location_id]["online_pods_count_by_asn"] ||= {}
 
       if location_state["online_pods_count_by_asn"][as_org_id.to_s].nil?
         location_state["online_pods_count_by_asn"][as_org_id.to_s] = 0
       end
-      # @consumer_offset.state["locations_state"][location_id]["online_pods_count_by_asn"][as_org_id.to_s] ||= 0
 
       asn_location_was_online = location_state["online_pods_count_by_asn"][as_org_id.to_s] > 0
 
