@@ -1,5 +1,5 @@
 class MetricsProjectionJob < ProjectionJob
   def perform
-    MetricsProjectionProcessor::Processor.new.process
+    StudyMetricsProjectionProcessor::Processor.new.process
   end
 end
