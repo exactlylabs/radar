@@ -38,30 +38,30 @@ module StudyMetricsProjectionProcessor
     end
 
     def on_online_event(event, state)
-      self.update_online_count_for_location(state["location_id"], state["autonomous_system_id"], 1)
+      self.update_online_count_for_location(event.timestamp, state["location_id"], state["autonomous_system_id"], 1)
     end
 
     def on_offline_event(event, state)
-      self.update_online_count_for_location(state["location_id"], state["autonomous_system_id"], -1)
+      self.update_online_count_for_location(event.timestamp, state["location_id"], state["autonomous_system_id"], -1)
     end
 
     def on_location_changed_event(event, state)
       if state["online"]
 
         if event.data["from"].present?
-          self.update_online_count_for_location(event.data["from"], state["autonomous_system_id"], -1)
+          self.update_online_count_for_location(event.timestamp, event.data["from"], state["autonomous_system_id"], -1)
         end
 
         if event.data["to"].present?
-          self.update_online_count_for_location(event.data["to"], state["autonomous_system_id"], 1)
+          self.update_online_count_for_location(event.timestamp, event.data["to"], state["autonomous_system_id"], 1)
         end
       end
     end
 
     def on_as_changed_event(event, state)
       if state["online"]
-        self.update_online_count_for_location(state["location_id"], event.data["from"], -1)
-        self.update_online_count_for_location(state["location_id"], event.data["to"], 1)
+        self.update_online_count_for_location(event.timestamp, state["location_id"], event.data["from"], -1)
+        self.update_online_count_for_location(event.timestamp, state["location_id"], event.data["to"], 1)
       end
     end
 
@@ -126,16 +126,16 @@ module StudyMetricsProjectionProcessor
         )
         records.each do |record|
           if record["from_online"]
-            self.update_online_count_for_location(record["from_location_id"], record["from_autonomous_system_id"], -1)
+            self.update_online_count_for_location(outage["end_time"], record["from_location_id"], record["from_autonomous_system_id"], -1)
           end
           if record["to_online"]
-            self.update_online_count_for_location(record["to_location_id"], record["to_autonomous_system_id"], 1)
+            self.update_online_count_for_location(outage["end_time"], record["to_location_id"], record["to_autonomous_system_id"], 1)
           end
         end
       end
     end
 
-    def update_online_count_for_location(location_id, autonomous_system_id, incr)
+    def update_online_count_for_location(timestamp, location_id, autonomous_system_id, incr)
       if @lonlats[location_id].nil?
         begin
           location = Location.with_deleted.find(location_id)
@@ -150,36 +150,11 @@ module StudyMetricsProjectionProcessor
 
       # Update the location's state.
       # Since our locations snapshots weren't tracking online events, it's safer to derive state from clients snapshots.
-      # Given we're storing this as a json object, all keys MUST be strings.
-      if @consumer_offset.state["locations_state"][location_id.to_s].nil?
-        @consumer_offset.state["locations_state"][location_id.to_s] = {}
-      end
-      location_state = @consumer_offset.state["locations_state"][location_id.to_s]
-      if location_state["online_pods_count_by_asn"].nil?
-        location_state["online_pods_count_by_asn"] = {}
-      end
+      location_meta = self.get_location_metadata(location_id, as_org_id)
+      asn_location_was_online = location_meta.online?
+      location_meta.online_pods_count += incr
+      location_is_online = location_meta.online_pods_count > 0
 
-      if location_state["online_pods_count_by_asn"][as_org_id.to_s].nil?
-        location_state["online_pods_count_by_asn"][as_org_id.to_s] = 0
-      end
-
-      asn_location_was_online = location_state["online_pods_count_by_asn"][as_org_id.to_s] > 0
-
-      location_state["online_pods_count_by_asn"][as_org_id.to_s] += incr
-
-      asn_location_is_online = location_state["online_pods_count_by_asn"][as_org_id.to_s] > 0
-
-      if location_state["state_by_asn"].nil?
-        location_state["state_by_asn"] ||= {}
-      end
-      if location_state["state_by_asn"][as_org_id.to_s].nil?
-        location_state["state_by_asn"][as_org_id.to_s] = {}
-      end
-      location_asn_state = location_state["state_by_asn"][as_org_id.to_s]
-
-      location_asn_state["online?"] = asn_location_is_online
-      location_asn_state["online_at_least_once"] = asn_location_is_online || location_asn_state.fetch("online_at_least_once", false)
-      location_asn_state["as_org_name"] = as_org_name
 
       aggs = self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: location_id)
       study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
@@ -190,19 +165,23 @@ module StudyMetricsProjectionProcessor
         end
 
         self.update_projection(aggregate, as_org_id, "online_pods_count", incr)
-        if asn_location_was_online && !asn_location_is_online
+        if asn_location_was_online && !location_is_online
           self.update_projection(aggregate, as_org_id, "online_locations_count", -1)
+          location_meta.online = false
+          location_meta.last_offline_event_at = timestamp
 
           # completed_and_online_locations_count should only be decreased if the location's goal isn't completed yet
-          if !location_asn_state.fetch("90_day_goal_reached", false)
+          if !location_meta.completed?
             self.update_projection(aggregate, as_org_id, "completed_and_online_locations_count", -1)
           end
 
-        elsif !asn_location_was_online && asn_location_is_online
+        elsif !asn_location_was_online && location_is_online
           self.update_projection(aggregate, as_org_id, "online_locations_count", 1)
+          location_meta.online = true
+          location_meta.last_online_event_at = timestamp
 
           # completed_and_online_locations_count should only be increased if the location's goal isn't completed yet'
-          if !location_asn_state.fetch("90_day_goal_reached", false)
+          if !location_meta.completed?
             self.update_projection(aggregate, as_org_id, "completed_and_online_locations_count", 1)
           end
         end

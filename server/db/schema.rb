@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_18_200049) do
+ActiveRecord::Schema.define(version: 2023_10_20_193615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pageinspect"
@@ -360,6 +360,19 @@ ActiveRecord::Schema.define(version: 2023_10_18_200049) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["account_id"], name: "index_location_groups_on_account_id"
+  end
+
+  create_table "location_metadata_projections", force: :cascade do |t|
+    t.bigint "location_id"
+    t.bigint "autonomous_system_org_id"
+    t.integer "online_pods_count", default: 0
+    t.integer "days_online", default: 0
+    t.boolean "completed", default: false
+    t.boolean "online", default: false
+    t.datetime "last_offline_event_at"
+    t.datetime "last_online_event_at"
+    t.index ["autonomous_system_org_id"], name: "index_location_metadata_projections_on_autonomous_system_org_id"
+    t.index ["location_id"], name: "index_location_metadata_projections_on_location_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -737,6 +750,8 @@ ActiveRecord::Schema.define(version: 2023_10_18_200049) do
   add_foreign_key "invites", "accounts"
   add_foreign_key "invites", "users"
   add_foreign_key "location_groups", "accounts"
+  add_foreign_key "location_metadata_projections", "autonomous_system_orgs"
+  add_foreign_key "location_metadata_projections", "locations"
   add_foreign_key "locations", "accounts"
   add_foreign_key "locations", "location_groups"
   add_foreign_key "locations", "users", column: "created_by_id"

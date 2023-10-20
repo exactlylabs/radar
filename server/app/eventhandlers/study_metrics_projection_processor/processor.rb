@@ -24,6 +24,12 @@ module StudyMetricsProjectionProcessor
       @consumer_offset.state["locations_state"] ||= {}
 
       @lonlats ||= {}
+      @location_metadatas = {}
+
+      LocationMetadataProjection.all.each do |meta|
+        @location_metadatas["#{meta.location_id}-#{meta.autonomous_system_org_id}"] = meta
+      end
+
     end
 
     def inspect()
@@ -143,7 +149,7 @@ module StudyMetricsProjectionProcessor
     end
 
     def flush_insertion_queue()
-      # Save current insertions into the DB and update the offsets in a single transaction
+      # Save current insertions into the DB, update the offsets, and location metadatas in a single transaction
       if @insertion_queue.size == 0
         return
       end
@@ -151,6 +157,9 @@ module StudyMetricsProjectionProcessor
         Rails.logger.info "Flushing insertion queue with #{@insertion_queue.size} elements"
         t = Time.now
         @consumer_offset.save!
+        @location_metadatas.values.each do |meta|
+          meta.save!
+        end
         @raw.exec("COPY metrics_projections (timestamp, study_aggregate_id, parent_aggregate_id, autonomous_system_org_id, online_pods_count, online_locations_count, measurements_count, points_with_tests_count, completed_locations_count, completed_and_online_locations_count, bucket_name) FROM STDIN CSV")
         @insertion_queue.each do |row|
           @raw.put_copy_data(

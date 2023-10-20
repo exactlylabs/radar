@@ -38,6 +38,15 @@ module StudyMetricsProjectionProcessor
       return aggs
     end
 
+    def get_location_metadata(location_id, as_org_id)
+      meta = @location_metadatas["#{location_id}-#{as_org_id}"]
+      if meta.nil?
+        meta = LocationMetadataProjection.find_or_create_by!(location_id: location_id, autonomous_system_org_id: as_org_id)
+        @location_metadatas["#{location_id}-#{as_org_id}"] = meta
+      end
+      return meta
+    end
+
     private
 
     def load_state_aggregate(geospaces)
