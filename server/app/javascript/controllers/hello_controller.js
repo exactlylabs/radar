@@ -12,15 +12,23 @@ export default class extends Controller {
     if(e.target !== document.body) return; // Only apply shortcut if not typing in an input or any other regular keyboard interaction
     if (e.shiftKey && e.key === 'N') {
       e.preventDefault();
-      fetch('/feature_flags/networks/toggle', {
-        method: 'PUT',
-        headers: { "X-CSRF-Token": this.token },
-      })
+      this.toggleFeatureFlag('Networks');
+    } else if(e.shiftKey && e.key === 'R') {
+      e.preventDefault();
+      this.toggleFeatureFlag('Roles');
+    }
+  }
+  
+  toggleFeatureFlag(featureFlag) {
+    fetch(`/feature_flags/${featureFlag.toLowerCase()}/toggle`, {
+      method: 'PUT',
+      headers: { "X-CSRF-Token": this.token },
+    })
       .then(res => {
         if (res.ok) {
           emitCustomEvent('renderAlert', {
             detail: {
-              message: 'Networks feature flag toggled successfully. Refreshing...',
+              message: `${featureFlag} feature flag toggled successfully. Refreshing...`,
               type: AlertTypes.SUCCESS
             }
           });
@@ -28,12 +36,11 @@ export default class extends Controller {
             window.location.reload();
           }, 1500);
         } else {
-          throw new Error('Networks toggle failed');
+          throw new Error(`${featureFlag} toggle failed`);
         }
       })
       .catch(err => {
-
+      
       })
-    }
   }
 }

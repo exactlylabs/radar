@@ -473,42 +473,6 @@ $small-header-height: 67px;
     background-color: $subtle-gray;
   }
 
-  .sidebar--account-item-name {
-    max-width: 18ch;
-  }
-
-  .sidebar--account-item-icon-container {
-    width: 2rem;
-    height: 2rem;
-    min-width: 2rem;
-    min-height: 2rem;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: $icon-container-gray;
-    margin-right: .5rem;
-    position: relative;
-
-    &.transparent {
-      background-color: transparent;
-    }
-
-    .sidebar--account-item-icon-shared-container {
-      width: 1rem;
-      height: 1rem;
-      border-radius: 50%;
-      background-color: $subtle-gray;
-      position: absolute;
-      bottom: -5px;
-      right: -5px;
-      z-index: 50;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
-
   &.sidebar--account-item-container-active {
     background-color: $subtle-gray;
 
@@ -522,6 +486,42 @@ $small-header-height: 67px;
   .sidebar--account-item-options-icon {
     position: absolute;
     right: 12px;
+  }
+}
+
+.sidebar--account-item-name {
+  max-width: 18ch;
+}
+
+.sidebar--account-item-icon-container {
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  min-height: 2rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $icon-container-gray;
+  margin-right: .5rem;
+  position: relative;
+
+  &.transparent {
+    background-color: transparent;
+  }
+
+  .sidebar--account-item-icon-shared-container {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background-color: $subtle-gray;
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 

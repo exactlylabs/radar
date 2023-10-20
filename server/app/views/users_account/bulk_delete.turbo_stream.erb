@@ -1,10 +1,36 @@
-<% @users_to_delete_ids.each do |c| %>
-  <%= turbo_stream.remove "users_account_#{c}" do %>
-  <% end %>
-<% end %>
+<% if FeatureFlagHelper.is_available('roles', current_user) %>
 
-<% @invites_to_delete_ids.each do |c| %>
-  <%= turbo_stream.remove "invite_#{c}" do %>
+  <% if current_account.is_all_accounts? %>
+    <% @users_to_delete_ids.each do |c| %>
+      <%= turbo_stream.remove c.to_s do %>
+      <% end %>
+    <% end %>
+
+    <% @invites_to_delete_ids.each do |c| %>
+      <%= turbo_stream.remove c.to_s do %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <% @users_to_delete_ids.each do |c| %>
+      <%= turbo_stream.remove "users_account_#{c}" do %>
+      <% end %>
+    <% end %>
+
+    <% @invites_to_delete_ids.each do |c| %>
+      <%= turbo_stream.remove "invite_#{c}" do %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+<% else %>
+  <% @users_to_delete_ids.each do |c| %>
+    <%= turbo_stream.remove "users_account_#{c}" do %>
+    <% end %>
+  <% end %>
+
+  <% @invites_to_delete_ids.each do |c| %>
+    <%= turbo_stream.remove "invite_#{c}" do %>
+    <% end %>
   <% end %>
 <% end %>
 

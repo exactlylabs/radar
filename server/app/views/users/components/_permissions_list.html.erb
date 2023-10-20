@@ -1,0 +1,20 @@
+<% owner_users_count = policy_scope(UsersAccount).where(role: UsersAccount.roles[:owner]).count %>
+<% owner_invites_count = policy_scope(Invite).where(role: Invite.roles[:owner]).count %>
+
+<% if role == "owner" %>
+  <div>
+    <p class="additional-text">This member is <%= owner_users_count + owner_invites_count > 1 ? 'a co-owner' : 'the owner' %> of <%= current_account.name %>.</p>
+  </div>
+<% else %>
+  <div class="users--guest-permissions-container">
+    <p class="additional-text">This member can only view:</p>
+    <div class="regular-text">
+      <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16, class: "me-1" %>
+      All networks
+    </div>
+    <div class="regular-text">
+      <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16, class: "me-1" %>
+      All pods
+    </div>
+  </div>
+<% end %>

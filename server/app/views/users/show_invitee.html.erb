@@ -4,8 +4,11 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title"><%= "#{invitee.first_name} #{invitee.last_name} "%>
-        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <% if FeatureFlagHelper.is_available('roles', current_user) %>
+        <h1 class="page-main-title"><%= invitee.email %></h1>
+      <% else %>
+        <h1 class="page-main-title"><%= invitee.full_name %></h1>
+      <% end %>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
@@ -21,15 +24,22 @@
 </div>
 <!--end::Toolbar-->
 
-<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
-  <!--begin::Container-->
-  <div class="w-100 d-flex flex-column" style="max-width: none;">
-    <!--begin::OptionsCard-->
-    <!-- TODO: add when more options are available? -->
-    <!--end::OptionsCard-->
-    <!--begin::Card-->
-    <%= render partial: "users/invitee_details", locals: { invitee: invitee } %>
-    <!--end::Card-->
+<% if !FeatureFlagHelper.is_available('roles', current_user) %>
+  <div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
+    <!--begin::Container-->
+    <div class="w-100 d-flex flex-column" style="max-width: none;">
+      <!--begin::OptionsCard-->
+      <!-- TODO: add when more options are available? -->
+      <!--end::OptionsCard-->
+      <!--begin::Card-->
+      <%= render partial: "users/invitee_details", locals: { invitee: invitee } %>
+      <!--end::Card-->
+    </div>
+    <!--end::Container-->
   </div>
-  <!--end::Container-->
-</div>
+<% else %>
+  <div class="users--details-content-container">
+    <%= render partial: "users/components/member_data_card", locals: { member: invitee, type: Invite.name } %>
+    <%= render partial: "users/components/member_role_card", locals: { member: invitee } %>
+  </div>
+<% end %>

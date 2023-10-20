@@ -20,7 +20,12 @@
     <span class=""><%= row.user.get_letter_for_icon %></span>
   </div>
   <div class="tables--name-email-container">
-    <a href="<%= users_account_path(row, type: row.class.name) %>" class="tables--full-name table-full-name ellipsis "><%= row.user.first_name %> <%= row.user.last_name %></a>
+    <div class="tables--name-badge-container">
+      <a href="<%= users_account_path(row, type: row.class.name) %>" class="tables--full-name table-full-name ellipsis "><%= row.user.first_name %> <%= row.user.last_name %></a>
+      <% if FeatureFlagHelper.is_available('roles', current_user) && row.guest? %>
+        <%= render partial: "users/components/role_badge", locals: { is_guest: true } %>
+      <% end %>
+    </div>
     <span class="tables--email help-text ellipsis"><%= row.user.email %></span>
   </div>
 </div>

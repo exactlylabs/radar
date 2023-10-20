@@ -57,6 +57,10 @@
   width: 100%;
   height: calc(100% - 59px);
   padding: 1rem 1.5rem 1.5rem;
+
+  &[data-full-width="true"] {
+    padding: 0;
+  }
 }
 
 .cards--info-row {
@@ -73,6 +77,12 @@
     overflow-wrap: break-word;
     white-space: normal;
     width: 50%;
+  }
+
+  &[data-type="users"] {
+    .forms--label {
+      width: 5rem;
+    }
   }
 }
 

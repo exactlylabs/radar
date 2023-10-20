@@ -16,12 +16,22 @@
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-      <button
-        type="button"
-        class="custom-button custom-button--primary custom-button--sm"
-        data-bs-toggle="modal"
-        data-bs-target="#add_user_wizard"
-      >Add User</button>
+      <% if FeatureFlagHelper.is_available('roles', current_user) %>
+        <a href="<%= get_add_member_modal_path %>"
+           class="custom-button custom-button--primary custom-button--sm"
+           data-turbo-frame="invite_member_modal"
+        >
+          <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: "me-1" %>
+          Add member
+        </a>
+      <% else %>
+        <button
+          type="button"
+          class="custom-button custom-button--primary custom-button--sm"
+          data-bs-toggle="modal"
+          data-bs-target="#add_user_wizard"
+        >Add User</button>
+      <% end %>
     </div>
   </div>
 </div>
@@ -40,20 +50,13 @@
   <%= render partial: "users/users_table_filters" %>
   <!--begin::Container-->
   <!-- render partial: "users/users_table", locals: { users_accounts: users_accounts, invited_users: invited_users } -->
+  <% table_type = current_account.is_all_accounts? ? TablesHelper::TableTypes::ALL_ACCOUNTS_MEMBERS : TablesHelper::TableTypes::MEMBERS %>
   <%= render partial: "application/components/tables/generic_table",
       locals: {
         table_id: "users_table",
-        type: TablesHelper::TableTypes::MEMBERS,
-        titles: [
-          { text: 'Checkbox', hidden: true },
-          { text: 'Name', sort: 'name', sort_action: 'click->table#sortByName' },
-          { text: 'Account', hidden: !current_account.is_all_accounts? },
-          { text: 'Invited' },
-          { text: 'Join date' },
-          { text: 'Resend', hidden: true },
-          { text: 'Actions', hidden: true}
-        ],
-        widths: TablesHelper.widths(TablesHelper::TableTypes::MEMBERS, current_account.is_all_accounts?),
+        type: table_type,
+        titles: TablesHelper.titles(table_type, current_account.is_all_accounts?),
+        widths: TablesHelper.widths(table_type, current_account.is_all_accounts?),
         rows: elements,
         total: total
       }
@@ -61,11 +64,17 @@
   <!--end::Container-->
 </div>
 
-<div class="modal fade"
-     tabindex="-1"
-     id="add_user_wizard"
-     data-controller="add-user modal"
-     data-action="turbo:submit-end->modal#submit"
->
-  <%= render partial: "users/add_user_wizard/add_user_wizard" %>
-</div>
+<% if FeatureFlagHelper.is_available('roles', current_user) %>
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "invite_member_modal", optional_added_controllers: "add-user" }
+  %>
+<% else %>
+  <div class="modal fade"
+       tabindex="-1"
+       id="add_user_wizard"
+       data-controller="add-user modal"
+       data-action="turbo:submit-end->modal#submit"
+  >
+    <%= render partial: "users/add_user_wizard/add_user_wizard" %>
+  </div>
+<% end %>

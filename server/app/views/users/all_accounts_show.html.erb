@@ -1,0 +1,26 @@
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="page-main-title"><%= "#{params[:email]}" %></h1>
+      <!--end::Title-->
+      <!--begin::Breadcrumb-->
+      <ul class="breadcrumb fw-bold fs-base my-1">
+        <li class="breadcrumb-item text-muted">
+          <a href="<%= users_account_index_path %>" class="text-muted page-sub-title">All Accounts</a>
+        </li>
+        <li class="breadcrumb-item page-sub-title">Members & Sharing</li>
+      </ul>
+      <!--end::Breadcrumb-->
+    </div>
+    <!--end::Info-->
+  </div>
+</div>
+<!--end::Toolbar-->
+
+<div class="users--details-content-container">
+  <%= render partial: "users/components/all_accounts_member_data_card", locals: { member: @full_entity, type: TablesHelper::TableTypes::ALL_ACCOUNTS_MEMBERS } %>
+  <%= render partial: "users/components/all_accounts_member_role_card", locals: { member: @full_entity } %>
+</div>

@@ -5,6 +5,7 @@ module TablesHelper
     MEASUREMENTS = "Measurements"
     NETWORK_PODS = "NetworkPods"
     ALL_ACCOUNTS_MEMBERS = "AllAccountsMembers"
+    ALL_ACCOUNTS_PRIVILEGES = "AllAccountsPrivileges"
     PODS = "Pods"
   end
 
@@ -12,6 +13,7 @@ module TablesHelper
     MEMBER = "Member"
     INVITEE = "Invitee"
     ALL_ACCOUNTS_MEMBER = "AllAccountsMember"
+    ALL_ACCOUNTS_PRIVILEGES = "AllAccountsPrivileges"
     NETWORK = "Network"
     NETWORKS_INDEX = "NetworksIndex"
     PODS = "Pods"
@@ -32,6 +34,8 @@ module TablesHelper
       'Pods'
     when TableTypes::PODS
       'Pods'
+    when TableTypes::ALL_ACCOUNTS_PRIVILEGES
+      'Accounts'
     end
   end
 
@@ -47,6 +51,8 @@ module TablesHelper
         '15%',
         '5%'
       ]
+    when TableTypes::ALL_ACCOUNTS_MEMBERS
+      ['4%', '31%', '60%', '5%']
     when TableTypes::NETWORKS
       [
         '4%',
@@ -85,6 +91,15 @@ module TablesHelper
         '17%',
         '5%'
       ]
+    when TableTypes::ALL_ACCOUNTS_PRIVILEGES
+      [
+        '35%',
+        '15%',
+        '15%',
+        '15%',
+        '15%',
+        '5%'
+      ]
     end
   end
 
@@ -96,24 +111,20 @@ module TablesHelper
         *rows,
         { text: 'Checkbox', hidden: true },
         { text: 'Name', sort: 'name', sort_action: 'click->table#sortByName' },
+        { text: 'spacer', hidden: true },
+        { text: 'Invited' },
+        { text: 'Join date' },
+        { text: 'Resend', hidden: true },
+        { text: 'Actions', hidden: true}
       ]
-      if is_all_accounts
-        rows = [
-          *rows,
-          { text: 'Account(s)', hidden: false },
-          { text: 'Resend', hidden: true },
-          { text: 'Actions', hidden: true}
-        ]
-      else
-        rows = [
-          *rows,
-          { text: 'Account', hidden: false },
-          { text: 'Invited' },
-          { text: 'Join date' },
-          { text: 'Resend', hidden: true },
-          { text: 'Actions', hidden: true}
-        ]
-      end
+    when TableTypes::ALL_ACCOUNTS_MEMBERS
+      rows = [
+        *rows,
+        { text: 'Checkbox', hidden: true },
+        { text: 'Name', sort: 'name', sort_action: 'click->table#sortByName' },
+        { text: 'Account(s)', hidden: false },
+        { text: 'Actions', hidden: true}
+      ]
     when TableTypes::NETWORKS
       rows = [
         *rows,
@@ -156,8 +167,30 @@ module TablesHelper
         { text: 'Last measurement' },
         { text: 'Actions', hidden: true}
       ]
+    when TableTypes::ALL_ACCOUNTS_PRIVILEGES
+      rows = [
+        *rows,
+        { text: 'Account' },
+        { text: 'Role' },
+        { text: 'Invited' },
+        { text: 'Join date' },
+        { text: 'Resend', hidden: true},
+        { text: 'Actions', hidden: true},
+      ]
     end
     rows
+  end
+
+  def self.get_row_index(type, row)
+    if type == TablesHelper::TableTypes::NETWORK_PODS || type == TablesHelper::TableTypes::PODS
+      row.unix_user
+    elsif type == self::TableTypes::ALL_ACCOUNTS_MEMBERS
+      row[:email]
+    elsif type == self::TableTypes::ALL_ACCOUNTS_PRIVILEGES
+      row.id
+    else
+      "#{row.id}-#{row.account.id}"
+    end
   end
 
   private

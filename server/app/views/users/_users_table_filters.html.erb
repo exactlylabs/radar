@@ -44,4 +44,20 @@
       }
   %>
 
+  <% if FeatureFlagHelper.is_available('roles', current_user) && !current_account.is_all_accounts? %>
+    <%= render partial: "application/components/tables/filter",
+               locals: {
+                 menu_id: 'role-filter-menu',
+                 key: 'role',
+                 default_value: 'all',
+                 default_label: 'All roles',
+                 options: [
+                   { label: 'All roles', value: 'all'},
+                   { label: 'Owner', value: 'owner' },
+                   { label: 'Guest', value: 'guest' }
+                 ],
+               }
+    %>
+  <% end %>
+
 </div>

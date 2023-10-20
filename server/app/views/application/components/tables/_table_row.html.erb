@@ -1,5 +1,5 @@
 <div class="tables--row-container"
-  id="<%= dom_id(row) %>"
+  id="<%= type == TablesHelper::TableTypes::ALL_ACCOUNTS_MEMBERS ? row[:email] : dom_id(row) %>"
   data-is-unassigned-pod="<%= type == TablesHelper::TableTypes::PODS && row.location.nil? %>"
 >
   <% if type == TablesHelper::TableTypes::MEMBERS %>
@@ -11,6 +11,14 @@
           index: index,
           even: even
         }
+    %>
+  <% elsif type == TablesHelper::TableTypes::ALL_ACCOUNTS_PRIVILEGES %>
+    <%= render partial: "users/components/all_accounts_privilege_row",
+        locals: { row: row, widths: widths, index: index }
+    %>
+  <% elsif type == TablesHelper::TableTypes::ALL_ACCOUNTS_MEMBERS %>
+    <%= render partial: "users/components/all_accounts_member_row",
+               locals: { row: row, widths: widths, index: index, even: even }
     %>
   <% elsif type == TablesHelper::TableTypes::NETWORKS %>
     <%= render partial: "networks/components/network_row",

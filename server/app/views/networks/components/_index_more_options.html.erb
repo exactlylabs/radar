@@ -1,5 +1,13 @@
-<%= link_to "Create new network", new_location_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "new_location_modal" } %>
-<%= link_to "Manage pods", clients_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "_top"} %>
-<% if !current_account.is_all_accounts? %>
+<% if FeatureFlagHelper.is_available('roles', current_user) %>
+  <% if current_user.owner?(current_account, is_super_user_disabled?) %>
+    <%= link_to "Create new network", new_location_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "new_location_modal" } %>
+    <%= link_to "Manage categories", categories_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
+  <% end %>
+  <%= link_to current_user.owner?(current_account, is_super_user_disabled?) ? "Manage pods" : "View pods", clients_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "_top"} %>
+<% else %>
+  <%= link_to "Create new network", new_location_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "new_location_modal" } %>
   <%= link_to "Manage categories", categories_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
+  <% if !current_account.is_all_accounts? %>
+    <%= link_to "Manage categories", categories_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
+  <% end %>
 <% end %>

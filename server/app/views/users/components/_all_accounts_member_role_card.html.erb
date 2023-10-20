@@ -1,0 +1,17 @@
+<div class="cards--card-with-header">
+  <div class="cards--card-header">
+    <span>Accounts & Privileges</span>
+  </div>
+  <div class="cards--card-with-header-content-container" data-full-width="true">
+    <%= render partial: "application/components/tables/generic_table",
+               locals: {
+                 table_id: "privileges_table",
+                 type: TablesHelper::TableTypes::ALL_ACCOUNTS_PRIVILEGES,
+                 titles: TablesHelper.titles(TablesHelper::TableTypes::ALL_ACCOUNTS_PRIVILEGES),
+                 widths: TablesHelper.widths(TablesHelper::TableTypes::ALL_ACCOUNTS_PRIVILEGES),
+                 rows: member[:accounts],
+                 total: member[:account_count]
+               }
+    %>
+  </div>
+</div>

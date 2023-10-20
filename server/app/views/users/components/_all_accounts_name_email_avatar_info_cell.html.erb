@@ -1,0 +1,13 @@
+<div class="users--avatar-name-email-container">
+  <div class="users--big-initial-container">
+    <%= member[:has_actual_user] ? @user_accounts.first.user.first_name[0].upcase : member[:email][0].upcase %>
+  </div>
+  <div class="users--name-email-container">
+    <p class="card-main-title">
+      <%= member[:has_actual_user] ? @user_accounts.first.user.first_name : member[:email] %>
+    </p>
+    <% if member[:has_actual_user] %>
+      <p class="additional-text"><%= member[:email] %></p>
+    <% end %>
+  </div>
+</div>

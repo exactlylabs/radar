@@ -1,0 +1,30 @@
+<div class="tables--name-container tables--grows-on-small"
+     style="width: <%= widths[0] %>"
+>
+  <div class="sidebar--account-item-icon-container">
+    <p class="m-0 sidebar-item--text"><%= row.account.name.upcase[0] %></p>
+  </div>
+  <p class="m-0 sidebar-item--text-static sidebar--account-item-name ellipsis"><%= row.account.name %></p>
+</div>
+
+<div class="tables--hides-on-small ellipsis"
+     style="width: <%= widths[1] %>;"
+>
+  <span class="ellipsis table-cell">
+    <%= render partial: "users/components/role_badge", locals: { is_guest: row.guest? } %>
+  </span>
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[2] %>">
+  <span class="ellipsis table-cell"><%= row.class.name == UsersAccount.name ? pretty_print_date(row.invited_at) : pretty_print_date(row.sent_at) %></span>
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[3] %>">
+  <span class="ellipsis table-cell">
+    <% if row.class.name == UsersAccount.name %>
+      <%= pretty_print_date(row.joined_at) %>
+    <% else %>
+      <%= render partial: "application/components/pending_badge" %>
+    <% end %>
+  </span>
+</div>

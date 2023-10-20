@@ -1,0 +1,9 @@
+<div class="users--avatar-name-email-container">
+  <div class="users--big-initial-container"><%= type == Invite.name ? member.get_letter_for_icon : member.user.get_letter_for_icon %></div>
+  <div class="users--name-email-container">
+    <p class="card-main-title"><%= type == Invite.name ? member.full_name : member.user.full_name %></p>
+    <% if type != Invite.name %>
+      <p class="additional-text"><%= member.user.email %></p>
+    <% end %>
+  </div>
+</div>

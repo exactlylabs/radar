@@ -1,0 +1,75 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: {
+             title: "Add member to #{current_account.is_all_accounts? ? 'account' : current_account.name}",
+             is_custom: true,
+           }
+%>
+<%= form_with(url: invites_path, method: :post) do |form| %>
+  <div class="modals--content-container" data-type="full">
+    <div class="modals--form-row mb-6">
+      <label class="forms--label">Send invite to...</label>
+      <%= form.text_field :email, name: "invite[email]", class: "w-100 forms--text-input forms--text-input-focusable", placeholder: 'Enter email address...', data: { action: "input->add-user#handleEmailChange" } %>
+    </div>
+    <% if current_account.is_all_accounts? %>
+      <div class="modals--form-row mb-6">
+        <label for="client-accounts-dropdown" class="forms--label">Account</label>
+        <select class="form-select forms--select"
+                data-controller="select2"
+                id="client-accounts-dropdown"
+                data-placeholder="Select an account"
+                name="invite[account_id]"
+                data-select2-id="select2-data-account_id"
+                tabindex="-1"
+        >
+          <% policy_scope(Account).each do |account|%>
+            <%= render partial: "clients/client_select_option", locals: { option: account, selected: params[:account_id]&.to_i == account.id} %>
+          <% end %>
+        </select>
+      </div>
+    <% end %>
+    <div class="modals--form-row">
+      <label class="forms--label">Member role</label>
+      <div class="users--role-picker-container" data-add-user-target="roleContainer" data-value="1" data-selected="true">
+        <div class="users--role-radio-container" data-value="1" data-action="click->add-user#pickRole">
+          <input data-add-user-target="roleInput" class="forms--radio-input" type="radio" name="invite[role]" value="1" id="invite-guest-radio" checked/>
+          <label class="regular-text" for="invite-guest-radio">Guest</label>
+        </div>
+        <div class="users--privileges-container">
+          <div class="regular-text">
+            <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16, class: "me-1" %>
+            View pods and networks
+          </div>
+        </div>
+      </div>
+      <div class="users--role-picker-container" data-add-user-target="roleContainer" data-value="0">
+        <div class="users--role-radio-container" data-value="0" data-action="click->add-user#pickRole">
+          <input data-add-user-target="roleInput"  class="forms--radio-input" type="radio" name="invite[role]" value="0" id="invite-guest-radio"/>
+          <label class="regular-text" for="invite-guest-radio">Owner</label>
+        </div>
+        <div class="users--privileges-container">
+          <div class="regular-text">
+            <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16, class: "me-1" %>
+            View and manage all pods
+          </div>
+          <div class="regular-text">
+            <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16, class: "me-1" %>
+            View and manage all networks
+          </div>
+          <div class="regular-text">
+            <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16, class: "me-1" %>
+            View and manage users
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <button type="submit"
+            class="custom-button custom-button--lg custom-button--primary custom-button--disabled"
+            data-controller="loading-feedback"
+            data-action="click->loading-feedback#replaceContent"
+            data-add-user-target="submitButton"
+    >Add member</button>
+  </div>
+<% end %>

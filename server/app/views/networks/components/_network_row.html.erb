@@ -1,15 +1,44 @@
-<div class="tables--checkbox-container" style="width: <%= widths[0] %>">
-  <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
-    <input id="check-box-network-<%= index %>"
-            class="form-check-input custom-multi-row-input-checkbox"
-            type="checkbox"
-            value="1"
-            data-multi-row-table-target="formCheckBoxInput"
-            data-action="input->multi-row-table#onCheckBoxChange"
-            data-row-type="Network"
-    />
+<% if FeatureFlagHelper.is_available('roles', current_user) %>
+  <% if current_user.owner?(row.account, is_super_user_disabled?) %>
+    <div class="tables--checkbox-container" style="width: <%= widths[0] %>">
+      <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
+        <input id="check-box-network-<%= index %>"
+               class="form-check-input custom-multi-row-input-checkbox"
+               type="checkbox"
+               value="1"
+               data-multi-row-table-target="formCheckBoxInput"
+               data-action="input->multi-row-table#onCheckBoxChange"
+               data-row-type="Network"
+          />
+      </div>
+    </div>
+  <% else %>
+    <div class="tables--checkbox-container" style="width: <%= widths[0] %>">
+      <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center disabled">
+        <input id="check-box-network-<%= index %>"
+               class="form-check-input custom-multi-row-input-checkbox"
+               type="checkbox"
+               value="1"
+               data-row-type="Network"
+               disabled
+          />
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="tables--checkbox-container" style="width: <%= widths[0] %>">
+    <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
+      <input id="check-box-network-<%= index %>"
+              class="form-check-input custom-multi-row-input-checkbox"
+              type="checkbox"
+              value="1"
+              data-multi-row-table-target="formCheckBoxInput"
+              data-action="input->multi-row-table#onCheckBoxChange"
+              data-row-type="Network"
+      />
+    </div>
   </div>
-</div>
+<% end %>
 
 <div class="tables--name-container tables--grows-on-small"
   style="width: <%= widths[1] %>"

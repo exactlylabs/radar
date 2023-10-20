@@ -18,6 +18,22 @@ class User < ApplicationRecord
 
   after_save :check_pending_downloads
 
+  def owner?(current_account, is_super_user_disabled = false)
+    if current_account.is_all_accounts?
+      if self.super_user && !is_super_user_disabled
+        return true
+      end
+      UsersAccount.not_deleted.where(user_id: self.id).filter {|ua| ua.guest?}.size == 0
+    end
+    if self.super_user && !is_super_user_disabled
+      possible_ua = UsersAccount.not_deleted.where(user_id: self.id, account_id: current_account.id).first
+      return true if possible_ua.nil?
+      possible_ua.owner?
+    else
+      self.users_accounts.not_deleted.where(account_id: current_account.id).first&.owner? || false
+    end
+  end
+
   def prefers_gb_unit
     self.data_cap_unit == "GB"
   end
@@ -56,6 +72,10 @@ class User < ApplicationRecord
   def has_measurements_pending_download
     return false unless self.has_pending_downloads
     has_pending_download_key 'measurements'
+  end
+
+  def full_name
+    "#{self.first_name} #{self.last_name}"
   end
 
   def get_letter_for_icon

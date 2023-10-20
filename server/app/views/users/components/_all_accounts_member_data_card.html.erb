@@ -1,0 +1,13 @@
+<div class="users--top-info-card">
+  <%= render partial: "users/components/all_accounts_name_email_avatar_info_cell", locals: { member: member } %>
+  <div class="users--metadata-container">
+    <%= render partial: "application/components/overview_info_cell",
+               locals: {
+                 title: 'Account(s)',
+                 subtitle: nil,
+                 partial: "accounts/components/accounts_table_cell",
+                 partial_locals: { just_names: true, accounts: member[:account_names], account_count: member[:account_count], shows_tooltip: false, row: 0 }
+               }
+    %>
+  </div>
+</div>

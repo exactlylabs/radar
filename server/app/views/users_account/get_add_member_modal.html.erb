@@ -1,0 +1,10 @@
+<%= turbo_frame_tag "invite_member_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+             locals: {
+               modal_title: "Add member to #{current_account.name}",
+               modal_partial_path: "users/modals/add_member/add_modal",
+               custom_submit_end_handler: nil,
+               resource: nil
+             }
+  %>
+<% end %>

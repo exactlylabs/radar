@@ -1,0 +1,18 @@
+<div class="users--top-info-card">
+  <%= render partial: "users/components/name_email_avatar_info_cell", locals: { member: member, type: type } %>
+  <div class="users--metadata-container">
+    <%= render partial: "application/components/overview_info_cell",
+               locals: {
+                 title: 'Invited',
+                 subtitle: type == Invite.name ? pretty_print_date(member.sent_at) : pretty_print_date(member.invited_at)
+               }
+    %>
+    <%= render partial: "application/components/overview_info_cell",
+               locals: {
+                 title: 'Join date',
+                 subtitle: type == Invite.name ? nil : pretty_print_date(member.joined_at),
+                 partial: type == Invite.name ? "application/components/pending_badge" : nil,
+               }
+    %>
+  </div>
+</div>

@@ -5,7 +5,7 @@
 
 .tables--table-container {
   width: 100%;
-  overflow: auto unset;
+  overflow-x: unset;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -207,6 +207,14 @@
   .tables--email {
     max-width: 40ch;
   }
+}
+
+.tables--name-badge-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.375rem;
 }
 
 @media (max-width: $md-max-width) {

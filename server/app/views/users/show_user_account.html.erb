@@ -4,8 +4,7 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title"><%= "#{user_account.user.first_name} #{user_account.user.last_name}" %>
-        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <h1 class="page-main-title"><%= "#{user_account.user.full_name}" %></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
@@ -21,15 +20,22 @@
 </div>
 <!--end::Toolbar-->
 
-<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
-  <!--begin::Container-->
-  <div class="w-100 d-flex flex-column" style="max-width: none;">
-    <!--begin::OptionsCard-->
-    <!-- TODO: add when more options are available? -->
-    <!--end::OptionsCard-->
-    <!--begin::Card-->
-    <%= render partial: "users/user_details", locals: { user_account: user_account } %>
-    <!--end::Card-->
+<% if !FeatureFlagHelper.is_available('roles', current_user) %>
+  <div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
+    <!--begin::Container-->
+    <div class="w-100 d-flex flex-column" style="max-width: none;">
+      <!--begin::OptionsCard-->
+      <!-- TODO: add when more options are available? -->
+      <!--end::OptionsCard-->
+      <!--begin::Card-->
+      <%= render partial: "users/user_details", locals: { user_account: user_account } %>
+      <!--end::Card-->
+    </div>
+    <!--end::Container-->
   </div>
-  <!--end::Container-->
-</div>
+<% else %>
+  <div class="users--details-content-container">
+    <%= render partial: "users/components/member_data_card", locals: { member: user_account, type: UsersAccount.name } %>
+    <%= render partial: "users/components/member_role_card", locals: { member: user_account } %>
+  </div>
+<% end %>

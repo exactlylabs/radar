@@ -42,7 +42,7 @@
 
 <% if FeatureFlagHelper.is_available('networks', current_user) && are_there_unassigned_pods? %>
   <div class="networks--unassigned-pods-banner">
-    <%= image_tag image_url('warning-icon'), width: 20, height: 20 %>
+    <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
     <div class="networks--unassigned-pods-banner-text-container">
       <% pod_count = policy_scope(Client).where(location: nil).count %>
       <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>

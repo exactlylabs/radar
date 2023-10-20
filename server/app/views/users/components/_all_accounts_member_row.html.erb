@@ -1,0 +1,47 @@
+<div class="tables--checkbox-container" style="width: <%= widths[0] %>">
+  <div class="form-check form-check-sm form-check-custom form-check-solid justify-content-center">
+    <input id="check-box-user-<%= index %>"
+           class="form-check-input custom-multi-row-input-checkbox"
+           type="checkbox"
+           value="1"
+           data-multi-row-table-target="formCheckBoxInput"
+           data-action="input->multi-row-table#onCheckBoxChange"
+           data-row-type="<%= row.class.name %>"
+      />
+  </div>
+</div>
+
+<div class="tables--name-container tables--grows-on-small"
+     style="width: <%= widths[1] %>"
+     data-url="<%= users_account_all_accounts_show_path(email: row[:email], type: TablesHelper::TableTypes::ALL_ACCOUNTS_MEMBERS) %>"
+     data-action="click->table#goToDetails"
+>
+  <div class="tables--name-initial-container" data-even="<%= even %>">
+    <span class=""><%= row[:full_name].present? ? row[:full_name][0].upcase : row[:email][0].upcase  %></span>
+  </div>
+  <div class="tables--name-email-container">
+    <div class="tables--name-badge-container">
+      <a href="<%= users_account_path(row, type: row.class.name) %>" class="tables--full-name table-full-name ellipsis "><%= row[:full_name].present? ? row[:full_name] : row[:email] %></a>
+    </div>
+    <% if row[:full_name].present? %>
+      <span class="tables--email help-text ellipsis"><%= row[:email] %></span>
+    <% end %>
+  </div>
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[2] %>;">
+  <%= render partial: "accounts/components/accounts_table_cell", locals: { accounts: row[:accounts], shows_tooltip: true, row: row[:index] } %>
+</div>
+
+<div class="tables--hides-on-small" style="width: <%= widths[3] %>">
+  <%= render partial: "application/components/buttons/custom_more_options_button",
+             locals: { index: index, type: TablesHelper::OptionsMenuType::ALL_ACCOUNTS_MEMBER, row: row }
+  %>
+</div>
+
+<a href="<%= users_account_all_accounts_show_path(email: row[:email], type: TablesHelper::TableTypes::ALL_ACCOUNTS_MEMBERS) %>"
+   class="tables--appears-on-small"
+   style="width: 5%"
+>
+  <%= image_tag image_url('caret-right.png'), width: 16, height: 16 %>
+</a>

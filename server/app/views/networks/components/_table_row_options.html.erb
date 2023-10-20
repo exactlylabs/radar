@@ -1,3 +1,5 @@
 <%= link_to "View", location_path(row), class: "tables--row-option table-menu-option ellipsis", data: {"turbo-frame" => "_top", "no-turbolink" => true} %>
-<%= link_to "Edit", edit_location_path(row), { class: "tables--row-option table-menu-option ellipsis", data: { "turbo-frame" => "edit_location_modal" } } %>
-<%= link_to "Delete", location_path(row), method: :delete, data: { confirm: 'Are you sure?' }, class: "tables--row-option table-menu-option ellipsis" %>
+<% if FeatureFlagHelper.is_available('roles', current_user) && current_user.owner?(row.account, is_super_user_disabled?) %>
+  <%= link_to "Edit", edit_location_path(row), { class: "tables--row-option table-menu-option ellipsis", data: { "turbo-frame" => "edit_location_modal" } } %>
+  <%= link_to "Delete", location_path(row), method: :delete, data: { confirm: 'Are you sure?' }, class: "tables--row-option table-menu-option ellipsis" %>
+<% end %>

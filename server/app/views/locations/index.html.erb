@@ -44,14 +44,14 @@
         <% end %>
       </div>
     <% else %>
-        <%= render partial: "application/components/buttons/custom_more_options_button",
-            locals: {
-              type: TablesHelper::OptionsMenuType::NETWORKS_INDEX,
-              with_bg: true,
-              big: true
-            }
-        %>
-      <% end %>
+      <%= render partial: "application/components/buttons/custom_more_options_button",
+          locals: {
+            type: TablesHelper::OptionsMenuType::NETWORKS_INDEX,
+            with_bg: true,
+            big: true
+          }
+      %>
+    <% end %>
   </div>
 </div>
 <!--end::Toolbar-->

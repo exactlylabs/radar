@@ -212,6 +212,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'users_account/get_add_member_modal', to: 'users_account#get_add_member_modal', as: "get_add_member_modal"
+  get 'users_account/all_accounts_show', to: 'users_account#all_accounts_show'
   resources :users_account do
     collection do
       delete 'bulk_delete'

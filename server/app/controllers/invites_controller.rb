@@ -4,11 +4,20 @@ class InvitesController < ApplicationController
 
   def create
     invite = params[:invite]
-    if invite[:first_name].blank? || invite[:last_name].blank? || invite[:email].blank?
-      respond_to do |format|
-        format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity, notice: "Error processing new invite request. Please try again." }
+    if FeatureFlagHelper.is_available('roles', current_user)
+      if invite[:email].blank?
+        respond_to do |format|
+          format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity, notice: "Error processing new invite request. Please try again." }
+        end
+        return # Required to stop method execution from proceeding
       end
-      return # Required to stop method execution from proceeding
+    else
+      if invite[:first_name].blank? || invite[:last_name].blank? || invite[:email].blank?
+        respond_to do |format|
+          format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity, notice: "Error processing new invite request. Please try again." }
+        end
+        return # Required to stop method execution from proceeding
+      end
     end
     
     # Need to check if there is already an invite created for this 
@@ -23,6 +32,7 @@ class InvitesController < ApplicationController
     account_to_use = current_account.is_all_accounts? || invite[:account_id].present? ? policy_scope(Account).find(invite[:account_id]) : current_account
     if !duplicate_invite_error
       @new_invite = Invite.new invite_params
+      @new_invite.role = params[:invite][:role].to_i
       @new_invite.account = account_to_use
       @new_invite.sent_at = Time.now
       secret = SecretsHelper.create_secret(16)

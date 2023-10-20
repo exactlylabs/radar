@@ -1,0 +1,35 @@
+<% account_count = local_assigns[:just_names].present? ? local_assigns[:account_count] : accounts.count %>
+<% just_names = local_assigns[:just_names].present? ? local_assigns[:just_names] : false %>
+
+<% if account_count == 0 %>
+  <div class="d-flex flex-row justify-content-start align-items-center">
+    <p class="m-0 regular-text">No accounts</p>
+  </div>
+<% elsif account_count == 1 %>
+  <div class="d-flex flex-row justify-content-start align-items-center">
+    <p class="m-0 regular-text"><%= just_names ? accounts[0] : accounts[0].name %></p>
+  </div>
+<% else %>
+  <div class="category--table-cell-container <%= shows_tooltip ? 'cursor-pointer' : nil %>"
+       data-controller="category-tooltip"
+       data-type="accounts"
+       data-action="mouseenter->category-tooltip#showTooltip mouseleave->category-tooltip#hideTooltip"
+       data-row-number="<%= row %>"
+  >
+    <% if shows_tooltip %>
+      <div class="category--tooltip invisible"
+           id="accounts--tooltip@<%= row %>"
+           data-type="accounts"
+           data-position="right"
+      >
+        <div class="category--tooltip-point"></div>
+        <% accounts.each do |account| %>
+          <div>
+            <p class="m-0 category--tooltip-name regular-text"><%= just_names ? account : account.name %></p>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    <p class="m-0 regular-text"><%= account_count %> accounts</p>
+  </div>
+<% end %>
