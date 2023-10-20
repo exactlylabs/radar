@@ -1,12 +1,4 @@
 class CreateAggregatedMeasurements < ActiveRecord::Migration[6.1]
-  def self.up
-
-  end
-
-  def self.down
-
-  end
-
   def change
     create_view :aggregated_measurements_by_hours, materialized: true
     create_view :aggregated_measurements_by_days, materialized: true

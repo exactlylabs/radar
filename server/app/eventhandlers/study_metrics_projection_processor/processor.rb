@@ -44,8 +44,6 @@ module StudyMetricsProjectionProcessor
       begin
         @raw = conn.raw_connection
         self.sources_iterator(**offsets).each do |source, value|
-          # self.load_distinct_projections if !loaded
-          # loaded = true
           @projection_updated = false
           timestamp = nil
           case source
