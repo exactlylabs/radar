@@ -129,25 +129,6 @@ module StudyMetricsProjectionProcessor
 
     private
 
-    def get_projection(study_aggregate_id, parent_aggregate_id, as_org_id)
-      proj = @consumer_offset.state["projections"]["#{study_aggregate_id}-#{as_org_id}"]
-      if proj.nil?
-        proj = {
-          "parent_aggregate_id" => parent_aggregate_id,
-          "study_aggregate_id" => study_aggregate_id,
-          "autonomous_system_org_id" => as_org_id,
-          "online_pods_count" => 0,
-          "online_locations_count" => 0,
-          "measurements_count" => 0,
-          "points_with_tests_count" => 0,
-          "completed_locations_count" => 0,
-          "completed_and_online_locations_count" => 0,
-        }
-        @consumer_offset.state["projections"]["#{study_aggregate_id}-#{as_org_id}"] = proj
-      end
-      return proj
-    end
-
     def flush_insertion_queue()
       # Save current insertions into the DB, update the offsets, and location metadatas in a single transaction
       if @insertion_queue.size == 0

@@ -1,7 +1,7 @@
 class AddLocationMetadataProjection < ActiveRecord::Migration[6.1]
   def change
     create_table :location_metadata_projections do |t|
-      t.references :location, foreign_key: true
+      t.references :location, foreign_key: true, index: { unique: true }
       t.references :autonomous_system_org, foreign_key: true
 
       t.integer :online_pods_count, default: 0

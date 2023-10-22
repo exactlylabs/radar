@@ -14,6 +14,25 @@ module StudyMetricsProjectionProcessor
       return @as_orgs_cache[autonomous_system_id]
     end
 
+    def get_projection(study_aggregate_id, parent_aggregate_id, as_org_id)
+      proj = @consumer_offset.state["projections"]["#{study_aggregate_id}-#{as_org_id}"]
+      if proj.nil?
+        proj = {
+          "parent_aggregate_id" => parent_aggregate_id,
+          "study_aggregate_id" => study_aggregate_id,
+          "autonomous_system_org_id" => as_org_id,
+          "online_pods_count" => 0,
+          "online_locations_count" => 0,
+          "measurements_count" => 0,
+          "points_with_tests_count" => 0,
+          "completed_locations_count" => 0,
+          "completed_and_online_locations_count" => 0,
+        }
+        @consumer_offset.state["projections"]["#{study_aggregate_id}-#{as_org_id}"] = proj
+      end
+      return proj
+    end
+
     def get_aggregates_for_point(lonlat, as_org_id, as_org_name, **opts)
       @aggregates_cache ||= {}
       return [] if lonlat.nil?
@@ -38,11 +57,11 @@ module StudyMetricsProjectionProcessor
       return aggs
     end
 
-    def get_location_metadata(location_id, as_org_id)
-      meta = @location_metadatas["#{location_id}-#{as_org_id}"]
+    def get_location_metadata(location_id)
+      meta = @location_metadatas["#{location_id}"]
       if meta.nil?
-        meta = LocationMetadataProjection.find_or_create_by!(location_id: location_id, autonomous_system_org_id: as_org_id)
-        @location_metadatas["#{location_id}-#{as_org_id}"] = meta
+        meta = LocationMetadataProjection.find_or_create_by!(location_id: location_id)
+        @location_metadatas["#{location_id}"] = meta
       end
       return meta
     end

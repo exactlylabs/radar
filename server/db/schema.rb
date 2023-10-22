@@ -372,7 +372,7 @@ ActiveRecord::Schema.define(version: 2023_10_20_193615) do
     t.datetime "last_offline_event_at"
     t.datetime "last_online_event_at"
     t.index ["autonomous_system_org_id"], name: "index_location_metadata_projections_on_autonomous_system_org_id"
-    t.index ["location_id"], name: "index_location_metadata_projections_on_location_id"
+    t.index ["location_id"], name: "index_location_metadata_projections_on_location_id", unique: true
   end
 
   create_table "locations", force: :cascade do |t|
