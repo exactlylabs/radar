@@ -1,15 +1,15 @@
-const destination_base_url = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? 'https://pods.radartoolkit.com' : 'https://pods.staging.radartoolkit.com'
+const DESTINATION_BASE_URL = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? 'https://pods.radartoolkit.com' : 'https://pods.staging.radartoolkit.com'
 module.exports = {
   async redirects() {
     return [
       {
         source: '/TTUHSC',
-        destination:  destination_base_url + '/TTUHSC',
+        destination:  DESTINATION_BASE_URL + '/TTUHSC',
         permanent: false,
       },
       {
         source: '/TTUHSC/:slug',
-        destination: destination_base_url  + '/TTUHSC/:slug',
+        destination: DESTINATION_BASE_URL  + '/TTUHSC/:slug',
         permanent: false,
       },
     ]
