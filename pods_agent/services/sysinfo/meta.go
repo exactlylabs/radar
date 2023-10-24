@@ -26,7 +26,9 @@ func macAddresses() []NetInterfaces {
 	defaultRoute, err := netroute.DefaultRoute()
 	if err != nil {
 		log.Println(errors.W(err))
-		sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{})
+		if !errors.Is(err, netroute.ErrDefaultRouteNotFound) {
+			sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{})
+		}
 	}
 	ifaces, err := net.Interfaces()
 	if err != nil {

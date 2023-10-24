@@ -76,7 +76,7 @@ func getGatewayFromNetRoute() (*gatewayInfo, error) {
 			Gateway:   ip,
 		}, nil
 	}
-	return nil, errors.New("failed to find gateway in /proc/net/route").WithMetadata(errors.Metadata{"content": routeContent})
+	return nil, errors.SentinelWithStack(ErrDefaultRouteNotFound).WithMetadata(errors.Metadata{"content": routeContent})
 }
 
 func inet_ntoa(ipnr int64) net.IP {

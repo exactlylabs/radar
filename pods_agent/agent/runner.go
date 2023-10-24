@@ -23,7 +23,9 @@ func startSpeedTestRunner(ctx context.Context, c *config.Config, runTestCh <-cha
 				if err != nil {
 					err = errors.Wrap(err, "failed to run speed test")
 					log.Println(err)
-					sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+					if !errors.Is(err, ErrRunnerConnectionError) {
+						sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+					}
 					continue
 				}
 				err = reporter.SendMeasurement(ctx, runner.Type(), result.Raw)

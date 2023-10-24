@@ -48,7 +48,7 @@ func DefaultRoute() (r Route, err error) {
 			return r, nil
 		}
 	}
-	return r, errors.New("failed to find default route").WithMetadata(errors.Metadata{"content": routeContent})
+	return r, errors.SentinelWithStack(ErrDefaultRouteNotFound).WithMetadata(errors.Metadata{"content": routeContent})
 }
 
 func interfaceByIP(ip net.IP) (net.Interface, error) {
@@ -69,5 +69,5 @@ func interfaceByIP(ip net.IP) (net.Interface, error) {
 			}
 		}
 	}
-	return net.Interface{}, errors.New("interface not found").WithMetadata(errors.Metadata{"interfaces": ifaces})
+	return net.Interface{}, errors.SentinelWithStack(ErrDefaultRouteNotFound).WithMetadata(errors.Metadata{"interfaces": ifaces})
 }

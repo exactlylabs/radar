@@ -1,6 +1,12 @@
 package netroute
 
-import "net"
+import (
+	"net"
+
+	"github.com/exactlylabs/go-errors/pkg/errors"
+)
+
+var ErrDefaultRouteNotFound = errors.NewSentinel("DefaultRouteNotFound", "failed to find route")
 
 // Route is a network route, that stores the destination IP and through which interface the packages goes to
 type Route struct {

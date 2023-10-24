@@ -3,8 +3,11 @@ package agent
 import (
 	"context"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
+
+var ErrRunnerConnectionError = errors.NewSentinel("RunnerConnectionError", "runner failed to connect to the speed test server")
 
 type BinaryUpdate struct {
 	Version   string `json:"version"`
@@ -28,6 +31,8 @@ type Measurement struct {
 }
 
 type Runner interface {
+	// Run a speed test.
+	// The returned error could either by an ErrRunnerConnectionError or an internal generic error
 	Run(ctx context.Context) (*Measurement, error)
 	Type() string
 }

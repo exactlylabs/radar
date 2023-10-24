@@ -108,7 +108,10 @@ func (r *ndt7Runner) Run(ctx context.Context) (*agent.Measurement, error) {
 	client.Scheme = defaultSchemeForArch()
 	b := &bytes.Buffer{}
 	err := r.runTest(ctx, b, client.StartDownload)
-	if err != nil {
+	if errors.Is(err, ndt7.ErrNoTargets) {
+		return nil, errors.SentinelWithStack(agent.ErrRunnerConnectionError).WithMetadata(errors.Metadata{"type": "ndt7", "test": "download"})
+
+	} else if err != nil {
 		if strings.Contains(err.Error(), "bad handshake") {
 			// Try one more time
 			log.Println("NDT7 - failed with bad handshake. Trying again in 5 seconds")
@@ -123,7 +126,10 @@ func (r *ndt7Runner) Run(ctx context.Context) (*agent.Measurement, error) {
 	}
 	log.Println("NDT7 - Starting Upload Test")
 	err = r.runTest(ctx, b, client.StartUpload)
-	if err != nil {
+	if errors.Is(err, ndt7.ErrNoTargets) {
+		return nil, errors.SentinelWithStack(agent.ErrRunnerConnectionError).WithMetadata(errors.Metadata{"type": "ndt7", "test": "download"})
+
+	} else if err != nil {
 		if strings.Contains(err.Error(), "bad handshake") {
 			// Try one more time
 			log.Println("NDT7 - failed with bad handshake. Trying again in 5 seconds")
