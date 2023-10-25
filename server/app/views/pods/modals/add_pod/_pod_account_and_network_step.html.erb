@@ -2,8 +2,8 @@
     locals: {
       title: "Add a new pod",
       is_custom: true,
-      goes_back: true,
-      go_back_url: get_add_pod_modal_path(unix_user: @unix_user),
+      goes_back: !@setup,
+      go_back_url: @setup ? nil : get_add_pod_modal_path(unix_user: @unix_user),
     }
 %>
 <%= form_with(url: claim_new_pod_path, method: :post) do |form| %>
@@ -14,9 +14,9 @@
     <h3 class="modal-main-title mb-6"><%= @unix_user %></h3>
     <input hidden name="id" value="<%= @unix_user %>"/>
     
-    <% if current_account.is_all_accounts? %>
+    <% if current_account.is_all_accounts? || @setup %>
       <div class="modals--form-row mb-4">
-        <label class="required forms--label">Account</label>
+        <label for="new-pod-account-select" class="required forms--label">Account</label>
         <select class="forms--select form-select"
           id="new-pod-account-select"
           data-controller="select2"
@@ -33,7 +33,7 @@
             <option>&nbsp;</option>
           <% end %>
           <% policy_scope(Account).each_with_index do |account, index|%>
-            <%= render partial: "clients/client_account", locals: { account: account, selected: index == 0 } %>
+            <%= render partial: "clients/client_account", locals: { account: account, selected: current_account.is_all_accounts? ? index == 0 : current_account.id == account.id } %>
           <% end %>
         </select>
       </div>

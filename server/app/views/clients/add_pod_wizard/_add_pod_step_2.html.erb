@@ -1,5 +1,7 @@
+<% is_setup = local_assigns[:setup].present? ? local_assigns[:setup] : false %>
+
 <%= form_with(url: claim_clients_path) do |form| %>
-  <div class="modal-body modals--body" style="display: none; min-width: 450px" data-add-pod-target="step2">
+  <div class="modal-body modals--body" style="<%= is_setup ? nil : 'display: none;' %> min-width: 450px" data-add-pod-target="step2">
     <div class="d-flex flex-column align-items-center justify-content-center mb-5">
       <div class="custom-icon-wrapper--pod mb-2">
         <span class="svg-icon svg-icon-2x svg-icon-primary">
@@ -12,11 +14,11 @@
         </span>
       </div>
       <div class="d-flex flex-column align-items-center justify-content-center">
-        <div class="card-main-title mb-1" data-add-pod-target="step2IdInput"></div>
+        <div class="card-main-title mb-1" data-add-pod-target="step2IdInput"><%= @unix_user.present? ? @unix_user : nil %></div>
       </div>
     </div>
     <div class="forms--row">
-      <%= form.text_field :id_final, class: "form-control form-control-solid", value: @client_id, name: "id", style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step2IdInputHidden"}%>
+      <%= form.text_field :id_final, class: "form-control form-control-solid", value: @unix_user, name: "id", style: "width: 0px; height: 0px; margin: 0; border: 0; padding: 0;", data: { "add-pod-target" => "step2IdInputHidden"}%>
       <!--begin::Label-->
       <label class="forms--label mb-2">Name</label>
       <!--end::Label-->
@@ -26,9 +28,9 @@
       <div class="fv-plugins-message-container invalid-feedback"></div>
     </div>
 
-    <% if current_account.is_all_accounts? %>
+    <% if current_account.is_all_accounts? || @setup %>
       <div class="forms--row">
-        <label class="forms--label mb-2 required">Account</label>
+        <label for="client-accounts-dropdown" class="forms--label mb-2 required">Account</label>
         <div class="forms--input-group">
           <select class="forms--select form-select"
                   data-controller="select2"
@@ -42,7 +44,7 @@
                   data-select2-dropdown-parent-value="add_pod_modal"
           >
             <% policy_scope(Account).each_with_index do |account, index|%>
-              <%= render partial: "clients/client_select_option", locals: { option: account, selected: index === 0} %>
+              <%= render partial: "clients/client_select_option", locals: { option: account, selected: current_account.is_all_accounts? ? index == 0 : account.id == current_account.id} %>
             <% end %> 
           </select>
         </div>
@@ -50,7 +52,7 @@
     <% end %>
 
     <div class="forms--row" data-add-pod-target="locationWrapper">
-      <label class="forms--label mb-2">Location</label>
+      <label for="client-locations-dropdown" class="forms--label mb-2">Location</label>
       <div class="forms--input-group">
         <select class="forms--select form-select"
                 data-controller="select2"
@@ -65,9 +67,15 @@
       >
           <option></option>
           <option>&nbsp;</option>
-          <% policy_scope(Location).each do |location|%>
-            <%= render partial: "clients/client_select_option", locals: { option: location, selected: false} %>
-          <% end %> 
+          <% if current_account.is_all_accounts? %>
+            <% policy_scope(Account).first.locations.each do |location|%>
+              <%= render partial: "clients/client_select_option", locals: { option: location, selected: false} %>
+            <% end %>
+          <% else %>
+            <% policy_scope(Location).each do |location|%>
+              <%= render partial: "clients/client_select_option", locals: { option: location, selected: false} %>
+            <% end %>
+          <% end %>
         </select>
       </div>
     </div>
@@ -106,7 +114,7 @@
     </a>
   </div>
 
-  <div class="modal-footer modals--footer" style="display:none" data-add-pod-target="step2Footer">
+  <div class="modal-footer modals--footer" style="<%= is_setup ? nil : 'display: none;' %>" data-add-pod-target="step2Footer">
     <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
     <%= form.submit "Add Pod", class: "custom-button custom-button--primary custom-button--sm", data: {"add-pod-target" => "addPodButton"} %>
   </div>

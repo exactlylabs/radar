@@ -5,11 +5,10 @@
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
       <% if FeatureFlagHelper.is_available('networks', current_user) %>
-        <h1 class="page-main-title"><%= @client.unix_user %>
+        <h1 class="page-main-title"><%= @client.unix_user %></h1>
       <% else %>
-        <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %> 
+        <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %></h1>
       <% end %>
-      <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">

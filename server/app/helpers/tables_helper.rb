@@ -14,6 +14,7 @@ module TablesHelper
     ALL_ACCOUNTS_MEMBER = "AllAccountsMember"
     NETWORK = "Network"
     NETWORKS_INDEX = "NetworksIndex"
+    NETWORK_OVERVIEW = "NetworkOverview"
     PODS = "Pods"
     POD_OVERVIEW = "PodOverview"
   end

@@ -2,8 +2,8 @@
 <% contained = local_assigns[:contained].present? ? local_assigns[:contained] : false %>
 <% is_account_fixed = local_assigns[:is_account_fixed] ? local_assigns[:is_account_fixed] : false %>
 <% onboarding = local_assigns[:is_onboarding].present? ? local_assigns[:is_onboarding] : false %>
-<% name_is_empty = @location.errors.full_messages.include?("Name can't be blank") %>
-<% address_is_empty = @location.errors.full_messages.include?("Address can't be blank") %>
+<% name_is_empty = @location&.errors&.full_messages&.include?("Name can't be blank") || false %>
+<% address_is_empty = @location&.errors&.full_messages&.include?("Address can't be blank") || false %>
 
 <div class="modals--content-container <%= contained ? 'contained' : '' %>"
   data-controller="location-form"

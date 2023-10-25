@@ -87,7 +87,11 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   def after_sign_in_path_for(resource)
-    dashboard_path
+    if params[:setup].present? && params[:setup] == "true"
+      clients_path(setup: true, unix_user: params[:unix_user])
+    else
+      dashboard_path
+    end
   end
 
   def current_account

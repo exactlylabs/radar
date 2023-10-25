@@ -12,11 +12,22 @@
         <li class="breadcrumb-item page-sub-title"><%= current_account.name %>
           <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
         </li>
-        <li class="breadcrumb-item page-sub-title">Locations</li>
+        <li class="breadcrumb-item page-sub-title"><%= FeatureFlagHelper.is_available('networks', current_user) ? 'Networks' : 'Locations' %></li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <div class="pods--header-options-container">
+        <%= render partial: "application/components/buttons/custom_more_options_button",
+                   locals: {
+                     type: TablesHelper::OptionsMenuType::NETWORK_OVERVIEW,
+                     with_bg: true,
+                     big: true
+                   }
+        %>
+      </div>
+    <% end %>
   </div>
 </div>
 <!--end::Toolbar-->
@@ -46,12 +57,22 @@
     </div>
   <!--end:Container-->
 </div>
-<!--begin::LocationModal-->
-<div class="modal fade" tabindex="-1" id="edit_location_modal" data-controller="modal categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->modal#submit turbo:frame-render->categories#initializeCategories">
-  <%= turbo_frame_tag "edit_location_modal", src: edit_location_path(@location) do %>
-  <% end %>
-</div>
-<!--end::LocationModal-->
+
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: {
+               turbo_frame_tag_id: "edit_location_modal",
+               optional_added_controllers: "categories",
+               optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse turbo:frame-render->categories#initializeCategories"
+             }
+  %>
+<% else %>
+  <div class="modal fade" tabindex="-1" id="edit_location_modal" data-controller="modal categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->modal#submit turbo:frame-render->categories#initializeCategories">
+    <%= turbo_frame_tag "edit_location_modal", src: edit_location_path(@location) do %>
+    <% end %>
+  </div>
+<% end %>
+
 <!--begin::AddPodModal-->
 <div class="modal fade" tabindex="-1" id="add_pod_modal" data-controller="modal add-pod" data-action="turbo:submit-end->modal#submit">
   <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path(location_id: @location.id) do %>

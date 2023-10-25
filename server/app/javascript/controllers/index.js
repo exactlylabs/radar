@@ -168,3 +168,6 @@ application.register("pod-account-and-network", PodAccountAndNetworkController);
 
 import LoadingFeedbackController from "./loading_feedback_controller";
 application.register("loading-feedback", LoadingFeedbackController);
+
+import QrController from "./qr_controller";
+application.register("qr", QrController);
