@@ -65,6 +65,23 @@ class ClientsController < ApplicationController
   def claim_form
     @client = Client.new
     @location_id = params[:location_id] || nil
+    @setup = params[:setup].present? && params[:setup] == 'true'
+    if @setup
+      possible_pod = Client.where(unix_user: params[:unix_user]).first
+      if possible_pod.present? && possible_pod.account.nil?
+        @unix_user = params[:unix_user]
+      else
+        redirect_to clients_path
+      end
+    end
+    if FeatureFlagHelper.is_available('networks', current_user)
+      @client = Client.find_by_unix_user(@unix_user)
+      @location = Location.new
+      respond_to do |format|
+        format.turbo_stream
+        format.html { render :get_add_pod_modal, status: :ok }
+      end
+    end
   end
 
   # Endpoint to be called from the public pod status page

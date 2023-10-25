@@ -3,8 +3,8 @@
   <div class="modal-content" style="width: max-content">
     <%= render partial: "application/components/modals/modal_header", locals: {title: "Add a Pod"} %>
     <%= render partial: "clients/add_pod_wizard/add_pod_error" %>
-    <%= render partial: "clients/add_pod_wizard/add_pod_step_0" %>
-    <%= render partial: "clients/add_pod_wizard/add_pod_step_2" %>
+    <%= render partial: "clients/add_pod_wizard/add_pod_step_0", locals: {setup: @setup} %>
+    <%= render partial: "clients/add_pod_wizard/add_pod_step_2", locals: {setup: @setup} %>
     <%= render partial: "clients/add_pod_wizard/add_pod_already_claimed" %>
     <%= render partial: "clients/add_pod_wizard/add_pod_not_found" %>
   </div>

@@ -1,5 +1,9 @@
 <%= turbo_stream.replace "location-details" do %>
-  <%= render partial: 'locations/location_details', locals: {location: @location} %>
+  <% if FeatureFlagHelper.is_available('networks', current_user) %>
+    <%= render partial: "networks/network_details", locals: { network: @location } %>
+  <% else %>
+    <%= render partial: "location_details", locals: { location: @location } %>
+  <% end %>
 <% end %>
 
 <% if FeatureFlagHelper.is_available('networks', current_user) %>

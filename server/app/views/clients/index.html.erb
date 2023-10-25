@@ -42,7 +42,7 @@
 
 <% if FeatureFlagHelper.is_available('networks', current_user) && are_there_unassigned_pods? %>
   <div class="networks--unassigned-pods-banner">
-    <%= image_tag image_url('warning-icon'), width: 20, height: 20 %>
+    <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
     <div class="networks--unassigned-pods-banner-text-container">
       <% pod_count = policy_scope(Client).where(location: nil).count %>
       <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>
@@ -80,7 +80,7 @@
   </div>
 <% else %>
   <div class="modal fade" tabindex="-1" id="add_pod_modal_wizard" data-controller="modal add-pod" data-action="turbo:submit-end->add-pod#handleSubmitEnd">
-    <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path do %>
+    <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path(setup: params[:setup], unix_user: params[:unix_user]) do %>
     <% end %>
   </div>
 <% end %>

@@ -384,3 +384,20 @@ body {
 .leaflet-popup-content {
   width: max-content !important;
 }
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    form {
+      width: 100%;
+
+      .modal-body.modals--body {
+        width: 100% !important;
+        min-width: unset !important;
+        max-width: 100% !important;
+      }
+    }
+  }
+}

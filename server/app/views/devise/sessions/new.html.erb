@@ -3,7 +3,7 @@
 	<!--begin::Wrapper-->
 	<div class="w-100">
 		<!--begin::Form-->
-		<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { data: { turbo: false }, class: "form w-100 fv-plugins-bootstrap5 fv-plugins-framework" }) do |f| %>
+		<%= form_for(resource, as: resource_name, url: session_path(resource_name, unix_user: params[:unix_user], setup: params[:setup]), html: { data: { turbo: false }, class: "form w-100 fv-plugins-bootstrap5 fv-plugins-framework" }) do |f| %>
 			<div class="text-center mb-6">
 				<!--begin::Title-->
 				<h1 class="page-main-title">Log in</h1>
@@ -11,7 +11,7 @@
 				<!--begin::Link-->
 				<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
 				<div class="additional-text">Don't have an account?
-				<a href="<%= new_registration_path(resource_name) %>" class="regular-link">Sign up</a></div>
+				<a href="<%= new_registration_path(resource_name, unix_user: params[:unix_user], setup: params[:setup]) %>" class="regular-link">Sign up</a></div>
 				<% end %>
 				<!--end::Link-->
 			</div>

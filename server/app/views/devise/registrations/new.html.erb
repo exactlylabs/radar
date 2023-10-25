@@ -13,7 +13,7 @@
       data-alert-type="warning"
       data-registration-target="duplicatedEmailAlert"
     >
-      This email address is already being used. You can <a href="<%= new_session_path(resource_name) %>" class="warning-link">log in</a> instead.
+      This email address is already being used. You can <a href="<%= new_session_path(resource_name, unix_user: params[:unix_user], setup: params[:setup]) %>" class="warning-link">log in</a> instead.
     </div>
 
     <div class="mt-2 devise--alert wrap invisible"

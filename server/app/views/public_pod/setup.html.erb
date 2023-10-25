@@ -17,7 +17,11 @@
 <p class="card-big-title wrap">This pod is ready to set up.</p>
 <p class="additional-text wrap">Set up this pod to work with your Radar account so you can start using it to measure your internet connectivity.</p>
 
-<a href="#" class="custom-button custom-button--primary custom-button--lg mx-auto mb-6" data-bs-target="#pod_setup_modal" data-bs-toggle="modal">Set up now</a>
+<% if user_signed_in? %>
+  <%= link_to "Set up now", clients_path(unix_user: @client.unix_user, setup: true), class: "custom-button custom-button--primary custom-button--lg mx-auto mb-6" %>
+<% else %>
+  <a href="#" class="custom-button custom-button--primary custom-button--lg mx-auto mb-6" data-bs-target="#pod_setup_modal" data-bs-toggle="modal">Set up now</a>
+<% end %>
 
 <div class="public--horizontal-divider"></div>
 

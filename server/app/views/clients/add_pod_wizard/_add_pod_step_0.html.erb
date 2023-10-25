@@ -1,4 +1,9 @@
-<div class="modal-body modals--body" data-add-pod-target="step0">
+<% is_setup = local_assigns[:setup].present? ? local_assigns[:setup] : false %>
+
+<div class="modal-body modals--body"
+     data-add-pod-target="step0"
+     style="display: <%= is_setup ? 'none' : 'flex' %>"
+>
   <div class="d-flex flex-column align-items-center justify-content-center">
     <div class="custom-icon-wrapper--pod mb-2">
       <span class="svg-icon svg-icon-2x svg-icon-primary">
@@ -32,6 +37,7 @@
 <div class="modal-footer modals--footer"
      id="podIdModalFooter"
      data-add-pod-target="step0Footer"
+     style="display: <%= is_setup ? 'none' : 'flex' %>"
 >
   <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
   <button type="button"

@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import handleError from "./error_handler_controller";
+import {emitCustomEvent} from "../eventsEmitter";
 
 const POD_ID_LENGTH = 12;
 
@@ -29,7 +30,31 @@ export default class extends Controller {
     "addPodButton"
   ];
 
-  connect() {}
+  connect() {
+    const currentUrl = new URL(window.location.href);
+    if(currentUrl.searchParams.has('unix_user') && currentUrl.searchParams.has('setup')) {
+      this.openAddPodModal(currentUrl.searchParams.get('unix_user'));
+    }
+  }
+  
+  openAddPodModal(podId) {
+    const token = document.getElementsByName("csrf-token")[0].content;
+    const url = new URL(window.location.origin + '/clients/claim');
+    url.searchParams.set('unix_user', podId);
+    url.searchParams.set('setup', 'true');
+    fetch(url, {
+      method: "GET",
+      headers: { "X-CSRF-Token": token },
+    })
+      .then (response => response.text())
+      .then(html => {
+        Turbo.renderStreamMessage(html);
+        $('#add_pod_modal_wizard').modal('show');
+      })
+      .catch((err) => {
+        handleError(err, this.identifier);
+      });
+  }
   
   async insertFromPaste(e) {
     const data = await e.clipboardData.getData("text");
@@ -254,6 +279,7 @@ export default class extends Controller {
   }
 
   onAccountsSelectChange(e) {
+    console.log('onAccountsSelectChange', e.target.value);
     const currentSelectedAccountId = this.accountsSelectTarget.value;
     if (currentSelectedAccountId) {
       fetch(`/locations/account/${currentSelectedAccountId}`)
