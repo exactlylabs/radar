@@ -279,7 +279,6 @@ export default class extends Controller {
   }
 
   onAccountsSelectChange(e) {
-    console.log('onAccountsSelectChange', e.target.value);
     const currentSelectedAccountId = this.accountsSelectTarget.value;
     if (currentSelectedAccountId) {
       fetch(`/locations/account/${currentSelectedAccountId}`)
