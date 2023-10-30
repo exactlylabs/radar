@@ -12,6 +12,11 @@ module.exports = {
         destination: DESTINATION_BASE_URL  + '/TTUHSC/:slug',
         permanent: false,
       },
+      {
+        source: '/WestVirginiaPCA',
+        destination: 'https://www.wvpca.org/content.asp?contentid=253#.',
+        permanent: false,
+      },
     ]
   },
 }
