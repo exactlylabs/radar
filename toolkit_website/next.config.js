@@ -14,7 +14,7 @@ module.exports = {
       },
       {
         source: '/WestVirginiaPCA',
-        destination: 'https://www.wvpca.org/content.asp?contentid=253#.',
+        destination: 'https://www.wvpca.org/content.asp?contentid=253',
         permanent: false,
       },
     ]
