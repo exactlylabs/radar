@@ -66,7 +66,6 @@ export default class extends Controller {
         );
         if (code) {
           if (this.doesCodeComply(code.data)) {
-            const string = code.data.replace('http://localhost:3000', 'https://c92a-190-247-7-163.ngrok-free.app');
             const url = new URL(string);
             url.searchParams.set('management_mode', 'true');
             window.location.href = url;

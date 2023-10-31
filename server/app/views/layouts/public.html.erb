@@ -47,7 +47,7 @@
         <%= yield %>
       </section>
       <section id="public--learn-section">
-        <p class="public--additional-text public--learn-more wrap">New to Radar Pods? <span><a href="https://pods.radartoolkit.com" class="regular-link">Learn more <%= image_tag image_url('new-tab-icon.png'), id: 'public--new-tab-icon' %></a></span></p>
+        <p class="public--additional-text public--learn-more wrap">New to Radar Pods? <span><a href="<%= request.protocol + request.host_with_port %>" class="regular-link">Learn more <%= image_tag image_url('new-tab-icon.png'), id: 'public--new-tab-icon' %></a></span></p>
       </section>
       <footer id="public--footer">
         <div id="public--footer-first-row">
