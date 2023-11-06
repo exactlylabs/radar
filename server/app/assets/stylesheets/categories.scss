@@ -1,3 +1,5 @@
+@import "./required_importants";
+
 .modal-dialog {
   &.category--modal-dialog {
     width: 518px;
@@ -186,7 +188,7 @@
   letter-spacing: 0;
   color: #3f3c70;
   margin: 0;
-  max-width: 90%;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -243,7 +245,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 0 0 4px;
+  margin: 0 8px 0 4px;
 
   &:hover {
     background-color: #f6f7fa;
@@ -295,7 +297,7 @@
 }
 
 .category--list-item-text-container-edit {
-  width: 75%;
+  width: 70%;
   height: 100%;
   display: flex;
   flex-direction: row;
@@ -329,22 +331,21 @@
 }
 
 .category--list-item-options-container {
-  width: 25%;
+  width: 40%;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: end;
   align-items: center;
 }
 
 .category--edit-button {
-  width: 32px;
-  height: 32px;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   border: none;
+  padding: 10px 15.5px;
 
   &:hover {
     opacity: 0.75;
@@ -358,6 +359,7 @@
 
 .category--edit-cancel-button {
   background-color: #f6f7fa;
+  margin-right: 8px;
 }
 
 .category--edit-confirm-button {
@@ -382,7 +384,7 @@
 }
 
 .category--search-container {
-  width: 200px;
+  width: 75%;
   height: 40px;
   display: flex;
   flex-direction: row;
