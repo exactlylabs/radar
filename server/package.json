@@ -1,6 +1,9 @@
 {
   "name": "radar",
   "private": true,
+  "engines": {
+    "node": "16.15.0"
+  },
   "dependencies": {
     "@hotwired/stimulus": "^3.0.1",
     "@hotwired/turbo-rails": "^7.1.0",
