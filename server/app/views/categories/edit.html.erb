@@ -1,3 +1,4 @@
+<!-- desktop version -->
 <%= turbo_frame_tag dom_id(@category) do %>
   <%= form_with(model: @category, url: category_path(@category.id), method: :put) do |form| %>
     <div class="category--list-item-edit">
@@ -10,10 +11,11 @@
         <%= link_to category_cancel_edit_path(@category), class: "category--edit-button category--edit-cancel-button custom-button custom-button--secondary"  do %>
           Cancel
         <% end %>
-        <button id="category--submit-<%= @category.id %>" type="submit" class="category--edit-button category--edit-confirm-button custom-button custom-button--primary custom-button--md">
+        <button id="category--submit-<%= @category.id %>" data-full-width="true" type="submit" class="category--edit-button category--edit-confirm-button custom-button custom-button--primary custom-button--md">
           Save
         </button>
       </div>
     </div>
   <% end %>
 <% end %>
+<

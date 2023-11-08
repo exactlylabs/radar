@@ -1,23 +1,9 @@
-<!-- desktop version -->
 <button type="button"
   data-controller="fetch"
-  class="category--add-button show-md-or-more custom-button custom-button--primary custom-button--md"
+  class="category--add-button custom-button custom-button--primary custom-button--md"
   data-url="<%= new_category_path %>"
   data-action="click->fetch#fetchTurbo"
 >
   <%= image_tag image_url("white-plus.png"), class: "category--add-icon" %>
   Add
 </button>
-<!-- end: desktop version -->
-
-<!-- mobile version -->
-<button type="button"
-  data-controller="fetch"
-  class=" custom-button custom-button--primary custom-button--md category--add-button show-sm-or-less-flex"
-  data-url="<%= new_category_path %>"
-  data-action="click->fetch#fetchTurbo"
->
-  <%= image_tag image_url("white-plus.png"), class: "category--add-icon" %>
-  Add
-</button>
-<!-- end: mobile version -->
