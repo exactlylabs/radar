@@ -1,8 +1,9 @@
 <% controllers = local_assigns[:optional_added_controllers].present? ? local_assigns[:optional_added_controllers] : nil %>
 <% actions = local_assigns[:optional_added_actions].present? ? local_assigns[:optional_added_actions] : nil %>
+<% allow_overflow = local_assigns[:needs_overflow].present? ? local_assigns[:needs_overflow] : false %>
 
 <%= turbo_frame_tag turbo_frame_tag_id,
-    class: "overflow-hidden",
+    class: allow_overflow ? '' : "overflow-hidden",
     data: {
       controller: controllers,
       action: actions

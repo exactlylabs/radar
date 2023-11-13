@@ -16,5 +16,7 @@
     <%= render partial: "pods/components/overview_options" %>
   <% elsif type == TablesHelper::OptionsMenuType::NETWORK_OVERVIEW %>
     <%= render partial: "networks/components/overview_options" %>
+  <% elsif type == TablesHelper::OptionsMenuType::PODS_INDEX %>
+    <%= render partial: "pods/components/index_options" %>
   <% end %>
 </div>

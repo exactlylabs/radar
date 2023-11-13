@@ -1,0 +1,35 @@
+<% origin = request.referrer.include?(locations_path) ? 'network' : 'pods' %>
+
+<% if origin == 'network' %>
+  <% @clients.each do |client| %>
+    <%= turbo_stream.remove client do %>
+    <% end %>
+  <% end %>
+<% else %>
+  <% if are_there_unassigned_pods?  %>
+    <%= turbo_stream.update "unassigned-pods-banner" do %>
+      <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
+      <div class="networks--unassigned-pods-banner-text-container">
+        <% pod_count = policy_scope(Client).where(location: nil).count %>
+        <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>
+        <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
+      </div>
+    <% end %>
+  <% else %>
+    <%= turbo_stream.remove "unassigned-pods-banner" do %>
+    <% end %>
+  <% end %>
+  <% @clients.each do |client| %>
+    <%= turbo_stream.replace client do %>
+      <%= render partial: "application/components/tables/table_row",
+                 locals: {
+                   row: client,
+                   type: TablesHelper::TableTypes::PODS,
+                   widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+                   index: client.unix_user,
+                   even: false
+                 }
+      %>
+    <% end %>
+  <% end %>
+<% end %>

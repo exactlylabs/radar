@@ -109,6 +109,14 @@ Rails.application.routes.draw do
       post 'bulk_move_to_network'
       post 'new_pod_onboarding', to: 'clients#new_pod_onboarding', as: 'new_pod_onboarding'
       post 'claim_pod_onboarding', to: 'clients#claim_pod_onboarding', as: 'claim_pod_onboarding'
+      get 'bulk_move_to_account', to: 'clients#get_bulk_move_to_account'
+      post 'bulk_move_to_account', to: 'clients#bulk_move_to_account'
+      get 'bulk_move_to_network_qr', to: 'clients#get_bulk_move_to_network_qr'
+      post 'bulk_move_to_network_qr', to: 'clients#bulk_move_to_network_qr'
+      put 'bulk_move_pods_to_account_step_one', to: 'clients#bulk_move_pods_to_account_step_one', as: 'bulk_move_pods_to_account_step_one'
+      put 'go_back_bulk_move_pods_to_account', to: 'clients#go_back_bulk_move_pods_to_account', as: 'go_back_bulk_move_pods_to_account'
+      put 'bulk_move_pods_to_network_step_one', to: 'clients#bulk_move_pods_to_network_step_one', as: 'bulk_move_pods_to_network_step_one'
+      put 'go_back_bulk_move_pods_to_network', to: 'clients#go_back_bulk_move_pods_to_network', as: 'go_back_bulk_move_pods_to_network'
     end
   end
 

@@ -23,6 +23,10 @@
   background-color: black;
 }
 
+.select2-container--bootstrap5 .select2-dropdown {
+  z-index: 100000;
+}
+
 .forms--select {
   -webkit-appearance: none;
   -moz-appearance: none;

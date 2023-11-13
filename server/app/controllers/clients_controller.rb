@@ -661,6 +661,92 @@ class ClientsController < ApplicationController
     end
   end
 
+  def get_bulk_move_to_account
+    possible_pod_ids = params[:pod_ids].present? ? JSON.parse(params[:pod_ids]) : nil
+    @pods = Client.none
+    if possible_pod_ids.present?
+      @pods = policy_scope(Client).where(unix_user: possible_pod_ids)
+    end
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html
+    end
+  end
+
+  def bulk_move_to_account
+    account_id = params[:account_id]
+    account = policy_scope(Account).find(account_id)
+    pod_ids = params[:pod_ids].present? ? JSON.parse(params[:pod_ids][0]) : nil
+    @pods = Client.none
+    @pod_ids = []
+    if pod_ids.present?
+      @pods = policy_scope(Client).where(unix_user: pod_ids)
+      @pod_ids = @pods.map(&:id)
+    end
+    respond_to do |format|
+      if @pods.update_all(account_id: account_id, location_id: nil)
+        @notice = "Your pods have been moved to #{account.name}."
+        format.turbo_stream
+      else
+        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error moving pod(s) to their account.", status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def get_bulk_move_to_network_qr
+    possible_pod_ids = params[:pod_ids].present? ? JSON.parse(params[:pod_ids]) : nil
+    @pods = Client.none
+    if possible_pod_ids.present?
+      @pods = policy_scope(Client).where(unix_user: possible_pod_ids)
+    end
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html
+    end
+  end
+
+  def bulk_move_to_network_qr
+    network_id = params[:network_id]
+    network = policy_scope(Location).find(network_id)
+    pod_ids = params[:pod_ids].present? ? JSON.parse(params[:pod_ids][0]) : nil
+    @pods = Client.none
+    @clients = Client.none
+    if pod_ids.present?
+      @pods = policy_scope(Client).where(unix_user: pod_ids)
+      @clients = @pods
+    end
+    respond_to do |format|
+      if @pods.update_all(location_id: network_id, account_id: network.account.id)
+        @notice = "Your pods have been moved to #{network.name}."
+        format.turbo_stream
+      else
+        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error moving pod(s) to their network.", status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def bulk_move_pods_to_account_step_one
+    pod_ids = JSON.parse(params[:pod_ids][0])
+    @pods = policy_scope(Client).where(unix_user: pod_ids)
+  end
+
+  def go_back_bulk_move_pods_to_account
+    pod_ids = params[:pod_ids]
+    @pods = policy_scope(Client).where(unix_user: pod_ids)
+  end
+
+  def bulk_move_pods_to_network_step_one
+    pod_ids = JSON.parse(params[:pod_ids][0])
+    @pods = policy_scope(Client).where(unix_user: pod_ids)
+  end
+
+  def go_back_bulk_move_pods_to_network
+    pod_ids = params[:pod_ids]
+    @pods = policy_scope(Client).where(unix_user: pod_ids)
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

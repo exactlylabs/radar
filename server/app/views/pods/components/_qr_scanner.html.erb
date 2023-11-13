@@ -1,0 +1,34 @@
+<div class="qr--undoable-bar" data-qr-target="undoableBanner" hidden="hidden">
+  <div class="tables--network-icon-container" data-pod-status="online">
+   <%= image_tag image_url('pod-online-icon.png'), width: 24, height: 24 %>
+  </div>
+  <p class="m-0"></p>
+  <button class="regular-link" data-action="click->qr#undoAdd">Undo</button>
+  <div id="loading-bar"></div>
+</div>
+<div class="qr--scan-info" data-qr-target="canvasInfo" hidden="hidden">
+  <%= image_tag image_url('white-alert-icon.png'), width: 16, height: 16, class: "me-1", hidden: 'hidden', "data-qr-target" => "alertIcon" %>
+  <span>Point your camera at the pod's QR code</span>
+</div>
+<button class="qr--continue-button"
+        data-qr-target="continueButton"
+        data-action="click->qr#close"
+        disabled="disabled"
+        hidden="hidden"
+>Continue</button>
+<div class="qr--scan-box" data-qr-target="canvasFocus" hidden="hidden"></div>
+<canvas class="pods--qr-scanner-canvas" data-qr-target="canvas" hidden="hidden">
+  <div></div>
+</canvas>
+<div data-qr-target="closeCanvas"
+     class="qr--close-canvas-icon hoverable"
+     hidden
+     data-action="click->qr#close"
+>
+  <%= image_tag image_url('white-close-icon.png'), width: 24, height: 24 %>
+</div>
+<div data-qr-target="canvasUnderlay"
+     class="public--qr-canvas-underlay"
+     data-action="click->qr#close"
+     hidden
+></div>

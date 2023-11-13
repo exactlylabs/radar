@@ -1,0 +1,43 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: {
+             title: "Move pods to account",
+             is_custom: true,
+             goes_back: true,
+             go_back_action: 'click->multi-pod-select#goBack',
+             go_back_url: go_back_bulk_move_pods_to_network_clients_path
+           }
+%>
+
+<%= form_with(url: bulk_move_to_network_qr_clients_path, method: :post) do |form| %>
+  <input hidden="hidden" type="text" value="<%= @pods.map(&:unix_user).to_s %>" name="pod_ids[]" data-multi-pod-select-target="selectedPodIdsHiddenInput"/>
+  <div class="modals--content-container" data-resource="bulk-move-pods">
+    <div class="modals--form-row">
+      <label for="bulk-pods-select-network" class="forms--label">Move your pods to...</label>
+      <select id="bulk-pods-select-network"
+              class="forms--select form-select select2-hidden-accessible"
+              data-placeholder="Choose an account"
+              tabindex="-1"
+              data-controller="select2"
+              style="background-color: #f5f8fa;"
+              name="network_id"
+              data-select2-dropdown-parent-value="bulk_move_to_network_modal"
+      >
+        <% policy_scope(Location).distinct.each do |network| %>
+          <option value="<%= network.id %>"
+                  label="<%= network.name %>"
+          ><%= network.name %></option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <!--begin::ContinueButton-->
+    <button type="submit"
+            class="custom-button custom-button--lg custom-button--primary"
+            data-controller="loading-feedback"
+            data-action="click->loading-feedback#replaceContent"
+    >Move pods</button>
+    <!--end::ContinueButton-->
+  </div>
+<% end %>

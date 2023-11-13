@@ -1,0 +1,57 @@
+<div hidden="hidden"
+     class="pods--select-options-container"
+     data-multi-pod-select-target="podSelectContainer"
+     id="pods-list"
+     data-action="addPodFromQR@window->multi-pod-select#addPodFromQR removeAll@window->multi-pod-select#removeAll"
+>
+  <div class="pods--select-search-container">
+    <div class="pods--select-search-content-container">
+      <%= image_tag image_url("search.png"), class: "pods--select-search-icon" %>
+      <input type="text" data-multi-pod-select-target="searchInput" class="pods--select-search-input" placeholder="Search..." data-action="input->multi-pod-select#search"/>
+      <%= image_tag image_url("cancel.png"), id: "pods--select-clear-icon-ref", class: "category--search-clear-icon invisible", data: { controller: "search", action: "click->search#clearSearch" } %>
+    </div>
+  </div>
+
+  <div class="category--horizontal-divider"></div>
+
+  <div class="pods--select-items-container">
+
+    <div class="pods--select-pod-list-container">
+      <div class="pods--select-option">
+        <input type="checkbox"
+               class="forms--checkbox"
+               id="pods--select-all"
+               name="selected_pods[]"
+               data-action="change->multi-pod-select#toggleSelectAll"
+          />
+        <label for="pods--select-all">All pods</label>
+      </div>
+    </div>
+
+    <div class="category--horizontal-divider"></div>
+
+    <div class="pods--select-pod-list-container">
+      <% policy_scope(Client).each do |pod| %>
+        <div class="pods--select-option"
+             data-multi-pod-select-target="podSelectOption"
+             data-pod-id="<%= pod.unix_user %>"
+        >
+          <input type="checkbox"
+                 class="forms--checkbox"
+                 id="pod--<%= pod.unix_user %>"
+                 name="selected_pods[]"
+                 data-multi-pod-select-target="podCheckbox"
+                 data-action="input->multi-pod-select#onCheckboxChange"
+                 <%= @pods&.find_by_unix_user(pod.unix_user).present? ? 'checked=checked' : nil %>
+            />
+          <div class="pods--select-icon-label-container">
+            <div class="tables--network-icon-container" data-pod-status="online">
+              <%= image_tag image_url('pod-online-icon.png'), width: 24, height: 24 %>
+            </div>
+            <label for="pod--<%= pod.unix_user %>"><%= pod.unix_user %></label>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
