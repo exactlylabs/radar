@@ -1,0 +1,25 @@
+<div class="pods--multi-pod-select-container"
+     data-open="false"
+     data-action="click->multi-pod-select#toggleSelect deletePodEvent@window->multi-pod-select#deletePodEvent addPodFromQR@window->multi-pod-select#addPodFromQR"
+>
+  <input hidden="hidden" name="available_pod_ids[]"
+         data-selected-pods-grid-target="allPodIdsHiddenInput"
+         data-multi-pod-select-target="allPodIdsHiddenInput"
+         data-qr-target="allPodIdsHiddenInput"
+         value="<%= policy_scope(Client).map(&:unix_user).to_s %>"
+    />
+  <input hidden="hidden" id="bulk-pods-select" name="pod_ids[]" data-multi-pod-select-target="podIdsHiddenInput" value="<%= @pods.map(&:unix_user).to_s %>"/>
+  <p class="text--select" data-multi-pod-select-target="noPodsMessage">Choose pods</p>
+  <div class="pods--select-pod-count-container" hidden="hidden" data-multi-pod-select-target="podCountMessage">
+    <%= image_tag image_url('pod-small-icon.png'), width: 16, height: 16 %>
+    <p class="text--select" data-multi-pod-select-target="podCountMessageText"></p>
+  </div>
+  <%= image_tag image_url('arrow-down-dark.png'), width: 16, height: 16, id: 'caret-down'%>
+  <div id="qr-reader" class="pods--qr-scan-code-container hoverable"
+       data-action="click->qr#openVideoSource"
+  >
+    <%= image_tag image_url('qr-scan-icon.png'), width: 16, height: 16 %>
+  </div>
+  <%= render partial: "pods/components/pods_select" %>
+  <%= render partial: "pods/components/qr_scanner" %>
+</div>

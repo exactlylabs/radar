@@ -23,8 +23,21 @@
   width: 100vw;
   height: 100vh;
   position: relative;
-  z-index: 100;
+  z-index: 9000;
   overflow: hidden;
+
+  &[data-allow-overflow="true"] {
+    overflow-y: visible;
+  }
+}
+
+@media (max-width: 990px) {
+  .modals--main-container {
+    height: 100dvh;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
 }
 
 .modals--underlay {
@@ -48,7 +61,7 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  z-index: 10000;
+  z-index: 1000000;
   transform: translate(-50%, -50%);
   overflow: hidden;
 
@@ -58,6 +71,11 @@
   
   &.closing {
     animation: modal-closing 200ms forwards cubic-bezier(0.88, 0.26, 0.32, 1);
+  }
+
+  &[data-allow-overflow="true"] {
+    overflow: unset;
+    overflow-y: visible;
   }
 }
 
@@ -71,7 +89,7 @@
     transform: translateX(-50%);
 
     &[data-modal-type="full"] {
-      height: 100vh;
+      height: 100dvh;
       overflow-y: auto;
     }
 
@@ -194,6 +212,12 @@
     text-align: center;
   }
 
+  &[data-resource="bulk-move-pods"] {
+    padding: 1.5rem;
+    overflow-y: visible;
+    min-width: 500px;
+  }
+
   &.contained {
     padding: 1rem;
   }
@@ -201,6 +225,7 @@
 
 @media (max-width: 450px) {
   .modals--content-container {
+    height: calc(100dvh - 200px);;
     min-width: unset;
     padding: 2rem;
     width: 100%;
@@ -216,6 +241,12 @@
     }
     &[data-resource="measurement"],
     &[data-resource="bulk-remove-from-network"] {
+      min-width: unset;
+    }
+
+    &[data-resource="bulk-move-pods"] {
+      padding: 2.5rem 2rem;
+      overflow-y: visible;
       min-width: unset;
     }
   }

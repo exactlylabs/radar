@@ -1,15 +1,45 @@
 import { Controller } from "@hotwired/stimulus";
 import { emitCustomEvent } from "../eventsEmitter";
+import handleError from "./error_handler_controller";
+import { AlertTypes } from "../alerts";
 import jsQR from "jsqr";
+
+const UNDO_ADD_TIMEOUT = 3000;
+const BASE_BANNER_MESSAGE = `Point your camera at the pod's QR code`;
 
 export default class extends Controller {
   
-  static targets = ["canvas", "closeCanvas", "canvasUnderlay"];
+  static targets = [
+    "canvas",
+    "closeCanvas",
+    "canvasUnderlay",
+    "canvasFocus",
+    "canvasInfo",
+    "undoableBanner",
+    "continueButton",
+    "allPodIdsHiddenInput",
+    "alertIcon"
+  ];
   
   connect(){
-    this.canvas = this.canvasTarget.getContext("2d");
     this.video = document.createElement("video");
     this.isOpen = false;
+    this.addPodTimeoutId = null;
+    this.loadingBarTimeoutId = null;
+    this.currentPodId = null;
+    this.analyzedPodIds = new Set();
+    this.addedPods = new Set();
+    this.availablePodIds = [];
+  }
+  
+  allPodIdsHiddenInputTargetConnected(target) {
+    const currentTargetValue = target.value;
+    if(!currentTargetValue || currentTargetValue === '') return;
+    this.availablePodIds = JSON.parse(currentTargetValue);
+  }
+  
+  canvasTargetConnected(target) {
+    this.canvas = target.getContext("2d", { willReadFrequently: true });
   }
   
   openVideoSource() {
@@ -28,19 +58,28 @@ export default class extends Controller {
           this.video.setAttribute('muted', '');
           this.video.setAttribute('playsinline', '')
           this.video.play();
+          this.showContinueButton();
           requestAnimationFrame(this.tick.bind(this));
         })
         .catch(e => { alert(e); });
     } catch (e) {
-      alert('open -> ' + e.message);
+      this.close();
+      handleError(e, this.identifier);
     }
   }
   
   close() {
     this.isOpen = false;
+    this.canvasInfoTarget.hidden = true;
+    this.canvasFocusTarget.hidden = true;
     this.canvasTarget.hidden = true;
     this.closeCanvasTarget.hidden = true;
     this.canvasUnderlayTarget.hidden = true;
+    this.hideContinueButton();
+    this.resetContinueButton();
+    this.currentPodId = null;
+    this.addedPods.clear();
+    this.analyzedPodIds.clear();
     
     // stop current video stream from webcam on browser
     const stream = this.video.srcObject;
@@ -52,6 +91,8 @@ export default class extends Controller {
     try {
       if (!this.isOpen) return;
       if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+        this.canvasInfoTarget.hidden = false;
+        this.canvasFocusTarget.hidden = false;
         this.canvasTarget.hidden = false;
         this.closeCanvasTarget.hidden = false;
         this.canvasUnderlayTarget.hidden = false;
@@ -62,28 +103,121 @@ export default class extends Controller {
         const code = jsQR(
           imageData.data,
           imageData.width,
-          imageData.height, { inversionAttempts: "dontInvert" }
+          imageData.height,
+          { inversionAttempts: "dontInvert" }
         );
         if (code) {
           if (this.doesCodeComply(code.data)) {
-            const url = new URL(string);
-            url.searchParams.set('management_mode', 'true');
-            window.location.href = url;
-          } else {
-            emitCustomEvent('renderAlert', {
-              detail: {
-                alertType: 'error',
-                message: `Oops! Seems like the QR code you scanned is not valid.`
+            const podId = code.data.split('/check/')[1];
+            
+            if(!this.analyzedPodIds.has(podId)) {
+              
+              this.analyzedPodIds.add(podId);
+              
+              if(this.availablePodIds.includes(podId)) {
+                this.currentPodId = podId;
+                this.showUndoableBanner();
+                this.addPodTimeoutId = setTimeout(this.addPod.bind(this), UNDO_ADD_TIMEOUT);
+              } else {
+                this.renderWrongPodAlert();
               }
-            });
+            }
+          } else {
+            this.renderUnknownQRCodeAlert();
           }
-          
         }
       }
       requestAnimationFrame(this.tick.bind(this));
     } catch (e) {
-      alert('tick -> ' + e.message);
+      this.close();
+      handleError(e, this.identifier);
     }
+  }
+  
+  addPod() {
+    this.hideUndoableBanner();
+    emitCustomEvent('addPodFromQR', { detail: { podId: this.currentPodId } });
+    this.renderPodAddedAlert();
+    this.addedPods.add(this.currentPodId);
+    this.enableContinueButton();
+  }
+  
+  resetLoadingBar() {
+    if(this.loadingBarTimeoutId) {
+      clearTimeout(this.loadingBarTimeoutId);
+      this.loadingBarTimeoutId = null;
+    }
+    this.undoableBannerTarget.dataset.loading = 'false';
+  }
+  
+  startLoadingBar() {
+    this.undoableBannerTarget.dataset.loading = 'true';
+    this.loadingBarTimeoutId = setTimeout(this.resetLoadingBar.bind(this), UNDO_ADD_TIMEOUT);
+  }
+  
+  hideUndoableBanner() {
+    if(this.addPodTimeoutId) {
+      clearTimeout(this.addPodTimeoutId);
+      this.addPodTimeoutId = null;
+    }
+    this.undoableBannerTarget.setAttribute('hidden', 'hidden');
+    this.resetLoadingBar();
+  }
+  
+  showUndoableBanner() {
+    this.undoableBannerTarget.removeAttribute('hidden');
+    this.undoableBannerTarget.querySelector('p').innerHTML = `<span>${this.currentPodId}</span> added to list.`;
+    this.startLoadingBar();
+  }
+  
+  undoAdd(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.analyzedPodIds.delete(this.currentPodId);
+    clearTimeout(this.addPodTimeoutId);
+    this.addPodTimeoutId = null;
+    this.hideUndoableBanner();
+  }
+  
+  showContinueButton() {
+    this.continueButtonTarget.removeAttribute('hidden');
+  }
+  
+  enableContinueButton() {
+    this.continueButtonTarget.removeAttribute('disabled');
+    this.continueButtonTarget.innerText = `Continue with ${this.addedPods.size} pod${this.addedPods.size === 1 ? '' : 's'}.`;
+  }
+  
+  resetContinueButton() {
+    this.continueButtonTarget.setAttribute('disabled', 'disabled');
+    this.continueButtonTarget.innerText = 'Continue';
+  }
+  
+  hideContinueButton() {
+    this.continueButtonTarget.setAttribute('hidden', 'hidden');
+  }
+  
+  resetCanvasInfo() {
+    this.alertIconTarget.setAttribute('hidden', 'hidden');
+    this.canvasInfoTarget.querySelector('span').innerText = BASE_BANNER_MESSAGE;
+  }
+  
+  renderPodAddedAlert() {
+    this.alertIconTarget.setAttribute('hidden', 'hidden');
+    this.canvasInfoTarget.querySelector('span').innerText = `${this.currentPodId} added successfully.`;
+    setTimeout(this.resetCanvasInfo.bind(this), 2000);
+  }
+  
+  renderWrongPodAlert() {
+    this.alertIconTarget.removeAttribute('hidden');
+    this.canvasInfoTarget.querySelector('span').innerText = `This pod doesn't exist or doesn't belong to you.`;
+    setTimeout(this.resetCanvasInfo.bind(this), 2000);
+  }
+  
+  renderUnknownQRCodeAlert() {
+    this.alertIconTarget.removeAttribute('hidden');
+    this.canvasInfoTarget.querySelector('span').innerText = `Unprocessable QR Code.`;
+    setTimeout(this.resetCanvasInfo.bind(this), 2000);
   }
   
   doesCodeComply(url) {

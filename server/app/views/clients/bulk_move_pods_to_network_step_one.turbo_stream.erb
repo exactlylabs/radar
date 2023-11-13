@@ -1,0 +1,11 @@
+<%= turbo_stream.update "bulk_move_to_network_qr_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+             locals: {
+               modal_title: "Move pods to network",
+               modal_partial_path: "pods/modals/bulk/move_pods/move_to_network_step_two",
+               custom_submit_end_handler: nil,
+               resource: nil,
+               needs_overflow: true
+             }
+  %>
+<% end %>

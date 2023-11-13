@@ -18,6 +18,10 @@ $extra-bold: 800;
   font-variation-settings: 'wght' $extra-bold;
 }
 
+.fw-bold {
+  font-variation-settings: 'wght' $bold;
+}
+
 .card-big-title {
   font-variation-settings: 'wght'$bold;
   font-size: 1.5rem;
@@ -196,4 +200,12 @@ $extra-bold: 800;
   font-variation-settings: 'wght' $semi-bold;
   font-size: 0.938rem;
   color: $deep-blue;
+}
+
+.text--select {
+  font-size: 0.938rem;
+  font-variation-settings: 'wght' $medium;
+  color: $dark-gray;
+  line-height: 1;
+  margin: 0;
 }

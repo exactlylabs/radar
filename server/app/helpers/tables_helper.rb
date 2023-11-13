@@ -17,6 +17,7 @@ module TablesHelper
     NETWORK_OVERVIEW = "NetworkOverview"
     PODS = "Pods"
     POD_OVERVIEW = "PodOverview"
+    PODS_INDEX = "PodsIndex"
   end
 
   def self.get_footer_label(type)

@@ -171,3 +171,9 @@ application.register("loading-feedback", LoadingFeedbackController);
 
 import QrController from "./qr_controller";
 application.register("qr", QrController);
+
+import MultiPodSelectController from "./multi_pod_select_controller";
+application.register("multi-pod-select", MultiPodSelectController);
+
+import SelectedPodsGridController from "./selected_pods_grid_controller";
+application.register("selected-pods-grid", SelectedPodsGridController);

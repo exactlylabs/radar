@@ -96,6 +96,7 @@
   box-shadow: none;
 }
 
+[disabled],
 .custom-button--disabled {
   opacity: 50%;
   cursor: default;
@@ -126,6 +127,10 @@
 
 .custom-button--xs {
   padding: 0.375rem .5rem;
+}
+
+.custom-button--options {
+  padding: .875rem;
 }
 
 .custom-button--icon {

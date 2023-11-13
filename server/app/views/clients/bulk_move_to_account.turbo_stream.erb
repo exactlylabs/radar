@@ -1,0 +1,48 @@
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <% # add new pod to network pods table if it's being remove from inside the network pods page %>
+  <% is_in_network_pods_view = request.referrer.include?(locations_path) %>
+  <% all_pods = policy_scope(Client) %>
+  <% if is_in_network_pods_view %>
+    <% if all_pods.count == 0 %>
+      <%= turbo_stream.update "network_pods_table_container" do %>
+        <%= render partial: "network_pods/components/empty_pods_card", locals: { network: @location_before_release } %>
+      <% end %>
+    <% else %>
+      <% @pod_ids.each do |pod_id| %>
+        <%= turbo_stream.remove "client_#{pod_id}" do %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <% if are_there_unassigned_pods?  %>
+      <%= turbo_stream.update "unassigned-pods-banner" do %>
+        <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
+        <div class="networks--unassigned-pods-banner-text-container">
+          <% pod_count = policy_scope(Client).where(location: nil).count %>
+          <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>
+          <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
+        </div>
+      <% end %>
+    <% else %>
+      <%= turbo_stream.remove "unassigned-pods-banner" do %>
+      <% end %>
+    <% end %>
+    <% if all_pods.count == 0 %>
+      <%= turbo_stream.update "clients_index_content" do %>
+        <%= render partial: "pods/components/empty_pods_card"%>
+      <% end %>
+    <% else %>
+      <% @pod_ids.each do |pod_id| %>
+        <%= turbo_stream.remove "client_#{pod_id}" do %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+
+  <%= turbo_stream.append 'realtime-notice' do %>
+    <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+  <% end %>
+
+<% end %>
+

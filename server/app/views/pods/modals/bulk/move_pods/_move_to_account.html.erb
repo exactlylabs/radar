@@ -1,0 +1,28 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: {
+             title: "Move pods to account",
+             is_custom: true,
+           }
+%>
+
+<%= form_with(url: bulk_move_pods_to_account_step_one_clients_path, method: :put) do |form| %>
+  <div class="modals--content-container" data-resource="bulk-move-pods">
+    <div class="modals--form-row">
+      <label for="bulk-pods-select" class="forms--label">Choose pods to move</label>
+      <%= render partial: "pods/components/multi_pod_select" %>
+    </div>
+    <%= render partial: "pods/components/selected_pods_grid" %>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <!--begin::ContinueButton-->
+    <button type="submit"
+            class="custom-button custom-button--lg custom-button--primary"
+            data-controller="loading-feedback"
+            data-action="click->loading-feedback#replaceContent"
+            data-selected-pods-grid-target="continueButton"
+            <%= @pods.count > 0 ? nil : 'disabled=disabled' %>
+    >Continue</button>
+    <!--end::ContinueButton-->
+  </div>
+<% end %>

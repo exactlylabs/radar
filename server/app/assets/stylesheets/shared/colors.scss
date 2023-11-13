@@ -31,6 +31,7 @@ $secondary-button--box-shadow: #a09fb715;
 $secondary-light-button--box-shadow: #a09fb720;
 $secondary-light-danger--background-color: rgba(241, 65, 108, 0.1);
 $secondary-light-danger--box-shadow: rgba(241, 65, 108, 0.35);
+$button-divider-border: #d8d8d8;
 
 // Badges
 $badge--green-color: #31b36c;
@@ -56,6 +57,7 @@ $alert--success-background-color: #ebf8f0;
 $alert--success-color: $deep-blue;
 $alert--success-border-color: rgba(49, 179, 108, 0.3);
 $alert--success-icon-container-background-color: rgba(49, 179, 108, 0.7);
+$alert--qr-background-color: rgba(0, 0, 0, 0.25);
 
 // Sidebar
 $sidebar--main-container-border: rgba(188, 187, 199, 0.1);
@@ -105,17 +107,15 @@ $modals--network-creation-component-border: $checkbox-gray;
 
 // Cards
 $cards--default-box-shadow: rgba(160, 159, 183, 0.15);
-
-// Dashboard
-$dashboard--no-accounts-card-box-shadow: rgba(160, 159, 183, 0.15);
-
-// Widgets
-$widget--border-color: rgba(188, 187, 199, 0.1);
-$widget--box-shadow: rgba(160, 159, 183, 0.15);
-$widget--location-popup-header-background-color: rgba(246, 247, 250, 0.3);
+$cards--selected-pod-background-color: rgba(246, 247, 250, 0.25);
+$cards--selected-pod-border: rgba(188, 187, 199, 0.2);
 
 // Forms
 $forms--search-box-shadow: rgba(160, 159, 183, 0.05);
+
+// QR
+$qr--background-color: rgba(35, 34, 52, 0.38);
+$qr--info-background-color: rgba(0, 0, 0, 0.5);
 
 .transparent {
   background-color: transparent;

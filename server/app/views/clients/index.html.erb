@@ -17,22 +17,29 @@
       <!--end::Breadcrumb-->
     </div>
     <!--end::Info-->
-    <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-      <% if current_user.super_user && !is_super_user_disabled? %>
-        <a href="<%= update_groups_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Manage Release Group</a>
-      <% end %>
-      <% if current_account.superaccount %>
-        <a href="<%= unclaimed_clients_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Unclaimed Pods</a>
-      <% end %>
+    <div class="pods--index-button-options-container">
       <% if FeatureFlagHelper.is_available('networks', current_user) %>
         <a href="<%= get_add_pod_modal_path %>"
           class="custom-button custom-button--primary custom-button--lg"
           data-turbo-frame="add_pod_modal"
         >
-        <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: 'me-2' %>
-        Add Pod
+          <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: 'me-2' %>
+          Add Pod
         </a>
+        <%= render partial: "application/components/buttons/custom_more_options_button",
+                   locals: {
+                     type: TablesHelper::OptionsMenuType::PODS_INDEX,
+                     with_bg: true,
+                     big: true
+                   }
+        %>
       <% else %>
+        <% if current_user.super_user && !is_super_user_disabled? %>
+          <a href="<%= update_groups_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Manage Release Group</a>
+        <% end %>
+        <% if current_account.superaccount %>
+          <a href="<%= unclaimed_clients_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Unclaimed Pods</a>
+        <% end %>
         <button type="button" class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled' : '' %>" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard">Add Pod</button>
       <% end %>
     </div>
@@ -41,7 +48,7 @@
 <!--end::Toolbar-->
 
 <% if FeatureFlagHelper.is_available('networks', current_user) && are_there_unassigned_pods? %>
-  <div class="networks--unassigned-pods-banner">
+  <div id="unassigned-pods-banner" class="networks--unassigned-pods-banner">
     <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
     <div class="networks--unassigned-pods-banner-text-container">
       <% pod_count = policy_scope(Client).where(location: nil).count %>
@@ -78,6 +85,20 @@
   <div class="modal fade" tabindex="-1" id="pod_id_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
     <%= render partial: "public_pod/pod_id_modal" %>
   </div>
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: {
+               turbo_frame_tag_id: "bulk_move_to_account_modal",
+               optional_added_controllers: "multi-pod-select selected-pods-grid qr",
+               needs_overflow: true
+             }
+  %>
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: {
+               turbo_frame_tag_id: "bulk_move_to_network_qr_modal",
+               optional_added_controllers: "multi-pod-select selected-pods-grid qr",
+               needs_overflow: true
+             }
+  %>
 <% else %>
   <div class="modal fade" tabindex="-1" id="add_pod_modal_wizard" data-controller="modal add-pod" data-action="turbo:submit-end->add-pod#handleSubmitEnd">
     <%= turbo_frame_tag "add_pod_modal", src: claim_clients_path(setup: params[:setup], unix_user: params[:unix_user]) do %>

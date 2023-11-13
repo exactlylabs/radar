@@ -1,0 +1,18 @@
+<% if current_user.super_user && !is_super_user_disabled? %>
+  <a href="<%= update_groups_path %>" class="tables--row-option table-menu-option ellipsis">Manage Release Group</a>
+<% end %>
+<% if current_account.superaccount %>
+  <a href="<%= unclaimed_clients_path %>" class="tables--row-option table-menu-option ellipsis">Unclaimed Pods</a>
+<% end %>
+<a class="tables--row-option table-menu-option ellipsis"
+   data-turbo="true"
+   data-turbo-stream="true"
+   data-turbo-frame="bulk_move_to_account_modal"
+   href="<%= bulk_move_to_account_clients_path %>"
+>Move pods to an account</a>
+<a class="tables--row-option table-menu-option ellipsis"
+   data-turbo="true"
+   data-turbo-stream="true"
+   data-turbo-frame="bulk_move_to_network_qr_modal"
+   href="<%= bulk_move_to_network_qr_clients_path %>"
+>Move pods to a network</a>
