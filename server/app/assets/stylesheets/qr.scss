@@ -56,6 +56,12 @@
   }
 }
 
+@media (min-width: 769px) {
+  .qr--scan-info {
+    top: -85px;
+  }
+}
+
 .qr--close-canvas-icon {
   position: fixed;
   top: 1rem;
@@ -66,6 +72,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (min-width: 769px) {
+  .qr--close-canvas-icon {
+    top: -85px;
+  }
 }
 
 .qr--undoable-bar {
@@ -117,6 +129,12 @@
   }
 }
 
+@media (min-width: 769px) {
+  .qr--undoable-bar {
+    top: -150px;
+  }
+}
+
 @keyframes loading {
   0% {
     width: 0;
@@ -143,4 +161,11 @@
   font-variation-settings: 'wght' $bold;
   border: none;
   z-index: 5005;
+}
+
+@media (min-width: 769px) {
+  .qr--continue-button {
+    width: 80%;
+    bottom: -100px;
+  }
 }

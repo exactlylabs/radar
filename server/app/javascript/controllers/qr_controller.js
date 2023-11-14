@@ -1,11 +1,14 @@
 import { Controller } from "@hotwired/stimulus";
 import { emitCustomEvent } from "../eventsEmitter";
 import handleError from "./error_handler_controller";
-import { AlertTypes } from "../alerts";
 import jsQR from "jsqr";
 
 const UNDO_ADD_TIMEOUT = 3000;
 const BASE_BANNER_MESSAGE = `Point your camera at the pod's QR code`;
+const INTERACTION_TYPES = {
+  SUCCESS: 'success',
+  ERROR: 'error'
+}
 
 export default class extends Controller {
   
@@ -30,6 +33,22 @@ export default class extends Controller {
     this.analyzedPodIds = new Set();
     this.addedPods = new Set();
     this.availablePodIds = [];
+    this.successAudio = new Audio('audios/success.wav');
+    this.errorAudio = new Audio('audios/error.wav');
+  }
+  
+  handleInteraction(type) {
+    // Not that big of a deal if the audios fails for some reason, but want to catch it
+    if(type === INTERACTION_TYPES.SUCCESS) {
+      this.successAudio.play().catch(() => {});
+    } else {
+      this.errorAudio.play().catch(() => {});
+    }
+    
+    // Double check vibrate support (mainly for iOS)
+    if('vibrate' in navigator) {
+      navigator.vibrate(200);
+    }
   }
   
   allPodIdsHiddenInputTargetConnected(target) {
@@ -119,10 +138,12 @@ export default class extends Controller {
                 this.showUndoableBanner();
                 this.addPodTimeoutId = setTimeout(this.addPod.bind(this), UNDO_ADD_TIMEOUT);
               } else {
+                this.handleInteraction(INTERACTION_TYPES.ERROR);
                 this.renderWrongPodAlert();
               }
             }
           } else {
+            this.handleInteraction(INTERACTION_TYPES.ERROR);
             this.renderUnknownQRCodeAlert();
           }
         }
@@ -135,6 +156,7 @@ export default class extends Controller {
   }
   
   addPod() {
+    this.handleInteraction(INTERACTION_TYPES.SUCCESS);
     this.hideUndoableBanner();
     emitCustomEvent('addPodFromQR', { detail: { podId: this.currentPodId } });
     this.renderPodAddedAlert();
