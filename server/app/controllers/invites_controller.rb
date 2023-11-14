@@ -1,6 +1,7 @@
 class InvitesController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_user_is_allowed
+  before_action :check_user_is_allowed, except: [:accept, :decline]
+  before_action :set_invite, only: [:accept, :decline]
 
   def create
     invite = params[:invite]
@@ -31,6 +32,7 @@ class InvitesController < ApplicationController
     respond_to do |format|
       if !duplicate_invite_error && @new_invite.save
         token = "#{@new_invite.id}#{secret}"
+        NotificationsChannel.broadcast_to("#{CHANNELS[:notifications]}_channel_#{@new_invite.email}", {type: "new_invite", account_name: @new_invite.account.name, account_id: @new_invite.account.id, invite_id: @new_invite.id})
         InviteMailer.with(invite: @new_invite, account: account_to_use, token: token).invite_email.deliver_later
         @notice = "Invite was successfully created."
         format.turbo_stream
@@ -66,6 +68,23 @@ class InvitesController < ApplicationController
     end
   end
 
+  def accept
+    @invite_id = @invite.id
+    invite_account_name = @invite.account.name
+    @user_account = UsersAccount.create!(user_id: current_user.id, account_id: @invite[:account_id], joined_at: Time.now, invited_at: @invite[:sent_at])
+    @invite.destroy!
+    @notice = "You are now part of #{invite_account_name}. Refresh to see changes..."
+  end
+
+  def decline
+    @invite_id = @invite.id
+    @invite.destroy!
+    @notice = "Invitation to #{@invite.account.name} declined successfully."
+  end
+
+  def pending_invites_panel
+  end
+
   private
   def invite_params
     params.require(:invite).permit(:first_name, :last_name, :email, :account_id)
@@ -75,5 +94,9 @@ class InvitesController < ApplicationController
     unless UsersAccount.is_user_allowed(current_account.id, current_user.id)
       head(401)
     end
+  end
+
+  def set_invite
+    @invite = Invite.where(email: current_user.email).find(params[:id])
   end
 end

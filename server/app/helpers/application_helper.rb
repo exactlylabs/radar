@@ -2,6 +2,10 @@ module ApplicationHelper
   GB_MULTIPLIER = 1024**3
   MB_MULTIPLIER = 1024**2
 
+  def has_pending_invites?(user = current_user)
+    Invite.where(email: user.email).count > 0
+  end
+
   def are_there_unassigned_pods?
     policy_scope(Client).where(location: nil).count > 0
   end
