@@ -1,0 +1,36 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: "Notifications", is_custom: true }
+%>
+<div class="modals--content-container"
+     data-type="headless"
+     data-controller="notifications"
+     data-action="newNotification@window->notifications#addNewNotification"
+     data-is-modal="true"
+>
+  <%= render partial: "application/components/sidebar/notification",
+             locals: { notification: nil, placeholder: true, modal: true }
+  %>
+  <% unless has_pending_invites? %>
+    <div class="sidebar--notifications-wrapper"
+         data-has-notifications="false"
+         data-modal="true"
+         id="modal-notifications-content"
+    >No notifications yet.</div>
+  <% else %>
+    <div class="sidebar--notifications-wrapper"
+         data-has-notifications="true"
+         data-modal="true"
+         id="modal-notifications-content"
+    >
+      <% pending_invites = Invite.where(email: current_user.email).order('created_at DESC') %>
+      <% pending_invites.each_with_index do |notification, index| %>
+        <%= render partial: "application/components/sidebar/notification",
+                   locals: { notification: notification, modal: true }
+        %>
+        <% if index != (pending_invites.count - 1) %>
+          <div class="sidebar--notifications-divider" id="modal-notification-divider-<%= notification.id %>"></div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

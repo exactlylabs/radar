@@ -1,0 +1,9 @@
+<%= turbo_frame_tag "notifications_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+             locals: {
+               modal_partial_path: "application/components/notifications/modal",
+               custom_submit_end_handler: nil,
+               resource: '',
+             }
+  %>
+<% end %>

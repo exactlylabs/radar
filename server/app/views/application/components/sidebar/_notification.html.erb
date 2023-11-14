@@ -1,0 +1,27 @@
+<% is_modal = local_assigns[:modal].present? ? local_assigns[:modal] : false %>
+<% is_placeholder = local_assigns[:placeholder].present? ? local_assigns[:placeholder] : false %>
+
+<div class="sidebar--notification"
+     id="<%= is_modal ? 'modal_' : '' %>notification_<%= notification.present? ? notification.id : 'placeholder' %>"
+     data-is-modal="<%= is_modal %>"
+     <%= is_placeholder ? 'hidden=hidden' : nil %>
+     <%= is_placeholder ? is_modal ? 'data-notifications-target=modalPlaceholderNotification' : 'data-notifications-target=placeholderNotification' : nil %>
+>
+  <div class="sidebar--notification-icon-container">
+    <% if is_modal %>
+      <%= image_tag image_url('notification-icon-big.png'), width: 24, height: 24 %>
+    <% else %>
+      <%= image_tag image_url('notification-icon.png'), width: 16, height: 16 %>
+    <% end %>
+  </div>
+  <div class="sidebar--notification-content-wrapper">
+    <div class="sidebar--notification-title-wrapper">
+      <p>You've been invited to join <%= notification.present? ? notification.account.name : '' %>.</p>
+      <span class="additional-text"><%= notification.present? ? time_ago_in_words(notification.created_at) : '' %> ago</span>
+    </div>
+    <div class="sidebar--notification-buttons-container">
+      <a href="<%= notification.present? ? accept_invite_path(id: notification.id) : '#' %>" data-method="post" class="custom-button custom-button--primary custom-button--notification">Join</a>
+      <a href="<%= notification.present? ? decline_invite_path(id: notification.id) : '#' %>" data-method="delete" class="custom-button custom-button--secondary custom-button--xs">Decline</a>
+    </div>
+  </div>
+</div>

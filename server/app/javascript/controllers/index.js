@@ -177,3 +177,6 @@ application.register("multi-pod-select", MultiPodSelectController);
 
 import SelectedPodsGridController from "./selected_pods_grid_controller";
 application.register("selected-pods-grid", SelectedPodsGridController);
+
+import NotificationsController from "./notifications_controller";
+application.register("notifications", NotificationsController);

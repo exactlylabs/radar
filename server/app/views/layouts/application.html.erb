@@ -43,6 +43,9 @@
           const banner = document.getElementById("unsupported-browser-notice");
           banner.className = banner.className.replace("invisible", "");
         }
+
+        const userEmailEvent = new CustomEvent('currentUserEmail', { detail: { userEmail: '<%= current_user.email %>' } });
+        window.dispatchEvent(userEmailEvent);
       };
     </script>
     <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
@@ -78,6 +81,9 @@
           locals: { turbo_frame_tag_id: "delete_account_modal" }
       %>
     <% end %>
+    <%= render partial: "application/components/modals/turbo_modal",
+               locals: { turbo_frame_tag_id: "notifications_modal" }
+    %>
     <%= render partial: "application/notice_alert", locals: {notice: notice.present? ? notice : @notice} %>
     <%= render partial: "application/components/alerts/empty_notice_alert", locals: {notice: notice.present? ? notice : @notice} %>
     <%= turbo_frame_tag 'realtime-notice' do %>

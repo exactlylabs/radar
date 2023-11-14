@@ -8,9 +8,13 @@ export default class extends Controller {
 
   static targets = [
     'profileMenuToggle',
+    'notificationsMenuToggle',
     'headerProfileMenuToggle',
+    'notificationsDataPopover',
     'profileDataPopover',
     'headerProfileDataPopover',
+    'headerNotificationsDataPopover',
+    'notificationsMenuContainer',
     'profileMenuContainer',
     'accountOptionsMenu',
     'accountsMenu',
@@ -176,6 +180,17 @@ export default class extends Controller {
     }
   }
 
+  openNotificationsMenu() {
+    if(this.isMidScreen) {
+      this.defaultSidebarTarget.classList.remove('invisible');
+      this.narrowSidebarTarget.classList.add('invisible');
+    }
+    this.notificationsMenuToggleTarget.setAttribute('data-menu-state', 'open');
+    this.notificationsMenuToggleTarget.classList.add('sidebar--profile-menu-toggle-open');
+    this.notificationsDataPopoverTarget.classList.remove('invisible');
+    document.addEventListener('click', this.closeNotificationsMenuOnClick.bind(this), {capture: true});
+  }
+  
   openProfileMenu() {
     if(this.isMidScreen) {
       this.defaultSidebarTarget.classList.remove('invisible');
@@ -194,6 +209,24 @@ export default class extends Controller {
     if (this.isMidScreen) {
       this.narrowSidebarTarget.classList.remove('invisible');
       this.defaultSidebarTarget.classList.add('invisible');
+    }
+  }
+  
+  closeNotificationsMenu() {
+    this.notificationsMenuToggleTarget.setAttribute('data-menu-state', 'closed');
+    this.notificationsMenuToggleTarget.classList.remove('sidebar--profile-menu-toggle-open');
+    this.notificationsDataPopoverTarget.classList.add('invisible');
+    if (this.isMidScreen) {
+      this.narrowSidebarTarget.classList.remove('invisible');
+      this.defaultSidebarTarget.classList.add('invisible');
+    }
+  }
+  
+  closeNotificationsMenuOnClick(e) {
+    const clickTarget = e.target;
+    const popoverElement = document.getElementById('sidebar--notifications-popover-regular');
+    if(popoverElement && !popoverElement.classList.contains('invisible') && !popoverElement.contains(clickTarget)) {
+      this.closeNotificationsMenu();
     }
   }
 
@@ -236,6 +269,12 @@ export default class extends Controller {
     const currentState = this.profileMenuToggleTarget.getAttribute('data-menu-state');
     if(currentState === 'closed') this.openProfileMenu();
     else this.closeProfileMenu();
+  }
+  
+  toggleNotificationsMenu(e) {
+    const currentState = this.notificationsMenuToggleTarget.getAttribute('data-menu-state');
+    if(currentState === 'closed') this.openNotificationsMenu();
+    else this.closeNotificationsMenu();
   }
 
   hoverAccount(e) {

@@ -1,0 +1,28 @@
+<% item_id = "sidebar--notifications-popover-#{narrow ? 'narrow' : 'regular'}" %>
+
+<div class="sidebar--notifications-container"
+     data-sidebar-target="notificationsMenuContainer"
+     data-narrow="<%= narrow %>"
+     data-header="<%= header %>"
+     id="<%= item_id %>"
+     data-item-id="<%= item_id %>"
+     data-tooltip-ref="<%= item_id %>-tooltip"
+>
+  <div class="sidebar--notifications-item cursor-pointer"
+    data-sidebar-target="notificationsMenuToggle"
+    data-action="<%= narrow ? 'click->sidebar#closeSearchIfOpen' : nil %> click->sidebar#toggleNotificationsMenu"
+    data-menu-state="closed"
+  >
+    <img id="<%= narrow ? 'narrow-' : '' %><%= header ? 'header-' : '' %>sidebar-notifications-alert-icon"
+         src="<%= image_url('notifications-alert-icon.png') %>"
+         width="24" height="24" alt="notifications alert icon" <%= !has_pending_invites? ? 'hidden=hidden' : nil %>
+      class="sidebar--notification-item-icon"
+    />
+    <img id="<%= narrow ? 'narrow-' : '' %><%= header ? 'header-' : '' %>sidebar-notifications-icon" src="<%= image_url('notifications-icon.png') %>" width="24" height="24" alt="notifications icon" <%= has_pending_invites? ? 'hidden=hidden' : nil %>
+         class="sidebar--notification-item-icon"/>
+    <% if !narrow %>
+      <p class="sidebar-item--profile-text sidebar--profile-item-name ellipsis">Notifications</p>
+      <%= render partial: "application/components/sidebar/notifications_popover", locals: { header: false } %>
+    <% end %>
+  </div>
+</div>
