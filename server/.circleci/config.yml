@@ -38,7 +38,7 @@ commands:
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-  
+
   apt_update:
     steps:
       - run:
@@ -68,6 +68,7 @@ jobs:
           node-version: '16.15'
       - node/install-packages:
           app-dir: server
+          pkg-manager: 'yarn'
       - setup_db
       - apt_update
       - browser-tools/install-chrome:
