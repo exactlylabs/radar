@@ -27,8 +27,8 @@ module StudyMetricsProjectionProcessor
     end
 
     def update_unique_locations_count(aggregate, as_org_id, lonlat)
-      parent_id = aggregate["parent_id"]
-      key = "#{aggregate["aggregate_id"]}-#{as_org_id}-#{lonlat.longitude}-#{lonlat.latitude}"
+      parent_id = aggregate.parent_aggregate_id
+      key = "#{aggregate.id}-#{as_org_id}-#{lonlat.longitude}-#{lonlat.latitude}"
       @consumer_offset.state["unique-locations-with-tests"] ||= {}
 
       if @consumer_offset.state["unique-locations-with-tests"][key].nil?
