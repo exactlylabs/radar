@@ -65,7 +65,8 @@ jobs:
           app-dir: server
           bundler-version: '2.2.33'
       - node/install:
-          node-version: '16.15'
+          node-version: '16.15.0'
+          install-yarn: true
       - node/install-packages:
           app-dir: server
           pkg-manager: 'yarn'
