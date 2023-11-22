@@ -101,6 +101,12 @@ const comingSoonTextStyle: CSSProperties = {
   margin: 0
 }
 
+const storeLinksContainerStyle: CSSProperties = {
+  width: 'max-content',
+  marginTop: '2rem',
+  marginInline: 'auto'
+}
+
 export const styles = {
   MobilePageDownload: (isSmall: boolean) => isSmall ? smallMobilePageDownloadStyle : mobilePageDownloadStyle,
   Header: (isSmall: boolean) => isSmall ? smallHeaderStyle : headerStyle,
@@ -111,4 +117,5 @@ export const styles = {
   ComingSoonContainer: comingSoonContainerStyle,
   StoresIcon: storesIconStyle,
   ComingSoonText: comingSoonTextStyle,
+  StoreLinksContainer: storeLinksContainerStyle
 }
