@@ -41,21 +41,64 @@ module ClientApi
           longs = [sw_lng, ne_lng].sort
           lats = [sw_lat, ne_lat].sort
           bbox = [longs[0], lats[0], longs[1], lats[1]]
-          @speed_tests = ClientSpeedTest.preload(:autonomous_system => :autonomous_system_org).in_bbox(bbox)
+          sql = %{
+               SELECT "client_speed_tests"."id",
+                      "client_speed_tests"."latitude",
+                      "client_speed_tests"."longitude",
+                      "client_speed_tests"."network_location",
+                      "client_speed_tests"."network_type",
+                      "client_speed_tests"."state",
+                      "client_speed_tests"."city",
+                      "client_speed_tests"."street",
+                      "autonomous_system_orgs"."name" AS autonomous_system_org_name,
+                      "client_speed_tests"."download_avg",
+                      "client_speed_tests"."upload_avg",
+                      "client_speed_tests"."loss",
+                      "client_speed_tests"."latency"
+                FROM "client_speed_tests"
+                LEFT JOIN "autonomous_systems" ON "autonomous_systems"."id" = "client_speed_tests"."autonomous_system_id"
+                LEFT JOIN "autonomous_system_orgs" ON "autonomous_system_orgs"."id" = "autonomous_systems"."autonomous_system_org_id"
+                WHERE (ST_MakeEnvelope(#{bbox[0]}, #{bbox[1]}, #{bbox[2]}, #{bbox[3]}, 4326) && lonlat)
+          }
           if !is_global
-            @speed_tests = @speed_tests.where('tested_by = ?', @widget_client.id)
+            sql += " AND tested_by = #{@widget_client.id}"
           end
+          @speed_tests = ActiveRecord::Base.connection.execute(sql)
         end
         respond_to do |format|
           if error
             format.json { render json: { msg: 'Missing map bounds!' }, status: :bad_request }
           else
-            format.json { render json: @speed_tests, status: :ok }
+            format.json { render json: format_json(@speed_tests), status: :ok }
           end
         end
       end
 
       private
+
+      def format_json(speed_tests)
+        speed_tests.map do |speed_test|
+          {
+            id: speed_test['id'],
+            latitude: speed_test['latitude'],
+            longitude: speed_test['longitude'],
+            network_location: speed_test['network_location'],
+            network_type: speed_test['network_type'],
+            state: speed_test['state'],
+            city: speed_test['city'],
+            street: speed_test['street'],
+            download_avg: speed_test['download_avg'],
+            upload_avg: speed_test['upload_avg'],
+            loss: speed_test['loss'],
+            latency: speed_test['latency'],
+            autonomous_system: {
+              autonomous_system_org: {
+                name: speed_test['autonomous_system_org_name'],
+              }
+            }
+          }
+        end
+      end
 
       def speed_test_params
         params.require(:speed_test).permit(

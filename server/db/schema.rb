@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_20_193615) do
+ActiveRecord::Schema.define(version: 2023_11_21_235704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pageinspect"
@@ -204,6 +204,8 @@ ActiveRecord::Schema.define(version: 2023_10_20_193615) do
     t.float "speed_before"
     t.float "speed_accuracy_before"
     t.string "session_id"
+    t.index ["latitude"], name: "client_speed_tests_latitude_idx"
+    t.index ["lonlat"], name: "client_speed_tests_gist_lonlat_idx", using: :gist
     t.index ["lonlat"], name: "index_client_speed_tests_on_lonlat"
   end
 
