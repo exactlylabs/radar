@@ -44,9 +44,9 @@ export default class extends Controller {
     this.updateMessage();
   }
   
-  goBack() {
+  goBack(e) {
     const podIds = JSON.stringify(JSON.parse(this.selectedPodIdsHiddenInputTarget.value));
-    const url = new URL(window.location.origin + '/clients/bulk_move_to_account');
+    const url = new URL(window.location.origin + e.target.dataset.url);
     url.searchParams.set('pod_ids', podIds);
     fetch(url, {
       method: 'GET',

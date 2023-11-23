@@ -550,11 +550,19 @@ class ClientsController < ApplicationController
 
   def bulk_remove_from_network
     @pods_to_remove_ids = @clients.map(&:unix_user)
+    @error = nil
+    Client.transaction do
+      @clients.each do |pod|
+        pod.update(location_id: nil)
+      end
+    rescue Exception => e
+      @error = "Oops! There has been an error removing pod(s) from their network(s)."
+    end
     respond_to do |format|
-      if @clients.update_all(location_id: nil)
+      if @error.nil?
         format.turbo_stream
       else
-        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error removing pod(s) from their network(s)." }
+        format.html { redirect_back fallback_location: root_path, notice: @error, status: :unprocessable_entity }
       end
     end
   end
@@ -570,12 +578,20 @@ class ClientsController < ApplicationController
     if @location.present? && @location.id != new_location.id
       @clients_to_remove = @clients
     end
+    @error = nil
+    Client.transaction do
+      @clients.each do |pod|
+        pod.update(location_id: new_location.id, account_id: new_location.account&.id)
+      end
+    rescue Exception => e
+      @error = "Oops! There has been an error removing pod(s) from their network(s)."
+    end
     respond_to do |format|
-      if @clients.update_all(location_id: new_location.id, account_id: new_location.account&.id)
+      if @error.nil?
         @notice = "Your pods have been moved to #{new_location.name}."
         format.turbo_stream
       else
-        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error removing pod(s) from their network(s).", status: :unprocessable_entity }
+        format.html { redirect_back fallback_location: root_path, notice: @error, status: :unprocessable_entity }
       end
     end
   end
@@ -678,14 +694,22 @@ class ClientsController < ApplicationController
     account_id = params[:account_id]
     account = policy_scope(Account).find(account_id)
     pod_ids = params[:pod_ids].present? ? JSON.parse(params[:pod_ids][0]) : nil
+    @error = nil
     @pods = Client.none
     @pod_ids = []
     if pod_ids.present?
       @pods = policy_scope(Client).where(unix_user: pod_ids)
       @pod_ids = @pods.map(&:id)
     end
+    Client.transaction do
+      @pods.each do |pod|
+        pod.update(account_id: account_id, location_id: nil)
+      end
+    rescue Exception => e
+      @error = "Oops! There has been an error moving pod(s) to their account."
+    end
     respond_to do |format|
-      if @pods.update_all(account_id: account_id, location_id: nil)
+      if @error.nil?
         @notice = "Your pods have been moved to #{account.name}."
         format.turbo_stream
       else
@@ -711,14 +735,22 @@ class ClientsController < ApplicationController
     network_id = params[:network_id]
     network = policy_scope(Location).find(network_id)
     pod_ids = params[:pod_ids].present? ? JSON.parse(params[:pod_ids][0]) : nil
+    @error = nil
     @pods = Client.none
     @clients = Client.none
     if pod_ids.present?
       @pods = policy_scope(Client).where(unix_user: pod_ids)
       @clients = @pods
     end
+    Client.transaction do
+      @pods.each do |pod|
+        pod.update(location_id: network_id, account_id: network.account.id)
+      end
+    rescue Exception => e
+      @error = "Oops! There has been an error moving pod(s) to their network."
+    end
     respond_to do |format|
-      if @pods.update_all(location_id: network_id, account_id: network.account.id)
+      if @error.nil?
         @notice = "Your pods have been moved to #{network.name}."
         format.turbo_stream
       else
