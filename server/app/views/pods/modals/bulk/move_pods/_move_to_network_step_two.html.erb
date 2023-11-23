@@ -1,10 +1,10 @@
 <%= render partial: "application/components/modals/modal_header",
            locals: {
-             title: "Move pods to account",
+             title: "Move pods to network",
              is_custom: true,
              goes_back: true,
              go_back_action: 'click->multi-pod-select#goBack',
-             go_back_url: go_back_bulk_move_pods_to_network_clients_path
+             go_back_url: bulk_move_to_network_qr_clients_path
            }
 %>
 
@@ -15,7 +15,7 @@
       <label for="bulk-pods-select-network" class="forms--label">Move your pods to...</label>
       <select id="bulk-pods-select-network"
               class="forms--select form-select select2-hidden-accessible"
-              data-placeholder="Choose an account"
+              data-placeholder="Choose a network"
               tabindex="-1"
               data-controller="select2"
               style="background-color: #f5f8fa;"
