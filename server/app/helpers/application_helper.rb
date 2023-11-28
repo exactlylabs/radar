@@ -1,4 +1,5 @@
 module ApplicationHelper
+  TB_MULTIPLIER = 1024**4
   GB_MULTIPLIER = 1024**3
   MB_MULTIPLIER = 1024**2
 
@@ -11,7 +12,9 @@ module ApplicationHelper
   end
 
   def get_value_in_preferred_unit(value)
-    if current_user.prefers_gb_unit
+    if current_user.prefers_tb_unit
+      value / TB_MULTIPLIER
+    elsif current_user.prefers_gb_unit
       value / GB_MULTIPLIER
     else
       value / MB_MULTIPLIER
@@ -77,7 +80,7 @@ module ApplicationHelper
 
   def get_bytes_with_user_units(bytes, user)
     unit = current_user&.data_cap_unit || 'MB'
-    multiplier = 1024 ** (unit == 'MB' ? 2 : 3)
+    multiplier = 1024 ** (unit == 'MB' ? 2 : unit == 'GB' ? 3 : 4)
     amount = (bytes / multiplier).round(0)
     "#{amount} #{unit}"
   end

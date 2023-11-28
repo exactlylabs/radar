@@ -118,9 +118,12 @@ class ClientDataUsageAndSchedulingController < ApplicationController
   end
 
   def get_value_in_bytes(value, unit)
+    tb_multiplier = (1024**4)
     gb_multiplier = (1024**3)
     mb_multiplier = (1024**2)
-    if (unit.present? && unit == "GB")
+    if (unit.present? && unit == "TB")
+      value * tb_multiplier
+    elsif (unit.present? && unit == "GB")
       value * gb_multiplier
     else
       value * mb_multiplier

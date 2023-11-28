@@ -22,6 +22,10 @@ class User < ApplicationRecord
     self.data_cap_unit == "GB"
   end
 
+  def prefers_tb_unit
+    self.data_cap_unit == "TB"
+  end
+
   def shared_accounts
     raw_query = %{
       SELECT a.* FROM accounts a 

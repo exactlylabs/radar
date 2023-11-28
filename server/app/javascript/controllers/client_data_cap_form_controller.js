@@ -25,7 +25,7 @@ export default class extends Controller {
     const valueInBytes = value * this.getCorrectMultiplier();
     const currentUsage = parseInt(this.dataCapValueInputTarget.getAttribute('data-client-average-usage'));
     const currentUsageInBytes = currentUsage * this.getCorrectInitialMultiplier();
-    if (valueInBytes <= currentUsageInBytes) {
+    if (currentUsageInBytes > 0 && valueInBytes <= currentUsageInBytes) {
       this.displayWarning(currentUsage);
     } else {
       this.hideWarning();
@@ -103,11 +103,29 @@ export default class extends Controller {
   }
 
   getCorrectMultiplier() {
-    return this.dataUnit === 'GB' ? (1024 ** 3) : (1024 ** 2);
+    switch (this.dataUnit) {
+      case 'MB':
+        return 1024 ** 2;
+      case 'GB':
+        return 1024 ** 3;
+      case 'TB':
+        return 1024 ** 4;
+      default:
+        return 1;
+    }
   }
 
   getCorrectInitialMultiplier() {
-    return this.intialDataUnit === 'GB' ? (1024 ** 3) : (1024 ** 2);
+    switch (this.initialDataUnit) {
+      case 'MB':
+        return 1024 ** 2;
+      case 'GB':
+        return 1024 ** 3;
+      case 'TB':
+        return 1024 ** 4;
+      default:
+        return 1;
+    }
   }
   
   showDaysSelect() {

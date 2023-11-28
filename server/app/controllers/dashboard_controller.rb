@@ -64,6 +64,106 @@ class DashboardController < ApplicationController
     end
   end
 
+  def online_pods
+    sql = DashboardHelper.get_online_pods_sql
+    has_param_asn_org_ids = params[:asn_org_ids].present? ? '1' : '-1'
+    has_param_location_ids = params[:location_ids].present? ? '1' : '-1'
+    account_ids = policy_scope(Account).pluck(:id).join(',')
+    autonomous_system_org_ids = has_param_asn_org_ids == '1' ? params[:asn_org_ids] : policy_scope(AutonomousSystemOrg).pluck(:id).join(',')
+    location_ids = has_param_location_ids == '1' ? params[:location_ids] : policy_scope(Location).pluck(:id).join(',')
+    days = params[:days].present? ? params[:days] : 30
+    sql = sql.gsub('$interval_type', 'd')
+    sql = sql.gsub('$from', "(NOW() - INTERVAL \'#{days} days\')")
+    sql = sql.gsub('$to', 'NOW()')
+    sql = sql.gsub('$account_ids', account_ids)
+    sql = sql.gsub('$as_orgs', autonomous_system_org_ids)
+    sql = sql.gsub('$location_ids', location_ids)
+    sql = sql.gsub('$params_asn_org_ids', has_param_asn_org_ids)
+    sql = sql.gsub('$param_location_ids', has_param_location_ids)
+    @online_pods = ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def download_speeds
+    sql = DashboardHelper.get_download_speed_sql
+    has_param_account_ids = params[:account_ids].present? ? '1' : '-1'
+    has_param_asn_org_ids = params[:asn_org_ids].present? ? '1' : '-1'
+    has_param_location_ids = params[:location_ids].present? ? '1' : '-1'
+    account_ids = has_param_account_ids == '1' ? params[:account_ids] : policy_scope(Account).pluck(:id).join(',')
+    autonomous_system_org_ids = has_param_asn_org_ids == '1' ? params[:asn_org_ids] : policy_scope(AutonomousSystemOrg).pluck(:id).join(',')
+    location_ids = has_param_location_ids == '1' ? params[:location_ids] : policy_scope(Location).pluck(:id).join(',')
+    days = params[:days].present? ? params[:days] : 30
+    sql = sql.gsub('$from', "(NOW() - INTERVAL \'#{days} days\')")
+    sql = sql.gsub('$to', 'NOW()')
+    sql = sql.gsub('$account_ids', account_ids)
+    sql = sql.gsub('$as_orgs', autonomous_system_org_ids)
+    sql = sql.gsub('$location_ids', location_ids)
+    sql = sql.gsub('$param_asn_org_ids', "'#{has_param_asn_org_ids}'")
+    sql = sql.gsub('$param_location_ids', "'#{has_param_location_ids}'")
+    sql = sql.gsub('$param_account_ids', "'#{has_param_account_ids}'")
+    @download_speeds = ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def upload_speeds
+    sql = DashboardHelper.get_upload_speed_sql
+    has_param_account_ids = params[:account_ids].present? ? '1' : '-1'
+    has_param_asn_org_ids = params[:asn_org_ids].present? ? '1' : '-1'
+    has_param_location_ids = params[:location_ids].present? ? '1' : '-1'
+    account_ids = has_param_account_ids == '1' ? params[:account_ids] : policy_scope(Account).pluck(:id).join(',')
+    autonomous_system_org_ids = has_param_asn_org_ids == '1' ? params[:asn_org_ids] : policy_scope(AutonomousSystemOrg).pluck(:id).join(',')
+    location_ids = has_param_location_ids == '1' ? params[:location_ids] : policy_scope(Location).pluck(:id).join(',')
+    days = params[:days].present? ? params[:days] : 30
+    sql = sql.gsub('$from', "(NOW() - INTERVAL \'#{days} days\')")
+    sql = sql.gsub('$to', 'NOW()')
+    sql = sql.gsub('$account_ids', account_ids)
+    sql = sql.gsub('$as_orgs', autonomous_system_org_ids)
+    sql = sql.gsub('$location_ids', location_ids)
+    sql = sql.gsub('$param_asn_org_ids', "'#{has_param_asn_org_ids}'")
+    sql = sql.gsub('$param_location_ids', "'#{has_param_location_ids}'")
+    sql = sql.gsub('$param_account_ids', "'#{has_param_account_ids}'")
+    @upload_speeds = ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def latency
+    sql = DashboardHelper.get_latency_sql
+    has_param_account_ids = params[:account_ids].present? ? '1' : '-1'
+    has_param_asn_org_ids = params[:asn_org_ids].present? ? '1' : '-1'
+    has_param_location_ids = params[:location_ids].present? ? '1' : '-1'
+    account_ids = has_param_account_ids == '1' ? params[:account_ids] : policy_scope(Account).pluck(:id).join(',')
+    autonomous_system_org_ids = has_param_asn_org_ids == '1' ? params[:asn_org_ids] : policy_scope(AutonomousSystemOrg).pluck(:id).join(',')
+    location_ids = has_param_location_ids == '1' ? params[:location_ids] : policy_scope(Location).pluck(:id).join(',')
+    days = params[:days].present? ? params[:days] : 30
+    sql = sql.gsub('$from', "(NOW() - INTERVAL \'#{days} days\')")
+    sql = sql.gsub('$to', 'NOW()')
+    sql = sql.gsub('$account_ids', account_ids)
+    sql = sql.gsub('$as_orgs', autonomous_system_org_ids)
+    sql = sql.gsub('$location_ids', location_ids)
+    sql = sql.gsub('$param_asn_org_ids', "'#{has_param_asn_org_ids}'")
+    sql = sql.gsub('$param_location_ids', "'#{has_param_location_ids}'")
+    sql = sql.gsub('$param_account_ids', "'#{has_param_account_ids}'")
+    @latencies = ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def data_usage
+    sql = DashboardHelper.get_usage_sql
+    has_param_account_ids = params[:account_ids].present? ? '1' : '-1'
+    has_param_asn_org_ids = params[:asn_org_ids].present? ? '1' : '-1'
+    has_param_location_ids = params[:location_ids].present? ? '1' : '-1'
+    account_ids = has_param_account_ids == '1' ? params[:account_ids] : policy_scope(Account).pluck(:id).join(',')
+    autonomous_system_org_ids = has_param_asn_org_ids == '1' ? params[:asn_org_ids] : policy_scope(AutonomousSystemOrg).pluck(:id).join(',')
+    location_ids = has_param_location_ids == '1' ? params[:location_ids] : policy_scope(Location).pluck(:id).join(',')
+    days = params[:days].present? ? params[:days] : 30
+    sql = sql.gsub('$interval_type', 'd')
+    sql = sql.gsub('$from', "(NOW() - INTERVAL \'#{days} days\')")
+    sql = sql.gsub('$to', 'NOW()')
+    sql = sql.gsub('$account_ids', account_ids)
+    sql = sql.gsub('$as_orgs', autonomous_system_org_ids)
+    sql = sql.gsub('$location_ids', location_ids)
+    sql = sql.gsub('$param_asn_org_ids', "'#{has_param_asn_org_ids}'")
+    sql = sql.gsub('$param_location_ids', "'#{has_param_location_ids}'")
+    sql = sql.gsub('$param_account_ids', "'#{has_param_account_ids}'")
+    @usage = ActiveRecord::Base.connection.execute(sql)
+  end
+
   private
 
   def get_filtered_locations(locations, filter)

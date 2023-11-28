@@ -191,6 +191,11 @@ Rails.application.routes.draw do
   get 'onboarding_step_1', to: 'dashboard#onboarding_step_1'
   get 'onboarding_step_2', to: 'dashboard#onboarding_step_2'
   get 'onboarding_step_3', to: 'dashboard#onboarding_step_3'
+  get 'online_pods', to: 'dashboard#online_pods'
+  get 'download_speeds', to: 'dashboard#download_speeds'
+  get 'upload_speeds', to: 'dashboard#upload_speeds'
+  get 'latency', to: 'dashboard#latency'
+  get 'data_usage', to: 'dashboard#data_usage'
 
   resources :exports do
     collection do

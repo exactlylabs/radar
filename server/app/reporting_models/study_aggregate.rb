@@ -10,8 +10,8 @@ class StudyAggregate < ActiveRecord::Base
 
 
   def self.populate_from_geospaces!
-    fips = ActiveRecord::Base.connection.execute("SELECT fips FROM study_counties").values.flatten
-    state_fips = ActiveRecord::Base.connection.execute("SELECT DISTINCT(state_fips) FROM us_states JOIN study_counties ON study_counties.state_code = us_states.state_code ").values.flatten
+    fips = Geospace::STUDY_COUNTIES_FIPS
+    state_fips = Geospace::STUDY_STATES_FIPS
     geospaces = Geospace.arel_table
     Geospace.where(geoid: state_fips).each do |state|
       state.update(study_geospace: true)

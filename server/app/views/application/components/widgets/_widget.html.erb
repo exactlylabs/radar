@@ -1,11 +1,19 @@
 <div class="widgets--widget" data-widget-type="<%= type %>">
-  <% if type != WidgetsHelper::WidgetTypes::LOCATIONS_MAP %>
-    <%= render partial: "application/components/widgets/widget_header", locals: { type: type } %>
-  <% end %>
+  <%= render partial: "application/components/widgets/widget_header", locals: { type: type } %>
   <div class="widgets--widget-content">
     <% case type %>
     <% when WidgetsHelper::WidgetTypes::LOCATIONS_MAP %>
       <%= render partial: "application/components/widgets/locations_map/locations_map" %>
+    <% when WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT %>
+      <%= render partial: "dashboard/components/widgets/online_pods" %>
+    <% when WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED %>
+      <%= render partial: "dashboard/components/widgets/download_speeds" %>
+    <% when WidgetsHelper::WidgetTypes::UPLOAD_SPEED %>
+      <%= render partial: "dashboard/components/widgets/upload_speeds" %>
+    <% when WidgetsHelper::WidgetTypes::LATENCY %>
+      <%= render partial: "dashboard/components/widgets/latency" %>
+    <% when WidgetsHelper::WidgetTypes::DATA_USAGE %>
+      <%= render partial: "dashboard/components/widgets/data_usage" %>
     <% else %>
       <%= render partial: "application/components/widgets/locations_map/locations_map" %>
     <% end %>
