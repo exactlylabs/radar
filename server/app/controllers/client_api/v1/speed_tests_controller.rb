@@ -63,6 +63,7 @@ module ClientApi
           if !is_global
             sql += " AND tested_by = #{@widget_client.id}"
           end
+          sql += " LIMIT 500 "
           @speed_tests = ActiveRecord::Base.connection.execute(sql)
         end
         respond_to do |format|
