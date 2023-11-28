@@ -180,3 +180,15 @@ application.register("selected-pods-grid", SelectedPodsGridController);
 
 import NotificationsController from "./notifications_controller";
 application.register("notifications", NotificationsController);
+
+import ChartController from "./chart_controller";
+application.register("chart", ChartController);
+
+import LineChartController from "./line_chart_controller";
+application.register("line-chart", LineChartController);
+
+import MultiLineChartController from "./multi_line_chart_controller";
+application.register("multi-line-chart", MultiLineChartController);
+
+import BarChartController from "./bar_chart_controller";
+application.register("bar-chart", BarChartController);

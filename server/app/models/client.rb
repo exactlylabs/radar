@@ -757,14 +757,14 @@ class Client < ApplicationRecord
 
   def get_current_usage(current_user)
     unit = current_user&.data_cap_unit || 'MB'
-    multiplier = 1024 ** (unit == 'MB' ? 2 : 3)
+    multiplier = 1024 ** (unit == 'MB' ? 2 : unit == 'GB' ? 3 : 4)
     amount = (self.data_cap_current_period_usage / multiplier).round(0)
     "#{amount} #{unit}"
   end
 
   def get_max_usage(current_user)
     unit = current_user&.data_cap_unit || 'MB'
-    multiplier = 1024 ** (unit == 'MB' ? 2 : 3)
+    multiplier = 1024 ** (unit == 'MB' ? 2 : unit == 'GB' ? 3 : 4)
     amount = (self.data_cap_max_usage / multiplier).round(0)
     "#{amount} #{unit}"
   end

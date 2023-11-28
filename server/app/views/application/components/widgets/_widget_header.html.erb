@@ -1,3 +1,4 @@
-<div class="widgets--header-container">
+<div class="widgets--header-container <%= type == WidgetsHelper::WidgetTypes::LOCATIONS_MAP ? 'invisible' : '' %>">
   <p class="widgets--header-text"><%= WidgetsHelper.get_header(type) %></p>
 </div>
+<div class="widgets--header-divider  <%= type == WidgetsHelper::WidgetTypes::LOCATIONS_MAP ? 'invisible' : '' %>"></div>

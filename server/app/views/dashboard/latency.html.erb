@@ -1,0 +1,13 @@
+<%= turbo_frame_tag 'latency-widget' do %>
+  <% if @latencies.count == 0 %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="latency-chart"
+            data-controller="multi-line-chart"
+            data-line-chart-data="<%= @latencies.to_json %>"
+            data-parent-id="latency-widget"
+            data-y-step-size="1"
+            data-label-suffix=" s"
+    ></canvas>
+  <% end %>
+<% end %>

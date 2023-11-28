@@ -1,0 +1,5 @@
+<div class="widgets--canvas-container">
+  <%= turbo_frame_tag 'data-usage-widget', src: data_usage_path(days: params[:days]), loading: 'lazy' do %>
+    <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+  <% end %>
+</div>

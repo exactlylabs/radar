@@ -40,6 +40,7 @@
             >
               <option label="MB" value="mb" <%= current_user.prefers_gb_unit ? nil : 'selected' %>>MB</option>
               <option label="GB" value="gb" <%= current_user.prefers_gb_unit ? 'selected' : nil %>>GB</option>
+              <option label="TB" value="tb" <%= current_user.prefers_tb_unit ? 'selected' : nil %>>TB</option>
             </select>
           </div>
         </div>

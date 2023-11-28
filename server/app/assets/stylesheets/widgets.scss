@@ -1,4 +1,26 @@
 @import "./shared/colors.scss";
+@import "required_importants";
+
+.widgets--grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr;
+  grid-gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 1980px) {
+  .widgets--grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .widgets--grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
 
 .widgets--widget {
   padding: 1.5rem;
@@ -6,15 +28,44 @@
   border-radius: 8px;
   border: solid 1px $widget--border-color;
   box-shadow: 0 2px 8px -2px $widget--box-shadow;
+  overflow-x: hidden;
+  min-height: 350px;
 
   &[data-widget-type="locations_map"] {
     width: 100%;
     min-width: 100%;
   }
+
+  &[data-widget-type="online_pod_count"] {
+    aspect-ratio: 1.5;
+    overflow-y: auto;
+  }
+
+  &:not([data-widget-type="locations_map"]) {
+    .widgets--widget-content {
+      height: calc(100% - 4.5rem);
+    }
+  }
+}
+
+.widgets--header-container {
+  width: 100%;
+  .widgets--header-text {
+    color: $deep-blue;
+    @extend .fw-bold;
+  }
+}
+
+.widgets--header-divider {
+  width: calc(100% + 3rem);
+  height: 1px;
+  background-color: $sidebar--horizontal-divider-background-color;
+  margin: 1rem 0 1.5rem -1.5rem;
 }
 
 .widgets--widget-content {
   width: 100%;
+  height: 100%;
 }
 
 .widgets--locations-map-container {
@@ -39,7 +90,8 @@
   height: 100%;
   min-height: 100px;
   max-height: 400px;
-  overflow: visible;
+  overflow-y: clip;
+  overflow-x: visible;
 
   #locations_map_widget_list {
     margin-top: .5rem;
@@ -53,6 +105,12 @@
 @media (max-width: 768px) {
   .widgets--locations-list-container {
     width: 100%;
+
+    #locations_map_widget_list {
+      height: max-content;
+      max-height: 400px;
+      overflow-y: auto;
+    }
   }
 }
 
@@ -213,5 +271,124 @@
     align-items: center;
     justify-content: flex-start;
     gap: .25rem;
+  }
+}
+
+.widgets--canvas-container {
+  width: 100%;
+  height: 100%;
+
+  turbo-frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.widgets--skeleton-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  svg {
+    --width: calc(100% - 2rem);
+    --half_width: calc(var(--width) / 2);
+    width: var(--width);
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+    -webkit-animation: skeleton-bg 5s ease infinite;
+    -moz-animation: skeleton-bg 5s ease infinite;
+    animation: skeleton-bg 5s ease infinite;
+  }
+}
+
+.widgets--skeleton-boxes-container {
+  padding-top: 1rem;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.widgets--skeleton-rectangles-container {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.5rem;
+}
+
+.widgets--skeleton {
+  -webkit-animation: skeleton-bg 5s ease infinite;
+  -moz-animation: skeleton-bg 5s ease infinite;
+  animation: skeleton-bg 5s ease infinite;
+
+  &[data-type="box"] {
+    --width: 1.25rem;
+    --half_width: calc(var(--width) / 2);
+    width: var(--width);
+    height: 1.25rem;
+    border-radius: .25rem;
+    background: linear-gradient(
+                    90deg,
+                    rgba(227, 227, 232, 0.67) 0px,
+                    rgba(246, 247, 250, 0.67) var(--half_width),
+                    rgba(227, 227, 232, 0.67) var(--width)
+    );
+  }
+
+  &[data-type="rectangle"] {
+    --width: 5.625rem;
+    --half_width: calc(var(--width) / 2);
+    width: var(--width);
+    height: 1.25rem;
+    border-radius: .25rem;
+    background: linear-gradient(
+                    90deg,
+                    rgba(227, 227, 232, 0.67) 0px,
+                    rgba(246, 247, 250, 0.67) var(--half_width),
+                    rgba(227, 227, 232, 0.67) var(--width)
+    );
+  }
+}
+
+@keyframes skeleton-bg {
+  0% {
+    background-position: 0 0;
+  }
+  25% {
+      background-position: var(--width) 0;
+  }
+  50% {
+      background-position: 0 0;
+  }
+  75% {
+      background-position: var(--width) 0;
+  }
+  100% {
+      background-position: 0 0;
+  }
+}
+
+.widgets--no-data-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 1.5rem;
+
+  h4 {
+    font-size: 1rem;
+    color: $dark-gray;
   }
 }
