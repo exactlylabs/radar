@@ -112,6 +112,23 @@
           <%= render partial: "application/components/widgets/widget",
                      locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
           %>
+          <div class="widgets--grid">
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
+            %>
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED }
+            %>
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED }
+            %>
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::LATENCY }
+            %>
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::DATA_USAGE }
+            %>
+          </div>
         </div>
       <% end %>
     <% end %>

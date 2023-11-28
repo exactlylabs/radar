@@ -1,0 +1,13 @@
+<%= turbo_frame_tag 'upload-speeds-widget' do %>
+  <% if @upload_speeds.count == 0 %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="upload-speeds-chart"
+            data-controller="multi-line-chart"
+            data-line-chart-data="<%= @upload_speeds.to_json %>"
+            data-parent-id="upload-speeds-widget"
+            data-y-step-size="150"
+            data-label-suffix=" Mbps"
+    ></canvas>
+  <% end %>
+<% end %>

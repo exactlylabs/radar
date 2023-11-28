@@ -1,0 +1,12 @@
+<%= turbo_frame_tag 'online-pods-widget' do %>
+  <% if @online_pods.count == 0 %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="online-pods-chart"
+            data-controller="line-chart"
+            data-line-chart-data="<%= @online_pods.to_json %>"
+            data-parent-id="online-pods-widget"
+            data-y-step-size="25"
+    ></canvas>
+  <% end %>
+<% end %>

@@ -13,7 +13,7 @@ module StudyMetricsProjectionProcessor
     def handle_client_event!(event)
       last_agg_event = @last_event_of_aggregate["#{event.aggregate_type}_#{event.aggregate_id}"]
       @last_event_of_aggregate["#{event.aggregate_type}_#{event.aggregate_id}"] = event
-
+      return if event.snapshot.nil?
       state = event.snapshot.state
       case event.name
       when Client::Events::CREATED

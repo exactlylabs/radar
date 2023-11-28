@@ -1,0 +1,12 @@
+<%= turbo_frame_tag 'data-usage-widget' do %>
+  <% if @usage.count == 0 %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="data-usage-chart"
+            data-controller="bar-chart"
+            data-line-chart-data="<%= @usage.to_json %>"
+            data-parent-id="data-usage-widget"
+            data-label-suffix="<%= current_user.data_cap_unit %>"
+    ></canvas>
+  <% end %>
+<% end %>
