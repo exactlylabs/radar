@@ -118,7 +118,9 @@ func (r *ndt7Runner) Run(ctx context.Context) (*agent.Measurement, error) {
 			time.Sleep(time.Second * 5)
 			err = r.runTest(ctx, b, client.StartDownload)
 		}
-		if err != nil {
+		if err != nil && strings.Contains(err.Error(), "network is unreachable") {
+			return nil, errors.SentinelWithStack(agent.ErrRunnerConnectionError).WithMetadata(errors.Metadata{"type": "ndt7", "test": "download"})
+		} else if err != nil {
 			// There is still an error. return the error
 			return nil, errors.W(err).WithMetadata(errors.Metadata{"type": "ndt7", "test": "download"})
 		}
@@ -136,7 +138,9 @@ func (r *ndt7Runner) Run(ctx context.Context) (*agent.Measurement, error) {
 			time.Sleep(time.Second * 5)
 			err = r.runTest(ctx, b, client.StartUpload)
 		}
-		if err != nil {
+		if err != nil && strings.Contains(err.Error(), "network is unreachable") {
+			return nil, errors.SentinelWithStack(agent.ErrRunnerConnectionError).WithMetadata(errors.Metadata{"type": "ndt7", "test": "upload"})
+		} else if err != nil {
 			return nil, errors.W(err).WithMetadata(errors.Metadata{"type": "ndt7", "test": "upload"})
 		}
 	}
