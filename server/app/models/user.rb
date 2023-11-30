@@ -23,15 +23,12 @@ class User < ApplicationRecord
   end
 
   def shared_accounts
-    raw_query = %{
-      SELECT a.* FROM accounts a 
-      WHERE a.id IN (
-        SELECT sa.original_account_id FROM accounts joined_account
-        JOIN shared_accounts sa ON joined_account.id = sa.shared_to_account_id
-        WHERE sa.shared_to_account_id IN (?))
-    }
-    query = ActiveRecord::Base.sanitize_sql([raw_query, self.accounts.map {|a| a.id}])
-    Account.where(id: ActiveRecord::Base.connection.execute(query).map {|r| r["id"]})
+    Account
+      .where(id: SharedAccount
+                   .where(shared_to_account_id: self.accounts.distinct.map {|a| a.id})
+                   .pluck(:original_account_id)
+                   .uniq
+      )
   end
 
   def has_pending_downloads

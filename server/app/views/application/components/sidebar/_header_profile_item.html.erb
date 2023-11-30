@@ -4,7 +4,7 @@
   data-menu-state="closed"
   id="sidebar--profile-popover-header"
 >
-  <img src="<%= url_for(current_user.avatar.variant(resize_to_limit: [36, 36])) %>"
+  <img src="<%= current_user.avatar.variant(resize_to_limit: [36, 36]) %>"
     width="36"
     height="36"
     class="<%= current_user.avatar.attached? ? nil : 'invisible' %> sign-up--avatar-image"

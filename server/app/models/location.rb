@@ -47,7 +47,8 @@ include Recents
   has_many :clients, dependent: :nullify
   has_one :client_count_aggregate, :as => :aggregator
   has_and_belongs_to_many :geospaces
-  has_one :location_metadata_projections
+  has_one :location_metadata_projection
+  has_one :autonomous_system_org, through: :location_metadata_projection
 
   after_validation :custom_geocode, if: :lat_long_changed?
   after_save :link_to_geospaces

@@ -321,6 +321,8 @@
   justify-content: flex-start;
   gap: .75rem;
   margin-bottom: 1.5rem;
+  z-index: 102;
+  position: relative;
 }
 
 .tables--filters-button-container {

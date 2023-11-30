@@ -1,0 +1,52 @@
+<div class="tables--filters-container">
+  <% if current_account.is_all_accounts? %>
+    <%= render partial: "application/components/tables/filter",
+               locals: {
+                 menu_id: 'accounts-filter-menu',
+                 key: 'account',
+                 default_value: '-1',
+                 default_label: 'All accounts',
+                 options: [
+                   { label: 'All accounts', value: '-1' },
+                   *policy_scope(Account).not_deleted.order(:name).map { |account| { label: account.name, value: account.id.to_s } }
+                 ],
+               }
+    %>
+  <% end %>
+  <%= render partial: "application/components/tables/filter",
+             locals: {
+               menu_id: 'networks-filter-menu',
+               key: 'network',
+               default_value: nil,
+               default_label: 'All networks',
+               options: [
+                 { label: 'All networks', value: nil },
+                 *policy_scope(Location).order(:name).map { |network| { label: network.name, value: network.id.to_s } }
+               ],
+             }
+  %>
+  <%= render partial: "application/components/tables/filter",
+             locals: {
+               menu_id: 'categories-filter-menu',
+               key: 'category',
+               default_value: nil,
+               default_label: 'All categories',
+               options: [
+                 { label: 'All categories', value: nil},
+                 *policy_scope(Category).order(:name).map {|category| { label: category.name , value: category.id.to_s }}
+               ],
+             }
+  %>
+  <%= render partial: "application/components/tables/filter",
+             locals: {
+               menu_id: 'isp-filter-menu',
+               key: 'isp',
+               default_value: nil,
+               default_label: 'All ISPs',
+               options: [
+                 { label: 'All ISPs', value: nil},
+                 *AutonomousSystemOrg.all.order(:name).map {|isp| { label: isp.name , value: isp.id.to_s }}
+               ],
+             }
+  %>
+</div>

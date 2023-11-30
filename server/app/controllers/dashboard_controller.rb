@@ -8,8 +8,8 @@ class DashboardController < ApplicationController
       @notice = "#{new_account_name} was successfully created."
     end
     @clients = policy_scope(Client)
-    locations_to_filter = policy_scope(Location)
-    @locations = get_filtered_locations(locations_to_filter, params[:status])
+    @locations = policy_scope(Location)
+    @locations = get_filtered_locations(@locations)
     if @locations.exists? || params[:filter].present?
       @onboard_step = -1
     elsif @clients.exists?
@@ -55,10 +55,9 @@ class DashboardController < ApplicationController
 
   def search_locations
     query = params[:query]
-    status = params[:status]
     @locations = policy_scope(Location)
     @locations = @locations.where("name ILIKE ?", "%#{query}%") if query
-    @locations = get_filtered_locations(@locations, status)
+    @locations = get_filtered_locations(@locations)
     respond_to do |format|
       format.turbo_stream
     end
@@ -66,8 +65,17 @@ class DashboardController < ApplicationController
 
   private
 
-  def get_filtered_locations(locations, filter)
-    case filter
+  def get_filtered_locations(locations)
+    locations = filter_locations_by_status(locations, params[:status]) if params[:status].present?
+    locations = filter_locations_by_account(locations, params[:account]) if params[:account].present?
+    locations = filter_locations_by_network(locations, params[:network]) if params[:network].present?
+    locations = filter_locations_by_category(locations, params[:category]) if params[:category].present?
+    locations = filter_locations_by_isp(locations, params[:isp]) if params[:isp].present?
+    locations
+  end
+
+  def filter_locations_by_status(locations, status)
+    case status
     when nil, 'all'
       locations
     when 'online'
@@ -75,5 +83,22 @@ class DashboardController < ApplicationController
     else
       locations.where_offline
     end
+  end
+
+  def filter_locations_by_account(locations, account_id)
+    account = policy_scope(Account).find(account_id)
+    locations.where(account: account)
+  end
+
+  def filter_locations_by_category(locations, category_id)
+    locations.joins(:categories_locations).where(categories_locations: {category_id: category_id})
+  end
+
+  def filter_locations_by_network(locations, network_id)
+    locations.where(id: network_id)
+  end
+
+  def filter_locations_by_isp(locations, isp_id)
+    locations.joins(:location_metadata_projection).where("location_metadata_projections.autonomous_system_org_id = ?", isp_id)
   end
 end
