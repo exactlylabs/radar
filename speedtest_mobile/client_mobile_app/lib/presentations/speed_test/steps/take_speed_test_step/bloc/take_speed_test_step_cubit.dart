@@ -54,11 +54,9 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
   Future<void> _parse(Map<String, dynamic> response) async {
     final updatedResponses = List<Map<String, dynamic>>.from(state.responses)..add(response);
     if (response.containsKey('Source') && response['Source'] == 'server') {
-      final bytes = (response['type'] == 'download') ? 'BytesSent' : 'BytesReceived';
-      final numBytes = response['Data']['TCPInfo'][bytes];
-      final elapsedTime = response['Data']['BBRInfo']['ElapsedTime'];
-      final meanMbps = (numBytes * 8) / elapsedTime;
-      final progress = _calculteProgress(numBytes);
+      final bytesAndMeanMbps =
+          _getBytesAndMeanMbps(response['Data'], response['type'] == 'download');
+      final progress = _calculteProgress(bytesAndMeanMbps.bytes);
       emit(
         state.copyWith(
           minRtt: response['Data']['TCPInfo']['MinRTT'],
@@ -67,17 +65,19 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
           responses: updatedResponses,
           downloadProgress: state.isTestingDownloadSpeed ? progress : state.downloadProgress,
           uploadProgress: state.isTestingUploadSpeed ? progress : state.uploadProgress,
-          downloadSpeed: response['type'] == 'download' ? meanMbps : state.downloadSpeed,
-          uploadSpeed: response['type'] == 'upload' ? meanMbps : state.uploadSpeed,
+          downloadSpeed:
+              response['type'] == 'download' ? bytesAndMeanMbps.mbps : state.downloadSpeed,
+          uploadSpeed: response['type'] == 'upload' ? bytesAndMeanMbps.mbps : state.uploadSpeed,
         ),
       );
     } else if (response.containsKey('LastClientMeasurement') &&
         response.containsKey('LastServerMeasurement')) {
       if (response['type'] == 'download' && state.isTestingDownloadSpeed) {
+        final bytesAndMeanMbps = _getBytesAndMeanMbps(response['LastServerMeasurement'], true);
         emit(
           state.copyWith(
             isTestingDownloadSpeed: false,
-            downloadSpeed: response['LastClientMeasurement']['MeanClientMbps'],
+            downloadSpeed: bytesAndMeanMbps.mbps,
             latency: (state.minRtt ?? 0) / 1000,
             loss: (state.bytesRetrans ?? 0) / (state.bytesSent ?? 1) * 100,
             responses: updatedResponses,
@@ -85,13 +85,14 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
         );
         startUploadTest();
       } else if (response['type'] == 'upload' && state.isTestingUploadSpeed) {
+        final bytesAndMeanMbps = _getBytesAndMeanMbps(response['LastServerMeasurement'], false);
         final positionAfterSpeedTest = await _getCurrentLocation();
         if (Platform.isAndroid) {
           _networkConnectionInfo
               .getNetworkConnectionInfo()
               .then((connectionInfo) => emit(state.copyWith(
                     isTestingUploadSpeed: false,
-                    uploadSpeed: response['LastClientMeasurement']['MeanClientMbps'],
+                    uploadSpeed: bytesAndMeanMbps.mbps,
                     finishedTesting: true,
                     responses: updatedResponses,
                     connectionInfo: connectionInfo,
@@ -105,7 +106,7 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
             isTestingUploadSpeed: false,
             responses: updatedResponses,
             positionAfterSpeedTest: positionAfterSpeedTest,
-            uploadSpeed: response['LastClientMeasurement']['MeanClientMbps'],
+            uploadSpeed: bytesAndMeanMbps.mbps,
           ));
         }
       }
@@ -123,6 +124,13 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
       return Strings.badNetworkQuality;
     }
     return null;
+  }
+
+  ({int bytes, double mbps}) _getBytesAndMeanMbps(Map<String, dynamic> response, bool isDownload) {
+    final bytes = isDownload ? 'BytesSent' : 'BytesReceived';
+    final numBytes = response['TCPInfo'][bytes];
+    final elapsedTime = response['BBRInfo']['ElapsedTime'];
+    return (bytes: numBytes, mbps: (numBytes * 8) / elapsedTime);
   }
 
   double _calculteProgress(int bytes) {
