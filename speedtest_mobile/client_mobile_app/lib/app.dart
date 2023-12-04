@@ -77,8 +77,6 @@ class App extends StatelessWidget {
             lazy: false,
             create: (context) => BackgroundFetchBloc(
               localStorage: localStorage,
-              restClient: restClient,
-              httpProvider: httpProvider,
               networkConnectionInfo: networkConnectionInfo,
               configurationMonitoring: configurationMonitoring,
             ),
