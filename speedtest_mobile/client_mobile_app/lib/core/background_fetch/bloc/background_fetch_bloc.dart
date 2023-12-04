@@ -5,22 +5,16 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:configuration_monitoring/models/configuration_status.dart';
-import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
-import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 import 'package:client_mobile_app/core/background_fetch/background_fetch_handler.dart';
 import 'package:client_mobile_app/core/background_fetch/bloc/background_fetch_state.dart';
 
 class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
   BackgroundFetchBloc({
-    required RestClient restClient,
     required LocalStorage localStorage,
-    required IHttpProvider httpProvider,
     required NetworkConnectionInfo networkConnectionInfo,
     required ConfigurationMonitoring configurationMonitoring,
   })  : _localStorage = localStorage,
-        _httpProvider = httpProvider,
-        _restClient = restClient,
         _configurationMonitoring = configurationMonitoring,
         super(const BackgroundFetchState()) {
     _listenToConfigurationMonitoring();
@@ -28,9 +22,7 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
     _loadConfigurationMonitoring();
   }
 
-  final RestClient _restClient;
   final LocalStorage _localStorage;
-  final IHttpProvider _httpProvider;
   final ConfigurationMonitoring _configurationMonitoring;
 
   late final StreamSubscription<ConfigurationStatus> _configurationMonitoringSubscription;

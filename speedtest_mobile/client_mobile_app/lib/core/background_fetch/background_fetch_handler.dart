@@ -137,13 +137,5 @@ class BackgroundFetchListener implements Listener {
         scope.setExtra('deviceAndPermissionsState', deviceAndPermissionsState);
       },
     );
-    // _httpProvider.postAndDecode(
-    //   url: _restClient.logs,
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: {
-    //     'logs': logcatLogs,
-    //     'states': deviceAndPermissionsState,
-    //   },
-    // );
   }
 }
