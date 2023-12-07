@@ -201,3 +201,6 @@ application.register("multi-line-chart", MultiLineChartController);
 
 import BarChartController from "./bar_chart_controller";
 application.register("bar-chart", BarChartController);
+
+import WidgetsController from "./widgets_controller";
+application.register("widgets", WidgetsController);

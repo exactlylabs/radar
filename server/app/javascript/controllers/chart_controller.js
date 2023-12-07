@@ -14,6 +14,7 @@ export default class ChartController extends Controller {
     this.prepareData(this.chartData);
     this.loadChart();
     window.addEventListener('resize', this.loadChart.bind(this));
+    this.element.addEventListener('mousemove', this.handleMouseMove.bind(this));
   }
   
   prepareInitialState() {
@@ -22,6 +23,19 @@ export default class ChartController extends Controller {
     this.chartData = JSON.parse(this.element.dataset.lineChartData);
     this.labels = [];
     this.labelSuffix = this.element.dataset.labelSuffix || '';
+  }
+  
+  getMousePosition(e) {
+    const rect = this.element.getBoundingClientRect();
+    return {
+      mouseX: e.clientX - rect.left,
+      mouseY: e.clientY - rect.top
+    };
+  }
+  
+  handleMouseMove(e) {
+    const { mouseX, mouseY } = this.getMousePosition(e);
+    this.showTooltip(mouseX, mouseY);
   }
   
   prepareData(rawData) {
@@ -65,6 +79,11 @@ export default class ChartController extends Controller {
     this.plotChart();
   }
   
+  clearCanvas() {
+    this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+    this.setChartAxis();
+  }
+  
   setChartAxis() {
     this.setYAxis();
     this.setXAxis();
@@ -90,6 +109,7 @@ export default class ChartController extends Controller {
   }
   
   renderLabels(dateSet) {
+    this.labels = [];
     const labelY = this.canvasHeight - Y_AXIS_OFFSET;
     const labels = Array.from(dateSet);
     const pointCount = labels.length - 1;
@@ -104,9 +124,7 @@ export default class ChartController extends Controller {
   // [{x: number, y: number}]
   // If different data format is expected, override this method
   setYAxis() {
-    this.ctx.beginPath();
-    this.ctx.fillStyle = 'black';
-    this.ctx.font = '13px Mulish';
+    this.resetStyles();
     const totals = this.chartData.map(entry => entry.y);
     this.maxTotal = Math.max(...totals);
     this.yStepSize = Math.ceil(this.maxTotal / 3);
@@ -127,38 +145,40 @@ export default class ChartController extends Controller {
       const text = `${(i + 1) * this.yStepSize}${this.labelSuffix}`;
       this.createYAxisLabel(text, X_AXIS_OFFSET, y);
     }
-    this.ctx.stroke();
   }
   
   createYAxisLabel(label, x, y) {
+    this.resetStyles();
+    this.ctx.beginPath();
     this.ctx.fillStyle = '#6d6a94';
-    this.ctx.fillText(label, x, y);
-    this.ctx.moveTo(x + X_CONTEXT_OFFSET(this.labelSuffix), y - GRID_LINE_Y_OFFSET);
     this.ctx.strokeStyle = '#E3E3E8';
     this.ctx.lineHeight = 1;
+    this.ctx.strokeWidth = 1;
+    this.ctx.fillText(label, x, y);
+    this.ctx.moveTo(x + X_CONTEXT_OFFSET(this.labelSuffix), y - GRID_LINE_Y_OFFSET);
     this.ctx.lineTo(this.canvasWidth - X_AXIS_OFFSET, y - GRID_LINE_Y_OFFSET);
+    this.ctx.stroke();
   }
   
   drawLine(points = [], strokeStyle = '#4b7be5', gradientFirstStopColor = 'rgba(75, 123, 229, 0.2)') {
     this.ctx.beginPath();
     this.ctx.strokeStyle = strokeStyle;
     this.ctx.lineWidth = 2;
-    const netHeight = this.canvasHeight - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT;
-    const baseHeight = this.canvasHeight - GRID_LINE_Y_OFFSET - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT;
     let pointY = 0;
+    if(this.chartId === 'onlinePods') console.log(points.length);
     points.forEach((point, index) => {
       const {x, y} = point;
       const pointTimeLabel = this.formatTime(x);
       const possibleLabel = this.labels.find(entry => entry.label === pointTimeLabel);
       if (!!possibleLabel) {
-        const pointX = possibleLabel.x;
-        const yAxisBlockHeight = netHeight / this.maxTotal;
-        pointY = baseHeight - y * yAxisBlockHeight;
+        const pointX = this.getXCoordinateFromXValue(x, points, index);
+        pointY = this.getYCoordinateFromYValue(y)
         if (index === 0) {
           this.ctx.moveTo(pointX, pointY);
         } else {
           this.ctx.lineTo(pointX, pointY);
         }
+        //this.drawDotOnLine(pointX, pointY, (index === 0 || index === (points.length - 1)) ? 'red' : 'black');
       }
     });
     this.ctx.lineTo(this.canvasWidth - X_AXIS_OFFSET, pointY);
@@ -190,15 +210,15 @@ export default class ChartController extends Controller {
     let days = url.searchParams.get('days');
     let spacing = 1;
     days = parseInt(days) || 30;
-    if(days < 30) spacing = 3;
-    else if(days < 90) spacing = 6;
+    if(days < 30) spacing = 6;
+    else if(days < 90) spacing = 10;
     else if(days < 120) spacing = 12;
     else if(days < 180) spacing = 16;
-    else spacing = 25;
+    else spacing = 40;
     
-    if(this.canvasWidth < 500) spacing = 40;
-    if(this.canvasWidth < 400) spacing = 60;
-    if(this.canvasWidth < 300) spacing = 80;
+    // if(this.canvasWidth < 500) spacing = 40;
+    // if(this.canvasWidth < 400) spacing = 60;
+    // if(this.canvasWidth < 300) spacing = 80;
     
     const totalPoints = this.chartData.length;
     const maxLabels = 10;
@@ -220,5 +240,71 @@ export default class ChartController extends Controller {
       default:
         return null;
     }
+  }
+  
+  shouldHideTooltip(mouseX, mouseY) {
+    return (
+      mouseX < X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix) - 1 ||
+      mouseX > this.canvasWidth - X_AXIS_OFFSET - 1 ||
+      mouseY < Y_AXIS_OFFSET / 2 ||
+      mouseY > this.canvasHeight - Y_AXIS_OFFSET * 2 - BOTTOM_LABELS_HEIGHT
+    );
+  }
+  
+  setupTooltipContext(mouseX, mouseY) {
+    this.plotChart();
+    return !this.shouldHideTooltip(mouseX, mouseY);
+  }
+  
+  showTooltip(mouseX, mouseY) {
+    this.plotChart();
+    const shouldContinue = this.setupTooltipContext(mouseX, mouseY);
+    if(!shouldContinue) return;
+    this.ctx.beginPath();
+    this.ctx.fillStyle = '#fff';
+    this.ctx.strokeStyle = 'rgba(188, 187, 199, 0.15)';
+    // create shadow for rect
+    this.ctx.shadowColor = 'rgba(160, 159, 183, 0.4)';
+    this.ctx.shadowOffsetX = 0;
+    this.ctx.shadowOffsetY = 2;
+    this.ctx.shadowBlur = 6;
+    this.ctx.fillRect(mouseX, mouseY, 180, 120);
+    this.ctx.stroke();
+  }
+  
+  resetStyles() {
+    this.ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+    this.ctx.shadowBlur = 0;
+    this.ctx.shadowOffsetX = 0;
+    this.ctx.shadowOffsetY = 0;
+    this.ctx.strokeWidth = 0;
+    this.ctx.fillStyle = 'black';
+    this.ctx.strokeStyle = 'black';
+    this.ctx.font = '13px Mulish';
+    this.ctx.lineHeight = 1;
+    this.ctx.lineWidth = 1;
+  }
+  
+  getYCoordinateFromYValue(yValue) {
+    const netHeight = this.canvasHeight - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT;
+    const yAxisBlockHeight = netHeight / this.maxTotal;
+    const baseHeight = this.canvasHeight - GRID_LINE_Y_OFFSET - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT;
+    return baseHeight - yValue * yAxisBlockHeight;
+  }
+  
+  getXCoordinateFromXValue(xValue, data = this.chartData, index) {
+    const netWidth = this.canvasWidth - X_AXIS_OFFSET - X_CONTEXT_OFFSET(this.labelSuffix) - RIGHT_X_CONTEXT_OFFSET / 4;
+    const step = netWidth / data.length;
+    const baseWidth = X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix);
+    return baseWidth + step * index;
+  }
+  
+  drawDotOnLine(x, y, color = '#4b7be5') {
+    this.ctx.beginPath();
+    this.ctx.fillStyle = color;
+    this.ctx.strokeStyle = color;
+    this.ctx.arc(x, y, 4, 0, 2 * Math.PI);
+    this.ctx.fill();
+    this.ctx.stroke();
   }
 }

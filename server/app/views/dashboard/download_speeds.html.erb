@@ -8,6 +8,9 @@
             data-parent-id="download-speeds-widget"
             data-y-step-size="150"
             data-label-suffix=" Mbps"
+            data-action="toggleLine@window->multi-line-chart#toggleLine"
+            data-chart-id="downloadSpeeds"
     ></canvas>
+    <%= render partial: "dashboard/components/widgets/multi_line_line_toggler", locals: { chart_id: "downloadSpeeds" } %>
   <% end %>
 <% end %>
