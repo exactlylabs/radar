@@ -110,6 +110,17 @@ $cards--default-box-shadow: rgba(160, 159, 183, 0.15);
 $cards--selected-pod-background-color: rgba(246, 247, 250, 0.25);
 $cards--selected-pod-border: rgba(188, 187, 199, 0.2);
 
+// Dashboard
+$dashboard--no-accounts-card-box-shadow: rgba(160, 159, 183, 0.15);
+
+// Widgets
+$widget--border-color: rgba(188, 187, 199, 0.1);
+$widget--box-shadow: rgba(160, 159, 183, 0.15);
+$widget--location-popup-header-background-color: rgba(246, 247, 250, 0.3);
+$widget--minimum: #ff695d;
+$widget--median: $blue;
+$widget--maximum: #9138e5;
+
 // Forms
 $forms--search-box-shadow: rgba(160, 159, 183, 0.05);
 

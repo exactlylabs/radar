@@ -22,6 +22,7 @@ export default class BarChartController extends ChartController {
   }
   
   plotChart() {
+    this.clearCanvas();
     this.chartData.forEach((barData, index) => {
       this.drawBar(barData, index);
     });

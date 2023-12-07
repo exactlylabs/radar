@@ -8,6 +8,9 @@
             data-parent-id="latency-widget"
             data-y-step-size="1"
             data-label-suffix=" s"
+            data-action="toggleLine@window->multi-line-chart#toggleLine"
+            data-chart-id="latency"
     ></canvas>
+    <%= render partial: "dashboard/components/widgets/multi_line_line_toggler", locals: { chart_id: "latency" } %>
   <% end %>
 <% end %>
