@@ -108,7 +108,7 @@
       <% elsif policy_scope(Client).count == 0 %>
         <%= render partial: "dashboard/components/empty_pods_card" %>
       <% else %>
-        <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
+        <div class="w-100 mw-100" data-controller="onboard map widgets" data-onboard-step-value="<%= @onboard_step %>">
           <%= render partial: "application/components/widgets/widget",
                      locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
           %>

@@ -1,8 +1,22 @@
 import ChartController from "./chart_controller";
 
+const CHART_BUTTONS_HEIGHT = 30;
+const LINE_TO_HEX = {
+  minimum: '#ff695d',
+  median: '#4b7be5',
+  maximum: '#9138e5',
+}
+
 export default class MultiLineChartController extends ChartController {
   connect() {
+    this.chartId = this.element.dataset.chartId;
+    this.selectedHex = null;
     super.connect();
+  }
+  
+  createHiDPICanvas(w, h, ratio) {
+    const heightWithoutButtons = h - CHART_BUTTONS_HEIGHT;
+    return super.createHiDPICanvas(w, heightWithoutButtons, ratio);
   }
   
   setXAxis() {
@@ -49,11 +63,28 @@ export default class MultiLineChartController extends ChartController {
       });
     });
     this.chartData = data;
+    this.visibleData = data;
   }
   
   plotChart() {
-    this.chartData.forEach((points, colorHex) => {
+    this.clearCanvas();
+    this.visibleData.forEach((points, colorHex) => {
       this.drawLine(points, colorHex, this.getFirstGradientStopColor(colorHex));
     });
+  }
+  
+  toggleLine(e) {
+    const chartId = e.detail.chartId;
+    if(chartId !== this.chartId) return;
+    const selectedLine = e.detail.selectedLine;
+    const selectedHex = LINE_TO_HEX[selectedLine];
+    if(this.selectedHex === selectedHex) {
+      this.selectedHex = null;
+      this.visibleData = this.chartData;
+    } else {
+      this.selectedHex = selectedHex;
+      this.visibleData = new Map([[selectedHex, this.chartData.get(selectedHex)]]);
+    }
+    this.plotChart(this.visibleData);
   }
 }

@@ -1,5 +1,6 @@
 @import "./shared/colors.scss";
 @import "required_importants";
+@import "application";
 
 .widgets--grid {
   width: 100%;
@@ -30,6 +31,7 @@
   box-shadow: 0 2px 8px -2px $widget--box-shadow;
   overflow-x: hidden;
   min-height: 350px;
+  max-width: 100%;
 
   &[data-widget-type="locations_map"] {
     width: 100%;
@@ -391,4 +393,63 @@
     font-size: 1rem;
     color: $dark-gray;
   }
+}
+
+.widgets--line-toggler-buttons-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .5rem;
+}
+
+.widgets--line-toggler-button {
+  border: none;
+  padding: .25rem .5rem;
+  border-radius: 6px;
+  background-color: $subtle-gray;
+  color: $gray;
+  font-size: 0.812rem;
+  line-height: 1.188rem;
+  letter-spacing: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+
+  span {
+    width: 1rem;
+    height: 2px;
+    border-radius: 1px;
+  }
+
+  &[data-selected-line="minimum"] {
+    span {
+      background-color: $widget--minimum;
+    }
+  }
+
+  &[data-selected-line="median"] {
+    span {
+      background-color: $widget--median;
+    }
+  }
+
+  &[data-selected-line="maximum"] {
+    span {
+      background-color: $widget--maximum;
+    }
+  }
+
+  &[data-selected="true"],
+  &[data-selected="true"]:focus,
+  &[data-selected="true"]:focus-visible {
+    background-color: $circular-icon-container-gray;
+    outline: solid 1px $blue;
+    box-shadow: 0 2px 4px 0 $circular-icon-container-gray;
+  }
+
+  @extend .hoverable;
 }

@@ -1,0 +1,31 @@
+<% raise 'chart_id needs to be present' unless chart_id %>
+
+<div class="widgets--line-toggler-buttons-container">
+  <button data-action="click->widgets#toggleLine"
+          data-selected-line="minimum"
+          data-chart-id="<%= chart_id %>"
+          class="widgets--line-toggler-button"
+          data-selected="false"
+  >
+    <span></span>
+    Minimum
+  </button>
+  <button data-action="click->widgets#toggleLine"
+          data-selected-line="median"
+          data-chart-id="<%= chart_id %>"
+          class="widgets--line-toggler-button"
+          data-selected="false"
+  >
+    <span></span>
+    Median
+  </button>
+  <button data-action="click->widgets#toggleLine"
+          data-selected-line="maximum"
+          data-chart-id="<%= chart_id %>"
+          class="widgets--line-toggler-button"
+          data-selected="false"
+  >
+    <span></span>
+    Maximum
+  </button>
+</div>
