@@ -16,7 +16,11 @@ class Snapshot < ApplicationRecord
     start_time = Time.now
     chunks = 10_000
     Rails.logger.info("Reprocessing events since #{since} in chunks of #{chunks}")
-    Event.where("timestamp > ?", since).order("timestamp ASC").find_in_batches(batch_size: chunks).each do |batch|
+    events = Event
+    if since.present?
+      events = events.where("timestamp > ?", since)
+    end
+    events.order("timestamp ASC").find_in_batches(batch_size: chunks).each do |batch|
       Snapshot.transaction do
         batch.each do |event|
           since = event.timestamp
