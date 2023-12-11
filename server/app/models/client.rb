@@ -52,7 +52,10 @@ class Client < ApplicationRecord
   after_save :send_event
   after_save :check_ip_changed
   after_save :update_versions, if: :saved_change_to_update_group_id?
-  after_save :recalculate_averages!, if: :saved_change_to_location_id? || :saved_change_to_account_id?
+  after_save :update_location_status, if: :saved_change_to_location_id? || :saved_change_to_online?
+
+  before_save :recalculate_averages, if: :location_id_changed? || :account_id_changed?
+
 
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, lambda {
@@ -687,6 +690,41 @@ class Client < ApplicationRecord
       end
     end
     self.save!
+  end
+
+  def recalculate_averages
+    if self.location.nil? || self.account.nil?
+      self.download_avg = nil
+      self.upload_avg = nil
+    else
+      model = Measurement.arel_table
+      measurements = self.measurements.where(location_id: self.location.id, account_id: self.account.id)
+      count, download, upload = measurements.pluck(model[:id].count, model[:download].sum, model[:upload].sum).first
+      if count > 0
+        self.measurements_count = count
+        self.measurements_download_sum = download
+        self.measurements_upload_sum = upload
+        self.download_avg = (self.measurements_download_sum / self.measurements_count).round(3)
+        self.upload_avg = (self.measurements_upload_sum / self.measurements_count).round(3)
+      else
+        self.measurements_count = 0
+        self.measurements_download_sum = 0
+        self.measurements_upload_sum = 0
+        self.download_avg = nil
+        self.upload_avg = nil
+      end
+    end
+  end
+
+  def update_location_status
+    if saved_change_to_online?
+      return if self.location.nil?
+      self.location.update_status!
+    end
+    if saved_change_to_location_id?
+      self.location.update_status! if self.location_id.present?
+      Location.find(self.location_id_was).update_status! if self.location_id_was.present?
+    end
   end
 
   def download_diff
