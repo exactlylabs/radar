@@ -4,7 +4,6 @@ Location.unscoped.each do |loc|
 end
 
 $last_event_by_id = {}
-
 $locations = {}
 $events = []
 
@@ -24,13 +23,6 @@ def decr_location_count(location_id, timestamp)
         updated_at: Time.now,
       }
       $locations[location_id][1] += 1
-      # Event.create!(
-      #   name: Location::Events::WENT_OFFLINE,
-      #   aggregate: $locations[location_id],
-      #   timestamp: timestamp,
-      #   data: { "to" => false, "from" => true },
-      #   version: Event.last_version_from_type_id_set(Location.name, location_id) + 1
-      # )
     rescue ActiveRecord::RecordNotFound
     end
   end
@@ -53,13 +45,6 @@ def incr_location_count(location_id, timestamp)
         updated_at: Time.now,
       }
       $locations[location_id][1] += 1
-      # Event.create!(
-      #   name: Location::Events::WENT_ONLINE,
-      #   aggregate: $locations[location_id],
-      #   timestamp: timestamp,
-      #   data: { "to" => true, "from" => false },
-      #   version: Event.last_version_from_type_id_set(Location.name, location_id) + 1
-      # )
     rescue ActiveRecord::RecordNotFound
     end
   end
@@ -69,17 +54,16 @@ Event.transaction do
   ActiveRecord::Base.connection.execute(%{
     DELETE FROM snapshots WHERE aggregate_type = 'Location'
   })
-  Event.of(Location).where_name_is(
-    Location::Events::WENT_ONLINE,
-    Location::Events::WENT_OFFLINE,
-  ).delete_all
+  ActiveRecord::Base.connection.execute(%{
+    DELETE FROM events WHERE aggregate_type = 'Location' AND name IN ('LOCATION_WENT_ONLINE', 'LOCATION_WENT_OFFLINE')
+  })
 
   Event.of(Client).where_name_is(
     Client::Events::CREATED,
     Client::Events::LOCATION_CHANGED,
     Client::Events::WENT_ONLINE,
     Client::Events::WENT_OFFLINE,
-  ).order(:version).each do |event|
+  ).order("timestamp ASC").each do |event|
     client_snapshot = event.snapshot
     location_id = client_snapshot.state["location_id"]
 
