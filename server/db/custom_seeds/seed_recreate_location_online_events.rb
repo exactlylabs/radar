@@ -39,6 +39,7 @@ def incr_location_count(location_id, timestamp)
 end
 
 Event.transaction do
+  Snapshot.of(Location).joins(:event).where(events: { name: [Location::Events::WENT_ONLINE, Location::Events::WENT_OFFLINE,] }).delete_all
   Event.of(Location).where_name_is(
     Location::Events::WENT_ONLINE,
     Location::Events::WENT_OFFLINE,
