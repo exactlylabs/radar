@@ -241,14 +241,14 @@ include Recents
     Location.joins(:clients).group("locations.id").having("BOOL_OR(clients.online)").where("offline_since IS NOT NULL OR locations.online = false").update(online: true, offline_since: nil)
     Location.joins(:clients).group(:id).having("BOOL_AND(NOT clients.online)").where("locations.offline_since IS NULL AND locations.online = true").each do |location|
       offline_since = Event.from_aggregate(location.clients).where_name_is(Client::Events::WENT_OFFLINE).last&.timestamp
-      self.update!(online: false, offline_since: offline_since || location.created_at)
+      self.update(online: false, offline_since: offline_since || location.created_at)
     end
   end
 
   def update_status!()
     has_online_pods = self.clients.where(in_service: true, online: true).count > 0
     if !online? && has_online_pods
-      self.update!(online: true, offline_since: nil)
+      self.update(online: true, offline_since: nil)
     elsif online? && !has_online_pods
       offline_since = Event.from_aggregate(self.clients).where_name_is(Client::Events::WENT_OFFLINE).last&.timestamp
       self.update(online: false, offline_since: offline_since || self.created_at)
