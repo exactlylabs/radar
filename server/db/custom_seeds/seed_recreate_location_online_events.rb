@@ -5,17 +5,32 @@ end
 
 $last_event_by_id = {}
 
+$locations = {}
+$events = []
+
 def decr_location_count(location_id, timestamp)
   $location_pods_count[location_id] -= 1
   if $location_pods_count[location_id] == 0
     begin
-      Event.create!(
+      $locations[location_id] ||= [Location.unscoped.find(location_id), Event.last_version_from_type_id_set(Location.name, location_id)]
+      $events << {
         name: Location::Events::WENT_OFFLINE,
-        aggregate: Location.unscoped.find(location_id),
+        aggregate_type: 'Location',
+        aggregate_id: location_id,
         timestamp: timestamp,
         data: { "to" => false, "from" => true },
-        version: Event.last_version_from_type_id_set(Location.name, location_id) + 1
-      )
+        version: $locations[location_id][1] + 1,
+        created_at: Time.now,
+        updated_at: Time.now,
+      }
+      $locations[location_id][1] += 1
+      # Event.create!(
+      #   name: Location::Events::WENT_OFFLINE,
+      #   aggregate: $locations[location_id],
+      #   timestamp: timestamp,
+      #   data: { "to" => false, "from" => true },
+      #   version: Event.last_version_from_type_id_set(Location.name, location_id) + 1
+      # )
     rescue ActiveRecord::RecordNotFound
     end
   end
@@ -26,20 +41,34 @@ def incr_location_count(location_id, timestamp)
   $location_pods_count[location_id] += 1
   if $location_pods_count[location_id] == 1
     begin
-      Event.create!(
+      $locations[location_id] ||= [Location.unscoped.find(location_id), Event.last_version_from_type_id_set(Location.name, location_id)]
+      $events << {
         name: Location::Events::WENT_ONLINE,
-        aggregate: Location.unscoped.find(location_id),
+        aggregate_type: 'Location',
+        aggregate_id: location_id,
         timestamp: timestamp,
         data: { "to" => true, "from" => false },
-        version: Event.last_version_from_type_id_set(Location.name, location_id) + 1
-      )
+        version: $locations[location_id][1] + 1,
+        created_at: Time.now,
+        updated_at: Time.now,
+      }
+      $locations[location_id][1] += 1
+      # Event.create!(
+      #   name: Location::Events::WENT_ONLINE,
+      #   aggregate: $locations[location_id],
+      #   timestamp: timestamp,
+      #   data: { "to" => true, "from" => false },
+      #   version: Event.last_version_from_type_id_set(Location.name, location_id) + 1
+      # )
     rescue ActiveRecord::RecordNotFound
     end
   end
 end
 
 Event.transaction do
-  Snapshot.of(Location).joins(:event).where(events: { name: [Location::Events::WENT_ONLINE, Location::Events::WENT_OFFLINE,] }).delete_all
+  ActiveRecord::Base.connection.execute(%{
+    DELETE FROM snapshots WHERE aggregate_type = 'Location'
+  })
   Event.of(Location).where_name_is(
     Location::Events::WENT_ONLINE,
     Location::Events::WENT_OFFLINE,
@@ -77,6 +106,8 @@ Event.transaction do
     $location_pods_count[location_id] = 0 if location_id.present? && $location_pods_count[location_id] < 0
     $last_event_by_id[client_snapshot.aggregate_id] = event
   end
-
-  Snapshot.reprocess_since(nil)
+  puts "Inserting Events"
+  Event.insert_all($events)
+  puts "Reprocessing Snapshots"
+  Snapshot.reprocess_for_model_since(Location, nil)
 end
