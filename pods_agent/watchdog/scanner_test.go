@@ -196,3 +196,24 @@ func TestScanSystemTimeZoneChanged(t *testing.T) {
 		t.Fatalf("ScanSystem didn't return that it has changed")
 	}
 }
+
+func TestScanSystemTimeZoneReturnedNilNoChange(t *testing.T) {
+	m := mocks.NewSystemManager(t)
+	m.On("GetHostname").Return("1234", nil)
+	m.On("GetRCLocal").Return(mustReadFile("osfiles/etc/rc.local"), nil)
+	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
+	m.On("GetCMDLine").Return(mustReadFile("osfiles/boot/cmdline.txt"), nil)
+	m.On("GetLogindConf").Return(mustReadFile("osfiles/etc/systemd/logind.conf"), nil)
+	m.On("GetWatchdogServiceFile").Return(mustReadFile("osfiles/etc/systemd/system/podwatchdog@.service"), nil)
+	m.On("GetSysTimezone").Return(nil, nil)
+	m.On("GetAuthLogFile").Return([]byte(""), nil)
+	c := &config.Config{}
+	c.ClientId = "1234"
+	hasChanged, err := ScanSystem(c, m)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if hasChanged {
+		t.Fatalf("ScanSystem expected to not have changes")
+	}
+}
