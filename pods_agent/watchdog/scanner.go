@@ -108,7 +108,7 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 	if err != nil {
 		return false, errors.W(err)
 	}
-	if tz.String() != "UTC" {
+	if tz != nil && tz.String() != "UTC" {
 		if err := sysManager.SetSysTimezone(utc); err != nil {
 			return false, errors.W(err)
 		}

@@ -212,6 +212,10 @@ func (si SysInfoManager) GetSysTimezone() (*time.Location, error) {
 
 	out, err := si.runCommand(exec.Command("timedatectl", "--value", "-p", "Timezone", "show"))
 	if err != nil {
+		metadata := errors.GetMetadata(err)
+		if metadata != nil && strings.Contains((*metadata)["stderr"].(string), "Connection timed out") {
+			return nil, nil
+		}
 		return nil, errors.W(err)
 	}
 	locStr := strings.Trim(strings.TrimSpace(string(out)), "\n")
