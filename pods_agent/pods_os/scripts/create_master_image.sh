@@ -32,7 +32,7 @@ while :; do
             usage
             exit 0
         ;;
-        -s|--enable-ssh)             
+        -s|--enable-ssh)
             ENABLE_SSH=1
         ;;
         -u|--url)
@@ -79,7 +79,7 @@ curl -L --output ${BUILD_DIR}/$WATCHDOG_BINARY_NAME $RADAR_WATCHDOG_BIN_URL
 # Decompress the .xz file
 #VERSION=2022-04-04-raspios-bullseye-arm64-lite.img
 # if [ ! -f $VERSION.xz ]; then
-# curl -L --output $VERSION.xz https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-04-07/$VERSION.xz 
+# curl -L --output $VERSION.xz https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-04-07/$VERSION.xz
 # fi
 # unxz $VERSION.xz
 
@@ -90,7 +90,7 @@ fi
 unzip -qod ${BUILD_DIR} ${BUILD_DIR}/${VERSION}.zip
 
 # Mount the .img in an available loop (/dev/loop) device
-# This makes plain files accessible as block devices 
+# This makes plain files accessible as block devices
 # (as if it was a device such as a HD)
 LOOP_DEV=$(losetup -f -P --show ${BUILD_DIR}/${VERSION})
 
@@ -115,7 +115,7 @@ rm ${TMP_DIR}/etc/shadow.tmp
 
 # Setup Radar Agent into the image
 
-# Replace the variables in the .service and move to the 
+# Replace the variables in the .service and move to the
 # mount's systemd dir
 AGENT_BINARY_PATH="/$PROJECT_DIR/$BINARY_NAME" \
 envsubst < ${FILES_DIR}/$AGENT_SERVICE > ${TMP_DIR}/etc/systemd/system/$AGENT_SERVICE
@@ -127,7 +127,7 @@ chmod +x ${TMP_DIR}/$PROJECT_DIR/$BINARY_NAME
 
 # Move Pod Watchdog .service and the binary to the image
 WATCHDOG_BINARY_PATH="/$PROJECT_DIR/$WATCHDOG_BINARY_NAME"
-cp ${SCRIPT_DIR}/../pods_agent/watchdog/osfiles/etc/systemd/system/podwatchdog@.service ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
+cp ${SCRIPT_DIR}/../../watchdog/osfiles/etc/systemd/system/podwatchdog@.service ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
 sed -i -r 's|^(ExecStart=).*|\1'"${WATCHDOG_BINARY_PATH}"'|' ${TMP_DIR}/etc/systemd/system/$WATCHDOG_SERVICE
 cp ${BUILD_DIR}/$WATCHDOG_BINARY_NAME ${TMP_DIR}/$PROJECT_DIR/$WATCHDOG_BINARY_NAME
 chmod +x ${TMP_DIR}/$PROJECT_DIR/$WATCHDOG_BINARY_NAME
@@ -161,7 +161,6 @@ echo "$(echo -n $(cat ${TMP_DIR}/boot/cmdline.txt)) systemd.run=/boot/firstrun.s
 cp ${FILES_DIR}/firstrun.sh ${TMP_DIR}/boot/firstrun.sh
 
 # Clear and umount
-rm ${TMP_DIR}/usr/bin/qemu-aarch64-static
 rm ${TMP_DIR}/root/withinnewimage.sh
 
 umount ${TMP_DIR}/boot
