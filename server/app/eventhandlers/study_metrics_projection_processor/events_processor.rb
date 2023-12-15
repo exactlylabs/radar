@@ -180,8 +180,8 @@ module StudyMetricsProjectionProcessor
       aggs = self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: location_id)
       study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
       aggs.each do |aggregate|
-        # Filter out "other" counties from the state level
-        if aggregate.level == 'state' && !study_county
+        # Filter out "other" counties from the state_with_study_only level
+        if aggregate.level == 'state_with_study_only' && !study_county
           next
         end
 

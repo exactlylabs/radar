@@ -35,7 +35,7 @@ module StudyMetricsProjectionProcessor
           aggs = self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: meta.location_id)
           study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
           aggs.each do |aggregate|
-            next if aggregate.level == "state" && !study_county
+            next if aggregate.level == "state_with_study_only" && !study_county
             self.update_projection(aggregate, as_org_id, "completed_locations_count", 1)
 
             if !meta.online?

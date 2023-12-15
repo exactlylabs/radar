@@ -43,6 +43,9 @@ module StudyMetricsProjectionProcessor
         state_agg = load_state_aggregate(geospaces)
         aggs << state_agg if state_agg
 
+        state_with_study_only_aggregate = load_state_with_study_only_aggregate(geospaces)
+        aggs << state_with_study_only_aggregate if state_with_study_only_aggregate
+
         county_agg = load_county_aggregate(geospaces, state_agg)
         aggs << county_agg if county_agg
 
@@ -73,6 +76,17 @@ module StudyMetricsProjectionProcessor
       if state
         return StudyAggregate.find_or_create_by!(
           name: state["name"], level: 'state', geospace_id: state["id"], study_aggregate: state["study_geospace"]
+        )
+      end
+      return nil
+    end
+
+    def load_state_with_study_only_aggregate(geospaces)
+      # Special aggregate, that not only aggregates for study counties, but all counties in that state.
+      state = geospaces.find {|g| g["ns"] == "state"}
+      if state
+        return StudyAggregate.find_or_create_by!(
+          name: state["name"], level: 'state_with_study_only', geospace_id: state["id"], study_aggregate: state["study_geospace"]
         )
       end
       return nil

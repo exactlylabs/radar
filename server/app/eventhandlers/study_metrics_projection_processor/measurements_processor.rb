@@ -6,7 +6,7 @@ module StudyMetricsProjectionProcessor
       aggs = self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: location_id)
       study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
       aggs.each do |aggregate|
-        if aggregate.level == 'state' && !study_county
+        if aggregate.level == 'state_with_study_only' && !study_county
           next
         end
         update_measurements_count(aggregate, as_org_id, timestamp)
@@ -18,7 +18,7 @@ module StudyMetricsProjectionProcessor
       aggs = self.get_aggregates_for_point(lonlat, as_org_id, as_org_name)
       study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
       aggs.each do |aggregate|
-        if aggregate.level == 'state' && !study_county
+        if aggregate.level == 'state_with_study_only' && !study_county
           next
         end
         update_measurements_count(aggregate, as_org_id, timestamp)
