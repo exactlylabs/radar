@@ -140,11 +140,9 @@ module EventSourceable
 
   def new_event(name, data, timestamp=nil)
     timestamp = timestamp or Time.now
-    if Event.where(aggregate: self, name: name, data: data).where("timestamp >= ?", timestamp - 1.second).exists?
-      return
-    end
     Event.transaction do
-      last_event = Event.from_aggregate(self).lock.last
+      self.lock!
+      last_event = Event.from_aggregate(self).last
       version = last_event&.version || 0
       evt = Event.create(aggregate: self, name: name, data: data, timestamp: timestamp, version: version + 1)
     end
