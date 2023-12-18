@@ -18,4 +18,3 @@ client_app
 .DS_Store
 agent.iml
 *.conf
-!config.dev.conf
