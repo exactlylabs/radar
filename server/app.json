@@ -1,4 +1,36 @@
 {
+    "formation": {
+        "web": {
+            "quantity": 1
+        },
+        "worker": {
+            "quantity": 1
+        },
+        "clock": {
+            "quantity": 1
+        },
+        "clock_monitor": {
+            "quantity": 1
+        }
+    },
+    "healthchecks": {
+        "web": [
+            {
+                "attempts": 3,
+                "name": "Liveness Check",
+                "path": "/health",
+                "timeout": 5,
+                "type": "liveness",
+                "wait": 5
+            },
+            {
+                "name": "Startup Check",
+                "type": "startup",
+                "path": "/users/sign_in",
+                "content":"Log in"
+            }
+        ]
+    },
     "scripts": {
         "dokku": {
             "predeploy": "echo $GOOGLE_STORAGE_CREDENTIALS | base64 -d > /app/gcs.keyfile"
