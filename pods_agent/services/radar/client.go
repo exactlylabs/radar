@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"mime/multipart"
+	"net"
 	"net/http"
 	"net/url"
 	"runtime"
@@ -320,10 +321,15 @@ func (c *RadarClient) SendMeasurement(ctx context.Context, style string, measure
 		return errors.W(err)
 	}
 	req.Header.Add("Content-Type", w.FormDataContentType())
+
 	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
+	if errors.Is(err, &net.DNSError{}) {
+		// Likelly a timeout / any network reachability issue that is out of our control.
+		return errors.SentinelWithStack(agent.ErrServerConnectionError)
+	} else if err != nil {
 		return errors.Wrap(err, "request failed").WithMetadata(errors.Metadata{"url": req.URL, "method": req.Method})
 	}
+
 	if resp.StatusCode != 201 {
 		return errors.New("radar.radarClient#SendMeasurement wrong status code: %d", resp.StatusCode)
 	}
