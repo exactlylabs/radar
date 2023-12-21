@@ -2,6 +2,7 @@ import consumer from "./consumer";
 
 window.addEventListener('currentUserEmail', (e) => {
   const userEmail = e.detail.userEmail;
+  if(!userEmail) return;
   consumer.subscriptions.create({
     channel: "NotificationsChannel",
     user_email: userEmail

@@ -44,7 +44,7 @@
           banner.className = banner.className.replace("invisible", "");
         }
 
-        const userEmailEvent = new CustomEvent('currentUserEmail', { detail: { userEmail: '<%= current_user.email %>' } });
+        const userEmailEvent = new CustomEvent('currentUserEmail', { detail: { userEmail: '<%= current_user&.email || nil %>' } });
         window.dispatchEvent(userEmailEvent);
       };
     </script>
