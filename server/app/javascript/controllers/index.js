@@ -178,5 +178,11 @@ application.register("multi-pod-select", MultiPodSelectController);
 import SelectedPodsGridController from "./selected_pods_grid_controller";
 application.register("selected-pods-grid", SelectedPodsGridController);
 
+import StateTabs from "./state_tabs_controller";
+application.register("state-tabs", StateTabs);
+
+import QA from "./qa_controller";
+application.register("qa", QA);
+
 import NotificationsController from "./notifications_controller";
 application.register("notifications", NotificationsController);

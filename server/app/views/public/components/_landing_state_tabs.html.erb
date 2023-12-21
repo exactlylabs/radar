@@ -1,0 +1,30 @@
+<ul class="landing--state-tabs">
+  <li class="landing--state-tab" data-action="click->state-tabs#handleClickTab" data-tab-id="alaska">Alaska</li>
+  <li class="landing--state-tab" data-action="click->state-tabs#handleClickTab" data-tab-id="michigan" data-selected="true">Michigan</li>
+  <li class="landing--state-tab" data-action="click->state-tabs#handleClickTab" data-tab-id="texas">Texas</li>
+  <li class="landing--state-tab" data-action="click->state-tabs#handleClickTab" data-tab-id="west-virginia">West Virginia</li>
+</ul>
+<div class="landing--state-content" id="alaska" data-visible="false" data-state-tabs-target="tabContent">
+  <p>ALASKA</p>
+</div>
+<div class="landing--state-content" id="michigan" data-visible="true" data-state-tabs-target="tabContent">
+  <%= image_tag image_url('michigan-state.png'), width: 320 %>
+  <div>
+    <p>The Telehealth Broadband Pilot Program in <b>Michigan</b> is actively looking for business & residential internet consumers in Alcona, Kent and the rest of Michigan to take a Radar Pod and plug it into their internet connection for 90 days.</p>
+    <p>We have partnered with the <b>Central</b> <b>Michigan</b> <b>University</b> <b>Rural</b> <b>Health</b> <b>Equity</b> <b>Institute</b> to help us better engage the rural MI community and connect strategic partners with the Telehealth Broadband Pilot Program.</p>
+    <a href="<%= get_started_modal_path %>" class="landing--primary-button" data-turbo="true" data-turbo-frame="get_started_modal" data-turbo-stream="true">
+      Get started
+      <%= image_tag image_url('arrow-right-white.png'), width: 16, height: 16 %>
+    </a>
+    <div class="landing--state-external-link-container">
+      <a class="landing--external-link">Learn more about our work with CMU RHEI</a>
+      <%= image_tag image_url('external-link-icon.png'), width: 16, height: 16 %>
+    </div>
+  </div>
+</div>
+<div class="landing--state-content" id="texas" data-visible="false" data-state-tabs-target="tabContent">
+  <p>TEXAS</p>
+</div>
+<div class="landing--state-content" id="west-virginia" data-visible="false" data-state-tabs-target="tabContent">
+  <p>WEST VIRGINIA</p>
+</div>

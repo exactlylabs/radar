@@ -1,6 +1,10 @@
 @import "colors";
 @import "text";
 
+.modal-header.modals--borderless-header {
+  border-bottom: none;
+}
+
 .modals--title {
   font-variation-settings: 'wght' $bold;
   font-size: 0.938rem;
@@ -196,6 +200,10 @@
 
   &[data-type="full"] {
     padding: 1.5rem 40px 2rem;
+
+    &.modals--get-started {
+      padding: 0 56px 2rem;
+    }
   }
 
   &[data-resource="networks"] {
@@ -375,3 +383,18 @@
     width: 100%;
   }
 }
+
+.modals--get-started {
+  width: 516px;
+  max-height: 550px;
+  overflow-y: auto;
+  padding-top: 0;
+}
+
+@media (max-width: 768px) {
+  .modals--get-started {
+    width: 100%;
+    max-height: 100%;
+  }
+}
+

@@ -1,0 +1,98 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: nil, is_custom: true }
+%>
+<%= form_with(url: check_claim_new_pod_path, method: :post) do |form| %>
+  <div class="modals--content-container modals--get-started text-center" data-type="full">
+    <h3 class="public--get-started-title">Get started</h3>
+    <p class="public--get-started-subtitle">Please fill in the form with your details</p>
+
+    <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
+      <label for="first-name" class="forms--label mb-2">First name</label>
+      <input id="first-name" type="text" name="first_name" autofocus class="forms--text-input forms--text-input-focusable w-100" placeholder="Your first name"/>
+    </div>
+
+    <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
+      <label for="last-name" class="forms--label mb-2">Last name</label>
+      <input id="last-name" type="text" name="last_name" autofocus class="forms--text-input forms--text-input-focusable w-100" placeholder="Your last name"/>
+    </div>
+
+    <div class="d-flex flex-column text-start gap-2 mb-6">
+      <label class="forms--label mb-2">Select what describes you best:</label>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="residential_consumer"
+                 name="personal_description"
+                 id="residential-consumer"
+            />
+          <label class="regular-text" for="residential-consumer">Residential Consumer</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="business_consumer"
+                 name="personal_description"
+                 id="business-consumer"
+            />
+          <label class="regular-text" for="business-consumer">Business Consumer</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="public_sector_consumer"
+                 name="personal_description"
+                 id="public-sector-consumer"
+            />
+          <label class="regular-text" for="public-sector-consumer">Public Sector Consumer</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="other_organizational_consumer"
+                 name="personal_description"
+                 id="other-organizational-consumer"
+            />
+          <label class="regular-text" for="other-organizational-consumer">Other Organizational Consumer</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="community_organization"
+                 name="personal_description"
+                 id="community-organization"
+            />
+          <label class="regular-text" for="community-organization">Community Organization</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
+      <label for="email" class="forms--label mb-2">Email address</label>
+      <input id="email" type="email" name="email" autofocus class="forms--text-input forms--text-input-focusable w-100" placeholder="Your email address"/>
+    </div>
+
+    <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
+      <label for="phone" class="forms--label mb-2">Phone number</label>
+      <input id="phone" type="text" name="phone" autofocus class="forms--text-input forms--text-input-focusable w-100" placeholder="Your phone number"/>
+    </div>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <!--begin::ContinueButton-->
+    <button type="submit"
+            class="custom-button custom-button--lg custom-button--primary"
+            data-controller="loading-feedback"
+            data-action="click->loading-feedback#replaceContent"
+    >Continue</button>
+    <!--end::ContinueButton-->
+  </div>
+<% end %>
