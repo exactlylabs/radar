@@ -5,7 +5,7 @@
 <% go_back_url = local_assigns[:go_back_url].present? ? local_assigns[:go_back_url] : nil %>
 <% raise "Missing go back params: " if goes_back && !go_back_action && !go_back_url %>
 
-<div class="modal-header modals--header">
+<div class="modal-header modals--header <%= title.nil? ? 'modals--borderless-header' : nil %>">
   <% if goes_back && go_back_action %>
     <%= image_tag image_url('arrow-left-dark.png'), width: 24, height: 24, class: "hoverable", data: { action: go_back_action, url: go_back_url } %>
   <% elsif goes_back && !go_back_action && go_back_url %>

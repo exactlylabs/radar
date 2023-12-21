@@ -1,0 +1,188 @@
+<section class="landing--top-most-section">
+  <nav class="landing--navbar">
+    <div class="landing--navbar-logos-container">
+      <%= image_tag image_url('new-radar-logo.png'), class: 'landing--radar-logo' %>
+      <div class="landing--logo-divider"></div>
+      <%= image_tag image_url('tbpp-logo-navbar.png'), class: 'landing--tbpp-logo' %>
+    </div>
+    <div class="landing--navbar-links-container">
+      <!-- <a href="/users/sign_in" class="landing--transparent-button">Log in</a> -->
+      <a href="<%= get_started_modal_path %>" class="landing--primary-button" data-turbo="true" data-turbo-frame="get_started_modal" data-turbo-stream="true">
+        Get started
+      </a>
+    </div>
+  </nav>
+  <section class="landing--hero">
+    <h1>Monitor the quality of your internet with ease.</h1>
+    <p>The Telehealth Broadband Pilot Program has developed Radar Pods to help you track your internet quality & collect the insights needed to understand the actual quality of internet delivered to rural Americans.</p>
+    <a href="<%= get_started_modal_path %>" class="landing--primary-button" data-turbo="true" data-turbo-frame="get_started_modal" data-turbo-stream="true">
+      Get started now
+      <%= image_tag image_url('arrow-right-white.png'), width: 16, height: 16 %>
+    </a>
+    <%= image_tag image_url('landing-houses-big.png'), id: 'houses' %>
+  </section>
+</section>
+<section class="landing--connectivity-section">
+  <div class="landing--connectivity-title-container">
+    <h2>See what's wrong with your connectivity at a glance.</h2>
+    <div class="landing--connectivity-cards-container">
+      <%= image_tag image_url('office-home-cards-big.png'), id: 'top' %>
+      <%= image_tag image_url('oval-shadow-big.png'), id: 'bottom' %>
+    </div>
+  </div>
+  <div class="landing--connectivity-bullets-container">
+    <%= render partial: "public/components/landing_bullet_point",
+               locals: {
+                 icon_url: 'track-performance-icon.png',
+                 title: 'Track performance',
+                 content: 'Analyze how your connectivity performs during peak-times and compare it to past performance.'
+               }
+    %>
+    <%= render partial: "public/components/landing_bullet_point",
+               locals: {
+                 icon_url: 'network-outages-icon.png',
+                 title: 'Detect network outages',
+                 content: 'Keep track of any network outages and know when your internet connection goes offline.'
+               }
+    %>
+    <%= render partial: "public/components/landing_bullet_point",
+               locals: {
+                 icon_url: 'compare-locations-icon.png',
+                 title: 'Compare locations',
+                 content: 'Have multiple locations set up and see how your internet providers compare to each other.'
+               }
+    %>
+    <%= render partial: "public/components/landing_bullet_point",
+               locals: {
+                 icon_url: 'schedule-tests-icon.png',
+                 title: 'Go beyond speeds',
+                 content: 'Get insights into your connectivity by looking at metrics other than speeds, like packet loss or latency.'
+               }
+    %>
+  </div>
+</section>
+<section class="landing--tbpp-section">
+  <div class="landing--tbpp-extra-blue"></div>
+  <div class="landing--tbpp-content">
+    <div class="landing--tbpp-main">
+      <h4>Introducing the Telehealth Broadband Pilot Program</h4>
+      <%= image_tag image_url('tbpp-logo-white.png') %>
+    </div>
+    <div class="landing--tbpp-mission">
+      <h5>Our mission</h5>
+      <p>The Telehealth Broadband Pilot Program was created to better understand how access to quality internet affects access to critical online services for Rural Americans. We are focused on collecting the data necessary to draw conclusions about the quality of internet service in Rural America.
+        <br/>
+        We are a grant funded initiative made possible by the <b>Office of Telehealth, Health Resources and Services Administration (HRSA) of the U.S. Department of Health and Human Services (DHHS)</b> under grant number GA540183.
+      </p>
+    </div>
+  </div>
+  <div class="landing--tbpp-extra-gray"></div>
+</section>
+<section class="landing--insights-section">
+  <div class="landing--insights-content">
+    <div class="landing--insights-content-text">
+      <h4>Get real insights about your internet speed quality.</h4>
+      <p>We developed Radar Pods to enable internet consumers to collect real data about the actual quality of their internet speed. We are looking to use Radar Pods with consumers to find real insights about rural internet speed.</p>
+    </div>
+    <%= image_tag image_url('insight-houses-big.png'), id: 'insight-houses' %>
+    <div class="landing--insights-bullet-points-container">
+      <%= render partial: "public/components/landing_bullet_point",
+                 locals: {
+                   icon_url: 'compare-locations-icon.png',
+                   title: 'Join our program',
+                   content: 'We are looking for individuals and businesses to take a Radar Pod and plug it into their internet connection for 90 days, to collect data regarding internet speed and track internet outages.'
+                 }
+      %>
+      <%= render partial: "public/components/landing_bullet_point",
+                 locals: {
+                   icon_url: 'insights-icon.png',
+                   title: 'Help us getting insights',
+                   content: 'We will use our Pod data to get insights about the actual quality of rural American internet speed and understand where internet infrastructure improvements need to be made.'
+                 }
+      %>
+      <%= render partial: "public/components/landing_bullet_point",
+                 locals: {
+                   icon_url: 'schedule-tests-icon.png',
+                   title: 'Track your internet performance',
+                   content: 'We encourage Pod users to interact with their own data and keep their Pods after the 90-day period. The data will help them understand the performance of their own internet connection.'
+                 }
+      %>
+    </div>
+  </div>
+</section>
+<section class="landing--states-section" data-controller="state-tabs">
+  <span>Participate in our program</span>
+  <h4>We're looking for all businesses and residential internet consumers in our study areas.</h4>
+  <%= render partial: "public/components/landing_state_tabs" %>
+</section>
+<section class="landing--qa-section" data-controller="qa">
+  <div class="landing--qa-content">
+    <h4>Questions? We've got you covered.</h4>
+    <%= render partial: "public/components/landing_qa" %>
+  </div>
+</section>
+<section class="landing--contact-section">
+  <h4>Get in touch with us.</h4>
+  <p>Our local teams can help you get started with Radar Pods.</p>
+  <div class="landing--phones-container">
+    <div class="landing--phone">
+      <h6>Michigan</h6>
+      <p>+1 (313) 993-1234</p>
+    </div>
+    <div class="landing--phone-divider"></div>
+    <div class="landing--phone">
+      <h6>West Virginia</h6>
+      <p>+1 (313) 993-1234</p>
+    </div>
+    <div class="landing--phone-divider"></div>
+    <div class="landing--phone">
+      <h6>Alaska</h6>
+      <p>+1 (313) 993-1234</p>
+    </div>
+    <div class="landing--phone-divider"></div>
+    <div class="landing--phone">
+      <h6>Texas</h6>
+      <p>+1 (313) 993-1234</p>
+    </div>
+  </div>
+  <p class="landing--contact-alternative">Or contact our Radar Toolkit team at +1 (313) 993-1234 or <a href="mailto:info@radartoolkit.com">info@radartoolkit.com</a>.</p>
+
+  <div class="landing--get-started-box">
+    <h5>Get started with Radar Pods</h5>
+    <p>Monitor the quality of your internet performance with ease</p>
+    <a href="<%= get_started_modal_path %>" class="landing--primary-button" data-turbo="true" data-turbo-frame="get_started_modal" data-turbo-stream="true">
+      Get started
+      <%= image_tag image_url('arrow-right-white.png'), width: 16, height: 16 %>
+    </a>
+  </div>
+
+  <div class="landing--logos-container">
+    <% logo_urls = %w{radar-logo-landing.png ttuhsc-logo.png wvpca-logo.png cmu-logo.png anthc-logo.png exactly-logo.png xlab-logo.png} %>
+    <% logo_urls.each do |url| %>
+      <%= image_tag image_url(url) %>
+    <% end %>
+  </div>
+
+  <div class="landing--contact-divider"></div>
+
+  <div class="landing--footer-tbpp">
+    <%= image_tag image_url('tbpp-dark-logo.png') %>
+    <div class="landing--contact-divider"></div>
+    <div>
+      <p>This project was developed as part of the <b>Telehealth Broadband Pilot Program</b>.</p>
+      <p>The Telehealth Broadband Pilot Program is made possible by grant #GA540183 from the <b>Office for the Advancement of Telehealth, Health Resources and Services Administration, DHHS</b>.</p>
+    </div>
+  </div>
+</section>
+<footer class="landing--footer">
+  <div class="landing--footer-content">
+    <p>Copyright © <%= Time.now.year %> Radar. All rights reserved.</p>
+    <div>
+      <a href="https://radartoolkit.com/privacy-policy">Privacy Policy</a>
+    </div>
+  </div>
+</footer>
+
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "get_started_modal" }
+%>
