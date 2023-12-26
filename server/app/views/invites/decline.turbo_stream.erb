@@ -1,0 +1,24 @@
+<%= turbo_stream.remove "notification_#{@invite_id}" do %>
+<% end %>
+
+<%= turbo_stream.remove "modal_notification_#{@invite_id}" do %>
+<% end %>
+
+<%= turbo_stream.remove "notification-divider-#{@invite_id}" do %>
+<% end %>
+
+<%= turbo_stream.remove "modal-notification-divider-#{@invite_id}" do %>
+<% end %>
+
+<% unless has_pending_invites?(current_user) %>
+  <%= turbo_stream.replace "notifications-content" do %>
+    <div class="sidebar--notifications-wrapper" data-has-notifications="false" id="notifications-content">No notifications yet.</div>
+  <% end %>
+  <%= turbo_stream.replace "modal-notifications-content" do %>
+    <div class="sidebar--notifications-wrapper" data-has-notifications="false" id="modal-notifications-content">No notifications yet.</div>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% end %>

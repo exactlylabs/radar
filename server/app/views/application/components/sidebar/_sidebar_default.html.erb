@@ -92,6 +92,10 @@
     <%= render partial: "application/components/sidebar/super_user_toggle", locals: { narrow: false } %>
   <% end %>
 
+  <%= render partial: "application/components/sidebar/notifications_item",
+             locals: { narrow: false, header: false }
+  %>
+
   <%= render partial: "application/components/sidebar/profile_item",
       locals: { narrow: false, header: false }
   %>

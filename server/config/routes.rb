@@ -226,7 +226,13 @@ Rails.application.routes.draw do
     end
   end
 
+
+  get 'pending_invites_panel', to: "invites#pending_invites_panel", as: "pending_invites_panel"
   resources :invites do
+    member do
+      post :accept
+      delete :decline
+    end
     collection do
       post 'resend', to: 'invites#resend'
     end

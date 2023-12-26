@@ -1,5 +1,14 @@
 <div class="sidebar--responsive-header-container">
   <%= image_tag image_url('hamburger-icon.png'), width: 24, height: 24, class: "hoverable", data: { action: "click->sidebar#openSmallSidebar" } %>
+  <a href="<%= pending_invites_panel_path %>"
+     data-turbo-stream="true"
+     data-turbo-frame="notifications_modal"
+     data-turbo="true"
+     class="sidebar--notification-icon hoverable"
+  >
+    <img id="header-sidebar-notifications-alert-icon" src="<%= image_url('notifications-alert-icon.png') %>" width="24" height="24" alt="notifications alert icon " <%= !has_pending_invites? ? 'hidden=hidden' : nil %>/>
+    <img id="header-sidebar-notifications-icon" src="<%= image_url('notifications-icon.png') %>" width="24" height="24" alt="notifications icon" <%= has_pending_invites? ? 'hidden=hidden' : nil %>/>
+  </a>
   <a href="/dashboard" class="m-0 p-0">
     <%= image_tag image_url('small-radar-logo.png'), width: 136, height: 27 %>
   </a>
