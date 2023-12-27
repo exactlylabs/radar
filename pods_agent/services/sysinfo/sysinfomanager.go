@@ -2,8 +2,10 @@ package sysinfo
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net"
 	"os"
 	"os/exec"
@@ -18,6 +20,7 @@ type SysInfoManager struct {
 
 // NewSystemManager returns an implementation of SystemManager using sysinfo service
 func NewSystemManager() *SysInfoManager {
+
 	return &SysInfoManager{}
 }
 
@@ -232,6 +235,100 @@ func (si SysInfoManager) SetSysTimezone(tz *time.Location) error {
 		return errors.W(err)
 	}
 	return nil
+}
+
+func (si SysInfoManager) EnsureTailscale() error {
+	if _, err := exec.LookPath("tailscale"); errors.Is(err, exec.ErrNotFound) {
+		// Install it
+		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale not installed, installing it")
+		_, err := si.runCommand(
+			exec.Command("bash", "-c", "curl -fsSL https://tailscale.com/install.sh | sh"))
+
+		if err != nil {
+			metadata := errors.GetMetadata(err)
+			if metadata != nil && strings.Contains((*metadata)["stderr"].(string), "Unable to acquire the dpkg frontend lock") {
+				return nil
+			}
+			return errors.W(err)
+		}
+		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale installed, allowing auto-update")
+		_, err = si.runCommand(
+			exec.Command("tailscale", "set", "--auto-update"))
+		if err != nil {
+			return errors.W(err)
+		}
+		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale installation completed.")
+	}
+
+	res, err := exec.Command("systemctl", "check", "tailscaled").Output()
+	if err != nil || !strings.Contains(string(res), "active") {
+		if err == nil {
+			log.Printf("sysinfo.SysInfoManager#EnsureTailscale: Tailscale service not running: %s", string(res))
+		} else {
+			log.Printf("sysinfo.SysInfoManager#EnsureTailscale: Failed to check tailscale service: stdout: %s -- err: %s", string(res), err.Error())
+		}
+		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Enabling Tailscale service")
+		_, err = si.runCommand(exec.Command("systemctl", "enable", "tailscaled"))
+		if err != nil {
+			return errors.W(err)
+		}
+		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Starting Tailscale service")
+		_, err = si.runCommand(exec.Command("systemctl", "start", "tailscaled"))
+		if err != nil {
+			return errors.W(err)
+		}
+	}
+
+	return nil
+}
+
+func (si SysInfoManager) TailscaleUp(authKey string, tags []string) error {
+	if err := si.EnsureTailscale(); err != nil {
+		return errors.W(err)
+	}
+	log.Println("sysinfo.SysInfoManager#TailscaleUp: Starting Tailscale")
+	_, err := si.runCommand(
+		exec.Command("tailscale", "up", "--ssh", "--force-reauth", "--auth-key", authKey, "--advertise-tags", strings.Join(tags, ",")))
+	if err != nil {
+		return errors.W(err)
+	}
+	log.Println("sysinfo.SysInfoManager#TailscaleUp: Tailscale Started")
+	return nil
+}
+
+func (si SysInfoManager) TailscaleDown() error {
+	log.Println("sysinfo.SysInfoManager#TailscaleDown: Stopping Tailscale")
+	_, err := si.runCommand(exec.Command("tailscale", "down"))
+	if errors.Is(err, exec.ErrNotFound) {
+		return nil
+	} else if err != nil {
+		return errors.W(err)
+	}
+	_, err = si.runCommand(exec.Command("tailscale", "logout"))
+	if err != nil {
+		return errors.W(err)
+	}
+	log.Println("sysinfo.SysInfoManager#TailscaleDown: Tailscale Logged Out")
+	_, err = si.runCommand(exec.Command("systemctl", "restart", "tailscaled"))
+	if err != nil {
+		return errors.W(err)
+	}
+	log.Println("sysinfo.SysInfoManager#TailscaleDown: Tailscale Service Restarted")
+	return nil
+}
+
+func (si SysInfoManager) TailscaleConnected() (bool, error) {
+	res, err := si.runCommand(exec.Command("tailscale", "status", "--json"))
+	if errors.Is(err, exec.ErrNotFound) {
+		return false, nil
+	} else if err != nil {
+		return false, errors.W(err)
+	}
+	var status map[string]interface{}
+	if err := json.Unmarshal(res, &status); err != nil {
+		return false, errors.W(err)
+	}
+	return status["Self"].(map[string]interface{})["Online"].(bool), nil
 }
 
 func (si SysInfoManager) runCommand(cmd *exec.Cmd) ([]byte, error) {
