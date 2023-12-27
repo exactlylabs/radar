@@ -60,6 +60,34 @@ class WatchdogChannel < ApplicationCable::Channel
     )
   end
 
+  def self.broadcast_debug_enabled(client)
+    auth_key = client.active_tailscale_key
+    ActionCable.server.broadcast(
+      WatchdogChannel.watchdog_stream_name(client),
+      {
+        event: "enable_tailscale",
+        payload: {
+          key_id: auth_key.key_id,
+          auth_key: auth_key.raw_key,
+          tags: ["tag:pod"],
+        }
+      }
+    )
+  end
+
+  def self.broadcast_debug_disabled(client)
+    auth_key = client.tailscale_auth_keys.where_consumed.last
+    ActionCable.server.broadcast(
+      WatchdogChannel.watchdog_stream_name(client),
+      {
+        event: "disable_tailscale",
+        payload: {
+          key_id: auth_key.key_id,
+        }
+      }
+    )
+  end
+
   # Actions called by the watchdog
 
   def sync(data)
@@ -74,10 +102,21 @@ class WatchdogChannel < ApplicationCable::Channel
     if self.client.has_watchdog_update?
       update
     end
+    if self.client.debug_enabled? && !data[:tailscale_connected]
+      enable_tailscale(self.client.active_tailscale_key)
+    end
   end
 
   def ndt7_diagnose_report(data)
     Ndt7DiagnoseReport.create client: self.client, report: data["payload"]
+  end
+
+  def tailscale_connected(data)
+    TailscaleAuthKey.find_by_key_id(data["payload"]["key_id"]).consumed!
+  end
+
+  def tailscale_disconnected(data)
+    TailscaleAuthKey.find_by_key_id(data["payload"]["key_id"]).revoke!
   end
 
 
@@ -95,6 +134,24 @@ class WatchdogChannel < ApplicationCable::Channel
         },
       }
     )
+  end
+
+  def enable_tailscale(auth_key)
+    self.connection.transmit({
+      type: "enable_tailscale",
+      message: {
+        key_id: auth_key.key_id,
+        auth_key: auth_key.raw_key,
+        tags: ["tag:pod"],
+      }
+    })
+  end
+
+  def disable_tailscale()
+    self.connection.transmit({
+      type: "disable_tailscale",
+      message: {},
+    })
   end
 
   def self.watchdog_stream_name(client)

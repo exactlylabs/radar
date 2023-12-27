@@ -106,6 +106,10 @@ GEM
       rest-client (>= 2.1.0.rc1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
+    dotenv (2.8.1)
+    dotenv-rails (2.8.1)
+      dotenv (= 2.8.1)
+      railties (>= 3.2)
     erubi (1.10.0)
     et-orbi (1.2.7)
       tzinfo
@@ -215,6 +219,7 @@ GEM
     grpc (1.47.0-x86_64-linux)
       google-protobuf (~> 3.19)
       googleapis-common-protos-types (~> 1.0)
+    hashie (5.0.0)
     hotwire-rails (0.1.3)
       rails (>= 6.0.0)
       stimulus-rails
@@ -269,6 +274,7 @@ GEM
     minitest (5.16.2)
     msgpack (1.5.4)
     multi_json (1.15.0)
+    multi_xml (0.6.0)
     netrc (0.11.0)
     nio4r (2.5.8)
     nokogiri (1.13.8-arm64-darwin)
@@ -277,6 +283,13 @@ GEM
       racc (~> 1.4)
     nokogiri (1.13.8-x86_64-linux)
       racc (~> 1.4)
+    oauth2 (2.0.9)
+      faraday (>= 0.17.3, < 3.0)
+      jwt (>= 1.0, < 3.0)
+      multi_xml (~> 0.5)
+      rack (>= 1.2, < 4)
+      snaky_hash (~> 2.0)
+      version_gem (~> 1.1)
     opus-ruby (1.0.1)
       ffi
     orm_adapter (0.5.0)
@@ -428,6 +441,9 @@ GEM
       faraday (>= 0.17.5, < 3.a)
       jwt (>= 1.5, < 3.0)
       multi_json (~> 1.10)
+    snaky_hash (2.0.1)
+      hashie
+      version_gem (~> 1.1, >= 1.1.1)
     sorbet-runtime (0.5.10835)
     spring (4.0.0)
     sprockets (4.1.1)
@@ -463,6 +479,7 @@ GEM
       unf_ext
     unf_ext (0.0.8.2)
     unicode-display_width (2.4.2)
+    version_gem (1.1.3)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.0)
@@ -509,6 +526,7 @@ DEPENDENCIES
   capybara (>= 3.26)
   devise
   discordrb
+  dotenv-rails
   foreman
   geocoder
   google-cloud-storage
@@ -521,6 +539,7 @@ DEPENDENCIES
   listen (~> 3.3)
   lograge
   mini_magick
+  oauth2
   pg (~> 1.5)
   puma (~> 5.0)
   pundit
