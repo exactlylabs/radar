@@ -17,6 +17,7 @@ Usage: $0 [OPTIONS] <img_zipfile_path> <ssh_pub_key_path>
   -p | --password      Set the password for the linux user
   -w | --watchdog      Set the path to the watchdog binary
   -a | --agent         Set the path to the radar agent binary
+  -b | --ssh           Set to allow SSH access to the pod
   """
 }
 
@@ -69,6 +70,9 @@ while :; do
             AGENT_PATH=$2
             shift
         ;;
+        -b|--ssh)
+            SSH=true
+        ;;
         *) break
     esac
     shift
@@ -98,10 +102,10 @@ rm -rf $DIST
 mkdir $DIST
 unzip -o $ZIP_IMAGE_LOCATION -d $DIST
 
-# Resize the image to 2G (This might need to be increased in the future)
+# Resize the image to 4G (This might need to be increased in the future)
 
 IMAGE_LOCATION=$DIST/radar.img
-qemu-img resize $IMAGE_LOCATION 2G
+qemu-img resize $IMAGE_LOCATION 4G
 
 # Mount the image to start copying files
 
@@ -116,14 +120,15 @@ mount ${LOOP_DEV}p1 -o rw ${TMP_DIR}/boot
 sleep 1
 
 # Enable SSH
+if [ ! -z $SSH ]; then
+  touch ${TMP_DIR}/boot/ssh
 
-touch ${TMP_DIR}/boot/ssh
+  cp $KEY_LOCATION $TMP_DIR/home/radar/.ssh/authorized_keys
 
-cp $KEY_LOCATION $TMP_DIR/home/radar/.ssh/authorized_keys
-
-# Set owner and group to radar
-chown 1000:1000 $TMP_DIR/home/radar/.ssh/authorized_keys
-chmod 644 $TMP_DIR/home/radar/.ssh/authorized_keys
+  # Set owner and group to radar
+  chown 1000:1000 $TMP_DIR/home/radar/.ssh/authorized_keys
+  chmod 644 $TMP_DIR/home/radar/.ssh/authorized_keys
+fi
 
 # Retrieve DTB and Kernel Files for use
 
