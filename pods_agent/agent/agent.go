@@ -17,22 +17,22 @@ import (
 )
 
 type Agent struct {
-	client     RadarClient
-	runners    []Runner
-	runTestCh  chan bool
-	pingRespCh chan *ServerMessage
-	wg         *sync.WaitGroup
-	started    bool
+	client      RadarClient
+	runners     []Runner
+	runTestCh   chan bool
+	serverMsgCh chan *ServerMessage
+	wg          *sync.WaitGroup
+	started     bool
 }
 
 func NewAgent(client RadarClient, runners []Runner) *Agent {
 	return &Agent{
-		client:     client,
-		runners:    runners,
-		runTestCh:  make(chan bool),
-		pingRespCh: make(chan *ServerMessage),
-		wg:         &sync.WaitGroup{},
-		started:    false,
+		client:      client,
+		runners:     runners,
+		runTestCh:   make(chan bool),
+		serverMsgCh: make(chan *ServerMessage),
+		wg:          &sync.WaitGroup{},
+		started:     false,
 	}
 }
 
@@ -97,10 +97,10 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 	go func() {
 		defer a.wg.Done()
 		defer sentry.NotifyIfPanic() // always add this to each new goroutine
-		startPingLoop(agentCtx, a.pingRespCh, a.client, pingFrequency(c))
+		startPingLoop(agentCtx, a.serverMsgCh, a.client, pingFrequency(c))
 	}()
 
-	a.client.Connect(agentCtx, a.pingRespCh)
+	a.client.Connect(agentCtx, a.serverMsgCh)
 	defer a.client.Close()
 
 	// Main Loop will listen to the responses and schedule Speed Tests when requested by the server
@@ -112,17 +112,22 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 			a.wg.Wait()
 			return
 
-		case pingResp := <-a.pingRespCh:
-			if pingResp.TestRequested {
-				maybeSendChannel(a.runTestCh)
-			}
-			if pingResp.Update != nil {
-				updateAgent(*pingResp.Update, cancel)
-			}
-			if pingResp.WatchdogUpdate != nil {
-				updateWatchdogIfNeeded(*pingResp.WatchdogUpdate, rebooter, cancel)
-			}
+		case serverMsg := <-a.serverMsgCh:
+			a.handleServerMessage(*serverMsg, rebooter, cancel)
 		}
+	}
+}
+
+func (a *Agent) handleServerMessage(msg ServerMessage, rebooter Rebooter, cancel context.CancelFunc) {
+	switch msg.Type {
+	case RunTest:
+		maybeSendChannel(a.runTestCh)
+
+	case Update:
+		updateAgent(msg.Data.(UpdateBinaryServerMessage), cancel)
+
+	case UpdateWatchdog:
+		updateWatchdogIfNeeded(msg.Data.(UpdateBinaryServerMessage), rebooter, cancel)
 	}
 }
 
@@ -160,15 +165,15 @@ func pingFrequency(c *config.Config) time.Duration {
 	return pingFreq
 }
 
-func updateAgent(bu BinaryUpdate, cancel context.CancelFunc) {
-	log.Printf("An Update for version %v is Available\n", bu.Version)
-	err := update.SelfUpdate(bu.BinaryUrl, bu.Version)
+func updateAgent(msg UpdateBinaryServerMessage, cancel context.CancelFunc) {
+	log.Printf("An Update for version %v is Available\n", msg.Version)
+	err := update.SelfUpdate(msg.BinaryUrl, msg.Version)
 	if update.IsValidationError(err) {
 		log.Printf("Existent update is invalid: %v\n", err)
 		sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{
 			"Update Data": {
-				"version": bu.Version,
-				"url":     bu.BinaryUrl,
+				"version": msg.Version,
+				"url":     msg.BinaryUrl,
 			},
 		})
 	} else if err != nil {
@@ -181,16 +186,16 @@ func updateAgent(bu BinaryUpdate, cancel context.CancelFunc) {
 }
 
 // updateWatchdogIfNeeded verifies if the watchdog is running, and in case it's not, it updates it.
-func updateWatchdogIfNeeded(bu BinaryUpdate, rebooter Rebooter, cancel context.CancelFunc) {
+func updateWatchdogIfNeeded(msg UpdateBinaryServerMessage, rebooter Rebooter, cancel context.CancelFunc) {
 	if !sysinfo.WatchdogIsRunning() {
-		log.Printf("An Update for Watchdog Version %v is available\n", bu.Version)
-		err := watchdog.UpdateWatchdog(bu.BinaryUrl, bu.Version)
+		log.Printf("An Update for Watchdog Version %v is available\n", msg.Version)
+		err := watchdog.UpdateWatchdog(msg.BinaryUrl, msg.Version)
 		if update.IsValidationError(err) {
 			log.Printf("Existent update is invalid: %v\n", err)
 			sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{
 				"Update Data": {
-					"version": bu.Version,
-					"url":     bu.BinaryUrl,
+					"version": msg.Version,
+					"url":     msg.BinaryUrl,
 				},
 			})
 		} else if err != nil {
