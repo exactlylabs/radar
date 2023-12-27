@@ -14,7 +14,6 @@ import (
 	"strings"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
-	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/agent"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/cable"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
@@ -38,9 +37,14 @@ const (
 )
 
 const (
-	RunTest             cable.MessageType = "run_test"        // Custom Type, when requested, the agent should run a speed test
-	UpdateClient        cable.MessageType = "update"          // Custom Type, when requested, the agent should update itself
-	AgentUpdateWatchdog cable.MessageType = "update_watchdog" // Custom Type, when requested, the agent should update the watchdog binary
+	RunTest       cable.MessageType = "run_test"       // Custom Type, when requested, the agent should run a speed test
+	TestRequested cable.MessageType = "test_requested" // same as run_test, but sent through the subscription channel
+
+	UpdateClient         cable.MessageType = "update"          // Custom Type, when requested, the agent should update itself
+	ClientVersionChanged cable.MessageType = "version_changed" // same as update, but sent through the subscription channel
+
+	AgentUpdateWatchdog         cable.MessageType = "update_watchdog"          // Custom Type, when requested, the agent should update the watchdog binary
+	AgentWatchdogVersionChanged cable.MessageType = "watchdog_version_changed" // same as update_watchdog, but sent through the subscription channel
 )
 
 // RadarClient implements agent.RadarClient, connecting to the server using websocket
@@ -77,8 +81,9 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 	header.Set("Sec-Radar-Service-Started", fmt.Sprintf("%t", firstPing))
 	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), RadarServerChannelName, header)
 	c.agentCh = ch
-	c.channel.OnSubscriptionMessage = c.handleSubscriptionMessage
-	c.channel.OnCustomMessage = c.handleCustomMessage
+	// c.channel.OnSubscriptionMessage = c.handleSubscriptionMessage
+	// c.channel.OnCustomMessage = c.handleCustomMessage
+	c.channel.OnMessage = c.handleMessage
 	c.channel.OnSubscribed = c.sendSync
 	c.channel.OnConnectionError = func(err error) {
 		log.Println(errors.W(err))
@@ -98,84 +103,35 @@ func (c *RadarClient) Connected() bool {
 	return c.connected
 }
 
-func (c *RadarClient) handleSubscriptionMessage(msg cable.SubscriptionMessage) {
-	log.Println("Received Message from Server: ", msg.Event)
-	if msg.Event == "test_requested" {
-		c.agentCh <- &agent.ServerMessage{TestRequested: true}
-
-	} else if msg.Event == "version_changed" || msg.Event == "watchdog_version_changed" {
-		updateData := messages.VersionChangedSubscriptionPayload{}
-		if err := json.Unmarshal(msg.Payload, &updateData); err != nil {
-			err = errors.Wrap(err, "json.Unmarshal failed")
-			sentry.NotifyError(
-				err,
-				map[string]sentry.Context{
-					"Message": {"event": msg.Event, "payload": string(msg.Payload)},
-				},
-			)
-			log.Println(err)
-		}
-		binUpdate := &agent.BinaryUpdate{
-			Version:   updateData.Version,
-			BinaryUrl: c.serverURL + updateData.BinaryUrl, // Websocket client only sends the path
-		}
-
-		serverMsg := &agent.ServerMessage{}
-		if msg.Event == "version_changed" {
-			serverMsg.Update = binUpdate
-		} else if msg.Event == "watchdog_version_changed" {
-			serverMsg.WatchdogUpdate = binUpdate
-		}
-		c.agentCh <- serverMsg
-	}
-}
-
-func (c *RadarClient) handleCustomMessage(msg cable.ServerMessage) {
+func (c *RadarClient) handleMessage(msg cable.ServerMessage) {
 	switch msg.Type {
 	case cable.Ping:
 		c.sendPong()
 
-	case RunTest:
-		c.agentCh <- &agent.ServerMessage{TestRequested: true}
+	case TestRequested:
+		c.agentCh <- &agent.ServerMessage{
+			Type: agent.RunTest,
+			Data: agent.RunTestServerMessage{},
+		}
 
-	case UpdateClient:
-		payload := &messages.VersionChangedSubscriptionPayload{}
-		if err := msg.DecodeMessage(payload); err != nil {
-			err = errors.W(err)
-			sentry.NotifyError(
-				err,
-				map[string]sentry.Context{
-					"Message": {"type": msg.Type, "message": msg.Message},
-				},
-			)
-			log.Println(err)
-			return
-		}
-		c.agentCh <- &agent.ServerMessage{
-			Update: &agent.BinaryUpdate{
+	case ClientVersionChanged, UpdateClient, AgentUpdateWatchdog, AgentWatchdogVersionChanged:
+		payload := cable.ParseMessage[*messages.VersionChangedSubscriptionPayload](msg)
+		if payload != nil {
+			binUpdate := agent.UpdateBinaryServerMessage{
 				Version:   payload.Version,
 				BinaryUrl: c.serverURL + payload.BinaryUrl, // Websocket client only sends the path
-			},
+			}
+
+			var msgType agent.MessageType = agent.Update
+			if msg.Type == AgentUpdateWatchdog || msg.Type == AgentWatchdogVersionChanged {
+				msgType = agent.UpdateWatchdog
+			}
+			c.agentCh <- &agent.ServerMessage{
+				Type: msgType,
+				Data: binUpdate,
+			}
 		}
-	case AgentUpdateWatchdog:
-		payload := &messages.VersionChangedSubscriptionPayload{}
-		if err := msg.DecodeMessage(payload); err != nil {
-			err = errors.W(err)
-			sentry.NotifyError(
-				err,
-				map[string]sentry.Context{
-					"Message": {"type": msg.Type, "message": msg.Message},
-				},
-			)
-			log.Println(err)
-			return
-		}
-		c.agentCh <- &agent.ServerMessage{
-			WatchdogUpdate: &agent.BinaryUpdate{
-				Version:   payload.Version,
-				BinaryUrl: c.serverURL + payload.BinaryUrl, // Websocket client only sends the path
-			},
-		}
+
 	}
 }
 
@@ -203,7 +159,7 @@ func (c *RadarClient) sendPong() {
 	})
 }
 
-func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) (*agent.ServerMessage, error) {
+func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) ([]agent.ServerMessage, error) {
 	apiUrl := fmt.Sprintf("%s/clients/%s/status", c.serverURL, c.clientID)
 	form := url.Values{}
 	form.Add("secret", c.secret)
@@ -244,22 +200,34 @@ func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) (*agent.ServerMessage, erro
 	if err := json.Unmarshal(body, podConfig); err != nil {
 		return nil, errors.Wrap(err, "error unmarshalling").WithMetadata(errors.Metadata{"body": string(body)})
 	}
-	res := &agent.ServerMessage{
-		TestRequested: podConfig.TestRequested,
+	msgs := make([]agent.ServerMessage, 0)
+
+	if podConfig.TestRequested {
+		msgs = append(msgs, agent.ServerMessage{
+			Type: agent.RunTest,
+			Data: agent.RunTestServerMessage{},
+		})
 	}
+
 	if podConfig.Update != nil {
-		res.Update = &agent.BinaryUpdate{
-			Version:   podConfig.Update.Version,
-			BinaryUrl: fmt.Sprintf("%s/%s", c.serverURL, podConfig.Update.Url),
-		}
+		msgs = append(msgs, agent.ServerMessage{
+			Type: agent.Update,
+			Data: agent.UpdateBinaryServerMessage{
+				Version:   podConfig.Update.Version,
+				BinaryUrl: fmt.Sprintf("%s/%s", c.serverURL, podConfig.Update.Url),
+			},
+		})
 	}
 	if podConfig.WatchdogUpdate != nil {
-		res.WatchdogUpdate = &agent.BinaryUpdate{
-			Version:   podConfig.WatchdogUpdate.Version,
-			BinaryUrl: fmt.Sprintf("%s/%s", c.serverURL, podConfig.WatchdogUpdate.Url),
-		}
+		msgs = append(msgs, agent.ServerMessage{
+			Type: agent.UpdateWatchdog,
+			Data: agent.UpdateBinaryServerMessage{
+				Version:   podConfig.WatchdogUpdate.Version,
+				BinaryUrl: fmt.Sprintf("%s/%s", c.serverURL, podConfig.WatchdogUpdate.Url),
+			},
+		})
 	}
-	return res, nil
+	return msgs, nil
 }
 
 func (c *RadarClient) Register(registrationToken *string) (*agent.RegisteredPod, error) {

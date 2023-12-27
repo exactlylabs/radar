@@ -9,14 +9,31 @@ import (
 
 var ErrRunnerConnectionError = errors.NewSentinel("RunnerConnectionError", "runner failed to connect to the speed test server")
 
-type BinaryUpdate struct {
+type MessageType int
+
+const (
+	RunTest = iota
+	Update
+	UpdateWatchdog
+)
+
+type UpdateBinaryServerMessage struct {
 	Version   string `json:"version"`
 	BinaryUrl string `json:"binary_url"`
 }
+
+type RunTestServerMessage struct {
+}
+
+// type ServerMessage struct {
+// 	TestRequested  bool
+// 	Update         *BinaryUpdate
+// 	WatchdogUpdate *BinaryUpdate
+// }
+
 type ServerMessage struct {
-	TestRequested  bool
-	Update         *BinaryUpdate
-	WatchdogUpdate *BinaryUpdate
+	Type MessageType
+	Data any
 }
 
 type RegisteredPod struct {
@@ -44,7 +61,7 @@ type Rebooter interface {
 type RadarClient interface {
 	Register(registrationToken *string) (*RegisteredPod, error)
 	SendMeasurement(ctx context.Context, testStyle string, measurement []byte) error
-	Ping(meta *sysinfo.ClientMeta) (*ServerMessage, error)
+	Ping(meta *sysinfo.ClientMeta) ([]ServerMessage, error)
 	Connect(ctx context.Context, ch chan<- *ServerMessage) error
 	Connected() bool
 	Close() error

@@ -21,12 +21,14 @@ func startPingLoop(ctx context.Context, respCh chan<- *ServerMessage, client Rad
 		case <-pingTimer.C:
 			if !client.Connected() {
 				log.Println("Pinging server...")
-				resp, err := client.Ping(meta)
+				msgs, err := client.Ping(meta)
 				if err != nil {
 					log.Println(errors.W(err))
 					continue
 				}
-				respCh <- resp
+				for _, msg := range msgs {
+					respCh <- &msg
+				}
 			}
 		}
 	}

@@ -12,12 +12,9 @@ import (
 	"github.com/google/uuid"
 )
 
-// SubscriptionCallback is called when receiving a message from the topic subscribed in the server
-type SubscriptionCallback func(SubscriptionMessage)
-
-// CustomMessageCallback is called whenever a non subscription message is received
-// and it is not of a type that was expected by the client.
-type CustomMessageCallback func(ServerMessage)
+// MessageCallback has all messages received from the server.
+// To know what type of message it is, check the "Type" field. If "SubscriptionMessageType", then "Message" is a SubscriptionMessage struct otherwise it is left untouched by the parser.
+type MessageCallback func(ServerMessage)
 
 // ChannelClient subscribes to a specific channel and handles the default connection steps.
 // To process the subscription messages or other type of events, set the "On[XXX]" callback variables
@@ -30,11 +27,10 @@ type ChannelClient struct {
 	header      http.Header
 
 	// Callbacks
-	OnConnected           func()
-	OnConnectionError     func(error)
-	OnSubscribed          func()
-	OnSubscriptionMessage SubscriptionCallback
-	OnCustomMessage       CustomMessageCallback
+	OnConnected       func()
+	OnConnectionError func(error)
+	OnSubscribed      func()
+	OnMessage         MessageCallback
 }
 
 func NewChannel(serverUrl, auth, channelName string, customHeader http.Header) *ChannelClient {
@@ -111,14 +107,15 @@ func (c *ChannelClient) listenToMessages() {
 				c.OnSubscribed()
 			}
 		default:
-			if msg.Identifier != nil && c.OnSubscriptionMessage != nil {
-				msgData := SubscriptionMessage{}
-				msg.DecodeMessage(&msgData)
-				c.OnSubscriptionMessage(msgData)
-			} else if c.OnCustomMessage != nil {
-				c.OnCustomMessage(msg)
+			if msg.Identifier != nil && msg.Type == "" {
+				// Subscription Broadcasted Message
+				subData := ParseMessage[SubscriptionMessage](msg)
+				msg.Type = MessageType(subData.Event)
+				msg.Message = subData.Payload
 			}
-
+			if c.OnMessage != nil {
+				c.OnMessage(msg)
+			}
 		}
 	}
 }
