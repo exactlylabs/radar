@@ -7,6 +7,14 @@ import (
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
+type MessageType int
+
+const (
+	UpdateWatchdogMessageType MessageType = iota
+	EnableTailscaleMessageType
+	DisableTailscaleMessageType
+)
+
 // SystemManager interface provides methods for dealing with some
 // files of the POD Os
 type SystemManager interface {
@@ -44,20 +52,41 @@ type SystemManager interface {
 	GetSysTimezone() (*time.Location, error)
 	// ResetLocaltime removes the timezone configuration
 	SetSysTimezone(*time.Location) error
+	// EnsureTailscale should make sure that tailscale is installed
+	EnsureTailscale() error
+	// TailscaleUp will log in to a tailnet using the provided authKey and tags
+	TailscaleUp(authKey string, tags []string) error
+	// TailscaleDown will log out of the current tailnet.
+	TailscaleDown() error
+	// TailscaleConnected returns if the pod is connected to a tailnet
+	TailscaleConnected() (bool, error)
 }
 
-type BinaryUpdate struct {
-	Version   string
-	BinaryUrl string
+type UpdateBinaryServerMessage struct {
+	Version   string `json:"version"`
+	BinaryUrl string `json:"binary_url"`
+}
+
+type EnableTailscaleServerMessage struct {
+	KeyId   string   `json:"key_id"`
+	AuthKey string   `json:"auth_key"`
+	Tags    []string `json:"tags"`
+}
+
+type DisableTailscaleServerMessage struct {
+	KeyId string `json:"key_id"`
 }
 
 type ServerMessage struct {
-	Update *BinaryUpdate
+	Type MessageType
+	Data any
 }
 
 type WatchdogClient interface {
 	Connect(context.Context, chan<- ServerMessage) error
 	WatchdogPing(meta *sysinfo.ClientMeta) (*ServerMessage, error)
+	NotifyTailscaleConnected(key_id string)
+	NotifyTailscaleDisconnected(key_id string)
 	Connected() bool
 	Close() error
 }

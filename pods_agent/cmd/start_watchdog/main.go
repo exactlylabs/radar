@@ -7,13 +7,16 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 
+	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/cmd/start_watchdog/internal/dev"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/exactlylabs/radar/pods_agent/services/bufferedsentry"
 	"github.com/exactlylabs/radar/pods_agent/services/radar"
+	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/watchdog"
 	"github.com/joho/godotenv"
@@ -46,17 +49,36 @@ func main() {
 	defer sentry.NotifyIfPanic()
 
 	sysManager := sysinfo.NewSystemManager()
-	cli := radar.NewWatchdogClient(c.ServerURL, c.ClientId, c.Secret)
+	cli := radar.NewWatchdogClient(c.ServerURL, c.ClientId, c.Secret, func() messages.WatchdogSync {
+		meta := sysinfo.Metadata()
+		tsConnected, err := sysManager.TailscaleConnected()
+		if err != nil {
+			err = errors.W(err)
+			log.Println(err)
+			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+		}
+		return messages.WatchdogSync{
+			Sync: messages.Sync{
+				OSVersion:         runtime.GOOS,
+				HardwarePlatform:  runtime.GOARCH,
+				Distribution:      meta.Distribution,
+				Version:           meta.Version,
+				NetInterfaces:     meta.NetInterfaces,
+				WatchdogVersion:   meta.WatchdogVersion,
+				RegistrationToken: meta.RegistrationToken,
+			},
+			TailscaleConnected: tsConnected,
+		}
+	})
 	ctx := context.Background()
 	if !info.IsDev() {
 		agentCli := sysinfo.NewAgentInfoManager(*radarPath, *agentService)
-		watchdog.Run(ctx, c, sysManager, agentCli, cli)
+		watchdog.NewWatchdog(c, sysManager, agentCli, cli).Run(ctx)
 	} else {
 		// We are in dev environment, use the dev interfaces
 		fmt.Println("Running in Development Mode")
 		agentCli := dev.NewDevAgentManager("Dev", true)
 		sysManager := dev.NewDevSysManager()
-
-		watchdog.Run(ctx, c, sysManager, agentCli, cli)
+		watchdog.NewWatchdog(c, sysManager, agentCli, cli).Run(ctx)
 	}
 }

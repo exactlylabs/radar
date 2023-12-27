@@ -111,3 +111,19 @@ func (dm *devSysManager) SetSysTimezone(tz *time.Location) error {
 	dm.Tz = tz
 	return nil
 }
+
+func (dm *devSysManager) EnsureTailscale() error {
+	return nil
+}
+
+func (dm *devSysManager) TailscaleUp(authKey string, tags []string) error {
+	return nil
+}
+
+func (dm *devSysManager) TailscaleDown() error {
+	return nil
+}
+
+func (dm *devSysManager) TailscaleConnected() (bool, error) {
+	return false, nil
+}
