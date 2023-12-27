@@ -14,19 +14,36 @@ import (
 	"github.com/exactlylabs/radar/pods_agent/watchdog/display"
 )
 
+type Watchdog struct {
+	c          *config.Config
+	sysManager SystemManager
+	agentCli   display.AgentClient
+	cli        WatchdogClient
+}
+
+func NewWatchdog(c *config.Config, sysManager SystemManager, agentCli display.AgentClient, cli WatchdogClient) *Watchdog {
+	return &Watchdog{
+		c:          c,
+		sysManager: sysManager,
+		agentCli:   agentCli,
+		cli:        cli,
+	}
+}
+
 // Run is a blocking function that starts all routines related to the Watchdog.
-func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentCli display.AgentClient, cli WatchdogClient) {
+func (w *Watchdog) Run(ctx context.Context) {
 	go func() {
 		defer sentry.NotifyIfPanic()
-		display.StartDisplayLoop(ctx, os.Stdout, agentCli, sysManager)
+		display.StartDisplayLoop(ctx, os.Stdout, w.agentCli, w.sysManager)
 	}()
 	go func() {
 		defer sentry.NotifyIfPanic()
-		StartScanLoop(ctx, sysManager)
+		StartScanLoop(ctx, w.sysManager)
 	}()
+
 	timer := time.NewTicker(10 * time.Second)
 	cliChan := make(chan ServerMessage)
-	if err := cli.Connect(ctx, cliChan); err != nil {
+	if err := w.cli.Connect(ctx, cliChan); err != nil {
 		panic(err)
 	}
 	for {
@@ -34,23 +51,34 @@ func Run(ctx context.Context, c *config.Config, sysManager SystemManager, agentC
 		case <-ctx.Done():
 			return
 		case msg := <-cliChan:
-			if msg.Update != nil {
-				handleUpdate(c, sysManager, *msg.Update)
-			}
+			w.handleMessage(ctx, msg)
+
 		case <-timer.C:
-			if !cli.Connected() {
-				res, err := cli.WatchdogPing(sysinfo.Metadata())
+			if !w.cli.Connected() {
+				res, err := w.cli.WatchdogPing(sysinfo.Metadata())
 				if err != nil {
 					log.Println(errors.W(err))
-				} else if res.Update != nil {
-					handleUpdate(c, sysManager, *res.Update)
+					continue
+				} else if res != nil {
+					w.handleMessage(ctx, *res)
 				}
 			}
 		}
 	}
 }
 
-func handleUpdate(c *config.Config, sysManager SystemManager, data BinaryUpdate) {
+func (w *Watchdog) handleMessage(ctx context.Context, msg ServerMessage) {
+	switch msg.Type {
+	case UpdateWatchdogMessageType:
+		w.handleUpdate(msg.Data.(UpdateBinaryServerMessage))
+	case EnableTailscaleMessageType:
+		w.handleEnableTailscale(ctx, msg.Data.(EnableTailscaleServerMessage))
+	case DisableTailscaleMessageType:
+		w.handleDisableTailscale(ctx, msg.Data.(DisableTailscaleServerMessage))
+	}
+}
+
+func (w *Watchdog) handleUpdate(data UpdateBinaryServerMessage) {
 	log.Printf("An Update for Watchdog Version %v is available\n", data.Version)
 	err := UpdateWatchdog(data.BinaryUrl, data.Version)
 	if update.IsValidationError(err) {
@@ -65,9 +93,36 @@ func handleUpdate(c *config.Config, sysManager SystemManager, data BinaryUpdate)
 		panic(err)
 	} else {
 		log.Println("Successfully Updated the Watchdog. Restarting the whole system")
-		if err := sysManager.Reboot(); err != nil {
+		if err := w.sysManager.Reboot(); err != nil {
 			panic(err)
 		}
 		os.Exit(1)
 	}
+}
+
+func (w *Watchdog) handleEnableTailscale(ctx context.Context, data EnableTailscaleServerMessage) {
+	err := w.sysManager.TailscaleUp(data.AuthKey, data.Tags)
+	if err != nil {
+		errors.W(err).WithMetadata(errors.Metadata{
+			"keyId": data.KeyId,
+			"tags":  data.Tags,
+		})
+		sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+		return
+	}
+	log.Println("Successfully Logged in to Tailnet")
+	w.cli.NotifyTailscaleConnected(data.KeyId)
+}
+
+func (w *Watchdog) handleDisableTailscale(ctx context.Context, data DisableTailscaleServerMessage) {
+	err := w.sysManager.TailscaleDown()
+	if err != nil {
+		errors.W(err).WithMetadata(errors.Metadata{
+			"keyId": data.KeyId,
+		})
+		sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+		return
+	}
+	log.Println("Successfully Logged out of Tailnet")
+	w.cli.NotifyTailscaleDisconnected(data.KeyId)
 }

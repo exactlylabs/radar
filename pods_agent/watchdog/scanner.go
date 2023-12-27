@@ -115,6 +115,11 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 		hasChanges = 1
 	}
 
+	// Ensures that Tailscale is installed
+	if err := sysManager.EnsureTailscale(); err != nil {
+		return false, errors.W(err)
+	}
+
 	authLog, err := sysManager.GetAuthLogFile()
 	if err != nil {
 		return false, errors.W(err)
