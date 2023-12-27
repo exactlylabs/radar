@@ -8,12 +8,9 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"runtime"
 	"strings"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
-	"github.com/exactlylabs/go-monitor/pkg/sentry"
-	"github.com/exactlylabs/radar/pods_agent/services/ndt7/ndt7diagnose"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/cable"
 	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
@@ -26,29 +23,42 @@ const (
 	WatchdogChannelName = "WatchdogChannel"
 )
 
-const NDT7DiagnoseReport cable.CustomActionTypes = "ndt7_diagnose_report"
+// CustomActionTypes
+const (
+	NDT7DiagnoseReport    cable.CustomActionTypes = "ndt7_diagnose_report"
+	TailscaleConnected    cable.CustomActionTypes = "tailscale_connected"
+	TailscaleDisconnected cable.CustomActionTypes = "tailscale_disconnected"
+)
+
+// Server MessageTypes
+const (
+	UpdateWatchdog         cable.MessageType = "update"            // when requested, the agent should update itself
+	WatchdogVersionChanged cable.MessageType = "version_changed"   // same as update, but sent through the subscription channel
+	EnableTailscale        cable.MessageType = "enable_tailscale"  // when requested, the agent should install and enable tailscale VPN
+	DisableTailscale       cable.MessageType = "disable_tailscale" // when requested, the agent should disable tailscale VPN
+)
 
 var WatchdogUserAgent = "RadarPodsWatchdog/"
 
-const (
-	UpdateWatchdog cable.MessageType = "update" // Custom Type, when requested, the agent should update itself
-)
+type GetSyncMessageFunc func() messages.WatchdogSync
 
 // RadarWatchdogClient implements watchdog.WatchdogClient, connecting to the server using websocket
 type RadarWatchdogClient struct {
-	serverURL string
-	clientID  string
-	secret    string
-	channel   *cable.ChannelClient
-	returnCh  chan<- watchdog.ServerMessage
-	connected bool
+	serverURL      string
+	clientID       string
+	secret         string
+	channel        *cable.ChannelClient
+	returnCh       chan<- watchdog.ServerMessage
+	connected      bool
+	getSyncMessage GetSyncMessageFunc
 }
 
-func NewWatchdogClient(serverURL, clientID, secret string) *RadarWatchdogClient {
+func NewWatchdogClient(serverURL, clientID, secret string, getSyncMessage GetSyncMessageFunc) *RadarWatchdogClient {
 	return &RadarWatchdogClient{
-		serverURL: serverURL,
-		clientID:  clientID,
-		secret:    secret,
+		serverURL:      serverURL,
+		clientID:       clientID,
+		secret:         secret,
+		getSyncMessage: getSyncMessage,
 	}
 }
 
@@ -60,8 +70,7 @@ func (c *RadarWatchdogClient) Connect(ctx context.Context, ch chan<- watchdog.Se
 	h.Set("Sec-Radar-Tool", "true")
 	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), WatchdogChannelName, h)
 	c.returnCh = ch
-	c.channel.OnSubscriptionMessage = c.handleSubscriptionMessage
-	c.channel.OnCustomMessage = c.handleCustomMessage
+	c.channel.OnMessage = c.handleMessage
 	c.channel.OnSubscribed = c.sendSync
 	c.channel.OnConnectionError = func(error) {
 		c.connected = false
@@ -84,82 +93,51 @@ func (c *RadarWatchdogClient) Close() error {
 	return c.channel.Close()
 }
 
-func (c *RadarWatchdogClient) handleSubscriptionMessage(msg cable.SubscriptionMessage) {
-	if msg.Event == "version_changed" {
-		updateData := messages.VersionChangedSubscriptionPayload{}
-		if err := json.Unmarshal(msg.Payload, &updateData); err != nil {
-			err = errors.W(err)
-			sentry.NotifyError(
-				err,
-				map[string]sentry.Context{
-					"Message": {"event": msg.Event, "payload": string(msg.Payload)},
-				},
-			)
-			log.Println(err)
-		}
-		c.returnCh <- watchdog.ServerMessage{
-			Update: &watchdog.BinaryUpdate{
-				Version:   updateData.Version,
-				BinaryUrl: c.serverURL + updateData.BinaryUrl, // Websocket client only sends the path
-			},
-		}
-	} else if msg.Event == "ndt7_diagnose_requested" {
-		report, err := ndt7diagnose.RunDiagnose()
-		if err != nil {
-			err = errors.W(err)
-			sentry.NotifyError(err, map[string]sentry.Context{"Message": {"event": msg.Event, "payload": string(msg.Payload)}})
-			log.Println(err)
-		} else {
-			c.sendNDT7Report(report)
-		}
-	}
-}
-
-func (c *RadarWatchdogClient) handleCustomMessage(msg cable.ServerMessage) {
+// handleMessage will notify the caller with the message already parsed
+func (c *RadarWatchdogClient) handleMessage(msg cable.ServerMessage) {
 	switch msg.Type {
-	case UpdateWatchdog:
-		payload := &messages.VersionChangedSubscriptionPayload{}
-		if err := msg.DecodeMessage(payload); err != nil {
-			err = errors.W(err)
-			sentry.NotifyError(err,
-				map[string]sentry.Context{
-					"Message": {"type": msg.Type, "message": msg.Message},
+	case WatchdogVersionChanged, UpdateWatchdog:
+		payload := cable.ParseMessage[*messages.VersionChangedSubscriptionPayload](msg)
+		if payload != nil {
+			c.returnCh <- watchdog.ServerMessage{
+				Type: watchdog.UpdateWatchdogMessageType,
+				Data: watchdog.UpdateBinaryServerMessage{
+					Version:   payload.Version,
+					BinaryUrl: c.serverURL + payload.BinaryUrl, // Websocket client only sends the path
 				},
-			)
-			log.Println(err)
-			return
+			}
 		}
-		c.returnCh <- watchdog.ServerMessage{
-			Update: &watchdog.BinaryUpdate{
-				Version:   payload.Version,
-				BinaryUrl: c.serverURL + payload.BinaryUrl, // Websocket client only sends the path
-			},
+
+	case EnableTailscale:
+		payload := cable.ParseMessage[*messages.EnableTailscaleSubscriptionPayload](msg)
+		if payload != nil {
+			c.returnCh <- watchdog.ServerMessage{
+				Type: watchdog.EnableTailscaleMessageType,
+				Data: watchdog.EnableTailscaleServerMessage{
+					KeyId:   payload.KeyId,
+					AuthKey: payload.AuthKey,
+					Tags:    payload.Tags,
+				},
+			}
+		}
+	case DisableTailscale:
+		payload := cable.ParseMessage[*messages.DisableTailscaleSubscriptionPayload](msg)
+		if payload != nil {
+			c.returnCh <- watchdog.ServerMessage{
+				Type: watchdog.DisableTailscaleMessageType,
+				Data: watchdog.DisableTailscaleServerMessage{
+					KeyId: payload.KeyId,
+				},
+			}
 		}
 	}
 }
 
 func (c *RadarWatchdogClient) sendSync() {
-	meta := sysinfo.Metadata()
-	payload := messages.Sync{
-		OSVersion:         runtime.GOOS,
-		HardwarePlatform:  runtime.GOARCH,
-		Distribution:      meta.Distribution,
-		Version:           meta.Version,
-		NetInterfaces:     meta.NetInterfaces,
-		WatchdogVersion:   meta.WatchdogVersion,
-		RegistrationToken: meta.RegistrationToken,
-	}
-
+	payload := c.getSyncMessage()
 	c.channel.SendAction(cable.CustomActionData{
 		Action:  Sync,
 		Payload: payload,
-	})
-}
-
-func (c *RadarWatchdogClient) sendNDT7Report(report *ndt7diagnose.DiagnoseReport) {
-	c.channel.SendAction(cable.CustomActionData{
-		Action:  NDT7DiagnoseReport,
-		Payload: report,
 	})
 }
 
@@ -195,10 +173,29 @@ func (c *RadarWatchdogClient) WatchdogPing(meta *sysinfo.ClientMeta) (*watchdog.
 	}
 	res := &watchdog.ServerMessage{}
 	if podConfig.Update != nil {
-		res.Update = &watchdog.BinaryUpdate{
+		res.Type = watchdog.UpdateWatchdogMessageType
+		res.Data = &watchdog.UpdateBinaryServerMessage{
 			Version:   podConfig.Update.Version,
 			BinaryUrl: fmt.Sprintf("%s/%s", c.serverURL, podConfig.Update.Url),
 		}
 	}
 	return res, nil
+}
+
+func (c *RadarWatchdogClient) NotifyTailscaleConnected(keyId string) {
+	c.channel.SendAction(cable.CustomActionData{
+		Action: TailscaleConnected,
+		Payload: messages.TailscaleConnected{
+			KeyId: keyId,
+		},
+	})
+}
+
+func (c *RadarWatchdogClient) NotifyTailscaleDisconnected(keyId string) {
+	c.channel.SendAction(cable.CustomActionData{
+		Action: TailscaleDisconnected,
+		Payload: messages.TailscaleDisconnected{
+			KeyId: keyId,
+		},
+	})
 }

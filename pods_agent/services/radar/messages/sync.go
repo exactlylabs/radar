@@ -11,3 +11,8 @@ type Sync struct {
 	OSVersion         string                  `json:"os_version"`
 	HardwarePlatform  string                  `json:"hardware_platform"`
 }
+
+type WatchdogSync struct {
+	Sync
+	TailscaleConnected bool `json:"tailscale_connected"`
+}
