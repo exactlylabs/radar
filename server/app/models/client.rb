@@ -45,6 +45,7 @@ class Client < ApplicationRecord
   has_many :measurements
   has_many :client_event_logs
   has_many :ndt7_diagnose_reports
+  has_many :tailscale_auth_keys
 
   validates :scheduling_amount_per_period, numericality: { only_integer: true, greater_than: 0 }
 
@@ -179,6 +180,13 @@ class Client < ApplicationRecord
     # The agent will know if it should update or leave it to the watchdog.
     PodAgentChannel.broadcast_watchdog_version_changed self if saved_change_to_target_watchdog_version_id
     WatchdogChannel.broadcast_version_changed self if saved_change_to_target_watchdog_version_id
+
+    if saved_change_to_debug_enabled && debug_enabled?
+      WatchdogChannel.broadcast_debug_enabled(self)
+    elsif saved_change_to_debug_enabled && !debug_enabled?
+      WatchdogChannel.broadcast_debug_disabled(self)
+      self.tailscale_auth_keys.where_active.each(&:revoke!)
+    end
   end
 
   def latest_download
@@ -759,6 +767,15 @@ class Client < ApplicationRecord
     multiplier = 1024 ** (unit == 'MB' ? 2 : 3)
     amount = (self.data_cap_max_usage / multiplier).round(0)
     "#{amount} #{unit}"
+  end
+
+  def active_tailscale_key()
+    key = self.tailscale_auth_keys.where_active.first
+    if key.nil? || key.expired?
+      key.revoke! if key.present?
+      key = TailscaleAuthKey.create!(client: self)
+    end
+    return key
   end
 
   private
