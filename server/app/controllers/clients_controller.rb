@@ -204,7 +204,7 @@ class ClientsController < ApplicationController
       if @client.update(user: nil, location: nil, account: nil)
         remove_recent_search(@client.id, Recents::RecentTypes::CLIENT)
         if request.referrer.include?(client_path(@client.unix_user))
-          format.html { redirect_to clients_path, notice: "Client was successfully deleted." }  
+          format.html { redirect_to clients_path, notice: "Client was successfully deleted." }
         else
           format.html { redirect_back fallback_location: root_path, notice: "Client was successfully deleted." }
         end
@@ -225,6 +225,7 @@ class ClientsController < ApplicationController
   end
 
   def status
+    @client.record_event(Client::Events::SERVICE_STARTED, {}, @client.pinged_at) if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     @client.pinged_at = Time.now
     @client.raw_version = params[:version]
     @client.distribution_name = params[:distribution]
@@ -247,7 +248,6 @@ class ClientsController < ApplicationController
     if @client.test_scheduled_at.nil?
       @client.schedule_next_test!
     end
-    @client.record_event(Client::Events::SERVICE_STARTED, {}, @client.pinged_at) if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     ClientEventLog.service_started_event @client if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     @client.compute_ping!
     @client.save!
@@ -352,7 +352,7 @@ class ClientsController < ApplicationController
         else
           format.html { redirect_to clients_path, notice: "Client was successfully updated.", status: :see_other }
         end
-        
+
         format.json { render :show, status: :ok, location: client_path(client.unix_user) }
       else
         format.html { render :edit, status: :unprocessable_entity }
