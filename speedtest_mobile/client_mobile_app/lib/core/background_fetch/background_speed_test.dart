@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:async';
-import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -31,6 +30,8 @@ class BackgroundSpeedTest {
   PackageInfo? _packageInfo;
   Position? _positionAfterSpeedTest;
   Position? _positionBeforeSpeedTest;
+  Position? _position;
+  StreamSubscription<Position>? _positionStreamSubscription;
   CI.ConnectionInfo? _connectionInfo;
   String? _sessionId;
   List<Map<String, dynamic>> _responses = [];
@@ -47,11 +48,39 @@ class BackgroundSpeedTest {
       config: {'protocol': 'wss'},
       onMeasurement: (data) => _onTestMeasurement(data),
       onCompleted: (data) => _onTestComplete(data),
-      onError: (data) => _onTestError(jsonEncode(data)),
+      onError: (data) => _onTestError(data),
     );
     _positionAfterSpeedTest = await _getPosition();
     _sessionId = _localStorage.getSessionId();
     _sendSpeedTestResults();
+  }
+
+  void stopSpeedTest() {
+    _positionStreamSubscription?.cancel();
+    _positionStreamSubscription = null;
+    _position = null;
+  }
+
+  void setupLocationSettings() {
+    if (Platform.isIOS) return;
+    final androidSettings = AndroidSettings(
+      accuracy: LocationAccuracy.best,
+      forceLocationManager: true,
+      useMSLAltitude: true,
+      foregroundNotificationConfig: const ForegroundNotificationConfig(
+        notificationText: "",
+        notificationTitle: "",
+        enableWakeLock: true,
+      ),
+    );
+
+    final positionStream =
+        GeolocatorPlatform.instance.getPositionStream(locationSettings: androidSettings);
+    _positionStreamSubscription = positionStream
+        .handleError((error) => Sentry.captureException(error))
+        .listen((updatedPosition) => _position = updatedPosition);
+
+    _positionStreamSubscription?.pause();
   }
 
   void startUploadTest() =>
@@ -61,7 +90,14 @@ class BackgroundSpeedTest {
 
   void _onTestMeasurement(Map<String, dynamic> testResult) => _parse(testResult);
 
-  void _onTestError(String error) => Sentry.captureException(error);
+  void _onTestError(Map<String, dynamic> error) {
+    if (error.containsKey('Error')) {
+      final errorMsg = error['Error'];
+      Sentry.captureException(errorMsg);
+    } else {
+      Sentry.captureException(error);
+    }
+  }
 
   Future<void> _parse(Map<String, dynamic> response) async {
     final updatedResponses = List<Map<String, dynamic>>.from(_responses)..add(response);
@@ -80,6 +116,7 @@ class BackgroundSpeedTest {
   }
 
   Future<Position?> _getPosition() async {
+    if (Platform.isIOS) return null;
     final permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       final permission = await Geolocator.requestPermission();
@@ -89,33 +126,22 @@ class BackgroundSpeedTest {
       }
     }
 
-    return _getCurrentLocation();
+    _position = null;
+    return _getLocationUpdate();
   }
 
-  Future<Position?> _getCurrentLocation() async {
-    const timeLimit = Duration(seconds: 3);
-    try {
-      final position = await Geolocator.getCurrentPosition(
-        timeLimit: timeLimit,
-        forceAndroidLocationManager: true,
-      );
-      return position;
-    } catch (exception, stackTrace) {
-      if (exception is TimeoutException) {
-        try {
-          final position = await Geolocator.getCurrentPosition(
-            timeLimit: timeLimit,
-            forceAndroidLocationManager: false,
-          );
-          return position;
-        } catch (exception, stackTrace) {
-          Sentry.captureException(exception, stackTrace: stackTrace);
-        }
-      }
-      // TODO: handle exception
-      Sentry.captureException(exception, stackTrace: stackTrace);
-    }
-    return null;
+  Future<Position?> _getLocationUpdate() async {
+    _positionStreamSubscription?.resume();
+
+    int timeout = 10;
+    await Future.doWhile(() async {
+      await Future.delayed(const Duration(seconds: 1));
+      timeout--;
+      return _position == null && timeout > 0;
+    });
+
+    _positionStreamSubscription?.pause();
+    return _position;
   }
 
   Future<void> _sendSpeedTestResults() async {
