@@ -60,9 +60,10 @@ Map<String, dynamic> _getLastMeasurements(String type) {
   };
 }
 
-Map<String, dynamic> _getError(error) {
+Map<String, dynamic> _getError(dynamic error) {
+  final errorMsg = error is String ? error : error.runtimeType;
   return {
-    'Error': error.runtimeType,
+    'Error': errorMsg,
   };
 }
 
@@ -263,7 +264,8 @@ Future<void> test({
 }) async {
   var results = await _discoverServerURLs(config ?? {});
   if (results == null) {
-    if (onError != null) onError(_getError('Could not discover server URLs'));
+    final error = _getError('Could not discover server URLs');
+    if (onError != null) onError(error);
     return;
   }
 

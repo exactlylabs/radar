@@ -114,10 +114,14 @@ class BackgroundFetchListener implements Listener {
   late final BackgroundSpeedTest _backgroundSpeedTest;
 
   @override
-  void onStart() {}
+  void onStart() {
+    _backgroundSpeedTest.setupLocationSettings();
+  }
 
   @override
-  void onStop() {}
+  void onStop() {
+    _backgroundSpeedTest.stopSpeedTest();
+  }
 
   @override
   void onAction() async {

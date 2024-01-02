@@ -188,6 +188,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
   }
 
   void chooseLocationOption([Location? location, bool canUseLocation = true]) {
+    if (isClosed) return;
     final locationEval = (location == null || !canUseLocation) ? null : location;
     emit(state.copyWith(
         isUsingGeolocation: false,
@@ -198,6 +199,7 @@ class LocationStepCubit extends Cubit<LocationStepState> {
   }
 
   void confirmInputLocation(Location location) {
+    if (isClosed) return;
     emit(state.copyWith(
         isUsingGeolocation: false,
         isLocationConfirmed: true,

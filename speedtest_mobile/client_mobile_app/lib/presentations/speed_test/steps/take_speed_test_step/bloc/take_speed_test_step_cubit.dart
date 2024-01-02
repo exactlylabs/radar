@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 
@@ -28,7 +27,7 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
       config: {'protocol': 'wss'},
       onMeasurement: (data) => onTestMeasurement(data),
       onCompleted: (data) => onTestComplete(data),
-      onError: (data) => onTestError(jsonEncode(data)),
+      onError: (data) => onTestError(data),
     );
   }
 
@@ -49,7 +48,14 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
 
   void onTestMeasurement(Map<String, dynamic> testResult) => _parse(testResult);
 
-  void onTestError(String error) => Sentry.captureException(error);
+  void onTestError(Map<String, dynamic> error) {
+    if (error.containsKey('Error')) {
+      final errorMsg = error['Error'];
+      Sentry.captureException(errorMsg);
+    } else {
+      Sentry.captureException(error);
+    }
+  }
 
   Future<void> _parse(Map<String, dynamic> response) async {
     final updatedResponses = List<Map<String, dynamic>>.from(state.responses)..add(response);
@@ -164,6 +170,7 @@ class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
         return null;
       }
     }
+
     final position = await Geolocator.getCurrentPosition();
     return position;
   }

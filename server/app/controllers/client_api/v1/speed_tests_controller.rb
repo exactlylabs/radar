@@ -17,7 +17,7 @@ module ClientApi
         @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: 'application/json')
         @speed_test.save!
         # Call process to parse JSON and seed measurement
-        ProcessSpeedTestJob.perform_later @speed_test
+        ProcessSpeedTestJob.perform_later(@speed_test, is_mobile)
         head(:no_content)
       end
 
