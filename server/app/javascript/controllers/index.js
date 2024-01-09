@@ -195,3 +195,6 @@ application.register("bar-chart", BarChartController);
 
 import WidgetsController from "./widgets_controller";
 application.register("widgets", WidgetsController);
+
+import DashboardTimeFilterController from "./dashboard_time_filter_controller";
+application.register("dashboard-time-filter", DashboardTimeFilterController);

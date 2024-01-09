@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 
+export const PADDING = 0;
 export const X_AXIS_OFFSET = 10;
 export const Y_AXIS_OFFSET = 10;
 export const X_CONTEXT_OFFSET = (labelSuffix) => labelSuffix ? 20 + 10 * labelSuffix.length : 20;
@@ -8,6 +9,12 @@ export const GRID_LINE_Y_OFFSET = 5;
 export const BOTTOM_LABELS_HEIGHT = 32;
 export const STANDARD_LABEL_WIDTH = 20;
 
+export const CHART_TITLES = {
+  'downloadSpeeds': 'Download Speeds',
+  'uploadSpeeds': 'Upload Speeds',
+  'latency': 'Latency'
+}
+
 export default class ChartController extends Controller {
   connect() {
     this.prepareInitialState();
@@ -15,6 +22,8 @@ export default class ChartController extends Controller {
     this.loadChart();
     window.addEventListener('resize', this.loadChart.bind(this));
     this.element.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    this.element.addEventListener('mousedown', this.handleMouseDown.bind(this));
+    this.element.addEventListener('mouseup', this.handleMouseUp.bind(this));
   }
   
   prepareInitialState() {
@@ -23,6 +32,10 @@ export default class ChartController extends Controller {
     this.chartData = JSON.parse(this.element.dataset.lineChartData);
     this.labels = [];
     this.labelSuffix = this.element.dataset.labelSuffix || '';
+    
+    // Specific coordinates for click-drag feature
+    this.mouseClickedX = null;
+    this.mouseReleasedX = null;
   }
   
   getMousePosition(e) {
@@ -35,7 +48,83 @@ export default class ChartController extends Controller {
   
   handleMouseMove(e) {
     const { mouseX, mouseY } = this.getMousePosition(e);
+    if(this.isDragging) {
+      this.plotChart();
+      this.showDragArea(e);
+      return;
+    }
     this.showTooltip(mouseX, mouseY);
+  }
+  
+  handleMouseDown(e) {
+    const { mouseX} = this.getMousePosition(e);
+    this.mouseClickedX = mouseX;
+    this.isDragging = true;
+  }
+  
+  handleMouseUp(e) {
+    const { mouseX} = this.getMousePosition(e);
+    this.mouseReleasedX = mouseX;
+    this.isDragging = false;
+    if(this.mouseClickedX) {
+      this.calculateDraggedTimeline();
+    }
+  }
+  
+  calculateDraggedTimeline() {
+    const mouseStart = Math.min(this.mouseClickedX, this.mouseReleasedX);
+    const mouseEnd = Math.max(this.mouseClickedX, this.mouseReleasedX);
+    const canvasStart = PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix);
+    const canvasEnd = this.canvasWidth - PADDING - X_AXIS_OFFSET;
+    const canvasWidth = canvasEnd - canvasStart;
+    
+    const normalizedMouseStart = (mouseStart - canvasStart) / canvasWidth;
+    const normalizedMouseEnd = (mouseEnd - canvasStart) / canvasWidth;
+    
+    const currentTimelineStart = Number(this.getXValueAtIndex(0));
+    const currentTimelineEnd = Number(this.getXValueAtIndex(-1)); // ask for last element
+    const fullTimelineDistance = currentTimelineEnd - currentTimelineStart;
+    
+    const normalizedTimelineStart = fullTimelineDistance * normalizedMouseStart + currentTimelineStart;
+    const normalizedTimelineEnd = fullTimelineDistance * normalizedMouseEnd + currentTimelineStart;
+    
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('start', normalizedTimelineStart.toFixed(0));
+    currentUrl.searchParams.set('end', normalizedTimelineEnd.toFixed(0));
+    this.mouseClickedX = null;
+    this.mouseReleasedX = null;
+    window.location.replace(currentUrl);
+  }
+  
+  showDragArea(e) {
+    const { mouseX} = this.getMousePosition(e);
+    const dragAreaVerticalOffset = 5;
+    
+    // Draw base solid rectangle
+    this.ctx.beginPath();
+    this.ctx.fillStyle = 'rgba(160, 159, 183, 0.2)';
+    const blockWidth = mouseX - this.mouseClickedX;
+    this.ctx.roundRect(this.mouseClickedX, dragAreaVerticalOffset, blockWidth, this.netHeight);
+    this.ctx.fill();
+    this.ctx.stroke();
+    
+    // Draw outline for rectangle with dashed style (using both in combination doesn't seem to work)
+    this.ctx.lineWidth = 1;
+    this.ctx.strokeStyle = '#a09fb7';
+    this.ctx.setLineDash([3]);
+    // Top horizontal line
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.mouseClickedX, dragAreaVerticalOffset);
+    this.ctx.lineTo(blockWidth + this.mouseClickedX, dragAreaVerticalOffset);
+    // Right side vertical line
+    this.ctx.lineTo(blockWidth + this.mouseClickedX, dragAreaVerticalOffset + this.netHeight);
+    // Bottom horizontal line
+    this.ctx.lineTo(this.mouseClickedX, dragAreaVerticalOffset + this.netHeight);
+    // Left side vertical line
+    this.ctx.closePath();
+    this.ctx.stroke();
+    this.resetStyles();
+    
   }
   
   prepareData(rawData) {
@@ -55,13 +144,15 @@ export default class ChartController extends Controller {
   };
   
   createHiDPICanvas(w, h, ratio) {
+    // padding: 1.5rem -- 24px
+    // margin-top: 1.5rem -- 24px
     ratio ||= this.getPixelRatio();
-    this.element.width = w * ratio;
-    this.element.height = h * ratio;
-    this.element.style.width = w + 'px';
-    this.element.style.height = h + 'px';
-    this.canvasWidth = w;
-    this.canvasHeight = h;
+    this.element.width = (w + PADDING) * ratio;
+    this.element.height = (h + PADDING) * ratio;
+    this.element.style.width = w + PADDING + 'px';
+    this.element.style.height = h + PADDING + 'px';
+    this.canvasWidth = w + PADDING;
+    this.canvasHeight = h + PADDING;
     return ratio;
   }
   
@@ -73,8 +164,9 @@ export default class ChartController extends Controller {
     const dpr = this.createHiDPICanvas(this.parent.clientWidth, this.parent.clientHeight);
     this.ctx = this.element.getContext('2d');
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    this.netWidth = this.canvasWidth - 2 * X_AXIS_OFFSET - X_CONTEXT_OFFSET(this.labelSuffix) - RIGHT_X_CONTEXT_OFFSET;
-    this.netHeight = this.canvasHeight - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT;
+    this.netWidth = this.canvasWidth - 2 * X_AXIS_OFFSET - X_CONTEXT_OFFSET(this.labelSuffix) - RIGHT_X_CONTEXT_OFFSET - 2 * PADDING;
+    this.netHeight = this.canvasHeight - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - 2 * PADDING;
+    
     this.setChartAxis();
     this.plotChart();
   }
@@ -110,11 +202,11 @@ export default class ChartController extends Controller {
   
   renderLabels(dateSet) {
     this.labels = [];
-    const labelY = this.canvasHeight - Y_AXIS_OFFSET;
+    const labelY = this.canvasHeight - Y_AXIS_OFFSET - PADDING;
     const labels = Array.from(dateSet);
     const pointCount = labels.length - 1;
     labels.forEach((label, index) => {
-      const labelX = X_AXIS_OFFSET + STANDARD_LABEL_WIDTH / 2 + X_CONTEXT_OFFSET(this.labelSuffix) + index * this.netWidth / pointCount;
+      const labelX = PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix) + index * this.netWidth / pointCount;
       this.ctx.fillText(label, labelX, labelY);
       this.labels.push({ label, x: labelX - STANDARD_LABEL_WIDTH / 2 });
     });
@@ -127,24 +219,47 @@ export default class ChartController extends Controller {
     this.resetStyles();
     const totals = this.chartData.map(entry => entry.y);
     this.maxTotal = Math.max(...totals);
-    this.yStepSize = Math.ceil(this.maxTotal / 3);
+    this.yStepSize = this.maxTotal / 3 > 1 ? Math.ceil(this.maxTotal / 3) : this.maxTotal / 3;
     this.drawJumpLines();
   }
   
+  formatLabelNumericValue(value) {
+    const number = Number(value);
+    const twoDigit = number.toFixed(2);
+    if(twoDigit === '0.00') {
+      let decimalPoints = 3;
+      let goOn = true;
+      while(goOn) {
+        let zerosString = '0.';
+        for(let i = 0 ; i < decimalPoints ; i++) {
+          zerosString += '0';
+        }
+        goOn = number.toFixed(decimalPoints) === zerosString;
+        if(goOn) decimalPoints++;
+      }
+      return number.toFixed(decimalPoints);
+    } else if(twoDigit.split('.')[1] === '00') {
+      return number.toFixed(0);
+    } else {
+      return twoDigit;
+    }
+  }
+  
   drawJumpLines() {
-    this.createYAxisLabel("0", X_AXIS_OFFSET, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT);
+    this.createYAxisLabel("0", X_AXIS_OFFSET + PADDING, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - PADDING);
     const jumps = Math.ceil(this.maxTotal / this.yStepSize);
     if(jumps < 2) {
-      this.createYAxisLabel(`${this.maxTotal}${this.labelSuffix}`, X_AXIS_OFFSET, Y_AXIS_OFFSET);
+      this.createYAxisLabel(`${this.formatLabelNumericValue(this.maxTotal)}${this.labelSuffix}`, X_AXIS_OFFSET + PADDING, Y_AXIS_OFFSET + PADDING);
     } else {
-      this.createYAxisLabel(`${this.yStepSize * jumps}${this.labelSuffix}`, X_AXIS_OFFSET, Y_AXIS_OFFSET);
+      this.createYAxisLabel(`${this.formatLabelNumericValue(this.yStepSize * jumps)}${this.labelSuffix}`, X_AXIS_OFFSET + PADDING, Y_AXIS_OFFSET + PADDING);
     }
     const boxHeight = this.netHeight / jumps;
     for(let i = 0 ; i < jumps - 1 ; i++) {
-      const y = this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - ((i + 1) * boxHeight);
-      const text = `${(i + 1) * this.yStepSize}${this.labelSuffix}`;
-      this.createYAxisLabel(text, X_AXIS_OFFSET, y);
+      const y = this.canvasHeight - PADDING - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - ((i + 1) * boxHeight);
+      const text = `${this.formatLabelNumericValue((i + 1) * this.yStepSize)}${this.labelSuffix}`;
+      this.createYAxisLabel(text, X_AXIS_OFFSET + PADDING, y);
     }
+    this.maxYLabelValue = jumps * this.yStepSize;
   }
   
   createYAxisLabel(label, x, y) {
@@ -156,39 +271,70 @@ export default class ChartController extends Controller {
     this.ctx.strokeWidth = 1;
     this.ctx.fillText(label, x, y);
     this.ctx.moveTo(x + X_CONTEXT_OFFSET(this.labelSuffix), y - GRID_LINE_Y_OFFSET);
-    this.ctx.lineTo(this.canvasWidth - X_AXIS_OFFSET, y - GRID_LINE_Y_OFFSET);
+    this.ctx.lineTo(this.canvasWidth - X_AXIS_OFFSET - PADDING, y - GRID_LINE_Y_OFFSET);
     this.ctx.stroke();
   }
   
-  drawLine(points = [], strokeStyle = '#4b7be5', gradientFirstStopColor = 'rgba(75, 123, 229, 0.2)') {
+  drawLine(data, strokeStyle = '#4b7be5', gradientFirstStopColor = 'rgba(75, 123, 229, 0.2)') {
     this.ctx.beginPath();
     this.ctx.strokeStyle = strokeStyle;
     this.ctx.lineWidth = 2;
-    let pointY = 0;
-    if(this.chartId === 'onlinePods') console.log(points.length);
-    points.forEach((point, index) => {
-      const {x, y} = point;
-      const pointTimeLabel = this.formatTime(x);
-      const possibleLabel = this.labels.find(entry => entry.label === pointTimeLabel);
-      if (!!possibleLabel) {
-        const pointX = this.getXCoordinateFromXValue(x, points, index);
-        pointY = this.getYCoordinateFromYValue(y)
+    let pointY = this.getYCoordinateFromYValue(data[0].ys[0]);
+    data.forEach((point, index) => {
+      const { x, ys } = point;
+      ys.forEach(y => {
+        const pointX = this.getXCoordinateFromXValue(data, index);
+        pointY = this.getYCoordinateFromYValue(y);
         if (index === 0) {
           this.ctx.moveTo(pointX, pointY);
         } else {
           this.ctx.lineTo(pointX, pointY);
         }
-        //this.drawDotOnLine(pointX, pointY, (index === 0 || index === (points.length - 1)) ? 'red' : 'black');
+      });
+    });
+    this.closeLine(pointY, gradientFirstStopColor);
+  }
+  
+  /**
+   * Adjusts data to be grouped by time period
+   * @param points {{x: string, y: number}[]} - array of points
+   * @returns {{x: string, ys: number[]}[]}
+   */
+  adjustData(points) {
+    const timeStep = '1d'; // TODO: should be a filter of some sorts
+    if(timeStep === '1d') {
+      return this.adjustLineData(points, '1d')
+    }
+  }
+  
+  adjustLineData(points, timeInterval) {
+    const pointsByDay = [];
+    points.forEach((point, index) => {
+      const { x, y } = point;
+      const pointTimeLabel = this.formatTime(x);
+      let prevPointTimeLabel = null;
+      if(index > 0) {
+        prevPointTimeLabel  = this.formatTime(points[index - 1].x);
+      }
+      if(pointTimeLabel === prevPointTimeLabel) {
+        const prevPoint = pointsByDay[pointsByDay.length - 1];
+        prevPoint.ys.push(y);
+      } else {
+        pointsByDay.push({ x, ys: [y] });
       }
     });
-    this.ctx.lineTo(this.canvasWidth - X_AXIS_OFFSET, pointY);
+    return pointsByDay;
+  }
+  
+  closeLine(pointY, gradientFirstStopColor) {
+    this.ctx.lineTo(this.canvasWidth - X_AXIS_OFFSET - PADDING, pointY);
     this.ctx.stroke();
     // close shape to create fill
     // reset line color to be invisible
     this.ctx.strokeStyle = 'rgba(0,0,0,0)';
     this.ctx.lineWidth = 0;
-    this.ctx.lineTo(this.canvasWidth - X_AXIS_OFFSET, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET);
-    this.ctx.lineTo(X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix), this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET);
+    this.ctx.lineTo(this.canvasWidth - X_AXIS_OFFSET - PADDING, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET - PADDING);
+    this.ctx.lineTo(PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix), this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET - PADDING);
     this.ctx.closePath();
     const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvasHeight);
     gradient.addColorStop(0, gradientFirstStopColor);
@@ -200,9 +346,18 @@ export default class ChartController extends Controller {
   }
   
   formatTime(timestamp) {
-    const date = new Date(timestamp);
-    const monthWord = date.toLocaleString('default', { month: 'short' });
-    return `${monthWord} ${date.getDate()}`;
+    try {
+      let date = null;
+      if(isNaN(Number(timestamp))) {
+        date = new Date(timestamp);
+      } else {
+        date = new Date(Number(timestamp));
+      }
+      const monthWord = date.toLocaleString('default', { month: 'short' });
+      return `${monthWord} ${date.getDate()}`;
+    } catch(e) {
+      console.error('Invalid timestamp', timestamp);
+    }
   }
   
   getDefaultSpacing() {
@@ -283,19 +438,20 @@ export default class ChartController extends Controller {
     this.ctx.font = '13px Mulish';
     this.ctx.lineHeight = 1;
     this.ctx.lineWidth = 1;
+    this.ctx.setLineDash([]);
   }
   
   getYCoordinateFromYValue(yValue) {
-    const netHeight = this.canvasHeight - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT;
-    const yAxisBlockHeight = netHeight / this.maxTotal;
-    const baseHeight = this.canvasHeight - GRID_LINE_Y_OFFSET - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT;
+    const netHeight = this.canvasHeight - 2 * PADDING - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT;
+    const yAxisBlockHeight = netHeight / this.maxYLabelValue;
+    const baseHeight = this.canvasHeight - GRID_LINE_Y_OFFSET - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - PADDING;
     return baseHeight - yValue * yAxisBlockHeight;
   }
   
-  getXCoordinateFromXValue(xValue, data = this.chartData, index) {
-    const netWidth = this.canvasWidth - X_AXIS_OFFSET - X_CONTEXT_OFFSET(this.labelSuffix) - RIGHT_X_CONTEXT_OFFSET / 4;
-    const step = netWidth / data.length;
-    const baseWidth = X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix);
+  getXCoordinateFromXValue(data = this.chartData, index) {
+    const netWidth = this.canvasWidth - 2 * PADDING - X_AXIS_OFFSET - X_CONTEXT_OFFSET(this.labelSuffix) - RIGHT_X_CONTEXT_OFFSET / 4;
+    const step = netWidth / (data.length - 1);
+    const baseWidth = PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix);
     return baseWidth + step * index;
   }
   

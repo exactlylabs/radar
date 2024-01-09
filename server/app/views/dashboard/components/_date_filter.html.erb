@@ -1,0 +1,58 @@
+<% current_filter_label = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:label] : params[:start].present? && params[:end].present? ? get_custom_date_range_label(params) : default_label %>
+<% current_filter_value = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:value] : default_value %>
+
+<div class="tables--filters-button-container"
+     data-controller="filters"
+     data-action="click->filters#toggleFiltersMenu"
+     data-menu-id="<%= menu_id %>"
+     data-is-calendar-open="true"
+>
+  <button type="button"
+          class="custom-button custom-button--sm custom-button--secondary-light"
+  >
+    <%= current_filter_label %>
+    <%= image_tag image_url('caret.png'), width: 16, height: 16, class: "ms-1" %>
+  </button>
+  <div class="tables--filters-menu-container invisible"
+       data-filters-target="filtersMenu"
+       id="<%= menu_id %>"
+  >
+    <% options.each do |option| %>
+      <a href="<%= url_for(request.query_parameters.merge({ "#{key}" => option[:value] })) %>"
+         data-turbo-frame="_top"
+         class="tables--filters-menu-item table-filter-option <%= current_filter_value == option[:value] ? 'active' : '' %>"
+      >
+        <%= option[:label] %>
+        <% if current_filter_value == option[:value] %>
+          <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
+        <% end %>
+      </a>
+    <% end %>
+    <button class="tables--filters-menu-item table-filter-option active custom-button custom-button--transparent"
+            data-action="click->filters#openCalendar"
+    >Custom date range...</button>
+  </div>
+  <div class="dashboard--date-range-filter-container"
+       data-controller="dashboard-time-filter"
+  >
+    <div class="dashboard--date-range-filter-content-container">
+      <div class="forms--input-group">
+        <label class="forms--label">Starting date</label>
+        <%= render partial: "dashboard/components/date_filter_input", locals: {type: "start"} %>
+      </div>
+      <div class="forms--input-group">
+        <label class="forms--label">End date</label>
+        <%= render partial: "dashboard/components/date_filter_input", locals: {type: "end"} %>
+      </div>
+      <%= render partial: "dashboard/components/datepicker" %>
+    </div>
+    <div class="dashboard--date-range-filter-footer">
+      <button class="custom-button custom-button--transparent"
+              data-action="click->dashboard-time-filter#clearFilter"
+      >Clear filter</button>
+      <button class="custom-button custom-button--primary custom-button--notification"
+              data-action="click->dashboard-time-filter#applyDateRange"
+      >Apply</button>
+    </div>
+  </div>
+</div>

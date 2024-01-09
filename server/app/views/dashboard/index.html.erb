@@ -109,6 +109,7 @@
         <%= render partial: "dashboard/components/empty_pods_card" %>
       <% else %>
         <div class="w-100 mw-100" data-controller="onboard map widgets" data-onboard-step-value="<%= @onboard_step %>">
+          <%= render partial: "dashboard/components/widget_filters" %>
           <%= render partial: "application/components/widgets/widget",
                      locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
           %>

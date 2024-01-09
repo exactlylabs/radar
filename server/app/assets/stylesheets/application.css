@@ -30,6 +30,16 @@
   font-weight: 100 1000;
 }
 
+@font-face {
+  font-family: 'MulishBold';
+  src: local('MulishBold'), url('Mulish-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'MulishSemiBold';
+  src: local('MulishSemiBold'), url('Mulish-SemiBold.ttf') format('truetype');
+}
+
 * {
   font-family: Mulish, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   color: #110e4c;
