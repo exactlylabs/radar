@@ -1,0 +1,30 @@
+<div class="dashboard--datepicker">
+  <div class="dashboard--datepicker-month-selector">
+    <button data-action="click->dashboard-time-filter#previousMonth">
+      <%= image_tag image_url('arrow-left-dark.png'), width: 16, height: 16 %>
+    </button>
+    <div data-dashboard-time-filter-target="monthYear">
+      <p>
+        <%= Date::MONTHNAMES[Time.now.month] %>
+        <%= Time.now.year %>
+      </p>
+      <%= image_tag image_url('sort-icon-down.png'), width: 16, height: 16 %>
+      <div class="dashboard--month-year-picker">
+        <div class="dashboard--month-year-picker-column">
+          <% Date::MONTHNAMES.compact.each do |month_name| %>
+            <span <%= month_name == Date::MONTHNAMES[Time.now.month] ? 'data-selected=true' : nil %>><%= month_name %></span>
+          <% end %>
+        </div>
+        <div class="dashboard--month-year-picker-column">
+          <% (1970..2024).each do |year| %>
+            <span <%= year == Time.now.year ? 'data-selected=true' : nil %>><%= year %></span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <button data-action="click->dashboard-time-filter#nextMonth">
+      <%= image_tag image_url('arrow-right-dark.png'), width: 16, height: 16 %>
+    </button>
+  </div>
+  <%= render partial: "dashboard/components/weeks_grid" %>
+</div>

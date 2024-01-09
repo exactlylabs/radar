@@ -9,6 +9,7 @@ export default class extends Controller {
   }
 
   toggleFiltersMenu() {
+    if(this.element.dataset.isCalendarOpen === 'true') return;
     if(this.menu) {
       if (this.menu.classList.contains("invisible")) {
         this.openFiltersMenu();
@@ -16,6 +17,12 @@ export default class extends Controller {
         this.closeFiltersMenu();
       }
     }
+  }
+  
+  openCalendar(e) {
+    e.preventDefault();
+    this.closeFiltersMenu();
+    this.element.dataset.isCalendarOpen = 'true';
   }
 
   closeMenuIfClickedOutside(event) {
