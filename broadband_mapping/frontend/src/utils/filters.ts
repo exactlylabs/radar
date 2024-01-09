@@ -76,8 +76,7 @@ export const quartersWithRange: QuartersWithRangeObject = {
   Q4: `${Quarters.Q4} (${QuartersDateRanges.Q4})`,
 }
 
-// Removing all years prior to 2019 due to missing download data
-export const years = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009];
+export const years = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009];
 export const months = ['All months', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 export const quarters = ['Q1: Jan 1 - Mar 31', 'Q2: Apr 1 - Jun 30', 'Q3: Jul 1 - Sep 30', 'Q4: Oct 1 - Dec 31'];
 export const halves = ['Jan 1 - Jun 30', 'Jul 1 - Dec 31'];
@@ -198,7 +197,7 @@ const decodeCustomDate = (customDate: string): string => {
       year = year.replace('(', '').replace(')', '');
       queryString += `&year=${year}`;
     } else {
-      queryString += `&year=2022`;
+      queryString += `&year=2024`;
     }
   } else if(customDate.includes('Q')) {
     const split: Array<string> = customDate.split(' ');
@@ -209,7 +208,7 @@ const decodeCustomDate = (customDate: string): string => {
       year = year.replace('(', '').replace(')', '');
       queryString += `&year=${year}`;
     } else {
-      queryString += `&year=2022`;
+      queryString += `&year=2024`;
     }
   } else if(customDate.includes('-')) {
     //Oct 11 - Oct 17 || Oct 11 - Oct 17 (2020)
@@ -225,14 +224,14 @@ const decodeCustomDate = (customDate: string): string => {
     const weekNumber = getWeekNumber(endDay);
     queryString += `&week=${weekNumber - 1}`;
     if(year) queryString += `&year=${year}`;
-    else queryString += `&year=2022`;
+    else queryString += `&year=2024`;
   } else if(isSpecificMonth(customDate)) {
     const split: Array<string> = customDate.split(' ');
     const month = getMonthNumberFromName(split[0]);
     const year = split.length > 1 ? split[1].split('(')[1].split(')')[0] : null;
     queryString += `&month=${month}`;
     if(year) queryString += `&year=${year}`;
-    else queryString += `&year=2022`;
+    else queryString += `&year=2024`;
   } else if(isSpecificYear(customDate)) {
     queryString += `&year=${customDate}`;
   } else {
