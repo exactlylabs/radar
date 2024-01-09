@@ -121,7 +121,7 @@ const OpenedTopMenuSmallScreen = ({
           <img src={ExactlyLogo} style={styles.ExactlyLogo} alt={'ANTHC-logo'} onClick={goToExactlyLabsWebsite}/>
           <img src={XlabLogo} style={styles.XlabLogo} alt={'ANTHC-logo'}/>
         </div>
-        <p className={'fw-light'} style={styles.RightsText}>Broadband Mapping © 2022. All rights reserved.</p>
+        <p className={'fw-light'} style={styles.RightsText}>Broadband Mapping © 2024. All rights reserved.</p>
       </div>
     </div>
   )

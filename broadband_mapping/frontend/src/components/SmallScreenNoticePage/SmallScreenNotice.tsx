@@ -38,7 +38,7 @@ const SmallScreenNotice = ({ setWantsToProceed }: SmallScreenNoticeProps): React
         </div>
         <div style={styles.HorizontalDivider}></div>
         <div style={styles.RightsTextContainer}>
-          <p className={'fw-light'} style={styles.LightText}>Broadband Mapping © 2022.</p>
+          <p className={'fw-light'} style={styles.LightText}>Broadband Mapping © 2024.</p>
           <p className={'fw-light'} style={styles.LightText}>All rights reserved.</p>
         </div>
       </div>
