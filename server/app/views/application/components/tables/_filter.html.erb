@@ -1,6 +1,7 @@
 <% current_filter_label = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:label] : default_label %>
 <% current_filter_value = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:value] : default_value %>
 <% is_dark = local_assigns[:dark].present? && local_assigns[:dark] == true %>
+<% is_paginated = local_assigns[:pagination].nil? || (local_assigns[:pagination].present? && local_assigns[:pagination] == false) %>
 
 <div class="tables--filters-button-container"
   data-controller="filters"
@@ -18,7 +19,7 @@
     id="<%= menu_id %>"
   >
     <% options.each do |option| %>
-      <a href="<%= url_for(request.query_parameters.merge({ page: 1, "#{key}" => option[:value] })) %>"
+      <a href="<%= url_for(request.query_parameters.merge({ page: is_paginated ? 1 : nil, "#{key}" => option[:value] })) %>"
         data-turbo-frame="_top"
         class="tables--filters-menu-item table-filter-option <%= current_filter_value == option[:value] ? 'active' : '' %>"
       >

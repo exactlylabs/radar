@@ -10,6 +10,13 @@ module DashboardHelper
     end
   end
 
+  def get_custom_date_range_label(params)
+    start_date = Time.at(params[:start].to_i / 1000)
+    end_date = Time.at(params[:end].to_i / 1000)
+    return "#{start_date.strftime('%b %d')} - #{end_date.strftime('%b %d')}" if start_date.year == end_date.year
+    "#{start_date.strftime('%b %d, %Y')} - #{end_date.strftime('%b %d, %Y')}"
+  end
+
   def self.get_online_pods_sql
     %{
       with base_series AS (
@@ -28,12 +35,12 @@ module DashboardHelper
             LEFT JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
             WHERE
               account_id IN ($account_ids)
-              AND CASE WHEN '$params_asn_org_ids' = '-1' THEN
+              AND CASE WHEN $param_asn_org_ids = '-1' THEN
                 true
               ELSE
                 autonomous_system_orgs.id IN ($as_orgs)
               END
-              AND CASE WHEN '$param_location_ids' = '-1' THEN
+              AND CASE WHEN $param_location_ids = '-1' THEN
                 true
               ELSE
                 location_id IN ($location_ids)
@@ -74,14 +81,14 @@ module DashboardHelper
       )
 
 
-      SELECT "time" as x, COALESCE(total_online, 0) as y FROM completed_table ORDER BY time ASC
+      SELECT EXTRACT(EPOCH FROM "time") * 1000 as x, COALESCE(total_online, 0) as y FROM completed_table ORDER BY time ASC
     }
   end
 
   def self.get_download_speed_sql
     %{
       SELECT
-          time as x,
+          EXTRACT(EPOCH FROM time) * 1000 as x,
           MAX(download_max) as "#9138e5",
           percentile_disc(0.5) WITHIN GROUP (ORDER BY download_median) as "#4b7be5",
           MIN(download_min) AS "#ff695d"
@@ -103,14 +110,14 @@ module DashboardHelper
             location_id IN ($location_ids)
           END
       GROUP BY 1
-      ORDER BY "time" ASC;
+      ORDER BY EXTRACT(EPOCH FROM "time") * 1000 ASC;
     }
   end
 
   def self.get_upload_speed_sql
     %{
       SELECT
-          time as x,
+          EXTRACT(EPOCH FROM time) * 1000 as x,
           MAX(upload_max) as "#9138e5",
           percentile_disc(0.5) WITHIN GROUP (ORDER BY upload_median) as "#4b7be5",
           MIN(upload_min) AS "#ff695d"
@@ -132,14 +139,14 @@ module DashboardHelper
             location_id IN ($location_ids)
           END
       GROUP BY 1
-      ORDER BY "time" ASC;
+      ORDER BY EXTRACT(EPOCH FROM "time") * 1000 ASC;
     }
   end
 
   def self.get_latency_sql
     %{
       SELECT
-          time as x,
+          EXTRACT(EPOCH FROM time) * 1000 as x,
           MAX(latency_max) as "#9138e5",
           percentile_disc(0.5) WITHIN GROUP (ORDER BY latency_median) as "#4b7be5",
           MIN(latency_min) AS "#ff695d"
@@ -161,7 +168,7 @@ module DashboardHelper
             location_id IN ($location_ids)
           END
       GROUP BY 1
-      ORDER BY "time" ASC;
+      ORDER BY EXTRACT(EPOCH FROM "time") * 1000 ASC;
     }
   end
 
@@ -195,7 +202,7 @@ module DashboardHelper
         ORDER BY 1 ASC
       )
 
-      SELECT total as y, time as x FROM data_used_per_day ORDER BY time ASC;
+      SELECT total as y, EXTRACT(EPOCH FROM time) * 1000 as x FROM data_used_per_day ORDER BY time ASC;
     }
   end
 

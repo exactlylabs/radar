@@ -1,0 +1,21 @@
+<% start_date_value = params[:start].present? && type == 'start' ? Time.at(params[:start].to_i / 1000).strftime("%Y-%m-%d") : nil %>
+<% end_date_value = params[:end].present? && type == 'end' ? Time.at(params[:end].to_i / 1000).strftime("%Y-%m-%d") : nil %>
+<% start_time_value = params[:start].present? && type == 'start' ? Time.at(params[:start].to_i / 1000).strftime("%H:%M") : nil %>
+<% end_time_value = params[:end].present? && type == 'end' ? Time.at(params[:end].to_i / 1000).strftime("%H:%M") : nil %>
+<div class="dashboard--date-filter-inputs-container">
+  <label for="<%= type %>-date" hidden></label>
+  <input type="date"
+         id="<%= type %>-date"
+         data-type="<%= type %>"
+         data-dashboard-time-filter-target="dateInput"
+         value="<%= type == 'start' ? start_date_value : end_date_value %>"
+    />
+  <label for="<%= type %>-time" hidden></label>
+  <input type="time"
+         id="<%= type %>-time"
+         data-type="<%= type %>"
+         pattern="[0-9]{2}:[0-9]{2}"
+         data-dashboard-time-filter-target="timeInput"
+         value="<%= type == 'start' ? start_time_value : end_time_value %>"
+    />
+</div>
