@@ -4,20 +4,28 @@
       <%= image_tag image_url('arrow-left-dark.png'), width: 16, height: 16 %>
     </button>
     <div data-dashboard-time-filter-target="monthYear">
-      <p>
-        <%= Date::MONTHNAMES[Time.now.month] %>
-        <%= Time.now.year %>
-      </p>
-      <%= image_tag image_url('sort-icon-down.png'), width: 16, height: 16 %>
-      <div class="dashboard--month-year-picker">
-        <div class="dashboard--month-year-picker-column">
+      <button data-action="click->dashboard-time-filter#toggleMonthYearPicker">
+        <p>
+          <%= Date::MONTHNAMES[Time.now.month] %>
+          <%= Time.now.year %>
+        </p>
+        <%= image_tag image_url('sort-icon-down.png'), width: 16, height: 16 %>
+      </button>
+      <div class="dashboard--month-year-picker" data-dashboard-time-filter-target="monthYearPicker" hidden>
+        <div class="dashboard--month-year-picker-column" data-type="months">
           <% Date::MONTHNAMES.compact.each do |month_name| %>
-            <span <%= month_name == Date::MONTHNAMES[Time.now.month] ? 'data-selected=true' : nil %>><%= month_name %></span>
+            <span <%= month_name == Date::MONTHNAMES[Time.now.month] ? 'data-selected=true' : nil %>
+                  data-dashboard-time-filter-target="monthName"
+                  data-action="click->dashboard-time-filter#selectMonth"
+            ><%= month_name %></span>
           <% end %>
         </div>
-        <div class="dashboard--month-year-picker-column">
+        <div class="dashboard--month-year-picker-column" data-type="years">
           <% (1970..2024).each do |year| %>
-            <span <%= year == Time.now.year ? 'data-selected=true' : nil %>><%= year %></span>
+            <span <%= year == Time.now.year ? 'data-selected=true' : nil %>
+                  data-dashboard-time-filter-target="year"
+                  data-action="click->dashboard-time-filter#selectYear"
+            ><%= year %></span>
           <% end %>
         </div>
       </div>

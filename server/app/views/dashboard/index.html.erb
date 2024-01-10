@@ -109,27 +109,31 @@
         <%= render partial: "dashboard/components/empty_pods_card" %>
       <% else %>
         <div class="w-100 mw-100" data-controller="onboard map widgets" data-onboard-step-value="<%= @onboard_step %>">
-          <%= render partial: "dashboard/components/widget_filters" %>
+          <% if FeatureFlagHelper.is_available('charts', current_user) %>
+            <%= render partial: "dashboard/components/widget_filters" %>
+          <% end %>
           <%= render partial: "application/components/widgets/widget",
                      locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
           %>
-          <div class="widgets--grid">
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
-            %>
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED }
-            %>
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED }
-            %>
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::LATENCY }
-            %>
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::DATA_USAGE }
-            %>
-          </div>
+          <% if FeatureFlagHelper.is_available('charts', current_user) %>
+            <div class="widgets--grid">
+              <%= render partial: "application/components/widgets/widget",
+                         locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
+              %>
+              <%= render partial: "application/components/widgets/widget",
+                         locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED }
+              %>
+              <%= render partial: "application/components/widgets/widget",
+                         locals: { type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED }
+              %>
+              <%= render partial: "application/components/widgets/widget",
+                         locals: { type: WidgetsHelper::WidgetTypes::LATENCY }
+              %>
+              <%= render partial: "application/components/widgets/widget",
+                         locals: { type: WidgetsHelper::WidgetTypes::DATA_USAGE }
+              %>
+            </div>
+          <% end %>
         </div>
       <% end %>
     <% end %>
