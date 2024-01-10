@@ -5,7 +5,7 @@
      data-controller="filters"
      data-action="click->filters#toggleFiltersMenu"
      data-menu-id="<%= menu_id %>"
-     data-is-calendar-open="true"
+     data-is-calendar-open="false"
 >
   <button type="button"
           class="custom-button custom-button--sm custom-button--secondary-light"
@@ -33,7 +33,9 @@
     >Custom date range...</button>
   </div>
   <div class="dashboard--date-range-filter-container"
+       id="dashboard-custom-datepicker"
        data-controller="dashboard-time-filter"
+       hidden="hidden"
   >
     <div class="dashboard--date-range-filter-content-container">
       <div class="forms--input-group">

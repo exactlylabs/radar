@@ -19,7 +19,10 @@ export default class extends Controller {
   static targets = [
     "dateInput",
     "timeInput",
-    "monthYear"
+    "monthYear",
+    "monthYearPicker",
+    "monthName",
+    "year"
   ];
   
   connect() {
@@ -29,18 +32,57 @@ export default class extends Controller {
     this.endTimeInput = this.timeInputTargets.find(input => input.id === 'end-time');
     this.canHover = false;
     this.populateCalendarGrid();
+    document.addEventListener('click', this.closeIfClickedOutside.bind(this));
+  }
+  
+  closeIfClickedOutside(e) {
+    const datePicker = document.getElementById('dashboard-custom-datepicker');
+    if(!datePicker.hasAttribute('hidden') && !datePicker.contains(e.target)) {
+      this.closeCalendar(datePicker);
+    }
+  }
+  
+  closeCalendar(datePicker) {
+    const pickerFilter = document.querySelector('[data-menu-id="date-range-filter-menu"]');
+    const monthYearPicker = datePicker.querySelector('[data-dashboard-time-filter-target="monthYearPicker"]');
+    const monthYear = datePicker.querySelector('[data-dashboard-time-filter-target="monthYear"]');
+    monthYearPicker.setAttribute('hidden', 'true');
+    monthYear.querySelector('button > img').style = 'transform: rotate(0deg);';
+    pickerFilter.dataset.isCalendarOpen = 'false';
+    datePicker.setAttribute('hidden', 'true');
+  }
+  
+  clearFilter(e) {
+    e.preventDefault();
+    this.startDateInput.value = null;
+    this.endDateInput.value = null;
+    this.startTimeInput.value = null;
+    this.endTimeInput.value = null;
+    this.unsetRangeStartButton();
+    this.unsetRangeEndButton();
+    this.unsetWithinRangeButtons();
+    this.unsetHoverableButtons();
+    this.canHover = false;
+    const today = new Date();
+    this.currentMonth = today.getMonth();
+    this.currentYear = today.getFullYear();
+    this.populateCalendarGrid();
   }
   
   applyDateRange(e) {
     e.preventDefault();
     if(!this.startDateInput.value || !this.endDateInput.value || !this.startTimeInput.value || !this.endTimeInput.value) {
-      alert('missing fields');
+      const url = new URL(window.location.href);
+      url.searchParams.delete('days');
+      url.searchParams.delete('start');
+      url.searchParams.delete('end');
+      window.location.replace(url.href);
       return;
     }
     const startDate = new Date(`${this.startDateInput.value}T${this.startTimeInput.value}`);
     const endDate = new Date(`${this.endDateInput.value}T${this.endTimeInput.value}`);
     if(startDate.getTime() > endDate.getTime()) {
-      alert('start date must be before end date');
+      alert('Start date must be before end date');
       return;
     }
     const url = new URL(window.location.href);
@@ -82,22 +124,70 @@ export default class extends Controller {
     let firstDayOfTheMonth;
     let startDate;
     if(givenMonth !== null && givenYear !== null) {
+      this.currentMonth = givenMonth;
+      this.currentYear = givenYear;
       const localTimeString = new Date(`${givenYear}-${this.twoDigit(givenMonth + 1)}-01T00:00:00`).toLocaleString();
       startDate = new Date(localTimeString);
     } else if(!this.startDateInput.value && !this.endDateInput.value) {
       startDate = new Date();
+      this.currentMonth = startDate.getMonth();
+      this.currentYear = startDate.getFullYear();
     } else {
       startDate = new Date(`${this.startDateInput.value}T${this.startTimeInput.value}`);
+      this.currentMonth = startDate.getMonth();
+      this.currentYear = startDate.getFullYear();
     }
     firstDayOfTheMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
-    this.currentMonth = firstDayOfTheMonth.getMonth();
-    this.currentYear = firstDayOfTheMonth.getFullYear();
     let lastRowDay = this.fillRow(firstDayOfTheMonth);
     while(new Date(lastRowDay.setDate(lastRowDay.getDate() + 1)).getMonth() === startDate.getMonth()) {
       const firstDay = new Date(lastRowDay.setDate(lastRowDay.getDate() + 1));
       lastRowDay = this.fillRow(firstDay);
     }
     this.monthYearTarget.querySelector('p').innerText = `${MONTH_NAMES[this.currentMonth]} ${this.currentYear}`;
+    this.setSelectedMonthYearList();
+  }
+  
+  setSelectedMonthYearList() {
+    this.monthNameTargets.forEach(monthName => {
+      if(monthName.innerText === MONTH_NAMES[this.currentMonth]) monthName.setAttribute('data-selected', 'true');
+      else monthName.removeAttribute('data-selected');
+    });
+    this.yearTargets.forEach(year => {
+      if(year.innerText === this.currentYear.toString()) year.setAttribute('data-selected', 'true');
+      else year.removeAttribute('data-selected');
+    });
+    // scroll to selected month
+    const monthsColumn = this.monthYearPickerTarget.querySelector('.dashboard--month-year-picker-column[data-type="months"]');
+    const selectedMonth = monthsColumn.querySelector('[data-selected="true"]');
+    monthsColumn.scrollTop = selectedMonth.offsetTop - 16;
+    const yearsColumn = this.monthYearPickerTarget.querySelector('.dashboard--month-year-picker-column[data-type="years"]');
+    const selectedYear = yearsColumn.querySelector('[data-selected="true"]');
+    yearsColumn.scrollTop = selectedYear.offsetTop - 16;
+  }
+  
+  selectMonth(e) {
+    e.preventDefault();
+    this.currentMonth = MONTH_NAMES.indexOf(e.target.innerText);
+    this.populateCalendarGrid(this.currentMonth, this.currentYear);
+    this.setSelectedMonthYearList();
+  }
+  
+  selectYear(e) {
+    e.preventDefault();
+    this.currentYear = parseInt(e.target.innerText);
+    this.populateCalendarGrid(this.currentMonth, this.currentYear);
+    this.setSelectedMonthYearList();
+  }
+  
+  toggleMonthYearPicker(e) {
+    e.preventDefault();
+    if(!this.monthYearPickerTarget.hasAttribute('hidden')) {
+      this.monthYearPickerTarget.setAttribute('hidden', 'true');
+      this.monthYearTarget.querySelector('button > img').style = 'transform: rotate(0deg);';
+    } else {
+      this.monthYearPickerTarget.removeAttribute('hidden');
+      this.monthYearTarget.querySelector('button > img').style = 'transform: rotate(180deg);';
+    }
     this.setSelectedMonthYearList();
   }
   
@@ -128,10 +218,10 @@ export default class extends Controller {
       dayButton.innerText = currentDay.getDate();
       dayButton.setAttribute('data-date', `${currentDay.getFullYear()}-${this.twoDigit(currentDay.getMonth() + 1)}-${this.twoDigit(currentDay.getDate())}`);
       weekGrid.appendChild(dayButtonWrapper);
-      if(hasRange && currentDay.getDate() === inputEndDate.getDate() && currentDay.getMonth() === inputEndDate.getMonth()) {
+      if(hasRange && currentDay.getDate() === inputEndDate.getDate() && currentDay.getMonth() === inputEndDate.getMonth() && currentDay.getFullYear() === inputEndDate.getFullYear()) {
         this.setRangeEndButton(dayButton, true);
         if(i === 0) dayButtonWrapper.setAttribute('data-is-row-start', 'true');
-      } else if(hasRange && currentDay.getDate() === inputStartDate.getDate() && currentDay.getMonth() === inputStartDate.getMonth()) {
+      } else if(hasRange && currentDay.getDate() === inputStartDate.getDate() && currentDay.getMonth() === inputStartDate.getMonth() && currentDay.getFullYear() === inputStartDate.getFullYear()) {
         this.setRangeStartButton(dayButton, true);
         if(i === 6) dayButtonWrapper.setAttribute('data-is-row-end', 'true');
       } else if(hasRange && currentDay.getTime() >= inputStartDate.getTime() && currentDay.getTime() <= inputEndDate.getTime()) {
@@ -149,7 +239,7 @@ export default class extends Controller {
   clickedDay(e) {
     let target = e.target;
     if(target.tagName === 'DIV') target = target.querySelector('button');
-    if(this.endDateInput.value) {
+    if(!this.startDateInput.value || (this.startDateInput.value && this.endDateInput.value)) {
       this.endDateInput.value = null;
       this.endTimeInput.value = null;
       this.startDateInput.value = target.dataset.date;
@@ -163,6 +253,10 @@ export default class extends Controller {
       this.setButtonsAsHoverable();
       this.canHover = true;
     } else {
+      const startDate = new Date(`${this.startDateInput.value}T${this.startTimeInput.value}`);
+      const endDate = new Date(`${target.dataset.date}T00:00`);
+      if(endDate.getTime() < startDate.getTime()) return;
+      if(target.dataset.date === this.startDateInput.value) return;
       this.endDateInput.value = target.dataset.date;
       this.endTimeInput.value = "00:00";
       this.setRangeEndButton(target, true);
@@ -270,5 +364,10 @@ export default class extends Controller {
     if(!this.canHover) return;
     this.unsetWithinRangeButtons();
     this.unsetRangeEndButton();
+  }
+  
+  openCalendar(e) {
+    e.preventDefault();
+    
   }
 }
