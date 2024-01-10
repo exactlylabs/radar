@@ -16,7 +16,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ConnectionInfo? _info;
+  List<Map<String, dynamic>>? _info;
   final _networkConnectionInfoPlugin = NetworkConnectionInfo();
 
   @override
@@ -27,11 +27,11 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    ConnectionInfo? info;
+    List<Map<String, dynamic>>? info;
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-      info = await _networkConnectionInfoPlugin.getNetworkConnectionInfo();
+      info = await _networkConnectionInfoPlugin.getWifiNetworkList();
     } catch (e) {
       info = null;
     }
@@ -54,9 +54,35 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: ${_info?.toJson()}\n'),
+          child: ListView.builder(
+            itemCount: _info?.length ?? 0,
+            itemBuilder: (context, index) {
+              final item = _info?[index];
+              return ListTile(
+                title: Text(item?['ssid'] ?? 'Unknown'),
+                subtitle: Text(item?['bssid'] ?? 'Unknown'),
+                trailing: Text(levelToHumanize(item?['level'])),
+              );
+            },
+          ),
         ),
       ),
     );
+  }
+
+  String levelToHumanize(int? level) {
+    if (level == null) {
+      return 'Unknown';
+    } else if (level <= -100) {
+      return 'Very bad';
+    } else if (level <= -80) {
+      return 'Bad';
+    } else if (level <= -70) {
+      return 'Good';
+    } else if (level <= -67) {
+      return 'Very good';
+    } else {
+      return 'Excellent';
+    }
   }
 }

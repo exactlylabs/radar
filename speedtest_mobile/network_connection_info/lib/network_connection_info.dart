@@ -9,4 +9,8 @@ class NetworkConnectionInfo {
   Future<ConnectionInfo?> getCellularNetworkConnectionInfo() {
     return NetworkConnectionInfoPlatform.instance.getCellularNetworkConnectionInfo();
   }
+
+  Future<List<Map<String, dynamic>>> getWifiNetworkList() {
+    return NetworkConnectionInfoPlatform.instance.getWifiNetworkList();
+  }
 }

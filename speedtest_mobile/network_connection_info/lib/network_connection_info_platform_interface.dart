@@ -31,4 +31,8 @@ abstract class NetworkConnectionInfoPlatform extends PlatformInterface {
   Future<ConnectionInfo?> getCellularNetworkConnectionInfo() {
     throw UnimplementedError('getCellularNetworkConnectionInfo() has not been implemented.');
   }
+
+  Future<List<Map<String, dynamic>>> getWifiNetworkList() {
+    throw UnimplementedError('getWifiNetworkList() has not been implemented.');
+  }
 }
