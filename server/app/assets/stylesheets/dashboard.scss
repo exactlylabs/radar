@@ -378,24 +378,33 @@
 }
 
 div[data-dashboard-time-filter-target="monthYear"] {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: .25rem;
-  cursor: pointer;
   position: relative;
   z-index: 100;
 
-  p {
-    margin: 0;
-    color: $dark-gray;
-    @extend .fw-bold;
+  button {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .25rem;
+
+    &:hover {
+      opacity: 0.75;
+    }
+
+    p {
+      margin: 0;
+      color: $dark-gray;
+      @extend .fw-bold;
+    }
   }
 }
 
 .dashboard--month-year-picker {
   width: 320px;
-  height: 285px;
+  height: 275px;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -403,7 +412,7 @@ div[data-dashboard-time-filter-target="monthYear"] {
   gap: 1rem;
   padding: 1rem;
   position: absolute;
-  top: 0;
+  top: 2rem;
   left: 50%;
   transform: translateX(-50%);
   background-color: white;
@@ -419,6 +428,7 @@ div[data-dashboard-time-filter-target="monthYear"] {
   justify-content: flex-start;
   gap: 1rem;
   overflow-y: auto;
+  font-size: 0.875rem;
 
   span:hover {
     opacity: 0.8;
