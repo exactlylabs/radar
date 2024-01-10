@@ -17,6 +17,11 @@ module.exports = {
         destination: 'https://www.wvpca.org/content.asp?contentid=253',
         permanent: false,
       },
+      {
+        source: '/Alaska',
+        destination: '/',
+        permanent: false,
+      }
     ]
   },
 }
