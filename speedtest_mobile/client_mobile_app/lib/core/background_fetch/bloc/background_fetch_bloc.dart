@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:client_mobile_app/core/wifi_tracking/wifi_tracker_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
@@ -33,7 +34,8 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
       final hasAccessToLocationAllTime = await Permission.locationAlways.isGranted;
       if (hasAccessToLocationAllTime) {
         emit(state.copyWith(delay: backgroundSpeedTestDelay, isEnabled: true));
-        final started = await BackgroundFetchHandler.setupAndStart(backgroundSpeedTestDelay);
+        // final started = await BackgroundFetchHandler.setupAndStart(backgroundSpeedTestDelay);
+        final started = await WifiTrackerService.setupAndStart(backgroundSpeedTestDelay);
         if (!started) {
           disableBackgroundSpeedTest();
         }
@@ -52,7 +54,7 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
 
   Future<void> enableBackgroundSpeedTest() async {
     if (!(state.isAirplaneModeOn || state.isEnabled)) {
-      final started = await BackgroundFetchHandler.setupAndStart(state.delay);
+      final started = await WifiTrackerService.setupAndStart(state.delay);
       if (started) {
         emit(state.copyWith(isEnabled: true));
         await _localStorage.setBackgroundModeFrequency(state.delay);
@@ -62,7 +64,8 @@ class BackgroundFetchBloc extends Cubit<BackgroundFetchState> {
 
   Future<void> disableBackgroundSpeedTest() async {
     if (state.isEnabled) {
-      final stopped = await BackgroundFetchHandler.stop();
+      // final stopped = await BackgroundFetchHandler.stop();
+      final stopped = await WifiTrackerService.stop();
       if (stopped) {
         final delay = state.isAirplaneModeOn ? state.delay : -1;
         emit(state.copyWith(delay: delay, isEnabled: false));

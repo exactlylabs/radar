@@ -35,4 +35,16 @@ class MethodChannelNetworkConnectionInfo extends NetworkConnectionInfoPlatform {
       return null;
     }
   }
+
+  @override
+  Future<List<Map<String, dynamic>>> getWifiNetworkList() async {
+    final wifiNetworkList = await methodChannel.invokeMethod<List<dynamic>>('getWifiNetworkList');
+    if (wifiNetworkList != null) {
+      final response =
+          wifiNetworkList.map<Map<String, dynamic>>((e) => e.cast<String, dynamic>()).toList();
+      return response;
+    } else {
+      return [];
+    }
+  }
 }

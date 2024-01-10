@@ -40,11 +40,12 @@ dependencies:
       url: https://github.com/exactlylabs/configuration_monitoring.git
       ref: main
         
+  # endless_service:
+  #   git:
+  #     url: https://github.com/exactlylabs/endless_service.git
+  #     ref: main
   endless_service:
-    git:
-      url: https://github.com/exactlylabs/endless_service.git
-      ref: main
-
+    path: ../../../endless_service
 
 
   flutter_bloc: ^8.1.1

@@ -5,7 +5,9 @@ import 'package:network_connection_info/network_connection_info_platform_interfa
 import 'package:network_connection_info/network_connection_info_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-class MockNetworkConnectionInfoPlatform with MockPlatformInterfaceMixin implements NetworkConnectionInfoPlatform {
+class MockNetworkConnectionInfoPlatform
+    with MockPlatformInterfaceMixin
+    implements NetworkConnectionInfoPlatform {
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
 
@@ -18,6 +20,12 @@ class MockNetworkConnectionInfoPlatform with MockPlatformInterfaceMixin implemen
   @override
   Future<ConnectionInfo?> getCellularNetworkConnectionInfo() {
     // TODO: implement getCellularNetworkConnectionInfo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getWifiNetworkList() {
+    // TODO: implement getWifiNetworkList
     throw UnimplementedError();
   }
 }
