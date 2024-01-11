@@ -25,12 +25,6 @@ type UpdateBinaryServerMessage struct {
 type RunTestServerMessage struct {
 }
 
-// type ServerMessage struct {
-// 	TestRequested  bool
-// 	Update         *BinaryUpdate
-// 	WatchdogUpdate *BinaryUpdate
-// }
-
 type ServerMessage struct {
 	Type MessageType
 	Data any

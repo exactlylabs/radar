@@ -81,8 +81,6 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 	header.Set("Sec-Radar-Service-Started", fmt.Sprintf("%t", firstPing))
 	c.channel = cable.NewChannel(c.serverURL, fmt.Sprintf("%s:%s", c.clientID, c.secret), RadarServerChannelName, header)
 	c.agentCh = ch
-	// c.channel.OnSubscriptionMessage = c.handleSubscriptionMessage
-	// c.channel.OnCustomMessage = c.handleCustomMessage
 	c.channel.OnMessage = c.handleMessage
 	c.channel.OnSubscribed = c.sendSync
 	c.channel.OnConnectionError = func(err error) {
