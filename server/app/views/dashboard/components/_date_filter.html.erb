@@ -18,7 +18,7 @@
        id="<%= menu_id %>"
   >
     <% options.each do |option| %>
-      <a href="<%= url_for(request.query_parameters.merge({ "#{key}" => option[:value] })) %>"
+      <a href="<%= url_for(request.query_parameters.merge({ "#{key}" => option[:value], start: nil, end: nil })) %>"
          data-turbo-frame="_top"
          class="tables--filters-menu-item table-filter-option <%= current_filter_value == option[:value] ? 'active' : '' %>"
       >
