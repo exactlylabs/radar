@@ -17,6 +17,10 @@ class DashboardController < ApplicationController
     else
       @onboard_step = 1
     end
+    if FeatureFlagHelper.is_available('charts', current_user)
+      @locations = @locations.where(account_id: params[:account_id]) if params[:account_id]
+      @locations = @locations.where(id: params[:network_id]) if params[:network_id]
+    end
     if FeatureFlagHelper.is_available('networks', current_user)
       cookie = get_cookie(:ftue_onboarding_modal)
       if current_user.ftue_disabled
@@ -152,7 +156,7 @@ class DashboardController < ApplicationController
     has_param_account_ids = params[:account_id].present? ? 1 : -1
     has_param_asn_org_ids = params[:isp_id].present? ? 1 : -1
     has_param_location_ids = params[:network_id].present? ? 1 : -1
-    account_ids = has_param_account_ids == 1 ? params[:account_ids] : current_account.is_all_accounts? ? policy_scope(Account).pluck(:id).join(',') : current_account.id
+    account_ids = has_param_account_ids == 1 ? params[:account_id] : current_account.is_all_accounts? ? policy_scope(Account).pluck(:id).join(',') : current_account.id
     autonomous_system_org_ids = has_param_asn_org_ids == 1 ? params[:isp_id] : policy_scope(AutonomousSystemOrg).pluck(:id).join(',')
     location_ids = has_param_location_ids == 1 ? params[:network_id] : policy_scope(Location).pluck(:id).join(',')
     sql = sql.gsub('$account_ids', "#{account_ids}")
