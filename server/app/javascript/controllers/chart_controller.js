@@ -91,6 +91,7 @@ export default class ChartController extends Controller {
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set('start', normalizedTimelineStart.toFixed(0));
     currentUrl.searchParams.set('end', normalizedTimelineEnd.toFixed(0));
+    currentUrl.searchParams.delete('days');
     this.mouseClickedX = null;
     this.mouseReleasedX = null;
     window.location.replace(currentUrl);
