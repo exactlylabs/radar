@@ -253,7 +253,8 @@ func (si SysInfoManager) EnsureTailscale() error {
 			if metadata != nil && strings.Contains((*metadata)["stderr"].(string), "Unable to acquire the dpkg frontend lock") {
 				return nil
 			}
-			return errors.W(err)
+			// return errors.W(err)
+			return nil
 		}
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale installed, allowing auto-update")
 		_, err = si.runCommand(
