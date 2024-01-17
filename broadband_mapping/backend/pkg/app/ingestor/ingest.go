@@ -63,7 +63,7 @@ func Ingest(ctx context.Context, s storages.IngestorAppStorages, bucketName stri
 	}
 	// Ensure that any outstanding insertion is finished before summarizing
 	if summarize {
-		s.Summarize()
+		s.Summarize(0)
 	}
 	return nil
 }

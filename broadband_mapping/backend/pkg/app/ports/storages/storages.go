@@ -42,11 +42,11 @@ func (i *IngestorAppStorages) CloseAll() error {
 	return nil
 }
 
-func (i *IngestorAppStorages) Summarize() error {
+func (i *IngestorAppStorages) Summarize(from int) error {
 	if err := i.MeasurementStorage.Close(); err != nil {
 		return errors.Wrap(err, "storages.IngestorAppStorages#Summarize Close")
 	}
-	if err := i.SummariesStorage.Summarize(); err != nil {
+	if err := i.SummariesStorage.Summarize(from); err != nil {
 		return errors.Wrap(err, "storages.IngestorAppStorages#Summarize Summarize")
 	}
 	return nil

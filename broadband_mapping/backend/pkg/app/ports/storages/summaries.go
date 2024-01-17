@@ -66,7 +66,7 @@ type SummariesStorage interface {
 	Close() error
 	Connected() error
 	// Summarize is called when new data is ready to be summarized by this interface
-	Summarize() error
+	Summarize(from int) error
 	SummaryForGeospace(geospaceId string, filter SummaryFilter) (*GeospaceSummaryResult, error)
 	SummaryForGeoAndASN(geospaceId, asnId string, filter SummaryFilter) (*GeospaceSummaryResult, error)
 	SummaryForNamespace(namespace namespaces.Namespace, filter SummaryFilter) ([]GeospaceSummaryResult, error)

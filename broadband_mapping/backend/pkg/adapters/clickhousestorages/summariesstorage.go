@@ -30,9 +30,9 @@ func (ss *summariesStorage) Connected() error {
 }
 
 // Summarize implements storages.SummariesStorage
-func (ss *summariesStorage) Summarize() error {
+func (ss *summariesStorage) Summarize(from int) error {
 	log.Println("summariesStorage#Summarize Starting Updating Views")
-	for _, name := range views.ViewsCreationOrder {
+	for _, name := range views.ViewsCreationOrder[from:] {
 		query := views.MaterializedViews[name]
 		tmpName := name + "_tmp"
 		if err := ss.conn.Exec(context.Background(), fmt.Sprintf("DROP VIEW %s", tmpName)); err != nil {
