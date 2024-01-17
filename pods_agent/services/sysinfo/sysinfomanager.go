@@ -243,8 +243,8 @@ func (si SysInfoManager) EnsureTailscale() error {
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale not installed, installing it")
 
 		// There's been an error where apt update fails. Removing old sources.list.d file might fix it.
-		si.runCommand(exec.Command("cp", "/var/backups/dpkg.status.0", "/var/lib/dpkg/status"))
-		si.runCommand(exec.Command("apt", "clean", "&&", "apt", "update"))
+		// si.runCommand(exec.Command("cp", "/var/backups/dpkg.status.0", "/var/lib/dpkg/status"))
+		// si.runCommand(exec.Command("apt", "clean", "&&", "apt", "update"))
 		_, err := si.runCommand(
 			exec.Command("bash", "-c", "curl -fsSL https://tailscale.com/install.sh | sh"))
 
