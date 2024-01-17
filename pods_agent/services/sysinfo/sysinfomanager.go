@@ -241,6 +241,10 @@ func (si SysInfoManager) EnsureTailscale() error {
 	if _, err := exec.LookPath("tailscale"); errors.Is(err, exec.ErrNotFound) {
 		// Install it
 		log.Println("sysinfo.SysInfoManager#EnsureTailscale: Tailscale not installed, installing it")
+
+		// There's been an error where apt update fails. Removing old sources.list.d file might fix it.
+		os.Remove("/usr/share/keyrings/tailscale-archive-keyring.gpg")
+		os.Remove("/etc/apt/sources.list.d/tailscale.list")
 		_, err := si.runCommand(
 			exec.Command("bash", "-c", "curl -fsSL https://tailscale.com/install.sh | sh"))
 
