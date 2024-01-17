@@ -1,3 +1,4 @@
+<div id="state-tooltip" hidden="hidden">Buenos Aires</div>
 <ul class="landing--state-tabs">
   <li class="landing--state-tab" data-action="click->state-tabs#handleClickTab" data-tab-id="alaska">Alaska</li>
   <li class="landing--state-tab" data-action="click->state-tabs#handleClickTab" data-tab-id="michigan" data-selected="true">Michigan</li>
@@ -5,26 +6,62 @@
   <li class="landing--state-tab" data-action="click->state-tabs#handleClickTab" data-tab-id="west-virginia">West Virginia</li>
 </ul>
 <div class="landing--state-content" id="alaska" data-visible="false" data-state-tabs-target="tabContent">
-  <p>ALASKA</p>
-</div>
-<div class="landing--state-content" id="michigan" data-visible="true" data-state-tabs-target="tabContent">
-  <%= image_tag image_url('michigan-state.png'), width: 320 %>
+  <%= render partial: "public/components/state_svg", locals: {state: 'alaska'} %>
   <div>
-    <p>The Telehealth Broadband Pilot Program in <b>Michigan</b> is actively looking for business & residential internet consumers in Alcona, Kent and the rest of Michigan to take a Radar Pod and plug it into their internet connection for 90 days.</p>
-    <p>We have partnered with the <b>Central</b> <b>Michigan</b> <b>University</b> <b>Rural</b> <b>Health</b> <b>Equity</b> <b>Institute</b> to help us better engage the rural MI community and connect strategic partners with the Telehealth Broadband Pilot Program.</p>
+    <p>We want to learn from your experience getting online above and around the Arctic circle.</p>
+    <p>The <b>Telehealth Broadband Pilot Program</b> in partnership with <b>ANTHC</b> is actively looking for internet users in the <b>Aleutians West Census Area</b>, <b>Bristol Bay Borough</b>, <b>Dillingham Census Area</b>, <b>Nome Census Area</b>, <b>North Slope Borough</b>, <b>Northwest Arctic Borough</b>, and the rest of Alaska to take a Radar Pod home and plug it in for 90 days.</p>
     <a href="<%= get_started_modal_path %>" class="landing--primary-button" data-turbo="true" data-turbo-frame="get_started_modal" data-turbo-stream="true">
-      Get started
+      Join the program
       <%= image_tag image_url('arrow-right-white.png'), width: 16, height: 16 %>
     </a>
     <div class="landing--state-external-link-container">
-      <a class="landing--external-link">Learn more about our work with CMU RHEI</a>
+      <a class="landing--external-link" href="https://www.anthc.org/" target="_blank">Learn more about our work with ANTHC</a>
+      <%= image_tag image_url('external-link-icon.png'), width: 16, height: 16 %>
+    </div>
+  </div>
+</div>
+<div class="landing--state-content" id="michigan" data-visible="true" data-state-tabs-target="tabContent">
+  <%= render partial: "public/components/state_svg", locals: {state: 'michigan'} %>
+  <div>
+    <p>As rural Michiganders know, accessing the Internet is not that simple. We are looking for users in <b>Gladwin</b>, <b>Manistee</b>, <b>Missaukee</b>, <b>Montmorency</b>, <b>Osceola</b>, <b>Oscoda</b>, and the rest of rural Michigan to take a Radar Pod home for 90 days.</p>
+    <p>The <b>Telehealth Broadband Pilot Program</b> has partnered with <b>CMU RHEI</b> to help us better engage with the rural local community.</p>
+    <a href="<%= get_started_modal_path %>" class="landing--primary-button" data-turbo="true" data-turbo-frame="get_started_modal" data-turbo-stream="true">
+      Join the program
+      <%= image_tag image_url('arrow-right-white.png'), width: 16, height: 16 %>
+    </a>
+    <div class="landing--state-external-link-container">
+      <a class="landing--external-link" href="https://www.cmich.edu/offices-departments/office-information-technology/telehealth-broadband-pilot-program#:~:text=The%20Telehealth%20Broadband%20Pilot%20Program,how%20connectivity%20affects%20telemedicine%20access" target="_blank">Learn more about our work with CMU RHEI</a>
       <%= image_tag image_url('external-link-icon.png'), width: 16, height: 16 %>
     </div>
   </div>
 </div>
 <div class="landing--state-content" id="texas" data-visible="false" data-state-tabs-target="tabContent">
-  <p>TEXAS</p>
+  <%= render partial: "public/components/state_svg", locals: {state: 'texas'} %>
+  <div>
+    <p>We need Texans to help us explain what getting online looks like in rural Texas.</p>
+    <p>The <b>Telehealth Broadband Pilot Program</b> together with <b>TTUHSC</b> is actively searching for internet users in <b>Crosby</b>, <b>Fischer</b>, <b>Haskell</b>, <b>Jones</b>, <b>Lamb</b>, <b>Mitchell</b> and elsewhere in rural Texas to take a Radar Pod home for 90 days.</p>
+    <a href="<%= get_started_modal_path %>" class="landing--primary-button" data-turbo="true" data-turbo-frame="get_started_modal" data-turbo-stream="true">
+      Join the program
+      <%= image_tag image_url('arrow-right-white.png'), width: 16, height: 16 %>
+    </a>
+    <div class="landing--state-external-link-container">
+      <a class="landing--external-link" href="https://www.ttuhsc.edu/rural-health/tbp.aspx" target="_blank">Learn more about our work with TTHUSC</a>
+      <%= image_tag image_url('external-link-icon.png'), width: 16, height: 16 %>
+    </div>
+  </div>
 </div>
 <div class="landing--state-content" id="west-virginia" data-visible="false" data-state-tabs-target="tabContent">
-  <p>WEST VIRGINIA</p>
+  <%= render partial: "public/components/state_svg", locals: {state: 'west-virginia'} %>
+  <div>
+    <p>The <b>Telehealth Broadband Pilot Program</b> together with <b>WVPCA</b> needs your help to tell the story about what the internet is like in West Virginia.</p>
+    <p>We are actively searching for internet users in <b>Calhoun</b>, <b>Clay</b>, <b>Jackson</b>, <b>Kanawha</b>, <b>Nicholas</b>, <b>Ritchie</b>, <b>Roane</b>, and the rest of West Virginia to take a Radar Pod home & plug it in for 90 days.</p>
+    <a href="<%= get_started_modal_path %>" class="landing--primary-button" data-turbo="true" data-turbo-frame="get_started_modal" data-turbo-stream="true">
+      Join the program
+      <%= image_tag image_url('arrow-right-white.png'), width: 16, height: 16 %>
+    </a>
+    <div class="landing--state-external-link-container">
+      <a class="landing--external-link" href="https://www.wvpca.org/content.asp?contentid=253#:~:text=The%20Telehealth%20Broadband%20Pilot%20Program,how%20connectivity%20affects%20telemedicine%20access" target="_blank">Learn more about our work with WVPCA</a>
+      <%= image_tag image_url('external-link-icon.png'), width: 16, height: 16 %>
+    </div>
+  </div>
 </div>

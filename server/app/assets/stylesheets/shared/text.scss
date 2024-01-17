@@ -22,6 +22,10 @@ $extra-bold: 800;
   font-variation-settings: 'wght' $bold;
 }
 
+.fw-semi-bold {
+  font-variation-settings: 'wght' $semi-bold;
+}
+
 .card-big-title {
   font-variation-settings: 'wght'$bold;
   font-size: 1.5rem;

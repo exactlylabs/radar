@@ -1,0 +1,13 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: nil, is_custom: true } %>
+<div class="modals--content-container modals--get-started text-center" data-type="full" data-controller="public-page-modal">
+  <h3 class="public--get-started-title">We've received your details</h3>
+  <p class="public--get-started-subtitle">Thank you for your interest. A member of our team will get in touch with you soon.</p>
+</div>
+<div class="modals--footer-container">
+  <button type="submit"
+          class="custom-button custom-button--lg custom-button--primary"
+          data-action="click->custom-modal#closeModal"
+  >Close</button>
+  <!--end::ContinueButton-->
+</div>

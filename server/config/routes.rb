@@ -300,9 +300,11 @@ Rails.application.routes.draw do
   get '/TTUHSC', to: 'mailer#redirect_to_ttuhsc'
   get '/TTUHSC/:id', to: 'mailer#redirect_campaign_to_ttuhsc'
 
-  get '/', to: 'public#landing'
+  get '/TBP', to: 'public#landing'
   get '/get_started_modal', to: 'public#get_started_modal'
+  post '/get_started_modal_step_1_submit', to: 'public#get_started_modal_step_1_submit'
+  get '/get_started_modal_step_2', to: 'public#get_started_modal_step_2'
+  post '/get_started_modal_step_2_submit', to: 'public#get_started_modal_step_2_submit'
 
-  # root to: 'home#home'
   root to: redirect('/users/sign_in')
 end

@@ -36,7 +36,7 @@
   cursor: pointer;
   background-image: url("arrow-down-dark.png");
   background-repeat: no-repeat;
-  background-position-x: 80%;
+  background-position-x: 95%;
   background-position-y: center;
   background-size: 1rem;
 
@@ -50,6 +50,10 @@
     color: $gray;
     cursor: not-allowed;
     pointer-events: none;
+  }
+
+  &[data-error="true"] {
+    outline: solid 2px $error-red;
   }
 }
 
@@ -153,6 +157,19 @@
   width: 1.125rem;
   aspect-ratio: 1;
   background-color: transparent;
+  position: relative;
+
+  &[data-error="true"]:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    border:  solid 2px $error-red;
+  }
 }
 
 .forms--checkbox {
