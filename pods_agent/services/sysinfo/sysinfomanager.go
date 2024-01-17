@@ -247,6 +247,7 @@ func (si SysInfoManager) EnsureTailscale() error {
 		// si.runCommand(exec.Command("apt", "clean", "&&", "apt", "update"))
 		si.runCommand(exec.Command("dpkg", "-P", "tailscale"))
 		si.runCommand(exec.Command("dpkg", "-P", "tailscale-archive-keyring"))
+		si.runCommand(exec.Command("cp", "/var/lib/dpkg/status-old", "/var/lib/dpkg/status"))
 		_, err := si.runCommand(
 			exec.Command("bash", "-c", "curl -fsSL https://tailscale.com/install.sh | sh"))
 
