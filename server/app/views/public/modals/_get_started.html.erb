@@ -1,19 +1,35 @@
+<% state_counties = { alaska: ['Aleutians West Census Area', 'Bristol Bay Borough', 'Dillingham Census Area', 'Nome Census Area', 'North Slope Borough', 'Northwest Arctic Borough'], michigan: %w[Gladwin Manistee Missaukee Montmorency Osceola Oscoda], west_virginia: %w[Crosby Fischer Haskell Jones Lamb Mitchell], texas: %w[Calhoun Clay Jackson Kanawha Nicholas Ritchie Roane] } %>
+
 <%= render partial: "application/components/modals/modal_header",
            locals: { title: nil, is_custom: true }
 %>
-<%= form_with(url: check_claim_new_pod_path, method: :post) do |form| %>
+<%= form_for(@submission, url: get_started_modal_step_1_submit_path, method: :post, data: { public_page_modal_target: 'firstStepForm' }) do |form| %>
+  <input hidden="hidden" name="submission[id]" value="<%= @submission.id %>"/>
   <div class="modals--content-container modals--get-started text-center" data-type="full">
-    <h3 class="public--get-started-title">Get started</h3>
+    <h3 class="public--get-started-title">Join the program</h3>
     <p class="public--get-started-subtitle">Please fill in the form with your details</p>
 
     <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
       <label for="first-name" class="forms--label mb-2">First name</label>
-      <input id="first-name" type="text" name="first_name" autofocus class="forms--text-input forms--text-input-focusable w-100" placeholder="Your first name"/>
+      <input id="first-name"
+             type="text"
+             name="submission[first_name]"
+             autofocus
+             class="forms--text-input forms--text-input-focusable w-100"
+             placeholder="Your first name"
+             value="<%= @submission.first_name %>"
+        />
     </div>
 
     <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
       <label for="last-name" class="forms--label mb-2">Last name</label>
-      <input id="last-name" type="text" name="last_name" autofocus class="forms--text-input forms--text-input-focusable w-100" placeholder="Your last name"/>
+      <input id="last-name"
+             type="text"
+             name="submission[last_name]"
+             class="forms--text-input forms--text-input-focusable w-100"
+             placeholder="Your last name"
+             value="<%= @submission.last_name %>"
+        />
     </div>
 
     <div class="d-flex flex-column text-start gap-2 mb-6">
@@ -22,9 +38,11 @@
         <div class="accounts--radio-input-container">
           <input class="forms--radio-input me-2"
                  type="radio"
-                 value="residential_consumer"
-                 name="personal_description"
+                 value="0"
+                 name="submission[consumer_type]"
+                 data-action="change->public-page-modal#handleConsumerTypeSelect"
                  id="residential-consumer"
+                 <%= @submission.present? && PublicPageContactSubmission.consumer_types[@submission.consumer_type] == 0 ? 'checked' : nil %>
             />
           <label class="regular-text" for="residential-consumer">Residential Consumer</label>
         </div>
@@ -33,9 +51,11 @@
         <div class="accounts--radio-input-container">
           <input class="forms--radio-input me-2"
                  type="radio"
-                 value="business_consumer"
-                 name="personal_description"
+                 value="1"
+                 name="submission[consumer_type]"
                  id="business-consumer"
+                 data-action="change->public-page-modal#handleConsumerTypeSelect"
+                 <%= @submission.present? && PublicPageContactSubmission.consumer_types[@submission.consumer_type] == 1 ? 'checked' : nil %>
             />
           <label class="regular-text" for="business-consumer">Business Consumer</label>
         </div>
@@ -44,9 +64,11 @@
         <div class="accounts--radio-input-container">
           <input class="forms--radio-input me-2"
                  type="radio"
-                 value="public_sector_consumer"
-                 name="personal_description"
+                 value="2"
+                 name="submission[consumer_type]"
                  id="public-sector-consumer"
+                 data-action="change->public-page-modal#handleConsumerTypeSelect"
+                 <%= @submission.present? && PublicPageContactSubmission.consumer_types[@submission.consumer_type] == 2 ? 'checked' : nil %>
             />
           <label class="regular-text" for="public-sector-consumer">Public Sector Consumer</label>
         </div>
@@ -55,43 +77,130 @@
         <div class="accounts--radio-input-container">
           <input class="forms--radio-input me-2"
                  type="radio"
-                 value="other_organizational_consumer"
-                 name="personal_description"
-                 id="other-organizational-consumer"
+                 value="3"
+                 name="submission[consumer_type]"
+                 id="community-organization"
+                 data-action="change->public-page-modal#handleConsumerTypeSelect"
+                 <%= @submission.present? && PublicPageContactSubmission.consumer_types[@submission.consumer_type] == 3 ? 'checked' : nil %>
             />
-          <label class="regular-text" for="other-organizational-consumer">Other Organizational Consumer</label>
+          <label class="regular-text" for="community-organization">Community Organization</label>
         </div>
       </div>
       <div class="d-flex flex-column justify-content-start">
         <div class="accounts--radio-input-container">
           <input class="forms--radio-input me-2"
                  type="radio"
-                 value="community_organization"
-                 name="personal_description"
-                 id="community-organization"
+                 value="4"
+                 name="submission[consumer_type]"
+                 id="other-organizational-consumer"
+                 data-action="change->public-page-modal#handleConsumerTypeSelect"
+                 <%= @submission.present? && PublicPageContactSubmission.consumer_types[@submission.consumer_type] == 4 ? 'checked' : nil %>
             />
-          <label class="regular-text" for="community-organization">Community Organization</label>
+          <label class="regular-text" for="other-organizational-consumer">Other Organizational Consumer</label>
         </div>
       </div>
+      <label for="business-name" hidden="hidden">Business name</label>
+      <input id="business-name"
+             type="text"
+             name="submission[business_name]"
+             class="forms--text-input forms--text-input-focusable w-100 mt-4"
+             placeholder="Enter your organization name"
+             data-public-page-modal-target="businessNameInput"
+             <%= @submission.id.nil? || @submission.business_name.nil? ? 'hidden=hidden' : nil %>
+             value="<%= @submission.business_name %>"
+        />
     </div>
 
     <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
       <label for="email" class="forms--label mb-2">Email address</label>
-      <input id="email" type="email" name="email" autofocus class="forms--text-input forms--text-input-focusable w-100" placeholder="Your email address"/>
+      <input id="email"
+             type="email"
+             name="submission[email]"
+             autofocus
+             class="forms--text-input forms--text-input-focusable w-100"
+             placeholder="Your email address"
+             value="<%= @submission.email %>"
+        />
     </div>
 
     <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
       <label for="phone" class="forms--label mb-2">Phone number</label>
-      <input id="phone" type="text" name="phone" autofocus class="forms--text-input forms--text-input-focusable w-100" placeholder="Your phone number"/>
+      <input id="phone"
+             type="text"
+             name="submission[phone_number]"
+             autofocus
+             class="forms--text-input forms--text-input-focusable w-100"
+             placeholder="Your phone number"
+             value="<%= @submission.phone_number %>"
+        />
     </div>
+
+    <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
+      <label for="state" class="forms--label mb-2">State</label>
+      <select id="state" class="forms--select w-100"
+              data-action="change->public-page-modal#handleStateSelect"
+              name="submission[state]"
+              data-public-page-modal-target="stateSelect"
+      >
+        <option value="" <%= @submission.id.nil? ? 'selected' : nil %> disabled>Select your state</option>
+        <option value="alaska" <%= @submission.id.present? && @submission.state.downcase == 'alaska' ? 'selected' : nil %>>Alaska</option>
+        <option value="michigan" <%= @submission.id.present? && @submission.state.downcase == 'michigan' ? 'selected' : nil %>>Michigan</option>
+        <option value="texas" <%= @submission.id.present? && @submission.state.downcase == 'texas' ? 'selected' : nil %>>Texas</option>
+        <option value="west-virginia" <%= @submission.id.present? && @submission.state.downcase == 'west-virginia' ? 'selected' : nil %>>West Virginia</option>
+        <option value="other" <%= @submission.id.present? && !state_counties.keys.include?(@submission.state.downcase) ? 'selected' : nil %>>Other state</option>
+      </select>
+      <label for="other-state" hidden="hidden">Other state</label>
+      <input id="other-state"
+             type="text"
+             name="submission[other_state]"
+             autofocus
+             class="forms--text-input forms--text-input-focusable w-100 mt-4"
+             placeholder="Enter your state"
+             data-public-page-modal-target="otherStateInput"
+             value="<%= @submission.state && !state_counties.keys.include?(@submission.state) ? @submission.state : nil %>"
+             <%= @submission.state && !state_counties.keys.include?(@submission.state) ? nil : 'disabled=disabled' %>
+             <%= @submission.state && !state_counties.keys.include?(@submission.state) ? nil : 'hidden=hidden' %>
+        />
+    </div>
+
+    <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
+      <label for="counties-select" class="forms--label mb-2">County</label>
+      <select id="counties-select" class="forms--select w-100"
+              <%= @submission.id.present? && @submission.county.present? ? nil : 'disabled' %>
+              name="submission[county]"
+              data-public-page-modal-target="countiesSelect"
+              <%= @submission.id.present? && @submission.county.present? && !state_counties.keys.include?(@submission.state) ? 'hidden=hidden' : nil %>
+      >
+        <option value="" <%= @submission.id.nil? ? 'selected' : nil %> disabled>Select your county</option>
+        <% if @submission.id.present? %>
+          <% state_counties[@submission.state.downcase.gsub('-', '_').to_sym]&.each do |county| %>
+            <option value="<%= county %>" <%= @submission.id.present? && @submission.county == county ? 'selected' : nil %>>
+              <%= county %>
+            </option>
+          <% end %>
+        <% end %>
+      </select>
+      <label for="other-county" hidden="hidden">Other county</label>
+      <input id="other-county"
+             type="text"
+             name="submission[other_county]"
+             class="forms--text-input forms--text-input-focusable w-100 mt-4"
+             placeholder="Enter your county"
+             data-public-page-modal-target="otherCountyInput"
+             value="<%= @submission.county && !state_counties.keys.include?(@submission.state.downcase) ? nil : @submission.county %>"
+             <%= @submission.id.present? && @submission.county.present? && !state_counties.keys.include?(@submission.state.downcase) ? nil : 'hidden=hidden' %>
+             <%= @submission.county && !state_counties.keys.include?(@submission.state.downcase) ? 'disabled=disabled' : nil %>
+        />
+    </div>
+    <p data-public-page-modal-target="errorMessage" class="text--error text-start" hidden="hidden">Please fill out all required fields before continuing.</p>
   </div>
   <div class="modals--footer-container">
     <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
     <!--begin::ContinueButton-->
-    <button type="submit"
+    <button type="button"
             class="custom-button custom-button--lg custom-button--primary"
             data-controller="loading-feedback"
-            data-action="click->loading-feedback#replaceContent"
+            data-action="click->loading-feedback#replaceContent replaceContent@window->loading-feedback#replaceContent click->public-page-modal#handleFirstStepSubmit"
     >Continue</button>
     <!--end::ContinueButton-->
   </div>

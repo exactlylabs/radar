@@ -1,0 +1,199 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: nil, is_custom: true, goes_back: true, go_back_url: get_started_modal_path(submission_id: @submission.id) } %>
+<%= form_for(@submission, url: get_started_modal_step_2_submit_path, method: :post, data: { public_page_modal_target: 'secondStepForm' }) do |form| %>
+  <input hidden="hidden" name="submission[id]" value="<%= @submission.id %>"/>
+  <div class="modals--content-container modals--get-started text-center" data-type="full">
+    <h3 class="public--get-started-title">You're almost done</h3>
+    <p class="public--get-started-subtitle">Tell us just a little bit about your connection.</p>
+
+    <div class="forms--input-group d-flex flex-column justify-content-start align-items-start mb-6">
+      <label for="isp" class="forms--label mb-2">Your Internet Service Provider</label>
+      <input id="isp"
+             type="text"
+             name="submission[isp]"
+             autofocus
+             class="forms--text-input forms--text-input-focusable w-100"
+             placeholder="Enter your ISP"
+             value="<%= @submission.isp %>"
+        />
+    </div>
+
+    <div class="d-flex flex-column text-start gap-2 mb-6">
+      <label class="forms--label mb-2">Select your connection type:</label>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="0"
+                 name="submission[connection_type]"
+                 id="dsl"
+                 <%= @submission.present? && PublicPageContactSubmission.connection_types[@submission.connection_type] == 0 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="dsl">DSL</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="1"
+                 name="submission[connection_type]"
+                 id="cable"
+                 <%= @submission.present? && PublicPageContactSubmission.connection_types[@submission.connection_type] == 1 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="cable">Cable</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="2"
+                 name="submission[connection_type]"
+                 id="fiber"
+                 <%= @submission.present? && PublicPageContactSubmission.connection_types[@submission.connection_type] == 2 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="fiber">Fiber-optic</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="3"
+                 name="submission[connection_type]"
+                 id="satellite"
+                 <%= @submission.present? && PublicPageContactSubmission.connection_types[@submission.connection_type] == 3 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="satellite">Satellite</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="4"
+                 name="submission[connection_type]"
+                 id="other"
+                 <%= @submission.present? && PublicPageContactSubmission.connection_types[@submission.connection_type] == 4 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="other">Other/I don't know</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="forms--input-group d-flex flex-row justify-content-between align-items-center mb-6 w-100 gap-2">
+      <div class="forms--input-group d-flex flex-column justify-content-start align-items-start w-50">
+        <label for="download_speed" class="forms--label mb-2">Download speed <span class="additional-text">(optional)</span></label>
+        <input id="download_speed"
+               type="text"
+               name="submission[download_speed]"
+               class="forms--text-input forms--text-input-focusable w-100"
+               placeholder="E.g. 20 Mbps"
+               value="<%= @submission.download_speed %>"
+          />
+      </div>
+      <div class="forms--input-group d-flex flex-column justify-content-start align-items-start w-50">
+        <label for="upload_speed" class="forms--label mb-2">Upload speed <span class="additional-text">(optional)</span></label>
+        <input id="upload_speed"
+               type="text"
+               name="submission[upload_speed]"
+               class="forms--text-input forms--text-input-focusable w-100"
+               placeholder="E.g. 10 Mbps"
+               value="<%= @submission.upload_speed %>"
+          />
+      </div>
+    </div>
+
+    <div class="d-flex flex-column text-start gap-2 mb-6">
+      <label class="forms--label mb-2">Where do you have Internet access? <span class="additional-text">(optional)</span></label>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="0"
+                 name="submission[connection_placement]"
+                 id="single-property"
+                 <%= @submission.connection_placement.present? && PublicPageContactSubmission.connection_placements[@submission.connection_placement] == 0 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="single-property">At one single property</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="1"
+                 name="submission[connection_placement]"
+                 id="single-property"
+                 <%= @submission.connection_placement.present? && PublicPageContactSubmission.connection_placements[@submission.connection_placement] == 1 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="single-property">At more than one property</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex flex-column text-start gap-2 mb-6">
+      <label class="forms--label mb-2">Rate your service satisfaction <span class="additional-text">(optional)</span></label>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="0"
+                 name="submission[service_satisfaction]"
+                 id="very_dissatisfied"
+                 <%= @submission.present? && PublicPageContactSubmission.service_satisfactions[@submission.service_satisfaction] == 0 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="very_dissatisfied">Very Dissatisfied</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="1"
+                 name="submission[service_satisfaction]"
+                 id="dissatisfied"
+                 <%= @submission.present? && PublicPageContactSubmission.service_satisfactions[@submission.service_satisfaction] == 1 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="dissatisfied">Dissatisfied</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="2"
+                 name="submission[service_satisfaction]"
+                 id="satisfied"
+                 <%= @submission.present? && PublicPageContactSubmission.service_satisfactions[@submission.service_satisfaction] == 2 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="satisfied">Satisfied</label>
+        </div>
+      </div>
+      <div class="d-flex flex-column justify-content-start">
+        <div class="accounts--radio-input-container">
+          <input class="forms--radio-input me-2"
+                 type="radio"
+                 value="3"
+                 name="submission[service_satisfaction]"
+                 id="very_satisfied"
+                 <%= @submission.present? && PublicPageContactSubmission.service_satisfactions[@submission.service_satisfaction] == 3 ? 'checked' : nil %>
+            />
+          <label class="regular-text" for="very_satisfied">Very Satisfied</label>
+        </div>
+      </div>
+    </div>
+    <p data-public-page-modal-target="errorMessage" class="text--error text-start" hidden="hidden">Please fill out all required fields before continuing.</p>
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <!--begin::ContinueButton-->
+    <button type="button"
+            class="custom-button custom-button--lg custom-button--primary"
+            data-controller="loading-feedback"
+            data-action="click->loading-feedback#replaceContent replaceContent@window->loading-feedback#replaceContent click->public-page-modal#handleSecondStepSubmit"
+    >Submit</button>
+    <!--end::ContinueButton-->
+  </div>
+<% end %>

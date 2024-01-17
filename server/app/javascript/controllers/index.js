@@ -184,5 +184,8 @@ application.register("state-tabs", StateTabs);
 import QA from "./qa_controller";
 application.register("qa", QA);
 
+import PublicPageModalController from "./public_page_modal_controller";
+application.register("public-page-modal", PublicPageModalController);
+
 import NotificationsController from "./notifications_controller";
 application.register("notifications", NotificationsController);
