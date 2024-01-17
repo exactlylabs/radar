@@ -32,6 +32,7 @@ func TestScanSystemNoChange(t *testing.T) {
 	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	m.On("EnsureTailscale").Return(nil)
+	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -55,6 +56,7 @@ func TestScanSystemHostDiffers(t *testing.T) {
 	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetHostname", "1234").Return(nil)
 	m.On("EnsureTailscale").Return(nil)
+	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -78,6 +80,7 @@ func TestScanSystemRCLocalDiffers(t *testing.T) {
 	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetRCLocal", mustReadFile("osfiles/etc/rc.local")).Return(nil)
 	m.On("EnsureTailscale").Return(nil)
+	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -101,6 +104,7 @@ func TestScanSystemBootConfigDiffers(t *testing.T) {
 	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetBootConfig", mustReadFile("osfiles/boot/config.txt")).Return(nil)
 	m.On("EnsureTailscale").Return(nil)
+	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -124,6 +128,7 @@ func TestScanSystemCMDLineDiffers(t *testing.T) {
 	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetCMDLine", []byte(strings.Join(cmdLineCommands, " "))).Return(nil)
 	m.On("EnsureTailscale").Return(nil)
+	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -147,6 +152,7 @@ func TestScanSystemLogindDiffers(t *testing.T) {
 	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetLogindConf", mustReadFile("osfiles/etc/systemd/logind.conf")).Return(nil)
 	m.On("EnsureTailscale").Return(nil)
+	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -171,6 +177,7 @@ func TestScanSystemMultipleChanged(t *testing.T) {
 	m.On("GetSysTimezone").Return(utc, nil)
 	m.On("SetBootConfig", mustReadFile("osfiles/boot/config.txt")).Return(nil)
 	m.On("EnsureTailscale").Return(nil)
+	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -194,6 +201,7 @@ func TestScanSystemTimeZoneChanged(t *testing.T) {
 	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	m.On("SetSysTimezone", utc).Return(nil)
 	m.On("EnsureTailscale").Return(nil)
+	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -216,6 +224,7 @@ func TestScanSystemTimeZoneReturnedNilNoChange(t *testing.T) {
 	m.On("GetSysTimezone").Return(nil, nil)
 	m.On("GetAuthLogFile").Return([]byte(""), nil)
 	m.On("EnsureTailscale").Return(nil)
+	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)

@@ -127,3 +127,7 @@ func (dm *devSysManager) TailscaleDown() error {
 func (dm *devSysManager) TailscaleConnected() (bool, error) {
 	return false, nil
 }
+
+func (dm *devSysManager) EnsureBinaryPermissions(path string) error {
+	return nil
+}

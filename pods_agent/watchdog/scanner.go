@@ -10,6 +10,7 @@ import (
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
 var cmdLineCommands = []string{
@@ -117,6 +118,10 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 
 	// Ensures that Tailscale is installed
 	if err := sysManager.EnsureTailscale(); err != nil {
+		return false, errors.W(err)
+	}
+
+	if err := sysManager.EnsureBinaryPermissions(sysinfo.WatchdogPath); err != nil {
 		return false, errors.W(err)
 	}
 

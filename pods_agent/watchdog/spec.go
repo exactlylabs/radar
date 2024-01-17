@@ -60,6 +60,7 @@ type SystemManager interface {
 	TailscaleDown() error
 	// TailscaleConnected returns if the pod is connected to a tailnet
 	TailscaleConnected() (bool, error)
+	EnsureBinaryPermissions(path string) error
 }
 
 type UpdateBinaryServerMessage struct {

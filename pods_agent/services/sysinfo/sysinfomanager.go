@@ -331,6 +331,14 @@ func (si SysInfoManager) TailscaleConnected() (bool, error) {
 	return status["Self"].(map[string]interface{})["Online"].(bool), nil
 }
 
+func (si SysInfoManager) EnsureBinaryPermissions(path string) error {
+	err := os.Chmod(path, 0755)
+	if err != nil {
+		return errors.W(err)
+	}
+	return nil
+}
+
 func (si SysInfoManager) runCommand(cmd *exec.Cmd) ([]byte, error) {
 	stdout := bytes.NewBuffer(nil)
 	stderr := bytes.NewBuffer(nil)
