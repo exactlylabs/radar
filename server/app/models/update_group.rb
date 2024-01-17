@@ -68,8 +68,7 @@ class UpdateGroup < ApplicationRecord
   private
 
   def call_update_jobs
-    if saved_change_to_client_version_id || saved_change_to_client_version_rollout_percentage
-
+    if saved_change_to_client_version_id? || saved_change_to_client_version_rollout_percentage?
       UpdateClientVersionsJob.perform_later self
     end
     return unless saved_change_to_watchdog_version_id || saved_change_to_watchdog_version_rollout_percentage

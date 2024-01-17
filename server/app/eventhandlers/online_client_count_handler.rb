@@ -164,8 +164,13 @@ class OnlineClientCountHandler
 
   def preload(current_timestamp)
     Client.all.each do |client|
-      @last_events[client] = Event.from_aggregate(client).prior_to(current_timestamp).last
+      @last_events[client.id] = Event.from_aggregate(client).prior_to(current_timestamp).last
     end
+  end
+
+  def last_event_for(client, timestamp)
+    @last_events[client.id] ||= Event.from_aggregate(client).prior_to(timestamp).last
+    @last_events[client.id]
   end
 
   def to_be_processed_events()
@@ -179,8 +184,7 @@ class OnlineClientCountHandler
     if event.aggregate_type != Client.name || ![Client::Events::WENT_ONLINE, Client::Events::WENT_OFFLINE].include?(event.name)
       return false
     end
-    self.preload(event.timestamp) if @last_events.empty?
-    return @last_events[event.aggregate_id]&.name == event.name
+    return last_event_for(event.aggregate_id, event.timestamp)&.name == event.name
   end
 
   def new_record!(previous_count, event, increment=0)
@@ -193,4 +197,3 @@ class OnlineClientCountHandler
     count.save!
   end
 end
-
