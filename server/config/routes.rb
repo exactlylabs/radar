@@ -301,6 +301,14 @@ Rails.application.routes.draw do
   get '/TTUHSC/:id', to: 'mailer#redirect_campaign_to_ttuhsc'
 
   get '/TBP', to: 'public#landing'
+  get '/tbp', to: redirect('/TBP')
+  get '/Tbp', to: redirect('/TBP')
+  get '/tBp', to: redirect('/TBP')
+  get '/tbP', to: redirect('/TBP')
+  get '/TBp', to: redirect('/TBP')
+  get '/TbP', to: redirect('/TBP')
+  get '/tBP', to: redirect('/TBP')
+
   get '/get_started_modal', to: 'public#get_started_modal'
   post '/get_started_modal_step_1_submit', to: 'public#get_started_modal_step_1_submit'
   get '/get_started_modal_step_2', to: 'public#get_started_modal_step_2'
