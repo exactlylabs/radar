@@ -59,7 +59,7 @@ dependencies:
   intl: ^0.17.0
   flutter_map: ^3.0.0
   async: ^2.9.0
-  geolocator: ^9.0.2
+  geolocator: ^10.1.0
   sentry_flutter: ^7.10.1
   package_info_plus: ^3.0.2
   url_launcher: ^6.1.8

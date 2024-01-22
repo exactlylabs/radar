@@ -66,7 +66,6 @@ class BackgroundSpeedTest {
     final androidSettings = AndroidSettings(
       accuracy: LocationAccuracy.best,
       forceLocationManager: true,
-      useMSLAltitude: true,
       foregroundNotificationConfig: const ForegroundNotificationConfig(
         notificationText: "",
         notificationTitle: "",
@@ -74,8 +73,7 @@ class BackgroundSpeedTest {
       ),
     );
 
-    final positionStream =
-        GeolocatorPlatform.instance.getPositionStream(locationSettings: androidSettings);
+    final positionStream = Geolocator.getPositionStream(locationSettings: androidSettings);
     _positionStreamSubscription = positionStream
         .handleError((error) => Sentry.captureException(error))
         .listen((updatedPosition) => _position = updatedPosition);

@@ -54,7 +54,7 @@ class WifiTrackerService {
     try {
       EndlessService.setup(
         callback: callback,
-        options: EndlessServiceOptions(frequency: 1000, forceHandler: true, wifiLock: true),
+        options: const EndlessServiceOptions(frequency: 1000, forceHandler: true, wifiLock: true),
         androidNotificationOptions: AndroidNotificationOptions(
           id: 600,
           title: 'Wifi Tracker enabled',
@@ -113,7 +113,9 @@ class WifiTrackerServiceListener implements Listener {
   late final WifiTracker _wifiTracker;
 
   @override
-  void onStart() {}
+  void onStart() {
+    _wifiTracker.setupLocationSettings();
+  }
 
   @override
   void onStop() {
@@ -122,7 +124,6 @@ class WifiTrackerServiceListener implements Listener {
 
   @override
   void onAction() async {
-    // print('${DateTime.now()}');
     await _wifiTracker.startWifiTracking();
   }
 
