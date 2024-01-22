@@ -1,3 +1,14 @@
+<div class="dashboard--top-level-tabs-container">
+  <a href="<%= dashboard_path %>"
+     target="_top"
+     <%= is_active_full_path?(dashboard_path) ? 'data-active=true' : nil %>
+  >Overview</a>
+  <a href="<%= dashboard_comparison_path %>"
+     target="_top"
+     <%= is_active_full_path?(dashboard_comparison_path) ? 'data-active=true' : nil %>
+  >Compare</a>
+</div>
+
 <div class="dashboard--filters-container">
   <%= render partial: "dashboard/components/date_filter",
              locals: {

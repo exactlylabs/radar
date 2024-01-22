@@ -39,6 +39,9 @@ class DashboardController < ApplicationController
     end
   end
 
+  def comparison
+  end
+
   def onboarding_step_1
     respond_to do |format|
       format.turbo_stream
