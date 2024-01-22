@@ -168,9 +168,9 @@ class OnlineClientCountHandler
     end
   end
 
-  def last_event_for(client, timestamp)
-    @last_events[client.id] ||= Event.from_aggregate(client).prior_to(timestamp).last
-    @last_events[client.id]
+  def last_event_for(client_id, timestamp)
+    @last_events[client] ||= Event.of(Client).where(aggregate_id: client_id).prior_to(timestamp).last
+    @last_events[client]
   end
 
   def to_be_processed_events()
