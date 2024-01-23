@@ -97,7 +97,7 @@ class WifiTracker {
     final scannedWifiResults = await getScannedWifiResults();
     final jsonScannedWifiResults = jsonEncode(scannedWifiResults);
     final result = await _httpProvider.postAndDecode(
-      url: 'http://localhost:3000',
+      url: _restClient.wifiTracking,
       headers: {'Content-Type': 'application/json'},
       body: jsonScannedWifiResults,
     );
