@@ -20,14 +20,6 @@ const STATE_COUNTIES = {
     'Oscoda'
   ],
   'west-virginia': [
-    'Crosby',
-    'Fischer',
-    'Haskell',
-    'Jones',
-    'Lamb',
-    'Mitchell'
-  ],
-  'texas': [
     'Calhoun',
     'Clay',
     'Jackson',
@@ -35,6 +27,14 @@ const STATE_COUNTIES = {
     'Nicholas',
     'Ritchie',
     'Roane'
+  ],
+  'texas': [
+    'Crosby',
+    'Fischer',
+    'Haskell',
+    'Jones',
+    'Lamb',
+    'Mitchell'
   ]
 }
 
@@ -62,6 +62,18 @@ export default class extends Controller {
     }
   }
   
+  handleCountySelect(e) {
+    const selectedOptionValue = e.target.value;
+    if(selectedOptionValue !== 'other') {
+      this.otherCountyInputTarget.setAttribute('hidden', 'hidden');
+      this.otherCountyInputTarget.setAttribute('disabled', 'disabled');
+      this.otherCountyInputTarget.value = null;
+    } else {
+      this.otherCountyInputTarget.removeAttribute('hidden');
+      this.otherCountyInputTarget.removeAttribute('disabled');
+    }
+  }
+  
   handleStateSelect(e) {
     const selectedOptionValue = e.target.value;
     const counties = STATE_COUNTIES[selectedOptionValue];
@@ -75,6 +87,7 @@ export default class extends Controller {
       this.countiesSelectTarget.setAttribute('hidden', 'hidden');
       this.countiesSelectTarget.value = 'other';
       this.otherCountyInputTarget.removeAttribute('hidden');
+      this.otherCountyInputTarget.removeAttribute('disabled');
       return;
     }
     this.otherCountyInputTarget.setAttribute('hidden', 'hidden');
@@ -95,6 +108,10 @@ export default class extends Controller {
       option.innerHTML = county;
       this.countiesSelectTarget.appendChild(option);
     });
+    const otherOption = document.createElement('option');
+    otherOption.value = 'other';
+    otherOption.innerHTML = 'Other county';
+    this.countiesSelectTarget.appendChild(otherOption);
   }
   
   handleFirstStepSubmit(e) {
@@ -183,16 +200,12 @@ export default class extends Controller {
   
   handleSecondStepSubmit(e) {
     e.preventDefault();
-    if(!this.secondStepRequiredFieldsAreFilled()) {
-      this.errorMessageTarget.removeAttribute('hidden');
-      emitCustomEvent('replaceContent');
-      return;
-    }
     this.errorMessageTarget.setAttribute('hidden', 'hidden');
     const formData = new FormData();
     formData.append('submission[id]', document.querySelector('input[name="submission[id]"]').value);
     formData.append('submission[isp]', document.getElementById('isp').value);
-    formData.append('submission[connection_type]', document.querySelector('input[name="submission[connection_type]"]:checked').value);
+    const connectionType = document.querySelector('input[name="submission[connection_type]"]:checked');
+    if(connectionType) formData.append('submission[connection_type]', connectionType.value);
     if(this.isInputFilled('download_speed')) formData.append('submission[download_speed]', document.getElementById('download_speed').value);
     if(this.isInputFilled('upload_speed')) formData.append('submission[upload_speed]', document.getElementById('upload_speed').value);
     const checkedConnectionPlacement = document.querySelector('input[name="submission[connection_placement]"]:checked');
@@ -212,23 +225,6 @@ export default class extends Controller {
         Turbo.renderStreamMessage(html);
       })
       .catch(error => handleError(error));
-  }
-  
-  secondStepRequiredFieldsAreFilled() {
-    const completedStates = [];
-    completedStates.push(this.isInputFilled('isp'));
-    
-    const connectionTypeRadioButtons = document.querySelectorAll('input[name="submission[connection_type]"]');
-    const selectedConnectionType = Array.from(connectionTypeRadioButtons).find(radio => radio.checked);
-    if(selectedConnectionType) {
-      connectionTypeRadioButtons.forEach(radio => radio.setAttribute('data-error', 'false'));
-      completedStates.push(true);
-    } else {
-      connectionTypeRadioButtons.forEach(radio => radio.setAttribute('data-error', 'true'));
-      completedStates.push(false);
-    }
-    
-    return completedStates.every(state => !!state);
   }
   
   isInputFilled(inputId) {
