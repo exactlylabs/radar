@@ -59,7 +59,11 @@ class PublicController < PublicApplicationController
     @submission.service_satisfaction = params[:submission][:service_satisfaction]&.to_i || nil
     respond_to do |format|
       if @submission.save
-        PublicSubmissionMailer.with(submission: @submission).new_submission.deliver_later
+        begin
+          PublicSubmissionMailer.with(submission: @submission).new_submission.deliver_later
+        rescue => e
+          Sentry.capture_exception(e)
+        end
         format.turbo_stream
       else
         render :get_started_modal
