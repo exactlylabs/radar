@@ -170,7 +170,6 @@
               name="submission[county]"
               data-public-page-modal-target="countiesSelect"
               data-action="change->public-page-modal#handleCountySelect"
-              <%= @submission.id.present? && @submission.county.present? && !state_counties.keys.include?(@submission.state) ? 'hidden=hidden' : nil %>
       >
         <option value="" <%= @submission.id.nil? ? 'selected' : nil %> disabled>Select your county</option>
         <% if @submission.id.present? %>
