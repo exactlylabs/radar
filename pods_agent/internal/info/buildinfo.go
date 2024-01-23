@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -87,4 +88,10 @@ func (i *Info) Patch() int {
 
 func IsDev() bool {
 	return version == "Dev" || strings.ToLower(os.Getenv("ENVIRONMENT")) == "dev"
+}
+
+// SetVersion modifies the binary version constant. Should be used in development mode only.
+func SetVersion(v string) {
+	version = v
+	distribution = fmt.Sprintf("%s-%s", runtime.GOOS, runtime.GOARCH)
 }

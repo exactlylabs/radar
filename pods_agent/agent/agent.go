@@ -11,6 +11,7 @@ import (
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
+	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/exactlylabs/radar/pods_agent/internal/update"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/watchdog"
@@ -23,6 +24,7 @@ type Agent struct {
 	serverMsgCh chan *ServerMessage
 	wg          *sync.WaitGroup
 	started     bool
+	conf        *config.Config
 }
 
 func NewAgent(client RadarClient, runners []Runner) *Agent {
@@ -80,6 +82,7 @@ func (a *Agent) Setup(ctx context.Context, c *config.Config) {
 	if err != nil {
 		panic(errors.W(err))
 	}
+	a.conf = c
 }
 
 // Start the Agent, blocking the current goroutine
@@ -124,10 +127,24 @@ func (a *Agent) handleServerMessage(msg ServerMessage, rebooter Rebooter, cancel
 		maybeSendChannel(a.runTestCh)
 
 	case Update:
-		updateAgent(msg.Data.(UpdateBinaryServerMessage), cancel)
+		if a.conf.Environment == "Dev" {
+			log.Println("Received Update Pod Agent Message: ", msg.Data.(UpdateBinaryServerMessage))
+			log.Println("Setting version manually to", msg.Data.(UpdateBinaryServerMessage).Version)
+			info.SetVersion(msg.Data.(UpdateBinaryServerMessage).Version)
+			a.client.Close()
+			a.client.Connect(context.Background(), a.serverMsgCh)
+		} else {
+			updateAgent(msg.Data.(UpdateBinaryServerMessage), cancel)
+		}
 
 	case UpdateWatchdog:
-		updateWatchdogIfNeeded(msg.Data.(UpdateBinaryServerMessage), rebooter, cancel)
+		if a.conf.Environment == "Dev" {
+			log.Println("Received Update Pod Watchdog Message: ", msg.Data.(UpdateBinaryServerMessage))
+			log.Println("Skipping it due to being in Dev Environment")
+		} else {
+			updateWatchdogIfNeeded(msg.Data.(UpdateBinaryServerMessage), rebooter, cancel)
+		}
+
 	}
 }
 

@@ -25,7 +25,12 @@ func main() {
 	version := flag.Bool("v", false, "Show Agent Version")
 	jsonVersion := flag.Bool("vv", false, "Show Agent Version in JSON format")
 	configFile := flag.String("c", "", "Path to the config.conf file to use. Defaults to the OS UserConfigDir/radar/config.conf")
+	forcedVersion := flag.String("set-version", "", "Set the version of the agent. Only works in Development mode.")
+
 	flag.Parse()
+	if *forcedVersion != "" && info.IsDev() {
+		info.SetVersion(*forcedVersion)
+	}
 	if *configFile != "" {
 		config.SetConfigFilePath(*configFile)
 	}
