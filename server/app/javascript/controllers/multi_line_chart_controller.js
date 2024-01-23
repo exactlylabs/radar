@@ -2,16 +2,62 @@ import ChartController, {CHART_TITLES} from "./chart_controller";
 
 const CHART_BUTTONS_HEIGHT = 30;
 const LINE_TO_HEX = {
-  minimum: '#ff695d',
-  median: '#4b7be5',
-  maximum: '#9138e5',
+  minimum: '#FF695D',
+  median: '#4B7BE5',
+  maximum: '#9138E5',
 }
+const COMPARISON_HEX = [
+  '#98CB87',
+  '#F51278',
+  '#4B7BE5',
+  '#9138E5',
+  '#FF695D',
+  '#F7AA5A'
+];
 
 export default class MultiLineChartController extends ChartController {
   connect() {
     this.chartId = this.element.dataset.chartId;
     this.selectedHex = null;
     super.connect();
+  }
+  
+  getChartDataForComparison() {
+    const rawData = JSON.parse(this.element.dataset.lineChartData);
+    let lastHexUsed = 0;
+    const data = new Map();
+    const seenKeys = new Map();
+    const timestamps = [];
+    rawData.forEach((line) => {
+      let hexIndex;
+      if(seenKeys.has(line['case'])) {
+        hexIndex = seenKeys.get(line['case']);
+      } else {
+        seenKeys.set(line['case'], lastHexUsed);
+        hexIndex = lastHexUsed;
+        lastHexUsed++;
+      }
+      const hex = COMPARISON_HEX[hexIndex];
+      const x = line['x'];
+      const y = line['y'];
+      if(data.has(hex)) {
+        data.get(hex).push({x, y});
+      } else {
+        data.set(hex, [{x, y}]);
+      }
+      if(!timestamps.includes(x)) timestamps.push(x);
+    });
+    data.forEach((linePoints, hex) => {
+      if(timestamps.length > linePoints.length) {
+        timestamps.forEach(timestamp => {
+          if(!linePoints.find(linePoint => linePoint.x === timestamp)) {
+            linePoints.push({x: timestamp, y: 0});
+          }
+        });
+        linePoints.sort((a, b) => a.x - b.x);
+      }
+    });
+    return data;
   }
   
   createHiDPICanvas(w, h, ratio) {
@@ -49,21 +95,23 @@ export default class MultiLineChartController extends ChartController {
   }
   
   prepareData(rawData) {
-    const data = new Map();
-    rawData.forEach((line, index) => {
-      const { x } = line;
-      Object.keys(line).forEach((key) => {
-        if(key === 'x') return;
-        const color = key;
-        const y = line[key];
-        if(data.has(color)) {
-          data.get(color).push({ x, y });
-        } else {
-          data.set(color, [{ x, y }]);
-        }
+    if(this.chartId !== 'compareDownloadSpeeds') {
+      const data = new Map();
+      rawData.forEach((line, index) => {
+        const {x} = line;
+        Object.keys(line).forEach((key) => {
+          if (key === 'x') return;
+          const color = key;
+          const y = line[key];
+          if (data.has(color)) {
+            data.get(color).push({x, y});
+          } else {
+            data.set(color, [{x, y}]);
+          }
+        });
       });
-    });
-    this.chartData = data;
+      this.chartData = data;
+    }
     this.adjustedData = this.adjustData(this.chartData);
   }
   
@@ -104,15 +152,11 @@ export default class MultiLineChartController extends ChartController {
   showTooltip(mouseX, mouseY) {
     const shouldContinue = this.setupTooltipContext(mouseX, mouseY);
     if(!shouldContinue) return;
-    if(!!this.selectedHex) {
-    
-    }
     const firstEntry = this.adjustedData.entries().next(); // {value: [hex, points], done: boolean}
     const xDifs = firstEntry.value[1].map(({x, _}, index) => Math.abs(this.getXCoordinateFromXValue(firstEntry.value[1], index) - mouseX));
     const minDif = Math.min(...xDifs);
     let minDifIndex = xDifs.indexOf(minDif);
     let yValues = [];
-    //let xCoordinate;
     const minDifIndexEntry = firstEntry.value[1][minDifIndex];
     let xCoordinate = this.getXCoordinateFromXValue(firstEntry.value[1], minDifIndex);
     let yCoordinate;

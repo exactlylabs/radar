@@ -1,0 +1,5 @@
+<div class="widgets--canvas-container">
+  <%= turbo_frame_tag 'compare-download-speeds-widget', src: compare_download_speeds_path(curve_type: params[:curve_type], filter_by: params[:filter_by], client_id: params[:client_id], network_id: params[:network_id], account_id: params[:account_id], isp_id: params[:isp_id], days: params[:days], start: params[:start], end: params[:end]), loading: 'lazy' do %>
+    <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+  <% end %>
+</div>

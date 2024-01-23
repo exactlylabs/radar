@@ -6,6 +6,7 @@ module WidgetsHelper
     UPLOAD_SPEED = 'upload_speed'
     LATENCY = 'latency'
     DATA_USAGE = 'data_usage'
+    COMPARE_DOWNLOAD_SPEED = 'compare_download_speed'
   end
 
   module WidgetHeaders
@@ -15,6 +16,7 @@ module WidgetsHelper
     UPLOAD_SPEED = 'Upload speed'
     LATENCY = 'Latency'
     DATA_USAGE = 'Data usage'
+    COMPARE_DOWNLOAD_SPEED = 'Download speed'
   end
 
   def self.get_header(type)
@@ -31,6 +33,8 @@ module WidgetsHelper
       WidgetHeaders::LATENCY
     when WidgetTypes::DATA_USAGE
       WidgetHeaders::DATA_USAGE
+    when WidgetTypes::COMPARE_DOWNLOAD_SPEED
+      WidgetHeaders::COMPARE_DOWNLOAD_SPEED
     else
       WidgetHeaders::LOCATIONS_MAP
     end

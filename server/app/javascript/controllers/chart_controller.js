@@ -12,7 +12,8 @@ export const STANDARD_LABEL_WIDTH = 20;
 export const CHART_TITLES = {
   'downloadSpeeds': 'Download Speeds',
   'uploadSpeeds': 'Upload Speeds',
-  'latency': 'Latency'
+  'latency': 'Latency',
+  'compareDownloadSpeeds': 'Download Speeds',
 }
 
 export default class ChartController extends Controller {
@@ -29,7 +30,11 @@ export default class ChartController extends Controller {
   prepareInitialState() {
     this.parent = document.getElementById(this.element.dataset.parentId);
     // TODO: try/catch
-    this.chartData = JSON.parse(this.element.dataset.lineChartData);
+    if(this.chartId === 'compareDownloadSpeeds') {
+      this.chartData = this.getChartDataForComparison();
+    } else {
+      this.chartData = JSON.parse(this.element.dataset.lineChartData);
+    }
     this.labels = [];
     this.labelSuffix = this.element.dataset.labelSuffix || '';
     
@@ -387,14 +392,20 @@ export default class ChartController extends Controller {
   
   getFirstGradientStopColor(hex) {
     switch (hex) {
-      case '#4b7be5':
+      case '#4B7BE5':
         return 'rgba(75, 123, 229, 0.2)';
-      case '#ff695d':
+      case '#FF695D':
         return 'rgba(255, 105, 93, 0.2)';
-      case '#9138e5':
+      case '#9138E5':
         return 'rgba(145, 56, 229, 0.2)';
+      case '#98CB87':
+        return 'rgba(152, 203, 135, 0.2)';
+      case '#F51278':
+        return 'rgba(245, 18, 120, 0.2)';
+      case '#F7AA5A':
+        return 'rgba(247, 170, 90, 0.2)';
       default:
-        return null;
+        return 'black';
     }
   }
   

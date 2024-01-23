@@ -103,7 +103,23 @@ class DashboardController < ApplicationController
     @usage = ActiveRecord::Base.connection.execute(sql)
   end
 
+  def compare_download_speeds
+    sql = DashboardHelper.get_compare_download_speed_sql
+    sql = replace_shared_params(sql)
+    sql = replace_data_usage_time_params(sql)
+    sql = replace_comparison_params(sql)
+    @download_speeds = ActiveRecord::Base.connection.execute(sql)
+  end
+
   private
+  def replace_comparison_params(sql)
+    sql = sql.gsub('$filter_by', params[:filter_by]&.downcase || 'pod')
+    sql = sql.gsub('$curve_type', params[:curve_type]&.upcase || 'MEDIAN')
+    has_param_client_ids = params[:client_id].present? ? 1 : -1
+    client_ids = has_param_client_ids == 1 ? params[:client_id] : current_account.is_all_accounts? ? policy_scope(Client).pluck(:id).join(',') : current_account.clients.map(&:id).join(',')
+    sql.gsub('$client_ids', "#{client_ids}")
+  end
+
   def replace_online_pods_time_params(sql)
     days = params[:days].present? ? params[:days] : 30
 

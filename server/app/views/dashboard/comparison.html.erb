@@ -94,10 +94,10 @@
       <div class="w-100 mw-100" data-controller="onboard map widgets" data-onboard-step-value="<%= @onboard_step %>">
         <% if FeatureFlagHelper.is_available('charts', current_user) %>
           <%= render partial: "dashboard/components/comparison_filters" %>
-        <% end %>
-        <% if FeatureFlagHelper.is_available('charts', current_user) %>
           <div class="widgets--grid">
-
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::COMPARE_DOWNLOAD_SPEED }
+            %>
           </div>
         <% end %>
       </div>
