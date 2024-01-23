@@ -1,0 +1,29 @@
+<h1>New public page form submission!</h1>
+<p>First name: <%= @submission.first_name %></p>
+<p>Last name: <%= @submission.last_name %></p>
+<p>Email: <%= @submission.email %></p>
+<p>Phone: <%= @submission.phone_number %></p>
+<p>Consumer type: <%= @submission.consumer_type %></p>
+<% unless @submission.business_name.blank? %>
+  <p>Business name: <%=  @submission.business_name  %></p>
+<%  end %>
+<p>State: <%= @submission.state %></p>
+<p>County: <%= @submission.county %></p>
+<% if @submission.isp.present? %>
+  <p>ISP: <%= @submission.isp %></p>
+<% end %>
+<% if @submission.connection_type.present? %>
+  <p>Connection Type: <%= @submission.connection_type %></p>
+<% end %>
+<% if @submission.download_speed.present? %>
+  <p>Download speed: <%= @submission.download_speed %></p>
+<% end %>
+<% if @submission.upload_speed.present? %>
+  <p>Upload speed: <%= @submission.upload_speed %></p>
+<% end %>
+<% if @submission.connection_placement.present? %>
+  <p>Connection Placement: <%= @submission.connection_placement %></p>
+<% end %>
+<% if @submission.service_satisfaction.present? %>
+  <p>Service Satisfaction: <%= @submission.service_satisfaction %></p>
+<% end %>

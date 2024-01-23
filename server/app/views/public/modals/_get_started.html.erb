@@ -1,4 +1,4 @@
-<% state_counties = { alaska: ['Aleutians West Census Area', 'Bristol Bay Borough', 'Dillingham Census Area', 'Nome Census Area', 'North Slope Borough', 'Northwest Arctic Borough'], michigan: %w[Gladwin Manistee Missaukee Montmorency Osceola Oscoda], west_virginia: %w[Crosby Fischer Haskell Jones Lamb Mitchell], texas: %w[Calhoun Clay Jackson Kanawha Nicholas Ritchie Roane] } %>
+<% state_counties = { alaska: ['Aleutians West Census Area', 'Bristol Bay Borough', 'Dillingham Census Area', 'Nome Census Area', 'North Slope Borough', 'Northwest Arctic Borough'], michigan: %w[Gladwin Manistee Missaukee Montmorency Osceola Oscoda], west_virginia: %w[Calhoun Clay Jackson Kanawha Nicholas Ritchie Roane], texas: %w[Crosby Fischer Haskell Jones Lamb Mitchell] } %>
 
 <%= render partial: "application/components/modals/modal_header",
            locals: { title: nil, is_custom: true }
@@ -169,6 +169,7 @@
               <%= @submission.id.present? && @submission.county.present? ? nil : 'disabled' %>
               name="submission[county]"
               data-public-page-modal-target="countiesSelect"
+              data-action="change->public-page-modal#handleCountySelect"
               <%= @submission.id.present? && @submission.county.present? && !state_counties.keys.include?(@submission.state) ? 'hidden=hidden' : nil %>
       >
         <option value="" <%= @submission.id.nil? ? 'selected' : nil %> disabled>Select your county</option>
@@ -179,17 +180,19 @@
             </option>
           <% end %>
         <% end %>
+        <option value="other" <%= @submission.id.present? && (!state_counties.keys.include?(@submission.state.downcase)  || !state_counties.values.include?(@submission.county.downcase)) ? 'selected' : nil %>>Other county</option>
       </select>
       <label for="other-county" hidden="hidden">Other county</label>
+      <% has_other_county = @submission.county && (!state_counties.keys.include?(@submission.state.downcase) || !state_counties.values.include?(@submission.county.downcase)) %>
       <input id="other-county"
              type="text"
              name="submission[other_county]"
              class="forms--text-input forms--text-input-focusable w-100 mt-4"
              placeholder="Enter your county"
              data-public-page-modal-target="otherCountyInput"
-             value="<%= @submission.county && !state_counties.keys.include?(@submission.state.downcase) ? nil : @submission.county %>"
-             <%= @submission.id.present? && @submission.county.present? && !state_counties.keys.include?(@submission.state.downcase) ? nil : 'hidden=hidden' %>
-             <%= @submission.county && !state_counties.keys.include?(@submission.state.downcase) ? 'disabled=disabled' : nil %>
+             value="<%= has_other_county ? @submission.county : nil %>"
+             <%= has_other_county ? nil : 'hidden=hidden' %>
+             <%= has_other_county ? nil : 'disabled=disabled' %>
         />
     </div>
     <p data-public-page-modal-target="errorMessage" class="text--error text-start" hidden="hidden">Please fill out all required fields before continuing.</p>

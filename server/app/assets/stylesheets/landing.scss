@@ -75,6 +75,7 @@ h1, h2, h3, h4, h5, h6 {
     rgba(119, 158, 255, 0.06) 15%,
     rgba(75, 123, 229, 0.15) 85%
   );
+  overflow-x: clip;
 
   nav, section {
     max-width: $shared-max-width;
@@ -95,6 +96,12 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: $shared-max-width) {
   .landing--navbar {
     padding: .75rem 1rem;
+  }
+}
+
+@media (max-width: $sm-breakpoint) {
+  .landing--navbar {
+    gap: 0;
   }
 }
 
@@ -878,10 +885,11 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.75rem;
     margin: 0 0 1rem 0;
     padding: 0;
-    white-space: break-spaces;
+    white-space: normal;
     @extend .fw-medium;
 
     b {
+      white-space: break-spaces;
       @extend .fw-bold;
     }
   }
@@ -919,6 +927,10 @@ h1, h2, h3, h4, h5, h6 {
 
     a {
       margin-inline: auto;
+    }
+
+    svg {
+      max-width: 100%;
     }
   }
 }
@@ -1268,7 +1280,7 @@ h1, h2, h3, h4, h5, h6 {
     @extend .fw-bold;
   }
 
-  p {
+  a.telephone {
     font-size: 1.062rem;
     line-height: 1.75rem;
     color: $dark-gray;
@@ -1277,7 +1289,7 @@ h1, h2, h3, h4, h5, h6 {
     white-space: normal;
   }
 
-  a {
+  a.email {
     font-size: 1rem;
     color: $gray;
     line-height: 1.5;
@@ -1293,7 +1305,7 @@ h1, h2, h3, h4, h5, h6 {
       line-height: 1.5rem;
     }
 
-    p {
+    a.telephone {
       font-size: 1rem;
       line-height: 1.75rem;
     }
@@ -1546,7 +1558,7 @@ h1, h2, h3, h4, h5, h6 {
   color: $gray;
   margin: 0 auto 2.5rem;
   max-width: 25rem;
-  white-space: break-spaces;
+  white-space: normal;
 }
 
 #state-tooltip {
@@ -1570,5 +1582,24 @@ h1, h2, h3, h4, h5, h6 {
     transform: rotate(45deg) translateX(-50%);
     width: .75rem;
     height: .75rem;
+  }
+}
+
+.landing--speeds-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 450px) {
+  .landing--speeds-container {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1rem;
   }
 }
