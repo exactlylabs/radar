@@ -59,7 +59,7 @@
                     tabindex="-1"
             >
               <% policy_scope(Account).each_with_index do |account, index|%>
-                <%= render partial: "clients/client_select_option", locals: { option: account, selected: index === 0} %>
+                <%= render partial: "clients/client_select_option", locals: { option: account, selected: location.account.present? ? location.account.id === account.id : index === 0} %>
               <% end %> 
             </select>
           </div>
