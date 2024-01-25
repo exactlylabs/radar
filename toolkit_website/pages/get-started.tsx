@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useState} from "react";
 import {ViewportContextProvider} from "../src/context/ViewportContent";
 import Head from "next/head";
 import Frame from "../src/components/Frame/Frame";

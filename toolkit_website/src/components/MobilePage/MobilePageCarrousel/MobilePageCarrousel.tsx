@@ -1,3 +1,4 @@
+'use client';
 import {ReactElement, useEffect, useRef, useState} from "react";
 import {styles} from "./styles/MobilePageCarrousel.style";
 import {Optional} from "../../../utils/types";
@@ -45,8 +46,8 @@ const MobilePageCarrousel = (): ReactElement => {
 
   const [currentItem, setCurrentItem] = useState(0);
   const [progress, setProgress] = useState(0);
-  let timer = useRef<Optional<NodeJS.Timer>>(null);
-  let progressTimer = useRef<Optional<NodeJS.Timer>>(null);
+  let timer = useRef<Optional<NodeJS.Timeout>>(null);
+  let progressTimer = useRef<Optional<NodeJS.Timeout>>(null);
 
   useEffect(() => {
     timer.current = setInterval(() => { setCurrentItem(prevItem => ++prevItem % 4); }, 5000);
