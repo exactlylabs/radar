@@ -1,5 +1,9 @@
+require "net/http"
+require "json"
+
 class PublicController < PublicApplicationController
   layout "landing", only: [:landing]
+  after_action :send_event_to_amplitude, only: [:landing]
 
   def supported_browsers
   end
@@ -79,5 +83,29 @@ class PublicController < PublicApplicationController
                   :county, :consumer_type, :connection_type,
                   :service_satisfaction, :comments, :business_name,
                   :isp, :download_speed, :upload_speed, :number_of_connections)
+  end
+
+  def send_event_to_amplitude
+    return if Rails.env.development? || Rails.env.staging?
+
+    url = URI("https://api2.amplitude.com/2/httpapi")
+    headers = {
+      "Content-Type" => "application/json",
+      "Accept" => "*/*",
+    }
+    data = {
+      "api_key": ENV['AMPLITUDE_API_KEY'],
+      "events": [{ "device_id": request.remote_ip, "event_type": "Visit TBP page" }],
+    }.to_json
+
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+    request = Net::HTTP::Post.new(url, headers)
+    request.body = data
+    begin
+      http.request(request)
+    rescue => e
+      Sentry.capture_exception(e)
+    end
   end
 end
