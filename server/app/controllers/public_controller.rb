@@ -86,7 +86,7 @@ class PublicController < PublicApplicationController
   end
 
   def send_event_to_amplitude
-    return if Rails.env.development? || Rails.env.staging?
+    return unless Rails.env.production?
 
     url = URI("https://api2.amplitude.com/2/httpapi")
     headers = {
