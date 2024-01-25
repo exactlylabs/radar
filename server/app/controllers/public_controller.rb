@@ -95,7 +95,11 @@ class PublicController < PublicApplicationController
     }
     data = {
       "api_key": ENV['AMPLITUDE_API_KEY'],
-      "events": [{ "device_id": request.remote_ip, "event_type": "Visit TBP page" }],
+      "events": [{
+                   "device_id": request.remote_ip,
+                   "event_type": "Visit TBP page",
+                   "ip": request.remote_ip,
+                 }],
     }.to_json
 
     http = Net::HTTP.new(url.host, url.port)
