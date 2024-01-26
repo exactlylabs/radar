@@ -6,7 +6,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/mdp/qrterminal/v3"
 	"github.com/rivo/tview"
 )
@@ -17,7 +17,7 @@ type AgentClient interface {
 }
 
 type PodInfoProvider interface {
-	Interfaces() ([]sysinfo.NetInterface, error)
+	Interfaces() (network.NetInterfaces, error)
 }
 
 type containers interface {

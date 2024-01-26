@@ -107,10 +107,13 @@ func (c *RadarClient) handleMessage(msg cable.ServerMessage) {
 	case cable.Ping:
 		c.sendPong()
 
-	case TestRequested:
+	case TestRequested, RunTest:
+		payload := cable.ParseMessage[*messages.TestRequestedSubscriptionPayload](msg)
 		c.agentCh <- &agent.ServerMessage{
 			Type: agent.RunTest,
-			Data: agent.RunTestServerMessage{},
+			Data: agent.RunTestServerMessage{
+				Interfaces: payload.Interfaces,
+			},
 		}
 
 	case ClientVersionChanged, UpdateClient, AgentUpdateWatchdog, AgentWatchdogVersionChanged:
@@ -263,7 +266,7 @@ func (c *RadarClient) Register(registrationToken *string) (*agent.RegisteredPod,
 	}, nil
 }
 
-func (c *RadarClient) SendMeasurement(ctx context.Context, style string, measurement []byte) error {
+func (c *RadarClient) SendMeasurement(ctx context.Context, style string, report agent.MeasurementReport) error {
 	apiUrl := fmt.Sprintf("%s/clients/%s/measurements", c.serverURL, c.clientID)
 
 	// Create Form Data
@@ -277,9 +280,24 @@ func (c *RadarClient) SendMeasurement(ctx context.Context, style string, measure
 	secretWriter, _ := w.CreateFormField("client_secret")
 	secretWriter.Write([]byte(c.secret))
 
+	ifaceWriter, _ := w.CreateFormField("measurement[interface]")
+	ifaceWriter.Write([]byte(report.Interface))
+
+	wlanWriter, _ := w.CreateFormField("measurement[wireless]")
+	wlanWriter.Write([]byte(fmt.Sprintf("%t", report.Wlan)))
+
+	if report.ConnectionInfo != nil {
+		connInfoWriter, _ := w.CreateFormField("connection_info")
+		data, err := json.Marshal(report.ConnectionInfo)
+		if err != nil {
+			return errors.W(err)
+		}
+		connInfoWriter.Write(data)
+	}
+
 	// File Field
 	fW, _ := w.CreateFormFile("measurement[result]", "result.json")
-	fW.Write(measurement)
+	fW.Write(report.Result)
 	w.Close()
 
 	req, err := NewRequest(http.MethodPost, apiUrl, &b)

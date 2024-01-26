@@ -4,7 +4,10 @@ import (
 	"context"
 	"time"
 
+	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
 )
 
 type MessageType int
@@ -13,6 +16,12 @@ const (
 	UpdateWatchdogMessageType MessageType = iota
 	EnableTailscaleMessageType
 	DisableTailscaleMessageType
+	ConnectToSSIDMessageType
+	ConnectToExistingSSIDMessageType
+	ScanAPsMessageType
+	ReportWirelessStatusMessageType
+	SetWlanInterfaceMessageType
+	DisconnectWirelessNetworkMessageType
 )
 
 // SystemManager interface provides methods for dealing with some
@@ -43,7 +52,7 @@ type SystemManager interface {
 	// SetCMDLine replaces the contents of cmdline.txt file
 	SetCMDLine([]byte) error
 	// Interfaces will return all available interfaces of the current POD
-	Interfaces() ([]sysinfo.NetInterface, error)
+	Interfaces() (network.NetInterfaces, error)
 	// Reboot makes the system reboot
 	Reboot() error
 	// GetAuthFile returns a log of authentications in the system
@@ -78,16 +87,41 @@ type DisableTailscaleServerMessage struct {
 	KeyId string `json:"key_id"`
 }
 
+type ConnectToSSIDMessage struct {
+	SSID string `json:"ssid"`
+	PSK  string `json:"psk"`
+}
+
+type ConnectToExistingSSIDMessage struct {
+	SSID string `json:"ssid"`
+}
+
+type ScanAPsMessage struct{}
+
+type ReportWirelessStatusMessage struct{}
+
+type SetWlanInterfaceMessage struct {
+	Name string `json:"interface"`
+}
+
+type DisconnectWirelessNetworkMessage struct{}
+
 type ServerMessage struct {
 	Type MessageType
 	Data any
 }
 
+type GetSyncMessageFunc func() messages.WatchdogSync
+
 type WatchdogClient interface {
-	Connect(context.Context, chan<- ServerMessage) error
+	Connect(context.Context, chan<- ServerMessage, GetSyncMessageFunc) error
 	WatchdogPing(meta *sysinfo.ClientMeta) (*ServerMessage, error)
 	NotifyTailscaleConnected(key_id string)
 	NotifyTailscaleDisconnected(key_id string)
+	ReportScanAPsResult(aps []wifi.APDetails)
+	ReportWirelessStatus(status wifi.WifiStatus)
+	ReportWirelessConnectionStateChanged(state, ssid string)
+	ReportActionError(action MessageType, err error)
 	Connected() bool
 	Close() error
 }
