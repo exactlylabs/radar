@@ -10,7 +10,7 @@ class ClientMeasurementsController < ApplicationController
   # GET /measurements or /measurements.json
   def index
     @measurements = policy_scope(@client.measurements).order(created_at: :desc) # Don't bring in measurements made on another account different to the current one
-    
+
     if FeatureFlagHelper.is_available('networks' , current_user)
       @measurements = @measurements.where(style: params[:style].upcase) if params[:style].present? && params[:style].upcase != 'ALL'
       if params[:range].present?
@@ -20,7 +20,7 @@ class ClientMeasurementsController < ApplicationController
       @total = @measurements.count
       @measurements = paginate(@measurements, params[:page], params[:page_size]) unless request.format.csv?
     end
-    
+
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements } }
       format.csv { send_data @measurements.to_csv, filename: "measurements-#{@client.unix_user}.csv" }
@@ -54,6 +54,20 @@ class ClientMeasurementsController < ApplicationController
     @measurement.location = @client.location if @client.location.present?
     @measurement.lonlat = @client.location.lonlat if @client.location.present?
     @measurement.ip = request.ip
+
+    if params[:connection_info].present? && params[:measurement][:wireless] == "true"
+      conn_info = params[:connection_info]
+      if conn_info.is_a?(String)
+        conn_info = JSON.parse conn_info
+      end
+      @measurement.signal = conn_info["signal"]
+      @measurement.tx_speed = conn_info["tx_speed"]
+      @measurement.frequency = conn_info["frequency"]
+      @measurement.channel = conn_info["channel"]
+      @measurement.width = conn_info["width"]
+      @measurement.noise = conn_info["noise"]
+    end
+
     if @client.test_requested
       @client.schedule_next_test!
       @client.test_requested = false
@@ -98,7 +112,7 @@ class ClientMeasurementsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def measurement_params
-    params.require(:measurement).permit(:style, :result, :client_id)
+    params.require(:measurement).permit(:style, :result, :interface, :wireless, :client_id)
   end
 
   def client_signed_in?
