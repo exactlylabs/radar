@@ -6,7 +6,7 @@ import (
 	"text/template"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
-	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/rivo/tview"
 )
 
@@ -36,7 +36,7 @@ func (nc *networkContainer) Update() {
 	ifaces, err := nc.prober.Interfaces()
 	if err != nil {
 		log.Println(errors.W(err))
-		ifaces = make([]sysinfo.NetInterface, 0)
+		ifaces = make(network.NetInterfaces, 0)
 	}
 	args := map[string]interface{}{
 		"netInterfaces": ifaces,
