@@ -7,6 +7,7 @@ import (
 	"os/exec"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 )
 
 const AgentPath = "/opt/radar/agent"
@@ -17,19 +18,12 @@ type AgentInfoManager struct {
 	serviceName string
 }
 
-type NetInterfaces struct {
-	Name string `json:"name"`
-	MAC  string `json:"mac"`
-	// DefaultRoute tells us if this is the default interface to connect to the internet
-	DefaultRoute bool `json:"default_route"`
-}
-
 type ClientMeta struct {
-	Version           string          `json:"version"`
-	Distribution      string          `json:"distribution"`
-	NetInterfaces     []NetInterfaces `json:"net_interfaces"`
-	WatchdogVersion   string          `json:"watchdog_version"`
-	RegistrationToken *string         `json:"registration_token"`
+	Version           string                `json:"version"`
+	Distribution      string                `json:"distribution"`
+	NetInterfaces     network.NetInterfaces `json:"net_interfaces"`
+	WatchdogVersion   string                `json:"watchdog_version"`
+	RegistrationToken *string               `json:"registration_token"`
 }
 
 func (m *ClientMeta) String() string {
