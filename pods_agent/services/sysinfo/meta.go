@@ -2,49 +2,29 @@ package sysinfo
 
 import (
 	"log"
-	"net"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
-	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/netroute"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/netroute"
 )
 
 func Metadata() *ClientMeta {
 	buildInfo := info.BuildInfo()
-	return &ClientMeta{
-		Distribution:      buildInfo.Distribution,
-		Version:           buildInfo.Version,
-		NetInterfaces:     macAddresses(),
-		WatchdogVersion:   GetWatchdogVersion(),
-		RegistrationToken: config.LoadConfig().RegistrationToken,
-	}
-}
-
-func macAddresses() []NetInterfaces {
-	defaultRoute, err := netroute.DefaultRoute()
+	ifaces, err := network.Interfaces()
 	if err != nil {
 		log.Println(errors.W(err))
 		if !errors.Is(err, netroute.ErrDefaultRouteNotFound) {
 			sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{})
 		}
 	}
-	ifaces, err := net.Interfaces()
-	if err != nil {
-		log.Println(errors.W(err))
-		sentry.NotifyErrorOnce(errors.W(err), map[string]sentry.Context{})
-		return nil
+	return &ClientMeta{
+		Distribution:      buildInfo.Distribution,
+		Version:           buildInfo.Version,
+		NetInterfaces:     ifaces,
+		WatchdogVersion:   GetWatchdogVersion(),
+		RegistrationToken: config.LoadConfig().RegistrationToken,
 	}
-	addresses := make([]NetInterfaces, 0)
-	for _, iface := range ifaces {
-		gatewayRoute := false
-		if defaultRoute.Interface != nil && iface.Name == defaultRoute.Interface.Name {
-			gatewayRoute = true
-		}
-		if iface.Flags&net.FlagLoopback == 0 {
-			addresses = append(addresses, NetInterfaces{Name: iface.Name, MAC: iface.HardwareAddr.String(), DefaultRoute: gatewayRoute})
-		}
-	}
-	return addresses
 }

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net"
 	"os"
@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 )
 
 type SysInfoManager struct {
@@ -31,7 +32,7 @@ func (*SysInfoManager) readFile(filePath string) ([]byte, error) {
 	}
 	defer r.Close()
 
-	data, err := ioutil.ReadAll(r)
+	data, err := io.ReadAll(r)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read file").WithMetadata(errors.Metadata{"file": filePath})
 	}
@@ -180,12 +181,12 @@ func (si *SysInfoManager) SetRCLocal(data []byte) error {
 	return nil
 }
 
-func (si *SysInfoManager) Interfaces() ([]NetInterface, error) {
+func (si *SysInfoManager) Interfaces() (network.NetInterfaces, error) {
 	ifaces, err := net.Interfaces()
 	if err != nil {
 		return nil, errors.Wrap(err, "net.Interfaces failed")
 	}
-	netInterfaces := make([]NetInterface, 0)
+	netInterfaces := make(network.NetInterfaces, 0)
 	for _, iface := range ifaces {
 		if iface.Name == "lo" {
 			continue
@@ -194,10 +195,10 @@ func (si *SysInfoManager) Interfaces() ([]NetInterface, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "iface.Addrs failed").WithMetadata(errors.Metadata{"iface": fmt.Sprintf("%v", iface)})
 		}
-		netInterfaces = append(netInterfaces, NetInterface{
-			IfaceName: iface.Name,
-			IfaceMac:  iface.HardwareAddr.String(),
-			IfaceIps:  addrs,
+		netInterfaces = append(netInterfaces, network.NetInterface{
+			Name: iface.Name,
+			MAC:  iface.HardwareAddr.String(),
+			IPs:  addrs,
 		})
 	}
 	return netInterfaces, nil
