@@ -38,6 +38,8 @@ type Config struct {
 	RegistrationToken *string `config:"registration_token"`
 	// CRL stands for Certificate Revocation List
 	CRLUrl string `env:"CRL_URL"`
+	// WlanInterface holds the configured Wlan to connect to. This is a Watchdog-Only config.
+	WlanInterface string `config:"wlan_interface"`
 }
 
 func (c *Config) LastTestedAt() *time.Time {
