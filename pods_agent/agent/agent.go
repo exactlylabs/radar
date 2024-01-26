@@ -20,7 +20,7 @@ import (
 type Agent struct {
 	client      RadarClient
 	runners     []Runner
-	runTestCh   chan bool
+	runTestCh   chan RunTestServerMessage
 	serverMsgCh chan *ServerMessage
 	wg          *sync.WaitGroup
 	started     bool
@@ -31,7 +31,7 @@ func NewAgent(client RadarClient, runners []Runner) *Agent {
 	return &Agent{
 		client:      client,
 		runners:     runners,
-		runTestCh:   make(chan bool),
+		runTestCh:   make(chan RunTestServerMessage),
 		serverMsgCh: make(chan *ServerMessage),
 		wg:          &sync.WaitGroup{},
 		started:     false,
@@ -122,9 +122,13 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 }
 
 func (a *Agent) handleServerMessage(msg ServerMessage, rebooter Rebooter, cancel context.CancelFunc) {
+	if msg.Data == nil {
+		// We don't accept empty messages
+		return
+	}
 	switch msg.Type {
 	case RunTest:
-		maybeSendChannel(a.runTestCh)
+		maybeSendChannel(a.runTestCh, msg.Data.(RunTestServerMessage))
 
 	case Update:
 		if a.conf.Environment == "Dev" {
@@ -156,14 +160,14 @@ func (a *Agent) StartTest() {
 	if !a.started {
 		panic("you cannot start a test before starting the agent")
 	}
-	maybeSendChannel(a.runTestCh)
+	maybeSendChannel(a.runTestCh, RunTestServerMessage{})
 }
 
 // maybeSendChannel simply tries to send to the channel
 // and in case the receiver is currently occupied, return.
-func maybeSendChannel(ch chan<- bool) {
+func maybeSendChannel(ch chan<- RunTestServerMessage, msg RunTestServerMessage) {
 	select {
-	case ch <- true:
+	case ch <- msg:
 	default:
 	}
 }
