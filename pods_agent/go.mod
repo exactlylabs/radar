@@ -16,6 +16,7 @@ require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/rivo/tview v0.0.0-20230916092115-0ad06c2ea3dd
 	github.com/stretchr/testify v1.8.4
+	github.com/theojulienne/go-wireless v1.2.0
 	golang.org/x/sys v0.15.0
 	google.golang.org/protobuf v1.31.0
 )
@@ -48,6 +49,7 @@ require (
 	github.com/m-lab/uuid-annotator v0.4.7 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/oschwald/geoip2-golang v1.7.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.17.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect

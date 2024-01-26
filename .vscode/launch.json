@@ -9,8 +9,26 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/agent/cmd/start_agent/main.go",
-            "cwd": "${workspaceFolder}/agent",
+            "program": "${workspaceFolder}/pods_agent/cmd/start_agent/main.go",
+            "cwd": "${workspaceFolder}/pods_agent",
+            "args": ["-c", "./config.dev.conf"]
+        },
+        {
+            "name": "Launch Watchdog",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/pods_agent/cmd/start_watchdog/main.go",
+            "cwd": "${workspaceFolder}/pods_agent",
+            "args": ["-c", "./config.dev.conf"]
+        },
+        {
+            "name": "Launch file",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}/pods_agent",
         }
     ]
 }

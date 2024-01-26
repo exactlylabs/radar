@@ -2,6 +2,8 @@
 
 set -e
 
+REFLEX_CONFIG_FILE=${REFLEX_CONFIG_FILE:-'reflex.config'}
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 ulimit -n 10000 || true
 
@@ -20,4 +22,4 @@ fi
 
 echo watching $(pwd)
 
-reflex --decoration=none -c reflex.config
+reflex --decoration=none -c $REFLEX_CONFIG_FILE
