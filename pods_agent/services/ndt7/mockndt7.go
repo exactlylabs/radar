@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"log"
 	"time"
+
 	"github.com/exactlylabs/radar/pods_agent/agent"
 )
 
@@ -24,7 +25,11 @@ func (r *Ndt7MockRunner) Type() string {
 }
 
 func (r *Ndt7MockRunner) Run(ctx context.Context) (*agent.Measurement, error) {
-	log.Println("Running Mock NDT7 Speedtest")
+	return r.RunForInterface(ctx, "")
+}
+
+func (r *Ndt7MockRunner) RunForInterface(ctx context.Context, name string) (*agent.Measurement, error) {
+	log.Println("Running Mock NDT7 Speedtest for Interface:", name)
 	if r.Err != nil {
 		return nil, r.Err
 	}

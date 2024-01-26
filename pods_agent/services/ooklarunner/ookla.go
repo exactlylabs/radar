@@ -39,8 +39,12 @@ func (r *ooklaRunner) Type() string {
 	return "OOKLA"
 }
 
-func (r *ooklaRunner) run(ctx context.Context) (*agent.Measurement, error) {
+func (r *ooklaRunner) run(ctx context.Context, name string) (*agent.Measurement, error) {
 	cmd := exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json")
+	if name != "" {
+		cmd = exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json", "--interface", name)
+	}
+
 	stderr := new(bytes.Buffer)
 	cmd.Stderr = stderr
 	res, err := cmd.Output()
@@ -65,12 +69,16 @@ func (r *ooklaRunner) run(ctx context.Context) (*agent.Measurement, error) {
 }
 
 func (r *ooklaRunner) Run(ctx context.Context) (res *agent.Measurement, err error) {
-	log.Println("Ookla - Starting Speed Test")
+	return r.RunForInterface(ctx, "")
+}
+
+func (r *ooklaRunner) RunForInterface(ctx context.Context, name string) (res *agent.Measurement, err error) {
+	log.Println("Ookla - Starting Speed Test for Interface:", name)
 	for i := 0; i < r.MaxRetries; i++ {
 		log.Printf("Ookla - Attempt %d of %d", i+1, r.MaxRetries)
-		res, err = r.run(ctx)
+		res, err = r.run(ctx, name)
 		if err == nil {
-			log.Println("Ookla - Finished Speed Test")
+			log.Println("Ookla - Finished Speed Test for Interface", name)
 			return
 		}
 		log.Printf("Ookla - Error running speed test: %v\n", err)

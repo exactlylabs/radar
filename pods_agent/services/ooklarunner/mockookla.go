@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"log"
 	"time"
+
 	"github.com/exactlylabs/radar/pods_agent/agent"
 )
 
@@ -23,8 +24,8 @@ func (r *OoklaMockRunner) Type() string {
 	return "OOKLA"
 }
 
-func (r *OoklaMockRunner) Run(ctx context.Context) (*agent.Measurement, error) {
-	log.Println("Running Mock Ookla Speedtest")
+func (r *OoklaMockRunner) RunForInterface(ctx context.Context, name string) (*agent.Measurement, error) {
+	log.Println("Running Mock Ookla Speedtest for Interface:", name)
 	if r.Err != nil {
 		return nil, r.Err
 	}
@@ -35,4 +36,8 @@ func (r *OoklaMockRunner) Run(ctx context.Context) (*agent.Measurement, error) {
 		DownloadMbps: 8 * (float64(50357709) / (1000.0 * 1000.0)),
 		UploadMbps:   8 * (float64(5899553) / (1000.0 * 1000.0)),
 	}, nil
+}
+
+func (r *OoklaMockRunner) Run(ctx context.Context) (*agent.Measurement, error) {
+	return r.RunForInterface(ctx, "")
 }
