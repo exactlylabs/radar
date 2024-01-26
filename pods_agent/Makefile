@@ -54,6 +54,9 @@ watchdog:
 run:
 	./scripts/dev.sh
 
+run_watchdog:
+	REFLEX_CONFIG_FILE='reflex.watchdog.config' ./scripts/dev.sh
+
 # Setup Dev environment
 dev: ookla_bin
 	DEV=1 CERT_CONFIG=scripts/dev_root_ca.cnf ./scripts/gen_root_ca.sh
@@ -65,16 +68,16 @@ install:
 
 
 deb:
-	./scripts/build_deb.sh -o ${DIST_DIR} -a ${ARCH} ${VERSION} 
+	./scripts/build_deb.sh -o ${DIST_DIR} -a ${ARCH} ${VERSION}
 
 rpm:
-	./scripts/build_rpm.sh -o ${DIST_DIR} -a ${ARCH} ${VERSION} 
+	./scripts/build_rpm.sh -o ${DIST_DIR} -a ${ARCH} ${VERSION}
 
 pkg:
-	./scripts/build_pkg.sh -o ${DIST_DIR} ${VERSION} 
+	./scripts/build_pkg.sh -o ${DIST_DIR} ${VERSION}
 
 msi:
-	./scripts/build_msi.sh -o ${DIST_DIR} ${VERSION} 
+	./scripts/build_msi.sh -o ${DIST_DIR} ${VERSION}
 
 all: build
 
