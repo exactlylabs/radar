@@ -46,10 +46,15 @@ class Client < ApplicationRecord
   has_many :client_event_logs
   has_many :ndt7_diagnose_reports
   has_many :tailscale_auth_keys
+  has_many :pod_network_interfaces
+
+  has_one :pod_connectivity_config, dependent: :destroy
 
   validates :scheduling_amount_per_period, numericality: { only_integer: true, greater_than: 0 }
 
   before_create :create_ids
+  after_create :create_pod_connectivity_config
+
   after_save :send_event
   after_save :check_ip_changed
   after_save :update_versions, if: :saved_change_to_update_group_id?
@@ -72,6 +77,10 @@ class Client < ApplicationRecord
   scope :where_in_service, -> { where(in_service: true) }
   scope :where_not_in_service, -> { where(in_service: false) }
   scope :where_no_account, -> { where("account_id IS NULL") }
+
+  def pod_connectivity_config
+    super || create_pod_connectivity_config
+  end
 
   def secret=(unencrypted_secret)
     # Manually set secret, to use our custom cost on BCrypt hasher

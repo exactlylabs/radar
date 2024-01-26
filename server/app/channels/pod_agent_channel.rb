@@ -8,7 +8,9 @@ class PodAgentChannel < ApplicationCable::Channel
   def self.broadcast_test_requested(client)
     ActionCable.server.broadcast(
       PodAgentChannel.agent_stream_name(client),
-      {event: "test_requested", payload: {}}
+      {event: "test_requested", payload: {
+        interfaces: test_allowed_interfaces(client)
+      }}
     )
   end
 
@@ -69,6 +71,17 @@ class PodAgentChannel < ApplicationCable::Channel
     # Check client Version Id
     version_id = ClientVersion.where(version: data["version"]).pluck(:id).first
     watchdog_version_id = WatchdogVersion.where(version: data["watchdog_version"]).pluck(:id).first
+
+    data["net_interfaces"].each do |interface|
+      self.client.pod_network_interfaces.upsert({
+        name: interface["name"],
+        mac_address: interface["mac"],
+        ips: interface["ips"],
+        wireless: interface["is_wlan"],
+        default: interface["default"],
+      }, unique_by: [:client_id, :name], returning: nil)
+    end
+
     self.client.update(
       raw_version:  data["version"],
       raw_watchdog_version: data["watchdog_version"],
@@ -102,6 +115,9 @@ class PodAgentChannel < ApplicationCable::Channel
     self.connection.transmit(
       {
         type: "run_test",
+        message: {
+          "interfaces": self.class.test_allowed_interfaces(self.client)
+        }
       }
     )
   end
@@ -134,6 +150,16 @@ class PodAgentChannel < ApplicationCable::Channel
 
   def self.agent_stream_name(client)
     "agent_stream_#{client.unix_user}"
+  end
+
+  def self.test_allowed_interfaces(client)
+    # Keep the original behavior when not a managed pod
+    return nil unless client.has_watchdog?
+
+    ifaces = ["default"] # Default route (We assume it's the wired interface -- eth0/enp4s0/etc...)
+    if client.pod_connectivity_config.wlan_enabled && client.pod_connectivity_config.wlan_interface.present?
+      ifaces << client.pod_connectivity_config.wlan_interface.name
+    end
   end
 
 end
