@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/exactlylabs/radar/pods_agent/watchdog"
 )
 
@@ -15,7 +15,7 @@ type devSysManager struct {
 	LogindConf          []byte
 	WatchdogServiceFile []byte
 	RCLocal             []byte
-	Interfaces_         []sysinfo.NetInterface
+	Interfaces_         network.NetInterfaces
 	AuthLogFile         []byte
 	Tz                  *time.Location
 }
@@ -95,7 +95,7 @@ func (dm *devSysManager) SetRCLocal(data []byte) error {
 	return nil
 }
 
-func (dm *devSysManager) Interfaces() ([]sysinfo.NetInterface, error) {
+func (dm *devSysManager) Interfaces() (network.NetInterfaces, error) {
 	return dm.Interfaces_, nil
 }
 
