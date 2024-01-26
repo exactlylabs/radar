@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+	"net"
 	"strings"
 	"time"
 
@@ -101,11 +102,21 @@ func (r *ndt7Runner) Type() string {
 	return "NDT7"
 }
 
+// RunForInterface implements agent.Runner.
 func (r *ndt7Runner) Run(ctx context.Context) (*agent.Measurement, error) {
-	log.Println("NDT7 - Starting Speed Test")
+	return r.RunForInterface(ctx, "")
+}
+
+func (r *ndt7Runner) RunForInterface(ctx context.Context, name string) (*agent.Measurement, error) {
+	log.Println("NDT7 - Starting Speed Test for Interface:", name)
 	log.Println("NDT7 - Starting Download Test")
 	client := ndt7.NewClient(clientName, sysinfo.Metadata().Version)
 	client.Scheme = defaultSchemeForArch()
+	if name != "" {
+		if err := configureClientForInterface(client, name); err != nil {
+			return nil, errors.W(err)
+		}
+	}
 	b := &bytes.Buffer{}
 	err := r.runTest(ctx, b, client.StartDownload)
 	if errors.Is(err, ndt7.ErrNoTargets) {
@@ -148,7 +159,7 @@ func (r *ndt7Runner) Run(ctx context.Context) (*agent.Measurement, error) {
 	if err != nil {
 		return nil, errors.W(err)
 	}
-	log.Println("NDT7 - Speed Test Finished")
+	log.Println("NDT7 - Speed Test Finished for Interface:", name)
 	res, err := io.ReadAll(b)
 	if err != nil {
 		return nil, errors.Wrap(err, "reading buffer")
@@ -169,4 +180,31 @@ func defaultSchemeForArch() string {
 		return "wss"
 	}
 	return "ws"
+}
+
+func configureClientForInterface(cli *ndt7.Client, name string) error {
+	iface, err := net.InterfaceByName(name)
+	if err != nil {
+		return errors.W(err)
+	}
+	addrs, err := iface.Addrs()
+	if err != nil {
+		return errors.W(err)
+	}
+	if len(addrs) == 0 {
+		return agent.ErrInterfaceNotConnected
+	}
+
+	tcpAddr := &net.TCPAddr{}
+	for _, addr := range addrs {
+		if ipAddr, ok := addr.(*net.IPNet); ok {
+			if ipAddr.IP.IsGlobalUnicast() {
+				tcpAddr.IP = ipAddr.IP
+			}
+		}
+	}
+	log.Printf("NDT7 - Interface %s, binding to IP %s\n", name, tcpAddr)
+	dialer := &net.Dialer{LocalAddr: tcpAddr}
+	cli.Dialer.NetDialContext = dialer.DialContext
+	return nil
 }
