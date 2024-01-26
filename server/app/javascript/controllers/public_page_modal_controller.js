@@ -84,8 +84,10 @@ export default class extends Controller {
       this.otherStateInputTarget.removeAttribute('hidden');
       this.otherStateInputTarget.removeAttribute('disabled');
       this.countiesSelectTarget.setAttribute('disabled', 'disabled');
-      this.countiesSelectTarget.setAttribute('hidden', 'hidden');
-      this.countiesSelectTarget.value = 'other';
+      const otherOption = document.createElement('option');
+      otherOption.value = 'other';
+      otherOption.innerHTML = 'Other county';
+      this.countiesSelectTarget.appendChild(otherOption);
       this.otherCountyInputTarget.removeAttribute('hidden');
       this.otherCountyInputTarget.removeAttribute('disabled');
       return;
@@ -176,7 +178,6 @@ export default class extends Controller {
       this.stateSelectTarget.dataset.error = 'false';
       if(selectedState === 'other') {
         completedStates.push(this.isInputFilled('other-state'));
-        completedStates.push(this.isInputFilled('other-county'));
       } else {
         completedStates.push(true);
       }
