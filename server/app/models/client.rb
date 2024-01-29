@@ -68,7 +68,19 @@ class Client < ApplicationRecord
     where.not(id: REDIS.zrangebyscore(Client::REDIS_PING_SET_NAME, (PING_DURATION * 1.5).second.ago.to_i, Time.now.to_i))
   }
   scope :where_test_should_be_requested, lambda {
-    where('(test_scheduled_at <= ? OR test_scheduled_at IS NULL) AND (test_requested = false AND in_service = true)', Time.now)
+    where(%{
+      (test_scheduled_at <= NOW() AT TIME ZONE COALESCE(test_allowed_time_tz, 'UTC') OR test_scheduled_at IS NULL) AND (test_requested = false AND in_service = true)
+      AND (
+        (test_allowed_time_end IS NULL AND test_allowed_time_start IS NULL)
+        OR (
+          CASE WHEN test_allowed_time_end < test_allowed_time_start THEN
+            ((NOW() AT TIME ZONE COALESCE(test_allowed_time_tz, 'UTC'))::time NOT BETWEEN test_allowed_time_end AND test_allowed_time_start)
+          ELSE
+            ((NOW() AT TIME ZONE COALESCE(test_allowed_time_tz, 'UTC'))::time BETWEEN test_allowed_time_start AND test_allowed_time_end)
+          END
+        )
+      )
+    })
   }
   scope :where_online, -> { where(online: true) }
   scope :where_offline, -> { where(online: false) }
