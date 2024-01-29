@@ -32,6 +32,7 @@ module ClientApi
       # we can respond with tests inside that bounding box
       def tests_with_bounds
         is_global = params[:global]
+        dots = (params[:dots] || 1500).to_i
         sw_lat = params[:sw_lat]
         sw_lng = params[:sw_lng]
         ne_lat = params[:ne_lat]
@@ -63,7 +64,7 @@ module ClientApi
           if !is_global
             sql += " AND tested_by = #{@widget_client.id}"
           end
-          sql += " ORDER BY tested_at DESC LIMIT 500 "
+          sql += " ORDER BY tested_at DESC LIMIT #{dots} "
           @speed_tests = ActiveRecord::Base.connection.execute(sql)
         end
         respond_to do |format|
