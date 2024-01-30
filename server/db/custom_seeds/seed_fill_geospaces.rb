@@ -28,15 +28,13 @@ def import_from_url(filename, ns, url)
     end
     RGeo::Shapefile::Reader.open(File.join(dir, filename)) do |shape|
       shape.each do |record|
-        if Geospace.where(geoid: record.attributes["GEOID"]).exists?
-          next
-        end
-        Geospace.create(
+      Geospace.upsert({
           name: record.attributes.include?('NAMELSAD') ? record.attributes["NAMELSAD"] : record.attributes["NAME"],
           namespace: ns,
           geom: record.geometry,
           geoid: record.attributes["GEOID"],
-        )
+
+        }, unique_by: [:namespace, :geoid])
       end
     end
   end
@@ -44,25 +42,32 @@ end
 
 # US
 
-url="https://www2.census.gov/geo/tiger/GENZ2022/shp/cb_2022_us_nation_5m.zip"
-import_from_url("cb_2022_us_nation_5m", "country", url)
+url="https://www2.census.gov/geo/tiger/GENZ2023/shp/cb_2023_us_nation_5m.zip"
+import_from_url("cb_2023_us_nation_5m", "country", url)
 
 # States
 
-url="https://www2.census.gov/geo/tiger/TIGER2022/STATE/tl_2022_us_state.zip"
-import_from_url("tl_2022_us_state", "state", url)
+url="https://www2.census.gov/geo/tiger/TIGER2023/STATE/tl_2023_us_state.zip"
+import_from_url("tl_2023_us_state", "state", url)
 
 # Counties
 
-url="https://www2.census.gov/geo/tiger/TIGER2022/COUNTY/tl_2022_us_county.zip"
-import_from_url("tl_2022_us_county", "county", url)
+url="https://www2.census.gov/geo/tiger/TIGER2023/COUNTY/tl_2023_us_county.zip"
+import_from_url("tl_2023_us_county", "county", url)
 
 
 # Census Places
 
 (1..78).each do |fips|
   fips = fips.to_s.rjust(2, "0")
-  url="https://www2.census.gov/geo/tiger/TIGER2022/PLACE/tl_2022_#{fips}_place.zip"
-  import_from_url("tl_2022_#{fips}_place", "census_place", url)  
+  url="https://www2.census.gov/geo/tiger/TIGER2023/PLACE/tl_2023_#{fips}_place.zip"
+  import_from_url("tl_2023_#{fips}_place", "census_place", url)
 end
 
+# Census Tracts
+
+(1..78).each do |fips|
+  fips = fips.to_s.rjust(2, "0")
+  url="https://www2.census.gov/geo/tiger/TIGER2023/TRACT/tl_2023_#{fips}_tract.zip"
+  import_from_url("tl_2023_#{fips}_tract", "census_tract", url)
+end
