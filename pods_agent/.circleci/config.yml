@@ -15,7 +15,7 @@ jobs:
   run_unit_tests:
     working_directory: ~/repo
     docker:
-      - image: cimg/go:1.18.2
+      - image: cimg/go:1.21.6
     steps:
       - build_config
       - run: cd pods_agent && go test ./...
@@ -34,7 +34,7 @@ jobs:
     working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
-      - image: cimg/go:1.18.2
+      - image: cimg/go:1.21.6
     parameters:
       version:
         type: string
@@ -63,7 +63,7 @@ jobs:
     working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
-      - image: cimg/go:1.18.2
+      - image: cimg/go:1.21.6
     parameters:
       version:
         type: string
@@ -101,7 +101,7 @@ jobs:
     working_directory: ~/repo
     docker:
       # Available Images: https://circleci.com/developer/images/image/cimg/go
-      - image: cimg/go:1.18.2
+      - image: cimg/go:1.21.6
     parameters:
       version:
         type: string
@@ -168,8 +168,8 @@ jobs:
         type: string
     steps:
       - build_config
-      - run: curl -L https://go.dev/dl/go1.18.3.darwin-amd64.pkg --output go1.18.3.darwin-amd64.pkg
-      - run: sudo installer -pkg go1.18.3.darwin-amd64.pkg -target /
+      - run: curl -L https://go.dev/dl/go1.21.6.darwin-amd64.pkg --output go1.21.6.darwin-amd64.pkg
+      - run: sudo installer -pkg go1.21.6.darwin-amd64.pkg -target /
       - run: echo $APP_P12_FILE | base64 -d > ~/repo/application.p12
       - run: echo $INSTALLER_P12_FILE | base64 -d > ~/repo/installer.p12
       - run: echo $APP_CERT_FILE | base64 -d > ~/repo/application.cer
@@ -202,7 +202,7 @@ jobs:
   msi_package:
     working_directory: ~/repo
     docker:
-      - image: cimg/go:1.18.2
+      - image: cimg/go:1.21.6
     parameters:
       version:
         type: string
