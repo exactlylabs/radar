@@ -58,6 +58,7 @@ class TakeSpeedTestStep extends StatelessWidget {
                       state.responses,
                       state.positionBeforeSpeedTest,
                       state.positionAfterSpeedTest,
+                      state.deviceAndPermissionsState,
                     );
               }
             },

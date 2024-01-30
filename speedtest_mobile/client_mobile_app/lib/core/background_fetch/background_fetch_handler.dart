@@ -104,8 +104,10 @@ class BackgroundFetchListener implements Listener {
       localStorage: _localStorage,
       httpProvider: _httpProvider,
       networkConnectionInfo: _networkConnectionInfo,
+      configurationMonitoring: _configurationMonitoring,
     );
   }
+
   late final RestClient _restClient;
   late final LocalStorage _localStorage;
   late final IHttpProvider _httpProvider;

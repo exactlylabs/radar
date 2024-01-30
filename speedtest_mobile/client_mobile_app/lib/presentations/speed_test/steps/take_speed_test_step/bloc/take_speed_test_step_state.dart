@@ -21,6 +21,7 @@ class TakeSpeedTestStepState {
     this.connectionInfo,
     this.positionBeforeSpeedTest,
     this.positionAfterSpeedTest,
+    this.deviceAndPermissionsState,
   });
 
   TakeSpeedTestStepState copyWith({
@@ -42,6 +43,7 @@ class TakeSpeedTestStepState {
     ConnectionInfo? connectionInfo,
     Position? positionBeforeSpeedTest,
     Position? positionAfterSpeedTest,
+    Map<String, dynamic>? deviceAndPermissionsState,
   }) {
     return TakeSpeedTestStepState(
       finishedTesting: finishedTesting ?? this.finishedTesting,
@@ -62,6 +64,7 @@ class TakeSpeedTestStepState {
       connectionInfo: connectionInfo ?? this.connectionInfo,
       positionBeforeSpeedTest: positionBeforeSpeedTest ?? this.positionBeforeSpeedTest,
       positionAfterSpeedTest: positionAfterSpeedTest ?? this.positionAfterSpeedTest,
+      deviceAndPermissionsState: deviceAndPermissionsState ?? this.deviceAndPermissionsState,
     );
   }
 
@@ -83,4 +86,5 @@ class TakeSpeedTestStepState {
   final ConnectionInfo? connectionInfo;
   final Position? positionBeforeSpeedTest;
   final Position? positionAfterSpeedTest;
+  final Map<String, dynamic>? deviceAndPermissionsState;
 }
