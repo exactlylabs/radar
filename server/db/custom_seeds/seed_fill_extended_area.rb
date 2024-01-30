@@ -3,7 +3,6 @@ require 'csv'
 STUDY_STATES = ["AK", "WV", "MI", "TX"]
 
 CSV.foreach(Rails.root.join("db", "custom_seeds", "files", "hrsa_rural_list.csv"), headers: true, col_sep: ";") do |row|
-  # if STUDY_STATES.include? row["ST"]
   expanded_study_area = STUDY_STATES.include? row["ST"]
   if row["CT"].blank? # Whole county is designated as a rural area
     begin
