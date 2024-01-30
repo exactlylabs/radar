@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_29_220118) do
+ActiveRecord::Schema.define(version: 2024_01_30_165248) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -330,10 +330,13 @@ ActiveRecord::Schema.define(version: 2024_01_29_220118) do
     t.geometry "geom", limit: {:srid=>0, :type=>"geometry"}
     t.string "geoid"
     t.integer "gid"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.boolean "study_geospace", default: false
+    t.boolean "hrsa_designated_rural_area", default: false
+    t.boolean "expanded_study_area", default: false
     t.index "st_setsrid(geom, 4326)", name: "index_geospaces_on_st_setsrid_geom_4326", using: :gist
+    t.index ["namespace", "geoid"], name: "index_geospaces_on_namespace_and_geoid", unique: true
   end
 
   create_table "geospaces_locations", id: false, force: :cascade do |t|
