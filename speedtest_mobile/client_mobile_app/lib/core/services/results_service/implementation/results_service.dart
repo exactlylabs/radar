@@ -29,14 +29,14 @@ class ResultsService implements IResultsService {
   }
 
   @override
-  void addResult(
-      List<Map<String, dynamic>> responses, TestResult result, ConnectionInfo? connectionInfo) {
+  void addResult(List<Map<String, dynamic>> responses, TestResult result,
+      ConnectionInfo? connectionInfo, Map<String, dynamic>? deviceAndPermissionsState) {
     _localStorage.addSpeedTestResult(result.toJson());
     _httpProvider
         .postAndDecode(
       url: _restClient.speedTest,
       headers: {'Content-Type': 'application/json'},
-      body: _buildBody(responses, result, connectionInfo),
+      body: _buildBody(responses, result, connectionInfo, deviceAndPermissionsState),
     )
         .then((failureOrSuccess) {
       if (failureOrSuccess.failure != null) {
@@ -46,12 +46,13 @@ class ResultsService implements IResultsService {
     });
   }
 
-  Map<String, dynamic> _buildBody(
-      List<Map<String, dynamic>> responses, TestResult result, ConnectionInfo? connectionInfo) {
+  Map<String, dynamic> _buildBody(List<Map<String, dynamic>> responses, TestResult result,
+      ConnectionInfo? connectionInfo, Map<String, dynamic>? deviceAndPermissionsState) {
     return {
       'result': {'raw': responses},
       'speed_test': result.toJsonServer(),
       'connection_data': connectionInfo?.toJson(),
+      'permissions': deviceAndPermissionsState,
       'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }

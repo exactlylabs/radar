@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
+import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/core/ndt7-client-dart/ndt7_client_dart.dart';
 import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test_step/bloc/take_speed_test_step_state.dart';
@@ -13,16 +14,23 @@ import 'package:client_mobile_app/presentations/speed_test/steps/take_speed_test
 class TakeSpeedTestStepCubit extends Cubit<TakeSpeedTestStepState> {
   TakeSpeedTestStepCubit({
     required NetworkConnectionInfo networkConnectionInfo,
+    required ConfigurationMonitoring configurationMonitoring,
   })  : _networkConnectionInfo = networkConnectionInfo,
+        _configurationMonitoring = configurationMonitoring,
         super(const TakeSpeedTestStepState());
 
   final NetworkConnectionInfo _networkConnectionInfo;
+  final ConfigurationMonitoring _configurationMonitoring;
 
   void startTest() async {
     final positionBeforeSpeedTest = await _getCurrentLocation();
-    if (positionBeforeSpeedTest != null) {
-      emit(state.copyWith(positionBeforeSpeedTest: positionBeforeSpeedTest));
-    }
+    final deviceAndPermissionsState = await _configurationMonitoring.getDeviceAndPermissionsState();
+
+    emit(state.copyWith(
+      positionBeforeSpeedTest: positionBeforeSpeedTest,
+      deviceAndPermissionsState: deviceAndPermissionsState,
+    ));
+
     await test(
       config: {'protocol': 'wss'},
       onMeasurement: (data) => onTestMeasurement(data),

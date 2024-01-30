@@ -5,6 +5,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
+import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:network_connection_info/models/connection_info.dart' as CI;
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
@@ -17,15 +18,18 @@ class BackgroundSpeedTest {
     required LocalStorage localStorage,
     required IHttpProvider httpProvider,
     required NetworkConnectionInfo networkConnectionInfo,
+    required ConfigurationMonitoring configurationMonitoring,
   })  : _restClient = restClient,
         _localStorage = localStorage,
         _httpProvider = httpProvider,
-        _networkConnectionInfo = networkConnectionInfo;
+        _networkConnectionInfo = networkConnectionInfo,
+        _configurationMonitoring = configurationMonitoring;
 
   final RestClient _restClient;
   final LocalStorage _localStorage;
   final IHttpProvider _httpProvider;
   final NetworkConnectionInfo _networkConnectionInfo;
+  final ConfigurationMonitoring _configurationMonitoring;
 
   PackageInfo? _packageInfo;
   Position? _positionAfterSpeedTest;
@@ -33,6 +37,7 @@ class BackgroundSpeedTest {
   Position? _position;
   StreamSubscription<Position>? _positionStreamSubscription;
   CI.ConnectionInfo? _connectionInfo;
+  Map<String, dynamic>? _deviceAndPermissionsState;
   String? _sessionId;
   List<Map<String, dynamic>> _responses = [];
 
@@ -42,6 +47,7 @@ class BackgroundSpeedTest {
   Future<void> startSpeedTest() async {
     _positionBeforeSpeedTest = await _getPosition();
     if (_positionBeforeSpeedTest == null) return;
+    _deviceAndPermissionsState = await _configurationMonitoring.getDeviceAndPermissionsState();
     _packageInfo = await PackageInfo.fromPlatform();
     _testingState = (isTestingDownloadSpeed: true, isTestingUploadSpeed: false);
     await test(
@@ -200,6 +206,7 @@ class BackgroundSpeedTest {
         'background_mode': true,
       },
       'connection_data': _connectionInfo?.toJson(),
+      'permissions': _deviceAndPermissionsState,
       'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
   }

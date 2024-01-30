@@ -11,6 +11,7 @@ module ClientApi
         @speed_test.ip = request.remote_ip
         @speed_test.lonlat = "POINT(#{params[:speed_test][:longitude]} #{params[:speed_test][:latitude]})"
         @speed_test.connection_data = params[:connection_data]
+        @speed_test.permissions = params[:permissions]
         @speed_test.tested_by = params[:client_id]
         filename = "speed-test-#{params[:timestamp]}.json"
         json_content = params[:result].to_json

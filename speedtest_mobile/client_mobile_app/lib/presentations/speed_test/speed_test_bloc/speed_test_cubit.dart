@@ -99,15 +99,17 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
   }
 
   void saveResults(
-      double downloadSpeed,
-      double uploadSpeed,
-      double latency,
-      double loss,
-      String? networkQuality,
-      ConnectionInfo? connectionInfo,
-      List<Map<String, dynamic>> responses,
-      Position? positionBefore,
-      Position? positionAfter) {
+    double downloadSpeed,
+    double uploadSpeed,
+    double latency,
+    double loss,
+    String? networkQuality,
+    ConnectionInfo? connectionInfo,
+    List<Map<String, dynamic>> responses,
+    Position? positionBefore,
+    Position? positionAfter,
+    Map<String, dynamic>? deviceAndPermissionsState,
+  ) {
     Location? locationBefore;
     Location? locationAfter;
 
@@ -137,7 +139,7 @@ class SpeedTestCubit extends Cubit<SpeedTestState> {
       sessionId: state.sessionId ?? Strings.emptyString,
     );
 
-    _resultsService.addResult(responses, result, connectionInfo);
+    _resultsService.addResult(responses, result, connectionInfo, deviceAndPermissionsState);
   }
 
   void endForm() {

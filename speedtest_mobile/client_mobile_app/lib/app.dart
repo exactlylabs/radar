@@ -93,6 +93,7 @@ class App extends StatelessWidget {
           BlocProvider(
             create: (context) => TakeSpeedTestStepCubit(
               networkConnectionInfo: networkConnectionInfo,
+              configurationMonitoring: configurationMonitoring,
             ),
           ),
         ],
