@@ -56,7 +56,7 @@ class DiscordNotifier < EventsNotifier::Notifier
   end
 
   def notify_new_location(location_info)
-    if !location_info.location.study_state?
+    if !location_info.location.study_county?
       return
     end
 
@@ -78,8 +78,8 @@ class DiscordNotifier < EventsNotifier::Notifier
   end
 
   def notify_location_online(location_info)
-    client = location_info.location.study_state? ? @tbp_alerts_client : @client
-    fill_fn = location_info.location.study_state? ? method(:fill_study_online_notification_fieldset) : method(:fill_online_notification_fieldset)
+    client = location_info.location.study_county? ? @tbp_alerts_client : @client
+    fill_fn = location_info.location.study_county? ? method(:fill_study_online_notification_fieldset) : method(:fill_online_notification_fieldset)
 
     client.execute do |builder|
       builder.add_embed do |embed|
@@ -94,8 +94,8 @@ class DiscordNotifier < EventsNotifier::Notifier
   end
 
   def notify_location_offline(location_info)
-    client = location_info.location.study_state? ? @tbp_alerts_client : @client
-    fill_fn = location_info.location.study_state? ? method(:fill_study_online_notification_fieldset) : method(:fill_online_notification_fieldset)
+    client = location_info.location.study_county? ? @tbp_alerts_client : @client
+    fill_fn = location_info.location.study_county? ? method(:fill_study_online_notification_fieldset) : method(:fill_online_notification_fieldset)
 
     client.execute do |builder|
       builder.add_embed do |embed|
