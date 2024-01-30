@@ -1,0 +1,8 @@
+with-expecter: true
+packages:
+    github.com/exactlylabs/radar/pods_agent/watchdog:
+      interfaces:
+          SystemManager:
+              config:
+                dir: "watchdog/mocks"
+                outpkg: "mocks"

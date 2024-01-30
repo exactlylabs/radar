@@ -9,7 +9,7 @@ import (
 	"github.com/exactlylabs/radar/pods_agent/watchdog/mocks"
 )
 
-//go:generate docker run -v "$PWD/..:/src" -w /src vektra/mockery -r --name SystemManager --output ./watchdog/mocks
+//go:generate mockery
 
 func mustReadFile(filePath string) []byte {
 	val, err := OSFS.ReadFile(filePath)
@@ -22,7 +22,7 @@ func mustReadFile(filePath string) []byte {
 var otherTz, _ = time.LoadLocation("America/Sao_Paulo")
 
 func TestScanSystemNoChange(t *testing.T) {
-	m := mocks.NewSystemManager(t)
+	m := mocks.NewMockSystemManager(t)
 	m.On("GetHostname").Return("1234", nil)
 	m.On("GetRCLocal").Return(mustReadFile("osfiles/etc/rc.local"), nil)
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
@@ -45,7 +45,7 @@ func TestScanSystemNoChange(t *testing.T) {
 }
 
 func TestScanSystemHostDiffers(t *testing.T) {
-	m := mocks.NewSystemManager(t)
+	m := mocks.NewMockSystemManager(t)
 	m.On("GetHostname").Return("Test", nil)
 	m.On("GetRCLocal").Return(mustReadFile("osfiles/etc/rc.local"), nil)
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
@@ -69,7 +69,7 @@ func TestScanSystemHostDiffers(t *testing.T) {
 }
 
 func TestScanSystemRCLocalDiffers(t *testing.T) {
-	m := mocks.NewSystemManager(t)
+	m := mocks.NewMockSystemManager(t)
 	m.On("GetHostname").Return("1234", nil)
 	m.On("GetRCLocal").Return([]byte{1, 2}, nil)
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
@@ -93,7 +93,7 @@ func TestScanSystemRCLocalDiffers(t *testing.T) {
 }
 
 func TestScanSystemBootConfigDiffers(t *testing.T) {
-	m := mocks.NewSystemManager(t)
+	m := mocks.NewMockSystemManager(t)
 	m.On("GetHostname").Return("1234", nil)
 	m.On("GetRCLocal").Return(mustReadFile("osfiles/etc/rc.local"), nil)
 	m.On("GetBootConfig").Return([]byte{1, 2, 3}, nil)
@@ -117,7 +117,7 @@ func TestScanSystemBootConfigDiffers(t *testing.T) {
 }
 
 func TestScanSystemCMDLineDiffers(t *testing.T) {
-	m := mocks.NewSystemManager(t)
+	m := mocks.NewMockSystemManager(t)
 	m.On("GetHostname").Return("1234", nil)
 	m.On("GetRCLocal").Return(mustReadFile("osfiles/etc/rc.local"), nil)
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
@@ -141,7 +141,7 @@ func TestScanSystemCMDLineDiffers(t *testing.T) {
 }
 
 func TestScanSystemLogindDiffers(t *testing.T) {
-	m := mocks.NewSystemManager(t)
+	m := mocks.NewMockSystemManager(t)
 	m.On("GetHostname").Return("1234", nil)
 	m.On("GetRCLocal").Return(mustReadFile("osfiles/etc/rc.local"), nil)
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
@@ -165,7 +165,7 @@ func TestScanSystemLogindDiffers(t *testing.T) {
 }
 
 func TestScanSystemMultipleChanged(t *testing.T) {
-	m := mocks.NewSystemManager(t)
+	m := mocks.NewMockSystemManager(t)
 	m.On("GetHostname").Return("aa", nil)
 	m.On("GetRCLocal").Return(mustReadFile("osfiles/etc/rc.local"), nil)
 	m.On("GetBootConfig").Return([]byte("test"), nil)
@@ -190,7 +190,7 @@ func TestScanSystemMultipleChanged(t *testing.T) {
 }
 
 func TestScanSystemTimeZoneChanged(t *testing.T) {
-	m := mocks.NewSystemManager(t)
+	m := mocks.NewMockSystemManager(t)
 	m.On("GetHostname").Return("1234", nil)
 	m.On("GetRCLocal").Return(mustReadFile("osfiles/etc/rc.local"), nil)
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)
@@ -214,7 +214,7 @@ func TestScanSystemTimeZoneChanged(t *testing.T) {
 }
 
 func TestScanSystemTimeZoneReturnedNilNoChange(t *testing.T) {
-	m := mocks.NewSystemManager(t)
+	m := mocks.NewMockSystemManager(t)
 	m.On("GetHostname").Return("1234", nil)
 	m.On("GetRCLocal").Return(mustReadFile("osfiles/etc/rc.local"), nil)
 	m.On("GetBootConfig").Return(mustReadFile("osfiles/boot/config.txt"), nil)

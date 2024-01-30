@@ -50,6 +50,7 @@ last_tested=
 last_updated=
 last_download_speed=
 last_upload_speed=
+wlan_interface=
 `
 	c := &Config{
 		ServerURL: "localhost",
