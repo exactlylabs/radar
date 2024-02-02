@@ -86,7 +86,7 @@ class PublicController < PublicApplicationController
   end
 
   def send_event_to_amplitude
-    return unless Rails.env.production?
+    # return unless Rails.env.production?
     comes_from_toolkit = params[:origin] == 'toolkit'
     url = URI("https://api2.amplitude.com/2/httpapi")
     headers = {
@@ -101,6 +101,7 @@ class PublicController < PublicApplicationController
                    "ip": request.remote_ip,
                    "event_properties": {
                      "comes_from_toolkit": comes_from_toolkit,
+                     "marketing_asset": params[:r],
                    }
                  }],
     }.to_json
