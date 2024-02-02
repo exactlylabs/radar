@@ -21,6 +21,11 @@ module.exports = {
         source: '/Alaska',
         destination: '/',
         permanent: false,
+      },
+      {
+        source: '/it-onboarding',
+        destination: 'https://docs.radartoolkit.com/security/network-access-requirements',
+        permanent: false,
       }
     ]
   }
