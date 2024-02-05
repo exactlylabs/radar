@@ -4,7 +4,7 @@ class LocalNotifier < EventsNotifier::Notifier
   def notify_new_account(account, contact)
     puts %{
       New Account created
-        
+
         * Account Name: #{account.name}
         * Account Type: #{account.account_type.titleize}
         * Contact Name: #{contact.first_name} #{contact.last_name}
@@ -21,7 +21,7 @@ class LocalNotifier < EventsNotifier::Notifier
     }
   end
 
-  
+
 
   def notify_new_location(location_info)
     puts %{
@@ -65,6 +65,26 @@ class LocalNotifier < EventsNotifier::Notifier
       * Location Place: #{location_info&.place&.name}
       * Location Study State?: #{location_info.location.study_state?}
       * Location Extras: #{location_info&.extra}
+    }
+  end
+
+  def notify_public_page_submission(submission)
+    puts %{
+      New Public Page Submission!
+      * First Name: #{submission.first_name}
+      * Last Name: #{submission.last_name}
+      * Email: #{submission.email}
+      * Phone Number: #{submission.phone_number}
+      * State: #{submission.state}
+      * County: #{submission.county}
+      * Consumer Type: #{submission.consumer_type}
+      * Business Name: #{submission.business_name}
+      * ISP: #{submission.isp}
+      * Connection Type: #{submission.connection_type}
+      * Download Speed: #{submission.download_speed}
+      * Upload Speed: #{submission.upload_speed}
+      * Connection Placement: #{submission.connection_placement}
+      * Service Satisfaction: #{submission.service_satisfaction}
     }
   end
 end

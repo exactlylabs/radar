@@ -151,6 +151,37 @@ class DiscordNotifier < EventsNotifier::Notifier
     end
   end
 
+  def notify_public_page_submission(submission)
+    @client.execute do |builder|
+      builder.add_embed do |embed|
+        embed.title = ":new: == New Public Page Submission == :new:"
+        embed.description = "A new user has just submitted a form in the public page"
+        embed.timestamp = Time.now
+        embed.color = 0x23C552
+        add_fieldset embed, "Contact Information" do |fieldset|
+          fieldset.add_field(name: "First Name", value: submission.first_name)
+          fieldset.add_field(name: "Last Name", value: submission.last_name)
+          fieldset.add_field(name: "E-Mail", value: submission.email)
+          fieldset.add_field(name: "Phone Number", value: submission.phone_number)
+        end
+        add_fieldset embed, "Location Information" do |fieldset|
+          fieldset.add_field(name: "State", value: submission.state)
+          fieldset.add_field(name: "County", value: submission.county)
+          fieldset.add_field(name: "Consumer Type", value: submission.consumer_type)
+          fieldset.add_field(name: "Business Name", value: submission.business_name)
+        end
+        add_fieldset embed, "Connection Information" do |fieldset|
+          fieldset.add_field(name: "ISP", value: submission.isp)
+          fieldset.add_field(name: "Connection Type", value: submission.connection_type)
+          fieldset.add_field(name: "Download Speed", value: submission.download_speed)
+          fieldset.add_field(name: "Upload Speed", value: submission.upload_speed)
+          fieldset.add_field(name: "Connection Placement", value: submission.connection_placement)
+          fieldset.add_field(name: "Service Satisfaction", value: submission.service_satisfaction)
+        end
+      end
+    end
+  end
+
   private
 
   def fill_default_location_info(location_info, fieldset)

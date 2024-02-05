@@ -75,11 +75,16 @@ module EventsNotifier
       notifier.notify_location_offline(location_info)
     end
   end
-  
+
   def self.notify_study_goal_reached(geospace, goal, as_org=nil)
     @notifiers.each do |notifier|
       notifier.notify_study_goal_reached(geospace, goal, as_org)
     end
   end
 
+  def self.notify_public_page_submission(submission)
+    @notifiers.each do |notifier|
+      notifier.notify_public_page_submission(submission)
+    end
+  end
 end
