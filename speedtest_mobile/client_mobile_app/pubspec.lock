@@ -133,9 +133,11 @@ packages:
   endless_service:
     dependency: "direct main"
     description:
-      path: "../../../endless_service"
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: f901cfedd5005a58b488900159316d057e56d060
+      url: "https://github.com/exactlylabs/endless_service.git"
+    source: git
     version: "0.0.1"
   fake_async:
     dependency: transitive
