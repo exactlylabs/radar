@@ -34,15 +34,20 @@ class LocalStorage {
 
   Future<void> _openBoxes() async {
     _deviceInfoBox = await Hive.openBox(_deviceInfoBoxName,
-        compactionStrategy: (entries, deletedEntries) => deletedEntries > 1);
+        compactionStrategy: (entries, deletedEntries) =>
+            deletedEntries > _MAX_DEFAULT_DELETED_ENTRIES);
     _preferencesBox = await Hive.openBox(_preferencesBoxName,
-        compactionStrategy: (entries, deletedEntries) => deletedEntries > 1);
+        compactionStrategy: (entries, deletedEntries) =>
+            deletedEntries > _MAX_DEFAULT_DELETED_ENTRIES);
     _speedTestResultsBox = await Hive.openBox(_speedTestResultsBoxName,
-        compactionStrategy: (entries, deletedEntries) => deletedEntries > 1);
+        compactionStrategy: (entries, deletedEntries) =>
+            deletedEntries > _MAX_DEFAULT_DELETED_ENTRIES);
     _backgroundModeSettingsBox = await Hive.openBox(_backgroundModeSettingsBoxName,
-        compactionStrategy: (entries, deletedEntries) => deletedEntries > 1);
+        compactionStrategy: (entries, deletedEntries) =>
+            deletedEntries > _MAX_DEFAULT_DELETED_ENTRIES);
     _pendingSpeedTestResultsBox = await Hive.openBox(_pendingSpeedTestResultsBoxName,
-        compactionStrategy: (entries, deletedEntries) => deletedEntries > 10);
+        compactionStrategy: (entries, deletedEntries) =>
+            deletedEntries > _MAX_PENDING_SPEED_TEST_RESULTS_DELETED_ENTRIES);
   }
 
   bool getFTUEMap() => _preferencesBox.get(_preferencesFTUEMap, defaultValue: true)!;
@@ -102,4 +107,7 @@ class LocalStorage {
   Future<void> removePendingSpeedTestResult(dynamic key) async {
     await _pendingSpeedTestResultsBox.delete(key);
   }
+
+  static const int _MAX_PENDING_SPEED_TEST_RESULTS_DELETED_ENTRIES = 10;
+  static const int _MAX_DEFAULT_DELETED_ENTRIES = 1;
 }
