@@ -144,11 +144,33 @@
         <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
           <%= render partial: "onboard", locals: { step: @onboard_step } %>
         </div>
+        <% if FeatureFlagHelper.is_available('charts', current_user) %>
+          <%= render partial: "dashboard/components/widget_filters" %>
+        <% end %>
         <% if @locations.exists? || params[:filter].present? %>
           <!-- REMOVE -->
           <%= render partial: "application/components/widgets/widget",
               locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
           %>
+        <% end %>
+        <% if FeatureFlagHelper.is_available('charts', current_user) %>
+          <div class="widgets--grid">
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
+            %>
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED }
+            %>
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED }
+            %>
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::LATENCY }
+            %>
+            <%= render partial: "application/components/widgets/widget",
+                       locals: { type: WidgetsHelper::WidgetTypes::DATA_USAGE }
+            %>
+          </div>
         <% end %>
       </div>
     <% else %>
