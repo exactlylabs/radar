@@ -36,27 +36,29 @@
                menu_id: 'network-filter-menu',
                key: 'network_id',
                default_value: nil,
-               default_label: 'All networks',
+               default_label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations',
                pagination: false,
                options: [
-                 { label: 'All networks', value: nil},
+                 { label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations', value: nil},
                  *policy_scope(Location).map {|network| { label: network.name , value: "#{network.id}" }}
                ],
              }
   %>
-  <%= render partial: "application/components/tables/filter",
-             locals: {
-               menu_id: 'category-filter-menu',
-               key: 'category_id',
-               default_value: nil,
-               default_label: 'All categories',
-               pagination: false,
-               options: [
-                 { label: 'All categories', value: nil},
-                 *policy_scope(Category).map {|category| { label: category.name , value: "#{category.id}" }}
-               ],
-             }
-  %>
+  <% unless current_account.is_all_accounts? %>
+    <%= render partial: "application/components/tables/filter",
+               locals: {
+                 menu_id: 'category-filter-menu',
+                 key: 'category_id',
+                 default_value: nil,
+                 default_label: 'All categories',
+                 pagination: false,
+                 options: [
+                   { label: 'All categories', value: nil},
+                   *policy_scope(Category).map {|category| { label: category.name , value: "#{category.id}" }}
+                 ],
+               }
+    %>
+  <% end %>
   <%= render partial: "application/components/tables/filter",
              locals: {
                menu_id: 'isp-filter-menu',
