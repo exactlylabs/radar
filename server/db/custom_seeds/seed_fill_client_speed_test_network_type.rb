@@ -1,12 +1,17 @@
-# frozen_string_literal: true
+sql = %{
+  UPDATE
+      client_speed_tests
+  SET
+      network_type = connection_data->>'connectionType',
+      backfilled = true
+  WHERE
+      network_type IS NULL
+      AND connection_data IS NOT NULL
+      AND connection_data->'connectionType' IS NOT NULL
+}
 
-ClientSpeedTest.transaction do
-  ClientSpeedTest.where(network_type: nil).where.not(connection_data: nil).each do |cst|
-    network_type = cst.connection_data['connectionType']
-    next unless network_type.present?
-
-    cst.network_type = network_type.humanize
-    cst.backfilled = true
-    cst.save!
-  end
-end
+ActiveRecord::Base.connection.execute(
+  ApplicationRecord.sanitize_sql(
+    [sql, {}]
+  )
+)
