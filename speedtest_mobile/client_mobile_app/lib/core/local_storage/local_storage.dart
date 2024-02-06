@@ -27,17 +27,22 @@ class LocalStorage {
 
   Future<void> setLocalStorage() async {
     WidgetsFlutterBinding.ensureInitialized();
-    final directory = await getApplicationCacheDirectory();
+    final directory = await getApplicationDocumentsDirectory();
     Hive.init(directory.path);
     await _openBoxes();
   }
 
   Future<void> _openBoxes() async {
-    _deviceInfoBox = await Hive.openBox(_deviceInfoBoxName);
-    _preferencesBox = await Hive.openBox(_preferencesBoxName);
-    _speedTestResultsBox = await Hive.openBox(_speedTestResultsBoxName);
-    _backgroundModeSettingsBox = await Hive.openBox(_backgroundModeSettingsBoxName);
-    _pendingSpeedTestResultsBox = await Hive.openBox(_pendingSpeedTestResultsBoxName);
+    _deviceInfoBox = await Hive.openBox(_deviceInfoBoxName,
+        compactionStrategy: (entries, deletedEntries) => deletedEntries > 1);
+    _preferencesBox = await Hive.openBox(_preferencesBoxName,
+        compactionStrategy: (entries, deletedEntries) => deletedEntries > 1);
+    _speedTestResultsBox = await Hive.openBox(_speedTestResultsBoxName,
+        compactionStrategy: (entries, deletedEntries) => deletedEntries > 1);
+    _backgroundModeSettingsBox = await Hive.openBox(_backgroundModeSettingsBoxName,
+        compactionStrategy: (entries, deletedEntries) => deletedEntries > 1);
+    _pendingSpeedTestResultsBox = await Hive.openBox(_pendingSpeedTestResultsBoxName,
+        compactionStrategy: (entries, deletedEntries) => deletedEntries > 10);
   }
 
   bool getFTUEMap() => _preferencesBox.get(_preferencesFTUEMap, defaultValue: true)!;
