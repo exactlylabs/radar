@@ -1,4 +1,5 @@
 web: bin/rails server -p ${PORT:-5000} -e $RAILS_ENV
 clock: bin/rails runner clock.rb
 worker: bundle exec sidekiq
+mobile_scans_worker: bundle exec sidekiq -q mobile_scans
 clock_monitor: bin/rails runner clock_monitor.rb
