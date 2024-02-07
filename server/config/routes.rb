@@ -283,6 +283,7 @@ Rails.application.routes.draw do
       post 'coordinates', to: 'geolocation#coordinates'
       get 'user_coordinates', to: 'geolocation#user_coordinates'
       post 'sentry', to: 'sentry#tunnel'
+      mount ActionCable.mobile_server => '/ws'
     end
   end
 
