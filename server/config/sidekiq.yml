@@ -4,5 +4,6 @@ production:
 
 :queues:
     - [default, 2]
+    # mobile_scans -- has its own dedicated worker
     - study_projection
     - notifications
