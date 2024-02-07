@@ -486,6 +486,21 @@ ActiveRecord::Schema.define(version: 2024_02_09_215434) do
     t.index ["study_aggregate_id"], name: "index_metrics_projections_on_study_aggregate_id"
   end
 
+  create_table "mobile_scanned_access_points", force: :cascade do |t|
+    t.string "bssid", null: false
+    t.string "ssid", null: false
+    t.string "capabilities", null: false
+    t.integer "frequency", null: false
+    t.integer "center_freq0", null: false
+    t.integer "center_freq1", null: false
+    t.boolean "is80211mc_responder", null: false
+    t.integer "channel_width", null: false
+    t.boolean "is_passpoint_network", null: false
+    t.integer "wifi_standard", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "ndt7_diagnose_reports", force: :cascade do |t|
     t.bigint "client_id"
     t.jsonb "report"
