@@ -40,6 +40,7 @@ class BackgroundSpeedTest {
       (isTestingDownloadSpeed: false, isTestingUploadSpeed: false);
 
   Future<void> startSpeedTest() async {
+    setInitialValues();
     _positionBeforeSpeedTest = await _getPosition();
     if (_positionBeforeSpeedTest == null) return;
     _packageInfo = await PackageInfo.fromPlatform();
@@ -202,5 +203,13 @@ class BackgroundSpeedTest {
       'connection_data': _connectionInfo?.toJson(),
       'timestamp': DateTime.now().toUtc().toIso8601String(),
     };
+  }
+
+  void setInitialValues() {
+    _responses = [];
+    _sessionId = null;
+    _connectionInfo = null;
+    _positionAfterSpeedTest = null;
+    _positionBeforeSpeedTest = null;
   }
 }
