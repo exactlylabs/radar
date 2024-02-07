@@ -1,0 +1,54 @@
+// WifiScan proto file declares the messages sent by the mobile app to the server when in wifi scanning mode.
+//
+// Ruby Generated code: https://protobuf.dev/reference/ruby/ruby-generated/
+// Generate a new Ruby code by calling:
+//  - protoc --proto_path=app/messages --ruby_out=app/messages app/messages/ws_mobile_messages.proto
+//
+// Parse message with:
+//  - Message.decode(str)
+//
+syntax = "proto3";
+package ws_mobile_messages_pb;
+import "google/protobuf/timestamp.proto";
+
+
+message ScannedAP {
+  string bssid = 1;
+  string ssid = 2;
+  string capabilities = 3;
+  int32 level = 4;
+  int32 frequency = 5;
+  int32 center_freq0 = 6;
+  int32 center_freq1 = 7;
+  bool is80211mc_responder = 8;
+  int32 channel_width = 9;
+  bool is_passpoint_network = 10;
+  bytes information_elements = 11;
+  int32 wifi_standard = 12;
+  google.protobuf.Timestamp timestamp = 13;
+}
+
+message ScanResult {
+  repeated ScannedAP scanned_aps = 1;
+  float latitude = 2;
+  float longitude = 3;
+}
+
+
+enum Events {
+  SCAN_RESULT = 0;
+  SCAN_START = 1;
+  SCAN_STOP = 2;
+  WELCOME = 3;
+  PING = 4;
+  Other = 99;
+}
+
+message WSMessage {
+  Events event = 1;
+  oneof message {
+    ScanResult scan_result = 2;
+    google.protobuf.Timestamp timestamp = 3;
+    string json = 4;
+  }
+}
