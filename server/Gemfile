@@ -96,3 +96,5 @@ gem "wicked_pdf"
 gem "wkhtmltopdf-binary"
 gem "scenic"
 gem 'oauth2'
+
+gem "google-protobuf", "~> 3.21"
