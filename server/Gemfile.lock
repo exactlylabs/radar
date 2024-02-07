@@ -530,6 +530,7 @@ DEPENDENCIES
   foreman
   geocoder
   google-cloud-storage
+  google-protobuf (~> 3.21)
   grpc (= 1.47)
   hotwire-rails
   http
