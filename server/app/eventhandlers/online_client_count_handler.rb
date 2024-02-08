@@ -168,9 +168,9 @@ class OnlineClientCountHandler
     end
   end
 
-  def last_event_for(client_id, timestamp)
-    @last_events[client_id] ||= Event.of(Client).where(aggregate_id: client_id).prior_to(timestamp).last
-    @last_events[client_id]
+  def last_event_for(client, timestamp)
+    @last_events[client.id] ||= Event.from_aggregate(client).prior_to(timestamp).last
+    @last_events[client.id]
   end
 
   def to_be_processed_events()
@@ -184,7 +184,7 @@ class OnlineClientCountHandler
     if event.aggregate_type != Client.name || ![Client::Events::WENT_ONLINE, Client::Events::WENT_OFFLINE].include?(event.name)
       return false
     end
-    return last_event_for(event.aggregate_id, event.timestamp)&.name == event.name
+    return last_event_for(event.aggregate, event.timestamp)&.name == event.name
   end
 
   def new_record!(previous_count, event, increment=0)
