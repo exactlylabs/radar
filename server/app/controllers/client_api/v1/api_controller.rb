@@ -24,7 +24,7 @@ module ClientApi
       protected
 
       def rate_limit
-        client_ip = request.env["REMOTE_ADDR"]
+        client_ip = request.remote_ip
         key = "count:#{client_ip}"
         count = REDIS.get(key)
 
