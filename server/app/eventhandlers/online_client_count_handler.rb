@@ -9,7 +9,7 @@ class OnlineClientCountHandler
     # Cached data to avoid repeated DB queries
     @last_projections = {}
     @locations = {}
-    @last_client_event = {}
+    @pods_status = {}
     @ongoing_system_outage = nil
   end
 
@@ -26,7 +26,6 @@ class OnlineClientCountHandler
   def _aggregate!()
     events = self.to_be_processed_events
     events.each do |event|
-      next if self.is_duplicated_event(event)
       @ongoing_system_outage = SystemOutage.at(event.timestamp).exists? if @ongoing_system_outage.nil?
       begin
         if event.aggregate_type == Client.name
@@ -87,10 +86,15 @@ class OnlineClientCountHandler
       end
 
     when Client::Events::WENT_ONLINE
+      return if pod_was_online?(event.aggregate, event.timestamp)
       self.new_record!(last_count, event, increment=1)
+      @pods_status[event.aggregate.id] = true
 
     when Client::Events::WENT_OFFLINE
+      return unless pod_was_online?(event.aggregate, event.timestamp)
       self.new_record!(last_count, event, increment=-1)
+      @pods_status[event.aggregate.id] = false
+
     end
   end
 
@@ -226,9 +230,12 @@ class OnlineClientCountHandler
     @last_projections["#{count.account_id}-#{count.autonomous_system_id}-#{count.location_id}"] = count
   end
 
-  def last_event_for(client, timestamp)
-    @last_client_event[client.id] ||= Event.from_aggregate(client).prior_to(timestamp).last
-    @last_client_event[client.id]
+  def pod_was_online?(aggregate, timestamp)
+    if @pods_status[aggregate.id].nil?
+      snap = Snapshot.from_aggregate(aggregate).prior_to(timestamp).last
+      @pods_status[aggregate.id] = snap&.state&.fetch("online") || false
+    end
+    @pods_status[aggregate.id]
   end
 
   def to_be_processed_events(**opts)
@@ -239,16 +246,8 @@ class OnlineClientCountHandler
           @consumer_offset.offset, Client.name, SystemOutage.name, Location.name
       ).order('timestamp ASC, version ASC').preload(:snapshot, :aggregate).find_each(batch_size: batch_size) do |event|
         g.yield event
-        @last_client_event[event.aggregate_id] = event if event.aggregate_type == Client.name
       end
     }
-  end
-
-  def is_duplicated_event(event)
-    if event.aggregate_type != Client.name || ![Client::Events::WENT_ONLINE, Client::Events::WENT_OFFLINE].include?(event.name)
-      return false
-    end
-    return last_event_for(event.aggregate, event.timestamp)&.name == event.name
   end
 
   def flush_insertion_queue
