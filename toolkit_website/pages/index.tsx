@@ -15,6 +15,10 @@ const Index = (): ReactElement => {
         <Head>
           <title>Radar - Internet Speed Test and Monitoring for Better Broadband Investments</title>
           <meta name="description" content="Radar helps identify where Internet investment will go the furthest by providing insights into broadband as it is today in your community."/>
+          <meta property="og:title" content="Radar - Internet Speed Test and Monitoring for Better Broadband Investments" />
+          <meta property="og:description" content="Radar helps identify where Internet investment will go the furthest by providing insights into broadband as it is today in your community." />
+          <meta property="og:image" content="./og.png" />
+          
         </Head>
         <Frame smallFooterMarginTop={'0px'}>
           <div style={styles.HomePage}>
