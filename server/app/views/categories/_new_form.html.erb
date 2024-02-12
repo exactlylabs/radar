@@ -6,16 +6,17 @@
         <%= form.hidden_field :color_hex, value: "#4b7be5", "data-categories-target" => "hiddenHexInput" %>
         <%= render partial: "categories/color_picker", locals: {category: Category.new} %>
       </div>
-      <div class="category--list-item-options-container">
+      <div class="category--add-actions-container">
         <button type="button"
                 class="category--edit-button category--edit-cancel-button custom-button custom-button--secondary"
                 data-controller="fetch"
+                data-full-width="true"
                 data-url="<%= category_cancel_new_path %>"
                 data-action="click->fetch#fetchTurbo"
         >
           Cancel
         </button>
-        <button id="category--submit--1" type="submit" class="category--edit-button category--edit-confirm-button custom-button custom-button--primary custom-button--md">
+        <button id="category--submit--1" type="submit" data-full-width="true" class="category--edit-button category--edit-confirm-button custom-button custom-button--primary custom-button--md">
           Save
         </button>
       </div>

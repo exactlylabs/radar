@@ -46,7 +46,7 @@ class CategoriesController < ApplicationController
 
   def cancel_edit
     respond_to do |format|
-      format.html { render partial: "categories/list_item", locals: {category: @category} }
+      format.turbo_stream
     end
   end
 
