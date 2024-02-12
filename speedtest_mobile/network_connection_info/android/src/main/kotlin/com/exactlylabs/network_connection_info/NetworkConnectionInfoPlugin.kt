@@ -36,9 +36,9 @@ class NetworkConnectionInfoPlugin : FlutterPlugin, MethodChannel.MethodCallHandl
     private lateinit var telephonyManager: TelephonyManager
     private lateinit var context: Context
 
-    private val WIFI = "WIFI"
+    private val WIFI = "Wifi"
     private val ANDROID = "Android"
-    private val CELLULAR = "CELLULAR"
+    private val CELLULAR = "Cellular"
     private val PLATFORM = "platform"
     private val CONNECTION_TYPE = "connectionType"
     private val CONNECTION_INFO = "connectionInfo"
