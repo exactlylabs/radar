@@ -207,12 +207,12 @@ const MyPopup = ({
   }
 
   const getNetworkLocationIcon = () => {
-    const networkLocation = placementOptions.find(placement => placement.text === measurement.network_location.toLowerCase());
+    const networkLocation = placementOptions.find(placement => placement.text.toLowerCase() === measurement.network_location.toLowerCase());
     return networkLocation.iconPopupSrc;
   }
 
   const getNetworkTypeIcon = () => {
-    const networkType = types.find(placement => placement.text === measurement.network_type.toLowerCase());
+    const networkType = types.find(placement => placement.text.toLowerCase() === measurement.network_type.toLowerCase());
     return networkType.iconPopupSrc;
   }
 
