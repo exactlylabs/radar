@@ -3,10 +3,21 @@ class CategoriesController < ApplicationController
   before_action :set_category, except: [:index, :new, :cancel_new, :create]
 
   def index
-    if params[:query]
-      @categories = policy_scope(Category).where("name ILIKE ?", "%#{params[:query]}%")
-    else
-      @categories = policy_scope(Category)
+    query = params[:query]
+    @categories = policy_scope(Category)
+
+    if query
+      @categories = @categories.where("name ILIKE ?", "%#{query}%")
+    end
+
+    if current_account.is_all_accounts?
+      @accounts = current_user.accounts.not_deleted
+      @accounts += current_user.shared_accounts.not_deleted
+    end
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
     end
   end
 
@@ -18,6 +29,7 @@ class CategoriesController < ApplicationController
 
   def create
     error = nil
+    @show_account_name = false
     begin
       Category.transaction do
         @category = Category.new category_params
@@ -61,9 +73,8 @@ class CategoriesController < ApplicationController
     respond_to do |format|
       if @category.update(name: params[:category][:name], color_hex: params[:category][:color_hex])
         @notice = "Category updated successfully."
-        @locations = policy_scope(Location).joins(:categories_locations).where(categories_locations: {category_id: @category.id})
+        @locations = policy_scope(Location).joins(:categories_locations).where(categories_locations: { category_id: @category.id })
         format.turbo_stream
-        format.html { render partial: "categories/list_item", locals: {category: @category} }
       else
         format.html { redirect_to "/locations", notice: "Error updating your category. Please try again later." }
       end
@@ -83,6 +94,7 @@ class CategoriesController < ApplicationController
   end
 
   private
+
   def set_category
     @category = policy_scope(Category).find(params[:id])
   end
