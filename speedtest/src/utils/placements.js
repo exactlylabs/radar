@@ -22,7 +22,7 @@ export const placementOptions = [
     iconSelectedSrc: HomeIconSelected,
     iconLightSrc: HomeIconLight,
     iconPopupSrc: HomeIconPopup,
-    text: 'Home',
+    text: 'home',
   },
   {
     id: 1,
@@ -30,7 +30,7 @@ export const placementOptions = [
     iconSelectedSrc: WorkIconSelected,
     iconLightSrc: WorkIconLight,
     iconPopupSrc: WorkIconPopup,
-    text: 'Work',
+    text: 'work',
   },
   {
     id: 2,
@@ -38,7 +38,7 @@ export const placementOptions = [
     iconSelectedSrc: OtherIconSelected,
     iconLightSrc: OtherIconLight,
     iconPopupSrc: OtherIconPopup,
-    text: 'Other',
+    text: 'other',
   },
   {
     id: 3,
@@ -46,6 +46,6 @@ export const placementOptions = [
     iconSelectedSrc: NoneIconSelected,
     iconLightSrc: NoneIconLight,
     iconPopupSrc: NoneIconPopup,
-    text: "I don't have",
+    text: "i don't have",
   },
 ];
