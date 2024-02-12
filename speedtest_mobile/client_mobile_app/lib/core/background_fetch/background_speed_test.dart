@@ -51,8 +51,8 @@ class BackgroundSpeedTest {
   Future<void> startSpeedTest() async {
     setInitialValues();
     _positionBeforeSpeedTest = await _getPosition();
-    _connectionType = await _getConnectionType();
     if (_positionBeforeSpeedTest == null) return;
+    _connectionType = await _getConnectionType();
     _deviceAndPermissionsState = await _configurationMonitoring.getDeviceAndPermissionsState();
     _packageInfo = await PackageInfo.fromPlatform();
     _testingState = (isTestingDownloadSpeed: true, isTestingUploadSpeed: false);
