@@ -1,0 +1,3 @@
+<%= turbo_stream.replace @category do %>
+  <%= render partial: "categories/list_item", locals: {category: @category} %>
+<% end %>
