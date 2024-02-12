@@ -62,7 +62,7 @@ jobs:
       - setup_keystores:
           working_directory: ~/project/speedtest_mobile/client_mobile_app/android
       - flutter/install_sdk_and_pub:
-          version: 3.13.2
+          version: 3.16.9
           app-dir: ~/project/speedtest_mobile/client_mobile_app
       - flutter/install_android_gradle_dependencies:
           app-dir: ~/project/speedtest_mobile/client_mobile_app
@@ -137,7 +137,7 @@ jobs:
       - macos/switch-ruby:
           version: "3.0"
       - flutter/install_sdk_and_pub:
-          version: 3.13.2
+          version: 3.16.9
           app-dir: ~/project/speedtest_mobile/client_mobile_app
       - flutter/install_ios_pod:
           app-dir: ~/project/speedtest_mobile/client_mobile_app
@@ -202,7 +202,7 @@ jobs:
 
   run_unit_tests:
     docker:
-      - image: ghcr.io/cirruslabs/flutter:3.13.2
+      - image: ghcr.io/cirruslabs/flutter:3.16.9
     steps:
       - checkout
       - flutter/install_pub:
