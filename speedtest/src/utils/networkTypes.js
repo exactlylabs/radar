@@ -22,7 +22,7 @@ export const types = [
     iconSelectedThickSrc: WiredSelectedThickIcon,
     iconLightSrc: WiredLightIcon,
     iconPopupSrc: WiredPopupIcon,
-    text: 'Wired',
+    text: 'wired',
   },
   {
     id: 1,
@@ -31,7 +31,7 @@ export const types = [
     iconSelectedThickSrc: WifiSelectedThickIcon,
     iconLightSrc: WifiLightIcon,
     iconPopupSrc: WifiPopupIcon,
-    text: 'Wifi',
+    text: 'wifi',
   },
   {
     id: 2,
@@ -40,6 +40,6 @@ export const types = [
     iconSelectedThickSrc: CellularSelectedThickIcon,
     iconLightSrc: CellularLightIcon,
     iconPopupSrc: CellularPopupIcon,
-    text: 'Cellular',
+    text: 'cellular',
   },
 ];

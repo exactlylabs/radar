@@ -2,11 +2,13 @@ import 'dart:io';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:network_connection_info/models/connection_info.dart' as CI;
+import 'package:client_mobile_app/resources/strings.dart';
 import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
@@ -30,11 +32,13 @@ class BackgroundSpeedTest {
   final IHttpProvider _httpProvider;
   final NetworkConnectionInfo _networkConnectionInfo;
   final ConfigurationMonitoring _configurationMonitoring;
+  final Connectivity _connectivity = Connectivity();
 
   PackageInfo? _packageInfo;
   Position? _positionAfterSpeedTest;
   Position? _positionBeforeSpeedTest;
   Position? _position;
+  String? _connectionType;
   StreamSubscription<Position>? _positionStreamSubscription;
   CI.ConnectionInfo? _connectionInfo;
   Map<String, dynamic>? _deviceAndPermissionsState;
@@ -47,6 +51,7 @@ class BackgroundSpeedTest {
   Future<void> startSpeedTest() async {
     setInitialValues();
     _positionBeforeSpeedTest = await _getPosition();
+    _connectionType = await _getConnectionType();
     if (_positionBeforeSpeedTest == null) return;
     _deviceAndPermissionsState = await _configurationMonitoring.getDeviceAndPermissionsState();
     _packageInfo = await PackageInfo.fromPlatform();
@@ -149,6 +154,19 @@ class BackgroundSpeedTest {
     return _position;
   }
 
+  Future<String?> _getConnectionType() async {
+    final connectivity = await _connectivity.checkConnectivity();
+
+    if (connectivity == ConnectivityResult.wifi) {
+      return Strings.wifiConnectionType;
+    } else if (connectivity == ConnectivityResult.mobile) {
+      return Strings.cellularConnectionType;
+    } else if (connectivity == ConnectivityResult.ethernet) {
+      return Strings.wiredConnectionType;
+    }
+    return null;
+  }
+
   Future<void> _sendSpeedTestResults() async {
     final speedTestResult = getSpeedTestResult();
     final result = await _httpProvider.postAndDecode(
@@ -201,6 +219,7 @@ class BackgroundSpeedTest {
         'heading_after': _positionAfterSpeedTest?.heading,
         'speed_after': _positionAfterSpeedTest?.speed,
         'speed_accuracy_after': _positionAfterSpeedTest?.speedAccuracy,
+        'network_type': _connectionType,
         'version_number': _packageInfo?.version,
         'build_number': _packageInfo?.buildNumber,
         'session_id': _sessionId,
@@ -218,5 +237,6 @@ class BackgroundSpeedTest {
     _connectionInfo = null;
     _positionAfterSpeedTest = null;
     _positionBeforeSpeedTest = null;
+    _connectionType = null;
   }
 }
