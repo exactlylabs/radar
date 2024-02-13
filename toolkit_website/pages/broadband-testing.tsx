@@ -16,9 +16,6 @@ const BroadbandTesting = (): ReactElement => {
         <Head>
           <title>Radar - Broadband Speed Testing for Consumers and Communities</title>
           <meta name="description" content="Find out which areas have the most broadband needs through detailed Internet speed tests and mapping solutions."/>
-          <meta property="og:title" content="Radar - Internet Speed Test and Monitoring for Better Broadband Investments" />
-          <meta property="og:description" content="Find out which areas have the most broadband needs through detailed Internet speed tests and mapping solutions." />
-          <meta property="og:image" content="./og.png" />
         </Head>
         <Frame isDifferentColorFooter>
           <div style={styles.BroadbandTestingPage}>

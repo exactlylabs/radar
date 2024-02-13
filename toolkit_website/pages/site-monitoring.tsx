@@ -13,12 +13,9 @@ const SiteMonitoringPage = (): ReactElement => {
   return (
     <ViewportContextProvider>
       <>
-        <Head>
+      <Head>
           <title>Radar - Remote Monitoring of your Sites' Internet Connectivity</title>
           <meta name="description" content="Ensure sites' Internet connectivity quality matches your expectations through continuous remote monitoring."/>
-          <meta property="og:title" content="Radar - Internet Speed Test and Monitoring for Better Broadband Investments" />
-          <meta property="og:description" content="Ensure sites' Internet connectivity quality matches your expectations through continuous remote monitoring." />
-          <meta property="og:image" content="./og.png" />
         </Head>
         <Frame isDifferentColorFooter>
           <div style={styles.SiteMonitoringPage}>

@@ -19,9 +19,6 @@ const GetStarted = (): ReactElement => {
         <Head>
           <title>Radar - Get Started with Radar Toolkit</title>
           <meta name={'description'} content={'Start using our broadband monitoring and speed testing tools in no time.'}/>
-          <meta property="og:title" content="Radar - Internet Speed Test and Monitoring for Better Broadband Investments" />
-          <meta property="og:description" content="Start using our broadband monitoring and speed testing tools in no time." />
-          <meta property="og:image" content="./og.png" />
         </Head>
         <Frame isDifferentColorFooter
                footerMargin={hasSentEmail ? '280px auto 0' : '40px auto 0'}
