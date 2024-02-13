@@ -447,6 +447,14 @@ ActiveRecord::Schema.define(version: 2024_02_09_215434) do
     t.bigint "autonomous_system_id"
     t.float "loss_rate"
     t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
+    t.boolean "wireless"
+    t.string "interface"
+    t.integer "signal"
+    t.integer "tx_speed"
+    t.integer "frequency"
+    t.integer "channel"
+    t.string "width"
+    t.integer "noise"
     t.index ["account_id", "processed_at"], name: "index_measurements_on_account_id_and_processed_at", order: { processed_at: :desc }
     t.index ["account_id"], name: "index_measurements_on_account_id"
     t.index ["autonomous_system_id"], name: "index_measurements_on_autonomous_system_id"
@@ -519,6 +527,28 @@ ActiveRecord::Schema.define(version: 2024_02_09_215434) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["client_version_id"], name: "index_packages_on_client_version_id"
+  end
+
+  create_table "pod_connectivity_configs", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.bigint "wlan_interface_id"
+    t.boolean "wlan_enabled", default: false
+    t.string "selected_ssid"
+    t.string "current_ssid"
+    t.boolean "wlan_connected", default: false
+    t.index ["client_id"], name: "index_pod_connectivity_configs_on_client_id"
+    t.index ["wlan_interface_id"], name: "index_pod_connectivity_configs_on_wlan_interface_id"
+  end
+
+  create_table "pod_network_interfaces", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.string "name"
+    t.string "mac_address"
+    t.jsonb "ips"
+    t.boolean "wireless", default: false
+    t.boolean "default", default: false
+    t.index ["client_id", "name"], name: "index_pod_network_interfaces_on_client_id_and_name", unique: true
+    t.index ["client_id"], name: "index_pod_network_interfaces_on_client_id"
   end
 
   create_table "public_page_contact_submissions", force: :cascade do |t|
@@ -751,6 +781,9 @@ ActiveRecord::Schema.define(version: 2024_02_09_215434) do
   add_foreign_key "online_client_count_projections", "events"
   add_foreign_key "online_client_count_projections", "locations"
   add_foreign_key "packages", "client_versions"
+  add_foreign_key "pod_connectivity_configs", "clients"
+  add_foreign_key "pod_connectivity_configs", "pod_network_interfaces", column: "wlan_interface_id"
+  add_foreign_key "pod_network_interfaces", "clients"
   add_foreign_key "recent_searches", "clients"
   add_foreign_key "recent_searches", "locations"
   add_foreign_key "recent_searches", "users"
