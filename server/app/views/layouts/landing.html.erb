@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" style="font-size: 16px !important;">
   <head>
-    <title>Radar</title>
+    <title>Radar | Pods</title>
+    <meta property="og:title" content="Radar | Pods"/>
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="<%= request.base_url %>/og.png" />
+    <meta property="og:url" content="<%= request.base_url %>/TBP">
+    <meta property="og:description" content="Telehealth Broadband Pilot Program">
+    <meta property="og:site_name" content="Radar | Pods">
+
+    <%= favicon_link_tag asset_path('favicon.png') %>
+
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
     <script
       src="https://browser.sentry-cdn.com/7.9.0/bundle.min.js"
