@@ -1,15 +1,17 @@
 <% if policy_scope(Category).count == 1 %>
   <%= turbo_stream.update "categories" do %>
-    <%= render partial: "categories/list_item", locals: {category: @category} %>
+    <%= render partial: "categories/list_item", locals: { category: @category } %>
   <% end %>
 <% else %>
   <%= turbo_stream.append "categories" do %>
-    <%= render partial: "categories/list_item", locals: {category: @category} %>
+    <%= render partial: "categories/list_item", locals: { category: @category } %>
+  <% end %>
+  <%= turbo_stream.destroy "account-#{@account_id}-empty-categories" do %>
   <% end %>
 <% end %>
 
-<%= turbo_stream.update "new-category" do %>
-  <%= turbo_frame_tag "new-category" do %>
+<%= turbo_stream.update "new-category-#{@account_id}" do %>
+  <%= turbo_frame_tag "new-category-#{@account_id}" do %>
   <% end %>
 <% end %>
 

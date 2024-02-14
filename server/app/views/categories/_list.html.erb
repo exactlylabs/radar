@@ -1,0 +1,11 @@
+<div class="categories--list-container">
+  <%= turbo_frame_tag "new-category-#{current_account.id}" do %>
+  <% end %>
+  <% if categories&.count > 0 %>
+    <% categories.each do |category| %>
+      <%= render partial: "categories/list_item", locals: { category: category } %>
+    <% end %>
+  <% else %>
+    <%= render partial: "categories/empty_list" %>
+  <% end %>
+</div>

@@ -17,9 +17,9 @@ class CategoryPolicy < ApplicationPolicy
         user.shared_accounts.not_deleted.each do |account|
           all_categories.append(*account.categories.pluck(:id))
         end
-        scope.where(id: all_categories).order(:account_id, :name)
+        scope.where(id: all_categories)
       else
-        scope.where(account_id: @auth_holder.account.id).order(:name)
+        scope.where(account_id: @auth_holder.account.id)
       end
     end
   end
