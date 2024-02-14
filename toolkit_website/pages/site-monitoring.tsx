@@ -13,7 +13,7 @@ const SiteMonitoringPage = (): ReactElement => {
   return (
     <ViewportContextProvider>
       <>
-      <Head>
+        <Head>
           <title>Radar - Remote Monitoring of your Sites' Internet Connectivity</title>
           <meta name="description" content="Ensure sites' Internet connectivity quality matches your expectations through continuous remote monitoring."/>
         </Head>
