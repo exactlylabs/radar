@@ -233,7 +233,6 @@ Rails.application.routes.draw do
     end
   end
 
-
   get 'pending_invites_panel', to: "invites#pending_invites_panel", as: "pending_invites_panel"
   resources :invites do
     member do
@@ -258,12 +257,18 @@ Rails.application.routes.draw do
   get '/location_categories/close_dropdown', to: 'location_categories#close_dropdown', as: 'categories_close_dropdown'
 
   get '/categories/cancel_new', to: 'categories#cancel_new', as: 'category_cancel_new'
+  # get '/categories/import_from_another_account', to: 'categories#import_from_another_account', as: 'categories_import_from_another_account'
+  # post '/categories/import', to: 'categories#import', as: 'categories_import'
+
   resources :categories, param: :id do
+    collection do
+      get 'import_from_another_account', to: 'categories#import_from_another_account'
+      post 'import', to: 'categories#import'
+    end
   end
   get '/categories/:id/delete', to: 'categories#delete', as: 'category_delete'
   get '/categories/:id/edit', to: 'categories#edit', as: 'category_edit'
   get '/categories/:id/cancel', to: 'categories#cancel_edit', as: 'category_cancel_edit'
-
 
   namespace 'api' do
     namespace 'v1' do
@@ -272,7 +277,7 @@ Rails.application.routes.draw do
           mount ActionCable.server => '/ws'
         end
       end
-      resources :client_versions, constraints: {id: /[^\/]+/} do
+      resources :client_versions, constraints: { id: /[^\/]+/ } do
         resources :distributions
         resources :packages
       end

@@ -2,17 +2,25 @@
 <% end %>
 
 <%= turbo_stream.update 'notice-container' do %>
-  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+  <%= render partial: 'application/notice_alert', locals: { notice: @notice } %>
 <% end %>
 
 <% policy_scope(Location).each_with_index do |location, index| %>
   <%= turbo_stream.replace location do %>
-    <%= render partial: 'locations/locations_table_row', locals: {location: location, shows_tooltip: true, row: index} %>
+    <%= render partial: 'locations/locations_table_row', locals: { location: location, shows_tooltip: true, row: index } %>
   <% end %>
 <% end %>
 
-<% if policy_scope(Category).count == 0 %>
-  <%= turbo_stream.update "categories" do %>
-    <%= render partial: "categories/empty_list" %>
+<% if @categories.count == 0 %>
+  <% if current_account.is_all_accounts? %>
+    <%= turbo_stream.update "account-#{@account_id}-empty-categories" do %>
+      <div class="categories--empty-container">
+        <div class="categories--empty-description">No categories</div>
+      </div>
+    <% end %>
+  <% else %>
+    <%= turbo_stream.update "categories" do %>
+      <%= render partial: "categories/empty_list" %>
+    <% end %>
   <% end %>
 <% end %>

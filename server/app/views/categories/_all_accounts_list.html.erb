@@ -1,0 +1,19 @@
+<% categories.each do |account, categories| %>
+  <div class="categories--account-container">
+    <div class="categories--account-name"><%= account.name %></div>
+    <%= link_to "+ Add category", new_category_path(account_id: account.id), data: { method: :get, turbo_stream: true }, class: "categories--account-add-category-button" %>
+  </div>
+  <%= turbo_frame_tag "new-category-#{account.id}" do %>
+  <% end %>
+  <% if categories&.count > 0 %>
+    <% categories.map do |category| %>
+      <%= render partial: "categories/list_item", locals: { category: category } %>
+    <% end %>
+  <% else %>
+    <%= turbo_frame_tag "account-#{account.id}-empty-categories" do %>
+      <div class="categories--empty-container">
+        <div class="categories--empty-description">No categories</div>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

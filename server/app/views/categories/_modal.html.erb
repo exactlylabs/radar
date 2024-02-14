@@ -7,19 +7,20 @@
     >
       <div class="category--search-add-container">
         <%= render partial: "categories/search_input", locals: { url: categories_path, turbo_frame: "categories" } %>
-        <%= render partial: "categories/add_category_button" %>
+        <% unless current_account.is_all_accounts? %>
+          <%= render partial: "categories/add_category_button", locals: { account_id: current_account.id } %>
+        <% end %>
       </div>
-      <%= turbo_frame_tag "new-category" do %>
-      <% end %>
+      <%= link_to "Import from another account…", import_from_another_account_categories_path, { class: "categories--import-button", data: { "turbo-frame" => "import_categories_from_another_account" } } %>
       <%= turbo_frame_tag "categories", class: "category--list-container" do %>
-        <% if categories.count > 0 %>
-          <% categories.each do |category| %>
-            <%= render partial: "categories/list_item", locals: { category: category } %>
-          <% end %>
-        <% elsif params[:query].present? %>
+        <% if params[:query].present? && @categories.count == 0 %>
           <p class="category--empty-state-text">No categories found for "<%= params[:query] %>".</p>
         <% else %>
-          <%= render partial: "categories/empty_list" %>
+          <% if current_account.is_all_accounts? %>
+            <%= render partial: "categories/all_accounts_list", locals: { categories: @categories } %>
+          <% else %>
+            <%= render partial: "categories/list", locals: { categories: @categories } %>
+          <% end %>
         <% end %>
       <% end %>
     </div>

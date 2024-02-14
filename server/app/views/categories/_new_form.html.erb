@@ -1,17 +1,17 @@
-<%= turbo_frame_tag "new-category", class: "category--form-frame-tag" do %>
-  <%= form_with(model: Category.new, url: categories_path, method: :post) do |form| %>
+<%= turbo_frame_tag "new-category-#{account_id}", class: "category--form-frame-tag" do %>
+  <%= form_with(model: Category.new, url: categories_path(account_id: account_id), method: :post) do |form| %>
     <div class="category--list-item-edit">
       <div class="category--list-item-text-container-edit">
         <%= form.text_field :name, class: "category--list-item-input", placeholder: "New Category", autofocus: true, data: { action: "input->categories#checkCategoryName", "category-id": "-1" } %>
         <%= form.hidden_field :color_hex, value: "#4b7be5", "data-categories-target" => "hiddenHexInput" %>
-        <%= render partial: "categories/color_picker", locals: {category: Category.new} %>
+        <%= render partial: "categories/color_picker", locals: { category: Category.new } %>
       </div>
       <div class="category--add-actions-container">
         <button type="button"
                 class="category--edit-button category--edit-cancel-button custom-button custom-button--secondary"
                 data-controller="fetch"
                 data-full-width="true"
-                data-url="<%= category_cancel_new_path %>"
+                data-url="<%= category_cancel_new_path(account_id: account_id) %>"
                 data-action="click->fetch#fetchTurbo"
         >
           Cancel

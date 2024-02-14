@@ -1,7 +1,7 @@
 <button type="button"
   data-controller="fetch"
   class="category--add-button custom-button custom-button--primary custom-button--md"
-  data-url="<%= new_category_path %>"
+  data-url="<%= new_category_path(account_id: account_id) %>"
   data-action="click->fetch#fetchTurbo"
 >
   <%= image_tag image_url("white-plus.png"), class: "category--add-icon" %>

@@ -1,5 +1,6 @@
-<%= turbo_stream.update "new-category" do %>
-  <%= render partial: "categories/new_form" %>
+<p><%= @account_id %></p>
+<%= turbo_stream.update "new-category-#{@account_id}" do %>
+  <%= render partial: "categories/new_form", locals: { account_id: @account_id} %>
 <% end %>
 
 <% if policy_scope(Category).count == 0 %>
