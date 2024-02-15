@@ -1,6 +1,8 @@
 package dev
 
 import (
+	"fmt"
+	"io/fs"
 	"log"
 	"time"
 
@@ -130,4 +132,16 @@ func (dm *devSysManager) TailscaleConnected() (bool, error) {
 
 func (dm *devSysManager) EnsureBinaryPermissions(path string) error {
 	return nil
+}
+
+// EnsurePathPermissions implements watchdog.SystemManager.
+func (*devSysManager) EnsurePathPermissions(path string, mode fs.FileMode) error {
+	fmt.Println("Setting permissions for", path, "to", mode)
+	return nil
+}
+
+// EnsureUserGroups implements watchdog.SystemManager.
+func (*devSysManager) EnsureUserGroups(user string, groups []string) (bool, error) {
+	fmt.Println("Adding user", user, "to groups", groups)
+	return false, nil
 }

@@ -9,6 +9,8 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"os/user"
+	"slices"
 	"strings"
 	"time"
 
@@ -339,6 +341,61 @@ func (si SysInfoManager) TailscaleConnected() (bool, error) {
 
 func (si SysInfoManager) EnsureBinaryPermissions(path string) error {
 	err := os.Chmod(path, 0755)
+	if err != nil {
+		return errors.W(err)
+	}
+	return nil
+}
+
+func (si SysInfoManager) EnsureUserGroups(userStr string, groups []string) (bool, error) {
+	u, err := user.Current()
+	if err != nil {
+		return false, errors.W(err)
+	}
+
+	gids, err := u.GroupIds()
+	if err != nil {
+		return false, errors.W(err)
+	}
+
+	userGroups := make([]string, len(gids))
+	for i, gid := range gids {
+		g, err := user.LookupGroupId(gid)
+		if err != nil {
+			return false, errors.W(err)
+		}
+		userGroups[i] = g.Name
+	}
+
+	missingGroup := false
+	for _, group := range groups {
+		if !slices.Contains(userGroups, group) {
+			missingGroup = true
+			break
+		}
+	}
+
+	if !missingGroup {
+		return false, nil
+	}
+
+	_, err = si.runCommand(exec.Command("usermod", "-aG", strings.Join(groups, ","), userStr))
+	if err != nil {
+		return false, errors.W(err)
+	}
+	return true, nil
+}
+
+func (si SysInfoManager) EnsurePathPermissions(path string, mode os.FileMode) error {
+	info, err := os.Stat(path)
+	if err != nil {
+		return errors.W(err)
+
+	}
+	if info.Mode()&mode == mode {
+		return nil
+	}
+	err = os.Chmod(path, mode)
 	if err != nil {
 		return errors.W(err)
 	}
