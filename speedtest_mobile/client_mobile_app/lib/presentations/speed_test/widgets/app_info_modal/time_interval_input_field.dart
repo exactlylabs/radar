@@ -5,11 +5,13 @@ import 'package:client_mobile_app/resources/app_style.dart';
 class TimeIntervalInputField extends StatefulWidget {
   const TimeIntervalInputField({
     Key? key,
+    this.unit,
     this.frequency,
     this.onChanged,
     this.onBlur,
   }) : super(key: key);
 
+  final String? unit;
   final int? frequency;
   final Function(String)? onChanged;
   final VoidCallback? onBlur;
@@ -87,7 +89,7 @@ class _TimeIntervalInputFieldState extends State<TimeIntervalInputField> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                Strings.timeIntervalInputSufix,
+                widget.unit ?? Strings.timeIntervalInputSufix,
                 style: AppTextStyle(
                   fontSize: 15.0,
                   color: Theme.of(context).colorScheme.primary,

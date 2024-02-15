@@ -4,6 +4,7 @@ import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:configuration_monitoring/configuration_monitoring.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
+import 'package:client_mobile_app/core/web_socket_client/web_socket_client.dart';
 import 'package:client_mobile_app/core/background_fetch/app_state_handler.dart';
 import 'package:client_mobile_app/core/http_provider/implementation/dio_http_provider.dart';
 
@@ -31,5 +32,10 @@ void registerDependencies(String baseUrl) {
 
   if (!sl.isRegistered<ConfigurationMonitoring>()) {
     sl.registerLazySingleton<ConfigurationMonitoring>(() => ConfigurationMonitoring());
+  }
+
+  if (!sl.isRegistered<WebSocketClient>()) {
+    sl.registerLazySingleton<WebSocketClient>(
+        () => WebSocketClient(Uri.parse(sl<RestClient>().ws)));
   }
 }

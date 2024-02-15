@@ -25,6 +25,8 @@ class LocalStorage {
 
   static const String _backgroundModeSettingsFrequency = 'background_mode_settings_frequency';
 
+  static const String _wifiTrackerFrequency = 'wifi_tracker_frequency';
+
   Future<void> setLocalStorage() async {
     WidgetsFlutterBinding.ensureInitialized();
     final directory = await getApplicationDocumentsDirectory();
@@ -107,6 +109,13 @@ class LocalStorage {
   Future<void> removePendingSpeedTestResult(dynamic key) async {
     await _pendingSpeedTestResultsBox.delete(key);
   }
+
+  Future<void> setWifiTrackerFrequency(int frequency) async {
+    await _backgroundModeSettingsBox.put(_wifiTrackerFrequency, frequency);
+  }
+
+  int getWifiTrackerFrequency() =>
+      _backgroundModeSettingsBox.get(_wifiTrackerFrequency, defaultValue: -1)!;
 
   static const int _MAX_PENDING_SPEED_TEST_RESULTS_DELETED_ENTRIES = 10;
   static const int _MAX_DEFAULT_DELETED_ENTRIES = 1;
