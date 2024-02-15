@@ -7,10 +7,9 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:endless_service/endless_service.dart';
 import 'package:client_mobile_app/resources/app_colors.dart';
 import 'package:endless_service/models/endless_service_options.dart';
-import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
-import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
+import 'package:client_mobile_app/core/web_socket_client/web_socket_client.dart';
 import 'package:client_mobile_app/core/flavors/string_resource/i_string_resource.dart';
 import 'package:client_mobile_app/core/flavors/string_resource/string_resource_dev.dart';
 import 'package:client_mobile_app/core/flavors/string_resource/string_resources_stg.dart';
@@ -54,7 +53,7 @@ class WifiTrackerService {
     try {
       EndlessService.setup(
         callback: callback,
-        options: const EndlessServiceOptions(frequency: 3000, forceHandler: true, wifiLock: true),
+        options: EndlessServiceOptions(frequency: frequency, forceHandler: true, wifiLock: true),
         androidNotificationOptions: AndroidNotificationOptions(
           id: 600,
           title: 'Wifi Tracker enabled',
@@ -93,28 +92,25 @@ class WifiTrackerService {
 class WifiTrackerServiceListener implements Listener {
   WifiTrackerServiceListener() {
     GetIt.I<LocalStorage>().setLocalStorage();
-    _restClient = GetIt.I<RestClient>();
     _localStorage = GetIt.I<LocalStorage>();
-    _httpProvider = GetIt.I<IHttpProvider>();
     _networkConnectionInfo = GetIt.I<NetworkConnectionInfo>();
     _configurationMonitoring = GetIt.I<ConfigurationMonitoring>();
+    _webSocketClient = GetIt.I<WebSocketClient>();
     _wifiTracker = WifiTracker(
-      restClient: _restClient,
       localStorage: _localStorage,
-      httpProvider: _httpProvider,
+      webSocketClient: _webSocketClient,
       networkConnectionInfo: _networkConnectionInfo,
     );
   }
-  late final RestClient _restClient;
   late final LocalStorage _localStorage;
-  late final IHttpProvider _httpProvider;
   late final NetworkConnectionInfo _networkConnectionInfo;
   late final ConfigurationMonitoring _configurationMonitoring;
+  late final WebSocketClient _webSocketClient;
   late final WifiTracker _wifiTracker;
 
   @override
   void onStart() {
-    _wifiTracker.setupLocationSettings();
+    _wifiTracker.setupWifiTracking();
   }
 
   @override

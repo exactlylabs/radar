@@ -1,34 +1,33 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
+import 'package:client_mobile_app/core/web_socket_client/web_socket_client.dart';
+import 'package:client_mobile_app/core/ws_mobile_messages/google/protobuf/timestamp.pbserver.dart';
+import 'package:client_mobile_app/core/ws_mobile_messages/ws_mobile_messages.pb.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:network_connection_info/network_connection_info.dart';
-import 'package:client_mobile_app/core/rest_client/rest_client.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
-import 'package:client_mobile_app/core/http_provider/i_http_provider.dart';
 
 class WifiTracker {
   WifiTracker({
-    required RestClient restClient,
     required LocalStorage localStorage,
-    required IHttpProvider httpProvider,
     required NetworkConnectionInfo networkConnectionInfo,
-  })  : _restClient = restClient,
-        _localStorage = localStorage,
-        _httpProvider = httpProvider,
+    required WebSocketClient webSocketClient,
+  })  : _localStorage = localStorage,
+        _webSocketClient = webSocketClient,
         _networkConnectionInfo = networkConnectionInfo;
 
-  final RestClient _restClient;
+  final WebSocketClient _webSocketClient;
   final LocalStorage _localStorage;
-  final IHttpProvider _httpProvider;
   final NetworkConnectionInfo _networkConnectionInfo;
 
   Position? _position;
+  // Position? _currentPosition;
   StreamSubscription<Position>? _positionStreamSubscription;
   List<Map<String, dynamic>> _responses = [];
 
   Future<void> startWifiTracking() async {
+    setInitialValues();
     final scannedWifiResults = await _networkConnectionInfo.getWifiNetworkList();
 
     _responses.addAll(scannedWifiResults);
@@ -36,15 +35,23 @@ class WifiTracker {
   }
 
   void stopWifiTracking() {
+    _webSocketClient.close();
     _positionStreamSubscription?.cancel();
     _positionStreamSubscription = null;
     _position = null;
   }
 
-  void setupLocationSettings() {
+  void setupWifiTracking() {
     if (Platform.isIOS) return;
+    _webSocketClient.open();
+
+    final wsMessage = WSMessage(
+      event: Events.SCAN_START,
+      timestamp: Timestamp.fromDateTime(DateTime.now()),
+    );
+    _webSocketClient.send(wsMessage.writeToBuffer());
     final androidSettings = AndroidSettings(
-      accuracy: LocationAccuracy.best,
+      accuracy: LocationAccuracy.bestForNavigation,
       forceLocationManager: true,
       foregroundNotificationConfig: const ForegroundNotificationConfig(
         notificationText: "",
@@ -60,47 +67,11 @@ class WifiTracker {
         .listen((updatedPosition) {
       _position = updatedPosition;
     });
-
-    _positionStreamSubscription?.pause();
-  }
-
-  Future<Position?> _getPosition() async {
-    if (Platform.isIOS) return null;
-    final permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      final permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        return null;
-      }
-    }
-
-    _position = null;
-    return _getLocationUpdate();
-  }
-
-  Future<Position?> _getLocationUpdate() async {
-    _positionStreamSubscription?.resume();
-
-    int timeout = 1;
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      timeout--;
-      return _position == null && timeout > 0;
-    });
-
-    _positionStreamSubscription?.pause();
-    return _position;
   }
 
   Future<void> _sendScannedWifiResults() async {
-    final scannedWifiResults = await getScannedWifiResults();
-    final jsonScannedWifiResults = jsonEncode(scannedWifiResults);
-    final result = await _httpProvider.postAndDecode(
-      url: _restClient.wifiTracking,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonScannedWifiResults,
-    );
+    final scanResult = await getScannedWifiResults();
+    final result = await _webSocketClient.send(scanResult);
 
     if (result.failure != null) {
       Sentry.captureException(result.failure!);
@@ -109,9 +80,35 @@ class WifiTracker {
     }
   }
 
-  Future<Map<String, dynamic>> getScannedWifiResults() async {
-    return {
-      'result': {'raw': jsonEncode(_responses)}
-    };
+  Future<List<int>> getScannedWifiResults() async {
+    final wsMessage = WSMessage(
+        event: Events.SCAN_RESULT,
+        scanResult: ScanResult(
+          scannedAps: _responses
+              .map((response) => ScannedAP(
+                    bssid: response['bssid'],
+                    ssid: response['ssid'],
+                    capabilities: response['capabilities'],
+                    level: response['level'],
+                    frequency: response['frequency'],
+                    centerFreq0: response['centerFreq0'],
+                    centerFreq1: response['centerFreq1'],
+                    is80211mcResponder: response['is80211mcResponder'],
+                    channelWidth: response['channelWidth'],
+                    isPasspointNetwork: response['isPasspointNetwork'],
+                    wifiStandard: response['wifiStandard'],
+                    timestamp: Timestamp.fromDateTime(
+                        DateTime.fromMillisecondsSinceEpoch(response['timestamp'])),
+                  ))
+              .toList(),
+          latitude: _position?.latitude,
+          longitude: _position?.longitude,
+        ));
+    final wsMessageToByteArray = wsMessage.writeToBuffer();
+    return wsMessageToByteArray;
+  }
+
+  void setInitialValues() {
+    _responses = [];
   }
 }

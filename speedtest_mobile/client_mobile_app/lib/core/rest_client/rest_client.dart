@@ -10,9 +10,12 @@ class RestClient {
 
   String get userCoordinates => _combineUrl(_userCoordinates);
 
-  String get wifiTracking => _combineUrl(_wifiTracking);
-
   String get baseUrl => _baseUrl;
+
+  String get ws {
+    final url = _baseUrl.replaceAll('http://', '').replaceAll('https://', '');
+    return 'ws://$url$_ws';
+  }
 
   String _combineUrl(String url) {
     return _baseUrl + url;
@@ -27,7 +30,7 @@ class RestClient {
 
   static const String _userCoordinates = '/client_api/v1/user_coordinates';
 
-  static const String _wifiTracking = '/client_api/v1/wifi_tracking';
+  static const String _ws = '/client_api/v1/ws';
 
   final String _baseUrl;
 

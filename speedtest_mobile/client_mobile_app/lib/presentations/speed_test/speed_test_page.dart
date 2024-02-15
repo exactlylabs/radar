@@ -1,3 +1,6 @@
+import 'package:client_mobile_app/core/web_socket_client/web_socket_client.dart';
+import 'package:client_mobile_app/core/wifi_tracking/bloc/wifi_tracker_cubit.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/wifi_tracker_modal.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,64 +36,71 @@ class SpeedTestPage extends StatelessWidget {
         backgroundFetchIsEnabled: context.read<BackgroundFetchBloc>().state.isEnabled,
         backgroundFetchFrequency: context.read<BackgroundFetchBloc>().state.delay,
       ),
-      child: BlocBuilder<BackgroundModeCubit, BackgroundModeState>(
-        builder: (context, appInfoModalState) => BlocBuilder<SpeedTestCubit, SpeedTestState>(
-          builder: (context, state) {
-            return Column(
-              children: [
-                AppBar(
-                  centerTitle: true,
-                  toolbarHeight: 50.0,
-                  backgroundColor: Theme.of(context).colorScheme.background,
-                  title: Image.asset(Images.logoGrey, fit: BoxFit.contain),
-                  actions: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: InkWell(
-                        onTap: () => _openInfoModal(
-                            context, state.versionNumber, state.buildNumber, state.sessionId),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(Images.infoGreyIcon),
-                            if (appInfoModalState.backgroundMode &&
-                                appInfoModalState.warnings != null)
-                              SizedBox(
-                                width: 20.0,
-                                height: 20.0,
-                                child: Align(
-                                  alignment: const Alignment(1.2, 1),
-                                  child: Dot(
-                                    color: appInfoModalState.warnings!.isNotEmpty
-                                        ? AppColors.rockfish
-                                        : AppColors.blue,
+      child: BlocProvider<WifiTrackerCubit>(
+        create: (context) => WifiTrackerCubit(
+          localStorage: GetIt.I<LocalStorage>(),
+        ),
+        child: BlocBuilder<BackgroundModeCubit, BackgroundModeState>(
+          builder: (context, appInfoModalState) => BlocBuilder<SpeedTestCubit, SpeedTestState>(
+            builder: (context, state) {
+              return Column(
+                children: [
+                  AppBar(
+                    centerTitle: true,
+                    toolbarHeight: 50.0,
+                    backgroundColor: Theme.of(context).colorScheme.background,
+                    title: InkWell(
+                        onLongPress: () => _openWifiTrackerModal(context),
+                        child: Image.asset(Images.logoGrey, fit: BoxFit.contain)),
+                    actions: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: InkWell(
+                          onTap: () => _openInfoModal(
+                              context, state.versionNumber, state.buildNumber, state.sessionId),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(Images.infoGreyIcon),
+                              if (appInfoModalState.backgroundMode &&
+                                  appInfoModalState.warnings != null)
+                                SizedBox(
+                                  width: 20.0,
+                                  height: 20.0,
+                                  child: Align(
+                                    alignment: const Alignment(1.2, 1),
+                                    child: Dot(
+                                      color: appInfoModalState.warnings!.isNotEmpty
+                                          ? AppColors.rockfish
+                                          : AppColors.blue,
+                                    ),
                                   ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                if (state.isLoadingTerms)
-                  Container()
-                else if (!state.termsAccepted)
-                  const AcceptTermsPage()
-                else if (state.isFormEnded)
-                  const NoInternetConnectionPage()
-                else
-                  SpeedTestForm(
-                    step: state.step,
-                    location: state.location,
-                    isStepValid: state.isStepValid,
-                    networkType: state.networkType,
-                    networkLocation: state.networkLocation,
-                    monthlyBillCost: state.monthlyBillCost,
-                  )
-              ],
-            );
-          },
+                    ],
+                  ),
+                  if (state.isLoadingTerms)
+                    Container()
+                  else if (!state.termsAccepted)
+                    const AcceptTermsPage()
+                  else if (state.isFormEnded)
+                    const NoInternetConnectionPage()
+                  else
+                    SpeedTestForm(
+                      step: state.step,
+                      location: state.location,
+                      isStepValid: state.isStepValid,
+                      networkType: state.networkType,
+                      networkLocation: state.networkLocation,
+                      monthlyBillCost: state.monthlyBillCost,
+                    )
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -119,6 +129,29 @@ class SpeedTestPage extends StatelessWidget {
             buildNumber: buildNumber ?? Strings.emptyString,
             sessionId: sessionId ?? Strings.emptyString,
           ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openWifiTrackerModal(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      enableDrag: true,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
+      builder: (_) => BlocProvider.value(
+        value: context.read<WifiTrackerCubit>(),
+        child: const ModalWithTitle(
+          title: Strings.emptyString,
+          padding: EdgeInsets.zero,
+          body: WifiTrackerModal(),
         ),
       ),
     );
