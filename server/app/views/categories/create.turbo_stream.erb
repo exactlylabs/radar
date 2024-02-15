@@ -6,7 +6,7 @@
   <%= turbo_stream.append "categories" do %>
     <%= render partial: "categories/list_item", locals: { category: @category } %>
   <% end %>
-  <%= turbo_stream.destroy "account-#{@account_id}-empty-categories" do %>
+  <%= turbo_stream.remove "account-#{@account_id}-empty-categories" do %>
   <% end %>
 <% end %>
 
@@ -17,6 +17,6 @@
 
 <%= turbo_stream.replace "location-categories" do %>
   <% policy_scope(Category).each do |category| %>
-    <%= render partial: "location_categories/category_list_item", locals: { category: category, selected: false } %>
+    <%= render partial: "categories/components/category_list_item", locals: { category: category, selected: false } %>
   <% end %>
 <% end %>

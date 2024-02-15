@@ -1,3 +1,10 @@
 <%= turbo_stream.replace "location-categories-dropdown" do %>
-  <%= render partial: "location_categories/categories_dropdown", locals: {categories: @categories, location: @location} %>
+  <%= render partial: "categories/components/categories_dropdown",
+             locals: {
+               categories: @categories,
+               entity_categories: @location&.categories,
+               base_turbo_frame_tag_id: "location-categories-dropdown",
+               categories_turbo_frame_tag_id: "location-categories"
+             }
+  %>
 <% end %>
