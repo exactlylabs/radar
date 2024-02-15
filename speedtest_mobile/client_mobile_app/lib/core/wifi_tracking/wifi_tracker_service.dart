@@ -54,7 +54,7 @@ class WifiTrackerService {
     try {
       EndlessService.setup(
         callback: callback,
-        options: const EndlessServiceOptions(frequency: 1000, forceHandler: true, wifiLock: true),
+        options: const EndlessServiceOptions(frequency: 3000, forceHandler: true, wifiLock: true),
         androidNotificationOptions: AndroidNotificationOptions(
           id: 600,
           title: 'Wifi Tracker enabled',
