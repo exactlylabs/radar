@@ -137,11 +137,7 @@ func sendMeasurement(ctx context.Context, reporter RadarClient, report Measureme
 func getWlanConnInfo(name string) (*wifi.WifiStatus, error) {
 	wlanCli, err := wifi.NewWirelessClient(name)
 	if err != nil {
-		err = errors.W(err)
-		log.Println(err)
-		sentry.NotifyErrorOnce(err, map[string]sentry.Context{
-			"interface": {"name": name},
-		})
+		return nil, errors.W(err)
 	}
 	defer wlanCli.Close()
 	status, err := wlanCli.ConnectionStatus()
