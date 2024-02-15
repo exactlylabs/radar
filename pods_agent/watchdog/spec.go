@@ -2,6 +2,7 @@ package watchdog
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/exactlylabs/radar/pods_agent/services/radar/messages"
@@ -69,7 +70,13 @@ type SystemManager interface {
 	TailscaleDown() error
 	// TailscaleConnected returns if the pod is connected to a tailnet
 	TailscaleConnected() (bool, error)
+	// EnsureBinaryPermissions validates that the binary has "execute" permission for all users
 	EnsureBinaryPermissions(path string) error
+	// EnsureUserGroups will make sure that the user is part of the provided groups
+	// In case of a change to the user, it will return true.
+	EnsureUserGroups(user string, groups []string) (bool, error)
+	// EnsurePathPermissions will make sure that the provided path has the provided permissions
+	EnsurePathPermissions(path string, mode os.FileMode) error
 }
 
 type UpdateBinaryServerMessage struct {

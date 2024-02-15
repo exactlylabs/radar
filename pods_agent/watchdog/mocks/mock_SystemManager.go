@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	fs "io/fs"
 	time "time"
 
 	network "github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
@@ -68,6 +69,53 @@ func (_c *MockSystemManager_EnsureBinaryPermissions_Call) RunAndReturn(run func(
 	return _c
 }
 
+// EnsurePathPermissions provides a mock function with given fields: path, mode
+func (_m *MockSystemManager) EnsurePathPermissions(path string, mode fs.FileMode) error {
+	ret := _m.Called(path, mode)
+
+	if len(ret) == 0 {
+		panic("no return value specified for EnsurePathPermissions")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, fs.FileMode) error); ok {
+		r0 = rf(path, mode)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockSystemManager_EnsurePathPermissions_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'EnsurePathPermissions'
+type MockSystemManager_EnsurePathPermissions_Call struct {
+	*mock.Call
+}
+
+// EnsurePathPermissions is a helper method to define mock.On call
+//   - path string
+//   - mode fs.FileMode
+func (_e *MockSystemManager_Expecter) EnsurePathPermissions(path interface{}, mode interface{}) *MockSystemManager_EnsurePathPermissions_Call {
+	return &MockSystemManager_EnsurePathPermissions_Call{Call: _e.mock.On("EnsurePathPermissions", path, mode)}
+}
+
+func (_c *MockSystemManager_EnsurePathPermissions_Call) Run(run func(path string, mode fs.FileMode)) *MockSystemManager_EnsurePathPermissions_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string), args[1].(fs.FileMode))
+	})
+	return _c
+}
+
+func (_c *MockSystemManager_EnsurePathPermissions_Call) Return(_a0 error) *MockSystemManager_EnsurePathPermissions_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockSystemManager_EnsurePathPermissions_Call) RunAndReturn(run func(string, fs.FileMode) error) *MockSystemManager_EnsurePathPermissions_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // EnsureTailscale provides a mock function with given fields:
 func (_m *MockSystemManager) EnsureTailscale() error {
 	ret := _m.Called()
@@ -109,6 +157,63 @@ func (_c *MockSystemManager_EnsureTailscale_Call) Return(_a0 error) *MockSystemM
 }
 
 func (_c *MockSystemManager_EnsureTailscale_Call) RunAndReturn(run func() error) *MockSystemManager_EnsureTailscale_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// EnsureUserGroups provides a mock function with given fields: user, groups
+func (_m *MockSystemManager) EnsureUserGroups(user string, groups []string) (bool, error) {
+	ret := _m.Called(user, groups)
+
+	if len(ret) == 0 {
+		panic("no return value specified for EnsureUserGroups")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, []string) (bool, error)); ok {
+		return rf(user, groups)
+	}
+	if rf, ok := ret.Get(0).(func(string, []string) bool); ok {
+		r0 = rf(user, groups)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(string, []string) error); ok {
+		r1 = rf(user, groups)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockSystemManager_EnsureUserGroups_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'EnsureUserGroups'
+type MockSystemManager_EnsureUserGroups_Call struct {
+	*mock.Call
+}
+
+// EnsureUserGroups is a helper method to define mock.On call
+//   - user string
+//   - groups []string
+func (_e *MockSystemManager_Expecter) EnsureUserGroups(user interface{}, groups interface{}) *MockSystemManager_EnsureUserGroups_Call {
+	return &MockSystemManager_EnsureUserGroups_Call{Call: _e.mock.On("EnsureUserGroups", user, groups)}
+}
+
+func (_c *MockSystemManager_EnsureUserGroups_Call) Run(run func(user string, groups []string)) *MockSystemManager_EnsureUserGroups_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string), args[1].([]string))
+	})
+	return _c
+}
+
+func (_c *MockSystemManager_EnsureUserGroups_Call) Return(_a0 bool, _a1 error) *MockSystemManager_EnsureUserGroups_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockSystemManager_EnsureUserGroups_Call) RunAndReturn(run func(string, []string) (bool, error)) *MockSystemManager_EnsureUserGroups_Call {
 	_c.Call.Return(run)
 	return _c
 }

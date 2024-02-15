@@ -125,6 +125,16 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 		return false, errors.W(err)
 	}
 
+	// Make sure that sentry buffer allows other users to write (radar user)
+	sysManager.EnsurePathPermissions("/tmp/tracing_buffer", 0777)
+
+	// Grant netdev to radar user, so it can use wpa_supplicant.
+	if changed, err := sysManager.EnsureUserGroups("radar", []string{"netdev"}); err != nil {
+		return false, errors.W(err)
+	} else if changed {
+		hasChanges = 1
+	}
+
 	authLog, err := sysManager.GetAuthLogFile()
 	if err != nil {
 		return false, errors.W(err)
