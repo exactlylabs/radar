@@ -367,23 +367,23 @@ func (si SysInfoManager) EnsureUserGroups(userStr string, groups []string) (bool
 		userGroups[i] = g.Name
 	}
 
-	missingGroup := false
+	missingGroups := make([]string, 0)
 	for _, group := range groups {
 		if !slices.Contains(userGroups, group) {
-			missingGroup = true
+			missingGroups = append(missingGroups, group)
 			break
 		}
 	}
 
-	if !missingGroup {
+	if len(missingGroups) == 0 {
 		return false, nil
 	}
-
-	_, err = si.runCommand(exec.Command("usermod", "-aG", strings.Join(groups, ","), userStr))
+	log.Println("sysinfo.SysInfoManager#EnsureUserGroups: User %s is missing groups %v", userStr, missingGroups)
+	_, err = si.runCommand(exec.Command("usermod", "-aG", strings.Join(missingGroups, ","), userStr))
 	if err != nil {
 		return false, errors.W(err)
 	}
-	return true, nil
+	return false, nil
 }
 
 func (si SysInfoManager) EnsurePathPermissions(path string, mode os.FileMode) error {
