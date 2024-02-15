@@ -348,7 +348,7 @@ func (si SysInfoManager) EnsureBinaryPermissions(path string) error {
 }
 
 func (si SysInfoManager) EnsureUserGroups(userStr string, groups []string) (bool, error) {
-	u, err := user.Current()
+	u, err := user.Lookup(userStr)
 	if err != nil {
 		return false, errors.W(err)
 	}
@@ -357,7 +357,7 @@ func (si SysInfoManager) EnsureUserGroups(userStr string, groups []string) (bool
 	if err != nil {
 		return false, errors.W(err)
 	}
-
+	log.Printf("User %s has groups %v", u.Username, gids)
 	userGroups := make([]string, len(gids))
 	for i, gid := range gids {
 		g, err := user.LookupGroupId(gid)
@@ -378,8 +378,8 @@ func (si SysInfoManager) EnsureUserGroups(userStr string, groups []string) (bool
 	if len(missingGroups) == 0 {
 		return false, nil
 	}
-	log.Println("sysinfo.SysInfoManager#EnsureUserGroups: User %s is missing groups %v", userStr, missingGroups)
-	_, err = si.runCommand(exec.Command("usermod", "-aG", strings.Join(missingGroups, ","), userStr))
+	log.Printf("sysinfo.SysInfoManager#EnsureUserGroups: User %s is missing groups %v\n", u.Username, missingGroups)
+	_, err = si.runCommand(exec.Command("usermod", "-aG", strings.Join(missingGroups, ","), u.Username))
 	if err != nil {
 		return false, errors.W(err)
 	}
