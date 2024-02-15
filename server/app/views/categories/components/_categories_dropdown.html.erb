@@ -1,0 +1,17 @@
+<% entity_categories = local_assigns[:entity_categories] || Category.none %>
+<%= turbo_frame_tag base_turbo_frame_tag_id do %>
+  <div class="category--location-select-list">
+    <%= render partial: "location_categories/add_category_list_item" %>
+    <div class="category--horizontal-divider"></div>
+    <%= turbo_frame_tag categories_turbo_frame_tag_id do %>
+      <% categories.each do |category| %>
+        <%= render partial: "categories/components/category_list_item",
+                   locals: {
+                     category: category,
+                     selected: entity_categories.where(id: category.id).count == 1
+                   }
+        %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

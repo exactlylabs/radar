@@ -130,8 +130,8 @@ export default class extends Controller {
         this.closeColorPicker();
     }
 
-    toggleCategoriesDropdown(shouldOpen) {
-        const url = shouldOpen ? `/location_categories/open_dropdown${!!this.locationIdValue ? `?location_id=${this.locationIdValue}` : ''}` : '/location_categories/close_dropdown';
+    toggleCategoriesDropdown(shouldOpen, dir) {
+        const url = shouldOpen ? `${dir}/open_dropdown${!!this.locationIdValue ? `?location_id=${this.locationIdValue}` : ''}` : `${dir}/close_dropdown`;
         const token = document.getElementsByName("csrf-token")[0].content;
         fetch(url, {
             method: "GET",
@@ -147,13 +147,14 @@ export default class extends Controller {
             });
     }
 
-    toggleFocus() {
+    toggleFocus(event) {
+        const dir = event.params.dir;
         if (this.selectClickableContainerTarget.classList.contains('category--location-select-container-focus')) {
             this.selectClickableContainerTarget.classList.remove('category--location-select-container-focus');
-            this.toggleCategoriesDropdown(false);
+            this.toggleCategoriesDropdown(false, dir);
         } else {
             this.selectClickableContainerTarget.classList.add('category--location-select-container-focus');
-            this.toggleCategoriesDropdown(true);
+            this.toggleCategoriesDropdown(true, dir);
         }
     }
 

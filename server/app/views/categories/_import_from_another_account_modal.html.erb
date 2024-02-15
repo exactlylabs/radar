@@ -21,6 +21,7 @@
             <input name="categories" autocomplete="off" type="hidden" value="<%= account_categories&.map{|c| c.id}.join(",") || [] %>" id="picked_account_categories" data-categories-target="hiddenPickedAccountCategoriesInput">
             <div class="category--location-select-container"
                  data-categories-target="selectClickableContainer"
+                 data-categories-dir-param="/account_categories"
                  data-action="click->categories#toggleFocus"
                  data-categories-account-id-value="<%= account.id.nil? ? nil : account.id %>"
             >
