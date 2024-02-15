@@ -2,6 +2,6 @@
 
 package wifi
 
-func newClient(wlanInterface string, ch chan Event) (WirelessClient, error) {
+func newClient(wlanInterface string) (WirelessClient, error) {
 	return nil, ErrNotSuported
 }
