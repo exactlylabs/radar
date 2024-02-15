@@ -2,36 +2,41 @@
 <% import_to_accounts = current_account.is_all_accounts? ? @categories.keys.map { |account| [account.name, account.id] } : nil %>
 <div class="modal-dialog category--modal-dialog" data-controller="categories">
   <div class="modal-content category--modal-content">
-    <%= render partial: "application/components/modals/modal_header", locals: { title: "Import categories" } %>
-    <%= form_with(url: import_categories_url, method: :post) do |form| %>
-      <div class="modal-body modals--body d-flex flex-column justify-content-start align-items-center category--modal-body">
-        <div class="" >
-          <div>
-            <%= form.label :import_from, "Import from..." %>
-            <%= form.select :import_from, options_for_select(import_from_accounts), {}, { class: "", data: { action: "change->categories#showCategoriesForSelectedAccount" } } %>
+    <%= render partial: "application/components/modals/modal_header", locals: { title: "Import categories", is_custom: true, goes_back: true, go_back_url: onboarding_step_2_path, go_back_action: "click->onboard#goToOnboardingStep" } %>
+    <%= form_with(url: import_categories_url, method: :post, class: "modal-body modals--body d-flex flex-column justify-content-start align-items-center category--modal-body") do |form| %>
+      <div class="categories--import-container">
+        <div class="modals--form-row mb-6">
+          <%= form.label :import_from, "Import from...", class: "forms--label" %>
+          <%= form.select :import_from, options_for_select(import_from_accounts), {}, { class: "form-select forms--select", data: { action: "change->categories#showCategoriesForSelectedAccount" } } %>
+        </div>
+        <% if current_account.is_all_accounts? %>
+          <div class="modals--form-row mb-6">
+            <%= form.label :import_to, "Import to...", class: "forms--label" %>
+            <%= form.select :import_to, options_for_select(import_to_accounts), {}, { class: "form-select forms--select" } %>
           </div>
-          <% if current_account.is_all_accounts? %>
-            <div>
-              <%= form.label :import_to, "Import to..." %>
-              <%= form.select :import_to, options_for_select(import_to_accounts), {}, { class: "" } %>
+        <% end %>
+        <% @categories.each do |account, account_categories| %>
+          <div data-categories-target="AccountCategoriesPicker" id="account-<%= account.id %>-categories" <%= account.id == import_from_accounts.first[1] ? nil : "hidden=hidden" %> class="modals--form-row mb-6">
+            <label class="forms--label">Categories</label>
+            <input name="categories" autocomplete="off" type="hidden" value="<%= account_categories&.map{|c| c.id}.join(",") || [] %>" id="picked_account_categories" data-categories-target="hiddenPickedAccountCategoriesInput">
+            <div class="category--location-select-container"
+                 data-categories-target="selectClickableContainer"
+                 data-action="click->categories#toggleFocus"
+                 data-categories-account-id-value="<%= account.id.nil? ? nil : account.id %>"
+            >
+              <%= turbo_frame_tag "selected-categories" do %>
+                <%= render partial: "categories/table_cell", locals: { categories: [], shows_tooltip: false, row: -1 } %>
+              <% end %>
+              <span class="svg-icon svg-icon-5 m-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+                      </svg>
+                    </span>
             </div>
-          <% end %>
-          <div>
-            <% @categories.each do |account, account_categories| %>
-              <div data-categories-target="AccountCategoriesPicker" id="account-<%= account.id %>-categories" <%= account.id == import_from_accounts.first[1] ? nil : "hidden=hidden" %>>
-                <div>
-                  <%= form.label :categories, "Categories" %>
-                  <select name="categories[]" data-categories-target="SelectedCategories" data-action="change->categories#updateSelectedCategories" >
-                    <option value="" disabled selected>Choose a category</option>
-                    <% account_categories.each do |category| %>
-                      <option value="<%= category.id %>"><%= category.name %></option>
-                    <% end %>
-                  </select>
-                </div>
-              </div>
+            <%= turbo_frame_tag "account-categories-dropdown" do %>
             <% end %>
           </div>
-        </div>
+        <% end %>
       </div>
       <div class="modal-footer modals--footer">
         <%= form.submit "Import categories", class: "btn btn-primary" %>

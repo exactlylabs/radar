@@ -17,8 +17,8 @@
     <!--end::Info-->
     <% if !FeatureFlagHelper.is_available('networks', current_user) %>
       <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-        <a 
-          type="button" 
+        <a
+          type="button"
           class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled custom-button--disabled' : '' %>"
           href="<%= new_location_path %>"
           data-turbo-frame="new_location_modal"
@@ -178,3 +178,11 @@
   <%= turbo_frame_tag "import_categories_from_another_account" do %>
   <% end %>
 </div>
+
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: {
+             turbo_frame_tag_id: "import_categories_from_another_account",
+             optional_added_controllers: "categories",
+             optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse"
+           }
+%>
