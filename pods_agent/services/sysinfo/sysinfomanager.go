@@ -357,7 +357,6 @@ func (si SysInfoManager) EnsureUserGroups(userStr string, groups []string) (bool
 	if err != nil {
 		return false, errors.W(err)
 	}
-	log.Printf("User %s has groups %v", u.Username, gids)
 	userGroups := make([]string, len(gids))
 	for i, gid := range gids {
 		g, err := user.LookupGroupId(gid)
@@ -383,7 +382,7 @@ func (si SysInfoManager) EnsureUserGroups(userStr string, groups []string) (bool
 	if err != nil {
 		return false, errors.W(err)
 	}
-	return false, nil
+	return true, nil
 }
 
 func (si SysInfoManager) EnsurePathPermissions(path string, mode os.FileMode) error {
