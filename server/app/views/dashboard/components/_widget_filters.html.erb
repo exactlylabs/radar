@@ -68,7 +68,7 @@
                pagination: false,
                options: [
                  { label: 'All ISPs', value: nil},
-                 *policy_scope(AutonomousSystemOrg).map {|isp| { label: isp.name , value: "#{isp.id}" }}
+                 *@filter_as_orgs.map {|isp| { label: isp["name"] , value: "#{isp["id"]}" }}
                ],
              }
   %>
