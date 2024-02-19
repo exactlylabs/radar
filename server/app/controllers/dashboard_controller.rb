@@ -79,19 +79,19 @@ class DashboardController < ApplicationController
   def download_speeds
     params = download_speeds_params()
     sql = DashboardHelper.get_download_speed_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
-    @download_speeds = ActiveRecord::Base.connection.execute(replace_shared_params(sql))
+    @download_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
   def upload_speeds
     params = upload_speeds_params()
     sql = DashboardHelper.get_upload_speed_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
-    @upload_speeds = ActiveRecord::Base.connection.execute(replace_shared_params(sql))
+    @upload_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
   def latency
     params = latency_params()
     sql = DashboardHelper.get_latency_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
-    @latencies = ActiveRecord::Base.connection.execute(replace_shared_params(sql))
+    @latencies = ActiveRecord::Base.connection.execute(sql)
   end
 
   def data_usage
@@ -142,72 +142,6 @@ class DashboardController < ApplicationController
 
   def policy_filter_ids(model, ids)
     policy_scope(model).where(id: ids).pluck(:id).join(',')
-  end
-
-  def replace_online_pods_time_params(sql)
-    days = params[:days].present? ? params[:days] : 30
-
-    if params[:start].present? && params[:end].present?
-      start_time = params[:start].to_i
-      end_time = params[:end].to_i
-      start_date = Time.at(start_time / 1000)
-      end_date = Time.at(end_time / 1000)
-      days_between = (end_date - start_date) / 1.day.in_seconds
-      sql = sql.gsub('$interval_type', days_between > 10 ? 'd' : 'hour')
-      sql = sql.gsub('$from::timestamp', "TIMESTAMP 'epoch' + #{start_time} * INTERVAL '1 millisecond'")
-      sql = sql.gsub('$to::timestamp', "TIMESTAMP 'epoch' + #{end_time} * INTERVAL '1 millisecond'")
-      sql = sql.gsub('$from', "TIMESTAMP 'epoch' + #{start_time} * INTERVAL '1 millisecond'")
-      sql = sql.gsub('$to', "TIMESTAMP 'epoch' + #{end_time} * INTERVAL '1 millisecond'")
-    else
-      sql = sql.gsub('$interval_type', 'd')
-      sql = sql.gsub('$from', "(NOW() - INTERVAL \'#{days} days\')")
-      sql = sql.gsub('$to', 'NOW()')
-    end
-    sql
-  end
-
-  def replace_data_usage_time_params(sql)
-    days = params[:days].present? ? params[:days] : 30
-    sql = sql.gsub('$interval_type', 'd')
-    if params[:start].present? && params[:end].present?
-      start_time = params[:start].to_i
-      end_time = params[:end].to_i
-      sql = sql.gsub('$from', "TIMESTAMP 'epoch' + #{start_time} * INTERVAL '1 millisecond'")
-      sql = sql.gsub('$to', "TIMESTAMP 'epoch' + #{end_time} * INTERVAL '1 millisecond'")
-    else
-      sql = sql.gsub('$from', "(NOW() - INTERVAL \'#{days} days\')")
-      sql = sql.gsub('$to', 'NOW()')
-    end
-    sql
-  end
-
-  def replace_speed_time_params(sql)
-    days = params[:days].present? ? params[:days] : 30
-    if params[:start].present? && params[:end].present?
-      start_time = params[:start].to_i
-      end_time = params[:end].to_i
-      sql = sql.gsub('$from::timestamp', "TIMESTAMP 'epoch' + #{start_time} * INTERVAL '1 millisecond'")
-      sql = sql.gsub('$to::timestamp', "TIMESTAMP 'epoch' + #{end_time} * INTERVAL '1 millisecond'")
-    else
-      sql = sql.gsub('$from', "(NOW() - INTERVAL \'#{days} days\')")
-      sql = sql.gsub('$to', 'NOW()')
-    end
-    sql
-  end
-
-  def replace_shared_params(sql)
-    has_param_account_ids = params[:account_id].present? ? 1 : -1
-    has_param_asn_org_ids = params[:isp_id].present? ? 1 : -1
-    has_param_location_ids = params[:network_id].present? ? 1 : -1
-    account_ids = has_param_account_ids == 1 ? params[:account_id] : current_account.is_all_accounts? ? policy_scope(Account).pluck(:id).join(',') : current_account.id
-    autonomous_system_org_ids = has_param_asn_org_ids == 1 ? params[:isp_id] : policy_scope(AutonomousSystemOrg).pluck(:id).join(',')
-    location_ids = has_param_location_ids == 1 ? params[:network_id] : policy_scope(Location).pluck(:id).join(',')
-    sql = sql.gsub('$account_ids', "#{account_ids}")
-    sql = sql.gsub('$as_orgs', "#{autonomous_system_org_ids}")
-    sql = sql.gsub('$location_ids', "#{location_ids}")
-    sql = sql.gsub('$param_asn_org_ids', "'#{has_param_asn_org_ids}'")
-    sql = sql.gsub('$param_location_ids', "'#{has_param_location_ids}'")
-    sql.gsub('$param_account_ids', "'#{has_param_account_ids}'")
   end
 
   def get_filtered_locations(locations, filter)
