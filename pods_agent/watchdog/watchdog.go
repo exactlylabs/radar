@@ -189,9 +189,20 @@ func (w *Watchdog) handleMessage(ctx context.Context, msg ServerMessage) {
 	if err != nil {
 		err = errors.W(err)
 		log.Println(err)
-		sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+		if w.shouldReportToSentry(err) {
+			sentry.NotifyErrorOnce(err, map[string]sentry.Context{})
+		}
 		w.cli.ReportActionError(msg.Type, err)
 	}
+}
+
+func (w *Watchdog) shouldReportToSentry(err error) bool {
+	if err == nil {
+		return false
+	} else if errors.Is(err, wifi.ErrAuthFailed) {
+		return false
+	}
+	return true
 }
 
 func (w *Watchdog) handleUpdate(data UpdateBinaryServerMessage) error {

@@ -36,6 +36,7 @@ func TestScanSystemNoChange(t *testing.T) {
 	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
+	m.On("EnsureWifiEnabled").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -62,6 +63,7 @@ func TestScanSystemHostDiffers(t *testing.T) {
 	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
+	m.On("EnsureWifiEnabled").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -88,6 +90,7 @@ func TestScanSystemRCLocalDiffers(t *testing.T) {
 	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
+	m.On("EnsureWifiEnabled").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -114,6 +117,7 @@ func TestScanSystemBootConfigDiffers(t *testing.T) {
 	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
+	m.On("EnsureWifiEnabled").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -140,6 +144,7 @@ func TestScanSystemCMDLineDiffers(t *testing.T) {
 	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
+	m.On("EnsureWifiEnabled").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -166,6 +171,7 @@ func TestScanSystemLogindDiffers(t *testing.T) {
 	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
+	m.On("EnsureWifiEnabled").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -193,6 +199,7 @@ func TestScanSystemMultipleChanged(t *testing.T) {
 	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
+	m.On("EnsureWifiEnabled").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -219,6 +226,7 @@ func TestScanSystemTimeZoneChanged(t *testing.T) {
 	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
+	m.On("EnsureWifiEnabled").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)
@@ -244,6 +252,7 @@ func TestScanSystemTimeZoneReturnedNilNoChange(t *testing.T) {
 	m.On("EnsureBinaryPermissions", "/opt/radar/watchdog").Return(nil)
 	m.On("EnsurePathPermissions", "/tmp/tracing_buffer", os.FileMode(0777)).Return(nil)
 	m.On("EnsureUserGroups", "radar", []string{"netdev"}).Return(false, nil)
+	m.On("EnsureWifiEnabled").Return(nil)
 	c := &config.Config{}
 	c.ClientId = "1234"
 	hasChanged, err := ScanSystem(c, m)

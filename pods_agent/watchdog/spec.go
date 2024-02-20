@@ -77,6 +77,8 @@ type SystemManager interface {
 	EnsureUserGroups(user string, groups []string) (bool, error)
 	// EnsurePathPermissions will make sure that the provided path has the provided permissions
 	EnsurePathPermissions(path string, mode os.FileMode) error
+	// EnsureWifiEnabled will make sure that the wifi driver is correctly configured and running
+	EnsureWifiEnabled() error
 }
 
 type UpdateBinaryServerMessage struct {
