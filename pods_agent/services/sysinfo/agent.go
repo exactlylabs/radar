@@ -18,6 +18,14 @@ type AgentInfoManager struct {
 	serviceName string
 }
 
+// ClientBasicMeta has binary-related information only
+type ClientBasicMeta struct {
+	Version           string  `json:"version"`
+	Distribution      string  `json:"distribution"`
+	WatchdogVersion   string  `json:"watchdog_version"`
+	RegistrationToken *string `json:"registration_token"`
+}
+
 type ClientMeta struct {
 	Version           string                `json:"version"`
 	Distribution      string                `json:"distribution"`
@@ -41,7 +49,7 @@ func NewAgentInfoManager(binaryPath, serviceName string) *AgentInfoManager {
 }
 
 // AgentMetadata should call the installed radar agent and get his version
-func (am *AgentInfoManager) AgentMetadata() (*ClientMeta, error) {
+func (am *AgentInfoManager) AgentMetadata() (*ClientBasicMeta, error) {
 	cmd := exec.Command(am.binPath, "-vv")
 	stderr := new(bytes.Buffer)
 	cmd.Stderr = stderr
@@ -55,7 +63,7 @@ func (am *AgentInfoManager) AgentMetadata() (*ClientMeta, error) {
 			})
 	}
 
-	meta := &ClientMeta{}
+	meta := &ClientBasicMeta{}
 	if err := json.Unmarshal(metaBytes, meta); err != nil {
 		return nil, errors.Wrap(err, "error unmarshalling the binary output").WithMetadata(errors.Metadata{
 			"output": string(metaBytes),
