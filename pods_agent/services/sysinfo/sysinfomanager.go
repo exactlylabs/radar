@@ -401,6 +401,43 @@ func (si SysInfoManager) EnsurePathPermissions(path string, mode os.FileMode) er
 	return nil
 }
 
+// EnsureWifiEnabled checks if the wifi interface is unblocked and properly configured.
+// The interface state is validated through `rfkill` command, and country code validated by reading wpa_supplicant.conf file.
+func (si SysInfoManager) EnsureWifiEnabled() error {
+	// IMPORTANT NOTE: Pi OS Bookworm and onwards use NetworkManager instead of wpa_supplicant (nmcli)
+	// See: https://www.raspberrypi.com/documentation/computers/configuration.html#connect-to-a-wireless-network
+
+	out, err := si.runCommand(exec.Command("rfkill", "list", "wlan", "-o", "soft", "|", "grep", "unblocked"))
+	if err != nil {
+		return errors.W(err)
+	}
+	if strings.TrimSpace(string(out)) != "unblocked" {
+		// Enable Wifi interface
+		_, err = si.runCommand(exec.Command("rfkill", "unblock", "wlan"))
+		if err != nil {
+			return errors.W(err)
+		}
+	}
+
+	// Check if country code is set
+	wpa_supplicant, err := os.Open("/etc/wpa_supplicant/wpa_supplicant.conf")
+	if err != nil {
+		return errors.W(err)
+	}
+	defer wpa_supplicant.Close()
+	wpa_data, err := io.ReadAll(wpa_supplicant)
+	if err != nil {
+		return errors.W(err)
+	}
+	if !strings.Contains(string(wpa_data), "country=") {
+		_, err := si.runCommand(exec.Command("raspi-config", "nonint", "do_wifi_country", "US"))
+		if err != nil {
+			return errors.W(err)
+		}
+	}
+	return nil
+}
+
 func (si SysInfoManager) runCommand(cmd *exec.Cmd) ([]byte, error) {
 	stdout := bytes.NewBuffer(nil)
 	stderr := bytes.NewBuffer(nil)
