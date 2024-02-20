@@ -135,6 +135,10 @@ func ScanSystem(c *config.Config, sysManager SystemManager) (bool, error) {
 		hasChanges = 1
 	}
 
+	if err := sysManager.EnsureWifiEnabled(); err != nil {
+		return false, errors.W(err)
+	}
+
 	authLog, err := sysManager.GetAuthLogFile()
 	if err != nil {
 		return false, errors.W(err)

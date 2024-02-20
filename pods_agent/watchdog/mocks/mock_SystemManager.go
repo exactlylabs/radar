@@ -218,6 +218,51 @@ func (_c *MockSystemManager_EnsureUserGroups_Call) RunAndReturn(run func(string,
 	return _c
 }
 
+// EnsureWifiEnabled provides a mock function with given fields:
+func (_m *MockSystemManager) EnsureWifiEnabled() error {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for EnsureWifiEnabled")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func() error); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockSystemManager_EnsureWifiEnabled_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'EnsureWifiEnabled'
+type MockSystemManager_EnsureWifiEnabled_Call struct {
+	*mock.Call
+}
+
+// EnsureWifiEnabled is a helper method to define mock.On call
+func (_e *MockSystemManager_Expecter) EnsureWifiEnabled() *MockSystemManager_EnsureWifiEnabled_Call {
+	return &MockSystemManager_EnsureWifiEnabled_Call{Call: _e.mock.On("EnsureWifiEnabled")}
+}
+
+func (_c *MockSystemManager_EnsureWifiEnabled_Call) Run(run func()) *MockSystemManager_EnsureWifiEnabled_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockSystemManager_EnsureWifiEnabled_Call) Return(_a0 error) *MockSystemManager_EnsureWifiEnabled_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockSystemManager_EnsureWifiEnabled_Call) RunAndReturn(run func() error) *MockSystemManager_EnsureWifiEnabled_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetAuthLogFile provides a mock function with given fields:
 func (_m *MockSystemManager) GetAuthLogFile() ([]byte, error) {
 	ret := _m.Called()
