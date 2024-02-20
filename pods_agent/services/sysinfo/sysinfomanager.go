@@ -407,7 +407,7 @@ func (si SysInfoManager) EnsureWifiEnabled() error {
 	// IMPORTANT NOTE: Pi OS Bookworm and onwards use NetworkManager instead of wpa_supplicant (nmcli)
 	// See: https://www.raspberrypi.com/documentation/computers/configuration.html#connect-to-a-wireless-network
 
-	out, err := si.runCommand(exec.Command("rfkill", "list", "wlan", "-o", "soft", "|", "grep", "unblocked"))
+	out, err := si.runCommand(exec.Command("rfkill", "list", "wlan", "-no", "soft"))
 	if err != nil {
 		return errors.W(err)
 	}
