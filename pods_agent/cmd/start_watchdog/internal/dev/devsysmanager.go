@@ -145,3 +145,7 @@ func (*devSysManager) EnsureUserGroups(user string, groups []string) (bool, erro
 	fmt.Println("Adding user", user, "to groups", groups)
 	return false, nil
 }
+
+func (*devSysManager) EnsureWifiEnabled() error {
+	return nil
+}
