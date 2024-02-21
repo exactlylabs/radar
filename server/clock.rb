@@ -33,7 +33,7 @@ scheduler.every '1h', overlap: false do
   end
 end
 
-scheduler.every '1h', overlap: false do
+scheduler.every '5m', overlap: false do
   begin
     FillClientCountProjection.perform_later
   rescue => e
