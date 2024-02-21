@@ -83,11 +83,11 @@ class WebSocketClient {
         Iterable.generate(10, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
   }
 
-  Uri _getConnectEndpoint(Uri endpoint, String? accesToken) {
-    if (accesToken == null) {
+  Uri _getConnectEndpoint(Uri endpoint, String? accessToken) {
+    if (accessToken == null) {
       return endpoint;
     }
-    return Uri.parse("$endpoint?token=${Uri.encodeComponent(accessToken!)}");
+    return Uri.parse("$endpoint?token=${Uri.encodeComponent(accessToken)}");
   }
 
   Stream<dynamic> get events => _eventsController.stream.asBroadcastStream();
