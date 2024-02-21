@@ -140,7 +140,7 @@ const MyAddressInput = ({
       }
       setLocationLoading(false);
     }
-  });
+  }, 1000);
 
   const autofillInput = (id, selectedAddress) => {
     const addressInputElement = document.getElementById('speedtest--address-input');
@@ -169,10 +169,10 @@ const MyAddressInput = ({
         openGenericLocationModal();
         return;
       }
-      if (isGeolocation) { 
-        openCurrentLocationModal(true); 
-      } else { 
-        setSelectedSuggestion(true); 
+      if (isGeolocation) {
+        openCurrentLocationModal(true);
+      } else {
+        setSelectedSuggestion(true);
       }
 
       setUserData({
