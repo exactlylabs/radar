@@ -10,6 +10,7 @@ class OnlineClientCountHandler
     @last_projections = {}
     @locations = {}
     @pods_status = {}
+    @last_clients_events = {}
     @ongoing_system_outage = nil
   end
 
@@ -50,8 +51,15 @@ class OnlineClientCountHandler
     if event.snapshot.nil? || @ongoing_system_outage
       return
     end
+    last_event = @last_clients_events[event.aggregate_id]
+    if last_event.present? && last_event.name == event.name && last_event.data == event.data
+      return
+    end
+    @last_clients_events[event.aggregate_id] = event
+
     state = event.snapshot.state
     last_count = last_projection(state["account_id"], state["autonomous_system_id"], state["location_id"])
+
     case event.name
     when Client::Events::CREATED
       if state["online"]
@@ -232,7 +240,7 @@ class OnlineClientCountHandler
 
   def pod_was_online?(aggregate, timestamp)
     if @pods_status[aggregate.id].nil?
-      snap = Snapshot.from_aggregate(aggregate).prior_to(timestamp).last
+      snap = Snapshot.from_aggregate(aggregate).prior_to(timestamp).ordered_by_event.last
       @pods_status[aggregate.id] = snap&.state&.fetch("online") || false
     end
     @pods_status[aggregate.id]
