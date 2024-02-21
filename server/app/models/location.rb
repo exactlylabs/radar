@@ -239,9 +239,9 @@ include Recents
   def self.update_online_status!()
     # Go through all locations and update their online/offline status + other metadata
     Location.joins(:clients).group("locations.id").having("BOOL_OR(clients.online)").where("offline_since IS NOT NULL OR locations.online = false").update(online: true, offline_since: nil)
-    Location.joins(:clients).group(:id).having("BOOL_AND(NOT clients.online)").where("locations.offline_since IS NULL AND locations.online = true").each do |location|
+    Location.joins(:clients).group("locations.id").having("BOOL_AND(NOT clients.online)").where("locations.offline_since IS NULL AND locations.online = true").each do |location|
       offline_since = Event.from_aggregate(location.clients).where_name_is(Client::Events::WENT_OFFLINE).last&.timestamp
-      self.update(online: false, offline_since: offline_since || location.created_at)
+      location.update(online: false, offline_since: offline_since || location.created_at)
     end
   end
 

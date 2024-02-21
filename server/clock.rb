@@ -6,7 +6,7 @@ scheduler.every '5s', overlap: false do
   begin
     if Rails.application.healthy? && !Rails.application.transient?
       Client.update_outdated_online!
-      # Location.update_online_status!
+      Location.update_online_status!
     end
   rescue => e
     Sentry.capture_exception(e)
