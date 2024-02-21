@@ -2,8 +2,11 @@ class Snapshot < ApplicationRecord
   belongs_to :event
   belongs_to :aggregate, polymorphic: true
 
+  default_scope { joins(:event).order("events.timestamp ASC") }
+
   scope :of, ->(model) { where(aggregate_type: model.name) }
   scope :from_aggregate, -> (obj) { where(aggregate: obj)}
+  scope :ordered_by_event, -> { joins(:event).order("events.timestamp ASC") }
   scope :prior_to_or_at, ->(timestamp) { joins(:event).where("timestamp <= ?", timestamp) }
   scope :prior_to, ->(timestamp) { joins(:event).where("timestamp < ?", timestamp) }
 
@@ -88,7 +91,7 @@ class Snapshot < ApplicationRecord
           else
             applier = config[:observed_fields].find { |x| (x[:event].is_a?(Hash) && x[:event].has_value?(event.name)) || x[:event] == event.name }&.[](:applier)
           end
-          last_snap = cached_snapshot[aggregate] || Snapshot.from_aggregate(aggregate).prior_to(event.timestamp).last
+          last_snap = cached_snapshot[aggregate] || Snapshot.from_aggregate(aggregate).prior_to(event.timestamp).ordered_by_event.last
           state = last_snap&.state || {}
 
           aggregate.send(applier, state, event) if applier.present?

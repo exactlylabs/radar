@@ -2,6 +2,8 @@ class Event < ApplicationRecord
   belongs_to :aggregate, polymorphic: true
   has_one :snapshot
 
+  self.implicit_order_column = :timestamp
+
   scope :of, ->(model) { where(aggregate_type: model.name) }
   scope :from_aggregate, -> (obj) { where(aggregate: obj)}
   scope :prior_to_or_at, ->(timestamp) { where("timestamp <= ?", timestamp) }
