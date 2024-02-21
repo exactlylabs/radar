@@ -246,7 +246,7 @@ include Recents
   end
 
   def update_status!()
-    has_online_pods = self.clients.where(in_service: true, online: true).count > 0
+    has_online_pods = self.clients.where(online: true).count > 0
     if !online? && has_online_pods
       self.update(online: true, offline_since: nil)
     elsif online? && !has_online_pods
