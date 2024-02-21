@@ -107,10 +107,10 @@ class CategoriesController < ApplicationController
   end
 
   def import_from_another_account
-    @categories = categories_for_import
-    @categories = categories_by_account
+    puts "Importing from another account"
+    @accounts = accounts_for_import
     respond_to do |format|
-      format.html
+      format.turbo_stream
     end
   end
 
@@ -164,15 +164,12 @@ class CategoriesController < ApplicationController
     @categories
   end
 
-  def categories_for_import
+  def accounts_for_import
     user = current_user
-    all_categories = []
-    user.accounts.not_deleted.each do |account|
-      all_categories.append(*account.categories.pluck(:id))
-    end
+    all_accounts = user.accounts.not_deleted
     user.shared_accounts.not_deleted.each do |account|
-      all_categories.append(*account.categories.pluck(:id))
+      all_accounts.append(account)
     end
-    Category.where(id: all_categories)
+    all_accounts
   end
 end

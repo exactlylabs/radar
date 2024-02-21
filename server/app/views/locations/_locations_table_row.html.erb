@@ -24,7 +24,7 @@
     <td class="regular-text mb-1" style="width: 15vw"><%= location.account.name %></td>
   <% else %>
     <td class="regular-text mb-1" style="width: 15vw">
-      <%= render partial: "location_categories/table_cell", locals: {categories: location.categories, shows_tooltip: true, row: row} %>
+      <%= render partial: "categories/components/table_cell", locals: {categories: location.categories, shows_tooltip: true, row: row} %>
     </td>
   <% end %>
   <td class="regular-text mb-1 wrap text-end" style="width: 12.5vw">

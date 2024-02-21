@@ -1,0 +1,4 @@
+<%= turbo_stream.update "selected-categories" do %>
+  <%= render partial: "categories/components/table_cell",
+             locals: {categories: @categories, shows_tooltip: false, row: -1} %>
+<% end %>

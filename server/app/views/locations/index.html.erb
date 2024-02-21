@@ -5,7 +5,7 @@
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
       <h1 class="page-main-title"><%= FeatureFlagHelper.is_available('networks', current_user) ? 'Networks' : 'Locations' %>
-      <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
@@ -25,10 +25,10 @@
         >Add Location</a>
         <% if !current_account.is_all_accounts? %>
           <a href="#"
-              class="ms-4 custom-button custom-button--secondary-light custom-button--sm d-flex justify-content-center align-items-center"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              id="options-button"
+             class="ms-4 custom-button custom-button--secondary-light custom-button--sm d-flex justify-content-center align-items-center"
+             data-bs-toggle="dropdown"
+             aria-expanded="false"
+             id="options-button"
           >
             <span class="svg-icon svg-icon-muted svg-icon-2 m-0">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -39,19 +39,19 @@
             </span>
           </a>
           <div class="dropdown-menu dropdown-menu-light fw-bold fs-7 py-4 bg-hover-light">
-            <%= link_to "Manage location categories", categories_path, { class: "px-3 py-2 regular-link", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref"} %>
+            <%= link_to "Manage location categories", categories_path, { class: "px-3 py-2 regular-link", "data-turbo-frame" => "categories_modal", id: "manage-categories-button-ref" } %>
           </div>
         <% end %>
       </div>
     <% else %>
-        <%= render partial: "application/components/buttons/custom_more_options_button",
-            locals: {
-              type: TablesHelper::OptionsMenuType::NETWORKS_INDEX,
-              with_bg: true,
-              big: true
-            }
-        %>
-      <% end %>
+      <%= render partial: "application/components/buttons/custom_more_options_button",
+                 locals: {
+                   type: TablesHelper::OptionsMenuType::NETWORKS_INDEX,
+                   with_bg: true,
+                   big: true
+                 }
+      %>
+    <% end %>
   </div>
 </div>
 <!--end::Toolbar-->
@@ -61,7 +61,7 @@
     <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
     <div class="networks--unassigned-pods-banner-text-container">
       <% pod_count = policy_scope(Client).where(location: nil).count %>
-      <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>
+      <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : '' %> not assigned to any network.</span>
       <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
     </div>
   </div>
@@ -69,11 +69,11 @@
 
 <%= turbo_frame_tag "locations_display" do %>
   <div class="post fs-6 d-flex flex-column" id="kt_post"
-    <%= FeatureFlagHelper.is_available('networks', current_user) ? 'data-controller=multi-row-table' : nil %>
+       <%= FeatureFlagHelper.is_available('networks', current_user) ? 'data-controller=multi-row-table' : nil %>
   >
-    <% if FeatureFlagHelper.is_available('networks', current_user)%>
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
       <%= turbo_frame_tag "networks-table-filters-wrapper" do %>
-        <% if @locations.count != 0 || ( @locations.count == 0 && request.query_parameters.count > 0 ) %>
+        <% if @locations.count != 0 || (@locations.count == 0 && request.query_parameters.count > 0) %>
           <%= render partial: "networks/components/table_filters" %>
         <% end %>
       <% end %>
@@ -86,21 +86,21 @@
       <%= turbo_frame_tag "networks-content-wrapper" do %>
         <% if @locations.count > 0 || (@locations.count == 0 && request.query_parameters.count > 0) %>
           <%= render partial: "application/components/tables/generic_table",
-              locals: {
-                table_id: "networks_table",
-                type: TablesHelper::TableTypes::NETWORKS,
-                titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
-                widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
-                rows: @locations,
-                total: @total
-              }
+                     locals: {
+                       table_id: "networks_table",
+                       type: TablesHelper::TableTypes::NETWORKS,
+                       titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
+                       widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORKS, current_account.is_all_accounts?),
+                       rows: @locations,
+                       total: @total
+                     }
           %>
         <% else %>
           <%= render partial: "networks/components/empty_networks_card",
-              locals: {
-                has_pods: policy_scope(Client).count > 0,
-                empty_search: params[:status].present? || params[:category].present? || params[:account_id].present?
-              }
+                     locals: {
+                       has_pods: policy_scope(Client).count > 0,
+                       empty_search: params[:status].present? || params[:category].present? || params[:account_id].present?
+                     }
           %>
         <% end %>
       <% end %>
@@ -112,19 +112,19 @@
 
 <% if FeatureFlagHelper.is_available('networks', current_user) %>
   <%= render partial: "application/components/modals/turbo_modal",
-    locals: {
-      turbo_frame_tag_id: "new_location_modal",
-      optional_added_controllers: "categories",
-      optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse"
-    }
+             locals: {
+               turbo_frame_tag_id: "new_location_modal",
+               optional_added_controllers: "categories",
+               optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse"
+             }
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",
-    locals: {
-      turbo_frame_tag_id: "edit_location_modal",
-      optional_added_controllers: "categories",
-      optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse turbo:frame-render->categories#initializeCategories"
-    }
+             locals: {
+               turbo_frame_tag_id: "edit_location_modal",
+               optional_added_controllers: "categories",
+               optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse turbo:frame-render->categories#initializeCategories"
+             }
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",
@@ -132,7 +132,7 @@
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",
-    locals: { turbo_frame_tag_id: "move_networks_modal", optional_added_controllers: "multi-row-table", }
+             locals: { turbo_frame_tag_id: "move_networks_modal", optional_added_controllers: "multi-row-table", }
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",
@@ -144,20 +144,20 @@
   %>
 <% else %>
   <div class="modal fade"
-    tabindex="-1"
-    data-controller="modal categories"
-    data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#clearCategories turbo:submit-end->modal#submit turbo:frame-render->modal#showModal"
-    data-clear-turbo-id="new_location_modal"
+       tabindex="-1"
+       data-controller="modal categories"
+       data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#clearCategories turbo:submit-end->modal#submit turbo:frame-render->modal#showModal"
+       data-clear-turbo-id="new_location_modal"
   >
     <%= turbo_frame_tag "new_location_modal" do %>
     <% end %>
   </div>
 
   <div class="modal fade"
-    tabindex="-1"
-    data-controller="modal categories"
-    data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated turbo:submit-end->modal#submit turbo:frame-render->modal#showModal turbo:frame-render->categories#initializeCategories"
-    data-clear-turbo-id="edit_location_modal"
+       tabindex="-1"
+       data-controller="modal categories"
+       data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated turbo:submit-end->modal#submit turbo:frame-render->modal#showModal turbo:frame-render->categories#initializeCategories"
+       data-clear-turbo-id="edit_location_modal"
   >
     <%= turbo_frame_tag "edit_location_modal" do %>
     <% end %>
@@ -165,8 +165,10 @@
 <% end %>
 
 <div id="categories_modal_ref" class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
-  <%= turbo_frame_tag "categories_modal" do %>
-  <% end %>
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: {
+               turbo_frame_tag_id: "categories_modal",
+             } %>
 </div>
 
 <div id="delete_category_modal_ref" class="modal fade" tabindex="-1" data-controller="modal categories" data-action="turbo:frame-render->modal#showModal">
@@ -174,14 +176,9 @@
   <% end %>
 </div>
 
-<div id="import_categories_from_another_account_ref" class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
-  <%= turbo_frame_tag "import_categories_from_another_account" do %>
-  <% end %>
-</div>
-
 <%= render partial: "application/components/modals/turbo_modal",
            locals: {
-             turbo_frame_tag_id: "import_categories_from_another_account",
+             turbo_frame_tag_id: "import_from_another_account",
              optional_added_controllers: "categories",
              optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse"
            }

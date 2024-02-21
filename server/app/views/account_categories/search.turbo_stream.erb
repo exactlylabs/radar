@@ -1,14 +1,12 @@
-<%= turbo_stream.update "location-categories" do %>
+<%= turbo_stream.update "account-categories" do %>
   <% if @categories.count > 0 %>
     <% @categories.each do |category| %>
       <%= render partial: "categories/components/category_list_item",
                  locals: {
                    category: category,
                    selected: false,
-                   on_box_checked_dir: "location_categories",
+                   on_box_checked_dir: "account_categories",
                  } %>
     <% end %>
-  <% else %>
-    <%= render partial: "location_categories/inline_add_item", locals: { query: @query } %>
   <% end %>
 <% end %>

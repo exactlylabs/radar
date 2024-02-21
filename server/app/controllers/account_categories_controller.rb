@@ -4,22 +4,19 @@ class AccountCategoriesController < ApplicationController
   before_action :authenticate_user!
 
   def search
-    @account = policy_scope(Account).find(params[:account_id]) if params[:account_id]
+    @account_id = params[:account_id]
     @query = params[:query]
-    if @query.present?
-      @categories = policy_scope(Category).where("name ILIKE ?", "%#{@query}%")
-    else
-      @categories = policy_scope(Category)
-    end
+    @categories = Category.where(account_id: @account_id)
+    @categories = @categories.where("name LIKE ?", "%#{@query}%")
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to "/accounts" }
     end
   end
 
   def change_selected_categories
     ids = params[:categories].split(',')
-    @categories = policy_scope(Category).where(id: ids)
+    @categories = Category.where(id: ids)
+    puts "Categories: #{@categories.count}"
     respond_to do |format|
       format.turbo_stream
     end
@@ -29,6 +26,7 @@ class AccountCategoriesController < ApplicationController
     @notice = nil
     begin
       @categories = Category.where(account_id: params[:account_id])
+      @account_id = params[:account_id]
     rescue ActiveRecord::RecordNotFound => e
       @notice = "There is no account with given ID."
     end
@@ -38,6 +36,8 @@ class AccountCategoriesController < ApplicationController
   end
 
   def close_dropdown
+    @account_id = params[:account_id]
+    puts "Account ID: #{@account_id}"
     respond_to do |format|
       format.turbo_stream
     end

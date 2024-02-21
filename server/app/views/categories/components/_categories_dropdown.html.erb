@@ -1,14 +1,19 @@
 <% entity_categories = local_assigns[:entity_categories] || Category.none %>
 <%= turbo_frame_tag base_turbo_frame_tag_id do %>
   <div class="category--location-select-list">
-    <%= render partial: "location_categories/add_category_list_item" %>
+    <%= render partial: "categories/components/add_category_list_item", locals: {
+      turbo_frame_tag_id: categories_turbo_frame_tag_id,
+      search_categories_path: search_categories_path,
+      can_create_category: can_create_category
+    } %>
     <div class="category--horizontal-divider"></div>
     <%= turbo_frame_tag categories_turbo_frame_tag_id do %>
       <% categories.each do |category| %>
         <%= render partial: "categories/components/category_list_item",
                    locals: {
                      category: category,
-                     selected: entity_categories.where(id: category.id).count == 1
+                     selected: entity_categories.include?(category),
+                     on_box_checked_dir: on_box_checked_dir,
                    }
         %>
       <% end %>

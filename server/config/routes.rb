@@ -251,6 +251,11 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/account_categories/open_dropdown', to: 'account_categories#open_dropdown', as: 'account_categories_open_dropdown'
+  get '/account_categories/close_dropdown', to: 'account_categories#close_dropdown', as: 'account_categories_close_dropdown'
+  put '/account_categories/selected_categories', to: 'account_categories#change_selected_categories', as: 'account_category_update_categories'
+  get '/account_categories/search', to: 'account_categories#search', as: 'account_category_search'
+
   put '/location_categories/selected_categories', to: 'location_categories#change_selected_categories', as: 'location_category_update_categories'
   get '/location_categories/search', to: 'location_categories#search', as: 'location_category_search'
   get '/location_categories/open_dropdown', to: 'location_categories#open_dropdown', as: 'categories_open_dropdown'

@@ -34,10 +34,10 @@
                  data-categories-target="selectClickableContainer"
                  data-categories-dir-param="/location_categories"
                  data-action="click->categories#toggleFocus"
-                 data-categories-location-id-value="<%= @location.id.nil? ? nil : @location.id %>"
+                 data-categories-holder-id-value="location_id=<%= @location.id.nil? ? nil : @location.id %>"
             >
               <%= turbo_frame_tag "selected-categories" do %>
-                <%= render partial: "location_categories/table_cell", locals: { categories: @location.categories, shows_tooltip: false, row: -1 } %>
+                <%= render partial: "categories/components/table_cell", locals: { categories: @location.categories, shows_tooltip: false, row: -1 } %>
               <% end %>
               <span class="svg-icon svg-icon-5 m-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
