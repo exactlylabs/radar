@@ -11,7 +11,9 @@
           <%= render partial: "categories/add_category_button", locals: { account_id: current_account.id } %>
         <% end %>
       </div>
-      <%= link_to "Import from another account…", import_from_another_account_categories_path, { class: "categories--import-button", data: { "turbo-frame" => "import_categories_from_another_account" } } %>
+      <a class="categories--import-button" data-turbo-frame="import_from_another_account" href="<%= import_from_another_account_categories_path %>" data-action="click->categories#onImportFromAnotherAccount">
+        Import from another account…
+      </a>
       <%= turbo_frame_tag "categories", class: "category--list-container" do %>
         <% if params[:query].present? && @categories.count == 0 %>
           <p class="category--empty-state-text">No categories found for "<%= params[:query] %>".</p>

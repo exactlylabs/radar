@@ -4,7 +4,10 @@
                categories: @categories,
                entity_categories: @location&.categories,
                base_turbo_frame_tag_id: "location-categories-dropdown",
-               categories_turbo_frame_tag_id: "location-categories"
+               categories_turbo_frame_tag_id: "location-categories",
+               on_box_checked_dir: "location_categories",
+               search_categories_path: location_category_search_path,
+               can_create_category: true
              }
   %>
 <% end %>
