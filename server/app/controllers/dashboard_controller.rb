@@ -134,7 +134,7 @@ class DashboardController < ApplicationController
   end
 
   def common_filter_params()
-    account_ids = params[:account_id].present? ? policy_filter_ids(Account, params[:account_id]) : current_account.is_all_accounts? ? policy_scope(Account).pluck(:id).join(',') : [current_account.id]
+    account_ids = params[:account_id].present? ? policy_filter_ids(Account, params[:account_id]) : current_account.is_all_accounts? ? policy_scope(Account).pluck(:id) : [current_account.id]
     as_org_ids = params[:isp_id].present? ? policy_filter_ids(AutonomousSystemOrg, params[:isp_id]) : nil
     location_ids = params[:network_id].present? ? policy_filter_ids(Location, params[:network_id]) : nil
     {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids}
