@@ -7,11 +7,12 @@ class ConnectionInfo {
   });
 
   factory ConnectionInfo.fromJson(Map<String, dynamic> json) {
+    final isWifi = (json['connectionType'] as String).toLowerCase() == 'wifi';
     return ConnectionInfo(
       platform: json['platform'] as String,
       connectionType: json['connectionType'] as String,
       data: json['connectionInfo'] as Map<String, dynamic>,
-      rssi: _getAndroidRSSI(json['connectionInfo'], json['connectionType'] == 'WIFI'),
+      rssi: _getAndroidRSSI(json['connectionInfo'], isWifi),
     );
   }
   static int _getAndroidRSSI(Map<String, dynamic> json, bool isWifi) {
@@ -20,7 +21,7 @@ class ConnectionInfo {
       return json['rssi'] as int;
     } else {
       if (json['signalStrength'] == null || json['signalStrength']['dbm'] == null) return -1;
-      return json['signalStrength']['dbm'];
+      return json['signalStrength']['dbm'] as int;
     }
   }
 
