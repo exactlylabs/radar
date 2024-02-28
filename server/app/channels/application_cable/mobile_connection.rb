@@ -12,7 +12,8 @@ module ApplicationCable
 
     def allow_request_origin?
       # Uses the same method as in the client_api/v1/api_controller.rb
-      !Rails.env.production? || request.origin && !widget_client.client_urls.include?(request.origin)
+      true
+      # !Rails.env.production? || request.origin && !widget_client.client_urls.include?(request.origin)
     end
 
      def report_error(error)
