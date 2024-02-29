@@ -4,8 +4,8 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title"><%= @location.name.present? ? @location.name : "Unnamed Location" %> 
-      <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <h1 class="page-main-title"><%= @location.name.present? ? @location.name : "Unnamed Location" %>
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
@@ -19,6 +19,13 @@
     <!--end::Info-->
     <% if FeatureFlagHelper.is_available('networks', current_user) %>
       <div class="pods--header-options-container">
+        <a href="<%= get_add_pod_to_network_modal_path(@location.id) %>"
+           data-turbo-frame="add_pod_to_network_modal"
+           class="custom-button custom-button--primary custom-button--lg"
+        >
+          <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: "me-2" %>
+          Add pod
+        </a>
         <%= render partial: "application/components/buttons/custom_more_options_button",
                    locals: {
                      type: TablesHelper::OptionsMenuType::NETWORK_OVERVIEW,
@@ -34,27 +41,27 @@
 
 <div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
-    <div class="clients--details-container">
+  <div class="clients--details-container">
 
-      <!--begin::OptionsCard-->
-        <%= render partial: "application/components/tabs/page_tabs",
-          locals: {
-            tabs: [
-              { text: 'Overview', path: location_path(@location) },
-              { text: 'Pods', path: location_clients_path(@location.id) },
-              { text: 'Measurements', path: location_measurements_path(@location.id) },
-            ]
-          }
-        %>
-      <!--end::OptionsCard-->
-      <!--begin::LocationCard-->
-      <% if FeatureFlagHelper.is_available('networks', current_user) %>
-        <%= render partial: "networks/network_details", locals: { network: @location } %>
-      <% else %>
-        <%= render partial: "location_details", locals: { location: @location } %>
-      <% end %>
-      <!--end::LocationCard-->
-    </div>
+    <!--begin::OptionsCard-->
+    <%= render partial: "application/components/tabs/page_tabs",
+               locals: {
+                 tabs: [
+                   { text: 'Overview', path: location_path(@location) },
+                   { text: 'Pods', path: location_clients_path(@location.id) },
+                   { text: 'Measurements', path: location_measurements_path(@location.id) },
+                 ]
+               }
+    %>
+    <!--end::OptionsCard-->
+    <!--begin::LocationCard-->
+    <% if FeatureFlagHelper.is_available('networks', current_user) %>
+      <%= render partial: "networks/network_details", locals: { network: @location } %>
+    <% else %>
+      <%= render partial: "location_details", locals: { location: @location } %>
+    <% end %>
+    <!--end::LocationCard-->
+  </div>
   <!--end:Container-->
 </div>
 
@@ -65,6 +72,9 @@
                optional_added_controllers: "categories",
                optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse turbo:frame-render->categories#initializeCategories"
              }
+  %>
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "add_pod_to_network_modal", optional_added_controllers: "add-pod-to-network pod-id-step" }
   %>
 <% else %>
   <div class="modal fade" tabindex="-1" id="edit_location_modal" data-controller="modal categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->modal#submit turbo:frame-render->categories#initializeCategories">
@@ -81,13 +91,13 @@
 <!--end::AddPodModal-->
 
 <div class="modal fade" tabindex="-1" id="add_pod_modal_step_0" data-controller="add-client-to-location">
-    <%= render partial: 'location_clients/add_pod_step_0', locals: { location: @location } %>
+  <%= render partial: 'location_clients/add_pod_step_0', locals: { location: @location } %>
 </div>
 
 <div class="modal fade" tabindex="-1" id="add_pod_step_1_existing">
-    <%= render partial: 'location_clients/add_pod_step_1_existing', locals: { location: @location } %>
+  <%= render partial: 'location_clients/add_pod_step_1_existing', locals: { location: @location } %>
 </div>
 
 <div class="modal fade" tabindex="-1" id="add_pod_step_2_existing">
-    <%= render partial: 'location_clients/add_pod_step_2_existing', locals: { location: @location } %>
+  <%= render partial: 'location_clients/add_pod_step_2_existing', locals: { location: @location } %>
 </div>

@@ -2,7 +2,7 @@ module EventSourceable
   extend ActiveSupport::Concern
 
   module Hooks
-    def notify_change(field, event_name, options={})
+    def notify_change(field, event_name, options = {})
       if options[:applier].nil?
         # set the default applier for this field
         define_method("#{field}_applier") do |state, event|
@@ -19,7 +19,7 @@ module EventSourceable
       }
     end
 
-    def on_create(opts={})
+    def on_create(opts = {})
       if opts[:applier].present?
         self._config[:on_create][:applier] = opts[:applier]
       end
@@ -31,7 +31,7 @@ module EventSourceable
       end
     end
 
-    def on_destroy(opts={})
+    def on_destroy(opts = {})
       if opts[:applier].present?
         self._config[:on_destroy][:applier] = opts[:applier]
       end
@@ -67,7 +67,7 @@ module EventSourceable
     klass.extend(Hooks)
   end
 
-  def create_snapshot_from_event(event, opts={}, &applier)
+  def create_snapshot_from_event(event, opts = {}, &applier)
     last_snap = Snapshot.from_aggregate(self).prior_to(event.timestamp).ordered_by_event.last
     if last_snap.present? || opts[:is_created]
       state = last_snap&.state || {}
@@ -97,7 +97,7 @@ module EventSourceable
   def send_field_changed_event(field, from, to, timestamp)
     field_data = self.get_field_data(field)
     event_data = {
-      "from":from,
+      "from": from,
       "to": to
     }
 
@@ -138,13 +138,13 @@ module EventSourceable
     original_timestamp
   end
 
-  def new_event(name, data, timestamp=nil)
+  def new_event(name, data, timestamp = nil)
     timestamp = timestamp or Time.now
     saved_changes_bkp = saved_changes
     Event.transaction do
-       # Obtain a lock in a new instance of this class, to avoid losing saved_changes_to_attribute? data
-       # When instantiating a lock, all that data is lost, and any following call to saved_changes_to_attribute? returns false.
-      self.class.find(self.id).lock!
+      # Obtain a lock in a new instance of this class, to avoid losing saved_changes_to_attribute? data
+      # When instantiating a lock, all that data is lost, and any following call to saved_changes_to_attribute? returns false.
+      self.class.where(id: self.id).lock!
       last_event = Event.from_aggregate(self).order("version ASC").last
       version = last_event&.version || 0
       evt = Event.create(aggregate: self, name: name, data: data, timestamp: timestamp, version: version + 1)
@@ -155,7 +155,7 @@ module EventSourceable
     evt = self.new_event(
       event_name,
       data,
-      timestamp=get_event_timestamp(event_name, timestamp)
+      timestamp = get_event_timestamp(event_name, timestamp)
     )
     if evt.present?
       self.create_snapshot_from_event(
@@ -188,6 +188,6 @@ module EventSourceable
   end
 
   def get_field_data(field)
-    self._config[:observed_fields].find{|f| f[:field] == field}
+    self._config[:observed_fields].find { |f| f[:field] == field }
   end
 end
