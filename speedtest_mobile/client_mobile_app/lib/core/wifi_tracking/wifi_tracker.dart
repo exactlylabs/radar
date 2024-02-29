@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:async';
-import 'package:client_mobile_app/core/web_socket_client/web_socket_client.dart';
-import 'package:client_mobile_app/core/ws_mobile_messages/google/protobuf/timestamp.pbserver.dart';
-import 'package:client_mobile_app/core/ws_mobile_messages/ws_mobile_messages.pb.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:network_connection_info/network_connection_info.dart';
 import 'package:client_mobile_app/core/local_storage/local_storage.dart';
+import 'package:client_mobile_app/core/web_socket_client/web_socket_client.dart';
+import 'package:client_mobile_app/core/ws_mobile_messages/ws_mobile_messages.pb.dart';
+import 'package:client_mobile_app/core/ws_mobile_messages/google/protobuf/timestamp.pbserver.dart';
 
 class WifiTracker {
   WifiTracker({
@@ -22,7 +22,6 @@ class WifiTracker {
   final NetworkConnectionInfo _networkConnectionInfo;
 
   Position? _position;
-  // Position? _currentPosition;
   StreamSubscription<Position>? _positionStreamSubscription;
   List<Map<String, dynamic>> _responses = [];
 
@@ -71,10 +70,10 @@ class WifiTracker {
 
   Future<void> _sendScannedWifiResults() async {
     final scanResult = await getScannedWifiResults();
-    final result = await _webSocketClient.send(scanResult);
+    final scanResultSent = _webSocketClient.send(scanResult);
 
-    if (result.failure != null) {
-      Sentry.captureException(result.failure!);
+    if (!scanResultSent) {
+      Sentry.captureException(Exception('Failed to send scanned wifi results'));
     } else {
       _responses.clear();
     }

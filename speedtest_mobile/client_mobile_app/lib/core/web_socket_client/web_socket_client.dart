@@ -70,11 +70,12 @@ class WebSocketClient {
     return socket != null;
   }
 
-  Future<dynamic> send(dynamic request) async {
+  bool send(dynamic request) {
     try {
       socket?.sink.add(request);
+      return true;
     } catch (e) {
-      print(e);
+      return false;
     }
   }
 
