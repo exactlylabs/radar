@@ -189,6 +189,13 @@ class Client < ApplicationRecord
     end
   end
 
+  def self.resend_missed_test_requests!
+    # Search for online Clients, with a test_requested set to true and whose test_scheduled_at is older than 10 minutes
+    Client.where_online.where(test_requested: true).where('test_scheduled_at < ?', 10.minutes.ago).each do |client|
+      PodAgentChannel.broadcast_test_requested client
+    end
+  end
+
   def send_event
     if saved_change_to_online || saved_change_to_test_requested
       PodStatusChannel.broadcast_to(CHANNELS[:clients_status], self)
