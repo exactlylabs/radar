@@ -70,6 +70,7 @@ class LocationsController < ApplicationController
     @location.user = current_user
     @location.account_id = current_account.is_all_accounts? ? params[:location][:account_id] : current_account.id
     # TODO: Is there a better UX for this?
+    # This is moving the client to the new location when creating a new network
     current_clients = policy_scope(Client)
     if current_clients.count == 1
       @location.clients << current_clients.first
@@ -138,7 +139,6 @@ class LocationsController < ApplicationController
   # DELETE /locations/1 or /locations/1.json
   def destroy
     @location.soft_delete
-
     # Check if there is a reference to the client in the recents list to delete
     possible_recent_search = policy_scope(RecentSearch).find_by_location_id(@location.id)
     possible_recent_search.destroy if possible_recent_search.present?

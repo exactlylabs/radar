@@ -2,7 +2,7 @@ module LocationMeasurementsHelper
   def parse_param_to_human(param)
     case param
     when 'NDT7'
-      'Ndt7'
+      'NDT7'
     when 'OOKLA'
       'Ookla'
     when 'last-week'

@@ -1,8 +1,8 @@
 <div class="modal-dialog" data-edit-pod-target="step0Content">
   <div class="modal-content">
-    <%= render partial: "application/components/modals/modal_header", locals: {title: "Edit Pod"} %>
+    <%= render partial: "application/components/modals/modal_header", locals: { title: "Edit Pod" } %>
     <div class="modal-body modals--body">
-      <%= render partial: "clients/components/modals/modal_body_head", locals: {client: @client, with_status: true} %>
+      <%= render partial: "clients/components/modals/modal_body_head", locals: { client: @client, with_status: true } %>
       <div class="forms--row">
         <!--begin::Label-->
         <label class="forms--label mb-2">Name</label>
@@ -32,7 +32,7 @@
               <option></option>
               <option>&nbsp;</option>
             <% end %>
-            <% policy_scope(Account).each do |account|%>
+            <% policy_scope(Account).each do |account| %>
               <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
             <% end %>
           </select>
@@ -40,12 +40,12 @@
       </div>
 
       <div class="forms--row">
-        <label class="forms--label mb-2">Location</label>
+        <label class="forms--label mb-2">Network</label>
         <div class="forms--input-group">
           <select class="forms--select form-select"
                   data-controller="select2"
                   id="client-locations-dropdown-edit"
-                  data-placeholder="Select a location"
+                  data-placeholder="Select a network"
                   name="location_id"
                   data-select2-id="select2-data-location_id"
                   tabindex="-1"
@@ -54,7 +54,7 @@
           >
             <option></option>
             <option>&nbsp;</option>
-            <% policy_scope(Location).where(account_id: @client.account.id).each do |location|%>
+            <% policy_scope(Location).where(account_id: @client.account.id).each do |location| %>
               <%= render partial: "clients/client_select_option", locals: { option: location, selected: location == @client.location } %>
             <% end %>
           </select>
@@ -106,7 +106,7 @@
                     tabindex="-1"
                     data-select2-dropdown-parent-value="edit_pod_modal"
             >
-              <% UpdateGroup.all.each do |ug|%>
+              <% UpdateGroup.all.each do |ug| %>
                 <option value="<%= ug.id %>" label="<%= ug.name %>" <%= @client.update_group_id == ug.id ? "selected" : nil %>><%= ug.name %></option>
               <% end %>
             </select>
@@ -117,13 +117,14 @@
     </div>
 
     <div class="modal-footer modals--footer">
-      <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel"} %>
+      <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel" } %>
       <button type="submit"
               class="custom-button custom-button--primary custom-button--sm"
               id="continue-button"
               data-action="click->edit-pod#submit"
               data-edit-pod-target="updatePodButton"
-      >Update Pod</button>
+      >Update Pod
+      </button>
     </div>
   </div>
 </div>

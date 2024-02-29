@@ -229,7 +229,7 @@ include Recents
   def soft_delete
     ActiveRecord::Base.transaction do
       self.deleted_at = Time.now
-      self.save!
+      self.save
       self.clients.update(location_id: nil)
       CategoriesLocation.where(location_id: self.id).destroy_all
       remove_recent_search(self.id, Recents::RecentTypes::LOCATION)

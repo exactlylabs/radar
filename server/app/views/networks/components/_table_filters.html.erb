@@ -1,5 +1,5 @@
 <div class="tables--filters-container">
-  <%= render partial: "application/components/tables/multi_row_actions", 
+  <%= render partial: "application/components/tables/multi_row_actions",
       locals: {
         menu_id: 'members-multi-row-actions-menu',
         options: [
@@ -30,7 +30,7 @@
         default_label: 'All accounts',
         options: [
           { label: 'All accounts', value: '-1'},
-          *policy_scope(Account).map {|account| { label: account.name , value: "#{account.id}" }}
+          *policy_scope(Account).order(name: :asc).map {|account| { label: account.name , value: "#{account.id}" }}
         ],
       }
     %>
@@ -43,10 +43,10 @@
         default_label: 'All categories',
         options: [
           { label: 'All categories', value: nil},
-          *policy_scope(Category).map {|category| { label: category.name , value: "#{category.id}" }}
+          *policy_scope(Category).order(name: :asc).map {|category| { label: category.name , value: "#{category.id}" }}
         ],
       }
-    %>  
+    %>
   <% end %>
 
   <%= render partial: "application/components/tables/filter",
