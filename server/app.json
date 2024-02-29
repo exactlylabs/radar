@@ -6,6 +6,9 @@
         "worker": {
             "quantity": 1
         },
+        "mobile_scans_worker": {
+            "quantity": 1
+        },
         "clock": {
             "quantity": 1
         },
