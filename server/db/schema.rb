@@ -655,49 +655,6 @@ ActiveRecord::Schema.define(version: 2024_02_29_184911) do
     t.index ["parent_aggregate_id"], name: "index_study_aggregates_on_parent_aggregate_id"
   end
 
-  create_table "study_counties", id: false, force: :cascade do |t|
-    t.string "state"
-    t.string "state_code"
-    t.string "county"
-    t.string "fips"
-    t.integer "pop_2021"
-  end
-
-  create_table "study_level_projections", force: :cascade do |t|
-    t.datetime "timestamp"
-    t.bigint "parent_aggregate_id"
-    t.bigint "study_aggregate_id"
-    t.bigint "autonomous_system_org_id"
-    t.bigint "location_id"
-    t.bigint "event_id"
-    t.bigint "measurement_id"
-    t.bigint "client_speed_test_id"
-    t.geography "lonlat", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}
-    t.string "level"
-    t.integer "online_count", default: 0
-    t.integer "incr", default: 0
-    t.boolean "location_online", default: false
-    t.integer "location_online_incr", default: 0
-    t.integer "measurement_count", default: 0
-    t.integer "measurement_incr", default: 0
-    t.integer "points_with_tests_count", default: 0
-    t.integer "points_with_tests_incr", default: 0
-    t.integer "days_online_count", default: 0
-    t.integer "completed_locations_count", default: 0
-    t.integer "completed_locations_incr", default: 0
-    t.boolean "location_completed", default: false
-    t.string "metric_type"
-    t.index ["autonomous_system_org_id"], name: "index_study_level_projections_on_autonomous_system_org_id"
-    t.index ["client_speed_test_id"], name: "index_study_level_projections_on_client_speed_test_id"
-    t.index ["event_id"], name: "index_study_level_projections_on_event_id"
-    t.index ["location_id"], name: "index_study_level_projections_on_location_id"
-    t.index ["measurement_id"], name: "index_study_level_projections_on_measurement_id"
-    t.index ["metric_type"], name: "index_study_level_projections_on_metric_type"
-    t.index ["parent_aggregate_id"], name: "index_study_level_projections_on_parent_aggregate_id"
-    t.index ["study_aggregate_id"], name: "index_study_level_projections_on_study_aggregate_id"
-    t.index ["timestamp"], name: "test_study_level_projs_timestamp", order: :desc
-  end
-
   create_table "system_outages", force: :cascade do |t|
     t.string "description"
     t.datetime "start_time"
@@ -850,13 +807,6 @@ ActiveRecord::Schema.define(version: 2024_02_29_184911) do
   add_foreign_key "study_aggregates", "autonomous_system_orgs"
   add_foreign_key "study_aggregates", "geospaces"
   add_foreign_key "study_aggregates", "study_aggregates", column: "parent_aggregate_id"
-  add_foreign_key "study_level_projections", "autonomous_system_orgs"
-  add_foreign_key "study_level_projections", "client_speed_tests"
-  add_foreign_key "study_level_projections", "events"
-  add_foreign_key "study_level_projections", "locations"
-  add_foreign_key "study_level_projections", "measurements"
-  add_foreign_key "study_level_projections", "study_aggregates"
-  add_foreign_key "study_level_projections", "study_aggregates", column: "parent_aggregate_id"
   add_foreign_key "update_groups", "client_versions"
   add_foreign_key "update_groups", "client_versions", column: "old_client_version_id"
   add_foreign_key "update_groups", "watchdog_versions"
