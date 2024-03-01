@@ -13,7 +13,7 @@
         "name": "Startup Check",
         "type": "startup",
         "path": "/",
-        "content": "speedtest--frame--main-frame-wrapper"
+        "content": "root"
       }
     ]
   }
