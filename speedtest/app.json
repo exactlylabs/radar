@@ -1,0 +1,14 @@
+{
+  "healthchecks": {
+    "web": [
+      {
+        "attempts": 3,
+        "name": "Liveness Check",
+        "path": "/",
+        "timeout": 5,
+        "type": "liveness",
+        "wait": 5
+      }
+    ]
+  }
+}
