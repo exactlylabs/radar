@@ -5,8 +5,7 @@ import {useViewportSizes} from "../../../hooks/useViewportSizes";
 
 const stepperContainerStyle = {
   width: '30%',
-  margin: '0 auto 20px',
-  paddingTop: '10px',
+  margin: '10px auto 20px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
@@ -15,8 +14,7 @@ const stepperContainerStyle = {
 
 const mobileStepperContainerStyle = {
   ...stepperContainerStyle,
-  margin: '0 auto 20px',
-  paddingTop: '30px'
+  margin: '30px auto 20px'
 }
 
 const stepConnectorStyle = {

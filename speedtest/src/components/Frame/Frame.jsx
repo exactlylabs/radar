@@ -6,7 +6,6 @@ import {DEFAULT_MAIN_SECTION_BACKGROUND_COLOR, WHITE} from '../../utils/colors';
 import {TABS} from "../../constants";
 import WidgetFooter from "./WidgetFooter";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
-import ExactlyLabsHeader from './ExactlyLabsHeader';
 
 const defaultMainWrapperStyle = {
   backgroundColor: DEFAULT_MAIN_SECTION_BACKGROUND_COLOR,
@@ -67,17 +66,11 @@ const Frame = ({ config, children, step, setStep }) => {
   const getFrameStyleBasedOnCurrentTab = () => {
     if(isOverviewPage) return overviewPageStyle;
     if(step === TABS.ALL_RESULTS) {
-      if(config.widgetMode) return {
-        ...widgetFullWidthWrapperStyle,
-        height: `${config.frameStyle.height} - 150px`,
-        overflowY: isAllResultsPage ? 'hidden' : 'auto'
-      };
+      if(config.widgetMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height} - 175px`, overflowY: isAllResultsPage ? 'hidden' : 'auto'};
       else if(config.webviewMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height}`};
       return isMediumSizeScreen || isSmallSizeScreen ? mobileFullWidthWrapperStyle : fullWidthWrapperStyle;
     } else {
-      if(config.widgetMode) {
-        return {...childrenWrapperStyle, height: `calc(${config.frameStyle.height} - 150px)`};
-      }
+      if(config.widgetMode) return {...childrenWrapperStyle, height: `${config.frameStyle.height} - 110px`};
       return childrenWrapperStyle;
     }
   }
@@ -97,7 +90,7 @@ const Frame = ({ config, children, step, setStep }) => {
   const getMinHeight = () => {
     if(isOverviewPage) return undefined;
     if(config.widgetMode) {
-      return `calc(${config.frameStyle.height} - 150px)`;
+      return `calc(${config.frameStyle.height} - 110px)`;
     } else if(config.webviewMode) {
       return `${config.frameStyle.height}`;
     } else {
@@ -107,8 +100,6 @@ const Frame = ({ config, children, step, setStep }) => {
 
   return (
     <div style={getWrapperStyle()} id={'speedtest--main-frame'}>
-
-      {config.widgetMode && <ExactlyLabsHeader />}
       {!config.widgetMode && !config.webviewMode && <Header setStep={setStep} isOverviewPage={isOverviewPage}/>}
       {shouldShowTabs && <Tabs step={step} setStep={setStep}/> }
       <div style={{ ...getFrameStyleBasedOnCurrentTab(), minHeight: getMinHeight() }} id={'speedtest--frame--main-frame-wrapper'}>

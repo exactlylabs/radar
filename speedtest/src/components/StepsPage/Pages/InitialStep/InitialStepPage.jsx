@@ -13,7 +13,6 @@ import initialPageShadow from '../../../../assets/initial-page-shadow.png';
 import performanceIcon from '../../../../assets/performance-icon.png';
 import mapIcon from '../../../../assets/map-icon.png';
 import speedTestsIcon from '../../../../assets/speedtests-icon.png';
-import ConfigContext from "../../../../context/ConfigContext";
 
 const initialStepPageStyle = {
   width: '100%',
@@ -161,7 +160,6 @@ const iconStyle = {
 
 const InitialStepPage = ({goToNextPage, error}) => {
 
-  const config = useContext(ConfigContext);
   const {userData, setTerms} = useContext(UserDataContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const isSmall = isSmallSizeScreen || isMediumSizeScreen;
@@ -183,16 +181,13 @@ const InitialStepPage = ({goToNextPage, error}) => {
           </div>
           { error && <MyMessageSnackbar type={'error'} message={error}/> }
           <MyForwardButton text={'Take the test'} icon={<img src={rightArrowWhite} style={rightArrowStyle} alt={'location-button-icon'} width={14} height={14}/>} onClick={goToNextPage}/>
-          { !config.widgetMode && <img src={initialPageShadow} alt={'shadow'} style={isSmall ? smallShadowImage : shadowImage}/> }
+          <img src={initialPageShadow} alt={'shadow'} style={isSmall ? smallShadowImage : shadowImage}/>
         </div>
-        {
-          !config.widgetMode &&
-          <div style={isSmall ? smallBulletsContainer : bulletsContainer}>
-            <Bullet icon={<img src={speedTestsIcon} style={iconStyle} alt={'test icon'} />} title={'Test your connectivity'} subtitle={'Get detailed information about your internet connection.'} />
-            <Bullet icon={<img src={performanceIcon} style={iconStyle} alt={'performance icon'} />} title={'Keep track of your results'} subtitle={'Check your history to see how your connectivity does over time.'} />
-            <Bullet icon={<img src={mapIcon} style={iconStyle} alt={'map icon'} />} title={'Compare your results'} subtitle={'Explore the map to see how broadband varies in your region.'} />
-          </div>
-        }
+        <div style={isSmall ? smallBulletsContainer : bulletsContainer}>
+          <Bullet icon={<img src={speedTestsIcon} style={iconStyle} alt={'test icon'}/>} title={'Test your connectivity'} subtitle={'Get detailed information about your internet connection.'}/>
+          <Bullet icon={<img src={performanceIcon} style={iconStyle} alt={'performance icon'}/>} title={'Keep track of your results'} subtitle={'Check your history to see how your connectivity does over time.'}/>
+          <Bullet icon={<img src={mapIcon} style={iconStyle} alt={'map icon'}/>} title={'Compare your results'} subtitle={'Explore the map to see how broadband varies in your region.'}/>
+        </div>
       </div>
     </div>
   )
