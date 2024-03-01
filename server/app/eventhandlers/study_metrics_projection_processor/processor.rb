@@ -41,37 +41,47 @@ module StudyMetricsProjectionProcessor
       conn = ActiveRecord::Base.connection_pool.checkout
       # loaded = false
       offsets = {
-        events_offset: @consumer_offset.state["events_offset"] || 0,
+        client_events_offset: @consumer_offset.state["events_offset"] || 0,
+        sys_outage_events_offset: @consumer_offset.state["sys_outage_events_offset"] || 0,
         measurements_offset: @consumer_offset.state["measurements_offset"] || 0,
         speed_tests_offset: @consumer_offset.state["speed_tests_offset"] || 0,
         daily_trigger_offset: @consumer_offset.state["daily_trigger_offset"] || 0,
       }
+      iterators = [
+        self.events_iterator(Client, offsets[:client_events_offset]),
+        self.events_iterator(SystemOutage, offsets[:sys_outage_events_offset]),
+        self.measurements_iterator(offsets[:measurements_offset]),
+        self.client_speed_tests_iterator(offsets[:speed_tests_offset]),
+        self.days_iterator(offsets[:daily_trigger_offset]),
+      ]
 
       begin
         @raw = conn.raw_connection
-        self.sources_iterator(**offsets).each do |source, value|
-          @projection_updated = false
-          timestamp = nil
-          case source
-          when "event"
-            self.handle_event value
-            @consumer_offset.state["events_offset"] = value.id
-            timestamp = value.timestamp
+        self.sorted_iteration(iterators).each do |content|
+          source = content[:name]
+          value = content[:data]
+          timestamp = Time.at(content[:timestamp])
 
-          when "measurement"
+          @projection_updated = false
+
+          case source
+          when "Client" || "SystemOutage"
+            self.handle_event value
+            @consumer_offset.state["client_events_offset"] = value.id if source == "Client"
+            @consumer_offset.state["sys_outage_events_offset"] = value.id if source == "SystemOutage"
+
+          when "Measurement"
             self.handle_measurement value["id"], value["location_id"], value["lonlat"], value["processed_at"], value["autonomous_system_org_id"], value["autonomous_system_org_name"]
             @consumer_offset.state["measurements_offset"] = value["id"]
-            timestamp = value["processed_at"]
 
-          when "speed_test"
+          when "ClientSpeedTest"
             self.handle_speed_test value["id"], value["lonlat"], value["processed_at"], value["autonomous_system_org_id"], value["autonomous_system_org_name"]
             @consumer_offset.state["speed_tests_offset"] = value["id"]
-            timestamp = value["processed_at"]
 
-          when "daily_trigger"
+          when "DailyTrigger"
             self.handle_daily_trigger value
             @consumer_offset.state["daily_trigger_offset"] = value.to_time.to_i
-            timestamp = value.to_time
+
           end
 
           self.close_finished_buckets(timestamp)

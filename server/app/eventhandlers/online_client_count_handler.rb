@@ -1,4 +1,6 @@
 class OnlineClientCountHandler
+  include Fetchers
+
   MAX_QUEUE_SIZE = 50000
   DEFAULT_BATCH_SIZE = 10000
 
@@ -12,6 +14,7 @@ class OnlineClientCountHandler
     @pods_status = {}
     @last_clients_events = {}
     @ongoing_system_outage = nil
+    @last_timestamp = nil
   end
 
   def aggregate!()
@@ -25,30 +28,46 @@ class OnlineClientCountHandler
   end
 
   def _aggregate!()
-    events = self.to_be_processed_events
-    events.each do |event|
+    @last_timestamp = OnlineClientCountProjection.order(timestamp: :desc).first&.timestamp
+    offsets = {
+      client_events_offset: @consumer_offset.state["client_events_offset"] || @consumer_offset.offset || 0,
+      location_events_offset: @consumer_offset.state["location_events_offset"] || 0,
+      sys_outage_events_offset: @consumer_offset.state["sys_outage_events_offset"] || 0,
+    }
+    iterators = [
+      self.events_iterator(Client, offsets[:client_events_offset]),
+      self.events_iterator(Location, offsets[:location_events_offset]),
+      self.events_iterator(SystemOutage, offsets[:sys_outage_events_offset]),
+    ]
+
+    self.sorted_iteration(iterators).each do |content|
+      event = content[:data]
+
       @ongoing_system_outage = SystemOutage.at(event.timestamp).exists? if @ongoing_system_outage.nil?
       begin
         if event.aggregate_type == Client.name
           self.handle_client_event! event
+          @consumer_offset.state["client_events_offset"] = event.id
         elsif event.aggregate_type == SystemOutage.name
           self.handle_system_outage_event! event
+          @consumer_offset.state["sys_outage_events_offset"] = event.id
         elsif event.aggregate_type == Location.name
           self.handle_location_event! event
+          @consumer_offset.state["location_events_offset"] = event.id
         end
       rescue ActiveRecord::InvalidForeignKey
       end
-      @consumer_offset.offset = event.id
       if @insertion_queue.length > MAX_QUEUE_SIZE
         self.flush_insertion_queue
       end
+      @last_timestamp = event.timestamp
     end
     self.flush_insertion_queue
     return nil
   end
 
   def handle_client_event!(event)
-    if event.snapshot.nil? || @ongoing_system_outage
+    if event.snapshot.nil?
       return
     end
     last_event = @last_clients_events[event.aggregate_id]
@@ -108,10 +127,53 @@ class OnlineClientCountHandler
 
   def handle_system_outage_event!(event)
     if event.name == SystemOutage::Events::CREATED
-      @ongoing_system_outage = true
+      # @ongoing_system_outage = true unless event.data["end_time"].present && event.data["end_time"].to_time < @last_timestamp
     elsif event.name == SystemOutage::Events::FINISHED
-      @ongoing_system_outage = false
+      # @ongoing_system_outage = false
       outage = event.snapshot.state
+
+      # Add any pending record from the queue into the DB, to work on DB data only, not both DB and queue.
+      self.flush_insertion_queue
+
+      # Update all projections from the beginning of the outage until the end with the value at the beginning.
+      sql = %{
+        WITH projections_before_outage AS (
+          SELECT
+            DISTINCT ON (p.account_id, p.autonomous_system_id, p.location_id) account_id, autonomous_system_id, location_id,
+            p.online,
+            p.total,
+            p.total_in_service,
+            p.timestamp,
+            p.incr
+          FROM online_client_count_projections p
+          WHERE
+            p.timestamp < :start_time
+          ORDER BY account_id, autonomous_system_id, location_id, timestamp DESC
+        )
+
+        UPDATE
+          online_client_count_projections p
+        SET
+          online = pbo.online,
+          total = pbo.total,
+          total_in_service = pbo.total_in_service,
+          incr = 0
+        FROM projections_before_outage pbo
+        WHERE
+          p.timestamp BETWEEN :start_time AND :end_time AND
+          pbo.account_id = p.account_id AND
+          pbo.autonomous_system_id = p.autonomous_system_id AND
+          pbo.location_id = p.location_id
+      }
+      ActiveRecord::Base.connection.execute(
+        ApplicationRecord.sanitize_sql(
+          [sql, {
+             start_time: outage["start_time"],
+             end_time: outage["end_time"],
+          }]
+        )
+      )
+
       # Once a system outage is finished, we search for
       # pods whose state differs from the state before the outage.
       sql = %{
@@ -229,6 +291,7 @@ class OnlineClientCountHandler
 
   def new_record!(previous_count, event, increment=0)
     count = OnlineClientCountProjection.new(previous_count.as_json)
+    return unless count.account_id.present?
     count.id = nil # to ensure it creates a new row, instead of updating the existing
     count.timestamp = event.timestamp
     count.event_id = event.id
