@@ -8,6 +8,12 @@
         "timeout": 5,
         "type": "liveness",
         "wait": 5
+      },
+      {
+        "name": "Startup Check",
+        "type": "startup",
+        "path": "/",
+        "content": "speedtest--frame--main-frame-wrapper"
       }
     ]
   }
