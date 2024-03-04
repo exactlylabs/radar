@@ -126,10 +126,7 @@ class OnlineClientCountHandler
   end
 
   def handle_system_outage_event!(event)
-    if event.name == SystemOutage::Events::CREATED
-      # @ongoing_system_outage = true unless event.data["end_time"].present && event.data["end_time"].to_time < @last_timestamp
-    elsif event.name == SystemOutage::Events::FINISHED
-      # @ongoing_system_outage = false
+    if event.name == SystemOutage::Events::FINISHED
       outage = event.snapshot.state
 
       # Add any pending record from the queue into the DB, to work on DB data only, not both DB and queue.
