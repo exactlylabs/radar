@@ -65,16 +65,16 @@ module StudyMetricsProjectionProcessor
           @projection_updated = false
 
           case source
-          when "Client" || "SystemOutage"
+          when Client.name || SystemOutage.name
             self.handle_event value
             @consumer_offset.state["client_events_offset"] = value.id if source == "Client"
             @consumer_offset.state["sys_outage_events_offset"] = value.id if source == "SystemOutage"
 
-          when "Measurement"
+          when Measurement.name
             self.handle_measurement value["id"], value["location_id"], value["lonlat"], value["processed_at"], value["autonomous_system_org_id"], value["autonomous_system_org_name"]
             @consumer_offset.state["measurements_offset"] = value["id"]
 
-          when "ClientSpeedTest"
+          when ClientSpeedTest.name
             self.handle_speed_test value["id"], value["lonlat"], value["processed_at"], value["autonomous_system_org_id"], value["autonomous_system_org_name"]
             @consumer_offset.state["speed_tests_offset"] = value["id"]
 
