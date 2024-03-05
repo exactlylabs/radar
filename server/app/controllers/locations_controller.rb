@@ -69,12 +69,6 @@ class LocationsController < ApplicationController
     @location = Location.new(location_params)
     @location.user = current_user
     @location.account_id = current_account.is_all_accounts? ? params[:location][:account_id] : current_account.id
-    # TODO: Is there a better UX for this?
-    # This is moving the client to the new location when creating a new network
-    current_clients = policy_scope(Client)
-    if current_clients.count == 1
-      @location.clients << current_clients.first
-    end
 
     @is_onboarding = params[:onboarding] == "true" if FeatureFlagHelper.is_available('networks', current_user)
 
