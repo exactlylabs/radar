@@ -101,9 +101,6 @@ class WifiTrackerCubit extends Cubit<WifiTrackerState> {
     final notificationStatus = await Permission.notification.isGranted;
     permissions[WifiTrackerState.NOTIFICATION_PERMISSION] = notificationStatus;
 
-    final scheduleExactAlarmStatus = await Permission.scheduleExactAlarm.isGranted;
-    permissions[WifiTrackerState.SCHEDULE_EXACT_ALARM_PERMISSION] = scheduleExactAlarmStatus;
-
     return permissions;
   }
 
