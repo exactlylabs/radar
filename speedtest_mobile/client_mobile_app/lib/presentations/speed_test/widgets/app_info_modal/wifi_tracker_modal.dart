@@ -48,9 +48,23 @@ class WifiTrackerModal extends StatelessWidget {
                   onChanged: (freq) =>
                       context.read<WifiTrackerCubit>().setFrequency(int.tryParse(freq) ?? -1),
                 ),
-                const SizedBox(height: 104),
+                const SizedBox(height: 45),
+                if (state.permissionsMessage != null)
+                  Text(
+                    state.permissionsMessage ?? '',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyle(
+                      fontSize: 16.0,
+                      fontWeight: 200,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                const SizedBox(height: 45),
                 PrimaryButton(
-                  onPressed: () => context.read<WifiTrackerCubit>().enableWifiTracker(),
+                  onPressed:
+                      (state.permissionsMessage != null && state.permissionsMessage!.isNotEmpty)
+                          ? null
+                          : () => context.read<WifiTrackerCubit>().enableWifiTracker(),
                   child: Text(
                     'Enable',
                     style: AppTextStyle(
