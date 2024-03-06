@@ -70,6 +70,10 @@ class WifiTracker {
 
   Future<void> _sendScannedWifiResults() async {
     final scanResult = await getScannedWifiResults();
+    if (scanResult == null) {
+      Sentry.captureException(Exception('Failed to get scanned wifi results'));
+      return;
+    }
     final scanResultSent = _webSocketClient.send(scanResult);
 
     if (!scanResultSent) {
@@ -79,32 +83,39 @@ class WifiTracker {
     }
   }
 
-  Future<List<int>> getScannedWifiResults() async {
-    final wsMessage = WSMessage(
-        event: Events.SCAN_RESULT,
-        scanResult: ScanResult(
-          scannedAps: _responses
-              .map((response) => ScannedAP(
-                    bssid: response['bssid'],
-                    ssid: response['ssid'],
-                    capabilities: response['capabilities'],
-                    level: response['level'],
-                    frequency: response['frequency'],
-                    centerFreq0: response['centerFreq0'],
-                    centerFreq1: response['centerFreq1'],
-                    is80211mcResponder: response['is80211mcResponder'],
-                    channelWidth: response['channelWidth'],
-                    isPasspointNetwork: response['isPasspointNetwork'],
-                    wifiStandard: response['wifiStandard'],
-                    timestamp: Timestamp.fromDateTime(
-                        DateTime.fromMillisecondsSinceEpoch(response['timestamp'])),
-                  ))
-              .toList(),
-          latitude: _position?.latitude,
-          longitude: _position?.longitude,
-        ));
-    final wsMessageToByteArray = wsMessage.writeToBuffer();
-    return wsMessageToByteArray;
+  Future<List<int>?> getScannedWifiResults() async {
+    print('Scanned wifi results: $_responses');
+    try {
+      final wsMessage = WSMessage(
+          event: Events.SCAN_RESULT,
+          scanResult: ScanResult(
+            scannedAps: _responses
+                .map((response) => ScannedAP(
+                      bssid: response['bssid'],
+                      ssid: response['ssid'],
+                      capabilities: response['capabilities'],
+                      level: response['level'],
+                      frequency: response['frequency'],
+                      centerFreq0: response['centerFreq0'],
+                      centerFreq1: response['centerFreq1'],
+                      is80211mcResponder: response['is80211mcResponder'],
+                      channelWidth: response['channelWidth'],
+                      isPasspointNetwork: response['isPasspointNetwork'],
+                      wifiStandard: response['wifiStandard'],
+                      timestamp: Timestamp.fromDateTime(
+                          DateTime.fromMillisecondsSinceEpoch(response['timestamp'])),
+                    ))
+                .toList(),
+            latitude: _position?.latitude,
+            longitude: _position?.longitude,
+          ));
+      final wsMessageToByteArray = wsMessage.writeToBuffer();
+      return wsMessageToByteArray;
+    } catch (e) {
+      print('Failed to get scanned wifi results: $e');
+      Sentry.captureException(e);
+      return null;
+    }
   }
 
   void setInitialValues() {

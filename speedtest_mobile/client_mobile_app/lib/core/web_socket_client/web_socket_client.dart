@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:client_mobile_app/core/ws_mobile_messages/ws_mobile_messages.pbserver.dart';
@@ -42,6 +43,7 @@ class WebSocketClient {
       final wsMessage = WSMessage.fromBuffer(event);
       print(wsMessage.toString());
     } catch (e) {
+      Sentry.captureException(e);
       print("Failed to parse message:");
       print(event);
     }
@@ -75,6 +77,8 @@ class WebSocketClient {
       socket?.sink.add(request);
       return true;
     } catch (e) {
+      print("Failed to send message:");
+      Sentry.captureException(e);
       return false;
     }
   }

@@ -50,7 +50,12 @@ class SpeedTestPage extends StatelessWidget {
                     toolbarHeight: 50.0,
                     backgroundColor: Theme.of(context).colorScheme.background,
                     title: InkWell(
-                        onLongPress: () => _openWifiTrackerModal(context),
+                        onLongPress: () {
+                          context
+                              .read<WifiTrackerCubit>()
+                              .updatePermissionsStatus()
+                              .then((_) => _openWifiTrackerModal(context));
+                        },
                         child: Image.asset(Images.logoGrey, fit: BoxFit.contain)),
                     actions: [
                       Container(
