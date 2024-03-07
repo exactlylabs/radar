@@ -123,7 +123,7 @@ const SpeedResultsBox = ({
     if (config.webviewMode) {
       style = {...style, top: 'calc(100vh - 125px - 45px)'}
     } else if(config.widgetMode) {
-      style = {...style, top: `calc(${config.frameStyle.height} - 60px - 54px - 56px - 70px)` }
+      style = {...style, top: `calc(${config.frameStyle.height} - 60px - 54px - 56px - 70px - 40px)` }
     } else {
       style = {...style, top: (y + height - 300)}
     }
@@ -144,7 +144,7 @@ const SpeedResultsBox = ({
     if (config.webviewMode) {
       style = {...style, top: 'calc(100vh - 125px - 45px)'}
     } else if(config.widgetMode) {
-      style = {...style, top: `calc(${config.frameStyle.height} - 95px - 54px - 56px - 70px)` }
+      style = {...style, top: `calc(${config.frameStyle.height} - 95px - 54px - 56px - 70px - 40px)` }
     } else {
       style = {...style, top: (y + height - 300)}
     }
@@ -160,7 +160,9 @@ const SpeedResultsBox = ({
 
   const getFloatingFilterTypeSwitch = () => {
     let style = mobileFilterSwitcherContainerStyle;
-    if(config.widgetMode || config.webviewMode) {
+    if(config.widgetMode) {
+      style = {...style, position: 'absolute', bottom: null, top: '-5px', left: 15 }
+    } else if(config.webviewMode) {
       style = {...style, position: 'absolute', bottom: null, top: '-5px', left: config.noZoomControl ? 15 : 50}
     }
     return (

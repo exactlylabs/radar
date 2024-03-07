@@ -3,6 +3,8 @@ import DownloadIconDisabled from '../../../../assets/small-download-icon-disable
 import UploadIcon from '../../../../assets/small-upload-icon.png';
 import UploadIconDisabled from '../../../../assets/small-upload-icon-disabled.png';
 import {DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
+import {useContext} from "react";
+import ConfigContext from "../../../../context/ConfigContext";
 
 const gaugeInteriorStyle = {
   width: 150,
@@ -11,6 +13,13 @@ const gaugeInteriorStyle = {
   top: '-215px',
   left: '50%',
   transform: 'translateX(-50%)',
+}
+
+const widgetGaugeInteriorStyle = {
+  ...gaugeInteriorStyle,
+  width: 120,
+  height: 120,
+  top: '-172px'
 }
 
 const sharedNumbersStyle = {
@@ -120,8 +129,10 @@ const SpeedGaugeInterior = ({
   isDownloading,
 }) => {
 
+  const config = useContext(ConfigContext);
+
   return (
-    <div className={'speedtest--bold'} style={gaugeInteriorStyle}>
+    <div className={'speedtest--bold'} style={false && config.widgetMode ? widgetGaugeInteriorStyle : gaugeInteriorStyle}>
       <div style={zeroStyle}>0</div>
       <div style={fiveStyle}>5</div>
       <div style={tenStyle}>10</div>

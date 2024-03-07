@@ -1,7 +1,8 @@
-import {useEffect} from "react";
+import {useContext, useEffect} from "react";
 import './styles/MyOption.css';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import {DEFAULT_TEXT_COLOR} from "../../utils/colors";
+import ConfigContext from "../../context/ConfigContext";
 
 const optionStyle = {
   width: 134,
@@ -11,8 +12,13 @@ const optionStyle = {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  marginRight: 20,
   cursor: 'pointer',
+  gap: '10px'
+}
+
+const widgetOptionStyle = {
+    ...optionStyle,
+    width: 125,
 }
 
 const mobileOptionStyle = {
@@ -23,32 +29,16 @@ const mobileOptionStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
-  marginBottom: 10,
+  gap: '10px',
   cursor: 'pointer',
   paddingLeft: 20,
   paddingRight: 20,
 }
 
-const lastOptionStyle = {
-  ...optionStyle,
-  marginRight: 0,
-}
-
-const hoverStyle = {
-  border: 'solid 1px #4b7be5',
-}
-
-const optionIconStyle = {
-  marginBottom: 10,
-}
-
-const mobileOptionIconStyle = {
-
-}
-
 const optionTextStyle = {
   fontSize: 16,
-  color: DEFAULT_TEXT_COLOR
+  color: DEFAULT_TEXT_COLOR,
+  margin: 0,
 }
 
 /**
@@ -62,6 +52,7 @@ const optionTextStyle = {
  */
 const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) => {
 
+  const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   useEffect(() => {
@@ -86,24 +77,26 @@ const MyOption = ({ option, index, isLast, selectedOption, setSelectedOption }) 
     setSelectedOption(index);
   }
 
-  return isMediumSizeScreen || isSmallSizeScreen?
-    <div style={mobileOptionStyle}
+  const getOptionStyle = () => {
+      if(config.widgetMode) return widgetOptionStyle;
+      else if(isSmallSizeScreen || isMediumSizeScreen) return mobileOptionStyle;
+      else return optionStyle;
+  }
+
+  return (
+    <div style={getOptionStyle()}
          className={'speedtest--my-option'}
          onClick={pickOption}
          id={`speedtest--option-${index}`}
     >
-      <div style={optionTextStyle}>{option.text}</div>
-      <img src={isCurrentOption() ? option.iconSelectedSrc : option.iconSrc} width={28} height={28} style={mobileOptionIconStyle} alt={`${option.text}-icon`}/>
+      <img src={isCurrentOption() ? option.iconSelectedSrc : option.iconSrc}
+           width={!config.widgetMode && (isMediumSizeScreen || isSmallSizeScreen) ? 28 : 32}
+           height={!config.widgetMode && (isMediumSizeScreen || isSmallSizeScreen) ? 28 : 32}
+           alt={`${option.text}-icon`}
+      />
+      <p style={optionTextStyle}>{option.text}</p>
     </div>
-    :
-    <div style={isLast ? lastOptionStyle : optionStyle}
-         className={'speedtest--my-option'}
-         onClick={pickOption}
-         id={`speedtest--option-${index}`}
-    >
-      <img src={isCurrentOption() ? option.iconSelectedSrc : option.iconSrc} width={32} height={32} style={optionIconStyle} alt={`${option.text}-icon`}/>
-      <div style={optionTextStyle}>{option.text}</div>
-    </div>
+  )
 
 }
 

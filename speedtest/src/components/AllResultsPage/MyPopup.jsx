@@ -14,8 +14,8 @@ import LossIcon from '../../assets/loss-icon.png';
 import LatencyIcon from '../../assets/latency-icon.png';
 import ProviderIcon from '../../assets/provider-icon.png';
 import MyPopupGridItem from "./MyPopupGridItem";
-import {placementOptions} from "../../utils/placements";
-import {types} from "../../utils/networkTypes";
+import {getNetworkPlacementIcon, placementOptions} from "../../utils/placements";
+import {getNetworkTypeIcon, types} from "../../utils/networkTypes";
 
 const popupOptions = {
   keepInView: false,
@@ -186,9 +186,7 @@ const providerNameStyle = {
   overflow: 'hidden',
 }
 
-const MyPopup = ({
-                   measurement
-                 }) => {
+const MyPopup = ({measurement}) => {
 
   const getAvailableWidth = () => {
     const hasLocation = measurement.network_location !== null;
@@ -201,19 +199,9 @@ const MyPopup = ({
   const getIconsAvailableWidth = () => {
     const hasLocation = measurement.network_location !== null;
     const hasType = measurement.network_type !== null;
-    if(!hasLocation && !hasType) return '0';
-    if((hasLocation && !hasType) || (!hasLocation && hasType)) return '15%';
+    if (!hasLocation && !hasType) return '0';
+    if ((hasLocation && !hasType) || (!hasLocation && hasType)) return '15%';
     return '30%';
-  }
-
-  const getNetworkLocationIcon = () => {
-    const networkLocation = placementOptions.find(placement => placement.text.toLowerCase() === measurement.network_location.toLowerCase());
-    return networkLocation.iconPopupSrc;
-  }
-
-  const getNetworkTypeIcon = () => {
-    const networkType = types.find(placement => placement.text.toLowerCase() === measurement.network_type.toLowerCase());
-    return networkType.iconPopupSrc;
   }
 
   const getCityStateText = () => {
@@ -273,11 +261,11 @@ const MyPopup = ({
             <div style={{...popupHeaderIconsContainerStyle, width: getIconsAvailableWidth()}}>
               {
                 measurement.network_location &&
-                <img src={getNetworkLocationIcon()} height={28} width={28} alt={'popup-icon-location'} style={measurement.network_type ? leftIconStyle : null}/>
+                <img src={getNetworkPlacementIcon(measurement.network_location, 'iconPopupSrc')} height={28} width={28} alt={'popup-icon-location'} style={measurement.network_type ? leftIconStyle : null}/>
               }
               {
                 measurement.network_type &&
-                <img src={getNetworkTypeIcon()} height={28} width={28} alt={'popup-icon-location'}/>
+                <img src={getNetworkTypeIcon(measurement.network_type, 'iconPopupSrc')} height={28} width={28} alt={'popup-icon-location'}/>
               }
             </div>
           }

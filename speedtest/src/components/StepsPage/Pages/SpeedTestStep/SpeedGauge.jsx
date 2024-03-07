@@ -66,6 +66,7 @@ const SpeedGauge = ({
   const [isDownloading, setIsDownload] = useState(true);
   const [rawData, setRawData] = useState([]);
 
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
   const {userData} = useContext(UserDataContext);
 
@@ -187,10 +188,13 @@ const SpeedGauge = ({
     });
   };
 
-  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const getWrapperStyle = () => {
+    if(!config.widgetMode && (isSmallSizeScreen || isMediumSizeScreen)) return mobileCanvasWrapperStyle;
+    return canvasWrapperStyle;
+  }
 
   return (
-    <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileCanvasWrapperStyle : canvasWrapperStyle}>
+    <div style={getWrapperStyle()}>
       <canvas id={'speedtest--gauge-canvas'} width={250} height={250}></canvas>
       <SpeedGaugeInterior currentValue={isDownloading ? downloadValue?.toFixed(2) : uploadValue?.toFixed(2)} isDownloading={isDownloading}/>
     </div>

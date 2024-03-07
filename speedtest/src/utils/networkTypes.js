@@ -22,7 +22,7 @@ export const types = [
     iconSelectedThickSrc: WiredSelectedThickIcon,
     iconLightSrc: WiredLightIcon,
     iconPopupSrc: WiredPopupIcon,
-    text: 'wired',
+    text: 'Wired',
   },
   {
     id: 1,
@@ -31,7 +31,7 @@ export const types = [
     iconSelectedThickSrc: WifiSelectedThickIcon,
     iconLightSrc: WifiLightIcon,
     iconPopupSrc: WifiPopupIcon,
-    text: 'wifi',
+    text: 'WiFi',
   },
   {
     id: 2,
@@ -40,6 +40,10 @@ export const types = [
     iconSelectedThickSrc: CellularSelectedThickIcon,
     iconLightSrc: CellularLightIcon,
     iconPopupSrc: CellularPopupIcon,
-    text: 'cellular',
+    text: 'Cellular',
   },
 ];
+
+export const getNetworkTypeIcon = (networkType, iconKey) => {
+  return types.find(type => type.text.toLowerCase() === networkType.toLowerCase())[iconKey];
+}

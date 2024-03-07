@@ -46,7 +46,7 @@ const FloatingExploreButton = ({
     const element = document.getElementById('speedtest--main-frame');
     const {x, y, width, height} = element.getBoundingClientRect();
     if(config.widgetMode) {
-      return {...floatingButtonStyle, bottom: null, right: null, top: (height - 180), left: (width - 70)}
+      return {...floatingButtonStyle, bottom: null, right: null, top: (height - 220), left: (width - 70)}
     } else if(config.webviewMode) {
       return {...floatingButtonStyle, bottom: null, right: null, top: 'calc(100vh - 48px - 25px)', left: (width - 70)}
     } else {

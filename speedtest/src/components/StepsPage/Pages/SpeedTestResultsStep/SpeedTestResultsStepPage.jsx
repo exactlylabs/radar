@@ -6,10 +6,14 @@ import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import {useContext} from "react";
-import UserDataContext from "../../../../context/UserData";
+import ConfigContext from "../../../../context/ConfigContext";
 
 const speedTestResultsContainerStyle = {
   marginTop: 25,
+}
+
+const widgetSpeedTestResultsContainerStyle = {
+  marginTop: 12
 }
 
 const exploreAreaStyle = {
@@ -39,8 +43,8 @@ const buttonFooterStyle = {
   flexDirection: 'row',
   margin: '35px auto 70px',
   alignItems: 'center',
-  justifyContent: 'space-between',
-  width: '20%',
+  justifyContent: 'center',
+  gap: '20px',
   minWidth: 300,
   marginBottom: 120,
   marginTop: 42,
@@ -60,7 +64,8 @@ const regularTextStyle = {
 const exploreAreaLinkStyle = {
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'center',
+  marginTop: '1rem'
 }
 
 const SpeedTestResultsStepPage = ({
@@ -71,12 +76,13 @@ const SpeedTestResultsStepPage = ({
 }) => {
 
   const goToHistoryWithRecentTestTaken = () => goToHistory(true);
+  const config = useContext(ConfigContext);
   const {isMediumSizeScreen, isSmallSizeScreen} = useViewportSizes();
 
   const getExploreAreaTextStyle = () => isMediumSizeScreen || isSmallSizeScreen ? stackedTextStyle : exploreAreaStyle
 
   return (
-    <div style={speedTestResultsContainerStyle}>
+    <div style={config.widgetMode ? widgetSpeedTestResultsContainerStyle : speedTestResultsContainerStyle}>
       <MyTitle text={'Your test results'}/>
       <div style={getExploreAreaTextStyle()} onClick={goToAreaMap}>
         <p className={'speedtest--p'} style={regularTextStyle}>See how you compare to others.</p>

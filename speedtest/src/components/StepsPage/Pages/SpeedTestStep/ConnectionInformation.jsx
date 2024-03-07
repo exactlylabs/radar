@@ -13,6 +13,7 @@ import {CONNECTION_INFORMATION_MIN_WIDTH} from "../../../../utils/breakpoints";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import MyConnectionInformationTooltip from "./MyConnectionInformationTooltip";
 import UserDataContext from "../../../../context/UserData";
+import ConfigContext from "../../../../context/ConfigContext";
 
 const connectionInformationStyle = {
   width: '100%',
@@ -45,6 +46,22 @@ const integratedMobileStyle = {
   ...mobileStyle,
   borderRadius: '16px 16px 0 0',
   margin: 'auto',
+}
+
+const widgetStyle = {
+  width: '100%',
+  height: 43,
+  backgroundColor: DEFAULT_CONNECTION_INFORMATION_BACKGROUND_COLOR,
+  borderRadius: 16,
+  margin: '0 auto 16px',
+  position: 'relative',
+  overflow: 'hidden'
+}
+
+const integratedWidgetStyle = {
+  ...widgetStyle,
+  margin: '0 auto',
+  borderRadius: '16px 16px 0 0',
 }
 
 const columnsContainerStyle = {
@@ -115,6 +132,7 @@ const ConnectionInformation = ({
   integratedToStatsTable
 }) => {
 
+  const config = useContext(ConfigContext);
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const {userData} = useContext(UserDataContext);
   const [shouldTextAppear, setShouldTextAppear] = useState(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH && !isExtraSmallSizeScreen);
@@ -126,7 +144,9 @@ const ConnectionInformation = ({
 
   const getStyle = () => {
     let style;
-    if((isMediumSizeScreen || isSmallSizeScreen) && !integratedToStatsTable) style = mobileStyle;
+    if(config.widgetMode && !integratedToStatsTable) style = widgetStyle;
+    else if(config.widgetMode && integratedToStatsTable) style = integratedWidgetStyle;
+    else if((isMediumSizeScreen || isSmallSizeScreen) && !integratedToStatsTable) style = mobileStyle;
     else if((isMediumSizeScreen || isSmallSizeScreen) && integratedToStatsTable) style = integratedMobileStyle;
     else if(!(isMediumSizeScreen || isSmallSizeScreen) && integratedToStatsTable) style = integratedStyle;
     else style = connectionInformationStyle;

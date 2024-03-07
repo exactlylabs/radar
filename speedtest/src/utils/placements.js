@@ -22,7 +22,7 @@ export const placementOptions = [
     iconSelectedSrc: HomeIconSelected,
     iconLightSrc: HomeIconLight,
     iconPopupSrc: HomeIconPopup,
-    text: 'home',
+    text: 'Home',
   },
   {
     id: 1,
@@ -30,7 +30,7 @@ export const placementOptions = [
     iconSelectedSrc: WorkIconSelected,
     iconLightSrc: WorkIconLight,
     iconPopupSrc: WorkIconPopup,
-    text: 'work',
+    text: 'Work',
   },
   {
     id: 2,
@@ -38,7 +38,7 @@ export const placementOptions = [
     iconSelectedSrc: OtherIconSelected,
     iconLightSrc: OtherIconLight,
     iconPopupSrc: OtherIconPopup,
-    text: 'other',
+    text: 'Other',
   },
   {
     id: 3,
@@ -46,6 +46,11 @@ export const placementOptions = [
     iconSelectedSrc: NoneIconSelected,
     iconLightSrc: NoneIconLight,
     iconPopupSrc: NoneIconPopup,
-    text: "i don't have",
+    text: "I don't have",
   },
 ];
+
+//
+export const getNetworkPlacementIcon = (givenPlacement, iconKey) => {
+  return placementOptions.find(placement => placement.text.toLowerCase() === givenPlacement.toLowerCase())[iconKey];
+}

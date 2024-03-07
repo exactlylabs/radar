@@ -1,7 +1,7 @@
 import {
   DEFAULT_MAP_MODAL_BACKGROUND_COLOR,
   DEFAULT_MODAL_BOX_SHADOW,
-  DEFAULT_TEXT_COLOR
+  DEFAULT_TEXT_COLOR, WIDGET_MODAL_BOX_SHADOW, WIDGET_MODAL_OUTLINE, WIDGET_STATS_BG_COLOR
 } from "../../../../utils/colors";
 import {Box, CircularProgress, Modal} from '@mui/material';
 import {MyModalTitle} from "../../../common/MyModalTitle";
@@ -56,6 +56,16 @@ const boxStyle = {
   textAlign: 'center',
 }
 
+const widgetBoxStyle = {
+  width: '100%',
+  height: '100%',
+  backgroundColor: WIDGET_STATS_BG_COLOR,
+  borderRadius: '16px',
+  textAlign: 'center',
+  outline: `solid 1px ${WIDGET_MODAL_OUTLINE}`,
+  boxShadow: `0 5px 10px 0 ${WIDGET_MODAL_BOX_SHADOW}`
+}
+
 const mapContainerStyle = {
   height: 250,
 }
@@ -88,7 +98,8 @@ const smallFooterStyle = {
   marginTop: '10px',
   width: '90%',
   justifyContent: 'center',
-  maxWidth: 450
+  maxWidth: 450,
+  gap: '20px'
 }
 
 const mobileFooterStyle = {
@@ -258,11 +269,12 @@ const MyMapModal = ({
     <Modal open={isOpen}
            onClose={closeModal}
            style={getStyle()}
+           hideBackdrop={config.widgetMode}
     >
-      <Box sx={boxStyle}>
-        <div>
+      <Box sx={config.widgetMode ? widgetBoxStyle : boxStyle}>
+        <div style={{paddingLeft: '.5rem', paddingRight: '.5rem'}}>
           <MyModalTitle text={isGeneric ? 'Tell us your location' : 'Confirm your location'}/>
-          <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{isGeneric ? 'Zoom the map and drag the marker to tell us your current location.' : 'You can move the marker to your approximate location.'}</div>
+          <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{isGeneric ? 'Zoom the map and drag the marker to tell us your current location.' : 'Please confirm your location by moving the marker to the correct place. You can zoom the map and drag the marker.'}</div>
         </div>
         <div style={getMapWrapperStyle()}>
           {

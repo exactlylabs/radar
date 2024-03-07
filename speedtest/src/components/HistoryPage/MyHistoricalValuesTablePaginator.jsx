@@ -1,6 +1,8 @@
 import ArrowLeft from '../../assets/icons-simple-left-arrow.png';
 import ArrowRight from '../../assets/icons-simple-right-arrow.png';
 import {DEFAULT_PAGE_COLOR, DEFAULT_PAGE_SELECTED_COLOR} from "../../utils/colors";
+import {useContext} from "react";
+import ConfigContext from "../../context/ConfigContext";
 
 const paginatorStyle = {
   width: 'max-content',
@@ -9,6 +11,11 @@ const paginatorStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-evenly',
+}
+
+const widgetPaginatorStyle = {
+  ...paginatorStyle,
+  margin: '16px auto',
 }
 
 const regularPageStyle = {
@@ -37,6 +44,8 @@ const MyHistoricalValuesTablePaginator = ({
   setCurrentPage,
   pageCount
 }) => {
+
+  const config = useContext(ConfigContext);
 
   const getPages = () => {
     let pages = [];
@@ -79,7 +88,7 @@ const MyHistoricalValuesTablePaginator = ({
   }
 
   return (
-    <div style={paginatorStyle}>
+    <div style={config.widgetMode ? widgetPaginatorStyle : paginatorStyle}>
       <img src={ArrowRight}
            width={14}
            height={14}

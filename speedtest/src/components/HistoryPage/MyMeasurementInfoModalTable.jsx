@@ -4,8 +4,8 @@ import {
   DEFAULT_POPUP_VALUE_COLOR,
   DEFAULT_STATS_TABLE_VERTICAL_DIVIDER_COLOR
 } from "../../utils/colors";
-import {types} from "../../utils/networkTypes";
-import {placementOptions} from "../../utils/placements";
+import {getNetworkTypeIcon, types} from "../../utils/networkTypes";
+import {getNetworkPlacementIcon, placementOptions} from "../../utils/placements";
 import LocationIcon from '../../assets/address-icon-blue.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 
@@ -109,16 +109,6 @@ const MyMeasurementInfoModalTable = ({
 
   const {isExtraSmallSizeScreen} = useViewportSizes();
 
-  const getNetworkTypeIcon = () => {
-    const type = types.find(placement => placement.text === networkType);
-    return type.iconPopupSrc;
-  }
-
-  const getNetworkLocationIcon = () => {
-    const location = placementOptions.find(placement => placement.text === networkLocation);
-    return location.iconPopupSrc;
-  }
-
   return (
     <div style={isExtraSmallSizeScreen ? xsTableStyle : tableStyle}>
       <div style={addressRowStyle}>
@@ -137,7 +127,7 @@ const MyMeasurementInfoModalTable = ({
           {
             networkLocation &&
             <div className={'speedtest--bold'} style={addressRowStyle}>
-              <img src={getNetworkLocationIcon()} width={isExtraSmallSizeScreen ? 20 : 28} height={isExtraSmallSizeScreen ? 20 : 28} alt={'location-icon'} style={iconStyle}/>
+              <img src={getNetworkPlacementIcon(networkLocation, 'iconPopupSrc')} width={isExtraSmallSizeScreen ? 20 : 28} height={isExtraSmallSizeScreen ? 20 : 28} alt={'location-icon'} style={iconStyle}/>
               <div style={isExtraSmallSizeScreen ? xsNetworkTextStyle : networkTextStyle}>{networkLocation}</div>
             </div>
           }
@@ -148,7 +138,7 @@ const MyMeasurementInfoModalTable = ({
           {
             networkType &&
             <div className={'speedtest--bold'} style={addressRowStyle}>
-              <img src={getNetworkTypeIcon()} width={isExtraSmallSizeScreen ? 20 : 28} height={isExtraSmallSizeScreen ? 20 : 28} alt={'location-icon'} style={iconStyle}/>
+              <img src={getNetworkTypeIcon(networkType, 'iconPopupSrc')} width={isExtraSmallSizeScreen ? 20 : 28} height={isExtraSmallSizeScreen ? 20 : 28} alt={'location-icon'} style={iconStyle}/>
               <div style={isExtraSmallSizeScreen ? xsNetworkTextStyle : networkTextStyle}>{networkType}</div>
             </div>
           }

@@ -147,6 +147,7 @@ const SuggestionsModal = ({
     <Modal open={isOpen}
            onClose={closeModal}
            style={getStyle()}
+           hideBackdrop={config.widgetMode}
     >
       <Box sx={boxStyle}>
         <div style={headerStyle}>

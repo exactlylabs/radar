@@ -10,6 +10,9 @@ import {
   DEFAULT_DOWNLOAD_FILTER_MID
 } from "../../utils/colors";
 import MyPopup from "./MyPopup";
+import {useViewportSizes} from "../../hooks/useViewportSizes";
+import {useContext} from "react";
+import ConfigContext from "../../context/ConfigContext";
 
 const sharedMarkerProps = {
   stroke: true,
@@ -21,6 +24,8 @@ const MyCustomMarker = ({
   measurement,
   recenterMap
 }) => {
+
+  const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getPathOptions = () => {
     const { downloadFilterTag, uploadFilterTag } = measurement;

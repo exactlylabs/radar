@@ -5,18 +5,22 @@ const widgetStyle = {
   backgroundColor: '#e7e7ec',
 }
 
-export const widgetModalFraming = (config, isXSScreen) => {
-  const mainFrameElement = document.getElementById('speedtest--main-frame');
+export const widgetModalFraming = (customCss = {}) => {
+  const mainFrameElement = document.getElementById('speedtest--frame--main-frame-wrapper');
   if (mainFrameElement) {
-    const {x, y} = mainFrameElement.getBoundingClientRect();
-    const modalWidth = `calc(${config.frameStyle.width} - 20px)`;
-    const modalHeight = `calc(${config.frameStyle.height} - 20px${isXSScreen ? '' : ' - 65px'})`;
+    const {width, height} = mainFrameElement.getBoundingClientRect();
     return {
       ...widgetStyle,
-      height: modalHeight,
-      width: modalWidth,
-      top: `calc(${y}px + ${isXSScreen ? '10px' : '55px'})`,
-      left: `calc(${x}px + 10px)`,
+      backgroundColor: 'transparent',
+      height: `calc(${height}px - 6px)`,
+      maxHeight: `calc(${height}px - 6px)`,
+      width: 'max-content',
+      maxWidth: `calc(${width}px - 6px)`,
+      top: '97px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      outline: 'none',
+      ...customCss
     };
   }
 }

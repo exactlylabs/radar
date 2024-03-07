@@ -1,8 +1,6 @@
-import React, {useEffect, useState, useContext, useRef} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import { CircularProgress } from '@mui/material';
-import { MyButton } from '../common/MyButton';
-import {MapContainer, TileLayer, useMap} from 'react-leaflet';
-import { TABS } from '../../constants';
+import {MapContainer, TileLayer, ZoomControl} from 'react-leaflet';
 import SpeedResultsBox from './SpeedResultsBox';
 import {getCorrespondingFilterTag} from '../../utils/speeds';
 import {
@@ -38,7 +36,7 @@ const searchIconStyle = {
   marginTop: '3px',
 }
 
-const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
+const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
   const [requestArea, setRequestArea] = useState(givenLocation ?? [DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
   const [shouldRecenter, setShouldRecenter] = useState(false);
   const [results, setResults] = useState([]);
@@ -141,7 +139,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
   const getMapContainerHeight = () => {
     if(config.widgetMode) {
       const widgetHeight = config.frameStyle.height;
-      return `calc(${widgetHeight} - 53px - 55px)`;
+      return `calc(${widgetHeight} - 53px - 55px - 40px)`;
     } else if(config.webviewMode) {
       return '100%';
     }
@@ -230,7 +228,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
             zoom={initialZoom ? initialZoom : 10}
             scrollWheelZoom
             style={{ height: getMapContainerHeight(), margin: 0, position: 'relative', overflowY: 'hidden' }}
-            zoomControl={(isMediumSizeScreen || isSmallSizeScreen || config.widgetMode) && !config.noZoomControl}
+            zoomControl={(isMediumSizeScreen || isSmallSizeScreen) && !config.widgetMode && !config.noZoomControl}
           >
               <MyMap position={requestArea}
                      shouldRecenter={shouldRecenter}
@@ -243,6 +241,7 @@ const AllResultsPage = ({ givenLocation, setStep, maxHeight, givenZoom }) => {
                      userOnMoveHandler={userOnMoveHandler}
                      setMap={setMap}
               />
+            { config.widgetMode && <ZoomControl position={'topright'}/> }
             <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
             {results?.map(measurement => (
               <MyCustomMarker key={measurement.id}

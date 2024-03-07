@@ -179,7 +179,7 @@ const InitialStepPage = ({goToNextPage, error}) => {
           <p className={'speedtest--p'} style={isSmall ? smallSubtitleStyle : subtitleStyle}>We'll ask you a few questions to better understand where and how you're connected so we can learn more about your current service.</p>
           <div style={{...termsStyle, marginBottom: error ? '-10px' : '35px'}} onClick={toggleTerms}>
             <MyCheckbox onChange={handleSetTerms} isChecked={userData.terms}/>
-            <p className={'speedtest--p'} style={termsTextStyle}>I agree to the Radar's <a className={'speedtest--opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>.</p>
+            <p className={'speedtest--p'} style={termsTextStyle}>I agree to the <a className={'speedtest--opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>.</p>
           </div>
           { error && <MyMessageSnackbar type={'error'} message={error}/> }
           <MyForwardButton text={'Take the test'} icon={<img src={rightArrowWhite} style={rightArrowStyle} alt={'location-button-icon'} width={14} height={14}/>} onClick={goToNextPage}/>

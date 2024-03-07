@@ -6,6 +6,8 @@ import LatencyIcon from "../../assets/latency-icon.png";
 import {DEFAULT_POPUP_VALUE_COLOR, DEFAULT_STATS_TABLE_TEXT_COLOR} from "../../utils/colors";
 import MyStatsTableHorizontalDivider from "../StepsPage/Pages/SpeedTestStep/MyStatsTableHorizontalDivider";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import {useContext} from "react";
+import ConfigContext from "../../context/ConfigContext";
 
 const tableContentStyle = {
   display: 'flex',
@@ -15,6 +17,16 @@ const tableContentStyle = {
   width: '100%',
   paddingTop: 10,
 }
+
+const widgetContentStyle = {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '95%'
+}
+
+const widgetExtendedContentStyle = widgetContentStyle;
 
 const mobileTableContentStyle = {
   width: '100%',
@@ -128,11 +140,14 @@ const TestStatsTableContent = ({
   lossValue
 }) => {
 
+  const config = useContext(ConfigContext);
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getStyle = () => {
     let style;
-    if((isMediumSizeScreen || isSmallSizeScreen) && extended) style = mobileExtendedRowStyle;
+    if(config.widgetMode && !extended) style = widgetContentStyle;
+    else if(config.widgetMode && extended) style = widgetExtendedContentStyle;
+    else if((isMediumSizeScreen || isSmallSizeScreen) && extended) style = mobileExtendedRowStyle;
     else if((isMediumSizeScreen || isSmallSizeScreen) && !extended) style = mobileTableContentStyle;
     else if(extended) style = extendedRowStyle;
     else style = tableContentStyle;
@@ -230,9 +245,14 @@ const TestStatsTableContent = ({
     </div>
   )
 
+  const getContent = () => {
+    if (!config.widgetMode && (isMediumSizeScreen || isSmallSizeScreen)) return getMobileContent();
+    return getDesktopContent();
+  }
+
   return (
     <div style={getStyle()}>
-      { isMediumSizeScreen || isSmallSizeScreen ? getMobileContent() : getDesktopContent() }
+      {getContent()}
     </div>
   )
 }

@@ -6,10 +6,16 @@ import TestStatsTableContent from "./TestStatsTable";
 import {storeRunData} from "../../../../utils/storage";
 import {DEFAULT_FOOTER_FONT_COLOR} from "../../../../utils/colors";
 import UserDataContext from "../../../../context/UserData";
+import ConfigContext from "../../../../context/ConfigContext";
 
 const footerStyle = {
   fontSize: 14,
   color: DEFAULT_FOOTER_FONT_COLOR
+}
+
+const widgetFooterStyle = {
+  ...footerStyle,
+  marginTop: -16
 }
 
 const SpeedTestStepPage = ({
@@ -24,6 +30,7 @@ const SpeedTestStepPage = ({
   const [downloadValue, setDownloadValue] = useState(null);
   const [uploadValue, setUploadValue] = useState(null);
   const {userData} = useContext(UserDataContext);
+  const config = useContext(ConfigContext);
 
   const storeRunResults = startTimestamp => {
     const results = {
@@ -67,12 +74,15 @@ const SpeedTestStepPage = ({
           <div style={footerStyle}>Testing <b>{!uploadValue ? 'download' : 'upload'}</b> speed...</div>
         </>
       }
-      <TestStatsTableContent disabled={disabled}
-                             downloadValue={downloadValue?.toFixed(2)}
-                             uploadValue={uploadValue?.toFixed(2)}
-                             latencyValue={latency?.toFixed(0)}
-                             lossValue={loss?.toFixed(2)}
-      />
+      {
+        !config.widgetMode &&
+        <TestStatsTableContent disabled={disabled}
+                               downloadValue={downloadValue?.toFixed(2)}
+                               uploadValue={uploadValue?.toFixed(2)}
+                               latencyValue={latency?.toFixed(0)}
+                               lossValue={loss?.toFixed(2)}
+        />
+      }
     </div>
   )
 }

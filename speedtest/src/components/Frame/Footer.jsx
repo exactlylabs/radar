@@ -140,11 +140,6 @@ const linkWithBottomMargin = {
 
 const FooterHorizontalDivider = () => <div style={horizontalDividerStyle}></div>
 
-// Commented until we add the MLab logo back again
-/*const anthcLogoStyle = {
-  marginRight: 48,
-};*/
-
 const footerLogoStyle = {
   marginRight: '60px'
 }

@@ -1,5 +1,6 @@
 import { useMap } from 'react-leaflet';
 import {useEffect} from "react";
+import L from 'leaflet';
 
 // The idea here is to remove the Ukranian flag from map's attribution
 // and re-center map on marker click
