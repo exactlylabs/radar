@@ -32,7 +32,7 @@ module ClientApi
       # By retrieving NE and SW points of the map
       # we can respond with tests inside that bounding box
       def tests_with_bounds
-        is_global = params[:global]
+        is_global = params[:global] || @widget_client.id == 1
         dots = (params[:dots] || 1500).to_i
         sw_lat = params[:sw_lat]
         sw_lng = params[:sw_lng]
