@@ -32,5 +32,4 @@ class WifiTrackerState {
   static const LOCATION_ALWAYS_PERMISSION = 'location';
   static const PHONE_PERMISSION = 'phone';
   static const NOTIFICATION_PERMISSION = 'notification';
-  static const SCHEDULE_EXACT_ALARM_PERMISSION = 'scheduleExactAlarm';
 }
