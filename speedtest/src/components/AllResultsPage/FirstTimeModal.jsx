@@ -41,8 +41,18 @@ const boxStyle = {
   textAlign: 'center',
 }
 
+const widgetBoxStyle = {
+  ...boxStyle,
+  maxWidth: 440,
+  height: 'max-content',
+  position: 'absolute',
+  left: '50%',
+  top: '50%',
+  transform: 'translate(-50%, -50%)'
+}
+
 const subtitleStyle = {
-  width: '95%',
+  width: 'calc(100% - 80px)',
   margin: 'auto',
   fontSize: 16,
   color: DEFAULT_TEXT_COLOR,
@@ -68,25 +78,24 @@ const footerStyle = {
 const mobileFooterStyle = {
   display: 'flex',
   flexDirection: 'column',
-  width: '80%',
+  width: 'max-content',
   justifyContent: 'center',
   alignItems: 'center',
-  margin: 'auto',
+  margin: '0 auto 16px',
 }
 
 const imageContainerStyle = {
-  width: '62.5%',
-  height: '50%',
+  width: '75%',
+  height: 'max-content',
+  aspectRatio: '2',
   margin: '30px auto 20px',
   position: 'relative',
 }
 
 const mobileImageContainerStyle = {
   ...imageContainerStyle,
-  width: '50%',
-  height: '40%',
-  minWidth: 285,
-  minHeight: 130,
+  width: '65%',
+  height: 'auto',
   margin: '30px auto',
 }
 
@@ -143,7 +152,11 @@ const FirstTimeModal = ({
   const closeModal = () => setIsOpen(false);
 
   const getStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen || isSmallSizeScreen);
+    if(config.widgetMode) {
+      const mainFrameElement = document.getElementById('speedtest--frame--main-frame-wrapper');
+      const { height } = mainFrameElement.getBoundingClientRect()
+      return widgetModalFraming({maxWidth: '100%', width: '100%', height, maxHeight: height, top: 94});
+    }
     return (isMediumSizeScreen || isSmallSizeScreen) ? mobileModalStyle : modalStyle
   }
 
@@ -156,8 +169,9 @@ const FirstTimeModal = ({
     <Modal open={isOpen}
            onClose={closeModal}
            style={getStyle()}
+           disableAutoFocus={true}
     >
-      <Box sx={boxStyle}>
+      <Box sx={config.widgetMode ? widgetBoxStyle : boxStyle}>
         <div style={isExtraSmallSizeScreen ? xsCloseButtonStyle : closeButtonStyle} onClick={closeModal} className={'speedtest--modal-dismiss--hoverable'}>
           <Close fontSize={'small'} color={'disabled'}/>
         </div>

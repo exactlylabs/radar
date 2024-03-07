@@ -2,6 +2,8 @@ import {STEPS} from "../utils/steps";
 import MyStepIcon from "./MyStepIcon";
 import {DEFAULT_STEP_CONNECTOR_COLOR} from "../../../utils/colors";
 import {useViewportSizes} from "../../../hooks/useViewportSizes";
+import {useContext} from "react";
+import ConfigContext from "../../../context/ConfigContext";
 
 const stepperContainerStyle = {
   width: '30%',
@@ -17,6 +19,12 @@ const mobileStepperContainerStyle = {
   ...stepperContainerStyle,
   margin: '0 auto 20px',
   paddingTop: '30px'
+}
+
+const widgetStepperContainerStyle = {
+  ...stepperContainerStyle,
+  margin: '0 auto 16px',
+  paddingTop: '16px'
 }
 
 const stepConnectorStyle = {
@@ -66,6 +74,7 @@ const MyStepper = ({
   activeStep
 }) => {
 
+  const config = useContext(ConfigContext);
   const {isMediumSizeScreen, isSmallSizeScreen} = useViewportSizes();
 
   const getIcon = (step) => {
@@ -78,8 +87,14 @@ const MyStepper = ({
     }
   }
 
+  const getStepperStyle = () => {
+    if(config.widgetMode) return widgetStepperContainerStyle;
+    else if(isSmallSizeScreen || isMediumSizeScreen) return mobileStepperContainerStyle;
+    else return stepperContainerStyle;
+  }
+
   return (
-    <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileStepperContainerStyle : stepperContainerStyle}>
+    <div style={getStepperStyle()}>
       {
         Object.values(STEPS).filter(s => s !== STEPS.INITIAL).map(step => {
           if(step < STEPS.RUN_SPEED_TEST) {

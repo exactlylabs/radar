@@ -2,12 +2,15 @@ import MyOption from "./MyOption";
 import MyVerticalDivider from "./MyVerticalDivider";
 import MyHorizontalOptionDivider from "./MyHorizontalOptionDivider";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
+import {useContext} from "react";
+import ConfigContext from "../../context/ConfigContext";
 
 const optionsPickerStyle = {
   display: 'flex',
   flexDirection: 'row',
   width: 'max-content',
   margin: '40px auto',
+  gap: '10px',
 }
 
 const mobileOptionsPickerStyle = {
@@ -15,6 +18,16 @@ const mobileOptionsPickerStyle = {
   flexDirection: 'column',
   width: '95%',
   margin: '30px auto',
+  gap: '10px',
+}
+
+const widgetOptionsPickerStyle = {
+  display: 'flex',
+  flexDirection: 'row',
+  width: 'max-content',
+  maxWidth: '95%',
+  gap: '10px',
+  margin: '16px auto',
 }
 
 const verticalDividerOptionStyle = {
@@ -48,10 +61,17 @@ const MyOptionPicker = ({
   selectedOption,
 }) => {
 
+  const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
+  const getOptionsPickerStyle = () => {
+    if(config.widgetMode) return widgetOptionsPickerStyle;
+    if(isSmallSizeScreen || isMediumSizeScreen) return mobileOptionsPickerStyle;
+    return optionsPickerStyle;
+  }
+
   return (
-    <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileOptionsPickerStyle : optionsPickerStyle}>
+    <div style={getOptionsPickerStyle()}>
       {
         !needsDivider &&
         options.map((option, index) => <MyOption key={index}
@@ -66,9 +86,9 @@ const MyOptionPicker = ({
         needsDivider && dividerIndex &&
         options.map((option, index) => {
           if(index === dividerIndex) {
-            return (<div key={`divider-${index}`} style={isMediumSizeScreen || isSmallSizeScreen? horizontalDividerOptionStyle : verticalDividerOptionStyle}>
+            return (<div key={`divider-${index}`} style={!config.widgetMode && (isMediumSizeScreen || isSmallSizeScreen) ? horizontalDividerOptionStyle : verticalDividerOptionStyle}>
               {
-                isMediumSizeScreen || isSmallSizeScreen ?
+                !config.widgetMode && (isMediumSizeScreen || isSmallSizeScreen) ?
                   <MyHorizontalOptionDivider/> :
                   <MyVerticalDivider/>
               }

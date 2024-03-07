@@ -107,7 +107,6 @@ const Frame = ({ config, children, step, setStep }) => {
 
   return (
     <div style={getWrapperStyle()} id={'speedtest--main-frame'}>
-
       {config.widgetMode && <ExactlyLabsHeader />}
       {!config.widgetMode && !config.webviewMode && <Header setStep={setStep} isOverviewPage={isOverviewPage}/>}
       {shouldShowTabs && <Tabs step={step} setStep={setStep}/> }

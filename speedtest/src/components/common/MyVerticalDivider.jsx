@@ -1,7 +1,7 @@
 import {DEFAULT_VERTICAL_DIVIDER_COLOR} from "../../utils/colors";
 
 const verticalDividerStyle = {
-  marginRight: 20,
+  marginRight: 10,
 }
 
 const lineStyle = {

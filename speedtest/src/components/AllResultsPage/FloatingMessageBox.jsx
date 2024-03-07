@@ -28,7 +28,7 @@ const smallFloatingMessageBoxStyle = {
   ...floatingMessageBoxStyle,
   width: undefined,
   maxWidth: '225px',
-  bottom: '165px',
+  bottom: '175px',
   left: '15px',
   height: undefined,
   alignItems: 'flex-start',

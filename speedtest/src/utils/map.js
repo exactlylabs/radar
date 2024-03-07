@@ -15,8 +15,6 @@ export const customMarker = new L.icon({
   shadowAnchor: [65, 85],  // the same for the shadow
 });
 
-export const SMALL_SCREEN_MAP_HEIGHT = 400;
-
 // Specific coordinates to fallback onto almost center point of the US
 export const DEFAULT_FALLBACK_LATITUDE = 40.566296;
 export const DEFAULT_FALLBACK_LONGITUDE = -97.264547;

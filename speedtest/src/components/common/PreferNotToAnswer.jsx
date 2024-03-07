@@ -7,7 +7,6 @@ import ArrowRightIconHovered from '../../assets/icons-right-arrow-hovered.png';
 const textStyle = {
   fontSize: 15,
   color: DEFAULT_SKIP_FONT_COLOR,
-  marginTop: -40,
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
@@ -18,7 +17,7 @@ const textStyle = {
 
 const mobileTextStyle = {
   ...textStyle,
-  marginTop: -40,
+  marginTop: '2rem'
 }
 
 const iconStyle = {

@@ -5,16 +5,22 @@ import {ArrowBack} from "@mui/icons-material";
 import {MyForwardButton} from "../common/MyForwardButton";
 import {MyButton} from "../common/MyButton";
 import {getStoredValues} from "../../utils/storage";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import MyMeasurementInfoModal from "./MyMeasurementInfoModal";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import iconLeftArrow from "../../assets/icons-left-arrow.png";
+import ConfigContext from "../../context/ConfigContext";
 
 const historyPageStyle = {
   width: '100%',
   margin: '0 auto',
   textAlign: 'center',
   paddingTop: 40,
+}
+
+const widgetHistoryPageStyle = {
+  ...historyPageStyle,
+  paddingTop: 16,
 }
 
 const buttonsContainerStyle = {
@@ -24,6 +30,14 @@ const buttonsContainerStyle = {
   alignItems: 'center',
   justifyContent: 'space-between',
   margin: '50px auto',
+}
+
+const widgetButtonsContainerStyle = {
+  ...buttonsContainerStyle,
+  width: '100%',
+  margin: '16px auto 0',
+  justifyContent: 'center',
+  gap: '1rem'
 }
 
 const mobileButtonsContainerStyle = {
@@ -40,8 +54,8 @@ const emptyStateTextStyle = {
 }
 
 const emptyStateStyle = {
-  width: '50%',
-  margin: 'auto',
+  width: '100%',
+  margin: '0 auto 32px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -62,6 +76,7 @@ const HistoryPage = ({
   hasRecentTest,
 }) => {
 
+  const config = useContext(ConfigContext);
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const historicalValues = getStoredValues();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,7 +89,8 @@ const HistoryPage = ({
 
   const getButtonsStyle = () => {
     let style;
-    if((isMediumSizeScreen || isSmallSizeScreen) && hasRecentTest) style = mobileButtonsContainerStyle;
+    if(config.widgetMode) style = widgetButtonsContainerStyle;
+    else if((isMediumSizeScreen || isSmallSizeScreen) && hasRecentTest) style = mobileButtonsContainerStyle;
     else if((isMediumSizeScreen || isSmallSizeScreen) && !hasRecentTest) style = {...mobileButtonsContainerStyle, justifyContent: 'flex-start'};
     else style = {...buttonsContainerStyle, justifyContent: hasRecentTest ? 'space-between' : 'center'};
     return style;
@@ -84,12 +100,12 @@ const HistoryPage = ({
   const goToMapPageWithNoCoordinates = () => goToMapPage(null)
 
   return (
-    <div style={historyPageStyle}>
+    <div style={config.widgetMode ? widgetHistoryPageStyle : historyPageStyle}>
       <MyTitle text={'All your results'}/>
       {
         !historicalValues &&
         <div style={emptyStateStyle}>
-          <div style={emptyStateTextStyle}>You have not taken any speed tests so far!</div>
+          <div style={emptyStateTextStyle}>You haven't taken any speed tests yet!</div>
           <MyButton text={'Take your first test'} onClick={goToSpeedTest}/>
         </div>
       }
@@ -106,7 +122,7 @@ const HistoryPage = ({
                         onClick={goToLastTest}
           />
         }
-        <MyForwardButton text={'Explore the map'} onClick={goToMapPageWithNoCoordinates} />
+        { historicalValues && <MyForwardButton text={'Explore the map'} onClick={goToMapPageWithNoCoordinates} /> }
       </div>
       {
         (isMediumSizeScreen || isSmallSizeScreen) &&

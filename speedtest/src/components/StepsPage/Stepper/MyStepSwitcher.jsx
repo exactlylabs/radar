@@ -2,6 +2,8 @@ import {ArrowBack, ArrowForward} from "@mui/icons-material";
 import {MyBackButton} from "../../common/MyBackButton";
 import {MyForwardButton} from "../../common/MyForwardButton";
 import iconLeftArrow from "../../../assets/icons-left-arrow.png";
+import {useContext} from "react";
+import ConfigContext from "../../../context/ConfigContext";
 
 const stepSwitcherStyle = {
   width: '20%',
@@ -13,9 +15,21 @@ const stepSwitcherStyle = {
   margin: '0 auto 70px',
 }
 
+const widgetStepSwitcherStyle = {
+  ...stepSwitcherStyle,
+  margin: '0 auto 16px'
+}
+
 const doubleButtonStepSwitcherStyle = {
   ...stepSwitcherStyle,
   justifyContent: 'space-between',
+  gap: '1rem'
+}
+
+const widgetDoubleButtonStepSwitcherStyle = {
+  ...widgetStepSwitcherStyle,
+  justifyContent: 'space-between',
+  gap: '1rem'
 }
 
 const arrowIconStyle = {
@@ -37,7 +51,12 @@ const MyStepSwitcher = ({
   noForwardIcon
 }) => {
 
-  const getStyle = () => goBack && goForward ? doubleButtonStepSwitcherStyle : stepSwitcherStyle;
+  const config = useContext(ConfigContext);
+
+  const getStyle = () => {
+    if(goBack && goForward) return config.widgetMode ? widgetDoubleButtonStepSwitcherStyle : doubleButtonStepSwitcherStyle;
+    else return config.widgetMode ? widgetStepSwitcherStyle : stepSwitcherStyle;
+  }
 
   return (
     <div style={getStyle()}>

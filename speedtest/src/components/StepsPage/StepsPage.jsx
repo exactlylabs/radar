@@ -27,7 +27,7 @@ const stepsPageStyle = {
 
 const mobileStepsPageStyle = {
   ...stepsPageStyle,
-  paddingTop: 0,
+  paddingTop: 16,
 }
 
 const StepsPage = ({

@@ -18,8 +18,6 @@ const MyFiltersList = ({
   setSelectedRangeIndexes
 }) => {
 
-  const {isExtraSmallSizeScreen} = useViewportSizes();
-
   const toggleFilter = index => {
     if(selectedRangeIndexes.includes(index)) {
       setSelectedRangeIndexes(selectedRangeIndexes.filter(idx => idx !== index));
@@ -44,7 +42,7 @@ const MyFiltersList = ({
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_NONE}
                           selected={selectedRangeIndexes.includes(0)}
                           onClick={toggleFilterWithZero}
-                          state={'No Internet'}
+                          range={'No Internet'}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(0)}
           />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_LOW}
@@ -79,7 +77,7 @@ const MyFiltersList = ({
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_NONE}
                           selected={selectedRangeIndexes.includes(0)}
                           onClick={toggleFilterWithZero}
-                          state={'No Internet'}
+                          range={'No Internet'}
                           opaque={selectedRangeIndexes.length > 0 && !selectedRangeIndexes.includes(0)}
           />
           <MyResultFilter color={DEFAULT_DOWNLOAD_FILTER_LOW}

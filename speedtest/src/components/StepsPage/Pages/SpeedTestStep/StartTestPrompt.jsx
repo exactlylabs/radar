@@ -3,12 +3,19 @@ import {MyForwardButton} from "../../../common/MyForwardButton";
 import {DEFAULT_PAGE_COLOR} from "../../../../utils/colors";
 import {MyButton} from "../../../common/MyButton";
 import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
+import {useContext} from "react";
+import ConfigContext from "../../../../context/ConfigContext";
 
 const promptStyle = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   marginTop: 40,
+}
+
+const widgetPromptStyle = {
+  ...promptStyle,
+  marginTop: 0
 }
 
 const textStyle = {
@@ -24,8 +31,10 @@ const StartTestPrompt = ({
   goBack
 }) => {
 
+  const config = useContext(ConfigContext);
+
   return (
-    <div style={promptStyle}>
+    <div style={config.widgetMode ? widgetPromptStyle : promptStyle}>
       <MyTitle text={`You're ready to start.`}/>
       <div style={textStyle}>For more accurate results, please make sure you are not currently making heavy use of your internet connection.</div>
       <MyStepSwitcher goForward={startTest}

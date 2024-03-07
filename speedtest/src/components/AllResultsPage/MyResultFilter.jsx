@@ -11,8 +11,8 @@ const resultFilterStyle = {
   display: 'flex',
   flexDirection: 'row',
   width: '100%',
-  marginBottom: 15,
-  marginTop: 15,
+  marginBottom: 12,
+  marginTop: 12,
   cursor: 'pointer'
 }
 
@@ -44,7 +44,7 @@ const filterBulletStyle = {
 const filterTextStyle = {
   color: WHITE,
   fontSize: 14,
-  marginLeft: 8,
+  marginLeft: 6,
 }
 
 const checkIconSX = {
@@ -71,8 +71,9 @@ const MyResultFilter = ({
   const {isExtraSmallSizeScreen} = useViewportSizes();
 
   const getRangeText = () => {
+    if(range === 'No Internet') return range;
     if(range[1] === Number.MAX_VALUE) {
-      return `> ${range[0]} Mbps`;
+      return `${range[0]}+ Mbps`;
     }
     return `${range[0]} - ${range[1]} Mbps`;
   }

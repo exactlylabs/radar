@@ -9,7 +9,7 @@ const widgetFooterStyle = {
 }
 
 const widgetFooterContentStyle = {
-  width: '90%',
+  width: 'calc(100% - 32px)',
   maxWidth: '1200px',
   height: '100%',
   margin: '0 auto',
@@ -21,7 +21,7 @@ const widgetFooterContentStyle = {
 
 const leftSideContainer = {
   width: '50%',
-  marginLeft: 15,
+  marginLeft: 0,
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-start',
@@ -29,7 +29,7 @@ const leftSideContainer = {
 }
 
 const rightSideContainer = {
-  marginRight: 15,
+  marginRight: 0,
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-end',
@@ -58,7 +58,6 @@ const WidgetFooter = () => {
     <div style={widgetFooterStyle}>
       <div style={widgetFooterContentStyle}>
         <div style={leftSideContainer}>
-          <div style={poweredByStyle}>Powered by</div>
           <img src={RadarLogoGray} height={17} width={70} alt={'radar-logo'}/>
         </div>
         <div style={rightSideContainer}>

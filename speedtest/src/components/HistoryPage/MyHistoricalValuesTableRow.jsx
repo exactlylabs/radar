@@ -4,7 +4,7 @@ import {
   HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR,
   TRANSPARENT,
 } from "../../utils/colors";
-import {types} from "../../utils/networkTypes";
+import {getNetworkTypeIcon, types} from "../../utils/networkTypes";
 import {prettyPrintDate} from "../../utils/dates";
 import InfoIcon from '../../assets/info-icon.png';
 import {useViewportSizes} from "../../hooks/useViewportSizes";
@@ -103,11 +103,6 @@ const MyHistoricalValuesTableRow = ({
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
-  const getNetworkTypeIcon = () => {
-    const networkType = types.find(type => type.text === measurement.networkType);
-    return networkType.iconSelectedThickSrc;
-  }
-
   const getMbpsText = possibleValue => {
     if(!possibleValue) return '-';
     return isMediumSizeScreen || isSmallSizeScreen ? possibleValue.toFixed(2) : `${possibleValue.toFixed(2)} Mbps`;
@@ -154,7 +149,7 @@ const MyHistoricalValuesTableRow = ({
     <div style={{...historicalValuesTableRowStyle, backgroundColor: isEven ? HISTORICAL_VALUES_TABLE_ROW_EVEN_BG_COLOR : TRANSPARENT}}>
       <div style={networkTypeColumStyle}>
         {measurement.networkType ?
-          <img src={getNetworkTypeIcon()} width={16} height={16} alt={'network-type-icon'}/> :
+          <img src={getNetworkTypeIcon(measurement.networkType, 'iconSelectedThickSrc')} width={16} height={16} alt={'network-type-icon'}/> :
           null
         }
       </div>
