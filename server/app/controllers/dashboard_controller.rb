@@ -37,8 +37,10 @@ class DashboardController < ApplicationController
         @show_ftue = cookie_is_turned_on && has_no_accounts
       end
     end
-    params = as_orgs_filters_params()
-    @filter_as_orgs = ActiveRecord::Base.connection.execute(DashboardHelper.get_as_orgs_sql(params[:account_ids], params[:from], params[:to], location_ids: params[:location_ids]))
+    if current_account.present?
+      params = as_orgs_filters_params()
+      @filter_as_orgs = ActiveRecord::Base.connection.execute(DashboardHelper.get_as_orgs_sql(params[:account_ids], params[:from], params[:to], location_ids: params[:location_ids]))
+    end
   end
 
   def onboarding_step_1
@@ -130,14 +132,14 @@ class DashboardController < ApplicationController
     days = params[:days] || 30
     start_time = params[:start].present? ? Time.at(params[:start].to_i / 1000) : (Time.now - days.to_i.days)
     end_time = params[:end].present? ? Time.at(params[:end].to_i / 1000) : Time.now
-    {from: start_time, to: end_time}
+    { from: start_time, to: end_time }
   end
 
   def common_filter_params()
     account_ids = params[:account_id].present? ? policy_filter_ids(Account, params[:account_id]) : current_account.is_all_accounts? ? policy_scope(Account).pluck(:id) : [current_account.id]
     as_org_ids = params[:isp_id].present? ? policy_filter_ids(AutonomousSystemOrg, params[:isp_id]) : nil
     location_ids = params[:network_id].present? ? policy_filter_ids(Location, params[:network_id]) : nil
-    {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids}
+    { account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids }
   end
 
   def policy_filter_ids(model, ids)
