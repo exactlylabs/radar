@@ -44,8 +44,6 @@ class WebSocketClient {
       print(wsMessage.toString());
     } catch (e) {
       Sentry.captureException(e);
-      print("Failed to parse message:");
-      print(event);
     }
   }
 
@@ -77,7 +75,6 @@ class WebSocketClient {
       socket?.sink.add(request);
       return true;
     } catch (e) {
-      print("Failed to send message:");
       Sentry.captureException(e);
       return false;
     }
