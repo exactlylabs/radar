@@ -6,9 +6,9 @@
                default_value: 30,
                default_label: 'Last 30 days',
                options: [
-                 { label: 'Last 7 days', value: '7'},
-                 { label: 'Last 30 days', value: '30'},
-                 { label: 'Last 90 days', value: '90'},
+                 { label: 'Last 7 days', value: '7' },
+                 { label: 'Last 30 days', value: '30' },
+                 { label: 'Last 90 days', value: '90' },
                ],
              }
   %>
@@ -25,8 +25,8 @@
                  default_label: 'All accounts',
                  pagination: false,
                  options: [
-                   { label: 'All accounts', value: '-1'},
-                   *policy_scope(Account).map {|account| { label: account.name , value: "#{account.id}" }}
+                   { label: 'All accounts', value: '-1' },
+                   *policy_scope(Account).map { |account| { label: account.name, value: "#{account.id}" } }
                  ],
                }
     %>
@@ -39,8 +39,8 @@
                default_label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations',
                pagination: false,
                options: [
-                 { label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations', value: nil},
-                 *policy_scope(Location).map {|network| { label: network.name , value: "#{network.id}" }}
+                 { label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations', value: nil },
+                 *policy_scope(Location).map { |network| { label: network.name, value: "#{network.id}" } }
                ],
              }
   %>
@@ -53,23 +53,25 @@
                  default_label: 'All categories',
                  pagination: false,
                  options: [
-                   { label: 'All categories', value: nil},
-                   *policy_scope(Category).map {|category| { label: category.name , value: "#{category.id}" }}
+                   { label: 'All categories', value: nil },
+                   *policy_scope(Category).map { |category| { label: category.name, value: "#{category.id}" } }
                  ],
                }
     %>
   <% end %>
-  <%= render partial: "application/components/tables/filter",
-             locals: {
-               menu_id: 'isp-filter-menu',
-               key: 'isp_id',
-               default_value: nil,
-               default_label: 'All ISPs',
-               pagination: false,
-               options: [
-                 { label: 'All ISPs', value: nil},
-                 *@filter_as_orgs.map {|isp| { label: isp["name"] , value: "#{isp["id"]}" }}
-               ],
-             }
-  %>
+  <% if @filter_as_orgs.present? %>
+    <%= render partial: "application/components/tables/filter",
+               locals: {
+                 menu_id: 'isp-filter-menu',
+                 key: 'isp_id',
+                 default_value: nil,
+                 default_label: 'All ISPs',
+                 pagination: false,
+                 options: [
+                   { label: 'All ISPs', value: nil },
+                   *@filter_as_orgs.map { |isp| { label: isp["name"], value: "#{isp["id"]}" } }
+                 ],
+               }
+    %>
+  <% end %>
 </div>

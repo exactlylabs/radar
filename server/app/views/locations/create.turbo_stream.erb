@@ -69,6 +69,15 @@
         %>
       <% end %>
     <% end %>
+    <%= turbo_stream.update "ask_add_pod_modal" do %>
+      <%= render partial: "application/components/modals/empty_custom_modal",
+                 locals: {
+                   modal_title: 'Add a pod',
+                   modal_partial_path: "pods/modals/add_pod/ask_modal",
+                   custom_submit_end_handler: nil,
+                 }
+      %>
+    <% end %>
   <% elsif @error && !@is_onboarding %>
     <%= turbo_stream.update "new_location_modal" do %>
       <%= render partial: "application/components/modals/empty_custom_modal",
