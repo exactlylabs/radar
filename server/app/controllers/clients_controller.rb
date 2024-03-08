@@ -140,9 +140,9 @@ class ClientsController < ApplicationController
     @client = Client.find_by_unix_user(@client_id)
     respond_to do |format|
       if !@client
-        format.json { render json: {msg: 'Client not found!'}, status: :not_found }
+        format.json { render json: { msg: 'Client not found!' }, status: :not_found }
       elsif @client.user.present?
-        format.json { render json: {msg: 'Client already claimed!'}, status: :bad_request }
+        format.json { render json: { msg: 'Client already claimed!' }, status: :bad_request }
       elsif @client.user.nil?
         format.json { render json: @client.to_json, status: :ok }
       else
@@ -416,7 +416,7 @@ class ClientsController < ApplicationController
       viewbox: true
     )
 
-    zoom = 203.0/300.0
+    zoom = 203.0 / 300.0
 
     respond_to do |format|
       format.pdf do
@@ -515,7 +515,7 @@ class ClientsController < ApplicationController
       @qrs.append(qr_svg)
     end
 
-    zoom = 203.0/300.0
+    zoom = 203.0 / 300.0
 
     respond_to do |format|
       format.pdf do
@@ -611,16 +611,49 @@ class ClientsController < ApplicationController
     respond_to do |format|
       format.html {
         render partial: "pods/components/speed_cells",
-        locals: {
-          download_avg: download_avg.present? ? "#{download_avg.round(2)} Mbps" : 'N/A',
-          upload_avg: upload_avg.present? ? "#{upload_avg.round(2)} Mbps" : 'N/A',
-        }
-    }
+               locals: {
+                 download_avg: download_avg.present? ? "#{download_avg.round(2)} Mbps" : 'N/A',
+                 upload_avg: upload_avg.present? ? "#{upload_avg.round(2)} Mbps" : 'N/A',
+               }
+      }
     end
   end
 
   def get_add_pod_modal
     @unix_user = params[:unix_user]
+  end
+
+  def get_add_new_pod_to_current_network_modal
+    @network = policy_scope(Location).find(params[:network_id])
+  end
+
+  def add_new_pod_to_current_network
+    # Not using set_client as we don't want to throw here
+    @unix_user = params[:pod_id]
+    @client = Client.find_by_unix_user(@unix_user)
+    @error = nil
+    @network = policy_scope(Location).find(params[:network_id])
+    if !@client
+      @error = ErrorsHelper::PodClaimErrors::PodNotFound
+    elsif @client.user.present?
+      @error = ErrorsHelper::PodClaimErrors::PodAlreadyClaimed
+    end
+
+    respond_to do |format|
+      if !@error
+        @client.user = @network.user
+        @client.account = @network.account
+        @client.location = @network
+        @locations = policy_scope(Location)
+        if @client.save!
+          format.turbo_stream
+        else
+          format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error adding your new pod. Please try again later." }
+        end
+      else
+        format.turbo_stream
+      end
+    end
   end
 
   def check_claim_new_pod
