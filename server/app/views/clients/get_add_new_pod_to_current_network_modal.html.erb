@@ -1,0 +1,10 @@
+<%= turbo_frame_tag "add_new_pod_to_current_network" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+             locals: {
+               modal_title: "Add new pod",
+               modal_partial_path: "pods/modals/add_pod/pod_id_to_current_network",
+               custom_submit_end_handler: nil,
+               resource: @network
+             }
+  %>
+<% end %>

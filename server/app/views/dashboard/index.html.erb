@@ -207,4 +207,8 @@
   <%= render partial: "application/components/modals/turbo_modal", 
               locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
   %>
+
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "add_new_pod_to_current_network", optional_added_controllers: "pod-id-step" }
+  %>
 <% end %>

@@ -1,8 +1,13 @@
 <%= render partial: "application/components/modals/modal_header",
            locals: { title: "Add a pod", is_custom: true }
 %>
-<%= form_with(url: get_add_pod_modal_path, method: :get, data: { "turbo-frame" => "add_pod_modal" }) do |_| %>
+<%= form_with(url: get_add_new_pod_to_current_network_modal_path, method: :get, data: { "turbo-frame" => "add_new_pod_to_current_network" }) do |form| %>
   <div class="cards--default pods--empty-card" id="empty-networks-card">
+    <input hidden
+           type="text"
+           name="network_id"
+           value="<%= resource.id %>"
+      />
     <div class="pods--empty-card-icon-container">
       <%= image_tag image_url('pod-online-icon.png'), width: 32, height: 32 %>
     </div>
