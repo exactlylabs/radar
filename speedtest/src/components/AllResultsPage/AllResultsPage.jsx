@@ -248,6 +248,8 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
                               measurement={measurement}
                               currentFilterType={selectedFilterType}
                               recenterMap={setRequestArea}
+                              areFiltersOpen={isBoxOpen}
+                              forceCloseFilters={() => setIsBoxOpen(false)}
               />
             ))}
           </MapContainer>
