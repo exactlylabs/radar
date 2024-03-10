@@ -32,8 +32,17 @@ module ApplicationCable
     def dispatch_websocket_message(message)
       # Called internally by the connection buffer to process the ws message (this is running in a different thread)
       # Enqueue the message back as a bytes array (if not, it can fail given it's not a valid UTF-8 encoding)
-      message = message.bytes unless message.is_a? Array
-      ProcessMobileScansJob.perform_later(message)
+      attachable = Tempfile.new('ws_message', :encoding => 'ascii-8bit')
+      attachable.write(message)
+      attachable.rewind
+      scan = MobileScanResult.new
+      scan.binary_message = {
+        io: attachable,
+        filename: 'ws_message',
+        content_type: 'application/octet-stream'
+      }
+      scan.save!
+      ProcessMobileScansJob.perform_later(scan)
     end
 
     def widget_client
