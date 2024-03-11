@@ -10,7 +10,7 @@ class ProcessMobileScansJob < ApplicationJob
     case message.event
     when :SCAN_RESULT
       message.scan_result.scanned_aps.each do |ap|
-        obj.update!(
+        obj.mobile_scan_result_aps.create!(
           bssid: ap.bssid,
           ssid: ap.ssid,
           capabilities: ap.capabilities,
@@ -21,10 +21,10 @@ class ProcessMobileScansJob < ApplicationJob
           channel_width: ap.channel_width,
           is_passpoint_network: ap.is_passpoint_network,
           wifi_standard: ap.wifi_standard,
-          processed_at: Time.now
         )
       end
     end
+    obj.update!(processed_at: Time.now, latitude: message.scan_result.latitude, longitude: message.scan_result.longitude)
   end
 
   private

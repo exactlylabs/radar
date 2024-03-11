@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_03_10_215846) do
+ActiveRecord::Schema.define(version: 2024_03_11_030347) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -486,7 +486,8 @@ ActiveRecord::Schema.define(version: 2024_03_10_215846) do
     t.index ["study_aggregate_id"], name: "index_metrics_projections_on_study_aggregate_id"
   end
 
-  create_table "mobile_scan_results", force: :cascade do |t|
+  create_table "mobile_scan_result_aps", force: :cascade do |t|
+    t.bigint "mobile_scan_result_id", null: false
     t.string "bssid"
     t.string "ssid"
     t.string "capabilities"
@@ -497,9 +498,17 @@ ActiveRecord::Schema.define(version: 2024_03_10_215846) do
     t.integer "channel_width"
     t.boolean "is_passpoint_network"
     t.integer "wifi_standard"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["mobile_scan_result_id"], name: "index_mobile_scan_result_aps_on_mobile_scan_result_id"
+  end
+
+  create_table "mobile_scan_results", force: :cascade do |t|
     t.datetime "processed_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.float "latitude"
+    t.float "longitude"
   end
 
   create_table "ndt7_diagnose_reports", force: :cascade do |t|
@@ -756,6 +765,7 @@ ActiveRecord::Schema.define(version: 2024_03_10_215846) do
   add_foreign_key "metrics_projections", "autonomous_system_orgs"
   add_foreign_key "metrics_projections", "study_aggregates"
   add_foreign_key "metrics_projections", "study_aggregates", column: "parent_aggregate_id"
+  add_foreign_key "mobile_scan_result_aps", "mobile_scan_results"
   add_foreign_key "ndt7_diagnose_reports", "clients"
   add_foreign_key "online_client_count_projections", "accounts"
   add_foreign_key "online_client_count_projections", "autonomous_systems"
