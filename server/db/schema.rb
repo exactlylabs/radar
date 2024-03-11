@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_03_11_030347) do
+ActiveRecord::Schema.define(version: 2024_03_11_185100) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -500,6 +500,8 @@ ActiveRecord::Schema.define(version: 2024_03_11_030347) do
     t.integer "wifi_standard"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "level"
+    t.jsonb "information_elements"
     t.index ["mobile_scan_result_id"], name: "index_mobile_scan_result_aps_on_mobile_scan_result_id"
   end
 
@@ -509,6 +511,9 @@ ActiveRecord::Schema.define(version: 2024_03_11_030347) do
     t.datetime "updated_at", precision: 6, null: false
     t.float "latitude"
     t.float "longitude"
+    t.string "session_id"
+    t.jsonb "device_data"
+    t.jsonb "raw_decoded_message"
   end
 
   create_table "ndt7_diagnose_reports", force: :cascade do |t|
