@@ -4,6 +4,7 @@
 require 'google/protobuf'
 
 require 'google/protobuf/timestamp_pb'
+require 'google/protobuf/struct_pb'
 
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_file("ws_mobile_messages.proto", :syntax => :proto3) do
@@ -18,7 +19,7 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       optional :is80211mc_responder, :bool, 8
       optional :channel_width, :int32, 9
       optional :is_passpoint_network, :bool, 10
-      optional :information_elements, :bytes, 11
+      repeated :information_elements, :bytes, 11
       optional :wifi_standard, :int32, 12
       optional :timestamp, :message, 13, "google.protobuf.Timestamp"
     end
@@ -26,19 +27,19 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       repeated :scanned_aps, :message, 1, "ws_mobile_messages_pb.ScannedAP"
       optional :latitude, :float, 2
       optional :longitude, :float, 3
+      optional :session_id, :string, 4
+      optional :metadata, :message, 99, "google.protobuf.Struct"
     end
     add_message "ws_mobile_messages_pb.WSMessage" do
       optional :event, :enum, 1, "ws_mobile_messages_pb.Events"
       oneof :message do
         optional :scan_result, :message, 2, "ws_mobile_messages_pb.ScanResult"
         optional :timestamp, :message, 3, "google.protobuf.Timestamp"
-        optional :json, :string, 4
+        optional :json, :message, 4, "google.protobuf.Struct"
       end
     end
     add_enum "ws_mobile_messages_pb.Events" do
       value :SCAN_RESULT, 0
-      value :SCAN_START, 1
-      value :SCAN_STOP, 2
       value :WELCOME, 3
       value :PING, 4
       value :Other, 99
