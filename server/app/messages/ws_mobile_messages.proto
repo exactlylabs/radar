@@ -10,6 +10,7 @@
 syntax = "proto3";
 package ws_mobile_messages_pb;
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
 
 
 message ScannedAP {
@@ -23,7 +24,7 @@ message ScannedAP {
   bool is80211mc_responder = 8;
   int32 channel_width = 9;
   bool is_passpoint_network = 10;
-  bytes information_elements = 11;
+  repeated bytes information_elements = 11;
   int32 wifi_standard = 12;
   google.protobuf.Timestamp timestamp = 13;
 }
@@ -32,13 +33,12 @@ message ScanResult {
   repeated ScannedAP scanned_aps = 1;
   float latitude = 2;
   float longitude = 3;
+  string session_id = 4;
+  google.protobuf.Struct metadata = 99;
 }
-
 
 enum Events {
   SCAN_RESULT = 0;
-  SCAN_START = 1;
-  SCAN_STOP = 2;
   WELCOME = 3;
   PING = 4;
   Other = 99;
@@ -49,6 +49,6 @@ message WSMessage {
   oneof message {
     ScanResult scan_result = 2;
     google.protobuf.Timestamp timestamp = 3;
-    string json = 4;
+    google.protobuf.Struct json = 4;
   }
 }
