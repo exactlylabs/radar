@@ -27,11 +27,11 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
       repeated :scanned_aps, :message, 1, "ws_mobile_messages_pb.ScannedAP"
       optional :latitude, :float, 2
       optional :longitude, :float, 3
-      optional :session_id, :string, 4
       optional :metadata, :message, 99, "google.protobuf.Struct"
     end
     add_message "ws_mobile_messages_pb.WSMessage" do
       optional :event, :enum, 1, "ws_mobile_messages_pb.Events"
+      optional :session_id, :string, 5
       oneof :message do
         optional :scan_result, :message, 2, "ws_mobile_messages_pb.ScanResult"
         optional :timestamp, :message, 3, "google.protobuf.Timestamp"

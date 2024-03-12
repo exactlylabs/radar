@@ -33,7 +33,6 @@ message ScanResult {
   repeated ScannedAP scanned_aps = 1;
   float latitude = 2;
   float longitude = 3;
-  string session_id = 4;
   google.protobuf.Struct metadata = 99;
 }
 
@@ -46,9 +45,11 @@ enum Events {
 
 message WSMessage {
   Events event = 1;
+  string session_id = 5;
   oneof message {
     ScanResult scan_result = 2;
     google.protobuf.Timestamp timestamp = 3;
     google.protobuf.Struct json = 4;
   }
+
 }

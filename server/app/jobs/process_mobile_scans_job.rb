@@ -27,17 +27,24 @@ class ProcessMobileScansJob < ApplicationJob
           information_elements: ap.information_elements.map { |ie| ie.bytes },
         )
         raw_message[:scan_result][:scanned_aps][idx][:information_elements] = raw_message[:scan_result][:scanned_aps][idx][:information_elements].map { |ie| ie.bytes }
+        obj.update!(
+          session_id: message.session_id,
+          processed_at: Time.now,
+          latitude: message.scan_result.latitude,
+          longitude: message.scan_result.longitude,
+          device_data: message.scan_result.metadata.to_h,
+          raw_decoded_message: raw_message
+        )
       end
+    else
+      obj.update!(
+          session_id: message.session_id,
+          processed_at: Time.now,
+          raw_decoded_message: raw_message
+        )
     end
 
-    obj.update!(
-      session_id: message.scan_result.session_id,
-      processed_at: Time.now,
-      latitude: message.scan_result.latitude,
-      longitude: message.scan_result.longitude,
-      device_data: message.scan_result.metadata.to_h,
-      raw_decoded_message: raw_message
-    )
+
   end
 
   private
