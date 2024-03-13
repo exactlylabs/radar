@@ -108,8 +108,10 @@ const MyCustomMarker = ({
     return {topLeftCorner, bottomRightCorner};
   }
 
-  const updateCoordinatesIfWithinBounds = (shapeCoordinates, currentPoint, mapHorizontalLimit, mapVerticalLimit) => {
-    const offset = 20;
+  const updateCoordinatesIfWithinBounds = (shapeCoordinates, currentPoint, shapePosition, mapHorizontalLimit, mapVerticalLimit, identifier) => {
+    console.log('update coords with ', identifier);
+    const shiftingOffset = 10;
+    const padding = 20;
     const popupWidth = 280;
     const popupHeight = 300;
 
@@ -117,8 +119,8 @@ const MyCustomMarker = ({
     const shapeHeight = Math.abs(shapeCoordinates.bottomRightCorner.y - shapeCoordinates.topLeftCorner.y);
 
     let popupCoordinates = {
-      topLeftCorner: { x: currentPoint.x + offset, y: currentPoint.y - offset},
-      bottomRightCorner: { x: currentPoint.x + popupWidth + offset, y: currentPoint.y + popupHeight - offset }
+      topLeftCorner: { x: currentPoint.x + padding, y: currentPoint.y - padding },
+      bottomRightCorner: { x: currentPoint.x + popupWidth + padding, y: currentPoint.y - padding + popupHeight }
     }
 
     const collidesHorizontally = shapesCollide(shapeCoordinates, shapeWidth, popupCoordinates, popupWidth, 'horizontal');
@@ -129,50 +131,41 @@ const MyCustomMarker = ({
     const horizontalCollisionQuantity = shapeCollisionQuantity(shapeCoordinates, shapeWidth, popupCoordinates, popupWidth, 'horizontal');
     const verticalCollisionQuantity = shapeCollisionQuantity(shapeCoordinates, shapeHeight, popupCoordinates, popupHeight, 'vertical');
 
-    if(horizontalCollisionQuantity >= verticalCollisionQuantity) {
+    if(horizontalCollisionQuantity > verticalCollisionQuantity) {
       while(shapesCollide(shapeCoordinates, shapeHeight, popupCoordinates, popupHeight, 'vertical')) {
-        popupCoordinates = {
-          topLeftCorner: {
-            ...popupCoordinates.topLeftCorner,
-            y: popupCoordinates.topLeftCorner.y - offset
-          },
-          bottomRightCorner: {
-            ...popupCoordinates.bottomRightCorner,
-            y: popupCoordinates.bottomRightCorner.y - offset
-          }
-        }
+        console.log(popupCoordinates.bottomRightCorner.y, mapVerticalLimit, popupCoordinates.bottomRightCorner.y > mapVerticalLimit, popupCoordinates.topLeftCorner.y < 0)
+        popupCoordinates.topLeftCorner.y -= shiftingOffset;
+        popupCoordinates.bottomRightCorner.y -= shiftingOffset;
         // this means the shifting should only be done vertically for now
+        console.log(shapeCoordinates.topLeftCorner.y, popupCoordinates.bottomRightCorner.y, mapVerticalLimit, popupCoordinates.bottomRightCorner.y > mapVerticalLimit, popupCoordinates.topLeftCorner.y < 0)
         if(popupCoordinates.topLeftCorner.y < 0) {
-          popupCoordinates.topLeftCorner.y = currentPoint.y - offset;
-          popupCoordinates.bottomRightCorner.y = currentPoint.y + popupHeight - offset;
+          console.log('se me paso vertical')
+          popupCoordinates.topLeftCorner.y = currentPoint.y - padding;
+          popupCoordinates.bottomRightCorner.y = currentPoint.y + popupHeight - padding;
           break;
         }
       }
     } else {
       while(shapesCollide(shapeCoordinates, shapeWidth, popupCoordinates, popupWidth, 'horizontal')) {
-        popupCoordinates = {
-          topLeftCorner: {
-            ...popupCoordinates.topLeftCorner,
-            x: popupCoordinates.topLeftCorner.x + offset
-          },
-          bottomRightCorner: {
-            ...popupCoordinates.bottomRightCorner,
-            x: popupCoordinates.bottomRightCorner.x + offset
-          }
-        }
-
+        const positionMultiplier = shapePosition === 'bottomright' ? -1 : 1;
+        popupCoordinates.topLeftCorner.x += shiftingOffset * positionMultiplier;
+        popupCoordinates.bottomRightCorner.x += shiftingOffset * positionMultiplier;
         // this means the shifting should only be done vertically for now
-        if(popupCoordinates.bottomRightCorner.x > mapHorizontalLimit) {
-          popupCoordinates.topLeftCorner.x = currentPoint.x + offset;
-          popupCoordinates.bottomRightCorner.x = currentPoint.x + offset;
+        console.log(popupCoordinates.bottomRightCorner.x > mapHorizontalLimit, popupCoordinates.topLeftCorner.x < 0)
+        if(popupCoordinates.bottomRightCorner.x > mapHorizontalLimit || popupCoordinates.topLeftCorner.x < 0) {
+          console.log('se me paso horizontal')
+          popupCoordinates.topLeftCorner.x = currentPoint.x + padding;
+          popupCoordinates.bottomRightCorner.x = currentPoint.x + padding;
           break;
         }
       }
     }
 
+    console.log('after all', popupCoordinates.topLeftCorner.x, popupCoordinates.topLeftCorner.y);
+
     return {
-      x: popupCoordinates.topLeftCorner.x - offset,
-      y: popupCoordinates.topLeftCorner.y + offset
+      x: popupCoordinates.topLeftCorner.x,
+      y: popupCoordinates.topLeftCorner.y
     };
   }
 
@@ -181,16 +174,16 @@ const MyCustomMarker = ({
       return (shape1.topLeftCorner.x + shape1Dimension - shape2.topLeftCorner.x) >= 0 &&
         (shape2.topLeftCorner.x + shape2Dimension - shape1.topLeftCorner.x) >= 0;
     } else {
-      return (shape1.topLeftCorner.y + shape1Dimension - shape2.topLeftCorner.y) >= 0 &&
-        (shape2.topLeftCorner.y + shape2Dimension - shape1.topLeftCorner.y) >= 0;
+      return (shape1.bottomRightCorner.y + shape1Dimension - shape2.bottomRightCorner.y) >= 0 &&
+        (shape2.bottomRightCorner.y + shape2Dimension - shape1.bottomRightCorner.y) >= 0;
     }
   }
 
   const shapeCollisionQuantity = (shape1, shape1Dimension, shape2, shape2Dimension, direction) => {
     if(direction === 'horizontal') {
-      return (shape1.topLeftCorner.x + shape1Dimension - shape2.topLeftCorner.x) + (shape2.topLeftCorner.x + shape2Dimension - shape1.topLeftCorner.x);
+      return (shape1.topLeftCorner.x + shape1Dimension - shape2.topLeftCorner.x);
     } else {
-      return (shape1.topLeftCorner.y + shape1Dimension - shape2.topLeftCorner.y) + (shape2.topLeftCorner.y + shape2Dimension - shape1.topLeftCorner.y);
+      return (shape1.topLeftCorner.y + shape1Dimension - shape2.topLeftCorner.y);
     }
   }
 
@@ -205,7 +198,7 @@ const MyCustomMarker = ({
     const requiredPopupArea = 300 * 280;
     const totalArea = width * height;
     if(areFiltersOpen) {
-      filtersAreaCoordinates = getShapeCoordinates(250, 150, 'bottomleft', width, height);
+      filtersAreaCoordinates = getShapeCoordinates(250, 130, 'bottomleft', width, height);
       buttonAreaCoordinates = getShapeCoordinates(68, 68, 'bottomright', width, height, true);
 
       const filtersArea =
@@ -219,8 +212,8 @@ const MyCustomMarker = ({
         forceCloseFilters();
         getWidgetShiftedCoordinates(x, y, width, height);
       } else {
-        currentPoint = updateCoordinatesIfWithinBounds(filtersAreaCoordinates, currentPoint, width, height);
-        currentPoint = updateCoordinatesIfWithinBounds(buttonAreaCoordinates, currentPoint, width, height);
+        currentPoint = {...currentPoint, ...updateCoordinatesIfWithinBounds(filtersAreaCoordinates, currentPoint, 'bottomleft', width, height, 'filters')};
+        currentPoint = {...currentPoint, ...updateCoordinatesIfWithinBounds(buttonAreaCoordinates, currentPoint, 'bottomright', width, height, 'button')};
       }
     } else {
       buttonAreaCoordinates = getShapeCoordinates(68, 68, 'bottomright', width, height, false);
@@ -232,7 +225,7 @@ const MyCustomMarker = ({
       if((totalArea - buttonArea) < requiredPopupArea) {
         return null;
       }
-      currentPoint = updateCoordinatesIfWithinBounds(buttonAreaCoordinates, currentPoint, width, height);
+      currentPoint = updateCoordinatesIfWithinBounds(buttonAreaCoordinates, currentPoint, 'bottomright', width, height);
     }
     return currentPoint;
   }
