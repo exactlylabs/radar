@@ -140,7 +140,14 @@
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "add_new_pod_to_current_network", optional_added_controllers: "pod-id-step" }
+             locals: { turbo_frame_tag_id: "add_new_pod_to_current_network", optional_added_controllers: "pod-id-step" } %>
+
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: {
+               turbo_frame_tag_id: "import_from_another_account",
+               optional_added_controllers: "categories",
+               optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse"
+             }
   %>
 <% else %>
   <div class="modal fade"
@@ -175,11 +182,3 @@
   <%= turbo_frame_tag "delete_category_modal" do %>
   <% end %>
 </div>
-
-<%= render partial: "application/components/modals/turbo_modal",
-           locals: {
-             turbo_frame_tag_id: "import_from_another_account",
-             optional_added_controllers: "categories",
-             optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse"
-           }
-%>

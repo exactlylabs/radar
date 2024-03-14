@@ -134,7 +134,7 @@ class AccountsController < ApplicationController
     end
   end
 
-  def all_accounts
+  def  all_accounts
     set_all_accounts
   end
 

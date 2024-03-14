@@ -27,7 +27,7 @@
       <input name="categories" autocomplete="off" type="hidden" value="<%= @location.categories&.map { |c| c.id }.join(",") || [] %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
       <div class="category--location-select-container"
            data-categories-target="selectClickableContainer"
-           data-categories-holder-id-param="<%= @location.id.nil? ? nil : "location_id=<#{@location.id}" %>"
+           data-categories-holder-id-param="<%= @location.id.nil? ? nil : "location_id=#{@location.id}" %>"
            data-categories-dir-param="/location_categories"
            data-action="click->categories#toggleFocus"
       >

@@ -107,22 +107,22 @@ class CategoriesController < ApplicationController
   end
 
   def import_from_another_account
-    puts "Importing from another account"
-    @accounts = accounts_for_import
+    @accounts = policy_scope(Account)
     respond_to do |format|
       format.turbo_stream
     end
   end
 
   def import
-    categories_ids = params[:categories]
+    categories_ids = params[:account_categories]
     import_to_account = params[:import_to] || current_account.id
     error = nil
     begin
       Category.transaction do
+        # Parse string to array of integers
+        categories_ids = categories_ids.split(',').map(&:to_i)
         categories_ids.each do |category_id|
           next unless category_id.present?
-
           category = Category.find(category_id)
           new_category = category.dup
           new_category.account_id = import_to_account
@@ -135,7 +135,9 @@ class CategoriesController < ApplicationController
     respond_to do |format|
       if error.nil?
         @categories = policy_scope(Category)
-        @categories = categories_by_account
+        if current_account.is_all_accounts?
+          @categories = categories_by_account
+        end
         format.turbo_stream
       else
         format.html { redirect_to "/locations", notice: "Error importing categories. Please try again later." }
@@ -155,21 +157,11 @@ class CategoriesController < ApplicationController
   end
 
   def categories_by_account
-    @categories.group_by(&:account)
     @categories = @categories.group_by(&:account)
     accounts = policy_scope(Account)
     accounts.each do |account|
       @categories[account] = [] unless @categories[account]
     end
     @categories
-  end
-
-  def accounts_for_import
-    user = current_user
-    all_accounts = user.accounts.not_deleted
-    user.shared_accounts.not_deleted.each do |account|
-      all_accounts.append(account)
-    end
-    all_accounts
   end
 end

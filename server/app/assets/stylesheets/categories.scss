@@ -8,6 +8,12 @@
   }
 }
 
+.import-category--modal-dialog {
+  width: 500px;
+  height: 430px;
+  padding: 1.5rem 40px 2rem;
+}
+
 .modal-content {
   &.category--modal-content {
     height: 100%;
@@ -624,6 +630,11 @@
       height: 100vh;
       margin: 0;
     }
+  }
+
+  .import-category--modal-dialog {
+    height: 100vh;
+    margin: 0;
   }
 
   .modal-content {
