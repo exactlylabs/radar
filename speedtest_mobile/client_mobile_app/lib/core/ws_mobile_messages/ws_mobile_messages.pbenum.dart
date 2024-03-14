@@ -15,16 +15,12 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 class Events extends $pb.ProtobufEnum {
   static const Events SCAN_RESULT = Events._(0, _omitEnumNames ? '' : 'SCAN_RESULT');
-  static const Events SCAN_START = Events._(1, _omitEnumNames ? '' : 'SCAN_START');
-  static const Events SCAN_STOP = Events._(2, _omitEnumNames ? '' : 'SCAN_STOP');
   static const Events WELCOME = Events._(3, _omitEnumNames ? '' : 'WELCOME');
   static const Events PING = Events._(4, _omitEnumNames ? '' : 'PING');
   static const Events Other = Events._(99, _omitEnumNames ? '' : 'Other');
 
   static const $core.List<Events> values = <Events>[
     SCAN_RESULT,
-    SCAN_START,
-    SCAN_STOP,
     WELCOME,
     PING,
     Other,

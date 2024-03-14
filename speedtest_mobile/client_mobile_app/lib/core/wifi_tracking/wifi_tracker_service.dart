@@ -99,6 +99,7 @@ class WifiTrackerServiceListener implements Listener {
     _wifiTracker = WifiTracker(
       localStorage: _localStorage,
       webSocketClient: _webSocketClient,
+      configurationMonitoring: _configurationMonitoring,
       networkConnectionInfo: _networkConnectionInfo,
     );
   }
