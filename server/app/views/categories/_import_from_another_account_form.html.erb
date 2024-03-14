@@ -1,12 +1,7 @@
 <% import_from_accounts = @accounts.select { |account| account.categories.count > 0 }.map { |account| [account.name, account.id] } %>
 <% import_to_accounts = current_account.is_all_accounts? ? @accounts.map { |account| [account.name, account.id] } : nil %>
-
-<div class=""
-  data-type="full"
-  data-controller="categories"
-  data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker"
-  >
-  <div class="modals--content-container">
+<div class="import-category--modal-dialog" data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker">
+  <div>
     <%= form.hidden_field :account_id, value: import_from_accounts.first[1], data: { categories_target: "firstAccountId" } %>
     <div class="modals--form-row mb-6">
       <%= form.label :import_from, "Import from...", class: "forms--label" %>
@@ -18,31 +13,31 @@
         <%= form.select :import_to, options_for_select(import_to_accounts), {}, { class: "form-select forms--select" } %>
       </div>
     <% end %>
-    <label class="forms--label">Categories</label>
-    <input name="categories" autocomplete="off" type="hidden" value="[]" id="account_categories" data-categories-target="hiddenCategoriesInput">
-    <div data-categories-target="accountCategoriesPicker" id="account-categories" class="modals--form-row mb-6">
-      <div class="category--location-select-container"
-           data-categories-target="selectClickableContainer"
-           data-categories-dir-param="/account_categories"
-           data-action="click->categories#toggleFocus"
-      >
-        <%= turbo_frame_tag "selected-categories" do %>
-          <%= render partial: "categories/components/table_cell", locals: { categories: [], shows_tooltip: false, row: -1 } %>
-        <% end %>
-        <span class="svg-icon svg-icon-5 m-0">
+    <div class="modals--form-row mb-6 forms--input-group">
+      <%= form.label :account_categories, "Categories", class: "forms--label" %>
+      <%= form.hidden_field :account_categories, value: "[]", data: { categories_target: "hiddenCategoriesInput" } %>
+      <div data-categories-target="accountCategoriesPicker" id="account-categories" class="modals--form-row mb-6">
+        <div class="category--location-select-container"
+             data-categories-target="selectClickableContainer"
+             data-categories-dir-param="/account_categories"
+             data-action="click->categories#toggleFocus"
+        >
+          <%= turbo_frame_tag "selected-categories" do %>
+            <%= render partial: "categories/components/table_cell", locals: { categories: [], shows_tooltip: false, row: -1 } %>
+          <% end %>
+          <span class="svg-icon svg-icon-5 m-0">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
               </svg>
             </span>
+        </div>
       </div>
+      <%= turbo_frame_tag "account-categories-dropdown" do %>
+      <% end %>
     </div>
-    <%= turbo_frame_tag "account-categories-dropdown" do %>
-    <% end %>
   </div>
-
-  <div class="modal-footer modals--footer">
-    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
-    <%= form.submit "Import categories", class: "custom-button custom-button--primary custom-button--sm"
-    %>
-  </div>
+</div>
+<div class="modal-footer modals--footer">
+  <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
+  <%= form.submit "Import categories", class: "custom-button custom-button--primary custom-button--sm" %>
 </div>

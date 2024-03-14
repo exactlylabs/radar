@@ -1,11 +1,12 @@
 <%= turbo_stream.replace "account-categories-dropdown" do %>
   <%= render partial: "categories/components/categories_dropdown",
-             locals: { categories: @categories,
-                       base_turbo_frame_tag_id: "account-categories-dropdown",
-                       categories_turbo_frame_tag_id: "account-categories",
-                       on_box_checked_dir: "account_categories",
-                       search_categories_path: account_category_search_path,
-                       can_create_category: false
+             locals: {
+               categories: @categories,
+               base_turbo_frame_tag_id: "account-categories-dropdown",
+               categories_turbo_frame_tag_id: "account-categories",
+               on_box_checked_dir: "account_categories",
+               search_categories_path: account_category_search_path,
+               can_create_category: false
              }
   %>
 <% end %>

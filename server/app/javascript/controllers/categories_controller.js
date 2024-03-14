@@ -1,5 +1,6 @@
 import {Controller} from "@hotwired/stimulus";
 import {emitCustomEvent} from "../eventsEmitter";
+import handleError from "./error_handler_controller";
 
 export default class extends Controller {
     static targets = [
@@ -29,7 +30,6 @@ export default class extends Controller {
     }
 
     initialize() {
-        console.log('initializing');
         if (this.categoryCheckboxTargets) {
             let categoryIds = [];
             this.categoryCheckboxTargets.forEach(checkbox => {
@@ -43,7 +43,6 @@ export default class extends Controller {
     }
 
     initializeCategories() {
-        console.log('initializing categories');
         if (document.getElementById('location_categories')) {
             if (this.hiddenCategoriesInputTarget) {
                 this.categories = this.hiddenCategoriesInputTarget.value.split(',');
@@ -52,7 +51,6 @@ export default class extends Controller {
     }
 
     onCheckBoxChange(e) {
-        console.log(this.categories);
         const dir = e.params.dir;
         if (e.target.checked) e.target.setAttribute('checked', 'true');
         else e.target.removeAttribute('checked');
@@ -60,16 +58,13 @@ export default class extends Controller {
         const selectedCategoryId = e.target.id.split('check-box-')[1];
 
         if (this.categories.includes(selectedCategoryId)) {
-            console.log('removing category')
             const index = this.categories.indexOf(selectedCategoryId);
             this.categories.splice(index, 1);
         } else {
-            console.log('adding category')
             this.categories.push(selectedCategoryId);
         }
 
         const categoriesHiddenInput = document.getElementById(dir);
-        console.log(categoriesHiddenInput);
         if (categoriesHiddenInput) categoriesHiddenInput.setAttribute('value', this.categories.join(','));
 
         const formData = new FormData();
@@ -160,10 +155,13 @@ export default class extends Controller {
         let holderId = event.params.holderId;
         if (holderId === null || holderId === undefined) {
             if (this.accountId === null || this.accountId === undefined) {
-                return;
-            } else {
-                holderId = `account_id=${this.accountId}`;
+                if (this.hasFirstAccountIdTarget) {
+                    this.accountId = this.firstAccountIdTarget.value;
+                } else {
+                    return;
+                }
             }
+            holderId = `account_id=${this.accountId}`;
         }
         if (this.selectClickableContainerTarget.classList.contains('category--location-select-container-focus')) {
             this.selectClickableContainerTarget.classList.remove('category--location-select-container-focus');
@@ -175,11 +173,8 @@ export default class extends Controller {
     }
 
     handleCategorySearchResponse() {
-        console.log('handling category search response');
-        console.log(this.hasCategoryCheckboxTarget);
         this.categoryCheckboxTargets.forEach(checkbox => {
             const currentCheckboxId = checkbox.id.split('check-box-')[1];
-            console.log(currentCheckboxId, this.categories)
             if (this.categories.includes(currentCheckboxId)) {
                 checkbox.setAttribute('checked', 'true');
             }
@@ -259,13 +254,11 @@ export default class extends Controller {
     }
 
     onImportFromAnotherAccount(event) {
-        console.log('importing categories from another account');
         event.preventDefault();
         // get href from the event
         const url = event.target.href;
         // make a turbo request to the href
         const token = document.getElementsByName("csrf-token")[0].content;
-        console.log(url)
         fetch(url, {
             method: "GET",
             headers: {"X-CSRF-Token": token},
@@ -277,16 +270,5 @@ export default class extends Controller {
             .catch((err) => {
                 handleError(err, this.identifier);
             });
-    }
-
-    goToManageCategories(e) {
-        e.preventDefault();
-        const url = e.target.dataset.url;
-        const token = document.getElementsByName("csrf-token")[0].content;
-        fetch(url, {
-            headers: {"X-CSRF-Token": token},
-        })
-            .then(response => response.text())
-            .then(html => Turbo.renderStreamMessage(html));
     }
 }

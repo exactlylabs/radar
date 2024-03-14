@@ -1,7 +1,13 @@
-<%= render partial: "application/components/modals/modal_header",
-           locals: { title: "Manage categories", is_custom: true, goes_back: true, go_back_url: categories_path, go_back_action: "click->categories#goToManageCategories" }
-%>
-<%= form_with(url: import_categories_url, method: :post, class: "") do |form| %>
+<div class="modal-header modals--header">
+  <%= link_to categories_path, { class: "tables--row-option table-menu-option", "data-turbo-frame" => "categories_modal", "data-action" => "click->custom-modal#closeModal", id: "manage-categories-button-ref" } do %>
+    <%= image_tag image_url('arrow-left-dark.png'), width: 24, height: 24, class: "hoverable" %>
+  <% end %>
+  <h5 class="modals--title">Manage categories</h5>
+  <div class="custom-close-button hoverable" data-action="click->custom-modal#closeModal">
+    <%= image_tag image_url('close-modal-icon.png'), width: 24, height: 24 %>
+  </div>
+</div>
+<%= form_with(url: import_categories_url, method: :post) do |form| %>
   <%= render partial: "categories/import_from_another_account_form",
              locals: {
                accounts: @accounts,
@@ -9,94 +15,3 @@
              }
   %>
 <% end %>
-
-
-
-<!--<div class="modal-dialog category--modal-dialog" data-controller="categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated">-->
-<!--  <div class="modal-content category--modal-content">-->
-<%#= render partial: "application/components/modals/modal_header", locals: { title: "Import categories", is_custom: true, goes_back: true, go_back_url: onboarding_step_2_path, go_back_action: "click->onboard#goToOnboardingStep" } %>
-<%#= form_with(url: import_categories_url, method: :post, class: "modal-body modals--body d-flex flex-column justify-content-start align-items-center category--modal-body") do |form| %>
-<!--      <div class="categories--import-container">-->
-<%#= form.hidden_field :account_id, value: import_from_accounts.first[1], data: { categories_target: "firstAccountId" } %>
-<!--        <div class="modals--form-row mb-6">-->
-<%#= form.label :import_from, "Import from...", class: "forms--label" %>
-<%#= form.select :import_from, options_for_select(import_from_accounts), {}, { class: "form-select forms--select", data: { action: "change->categories#showCategoriesForSelectedAccount" } } %>
-<!--        </div>-->
-<%# if current_account.is_all_accounts? %>
-<!--          <div class="modals--form-row mb-6">-->
-<%#= form.label :import_to, "Import to...", class: "forms--label" %>
-<%#= form.select :import_to, options_for_select(import_to_accounts), {}, { class: "form-select forms--select" } %>
-<!--          </div>-->
-<%# end %>
-<!--        <label class="forms--label">Categories</label>-->
-<!--        <input name="categories" autocomplete="off" type="hidden" value="[]" id="account_categories" data-categories-target="hiddenCategoriesInput">-->
-<!--        <div data-categories-target="accountCategoriesPicker" id="account-categories" class="modals--form-row mb-6">-->
-<!--          <div class="category--location-select-container"-->
-<!--               data-categories-target="selectClickableContainer"-->
-<!--               data-categories-dir-param="/account_categories"-->
-<!--               data-action="click->categories#toggleFocus"-->
-<!--          >-->
-<%#= turbo_frame_tag "selected-categories" do %>
-<%#= render partial: "categories/components/table_cell", locals: { categories: [], shows_tooltip: false, row: -1 } %>
-<%# end %>
-<!--            <span class="svg-icon svg-icon-5 m-0">-->
-<!--              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">-->
-<!--                <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>-->
-<!--              </svg>-->
-<!--            </span>-->
-<!--          </div>-->
-<!--        </div>-->
-<%#= turbo_frame_tag "account-categories-dropdown" do %>
-<%# end %>
-<!--      </div>-->
-<!--      <div class="modal-footer modals--footer">-->
-<%#= form.submit "Import categories", class: "btn btn-primary" %>
-<!--      </div>-->
-<%# end %>
-<!--  </div>-->
-<!--</div>-->
-
-
-<!--<div class="modal-dialog category--modal-dialog" data-controller="categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated">-->
-<!--  <div class="modal-content category--modal-content">-->
-<%#= render partial: "application/components/modals/modal_header", locals: { title: modal_title, is_custom: true, goes_back: true, go_back_url: categories_path, go_back_action: "click->onboard#goToOnboardingStep" } %>
-<%#= form_with(url: import_categories_url, method: :post, class: "modal-body modals--body d-flex flex-column justify-content-start align-items-center category--modal-body") do |form| %>
-<!--      <div class="categories--import-container">-->
-<%#= form.hidden_field :account_id, value: import_from_accounts.first[1], data: { categories_target: "firstAccountId" } %>
-<!--        <div class="modals--form-row mb-6">-->
-<%#= form.label :import_from, "Import from...", class: "forms--label" %>
-<%#= form.select :import_from, options_for_select(import_from_accounts), {}, { class: "form-select forms--select", data: { action: "change->categories#showCategoriesForSelectedAccount" } } %>
-<!--        </div>-->
-<%# if current_account.is_all_accounts? %>
-<!--          <div class="modals--form-row mb-6">-->
-<%#= form.label :import_to, "Import to...", class: "forms--label" %>
-<%#= form.select :import_to, options_for_select(import_to_accounts), {}, { class: "form-select forms--select" } %>
-<!--          </div>-->
-<%# end %>
-<!--        <label class="forms--label">Categories</label>-->
-<!--        <input name="categories" autocomplete="off" type="hidden" value="[]" id="account_categories" data-categories-target="hiddenCategoriesInput">-->
-<!--        <div data-categories-target="accountCategoriesPicker" id="account-categories" class="modals--form-row mb-6">-->
-<!--          <div class="category--location-select-container"-->
-<!--               data-categories-target="selectClickableContainer"-->
-<!--               data-categories-dir-param="/account_categories"-->
-<!--               data-action="click->categories#toggleFocus"-->
-<!--          >-->
-<%#= turbo_frame_tag "selected-categories" do %>
-<%#= render partial: "categories/components/table_cell", locals: { categories: [], shows_tooltip: false, row: -1 } %>
-<%# end %>
-<!--            <span class="svg-icon svg-icon-5 m-0">-->
-<!--              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">-->
-<!--                <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>-->
-<!--              </svg>-->
-<!--            </span>-->
-<!--          </div>-->
-<!--        </div>-->
-<%#= turbo_frame_tag "account-categories-dropdown" do %>
-<%# end %>
-<%# end %>
-<!--    </div>-->
-<!--    <div class="modal-footer modals--footer">-->
-<%#= render partial: "application/components/buttons/close_modal_button", locals: { text: "Close" } %>
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
