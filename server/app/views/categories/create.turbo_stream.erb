@@ -17,6 +17,12 @@
 
 <%= turbo_stream.replace "location-categories" do %>
   <% policy_scope(Category).each do |category| %>
-    <%= render partial: "categories/components/category_list_item", locals: { category: category, selected: false } %>
+    <%= render partial: "categories/components/category_list_item",
+               locals: {
+                 category: category,
+                 selected: false,
+                 on_box_checked_dir: "location_categories",
+               }
+    %>
   <% end %>
 <% end %>
