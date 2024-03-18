@@ -14,6 +14,9 @@
       <% if title[:sort] %>
         <%= image_tag image_url(current_sort_order_icon_name), width: 16, height: 16 %>
       <% end %>
+      <% if title[:partial_after] %>
+        <%= render partial: title[:partial_after] %>
+      <% end %>
       <% if title[:text] == 'Checkbox' %>
         <div class="form-check form-check-sm form-check-custom form-check-solid tables--checkbox-container" >
           <input id="check-box-select-all"
