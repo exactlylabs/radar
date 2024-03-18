@@ -129,7 +129,7 @@ module TablesHelper
     when TableTypes::MEASUREMENTS
       rows = [
         *rows,
-        { text: 'Time' },
+        { text: 'Time', partial_after: "application/timezone_tooltip" },
         { text: 'Type' },
         { text: 'Download', icon_before: 'download-icon.png' },
         { text: 'Upload', icon_before: 'upload-icon.png' },

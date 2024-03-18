@@ -15,7 +15,13 @@
     <div class="sidebar--horizontal-divider"></div>
   <% end %>
   <% if results[:locations].count > 0 %>
-    <p class="help-text m-0 ms-2 mb-2">Locations</p>
+    <p class="help-text m-0 ms-2 mb-2">
+      <% if FeatureFlagHelper.is_available('networks', current_user) %>
+        Networks
+      <% else %>
+        Locations
+      <% end %>
+    </p>
     <div class="sidebar--recents-container">
       <% results[:locations].each do |location| %>
         <%= render partial: "application/components/sidebar/result_item",

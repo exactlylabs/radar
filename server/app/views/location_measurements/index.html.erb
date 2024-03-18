@@ -12,7 +12,13 @@
         <li class="breadcrumb-item page-sub-title"><%= current_account.name %>
           <!--<a href="/craft/index.html" class="text-muted text-hover-primary">Home</a>-->
         </li>
-        <li class="breadcrumb-item page-sub-title">Locations</li>
+        <li class="breadcrumb-item page-sub-title">
+          <% if FeatureFlagHelper.is_available('networks', current_user) %>
+            Networks
+          <% else %>
+            Locations
+          <% end %>
+        </li>
       </ul>
       <!--end::Breadcrumb-->
     </div>
