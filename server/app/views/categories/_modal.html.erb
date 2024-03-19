@@ -1,31 +1,61 @@
-<div class="modal-dialog category--modal-dialog">
-  <div class="modal-content category--modal-content">
-    <%= render partial: "application/components/modals/modal_header", locals: { title: "Manage categories" } %>
-    <div class="modal-body modals--body d-flex flex-column justify-content-start align-items-center category--modal-body"
-         data-controller="categories"
-         data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker"
-    >
-      <div class="category--search-add-container">
-        <%= render partial: "categories/search_input", locals: { url: categories_path, turbo_frame: "categories" } %>
-        <% unless current_account.is_all_accounts? %>
-          <%= render partial: "categories/add_category_button", locals: { account_id: current_account.id } %>
-        <% end %>
-      </div>
-      <%= link_to "Import from another account…", import_from_another_account_categories_path, data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
-      <%= turbo_frame_tag "categories", class: "category--list-container" do %>
-        <% if params[:query].present? && @categories.count == 0 %>
-          <p class="category--empty-state-text">No categories found for "<%= params[:query] %>".</p>
-        <% else %>
-          <% if current_account.is_all_accounts? %>
-            <%= render partial: "categories/all_accounts_list", locals: { categories: @categories } %>
-          <% else %>
-            <%= render partial: "categories/list", locals: { categories: @categories } %>
-          <% end %>
-        <% end %>
-      <% end %>
-    </div>
-    <div class="modal-footer modals--footer">
-      <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Close" } %>
-    </div>
+<!--<div class="modal-dialog category--modal-dialog">-->
+<!--  <div class="modal-content category--modal-content">-->
+    <%#= render partial: "application/components/modals/modal_header", locals: { title: "Manage categories" } %>
+<!--    <div class="modal-body modals--body d-flex flex-column justify-content-start align-items-center category--modal-body"-->
+<!--         data-controller="categories"-->
+<!--         data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker"-->
+<!--    >-->
+<!--      <div class="category--search-add-container">-->
+        <%#= render partial: "categories/search_input", locals: { url: categories_path, turbo_frame: "categories" } %>
+        <%# unless current_account.is_all_accounts? %>
+          <%#= render partial: "categories/add_category_button", locals: { account_id: current_account.id } %>
+        <%# end %>
+<!--      </div>-->
+      <%#= link_to "Import from another account…", import_from_another_account_categories_path, data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
+      <%#= turbo_frame_tag "categories", class: "category--list-container" do %>
+        <%# if params[:query].present? && @categories.count == 0 %>
+<!--          <p class="category--empty-state-text">No categories found for "<%#= params[:query] %>".</p>-->
+        <%# else %>
+          <%# if current_account.is_all_accounts? %>
+            <%#= render partial: "categories/all_accounts_list", locals: { categories: @categories } %>
+          <%# else %>
+            <%#= render partial: "categories/list", locals: { categories: @categories } %>
+          <%# end %>
+        <%# end %>
+      <%# end %>
+<!--    </div>-->
+<!--    <div class="modal-footer modals--footer">-->
+      <%#= render partial: "application/components/buttons/close_modal_button", locals: { text: "Close" } %>
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: "Manage categories", is_custom: true }
+%>
+
+<div class="modals--content-container text-center" data-type="full" data-controller="categories" data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker">
+  <div class="category--search-add-container">
+    <%= render partial: "categories/search_input", locals: { url: categories_path, turbo_frame: "categories" } %>
+    <% unless current_account.is_all_accounts? %>
+      <%= render partial: "categories/add_category_button", locals: { account_id: current_account.id } %>
+    <% end %>
   </div>
+  <%= link_to "Import from another account…", import_from_another_account_categories_path, data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
+  <%= turbo_frame_tag "categories", class: "category--list-container" do %>
+    <% if params[:query].present? && @categories.count == 0 %>
+      <p class="category--empty-state-text">No categories found for "<%= params[:query] %>".</p>
+    <% else %>
+      <% if current_account.is_all_accounts? %>
+        <%= render partial: "categories/all_accounts_list", locals: { categories: @categories } %>
+      <% else %>
+        <%= render partial: "categories/list", locals: { categories: @categories } %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+<div class="modals--footer-container">
+  <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Close", is_custom: true } %>
+
 </div>

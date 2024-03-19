@@ -171,12 +171,12 @@
   </div>
 <% end %>
 
-<div id="categories_modal_ref" class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
+<!--<div id="categories_modal_ref" class="modal fade" tabindex="-1" data-controller="modal" data-action="turbo:frame-render->modal#showModal">-->
   <%= render partial: "application/components/modals/turbo_modal",
              locals: {
                turbo_frame_tag_id: "categories_modal",
              } %>
-</div>
+<!--</div>-->
 
 <div id="delete_category_modal_ref" class="modal fade" tabindex="-1" data-controller="modal categories" data-action="turbo:frame-render->modal#showModal">
   <%= turbo_frame_tag "delete_category_modal" do %>
