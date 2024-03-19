@@ -1,0 +1,25 @@
+.screenContainer {
+  width: 100%;
+  max-width: 500px;
+  margin-inline: auto;
+}
+
+.inputsContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 3rem auto 2.5rem;
+  width: 100%;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.widgetInputsContainer {
+  flex-direction: row;
+}
+
+@media (max-width: 600px) {
+  .inputsContainer {
+    flex-direction: row;
+  }
+}

@@ -8,6 +8,13 @@ import {ADDRESS_PROVIDER} from "../utils/userMetadata";
  */
 const UserDataContext = createContext({});
 
+export const emptyContactInformation = {
+  firstName: null,
+  lastName: null,
+  email: null,
+  phone: null,
+}
+
 export const emptyAddress = {
   address: '',
   coordinates: [],
@@ -41,6 +48,9 @@ export const UserDataContextProvider = ({children}) => {
     altitudeAccuracy: null, // provided by browser geolocation API
     speed: null, // provided by browser geolocation API
     heading: null, // provided by browser geolocation API
+    expectedDownloadSpeed: null,
+    expectedUploadSpeed: null,
+    contactInformation: emptyContactInformation,
   });
 
   const setAddress = address => setUserData(prev => ({...prev, address}));
@@ -48,9 +58,11 @@ export const UserDataContextProvider = ({children}) => {
   const setNetworkLocation = location => setUserData(prev => ({...prev, networkLocation: location }));
   const setNetworkType = chosenOption => setUserData(prev => ({...prev, networkType: chosenOption}));
   const setNetworkCost = cost => setUserData(prev => ({...prev, networkCost: cost }));
+  const setExpectedSpeeds = speeds => setUserData(prev => ({ ...prev, expectedDownloadSpeed: speeds.download, expectedUploadSpeed: speeds.upload }));
+  const setContactInformation = info => setUserData(prev => ({ ...prev, contactInformation: info }));
 
   return (
-    <UserDataContext.Provider value={{userData, setUserData, setAddress, setTerms, setNetworkLocation, setNetworkType, setNetworkCost}}>
+    <UserDataContext.Provider value={{userData, setUserData, setAddress, setTerms, setNetworkLocation, setNetworkType, setNetworkCost, setExpectedSpeeds, setContactInformation}}>
       {children}
     </UserDataContext.Provider>
   );
