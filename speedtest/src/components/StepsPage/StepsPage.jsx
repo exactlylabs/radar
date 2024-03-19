@@ -17,6 +17,7 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 import InitialStepPage from "./Pages/InitialStep/InitialStepPage";
 import ConfigContext from "../../context/ConfigContext";
 import UserDataContext from "../../context/UserData";
+import ExpectedSpeedsStepPage from "./Pages/ExpectedSpeedsStepPage/ExpectedSpeedsStepPage";
 
 const stepsPageStyle = {
   width: '100%',
@@ -37,7 +38,7 @@ const StepsPage = ({
 }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(STEPS.INITIAL);
+  const [currentStep, setCurrentStep] = useState(STEPS.EXPECTED_SPEEDS);
   const [error, setError] = useState(null);
   const [warning, setWarning] = useState(null);
   const [lastTestResults, setLastTestResults] = useState(null);
@@ -129,9 +130,13 @@ const StepsPage = ({
 
   const goToPage4 = () => setCurrentStep(STEPS.CONNECTION_COST);
 
-  const goToPage5 = () => setCurrentStep(STEPS.RUN_SPEED_TEST);
+  const goToPage5 = () => setCurrentStep(STEPS.EXPECTED_SPEEDS);
 
-  const goToPage6 = (testResults) => {
+  const goToPage6 = () => setCurrentStep(STEPS.CONTACT_INFO);
+
+  const goToPage7 = () => setCurrentStep(STEPS.RUN_SPEED_TEST);
+
+  const goToPage8 = (testResults) => {
     setLastTestResults(testResults);
     setCurrentStep(STEPS.SPEED_TEST_RESULTS);
   }
@@ -221,8 +226,8 @@ const StepsPage = ({
                                        goBack={goToConnectionType}
         />;
       case STEPS.RUN_SPEED_TEST:
-        return <SpeedTestStepPage goForward={goToPage6}
-                                  goBack={goToPage4}
+        return <SpeedTestStepPage goForward={goToPage8}
+                                  goBack={goToPage6}
         />;
       case STEPS.SPEED_TEST_RESULTS:
         return <SpeedTestResultsStepPage testResults={lastTestResults}
@@ -232,6 +237,10 @@ const StepsPage = ({
         />;
       case STEPS.NO_INTERNET:
         return <NoInternetStepPage goToMapPage={goToMapPage}/>
+      case STEPS.EXPECTED_SPEEDS:
+        return <ExpectedSpeedsStepPage goForward={goToPage6} goBack={goToPage4}/>
+      case STEPS.CONTACT_INFO:
+        return <ContactInfoStepPage goForward={goToPage7} goBack={goToPage5}/>
       default:
         return <InitialStepPage setTerms={setTerms}
                                 goToNextPage={goToAddressPage}
@@ -243,7 +252,7 @@ const StepsPage = ({
   return (
     <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileStepsPageStyle : stepsPageStyle}>
       {
-        currentStep <= STEPS.CONNECTION_COST && currentStep !== STEPS.INITIAL &&
+        currentStep <= STEPS.CONTACT_INFO && currentStep !== STEPS.INITIAL &&
           <MyStepper activeStep={currentStep} isMobile={isMediumSizeScreen}/>
       }
       { getCurrentPage() }
