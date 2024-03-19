@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_03_11_185100) do
+ActiveRecord::Schema.define(version: 2024_03_18_173939) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -204,6 +204,12 @@ ActiveRecord::Schema.define(version: 2024_03_11_185100) do
     t.string "session_id"
     t.boolean "backfilled", default: false
     t.jsonb "permissions"
+    t.float "expected_download_speed"
+    t.float "expected_upload_speed"
+    t.string "client_first_name"
+    t.string "client_last_name"
+    t.string "client_email"
+    t.string "client_phone"
     t.index ["latitude"], name: "client_speed_tests_latitude_idx"
     t.index ["lonlat"], name: "client_speed_tests_gist_lonlat_idx", using: :gist
     t.index ["lonlat"], name: "index_client_speed_tests_on_lonlat"
@@ -348,8 +354,8 @@ ActiveRecord::Schema.define(version: 2024_03_11_185100) do
 
   create_table "invites", force: :cascade do |t|
     t.boolean "is_active", default: false
-    t.string "first_name", null: false
-    t.string "last_name", null: false
+    t.string "first_name"
+    t.string "last_name"
     t.string "email", null: false
     t.datetime "sent_at", null: false
     t.bigint "account_id", null: false
@@ -357,6 +363,7 @@ ActiveRecord::Schema.define(version: 2024_03_11_185100) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "token_digest"
+    t.integer "role", default: 0
     t.index ["account_id"], name: "index_invites_on_account_id"
     t.index ["user_id"], name: "index_invites_on_user_id"
   end
@@ -481,7 +488,6 @@ ActiveRecord::Schema.define(version: 2024_03_11_185100) do
     t.index ["autonomous_system_org_id"], name: "index_metrics_projections_on_autonomous_system_org_id"
     t.index ["parent_aggregate_id"], name: "index_metrics_projections_on_parent_aggregate_id"
     t.index ["study_aggregate_id", "autonomous_system_org_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_asn_bucket_timestamp_desc_idx", order: { timestamp: :desc }
-    t.index ["study_aggregate_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_bucket_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id", "timestamp"], name: "metrics_projections_agg_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id"], name: "index_metrics_projections_on_study_aggregate_id"
   end
@@ -648,6 +654,14 @@ ActiveRecord::Schema.define(version: 2024_03_11_185100) do
     t.index ["parent_aggregate_id"], name: "index_study_aggregates_on_parent_aggregate_id"
   end
 
+  create_table "study_counties", id: false, force: :cascade do |t|
+    t.string "state"
+    t.string "state_code"
+    t.string "county"
+    t.string "fips"
+    t.integer "pop_2021"
+  end
+
   create_table "system_outages", force: :cascade do |t|
     t.string "description"
     t.datetime "start_time"
@@ -685,6 +699,11 @@ ActiveRecord::Schema.define(version: 2024_03_11_185100) do
     t.index ["watchdog_version_id"], name: "index_update_groups_on_watchdog_version_id"
   end
 
+  create_table "us_states", primary_key: "state_fips", id: :string, force: :cascade do |t|
+    t.string "state_code"
+    t.string "name"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -715,6 +734,7 @@ ActiveRecord::Schema.define(version: 2024_03_11_185100) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
+    t.integer "role", default: 0
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end

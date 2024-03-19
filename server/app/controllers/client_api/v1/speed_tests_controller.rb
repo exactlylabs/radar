@@ -107,7 +107,8 @@ module ClientApi
         params.require(:speed_test).permit(
           :latitude, :longitude, :tested_at, :address, :network_location, :network_type, :network_cost, :city,
           :state, :street, :house_number, :postal_code, :connection_data, :version_number, :build_number, :altitude,
-          :accuracy, :address_provider, :background_mode, :alt_accuracy, :floor, :heading, :speed, :speed_accuracy, :session_id
+          :accuracy, :address_provider, :background_mode, :alt_accuracy, :floor, :heading, :speed, :speed_accuracy, :session_id,
+          :expected_download_speed, :expected_upload_speed, :client_first_name, :client_last_name, :client_email, :client_phone
         )
       end
 
