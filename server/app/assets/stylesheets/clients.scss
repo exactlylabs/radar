@@ -33,3 +33,7 @@
 .clients--title-content {
   max-width: 15ch;
 }
+
+.clients--pod-id-modal {
+  z-index: 90000 !important;
+}
