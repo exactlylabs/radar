@@ -405,6 +405,40 @@
   gap: .5rem;
 }
 
+.widgets--outage-toggler-buttons-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .5rem;
+}
+
+@media (max-width: 768px) {
+  .widgets--outage-toggler-buttons-container {
+    display: none;
+  }
+}
+
+.widgets--outage-filter-button {
+  border: none;
+  padding: .25rem .75rem;
+  border-radius: 6px;
+  background-color: $subtle-gray;
+  color: $gray;
+  font-size: 0.812rem;
+  line-height: 1.462rem;
+  letter-spacing: 0;
+
+  &[data-selected="true"] {
+    background-color: $circular-icon-container-gray;
+    color: $blue;
+  }
+
+  @extend .fw-bold;
+  @extend .hoverable;
+}
+
 .widgets--line-toggler-button {
   border: none;
   padding: .25rem .5rem;

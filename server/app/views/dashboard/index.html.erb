@@ -120,6 +120,11 @@
               <%= render partial: "application/components/widgets/widget",
                          locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
               %>
+              <% if FeatureFlagHelper.is_available('outages', current_user) %>
+                <%= render partial: "application/components/widgets/widget",
+                           locals: { type: WidgetsHelper::WidgetTypes::OUTAGES }
+                %>
+              <% end %>
               <%= render partial: "application/components/widgets/widget",
                          locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED }
               %>

@@ -1,0 +1,11 @@
+<%= turbo_frame_tag 'outages-widget' do %>
+  <div>
+    <div class="widgets--outage-toggler-buttons-container">
+      <button class="widgets--outage-filter-button" data-selected="true">All outages</button>
+      <button class="widgets--outage-filter-button">ISP outages</button>
+      <button class="widgets--outage-filter-button">Power outages</button>
+      <button class="widgets--outage-filter-button">Pod failures</button>
+    </div>
+    <div class="widgets--outage-list"></div>
+  </div>
+<% end %>

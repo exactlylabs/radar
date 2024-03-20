@@ -196,6 +196,7 @@ Rails.application.routes.draw do
   get 'upload_speeds', to: 'dashboard#upload_speeds'
   get 'latency', to: 'dashboard#latency'
   get 'data_usage', to: 'dashboard#data_usage'
+  get 'outages', to: 'dashboard#outages'
 
   resources :exports do
     collection do

@@ -100,6 +100,10 @@ class DashboardController < ApplicationController
     @usage = ActiveRecord::Base.connection.execute(sql)
   end
 
+  def outages
+
+  end
+
   private
 
   def as_orgs_filters_params()
