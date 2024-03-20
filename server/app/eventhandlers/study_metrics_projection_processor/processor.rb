@@ -15,7 +15,6 @@ module StudyMetricsProjectionProcessor
     def initialize
       @insertion_queue = []
       @consumer_offset = ConsumerOffset.find_or_create_by!(consumer_id: "MetricsProjectionProcessor")
-      @last_event_of_aggregate = {}
 
       # Initialize states in case of first run.
       @consumer_offset.state["open_buckets"] ||= {}
@@ -39,7 +38,6 @@ module StudyMetricsProjectionProcessor
     def process()
       Rails.logger.info "Starting Processor"
       conn = ActiveRecord::Base.connection_pool.checkout
-      # loaded = false
       offsets = {
         client_events_offset: @consumer_offset.state["events_offset"] || 0,
         sys_outage_events_offset: @consumer_offset.state["sys_outage_events_offset"] || 0,
@@ -67,15 +65,16 @@ module StudyMetricsProjectionProcessor
           case source
           when Client.name || SystemOutage.name
             self.handle_event value
-            @consumer_offset.state["client_events_offset"] = value.id if source == "Client"
-            @consumer_offset.state["sys_outage_events_offset"] = value.id if source == "SystemOutage"
+            @consumer_offset.state["client_events_offset"] = value["id"] if source == "Client"
+            @consumer_offset.state["sys_outage_events_offset"] = value["id"] if source == "SystemOutage"
 
           when Measurement.name
-            self.handle_measurement value["id"], value["location_id"], value["lonlat"], value["processed_at"], value["autonomous_system_org_id"], value["autonomous_system_org_name"]
+            value["lonlat"] =
+            self.handle_measurement value["id"], value["location_id"], value["longitude"], value["latitude"], value["processed_at"], value["autonomous_system_org_id"], value["autonomous_system_org_name"]
             @consumer_offset.state["measurements_offset"] = value["id"]
 
           when ClientSpeedTest.name
-            self.handle_speed_test value["id"], value["lonlat"], value["processed_at"], value["autonomous_system_org_id"], value["autonomous_system_org_name"]
+            self.handle_speed_test value["id"], value["longitude"], value["latitude"], value["processed_at"], value["autonomous_system_org_id"], value["autonomous_system_org_name"]
             @consumer_offset.state["speed_tests_offset"] = value["id"]
 
           when "DailyTrigger"

@@ -3,75 +3,52 @@ module StudyMetricsProjectionProcessor
     include StudyMetricsProjectionProcessor::Common
 
     def handle_event(event)
-      if event.aggregate_type == Client.name
+      if event["aggregate_type"] == Client.name
         self.handle_client_event! event
-      elsif event.aggregate_type == SystemOutage.name
+      elsif event["aggregate_type"] == SystemOutage.name
         self.handle_system_outage_event! event
       end
     end
 
     def handle_client_event!(event)
-      last_agg_event = @last_event_of_aggregate["#{event.aggregate_type}_#{event.aggregate_id}"]
-      @last_event_of_aggregate["#{event.aggregate_type}_#{event.aggregate_id}"] = event
-      return if event.snapshot.nil?
-      state = event.snapshot.state
-      case event.name
-      when Client::Events::CREATED
-        if state["online"]
-          self.on_online_event(event, state)
-        end
-      when Client::Events::LOCATION_CHANGED
-        self.on_location_changed_event(event, state)
-      when Client::Events::AS_CHANGED
-        self.on_as_changed_event(event, state)
-      when Client::Events::WENT_ONLINE
-        if @in_outage || last_agg_event.present? && last_agg_event.name == Client::Events::WENT_ONLINE
-          return
-        end
-        self.on_online_event(event, state)
-      when Client::Events::WENT_OFFLINE
-        if @in_outage || last_agg_event.present? && last_agg_event.name == Client::Events::WENT_OFFLINE
-          return
-        end
-        self.on_offline_event(event, state)
-      end
-    end
+      return if event["snapshot_id"].nil?
 
-    def on_online_event(event, state)
-      self.update_online_count_for_location(event.timestamp, state["location_id"], state["autonomous_system_id"], 1)
-    end
+      aggregate_id = event["aggregate_id"]
+      self.with_previous_pod_state(event["snapshot_state"], aggregate_id, event["timestamp"]) do |previous_state, state|
+        online_changed = state["online"] != previous_state&.fetch("online", false)
+        location_changed = state["location_id"] != previous_state&.fetch("location_id", nil)
+        as_changed = state["autonomous_system_id"] != previous_state&.fetch("autonomous_system_id", nil)
 
-    def on_offline_event(event, state)
-      self.update_online_count_for_location(event.timestamp, state["location_id"], state["autonomous_system_id"], -1)
-    end
-
-    def on_location_changed_event(event, state)
-      if state["online"]
-
-        if event.data["from"].present?
-          self.update_online_count_for_location(event.timestamp, event.data["from"], state["autonomous_system_id"], -1)
-        end
-
-        if event.data["to"].present?
-          self.update_online_count_for_location(event.timestamp, event.data["to"], state["autonomous_system_id"], 1)
+        if (location_changed || as_changed) && state["online"]
+          self.decrease_online_count(event, previous_state) if previous_state.present?
+          self.increase_online_count(event, state)
+        elsif online_changed
+          if state["online"]
+            self.increase_online_count(event, state)
+          elsif previous_state.present?
+            self.decrease_online_count(event, state)
+          end
         end
       end
     end
 
-    def on_as_changed_event(event, state)
-      if state["online"]
-        self.update_online_count_for_location(event.timestamp, state["location_id"], event.data["from"], -1)
-        self.update_online_count_for_location(event.timestamp, state["location_id"], event.data["to"], 1)
-      end
+    def increase_online_count(event, state)
+      return unless state["location_id"].present?
+      self.update_online_count_for_location(event["timestamp"], state["location_id"], state["autonomous_system_id"], 1)
+    end
+
+    def decrease_online_count(event, state)
+      return unless state["location_id"].present?
+      self.update_online_count_for_location(event["timestamp"], state["location_id"], state["autonomous_system_id"], -1)
     end
 
     def handle_system_outage_event!(event)
-      if event.name == SystemOutage::Events::CREATED
+      if event["name"] == SystemOutage::Events::CREATED
         @in_outage = true
 
-      elsif event.name == SystemOutage::Events::FINISHED
+      elsif event["name"] == SystemOutage::Events::FINISHED
         @in_outage = false
-        outage = event.snapshot.state
+        outage = event["snapshot_state"]
         # Once a system outage is finished, we search for
         # pods whose state differs from the state before the outage.
         sql = %{
@@ -136,15 +113,8 @@ module StudyMetricsProjectionProcessor
     end
 
     def update_online_count_for_location(timestamp, location_id, autonomous_system_id, incr)
-      if @lonlats[location_id].nil?
-        begin
-          location = Location.with_deleted.find(location_id)
-        rescue ActiveRecord::RecordNotFound
-          return
-        end
-        @lonlats[location_id] = location.lonlat
-      end
-      lonlat = @lonlats[location_id]
+      lonlat = self.location_lonlat(location_id)
+      return if lonlat.nil?
 
       as_org_id, as_org_name = self.as_org_info(autonomous_system_id)
 
@@ -153,31 +123,29 @@ module StudyMetricsProjectionProcessor
       location_meta = self.get_location_metadata(location_id)
       location_was_online = location_meta.online?
       location_meta.online_pods_count += incr
-      location_is_online = location_meta.online_pods_count > 0
+      location_meta.online = location_meta.online_pods_count > 0
 
-      if location_was_online && !location_is_online
-        location_meta.online = false
+      if location_was_online && !location_meta.online?
         location_meta.last_offline_event_at = timestamp
-      elsif !location_was_online && location_is_online
-        location_meta.online = true
+
+      elsif !location_was_online && location_meta.online?
         location_meta.last_online_event_at = timestamp
         location_meta.autonomous_system_org_id = as_org_id
       end
 
 
       # location metadata for a specific asn
+      key = "#{location_id}-#{as_org_id}"
       @consumer_offset.state["location_pods_count"] ||= {}
-      @consumer_offset.state["location_pods_count"]["#{location_id}-#{as_org_id}"] ||= 0
-      location_asn_pods_count = @consumer_offset.state["location_pods_count"]["#{location_id}-#{as_org_id}"]
+      @consumer_offset.state["location_pods_count"][key] ||= 0
 
-      asn_location_was_online = location_asn_pods_count > 0
+      asn_location_was_online = @consumer_offset.state["location_pods_count"][key] > 0
+      @consumer_offset.state["location_pods_count"][key] += incr
+      asn_location_is_online = @consumer_offset.state["location_pods_count"][key] > 0
 
-      @consumer_offset.state["location_pods_count"]["#{location_id}-#{as_org_id}"] += incr
-      location_asn_pods_count = @consumer_offset.state["location_pods_count"]["#{location_id}-#{as_org_id}"]
-      asn_location_is_online = location_asn_pods_count > 0
-
-
-      aggs = self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: location_id)
+      aggs = self.get_aggregates_for_point(
+        lonlat.longitude, lonlat.latitude, as_org_id, as_org_name, location_id: location_id
+      )
       study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
       aggs.each do |aggregate|
         # Filter out "other" counties from the state_with_study_only level
@@ -203,6 +171,18 @@ module StudyMetricsProjectionProcessor
           end
         end
       end
+    end
+
+    # Compare states with a caching mechanism to avoid duplicated queries
+    def with_previous_pod_state(current_state, aggregate_id, timestamp)
+      @pod_state ||= {}
+      if @pod_state[aggregate_id].nil?
+        previous_event = Event.of(Client).where(aggregate_id: aggregate_id).where("timestamp < ?", timestamp).order(:timestamp => :asc, :version => :asc).last
+        @pod_state[aggregate_id] = previous_event&.snapshot&.state
+      end
+      yield @pod_state[aggregate_id], current_state
+
+      @pod_state[aggregate_id] = current_state
     end
   end
 end

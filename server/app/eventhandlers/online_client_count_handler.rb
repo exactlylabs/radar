@@ -43,43 +43,43 @@ class OnlineClientCountHandler
     self.sorted_iteration(iterators).each do |content|
       event = content[:data]
 
-      @ongoing_system_outage = SystemOutage.at(event.timestamp).exists? if @ongoing_system_outage.nil?
+      @ongoing_system_outage = SystemOutage.at(event["timestamp"]).exists? if @ongoing_system_outage.nil?
       begin
-        if event.aggregate_type == Client.name
+        if event["aggregate_type"] == Client.name
           self.handle_client_event! event
-          @consumer_offset.state["client_events_offset"] = event.id
-        elsif event.aggregate_type == SystemOutage.name
+          @consumer_offset.state["client_events_offset"] = event["id"]
+        elsif event["aggregate_type"] == SystemOutage.name
           self.handle_system_outage_event! event
-          @consumer_offset.state["sys_outage_events_offset"] = event.id
-        elsif event.aggregate_type == Location.name
+          @consumer_offset.state["sys_outage_events_offset"] = event["id"]
+        elsif event["aggregate_type"] == Location.name
           self.handle_location_event! event
-          @consumer_offset.state["location_events_offset"] = event.id
+          @consumer_offset.state["location_events_offset"] = event["id"]
         end
       rescue ActiveRecord::InvalidForeignKey
       end
       if @insertion_queue.length > MAX_QUEUE_SIZE
         self.flush_insertion_queue
       end
-      @last_timestamp = event.timestamp
+      @last_timestamp = event["timestamp"]
     end
     self.flush_insertion_queue
     return nil
   end
 
   def handle_client_event!(event)
-    if event.snapshot.nil?
+    if event["snapshot_id"].nil?
       return
     end
-    last_event = @last_clients_events[event.aggregate_id]
-    if last_event.present? && last_event.name == event.name && last_event.data == event.data
+    last_event = @last_clients_events[event["aggregate_id"]]
+    if last_event.present? && last_event["name"] == event["name"] && last_event["data"] == event["data"]
       return
     end
-    @last_clients_events[event.aggregate_id] = event
+    @last_clients_events[event["aggregate_id"]] = event
 
-    state = event.snapshot.state
+    state = event["snapshot_state"]
     last_count = last_projection(state["account_id"], state["autonomous_system_id"], state["location_id"])
 
-    case event.name
+    case event["name"]
     when Client::Events::CREATED
       if state["online"]
         self.new_record!(last_count, event, increment=1)
@@ -87,7 +87,7 @@ class OnlineClientCountHandler
 
     when Client::Events::ACCOUNT_CHANGED
       if state["online"]
-        old_account_count = self.last_projection(event.data["from"], state["autonomous_system_id"], state["location_id"])
+        old_account_count = self.last_projection(event["data"]["from"], state["autonomous_system_id"], state["location_id"])
         self.new_record!(last_count, event, increment=1)
         if old_account_count.present?
           self.new_record!(old_account_count, event, increment=-1)
@@ -96,7 +96,7 @@ class OnlineClientCountHandler
 
     when Client::Events::LOCATION_CHANGED
       if state["online"]
-        old_location_count = self.last_projection(state["account_id"], state["autonomous_system_id"], event.data["from"])
+        old_location_count = self.last_projection(state["account_id"], state["autonomous_system_id"], event["data"]["from"])
         self.new_record!(last_count, event, increment=1)
         if old_location_count.present?
           self.new_record!(old_location_count, event, increment=-1)
@@ -105,7 +105,7 @@ class OnlineClientCountHandler
 
     when Client::Events::AS_CHANGED
       if state["online"]
-        old_as_count = self.last_projection(state["account_id"], event.data["from"], state["location_id"])
+        old_as_count = self.last_projection(state["account_id"], event["data"]["from"], state["location_id"])
         self.new_record!(last_count, event, increment=1)
         if old_as_count.present?
           self.new_record!(old_as_count, event, increment=-1)
@@ -113,21 +113,21 @@ class OnlineClientCountHandler
       end
 
     when Client::Events::WENT_ONLINE
-      return if pod_was_online?(event.aggregate, event.timestamp)
+      return if pod_was_online?(event["aggregate_type"], event["aggregate_id"], event["timestamp"])
       self.new_record!(last_count, event, increment=1)
-      @pods_status[event.aggregate.id] = true
+      @pods_status[event["aggregate_id"]] = true
 
     when Client::Events::WENT_OFFLINE
-      return unless pod_was_online?(event.aggregate, event.timestamp)
+      return unless pod_was_online?(event["aggregate_type"], event["aggregate_id"], event["timestamp"])
       self.new_record!(last_count, event, increment=-1)
-      @pods_status[event.aggregate.id] = false
+      @pods_status[event["aggregate_id"]] = false
 
     end
   end
 
   def handle_system_outage_event!(event)
-    if event.name == SystemOutage::Events::FINISHED
-      outage = event.snapshot.state
+    if event["name"] == SystemOutage::Events::FINISHED
+      outage = event["snapshot_state"]
 
       # Add any pending record from the queue into the DB, to work on DB data only, not both DB and queue.
       self.flush_insertion_queue
@@ -237,10 +237,10 @@ class OnlineClientCountHandler
   end
 
   def handle_location_event!(event)
-    if event.name == Location::Events::DATA_MIGRATION_REQUESTED
+    if event["name"] == Location::Events::DATA_MIGRATION_REQUESTED
       OnlineClientCountProjection.where(
-        location_id: event.aggregate_id, account_id: event.data["from"]
-      ).update_all(account_id: event.data["to"])
+        location_id: event["aggregate_id"], account_id: event["data"]["from"]
+      ).update_all(account_id: event["data"]["to"])
     end
   end
 
@@ -256,18 +256,20 @@ class OnlineClientCountHandler
     return @locations[location_id].present?
   end
 
-  def push_to_queue(event, account_id, autonomous_system_id, location_id, online, total, total_in_service, incr)
+  def push_to_queue(event, account_id, autonomous_system_id, location_id, online, total, total_in_service, incr, is_online, location_online_incr)
     return unless self.location_valid?(location_id)
     @insertion_queue.push({
-      "timestamp" => event.timestamp,
+      "timestamp" => event["timestamp"],
       "account_id" => account_id,
       "autonomous_system_id" => autonomous_system_id,
       "location_id" => location_id,
       "online" => online,
       "total" => total,
       "total_in_service" => total_in_service,
-      "event_id" => event.id,
-      "incr" => incr
+      "event_id" => event["id"],
+      "incr" => incr,
+      "is_online" => is_online,
+      "location_online_incr" => location_online_incr
     })
   end
 
@@ -290,20 +292,25 @@ class OnlineClientCountHandler
     count = OnlineClientCountProjection.new(previous_count.as_json)
     return unless count.account_id.present?
     count.id = nil # to ensure it creates a new row, instead of updating the existing
-    count.timestamp = event.timestamp
-    count.event_id = event.id
+    count.timestamp = event["timestamp"]
+    count.event_id = event["id"]
     count.online += increment
     count.incr = increment
-    self.push_to_queue(event, count.account_id, count.autonomous_system_id, count.location_id, count.online, count.total, count.total_in_service, increment)
+    count.is_online = count.online > 0 unless count.location_id.nil?
+    count.location_online_incr = 0
+    if count.location_id.present? && count.is_online ^ previous_count.is_online
+      count.location_online_incr = count.is_online? ? 1 : -1
+    end
+    self.push_to_queue(event, count.account_id, count.autonomous_system_id, count.location_id, count.online, count.total, count.total_in_service, increment, count.is_online, count.location_online_incr)
     @last_projections["#{count.account_id}-#{count.autonomous_system_id}-#{count.location_id}"] = count
   end
 
-  def pod_was_online?(aggregate, timestamp)
-    if @pods_status[aggregate.id].nil?
-      snap = Snapshot.from_aggregate(aggregate).prior_to(timestamp).ordered_by_event.last
-      @pods_status[aggregate.id] = snap&.state&.fetch("online") || false
+  def pod_was_online?(aggregate_type, aggregate_id, timestamp)
+    if @pods_status[aggregate_id].nil?
+      snap = Snapshot.where(aggregate_type: aggregate_type, aggregate_id: aggregate_id).prior_to(timestamp).ordered_by_event.last
+      @pods_status[aggregate_id] = snap&.state&.fetch("online") || false
     end
-    @pods_status[aggregate.id]
+    @pods_status[aggregate_id]
   end
 
   def to_be_processed_events(**opts)
@@ -327,12 +334,12 @@ class OnlineClientCountHandler
       t = Time.now
       @consumer_offset.save!
       @raw.exec(%{
-        COPY online_client_count_projections (timestamp, account_id, autonomous_system_id, location_id, online, total, total_in_service, event_id, incr)
+        COPY online_client_count_projections (timestamp, account_id, autonomous_system_id, location_id, online, total, total_in_service, event_id, incr, is_online, location_online_incr)
         FROM STDIN CSV
       })
       @insertion_queue.each do |row|
         @raw.put_copy_data(
-          "#{row['timestamp']},#{row['account_id']},#{row['autonomous_system_id']},#{row['location_id']},#{row['online']},#{row['total']},#{row['total_in_service']},#{row['event_id']},#{row['incr']}\n")
+          "#{row['timestamp']},#{row['account_id']},#{row['autonomous_system_id']},#{row['location_id']},#{row['online']},#{row['total']},#{row['total_in_service']},#{row['event_id']},#{row['incr']},#{row['is_online']},#{row['location_online_incr']}\n")
       end
       @raw.put_copy_end
       while res = @raw.get_result do

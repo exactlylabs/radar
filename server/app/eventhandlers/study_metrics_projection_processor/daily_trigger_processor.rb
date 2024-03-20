@@ -32,7 +32,7 @@ module StudyMetricsProjectionProcessor
           as_org_name = meta.autonomous_system_org&.name
           as_org_id = meta.autonomous_system_org_id
 
-          aggs = self.get_aggregates_for_point(lonlat, as_org_id, as_org_name, location_id: meta.location_id)
+          aggs = self.get_aggregates_for_point(lonlat.longitude, lonlat.latitude, as_org_id, as_org_name, location_id: meta.location_id)
           study_county = aggs.find {|agg| agg.level == 'county' && agg.study_aggregate}
           aggs.each do |aggregate|
             next if aggregate.level == "state_with_study_only" && !study_county
