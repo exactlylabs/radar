@@ -33,12 +33,12 @@ module StudyMetricsProjectionProcessor
       return proj
     end
 
-    def get_aggregates_for_point(lonlat, as_org_id, as_org_name, **opts)
+    def get_aggregates_for_point(longitude, latitude, as_org_id, as_org_name, **opts)
       @aggregates_cache ||= {}
-      return [] if lonlat.nil?
-      aggs = @aggregates_cache["#{lonlat.latitude}-#{lonlat.longitude}-#{as_org_id}"].dup || []
+      return [] if longitude.nil?
+      aggs = @aggregates_cache["#{latitude}-#{longitude}-#{as_org_id}"].dup || []
       if aggs.size == 0
-        geospaces = load_geospaces_for_point(lonlat, **opts)
+        geospaces = load_geospaces_for_point(longitude, latitude, **opts)
 
         state_agg = load_state_aggregate(geospaces)
         aggs << state_agg if state_agg
@@ -55,18 +55,13 @@ module StudyMetricsProjectionProcessor
         census_place_agg = load_census_place_aggregate(geospaces, county_agg)
         aggs << census_place_agg if census_place_agg
 
-        @aggregates_cache["#{lonlat.latitude}-#{lonlat.longitude}-#{as_org_id}"] = aggs
+        @aggregates_cache["#{latitude}-#{longitude}-#{as_org_id}"] = aggs
       end
       return aggs
     end
 
     def get_location_metadata(location_id)
-      meta = @location_metadatas["#{location_id}"]
-      if meta.nil?
-        meta = LocationMetadataProjection.find_or_create_by!(location_id: location_id)
-        @location_metadatas["#{location_id}"] = meta
-      end
-      return meta
+      @location_metadatas["#{location_id}"] ||= LocationMetadataProjection.find_or_create_by!(location_id: location_id)
     end
 
     private
@@ -127,7 +122,7 @@ module StudyMetricsProjectionProcessor
       return nil
     end
 
-    def load_geospaces_for_point(lonlat, **opts)
+    def load_geospaces_for_point(longitude, latitude, **opts)
       geospaces = []
       if opts[:location].present?
         opts[:location].geospaces.each do |geospace|
@@ -142,13 +137,25 @@ module StudyMetricsProjectionProcessor
           }
         end
       else
-        Geospace.containing_lonlat(lonlat).each do |geospace|
+        Geospace.containing_point(longitude, latitude).each do |geospace|
           geospaces << {
             "id" => geospace.id, "ns" => geospace.namespace, "name" => geospace.name, "study_geospace" => geospace.study_geospace
           }
         end
       end
       return geospaces
+    end
+
+    def location_lonlat(location_id)
+      if @lonlats[location_id].nil?
+        begin
+          location = Location.with_deleted.find(location_id)
+        rescue ActiveRecord::RecordNotFound
+          return
+        end
+        @lonlats[location_id] = location.lonlat
+      end
+      @lonlats[location_id]
     end
   end
 end
