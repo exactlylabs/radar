@@ -1,130 +1,98 @@
-<div class="modal-dialog" data-edit-pod-target="step0Content">
-  <div class="modal-content">
-    <%= render partial: "application/components/modals/modal_header", locals: { title: "Edit Pod" } %>
-    <div class="modal-body modals--body">
-      <%= render partial: "clients/components/modals/modal_body_head", locals: { client: @client, with_status: true } %>
-      <div class="forms--row">
-        <!--begin::Label-->
-        <label class="forms--label mb-2">Name</label>
-        <!--end::Label-->
-        <!--begin::Input-->
-        <%= form.text_field :name, class: "forms--text-input form-control form-control-solid", value: @client.name %>
-        <!--end::Input-->
-        <div class="fv-plugins-message-container invalid-feedback"></div>
+<%= render partial: "application/components/modals/modal_header",
+           locals: {
+             title: "Edit Pod",
+             is_custom: true,
+             goes_back: false,
+           }
+%>
+<%= form_with(model: @client, url: client_path(@client.unix_user), data: { "turbo-frame" => "_top", "controller" => "edit-pod" }, id: 'testing-edit-form') do |form| %>
+  <div class="modals--content-container client--details-container" data-type="full" data-controller="pod-account-and-network" data-network-type="<%= @client.location.present? ? 'existing_network' : 'no_network' %>">
+    <div class="d-flex flex-column align-items-center justify-content-center mb-5">
+      <div class="modals--big-icon-container mb-4">
+        <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32 %>
       </div>
-
-      <div class="forms--row">
-        <label class="required forms--label mb-2" for="client-accounts-dropdown-edit">Account</label>
-        <div class="forms--input-group">
-          <select class="forms--select form-select form-control"
-                  data-controller="select2"
-                  id="client-accounts-dropdown-edit"
-                  data-placeholder="Select an account"
-                  name="account_id"
-                  data-select2-id="select2-data-account_id"
-                  data-action="select2-select->edit-pod#onAccountsSelectChange select2-clear->edit-pod#onAccountsSelectChange"
-                  data-edit-pod-target="accountsSelect"
-                  data-select2-dropdown-parent-value="edit_pod_modal"
-                  data-select2-blanks-value="<%= current_user.super_user && !is_super_user_disabled? %>"
-                  data-select2-allow-clear-value="false"
-          >
-            <% if current_user.super_user && !is_super_user_disabled? && @client.account.nil? %>
-              <option></option>
-              <option>&nbsp;</option>
-            <% end %>
-            <% policy_scope(Account).each do |account| %>
-              <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
-            <% end %>
-          </select>
-        </div>
+      <div class="card-main-title mb-1">
+        <%= @client.unix_user %>
       </div>
+      <div class="card-main-subtitle">
+        Added on <%= @client.created_at.strftime('%b %d, %Y') %>
+      </div>
+    </div>
+    <div class="modals--form-row mb-4">
+      <%= form.label :account_id, "Account", class: "forms--label" %>
+      <select class="forms--select form-select form-control"
+              data-controller="select2"
+              id="client-accounts-dropdown-edit"
+              data-placeholder="Select an account"
+              name="account_id"
+              data-select2-id="select2-data-account_id"
+              data-action="select2-select->edit-pod#onAccountsSelectChange select2-clear->edit-pod#onAccountsSelectChange"
+              data-edit-pod-target="accountsSelect"
+              data-select2-dropdown-parent-value="edit_pod_modal"
+              data-select2-blanks-value="<%= current_user.super_user && !is_super_user_disabled? %>"
+              data-select2-allow-clear-value="false"
+      >
+        <% if current_user.super_user && !is_super_user_disabled? && @client.account.nil? %>
+          <option></option>
+          <option>&nbsp;</option>
+        <% end %>
+        <% policy_scope(Account).each do |account| %>
+          <%= render partial: "clients/client_account", locals: { account: account, selected: account == @client.account } %>
+        <% end %>
+      </select>
+      <div style="font-size: 13px; font-weight: 500;  color: #6D6A94; ">Your pod will be accessible to everyone
+        at <%= @client.account.name %></div>
+    </div>
 
-      <div class="forms--row">
-        <label class="forms--label mb-2">Network</label>
+    <div class="modals--form-row mb-4">
+      <%= form.label :location_id, "Network", class: "forms--label" %>
+      <select class="forms--select form-select"
+              data-controller="select2"
+              tabindex="-1"
+              data-remove-searchbar="true"
+              data-action="select2-select->pod-account-and-network#handleNetworkAssignmentTypeSelect"
+              name="network_assignment_type"
+      >
+        <option value="no_network" label="Do not assign to a network" <%= @client.location.present? ? nil : 'selected' %>>Do not assign to a network</option>
+        <option value="existing_network" label="Assign to an existing network" <%= @client.location.present? ? 'selected' : nil %>>Assign to an existing network
+        </option>
+        <option value="new_network" label="Assign to a new network">Assign to a new network</option>
+      </select>
+
+      <span class="additional-text mt-1 wrap" data-pod-account-and-network-target="networkSubtitle">Assign your pods to a network to keep them organized.</span>
+      <%= render partial: "pods/components/pod_creation_network_select" %>
+      <%= render partial: "pods/components/pod_network_creator_component", locals: { starts_invisible: true, form: form } %>
+    </div>
+
+    <% if current_user.super_user && !is_super_user_disabled? %>
+      <div class="modals--form-row">
+        <%= form.label :update_group_id, "Release Group", class: "forms--label" %>
         <div class="forms--input-group">
           <select class="forms--select form-select"
                   data-controller="select2"
-                  id="client-locations-dropdown-edit"
-                  data-placeholder="Select a network"
-                  name="location_id"
-                  data-select2-id="select2-data-location_id"
+                  id="client-update-groups-dropdown-edit"
+                  data-placeholder="Select a release group"
+                  name="update_group_id"
+                  data-select2-id="select2-data-update_group_id"
                   tabindex="-1"
                   data-select2-dropdown-parent-value="edit_pod_modal"
-                  data-select2-blanks-value="true"
           >
-            <option></option>
-            <option>&nbsp;</option>
-            <% policy_scope(Location).where(account_id: @client.account.id).each do |location| %>
-              <%= render partial: "clients/client_select_option", locals: { option: location, selected: location == @client.location } %>
+            <% UpdateGroup.all.each do |ug| %>
+              <option value="<%= ug.id %>" label="<%= ug.name %>" <%= @client.update_group_id == ug.id ? "selected" : nil %>><%= ug.name %></option>
             <% end %>
           </select>
         </div>
       </div>
-      <div id="location-created-snackbar-edit" class="d-none w-100 d-flex flex-row align-items-center justify-content-start fw-bold"
-           style="display: none; background-color: #f1faff; height: 45px; color: #00a3ff; font-size: 14px; border-radius: 6px; margin-top: 15px; margin-bottom: 15px">
-        <svg style="margin: 0 8px 0 12px" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-          <g fill="none" fill-rule="evenodd">
-            <path d="M0 0h20v20H0z"/>
-            <g fill="#00A3FF">
-              <path d="M11.39 19.455c-.623.727-1.66.727-2.284 0l-5.085-5.604c-1.557-1.765-2.387-4.048-2.076-6.643C2.465 3.472 5.474.462 9.21.048c4.982-.52 9.237 3.32 9.237 8.198.104 2.18-.726 4.152-1.972 5.605l-5.085 5.604z" fill-rule="nonzero" opacity=".3"/>
-              <path d="M10.248 11.464a3.114 3.114 0 1 1 0-6.228 3.114 3.114 0 0 1 0 6.228z"/>
-            </g>
-          </g>
-        </svg>
-        Your new location has been created.
-      </div>
-
-      <div id="loading-container-edit" class="d-none d-flex align-items-center mb-5">
-        <div class="spinner-border text-primary me-3" role="status"></div>
-        <div style="font-size: 13px; color: #b5b5c3;">Creating new location...</div>
-      </div>
-
-
-      <a class="d-flex align-items-center fw-bold regular-link mb-2"
-         href="#"
-         data-bs-toggle="modal"
-         data-bs-target="#new_location_modal-edit">
-        Add new location
-        <span class="svg-icon svg-icon-primary">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <rect opacity="0.5" x="18" y="13" width="13" height="2" rx="1" transform="rotate(-180 18 13)" fill="black"/>
-            <path d="M15.4343 12.5657L11.25 16.75C10.8358 17.1642 10.8358 17.8358 11.25 18.25C11.6642 18.6642 12.3358 18.6642 12.75 18.25L18.2929 12.7071C18.6834 12.3166 18.6834 11.6834 18.2929 11.2929L12.75 5.75C12.3358 5.33579 11.6642 5.33579 11.25 5.75C10.8358 6.16421 10.8358 6.83579 11.25 7.25L15.4343 11.4343C15.7467 11.7467 15.7467 12.2533 15.4343 12.5657Z" fill="black"/>
-          </svg>
-        </span>
-      </a>
-
-      <% if current_user.super_user && !is_super_user_disabled? %>
-        <div class="forms--row">
-          <label class="required forms--label mb-2">Release Group</label>
-          <div class="forms--input-group">
-            <select class="forms--select form-select"
-                    data-controller="select2"
-                    id="client-update-groups-dropdown-edit"
-                    data-placeholder="Select a release group"
-                    name="update_group_id"
-                    data-select2-id="select2-data-update_group_id"
-                    tabindex="-1"
-                    data-select2-dropdown-parent-value="edit_pod_modal"
-            >
-              <% UpdateGroup.all.each do |ug| %>
-                <option value="<%= ug.id %>" label="<%= ug.name %>" <%= @client.update_group_id == ug.id ? "selected" : nil %>><%= ug.name %></option>
-              <% end %>
-            </select>
-          </div>
-        </div>
-      <% end %>
-
-    </div>
-
-    <div class="modal-footer modals--footer">
-      <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel" } %>
-      <button type="submit"
-              class="custom-button custom-button--primary custom-button--sm"
-              id="continue-button"
-              data-action="click->edit-pod#submit"
-              data-edit-pod-target="updatePodButton"
-      >Update Pod
-      </button>
-    </div>
+    <% end %>
   </div>
-</div>
+  <div class="modal-footer modals--footer">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
+    <button type="submit"
+            class="custom-button custom-button--primary custom-button--sm"
+            id="continue-button"
+            data-action="click->edit-pod#submit"
+            data-edit-pod-target="updatePodButton"
+    >Save settings
+    </button>
+  </div>
+<% end %>

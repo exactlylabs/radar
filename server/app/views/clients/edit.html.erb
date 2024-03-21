@@ -1,6 +1,14 @@
 <%= turbo_frame_tag "edit_client_modal" do %>
-  <%= form_with(model: @client, url: client_path(@client.unix_user), data: {"turbo-frame" => "_top", "controller" => "edit-pod"}, id: 'testing-edit-form') do |form| %>
-    <%= render partial: "clients/edit_client/edit_client_step_0", locals: { client: @client, form: form } %>
-    <%= render partial: "clients/edit_client/edit_client_step_1", locals: { client: @client, form: form } %>
-  <% end %>
+  <div id="edit_pod_modal">
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: "Edit Pod",
+                 modal_partial_path: "clients/edit_client/edit_client_step_0",
+                 custom_submit_end_handler: nil,
+                 resource: @client
+               }
+    %>
+  </div>
+  <%#= render partial: "clients/edit_client/edit_client_step_0", locals: { client: @client, form: form } %>
+  <%#= render partial: "clients/edit_client/edit_client_step_1", locals: { client: @client, form: form } %>
 <% end %>

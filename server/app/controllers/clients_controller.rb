@@ -60,6 +60,7 @@ class ClientsController < ApplicationController
 
   # GET /clients/1/edit
   def edit
+    @location = @client.location
   end
 
   def claim_form
@@ -312,41 +313,15 @@ class ClientsController < ApplicationController
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
-    name = params[:client][:name]
-    account_id = params[:account_id]
-    location_id = params[:location_id]
+    assign_network_to_pod
 
-    # not doing policy_scope because when selecting another account
-    # different to current_account, running policy_scope(Client) would throw
-    client = Client.find_by_unix_user(params[:id])
-
-    # defaulting to current_account. UI does not
-    # allow account to be empty anyways
-    if current_account.is_all_accounts?
-      account = client.account
-    else
-      account = current_account
-    end
-
-    location = nil
-    if account_id
-      account = policy_scope(Account).find(account_id) if account_id != current_account.id
-      if location_id
-        # not doing policy_scope as that would check with current_account and the new location
-        # could not be in the current_account's locations list
-        location = Location.where(id: location_id, account_id: account_id).first
-      end
-    else
-      location = policy_scope(Location).find(location_id) if location_id
-      account = location.account if location
-    end
     if params[:update_group_id]
       update_group = policy_scope(UpdateGroup).find(params[:update_group_id])
-    else
-      update_group = client.update_group
+      @client.update_group = update_group
     end
+
     respond_to do |format|
-      if client.update(name: name, location: location, account: account, update_group: update_group)
+      if @client.save!
         if FeatureFlagHelper.is_available('networks', current_user)
           format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated." }
         else
@@ -678,25 +653,7 @@ class ClientsController < ApplicationController
   end
 
   def claim_new_pod
-    pod_assignment_type = params[:network_assignment_type]
-    @client = Client.find_by_unix_user(params[:id])
-    raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless @client.present?
-    account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
-    @client.user = current_user
-    @client.account = account
-    if pod_assignment_type == 'no_network'
-      @client.location = nil
-    elsif pod_assignment_type == 'existing_network'
-      @client.location = policy_scope(Location).find(params[:network_id])
-    elsif pod_assignment_type == 'new_network'
-      @location = Location.new(location_params)
-      @location.user = current_user
-      @location.account_id = account.id
-      @location.clients << @client
-      @location.categories << policy_scope(Category).where(id: params[:categories].split(",")).distinct if params[:categories].present?
-      @location.save!
-      @client.location = @location
-    end
+    assign_network_to_pod
     if FeatureFlagHelper.is_available('networks', current_user)
       @onboarding = params[:onboarding].present?
       @locations = policy_scope(Location)
@@ -864,5 +821,31 @@ class ClientsController < ApplicationController
     is_from_search = params[:origin].present? && params[:origin] == 'search'
     return if !is_from_search
     store_recent_search(params[:id], Recents::RecentTypes::CLIENT)
+  end
+
+  def assign_network_to_pod
+    pod_assignment_type = params[:network_assignment_type]
+    @client = Client.find_by_unix_user(params[:id])
+    raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless @client.present?
+    account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
+    @client.user = current_user
+    @client.account = account
+    @previous_location = @client.location
+    case pod_assignment_type
+    when 'no_network'
+      @client.location = nil
+    when 'existing_network'
+      @client.location = policy_scope(Location).find(params[:network_id])
+    when 'new_network'
+      @location = Location.new(location_params)
+      @location.user = current_user
+      @location.account_id = account.id
+      @location.clients << @client
+      @location.categories << policy_scope(Category).where(id: params[:categories].split(",")).distinct if params[:categories].present?
+      @location.save!
+      @client.location = @location
+    else
+      raise 'Invalid network assignment type'
+    end
   end
 end

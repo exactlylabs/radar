@@ -27,7 +27,7 @@ $extra-bold: 800;
 }
 
 .card-big-title {
-  font-variation-settings: 'wght'$bold;
+  font-variation-settings: 'wght' $bold;
   font-size: 1.5rem;
   line-height: 2.25rem;
   color: $deep-blue;
@@ -37,6 +37,12 @@ $extra-bold: 800;
   font-variation-settings: 'wght' $bold;
   font-size: 1rem;
   color: $deep-blue;
+}
+
+.card-main-subtitle {
+  font-size: 14px;
+  color: $gray;
+
 }
 
 .page-main-title {
@@ -119,7 +125,7 @@ $extra-bold: 800;
 }
 
 .help-dark-text {
-  font-variation-settings: 'wght'$semi-bold;
+  font-variation-settings: 'wght' $semi-bold;
   font-size: 0.812rem;
   line-height: 1.188rem;
   letter-spacing: 0;
@@ -127,7 +133,7 @@ $extra-bold: 800;
 }
 
 .help-small-text {
-  font-variation-settings: 'wght'$medium;
+  font-variation-settings: 'wght' $medium;
   font-size: 0.75rem;
   line-height: 1.188rem;
   letter-spacing: 0;
