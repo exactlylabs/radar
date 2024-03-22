@@ -144,8 +144,9 @@ const StepsPage = ({
 
   const goToMapPage = () => goToAreaMap(userData.address.coordinates);
 
-  function goToNoInternetPage() {
-    sendSpeedTestFormInformation(userData, config.clientId)
+  async function goToNoInternetPage() {
+    const emptyTestId = await sendSpeedTestFormInformation(userData, config.clientId);
+    setLastTestResults({id: emptyTestId});
     setCurrentStep(STEPS.NO_INTERNET);
   }
 
@@ -237,7 +238,7 @@ const StepsPage = ({
                                          goToTestAgain={goToPage7}
         />;
       case STEPS.NO_INTERNET:
-        return <NoInternetStepPage goToMapPage={goToMapPage}/>
+        return <NoInternetStepPage goToMapPage={goToMapPage} lastTest={lastTestResults}/>
       case STEPS.EXPECTED_DOWNLOAD_SPEED:
         return <ExpectedSpeedsStepPage type={'download'} goForward={goToPage6} goBack={goToPage4}/>
       case STEPS.EXPECTED_UPLOAD_SPEED:

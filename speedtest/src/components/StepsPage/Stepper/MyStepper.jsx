@@ -6,7 +6,7 @@ import {useContext} from "react";
 import ConfigContext from "../../../context/ConfigContext";
 
 const stepperContainerStyle = {
-  width: '30%',
+  width: '300px',
   margin: '0 auto 20px',
   paddingTop: '10px',
   display: 'flex',

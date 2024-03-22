@@ -62,8 +62,13 @@ export const sendRawData = (rawData, startTimestamp, userData, clientId) => {
     .catch(notifyError);
 };
 
-export const sendSpeedTestFormInformation = (userData, clientId) => {
-  sendRawData({}, new Date().toISOString(), userData, clientId);
+export const sendSpeedTestFormInformation = async (userData, clientId) => {
+  try {
+    const emptySubmission = await sendRawData({}, new Date().toISOString(), userData, clientId);
+    return emptySubmission.id;
+  } catch (err) {
+    notifyError(err);
+  }
 };
 
 export const getSuggestions = async (addressString, clientId) => {

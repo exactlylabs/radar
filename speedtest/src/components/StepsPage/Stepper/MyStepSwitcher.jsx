@@ -6,12 +6,12 @@ import {useContext} from "react";
 import ConfigContext from "../../../context/ConfigContext";
 
 const stepSwitcherStyle = {
-  width: '20%',
-  minWidth: 300,
+  width: 300,
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center',
+  gap: '1.25rem',
   margin: '0 auto 70px',
 }
 
