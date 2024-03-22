@@ -136,52 +136,7 @@ const ConnectionInformation = ({
 
   const config = useContext(ConfigContext);
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
-  //const {userData} = useContext(UserDataContext);
-  const userData = {
-    "address": {
-      "coordinates": [
-        "40.4311973",
-        "-3.718966"
-      ],
-      "house_number": null,
-      "postal_code": "28008",
-      "state": "Community of Madrid",
-      "street": "Calle de Altamirano",
-      "city": "Madrid",
-      "address": " Calle de Altamirano, Madrid, Community of Madrid 28008"
-    },
-    "terms": true,
-    "networkLocation": {
-      "id": 0,
-      "iconSrc": "http://localhost:9999/static/icon-location-home.png",
-      "iconSelectedSrc": "http://localhost:9999/static/icon-location-home-selected.png",
-      "iconLightSrc": "http://localhost:9999/static/icon-location-home-light.png",
-      "iconPopupSrc": "http://localhost:9999/static/icon-location-home-popup.png",
-      "text": "Home"
-    },
-    "networkType": {
-      "id": 1,
-      "iconSrc": "http://localhost:9999/static/icon-connection-wifi.png",
-      "iconSelectedSrc": "http://localhost:9999/static/icon-connection-wifi-selected.png",
-      "iconSelectedThickSrc": "http://localhost:9999/static/icon-connection-wifi-selected-thick.png",
-      "iconLightSrc": "http://localhost:9999/static/icon-connection-wifi-light.png",
-      "iconPopupSrc": "http://localhost:9999/static/icon-connection-wifi-popup.png",
-      "text": "WiFi"
-    },
-    "networkCost": "",
-    "addressProvider": "BROWSER_GPS",
-    "altitude": null,
-    "accuracy": 13.127,
-    "altitudeAccuracy": null,
-    "speed": null,
-    "heading": null,
-    "contactInformation": {
-      "firstName": null,
-      "lastName": null,
-      "email": null,
-      "phone": null
-    }
-  }
+  const {userData} = useContext(UserDataContext);
   const [shouldTextAppear, setShouldTextAppear] = useState(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH && !isExtraSmallSizeScreen);
 
   useEffect(() => {
