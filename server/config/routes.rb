@@ -281,7 +281,7 @@ Rails.application.routes.draw do
   namespace 'client_api' do
     namespace 'v1' do
       match '*path', controller: 'api', action: 'check_preflight', via: :options
-      resources :speed_tests, controller: 'speed_tests', only: [:index, :create]
+      resources :speed_tests, controller: 'speed_tests', only: [:index, :create, :update]
       get 'tests_with_bounds', to: 'speed_tests#tests_with_bounds'
       post 'geocode', to: 'geolocation#code'
       post 'suggestions', to: 'geolocation#suggestions'
