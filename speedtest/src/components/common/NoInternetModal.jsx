@@ -6,6 +6,7 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 import {widgetModalFraming} from "../../utils/modals";
 import {useContext} from "react";
 import ConfigContext from "../../context/ConfigContext";
+import rightArrowWhite from "../../assets/right-arrow-white.png";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -82,7 +83,7 @@ const subtitleStyle = {
   fontSize: '16px',
   lineHeight: '25px',
   color: DEFAULT_TEXT_COLOR,
-  fontFamily: 'MulishRegular',
+  fontFamily: 'Mulish',
 }
 
 const xsSubtitleStyle = {
@@ -91,7 +92,7 @@ const xsSubtitleStyle = {
   fontSize: '13px',
   lineHeight: '20px',
   color: DEFAULT_TEXT_COLOR,
-  fontFamily: 'MulishRegular',
+  fontFamily: 'Mulish',
 }
 
 const footerStyle = {
@@ -168,7 +169,7 @@ const NoInternetModal = ({
         <p className={'speedtest--p'} style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>Please make sure your device is connected to the Internet before continuing.</p>
         <div style={isSmall ? mobileFooterStyle : footerStyle}>
           <MyButton text={'Continue anyways'}
-                    icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
+                    icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>}
                     onClick={closeModal}
                     fullWidth
           />

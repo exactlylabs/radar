@@ -1,0 +1,29 @@
+.container {
+  padding-top: 3.5rem;
+  text-align: center;
+}
+
+.image {
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-family: MulishExtraBold, Mulish, sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.667;
+  color: #110e4c;
+  margin: 0 auto 5px;
+}
+
+.subtitle {
+  font-family: Mulish, sans-serif;
+  font-size: 1rem;
+  line-height: 1.563;
+  color: #110e4c;
+  margin: 0 auto 2.5rem;
+}
+
+.buttonContainer {
+  width: max-content;
+  margin: 0 auto;
+}

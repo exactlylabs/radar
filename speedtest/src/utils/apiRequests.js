@@ -1,11 +1,28 @@
 import { API_URL } from '../constants';
 import { notifyError } from './errors';
 
+export const persistContactData = (data, speedTestId) => {
+  return fetch(`${API_URL}/speed_tests/${speedTestId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      client_email: data.email,
+      client_phone: data.phone,
+      client_first_name: data.firstName,
+      client_last_name: data.lastName
+    })
+  })
+    .then(res => {
+      if(!res.ok) throw new Error('Error persisting contact data!');
+      else return res.json();
+    });
+}
+
 export const sendRawData = (rawData, startTimestamp, userData, clientId) => {
   const { networkLocation, networkType, networkCost, accuracy, altitude, addressProvider, altitudeAccuracy, speed, heading, expectedDownloadSpeed, expectedUploadSpeed, contactInformation } = userData;
   const { address, city, state, house_number, street, postal_code } = userData.address;
   const location = userData.address.coordinates;
-  fetch(`${API_URL}/speed_tests?client_id=${clientId}`, {
+  return fetch(`${API_URL}/speed_tests?client_id=${clientId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -37,7 +54,12 @@ export const sendRawData = (rawData, startTimestamp, userData, clientId) => {
         client_phone: contactInformation.phone
       }
     }),
-  }).catch(notifyError);
+  })
+    .then(res => {
+      if(!res.ok) throw new Error('Error creating new speed test!');
+      return res.json();
+    })
+    .catch(notifyError);
 };
 
 export const sendSpeedTestFormInformation = (userData, clientId) => {

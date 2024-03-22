@@ -1,12 +1,12 @@
-import { useContext } from "react";
+import {useContext, useRef} from "react";
 import { DEFAULT_TEXT_COLOR } from "../../../../utils/colors";
 import { MyTitle } from "../../../common/MyTitle";
-import PreferNotToAnswer from "../../../common/PreferNotToAnswer";
 import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
 import UserDataContext from "../../../../context/UserData";
 import styles from './expected_speeds_step_page.module.css';
 import ExpectedSpeedInput from "./ExpectedSpeedInput/ExpectedSpeedInput";
 import ConfigContext from "../../../../context/ConfigContext";
+import forwardArrowBlue from '../../../../assets/right-arrow-blue.png';
 
 const subtitleStyle = {
   color: DEFAULT_TEXT_COLOR
@@ -14,37 +14,48 @@ const subtitleStyle = {
 
 const ExpectedSpeedsStepPage = ({
   goForward,
-  goBack
+  goBack,
+  type
 }) => {
 
   const { userData, setExpectedSpeeds } = useContext(UserDataContext);
   const config = useContext(ConfigContext);
+  const inputRef = useRef(null);
 
-  const handleInputChange = e => {
-    const inputType = e.target.dataset.inputType;
-    if(inputType === 'download') {
-      setExpectedSpeeds({upload: userData.expectedUploadSpeed, download: e.target.value});
-    } else {
-      setExpectedSpeeds({ download: userData.expectedDownloadSpeed, upload: e.target.value });
+  const handleGoForward = () => {
+    if(!inputRef) {
+      goForward();
+      return;
     }
+    let value = inputRef.current.value;
+    if(value !== '') {
+      value = Number(inputRef.current.value);
+    } else {
+      value = undefined;
+    }
+    if(type === 'download') {
+      setExpectedSpeeds({ upload: userData.expectedUploadSpeed, download: value });
+    } else {
+      setExpectedSpeeds({ download: userData.expectedDownloadSpeed, upload: value });
+    }
+    goForward();
   }
 
   return (
     <div className={styles.screenContainer}>
-      <MyTitle text={`What are your expected Internet speeds?`} />
-      <div style={subtitleStyle}>Tell us a bit more about your service.</div>
+      <MyTitle text={`Do you know your expected ${type} speed?`} />
+      <div style={subtitleStyle}>Tell us your expected {type} speed if you're aware of it.</div>
       <div className={`${styles.inputsContainer} ${config.widgetMode ? styles.widgetInputsContainer : null}`} data-is-widget={config.widgetMode}>
-        <ExpectedSpeedInput type={'download'}
-          handleChange={handleInputChange}
-          initialValue={userData.expectedDownloadSpeed}
-        />
-        <ExpectedSpeedInput type={'upload'}
-          handleChange={handleInputChange}
-          initialValue={userData.expectedDownloadSpeed}
+        <ExpectedSpeedInput type={type}
+                            initialValue={type === 'download' ? userData.expectedDownloadSpeed : userData.expectedUploadSpeed}
+                            ref={inputRef}
         />
       </div>
-      <MyStepSwitcher goForward={goForward} goBack={goBack} forwardDisabled={!userData.expectedDownload && !userData.expectedUpload} />
-      <PreferNotToAnswer goForward={goForward} />
+      <button onClick={handleGoForward} className={styles.skipSpeedButton}>
+        I don't know my expected speed
+        <img src={forwardArrowBlue} width={10} height={10} alt={'forward arrow'}/>
+      </button>
+      <MyStepSwitcher goForward={handleGoForward} goBack={goBack} />
     </div>
   );
 }

@@ -11,9 +11,9 @@ const disabledForwardButtonStyle = {
   opacity: 0.5,
 }
 
-export const MyForwardButton = ({ text, onClick, disabled, icon, iconFirst }) => {
+export const MyForwardButton = ({ text, onClick, disabled, icon, iconFirst, customCss = {} }) => {
 
-  const getStyle = () => disabled ? disabledForwardButtonStyle : forwardButtonStyle;
+  const getStyle = () => disabled ? {...disabledForwardButtonStyle, ...customCss} : {...forwardButtonStyle, ...customCss};
 
   return iconFirst ?
     <button style={getStyle()}

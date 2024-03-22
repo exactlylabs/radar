@@ -25,6 +25,7 @@ import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import ConnectionContext from "../../../../context/ConnectionContext";
 import {ADDRESS_PROVIDER} from "../../../../utils/userMetadata";
 import UserDataContext from "../../../../context/UserData";
+import rightArrowWhite from "../../../../assets/right-arrow-white.png";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -114,7 +115,7 @@ const mobileFooterStyle = {
 
 const subtitleStyle = {
   color: DEFAULT_TEXT_COLOR,
-  fontFamily: 'MulishRegular',
+  fontFamily: 'Mulish',
   fontSize: 16,
   lineHeight: '25px',
   marginBottom: '20px'
@@ -307,7 +308,7 @@ const MyMapModal = ({
                         onClick={handleChangeAddress}
           />
           <MyForwardButton text={isSmallSizeScreen || isExtraSmallSizeScreen ? 'Confirm' : 'Confirm location'}
-                           icon={<ArrowForward style={{marginLeft: isExtraSmallSizeScreen ? 5 : 15}} fontSize={'small'}/>}
+                           icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>}
                            onClick={handleContinue}
           />
         </div>

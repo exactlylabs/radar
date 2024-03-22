@@ -97,7 +97,8 @@ const currentValueStyle = {
   top: 60,
   left: '50%',
   transform: 'translateX(-50%)',
-  color: DEFAULT_TEXT_COLOR
+  color: DEFAULT_TEXT_COLOR,
+  fontFamily: 'MulishBold'
 }
 
 const mbpsStyle = {

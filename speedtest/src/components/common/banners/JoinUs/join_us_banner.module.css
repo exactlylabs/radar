@@ -1,0 +1,33 @@
+.banner {
+  width: 100%;
+  padding: 6px 1rem;
+  background-color: #ECF2FC;
+  border-radius: 21px;
+  outline: solid 1px rgba(75, 123, 229, 0.15);
+  white-space: nowrap;
+  cursor: pointer;
+  line-height: 25px;
+  font-size: 0.9375rem;
+  color: #3F3C70;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .25rem;
+  appearance: none;
+  border: none;
+}
+
+.banner:hover {
+  cursor: pointer;
+}
+
+.link {
+  font-family: MulishBold, MulishRegular, -apple-system, sans-serif;
+  font-weight: 700;
+  color: #4b7be5;
+}
+
+.arrowIcon {
+  margin-top: 2px;
+}

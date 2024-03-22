@@ -1,13 +1,13 @@
 .screenContainer {
   width: 100%;
-  max-width: 500px;
+  max-width: calc(100% - 4rem);
   margin-inline: auto;
 }
 
 .inputsContainer {
   display: flex;
   flex-direction: column;
-  margin: 3rem auto 2.5rem;
+  margin: 2rem auto 1.5rem;
   width: 100%;
   gap: 1.5rem;
   justify-content: center;
@@ -22,4 +22,28 @@
   .inputsContainer {
     flex-direction: row;
   }
+}
+
+.skipSpeedButton {
+  appearance: none;
+  border: none;
+  outline: none;
+  color: #4b7be5;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  font-family: MulishBold, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.667;
+  cursor: pointer;
+  width: max-content;
+  margin-inline: auto;
+  margin-bottom: 2.5rem;
+}
+
+.skipSpeedButton:hover {
+  opacity: 0.8;
 }

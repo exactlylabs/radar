@@ -1,0 +1,24 @@
+.banner {
+  width: 100%;
+  white-space: nowrap;
+  line-height: 23px;
+  font-size: 0.9375rem;
+  color: #3F3C70;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+}
+
+.checkContainer {
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  min-height: 2rem;
+  background-color: rgba(49, 179, 108, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}

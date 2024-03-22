@@ -1,1 +1,1 @@
-export const DEFAULT_FONT_FAMILY = 'MulishRegular';
+export const DEFAULT_FONT_FAMILY = 'Mulish';

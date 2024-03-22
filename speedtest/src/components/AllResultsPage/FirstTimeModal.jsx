@@ -9,6 +9,7 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 import {widgetModalFraming} from "../../utils/modals";
 import {useContext} from "react";
 import ConfigContext from "../../context/ConfigContext";
+import rightArrowWhite from "../../assets/right-arrow-white.png";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -56,7 +57,7 @@ const subtitleStyle = {
   margin: 'auto',
   fontSize: 16,
   color: DEFAULT_TEXT_COLOR,
-  fontFamily: 'MulishRegular',
+  fontFamily: 'Mulish',
 }
 
 const xsSubtitleStyle = {
@@ -184,7 +185,7 @@ const FirstTimeModal = ({
         </div>
         <div style={(isMediumSizeScreen || isSmallSizeScreen) ? mobileFooterStyle : footerStyle}>
           <MyButton text={'Go to map'}
-                    icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
+                    icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>}
                     onClick={closeModal}
                     fullWidth
           />

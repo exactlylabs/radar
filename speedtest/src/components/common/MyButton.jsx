@@ -18,15 +18,16 @@ export const defaultButtonStyle = {
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   overflow: 'hidden',
+  gap: '1rem'
 };
 
 export const MyButton = ({ text, onClick, disabled, icon, iconFirst, fullWidth }) => {
   return iconFirst ?
-    <button className={'speedtest--bold speedtest--blue-button--hoverable'} style={fullWidth ? {...defaultButtonStyle, width: '100%'} : defaultButtonStyle} onClick={onClick} disabled={disabled}>
+    <button className={'speedtest--bold speedtest--blue-button--hoverable'} style={fullWidth ? {...defaultButtonStyle, width: '100%'} : {...defaultButtonStyle, paddingLeft: icon ? 16 : 24}} onClick={onClick} disabled={disabled}>
       {icon}
       {text}
     </button> :
-    <button className={'speedtest--bold speedtest--blue-button--hoverable'} style={fullWidth ? {...defaultButtonStyle, width: '100%'} : defaultButtonStyle} onClick={onClick} disabled={disabled}>
+    <button className={'speedtest--bold speedtest--blue-button--hoverable'} style={fullWidth ? {...defaultButtonStyle, width: '100%'} : {...defaultButtonStyle, paddingRight: icon ? 16 : 24}} onClick={onClick} disabled={disabled}>
       {text}
       {icon}
     </button>

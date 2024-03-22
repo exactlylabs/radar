@@ -54,7 +54,7 @@ const MyCheckbox = ({onChange, isChecked}) => {
       {
         selected &&
         <div style={checkedInsideStyle}>
-          <Check sx={{color: WHITE, fontSize: '16px'}}/>
+          <Check style={{fill: WHITE}} sx={{fontSize: '16px'}}/>
         </div>
       }
     </div>

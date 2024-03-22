@@ -10,6 +10,7 @@ import MyMeasurementInfoModal from "./MyMeasurementInfoModal";
 import {useViewportSizes} from "../../hooks/useViewportSizes";
 import iconLeftArrow from "../../assets/icons-left-arrow.png";
 import ConfigContext from "../../context/ConfigContext";
+import HistoryEmptyState from "./HistoryEmptyState/HistoryEmptyState";
 
 const historyPageStyle = {
   width: '100%',
@@ -20,7 +21,7 @@ const historyPageStyle = {
 
 const widgetHistoryPageStyle = {
   ...historyPageStyle,
-  paddingTop: 16,
+  paddingTop: 24,
 }
 
 const buttonsContainerStyle = {
@@ -101,29 +102,28 @@ const HistoryPage = ({
 
   return (
     <div style={config.widgetMode ? widgetHistoryPageStyle : historyPageStyle}>
-      <MyTitle text={'All your results'}/>
-      {
-        !historicalValues &&
-        <div style={emptyStateStyle}>
-          <div style={emptyStateTextStyle}>You haven't taken any speed tests yet!</div>
-          <MyButton text={'Take your first test'} onClick={goToSpeedTest}/>
-        </div>
-      }
+      { !historicalValues && <HistoryEmptyState goToTest={goToSpeedTest}/> }
       {
         !!historicalValues &&
-        <MyHistoricalValuesTable values={historicalValues} openMeasurementInfoModal={openMeasurementInfoModal}/>
+        <>
+          <MyTitle text={'All your results'}/>
+          <MyHistoricalValuesTable values={historicalValues} openMeasurementInfoModal={openMeasurementInfoModal}/>
+        </>
       }
-      <div style={getButtonsStyle()}>
-        {
-          hasRecentTest &&
-          <MyBackButton text={'Go to last test'}
-                        icon={<img src={iconLeftArrow} alt={'go back arrow icon'} style={arrowIconStyle}/>}
-                        iconFirst
-                        onClick={goToLastTest}
-          />
-        }
-        { historicalValues && <MyForwardButton text={'Explore the map'} onClick={goToMapPageWithNoCoordinates} /> }
-      </div>
+      {
+        !config.widgetMode &&
+        <div style={getButtonsStyle()}>
+          {
+            hasRecentTest &&
+            <MyBackButton text={'Go to last test'}
+                          icon={<img src={iconLeftArrow} alt={'go back arrow icon'} style={arrowIconStyle}/>}
+                          iconFirst
+                          onClick={goToLastTest}
+            />
+          }
+          { historicalValues && <MyForwardButton text={'Explore the map'} onClick={goToMapPageWithNoCoordinates} /> }
+        </div>
+      }
       {
         (isMediumSizeScreen || isSmallSizeScreen) &&
         <MyMeasurementInfoModal isOpen={isModalOpen}

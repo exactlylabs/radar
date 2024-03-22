@@ -69,7 +69,8 @@ const widgetExtendedStyle = {
   ...widgetStyle,
   height: 'max-content',
   margin: '16px auto 0',
-  backgroundColor: WIDGET_STATS_BG_COLOR
+  backgroundColor: WIDGET_STATS_BG_COLOR,
+  width: 'calc(100% - 3rem)',
 }
 
 const TestStatsTable = ({

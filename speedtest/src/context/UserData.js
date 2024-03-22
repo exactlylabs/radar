@@ -48,8 +48,8 @@ export const UserDataContextProvider = ({children}) => {
     altitudeAccuracy: null, // provided by browser geolocation API
     speed: null, // provided by browser geolocation API
     heading: null, // provided by browser geolocation API
-    expectedDownloadSpeed: null,
-    expectedUploadSpeed: null,
+    expectedDownloadSpeed: undefined,
+    expectedUploadSpeed: undefined,
     contactInformation: emptyContactInformation,
   });
 

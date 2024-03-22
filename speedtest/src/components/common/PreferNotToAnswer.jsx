@@ -25,7 +25,8 @@ const iconStyle = {
 }
 
 const PreferNotToAnswer = ({
-  goForward
+  goForward,
+  text
 }) => {
 
   const {isMediumSizeScreen} = useViewportSizes();
@@ -42,7 +43,7 @@ const PreferNotToAnswer = ({
          onMouseEnter={hoverOn}
          onMouseLeave={hoverOff}
     >
-      <p className={'speedtest--p speedtest--regular-link--hoverable'}>Skip this question</p>
+      <p className={'speedtest--p speedtest--regular-link--hoverable speedtest--bold '}>{text ? text : 'Skip this question'}</p>
       {
         hovered ?
           <img src={ArrowRightIconHovered} width={10} height={10} style={iconStyle} alt={'move-forward-icon'}/> :

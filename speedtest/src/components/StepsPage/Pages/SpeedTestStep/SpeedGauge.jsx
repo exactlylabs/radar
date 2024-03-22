@@ -87,11 +87,11 @@ const SpeedGauge = ({
     }
   }, [loading, runningTest, startTimestamp]);
 
-  const finishTestRun = (exitCode, error) => {
+  const finishTestRun = async (exitCode, error) => {
     try {
       if (exitCode === 0) {
-        storeRunData(startTimestamp);
-        sendRawData(rawData, startTimestamp, userData, config.clientId);
+        const speedTest = await sendRawData(rawData, startTimestamp, userData, config.clientId);
+        storeRunData(startTimestamp, speedTest.id);
       } else {
         notifyError(error);
       }

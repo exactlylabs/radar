@@ -15,6 +15,7 @@ import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import ConfigContext from "../../../../context/ConfigContext";
 import SuggestionModalList from "./SuggestionModalList";
 import SmallRightArrow from '../../../../assets/small-right-arrow.png';
+import rightArrowWhite from "../../../../assets/right-arrow-white.png";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -86,7 +87,7 @@ const mobileFooterStyle = {
 
 const subtitleStyle = {
   color: DEFAULT_TEXT_COLOR,
-  fontFamily: 'MulishRegular',
+  fontFamily: 'Mulish',
 }
 
 const notListedTextContainerStyle = {
@@ -172,7 +173,7 @@ const SuggestionsModal = ({
                         onClick={handleCloseModal}
           />
           <MyForwardButton text={'Continue'}
-                           icon={<ArrowForward style={{marginLeft: 15, marginRight: '-10px'}} fontSize={'small'}/>}
+                           icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>}
                            onClick={continueWithSelectedSuggestion}
           />
         </div>
