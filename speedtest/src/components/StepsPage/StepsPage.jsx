@@ -38,7 +38,7 @@ const StepsPage = ({
 }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(STEPS.EXPECTED_SPEEDS);
+  const [currentStep, setCurrentStep] = useState(STEPS.INITIAL);
   const [error, setError] = useState(null);
   const [warning, setWarning] = useState(null);
   const [lastTestResults, setLastTestResults] = useState(null);
@@ -69,6 +69,7 @@ const StepsPage = ({
           networkType: networkType,
         });
         setLastTestResults({
+          id: lastTestTaken.id,
           downloadValue: lastTestTaken.download,
           uploadValue: lastTestTaken.upload,
           loss: lastTestTaken.loss,
@@ -130,9 +131,9 @@ const StepsPage = ({
 
   const goToPage4 = () => setCurrentStep(STEPS.CONNECTION_COST);
 
-  const goToPage5 = () => setCurrentStep(STEPS.EXPECTED_SPEEDS);
+  const goToPage5 = () => setCurrentStep(STEPS.EXPECTED_DOWNLOAD_SPEED);
 
-  const goToPage6 = () => setCurrentStep(STEPS.CONTACT_INFO);
+  const goToPage6 = () => setCurrentStep(STEPS.EXPECTED_UPLOAD_SPEED);
 
   const goToPage7 = () => setCurrentStep(STEPS.RUN_SPEED_TEST);
 
@@ -233,14 +234,14 @@ const StepsPage = ({
         return <SpeedTestResultsStepPage testResults={lastTestResults}
                                          goToAreaMap={goToMapPage}
                                          goToHistory={goToHistory}
-                                         goToTestAgain={goToPage5}
+                                         goToTestAgain={goToPage7}
         />;
       case STEPS.NO_INTERNET:
         return <NoInternetStepPage goToMapPage={goToMapPage}/>
-      case STEPS.EXPECTED_SPEEDS:
-        return <ExpectedSpeedsStepPage goForward={goToPage6} goBack={goToPage4}/>
-      case STEPS.CONTACT_INFO:
-        return <ContactInfoStepPage goForward={goToPage7} goBack={goToPage5}/>
+      case STEPS.EXPECTED_DOWNLOAD_SPEED:
+        return <ExpectedSpeedsStepPage type={'download'} goForward={goToPage6} goBack={goToPage4}/>
+      case STEPS.EXPECTED_UPLOAD_SPEED:
+        return <ExpectedSpeedsStepPage type={'upload'} goForward={goToPage7} goBack={goToPage5}/>
       default:
         return <InitialStepPage setTerms={setTerms}
                                 goToNextPage={goToAddressPage}
@@ -252,7 +253,7 @@ const StepsPage = ({
   return (
     <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileStepsPageStyle : stepsPageStyle}>
       {
-        currentStep <= STEPS.CONTACT_INFO && currentStep !== STEPS.INITIAL &&
+        currentStep < STEPS.RUN_SPEED_TEST && currentStep !== STEPS.INITIAL &&
           <MyStepper activeStep={currentStep} isMobile={isMediumSizeScreen}/>
       }
       { getCurrentPage() }

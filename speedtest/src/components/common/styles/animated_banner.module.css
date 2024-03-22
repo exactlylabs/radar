@@ -1,0 +1,20 @@
+.banner {
+  position: absolute;
+  left: 50%;
+  top: .5rem;
+  opacity: 1;
+  transform: translateX(-50%);
+  animation: fadeIn 500ms;
+}
+
+@keyframes fadeIn {
+  0% {
+    top: 0;
+    opacity: 0;
+  }
+
+  100% {
+    top: .5rem;
+    opacity: 1;
+  }
+}

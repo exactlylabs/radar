@@ -160,7 +160,7 @@ const Tabs = ({ step, setStep }) => {
               style={tabIconStyle}
               alt={selectedTab === TABS.HISTORY ? 'history-active' : 'history-inactive'}
             />
-            <div className={'speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.HISTORY ? selectedContentStyle : null}>{isExtraSmallSizeScreen ? 'History' : 'Your History'}</div>
+            <div className={'speedtest--bold speedtest--tab-item--hoverable'} style={selectedTab === TABS.HISTORY ? selectedContentStyle : null}>{isExtraSmallSizeScreen ? 'Results' : 'Your Results'}</div>
           </div>
           <div style={selectedTab === TABS.HISTORY ? selectedTabUnderlineStyle : tabUnderlineStyle}></div>
         </div>

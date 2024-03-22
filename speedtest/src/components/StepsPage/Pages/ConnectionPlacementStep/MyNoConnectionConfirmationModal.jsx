@@ -13,6 +13,7 @@ import MySecondaryModalTitle from "../../../common/MySecondaryModalTitle";
 import {widgetModalFraming} from "../../../../utils/modals";
 import {useContext} from "react";
 import ConfigContext from "../../../../context/ConfigContext";
+import rightArrowWhite from "../../../../assets/right-arrow-white.png";
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -47,7 +48,7 @@ const boxStyle = {
 const subtitleStyle = {
   width: '80%',
   margin: 'auto',
-  fontFamily: 'MulishRegular',
+  fontFamily: 'Mulish',
   fontSize: 16,
   lineHeight: '25px',
   color: DEFAULT_TEXT_COLOR,
@@ -143,7 +144,7 @@ const MyNoConnectionConfirmationModal = ({
                         onClick={close}
           />
           <MyForwardButton text={isExtraSmallSizeScreen ? 'Confirm' : 'I don\'t have internet'}
-                           icon={<ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
+                           icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>}
                            onClick={goToLastFlowStep}
           />
         </div>

@@ -32,8 +32,9 @@ const SpeedTestStepPage = ({
   const {userData} = useContext(UserDataContext);
   const config = useContext(ConfigContext);
 
-  const storeRunResults = startTimestamp => {
+  const storeRunResults = (startTimestamp, id) => {
     const results = {
+      id,
       startTimestamp,
       downloadValue: downloadValue ?? 0.0,
       uploadValue: uploadValue ?? 0.0,

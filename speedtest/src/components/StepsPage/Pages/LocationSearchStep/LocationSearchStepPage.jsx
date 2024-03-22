@@ -33,8 +33,6 @@ const smallBackButtonContainer = {
 const arrowIconStyle = {
   width: '14px',
   height: '14px',
-  marginRight: '15px',
-  marginLeft: '-4px'
 }
 
 const LocationSearchStepPage = ({

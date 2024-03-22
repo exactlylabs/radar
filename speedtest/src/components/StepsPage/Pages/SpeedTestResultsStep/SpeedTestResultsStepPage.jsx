@@ -1,42 +1,24 @@
 import {MyTitle} from "../../../common/MyTitle";
 import TestStatsTableContent from "../SpeedTestStep/TestStatsTable";
-import {DEFAULT_EXPLORE_AREA_COLOR, DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
-import ArrowRightBlue from '../../../../assets/icons-arrow-right-blue.png';
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import ConfigContext from "../../../../context/ConfigContext";
+import AnimatedBanner from "../../../common/AnimatedBanner";
+import SubmittedInfoBanner from "../../../common/banners/SubmittedInfo/SubmittedInfoBanner";
+import JoinUsBanner from "../../../common/banners/JoinUs/JoinUsBanner";
+import {getSessionValue, isKeyInSession} from "../../../../utils/session";
+import ContactInfoModal from "./ContactInfoModal/ContactInfoModal";
+import {persistContactData} from "../../../../utils/apiRequests";
+import {notifyError} from "../../../../utils/errors";
 
 const speedTestResultsContainerStyle = {
-  marginTop: 25,
+  paddingTop: '4rem',
+  position: 'relative',
 }
 
-const widgetSpeedTestResultsContainerStyle = {
-  marginTop: 12
-}
-
-const exploreAreaStyle = {
-  cursor: 'pointer',
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'center',
-  margin: '20px auto 35px'
-}
-
-const stackedTextStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center'
-}
-
-const textStyle = {
-  color: DEFAULT_EXPLORE_AREA_COLOR,
-  fontSize: 16,
-  cursor: 'pointer',
-}
+const widgetSpeedTestResultsContainerStyle = speedTestResultsContainerStyle;
 
 const buttonFooterStyle = {
   display: 'flex',
@@ -55,42 +37,62 @@ const mobileButtonFooterStyle = {
   margin: '35px auto 70px',
 }
 
-const regularTextStyle = {
-  color: DEFAULT_TEXT_COLOR,
-  fontSize: 16,
-  marginRight: 3,
-}
-
-const exploreAreaLinkStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginTop: '1rem'
+const SUBMISSION_STATES = {
+  MISSING: 'missing',
+  JUST_SUBMITTED: 'just_submitted',
+  ALREADY_SUBMITTED: 'already_submitted'
 }
 
 const SpeedTestResultsStepPage = ({
   testResults,
   goToAreaMap,
-  goToHistory,
   goToTestAgain
 }) => {
 
-  const goToHistoryWithRecentTestTaken = () => goToHistory(true);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const config = useContext(ConfigContext);
-  const {isMediumSizeScreen, isSmallSizeScreen} = useViewportSizes();
+  const {isMediumSizeScreen} = useViewportSizes();
+  const [hasSubmittedInfo, setHasSubmittedInfo] = useState(isKeyInSession('contactInfo') ? SUBMISSION_STATES.ALREADY_SUBMITTED : SUBMISSION_STATES.MISSING);
 
-  const getExploreAreaTextStyle = () => isMediumSizeScreen || isSmallSizeScreen ? stackedTextStyle : exploreAreaStyle
+  useEffect(() => {
+    if(hasSubmittedInfo === SUBMISSION_STATES.MISSING) {
+      setTimeout(openContactInfoModal, 1000);
+    } else {
+      const contactInfo = JSON.parse(getSessionValue('contactInfo'));
+      persistContactData(contactInfo, testResults.id)
+        .catch(notifyError);
+    }
+  }, []);
+
+  const openContactInfoModal = (e) => {
+    if(e) e.preventDefault();
+    setIsContactModalOpen(true);
+  }
+
+  const handleCloseModal = (e) => {
+    if(e) e.preventDefault();
+    if(isKeyInSession('contactInfo') && hasSubmittedInfo === SUBMISSION_STATES.MISSING) {
+      setHasSubmittedInfo(SUBMISSION_STATES.JUST_SUBMITTED);
+    }
+    setIsContactModalOpen(false);
+  }
+
+  const getContainerStyle = () => {
+    let style = config.widgetMode ? widgetSpeedTestResultsContainerStyle : speedTestResultsContainerStyle;
+    if(hasSubmittedInfo === SUBMISSION_STATES.ALREADY_SUBMITTED) {
+      style.paddingTop = '8px';
+    }
+    return style;
+  }
 
   return (
-    <div style={config.widgetMode ? widgetSpeedTestResultsContainerStyle : speedTestResultsContainerStyle}>
+    <div style={getContainerStyle()}>
+      { (hasSubmittedInfo === SUBMISSION_STATES.MISSING || hasSubmittedInfo === SUBMISSION_STATES.JUST_SUBMITTED) &&
+        <AnimatedBanner>
+          {hasSubmittedInfo === SUBMISSION_STATES.JUST_SUBMITTED ? <SubmittedInfoBanner/> : <JoinUsBanner openModal={openContactInfoModal}/>}
+        </AnimatedBanner>
+      }
       <MyTitle text={'Your test results'}/>
-      <div style={getExploreAreaTextStyle()} onClick={goToAreaMap}>
-        <p className={'speedtest--p'} style={regularTextStyle}>See how you compare to others.</p>
-        <div style={exploreAreaLinkStyle}>
-          <div className={'speedtest--bold speedtest--opaque-hoverable'} style={textStyle}>Explore your area</div>
-          <img src={ArrowRightBlue} style={{marginLeft: 7}} width={14} height={14} alt={'blue-arrow-right'}/>
-        </div>
-      </div>
       <TestStatsTableContent extended
                              latencyValue={testResults.latency.toFixed(0)}
                              downloadValue={testResults.downloadValue.toFixed(2)}
@@ -99,8 +101,12 @@ const SpeedTestResultsStepPage = ({
       />
       <div style={isMediumSizeScreen ? mobileButtonFooterStyle : buttonFooterStyle}>
         <MyBackButton text={'Test again'} onClick={goToTestAgain}/>
-        <MyForwardButton text={'View all results'} onClick={goToHistoryWithRecentTestTaken}/>
+        <MyForwardButton text={'Explore the map'} onClick={goToAreaMap}/>
       </div>
+      <ContactInfoModal isOpen={isContactModalOpen}
+                        closeModal={handleCloseModal}
+                        speedTestId={testResults.id}
+      />
     </div>
   )
 }

@@ -8,11 +8,13 @@ const titleStyle = {
   color: DEFAULT_TITLE_COLOR,
   marginBottom: 10,
   width: '100%',
-  maxWidth: '480px'
+  maxWidth: '480px',
+  marginInline: 'auto'
 }
 
 const widgetTitleStyle = {
   ...titleStyle,
+  maxWidth: 'none',
   fontSize: 24
 }
 

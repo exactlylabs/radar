@@ -42,7 +42,7 @@ const closeButtonStyle = {
 const dateStyle = {
   color: DEFAULT_POPUP_VALUE_COLOR,
   fontSize: 15,
-  fontFamily: 'MulishRegular',
+  fontFamily: 'Mulish',
 }
 
 const MyMeasurementInfoModal = ({

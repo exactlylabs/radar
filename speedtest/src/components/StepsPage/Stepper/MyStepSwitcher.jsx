@@ -1,7 +1,7 @@
-import {ArrowBack, ArrowForward} from "@mui/icons-material";
 import {MyBackButton} from "../../common/MyBackButton";
 import {MyForwardButton} from "../../common/MyForwardButton";
 import iconLeftArrow from "../../../assets/icons-left-arrow.png";
+import iconRightArrow from "../../../assets/right-arrow-white.png";
 import {useContext} from "react";
 import ConfigContext from "../../../context/ConfigContext";
 
@@ -34,9 +34,7 @@ const widgetDoubleButtonStepSwitcherStyle = {
 
 const arrowIconStyle = {
   width: '14px',
-  height: '14px',
-  marginRight: '15px',
-  marginLeft: '-4px'
+  height: '14px'
 }
 
 const MyStepSwitcher = ({
@@ -67,7 +65,7 @@ const MyStepSwitcher = ({
       {
         goForward &&
         <MyForwardButton text={forwardText ?? 'Continue'}
-                         icon={noForwardIcon ? null : <ArrowForward style={{marginLeft: 15}} fontSize={'small'}/>}
+                         icon={noForwardIcon ? null : <img src={iconRightArrow} alt={'go forward arrow icon'} style={arrowIconStyle}/>}
                          onClick={shouldExecuteAlt ? altForward : goForward}
                          disabled={forwardDisabled}
         />

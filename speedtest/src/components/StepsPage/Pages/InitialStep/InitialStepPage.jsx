@@ -4,7 +4,7 @@ import {MyForwardButton} from "../../../common/MyForwardButton";
 import MyMessageSnackbar from "../../../common/MyMessageSnackbar";
 import Bullet from "./Bullet";
 import {useViewportSizes} from "../../../../hooks/useViewportSizes";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import UserDataContext from "../../../../context/UserData";
 
 import rightArrowWhite from "../../../../assets/right-arrow-white.png";
@@ -14,6 +14,7 @@ import performanceIcon from '../../../../assets/performance-icon.png';
 import mapIcon from '../../../../assets/map-icon.png';
 import speedTestsIcon from '../../../../assets/speedtests-icon.png';
 import ConfigContext from "../../../../context/ConfigContext";
+import ContactInfoModal from "../SpeedTestResultsStep/ContactInfoModal/ContactInfoModal";
 
 const initialStepPageStyle = {
   width: '100%',
@@ -182,7 +183,7 @@ const InitialStepPage = ({goToNextPage, error}) => {
             <p className={'speedtest--p'} style={termsTextStyle}>I agree to the <a className={'speedtest--opaque-hoverable'} style={linkStyle} href={'https://radartoolkit.com/privacy-policy'} target={'_blank'}>Privacy Policy</a>.</p>
           </div>
           { error && <MyMessageSnackbar type={'error'} message={error}/> }
-          <MyForwardButton text={'Take the test'} icon={<img src={rightArrowWhite} style={rightArrowStyle} alt={'location-button-icon'} width={14} height={14}/>} onClick={goToNextPage}/>
+          <MyForwardButton text={'Take the test'} icon={<img src={rightArrowWhite} alt={'location-button-icon'} width={14} height={14}/>} onClick={goToNextPage}/>
           { !config.widgetMode && <img src={initialPageShadow} alt={'shadow'} style={isSmall ? smallShadowImage : shadowImage}/> }
         </div>
         {

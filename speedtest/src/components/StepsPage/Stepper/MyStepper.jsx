@@ -96,7 +96,7 @@ const MyStepper = ({
   return (
     <div style={getStepperStyle()}>
       {
-        Object.values(STEPS).filter(s => (s !== STEPS.INITIAL && s !== STEPS.CONTACT_INFO)).map(step => {
+        Object.values(STEPS).filter(s => s !== STEPS.INITIAL).map(step => {
           if(step < STEPS.RUN_SPEED_TEST) {
            return (
               <MyStep key={step}>
