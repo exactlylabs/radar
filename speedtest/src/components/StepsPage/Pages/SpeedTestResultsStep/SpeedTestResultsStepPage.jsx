@@ -78,9 +78,9 @@ const SpeedTestResultsStepPage = ({
   }
 
   const getContainerStyle = () => {
-    let style = config.widgetMode ? widgetSpeedTestResultsContainerStyle : speedTestResultsContainerStyle;
-    if(hasSubmittedInfo === SUBMISSION_STATES.ALREADY_SUBMITTED) {
-      style.paddingTop = '8px';
+    let style = config.widgetMode ? {...widgetSpeedTestResultsContainerStyle} : {...speedTestResultsContainerStyle};
+    if(!config.widgetMode && hasSubmittedInfo === SUBMISSION_STATES.ALREADY_SUBMITTED) {
+      style['paddingTop'] = '8px';
     }
     return style;
   }
