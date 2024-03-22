@@ -2,24 +2,39 @@ module ClientApi
   module V1
     class SpeedTestsController < ApiController
       def create
-        is_mobile = params[:mobile].present? && params[:mobile] == 'true'
-        if is_mobile
-          @speed_test = ClientSpeedTest.new mobile_speed_test_params
-        else
-          @speed_test = ClientSpeedTest.new speed_test_params
+        begin
+          is_mobile = params[:mobile].present? && params[:mobile] == 'true'
+          if is_mobile
+            @speed_test = ClientSpeedTest.new mobile_speed_test_params
+          else
+            @speed_test = ClientSpeedTest.new speed_test_params
+          end
+          @speed_test.ip = request.remote_ip
+          @speed_test.lonlat = "POINT(#{params[:speed_test][:longitude]} #{params[:speed_test][:latitude]})"
+          @speed_test.connection_data = params[:connection_data]
+          @speed_test.permissions = params[:permissions]
+          @speed_test.tested_by = params[:client_id]
+          filename = "speed-test-#{params[:timestamp]}.json"
+          json_content = params[:result].to_json
+          @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: 'application/json')
+          @speed_test.save!
+          # Call process to parse JSON and seed measurement
+          ProcessSpeedTestJob.perform_later(@speed_test, is_mobile)
+        rescue Exception => e
+          Sentry.capture_exception(e)
+          render json: { error: e.message }, status: :unprocessable_entity
+          return
         end
-        @speed_test.ip = request.remote_ip
-        @speed_test.lonlat = "POINT(#{params[:speed_test][:longitude]} #{params[:speed_test][:latitude]})"
-        @speed_test.connection_data = params[:connection_data]
-        @speed_test.permissions = params[:permissions]
-        @speed_test.tested_by = params[:client_id]
-        filename = "speed-test-#{params[:timestamp]}.json"
-        json_content = params[:result].to_json
-        @speed_test.result.attach(io: StringIO.new(json_content), filename: filename, content_type: 'application/json')
-        @speed_test.save!
-        # Call process to parse JSON and seed measurement
-        ProcessSpeedTestJob.perform_later(@speed_test, is_mobile)
-        head(:no_content)
+        render json: @speed_test, status: :created
+      end
+
+      def update
+        @speed_test = ClientSpeedTest.find(params[:id])
+        if @speed_test.update(contact_params)
+          render json: @speed_test, status: :ok
+        else
+          render json: @speed_test.errors, status: :unprocessable_entity
+        end
       end
 
       def index
@@ -78,6 +93,10 @@ module ClientApi
       end
 
       private
+
+      def contact_params
+        params.require(:speed_test).permit(:client_email, :client_phone, :client_first_name, :client_last_name)
+      end
 
       def format_json(speed_tests)
         speed_tests.map do |speed_test|
