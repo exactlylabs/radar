@@ -41,6 +41,16 @@ const ExpectedSpeedsStepPage = ({
     goForward();
   }
 
+  const handleSkip = (e) => {
+    if(e) e.preventDefault();
+    if(type === 'download') {
+      setExpectedSpeeds({ upload: userData.expectedUploadSpeed, download: undefined });
+    } else {
+      setExpectedSpeeds({ download: userData.expectedDownloadSpeed, upload: undefined });
+    }
+    goForward();
+  }
+
   return (
     <div className={styles.screenContainer}>
       <MyTitle text={`Do you know your expected ${type} speed?`} />
@@ -51,7 +61,7 @@ const ExpectedSpeedsStepPage = ({
                             ref={inputRef}
         />
       </div>
-      <button onClick={handleGoForward} className={styles.skipSpeedButton}>
+      <button onClick={handleSkip} className={styles.skipSpeedButton}>
         I don't know my expected speed
         <img src={forwardArrowBlue} width={10} height={10} alt={'forward arrow'}/>
       </button>
