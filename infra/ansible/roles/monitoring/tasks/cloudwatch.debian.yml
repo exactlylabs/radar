@@ -1,0 +1,26 @@
+---
+- name: Download AWS CloudWatch agent package
+  get_url:
+    url: "https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/{% if ansible_architecture == 'aarch64' %}arm64{% else %}amd64{% endif %}/latest/amazon-cloudwatch-agent.deb"
+    dest: /tmp/amazon-cloudwatch-agent.deb
+    mode: 0644
+
+- name: Install Cloudwatch Agent
+  become: yes
+  apt:
+    deb: /tmp/amazon-cloudwatch-agent.deb
+    state: present
+    update_cache: yes
+
+- name: Configure AWS CloudWatch agent
+  become: yes
+  template:
+    src: cloudwatch_agent_config.json.j2
+    dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.d/file_config.json
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start CloudWatch Agent
+  become: yes
+  shell: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json

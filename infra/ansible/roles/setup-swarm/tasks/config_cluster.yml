@@ -1,0 +1,52 @@
+---
+- name: Setup hostnames
+  become: yes
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Set Leader IP
+  set_fact:
+    swarm_leader_ip: "{{ hostvars[groups['managers'][0]].ansible_default_ipv4.address }}"
+
+- name: Init a new swarm
+  become: yes
+  community.docker.docker_swarm:
+    state: present
+    default_addr_pool:
+      - "{{swarm_default_addr_pool}}"
+    advertise_addr: "{{ swarm_leader_ip }}"
+  register: result
+  when: inventory_hostname == groups['managers'][0]
+
+- name: Get join-token for manager nodes
+  set_fact:
+    join_token_manager: "{{ hostvars[groups['managers'][0]].result.swarm_facts.JoinTokens.Manager }}"
+
+- name: Get join-token for worker nodes
+  set_fact:
+    join_token_worker: "{{ hostvars[groups['managers'][0]].result.swarm_facts.JoinTokens.Worker }}"
+
+- name: Join other managers
+  become: yes
+  community.docker.docker_swarm:
+    state: join
+    join_token: "{{ join_token_manager }}"
+    remote_addrs: [ "{{swarm_leader_ip}}:2377" ]
+  when: inventory_hostname in groups['managers'][1:]
+
+- name: Join Worker nodes
+  become: yes
+  community.docker.docker_swarm:
+    state: join
+    join_token: "{{ join_token_worker }}"
+    remote_addrs: [ "{{swarm_leader_ip}}:2377" ]
+  when: inventory_hostname in groups['workers']
+
+- name: Apply Labels to Nodes
+  become: yes
+  community.docker.docker_node:
+    hostname: "{{ hostvars[item].inventory_hostname }}"
+    labels_state: replace
+    labels: "{{ hostvars[item].labels }}"
+  loop: "{{ groups['managers'] + groups['workers'] }}"
+  when: inventory_hostname == groups['managers'][0] and hostvars[item].labels is defined and hostvars[item].labels

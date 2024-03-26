@@ -1,0 +1,38 @@
+---
+- name: system packages | nfs server
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    name:
+      - rpcbind
+      - nfs-common
+      - nfs-kernel-server
+
+    state: present
+
+- name: create nfs share directories
+  become: true
+  file:
+    path: "{{ item.key }}"
+    state: directory
+    mode: 0755
+    owner: nobody
+    group: nogroup
+  with_dict: "{{ nfs_shares }}"
+
+- name: nfs server | configure shares
+  become: true
+  template:
+    backup: true
+    dest: /etc/exports
+    src: exports.j2
+    mode: 0644
+  notify:
+    - refresh nfs
+
+- name: nfs server | enable nfs
+  become: true
+  service:
+    enabled: true
+    name: nfs-server
+    state: started

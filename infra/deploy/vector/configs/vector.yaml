@@ -1,0 +1,60 @@
+# api:
+#   enabled: false
+#   address: 0.0.0.0:8686
+
+sources:
+  # docker_logs:
+  #   type: docker_logs
+  #   exclude_containers:
+  #     - "vector"
+  #     - "swarmpit"
+  #     - "traefik"
+
+  traefik_metrics:
+    type: "statsd"
+    address: "0.0.0.0:8125"
+    mode: udp
+
+  # traefik_logs:
+  #   type: "docker_logs"
+  #   include_containers:
+  #     - "traefik"
+
+# transforms:
+  # traefik_logs_decode:
+  #   type: remap
+  #   inputs: ["traefik_logs"]
+  #   source: |-
+  #     .access_data = parse_json!(.message)
+
+
+sinks:
+  # docker_logs_sink:
+  #   type: "aws_cloudwatch_logs"
+  #   inputs: ["docker_logs", "traefik_logs_decode"]
+  #   compression: "gzip"
+  #   encoding:
+  #     codec: "json"
+  #   region: "us-east-2"
+  #   group_name: "/vector/docker-logs"
+  #   stream_name: {{ "\"{{ host }}\"" }}
+  #   auth:
+  #     access_key_id: "{{ env "AWS_ACCESS_KEY_ID" }}"
+  #     secret_access_key: "{{ env "AWS_SECRET_ACCESS_KEY" }}"
+  #   healthcheck: false
+
+  # TODO: Add this once we have apps running.
+  traefik_metrics_sink:
+    type: "aws_cloudwatch_metrics"
+    inputs: ["traefik_metrics"]
+    region: "us-east-2"
+    default_namespace: "traefik"
+    auth:
+      access_key_id: "{{ env "AWS_ACCESS_KEY_ID" }}"
+      secret_access_key: "{{ env "AWS_SECRET_ACCESS_KEY" }}"
+
+  debug:
+    type: "console"
+    inputs: ["traefik_metrics"]
+    encoding:
+      codec: "text"

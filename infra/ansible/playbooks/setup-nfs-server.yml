@@ -1,0 +1,18 @@
+---
+- name: Setup NFS Server
+  hosts:
+    - nfs
+  roles:
+    - role: nfs
+      nfs_shares:
+      # Declare all mounting paths to be used by the applications here
+      # Any new mounting path should be added and then call make setup-nfs to apply it.
+        /mnt/nfs/traefik/letsencrypt:
+          - host: "{{ vpc_subnet_cidr }}"
+            options: rw,sync,subtree_check,no_root_squash
+        /mnt/nfs/swarmpit/influx-data:
+          - host: "{{ vpc_subnet_cidr }}"
+            options: rw,sync,subtree_check,no_root_squash
+        /mnt/nfs/swarmpit/couch-data:
+          - host: "{{ vpc_subnet_cidr }}"
+            options: rw,sync,subtree_check,no_root_squash

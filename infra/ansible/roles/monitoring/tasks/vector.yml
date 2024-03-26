@@ -1,0 +1,36 @@
+---
+- name: Setup Vector Repository
+  become: yes
+  shell: bash -c "$(curl -L https://setup.vector.dev)"
+
+- name: Install Vector
+  become: yes
+  apt:
+    name: vector
+    state: present
+    update_cache: yes
+  register: vector_install
+
+- name: Configure Vector
+  become: yes
+  template:
+    src: vector.yaml.j2
+    dest: /etc/vector/vector.yaml
+    owner: root
+    group: root
+    mode: 0644
+  register: vector_config
+
+- name: Start Vector
+  service:
+    name: vector
+    state: started
+    enabled: yes
+  when: vector_install.changed
+
+- name: Restart Vector
+  service:
+    name: vector
+    state: restarted
+    enabled: yes
+  when: vector_config.changed
