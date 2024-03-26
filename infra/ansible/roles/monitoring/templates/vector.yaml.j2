@@ -1,0 +1,61 @@
+#                                    __   __  __
+#                                    \ \ / / / /
+#                                     \ V / / /
+#                                      \_/  \/
+#
+#                                    V E C T O R
+#                                   Configuration
+#
+# ------------------------------------------------------------------------------
+# Website: https://vector.dev
+# Docs: https://vector.dev/docs
+# Chat: https://chat.vector.dev
+# ------------------------------------------------------------------------------
+
+# Change this to use a non-default directory for Vector data storage:
+# data_dir: "/var/lib/vector"
+
+# Random Syslog-formatted logs
+
+
+sources:
+  critical_journald:
+    type: journald
+    current_boot_only: false
+    include_matches:
+      PRIORITY: [ "0", "1", "2" ] # Emergency, Alert, Critical
+
+
+# Parse Syslog logs
+# See the Vector Remap Language reference for more info: https://vrl.dev
+transforms:
+  convert_journald:
+    type: "remap"
+    inputs: ["critical_journald"]
+    source: >-
+      .app = .SYSLOG_IDENTIFIER
+
+      .realtime = to_int(.__REALTIME_TIMESTAMP) ?? 0
+
+      .datetime = from_unix_timestamp(round(.realtime / 1000000)) ?? now()
+
+      .facility = to_syslog_facility(to_int(.SYSLOG_FACILITY) ?? 0) ?? ""
+
+      .severity = to_int(.PRIORITY) ?? 0
+
+      .level = to_syslog_level(.severity) ?? ""
+
+
+# Print parsed logs to stdout
+sinks:
+  critical_journald_sink:
+    type: "aws_cloudwatch_logs"
+    inputs: ["convert_journald"]
+    compression: "gzip"
+    encoding:
+      codec: "json"
+    region: "us-east-2"
+    group_name: "/vector/{% raw %}{{host}}/journald-critical-events{% endraw %}"
+    stream_name: "journald-critical-events"
+    healthcheck: false
+

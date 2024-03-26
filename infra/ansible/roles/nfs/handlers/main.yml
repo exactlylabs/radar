@@ -1,0 +1,4 @@
+---
+- name: refresh nfs
+  become: true
+  command: exportfs -ar

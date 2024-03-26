@@ -1,0 +1,8 @@
+---
+# Declare the paths you want to share here
+# example:
+# nfs_shares:
+#    /opt/nfs-share:
+#      - host: 10.0.0.0/24
+#        options: rw,sync,root_squash
+nfs_shares: {}

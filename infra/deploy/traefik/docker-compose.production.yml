@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: "traefik:v2.10.6"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+
+    command:
+      - "--api.insecure=true"
+      - "--ping"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.swarmmode=true"
+      - "--providers.docker.network=traefik_public"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=devops@exactlylabs.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/opt/janus-core/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - public
+
+networks:
+  public:
+    driver: overlay
+    attachable: true

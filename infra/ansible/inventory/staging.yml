@@ -1,0 +1,17 @@
+managers:
+  hosts:
+    manager-01.staging.radartoolkit.com:
+      swarm_default_addr_pool: 10.0.0.0/16 # Be careful to not conflict with the VPC subnet
+
+workers:
+  hosts:
+    worker-01.staging.radartoolkit.com:
+      labels:
+        private: "true"
+        architecture: arm64
+
+
+nfs:
+  hosts:
+    nfs.staging.radartoolkit.com:
+      vpc_subnet_cidr: 11.0.0.0/16

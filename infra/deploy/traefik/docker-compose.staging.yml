@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: "traefik:v2.10.4"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--ping"
+      - "--accesslog=true"
+      - "--accesslog.format=json"
+      - "--metrics.statsd=true"
+      - "--metrics.statsd.address=vector-agent:8125"
+      # - "--metrics.statsd.addentrypointslabels=true"
+      # - "--metrics.statsd.addrouterslabels=true"
+      - "--metrics.statsd.addserviceslabels=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.swarmmode=true"
+      - "--providers.docker.network=traefik_public"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=devops@exactlylabs.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "letsencrypt-data:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - public
+      - vector_public
+
+networks:
+  public:
+    driver: overlay
+    attachable: true
+  vector_public:
+    external: true
+
+volumes:
+  letsencrypt-data:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=nfs.staging.radartoolkit.com,rw
+      device: ":/mnt/nfs/traefik/letsencrypt"

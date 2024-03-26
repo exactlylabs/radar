@@ -1,0 +1,13 @@
+---
+- include_tasks: cloudwatch.centos.yml
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: cloudwatch.debian.yml
+  when: ansible_os_family == 'Debian'
+
+- include_tasks: vector.yml
+  when: ansible_os_family == 'Debian'
+
+- include_tasks: vector.yum.yml
+  when: ansible_os_family == 'RedHat' or ansible_os_family == 'Centos'
+

@@ -1,0 +1,8 @@
+---
+- name: Setup Swarm Nodes
+  hosts:
+    - managers
+    - workers
+  roles:
+    - monitoring
+    # - setup-swarm
