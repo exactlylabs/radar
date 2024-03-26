@@ -26,8 +26,6 @@ end
 scheduler.every '1h', overlap: false do
   begin
     Client.refresh_outdated_data_usage!
-    ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW aggregated_measurements_by_hours")
-    ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW aggregated_measurements_by_days")
   rescue => e
     Sentry.capture_exception(e)
     raise e
@@ -36,7 +34,7 @@ end
 
 scheduler.every '5m', overlap: false do
   begin
-    FillClientCountProjection.perform_later
+    # FillClientCountProjection.perform_later
   rescue => e
     Sentry.capture_exception(e)
     raise e
@@ -46,7 +44,9 @@ end
 
 scheduler.every '1h', overlap: false do
   begin
-    MetricsProjectionJob.perform_later
+    # MetricsProjectionJob.perform_later
+    # ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW aggregated_measurements_by_hours")
+    # ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW aggregated_measurements_by_days")
   rescue => e
     Sentry.capture_exception(e)
     raise e
