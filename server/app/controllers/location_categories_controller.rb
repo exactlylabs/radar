@@ -4,7 +4,9 @@ class LocationCategoriesController < ApplicationController
   def search
     @location = policy_scope(Location).find(params[:location_id]) if params[:location_id]
     @query = params[:query]
+    @add_category = false
     if @query.present?
+      @add_category = policy_scope(Category).find_by(name: @query).nil?
       @categories = policy_scope(Category).where("name ILIKE ?", "%#{@query}%")
     else
       @categories = policy_scope(Category)
