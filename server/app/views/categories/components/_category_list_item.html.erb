@@ -10,6 +10,8 @@
            <%= selected ? 'checked="true"' : nil %>
       />
   </div>
-  <div class="category--marker" style="background-color: <%= category.color_hex %>"></div>
+  <% if category.color_hex.present? %>
+    <div class="category--marker" style="background-color: <%= category.color_hex %>"></div>
+  <% end %>
   <p class="category--list-item-title"><%= category.name %></p>
 </div>

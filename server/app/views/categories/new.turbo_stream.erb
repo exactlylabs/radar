@@ -1,4 +1,3 @@
-<p><%= @account_id %></p>
 <%= turbo_stream.update "new-category-#{@account_id}" do %>
   <%= render partial: "categories/new_form", locals: { account_id: @account_id} %>
 <% end %>

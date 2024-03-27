@@ -8,7 +8,8 @@
                    on_box_checked_dir: "location_categories",
                  } %>
     <% end %>
-  <% else %>
+  <% end %>
+  <% if @add_category %>
     <%= render partial: "location_categories/inline_add_item", locals: { query: @query } %>
   <% end %>
 <% end %>

@@ -1,5 +1,14 @@
 <%= turbo_stream.update "categories_modal" do %>
-  <%= render partial: "categories/modal", locals: { categories: @categories } %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+             locals: {
+               modal_title: "Manage categories",
+               modal_partial_path: "categories/modal",
+               resource: @categories,
+               custom_submit_end_handler: nil
+             }
+  %>
 <% end %>
 
-
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% end %>

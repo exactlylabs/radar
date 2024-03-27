@@ -52,16 +52,38 @@ export default class extends Controller {
 
     onCheckBoxChange(e) {
         const dir = e.params.dir;
-        if (e.target.checked) e.target.setAttribute('checked', 'true');
-        else e.target.removeAttribute('checked');
-
         const selectedCategoryId = e.target.id.split('check-box-')[1];
-
-        if (this.categories.includes(selectedCategoryId)) {
-            const index = this.categories.indexOf(selectedCategoryId);
-            this.categories.splice(index, 1);
+        if (selectedCategoryId === '-1') {
+            // this means the user has selected all categories
+            const uncheckAll = this.categories.includes(selectedCategoryId)
+            this.categories = [];
+            this.categoryCheckboxTargets.forEach(checkbox => {
+                console.log(checkbox.id)
+                if (uncheckAll) {
+                    checkbox.removeAttribute('checked');
+                    checkbox.checked = false;
+                } else {
+                    const currentCheckboxId = checkbox.id.split('check-box-')[1];
+                    this.categories.push(currentCheckboxId);
+                    checkbox.setAttribute('checked', 'true');
+                    checkbox.checked = true;
+                }
+            });
         } else {
-            this.categories.push(selectedCategoryId);
+            console.log(selectedCategoryId)
+            console.log(e.target.checked)
+            console.log(this.categories)
+            if (!e.target.checked && this.categories.includes(selectedCategoryId)) {
+                const index = this.categories.indexOf(selectedCategoryId);
+                this.categories.splice(index, 1);
+                e.target.removeAttribute('checked');
+                e.target.checked = false;
+            } else if (e.target.checked && !this.categories.includes(selectedCategoryId)) {
+                this.categories.push(selectedCategoryId);
+                e.target.setAttribute('checked', 'true');
+                e.target.checked = true;
+            }
+            console.log(this.categories)
         }
 
         const categoriesHiddenInput = document.getElementById(dir);

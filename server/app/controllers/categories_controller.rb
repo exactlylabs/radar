@@ -3,18 +3,19 @@ class CategoriesController < ApplicationController
   before_action :set_category, except: [:index, :new, :cancel_new, :create, :import_from_another_account, :import]
 
   def index
-    query = params[:query]
     @categories = policy_scope(Category)
 
-    if query
-      @categories = @categories.where("name ILIKE ?", "%#{query}%")
+    @query = params[:query]
+    if @query
+      @categories = @categories.where("name ILIKE ?", "%#{@query}%")
     end
 
     # add to the map the accounts that don't have any categories.
-    if current_account.is_all_accounts?
-      # categories should be a map where the account is the key and the value is an array of categories
-      @categories = categories_by_account
-    end
+    @categories = if current_account.is_all_accounts?
+                    categories_by_account
+                  else
+                    @categories.where(account_id: current_account.id)
+                  end
 
     respond_to do |format|
       format.html
@@ -80,14 +81,15 @@ class CategoriesController < ApplicationController
   end
 
   def update
+
     respond_to do |format|
       if @category.update(name: params[:category][:name], color_hex: params[:category][:color_hex])
         @notice = "Category updated successfully."
         @locations = policy_scope(Location).joins(:categories_locations).where(categories_locations: { category_id: @category.id })
-        format.turbo_stream
       else
-        format.html { redirect_to "/locations", notice: "Error updating your category. Please try again later." }
+        @notice = "Error updating your category. Please try again later."
       end
+      format.turbo_stream
     end
   end
 
@@ -130,19 +132,17 @@ class CategoriesController < ApplicationController
         end
       end
     rescue Exception => e
-      error = e
+      @notice = "Oops! Something went wrong. Please try again later."
     end
     respond_to do |format|
       if error.nil?
+        @notice = "All categories were successfully imported."
         @categories = policy_scope(Category)
         if current_account.is_all_accounts?
           @categories = categories_by_account
         end
-        format.turbo_stream
-      else
-        format.html { redirect_to "/locations", notice: "Error importing categories. Please try again later." }
       end
-
+      format.turbo_stream
     end
   end
 

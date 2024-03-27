@@ -1,9 +1,28 @@
+<% if @notice.present? %>
+  <%= turbo_stream.append 'realtime-notice' do %>
+    <%= render partial: 'application/notice_alert', locals: { notice: @notice } %>
+  <% end %>
+<% end %>
+
+<% if @categories.present? %>
+  <%= turbo_stream.update "categories_modal" do %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: "Manage categories",
+                 modal_partial_path: "categories/modal",
+                 resource: @categories,
+                 custom_submit_end_handler: nil
+               }
+    %>
+  <% end %>
+<% end %>
+
 <%= turbo_stream.replace @category do %>
-  <%= render partial: "categories/list_item", locals: {category: @category} %>
+  <%= render partial: "categories/list_item", locals: { category: @category } %>
 <% end %>
 
 <% @locations.each_with_index do |location, index| %>
   <%= turbo_stream.replace location do %>
-    <%= render partial: 'locations/locations_table_row', locals: {location: location, shows_tooltip: true, row: index} %>
+    <%= render partial: 'locations/locations_table_row', locals: { location: location, shows_tooltip: true, row: index } %>
   <% end %>
 <% end %>

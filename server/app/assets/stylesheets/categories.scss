@@ -154,7 +154,7 @@
   height: 230px;
   overflow-x: hidden;
   overflow-y: auto;
-  margin: 0 auto;
+  margin: 24px auto 0;
 }
 
 .category--turbo-frame {
@@ -395,7 +395,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 0 auto 8px;
+  margin: 0 auto 10px;
 }
 
 .category--search-container {
@@ -634,6 +634,7 @@
 
   .import-category--modal-dialog {
     height: 100vh;
+    width: 100vw;
     margin: 0;
   }
 
@@ -667,7 +668,6 @@
   line-height: 21px;
   font-variation-settings: 'wght' $bold;
   padding-left: 12px;
-  margin-bottom: 24px;
 }
 
 .categories--list-container {
@@ -720,5 +720,15 @@
 }
 
 .categories--import-container {
-  width: 100%;
+  min-width: 500px !important;
+}
+
+@media (max-width: 450px) {
+  .categories--import-container {
+    overflow-y: auto;
+    min-width: 300px;
+    border-radius: 0;
+    top: unset;
+    bottom: 0;
+  }
 }
