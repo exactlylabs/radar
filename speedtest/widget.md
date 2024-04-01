@@ -56,7 +56,7 @@ So an example `configObject` could be:
 
 ```js
 const configObject = {
-  clientId: 'my-client-id',
+  clientId: my-client-id,
   elementId: 'root',
   frameStyle: {
     width: '500px',
@@ -64,4 +64,22 @@ const configObject = {
   },
   global: false
 }
+```
+
+So a full example may be as follows (though ideally the script tags go in the header of the site though is not required):
+```html
+<div id="speedtest" style="width: 600px; height: 600px"></div>
+<script type="text/javascript" src="https://speed.radartoolkit.com/widget.js"></script>
+<script>
+  RadarSpeedWidget.config({
+    clientId: 2,
+    elementId: 'speedtest',
+    frameStyle: {
+      width: '600px',
+      height: '600px',
+    },
+    global: false
+  });
+  RadarSpeedWidget.new().mount();
+</script>
 ```
