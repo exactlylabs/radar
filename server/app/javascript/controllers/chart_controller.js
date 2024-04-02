@@ -60,13 +60,15 @@ export default class ChartController extends Controller {
     const { mouseX} = this.getMousePosition(e);
     this.mouseClickedX = mouseX;
     this.isDragging = true;
+    this.dragInitialTime = new Date().getTime();
   }
   
   handleMouseUp(e) {
     const { mouseX} = this.getMousePosition(e);
     this.mouseReleasedX = mouseX;
     this.isDragging = false;
-    if(this.mouseClickedX) {
+    const dragFinalTime = new Date().getTime();
+    if(this.mouseClickedX && this.mouseReleasedX && dragFinalTime - this.dragInitialTime > 100) {
       this.calculateDraggedTimeline();
     }
   }

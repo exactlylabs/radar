@@ -63,6 +63,7 @@ export default class BarChartController extends ChartController {
     const xDifs = this.chartData.map(({x, _}, index) => Math.abs(this.getXCoordinateFromXValue(this.chartData, index) - mouseX));
     const minDif = Math.min(...xDifs);
     const minDifIndex = xDifs.indexOf(minDif);
+    if(minDifIndex < 0) return;
     if(!this.mouseOverBar(mouseX, mouseY, minDifIndex)) return;
     const {barX, barY, barHeight, barWidth} = this.drawBar(this.chartData[minDifIndex], minDifIndex, '#4b7be5');
     
@@ -140,7 +141,7 @@ export default class BarChartController extends ChartController {
   }
   
   getXValueAtIndex(index) {
-    if(index === -1) this.chartData[this.chartData.length - 1].x;
+    if(index === -1) return this.chartData[this.chartData.length - 1].x;
     return this.chartData[index].x;
   }
 }

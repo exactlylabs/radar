@@ -257,14 +257,21 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def set_invite
     token = params[:token]
     if token
+      begin
       invite_id = token[0..-17]
       invite_secret = token[-16..-1]
       @invite = Invite.find(invite_id).authenticate_token(invite_secret)
+      rescue ActiveRecord::RecordNotFound
+        @notice = "Error: Invite token not found."
+      end
     else
-      raise ArgumentError.new("Couldn't find token")
+      @notice = "Error: Invalid invite token."
     end
-    if !@invite
-      raise ActiveRecord::RecordNotFound.new("Couldn't find Invite", Invite.name)
+    @notice = "Error: Invite token missing." if !@invite
+    if @notice.present?
+      redirect_path = user_signed_in? ? dashboard_path : root_path
+      flash[:alert] = @notice
+      redirect_to redirect_path
     end
   end
 end
