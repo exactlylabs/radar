@@ -260,10 +260,11 @@ Rails.application.routes.draw do
   get '/location_categories/search', to: 'location_categories#search', as: 'location_category_search'
   get '/location_categories/open_dropdown', to: 'location_categories#open_dropdown', as: 'categories_open_dropdown'
   get '/location_categories/close_dropdown', to: 'location_categories#close_dropdown', as: 'categories_close_dropdown'
+  get '/location_categories/import_from_another_account', to: 'location_categories#import_from_another_account', as: 'categories_import_from_another_account'
+  post '/location_categories/import', to: 'location_categories#import', as: 'categories_import'
 
   get '/categories/cancel_new', to: 'categories#cancel_new', as: 'category_cancel_new'
-  # get '/categories/import_from_another_account', to: 'categories#import_from_another_account', as: 'categories_import_from_another_account'
-  # post '/categories/import', to: 'categories#import', as: 'categories_import'
+
 
   resources :categories, param: :id do
     collection do

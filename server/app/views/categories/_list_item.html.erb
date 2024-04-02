@@ -7,14 +7,15 @@
       </div>
     </div>
     <div class="category--list-item-options-container">
-      <% if !category.locked %>
+      <% unless category.locked %>
         <div class="category--more-options-icon-container" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
           <i class="fas fa-ellipsis-v text-gray-700" id="category--list-item-menu-icon@<%= category.id %>"></i>
         </div>
         <div class="menu menu-sub menu-sub-dropdown category--options-menu"
              data-kt-menu="true"
+             data-controller="menu"
              data-categories-target="menuIcon"
-             id="categoy--list-item-more-options@<%= category.id %>"
+             id="category--list-item-more-options@<%= category.id %>"
         >
           <a class="category--options-menu-item"
              href="<%= category_edit_path(category.id) %>"

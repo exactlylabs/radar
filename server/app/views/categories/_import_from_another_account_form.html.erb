@@ -2,7 +2,7 @@
 <% import_to_accounts = current_account.is_all_accounts? ? @accounts : nil %>
 <div class="import-category--modal-dialog" data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker">
   <div>
-    <%= form.hidden_field :account_id, value: import_from_accounts.first.id, data: { categories_target: "firstAccountId" } %>
+    <%= form.hidden_field :account_id, value: import_from_accounts&.first&.id, data: { categories_target: "firstAccountId" } %>
     <div class="modals--form-row mb-6">
       <%= form.label :import_from, "Import from...", class: "forms--label" %>
       <select class="form-select forms--select"

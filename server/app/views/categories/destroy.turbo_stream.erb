@@ -1,25 +1,29 @@
-<%= turbo_stream.remove @category do %>
-<% end %>
+<%= turbo_stream.remove @category %>
 
 <%= turbo_stream.update 'notice-container' do %>
   <%= render partial: 'application/notice_alert', locals: { notice: @notice } %>
 <% end %>
 
-<% policy_scope(Location).each_with_index do |location, index| %>
+<% @locations.each_with_index do |location, index| %>
   <%= turbo_stream.replace location do %>
     <%= render partial: 'locations/locations_table_row', locals: { location: location, shows_tooltip: true, row: index } %>
   <% end %>
 <% end %>
 
-<% if @categories.count == 0 %>
-  <% if current_account.is_all_accounts? %>
-    <%= turbo_stream.update "account-#{@account_id}-empty-categories" do %>
-      <div class="categories--empty-container">
-        <div class="categories--empty-description">No categories</div>
-      </div>
+
+<% if current_account.is_all_accounts? %>
+  <% if @categories[@category.account].count == 0 %>
+    <%= turbo_stream.update "account-#{@account_id}-categories" do %>
+      <%= turbo_frame_tag "account-#{@account_id}-empty-categories" do %>
+        <div class="categories--empty-container">
+          <div class="categories--empty-description">No categories</div>
+        </div>
+      <% end %>
     <% end %>
-  <% else %>
-    <%= turbo_stream.update "categories" do %>
+  <% end %>
+<% else %>
+  <% if @categories.count == 0 %>
+    <%= turbo_stream.update "account-#{@account_id}-categories" do %>
       <%= render partial: "categories/empty_list" %>
     <% end %>
   <% end %>

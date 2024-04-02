@@ -58,7 +58,6 @@ export default class extends Controller {
             const uncheckAll = this.categories.includes(selectedCategoryId)
             this.categories = [];
             this.categoryCheckboxTargets.forEach(checkbox => {
-                console.log(checkbox.id)
                 if (uncheckAll) {
                     checkbox.removeAttribute('checked');
                     checkbox.checked = false;
@@ -70,9 +69,6 @@ export default class extends Controller {
                 }
             });
         } else {
-            console.log(selectedCategoryId)
-            console.log(e.target.checked)
-            console.log(this.categories)
             if (!e.target.checked && this.categories.includes(selectedCategoryId)) {
                 const index = this.categories.indexOf(selectedCategoryId);
                 this.categories.splice(index, 1);
@@ -83,7 +79,6 @@ export default class extends Controller {
                 e.target.setAttribute('checked', 'true');
                 e.target.checked = true;
             }
-            console.log(this.categories)
         }
 
         const categoriesHiddenInput = document.getElementById(dir);

@@ -51,7 +51,6 @@ class AccountCategoriesController < ApplicationController
 
   def close_dropdown
     @account_id = params[:account_id]
-    puts "Account ID: #{@account_id}"
     respond_to do |format|
       format.turbo_stream
     end

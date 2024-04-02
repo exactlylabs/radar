@@ -1,3 +1,9 @@
 <%= turbo_frame_tag "delete_category_modal" do %>
-  <%= render partial: "categories/delete_modal" %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+             locals: {
+               resource: @category,
+               modal_partial_path: "categories/delete_modal",
+               custom_submit_end_handler: "turbo:submit-end->custom-modal#closeModal"
+             }
+  %>
 <% end %>

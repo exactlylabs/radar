@@ -1,4 +1,5 @@
 <%= turbo_stream.replace "location-categories-dropdown" do %>
   <%= turbo_frame_tag "location-categories-dropdown" do %>
+    <%= link_to "Import from another account…", categories_import_from_another_account_url, data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
   <% end %>
 <% end %>

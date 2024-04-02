@@ -2,6 +2,7 @@
   <%= form_with(model: Category.new, url: categories_path(account_id: account_id), method: :post) do |form| %>
     <div class="category--list-item-edit">
       <div class="category--list-item-text-container-edit">
+        <%= form.hidden_field :account_id, value: account_id %>
         <%= form.text_field :name, class: "category--list-item-input", placeholder: "New Category", autofocus: true, data: { action: "input->categories#checkCategoryName", "category-id": "-1" } %>
         <%= form.hidden_field :color_hex, value: "#4b7be5", "data-categories-target" => "hiddenHexInput" %>
         <%= render partial: "categories/color_picker", locals: { category: Category.new } %>

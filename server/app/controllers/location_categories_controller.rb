@@ -2,14 +2,14 @@ class LocationCategoriesController < ApplicationController
   before_action :authenticate_user!
 
   def search
-    @location = policy_scope(Location).find(params[:location_id]) if params[:location_id]
-    @query = params[:query]
-    @add_category = false
-    if @query.present?
-      @add_category = policy_scope(Category).find_by(name: @query).nil?
-      @categories = policy_scope(Category).where("name ILIKE ?", "%#{@query}%")
-    else
-      @categories = policy_scope(Category)
+    notice = nil
+    notice = "Please select an account before searching for categories." if params[:account_id].nil?
+    if notice.nil?
+      @account_id = params[:account_id] || current_account.id
+      @query = params[:query]
+      @categories = Category.where(account_id: @account_id)
+      @add_category = @categories.where(name: @query).empty? if @query.present?
+      @categories = @categories.where("name LIKE ?", "%#{@query}%")
     end
     respond_to do |format|
       format.turbo_stream
@@ -27,20 +27,15 @@ class LocationCategoriesController < ApplicationController
   end
 
   def open_dropdown
-    @categories = policy_scope(Category)
-    notice = nil
+    @notice = nil
     begin
-      @location = policy_scope(Location).find(params[:location_id]) if params[:location_id].present?
+      @account_id = params[:account_id]
+      @categories = Category.where(account_id: @account_id)
     rescue ActiveRecord::RecordNotFound => e
-      notice = "There is no location with given ID."
+      @notice = "There is no account with given ID."
     end
     respond_to do |format|
-      if notice.nil?
-        format.turbo_stream
-        format.html { redirect_to "/locations" }
-      else
-        format.html { redirect_to "/locations", notice: notice }
-      end
+      format.turbo_stream
     end
   end
 
@@ -48,6 +43,44 @@ class LocationCategoriesController < ApplicationController
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to "/locations" }
+    end
+  end
+
+  def import_from_another_account
+    @network_id = params[:network_id]
+    @accounts = policy_scope(Account)
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
+  def import
+    categories_ids = params[:account_categories]
+    import_to_account = params[:import_to] || current_account.id
+    error = nil
+    begin
+      Category.transaction do
+        # Parse string to array of integers
+        categories_ids = categories_ids.split(',').map(&:to_i)
+        categories_ids.each do |category_id|
+          next if category_id.nil? || category_id == -1
+
+          category = Category.find(category_id)
+          new_category = category.dup
+          new_category.account_id = import_to_account
+          new_category.save!
+        end
+      end
+    rescue Exception => e
+      @notice = "Oops! Something went wrong. Please try again later."
+    end
+    respond_to do |format|
+      if error.nil?
+        network_id = params[:network_id]
+        @location = network_id.present? ? Location.find(network_id) : Location.new
+        @notice = "All categories were successfully imported."
+      end
+      format.turbo_stream
     end
   end
 end

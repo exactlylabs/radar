@@ -5,12 +5,12 @@
   </div>
   <%= turbo_frame_tag "new-category-#{account.id}" do %>
   <% end %>
-  <% if categories&.count > 0 %>
-    <% categories.map do |category| %>
-      <%= render partial: "categories/list_item", locals: { category: category } %>
-    <% end %>
-  <% else %>
-    <%= turbo_frame_tag "account-#{account.id}-empty-categories" do %>
+  <%= turbo_frame_tag "account-#{account.id}-categories" do %>
+    <% if categories&.count > 0 %>
+      <% categories.map do |category| %>
+        <%= render partial: "categories/list_item", locals: { category: category } %>
+      <% end %>
+    <% else %>
       <div class="categories--empty-container">
         <div class="categories--empty-description">No categories</div>
       </div>

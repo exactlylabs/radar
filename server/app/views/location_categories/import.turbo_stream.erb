@@ -1,0 +1,27 @@
+<% turbo_frame_tag = @location.present? ? "edit_location_modal" : "new_location_modal" %>
+
+<%= turbo_stream.update turbo_frame_tag do %>
+  <% if @location.present? %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: 'Edit network',
+                 modal_partial_path: "networks/modals/edit/edit_modal",
+                 resource: @location,
+                 custom_submit_end_handler: nil,
+               }
+    %>
+  <% else %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: 'Create a network',
+                 modal_partial_path: "networks/modals/create/create_modal",
+                 resource: @location,
+                 custom_submit_end_handler: nil,
+               }
+    %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: { notice: @notice } %>
+<% end %>
