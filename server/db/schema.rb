@@ -354,8 +354,8 @@ ActiveRecord::Schema.define(version: 2024_03_18_181827) do
 
   create_table "invites", force: :cascade do |t|
     t.boolean "is_active", default: false
-    t.string "first_name"
-    t.string "last_name"
+    t.string "first_name", null: false
+    t.string "last_name", null: false
     t.string "email", null: false
     t.datetime "sent_at", null: false
     t.bigint "account_id", null: false
@@ -363,7 +363,6 @@ ActiveRecord::Schema.define(version: 2024_03_18_181827) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "token_digest"
-    t.integer "role", default: 0
     t.index ["account_id"], name: "index_invites_on_account_id"
     t.index ["user_id"], name: "index_invites_on_user_id"
   end
@@ -723,7 +722,6 @@ ActiveRecord::Schema.define(version: 2024_03_18_181827) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
-    t.integer "role", default: 0
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
