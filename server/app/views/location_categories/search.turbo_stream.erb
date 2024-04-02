@@ -10,6 +10,6 @@
     <% end %>
   <% end %>
   <% if @add_category %>
-    <%= render partial: "location_categories/inline_add_item", locals: { query: @query } %>
+    <%= render partial: "location_categories/inline_add_item", locals: { query: @query, account_id: @account_id } %>
   <% end %>
 <% end %>

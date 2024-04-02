@@ -4,6 +4,15 @@
 <% onboarding = local_assigns[:is_onboarding].present? ? local_assigns[:is_onboarding] : false %>
 <% name_is_empty = @location&.errors&.full_messages&.include?("Name can't be blank") || false %>
 <% address_is_empty = @location&.errors&.full_messages&.include?("Address can't be blank") || false %>
+<% initial_account_id = if @location&.account.nil?
+                          if current_account.is_all_accounts?
+                            policy_scope(Account).first.id
+                          else
+                            current_account.id
+                          end
+                        else
+                          @location.account.id
+                        end %>
 
 <div class="modals--content-container <%= contained ? 'contained' : '' %>"
      data-type="full"
@@ -13,36 +22,10 @@
   <% if FeatureFlagHelper.is_available('networks', current_user) && onboarding %>
     <input hidden="hidden" name="onboarding" value="true"/>
   <% end %>
-  <div class="modals--form-row mb-6">
-    <label class="forms--label">Name</label>
-    <%= form.text_field :name, name: "location[name]", class: "w-100 forms--text-input forms--text-input-focusable", placeholder: 'Enter your network name', data: { "location-form-target" => "name", error: name_is_empty } %>
-    <% if name_is_empty %>
-      <p class="text--error">Name is required.</p>
-    <% end %>
-  </div>
 
-  <div class="modals--form-row mb-6 forms--input-group">
-    <% if !current_account&.is_all_accounts? %>
-      <label class="forms--label optional">Categories</label>
-      <input name="categories" autocomplete="off" type="hidden" value="<%= @location.categories&.map { |c| c.id }.join(",") || [] %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
-      <div class="category--location-select-container"
-           data-categories-target="selectClickableContainer"
-           data-categories-holder-id-param="<%= @location.id.nil? ? nil : "location_id=#{@location.id}" %>"
-           data-categories-dir-param="/location_categories"
-           data-action="click->categories#toggleFocus"
-      >
-        <%= turbo_frame_tag "selected-categories" do %>
-          <%= render partial: "categories/components/table_cell", locals: { categories: @location.categories, shows_tooltip: false, row: -1 } %>
-        <% end %>
-        <span class="svg-icon svg-icon-5 m-0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
-          </svg>
-        </span>
-      </div>
-      <%= turbo_frame_tag "location-categories-dropdown" do %>
-      <% end %>
-    <% else %>
+  <%= form.hidden_field "location[account_id]", value: initial_account_id, data: { categories_target: "firstAccountId" } %>
+  <% if current_account.is_all_accounts? %>
+    <div class="modals--form-row mb-6 forms--input-group">
       <label class="forms--label">Account</label>
       <select class="form-select forms--select"
               data-controller="select2"
@@ -51,12 +34,42 @@
               name="location[account_id]"
               data-select2-id="select2-data-account_id"
               tabindex="-1"
-              data-action="select2-select->pod-account-and-network#handleAccountChangeOnNewNetwork"
+              data-action="select2-select->categories#showCategoriesForSelectedAccount"
       >
         <% policy_scope(Account).each_with_index do |account, index| %>
           <%= render partial: "clients/client_select_option", locals: { option: account, selected: type == "edit" ? account.id == @location&.account.id : index == 0 } %>
         <% end %>
       </select>
+    </div>
+  <% end %>
+
+  <div class="modals--form-row mb-6">
+    <label class="forms--label">Network name</label>
+    <%= form.text_field :name, name: "location[name]", class: "w-100 forms--text-input forms--text-input-focusable", placeholder: 'Enter your network name', data: { "location-form-target" => "name", error: name_is_empty } %>
+    <% if name_is_empty %>
+      <p class="text--error">Name is required.</p>
+    <% end %>
+  </div>
+
+  <div class="modals--form-row mb-6 forms--input-group">
+    <label class="forms--label optional">Categories</label>
+    <input name="categories" autocomplete="off" type="hidden" value="<%= @location.categories&.map { |c| c.id }.join(",") || [] %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
+    <div class="category--location-select-container"
+         data-categories-target="selectClickableContainer"
+         data-categories-dir-param="/location_categories"
+         data-action="click->categories#toggleFocus"
+    >
+      <%= turbo_frame_tag "selected-categories" do %>
+        <%= render partial: "categories/components/table_cell", locals: { categories: @location.categories, shows_tooltip: false, row: -1 } %>
+      <% end %>
+      <span class="svg-icon svg-icon-5 m-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="black"></path>
+          </svg>
+        </span>
+    </div>
+    <%= turbo_frame_tag "location-categories-dropdown" do %>
+      <%= link_to "Import from another account…", categories_import_from_another_account_url(network_id: @location.id), data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
     <% end %>
   </div>
 

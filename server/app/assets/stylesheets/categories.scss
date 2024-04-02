@@ -215,6 +215,7 @@
   width: 132px;
   height: 72px;
   padding: 4px;
+  //transform: translate(-100px, 300px) !important;
 }
 
 .category--options-menu-item {
@@ -667,7 +668,6 @@
   color: #4b7be5;
   line-height: 21px;
   font-variation-settings: 'wght' $bold;
-  padding-left: 12px;
 }
 
 .categories--list-container {

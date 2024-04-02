@@ -1,0 +1,20 @@
+<% back_url = @network_id.nil? ? new_location_url : edit_location_url(id: @network_id) %>
+<% turbo_frame = @network_id.nil? ? "new_location_modal" : "edit_location_modal" %>
+<div class="modal-header modals--header">
+  <%= link_to back_url, { class: "tables--row-option table-menu-option", "data-turbo-frame" => turbo_frame, "data-action" => "click->custom-modal#closeModal", id: "manage-categories-button-ref" } do %>
+    <%= image_tag image_url('arrow-left-dark.png'), width: 24, height: 24, class: "hoverable" %>
+  <% end %>
+  <h5 class="modals--title">Manage categories</h5>
+  <div class="custom-close-button hoverable" data-action="click->custom-modal#closeModal">
+    <%= image_tag image_url('close-modal-icon.png'), width: 24, height: 24 %>
+  </div>
+</div>
+<%= form_with(url: categories_import_url, method: :post) do |form| %>
+  <%= form.hidden_field :network_id, value: @network_id %>
+  <%= render partial: "categories/import_from_another_account_form",
+             locals: {
+               accounts: @accounts,
+               form: form,
+             }
+  %>
+<% end %>

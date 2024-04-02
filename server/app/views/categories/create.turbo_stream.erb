@@ -1,27 +1,28 @@
-<% unless current_account.is_all_accounts? %>
-  <% if policy_scope(Category).count == 1 %>
-    <%= turbo_stream.update "categories" do %>
+<%= turbo_stream.update "new-category-#{@account_id}" %>
+<% if current_account.is_all_accounts? %>
+  <% if @categories.where(account_id: @account_id).count == 1 %>
+    <%= turbo_stream.update "account-#{@account_id}-categories" do %>
       <%= render partial: "categories/list_item", locals: { category: @category } %>
     <% end %>
   <% else %>
-    <%= turbo_stream.append "categories" do %>
+    <%= turbo_stream.append "account-#{@account_id}-categories" do %>
       <%= render partial: "categories/list_item", locals: { category: @category } %>
     <% end %>
-    <%= turbo_stream.remove "account-#{@account_id}-empty-categories" do %>
+  <% end %>
+<% else %>
+  <% if @categories.count == 1 %>
+    <%= turbo_stream.update "account-#{@account_id}-categories" do %>
+      <%= render partial: "categories/list_item", locals: { category: @category } %>
     <% end %>
-  <% end %>
-<% end %>
-
-<%= turbo_stream.update "new-category-#{@account_id}" do %>
-  <%= turbo_frame_tag "new-category-#{@account_id}" do %>
-  <% end %>
-  <% if current_account.is_all_accounts? %>
-    <%= render partial: "categories/list_item", locals: { category: @category } %>
+  <% else %>
+    <%= turbo_stream.append "account-#{@account_id}-categories" do %>
+      <%= render partial: "categories/list_item", locals: { category: @category } %>
+    <% end %>
   <% end %>
 <% end %>
 
 <%= turbo_stream.replace "location-categories" do %>
-  <% policy_scope(Category).each do |category| %>
+  <% @categories.each do |category| %>
     <%= render partial: "categories/components/category_list_item",
                locals: {
                  category: category,

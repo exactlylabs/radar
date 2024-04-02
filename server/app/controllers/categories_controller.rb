@@ -25,7 +25,6 @@ class CategoriesController < ApplicationController
 
   def new
     @account_id = params[:account_id] || current_account.id
-    puts "Account ID: #{@account_id}"
     respond_to do |format|
       format.turbo_stream
     end
@@ -33,13 +32,8 @@ class CategoriesController < ApplicationController
 
   def create
     error = nil
-    @account_id = params[:account_id] || current_account.id
-    category_account = if params[:account_id].present?
-                         Account.find(params[:account_id])
-                       else
-                         current_account
-                       end
-
+    @account_id = params[:category][:account_id] || current_account.id
+    category_account = Account.find(@account_id)
     begin
       Category.transaction do
         @category = Category.new category_params
@@ -52,7 +46,7 @@ class CategoriesController < ApplicationController
     end
     respond_to do |format|
       if error.nil?
-        @categories = policy_scope(Category)
+        @categories = policy_scope(Category).where(account_id: @account_id)
         format.turbo_stream
       else
         format.html { render "/locations", notice: "Error creating new Category. Please try again later." }
@@ -98,8 +92,13 @@ class CategoriesController < ApplicationController
     respond_to do |format|
       if @category.destroy
         @categories = policy_scope(Category)
-        @categories = categories_by_account
-        @account_id = params[:account_id] || current_account.id
+        @categories = if current_account.is_all_accounts?
+                        categories_by_account
+                      else
+                        @categories.where(account_id: current_account.id)
+                      end
+        @account_id = @category.account.id
+        @locations = policy_scope(Location).joins(:categories_locations).where(categories_locations: { category_id: @category.id })
         @notice = "Category deleted successfully."
         format.turbo_stream
       else
@@ -124,7 +123,7 @@ class CategoriesController < ApplicationController
         # Parse string to array of integers
         categories_ids = categories_ids.split(',').map(&:to_i)
         categories_ids.each do |category_id|
-          next unless category_id.present?
+          next if category_id.nil? || category_id == -1
           category = Category.find(category_id)
           new_category = category.dup
           new_category.account_id = import_to_account
@@ -153,7 +152,7 @@ class CategoriesController < ApplicationController
   end
 
   def category_params
-    params.require(:category).permit(:name, :color_hex)
+    params.require(:category).permit(:name, :color_hex, :account_id)
   end
 
   def categories_by_account
