@@ -33,7 +33,8 @@ export const SpeedTestContextProvider = ({children}) => {
     latency: null,
     downloadValue: null,
     uploadValue: null,
-    rawData: []
+    rawData: [],
+    autonomous_system: null,
   });
 
   const timestampRef = useRef(speedTestData.startTimestamp);
@@ -55,6 +56,8 @@ export const SpeedTestContextProvider = ({children}) => {
   const setLoading = loading => setSpeedTestData(prevState => ({...prevState, loading: loading}));
   const setError = error => setSpeedTestData(prevState => ({...prevState, error: error}));
   const setStartTimestamp = timestamp => setSpeedTestData(prevState => ({...prevState, startTimestamp: timestamp}));
+  const setAutonomousSystem = asn => setSpeedTestData(prevState => ({...prevState, autonomous_system: asn}));
+
   const clearValues = () => {
     setCounter(0);
     setDownloadValue(null);
@@ -151,6 +154,7 @@ export const SpeedTestContextProvider = ({children}) => {
       setCurrentStep(STEPS.SPEED_TEST_RESULTS);
       setIsRunning(false);
       const speedTest = await sendRawData(speedTestData.rawData, timestampRef.current, userData, config.clientId);
+      setAutonomousSystem(speedTest.autonomous_system);
       const result = {
         id: speedTest.id,
         startTimestamp: timestampRef.current,
@@ -161,6 +165,7 @@ export const SpeedTestContextProvider = ({children}) => {
         networkType: userData.networkType?.text ?? null,
         networkLocation: userData.networkLocation?.text ?? null,
         location: userData.address.coordinates,
+        autonomous_system: speedTest.autonomous_system,
         ...userData.address,
       };
       storeRunData(result);

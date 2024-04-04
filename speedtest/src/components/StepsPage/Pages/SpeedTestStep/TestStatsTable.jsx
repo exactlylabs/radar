@@ -27,7 +27,6 @@ const extendedStyle = {
   width: '100%',
   minWidth: 550,
   maxWidth: 600,
-  height: 180,
   borderRadius: 16,
   backgroundColor: WHITE,
   margin: '25px auto',
