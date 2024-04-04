@@ -2,7 +2,6 @@ class ProcessSpeedTestJob < ApplicationJob
   queue_as :default
 
   def perform(measurement, is_mobile = false)
-    FindAsnByIp.perform_now measurement
     return unless measurement.result.attached?
 
     json = JSON.parse(measurement.result.download)

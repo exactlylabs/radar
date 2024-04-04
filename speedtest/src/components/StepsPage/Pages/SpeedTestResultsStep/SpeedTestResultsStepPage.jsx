@@ -101,12 +101,7 @@ const SpeedTestResultsStepPage = ({
             </AnimatedBanner>
           }
           <MyTitle text={'Your test results'}/>
-          <TestStatsTableContent extended
-                                 latencyValue={testResults.latency.toFixed(0)}
-                                 downloadValue={testResults.downloadValue.toFixed(2)}
-                                 uploadValue={testResults.uploadValue.toFixed(2)}
-                                 lossValue={testResults.loss.toFixed(2)}
-          />
+          <TestStatsTableContent extended/>
           <div style={isMediumSizeScreen ? mobileButtonFooterStyle : buttonFooterStyle}>
             <MyBackButton text={'Test again'} onClick={goToTestAgain}/>
             <MyForwardButton text={'Explore the map'} onClick={goToAreaMap}/>

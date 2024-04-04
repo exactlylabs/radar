@@ -9,6 +9,7 @@ import {useViewportSizes} from "../../hooks/useViewportSizes";
 import {useContext} from "react";
 import ConfigContext from "../../context/ConfigContext";
 import SpeedTestContext from "../../context/SpeedTestContext";
+import ProviderIcon from "../../assets/provider-icon.png";
 
 const tableContentStyle = {
   display: 'flex',
@@ -27,7 +28,10 @@ const widgetContentStyle = {
   width: '95%'
 }
 
-const widgetExtendedContentStyle = widgetContentStyle;
+const widgetExtendedContentStyle = {
+  ...widgetContentStyle,
+  flexDirection: 'column'
+};
 
 const mobileTableContentStyle = {
   width: '100%',
@@ -110,7 +114,8 @@ const extendedRowStyle = {
   paddingRight: 0,
   paddingLeft: 0,
   margin: 0,
-  borderRadius: '0 0 16px 16px'
+  borderRadius: '0 0 16px 16px',
+  flexDirection: 'column'
 }
 
 const mobileExtendedRowStyle = {
@@ -133,11 +138,30 @@ const mobileValuesStyle = {
   margin: '0 auto',
 }
 
+const asnStyle = {
+  width: '100%',
+  padding: '16px',
+  borderTop: 'solid 1px rgba(160, 159, 183, 0.2)',
+  display: 'flex',
+  flexDirection: 'row',
+  gap: '8px',
+  alignItems: 'center',
+  justifyContent: 'center',
+  boxSizing: 'border-box',
+}
+
+const asnNameStyle = {
+  fontSize: '0.875rem',
+  fontFamily: 'Mulish',
+  fontWeight: 500,
+  margin: 0
+}
+
 const TestStatsTableContent = ({extended}) => {
 
   const config = useContext(ConfigContext);
   const {speedTestData} = useContext(SpeedTestContext);
-  const {downloadValue, uploadValue, loss, latency} = speedTestData;
+  const {downloadValue, uploadValue, loss, latency, autonomous_system} = speedTestData;
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getStyle = () => {
@@ -250,6 +274,13 @@ const TestStatsTableContent = ({extended}) => {
   return (
     <div style={getStyle()}>
       {getContent()}
+      {
+        (autonomous_system && autonomous_system.autonomous_system_org) &&
+        <div style={asnStyle}>
+          <img src={ProviderIcon} height={14} width={14} alt={'provider-icon'}/>
+          <p style={asnNameStyle}>{autonomous_system.autonomous_system_org.name}</p>
+        </div>
+      }
     </div>
   )
 }
