@@ -2,7 +2,7 @@
 <% super_user_bulk_options = ['Run speed test', 'Move to network...', 'Remove from network', 'Change release group(s)', 'Print labels', 'Delete']%>
 
 <div class="tables--filters-container">
-  <%= render partial: "application/components/tables/multi_row_actions", 
+  <%= render partial: "application/components/tables/multi_row_actions",
       locals: {
         menu_id: 'network-pods-multi-row-actions-menu',
         options: current_user.super_user && !is_super_user_disabled? ? super_user_bulk_options : base_bulk_options,

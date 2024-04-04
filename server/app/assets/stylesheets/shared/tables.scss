@@ -212,6 +212,7 @@
 @media (max-width: $md-max-width) {
   .tables--name-email-container {
     width: 100%;
+
     .tables--full-name,
     .tables--email {
       max-width: calc(95% - 4rem);
@@ -251,6 +252,7 @@
 
   &[data-even="false"] {
     background-color: $table--odd-row-background-color;
+
     span {
       color: $table--odd-row-color;
     }
@@ -321,6 +323,15 @@
   justify-content: flex-start;
   gap: .75rem;
   margin-bottom: 1.5rem;
+}
+
+.tables--filters-search-container {
+  background-color: white;
+  box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
+  border-radius: $border-radius;
+  border: solid 1px $sidebar--main-container-border;
+  position: relative;
+  z-index: 10;
 }
 
 .tables--filters-button-container {

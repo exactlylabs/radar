@@ -4,8 +4,8 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title">Pods
-      <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <h1 class="page-main-title">Manage Pods
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
@@ -19,13 +19,15 @@
     <!--end::Info-->
     <div class="pods--index-button-options-container">
       <% if FeatureFlagHelper.is_available('networks', current_user) %>
-        <a href="<%= get_add_pod_modal_path %>"
-          class="custom-button custom-button--primary custom-button--lg"
-          data-turbo-frame="add_pod_modal"
-        >
-          <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: 'me-2' %>
-          Add Pod
-        </a>
+        <% if @clients.count.positive? %>
+          <a href="<%= get_add_pod_modal_path %>"
+             class="custom-button custom-button--primary custom-button--lg"
+             data-turbo-frame="add_pod_modal"
+          >
+            <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: 'me-2' %>
+            Add Pod
+          </a>
+        <% end %>
         <%= render partial: "application/components/buttons/custom_more_options_button",
                    locals: {
                      type: TablesHelper::OptionsMenuType::PODS_INDEX,
@@ -35,12 +37,16 @@
         %>
       <% else %>
         <% if current_user.super_user && !is_super_user_disabled? %>
-          <a href="<%= update_groups_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Manage Release Group</a>
+          <a href="<%= update_groups_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Manage
+            Release Group</a>
         <% end %>
         <% if current_account.superaccount %>
-          <a href="<%= unclaimed_clients_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Unclaimed Pods</a>
+          <a href="<%= unclaimed_clients_path %>" class="custom-button custom-button--secondary-light custom-button--lg me-5">Unclaimed
+            Pods</a>
         <% end %>
-        <button type="button" class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled' : '' %>" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard">Add Pod</button>
+        <button type="button" class="custom-button custom-button--primary custom-button--lg <%= current_account.nil? ? 'disabled' : '' %>" data-bs-toggle="modal" data-bs-target="#add_pod_modal_wizard">Add
+          Pod
+        </button>
       <% end %>
     </div>
   </div>
@@ -52,7 +58,7 @@
     <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
     <div class="networks--unassigned-pods-banner-text-container">
       <% pod_count = policy_scope(Client).where(location: nil).count %>
-      <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>
+      <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : '' %> not assigned to any network.</span>
       <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
     </div>
   </div>
@@ -79,8 +85,8 @@
 </div>
 
 <% if FeatureFlagHelper.is_available('networks', current_user) %>
-  <%= render partial: "application/components/modals/turbo_modal", 
-    locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "pod-id-step" }
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "pod-id-step" }
   %>
   <div class="modal fade clients--pod-id-modal" tabindex="-1" id="pod_id_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
     <%= render partial: "public_pod/pod_id_modal" %>
@@ -112,7 +118,7 @@
 </div>
 
 <div class="modal fade" tabindex="-1" id="new_location_modal" data-controller="add-pod categories" data-action="turbo:submit-start->add-pod#handleSubmitStart turbo:submit-end->add-pod#handleNewLocationFromClientModal">
-  <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "create-pod-modal", modal_target: "add_pod_modal_wizard")  do %>
+  <%= turbo_frame_tag "new_location_modal", src: new_location_path(data_target: "create-pod-modal", modal_target: "add_pod_modal_wizard") do %>
   <% end %>
 </div>
 
