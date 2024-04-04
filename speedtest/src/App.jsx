@@ -4,6 +4,7 @@ import {ViewportContextProvider} from "./context/ViewportContext";
 import {ConnectionContextProvider} from "./context/ConnectionContext";
 import MainPage from "./components/MainPage/MainPage";
 import {UserDataContextProvider} from "./context/UserData";
+import {SpeedTestContextProvider} from "./context/SpeedTestContext";
 
 // Application entry point, would hold all logic for state management
 // of multistep process
@@ -17,7 +18,9 @@ const App = ({ config }) => {
         <ThemeProvider theme={theme}>
           <ConnectionContextProvider>
             <UserDataContextProvider>
-              <MainPage config={config}/>
+              <SpeedTestContextProvider>
+                <MainPage config={config}/>
+              </SpeedTestContextProvider>
             </UserDataContextProvider>
           </ConnectionContextProvider>
         </ThemeProvider>

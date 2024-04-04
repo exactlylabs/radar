@@ -8,12 +8,12 @@ import ConfigContext from "../../context/ConfigContext";
 const historicalValuesTableStyle = {
   width: '75%',
   maxWidth: '960px',
-  margin: '35px auto'
+  margin: '32px auto'
 }
 
 const mobileHistoricalValuesTableStyle = {
   width: '95%',
-  margin: '30px auto 25px'
+  margin: '24px auto 25px'
 }
 
 const widgetHistoricalValuesTableStyle = {
@@ -41,7 +41,7 @@ const MyHistoricalValuesTable = ({ values, openMeasurementInfoModal }) => {
     <div style={getMainContainerStyle()}>
       <MyHistoricalValuesTableHeader />
       {
-        paginatedValues().map((measurement, index) => <MyHistoricalValuesTableRow key={measurement.timestamp}
+        paginatedValues().map((measurement, index) => <MyHistoricalValuesTableRow key={measurement.timestamp + index}
                                                                                   measurement={measurement}
                                                                                   isEven={index % 2 === 0}
                                                                                   openMeasurementInfoModal={openMeasurementInfoModal}

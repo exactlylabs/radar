@@ -14,6 +14,7 @@ import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import MyConnectionInformationTooltip from "./MyConnectionInformationTooltip";
 import UserDataContext from "../../../../context/UserData";
 import ConfigContext from "../../../../context/ConfigContext";
+import SpeedTestContext from "../../../../context/SpeedTestContext";
 
 const connectionInformationStyle = {
   width: '100%',
@@ -129,13 +130,13 @@ const addressStyle = {
 }
 
 const ConnectionInformation = ({
-  disabled,
-  progress = 0,
   integratedToStatsTable
 }) => {
 
   const config = useContext(ConfigContext);
   const {isExtraSmallSizeScreen, isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
+  const {speedTestData} = useContext(SpeedTestContext);
+  const {progress, disabled} = speedTestData;
   const {userData} = useContext(UserDataContext);
   const [shouldTextAppear, setShouldTextAppear] = useState(window.innerWidth > CONNECTION_INFORMATION_MIN_WIDTH && !isExtraSmallSizeScreen);
 
@@ -153,7 +154,7 @@ const ConnectionInformation = ({
     else if(!(isMediumSizeScreen || isSmallSizeScreen) && integratedToStatsTable) style = integratedStyle;
     else style = connectionInformationStyle;
     if(!integratedToStatsTable) style = {...style, boxShadow: DEFAULT_CONNECTION_INFORMATION_BOX_SHADOW}
-    return disabled ? {...style, opacity: 0.3} : style;
+    return !integratedToStatsTable && disabled ? {...style, opacity: 0.3} : style;
   }
 
   const getText = possibleData => {

@@ -18,6 +18,7 @@ import InitialStepPage from "./Pages/InitialStep/InitialStepPage";
 import ConfigContext from "../../context/ConfigContext";
 import UserDataContext from "../../context/UserData";
 import ExpectedSpeedsStepPage from "./Pages/ExpectedSpeedsStepPage/ExpectedSpeedsStepPage";
+import SpeedTestContext from "../../context/SpeedTestContext";
 
 const stepsPageStyle = {
   width: '100%',
@@ -38,7 +39,6 @@ const StepsPage = ({
 }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(STEPS.INITIAL);
   const [error, setError] = useState(null);
   const [warning, setWarning] = useState(null);
   const [lastTestResults, setLastTestResults] = useState(null);
@@ -49,35 +49,15 @@ const StepsPage = ({
 
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
   const config = useContext(ConfigContext);
-  const {userData, setUserData, setAddress, setTerms, setNetworkType, setNetworkLocation, setNetworkCost} = useContext(UserDataContext);
-
+  const {userData, setUserData, setAddress, setTerms, setNetworkType, setNetworkLocation, setCurrentStep} = useContext(UserDataContext);
+  const {runNdt7Test} = useContext(SpeedTestContext);
+  
   useEffect(() => {
-    if(specificStep) {
-      setCurrentStep(specificStep);
-      if (specificStep === STEPS.SPEED_TEST_RESULTS) {
-        const lastTestTaken = getLastStoredValue();
-        const networkLocation = placementOptions.find(placement => placement.text === lastTestTaken.networkLocation);
-        const networkType = types.find(type => type.text === lastTestTaken.networkType);
-        setUserData({
-          ...userData,
-          address: {
-            coordinates: [lastTestTaken.lat, lastTestTaken.long],
-            ...lastTestTaken,
-          },
-          terms: true,
-          networkLocation: networkLocation,
-          networkType: networkType,
-        });
-        setLastTestResults({
-          id: lastTestTaken.id,
-          downloadValue: lastTestTaken.download,
-          uploadValue: lastTestTaken.upload,
-          loss: lastTestTaken.loss,
-          latency: lastTestTaken.latency,
-        });
-      }
+    setCurrentStep(specificStep);
+    if(specificStep === STEPS.SPEED_TEST_RESULTS) {
+      setLastTestTaken();
     }
-  }, []);
+  }, [specificStep]);
 
   useEffect(() => {
     if(geolocationError) setError(errors.LOCATION_ACCESS_ERROR);
@@ -86,6 +66,29 @@ const StepsPage = ({
   useEffect(() => {
     setCanProceedToStep2(selectedSuggestion);
   }, [selectedSuggestion]);
+
+  const setLastTestTaken = () => {
+    const lastTestTaken = getLastStoredValue();
+    const networkLocation = placementOptions.find(placement => placement.text === lastTestTaken.networkLocation);
+    const networkType = types.find(type => type.text === lastTestTaken.networkType);
+    setUserData({
+      ...userData,
+      address: {
+        coordinates: [lastTestTaken.lat, lastTestTaken.long],
+        ...lastTestTaken,
+      },
+      terms: true,
+      networkLocation: networkLocation,
+      networkType: networkType,
+    });
+    setLastTestResults({
+      id: lastTestTaken.id,
+      downloadValue: lastTestTaken.download,
+      uploadValue: lastTestTaken.upload,
+      loss: lastTestTaken.loss,
+      latency: lastTestTaken.latency,
+    });
+  }
 
   const checkAndOpenModal = (addressSync = null) => {
     setError(null);
@@ -137,9 +140,14 @@ const StepsPage = ({
 
   const goToPage7 = () => setCurrentStep(STEPS.RUN_SPEED_TEST);
 
-  const goToPage8 = (testResults) => {
-    setLastTestResults(testResults);
+  const goToPage8 = () => {
+    setLastTestTaken();
     setCurrentStep(STEPS.SPEED_TEST_RESULTS);
+  }
+
+  const forceNewTest = () => {
+    runNdt7Test();
+    goToPage7();
   }
 
   const goToMapPage = () => goToAreaMap(userData.address.coordinates);
@@ -191,7 +199,7 @@ const StepsPage = ({
   }
 
   const getCurrentPage = () => {
-    switch (currentStep) {
+    switch (userData.currentStep) {
       case STEPS.INITIAL:
         return <InitialStepPage goToNextPage={goToAddressPage}
                                 error={error}
@@ -235,7 +243,7 @@ const StepsPage = ({
         return <SpeedTestResultsStepPage testResults={lastTestResults}
                                          goToAreaMap={goToMapPage}
                                          goToHistory={goToHistory}
-                                         goToTestAgain={goToPage7}
+                                         goToTestAgain={forceNewTest}
         />;
       case STEPS.NO_INTERNET:
         return <NoInternetStepPage goToMapPage={goToMapPage} lastTest={lastTestResults}/>
@@ -254,8 +262,8 @@ const StepsPage = ({
   return (
     <div style={isMediumSizeScreen || isSmallSizeScreen ? mobileStepsPageStyle : stepsPageStyle}>
       {
-        currentStep < STEPS.RUN_SPEED_TEST && currentStep !== STEPS.INITIAL &&
-          <MyStepper activeStep={currentStep} isMobile={isMediumSizeScreen}/>
+        userData.currentStep < STEPS.RUN_SPEED_TEST && userData.currentStep !== STEPS.INITIAL &&
+          <MyStepper activeStep={userData.currentStep} isMobile={isMediumSizeScreen}/>
       }
       { getCurrentPage() }
     </div>

@@ -1,5 +1,6 @@
 import {createContext, useEffect, useState} from "react";
 import {ADDRESS_PROVIDER} from "../utils/userMetadata";
+import {STEPS} from "../components/StepsPage/utils/steps";
 
 /**
  * Custom context provider to expose shared config application-wide
@@ -37,6 +38,7 @@ export const emptyNetworkLocation = {
 export const UserDataContextProvider = ({children}) => {
 
   const [userData, setUserData] = useState({
+    currentStep: STEPS.INITIAL,
     address: emptyAddress,
     terms: false,
     networkLocation: emptyNetworkLocation,
@@ -60,9 +62,10 @@ export const UserDataContextProvider = ({children}) => {
   const setNetworkCost = cost => setUserData(prev => ({...prev, networkCost: cost }));
   const setExpectedSpeeds = speeds => setUserData(prev => ({ ...prev, expectedDownloadSpeed: speeds.download, expectedUploadSpeed: speeds.upload }));
   const setContactInformation = info => setUserData(prev => ({ ...prev, contactInformation: info }));
+  const setCurrentStep = step => setUserData(prev => ({...prev, currentStep: step}));
 
   return (
-    <UserDataContext.Provider value={{userData, setUserData, setAddress, setTerms, setNetworkLocation, setNetworkType, setNetworkCost, setExpectedSpeeds, setContactInformation}}>
+    <UserDataContext.Provider value={{userData, setUserData, setAddress, setTerms, setNetworkLocation, setNetworkType, setNetworkCost, setExpectedSpeeds, setContactInformation, setCurrentStep}}>
       {children}
     </UserDataContext.Provider>
   );
