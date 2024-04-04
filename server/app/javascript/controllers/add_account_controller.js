@@ -122,11 +122,22 @@ export default class extends Controller {
       e.target.value !== undefined &&
       e.target.value !== ""
     ) {
-      this.continueToShareButtonTarget.classList.remove("custom-button--disabled");
-      this.continueToShareButtonTarget.classList.remove("disabled");
+      if (this.hasContinueToShareButtonTarget) {
+        this.continueToShareButtonTarget.classList.remove("custom-button--disabled");
+        this.continueToShareButtonTarget.classList.remove("disabled");
+      } else {
+        this.createAccountButtonTarget.classList.remove("custom-button--disabled");
+        this.createAccountButtonTarget.classList.remove("disabled");
+      }
     } else {
-      this.continueToShareButtonTarget.classList.add("custom-button--disabled");
-      this.continueToShareButtonTarget.classList.add("disabled");
+      if (this.hasContinueToShareButtonTarget) {
+        this.continueToShareButtonTarget.classList.add("custom-button--disabled");
+        this.continueToShareButtonTarget.classList.add("disabled");
+      } else {
+        this.createAccountButtonTarget.classList.add("custom-button--disabled");
+        this.createAccountButtonTarget.classList.add("disabled");
+
+      }
     }
     this.newAccountData.account_name = e.target.value ?? null;
   }
