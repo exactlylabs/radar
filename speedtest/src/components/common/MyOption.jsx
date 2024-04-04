@@ -28,7 +28,7 @@ const mobileOptionStyle = {
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'space-between',
+  justifyContent: 'flex-start',
   gap: '10px',
   cursor: 'pointer',
   paddingLeft: 20,

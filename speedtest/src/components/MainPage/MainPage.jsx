@@ -8,6 +8,8 @@ import HistoryPage from "../HistoryPage/HistoryPage";
 import ConnectionContext from "../../context/ConnectionContext";
 import NoInternetModal from "../common/NoInternetModal";
 import OverviewPage from "../OverviewPage/OverviewPage";
+import UserData from "../../context/UserData";
+import UserDataContext from "../../context/UserData";
 
 const MainPage = ({config}) => {
 
@@ -31,6 +33,12 @@ const MainPage = ({config}) => {
   const [givenLocation, setGivenLocation] = useState(getGivenLocationIfPresent(config.userLat, config.userLng));
   const [specificSpeedTestStep, setSpecificSpeedTestStep] = useState(STEPS.INITIAL);
   const {noInternet, setNoInternet} = useContext(ConnectionContext);
+  const {userData} = useContext(UserDataContext);
+  const {currentStep} = userData;
+
+  useEffect(() => {
+    setSpecificSpeedTestStep(currentStep);
+  }, [currentStep]);
 
   const goToMapPage = location => {
     if(location) setGivenLocation(location);
@@ -48,7 +56,7 @@ const MainPage = ({config}) => {
   }
 
   const goToSpeedTest = () => {
-    setSpecificSpeedTestStep(STEPS.INITIAL);
+    setSpecificSpeedTestStep(currentStep);
     setStep(TABS.SPEED_TEST);
   }
 

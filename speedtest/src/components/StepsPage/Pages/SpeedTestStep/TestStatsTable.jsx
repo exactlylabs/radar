@@ -5,6 +5,7 @@ import {useViewportSizes} from "../../../../hooks/useViewportSizes";
 import {useContext} from "react";
 import UserDataContext from "../../../../context/UserData";
 import ConfigContext from "../../../../context/ConfigContext";
+import SpeedTestContext from "../../../../context/SpeedTestContext";
 
 const tableStyle = {
   width: '100%',
@@ -73,16 +74,11 @@ const widgetExtendedStyle = {
   width: 'calc(100% - 3rem)',
 }
 
-const TestStatsTable = ({
-  extended,
-  disabled,
-  downloadValue,
-  uploadValue,
-  lossValue,
-  latencyValue,
-}) => {
+const TestStatsTable = ({extended}) => {
 
   const config = useContext(ConfigContext);
+  const {speedTestData} = useContext(SpeedTestContext);
+  const {disabled} = speedTestData;
   const {isSmallSizeScreen, isMediumSizeScreen} = useViewportSizes();
 
   const getStyle = () => {
@@ -93,7 +89,7 @@ const TestStatsTable = ({
     else if((isMediumSizeScreen || isSmallSizeScreen) && extended) style = mobileExtendedStyle;
     else if(!(isMediumSizeScreen || isSmallSizeScreen) && extended) style = extendedStyle;
     else style = tableStyle;
-    return disabled ? {...style, opacity: 0.3} : style;
+    return !extended && disabled ? {...style, opacity: 0.3} : style;
   }
 
   return (
@@ -102,19 +98,9 @@ const TestStatsTable = ({
         extended ?
           <>
             <ConnectionInformation integratedToStatsTable={extended}/>
-            <TestStatsTableContent disabled={disabled}
-                                   downloadValue={downloadValue}
-                                   uploadValue={uploadValue}
-                                   latencyValue={latencyValue}
-                                   lossValue={lossValue}
-            />
+            <TestStatsTableContent extended={true}/>
           </> :
-          <TestStatsTableContent disabled={disabled}
-                                 downloadValue={downloadValue}
-                                 uploadValue={uploadValue}
-                                 latencyValue={latencyValue}
-                                 lossValue={lossValue}
-          />
+          <TestStatsTableContent extended={false}/>
       }
     </div>
   )

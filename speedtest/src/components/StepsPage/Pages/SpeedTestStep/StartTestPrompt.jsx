@@ -1,10 +1,11 @@
 import {MyTitle} from "../../../common/MyTitle";
 import {MyForwardButton} from "../../../common/MyForwardButton";
-import {DEFAULT_PAGE_COLOR} from "../../../../utils/colors";
+import {DEFAULT_PAGE_COLOR, DEFAULT_TEXT_COLOR} from "../../../../utils/colors";
 import {MyButton} from "../../../common/MyButton";
 import MyStepSwitcher from "../../Stepper/MyStepSwitcher";
 import {useContext} from "react";
 import ConfigContext from "../../../../context/ConfigContext";
+import SpeedTestContext from "../../../../context/SpeedTestContext";
 
 const promptStyle = {
   display: 'flex',
@@ -22,7 +23,7 @@ const textStyle = {
   width: '75%',
   maxWidth: '490px',
   marginBottom: 30,
-  color: DEFAULT_PAGE_COLOR,
+  color: DEFAULT_TEXT_COLOR,
   lineHeight: '25px'
 }
 
