@@ -290,7 +290,7 @@ const MyAddressInput = ({
         autofillInput={autofillInput}
         open={suggestionsListOpen}
         setOpen={setSuggestionsListOpen}
-        currentInputValue={userData.address.address}
+        currentInputValue={userData?.address?.address ?? null}
       />
     </div>
   )
