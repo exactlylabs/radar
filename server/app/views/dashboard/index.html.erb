@@ -182,7 +182,7 @@
 <!--end::Post-->
 
 <% if @show_ftue %>
-  <%= turbo_frame_tag "ftue_modal", class: "overflow-hidden", data: {controller: "onboard categories pod-id-step"} do %>
+  <%= turbo_frame_tag "ftue_modal", class: "overflow-hidden", data: { controller: "onboard categories pod-id-step" } do %>
     <%= render partial: "application/components/modals/empty_custom_modal",
                locals: {
                  modal_title: 'Welcome to Radar',
@@ -203,5 +203,12 @@
   %>
   <%= render partial: "application/components/modals/turbo_modal",
              locals: { turbo_frame_tag_id: "new_location_modal", optional_added_controllers: "categories" }
+  %>
+  <%= render partial: "application/components/modals/turbo_modal", 
+              locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
+  %>
+
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "add_new_pod_to_current_network", optional_added_controllers: "pod-id-step" }
   %>
 <% end %>
