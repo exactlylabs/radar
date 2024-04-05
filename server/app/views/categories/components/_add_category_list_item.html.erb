@@ -1,3 +1,4 @@
+<% can_create_category = local_assigns[:can_create_category] || false %>
 <% placeholder = can_create_category ? "Add a category..." : "Search..." %>
 <% fetch_url = @account_id.present? ? "#{search_categories_path}?account_id=#{@account_id}" : search_categories_path %>
 <div class="category--location-select-list-item">

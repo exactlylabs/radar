@@ -43,7 +43,7 @@
       <%= form.hidden_field :account_categories, value: "[]", data: { categories_target: "hiddenCategoriesInput" } %>
       <div class="category--location-select-container"
            data-categories-target="selectClickableContainer"
-           data-categories-dir-param="/account_categories"
+           data-categories-path-param="/account_categories"
            data-action="click->categories#toggleFocus"
       >
         <%= turbo_frame_tag "selected-categories" do %>

@@ -301,6 +301,7 @@
     height: 96px;
     flex-direction: column;
     justify-content: space-between;
+    gap: 8px;
 
   }
 }
@@ -360,7 +361,7 @@
   justify-content: center;
   align-items: center;
   border: none;
-  padding: 10px 15.5px;
+  padding: 10px 16px;
 
   &:hover {
     opacity: 0.75;
@@ -502,6 +503,7 @@
     width: 100%;
     justify-content: space-between;
     margin-top: 16px;
+    gap: 8px;
   }
 }
 
@@ -661,7 +663,7 @@
 
 .categories--import-button {
   width: 100%;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #4b7be5;
   line-height: 21px;
   font-variation-settings: 'wght' $bold;
@@ -704,7 +706,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 0 10px 16px;
+  padding: 10px 16px;
 
   margin-bottom: 12px;
 }
