@@ -11,7 +11,7 @@
   align-items: flex-start;
 }
 
-.clients--detail-card { 
+.clients--detail-card {
   width: 100%;
 }
 
@@ -34,15 +34,8 @@
   max-width: 15ch;
 }
 
-.client--details-container {
-  min-width: 500px !important;
-}
-
-@media (max-width: 1200px) {
+@media (min-width: 500px) {
   .client--details-container {
-    height: 100dvh;
-    position: fixed;
-    top: 0;
-    left: 0;
+    min-width: 500px;
   }
 }
