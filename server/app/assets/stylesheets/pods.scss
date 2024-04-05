@@ -454,3 +454,22 @@
   align-items: center;
   justify-content: center;
 }
+
+.pods--ask-add-pod-icon-container {
+  width: 60px;
+  min-width: 60px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $circular-icon-container-gray;
+  border-radius: 50%;
+}
+
+.pods--ask-add-pod-title {
+  font-size: 1.063rem;
+  color: $deep-blue;
+  margin-top: 1rem;
+  margin-bottom: .75rem;
+  font-variation-settings: 'wght'$bold;
+}
