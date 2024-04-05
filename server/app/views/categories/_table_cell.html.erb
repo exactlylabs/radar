@@ -35,7 +35,7 @@
           </div>
         <% end %>
       </div>
-      <p class="m-0 regular-text"><%= categories.count %> categories</p>
+      <p class="m-0 regular-text"><%= categories.count %> <%= 'categories'.pluralize(categories.locations.count) %>.</p>
     </div>
   </div>
 <% end %>

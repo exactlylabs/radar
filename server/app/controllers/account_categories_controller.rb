@@ -4,19 +4,14 @@ class AccountCategoriesController < ApplicationController
   before_action :authenticate_user!
 
   def search
-    notice = nil
-    if params[:account_id].nil?
-      notice = "Please select an account before searching for categories."
-    end
-    if notice.nil?
-      @account_id = params[:account_id] || current_account.id
-      @query = params[:query]
-      @categories = Category.where(account_id: @account_id)
-      @categories = @categories.where("name LIKE ?", "%#{@query}%")
-    end
+    notice = params[:account_id].nil? ? "Please select an account before searching for categories." : nil
 
     respond_to do |format|
       if notice.nil?
+        @account_id = params[:account_id] || current_account.id
+        @query = params[:query]
+        @categories = policy_scope(Category).where(account_id: @account_id)
+        @categories = @categories.where("name LIKE ?", "%#{@query}%")
         format.turbo_stream
       else
         format.html { redirect_to "/locations", notice: notice }
@@ -26,7 +21,7 @@ class AccountCategoriesController < ApplicationController
 
   def change_selected_categories
     ids = params[:categories].split(',')
-    @categories = Category.where(id: ids)
+    @categories = policy_scope(Category).where(id: ids)
     respond_to do |format|
       format.turbo_stream
     end
@@ -36,7 +31,7 @@ class AccountCategoriesController < ApplicationController
     @notice = nil
     begin
       @account_id = params[:account_id]
-      @categories = Category.where(account_id: @account_id)
+      @categories = policy_scope(Category).where(account_id: @account_id)
       all_categories = Category.new(id: -1, name: "All categories")
       @categories = @categories.order(:name)
       @categories = [all_categories] + @categories

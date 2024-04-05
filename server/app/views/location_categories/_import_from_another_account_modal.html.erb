@@ -1,7 +1,7 @@
 <% back_url = @network_id.nil? ? new_location_url : edit_location_url(id: @network_id) %>
 <% turbo_frame = @network_id.nil? ? "new_location_modal" : "edit_location_modal" %>
 <div class="modal-header modals--header">
-  <%= link_to back_url, { class: "tables--row-option table-menu-option", "data-turbo-frame" => turbo_frame, "data-action" => "click->custom-modal#closeModal", id: "manage-categories-button-ref" } do %>
+  <%= link_to back_url, { class: "tables--row-option table-menu-option", data_turbo_frame: turbo_frame, data_action: "click->custom-modal#closeModal", id: "manage-categories-button-ref" } do %>
     <%= image_tag image_url('arrow-left-dark.png'), width: 24, height: 24, class: "hoverable" %>
   <% end %>
   <h5 class="modals--title">Manage categories</h5>

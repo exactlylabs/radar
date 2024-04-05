@@ -354,8 +354,8 @@ ActiveRecord::Schema.define(version: 2024_03_18_181827) do
 
   create_table "invites", force: :cascade do |t|
     t.boolean "is_active", default: false
-    t.string "first_name", null: false
-    t.string "last_name", null: false
+    t.string "first_name"
+    t.string "last_name"
     t.string "email", null: false
     t.datetime "sent_at", null: false
     t.bigint "account_id", null: false
@@ -363,6 +363,7 @@ ActiveRecord::Schema.define(version: 2024_03_18_181827) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "token_digest"
+    t.integer "role", default: 0
     t.index ["account_id"], name: "index_invites_on_account_id"
     t.index ["user_id"], name: "index_invites_on_user_id"
   end
@@ -487,6 +488,7 @@ ActiveRecord::Schema.define(version: 2024_03_18_181827) do
     t.index ["autonomous_system_org_id"], name: "index_metrics_projections_on_autonomous_system_org_id"
     t.index ["parent_aggregate_id"], name: "index_metrics_projections_on_parent_aggregate_id"
     t.index ["study_aggregate_id", "autonomous_system_org_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_asn_bucket_timestamp_desc_idx", order: { timestamp: :desc }
+    t.index ["study_aggregate_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_bucket_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id", "timestamp"], name: "metrics_projections_agg_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id"], name: "index_metrics_projections_on_study_aggregate_id"
   end
@@ -722,6 +724,7 @@ ActiveRecord::Schema.define(version: 2024_03_18_181827) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
+    t.integer "role", default: 0
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end

@@ -121,9 +121,8 @@ class CategoriesController < ApplicationController
     begin
       Category.transaction do
         # Parse string to array of integers
-        categories_ids = categories_ids.split(',').map(&:to_i)
+        categories_ids = categories_ids.split(',').map(&:to_i).select(&:positive?)
         categories_ids.each do |category_id|
-          next if category_id.nil? || category_id == -1
           category = Category.find(category_id)
           new_category = category.dup
           new_category.account_id = import_to_account

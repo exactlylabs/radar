@@ -2,8 +2,7 @@ class LocationCategoriesController < ApplicationController
   before_action :authenticate_user!
 
   def search
-    notice = nil
-    notice = "Please select an account before searching for categories." if params[:account_id].nil?
+    notice = params[:account_id].nil? ? "Please select an account before searching for categories." : nil
     if notice.nil?
       @account_id = params[:account_id] || current_account.id
       @query = params[:query]
@@ -13,7 +12,7 @@ class LocationCategoriesController < ApplicationController
     end
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to "/locations" }
+      format.html { redirect_to "/locations", notice: notice }
     end
   end
 
@@ -28,12 +27,11 @@ class LocationCategoriesController < ApplicationController
 
   def open_dropdown
     @notice = nil
-    begin
-      @account_id = params[:account_id]
-      @categories = Category.where(account_id: @account_id)
-    rescue ActiveRecord::RecordNotFound => e
-      @notice = "There is no account with given ID."
-    end
+    @account_id = params[:account_id]
+    @categories = Category.where(account_id: @account_id)
+
+    @notice = "There is no account with given ID." if @categories.empty?
+
     respond_to do |format|
       format.turbo_stream
     end
@@ -57,28 +55,15 @@ class LocationCategoriesController < ApplicationController
   def import
     categories_ids = params[:account_categories]
     import_to_account = params[:import_to] || current_account.id
-    error = nil
-    begin
-      Category.transaction do
-        # Parse string to array of integers
-        categories_ids = categories_ids.split(',').map(&:to_i)
-        categories_ids.each do |category_id|
-          next if category_id.nil? || category_id == -1
+    error = import_categories_into_account(categories_ids, import_to_account)
 
-          category = Category.find(category_id)
-          new_category = category.dup
-          new_category.account_id = import_to_account
-          new_category.save!
-        end
-      end
-    rescue Exception => e
-      @notice = "Oops! Something went wrong. Please try again later."
-    end
     respond_to do |format|
       if error.nil?
         network_id = params[:network_id]
         @location = network_id.present? ? Location.find(network_id) : Location.new
         @notice = "All categories were successfully imported."
+      else
+        @notice = error
       end
       format.turbo_stream
     end

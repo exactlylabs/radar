@@ -24,13 +24,14 @@ export default class extends Controller {
     }
 
     connect() {
+        this.token = document.getElementsByName("csrf-token")[0].content;
         KTMenu.createInstances();
         this.categories = [];
         this.accountId = this.hasFirstAccountIdTarget ? this.firstAccountIdTarget.value : null;
     }
 
     initialize() {
-        if (this.categoryCheckboxTargets) {
+        if (this.hasCategoryCheckboxTargets) {
             let categoryIds = [];
             this.categoryCheckboxTargets.forEach(checkbox => {
                 if (checkbox.getAttribute('checked')) {
@@ -44,14 +45,14 @@ export default class extends Controller {
 
     initializeCategories() {
         if (document.getElementById('location_categories')) {
-            if (this.hiddenCategoriesInputTarget) {
+            if (this.hasHiddenCategoriesInputTarget) {
                 this.categories = this.hiddenCategoriesInputTarget.value.split(',');
             }
         }
     }
 
     onCheckBoxChange(e) {
-        const dir = e.params.dir;
+        const path = e.params.path;
         const selectedCategoryId = e.target.id.split('check-box-')[1];
         if (selectedCategoryId === '-1') {
             // this means the user has selected all categories
@@ -81,15 +82,14 @@ export default class extends Controller {
             }
         }
 
-        const categoriesHiddenInput = document.getElementById(dir);
+        const categoriesHiddenInput = document.getElementById(path);
         if (categoriesHiddenInput) categoriesHiddenInput.setAttribute('value', this.categories.join(','));
 
         const formData = new FormData();
         formData.append('categories', this.categories);
-        const token = document.getElementsByName("csrf-token")[0].content;
-        fetch(`/${dir}/selected_categories`, {
+        fetch(`/${path}/selected_categories`, {
             method: "PUT",
-            headers: {"X-CSRF-Token": token},
+            headers: {"X-CSRF-Token": this.token},
             body: formData
         })
             .then(response => response.text())
@@ -150,12 +150,11 @@ export default class extends Controller {
         this.closeColorPicker();
     }
 
-    toggleCategoriesDropdown(shouldOpen, dir, holderId) {
-        const url = shouldOpen ? `${dir}/open_dropdown?${holderId}` : `${dir}/close_dropdown?${holderId}`;
-        const token = document.getElementsByName("csrf-token")[0].content;
+    toggleCategoriesDropdown(shouldOpen, path, holderId) {
+        const url = shouldOpen ? `${path}/open_dropdown?${holderId}` : `${path}/close_dropdown?${holderId}`;
         fetch(url, {
             method: "GET",
-            headers: {"X-CSRF-Token": token},
+            headers: {"X-CSRF-Token": this.token},
         })
             .then(response => response.text())
             .then(html => {
@@ -168,7 +167,7 @@ export default class extends Controller {
     }
 
     toggleFocus(event) {
-        const dir = event.params.dir;
+        const path = event.params.path;
         let holderId = event.params.holderId;
         if (holderId === null || holderId === undefined) {
             if (this.accountId === null || this.accountId === undefined) {
@@ -182,10 +181,10 @@ export default class extends Controller {
         }
         if (this.selectClickableContainerTarget.classList.contains('category--location-select-container-focus')) {
             this.selectClickableContainerTarget.classList.remove('category--location-select-container-focus');
-            this.toggleCategoriesDropdown(false, dir, holderId);
+            this.toggleCategoriesDropdown(false, path, holderId);
         } else {
             this.selectClickableContainerTarget.classList.add('category--location-select-container-focus');
-            this.toggleCategoriesDropdown(true, dir, holderId);
+            this.toggleCategoriesDropdown(true, path, holderId);
         }
     }
 
@@ -272,13 +271,11 @@ export default class extends Controller {
 
     onImportFromAnotherAccount(event) {
         event.preventDefault();
-        // get href from the event
         const url = event.target.href;
         // make a turbo request to the href
-        const token = document.getElementsByName("csrf-token")[0].content;
         fetch(url, {
             method: "GET",
-            headers: {"X-CSRF-Token": token},
+            headers: {"X-CSRF-Token": this.token},
         }).then(response => response.text())
             .then(html => {
                 this.closeBaseModal();
