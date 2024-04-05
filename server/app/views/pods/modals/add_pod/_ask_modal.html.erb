@@ -2,16 +2,16 @@
            locals: { title: "Add a pod", is_custom: true }
 %>
 <%= form_with(url: get_add_new_pod_to_current_network_modal_path, method: :get, data: { "turbo-frame" => "add_new_pod_to_current_network" }) do |form| %>
-  <div class="cards--default pods--empty-card" id="empty-networks-card">
+  <div class="modal-body modals--body d-flex flex-column justify-content-center align-items-center text-center">
     <input hidden
            type="text"
            name="network_id"
            value="<%= resource.id %>"
       />
-    <div class="pods--empty-card-icon-container">
+    <div class="pods--ask-add-pod-icon-container">
       <%= image_tag image_url('pod-online-icon.png'), width: 32, height: 32 %>
     </div>
-    <h3 class="pods--empty-card-title wrap">Would you like to add a pod to your network?</h3>
+    <h3 class="pods--ask-add-pod-title wrap">Would you like to add a pod to your network?</h3>
     <span class="additional-text wrap">Pods keep connected to your Internet network and perform various tests throughout the day or at your request.</span>
   </div>
   <div class="modal-footer modals--footer">
