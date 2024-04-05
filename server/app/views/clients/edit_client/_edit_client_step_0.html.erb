@@ -6,7 +6,7 @@
            }
 %>
 <%= form_with(model: @client, url: client_path(@client.unix_user), data: { "turbo-frame" => "_top", "controller" => "edit-pod" }, id: 'testing-edit-form') do |form| %>
-  <div class="modals--content-container client--details-container" data-type="full" data-controller="pod-account-and-network" data-network-type="<%= @client.location.present? ? 'existing_network' : 'no_network' %>">
+  <div class="modal-body modals--body client--details-container" data-type="full" data-controller="pod-account-and-network" data-network-type="<%= @client.location.present? ? 'existing_network' : 'no_network' %>">
     <div class="d-flex flex-column align-items-center justify-content-center mb-5">
       <div class="modals--big-icon-container mb-4">
         <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32 %>
