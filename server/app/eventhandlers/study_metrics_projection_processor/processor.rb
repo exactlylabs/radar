@@ -39,7 +39,7 @@ module StudyMetricsProjectionProcessor
       Rails.logger.info "Starting Processor"
       conn = ActiveRecord::Base.connection_pool.checkout
       offsets = {
-        client_events_offset: @consumer_offset.state["events_offset"] || 0,
+        client_events_offset: @consumer_offset.state["client_events_offset"] || 0,
         sys_outage_events_offset: @consumer_offset.state["sys_outage_events_offset"] || 0,
         measurements_offset: @consumer_offset.state["measurements_offset"] || 0,
         speed_tests_offset: @consumer_offset.state["speed_tests_offset"] || 0,
