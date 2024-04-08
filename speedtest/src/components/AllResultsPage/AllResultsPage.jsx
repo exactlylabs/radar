@@ -52,6 +52,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
   const [selectedRangeIndexes, setSelectedRangeIndexes] = useState([]);
   const [initialZoom, setInitialZoom] = useState(givenZoom);
   const [isBoxOpen, setIsBoxOpen] = useState(true);
+  const [bottomFiltersVisible, setBottomFiltersVisible] = useState(true);
 
   const [map, setMap] = useState(null);
 
@@ -215,6 +216,10 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
 
   const handleSetRecenter = (value) => setHasRecentered(value);
 
+  const hideBottomFilters = () => {
+    setBottomFiltersVisible(false);
+  }
+
   return (
     <div style={{ textAlign: 'center', height: '100%' }}>
       {(loading || centerCoordinatesLoading) && <CircularProgress size={25} />}
@@ -248,20 +253,21 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
                               measurement={measurement}
                               currentFilterType={selectedFilterType}
                               recenterMap={setRequestArea}
-                              areFiltersOpen={isBoxOpen}
-                              forceCloseFilters={() => setIsBoxOpen(false)}
+                              setBottomFiltersVisible={setBottomFiltersVisible}
               />
             ))}
           </MapContainer>
-          <SpeedResultsBox setSelectedFilters={filterResults}
-                           currentFilterType={currentFilterType}
-                           setCurrentFilterType={setCurrentFilterType}
-                           selectedRangeIndexes={selectedRangeIndexes}
-                           setSelectedRangeIndexes={setSelectedRangeIndexes}
-                           isBoxOpen={isBoxOpen}
-                           setIsBoxOpen={setIsBoxOpen}
-          />
-          { (!isExtraSmallSizeScreen && !isSmallSizeScreen) && floatingBoxVisible &&
+          { bottomFiltersVisible &&
+            <SpeedResultsBox setSelectedFilters={filterResults}
+                             currentFilterType={currentFilterType}
+                             setCurrentFilterType={setCurrentFilterType}
+                             selectedRangeIndexes={selectedRangeIndexes}
+                             setSelectedRangeIndexes={setSelectedRangeIndexes}
+                             isBoxOpen={isBoxOpen}
+                             setIsBoxOpen={setIsBoxOpen}
+            />
+          }
+          { (!isExtraSmallSizeScreen && !isSmallSizeScreen) && floatingBoxVisible && bottomFiltersVisible &&
             <FloatingMessageBox icon={fetchingResults ? <MySpinner color={DEFAULT_GRAY_BUTTON_TEXT_COLOR} size={14}/> : <img src={searchIcon} style={searchIconStyle} alt={'search icon'}/>}
                                 text={fetchingResults ? null : 'No test results in this area. Try adjusting your search area or speed filters.'}
                                 isBoxOpen={isBoxOpen}
