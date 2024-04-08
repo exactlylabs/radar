@@ -216,10 +216,6 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
 
   const handleSetRecenter = (value) => setHasRecentered(value);
 
-  const hideBottomFilters = () => {
-    setBottomFiltersVisible(false);
-  }
-
   return (
     <div style={{ textAlign: 'center', height: '100%' }}>
       {(loading || centerCoordinatesLoading) && <CircularProgress size={25} />}
