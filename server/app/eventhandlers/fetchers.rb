@@ -46,8 +46,8 @@ module Fetchers
         measurements.id as id,
         measurements.location_id as location_id,
         measurements.lonlat as lonlat,
-        ST_X(measurements.lonlat) as longitude,
-        ST_Y(measurements.lonlat) as latitude,
+        ST_X(measurements.lonlat::geometry) as longitude,
+        ST_Y(measurements.lonlat::geometry) as latitude,
         measurements.processed_at as processed_at,
         autonomous_system_orgs.id as autonomous_system_org_id,
         autonomous_system_orgs.name as autonomous_system_org_name
@@ -73,8 +73,8 @@ module Fetchers
     ).order("processed_at ASC, client_speed_tests.id ASC").select(%{
       client_speed_tests.id as id,
       client_speed_tests.lonlat as lonlat,
-      ST_X(client_speed_tests.lonlat) as longitude,
-      ST_Y(client_speed_tests.lonlat) as latitude,
+      ST_X(client_speed_tests.lonlat::geometry) as longitude,
+      ST_Y(client_speed_tests.lonlat::geometry) as latitude,
       client_speed_tests.processed_at as processed_at,
       autonomous_system_orgs.id as autonomous_system_org_id,
       autonomous_system_orgs.name as autonomous_system_org_name
