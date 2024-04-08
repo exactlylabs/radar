@@ -1,4 +1,4 @@
-import {CircleMarker, useMap} from "react-leaflet";
+import {CircleMarker} from "react-leaflet";
 import {
   DOWNLOAD_FILTER_TAGS,
   UPLOAD_FILTER_TAGS,
