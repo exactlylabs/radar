@@ -93,14 +93,8 @@ const TestStatsTable = ({extended}) => {
 
   return (
     <div style={getStyle()}>
-      {
-        extended ?
-          <>
-            <ConnectionInformation integratedToStatsTable={extended}/>
-            <TestStatsTableContent extended={true}/>
-          </> :
-          <TestStatsTableContent extended={false}/>
-      }
+      {extended && <ConnectionInformation integratedToStatsTable={extended}/>}
+      <TestStatsTableContent extended={extended}/>
     </div>
   )
 }
