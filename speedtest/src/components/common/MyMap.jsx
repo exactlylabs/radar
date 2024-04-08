@@ -41,7 +41,6 @@ export const MyMap = ({
 
   if(shouldRecenter && position && !hasRecentered) {
     // Docs: https://leafletjs.com/reference.html#map-flyto
-    console.log('flyTo', position);
     map.flyTo(position, map.getZoom(), {animate: false});
     setHasRecentered(true);
   }
