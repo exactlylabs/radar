@@ -30,6 +30,7 @@ export const MyMap = ({
       // Reference: https://github.com/Leaflet/Leaflet/pull/8109
       // Docs: https://react-leaflet.js.org/docs/api-map/#usemap
       map.attributionControl.setPrefix('');
+      map.preferCanvas = true;
       if(onPopupClose) {
         map.on('popupclose', onPopupClose);
       }

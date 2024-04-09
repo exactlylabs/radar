@@ -1,6 +1,6 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useEffect, useState, useContext, useMemo} from 'react';
 import { CircularProgress } from '@mui/material';
-import {MapContainer, TileLayer, ZoomControl} from 'react-leaflet';
+import {CircleMarker, MapContainer, Marker, TileLayer, ZoomControl} from 'react-leaflet';
 import SpeedResultsBox from './SpeedResultsBox';
 import {getCorrespondingFilterTag} from '../../utils/speeds';
 import {
@@ -11,7 +11,6 @@ import {
 } from '../../utils/map';
 import {getTestsWithBounds, getUserApproximateCoordinates} from '../../utils/apiRequests';
 import { MyMap } from '../common/MyMap';
-import MyCustomMarker from "./MyCustomMarker";
 import {isNoConnectionError, notifyError} from "../../utils/errors";
 import {hasVisitedAllResults, setAlreadyVisitedCookieIfNotPresent} from "../../utils/cookies";
 import FirstTimeModal from "./FirstTimeModal";
@@ -23,6 +22,7 @@ import MySpinner from "../common/MySpinner";
 import {DEFAULT_GRAY_BUTTON_TEXT_COLOR} from "../../utils/colors";
 import {addMetadataToResults} from "../../utils/metadata";
 import ConnectionContext from "../../context/ConnectionContext";
+import EfficientMarkers from "./EfficientMarkers/EfficientMarkers";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -60,7 +60,6 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
   const {setNoInternet} = useContext(ConnectionContext);
   let timerId;
 
-
   useEffect(() => {
     const fetchUserApproximateCoordinates = async () => getUserApproximateCoordinates(config.clientId);
 
@@ -94,7 +93,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
   useEffect(() => {
     const fetchSpeedTests = async () => {
       setFetchingResults(true);
-      if(!map && requestArea) {
+      if(requestArea) {
         const [lat, lng] = requestArea;
         // Create bounding box
         const _southWest = {lat: lat - 2, lng: lng - 2};
@@ -113,12 +112,13 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
         setError('Failed to fetch speed tests. Please try again later.');
       })
       .finally(() => setLoading(false));
-  }, [requestArea, map]);
+  }, [requestArea]);
 
   const filterResults = (selectedTab, filters, paramResults = null) => {
     let fullRange = [];
     setSelectedFilterType(selectedTab);
-    fullRange = filters.map(filter => getCorrespondingFilterTag(selectedTab, filter));
+    fullRange = filters.map(filter => getCorrespondingFilterTag(selectedTab, filter))
+    console.log(fullRange)
     if(fullRange.length === 0) {
       const handler = result => ({...result, visible: true});
       if(paramResults) setResults(paramResults.map(handler));
@@ -131,8 +131,14 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
           visible: fullRange.includes(tagToCheck)
         };
       };
-      if(paramResults) setResults(paramResults.map(handler));
-      else setResults(results.map(handler));
+      if(paramResults) {
+        console.log(paramResults.map(handler).length, paramResults.map(handler).filter(i => i.visible).length);
+        setResults(paramResults.map(handler).filter(i => i.visible));
+      }
+      else {
+        console.log(results.map(handler).length, results.map(handler).filter(i => i.visible).length);
+        setResults(results.map(handler).filter(i => i.visible));
+      }
     }
   }
 
@@ -243,13 +249,7 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
               />
             { config.widgetMode && <ZoomControl position={'topright'}/> }
             <TileLayer attribution={mapTileAttribution} url={mapTileUrl} />
-            {results?.map(measurement => (
-              <MyCustomMarker key={measurement.id}
-                              measurement={measurement}
-                              currentFilterType={selectedFilterType}
-                              recenterMap={setRequestArea}
-              />
-            ))}
+            <EfficientMarkers items={Object.values(results)} currentFilterType={currentFilterType}/>
           </MapContainer>
           <SpeedResultsBox setSelectedFilters={filterResults}
                            currentFilterType={currentFilterType}

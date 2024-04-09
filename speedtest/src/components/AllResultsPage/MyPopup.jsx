@@ -1,4 +1,4 @@
-import {Popup} from "react-leaflet";
+import {Popup, useMap} from "react-leaflet";
 import {Point} from "leaflet/dist/leaflet-src.esm";
 import './MyPopup.css';
 import {
@@ -187,6 +187,8 @@ const providerNameStyle = {
 }
 
 const MyPopup = ({measurement}) => {
+
+  if(!measurement) return;
 
   const getAvailableWidth = () => {
     const hasLocation = measurement.network_location !== null;

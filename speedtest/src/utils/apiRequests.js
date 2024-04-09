@@ -101,6 +101,6 @@ export const getUserApproximateCoordinates = (clientId) => fetch(`${API_URL}/use
 
 export const getTestsWithBounds = (northEast, southWest, clientId, global) => {
   if(!northEast || !southWest) throw new Error('Missing bounds!');
-  const params = `?${global ? 'global=true' : `client_id=${clientId}`}&sw_lat=${southWest.lat}&sw_lng=${southWest.lng}&ne_lat=${northEast.lat}&ne_lng=${northEast.lng}`;
+  const params = `?dots=10000&${global ? 'global=true' : `client_id=${clientId}`}&sw_lat=${southWest.lat}&sw_lng=${southWest.lng}&ne_lat=${northEast.lat}&ne_lng=${northEast.lng}`;
   return fetch(`${API_URL}/tests_with_bounds${params}`).then(res => res.json());
 }
