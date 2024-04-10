@@ -8,25 +8,15 @@
     </div>
     <div class="category--list-item-options-container">
       <% unless category.locked %>
-        <div class="category--more-options-icon-container" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-          <i class="fas fa-ellipsis-v text-gray-700" id="category--list-item-menu-icon@<%= category.id %>"></i>
-        </div>
-        <div class="menu menu-sub menu-sub-dropdown category--options-menu"
-             data-kt-menu="true"
-             data-controller="menu"
-             data-categories-target="menuIcon"
-             id="category--list-item-more-options@<%= category.id %>"
-        >
-          <a class="category--options-menu-item"
-             href="<%= category_edit_path(category.id) %>"
-             data-turbo-frame="category--<%= category.id %>"
-          >Edit</a>
-          <a class="category--options-menu-item"
-             href="<%= category_delete_path(category.id) %>"
-             data-turbo-frame="delete_category_modal"
-             data-action="click->categories#closeBaseModal"
-          >Delete</a>
-        </div>
+        <%= render partial: "application/components/buttons/custom_more_options_button",
+                   locals: {
+                     index: category.id,
+                     type: Category.name,
+                     with_bg: false,
+                     big: false,
+                     row: category,
+                   }
+        %>
       <% end %>
     </div>
   </div>
