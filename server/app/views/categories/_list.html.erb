@@ -4,7 +4,7 @@
   <%= turbo_frame_tag "account-#{current_account.id}-categories" do %>
     <% if categories&.count > 0 %>
       <% categories.each do |category| %>
-        <%= render partial: "categories/list_item", locals: { category: category } %>
+        <%= render partial: "categories/list_item", locals: { category: category, idx: category.id } %>
       <% end %>
     <% else %>
       <%= render partial: "categories/empty_list" %>

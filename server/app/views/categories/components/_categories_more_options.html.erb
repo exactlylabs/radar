@@ -1,0 +1,13 @@
+<a class="tables--row-option table-menu-option ellipsis"
+   data-turbo="true"
+   data-turbo-stream="true"
+   href="<%= category_edit_path(row.id) %>"
+   data-turbo-frame="category--<%= row.id %>"
+>Edit</a>
+<a class="tables--row-option table-menu-option ellipsis"
+   href="<%= category_delete_path(row.id) %>"
+   data-turbo="true"
+   data-turbo-stream="true"
+   data-turbo-frame="delete_category_modal"
+   data-action="click->categories#closeBaseModal"
+>Delete</a>
