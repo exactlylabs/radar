@@ -185,8 +185,12 @@ class ApplicationController < ActionController::Base
         if !@auth_holder.account
           get_first_user_account_and_set_cookie
         end
+      elsif current_user.super_user
+        set_all_accounts
       elsif current_user.users_accounts.not_deleted.length > 0
         get_first_user_account_and_set_cookie
+      elsif current_user.shared_accounts.not_deleted.length > 0
+        get_first_shared_user_account_and_set_cookie
       else
         # We fall into this case if the current_user has no record
         # of a user_account association in the DB (empty account state).
@@ -224,6 +228,17 @@ class ApplicationController < ActionController::Base
     else
       @auth_holder.set_account(current_user.accounts.find(first_user_account.account_id))
       set_cookie(:radar_current_account_id, first_user_account.account_id)
+    end
+  end
+
+  def get_first_shared_user_account_and_set_cookie
+    first_shared_user_account = current_user.shared_accounts.not_deleted.first
+    if first_shared_user_account.nil?
+      clear_account_and_cookie
+    else
+      @auth_holder.set_shared_account
+      @auth_holder.set_account(current_user.shared_accounts.find(first_shared_user_account.account_id))
+      set_cookie(:radar_current_account_id, first_shared_user_account.account_id)
     end
   end
 
