@@ -24,6 +24,7 @@ export default class ChartController extends Controller {
     this.element.addEventListener('mousemove', this.handleMouseMove.bind(this));
     this.element.addEventListener('mousedown', this.handleMouseDown.bind(this));
     this.element.addEventListener('mouseup', this.handleMouseUp.bind(this));
+    this.element.addEventListener('mouseleave', this.plotChart.bind(this));
   }
   
   prepareInitialState() {
@@ -222,6 +223,9 @@ export default class ChartController extends Controller {
     this.resetStyles();
     const totals = this.chartData.map(entry => entry.y);
     this.maxTotal = Math.max(...totals);
+    if(this.maxTotal === 0) {
+      this.maxTotal = 1;
+    }
     this.yStepSize = this.maxTotal / 3 > 1 ? Math.ceil(this.maxTotal / 3) : this.maxTotal / 3;
     this.drawJumpLines();
   }
@@ -250,7 +254,8 @@ export default class ChartController extends Controller {
   
   drawJumpLines() {
     this.createYAxisLabel("0", X_AXIS_OFFSET + PADDING, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - PADDING);
-    const jumps = Math.ceil(this.maxTotal / this.yStepSize);
+    let jumps = Math.ceil(this.maxTotal / this.yStepSize);
+    if(isNaN(jumps)) jumps = 1;
     if(jumps < 2) {
       this.createYAxisLabel(`${this.formatLabelNumericValue(this.maxTotal)}${this.labelSuffix}`, X_AXIS_OFFSET + PADDING, Y_AXIS_OFFSET + PADDING);
     } else {

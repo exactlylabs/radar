@@ -8,6 +8,7 @@ export default class LineChartController extends ChartController {
   
   prepareData(rawData) {
     this.adjustedData = this.adjustData(rawData);
+    console.log(this.adjustedData);
   }
   
   plotChart() {

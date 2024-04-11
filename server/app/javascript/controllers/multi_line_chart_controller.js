@@ -65,6 +65,7 @@ export default class MultiLineChartController extends ChartController {
     });
     this.chartData = data;
     this.adjustedData = this.adjustData(this.chartData);
+    console.log(this.adjustedData, 'multi');
   }
   
   adjustData(points) {
@@ -148,7 +149,14 @@ export default class MultiLineChartController extends ChartController {
 
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
-    const tooltipWidth = 180;
+    
+    let maxLabelLength = 0;
+    let i = 0;
+    for(let [hex, _] of this.adjustedData.entries()) {
+      const currentLabel = yValues[i++].toFixed(2) + this.labelSuffix;
+      if(currentLabel.length > maxLabelLength) maxLabelLength = currentLabel.length;
+    }
+    const tooltipWidth = maxLabelLength <= 10 ? 180 : maxLabelLength <= 15 ? 200 : maxLabelLength <= 20 ? 220 : 240;
     const tooltipHeight = !!this.selectedHex ? 70 : 120;
     let tooltipTopYCoordinate;
     if(!!this.selectedHex) {
@@ -192,7 +200,7 @@ export default class MultiLineChartController extends ChartController {
 
     
     const date = new Date(Number(minDifIndexEntry.x));
-    let i = 0;
+    i = 0;
     for(let [hex, _] of this.adjustedData.entries()) {
       this.drawDotOnLine(xCoordinate + 12, tooltipTopYCoordinate + 40 + 8 + i * 25, hex);
       
@@ -203,7 +211,10 @@ export default class MultiLineChartController extends ChartController {
       this.ctx.font = '13px MulishSemiBold';
       
       this.ctx.fillStyle = 'black';
-      this.ctx.fillText(yValues[i].toFixed(2) + ' Mbps', xCoordinate + tooltipWidth - 12 - 75, tooltipTopYCoordinate + 40 + 13 + i * 25);
+      // send text to right side of tooltip
+      const textXCoordinate = xCoordinate + tooltipWidth - 12 - 75;
+      const textYCoordinate = tooltipTopYCoordinate + 40 + 13 + i * 25;
+      this.ctx.fillText(yValues[i].toFixed(2) + this.labelSuffix, textXCoordinate, textYCoordinate);
       i++;
     }
     this.ctx.font = '16px Mulish';
