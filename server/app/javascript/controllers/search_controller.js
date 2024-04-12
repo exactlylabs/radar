@@ -27,15 +27,13 @@ export default class extends Controller {
   doStreamRequest(formElement) {
     const query = document.querySelector("[name=query]").value;
     let fetchUrl = formElement.getAttribute('data-fetch-url');
-    // check if the url already has a query string
-    if(fetchUrl.includes('?')) {
-        fetchUrl = `${fetchUrl}&query=${query}`;
-    } else {
-        fetchUrl = `${fetchUrl}?query=${query}`;
-    }
-    const url = fetchUrl;
+    const url = new URL(window.location.origin + fetchUrl)
+    const queryParams = new URLSearchParams(url.search)
+    queryParams.set('query', query)
+    const newUrl = url.origin + url.pathname + '?' + queryParams.toString()
+
     const eventToEmitKey = formElement.getAttribute('data-event-key');
-    fetch(url, {
+    fetch(newUrl, {
       method: 'GET',
       headers: { "X-CSRF-Token": this.token },
     })
