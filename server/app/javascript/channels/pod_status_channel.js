@@ -28,9 +28,9 @@ consumer.subscriptions.create({ channel: 'PodStatusChannel' }, {
     const clientNameElement = document.getElementById(`client_${client.id}_name${idSuffix}`);
     if(clientNameElement) clientNameElement.innerText = !!client.name ? client.name : 'Unnamed Pod';
     const clientStatusElement = document.getElementById(`client_${client.id}_status${idSuffix}`);
-    const currentStatus = client.online ? client.test_requested ? 'Test running' : 'Online' : 'Offline';
+    const currentStatus = client.online ? client.test_requested ? 'Running test' : 'Online' : 'Offline';
     const currentStatusBadgeColor =
-      currentStatus === 'Test running' ? 'custom-badge--running' :
+      currentStatus === 'Running test' ? 'custom-badge--running' :
         currentStatus === 'Online' ? 'custom-badge--online' :
           'custom-badge--offline';
     const currentStatusClass = `custom-badge  ${currentStatusBadgeColor}`;

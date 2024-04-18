@@ -1,4 +1,7 @@
-<div class="widgets--widget" data-widget-type="<%= type %>">
+<% custom_url = local_assigns[:custom_url] || nil %>
+<% responsive = local_assigns[:responsive] || false %>
+
+<div class="widgets--widget" data-widget-type="<%= type %>" data-pod-page="<%= custom_url.present? %>">
   <%= render partial: "application/components/widgets/widget_header", locals: { type: type } %>
   <div class="widgets--widget-content">
     <% case type %>
@@ -7,13 +10,13 @@
     <% when WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT %>
       <%= render partial: "dashboard/components/widgets/online_pods" %>
     <% when WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED %>
-      <%= render partial: "dashboard/components/widgets/download_speeds" %>
+      <%= render partial: "dashboard/components/widgets/download_speeds", locals: { custom_url: custom_url, responsive: responsive } %>
     <% when WidgetsHelper::WidgetTypes::UPLOAD_SPEED %>
-      <%= render partial: "dashboard/components/widgets/upload_speeds" %>
+      <%= render partial: "dashboard/components/widgets/upload_speeds", locals: { custom_url: custom_url, responsive: responsive } %>
     <% when WidgetsHelper::WidgetTypes::LATENCY %>
-      <%= render partial: "dashboard/components/widgets/latency" %>
+      <%= render partial: "dashboard/components/widgets/latency", locals: { custom_url: custom_url, responsive: responsive } %>
     <% when WidgetsHelper::WidgetTypes::DATA_USAGE %>
-      <%= render partial: "dashboard/components/widgets/data_usage" %>
+      <%= render partial: "dashboard/components/widgets/data_usage", locals: { custom_url: custom_url, responsive: responsive } %>
     <% else %>
       <%= render partial: "application/components/widgets/locations_map/locations_map" %>
     <% end %>

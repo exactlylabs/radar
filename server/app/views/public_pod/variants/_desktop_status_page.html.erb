@@ -1,0 +1,129 @@
+<div class="public--pod-hero-container">
+  <div class="public--pod-hero-text-container">
+    <p class="dialog-main-title wrap">This pod belongs to <%= client.account.name %></p>
+    <p class="additional-text wrap">This pod is monitoring the quality of the internet connection</p>
+  </div>
+
+  <% if client.status == Client::STATUSES::RUNNING_TEST %>
+      <span class="m-0 public--tooltip-wrapper additional-text wrap" data-bs-custom-class="additional-text wrap public--custom-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="A speed test is already running or you need to wait a few minutes before taking another one.">
+        <a class="custom-button custom-button--primary custom-button--lg custom-button--disabled public--manage-pod-button disabled">
+          <%= image_tag image_url('run-speed-test-icon.png'), id: 'public--run-speed-test-icon' %>
+          Run speed test
+        </a>
+      </span>
+  <% else %>
+    <button class="custom-button custom-button--primary custom-button--lg public--manage-pod-button" data-action="click->public-page#runPublicTest">
+      <%= image_tag image_url('run-speed-test-icon.png'), id: 'public--run-speed-test-icon' %>
+      Run speed test
+    </button>
+  <% end %>
+</div>
+
+<div class="public--pod-content-card">
+  <div class="public--pod-content-card-header" data-status="<%= client.status_without_running %>">
+    <div class="public--pod-status-id-container">
+      <div class="tables--network-icon-container me-2" data-pod-status="<%= client.online ? 'online' : 'offline' %>">
+        <%= image_tag image_url(client.online ? 'pod-online-icon.png' : 'pod-offline-icon.png'), width: 24, height: 24 %>
+        <% if client.online %>
+          <div class="tables--network-online-dot"></div>
+        <% end %>
+      </div>
+      <div id="public--status-card-status">
+        <p class="public--pod-id-title"><%= client.unix_user %></p>
+        <p class="public--additional-text m-0"><%= client.get_status_timestamp %></p>
+      </div>
+    </div>
+
+    <% if client.latest_measurement&.download.nil?%>
+      <div class="public--no-measurement-container">
+        <div class="public--no-measurement-icons-container">
+          <div class="public--no-measurement-icon-container me-4">
+            <%= image_tag image_url('download-icon-blue.png') %>
+            <span class="public--additional-text">-</span>
+          </div>
+          <div class="public--no-measurement-icon-container">
+            <%= image_tag image_url('upload-icon-blue.png') %>
+            <span class="public--additional-text">-</span>
+          </div>
+        </div>
+        <p class="additional-text m-0">No measurement available</p>
+      </div>
+    <% elsif client.status == Client::STATUSES::RUNNING_TEST %>
+      <div class="public--no-measurement-container gap-2">
+        <div class="d-flex flex-row justify-content-center align-items-center custom-badge custom-badge--<%= client.status_suffix %>">
+          <div class="spinner-border spinner-border-sm me-1 public--custom-spinner" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <%= client.status %>
+        </div>
+        <p class="additional-text">Right now</p>
+      </div>
+    <% else %>
+      <div class="public--no-measurement-container">
+        <div class="public--no-measurement-icons-container">
+          <div class="public--no-measurement-icon-container me-4">
+            <%= image_tag image_url('download-icon-blue.png') %>
+            <span class="public--speed-text"><%= client.latest_measurement.download.round(2) %> <span class="public--speed-text-unit">Mbps</span></span>
+          </div>
+          <div class="public--no-measurement-icon-container">
+            <%= image_tag image_url('upload-icon-blue.png') %>
+            <span class="public--speed-text"><%= client.latest_measurement.upload.round(2) %> <span class="public--speed-text-unit">Mbps</span></span>
+          </div>
+        </div>
+        <p class="public--additional-text wrap"><%= "Last measurement on #{pretty_print_date_with_time(client.latest_measurement.created_at)}" %></p>
+      </div>
+    <% end %>
+  </div>
+  <div class="public--pod-content-card-body">
+    <%= render partial: "dashboard/components/date_filter",
+               locals: {
+                 menu_id: 'date-range-filter-menu',
+                 key: 'days',
+                 default_value: 30,
+                 default_label: 'Last 30 days',
+                 options: [
+                   { label: 'Last 7 days', value: '7' },
+                   { label: 'Last 30 days', value: '30' },
+                   { label: 'Last 90 days', value: '90' },
+                 ],
+                 public_use: true
+               }
+    %>
+    <div class="widgets--grid" data-pod-page="true">
+      <%= render partial: "application/components/widgets/widget",
+                 locals: {
+                   type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED,
+                   custom_url: download_speeds_client_path(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end]),
+                   responsive: false
+                 }
+      %>
+      <%= render partial: "application/components/widgets/widget",
+                 locals: {
+                   type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED,
+                   custom_url: upload_speeds_client_path(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end]),
+                   responsive: false
+                 }
+      %>
+      <%= render partial: "application/components/widgets/widget",
+                 locals: {
+                   type: WidgetsHelper::WidgetTypes::LATENCY,
+                   custom_url: latency_client_path(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end]),
+                   responsive: false
+                 }
+      %>
+      <%= render partial: "application/components/widgets/widget",
+                 locals: {
+                   type: WidgetsHelper::WidgetTypes::DATA_USAGE,
+                   custom_url: data_usage_client_path(id: client.unix_user, days: params[:days], start: params[:start], end: params[:end]),
+                   responsive: false
+                 }
+      %>
+    </div>
+  </div>
+</div>
+
+<% if user_signed_in? %>
+  <p class="additional-text w-100 mt-6 mb-0 mx-0 text-center wrap">You can run a new speed test or if you are responsible for managing this pod, you can <a href="<%= dashboard_path %>" data-turbo-frame="_top" class="regular-link">go to your dashboard.</a></p>
+<% else %>
+  <p class="additional-text w-100 mt-6 mb-0 mx-0 text-center wrap">You can run a new speed test or if you are responsible for managing this pod, you can <a class="regular-link mb-0" href="#" data-bs-target="#dashboard_modal" data-bs-toggle="modal">go to your dashboard.</a></p>
+<% end %>

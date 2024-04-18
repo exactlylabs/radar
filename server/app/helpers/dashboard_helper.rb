@@ -99,6 +99,22 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
 
+  def self.get_pod_download_speed_sql(pod_id, from, to)
+    sql = %{
+      SELECT
+        EXTRACT(EPOCH FROM date_trunc('d', processed_at)) * 1000 as "x",
+        percentile_disc(0.5) WITHIN GROUP (ORDER BY download) AS "#4b7be5",
+        MIN(download) AS "#ff695d",
+        MAX(download) AS "#9138e5"
+      FROM measurements
+      WHERE processed_at BETWEEN :from AND :to
+      AND client_id = :pod_id
+      GROUP BY 1
+      ORDER BY "x" ASC
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
+  end
+
   def self.get_upload_speed_sql(account_ids, from, to, as_org_ids: nil, location_ids: nil)
     sql = %{
       SELECT
@@ -119,6 +135,22 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
 
+  def self.get_pod_upload_speed_sql(pod_id, from, to)
+    sql = %{
+      SELECT
+        EXTRACT(EPOCH FROM date_trunc('d', processed_at)) * 1000 as "x",
+        percentile_disc(0.5) WITHIN GROUP (ORDER BY upload) AS "#4b7be5",
+        MIN(upload) AS "#ff695d",
+        MAX(upload) AS "#9138e5"
+      FROM measurements
+      WHERE processed_at BETWEEN :from AND :to
+      AND client_id = :pod_id
+      GROUP BY 1
+      ORDER BY "x" ASC
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
+  end
+
   def self.get_latency_sql(account_ids, from, to, as_org_ids: nil, location_ids: nil)
     sql = %{
       SELECT
@@ -137,6 +169,22 @@ module DashboardHelper
       ORDER BY EXTRACT(EPOCH FROM "time") * 1000 ASC;
     }
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+  end
+
+  def self.get_pod_latency_sql(pod_id, from, to)
+    sql = %{
+      SELECT
+        EXTRACT(EPOCH FROM date_trunc('d', processed_at)) * 1000 as "x",
+        percentile_disc(0.5) WITHIN GROUP (ORDER BY latency) AS "#4b7be5",
+        MIN(latency) AS "#ff695d",
+        MAX(latency) AS "#9138e5"
+      FROM measurements
+      WHERE processed_at BETWEEN :from AND :to
+      AND client_id = :pod_id
+      GROUP BY 1
+      ORDER BY "x" ASC
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
   end
 
   def self.get_usage_sql(interval_type, from, to, account_ids, as_org_ids: nil, location_ids: nil)
@@ -162,6 +210,24 @@ module DashboardHelper
       SELECT total as y, EXTRACT(EPOCH FROM time) * 1000 as x FROM data_used_per_day ORDER BY time ASC;
     }
     ActiveRecord::Base.sanitize_sql([sql, {interval_type: interval_type, account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+  end
+
+  def self.get_pod_usage_sql(pod_id, from, to)
+    sql = %{
+      WITH data_used_per_day AS (
+        SELECT
+          date_trunc('d', processed_at) as "time",
+          SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes) AS "total"
+        FROM measurements
+        WHERE
+          processed_at BETWEEN :from AND :to
+          AND client_id = :pod_id
+        GROUP BY 1
+        ORDER BY 1 ASC
+      )
+      SELECT total as y, EXTRACT(EPOCH FROM time) * 1000 as x FROM data_used_per_day ORDER BY time ASC;
+      }
+    ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
   end
 
   def self.get_as_orgs_sql(account_ids, from, to, location_ids: nil)

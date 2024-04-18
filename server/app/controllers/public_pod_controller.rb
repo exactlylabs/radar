@@ -1,6 +1,7 @@
 class PublicPodController < PublicApplicationController
+  include ChartsHelper
 
-  before_action :set_client, only: [:setup, :status, :update_public_page]
+  before_action :set_client, only: [:setup, :status, :update_public_page, :download_speeds, :upload_speeds, :latency, :data_usage]
 
   def index
   end
@@ -36,6 +37,7 @@ class PublicPodController < PublicApplicationController
         format.html { redirect_to "/setup/#{@client.unix_user}" }
       end
     end
+    render layout: "public_pod"
   end
 
   def update_public_page
@@ -44,9 +46,41 @@ class PublicPodController < PublicApplicationController
     end
   end
 
+  def download_speeds
+    @responsive = params[:responsive] == "true"
+    params = pod_download_speeds_params(@client)
+    sql = DashboardHelper.get_pod_download_speed_sql(@client.id, params[:from], params[:to])
+    @download_speeds = ActiveRecord::Base.connection.execute(sql)
+    render "dashboard/download_speeds"
+  end
+
+  def upload_speeds
+    @responsive = params[:responsive] == "true"
+    params = pod_upload_speeds_params(@client)
+    sql = DashboardHelper.get_pod_upload_speed_sql(@client.id, params[:from], params[:to])
+    @upload_speeds = ActiveRecord::Base.connection.execute(sql)
+    render "dashboard/upload_speeds"
+  end
+
+  def latency
+    @responsive = params[:responsive] == "true"
+    params = pod_latency_params(@client)
+    sql = DashboardHelper.get_pod_latency_sql(@client.id, params[:from], params[:to])
+    @latencies = ActiveRecord::Base.connection.execute(sql)
+    render "dashboard/latency"
+  end
+
+  def data_usage
+    @responsive = params[:responsive] == "true"
+    params = pod_data_usage_params(@client)
+    sql = DashboardHelper.get_pod_usage_sql(@client.id, params[:from], params[:to])
+    @usage = ActiveRecord::Base.connection.execute(sql)
+    render "dashboard/data_usage"
+  end
+
   private
   def set_client
-    @client = Client.find_by_unix_user(params[:pod_id])
+    @client = Client.find_by_unix_user(params[:pod_id] || params[:id])
     if !@client
       raise ActiveRecord::RecordNotFound.new("Couldn't find Pod with 'id'=#{params[:pod_id]}", Client.name, params[:pod_id])
     end

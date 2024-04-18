@@ -1,4 +1,5 @@
 class DashboardController < ApplicationController
+  include ChartsHelper
   before_action :authenticate_user!
 
   # GET /dashboard or /dashboard.json
@@ -38,7 +39,7 @@ class DashboardController < ApplicationController
       end
     end
     if current_account.present?
-      params = as_orgs_filters_params()
+      params = as_orgs_filters_params(current_account)
       @filter_as_orgs = ActiveRecord::Base.connection.execute(DashboardHelper.get_as_orgs_sql(params[:account_ids], params[:from], params[:to], location_ids: params[:location_ids]))
     end
   end
@@ -73,74 +74,36 @@ class DashboardController < ApplicationController
   end
 
   def online_pods
-    params = online_pods_params()
+    params = online_pods_params(current_account)
     sql = DashboardHelper.get_online_pods_sql(params[:interval_type], params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
     @online_pods = ActiveRecord::Base.connection.execute(sql)
   end
 
   def download_speeds
-    params = download_speeds_params()
+    params = download_speeds_params(current_account)
     sql = DashboardHelper.get_download_speed_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
     @download_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
   def upload_speeds
-    params = upload_speeds_params()
+    params = upload_speeds_params(current_account)
     sql = DashboardHelper.get_upload_speed_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
     @upload_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
   def latency
-    params = latency_params()
+    params = latency_params(current_account)
     sql = DashboardHelper.get_latency_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
     @latencies = ActiveRecord::Base.connection.execute(sql)
   end
 
   def data_usage
-    params = data_usage_params()
+    params = data_usage_params(current_account)
     sql = DashboardHelper.get_usage_sql(params[:interval_type], params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
     @usage = ActiveRecord::Base.connection.execute(sql)
   end
 
   private
-
-  def as_orgs_filters_params()
-    common_filter_params.merge(time_filter_params)
-  end
-
-  def online_pods_params()
-    common_filter_params.merge(time_filter_params).merge(interval_type: 'd')
-  end
-
-  def download_speeds_params()
-    common_filter_params.merge(time_filter_params)
-  end
-
-  def upload_speeds_params()
-    common_filter_params.merge(time_filter_params)
-  end
-
-  def latency_params()
-    common_filter_params.merge(time_filter_params)
-  end
-
-  def data_usage_params()
-    common_filter_params.merge(time_filter_params).merge(interval_type: 'd')
-  end
-
-  def time_filter_params()
-    days = params[:days] || 30
-    start_time = params[:start].present? ? Time.at(params[:start].to_i / 1000) : (Time.now - days.to_i.days)
-    end_time = params[:end].present? ? Time.at(params[:end].to_i / 1000) : Time.now
-    { from: start_time, to: end_time }
-  end
-
-  def common_filter_params()
-    account_ids = params[:account_id].present? ? policy_filter_ids(Account, params[:account_id]) : current_account.is_all_accounts? ? policy_scope(Account).pluck(:id) : [current_account.id]
-    as_org_ids = params[:isp_id].present? ? policy_filter_ids(AutonomousSystemOrg, params[:isp_id]) : nil
-    location_ids = params[:network_id].present? ? policy_filter_ids(Location, params[:network_id]) : nil
-    { account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids }
-  end
 
   def policy_filter_ids(model, ids)
     policy_scope(model).where(id: ids).pluck(:id).join(',')

@@ -3,11 +3,12 @@ import { Controller } from "@hotwired/stimulus";
 export const PADDING = 0;
 export const X_AXIS_OFFSET = 10;
 export const Y_AXIS_OFFSET = 10;
-export const X_CONTEXT_OFFSET = (labelSuffix) => labelSuffix ? 20 + 10 * labelSuffix.length : 20;
+export const STANDARD_LABEL_WIDTH = 20;
+export const STANDARD_CHAR_WIDTH = 6;
+export const X_CONTEXT_OFFSET = (labelSuffix) => labelSuffix ? STANDARD_LABEL_WIDTH + STANDARD_CHAR_WIDTH * labelSuffix.length : STANDARD_LABEL_WIDTH;
 export const RIGHT_X_CONTEXT_OFFSET = 40;
 export const GRID_LINE_Y_OFFSET = 5;
 export const BOTTOM_LABELS_HEIGHT = 32;
-export const STANDARD_LABEL_WIDTH = 20;
 
 export const CHART_TITLES = {
   'downloadSpeeds': 'Download Speeds',
@@ -167,11 +168,16 @@ export default class ChartController extends Controller {
     const dpr = this.createHiDPICanvas(this.parent.clientWidth, this.parent.clientHeight);
     this.ctx = this.element.getContext('2d');
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    this.netWidth = this.canvasWidth - 2 * X_AXIS_OFFSET - X_CONTEXT_OFFSET(this.labelSuffix) - RIGHT_X_CONTEXT_OFFSET - 2 * PADDING;
+    this.setLongestLabel();
+    this.setNetWidth();
     this.netHeight = this.canvasHeight - 2 * Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - 2 * PADDING;
     
     this.setChartAxis();
     this.plotChart();
+  }
+  
+  setNetWidth() {
+    this.netWidth = this.canvasWidth - 2 * X_AXIS_OFFSET - X_CONTEXT_OFFSET(this.longestLabel) - RIGHT_X_CONTEXT_OFFSET - 2 * PADDING;
   }
   
   clearCanvas() {
@@ -248,24 +254,48 @@ export default class ChartController extends Controller {
     }
   }
   
+  isSmallScreen() {
+    return window.innerWidth < 768;
+  }
+  
+  setLongestLabel() {
+    this.longestLabel = this.isSmallScreen() ? `0 ${this.labelSuffix}` : "0";
+    const jumps = Math.ceil(this.maxTotal / this.yStepSize);
+    if(isNaN(jumps)) return;
+    if(jumps < 2) {
+      let label = `${this.formatLabelNumericValue(this.maxTotal)}${this.isSmallScreen() ? '' : this.labelSuffix}`;
+      if(label.length > this.longestLabel.length) this.longestLabel = label;
+    } else {
+      let label = `${this.formatLabelNumericValue(this.yStepSize * jumps)}${this.isSmallScreen() ? '' : this.labelSuffix}`;
+      if(label.length > this.longestLabel.length) this.longestLabel = label;
+    }
+    for(let i = 0 ; i < jumps - 1 ; i++) {
+      let rowLabel = `${this.formatLabelNumericValue((i + 1) * this.yStepSize)}${this.isSmallScreen() ? '' : this.labelSuffix}`;
+      if(rowLabel.length > this.longestLabel.length) this.longestLabel = rowLabel;
+    }
+  }
+  
   drawJumpLines() {
-    this.createYAxisLabel("0", X_AXIS_OFFSET + PADDING, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - PADDING);
+    this.setLongestLabel();
+    this.setNetWidth();
+    this.createYAxisLabel(this.isSmallScreen() ? this.labelSuffix : "0", X_AXIS_OFFSET + PADDING, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - PADDING);
     const jumps = Math.ceil(this.maxTotal / this.yStepSize);
     if(jumps < 2) {
-      this.createYAxisLabel(`${this.formatLabelNumericValue(this.maxTotal)}${this.labelSuffix}`, X_AXIS_OFFSET + PADDING, Y_AXIS_OFFSET + PADDING);
+      this.createYAxisLabel(`${this.formatLabelNumericValue(this.maxTotal)}${this.isSmallScreen() ? '' : this.labelSuffix}`, X_AXIS_OFFSET + PADDING, Y_AXIS_OFFSET + PADDING);
     } else {
-      this.createYAxisLabel(`${this.formatLabelNumericValue(this.yStepSize * jumps)}${this.labelSuffix}`, X_AXIS_OFFSET + PADDING, Y_AXIS_OFFSET + PADDING);
+      this.createYAxisLabel(`${this.formatLabelNumericValue(this.yStepSize * jumps)}${this.isSmallScreen() ? '' : this.labelSuffix}`, X_AXIS_OFFSET + PADDING, Y_AXIS_OFFSET + PADDING);
     }
     const boxHeight = this.netHeight / jumps;
     for(let i = 0 ; i < jumps - 1 ; i++) {
       const y = this.canvasHeight - PADDING - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - ((i + 1) * boxHeight);
-      const text = `${this.formatLabelNumericValue((i + 1) * this.yStepSize)}${this.labelSuffix}`;
+      const text = `${this.formatLabelNumericValue((i + 1) * this.yStepSize)}${this.isSmallScreen() ? '' : this.labelSuffix}`;
       this.createYAxisLabel(text, X_AXIS_OFFSET + PADDING, y);
     }
     this.maxYLabelValue = jumps * this.yStepSize;
   }
   
   createYAxisLabel(label, x, y) {
+    this.setLongestLabel();
     this.resetStyles();
     this.ctx.beginPath();
     this.ctx.fillStyle = '#6d6a94';
@@ -273,7 +303,7 @@ export default class ChartController extends Controller {
     this.ctx.lineHeight = 1;
     this.ctx.strokeWidth = 1;
     this.ctx.fillText(label, x, y);
-    this.ctx.moveTo(x + X_CONTEXT_OFFSET(this.labelSuffix), y - GRID_LINE_Y_OFFSET);
+    this.ctx.moveTo(x + X_CONTEXT_OFFSET(this.longestLabel), y - GRID_LINE_Y_OFFSET);
     this.ctx.lineTo(this.canvasWidth - X_AXIS_OFFSET - PADDING, y - GRID_LINE_Y_OFFSET);
     this.ctx.stroke();
   }
@@ -284,7 +314,7 @@ export default class ChartController extends Controller {
     this.ctx.lineWidth = 2;
     let pointY = this.getYCoordinateFromYValue(data[0].ys[0]);
     data.forEach((point, index) => {
-      const { x, ys } = point;
+      const { ys } = point;
       ys.forEach(y => {
         const pointX = this.getXCoordinateFromXValue(data, index);
         pointY = this.getYCoordinateFromYValue(y);
@@ -337,7 +367,7 @@ export default class ChartController extends Controller {
     this.ctx.strokeStyle = 'rgba(0,0,0,0)';
     this.ctx.lineWidth = 0;
     this.ctx.lineTo(this.canvasWidth - X_AXIS_OFFSET - PADDING, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET - PADDING);
-    this.ctx.lineTo(PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix), this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET - PADDING);
+    this.ctx.lineTo(PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.longestLabel), this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET - PADDING);
     this.ctx.closePath();
     const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvasHeight);
     gradient.addColorStop(0, gradientFirstStopColor);
@@ -452,9 +482,9 @@ export default class ChartController extends Controller {
   }
   
   getXCoordinateFromXValue(data = this.chartData, index) {
-    const netWidth = this.canvasWidth - 2 * PADDING - X_AXIS_OFFSET - X_CONTEXT_OFFSET(this.labelSuffix) - RIGHT_X_CONTEXT_OFFSET / 4;
+    const netWidth = this.canvasWidth - 2 * PADDING - X_AXIS_OFFSET - X_CONTEXT_OFFSET(this.longestLabel) - RIGHT_X_CONTEXT_OFFSET / 4;
     const step = netWidth / (data.length - 1);
-    const baseWidth = PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix);
+    const baseWidth = PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.longestLabel);
     return baseWidth + step * index;
   }
   

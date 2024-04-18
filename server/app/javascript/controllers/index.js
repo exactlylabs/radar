@@ -207,3 +207,6 @@ application.register("widgets", WidgetsController);
 
 import DashboardTimeFilterController from "./dashboard_time_filter_controller";
 application.register("dashboard-time-filter", DashboardTimeFilterController);
+
+import PublicPodTabsController from "./public_pod_tabs_controller";
+application.register("public-pod-tabs", PublicPodTabsController);

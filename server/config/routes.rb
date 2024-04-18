@@ -90,6 +90,10 @@ Rails.application.routes.draw do
       get 'pdf_label', to: 'clients#get_client_label'
       post 'run_public_test'
       get 'speed_average', to: 'clients#speed_average', as: 'speed_average'
+      get 'download_speeds', to: 'public_pod#download_speeds'
+      get 'upload_speeds', to: 'public_pod#upload_speeds'
+      get 'latency', to: 'public_pod#latency'
+      get 'data_usage', to: 'public_pod#data_usage'
     end
 
     collection do

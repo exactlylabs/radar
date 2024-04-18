@@ -1,3 +1,6 @@
+@import "shared/colors";
+@import "shared/text";
+
 #public--body {
   background-color: #f6f7fa;
   width: 100vw;
@@ -13,6 +16,21 @@
   position: relative;
   display: flex;
   flex-direction: column;
+
+  &[data-page="check"] {
+    max-width: 1068px;
+    margin: 0 auto;
+    padding-top: 2.5rem;
+    padding-inline: 2rem;
+  }
+}
+
+@media (max-width: 450px) {
+  #public--main {
+    &[data-page="check"] {
+      padding-inline: 1rem;
+    }
+  }
 }
 
 #public--footer {
@@ -60,6 +78,7 @@
 #public--learn-section {
   width: 85%;
   margin: 0 auto;
+  padding-top: 2rem;
 }
 
 .public--additional-text {
@@ -72,6 +91,13 @@
 
   &.public--learn-more {
     margin-bottom: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .public--additional-text {
+    font-size: 13px;
+    line-height: 19px;
   }
 }
 
@@ -392,16 +418,15 @@
 .public--no-measurement-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   justify-content: flex-start;
-  margin-bottom: 32px;
 
   .public--no-measurement-icons-container {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 
     .public--no-measurement-icon-container {
       display: flex;
@@ -420,12 +445,19 @@
   }
 }
 
+@media (max-width: 768px) {
+  .public--no-measurement-container {
+    align-items: center;
+    justify-content: center;
+  }
+}
+
 #public--status-card-status {
   display: flex;
   flex-direction: column;
-  width: calc(50% - 1px);
   justify-content: flex-start;
   align-items: flex-start;
+  gap: .25rem;
 
   #public--status-card-status-date {
     display: flex;
@@ -502,7 +534,6 @@
 
 .public--manage-pod-button {
   max-width: 165px;
-  margin: 0 auto;
 
   img {
     width: 16px;
@@ -629,4 +660,245 @@
   .public--check-continue-button {
     max-width: none;
   }
+}
+
+.public--header-link-text {
+  font-size: 0.875rem;
+  line-height: 21px;
+  color: $gray;
+  margin: 0;
+
+  .public--header-link {
+    cursor: pointer;
+    margin: 0;
+    position: relative;
+    @extend .regular-link;
+    @extend .fw-bold;
+
+    img {
+      position: absolute;
+      top: 50%;
+      right: -16px;
+      transform: translateY(-50%);
+    }
+
+    &:hover {
+      opacity: 0.75;
+
+      img {
+        animation: shift 0.3s forwards;
+      }
+    }
+  }
+}
+
+@keyframes shift {
+  0% {
+    right: -16px;
+  }
+
+  100% {
+    right: -18px;
+  }
+}
+
+#public--pods-logo-section {
+  width: calc(100% - 1rem);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 2.5remx;
+}
+
+@media (max-width: 768px) {
+  #public--pods-logo-section {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+}
+
+.public--pod-hero-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.public--pod-hero-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 6px;
+
+  p {
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .public--pod-hero-text-container {
+    width: 100%;
+    max-width: calc(100% - 2rem);
+    margin-inline: auto;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+  }
+}
+
+.public--pod-content-card {
+  width: 100%;
+  border-radius: .5rem;
+  background-color: white;
+  outline: solid 1px rgba(188, 187, 199, 0.1);
+  box-shadow: 0 2px 8px -2px rgba(160, 159, 183, 0.15);
+  padding: 1.5rem 0 2rem;
+}
+
+.public--pod-content-card-header {
+  width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: solid 1px rgba(188, 187, 199, 0.1);
+  background: linear-gradient(0, rgba(49, 179, 108, 0.15) 0%, white 75%);
+
+  &[data-status="Offline"] {
+    background: linear-gradient(0, rgba(241, 65, 108, 0.15) 0%, white 75%);
+  }
+}
+
+@media (max-width: 768px) {
+  .public--pod-content-card-header {
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.public--pod-status-id-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .75rem;
+}
+
+@media (max-width: 768px) {
+  .public--pod-status-id-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+}
+
+.public--pod-id-title {
+  font-size: 1.125rem;
+  color: $deep-blue;
+  margin: 0;
+  @extend .fw-bold;
+}
+
+@media (max-width: 768px) {
+  .public--pod-id-title {
+    font-size: 1rem;
+  }
+}
+
+.public--pod-icon {
+  margin-right: .5rem;
+}
+
+@media (max-width: 768px) {
+  .public--pod-icon {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}
+
+.public--pod-content-card-body {
+  width: 100%;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1.5rem;
+}
+
+.public--pod-desktop-container {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .public--pod-desktop-container {
+    display: block;
+  }
+}
+
+.public--pod-responsive-container {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .public--pod-responsive-container {
+    display: block;
+  }
+}
+
+.public--pod-tabs-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  border-bottom: solid 1px rgb(227, 227, 232);
+  margin-bottom: 2rem;
+
+  button {
+    width: 50%;
+    max-width: 180px;
+    text-align: center;
+    appearance: none;
+    border: none;
+    background-color: transparent;
+    padding: 0 1rem 10px;
+    font-size: 0.9375rem;
+    color: $dark-gray;
+    @extend .fw-medium;
+
+    &[data-selected="true"] {
+      color: $deep-blue;
+      @extend .fw-bold;
+      border-bottom: solid 2px $blue;
+    }
+  }
+}
+
+.public--responsive-overview-data-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding-top: 2rem;
+  text-align: center;
 }

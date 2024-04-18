@@ -26,6 +26,7 @@ export default class extends Controller {
   ];
   
   connect() {
+    this.elementId = this.element.id;
     this.startDateInput = this.dateInputTargets.find(input => input.id === 'start-date');
     this.endDateInput = this.dateInputTargets.find(input => input.id === 'end-date');
     this.startTimeInput = this.timeInputTargets.find(input => input.id === 'start-time');
@@ -36,7 +37,7 @@ export default class extends Controller {
   }
   
   closeIfClickedOutside(e) {
-    const datePicker = document.getElementById('dashboard-custom-datepicker');
+    const datePicker = document.getElementById(this.elementId);
     if(!datePicker.hasAttribute('hidden') && !datePicker.contains(e.target)) {
       this.closeCalendar(datePicker);
     }
@@ -111,7 +112,7 @@ export default class extends Controller {
   }
   
   clearCalendarGrid() {
-    const weekGrid = document.getElementById('week-grid');
+    const weekGrid = this.element.querySelector('#week-grid');
     const rows = weekGrid.querySelectorAll('div');
     rows.forEach(row => {
       if(row.id === 'calendar-button-placeholder') return;
@@ -208,8 +209,8 @@ export default class extends Controller {
       currentDay = new Date(currentDay.setDate(currentDay.getDate() - 6));
     }
     
-    const placeholder = document.getElementById('calendar-button-placeholder');
-    const weekGrid = document.getElementById('week-grid');
+    const placeholder = this.element.querySelector('#calendar-button-placeholder');
+    const weekGrid = this.element.querySelector('#week-grid');
     for(let i = 0 ; i < 7 ; i++) {
       const dayButtonWrapper = placeholder.cloneNode(true);
       const dayButton = dayButtonWrapper.querySelector('button');

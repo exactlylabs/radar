@@ -1,6 +1,12 @@
 class Client < ApplicationRecord
   include EventSourceable
 
+  module STATUSES
+    ONLINE = 'Online'
+    OFFLINE = 'Offline'
+    RUNNING_TEST = 'Running test'
+  end
+
   module Events
     CREATED = 'CREATED'
     WENT_ONLINE = 'WENT_ONLINE'
@@ -249,7 +255,7 @@ class Client < ApplicationRecord
   end
 
   def test_running?
-    status == 'Test running'
+    status == STATUSES::RUNNING_TEST
   end
 
   def data_cap_next_period
@@ -392,33 +398,33 @@ class Client < ApplicationRecord
   def status
     if online?
       if test_requested?
-        'Test running'
+        STATUSES::RUNNING_TEST
       else
-        'Online'
+        STATUSES::ONLINE
       end
     else
-      'Offline'
+      STATUSES::OFFLINE
     end
   end
 
   def status_without_running
-    online? ? 'Online' : 'Offline'
+    online? ? STATUSES::ONLINE : STATUSES::OFFLINE
   end
 
   def status_suffix
     if online?
       if test_requested?
-        'running'
+        STATUSES::RUNNING_TEST.gsub(' test', '').downcase
       else
-        'online'
+        STATUSES::ONLINE.downcase
       end
     else
-      'offline'
+      STATUSES::OFFLINE.downcase
     end
   end
 
   def status_suffix_without_running
-    online? ? 'online' : 'offline'
+    online? ? STATUSES::ONLINE.downcase : STATUSES::ONLINE.downcase
   end
 
   def status_style
@@ -668,7 +674,7 @@ class Client < ApplicationRecord
   end
 
   def get_in_service_action_label
-    "Mark as #{in_service? ? 'not in servce' : 'in service'}"
+    "Mark as #{in_service? ? 'not in service' : 'in service'}"
   end
 
   def get_status_timestamp

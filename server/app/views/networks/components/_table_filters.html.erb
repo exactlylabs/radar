@@ -57,8 +57,8 @@
         default_label: 'All statuses',
         options: [
           { label: 'All statuses', value: nil},
-          { label: 'Online', value: 'online' },
-          { label: 'Offline', value: 'offline' }
+          { label: Client::STATUSES::ONLINE, value: Client::STATUSES::ONLINE.downcase },
+          { label: Client::STATUSES::OFFLINE, value: Client::STATUSES::OFFLINE.downcase }
         ],
       }
   %>

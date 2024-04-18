@@ -82,10 +82,10 @@
         All Pods
       </a>
       <!--begin::Menu item-->
-      <a href="<%= params[:status] == 'online' ? clients_path(environment: params[:environment], account_id: params[:account_id]) : clients_path(params.permit([:status, :environment, :account_id]).merge(status: 'online')) %>"
-        class="dropdowns--option d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:status] == 'online' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
+      <a href="<%= params[:status] == Client::STATUSES::ONLINE.downcase ? clients_path(environment: params[:environment], account_id: params[:account_id]) : clients_path(params.permit([:status, :environment, :account_id]).merge(status: Client::STATUSES::ONLINE.downcase)) %>"
+        class="dropdowns--option d-flex align-items-center justify-content-start menu-item text-hover-gray-500 <%= params[:status] == Client::STATUSES::ONLINE.downcase ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
         <div class="green-cirle" style="width:6px; height: 6px; background-color:#50cd89; border-radius: 50%; margin-right: 7px;"></div>
-        Online
+        <%= Client::STATUSES::ONLINE %>
       </a>
       <!--end::Menu item-->
       <!--begin::Menu item-->
