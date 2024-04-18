@@ -24,7 +24,7 @@ export default class extends Controller {
     e.stopPropagation();
     this.closeFiltersMenu();
     this.element.dataset.isCalendarOpen = 'true';
-    const datePicker = document.getElementById('dashboard-custom-datepicker');
+    const datePicker = document.getElementById(e.target.getAttribute('data-calendar-id'));
     datePicker.removeAttribute('hidden');
   }
 

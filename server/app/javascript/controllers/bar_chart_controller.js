@@ -34,7 +34,7 @@ export default class BarChartController extends ChartController {
     const barHeight = y * this.netHeight / this.maxYLabelValue;
     let individualBlockCount = this.chartData.length * 2 + this.chartData.length - 1; // one full data block is 2 individual spacers
     const individualBlockWidth = (this.netWidth + RIGHT_X_CONTEXT_OFFSET + PADDING) / individualBlockCount;
-    const barX = index * 2 * individualBlockWidth + index * individualBlockWidth + PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix);
+    const barX = index * 2 * individualBlockWidth + index * individualBlockWidth + PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.longestLabel);
     const barY = this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET - barHeight;
     this.ctx.fillStyle = color;
     this.ctx.roundRect(barX, barY, 2 * individualBlockWidth, barHeight, 2, 2, 0, 0);
@@ -132,7 +132,7 @@ export default class BarChartController extends ChartController {
   mouseOverBar(mouseX, mouseY, possibleBarIndex) {
     let individualBlockCount = this.chartData.length * 2 + this.chartData.length - 1; // one full data block is 2 individual spacers
     const individualBlockWidth = (this.netWidth + RIGHT_X_CONTEXT_OFFSET + PADDING) / individualBlockCount;
-    const barX = possibleBarIndex * 2 * individualBlockWidth + possibleBarIndex * individualBlockWidth + PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix);
+    const barX = possibleBarIndex * 2 * individualBlockWidth + possibleBarIndex * individualBlockWidth + PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.longestLabel);
     const barEndX = barX + individualBlockWidth * 2;
     const barHeight = this.chartData[possibleBarIndex].y * this.netHeight / this.maxYLabelValue;
     const barY = this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET;

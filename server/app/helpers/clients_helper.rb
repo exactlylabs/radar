@@ -4,9 +4,9 @@ module ClientsHelper
     when nil
       'All Pods'
     when 'online'
-      'Online'
+      Client::STATUSES::ONLINE
     else
-      'Offline'
+      Client::STATUSES::OFFLINE
     end
   end
 

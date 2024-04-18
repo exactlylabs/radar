@@ -371,7 +371,7 @@
 }
 
 @media (max-width: 768px) {
-  .tables--filters-menu-container {
+  .tables--filters-menu-container:not(#date-range-filter-menu-responsive) {
     left: unset;
     right: 0;
   }

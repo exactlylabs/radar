@@ -1,5 +1,6 @@
 <% current_filter_label = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:label] : params[:start].present? && params[:end].present? ? get_custom_date_range_label(params) : default_label %>
 <% current_filter_value = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:value] : default_value %>
+<% public_use = local_assigns[:public_use] || false %>
 
 <div class="tables--filters-button-container"
      data-controller="filters"
@@ -9,6 +10,7 @@
 >
   <button type="button"
           class="custom-button custom-button--sm custom-button--secondary-light"
+          data-public-use="<%= public_use %>"
   >
     <%= current_filter_label %>
     <%= image_tag image_url('caret.png'), width: 16, height: 16, class: "ms-1" %>
@@ -30,10 +32,11 @@
     <% end %>
     <button class="tables--filters-menu-item table-filter-option active custom-button custom-button--transparent"
             data-action="click->filters#openCalendar"
+            data-calendar-id="dashboard-custom-datepicker-<%= menu_id %>"
     >Custom date range...</button>
   </div>
   <div class="dashboard--date-range-filter-container"
-       id="dashboard-custom-datepicker"
+       id="dashboard-custom-datepicker-<%= menu_id %>"
        data-controller="dashboard-time-filter"
        hidden="hidden"
   >

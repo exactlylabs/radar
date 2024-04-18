@@ -50,7 +50,7 @@
     </div>
   <% elsif row.test_running?%>
     <div class="custom-badge custom-badge--running">
-      Test running
+      <%= Client::STATUSES::RUNNING_TEST %>
     </div>
   <% else %>
     <span class="ellipsis table-cell"><%= row.latest_measurement.present? ? pretty_print_date_with_time(row.latest_measurement.created_at) : "-" %></span>

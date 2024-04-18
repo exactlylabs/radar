@@ -1,11 +1,13 @@
-<%= turbo_frame_tag 'upload-speeds-widget' do %>
+<% responsive = @responsive || false %>
+
+<%= turbo_frame_tag "upload-speeds-widget#{responsive ? '-responsive' : ''}" do %>
   <% if @upload_speeds.count == 0 %>
     <%= render partial: "dashboard/components/widgets/no_data" %>
   <% else %>
-    <canvas id="upload-speeds-chart"
+    <canvas id="upload-speeds-chart<%= responsive ? '-responsive' : ''%>"
             data-controller="multi-line-chart"
             data-line-chart-data="<%= @upload_speeds.to_json %>"
-            data-parent-id="upload-speeds-widget"
+            data-parent-id="upload-speeds-widget<%= responsive ? '-responsive' : ''%>"
             data-y-step-size="150"
             data-label-suffix=" Mbps"
             data-action="toggleLine@window->multi-line-chart#toggleLine"
