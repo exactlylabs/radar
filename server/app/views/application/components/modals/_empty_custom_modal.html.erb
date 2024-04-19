@@ -11,6 +11,7 @@
   <div class="modals--underlay" data-action="click->custom-modal#closeModal"></div>
   <div id="<%= is_headless ? 'headless-modal' : 'full-modal' %>"
        class="modals--container opening"
+       data-modal-element="true"
        data-modal-type="<%= is_headless ? 'headless' : 'full' %>"
        data-allow-overflow="<%= allow_overflow %>"
   >

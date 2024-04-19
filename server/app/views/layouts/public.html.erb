@@ -1,81 +1,81 @@
 <!DOCTYPE html>
 <html style="font-size: 16px !important;">
-  <head>
-    <title>Radar | Pods</title>
-    <meta property="og:title" content="Radar | Pods"/>
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="<%= request.base_url %>/og.png" />
-    <meta property="og:url" content="<%= request.base_url %>">
-    <meta property="og:description" content="Telehealth Broadband Pilot Program">
-    <meta property="og:site_name" content="Radar | Pods">
+<head>
+  <title>Radar | Pods</title>
+  <meta property="og:title" content="Radar | Pods"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="<%= request.base_url %>/og.png"/>
+  <meta property="og:url" content="<%= request.base_url %>">
+  <meta property="og:description" content="Telehealth Broadband Pilot Program">
+  <meta property="og:site_name" content="Radar | Pods">
 
-    <%= favicon_link_tag asset_path('favicon.png') %>
+  <%= favicon_link_tag asset_path('favicon.png') %>
 
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
-    <script
-      src="https://browser.sentry-cdn.com/7.9.0/bundle.min.js"
-      integrity="sha384-4Q6VnoFQcxYhNxg1ic5R+RRx0fam6rRf9PFAE3oTZhtTV2S8IM7uyl8Bg2z3AFi9"
-      crossorigin="anonymous"
-    ></script>
-    <% if Rails.env.production? %>
-      <script>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
+  <script
+    src="https://browser.sentry-cdn.com/7.9.0/bundle.min.js"
+    integrity="sha384-4Q6VnoFQcxYhNxg1ic5R+RRx0fam6rRf9PFAE3oTZhtTV2S8IM7uyl8Bg2z3AFi9"
+    crossorigin="anonymous"
+  ></script>
+  <% if Rails.env.production? %>
+    <script>
         // based on sentry.rb file config
         Sentry.init({
-          dsn: "https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151",
-          tracesSampleRate: 0.0,
-          environment: "production",
+            dsn: "https://824cb73d4b5149459eb889296687f94f@o1197382.ingest.sentry.io/6320151",
+            tracesSampleRate: 0.0,
+            environment: "production",
         });
-      </script>
-    <% end %>
-    <script>
-      window.onload = function() {
-        const userAgent = window.navigator.userAgent;
-        if(userAgent && /MSIE|Trident/.test(userAgent)) {
-          // need to use className as classList might not be supported yet in old browsers
-          const banner = document.getElementById("unsupported-browser-notice");
-          banner.className = banner.className.replace("invisible", "");
-        }
-      };
     </script>
-    <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
-    <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
-  </head>
-  <body id="public--body" >
-    <%= render partial: "application/components/misc/supported_browsers_banner" %>
-    <main id="public--main" data-controller="public-page">
-      <section id="public--logo-section">
-        <a href="/" class="m-0">
-        <%= image_tag image_url('new-radar-logo.png'), id: 'public--logo' %>
-        </a>
-      </section>
-      <section id="public--card-section">
-        <%= yield %>
-      </section>
-      <section id="public--learn-section">
-        <p class="public--additional-text public--learn-more wrap">New to Radar Pods? <span><a href="<%= request.protocol + request.host_with_port %>" class="regular-link">Learn more <%= image_tag image_url('new-tab-icon.png'), id: 'public--new-tab-icon' %></a></span></p>
-      </section>
-      <footer id="public--footer">
-        <div id="public--footer-first-row">
-          <a href="https://radartoolkit.com/privacy-policy" class="public--footer-link">Privacy Policy</a>
-          <a href="mailto:support@radartoolkit.com" class="public--footer-link">Support</a>
-        </div>
-        <div id="public--footer-second-row">
-          <p id="public--footer-rights" class="wrap">© 2024 Radar. All rights reserved.</p>
-        </div>
-      </footer>
-    </main>
-    <div class="modal fade clients--pod-id-modal" tabindex="-1" id="pod_id_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
-      <%= render partial: "public_pod/pod_id_modal" %>
+  <% end %>
+  <script>
+      window.onload = function () {
+          const userAgent = window.navigator.userAgent;
+          if (userAgent && /MSIE|Trident/.test(userAgent)) {
+              // need to use className as classList might not be supported yet in old browsers
+              const banner = document.getElementById("unsupported-browser-notice");
+              banner.className = banner.className.replace("invisible", "");
+          }
+      };
+  </script>
+  <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
+  <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
+</head>
+<body id="public--body">
+<%= render partial: "application/components/misc/supported_browsers_banner" %>
+<main id="public--main" data-controller="public-page">
+  <section id="public--logo-section">
+    <a href="/" class="m-0">
+      <%= image_tag image_url('new-radar-logo.png'), id: 'public--logo' %>
+    </a>
+  </section>
+  <section id="public--card-section">
+    <%= yield %>
+  </section>
+  <section id="public--learn-section">
+    <p class="public--additional-text public--learn-more wrap">New to Radar Pods?
+      <span><a href="<%= request.protocol + request.host_with_port %>" class="regular-link">Learn more <%= image_tag image_url('new-tab-icon.png'), id: 'public--new-tab-icon' %></a></span>
+    </p>
+  </section>
+  <footer id="public--footer">
+    <div id="public--footer-first-row">
+      <a href="https://radartoolkit.com/privacy-policy" class="public--footer-link">Privacy Policy</a>
+      <a href="mailto:support@radartoolkit.com" class="public--footer-link">Support</a>
     </div>
-    <div class="modal fade" tabindex="-1" id="pod_setup_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
-      <%= render partial: "public_pod/setup_pod_modal" %>
+    <div id="public--footer-second-row">
+      <p id="public--footer-rights" class="wrap">© 2024 Radar. All rights reserved.</p>
     </div>
-    <div class="modal fade" tabindex="-1" id="dashboard_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
-      <%= render partial: "public_pod/dashboard_modal" %>
-    </div>
-  </body>
+  </footer>
+</main>
+<%= render partial: "application/components/modals/turbo_modal", locals: { turbo_frame_tag_id: "pod_id_modal" } %>
+<div class="modal fade" tabindex="-1" id="pod_setup_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
+  <%= render partial: "public_pod/setup_pod_modal" %>
+</div>
+<div class="modal fade" tabindex="-1" id="dashboard_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
+  <%= render partial: "public_pod/dashboard_modal" %>
+</div>
+</body>
 </html>

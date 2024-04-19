@@ -1,0 +1,9 @@
+<%= turbo_stream.update "pod_id_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal", locals: {
+    modal_title: "Finding your pod ID",
+    modal_partial_path: "pods/modals/add_pod/need_help_finding_pod_id",
+    custom_submit_end_handler: nil,
+    resource: nil,
+  } %>
+
+<% end %>

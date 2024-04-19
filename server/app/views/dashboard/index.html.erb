@@ -4,8 +4,8 @@
     <!--begin::Info-->
     <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
       <!--begin::Title-->
-      <h1 class="page-main-title">Dashboard 
-      <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <h1 class="page-main-title">Dashboard
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
       <!--begin::Breadcrumb-->
       <ul class="breadcrumb fw-bold fs-base my-1">
@@ -98,7 +98,7 @@
               <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
               <div class="networks--unassigned-pods-banner-text-container">
                 <% pod_count = policy_scope(Client).where(location: nil).count %>
-                <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>
+                <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : '' %> not assigned to any network.</span>
                 <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
               </div>
             </div>
@@ -150,7 +150,7 @@
         <% if @locations.exists? || params[:filter].present? %>
           <!-- REMOVE -->
           <%= render partial: "application/components/widgets/widget",
-              locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
+                     locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
           %>
         <% end %>
         <% if FeatureFlagHelper.is_available('charts', current_user) %>
@@ -204,11 +204,15 @@
   <%= render partial: "application/components/modals/turbo_modal",
              locals: { turbo_frame_tag_id: "new_location_modal", optional_added_controllers: "categories" }
   %>
-  <%= render partial: "application/components/modals/turbo_modal", 
-              locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",
              locals: { turbo_frame_tag_id: "add_new_pod_to_current_network", optional_added_controllers: "pod-id-step" }
+  %>
+
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "pod_id_modal" }
   %>
 <% end %>

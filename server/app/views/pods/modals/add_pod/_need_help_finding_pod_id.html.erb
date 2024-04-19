@@ -1,0 +1,11 @@
+<%= render partial: "application/components/modals/modal_header", locals: { title: "Finding your pod ID", is_custom: true } %>
+<div class="modal-body modals--body d-flex flex-column justify-content-center align-items-center text-center">
+  <%= image_tag image_url('pod-id-label-image.png'), id: 'public--pod-id-modal-image' %>
+  <p class="modal-main-title">Check the bottom of your pod</p>
+  <p class="additional-text wrap">Your pod ID is a 12-digit code of numbers and uppercase and lowercase letters. You can
+    find it printed on a label on the bottom of your pod. Example: aBc123ask7Fx.</p>
+  <a href="mailto:support@radartoolkit.com" class="regular-link">Still can't find it? Contact us.</a>
+</div>
+<div class="modals--footer-container">
+  <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Close", is_custom: true } %>
+</div>

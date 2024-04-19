@@ -19,7 +19,7 @@
     <!--end::Info-->
     <div class="pods--index-button-options-container">
       <% if FeatureFlagHelper.is_available('networks', current_user) %>
-        <% if @clients.count.positive? %>
+        <% if @clients.count >= 1 %>
           <a href="<%= get_add_pod_modal_path %>"
              class="custom-button custom-button--primary custom-button--lg"
              data-turbo-frame="add_pod_modal"
@@ -88,9 +88,11 @@
   <%= render partial: "application/components/modals/turbo_modal",
              locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "pod-id-step" }
   %>
-  <div class="modal fade clients--pod-id-modal" tabindex="-1" id="pod_id_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
-    <%= render partial: "public_pod/pod_id_modal" %>
-  </div>
+
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "pod_id_modal" }
+  %>
+
   <%= render partial: "application/components/modals/turbo_modal",
              locals: {
                turbo_frame_tag_id: "bulk_move_to_account_modal",

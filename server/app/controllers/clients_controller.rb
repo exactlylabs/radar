@@ -812,6 +812,9 @@ class ClientsController < ApplicationController
     @pods = policy_scope(Client).where(unix_user: pod_ids)
   end
 
+  def need_help_finding_pod_id
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

@@ -11,7 +11,7 @@ export default class extends Controller {
   
   connect() {
     this.modalType = this.element.getAttribute('data-modal-type');
-    this.modalElement = document.getElementById(this.getModalId());
+    this.modalElement = this.element.querySelector('div[data-modal-element="true"]');
     window.addEventListener('keydown', this.listenForEscapeKey.bind(this));
     setTimeout(() => {
       this.modalElement.classList.remove('opening');
