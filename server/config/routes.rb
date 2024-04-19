@@ -66,6 +66,7 @@ Rails.application.routes.draw do
   post 'clients/check_claim_new_pod', to: 'clients#check_claim_new_pod', as: :check_claim_new_pod
   post 'clients/claim_new_pod', to: 'clients#claim_new_pod', as: :claim_new_pod
   post 'clients/add_new_pod_to_current_network', to: 'clients#add_new_pod_to_current_network', as: :add_new_pod_to_current_network
+  get 'clients/need_help_finding_pod_id', to: 'clients#need_help_finding_pod_id', as: :need_help_finding_pod_id
 
   resources :clients do
     resources :measurements, controller: 'client_measurements', only: [:index, :create, :show] do

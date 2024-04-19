@@ -92,6 +92,10 @@
   <% end %>
 </div>
 
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "pod_id_modal" }
+%>
+
 <div class="modal fade" tabindex="-1" id="add_pod_modal_step_0" data-controller="add-client-to-location">
   <%= render partial: 'add_pod_step_0', locals: { location: @location } %>
 </div>
@@ -112,7 +116,3 @@
 <%= render partial: "application/components/modals/turbo_modal",
            locals: { turbo_frame_tag_id: "bulk_remove_from_network_modal" }
 %>
-
-<div class="modal fade clients--pod-id-modal" tabindex="-1" id="pod_id_modal" data-controller="modal" data-action="turbo:frame-render->modal#showModal">
-  <%= render partial: "public_pod/pod_id_modal" %>
-</div>
