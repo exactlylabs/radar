@@ -1,6 +1,8 @@
 class ClientOutage < ApplicationRecord
+  belongs_to :client
+  belongs_to :location
   belongs_to :outage_event, optional: true
-  belongs_to :autonomous_system_org, optional: true
+  belongs_to :autonomous_system, optional: true
 
   enum status: { active: 0, cancelled: 1, resolved: 2 }
 
