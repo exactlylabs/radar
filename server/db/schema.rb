@@ -151,13 +151,15 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
     t.integer "status", default: 0, null: false
     t.boolean "has_service_started_event", default: false, null: false
     t.bigint "client_id"
+    t.bigint "location_id"
     t.bigint "outage_event_id"
-    t.bigint "autonomous_system_org_id"
+    t.bigint "autonomous_system_id"
     t.boolean "accounted_in_isp_window", default: false, null: false
     t.datetime "started_at"
     t.datetime "resolved_at"
-    t.index ["autonomous_system_org_id"], name: "index_client_outages_on_autonomous_system_org_id"
+    t.index ["autonomous_system_id"], name: "index_client_outages_on_autonomous_system_id"
     t.index ["client_id"], name: "index_client_outages_on_client_id"
+    t.index ["location_id"], name: "index_client_outages_on_location_id"
     t.index ["outage_event_id"], name: "index_client_outages_on_outage_event_id"
   end
 
@@ -595,10 +597,10 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
   create_table "outage_events", force: :cascade do |t|
     t.integer "status", default: 0, null: false
     t.integer "outage_type", default: 0, null: false
-    t.bigint "autonomous_system_org_id"
+    t.bigint "autonomous_system_id"
     t.datetime "started_at"
     t.datetime "resolved_at"
-    t.index ["autonomous_system_org_id"], name: "index_outage_events_on_autonomous_system_org_id"
+    t.index ["autonomous_system_id"], name: "index_outage_events_on_autonomous_system_id"
   end
 
   create_table "packages", force: :cascade do |t|
@@ -815,8 +817,9 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
   add_foreign_key "client_event_logs", "clients"
   add_foreign_key "client_online_logs", "accounts"
   add_foreign_key "client_online_logs", "clients"
-  add_foreign_key "client_outages", "autonomous_system_orgs"
+  add_foreign_key "client_outages", "autonomous_systems"
   add_foreign_key "client_outages", "clients"
+  add_foreign_key "client_outages", "locations"
   add_foreign_key "client_outages", "outage_events"
   add_foreign_key "client_speed_tests", "autonomous_systems"
   add_foreign_key "client_speed_tests", "widget_clients", column: "tested_by"
@@ -852,7 +855,7 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
   add_foreign_key "online_client_count_projections", "autonomous_systems"
   add_foreign_key "online_client_count_projections", "events"
   add_foreign_key "online_client_count_projections", "locations"
-  add_foreign_key "outage_events", "autonomous_system_orgs"
+  add_foreign_key "outage_events", "autonomous_systems"
   add_foreign_key "packages", "client_versions"
   add_foreign_key "pod_connectivity_configs", "clients"
   add_foreign_key "pod_connectivity_configs", "pod_network_interfaces", column: "wlan_interface_id"
