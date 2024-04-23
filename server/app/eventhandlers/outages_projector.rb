@@ -40,7 +40,7 @@ class OutagesProjector
 
   def process
     iterators = [
-      self.events_iterator(Client, @state["client_events_offset"] || 0),
+      self.events_iterator(Client, @state["client_events_offset"] || 2383559),
       self.events_iterator(SystemOutage, @state["sys_outage_events_offset"] || 0),
     ]
     ActiveRecord::Base.connection.transaction do
@@ -97,17 +97,17 @@ class OutagesProjector
     end
 
     pod_state = event["snapshot_state"]
-    as_org_id = AutonomousSystem.select(:autonomous_system_org_id).find(pod_state["autonomous_system_id"])&.autonomous_system_org_id if pod_state["autonomous_system_id"].present?
+    as_id = pod_state["autonomous_system_id"]
 
     case event["name"]
     when Client::Events::WENT_OFFLINE
-      handle_offline_event(as_org_id, event)
+      handle_offline_event(as_id, event)
 
     when Client::Events::WENT_ONLINE
-      handle_online_event(as_org_id, event)
+      handle_online_event(as_id, event)
 
     when Client::Events::SERVICE_STARTED
-      handle_service_started_event(as_org_id, event)
+      handle_service_started_event(as_id, event)
 
     when Client::Events::AS_CHANGED
 
@@ -118,7 +118,8 @@ class OutagesProjector
     # no longer valid isp outage
     isp_outage.update_columns(status: :cancelled)
     isp_outage.client_outages.each do |c_outage|
-      c_outage.update_columns(outage_event: nil, accounted_in_isp_window: false)
+      c_outage.update_columns(outage_event_id: nil, accounted_in_isp_window: false)
+      c_outage.outage_event = nil # update_columns won't delete the association by default
       if c_outage.resolved?
         # Run through the resolve logic again, to generate a different outage event
         resolve_client_outage(c_outage, c_outage.resolved_at)
@@ -131,7 +132,7 @@ class OutagesProjector
       outage_type: outage_type,
       status: :resolved,
       started_at: client_outage.started_at,
-      autonomous_system_org_id: client_outage.autonomous_system_org_id,
+      autonomous_system_id: client_outage.autonomous_system_id,
       resolved_at: resolved_at
     )
     client_outage.update_columns(
@@ -176,7 +177,7 @@ class OutagesProjector
       isp_outage = client_outage.outage_event
       create_outage_event_for_client_outage(
         client_outage,
-        :power_outage.
+        :power_outage,
         resolved_at
       )
       if isp_outage.client_outages.where(accounted_in_isp_window: true).count < 3
@@ -187,18 +188,18 @@ class OutagesProjector
       isp_outage = client_outage.outage_event
       client_outage.update_columns(status: :resolved, resolved_at: resolved_at)
       return unless isp_outage.active?
-      byebug
-      cached_data = @state["isp_outages"][isp_outage.autonomous_system_org_id]
+
+      cached_data = @state["isp_outages"][isp_outage.autonomous_system_id]
       cached_data["isp_window_count"] -= 1 if client_outage.accounted_in_isp_window
 
-      if (cached_data["isp_window_count"].to_f / cached_data["isp_window_client_outages"].count.to_f) < 2/3
+      if (cached_data["isp_window_count"].to_f / cached_data["isp_window_client_outages"].count.to_f) <= 2.0/3.0
         isp_outage.update_columns(status: :resolved, resolved_at: resolved_at)
-        @state["isp_outages"].delete(isp_outage.autonomous_system_org_id)
+        @state["isp_outages"].delete(isp_outage.autonomous_system_id)
       end
     end
   end
 
-  def handle_service_started_event(as_org_id, event)
+  def handle_service_started_event(as_id, event)
     client_outage = ClientOutage.active.where(
       client_id: event["aggregate_id"]
     ).first
@@ -215,12 +216,12 @@ class OutagesProjector
       ).where("resolved_at > ?", event["timestamp"] - 1.minute).last
       return unless client_outage.present?
 
-      client_outage.has_service_started_event = true
+      client_outage.update_columns(has_service_started_event: true)
       resolve_client_outage(client_outage, event["timestamp"])
     end
   end
 
-  def handle_online_event(as_org_id, event)
+  def handle_online_event(as_id, event)
     client_outage = ClientOutage.preload(:outage_event).active.find_by(client_id: event["aggregate_id"])
     self.resolve_client_outage(client_outage, event["timestamp"]) if client_outage.present?
   end
@@ -229,65 +230,68 @@ class OutagesProjector
   #
   # Creates a ClientOutage record, and runs the following logic for ISP Outages:
   #
-  #   - If the client has an autonomous_system_org_id, and no ongoing ISP Outage,
+  #   - If the client has an autonomous_system_id, and no ongoing ISP Outage,
   #     verify the number of client outages from that ISP in the last 5 minutes.
   #     If it is greater or equal to 3, create the isp_outage event, link the last 5 minutes client outages to it.
   #
-  #   - If the client has an autonomous_system_org_id, and there is an ongoing ISP Outage,
+  #   - If the client has an autonomous_system_id, and there is an ongoing ISP Outage,
   #     link this client outage to the ongoing isp_outage, and this outage happened within start of isp outage + Time window,
   #     then also mark this client outage as accounted_in_isp_window.
   #
   #
   ##
-  def handle_offline_event(as_org_id, event)
-    return if @state["system_outage"]
+  def handle_offline_event(as_id, event)
+    return if @state["system_outage"] || event["snapshot_state"]["location_id"].nil?
 
     c_outage = ClientOutage.new(
       client_id: event["aggregate_id"],
+      location_id: event["snapshot_state"]["location_id"],
       started_at: event["timestamp"],
-      autonomous_system_org_id: as_org_id
+      autonomous_system_id: as_id
     )
     c_outage.save!(validate: false)
 
     @state["isp_outages"] ||= {}
-    @state["isp_outages"][as_org_id] ||= {}
+    @state["isp_outages"][as_id] ||= {}
 
-    ongoing_isp_outage = @state["isp_outages"][as_org_id] if as_org_id.present?
-    if as_org_id.present? && ongoing_isp_outage.nil?
-      @state["isp_window_outages"][as_org_id] ||= []
-      @state["isp_window_outages"][as_org_id] << {"id" => c_outage.id, "started_at" => c_outage.started_at}
-      @state["isp_window_outages"][as_org_id].delete_if { |o| o["started_at"] < (event["timestamp"].to_time - ISP_WINDOW) }
+    ongoing_isp_outage = @state["isp_outages"][as_id] if as_id.present?
+    if as_id.present? && ongoing_isp_outage.blank?
+      @state["isp_window_outages"][as_id] ||= []
+      @state["isp_window_outages"][as_id] << {"id" => c_outage.id, "started_at" => c_outage.started_at, "location_id" => c_outage.location_id}
+      @state["isp_window_outages"][as_id].delete_if { |o| o["started_at"] < (event["timestamp"].to_time - ISP_WINDOW) }
 
-      return unless @state["isp_window_outages"][as_org_id].count >= 3
-      byebug # TODO: delme
+      distinct_locations = @state["isp_window_outages"][as_id].map { |o| o["location_id"] }.uniq
+      return unless distinct_locations.count >= 3
 
       outage = OutageEvent.create(
         outage_type: :isp_outage,
         started_at: event["timestamp"],
-        autonomous_system_org_id: as_org_id,
+        autonomous_system_id: as_id,
       )
       outage.save!(validate: false)
-      @state["isp_outages"][as_org_id] = {
+      @state["isp_outages"][as_id] = {
         "id" => outage.id,
         "started_at" => outage.started_at,
-        "isp_window_client_outages": @state["isp_window_outages"][as_org_id].dup,
-        "isp_window_count": @state["isp_window_outages"][as_org_id].count
+        "isp_window_client_outages" => @state["isp_window_outages"][as_id].dup,
+        "isp_window_count" => distinct_locations.count
       }
       ClientOutage.where(
-        id: @state["isp_window_outages"][as_org_id].map { |o| o["id"] }
+        id: @state["isp_window_outages"][as_id].map { |o| o["id"] }
       ).update_all(outage_event_id: outage.id, accounted_in_isp_window: true)
 
-      @state["isp_window_outages"].delete(as_org_id)
+      @state["isp_window_outages"].delete(as_id)
 
-    elsif as_org_id.present? && ongoing_isp_outage.present?
-      account_in_window = event["timestamp"] <= ongoing_isp_outage["started_at"].to_time + ISP_WINDOW
+    elsif as_id.present? && ongoing_isp_outage.present?
+      # Account this outage in the ISP outages window if it is inside the time window, and the pod's location is not already accounted for.
+      account_in_window = event["timestamp"] <= ongoing_isp_outage["started_at"].to_time + ISP_WINDOW && !c_outage.location_id.in?(ongoing_isp_outage["isp_window_client_outages"].map {|o| o["location_id"]})
+
       c_outage.update_columns(
         outage_event_id: ongoing_isp_outage["id"],
         accounted_in_isp_window: account_in_window
       )
       if account_in_window
-        @state["isp_outages"][as_org_id]["isp_window_client_outages"] << {"id" => c_outage.id, "started_at" => c_outage.started_at}
-        @state["isp_outages"][as_org_id]["isp_window_count"] += 1
+        @state["isp_outages"][as_id]["isp_window_client_outages"] << {"id" => c_outage.id, "started_at" => c_outage.started_at, "location_id" => c_outage.location_id}
+        @state["isp_outages"][as_id]["isp_window_count"] += 1
       end
     end
   end
