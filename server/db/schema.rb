@@ -13,11 +13,8 @@
 ActiveRecord::Schema.define(version: 2024_04_22_162200) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "btree_gist"
-  enable_extension "pageinspect"
   enable_extension "plpgsql"
   enable_extension "postgis"
-  enable_extension "tablefunc"
 
   create_table "accounts", force: :cascade do |t|
     t.integer "account_type", default: 0, null: false
@@ -230,10 +227,8 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
     t.string "client_email"
     t.string "client_phone"
     t.index ["latitude"], name: "client_speed_tests_latitude_idx"
-    t.index ["lonlat", "tested_by"], name: "index_client_speed_test_lonlat_tested_by"
     t.index ["lonlat"], name: "client_speed_tests_gist_lonlat_idx", using: :gist
     t.index ["lonlat"], name: "index_client_speed_tests_on_lonlat"
-    t.index ["tested_by", "lonlat"], name: "client_speed_tests_gist_lonlat_tested_by_idx", using: :gist
   end
 
   create_table "client_versions", force: :cascade do |t|
@@ -328,7 +323,7 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
 
   create_table "events", force: :cascade do |t|
     t.string "name"
-    t.datetime "timestamp", precision: 6
+    t.datetime "timestamp"
     t.string "aggregate_type"
     t.bigint "aggregate_id"
     t.jsonb "data"
@@ -336,9 +331,6 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["aggregate_type", "aggregate_id"], name: "index_events_on_aggregate"
-    t.index ["aggregate_type", "name"], name: "idx_events_on_agg_type_and_name"
-    t.index ["aggregate_type", "timestamp"], name: "test_events_aggregate_type_timestamp", order: { timestamp: :desc }
-    t.index ["timestamp"], name: "test_events_timestamp", order: :desc
     t.index ["version", "aggregate_id", "aggregate_type"], name: "index_events_on_version_and_aggregate_id_and_aggregate_type", unique: true
   end
 
@@ -425,9 +417,9 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
     t.boolean "test_requested", default: false
     t.string "state"
     t.string "county"
+    t.boolean "manual_lat_long", default: false
     t.string "state_fips"
     t.string "county_fips"
-    t.boolean "manual_lat_long", default: false
     t.boolean "automatic_location", default: false
     t.integer "account_id"
     t.float "download_avg"
@@ -442,7 +434,6 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
     t.float "measurements_download_sum", default: 0.0
     t.float "measurements_upload_sum", default: 0.0
     t.index ["account_id"], name: "index_locations_on_account_id"
-    t.index ["account_id"], name: "test_locations_on_account_id"
     t.index ["created_by_id"], name: "index_locations_on_created_by_id"
     t.index ["location_group_id"], name: "index_locations_on_location_group_id"
   end
@@ -486,24 +477,15 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
     t.integer "channel"
     t.string "width"
     t.integer "noise"
-    t.index ["account_id", "client_id", "download"], name: "idx_measurements_acc_cli_download"
     t.index ["account_id", "processed_at"], name: "index_measurements_on_account_id_and_processed_at", order: { processed_at: :desc }
-    t.index ["account_id", "processed_at"], name: "test_measurements_account_processed_at_btree", order: { processed_at: :desc }
     t.index ["account_id"], name: "index_measurements_on_account_id"
-    t.index ["account_id"], name: "test_measurements_account_btree"
     t.index ["autonomous_system_id"], name: "index_measurements_on_autonomous_system_id"
     t.index ["client_id"], name: "index_measurements_on_client_id"
-    t.index ["created_at"], name: "test_measurements_brin_created_at", using: :brin
-    t.index ["location_id", "processed_at"], name: "test_measurements_location_id_processed_at", order: { processed_at: :desc }
     t.index ["location_id"], name: "index_measurements_on_location_id"
     t.index ["lonlat"], name: "index_measurements_on_lonlat"
     t.index ["measured_by_id"], name: "index_measurements_on_measured_by_id"
     t.index ["processed_at", "location_id", "autonomous_system_id"], name: "idx_meas_filter_by_loc_and_isp", order: { processed_at: :desc }
-    t.index ["processed_at", "location_id", "autonomous_system_id"], name: "test_measurements_processed_at_location_id_autonomous_sys_id", order: { processed_at: :desc }
-    t.index ["processed_at", "location_id"], name: "test_measurements_location_id_processed_at_2", order: { processed_at: :desc }
     t.index ["processed_at"], name: "index_measurements_on_processed_at", order: :desc
-    t.index ["processed_at"], name: "measurements_brin_processed_at", using: :brin
-    t.index ["processed_at"], name: "test_measurements_processed_at", order: :desc
   end
 
   create_table "metrics_projections", id: false, force: :cascade do |t|
@@ -521,9 +503,7 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
     t.index ["autonomous_system_org_id"], name: "index_metrics_projections_on_autonomous_system_org_id"
     t.index ["parent_aggregate_id"], name: "index_metrics_projections_on_parent_aggregate_id"
     t.index ["study_aggregate_id", "autonomous_system_org_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_asn_bucket_timestamp_desc_idx", order: { timestamp: :desc }
-    t.index ["study_aggregate_id", "autonomous_system_org_id", "timestamp"], name: "test_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_bucket_timestamp_desc_idx", order: { timestamp: :desc }
-    t.index ["study_aggregate_id", "timestamp"], name: "metrics_projections_agg_timestamp_asc_idx"
     t.index ["study_aggregate_id", "timestamp"], name: "metrics_projections_agg_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id"], name: "index_metrics_projections_on_study_aggregate_id"
   end
@@ -682,7 +662,6 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
     t.jsonb "state"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["aggregate_type", "aggregate_id", "id"], name: "test_idx_snapshots", order: { id: :desc }
     t.index ["aggregate_type", "aggregate_id"], name: "index_snapshots_on_aggregate"
     t.index ["event_id"], name: "index_snapshots_on_event_id"
   end
@@ -699,16 +678,7 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
     t.integer "locations_goal"
     t.index ["autonomous_system_org_id"], name: "index_study_aggregates_on_autonomous_system_org_id"
     t.index ["geospace_id"], name: "index_study_aggregates_on_geospace_id"
-    t.index ["level"], name: "study_aggregates_level_idx"
     t.index ["parent_aggregate_id"], name: "index_study_aggregates_on_parent_aggregate_id"
-  end
-
-  create_table "study_counties", id: false, force: :cascade do |t|
-    t.string "state"
-    t.string "state_code"
-    t.string "county"
-    t.string "fips"
-    t.integer "pop_2021"
   end
 
   create_table "system_outages", force: :cascade do |t|
@@ -746,18 +716,6 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
     t.index ["old_client_version_id"], name: "index_update_groups_on_old_client_version_id"
     t.index ["old_watchdog_version_id"], name: "index_update_groups_on_old_watchdog_version_id"
     t.index ["watchdog_version_id"], name: "index_update_groups_on_watchdog_version_id"
-  end
-
-  create_table "us_counties", primary_key: "fips", id: :string, force: :cascade do |t|
-    t.string "name"
-    t.string "state_fips"
-    t.string "state"
-    t.string "state_code"
-  end
-
-  create_table "us_states", primary_key: "state_fips", id: :string, force: :cascade do |t|
-    t.string "state_code"
-    t.string "name"
   end
 
   create_table "users", force: :cascade do |t|
@@ -865,7 +823,7 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
   add_foreign_key "recent_searches", "users"
   add_foreign_key "shared_accounts", "accounts", column: "original_account_id"
   add_foreign_key "shared_accounts", "accounts", column: "shared_to_account_id"
-  add_foreign_key "snapshots", "events", on_delete: :cascade
+  add_foreign_key "snapshots", "events"
   add_foreign_key "study_aggregates", "autonomous_system_orgs"
   add_foreign_key "study_aggregates", "geospaces"
   add_foreign_key "study_aggregates", "study_aggregates", column: "parent_aggregate_id"
@@ -876,25 +834,6 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
   add_foreign_key "users_accounts", "accounts"
   add_foreign_key "users_accounts", "users"
 
-  create_view "aggregated_measurements_by_days", materialized: true, sql_definition: <<-SQL
-      SELECT date_trunc('d'::text, measurements.processed_at) AS "time",
-      measurements.account_id,
-      autonomous_systems.autonomous_system_org_id,
-      measurements.location_id,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
-      min(measurements.download) AS download_min,
-      max(measurements.download) AS download_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
-      min(measurements.upload) AS upload_min,
-      max(measurements.upload) AS upload_max,
-      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
-      min(measurements.latency) AS latency_min,
-      max(measurements.latency) AS latency_max
-     FROM (measurements
-       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
-    GROUP BY (date_trunc('d'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
-    ORDER BY (date_trunc('d'::text, measurements.processed_at));
-  SQL
   create_view "aggregated_measurements_by_hours", materialized: true, sql_definition: <<-SQL
       SELECT date_trunc('h'::text, measurements.processed_at) AS "time",
       measurements.account_id,
@@ -913,5 +852,24 @@ ActiveRecord::Schema.define(version: 2024_04_22_162200) do
        LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
     GROUP BY (date_trunc('h'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
     ORDER BY (date_trunc('h'::text, measurements.processed_at));
+  SQL
+  create_view "aggregated_measurements_by_days", materialized: true, sql_definition: <<-SQL
+      SELECT date_trunc('d'::text, measurements.processed_at) AS "time",
+      measurements.account_id,
+      autonomous_systems.autonomous_system_org_id,
+      measurements.location_id,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.download) AS download_median,
+      min(measurements.download) AS download_min,
+      max(measurements.download) AS download_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.upload) AS upload_median,
+      min(measurements.upload) AS upload_min,
+      max(measurements.upload) AS upload_max,
+      percentile_disc((0.5)::double precision) WITHIN GROUP (ORDER BY measurements.latency) AS latency_median,
+      min(measurements.latency) AS latency_min,
+      max(measurements.latency) AS latency_max
+     FROM (measurements
+       LEFT JOIN autonomous_systems ON ((autonomous_systems.id = measurements.autonomous_system_id)))
+    GROUP BY (date_trunc('d'::text, measurements.processed_at)), measurements.account_id, autonomous_systems.autonomous_system_org_id, measurements.location_id
+    ORDER BY (date_trunc('d'::text, measurements.processed_at));
   SQL
 end
