@@ -109,8 +109,6 @@ class OutagesProjector
     when Client::Events::SERVICE_STARTED
       handle_service_started_event(as_id, event)
 
-    when Client::Events::AS_CHANGED
-
     end
   end
 
