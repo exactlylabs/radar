@@ -40,7 +40,7 @@ class OutagesProjector
 
   def process
     iterators = [
-      self.events_iterator(Client, @state["client_events_offset"] || 2383559),
+      self.events_iterator(Client, @state["client_events_offset"] || 0),
       self.events_iterator(SystemOutage, @state["sys_outage_events_offset"] || 0),
     ]
     ActiveRecord::Base.connection.transaction do
