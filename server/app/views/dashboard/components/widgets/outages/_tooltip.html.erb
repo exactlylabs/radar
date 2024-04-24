@@ -1,0 +1,23 @@
+<div id="outage-tooltip-<%= index %>"
+     class="dashboard--outages-tooltip" hidden="hidden"
+     data-action="mouseenter->outages-chart#hoverTooltip mouseleave->outages-chart#hideTooltip"
+>
+  <div class="dashboard--outages-tooltip-header">
+    <p>July 16 - July 19</p>
+  </div>
+  <div class="dashboard--outages-tooltip-body">
+    <div class="dashboard--outages-tooltip-body-row">
+      <%= image_tag image_url("#{type}-outage-icon.png"), width: 14, height: 14 %>
+      <div class="dashboard--outages-tooltip-body-content">
+        <p class="dashboard--outages-tooltip-body-content-header">4 outages · 8h 15m</p>
+
+      </div>
+    </div>
+  </div>
+  <div class="dashboard--outages-tooltip-footer">
+    <a href="<%= detail_modal_outages_path %>"
+       class="regular-link cursor-pointer"
+       data-turbo-frame="outages_details_modal"
+    >View details</a>
+  </div>
+</div>

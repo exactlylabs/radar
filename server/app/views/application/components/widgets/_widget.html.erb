@@ -19,6 +19,8 @@
       <%= render partial: "dashboard/components/widgets/data_usage", locals: { custom_url: custom_url, responsive: responsive } %>
     <% when WidgetsHelper::WidgetTypes::TOTAL_DATA %>
       <%= render partial: "dashboard/components/widgets/total_data", locals: { custom_url: custom_url, responsive: responsive } %>
+    <% when WidgetsHelper::WidgetTypes::OUTAGES %>
+      <%= render partial: "dashboard/components/widgets/outages" %>
     <% else %>
       <%= render partial: "application/components/widgets/locations_map/locations_map" %>
     <% end %>

@@ -113,6 +113,10 @@ class DashboardController < ApplicationController
     @total_data = ActiveRecord::Base.connection.execute(sql)
   end
 
+  def outages
+    @outages = [1] # TODO: Implement outages mock data
+  end
+
   private
 
   def policy_filter_ids(model, ids)

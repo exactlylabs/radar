@@ -204,6 +204,7 @@ Rails.application.routes.draw do
   get 'upload_speeds', to: 'dashboard#upload_speeds'
   get 'latency', to: 'dashboard#latency'
   get 'data_usage', to: 'dashboard#data_usage'
+  get 'outages', to: 'dashboard#outages'
   get 'total_data', to: 'dashboard#total_data'
 
   resources :exports do
@@ -340,6 +341,12 @@ Rails.application.routes.draw do
   post '/get_started_modal_step_1_submit', to: 'public#get_started_modal_step_1_submit'
   get '/get_started_modal_step_2', to: 'public#get_started_modal_step_2'
   post '/get_started_modal_step_2_submit', to: 'public#get_started_modal_step_2_submit'
+
+  resources :outages do
+    collection do
+      get 'detail_modal', to: 'outages#detail_modal'
+    end
+  end
 
   root to: redirect('/users/sign_in')
 end

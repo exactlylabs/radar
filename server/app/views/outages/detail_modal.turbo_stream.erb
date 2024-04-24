@@ -1,0 +1,6 @@
+<%= turbo_stream.update "outages-detail-modal-content" do %>
+  <p class="dashboard--outages-modal-content-date-key"><%= Time.now.strftime("%b %d, %Y") %></p>
+  <%= render partial: "outages/components/outage_collapsible_row", locals: { type: params[:type] || 'power'} %>
+  <%= render partial: "outages/components/outage_collapsible_row", locals: { type: params[:type] || 'power'} %>
+  <%= render partial: "outages/components/outage_collapsible_row", locals: { type: params[:type] || 'power'} %>
+<% end %>

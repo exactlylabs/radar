@@ -383,6 +383,12 @@
       color: $blue;
     }
   }
+
+  button.tables--filters-menu-item {
+    border: none;
+    outline: none;
+    background-color: transparent;
+  }
 }
 
 @media (max-width: 768px) {

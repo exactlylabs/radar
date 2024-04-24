@@ -1,0 +1,16 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: { title: "Outages", is_custom: true }
+%>
+
+<div class="modals--content-container text-center" data-type="full">
+  <div class="dashboard--outages-modal-top-bar" data-controller="outages-modal" data-url="<%= detail_modal_outages_url %>">
+    <%= render partial: "outages/components/type_filter" %>
+    <%= render partial: "outages/components/search_bar" %>
+  </div>
+  <div id="outages-detail-modal-content" class="dashboard--outages-modal-content">
+    <p class="dashboard--outages-modal-content-date-key">July 5, 2024</p>
+    <%= render partial: "outages/components/outage_collapsible_row", locals: { type: 'power' } %>
+    <%= render partial: "outages/components/outage_collapsible_row", locals: { type: 'isp' } %>
+    <%= render partial: "outages/components/outage_collapsible_row", locals: { type: 'failure' } %>
+  </div>
+</div>

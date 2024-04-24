@@ -121,6 +121,9 @@
                          locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
               %>
               <%= render partial: "application/components/widgets/widget",
+                         locals: { type: WidgetsHelper::WidgetTypes::OUTAGES }
+              %>
+              <%= render partial: "application/components/widgets/widget",
                          locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED }
               %>
               <%= render partial: "application/components/widgets/widget",
@@ -207,8 +210,8 @@
   <%= render partial: "application/components/modals/turbo_modal",
              locals: { turbo_frame_tag_id: "new_location_modal", optional_added_controllers: "categories" }
   %>
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
+  <%= render partial: "application/components/modals/turbo_modal", 
+              locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",
@@ -219,3 +222,7 @@
              locals: { turbo_frame_tag_id: "pod_id_modal" }
   %>
 <% end %>
+
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "outages_details_modal" }
+%>
