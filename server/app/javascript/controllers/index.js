@@ -210,3 +210,12 @@ application.register("dashboard-time-filter", DashboardTimeFilterController);
 
 import PublicPodTabsController from "./public_pod_tabs_controller";
 application.register("public-pod-tabs", PublicPodTabsController);
+
+import OutagesChartController from "./outages_chart_controller";
+application.register("outages-chart", OutagesChartController);
+
+import CollapsibleRowController from "./collapsible_row_controller";
+application.register("collapsible-row", CollapsibleRowController);
+
+import OutagesModalController from "./outages_modal_controller";
+application.register("outages-modal", OutagesModalController);

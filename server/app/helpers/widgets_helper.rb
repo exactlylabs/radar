@@ -6,6 +6,7 @@ module WidgetsHelper
     UPLOAD_SPEED = 'upload_speed'
     LATENCY = 'latency'
     DATA_USAGE = 'data_usage'
+    OUTAGES = 'outages'
     TOTAL_DATA = 'total_data'
   end
 
@@ -16,6 +17,7 @@ module WidgetsHelper
     UPLOAD_SPEED = 'Upload speed'
     LATENCY = 'Latency'
     DATA_USAGE = 'Data usage'
+    OUTAGES = 'Outages'
     TOTAL_DATA = 'Total data'
   end
 
@@ -33,6 +35,8 @@ module WidgetsHelper
       WidgetHeaders::LATENCY
     when WidgetTypes::DATA_USAGE
       WidgetHeaders::DATA_USAGE
+    when WidgetTypes::OUTAGES
+      WidgetHeaders::OUTAGES
     when WidgetTypes::TOTAL_DATA
       WidgetHeaders::TOTAL_DATA
     else

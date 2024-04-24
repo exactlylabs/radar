@@ -1,0 +1,21 @@
+<div class="dashboard--outages-collapsible-row" data-is-open="false" data-controller="collapsible-row">
+  <div class="dashboard--outages-collapsible-row-header" data-action="click->collapsible-row#handleClick">
+    <div class="dashboard--outages-collapsible-row-header-title">
+      <%= image_tag image_url("#{type}-outage-icon.png"), width: 14, height: 14 %>
+      <p class="dashboard--outages-tooltip-body-content-header">Power outage · 1h 10m</p>
+    </div>
+    <div class="dashboard--outages-modal-range-collapser">
+      <p class="dashboard--outages-tooltip-body-content-subtitle">5:20 pm - 6:30 pm</p>
+      <%= image_tag image_url('arrow-down-dark.png'), width: 16, height: 16 %>
+    </div>
+  </div>
+  <div class="dashboard--outages-collapsible-row-content">
+    <p class="dashboard--outages-account-key">ExactlyLabs</p>
+    <div class="dashboard--outages-affected-network-row">
+      <div class="dashboard--outages-affected-network-icon">
+        <%= image_tag image_url('hollow-networks-icon-disabled.png'), width: 16, height: 16 %>
+      </div>
+      <p>Main Room</p>
+    </div>
+  </div>
+</div>
