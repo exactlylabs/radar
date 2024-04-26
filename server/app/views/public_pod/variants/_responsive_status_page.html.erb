@@ -13,7 +13,7 @@
     <div class="public--pod-content-card">
       <div class="public--pod-content-card-header" data-status="<%= client.status_without_running %>">
         <div class="public--pod-status-id-container">
-          <div class="tables--network-icon-container public--pod-icon" data-pod-status="<%= client.online ? 'online' : 'offline' %>">
+          <div class="tables--network-icon-container public--pod-icon" data-pod-status="<%= client.online ? Client::STATUSES::ONLINE : Client::STATUSES::OFFLINE %>">
             <%= image_tag image_url(client.online ? 'pod-online-icon.png' : 'pod-offline-icon.png'), width: 24, height: 24 %>
             <% if client.online %>
               <div class="tables--network-online-dot"></div>
