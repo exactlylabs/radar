@@ -3,19 +3,36 @@
      data-action="mouseenter->outages-chart#hoverTooltip mouseleave->outages-chart#hideTooltip"
 >
   <div class="dashboard--outages-tooltip-header">
-    <p>July 16 - July 19</p>
+    <% start_date_formatted = start_date.strftime("%b %d#{start_date.year != Time.now.year ? ', %Y' : ''}") %>
+    <% end_date_formatted = end_date.strftime("%b %d#{end_date.year != Time.now.year ? ', %Y' : ''}") %>
+    <% if start_date_formatted == end_date_formatted %>
+      <p><%= start_date_formatted %></p>
+    <% else %>
+      <p><%= start_date_formatted %> - <%= end_date_formatted %></p>
+    <% end %>
   </div>
   <div class="dashboard--outages-tooltip-body">
-    <div class="dashboard--outages-tooltip-body-row">
-      <%= image_tag image_url("#{type}-outage-icon.png"), width: 14, height: 14 %>
-      <div class="dashboard--outages-tooltip-body-content">
-        <p class="dashboard--outages-tooltip-body-content-header">4 outages · 8h 15m</p>
-
+    <% if outages.count <= 3 %>
+      <% outages.each do |outage| %>
+        <% type = outage[:outage_type] %>
+        <div class="dashboard--outages-tooltip-body-row">
+          <%#= image_tag image_url("#{type}-outage-icon.png"), width: 14, height: 14 %>
+          <div class="dashboard--outages-tooltip-body-content">
+            <p class="dashboard--outages-tooltip-body-content-header"><%= outage_type_to_human(type) %> · <%= get_time_duration(outage['resolved_at'] - outage['started_at']) %></p>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="dashboard--outages-tooltip-body-row">
+        <%= image_tag image_url("generic-outage-icon.png"), width: 14, height: 14 %>
+        <div class="dashboard--outages-tooltip-body-content">
+          <p class="dashboard--outages-tooltip-body-content-header"><%= outages.count %> outages · <%= get_time_duration(group_duration) %></p>
+        </div>
       </div>
-    </div>
+    <% end %>
   </div>
   <div class="dashboard--outages-tooltip-footer">
-    <a href="<%= detail_modal_outages_path %>"
+    <a href="<%= detail_modal_outages_path(outage_type: params[:outage_type], ids: outages.map {|o| o['id']}) %>"
        class="regular-link cursor-pointer"
        data-turbo-frame="outages_details_modal"
     >View details</a>

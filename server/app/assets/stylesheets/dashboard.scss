@@ -656,6 +656,10 @@ div[data-dashboard-time-filter-target="monthYear"] {
   .dashboard--outages-metric-value {
     font-size: 1.5rem;
     color: $deep-blue;
+    max-width: 15ch;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     @extend .fw-bold;
   }
 
@@ -734,6 +738,10 @@ div[data-dashboard-time-filter-target="monthYear"] {
   color: $deep-blue;
   font-size: .875rem;
   line-height: 1.143;
+  max-width: 25ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   @extend .fw-semi-bold;
 }
 
@@ -762,11 +770,16 @@ div[data-dashboard-time-filter-target="monthYear"] {
 
 .dashboard--outages-modal-content {
   width: 100%;
+  min-width: 320px;
+  max-height: 500px;
+  min-height: 300px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   gap: 1rem;
+  padding-inline: 1px;
 }
 
 .dashboard--outages-modal-content-date-key {
@@ -899,4 +912,13 @@ div[data-dashboard-time-filter-target="monthYear"] {
     color: $dark-gray;
     @extend .fw-medium;
   }
+}
+
+.dashboard--outages-modal-content-empty {
+  font-size: 0.875rem;
+  color: $gray;
+  line-height: 1.5;
+  text-align: center;
+  margin-inline: auto;
+  @extend .fw-medium;
 }

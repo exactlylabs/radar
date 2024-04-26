@@ -382,6 +382,18 @@
     &.active:hover {
       color: $blue;
     }
+
+    &.outages {
+      img {
+        display: none;
+      }
+
+      &.active {
+        img {
+          display: block;
+        }
+      }
+    }
   }
 
   button.tables--filters-menu-item {

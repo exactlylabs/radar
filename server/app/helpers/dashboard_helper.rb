@@ -1,4 +1,27 @@
 module DashboardHelper
+  def get_time_duration(duration)
+    puts "get_time_duration: #{duration}"
+    duration_parts = ActiveSupport::Duration.build(duration.to_i).parts
+    duration_keys = duration_parts.keys.map(&:to_s)
+    duration_values = duration_parts.values.map(&:to_i)
+    str = "#{duration_values.first}#{duration_keys.first[0]}"
+    if duration_keys.count > 1
+      str += " #{duration_values.second}#{duration_keys.second[0]}"
+    end
+    str
+  end
+
+  def outage_type_to_human(outage_type)
+    case outage_type
+    when 'pod_failure'
+      'Pod failure'
+    when 'isp_outage'
+      'ISP outage'
+    else
+      'Power outage'
+    end
+  end
+
   def location_filter_name_to_human(param)
     case param
     when 'active'
@@ -279,6 +302,51 @@ module DashboardHelper
     }
     sql += " AND location_id IN (:location_ids)" if location_ids.present?
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, from: from, to: to, location_ids: location_ids}])
+  end
+
+  def self.get_outages_sql(from, to, account_ids, location_id = nil, outage_type = nil, as_org_id = nil)
+    sql_args = {from: from, to: to, account_ids: account_ids}
+    sql = %{
+    SELECT
+      outage_events.id,
+      client_outages.autonomous_system_id,
+      CASE
+        WHEN outage_events.outage_type = 1 THEN 'pod_failure'
+        WHEN outage_events.outage_type = 2 THEN 'isp_outage'
+        ELSE 'power_outage' END as outage_type,
+      outage_events.started_at,
+      outage_events.resolved_at,
+      EXTRACT(EPOCH FROM outage_events.resolved_at - outage_events.started_at) * 1000 as duration,
+      COUNT(*) as count
+    FROM outage_events
+    JOIN client_outages ON client_outages.outage_event_id = outage_events.id
+    JOIN locations ON locations.id = client_outages.location_id
+    JOIN autonomous_systems ON autonomous_systems.id = outage_events.autonomous_system_id
+    WHERE outage_events.status = 2 AND locations.account_id IN (:account_ids)
+    }
+
+    if location_id.present?
+      sql += " AND client_outages.location_id = :location_id "
+      sql_args[:location_id] = location_id
+    end
+
+    if outage_type.present?
+      sql += " AND outage_events.outage_type = :outage_type "
+      sql_args[:outage_type] = outage_type
+    end
+
+    if as_org_id.present?
+      sql += " AND autonomous_systems.autonomous_system_org_id = :as_org_id "
+      sql_args[:as_org_id] = as_org_id
+    end
+
+    sql += %{
+      AND outage_events.started_at < :to::timestamp
+      AND outage_events.resolved_at > :from::timestamp
+      GROUP BY 1, 2, 3, 4, 5, 6
+      ORDER BY outage_events.started_at ASC;
+    }
+    ActiveRecord::Base.sanitize_sql([sql, sql_args])
   end
 
 end

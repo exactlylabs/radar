@@ -1,14 +1,14 @@
 <div class="dashboard--outages-metrics-container">
   <div class="dashboard--outages-metric-container">
-    <p class="dashboard--outages-metric-value">8</p>
+    <p class="dashboard--outages-metric-value"><%= @outages_count %></p>
     <p class="dashboard--outages-metric-label">Outages</p>
   </div>
   <div class="dashboard--outages-metric-container">
-    <p class="dashboard--outages-metric-value">98.5%</p>
+    <p class="dashboard--outages-metric-value"><%= @uptime_percentage %>%</p>
     <p class="dashboard--outages-metric-label">Uptime</p>
   </div>
   <div class="dashboard--outages-metric-container">
-    <p class="dashboard--outages-metric-value">2d 23h</p>
+    <p class="dashboard--outages-metric-value"><%= get_time_duration(@downtime) %></p>
     <p class="dashboard--outages-metric-label">Total offline</p>
   </div>
 </div>

@@ -5,27 +5,48 @@
 >
   <button type="button"
           class="custom-button custom-button--sm custom-button--secondary"
+          data-outages-modal-target="filtersButtonBase"
   >
-    All outages
+    <%= params[:outage_type].nil? ? 'All outages' : params[:outage_type].humanize %>
     <%= image_tag image_url('caret.png'), width: 16, height: 16, class: "ms-1" %>
   </button>
   <div class="tables--filters-menu-container invisible"
        data-filters-target="filtersMenu"
        id="outages-type-filter-menu"
   >
-    <button class="tables--filters-menu-item table-filter-option active" data-action="click->outages-modal#filterType" data-type="all">
+    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type].nil? || params[:outage_type] == 'all' ? 'active' : nil %> outages"
+            data-action="click->outages-modal#filterType click->filters#closeFiltersMenu"
+            data-outages-modal-target="filter"
+            data-type="all"
+            data-label="All outages"
+    >
       All outages
       <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
     </button>
-    <button class="tables--filters-menu-item table-filter-option" data-action="click->outages-modal#filterType" data-type="power">
+    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type] == 'power_outage' ? 'active' : nil %> outages"
+            data-action="click->outages-modal#filterType click->filters#closeFiltersMenu"
+            data-outages-modal-target="filter"
+            data-type="power_outage"
+            data-label="Power outage"
+    >
       Power outage
       <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
     </button>
-    <button class="tables--filters-menu-item table-filter-option" data-action="click->outages-modal#filterType" data-type="isp">
+    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type] == 'isp_outage' ? 'active' : nil %> outages"
+            data-action="click->outages-modal#filterType click->filters#closeFiltersMenu"
+            data-outages-modal-target="filter"
+            data-type="isp_outage"
+            data-label="ISP outage"
+    >
       ISP outage
       <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
     </button>
-    <button class="tables--filters-menu-item table-filter-option" data-action="click->outages-modal#filterType" data-type="pod">
+    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type] == 'pod_failure' ? 'active' : nil %> outages"
+            data-action="click->outages-modal#filterType click->filters#closeFiltersMenu"
+            data-outages-modal-target="filter"
+            data-type="pod_failure"
+            data-label="Pod failure"
+    >
       Pod failure
       <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
     </button>

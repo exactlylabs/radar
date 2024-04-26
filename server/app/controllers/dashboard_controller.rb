@@ -114,10 +114,116 @@ class DashboardController < ApplicationController
   end
 
   def outages
-    @outages = [1] # TODO: Implement outages mock data
+    params = outages_params
+    sql = DashboardHelper.get_outages_sql(params[:from], params[:to], params[:account_ids], params[:location_id], params[:outage_type], params[:as_org_id])
+    @outages = ActiveRecord::Base.connection.execute(sql)
+    @outages_count = @outages.count
+    if @outages_count > 0
+      @outages = group_outages(@outages)
+      @outages.each do |_, v|
+        puts "Duration: #{v[:duration]} <> index: #{_}"
+      end
+      @downtime = @outages.map {|_, v| v[:duration] }.sum
+
+      if @outages[0][:started_at] < params[:from]
+        @downtime -= (params[:from] - @outages[0][:started_at])
+      end
+
+      downtime_percentage = @downtime / (params[:to] - params[:from]) * 100
+      @uptime_percentage = (100 - downtime_percentage).round(2)
+      @uptime_percentage = 0 if @uptime_percentage < 0
+    else
+      @downtime = 0
+      @uptime_percentage = 100
+    end
   end
 
   private
+
+  def group_outages(outages)
+    outages_obj = {}
+    group_idx = 0
+    outages.each do |outage|
+      if outages_obj[group_idx].nil?
+        outages_obj[group_idx] = {
+          started_at: outage['started_at'],
+          resolved_at: outage['resolved_at'],
+          outages: [outage],
+          duration: outage['resolved_at'] - outage['started_at']
+        }
+        next
+      end
+
+      if (outage['started_at'] >= outages_obj[group_idx][:started_at] &&
+         outage['started_at'] <= outages_obj[group_idx][:resolved_at]) ||
+        (outage['started_at'] >= outages_obj[group_idx][:started_at] &&
+         outage['resolved_at'] <= outages_obj[group_idx][:resolved_at])
+        outages_obj[group_idx][:outages] << outage
+
+        if outage['resolved_at'] > outages_obj[group_idx][:resolved_at]
+          new_resolved_at = outage['resolved_at']
+          outages_obj[group_idx][:resolved_at] = new_resolved_at
+          outages_obj[group_idx][:duration] = new_resolved_at - outages_obj[group_idx][:started_at]
+        end
+      else
+        group_idx += 1
+        outages_obj[group_idx] = {
+          started_at: outage['started_at'],
+          resolved_at: outage['resolved_at'],
+          outages: [outage],
+          duration: outage['resolved_at'] - outage['started_at']
+        }
+      end
+    end
+    outages_obj
+  end
+
+  def as_orgs_filters_params()
+    common_filter_params.merge(time_filter_params)
+  end
+
+  def online_pods_params()
+    common_filter_params.merge(time_filter_params).merge(interval_type: 'd')
+  end
+
+  def download_speeds_params()
+    common_filter_params.merge(time_filter_params)
+  end
+
+  def upload_speeds_params()
+    common_filter_params.merge(time_filter_params)
+  end
+
+  def latency_params()
+    common_filter_params.merge(time_filter_params)
+  end
+
+  def data_usage_params()
+    common_filter_params.merge(time_filter_params).merge(interval_type: 'd')
+  end
+
+  def outages_params()
+    common_filter_params.merge(time_filter_params).merge(outage_type: OutageEvent.outage_types[params[:outage_type]])
+  end
+
+  def time_filter_params()
+    days = params[:days] || 30
+    start_time = params[:start].present? ? Time.at(params[:start].to_i / 1000) : (Time.now - days.to_i.days)
+    end_time = params[:end].present? ? Time.at(params[:end].to_i / 1000) : Time.now
+
+    # convert start and end time to UTC
+    start_time = start_time.utc
+    end_time = end_time.utc
+
+    { from: start_time, to: end_time }
+  end
+
+  def common_filter_params()
+    account_ids = params[:account_id].present? ? policy_filter_ids(Account, params[:account_id]) : current_account.is_all_accounts? ? policy_scope(Account).pluck(:id) : [current_account.id]
+    as_org_ids = params[:isp_id].present? ? policy_filter_ids(AutonomousSystemOrg, params[:isp_id]) : nil
+    location_ids = params[:network_id].present? ? policy_filter_ids(Location, params[:network_id]) : nil
+    { account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids }
+  end
 
   def policy_filter_ids(model, ids)
     policy_scope(model).where(id: ids).pluck(:id).join(',')

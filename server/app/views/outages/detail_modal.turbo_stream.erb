@@ -1,6 +1,20 @@
 <%= turbo_stream.update "outages-detail-modal-content" do %>
-  <p class="dashboard--outages-modal-content-date-key"><%= Time.now.strftime("%b %d, %Y") %></p>
-  <%= render partial: "outages/components/outage_collapsible_row", locals: { type: params[:type] || 'power'} %>
-  <%= render partial: "outages/components/outage_collapsible_row", locals: { type: params[:type] || 'power'} %>
-  <%= render partial: "outages/components/outage_collapsible_row", locals: { type: params[:type] || 'power'} %>
+  <% if @outages.present? && @outages.count > 0 %>
+    <% start_date = @outages.first.started_at %>
+    <% end_date = @outages.order(:resolved_at).last.resolved_at %>
+    <% start_date_formatted = start_date.strftime("%b %d#{start_date.year != Time.now.year ? ', %Y' : ''}") %>
+    <% end_date_formatted = end_date.strftime("%b %d#{end_date.year != Time.now.year ? ', %Y' : ''}") %>
+    <% if start_date_formatted == end_date_formatted %>
+      <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %></p>
+    <% else %>
+      <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %> - <%= end_date_formatted %></p>
+    <% end %>
+
+    <% @outages.each do |outage| %>
+      <%= render partial: "outages/components/outage_collapsible_row", locals: {outage: outage} %>
+    <% end %>
+  <% else %>
+    <p class="dashboard--outages-modal-content-empty">No results match the given criteria.</p>
+  <% end %>
+  </div>
 <% end %>
