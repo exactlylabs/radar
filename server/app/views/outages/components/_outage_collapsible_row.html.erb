@@ -1,21 +1,24 @@
 <div class="dashboard--outages-collapsible-row" data-is-open="false" data-controller="collapsible-row">
   <div class="dashboard--outages-collapsible-row-header" data-action="click->collapsible-row#handleClick">
     <div class="dashboard--outages-collapsible-row-header-title">
-      <%= image_tag image_url("#{type}-outage-icon.png"), width: 14, height: 14 %>
-      <p class="dashboard--outages-tooltip-body-content-header">Power outage · 1h 10m</p>
+      <%#= image_tag image_url("#{type}-outage-icon.png"), width: 14, height: 14 %>
+      <p class="dashboard--outages-tooltip-body-content-header"><%= outage_type_to_human(outage[:outage_type]) %> · <%= get_time_duration(outage['resolved_at'] - outage['started_at']) %></p>
     </div>
     <div class="dashboard--outages-modal-range-collapser">
-      <p class="dashboard--outages-tooltip-body-content-subtitle">5:20 pm - 6:30 pm</p>
+      <p class="dashboard--outages-tooltip-body-content-subtitle"><%= outage['started_at'].strftime("%r") %> - <%= outage['resolved_at'].strftime("%r") %></p>
       <%= image_tag image_url('arrow-down-dark.png'), width: 16, height: 16 %>
     </div>
   </div>
   <div class="dashboard--outages-collapsible-row-content">
-    <p class="dashboard--outages-account-key">ExactlyLabs</p>
-    <div class="dashboard--outages-affected-network-row">
-      <div class="dashboard--outages-affected-network-icon">
-        <%= image_tag image_url('hollow-networks-icon-disabled.png'), width: 16, height: 16 %>
+<!--    <p class="dashboard--outages-account-key">ExactlyLabs</p>-->
+    <% outage.client_outages.each do |co| %>
+      <% affected_network = co.location %>
+      <div class="dashboard--outages-affected-network-row">
+        <div class="dashboard--outages-affected-network-icon">
+          <%= image_tag image_url('hollow-networks-icon-disabled.png'), width: 16, height: 16 %>
+        </div>
+        <p><%= affected_network.name %></p>
       </div>
-      <p>Main Room</p>
-    </div>
+    <% end %>
   </div>
 </div>

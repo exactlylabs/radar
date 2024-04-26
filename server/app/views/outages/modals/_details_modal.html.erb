@@ -1,16 +1,29 @@
-<%= render partial: "application/components/modals/modal_header",
-           locals: { title: "Outages", is_custom: true }
-%>
-
+<%= render partial: "application/components/modals/modal_header", locals: { title: "Outages", is_custom: true }%>
 <div class="modals--content-container text-center" data-type="full">
-  <div class="dashboard--outages-modal-top-bar" data-controller="outages-modal" data-url="<%= detail_modal_outages_url %>">
+  <div class="dashboard--outages-modal-top-bar" data-controller="outages-modal"
+       data-url="<%= detail_modal_outages_url %>"
+       data-outages-ids="<%= @outages.map(&:id) %>"
+  >
     <%= render partial: "outages/components/type_filter" %>
     <%= render partial: "outages/components/search_bar" %>
   </div>
   <div id="outages-detail-modal-content" class="dashboard--outages-modal-content">
-    <p class="dashboard--outages-modal-content-date-key">July 5, 2024</p>
-    <%= render partial: "outages/components/outage_collapsible_row", locals: { type: 'power' } %>
-    <%= render partial: "outages/components/outage_collapsible_row", locals: { type: 'isp' } %>
-    <%= render partial: "outages/components/outage_collapsible_row", locals: { type: 'failure' } %>
+    <% if @outages.present? && @outages.count > 0 %>
+      <% start_date = @outages.first.started_at %>
+      <% end_date = @outages.order(:resolved_at).last.resolved_at %>
+      <% start_date_formatted = start_date.strftime("%b %d#{start_date.year != Time.now.year ? ', %Y' : ''}") %>
+      <% end_date_formatted = end_date.strftime("%b %d#{end_date.year != Time.now.year ? ', %Y' : ''}") %>
+      <% if start_date_formatted == end_date_formatted %>
+        <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %></p>
+      <% else %>
+        <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %> - <%= end_date_formatted %></p>
+      <% end %>
+
+      <% @outages.each do |outage| %>
+        <%= render partial: "outages/components/outage_collapsible_row", locals: {outage: outage} %>
+      <% end %>
+    <% else %>
+      <p class="dashboard--outages-modal-content-empty">No results match the given criteria.</p>
+    <% end %>
   </div>
 </div>

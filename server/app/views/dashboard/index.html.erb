@@ -112,12 +112,12 @@
           <% if FeatureFlagHelper.is_available('charts', current_user) %>
             <%= render partial: "dashboard/components/widget_filters" %>
           <% end %>
-          <%= render partial: "application/components/widgets/widget",
+          <%#= render partial: "application/components/widgets/widget",
                      locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
           %>
           <% if FeatureFlagHelper.is_available('charts', current_user) %>
             <div class="widgets--grid">
-              <%= render partial: "application/components/widgets/widget",
+              <%#= render partial: "application/components/widgets/widget",
                          locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
               %>
               <%= render partial: "application/components/widgets/widget",

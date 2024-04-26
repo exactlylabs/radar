@@ -7,18 +7,18 @@
      target="_top"
   >All outages</a>
   <a class="dashboard--outages-filter"
-     data-selected="<%= outage_type === 'isp' %>"
-     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'isp' })) %>"
+     data-selected="<%= outage_type === 'isp_outage' %>"
+     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'isp_outage' })) %>"
      target="_top"
   >ISP outages</a>
   <a class="dashboard--outages-filter"
-     data-selected="<%= outage_type === 'power' %>"
-     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'power' })) %>"
+     data-selected="<%= outage_type === 'power_outage' %>"
+     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'power_outage' })) %>"
      target="_top"
   >Power outages</a>
   <a class="dashboard--outages-filter"
-     data-selected="<%= outage_type === 'pod' %>"
-     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'pod' })) %>"
+     data-selected="<%= outage_type === 'pod_failure' %>"
+     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'pod_failure' })) %>"
      target="_top"
   >Pod failure</a>
 </div>

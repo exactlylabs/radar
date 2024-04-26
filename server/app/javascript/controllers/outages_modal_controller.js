@@ -2,18 +2,39 @@ import { Controller } from '@hotwired/stimulus';
 import handleError from "./error_handler_controller";
 
 export default class extends Controller {
+  
+  static targets = ['filtersButtonBase', 'filter'];
+  
   connect() {
     this.baseUrl = this.element.dataset.url;
     this.searchParams = new URLSearchParams();
+    this.element.dataset.outagesIds
+      .replace('[', '')
+      .replace(']', '')
+      .split(',')
+      .forEach(id => this.searchParams.append('ids[]', id.trim()));
     this.token = document.getElementsByName("csrf-token")[0].content;
     this.debounceTimeout = null;
+  }
+  
+  setOptionToActive(type) {
+    this.filterTargets.forEach(filter => {
+      if(filter.dataset.type === type) {
+        filter.classList.add('active');
+      } else {
+        filter.classList.remove('active');
+      }
+    });
   }
   
   filterType(e) {
     e.preventDefault();
     e.stopPropagation();
     const type = e.target.dataset.type;
-    this.searchParams.set('type', type);
+    const img = this.filtersButtonBaseTarget.querySelector('img');
+    this.filtersButtonBaseTarget.innerHTML = `${e.target.dataset.label} ${img.outerHTML}`;
+    this.setOptionToActive(type);
+    this.searchParams.set('outage_type', type);
     this.fetchOutages();
   }
   
