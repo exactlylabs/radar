@@ -138,53 +138,6 @@ class DashboardController < ApplicationController
 
   private
 
-  def as_orgs_filters_params()
-    common_filter_params.merge(time_filter_params)
-  end
-
-  def online_pods_params()
-    common_filter_params.merge(time_filter_params).merge(interval_type: 'd')
-  end
-
-  def download_speeds_params()
-    common_filter_params.merge(time_filter_params)
-  end
-
-  def upload_speeds_params()
-    common_filter_params.merge(time_filter_params)
-  end
-
-  def latency_params()
-    common_filter_params.merge(time_filter_params)
-  end
-
-  def data_usage_params()
-    common_filter_params.merge(time_filter_params).merge(interval_type: 'd')
-  end
-
-  def outages_params()
-    common_filter_params.merge(time_filter_params).merge(outage_type: OutageEvent.outage_types[params[:outage_type]])
-  end
-
-  def time_filter_params()
-    days = params[:days] || 30
-    start_time = params[:start].present? ? Time.at(params[:start].to_i / 1000) : (Time.now - days.to_i.days)
-    end_time = params[:end].present? ? Time.at(params[:end].to_i / 1000) : Time.now
-
-    # convert start and end time to UTC
-    start_time = start_time.utc
-    end_time = end_time.utc
-
-    { from: start_time, to: end_time }
-  end
-
-  def common_filter_params()
-    account_ids = params[:account_id].present? ? policy_filter_ids(Account, params[:account_id]) : current_account.is_all_accounts? ? policy_scope(Account).pluck(:id) : [current_account.id]
-    as_org_ids = params[:isp_id].present? ? policy_filter_ids(AutonomousSystemOrg, params[:isp_id]) : nil
-    location_ids = params[:network_id].present? ? policy_filter_ids(Location, params[:network_id]) : nil
-    { account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids }
-  end
-
   def policy_filter_ids(model, ids)
     policy_scope(model).where(id: ids).pluck(:id).join(',')
   end
