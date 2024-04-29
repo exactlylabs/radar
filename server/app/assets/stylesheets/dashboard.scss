@@ -577,6 +577,11 @@ div[data-dashboard-time-filter-target="monthYear"] {
   border-radius: 2px;
   background-color: rgba(188, 187, 199, 0.25);
   margin-bottom: 1rem;
+
+  &.full-width {
+    width: calc(100% + 3rem);
+    margin-left: -1.5rem;
+  }
 }
 
 .dashboard--outages-filters-container {
@@ -771,8 +776,7 @@ div[data-dashboard-time-filter-target="monthYear"] {
 .dashboard--outages-modal-content {
   width: 100%;
   min-width: 320px;
-  max-height: 500px;
-  min-height: 300px;
+  max-height: 485px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -780,6 +784,15 @@ div[data-dashboard-time-filter-target="monthYear"] {
   justify-content: flex-start;
   gap: 1rem;
   padding-inline: 1px;
+  padding-bottom: 1rem;
+}
+
+@media (max-width: 450px) {
+  .dashboard--outages-modal-content {
+    padding: 0 .25rem;
+    max-height: none;
+    min-width: unset;
+  }
 }
 
 .dashboard--outages-modal-content-date-key {
@@ -830,6 +843,16 @@ div[data-dashboard-time-filter-target="monthYear"] {
   cursor: pointer;
 }
 
+@media (max-width: 768px) {
+  .dashboard--outages-collapsible-row-header {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: .5rem;
+
+  }
+}
+
 .dashboard--outages-collapsible-row-content {
   padding: .75rem 1rem;
   display: none;
@@ -854,6 +877,15 @@ div[data-dashboard-time-filter-target="monthYear"] {
   align-items: center;
   justify-content: flex-end;
   gap: .75rem;
+}
+
+@media (max-width: 768px) {
+  .dashboard--outages-modal-range-collapser {
+    width: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .75rem;
+  }
 }
 
 .dashboard--outages-account-key {

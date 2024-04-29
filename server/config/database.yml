@@ -23,7 +23,7 @@ default: &default
 
 development:
   <<: *default
-  database: radar_dev_prod
+  database: radar_development
   <% if ENV["DATABASE_URL"].present? %>
   url: <%= ENV["DATABASE_URL"].sub(/^postgres/, "postgis") %>
   <% end %>

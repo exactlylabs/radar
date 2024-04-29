@@ -68,6 +68,8 @@
   z-index: 1000000;
   transform: translate(-50%, -50%);
   overflow: hidden;
+  max-height: calc(100vh - 56px - 1.5rem);
+  max-height: calc(100vh - 56px - 1.5rem);
 
   &.opening {
     animation: modal-opening 500ms forwards cubic-bezier(0.3, 0.49, 0.31, 1);
@@ -246,7 +248,7 @@
   .modals--content-container {
     height: calc(100dvh - 200px);;
     min-width: unset;
-    padding: 2rem;
+    padding: 2rem 1rem;
     width: 100%;
     
     &[data-type="full"] {
@@ -255,7 +257,8 @@
     &[data-type="headless"] {
       height: max-content;
     }
-    &[data-resource="networks"] {
+    &[data-resource="networks"],
+    &[data-resource="outages"] {
       max-height: calc(100% - 75px);
     }
     &[data-resource="measurement"],

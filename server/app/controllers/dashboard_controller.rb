@@ -118,11 +118,9 @@ class DashboardController < ApplicationController
     sql = DashboardHelper.get_outages_sql(params[:from], params[:to], params[:account_ids], params[:location_id], params[:outage_type], params[:as_org_id])
     @outages = ActiveRecord::Base.connection.execute(sql)
     @outages_count = @outages.count
+    @outages_ids = @outages.map { |outage| outage['id'] }
     if @outages_count > 0
-      @outages = group_outages(@outages)
-      @outages.each do |_, v|
-        puts "Duration: #{v[:duration]} <> index: #{_}"
-      end
+      @outages = OutagesHelper.group_outages(@outages)
       @downtime = @outages.map {|_, v| v[:duration] }.sum
 
       if @outages[0][:started_at] < params[:from]
@@ -139,44 +137,6 @@ class DashboardController < ApplicationController
   end
 
   private
-
-  def group_outages(outages)
-    outages_obj = {}
-    group_idx = 0
-    outages.each do |outage|
-      if outages_obj[group_idx].nil?
-        outages_obj[group_idx] = {
-          started_at: outage['started_at'],
-          resolved_at: outage['resolved_at'],
-          outages: [outage],
-          duration: outage['resolved_at'] - outage['started_at']
-        }
-        next
-      end
-
-      if (outage['started_at'] >= outages_obj[group_idx][:started_at] &&
-         outage['started_at'] <= outages_obj[group_idx][:resolved_at]) ||
-        (outage['started_at'] >= outages_obj[group_idx][:started_at] &&
-         outage['resolved_at'] <= outages_obj[group_idx][:resolved_at])
-        outages_obj[group_idx][:outages] << outage
-
-        if outage['resolved_at'] > outages_obj[group_idx][:resolved_at]
-          new_resolved_at = outage['resolved_at']
-          outages_obj[group_idx][:resolved_at] = new_resolved_at
-          outages_obj[group_idx][:duration] = new_resolved_at - outages_obj[group_idx][:started_at]
-        end
-      else
-        group_idx += 1
-        outages_obj[group_idx] = {
-          started_at: outage['started_at'],
-          resolved_at: outage['resolved_at'],
-          outages: [outage],
-          duration: outage['resolved_at'] - outage['started_at']
-        }
-      end
-    end
-    outages_obj
-  end
 
   def as_orgs_filters_params()
     common_filter_params.merge(time_filter_params)
