@@ -1,26 +1,31 @@
 <%= render partial: "application/components/modals/modal_header", locals: { title: "Outages", is_custom: true }%>
-<div class="modals--content-container text-center" data-type="full">
+<div class="modals--content-container text-center" data-type="full" data-resource="outages">
   <div class="dashboard--outages-modal-top-bar" data-controller="outages-modal"
        data-url="<%= detail_modal_outages_url %>"
-       data-outages-ids="<%= @outages.map(&:id) %>"
+       data-outages-ids="<%= @outages.map {|entry| entry[1][:outages]}.flatten.map {|o| o.id} %>"
   >
     <%= render partial: "outages/components/type_filter" %>
-    <%= render partial: "outages/components/search_bar" %>
+    <%#= render partial: "outages/components/search_bar" %>
   </div>
   <div id="outages-detail-modal-content" class="dashboard--outages-modal-content">
     <% if @outages.present? && @outages.count > 0 %>
-      <% start_date = @outages.first.started_at %>
-      <% end_date = @outages.order(:resolved_at).last.resolved_at %>
-      <% start_date_formatted = start_date.strftime("%b %d#{start_date.year != Time.now.year ? ', %Y' : ''}") %>
-      <% end_date_formatted = end_date.strftime("%b %d#{end_date.year != Time.now.year ? ', %Y' : ''}") %>
-      <% if start_date_formatted == end_date_formatted %>
-        <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %></p>
-      <% else %>
-        <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %> - <%= end_date_formatted %></p>
-      <% end %>
+      <% @outages.each do |entry| %>
+        <% outage_group_id = entry[0] %>
+        <% group_data = entry[1] %>
+        <% outages = group_data[:outages] %>
+        <% start_date = outages.first.started_at %>
+        <% end_date = outages.sort_by(&:resolved_at).last.resolved_at %>
+        <% start_date_formatted = start_date.strftime("%b %d#{start_date.year != Time.now.year ? ', %Y' : ''}") %>
+        <% end_date_formatted = end_date.strftime("%b %d#{end_date.year != Time.now.year ? ', %Y' : ''}") %>
+        <% if start_date_formatted == end_date_formatted %>
+          <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %></p>
+        <% else %>
+          <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %> - <%= end_date_formatted %></p>
+        <% end %>
 
-      <% @outages.each do |outage| %>
-        <%= render partial: "outages/components/outage_collapsible_row", locals: {outage: outage} %>
+        <% outages.each do |outage| %>
+          <%= render partial: "outages/components/outage_collapsible_row", locals: {outage: outage} %>
+        <% end %>
       <% end %>
     <% else %>
       <p class="dashboard--outages-modal-content-empty">No results match the given criteria.</p>

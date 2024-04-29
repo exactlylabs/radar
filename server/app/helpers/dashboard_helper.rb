@@ -1,6 +1,5 @@
 module DashboardHelper
   def get_time_duration(duration)
-    puts "get_time_duration: #{duration}"
     duration_parts = ActiveSupport::Duration.build(duration.to_i).parts
     duration_keys = duration_parts.keys.map(&:to_s)
     duration_values = duration_parts.values.map(&:to_i)
