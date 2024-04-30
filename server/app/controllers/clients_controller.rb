@@ -646,6 +646,7 @@ class ClientsController < ApplicationController
       @error = ErrorsHelper::PodClaimErrors::PodAlreadyClaimed
     else
       @location = Location.new
+      @pods = [@client]
     end
     respond_to do |format|
       format.turbo_stream

@@ -1,24 +1,37 @@
-import { Controller } from "@hotwired/stimulus";
+import {Controller} from "@hotwired/stimulus";
 
 export default class extends Controller {
 
-  static targets = [
-    "hiddenPodIdInput",
-    "submitIdButton"
-  ]
+    static targets = [
+        "hiddenPodIdInput",
+        "submitIdButton"
+    ]
 
-  connect(){}
+    connect() {
+    }
 
-  disableButton() {
-    this.submitIdButtonTarget.classList.add('custom-button--disabled');
-  }
+    handleContinueButtonStateChanged(e) {
+        let buttonState = e.detail.state;
+        if (buttonState === 'disable') {
+            this.disableButton();
+        } else {
+            this.enableButton();
+        }
 
-  enableButton() {
-    this.submitIdButtonTarget.classList.remove('custom-button--disabled');
-  }
+    }
 
-  fillHiddenInput(e) {
-    const { podId } = e.detail;
-    this.hiddenPodIdInputTarget.value = podId;
-  }
+    disableButton() {
+        this.submitIdButtonTarget.classList.add('custom-button--disabled');
+    }
+
+    enableButton() {
+        this.submitIdButtonTarget.classList.remove('custom-button--disabled');
+    }
+
+    fillHiddenInput(e) {
+        const {podId} = e.detail;
+        this.hiddenPodIdInputTarget.value = podId;
+    }
+
+
 }

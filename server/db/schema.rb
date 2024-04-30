@@ -752,7 +752,10 @@ ActiveRecord::Schema.define(version: 2024_05_04_042012) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
+<<<<<<< HEAD
     t.string "token"
+=======
+>>>>>>> aeeb24df (updated pod id modal to show error/warning using turbo)
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
