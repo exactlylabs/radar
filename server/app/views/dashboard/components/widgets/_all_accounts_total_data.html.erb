@@ -1,0 +1,20 @@
+<% total_data = total_data_by_account.sum { |o| o['y'] } %>
+<% value_in_preferred_unit = get_value_in_preferred_unit(total_data) %>
+<% precision = total_data_by_account.map {|o| get_minimum_precision(get_value_in_preferred_unit(o['y']))}.max  %>
+
+<div class="dashboard--total-data-all-accounts-container">
+  <div class="dashboard--total-data-value-container">
+    <h4><%= value_in_preferred_unit.round(precision) %></h4>
+    <p><%= preferred_unit_humanized %></p>
+  </div>
+  <div class="dashboard--horizontal-divider"></div>
+  <div class="dashboard--total-data-rows-container">
+    <% total_data_by_account.each do |object| %>
+      <%= render partial: "dashboard/components/widgets/account_total_data_row", locals: {
+        data_used: object['y'],
+        account_name: object['name'],
+        precision: precision
+      } %>
+    <% end %>
+  </div>
+</div>

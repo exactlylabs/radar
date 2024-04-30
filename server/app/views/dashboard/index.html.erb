@@ -132,6 +132,9 @@
               <%= render partial: "application/components/widgets/widget",
                          locals: { type: WidgetsHelper::WidgetTypes::DATA_USAGE }
               %>
+              <%= render partial: "application/components/widgets/widget",
+                         locals: { type: WidgetsHelper::WidgetTypes::TOTAL_DATA }
+              %>
             </div>
           <% end %>
         </div>

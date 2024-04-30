@@ -483,7 +483,7 @@ export default class ChartController extends Controller {
   
   getXCoordinateFromXValue(data = this.chartData, index) {
     const netWidth = this.canvasWidth - 2 * PADDING - X_AXIS_OFFSET - X_CONTEXT_OFFSET(this.longestLabel) - RIGHT_X_CONTEXT_OFFSET / 4;
-    const step = netWidth / (data.length - 1);
+    const step = netWidth / (data.length - 1 > 0 ? data.length - 1 : 1);
     const baseWidth = PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.longestLabel);
     return baseWidth + step * index;
   }

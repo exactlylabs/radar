@@ -95,6 +95,7 @@ Rails.application.routes.draw do
       get 'upload_speeds', to: 'public_pod#upload_speeds'
       get 'latency', to: 'public_pod#latency'
       get 'data_usage', to: 'public_pod#data_usage'
+      get 'total_data', to: 'public_pod#total_data'
     end
 
     collection do
@@ -203,6 +204,7 @@ Rails.application.routes.draw do
   get 'upload_speeds', to: 'dashboard#upload_speeds'
   get 'latency', to: 'dashboard#latency'
   get 'data_usage', to: 'dashboard#data_usage'
+  get 'total_data', to: 'dashboard#total_data'
 
   resources :exports do
     collection do
