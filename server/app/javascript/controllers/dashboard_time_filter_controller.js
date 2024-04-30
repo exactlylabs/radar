@@ -38,6 +38,7 @@ export default class extends Controller {
   
   closeIfClickedOutside(e) {
     const datePicker = document.getElementById(this.elementId);
+    if(!datePicker) return;
     if(!datePicker.hasAttribute('hidden') && !datePicker.contains(e.target)) {
       this.closeCalendar(datePicker);
     }

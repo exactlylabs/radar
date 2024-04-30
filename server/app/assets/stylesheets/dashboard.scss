@@ -182,6 +182,7 @@
   margin-bottom: 1.5rem;
   position: relative;
   z-index: 11;
+  flex-wrap: wrap;
 }
 
 .dashboard--date-range-filter-container {
@@ -438,5 +439,124 @@ div[data-dashboard-time-filter-target="monthYear"] {
   span[data-selected="true"] {
     color: $blue;
     @extend .fw-bold;
+  }
+}
+
+.dashboard--total-data-all-accounts-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.dashboard--total-data-value-container {
+  width: 100%;
+  height: 75px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0;
+
+  h4 {
+    margin: 0;
+    font-size: 2rem;
+    color: $deep-blue;
+    @extend .fw-bold;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: $gray;
+    line-height: 1.357;
+    @extend .fw-semi-bold;
+  }
+}
+
+.dashboard--horizontal-divider {
+  width: 100%;
+  height: 1px;
+  border-radius: 2px;
+  background-color: $sidebar--accounts-item-outline;
+}
+
+.dashboard--total-data-rows-container {
+  padding-top: 1rem;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0;
+  padding-bottom: .25rem;
+}
+
+.dashboard--total-data-by-account-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: .25rem;
+}
+
+.dashboard--total-data-by-account-name-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.dashboard--total-data-by-account-initial-container {
+  width: 2rem;
+  min-width: 2rem;
+  aspect-ratio: 1;
+  background-color: $icon-container-gray;
+  border-radius: .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    font-size: .9375rem;
+    color: $dark-gray;
+    margin: 0;
+    @extend .fw-bold;
+  }
+}
+
+.dashboard--total-data-by-account-name {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: $deep-blue;
+}
+
+.dashboard--total-data-all-accounts-values-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .125rem;
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: $deep-blue;
+    @extend .fw-medium;
+  }
+
+  span {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.615;
+    color: $light-gray;
+    @extend .fw-medium;
   }
 }

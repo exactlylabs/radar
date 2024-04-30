@@ -328,6 +328,10 @@
   height: min-content;
   position: relative;
   z-index: 10;
+
+  &[data-no-z-index="true"] {
+    z-index: unset;
+  }
 }
 
 .tables--filters-menu-container {

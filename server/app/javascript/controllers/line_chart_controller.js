@@ -36,6 +36,7 @@ export default class LineChartController extends ChartController {
     const xDifs = this.adjustedData.map(({x, _}, index) => Math.abs(this.getXCoordinateFromXValue(this.adjustedData, index) - mouseX));
     const minDif = Math.min(...xDifs);
     const minDifIndex = xDifs.indexOf(minDif);
+    if(minDifIndex < 0) return;
     
     const { ys } = this.adjustedData[minDifIndex];
     
@@ -49,6 +50,7 @@ export default class LineChartController extends ChartController {
       const yDifs = ys.map(y => Math.abs(this.getYCoordinateFromYValue(y) - mouseY));
       const minDif = Math.min(...yDifs);
       const minDifIndex = yDifs.indexOf(minDif);
+      if(minDifIndex < 0) return;
       yCoordinate = this.getYCoordinateFromYValue(ys[minDifIndex]);
       yValue = ys[minDifIndex];
     }

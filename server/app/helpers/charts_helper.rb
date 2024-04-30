@@ -23,6 +23,10 @@ module ChartsHelper
     common_filter_params(current_account).merge(time_filter_params).merge(interval_type: 'd')
   end
 
+  def total_data_params(current_account)
+    common_filter_params(current_account).merge(time_filter_params)
+  end
+
   def pod_download_speeds_params(pod)
     common_pod_filter_params(pod).merge(time_filter_params)
   end

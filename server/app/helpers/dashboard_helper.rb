@@ -230,6 +230,45 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
   end
 
+  def self.get_total_data_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil)
+    sql = %{
+        SELECT COALESCE(SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes), 0) AS "y",
+        EXTRACT(EPOCH FROM :from::timestamp) * 1000 as "x"
+        FROM measurements
+        JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
+        JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+        WHERE
+          processed_at BETWEEN :from AND :to
+          AND account_id IN (:account_ids)
+      }
+    sql += " AND autonomous_system_orgs.id IN (:as_org_ids)" if as_org_ids.present?
+    sql += " AND location_id IN (:location_ids)" if location_ids.present?
+
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+  end
+
+  def self.get_all_accounts_data_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil)
+    sql = %{
+    SELECT COALESCE(SUM(m.download_total_bytes) + SUM(m.upload_total_bytes),0) AS "y",
+           a.name
+    FROM measurements AS m
+    JOIN accounts AS a ON a.id = m.account_id
+    JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
+    JOIN autonomous_system_orgs
+    ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+    WHERE processed_at BETWEEN :from AND :to
+    AND account_id IN (:account_ids)
+    }
+    sql += " AND autonomous_system_orgs.id IN (:as_org_ids)" if as_org_ids.present?
+    sql += " AND location_id IN (:location_ids)" if location_ids.present?
+
+    sql += %{
+      GROUP BY a.name
+      ORDER BY "y" DESC;
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+  end
+
   def self.get_as_orgs_sql(account_ids, from, to, location_ids: nil)
     sql = %{
       SELECT DISTINCT as_org.name as name, as_org.id as id

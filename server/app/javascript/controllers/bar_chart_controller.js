@@ -82,6 +82,7 @@ export default class BarChartController extends ChartController {
     let xCoordinate = barX + barWidth;
     
     // check if tooltip is within the chart space, otherwise shift over
+    // if there is no space left, draw on top of the bar
     const offset = 8;
     const tooltipWidth = 120;
     const tooltipHeight = 70;
@@ -90,7 +91,15 @@ export default class BarChartController extends ChartController {
     } else {
       xCoordinate += offset;
     }
-    if(yCoordinate + offset + tooltipHeight > this.canvasHeight) {
+    
+    if(xCoordinate < 0) {
+      xCoordinate = mouseX;
+    }
+    
+    
+    if(xCoordinate === mouseX) {
+      yCoordinate = mouseY;
+    } else if(yCoordinate + offset + tooltipHeight > this.canvasHeight) {
       const tooltipEndY = yCoordinate + offset + tooltipHeight;
       const diff = tooltipEndY - this.canvasHeight;
       yCoordinate -= diff;

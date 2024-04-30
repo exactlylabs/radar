@@ -5,6 +5,7 @@
                key: 'days',
                default_value: 30,
                default_label: 'Last 30 days',
+               no_z_index: true,
                options: [
                  { label: 'Last 7 days', value: '7' },
                  { label: 'Last 30 days', value: '30' },
@@ -24,6 +25,7 @@
                  default_value: '-1',
                  default_label: 'All accounts',
                  pagination: false,
+                 no_z_index: true,
                  options: [
                    { label: 'All accounts', value: '-1' },
                    *policy_scope(Account).map { |account| { label: account.name, value: "#{account.id}" } }
@@ -38,6 +40,7 @@
                default_value: nil,
                default_label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations',
                pagination: false,
+               no_z_index: true,
                options: [
                  { label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations', value: nil },
                  *policy_scope(Location).map { |network| { label: network.name, value: "#{network.id}" } }
@@ -52,6 +55,7 @@
                  default_value: nil,
                  default_label: 'All categories',
                  pagination: false,
+                 no_z_index: true,
                  options: [
                    { label: 'All categories', value: nil },
                    *policy_scope(Category).map { |category| { label: category.name, value: "#{category.id}" } }
@@ -67,6 +71,7 @@
                  default_value: nil,
                  default_label: 'All ISPs',
                  pagination: false,
+                 no_z_index: true,
                  options: [
                    { label: 'All ISPs', value: nil },
                    *@filter_as_orgs.map { |isp| { label: isp["name"], value: "#{isp["id"]}" } }

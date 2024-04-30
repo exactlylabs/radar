@@ -1,0 +1,18 @@
+<% responsive = @responsive || false %>
+
+<%= turbo_frame_tag "total-data-widget" do %>
+  <% if @total_data.nil? || @total_data.all? { |object| object['y'] == 0 } %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% elsif current_account.is_all_accounts? %>
+    <div>
+      <%= render partial: "dashboard/components/widgets/all_accounts_total_data", locals: { total_data_by_account: @total_data } %>
+    </div>
+  <% else %>
+    <canvas id="total-data-chart<%= responsive ? '-responsive' : ''%>"
+            data-controller="bar-chart"
+            data-line-chart-data="<%= @total_data.to_json %>"
+            data-parent-id="total-data-widget<%= responsive ? '-responsive' : ''%>"
+            data-label-suffix="<%= current_user&.data_cap_unit || "GB" %>"
+    ></canvas>
+  <% end %>
+<% end %>

@@ -104,13 +104,11 @@ export default class MultiLineChartController extends ChartController {
   showTooltip(mouseX, mouseY) {
     const shouldContinue = this.setupTooltipContext(mouseX, mouseY);
     if(!shouldContinue) return;
-    if(!!this.selectedHex) {
-    
-    }
-    const firstEntry = this.adjustedData.entries().next(); // {value: [hex, points], done: boolean}
+    const firstEntry = this.adjustedData.entries().next();
     const xDifs = firstEntry.value[1].map(({x, _}, index) => Math.abs(this.getXCoordinateFromXValue(firstEntry.value[1], index) - mouseX));
     const minDif = Math.min(...xDifs);
     let minDifIndex = xDifs.indexOf(minDif);
+    if(minDifIndex < 0) return;
     let yValues = [];
     //let xCoordinate;
     const minDifIndexEntry = firstEntry.value[1][minDifIndex];
@@ -127,6 +125,7 @@ export default class MultiLineChartController extends ChartController {
         const yDifs = currentColorMinDifEntry.ys.map(y => Math.abs(this.getYCoordinateFromYValue(y) - mouseY));
         const minDif = Math.min(...yDifs);
         const minDifIndex = yDifs.indexOf(minDif);
+        if(minDifIndex < 0) return;
         yCoordinate = this.getYCoordinateFromYValue(currentColorMinDifEntry.ys[minDifIndex]);
         yValue = currentColorMinDifEntry.ys[minDifIndex];
       }
@@ -156,6 +155,7 @@ export default class MultiLineChartController extends ChartController {
       const yDifs = ys.map(y => Math.abs(this.getYCoordinateFromYValue(y) - mouseY));
       const minDif = Math.min(...yDifs);
       const minDifIndex = yDifs.indexOf(minDif);
+      if(minDifIndex < 0) return;
       tooltipTopYCoordinate = this.getYCoordinateFromYValue(ys[minDifIndex]);
     } else {
       tooltipTopYCoordinate = 16;

@@ -103,6 +103,16 @@ class DashboardController < ApplicationController
     @usage = ActiveRecord::Base.connection.execute(sql)
   end
 
+  def total_data
+    params = total_data_params(current_account)
+    if current_account.is_all_accounts?
+      sql = DashboardHelper.get_all_accounts_data_sql(params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    else
+      sql = DashboardHelper.get_total_data_sql(params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    end
+    @total_data = ActiveRecord::Base.connection.execute(sql)
+  end
+
   private
 
   def policy_filter_ids(model, ids)
