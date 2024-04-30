@@ -1,0 +1,7 @@
+<div class="pods--selected-pod-cell" id="selected-pod-<%= client.unix_user %>">
+  <div class="tables--network-icon-container" data-pod-status="online">
+    <%= image_tag image_url('pod-online-icon.png'), width: 16, height: 16 %>
+  </div>
+  <p><%= client.unix_user %></p>
+  <%= image_tag image_url('cancel.png'), width: 12, height: 12, class: 'hoverable', data: { action: 'click->selected-pods-grid#deletePod', pod_id: client.unix_user } %>
+</div>

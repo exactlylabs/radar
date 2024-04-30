@@ -118,6 +118,7 @@ export default class MultiLineChartController extends ChartController {
     for(let [hex, linePoints] of this.adjustedData.entries()) {
       const currentColorMinDifEntry = linePoints[minDifIndex];
       let yValue;
+      console.log(currentColorMinDifEntry);
       if(currentColorMinDifEntry.ys.length === 1) {
         yCoordinate = this.getYCoordinateFromYValue(currentColorMinDifEntry.ys[0]);
         yValue = currentColorMinDifEntry.ys[0];
