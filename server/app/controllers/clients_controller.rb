@@ -832,11 +832,11 @@ class ClientsController < ApplicationController
     @client.account = account
     @previous_location = @client.location
     case pod_assignment_type
-    when 'no_network'
+    when PodsHelper::PodAssignmentType::NoNetwork
       @client.location = nil
-    when 'existing_network'
+    when PodsHelper::PodAssignmentType::ExistingNetwork
       @client.location = policy_scope(Location).find(params[:network_id])
-    when 'new_network'
+    when PodsHelper::PodAssignmentType::NewNetwork
       @location = Location.new(location_params)
       @location.user = current_user
       @location.account_id = account.id
