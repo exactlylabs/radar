@@ -118,6 +118,15 @@
           <% if FeatureFlagHelper.is_available('charts', current_user) %>
             <div class="widgets--grid">
               <%= render partial: "application/components/widgets/widget",
+                         locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED_BY_HOUR }
+              %>
+              <%= render partial: "application/components/widgets/widget",
+                         locals: { type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED_BY_HOUR }
+              %>
+              <%= render partial: "application/components/widgets/widget",
+                         locals: { type: WidgetsHelper::WidgetTypes::LATENCY_BY_HOUR }
+              %>
+              <%= render partial: "application/components/widgets/widget",
                          locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
               %>
               <%= render partial: "application/components/widgets/widget",

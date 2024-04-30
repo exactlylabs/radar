@@ -1,0 +1,8 @@
+<% url = local_assigns[:custom_url] || download_speeds_by_hour_path(network_id: params[:network_id], account_id: params[:account_id], isp_id: params[:isp_id], days: params[:days], start: params[:start], end: params[:end]) %>
+<% responsive = local_assigns[:responsive] || false %>
+
+<div class="widgets--canvas-container">
+  <%= turbo_frame_tag "download-speeds-by-hour-widget#{responsive ? '-responsive' : ''}", src: url, loading: 'lazy' do %>
+    <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+  <% end %>
+</div>

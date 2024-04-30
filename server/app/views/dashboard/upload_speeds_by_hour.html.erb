@@ -1,0 +1,18 @@
+<% responsive = @responsive || false %>
+
+<%= turbo_frame_tag "upload-speeds-by-hour-widget#{responsive ? '-responsive' : ''}" do %>
+  <% if @upload_speeds_by_hour.count == 0 %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="upload-speeds-by-hour-chart<%= responsive ? '-responsive' : ''%>"
+            data-controller="multi-line-dot-chart"
+            data-line-chart-data="<%= @upload_speeds_by_hour.to_json %>"
+            data-parent-id="upload-speeds-by-hour-widget<%= responsive ? '-responsive' : ''%>"
+            data-y-step-size="150"
+            data-label-suffix=" Mbps"
+            data-action="toggleLine@window->multi-line-dot-chart#toggleLine"
+            data-chart-id="uploadSpeedsByHour"
+    ></canvas>
+    <%= render partial: "dashboard/components/widgets/multi_line_line_toggler", locals: { chart_id: "uploadSpeedsByHour" } %>
+  <% end %>
+<% end %>

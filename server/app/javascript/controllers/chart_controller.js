@@ -215,9 +215,9 @@ export default class ChartController extends Controller {
     const labels = Array.from(dateSet);
     const pointCount = labels.length - 1;
     labels.forEach((label, index) => {
-      const labelX = PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix) + index * this.netWidth / pointCount;
+      const labelX = PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.longestLabel) + index * this.netWidth / pointCount;
       this.ctx.fillText(label, labelX, labelY);
-      this.labels.push({ label, x: labelX - STANDARD_LABEL_WIDTH / 2 });
+      this.labels.push({ label, x: labelX - STANDARD_CHAR_WIDTH * label.length });
     });
   }
   

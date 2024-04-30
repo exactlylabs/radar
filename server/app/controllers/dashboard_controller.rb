@@ -85,16 +85,34 @@ class DashboardController < ApplicationController
     @download_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
+  def download_speeds_by_hour
+    params = download_speeds_params(current_account)
+    sql = DashboardHelper.get_download_speed_by_hour_of_day_sql(params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    @download_speeds_by_hour = ActiveRecord::Base.connection.execute(sql)
+  end
+
   def upload_speeds
     params = upload_speeds_params(current_account)
     sql = DashboardHelper.get_upload_speed_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
     @upload_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
+  def upload_speeds_by_hour
+    params = upload_speeds_params(current_account)
+    sql = DashboardHelper.get_upload_speed_by_hour_of_day_sql(params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    @upload_speeds_by_hour = ActiveRecord::Base.connection.execute(sql)
+  end
+
   def latency
     params = latency_params(current_account)
     sql = DashboardHelper.get_latency_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
     @latencies = ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def latency_by_hour
+    params = latency_params(current_account)
+    sql = DashboardHelper.get_latency_by_hour_of_day_sql(params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    @latency_by_hour = ActiveRecord::Base.connection.execute(sql)
   end
 
   def data_usage

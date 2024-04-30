@@ -99,6 +99,35 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
 
+  def self.get_download_speed_by_hour_of_day_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil)
+    sql = %{
+      WITH measurements_with_ratios AS (
+        SELECT processed_at, download
+        FROM measurements
+        JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
+        JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+        WHERE processed_at BETWEEN :from AND :to
+        AND account_id IN (:account_ids)
+    }
+
+    sql += " AND autonomous_system_org_id IN (:as_org_ids)" if as_org_ids.present?
+    sql += " AND location_id IN (:location_ids)" if location_ids.present?
+
+    sql += ')'
+
+    sql += %{
+      SELECT
+        extract (hour FROM "processed_at")::integer as "x",
+        MAX(download) as "#9138e5",
+        percentile_disc(0.5) WITHIN GROUP (ORDER BY download) AS "#4b7be5",
+        MIN(download) as "#ff695d"
+      FROM measurements_with_ratios
+      GROUP BY 1
+      ORDER BY 1
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+  end
+
   def self.get_pod_download_speed_sql(pod_id, from, to)
     sql = %{
       SELECT
@@ -131,6 +160,35 @@ module DashboardHelper
     sql += %{
       GROUP BY 1
       ORDER BY EXTRACT(EPOCH FROM "time") * 1000 ASC;
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+  end
+
+  def self.get_upload_speed_by_hour_of_day_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil)
+    sql = %{
+      WITH measurements_with_ratios AS (
+        SELECT processed_at, upload
+        FROM measurements
+        JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
+        JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+        WHERE processed_at BETWEEN :from AND :to
+        AND account_id IN (:account_ids)
+    }
+
+    sql += " AND autonomous_system_org_id IN (:as_org_ids)" if as_org_ids.present?
+    sql += " AND location_id IN (:location_ids)" if location_ids.present?
+
+    sql += ')'
+
+    sql += %{
+      SELECT
+        extract (hour FROM "processed_at")::integer as "x",
+        MAX(upload) as "#9138e5",
+        percentile_disc(0.5) WITHIN GROUP (ORDER BY upload) AS "#4b7be5",
+        MIN(upload) as "#ff695d"
+      FROM measurements_with_ratios
+      GROUP BY 1
+      ORDER BY 1
     }
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
@@ -185,6 +243,35 @@ module DashboardHelper
       ORDER BY "x" ASC
     }
     ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
+  end
+
+  def self.get_latency_by_hour_of_day_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil)
+    sql = %{
+      WITH measurements_with_ratios AS (
+        SELECT processed_at, latency
+        FROM measurements
+        JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
+        JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+        WHERE processed_at BETWEEN :from AND :to
+        AND account_id IN (:account_ids)
+    }
+
+    sql += " AND autonomous_system_org_id IN (:as_org_ids)" if as_org_ids.present?
+    sql += " AND location_id IN (:location_ids)" if location_ids.present?
+
+    sql += ')'
+
+    sql += %{
+      SELECT
+        extract (hour FROM "processed_at")::integer as "x",
+        MAX(latency) as "#9138e5",
+        percentile_disc(0.5) WITHIN GROUP (ORDER BY latency) AS "#4b7be5",
+        MIN(latency) as "#ff695d"
+      FROM measurements_with_ratios
+      GROUP BY 1
+      ORDER BY 1
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
 
   def self.get_usage_sql(interval_type, from, to, account_ids, as_org_ids: nil, location_ids: nil)

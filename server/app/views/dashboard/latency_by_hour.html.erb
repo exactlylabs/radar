@@ -1,0 +1,18 @@
+<% responsive = @responsive || false %>
+
+<%= turbo_frame_tag "latency-by-hour-widget#{responsive ? '-responsive' : ''}" do %>
+  <% if @latency_by_hour.count == 0 %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="latency-by-hour-chart<%= responsive ? '-responsive' : ''%>"
+            data-controller="multi-line-dot-chart"
+            data-line-chart-data="<%= @latency_by_hour.to_json %>"
+            data-parent-id="latency-by-hour-widget<%= responsive ? '-responsive' : ''%>"
+            data-y-step-size="1"
+            data-label-suffix=" s"
+            data-action="toggleLine@window->multi-line-dot-chart#toggleLine"
+            data-chart-id="latencyByHour"
+    ></canvas>
+    <%= render partial: "dashboard/components/widgets/multi_line_line_toggler", locals: { chart_id: "latencyByHour" } %>
+  <% end %>
+<% end %>

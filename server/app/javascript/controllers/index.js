@@ -210,3 +210,6 @@ application.register("dashboard-time-filter", DashboardTimeFilterController);
 
 import PublicPodTabsController from "./public_pod_tabs_controller";
 application.register("public-pod-tabs", PublicPodTabsController);
+
+import MultiLineDotChartController from "./multi_line_dot_chart_controller";
+application.register("multi-line-dot-chart", MultiLineDotChartController);
