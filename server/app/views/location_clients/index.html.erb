@@ -109,5 +109,13 @@
 </div>
 
 <%= render partial: "application/components/modals/turbo_modal",
+           locals: {
+             turbo_frame_tag_id: "edit_client_modal",
+             optional_added_controllers: "edit-pod",
+             optional_added_actions: "turbo:submit-start->edit-pod#handleSubmitStart turbo:submit-end->edit-pod#handleNewLocationFromClientModal"
+           }
+%>
+
+<%= render partial: "application/components/modals/turbo_modal",
            locals: { turbo_frame_tag_id: "bulk_remove_from_network_modal" }
 %>
