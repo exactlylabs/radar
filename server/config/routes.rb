@@ -270,7 +270,6 @@ Rails.application.routes.draw do
 
   get '/categories/cancel_new', to: 'categories#cancel_new', as: 'category_cancel_new'
 
-
   resources :categories, param: :id do
     collection do
       get 'import_from_another_account', to: 'categories#import_from_another_account'
@@ -332,6 +331,8 @@ Rails.application.routes.draw do
   get '/TBp', to: redirect('/TBP')
   get '/TbP', to: redirect('/TBP')
   get '/tBP', to: redirect('/TBP')
+
+  get '/GO', to: 'mailer#redirect_go_campaign'
 
   get '/get_started_modal', to: 'public#get_started_modal'
   post '/get_started_modal_step_1_submit', to: 'public#get_started_modal_step_1_submit'
