@@ -184,17 +184,9 @@ func defaultSchemeForArch() string {
 }
 
 func configureClientForInterface(cli *ndt7.Client, name string) error {
-	ifaces, err := network.Interfaces()
+	ipAddr, err := network.InterfaceIPByName(name)
 	if err != nil {
 		return errors.W(err)
-	}
-	found, iface := ifaces.FindByName(name)
-	if !found {
-		return agent.ErrInterfaceNotFound
-	}
-	ipAddr := iface.UnicastAddress()
-	if ipAddr == nil {
-		return agent.ErrInterfaceNotConnected
 	}
 
 	log.Printf("NDT7 - Interface %s, binding to IP %s\n", name, ipAddr.IP.String())
