@@ -288,6 +288,8 @@ Rails.application.routes.draw do
       resources :clients do
         collection do
           mount ActionCable.server => '/ws'
+          post "assign"
+          get "me"
         end
       end
       resources :client_versions, constraints: { id: /[^\/]+/ } do
