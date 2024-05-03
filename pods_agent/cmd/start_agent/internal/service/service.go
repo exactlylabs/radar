@@ -2,9 +2,6 @@ package service
 
 import (
 	"context"
-	"flag"
-	"log"
-	"os"
 
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/agent"
@@ -17,26 +14,13 @@ var (
 	Interactive = service.Interactive
 )
 
-var svcFlag = flag.String("service", "", "Control the system service.")
-
 func MakeService(agent *agent.Agent, c *config.Config, ctx context.Context, cancel context.CancelFunc) service.Service {
 	svc := &agentSvc{agent, ctx, c, cancel}
 	s, err := service.New(svc, getConfig())
 	if err != nil {
 		panic(err)
 	}
-	if len(*svcFlag) != 0 {
-		err := service.Control(s, *svcFlag)
-		if err != nil && err == service.ErrNotInstalled {
-			os.Exit(0)
-		} else if err != nil {
-			log.Printf("Valid actions: %q\n", service.ControlAction)
-			log.Fatal(err)
-		} else if *svcFlag == "install" {
-			setupInstall()
-		}
-		os.Exit(0)
-	}
+
 	return s
 }
 

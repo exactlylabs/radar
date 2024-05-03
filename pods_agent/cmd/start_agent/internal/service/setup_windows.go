@@ -37,7 +37,7 @@ func setupLogging() *os.File {
 	return f
 }
 
-func setupInstall() {
+func SetupInstall() {
 	// We need to set some permissions, due to windows permission error
 	// when running as a LocalService user
 	sid, err := windows.CreateWellKnownSid(windows.WinLocalServiceSid)
