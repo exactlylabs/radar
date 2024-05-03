@@ -12,18 +12,20 @@ import (
 
 func DefaultRoute() (r Route, err error) {
 	cmd := exec.Command("route", "print", "0.0.0.0")
-	stderr := new(bytes.Buffer)
+	stdout := bytes.NewBuffer(nil)
+	stderr := bytes.NewBuffer(nil)
 	cmd.Stderr = stderr
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		return r, errors.Wrap(err, "failed to run fetch gateway route: %s", string(out)).WithMetadata(errors.Metadata{
-			"stderr": stderr.String(), "stdout": string(out),
+	cmd.Stdout = stdout
+
+	if err := cmd.Run(); err != nil {
+		return r, errors.Wrap(err, "failed to run fetch gateway route: %s", stdout.String()).WithMetadata(errors.Metadata{
+			"stderr": stderr.String(), "stdout": stdout.String(),
 		})
 	}
 	routeContent := ""
 	// windows doesn't have a good format to parse
 	// so we need to infer based on the number of columns and if our parsings don't fail
-	scanner := bufio.NewScanner(bytes.NewReader(out))
+	scanner := bufio.NewScanner(stdout)
 	for scanner.Scan() {
 		row := scanner.Text()
 		routeContent += row + "\n"

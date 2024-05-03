@@ -2,7 +2,7 @@ package wifi
 
 import "github.com/exactlylabs/go-errors/pkg/errors"
 
-var ErrNotSuported = errors.NewSentinel("NotSupportedError", "this functionality is not supported in this system")
+var ErrNotSupported = errors.NewSentinel("NotSupportedError", "this functionality is not supported in this system")
 var ErrNotWlanInterface = errors.NewSentinel("NotWLANInterfaceError", "this interface is not a Wlan interface")
 var ErrNotConnected = errors.NewSentinel("NotConnectedError", "not connected to an access point")
 var ErrSSIDNotRegistered = errors.NewSentinel("NotRegisteredError", "ssid is not registered in this device. You have to connect to it first")

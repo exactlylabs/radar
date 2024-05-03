@@ -21,7 +21,7 @@ func Interfaces() (NetInterfaces, error) {
 		return nil, errors.W(err)
 	}
 	wlanInterfaces, err := wifi.WlanInterfaceNames()
-	if err != nil && !errors.Is(err, wifi.ErrNotSuported) {
+	if err != nil && !errors.Is(err, wifi.ErrNotSupported) {
 		return nil, errors.W(err)
 	}
 

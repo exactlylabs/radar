@@ -3,5 +3,5 @@
 package wifi
 
 func WlanInterfaceNames() ([]string, error) {
-	return nil, ErrNotSuported
+	return nil, ErrNotSupported
 }
