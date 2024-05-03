@@ -45,12 +45,12 @@ func (args RegisterCommand) Validate(p *arg.Parser) {
 }
 
 func (args RegisterCommand) Run(ctx context.Context, c *config.Config) {
+	cli := radar.NewClient(c.ServerURL, c.ClientId, c.Secret)
 	pod := &agent.PodInfo{}
 	var err error
 
-	cli := radar.NewClient(c.ServerURL, c.ClientId, c.Secret)
-	log.Println("Registering Agent to Radar Platform")
 	if c.ClientId == "" {
+		log.Println("Registering Agent to Radar Platform")
 		podInfo := agent.RegisterPodInfo{}
 		if args.PodName != "" {
 			podInfo.Name = &args.PodName
@@ -84,16 +84,18 @@ func (args RegisterCommand) Run(ctx context.Context, c *config.Config) {
 			if err != nil {
 				panic(err)
 			}
+			pod.Secret = c.Secret
+		}
 
-			if err := config.Save(c); err != nil {
-				panic(err)
-			}
+		if err := config.Save(c); err != nil {
+			panic(err)
 		}
 
 		if pod.Id != 0 {
 			data, _ := json.Marshal(pod)
 			fmt.Println(string(data))
 		}
+
 	} else {
 		log.Println("Client ID already exists in config file, skipping registration")
 	}

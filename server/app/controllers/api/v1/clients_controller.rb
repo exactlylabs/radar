@@ -37,7 +37,7 @@ module Api
 
       # POST /api/v1/clients/assign
       def assign
-        user_account = UsersAccount.find_by_token(params[:token])
+        user_account = UsersAccount.find_by_token(assign_params[:token])
         unless user_account.present?
           render json: { error: "Invalid User Account Token" }, status: :bad_request
         end
@@ -45,11 +45,11 @@ module Api
         @client.account = user_account.account
         @client.user = user_account.user
 
-        if network_params.present? && network_params[:id].nil?
+        if assign_params[:network].present? && assign_params[:network][:id].nil?
           @client.location = create_network_for_client(@client)
 
-        elsif network_params.present?
-          location = policy_scope(Location).find(network_params[:id])
+        elsif assign_params[:network].present?
+          location = policy_scope(Location).find(assign_params[:network][:id])
           @client.update!(location: location)
         end
 
@@ -63,11 +63,11 @@ module Api
       private
 
       def create_network_for_client(client)
-        Location.create!(network_params.merge(account: client.account, created_by_id: client.user.id))
+        Location.create!(assign_params[:network].merge(account: client.account, created_by_id: client.user.id))
       end
 
-      def network_params
-        params.permit(:network => [:id, :name, :latitude, :longitude, :address, :expected_mbps_down, :expected_mbps_up])
+      def assign_params
+        params.permit(:token, :network => [:id, :name, :latitude, :longitude, :address, :expected_mbps_down, :expected_mbps_up])
       end
 
       def create_client_params
