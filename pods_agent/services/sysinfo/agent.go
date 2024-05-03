@@ -20,6 +20,7 @@ type AgentInfoManager struct {
 
 // ClientBasicMeta has binary-related information only
 type ClientBasicMeta struct {
+	ClientId          string  `json:"client_id"`
 	Version           string  `json:"version"`
 	Distribution      string  `json:"distribution"`
 	WatchdogVersion   string  `json:"watchdog_version"`
@@ -27,6 +28,7 @@ type ClientBasicMeta struct {
 }
 
 type ClientMeta struct {
+	ClientId          string                `json:"client_id"`
 	Version           string                `json:"version"`
 	Distribution      string                `json:"distribution"`
 	NetInterfaces     network.NetInterfaces `json:"net_interfaces"`
@@ -35,10 +37,11 @@ type ClientMeta struct {
 }
 
 func (m *ClientMeta) String() string {
-	return fmt.Sprintf(`Version: %v
+	return fmt.Sprintf(`ClientID: %v
+Version: %v
 Distribution: %v
 NetInterfaces: %+v`,
-		m.Version, m.Distribution, m.NetInterfaces)
+		m.ClientId, m.Version, m.Distribution, m.NetInterfaces)
 }
 
 func NewAgentInfoManager(binaryPath, serviceName string) *AgentInfoManager {
