@@ -3,23 +3,8 @@ package agent
 import (
 	"context"
 
-	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
-
-// ErrServerConnectionError should be used whenever the implementing service fails to connect to the server due to network issues
-// This error tells us that we should ignore it, try again later, and to not notify our Sentry instance about it.
-var ErrServerConnectionError = errors.NewSentinel("ConnectionError", "failed to connect to the server")
-
-// ErrRunnerConnectionError should be used whenever the implementing runner fails to connect to its servers due to network issues.
-// This error tells us that we should ignore it, try again later, and to not notify our Sentry instance about it.
-var ErrRunnerConnectionError = errors.NewSentinel("RunnerConnectionError", "runner failed to connect to the speed test server")
-
-// ErrInterfaceNotConnected should be used whenever a runner tries to run a test for a specific network interface and it doesn't have an IP address configured
-var ErrInterfaceNotConnected = errors.NewSentinel("InterfaceNotConnectedError", "selected interface doesn't have an address configured to it")
-
-// ErrInterfaceNotFound should be used when the runner is given an interface name to bind to but it failed to find it in the system's network interfaces
-var ErrInterfaceNotFound = errors.NewSentinel("InterfaceNotFound", "selected interface not found")
 
 type MessageType int
 

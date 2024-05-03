@@ -48,3 +48,20 @@ func Interfaces() (NetInterfaces, error) {
 	}
 	return interfaces, nil
 }
+
+// InterfaceIPByName returns the IP address of the first interface with a Unicast address
+func InterfaceIPByName(name string) (*net.IPNet, error) {
+	ifaces, err := Interfaces()
+	if err != nil {
+		return nil, errors.W(err)
+	}
+	found, iface := ifaces.FindByName(name)
+	if !found {
+		return nil, ErrInterfaceNotFound
+	}
+	ipAddr := iface.UnicastAddress()
+	if ipAddr == nil {
+		return nil, ErrInterfaceNotConnected
+	}
+	return ipAddr, nil
+}
