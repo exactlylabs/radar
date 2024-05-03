@@ -13,6 +13,7 @@ import (
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/agent"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 	"github.com/m-lab/ndt7-client-go"
 	"github.com/m-lab/ndt7-client-go/spec"
 	"golang.org/x/sys/cpu"
@@ -183,28 +184,21 @@ func defaultSchemeForArch() string {
 }
 
 func configureClientForInterface(cli *ndt7.Client, name string) error {
-	iface, err := net.InterfaceByName(name)
+	ifaces, err := network.Interfaces()
 	if err != nil {
 		return errors.W(err)
 	}
-	addrs, err := iface.Addrs()
-	if err != nil {
-		return errors.W(err)
+	found, iface := ifaces.FindByName(name)
+	if !found {
+		return agent.ErrInterfaceNotFound
 	}
-	if len(addrs) == 0 {
+	ipAddr := iface.UnicastAddress()
+	if ipAddr == nil {
 		return agent.ErrInterfaceNotConnected
 	}
 
-	tcpAddr := &net.TCPAddr{}
-	for _, addr := range addrs {
-		if ipAddr, ok := addr.(*net.IPNet); ok {
-			if ipAddr.IP.IsGlobalUnicast() {
-				tcpAddr.IP = ipAddr.IP
-			}
-		}
-	}
-	log.Printf("NDT7 - Interface %s, binding to IP %s\n", name, tcpAddr)
-	dialer := &net.Dialer{LocalAddr: tcpAddr}
+	log.Printf("NDT7 - Interface %s, binding to IP %s\n", name, ipAddr.IP.String())
+	dialer := &net.Dialer{LocalAddr: &net.TCPAddr{IP: ipAddr.IP}}
 	cli.Dialer.NetDialContext = dialer.DialContext
 	return nil
 }
