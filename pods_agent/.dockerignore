@@ -1,0 +1,13 @@
+.circleci/
+dist
+*.conf
+*.conf_template
+.env
+Makefile
+./ookla
+./radar-agent
+pods_os/
+scripts/
+packaging/
+collection/
+./docker/floto/Dockerfile
