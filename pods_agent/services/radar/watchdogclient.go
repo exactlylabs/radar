@@ -210,7 +210,7 @@ func (c *RadarWatchdogClient) WatchdogPing(meta *sysinfo.ClientMeta) (*watchdog.
 	form := url.Values{}
 	form.Add("secret", c.secret)
 	form.Add("version", meta.Version)
-	req, err := NewRequest("POST", apiUrl, strings.NewReader(form.Encode()))
+	req, err := NewRequest("POST", apiUrl, c.clientID, c.secret, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, errors.W(err)
 	}
