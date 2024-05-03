@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
@@ -250,7 +251,7 @@ func (c *RadarClient) Register(podInfo agent.RegisterPodInfo) (*agent.PodInfo, e
 		return nil, errors.New("radarClient#Register wrong status code %d", resp.StatusCode)
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "error reading response")
 	}
