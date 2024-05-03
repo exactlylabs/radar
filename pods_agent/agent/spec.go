@@ -18,6 +18,9 @@ var ErrRunnerConnectionError = errors.NewSentinel("RunnerConnectionError", "runn
 // ErrInterfaceNotConnected should be used whenever a runner tries to run a test for a specific network interface and it doesn't have an IP address configured
 var ErrInterfaceNotConnected = errors.NewSentinel("InterfaceNotConnectedError", "selected interface doesn't have an address configured to it")
 
+// ErrInterfaceNotFound should be used when the runner is given an interface name to bind to but it failed to find it in the system's network interfaces
+var ErrInterfaceNotFound = errors.NewSentinel("InterfaceNotFound", "selected interface not found")
+
 type MessageType int
 
 const (
@@ -40,9 +43,12 @@ type ServerMessage struct {
 	Data any
 }
 
-type RegisteredPod struct {
-	ClientId string
-	Secret   string
+type PodInfo struct {
+	Id         int    `json:"id"`
+	ClientId   string `json:"unix_user"`
+	Secret     string `json:"secret"`
+	LocationId int    `json:"location_id"`
+	AccountId  int    `json:"account_id"`
 }
 
 type Measurement struct {
@@ -51,11 +57,27 @@ type Measurement struct {
 	UploadMbps   float64
 }
 
+type RegisterPodInfo struct {
+	RegistrationToken *string `json:"registration_token"`
+	Name              *string `json:"name"`
+	Label             *string `json:"register_label"` // Allow to send a label to trace this pod
+}
+
 type MeasurementReport struct {
 	Result         []byte `json:"result"`
 	Interface      string `json:"interface"`
 	Wlan           bool   `json:"wlan"`
 	ConnectionInfo any    `json:"connection_info"`
+}
+
+type NetworkData struct {
+	ID           *int    `json:"id"`
+	Name         string  `json:"name"`
+	Latitude     float64 `json:"latitude"`
+	Longitude    float64 `json:"longitude"`
+	Address      string  `json:"address"`
+	DownloadMbps float64 `json:"expected_mbps_down"`
+	UploadMbps   float64 `json:"expected_mbps_up"`
 }
 
 type Runner interface {
@@ -72,9 +94,10 @@ type Rebooter interface {
 }
 
 type RadarClient interface {
-	Register(registrationToken *string) (*RegisteredPod, error)
+	Register(podInfo RegisterPodInfo) (*PodInfo, error)
 	SendMeasurement(ctx context.Context, testStyle string, measurement MeasurementReport) error
 	Ping(meta *sysinfo.ClientMeta) ([]ServerMessage, error)
+	AssignPodToAccount(accountToken string, network *NetworkData) (*PodInfo, error)
 	Connect(ctx context.Context, ch chan<- *ServerMessage) error
 	Connected() bool
 	Close() error

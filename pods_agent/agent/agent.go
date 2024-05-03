@@ -40,11 +40,14 @@ func NewAgent(client RadarClient, runners []Runner) *Agent {
 
 // registerAgent tries to register the agent to the server and retries
 // every 10 seconds in case of error until it succeeds or the context is cancelled
-func (a *Agent) registerAgent(ctx context.Context, c *config.Config) *RegisteredPod {
+func (a *Agent) registerAgent(ctx context.Context, c *config.Config, label *string) *PodInfo {
 	retryPeriod := 10 * time.Second
 	for {
 		log.Println("Registering the pod to the server")
-		pod, err := a.client.Register(c.RegistrationToken)
+		pod, err := a.client.Register(RegisterPodInfo{
+			RegistrationToken: c.RegistrationToken,
+			Label:             label,
+		})
 		if err != nil {
 			err = errors.Wrap(err, "failed to register pod to server")
 			log.Println(err)
@@ -65,8 +68,12 @@ func (a *Agent) registerAgent(ctx context.Context, c *config.Config) *Registered
 func (a *Agent) Setup(ctx context.Context, c *config.Config) {
 	if c.ClientId == "" {
 		log.Println("No Client ID found for this agent.")
-
-		pod := a.registerAgent(ctx, c)
+		var label *string
+		if os.Getenv("RADAR_REGISTER_LABEL") != "" {
+			labelStr := os.Getenv("RADAR_REGISTER_LABEL")
+			label = &labelStr
+		}
+		pod := a.registerAgent(ctx, c, label)
 		if pod == nil {
 			// Context was cancelled, skip all rest
 			return
@@ -76,7 +83,7 @@ func (a *Agent) Setup(ctx context.Context, c *config.Config) {
 		log.Println("Agent Registered to the Server!")
 		log.Println("Client ID =", c.ClientId)
 		log.Println("Secret =", c.Secret)
-		log.Println("You can find these values in the config file located at", config.Join("config.conf"))
+		log.Println("You can find these values in the config file located at", config.ConfigFilePath())
 	}
 	err := config.Save(c)
 	if err != nil {
