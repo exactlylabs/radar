@@ -10,7 +10,7 @@ func Setup() {
 	// NOOP
 }
 
-func setupInstall() {
+func SetupInstall() {
 	// NOOP
 }
 
