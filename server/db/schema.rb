@@ -294,6 +294,7 @@ ActiveRecord::Schema.define(version: 2024_05_04_042012) do
     t.time "test_allowed_time_start"
     t.time "test_allowed_time_end"
     t.string "test_allowed_time_tz", default: "UTC"
+    t.string "register_label"
     t.index ["autonomous_system_id"], name: "index_clients_on_autonomous_system_id"
     t.index ["claimed_by_id"], name: "index_clients_on_claimed_by_id"
     t.index ["client_version_id"], name: "index_clients_on_client_version_id"
@@ -750,6 +751,7 @@ ActiveRecord::Schema.define(version: 2024_05_04_042012) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
+    t.string "token"
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
