@@ -79,6 +79,9 @@ pkg:
 msi:
 	./scripts/build_msi.sh -o ${DIST_DIR} ${VERSION}
 
+floto-image:
+	docker build -t radar-agent:floto -f docker/floto/Dockerfile .
+
 all: build
 
 clean:
