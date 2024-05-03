@@ -52,7 +52,7 @@ func InstallFromUrl(binPath, url, expectedVersion string) error {
 
 // Install adds or replaces the binary into the OS
 func Install(binPath string, binary []byte, expectedVersion string) (err error) {
-	tmpBinPath := fmt.Sprintf("%s_tmp", binPath)
+	tmpBinPath := fmt.Sprintf("%s.tmp", binPath)
 	if _, err = os.Stat(tmpBinPath); errors.Is(err, os.ErrNotExist) {
 		err = addBinary(tmpBinPath, binary)
 	} else {
@@ -64,10 +64,30 @@ func Install(binPath string, binary []byte, expectedVersion string) (err error) 
 	if err := validateBinaryVersion(tmpBinPath, expectedVersion); err != nil {
 		return errors.W(err)
 	}
-	if err := os.Rename(tmpBinPath, binPath); err != nil {
-		return errors.Wrap(err, "failed to rename file").WithMetadata(errors.Metadata{
-			"from": tmpBinPath, "to": binPath,
-		})
+
+	if runtime.GOOS == "windows" {
+		// Windows doesn't allow us to replace the binary directly.
+		// We first rename the current to _old, then rename the _tmp with the latest version to the original name, and finally delete the _old version.
+
+		oldBinPath := fmt.Sprintf("%s.old", binPath)
+		if err := os.Rename(binPath, oldBinPath); err != nil {
+			return errors.Wrap(err, "failed to rename file").WithMetadata(errors.Metadata{
+				"from": binPath, "to": oldBinPath})
+		}
+		if err := os.Rename(tmpBinPath, binPath); err != nil {
+			os.Rename(oldBinPath, binPath) // rollback
+			return errors.Wrap(err, "failed to rename file").WithMetadata(errors.Metadata{
+				"from": fmt.Sprintf("%s_tmp", binPath), "to": binPath})
+		}
+		os.Remove(oldBinPath)
+
+	} else {
+		// On Unix, we can replace the binary directly.
+		if err := os.Rename(tmpBinPath, binPath); err != nil {
+			return errors.Wrap(err, "failed to rename file").WithMetadata(errors.Metadata{
+				"from": tmpBinPath, "to": binPath,
+			})
+		}
 	}
 	return nil
 }
