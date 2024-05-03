@@ -176,15 +176,12 @@ func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) ([]agent.ServerMessage, err
 		return nil, errors.Wrap(err, "marshalling NetInterfaces failed").WithMetadata(errors.Metadata{"interfaces": fmt.Sprintf("%v", meta.NetInterfaces)})
 	}
 	form.Add("network_interfaces", string(ifaces))
-	req, err := NewRequest(http.MethodPost, apiUrl, strings.NewReader(form.Encode()))
+	req, err := NewRequest(http.MethodPost, apiUrl, c.clientID, c.secret, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, errors.W(err)
 	}
-	req.Header.Add("Accept", "application/json")
-	if meta.RegistrationToken != nil {
-		req.Header.Add("Authorization", fmt.Sprintf("Token %s", *meta.RegistrationToken))
-	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrap(err, "request failed")
@@ -232,16 +229,19 @@ func (c *RadarClient) Ping(meta *sysinfo.ClientMeta) ([]agent.ServerMessage, err
 	return msgs, nil
 }
 
-func (c *RadarClient) Register(registrationToken *string) (*agent.RegisteredPod, error) {
-	apiUrl := fmt.Sprintf("%s/clients", c.serverURL)
-	req, err := http.NewRequest(http.MethodPost, apiUrl, nil)
+func (c *RadarClient) Register(podInfo agent.RegisterPodInfo) (*agent.PodInfo, error) {
+	apiUrl := fmt.Sprintf("%s/api/v1/clients", c.serverURL)
+
+	reqBody := bytes.NewBuffer(nil)
+	if err := json.NewEncoder(reqBody).Encode(podInfo); err != nil {
+		return nil, errors.W(err)
+	}
+
+	req, err := NewRequest(http.MethodPost, apiUrl, c.clientID, c.secret, reqBody)
 	if err != nil {
 		return nil, errors.Wrap(err, "http.NewRequest failed")
 	}
-	req.Header.Add("Accept", "application/json")
-	if registrationToken != nil {
-		req.Header.Add("Authorization", fmt.Sprintf("Token %s", *registrationToken))
-	}
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrap(err, "request failed")
@@ -254,16 +254,13 @@ func (c *RadarClient) Register(registrationToken *string) (*agent.RegisteredPod,
 	if err != nil {
 		return nil, errors.Wrap(err, "error reading response")
 	}
-	p := &Pod{}
+	p := &agent.PodInfo{}
 	if err := json.Unmarshal(body, p); err != nil {
 		return nil, errors.Wrap(err, "error unmarshalling").WithMetadata(errors.Metadata{"body": string(body)})
 	}
 	c.clientID = p.ClientId
 	c.secret = p.Secret
-	return &agent.RegisteredPod{
-		ClientId: p.ClientId,
-		Secret:   p.Secret,
-	}, nil
+	return p, nil
 }
 
 func (c *RadarClient) SendMeasurement(ctx context.Context, style string, report agent.MeasurementReport) error {
@@ -300,11 +297,11 @@ func (c *RadarClient) SendMeasurement(ctx context.Context, style string, report 
 	fW.Write(report.Result)
 	w.Close()
 
-	req, err := NewRequest(http.MethodPost, apiUrl, &b)
+	req, err := NewRequest(http.MethodPost, apiUrl, c.clientID, c.secret, &b)
 	if err != nil {
 		return errors.W(err)
 	}
-	req.Header.Add("Content-Type", w.FormDataContentType())
+	req.Header.Set("Content-Type", w.FormDataContentType())
 
 	resp, err := http.DefaultClient.Do(req)
 	if errors.Is(err, &net.DNSError{}) {
@@ -318,4 +315,49 @@ func (c *RadarClient) SendMeasurement(ctx context.Context, style string, report 
 		return errors.New("radar.radarClient#SendMeasurement wrong status code: %d", resp.StatusCode)
 	}
 	return nil
+}
+
+// AssignPodToAccount that owns the accountToken. If network is given, it will try to either create a network, or link it to an existing if ID is given.
+func (c *RadarClient) AssignPodToAccount(accountToken string, network *agent.NetworkData) (*agent.PodInfo, error) {
+	apiUrl := fmt.Sprintf("%s/api/v1/clients/assign", c.serverURL)
+
+	bodyBuffer := bytes.NewBuffer(nil)
+
+	data := map[string]interface{}{
+		"token": accountToken,
+	}
+
+	if network != nil {
+		data["network"] = *network
+	}
+
+	if err := json.NewEncoder(bodyBuffer).Encode(data); err != nil {
+		return nil, errors.W(err)
+	}
+
+	req, err := NewRequest(http.MethodPost, apiUrl, c.clientID, c.secret, bodyBuffer)
+	if err != nil {
+		return nil, errors.W(err)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, errors.W(err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.W(err)
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, errors.New("wrong status code %d", resp.StatusCode).WithMetadata(errors.Metadata{"body": string(body)})
+	}
+
+	pod := &agent.PodInfo{}
+	if err := json.Unmarshal(body, pod); err != nil {
+		return nil, errors.Wrap(err, "error unmarshalling").WithMetadata(errors.Metadata{"body": string(body)})
+	}
+
+	return pod, nil
 }
