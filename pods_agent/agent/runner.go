@@ -32,7 +32,7 @@ func runUntilSuccessfull(ctx context.Context, runners []Runner, reporter RadarCl
 		interfaces = []string{"default"}
 	}
 	wlanNames, err := wifi.WlanInterfaceNames()
-	if err != nil {
+	if err != nil && !errors.Is(err, wifi.ErrNotSupported) {
 		panic(errors.W(err))
 	}
 	for !successfull {
@@ -55,7 +55,7 @@ func runUntilSuccessfull(ctx context.Context, runners []Runner, reporter RadarCl
 				if slices.Contains(wlanNames, iface) {
 					report.Wlan = true
 					status, err := getWlanConnInfo(iface)
-					if errors.Is(err, wifi.ErrNotConnected) || errors.Is(err, wifi.ErrNotSuported) {
+					if errors.Is(err, wifi.ErrNotConnected) || errors.Is(err, wifi.ErrNotSupported) {
 						// Send failed measurement
 						continue
 					} else if err != nil {
