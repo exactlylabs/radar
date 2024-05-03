@@ -21,6 +21,7 @@ func Metadata() *ClientMeta {
 		}
 	}
 	return &ClientMeta{
+		ClientId:          config.LoadConfig().ClientId,
 		Distribution:      buildInfo.Distribution,
 		Version:           buildInfo.Version,
 		NetInterfaces:     ifaces,
