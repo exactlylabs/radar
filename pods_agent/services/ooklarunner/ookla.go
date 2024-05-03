@@ -5,10 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"net"
 	"os/exec"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/agent"
+	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network"
 )
 
 const DefaultMaxRetries int = 3
@@ -42,7 +44,11 @@ func (r *ooklaRunner) Type() string {
 func (r *ooklaRunner) run(ctx context.Context, name string) (*agent.Measurement, error) {
 	cmd := exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json")
 	if name != "" {
-		cmd = exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json", "--interface", name)
+		addr, err := addrForInterface(name)
+		if err != nil {
+			return nil, errors.W(err)
+		}
+		cmd = exec.CommandContext(ctx, binaryPath(), "--accept-license", "--accept-gdpr", "--format", "json", "--ip", addr.IP.String())
 	}
 
 	stderr := new(bytes.Buffer)
@@ -84,4 +90,20 @@ func (r *ooklaRunner) RunForInterface(ctx context.Context, name string) (res *ag
 		log.Printf("Ookla - Error running speed test: %v\n", err)
 	}
 	return nil, errors.W(err)
+}
+
+func addrForInterface(name string) (*net.IPNet, error) {
+	ifaces, err := network.Interfaces()
+	if err != nil {
+		return nil, errors.W(err)
+	}
+	found, iface := ifaces.FindByName(name)
+	if !found {
+		return nil, agent.ErrInterfaceNotFound
+	}
+	ipAddr := iface.UnicastAddress()
+	if ipAddr == nil {
+		return nil, agent.ErrInterfaceNotConnected
+	}
+	return ipAddr, nil
 }
