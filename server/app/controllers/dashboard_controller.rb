@@ -114,7 +114,7 @@ class DashboardController < ApplicationController
   end
 
   def outages
-    params = outages_params
+    params = outages_params(current_account)
     sql = DashboardHelper.get_outages_sql(params[:from], params[:to], params[:account_ids], params[:location_id], params[:outage_type], params[:as_org_id])
     @outages = ActiveRecord::Base.connection.execute(sql)
     @outages_count = @outages.count

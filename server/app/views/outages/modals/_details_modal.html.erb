@@ -9,7 +9,6 @@
   <div id="outages-detail-modal-content" class="dashboard--outages-modal-content">
     <% if @outages.present? && @outages.count > 0 %>
       <% @outages.each do |entry| %>
-        <% outage_group_id = entry[0] %>
         <% group_data = entry[1] %>
         <% outages = group_data[:outages] %>
         <% start_date = outages.first.started_at %>

@@ -50,6 +50,10 @@ module ChartsHelper
     { from: start_time, to: end_time }
   end
 
+  def outages_params(current_account)
+    common_filter_params(current_account).merge(time_filter_params).merge(outage_type: OutageEvent.outage_types[params[:outage_type]])
+  end
+
   def common_filter_params(current_account)
     if current_account.nil?
       account_ids = []

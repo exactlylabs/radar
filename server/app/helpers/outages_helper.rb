@@ -1,5 +1,17 @@
 module OutagesHelper
 
+  def get_outage_icon(outage)
+    type = outage['outage_type']
+    case type
+    when 'pod_failure'
+      'pod-failure-outage-icon.png'
+    when 'isp_outage'
+      'isp-outage-icon.png'
+    when 'power_outage'
+      'power-outage-icon.png'
+    end
+  end
+
   def self.group_outages(outages)
     outages_obj = {}
     group_idx = 0
