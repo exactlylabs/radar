@@ -1,6 +1,3 @@
-import 'package:client_mobile_app/core/web_socket_client/web_socket_client.dart';
-import 'package:client_mobile_app/core/wifi_tracking/bloc/wifi_tracker_cubit.dart';
-import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/wifi_tracker_modal.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,12 +9,14 @@ import 'package:client_mobile_app/core/local_storage/local_storage.dart';
 import 'package:client_mobile_app/presentations/widgets/modal_with_title.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_form.dart';
 import 'package:client_mobile_app/presentations/speed_test/accept_terms_page.dart';
+import 'package:client_mobile_app/core/wifi_tracking/bloc/wifi_tracker_cubit.dart';
 import 'package:client_mobile_app/core/background_fetch/bloc/background_fetch_bloc.dart';
 import 'package:client_mobile_app/core/services/warnings_service/i_warnings_service.dart';
 import 'package:client_mobile_app/presentations/speed_test/no_internet_connection_page.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/speed_test_bloc/speed_test_state.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/info_modal.dart';
+import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/wifi_tracker_modal.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/background_mode_bloc/background_mode_cubit.dart';
 import 'package:client_mobile_app/presentations/speed_test/widgets/app_info_modal/background_mode_bloc/background_mode_state.dart';
 

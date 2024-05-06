@@ -28,7 +28,7 @@ class _LeafletMapState extends State<LeafletMap> {
   @override
   void initState() {
     super.initState();
-    _address = widget.address ?? LatLng(39.8282, -98.5696);
+    _address = widget.address ?? const LatLng(39.8282, -98.5696);
     _zoom = widget.address != null ? 16.0 : 3.0;
     _circleMarkerVisible = true;
   }
@@ -57,11 +57,14 @@ class _LeafletMapState extends State<LeafletMap> {
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
-        center: _address,
-        zoom: _zoom,
-        interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-        rotationWinGestures: MultiFingerGesture.none,
-        onPositionChanged: (mapPosition, _) => mapPosition.center != null ? _updateAddress(mapPosition.center!) : null,
+        initialCenter: _address,
+        initialZoom: _zoom,
+        interactionOptions: const InteractionOptions(
+          flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+          rotationWinGestures: MultiFingerGesture.none,
+        ),
+        onPositionChanged: (mapPosition, _) =>
+            mapPosition.center != null ? _updateAddress(mapPosition.center!) : null,
         onMapEvent: (event) {
           if (event is MapEventMoveStart || event is MapEventDoubleTapZoomStart) {
             _hideCircleMarker();

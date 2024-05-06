@@ -23,10 +23,10 @@ class NavigationCubit extends Cubit<NavigationState> {
     _parseConnectionStatus(status);
   }
 
-  void _parseConnectionStatus(ConnectivityResult status) {
-    if (status == ConnectivityResult.wifi ||
-        status == ConnectivityResult.mobile ||
-        status == ConnectivityResult.ethernet) {
+  void _parseConnectionStatus(List<ConnectivityResult> status) {
+    if (status.contains(ConnectivityResult.wifi) ||
+        status.contains(ConnectivityResult.mobile) ||
+        status.contains(ConnectivityResult.ethernet)) {
       emit(state.copyWith(canNavigate: true));
     } else {
       emit(state.copyWith(canNavigate: false));
