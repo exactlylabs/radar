@@ -1,3 +1,8 @@
 <%= turbo_stream.update "public-page-#{@client.unix_user}" do %>
-  <%= render partial: "public_pod/status_page", locals: {client: @client} %>
+  <div class="public--pod-desktop-container">
+    <%= render partial: "public_pod/variants/desktop_status_page", locals: { client: @client } %>
+  </div>
+  <div class="public--pod-responsive-container">
+    <%= render partial: "public_pod/variants/responsive_status_page", locals: { client: @client } %>
+  </div>
 <% end %>
