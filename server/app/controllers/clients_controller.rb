@@ -35,7 +35,7 @@ class ClientsController < ApplicationController
     if FeatureFlagHelper.is_available('networks', current_user)
       @clients = @clients.where(update_group_id: params[:update_group_id]) if params[:update_group_id].present? && params[:update_group_id].to_i != -1
       @total = @clients.count
-      @clients = @clients.sort { |x| x.location_id.nil? ? -1 : 1 } # Show pods without network first
+      @clients = @clients.order("location_id NULLS FIRST")
       @clients = paginate(@clients, params[:page], params[:page_size])
     end
   end
