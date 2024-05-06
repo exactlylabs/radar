@@ -141,10 +141,9 @@ module EventSourceable
   def new_event(name, data, timestamp = nil)
     timestamp = timestamp or Time.now
     saved_changes_bkp = saved_changes
-    Event.transaction do
+    self.class.find(self.id).with_lock do
       # Obtain a lock in a new instance of this class, to avoid losing saved_changes_to_attribute? data
       # When instantiating a lock, all that data is lost, and any following call to saved_changes_to_attribute? returns false.
-      self.class.where(id: self.id).lock!
       last_event = Event.from_aggregate(self).order("version ASC").last
       version = last_event&.version || 0
       evt = Event.create(aggregate: self, name: name, data: data, timestamp: timestamp, version: version + 1)

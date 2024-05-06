@@ -44,7 +44,7 @@ class OutagesProjector
       self.events_iterator(SystemOutage, @state["sys_outage_events_offset"] || 0),
     ]
 
-    self.sorted_iteration(iterators).each_slice(100) do |chunk|
+    self.sorted_iteration(iterators).each_slice(500) do |chunk|
       OutageEvent.transaction do
         chunk.each do |content|
           event = content[:data]
@@ -61,6 +61,7 @@ class OutagesProjector
         end
         @co.state = @state
         @co.save!
+        # sleep 100000
       end
     end
   end
