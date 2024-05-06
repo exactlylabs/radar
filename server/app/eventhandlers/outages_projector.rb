@@ -43,23 +43,25 @@ class OutagesProjector
       self.events_iterator(Client, @state["client_events_offset"] || 0),
       self.events_iterator(SystemOutage, @state["sys_outage_events_offset"] || 0),
     ]
-    OutageEvent.transaction do
-      self.sorted_iteration(iterators).each do |content|
-        event = content[:data]
-        case event["aggregate_type"]
-        when Client.name
-          @pods[event["aggregate_id"]] ||= {}
-          handle_client_event(event)
-          @pods[event["aggregate_id"]]["last_event"] = {name: event["name"], data: event["data"]}
-          @state["client_events_offset"] = event["id"]
-        when SystemOutage.name
-          handle_system_outage_event(event)
-          @state["sys_outage_events_offset"] = event["id"]
-        end
 
+    self.sorted_iteration(iterators).each_slice(100) do |chunk|
+      OutageEvent.transaction do
+        chunk.each do |content|
+          event = content[:data]
+          case event["aggregate_type"]
+          when Client.name
+            @pods[event["aggregate_id"]] ||= {}
+            handle_client_event(event)
+            @pods[event["aggregate_id"]]["last_event"] = {name: event["name"], data: event["data"]}
+            @state["client_events_offset"] = event["id"]
+          when SystemOutage.name
+            handle_system_outage_event(event)
+            @state["sys_outage_events_offset"] = event["id"]
+          end
+        end
+        @co.state = @state
+        @co.save!
       end
-      @co.state = @state
-      @co.save!
     end
   end
 
