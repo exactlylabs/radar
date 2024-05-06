@@ -19,7 +19,7 @@ export const getConfigFromParams = () => {
   let config = baseConfig;
   const url = new URL(window.location.href);
   const searchParams = url.searchParams;
-  if(searchParams) {
+  if(searchParams.size > 0) {
     searchParams.forEach((value, name) => {
       if(['tab', 'zoom', 'clientId'].includes(name)) {
         config[name] = parseInt(value);
