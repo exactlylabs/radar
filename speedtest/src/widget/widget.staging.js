@@ -98,6 +98,8 @@ const RadarSpeedWidget = {
         iframe.id = 'speedtest-widget--iframe';
         iframe.style.width = frameStyle.width;
         iframe.style.height = frameStyle.height;
+        iframe.style.minHeight = '300px';
+        iframe.style.minWidth = '300px';
         iframe.style.border = 'none';
         iframe.src = radarUtilities.getSrcWithParams();
         iframe.setAttribute('allow', 'geolocation');

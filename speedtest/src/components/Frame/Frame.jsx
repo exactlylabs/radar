@@ -28,13 +28,15 @@ const widgetMainWrapperStyle = {
   backgroundColor: WHITE,
   overflowX: 'auto',
   overflowY: 'auto',
+  minWidth: '300px',
+  minHeight: '300px'
 }
 
 const childrenWrapperStyle = {
   width: '100%',
   margin: '0 auto',
-  overflowY: 'visible',
-  height: 'auto',
+  overflowY: 'auto',
+  height: 'auto'
 };
 
 const fullWidthWrapperStyle = {
@@ -70,7 +72,7 @@ const Frame = ({ config, children, step, setStep }) => {
       if(config.widgetMode) return {
         ...widgetFullWidthWrapperStyle,
         height: `${config.frameStyle.height} - 150px`,
-        overflowY: isAllResultsPage ? 'hidden' : 'auto'
+        overflowY: 'auto'
       };
       else if(config.webviewMode) return {...widgetFullWidthWrapperStyle, height: `${config.frameStyle.height}`};
       return isMediumSizeScreen || isSmallSizeScreen ? mobileFullWidthWrapperStyle : fullWidthWrapperStyle;

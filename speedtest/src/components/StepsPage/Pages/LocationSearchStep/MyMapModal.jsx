@@ -69,18 +69,22 @@ const widgetBoxStyle = {
 
 const mapContainerStyle = {
   height: 250,
+  width: '100%'
 }
 
 const mobileMapContainerStyle = {
-  height: '45%'
+  height: '45%',
+  width: '100%'
 }
 
 const smallMapContainerStyle = {
-  height: '55%'
+  height: '55%',
+  width: '100%'
 }
 
 const xsMapContainerStyle = {
-  height: '65%'
+  height: '65%',
+  width: '100%'
 }
 
 const footerStyle = {
@@ -206,7 +210,7 @@ const MyMapModal = ({
   )
 
   const getStyle = () => {
-    if(config.widgetMode) return widgetModalFraming(config, isExtraSmallSizeScreen || isSmallSizeScreen);
+    if(config.widgetMode) return widgetModalFraming({maxHeight: '475px'});
     return isMediumSizeScreen || isSmallSizeScreen ? mobileModalStyle : modalStyle
   }
 
@@ -284,7 +288,7 @@ const MyMapModal = ({
               center={addressCoordinates}
               zoom={isGeneric ? 12 : 20}
               scrollWheelZoom
-              style={{height: '100%', maxWidth: 800}}
+              style={{height: '100%', maxWidth: 'unset', width: '100%'}}
             >
               <MyMap/>
               <TileLayer attribution={mapTileAttribution} url={mapTileUrl}/>

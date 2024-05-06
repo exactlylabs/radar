@@ -26,6 +26,7 @@ const mobileFiltersWrapper = {
   left: 0,
   width: '100%',
   zIndex: 1001,
+  height: '100%'
 }
 
 const mobileFilterListStyle = {
@@ -123,7 +124,7 @@ const SpeedResultsBox = ({
     if (config.webviewMode) {
       style = {...style, top: 'calc(100vh - 125px - 45px)'}
     } else if(config.widgetMode) {
-      style = {...style, top: `calc(${config.frameStyle.height} - 60px - 54px - 56px - 70px - 40px)` }
+      style = {...style, top: `unset`, bottom: '16px' }
     } else {
       style = {...style, top: (y + height - 300)}
     }
@@ -144,7 +145,7 @@ const SpeedResultsBox = ({
     if (config.webviewMode) {
       style = {...style, top: 'calc(100vh - 125px - 45px)'}
     } else if(config.widgetMode) {
-      style = {...style, top: `calc(${config.frameStyle.height} - 95px - 54px - 56px - 70px - 40px)` }
+      style = {...style, top: `unset`, bottom: '16px' }
     } else {
       style = {...style, top: (y + height - 300)}
     }
