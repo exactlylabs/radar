@@ -5,7 +5,6 @@
        data-outages-ids="<%= @outages.map {|entry| entry[1][:outages]}.flatten.map {|o| o.id} %>"
   >
     <%= render partial: "outages/components/type_filter" %>
-    <%#= render partial: "outages/components/search_bar" %>
   </div>
   <div id="outages-detail-modal-content" class="dashboard--outages-modal-content">
     <% if @outages.present? && @outages.count > 0 %>

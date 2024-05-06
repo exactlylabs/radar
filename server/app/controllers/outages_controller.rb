@@ -13,11 +13,6 @@ class OutagesController < ApplicationController
 
     @outages = OutagesHelper.group_outages(@outages)
 
-    # Just leaving this comment until this specific part is implemented (it's up for review)
-    # if params[:search].present?
-    #   @outages = @outages.joins(:autonomous_system).where("autonomous_systems.asn = ? OR autonomous_systems.name ILIKE ?", params[:search], "%#{params[:search]}%")
-    # end
-
     respond_to do |format|
       format.turbo_stream
       format.html

@@ -16,7 +16,7 @@ module DashboardHelper
       'Pod failure'
     when 'isp_outage'
       'ISP outage'
-    else
+    when 'power_outage'
       'Power outage'
     end
   end
