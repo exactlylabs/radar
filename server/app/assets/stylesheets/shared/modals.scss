@@ -231,6 +231,11 @@
     min-width: 500px;
   }
 
+  &[data-resource="outages"] {
+    min-height: 300px;
+    max-width: max-content;
+  }
+
   &.contained {
     padding: 1rem;
   }
@@ -259,7 +264,9 @@
     }
     &[data-resource="networks"],
     &[data-resource="outages"] {
+      min-height: unset;
       max-height: calc(100% - 75px);
+      max-width: 100%;
     }
     &[data-resource="measurement"],
     &[data-resource="categories"],

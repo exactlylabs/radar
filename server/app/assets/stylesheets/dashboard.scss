@@ -775,7 +775,7 @@ div[data-dashboard-time-filter-target="monthYear"] {
 
 .dashboard--outages-modal-content {
   width: 100%;
-  min-width: 320px;
+  min-width: 450px;
   max-height: 485px;
   overflow-y: auto;
   display: flex;
@@ -838,7 +838,7 @@ div[data-dashboard-time-filter-target="monthYear"] {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 3rem;
+  gap: .5rem;
   background-color: $cards--selected-pod-background-color;
   cursor: pointer;
 }

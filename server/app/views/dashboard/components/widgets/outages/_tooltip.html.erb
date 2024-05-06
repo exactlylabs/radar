@@ -14,9 +14,9 @@
   <div class="dashboard--outages-tooltip-body">
     <% if outages.count <= 3 %>
       <% outages.each do |outage| %>
-        <% type = outage[:outage_type] %>
+        <% type = outage['outage_type'] %>
         <div class="dashboard--outages-tooltip-body-row">
-          <%#= image_tag image_url("#{type}-outage-icon.png"), width: 14, height: 14 %>
+          <%= image_tag image_url(get_outage_icon(outage)), width: 16, height: 16 %>
           <div class="dashboard--outages-tooltip-body-content">
             <p class="dashboard--outages-tooltip-body-content-header"><%= outage_type_to_human(type) %> · <%= get_time_duration(outage['resolved_at'] - outage['started_at']) %></p>
           </div>
@@ -24,7 +24,7 @@
       <% end %>
     <% else %>
       <div class="dashboard--outages-tooltip-body-row">
-        <%= image_tag image_url("generic-outage-icon.png"), width: 14, height: 14 %>
+        <%= image_tag image_url("generic-outage-icon.png"), width: 16, height: 16 %>
         <div class="dashboard--outages-tooltip-body-content">
           <p class="dashboard--outages-tooltip-body-content-header"><%= outages.count %> outages · <%= get_time_duration(group_duration) %></p>
         </div>
