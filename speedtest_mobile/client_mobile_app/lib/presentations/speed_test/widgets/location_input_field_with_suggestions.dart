@@ -34,9 +34,11 @@ class LocationInputFieldWithSuggestions extends StatelessWidget {
         } else if (location == null && suggestions == null && !isLoading) {
           controller.text = Strings.emptyString;
         }
-        if (focusNode.hasFocus) {
-          WidgetsBinding.instance.addPostFrameCallback((_) => Scrollable.ensureVisible(context));
-        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted && focusNode.hasFocus) {
+            Scrollable.ensureVisible(context);
+          }
+        });
         return LocationInputField(
             controller: controller, focusNode: focusNode, isLoading: isLoading);
       },

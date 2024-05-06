@@ -15,15 +15,17 @@ Future<void> mapModal(BuildContext context, bool? isScrollControlled, bool isUsi
         borderRadius:
             BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0))),
     isScrollControlled: isScrollControlled ?? false,
-    builder: (_) => BlocProvider.value(
-      value: BlocProvider.of<LocationStepCubit>(context),
-      child: ModalWithTitle(
-        title: '',
-        padding: EdgeInsets.zero,
-        body: const LocationPickerModal(),
-        onPop: onPop,
-      ),
-    ),
+    builder: (_) => context.mounted
+        ? BlocProvider.value(
+            value: BlocProvider.of<LocationStepCubit>(context),
+            child: ModalWithTitle(
+              title: '',
+              padding: EdgeInsets.zero,
+              body: const LocationPickerModal(),
+              onPop: onPop,
+            ),
+          )
+        : Container(),
   );
 }
 
