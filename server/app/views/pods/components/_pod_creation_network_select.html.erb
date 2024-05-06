@@ -10,7 +10,9 @@
   data-onboarding="<%= is_onboarding %>"
 >
   <% initial_locations = policy_scope(Location) %>
-  <% if current_account.is_all_accounts? %>
+  <% if @client.location.present? %>
+    <% initial_locations = initial_locations.where(account_id: @client.account.id) %>
+  <% elsif current_account.is_all_accounts? %>
     <% initial_locations = initial_locations.where(account_id: policy_scope(Account).first.id) %>
   <% else %>
     <% initial_locations = initial_locations.where(account_id: current_account.id) %>
