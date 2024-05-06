@@ -158,7 +158,7 @@ class Client < ApplicationRecord
   def connected!
     REDIS.zadd Client::REDIS_PING_SET_NAME, Time.now.to_i, id
     Client.transaction do
-      c = Client.lock().find(id)
+      c = Client.lock("FOR UPDATE").find(id)
       if !c.online
         c.online = true
         c.save!
@@ -178,15 +178,19 @@ class Client < ApplicationRecord
       'events.id IS NOT NULL AND events.timestamp > ? AND (events.name = ? OR events.name = ?)',
       5.minute.ago, Client::Events::CLIENT_REQUESTED_TO_UPDATE, Client::Events::WATCHDOG_REQUESTED_TO_UPDATE
     ).where.not(id: client_ids).distinct
+
     # Adding locks to avoid concurrency between this and disconnected!
-    Client.transaction do
-      Client.where(id: clients).lock().each do |c|
+    Client.where(id: clients).each do |c|
+      c.with_lock do
         if c.online
           c.online = false
           c.save!
         end
       end
-      Client.where(online: false, id: client_ids).lock().each do |client|
+    end
+
+    Client.where(online: false, id: client_ids).each do |client|
+      client.with_lock do
         if !client.online
           client.online = true
           client.save!
