@@ -138,11 +138,8 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
   }
 
   const getMapContainerHeight = () => {
-    if(config.widgetMode) {
-      const widgetHeight = config.frameStyle.height;
-      return `calc(${widgetHeight} - 53px - 55px - 40px)`;
-    } else if(config.webviewMode) {
-      return '100%';
+    if(config.widgetMode || config.webviewMode) {
+      return `100%`;
     }
     if(isMediumSizeScreen || isSmallSizeScreen) return 'calc(99vh - 125px)';
     else return `calc(${maxHeight} - 70px - 173px - 53px)`;
