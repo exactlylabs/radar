@@ -10,8 +10,6 @@ export default class extends Controller {
     "step0Content",
   ];
 
-  connect() {}
-
   hideModal() {
     $(this.element).modal("hide");
   }
@@ -52,7 +50,7 @@ export default class extends Controller {
         })
         .then((res) => {
           const locationsDropdownSelector = $(
-            "#client-locations-dropdown-edit"
+            "#pod-existing-network-select"
           );
           // empty current locations dropdown
           locationsDropdownSelector.empty();
@@ -95,15 +93,5 @@ export default class extends Controller {
         currentSelectedAccountName = option.text;
       }
     });
-    // If selected account has not changed => regular submission
-    // else => extra step modal as a warning
-    if (currentSelectedAccountId !== initialAccountSelectedId) {
-      e.preventDefault();
-      e.stopPropagation();
-      this.warningContentTarget.style.display = "block";
-      this.step0ContentTarget.style.display = "none";
-      this.warningTitleTarget.innerText = `Move Pod to ${currentSelectedAccountName}`;
-      this.warningTextTarget.innerText = `If you continue this Pod will no longer be available to anyone in ${initialAccountSelectedName}.`;
-    }
   }
 }

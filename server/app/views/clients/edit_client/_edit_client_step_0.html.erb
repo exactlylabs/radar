@@ -20,13 +20,13 @@
     </div>
     <div class="modals--form-row mb-4">
       <%= form.label :account_id, "Account", class: "forms--label" %>
-      <select class="forms--select form-select form-control"
+      <select class="forms--select form-select"
               data-controller="select2"
               id="client-accounts-dropdown-edit"
               data-placeholder="Select an account"
               name="account_id"
               data-select2-id="select2-data-account_id"
-              data-action="select2-select->edit-pod#onAccountsSelectChange select2-clear->edit-pod#onAccountsSelectChange"
+              data-action="change->edit-pod#onAccountsSelectChange"
               data-edit-pod-target="accountsSelect"
               data-select2-dropdown-parent-value="edit_pod_modal"
               data-select2-blanks-value="<%= current_user.super_user && !is_super_user_disabled? %>"
