@@ -38,9 +38,6 @@ share or deploy the following files:
 
 ```
 widget.js
-widget.css
-ndt7-download-worker.js
-ndt7-upload-worker.js
 ```
 
 ### External usage
@@ -55,7 +52,6 @@ For example, in an `index.html` file:
     <head>
         ...
         <script type="text/javascript" src="path/to/widget.js"></script>
-        <link rel="stylesheet" href="path/to/widget.css"/>
     </head>
     <body>
         ...
@@ -63,11 +59,11 @@ For example, in an `index.html` file:
         ...
     </body>
     <script>
-        SpeedTest.config({
+        RadarSpeedWidget.config({
             elementId: 'my-widget-wrapper',
             ...config
         });
-        SpeedTest.new().mount();
+        RadarSpeedWidget.new().mount();
     </script>
 </html>
 ```
@@ -78,5 +74,4 @@ Where the `config` given can have the following attributes:
 | ---------- | ------- | --------------------------------------------------------------------------------------------------------- | -------- |
 | widgetMode | boolean | Turn on if using in widget mode, embedded                                                                 | true     |
 | elementId  | string  | DOM element id that should contain the widget                                                             | true     |
-| frameStyle | object  | JSON object with custom style for the main frame of the widget. The style is based on "CSS-in-JS" format. | false    |
 | clientId   | string  | Developer id to identify the client using the widget                                                      | true     |
