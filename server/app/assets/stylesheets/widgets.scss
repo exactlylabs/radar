@@ -11,7 +11,7 @@
   margin-top: 1.5rem;
 }
 
-@media (min-width: 1980px) {
+@media (min-width: 1680px) {
   .widgets--grid:not([data-pod-page="true"]) {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -35,6 +35,10 @@
   height: -webkit-fill-available;
   height: -moz-available;
   height: fill-available;
+  width: -webkit-fill-available;
+  width: -moz-available;
+  width: fill-available;
+  margin-inline: auto;
 
   &[data-widget-type="locations_map"] {
     width: 100%;
@@ -62,6 +66,18 @@
   }
 }
 
+@media (min-width: 1080px) and (max-width: 1680px) {
+  .widgets--widget {
+    max-width: 570px;
+  }
+}
+
+@media (min-width: 1900px) {
+  .widgets--widget {
+    max-height: 385px;
+  }
+}
+
 .widgets--header-container {
   width: 100%;
   .widgets--header-text {
@@ -74,12 +90,13 @@
   width: calc(100% + 3rem);
   height: 1px;
   background-color: $sidebar--horizontal-divider-background-color;
-  margin: 1rem 0 1.5rem -1.5rem;
+  margin: 0 0 0 -1.5rem;
 }
 
 .widgets--widget-content {
   width: 100%;
   height: 100%;
+  padding-top: 1.5rem;
 }
 
 .widgets--locations-map-container {

@@ -303,7 +303,7 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, from: from, to: to, location_ids: location_ids}])
   end
 
-  def self.get_outages_sql(from, to, account_ids, location_id = nil, outage_type = nil, as_org_id = nil)
+  def self.get_outages_sql(from, to, account_ids, location_ids = nil, outage_type = nil, as_org_id = nil)
     sql_args = {from: from, to: to, account_ids: account_ids}
     sql = %{
     SELECT
@@ -324,9 +324,9 @@ module DashboardHelper
     WHERE outage_events.status = 2 AND locations.account_id IN (:account_ids)
     }
 
-    if location_id.present?
-      sql += " AND client_outages.location_id = :location_id "
-      sql_args[:location_id] = location_id
+    if location_ids.present?
+      sql += " AND client_outages.location_id = :location_ids "
+      sql_args[:location_ids] = location_ids
     end
 
     if outage_type.present?
