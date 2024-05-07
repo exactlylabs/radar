@@ -25,17 +25,15 @@ class PublicPodController < PublicApplicationController
 
   def setup
     if @client.account.present?
-      respond_to do |format|
-        format.html { redirect_to "/check/#{@client.unix_user}" }
-      end
+      redirect_to "/check/#{@client.unix_user}"
+      return
     end
   end
 
   def status
     if @client.account.nil?
-      respond_to do |format|
-        format.html { redirect_to "/setup/#{@client.unix_user}" }
-      end
+      redirect_to "/setup/#{@client.unix_user}"
+      return
     end
     render layout: "public_pod"
   end
