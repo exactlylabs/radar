@@ -22,12 +22,12 @@
                locals: {
                  menu_id: 'account-filter-menu',
                  key: 'account_id',
-                 default_value: '-1',
+                 default_value: nil,
                  default_label: 'All accounts',
                  pagination: false,
                  no_z_index: true,
                  options: [
-                   { label: 'All accounts', value: '-1' },
+                   { label: 'All accounts', value: nil },
                    *policy_scope(Account).map { |account| { label: account.name, value: "#{account.id}" } }
                  ],
                }

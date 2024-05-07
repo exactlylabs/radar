@@ -57,7 +57,7 @@ module ChartsHelper
   def common_filter_params(current_account)
     if current_account.nil?
       account_ids = []
-    elsif params[:account_id].present?
+    elsif params[:account_id].present? && params[:account_id] != '-1'
       account_ids = policy_filter_ids(Account, params[:account_id])
     elsif current_account.is_all_accounts?
       account_ids = policy_scope(Account).pluck(:id)
