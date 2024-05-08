@@ -6,7 +6,17 @@
     <%= render partial: "dashboard/components/widgets/outages/metrics" %>
     <% if @outages.count != 0 %>
       <div class="dashboard--horizontal-divider full-width"></div>
-      <a href="<%= detail_modal_outages_path(outage_type: params[:outage_type], ids: @outages_ids) %>"
+      <a href="<%= detail_modal_outages_path(
+                     outage_type: params[:outage_type],
+                     network_id: params[:network_id],
+                     account_id: params[:account_id],
+                     isp_id: params[:isp_id],
+                     days: params[:days],
+                     start: params[:start],
+                     end: params[:end],
+                     page: 0,
+                     total_count: @outages_count
+                   ) %>"
          class="regular-link cursor-pointer"
          data-turbo-frame="outages_details_modal"
       >View all outages...</a>

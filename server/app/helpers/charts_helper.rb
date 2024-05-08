@@ -51,7 +51,7 @@ module ChartsHelper
   end
 
   def outages_params(current_account)
-    common_filter_params(current_account).merge(time_filter_params).merge(outage_type: OutageEvent.outage_types[params[:outage_type]])
+    common_filter_params(current_account).merge(time_filter_params).merge(outage_type: OutageEvent.outage_types[params[:outage_type]], page: params[:page] || 0)
   end
 
   def common_filter_params(current_account)
@@ -73,5 +73,9 @@ module ChartsHelper
     account_ids = pod.account.nil? ? [] : [pod.account.id]
     locations_ids = pod.location.nil? ? nil : [pod.location.id]
     { account_ids: account_ids, location_ids: locations_ids, as_org_ids: nil }
+  end
+
+  def policy_filter_ids(model, ids)
+    policy_scope(model).where(id: ids).pluck(:id).join(',')
   end
 end

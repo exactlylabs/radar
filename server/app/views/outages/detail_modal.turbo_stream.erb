@@ -1,23 +1,67 @@
-<%= turbo_stream.update "outages-detail-modal-content" do %>
-  <% if @outages.present? && @outages.count > 0 %>
-    <% @outages.each do |entry| %>
-      <% group_data = entry[1] %>
-      <% outages = group_data[:outages] %>
-      <% start_date = outages.first.started_at %>
-      <% end_date = outages.sort_by(&:resolved_at).last.resolved_at %>
-      <% start_date_formatted = start_date.strftime("%b %d#{start_date.year != Time.now.year ? ', %Y' : ''}") %>
-      <% end_date_formatted = end_date.strftime("%b %d#{end_date.year != Time.now.year ? ', %Y' : ''}") %>
-      <% if start_date_formatted == end_date_formatted %>
-        <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %></p>
-      <% else %>
-        <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %> - <%= end_date_formatted %></p>
+<% if @page != 0 %>
+  <%= turbo_stream.append "outages-detail-modal-content" do %>
+    <% if @grouped === true %>
+      <% @outages.each do |entry| %>
+        <% group_data = entry[1] %>
+        <% outages = group_data[:outages] %>
+        <% outages.each do |outage| %>
+          <%= render partial: "outages/components/outage_collapsible_row", locals: {outage: outage} %>
+        <% end %>
       <% end %>
+    <% else %>
+      <% if @outages.present? && @outages.count > 0 %>
+        <% @outages.each do |entry| %>
+          <% group_data = entry[1] %>
+          <% outages = group_data[:outages] %>
+          <% start_date = outages.first.started_at %>
+          <% end_date = outages.sort_by(&:resolved_at).last.resolved_at %>
+          <% start_date_formatted = start_date.strftime("%b %d#{start_date.year != Time.now.year ? ', %Y' : ''}") %>
+          <% end_date_formatted = end_date.strftime("%b %d#{end_date.year != Time.now.year ? ', %Y' : ''}") %>
+          <% if start_date_formatted == end_date_formatted %>
+            <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %></p>
+          <% else %>
+            <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %> - <%= end_date_formatted %></p>
+          <% end %>
 
-      <% outages.each do |outage| %>
-        <%= render partial: "outages/components/outage_collapsible_row", locals: {outage: outage} %>
+          <% outages.each do |outage| %>
+            <%= render partial: "outages/components/outage_collapsible_row", locals: {outage: outage} %>
+          <% end %>
+        <% end %>
       <% end %>
     <% end %>
-  <% else %>
-    <p class="dashboard--outages-modal-content-empty">No results match the given criteria.</p>
+  <% end %>
+<% else %>
+  <%= turbo_stream.update "outages-detail-modal-content" do %>
+    <% if @outages.present? && @outages.count > 0 %>
+      <% if @grouped %>
+        <% @outages.each do |entry| %>
+          <% group_data = entry[1] %>
+          <% outages = group_data[:outages] %>
+          <% outages.each do |outage| %>
+            <%= render partial: "outages/components/outage_collapsible_row", locals: {outage: outage} %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% @outages.each do |entry| %>
+          <% group_data = entry[1] %>
+          <% outages = group_data[:outages] %>
+          <% start_date = outages.first.started_at %>
+          <% end_date = outages.sort_by(&:resolved_at).last.resolved_at %>
+          <% start_date_formatted = start_date.strftime("%b %d#{start_date.year != Time.now.year ? ', %Y' : ''}") %>
+          <% end_date_formatted = end_date.strftime("%b %d#{end_date.year != Time.now.year ? ', %Y' : ''}") %>
+          <% if start_date_formatted == end_date_formatted %>
+            <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %></p>
+          <% else %>
+            <p class="dashboard--outages-modal-content-date-key"><%= start_date_formatted %> - <%= end_date_formatted %></p>
+          <% end %>
+
+          <% outages.each do |outage| %>
+            <%= render partial: "outages/components/outage_collapsible_row", locals: {outage: outage} %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <p class="dashboard--outages-modal-content-empty">No results match the given criteria.</p>
+    <% end %>
   <% end %>
 <% end %>

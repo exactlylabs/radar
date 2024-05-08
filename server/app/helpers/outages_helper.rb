@@ -12,7 +12,7 @@ module OutagesHelper
     end
   end
 
-  def self.group_outages(outages)
+  def self.group_outages(outages, order='asc', already_grouped=false)
     outages_obj = {}
     group_idx = 0
     outages.each do |outage|
@@ -23,6 +23,16 @@ module OutagesHelper
           outages: [outage],
           duration: outage['resolved_at'] - outage['started_at']
         }
+        next
+      end
+
+      if already_grouped
+        outages_obj[group_idx][:outages] << outage
+        if outage['resolved_at'] > outages_obj[group_idx][:resolved_at]
+          new_resolved_at = outage['resolved_at']
+          outages_obj[group_idx][:resolved_at] = new_resolved_at
+          outages_obj[group_idx][:duration] = new_resolved_at - outages_obj[group_idx][:started_at]
+        end
         next
       end
 
@@ -47,6 +57,11 @@ module OutagesHelper
         }
       end
     end
+
+    if order == 'desc'
+      outages_obj = outages_obj.sort_by { |_, v| v[:started_at] }.reverse.to_h
+    end
+
     outages_obj
   end
 

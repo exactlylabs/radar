@@ -219,3 +219,6 @@ application.register("collapsible-row", CollapsibleRowController);
 
 import OutagesModalController from "./outages_modal_controller";
 application.register("outages-modal", OutagesModalController);
+
+import InfiniteScrollController from "./infinite_scroll_controller";
+application.register("infinite-scroll", InfiniteScrollController);

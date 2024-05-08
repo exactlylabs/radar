@@ -348,4 +348,40 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, sql_args])
   end
 
+  def self.get_outage_ids_sql(from, to, account_ids, page = 0, location_id = nil, outage_type = nil, as_org_id = nil)
+    sql_args = {from: from, to: to, account_ids: account_ids, page: page.to_i * 10}
+    sql = %{
+    SELECT
+      outage_events.id
+    FROM outage_events
+    JOIN client_outages ON client_outages.outage_event_id = outage_events.id
+    JOIN locations ON locations.id = client_outages.location_id
+    JOIN autonomous_systems ON autonomous_systems.id = outage_events.autonomous_system_id
+    WHERE outage_events.status = 2 AND locations.account_id IN (:account_ids)
+    }
+
+    if location_id.present?
+      sql += " AND client_outages.location_id = :location_id "
+      sql_args[:location_id] = location_id
+    end
+
+    if outage_type.present?
+      sql += " AND outage_events.outage_type = :outage_type "
+      sql_args[:outage_type] = outage_type
+    end
+
+    if as_org_id.present?
+      sql += " AND autonomous_systems.autonomous_system_org_id = :as_org_id "
+      sql_args[:as_org_id] = as_org_id
+    end
+
+    sql += %{
+      AND outage_events.started_at < :to::timestamp
+      AND outage_events.resolved_at > :from::timestamp
+      ORDER BY outage_events.started_at DESC
+      LIMIT 10 OFFSET :page;
+    }
+    ActiveRecord::Base.sanitize_sql([sql, sql_args])
+  end
+
 end

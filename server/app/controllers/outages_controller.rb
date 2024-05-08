@@ -1,17 +1,29 @@
 class OutagesController < ApplicationController
+  include ChartsHelper
+
   def detail_modal
+    @total_count = params[:total_count].to_i
+    @grouped = params[:grouped] == 'true'
 
-    if params[:ids].present?
-      @outages = OutageEvent.where(id: params[:ids])
+    if @total_count >= 10 * params[:page].to_i
+      params = outages_params(current_account)
+      sql = DashboardHelper.get_outage_ids_sql(
+        params[:from],
+        params[:to],
+        params[:account_ids],
+        params[:page],
+        params[:location_id],
+        params[:outage_type],
+        params[:as_org_id]
+      )
+      @outage_ids = ActiveRecord::Base.connection.execute(sql)
+
+      @outages = OutageEvent.where(id: @outage_ids.map { |outage| outage['id'] }).order(started_at: :asc)
+
+      @outages = OutagesHelper.group_outages(@outages, 'desc', @grouped)
+    else
+      @outages = {}
     end
-
-    if params[:outage_type].present? && OutageEvent.outage_types.keys.include?(params[:outage_type])
-      @outages = @outages.where(outage_type: OutageEvent.outage_types[params[:outage_type]])
-    end
-
-    @outages = @outages.order(:started_at)
-
-    @outages = OutagesHelper.group_outages(@outages)
 
     respond_to do |format|
       format.turbo_stream
