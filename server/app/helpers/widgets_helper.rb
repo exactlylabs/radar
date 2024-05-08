@@ -2,45 +2,38 @@ module WidgetsHelper
   module WidgetTypes
     LOCATIONS_MAP = 'locations_map'
     ONLINE_POD_COUNT = 'online_pod_count'
+    COMPARISON_ONLINE_POD_COUNT = 'comparison_online_pod_count'
     DOWNLOAD_SPEED = 'download_speed'
+    COMPARISON_DOWNLOAD_SPEED = 'comparison_download_speed'
     UPLOAD_SPEED = 'upload_speed'
+    COMPARISON_UPLOAD_SPEED = 'comparison_upload_speed'
     LATENCY = 'latency'
+    COMPARISON_LATENCY = 'comparison_latency'
     DATA_USAGE = 'data_usage'
+    COMPARISON_DATA_USAGE = 'comparison_data_usage'
     OUTAGES = 'outages'
     TOTAL_DATA = 'total_data'
+    COMPARISON_TOTAL_DATA = 'comparison_total_data'
   end
 
-  module WidgetHeaders
-    LOCATIONS_MAP = 'All locations'
-    ONLINE_POD_COUNT = 'Online pods'
-    DOWNLOAD_SPEED = 'Download speed'
-    UPLOAD_SPEED = 'Upload speed'
-    LATENCY = 'Latency'
-    DATA_USAGE = 'Data usage'
-    OUTAGES = 'Outages'
-    TOTAL_DATA = 'Total data'
-  end
+  WidgetHeaders = {
+    locations_map: 'All locations',
+    online_pod_count: 'Online pods',
+    comparison_online_pod_count: 'Online pods',
+    download_speed: 'Download speed',
+    comparison_download_speed: 'Download speed',
+    upload_speed: 'Upload speed',
+    comparison_upload_speed: 'Upload speed',
+    latency: 'Latency',
+    comparison_latency: 'Latency',
+    data_usage: 'Data usage',
+    comparison_data_usage: 'Data usage',
+    outages: 'Outages',
+    total_data: 'Total data',
+    comparison_total_data: 'Total data'
+  }
 
   def self.get_header(type)
-    case type
-    when WidgetTypes::LOCATIONS_MAP
-      WidgetHeaders::LOCATIONS_MAP
-    when WidgetTypes::ONLINE_POD_COUNT
-      WidgetHeaders::ONLINE_POD_COUNT
-    when WidgetTypes::DOWNLOAD_SPEED
-      WidgetHeaders::DOWNLOAD_SPEED
-    when WidgetTypes::UPLOAD_SPEED
-      WidgetHeaders::UPLOAD_SPEED
-    when WidgetTypes::LATENCY
-      WidgetHeaders::LATENCY
-    when WidgetTypes::DATA_USAGE
-      WidgetHeaders::DATA_USAGE
-    when WidgetTypes::OUTAGES
-      WidgetHeaders::OUTAGES
-    when WidgetTypes::TOTAL_DATA
-      WidgetHeaders::TOTAL_DATA
-    else
-      WidgetHeaders::LOCATIONS_MAP
-    end
+    WidgetHeaders[type.to_sym]
   end
 end

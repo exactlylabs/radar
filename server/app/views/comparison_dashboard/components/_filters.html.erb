@@ -1,0 +1,136 @@
+<div class="dashboard--filters-container" data-controller="realtime-filters">
+
+  <%= render partial: "dashboard/components/date_filter",
+             locals: {
+               menu_id: 'date-range-filter-menu',
+               key: 'days',
+               default_value: 30,
+               default_label: 'Last 30 days',
+               no_z_index: true,
+               options: [
+                 { label: 'Last 7 days', value: '7' },
+                 { label: 'Last 30 days', value: '30' },
+                 { label: 'Last 90 days', value: '90' },
+               ],
+             }
+  %>
+
+  <span class="dashboard--comparison-compare-by">Compare by</span>
+
+  <%= render layout: "application/components/filters/realtime_filter",
+             locals: {
+               id: 'compare-by-filter',
+               menu_id: 'compare-by-filter-menu',
+               key: 'compare_by',
+               default_value: nil,
+               default_label: 'Account',
+               current_label: params[:compare_by].present? ? params[:compare_by].capitalize : 'Account',
+               pagination: false,
+               no_z_index: true,
+             } do %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->realtime-filters#toggleDynamicContent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'account', label: 'Account', active: params[:compare_by].nil? || params[:compare_by] == 'account' } %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->realtime-filters#toggleDynamicContent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'category', label: 'Category', active: params[:compare_by] == 'category' } %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->realtime-filters#toggleDynamicContent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'isp', label: 'ISP', active: params[:compare_by] == 'isp' } %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->realtime-filters#toggleDynamicContent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'network', label: FeatureFlagHelper.is_available('networks', current_user) ? 'Network' : 'Location', active: params[:compare_by] == 'network' } %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->realtime-filters#toggleDynamicContent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'pod', label: 'Pod', active: params[:compare_by] == 'pod' } %>
+  <% end %>
+
+  <div class="dashboard--dynamic-compare-by-container"
+       data-realtime-filters-target="dynamicCompareByContainer"
+       data-current-compare-by="<%= params[:compare_by] || 'account' %>"
+  >
+
+    <%= render partial: "application/components/tables/filter",
+               locals: {
+                 menu_id: 'account-filter-menu',
+                 key: 'account_id',
+                 default_value: '-1',
+                 default_label: 'All accounts',
+                 pagination: false,
+                 no_z_index: true,
+                 options: [
+                   { label: 'All accounts', value: '-1' },
+                   *policy_scope(Account).map { |account| { label: account.name, value: "#{account.id}" } }
+                 ],
+               }
+    %>
+
+    <%= render partial: "application/components/tables/filter",
+               locals: {
+                 menu_id: 'network-filter-menu',
+                 key: 'network_id',
+                 default_value: nil,
+                 default_label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations',
+                 pagination: false,
+                 no_z_index: true,
+                 options: [
+                   { label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations', value: nil },
+                   *policy_scope(Location).map { |network| { label: network.name, value: "#{network.id}" } }
+                 ],
+               }
+    %>
+
+    <%= render partial: "application/components/tables/filter",
+               locals: {
+                 menu_id: 'category-filter-menu',
+                 key: 'category_id',
+                 default_value: nil,
+                 default_label: 'All categories',
+                 pagination: false,
+                 no_z_index: true,
+                 options: [
+                   { label: 'All categories', value: nil },
+                   *policy_scope(Category).map { |category| { label: category.name, value: "#{category.id}" } }
+                 ],
+               }
+    %>
+
+    <%= render partial: "application/components/tables/filter",
+               locals: {
+                 menu_id: 'isp-filter-menu',
+                 key: 'isp_id',
+                 default_value: nil,
+                 default_label: 'All ISPs',
+                 pagination: false,
+                 no_z_index: true,
+                 options: [
+                   { label: 'All ISPs', value: nil },
+                   *@filter_as_orgs.map { |isp| { label: isp["name"], value: "#{isp["id"]}" } }
+                 ],
+               }
+    %>
+
+    <%= render partial: "application/components/tables/filter",
+               locals: {
+                 menu_id: 'pod-filter-menu',
+                 key: 'pod_id',
+                 default_value: nil,
+                 default_label: 'All pods',
+                 pagination: false,
+                 no_z_index: true,
+                 options: [
+                   { label: 'All pods', value: nil },
+                   *policy_scope(Client).map { |pod| { label: pod.unix_user, value: "#{pod.id}" } }
+                 ],
+               }
+    %>
+  </div>
+
+  <%= render partial: "application/components/tables/filter",
+             locals: {
+               menu_id: 'curve-type-filter-menu',
+               key: 'curve_type',
+               default_value: nil,
+               default_label: 'Median',
+               pagination: false,
+               no_z_index: true,
+               options: [
+                 { label: 'Min', value: 'min' },
+                 { label: 'Max', value: 'max' },
+                 { label: 'Median', value: nil },
+                 { label: 'Average', value: 'avg' }
+               ],
+             }
+  %>
+  <button class="custom-button custom-button--primary custom-button--sm" data-action="click->realtime-filters#applyFilters">Apply filters</button>
+</div>
