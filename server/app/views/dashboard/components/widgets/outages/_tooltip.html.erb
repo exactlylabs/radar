@@ -32,7 +32,17 @@
     <% end %>
   </div>
   <div class="dashboard--outages-tooltip-footer">
-    <a href="<%= detail_modal_outages_path(outage_type: params[:outage_type], ids: outages.map {|o| o['id']}) %>"
+    <a href="<%= detail_modal_outages_path(
+                   outage_type: params[:outage_type],
+                   network_id: params[:network_id],
+                   account_id: params[:account_id],
+                   isp_id: params[:isp_id],
+                   start: timeframe_start_date.to_i > start_date.to_i ? timeframe_start_date.to_i * 1000 : start_date.to_i * 1000,
+                   end: end_date.to_i * 1000,
+                   page: 0,
+                   total_count: outages.count,
+                   grouped: true
+                 ) %>"
        class="regular-link cursor-pointer"
        data-turbo-frame="outages_details_modal"
     >View details</a>

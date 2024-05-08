@@ -776,7 +776,7 @@ div[data-dashboard-time-filter-target="monthYear"] {
 .dashboard--outages-modal-content {
   width: 100%;
   min-width: 450px;
-  max-height: 485px;
+  max-height: calc(100% - 36px);
   overflow-y: auto;
   display: flex;
   flex-direction: column;

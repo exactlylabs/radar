@@ -7,7 +7,8 @@
     <% outage_group_id = entry[0] %>
     <% group_data = entry[1] %>
     <% full_time_span = (end_date - start_date).to_i %>
-    <% width = (group_data[:duration] / full_time_span.to_f) * 100 %>
+    <% normalized_duration = group_data[:started_at].to_i < start_date.to_i ? group_data[:resolved_at].to_i - start_date.to_i : group_data[:duration].to_i %>
+    <% width = (normalized_duration / full_time_span.to_f) * 100 %>
     <% width = 100 if width > 100 %>
     <% left = ((group_data[:started_at] - start_date.to_f).to_f / (full_time_span.to_f) * 100).floor(0)  %>
     <% left = 0 if left < 0 %>
@@ -23,7 +24,8 @@
                    end_date: group_data[:resolved_at],
                    group_duration: group_data[:duration],
                    outages: group_data[:outages],
-                   index: outage_group_id
+                   index: outage_group_id,
+                   timeframe_start_date: start_date,
                  }
       %>
     </div>

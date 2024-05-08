@@ -28,7 +28,7 @@
                  no_z_index: true,
                  options: [
                    { label: 'All accounts', value: nil },
-                   *policy_scope(Account).map { |account| { label: account.name, value: "#{account.id}" } }
+                   *policy_scope(Account).order(:name).map { |account| { label: account.name, value: "#{account.id}" } }
                  ],
                }
     %>
@@ -43,7 +43,7 @@
                no_z_index: true,
                options: [
                  { label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations', value: nil },
-                 *policy_scope(Location).map { |network| { label: network.name, value: "#{network.id}" } }
+                 *policy_scope(Location).order(:name).map { |network| { label: network.name, value: "#{network.id}" } }
                ],
              }
   %>
@@ -58,7 +58,7 @@
                  no_z_index: true,
                  options: [
                    { label: 'All categories', value: nil },
-                   *policy_scope(Category).map { |category| { label: category.name, value: "#{category.id}" } }
+                   *policy_scope(Category).order(:name).map { |category| { label: category.name, value: "#{category.id}" } }
                  ],
                }
     %>
@@ -74,7 +74,7 @@
                  no_z_index: true,
                  options: [
                    { label: 'All ISPs', value: nil },
-                   *@filter_as_orgs.map { |isp| { label: isp["name"], value: "#{isp["id"]}" } }
+                   *@filter_as_orgs.sort_by { |isp| isp['name'] }.map { |isp| { label: isp["name"], value: "#{isp["id"]}" } }
                  ],
                }
     %>

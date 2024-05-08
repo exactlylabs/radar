@@ -138,10 +138,6 @@ class DashboardController < ApplicationController
 
   private
 
-  def policy_filter_ids(model, ids)
-    policy_scope(model).where(id: ids).pluck(:id).join(',')
-  end
-
   def get_filtered_locations(locations, filter)
     case filter
     when nil, 'all'
