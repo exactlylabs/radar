@@ -51,7 +51,6 @@
   width: -moz-available;
   width: fill-available;
   margin-inline: auto;
-  aspect-ratio: 2.5;
 
   &[data-widget-type="locations_map"] {
     width: 100%;
@@ -82,7 +81,6 @@
 @media (min-width: 1080px) and (max-width: 1680px) {
   .widgets--widget {
     max-width: 570px;
-    aspect-ratio: 2.5;
   }
 }
 

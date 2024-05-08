@@ -104,7 +104,7 @@
           <% if FeatureFlagHelper.is_available('charts', current_user) %>
             <%= render partial: "comparison_dashboard/components/filters" %>
             <div class="widgets--grid" data-comparison="true">
-              <%#= render partial: "application/components/widgets/widget",
+              <%= render partial: "application/components/widgets/widget",
                          locals: { type: WidgetsHelper::WidgetTypes::COMPARISON_ONLINE_POD_COUNT }
               %>
               <%= render partial: "application/components/widgets/widget",
