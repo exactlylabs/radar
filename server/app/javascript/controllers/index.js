@@ -2,229 +2,226 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application"
+import { application } from "./application";
 
-import AccountsDrawerMenuController from "./accounts_drawer_menu_controller"
-application.register("accounts-drawer-menu", AccountsDrawerMenuController)
+import HelloController from "./hello_controller.js";
+application.register("hello", HelloController);
 
-import AddAccountController from "./add_account_controller"
-application.register("add-account", AddAccountController)
+import ModalController from "./modal_controller.js";
+application.register("modal", ModalController);
 
-import AddClientToLocationController from "./add_client_to_location_controller"
-application.register("add-client-to-location", AddClientToLocationController)
+import MenuController from "./menu_controller.js";
+application.register("menu", MenuController);
 
-import AddPodController from "./add_pod_controller"
-application.register("add-pod", AddPodController)
+import PasswordController from "./password_controller.js";
+application.register("password", PasswordController);
 
-import AddPodToNetworkController from "./add_pod_to_network_controller"
-application.register("add-pod-to-network", AddPodToNetworkController)
+import LocationController from "./location_controller.js";
+application.register("location", LocationController);
 
-import AddUserController from "./add_user_controller"
-application.register("add-user", AddUserController)
+import LocationFormController from "./location_form_controller.js";
+application.register("location-form", LocationFormController);
 
-import AlertController from "./alert_controller"
-application.register("alert", AlertController)
+import DrawerController from "./drawer_controller.js";
+application.register("drawer", DrawerController);
 
-import AlertHandlerController from "./alert_handler_controller"
-application.register("alert-handler", AlertHandlerController)
+import LocaltimeController from "./localtime_controller.js";
+application.register("localtime", LocaltimeController);
 
-import AppSearchController from "./app_search_controller"
-application.register("app-search", AppSearchController)
+import TimezoneController from "./timezone_controller.js";
+application.register("timezone", TimezoneController);
 
-import BannerController from "./banner_controller"
-application.register("banner", BannerController)
+import OnboardController from "./onboard_controller.js";
+application.register("onboard", OnboardController);
 
-import BarChartController from "./bar_chart_controller"
-application.register("bar-chart", BarChartController)
+import Select2Controller from "./select2_controller.js";
+application.register("select2", Select2Controller);
 
-import BulkReleaseGroupModalController from "./bulk_release_group_modal_controller"
-application.register("bulk-release-group-modal", BulkReleaseGroupModalController)
+import MapController from "./map_controller.js";
+application.register("map", MapController);
 
-import CategoriesController from "./categories_controller"
-application.register("categories", CategoriesController)
+import AddClientToLocation from "./add_client_to_location_controller.js";
+application.register("add-client-to-location", AddClientToLocation);
 
-import CategoryTooltipController from "./category_tooltip_controller"
-application.register("category-tooltip", CategoryTooltipController)
+import AddPodController from "./add_pod_controller.js";
+application.register("add-pod", AddPodController);
 
-import ChartController from "./chart_controller"
-application.register("chart", ChartController)
+import EditPodController from "./edit_pod_controller.js";
+application.register("edit-pod", EditPodController);
 
-import ClaimPodsController from "./claim_pods_controller"
-application.register("claim-pods", ClaimPodsController)
+import RegistrationController from "./registration_controller.js";
+application.register("registration", RegistrationController);
 
-import ClientDataCapFormController from "./client_data_cap_form_controller"
-application.register("client-data-cap-form", ClientDataCapFormController)
+import AddAccountController from "./add_account_controller.js";
+application.register("add-account", AddAccountController);
 
-import ClientSchedulingFormController from "./client_scheduling_form_controller"
-application.register("client-scheduling-form", ClientSchedulingFormController)
+import SwitchAccountController from "./switch_account_controller.js";
+application.register("switch-account", SwitchAccountController);
 
-import CollapsibleRowController from "./collapsible_row_controller"
-application.register("collapsible-row", CollapsibleRowController)
+import AddUserController from "./add_user_controller.js";
+application.register("add-user", AddUserController);
 
-import CustomModalController from "./custom_modal_controller"
-application.register("custom-modal", CustomModalController)
+import SignInController from "./sign_in_controller.js";
+application.register("sign-in", SignInController);
 
-import DashboardTimeFilterController from "./dashboard_time_filter_controller"
-application.register("dashboard-time-filter", DashboardTimeFilterController)
+import AccountsDrawerMenuController from "./accounts_drawer_menu_controller.js";
+application.register("accounts-drawer-menu", AccountsDrawerMenuController);
 
-import DownloadsController from "./downloads_controller"
-application.register("downloads", DownloadsController)
+import EditProfilePictureController from "./edit_profile_picture_controller.js";
+application.register("edit-profile-picture", EditProfilePictureController);
 
-import DrawerController from "./drawer_controller"
-application.register("drawer", DrawerController)
+import PasswordRevealController from "./password_reveal_controller.js";
+application.register("password-reveal", PasswordRevealController);
 
-import EditAccountController from "./edit_account_controller"
-application.register("edit-account", EditAccountController)
+import ClientDataCapFormController from "./client_data_cap_form_controller";
+application.register("client-data-cap-form", ClientDataCapFormController);
 
-import EditPasswordController from "./edit_password_controller"
-application.register("edit-password", EditPasswordController)
+import ClientSchedulingFormController from "./client_scheduling_form_controller";
+application.register("client-scheduling-form", ClientSchedulingFormController);
 
-import EditPodController from "./edit_pod_controller"
-application.register("edit-pod", EditPodController)
+import MultiRowTableController from "./multi_row_table_controller";
+application.register("multi-row-table", MultiRowTableController);
 
-import EditProfilePictureController from "./edit_profile_picture_controller"
-application.register("edit-profile-picture", EditProfilePictureController)
+import BulkReleaseGroupModal from "./bulk_release_group_modal_controller";
+application.register("bulk-release-group-modal", BulkReleaseGroupModal);
 
-import ErrorHandlerController from "./error_handler_controller"
-application.register("error-handler", ErrorHandlerController)
+import ExportsController from './exports_controller';
+application.register("exports", ExportsController);
 
-import ExportsController from "./exports_controller"
-application.register("exports", ExportsController)
+import PublicPageController from './public_page_controller';
+application.register("public-page", PublicPageController);
 
-import FeatureFlagsController from "./feature_flags_controller"
-application.register("feature-flags", FeatureFlagsController)
+import CategoriesController from './categories_controller';
+application.register("categories", CategoriesController);
 
-import FetchController from "./fetch_controller"
-application.register("fetch", FetchController)
+import SearchController from './search_controller';
+application.register("search", SearchController);
 
-import FiltersController from "./filters_controller"
-application.register("filters", FiltersController)
+import CategoryTooltipController from './category_tooltip_controller';
+application.register("category-tooltip", CategoryTooltipController);
 
-import HelloController from "./hello_controller"
-application.register("hello", HelloController)
+import FetchController from './fetch_controller';
+application.register("fetch", FetchController);
 
-import InfiniteScrollController from "./infinite_scroll_controller"
-application.register("infinite-scroll", InfiniteScrollController)
+import AlertController from './alert_controller';
+application.register("alert", AlertController);
 
-import LineChartController from "./line_chart_controller"
-application.register("line-chart", LineChartController)
+import SidebarController from './sidebar_controller';
+application.register("sidebar", SidebarController);
 
-import LoadingFeedbackController from "./loading_feedback_controller"
-application.register("loading-feedback", LoadingFeedbackController)
+import UpdateGroupController from './update_group_controller';
+application.register("update-group", UpdateGroupController);
 
-import LocaltimeController from "./localtime_controller"
-application.register("localtime", LocaltimeController)
+import AppSearchController from './app_search_controller';
+application.register("app-search", AppSearchController);
 
-import LocationController from "./location_controller"
-application.register("location", LocationController)
+import BannerController from './banner_controller';
+application.register("banner", BannerController);
 
-import LocationFormController from "./location_form_controller"
-application.register("location-form", LocationFormController)
+import SuperUserController from './super_user_controller';
+application.register("super-user", SuperUserController);
 
-import LocationsMapWidgetController from "./locations_map_widget_controller"
-application.register("locations-map-widget", LocationsMapWidgetController)
+import PaginationController from './pagination_controller';
+application.register("pagination", PaginationController);
 
-import MapController from "./map_controller"
-application.register("map", MapController)
+import MoreOptionsButtonController from './more_options_button_controller';
+application.register("more-options-button", MoreOptionsButtonController);
 
-import MenuController from "./menu_controller"
-application.register("menu", MenuController)
+import TableController from './table_controller';
+application.register("table", TableController);
 
-import ModalController from "./modal_controller"
-application.register("modal", ModalController)
+import FiltersController from './filters_controller';
+application.register("filters", FiltersController);
 
-import MoreOptionsButtonController from "./more_options_button_controller"
-application.register("more-options-button", MoreOptionsButtonController)
+import CustomModalController from './custom_modal_controller';
+application.register("custom-modal", CustomModalController);
 
-import MultiLineChartController from "./multi_line_chart_controller"
-application.register("multi-line-chart", MultiLineChartController)
+import EditAccountController from './edit_account_controller';
+application.register("edit-account", EditAccountController);
 
-import MultiPodSelectController from "./multi_pod_select_controller"
-application.register("multi-pod-select", MultiPodSelectController)
+import EditPasswordController from './edit_password_controller';
+application.register("edit-password", EditPasswordController);
 
-import MultiRowTableController from "./multi_row_table_controller"
-application.register("multi-row-table", MultiRowTableController)
+import FeatureFlagsController from './feature_flags_controller';
+application.register("feature-flags", FeatureFlagsController);
 
-import NotificationSettingsController from "./notification_settings_controller"
-application.register("notification-settings", NotificationSettingsController)
+import SpeedFiltersController from './speed_filters_controller';
+application.register("speed-filters", SpeedFiltersController);
 
-import NotificationsController from "./notifications_controller"
-application.register("notifications", NotificationsController)
+import LocationsMapWidget from './locations_map_widget_controller';
+application.register("locations-map-widget", LocationsMapWidget);
 
-import OnboardController from "./onboard_controller"
-application.register("onboard", OnboardController)
+import DownloadsController from './downloads_controller';
+application.register("downloads", DownloadsController);
 
-import OutagesChartController from "./outages_chart_controller"
-application.register("outages-chart", OutagesChartController)
+import AddPodToNetworkController from "./add_pod_to_network_controller";
+application.register("add-pod-to-network", AddPodToNetworkController);
 
-import OutagesModalController from "./outages_modal_controller"
-application.register("outages-modal", OutagesModalController)
+import PodIdInputController from "./pod_id_input_controller";
+application.register("pod-id-input", PodIdInputController);
 
-import PaginationController from "./pagination_controller"
-application.register("pagination", PaginationController)
+import PodIdStepController from "./pod_id_step_controller";
+application.register("pod-id-step", PodIdStepController);
 
-import PasswordController from "./password_controller"
-application.register("password", PasswordController)
+import PodAccountAndNetworkController from "./pod_account_and_network_controller";
+application.register("pod-account-and-network", PodAccountAndNetworkController);
 
-import PasswordRevealController from "./password_reveal_controller"
-application.register("password-reveal", PasswordRevealController)
+import LoadingFeedbackController from "./loading_feedback_controller";
+application.register("loading-feedback", LoadingFeedbackController);
 
-import PodAccountAndNetworkController from "./pod_account_and_network_controller"
-application.register("pod-account-and-network", PodAccountAndNetworkController)
+import QrController from "./qr_controller";
+application.register("qr", QrController);
 
-import PublicPageController from "./public_page_controller"
-application.register("public-page", PublicPageController)
+import MultiPodSelectController from "./multi_pod_select_controller";
+application.register("multi-pod-select", MultiPodSelectController);
 
-import PublicPageModalController from "./public_page_modal_controller"
-application.register("public-page-modal", PublicPageModalController)
+import SelectedPodsGridController from "./selected_pods_grid_controller";
+application.register("selected-pods-grid", SelectedPodsGridController);
 
-import PublicPodTabsController from "./public_pod_tabs_controller"
-application.register("public-pod-tabs", PublicPodTabsController)
+import StateTabs from "./state_tabs_controller";
+application.register("state-tabs", StateTabs);
 
-import QaController from "./qa_controller"
-application.register("qa", QaController)
+import QA from "./qa_controller";
+application.register("qa", QA);
 
-import QrController from "./qr_controller"
-application.register("qr", QrController)
+import PublicPageModalController from "./public_page_modal_controller";
+application.register("public-page-modal", PublicPageModalController);
 
-import RegistrationController from "./registration_controller"
-application.register("registration", RegistrationController)
+import NotificationsController from "./notifications_controller";
+application.register("notifications", NotificationsController);
 
-import SearchController from "./search_controller"
-application.register("search", SearchController)
+import ChartController from "./chart_controller";
+application.register("chart", ChartController);
 
-import Select2Controller from "./select2_controller"
-application.register("select2", Select2Controller)
+import LineChartController from "./line_chart_controller";
+application.register("line-chart", LineChartController);
 
-import SelectedPodsGridController from "./selected_pods_grid_controller"
-application.register("selected-pods-grid", SelectedPodsGridController)
+import MultiLineChartController from "./multi_line_chart_controller";
+application.register("multi-line-chart", MultiLineChartController);
 
-import SidebarController from "./sidebar_controller"
-application.register("sidebar", SidebarController)
+import BarChartController from "./bar_chart_controller";
+application.register("bar-chart", BarChartController);
 
-import SignInController from "./sign_in_controller"
-application.register("sign-in", SignInController)
+import WidgetsController from "./widgets_controller";
+application.register("widgets", WidgetsController);
 
-import SpeedFiltersController from "./speed_filters_controller"
-application.register("speed-filters", SpeedFiltersController)
+import DashboardTimeFilterController from "./dashboard_time_filter_controller";
+application.register("dashboard-time-filter", DashboardTimeFilterController);
 
-import StateTabsController from "./state_tabs_controller"
-application.register("state-tabs", StateTabsController)
+import PublicPodTabsController from "./public_pod_tabs_controller";
+application.register("public-pod-tabs", PublicPodTabsController);
 
-import SuperUserController from "./super_user_controller"
-application.register("super-user", SuperUserController)
+import OutagesChartController from "./outages_chart_controller";
+application.register("outages-chart", OutagesChartController);
 
-import SwitchAccountController from "./switch_account_controller"
-application.register("switch-account", SwitchAccountController)
+import CollapsibleRowController from "./collapsible_row_controller";
+application.register("collapsible-row", CollapsibleRowController);
 
-import TableController from "./table_controller"
-application.register("table", TableController)
+import OutagesModalController from "./outages_modal_controller";
+application.register("outages-modal", OutagesModalController);
 
-import TimezoneController from "./timezone_controller"
-application.register("timezone", TimezoneController)
+import RealtimeFiltersController from "./realtime_filters_controller";
+application.register("realtime-filters", RealtimeFiltersController);
 
-import UpdateGroupController from "./update_group_controller"
-application.register("update-group", UpdateGroupController)
-
-import WidgetsController from "./widgets_controller"
-application.register("widgets", WidgetsController)
+import WidgetsController from "./widgets_controller";
+application.register("widgets", WidgetsController);

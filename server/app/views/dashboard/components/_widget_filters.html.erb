@@ -13,10 +13,6 @@
                ],
              }
   %>
-  <% if params[:start] && params[:end] %>
-    <% start = Time.at(params[:start].to_i / 1000) %>
-    <% end_date = Time.at(params[:end].to_i / 1000) %>
-  <% end %>
   <% if current_account.is_all_accounts? %>
     <%= render partial: "application/components/tables/filter",
                locals: {

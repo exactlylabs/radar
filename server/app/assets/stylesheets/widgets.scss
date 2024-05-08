@@ -9,6 +9,10 @@
   grid-auto-rows: 1fr;
   grid-gap: 1.5rem;
   margin-top: 1.5rem;
+
+  &[data-comparison="true"] {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 @media (min-width: 1680px) {

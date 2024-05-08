@@ -1,0 +1,30 @@
+<% raise "ID is required" if local_assigns[:id].nil? %>
+<% raise "Menu ID is required" if local_assigns[:menu_id].nil? %>
+<%# current_filter_label = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:label] : default_label %>
+<%# current_filter_value = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:value] : default_value %>
+<% is_dark = local_assigns[:dark].present? && local_assigns[:dark] == true %>
+<%# is_paginated = local_assigns[:pagination].nil? || (local_assigns[:pagination].present? && local_assigns[:pagination] == false) %>
+<%# no_z_index = local_assigns[:no_z_index] || false %>
+
+<div class="tables--filters-button-container"
+     data-controller="filters"
+     data-action="click->filters#toggleFiltersMenu"
+     data-menu-id="<%= menu_id %>"
+     data-no-z-index="true"
+>
+  <button type="button"
+          class="custom-button custom-button--sm <%= is_dark ? 'custom-button--secondary' : 'custom-button--secondary-light' %>"
+          data-realtime-filters-target="baseButton"
+          data-default-label="<%= default_label %>"
+          id="<%= id %>"
+  >
+    <%= current_label %>
+    <%= image_tag image_url('caret.png'), width: 16, height: 16, class: "ms-1" %>
+  </button>
+  <div class="tables--filters-menu-container invisible"
+       data-filters-target="filtersMenu"
+       id="<%= menu_id %>"
+  >
+    <%= yield %>
+  </div>
+</div>

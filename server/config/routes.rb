@@ -213,6 +213,9 @@ Rails.application.routes.draw do
   get 'outages', to: 'dashboard#outages'
   get 'total_data', to: 'dashboard#total_data'
 
+  get 'comparison_dashboard', to: 'comparison_dashboard#index'
+  get 'comparison_online_pods', to: 'comparison_dashboard#online_pods'
+
   resources :exports do
     collection do
       get 'all'

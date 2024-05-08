@@ -9,15 +9,27 @@
       <%= render partial: "application/components/widgets/locations_map/locations_map" %>
     <% when WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT %>
       <%= render partial: "dashboard/components/widgets/online_pods" %>
+    <% when WidgetsHelper::WidgetTypes::COMPARISON_ONLINE_POD_COUNT %>
+      <%= render partial: "dashboard/components/widgets/comparison_online_pods" %>
     <% when WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED %>
+      <%= render partial: "dashboard/components/widgets/download_speeds", locals: { custom_url: custom_url, responsive: responsive } %>
+    <% when WidgetsHelper::WidgetTypes::COMPARISON_DOWNLOAD_SPEED %>
       <%= render partial: "dashboard/components/widgets/download_speeds", locals: { custom_url: custom_url, responsive: responsive } %>
     <% when WidgetsHelper::WidgetTypes::UPLOAD_SPEED %>
       <%= render partial: "dashboard/components/widgets/upload_speeds", locals: { custom_url: custom_url, responsive: responsive } %>
+    <% when WidgetsHelper::WidgetTypes::COMPARISON_UPLOAD_SPEED %>
+      <%= render partial: "dashboard/components/widgets/upload_speeds", locals: { custom_url: custom_url, responsive: responsive } %>
     <% when WidgetsHelper::WidgetTypes::LATENCY %>
+      <%= render partial: "dashboard/components/widgets/latency", locals: { custom_url: custom_url, responsive: responsive } %>
+    <% when WidgetsHelper::WidgetTypes::COMPARISON_LATENCY %>
       <%= render partial: "dashboard/components/widgets/latency", locals: { custom_url: custom_url, responsive: responsive } %>
     <% when WidgetsHelper::WidgetTypes::DATA_USAGE %>
       <%= render partial: "dashboard/components/widgets/data_usage", locals: { custom_url: custom_url, responsive: responsive } %>
+    <% when WidgetsHelper::WidgetTypes::COMPARISON_DATA_USAGE %>
+      <%= render partial: "dashboard/components/widgets/data_usage", locals: { custom_url: custom_url, responsive: responsive } %>
     <% when WidgetsHelper::WidgetTypes::TOTAL_DATA %>
+      <%= render partial: "dashboard/components/widgets/total_data", locals: { custom_url: custom_url, responsive: responsive } %>
+    <% when WidgetsHelper::WidgetTypes::COMPARISON_TOTAL_DATA %>
       <%= render partial: "dashboard/components/widgets/total_data", locals: { custom_url: custom_url, responsive: responsive } %>
     <% when WidgetsHelper::WidgetTypes::OUTAGES %>
       <%= render partial: "dashboard/components/widgets/outages" %>

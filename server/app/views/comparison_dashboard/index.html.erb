@@ -11,15 +11,6 @@
       <ul class="breadcrumb fw-bold fs-base my-1">
         <li class="breadcrumb-item page-sub-title"><%= current_account.nil? ? 'No accounts' : current_account.is_all_accounts? ? "All accounts" : current_account.name %>
       </ul>
-      <!--end::Breadcrumb-->
-      <% if FeatureFlagHelper.is_available('Feature_Flag_1', current_user) %>
-        <!-- This div is only meant for system testing -->
-        <div id="ff-test-element">HIDDEN FEATURE</div>
-      <% end %>
-      <% if FeatureFlagHelper.is_available('Feature_Flag_2', current_user) %>
-        <!-- This div is only meant for system testing -->
-        <div id="ff-public-test-element">PUBLIC FEATURE</div>
-      <% end %>
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
@@ -93,10 +84,15 @@
         <%= render partial: "dashboard/components/empty_accounts_card" %>
       <% elsif policy_scope(Location).count == 0 %>
         <div class="d-flex flex-column w-100">
-          <%= turbo_frame_tag "unassigned-pods-banner" do %>
-            <% if are_there_unassigned_pods? %>
-              <%= render partial: "pods/components/unassigned_pods_banner" %>
-            <% end %>
+          <% if are_there_unassigned_pods? %>
+            <div class="networks--unassigned-pods-banner">
+              <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
+              <div class="networks--unassigned-pods-banner-text-container">
+                <% pod_count = policy_scope(Client).where(location: nil).count %>
+                <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : '' %> not assigned to any network.</span>
+                <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
+              </div>
+            </div>
           <% end %>
           <%= render partial: "dashboard/components/empty_networks_card" %>
         </div>
@@ -104,35 +100,27 @@
         <%= render partial: "dashboard/components/empty_pods_card" %>
       <% else %>
         <div class="w-100 mw-100" data-controller="onboard map widgets" data-onboard-step-value="<%= @onboard_step %>">
-          <%= render partial: "dashboard/components/tabs", locals: { selected: [true, false] } %>
+          <%= render partial: "dashboard/components/tabs", locals: { selected: [false, true] } %>
           <% if FeatureFlagHelper.is_available('charts', current_user) %>
-            <%= render partial: "dashboard/components/widget_filters" %>
-          <% end %>
-          <%= render partial: "application/components/widgets/widget",
-                     locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
-          %>
-          <% if FeatureFlagHelper.is_available('charts', current_user) %>
-            <div class="widgets--grid">
+            <%= render partial: "comparison_dashboard/components/filters" %>
+            <div class="widgets--grid" data-comparison="true">
               <%= render partial: "application/components/widgets/widget",
-                         locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
+                         locals: { type: WidgetsHelper::WidgetTypes::COMPARISON_ONLINE_POD_COUNT }
               %>
               <%= render partial: "application/components/widgets/widget",
-                         locals: { type: WidgetsHelper::WidgetTypes::OUTAGES }
+                         locals: { type: WidgetsHelper::WidgetTypes::COMPARISON_DOWNLOAD_SPEED }
               %>
               <%= render partial: "application/components/widgets/widget",
-                         locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED }
+                         locals: { type: WidgetsHelper::WidgetTypes::COMPARISON_UPLOAD_SPEED }
               %>
               <%= render partial: "application/components/widgets/widget",
-                         locals: { type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED }
+                         locals: { type: WidgetsHelper::WidgetTypes::COMPARISON_LATENCY }
               %>
               <%= render partial: "application/components/widgets/widget",
-                         locals: { type: WidgetsHelper::WidgetTypes::LATENCY }
+                         locals: { type: WidgetsHelper::WidgetTypes::COMPARISON_DATA_USAGE }
               %>
               <%= render partial: "application/components/widgets/widget",
-                         locals: { type: WidgetsHelper::WidgetTypes::DATA_USAGE }
-              %>
-              <%= render partial: "application/components/widgets/widget",
-                         locals: { type: WidgetsHelper::WidgetTypes::TOTAL_DATA }
+                         locals: { type: WidgetsHelper::WidgetTypes::COMPARISON_TOTAL_DATA }
               %>
             </div>
           <% end %>
@@ -142,38 +130,8 @@
   <% else %>
     <!--begin::Container-->
     <% if current_account.present? %>
-      <div class="w-100 mw-100" data-controller="onboard map" data-onboard-step-value="<%= @onboard_step %>">
-        <div data-onboard-target="wizard" class="h-100 <%= @onboard_step < 0 ? "d-none" : "" %>">
-          <%= render partial: "onboard", locals: { step: @onboard_step } %>
-        </div>
-        <% if FeatureFlagHelper.is_available('charts', current_user) %>
-          <%= render partial: "dashboard/components/widget_filters" %>
-        <% end %>
-        <% if @locations.exists? || params[:filter].present? %>
-          <!-- REMOVE -->
-          <%= render partial: "application/components/widgets/widget",
-                     locals: { type: WidgetsHelper::WidgetTypes::LOCATIONS_MAP }
-          %>
-        <% end %>
-        <% if FeatureFlagHelper.is_available('charts', current_user) %>
-          <div class="widgets--grid">
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::ONLINE_POD_COUNT }
-            %>
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::DOWNLOAD_SPEED }
-            %>
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::UPLOAD_SPEED }
-            %>
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::LATENCY }
-            %>
-            <%= render partial: "application/components/widgets/widget",
-                       locals: { type: WidgetsHelper::WidgetTypes::DATA_USAGE }
-            %>
-          </div>
-        <% end %>
+      <div class="w-100 mw-100">
+
       </div>
     <% else %>
       <%= render partial: "dashboard/no_accounts_card" %>
@@ -183,32 +141,22 @@
 </div>
 <!--end::Post-->
 
-<% if @show_ftue %>
-  <%= turbo_frame_tag "ftue_modal", class: "overflow-hidden", data: { controller: "onboard categories claim-pods pod-account-and-network-pods" } do %>
-    <%= render partial: "application/components/modals/empty_custom_modal",
-               locals: {
-                 modal_title: 'Welcome to Radar',
-                 modal_partial_path: "dashboard/modals/onboarding/initial_step",
-                 resource: nil,
-                 custom_submit_end_handler: nil,
-               }
-    %>
-  <% end %>
-<% end %>
-
 <% if FeatureFlagHelper.is_available('networks', current_user) %>
   <%= render partial: "application/components/modals/turbo_modal",
              locals: { turbo_frame_tag_id: "create_account_modal" }
   %>
   <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "claim-pods pod-account-and-network" }
+             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "pod-id-step" }
   %>
-
   <%= render partial: "application/components/modals/turbo_modal",
              locals: { turbo_frame_tag_id: "new_location_modal", optional_added_controllers: "categories" }
   %>
   <%= render partial: "application/components/modals/turbo_modal",
              locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
+  %>
+
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "add_new_pod_to_current_network", optional_added_controllers: "pod-id-step" }
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",

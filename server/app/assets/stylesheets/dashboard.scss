@@ -954,3 +954,108 @@ div[data-dashboard-time-filter-target="monthYear"] {
   margin-inline: auto;
   @extend .fw-medium;
 }
+
+.dashboard--comparison-tabs-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: solid 1px $checkbox-gray;
+}
+
+.dashboard--comparison-tab {
+  appearance: none;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 0 1.5rem .75rem;
+  font-size: 0.9375rem;
+  color: $dark-gray;
+  line-height: 1.4;
+  cursor: pointer;
+  @extend .fw-medium;
+
+  &:hover {
+    color: $deep-blue;
+  }
+
+  &[data-selected="true"] {
+    color: $deep-blue;
+    border-bottom: solid 2px $blue;
+    @extend .fw-bold;
+  }
+}
+
+.dashboard--comparison-compare-by {
+  font-size: 0.875rem;
+  color: $gray;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+
+  &:before {
+    content: "";
+    height: 1.75rem;
+    width: 1px;
+    background-color: $sidebar--horizontal-divider-background-color;
+    margin: 0 0 0 .25rem;
+  }
+}
+
+.dashboard--dynamic-compare-by-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .75rem;
+
+  &[data-current-compare-by="account"] {
+    div[data-menu-id="account-filter-menu"] {
+      display: flex;
+    }
+    div:not([data-menu-id="account-filter-menu"]) {
+      display: none;
+    }
+  }
+
+  &[data-current-compare-by="network"] {
+    div[data-menu-id="network-filter-menu"] {
+      display: flex;
+    }
+    div:not([data-menu-id="network-filter-menu"]) {
+      display: none;
+    }
+  }
+
+  &[data-current-compare-by="category"] {
+    div[data-menu-id="category-filter-menu"] {
+      display: flex;
+    }
+    div:not([data-menu-id="category-filter-menu"]) {
+      display: none;
+    }
+  }
+
+  &[data-current-compare-by="isp"] {
+    div[data-menu-id="isp-filter-menu"] {
+      display: flex;
+    }
+    div:not([data-menu-id="isp-filter-menu"]) {
+      display: none;
+    }
+  }
+
+  &[data-current-compare-by="pod"] {
+    div[data-menu-id="pod-filter-menu"] {
+      display: flex;
+    }
+    div:not([data-menu-id="pod-filter-menu"]) {
+      display: none;
+    }
+  }
+}
