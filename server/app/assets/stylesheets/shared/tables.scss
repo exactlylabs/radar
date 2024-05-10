@@ -327,11 +327,14 @@
 
 .tables--filters-search-container {
   background-color: white;
-  box-shadow: 0 4px 20px -2px $sidebar--accounts-options-box-shadow;
   border-radius: $border-radius;
-  border: solid 1px $sidebar--main-container-border;
   position: relative;
+  padding: 2px 0;
   z-index: 10;
+
+  .forms--custom-search-input {
+    background-color: transparent;
+  }
 }
 
 .tables--filters-button-container {
