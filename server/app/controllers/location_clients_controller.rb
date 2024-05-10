@@ -9,10 +9,10 @@ class LocationClientsController < ApplicationController
     @clients = @location.clients
     if FeatureFlagHelper.is_available('networks', current_user)
       status = params[:status]
-      @query = params[:query]
+      query = params[:query]
       @clients = @clients.where(online: status == 'online') if status.present?
       @total = @clients.count
-      @clients = @clients.where("unix_user ILIKE ?", "%#{@query}%") if @query.present?
+      @clients = @clients.where("unix_user ILIKE ?", "%#{query}%") if query.present?
 
       @clients = paginate(@clients, params[:page], params[:page_size])
     end
