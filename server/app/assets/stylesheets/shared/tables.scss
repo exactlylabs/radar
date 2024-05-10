@@ -328,11 +328,12 @@
 .tables--filters-search-container {
   background-color: white;
   border-radius: $border-radius;
+  border: solid 1px $sidebar--main-container-border;
   position: relative;
-  padding: 2px 0;
   z-index: 10;
 
   .forms--custom-search-input {
+    max-height: 2.25rem;
     background-color: transparent;
   }
 }
