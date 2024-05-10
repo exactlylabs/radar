@@ -58,6 +58,7 @@ Rails.application.routes.draw do
   post 'location/:location_id/clients/add_new_pod_to_network', to: 'location_clients#add_new_pod_to_network', as: :add_new_pod_to_network
   get 'location/:location_id/clients/add_existing_pod_to_network_modal', to: 'location_clients#get_add_existing_pod_to_network_modal', as: :get_add_existing_pod_to_network_modal
   post 'location/:location_id/clients/add_existing_pod_to_network', to: 'location_clients#add_existing_pod_to_network', as: :add_existing_pod_to_network
+  get 'location/:location_id/clients/search', to: 'location_clients#search', as: :search_location_clients
 
   get 'locations/account/:account_id', to: 'locations#get_by_account_id'
 

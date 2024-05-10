@@ -1,0 +1,12 @@
+<%= turbo_stream.update 'network_pods_table' do %>
+  <%= render partial: "application/components/tables/generic_table",
+             locals: {
+               table_id: "network_pods_table",
+               type: TablesHelper::TableTypes::NETWORK_PODS,
+               titles: TablesHelper.titles(TablesHelper::TableTypes::NETWORK_PODS),
+               widths: TablesHelper.widths(TablesHelper::TableTypes::NETWORK_PODS),
+               rows: @clients,
+               total: @total
+             }
+  %>
+<% end %>
