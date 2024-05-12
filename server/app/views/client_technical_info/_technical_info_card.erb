@@ -11,7 +11,11 @@
         <div class="fw-bold d-flex flex-column <%= client.target_client_version.nil? || client.client_version.nil? ? "additional-text" : "regular-text" %>" style="width: 75%;">
           <%= client.client_version.nil? ? "-" : client.client_version.version %>
           <% if client.target_client_version.present? && client.client_version.present? %>
-            <span class="additional-text"><%= client.target_client_version.version == client.client_version.version ? "Latest version" : "Outdated version" %></span>
+            <% if client.has_update? %>
+              <span class="text--warning">Update available (<%= client.target_client_version.version %>)</span>
+            <% else %>
+              <span class="additional-text">"Latest version"</span>
+            <% end %>
           <% end %>
         </div>
       </div>
