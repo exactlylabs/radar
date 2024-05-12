@@ -5,7 +5,8 @@
 >
   <input hidden="hidden" type="text" data-selected-pods-grid-target="selectedPodIdsHiddenInput" value="<%= @pods.map(&:unix_user).to_s %>"/>
   <div class="pods--selected-pods-grid-header">
-    <p data-selected-pods-grid-target="podListCount"></p>
+
+    <p data-selected-pods-grid-target="podListCount">Pod list(<%= @pods.count %>)</p>
     <span class="regular-link hoverable" data-action="click->selected-pods-grid#removeAll:prevent">Remove all</span>
   </div>
   <div class="pods--selected-pods-grid" id="selected-pods-grid-wrapper">

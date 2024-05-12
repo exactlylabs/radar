@@ -643,7 +643,16 @@ class ClientsController < ApplicationController
     if !@client
       @error = ErrorsHelper::PodClaimErrors::PodNotFound
     elsif @client.user.present?
-      @error = ErrorsHelper::PodClaimErrors::PodAlreadyClaimed
+      @pods = [@client]
+      if policy_scope(Client).where(unix_user: @unix_user).count.zero?
+        @error = ErrorsHelper::PodClaimErrors::PodAlreadyClaimedBySomeoneElse
+      else
+        if @client.account == current_account
+          @error = ErrorsHelper::PodClaimErrors::PodIsAlreadyInYourAccount
+        else
+          @error = ErrorsHelper::PodClaimErrors::PodBelongsToOneOfYourOtherAccounts
+        end
+      end
     else
       @location = Location.new
       @pods = [@client]

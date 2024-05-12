@@ -3,11 +3,12 @@ import {Controller} from "@hotwired/stimulus";
 export default class extends Controller {
 
     static targets = [
-        "hiddenPodIdInput",
-        "submitIdButton"
+        "hiddenPodIdsInput",
+        "continueButton"
     ]
 
     connect() {
+        this.hiddenPodIdsAddedOrMoved = [];
     }
 
     handleContinueButtonStateChanged(e) {
@@ -21,17 +22,20 @@ export default class extends Controller {
     }
 
     disableButton() {
-        this.submitIdButtonTarget.classList.add('custom-button--disabled');
+        this.continueButtonTarget.classList.add('custom-button--disabled');
     }
 
     enableButton() {
-        this.submitIdButtonTarget.classList.remove('custom-button--disabled');
+        this.continueButtonTarget.classList.remove('custom-button--disabled');
     }
 
-    fillHiddenInput(e) {
-        const {podId} = e.detail;
-        this.hiddenPodIdInputTarget.value = podId;
+    addPodIdToHiddenPodIds(e) {
+        const podId = e.detail.podId;
+        this.hiddenPodIdsAddedOrMoved.push(podId);
+        this.hiddenPodIdsInputTarget.value = this.hiddenPodIdsAddedOrMoved;
     }
 
-
+    removePodIdFromHiddenPodIds(e) {
+        const podId = e.detail.podId;
+    }
 }
