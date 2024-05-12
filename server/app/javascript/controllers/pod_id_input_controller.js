@@ -10,6 +10,7 @@ export default class extends Controller {
     static targets = ["podIdInput", "continueButton", "inputsContainer", "spinner", "podsIdList"];
 
     connect() {
+        this.token = document.getElementsByName("csrf-token")[0].content;
         if (this.hasPodsIdListTarget) {
             this.podsId = this.podsIdListTarget.value;
         } else {
@@ -27,8 +28,7 @@ export default class extends Controller {
             inputs[i].value = data[i];
         }
         inputs[i - 1].focus();
-        this.toggleButtonState();
-        return;
+        this.onPodIdChanged(e)
     }
 
     focusInput(e) {
@@ -53,19 +53,40 @@ export default class extends Controller {
         if (!focusedInput) this.inputsContainerTarget.classList.remove('public--card-inputs-container-focus');
     }
 
-    checkBackspace(e) {
-        const element = e.srcElement;
-        if (e.key === "Backspace") {
-            this.forceDisable();
-            if (element.value.length === 0) {
-                element.previousElementSibling && element.previousElementSibling.focus();
-                return;
-            }
+    parseKeydownEvent(e) {
+        switch (e.key) {
+            case "ArrowLeft":
+                this.moveLeftWithArrow(e);
+                break;
+            case "ArrowRight":
+                this.moveRightWithArrow(e);
+                break;
+            case "Backspace":
+                this.deleteAndMoveLeft(e);
+                break;
         }
     }
 
-    forceDisable() {
-        emitCustomEvent('disableButton');
+    moveRightWithArrow(e) {
+        const element = e.srcElement;
+        e.preventDefault();
+        e.stopPropagation();
+        element.nextElementSibling && element.nextElementSibling.focus();
+    }
+
+    moveLeftWithArrow(e) {
+        const element = e.srcElement;
+        e.preventDefault();
+        e.stopPropagation();
+        element.previousElementSibling && element.previousElementSibling.focus();
+    }
+
+    deleteAndMoveLeft(e) {
+        const element = e.srcElement;
+        if (element.value.length === 0) {
+            element.previousElementSibling && element.previousElementSibling.focus();
+        }
+        this.disableContinueButton();
     }
 
     toggleButtonState() {
@@ -103,16 +124,16 @@ export default class extends Controller {
             return;
         if (e.type === "paste") return this.insertFromPaste(e);
         const element = e.srcElement;
-        if (e.data?.length == element.maxLength) {
+        if (e.data?.length === element.maxLength) {
             element.nextElementSibling && element.nextElementSibling.focus();
         }
         // this.toggleButtonState();
         this.onPodIdChanged(e)
     }
 
-    // set caret position to the end of the input
+// set caret position to the end of the input
 
-    // When the last character is typed, the validation is triggered automatically.
+// When the last character is typed, the validation is triggered automatically.
     onPodIdChanged(e) {
         if (this.isComplete()) {
             this.validatePodId(this.getPodIdString())
@@ -127,18 +148,15 @@ export default class extends Controller {
     }
 
     validatePodId(podId) {
-        //disable continue button
         this.disableContinueButton();
-        // show spinner at the end of the input field
         this.showSpinner()
 
-        const token = document.getElementsByName("csrf-token")[0].content;
         const formData = new FormData();
         formData.append("pod_id", podId);
 
         fetch('clients/check_claim_new_pod', {
             method: "POST",
-            headers: {"X-CSRF-Token": token},
+            headers: {"X-CSRF-Token": this.token},
             body: formData,
         }).then(response => {
             if (response.ok) return response.text()
@@ -173,6 +191,12 @@ export default class extends Controller {
 
     hideSpinner() {
         this.spinnerTarget.setAttribute('hidden', 'true')
+    }
+
+    resetPodIdInputField() {
+        const inputs = this.podIdInputTargets;
+        inputs.forEach((input) => (input.value = null));
+        inputs[0].focus();
     }
 
 }
