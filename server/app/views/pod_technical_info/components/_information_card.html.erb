@@ -16,9 +16,11 @@
       <div class="cards--info-row-value pods--version-container">
         <span class="<%= pod.client_version.nil? ? 'additional-text' : 'regular-text' %>"><%= pod.client_version.nil? ? "Not Available" : pod.client_version.version %></span>
         <% if pod.target_client_version.present? && pod.client_version.present? %>
-          <span class="additional-text">
-            <%= pod.target_client_version.version == pod.client_version.version ? "Latest version" : "Outdated version" %>
-          </span>
+          <% if pod.has_update? %>
+            <span class="text--warning">Update available (<%= pod.target_client_version.version %>)</span>
+          <% else %>
+            <span class="additional-text">"Latest version"</span>
+          <% end %>
         <% end %>
       </div>
     </div>

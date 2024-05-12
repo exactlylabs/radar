@@ -219,3 +219,9 @@ $extra-bold: 800;
   line-height: 1;
   margin: 0;
 }
+
+.text--warning {
+  font-size: 0.875rem;
+  color: $warning;
+  line-height: 1.5;
+}
