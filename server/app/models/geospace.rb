@@ -17,14 +17,14 @@ class Geospace < ApplicationRecord
   scope :census_places, -> { where(namespace: "census_place") }
   scope :study_geospaces, -> { where(study_geospace: true) }
 
-  scope :containing_lonlat, -> (lonlat) { where("ST_Contains(ST_SetSRID(geom, 4326), ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326))") }
-  scope :containing_point, -> (longitude, latitude) { where("ST_Contains(ST_SetSRID(geom, 4326), ST_GeomFromText('POINT(#{longitude} #{latitude})', 4326))") }
-  scope :excluding_lonlat, -> (lonlat) { where("NOT ST_Contains(ST_SetSRID(geom, 4326), ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326))") }
+  scope :containing_lonlat, -> (lonlat) { where("geom && ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326)") }
+  scope :containing_point, -> (longitude, latitude) { where("geom && ST_GeomFromText('POINT(#{longitude} #{latitude})', 4326)") }
+  scope :excluding_lonlat, -> (lonlat) { where("NOT geom && ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326)") }
 
   after_create :link_to_locations
 
   def link_to_locations()
-    Location.joins("JOIN geospaces ON ST_Contains(ST_SetSRID(geospaces.geom, 4326), ST_SetSRID(locations.lonlat::geometry, 4326))").where("geospaces.id = ?", self.id).each do |location|
+    Location.joins("JOIN geospaces ON geospaces.geom && locations.lonlat").where("geospaces.id = ?", self.id).each do |location|
       self.locations << location unless self.locations.include? location
     end
   end
