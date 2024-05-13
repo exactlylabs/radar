@@ -1,0 +1,14 @@
+<div class="cards--card-with-header">
+  <div class="cards--card-header">
+    <span>Email Notification</span>
+  </div>
+  <div class="cards--card-with-header-content-container">
+    <%= render partial: "notification_settings/components/notification_option_row", locals: {
+      is_enabled: @notification_settings.email_notifications_enabled,
+      option_id: "email_notifications_enabled",
+      option_name: "email_notifications_enabled",
+      option_label: "Enable email notifications",
+      option_description: "Radar will send you email notifications for all the events you have turned on."
+    } %>
+  </div>
+</div>

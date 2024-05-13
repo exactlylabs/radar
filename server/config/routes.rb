@@ -23,6 +23,9 @@ Rails.application.routes.draw do
     post 'users/check_email_uniqueness' => 'users/registrations#check_email_uniqueness'
   end
 
+  resources :notification_settings, only: [:index]
+  put 'notification_settings/toggle_notification_option', to: 'notification_settings#toggle_notification_option'
+
   resources :measurements, only: [:index, :show] do
     collection do
       get 'full_index'
