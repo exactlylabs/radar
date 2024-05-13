@@ -36,7 +36,7 @@
     },
     "scripts": {
         "dokku": {
-            "predeploy": "echo $GOOGLE_STORAGE_CREDENTIALS | base64 -d > /app/gcs.keyfile"
+            "predeploy": "./scripts/predeploy.sh"
         }
     }
 }
