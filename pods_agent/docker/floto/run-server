@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+
+# Be sure to send the SIGTERM signal to child process (agent)
+_term() {
+  echo "Caught SIGTERM signal!"
+  kill -TERM $child 2>/dev/null
+}
+trap _term SIGTERM
+
+while true
+do
+  # Start the agent in a child process, and restart it in case it exits with a non-zero code
+  /app/radar-agent agent &
+  child=$!
+  wait "$child"
+  res=$?
+  echo "Exit code: $res"
+  if [ $res -eq 0 ]; then
+    break
+  fi
+  echo "Command failed. Retrying in 2 seconds."
+  sleep 2
+done
