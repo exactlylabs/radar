@@ -142,6 +142,9 @@ application.register("multi-pod-select", MultiPodSelectController)
 import MultiRowTableController from "./multi_row_table_controller"
 application.register("multi-row-table", MultiRowTableController)
 
+import NotificationSettingsController from "./notification_settings_controller"
+application.register("notification-settings", NotificationSettingsController)
+
 import NotificationsController from "./notifications_controller"
 application.register("notifications", NotificationsController)
 
@@ -150,6 +153,9 @@ application.register("onboard", OnboardController)
 
 import OutagesChartController from "./outages_chart_controller"
 application.register("outages-chart", OutagesChartController)
+
+import OutagesModalController from "./outages_modal_controller"
+application.register("outages-modal", OutagesModalController)
 
 import PaginationController from "./pagination_controller"
 application.register("pagination", PaginationController)
@@ -162,6 +168,12 @@ application.register("password-reveal", PasswordRevealController)
 
 import PodAccountAndNetworkController from "./pod_account_and_network_controller"
 application.register("pod-account-and-network", PodAccountAndNetworkController)
+
+import PodIdInputController from "./pod_id_input_controller"
+application.register("pod-id-input", PodIdInputController)
+
+import PodIdStepController from "./pod_id_step_controller"
+application.register("pod-id-step", PodIdStepController)
 
 import PublicPageController from "./public_page_controller"
 application.register("public-page", PublicPageController)
@@ -208,14 +220,10 @@ application.register("super-user", SuperUserController)
 import SwitchAccountController from "./switch_account_controller"
 application.register("switch-account", SwitchAccountController)
 
-import TableController from "./table_controller"
-application.register("table", TableController)
-
-import OutagesModalController from "./outages_modal_controller";
-application.register("outages-modal", OutagesModalController);
-
 import InfiniteScrollController from "./infinite_scroll_controller";
 application.register("infinite-scroll", InfiniteScrollController);
+import TableController from "./table_controller"
+application.register("table", TableController)
 
 import TimezoneController from "./timezone_controller"
 application.register("timezone", TimezoneController)
@@ -225,4 +233,3 @@ application.register("update-group", UpdateGroupController)
 
 import WidgetsController from "./widgets_controller"
 application.register("widgets", WidgetsController)
-

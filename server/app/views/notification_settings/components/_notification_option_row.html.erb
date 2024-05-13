@@ -1,0 +1,16 @@
+<% is_enabled = local_assigns[:is_enabled].present? ? local_assigns[:is_enabled] : false %>
+<% controller = local_assigns[:controller].present? ? local_assigns[:controller] : 'notification-settings' %>
+
+<div class="form-check form-switch form-check-custom form-check-solid align-items-start">
+  <input type="checkbox"
+         id="<%= option_id %>"
+         name="<%= option_name %>"
+         data-action="click-><%= controller %>#toggleNotificationOption"
+         class="form-check-input forms--toggle me-3"
+         <%= is_enabled ? 'checked=true' : nil %>
+    />
+  <div class="cards--info-column gap-1">
+    <label class="forms--label sidebar--super-user-toggle-label"><%= option_label %></label>
+    <span class="cards--info-row-value additional-text wrap"><%= option_description %></span>
+  </div>
+</div>
