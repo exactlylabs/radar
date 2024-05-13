@@ -10,7 +10,7 @@ module StudyMetricsProjectionProcessor
           next
         end
         update_measurements_count(aggregate, as_org_id, timestamp)
-        update_unique_locations_count(aggregate, as_org_id, longitude, latitude)
+        update_unique_locations_count(timestamp, aggregate, as_org_id, longitude, latitude)
       end
     end
 
@@ -22,11 +22,11 @@ module StudyMetricsProjectionProcessor
           next
         end
         update_measurements_count(aggregate, as_org_id, timestamp)
-        update_unique_locations_count(aggregate, as_org_id, longitude, latitude)
+        update_unique_locations_count(timestamp, aggregate, as_org_id, longitude, latitude)
       end
     end
 
-    def update_unique_locations_count(aggregate, as_org_id, longitude, latitude)
+    def update_unique_locations_count(timestamp, aggregate, as_org_id, longitude, latitude)
       parent_id = aggregate.parent_aggregate_id
       key = "#{aggregate.id}-#{as_org_id}-#{longitude}-#{latitude}"
       @consumer_offset.state["unique-locations-with-tests"] ||= {}
@@ -38,7 +38,7 @@ module StudyMetricsProjectionProcessor
     end
 
     def update_measurements_count(aggregate, as_org_id, timestamp)
-      self.update_projection(aggregate, as_org_id, "measurements_count", 1, send_to_queue: false)
+      self.update_projection(aggregate, as_org_id, "measurements_count", 1)
     end
   end
 end

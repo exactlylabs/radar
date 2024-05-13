@@ -12,7 +12,7 @@ module StudyMetricsProjectionProcessor
 
     def handle_client_event!(event)
       return if event["snapshot_id"].nil?
-
+      # TODO: Drop the empty buckets, keep only hourly and daily buckets.
       aggregate_id = event["aggregate_id"]
       self.with_previous_pod_state(event["snapshot_state"], aggregate_id, event["timestamp"]) do |previous_state, state|
         online_changed = state["online"] != previous_state&.fetch("online", false)
@@ -132,7 +132,6 @@ module StudyMetricsProjectionProcessor
         location_meta.last_online_event_at = timestamp
         location_meta.autonomous_system_org_id = as_org_id
       end
-
 
       # location metadata for a specific asn
       key = "#{location_id}-#{as_org_id}"

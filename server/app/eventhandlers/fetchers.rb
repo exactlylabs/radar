@@ -58,7 +58,7 @@ module Fetchers
         conn.send_query(sql)
         conn.set_single_row_mode
         conn.get_result.stream_each do |measurement|
-            g.yield ({name: "Measurements", data: measurement, timestamp: measurement["processed_at"].to_i})
+            g.yield ({name: Measurement.name, data: measurement, timestamp: measurement["processed_at"].to_i})
         end
       ensure
         ActiveRecord::Base::connection_pool.checkin(ar_conn)
@@ -86,7 +86,7 @@ module Fetchers
         conn.send_query(speed_tests)
         conn.set_single_row_mode
         conn.get_result.stream_each do |speed_test|
-          g.yield ({name: "ClientSpeedTest", data: speed_test, timestamp: speed_test["processed_at"].to_i})
+          g.yield ({name: ClientSpeedTest.name, data: speed_test, timestamp: speed_test["processed_at"].to_i})
         end
       ensure
         ActiveRecord::Base::connection_pool.checkin(ar_conn)
@@ -107,21 +107,30 @@ module Fetchers
 
   def sorted_iteration(iterators)
     Enumerator.new do |g|
+      iterators_hash = iterators.each_with_object({}) do |it, h|
+        h[it] = next_or_nil(it)
+      end
+
       loop do
-        next_values = iterators.map do |it|
-          content = it.peek rescue nil
-          [content[:timestamp], it] if content
+        next_values = iterators_hash.map do |it, content|
+          [content[:timestamp], content, it] if content
         end.compact # drop all nils
 
         if next_values.blank?
           break
         end
 
-        next_values.sort_by! { |at, it| at }
-        at, it = next_values.first
-
-        g.yield it.next
+        next_values.sort_by! { |at, content, it| at }
+        at, content, it = next_values.first
+        g.yield content
+        iterators_hash[it] = next_or_nil(it)
       end
     end
+  end
+
+  def next_or_nil(it)
+    it.next
+  rescue StopIteration
+    nil
   end
 end

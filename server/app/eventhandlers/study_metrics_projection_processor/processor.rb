@@ -10,7 +10,7 @@ module StudyMetricsProjectionProcessor
     include StudyMetricsProjectionProcessor::DailyTriggerProcessor
     include Fetchers
 
-    MAX_QUEUE_SIZE = 50000
+    MAX_QUEUE_SIZE = 100000
 
     def initialize
       @insertion_queue = []
@@ -28,7 +28,14 @@ module StudyMetricsProjectionProcessor
       LocationMetadataProjection.all.each do |meta|
         @location_metadatas["#{meta.location_id}-#{meta.autonomous_system_org_id}"] = meta
       end
+    end
 
+    def self.clear
+      ActiveRecord::Base.connection.transaction do
+        ActiveRecord::Base.connection.execute("TRUNCATE TABLE metrics_projections, location_metadata_projections")
+        ConsumerOffset.find_by(consumer_id: "MetricsProjectionProcessor")&.destroy
+      end
+      return
     end
 
     def inspect()
@@ -37,6 +44,7 @@ module StudyMetricsProjectionProcessor
 
     def process()
       Rails.logger.info "Starting Processor"
+      t = Time.now
       conn = ActiveRecord::Base.connection_pool.checkout
       offsets = {
         client_events_offset: @consumer_offset.state["client_events_offset"] || 0,
@@ -61,7 +69,7 @@ module StudyMetricsProjectionProcessor
           timestamp = Time.at(content[:timestamp])
 
           @projection_updated = false
-
+          Rails.logger.debug("Processing #{source} at #{timestamp}")
           case source
           when Client.name || SystemOutage.name
             self.handle_event value
@@ -84,17 +92,19 @@ module StudyMetricsProjectionProcessor
           end
 
           self.close_finished_buckets(timestamp)
-          self.push_projections_to_queue(timestamp) if @projection_updated
 
           if @insertion_queue.size > MAX_QUEUE_SIZE
             self.flush_insertion_queue
           end
         end
         self.flush_insertion_queue
+        @location_metadatas.each do |key, meta|
+          meta.save!
+        end
       ensure
         ActiveRecord::Base.connection_pool.checkin(conn)
       end
-
+      Rails.logger.info "Processor took #{Time.now - t} seconds"
       return nil
     end
 
@@ -113,6 +123,27 @@ module StudyMetricsProjectionProcessor
       end
     end
 
+    ##
+    #
+    # Directly push a single dimension-set current state to the insertion queue in the given timestamp
+    #
+    ##
+    def push_projection_to_queue(timestamp, study_aggregate_id, parent_aggregate_id, as_org_id, **opts)
+      obj = self.get_projection(study_aggregate_id, parent_aggregate_id, as_org_id).dup
+      obj["timestamp"] = timestamp
+      obj["bucket_name"] = opts[:bucket_name]
+      @insertion_queue << obj
+    end
+
+    ##
+    #
+    # Pushes all dimension-set projections existent to insertion under the same timestamp
+    #
+    # This ensures we have a way of rolling up all the dimension-sets for a given timestamp, without the need to look back in time.
+    # Although it's great for querying, considering we know the count for all dimensions at a given time,
+    # it takes too much space in disk and insertion is slower, as every single point results in an insertion for all dimensions existent.
+    #
+    ##
     def push_projections_to_queue(timestamp, **opts)
       @consumer_offset.state["projections"].values.each do |projection|
         obj = projection.dup
@@ -122,18 +153,16 @@ module StudyMetricsProjectionProcessor
       end
     end
 
-    def update_projection(study_aggregate, as_org_id, metric_type, incr, **opts)
+    def update_projection(study_aggregate, as_org_id, metric_type, incr)
       # increment the value of the projection's metric_type
       proj = self.get_projection(study_aggregate.id, study_aggregate.parent_aggregate_id, as_org_id)
       proj[metric_type] += incr
-      @projection_updated = true if opts.fetch(:send_to_queue, true)
     end
 
-    def set_projection(study_aggregate, as_org_id, metric_type, value, **opts)
+    def set_projection(study_aggregate, as_org_id, metric_type, value)
       # Set the value of a metric_type, instead of incrementing it
       proj = self.get_projection(study_aggregate.id, study_aggregate.parent_aggregate_id, as_org_id)
       proj[metric_type] = value
-      @projection_updated = true if opts.fetch(:send_to_queue, true)
     end
 
     private

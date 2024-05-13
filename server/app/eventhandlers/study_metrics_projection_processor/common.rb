@@ -36,10 +36,13 @@ module StudyMetricsProjectionProcessor
     def get_aggregates_for_point(longitude, latitude, as_org_id, as_org_name, **opts)
       @aggregates_cache ||= {}
       return [] if longitude.nil?
+
       aggs = @aggregates_cache["#{latitude}-#{longitude}-#{as_org_id}"].dup || []
       if aggs.size == 0
+        Rails.logger.debug "Loading Geospaces for point #{latitude}, #{longitude}, #{opts}"
+        t = Time.now
         geospaces = load_geospaces_for_point(longitude, latitude, **opts)
-
+        Rails.logger.debug "Loaded Geospaces in #{Time.now - t} seconds"
         state_agg = load_state_aggregate(geospaces)
         aggs << state_agg if state_agg
 
