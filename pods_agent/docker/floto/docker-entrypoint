@@ -17,4 +17,4 @@ if [ -z "$CLIENT_ID" ]; then
 
 fi
 
-exec "${@}"
+exec "$@"

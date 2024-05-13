@@ -1,31 +1,23 @@
-FROM golang:1.22.2-alpine as builder
+FROM alpine:latest
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+RUN apk add jq curl
 
-RUN go mod download
+RUN curl -o /app/radar-agent https://pods.radartoolkit.com/client_versions/stable/distributions/linux-arm64/download
 
-COPY . .
-
-RUN go build -o /app/radar-agent cmd/start_agent/main.go
-
-FROM alpine:latest as runner
-
-RUN apk add jq
 
 WORKDIR /app
-
-COPY --from=builder /app/radar-agent /app/radar-agent
 
 RUN chmod +x /app/radar-agent
 
 RUN addgroup -S radar && adduser -G radar -S radar
 
-
 COPY ./docker/floto/docker-entrypoint /app/docker-entrypoint
+COPY ./docker/floto/run-server /app/run-server
 
 RUN chmod +x /app/docker-entrypoint
+RUN chmod +x /app/run-server
 
 RUN chown -R radar:radar /app
 
@@ -37,5 +29,5 @@ ENV RADAR_CONFIG_PATH="/public/radar/radar-agent.conf"
 
 ENTRYPOINT ["/app/docker-entrypoint"]
 
-CMD ["/app/radar-agent", "agent"]
+CMD ["/app/run-server"]
 
