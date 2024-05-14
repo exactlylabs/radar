@@ -40,6 +40,7 @@
                    start: timeframe_start_date.to_i > start_date.to_i ? timeframe_start_date.to_i * 1000 : start_date.to_i * 1000,
                    end: end_date.to_i * 1000,
                    page: 0,
+                   page_size: 10,
                    total_count: outages.count,
                    grouped: true
                  ) %>"

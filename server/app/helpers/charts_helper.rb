@@ -51,7 +51,7 @@ module ChartsHelper
   end
 
   def outages_params(current_account)
-    common_filter_params(current_account).merge(time_filter_params).merge(outage_type: OutageEvent.outage_types[params[:outage_type]], page: params[:page] || 0)
+    common_filter_params(current_account).merge(time_filter_params).merge(outage_type: OutageEvent.outage_types[params[:outage_type]], page: params[:page] || 0, page_size: params[:page_size] || 10)
   end
 
   def common_filter_params(current_account)

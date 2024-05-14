@@ -348,8 +348,8 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, sql_args])
   end
 
-  def self.get_outage_ids_sql(from, to, account_ids, page = 0, location_id = nil, outage_type = nil, as_org_id = nil)
-    sql_args = {from: from, to: to, account_ids: account_ids, page: page.to_i * 10}
+  def self.get_outage_ids_sql(from, to, account_ids, page = 0, page_size = 10, location_id = nil, outage_type = nil, as_org_id = nil)
+    sql_args = {from: from, to: to, account_ids: account_ids, page: page.to_i * 10, page_size: page_size.to_i}
     sql = %{
     SELECT
       outage_events.id
@@ -379,7 +379,7 @@ module DashboardHelper
       AND outage_events.started_at < :to::timestamp
       AND outage_events.resolved_at > :from::timestamp
       ORDER BY outage_events.started_at DESC
-      LIMIT 10 OFFSET :page;
+      LIMIT :page_size OFFSET :page;
     }
     ActiveRecord::Base.sanitize_sql([sql, sql_args])
   end
