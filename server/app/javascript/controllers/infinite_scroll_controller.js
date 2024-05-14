@@ -29,6 +29,7 @@ export default class extends Controller {
     this.loadingTimeout = setTimeout(() => {this.loadingTimeout = null;}, 500);
     const url = new URL(this.element.dataset.url);
     url.searchParams.set('page', this.nextPage);
+    url.searchParams.set('page_size', this.PAGE_SIZE.toString());
     fetch(url)
       .then(response => response.text())
       .then(html => {
