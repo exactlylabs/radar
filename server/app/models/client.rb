@@ -68,7 +68,6 @@ class Client < ApplicationRecord
 
   before_save :recalculate_averages, if: :location_id_changed? || :account_id_changed?
 
-
   # Any client's which haven't pinged in PING_DURRATION * 1.5 and currently aren't marked offline
   scope :where_outdated_online, lambda {
     where.not(id: REDIS.zrangebyscore(Client::REDIS_PING_SET_NAME, (PING_DURATION * 1.5).second.ago.to_i, Time.now.to_i))
@@ -504,7 +503,9 @@ class Client < ApplicationRecord
 
   def get_measurement_data(total_bytes, correct_unit_fn = method(:get_value_in_preferred_unit), correct_unit)
     data_string = ''
-    data_string += "~#{float_without_trailing_zeroes(correct_unit_fn.call(total_bytes))} #{correct_unit} per test (" if total_bytes > 0
+    if total_bytes > 0
+      data_string += "~#{float_without_trailing_zeroes(correct_unit_fn.call(total_bytes))} #{correct_unit} per test ("
+    end
     data_string += "#{float_without_trailing_zeroes(correct_unit_fn.call(data_cap_current_period_usage))} #{correct_unit} this month"
     data_string += ')' if total_bytes > 0
     data_string
@@ -541,13 +542,13 @@ class Client < ApplicationRecord
   def get_speed_averages(account_id)
     if account_id.present?
       raw_query = 'SELECT AVG(download_total_bytes) as download, AVG(upload_total_bytes) as upload FROM ' +
-                  '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ? AND account_id = ? ' +
-                  'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
+        '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ? AND account_id = ? ' +
+        'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
       query = ActiveRecord::Base.sanitize_sql([raw_query, id, account_id])
     else
       raw_query = 'SELECT AVG(download_total_bytes) as download, AVG(upload_total_bytes) as upload FROM ' +
-                  '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ?' +
-                  'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
+        '(SELECT download_total_bytes, upload_total_bytes FROM measurements WHERE client_id = ?' +
+        'AND download_total_bytes IS NOT NULL AND upload_total_bytes IS NOT NULL LIMIT 10) AS total_avg'
       query = ActiveRecord::Base.sanitize_sql([raw_query, id])
     end
     averages = ActiveRecord::Base.connection.execute(query)[0]
@@ -625,12 +626,50 @@ class Client < ApplicationRecord
     interface['name'].match(/en\d+/)
   end
 
+  def is_wlan?(interface)
+    interface['name'].match(/wlan\d+/)
+  end
+
   def has_no_ethernet_interface?
     network_interfaces.filter { |i| i.present? && (is_eth?(i) || is_enps?(i) || is_en?(i)) }.size == 0
   end
 
+  def has_ethernet_interface?
+    pod_network_interfaces.where(wireless: false).count > 0
+  end
+
+  def has_wifi_interface?
+    pod_network_interfaces.where(wireless: true).count > 0
+  end
+
   def get_default_interface
     network_interfaces.filter { |i| i.present? && i["default_route"] == true }
+  end
+
+  def get_ethernet_mac_address
+    if has_ethernet_interface?
+      pod_network_interfaces.where(wireless: false).first&.mac_address
+    else
+      'Not Available'
+    end
+  end
+
+  def get_wifi_mac_address
+    if has_wifi_interface?
+      pod_network_interfaces.where(wireless: true).first&.mac_address
+    else
+      'Not Available'
+    end
+  end
+
+  def active_connections
+    active_connections = nil
+    default_interface = pod_network_interfaces.where(default: true).first
+    active_connections = default_interface.wireless ? 'Wi-Fi' : 'Wired' if default_interface.present?
+    if active_connections != 'Wi-Fi' && pod_connectivity_config.present? && pod_connectivity_config.wlan_connected
+      active_connections = active_connections.present? ? "#{active_connections} & Wi-Fi" : 'Wi-Fi'
+    end
+    active_connections
   end
 
   def get_mac_address
