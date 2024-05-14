@@ -215,6 +215,11 @@ Rails.application.routes.draw do
 
   get 'comparison_dashboard', to: 'comparison_dashboard#index'
   get 'comparison_online_pods', to: 'comparison_dashboard#online_pods'
+  get 'comparison_download_speeds', to: 'comparison_dashboard#download_speeds'
+  get 'comparison_upload_speeds', to: 'comparison_dashboard#upload_speeds'
+  get 'comparison_latency', to: 'comparison_dashboard#latency'
+  get 'comparison_data_usage', to: 'comparison_dashboard#data_usage'
+  get 'comparison_total_data', to: 'comparison_dashboard#total_data'
 
   resources :exports do
     collection do

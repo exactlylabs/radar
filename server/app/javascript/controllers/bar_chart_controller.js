@@ -11,20 +11,29 @@ const TB_UNIT = 1024 ** 4;
 
 export default class BarChartController extends ChartController {
   connect() {
+    this.chartId = this.element.dataset.chartId;
     super.connect();
   }
   
   prepareData(rawData) {
     this.chartData = this.chartData.map((barData) => {
-      const { x, y } = barData;
-      return { x, y: this.convertToPreferredUnit(y) };
-    })
+      const {x, y} = barData;
+      return {x, y: this.convertToPreferredUnit(y)};
+    });
+  }
+  
+  getChartDataForComparison() {
+    return JSON.parse(this.element.dataset.lineChartData);
   }
   
   plotChart() {
     this.clearCanvas();
     this.chartData.forEach((barData, index) => {
-      this.drawBar(barData, index);
+      if(this.isCompareChart) {
+        this.drawBar(barData, index, this.getFirstGradientStopColor(this.COMPARISON_HEX[index], 0.5));
+      } else {
+        this.drawBar(barData, index);
+      }
     });
   }
   
@@ -65,7 +74,8 @@ export default class BarChartController extends ChartController {
     const minDifIndex = xDifs.indexOf(minDif);
     if(minDifIndex < 0) return;
     if(!this.mouseOverBar(mouseX, mouseY, minDifIndex)) return;
-    const {barX, barY, barHeight, barWidth} = this.drawBar(this.chartData[minDifIndex], minDifIndex, '#4b7be5');
+    const res = this.isCompareChart ? this.drawBar(this.chartData[minDifIndex], minDifIndex, this.getFirstGradientStopColor(this.COMPARISON_HEX[minDifIndex], 1)) : this.drawBar(this.chartData[minDifIndex], minDifIndex, '#4b7be5');
+    const {barX, barY, barHeight, barWidth} = res;
     
     // Tooltip drawing section
     this.ctx.beginPath();
@@ -127,8 +137,12 @@ export default class BarChartController extends ChartController {
     this.ctx.font = '13px Mulish';
     
     this.ctx.fillStyle = '#6d6a94';
-    const date = new Date(Number(this.chartData[minDifIndex].x));
-    this.ctx.fillText(this.formatTime(date), xCoordinate + 8, yCoordinate + 40 + 13);
+    if(this.isCompareChart) {
+      this.ctx.fillText('Data:', xCoordinate + 8, yCoordinate + 40 + 13);
+    } else {
+      const date = new Date(Number(this.chartData[minDifIndex].x));
+      this.ctx.fillText(this.formatTime(date), xCoordinate + 8, yCoordinate + 40 + 13);
+    }
     
     this.ctx.font = '13px MulishSemiBold';
     

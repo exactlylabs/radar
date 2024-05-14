@@ -493,3 +493,23 @@
   border-radius: 10px;
 
 }
+
+.tables--filters-menu-item-checkbox {
+  width: 100%;
+  padding: .5rem .75rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .75rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  color: $dark-gray;
+  border-radius: 6px;
+  @extend .fw-semi-bold;
+
+  &:hover {
+    cursor: pointer;
+    background-color: $subtle-gray;
+  }
+}

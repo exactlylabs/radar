@@ -1,0 +1,26 @@
+<% responsive = @responsive || false %>
+<% entity_array = @latency.map{|row| row['case']}.to_set.to_a %>
+
+<%= turbo_frame_tag "compare-latency-widget#{responsive ? '-responsive' : ''}" do %>
+  <% if @latency.count == 0 %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="compare-latency-chart"
+            data-controller="multi-line-chart"
+            data-line-chart-data="<%= @latency.to_json %>"
+            data-parent-id="compare-latency-widget<%= responsive ? '-responsive' : '' %>"
+            data-y-step-size="1"
+            data-label-suffix=" s"
+            data-action="toggleLine@window->multi-line-chart#toggleLine"
+            data-chart-id="compareLatency"
+            data-is-compare-chart="true"
+            data-entity-count="<%= entity_array.count %>"
+    ></canvas>
+    <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
+               locals: {
+                 chart_id: "compareLatency",
+                 options: entity_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i] }}
+               }
+    %>
+  <% end %>
+<% end %>

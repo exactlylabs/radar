@@ -1,16 +1,15 @@
 import ChartController, {CHART_TITLES} from "./chart_controller";
 
+const MB_UNIT = 1024 ** 2;
+const GB_UNIT = 1024 ** 3;
+const TB_UNIT = 1024 ** 4;
+
 const CHART_BUTTONS_HEIGHT = 30;
-const LINE_TO_HEX = {
-  minimum: '#ff695d',
-  median: '#4b7be5',
-  maximum: '#9138e5',
-}
 
 export default class MultiLineChartController extends ChartController {
   connect() {
     this.chartId = this.element.dataset.chartId;
-    this.selectedHex = null;
+    this.selectedHexes = [];
     super.connect();
   }
   
@@ -49,38 +48,83 @@ export default class MultiLineChartController extends ChartController {
   }
   
   prepareData(rawData) {
-    const data = new Map();
-    rawData.forEach((line, index) => {
-      const { x } = line;
-      Object.keys(line).forEach((key) => {
-        if(key === 'x') return;
-        const color = key;
-        const y = line[key];
-        if(data.has(color)) {
-          data.get(color).push({ x, y });
-        } else {
-          data.set(color, [{ x, y }]);
-        }
+    if(!this.isCompareChart) {
+      const data = new Map();
+      rawData.forEach((line, index) => {
+        const {x} = line;
+        Object.keys(line).forEach((key) => {
+          if (key === 'x') return;
+          const color = key;
+          const y = line[key];
+          if (data.has(color)) {
+            data.get(color).push({x, y});
+          } else {
+            data.set(color, [{x, y}]);
+          }
+        });
       });
-    });
-    this.chartData = data;
+      this.chartData = data;
+    }
     this.adjustedData = this.adjustData(this.chartData);
   }
   
   adjustData(points) {
     const adjustedDataByHex = new Map();
     points.forEach((linePoints, lineHex) => {
-      if(!this.selectedHex || (!!this.selectedHex && this.selectedHex === lineHex))
+      if(this.selectedHexes.length === 0 || (this.selectedHexes.includes(lineHex)))
         adjustedDataByHex.set(lineHex, this.adjustLineData(linePoints, '1d'));
     });
     return adjustedDataByHex;
   }
   
+  getChartDataForComparison() {
+    const rawData = JSON.parse(this.element.dataset.lineChartData);
+    let lastHexUsed = 0;
+    const data = new Map();
+    const seenKeys = new Map();
+    const timestamps = [];
+    rawData.forEach((line) => {
+      let hexIndex;
+      if(seenKeys.has(line['case'])) {
+        hexIndex = seenKeys.get(line['case']);
+      } else {
+        seenKeys.set(line['case'], lastHexUsed);
+        hexIndex = lastHexUsed;
+        lastHexUsed++;
+      }
+      const hex = this.COMPARISON_HEX[hexIndex];
+      const x = line['x'];
+      const y = line['y'];
+      if(data.has(hex)) {
+        data.get(hex).push({x, y});
+      } else {
+        data.set(hex, [{x, y}]);
+      }
+      if(!timestamps.includes(x)) timestamps.push(x);
+    });
+    data.forEach((linePoints, hex) => {
+      if(timestamps.length > linePoints.length) {
+        timestamps.forEach(timestamp => {
+          if(!linePoints.find(linePoint => linePoint.x === timestamp)) {
+            linePoints.push({x: timestamp, y: 0});
+          }
+        });
+        linePoints.sort((a, b) => a.x - b.x);
+      }
+    });
+    if(this.chartId === 'compareDataUsage') {
+      data.forEach((linePoints, hex) => {
+        data.set(hex, linePoints.map(lp => ({x: lp.x, y: this.convertToPreferredUnit(lp.y)})));
+      });
+    }
+    return data;
+  }
+  
   plotChart() {
     this.clearCanvas();
     for(let [hex, points] of this.adjustedData.entries()) {
-      if(!!this.selectedHex) {
-        if(this.selectedHex === hex) this.drawLine(points, hex, this.getFirstGradientStopColor(hex));
+      if(this.selectedHexes.length > 0) {
+        if(this.selectedHexes.includes(hex)) this.drawLine(points, hex, this.getFirstGradientStopColor(hex));
       } else {
         this.drawLine(points, hex, this.getFirstGradientStopColor(hex));
       }
@@ -90,12 +134,11 @@ export default class MultiLineChartController extends ChartController {
   toggleLine(e) {
     const chartId = e.detail.chartId;
     if(chartId !== this.chartId) return;
-    const selectedLine = e.detail.selectedLine;
-    const selectedHex = LINE_TO_HEX[selectedLine];
-    if(this.selectedHex === selectedHex) {
-      this.selectedHex = null;
+    const selectedHex = e.detail.selectedLine;
+    if(this.selectedHexes.includes(selectedHex)) {
+      this.selectedHexes = this.selectedHexes.filter(hex => hex !== selectedHex);
     } else {
-      this.selectedHex = selectedHex;
+      this.selectedHexes.push(selectedHex);
     }
     this.adjustedData = this.adjustData(this.chartData);
     this.plotChart(this.adjustedData);
@@ -148,18 +191,9 @@ export default class MultiLineChartController extends ChartController {
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
     const tooltipWidth = 180;
-    const tooltipHeight = !!this.selectedHex ? 70 : 120;
-    let tooltipTopYCoordinate;
-    if(!!this.selectedHex) {
-      const { ys } = minDifIndexEntry;
-      const yDifs = ys.map(y => Math.abs(this.getYCoordinateFromYValue(y) - mouseY));
-      const minDif = Math.min(...yDifs);
-      const minDifIndex = yDifs.indexOf(minDif);
-      if(minDifIndex < 0) return;
-      tooltipTopYCoordinate = this.getYCoordinateFromYValue(ys[minDifIndex]);
-    } else {
-      tooltipTopYCoordinate = 16;
-    }
+    //const tooltipHeight = this.selectedHexes.length > 0 ? 70 : 120;
+    const tooltipHeight = this.getDynamicTooltipHeight(yValues.length);
+    let tooltipTopYCoordinate = mouseY - tooltipHeight / 2;
     
     if(xCoordinate + offset + tooltipWidth > this.canvasWidth) {
       const tooltipEndX = xCoordinate + offset + tooltipWidth;
@@ -172,6 +206,19 @@ export default class MultiLineChartController extends ChartController {
     } else {
       xCoordinate += offset;
     }
+    
+    if(xCoordinate < 0) {
+      xCoordinate = mouseX;
+    }
+    
+    if(tooltipTopYCoordinate + tooltipHeight > this.canvasHeight) {
+      const tooltipEndY = tooltipTopYCoordinate + tooltipHeight;
+      const diff = tooltipEndY - this.canvasHeight;
+      tooltipTopYCoordinate -= diff + 12;
+    } else if (tooltipTopYCoordinate < 0) {
+      tooltipTopYCoordinate = 5;
+    }
+    
 
     this.ctx.roundRect(xCoordinate, tooltipTopYCoordinate, tooltipWidth, tooltipHeight, 6);
     this.ctx.fill();
@@ -203,15 +250,39 @@ export default class MultiLineChartController extends ChartController {
       this.ctx.font = '13px MulishSemiBold';
       
       this.ctx.fillStyle = 'black';
-      this.ctx.fillText(yValues[i].toFixed(2) + ' Mbps', xCoordinate + tooltipWidth - 12 - 75, tooltipTopYCoordinate + 40 + 13 + i * 25);
+      this.ctx.fillText(yValues[i].toFixed(2) + this.labelSuffix, xCoordinate + tooltipWidth - 12 - 75, tooltipTopYCoordinate + 40 + 13 + i * 25);
       i++;
     }
     this.ctx.font = '16px Mulish';
+  }
+  
+  getDynamicTooltipHeight(yValuesLength = 0) {
+    const tooltipHeaderHeight = 32;
+    const verticalPadding = 8 * 2;
+    const maxVisibleRows = 7;
+    const rowCountUsed = this.selectedHexes.length > 0 ? this.selectedHexes.length : yValuesLength;
+    if(rowCountUsed > maxVisibleRows) return tooltipHeaderHeight + verticalPadding + 25 * maxVisibleRows;
+    return tooltipHeaderHeight + verticalPadding + 25 * rowCountUsed;
   }
   
   getXValueAtIndex(index) {
     const firstEntryValues = this.adjustedData.entries().next().value[1];
     if(index === -1) return firstEntryValues[firstEntryValues.length - 1].x
     return firstEntryValues[index].x;
+  }
+  
+  // incoming value is in bytes, use this.preferredUnit to convert to MB, GB, etc.
+  convertToPreferredUnit(value) {
+    value = parseFloat(value);
+    switch (this.labelSuffix) {
+      case 'MB':
+        return value / MB_UNIT;
+      case 'GB':
+        return value / GB_UNIT;
+      case 'TB':
+        return value / TB_UNIT;
+      default:
+        return value;
+    }
   }
 }

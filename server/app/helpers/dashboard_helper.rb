@@ -104,9 +104,9 @@ module DashboardHelper
     sql = %{
       SELECT
           EXTRACT(EPOCH FROM time) * 1000 as x,
-          MAX(download_max) as "#9138e5",
-          percentile_disc(0.5) WITHIN GROUP (ORDER BY download_median) as "#4b7be5",
-          MIN(download_min) AS "#ff695d"
+          MAX(download_max) as "#9138E5",
+          percentile_disc(0.5) WITHIN GROUP (ORDER BY download_median) as "#4B7BE5",
+          MIN(download_min) AS "#FF695D"
       FROM aggregated_measurements(:from::timestamp, :to::timestamp)
       WHERE
           account_id IN (:account_ids)
@@ -125,9 +125,9 @@ module DashboardHelper
     sql = %{
       SELECT
         EXTRACT(EPOCH FROM date_trunc('d', processed_at)) * 1000 as "x",
-        percentile_disc(0.5) WITHIN GROUP (ORDER BY download) AS "#4b7be5",
-        MIN(download) AS "#ff695d",
-        MAX(download) AS "#9138e5"
+        percentile_disc(0.5) WITHIN GROUP (ORDER BY download) AS "#4B7BE5",
+        MIN(download) AS "#FF695D",
+        MAX(download) AS "#9138E5"
       FROM measurements
       WHERE processed_at BETWEEN :from AND :to
       AND client_id = :pod_id
@@ -137,13 +137,81 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
   end
 
+  def self.get_compare_download_speed_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
+    sql = %{
+      WITH filtered_measurements AS (
+        SELECT
+          processed_at as "time",
+          download as "value",
+          measurements.account_id,
+          accounts.name as "account_name",
+          measurements.location_id,
+          locations.name as "location_name",
+          measurements.client_id,
+          clients.unix_user as "client_unix_user",
+          autonomous_system_org_id as "isp_id",
+          autonomous_system_orgs.name as "isp_name",
+          categories.id as "category_id",
+          categories.name as "category_name"
+        FROM measurements
+        JOIN accounts ON account_id = accounts.id
+        JOIN locations ON location_id = locations.id
+        JOIN clients ON client_id = clients.id
+        JOIN categories ON categories.account_id = accounts.id
+        JOIN autonomous_systems ON autonomous_systems.id = measurements.autonomous_system_id
+        JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+        WHERE processed_at BETWEEN :from AND :to
+        AND measurements.account_id IN (:account_ids)
+      )
+      SELECT
+          CASE WHEN :compare_by = 'account' THEN
+                   account_name
+               WHEN :compare_by = 'isp' THEN
+                   isp_name
+               WHEN :compare_by = 'network' THEN
+                   location_name
+               WHEN :compare_by = 'pod' THEN
+                   client_unix_user
+               WHEN :compare_by = 'category' THEN
+                   category_name
+              END,
+          EXTRACT(EPOCH FROM date_trunc('d', "time")) * 1000 as "x",
+          CASE
+              WHEN 'average' = :curve_type THEN
+                  AVG(value)
+              WHEN 'min' = :curve_type THEN
+                  MIN(value)
+              WHEN 'max' = :curve_type THEN
+                  MAX(value)
+              WHEN 'median' = :curve_type THEN
+                  percentile_disc(0.5) WITHIN GROUP (ORDER BY value)
+              END as "y"
+      FROM filtered_measurements
+      WHERE
+          CASE WHEN :compare_by = 'account' THEN
+                   account_id IN (:account_ids)
+               WHEN :compare_by = 'isp' THEN
+                   isp_id IN (:as_org_ids)
+               WHEN :compare_by = 'network' THEN
+                   location_id IN (:network_ids)
+               WHEN :compare_by = 'pod' THEN
+                   client_id IN (:pod_ids)
+               WHEN :compare_by = 'category' THEN
+                   category_id IN (:category_ids)
+              END
+      GROUP BY 1, 2
+      ORDER BY "x" ASC;
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {curve_type: curve_type, compare_by: compare_by, account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
+  end
+
   def self.get_upload_speed_sql(account_ids, from, to, as_org_ids: nil, location_ids: nil)
     sql = %{
       SELECT
           EXTRACT(EPOCH FROM time) * 1000 as x,
-          MAX(upload_max) as "#9138e5",
-          percentile_disc(0.5) WITHIN GROUP (ORDER BY upload_median) as "#4b7be5",
-          MIN(upload_min) AS "#ff695d"
+          MAX(upload_max) as "#9138E5",
+          percentile_disc(0.5) WITHIN GROUP (ORDER BY upload_median) as "#4B7BE5",
+          MIN(upload_min) AS "#FF695D"
       FROM aggregated_measurements(:from::timestamp, :to::timestamp)
       WHERE
         account_id IN (:account_ids)
@@ -161,9 +229,9 @@ module DashboardHelper
     sql = %{
       SELECT
         EXTRACT(EPOCH FROM date_trunc('d', processed_at)) * 1000 as "x",
-        percentile_disc(0.5) WITHIN GROUP (ORDER BY upload) AS "#4b7be5",
-        MIN(upload) AS "#ff695d",
-        MAX(upload) AS "#9138e5"
+        percentile_disc(0.5) WITHIN GROUP (ORDER BY upload) AS "#4B7BE5",
+        MIN(upload) AS "#FF695D",
+        MAX(upload) AS "#9138E5"
       FROM measurements
       WHERE processed_at BETWEEN :from AND :to
       AND client_id = :pod_id
@@ -173,13 +241,81 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
   end
 
+  def self.get_compare_upload_speed_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
+    sql = %{
+      WITH filtered_measurements AS (
+        SELECT
+          processed_at as "time",
+          upload as "value",
+          measurements.account_id,
+          accounts.name as "account_name",
+          measurements.location_id,
+          locations.name as "location_name",
+          measurements.client_id,
+          clients.unix_user as "client_unix_user",
+          autonomous_system_org_id as "isp_id",
+          autonomous_system_orgs.name as "isp_name",
+          categories.id as "category_id",
+          categories.name as "category_name"
+        FROM measurements
+        JOIN accounts ON account_id = accounts.id
+        JOIN locations ON location_id = locations.id
+        JOIN clients ON client_id = clients.id
+        JOIN categories ON categories.account_id = accounts.id
+        JOIN autonomous_systems ON autonomous_systems.id = measurements.autonomous_system_id
+        JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+        WHERE processed_at BETWEEN :from AND :to
+        AND measurements.account_id IN (:account_ids)
+      )
+      SELECT
+          CASE WHEN :compare_by = 'account' THEN
+                   account_name
+               WHEN :compare_by = 'isp' THEN
+                   isp_name
+               WHEN :compare_by = 'network' THEN
+                   location_name
+               WHEN :compare_by = 'pod' THEN
+                   client_unix_user
+               WHEN :compare_by = 'category' THEN
+                   category_name
+              END,
+          EXTRACT(EPOCH FROM date_trunc('d', "time")) * 1000 as "x",
+          CASE
+              WHEN 'average' = :curve_type THEN
+                  AVG(value)
+              WHEN 'min' = :curve_type THEN
+                  MIN(value)
+              WHEN 'max' = :curve_type THEN
+                  MAX(value)
+              WHEN 'median' = :curve_type THEN
+                  percentile_disc(0.5) WITHIN GROUP (ORDER BY value)
+              END as "y"
+      FROM filtered_measurements
+      WHERE
+          CASE WHEN :compare_by = 'account' THEN
+                   account_id IN (:account_ids)
+               WHEN :compare_by = 'isp' THEN
+                   isp_id IN (:as_org_ids)
+               WHEN :compare_by = 'network' THEN
+                   location_id IN (:network_ids)
+               WHEN :compare_by = 'pod' THEN
+                   client_id IN (:pod_ids)
+               WHEN :compare_by = 'category' THEN
+                   category_id IN (:category_ids)
+              END
+      GROUP BY 1, 2
+      ORDER BY "x" ASC;
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {curve_type: curve_type, compare_by: compare_by, account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
+  end
+
   def self.get_latency_sql(account_ids, from, to, as_org_ids: nil, location_ids: nil)
     sql = %{
       SELECT
           EXTRACT(EPOCH FROM time) * 1000 as x,
-          MAX(latency_max) as "#9138e5",
-          percentile_disc(0.5) WITHIN GROUP (ORDER BY latency_median) as "#4b7be5",
-          MIN(latency_min) AS "#ff695d"
+          MAX(latency_max) as "#9138E5",
+          percentile_disc(0.5) WITHIN GROUP (ORDER BY latency_median) as "#4B7BE5",
+          MIN(latency_min) AS "#FF695D"
       FROM aggregated_measurements(:from::timestamp, :to::timestamp)
       WHERE
         account_id IN (:account_ids)
@@ -197,9 +333,9 @@ module DashboardHelper
     sql = %{
       SELECT
         EXTRACT(EPOCH FROM date_trunc('d', processed_at)) * 1000 as "x",
-        percentile_disc(0.5) WITHIN GROUP (ORDER BY latency) AS "#4b7be5",
-        MIN(latency) AS "#ff695d",
-        MAX(latency) AS "#9138e5"
+        percentile_disc(0.5) WITHIN GROUP (ORDER BY latency) AS "#4B7BE5",
+        MIN(latency) AS "#FF695D",
+        MAX(latency) AS "#9138E5"
       FROM measurements
       WHERE processed_at BETWEEN :from AND :to
       AND client_id = :pod_id
@@ -207,6 +343,74 @@ module DashboardHelper
       ORDER BY "x" ASC
     }
     ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
+  end
+
+  def self.get_compare_latency_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
+    sql = %{
+      WITH filtered_measurements AS (
+        SELECT
+          processed_at as "time",
+          latency as "value",
+          measurements.account_id,
+          accounts.name as "account_name",
+          measurements.location_id,
+          locations.name as "location_name",
+          measurements.client_id,
+          clients.unix_user as "client_unix_user",
+          autonomous_system_org_id as "isp_id",
+          autonomous_system_orgs.name as "isp_name",
+          categories.id as "category_id",
+          categories.name as "category_name"
+        FROM measurements
+        JOIN accounts ON account_id = accounts.id
+        JOIN locations ON location_id = locations.id
+        JOIN clients ON client_id = clients.id
+        JOIN categories ON categories.account_id = accounts.id
+        JOIN autonomous_systems ON autonomous_systems.id = measurements.autonomous_system_id
+        JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+        WHERE processed_at BETWEEN :from AND :to
+        AND measurements.account_id IN (:account_ids)
+      )
+      SELECT
+          CASE WHEN :compare_by = 'account' THEN
+                   account_name
+               WHEN :compare_by = 'isp' THEN
+                   isp_name
+               WHEN :compare_by = 'network' THEN
+                   location_name
+               WHEN :compare_by = 'pod' THEN
+                   client_unix_user
+               WHEN :compare_by = 'category' THEN
+                   category_name
+              END,
+          EXTRACT(EPOCH FROM date_trunc('d', "time")) * 1000 as "x",
+          CASE
+              WHEN 'average' = :curve_type THEN
+                  AVG(value)
+              WHEN 'min' = :curve_type THEN
+                  MIN(value)
+              WHEN 'max' = :curve_type THEN
+                  MAX(value)
+              WHEN 'median' = :curve_type THEN
+                  percentile_disc(0.5) WITHIN GROUP (ORDER BY value)
+              END as "y"
+      FROM filtered_measurements
+      WHERE
+          CASE WHEN :compare_by = 'account' THEN
+                   account_id IN (:account_ids)
+               WHEN :compare_by = 'isp' THEN
+                   isp_id IN (:as_org_ids)
+               WHEN :compare_by = 'network' THEN
+                   location_id IN (:network_ids)
+               WHEN :compare_by = 'pod' THEN
+                   client_id IN (:pod_ids)
+               WHEN :compare_by = 'category' THEN
+                   category_id IN (:category_ids)
+              END
+      GROUP BY 1, 2
+      ORDER BY "x" ASC;
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {curve_type: curve_type, compare_by: compare_by, account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
   end
 
   def self.get_usage_sql(interval_type, from, to, account_ids, as_org_ids: nil, location_ids: nil)
@@ -252,6 +456,77 @@ module DashboardHelper
     ActiveRecord::Base.sanitize_sql([sql, {pod_id: pod_id, from: from, to: to}])
   end
 
+  def self.get_compare_data_usage_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
+    sql = %{
+    WITH data_used_per_day AS (
+        SELECT
+              processed_at as "time",
+              SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes) AS "value",
+              measurements.account_id,
+              accounts.name as "account_name",
+              measurements.location_id,
+              locations.name as "location_name",
+              measurements.client_id,
+              clients.name as "client_name",
+              clients.unix_user as "client_unix_user",
+              autonomous_system_org_id as "isp_id",
+              autonomous_system_orgs.name as "isp_name",
+              categories.id as "category_id",
+              categories.name as "category_name"
+        FROM measurements
+            JOIN accounts ON account_id = accounts.id
+            JOIN locations ON location_id = locations.id
+            JOIN clients ON client_id = clients.id
+            JOIN categories ON categories.account_id = accounts.id
+            JOIN autonomous_systems ON autonomous_systems.id = measurements.autonomous_system_id
+            JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+            WHERE processed_at BETWEEN :from AND :to
+            AND measurements.account_id IN (:account_ids)
+            GROUP BY 1,3,4,5,6,7,8,9,10,11,12
+    )
+    SELECT
+      CASE WHEN :compare_by = 'account' THEN
+               account_name
+           WHEN :compare_by = 'isp' THEN
+               isp_name
+           WHEN :compare_by = 'network' THEN
+               location_name
+           WHEN :compare_by = 'pod' THEN
+               client_unix_user
+           WHEN :compare_by = 'category' THEN
+               category_name
+          END,
+      EXTRACT(EPOCH FROM date_trunc('d', "time")) * 1000 as "x",
+      CASE
+          WHEN 'average' = :curve_type THEN
+              AVG(value)
+          WHEN 'min' = :curve_type THEN
+              MIN(value)
+          WHEN 'max' = :curve_type THEN
+              MAX(value)
+          WHEN 'median' = :curve_type THEN
+              percentile_disc(0.5) WITHIN GROUP (ORDER BY value)
+          END as "y"
+    FROM data_used_per_day
+    WHERE
+      CASE WHEN :compare_by = 'account' THEN
+               account_id IN (:account_ids)
+           WHEN :compare_by = 'isp' THEN
+               isp_id IN (:as_org_ids)
+           WHEN :compare_by = 'network' THEN
+               location_id IN (:network_ids)
+           WHEN :compare_by = 'pod' THEN
+               client_id IN (:pod_ids)
+           WHEN :compare_by = 'category' THEN
+               category_id IN (:category_ids)
+          END
+    GROUP BY 1, 2
+    ORDER BY "x" ASC;
+    }
+
+    ActiveRecord::Base.sanitize_sql([sql, {curve_type: curve_type, compare_by: compare_by, account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
+  end
+
   def self.get_total_data_sql(from, to, account_ids, as_org_ids: nil, location_ids: nil)
     sql = %{
         SELECT COALESCE(SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes), 0) AS "y",
@@ -289,6 +564,85 @@ module DashboardHelper
       ORDER BY "y" DESC;
     }
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+  end
+
+  def self.get_compare_total_data_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
+    sql = %{
+    WITH data_used_per_day AS (
+        SELECT
+          processed_at as "time",
+          COALESCE(SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes), 0) AS "value",
+          measurements.account_id,
+          accounts.name as "account_name",
+          measurements.location_id,
+          locations.name as "location_name",
+          measurements.client_id,
+          clients.name as "client_name",
+          autonomous_system_org_id as "isp_id",
+          autonomous_system_orgs.name as "isp_name",
+          categories.id as "category_id",
+          categories.name as "category_name"
+        FROM measurements
+            JOIN accounts ON account_id = accounts.id
+            JOIN locations ON location_id = locations.id
+            JOIN clients ON client_id = clients.id
+            JOIN categories ON categories.account_id = accounts.id
+            JOIN autonomous_systems ON autonomous_systems.id = measurements.autonomous_system_id
+            JOIN autonomous_system_orgs ON autonomous_system_orgs.id = autonomous_systems.autonomous_system_org_id
+            WHERE processed_at BETWEEN :from AND :to
+            AND measurements.account_id IN (:account_ids)
+            GROUP BY 1,3,4,5,6,7,8,9,10,11,12
+    )
+    SELECT
+      CASE WHEN :compare_by = 'account' THEN
+               account_name
+           WHEN :compare_by = 'isp' THEN
+               isp_name
+           WHEN :compare_by = 'network' THEN
+               location_name
+           WHEN :compare_by = 'pod' THEN
+               client_name
+           WHEN :compare_by = 'category' THEN
+               category_name
+          END,
+      CASE WHEN :compare_by = 'account' THEN
+               account_name
+           WHEN :compare_by = 'isp' THEN
+               isp_name
+           WHEN :compare_by = 'network' THEN
+               location_name
+           WHEN :compare_by = 'pod' THEN
+               client_name
+           WHEN :compare_by = 'category' THEN
+               category_name
+          END AS "x",
+      CASE
+          WHEN 'average' = :curve_type THEN
+              AVG(value)
+          WHEN 'min' = :curve_type THEN
+              MIN(value)
+          WHEN 'max' = :curve_type THEN
+              MAX(value)
+          WHEN 'median' = :curve_type THEN
+              percentile_disc(0.5) WITHIN GROUP (ORDER BY value)
+          END as "y"
+    FROM data_used_per_day
+    WHERE
+      CASE WHEN :compare_by = 'account' THEN
+               account_id IN (:account_ids)
+           WHEN :compare_by = 'isp' THEN
+               isp_id IN (:as_org_ids)
+           WHEN :compare_by = 'network' THEN
+               location_id IN (:network_ids)
+           WHEN :compare_by = 'pod' THEN
+               client_id IN (:pod_ids)
+           WHEN :compare_by = 'category' THEN
+               category_id IN (:category_ids)
+          END
+    GROUP BY 1, 2
+    ORDER BY "x" ASC;
+    }
+    ActiveRecord::Base.sanitize_sql([sql, {curve_type: curve_type, compare_by: compare_by, account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
   end
 
   def self.get_as_orgs_sql(account_ids, from, to, location_ids: nil)
