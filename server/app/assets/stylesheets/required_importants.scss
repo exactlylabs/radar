@@ -152,14 +152,24 @@ body {
 
   &.forms--text-input-focusable:focus {
     outline: solid 2px $blue !important;
+
+    &[data-error="true"],
+    &[data-error="true"]:focus {
+      outline: solid 2px $error-red !important;
+    }
   }
 
   &[data-narrow="true"] {
     padding-right: 6rem !important;
   }
 
-  &[data-error="true"] {
+  &[data-error="true"],
+  &[data-error="true"]:focus,{
     outline: solid 2px $error-red !important;
+  }
+
+  &.forms--text-input-with-decoration {
+    padding: 10px 40px 10px 16px !important;
   }
 }
 
