@@ -193,4 +193,8 @@ class Measurement < ApplicationRecord
     end
   end
 
+  def get_connection
+    self.wireless ? "Wi-Fi" : "Wired"
+  end
+
 end

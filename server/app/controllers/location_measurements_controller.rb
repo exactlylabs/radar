@@ -16,6 +16,7 @@ class LocationMeasurementsController < ApplicationController
         range = human_filter_to_range(params[:range])
         @measurements = @measurements.where(created_at: range[0]..range[1])
       end
+      @measurements = @measurements.where(wireless: params[:connection].upcase == 'WIFI') if params[:connection].present? && params[:connection].upcase != 'ALL'
       @total = @measurements.count
       @measurements = paginate(@measurements, params[:page], params[:page_size]) unless request.format.csv?
     end

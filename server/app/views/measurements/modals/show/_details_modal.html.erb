@@ -20,6 +20,10 @@
       <p class="regular-text w-75"><%= @measurement.style %></p>
     </div>
     <div class="row d-flex flex-row mb-1">
+      <p class="forms--label w-25">Connection</p>
+      <p class="regular-text w-75"><%= @measurement.get_connection %></p>
+    </div>
+    <div class="row d-flex flex-row mb-1">
       <p class="forms--label w-25">Location</p>
       <p class="regular-text w-75"><%= @measurement.get_location %></p>
     </div>
