@@ -191,7 +191,6 @@ export default class MultiLineChartController extends ChartController {
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
     const tooltipWidth = 180;
-    //const tooltipHeight = this.selectedHexes.length > 0 ? 70 : 120;
     const tooltipHeight = this.getDynamicTooltipHeight(yValues.length);
     let tooltipTopYCoordinate = mouseY - tooltipHeight / 2;
     

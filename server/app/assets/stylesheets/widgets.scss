@@ -345,6 +345,15 @@
         max-height: 250px;
         overflow-y: auto;
         padding: 3px;
+
+        &[data-is-vertical="false"] {
+          width: 100%;
+        }
+      }
+
+      &:has(.widgets--line-toggler-buttons-container[data-is-vertical="false"]) {
+        flex-direction: column;
+        gap: .5rem;
       }
     }
   }
