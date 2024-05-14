@@ -4,13 +4,25 @@
   </div>
   <div class="cards--card-with-header-content-container">
     <div class="cards--info-row-full-width mb-4">
-      <label class="forms--label">MAC address</label>
-      <span class="cards--info-row-value <%= pod.network_interfaces.nil? ? 'additional-text' : 'regular-text' %>">
-        <%= pod.get_mac_address %>
+      <label class="forms--label">MAC address (Ethernet)</label>
+      <span class="cards--info-row-value <%= pod.has_ethernet_interface? ? 'regular-text' : 'additional-text' %>">
+        <%= pod.get_ethernet_mac_address %>
       </span>
     </div>
     <div class="cards--info-row-full-width mb-4">
-      <label class="forms--label">IP address</label>
+      <label class="forms--label">MAC address (Wi-Fi)</label>
+      <span class="cards--info-row-value <%= pod.has_wifi_interface? ? 'regular-text' : 'additional-text' %>">
+        <%= pod.get_wifi_mac_address %>
+      </span>
+    </div>
+    <div class="cards--info-row-full-width mb-4">
+      <label class="forms--label">Active connection(s)</label>
+      <span class="cards--info-row-value <%= pod.active_connections.nil? ? 'additional-text' : 'regular-text' %>">
+        <%= pod.active_connections %>
+      </span>
+    </div>
+    <div class="cards--info-row-full-width mb-4">
+      <label class="forms--label">Public IP address</label>
       <span class="cards--info-row-value <%= pod.ip.nil? ? 'additional-text' : 'regular-text' %>">
         <%= pod.ip.nil? ? 'Not available' : pod.ip %>
       </span>
