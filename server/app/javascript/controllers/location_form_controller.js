@@ -17,7 +17,8 @@ export default class extends Controller {
     "addressWrapper",
     "manualLatLongWrapper",
     "submitButton",
-    "spinnerButton"
+    "spinnerButton",
+    "addressNotFoundMessage"
   ];
 
   connect() {
@@ -104,6 +105,14 @@ export default class extends Controller {
   }
 
   fetch() {
+    this.addressTarget.dataset.error = 'false';
+    if(this.hasMapTarget) this.mapTarget.dataset.error = 'false';
+    if(this.hasAddressNotFoundMessageTarget) this.addressNotFoundMessageTarget.setAttribute("hidden", "hidden");
+    
+    if(this.address === "" || this.address.length < 5) return;
+    this.spinnerTarget.classList.remove("d-none");
+    this.geoIconTarget.classList.add("d-none");
+    
     let formData = new FormData();
     formData.append("address", this.address);
     fetch("/geocode", {
@@ -112,32 +121,25 @@ export default class extends Controller {
     })
       .then((response) => response.json())
       .then((data) => {
-        // fallback location to center of the US
-        const defaultLatitude = 40.566296;
-        const defaultLongitude = -97.264547;
-        let coordinates = [defaultLatitude, defaultLongitude];
         if (data.length > 0) {
-          this.addressWrapperTarget.style.border = 'none';
-          this.addressWrapperTarget.style.borderRadius = 'none';
-          coordinates = data;
+          const [lat, lng] = data;
+          this.mapTarget.setAttribute("data-location-latitude-value", lat);
+          this.mapTarget.setAttribute("data-location-longitude-value", lng);
+          this.latitudeTarget.value = lat;
+          this.longitudeTarget.value = lng;
         } else {
-          this.addressWrapperTarget.style.border = 'solid 1px red';
-          this.addressWrapperTarget.style.borderRadius = '6px';
+          this.addressTarget.dataset.error = 'true';
+          if(this.hasMapTarget) this.mapTarget.dataset.error = 'true';
+          if(this.hasAddressNotFoundMessageTarget) this.addressNotFoundMessageTarget.removeAttribute("hidden");
         }
-        this.mapTarget.setAttribute(
-          "data-location-latitude-value",
-          coordinates[0]
-        );
-        this.mapTarget.setAttribute(
-          "data-location-longitude-value",
-          coordinates[1]
-        );
-        this.latitudeTarget.value = coordinates[0];
-        this.longitudeTarget.value = coordinates[1];
       })
       .catch((err) => {
         handleError(err, this.identifier);
-      });
+      })
+      .finally(() => {
+        this.spinnerTarget.classList.add("d-none");
+        this.geoIconTarget.classList.remove("d-none");
+      })
   }
 
   onAddressChange(e) {

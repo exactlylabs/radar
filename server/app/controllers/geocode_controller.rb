@@ -3,7 +3,7 @@ class GeocodeController < ApplicationController
 
   def code
     if params["address"].nil?
-      results = Geocoder.search(request.ip)
+      results = Geocoder.search(request.remote_ip)
     else
       results = Geocoder.search(params["address"])
     end
