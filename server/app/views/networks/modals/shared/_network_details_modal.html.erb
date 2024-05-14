@@ -14,6 +14,7 @@
                           @location.account.id
                         end %>
 
+<%= @location&.account.id %>
 <div class="modals--content-container <%= contained ? 'contained' : '' %>"
      data-type="full"
      data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker"
@@ -23,6 +24,7 @@
     <input hidden="hidden" name="onboarding" value="true"/>
   <% end %>
 
+  <%= initial_account_id %>
   <%= form.hidden_field "location[account_id]", value: initial_account_id, data: { categories_target: "firstAccountId" } %>
   <% if current_account.is_all_accounts? %>
     <div class="modals--form-row mb-6 forms--input-group">

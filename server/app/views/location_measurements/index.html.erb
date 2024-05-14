@@ -57,8 +57,8 @@
             <div class="d-flex justify-content-between" data-kt-customer-table-toolbar="base">
               <div class="dropdown-container">
                   <div class="btn-group">
-                    <a href="#" 
-                      class="custom-button custom-button--secondary custom-button--sm px-2" 
+                    <a href="#"
+                      class="custom-button custom-button--secondary custom-button--sm px-2"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
                       style="border-radius: 6px"
@@ -73,30 +73,30 @@
                     <!--begin::Menu-->
                     <div class="dropdown-menu fw-bold fs-7 py-4"
                         aria-labelledby="schedule-button">
-                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-week') %>" 
+                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-week') %>"
                         class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-week' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                         Last week
                       </a>
                       <!--begin::Menu item-->
-                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-month') %>" 
+                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-month') %>"
                         class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-month' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                         Last month
                       </a>
                       <!--end::Menu item-->
                       <!--begin::Menu item-->
-                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-6-months') %>" 
+                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-6-months') %>"
                         class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-6-months' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                         Last 6 months
                       </a>
                       <!--end::Menu item-->
                       <!--begin::Menu item-->
-                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-year') %>" 
+                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'last-year') %>"
                         class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'last-year' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                         Last year
                       </a>
                       <!--end::Menu item-->
                       <!--begin::Menu item-->
-                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'all-time') %>" 
+                      <a href="<%= location_measurements_path(@location, style: params[:style], range: 'all-time') %>"
                         class="dropdowns--option menu-item text-hover-gray-500 <%= params[:range] == 'all-time' ? 'text-primary' : 'text-gray-700' %> p-2 px-3">
                         All time
                       </a>

@@ -31,7 +31,16 @@
 </div>
 
 <div class="tables--hides-on-small ellipsis"
-  style="width: <%= widths[2] %>;"
+     style="width: <%= widths[2] %>;"
+>
+  <span class="ellipsis table-cell">
+    <%= row.get_connection %>
+  </span>
+</div>
+
+
+<div class="tables--hides-on-small ellipsis"
+  style="width: <%= widths[3] %>;"
 >
   <span class="ellipsis table-cell">
     <%= row.download.present? ? "#{row.download.round(3)} Mbps" : "N/A" %>
@@ -39,7 +48,7 @@
 </div>
 
 <div class="tables--hides-on-small ellipsis"
-  style="width: <%= widths[3] %>;"
+  style="width: <%= widths[4] %>;"
 >
   <span class="ellipsis table-cell">
     <%= row.upload.present? ? "#{row.upload.round(3)} Mbps" : "N/A" %>
@@ -47,7 +56,7 @@
 </div>
 
 <div class="tables--hides-on-small ellipsis"
-  style="width: <%= widths[4] %>;"
+  style="width: <%= widths[5] %>;"
 >
   <span class="ellipsis table-cell">
     <%= row.latency.present? ? "#{row.latency.round(2)} ms" : "N/A" %>
@@ -55,7 +64,7 @@
 </div>
 
 <div class="tables--hides-on-small ellipsis"
-  style="width: <%= widths[5] %>;"
+  style="width: <%= widths[6] %>;"
 >
   <span class="ellipsis table-cell">
     <%= row.loss_rate.present? ? "#{row.loss_rate.round(2)}%" : "0.00%" %>
@@ -63,14 +72,14 @@
 </div>
 
 <div class="tables--hides-on-small ellipsis"
-  style="width: <%= widths[6] %>;"
+  style="width: <%= widths[7] %>;"
 >
   <span class="ellipsis table-cell">
     <%= row.jitter.present? ? "#{row.jitter.round(2)} ms" : "N/A" %>
   </span>
 </div>
 
-<div class="tables--hides-on-small" style="width: <%= widths[7] %>">
+<div class="tables--hides-on-small" style="width: <%= widths[8] %>">
   <%= link_to "View details",
       measurement_path(row),
       class: "custom-button custom-button--secondary custom-button--xs",

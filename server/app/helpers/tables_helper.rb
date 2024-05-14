@@ -60,14 +60,15 @@ module TablesHelper
       ]
     when TableTypes::MEASUREMENTS
       [
-        '15%',
-        '10%',
-        '15%',
-        '15%',
-        '11%',
-        '11%',
-        '11%',
         '12%',
+        '10%',
+        '10%',
+        '14%',
+        '14%',
+        '10%',
+        '10%',
+        '10%',
+        '10%',
       ]
     when TableTypes::NETWORK_PODS
       [
@@ -104,7 +105,7 @@ module TablesHelper
           *rows,
           { text: 'Account(s)', hidden: false },
           { text: 'Resend', hidden: true },
-          { text: 'Actions', hidden: true}
+          { text: 'Actions', hidden: true }
         ]
       else
         rows = [
@@ -113,7 +114,7 @@ module TablesHelper
           { text: 'Invited' },
           { text: 'Join date' },
           { text: 'Resend', hidden: true },
-          { text: 'Actions', hidden: true}
+          { text: 'Actions', hidden: true }
         ]
       end
     when TableTypes::NETWORKS
@@ -124,19 +125,20 @@ module TablesHelper
         { text: 'Category' },
         { text: 'Avg. download', icon_before: 'download-icon.png' },
         { text: 'Avg. upload', icon_before: 'upload-icon.png' },
-        { text: 'Actions', hidden: true}
+        { text: 'Actions', hidden: true }
       ]
     when TableTypes::MEASUREMENTS
       rows = [
         *rows,
         { text: 'Time', partial_after: "application/timezone_tooltip" },
-        { text: 'Type' },
-        { text: 'Download', icon_before: 'download-icon.png' },
-        { text: 'Upload', icon_before: 'upload-icon.png' },
+        { text: 'Style' },
+        { text: 'Connection' },
+        { text: 'Download' },
+        { text: 'Upload' },
         { text: 'Latency' },
         { text: 'Loss' },
         { text: 'Jitter' },
-        { text: 'Actions', hidden: true}
+        { text: 'Actions', hidden: true }
       ]
     when TableTypes::NETWORK_PODS
       rows = [
@@ -146,7 +148,7 @@ module TablesHelper
         { text: 'Avg. download', icon_before: 'download-icon.png' },
         { text: 'Avg. upload', icon_before: 'upload-icon.png' },
         { text: 'Last measurement' },
-        { text: 'Actions', hidden: true}
+        { text: 'Actions', hidden: true }
       ]
     when TableTypes::PODS
       rows = [
@@ -156,13 +158,14 @@ module TablesHelper
         { text: 'Account', hidden: !is_all_accounts },
         { text: 'Release', hidden: !is_super_user },
         { text: 'Last measurement' },
-        { text: 'Actions', hidden: true}
+        { text: 'Actions', hidden: true }
       ]
     end
     rows
   end
 
   private
+
   def self.get_pod_id_width(is_all_accounts, is_super_user)
     width = '74%'
     if (is_all_accounts && !is_super_user) ||

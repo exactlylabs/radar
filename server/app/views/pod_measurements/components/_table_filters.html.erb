@@ -16,16 +16,29 @@
   %>
   <%= render partial: "application/components/tables/filter",
       locals: {
-        menu_id: 'types-filter-menu',
+        menu_id: 'tests-filter-menu',
         key: 'style',
         default_value: 'all',
-        default_label: 'All types',
+        default_label: 'All tests',
         options: [
-          { label: 'All types', value: 'all'},
+          { label: 'All tests', value: 'all'},
           { label: 'NDT7', value: 'ndt7' },
           { label: 'Ookla', value: 'ookla' }
         ],
       }
+  %>
+  <%= render partial: "application/components/tables/filter",
+             locals: {
+               menu_id: 'connection-filter-menu',
+               key: 'connection',
+               default_value: 'all',
+               default_label: 'All connections',
+               options: [
+                 { label: 'All connections', value: 'all'},
+                 { label: 'Wi-Fi', value: 'wifi' },
+                 { label: 'Wired', value: 'wired' }
+               ],
+             }
   %>
 
 </div>
