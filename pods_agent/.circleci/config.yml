@@ -112,7 +112,7 @@ jobs:
     steps:
       - checkout
       - build_config
-      - run: sudo apt update && sudo apt install dh-systemd
+      - run: sudo apt update && sudo apt install debhelper
       - run: |
           cd pods_agent
           make deb \
