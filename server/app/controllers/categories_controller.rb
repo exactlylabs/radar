@@ -1,4 +1,5 @@
 class CategoriesController < ApplicationController
+  include CategoriesHelper
   before_action :authenticate_user!
   before_action :set_category, except: [:index, :new, :cancel_new, :create, :import_from_another_account, :import]
 
