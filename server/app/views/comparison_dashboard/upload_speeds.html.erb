@@ -1,0 +1,26 @@
+<% responsive = @responsive || false %>
+<% entity_array = @upload_speeds.map{|row| row['case']}.to_set.to_a %>
+
+<%= turbo_frame_tag "compare-upload-speeds-widget#{responsive ? '-responsive' : ''}" do %>
+  <% if @upload_speeds.count == 0 %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="compare-upload-speeds-chart"
+            data-controller="multi-line-chart"
+            data-line-chart-data="<%= @upload_speeds.to_json %>"
+            data-parent-id="compare-upload-speeds-widget<%= responsive ? '-responsive' : '' %>"
+            data-y-step-size="150"
+            data-label-suffix=" Mbps"
+            data-action="toggleLine@window->multi-line-chart#toggleLine"
+            data-chart-id="compareUploadSpeeds"
+            data-is-compare-chart="true"
+            data-entity-count="<%= entity_array.count %>"
+    ></canvas>
+    <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
+               locals: {
+                 chart_id: "compareUploadSpeeds",
+                 options: entity_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i] }}
+               }
+    %>
+  <% end %>
+<% end %>

@@ -318,6 +318,31 @@
     width: 100%;
     height: 100%;
     position: relative;
+
+    &.widgets--comparison-tf {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+
+      .widgets--line-toggler-buttons-container {
+        width: 25%;
+        flex-wrap: wrap;
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 3px;
+
+        &[data-is-vertical="false"] {
+          width: 100%;
+        }
+      }
+
+      &:has(.widgets--line-toggler-buttons-container[data-is-vertical="false"]) {
+        flex-direction: column;
+        gap: .5rem;
+      }
+    }
   }
 }
 
@@ -437,6 +462,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: .5rem;
+  flex-wrap: wrap;
 }
 
 .widgets--line-toggler-button {
@@ -458,24 +484,6 @@
     width: 1rem;
     height: 2px;
     border-radius: 1px;
-  }
-
-  &[data-selected-line="minimum"] {
-    span {
-      background-color: $widget--minimum;
-    }
-  }
-
-  &[data-selected-line="median"] {
-    span {
-      background-color: $widget--median;
-    }
-  }
-
-  &[data-selected-line="maximum"] {
-    span {
-      background-color: $widget--maximum;
-    }
   }
 
   &[data-selected="true"],

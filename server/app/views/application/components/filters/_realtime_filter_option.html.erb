@@ -4,6 +4,7 @@
 <% raise "Base button ID is required" if local_assigns[:base_button_id].nil? %>
 <% active = local_assigns[:active] || false %>
 <% custom_actions = local_assigns[:custom_actions] || '' %>
+<% overridden_keys = local_assigns[:overridden_keys] || '' %>
 
 <button class="tables--filters-menu-item outages table-filter-option <%= active ? 'active' : '' %>"
         data-value="<%= value %>"
@@ -12,6 +13,8 @@
         data-action="click->realtime-filters#selectFilter <%= custom_actions %>"
         data-realtime-filters-target="filter"
         data-base-button-id="<%= base_button_id %>"
+        data-overriden-keys="<%= overridden_keys %>"
+        data-realtime-filter-target="filterOption"
 >
   <%= label %>
   <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>

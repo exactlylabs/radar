@@ -12,8 +12,6 @@ export default class extends Controller {
     allButtons.forEach(button => {
       if(button.dataset.selectedLine === selectedLine) {
         button.dataset.selected = button.dataset.selected === 'true' ? 'false' : 'true';
-      } else {
-        button.dataset.selected = 'false';
       }
     });
     emitCustomEvent('toggleLine', { detail: { selectedLine, chartId: chartId } });

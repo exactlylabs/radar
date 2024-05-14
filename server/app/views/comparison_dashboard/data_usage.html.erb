@@ -1,0 +1,26 @@
+<% responsive = @responsive || false %>
+<% entities_array = @data_usage.map{|row| row['case']}.to_set.to_a %>
+
+<%= turbo_frame_tag "compare-data-usage-widget#{responsive ? '-responsive' : ''}" do %>
+  <% if @data_usage.count == 0 %>
+    <%= render partial: "dashboard/components/widgets/no_data" %>
+  <% else %>
+    <canvas id="compare-data-usage-chart"
+            data-controller="multi-line-chart"
+            data-line-chart-data="<%= @data_usage.to_json %>"
+            data-parent-id="compare-data-usage-widget<%= responsive ? '-responsive' : '' %>"
+            data-y-step-size="100"
+            data-label-suffix="<%= current_user.data_cap_unit || "GB" %>"
+            data-action="toggleLine@window->multi-line-chart#toggleLine"
+            data-chart-id="compareDataUsage"
+            data-is-compare-chart="true"
+            data-entity-count="<%= entities_array.count %>"
+    ></canvas>
+    <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
+               locals: {
+                 chart_id: "compareDataUsage",
+                 options: entities_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i] }}
+               }
+    %>
+  <% end %>
+<% end %>

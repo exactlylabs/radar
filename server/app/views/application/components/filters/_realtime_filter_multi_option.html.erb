@@ -1,0 +1,25 @@
+<% raise "Filter key is required" if local_assigns[:key].nil? %>
+<% raise "Label is required" if local_assigns[:label].nil? %>
+<% raise "Multiple selection label is required" if local_assigns[:multi_label].nil? %>
+<% raise "Value is required" if local_assigns[:value].nil? %>
+<% raise "Base button ID is required" if local_assigns[:base_button_id].nil? %>
+<% active = local_assigns[:active] || false %>
+<% custom_actions = local_assigns[:custom_actions] || '' %>
+<% overridden_keys = local_assigns[:overridden_keys] || '' %>
+
+<label class="tables--filters-menu-item-checkbox">
+  <input type="checkbox"
+         class="forms--checkbox"
+         value="<%= value %>"
+         data-key="<%= key %>"
+         data-label="<%= label %>"
+         data-value="<%= value %>"
+         data-action="change->realtime-filters#selectMultiFilter:prevent <%= custom_actions %>"
+         data-realtime-filters-target="filter"
+         data-base-button-id="<%= base_button_id %>"
+         data-overriden-keys="<%= overridden_keys %>"
+         data-multi-label="<%= multi_label %>"
+         <%= active ? 'checked=checked' : nil %>
+    />
+  <%= label %>
+</label>

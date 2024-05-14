@@ -13,11 +13,22 @@ export const BOTTOM_LABELS_HEIGHT = 32;
 export const CHART_TITLES = {
   'downloadSpeeds': 'Download Speeds',
   'uploadSpeeds': 'Upload Speeds',
-  'latency': 'Latency'
+  'latency': 'Latency',
+  'compareDownloadSpeeds': 'Download Speeds',
+  'compareUploadSpeeds': 'Upload Speeds',
+  'compareLatency': 'Latency',
+  'compareDataUsage': 'Data Usage',
 }
 
 export default class ChartController extends Controller {
+  
+  COMPARISON_HEX = ['#472118', '#960A8B', '#FC3A11', '#58396A', '#D6463E', '#307B2A', '#535FB6', '#77DFB1', '#767698', '#502628', '#EFE7DF', '#A502EF', '#B21BE4', '#88FC76', '#9FADE3', '#B403C4', '#78BCFE', '#686514', '#B2D343', '#CE87CA', '#20E92E', '#C8A3D7', '#161C6C', '#98AE22', '#A8A5CF', '#D72876', '#105F87', '#432B82', '#5462EA', '#86C625', '#9175BF', '#438F36', '#AF3BCF', '#F3ADEF', '#050044', '#5F47D3', '#E11986', '#0C7566', '#A129E0', '#43B2D6', '#A7CB09', '#0C7318', '#9A6E4F', '#81B2A6', '#AE37B2', '#D66E62', '#05F0D9', '#EC1FA4', '#4CAC54', '#F94C42'];
+  
   connect() {
+    this.isCompareChart = this.element.dataset.isCompareChart === 'true';
+    if(this.isCompareChart) {
+      this.entityCount = Number(this.element.dataset.entityCount) || 1;
+    }
     this.prepareInitialState();
     this.prepareData(this.chartData);
     this.loadChart();
@@ -29,10 +40,14 @@ export default class ChartController extends Controller {
   
   prepareInitialState() {
     this.parent = document.getElementById(this.element.dataset.parentId);
-    // TODO: try/catch
-    this.chartData = JSON.parse(this.element.dataset.lineChartData);
-    this.labels = [];
     this.labelSuffix = this.element.dataset.labelSuffix || '';
+    // TODO: try/catch
+    if(this.isCompareChart) {
+      this.chartData = this.getChartDataForComparison();
+    } else {
+      this.chartData = JSON.parse(this.element.dataset.lineChartData);
+    }
+    this.labels = [];
     
     // Specific coordinates for click-drag feature
     this.mouseClickedX = null;
@@ -58,6 +73,7 @@ export default class ChartController extends Controller {
   }
   
   handleMouseDown(e) {
+    if(this.chartId === 'compareTotalData') return;
     const { mouseX} = this.getMousePosition(e);
     this.mouseClickedX = mouseX;
     this.isDragging = true;
@@ -165,7 +181,12 @@ export default class ChartController extends Controller {
       this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
       this.labels = [];
     }
-    const dpr = this.createHiDPICanvas(this.parent.clientWidth, this.parent.clientHeight);
+    let dpr;
+    if(this.isCompareChart && this.entityCount > 5) {
+      dpr = this.createHiDPICanvas(this.parent.clientWidth * 0.75, this.parent.clientHeight);
+    } else {
+      dpr = this.createHiDPICanvas(this.parent.clientWidth, this.parent.clientHeight);
+    }
     this.ctx = this.element.getContext('2d');
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this.setLongestLabel();
@@ -417,17 +438,13 @@ export default class ChartController extends Controller {
     return spacing;
   }
   
-  getFirstGradientStopColor(hex) {
-    switch (hex) {
-      case '#4b7be5':
-        return 'rgba(75, 123, 229, 0.2)';
-      case '#ff695d':
-        return 'rgba(255, 105, 93, 0.2)';
-      case '#9138e5':
-        return 'rgba(145, 56, 229, 0.2)';
-      default:
-        return null;
-    }
+  getFirstGradientStopColor(hex, opacity = 0.2) {
+    // return hex with specified opacity
+    const hexColor = hex.replace('#', '');
+    const r = parseInt(hexColor.substring(0, 2), 16);
+    const g = parseInt(hexColor.substring(2, 4), 16);
+    const b = parseInt(hexColor.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }
   
   shouldHideTooltip(mouseX, mouseY) {

@@ -1015,46 +1015,46 @@ div[data-dashboard-time-filter-target="monthYear"] {
   gap: .75rem;
 
   &[data-current-compare-by="account"] {
-    div[data-menu-id="account-filter-menu"] {
+    div[data-controller="filters"][data-menu-id="account-filter-menu"] {
       display: flex;
     }
-    div:not([data-menu-id="account-filter-menu"]) {
+    div[data-controller="filters"]:not([data-menu-id="account-filter-menu"]) {
       display: none;
     }
   }
 
   &[data-current-compare-by="network"] {
-    div[data-menu-id="network-filter-menu"] {
+    div[data-controller="filters"][data-menu-id="network-filter-menu"] {
       display: flex;
     }
-    div:not([data-menu-id="network-filter-menu"]) {
+    div[data-controller="filters"]:not([data-menu-id="network-filter-menu"]) {
       display: none;
     }
   }
 
   &[data-current-compare-by="category"] {
-    div[data-menu-id="category-filter-menu"] {
+    div[data-controller="filters"][data-menu-id="category-filter-menu"] {
       display: flex;
     }
-    div:not([data-menu-id="category-filter-menu"]) {
+    div[data-controller="filters"]:not([data-menu-id="category-filter-menu"]) {
       display: none;
     }
   }
 
   &[data-current-compare-by="isp"] {
-    div[data-menu-id="isp-filter-menu"] {
+    div[data-controller="filters"][data-menu-id="isp-filter-menu"] {
       display: flex;
     }
-    div:not([data-menu-id="isp-filter-menu"]) {
+    div[data-controller="filters"]:not([data-menu-id="isp-filter-menu"]) {
       display: none;
     }
   }
 
   &[data-current-compare-by="pod"] {
-    div[data-menu-id="pod-filter-menu"] {
+    div[data-controller="filters"][data-menu-id="pod-filter-menu"] {
       display: flex;
     }
-    div:not([data-menu-id="pod-filter-menu"]) {
+    div[data-controller="filters"]:not([data-menu-id="pod-filter-menu"]) {
       display: none;
     }
   }

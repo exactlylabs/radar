@@ -1,0 +1,8 @@
+<% url = local_assigns[:custom_url] || comparison_data_usage_path(network_id: params[:network_id], account_id: params[:account_id], isp_id: params[:isp_id], category_id: params[:category_id], pod_id: params[:pod_id], days: params[:days], start: params[:start], end: params[:end], curve_type: params[:curve_type], compare_by: params[:compare_by]) %>
+<% responsive = local_assigns[:responsive] || false %>
+
+<div class="widgets--canvas-container">
+  <%= turbo_frame_tag "compare-data-usage-widget#{responsive ? '-responsive' : ''}", src: url, loading: 'lazy', class: "widgets--comparison-tf" do %>
+    <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+  <% end %>
+</div>
