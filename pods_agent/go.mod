@@ -3,6 +3,7 @@ module github.com/exactlylabs/radar/pods_agent
 go 1.21
 
 require (
+	github.com/alexflint/go-arg v1.4.3
 	github.com/exactlylabs/go-monitor v0.1.3
 	github.com/getsentry/sentry-go v0.21.0
 	github.com/google/uuid v1.3.1
@@ -35,7 +36,6 @@ require (
 	cloud.google.com/go/iam v0.8.0 // indirect
 	cloud.google.com/go/storage v1.27.0 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/alexflint/go-arg v1.4.3 // indirect
 	github.com/alexflint/go-scalar v1.1.0 // indirect
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -59,7 +59,6 @@ require (
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
-	golang.org/x/crypto v0.15.0 // indirect
 	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/oauth2 v0.12.0 // indirect
 	golang.org/x/term v0.14.0 // indirect

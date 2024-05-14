@@ -6,9 +6,9 @@
 
 sudo dnf install -y rpmdevtools rpmlint git wget make systemd-rpm-macros gettext
 
-# Install Golang 
-wget https://go.dev/dl/go1.18.3.linux-amd64.tar.gz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xf go1.18.3.linux-amd64.tar.gz
+# Install Golang
+wget https://go.dev/dl/go1.21.6.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xf go1.21.6.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
 echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
 
