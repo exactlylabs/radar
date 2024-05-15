@@ -9,7 +9,8 @@ module ClientApi
           render json: []
         end
       end
-      # 
+
+      #
       # POST /client_api/v1/suggestions
       def suggestions
         results = []
@@ -26,7 +27,6 @@ module ClientApi
         else
           render json: []
         end
-        
       end
 
       def coordinates
