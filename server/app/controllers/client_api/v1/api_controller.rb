@@ -26,20 +26,16 @@ module ClientApi
       def rate_limit
         client_ip = request.remote_ip
         key = "count:#{client_ip}"
-        count = REDIS.get(key)
 
-        unless count
-          REDIS.set(key, 0)
+        count = REDIS.incr(key)
+        if count == 1
           REDIS.expire(key, 60) # 1 minute
-          return true
         end
 
-        if count.to_i >= 10 # 10 requests per minute
+        if count.to_i > 10 # 10 requests per minute
           render status: :too_many_requests, json: { message: "You have fired too many requests. Please wait some time before requesting this resource again." }
           return
         end
-
-        REDIS.incr(key)
         true
       end
 
