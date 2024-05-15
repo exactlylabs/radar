@@ -3,8 +3,10 @@ package cable
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
@@ -19,12 +21,14 @@ type MessageCallback func(ServerMessage)
 // ChannelClient subscribes to a specific channel and handles the default connection steps.
 // To process the subscription messages or other type of events, set the "On[XXX]" callback variables
 type ChannelClient struct {
-	ServerURL   string
-	Auth        string
-	cli         *ws.Client
-	ChannelName string
-	identifier  Identifier
-	header      http.Header
+	ServerURL           string
+	Auth                string
+	cli                 *ws.Client
+	ChannelName         string
+	SubscriptionTimeout time.Duration
+	subscription        *Identifier
+	header              http.Header
+	subscribedCh        chan struct{} // To signal a successful subscription
 
 	// Callbacks
 	OnConnected       func()
@@ -36,14 +40,12 @@ type ChannelClient struct {
 func NewChannel(serverUrl, auth, channelName string, customHeader http.Header) *ChannelClient {
 	customHeader.Set("Authorization", "Basic "+auth)
 	return &ChannelClient{
-		ServerURL:   serverUrl,
-		Auth:        auth,
-		ChannelName: channelName,
-		header:      customHeader,
-		identifier: Identifier{
-			Channel: channelName,
-			Id:      uuid.NewString(),
-		},
+		ServerURL:           serverUrl,
+		Auth:                auth,
+		ChannelName:         channelName,
+		SubscriptionTimeout: time.Second * 10,
+		header:              customHeader,
+		subscribedCh:        make(chan struct{}),
 	}
 }
 
@@ -70,7 +72,14 @@ func (c *ChannelClient) Connect(ctx context.Context) error {
 		defer sentry.NotifyIfPanic()
 		c.listenToMessages()
 	}()
-	return nil
+
+	select {
+	case <-c.subscribedCh:
+		log.Println("cable.ChannelClient#Connect: connected successfully:", *c.subscription)
+		return nil
+	case <-time.NewTimer(c.SubscriptionTimeout).C:
+		return errors.SentinelWithStack(ErrSubscriptionConfirmationTimeout)
+	}
 }
 
 func (c *ChannelClient) Close() error {
@@ -78,13 +87,20 @@ func (c *ChannelClient) Close() error {
 }
 
 func (c *ChannelClient) onConnected(cli *ws.Client) {
-	// Subscribe to channels
-	c.cli.Sender() <- ClientMessage{
-		Command:    Subscribe,
-		Identifier: &c.identifier,
-	}
+	c.subscribeToChannel()
 	if c.OnConnected != nil {
 		c.OnConnected()
+	}
+}
+
+// subscribeToChannel tries to subscribe and wait until the subscription is confirmed, with a timeout of 5 seconds
+func (c *ChannelClient) subscribeToChannel() {
+	c.cli.Sender() <- ClientMessage{
+		Command: Subscribe,
+		Identifier: &Identifier{
+			Channel: c.ChannelName,
+			Id:      uuid.NewString(),
+		},
 	}
 }
 
@@ -103,6 +119,11 @@ func (c *ChannelClient) listenToMessages() {
 		}
 		switch msg.Type {
 		case ConfirmSubscription:
+			c.subscription = &Identifier{
+				Channel: msg.Identifier.Channel,
+				Id:      msg.Identifier.Id,
+			}
+			c.subscribedCh <- struct{}{}
 			if c.OnSubscribed != nil {
 				c.OnSubscribed()
 			}
@@ -120,10 +141,15 @@ func (c *ChannelClient) listenToMessages() {
 	}
 }
 
-func (c *ChannelClient) SendAction(msg CustomActionData) {
+func (c *ChannelClient) SendAction(msg CustomActionData) error {
+	if c.subscription == nil {
+		// We can't send actions without a subscription
+		return errors.SentinelWithStack(ErrNotSubscribed)
+	}
 	c.cli.Sender() <- ClientMessage{
-		Identifier: &c.identifier,
+		Identifier: c.subscription,
 		Command:    Message,
 		ActionData: &msg,
 	}
+	return nil
 }
