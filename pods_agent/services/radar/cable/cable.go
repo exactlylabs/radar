@@ -93,7 +93,6 @@ func (c *ChannelClient) onConnected(cli *ws.Client) {
 	}
 }
 
-// subscribeToChannel tries to subscribe and wait until the subscription is confirmed, with a timeout of 5 seconds
 func (c *ChannelClient) subscribeToChannel() {
 	c.cli.Sender() <- ClientMessage{
 		Command: Subscribe,
