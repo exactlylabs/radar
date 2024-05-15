@@ -32,19 +32,20 @@ export default class extends Controller {
 
         let fetchUrl = formElement.getAttribute('data-fetch-url');
 
-        const newUrl = new URL(currentUrl.origin + fetchUrl);
-        const newSearchParams = new URLSearchParams(newUrl.search);
+        const newUrl = new URL(fetchUrl);
+        let newSearchParams = new URLSearchParams(newUrl.search);
 
         newSearchParams.set('query', query);
         let updateUrl = formElement.getAttribute('data-update-url');
 
 
-        if (updateUrl !== null && updateUrl !== undefined && updateUrl) {
-            for (let paramName of currentSearchParams.keys()) {
-                if (!newSearchParams.has(paramName)) {
-                    newSearchParams.set(paramName, currentSearchParams.get(paramName));
-                }
-            }
+        if (!!updateUrl) {
+            newSearchParams = new URLSearchParams({
+                ...Object.fromEntries(currentSearchParams),
+                ...Object.fromEntries(newSearchParams)
+            });
+
+
             url = newUrl + "?" + newSearchParams.toString();
             window.history.replaceState(null, null, url);
         }

@@ -4,7 +4,7 @@
 
 <div class="modals--content-container" data-resource="categories" data-type="full" data-controller="categories" data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker">
   <div class="category--search-add-container">
-    <%= render partial: "categories/search_input", locals: { url: categories_path, turbo_frame: "categories" } %>
+    <%= render partial: "categories/search_input", locals: { url: categories_url, turbo_frame: "categories" } %>
     <% unless current_account.is_all_accounts? %>
       <%= render partial: "categories/add_category_button", locals: { account_id: current_account.id } %>
     <% end %>
