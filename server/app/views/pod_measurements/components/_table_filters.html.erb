@@ -1,40 +1,40 @@
 <div class="tables--filters-container">
   <%= render partial: "application/components/tables/filter",
-      locals: {
-        menu_id: 'range-filter-menu',
-        key: 'range',
-        default_value: 'all',
-        default_label: 'All time',
-        options: [
-          { label: 'Last week', value: 'last-week' },
-          { label: 'Last month', value: 'last-month' },
-          { label: 'Last 6 months', value: 'last-6-months' },
-          { label: 'Last year', value: 'last-year' },
-          { label: 'All time', value: 'all-time' },
-        ],
-      }
+             locals: {
+               menu_id: 'range-filter-menu',
+               key: 'range',
+               default_value: nil,
+               default_label: 'All time',
+               options: [
+                 { label: 'Last week', value: 'last-week' },
+                 { label: 'Last month', value: 'last-month' },
+                 { label: 'Last 6 months', value: 'last-6-months' },
+                 { label: 'Last year', value: 'last-year' },
+                 { label: 'All time', value: nil },
+               ],
+             }
   %>
   <%= render partial: "application/components/tables/filter",
-      locals: {
-        menu_id: 'tests-filter-menu',
-        key: 'style',
-        default_value: 'all',
-        default_label: 'All tests',
-        options: [
-          { label: 'All tests', value: 'all'},
-          { label: 'NDT7', value: 'ndt7' },
-          { label: 'Ookla', value: 'ookla' }
-        ],
-      }
+             locals: {
+               menu_id: 'tests-filter-menu',
+               key: 'style',
+               default_value: nil,
+               default_label: 'All tests',
+               options: [
+                 { label: 'All tests', value: nil },
+                 { label: 'NDT7', value: 'ndt7' },
+                 { label: 'Ookla', value: 'ookla' }
+               ],
+             }
   %>
   <%= render partial: "application/components/tables/filter",
              locals: {
                menu_id: 'connection-filter-menu',
                key: 'connection',
-               default_value: 'all',
+               default_value: nil,
                default_label: 'All connections',
                options: [
-                 { label: 'All connections', value: 'all'},
+                 { label: 'All connections', value: nil },
                  { label: 'Wi-Fi', value: 'wifi' },
                  { label: 'Wired', value: 'wired' }
                ],
