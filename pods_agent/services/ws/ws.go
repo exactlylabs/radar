@@ -46,6 +46,7 @@ type Client struct {
 	pingWait          time.Duration
 	onConnectionError ConnectionErrorCallback
 	onConnected       func(*Client)
+	connected         bool
 }
 
 func New(url string, header http.Header, options ...Option) *Client {
@@ -121,6 +122,10 @@ func (c *Client) connectAndListen(ctx context.Context) error {
 	if c.onConnected != nil {
 		c.onConnected(c)
 	}
+	c.connected = true
+	defer func() {
+		c.connected = false
+	}()
 	c.backoff.Reset()
 
 	for {
@@ -143,6 +148,10 @@ func (c *Client) connectAndListen(ctx context.Context) error {
 			return nil
 		}
 	}
+}
+
+func (c *Client) Connected() bool {
+	return c.connected
 }
 
 // Sender channel, where any message to the server is sent
