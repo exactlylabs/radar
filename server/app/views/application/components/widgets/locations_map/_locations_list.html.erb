@@ -4,7 +4,7 @@
   <%= render partial: "application/components/shared/custom_search_input",
       locals: { 
         turbo_frame: true,
-        url: search_locations_path,
+        url: search_locations_url,
         controller: 'locations-map-widget',
         method: 'handleInputChange'
       }
