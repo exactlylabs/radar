@@ -2,6 +2,9 @@ import { Controller } from "@hotwired/stimulus";
 import handleError from "./error_handler_controller";
 
 export default class extends Controller {
+  
+  ADDRESS_SEARCH_DELAY = 500;
+  
   static targets = [
     "name",
     "address",
@@ -70,7 +73,7 @@ export default class extends Controller {
             this.geoIconTarget.classList.remove("d-none");
           });
       }.bind(this),
-      1000
+      this.ADDRESS_SEARCH_DELAY
     );
   }
 
@@ -101,7 +104,7 @@ export default class extends Controller {
   fetchGeoData(address) {
     this.address = address;
     clearTimeout(this.addressTimeout);
-    this.addressTimeout = setTimeout(this.fetch.bind(this), 1000);
+    this.addressTimeout = setTimeout(this.fetch.bind(this), this.ADDRESS_SEARCH_DELAY);
   }
 
   fetch() {
