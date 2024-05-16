@@ -79,7 +79,7 @@
 }
 
 @media (min-width: 1080px) and (max-width: 1680px) {
-  .widgets--widget {
+  .widgets--widget:not([data-is-comparison="true"]) {
     max-width: 570px;
   }
 }
@@ -348,6 +348,8 @@
 
         &[data-is-vertical="false"] {
           width: 100%;
+          overflow-y: unset;
+          padding: 0;
         }
       }
 

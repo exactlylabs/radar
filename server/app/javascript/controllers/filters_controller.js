@@ -54,22 +54,7 @@ export default class extends Controller {
     const windowWidth = window.innerWidth;
     if(rightEdge > windowWidth) {
       const shiftAmount = rightEdge - windowWidth + 10;
-      this.menu.style.left = `${menuRect.left - shiftAmount}px`;
-      this.menu.style.right = 'unset';
-    }
-    
-    const leftEdge = menuRect.left;
-    if(leftEdge < 0) {
-      this.menu.style.left = '0';
-      this.menu.style.right = 'unset';
-    }
-    
-    const startingPixel = this.element.getBoundingClientRect().left;
-    const menuWidth = this.menu.offsetWidth;
-    const menuEndPixel = startingPixel + menuWidth;
-    
-    if(menuEndPixel > windowWidth) {
-      this.menu.style.maxWidth = `${windowWidth - startingPixel}px`;
+      this.menu.style.maxWidth = `${menuRect.width - (rightEdge - windowWidth)}px`;
     }
   }
 }

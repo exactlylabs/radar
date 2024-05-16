@@ -157,8 +157,11 @@ export default class MultiLineChartController extends ChartController {
     const minDifIndexEntry = firstEntry.value[1][minDifIndex];
     let xCoordinate = this.getXCoordinateFromXValue(firstEntry.value[1], minDifIndex);
     let yCoordinate;
-    
+    let rowCount = 1;
     for(let [hex, linePoints] of this.adjustedData.entries()) {
+      if(rowCount > 5) break;
+      rowCount++;
+      
       const currentColorMinDifEntry = linePoints[minDifIndex];
       let yValue;
       if(currentColorMinDifEntry.ys.length === 1) {
@@ -240,6 +243,7 @@ export default class MultiLineChartController extends ChartController {
     const date = new Date(Number(minDifIndexEntry.x));
     let i = 0;
     for(let [hex, _] of this.adjustedData.entries()) {
+      if(i >= yValues.length) break;
       this.drawDotOnLine(xCoordinate + 12, tooltipTopYCoordinate + 40 + 8 + i * 25, hex);
       
       this.ctx.font = '13px Mulish';

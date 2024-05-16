@@ -61,8 +61,18 @@ class DashboardController < ApplicationController
     @locations = policy_scope(Location)
     @locations = @locations.where("name ILIKE ?", "%#{query}%") if query
     @locations = get_filtered_locations(@locations, status)
+
+    if params[:account_id]
+      @locations = @locations.where(account_id: params[:account_id])
+    end
+
+    if params[:network_id]
+      @locations = @locations.where(id: params[:network_id])
+    end
+
     respond_to do |format|
       format.turbo_stream
+      format.html
     end
   end
 

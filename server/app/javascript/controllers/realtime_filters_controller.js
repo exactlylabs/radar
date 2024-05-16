@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
   
-  static targets = ['baseButton', 'filter', 'dynamicCompareByContainer', 'filterOption'];
+  static targets = ['filter', 'filterOption'];
   
   connect() {
     this.searchParams = new URLSearchParams(window.location.search);
@@ -35,21 +35,27 @@ export default class extends Controller {
   }
   
   selectMultiFilter(e) {
-    e.preventDefault();
     const selectedFilterTarget = e.target;
     const key = selectedFilterTarget.dataset.key;
     const value = selectedFilterTarget.dataset.value;
     let label = '';
+    const defaultOption = document.querySelector(`[data-key="${key}"][data-value="all"]`);
+    if(defaultOption) {
+      if(value === 'all') this.setAsActive(key, value);
+      else this.setAsInactive(key, 'all');
+    }
     if(value === 'all') {
       this.searchParams.delete(key);
-      this.updateBaseButton(selectedFilterTarget, null);
+      label = null;
+      this.setAsActive(key, value);
     } else if (this.searchParams.has(key)) {
       const values = this.searchParams.getAll(key);
       if (values.includes(value)) {
         this.searchParams.delete(key, value);
         const currentValues = this.searchParams.getAll(key);
         if(currentValues.length === 0) {
-          label = this.baseButtonTarget.dataset.defaultLabel;
+          let baseButton = document.getElementById(selectedFilterTarget.dataset.baseButtonId);
+          label = baseButton.dataset.defaultLabel;
         } else if(currentValues.length === 1) {
           label = this.allItems.get(key).get(currentValues[0]);
         } else {
@@ -60,6 +66,7 @@ export default class extends Controller {
         label = `${(values.length + 1)} ${selectedFilterTarget.dataset.multiLabel}`;
       }
     } else {
+      
       this.searchParams.set(key, value);
       label = this.allItems.get(key).get(value);
     }
@@ -92,7 +99,13 @@ export default class extends Controller {
     }
     others.forEach(other => {
       other.classList.remove('active');
+      if(other.checked) other.checked = false;
     });
+  }
+  
+  setAsInactive(key, value) {
+    const element = document.querySelector(`[data-key="${key}"][data-value="${value}"]`);
+    if(element) element.classList.remove('active');
   }
   
   applyFilters(e) {
@@ -100,9 +113,5 @@ export default class extends Controller {
     const url = new URL(window.location.href);
     url.search = this.searchParams.toString();
     window.location.href = url.href;
-  }
-  
-  toggleDynamicContent(e) {
-    this.dynamicCompareByContainerTarget.dataset.currentCompareBy = e.target.dataset.value;
   }
 }
