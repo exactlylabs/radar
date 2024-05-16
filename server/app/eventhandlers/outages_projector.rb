@@ -61,7 +61,6 @@ class OutagesProjector
         end
         @co.state = @state
         @co.save!
-        # sleep 100000
       end
     end
   end
@@ -100,7 +99,7 @@ class OutagesProjector
     end
 
     pod_state = event["snapshot_state"]
-    as_id = pod_state["autonomous_system_id"]
+    as_id = pod_state["autonomous_system_id"].to_s
 
     case event["name"]
     when Client::Events::WENT_OFFLINE
@@ -126,6 +125,7 @@ class OutagesProjector
         resolve_client_outage(c_outage, c_outage.resolved_at)
       end
     end
+    @state["isp_outages"].delete(isp_outage.autonomous_system_id)
   end
 
   def create_outage_event_for_client_outage(client_outage, outage_type, resolved_at)
@@ -189,18 +189,21 @@ class OutagesProjector
       isp_outage = client_outage.outage_event
       client_outage.update_columns(status: :resolved, resolved_at: resolved_at)
       return unless isp_outage.active?
-
-      cached_data = @state["isp_outages"][isp_outage.autonomous_system_id]
+      cached_data = @state["isp_outages"][isp_outage.autonomous_system_id.to_s]
+      byebug if cached_data.nil? || cached_data["isp_window_client_outages"].nil?
       cached_data["isp_window_count"] -= 1 if client_outage.accounted_in_isp_window
 
       if (cached_data["isp_window_count"].to_f / cached_data["isp_window_client_outages"].count.to_f) <= 2.0/3.0
         isp_outage.update_columns(status: :resolved, resolved_at: resolved_at)
-        @state["isp_outages"].delete(isp_outage.autonomous_system_id)
+        @state["isp_outages"].delete(isp_outage.autonomous_system_id.to_s)
       end
     end
   end
 
   def handle_service_started_event(as_id, event)
+    # We use as_id as a key in the state hash, and we can end up with bugs because after the state is persisted in the DB,
+    # it will be converted into a string.
+    as_id = as_id.to_s
     client_outage = ClientOutage.active.where(
       client_id: event["aggregate_id"]
     ).first
