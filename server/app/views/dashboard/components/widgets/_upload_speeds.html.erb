@@ -1,8 +1,8 @@
-<% url = local_assigns[:custom_url] || upload_speeds_path(network_id: params[:network_id], account_id: params[:account_id], isp_id: params[:isp_id], days: params[:days], start: params[:start], end: params[:end]) %>
+<% url = local_assigns[:custom_url] || upload_speeds_url(network_id: params[:network_id], account_id: params[:account_id], isp_id: params[:isp_id], days: params[:days], start: params[:start], end: params[:end]) %>
 <% responsive = local_assigns[:responsive] || false %>
 
 <div class="widgets--canvas-container">
-  <%= turbo_frame_tag "upload-speeds-widget#{responsive ? '-responsive' : ''}", src: url, loading: 'lazy' do %>
+  <%= turbo_frame_tag "upload-speeds-widget#{responsive ? '-responsive' : ''}", src: url, loading: 'lazy', data: { dashboard_realtime_filters_target: 'widget', action: 'turbo:before-fetch-response->dashboard-realtime-filters#onWidgetSubmitEnd' } do %>
     <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
   <% end %>
 </div>

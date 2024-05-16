@@ -4,14 +4,14 @@
   <%= render partial: "application/components/shared/custom_search_input",
       locals: { 
         turbo_frame: true,
-        url: search_locations_url,
+        url: search_locations_url(account_id: params[:account_id], network_id: params[:network_id]),
         controller: 'locations-map-widget',
         method: 'handleInputChange'
       }
   %>
   <%= render partial: "application/components/widgets/locations_map/search_filters_menu" %>
 </div>
-<%= turbo_frame_tag "locations_map_widget_list" do %>
+<%= turbo_frame_tag "locations_map_widget_list", src: search_locations_url(account_id: params[:account_id], network_id: params[:network_id]), data: { dashboard_realtime_filters_target: 'widget', action: 'turbo:before-fetch-response->dashboard-realtime-filters#onWidgetSubmitEnd' } do %>
   <% if @locations.length > 0 %>
     <% @locations.each do |location| %>
       <%= render "application/components/widgets/locations_map/location_row", location: location %>

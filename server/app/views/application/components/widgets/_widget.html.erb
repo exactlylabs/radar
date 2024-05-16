@@ -1,7 +1,7 @@
 <% custom_url = local_assigns[:custom_url] || nil %>
 <% responsive = local_assigns[:responsive] || false %>
 
-<div class="widgets--widget" data-widget-type="<%= type %>" data-pod-page="<%= custom_url.present? %>">
+<div class="widgets--widget" data-widget-type="<%= type %>" data-pod-page="<%= custom_url.present? %>" data-is-comparison="<%= type.include?('comparison') %>">
   <%= render partial: "application/components/widgets/widget_header", locals: { type: type } %>
   <div class="widgets--widget-content">
     <% case type %>
