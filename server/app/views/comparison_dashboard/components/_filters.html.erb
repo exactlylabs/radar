@@ -29,19 +29,19 @@
                no_z_index: true,
              } do %>
     <%= render partial: "application/components/filters/realtime_filter_option",
-               locals: { overridden_keys: "network_id[], category_id[], pod_id[], isp_id[]",
+               locals: { overridden_keys: "network_id[], category_id[], pod_id[], isp_id[]", base_menu_id: 'compare-by-filter-menu',
                          custom_actions: 'click->dashboard-realtime-filters#toggleDynamicContent click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'account', label: 'Account', active: params[:compare_by].nil? || params[:compare_by] == 'account' } %>
     <%= render partial: "application/components/filters/realtime_filter_option",
-               locals: { overridden_keys: "network_id[], account_id[], pod_id[], isp_id[]",
+               locals: { overridden_keys: "network_id[], account_id[], pod_id[], isp_id[]", base_menu_id: 'compare-by-filter-menu',
                          custom_actions: 'click->dashboard-realtime-filters#toggleDynamicContent click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'category', label: 'Category', active: params[:compare_by] == 'category' } %>
     <%= render partial: "application/components/filters/realtime_filter_option",
-               locals: { overridden_keys: "network_id[], category_id[], pod_id[], account_id[]",
+               locals: { overridden_keys: "network_id[], category_id[], pod_id[], account_id[]", base_menu_id: 'compare-by-filter-menu',
                          custom_actions: 'click->dashboard-realtime-filters#toggleDynamicContent click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'isp', label: 'ISP', active: params[:compare_by] == 'isp' } %>
     <%= render partial: "application/components/filters/realtime_filter_option",
-               locals: { overridden_keys: "isp_id[], category_id[], pod_id[], account_id[]",
+               locals: { overridden_keys: "isp_id[], category_id[], pod_id[], account_id[]", base_menu_id: 'compare-by-filter-menu',
                          custom_actions: 'click->dashboard-realtime-filters#toggleDynamicContent click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'network', label: FeatureFlagHelper.is_available('networks', current_user) ? 'Network' : 'Location', active: params[:compare_by] == 'network' } %>
     <%= render partial: "application/components/filters/realtime_filter_option",
-               locals: { overridden_keys: "network_id[], category_id[], account_id[], isp_id[]",
+               locals: { overridden_keys: "network_id[], category_id[], account_id[], isp_id[]", base_menu_id: 'compare-by-filter-menu',
                          custom_actions: 'click->dashboard-realtime-filters#toggleDynamicContent click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'compare-by-filter', key: 'compare_by', value: 'pod', label: 'Pod', active: params[:compare_by] == 'pod' } %>
   <% end %>
 
@@ -62,13 +62,13 @@
                  no_z_index: true,
                } do %>
       <%= render partial: "application/components/filters/realtime_filter_option",
-                 locals: { multi_label: ' accounts',overridden_keys: "network_id[], category_id[], pod_id[], isp_id[]",
+                 locals: { base_menu_id: 'account-filter-menu', multi_label: ' accounts',overridden_keys: "network_id[], category_id[], pod_id[], isp_id[]",
                            custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent',
                            base_button_id: 'account-filter', key: 'account_id[]', value: 'all', label: 'All accounts', active: params[:account_id].nil? } %>
       <div class="category--horizontal-divider"></div>
       <% policy_scope(Account).order(:name).each do |account| %>
         <%= render partial: "application/components/filters/realtime_filter_multi_option",
-                   locals: { custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' accounts', overridden_keys: "network_id[], category_id[], pod_id[], isp_id[]", base_button_id: 'account-filter', key: 'account_id[]', value: account.id, label: account.name, active: params[:account_id] == account.id.to_s || params[:account_id]&.include?(account.id.to_s) } %>
+                   locals: { base_menu_id: 'account-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' accounts', overridden_keys: "network_id[], category_id[], pod_id[], isp_id[]", base_button_id: 'account-filter', key: 'account_id[]', value: account.id, label: account.name, active: params[:account_id] == account.id.to_s || params[:account_id]&.include?(account.id.to_s) } %>
       <% end %>
     <% end %>
 
@@ -83,9 +83,9 @@
                  pagination: false,
                  no_z_index: true,
                } do %>
-      <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' networks',overridden_keys: "account_id[], category_id[], pod_id[], isp_id[]", base_button_id: 'network-filter', key: 'network_id[]', value: 'all', label: 'All networks', active: params[:network_id].nil? } %>
+      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'network-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' networks',overridden_keys: "account_id[], category_id[], pod_id[], isp_id[]", base_button_id: 'network-filter', key: 'network_id[]', value: 'all', label: 'All networks', active: params[:network_id].nil? } %>
       <% policy_scope(Location).order(:name).each do |network| %>
-        <%= render partial: "application/components/filters/realtime_filter_multi_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' networks',overridden_keys: "account_id[], category_id[], pod_id[], isp_id[]", base_button_id: 'network-filter', key: 'network_id[]', value: network.id, label: network.name, active: params[:network_id] == network.id.to_s || params[:network_id]&.include?(network.id.to_s) } %>
+        <%= render partial: "application/components/filters/realtime_filter_multi_option", locals: { base_menu_id: 'network-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' networks',overridden_keys: "account_id[], category_id[], pod_id[], isp_id[]", base_button_id: 'network-filter', key: 'network_id[]', value: network.id, label: network.name, active: params[:network_id] == network.id.to_s || params[:network_id]&.include?(network.id.to_s) } %>
       <% end %>
     <% end %>
 
@@ -101,9 +101,9 @@
                  pagination: false,
                  no_z_index: true,
                } do %>
-      <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' categories', overridden_keys: "account_id[], network_id[], pod_id[], isp_id[]", base_button_id: 'category-filter', key: 'category_id[]', value: 'all', label: 'All categories', active: params[:category_id].nil? } %>
+      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' categories', overridden_keys: "account_id[], network_id[], pod_id[], isp_id[]", base_button_id: 'category-filter', key: 'category_id[]', value: 'all', label: 'All categories', active: params[:category_id].nil? } %>
       <% policy_scope(Category).order(:name).each do |category| %>
-        <%= render partial: "application/components/filters/realtime_filter_multi_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' categories', overridden_keys: "account_id[], network_id[], pod_id[], isp_id[]", base_button_id: 'category-filter', key: 'category_id[]', value: category.id, label: category.name, active: params[:category_id] == category.id.to_s || params[:category_id]&.include?(category.id.to_s) } %>
+        <%= render partial: "application/components/filters/realtime_filter_multi_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' categories', overridden_keys: "account_id[], network_id[], pod_id[], isp_id[]", base_button_id: 'category-filter', key: 'category_id[]', value: category.id, label: category.name, active: params[:category_id] == category.id.to_s || params[:category_id]&.include?(category.id.to_s) } %>
       <% end %>
     <% end %>
 
@@ -118,9 +118,9 @@
                  pagination: false,
                  no_z_index: true,
                } do %>
-      <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' ISPs',overridden_keys: "account_id[], network_id[], pod_id[], category_id[]", base_button_id: 'isp-filter', key: 'isp_id[]', value: 'all', label: 'All ISPs', active: params[:isp_id].nil? } %>
+      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'isp-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' ISPs',overridden_keys: "account_id[], network_id[], pod_id[], category_id[]", base_button_id: 'isp-filter', key: 'isp_id[]', value: 'all', label: 'All ISPs', active: params[:isp_id].nil? } %>
       <% @filter_as_orgs.sort_by {|isp| isp['name']}.each do |isp| %>
-        <%= render partial: "application/components/filters/realtime_filter_multi_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' ISPs',overridden_keys: "account_id[], network_id[], pod_id[], category_id[]", base_button_id: 'isp-filter', key: 'isp_id[]', value: isp['id'], label: isp['name'], active: params[:isp_id] == isp['id'].to_s || params[:isp_id]&.include?(isp.id.to_s) } %>
+        <%= render partial: "application/components/filters/realtime_filter_multi_option", locals: { base_menu_id: 'isp-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' ISPs',overridden_keys: "account_id[], network_id[], pod_id[], category_id[]", base_button_id: 'isp-filter', key: 'isp_id[]', value: isp['id'], label: isp['name'], active: params[:isp_id] == isp['id'].to_s || params[:isp_id]&.include?(isp.id.to_s) } %>
       <% end %>
     <% end %>
 
@@ -135,9 +135,9 @@
                  pagination: false,
                  no_z_index: true,
                } do %>
-      <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' pods',overridden_keys: "account_id[], network_id[], isp_id[], category_id[]", base_button_id: 'pod-id-filter', key: 'pod_id[]', value: 'all', label: 'All pods', active: params[:pod_id].nil? } %>
+      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'pod-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' pods',overridden_keys: "account_id[], network_id[], isp_id[], category_id[]", base_button_id: 'pod-id-filter', key: 'pod_id[]', value: 'all', label: 'All pods', active: params[:pod_id].nil? } %>
       <% policy_scope(Client).order(:unix_user).each do |pod| %>
-        <%= render partial: "application/components/filters/realtime_filter_multi_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' pods',overridden_keys: "account_id[], network_id[], isp_id[], category_id[]", base_button_id: 'pod-id-filter', key: 'pod_id[]', value: pod.unix_user, label: pod.unix_user, active: params[:pod_id] == pod.unix_user || params[:pod_id]&.include?(pod.unix_user)} %>
+        <%= render partial: "application/components/filters/realtime_filter_multi_option", locals: { base_menu_id: 'pod-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectMultiFilter:prevent', multi_label: ' pods',overridden_keys: "account_id[], network_id[], isp_id[], category_id[]", base_button_id: 'pod-id-filter', key: 'pod_id[]', value: pod.unix_user, label: pod.unix_user, active: params[:pod_id] == pod.unix_user || params[:pod_id]&.include?(pod.unix_user)} %>
       <% end %>
     <% end %>
   </div>
@@ -153,11 +153,9 @@
                pagination: false,
                no_z_index: true,
              } do %>
-    <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'curve-type-filter', key: 'curve_type', value: 'min', label: 'Min', active: params[:curve_type] == 'min' } %>
-    <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'curve-type-filter', key: 'curve_type', value: 'max', label: 'Max', active: params[:curve_type] == 'max' } %>
-    <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'curve-type-filter', key: 'curve_type', value: 'median', label: 'Median', active: params[:curve_type].nil? || params[:curve_type] == 'median' } %>
-    <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: 'click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'curve-type-filter', key: 'curve_type', value: 'average', label: 'Average', active: params[:curve_type] == 'average' } %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'curve-type-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'curve-type-filter', key: 'curve_type', value: 'min', label: 'Min', active: params[:curve_type] == 'min' } %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'curve-type-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'curve-type-filter', key: 'curve_type', value: 'max', label: 'Max', active: params[:curve_type] == 'max' } %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'curve-type-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'curve-type-filter', key: 'curve_type', value: 'median', label: 'Median', active: params[:curve_type].nil? || params[:curve_type] == 'median' } %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'curve-type-filter-menu', custom_actions: 'click->dashboard-realtime-filters#selectFilter:prevent', base_button_id: 'curve-type-filter', key: 'curve_type', value: 'average', label: 'Average', active: params[:curve_type] == 'average' } %>
   <% end %>
-
-  <button class="custom-button custom-button--primary custom-button--sm" data-action="click->realtime-filters#applyFilters">Apply filters</button>
 </div>

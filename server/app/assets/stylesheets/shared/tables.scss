@@ -347,9 +347,23 @@
   &[data-no-z-index="true"] {
     z-index: unset;
   }
+
+  &[data-full-width="true"] {
+    width: 100%;
+
+    button:first-of-type {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+  }
 }
 
 .tables--filters-menu-container {
+  width: max-content;
   padding: .25rem;
   max-height: 400px;
   background-color: white;
@@ -357,13 +371,13 @@
   border-radius: $border-radius;
   border: solid 1px $sidebar--main-container-border;
   position: absolute;
-  top: 3rem;
+  top: 2.5rem;
   left: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  z-index: 1000;
+  z-index: 100000;
   overflow-y: auto;
 
   .tables--filters-menu-item {
@@ -377,6 +391,10 @@
     justify-content: space-between;
     gap: 1rem;
 
+    img {
+      display: none;
+    }
+
     &:hover {
       color: $deep-blue;
       background-color: $subtle-gray;
@@ -385,6 +403,12 @@
 
     &.active:hover {
       color: $blue;
+    }
+
+    &.active {
+      img {
+        display: block;
+      }
     }
 
     &.outages {
@@ -512,4 +536,52 @@
     cursor: pointer;
     background-color: $subtle-gray;
   }
+}
+
+.tables--locations-map-filter-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .875rem;
+  padding: .5rem 1rem;
+
+  .tables--locations-map-filter-row-title {
+    font-size: .9375rem;
+    color: $deep-blue;
+    @extend .fw-bold;
+  }
+
+  .tables--filters-button-container {
+    min-width: 10rem;
+
+    button {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+.dashboard--all-filters-row {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .5rem;
+
+  label {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: $deep-blue;
+    @extend .fw-bold;
+  }
+}
+
+.dashboard--all-filters-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1.5rem;
 }

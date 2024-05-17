@@ -62,7 +62,7 @@
       <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
     <% end %>
   </head>
-  <body data-controller="hello" data-environment="<%= ENV["RAILS_ENV"] %>">
+  <body data-controller="<%= is_active_path?(dashboard_path) ? 'dashboard-modal-realtime-filters' : '' %>" data-environment="<%= ENV["RAILS_ENV"] %>">
     <% if content_for?(:content) %>
       <%= yield(:content) %>
     <% elsif user_signed_in? %>

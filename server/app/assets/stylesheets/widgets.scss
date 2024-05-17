@@ -76,6 +76,12 @@
   &[data-widget-type="outages"] {
     overflow: visible;
   }
+
+  &[data-widget-type="locations_map"] {
+    .widgets--widget-content {
+      padding-top: 0;
+    }
+  }
 }
 
 @media (min-width: 1080px) and (max-width: 1680px) {
@@ -85,7 +91,7 @@
 }
 
 @media (min-width: 1900px) {
-  .widgets--widget {
+  .widgets--widget:not([data-widget-type="locations_map"]) {
     max-height: 385px;
   }
 }
@@ -142,6 +148,7 @@
     height: calc(100% - 3rem);
     overflow-y: auto;
     overflow-x: hidden;
+    position: relative;
   }
 }
 

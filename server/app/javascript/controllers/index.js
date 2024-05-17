@@ -220,5 +220,8 @@ application.register("realtime-filters", RealtimeFiltersController);
 import DashboardRealtimeFilters from "./dashboard_realtime_filters";
 application.register("dashboard-realtime-filters", DashboardRealtimeFilters);
 
+import DashboardModalRealtimeFilters from "./dashboard_modal_realtime_filters";
+application.register("dashboard-modal-realtime-filters", DashboardModalRealtimeFilters);
+
 import ClaimPodsController from "./claim_pods_controller";
 application.register("claim-pods", ClaimPodsController);
