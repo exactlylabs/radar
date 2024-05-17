@@ -23,7 +23,7 @@
        id="<%= menu_id %>"
   >
     <% options.each do |option| %>
-      <%= render partial: "application/components/filters/realtime_filter_option", locals: { custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'date-filter-button', key: 'days', value: option[:value], label: option[:label], active: params[:days] == option[:value] } %>
+      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: menu_id, custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'date-filter-button', key: 'days', value: option[:value], label: option[:label], active: params[:days] == option[:value] } %>
     <% end %>
     <button class="tables--filters-menu-item table-filter-option active custom-button custom-button--transparent"
             data-action="click->filters#openCalendar"

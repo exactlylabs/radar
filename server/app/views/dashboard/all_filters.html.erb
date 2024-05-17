@@ -1,0 +1,10 @@
+<%= turbo_frame_tag "all_filters_modal" do %>
+  <%= render partial: "application/components/modals/empty_custom_modal",
+             locals: {
+               modal_title: 'All filters',
+               modal_partial_path: "dashboard/modals/all_filters",
+               resource: nil,
+               custom_submit_end_handler: nil,
+             }
+  %>
+<% end %>

@@ -1,3 +1,4 @@
+
 <!--begin::Toolbar-->
 <div class="toolbar" id="kt_toolbar">
   <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
@@ -103,7 +104,7 @@
       <% elsif policy_scope(Client).count == 0 %>
         <%= render partial: "dashboard/components/empty_pods_card" %>
       <% else %>
-        <div class="w-100 mw-100" data-controller="onboard map widgets dashboard-realtime-filters" data-onboard-step-value="<%= @onboard_step %>">
+        <div class="w-100 mw-100" data-controller="onboard map widgets dashboard-realtime-filters" data-onboard-step-value="<%= @onboard_step %>" data-action="remoteFetchAllWidgets@window->dashboard-realtime-filters#remoteFetchAllWidgets remoteClearFilters@window->dashboard-realtime-filters#remoteClearFilters">
           <%= render partial: "dashboard/components/tabs", locals: { selected: [true, false] } %>
           <% if FeatureFlagHelper.is_available('charts', current_user) %>
             <%= render partial: "dashboard/components/widget_filters" %>
@@ -225,4 +226,8 @@
 
 <%= render partial: "application/components/modals/turbo_modal",
            locals: { turbo_frame_tag_id: "outages_details_modal" }
+%>
+
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: { turbo_frame_tag_id: "all_filters_modal" }
 %>

@@ -71,7 +71,7 @@ export default class extends Controller {
     this.observer.observe(document.querySelector("#map"));
   }
 
-  renderLocationsMap() {
+  renderLocationsMap(e) {
     if (!document.querySelector("#map") || !this.map) return;
     this.populateLocationsMap();
   }
@@ -112,5 +112,10 @@ export default class extends Controller {
 
       this.markers.push(marker);
     });
+    
+    if(this.markers.length > 0) {
+      const firstMarker = this.markers[0];
+      this.map.setView(firstMarker.getLatLng(), this.markers.length === 1 ? 13 : this.map.zoom);
+    }
   }
 }
