@@ -110,3 +110,7 @@ With the installer (.msi), and the MSI transformer (.mst) in hand, you have to p
 12. Wait for it to synchronize, or have the target computers reboot
 
 13. Go to https://pods.radartoolkit.com, and check your available pods. You should be able to see them there.
+
+
+> At least in my tests, whenever I linked the GPO to a computer group, I had to restart the PC twice for it to install. Maybe the first one syncs and schedule an install in the next reboot.
+
