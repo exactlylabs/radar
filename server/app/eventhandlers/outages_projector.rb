@@ -225,7 +225,7 @@ class OutagesProjector
   end
 
   def handle_online_event(as_id, event)
-    client_outage = ClientOutage.preload(:outage_event).active.find_by`(client_id: event["aggregate_id"])
+    client_outage = ClientOutage.preload(:outage_event).active.find_by(client_id: event["aggregate_id"])
     self.resolve_client_outage(client_outage, event["timestamp"]) if client_outage.present?
   end
 
