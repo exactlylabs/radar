@@ -190,7 +190,6 @@ class OutagesProjector
       client_outage.update_columns(status: :resolved, resolved_at: resolved_at)
       return unless isp_outage.active?
       cached_data = @state["isp_outages"][isp_outage.autonomous_system_id.to_s]
-      byebug if cached_data.nil? || cached_data["isp_window_client_outages"].nil?
       cached_data["isp_window_count"] -= 1 if client_outage.accounted_in_isp_window
 
       if (cached_data["isp_window_count"].to_f / cached_data["isp_window_client_outages"].count.to_f) <= 2.0/3.0
@@ -226,7 +225,7 @@ class OutagesProjector
   end
 
   def handle_online_event(as_id, event)
-    client_outage = ClientOutage.preload(:outage_event).active.find_by(client_id: event["aggregate_id"])
+    client_outage = ClientOutage.preload(:outage_event).active.find_by`(client_id: event["aggregate_id"])
     self.resolve_client_outage(client_outage, event["timestamp"]) if client_outage.present?
   end
 
