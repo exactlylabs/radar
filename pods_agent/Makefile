@@ -80,7 +80,7 @@ msi:
 	./scripts/build_msi.sh -o ${DIST_DIR} ${VERSION}
 
 floto-image:
-	docker build -t radar-agent:floto -f docker/floto/Dockerfile .
+	docker build -t exactlylabs/radar-floto-agent:latest -f docker/floto/Dockerfile .
 
 all: build
 

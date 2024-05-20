@@ -7,8 +7,6 @@ RUN apk add jq curl
 RUN curl -o /app/radar-agent https://pods.radartoolkit.com/client_versions/stable/distributions/linux-arm64/download
 
 
-WORKDIR /app
-
 RUN chmod +x /app/radar-agent
 
 RUN addgroup -S radar && adduser -G radar -S radar
