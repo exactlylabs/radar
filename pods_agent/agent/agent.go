@@ -102,7 +102,8 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 	go func() {
 		defer a.wg.Done()
 		defer sentry.NotifyIfPanic() // always add this to each new goroutine
-		startSpeedTestRunner(agentCtx, c, a.runTestCh, a.runners, a.client)
+		executor := newExecutor(c, a.runners, a.client)
+		executor.listen(agentCtx, a.runTestCh)
 	}()
 	go func() {
 		defer a.wg.Done()

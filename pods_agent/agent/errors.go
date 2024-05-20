@@ -9,3 +9,12 @@ var ErrServerConnectionError = errors.NewSentinel("ConnectionError", "failed to 
 // ErrRunnerConnectionError should be used whenever the implementing runner fails to connect to its servers due to network issues.
 // This error tells us that we should ignore it, try again later, and to not notify our Sentry instance about it.
 var ErrRunnerConnectionError = errors.NewSentinel("RunnerConnectionError", "runner failed to connect to the speed test server")
+
+func errorIsAny(err error, targets ...error) bool {
+	for _, target := range targets {
+		if errors.Is(err, target) {
+			return true
+		}
+	}
+	return false
+}
