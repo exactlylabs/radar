@@ -15,12 +15,13 @@
 <div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
   <!--begin::Container-->
   <div class="clients--details-container">
-    <% unless current_account.is_all_accounts? %>
+    <% unless current_account.is_all_accounts? || !FeatureFlagHelper.is_available('notification_settings', current_user) %>
       <%= render partial: "application/components/tabs/page_tabs",
                  locals: {
                    tabs: [
                      { text: 'Profile', path: edit_user_registration_path },
-                     { text: 'Notifications', path: notification_settings_path },
+                     { text: 'Notifications', path: notification_settings_path }
+
                    ]
                  }
       %>
