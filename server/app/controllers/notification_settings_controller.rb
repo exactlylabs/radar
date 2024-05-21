@@ -26,30 +26,48 @@ class NotificationSettingsController < ApplicationController
 
     @notification_settings = NotificationSettings.find_by(user: current_user, account: current_account)
     if @notification_settings.nil?
-      @notification_settings = NotificationSettings.create(user: current_user, account: current_account)
+      user_notifications_settings = NotificationSettings.where(user: current_user)
+      if user_notifications_settings.count > 0
+        @notification_settings = user_notifications_settings.first.dup
+        @notification_settings.account = current_account
+        @notification_settings.save
+      else
+        @notification_settings = NotificationSettings.create(user: current_user, account: current_account)
+      end
     end
   end
 
   def update_notification_preferences_by_id(option_id, is_enabled)
     case option_id
     when 'email_notifications_enabled'
-      @notification_settings.update(email_notifications_enabled: is_enabled)
+      update_notification_settings_from_user_all_accounts('email_notifications_enabled', is_enabled)
     when 'pod_loses_total_connectivity'
-      @notification_settings.update(pod_loses_total_connectivity: is_enabled)
+      update_notification_settings_from_user_all_accounts('pod_loses_total_connectivity', is_enabled)
     when 'pod_recovers_total_connectivity'
-      @notification_settings.update(pod_recovers_total_connectivity: is_enabled)
+      update_notification_settings_from_user_all_accounts('pod_recovers_total_connectivity', is_enabled)
     when 'pod_loses_partial_connectivity'
-      @notification_settings.update(pod_loses_partial_connectivity: is_enabled)
+      update_notification_settings_from_user_all_accounts('pod_loses_partial_connectivity', is_enabled)
     when 'pod_recovers_partial_connectivity'
-      @notification_settings.update(pod_recovers_partial_connectivity: is_enabled)
+      update_notification_settings_from_user_all_accounts('pod_recovers_partial_connectivity', is_enabled)
     when 'significant_speed_variation'
-      @notification_settings.update(significant_speed_variation: is_enabled)
+      update_notification_settings_from_user_all_accounts('significant_speed_variation', is_enabled)
     when 'isp_goes_offline'
-      @notification_settings.update(isp_goes_offline: is_enabled)
+      update_notification_settings_from_user_all_accounts('isp_goes_offline', is_enabled)
     when 'isp_comes_back_online'
-      @notification_settings.update(isp_comes_back_online: is_enabled)
+      update_notification_settings_from_user_all_accounts('isp_comes_back_online', is_enabled)
     else
       false
+    end
+  end
+
+  def update_notification_settings_from_user_all_accounts(setting_name, setting_value)
+    accounts = policy_scope(Account)
+    accounts.each do |account|
+      notification_settings = NotificationSettings.find_by(user: current_user, account: account)
+      if notification_settings.nil?
+        notification_settings = NotificationSettings.create(user: current_user, account: account)
+      end
+      notification_settings.update(setting_name => setting_value) if notification_settings.present?
     end
   end
 end
