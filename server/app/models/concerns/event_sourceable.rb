@@ -141,7 +141,7 @@ module EventSourceable
   def new_event(name, data, timestamp = nil)
     timestamp = timestamp or Time.now
     saved_changes_bkp = saved_changes
-    self.class.find(self.id).with_lock do
+    self.class.unscoped.find(self.id).with_lock do
       # Obtain a lock in a new instance of this class, to avoid losing saved_changes_to_attribute? data
       # When instantiating a lock, all that data is lost, and any following call to saved_changes_to_attribute? returns false.
       last_event = Event.from_aggregate(self).order("version ASC").last

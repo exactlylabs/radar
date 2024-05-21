@@ -132,13 +132,13 @@ class LocationsController < ApplicationController
 
   # DELETE /locations/1 or /locations/1.json
   def destroy
-    @location.soft_delete
-    # Check if there is a reference to the client in the recents list to delete
-    possible_recent_search = policy_scope(RecentSearch).find_by_location_id(@location.id)
-    possible_recent_search.destroy if possible_recent_search.present?
-
-    policy_scope(CategoriesLocation).where(location_id: @location.id).destroy_all
-    @notice = FeatureFlagHelper.is_available('networks', current_user) ? "Network was successfully deleted." : "Location was successfully deleted."
+    begin
+      @location.soft_delete
+    rescue Exception => e
+      handle_exception(e, current_user)
+      @notice = "Error deleting network."
+    end
+    @notice = FeatureFlagHelper.is_available('networks', current_user) ? "Network was successfully deleted." : "Location was successfully deleted." if !@notice
     respond_to do |format|
       format.html { redirect_to locations_url, notice: @notice }
       format.json { head :no_content }
