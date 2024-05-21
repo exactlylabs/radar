@@ -45,7 +45,6 @@ func NewChannel(serverUrl, auth, channelName string, customHeader http.Header) *
 		ChannelName:         channelName,
 		SubscriptionTimeout: time.Second * 10,
 		header:              customHeader,
-		subscribedCh:        make(chan struct{}),
 	}
 }
 
@@ -61,6 +60,16 @@ func (c *ChannelClient) Connect(ctx context.Context) error {
 		wsUrl.Scheme = "wss"
 	}
 	wsUrl.Path = "/api/v1/clients/ws"
+
+	// Channel to block until the first subscription is confirmed
+	// Given the ws service handles reconnects, meaning it calls onConnected multiple times, we clear the channel after it
+	// so we don't lock the callback function given we won't read from it anymore.
+	c.subscribedCh = make(chan struct{})
+	defer func() {
+		close(c.subscribedCh)
+		c.subscribedCh = nil //
+	}()
+
 	c.cli = ws.New(wsUrl.String(), c.header,
 		ws.WithOnConnected(c.onConnected),
 		ws.WithConnectionErrorCallback(c.onConnectionError),
@@ -75,7 +84,6 @@ func (c *ChannelClient) Connect(ctx context.Context) error {
 
 	select {
 	case <-c.subscribedCh:
-		log.Println("cable.ChannelClient#Connect: connected successfully:", *c.subscription)
 		return nil
 	case <-time.NewTimer(c.SubscriptionTimeout).C:
 		return errors.SentinelWithStack(ErrSubscriptionConfirmationTimeout)
@@ -94,6 +102,7 @@ func (c *ChannelClient) onConnected(cli *ws.Client) {
 }
 
 func (c *ChannelClient) subscribeToChannel() {
+	log.Println("cable.ChannelClient#subscribeToChannel: Sending Subscription Request to channel:", c.ChannelName)
 	c.cli.Sender() <- ClientMessage{
 		Command: Subscribe,
 		Identifier: &Identifier{
@@ -104,6 +113,7 @@ func (c *ChannelClient) subscribeToChannel() {
 }
 
 func (c *ChannelClient) onConnectionError(err error) {
+	c.subscription = nil
 	if c.OnConnectionError != nil {
 		c.OnConnectionError(err)
 	}
@@ -122,7 +132,11 @@ func (c *ChannelClient) listenToMessages() {
 				Channel: msg.Identifier.Channel,
 				Id:      msg.Identifier.Id,
 			}
-			c.subscribedCh <- struct{}{}
+			log.Println("cable.ChannelClient#Connect: connected successfully:", *c.subscription)
+			if c.subscribedCh != nil {
+				// After the first write to this, it should't be written to again, unless we call Connect again.
+				c.subscribedCh <- struct{}{}
+			}
 			if c.OnSubscribed != nil {
 				c.OnSubscribed()
 			}
