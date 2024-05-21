@@ -1,4 +1,18 @@
-<%= turbo_stream.update "add_pod_modal" %>
+<% if @onboarding %>
+  <%= turbo_stream.update "ftue_modal" do %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: 'Welcome to Radar',
+                 modal_partial_path: "dashboard/modals/onboarding/last_step",
+                 resource: nil,
+                 custom_submit_end_handler: nil,
+               }
+    %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.update "add_pod_modal" %>
+<% end %>
+
 
 <% if FeatureFlagHelper.is_available('networks', current_user) %>
   <% clients = policy_scope(Client) %>
@@ -61,7 +75,6 @@
       <% end %>
     <% end %>
   <% end %>
-
 <% else %>
   <%= turbo_stream.prepend 'location_clients_table' do %>
     <%= render partial: 'location_clients/location_clients_table_row', locals: { client: @client } %>
@@ -83,7 +96,6 @@
     %>
   </div>
 <% end %>
-
 
 <%= turbo_stream.append 'realtime-notice' do %>
   <%= render partial: 'application/notice_alert', locals: { notice: @notice } %>

@@ -33,9 +33,7 @@ class ClientsController < ApplicationController
     end
 
     if FeatureFlagHelper.is_available('networks', current_user)
-      if params[:update_group_id].present? && params[:update_group_id].to_i != -1
-        @clients = @clients.where(update_group_id: params[:update_group_id])
-      end
+      @clients = @clients.where(update_group_id: params[:update_group_id]) if params[:update_group_id].present? && params[:update_group_id].to_i != -1
       @total = @clients.count
       @clients = @clients.order("location_id NULLS FIRST")
       @clients = paginate(@clients, params[:page], params[:page_size])
@@ -228,9 +226,7 @@ class ClientsController < ApplicationController
   end
 
   def status
-    if params[:service_first_ping].present? && params[:service_first_ping] == "true"
-      @client.record_event(Client::Events::SERVICE_STARTED, {}, @client.pinged_at)
-    end
+    @client.record_event(Client::Events::SERVICE_STARTED, {}, @client.pinged_at) if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     @client.pinged_at = Time.now
     @client.raw_version = params[:version]
     @client.distribution_name = params[:distribution]
@@ -250,13 +246,15 @@ class ClientsController < ApplicationController
       end
       @client.client_version_id = version_id
     end
-    @client.schedule_next_test! if @client.test_scheduled_at.nil?
-    if params[:service_first_ping].present? && params[:service_first_ping] == "true"
-      ClientEventLog.service_started_event @client
+    if @client.test_scheduled_at.nil?
+      @client.schedule_next_test!
     end
+    ClientEventLog.service_started_event @client if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     @client.compute_ping!
     @client.save!
-    @client.connected! if !@client.online
+    if !@client.online
+      @client.connected!
+    end
 
     respond_to do |format|
       format.json { render :status, status: :ok }
@@ -269,7 +267,9 @@ class ClientsController < ApplicationController
     if params[:version]
       # Check client Version Id
       wv_ids = WatchdogVersion.where(version: params[:version]).pluck(:id)
-      @client.watchdog_version_id = wv_ids[0] if wv_ids.length > 0
+      if wv_ids.length > 0
+        @client.watchdog_version_id = wv_ids[0]
+      end
 
     end
     @client.save
@@ -285,11 +285,16 @@ class ClientsController < ApplicationController
     @secret = SecretsHelper.create_human_readable_secret(11)
     @client.secret = @secret
     ug = UpdateGroup.default_group
-    @client.update_group = ug if !ug.nil?
+    if !ug.nil?
+      @client.update_group = ug
+    end
 
     # If it's registered with a superaccount token
     # set the pod as having a watchdog (physical pod)
-    @client.has_watchdog = true if @account&.superaccount?
+    if @account&.superaccount?
+      @client.has_watchdog = true
+
+    end
 
     respond_to do |format|
       if @client.save
@@ -505,7 +510,9 @@ class ClientsController < ApplicationController
   end
 
   def unclaimed
-    head(403) if !current_account.superaccount
+    if !current_account.superaccount
+      head(403)
+    end
     @clients = Client.where_no_account.where_online
   end
 
@@ -543,7 +550,9 @@ class ClientsController < ApplicationController
     current_network_id = !params[:current_network_id].blank? ? params[:current_network_id] : nil
     @location = policy_scope(Location).find(params[:current_network_id]) if current_network_id
     new_location = policy_scope(Location).find(params[:location_id])
-    @clients_to_remove = @clients if @location.present? && @location.id != new_location.id
+    if @location.present? && @location.id != new_location.id
+      @clients_to_remove = @clients
+    end
     @error = nil
     Client.transaction do
       @clients.each do |pod|
@@ -647,9 +656,11 @@ class ClientsController < ApplicationController
   def save_claimed_pods
     pods_ids = params[:pods_ids]
     @clients_ids = pods_ids.split(',') || []
+    @onboarding = params[:onboarding].present? && params[:onboarding] == 'true'
   end
 
   def add_claimed_pods_to_account_and_network
+    @onboarding = params[:onboarding].present? && params[:onboarding] == 'true'
     pods_ids = params[:pods_ids]
     @clients_ids = pods_ids.split(',') || []
     @destination_account = policy_scope(Account).find(params[:account_id])
@@ -672,6 +683,7 @@ class ClientsController < ApplicationController
   end
 
   def confirm_moving_claimed_pods_to_account_and_network
+    @onboarding = params[:onboarding].present? && params[:onboarding] == 'true'
     pods_ids = params[:pods_ids]
     @clients_ids = pods_ids.split(',') || []
     @destination_account = policy_scope(Account).find(params[:account_id])
@@ -700,7 +712,9 @@ class ClientsController < ApplicationController
   def get_bulk_move_to_account
     possible_pod_ids = params[:pod_ids].present? ? JSON.parse(params[:pod_ids]) : nil
     @pods = Client.none
-    @pods = policy_scope(Client).where(unix_user: possible_pod_ids) if possible_pod_ids.present?
+    if possible_pod_ids.present?
+      @pods = policy_scope(Client).where(unix_user: possible_pod_ids)
+    end
 
     respond_to do |format|
       format.turbo_stream
@@ -820,13 +834,17 @@ class ClientsController < ApplicationController
 
   def authenticate_client!
     @client = Client.find_by_unix_user(params[:id])&.authenticate_secret(params[:secret])
-    head(403) if !@client
+    if !@client
+      head(403)
+    end
   end
 
   def authenticate_token!
     if request.headers["Authorization"].present?
       token = request.headers["Authorization"].split(" ")
-      @account = Account.find_by_token(token[1]) if token.size == 2 && token[0] == 'Token'
+      if token.size == 2 && token[0] == 'Token'
+        @account = Account.find_by_token(token[1])
+      end
     end
   end
 
@@ -867,9 +885,7 @@ class ClientsController < ApplicationController
       @location.user = current_user
       @location.account_id = account.id
       @location.clients << @client
-      if categories.present?
-        @location.categories << policy_scope(Category).where(id: categories.split(",")).distinct
-      end
+      @location.categories << policy_scope(Category).where(id: params[:categories].split(",")).distinct if categories.present?
       @location.save!
       @client.location = @location
     else

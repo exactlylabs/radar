@@ -16,7 +16,6 @@
       <% end %>
     </div>
   <% end %>
-  <!--  // If the pods list is not empty, the button should be enabled-->
 <% else %>
   <%= turbo_stream.update 'claim-pods-input' do %>
     <%= render partial: "application/components/pod_id_input" %>
@@ -37,6 +36,7 @@
     <% end %>
   <% end %>
 <% end %>
+
 <%= turbo_stream.replace 'claim-pods-continue-button' do %>
   <button type="button"
           id="claim-pods-continue-button"

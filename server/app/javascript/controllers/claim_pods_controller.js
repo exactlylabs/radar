@@ -7,7 +7,7 @@ const EMPTY_POD_ID_LENGTH = 0;
 
 export default class extends Controller {
 
-    static targets = ["podIdInput", "continueButton", "inputsContainer", "spinner", "claimedPod"];
+    static targets = ["podIdInput", "continueButton", "inputsContainer", "spinner", "claimedPod", "hiddenOnboardingStep"];
 
     connect() {
         this.token = document.getElementsByName("csrf-token")[0].content;
@@ -227,8 +227,10 @@ export default class extends Controller {
 
     goToSelectAccountAndNetworkStep(e) {
         const podsIds = this.getPodsIdList();
+        const onboarding = this.getOnboarding();
         const formData = new FormData();
         formData.append("pods_ids", podsIds);
+        formData.append("onboarding", onboarding);
         const url = window.origin + '/clients/save_claimed_pods';
         fetch(url, {
             method: "POST",
@@ -277,5 +279,13 @@ export default class extends Controller {
             podsIds.push(podId);
         });
         return podsIds;
+    }
+
+    getOnboarding() {
+        if (this.hasHiddenOnboardingStepTarget) {
+            return this.hiddenOnboardingStepTarget.value;
+        } else {
+            return false;
+        }
     }
 }

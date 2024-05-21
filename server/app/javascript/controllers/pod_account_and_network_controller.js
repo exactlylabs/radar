@@ -15,7 +15,6 @@ export default class extends Controller {
         "existingNetworkSelect",
         "newNetworkComponent",
         "accountsSelect",
-        "podsIds",
     ]
 
     connect() {
@@ -133,34 +132,33 @@ export default class extends Controller {
         const currentSelectedAccountId = this.accountsSelectTarget.value;
         if (currentSelectedAccountId) {
             $("#new-network-accounts-dropdown").val(currentSelectedAccountId).trigger('change');
-            fetch(`/locations/account/${currentSelectedAccountId}`)
-                .then((res) => {
-                    if (res.ok) return res.json();
-                    else throw new Error(res.statusText);
-                })
-                .then((res) => {
-                    const networksByAccountSelect = $("#pod-existing-network-select");
-                    // empty current locations dropdown
-                    networksByAccountSelect.empty();
-                    // populate with new locations received
-                    const placeholderOption = document.createElement('option');
-                    const emptyOption = document.createElement('option');
-                    emptyOption.innerText = '\xA0';
-                    networksByAccountSelect.append(placeholderOption);
-                    networksByAccountSelect.append(emptyOption);
-                    res.forEach((location) => {
-                        const currentLocationOption = new Option(
-                            location.text,
-                            location.id,
-                            false,
-                            false
-                        );
-                        networksByAccountSelect.append(currentLocationOption);
-                    });
-                    // clear default selection
-                    networksByAccountSelect.val(null);
-                })
-                .catch((err) => console.error(err));
+            fetch(`/locations/account/${currentSelectedAccountId}`, {
+                headers: {'X-CSRF-Token': this.token}
+            }).then((res) => {
+                if (res.ok) return res.json();
+                else throw new Error(res.statusText);
+            }).then((res) => {
+                const networksByAccountSelect = $("#pod-existing-network-select");
+                // empty current locations dropdown
+                networksByAccountSelect.empty();
+                // populate with new locations received
+                const placeholderOption = document.createElement('option');
+                const emptyOption = document.createElement('option');
+                emptyOption.innerText = '\xA0';
+                networksByAccountSelect.append(placeholderOption);
+                networksByAccountSelect.append(emptyOption);
+                res.forEach((location) => {
+                    const currentLocationOption = new Option(
+                        location.text,
+                        location.id,
+                        false,
+                        false
+                    );
+                    networksByAccountSelect.append(currentLocationOption);
+                });
+                // clear default selection
+                networksByAccountSelect.val(null);
+            }).catch((err) => console.error(err));
         }
     }
 }

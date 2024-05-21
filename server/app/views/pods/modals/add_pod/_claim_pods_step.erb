@@ -35,8 +35,7 @@
     <% end %>
   <% end %>
 
-  <a href="#" class="regular-link wrap" data-bs-target="#pod_id_modal" data-bs-toggle="modal">Need help finding your
-    pod ID?</a>
+  <%= link_to "Need help finding your pod ID?", need_help_finding_pod_id_path, data: { method: :get, turbo_stream: true }, class: "regular-link wrap" %>
 
   <%= turbo_frame_tag 'pods-claimed-grid' do %>
     <%= render partial: "pods/modals/add_pod/pods_claimed_grid", locals: { pods: @clients } %>
