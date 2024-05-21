@@ -753,7 +753,9 @@ class ClientsController < ApplicationController
   def get_bulk_move_to_network_qr
     possible_pod_ids = params[:pod_ids].present? ? JSON.parse(params[:pod_ids]) : nil
     @pods = Client.none
-    @pods = policy_scope(Client).where(unix_user: possible_pod_ids) if possible_pod_ids.present?
+    if possible_pod_ids.present?
+      @pods = policy_scope(Client).where(unix_user: possible_pod_ids)
+    end
 
     respond_to do |format|
       format.turbo_stream
@@ -885,7 +887,7 @@ class ClientsController < ApplicationController
       @location.user = current_user
       @location.account_id = account.id
       @location.clients << @client
-      @location.categories << policy_scope(Category).where(id: params[:categories].split(",")).distinct if categories.present?
+      @location.categories << policy_scope(Category).where(id: categories.split(",")).distinct if categories.present?
       @location.save!
       @client.location = @location
     else
