@@ -7,47 +7,52 @@
              go_back_action: "click->onboard#goToOnboardingStep"
            }
 %>
-<%= form_with(url: check_claim_new_pod_path, method: :post) do |form| %>
-  <div class="modals--content-container modals--move-pod-modal text-center" data-type="full">
-    <div class="modals--big-icon-container mb-4">
-      <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32 %>
-    </div>
-    <input hidden="hidden" name="onboarding" value="true"/>
-    <h3 class="modal-main-title mb-2">Enter your pod ID</h3>
-    <span class="additional-text wrap mb-6">You can find your 12-digit ID printed on your pod.</span>
-    <input hidden
-           type="text"
-           name="pod_id"
-           value="<%= @unix_user %>"
-           data-action="fillHiddenInput@window->pod-id-step#fillHiddenInput"
-           data-pod-id-step-target="hiddenPodIdInput"
-      />
-    <%= render partial: "application/components/pod_id_input",
-               locals: { unix_user: @unix_user }
-    %>
+<div class="modals--content-container modals--move-pod-modal text-center" data-type="full" data-resource="clients">
+  <div class="modals--big-icon-container mb-4">
+    <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32 %>
+  </div>
+  <h3 class="modal-main-title mb-2">Enter your pod ID</h3>
+  <span class="additional-text wrap mb-6">You can find your 12-digit ID printed on your pod.</span>
+  <%= turbo_frame_tag 'claim-pods-input' do %>
+    <%= render partial: "application/components/pod_id_input", locals: { unix_user: @unix_user } %>
+  <% end %>
 
+  <%= turbo_frame_tag 'claim-pods-error' do %>
     <% if @error %>
       <div class="modals--banner mb-6" data-type="<%= @error == ErrorsHelper::PodClaimErrors::PodNotFound ? 'danger' : 'warning' %>">
         <% if @error == ErrorsHelper::PodClaimErrors::PodNotFound %>
           The pod ID you entered is invalid. Please note that the ID is case sensitive.
-        <% elsif @error == ErrorsHelper::PodClaimErrors::PodAlreadyClaimed %>
-          The pod you're trying to add appears to have already been claimed by someone else. If you think this could be an error, please <a href="mailto:support@radartoolkit.com" class="warning-link">contact us</a>.
+        <% elsif @error == ErrorsHelper::PodClaimErrors::PodAlreadyClaimedBySomeoneElse %>
+          The pod you're trying to add appears to have already been claimed by someone else. If you think this could
+          be an
+          error, please <a href="mailto:support@radartoolkit.com" class="warning-link">contact us</a>.
+        <% elsif @error == ErrorsHelper::PodClaimErrors::PodIsAlreadyInYourAccount %>
+          The pod you are trying to add is already in your account. You can
+          <a href="<%= client_path(@unix_user) %>" class="warning-link">view it's details</a> instead
+        <% elsif @error == ErrorsHelper::PodClaimErrors::PodBelongsToOneOfYourOtherAccounts %>
+          This pod currently belongs to <%= @client.account.name %>. If you want to add it to a different account, you
+          can
+          <a href="<%= client_path(@unix_user) %>" class="warning-link">move it</a> instead.
         <% end %>
       </div>
     <% end %>
+  <% end %>
 
-    <%= link_to "Need help finding your pod ID?", need_help_finding_pod_id_path, data: { method: :get, turbo_stream: true }, class: "regular-link wrap" %>
+  <input name="onboarding" autocomplete="off" type="hidden" value="true" id="claim-pods-onboarding" data-claim-pods-target="hiddenOnboardingStep">
 
-  </div>
-  <div class="modals--footer-container">
-    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
-    <!--begin::ContinueButton-->
-    <button type="submit"
-            class="custom-button custom-button--lg custom-button--primary <%= @unix_user.present? ? '' : 'custom-button--disabled' %>"
-            data-pod-id-step-target="submitIdButton"
-            data-controller="loading-feedback"
-            data-action="disableButton@window->pod-id-step#disableButton enableButton@window->pod-id-step#enableButton click->loading-feedback#replaceContent"
-    >Continue</button>
-    <!--end::ContinueButton-->
-  </div>
-<% end %>
+  <%= link_to "Need help finding your pod ID?", need_help_finding_pod_id_path, data: { method: :get, turbo_stream: true }, class: "regular-link wrap" %>
+
+  <%= turbo_frame_tag 'pods-claimed-grid' do %>
+    <%= render partial: "pods/modals/add_pod/pods_claimed_grid", locals: { pods: @clients } %>
+  <% end %>
+
+</div>
+<div class="modals--footer-container">
+  <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
+  <button type="button"
+          id="claim-pods-continue-button"
+          class="custom-button custom-button--primary custom-button--sm <%= @clients.present? && @clients.count > 0 ? '' : 'custom-button--disabled' %>"
+          data-action="click->claim-pods#goToSelectAccountAndNetworkStep"
+  >Continue
+  </button>
+</div>

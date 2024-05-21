@@ -13,6 +13,7 @@
     </div>
     <h3 class="modal-main-title mb-6"><%= @clients_ids.count == 1 ? @clients_ids.first : "#{@clients_ids.count} pods" %></h3>
     <%= form.hidden_field :pods_ids, value: @clients_ids.map(&:to_s).join(",") %>
+    <%= form.hidden_field :onboarding, value: @onboarding %>
 
     <div class="modals--form-row mb-4">
       <label for="new-pod-account-select" class="required forms--label">Account</label>

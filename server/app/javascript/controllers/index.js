@@ -151,9 +151,6 @@ application.register("onboard", OnboardController)
 import OutagesChartController from "./outages_chart_controller"
 application.register("outages-chart", OutagesChartController)
 
-import OutagesModalController from "./outages_modal_controller"
-application.register("outages-modal", OutagesModalController)
-
 import PaginationController from "./pagination_controller"
 application.register("pagination", PaginationController)
 
@@ -165,9 +162,6 @@ application.register("password-reveal", PasswordRevealController)
 
 import PodAccountAndNetworkController from "./pod_account_and_network_controller"
 application.register("pod-account-and-network", PodAccountAndNetworkController)
-
-import PodIdStepController from "./pod_id_step_controller"
-application.register("pod-id-step", PodIdStepController)
 
 import PublicPageController from "./public_page_controller"
 application.register("public-page", PublicPageController)
