@@ -111,7 +111,9 @@ func (a *Agent) Start(ctx context.Context, c *config.Config, rebooter Rebooter) 
 		startPingLoop(agentCtx, a.serverMsgCh, a.client, pingFrequency(c))
 	}()
 
-	a.client.Connect(agentCtx, a.serverMsgCh)
+	if err := a.client.Connect(agentCtx, a.serverMsgCh); err != nil {
+		panic(err)
+	}
 	defer a.client.Close()
 
 	// Main Loop will listen to the responses and schedule Speed Tests when requested by the server

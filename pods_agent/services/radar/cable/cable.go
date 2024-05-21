@@ -28,7 +28,6 @@ type ChannelClient struct {
 	SubscriptionTimeout time.Duration
 	subscription        *Identifier
 	header              http.Header
-	subscribedCh        chan struct{} // To signal a successful subscription
 
 	// Callbacks
 	OnConnected       func()
@@ -61,15 +60,6 @@ func (c *ChannelClient) Connect(ctx context.Context) error {
 	}
 	wsUrl.Path = "/api/v1/clients/ws"
 
-	// Channel to block until the first subscription is confirmed
-	// Given the ws service handles reconnects, meaning it calls onConnected multiple times, we clear the channel after it
-	// so we don't lock the callback function given we won't read from it anymore.
-	c.subscribedCh = make(chan struct{})
-	defer func() {
-		close(c.subscribedCh)
-		c.subscribedCh = nil //
-	}()
-
 	c.cli = ws.New(wsUrl.String(), c.header,
 		ws.WithOnConnected(c.onConnected),
 		ws.WithConnectionErrorCallback(c.onConnectionError),
@@ -82,12 +72,7 @@ func (c *ChannelClient) Connect(ctx context.Context) error {
 		c.listenToMessages()
 	}()
 
-	select {
-	case <-c.subscribedCh:
-		return nil
-	case <-time.NewTimer(c.SubscriptionTimeout).C:
-		return errors.SentinelWithStack(ErrSubscriptionConfirmationTimeout)
-	}
+	return nil
 }
 
 func (c *ChannelClient) Close() error {
@@ -133,10 +118,6 @@ func (c *ChannelClient) listenToMessages() {
 				Id:      msg.Identifier.Id,
 			}
 			log.Println("cable.ChannelClient#Connect: connected successfully:", *c.subscription)
-			if c.subscribedCh != nil {
-				// After the first write to this, it should't be written to again, unless we call Connect again.
-				c.subscribedCh <- struct{}{}
-			}
 			if c.OnSubscribed != nil {
 				c.OnSubscribed()
 			}
