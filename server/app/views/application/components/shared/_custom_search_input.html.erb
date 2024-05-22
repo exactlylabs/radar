@@ -1,5 +1,5 @@
 <% turbo_frame_on = local_assigns[:turbo_frame].present? && local_assigns[:turbo_frame] == true %>
-<% update_url = local_assigns[:update_url].present? && local_assigns[:update_url] == true %>
+<% should_update_url = local_assigns[:should_update_url].present? && local_assigns[:should_update_url] == true %>
 <% controller = local_assigns[:controller].present? ? local_assigns[:controller] : 'search' %>
 <% method_for_action = local_assigns[:method].present? ? local_assigns[:method] : 'search' %>
 
@@ -11,7 +11,7 @@
         turbo_frame: turbo_frame,
         turbo: turbo_frame_on,
         fetch_url: url,
-        update_url: update_url
+        should_update_url: should_update_url
       },
       html: { 
         class: "forms--search-form" 

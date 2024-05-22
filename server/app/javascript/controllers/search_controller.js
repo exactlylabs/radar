@@ -36,10 +36,10 @@ export default class extends Controller {
         let newSearchParams = new URLSearchParams(newUrl.search);
 
         newSearchParams.set('query', query);
-        let updateUrl = formElement.getAttribute('data-update-url');
+        let shouldUpdateUrl = formElement.getAttribute('data-should-update-url');
 
 
-        if (!!updateUrl) {
+        if (!!shouldUpdateUrl) {
             newSearchParams = new URLSearchParams({
                 ...Object.fromEntries(currentSearchParams),
                 ...Object.fromEntries(newSearchParams)
