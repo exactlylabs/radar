@@ -14,12 +14,10 @@ RUN addgroup -S radar && adduser -G radar -S radar
 COPY ./docker/floto/docker-entrypoint /app/docker-entrypoint
 COPY ./docker/floto/run-server /app/run-server
 
+RUN mkdir -p /public/radar
+
 RUN chmod +x /app/docker-entrypoint
 RUN chmod +x /app/run-server
-
-RUN chown -R radar:radar /app
-
-USER radar
 
 # Set the default config path to the persisted volume according to FLOTO docs:
 # https://github.com/UChicago-FLOTO/docs/blob/master/user/application_user.md#create-an-application
