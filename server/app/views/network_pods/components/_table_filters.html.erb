@@ -2,6 +2,15 @@
 <% super_user_bulk_options = ['Run speed test', 'Move to network...', 'Remove from network', 'Change release group(s)', 'Print labels', 'Delete']%>
 
 <div class="tables--filters-container">
+  <div class="tables--filters-search-container">
+    <%= render partial: "application/components/shared/custom_search_input",
+               locals: {
+                 turbo_frame: true,
+                 should_update_url: true,
+                 url: location_clients_url,
+               }
+    %>
+  </div>
   <%= render partial: "application/components/tables/multi_row_actions",
       locals: {
         menu_id: 'network-pods-multi-row-actions-menu',
