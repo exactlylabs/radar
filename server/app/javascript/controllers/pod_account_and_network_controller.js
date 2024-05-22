@@ -128,7 +128,8 @@ export default class extends Controller {
         }
     }
 
-    onAccountsSelectChange() {
+    onAccountsSelectChange(e) {
+        this.updateAccountSubtitle();
         const currentSelectedAccountId = this.accountsSelectTarget.value;
         if (currentSelectedAccountId) {
             $("#new-network-accounts-dropdown").val(currentSelectedAccountId).trigger('change');
@@ -160,5 +161,11 @@ export default class extends Controller {
                 networksByAccountSelect.val(null);
             }).catch((err) => console.error(err));
         }
+    }
+
+    updateAccountSubtitle() {
+        const selectedIndex = this.accountsSelectTarget.selectedIndex;
+        const accountName = this.accountsSelectTarget.options[selectedIndex].text
+        this.accountSubtitleTarget.innerText = `Your pod will be accessible to everyone at ${accountName}.`
     }
 }

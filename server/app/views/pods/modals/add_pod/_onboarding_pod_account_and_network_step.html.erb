@@ -3,10 +3,10 @@
              title: "Add a new pod",
              is_custom: true,
              goes_back: true,
-             go_back_url: get_add_pod_modal_url(pods_ids: @clients_ids),
+             go_back_url: get_add_pod_modal_clients_url(pods_ids: @clients_ids),
            }
 %>
-<%= form_with(url: add_claimed_pods_to_account_and_network_path, method: :post) do |form| %>
+<%= form_with(url: add_claimed_pods_to_account_and_network_clients_path, method: :post) do |form| %>
   <div class="modals--content-container modals--move-pod-modal text-center" data-type="full" data-resource="clients">
     <div class="modals--big-icon-container mb-4">
       <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32 %>
@@ -36,8 +36,7 @@
           <%= render partial: "clients/client_account", locals: { account: account, selected: current_account.is_all_accounts? ? index == 0 : current_account.id == account.id } %>
         <% end %>
       </select>
-      <!--      TODO (NACHO): UPDATE THIS-->
-      <span class="additional-text mt-1 wrap" data-pod-account-and-network-target="accountSubtitle">Your pod will be accessible to everyone at the selected account.</span>
+      <span class="additional-text mt-1 wrap" data-pod-account-and-network-target="accountSubtitle">Your pod will be accessible to everyone at <%= current_account.is_all_accounts? ? policy_scope(Account).first.name : current_account.name  %>.</span>
     </div>
 
     <div class="modals--form-row">

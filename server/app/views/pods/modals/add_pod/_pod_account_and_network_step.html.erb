@@ -3,10 +3,10 @@
       title: "Add a new pod",
       is_custom: true,
       goes_back: !@setup,
-      go_back_url: @setup ? nil : get_add_pod_modal_path(unix_user: @unix_user),
+      go_back_url: @setup ? nil : get_add_pod_modal_clients_path(unix_user: @unix_user),
     }
 %>
-<%= form_with(url: claim_new_pod_path, method: :post) do |form| %>
+<%= form_with(url: claim_new_pod_clients_path, method: :post) do |form| %>
   <div class="modals--content-container modals--move-pod-modal text-center" data-type="full" data-controller="pod-account-and-network">
     <div class="modals--big-icon-container mb-4">
       <%= image_tag image_url('big-pods-icon.png'), width: 32, height: 32 %>

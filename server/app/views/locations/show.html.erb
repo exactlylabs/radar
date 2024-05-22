@@ -19,7 +19,7 @@
     <!--end::Info-->
     <% if FeatureFlagHelper.is_available('networks', current_user) %>
       <div class="pods--header-options-container">
-        <a href="<%= get_add_pod_modal_path %>"
+        <a href="<%= get_add_pod_modal_clients_path %>"
            class="custom-button custom-button--primary custom-button--lg"
            data-turbo-frame="add_pod_modal">
           <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: "me-2" %>

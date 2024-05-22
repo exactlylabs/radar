@@ -1,6 +1,6 @@
 <% pod_id = pod.unix_user %>
-<% pod_icon = local_assigns[:pod_icon].present? ? local_assigns[:pod_icon] : 'pod-online-icon.png' %>
-<% on_pod_deleted = local_assigns[:on_pod_deleted].present? ? local_assigns[:on_pod_deleted] : 'selected-pods-grid#onPodDeleted' %>
+<% pod_icon = local_assigns[:pod_icon] || 'pod-online-icon.png' %>
+<% on_pod_deleted = local_assigns[:on_pod_deleted] || 'selected-pods-grid#onPodDeleted' %>
 <div class="pods--selected-pod-cell" id="selected-pod-<%= pod_id %>">
   <div class="tables--network-icon-container" data-pod-status="online">
     <%= image_tag image_url(pod_icon), width: 24, height: 24 %>

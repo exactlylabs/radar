@@ -6,7 +6,7 @@
              go_back_url: nil,
            }
 %>
-<%= form_with(url: confirm_moving_claimed_pods_to_account_and_network_path, method: :post) do |form| %>
+<%= form_with(url: confirm_moving_claimed_pods_to_account_and_network_clients_path, method: :post) do |form| %>
   <div class="modals--content-container modals--move-pod-modal text-center" data-type="full" data-controller="pod-account-and-network">
     <h3 class="modal-main-title mb-6"><%= @moving_pods_count %> pod(s) will be moved
       to <%= @destination_account.name %></h3>

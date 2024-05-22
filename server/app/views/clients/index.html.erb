@@ -20,7 +20,7 @@
     <div class="pods--index-button-options-container">
       <% if FeatureFlagHelper.is_available('networks', current_user) %>
         <% if @clients.count >= 1 %>
-          <a href="<%= get_add_pod_modal_path %>"
+          <a href="<%= get_add_pod_modal_clients_path %>"
              class="custom-button custom-button--primary custom-button--lg"
              data-turbo-frame="add_pod_modal"
           >
