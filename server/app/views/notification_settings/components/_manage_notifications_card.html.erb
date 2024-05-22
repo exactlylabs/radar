@@ -1,4 +1,6 @@
-<div class="cards--card-with-header" data-notification-settings-target="manageNotificationsOptions">
+<% is_enabled = local_assigns[:is_enabled].present? ? local_assigns[:is_enabled] : false %>
+<% table_style = is_enabled ? 'pointer-events: auto; opacity: 1;' : 'pointer-events: none; opacity: 0.5;' %>
+<div class="cards--card-with-header" data-notification-settings-target="manageNotificationsOptions" style="<%= table_style %>">
   <div class="cards--card-header">
     <span>Manage notifications</span>
   </div>
