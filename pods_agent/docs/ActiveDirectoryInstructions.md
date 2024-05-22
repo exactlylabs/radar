@@ -12,6 +12,9 @@ Download the latest [MSI installer](https://pods.radartoolkit.com/client_version
 
 ### 2. MSI Transformer
 
+>If you already have an MSI transformer with you, please proceed to the next [Installation Section](#installation)
+
+
 The installer comes with two configurable properties:
 
 * ACCOUNT_TOKEN: A token used to link the pod into your account at installation time
@@ -20,14 +23,24 @@ The installer comes with two configurable properties:
 When deploying through active directory, you can't set those properties directly. You have to use something called an MSI Transformer.
 This transformer works as a layer of configuration on top of the MSI, and for our case, can be used to set these two properties in our MSI.
 
-#### 2.1 Creating the MSI Transformer (.mst)
+#### 2.1 Using a baseline Transformer
+
+If all you want is to set an account token and the computer name in REGISTER_LABEL, then we already have a [Baseline Transformer](files/ActiveDirectoryInstructions/Radar-Baseline.mst) you can use. No need to go through the next steps except for how to get the ACCOUNT_TOKEN [here](#221-configure-account_token-property) and then you'll have to open the baseline file with an editor and replace `REPLACE_ME_WITH_A_TOKEN` with the Account Token you got.
+
+Suggestion, you can use `sed` command for this if you have it
+
+```sh
+sed -e 's/REPLACE_ME_WITH_A_TOKEN/<the token>/' Radar-Baseline.mst | tee Radar-MyToken.mst
+```
+
+#### 2.2 Creating the MSI Transformer (.mst)
 
 To create a transformer, first you need to install an application called [Orca](https://learn.microsoft.com/pt-br/windows/win32/msi/orca-exe).
 
 With Orca installed, you right click `RadarAgent.msi` installer, and select `Edit with Orca`. It will open Orca and you'll be able to see all configurations on this MSI.
 
 
-**Configure ACCOUNT_TOKEN property**
+##### 2.2.1 Configure ACCOUNT_TOKEN property
 
 First, we'll set the ACCOUNT_TOKEN propery. This requires you to fetch the token field from `users_accounts` table in the Database.
 
@@ -48,7 +61,7 @@ Now, in Orca:
 
 That's it, now when we reference this transformer, the MSI will have the account token set.
 
-**Configure REGISTER_LABEL**
+##### 2.2.1 Configure REGISTER_LABEL
 
 `REGISTER_LABEL` has a different configuration. Usually, we want to put something like the computer name, or an environment variable. This means we don't know that value at the time we are creating this file, given that's in the target machine.
 
@@ -79,9 +92,30 @@ Good, now you configured the Action, but you aren't calling it yet. For that, we
 
 Ok, now we have everything configured, it's time to generate the Transformer file. Click on the `Transform` menu, and select `Generate Transform`. This will ask you where to save the file, put it in the same directory of the installer, we'll need to store both in a shared folder next.
 
+## Installation
 
+### Manual Installation
 
-## Steps to install through in Active Directory
+In case you want to install an MSI manually, be it for test or whatever reason,
+you can do it by opening the Windows terminal with admin privilleges and type:
+
+```
+msiexec.exe /i RadarAgent.msi
+```
+
+If you want to set either ACCOUNT_TOKEN and/or REGISTER_LABEL manually, all you have to do is add these arguments at the end of the command:
+
+```
+msiexec.exe /i RadarAgent.msi ACCOUNT_TOKEN=<something> REGISTER_LABEL=<anotherthing>
+```
+
+Now, if you have an MST file with you and want to test it, such as the basefile [Radar-Baseline.mst](files/ActiveDirectoryInstructions/Radar-Baseline.mst), you can as follows:
+
+```
+msiexec.exe /i RadarAgent.msi TRANSFORMS=Radar-Baseline.mst
+```
+
+### Steps to install through in Active Directory
 
 
 With the installer (.msi), and the MSI transformer (.mst) in hand, you have to put them in a shared folder, and ensure all computers have access to it.
