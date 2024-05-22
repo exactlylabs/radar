@@ -49,42 +49,63 @@ module EventsNotifier
   def self.notify_new_account(account, contact)
     @notifiers.each do |notifier|
       notifier.notify_new_account(account, contact)
+    rescue RestClient::Exception => e
+      Sentry.set_context("Response", body: e.response.body)
+      raise e
     end
   end
 
   def self.notify_user_invite_accepted(account, user)
     @notifiers.each do |notifier|
       notifier.notify_user_invite_accepted(account, user)
+    rescue RestClient::Exception => e
+      Sentry.set_context("Response", body: e.response.body)
+      raise e
     end
   end
 
   def self.notify_new_location(location_info)
     @notifiers.each do |notifier|
       notifier.notify_new_location(location_info)
+    rescue RestClient::Exception => e
+      Sentry.set_context("Response", body: e.response.body)
+      raise e
     end
   end
 
   def self.notify_location_online(location_info)
     @notifiers.each do |notifier|
       notifier.notify_location_online(location_info)
+    rescue RestClient::Exception => e
+      Sentry.set_context("Response", body: e.response.body)
+      raise e
     end
   end
 
   def self.notify_location_offline(location_info)
     @notifiers.each do |notifier|
       notifier.notify_location_offline(location_info)
+    rescue RestClient::Exception => e
+      Sentry.set_context("Response", body: e.response.body)
+      raise e
     end
   end
 
   def self.notify_study_goal_reached(geospace, goal, as_org=nil)
     @notifiers.each do |notifier|
       notifier.notify_study_goal_reached(geospace, goal, as_org)
+    rescue RestClient::Exception => e
+      Sentry.set_context("Response", body: e.response.body)
+      raise e
     end
   end
 
   def self.notify_public_page_submission(submission)
     @notifiers.each do |notifier|
       notifier.notify_public_page_submission(submission)
+    rescue RestClient::Exception => e
+      Sentry.set_context("Response", body: e.response.body)
+      raise e
     end
   end
 end
