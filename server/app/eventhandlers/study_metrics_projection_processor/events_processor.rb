@@ -43,70 +43,49 @@ module StudyMetricsProjectionProcessor
 
     def handle_system_outage_event!(event)
       if event["name"] == SystemOutage::Events::CREATED
-        @in_outage = true
-
       elsif event["name"] == SystemOutage::Events::FINISHED
-        @in_outage = false
         outage = event["snapshot_state"]
         # Once a system outage is finished, we search for
         # pods whose state differs from the state before the outage.
+        buckets = ['hourly', 'daily']
         sql = %{
-          WITH state_before_outage AS (
+          WITH previous_state AS (
             SELECT
-              DISTINCT ON (snapshots.aggregate_id) snapshots.aggregate_id,
-              (state->>'online')::boolean as online,
-              (state->>'account_id')::bigint as account_id,
-              (state->>'location_id')::bigint as location_id,
-              (state->>'autonomous_system_id')::bigint as autonomous_system_id
-            FROM snapshots
-            JOIN events ON snapshots.event_id = events.id
-            WHERE snapshots.aggregate_type = :client_aggregate_type
-            AND timestamp < :start_time
-            ORDER BY snapshots.aggregate_id, timestamp DESC
-          ), state_right_before_ending AS (
-            SELECT
-              DISTINCT ON (snapshots.aggregate_id) snapshots.aggregate_id,
-              (state->>'online')::boolean as online,
-              (state->>'account_id')::bigint as account_id,
-              (state->>'location_id')::bigint as location_id,
-              (state->>'autonomous_system_id')::bigint as autonomous_system_id
-            FROM snapshots
-            JOIN events ON snapshots.event_id = events.id
-            WHERE snapshots.aggregate_type = :client_aggregate_type
-            AND timestamp < :end_time
-            ORDER BY snapshots.aggregate_id, timestamp DESC
+              DISTINCT ON (study_aggregate_id, autonomous_system_org_id) study_aggregate_id, autonomous_system_org_id,
+              online_pods_count,
+              online_locations_count,
+              measurements_count,
+              points_with_tests_count,
+              completed_locations_count,
+              completed_and_online_locations_count
+
+            FROM metrics_projections
+            WHERE timestamp < :start_time AND bucket_name = :bucket
+            ORDER BY study_aggregate_id, autonomous_system_org_id, timestamp DESC
           )
 
-          SELECT
-            f.online as from_online,
-            f.account_id as from_account_id,
-            f.location_id as from_location_id,
-            f.autonomous_system_id as from_autonomous_system_id,
-            t.online as to_online,
-            t.account_id as to_account_id,
-            t.location_id as to_location_id,
-            t.autonomous_system_id as to_autonomous_system_id
-
-          FROM state_before_outage f
-          RIGHT JOIN state_right_before_ending t ON f.aggregate_id = t.aggregate_id
-          WHERE f.online != t.online
+          UPDATE metrics_projections
+          SET
+            online_pods_count = previous_state.online_pods_count,
+            online_locations_count = previous_state.online_locations_count,
+            measurements_count = previous_state.measurements_count,
+            points_with_tests_count = previous_state.points_with_tests_count,
+            completed_locations_count = previous_state.completed_locations_count,
+            completed_and_online_locations_count = previous_state.completed_and_online_locations_count
+          FROM previous_state
+          WHERE
+            metrics_projections.study_aggregate_id = previous_state.study_aggregate_id
+            AND metrics_projections.autonomous_system_org_id = previous_state.autonomous_system_org_id
+            AND metrics_projections.timestamp >= :start_time
+            AND metrics_projections.timestamp < :end_time
+            AND metrics_projections.bucket_name = :bucket
         }
-        records = ActiveRecord::Base.connection.execute(
-          ApplicationRecord.sanitize_sql(
-            [sql, {
-              start_time: outage["start_time"],
-              end_time: outage["end_time"],
-              client_aggregate_type: Client.name
-            }]
+        buckets.each do |bucket|
+          records = ActiveRecord::Base.connection.execute(
+            ApplicationRecord.sanitize_sql(
+              [sql, {start_time: outage["start_time"], end_time: outage["end_time"], bucket: bucket}]
+            )
           )
-        )
-        records.each do |record|
-          if record["from_online"]
-            self.update_online_count_for_location(outage["end_time"], record["from_location_id"], record["from_autonomous_system_id"], -1)
-          end
-          if record["to_online"]
-            self.update_online_count_for_location(outage["end_time"], record["to_location_id"], record["to_autonomous_system_id"], 1)
-          end
         end
       end
     end
