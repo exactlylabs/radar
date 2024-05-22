@@ -507,6 +507,7 @@ ActiveRecord::Schema.define(version: 2024_05_04_042012) do
     t.index ["autonomous_system_org_id"], name: "index_metrics_projections_on_autonomous_system_org_id"
     t.index ["parent_aggregate_id"], name: "index_metrics_projections_on_parent_aggregate_id"
     t.index ["study_aggregate_id", "autonomous_system_org_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_asn_bucket_timestamp_desc_idx", order: { timestamp: :desc }
+    t.index ["study_aggregate_id", "bucket_name", "timestamp"], name: "metrics_projections_agg_bucket_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id", "timestamp"], name: "metrics_projections_agg_timestamp_desc_idx", order: { timestamp: :desc }
     t.index ["study_aggregate_id"], name: "index_metrics_projections_on_study_aggregate_id"
   end
