@@ -25,7 +25,9 @@
     %>
     <div class="cards--info-column gap-6" data-controller="notification-settings">
       <%= render partial: "notification_settings/components/email_notifications_card" %>
-      <%= render partial: "notification_settings/components/manage_notifications_card" %>
+      <%= render partial: "notification_settings/components/manage_notifications_card",
+                 locals: { is_enabled: @notification_settings.email_notifications_enabled }
+      %>
     </div>
   </div>
 </div>

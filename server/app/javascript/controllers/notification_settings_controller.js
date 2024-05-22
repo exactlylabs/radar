@@ -12,12 +12,6 @@ export default class extends Controller {
 
     connect() {
         this.token = document.getElementsByName("csrf-token")[0].content;
-        const emailNotifications = document.getElementById(NOTIFICATION_OPTIONS_ID.EMAIL_NOTIFICATIONS_ENABLED);
-        if (emailNotifications) {
-            this.notificationsEnabled = emailNotifications.getAttribute("checked") === "true";
-            console.log(this.notificationsEnabled);
-            this.updateNotificationsPreferences(this.notificationsEnabled);
-        }
     }
 
     toggleNotificationOption(e) {
