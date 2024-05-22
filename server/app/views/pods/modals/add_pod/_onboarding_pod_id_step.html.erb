@@ -40,7 +40,7 @@
 
   <input name="onboarding" autocomplete="off" type="hidden" value="true" id="claim-pods-onboarding" data-claim-pods-target="hiddenOnboardingStep">
 
-  <%= link_to "Need help finding your pod ID?", need_help_finding_pod_id_path, data: { method: :get, turbo_stream: true }, class: "regular-link wrap" %>
+  <%= link_to "Need help finding your pod ID?", need_help_finding_pod_id_clients_path, data: { method: :get, turbo_stream: true }, class: "regular-link wrap" %>
 
   <%= turbo_frame_tag 'pods-claimed-grid' do %>
     <%= render partial: "pods/modals/add_pod/pods_claimed_grid", locals: { pods: @clients } %>

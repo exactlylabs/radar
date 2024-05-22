@@ -55,20 +55,19 @@ Rails.application.routes.draw do
 
   get 'locations/account/:account_id', to: 'locations#get_by_account_id'
 
-  get 'clients/get_add_pod_modal', to: 'clients#get_add_pod_modal', as: :get_add_pod_modal
-
-  post 'clients/claim_new_pod', to: 'clients#claim_new_pod', as: :claim_new_pod
-  get 'clients/need_help_finding_pod_id', to: 'clients#need_help_finding_pod_id', as: :need_help_finding_pod_id
-
-  # Add or Move a pod
-  post 'clients/check_claimed_pod', to: 'clients#check_claimed_pod', as: :check_claimed_pod
-  delete 'clients/remove_claimed_pod', to: 'clients#remove_claimed_pod', as: :remove_claimed_pod
-  post 'clients/move_claimed_pod', to: 'clients#move_claimed_pod', as: :move_claimed_pod
-  post 'clients/save_claimed_pods', to: 'clients#save_claimed_pods', as: :save_claimed_pods
-  post 'clients/add_claimed_pods_to_account_and_network', to: 'clients#add_claimed_pods_to_account_and_network', as: :add_claimed_pods_to_account_and_network
-  post 'clients/confirm_moving_claimed_pods_to_account_and_network', to: 'clients#confirm_moving_claimed_pods_to_account_and_network', as: :confirm_moving_claimed_pods_to_account_and_network
-
   resources :clients do
+    collection do
+      get 'get_add_pod_modal', to: 'clients#get_add_pod_modal'
+      post 'check_claimed_pod', to: 'clients#check_claimed_pod'
+      delete 'remove_claimed_pod', to: 'clients#remove_claimed_pod'
+      post 'move_claimed_pod', to: 'clients#move_claimed_pod'
+      post 'save_claimed_pods', to: 'clients#save_claimed_pods'
+      post 'add_claimed_pods_to_account_and_network', to: 'clients#add_claimed_pods_to_account_and_network'
+      post 'confirm_moving_claimed_pods_to_account_and_network', to: 'clients#confirm_moving_claimed_pods_to_account_and_network'
+      post 'claim_new_pod', to: 'clients#claim_new_pod'
+      get 'need_help_finding_pod_id', to: 'clients#need_help_finding_pod_id'
+    end
+
     resources :measurements, controller: 'client_measurements', only: [:index, :create, :show] do
       collection do
         get 'ndt7_index'

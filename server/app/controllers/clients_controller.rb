@@ -4,6 +4,7 @@ require "rqrcode"
 class ClientsController < ApplicationController
   include Recents
   include Paginator
+  include ErrorsHelper
   include RangeEvaluator
   before_action :check_account_presence, only: %i[ index show ]
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
@@ -447,7 +448,7 @@ class ClientsController < ApplicationController
         remove_recent_search(c.id, Recents::RecentTypes::CLIENT)
       end
     else
-      @notice = "Oops! There has been an error deleting your clients."
+      @notice = there_has_been_an_error('deleting your clients')
     end
 
     respond_to do |format|
@@ -464,7 +465,7 @@ class ClientsController < ApplicationController
     if @clients.update_all(update_group_id: update_group_id)
       @notice = "Clients' release group was successfully updated."
     else
-      @notice = "Oops! There has been an error updating your clients' release group."
+      @notice = there_has_been_an_error('updating your clients\' release group')
     end
     respond_to do |format|
       format.turbo_stream
@@ -531,7 +532,7 @@ class ClientsController < ApplicationController
         pod.update(location_id: nil)
       end
     rescue Exception => e
-      @error = "Oops! There has been an error removing pod(s) from their network(s)."
+      @error = there_has_been_an_error('removing pod(s) from their network(s)')
     end
     respond_to do |format|
       if @error.nil?
@@ -559,7 +560,7 @@ class ClientsController < ApplicationController
         pod.update(location_id: new_location.id, account_id: new_location.account&.id)
       end
     rescue Exception => e
-      @error = "Oops! There has been an error removing pod(s) from their network(s)."
+      @error = there_has_been_an_error('removing pod(s) from their network(s)')
     end
     respond_to do |format|
       if @error.nil?
@@ -704,7 +705,7 @@ class ClientsController < ApplicationController
       if @client.save!
         format.turbo_stream
       else
-        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error adding your new pod. Please try again later." }
+        format.html { redirect_back fallback_location: root_path, notice: there_has_been_an_error('adding your new pod') }
       end
     end
   end
@@ -738,14 +739,14 @@ class ClientsController < ApplicationController
         pod.update(account_id: account_id, location_id: nil)
       end
     rescue Exception => e
-      @error = "Oops! There has been an error moving pod(s) to their account."
+      @error = there_has_been_an_error('moving pod(s) to their account')
     end
     respond_to do |format|
       if @error.nil?
         @notice = "Your pods have been moved to #{account.name}."
         format.turbo_stream
       else
-        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error moving pod(s) to their account.", status: :unprocessable_entity }
+        format.html { redirect_back fallback_location: root_path, notice: there_has_been_an_error('moving pod(s) to their account') }
       end
     end
   end
@@ -779,14 +780,14 @@ class ClientsController < ApplicationController
         pod.update(location_id: network_id, account_id: network.account.id)
       end
     rescue Exception => e
-      @error = "Oops! There has been an error moving pod(s) to their network."
+      @error = there_has_been_an_error('moving pod(s) to their network')
     end
     respond_to do |format|
       if @error.nil?
         @notice = "Your pods have been moved to #{network.name}."
         format.turbo_stream
       else
-        format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error moving pod(s) to their network.", status: :unprocessable_entity }
+        format.html { redirect_back fallback_location: root_path, notice: there_has_been_an_error('moving pod(s) to their network'), status: :unprocessable_entity }
       end
     end
   end
@@ -896,11 +897,9 @@ class ClientsController < ApplicationController
   end
 
   def can_move_pod_to_current_account(client)
-    accounts = policy_scope(Account)
-    accounts.each do |account|
-      return true if (account.id == client.account_id && account.id != current_account.id)
-    end
-    false
+    return false if client.account_id == current_account.id
+
+    policy_scope(Account).where(id: client.account_id).count > 0
   end
 
   def add_pods_to_account_and_network
@@ -909,16 +908,18 @@ class ClientsController < ApplicationController
       @locations = policy_scope(Location)
     end
 
+    @clients = []
     begin
       Client.transaction do
         @clients_ids.each do |client_id|
           assign_network_to_pod(client_id, @destination_account.id, @destination_network_id, @network_assignment_type, @categories, @location_params)
           @client.save!
+          @clients.append(@client)
         end
       end
       @notice = @clients_ids.length > 1 ? "#{@clients_ids.length} pods have been successfully added" : "Your pod has been successfully added."
     rescue Exception => e
-      @notice = "Oops! There has been an error adding your new pod. Please try again later."
+      @notice = there_has_been_an_error('adding your new pod')
     end
   end
 end

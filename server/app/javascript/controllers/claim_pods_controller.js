@@ -28,7 +28,7 @@ export default class extends Controller {
             inputs[i].value = data[i];
         }
         inputs[i - 1].focus();
-        this.onPodIdChanged(e)
+        this.onPodIdChanged(e);
     }
 
     focusInput(e) {
@@ -86,7 +86,7 @@ export default class extends Controller {
         if (element.value.length === 0) {
             element.previousElementSibling && element.previousElementSibling.focus();
         }
-        const podsCount = this.getPodsCount()
+        const podsCount = this.getPodsCount();
         if (podsCount === 0) {
             this.disableContinueButton();
         }
@@ -108,7 +108,7 @@ export default class extends Controller {
 
     isEmpty() {
         const currentId = this.getPodIdString();
-        return currentId.length === EMPTY_POD_ID_LENGTH
+        return currentId.length === EMPTY_POD_ID_LENGTH;
     }
 
     getPodIdString() {
@@ -130,18 +130,17 @@ export default class extends Controller {
         if (e.data?.length === element.maxLength) {
             element.nextElementSibling && element.nextElementSibling.focus();
         }
-        // this.toggleButtonState();
-        this.onPodIdChanged(e)
+        this.onPodIdChanged(e);
     }
 
     onPodIdChanged(e) {
         if (this.isComplete()) {
-            this.validatePodId(this.getPodIdString())
+            this.validatePodId(this.getPodIdString());
         } else {
             if (this.isEmpty() && this.podsId.length > 0) {
                 this.enableContinueButton();
             } else {
-                const podsCount = this.getPodsCount()
+                const podsCount = this.getPodsCount();
                 if (podsCount === 0) {
                     this.disableContinueButton();
                 }
@@ -152,8 +151,8 @@ export default class extends Controller {
 
     validatePodId(podId) {
         this.disableContinueButton();
-        this.showSpinner()
-        const podsCount = this.getPodsCount()
+        this.showSpinner();
+        const podsCount = this.getPodsCount();
         const formData = new FormData();
         formData.append("pod_id", podId);
         formData.append("pods_count", podsCount);
@@ -164,19 +163,17 @@ export default class extends Controller {
             headers: {"X-CSRF-Token": this.token},
             body: formData,
         }).then(response => {
-            if (response.ok) return response.text()
+            if (response.ok) return response.text();
             else throw new Error(response.statusText);
         })
-            .then(html => {
-                this.hideSpinner();
-                Turbo.renderStreamMessage(html);
-            })
-            .catch(error => handleError(error));
+            .then(html => Turbo.renderStreamMessage(html))
+            .catch(error => handleError(error))
+            .finally(() => this.hideSpinner());
     }
 
     onPodDeleted(e) {
         const podId = e.target.dataset.podId;
-        const podsCount = this.getPodsCount()
+        const podsCount = this.getPodsCount();
         const formData = new FormData();
         formData.append("pod_id", podId);
         formData.append("pods_count", podsCount);
@@ -190,7 +187,7 @@ export default class extends Controller {
 
     onMoveClaimedPod(e) {
         const podId = e.target.dataset.podId;
-        const podsCount = this.getPodsCount()
+        const podsCount = this.getPodsCount();
         const formData = new FormData();
         formData.append("pod_id", podId);
         formData.append("pods_count", podsCount);
@@ -200,7 +197,7 @@ export default class extends Controller {
             headers: {"X-CSRF-Token": this.token},
             body: formData,
         }).then(response => {
-            if (response.ok) return response.text()
+            if (response.ok) return response.text();
             else throw new Error(response.statusText);
         })
             .then(html => {
@@ -216,7 +213,7 @@ export default class extends Controller {
             headers: {"X-CSRF-Token": this.token},
             body: formData,
         }).then(response => {
-            if (response.ok) return response.text()
+            if (response.ok) return response.text();
             else throw new Error(response.statusText);
         })
             .then(html => {
@@ -237,7 +234,7 @@ export default class extends Controller {
             headers: {"X-CSRF-Token": this.token},
             body: formData,
         }).then(response => {
-            if (response.ok) return response.text()
+            if (response.ok) return response.text();
             else throw new Error(response.statusText);
         })
             .then(html => {
