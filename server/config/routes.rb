@@ -247,6 +247,7 @@ Rails.application.routes.draw do
       delete :decline
     end
     collection do
+      get 'invite_modal', to: 'invites#invite_modal'
       post 'resend', to: 'invites#resend'
     end
   end
