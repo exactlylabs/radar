@@ -234,7 +234,8 @@ void _runDownloadIsolate(List<dynamic> args) async {
   );
 }
 
-Future<List<String>?> _discoverServerURLs(Map<String, String> config) async {
+Future<({String? error, List<String>? urls})> _discoverServerURLs(
+    Map<String, String> config) async {
   final queryParameters = {
     'client_name': 'dart-client',
     'client_library_name': 'ndt7-dart',
@@ -247,12 +248,12 @@ Future<List<String>?> _discoverServerURLs(Map<String, String> config) async {
   try {
     final response = await http.get(url);
     final body = jsonDecode(response.body);
-    final downloadUrl = body['results'][0]['urls']['$protocol:///ndt/v7/download'];
-    final uploadUrl = body['results'][0]['urls']['$protocol:///ndt/v7/upload'];
-    return [downloadUrl, uploadUrl];
+    final downloadUrl = body['results'][0]['urls']['$protocol:///ndt/v7/download'] as String;
+    final uploadUrl = body['results'][0]['urls']['$protocol:///ndt/v7/upload'] as String;
+    final urls = [downloadUrl, uploadUrl];
+    return (error: null, urls: urls);
   } catch (exception) {
-    //HANDLE EXCEPTION
-    return null;
+    return (error: exception.toString(), urls: null);
   }
 }
 
@@ -262,15 +263,15 @@ Future<void> test({
   Function(Map<String, dynamic>)? onCompleted,
   Function(Map<String, dynamic>)? onError,
 }) async {
-  var results = await _discoverServerURLs(config ?? {});
-  if (results == null) {
-    final error = _getError('Could not discover server URLs');
+  final response = await _discoverServerURLs(config ?? {});
+  if (response.error != null) {
+    final error = _getError('Could not discover server URLs: ${response.error}');
     if (onError != null) onError(error);
     return;
   }
 
-  final downloadUrl = results[0];
-  final uploadUrl = results[1];
+  final downloadUrl = response.urls![0];
+  final uploadUrl = response.urls![1];
   await _download(
     downloadUrl,
     onMeasurement: onMeasurement,
