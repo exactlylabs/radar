@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -22,12 +21,15 @@ class WebSocketClient {
   Map<String, StreamController<dynamic>> requests = <String, StreamController<dynamic>>{};
 
   void open() {
-    // TODO: Seperate concept of openning/closing from attempted opening/retry opening
     Uri connectEndpoint = _getConnectEndpoint(endpoint, accessToken);
 
-    socket = WebSocketChannel.connect(connectEndpoint);
-    socket!.stream
-        .listen(_handleMessages, onError: _handleError, onDone: _handleError, cancelOnError: true);
+    try {
+      socket = WebSocketChannel.connect(connectEndpoint);
+      socket!.stream.listen(_handleMessages,
+          onError: _handleError, onDone: _handleError, cancelOnError: true);
+    } catch (exception, stackTrace) {
+      Sentry.captureException(exception, stackTrace: stackTrace);
+    }
   }
 
   void close() {
