@@ -43,6 +43,9 @@ class InvitesController < ApplicationController
     end
   end
 
+  def invite_modal
+  end
+
   def resend
     # Not handling this with a before_action like set_invite as this is 
     # triggered as a POST request from a button and although an exception 

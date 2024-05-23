@@ -16,12 +16,7 @@
     </div>
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
-      <button
-        type="button"
-        class="custom-button custom-button--primary custom-button--sm"
-        data-bs-toggle="modal"
-        data-bs-target="#add_user_wizard"
-      >Add User</button>
+      <%= link_to "Add User", invite_modal_invites_path, { class: "custom-button custom-button--sm custom-button--primary", data: { "turbo-frame" => "add_user_modal" } } %>
     </div>
   </div>
 </div>
@@ -61,11 +56,10 @@
   <!--end::Container-->
 </div>
 
-<div class="modal fade"
-     tabindex="-1"
-     id="add_user_wizard"
-     data-controller="add-user modal"
-     data-action="turbo:submit-end->modal#submit"
->
-  <%= render partial: "users/add_user_wizard/add_user_wizard" %>
-</div>
+<%= render partial: "application/components/modals/turbo_modal",
+           locals: {
+             turbo_frame_tag_id: "add_user_modal",
+             optional_added_controllers: "add-user",
+             optional_added_actions: nil
+           }
+%>
