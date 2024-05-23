@@ -8,16 +8,10 @@
 <% else %>
   <% if are_there_unassigned_pods?  %>
     <%= turbo_stream.update "unassigned-pods-banner" do %>
-      <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
-      <div class="networks--unassigned-pods-banner-text-container">
-        <% pod_count = policy_scope(Client).where(location: nil).count %>
-        <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : ''%> not assigned to any network.</span>
-        <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
-      </div>
+      <%= render partial: "pods/components/unassigned_pods_banner" %>
     <% end %>
   <% else %>
-    <%= turbo_stream.remove "unassigned-pods-banner" do %>
-    <% end %>
+    <%= turbo_stream.update "unassigned-pods-banner" %>
   <% end %>
   <% @clients.each do |client| %>
     <%= turbo_stream.replace client do %>

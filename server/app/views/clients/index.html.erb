@@ -54,16 +54,10 @@
   </div>
 </div>
 <!--end::Toolbar-->
-
-<% if FeatureFlagHelper.is_available('networks', current_user) && are_there_unassigned_pods? %>
-  <div id="unassigned-pods-banner" class="networks--unassigned-pods-banner">
-    <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
-    <div class="networks--unassigned-pods-banner-text-container">
-      <% pod_count = policy_scope(Client).where(location: nil).count %>
-      <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : '' %> not assigned to any network.</span>
-      <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
-    </div>
-  </div>
+<%= turbo_frame_tag "unassigned-pods-banner" do %>
+  <% if FeatureFlagHelper.is_available('networks', current_user) && are_there_unassigned_pods? %>
+    <%= render partial: "pods/components/unassigned_pods_banner" %>
+  <% end %>
 <% end %>
 
 <div class="post fs-6 d-flex flex-column-fluid" id="kt_post">

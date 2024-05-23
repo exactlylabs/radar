@@ -88,6 +88,7 @@ Rails.application.routes.draw do
       post 'run_test'
       post 'toggle_in_service'
       get 'pdf_label', to: 'clients#get_client_label'
+      get 'remove_from_network', to: 'clients#remove_from_network'
       post 'run_public_test'
       get 'speed_average', to: 'clients#speed_average', as: 'speed_average'
       get 'download_speeds', to: 'public_pod#download_speeds'
