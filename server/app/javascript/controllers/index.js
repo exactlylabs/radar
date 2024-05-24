@@ -103,6 +103,9 @@ application.register("filters", FiltersController)
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
+import InfiniteScrollController from "./infinite_scroll_controller"
+application.register("infinite-scroll", InfiniteScrollController)
+
 import LineChartController from "./line_chart_controller"
 application.register("line-chart", LineChartController)
 
@@ -169,12 +172,6 @@ application.register("password-reveal", PasswordRevealController)
 import PodAccountAndNetworkController from "./pod_account_and_network_controller"
 application.register("pod-account-and-network", PodAccountAndNetworkController)
 
-import PodIdInputController from "./pod_id_input_controller"
-application.register("pod-id-input", PodIdInputController)
-
-import PodIdStepController from "./pod_id_step_controller"
-application.register("pod-id-step", PodIdStepController)
-
 import PublicPageController from "./public_page_controller"
 application.register("public-page", PublicPageController)
 
@@ -220,8 +217,6 @@ application.register("super-user", SuperUserController)
 import SwitchAccountController from "./switch_account_controller"
 application.register("switch-account", SwitchAccountController)
 
-import InfiniteScrollController from "./infinite_scroll_controller";
-application.register("infinite-scroll", InfiniteScrollController);
 import TableController from "./table_controller"
 application.register("table", TableController)
 
