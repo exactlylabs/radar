@@ -88,7 +88,7 @@
 
 <% if FeatureFlagHelper.is_available('networks', current_user) %>
   <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "pod-id-step" }
+             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "claim-pods pod-account-and-network" }
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",

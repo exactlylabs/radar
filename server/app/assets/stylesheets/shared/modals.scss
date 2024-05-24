@@ -194,13 +194,13 @@
 }
 
 .modals--content-container {
-  max-width: 480px;
+  max-width: 508px;
   min-width: 400px;
   padding: 40px;
   overflow-y: auto;
 
   &[data-type="full"] {
-    padding: 1.5rem 40px 2rem;
+    padding: 1.5rem 36px 2rem;
 
     &.modals--get-started {
       padding: 0 56px 2rem;
@@ -208,6 +208,11 @@
   }
 
   &[data-resource="networks"] {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  &[data-resource="clients"] {
     max-height: 500px;
     overflow-y: auto;
   }
@@ -398,7 +403,7 @@
 }
 
 .modals--move-pod-modal {
-  width: 480px;
+  width: 508px;
 }
 
 @media (max-width: 768px) {

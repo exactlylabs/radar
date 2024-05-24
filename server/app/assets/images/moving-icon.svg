@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>moving_icon@1x</title>
+    <g id="[Desktop]-Manage-pods" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Networks---Pods---Add-Pod---Physical---Step-1-(Claimed-pod-added)--v-Desktop" transform="translate(-762, -513)">
+            <g id="moving_icon" transform="translate(762, 513)">
+                <circle id="Oval" fill="#F58600" cx="6" cy="6" r="6"></circle>
+                <g id="Icons-/-16x16-/-Arrow-Right-Alternative" transform="translate(2.6, 4)">
+                    <polyline id="Path-2" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(5, 2) rotate(-90) translate(-5, -2)" points="3 1 5 3 7 1"></polyline>
+                    <rect id="Rectangle" fill="#FFFFFF" x="0" y="1.25" width="6" height="1.5" rx="0.75"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

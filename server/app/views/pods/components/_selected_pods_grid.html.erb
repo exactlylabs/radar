@@ -1,12 +1,13 @@
+<% pods = local_assigns[:pods].present? ? local_assigns[:pods] : [] %>
 <div class="pods--selected-pods-container"
      data-action="addPod@window->selected-pods-grid#addPod addPodFromQR@window->selected-pods-grid#addPod removePod@window->selected-pods-grid#removePod selectAll@window->selected-pods-grid#selectAll deselectAll@window->selected-pods-grid#deselectAll"
      data-selected-pods-grid-target="podGridHeader"
-     <%= @pods.count > 0 ? nil : 'hidden=hidden' %>
+     <%= pods.count > 0 ? nil : 'hidden=hidden' %>
 >
-  <input hidden="hidden" type="text" data-selected-pods-grid-target="selectedPodIdsHiddenInput" value="<%= @pods.map(&:unix_user).to_s %>"/>
+  <input hidden="hidden" type="text" data-selected-pods-grid-target="selectedPodIdsHiddenInput" value="<%= pods.map(&:unix_user).to_s %>"/>
   <div class="pods--selected-pods-grid-header">
 
-    <p data-selected-pods-grid-target="podListCount">Pod list(<%= @pods.count %>)</p>
+    <p data-selected-pods-grid-target="podListCount">Pod list(<%= pods.count %>)</p>
     <span class="regular-link hoverable" data-action="click->selected-pods-grid#removeAll:prevent">Remove all</span>
   </div>
   <div class="pods--selected-pods-grid" id="selected-pods-grid-wrapper">
@@ -17,14 +18,8 @@
       <p></p>
       <%= image_tag image_url('cancel.png'), width: 16, height: 16, class: 'hoverable', data: { action: 'click->selected-pods-grid#deletePod' } %>
     </div>
-    <% @pods&.each do |pod| %>
-      <div class="pods--selected-pod-cell" id="selected-pod-<%= pod.unix_user %>">
-        <div class="tables--network-icon-container" data-pod-status="online">
-          <%= image_tag image_url('pod-online-icon.png'), width: 24, height: 24 %>
-        </div>
-        <p><%= pod.unix_user %></p>
-        <%= image_tag image_url('cancel.png'), width: 16, height: 16, class: 'hoverable', data: { action: 'click->selected-pods-grid#deletePod', pod_id: pod.unix_user } %>
-      </div>
+    <% pods.each do |pod| %>
+      <%= render partial: "pods/components/selected_pod", locals: { pod: pod } %>
     <% end %>
   </div>
 </div>

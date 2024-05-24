@@ -1,4 +1,5 @@
 import {Controller} from "@hotwired/stimulus";
+import handleError from "./error_handler_controller";
 
 const NETWORK_SELECT_STATUS = {
     NO_NETWORK: 'no_network',
@@ -10,12 +11,15 @@ export default class extends Controller {
 
     static targets = [
         "networkSubtitle",
+        "accountSubtitle",
         "existingNetworkSelect",
         "newNetworkComponent",
-        "accountsSelect"
+        "accountsSelect",
+        "podsIds",
     ]
 
     connect() {
+        this.token = document.querySelector('meta[name="csrf-token"]').content;
         const {onboarding, networkType} = this.element.dataset;
         if (networkType !== null && networkType !== undefined) {
             this.networkAssignmentType = networkType;
@@ -159,6 +163,4 @@ export default class extends Controller {
                 .catch((err) => console.error(err));
         }
     }
-
-
 }

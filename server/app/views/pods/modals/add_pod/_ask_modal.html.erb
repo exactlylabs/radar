@@ -1,7 +1,7 @@
 <%= render partial: "application/components/modals/modal_header",
            locals: { title: "Add a pod", is_custom: true }
 %>
-<%= form_with(url: get_add_new_pod_to_current_network_modal_path, method: :get, data: { "turbo-frame" => "add_new_pod_to_current_network" }) do |form| %>
+<%= form_with(url: get_add_pod_modal_path, method: :get, data: { "turbo-frame" => 'add_pod_modal' }) do |form| %>
   <div class="modal-body modals--body d-flex flex-column justify-content-center align-items-center text-center">
     <input hidden
            type="text"

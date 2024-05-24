@@ -11,7 +11,7 @@
       <label for="bulk-pods-select" class="forms--label">Choose pods to move</label>
       <%= render partial: "pods/components/multi_pod_select" %>
     </div>
-    <%= render partial: "pods/components/selected_pods_grid" %>
+    <%= render partial: "pods/components/selected_pods_grid", locals: { pods: @pods }  %>
   </div>
   <div class="modals--footer-container">
     <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>

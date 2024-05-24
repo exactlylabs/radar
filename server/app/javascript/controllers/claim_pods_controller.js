@@ -7,7 +7,7 @@ const EMPTY_POD_ID_LENGTH = 0;
 
 export default class extends Controller {
 
-    static targets = ["podIdInput", "continueButton", "inputsContainer", "spinner", "podsIdList"];
+    static targets = ["podIdInput", "continueButton", "inputsContainer", "spinner", "claimedPod"];
 
     connect() {
         this.token = document.getElementsByName("csrf-token")[0].content;
@@ -86,7 +86,10 @@ export default class extends Controller {
         if (element.value.length === 0) {
             element.previousElementSibling && element.previousElementSibling.focus();
         }
-        this.disableContinueButton();
+        const podsCount = this.getPodsCount()
+        if (podsCount === 0) {
+            this.disableContinueButton();
+        }
     }
 
     toggleButtonState() {
@@ -131,9 +134,6 @@ export default class extends Controller {
         this.onPodIdChanged(e)
     }
 
-// set caret position to the end of the input
-
-// When the last character is typed, the validation is triggered automatically.
     onPodIdChanged(e) {
         if (this.isComplete()) {
             this.validatePodId(this.getPodIdString())
@@ -141,7 +141,10 @@ export default class extends Controller {
             if (this.isEmpty() && this.podsId.length > 0) {
                 this.enableContinueButton();
             } else {
-                this.disableContinueButton();
+                const podsCount = this.getPodsCount()
+                if (podsCount === 0) {
+                    this.disableContinueButton();
+                }
             }
             this.hideSpinner();
         }
@@ -150,11 +153,13 @@ export default class extends Controller {
     validatePodId(podId) {
         this.disableContinueButton();
         this.showSpinner()
-
+        const podsCount = this.getPodsCount()
         const formData = new FormData();
         formData.append("pod_id", podId);
+        formData.append("pods_count", podsCount);
+        const url = window.origin + '/clients/check_claimed_pod';
 
-        fetch('clients/check_claim_new_pod', {
+        fetch(url, {
             method: "POST",
             headers: {"X-CSRF-Token": this.token},
             body: formData,
@@ -164,18 +169,81 @@ export default class extends Controller {
         })
             .then(html => {
                 this.hideSpinner();
-                this.enableContinueButton();
                 Turbo.renderStreamMessage(html);
             })
             .catch(error => handleError(error));
-
-        // send the pod id to the backend and wait for the response
-        // if it's a valid pod id then add it to the instance podsId list, hide the spinner, clear the input field and enable the continue button.
-        // if it's not a valid pod id then hide the spinner, disable the continue button
-        // if the pod belongs to one of your accounts, show warning message suggesting moving it to this account.
-        // if the pod id it's invalid, show the error message.
-
     }
+
+    onPodDeleted(e) {
+        const podId = e.target.dataset.podId;
+        const podsCount = this.getPodsCount()
+        const formData = new FormData();
+        formData.append("pod_id", podId);
+        formData.append("pods_count", podsCount);
+        this.removeClaimedPods(formData);
+    }
+
+    onDeleteAllPods(e) {
+        const formData = new FormData();
+        this.removeClaimedPods(formData);
+    }
+
+    onMoveClaimedPod(e) {
+        const podId = e.target.dataset.podId;
+        const podsCount = this.getPodsCount()
+        const formData = new FormData();
+        formData.append("pod_id", podId);
+        formData.append("pods_count", podsCount);
+        const url = window.origin + '/clients/move_claimed_pod';
+        fetch(url, {
+            method: "POST",
+            headers: {"X-CSRF-Token": this.token},
+            body: formData,
+        }).then(response => {
+            if (response.ok) return response.text()
+            else throw new Error(response.statusText);
+        })
+            .then(html => {
+                Turbo.renderStreamMessage(html);
+            })
+            .catch(error => handleError(error));
+    }
+
+    removeClaimedPods(formData) {
+        const url = window.origin + '/clients/remove_claimed_pod';
+        fetch(url, {
+            method: "DELETE",
+            headers: {"X-CSRF-Token": this.token},
+            body: formData,
+        }).then(response => {
+            if (response.ok) return response.text()
+            else throw new Error(response.statusText);
+        })
+            .then(html => {
+                Turbo.renderStreamMessage(html);
+            })
+            .catch(error => handleError(error));
+    }
+
+    goToSelectAccountAndNetworkStep(e) {
+        const podsIds = this.getPodsIdList();
+        const formData = new FormData();
+        formData.append("pods_ids", podsIds);
+        const url = window.origin + '/clients/save_claimed_pods';
+        fetch(url, {
+            method: "POST",
+            headers: {"X-CSRF-Token": this.token},
+            body: formData,
+        }).then(response => {
+            if (response.ok) return response.text()
+            else throw new Error(response.statusText);
+        })
+            .then(html => {
+                Turbo.renderStreamMessage(html);
+            })
+            .catch(error => handleError(error));
+    }
+
 
     disableContinueButton() {
         emitCustomEvent('continueButtonStateChanged', {detail: {state: "disable"}});
@@ -193,10 +261,21 @@ export default class extends Controller {
         this.spinnerTarget.setAttribute('hidden', 'true')
     }
 
-    resetPodIdInputField() {
-        const inputs = this.podIdInputTargets;
-        inputs.forEach((input) => (input.value = null));
-        inputs[0].focus();
+    getPodsCount() {
+        if (this.claimedPodTargets.length > 0) {
+            return this.claimedPodTargets.length;
+        } else {
+            return 0;
+        }
     }
 
+    getPodsIdList() {
+        let podsIds = [];
+        this.claimedPodTargets.forEach((pod) => {
+            //take the id from the id attribute
+            const podId = pod.id.split('pod-claimed-')[1];
+            podsIds.push(podId);
+        });
+        return podsIds;
+    }
 }

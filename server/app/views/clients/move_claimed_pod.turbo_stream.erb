@@ -1,0 +1,34 @@
+<%= turbo_stream.update 'claim-pods-input' do %>
+  <%= render partial: "application/components/pod_id_input" %>
+<% end %>
+
+<%= turbo_stream.update 'claim-pods-error' %>
+
+<% if @clients_count == 1 %>
+  <%= turbo_stream.update 'pods-claimed-grid' do %>
+    <%= render partial: "pods/modals/add_pod/pods_claimed_grid", locals: { pods: [@client] } %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace 'pods-claimed-grid-count' do %>
+    <p id="pods-claimed-grid-count">Pod list(<%= @clients_count %>)</p>
+  <% end %>
+<% end %>
+<%= turbo_stream.append 'pods-claimed-grid-content' do %>
+  <%= render partial: "pods/modals/add_pod/pod_claimed",
+             locals: {
+               pod: @client,
+               pods_count: @clients_count,
+               pod_moved: true
+             }
+  %>
+<% end %>
+
+
+<%= turbo_stream.replace 'claim-pods-continue-button' do %>
+  <button type="button"
+          id="claim-pods-continue-button"
+          class="custom-button custom-button--primary custom-button--sm <%= @clients_count > 0 ? '' : 'custom-button--disabled' %>"
+          data-action="click->claim-pods#goToSelectAccountAndNetworkStep"
+  >Continue
+  </button>
+<% end %>

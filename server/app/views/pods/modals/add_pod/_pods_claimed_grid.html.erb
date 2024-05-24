@@ -1,0 +1,19 @@
+<% pods = local_assigns[:pods].present? ? local_assigns[:pods] : [] %>
+<div class="pods--selected-pods-container" <%= pods.count > 0 ? nil : 'hidden=hidden' %>>
+  <div class="pods--selected-pods-grid-header">
+    <p id="pods-claimed-grid-count">Pod list(<%= pods.count %>)</p>
+    <span class="regular-link hoverable" data-action="click->claim-pods#onDeleteAllPods">Remove all</span>
+  </div>
+
+  <div id="pods-claimed-grid-content" class="pods--selected-pods-grid">
+    <% pods.each do |pod| %>
+      <%= render partial: "pods/modals/add_pod/pod_claimed",
+                 locals: {
+                   pod: pod,
+                   pods_count: pods.count,
+                   pod_moved: pod.account&.id != nil &&  pod.account&.id != current_account.id
+                 }
+      %>
+    <% end %>
+  </div>
+</div>
