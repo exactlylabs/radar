@@ -1,5 +1,4 @@
-class ClientOutage < ApplicationRecord
-  belongs_to :client
+class NetworkOutage < ApplicationRecord
   belongs_to :location
   belongs_to :outage_event, optional: true
   belongs_to :autonomous_system, optional: true
