@@ -2,8 +2,11 @@ class OutagesProjector
   include Fetchers
   ##
   # This projector fill the outages projection, and classify them as:
-  #  * Pod Failure
-  #    - Location went offline
+  #  * Unknown Reason
+  #    - Location is offline (all pods within this location are offline), and it's not back online and not an ISP outage
+  #
+  #  * Network Failure
+  #    - Location went offline (all pods within this location are offline), and brought back online without any other information
   #
   #  * ISP Outage
   #    - Multiple locations, on the same ISP going down
@@ -16,7 +19,10 @@ class OutagesProjector
 
   def self.reprocess
     ConsumerOffset.find_by(consumer_id: 'OutagesProjector')&.destroy
-    ClientOutage.delete_all
+    # Preciso armazenar o estado do location, para saber quantos pods e qual o estado desses pods, assim defino se está online ou não.
+    # Locations sem pods, não devem ter um outage. E se tinham, esse outage deve ser finalizado como unknown.
+    # Locations que receberam um pod offline, iniciam com um unknown outage? Acho que nesse caso iniciam sem outage, pois nunca ficaram online.
+    NetworkOutage.delete_all
     OutageEvent.delete_all
     process
   end
@@ -29,8 +35,10 @@ class OutagesProjector
     @co = ConsumerOffset.find_or_create_by!(consumer_id: 'OutagesProjector')
     @state = @co.state
     @state["pods"] ||= {}
+    @state["network_pods"] ||= {}
     @state["isp_window_outages"] ||= {}
     @pods = @state["pods"]
+    @network_pods = @state["network_pods"]
     @system_outage = @state["system_outage"] || false
   end
 
@@ -81,7 +89,7 @@ class OutagesProjector
       OutageEvent.where(
         "started_at >= ? AND started_at < ?", system_outage["start_time"], system_outage["end_time"]
       ).update_all(status: :cancelled)
-      ClientOutage.where(
+      NetworkOutage.where(
         "started_at >= ? AND started_at < ?", system_outage["start_time"], system_outage["end_time"]
       ).update_all(status: :cancelled)
 
@@ -101,137 +109,143 @@ class OutagesProjector
     pod_state = event["snapshot_state"]
     as_id = pod_state["autonomous_system_id"].to_s
 
+
+    @pods[event["aggregate_id"]]["state"] = pod_state if pod_state["location_id"].present?
+
     case event["name"]
+    when Client::Events::CREATED
+      if pod_state["location_id"].present?
+        @network_pods[pod_state["location_id"]] ||= []
+        @network_pods[pod_state["location_id"]] << event["aggregate_id"]
+      end
     when Client::Events::WENT_OFFLINE
-      handle_offline_event(as_id, event)
+      return if pod_state["location_id"].nil?
+      handle_offline_event(as_id, pod_state, event)
 
     when Client::Events::WENT_ONLINE
-      handle_online_event(as_id, event)
+      return if pod_state["location_id"].nil?
+      handle_online_event(as_id, pod_state, event)
 
     when Client::Events::SERVICE_STARTED
-      handle_service_started_event(as_id, event)
+      return if pod_state["location_id"].nil?
+      handle_service_started_event(as_id, pod_state, event)
 
+    when Client::Events::LOCATION_CHANGED
+      handle_location_changed_event(as_id, pod_state, event)
     end
   end
 
-  def invalidate_isp_outage(isp_outage)
+  def invalidate_isp_outage(isp_outage, network_outages, cancelled_at)
     # no longer valid isp outage
-    isp_outage.update_columns(status: :cancelled)
-    isp_outage.client_outages.each do |c_outage|
-      c_outage.update_columns(outage_event_id: nil, accounted_in_isp_window: false)
-      c_outage.outage_event = nil # update_columns won't delete the association by default
-      if c_outage.resolved?
+    isp_outage.update_columns(status: :cancelled, cancelled_at: cancelled_at)
+    network_outages.each do |n_outage|
+      n_outage.accounted_in_isp_window = false
+      n_outage.outage_event = OutageEvent.new(
+        outage_type: :unknown_reason,
+        started_at: n_outage.started_at,
+        autonomous_system_id: n_outage.autonomous_system_id
+      )
+      if n_outage.resolved?
         # Run through the resolve logic again, to generate a different outage event
-        resolve_client_outage(c_outage, c_outage.resolved_at)
+        resolve_network_outage(n_outage, n_outage.resolved_at)
+      else
+        n_outage.save!(validate: false)
       end
     end
     @state["isp_outages"].delete(isp_outage.autonomous_system_id)
   end
 
-  def create_outage_event_for_client_outage(client_outage, outage_type, resolved_at)
-    outage_event = OutageEvent.create!(
-      outage_type: outage_type,
-      status: :resolved,
-      started_at: client_outage.started_at,
-      autonomous_system_id: client_outage.autonomous_system_id,
-      resolved_at: resolved_at
-    )
-    client_outage.update_columns(
-      outage_event_id: outage_event.id,
-      status: :resolved,
-      resolved_at: resolved_at,
-      accounted_in_isp_window: outage_type == :isp_outage
-    )
-  end
 
   ##
   #
-  # Resolve a client outage, and create/update an OutageEvent depending on the rules:
+  # Resolve a network outage, and create/update an OutageEvent depending on the rules:
   #
-  #  - If the client outage has no existing outage event linked to it, it can be either a power_outage, or a pod_failure.
-  #    We decide based on the value of has_service_started_event, which is set when processing SERVICE_STARTED events.
-  #
-  #  - If the client outage is linked to a pod_failure outage event, but it has the has_service_started_event flag set,
+  #  - If the network outage is linked to a network_failure outage event, but it has the has_service_started_event flag set,
   #    we update it to power_outage type.
   #
-  #  - If the client outage is linked to an isp_failure outage event, and it has the has_service_started_event flag set,
+  #  - If the network outage is linked to an isp_failure outage event, and it has the has_service_started_event flag set,
   #    then we remove it from the existing isp_failure, generate a power_outage event linked to it, and verify if the existing isp_failure outage is still valid
-  #    by checking if it still has more than 3 client outages from the first 5 minutes window linked to it.
-  #    If it doesn't, we cancel the isp_failure event, remove the link from all client outages linked to it, and update the resolved ones to pod_failure.
+  #    by checking if it still has more than 3 network outages from the first 5 minutes window linked to it.
+  #    If it doesn't, we cancel the isp_failure event, remove the link from all network outages linked to it, and update the resolved ones to network_failure.
   #
-  # - If the client outage is linked to an isp_failure outage event, and no has_service_started_event flag set,
-  #   after resolving the client outage, we check if the isp_failure has a percentage of active client outages from the first 5 minutes window that is lower than 2/3 of the original value.
+  # - If the network outage is linked to an isp_failure outage event, and no has_service_started_event flag set,
+  #   after resolving the network outage, we check if the isp_failure has a percentage of active network outages from the first 5 minutes window that is lower than 2/3 of the original value.
   #   If the condition checks, then we consider the isp_failure resolved.
   ##
-  def resolve_client_outage(client_outage, resolved_at)
-    if client_outage.outage_event.nil?
-      create_outage_event_for_client_outage(
-        client_outage,
-        client_outage.has_service_started_event? ? :power_outage : :pod_failure,
-        resolved_at
-      )
+  def resolve_network_outage(network_outage, resolved_at)
+    network_outage.status = :resolved
+    network_outage.resolved_at = resolved_at
 
-    elsif client_outage.outage_event.pod_failure? && client_outage.has_service_started_event?
-      client_outage.outage_event.update_columns(outage_type: :power_outage)
+    if network_outage.outage_event.network_failure? && network_outage.has_service_started_event?
+      network_outage.outage_event.update_columns(outage_type: :power_outage)
 
-    elsif client_outage.outage_event.isp_outage? && client_outage.has_service_started_event?
-      isp_outage = client_outage.outage_event
-      create_outage_event_for_client_outage(
-        client_outage,
-        :power_outage,
-        resolved_at
+    elsif network_outage.outage_event.isp_outage? && network_outage.has_service_started_event?
+      # Replace this NetworkOutage's OutageEvent to a Power Outage, and check if ISP outage still applies
+      isp_outage = network_outage.outage_event
+      outage_event = OutageEvent.create!(
+        outage_type: :power_outage,
+        status: :resolved,
+        started_at: network_outage.started_at,
+        autonomous_system_id: isp_outage.autonomous_system_id,
+        resolved_at: resolved_at
       )
-      if isp_outage.client_outages.where(accounted_in_isp_window: true).count < 3
-        invalidate_isp_outage(isp_outage)
+      network_outage.outage_event = outage_event
+
+      remaining_networks = isp_outage.network_outages.except(network_outage)
+      if remaining_networks.where(accounted_in_isp_window: true).count < 3
+        invalidate_isp_outage(isp_outage, remaining_networks, resolved_at)
       end
 
-    elsif client_outage.outage_event.isp_outage?
-      isp_outage = client_outage.outage_event
-      client_outage.update_columns(status: :resolved, resolved_at: resolved_at)
+    elsif network_outage.outage_event.isp_outage?
+      # Verify if the ISP Outage should get resolved as well
+      isp_outage = network_outage.outage_event
       return unless isp_outage.active?
       cached_data = @state["isp_outages"][isp_outage.autonomous_system_id.to_s]
-      cached_data["isp_window_count"] -= 1 if client_outage.accounted_in_isp_window
+      cached_data["isp_window_count"] -= 1 if network_outage.accounted_in_isp_window
 
-      if (cached_data["isp_window_count"].to_f / cached_data["isp_window_client_outages"].count.to_f) <= 2.0/3.0
+      if (cached_data["isp_window_count"].to_f / cached_data["isp_window_network_outages"].count.to_f) <= 2.0/3.0
         isp_outage.update_columns(status: :resolved, resolved_at: resolved_at)
         @state["isp_outages"].delete(isp_outage.autonomous_system_id.to_s)
       end
     end
+  ensure
+    network_outage.save!(validate: false)
   end
 
-  def handle_service_started_event(as_id, event)
-    # We use as_id as a key in the state hash, and we can end up with bugs because after the state is persisted in the DB,
-    # it will be converted into a string.
-    as_id = as_id.to_s
-    client_outage = ClientOutage.active.where(
-      client_id: event["aggregate_id"]
+  def handle_service_started_event(as_id, state, event)
+    return if state["location_id"].nil?
+
+    as_id = as_id.to_s # keys with this will get transformed into string, so I force it here to avoid mismatches
+    network_outage = NetworkOutage.active.where(
+      location_id: state["location_id"]
     ).first
-    if client_outage.present?
-      client_outage.update_columns(has_service_started_event: true)
+
+    if network_outage.present?
+      network_outage.update_columns(has_service_started_event: true)
 
     else
       # This can happen in two scenarios:
       #  - The pod service got restarted, but no offline event was recorded, therefore we do nothing.
-      #  - The pod online event got processed already and now it is either a resolved pod_failure, or in a resolved isp_outage.
+      #  - The pod online event got processed already and now it is either a resolved network_failure, or in a resolved isp_outage.
       #    - This is possible because they are two different events. For now, I'll pick the outage from the last minute to verify if we should undo something
-      client_outage = ClientOutage.preload(:outage_event).resolved.where(
-        client_id: event["aggregate_id"]
+      network_outage = NetworkOutage.preload(:outage_event).resolved.where(
+        location_id: state["location_id"]
       ).where("resolved_at > ?", event["timestamp"] - 1.minute).last
-      return unless client_outage.present?
+      return unless network_outage.present?
 
-      client_outage.update_columns(has_service_started_event: true)
-      resolve_client_outage(client_outage, event["timestamp"])
+      network_outage.update_columns(has_service_started_event: true)
+      resolve_network_outage(network_outage, event["timestamp"])
     end
   end
 
-  def handle_online_event(as_id, event)
-    client_outage = ClientOutage.preload(:outage_event).active.find_by(client_id: event["aggregate_id"])
-    self.resolve_client_outage(client_outage, event["timestamp"]) if client_outage.present?
+  def handle_online_event(as_id, state, event)
+    network_outage = NetworkOutage.preload(:outage_event).active.find_by(location_id: state["location_id"])
+    self.resolve_network_outage(network_outage, event["timestamp"]) if network_outage.present?
   end
 
   ##
   #
-  # Creates a ClientOutage record, and runs the following logic for ISP Outages:
+  # Creates a NetworkOutage record in case all pods in a network are offline, and runs the following logic for ISP Outages:
   #
   #   - If the client has an autonomous_system_id, and no ongoing ISP Outage,
   #     verify the number of client outages from that ISP in the last 5 minutes.
@@ -243,58 +257,117 @@ class OutagesProjector
   #
   #
   ##
-  def handle_offline_event(as_id, event)
-    return if @state["system_outage"] || event["snapshot_state"]["location_id"].nil?
+  def handle_offline_event(as_id, state, event)
+    return if @state["system_outage"] || state["location_id"].nil?
+    @network_pods[state["location_id"]] ||= []
 
-    c_outage = ClientOutage.new(
-      client_id: event["aggregate_id"],
-      location_id: event["snapshot_state"]["location_id"],
+    return if @network_pods[state["location_id"]].map { |pod_id| @pods[pod_id]["state"] }.any? { |pod| pod["online"] }
+    return if NetworkOutage.active.find_by(location_id: state["location_id"]).present?
+
+    network_outage = NetworkOutage.new(
+      location_id: state["location_id"],
       started_at: event["timestamp"],
-      autonomous_system_id: as_id
+      autonomous_system_id: as_id,
     )
-    c_outage.save!(validate: false)
+    network_outage.save!(validate: false) # Save to get an id
+    process_new_network_outage(network_outage, event["timestamp"].to_time)
+    network_outage.save!(validate: false)
 
+  end
+
+  def process_new_network_outage(network_outage, timestamp)
+    as_id = network_outage.autonomous_system_id.to_s
     @state["isp_outages"] ||= {}
     @state["isp_outages"][as_id] ||= {}
+
+    outage = OutageEvent.new(
+      outage_type: :unknown_reason,
+      started_at: network_outage.started_at,
+      autonomous_system_id: network_outage.autonomous_system_id
+    )
+    network_outage.outage_event = outage
 
     ongoing_isp_outage = @state["isp_outages"][as_id] if as_id.present?
     if as_id.present? && ongoing_isp_outage.blank?
       @state["isp_window_outages"][as_id] ||= []
-      @state["isp_window_outages"][as_id] << {"id" => c_outage.id, "started_at" => c_outage.started_at, "location_id" => c_outage.location_id}
-      @state["isp_window_outages"][as_id].delete_if { |o| o["started_at"] < (event["timestamp"].to_time - ISP_WINDOW) }
+      @state["isp_window_outages"][as_id] << {"id" => network_outage.id, "started_at" => network_outage.started_at, "location_id" => network_outage.location_id}
+      @state["isp_window_outages"][as_id].delete_if { |o| o["started_at"] < (timestamp.to_time - ISP_WINDOW) }
 
       distinct_locations = @state["isp_window_outages"][as_id].map { |o| o["location_id"] }.uniq
-      return unless distinct_locations.count >= 3
+      if distinct_locations.count < 3
+        return outage
+      end
 
-      outage = OutageEvent.create(
-        outage_type: :isp_outage,
-        started_at: event["timestamp"],
-        autonomous_system_id: as_id,
-      )
+      outage.outage_type = :isp_outage
       outage.save!(validate: false)
+
       @state["isp_outages"][as_id] = {
         "id" => outage.id,
         "started_at" => outage.started_at,
-        "isp_window_client_outages" => @state["isp_window_outages"][as_id].dup,
+        "isp_window_network_outages" => @state["isp_window_outages"][as_id].dup,
         "isp_window_count" => distinct_locations.count
       }
-      ClientOutage.where(
+      NetworkOutage.where(
         id: @state["isp_window_outages"][as_id].map { |o| o["id"] }
       ).update_all(outage_event_id: outage.id, accounted_in_isp_window: true)
 
       @state["isp_window_outages"].delete(as_id)
 
+      return outage
+
     elsif as_id.present? && ongoing_isp_outage.present?
       # Account this outage in the ISP outages window if it is inside the time window, and the pod's location is not already accounted for.
-      account_in_window = event["timestamp"] <= ongoing_isp_outage["started_at"].to_time + ISP_WINDOW && !c_outage.location_id.in?(ongoing_isp_outage["isp_window_client_outages"].map {|o| o["location_id"]})
+      account_in_window = timestamp <= ongoing_isp_outage["started_at"].to_time + ISP_WINDOW
 
-      c_outage.update_columns(
-        outage_event_id: ongoing_isp_outage["id"],
-        accounted_in_isp_window: account_in_window
-      )
+      network_outage.outage_event_id = ongoing_isp_outage["id"]
+      network_outage.accounted_in_isp_window = account_in_window
+
       if account_in_window
-        @state["isp_outages"][as_id]["isp_window_client_outages"] << {"id" => c_outage.id, "started_at" => c_outage.started_at, "location_id" => c_outage.location_id}
+        @state["isp_outages"][as_id]["isp_window_network_outages"] << {"id" => network_outage.id, "started_at" => network_outage.started_at, "location_id" => network_outage.location_id}
         @state["isp_outages"][as_id]["isp_window_count"] += 1
+      end
+    end
+
+    return outage
+  end
+
+  ##
+  #
+  # Register the move of a pod from one location to the other.
+  # Deal with existing Network Outage in the pods' original location, and decide if it should be resolved or not.
+  # It can also create a Network Outage in case of the network still have pods, but all are offline and there is no Network Outage yet.
+  #
+  ##
+  def handle_location_changed_event(as_id, state, event)
+    if event["data"]["to"].present?
+      @network_pods[event["data"]["to"]] ||= []
+      @network_pods[event["data"]["to"]] << event["aggregate_id"]
+    end
+
+    if event["data"]["from"].present?
+      @network_pods[event["data"]["from"]].delete(event["aggregate_id"])
+      remaining_pods = @network_pods[event["data"]["from"]].map { |pod_id| @pods[pod_id]["state"] }
+      network_is_online = remaining_pods.any? { |pod| pod["online"] }
+
+      active_outage = NetworkOutage.active.find_by(location_id: event["data"]["from"])
+
+      if remaining_pods.empty? && active_outage.present?
+        # Resolve it, this location is no longer in service.
+        resolve_network_outage(active_outage, event["timestamp"])
+
+      elsif remaining_pods.present? && !network_is_online && active_outage.blank?
+        outage = OutageEvent.create!(
+          outage_type: :unknown_reason,
+          started_at: event["timestamp"],
+          autonomous_system_id: as_id
+        )
+        network_outage = NetworkOutage.new(
+          location_id: event["data"]["from"],
+          started_at: event["timestamp"],
+          autonomous_system_id: as_id,
+          outage_event: outage
+        )
+        network_outage.save!(validate: false)
       end
     end
   end
