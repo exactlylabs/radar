@@ -1,0 +1,18 @@
+<% if @moving_pods_count > 0 %>
+  <%= turbo_stream.update "add_pod_modal" do %>
+    <%= render partial: "application/components/modals/empty_custom_modal",
+               locals: {
+                 modal_title: "Add a pod",
+                 modal_partial_path: "pods/modals/add_pod/confirm_moving_claimed_pods",
+                 custom_submit_end_handler: nil,
+                 resource: nil,
+               }
+    %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.update "add_pod_modal" %>
+
+  <%= turbo_stream.append 'realtime-notice' do %>
+    <%= render partial: 'application/notice_alert', locals: { notice: @notice } %>
+  <% end %>
+<% end %>

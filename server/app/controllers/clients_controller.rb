@@ -33,7 +33,9 @@ class ClientsController < ApplicationController
     end
 
     if FeatureFlagHelper.is_available('networks', current_user)
-      @clients = @clients.where(update_group_id: params[:update_group_id]) if params[:update_group_id].present? && params[:update_group_id].to_i != -1
+      if params[:update_group_id].present? && params[:update_group_id].to_i != -1
+        @clients = @clients.where(update_group_id: params[:update_group_id])
+      end
       @total = @clients.count
       @clients = @clients.order("location_id NULLS FIRST")
       @clients = paginate(@clients, params[:page], params[:page_size])
@@ -226,7 +228,9 @@ class ClientsController < ApplicationController
   end
 
   def status
-    @client.record_event(Client::Events::SERVICE_STARTED, {}, @client.pinged_at) if params[:service_first_ping].present? && params[:service_first_ping] == "true"
+    if params[:service_first_ping].present? && params[:service_first_ping] == "true"
+      @client.record_event(Client::Events::SERVICE_STARTED, {}, @client.pinged_at)
+    end
     @client.pinged_at = Time.now
     @client.raw_version = params[:version]
     @client.distribution_name = params[:distribution]
@@ -246,15 +250,13 @@ class ClientsController < ApplicationController
       end
       @client.client_version_id = version_id
     end
-    if @client.test_scheduled_at.nil?
-      @client.schedule_next_test!
+    @client.schedule_next_test! if @client.test_scheduled_at.nil?
+    if params[:service_first_ping].present? && params[:service_first_ping] == "true"
+      ClientEventLog.service_started_event @client
     end
-    ClientEventLog.service_started_event @client if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     @client.compute_ping!
     @client.save!
-    if !@client.online
-      @client.connected!
-    end
+    @client.connected! if !@client.online
 
     respond_to do |format|
       format.json { render :status, status: :ok }
@@ -267,9 +269,7 @@ class ClientsController < ApplicationController
     if params[:version]
       # Check client Version Id
       wv_ids = WatchdogVersion.where(version: params[:version]).pluck(:id)
-      if wv_ids.length > 0
-        @client.watchdog_version_id = wv_ids[0]
-      end
+      @client.watchdog_version_id = wv_ids[0] if wv_ids.length > 0
 
     end
     @client.save
@@ -285,16 +285,11 @@ class ClientsController < ApplicationController
     @secret = SecretsHelper.create_human_readable_secret(11)
     @client.secret = @secret
     ug = UpdateGroup.default_group
-    if !ug.nil?
-      @client.update_group = ug
-    end
+    @client.update_group = ug if !ug.nil?
 
     # If it's registered with a superaccount token
     # set the pod as having a watchdog (physical pod)
-    if @account&.superaccount?
-      @client.has_watchdog = true
-
-    end
+    @client.has_watchdog = true if @account&.superaccount?
 
     respond_to do |format|
       if @client.save
@@ -313,7 +308,7 @@ class ClientsController < ApplicationController
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
-    assign_network_to_pod
+    assign_network_to_pod(params[:id], params[:account_id], params[:location_id], params[:network_assignment_type], params[:categories], location_params)
 
     if params[:update_group_id]
       update_group = policy_scope(UpdateGroup).find(params[:update_group_id])
@@ -510,9 +505,7 @@ class ClientsController < ApplicationController
   end
 
   def unclaimed
-    if !current_account.superaccount
-      head(403)
-    end
+    head(403) if !current_account.superaccount
     @clients = Client.where_no_account.where_online
   end
 
@@ -550,9 +543,7 @@ class ClientsController < ApplicationController
     current_network_id = !params[:current_network_id].blank? ? params[:current_network_id] : nil
     @location = policy_scope(Location).find(params[:current_network_id]) if current_network_id
     new_location = policy_scope(Location).find(params[:location_id])
-    if @location.present? && @location.id != new_location.id
-      @clients_to_remove = @clients
-    end
+    @clients_to_remove = @clients if @location.present? && @location.id != new_location.id
     @error = nil
     Client.transaction do
       @clients.each do |pod|
@@ -595,43 +586,15 @@ class ClientsController < ApplicationController
   end
 
   def get_add_pod_modal
+    pods_ids = params[:pods_ids]
+    clients_ids = pods_ids&.split(',') || []
+    @clients = Client.where(unix_user: clients_ids)
+
     @unix_user = params[:unix_user]
   end
 
-  def get_add_new_pod_to_current_network_modal
-    @network = policy_scope(Location).find(params[:network_id])
-  end
-
-  def add_new_pod_to_current_network
-    # Not using set_client as we don't want to throw here
-    @unix_user = params[:pod_id]
-    @client = Client.find_by_unix_user(@unix_user)
-    @error = nil
-    @network = policy_scope(Location).find(params[:network_id])
-    if !@client
-      @error = ErrorsHelper::PodClaimErrors::PodNotFound
-    elsif @client.user.present?
-      @error = ErrorsHelper::PodClaimErrors::PodAlreadyClaimed
-    end
-
-    respond_to do |format|
-      if !@error
-        @client.user = @network.user
-        @client.account = @network.account
-        @client.location = @network
-        @locations = policy_scope(Location)
-        if @client.save!
-          format.turbo_stream
-        else
-          format.html { redirect_back fallback_location: root_path, notice: "Oops! There has been an error adding your new pod. Please try again later." }
-        end
-      else
-        format.turbo_stream
-      end
-    end
-  end
-
-  def check_claim_new_pod
+  def check_claimed_pod
+    @clients_count = params[:pods_count].present? ? params[:pods_count].to_i : 0
     # Not using set_client as we don't want to throw here
     @unix_user = params[:pod_id]
     @client = Client.find_by_unix_user(@unix_user)
@@ -643,27 +606,84 @@ class ClientsController < ApplicationController
     if !@client
       @error = ErrorsHelper::PodClaimErrors::PodNotFound
     elsif @client.user.present?
-      @pods = [@client]
-      if policy_scope(Client).where(unix_user: @unix_user).count.zero?
-        @error = ErrorsHelper::PodClaimErrors::PodAlreadyClaimedBySomeoneElse
+      if can_move_pod_to_current_account(@client)
+        @error = ErrorsHelper::PodClaimErrors::PodBelongsToOneOfYourOtherAccounts
       else
         if @client.account == current_account
           @error = ErrorsHelper::PodClaimErrors::PodIsAlreadyInYourAccount
         else
-          @error = ErrorsHelper::PodClaimErrors::PodBelongsToOneOfYourOtherAccounts
+          @error = ErrorsHelper::PodClaimErrors::PodAlreadyClaimedBySomeoneElse
         end
       end
     else
       @location = Location.new
-      @pods = [@client]
+      @clients_count += 1
     end
     respond_to do |format|
       format.turbo_stream
     end
   end
 
+  def remove_claimed_pod
+    if params[:pod_id].present?
+      @pod_removed_id = params[:pod_id]
+      @clients_count = params[:pods_count].present? ? (params[:pods_count].to_i - 1) : 0
+    else
+      @clients_count = 0
+    end
+    respond_to do |format|
+      format.turbo_stream
+    end
+  end
+
+  def move_claimed_pod
+    @clients_count = params[:pods_count].present? ? params[:pods_count].to_i : 0
+    # Not using set_client as we don't want to throw here
+    @unix_user = params[:pod_id]
+    @client = Client.find_by_unix_user(@unix_user)
+    @clients_count += 1
+  end
+
+  def save_claimed_pods
+    pods_ids = params[:pods_ids]
+    @clients_ids = pods_ids.split(',') || []
+  end
+
+  def add_claimed_pods_to_account_and_network
+    pods_ids = params[:pods_ids]
+    @clients_ids = pods_ids.split(',') || []
+    @destination_account = policy_scope(Account).find(params[:account_id])
+    @network_assignment_type = params[:network_assignment_type]
+    @destination_network_id = params[:network_id]
+    @location_params = location_params
+    @categories = params[:categories]
+
+    @moving_pods_count = 0
+    @clients_ids.each do |client_id|
+      client = Client.find_by_unix_user(client_id)
+      if !client.account.nil? && client.account&.id != current_account.id
+        @moving_pods_count += 1
+        break
+      end
+    end
+    unless @moving_pods_count > 0
+      add_pods_to_account_and_network
+    end
+  end
+
+  def confirm_moving_claimed_pods_to_account_and_network
+    pods_ids = params[:pods_ids]
+    @clients_ids = pods_ids.split(',') || []
+    @destination_account = policy_scope(Account).find(params[:account_id])
+    @network_assignment_type = params[:network_assignment_type]
+    @destination_network_id = params[:network_id]
+    @location_params = params[:location_params]
+    @categories = params[:categories]
+    add_pods_to_account_and_network
+  end
+
   def claim_new_pod
-    assign_network_to_pod
+    assign_network_to_pod(params[:id], params[:account_id], params[:location_id], params[:network_assignment_type], params[:categories], location_params)
     if FeatureFlagHelper.is_available('networks', current_user)
       @onboarding = params[:onboarding].present?
       @locations = policy_scope(Location)
@@ -680,9 +700,7 @@ class ClientsController < ApplicationController
   def get_bulk_move_to_account
     possible_pod_ids = params[:pod_ids].present? ? JSON.parse(params[:pod_ids]) : nil
     @pods = Client.none
-    if possible_pod_ids.present?
-      @pods = policy_scope(Client).where(unix_user: possible_pod_ids)
-    end
+    @pods = policy_scope(Client).where(unix_user: possible_pod_ids) if possible_pod_ids.present?
 
     respond_to do |format|
       format.turbo_stream
@@ -721,9 +739,7 @@ class ClientsController < ApplicationController
   def get_bulk_move_to_network_qr
     possible_pod_ids = params[:pod_ids].present? ? JSON.parse(params[:pod_ids]) : nil
     @pods = Client.none
-    if possible_pod_ids.present?
-      @pods = policy_scope(Client).where(unix_user: possible_pod_ids)
-    end
+    @pods = policy_scope(Client).where(unix_user: possible_pod_ids) if possible_pod_ids.present?
 
     respond_to do |format|
       format.turbo_stream
@@ -804,17 +820,13 @@ class ClientsController < ApplicationController
 
   def authenticate_client!
     @client = Client.find_by_unix_user(params[:id])&.authenticate_secret(params[:secret])
-    if !@client
-      head(403)
-    end
+    head(403) if !@client
   end
 
   def authenticate_token!
     if request.headers["Authorization"].present?
       token = request.headers["Authorization"].split(" ")
-      if token.size == 2 && token[0] == 'Token'
-        @account = Account.find_by_token(token[1])
-      end
+      @account = Account.find_by_token(token[1]) if token.size == 2 && token[0] == 'Token'
     end
   end
 
@@ -833,11 +845,15 @@ class ClientsController < ApplicationController
     store_recent_search(params[:id], Recents::RecentTypes::CLIENT)
   end
 
-  def assign_network_to_pod
-    pod_assignment_type = params[:network_assignment_type]
-    @client = Client.find_by_unix_user(params[:id])
-    raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless @client.present?
-    account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
+  def assign_network_to_pod(client_id, account_id, network_id, network_assignment_type, categories, location_params)
+    pod_assignment_type = network_assignment_type
+    @client = Client.find_by_unix_user(client_id)
+
+    unless @client.present?
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{client_id}", Client.name, client_id)
+    end
+
+    account = account_id.present? ? policy_scope(Account).find(account_id) : current_account
     @client.user = current_user
     @client.account = account
     @previous_location = @client.location
@@ -845,17 +861,46 @@ class ClientsController < ApplicationController
     when PodsHelper::PodAssignmentType::NoNetwork
       @client.location = nil
     when PodsHelper::PodAssignmentType::ExistingNetwork
-      @client.location = policy_scope(Location).find(params[:network_id])
+      @client.location = policy_scope(Location).find(network_id)
     when PodsHelper::PodAssignmentType::NewNetwork
       @location = Location.new(location_params)
       @location.user = current_user
       @location.account_id = account.id
       @location.clients << @client
-      @location.categories << policy_scope(Category).where(id: params[:categories].split(",")).distinct if params[:categories].present?
+      if categories.present?
+        @location.categories << policy_scope(Category).where(id: categories.split(",")).distinct
+      end
       @location.save!
       @client.location = @location
     else
       raise 'Invalid network assignment type'
+    end
+  end
+
+  def can_move_pod_to_current_account(client)
+    accounts = policy_scope(Account)
+    accounts.each do |account|
+      return true if (account.id == client.account_id && account.id != current_account.id)
+    end
+    false
+  end
+
+  def add_pods_to_account_and_network
+    if FeatureFlagHelper.is_available('networks', current_user)
+      @onboarding = params[:onboarding].present?
+      @locations = policy_scope(Location)
+    end
+
+    begin
+      Client.transaction do
+        @clients_ids.each do |client_id|
+          assign_network_to_pod(client_id, @destination_account.id, @destination_network_id, @network_assignment_type, @categories, @location_params)
+          @client.save!
+        end
+      end
+      @notice = @clients_ids.length > 1 ? "#{@clients_ids.length} pods have been successfully added" : "Your pod has been successfully added."
+    rescue Exception => e
+      @notice = "Oops! There has been an error adding your new pod. Please try again later."
     end
   end
 end

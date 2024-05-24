@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_04_042012) do
+ActiveRecord::Schema.define(version: 2024_05_12_215832) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -550,6 +550,23 @@ ActiveRecord::Schema.define(version: 2024_05_04_042012) do
     t.index ["client_id"], name: "index_ndt7_diagnose_reports_on_client_id"
   end
 
+  create_table "notification_settings", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "account_id", null: false
+    t.boolean "email_notifications_enabled", default: false
+    t.boolean "pod_loses_total_connectivity", default: false
+    t.boolean "pod_recovers_total_connectivity", default: false
+    t.boolean "pod_loses_partial_connectivity", default: false
+    t.boolean "pod_recovers_partial_connectivity", default: false
+    t.boolean "significant_speed_variation", default: false
+    t.boolean "isp_goes_offline", default: false
+    t.boolean "isp_comes_back_online", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["account_id"], name: "index_notification_settings_on_account_id"
+    t.index ["user_id"], name: "index_notification_settings_on_user_id"
+  end
+
   create_table "notified_study_goals", force: :cascade do |t|
     t.bigint "geospace_id"
     t.bigint "autonomous_system_org_id"
@@ -752,10 +769,7 @@ ActiveRecord::Schema.define(version: 2024_05_04_042012) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "invited_at"
-<<<<<<< HEAD
     t.string "token"
-=======
->>>>>>> aeeb24df (updated pod id modal to show error/warning using turbo)
     t.index ["account_id"], name: "index_users_accounts_on_account_id"
     t.index ["user_id"], name: "index_users_accounts_on_user_id"
   end
@@ -817,6 +831,8 @@ ActiveRecord::Schema.define(version: 2024_05_04_042012) do
   add_foreign_key "metrics_projections", "study_aggregates", column: "parent_aggregate_id"
   add_foreign_key "mobile_scan_result_aps", "mobile_scan_results"
   add_foreign_key "ndt7_diagnose_reports", "clients"
+  add_foreign_key "notification_settings", "accounts"
+  add_foreign_key "notification_settings", "users"
   add_foreign_key "online_client_count_projections", "accounts"
   add_foreign_key "online_client_count_projections", "autonomous_systems"
   add_foreign_key "online_client_count_projections", "events"

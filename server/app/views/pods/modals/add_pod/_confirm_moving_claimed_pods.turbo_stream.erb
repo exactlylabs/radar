@@ -1,0 +1,33 @@
+<%= render partial: "application/components/modals/modal_header",
+           locals: {
+             title: "Add a pod",
+             is_custom: true,
+             goes_back: nil,
+             go_back_url: nil,
+           }
+%>
+<%= form_with(url: confirm_moving_claimed_pods_to_account_and_network_path, method: :post) do |form| %>
+  <div class="modals--content-container modals--move-pod-modal text-center" data-type="full" data-controller="pod-account-and-network">
+    <h3 class="modal-main-title mb-6"><%= @moving_pods_count %> pod(s) will be moved
+      to <%= @destination_account.name %></h3>
+    <span class="additional-text wrap">One or more of your pods currently belong to another account(s). If you continue, they will be moved to <%= @destination_account.name %></span>
+    <%= form.hidden_field :pods_ids, value: @clients_ids.map(&:to_s).join(",") %>
+    <%= form.hidden_field :account_id, value: @destination_account.id %>
+    <%= form.hidden_field :network_id, value: @destination_network_id %>
+    <%= form.hidden_field :network_assignment_type, value: @network_assignment_type %>
+    <%= form.hidden_field :location_params, value: @location_params %>
+    <%= form.hidden_field :categories, value: @categories %>
+
+  </div>
+  <div class="modals--footer-container">
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
+    <!--begin::ContinueButton-->
+    <button type="submit"
+            class="custom-button custom-button--lg custom-button--primary"
+            data-controller="loading-feedback"
+            data-action="click->loading-feedback#replaceContent"
+    >Move pods
+    </button>
+    <!--end::ContinueButton-->
+  </div>
+<% end %>

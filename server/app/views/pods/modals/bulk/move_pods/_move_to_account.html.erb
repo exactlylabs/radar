@@ -11,10 +11,10 @@
       <label for="bulk-pods-select" class="forms--label">Choose pods to move</label>
       <%= render partial: "pods/components/multi_pod_select" %>
     </div>
-    <%= render partial: "pods/components/selected_pods_grid" %>
+    <%= render partial: "pods/components/selected_pods_grid", locals: { pods: @pods } %>
   </div>
   <div class="modals--footer-container">
-    <%= render partial: "application/components/buttons/close_modal_button", locals: {text: "Cancel", is_custom: true} %>
+    <%= render partial: "application/components/buttons/close_modal_button", locals: { text: "Cancel", is_custom: true } %>
     <!--begin::ContinueButton-->
     <button type="submit"
             class="custom-button custom-button--lg custom-button--primary"
@@ -22,7 +22,8 @@
             data-action="click->loading-feedback#replaceContent"
             data-selected-pods-grid-target="continueButton"
             <%= @pods.count > 0 ? nil : 'disabled=disabled' %>
-    >Continue</button>
+    >Continue
+    </button>
     <!--end::ContinueButton-->
   </div>
 <% end %>

@@ -19,10 +19,9 @@
     <!--end::Info-->
     <% if FeatureFlagHelper.is_available('networks', current_user) %>
       <div class="pods--header-options-container">
-        <a href="<%= get_add_pod_to_network_modal_path(@location.id) %>"
-           data-turbo-frame="add_pod_to_network_modal"
+        <a href="<%= get_add_pod_modal_path %>"
            class="custom-button custom-button--primary custom-button--lg"
-        >
+           data-turbo-frame="add_pod_modal">
           <%= image_tag image_url('white-plus.png'), width: 16, height: 16, class: "me-2" %>
           Add pod
         </a>
@@ -74,7 +73,7 @@
              }
   %>
   <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "add_pod_to_network_modal", optional_added_controllers: "add-pod-to-network pod-id-step" }
+             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "claim-pods pod-account-and-network" }
   %>
 <% else %>
   <div class="modal fade" tabindex="-1" id="edit_location_modal" data-controller="modal categories" data-action="handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->modal#submit turbo:frame-render->categories#initializeCategories">
@@ -89,19 +88,6 @@
   <% end %>
 </div>
 <!--end::AddPodModal-->
-
-<div class="modal fade" tabindex="-1" id="add_pod_modal_step_0" data-controller="add-client-to-location">
-  <%= render partial: 'location_clients/add_pod_step_0', locals: { location: @location } %>
-</div>
-
-<div class="modal fade" tabindex="-1" id="add_pod_step_1_existing">
-  <%= render partial: 'location_clients/add_pod_step_1_existing', locals: { location: @location } %>
-</div>
-
-<div class="modal fade" tabindex="-1" id="add_pod_step_2_existing">
-  <%= render partial: 'location_clients/add_pod_step_2_existing', locals: { location: @location } %>
-</div>
-
 <%= render partial: "application/components/modals/turbo_modal",
            locals: { turbo_frame_tag_id: "pod_id_modal" }
 %>

@@ -128,7 +128,7 @@
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "pod-id-step" }
+             locals: { turbo_frame_tag_id: "add_pod_modal", optional_added_controllers: "claim-pods pod-account-and-network" }
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",
@@ -138,9 +138,6 @@
   <%= render partial: "application/components/modals/turbo_modal",
              locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
   %>
-
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: { turbo_frame_tag_id: "add_new_pod_to_current_network", optional_added_controllers: "pod-id-step" } %>
 
   <%= render partial: "application/components/modals/turbo_modal", locals: { turbo_frame_tag_id: "pod_id_modal" } %>
 

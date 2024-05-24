@@ -53,21 +53,20 @@ Rails.application.routes.draw do
     resources :clients, controller: 'location_clients', only: [:index]
   end
 
-  get 'location/:location_id/clients/add_pod_to_network_modal', to: 'location_clients#get_add_pod_to_network_modal', as: :get_add_pod_to_network_modal
-  get 'location/:location_id/clients/add_new_pod_to_network_modal', to: 'location_clients#get_add_new_pod_to_network_modal', as: :get_add_new_pod_to_network_modal
-  post 'location/:location_id/clients/add_new_pod_to_network', to: 'location_clients#add_new_pod_to_network', as: :add_new_pod_to_network
-  get 'location/:location_id/clients/add_existing_pod_to_network_modal', to: 'location_clients#get_add_existing_pod_to_network_modal', as: :get_add_existing_pod_to_network_modal
-  post 'location/:location_id/clients/add_existing_pod_to_network', to: 'location_clients#add_existing_pod_to_network', as: :add_existing_pod_to_network
-  get 'location/:location_id/clients/search', to: 'location_clients#search', as: :search_location_clients
-
   get 'locations/account/:account_id', to: 'locations#get_by_account_id'
 
   get 'clients/get_add_pod_modal', to: 'clients#get_add_pod_modal', as: :get_add_pod_modal
-  get 'clients/get_add_new_pod_to_current_network_modal', to: 'clients#get_add_new_pod_to_current_network_modal', as: :get_add_new_pod_to_current_network_modal
-  post 'clients/check_claim_new_pod', to: 'clients#check_claim_new_pod', as: :check_claim_new_pod
+
   post 'clients/claim_new_pod', to: 'clients#claim_new_pod', as: :claim_new_pod
-  post 'clients/add_new_pod_to_current_network', to: 'clients#add_new_pod_to_current_network', as: :add_new_pod_to_current_network
   get 'clients/need_help_finding_pod_id', to: 'clients#need_help_finding_pod_id', as: :need_help_finding_pod_id
+
+  # Add or Move a pod
+  post 'clients/check_claimed_pod', to: 'clients#check_claimed_pod', as: :check_claimed_pod
+  delete 'clients/remove_claimed_pod', to: 'clients#remove_claimed_pod', as: :remove_claimed_pod
+  post 'clients/move_claimed_pod', to: 'clients#move_claimed_pod', as: :move_claimed_pod
+  post 'clients/save_claimed_pods', to: 'clients#save_claimed_pods', as: :save_claimed_pods
+  post 'clients/add_claimed_pods_to_account_and_network', to: 'clients#add_claimed_pods_to_account_and_network', as: :add_claimed_pods_to_account_and_network
+  post 'clients/confirm_moving_claimed_pods_to_account_and_network', to: 'clients#confirm_moving_claimed_pods_to_account_and_network', as: :confirm_moving_claimed_pods_to_account_and_network
 
   resources :clients do
     resources :measurements, controller: 'client_measurements', only: [:index, :create, :show] do

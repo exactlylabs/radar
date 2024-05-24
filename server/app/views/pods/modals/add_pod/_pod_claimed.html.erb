@@ -1,0 +1,17 @@
+<% pod_id = pod.unix_user %>
+<% pod_moved = local_assigns[:pod_moved].present? ? local_assigns[:pod_moved] : false %>
+<div class="pods--selected-pod-cell" id="pod-claimed-<%= pod_id %>" data-claim-pods-target="claimedPod">
+  <div class="tables--network-icon-container" data-pod-status="online">
+    <%= image_tag image_url('pod-online-icon.png'), width: 24, height: 24 %>
+    <% if pod_moved %>
+      <%= image_tag image_url('moving-icon.svg'), width: 12, height: 12, class: "pods--moving-icon" %>
+    <% end %>
+  </div>
+  <p><%= pod_id %></p>
+  <%= image_tag image_url('cancel.png'), width: 16, height: 16, class: 'hoverable',
+                data: {
+                  pod_id: pod_id,
+                  action: "click->claim-pods#onPodDeleted",
+                }
+  %>
+</div>
