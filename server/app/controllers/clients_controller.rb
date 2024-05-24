@@ -816,8 +816,15 @@ class ClientsController < ApplicationController
   end
 
   def remove_from_network
-    @client.update(location_id: nil)
-    @notice = "Client was successfully removed from network."
+    begin
+      @error = false
+      @client.update(location_id: nil)
+      @notice = 'Client was successfully removed from network.'
+    rescue => _e
+      @error = true
+      @notice = there_has_been_an_error('removing your client from network')
+    end
+
   end
 
   private
