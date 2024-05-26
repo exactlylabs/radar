@@ -1,0 +1,59 @@
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+  <style>
+      @import url(http://fonts.googleapis.com/css?family=Roboto);
+
+      * {
+          font-family: Roboto, serif;
+      }
+  </style>
+</head>
+<body>
+<div style="width: 60%; text-align: left; padding: 32px 0; margin-left: auto; margin-right: auto;">
+  <div style="width: 100%; display: flex; justify-content: center; align-items: center">
+    <img src="<%= attachments["new-logo.png"].url %>" alt="Radar-logo" style="width: 25%; height: auto; margin-right: auto; margin-left: auto;"/>
+  </div>
+  <div style="height: 2px; width: 100%; margin-top: 32px; background-color: #f6f8fa;"></div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 32px 0;">
+    <%= render partial: "pod_connectivity_events_mailer/components/pod_offline_icon" %>
+    <div style="max-width: 384px; text-align: center; font-weight: bold; font-size: 20px; line-height: 30px; color: #181C31;">
+      Your pod in <%= @client.location.name %> at <%= @client.account.name %> is offline.
+    </div>
+    <div style="font-size: 15px; font-weight: normal; line-height: 22px; color: #6D6A94; "><%= @offline_at.strftime("%d %B %I:%M %p") %></div>
+  </div>
+  <div style="height: 2px; width: 100%; margin-bottom: 32px; background-color: #f6f8fa;"></div>
+  <div style="width: 100%;">
+    <div style="font-weight: bold; font-size: 16px; line-height: 26px; color: #110E4C; margin: 0 0 15px 0"><%= "Hi #{@user.first_name}," %></div>
+    <div style="display: flex; flex-direction: column; gap: 40px;">
+      <div style="margin: 0; font-size: 15px; line-height: 22px; color: #110E4C">
+        One of your pods in <%= @client.location.name %> at <%= @client.account.name %> went offline unexpectedly
+        on <%= @offline_at.strftime("%m/%d at %I:%M %p") %>.
+      </div>
+      <div style="margin: 0 110px; max-width: 400px; min-width: 350px; align-self: center;">
+        <div style="display: flex; flex-direction: column; gap:8px; justify-content: space-between; align-items: center; background-color: rgba(246, 247, 250, 0.25); border-radius: 8px 8px 0 0; border: 1px solid #E5E5E5; padding: 16px 0;">
+          <img src="<%= attachments["pod-offline-rounded-icon.png"].url %>" alt="offline" style="width: 48px; height: 48px;"/>
+          <div style="font-size: 16px; font-weight: bold; line-height: 24px; color: #110E4C"><%= @client.unix_user %></div>
+          <%= render partial: "pod_connectivity_events_mailer/components/connectivity_status_badge", locals: {status: 'offline'} %>
+        </div>
+        <div style="display: flex; flex-direction: column; gap:8px; padding: 16px 24px; background-color: #FFFFFF; border-radius: 0 0 8px 8px; border: 1px solid #E5E5E5;">
+          <%= render partial: 'pod_connectivity_events_mailer/components/pod_info_table_row', locals: { title: "Offline time", value: @offline_at.strftime("%I:%M %p") } %>
+          <%= render partial: 'pod_connectivity_events_mailer/components/pod_info_table_row', locals: { title: "Network", value: @client.location&.name || '-' } %>
+          <%= render partial: 'pod_connectivity_events_mailer/components/pod_info_table_row', locals: { title: "ISP", value: @client.autonomous_system&.autonomous_system_org&.name || '-' } %>
+        </div>
+      </div>
+      <div style="font-size: 15px; line-height: 22px; color: #110E4C">
+        We have not identified any ISP outage at this time, so make sure your pod is actually turned on and connected to
+        your network.
+        If you believe there is something wrong with your pod, please let us know.
+      </div>
+      <span style="font-size: 13px; font-weight: 500; color:#6D6A94; line-height: 19px;  text-align: center; ">If you need help, please contact us at <a href="mailto:support@exactlylabs.com" style="color: rgb(75, 123, 229)">support@exactlylabs.com</a>.</span>
+    </div>
+  </div>
+  <div style="height: 2px; width: 100%; margin-bottom: 32px; margin-top: 30px; background-color: #f6f8fa;"></div>
+  <div style="color: #A09FB7; text-align: center; font-size: 14px">© 2024 National Telehealth Technology Assessment
+    Resource Center
+  </div>
+</div>
+</body>
+</html>

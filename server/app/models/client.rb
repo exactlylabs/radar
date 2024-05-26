@@ -670,6 +670,10 @@ class Client < ApplicationRecord
     end
   end
 
+  def get_wifi_name
+    pod_network_interfaces.where(wireless: true).first.name if has_wifi_interface?
+  end
+
   def active_connections
     active_connections = nil
     default_interface = pod_network_interfaces.where(default: true).first
