@@ -1,0 +1,13 @@
+<% if status == 'offline' %>
+  <div style="background-color: #F6F7FA; border-radius: 6px; font-size: 13px; font-weight: bold; color: #A09FB7; padding: 6px 8px;">
+    Offline
+  </div>
+<% elsif status == 'online' %>
+  <div style="background-color: rgb(235, 248, 240); border-radius: 6px; font-size: 13px; font-weight: bold; color: rgb(49, 179, 108); padding: 6px 8px;">
+    Online
+  </div>
+<% elsif status == 'partially_offline' %>
+  <div style="background-color: rgb(255, 244, 235); border-radius: 6px; font-size: 13px; font-weight: bold; color: rgb(241, 143, 65); padding: 6px 8px;">
+    Partially offline
+  </div>
+<% end %>
