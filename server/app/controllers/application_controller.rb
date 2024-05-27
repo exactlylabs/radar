@@ -86,6 +86,12 @@ class ApplicationController < ActionController::Base
   rescue_from Exception, with: :handle_controller_exception
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+  before_action do
+    if current_user && current_user.super_user
+      Rack::MiniProfiler.authorize_request
+    end
+  end
+
   def after_sign_in_path_for(resource)
     if params[:setup].present? && params[:setup] == "true"
       clients_path(setup: true, unix_user: params[:unix_user])
@@ -122,7 +128,7 @@ class ApplicationController < ActionController::Base
       if current_user.super_user
         can_access_account = true
       else
-        can_access_account =  is_account_accessible_through_share || current_user.accounts.where(id: account_id).count == 1  
+        can_access_account =  is_account_accessible_through_share || current_user.accounts.where(id: account_id).count == 1
       end
 
       if !can_access_account
