@@ -1,0 +1,22 @@
+---
+- name: Configure pg_hba.conf
+  become: yes
+  template:
+    src: "pg_hba.conf.j2"
+    dest: "/etc/postgresql/{{postgresql_version}}/main/pg_hba.conf"
+    owner: "postgres"
+    group: "postgres"
+    mode: 0600
+  notify:
+    - restart postgresql service
+
+- name: Configure postgresql.conf
+  become: yes
+  lineinfile:
+    dest: "/etc/postgresql/{{postgresql_version}}/main/postgresql.conf"
+    regexp: "{{ item.option }}\\s+?="
+    line: "{{ item.option }} = {{ item.value }}"
+    state: present
+  with_items: "{{ postgresql_configs }}"
+  notify:
+    - restart postgresql service

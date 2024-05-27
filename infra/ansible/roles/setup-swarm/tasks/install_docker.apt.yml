@@ -63,3 +63,10 @@
       - python3-docker
     state: latest
     update_cache: yes
+
+- name: Adding {{ ansible_user }} to docker group
+  become: yes
+  user:
+    name: {{ ansible_user }}
+    groups: docker
+    append: yes
