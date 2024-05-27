@@ -1,0 +1,68 @@
+<% is_enabled = local_assigns[:is_enabled].present? ? local_assigns[:is_enabled] : false %>
+<% table_style = is_enabled ? 'pointer-events: auto; opacity: 1;' : 'pointer-events: none; opacity: 0.5;' %>
+<div class="cards--card-with-header" data-notification-settings-target="manageNotificationsOptions" style="<%= table_style %>">
+  <div class="cards--card-header">
+    <span>Manage notifications</span>
+  </div>
+  <div class="cards--info-column">
+    <div class="cards--section-container">
+      <p class="cards--section-title">Pods and Networks</p>
+      <div class="cards--section-content-container">
+        <%= render partial: "notification_settings/components/notification_option_row", locals: {
+          is_enabled: @notification_settings.pod_loses_total_connectivity,
+          option_id: "pod_loses_total_connectivity",
+          option_name: "pod_loses_total_connectivity",
+          option_label: "Pod loses total connectivity",
+          option_description: "When a nod assigned to a network unexpectedly loses total Internet access."
+        } %>
+        <%= render partial: "notification_settings/components/notification_option_row", locals: {
+          is_enabled: @notification_settings.pod_recovers_total_connectivity,
+          option_id: "pod_recovers_total_connectivity",
+          option_name: "pod_recovers_total_connectivity",
+          option_label: "Pod recovers total connectivity",
+          option_description: "When a pod assigned to a network recovers total Internet access."
+        } %>
+        <%= render partial: "notification_settings/components/notification_option_row", locals: {
+          is_enabled: @notification_settings.pod_loses_partial_connectivity,
+          option_id: "pod_loses_partial_connectivity",
+          option_name: "pod_loses_partial_connectivity",
+          option_label: "Pod loses partial connectivity",
+          option_description: "When a pod assigned to a network unexpectedly loses Internet access through one of its channels (Ethernet or Wi-Fi)."
+        } %>
+        <%= render partial: "notification_settings/components/notification_option_row", locals: {
+          is_enabled: @notification_settings.pod_recovers_partial_connectivity,
+          option_id: "pod_recovers_partial_connectivity",
+          option_name: "pod_recovers_partial_connectivity",
+          option_label: "Pod recovers partial connectivity",
+          option_description: "When a pod assigned to a network recovers Internet access through a previously lost channel (Ethernet or Wi-Fi)."
+        } %>
+        <%= render partial: "notification_settings/components/notification_option_row", locals: {
+          is_enabled: @notification_settings.significant_speed_variation,
+          option_id: "significant_speed_variation:",
+          option_name: "significant_speed_variation:",
+          option_label: "Significant speed variation",
+          option_description: "When a significant change in either the download or upload speeds is detected."
+        } %>
+      </div>
+    </div>
+    <div class="cards--section-container pt-0">
+      <p class="cards--section-title">ISPs</p>
+      <div class="cards--section-content-container">
+        <%= render partial: "notification_settings/components/notification_option_row", locals: {
+          is_enabled: @notification_settings.isp_goes_offline,
+          option_id: "isp_goes_offline",
+          option_name: "isp_goes_offline",
+          option_label: "ISP goes offline",
+          option_description: "When an ISP outage is detected.",
+        } %>
+        <%= render partial: "notification_settings/components/notification_option_row", locals: {
+          is_enabled: @notification_settings.isp_comes_back_online,
+          option_id: "isp_comes_back_online",
+          option_name: "isp_comes_back_online",
+          option_label: "ISP comes back online",
+          option_description: "When an ISP goes back online after an identified outage.",
+        } %>
+      </div>
+    </div>
+  </div>
+</div>

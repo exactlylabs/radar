@@ -23,6 +23,12 @@ Rails.application.routes.draw do
     post 'users/check_email_uniqueness' => 'users/registrations#check_email_uniqueness'
   end
 
+  resources :notification_settings, only: [:index] do
+    collection do
+      put 'toggle_notification_option', to: 'notification_settings#toggle_notification_option'
+    end
+  end
+
   resources :measurements, only: [:index, :show] do
     collection do
       get 'full_index'
@@ -88,6 +94,7 @@ Rails.application.routes.draw do
       post 'run_test'
       post 'toggle_in_service'
       get 'pdf_label', to: 'clients#get_client_label'
+      get 'remove_from_network', to: 'clients#remove_from_network'
       post 'run_public_test'
       get 'speed_average', to: 'clients#speed_average', as: 'speed_average'
       get 'download_speeds', to: 'public_pod#download_speeds'
@@ -247,6 +254,7 @@ Rails.application.routes.draw do
       delete :decline
     end
     collection do
+      get 'invite_modal', to: 'invites#invite_modal'
       post 'resend', to: 'invites#resend'
     end
   end

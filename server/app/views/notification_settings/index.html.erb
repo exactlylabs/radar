@@ -1,0 +1,34 @@
+<!--begin::Toolbar-->
+<div class="toolbar" id="kt_toolbar">
+  <div class="d-flex flex-stack flex-wrap flex-sm-nowrap">
+    <!--begin::Info-->
+    <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+      <!--begin::Title-->
+      <h1 class="page-main-title">Settings
+        <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
+      <!--end::Title-->
+    </div>
+    <!--end::Info-->
+  </div>
+</div>
+<!--end::Toolbar-->
+<div class="post fs-6 d-flex flex-column-fluid justify-content-center" id="kt_post">
+  <!--begin::Container-->
+  <div class="clients--details-container">
+    <%= render partial: "application/components/tabs/page_tabs",
+               locals: {
+                 tabs: [
+                   { text: 'Profile', path: edit_user_registration_path },
+                   { text: 'Notifications', path: notification_settings_path },
+                 ]
+               }
+    %>
+    <div class="cards--info-column gap-6" data-controller="notification-settings">
+      <%= render partial: "notification_settings/components/email_notifications_card" %>
+      <%= render partial: "notification_settings/components/manage_notifications_card",
+                 locals: { is_enabled: @notification_settings.email_notifications_enabled }
+      %>
+    </div>
+  </div>
+</div>
+

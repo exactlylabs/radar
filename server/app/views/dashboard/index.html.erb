@@ -93,15 +93,10 @@
         <%= render partial: "dashboard/components/empty_accounts_card" %>
       <% elsif policy_scope(Location).count == 0 %>
         <div class="d-flex flex-column w-100">
-          <% if are_there_unassigned_pods? %>
-            <div class="networks--unassigned-pods-banner">
-              <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
-              <div class="networks--unassigned-pods-banner-text-container">
-                <% pod_count = policy_scope(Client).where(location: nil).count %>
-                <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : '' %> not assigned to any network.</span>
-                <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance.</span>
-              </div>
-            </div>
+          <%= turbo_frame_tag "unassigned-pods-banner" do %>
+            <% if are_there_unassigned_pods? %>
+              <%= render partial: "pods/components/unassigned_pods_banner" %>
+            <% end %>
           <% end %>
           <%= render partial: "dashboard/components/empty_networks_card" %>
         </div>
@@ -211,8 +206,8 @@
   <%= render partial: "application/components/modals/turbo_modal",
              locals: { turbo_frame_tag_id: "new_location_modal", optional_added_controllers: "categories" }
   %>
-  <%= render partial: "application/components/modals/turbo_modal", 
-              locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
+  <%= render partial: "application/components/modals/turbo_modal",
+             locals: { turbo_frame_tag_id: "ask_add_pod_modal" }
   %>
 
   <%= render partial: "application/components/modals/turbo_modal",

@@ -1,0 +1,26 @@
+<% unless @error %>
+  <%= turbo_stream.update "unassigned-pods-banner" do %>
+    <%= render partial: "pods/components/unassigned_pods_banner" %>
+  <% end %>
+
+  <%= turbo_stream.replace @client do %>
+    <%= render partial: "application/components/tables/table_row",
+               locals: {
+                 row: @client,
+                 type: TablesHelper::TableTypes::PODS,
+                 widths: TablesHelper.widths(TablesHelper::TableTypes::PODS, current_account.is_all_accounts?, current_user.super_user && !is_super_user_disabled?),
+                 index: @client.unix_user,
+                 even: false
+               }
+    %>
+  <% end %>
+<% end %>
+<% if FeatureFlagHelper.is_available('networks', current_user) %>
+  <%= turbo_stream.append 'realtime-notice' do %>
+    <%= render partial: 'application/notice_alert', locals: { notice: @notice } %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.update 'notice-container' do %>
+    <%= render partial: 'application/notice_alert', locals: { notice: @notice } %>
+  <% end %>
+<% end %>

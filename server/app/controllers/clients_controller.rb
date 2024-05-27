@@ -10,7 +10,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
   before_action :check_request_origin, only: %i[ show ]
-  before_action :set_client, only: %i[ release show edit destroy get_client_label toggle_in_service speed_average ]
+  before_action :set_client, only: %i[ release show edit destroy get_client_label toggle_in_service speed_average remove_from_network ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_change_release_group get_bulk_remove_from_network bulk_remove_from_network get_bulk_move_to_network bulk_move_to_network ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
@@ -813,6 +813,18 @@ class ClientsController < ApplicationController
   end
 
   def need_help_finding_pod_id
+  end
+
+  def remove_from_network
+    begin
+      @error = false
+      @client.update(location_id: nil)
+      @notice = 'Client was successfully removed from network.'
+    rescue => _e
+      @error = true
+      @notice = there_has_been_an_error('removing your client from network')
+    end
+
   end
 
   private

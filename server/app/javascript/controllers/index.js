@@ -103,6 +103,9 @@ application.register("filters", FiltersController)
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
+import InfiniteScrollController from "./infinite_scroll_controller"
+application.register("infinite-scroll", InfiniteScrollController)
+
 import LineChartController from "./line_chart_controller"
 application.register("line-chart", LineChartController)
 
@@ -142,6 +145,9 @@ application.register("multi-pod-select", MultiPodSelectController)
 import MultiRowTableController from "./multi_row_table_controller"
 application.register("multi-row-table", MultiRowTableController)
 
+import NotificationSettingsController from "./notification_settings_controller"
+application.register("notification-settings", NotificationSettingsController)
+
 import NotificationsController from "./notifications_controller"
 application.register("notifications", NotificationsController)
 
@@ -150,6 +156,9 @@ application.register("onboard", OnboardController)
 
 import OutagesChartController from "./outages_chart_controller"
 application.register("outages-chart", OutagesChartController)
+
+import OutagesModalController from "./outages_modal_controller"
+application.register("outages-modal", OutagesModalController)
 
 import PaginationController from "./pagination_controller"
 application.register("pagination", PaginationController)
@@ -211,12 +220,6 @@ application.register("switch-account", SwitchAccountController)
 import TableController from "./table_controller"
 application.register("table", TableController)
 
-import OutagesModalController from "./outages_modal_controller";
-application.register("outages-modal", OutagesModalController);
-
-import InfiniteScrollController from "./infinite_scroll_controller";
-application.register("infinite-scroll", InfiniteScrollController);
-
 import TimezoneController from "./timezone_controller"
 application.register("timezone", TimezoneController)
 
@@ -225,4 +228,3 @@ application.register("update-group", UpdateGroupController)
 
 import WidgetsController from "./widgets_controller"
 application.register("widgets", WidgetsController)
-
