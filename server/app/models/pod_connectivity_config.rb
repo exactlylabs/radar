@@ -1,8 +1,22 @@
 class PodConnectivityConfig < ApplicationRecord
+  include EventSourceable
+
   belongs_to :client
   belongs_to :wlan_interface, class_name: "PodNetworkInterface", optional: true, foreign_key: :wlan_interface_id
 
   after_save :broadcast_update
+
+  module Events
+    CREATED = "CREATED"
+    WLAN_CONNECTED = "WLAN_CONNECTED"
+    WLAN_DISCONNECTED = "WLAN_DISCONNECTED"
+  end
+  # TODO: Need to populate CREATED event for the existing entries.
+
+  notify_change :wlan_enabled
+  notify_change :selected_ssid
+  notify_change :current_ssid
+  notify_change :wlan_connected, { true => Events::WLAN_CONNECTED, false => Events::WLAN_DISCONNECTED }
 
   def broadcast_update
     if saved_change_to_wlan_interface_id?
