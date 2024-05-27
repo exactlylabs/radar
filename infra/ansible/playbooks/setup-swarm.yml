@@ -5,4 +5,4 @@
     - workers
   roles:
     - monitoring
-    # - setup-swarm
+    - setup-swarm

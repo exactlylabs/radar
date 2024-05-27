@@ -10,8 +10,16 @@ workers:
         private: "true"
         architecture: arm64
 
-
 nfs:
   hosts:
     nfs.staging.radartoolkit.com:
-      vpc_subnet_cidr: 11.0.0.0/16
+      vpc_subnet_cidr: 10.4.0.0/16
+
+vpn-routers:
+  hosts:
+    vpn-router.staging.radartoolkit.com:
+
+postgresql-servers:
+  hosts:
+    db-01.staging.radartoolkit.com:
+      listen_address: 10.4.0.0/16
