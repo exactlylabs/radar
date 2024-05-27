@@ -163,10 +163,16 @@ module EventSourceable
         &applier
       )
     end
+    self.notify_event(evt)
     return evt
   end
 
   private
+
+  def notify_event(event)
+    event_name = "#{event.aggregate_type}::#{event.name}"
+    ActiveSupport::Notifications.instrument(event_name, payload: event)
+  end
 
   def default_created_applier(state, event)
     self._config[:observed_fields].each do |field_data|
