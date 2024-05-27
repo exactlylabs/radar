@@ -12,8 +12,18 @@ deploy-traefik:
 deploy-vector:
 	make -C ./deploy deploy STACK=vector ENVIRONMENT=$(ENVIRONMENT)
 
+.PHONY: setup-vpn-router
+setup-vpn-router:
+	make -C ./ansible setup-vpn-router ENVIRONMENT=$(ENVIRONMENT)
+
+.PHONY: setup-nfs
 setup-nfs:
 	make -C ./ansible setup-nfs ENVIRONMENT=$(ENVIRONMENT)
 
+.PHONY: setup-swarm
 setup-swarm:
 	make -C ./ansible setup-swarm ENVIRONMENT=$(ENVIRONMENT)
+
+.PHONY: setup-postgres
+setup-postgres:
+	make -C ./ansible setup-postgres ENVIRONMENT=$(ENVIRONMENT)
