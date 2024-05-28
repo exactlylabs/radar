@@ -1,8 +1,6 @@
 module ClientApi
   module V1
     class GeolocationController < ApiController
-      before_action :rate_limit, only: [:suggestions, :coordinates, :user_coordinates]
-
       def code
         results = Geocoder.search(params[:address])
         if results.first
