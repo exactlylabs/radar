@@ -1,4 +1,4 @@
-class WatchdogChannel < ApplicationCable::Channel
+  class WatchdogChannel < ApplicationCable::Channel
   def subscribed
     stream_from WatchdogChannel.watchdog_stream_name self.client
   end
@@ -85,7 +85,7 @@ class WatchdogChannel < ApplicationCable::Channel
           key_id: auth_key.key_id,
         }
       }
-    )
+    ) unless auth_key.nil?
   end
 
   def self.broadcast_scan_wireless_networks(client)
