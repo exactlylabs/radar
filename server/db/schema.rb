@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_12_215832) do
+ActiveRecord::Schema.define(version: 2024_05_28_194929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -142,22 +142,6 @@ ActiveRecord::Schema.define(version: 2024_05_12_215832) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["account_id"], name: "index_client_online_logs_on_account_id"
     t.index ["client_id"], name: "index_client_online_logs_on_client_id"
-  end
-
-  create_table "client_outages", force: :cascade do |t|
-    t.integer "status", default: 0, null: false
-    t.boolean "has_service_started_event", default: false, null: false
-    t.bigint "client_id"
-    t.bigint "location_id"
-    t.bigint "outage_event_id"
-    t.bigint "autonomous_system_id"
-    t.boolean "accounted_in_isp_window", default: false, null: false
-    t.datetime "started_at"
-    t.datetime "resolved_at"
-    t.index ["autonomous_system_id"], name: "index_client_outages_on_autonomous_system_id"
-    t.index ["client_id"], name: "index_client_outages_on_client_id"
-    t.index ["location_id"], name: "index_client_outages_on_location_id"
-    t.index ["outage_event_id"], name: "index_client_outages_on_outage_event_id"
   end
 
   create_table "client_speed_tests", force: :cascade do |t|
@@ -483,6 +467,7 @@ ActiveRecord::Schema.define(version: 2024_05_12_215832) do
     t.index ["account_id", "processed_at"], name: "index_measurements_on_account_id_and_processed_at", order: { processed_at: :desc }
     t.index ["account_id"], name: "index_measurements_on_account_id"
     t.index ["autonomous_system_id"], name: "index_measurements_on_autonomous_system_id"
+    t.index ["client_id", "created_at"], name: "measurements_not_null_client_id", order: { created_at: :desc }, where: "((download IS NOT NULL) AND (upload IS NOT NULL))"
     t.index ["client_id"], name: "index_measurements_on_client_id"
     t.index ["location_id", "created_at"], name: "index_measurements_on_location_id_and_created_at", order: { created_at: :desc }
     t.index ["location_id"], name: "index_measurements_on_location_id"
@@ -550,6 +535,20 @@ ActiveRecord::Schema.define(version: 2024_05_12_215832) do
     t.index ["client_id"], name: "index_ndt7_diagnose_reports_on_client_id"
   end
 
+  create_table "network_outages", force: :cascade do |t|
+    t.integer "status", default: 0, null: false
+    t.boolean "has_service_started_event", default: false, null: false
+    t.bigint "location_id"
+    t.bigint "outage_event_id"
+    t.bigint "autonomous_system_id"
+    t.boolean "accounted_in_isp_window", default: false, null: false
+    t.datetime "started_at"
+    t.datetime "resolved_at"
+    t.index ["autonomous_system_id"], name: "index_network_outages_on_autonomous_system_id"
+    t.index ["location_id"], name: "index_network_outages_on_location_id"
+    t.index ["outage_event_id"], name: "index_network_outages_on_outage_event_id"
+  end
+
   create_table "notification_settings", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "account_id", null: false
@@ -601,6 +600,7 @@ ActiveRecord::Schema.define(version: 2024_05_12_215832) do
     t.bigint "autonomous_system_id"
     t.datetime "started_at"
     t.datetime "resolved_at"
+    t.datetime "cancelled_at"
     t.index ["autonomous_system_id"], name: "index_outage_events_on_autonomous_system_id"
   end
 
@@ -797,10 +797,6 @@ ActiveRecord::Schema.define(version: 2024_05_12_215832) do
   add_foreign_key "client_event_logs", "clients"
   add_foreign_key "client_online_logs", "accounts"
   add_foreign_key "client_online_logs", "clients"
-  add_foreign_key "client_outages", "autonomous_systems"
-  add_foreign_key "client_outages", "clients"
-  add_foreign_key "client_outages", "locations"
-  add_foreign_key "client_outages", "outage_events"
   add_foreign_key "client_speed_tests", "autonomous_systems"
   add_foreign_key "client_speed_tests", "widget_clients", column: "tested_by"
   add_foreign_key "clients", "accounts"
@@ -831,6 +827,9 @@ ActiveRecord::Schema.define(version: 2024_05_12_215832) do
   add_foreign_key "metrics_projections", "study_aggregates", column: "parent_aggregate_id"
   add_foreign_key "mobile_scan_result_aps", "mobile_scan_results"
   add_foreign_key "ndt7_diagnose_reports", "clients"
+  add_foreign_key "network_outages", "autonomous_systems"
+  add_foreign_key "network_outages", "locations"
+  add_foreign_key "network_outages", "outage_events"
   add_foreign_key "notification_settings", "accounts"
   add_foreign_key "notification_settings", "users"
   add_foreign_key "online_client_count_projections", "accounts"
