@@ -1,7 +1,6 @@
 module ClientApi
   module V1
     class ApiController < ActionController::Base
-      before_action :rate_limit
       skip_forgery_protection
       before_action :set_client
       before_action :check_allowed_origin
