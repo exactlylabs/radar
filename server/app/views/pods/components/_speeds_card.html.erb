@@ -11,7 +11,7 @@
     %>
     <%= render partial: "pods/components/speed_cells",
         locals: {
-          download_avg: pod.measurements.count > 0 ? pod.download_.round(2) : 'N/A',
+          download_avg: pod.measurements.count > 0 ? pod.download_avg.round(2) : 'N/A',
           upload_avg: pod.measurements.count > 0 ? pod.upload_avg.round(2) : 'N/A',
         }
     %>
