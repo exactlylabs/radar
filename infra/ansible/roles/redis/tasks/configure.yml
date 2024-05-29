@@ -1,0 +1,45 @@
+---
+# Linux configurations guidelines from redis documentation:
+#  - https://redis.io/docs/latest/operate/oss_and_stack/management/admin/
+- name: Configure Kernel Overcommit memory
+  become: yes
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: '1'
+    state: present
+    reload: true
+
+- name: Disable Transparent Huge Pages in kernel
+  become: yes
+  shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+- name: Set redis.conf.d
+  become: yes
+  file:
+    path: /etc/redis/redis.conf.d
+    state: directory
+    owner: redis
+    group: redis
+    mode: 0740
+
+- name: Configure redis.conf to load redis.conf.d/*
+  become: yes
+  lineinfile:
+    dest: "/etc/redis/redis.conf"
+    line: "include /etc/redis/redis.conf.d/*"
+    state: present
+  notify:
+    - restart redis service
+
+- name: Send custom config file
+  become: yes
+  template:
+    src: "{{redis_config_template_path}}"
+    dest: "/etc/redis/redis.conf.d/config.conf"
+    owner: redis
+    group: redis
+    mode: 0640
+  when: redis_config_template_path
+  notify:
+    - restart redis service
+

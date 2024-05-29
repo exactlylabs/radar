@@ -13,7 +13,8 @@ workers:
 nfs:
   hosts:
     nfs.staging.radartoolkit.com:
-      vpc_subnet_cidr: 10.4.0.0/16
+  vars:
+    vpc_subnet_cidr: 10.4.0.0/16
 
 vpn-routers:
   hosts:
@@ -22,4 +23,9 @@ vpn-routers:
 postgresql-servers:
   hosts:
     db-01.staging.radartoolkit.com:
+  vars:
       listen_address: 10.4.0.0/16
+
+redis-servers:
+  hosts:
+    redis-01.staging.radartoolkit.com:

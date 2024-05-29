@@ -7,20 +7,7 @@
     - postgresql
   vars:
     postgresql_version: "16"
-    postgresql_configs:
-      - option: port
-        value: 5432
-      - option: listen_addresses
-        value: "'localhost,{{ ansible_default_ipv4.address | default(ansible_all_ipv4_addresses[0]) }}'"
-      - option: max_connections
-        value: 200
-      - option: wal_level
-        value: replica
-
-    postgresql_authentication:
-      - {type: local, database: all, user: postgres, auth_method: peer}
-      - {type: local, database: all, user: all, auth_method: scram-sha-256 }
-      - {type: host, database: all, user: all, address: "{{ listen_address }}", auth_method: scram-sha-256}
-      - {type: local, database: replication, user: all, auth_method: peer}
-      - {type: host, database: replication, address: "{{ listen_address }}", user: all, auth_method: scram-sha-256}
+    postgresql_data_directory: '/mnt/postgresql-data/16/main'
+    postgresql_configuration_template: 'postgres.conf.j2'
+    postgresql_pg_hba_template: 'pg_hba.conf.j2'
 

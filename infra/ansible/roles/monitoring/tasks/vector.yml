@@ -22,6 +22,7 @@
   register: vector_config
 
 - name: Start Vector
+  become: yes
   service:
     name: vector
     state: started
@@ -29,6 +30,7 @@
   when: vector_install.changed
 
 - name: Restart Vector
+  become: yes
   service:
     name: vector
     state: restarted

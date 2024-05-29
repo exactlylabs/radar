@@ -1,0 +1,9 @@
+---
+- name: Setup Redis Server
+  hosts:
+    - redis-servers
+  roles:
+    # - monitoring
+    - redis
+  vars:
+    redis_config_template_path: "redis-config.conf.j2"

@@ -1,0 +1,41 @@
+---
+- name: Install Requirements
+  become: yes
+  apt:
+    name:
+      - curl
+      - gpg
+      - lsb-release
+    state: latest
+    update_cache: yes
+
+- name: Setup APT Keys
+  become: yes
+  block:
+    - name: Create keyring directory
+      file:
+        path: /usr/share/keyrings
+        state: directory
+
+    - name: Create gpg key
+      ansible.builtin.get_url:
+        url: https://packages.redis.io/gpg
+        dest: /usr/share/keyrings/redis-archive-keyring.asc
+
+    - name: add Redis Repository
+      apt_repository:
+        repo: deb [arch={% if ansible_architecture == "aarch64" %}arm64{% else %}{{ansible_architecture}}{% endif %} signed-by=/usr/share/keyrings/redis-archive-keyring.asc] https://packages.redis.io/deb {{ ansible_distribution_release }} main
+        state: present
+
+- name: Install Redis
+  become: yes
+  apt:
+    name:
+      - redis
+
+- name: start and enable redis service
+  become: yes
+  systemd:
+    name: "redis-server"
+    state: started
+    enabled: yes

@@ -1,0 +1,5 @@
+---
+# - include_tasks: install.apt.yml
+#   when: ansible_os_family in ['Debian', 'Ubuntu']
+
+- include_tasks: configure.yml
