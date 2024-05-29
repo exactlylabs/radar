@@ -16,4 +16,8 @@ setup-postgres:
 	@echo "Setting up Postgres"
 	ansible-playbook -i inventory/${ENVIRONMENT}.yml playbooks/setup-postgresql.yml
 
+setup-redis:
+	@echo "Setting up Redis"
+	ansible-playbook -i inventory/${ENVIRONMENT}.yml playbooks/setup-redis.yml
+
 setup: setup-nfs setup-swarm

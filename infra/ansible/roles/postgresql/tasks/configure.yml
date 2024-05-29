@@ -1,8 +1,33 @@
 ---
+- name: Create Data Directory
+  become: yes
+  file:
+    path: "{{postgresql_data_directory}}"
+    state: directory
+    owner: "postgres"
+    group: "postgres"
+    mode: 0700
+  when: "postgresql_data_directory != '/var/lib/postgresql/'+postgresql_version+'/main'"
+  register: create_data
+
+- name: Copy Data Directory Content
+  become: yes
+  shell: "cp -axf /var/lib/postgresql/{{postgresql_version}}/main/* {{postgresql_data_directory}}"
+  when: "create_data.changed"
+  notify:
+    - restart postgresql service
+
+- name: Backup pg_hba.conf
+  become: yes
+  copy:
+    src: "/etc/postgresql/{{postgresql_version}}/main/pg_hba.conf"
+    remote_src: true
+    dest: "/etc/postgresql/{{postgresql_version}}/main/pg_hba.conf.bkp"
+
 - name: Configure pg_hba.conf
   become: yes
   template:
-    src: "pg_hba.conf.j2"
+    src: "{{postgresql_pg_hba_template}}"
     dest: "/etc/postgresql/{{postgresql_version}}/main/pg_hba.conf"
     owner: "postgres"
     group: "postgres"
@@ -12,11 +37,21 @@
 
 - name: Configure postgresql.conf
   become: yes
+  template:
+    src: "{{postgresql_configuration_template}}"
+    dest: "/etc/postgresql/{{postgresql_version}}/main/conf.d/ansible-config.conf"
+    owner: "postgres"
+    group: "postgres"
+    mode: 0600
+  notify:
+    - restart postgresql service
+
+- name: Configure Data Directory in postgresql.conf
+  become: yes
   lineinfile:
     dest: "/etc/postgresql/{{postgresql_version}}/main/postgresql.conf"
-    regexp: "{{ item.option }}\\s+?="
-    line: "{{ item.option }} = {{ item.value }}"
+    regexp: "data_directory ="
+    line: "data_directory = '{{postgresql_data_directory}}'"
     state: present
-  with_items: "{{ postgresql_configs }}"
   notify:
     - restart postgresql service

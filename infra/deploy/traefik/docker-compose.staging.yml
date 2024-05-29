@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   traefik:
-    image: "traefik:v2.10.4"
+    image: "traefik:v3.0"
     deploy:
       mode: global
       placement:
@@ -14,11 +14,16 @@ services:
       - "--ping"
       - "--accesslog=true"
       - "--accesslog.format=json"
-      - "--metrics.statsd=true"
-      - "--metrics.statsd.address=vector-agent:8125"
-      # - "--metrics.statsd.addentrypointslabels=true"
-      # - "--metrics.statsd.addrouterslabels=true"
-      - "--metrics.statsd.addserviceslabels=true"
+      - "--metrics=true"
+      - "--metrics.otlp=true"
+      - "--metrics.otlp.addEntryPointsLabels=true"
+      - "--metrics.otlp.addRoutersLabels=true"
+      - "--metrics.otlp.addServicesLabels=true"
+      - "--metrics.otlp.pushInterval=10s"
+      - "--metrics.otlp.grpc=true"
+      - "--metrics.otlp.grpc.endpoint=otel_collector:4317"
+      - "--tracing=true"
+      - "--tracing.sampleRate=1.0"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.swarmmode=true"
@@ -39,12 +44,15 @@ services:
     networks:
       - public
       - vector_public
+      - otel_collector_public
 
 networks:
   public:
     driver: overlay
     attachable: true
   vector_public:
+    external: true
+  otel_collector_public:
     external: true
 
 volumes:

@@ -1,0 +1,24 @@
+services:
+  otel_collector:
+    image: "otel/opentelemetry-collector-contrib"
+    networks:
+      - public
+    deploy:
+      replicas: 1
+
+    configs:
+      - source: otel_config-v1
+        target: /etc/vector/vector.yaml
+
+configs:
+  # To update config files, we must rename the config key name, and update the service to source from this new name.
+  # see for more: https://docs.docker.com/engine/swarm/configs/#example-rotate-a-config
+  otel_config-v1:
+    template_driver: golang
+    file: ./configs/config.yaml
+
+networks:
+  public:
+    driver: overlay
+    attachable: true
+
