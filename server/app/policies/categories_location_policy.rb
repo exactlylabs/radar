@@ -8,7 +8,7 @@ class CategoriesLocationPolicy < ApplicationPolicy
           user.accounts.not_deleted.each do |account|
             all_categories.append(*account.categories.pluck(:id))
           end
-          user.shared_accounts.not_deleted.each do |account|
+          user.shared_accounts.each do |account|
             all_categories.append(*account.categories.pluck(:id))
           end
           scope.where(category_id: all_categories)

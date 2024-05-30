@@ -1,3 +1,4 @@
+<% curr_account = current_account %>
 <div class="sidebar--accounts-menu-container invisible"
   data-sidebar-target="accountsMenu"
 >
@@ -8,14 +9,14 @@
         has_options: false,
         text: 'All accounts',
         has_icon: true,
-        icon: current_account.is_all_accounts? ? 'all-accounts-icon-selected' : 'all-accounts-icon',
-        active: current_account.is_all_accounts?,
+        icon: curr_account.is_all_accounts? ? 'all-accounts-icon-selected' : 'all-accounts-icon',
+        active: curr_account.is_all_accounts?,
         account_id: -1
       }
   %>
   <div class="sidebar--horizontal-divider"></div>
   <div id="sidebar--accounts-list-wrapper" data-action="scroll->sidebar#closeMenusOnScroll">
-    <% policy_scope(Account).not_deleted.order("LOWER(name)").each do |account| %>
+    <% policy_scope(Account).order("LOWER(name)").each do |account| %>
       <%= render partial: "application/components/sidebar/account_item", 
           locals: {
             is_shared: false,
@@ -23,12 +24,12 @@
             text: account.name,
             has_icon: false,
             icon: nil,
-            active: current_account.id == account.id,
+            active: curr_account.id == account.id,
             account_id: account.id
           }
       %>
     <% end %>
-    <% current_user.shared_accounts.not_deleted.distinct.each do |account| %>
+    <% current_user.shared_accounts.each do |account| %>
       <%= render partial: "application/components/sidebar/account_item", 
           locals: {
             is_shared: true,
@@ -36,7 +37,7 @@
             text: account.name,
             has_icon: false,
             icon: nil,
-            active: current_account.id == account.id,
+            active: curr_account.id == account.id,
             account_id: account.id
           }
       %>

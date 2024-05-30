@@ -7,7 +7,7 @@ class MeasurementPolicy < ApplicationPolicy
       if @auth_holder.present?
         if @auth_holder.is_all_accounts?
           user = @auth_holder.user
-          accounts = [*user.accounts.not_deleted, *user.shared_accounts.not_deleted]
+          accounts = [*user.accounts.not_deleted, *user.shared_accounts]
           scope.where(account: accounts).where.not(download: nil)
         else
           scope.where(account_id: @auth_holder.account.id).where('download IS NOT NULL') # Prevent from seeing tests from different accounts where the test wasn't taken
