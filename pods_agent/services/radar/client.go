@@ -91,6 +91,8 @@ func (c *RadarClient) Connect(ctx context.Context, ch chan<- *agent.ServerMessag
 	}
 	c.channel.OnConnected = func() {
 		c.connected = true
+		firstPing = false
+		header.Set("Sec-Radar-Service-Started", "false")
 		log.Println("PodAgentChannel Connected")
 	}
 	if err := c.channel.Connect(ctx); err != nil {
