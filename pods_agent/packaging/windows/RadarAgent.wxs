@@ -26,7 +26,7 @@
 
     <Property Id='ACCOUNT_TOKEN'  />
     <Property Id='REGISTER_LABEL' />
-    <Property Id='FORCE' />
+    <Property Id='REPLACE_EXISTING_CONFIG' />
 
     <Directory Id='TARGETDIR' Name='SourceDir'>
       <Directory Id='LocalAppDataFolder' Name='LocalAppData'>
@@ -60,10 +60,10 @@
       <Custom Action='StopService' Sequence='3399' >Installed</Custom>
       <Custom Action='UninstallService' Sequence='3400' >Installed</Custom>
       <Custom Action='InstallService' Sequence='6101' >NOT Installed OR (WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))</Custom>
-      <Custom Action='RegisterAgent' Sequence='6102' >NOT Installed AND (NOT ACCOUNT_TOKEN="" AND REGISTER_LABEL="" AND FORCE="")</Custom>
-      <Custom Action='RegisterAgentWithForce' Sequence='6103' >NOT Installed AND (NOT ACCOUNT_TOKEN="" AND REGISTER_LABEL="" AND NOT FORCE="")</Custom>
-      <Custom Action='RegisterAgentWithLabel' Sequence='6104' >NOT Installed AND (NOT ACCOUNT_TOKEN="" AND NOT REGISTER_LABEL="" AND FORCE="")</Custom>
-      <Custom Action='RegisterAgentWithLabelAndForce' Sequence='6105' >NOT Installed AND (NOT ACCOUNT_TOKEN="" AND NOT REGISTER_LABEL="" AND NOT FORCE="")</Custom>
+      <Custom Action='RegisterAgent' Sequence='6102' >NOT Installed AND (NOT ACCOUNT_TOKEN="" AND REGISTER_LABEL="" AND REPLACE_EXISTING_CONFIG="")</Custom>
+      <Custom Action='RegisterAgentWithForce' Sequence='6103' >NOT Installed AND (NOT ACCOUNT_TOKEN="" AND REGISTER_LABEL="" AND NOT REPLACE_EXISTING_CONFIG="")</Custom>
+      <Custom Action='RegisterAgentWithLabel' Sequence='6104' >NOT Installed AND (NOT ACCOUNT_TOKEN="" AND NOT REGISTER_LABEL="" AND REPLACE_EXISTING_CONFIG="")</Custom>
+      <Custom Action='RegisterAgentWithLabelAndForce' Sequence='6105' >NOT Installed AND (NOT ACCOUNT_TOKEN="" AND NOT REGISTER_LABEL="" AND NOT REPLACE_EXISTING_CONFIG="")</Custom>
       <Custom Action='StartService' Sequence='6106' >NOT Installed OR (WIX_UPGRADE_DETECTED AND NOT (REMOVE="ALL"))</Custom>
     </InstallExecuteSequence>
 
