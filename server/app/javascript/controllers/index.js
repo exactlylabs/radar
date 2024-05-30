@@ -157,12 +157,6 @@ application.register("downloads", DownloadsController);
 import AddPodToNetworkController from "./add_pod_to_network_controller";
 application.register("add-pod-to-network", AddPodToNetworkController);
 
-import PodIdInputController from "./pod_id_input_controller";
-application.register("pod-id-input", PodIdInputController);
-
-import PodIdStepController from "./pod_id_step_controller";
-application.register("pod-id-step", PodIdStepController);
-
 import PodAccountAndNetworkController from "./pod_account_and_network_controller";
 application.register("pod-account-and-network", PodAccountAndNetworkController);
 
@@ -222,6 +216,3 @@ application.register("outages-modal", OutagesModalController);
 
 import RealtimeFiltersController from "./realtime_filters_controller";
 application.register("realtime-filters", RealtimeFiltersController);
-
-import WidgetsController from "./widgets_controller";
-application.register("widgets", WidgetsController);
