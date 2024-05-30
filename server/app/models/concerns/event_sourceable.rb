@@ -119,7 +119,7 @@ module EventSourceable
     self.record_event(
       self._config[:on_create][:event],
       self.method(self._config[:on_create][:event_data]).call(),
-      self.created_at,
+      self.respond_to?(:created_at) ? self.created_at : Time.now,
       is_created: true,
       &self.method(self._config[:on_create][:applier])
     )

@@ -10,12 +10,15 @@ class PodConnectivityConfig < ApplicationRecord
     CREATED = "CREATED"
     WLAN_CONNECTED = "WLAN_CONNECTED"
     WLAN_DISCONNECTED = "WLAN_DISCONNECTED"
+    WLAN_ENABLED = "WLAN_ENABLED"
+    SSID_SELECTED = "SSID_SELECTED"
+    CURRENT_SSID_CHANGED = "CURRENT_SSID_CHANGED"
   end
   # TODO: Need to populate CREATED event for the existing entries.
 
-  notify_change :wlan_enabled
-  notify_change :selected_ssid
-  notify_change :current_ssid
+  notify_change :wlan_enabled, Events::WLAN_ENABLED
+  notify_change :selected_ssid, Events::SSID_SELECTED
+  notify_change :current_ssid, Events::CURRENT_SSID_CHANGED
   notify_change :wlan_connected, { true => Events::WLAN_CONNECTED, false => Events::WLAN_DISCONNECTED }
 
   def broadcast_update
