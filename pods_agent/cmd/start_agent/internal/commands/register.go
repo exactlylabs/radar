@@ -27,6 +27,7 @@ type RegisterCommand struct {
 	PodName       string `arg:"--pod-name,env:RADAR_POD_NAME"`
 	RegisterLabel string `arg:"--label,env:RADAR_REGISTER_LABEL"`
 	CreateNetwork bool   `arg:"--create-network,env:RADAR_CREATE_NETWORK"`
+	Force         bool   `arg:"-f,--force,env:RADAR_FORCE"`
 	NetworkInfoArgs
 }
 
@@ -49,54 +50,54 @@ func (args RegisterCommand) Run(ctx context.Context, c *config.Config) {
 	pod := &agent.PodInfo{}
 	var err error
 
-	if c.ClientId == "" {
-		log.Println("Registering Agent to Radar Platform")
-		podInfo := agent.RegisterPodInfo{}
-		if args.PodName != "" {
-			podInfo.Name = &args.PodName
-		}
-		if args.RegisterLabel != "" {
-			podInfo.Label = &args.RegisterLabel
+	if c.ClientId != "" && !args.Force {
+		log.Println("Client ID already exists in config file, skipping registration")
+		return
+	}
+
+	log.Println("Registering Agent to Radar Platform")
+	podInfo := agent.RegisterPodInfo{}
+	if args.PodName != "" {
+		podInfo.Name = &args.PodName
+	}
+	if args.RegisterLabel != "" {
+		podInfo.Label = &args.RegisterLabel
+	}
+
+	pod, err = cli.Register(podInfo)
+	if err != nil {
+		panic(err)
+	}
+	c.ClientId = pod.ClientId
+	c.Secret = pod.Secret
+
+	if args.AccountToken != "" {
+		var network *agent.NetworkData
+		if args.CreateNetwork {
+			network = &agent.NetworkData{
+				ID:           args.NetworkId,
+				Name:         args.NetworkName,
+				Latitude:     args.NetworkLatitude,
+				Longitude:    args.NetworkLongitude,
+				Address:      args.NetworkAddress,
+				DownloadMbps: args.NetworkDownloadMbps,
+				UploadMbps:   args.NetworkUploadMbps,
+			}
 		}
 
-		pod, err = cli.Register(podInfo)
+		pod, err = cli.AssignPodToAccount(args.AccountToken, network)
 		if err != nil {
 			panic(err)
 		}
-		c.ClientId = pod.ClientId
-		c.Secret = pod.Secret
+		pod.Secret = c.Secret
+	}
 
-		if args.AccountToken != "" {
-			var network *agent.NetworkData
-			if args.CreateNetwork {
-				network = &agent.NetworkData{
-					ID:           args.NetworkId,
-					Name:         args.NetworkName,
-					Latitude:     args.NetworkLatitude,
-					Longitude:    args.NetworkLongitude,
-					Address:      args.NetworkAddress,
-					DownloadMbps: args.NetworkDownloadMbps,
-					UploadMbps:   args.NetworkUploadMbps,
-				}
-			}
+	if err := config.Save(c); err != nil {
+		panic(err)
+	}
 
-			pod, err = cli.AssignPodToAccount(args.AccountToken, network)
-			if err != nil {
-				panic(err)
-			}
-			pod.Secret = c.Secret
-		}
-
-		if err := config.Save(c); err != nil {
-			panic(err)
-		}
-
-		if pod.Id != 0 {
-			data, _ := json.Marshal(pod)
-			fmt.Println(string(data))
-		}
-
-	} else {
-		log.Println("Client ID already exists in config file, skipping registration")
+	if pod.Id != 0 {
+		data, _ := json.Marshal(pod)
+		fmt.Println(string(data))
 	}
 }
