@@ -85,10 +85,10 @@ export default class MultiLineChartController extends ChartController {
     const timestamps = [];
     rawData.forEach((line) => {
       let hexIndex;
-      if(seenKeys.has(line['case'])) {
-        hexIndex = seenKeys.get(line['case']);
+      if(seenKeys.has(line['entity_identifier'])) {
+        hexIndex = seenKeys.get(line['entity_identifier']);
       } else {
-        seenKeys.set(line['case'], lastHexUsed);
+        seenKeys.set(line['entity_identifier'], lastHexUsed);
         hexIndex = lastHexUsed;
         lastHexUsed++;
       }
@@ -102,7 +102,7 @@ export default class MultiLineChartController extends ChartController {
       }
       if(!timestamps.includes(x)) timestamps.push(x);
     });
-    data.forEach((linePoints, hex) => {
+    data.forEach((linePoints, _) => {
       if(timestamps.length > linePoints.length) {
         timestamps.forEach(timestamp => {
           if(!linePoints.find(linePoint => linePoint.x === timestamp)) {
@@ -117,6 +117,7 @@ export default class MultiLineChartController extends ChartController {
         data.set(hex, linePoints.map(lp => ({x: lp.x, y: this.convertToPreferredUnit(lp.y)})));
       });
     }
+    console.log(data);
     return data;
   }
   
@@ -141,6 +142,7 @@ export default class MultiLineChartController extends ChartController {
       this.selectedHexes.push(selectedHex);
     }
     this.adjustedData = this.adjustData(this.chartData);
+    console.log(this.adjustedData)
     this.plotChart(this.adjustedData);
   }
   

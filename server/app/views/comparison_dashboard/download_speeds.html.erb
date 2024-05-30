@@ -1,5 +1,5 @@
 <% responsive = @responsive || false %>
-<% entities_array =  @download_speeds.map{|row| row['case']}.to_set.to_a %>
+<% entities_array =  @download_speeds.map{|row| row['entity_identifier']}.to_set.to_a %>
 
 <%= turbo_frame_tag "compare-download-speeds-widget#{responsive ? '-responsive' : ''}" do %>
   <% if @download_speeds.count == 0 %>
