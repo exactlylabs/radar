@@ -31,9 +31,9 @@ class User < ApplicationRecord
     raw_query = %{
       SELECT a.* FROM accounts a 
       WHERE a.id IN (
-        SELECT sa.original_account_id FROM accounts joined_account
+        SELECT DISTINCT sa.original_account_id FROM accounts joined_account
         JOIN shared_accounts sa ON joined_account.id = sa.shared_to_account_id
-        WHERE sa.shared_to_account_id IN (?))
+        WHERE sa.shared_to_account_id IN (?) AND joined_account.deleted_at IS NULL)
     }
     query = ActiveRecord::Base.sanitize_sql([raw_query, self.accounts.map {|a| a.id}])
     Account.where(id: ActiveRecord::Base.connection.execute(query).map {|r| r["id"]})

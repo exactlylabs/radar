@@ -10,7 +10,7 @@ class LocationPolicy < ApplicationPolicy
           user.accounts.not_deleted.each do |account|
             all_locations.append(*account.locations.pluck(:id))
           end
-          user.shared_accounts.not_deleted.each do |account|
+          user.shared_accounts.each do |account|
             all_locations.append(*account.locations.pluck(:id))
           end
           scope.where(id: all_locations)
