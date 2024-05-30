@@ -1,5 +1,5 @@
 <% responsive = @responsive || false %>
-<% entities_array = @data_usage.map{|row| row['case']}.to_set.to_a %>
+<% entities_array = @data_usage.map{|row| row['entity_identifier']}.to_set.to_a %>
 
 <%= turbo_frame_tag "compare-data-usage-widget#{responsive ? '-responsive' : ''}" do %>
   <% if @data_usage.count == 0 %>

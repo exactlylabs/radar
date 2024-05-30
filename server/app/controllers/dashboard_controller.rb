@@ -1,5 +1,7 @@
 class DashboardController < ApplicationController
   include ChartsHelper
+  include Onboarding
+  include DashboardConcern
   before_action :authenticate_user!
 
   # GET /dashboard or /dashboard.json
@@ -11,13 +13,7 @@ class DashboardController < ApplicationController
     @clients = policy_scope(Client)
     locations_to_filter = policy_scope(Location)
     @locations = get_filtered_locations(locations_to_filter, params[:status])
-    if @locations.exists? || params[:filter].present?
-      @onboard_step = -1
-    elsif @clients.exists?
-      @onboard_step = 3
-    else
-      @onboard_step = 1
-    end
+    set_onboarding_step
     if FeatureFlagHelper.is_available('charts', current_user)
       @locations = @locations.where(account_id: params[:account_id]) if params[:account_id]
       @locations = @locations.where(id: params[:network_id]) if params[:network_id]
@@ -38,10 +34,7 @@ class DashboardController < ApplicationController
         @show_ftue = cookie_is_turned_on && has_no_accounts
       end
     end
-    if current_account.present?
-      params = as_orgs_filters_params(current_account)
-      @filter_as_orgs = ActiveRecord::Base.connection.execute(DashboardHelper.get_as_orgs_sql(params[:account_ids], params[:from], params[:to], location_ids: params[:location_ids]))
-    end
+    set_as_orgs
   end
 
   def onboarding_step_1

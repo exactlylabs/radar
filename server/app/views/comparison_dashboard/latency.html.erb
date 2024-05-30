@@ -1,5 +1,5 @@
 <% responsive = @responsive || false %>
-<% entity_array = @latency.map{|row| row['case']}.to_set.to_a %>
+<% entity_array = @latency.map{|row| row['entity_identifier']}.to_set.to_a %>
 
 <%= turbo_frame_tag "compare-latency-widget#{responsive ? '-responsive' : ''}" do %>
   <% if @latency.count == 0 %>

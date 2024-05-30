@@ -1,10 +1,6 @@
 <% raise "ID is required" if local_assigns[:id].nil? %>
 <% raise "Menu ID is required" if local_assigns[:menu_id].nil? %>
-<%# current_filter_label = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:label] : default_label %>
-<%# current_filter_value = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first[:value] : default_value %>
 <% is_dark = local_assigns[:dark].present? && local_assigns[:dark] == true %>
-<%# is_paginated = local_assigns[:pagination].nil? || (local_assigns[:pagination].present? && local_assigns[:pagination] == false) %>
-<%# no_z_index = local_assigns[:no_z_index] || false %>
 
 <div class="tables--filters-button-container"
      data-controller="filters"
