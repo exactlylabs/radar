@@ -8,7 +8,7 @@ class InvitePolicy < ApplicationPolicy
           user.accounts.not_deleted.each do |account|
             all_invites.append(*account.invites.map{|l| l.id})
           end
-          user.shared_accounts.not_deleted.each do |account|
+          user.shared_accounts.each do |account|
             all_invites.append(*account.invites.map{|l| l.id})
           end
           scope.where(id: all_invites)
