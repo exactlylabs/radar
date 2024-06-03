@@ -85,6 +85,7 @@ class Client < ApplicationRecord
           END
         )
       )
+      AND data_cap_current_period_usage < data_cap_max_usage
     })
   }
   scope :where_online, -> { where(online: true) }
