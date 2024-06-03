@@ -19,9 +19,6 @@ class OutagesProjector
 
   def self.reprocess
     ConsumerOffset.find_by(consumer_id: 'OutagesProjector')&.destroy
-    # Preciso armazenar o estado do location, para saber quantos pods e qual o estado desses pods, assim defino se está online ou não.
-    # Locations sem pods, não devem ter um outage. E se tinham, esse outage deve ser finalizado como unknown.
-    # Locations que receberam um pod offline, iniciam com um unknown outage? Acho que nesse caso iniciam sem outage, pois nunca ficaram online.
     NetworkOutage.delete_all
     OutageEvent.delete_all
     process
