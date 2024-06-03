@@ -342,8 +342,8 @@ class OutagesProjector
     end
 
     if event["data"]["from"].present?
-      @network_pods[event["data"]["from"]].delete(event["aggregate_id"])
-      remaining_pods = @network_pods[event["data"]["from"]].map { |pod_id| @pods[pod_id]["state"] }
+      @network_pods[event["data"]["from"]]&.delete(event["aggregate_id"])
+      remaining_pods = @network_pods[event["data"]["from"]]&.map { |pod_id| @pods[pod_id]["state"] } || []
       network_is_online = remaining_pods.any? { |pod| pod["online"] }
 
       active_outage = NetworkOutage.active.find_by(location_id: event["data"]["from"])
