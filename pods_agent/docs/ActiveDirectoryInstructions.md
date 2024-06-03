@@ -15,10 +15,11 @@ Download the latest [MSI installer](https://pods.radartoolkit.com/client_version
 >If you already have an MSI transformer with you, please proceed to the next [Installation Section](#installation)
 
 
-The installer comes with two configurable properties:
+The installer comes with three configurable properties:
 
 * ACCOUNT_TOKEN: A token used to link the pod into your account at installation time
 * REGISTER_LABEL: A text field, this can hold any string and can be used to trace back a computer installation in our backend. Can be the computer name and/or any env variable.
+* REPLACE_EXISTING_CONFIG: Set it to any value, and the installer will generate a new configuration file, meaning it will register itself as a new pod + link to an account if ACCOUNT_TOKEN is given.
 
 When deploying through active directory, you can't set those properties directly. You have to use something called an MSI Transformer.
 This transformer works as a layer of configuration on top of the MSI, and for our case, can be used to set these two properties in our MSI.
@@ -32,6 +33,8 @@ Suggestion, you can use `sed` command for this if you have it
 ```sh
 sed -e 's/REPLACE_ME_WITH_A_TOKEN/<the token>/' Radar-Baseline.mst | tee Radar-MyToken.mst
 ```
+
+In case you also want it to replace the existing configuration when installed, use [Radar-Baseline With Replace](files/ActiveDirectoryInstructions/Radar-Baseline-With-Replace.mst) instead.
 
 #### 2.2 Creating the MSI Transformer (.mst)
 
