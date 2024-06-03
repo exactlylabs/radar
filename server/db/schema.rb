@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_28_194929) do
+ActiveRecord::Schema.define(version: 2024_06_03_194610) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -142,6 +142,22 @@ ActiveRecord::Schema.define(version: 2024_05_28_194929) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["account_id"], name: "index_client_online_logs_on_account_id"
     t.index ["client_id"], name: "index_client_online_logs_on_client_id"
+  end
+
+  create_table "client_outages", force: :cascade do |t|
+    t.integer "status", default: 0, null: false
+    t.boolean "has_service_started_event", default: false, null: false
+    t.bigint "client_id"
+    t.bigint "location_id"
+    t.bigint "outage_event_id"
+    t.bigint "autonomous_system_id"
+    t.boolean "accounted_in_isp_window", default: false, null: false
+    t.datetime "started_at"
+    t.datetime "resolved_at"
+    t.index ["autonomous_system_id"], name: "index_client_outages_on_autonomous_system_id"
+    t.index ["client_id"], name: "index_client_outages_on_client_id"
+    t.index ["location_id"], name: "index_client_outages_on_location_id"
+    t.index ["outage_event_id"], name: "index_client_outages_on_outage_event_id"
   end
 
   create_table "client_speed_tests", force: :cascade do |t|
@@ -797,6 +813,10 @@ ActiveRecord::Schema.define(version: 2024_05_28_194929) do
   add_foreign_key "client_event_logs", "clients"
   add_foreign_key "client_online_logs", "accounts"
   add_foreign_key "client_online_logs", "clients"
+  add_foreign_key "client_outages", "autonomous_systems"
+  add_foreign_key "client_outages", "clients"
+  add_foreign_key "client_outages", "locations"
+  add_foreign_key "client_outages", "outage_events"
   add_foreign_key "client_speed_tests", "autonomous_systems"
   add_foreign_key "client_speed_tests", "widget_clients", column: "tested_by"
   add_foreign_key "clients", "accounts"
