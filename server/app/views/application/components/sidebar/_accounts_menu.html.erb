@@ -16,7 +16,7 @@
   %>
   <div class="sidebar--horizontal-divider"></div>
   <div id="sidebar--accounts-list-wrapper" data-action="scroll->sidebar#closeMenusOnScroll">
-    <% policy_scope(Account).order("LOWER(name)").each do |account| %>
+    <% policy_scope(Account).where.not(id: current_user.shared_accounts).order("LOWER(name)").each do |account| %>
       <%= render partial: "application/components/sidebar/account_item", 
           locals: {
             is_shared: false,
