@@ -37,6 +37,7 @@
           <label class="forms--label">Share account with...</label>
           <div class="d-flex flex-row justify-content-between align-items-center w-100">
             <div class="input-group forms--input-group" style="width: 50%; max-width: 400px">
+              <% all_shared_accounts_for_current_one = policy_scope(SharedAccount) %>
               <select id=""
                 class="forms--select form-select select2-hidden-accessible"
                 data-placeholder="Do not share"
@@ -48,7 +49,7 @@
                 data-is-multi="true"
               >
                 <% policy_scope(Account).not_deleted.distinct.where.not(id: current_account.id).each do |account| %>
-                  <option value="<%= account.id %>" label="<%= account.name %>" <%= policy_scope(SharedAccount).where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
+                  <option value="<%= account.id %>" label="<%= account.name %>" <%= all_shared_accounts_for_current_one.where(shared_to_account_id: account.id).count == 1 ? "selected" : nil %>><%= account.name %></option>
                 <% end %>
               </select>
             </div>
