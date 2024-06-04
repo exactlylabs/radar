@@ -28,6 +28,7 @@ export default class extends Controller {
         KTMenu.createInstances();
         this.categories = [];
         this.accountId = this.hasFirstAccountIdTarget ? this.firstAccountIdTarget.value : null;
+        this.isMenuOpen = false;
     }
 
     initialize() {
@@ -166,27 +167,47 @@ export default class extends Controller {
             });
     }
 
-    toggleFocus(event) {
-        const path = event.params.path;
-        let holderId = event.params.holderId;
-        if (holderId === null || holderId === undefined) {
-            if (this.accountId === null || this.accountId === undefined) {
-                if (this.hasFirstAccountIdTarget) {
-                    this.accountId = this.firstAccountIdTarget.value;
-                } else {
-                    return;
-                }
-            }
-            holderId = `account_id=${this.accountId}`;
+    toggleFocus(e) {
+      if(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const path = this.selectClickableContainerTarget.dataset.categoriesPathParam;
+      let holderId = this.selectClickableContainerTarget.dataset.categoriesHolderIdValue;
+      if (holderId === null || holderId === undefined) {
+        if (this.accountId === null || this.accountId === undefined) {
+          if (this.hasFirstAccountIdTarget) {
+            this.accountId = this.firstAccountIdTarget.value;
+          } else {
+            return;
+          }
         }
-        if (this.selectClickableContainerTarget.classList.contains('category--location-select-container-focus')) {
-            this.selectClickableContainerTarget.classList.remove('category--location-select-container-focus');
-            this.toggleCategoriesDropdown(false, path, holderId);
-        } else {
-            this.selectClickableContainerTarget.classList.add('category--location-select-container-focus');
-            this.toggleCategoriesDropdown(true, path, holderId);
-        }
+        holderId = `account_id=${this.accountId}`;
+      }
+      document.removeEventListener('click', this.closeMenuIfClickedOutside.bind(this));
+      
+      if (this.isMenuOpen) {
+        this.selectClickableContainerTarget.classList.remove('category--location-select-container-focus');
+        this.toggleCategoriesDropdown(false, path, holderId);
+      } else {
+        document.addEventListener('click', this.closeMenuIfClickedOutside.bind(this), {once: true});
+        this.selectClickableContainerTarget.classList.add('category--location-select-container-focus');
+        this.toggleCategoriesDropdown(true, path, holderId);
+      }
+      this.isMenuOpen = !this.isMenuOpen;
     }
+  
+  closeMenuIfClickedOutside(event) {
+    if(!this.isMenuOpen) return;
+    event.stopPropagation();
+    const clickedTarget = event.target;
+    const clickableContainer = this.selectClickableContainerTarget;
+    const categoriesMenu = document.getElementById(clickableContainer.dataset.categoriesMenuId);
+    if(!categoriesMenu) return;
+    if (!this.selectClickableContainerTarget.contains(clickedTarget) && !categoriesMenu.contains(clickedTarget)) {
+      this.toggleFocus();
+    }
+  }
 
     handleCategorySearchResponse() {
         this.categoryCheckboxTargets.forEach(checkbox => {

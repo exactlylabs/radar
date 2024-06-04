@@ -59,6 +59,7 @@
          data-categories-target="selectClickableContainer"
          data-categories-path-param="/location_categories"
          data-action="click->categories#toggleFocus"
+         data-categories-menu-id="location-categories-dropdown"
     >
       <%= turbo_frame_tag "selected-categories" do %>
         <%= render partial: "categories/components/table_cell", locals: { categories: location&.categories, shows_tooltip: false, row: -1 } %>
@@ -69,9 +70,8 @@
           </svg>
         </span>
     </div>
-    <%= turbo_frame_tag "location-categories-dropdown" do %>
-      <%= link_to "Import from another account…", categories_import_from_another_account_url(network_id: location&.id), data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
-    <% end %>
+    <%= turbo_frame_tag "location-categories-dropdown" %>
+    <%= link_to "Import from another account…", categories_import_from_another_account_url(network_id: location&.id), data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
   </div>
 
   <div class="modals--half-width-row mb-6">
