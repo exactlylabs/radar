@@ -10,7 +10,7 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
   before_action :check_request_origin, only: %i[ show ]
-  before_action :set_client, only: %i[ release show edit destroy get_client_label toggle_in_service speed_average remove_from_network ]
+  before_action :set_client, only: %i[ release update show edit destroy get_client_label toggle_in_service speed_average remove_from_network ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_change_release_group get_bulk_remove_from_network bulk_remove_from_network get_bulk_move_to_network bulk_move_to_network ]
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
@@ -314,7 +314,7 @@ class ClientsController < ApplicationController
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
-    assign_network_to_pod(params[:id], params[:account_id], params[:location_id], params[:network_assignment_type], params[:categories], location_params)
+    assign_network_to_pod(params[:account_id], params[:network_id], params[:network_assignment_type], params[:categories])
 
     if params[:update_group_id]
       update_group = policy_scope(UpdateGroup).find(params[:update_group_id])
@@ -878,34 +878,35 @@ class ClientsController < ApplicationController
     store_recent_search(params[:id], Recents::RecentTypes::CLIENT)
   end
 
-  def assign_network_to_pod(client_id, account_id, network_id, network_assignment_type, categories, location_params)
-    pod_assignment_type = network_assignment_type
-    @client = Client.find_by_unix_user(client_id)
-
-    unless @client.present?
-      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{client_id}", Client.name, client_id)
-    end
-
+  def assign_network_to_pod(account_id, network_id, pod_assignment_type, categories)
     account = account_id.present? ? policy_scope(Account).find(account_id) : current_account
-    @client.user = current_user
-    @client.account = account
+    @client.user = current_user if @client.user.nil?
+    @client.account = account if @client.account.nil?
     @previous_location = @client.location
     case pod_assignment_type
     when PodsHelper::PodAssignmentType::NoNetwork
       @client.location = nil
     when PodsHelper::PodAssignmentType::ExistingNetwork
-      @client.location = policy_scope(Location).find(network_id)
+      existing_network = policy_scope(Location).find(network_id)
+      @client.account = existing_network.account if existing_network.account.id != @client.account.id
+      @client.location = existing_network
     when PodsHelper::PodAssignmentType::NewNetwork
       @location = Location.new(location_params)
       @location.user = current_user
-      @location.account_id = account.id
+      if account.present?
+        @location.account = account
+        @client.account = account if @client.account.id != account.id
+      else
+        @location.account = @client.account
+      end
       @location.clients << @client
-      @location.categories << policy_scope(Category).where(id: categories.split(",")).distinct if categories.present?
       @location.save!
+      @location.categories << policy_scope(Category).where(id: categories.split(",")) if categories.present?
       @client.location = @location
     else
       raise 'Invalid network assignment type'
     end
+    @client.save!
   end
 
   def can_move_pod_to_current_account(client)
