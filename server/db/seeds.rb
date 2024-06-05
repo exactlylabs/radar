@@ -21,3 +21,10 @@ if Rails.env.production?
         loc.save
     end
 end
+
+FEATURE_FLAGS = %w[networks charts]
+FEATURE_FLAGS.each do |flag|
+    FeatureFlag.find_or_create_by(name: flag) do |f|
+        f.generally_available = true
+    end
+end
