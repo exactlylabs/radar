@@ -49,7 +49,7 @@ commands:
 jobs:
   run_tests:
     docker:
-      - image: cimg/ruby:3.0-node
+      - image: cimg/ruby:3.0.6
         environment:
           DATABASE_URL: 'postgis://postgres:postgres@localhost:5432/radar_test'
       - image: cimg/postgres:13.10-postgis
