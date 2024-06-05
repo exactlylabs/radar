@@ -160,9 +160,14 @@ class ClientsController < ApplicationController
     @account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
 
     location = policy_scope(Location).where(id: @location_id).first if @location_id.present?
+
+    if location.present? && @account.present? && location.account != @account
+      @error = true
+    end
+
     @client = Client.find_by_unix_user(@client_id)
     respond_to do |format|
-      if @client && !@client.user
+      if !@error && @client && !@client.user
         @client.user = current_user
         @client.location = location
         @client.name = @client_name
@@ -170,6 +175,9 @@ class ClientsController < ApplicationController
         @client.save
         format.turbo_stream
         format.json { render :show, status: :ok, location: client_path(@client.unix_user) }
+      elsif @error == true
+        format.html { render :claim_form, status: :bad_request }
+        format.json { render json: {}, status: :bad_request }
       else
         @error = true
         format.html { render :claim_form, status: :unprocessable_entity }
@@ -670,14 +678,14 @@ class ClientsController < ApplicationController
     @location_params = location_params
     @categories = params[:categories]
 
-    @moving_pods_count = 0
-    @clients_ids.each do |client_id|
-      client = Client.find_by_unix_user(client_id)
-      if !client.account.nil? && client.account&.id != current_account.id
-        @moving_pods_count += 1
-        break
-      end
-    end
+    @moving_pods_count = @clients_ids.length
+    # @clients_ids.each do |client_id|
+    #   client = Client.find_by_unix_user(client_id)
+    #   if !client.account.nil? && client.account&.id != current_account.id
+    #     @moving_pods_count += 1
+    #     break
+    #   end
+    # end
     unless @moving_pods_count > 0
       add_pods_to_account_and_network
     end
@@ -917,7 +925,7 @@ class ClientsController < ApplicationController
 
   def add_pods_to_account_and_network
     if FeatureFlagHelper.is_available('networks', current_user)
-      @onboarding = params[:onboarding].present?
+      @onboarding = params[:onboarding].present? && params[:onboarding] == 'true'
       @locations = policy_scope(Location)
     end
 
@@ -925,13 +933,14 @@ class ClientsController < ApplicationController
     begin
       Client.transaction do
         @clients_ids.each do |client_id|
-          assign_network_to_pod(client_id, @destination_account.id, @destination_network_id, @network_assignment_type, @categories, @location_params)
-          @client.save!
+          @client = Client.find_by_unix_user(client_id)
+          assign_network_to_pod(@destination_account.id, @destination_network_id, @network_assignment_type, @categories)
           @clients.append(@client)
         end
       end
       @notice = @clients_ids.length > 1 ? "#{@clients_ids.length} pods have been successfully added" : "Your pod has been successfully added."
     rescue Exception => e
+      puts e
       @notice = there_has_been_an_error('adding your new pod')
     end
   end

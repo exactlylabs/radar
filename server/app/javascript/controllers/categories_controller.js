@@ -43,13 +43,18 @@ export default class extends Controller {
             this.categories = categoryIds;
         }
     }
-
+  
+  resetMenuOpen() {
+    this.isMenuOpen = false;
+  }
+    
     initializeCategories() {
-        if (document.getElementById('location_categories')) {
-            if (this.hasHiddenCategoriesInputTarget) {
-                this.categories = this.hiddenCategoriesInputTarget.value.split(',');
-            }
+      this.isMenuOpen = false;
+      if (document.getElementById('location_categories')) {
+        if (this.hasHiddenCategoriesInputTarget) {
+          this.categories = this.hiddenCategoriesInputTarget.value.split(',');
         }
+      }
     }
 
     onCheckBoxChange(e) {
@@ -168,6 +173,7 @@ export default class extends Controller {
     }
 
     toggleFocus(e) {
+      console.log('toggleFocus', this.isMenuOpen);
       if(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -190,7 +196,7 @@ export default class extends Controller {
         this.selectClickableContainerTarget.classList.remove('category--location-select-container-focus');
         this.toggleCategoriesDropdown(false, path, holderId);
       } else {
-        document.addEventListener('click', this.closeMenuIfClickedOutside.bind(this), {once: true});
+        document.addEventListener('click', this.closeMenuIfClickedOutside.bind(this));
         this.selectClickableContainerTarget.classList.add('category--location-select-container-focus');
         this.toggleCategoriesDropdown(true, path, holderId);
       }
