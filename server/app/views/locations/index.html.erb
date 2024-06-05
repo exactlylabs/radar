@@ -110,7 +110,7 @@
              locals: {
                turbo_frame_tag_id: "new_location_modal",
                optional_added_controllers: "categories",
-               optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse turbo:submit-end->categories#handleCategoryCreated"
+               optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse turbo:frame-render->categories#resetMenuOpen turbo:submit-end->categories#handleCategoryCreated"
              }
   %>
 

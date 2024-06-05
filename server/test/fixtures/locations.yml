@@ -27,3 +27,10 @@ offline1:
   online: false
   created_by_id: 1
 
+different_account:
+  name: "Different Account"
+  account: superaccount
+  address: "125 Main St"
+  online: false
+  created_by_id: 1
+

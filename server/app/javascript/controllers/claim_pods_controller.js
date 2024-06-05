@@ -167,7 +167,7 @@ export default class extends Controller {
             else throw new Error(response.statusText);
         })
             .then(html => Turbo.renderStreamMessage(html))
-            .catch(error => handleError(error))
+            .catch(error => handleError(error, this.identifier))
             .finally(() => this.hideSpinner());
     }
 
