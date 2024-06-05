@@ -52,13 +52,13 @@ jobs:
       - image: cimg/ruby:3.0.6
         environment:
           DATABASE_URL: 'postgis://postgres:postgres@localhost:5432/radar_test'
+      - image: cimg/node:20.4.0-browsers
       - image: cimg/postgres:13.10-postgis
         environment:
           POSTGRES_DB: radar_test
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
       - image: cimg/redis:6.2.6
-      - image: cimg/node:16.15.0-browsers
     steps:
       - checkout
       - wait_psql

@@ -24,12 +24,12 @@ class FeatureFlagsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "When_get_new_gets_called_Expect_to_receive_2XX" do
-    get new_feature_flag_url
+    get(new_feature_flag_url, as: :html)
     assert_response :success
   end
 
   test "When_get_delete_gets_called_Expect_to_receive_2XX" do
-    get delete_feature_flag_url(feature_flags(:private_ff))
+    get(delete_feature_flag_url(id: feature_flags(:private_ff).id), as: :html)
     assert_response :success
   end
 
