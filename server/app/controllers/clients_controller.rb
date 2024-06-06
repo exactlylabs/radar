@@ -331,6 +331,11 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.save!
+
+        if @client.account != current_account
+          set_new_account(@client.account)
+        end
+
         if FeatureFlagHelper.is_available('networks', current_user)
           format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated." }
         else
@@ -882,13 +887,19 @@ class ClientsController < ApplicationController
   def assign_pod_to_network(account_id, network_id, pod_assignment_type, categories)
     account = account_id.present? ? policy_scope(Account).find(account_id) : current_account
     @client.user = current_user if @client.user.nil?
-    @client.account = account if @client.account.nil?
+    @client.account = account
     @previous_location = @client.location
     case pod_assignment_type
     when PodsHelper::PodAssignmentType::NoNetwork
       @client.location = nil
     when PodsHelper::PodAssignmentType::ExistingNetwork
-      existing_network = policy_scope(Location).find(network_id)
+      is_existing_network_in_current_account = policy_scope(Location).where(id: network_id).count == 1
+      if is_existing_network_in_current_account
+        existing_network = policy_scope(Location).find(network_id)
+      else
+        existing_network = Location.where(id: network_id, account_id: account.id).first
+      end
+      raise 'Invalid network assignment' if existing_network.nil?
       @client.account = existing_network.account if existing_network.account.id != @client.account.id
       @client.location = existing_network
     when PodsHelper::PodAssignmentType::NewNetwork
