@@ -135,14 +135,6 @@
   %>
 
   <%= render partial: "application/components/modals/turbo_modal", locals: { turbo_frame_tag_id: "pod_id_modal" } %>
-
-  <%= render partial: "application/components/modals/turbo_modal",
-             locals: {
-               turbo_frame_tag_id: "import_from_another_account",
-               optional_added_controllers: "categories",
-               optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse"
-             }
-  %>
 <% else %>
   <div class="modal fade"
        tabindex="-1"
@@ -168,6 +160,8 @@
 <%= render partial: "application/components/modals/turbo_modal",
            locals: {
              turbo_frame_tag_id: "categories_modal",
+             optional_added_controllers: "categories",
+             optional_added_actions: "handleCategorySearch@window->categories#handleCategorySearchResponse turbo:frame-render->categories#initializeCategories turbo:submit-end->categories#handleCategoryCreated"
            } %>
 
 

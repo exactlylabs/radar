@@ -46,6 +46,7 @@ class LocationCategoriesController < ApplicationController
   end
 
   def import_from_another_account
+    @type = params[:type] || "create"
     @network_id = params[:network_id]
     @accounts = policy_scope(Account)
     respond_to do |format|
