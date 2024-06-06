@@ -1,6 +1,4 @@
-<%= turbo_stream.update "categories_modal" %>
-
-<%= turbo_stream.update "import_from_another_account" do %>
+<%= turbo_stream.update "categories_modal" do %>
   <%= render partial: "application/components/modals/empty_custom_modal",
              locals: {
                modal_title: 'Import Categories',

@@ -1,4 +1,4 @@
-<% import_from_accounts = @accounts.select { |account| account.categories.count > 0 } %>
+<% import_from_accounts = @accounts.where.not(id: current_account.id).select { |account| account.categories.count > 0 } %>
 <% import_to_accounts = current_account.is_all_accounts? ? @accounts : nil %>
 <div class="import-category--modal-dialog" data-action="click->categories#checkCloseColorPicker keydown->categories#checkCloseColorPicker">
   <div>
