@@ -10,9 +10,10 @@ class ClientsController < ApplicationController
   before_action :authenticate_user!, except: %i[ configuration new create status watchdog_status public_status check_public_status run_test run_public_test ]
   before_action :authenticate_client!, only: %i[ configuration status watchdog_status ], if: :json_request?
   before_action :check_request_origin, only: %i[ show ]
-  before_action :set_client, only: %i[ release update show edit destroy get_client_label toggle_in_service speed_average remove_from_network ]
+  before_action :set_client, only: %i[ release update edit destroy get_client_label toggle_in_service speed_average remove_from_network ]
   before_action :authenticate_token!, only: %i[ create status watchdog_status ]
   before_action :set_clients, only: %i[ bulk_run_tests bulk_delete bulk_update_release_group get_bulk_change_release_group get_bulk_remove_from_network bulk_remove_from_network get_bulk_move_to_network bulk_move_to_network ]
+  before_action :set_client_and_change_account_if_needed, only: :show
   skip_forgery_protection only: %i[ status watchdog_status configuration new create ]
 
   # GET /clients or /clients.json
@@ -835,12 +836,22 @@ class ClientsController < ApplicationController
 
   private
 
+  # We want to allow for a user to access a pod if it's within reach of all their accessible accounts,
+  # regardless of the current one not being the pod's one. So we need to change the current account to the pod's one
+  # if needed
+  def set_client_and_change_account_if_needed
+    @client = Client.find_by_unix_user(params[:id])
+    is_in_users_accounts = policy_scope(Account).where(id: @client.account_id).count == 1 # Not running find as we don't want to throw
+    raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless is_in_users_accounts
+    if !current_account.is_all_accounts? && current_account.id != @client.account_id
+      set_new_account(@client.account)
+    end
+  end
+
   # Use callbacks to share common setup or constraints between actions.
   def set_client
     @client = Client.find_by_unix_user(params[:id])
-    if !@client
-      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id])
-    end
+    raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless @client
     authorize @client, :superaccount_or_in_scope?
   end
 
