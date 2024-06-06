@@ -679,13 +679,6 @@ class ClientsController < ApplicationController
     @categories = params[:categories]
 
     @moving_pods_count = @clients_ids.length
-    # @clients_ids.each do |client_id|
-    #   client = Client.find_by_unix_user(client_id)
-    #   if !client.account.nil? && client.account&.id != current_account.id
-    #     @moving_pods_count += 1
-    #     break
-    #   end
-    # end
     unless @moving_pods_count > 0
       add_pods_to_account_and_network
     end

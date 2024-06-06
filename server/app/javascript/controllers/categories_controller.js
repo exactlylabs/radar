@@ -173,7 +173,6 @@ export default class extends Controller {
     }
 
     toggleFocus(e) {
-      console.log('toggleFocus', this.isMenuOpen);
       if(e) {
         e.preventDefault();
         e.stopPropagation();

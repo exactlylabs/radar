@@ -1,5 +1,5 @@
 Geocoder.configure(
-  # lookup: :nominatim,         # name of geocoding service (symbol)
+  lookup: :nominatim,         # name of geocoding service (symbol)
   # ip_lookup: :ipinfo_io,      # name of IP address geocoding service (symbol)
   always_raise: :all,
 )
