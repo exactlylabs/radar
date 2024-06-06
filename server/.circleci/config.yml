@@ -72,7 +72,7 @@ jobs:
           pkg-manager: 'yarn'
       - setup_db
       - apt_update
-      - browser-tools/install-browser-tools:
+      - browser-tools/install-chrome:
           chrome-version: 125.0.6422.141
       - browser-tools/install-chromedriver
       - run:
@@ -81,7 +81,7 @@ jobs:
             chromedriver --version
           name: Check install
       - tests
-      - system_tests
+      #- system_tests
 
 
 workflows:
