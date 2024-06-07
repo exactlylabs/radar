@@ -1,0 +1,6 @@
+one:
+  first_name: 'Existing'
+  last_name: 'Invite'
+  email: 'existing_invite@example.com'
+  account: root
+  sent_at: <%= Time.now %>
