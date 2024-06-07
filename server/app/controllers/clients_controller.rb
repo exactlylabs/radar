@@ -212,14 +212,16 @@ class ClientsController < ApplicationController
   def release
     @location_before_release = @client.location
     respond_to do |format|
-      if @client.update(user: nil, location: nil, account: nil)
+      if @client.release!
         remove_recent_search(@client.id, Recents::RecentTypes::CLIENT)
+        notice = "Pod was successfully deleted."
         if request.referrer.include?(client_path(@client.unix_user))
-          format.html { redirect_to clients_path, notice: "Client was successfully deleted." }
+          format.turbo_stream { redirect_to clients_path, notice: notice }
+          format.html { redirect_to clients_path, notice: notice }
         else
-          format.html { redirect_back fallback_location: root_path, notice: "Client was successfully deleted." }
+          format.turbo_stream { }
+          format.html { redirect_back fallback_location: root_path, notice: notice }
         end
-        format.turbo_stream
         format.json { head :no_content }
       end
     end
@@ -449,7 +451,7 @@ class ClientsController < ApplicationController
     begin
       Client.transaction do
         @clients.each do |c|
-          c.update(user: nil, location: nil, account: nil)
+          c.release!
         end
       end
     rescue Exception => e
@@ -588,7 +590,7 @@ class ClientsController < ApplicationController
   def speed_average
     start_date = get_range_start_date(params[:type])
     end_date = Time.zone.now
-    filtered_measurements = @client.measurements.where(created_at: start_date..end_date)
+    filtered_measurements = @client.account_measurements.where(created_at: start_date..end_date)
     if filtered_measurements.count > 0
       download_avg = filtered_measurements.average(:download).round(3)
       upload_avg = filtered_measurements.average(:upload).round(3)
@@ -601,8 +603,8 @@ class ClientsController < ApplicationController
       format.html {
         render partial: "pods/components/speed_cells",
                locals: {
-                 download_avg: download_avg.present? ? "#{download_avg.round(2)} Mbps" : 'N/A',
-                 upload_avg: upload_avg.present? ? "#{upload_avg.round(2)} Mbps" : 'N/A',
+                 download_avg: download_avg.present? ? "#{download_avg.round(2)}" : 'N/A',
+                 upload_avg: upload_avg.present? ? "#{upload_avg.round(2)}" : 'N/A',
                }
       }
     end

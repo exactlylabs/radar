@@ -21,13 +21,13 @@
 <div class="tables--hides-on-small ellipsis"
   style="width: <%= widths[0] %>;"
 >
-  <span class="ellipsis table-cell"><%= pretty_print_date(row.created_at) %></span>
+  <span class="ellipsis table-cell"><%= pretty_print_date_with_time(row.created_at) %></span>
 </div>
 
 <div class="tables--hides-on-small ellipsis"
   style="width: <%= widths[1] %>;"
 >
-  <span class="ellipsis table-cell"><%= row.style.titlecase %></span>
+  <span class="ellipsis table-cell"><%= row.style == 'OOKLA' ? 'Ookla' : row.style.upcase %></span>
 </div>
 
 <div class="tables--hides-on-small ellipsis"

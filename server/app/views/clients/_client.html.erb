@@ -26,7 +26,7 @@
       <div class="menu-item px-3">
         <% if !client.test_requested %>
           <%= link_to run_test_client_path(client.unix_user), method: :post, class: "menu-link flex-stack px-3 #{client.test_requested ? 'disabled' : ''}" do%>
-            Run Test 
+            Run Test
           <% end %>
         <% else %>
           <a href="#" class="menu-link flex-stack px-3" style="cursor: not-allowed">

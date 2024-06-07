@@ -7,7 +7,7 @@
       <% if FeatureFlagHelper.is_available('networks', current_user) %>
         <h1 class="page-main-title"><%= @client.unix_user %>
       <% else %>
-        <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %> 
+        <h1 class="page-main-title"><%= @client.name.present? ? @client.name : "Unnamed Pod" %>
       <% end %>
       <small class="text-muted fs-6 fw-normal ms-1"></small></h1>
       <!--end::Title-->
@@ -65,7 +65,7 @@
         <% end %>
       </div>
 
-      <%= render partial: "application/components/modals/turbo_modal", 
+      <%= render partial: "application/components/modals/turbo_modal",
           locals: { turbo_frame_tag_id: "measurement_details_modal" }
       %>
     <% else %>
