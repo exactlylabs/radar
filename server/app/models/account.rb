@@ -10,7 +10,9 @@ class Account < ApplicationRecord
   has_many :notification_settings
   has_one :client_count_aggregate, :as => :aggregator
 
-  has_many :shared_accounts, foreign_key: :shared_to_account_id
+  has_and_belongs_to_many :shared_accounts, class_name: "Account", join_table: :shared_accounts, foreign_key: :shared_to_account_id, association_foreign_key: :original_account_id
+  has_and_belongs_to_many :shared_to_accounts, class_name: "Account", join_table: :shared_accounts, foreign_key: :original_account_id, association_foreign_key: :shared_to_account_id
+
 
   enum account_type: [ :personal, :organization ]
 

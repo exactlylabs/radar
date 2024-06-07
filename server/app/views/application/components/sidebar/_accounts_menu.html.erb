@@ -3,7 +3,7 @@
   data-sidebar-target="accountsMenu"
 >
   <p class="sidebar--accounts-menu-title help-text">Accounts</p>
-  <%= render partial: "application/components/sidebar/account_item", 
+  <%= render partial: "application/components/sidebar/account_item",
       locals: {
         is_shared: false,
         has_options: false,
@@ -16,8 +16,9 @@
   %>
   <div class="sidebar--horizontal-divider"></div>
   <div id="sidebar--accounts-list-wrapper" data-action="scroll->sidebar#closeMenusOnScroll">
-    <% policy_scope(Account).where.not(id: current_user.shared_accounts).order("LOWER(name)").each do |account| %>
-      <%= render partial: "application/components/sidebar/account_item", 
+    <% accounts = AccountPolicy::ScopeWithoutShared.new(@auth_holder, Account).resolve %>
+    <% accounts.order("LOWER(name)").each do |account| %>
+      <%= render partial: "application/components/sidebar/account_item",
           locals: {
             is_shared: false,
             has_options: true,
@@ -29,8 +30,8 @@
           }
       %>
     <% end %>
-    <% current_user.shared_accounts.each do |account| %>
-      <%= render partial: "application/components/sidebar/account_item", 
+    <% current_user.shared_accounts.where.not(id: accounts).each do |account| %>
+      <%= render partial: "application/components/sidebar/account_item",
           locals: {
             is_shared: true,
             has_options: true,
