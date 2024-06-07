@@ -1,0 +1,12 @@
+<% if @entity_to_remove.is_a?(Invite) %>
+  <% row_id = "invite_#{@entity_to_remove.id}" %>
+<% else %>
+  <% row_id = "users_account_#{@entity_to_remove.id}" %>
+<% end %>
+
+<%= turbo_stream.remove row_id do %>
+<% end %>
+
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
+<% end %>

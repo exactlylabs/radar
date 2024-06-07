@@ -1,14 +1,14 @@
 <%= turbo_frame_tag "change_email" do %>
-  <%= form_for(current_user, as: "user", url: update_user_email_path, html: { method: :put, class: "form fv-plugins-bootstrap5 fv-plugins-framework" }) do |f| %>
+  <%= form_for(resource, as: resource_name, url: update_user_email_path, html: { method: :put, class: "form fv-plugins-bootstrap5 fv-plugins-framework" }) do |f| %>
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-8 w-100">
     <div id="kt_signin_email" class="w-25">
       <div class="forms--label">Email Address</div>
-      <%= f.text_field :email, value: current_user.email, class: "form-control forms--text-input w-100", placeholder: "Email" %>
-      <% if current_user.errors[:first_name] %>
-        <div class="fv-plugins-message-container invalid-feedback"><%= current_user.errors[:email].join(", ") %></div>
+      <%= f.text_field :email, value: resource.email, class: "form-control forms--text-input w-100", placeholder: "Email" %>
+      <% if resource.errors[:email] %>
+        <div class="fv-plugins-message-container invalid-feedback"><%= resource.errors[:email].join(", ") %></div>
       <% end %>
     </div>
-    
+
     <div id="kt_signin_email_button" class="d-flex flex-row justify-content-start align-items-center">
       <a href="<%= edit_user_registration_path %>"
         class="custom-button custom-button--sm custom-button--secondary me-4"

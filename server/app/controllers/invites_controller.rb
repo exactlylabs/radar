@@ -11,17 +11,19 @@ class InvitesController < ApplicationController
       end
       return # Required to stop method execution from proceeding
     end
-    
-    # Need to check if there is already an invite created for this 
+
+    # Need to check if there is already an invite created for this
     # account with the given email and prevent dups as well as already
     # registered users in the account (invite was used)
+    account_to_use = current_account.is_all_accounts? || invite[:account_id].present? ? policy_scope(Account).find(invite[:account_id]) : current_account
+
     duplicate_invite_error = false
-    already_created_invite = policy_scope(Invite).find_by_email(invite[:email])
-    already_added_user = policy_scope(UsersAccount).joins(:user).where(user: { email: invite[:email] })
+    already_created_invite = Invite.find_by(email: invite[:email], account: account_to_use)
+    already_added_user = UsersAccount.joins(:user).where(user: { email: invite[:email] }, account: account_to_use)
     if already_created_invite.present? || already_added_user.present?
       duplicate_invite_error = true
     end
-    account_to_use = current_account.is_all_accounts? || invite[:account_id].present? ? policy_scope(Account).find(invite[:account_id]) : current_account
+
     if !duplicate_invite_error
       @new_invite = Invite.new invite_params
       @new_invite.account = account_to_use
@@ -38,7 +40,9 @@ class InvitesController < ApplicationController
         format.turbo_stream
         format.html { redirect_back fallback_location: root_path, notice: @notice }
       else
-        format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity, notice: duplicate_invite_error ? "Error: There is already an Invite with the given email!" : "There has been an error creating the Invite! Please try again later." }
+        @notice = duplicate_invite_error ? "Error: There is already an Invite with the given email!" : "There has been an error creating the Invite! Please try again later."
+        format.turbo_stream { render status: :unprocessable_entity }
+        format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity, notice: @notice }
       end
     end
   end
@@ -47,8 +51,8 @@ class InvitesController < ApplicationController
   end
 
   def resend
-    # Not handling this with a before_action like set_invite as this is 
-    # triggered as a POST request from a button and although an exception 
+    # Not handling this with a before_action like set_invite as this is
+    # triggered as a POST request from a button and although an exception
     # could be raised, it fails silently on the console and triggers a new
     # GET request to the original url, missing the actual error notice.
     invite_not_found_error = false
@@ -63,7 +67,7 @@ class InvitesController < ApplicationController
         format.html { redirect_back fallback_location: root_path, notice: "Error: There is no Invite with given id." }
       elsif invite.update(token: secret, sent_at: Time.now)
         token = "#{invite.id}#{secret}"
-        InviteMailer.with(invite: invite, account: current_account, token: token).invite_email.deliver_later
+        InviteMailer.with(invite: invite, account: invite.account, token: token).invite_email.deliver_later
         format.html { redirect_back fallback_location: root_path, notice: "Invite email was successfully re-sent." }
       else
         format.html { redirect_back fallback_location: root_path, notice: "Error resending invite!" }

@@ -40,8 +40,11 @@ export default class extends Controller {
     if(this.element.getAttribute('data-remove-searchbar') === 'true') {
       options.minimumResultsForSearch = Infinity;
     }
+    // Prevents select2 from called twice due to turbolinks
+    if (!document.documentElement.hasAttribute('data-turbo-preview')) {
+      $(this.element).select2(options);
+    }
 
-    $(this.element).select2(options);
     $(this.element).on("select2:select", function () {
       let event = new Event("select2-select", { bubbles: true }); // fire a native event
       this.dispatchEvent(event);
@@ -54,7 +57,7 @@ export default class extends Controller {
       let event = new Event("select2-unselect", { bubbles: true }); // fire a native event
       this.dispatchEvent(event);
     });
-    
+
   }
 
   customMovePodTemplate(state) {
@@ -62,7 +65,7 @@ export default class extends Controller {
     const podName = state.text.replace(/[\t\n\r]/gm, '');
     var $state = $(
       '<div class="add-pod--custom-move-option-container">' +
-        `<span class="add-pod--custom-move-option-pod-name">${podName}</span>` + 
+        `<span class="add-pod--custom-move-option-pod-name">${podName}</span>` +
         `<span class="add-pod--custom-move-option-pod-id">${state.id}</span>` +
       '</div>'
     );

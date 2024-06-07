@@ -36,7 +36,7 @@ export default class extends Controller {
         if (res.redirected) {
           window.location.href = res.url;
         } else if (res.status === 422) {
-          this.showGenericError("Invalid email or password");
+          res.json().then((data) => this.showGenericError(data.msg || "Invalid email or password"));
         } else if (res.status === 500) {
           throw new Error(`Error in sign in process from invite, user email: ${this.emailInputTarget.value}`);
         }

@@ -61,25 +61,35 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # POST /sign_in_from_invite
   def sign_from_invite
     error = false
+    already_joined = false
     @user = User.find_by_email(params[:user][:email])
     if @user.valid_password?(params[:user][:password])
-      begin
-        UsersAccount.transaction do
-          @user_account = UsersAccount.create!(user_id: @user.id, account_id: @invite[:account_id], joined_at: Time.now, invited_at: @invite[:sent_at])
-          @invite.destroy!
+      @user_account = UsersAccount.find_by(user_id: @user.id, account_id: @invite[:account_id])
+      if @user_account.nil?
+        begin
+          UsersAccount.transaction do
+            @user_account = UsersAccount.create!(user_id: @user.id, account_id: @invite[:account_id], joined_at: Time.now, invited_at: @invite[:sent_at])
+            @invite.destroy!
+          end
+        rescue ActiveRecord::RecordInvalid => invalid
+          error = invalid.record.errors
+        rescue ActiveRecord::RecordNotDestroyed => invalid
+          error = invalid.record.errors
         end
-      rescue ActiveRecord::RecordInvalid => invalid
-        error = invalid.record.errors
-      rescue ActiveRecord::RecordNotDestroyed => invalid
-        error = invalid.record.errors
+      else
+        already_joined = true
+        @invite.destroy!
       end
     else
       error = "Invalid email or password."
     end
+
     respond_to do |format|
       if !error
         sign_in @user
-        format.html { redirect_to dashboard_path(invite: true), notice: "Registered successfully" }
+        set_cookie(:radar_current_account_id, @user_account.account_id)
+        @notice = already_joined ? "You have already joined this account." : "Successfully joined account."
+        format.html { redirect_to dashboard_path, notice: @notice }
       else
         format.json { render json: { msg: error }, status: :unprocessable_entity }
         format.html { redirect_back fallback_location: root_path, status: :unprocessable_entity, error: error }
@@ -106,14 +116,15 @@ class Users::RegistrationsController < Devise::RegistrationsController
     user_params = params.require(:user).permit(:first_name, :last_name, :avatar)
     # If avatar is not present in request params, it's because the user deleted it,
     # then default to nil so db removes it
-    user_params[:avatar] ||= nil 
-    
+    user_params[:avatar] ||= nil
+
     respond_to do |format|
       if current_user.update(user_params)
         format.html { redirect_to edit_user_registration_path, notice: "Profile successfully updated." }
         format.json { render :edit, status: :ok }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        notice = "There was an error updating your profile. Please, try again."
+        format.html { redirect_back fallback_location: edit_user_registration_path, status: :unprocessable_entity, notice: notice }
         format.json { render json: current_user.errors, status: :unprocessable_entity }
       end
     end
@@ -127,7 +138,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
         format.html { redirect_to edit_user_registration_path, notice: "Name was successfully updated." }
         format.json { render :edit, status: :ok }
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        notice = "There was an error updating your profile. Please, try again."
+        format.html { redirect_back fallback_location: edit_user_registration_path, status: :unprocessable_entity, notice: notice }
         format.json { render json: current_user.errors, status: :unprocessable_entity }
       end
     end
@@ -186,7 +198,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def edit_email
     @resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
-    edit
   end
 
   def update_email
@@ -194,7 +205,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     @resource = resource
     prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
 
-    resource_updated = update_resource(resource, account_update_params)
+    resource_updated = resource.update(account_update_params)
     yield resource if block_given?
     if resource_updated
       set_flash_message_for_update(resource, prev_unconfirmed_email)
@@ -202,9 +213,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
       respond_with resource, location: edit_user_registration_path
     else
-      clean_up_passwords resource
-      set_minimum_password_length
-      render action: 'edited_email'
+      @notice = "Error: Email invalid."
+      respond_to do |format|
+        format.turbo_stream
+      end
     end
   end
 

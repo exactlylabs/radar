@@ -2,8 +2,10 @@ class InvitePolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       if @auth_holder.present?
-        if @auth_holder.is_all_accounts?
-          user = @auth_holder.user
+        user = @auth_holder.user
+        if user.super_user? && !@auth_holder.is_super_user_disabled?
+          scope.all
+        elsif @auth_holder.is_all_accounts?
           all_invites = []
           user.accounts.not_deleted.each do |account|
             all_invites.append(*account.invites.map{|l| l.id})
