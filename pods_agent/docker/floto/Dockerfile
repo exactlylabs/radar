@@ -1,11 +1,10 @@
-FROM alpine:latest
+FROM --platform=$BUILDPLATFORM alpine:latest
 
 WORKDIR /app
 
 RUN apk add jq curl
 
 RUN curl -o /app/radar-agent https://pods.radartoolkit.com/client_versions/stable/distributions/linux-arm64/download
-
 
 RUN chmod +x /app/radar-agent
 
