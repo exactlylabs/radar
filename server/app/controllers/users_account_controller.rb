@@ -24,7 +24,7 @@ class UsersAccountController < ApplicationController
 
     # Array-based pagination
     elements = [*users_accounts, *invited_users]
-    
+
     # Get total variable for pagination
     total_elements = elements.count
 
@@ -52,7 +52,7 @@ class UsersAccountController < ApplicationController
     end
 
     raise ActiveRecord::RecordNotFound.new("Couldn't find User with 'id'=#{params[:id]}", params[:type], params[:id]) if !entity
-    
+
     respond_to do |format|
       if entity && entity_type == 'UsersAccount'
         format.html { render template: "users/show_user_account", locals: { user_account: entity } }
@@ -66,24 +66,27 @@ class UsersAccountController < ApplicationController
     entity_to_remove_id = params[:id]
     entity_type = params[:type]
     if entity_type == 'UsersAccount'
-      entity_to_remove = policy_scope(UsersAccount).find(entity_to_remove_id)
+      @entity_to_remove = policy_scope(UsersAccount).find(entity_to_remove_id)
     else
-      entity_to_remove = policy_scope(Invite).find(entity_to_remove_id)
+      @entity_to_remove = policy_scope(Invite).find(entity_to_remove_id)
     end
-    user_deleted_itself = entity_type == 'UsersAccount' && entity_to_remove.user_id == current_user.id
+    user_deleted_itself = entity_type == 'UsersAccount' && @entity_to_remove.user_id == current_user.id
     is_current_account_all_accounts = current_account.is_all_accounts?
     respond_to do |format|
-      if entity_to_remove.destroy
+      if @entity_to_remove.destroy
+        @notice = "Member removed successfully"
         # If the user is removing itself from the users table
         # then reassign the current_account to the first available if any
         if user_deleted_itself && !is_current_account_all_accounts
           get_first_user_account_and_set_cookie
-          format.html { redirect_to "/dashboard", locals: { notice: "Member removed successfully" } }
+          format.html { redirect_to "/dashboard", notice: "Member removed successfully" }
         else
-          format.html { redirect_to users_account_index_path, locals: { notice: "Member removed successfully" } }
+          format.turbo_stream
+          format.html { redirect_to users_account_index_path, notice: "Member removed successfully" }
         end
       else
-        format.html { redirect_back fallback_location: root_path, notice: "Error removing member."  }
+        @notice = "Error removing member."
+        format.html { redirect_back fallback_location: root_path, notice: @notice  }
       end
     end
   end
@@ -93,7 +96,7 @@ class UsersAccountController < ApplicationController
     @invites_to_delete_ids = JSON.parse(params[:invites_ids]).map(&:to_i)
     users_to_delete = policy_scope(UsersAccount).where(id: @users_to_delete_ids)
     invites_to_delete = policy_scope(Invite).where(id: @invites_to_delete_ids)
-    
+
     did_user_remove_itself = users_to_delete.map{|ua| ua.user_id}.include? current_user.id
     is_current_account_all_accounts = current_account.is_all_accounts?
     is_more_than_one_member = (users_to_delete.count + invites_to_delete.count) > 1

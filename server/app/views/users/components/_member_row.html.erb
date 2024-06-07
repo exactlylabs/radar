@@ -1,18 +1,18 @@
 <% if type == UsersAccount.name %>
-  <%= render partial: "users/components/user_row", 
+  <%= render partial: "users/components/user_row",
       locals: {
         row: row,
         widths: widths,
-        index: index,
+        index: "#{index}-#{UsersAccount.name}",
         even: even
       }
   %>
 <% else %>
-  <%= render partial: "users/components/invitee_row", 
+  <%= render partial: "users/components/invitee_row",
       locals: {
         row: row,
         widths: widths,
-        index: index
+        index: "#{index}-#{Invite.name}",
       }
   %>
 <% end %>

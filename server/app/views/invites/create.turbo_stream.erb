@@ -1,7 +1,7 @@
 <%= turbo_frame_tag "add_member_modal" do %>
 <% end %>
 
-<% if current_account.is_all_accounts? || current_account.id == @new_invite.account.id %>
+<% if @new_invite.present? && (current_account.is_all_accounts? || current_account.id == @new_invite.account.id) %>
   <%= turbo_stream.append "users_table" do %>
     <%= render partial: "application/components/tables/table_row",
         locals: {
@@ -13,4 +13,8 @@
         }
     %>
   <% end %>
+<% end %>
+
+<%= turbo_stream.append 'realtime-notice' do %>
+  <%= render partial: 'application/notice_alert', locals: {notice: @notice} %>
 <% end %>
