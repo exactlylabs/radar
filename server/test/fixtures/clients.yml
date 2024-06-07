@@ -4,7 +4,13 @@ pod1:
   name: Pod 1
   user: user1
 
-unclaimed:
+pod2:
   account: root
+  unix_user: "r1235"
+  name: Pod 2
+  user: user1
+
+unclaimed:
   unix_user: "r6789"
   name: Pod 2
+

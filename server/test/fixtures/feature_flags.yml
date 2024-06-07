@@ -7,3 +7,12 @@ public_ff:
   id: 2
   name: 'Feature_Flag_2'
   generally_available: true
+
+networks:
+  name: "networks"
+  generally_available: false
+
+charts:
+  name: "charts"
+  generally_available: false
+
