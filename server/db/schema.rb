@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_03_194610) do
+ActiveRecord::Schema.define(version: 2024_06_06_202220) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -480,10 +480,10 @@ ActiveRecord::Schema.define(version: 2024_06_03_194610) do
     t.integer "channel"
     t.string "width"
     t.integer "noise"
+    t.index ["account_id", "client_id", "created_at"], name: "measurements_on_account_client_not_null", order: { created_at: :desc }, where: "((download IS NOT NULL) AND (upload IS NOT NULL))"
     t.index ["account_id", "processed_at"], name: "index_measurements_on_account_id_and_processed_at", order: { processed_at: :desc }
     t.index ["account_id"], name: "index_measurements_on_account_id"
     t.index ["autonomous_system_id"], name: "index_measurements_on_autonomous_system_id"
-    t.index ["client_id", "created_at"], name: "measurements_not_null_client_id", order: { created_at: :desc }, where: "((download IS NOT NULL) AND (upload IS NOT NULL))"
     t.index ["client_id"], name: "index_measurements_on_client_id"
     t.index ["location_id", "created_at"], name: "index_measurements_on_location_id_and_created_at", order: { created_at: :desc }
     t.index ["location_id"], name: "index_measurements_on_location_id"

@@ -41,7 +41,7 @@ export default class extends Controller {
     );
 
     // Limit map bounds to display America + Africa + Western Europe mainly
-    const topLeftBoundingPoint = L.latLng(80.011830, -172.614055);
+    const topLeftBoundingPoint = L.latLng(80.011830, -180);
     const bottomRightBoundingPoint = L.latLng(-65.116127, 53.220752);
     const bounds = L.latLngBounds(topLeftBoundingPoint, bottomRightBoundingPoint);
     this.map.setMaxBounds(bounds);

@@ -57,6 +57,13 @@ class Client < ApplicationRecord
   has_one :pod_connectivity_config, dependent: :destroy
 
   validates :scheduling_amount_per_period, numericality: { only_integer: true, greater_than: 0 }
+  validate do |client|
+    if self.location.present? && self.location.account_id != self.account_id
+      errors.add :location_id, :invalid, message: "Client and Location must belong to the same account"
+      errors.add :account_id, :invalid, message: "Client and Location must belong to the same account"
+    end
+  end
+  after_validation :check_if_pod_moved, on: :update
 
   before_create :create_ids
   after_create :create_pod_connectivity_config
@@ -499,7 +506,7 @@ class Client < ApplicationRecord
 
   def latest_measurement
     # Extra condition for download/upload not being null just in case there is some bad state
-    measurements.order(created_at: :desc).where('download IS NOT NULL AND upload IS NOT NULL').first
+    measurements.where(account_id: account_id).order(created_at: :desc).where('download IS NOT NULL AND upload IS NOT NULL').first
   end
 
   def get_measurement_data(total_bytes, correct_unit_fn = method(:get_value_in_preferred_unit), correct_unit)
@@ -854,6 +861,49 @@ class Client < ApplicationRecord
       key = TailscaleAuthKey.create!(client: self)
     end
     return key
+  end
+
+  def check_if_pod_moved
+    if saved_change_to_location_id? || saved_change_to_account_id? && !online?
+      self.autonomous_system = nil
+    end
+
+    if saved_change_to_account_id?
+      self.clear_pod_state
+    end
+  end
+
+  def release!()
+    self.account = nil
+    self.user = nil
+    self.location = nil
+    self.autonomous_system = nil
+    self.clear_pod_state
+    self.save
+  end
+
+  def clear_pod_state
+    self.download_avg = nil
+    self.upload_avg = nil
+    self.data_cap_max_usage = nil
+    self.data_cap_periodicity = :daily
+    self.data_cap_current_period_usage =  0.0
+    self.data_cap_current_period = nil
+    self.scheduling_periodicity = :scheduler_hourly
+    self.scheduling_amount_per_period = 1
+    self.scheduling_tests_in_period = 0
+    self.scheduling_period_end = nil
+    self.measurements_count = 0
+    self.measurements_download_sum = 0
+    self.measurements_upload_sum = 0
+    self.test_allowed_time_start = nil
+    self.test_allowed_time_end = nil
+    self.test_allowed_time_tz = nil
+    self.register_label = nil
+  end
+
+  def account_measurements
+    measurements.where(account_id: account_id)
   end
 
   private

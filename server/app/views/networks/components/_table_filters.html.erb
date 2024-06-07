@@ -43,7 +43,7 @@
         default_label: 'All categories',
         options: [
           { label: 'All categories', value: nil},
-          *policy_scope(Category).order(name: :asc).map {|category| { label: category.name , value: "#{category.id}" }}
+          *policy_scope(current_account.categories).order(name: :asc).map {|category| { label: category.name , value: "#{category.id}" }}
         ],
       }
     %>

@@ -44,9 +44,9 @@ class ClientDataUsageAndSchedulingController < ApplicationController
     end
 
     if @client.save
-      notice = "Client's data cap was successfully saved."
+      notice = "Pod's data cap was successfully saved."
     else
-      notice = "Error saving client's data cap."
+      notice = "Error saving pod's data cap."
     end
     respond_to do |format|
       format.html { redirect_back fallback_location: root_path, notice: notice }
@@ -73,9 +73,9 @@ class ClientDataUsageAndSchedulingController < ApplicationController
     end
 
     if @client.update(custom_scheduling: custom_scheduling, scheduling_periodicity: periodicity, scheduling_amount_per_period: amount)
-      notice = "Client's Custom Scheduling was successfully saved."
+      notice = "Pod's Custom Scheduling was successfully saved."
     else
-      notice = "Error saving client's custom scheduling."
+      notice = "Error saving pod's custom scheduling."
     end
 
     respond_to do |format|
@@ -113,7 +113,7 @@ class ClientDataUsageAndSchedulingController < ApplicationController
   def set_client
     @client = policy_scope(Client).find_by_unix_user(params[:client_id])
     if !@client
-      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:client_id]}", Client.name, params[:client_id])
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Pod with 'id'=#{params[:client_id]}", Client.name, params[:client_id])
     end
   end
 

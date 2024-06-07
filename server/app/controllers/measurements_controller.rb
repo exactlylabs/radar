@@ -6,7 +6,14 @@ class MeasurementsController < ApplicationController
     @measurements = policy_scope(Measurement)
     authorize @measurements
     respond_to do |format|
-      format.csv { send_data @measurements.to_csv, filename: "measurements.csv" }
+      format.csv do
+        headers["X-Accel-Buffering"] = "no"
+        headers["Cache-Control"] = "no-cache"
+        headers["Content-Type"] = "text/csv; charset=utf-8"
+        headers["Content-Disposition"] = "attachment; filename=measurements.csv"
+        headers["Last-Modified"] = Time.zone.now.ctime.to_s
+        self.response_body = @measurements.to_csv_enumerator
+      end
     end
   end
 
