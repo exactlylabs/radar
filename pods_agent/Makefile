@@ -80,7 +80,7 @@ msi:
 	./scripts/build_msi.sh -o ${DIST_DIR} ${VERSION}
 
 floto-image:
-	docker buildx build --platform linux/arm64 -t exactlylabs/radar-floto-agent:latest -f docker/floto/Dockerfile .
+	docker buildx build --platform linux/amd64,linux/arm64 -t exactlylabs/radar-floto-agent:latest -f docker/floto/Dockerfile --push .
 
 all: build
 
