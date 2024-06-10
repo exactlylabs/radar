@@ -42,8 +42,7 @@
                data-action="click->edit-profile-picture#handleFileZoneClicked drop->edit-profile-picture#handleFileDrop dragenter->edit-profile-picture#preventDefault dragleave->edit-profile-picture#preventDefault dragover->edit-profile-picture#preventDefault"
                data-edit-profile-picture-target="dropzone"
           >
-            <img src="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_limit: [158, 158])) : nil %>"
-                 width="158"
+            <img src="<%= current_user.avatar.attached? ? url_for(current_user.avatar.variant(resize_to_limit: [nil, 474])) : nil %>"
                  height="158"
                  id="edit-profile-picture-avatar"
                  data-edit-profile-picture-target="avatarPreview"

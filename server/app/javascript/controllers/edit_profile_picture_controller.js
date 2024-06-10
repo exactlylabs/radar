@@ -13,8 +13,7 @@ export default class extends Controller {
 
   connect() {
     this.initialData = {
-      originalImageSrc: document.querySelector("#edit-profile-picture-avatar")
-        .src,
+      originalImageSrc: document.querySelector("#edit-profile-picture-avatar")?.src,
     };
   }
 

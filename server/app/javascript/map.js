@@ -78,7 +78,7 @@ export function getPopupElement(location) {
                 >${!!uploadDiff ? uploadDiff : '-'}</span>
             </div>
           </div>
-          <a href="/locations/${locationId}" class="w-100 custom-button custom-button--secondary custom-button--lg">
+          <a href="/locations/${locationId}" class="w-100 custom-button custom-button--secondary custom-button--lg" target="_top">
             View details
           </a>
         </div>

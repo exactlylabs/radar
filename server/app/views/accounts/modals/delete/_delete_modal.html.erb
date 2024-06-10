@@ -4,7 +4,7 @@
 <div class="modals--content-container" data-type="full">
   <div class="accounts--delete-modal-content-container">
     <h3 class="modal-main-title wrap">Are you sure you want to leave "<%= resource.name %>" account?</h3>
-    <p class="additional-text wrap">If you choose to leave this account, you'll need to be re-invited to access it again.</p>
+    <p class="additional-text wrap">If you choose to delete this account, all the networks and pods associated with it will also be deleted.</p>
   </div>
 </div>
 <div class="modals--footer-container">
@@ -12,7 +12,7 @@
   <%= button_to "Delete", 
     account_path(resource), 
     method: :delete,
-    class: "custom-button custom-button--secondary-light-danger custom-button--lg",
+    class: "custom-button custom-button--secondary-light-danger custom-button--sm",
     data: { turbo: false }
   %>
 </div>
