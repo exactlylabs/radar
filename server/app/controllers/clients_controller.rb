@@ -322,7 +322,7 @@ class ClientsController < ApplicationController
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
-    assign_network_to_pod(params[:account_id], params[:network_id], params[:network_assignment_type], params[:categories])
+    assign_pod_to_network(params[:account_id], params[:network_id], params[:network_assignment_type], params[:categories])
 
     if params[:update_group_id]
       update_group = policy_scope(UpdateGroup).find(params[:update_group_id])
@@ -697,7 +697,7 @@ class ClientsController < ApplicationController
   end
 
   def claim_new_pod
-    assign_network_to_pod(params[:id], params[:account_id], params[:location_id], params[:network_assignment_type], params[:categories], location_params)
+    assign_pod_to_network(params[:id], params[:account_id], params[:location_id], params[:network_assignment_type], params[:categories], location_params)
     if FeatureFlagHelper.is_available('networks', current_user)
       @onboarding = params[:onboarding].present?
       @locations = policy_scope(Location)
@@ -879,7 +879,7 @@ class ClientsController < ApplicationController
     store_recent_search(params[:id], Recents::RecentTypes::CLIENT)
   end
 
-  def assign_network_to_pod(account_id, network_id, pod_assignment_type, categories)
+  def assign_pod_to_network(account_id, network_id, pod_assignment_type, categories)
     account = account_id.present? ? policy_scope(Account).find(account_id) : current_account
     @client.user = current_user if @client.user.nil?
     @client.account = account if @client.account.nil?
@@ -927,13 +927,13 @@ class ClientsController < ApplicationController
       Client.transaction do
         @clients_ids.each do |client_id|
           @client = Client.find_by_unix_user(client_id)
-          assign_network_to_pod(@destination_account.id, @destination_network_id, @network_assignment_type, @categories)
+          assign_pod_to_network(@destination_account.id, @destination_network_id, @network_assignment_type, @categories)
           @clients.append(@client)
         end
       end
       @notice = @clients_ids.length > 1 ? "#{@clients_ids.length} pods have been successfully added" : "Your pod has been successfully added."
     rescue Exception => e
-      puts e
+      Sentry.capture_exception(e)
       @notice = there_has_been_an_error('adding your new pod')
     end
   end
