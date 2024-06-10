@@ -87,7 +87,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     respond_to do |format|
       if !error
         sign_in @user
-        set_cookie(:radar_current_account_id, @user_account.account_id)
+        assign_account(@user_account.account_id)
         @notice = already_joined ? "You have already joined this account." : "Successfully joined account."
         format.html { redirect_to dashboard_path, notice: @notice }
       else
@@ -213,7 +213,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
       respond_with resource, location: edit_user_registration_path
     else
-      @notice = "Error: Email invalid."
+      @notice = "Oops! The email is invalid."
       respond_to do |format|
         format.turbo_stream
       end
