@@ -6,15 +6,23 @@ CLIENT_ID=$(/app/radar-agent -vv | jq -r ".client_id")
 
 echo "Pod Agent Docker Entrypoint. Client ID: $CLIENT_ID"
 
-if [ -z "$CLIENT_ID" ] || [ "$CLIENT_ID" = "null" ]; then
-  echo "No Client ID found for this agent. Registering it before executing the command."
-
-  if [ ! -z "$RADAR_NETWORK_NAME" ]; then
-    export RADAR_CREATE_NETWORK=true
+# Map any FLOTO_RADAR_* environment variables to RADAR_*
+for var in $(env | grep ^FLOTO_RADAR_ | awk -F= '{print $1}'); do
+  radar_var=$(echo $var | sed 's/^FLOTO_RADAR_/RADAR_/')
+  if [ -z "$(eval echo \$$radar_var)" ]; then
+    export $radar_var=$(eval echo \$$var)
   fi
-  export RADAR_REGISTER_LABEL=${RADAR_REGISTER_LABEL:-${FLOTO_DEVICE_UUID}}
-  /app/radar-agent register
+done
 
+
+if [ ! -z "$RADAR_NETWORK_NAME" ]; then
+  export RADAR_CREATE_NETWORK=true
+fi
+export RADAR_REGISTER_LABEL=${RADAR_REGISTER_LABEL:-${FLOTO_DEVICE_UUID}}
+if [ ! -z "$RADAR_FORCE_REREGISTER" ]; then
+  /app/radar-agent register --force
+else
+  /app/radar-agent register
 fi
 
 set +e
