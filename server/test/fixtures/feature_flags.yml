@@ -1,7 +1,9 @@
 private_ff:
+  id: 1
   name: 'Feature_Flag_1'
   generally_available: false
 
 public_ff:
+  id: 2
   name: 'Feature_Flag_2'
   generally_available: true

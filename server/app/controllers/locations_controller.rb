@@ -70,7 +70,7 @@ class LocationsController < ApplicationController
     @location.user = current_user
     @location.account_id = current_account.is_all_accounts? ? params[:location][:account_id] : current_account.id
 
-    @is_onboarding = params[:onboarding] == "true" if FeatureFlagHelper.is_available('networks', current_user)
+    @is_onboarding = params[:onboarding] == "true"
 
     respond_to do |format|
       if @location.save

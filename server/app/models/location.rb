@@ -296,14 +296,7 @@ include Recents
   end
 
   def link_to_geospaces
-    if saved_change_to_lonlat? && self.lonlat.present?
-      self.geospaces.excluding_lonlat(self.lonlat).each do |geospace|
-        self.geospaces.delete geospace
-      end
-      Geospace.containing_lonlat(self.lonlat).each do |geospace|
-        self.geospaces << geospace unless self.geospaces.include? geospace
-      end
-    end
+    ReprocessNetworkGeospaceJob.perform_later(self) if saved_change_to_lonlat? && self.lonlat.present?
   end
 
   def send_notifications

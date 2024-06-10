@@ -40,7 +40,8 @@ export default class extends Controller {
     setTimeout(() => {
       this.modalElement.classList.remove('closing');
       this.element.classList.add('invisible');
-    }, 250)
+      this.element.parentElement.innerHTML = null;
+    }, 250);
   }
 
   clearTurboReferences(elementToClearId) {

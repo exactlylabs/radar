@@ -11,7 +11,7 @@ class UsersAccountPolicy < ApplicationPolicy
             user.accounts.not_deleted.each do |account|
               all_ua.append(*account.users_accounts.pluck(:id))
             end
-            user.shared_accounts.not_deleted.each do |account|
+            user.shared_accounts.each do |account|
               all_ua.append(*account.users_accounts.pluck(:id))
             end
             scope.where(id: all_ua)

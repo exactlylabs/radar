@@ -2,16 +2,17 @@
 <% contained = local_assigns[:contained].present? ? local_assigns[:contained] : false %>
 <% is_account_fixed = local_assigns[:is_account_fixed] ? local_assigns[:is_account_fixed] : false %>
 <% onboarding = local_assigns[:is_onboarding].present? ? local_assigns[:is_onboarding] : false %>
-<% name_is_empty = @location&.errors&.full_messages&.include?("Name can't be blank") || false %>
-<% address_is_empty = @location&.errors&.full_messages&.include?("Address can't be blank") || false %>
-<% initial_account_id = if @location&.account.nil?
+<% location = local_assigns[:location] || location %>
+<% name_is_empty = location&.errors&.full_messages&.include?("Name can't be blank") || false %>
+<% address_is_empty = location&.errors&.full_messages&.include?("Address can't be blank") || false %>
+<% initial_account_id = if location&.account.nil?
                           if current_account.is_all_accounts?
                             policy_scope(Account).first.id
                           else
                             current_account.id
                           end
                         else
-                          @location.account.id
+                          location.account.id
                         end %>
 
 <div class="modals--content-container <%= contained ? 'contained' : '' %>"
@@ -37,7 +38,7 @@
               data-action="select2-select->categories#showCategoriesForSelectedAccount"
       >
         <% policy_scope(Account).each_with_index do |account, index| %>
-          <%= render partial: "clients/client_select_option", locals: { option: account, selected: type == "edit" ? account.id == @location&.account.id : index == 0 } %>
+          <%= render partial: "clients/client_select_option", locals: { option: account, selected: type == "edit" ? account.id == location&.account.id : index == 0 } %>
         <% end %>
       </select>
     </div>
@@ -53,14 +54,15 @@
 
   <div class="modals--form-row mb-6 forms--input-group">
     <label class="forms--label optional">Categories</label>
-    <input name="categories" autocomplete="off" type="hidden" value="<%= @location&.categories&.map { |c| c.id }&.join(",") || [] %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
+    <input name="categories" autocomplete="off" type="hidden" value="<%= location&.categories&.map { |c| c.id }&.join(",") || [] %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
     <div class="category--location-select-container"
          data-categories-target="selectClickableContainer"
          data-categories-path-param="/location_categories"
          data-action="click->categories#toggleFocus"
+         data-categories-menu-id="location-categories-dropdown"
     >
       <%= turbo_frame_tag "selected-categories" do %>
-        <%= render partial: "categories/components/table_cell", locals: { categories: @location&.categories, shows_tooltip: false, row: -1 } %>
+        <%= render partial: "categories/components/table_cell", locals: { categories: location&.categories, shows_tooltip: false, row: -1 } %>
       <% end %>
       <span class="svg-icon svg-icon-5 m-0">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -68,9 +70,8 @@
           </svg>
         </span>
     </div>
-    <%= turbo_frame_tag "location-categories-dropdown" do %>
-      <%= link_to "Import from another account…", categories_import_from_another_account_url(network_id: @location&.id), data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
-    <% end %>
+    <%= turbo_frame_tag "location-categories-dropdown" %>
+    <%= link_to "Import from another account…", categories_import_from_another_account_url(network_id: location&.id), data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
   </div>
 
   <div class="modals--half-width-row mb-6">
@@ -103,7 +104,7 @@
              type="text"
              name="location[address]"
              id="location_address"
-             value="<%= @location&.address %>"
+             value="<%= location&.address %>"
              data-error="<%= address_is_empty %>"
         />
       <div class="d-none forms--input-decoration" data-location-form-target="spinner">
@@ -126,8 +127,8 @@
        data-controller="location"
        data-location-form-target="map"
        data-action="modal:shown->location#display"
-       data-location-latitude-value="<%= @location&.latitude %>"
-       data-location-longitude-value="<%= @location&.longitude %>"
+       data-location-latitude-value="<%= location&.latitude %>"
+       data-location-longitude-value="<%= location&.longitude %>"
        data-draggable="true"
   ></div>
 
@@ -151,7 +152,7 @@
   <div class="modals--half-width-row mb-6"
        data-location-form-target="manualLatLongWrapper"
        id="hidden_lat_lng_wrapper"
-       <%= @location&.manual_lat_long ? '' : 'hidden' %>
+       <%= location&.manual_lat_long ? '' : 'hidden' %>
   >
     <div class="modals--form-row">
       <label class="forms--label">Latitude</label>

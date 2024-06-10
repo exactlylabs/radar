@@ -1,9 +1,3 @@
-Geocoder.configure(
-  lookup: :nominatim,         # name of geocoding service (symbol)
-  # ip_lookup: :ipinfo_io,      # name of IP address geocoding service (symbol)
-  always_raise: :all,
-)
-
 if Rails.env.production? || Rails.env.staging?
   Geocoder.configure(
     # Geocoding options
@@ -26,5 +20,18 @@ if Rails.env.production? || Rails.env.staging?
     # Calculation options
     # units: :mi,                 # :km for kilometers or :mi for miles
     # distances: :linear          # :spherical or :linear
+  )
+elsif Rails.env.test?
+  Geocoder.configure(
+    lookup: :test,
+    ip_lookup: :test,
+    always_raise: :all,
+    cache: nil
+  )
+else
+  Geocoder.configure(
+    lookup: :nominatim,         # name of geocoding service (symbol)
+    # ip_lookup: :ipinfo_io,      # name of IP address geocoding service (symbol)
+    always_raise: :all,
   )
 end

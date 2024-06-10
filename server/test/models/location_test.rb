@@ -6,6 +6,6 @@ class LocationTest < ActiveSupport::TestCase
   end
 
   test "offline_scope" do
-    assert_equal Location.where_offline.all().to_a, [locations(:offline1)]
+    assert_equal Location.where_offline.all().to_a, [locations(:offline1), locations(:different_account)]
   end
 end

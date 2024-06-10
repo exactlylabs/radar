@@ -419,3 +419,12 @@
   padding-top: 0;
 }
 
+#pod-edit-form {
+  max-height: 700px;
+  overflow-y: auto;
+
+  .modal-body.modals--body.client--details-container {
+    max-height: calc(700px - 76px);
+    overflow-y: auto;
+  }
+}

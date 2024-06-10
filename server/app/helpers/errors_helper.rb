@@ -7,7 +7,7 @@ module ErrorsHelper
   end
 
   def there_has_been_an_error(action)
-    msg = action.present? ? "There has been an error #{action}." : 'Something went wrong.'
+    msg = action.present? ? "There has been an error #{action}" : 'Something went wrong'
     "Oops! #{msg}. Please try again later!"
   end
 end
