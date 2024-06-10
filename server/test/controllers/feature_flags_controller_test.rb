@@ -1,7 +1,7 @@
 require "test_helper"
 
 class FeatureFlagsControllerTest < ActionDispatch::IntegrationTest
-  
+
   setup do
     sign_in_as users(:superuser1)
   end
@@ -17,10 +17,10 @@ class FeatureFlagsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "When_create_gets_called_Expect_to_receive_2XX_and_new_ff_to_be_created" do
-    post feature_flags_url, params: { feature_flag: { name: "test" }, format: :turbo_stream }
-    ffs = FeatureFlag.all
-    assert_response :success
-    assert_equal ffs.count, 3
+    assert_difference('FeatureFlag.count', 1) do
+      post feature_flags_url, params: { feature_flag: { name: "test" }, format: :turbo_stream }
+      assert_response :success
+    end
   end
 
   test "When_get_new_gets_called_Expect_to_receive_2XX" do
@@ -34,10 +34,10 @@ class FeatureFlagsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "When_destroy_gets_called_Expect_to_receive_2XX_and_ff_to_be_deleted" do
-    delete feature_flag_url(feature_flags(:private_ff)), params: { format: :turbo_stream }
-    ffs = FeatureFlag.all
-    assert_response :success
-    assert_equal ffs.count, 1
+    assert_difference('FeatureFlag.count', -1) do
+      delete feature_flag_url(feature_flags(:private_ff)), params: { format: :turbo_stream }
+      assert_response :success
+    end
   end
 
   test "When_update_gets_called_Expect_to_receive_2XX_and_ff_to_be_updated" do
