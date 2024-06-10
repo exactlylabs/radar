@@ -280,7 +280,6 @@ include Recents
   def custom_geocode
     # if the location entity had no lat/long, then geocode based
     # on address, else, always stick to given lat/long values.
-    return if Rails.env.test?
     if !self.longitude && !self.latitude
       results = Geocoder.search(self.address)
     else

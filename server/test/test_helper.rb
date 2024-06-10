@@ -18,4 +18,36 @@ class ActiveSupport::TestCase
   def sign_in_as(user)
     sign_in(user)
   end
+
+  def set_up_geocoder
+    Geocoder::Lookup::Test.add_stub(
+      "New Address",
+      [
+        {
+          'coordinates'  => [0.0, 0.0],
+          'address'      => 'New Address',
+          'state'        => 'New State',
+          'state_code'   => 'NS',
+          'country'      => 'United States',
+          'country_code' => 'US',
+          'county'       => 'New County'
+        }
+      ]
+    )
+
+    Geocoder::Lookup::Test.add_stub(
+      [0.0, 0.0],
+      [
+        {
+          'coordinates'  => [0.0, 0.0],
+          'address'      => 'New Address',
+          'state'        => 'New State',
+          'state_code'   => 'NS',
+          'country'      => 'United States',
+          'country_code' => 'US',
+          'county'       => 'New County'
+        }
+      ]
+    )
+  end
 end

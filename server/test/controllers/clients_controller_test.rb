@@ -4,6 +4,7 @@ class ClientsControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     sign_in_as users(:superuser1)
+    set_up_geocoder
   end
 
   test "Test_check_claim_When_given_an_invalid_client_unix_user_Expect_a_404" do
