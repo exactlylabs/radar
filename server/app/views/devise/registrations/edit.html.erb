@@ -77,8 +77,7 @@
                     <div class="fv-row fv-plugins-icon-container" data-controller="edit-profile-picture">
                       <div class="sign-up--avatar-container mb-4">
                         <%= f.file_field "avatar", data: { action: "input->edit-profile-picture#handleFileUpload", "edit-profile-picture-target" => "userAvatarInput" }, style: "display: none" %>
-                        <img src="<%= url_for(current_user.avatar.variant(resize_to_limit: [104, 104])) %>"
-                             width="104"
+                        <img src="<%= url_for(current_user.avatar.variant(resize_to_limit: [nil, 312])) %>"
                              height="104"
                              class="<%= current_user.avatar.attached? ? nil : 'invisible' %> sign-up--avatar-image"
                              data-edit-profile-picture-target="avatarPreview"

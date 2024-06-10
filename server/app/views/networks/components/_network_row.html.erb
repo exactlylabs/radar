@@ -25,14 +25,14 @@
     <% end %>
   </div>
   <div class="tables--network-name-pod-count-container">
-    <span class="tables--network-name ellipsis"><%= row.name %></span>
+    <p class="tables--network-name ellipsis m-0"><%= row.name %></p>
     <% pod_count = row.clients.count %>
     <span class="tables--network-pod-count ellipsis"><%= pod_count %> pod<%= pod_count != 1 ? 's' : '' %></span>
   </div>
 </div>
 
 <div class="tables--hides-on-small"
-  style="width: <%= widths[2] %>"
+  style="width: <%= widths[2] %>; max-width: <%= widths[2] %>"
 >
   <%= render partial: "categories/components/table_cell", locals: { categories: row.categories, shows_tooltip: true, row: index } %>
 </div>

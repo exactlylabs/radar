@@ -1,5 +1,5 @@
 <% if notice.present? %>
-  <% is_error = notice =~ /error/i || notice =~ /oops/i %>
+  <% is_error = notice =~ /error/i || notice =~ /oops/i || notice =~ /invalid/i %>
   <% is_account_switch = notice =~ /You are now viewing/i || notice =~ /super user/i%>
   <% alert_type = is_error ? 'error' : is_account_switch ? 'account' : 'success' %>
 
