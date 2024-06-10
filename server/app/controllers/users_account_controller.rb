@@ -85,7 +85,7 @@ class UsersAccountController < ApplicationController
           format.html { redirect_to users_account_index_path, notice: "Member removed successfully" }
         end
       else
-        @notice = "Error removing member."
+        @notice = "Oops! Something went wrong, please try again."
         format.html { redirect_back fallback_location: root_path, notice: @notice  }
       end
     end
