@@ -5,11 +5,11 @@ class UsersAccountController < ApplicationController
   def index
     # Sorting here instead of in the view because I want users to appear first, then invites
     # each of those lists individually sorted by first_name
-    account_id = params[:account_id]
+    account_id = params[:account_id] || current_account.id
     status = params[:status]
     order = params[:order].present? ? "#{params[:order].upcase}" : nil
 
-    if account_id && account_id != "-1" # -1 is the value for all accounts
+    if account_id && account_id.to_i != -1 # -1 is the value for all accounts
       users_accounts = policy_scope(UsersAccount).includes(:user).where(account_id: account_id) unless status == 'pending'
       invited_users = policy_scope(Invite).where(account_id: account_id) unless status == 'joined'
     else
