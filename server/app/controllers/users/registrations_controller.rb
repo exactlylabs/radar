@@ -87,6 +87,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     respond_to do |format|
       if !error
         sign_in @user
+        get_or_set_account_from_cookie
         assign_account(@user_account.account_id)
         @notice = already_joined ? "You have already joined this account." : "Successfully joined account."
         format.html { redirect_to dashboard_path, notice: @notice }
@@ -231,6 +232,22 @@ class Users::RegistrationsController < Devise::RegistrationsController
     first_name = @invite.first_name
     last_name = @invite.last_name
     email = @invite.email
+
+    # In case the user is already signed in, and the emails match, there is no need to sign-in again.
+    authenticate_user! rescue nil
+    get_or_set_account_from_cookie unless @auth_holder.present?
+    if current_user.present? && current_user.email == email
+      UsersAccount.transaction do
+        if !UsersAccount.where(user: current_user, account: account).exists?
+          UsersAccount.create!(user: current_user, account: account, joined_at: Time.now, invited_at: @invite.sent_at)
+        end
+        @invite.destroy!
+        assign_account(account.id)
+      end
+      redirect_to dashboard_path
+      return
+    end
+
     render template: "devise/registrations/invite/new", locals: { account: account, first_name: first_name, last_name: last_name, email: email }
   end
 
