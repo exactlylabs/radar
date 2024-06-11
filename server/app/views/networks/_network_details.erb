@@ -1,18 +1,18 @@
 <div class="networks--details-content-container" id="location-details">
   <div class="networks--top-info-card">
-    <%= render partial: "application/components/overview_info_cell", 
+    <%= render partial: "application/components/overview_info_cell",
         locals: {
           title: 'Address',
           subtitle: network.address
         }
     %>
-    <%= render partial: "application/components/overview_info_cell", 
+    <%= render partial: "application/components/overview_info_cell",
         locals: {
           title: 'Total pods',
           subtitle: "#{network.clients.count} #{network.clients.count == 1 ? 'pod' : 'pods'}"
         }
     %>
-    <%= render partial: "application/components/overview_info_cell", 
+    <%= render partial: "application/components/overview_info_cell",
         locals: {
           title: 'Category',
           subtitle: nil,
@@ -20,10 +20,10 @@
           partial_locals: {categories: network.categories, shows_tooltip: true, row: 0}
         }
     %>
-    <%= render partial: "application/components/overview_info_cell", 
+    <%= render partial: "application/components/overview_info_cell",
         locals: {
           title: 'Internet Provider',
-          subtitle: network.latest_measurement&.autonomous_system.nil? ? "Not available" : network.latest_measurement.autonomous_system.autonomous_system_org.name
+          subtitle: network.autonomous_system.nil? ? "Not available" : network.autonomous_system.autonomous_system_org.name
         }
     %>
   </div>

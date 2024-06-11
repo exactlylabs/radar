@@ -62,7 +62,7 @@ include Recents
 
   scope :where_has_client_associated, -> { joins(:clients).where("clients.location_id IS NOT NULL").distinct }
 
-  scope :with_geospaces,  -> { joins("JOIN geospaces ON ST_INTERSECTS(ST_SetSRID(locations.lonlat, 4326)::geometry, ST_SetSRID(geospaces.geom, 4326)::geometry)") }
+  scope :with_geospaces,  -> { joins("JOIN geospaces ON ST_CONTAINS(ST_SetSRID(geospaces.geom, 4326), locations.lonlat::geometry)") }
 
   def event_data()
     data = self.as_json.transform_keys(&:to_sym)
@@ -117,7 +117,7 @@ include Recents
   end
 
   def latest_measurement
-    self.measurements.order(created_at: :desc).first
+    measurements.order(created_at: :desc).where('download IS NOT NULL AND upload IS NOT NULL').first
   end
 
   def diff_to_human(diff, expected_value)
@@ -273,6 +273,10 @@ include Recents
 
   def place_geospace
     self.geospaces.census_places.first
+  end
+
+  def autonomous_system
+    self.clients.map(&:autonomous_system).compact.first
   end
 
   private
