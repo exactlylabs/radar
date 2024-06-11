@@ -17,9 +17,9 @@ class Geospace < ApplicationRecord
   scope :census_places, -> { where(namespace: "census_place") }
   scope :study_geospaces, -> { where(study_geospace: true) }
 
-  scope :containing_lonlat, -> (lonlat) { where("geom && ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326)") }
-  scope :containing_point, -> (longitude, latitude) { where("geom && ST_GeomFromText('POINT(#{longitude} #{latitude})', 4326)") }
-  scope :excluding_lonlat, -> (lonlat) { where("NOT geom && ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326)") }
+  scope :containing_lonlat, -> (lonlat) { where("ST_CONTAINS(ST_SetSRID(geom, 4326), ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326)::geometry)") }
+  scope :containing_point, -> (longitude, latitude) { where("ST_CONTAINS(ST_SetSRID(geom, 4326), ST_GeomFromText('POINT(#{longitude} #{latitude})', 4326)::geometry)") }
+  scope :excluding_lonlat, -> (lonlat) { where("NOT ST_CONTAINS(ST_SetSRID(geom, 4326), ST_GeomFromText('POINT(#{lonlat.longitude} #{lonlat.latitude})', 4326)::geometry)") }
 
   after_create :link_to_locations
 

@@ -29,8 +29,8 @@
     </div>
     <div class="cards--info-row-full-width mb-4">
       <label class="forms--label">Internet provider</label>
-      <span class="cards--info-row-value <%= pod.location&.latest_measurement&.autonomous_system.nil? ? 'additional-text' : 'regular-text' %>">
-        <%= pod.location&.latest_measurement&.autonomous_system.nil? ? "Not available" : pod.location.latest_measurement.autonomous_system.autonomous_system_org.name %>
+      <span class="cards--info-row-value <%= pod.autonomous_system.nil? ? 'additional-text' : 'regular-text' %>">
+        <%= pod.autonomous_system.nil? ? "Not available" : pod.autonomous_system.autonomous_system_org.name %>
       </span>
     </div>
   </div>
