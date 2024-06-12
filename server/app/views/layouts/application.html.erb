@@ -57,8 +57,10 @@
         window.dispatchEvent(userEmailEvent);
       };
     </script>
-    <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
-    <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
+    <% unless Rails.env.test? %>
+      <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
+      <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
+    <% end %>
   </head>
   <body data-controller="hello" data-environment="<%= ENV["RAILS_ENV"] %>">
     <% if content_for?(:content) %>
