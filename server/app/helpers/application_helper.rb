@@ -11,10 +11,6 @@ module ApplicationHelper
     Invite.where(email: user.email).count > 0
   end
 
-  def are_there_unassigned_pods?
-    policy_scope(Client).where(location: nil).count > 0
-  end
-
   def preferred_unit_humanized
     if current_user.prefers_tb_unit
       "Terabytes"
@@ -35,12 +31,14 @@ module ApplicationHelper
     end
   end
 
-  def are_there_unassigned_pods?
-    policy_scope(Client).where(location: nil).count > 0
+  def unassigned_pods_count
+    unassigned = policy_scope(Client).where(location: nil)
+    unassigned = unassigned.where(account: current_account) unless current_account.is_all_accounts?
+    unassigned.count
   end
 
   def are_there_unassigned_pods?
-    policy_scope(Client).where(location: nil).count > 0
+    unassigned_pods_count.positive?
   end
 
   def is_super_user_disabled?
@@ -62,7 +60,7 @@ module ApplicationHelper
     else
       "active" if request.path.starts_with?(path)
     end
-    
+
   end
 
   def active_sidebar_item?(path)
@@ -115,7 +113,7 @@ module ApplicationHelper
       [nil, Time.now]
     end
   end
-  
+
   def default_items_per_page
     10
   end

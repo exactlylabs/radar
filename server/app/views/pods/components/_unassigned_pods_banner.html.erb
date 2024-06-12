@@ -1,8 +1,7 @@
 <div class="networks--unassigned-pods-banner">
   <%= image_tag image_url('warning-icon.png'), width: 20, height: 20 %>
   <div class="networks--unassigned-pods-banner-text-container">
-    <% pod_count = policy_scope(Client).where(location: nil).count %>
-    <span class="forms--label wrap">You have <%= pod_count %> pod<%= pod_count > 1 ? 's' : '' %> not assigned to any network.</span>
+    <span class="forms--label wrap">You have <%= unassigned_pods_count %> pod<%= unassigned_pods_count > 1 ? 's' : '' %> not assigned to any network.</span>
     <span class="additional-text wrap">Assign your pods to a network to get insights into your network's performance. <a href="<%= clients_path %>" class="warning-link" target="_top">Manage your pods</a></span>
   </div>
 </div>

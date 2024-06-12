@@ -19,7 +19,9 @@ class ClientsController < ApplicationController
   # GET /clients or /clients.json
   def index
     @status = params[:status]
-    @account_id = params[:account_id]
+    @account_id = params[:account_id] || current_account.id
+    @clients = policy_scope(Client)
+
     if @account_id && @account_id.to_i != -1
       if @account_id == 'none'
         @clients = policy_scope(Client).where_no_account
