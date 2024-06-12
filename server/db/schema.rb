@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_06_202220) do
+ActiveRecord::Schema.define(version: 2024_06_12_184100) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -331,7 +331,12 @@ ActiveRecord::Schema.define(version: 2024_06_06_202220) do
     t.bigint "version"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["aggregate_type", "aggregate_id", "timestamp"], name: "index_events_on_aggregate_and_timestamp", order: { timestamp: :desc }
+    t.index ["aggregate_type", "aggregate_id", "version"], name: "index_events_on_aggregate_and_version", order: { version: :desc }
     t.index ["aggregate_type", "aggregate_id"], name: "index_events_on_aggregate"
+    t.index ["aggregate_type", "name"], name: "index_events_on_aggregate_type_and_name"
+    t.index ["aggregate_type", "timestamp"], name: "index_events_on_aggregate_type_and_timestamp"
+    t.index ["timestamp"], name: "index_events_on_timestamp", order: :desc
     t.index ["version", "aggregate_id", "aggregate_type"], name: "index_events_on_version_and_aggregate_id_and_aggregate_type", unique: true
   end
 

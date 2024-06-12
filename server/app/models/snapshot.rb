@@ -2,17 +2,17 @@ class Snapshot < ApplicationRecord
   belongs_to :event
   belongs_to :aggregate, polymorphic: true
 
-  default_scope { joins(:event).order("events.timestamp ASC, events.version ASC") }
+  default_scope { joins(:event).order("timestamp ASC, version ASC") }
 
-  scope :of, ->(model) { where(aggregate_type: model.name) }
-  scope :from_aggregate, -> (obj) { where(aggregate: obj)}
-  scope :ordered_by_event, -> { joins(:event).order("events.timestamp ASC, events.version ASC") }
+  # Some scopes below when filtered by the aggregate, we prefer filtering by the event's aggregate.
+  # This is a performance optimization, as we usually also filter Snapshot by time, and so it's preferable
+  # to do all filters in the same table, hence the Event table.
+  scope :of, ->(model) { joins(:event).where(event: {aggregate_type: model.name}) }
+  scope :from_aggregate, -> (obj) { joins(:event).where(event: {aggregate: obj})}
+  scope :ordered_by_event, -> { joins(:event).order("timestamp ASC, version ASC") }
   scope :prior_to_or_at, ->(timestamp) { joins(:event).where("timestamp <= ?", timestamp) }
   scope :prior_to, ->(timestamp) { joins(:event).where("timestamp < ?", timestamp) }
 
-  def self.last_from(aggregate)
-    Snapshot.where(aggregate: aggregate).order("snapshots.aggregate_id, created_at DESC").first
-  end
 
   def self.reprocess_for_model_since(model, since)
     cached_snapshot = {}
