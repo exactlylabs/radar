@@ -8,15 +8,15 @@ class ClientsControllersTest < ActionDispatch::IntegrationTest
     feature_flags(:networks).update(generally_available: true)
   end
 
-  test "when get unclaimed details and super user expect success" do
-    get client_url(clients(:unclaimed).unix_user)
+  test "when get no_account details and super user expect success" do
+    get client_url(clients(:no_account).unix_user)
     assert_response :success
   end
 
-  test "when get unclaimed details and non super user expect not found" do
+  test "when get no_account details and non super user expect not found" do
     sign_in_as users(:user1)
     assert_raises(ActiveRecord::RecordNotFound) do
-      get client_url(clients(:unclaimed).unix_user)
+      get client_url(clients(:no_account).unix_user)
     end
   end
 

@@ -13,4 +13,9 @@ pod2:
 unclaimed:
   unix_user: "r6789"
   name: Pod 2
+  account: root
+
+no_account:
+  unix_user: "r6782"
+  name: Pod 2
 
