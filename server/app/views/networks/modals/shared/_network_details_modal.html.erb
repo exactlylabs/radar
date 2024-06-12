@@ -25,7 +25,7 @@
   <% end %>
 
   <%= form.hidden_field "location[account_id]", value: initial_account_id, data: { categories_target: "firstAccountId" } %>
-  <% if current_account.is_all_accounts? %>
+  <% if current_account.is_all_accounts? && !contained %>
     <div class="modals--form-row mb-6 forms--input-group">
       <label class="forms--label">Account</label>
       <select class="form-select forms--select"
