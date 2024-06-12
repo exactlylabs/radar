@@ -843,15 +843,18 @@ class ClientsController < ApplicationController
   # regardless of the current one not being the pod's one. So we need to change the current account to the pod's one
   # if needed
   def set_client_and_change_account_if_needed
-    @client = Client.find_by_unix_user(params[:id])
-    is_in_users_accounts = policy_scope(Account).where(id: @client.account_id).exists? # Not running find as we don't want to throw
-    raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless is_in_users_accounts
-    set_new_account(@client.account) if !current_account.is_all_accounts? && current_account.id != @client.account_id
+    @client = policy_scope(Client).find_by_unix_user(params[:id])
+    raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless @client.present?
+    if @client.account_id.present?
+      is_in_users_accounts = policy_scope(Account).where(id: @client.account_id).exists? # Not running find as we don't want to throw
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless is_in_users_accounts
+      set_new_account(@client.account) if !current_account.is_all_accounts? && current_account.id != @client.account_id
+    end
   end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_client
-    @client = Client.find_by_unix_user(params[:id])
+    @client = policy_scope(Client).find_by_unix_user(params[:id])
     raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless @client
     authorize @client, :superaccount_or_in_scope?
   end
