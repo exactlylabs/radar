@@ -124,7 +124,7 @@ class ApplicationController < ActionController::Base
     else
       # Check if user has acces to given account, and define if it is an active user
       # or it can access due to account delegation
-      is_account_accessible_through_share = current_user.shared_accounts.where(id: account_id).count == 1
+      is_account_accessible_through_share = current_user.shared_accounts.where(id: account_id).exists?
       if current_user.super_user
         can_access_account = true
       else
@@ -193,9 +193,9 @@ class ApplicationController < ActionController::Base
         end
       elsif current_user.super_user
         set_all_accounts
-      elsif current_user.users_accounts.not_deleted.length > 0
+      elsif current_user.users_accounts.not_deleted.count > 0
         get_first_user_account_and_set_cookie
-      elsif current_user.shared_accounts.length > 0
+      elsif current_user.shared_accounts.count > 0
         get_first_shared_user_account_and_set_cookie
       else
         # We fall into this case if the current_user has no record

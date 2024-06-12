@@ -323,7 +323,9 @@ class ClientsController < ApplicationController
 
   # PATCH/PUT /clients/1 or /clients/1.json
   def update
-    assign_pod_to_network(params[:account_id], params[:network_id], params[:network_assignment_type], params[:categories])
+    account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
+    @client.account = account if account.present? && account.id != @client.account.id
+    assign_pod_to_network(account, params[:network_id], params[:network_assignment_type], params[:categories])
 
     if params[:update_group_id]
       update_group = policy_scope(UpdateGroup).find(params[:update_group_id])
@@ -332,10 +334,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if @client.save!
-
-        if @client.account != current_account
-          set_new_account(@client.account)
-        end
+        set_new_account(@client.account) if @client.account != current_account && !current_account.is_all_accounts?
 
         if FeatureFlagHelper.is_available('networks', current_user)
           format.html { redirect_back fallback_location: root_path, notice: "Client was successfully updated." }
@@ -703,7 +702,9 @@ class ClientsController < ApplicationController
   end
 
   def claim_new_pod
-    assign_pod_to_network(params[:id], params[:account_id], params[:location_id], params[:network_assignment_type], params[:categories], location_params)
+    account = params[:account_id].present? ? policy_scope(Account).find(params[:account_id]) : current_account
+    @client.account = account if account.present? && account.id != @client.account.id
+    assign_pod_to_network(account, params[:location_id], params[:network_assignment_type], params[:categories], location_params)
     if FeatureFlagHelper.is_available('networks', current_user)
       @onboarding = params[:onboarding].present?
       @locations = policy_scope(Location)
@@ -841,11 +842,9 @@ class ClientsController < ApplicationController
   # if needed
   def set_client_and_change_account_if_needed
     @client = Client.find_by_unix_user(params[:id])
-    is_in_users_accounts = policy_scope(Account).where(id: @client.account_id).count == 1 # Not running find as we don't want to throw
+    is_in_users_accounts = policy_scope(Account).where(id: @client.account_id).exists? # Not running find as we don't want to throw
     raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless is_in_users_accounts
-    if !current_account.is_all_accounts? && current_account.id != @client.account_id
-      set_new_account(@client.account)
-    end
+    set_new_account(@client.account) if !current_account.is_all_accounts? && current_account.id != @client.account_id
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -895,16 +894,14 @@ class ClientsController < ApplicationController
     store_recent_search(params[:id], Recents::RecentTypes::CLIENT)
   end
 
-  def assign_pod_to_network(account_id, network_id, pod_assignment_type, categories)
-    account = account_id.present? ? policy_scope(Account).find(account_id) : current_account
+  def assign_pod_to_network(account, network_id, pod_assignment_type, categories)
     @client.user = current_user if @client.user.nil?
-    @client.account = account
     @previous_location = @client.location
     case pod_assignment_type
     when PodsHelper::PodAssignmentType::NoNetwork
       @client.location = nil
     when PodsHelper::PodAssignmentType::ExistingNetwork
-      is_existing_network_in_current_account = policy_scope(Location).where(id: network_id).count == 1
+      is_existing_network_in_current_account = policy_scope(Location).where(id: network_id).exists?
       if is_existing_network_in_current_account
         existing_network = policy_scope(Location).find(network_id)
       else
@@ -918,7 +915,6 @@ class ClientsController < ApplicationController
       @location.user = current_user
       if account.present?
         @location.account = account
-        @client.account = account if @client.account.id != account.id
       else
         @location.account = @client.account
       end
@@ -949,7 +945,8 @@ class ClientsController < ApplicationController
       Client.transaction do
         @clients_ids.each do |client_id|
           @client = Client.find_by_unix_user(client_id)
-          assign_pod_to_network(@destination_account.id, @destination_network_id, @network_assignment_type, @categories)
+          @client.account = @destination_account
+          assign_pod_to_network(@destination_account, @destination_network_id, @network_assignment_type, @categories)
           @clients.append(@client)
         end
       end
