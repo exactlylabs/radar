@@ -7,7 +7,7 @@
 <% address_is_empty = location&.errors&.full_messages&.include?("Address can't be blank") || false %>
 <% initial_account_id = if location&.account.nil?
                           if current_account.is_all_accounts?
-                            policy_scope(Account).first.id
+                            policy_scope(Account).order(:name).first.id
                           else
                             current_account.id
                           end
@@ -37,7 +37,7 @@
               tabindex="-1"
               data-action="select2-select->categories#showCategoriesForSelectedAccount"
       >
-        <% policy_scope(Account).each_with_index do |account, index| %>
+        <% policy_scope(Account).order(:name).each_with_index do |account, index| %>
           <%= render partial: "clients/client_select_option", locals: { option: account, selected: type == "edit" ? account.id == location&.account.id : index == 0 } %>
         <% end %>
       </select>
@@ -57,7 +57,7 @@
     <input name="categories" autocomplete="off" type="hidden" value="<%= location&.categories&.map { |c| c.id }&.join(",") || [] %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
     <div class="category--location-select-container"
          data-categories-target="selectClickableContainer"
-         data-categories-path-param="/location_categories"
+         data-categories-path-param="<%= location_categories_url %>"
          data-action="click->categories#toggleFocus"
          data-categories-menu-id="location-categories-dropdown"
     >
@@ -71,7 +71,7 @@
         </span>
     </div>
     <%= turbo_frame_tag "location-categories-dropdown" %>
-    <%= link_to "Import from another account…", categories_import_from_another_account_url(network_id: location&.id, type: type), data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
+    <%= link_to "Import from another account…", categories_import_from_another_account_location_categories_path(network_id: location&.id, type: type), data: { method: :get, turbo_stream: true }, class: "categories--import-button" %>
   </div>
 
   <div class="modals--half-width-row mb-6">

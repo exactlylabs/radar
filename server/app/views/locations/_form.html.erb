@@ -32,7 +32,7 @@
             <input name="categories" autocomplete="off" type="hidden" value="<%= @location.categories.map { |c| c.id }.join(",") %>" id="location_categories" data-categories-target="hiddenCategoriesInput">
             <div class="category--location-select-container"
                  data-categories-target="selectClickableContainer"
-                 data-categories-path-param="/location_categories"
+                 data-categories-path-param="<%= location_categories_url %>"
                  data-action="click->categories#toggleFocus"
                  data-categories-holder-id-value="location_id=<%= @location.id.nil? ? nil : @location.id %>"
             >

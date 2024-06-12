@@ -44,6 +44,7 @@ class CategoriesController < ApplicationController
       end
     rescue Exception => e
       error = e
+      Sentry.capture_exception(e)
     end
     respond_to do |format|
       if error.nil?

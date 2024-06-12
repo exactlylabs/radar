@@ -271,12 +271,16 @@ Rails.application.routes.draw do
   put '/account_categories/selected_categories', to: 'account_categories#change_selected_categories', as: 'account_category_update_categories'
   get '/account_categories/search', to: 'account_categories#search', as: 'account_category_search'
 
-  put '/location_categories/selected_categories', to: 'location_categories#change_selected_categories', as: 'location_category_update_categories'
-  get '/location_categories/search', to: 'location_categories#search', as: 'location_category_search'
-  get '/location_categories/open_dropdown', to: 'location_categories#open_dropdown', as: 'categories_open_dropdown'
-  get '/location_categories/close_dropdown', to: 'location_categories#close_dropdown', as: 'categories_close_dropdown'
-  get '/location_categories/import_from_another_account', to: 'location_categories#import_from_another_account', as: 'categories_import_from_another_account'
-  post '/location_categories/import', to: 'location_categories#import', as: 'categories_import'
+  resource :location_categories do
+    collection do
+      put 'selected_categories', to: 'location_categories#change_selected_categories', as: 'location_category_update_categories'
+      get 'search', to: 'location_categories#search', as: 'location_category_search'
+      get 'open_dropdown', to: 'location_categories#open_dropdown', as: 'categories_open_dropdown'
+      get 'close_dropdown', to: 'location_categories#close_dropdown', as: 'categories_close_dropdown'
+      get 'import_from_another_account', to: 'location_categories#import_from_another_account', as: 'categories_import_from_another_account'
+      post 'import', to: 'location_categories#import', as: 'categories_import'
+    end
+  end
 
   get '/categories/cancel_new', to: 'categories#cancel_new', as: 'category_cancel_new'
 

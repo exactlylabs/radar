@@ -32,16 +32,16 @@ export default class extends Controller {
     }
 
     initialize() {
-        if (this.hasCategoryCheckboxTargets) {
-            let categoryIds = [];
-            this.categoryCheckboxTargets.forEach(checkbox => {
-                if (checkbox.getAttribute('checked')) {
-                    const categoryId = checkbox.id.split('check-box-')[1];
-                    categoryIds.push(categoryId);
-                }
-            });
-            this.categories = categoryIds;
-        }
+      if (this.hasCategoryCheckboxTargets) {
+        let categoryIds = [];
+        this.categoryCheckboxTargets.forEach(checkbox => {
+          if (checkbox.getAttribute('checked')) {
+            const categoryId = checkbox.id.split('check-box-')[1];
+            categoryIds.push(categoryId);
+          }
+        });
+        this.categories = categoryIds;
+      }
     }
   
   resetMenuOpen() {
@@ -87,24 +87,33 @@ export default class extends Controller {
                 e.target.checked = true;
             }
         }
-
-        const categoriesHiddenInput = document.getElementById(path);
-        if (categoriesHiddenInput) categoriesHiddenInput.setAttribute('value', this.categories.join(','));
-
-        const formData = new FormData();
-        formData.append('categories', this.categories);
-        fetch(`/${path}/selected_categories`, {
-            method: "PUT",
-            headers: {"X-CSRF-Token": this.token},
-            body: formData
-        })
-            .then(response => response.text())
-            .then(html => Turbo.renderStreamMessage(html))
-            .catch((err) => {
-                handleError(err, this.identifier)
-            });
+        
+        this.updateSelectedCategories(path);
     }
-
+  
+    updateSelectedCategories(url) {
+      
+      const relationKey = url.split(window.location.origin + '/')[1]; // this would give either location_categories or account_categories
+      const categoriesHiddenInput = document.getElementById(relationKey);
+      if (categoriesHiddenInput) categoriesHiddenInput.setAttribute('value', this.categories.join(','));
+      
+      const formData = new FormData();
+      formData.append('categories', this.categories);
+      let fullUrl = new URL(url);
+      fullUrl += '/selected_categories';
+      fetch(fullUrl, {
+        method: "PUT",
+        headers: {"X-CSRF-Token": this.token},
+        body: formData
+      })
+        .then(response => response.text())
+        .then(html => Turbo.renderStreamMessage(html))
+        .catch((err) => {
+          handleError(err, this.identifier)
+        });
+      
+    }
+    
     fetchBaseModal() {
         document.querySelector("#manage-categories-button-ref").click();
     }
@@ -165,7 +174,7 @@ export default class extends Controller {
             .then(response => response.text())
             .then(html => {
                 Turbo.renderStreamMessage(html);
-                if (shouldOpen) emitCustomEvent('handleCategorySearch');
+                if (shouldOpen) emitCustomEvent('handleCategorySearch', { detail: { elementId: this.element.id } });
             })
             .catch((err) => {
                 handleError(err, this.identifier);
@@ -214,13 +223,22 @@ export default class extends Controller {
     }
   }
 
-    handleCategorySearchResponse() {
-        this.categoryCheckboxTargets.forEach(checkbox => {
-            const currentCheckboxId = checkbox.id.split('check-box-')[1];
-            if (this.categories.includes(currentCheckboxId)) {
-                checkbox.setAttribute('checked', 'true');
-            }
-        })
+    handleCategorySearchResponse(e) {
+      if(e.detail?.elementId !== this.element.id) return;
+      if(e.detail?.fromCreate) {
+        const { newCategoryName } = e.detail;
+        const newlyAddedCategory = this.categoryCheckboxTargets.find(checkbox => checkbox.getAttribute('data-category-name') === newCategoryName);
+        if (newlyAddedCategory) {
+          this.categories.push(newlyAddedCategory.getAttribute('data-category-id'));
+        }
+      }
+      this.categoryCheckboxTargets.forEach(checkbox => {
+        const currentCheckboxId = checkbox.id.split('check-box-')[1];
+        if (this.categories.includes(currentCheckboxId)) {
+          checkbox.setAttribute('checked', 'true');
+        }
+      })
+      this.updateSelectedCategories(this.selectClickableContainerTarget.dataset.categoriesPathParam);
     }
 
     toggleColorPicker() {
@@ -280,10 +298,17 @@ export default class extends Controller {
     }
 
     handleCategoryCreated(e) {
-        if (e.detail.formSubmission.location.pathname === '/categories' && e.detail.success) {
-            this.clearSearchInput();
-            setTimeout(() => emitCustomEvent('handleCategorySearch'), 100); // need to add a little delay to let turbo re-render components on screen
-        }
+      console.log('handleCategoryCreated', e.detail.formSubmission.formData.get('category[name]'));
+      if (e.detail.formSubmission.location.pathname === '/categories' && e.detail.success) {
+        this.clearSearchInput();
+        setTimeout(() => emitCustomEvent('handleCategorySearch', {
+          detail: {
+            elementId: this.element.id,
+            fromCreate: true,
+            newCategoryName: e.detail.formSubmission.formData.get('category[name]')
+          }
+        }), 100); // need to add a little delay to let turbo re-render components on screen
+      }
     }
 
     clearCategories() {
