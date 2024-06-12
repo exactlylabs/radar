@@ -46,6 +46,13 @@ commands:
           command: sudo apt-get update
           working_directory: server
 
+  compile_webpacker:
+    steps:
+      - run:
+          name: Compile webpacker
+          command: bundle exec rake webpacker:compile
+          working_directory: server
+
 jobs:
   run_tests:
     docker:
@@ -80,6 +87,7 @@ jobs:
             google-chrome --version
             chromedriver --version
           name: Check install
+      - compile_webpacker
       - tests
       #- system_tests
 
