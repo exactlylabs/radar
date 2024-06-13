@@ -138,7 +138,7 @@ module EventSourceable
     original_timestamp
   end
 
-  def new_event(name, data, timestamp = nil)
+  def new_event(name, data, timestamp = nil, **options, &applier)
     timestamp = timestamp or Time.now
     saved_changes_bkp = saved_changes
     self.class.unscoped.find(self.id).with_lock do
@@ -147,6 +147,15 @@ module EventSourceable
       last_event = Event.from_aggregate(self).order("version ASC").last
       version = last_event&.version || 0
       evt = Event.create(aggregate: self, name: name, data: data, timestamp: timestamp, version: version + 1)
+
+      if evt.present?
+        self.create_snapshot_from_event(
+          evt,
+          **options,
+          &applier
+        )
+      end
+      evt
     end
   end
 
@@ -154,15 +163,10 @@ module EventSourceable
     evt = self.new_event(
       event_name,
       data,
-      timestamp = get_event_timestamp(event_name, timestamp)
+      timestamp = get_event_timestamp(event_name, timestamp),
+      **options,
+      &applier
     )
-    if evt.present?
-      self.create_snapshot_from_event(
-        evt,
-        **options,
-        &applier
-      )
-    end
     self.notify_event(evt)
     return evt
   end
