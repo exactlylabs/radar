@@ -49,6 +49,7 @@ include Recents
   has_and_belongs_to_many :geospaces
   has_one :location_metadata_projections
 
+  before_validation :check_if_only_coordinates
   after_validation :custom_geocode, if: :lat_long_changed?
   after_save :link_to_geospaces
   after_save :send_notifications
@@ -280,6 +281,18 @@ include Recents
   end
 
   private
+
+  # This covers the case in which a user might create/update a network and only manually set
+  # values for lat/lng, but no explicit address in the corresponding input. In this case, we
+  # want to make sure that the address is set based on the given lat/lng values before running
+  # address existence validations.
+  def check_if_only_coordinates
+    return if self.address.present?
+    return if self.latitude.blank? || self.longitude.blank?
+    result = Geocoder.search([self.latitude, self.longitude])
+    return if result.empty?
+    self.address = result.first.address
+  end
 
   def custom_geocode
     # if the location entity had no lat/long, then geocode based
