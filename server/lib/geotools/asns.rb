@@ -5,15 +5,17 @@ module GeoTools
   @@asn_finder = nil
 
   class ASNFinder
+    attr_reader :asns
+
     def initialize
-      if ENV['RAILS_ENV'].present? && ENV['RAILS_ENV'] != 'development'
+      if ENV['RAILS_ENV'].present? && ENV['RAILS_ENV'] != 't'
         @org2info_filepath = ENV["ASN_ORG2INFO_FILEPATH"] || "./lib/geotools/files/as-org2info.jsonl"
         @asnipv4_filepath = ENV["ASN_IPV4_FILEPATH"] || "./lib/geotools/files/GeoLite2-ASN-Blocks-IPv4.csv"
         @asnipv6_filepath = ENV["ASN_IPV6_FILEPATH"] || "./lib/geotools/files/GeoLite2-ASN-Blocks-IPv6.csv"
       end
       @asns = {}
-      @ipv4asns = []
-      @ipv6asns = []
+      # @ipv4asns = []
+      # @ipv6asns = []
       mount_objects
     end
 
@@ -21,9 +23,7 @@ module GeoTools
       return if @asnipv4_filepath.nil?
       CSV.foreach((@asnipv4_filepath), headers: true, col_sep: ",") do |row|
         if @asns[row["autonomous_system_number"]].present?
-          as = @asns[row["autonomous_system_number"]].dup
-          as.ip = IPAddr.new row["network"]
-          @ipv4asns.append(as)
+          @asns[row["autonomous_system_number"]].ipv4 << IPAddr.new(row["network"])
         end
       end
     end
@@ -32,9 +32,7 @@ module GeoTools
       return [] if @asnipv6_filepath.nil?
       CSV.foreach((@asnipv6_filepath), headers: true, col_sep: ",") do |row|
         if @asns[row["autonomous_system_number"]].present?
-          as = @asns[row["autonomous_system_number"]].dup
-          as.ip = IPAddr.new row["network"]
-          @ipv6asns.append(as)
+          @asns[row["autonomous_system_number"]].ipv6 << IPAddr.new(row["network"])
         end
       end
     end
@@ -52,7 +50,7 @@ module GeoTools
 
     def mount_objects
       orgs = {}
-
+      Rails.logger.debug("Loading ASN data")
       load_jsonl_file.each do |row|
         if row["type"] == "Organization"
           orgs[row["organizationId"]] = GeoTools::ASOrg.new row["name"], row["organizationId"], row["country"], row["source"]
@@ -61,29 +59,43 @@ module GeoTools
           @asns[row["asn"]] = AutonomousSystem.new row["name"], row["asn"], org
         end
       end
-
+      Rails.logger.debug("Mounting ASN IPs map")
       # Now iterate through the ipv4 and ipv6 map files to fill that info
-      load_asn_ipv4
-      load_asn_ipv6
+      threads = []
+      threads << Thread.new do
+        load_asn_ipv4
+      end
+      threads << Thread.new do
+        load_asn_ipv6
+      end
+      threads.each(&:join)
+      return nil
     end
 
     def find(ip)
       ipaddr = IPAddr.new ip
       iptype = ipaddr.ipv4? ? "ipv4" : "ipv6"
+      matches = []
+
       if iptype == "ipv4"
-        @ipv4asns.each do |as|
-          if as.ip.present? && as.ip.include?(ipaddr)
-            return as
+        @asns.values.each do |asn|
+          asn.ipv4.each do |ip|
+            if ip.include?(ipaddr)
+              matches << {asn: asn, ip: ip}
+            end
           end
         end
       else
-        @ipv6asns.each do |as|
-          if as.ip.present? && as.ip.include?(ipaddr)
-            return as
+        @asns.values.each do |asn|
+          asn.ipv6.each do |ip|
+            if ip.include?(ipaddr)
+              matches << {asn: asn, ip: ip}
+            end
           end
         end
       end
-      return nil
+      # From all matches, select the more specific one
+      matches.sort_by { |match| match[:ip].prefix }.last.fetch(:asn, nil)
     end
   end
 
@@ -125,13 +137,18 @@ module GeoTools
   end
 
   class AutonomousSystem
-    attr_accessor :name, :asn, :organization, :ip
+    attr_accessor :name, :asn, :organization, :ipv4, :ipv6
 
     def initialize(name, asn, organization)
       @name = name
       @asn = asn
       @organization = organization
-      @ip
+      @ipv4 = []
+      @ipv6 = []
+    end
+
+    def ip
+      @ipv4 || @ipv6
     end
   end
 end
