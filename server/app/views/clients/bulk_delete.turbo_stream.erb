@@ -1,6 +1,5 @@
 <% @clients.each do |c| %>
-  <%= turbo_stream.remove c do %>
-  <% end %>
+  <%= turbo_stream.remove c %>
 <% end %>
 
 <% if FeatureFlagHelper.is_available('networks', current_user) %>
