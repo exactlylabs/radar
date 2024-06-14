@@ -59,6 +59,7 @@ module ChartsHelper
       account_ids = []
     elsif params[:account_id].present? && params[:account_id] != '-1'
       account_ids = policy_filter_ids(Account, params[:account_id])
+      account_ids = [] if account_ids.blank?
     elsif current_account.is_all_accounts?
       account_ids = policy_scope(Account).pluck(:id)
     else

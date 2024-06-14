@@ -1,7 +1,5 @@
-<% if !current_user.super_user || is_super_user_disabled? %>
-  <% @clients.each do |c| %>
-    <%= turbo_stream.remove c do %>
-    <% end %>
+<% @clients.each do |c| %>
+  <%= turbo_stream.remove c do %>
   <% end %>
 <% end %>
 
