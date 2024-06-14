@@ -5,7 +5,8 @@ class LocationsController < ApplicationController
   before_action :authenticate_user!
   before_action :check_account_presence, only: %i[ index show ]
   before_action :check_request_origin, only: %i[ show ]
-  before_action :set_location, only: %i[ show edit update destroy request_test speed_average ]
+  before_action :set_location, only: %i[ edit update destroy request_test speed_average ]
+  before_action :set_location_and_account_if_needed, only: %i[ show ]
   before_action :set_locations, only: %i[ bulk_destroy move_to_account bulk_move_to_account ]
 
   # GET /locations or /locations.json
@@ -264,6 +265,23 @@ class LocationsController < ApplicationController
   end
 
   private
+
+    # We want to allow for a user to access a network if it's within reach of all their accessible accounts,
+    # regardless of the current one not being the network's one. So we need to change the current account to
+    # the network's one if needed
+    def set_location_and_account_if_needed
+      @location = policy_scope(Location).find_by_id(params[:id]) # Don't want to throw on first check
+      return if @location.present?
+
+      @location = Location.find(params[:id]) # This is the actual throwable check
+      return if current_user.super_user && !is_super_user_disabled? && current_account.is_all_accounts?
+
+      has_access_to_network_account = policy_scope(Account).where(id: @location.account_id).exists?
+      raise ActiveRecord::RecordNotFound.new("Couldn't find Network with 'id'=#{params[:id]}", Location.name, params[:id]) unless has_access_to_network_account
+
+      set_new_account(@location.account) if current_account.id != @location.account_id
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_location
       @location = policy_scope(Location).find(params[:id])
