@@ -9,11 +9,20 @@ export default class extends Controller {
     window.location.href = url;
   }
 
-  sortByName(e) {
+  sortBy(e) {
+    const currentTarget = e.target;
+    const value = currentTarget.dataset.value;
+
     const currentUrl = window.location.href;
     const url = new URL(currentUrl);
-    url.searchParams.set("sort_by", "name");
+
+    if(url.searchParams.has("sort_by")) {
+      url.searchParams.delete("sort_by");
+    }
+
+    url.searchParams.set("sort_by", value);
     const currentOrderBy = url.searchParams.get("order");
+
     if(!currentOrderBy) {
       url.searchParams.set("order", "desc");
     } else if(currentOrderBy === "desc") {
