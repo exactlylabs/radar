@@ -30,7 +30,7 @@ export default class BarChartController extends ChartController {
     this.clearCanvas();
     this.chartData.forEach((barData, index) => {
       if(this.isCompareChart) {
-        this.drawBar(barData, index, this.getFirstGradientStopColor(this.COMPARISON_HEX[index], 0.5));
+        this.drawBar(barData, index, this.getFirstGradientStopColor(this.COMPARISON_HEX[index % this.COMPARISON_HEX.length], 0.5));
       } else {
         this.drawBar(barData, index);
       }
@@ -74,7 +74,7 @@ export default class BarChartController extends ChartController {
     const minDifIndex = xDifs.indexOf(minDif);
     if(minDifIndex < 0) return;
     if(!this.mouseOverBar(mouseX, mouseY, minDifIndex)) return;
-    const res = this.isCompareChart ? this.drawBar(this.chartData[minDifIndex], minDifIndex, this.getFirstGradientStopColor(this.COMPARISON_HEX[minDifIndex], 1)) : this.drawBar(this.chartData[minDifIndex], minDifIndex, '#4b7be5');
+    const res = this.isCompareChart ? this.drawBar(this.chartData[minDifIndex], minDifIndex, this.getFirstGradientStopColor(this.COMPARISON_HEX[minDifIndex % this.COMPARISON_HEX.length], 1)) : this.drawBar(this.chartData[minDifIndex], minDifIndex, '#4b7be5');
     const {barX, barY, barHeight, barWidth} = res;
     
     // Tooltip drawing section

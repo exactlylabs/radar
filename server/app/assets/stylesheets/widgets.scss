@@ -11,7 +11,7 @@
   margin-top: 1.5rem;
 
   &[data-comparison="true"] {
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -19,11 +19,19 @@
   .widgets--grid:not([data-pod-page="true"]) {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .widgets--grid[data-comparison="true"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
   .widgets--grid {
     grid-template-columns: repeat(1, 1fr);
+
+    &[data-comparison="true"] {
+      grid-template-columns: repeat(1, 1fr);
+    }
   }
 }
 
@@ -34,7 +42,7 @@
   border: solid 1px $widget--border-color;
   box-shadow: 0 2px 8px -2px $widget--box-shadow;
   overflow-x: hidden;
-  min-height: 350px;
+  min-height: 300px;
   max-width: 100%;
   height: -webkit-fill-available;
   height: -moz-available;
@@ -43,6 +51,7 @@
   width: -moz-available;
   width: fill-available;
   margin-inline: auto;
+  aspect-ratio: 2.5;
 
   &[data-widget-type="locations_map"] {
     width: 100%;
@@ -73,6 +82,7 @@
 @media (min-width: 1080px) and (max-width: 1680px) {
   .widgets--widget {
     max-width: 570px;
+    aspect-ratio: 2.5;
   }
 }
 
@@ -325,22 +335,18 @@
       align-items: flex-start;
       justify-content: flex-start;
       flex-wrap: nowrap;
+      gap: 1rem;
+
+      canvas {
+        max-width: 70%;
+      }
 
       .widgets--line-toggler-buttons-container {
-        width: 25%;
+        width: 30%;
         flex-wrap: wrap;
         max-height: 250px;
         overflow-y: auto;
         padding: 3px;
-
-        &[data-is-vertical="false"] {
-          width: 100%;
-        }
-      }
-
-      &:has(.widgets--line-toggler-buttons-container[data-is-vertical="false"]) {
-        flex-direction: column;
-        gap: .5rem;
       }
     }
   }
