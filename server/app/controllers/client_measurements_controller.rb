@@ -10,6 +10,9 @@ class ClientMeasurementsController < ApplicationController
   # GET /measurements or /measurements.json
   def index
     @measurements = policy_scope(@client.measurements).order(created_at: :desc) # Don't bring in measurements made on another account different to the current one
+    if @client.account.present?
+      @measurements = @measurements.where(account: @client.account)
+    end
     if FeatureFlagHelper.is_available('networks', current_user)
       @measurements = @measurements.where(style: params[:style].upcase) if params[:style].present?
       if params[:range].present?
