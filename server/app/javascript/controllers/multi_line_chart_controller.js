@@ -14,7 +14,7 @@ export default class MultiLineChartController extends ChartController {
   }
   
   createHiDPICanvas(w, h, ratio) {
-    const heightWithoutButtons = h - CHART_BUTTONS_HEIGHT;
+    const heightWithoutButtons = this.isCompareChart ? h : h - CHART_BUTTONS_HEIGHT;
     return super.createHiDPICanvas(w, heightWithoutButtons, ratio);
   }
   
@@ -117,7 +117,6 @@ export default class MultiLineChartController extends ChartController {
         data.set(hex, linePoints.map(lp => ({x: lp.x, y: this.convertToPreferredUnit(lp.y)})));
       });
     }
-    console.log(data);
     return data;
   }
   
@@ -142,7 +141,6 @@ export default class MultiLineChartController extends ChartController {
       this.selectedHexes.push(selectedHex);
     }
     this.adjustedData = this.adjustData(this.chartData);
-    console.log(this.adjustedData)
     this.plotChart(this.adjustedData);
   }
   

@@ -410,7 +410,8 @@ module DashboardHelper
   end
 
   private
-  def self.append_select_fields(compare_by, sql)
+  def self.select_fields(compare_by)
+    sql = ''
     case compare_by
     when 'account'
       sql += %{
@@ -442,7 +443,8 @@ module DashboardHelper
   end
 
 
-  def self.append_join_fields(compare_by, sql)
+  def self.join_fields(compare_by)
+    sql = ''
     case compare_by
     when 'account'
       sql += ' JOIN accounts ON account_id = accounts.id '
@@ -463,8 +465,8 @@ module DashboardHelper
     sql
   end
 
-  def self.append_inner_select_fields(compare_by, sql)
-    sql += ' SELECT '
+  def self.inner_select_fields(compare_by)
+    sql = ' SELECT '
     case compare_by
     when 'account'
       sql += 'account_name as entity_identifier,'
@@ -480,7 +482,8 @@ module DashboardHelper
     sql
   end
 
-  def self.append_curve_type_fields(curve_type, sql)
+  def self.curve_type_fields(curve_type)
+    sql = ''
     case curve_type
     when 'average'
       sql += ' AVG(value) as "y"'
@@ -494,8 +497,8 @@ module DashboardHelper
     sql
   end
 
-  def self.append_where_fields(compare_by, sql)
-    sql += ' WHERE '
+  def self.where_fields(compare_by)
+    sql = ' WHERE '
     case compare_by
     when 'account'
       sql += ' account_id IN (:account_ids) '
@@ -512,43 +515,26 @@ module DashboardHelper
   end
 
   def self.get_comparison_speed_sql(compare_by, curve_type, key)
-    sql = %{
+    %{
       WITH filtered_measurements AS (
         SELECT
           processed_at as "time",
-      }
-    sql += key + ' as "value",'
-    sql = self.append_select_fields(compare_by, sql)
-    sql += " FROM measurements "
-    sql = self.append_join_fields(compare_by, sql)
-    sql += %{
+          #{key} as "value",
+          #{self.select_fields(compare_by)}
+        FROM measurements
+          #{self.join_fields(compare_by)}
         WHERE processed_at BETWEEN :from AND :to
         AND measurements.account_id IN (:account_ids)
-    }
-    if key.include?('SUM')
-      sql += ' GROUP BY 1,3,4) '
-    else
-      sql += ')'
-    end
+        #{key.include?('SUM') ? 'GROUP BY 1,3,4' : ''}
+      )
 
-    sql = self.append_inner_select_fields(compare_by, sql)
-
-    sql += %{
+      #{self.inner_select_fields(compare_by)}
       EXTRACT(EPOCH FROM date_trunc('d', "time")) * 1000 as "x",
-    }
-
-    sql = self.append_curve_type_fields(curve_type, sql)
-
-    sql += %{
+      #{self.curve_type_fields(curve_type)}
       FROM filtered_measurements
-    }
-
-    sql = self.append_where_fields(compare_by, sql)
-
-    sql += %{
+      #{self.where_fields(compare_by)}
       GROUP BY 1, 2
       ORDER BY "x" ASC;
-    }
-    sql
+      }
   end
 end
