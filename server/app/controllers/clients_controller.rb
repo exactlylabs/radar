@@ -850,6 +850,9 @@ class ClientsController < ApplicationController
     if @client.account_id.present?
       is_in_users_accounts = policy_scope(Account).where(id: @client.account_id).exists? # Not running find as we don't want to throw
       raise ActiveRecord::RecordNotFound.new("Couldn't find Client with 'id'=#{params[:id]}", Client.name, params[:id]) unless is_in_users_accounts
+
+      return if current_user.super_user && !is_super_user_disabled? && current_account.is_all_accounts?
+
       set_new_account(@client.account) if !current_account.is_all_accounts? && current_account.id != @client.account_id
     end
   end

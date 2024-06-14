@@ -114,7 +114,7 @@ class ApplicationController < ActionController::Base
   def set_all_accounts
     @auth_holder = AuthenticationHolder.new(current_user) unless @auth_holder
     @auth_holder.set_all_accounts
-    @auth_holder.set_super_user_disabled(get_super_user_disabled_value) if current_user.super_user
+    @auth_holder.set_super_user_disabled(is_super_user_disabled?) if current_user.super_user
     set_cookie(:radar_current_account_id, -1)
   end
 
@@ -137,7 +137,7 @@ class ApplicationController < ActionController::Base
         set_cookie(:radar_current_account_id, account_id)
         @auth_holder.set_user(current_user) if @auth_holder.user.nil?
         @auth_holder.set_account(Account.find(account_id))
-        @auth_holder.set_super_user_disabled(get_super_user_disabled_value) if current_user.super_user
+        @auth_holder.set_super_user_disabled(is_super_user_disabled?) if current_user.super_user
         if is_account_accessible_through_share
           @auth_holder.set_shared_account
         else
@@ -177,7 +177,7 @@ class ApplicationController < ActionController::Base
     account_id = get_cookie(:radar_current_account_id)
     begin
       @auth_holder = AuthenticationHolder.new(current_user, false, false) unless @auth_holder
-      @auth_holder.set_super_user_disabled(get_super_user_disabled_value) if current_user.super_user
+      @auth_holder.set_super_user_disabled(is_super_user_disabled?) if current_user.super_user
       if account_id
         if is_all_accounts_id(account_id)
           set_all_accounts
@@ -248,7 +248,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def get_super_user_disabled_value
+  def is_super_user_disabled?
     possible_cookie = cookies[:radar_super_user_disabled]
     return possible_cookie.present? && possible_cookie == "true"
   end
