@@ -98,7 +98,7 @@ module TablesHelper
       rows = [
         *rows,
         { text: 'Checkbox', hidden: true },
-        { text: 'Name', sort: 'name', sort_action: 'click->table#sortByName' },
+        { text: 'Name', sort: 'name', sort_action: 'click->table#sortBy' },
       ]
       if is_all_accounts
         rows = [
@@ -121,7 +121,7 @@ module TablesHelper
       rows = [
         *rows,
         { text: 'Checkbox', hidden: true },
-        { text: 'Network', sort: 'name', sort_action: 'click->table#sortByName' },
+        { text: 'Network', sort: 'name', sort_action: 'click->table#sortBy' },
         { text: 'Category' },
         { text: 'Avg. download', icon_before: 'download-icon.png' },
         { text: 'Avg. upload', icon_before: 'upload-icon.png' },
@@ -130,14 +130,14 @@ module TablesHelper
     when TableTypes::MEASUREMENTS
       rows = [
         *rows,
-        { text: 'Time', partial_after: "application/timezone_tooltip" },
-        { text: 'Style' },
-        { text: 'Connection' },
-        { text: 'Download' },
-        { text: 'Upload' },
-        { text: 'Latency' },
-        { text: 'Loss' },
-        { text: 'Jitter' },
+        { text: 'Time', sort: 'created_at', sort_action: 'click->table#sortBy' },
+        { text: 'Style', sort: 'style', sort_action: 'click->table#sortBy' },
+        { text: 'Connection', sort: 'wireless', sort_action: 'click->table#sortBy' },
+        { text: 'Download', sort: 'download', sort_action: 'click->table#sortBy' },
+        { text: 'Upload', sort: 'upload', sort_action: 'click->table#sortBy' },
+        { text: 'Latency', sort: 'latency', sort_action: 'click->table#sortBy' },
+        { text: 'Loss', sort: 'loss_rate', sort_action: 'click->table#sortBy' },
+        { text: 'Jitter', sort: 'jitter', sort_action: 'click->table#sortBy' },
         { text: 'Actions', hidden: true }
       ]
     when TableTypes::NETWORK_PODS

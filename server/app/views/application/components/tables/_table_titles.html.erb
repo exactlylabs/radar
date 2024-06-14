@@ -3,9 +3,10 @@
 <div class="tables--titles-container">
   <% titles.each_with_index do |title, index| %>
     <div class="tables--title table-title"
-      style="width: <%= widths[index] %>"
-      data-action="<%= title[:sort] ? title[:sort_action] : nil %>"
-      data-sortable="<%= title[:sort].present? %>"
+         style="width: <%= widths[index] %>"
+         data-action="<%= title[:sort] ? title[:sort_action] : nil %>"
+         data-sortable="<%= title[:sort].present? %>"
+         data-value="<%= title[:sort] %>"
     >
       <% if title[:icon_before] %>
         <%= image_tag image_url(title[:icon_before]), width: 16, height: 16, class: "me-1" %>
@@ -18,14 +19,14 @@
         <%= render partial: title[:partial_after] %>
       <% end %>
       <% if title[:text] == 'Checkbox' %>
-        <div class="form-check form-check-sm form-check-custom form-check-solid tables--checkbox-container" >
+        <div class="form-check form-check-sm form-check-custom form-check-solid tables--checkbox-container">
           <input id="check-box-select-all"
-            class="form-check-input custom-multi-row-input-checkbox"
-            type="checkbox"
-            value="1"
-            data-action="input->multi-row-table#onSelectAll"
-            data-multi-row-table-target="selectAllFormCheckBoxInput"
-          />
+                 class="form-check-input custom-multi-row-input-checkbox"
+                 type="checkbox"
+                 value="1"
+                 data-action="input->multi-row-table#onSelectAll"
+                 data-multi-row-table-target="selectAllFormCheckBoxInput"
+            />
         </div>
       <% end %>
     </div>

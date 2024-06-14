@@ -8,7 +8,7 @@ class LocationMeasurementsController < ApplicationController
 
   # GET /measurements or /measurements.json
   def index
-    @measurements = @location.measurements.where(account_id: @location.account_id).order(created_at: :desc) # only show measurements tied with current location's account
+    @measurements = @location.measurements.where(account_id: @location.account_id)  # only show measurements tied with current location's account
 
     if FeatureFlagHelper.is_available('networks' , current_user)
       @measurements = @measurements.where(style: params[:style].upcase) if params[:style].present? && params[:style].upcase != 'ALL'
@@ -21,6 +21,13 @@ class LocationMeasurementsController < ApplicationController
       @measurements = paginate(@measurements, params[:page], params[:page_size]) unless request.format.csv?
     end
 
+    if params[:sort_by].present?
+      sort_by = params[:sort_by]
+      order = params[:order] || 'desc'
+      @measurements = @measurements.order(sort_by => order)
+    else
+      @measurements = @measurements.order(created_at: :desc)
+    end
     respond_to do |format|
       format.html { render "index", locals: { measurements: @measurements } }
       format.csv { send_data @measurements.to_csv, filename: "measurements-#{@location.id}.csv" }
