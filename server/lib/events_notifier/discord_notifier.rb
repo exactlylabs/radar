@@ -3,7 +3,7 @@ require 'discordrb/webhooks'
 
 class DiscordNotifier < EventsNotifier::Notifier
 
-  def initialize(webhook_url, tbp_alerts_webhook_url=nil, tbp_general_webhook_url=nil)
+  def initialize(webhook_url, tbp_alerts_webhook_url = nil, tbp_general_webhook_url = nil)
     @client = Discordrb::Webhooks::Client.new(url: webhook_url)
     @tbp_alerts_client = tbp_alerts_webhook_url ? Discordrb::Webhooks::Client.new(url: tbp_alerts_webhook_url) : nil
     @tbp_general_client = tbp_general_webhook_url ? Discordrb::Webhooks::Client.new(url: tbp_general_webhook_url) : nil
@@ -106,13 +106,13 @@ class DiscordNotifier < EventsNotifier::Notifier
         embed.timestamp = Time.now
         embed.color = 0xF84F31
         add_fieldset embed, "Location Info" do |fieldset|
-          fill_fn.call(location_info, fieldset)
+          fill_fn.call(location_info, fieldset, online: false)
         end
       end
     end
   end
 
-  def notify_study_goal_reached(geospace, goal, as_org=nil)
+  def notify_study_goal_reached(geospace, goal, as_org = nil)
     @tbp_general_client.execute do |builder|
       builder.add_embed do |embed|
         embed.title = ":white_check_mark: == Study Goal Reached == :white_check_mark:"
@@ -202,19 +202,21 @@ class DiscordNotifier < EventsNotifier::Notifier
     fieldset.add_field(name: "Place", value: location_info.place.name) if location_info.place
   end
 
-  def fill_study_online_notification_fieldset(location_info, fieldset)
+  def fill_study_online_notification_fieldset(location_info, fieldset, online: true)
     self.fill_default_study_location_fieldset(location_info, fieldset)
     fieldset.add_field(name: "ISP", value: location_info.extra[:as_org]&.name) if location_info.extra[:as_org]
     fieldset.add_field(name: "Total in County", value: "#{location_info.extra[:locations_per_county_count]} out of #{Location::LOCATIONS_PER_COUNTY_GOAL} goal") if location_info.county
     fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]} out of #{Location::LOCATIONS_PER_PLACE_GOAL} goal") if location_info.place && location_info.extra[:locations_per_place_count].present?
     fieldset.add_field(name: "Total in ISP in the County", value: "#{location_info.extra[:locations_per_isp_county_count]} out of #{Location::LOCATIONS_PER_ISP_PER_COUNTY_GOAL}") if location_info.extra[:as_org].present? && location_info.extra[:locations_per_isp_county_count].present?
+    fieldset.add_field(name: "Pod ID", value: location_info.location.clients.where(online: online).order(:updated_at).first.id)
   end
 
-  def fill_online_notification_fieldset(location_info, fieldset)
+  def fill_online_notification_fieldset(location_info, fieldset, online: true)
     self.fill_default_location_info(location_info, fieldset)
     fieldset.add_field(name: "ISP", value: location_info.extra[:as_org]&.name) if location_info.extra[:as_org]
     fieldset.add_field(name: "Total in County", value: "#{location_info.extra[:locations_per_county_count]}") if location_info.county
     fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]}") if location_info.place && location_info.extra[:locations_per_place_count]
     fieldset.add_field(name: "Total in ISP", value: "#{location_info.extra[:locations_per_isp_count]}") if location_info.extra[:as_org].present? && location_info.extra[:locations_per_isp_count].present?
+    fieldset.add_field(name: "Pod ID", value: location_info.location.clients.where(online: online).order(:updated_at).first.id)
   end
 end
