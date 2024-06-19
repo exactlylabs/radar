@@ -37,6 +37,7 @@ export default class extends Controller {
   }
   
   closeIfClickedOutside(e) {
+    if(!this.elementId) return;
     const datePicker = document.getElementById(this.elementId);
     if(!datePicker) return;
     if(!datePicker.hasAttribute('hidden') && !datePicker.contains(e.target)) {
@@ -121,6 +122,19 @@ export default class extends Controller {
     });
   }
   
+  setInitialHoverableButtons(firstDayOfVisibleMonth, lastDayOfVisibleMonth) {
+    if(!this.startDateInput.value) return;
+    const startDate = new Date(this.startDateInput.value);
+    if(startDate > lastDayOfVisibleMonth) return; // current visible buttons shouldn't be hoverable
+    const allVisibleWrappers = document.querySelectorAll('.dashboard--calendar-day-button-wrapper');
+    allVisibleWrappers.forEach(wrapper => {
+      const wrapperButton = wrapper.querySelector('button');
+      const wrapperDate = new Date(wrapperButton.dataset.date);
+      if(wrapperDate.getTime() === startDate.getTime()) this.setRangeStartButton(wrapperButton, true);
+      if(wrapperDate.getTime() > startDate.getTime()) wrapper.setAttribute('data-hoverable', 'true');
+    });
+  }
+  
   populateCalendarGrid(givenMonth = null, givenYear = null) {
     this.clearCalendarGrid();
     let firstDayOfTheMonth;
@@ -147,6 +161,7 @@ export default class extends Controller {
     }
     this.monthYearTarget.querySelector('p').innerText = `${MONTH_NAMES[this.currentMonth]} ${this.currentYear}`;
     this.setSelectedMonthYearList();
+    this.setInitialHoverableButtons(firstDayOfTheMonth, lastRowDay);
   }
   
   setSelectedMonthYearList() {
@@ -348,14 +363,20 @@ export default class extends Controller {
   
   hoverDay(e) {
     if(!this.canHover) return;
-    const startDateWrapper = document.querySelector('button[data-is-range-start="true"]').parentElement;
-    startDateWrapper.removeAttribute('data-is-range-start');
     let currentHoveredDay = e.target;
-    if(currentHoveredDay.tagName === 'DIV') currentHoveredDay = currentHoveredDay.querySelector('button');
+    if (currentHoveredDay.tagName === 'DIV') currentHoveredDay = currentHoveredDay.querySelector('button');
     const currentHoveredDate = new Date(currentHoveredDay.dataset.date);
-    if(isNaN(currentHoveredDate.getTime())) return;
-    if(currentHoveredDay.dataset.date === this.startDateInput.value || currentHoveredDate < new Date(this.startDateInput.value)) return;
-    startDateWrapper.setAttribute('data-is-range-start', 'true');
+    const possibleRangeStartButton = document.querySelector('button[data-is-range-start="true"]');
+    // if the button isn't present, either it's not set or it's not in the visible calendar grid
+    if(!possibleRangeStartButton) {
+    
+    } else {
+      const startDateWrapper = possibleRangeStartButton.parentElement;
+      startDateWrapper.removeAttribute('data-is-range-start');
+      if (isNaN(currentHoveredDate.getTime())) return;
+      if (currentHoveredDay.dataset.date === this.startDateInput.value || currentHoveredDate < new Date(this.startDateInput.value)) return;
+      startDateWrapper.setAttribute('data-is-range-start', 'true');
+    }
     this.unsetRangeEndButton();
     this.setRangeEndButton(currentHoveredDay, false);
     this.unsetWithinRangeButtons();

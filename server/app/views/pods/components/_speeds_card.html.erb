@@ -6,7 +6,7 @@
     <%= render partial: "application/components/speed_filters",
         locals: {
           resource_id: pod.unix_user,
-          speed_average_path: method(:speed_average_client_path)
+          speed_average_path: method(:speed_average_client_url)
         }
     %>
     <%= render partial: "pods/components/speed_cells",

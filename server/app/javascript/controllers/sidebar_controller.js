@@ -125,6 +125,9 @@ export default class extends Controller {
     const element = e.target;
     const itemId = element.getAttribute('data-item-id');
     const { icon, activeIcon, text } = this.getItemElements(itemId);
+    
+    if(!icon || !activeIcon || !text) return;
+    
     if (this.isMidScreen && !this.isSearchOpen) {
       const tooltipId = `${itemId}-tooltip`;
       const tooltip = document.getElementById(tooltipId);
