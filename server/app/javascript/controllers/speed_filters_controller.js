@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import handleError from "./error_handler_controller";
 
 const SPEED_FILTERS = {
   ALL_TIME: 'all_time',
@@ -19,6 +20,7 @@ export default class extends Controller {
   }
 
   switchFilter(e) {
+    e.preventDefault();
     const filter = e.currentTarget.dataset.filter;
     if(filter === this.currentFilter) return;
     const oldFilterElement = this.element.querySelector(`[data-filter="${this.currentFilter}"]`);
@@ -38,6 +40,28 @@ export default class extends Controller {
       $('#speed-filters-select').trigger('change');
       this.currentFilter = filter;
     }
+    
+    const url = new URL(e.target.href);
+    if(this.switchFilterTimeout) {
+      clearTimeout(this.switchFilterTimeout);
+    }
+    this.switchFilterTimeout = setTimeout(() => {
+      fetch(url).then((response) => {
+        if(response.ok) {
+          return response.text();
+        } else {
+          throw new Error('Error fetching speed data.');
+        }
+      })
+      .then((html) => {
+        Turbo.renderStreamMessage(html);
+      })
+      .catch((error) => {
+        handleError(error, this.identifier);
+      });
+    }, 250);
+    
+    
   }
 
   switchDropdownFilter(e) {
