@@ -368,9 +368,7 @@ export default class extends Controller {
     const currentHoveredDate = new Date(currentHoveredDay.dataset.date);
     const possibleRangeStartButton = document.querySelector('button[data-is-range-start="true"]');
     // if the button isn't present, either it's not set or it's not in the visible calendar grid
-    if(!possibleRangeStartButton) {
-    
-    } else {
+    if(possibleRangeStartButton) {
       const startDateWrapper = possibleRangeStartButton.parentElement;
       startDateWrapper.removeAttribute('data-is-range-start');
       if (isNaN(currentHoveredDate.getTime())) return;
