@@ -1,7 +1,7 @@
 class ClientPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if @auth_holder&.user.super_user? && !@auth_holder.is_super_user_disabled?
+      if @auth_holder&.user&.super_user? && !@auth_holder.is_super_user_disabled?
         scope.all
       elsif @auth_holder&.is_all_accounts?
         user = @auth_holder.user
