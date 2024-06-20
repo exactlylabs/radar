@@ -8,10 +8,10 @@ class SearchController < ApplicationController
     current_user_accounts_ids = @account_id > -1 ?  [@account_id] : policy_scope(Account).pluck(:id)
     if @query.present?
       if current_user_accounts_ids.count == 1
-        @results[:pods] = Client.where("(unix_user ILIKE ?) AND account_id = ?", "%#{@query}%", current_user_accounts_ids[0])
+        @results[:pods] = Client.where("unix_user ILIKE ? AND account_id = ?", "%#{@query}%", current_user_accounts_ids[0])
         @results[:locations] = Location.where("name ILIKE ? AND account_id = ?", "%#{@query}%", current_user_accounts_ids[0])
       else 
-        @results[:pods] = Client.where("(unix_user ILIKE ?) AND account_id IN (?)", "%#{@query}%", current_user_accounts_ids)
+        @results[:pods] = Client.where("unix_user ILIKE ? AND account_id IN (?)", "%#{@query}%", current_user_accounts_ids)
         @results[:locations] = Location.where("name ILIKE ? AND account_id IN (?)", "%#{@query}%", current_user_accounts_ids)
       end
     end
