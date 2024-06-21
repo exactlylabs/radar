@@ -244,16 +244,22 @@ export default class MultiLineChartController extends ChartController {
     let i = 0;
     for(let [hex, _] of this.adjustedData.entries()) {
       if(i >= yValues.length) break;
-      this.drawDotOnLine(xCoordinate + 12, tooltipTopYCoordinate + 40 + 8 + i * 25, hex);
+      const DOT_X_OFFSET = 12;
+      const DOT_Y_OFFSET = 40;
+      const DOT_Y_XL_OFFSET = 53;
+      const DOT_Y_PADDING = 8;
+      const DOT_INDEXED_Y_OFFSET = 25;
+      this.drawDotOnLine(xCoordinate + DOT_X_OFFSET, tooltipTopYCoordinate + DOT_Y_OFFSET + DOT_Y_PADDING + i * DOT_INDEXED_Y_OFFSET, hex);
       
       this.ctx.font = '13px Mulish';
       this.ctx.fillStyle = '#6d6a94';
-      this.ctx.fillText(this.formatTime(date), xCoordinate + 12 + 12, tooltipTopYCoordinate + 40 + 13 + i * 25);
+      this.ctx.fillText(this.formatTime(date), xCoordinate + 2 * DOT_X_OFFSET, tooltipTopYCoordinate + DOT_Y_XL_OFFSET + i * DOT_INDEXED_Y_OFFSET);
       
       this.ctx.font = '13px MulishSemiBold';
       
       this.ctx.fillStyle = 'black';
-      this.ctx.fillText(yValues[i].toFixed(2) + this.labelSuffix, xCoordinate + tooltipWidth - 12 - 75, tooltipTopYCoordinate + 40 + 13 + i * 25);
+      const TEXT_X_OFFSET = 75;
+      this.ctx.fillText(yValues[i].toFixed(2) + this.labelSuffix, xCoordinate + tooltipWidth - DOT_X_OFFSET - TEXT_X_OFFSET, tooltipTopYCoordinate + DOT_Y_XL_OFFSET + i * DOT_INDEXED_Y_OFFSET);
       i++;
     }
     this.ctx.font = '16px Mulish';

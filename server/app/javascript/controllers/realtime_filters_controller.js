@@ -54,14 +54,14 @@ export default class extends Controller {
       const values = this.searchParams.getAll(key);
       if (values.includes(value)) {
         this.searchParams.delete(key, value);
-        const currentValues = this.searchParams.getAll(key);
-        if(currentValues.length === 0) {
+        const currentLength = values.length - 1;
+        if(currentLength === 0) {
           let baseButton = document.getElementById(selectedFilterTarget.dataset.baseButtonId);
           label = baseButton.dataset.defaultLabel;
-        } else if(currentValues.length === 1) {
+        } else if(currentLength === 1) {
           label = this.allItems.get(key).get(currentValues[0]);
         } else {
-          label = `${(currentValues.length)} ${selectedFilterTarget.dataset.multiLabel}`;
+          label = `${(currentLength)} ${selectedFilterTarget.dataset.multiLabel}`;
         }
       } else {
         this.searchParams.append(key, value);

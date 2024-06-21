@@ -40,7 +40,7 @@ export default class extends Controller {
     urlSearchParams.forEach((value, key) => {
       this.searchParams.set(key, value);
     });
-    const fullUrl = `${url.protocol}//${url.host}${url.pathname}?${this.searchParams.toString()}`;
+    const fullUrl = `${url.origin}${url.pathname}?${this.searchParams.toString()}`;
     fetch(fullUrl, {
       method: 'GET',
       headers: { "X-CSRF-Token": this.token },

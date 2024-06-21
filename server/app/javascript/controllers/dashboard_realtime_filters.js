@@ -52,10 +52,10 @@ export default class extends RealtimeFiltersController {
     this.updateAllFiltersFromSearchParams(searchParams, filterTargets);
     this.updateAllFiltersFromSearchParams(searchParams, this.filterTargets);
     this.fetchAllWidgets(searchParams);
-    this.checkIfAllFiltersHaveAnActive();
+    this.setDefaultActiveValuesForFilters();
   }
   
-  checkIfAllFiltersHaveAnActive() {
+  setDefaultActiveValuesForFilters() {
     const keySet = new Set();
     this.filterTargets.forEach(filter => {
       if(filter.dataset.key === 'days') return;
