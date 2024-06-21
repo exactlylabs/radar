@@ -1,4 +1,9 @@
-import ChartController, {RIGHT_X_CONTEXT_OFFSET, X_AXIS_OFFSET, X_CONTEXT_OFFSET} from "./chart_controller";
+import ChartController, {
+  QUERY_INTERVALS,
+  RIGHT_X_CONTEXT_OFFSET,
+  X_AXIS_OFFSET,
+  X_CONTEXT_OFFSET
+} from "./chart_controller";
 
 export default class LineChartController extends ChartController {
   connect() {
@@ -20,13 +25,13 @@ export default class LineChartController extends ChartController {
     const firstDate = new Date(Number(this.chartData[0].x));
     const lastDate = new Date(Number(this.chartData[this.chartData.length - 1].x));
     const dateDiff = Number(this.chartData[this.chartData.length - 1].x) - Number(this.chartData[0].x);
-    const maxLabels = 5;
+    const maxLabels = this.queryTimeInterval === QUERY_INTERVALS.DAY ? 5 : this.queryTimeInterval === QUERY_INTERVALS.HOUR ? 4 : 3;
     const dateStep = Math.ceil(dateDiff / (maxLabels - 1));
     for(let i = 0 ; i < maxLabels - 1 ; i++) {
       const date = new Date(firstDate.getTime() + dateStep * i);
-      dateSet.add(this.formatTime(date));
+      dateSet.add(this.formatTime(date, true));
     }
-    dateSet.add(this.formatTime(lastDate));
+    dateSet.add(this.formatTime(lastDate, true));
     this.renderLabels(dateSet);
   }
   
@@ -54,7 +59,7 @@ export default class LineChartController extends ChartController {
       yCoordinate = this.getYCoordinateFromYValue(ys[minDifIndex]);
       yValue = ys[minDifIndex];
     }
-    
+    this.showVerticalDashedLine(mouseX);
     this.drawDotOnLine(xCoordinate, yCoordinate);
     
     // Tooltip drawing section
@@ -100,7 +105,9 @@ export default class LineChartController extends ChartController {
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
     
-    this.ctx.fillText('Online pods', xCoordinate + 8, yCoordinate + 8 + 13);
+    //this.ctx.fillText('Online pods', xCoordinate + 8, yCoordinate + 8 + 13);
+    const minDifIndexEntry = this.adjustedData[minDifIndex];
+    this.ctx.fillText(this.formatTime(new Date(Number(minDifIndexEntry.x))), xCoordinate + 8, yCoordinate + 8 + 13);
     
     this.ctx.beginPath();
     this.ctx.fillStyle = '#e3e3e8';
@@ -111,14 +118,10 @@ export default class LineChartController extends ChartController {
     
     this.ctx.font = '13px Mulish';
     
-    this.ctx.fillStyle = '#6d6a94';
-    const date = new Date(Number(this.adjustedData[minDifIndex].x));
-    this.ctx.fillText(this.formatTime(date), xCoordinate + 8, yCoordinate + 40 + 13);
-    
     this.ctx.font = '13px MulishSemiBold';
     
     this.ctx.fillStyle = 'black';
-    this.ctx.fillText(yValue, xCoordinate + tooltipWidth - 8 - 25, yCoordinate + 40 + 13);
+    this.ctx.fillText(`${yValue} pods`, xCoordinate + 8, yCoordinate + 40 + 13);
   
     this.ctx.font = '16px Mulish';
   }

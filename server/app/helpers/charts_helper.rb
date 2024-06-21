@@ -7,7 +7,8 @@ module ChartsHelper
   end
 
   def online_pods_params(current_account)
-    common_filter_params(current_account).merge(time_filter_params).merge(interval_type: 'd')
+    params = common_filter_params(current_account).merge(time_filter_params)
+    params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
   end
 
   def download_speeds_params(current_account)
@@ -136,5 +137,14 @@ module ChartsHelper
 
   def policy_filter_ids(model, ids)
     policy_scope(model).where(id: ids).pluck(:id).join(',')
+  end
+
+  def get_interval_type(from, to)
+    puts "get_interval_type, from: #{from.to_s}, to: #{to.to_s}"
+    return 'day' if from.nil? || to.nil?
+    return 'second' if (to.to_i - from.to_i) < 3.hours
+    return 'minute' if (to.to_i - from.to_i) < 8.hours
+    return 'hour' if (to.to_i - from.to_i) < 10.days
+    'day'
   end
 end

@@ -72,7 +72,7 @@ export default class MultiLineChartController extends ChartController {
     const adjustedDataByHex = new Map();
     points.forEach((linePoints, lineHex) => {
       if(this.selectedHexes.length === 0 || (this.selectedHexes.includes(lineHex)))
-        adjustedDataByHex.set(lineHex, this.adjustLineData(linePoints, '1d'));
+        adjustedDataByHex.set(lineHex, this.adjustLineData(linePoints));
     });
     return adjustedDataByHex;
   }
@@ -153,7 +153,6 @@ export default class MultiLineChartController extends ChartController {
     let minDifIndex = xDifs.indexOf(minDif);
     if(minDifIndex < 0) return;
     let yValues = [];
-    //let xCoordinate;
     const minDifIndexEntry = firstEntry.value[1][minDifIndex];
     let xCoordinate = this.getXCoordinateFromXValue(firstEntry.value[1], minDifIndex);
     let yCoordinate;
@@ -229,8 +228,8 @@ export default class MultiLineChartController extends ChartController {
     this.ctx.shadowColor = 'transparent';
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
-
-    this.ctx.fillText(CHART_TITLES[this.chartId], xCoordinate + 8, tooltipTopYCoordinate + 20);
+    
+    this.ctx.fillText(this.formatTime(new Date(Number(minDifIndexEntry.x))), xCoordinate + 8, tooltipTopYCoordinate + 20);
 
     this.ctx.beginPath();
     this.ctx.fillStyle = '#e3e3e8';
@@ -242,6 +241,7 @@ export default class MultiLineChartController extends ChartController {
     
     const date = new Date(Number(minDifIndexEntry.x));
     let i = 0;
+    this.showVerticalDashedLine(mouseX);
     for(let [hex, _] of this.adjustedData.entries()) {
       if(i >= yValues.length) break;
       const DOT_X_OFFSET = 12;

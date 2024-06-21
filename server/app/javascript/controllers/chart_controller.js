@@ -23,11 +23,19 @@ export const CHART_TITLES = {
   'compareDataUsage': 'Data Usage',
 }
 
+export const QUERY_INTERVALS = {
+  DAY: 'day',
+  HOUR: 'hour',
+  MINUTE: 'minute',
+  SECOND: 'second',
+}
+
 export default class ChartController extends Controller {
   
   COMPARISON_HEX = ['#472118', '#960A8B', '#FC3A11', '#58396A', '#D6463E', '#307B2A', '#535FB6', '#77DFB1', '#767698', '#502628', '#EFE7DF', '#A502EF', '#B21BE4', '#88FC76', '#9FADE3', '#B403C4', '#78BCFE', '#686514', '#B2D343', '#CE87CA', '#20E92E', '#C8A3D7', '#161C6C', '#98AE22', '#A8A5CF', '#D72876', '#105F87', '#432B82', '#5462EA', '#86C625', '#9175BF', '#438F36', '#AF3BCF', '#F3ADEF', '#050044', '#5F47D3', '#E11986', '#0C7566', '#A129E0', '#43B2D6', '#A7CB09', '#0C7318', '#9A6E4F', '#81B2A6', '#AE37B2', '#D66E62', '#05F0D9', '#EC1FA4', '#4CAC54', '#F94C42'];
   
   connect() {
+    this.queryTimeInterval = this.element.dataset.queryTimeInterval || 'day';
     this.isCompareChart = this.element.dataset.isCompareChart === 'true';
     if(this.isCompareChart) {
       this.entityCount = Number(this.element.dataset.entityCount) || 1;
@@ -67,12 +75,29 @@ export default class ChartController extends Controller {
   
   handleMouseMove(e) {
     const { mouseX, mouseY } = this.getMousePosition(e);
+    const isOffHorizontally = mouseX < X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.longestLabel) - 1 || mouseX > this.canvasWidth - X_AXIS_OFFSET - 1;
+    const isOffVertically = mouseY < Y_AXIS_OFFSET / 2 || mouseY > this.canvasHeight - Y_AXIS_OFFSET * 2 - BOTTOM_LABELS_HEIGHT;
+    if(isOffHorizontally || isOffVertically) {
+      this.resetStyles();
+      this.plotChart();
+      return;
+    }
     if(this.isDragging) {
       this.plotChart();
       this.showDragArea(e);
       return;
     }
     this.showTooltip(mouseX, mouseY);
+  }
+  
+  showVerticalDashedLine(mouseX) {
+    this.resetStyles();
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = '#3F3C70';
+    this.ctx.setLineDash([3]);
+    this.ctx.moveTo(mouseX, Y_AXIS_OFFSET / 2);
+    this.ctx.lineTo(mouseX, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - PADDING);
+    this.ctx.stroke();
   }
   
   handleMouseDown(e) {
@@ -133,7 +158,7 @@ export default class ChartController extends Controller {
     
     // Draw outline for rectangle with dashed style (using both in combination doesn't seem to work)
     this.ctx.lineWidth = 1;
-    this.ctx.strokeStyle = '#a09fb7';
+    this.ctx.strokeStyle = '#3F3C70';
     this.ctx.setLineDash([3]);
     // Top horizontal line
     this.ctx.beginPath();
@@ -238,10 +263,13 @@ export default class ChartController extends Controller {
     const labelY = this.canvasHeight - Y_AXIS_OFFSET - PADDING;
     const labels = Array.from(dateSet);
     const pointCount = labels.length - 1;
+    // get each label length, and distance them equally
+    const totalLabelCharWidth = labels.reduce((acc, label) => acc + (label.length * STANDARD_CHAR_WIDTH), 0);
+    const spaceBetweenLabels = (this.netWidth - totalLabelCharWidth + 2 * X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix)) / pointCount;
     labels.forEach((label, index) => {
-      const labelX = PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix) + index * this.netWidth / pointCount;
+      const labelX = PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.labelSuffix) + index * (label.length * STANDARD_CHAR_WIDTH + spaceBetweenLabels);
       this.ctx.fillText(label, labelX, labelY);
-      this.labels.push({ label, x: labelX - STANDARD_LABEL_WIDTH / 2 });
+      this.labels.push({ label, x: labelX });
     });
   }
   
@@ -358,29 +386,11 @@ export default class ChartController extends Controller {
    * @returns {{x: string, ys: number[]}[]}
    */
   adjustData(points) {
-    const timeStep = '1d'; // TODO: should be a filter of some sorts
-    if(timeStep === '1d') {
-      return this.adjustLineData(points, '1d')
-    }
+    return this.adjustLineData(points)
   }
   
-  adjustLineData(points, timeInterval) {
-    const pointsByDay = [];
-    points.forEach((point, index) => {
-      const { x, y } = point;
-      const pointTimeLabel = this.formatTime(x);
-      let prevPointTimeLabel = null;
-      if(index > 0) {
-        prevPointTimeLabel  = this.formatTime(points[index - 1].x);
-      }
-      if(pointTimeLabel === prevPointTimeLabel) {
-        const prevPoint = pointsByDay[pointsByDay.length - 1];
-        prevPoint.ys.push(y);
-      } else {
-        pointsByDay.push({ x, ys: [y] });
-      }
-    });
-    return pointsByDay;
+  adjustLineData(points) {
+    return points.map(point => ({ x: point.x, ys: [point.y] }));
   }
   
   closeLine(pointY, gradientFirstStopColor) {
@@ -402,7 +412,7 @@ export default class ChartController extends Controller {
     this.ctx.stroke();
   }
   
-  formatTime(timestamp) {
+  formatTime(timestamp, isInAxis = false) {
     try {
       let date = null;
       if(isNaN(Number(timestamp))) {
@@ -410,8 +420,23 @@ export default class ChartController extends Controller {
       } else {
         date = new Date(Number(timestamp));
       }
-      const monthWord = date.toLocaleString('default', { month: 'short' });
-      return `${monthWord} ${date.getDate()}`;
+      const monthWord = date.toLocaleString('default', {month: 'short'});
+      let hours = date.getHours() % 12;
+      if(hours === 0) hours = 12;
+      hours = hours.toString().padStart(2, '0');
+      if(this.queryTimeInterval === QUERY_INTERVALS.DAY) {
+        return `${monthWord} ${date.getDate()}`;
+      } else if(this.queryTimeInterval === QUERY_INTERVALS.HOUR && !isInAxis) {
+        // return date in format 'Jan 1, 12:11 AM' always in 2 digit format
+        return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+      } else if (this.queryTimeInterval === QUERY_INTERVALS.HOUR) {
+        return `${hours}:${date.getMinutes().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+      } else if([QUERY_INTERVALS.MINUTE, QUERY_INTERVALS.SECOND].includes(this.queryTimeInterval) && !isInAxis) {
+        // return date in format 'Jan 1, 8:30:35 PM' always in 2 digit format
+        return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+      } else if([QUERY_INTERVALS.MINUTE, QUERY_INTERVALS.SECOND].includes(this.queryTimeInterval)) {
+        return `${hours}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
+      }
     } catch(e) {
       console.error('Invalid timestamp', timestamp);
     }
@@ -509,6 +534,7 @@ export default class ChartController extends Controller {
   }
   
   drawDotOnLine(x, y, color = DEFAULT_BLUE) {
+    this.resetStyles();
     this.ctx.beginPath();
     this.ctx.fillStyle = color;
     this.ctx.strokeStyle = color;

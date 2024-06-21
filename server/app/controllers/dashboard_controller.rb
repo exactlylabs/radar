@@ -90,30 +90,35 @@ class DashboardController < ApplicationController
   def online_pods
     params = online_pods_params(current_account)
     sql = DashboardHelper.get_online_pods_sql(params[:interval_type], params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    set_query_interval_type(params)
     @online_pods = ActiveRecord::Base.connection.execute(sql)
   end
 
   def download_speeds
     params = download_speeds_params(current_account)
     sql = DashboardHelper.get_download_speed_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    set_query_interval_type(params)
     @download_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
   def upload_speeds
     params = upload_speeds_params(current_account)
     sql = DashboardHelper.get_upload_speed_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    set_query_interval_type(params)
     @upload_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
   def latency
     params = latency_params(current_account)
     sql = DashboardHelper.get_latency_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    set_query_interval_type(params)
     @latencies = ActiveRecord::Base.connection.execute(sql)
   end
 
   def data_usage
     params = data_usage_params(current_account)
     sql = DashboardHelper.get_usage_sql(params[:interval_type], params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+    set_query_interval_type(params)
     @usage = ActiveRecord::Base.connection.execute(sql)
   end
 
@@ -158,6 +163,11 @@ class DashboardController < ApplicationController
   end
 
   private
+
+  def set_query_interval_type(params)
+    puts "Setting query time interval type"
+    @query_time_interval = get_interval_type(params[:from], params[:to])
+  end
 
   def get_filtered_locations(locations, filter)
     case filter
