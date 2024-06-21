@@ -15,6 +15,7 @@
             data-chart-id="compareDataUsage"
             data-is-compare-chart="true"
             data-entity-count="<%= entities_array.count %>"
+            data-full-width="<%= entities_array.count <= 3 %>"
     ></canvas>
     <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                locals: {

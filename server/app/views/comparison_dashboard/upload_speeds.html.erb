@@ -15,6 +15,7 @@
             data-chart-id="compareUploadSpeeds"
             data-is-compare-chart="true"
             data-entity-count="<%= entity_array.count %>"
+            data-full-width="<%= entity_array.count <= 3 %>"
     ></canvas>
     <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                locals: {

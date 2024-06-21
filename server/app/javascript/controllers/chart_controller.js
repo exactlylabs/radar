@@ -9,6 +9,9 @@ export const X_CONTEXT_OFFSET = (labelSuffix) => labelSuffix ? STANDARD_LABEL_WI
 export const RIGHT_X_CONTEXT_OFFSET = 40;
 export const GRID_LINE_Y_OFFSET = 5;
 export const BOTTOM_LABELS_HEIGHT = 32;
+export const DEFAULT_BLUE = '#4b7be5';
+export const TOOLTIP_X_OFFSET = 8;
+export const TOOLTIP_Y_OFFSET = 21;
 
 export const CHART_TITLES = {
   'downloadSpeeds': 'Download Speeds',
@@ -329,7 +332,7 @@ export default class ChartController extends Controller {
     this.ctx.stroke();
   }
   
-  drawLine(data, strokeStyle = '#4b7be5', gradientFirstStopColor = 'rgba(75, 123, 229, 0.2)') {
+  drawLine(data, strokeStyle = DEFAULT_BLUE, gradientFirstStopColor = 'rgba(75, 123, 229, 0.2)') {
     this.ctx.beginPath();
     this.ctx.strokeStyle = strokeStyle;
     this.ctx.lineWidth = 2;
@@ -505,7 +508,7 @@ export default class ChartController extends Controller {
     return baseWidth + step * index;
   }
   
-  drawDotOnLine(x, y, color = '#4b7be5') {
+  drawDotOnLine(x, y, color = DEFAULT_BLUE) {
     this.ctx.beginPath();
     this.ctx.fillStyle = color;
     this.ctx.strokeStyle = color;
