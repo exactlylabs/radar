@@ -1,8 +1,15 @@
 import ChartController, {
-  BOTTOM_LABELS_HEIGHT, GRID_LINE_Y_OFFSET, PADDING, RIGHT_X_CONTEXT_OFFSET, TOOLTIP_X_OFFSET, TOOLTIP_Y_OFFSET,
+  BOTTOM_LABELS_HEIGHT,
+  GRID_LINE_Y_OFFSET,
+  PADDING,
+  RIGHT_X_CONTEXT_OFFSET,
+  TOOLTIP_X_OFFSET,
+  TOOLTIP_Y_OFFSET,
+  TOOLTIP_TITLE_PADDING,
   X_AXIS_OFFSET,
   X_CONTEXT_OFFSET,
-  Y_AXIS_OFFSET
+  Y_AXIS_OFFSET,
+  DEFAULT_BLUE
 } from "./chart_controller";
 
 const MB_UNIT = 1024 ** 2;
@@ -22,12 +29,22 @@ export default class BarChartController extends ChartController {
     });
   }
   
+  getFirstDate() {
+    return Number(this.chartData[0].x);
+  }
+  
+  getLastDate() {
+    return Number(this.chartData[this.chartData.length - 1].x);
+  }
+  
   getChartDataForComparison() {
     return JSON.parse(this.element.dataset.lineChartData);
   }
   
   plotChart() {
     this.clearCanvas();
+    this.individualBlockCount ||= this.chartData.length * 2 + this.chartData.length - 1; // one full data block is 2 individual spacers
+    this.barWidth = this.calculateBarWidth();
     this.chartData.forEach((barData, index) => {
       if(this.isCompareChart) {
         this.drawBar(barData, index, this.getFirstGradientStopColor(this.COMPARISON_HEX[index % this.COMPARISON_HEX.length], 0.5));
@@ -37,19 +54,22 @@ export default class BarChartController extends ChartController {
     });
   }
   
+  calculateBarWidth() {
+    return 2 * (this.netWidth / this.individualBlockCount);
+  }
+  
   drawBar(barData, index, color = 'rgba(75,123,229,0.5)') {
     this.ctx.beginPath();
     const { y } = barData;
     const barHeight = y * this.netHeight / this.maxYLabelValue;
-    let individualBlockCount = this.chartData.length * 2 + this.chartData.length - 1; // one full data block is 2 individual spacers
-    const individualBlockWidth = (this.netWidth + RIGHT_X_CONTEXT_OFFSET + PADDING) / individualBlockCount;
-    const barX = index * 2 * individualBlockWidth + index * individualBlockWidth + PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.longestLabel);
+    const spaceBetweenBars = this.barWidth / 2;
+    const barX = index * this.barWidth + index * spaceBetweenBars + this.horizontalContentStartingPixel;
     const barY = this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET - barHeight;
     this.ctx.fillStyle = color;
-    this.ctx.roundRect(barX, barY, 2 * individualBlockWidth, barHeight, 2, 2, 0, 0);
+    this.ctx.roundRect(barX, barY, this.barWidth, barHeight, 2, 2, 0, 0);
     this.ctx.fill();
     this.ctx.stroke();
-    return { barX, barY, barHeight, barWidth: 2 * individualBlockWidth };
+    return { barX, barY, barHeight, barWidth: this.barWidth };
   }
   
   // incoming value is in bytes, use this.preferredUnit to convert to MB, GB, etc.
@@ -69,6 +89,7 @@ export default class BarChartController extends ChartController {
   showTooltip(mouseX, mouseY) {
     const shouldContinue = this.setupTooltipContext(mouseX, mouseY);
     if(!shouldContinue) return;
+    this.showVerticalDashedLine(mouseX);
     const xDifs = this.chartData.map(({x, _}, index) => Math.abs(this.getXCoordinateFromXValue(this.chartData, index) - mouseX));
     const minDif = Math.min(...xDifs);
     const minDifIndex = xDifs.indexOf(minDif);
@@ -94,7 +115,12 @@ export default class BarChartController extends ChartController {
     // check if tooltip is within the chart space, otherwise shift over
     // if there is no space left, draw on top of the bar
     const offset = 8;
-    const tooltipWidth = 120;
+    let tooltipWidth = 120;
+    const tooltipTitle= new Date(Number(this.chartData[minDifIndex].x));
+    const tooltipTitleWidth = this.textWidth(tooltipTitle) + TOOLTIP_TITLE_PADDING;
+    
+    if(tooltipTitleWidth > tooltipWidth) tooltipWidth = tooltipTitleWidth;
+    
     const tooltipHeight = 70;
     if(xCoordinate + offset + tooltipWidth > this.canvasWidth) {
       xCoordinate = barX - tooltipWidth - offset;
@@ -125,7 +151,7 @@ export default class BarChartController extends ChartController {
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
     
-    this.ctx.fillText('Data usage', xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + TOOLTIP_Y_OFFSET);
+    this.ctx.fillText(this.formatTime(tooltipTitle), xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + TOOLTIP_Y_OFFSET);
     
     this.ctx.beginPath();
     this.ctx.fillStyle = '#e3e3e8';
@@ -141,8 +167,7 @@ export default class BarChartController extends ChartController {
     if(this.isCompareChart) {
       this.ctx.fillText('Data:', xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + 2 * TOOLTIP_Y_OFFSET + TOOLTIP_SECOND_LINE_Y_OFFSET);
     } else {
-      const date = new Date(Number(this.chartData[minDifIndex].x));
-      this.ctx.fillText(this.formatTime(date), xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + 2 * TOOLTIP_Y_OFFSET + TOOLTIP_SECOND_LINE_Y_OFFSET);
+      this.ctx.fillText(this.formatTime(tooltipTitle), xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + 2 * TOOLTIP_Y_OFFSET + TOOLTIP_SECOND_LINE_Y_OFFSET);
     }
     
     this.ctx.font = '13px MulishSemiBold';
@@ -155,14 +180,12 @@ export default class BarChartController extends ChartController {
   }
   
   mouseOverBar(mouseX, mouseY, possibleBarIndex) {
-    let individualBlockCount = this.chartData.length * 2 + this.chartData.length - 1; // one full data block is 2 individual spacers
-    const individualBlockWidth = (this.netWidth + RIGHT_X_CONTEXT_OFFSET + PADDING) / individualBlockCount;
-    const barX = possibleBarIndex * 2 * individualBlockWidth + possibleBarIndex * individualBlockWidth + PADDING + X_AXIS_OFFSET + X_CONTEXT_OFFSET(this.longestLabel);
-    const barEndX = barX + individualBlockWidth * 2;
+    const startBarX = this.horizontalContentStartingPixel + possibleBarIndex * (this.barWidth + this.barWidth / 2);
+    const endBarX = startBarX + this.barWidth;
     const barHeight = this.chartData[possibleBarIndex].y * this.netHeight / this.maxYLabelValue;
     const barY = this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - GRID_LINE_Y_OFFSET;
     const barEndY = barY - barHeight;
-    return mouseX >= barX && mouseX <= barEndX && mouseY <= barY && mouseY >= barEndY;
+    return mouseX >= startBarX && mouseX <= endBarX && mouseY <= barY && mouseY >= barEndY;
   }
   
   getXValueAtIndex(index) {

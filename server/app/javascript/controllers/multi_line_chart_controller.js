@@ -1,4 +1,4 @@
-import ChartController, {CHART_TITLES} from "./chart_controller";
+import ChartController, {CHART_TITLES, DOT_SIZE, TOOLTIP_TITLE_PADDING, X_AXIS_OFFSET} from "./chart_controller";
 
 const MB_UNIT = 1024 ** 2;
 const GB_UNIT = 1024 ** 3;
@@ -18,19 +18,12 @@ export default class MultiLineChartController extends ChartController {
     return super.createHiDPICanvas(w, heightWithoutButtons, ratio);
   }
   
-  setXAxis() {
-    const dateSet = new Set();
-    const firstDate = new Date(Number(this.chartData.values().next().value[0].x));
-    const lastDate = new Date(Number(this.chartData.values().next().value[this.chartData.values().next().value.length - 1].x));
-    const dateDiff = Number(this.chartData.values().next().value[this.chartData.values().next().value.length - 1].x) - Number(this.chartData.values().next().value[0].x);
-    const maxLabels = 5;
-    const dateStep = Math.ceil(dateDiff / (maxLabels - 1));
-    for(let i = 0 ; i < maxLabels - 1 ; i++) {
-      const date = new Date(firstDate.getTime() + dateStep * i);
-      dateSet.add(this.formatTime(date));
-    }
-    dateSet.add(this.formatTime(lastDate));
-    this.renderLabels(dateSet);
+  getFirstDate() {
+    return Number(this.chartData.values().next().value[0].x);
+  }
+  
+  getLastDate() {
+    return Number(this.chartData.values().next().value[this.chartData.values().next().value.length - 1].x);
   }
   
   setYAxis() {
@@ -177,6 +170,7 @@ export default class MultiLineChartController extends ChartController {
       yValues.push(yValue);
       
       this.drawDotOnLine(xCoordinate, yCoordinate, hex);
+      this.showVerticalDashedLine(mouseX);
     }
     
     // Tooltip drawing section
@@ -192,7 +186,23 @@ export default class MultiLineChartController extends ChartController {
 
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
-    const tooltipWidth = 180;
+    let tooltipWidth = 100;
+    
+    const tooltipTitle = this.formatTime(new Date(Number(minDifIndexEntry.x)));
+    const tooltipTitleWidth = this.ctx.measureText(tooltipTitle).width + TOOLTIP_TITLE_PADDING;
+    if(tooltipTitleWidth > tooltipWidth) tooltipWidth = tooltipTitleWidth;
+    
+    let i = 0;
+    const X_SIDE_PADDING = 12;
+    const DOT_TEXT_SPACING = 8;
+    const MAIN_TEXT_VALUE_SPACING = 16;
+    for(let entry of this.adjustedData.entries()) {
+      let lineWidth = X_SIDE_PADDING + DOT_SIZE + DOT_TEXT_SPACING + tooltipTitleWidth - TOOLTIP_TITLE_PADDING + MAIN_TEXT_VALUE_SPACING +
+        this.textWidth(yValues[i].toFixed(2) + this.labelSuffix) + X_SIDE_PADDING;
+      if(lineWidth > tooltipWidth) tooltipWidth = lineWidth;
+      i++;
+    }
+    
     const tooltipHeight = this.getDynamicTooltipHeight(yValues.length);
     let tooltipTopYCoordinate = mouseY - tooltipHeight / 2;
     
@@ -229,7 +239,7 @@ export default class MultiLineChartController extends ChartController {
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
     
-    this.ctx.fillText(this.formatTime(new Date(Number(minDifIndexEntry.x))), xCoordinate + 8, tooltipTopYCoordinate + 20);
+    this.ctx.fillText(tooltipTitle, xCoordinate + 8, tooltipTopYCoordinate + 20);
 
     this.ctx.beginPath();
     this.ctx.fillStyle = '#e3e3e8';
@@ -237,32 +247,28 @@ export default class MultiLineChartController extends ChartController {
     this.ctx.moveTo(xCoordinate, tooltipTopYCoordinate + 30);
     this.ctx.lineTo(xCoordinate + tooltipWidth, tooltipTopYCoordinate +  30);
     this.ctx.stroke();
-
     
-    const date = new Date(Number(minDifIndexEntry.x));
-    let i = 0;
-    this.showVerticalDashedLine(mouseX);
+    i = 0;
     for(let [hex, _] of this.adjustedData.entries()) {
-      if(i >= yValues.length) break;
-      const DOT_X_OFFSET = 12;
-      const DOT_Y_OFFSET = 40;
-      const DOT_Y_XL_OFFSET = 53;
-      const DOT_Y_PADDING = 8;
-      const DOT_INDEXED_Y_OFFSET = 25;
-      this.drawDotOnLine(xCoordinate + DOT_X_OFFSET, tooltipTopYCoordinate + DOT_Y_OFFSET + DOT_Y_PADDING + i * DOT_INDEXED_Y_OFFSET, hex);
-      
+      let xPixel = xCoordinate + X_SIDE_PADDING;
+      const DOT_Y_COORDINATE = tooltipTopYCoordinate + 40 + 8 + i * 25;
+      const TEXT_Y_COORDINATE = tooltipTopYCoordinate + 40 + 13 + i * 25;
+      this.drawDotOnLine(xPixel, DOT_Y_COORDINATE, hex);
       this.ctx.font = '13px Mulish';
       this.ctx.fillStyle = '#6d6a94';
-      this.ctx.fillText(this.formatTime(date), xCoordinate + 2 * DOT_X_OFFSET, tooltipTopYCoordinate + DOT_Y_XL_OFFSET + i * DOT_INDEXED_Y_OFFSET);
+      xPixel += DOT_SIZE + DOT_TEXT_SPACING;
+      this.ctx.fillText(tooltipTitle, xPixel, tooltipTopYCoordinate + 40 + 13 + i * 25);
       
       this.ctx.font = '13px MulishSemiBold';
-      
       this.ctx.fillStyle = 'black';
-      const TEXT_X_OFFSET = 75;
-      this.ctx.fillText(yValues[i].toFixed(2) + this.labelSuffix, xCoordinate + tooltipWidth - DOT_X_OFFSET - TEXT_X_OFFSET, tooltipTopYCoordinate + DOT_Y_XL_OFFSET + i * DOT_INDEXED_Y_OFFSET);
+      // start from right to left to force side padding to be contemplated
+      const valueAndUnit = yValues[i].toFixed(2) + this.labelSuffix;
+      xPixel = xCoordinate + tooltipWidth - X_SIDE_PADDING - this.textWidth(valueAndUnit);
+      this.ctx.fillText(valueAndUnit, xPixel, TEXT_Y_COORDINATE);
       i++;
     }
     this.ctx.font = '16px Mulish';
+    this.ctx.stroke();
   }
   
   getDynamicTooltipHeight(yValuesLength = 0) {

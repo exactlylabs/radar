@@ -1,9 +1,4 @@
-import ChartController, {
-  QUERY_INTERVALS,
-  RIGHT_X_CONTEXT_OFFSET,
-  X_AXIS_OFFSET,
-  X_CONTEXT_OFFSET
-} from "./chart_controller";
+import ChartController, { QUERY_INTERVALS, TOOLTIP_TITLE_PADDING } from "./chart_controller";
 
 export default class LineChartController extends ChartController {
   connect() {
@@ -20,19 +15,12 @@ export default class LineChartController extends ChartController {
     this.drawLine(this.adjustedData);
   }
   
-  setXAxis() {
-    const dateSet = new Set();
-    const firstDate = new Date(Number(this.chartData[0].x));
-    const lastDate = new Date(Number(this.chartData[this.chartData.length - 1].x));
-    const dateDiff = Number(this.chartData[this.chartData.length - 1].x) - Number(this.chartData[0].x);
-    const maxLabels = this.queryTimeInterval === QUERY_INTERVALS.DAY ? 5 : this.queryTimeInterval === QUERY_INTERVALS.HOUR ? 4 : 3;
-    const dateStep = Math.ceil(dateDiff / (maxLabels - 1));
-    for(let i = 0 ; i < maxLabels - 1 ; i++) {
-      const date = new Date(firstDate.getTime() + dateStep * i);
-      dateSet.add(this.formatTime(date, true));
-    }
-    dateSet.add(this.formatTime(lastDate, true));
-    this.renderLabels(dateSet);
+  getFirstDate() {
+    return Number(this.chartData[0].x);
+  }
+  
+  getLastDate() {
+    return Number(this.chartData[this.chartData.length - 1].x);
   }
   
   showTooltip(mouseX, mouseY) {
@@ -59,8 +47,8 @@ export default class LineChartController extends ChartController {
       yCoordinate = this.getYCoordinateFromYValue(ys[minDifIndex]);
       yValue = ys[minDifIndex];
     }
-    this.showVerticalDashedLine(mouseX);
     this.drawDotOnLine(xCoordinate, yCoordinate);
+    this.showVerticalDashedLine(mouseX);
     
     // Tooltip drawing section
     this.ctx.beginPath();
@@ -75,7 +63,21 @@ export default class LineChartController extends ChartController {
     
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
-    const tooltipWidth = 120;
+    let tooltipWidth = 97;
+    
+    // I need to check if the content is wider than the tooltip base width and adjust it
+    const tooltipTitle = this.formatTime(new Date(Number(this.adjustedData[minDifIndex].x)));
+    const tooltipTitleWidth = this.ctx.measureText(tooltipTitle).width + TOOLTIP_TITLE_PADDING;
+    if(tooltipTitleWidth > tooltipWidth) {
+      tooltipWidth = tooltipTitleWidth;
+    }
+    
+    const tooltipContent = `${yValue} pods`;
+    const tooltipContentWidth = this.ctx.measureText(tooltipContent).width + TOOLTIP_TITLE_PADDING;
+    if(tooltipContentWidth > tooltipWidth) {
+      tooltipWidth = tooltipContentWidth;
+    }
+    
     const tooltipHeight = 70;
     if(xCoordinate + offset + tooltipWidth > this.canvasWidth) {
       const tooltipEndX = xCoordinate + offset + tooltipWidth;
@@ -105,9 +107,7 @@ export default class LineChartController extends ChartController {
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
     
-    //this.ctx.fillText('Online pods', xCoordinate + 8, yCoordinate + 8 + 13);
-    const minDifIndexEntry = this.adjustedData[minDifIndex];
-    this.ctx.fillText(this.formatTime(new Date(Number(minDifIndexEntry.x))), xCoordinate + 8, yCoordinate + 8 + 13);
+    this.ctx.fillText(tooltipTitle, xCoordinate + 8, yCoordinate + 8 + 13);
     
     this.ctx.beginPath();
     this.ctx.fillStyle = '#e3e3e8';

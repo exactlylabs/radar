@@ -140,7 +140,6 @@ module ChartsHelper
   end
 
   def get_interval_type(from, to)
-    puts "get_interval_type, from: #{from.to_s}, to: #{to.to_s}"
     return 'day' if from.nil? || to.nil?
     return 'second' if (to.to_i - from.to_i) < 3.hours
     return 'minute' if (to.to_i - from.to_i) < 8.hours
