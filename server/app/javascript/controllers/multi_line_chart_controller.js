@@ -149,6 +149,7 @@ export default class MultiLineChartController extends ChartController {
     const minDifIndexEntry = firstEntry.value[1][minDifIndex];
     let xCoordinate = this.getXCoordinateFromXValue(firstEntry.value[1], minDifIndex);
     let yCoordinate;
+    this.showVerticalDashedLine(mouseX);
     let rowCount = 1;
     for(let [hex, linePoints] of this.adjustedData.entries()) {
       if(rowCount > 5) break;
@@ -170,7 +171,6 @@ export default class MultiLineChartController extends ChartController {
       yValues.push(yValue);
       
       this.drawDotOnLine(xCoordinate, yCoordinate, hex);
-      this.showVerticalDashedLine(mouseX);
     }
     
     // Tooltip drawing section

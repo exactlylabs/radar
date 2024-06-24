@@ -12,15 +12,18 @@ module ChartsHelper
   end
 
   def download_speeds_params(current_account)
-    common_filter_params(current_account).merge(time_filter_params)
+    params = common_filter_params(current_account).merge(time_filter_params)
+    params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
   end
 
   def compare_download_speeds_params(current_account)
-    common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    params = common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
   end
 
   def upload_speeds_params(current_account)
-    common_filter_params(current_account).merge(time_filter_params)
+    params = common_filter_params(current_account).merge(time_filter_params)
+    params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
   end
 
   def compare_upload_speeds_params(current_account)
@@ -28,7 +31,8 @@ module ChartsHelper
   end
 
   def latency_params(current_account)
-    common_filter_params(current_account).merge(time_filter_params)
+    params = common_filter_params(current_account).merge(time_filter_params)
+    params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
   end
 
   def compare_latency_params(current_account)
@@ -36,7 +40,8 @@ module ChartsHelper
   end
 
   def data_usage_params(current_account)
-    common_filter_params(current_account).merge(time_filter_params).merge(interval_type: 'd')
+    params = common_filter_params(current_account).merge(time_filter_params)
+    params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
   end
 
   def compare_data_usage_params(current_account)
@@ -44,7 +49,8 @@ module ChartsHelper
   end
 
   def total_data_params(current_account)
-    common_filter_params(current_account).merge(time_filter_params)
+    params = common_filter_params(current_account).merge(time_filter_params)
+    params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
   end
 
   def compare_total_data_params(current_account)

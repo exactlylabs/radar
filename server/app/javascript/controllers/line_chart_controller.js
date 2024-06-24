@@ -47,8 +47,8 @@ export default class LineChartController extends ChartController {
       yCoordinate = this.getYCoordinateFromYValue(ys[minDifIndex]);
       yValue = ys[minDifIndex];
     }
-    this.drawDotOnLine(xCoordinate, yCoordinate);
     this.showVerticalDashedLine(mouseX);
+    this.drawDotOnLine(xCoordinate, yCoordinate);
     
     // Tooltip drawing section
     this.ctx.beginPath();
