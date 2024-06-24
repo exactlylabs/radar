@@ -1,5 +1,6 @@
 class ReprocessNetworkGeospaceJob < ApplicationJob
   queue_as :default
+  sidekiq_options retry: 5
 
   def perform(network)
     network.geospaces.excluding_lonlat(network.lonlat).each do |geospace|
