@@ -97,10 +97,16 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
       setFetchingResults(true);
       if(!map && requestArea) {
         const [lat, lng] = requestArea;
-        // Create bounding box
-        const _southWest = {lat: lat - 2, lng: lng - 2};
-        const _northEast = {lat: lat + 2, lng: lng + 2};
-        fetchTestsWithBounds({_southWest, _northEast});
+
+        if (isNaN(lat) || isNaN(lng)) {
+          notifyError("Error fetching based on request area: ", requestArea);
+          fetchTestsWithBounds([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
+        } else {
+          // Create bounding box
+          const _southWest = {lat: lat - 2, lng: lng - 2};
+          const _northEast = {lat: lat + 2, lng: lng + 2};
+          fetchTestsWithBounds({_southWest, _northEast});
+        }
       } else {
         // Way more precise way of getting current bounding box
         fetchTestsWithBounds(map.getBounds());
