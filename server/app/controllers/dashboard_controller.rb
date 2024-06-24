@@ -165,7 +165,6 @@ class DashboardController < ApplicationController
   private
 
   def set_query_interval_type(params)
-    puts "Setting query time interval type"
     @query_time_interval = get_interval_type(params[:from], params[:to])
   end
 

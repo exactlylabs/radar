@@ -296,6 +296,7 @@ export default class ChartController extends Controller {
   }
   
   formatLabelNumericValue(value) {
+    if(value === 0) return '0';
     const number = Number(value);
     const twoDigit = number.toFixed(2);
     if(twoDigit === '0.00') {
@@ -322,7 +323,7 @@ export default class ChartController extends Controller {
   }
   
   setLongestLabel() {
-    this.longestLabel = this.isSmallScreen() ? `0 ${this.labelSuffix}` : "0";
+    this.longestLabel = this.isSmallScreen() ? "0" : `0 ${this.labelSuffix}`;
     const jumps = Math.ceil(this.maxTotal / this.yStepSize);
     if(isNaN(jumps)) return;
     if(jumps < 2) {
@@ -342,7 +343,8 @@ export default class ChartController extends Controller {
     this.setLongestLabel();
     this.setNetWidth();
     this.createYAxisLabel(this.isSmallScreen() ? this.labelSuffix : "0", 0, this.canvasHeight - Y_AXIS_OFFSET - BOTTOM_LABELS_HEIGHT - PADDING);
-    const jumps = Math.ceil(this.maxTotal / this.yStepSize);
+    let jumps = Math.ceil(this.maxTotal / this.yStepSize);
+    if(isNaN(jumps)) jumps = 1;
     if(jumps < 2) {
       this.createYAxisLabel(`${this.formatLabelNumericValue(this.maxTotal)}${this.isSmallScreen() ? '' : this.labelSuffix}`, 0, Y_AXIS_OFFSET + PADDING);
     } else {

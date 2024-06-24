@@ -44,7 +44,7 @@ export default class BarChartController extends ChartController {
   plotChart() {
     this.clearCanvas();
     this.individualBlockCount ||= this.chartData.length * 2 + this.chartData.length - 1; // one full data block is 2 individual spacers
-    this.barWidth = this.calculateBarWidth();
+    this.barWidth = this.calculateBarWidth(this.chartData.length);
     this.chartData.forEach((barData, index) => {
       if(this.isCompareChart) {
         this.drawBar(barData, index, this.getFirstGradientStopColor(this.COMPARISON_HEX[index % this.COMPARISON_HEX.length], 0.5));
@@ -54,7 +54,7 @@ export default class BarChartController extends ChartController {
     });
   }
   
-  calculateBarWidth() {
+  calculateBarWidth(totalDataPointsCount) {
     return 2 * (this.netWidth / this.individualBlockCount);
   }
   
@@ -116,10 +116,14 @@ export default class BarChartController extends ChartController {
     // if there is no space left, draw on top of the bar
     const offset = 8;
     let tooltipWidth = 120;
-    const tooltipTitle= new Date(Number(this.chartData[minDifIndex].x));
+    const tooltipTitle= this.formatTime(new Date(Number(this.chartData[minDifIndex].x)));
     const tooltipTitleWidth = this.textWidth(tooltipTitle) + TOOLTIP_TITLE_PADDING;
     
     if(tooltipTitleWidth > tooltipWidth) tooltipWidth = tooltipTitleWidth;
+    
+    const tooltipDataLength = offset + this.textWidth(this.formatLabelNumericValue(this.chartData[minDifIndex].y) + this.labelSuffix);
+    
+    if(tooltipDataLength > tooltipWidth) tooltipWidth = tooltipDataLength;
     
     const tooltipHeight = 70;
     if(xCoordinate + offset + tooltipWidth > this.canvasWidth) {
@@ -163,18 +167,14 @@ export default class BarChartController extends ChartController {
     this.ctx.font = '13px Mulish';
     
     this.ctx.fillStyle = '#6d6a94';
-    const TOOLTIP_SECOND_LINE_Y_OFFSET = 13;
     if(this.isCompareChart) {
-      this.ctx.fillText('Data:', xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + 2 * TOOLTIP_Y_OFFSET + TOOLTIP_SECOND_LINE_Y_OFFSET);
-    } else {
-      this.ctx.fillText(this.formatTime(tooltipTitle), xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + 2 * TOOLTIP_Y_OFFSET + TOOLTIP_SECOND_LINE_Y_OFFSET);
+      this.ctx.fillText('Data:', xCoordinate + 8, yCoordinate + 40 + 13);
     }
     
     this.ctx.font = '13px MulishSemiBold';
     
     this.ctx.fillStyle = 'black';
-    const TOOLTIP_WIDTH_OFFSET = 57;
-    this.ctx.fillText(this.formatLabelNumericValue(this.chartData[minDifIndex].y) + this.labelSuffix, xCoordinate + tooltipWidth - TOOLTIP_WIDTH_OFFSET, yCoordinate + 2 * TOOLTIP_Y_OFFSET + TOOLTIP_SECOND_LINE_Y_OFFSET);
+    this.ctx.fillText(this.formatLabelNumericValue(this.chartData[minDifIndex].y) + " " + this.labelSuffix, xCoordinate + offset, yCoordinate + 40 + 13);
     
     this.ctx.font = '16px Mulish';
   }

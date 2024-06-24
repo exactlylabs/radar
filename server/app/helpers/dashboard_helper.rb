@@ -226,7 +226,11 @@ module DashboardHelper
 
   def self.get_usage_sql(interval_type, from, to, account_ids, as_org_ids: nil, location_ids: nil)
     sql = %{
-      WITH data_used_per_day AS (
+    WITH timeseries AS (
+      SELECT extract(EPOCH FROM generate_series) * 1000 as "step"
+      FROM generate_series(:from::date, :to::date, CONCAT('1 ', :interval_type)::interval)
+    ),
+    data_used_per_day AS (
         SELECT
           date_trunc(:interval_type, processed_at) as "time",
           SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes) AS "total"
@@ -244,7 +248,9 @@ module DashboardHelper
         GROUP BY 1
         ORDER BY 1 ASC
       )
-      SELECT total as y, EXTRACT(EPOCH FROM time) * 1000 as x FROM data_used_per_day ORDER BY time ASC;
+      SELECT COALESCE(total, 0) AS y, step AS x from timeseries
+      LEFT JOIN data_used_per_day ON timeseries.step = EXTRACT(EPOCH FROM time) * 1000
+      ORDER BY x ASC;
     }
     ActiveRecord::Base.sanitize_sql([sql, {interval_type: interval_type, account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
