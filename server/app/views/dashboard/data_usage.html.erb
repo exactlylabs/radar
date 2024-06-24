@@ -9,6 +9,7 @@
             data-line-chart-data="<%= @usage.to_json %>"
             data-parent-id="data-usage-widget<%= responsive ? '-responsive' : ''%>"
             data-label-suffix="<%= current_user&.data_cap_unit || "GB" %>"
+            data-query-time-interval="<%= @query_time_interval %>"
     ></canvas>
   <% end %>
 <% end %>
