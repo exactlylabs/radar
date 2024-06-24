@@ -216,3 +216,6 @@ application.register("outages-modal", OutagesModalController);
 
 import RealtimeFiltersController from "./realtime_filters_controller";
 application.register("realtime-filters", RealtimeFiltersController);
+
+import ClaimPodsController from "./claim_pods_controller";
+application.register("claim-pods", ClaimPodsController);

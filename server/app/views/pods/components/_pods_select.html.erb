@@ -31,7 +31,7 @@
     <div class="category--horizontal-divider"></div>
 
     <div class="pods--select-pod-list-container">
-      <% policy_scope(Client).each do |pod| %>
+      <% policy_scope(Client).order(:unix_user).each do |pod| %>
         <div class="pods--select-option"
              data-multi-pod-select-target="podSelectOption"
              data-pod-id="<%= pod.unix_user %>"

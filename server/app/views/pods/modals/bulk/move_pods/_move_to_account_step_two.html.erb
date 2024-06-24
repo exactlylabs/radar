@@ -12,7 +12,7 @@
   <input hidden="hidden" type="text" value="<%= @pods.map(&:unix_user).to_s %>" name="pod_ids[]" data-multi-pod-select-target="selectedPodIdsHiddenInput"/>
   <div class="modals--content-container" data-resource="bulk-move-pods">
     <div class="modals--form-row">
-      <% all_accounts = policy_scope(Account).not_deleted.distinct.where.not(id: current_account&.id) %>
+      <% all_accounts = policy_scope(Account).not_deleted.order(:name).distinct.where.not(id: current_account&.id) %>
       <label for="bulk-pods-select-account" class="forms--label">Move your pods to...</label>
       <select id="bulk-pods-select-account"
               class="forms--select form-select select2-hidden-accessible"

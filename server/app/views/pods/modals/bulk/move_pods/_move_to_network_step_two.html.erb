@@ -22,7 +22,7 @@
               name="network_id"
               data-select2-dropdown-parent-value="bulk_move_to_network_modal"
       >
-        <% policy_scope(Location).distinct.each do |network| %>
+        <% policy_scope(Location).distinct.order(:name).each do |network| %>
           <option value="<%= network.id %>"
                   label="<%= network.name %>"
           ><%= network.name %></option>
