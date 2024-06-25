@@ -151,8 +151,6 @@ export const SpeedTestContextProvider = ({children}) => {
 
   const finishRun = async () => {
     try {
-      setCurrentStep(STEPS.SPEED_TEST_RESULTS);
-      setIsRunning(false);
       const speedTest = await sendRawData(speedTestData.rawData, timestampRef.current, userData, config.clientId);
       setAutonomousSystem(speedTest.autonomous_system);
       const result = {
@@ -169,6 +167,8 @@ export const SpeedTestContextProvider = ({children}) => {
         ...userData.address,
       };
       storeRunData(result);
+      setIsRunning(false);
+      setCurrentStep(STEPS.SPEED_TEST_RESULTS);
     } catch (e) {
       notifyError(e);
     }
