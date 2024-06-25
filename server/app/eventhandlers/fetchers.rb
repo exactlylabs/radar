@@ -1,11 +1,12 @@
 module Fetchers
   DEFAULT_BATCH_SIZE = 10000
 
-  def events_iterator(model, offset, batch_size: DEFAULT_BATCH_SIZE)
+  def events_iterator(model, offset, batch_size: DEFAULT_BATCH_SIZE, filter_timestamp: false)
     Enumerator.new { |g|
       ar_conn = ActiveRecord::Base::connection_pool.checkout
       begin
         conn = ar_conn.raw_connection
+        filter_type = filter_timestamp ? "events.timestamp > to_timestamp(?)" : "events.id > ?"
         sql = %{
           SELECT
             events.id as id,
@@ -18,7 +19,7 @@ module Fetchers
             snapshots.id as snapshot_id
           FROM events
           JOIN snapshots ON snapshots.event_id = events.id
-          WHERE events.id > ? AND events.aggregate_type = ?
+          WHERE #{filter_type} AND events.aggregate_type = ?
           ORDER BY events.timestamp ASC, events.version ASC
         }
         sql = ActiveRecord::Base.sanitize_sql_array([sql, offset, model.name])

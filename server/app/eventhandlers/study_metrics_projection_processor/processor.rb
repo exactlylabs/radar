@@ -23,11 +23,7 @@ module StudyMetricsProjectionProcessor
       @consumer_offset.state["locations_state"] ||= {}
 
       @lonlats ||= {}
-      @location_metadatas = {}
-
-      LocationMetadataProjection.all.each do |meta|
-        @location_metadatas["#{meta.location_id}-#{meta.autonomous_system_org_id}"] = meta
-      end
+      @location_metadatas = self.load_location_metadatas
     end
 
     def self.clear
@@ -47,14 +43,14 @@ module StudyMetricsProjectionProcessor
       t = Time.now
       conn = ActiveRecord::Base.connection_pool.checkout
       offsets = {
-        client_events_offset: @consumer_offset.state["client_events_offset"] || 0,
+        client_events_timestamp: @consumer_offset.state["client_events_timestamp"] || 0,
         sys_outage_events_offset: @consumer_offset.state["sys_outage_events_offset"] || 0,
         measurements_offset: @consumer_offset.state["measurements_offset"] || 0,
         speed_tests_offset: @consumer_offset.state["speed_tests_offset"] || 0,
         daily_trigger_offset: @consumer_offset.state["daily_trigger_offset"] || 0,
       }
       iterators = [
-        self.events_iterator(Client, offsets[:client_events_offset]),
+        self.events_iterator(Client, offsets[:client_events_timestamp], filter_timestamp: true),
         self.events_iterator(SystemOutage, offsets[:sys_outage_events_offset]),
         self.measurements_iterator(offsets[:measurements_offset]),
         self.client_speed_tests_iterator(offsets[:speed_tests_offset]),
@@ -73,7 +69,7 @@ module StudyMetricsProjectionProcessor
           case source
           when Client.name || SystemOutage.name
             self.handle_event value
-            @consumer_offset.state["client_events_offset"] = value["id"] if source == "Client"
+            @consumer_offset.state["client_events_timestamp"] = value["timestamp"].to_f if source == "Client"
             @consumer_offset.state["sys_outage_events_offset"] = value["id"] if source == "SystemOutage"
 
           when Measurement.name
@@ -98,9 +94,6 @@ module StudyMetricsProjectionProcessor
           end
         end
         self.flush_insertion_queue
-        @location_metadatas.each do |key, meta|
-          meta.save!
-        end
       ensure
         ActiveRecord::Base.connection_pool.checkin(conn)
       end
@@ -169,9 +162,6 @@ module StudyMetricsProjectionProcessor
 
     def flush_insertion_queue()
       # Save current insertions into the DB, update the offsets, and location metadatas in a single transaction
-      if @insertion_queue.size == 0
-        return
-      end
       @raw.transaction do
         Rails.logger.info "Flushing insertion queue with #{@insertion_queue.size} elements"
         t = Time.now
@@ -179,18 +169,20 @@ module StudyMetricsProjectionProcessor
         @location_metadatas.values.each do |meta|
           meta.save!
         end
-        @raw.exec("COPY metrics_projections (timestamp, study_aggregate_id, parent_aggregate_id, autonomous_system_org_id, online_pods_count, online_locations_count, measurements_count, points_with_tests_count, completed_locations_count, completed_and_online_locations_count, bucket_name) FROM STDIN CSV")
-        @insertion_queue.each do |row|
-          @raw.put_copy_data(
-            "#{row["timestamp"].iso8601(9)},#{row["study_aggregate_id"]},#{row["parent_aggregate_id"]},#{row["autonomous_system_org_id"]},#{row["online_pods_count"]},#{row["online_locations_count"]},#{row["measurements_count"]},#{row["points_with_tests_count"]},#{row["completed_locations_count"]},#{row["completed_and_online_locations_count"]},#{row["bucket_name"]}\n")
-        end
-        @raw.put_copy_end
-        while res = @raw.get_result do
-          if res.result_status != 1
-            raise res.error_message
+        if @insertion_queue.size > 0
+          @raw.exec("COPY metrics_projections (timestamp, study_aggregate_id, parent_aggregate_id, autonomous_system_org_id, online_pods_count, online_locations_count, measurements_count, points_with_tests_count, completed_locations_count, completed_and_online_locations_count, bucket_name) FROM STDIN CSV")
+          @insertion_queue.each do |row|
+            @raw.put_copy_data(
+              "#{row["timestamp"].iso8601(9)},#{row["study_aggregate_id"]},#{row["parent_aggregate_id"]},#{row["autonomous_system_org_id"]},#{row["online_pods_count"]},#{row["online_locations_count"]},#{row["measurements_count"]},#{row["points_with_tests_count"]},#{row["completed_locations_count"]},#{row["completed_and_online_locations_count"]},#{row["bucket_name"]}\n")
           end
+          @raw.put_copy_end
+          while res = @raw.get_result do
+            if res.result_status != 1
+              raise res.error_message
+            end
+          end
+          Rails.logger.info "Insertion took #{Time.now - t} seconds"
         end
-        Rails.logger.info "Insertion took #{Time.now - t} seconds"
       end
       @insertion_queue = []
     end

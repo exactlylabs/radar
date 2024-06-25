@@ -17,6 +17,13 @@ class OnlineClientCountHandler
     @last_timestamp = nil
   end
 
+  def self.clear
+    ActiveRecord::Base.connection.transaction do
+      ActiveRecord::Base.connection.execute("TRUNCATE TABLE online_client_count_projections")
+      ConsumerOffset.find_by(consumer_id: "OnlineClientCountProjection")&.destroy
+    end
+  end
+
   def aggregate!()
     conn = ActiveRecord::Base.connection_pool.checkout
     begin
@@ -30,13 +37,13 @@ class OnlineClientCountHandler
   def _aggregate!()
     @last_timestamp = OnlineClientCountProjection.order(timestamp: :desc).first&.timestamp
     offsets = {
-      client_events_offset: @consumer_offset.state["client_events_offset"] || @consumer_offset.offset || 0,
-      location_events_offset: @consumer_offset.state["location_events_offset"] || 0,
+      client_events_timestamp: @consumer_offset.state["client_events_timestamp"] || 0,
+      location_events_timestamp: @consumer_offset.state["location_events_timestamp"] || 0,
       sys_outage_events_offset: @consumer_offset.state["sys_outage_events_offset"] || 0,
     }
     iterators = [
-      self.events_iterator(Client, offsets[:client_events_offset]),
-      self.events_iterator(Location, offsets[:location_events_offset]),
+      self.events_iterator(Client, offsets[:client_events_timestamp], filter_timestamp: true),
+      self.events_iterator(Location, offsets[:location_events_timestamp], filter_timestamp: true),
       self.events_iterator(SystemOutage, offsets[:sys_outage_events_offset]),
     ]
 
@@ -47,13 +54,13 @@ class OnlineClientCountHandler
       begin
         if event["aggregate_type"] == Client.name
           self.handle_client_event! event
-          @consumer_offset.state["client_events_offset"] = event["id"]
+          @consumer_offset.state["client_events_timestamp"] = event["timestamp"].to_f
         elsif event["aggregate_type"] == SystemOutage.name
           self.handle_system_outage_event! event
           @consumer_offset.state["sys_outage_events_offset"] = event["id"]
         elsif event["aggregate_type"] == Location.name
           self.handle_location_event! event
-          @consumer_offset.state["location_events_offset"] = event["id"]
+          @consumer_offset.state["location_events_timestamp"] = event["timestamp"].to_f
         end
       rescue ActiveRecord::InvalidForeignKey
       end

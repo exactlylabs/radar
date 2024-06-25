@@ -67,6 +67,14 @@ module StudyMetricsProjectionProcessor
       @location_metadatas["#{location_id}"] ||= LocationMetadataProjection.find_or_create_by!(location_id: location_id)
     end
 
+    def load_location_metadatas()
+      meta = {}
+      LocationMetadataProjection.all.each do |lm|
+        meta["#{lm.location_id}"] = lm
+      end
+      meta
+    end
+
     private
 
     def load_state_aggregate(geospaces)
