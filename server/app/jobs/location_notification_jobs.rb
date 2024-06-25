@@ -61,8 +61,8 @@ module LocationNotificationJobs
 
       return unless location_info&.county&.study_geospace?
 
-      county_goal = location_info&.county.study_aggregate_by_level('county')&.locations_goal || Location::LOCATIONS_PER_COUNTY_GOAL
-      place_goal = location_info&.place.study_aggregate_by_level('census_place')&.locations_goal || Location::LOCATIONS_PER_PLACE_GOAL
+      county_goal = location_info&.county&.study_aggregate_by_level('county')&.locations_goal || Location::LOCATIONS_PER_COUNTY_GOAL
+      place_goal = location_info&.place&.study_aggregate_by_level('census_place')&.locations_goal || Location::LOCATIONS_PER_PLACE_GOAL
 
       isp_county_goal = Location::LOCATIONS_PER_ISP_PER_COUNTY_GOAL
       if as_org.present?
