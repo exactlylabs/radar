@@ -240,7 +240,7 @@ class ClientsController < ApplicationController
   end
 
   def status
-    @client.record_event(Client::Events::SERVICE_STARTED, {}, @client.pinged_at) if params[:service_first_ping].present? && params[:service_first_ping] == "true"
+    @client.record_event(Client::Events::SERVICE_STARTED, {}, Time.now) if params[:service_first_ping].present? && params[:service_first_ping] == "true"
     @client.pinged_at = Time.now
     @client.raw_version = params[:version]
     @client.distribution_name = params[:distribution]
