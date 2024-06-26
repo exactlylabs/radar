@@ -147,7 +147,7 @@ export default class MultiLineChartController extends ChartController {
     this.showVerticalDashedLine(mouseX);
     let i = 0;
     for(let [hex, linePoints] of this.adjustedData.entries()) {
-      if(i > MAX_TOOLTIP_LINES) break;
+      if(i >= MAX_TOOLTIP_LINES) break;
       const currentColorMinDifEntry = linePoints[minDifIndex];
       let yValue;
       if(currentColorMinDifEntry.ys.length === 1) {
@@ -191,7 +191,7 @@ export default class MultiLineChartController extends ChartController {
     const DOT_TEXT_SPACING = 8;
     const MAIN_TEXT_VALUE_SPACING = 16;
     for(let entry of this.adjustedData.entries()) {
-      if(i > MAX_TOOLTIP_LINES) break;
+      if(i >= MAX_TOOLTIP_LINES) break;
       let lineWidth = X_SIDE_PADDING + DOT_SIZE + DOT_TEXT_SPACING + tooltipTitleWidth - TOOLTIP_TITLE_PADDING + MAIN_TEXT_VALUE_SPACING +
         this.textWidth(yValues[i].toFixed(2) + this.labelSuffix) + X_SIDE_PADDING;
       if(lineWidth > tooltipWidth) tooltipWidth = lineWidth;
@@ -245,7 +245,7 @@ export default class MultiLineChartController extends ChartController {
     
     i = 0;
     for(let [hex, _] of this.adjustedData.entries()) {
-      if(i > MAX_TOOLTIP_LINES) break;
+      if(i >= MAX_TOOLTIP_LINES) break;
       let xPixel = xCoordinate + X_SIDE_PADDING;
       const DOT_Y_COORDINATE = tooltipTopYCoordinate + 40 + 8 + i * 25;
       const TEXT_Y_COORDINATE = tooltipTopYCoordinate + 40 + 13 + i * 25;
