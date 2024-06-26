@@ -70,8 +70,7 @@ export default class MultiLineChartController extends ChartController {
     return adjustedDataByHex;
   }
   
-  getChartDataForComparison() {
-    const rawData = JSON.parse(this.element.dataset.lineChartData);
+  getChartDataForComparison(rawData) {
     let lastHexUsed = 0;
     const data = new Map();
     const seenKeys = new Map();

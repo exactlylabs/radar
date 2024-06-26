@@ -17,8 +17,8 @@ module ChartsHelper
   end
 
   def compare_download_speeds_params(current_account)
-    params = common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
-    params.merge(interval_type: get_interval_type(params[:from], params[:to]) || 'd')
+    p = common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    p.merge(interval_type: get_interval_type(p[:from], p[:to]) || 'd')
   end
 
   def upload_speeds_params(current_account)
@@ -27,7 +27,8 @@ module ChartsHelper
   end
 
   def compare_upload_speeds_params(current_account)
-    common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    p = common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    p.merge(interval_type: get_interval_type(p[:from], p[:to]) || 'd')
   end
 
   def latency_params(current_account)
@@ -36,7 +37,8 @@ module ChartsHelper
   end
 
   def compare_latency_params(current_account)
-    common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    p = common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    p.merge(interval_type: get_interval_type(p[:from], p[:to]) || 'd')
   end
 
   def data_usage_params(current_account)
@@ -45,7 +47,8 @@ module ChartsHelper
   end
 
   def compare_data_usage_params(current_account)
-    common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    p = common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    p.merge(interval_type: get_interval_type(p[:from], p[:to]) || 'd')
   end
 
   def total_data_params(current_account)
@@ -54,7 +57,8 @@ module ChartsHelper
   end
 
   def compare_total_data_params(current_account)
-    common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    p = common_comparison_filter_params(current_account).merge(time_filter_params).merge(compare_by: params[:compare_by] || 'account', curve_type: params[:curve_type] || 'median')
+    p.merge(interval_type: get_interval_type(p[:from], p[:to]) || 'd')
   end
 
   def pod_download_speeds_params(pod)
@@ -147,9 +151,10 @@ module ChartsHelper
 
   def get_interval_type(from, to)
     return 'day' if from.nil? || to.nil?
-    return 'second' if (to.to_i - from.to_i) < 3.hours
-    return 'minute' if (to.to_i - from.to_i) < 8.hours
-    return 'hour' if (to.to_i - from.to_i) < 10.days
-    'day'
+
+    date_diff = to.to_i - from.to_i
+    return 'second' if date_diff < 1.day
+    return 'minute' if date_diff < 1.week
+    return 'day' if date_diff < 1.year
   end
 end

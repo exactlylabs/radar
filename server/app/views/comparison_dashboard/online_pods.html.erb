@@ -12,6 +12,10 @@
             data-label-suffix=""
             data-action="toggleLine@window->multi-line-chart#toggleLine"
             data-chart-id="onlinePods"
+            data-skeleton-id="online-pods-chart-skeleton"
     ></canvas>
+    <div id="online-pods-chart-skeleton">
+      <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+    </div>
   <% end %>
 <% end %>

@@ -43,7 +43,15 @@ export default class ChartController extends Controller {
     if(this.isCompareChart) {
       this.entityCount = Number(this.element.dataset.entityCount) || 1;
     }
+    this.skeleton = document.getElementById(this.element.dataset.skeletonId);
+    this.lineToggler = document.getElementById(this.element.dataset.togglerId);
+    this.chartData = [];
     this.prepareInitialState();
+  }
+  
+  paintInitialChart() {
+    if(this.lineToggler) this.lineToggler.style.display = 'block';
+    this.skeleton.style.display = 'none';
     this.prepareData(this.chartData);
     this.loadChart();
     window.addEventListener('resize', this.loadChart.bind(this));
@@ -60,11 +68,31 @@ export default class ChartController extends Controller {
   prepareInitialState() {
     this.parent = document.getElementById(this.element.dataset.parentId);
     this.labelSuffix = this.element.dataset.labelSuffix || '';
-    // TODO: try/catch
     if(this.isCompareChart) {
-      this.chartData = this.getChartDataForComparison();
+      if(window.Worker) {
+        const worker = new Worker('/workers/chart_worker.js');
+        worker.postMessage(this.element.dataset.lineChartData);
+        worker.onmessage = (e) => {
+          this.chartData = this.getChartDataForComparison(e.data);
+          this.paintInitialChart();
+        }
+      } else {
+        this.chartData = this.getChartDataForComparison(JSON.parse(this.element.dataset.lineChartData));
+        this.paintInitialChart();
+      }
     } else {
-      this.chartData = JSON.parse(this.element.dataset.lineChartData);
+      // run the parse in a dedicated worker is available in the browser
+      if(window.Worker) {
+        const worker = new Worker('/workers/chart_worker.js');
+        worker.postMessage(this.element.dataset.lineChartData);
+        worker.onmessage = (e) => {
+          this.chartData = e.data;
+          this.paintInitialChart();
+        }
+      } else {
+        this.chartData = JSON.parse(this.element.dataset.lineChartData);
+        this.paintInitialChart();
+      }
     }
     this.labels = [];
     

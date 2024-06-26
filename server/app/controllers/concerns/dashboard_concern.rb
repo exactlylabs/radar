@@ -7,4 +7,8 @@ include ChartsHelper
       @filter_as_orgs = ActiveRecord::Base.connection.execute(DashboardHelper.get_as_orgs_sql(params[:account_ids], params[:from], params[:to], location_ids: params[:location_ids]))
     end
   end
+
+  def set_query_interval_type(params)
+    @query_time_interval = get_interval_type(params[:from], params[:to])
+  end
 end

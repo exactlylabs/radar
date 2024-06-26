@@ -16,12 +16,19 @@
             data-is-compare-chart="true"
             data-entity-count="<%= entities_array.count %>"
             data-query-time-interval="<%= @query_time_interval %>"
+            data-skeleton-id="download-speeds-chart-skeleton"
+            data-toggler-id="download-speeds-toggler"
     ></canvas>
-    <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
-               locals: {
-                 chart_id: "compareDownloadSpeeds",
-                 options: entities_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i] }}
-               }
-    %>
+    <div id="download-speeds-toggler" style="display: none">
+      <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
+                 locals: {
+                   chart_id: "compareDownloadSpeeds",
+                   options: entities_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i] }}
+                 }
+      %>
+    </div>
+    <div id="download-speeds-chart-skeleton" style="position: absolute; inset: 0">
+      <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+    </div>
   <% end %>
 <% end %>
