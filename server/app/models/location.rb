@@ -51,8 +51,8 @@ include Recents
 
   before_validation :check_if_only_coordinates
   after_validation :custom_geocode, if: :lat_long_changed?
-  after_save :link_to_geospaces
-  after_save :send_notifications
+  after_commit :link_to_geospaces
+  after_commit :send_notifications
   after_save :recalculate_averages!, if: :saved_change_to_account_id?
 
   default_scope { where(deleted_at: nil) }
@@ -313,10 +313,12 @@ include Recents
   end
 
   def link_to_geospaces
+    byebug
     ReprocessNetworkGeospaceJob.perform_later(self) if saved_change_to_lonlat? && self.lonlat.present?
   end
 
   def send_notifications
+    byebug
     if saved_change_to_online?
       if self.online
         LocationNotificationJobs::NotifyLocationOnline.perform_later self, Time.now
