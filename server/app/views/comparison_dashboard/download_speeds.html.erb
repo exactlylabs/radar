@@ -19,7 +19,7 @@
             data-skeleton-id="download-speeds-chart-skeleton"
             data-toggler-id="download-speeds-toggler"
     ></canvas>
-    <div id="download-speeds-toggler" style="display: none">
+    <div id="download-speeds-toggler" class="widgets--comparison-toggler" style="display: none">
       <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                  locals: {
                    chart_id: "compareDownloadSpeeds",

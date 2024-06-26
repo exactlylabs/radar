@@ -15,10 +15,11 @@
             data-chart-id="compareUploadSpeeds"
             data-is-compare-chart="true"
             data-entity-count="<%= entity_array.count %>"
+            data-query-time-interval="<%= @query_time_interval %>"
             data-skeleton-id="upload-speeds-chart-skeleton"
             data-toggler-id="upload-speeds-toggler"
     ></canvas>
-    <div id="upload-speeds-toggler" style="display: none">
+    <div id="upload-speeds-toggler" class="widgets--comparison-toggler" style="display: none">
       <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                  locals: {
                    chart_id: "compareUploadSpeeds",

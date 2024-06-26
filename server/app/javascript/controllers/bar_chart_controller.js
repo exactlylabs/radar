@@ -1,15 +1,9 @@
 import ChartController, {
   BOTTOM_LABELS_HEIGHT,
   GRID_LINE_Y_OFFSET,
-  PADDING,
-  RIGHT_X_CONTEXT_OFFSET,
-  TOOLTIP_X_OFFSET,
-  TOOLTIP_Y_OFFSET,
   TOOLTIP_TITLE_PADDING,
-  X_AXIS_OFFSET,
-  X_CONTEXT_OFFSET,
   Y_AXIS_OFFSET,
-  DEFAULT_BLUE
+  DEFAULT_BLUE, TOOLTIP_X_OFFSET
 } from "./chart_controller";
 
 const MB_UNIT = 1024 ** 2;
@@ -58,6 +52,12 @@ export default class BarChartController extends ChartController {
     return 2 * (this.netWidth / this.individualBlockCount);
   }
   
+  setXAxis() {
+    if(!this.isCompareChart) {
+      super.setXAxis();
+    }
+  }
+  
   drawBar(barData, index, color = 'rgba(75,123,229,0.5)') {
     this.ctx.beginPath();
     const { y } = barData;
@@ -86,6 +86,36 @@ export default class BarChartController extends ChartController {
     }
   }
   
+  showComparisonTooltip(mouseX, mouseY, hoveredBarProperties, hoveredBarData) {
+    const { barX, barY, barHeight, barWidth } = hoveredBarProperties;
+    const SPACING_BETWEEN_TOOLTIP_AND_BAR = 14;
+    const tooltipHeight = 30;
+    let yCoordinate = barY - SPACING_BETWEEN_TOOLTIP_AND_BAR - tooltipHeight;
+    const PADDING = 4;
+    const tooltipText = Number(hoveredBarData.y).toFixed(2) + " " + this.labelSuffix;
+    const tooltipWidth = this.textWidth(tooltipText) + PADDING * 2;
+    let xCoordinate = barX + barWidth / 2 - tooltipWidth / 2;
+    
+    if(yCoordinate < 0) {
+      yCoordinate = SPACING_BETWEEN_TOOLTIP_AND_BAR / 2;
+      xCoordinate = barX + barWidth + SPACING_BETWEEN_TOOLTIP_AND_BAR / 2;
+    }
+    
+    this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight, 6);
+    this.ctx.fill();
+    this.ctx.stroke();
+    
+    this.ctx.shadowColor = 'transparent';
+    this.ctx.fillStyle = 'black';
+    this.ctx.font = 'normal bold 13px MulishBold';
+    const FONT_SIZE = 13;
+    const midYPoint = yCoordinate + tooltipHeight / 2 + PADDING;
+    this.ctx.fillText(tooltipText.split(" ")[0], xCoordinate + PADDING, midYPoint);
+    
+    this.ctx.font = '13px Mulish';
+    this.ctx.fillText(tooltipText.split(" ")[1], xCoordinate + PADDING + this.textWidth(Number(hoveredBarData.y).toFixed(2) + " "), midYPoint);
+  }
+  
   showTooltip(mouseX, mouseY) {
     const shouldContinue = this.setupTooltipContext(mouseX, mouseY);
     if(!shouldContinue) return;
@@ -108,6 +138,11 @@ export default class BarChartController extends ChartController {
     this.ctx.shadowOffsetX = 0;
     this.ctx.shadowOffsetY = 2;
     this.ctx.shadowBlur = 6;
+    
+    if(this.isCompareChart) {
+      this.showComparisonTooltip(mouseX, mouseY, res, this.chartData[minDifIndex]);
+      return;
+    }
     
     let yCoordinate = barY;
     let xCoordinate = barX + barWidth;

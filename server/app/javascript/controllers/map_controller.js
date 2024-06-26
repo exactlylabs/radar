@@ -3,10 +3,6 @@ import onlineLocationIcon from "../../assets/images/location-online-icon.png";
 import offlineLocationIcon from "../../assets/images/location-offline-icon.png";
 import { MAPBOX_URL, getPopupElement } from "../map";
 
-//Using a global variable to prevent console error:
-//`Map container is already initialized`
-
-
 export default class extends Controller {
 
   static targets = ["locationRow"];
