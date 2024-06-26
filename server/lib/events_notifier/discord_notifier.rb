@@ -208,7 +208,7 @@ class DiscordNotifier < EventsNotifier::Notifier
     fieldset.add_field(name: "Total in County", value: "#{location_info.extra[:locations_per_county_count]} out of #{Location::LOCATIONS_PER_COUNTY_GOAL} goal") if location_info.county
     fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]} out of #{Location::LOCATIONS_PER_PLACE_GOAL} goal") if location_info.place && location_info.extra[:locations_per_place_count].present?
     fieldset.add_field(name: "Total in ISP in the County", value: "#{location_info.extra[:locations_per_isp_county_count]} out of #{Location::LOCATIONS_PER_ISP_PER_COUNTY_GOAL}") if location_info.extra[:as_org].present? && location_info.extra[:locations_per_isp_county_count].present?
-    fieldset.add_field(name: "Pod ID", value: location_info.location.clients.where(online: online).order(:updated_at).first.id)
+    fieldset.add_field(name: "Pod ID", value: location_info.location.clients.where(online: online).order(:updated_at).first.unix_user)
   end
 
   def fill_online_notification_fieldset(location_info, fieldset, online: true)
@@ -217,6 +217,6 @@ class DiscordNotifier < EventsNotifier::Notifier
     fieldset.add_field(name: "Total in County", value: "#{location_info.extra[:locations_per_county_count]}") if location_info.county
     fieldset.add_field(name: "Total in Place", value: "#{location_info.extra[:locations_per_place_count]}") if location_info.place && location_info.extra[:locations_per_place_count]
     fieldset.add_field(name: "Total in ISP", value: "#{location_info.extra[:locations_per_isp_count]}") if location_info.extra[:as_org].present? && location_info.extra[:locations_per_isp_count].present?
-    fieldset.add_field(name: "Pod ID", value: location_info.location.clients.where(online: online).order(:updated_at).first.id)
+    fieldset.add_field(name: "Pod ID", value: location_info.location.clients.where(online: online).order(:updated_at).first.unix_user)
   end
 end
