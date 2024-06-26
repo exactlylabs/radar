@@ -13,20 +13,46 @@
     data-filters-target="filtersMenu"
     id="locations-map-filter-menu"
   >
-    <%= render partial: "application/components/tables/client_filter",
-      locals: {
-        menu_id: 'status-filter-menu',
-        key: 'status',
-        default_value: 'all',
-        default_label: 'All statuses',
-        controller: 'locations-map-widget',
-        method: 'selectStatusFilter',
-        options: [
-          { label: 'All statuses', value: 'all'},
-          { label: 'Online', value: 'online' },
-          { label: 'Offline', value: 'offline' }
-        ]
-      }
-    %>
+    <div class="tables--locations-map-filter-row" style="z-index: 1">
+      <label class="tables--locations-map-filter-row-title">Sort by</label>
+      <%= render partial: "application/components/tables/client_filter",
+                 locals: {
+                   menu_id: 'sort-by-filter-menu',
+                   key: 'sort_by',
+                   default_value: 'name',
+                   default_label: 'Name',
+                   controller: 'locations-map-widget',
+                   method: 'selectSortByFilter',
+                   filter_button_id: 'sort-by-filter-button',
+                   dark: true,
+                   options: [
+                     { label: 'Name', value: 'name'},
+                     { label: 'Status', value: 'status' },
+                     { label: 'Account', value: 'account' },
+                     { label: 'ISP', value: 'isp' }
+                   ]
+                 }
+      %>
+    </div>
+    <div class="tables--locations-map-filter-row" style="z-index: 0">
+      <label class="tables--locations-map-filter-row-title">Status</label>
+      <%= render partial: "application/components/tables/client_filter",
+        locals: {
+          menu_id: 'status-filter-menu',
+          key: 'status',
+          default_value: 'all',
+          default_label: 'All statuses',
+          controller: 'locations-map-widget',
+          method: 'selectStatusFilter',
+          filter_button_id: 'status-filter-button',
+          dark: true,
+          options: [
+            { label: 'All statuses', value: 'all'},
+            { label: 'Online', value: 'online' },
+            { label: 'Offline', value: 'offline' }
+          ]
+        }
+      %>
+    </div>
   </div>
 </div>

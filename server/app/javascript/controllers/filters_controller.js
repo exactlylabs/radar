@@ -5,7 +5,30 @@ export default class extends Controller {
   connect() {
     const menuId = this.element.getAttribute("data-menu-id");
     const menu = document.getElementById(menuId);
-    if(menu) this.menu = menu;
+    if(menu) {
+      this.positionedOutsideOfParent = false;
+      this.menu = menu;
+      // By cloning the menu and appending it straight into the body, we prevent any
+      // weird issues where a parent of the menu has properties like transform from creating
+      // a new coordinate system, breaking all absolute positioning.
+      if(this.menu.dataset.appendToBody === 'true') {
+        this.positionedOutsideOfParent = true;
+        this.cloneMenuAndAppendToBody();
+      }
+    }
+    const anchorId = this.element.getAttribute("data-anchor-id");
+    const anchor = document.getElementById(anchorId);
+    if(anchor) this.anchor = anchor;
+    window.addEventListener('resize', this.closeFiltersMenu.bind(this));
+  }
+  
+  cloneMenuAndAppendToBody() {
+    const clonedMenu = this.menu.cloneNode(true);
+    clonedMenu.classList.add("invisible");
+    clonedMenu.classList.add("filters-menu-clone");
+    document.body.appendChild(clonedMenu);
+    this.menu.remove();
+    this.menu = clonedMenu;
   }
 
   toggleFiltersMenu() {
@@ -29,19 +52,18 @@ export default class extends Controller {
   }
 
   closeMenuIfClickedOutside(event) {
-    if (this.menu && 
-      !this.menu.classList.contains("invisible") &&
-      !this.menu.contains(event.target)
-    ) {
+    if(!this.element.contains(event.target)) {
       document.removeEventListener("click", this.closeMenuIfClickedOutside.bind(this));
       this.closeFiltersMenu();
     }
   }
 
   openFiltersMenu() {
-    this.menu.classList.remove("invisible");
+    if(this.positionedOutsideOfParent) this.positionMenuRelativeToAnchor();
     document.addEventListener("click", this.closeMenuIfClickedOutside.bind(this), { capture: true });
+    this.menu.classList.remove("invisible");
     this.shiftHorizontallyIfMenuIsOffScreen();
+    this.clipMenuIfOffScreenVertically();
   }
 
   closeFiltersMenu() {
@@ -53,23 +75,23 @@ export default class extends Controller {
     const rightEdge = menuRect.right;
     const windowWidth = window.innerWidth;
     if(rightEdge > windowWidth) {
-      const shiftAmount = rightEdge - windowWidth + 10;
-      this.menu.style.left = `${menuRect.left - shiftAmount}px`;
-      this.menu.style.right = 'unset';
+      this.menu.style.maxWidth = `${menuRect.width - (rightEdge - windowWidth)}px`;
     }
-    
-    const leftEdge = menuRect.left;
-    if(leftEdge < 0) {
-      this.menu.style.left = '0';
-      this.menu.style.right = 'unset';
+  }
+  
+  clipMenuIfOffScreenVertically() {
+    const menuRect = this.menu.getBoundingClientRect();
+    const bottomEdge = menuRect.bottom;
+    const windowHeight = window.innerHeight;
+    if(bottomEdge > windowHeight) {
+      this.menu.style.maxHeight = `${menuRect.height - (bottomEdge - windowHeight)}px`;
     }
-    
-    const startingPixel = this.element.getBoundingClientRect().left;
-    const menuWidth = this.menu.offsetWidth;
-    const menuEndPixel = startingPixel + menuWidth;
-    
-    if(menuEndPixel > windowWidth) {
-      this.menu.style.maxWidth = `${windowWidth - startingPixel}px`;
-    }
+  }
+  
+  positionMenuRelativeToAnchor() {
+    const anchorRect = this.anchor.getBoundingClientRect();
+    this.menu.style.top = `calc(${anchorRect.bottom}px + .5rem)`;
+    this.menu.style.left = `${anchorRect.left}px`;
+    this.menu.style.minWidth = `${anchorRect.width}px`;
   }
 }

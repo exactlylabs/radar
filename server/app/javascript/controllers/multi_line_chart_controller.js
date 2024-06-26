@@ -157,8 +157,11 @@ export default class MultiLineChartController extends ChartController {
     const minDifIndexEntry = firstEntry.value[1][minDifIndex];
     let xCoordinate = this.getXCoordinateFromXValue(firstEntry.value[1], minDifIndex);
     let yCoordinate;
-    
+    let rowCount = 1;
     for(let [hex, linePoints] of this.adjustedData.entries()) {
+      if(rowCount > 5) break;
+      rowCount++;
+      
       const currentColorMinDifEntry = linePoints[minDifIndex];
       let yValue;
       if(currentColorMinDifEntry.ys.length === 1) {
@@ -191,7 +194,6 @@ export default class MultiLineChartController extends ChartController {
     // check if tooltip is within the chart space, otherwise shift over
     const offset = 8;
     const tooltipWidth = 180;
-    //const tooltipHeight = this.selectedHexes.length > 0 ? 70 : 120;
     const tooltipHeight = this.getDynamicTooltipHeight(yValues.length);
     let tooltipTopYCoordinate = mouseY - tooltipHeight / 2;
     
@@ -241,16 +243,23 @@ export default class MultiLineChartController extends ChartController {
     const date = new Date(Number(minDifIndexEntry.x));
     let i = 0;
     for(let [hex, _] of this.adjustedData.entries()) {
-      this.drawDotOnLine(xCoordinate + 12, tooltipTopYCoordinate + 40 + 8 + i * 25, hex);
+      if(i >= yValues.length) break;
+      const DOT_X_OFFSET = 12;
+      const DOT_Y_OFFSET = 40;
+      const DOT_Y_XL_OFFSET = 53;
+      const DOT_Y_PADDING = 8;
+      const DOT_INDEXED_Y_OFFSET = 25;
+      this.drawDotOnLine(xCoordinate + DOT_X_OFFSET, tooltipTopYCoordinate + DOT_Y_OFFSET + DOT_Y_PADDING + i * DOT_INDEXED_Y_OFFSET, hex);
       
       this.ctx.font = '13px Mulish';
       this.ctx.fillStyle = '#6d6a94';
-      this.ctx.fillText(this.formatTime(date), xCoordinate + 12 + 12, tooltipTopYCoordinate + 40 + 13 + i * 25);
+      this.ctx.fillText(this.formatTime(date), xCoordinate + 2 * DOT_X_OFFSET, tooltipTopYCoordinate + DOT_Y_XL_OFFSET + i * DOT_INDEXED_Y_OFFSET);
       
       this.ctx.font = '13px MulishSemiBold';
       
       this.ctx.fillStyle = 'black';
-      this.ctx.fillText(yValues[i].toFixed(2) + this.labelSuffix, xCoordinate + tooltipWidth - 12 - 75, tooltipTopYCoordinate + 40 + 13 + i * 25);
+      const TEXT_X_OFFSET = 75;
+      this.ctx.fillText(yValues[i].toFixed(2) + this.labelSuffix, xCoordinate + tooltipWidth - DOT_X_OFFSET - TEXT_X_OFFSET, tooltipTopYCoordinate + DOT_Y_XL_OFFSET + i * DOT_INDEXED_Y_OFFSET);
       i++;
     }
     this.ctx.font = '16px Mulish';

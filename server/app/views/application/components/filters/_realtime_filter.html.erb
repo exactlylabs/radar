@@ -1,12 +1,16 @@
 <% raise "ID is required" if local_assigns[:id].nil? %>
 <% raise "Menu ID is required" if local_assigns[:menu_id].nil? %>
-<% is_dark = local_assigns[:dark].present? && local_assigns[:dark] == true %>
+<% is_dark = local_assigns[:is_dark] || false %>
+<% full_width = local_assigns[:full_width] || false %>
+<% append_to_body = local_assigns[:append_to_body] || false %>
 
 <div class="tables--filters-button-container"
      data-controller="filters"
      data-action="click->filters#toggleFiltersMenu"
      data-menu-id="<%= menu_id %>"
      data-no-z-index="true"
+     data-full-width="<%= full_width %>"
+     data-anchor-id="<%= id %>"
 >
   <button type="button"
           class="custom-button custom-button--sm <%= is_dark ? 'custom-button--secondary' : 'custom-button--secondary-light' %>"
@@ -20,6 +24,7 @@
   <div class="tables--filters-menu-container invisible"
        data-filters-target="filtersMenu"
        id="<%= menu_id %>"
+       data-append-to-body="<%= append_to_body %>"
   >
     <%= yield %>
   </div>

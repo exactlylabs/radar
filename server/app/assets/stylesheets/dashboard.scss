@@ -185,6 +185,15 @@
   flex-wrap: wrap;
 }
 
+@media (max-width: 768px) {
+  .dashboard--filters-container {
+    .public--vertical-divider,
+    .tables--filters-button-container:not([data-menu-id="date-range-filter-menu"]) {
+      display: none;
+    }
+  }
+}
+
 .dashboard--date-range-filter-container {
   width: 360px;
   height: 565px;
@@ -1058,4 +1067,25 @@ div[data-dashboard-time-filter-target="monthYear"] {
       display: none;
     }
   }
+}
+
+.dashboard--widgets-container {
+  width: 100%;
+  position: relative;
+
+  .dashboard--spinner {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+  }
+}
+
+.dashboard--locations-initial-spinner {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -15%);
 }

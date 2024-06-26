@@ -1,5 +1,5 @@
 import ChartController, {
-  BOTTOM_LABELS_HEIGHT, GRID_LINE_Y_OFFSET, PADDING, RIGHT_X_CONTEXT_OFFSET,
+  BOTTOM_LABELS_HEIGHT, GRID_LINE_Y_OFFSET, PADDING, RIGHT_X_CONTEXT_OFFSET, TOOLTIP_X_OFFSET, TOOLTIP_Y_OFFSET,
   X_AXIS_OFFSET,
   X_CONTEXT_OFFSET,
   Y_AXIS_OFFSET
@@ -74,7 +74,7 @@ export default class BarChartController extends ChartController {
     const minDifIndex = xDifs.indexOf(minDif);
     if(minDifIndex < 0) return;
     if(!this.mouseOverBar(mouseX, mouseY, minDifIndex)) return;
-    const res = this.isCompareChart ? this.drawBar(this.chartData[minDifIndex], minDifIndex, this.getFirstGradientStopColor(this.COMPARISON_HEX[minDifIndex % this.COMPARISON_HEX.length], 1)) : this.drawBar(this.chartData[minDifIndex], minDifIndex, '#4b7be5');
+    const res = this.isCompareChart ? this.drawBar(this.chartData[minDifIndex], minDifIndex, this.getFirstGradientStopColor(this.COMPARISON_HEX[minDifIndex % this.COMPARISON_HEX.length], 1)) : this.drawBar(this.chartData[minDifIndex], minDifIndex, DEFAULT_BLUE);
     const {barX, barY, barHeight, barWidth} = res;
     
     // Tooltip drawing section
@@ -116,8 +116,8 @@ export default class BarChartController extends ChartController {
     } else {
       yCoordinate += offset;
     }
-    
-    this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight, 6);
+    const radii = 6;
+    this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight, radii);
     this.ctx.fill();
     this.ctx.stroke();
     
@@ -125,7 +125,7 @@ export default class BarChartController extends ChartController {
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
     
-    this.ctx.fillText('Data usage', xCoordinate + 8, yCoordinate + 8 + 13);
+    this.ctx.fillText('Data usage', xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + TOOLTIP_Y_OFFSET);
     
     this.ctx.beginPath();
     this.ctx.fillStyle = '#e3e3e8';
@@ -137,17 +137,19 @@ export default class BarChartController extends ChartController {
     this.ctx.font = '13px Mulish';
     
     this.ctx.fillStyle = '#6d6a94';
+    const TOOLTIP_SECOND_LINE_Y_OFFSET = 13;
     if(this.isCompareChart) {
-      this.ctx.fillText('Data:', xCoordinate + 8, yCoordinate + 40 + 13);
+      this.ctx.fillText('Data:', xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + 2 * TOOLTIP_Y_OFFSET + TOOLTIP_SECOND_LINE_Y_OFFSET);
     } else {
       const date = new Date(Number(this.chartData[minDifIndex].x));
-      this.ctx.fillText(this.formatTime(date), xCoordinate + 8, yCoordinate + 40 + 13);
+      this.ctx.fillText(this.formatTime(date), xCoordinate + TOOLTIP_X_OFFSET, yCoordinate + 2 * TOOLTIP_Y_OFFSET + TOOLTIP_SECOND_LINE_Y_OFFSET);
     }
     
     this.ctx.font = '13px MulishSemiBold';
     
     this.ctx.fillStyle = 'black';
-    this.ctx.fillText(this.formatLabelNumericValue(this.chartData[minDifIndex].y) + this.labelSuffix, xCoordinate + tooltipWidth - 12 - 45, yCoordinate + 40 + 13);
+    const TOOLTIP_WIDTH_OFFSET = 57;
+    this.ctx.fillText(this.formatLabelNumericValue(this.chartData[minDifIndex].y) + this.labelSuffix, xCoordinate + tooltipWidth - TOOLTIP_WIDTH_OFFSET, yCoordinate + 2 * TOOLTIP_Y_OFFSET + TOOLTIP_SECOND_LINE_Y_OFFSET);
     
     this.ctx.font = '16px Mulish';
   }

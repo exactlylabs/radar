@@ -4,19 +4,13 @@
   <%= render partial: "application/components/shared/custom_search_input",
       locals: { 
         turbo_frame: true,
-        url: search_locations_url,
+        url: search_locations_url(account_id: params[:account_id], network_id: params[:network_id]),
         controller: 'locations-map-widget',
         method: 'handleInputChange'
       }
   %>
   <%= render partial: "application/components/widgets/locations_map/search_filters_menu" %>
 </div>
-<%= turbo_frame_tag "locations_map_widget_list" do %>
-  <% if @locations.length > 0 %>
-    <% @locations.each do |location| %>
-      <%= render "application/components/widgets/locations_map/location_row", location: location %>
-    <% end %>
-  <% else %>
-    <p class="additional-text text-center mt-2">No locations found.</p>
-  <% end %>
+<%= turbo_frame_tag "locations_map_widget_list", src: search_locations_url(account_id: params[:account_id], network_id: params[:network_id]), data: { dashboard_realtime_filters_target: 'widget', action: 'turbo:before-fetch-response->dashboard-realtime-filters#onWidgetSubmitEnd turbo:before-fetch-response->dashboard-realtime-filters#locationsMapFetchHandler' } do %>
+  <svg width="24" height="24" class="dashboard--locations-initial-spinner" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><style>.spinner_ajPY{transform-origin:center;animation:spinner_AtaB .75s infinite linear}@keyframes spinner_AtaB{100%{transform:rotate(360deg)}}</style><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z" class="spinner_ajPY"/></svg>
 <% end %>

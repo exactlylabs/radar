@@ -13,66 +13,84 @@
                ],
              }
   %>
+  <div class="public--vertical-divider" style="height: 28px"></div>
   <% if current_account.is_all_accounts? %>
-    <%= render partial: "application/components/tables/filter",
+    <%= render layout: "application/components/filters/realtime_filter",
                locals: {
+                 id: 'account-filter',
                  menu_id: 'account-filter-menu',
                  key: 'account_id',
-                 default_value: nil,
+                 default_value: 'all',
                  default_label: 'All accounts',
+                 current_label: params[:account_id].present? ? policy_scope(Account).find(params[:account_id]).name : 'All accounts',
                  pagination: false,
                  no_z_index: true,
-                 options: [
-                   { label: 'All accounts', value: nil },
-                   *policy_scope(Account).order(:name).map { |account| { label: account.name, value: "#{account.id}" } }
-                 ],
-               }
-    %>
+               } do %>
+      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'account-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'account-filter', key: 'account_id', value: 'all', label: 'All accounts', active: params[:account_id].nil? } %>
+      <% policy_scope(Account).order(:name).each do |account| %>
+        <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'account-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'account-filter', key: 'account_id', value: account.id, label: account.name, active: params[:account_id] == account.id.to_s } %>
+      <% end %>
+    <% end %>
   <% end %>
-  <%= render partial: "application/components/tables/filter",
+  <%= render layout: "application/components/filters/realtime_filter",
              locals: {
+               id: 'network-filter',
                menu_id: 'network-filter-menu',
                key: 'network_id',
-               default_value: nil,
-               default_label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations',
+               default_value: 'all',
+               default_label: 'All networks',
+               current_label: params[:network_id].present? ? policy_scope(Location).find(params[:network_id]).name : 'All networks',
                pagination: false,
                no_z_index: true,
-               options: [
-                 { label: FeatureFlagHelper.is_available('networks', current_user) ? 'All networks' : 'All locations', value: nil },
-                 *policy_scope(Location).order(:name).map { |network| { label: network.name, value: "#{network.id}" } }
-               ],
-             }
-  %>
+             } do %>
+    <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'network-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'network-filter', key: 'network_id', value: 'all', label: 'All networks', active: params[:network_id].nil? } %>
+    <% policy_scope(Location).order(:name).each do |network| %>
+      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'network-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'network-filter', key: 'network_id', value: network.id, label: network.name, active: params[:network_id] == network.id.to_s } %>
+    <% end %>
+  <% end %>
+
   <% unless current_account.is_all_accounts? %>
-    <%= render partial: "application/components/tables/filter",
+    <%= render layout: "application/components/filters/realtime_filter",
                locals: {
+                 id: 'category-filter',
                  menu_id: 'category-filter-menu',
                  key: 'category_id',
-                 default_value: nil,
+                 default_value: 'all',
                  default_label: 'All categories',
+                 current_label: params[:category_id].present? ? policy_scope(Category).find(params[:category_id]).name : 'All categories',
                  pagination: false,
                  no_z_index: true,
-                 options: [
-                   { label: 'All categories', value: nil },
-                   *policy_scope(Category).order(:name).map { |category| { label: category.name, value: "#{category.id}" } }
-                 ],
-               }
-    %>
+               } do %>
+      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'category-filter', key: 'category_id', value: 'all', label: 'All categories', active: params[:category_id].nil? } %>
+      <% policy_scope(Category).order(:name).each do |category| %>
+        <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'category-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'category-filter', key: 'category_id', value: category.id, label: category.name, active: params[:category_id] == category.id.to_s } %>
+      <% end %>
+    <% end %>
   <% end %>
   <% if @filter_as_orgs.present? %>
-    <%= render partial: "application/components/tables/filter",
+    <%= render layout: "application/components/filters/realtime_filter",
                locals: {
+                 id: 'isp-filter',
                  menu_id: 'isp-filter-menu',
                  key: 'isp_id',
-                 default_value: nil,
+                 default_value: 'all',
                  default_label: 'All ISPs',
+                 current_label: params[:isp_id].present? ? @filter_as_orgs.filter {|isp| isp['id'] == params[:isp_id]}.name : 'All ISPs',
                  pagination: false,
                  no_z_index: true,
-                 options: [
-                   { label: 'All ISPs', value: nil },
-                   *@filter_as_orgs.sort_by { |isp| isp['name'] }.map { |isp| { label: isp["name"], value: "#{isp["id"]}" } }
-                 ],
-               }
-    %>
+               } do %>
+      <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'isp-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'isp-filter', key: 'isp_id', value: 'all', label: 'All ISPs', active: params[:isp_id].nil? } %>
+      <% @filter_as_orgs.sort_by {|isp| isp['name']}.each do |isp| %>
+        <%= render partial: "application/components/filters/realtime_filter_option", locals: { base_menu_id: 'isp-filter-menu', custom_actions: "click->dashboard-realtime-filters#selectFilter:prevent", base_button_id: 'isp-filter', key: 'isp_id', value: isp['id'], label: isp['name'], active: params[:isp_id] == isp['id'].to_s } %>
+      <% end %>
+    <% end %>
   <% end %>
+  <div class="public--vertical-divider" style="height: 28px"></div>
+  <a href="<%= all_filters_url(account_id: params[:account_id], network_id: params[:network_id], category_id: params[:category_id], isp_id: params[:isp_id]) %>"
+     class="custom-button custom-button--secondary-light custom-button--sm"
+     data-turbo-frame="all_filters_modal"
+  >
+    <%= image_tag image_url('filters-icon.png'), width: 16, height: 16, class: "me-2" %>
+    All filters
+  </a>
 </div>

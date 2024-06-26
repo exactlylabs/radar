@@ -58,11 +58,32 @@ class DashboardController < ApplicationController
   def search_locations
     query = params[:query]
     status = params[:status]
+    sort_by = params[:sort_by]
     @locations = policy_scope(Location)
-    @locations = @locations.where("name ILIKE ?", "%#{query}%") if query
+    @locations = @locations.where("locations.name ILIKE ?", "%#{query}%") if query
     @locations = get_filtered_locations(@locations, status)
+
+    if sort_by.nil? || sort_by == 'name'
+      @locations = @locations.order(:name)
+    elsif sort_by == 'status'
+      @locations = @locations.order(online: :desc)
+    elsif sort_by == 'account'
+      @locations = @locations.joins(:account).order('accounts.name')
+    elsif sort_by == 'isp'
+      @locations = @locations.joins(clients: :autonomous_system).order('autonomous_systems.name')
+    end
+
+    if params[:account_id]
+      @locations = @locations.where(account_id: params[:account_id])
+    end
+
+    if params[:network_id]
+      @locations = @locations.where(id: params[:network_id])
+    end
+
     respond_to do |format|
       format.turbo_stream
+      format.html
     end
   end
 
@@ -126,6 +147,13 @@ class DashboardController < ApplicationController
     else
       @downtime = 0
       @uptime_percentage = 100
+    end
+  end
+
+  def all_filters
+    if current_account.present?
+      params = as_orgs_filters_params(current_account)
+      @filter_as_orgs = ActiveRecord::Base.connection.execute(DashboardHelper.get_as_orgs_sql(params[:account_ids], params[:from], params[:to], location_ids: params[:network_id]))
     end
   end
 

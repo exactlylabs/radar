@@ -4,14 +4,16 @@
 <% custom_extra_controller = local_assigns[:controller].present? ? local_assigns[:controller] : nil %>
 <% custom_extra_method = local_assigns[:method].present? ? local_assigns[:method] : nil %>
 <% raise "Missing custom method" if custom_extra_controller.present? && custom_extra_method.nil? %>
+<% raise "Missing filter button ID" if local_assigns[:filter_button_id].nil? %>
 
 <div class="tables--filters-button-container"
-  data-controller="filters"
-  data-action="click->filters#toggleFiltersMenu"
-  data-menu-id="<%= menu_id %>"
+     data-controller="filters"
+     data-action="click->filters#toggleFiltersMenu"
+     data-menu-id="<%= menu_id %>"
 >
   <button type="button"
     class="custom-button custom-button--sm <%= is_dark ? 'custom-button--secondary' : 'custom-button--secondary-light' %>"
+          id="<%= filter_button_id %>"
   >
     <span class="table-filter-option" <%= custom_extra_controller.present? ? "data-#{custom_extra_controller}-target=filterButton" : nil %>><%= current_filter_label %></span>
     <%= image_tag image_url('caret.png'), width: 16, height: 16, class: "ms-1" %>
@@ -22,9 +24,11 @@
   >
     <% options.each do |option| %>
       <div data-action="<%= custom_extra_controller.present? ? "click->#{custom_extra_controller}##{custom_extra_method}": nil %>"
-        class="tables--filters-menu-item table-filter-option <%= current_filter_value == option[:value] ? 'active' : '' %>"
-        data-value="<%= option[:value] %>"
-        data-label="<%= option[:label] %>"
+           class="tables--filters-menu-item table-filter-option <%= current_filter_value == option[:value] ? 'active' : '' %>"
+           data-key="<%= key %>"
+           data-value="<%= option[:value] %>"
+           data-label="<%= option[:label] %>"
+           data-filter-button-id="<%= filter_button_id %>"
       >
         <%= option[:label] %>
         <%= image_tag image_url('checkmark-blue-icon.png'),

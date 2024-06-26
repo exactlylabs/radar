@@ -2,6 +2,7 @@
 <% raise "Label is required" if local_assigns[:label].nil? %>
 <% raise "Value is required" if local_assigns[:value].nil? %>
 <% raise "Base button ID is required" if local_assigns[:base_button_id].nil? %>
+<% raise "Base menu ID is required" if local_assigns[:base_menu_id].nil? %>
 <% active = local_assigns[:active] || false %>
 <% custom_actions = local_assigns[:custom_actions] || '' %>
 <% overridden_keys = local_assigns[:overridden_keys] || '' %>
@@ -10,9 +11,12 @@
         data-value="<%= value %>"
         data-key="<%= key %>"
         data-label="<%= label %>"
-        data-action="click->realtime-filters#selectFilter <%= custom_actions %>"
+        data-action=" <%= custom_actions %> click->realtime-filters#selectFilter"
         data-realtime-filters-target="filter"
+        data-dashboard-realtime-filters-target="filter"
+        data-dashboard-modal-realtime-filters-target="filter"
         data-base-button-id="<%= base_button_id %>"
+        data-base-menu-id="<%= base_menu_id %>"
         data-overriden-keys="<%= overridden_keys %>"
         data-realtime-filter-target="filterOption"
 >
