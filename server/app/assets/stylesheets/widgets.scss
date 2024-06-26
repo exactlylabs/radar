@@ -511,3 +511,11 @@
 
   @extend .hoverable;
 }
+
+#online-pods-widget {
+  position: relative;
+  #online-pods-chart-skeleton {
+    position: absolute;
+    inset: 0;
+  }
+}

@@ -10,6 +10,10 @@
             data-parent-id="data-usage-widget<%= responsive ? '-responsive' : ''%>"
             data-label-suffix="<%= current_user&.data_cap_unit || "GB" %>"
             data-query-time-interval="<%= @query_time_interval %>"
+            data-skeleton-id="data-usage-chart-skeleton"
     ></canvas>
+    <div id="data-usage-chart-skeleton" style="position: absolute; inset: 0">
+      <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+    </div>
   <% end %>
 <% end %>

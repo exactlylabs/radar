@@ -37,8 +37,8 @@ export default class BarChartController extends ChartController {
     return Number(this.chartData[this.chartData.length - 1].x);
   }
   
-  getChartDataForComparison() {
-    return JSON.parse(this.element.dataset.lineChartData);
+  getChartDataForComparison(rawData) {
+    return rawData;
   }
   
   plotChart() {

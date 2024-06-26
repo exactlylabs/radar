@@ -13,7 +13,10 @@
             data-action="toggleLine@window->multi-line-chart#toggleLine"
             data-chart-id="latency"
             data-query-time-interval="<%= @query_time_interval %>"
+            data-skeleton-id="latency-chart-skeleton"
+            data-toggler-id="latency-toggler"
     ></canvas>
+    <div id="latency-toggler" style="display: none">
     <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                locals: {
                  chart_id: "latency",
@@ -23,5 +26,9 @@
                    { label: 'Maximum', hex: '#9138E5' }
                  ]
                } %>
+    </div>
+    <div id="latency-chart-skeleton" style="position: absolute; inset: 0">
+      <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+    </div>
   <% end %>
 <% end %>

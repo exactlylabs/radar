@@ -8,6 +8,10 @@
             data-parent-id="online-pods-widget"
             data-y-step-size="25"
             data-query-time-interval="<%= @query_time_interval %>"
+            data-skeleton-id="online-pods-chart-skeleton"
     ></canvas>
+    <div id="online-pods-chart-skeleton">
+      <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+    </div>
   <% end %>
 <% end %>

@@ -164,10 +164,6 @@ class DashboardController < ApplicationController
 
   private
 
-  def set_query_interval_type(params)
-    @query_time_interval = get_interval_type(params[:from], params[:to])
-  end
-
   def get_filtered_locations(locations, filter)
     case filter
     when nil, 'all'

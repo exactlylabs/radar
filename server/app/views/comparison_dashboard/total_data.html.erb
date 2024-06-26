@@ -11,6 +11,10 @@
             data-label-suffix="<%= current_user&.data_cap_unit || "GB" %>"
             data-chart-id="compareTotalData"
             data-is-compare-chart="true"
+            data-skeleton-id="total-data-chart-skeleton"
     ></canvas>
+    <div id="total-data-chart-skeleton" style="position: absolute; inset: 0">
+      <%= render partial: "dashboard/components/widgets/line_chart_skeleton" %>
+    </div>
   <% end %>
 <% end %>

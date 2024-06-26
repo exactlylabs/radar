@@ -1,4 +1,7 @@
 module DashboardHelper
+
+  DOT_LIMIT = 100
+
   def get_time_duration(duration)
     duration_parts = ActiveSupport::Duration.build(duration.to_i).parts
     duration_keys = duration_parts.keys.map(&:to_s)
@@ -40,17 +43,20 @@ module DashboardHelper
   end
 
   def self.get_online_pods_sql(interval_type, from, to, account_ids, as_org_ids: nil, location_ids: nil)
+
+    time_series_step = self.get_interval_step(from, to, interval_type)
+
     sql = %{
       with base_series AS (
             SELECT
               date_trunc(:interval_type, dd) as "time"
-            FROM generate_series(:from, :to, CONCAT('1 ', :interval_type)::interval) dd
+            FROM generate_series(:from, :to, CONCAT(:step, :interval_type)::interval) dd
       ),
           filtered_dimensions AS (
             SELECT
               online_client_count_projections.id,
               SUM(incr) OVER (ORDER BY "timestamp") as total_online,
-              "timestamp" as "time"
+              date_trunc(:interval_type, "timestamp") as "time"
 
             FROM online_client_count_projections
             LEFT JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
@@ -63,7 +69,8 @@ module DashboardHelper
     sql += %{
       ),
         time_filtered AS (
-          SELECT * FROM filtered_dimensions
+          SELECT last_value(total_online) over (partition by time) as total_online, time
+          FROM filtered_dimensions
           WHERE "time" BETWEEN :from AND :to
           ORDER BY "time" ASC
       ),
@@ -97,7 +104,7 @@ module DashboardHelper
 
       SELECT EXTRACT(EPOCH FROM "time") * 1000 as x, COALESCE(total_online, 0) as y FROM completed_table ORDER BY time ASC
     }
-    ActiveRecord::Base.sanitize_sql([sql, {interval_type: interval_type, account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
+    ActiveRecord::Base.sanitize_sql([sql, {step: time_series_step, interval_type: interval_type, account_ids: account_ids, as_org_ids: as_org_ids, location_ids: location_ids, from: from, to: to}])
   end
 
   def self.get_download_speed_sql(account_ids, from, to, as_org_ids: nil, location_ids: nil)
@@ -542,5 +549,26 @@ module DashboardHelper
       GROUP BY 1, 2
       ORDER BY "x" ASC;
       }
+  end
+
+  # I want to avoid having more than 100 dots
+  def self.get_interval_step(from, to, interval_type = 'day')
+    time_diff = to - from
+    unit = case interval_type
+    when 'second'
+      1.second
+    when 'minute'
+      1.minute
+    when 'day'
+      1.day
+    else
+      1.day
+    end
+    dots_in_interval = time_diff / unit
+    step = 1
+    while dots_in_interval / step > DOT_LIMIT
+      step += 5
+    end
+    "#{step} "
   end
 end
