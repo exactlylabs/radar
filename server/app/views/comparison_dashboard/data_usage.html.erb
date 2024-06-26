@@ -15,10 +15,11 @@
             data-chart-id="compareDataUsage"
             data-is-compare-chart="true"
             data-entity-count="<%= entities_array.count %>"
+            data-query-time-interval="<%= @query_time_interval %>"
             data-skeleton-id="data-usage-chart-skeleton"
             data-toggler-id="data-usage-toggler"
     ></canvas>
-    <div id="data-usage-toggler" style="display: none">
+    <div id="data-usage-toggler" class="widgets--comparison-toggler" style="display: none">
       <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                  locals: {
                    chart_id: "compareDataUsage",

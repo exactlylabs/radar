@@ -4,18 +4,14 @@ const MB_UNIT = 1024 ** 2;
 const GB_UNIT = 1024 ** 3;
 const TB_UNIT = 1024 ** 4;
 
-const CHART_BUTTONS_HEIGHT = 30;
+const MAX_TOOLTIP_LINES = 5;
+
 
 export default class MultiLineChartController extends ChartController {
   connect() {
     this.chartId = this.element.dataset.chartId;
     this.selectedHexes = [];
     super.connect();
-  }
-  
-  createHiDPICanvas(w, h, ratio) {
-    const heightWithoutButtons = this.isCompareChart ? h : h - CHART_BUTTONS_HEIGHT;
-    return super.createHiDPICanvas(w, heightWithoutButtons, ratio);
   }
   
   getFirstDate() {
@@ -149,11 +145,9 @@ export default class MultiLineChartController extends ChartController {
     let xCoordinate = this.getXCoordinateFromXValue(firstEntry.value[1], minDifIndex);
     let yCoordinate;
     this.showVerticalDashedLine(mouseX);
-    let rowCount = 1;
+    let i = 0;
     for(let [hex, linePoints] of this.adjustedData.entries()) {
-      if(rowCount > 5) break;
-      rowCount++;
-      
+      if(i > MAX_TOOLTIP_LINES) break;
       const currentColorMinDifEntry = linePoints[minDifIndex];
       let yValue;
       if(currentColorMinDifEntry.ys.length === 1) {
@@ -170,6 +164,7 @@ export default class MultiLineChartController extends ChartController {
       yValues.push(yValue);
       
       this.drawDotOnLine(xCoordinate, yCoordinate, hex);
+      i++;
     }
     
     // Tooltip drawing section
@@ -191,11 +186,12 @@ export default class MultiLineChartController extends ChartController {
     const tooltipTitleWidth = this.ctx.measureText(tooltipTitle).width + TOOLTIP_TITLE_PADDING;
     if(tooltipTitleWidth > tooltipWidth) tooltipWidth = tooltipTitleWidth;
     
-    let i = 0;
+    i = 0;
     const X_SIDE_PADDING = 12;
     const DOT_TEXT_SPACING = 8;
     const MAIN_TEXT_VALUE_SPACING = 16;
     for(let entry of this.adjustedData.entries()) {
+      if(i > MAX_TOOLTIP_LINES) break;
       let lineWidth = X_SIDE_PADDING + DOT_SIZE + DOT_TEXT_SPACING + tooltipTitleWidth - TOOLTIP_TITLE_PADDING + MAIN_TEXT_VALUE_SPACING +
         this.textWidth(yValues[i].toFixed(2) + this.labelSuffix) + X_SIDE_PADDING;
       if(lineWidth > tooltipWidth) tooltipWidth = lineWidth;
@@ -249,6 +245,7 @@ export default class MultiLineChartController extends ChartController {
     
     i = 0;
     for(let [hex, _] of this.adjustedData.entries()) {
+      if(i > MAX_TOOLTIP_LINES) break;
       let xPixel = xCoordinate + X_SIDE_PADDING;
       const DOT_Y_COORDINATE = tooltipTopYCoordinate + 40 + 8 + i * 25;
       const TEXT_Y_COORDINATE = tooltipTopYCoordinate + 40 + 13 + i * 25;

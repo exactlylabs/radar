@@ -325,7 +325,7 @@ module DashboardHelper
   end
 
   def self.get_compare_total_data_sql(from, to, compare_by = 'account', curve_type = 'median', account_ids = nil, as_org_ids = nil, network_ids = nil, pod_ids = nil, category_ids = nil)
-    sql = self.get_comparison_speed_sql(compare_by, curve_type, 'COALESCE(SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes), 0)')
+    sql = self.get_comparison_total_data_sql(compare_by)
     ActiveRecord::Base.sanitize_sql([sql, {account_ids: account_ids, as_org_ids: as_org_ids, network_ids: network_ids, pod_ids: pod_ids, category_ids: category_ids, from: from, to: to}])
   end
 
@@ -548,6 +548,27 @@ module DashboardHelper
       #{self.where_fields(compare_by)}
       GROUP BY 1, 2
       ORDER BY "x" ASC;
+      }
+  end
+
+  def self.get_comparison_total_data_sql(compare_by)
+    %{
+      WITH filtered_measurements AS (
+        SELECT
+          COALESCE(SUM(measurements.download_total_bytes) + SUM(measurements.upload_total_bytes), 0) as "value",
+          #{self.select_fields(compare_by)}
+        FROM measurements
+          #{self.join_fields(compare_by)}
+        WHERE processed_at BETWEEN :from AND :to
+        AND measurements.account_id IN (:account_ids)
+        GROUP BY 2,3
+      )
+
+      SELECT client_unix_user as entity_identifier, value as "y"
+      FROM filtered_measurements
+      #{self.where_fields(compare_by)}
+      GROUP BY 1, 2
+      ORDER BY 1 ASC;
       }
   end
 

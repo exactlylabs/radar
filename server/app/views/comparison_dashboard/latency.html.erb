@@ -15,10 +15,11 @@
             data-chart-id="compareLatency"
             data-is-compare-chart="true"
             data-entity-count="<%= entity_array.count %>"
+            data-query-time-interval="<%= @query_time_interval %>"
             data-skeleton-id="latency-chart-skeleton"
             data-toggler-id="latency-toggler"
     ></canvas>
-    <div id="latency-toggler" style="display: none">
+    <div id="latency-toggler" class="widgets--comparison-toggler" style="display: none">
       <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                  locals: {
                    chart_id: "compareLatency",
