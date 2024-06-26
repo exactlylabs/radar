@@ -466,7 +466,21 @@ export default class ChartController extends Controller {
       if(hours === 0) hours = 12;
       hours = hours.toString().padStart(2, '0');
       if(this.queryTimeInterval === QUERY_INTERVALS.DAY) {
-        return `${monthWord} ${date.getDate()}`;
+        const firstDate = new Date(this.getFirstDate());
+        const lastDate = new Date(this.getLastDate());
+        const dateDiff = lastDate.getTime() - firstDate.getTime();
+        const THREE_YEARS_IN_MS = 94608000000;
+        const ONE_YEAR_IN_MS = 31536000000;
+        // if difference is 3 years or more, just show year
+        // if difference is between 1 and 3 years, show month and year
+        // if difference is between 1 week and 1 year, show month and day
+        if(dateDiff >= 94608000000 && isInAxis) {
+          return date.getFullYear();
+        } else if(dateDiff >= 31536000000 && isInAxis) {
+          return `${monthWord} ${date.getFullYear()}`;
+        } else {
+          return `${monthWord} ${date.getDate()}`;
+        }
       } else if(this.queryTimeInterval === QUERY_INTERVALS.HOUR && !isInAxis) {
         // return date in format 'Jan 1, 12:11 AM' always in 2 digit format
         return `${monthWord} ${date.getDate()}, ${hours}:${date.getMinutes().toString().padStart(2, '0')} ${date.getHours() < 12 ? 'AM' : 'PM'}`;
