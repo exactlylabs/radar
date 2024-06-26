@@ -313,12 +313,10 @@ include Recents
   end
 
   def link_to_geospaces
-    byebug
     ReprocessNetworkGeospaceJob.perform_later(self) if saved_change_to_lonlat? && self.lonlat.present?
   end
 
   def send_notifications
-    byebug
     if saved_change_to_online?
       if self.online
         LocationNotificationJobs::NotifyLocationOnline.perform_later self, Time.now
