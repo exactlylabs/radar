@@ -4,21 +4,5 @@ Sentry.init do |config|
 
   config.traces_sample_rate = 0.0
 
-  config.before_send = lambda do |event, hint|
-    e = hint[:exception]
-    begin
-      if REDIS.get("sentry:#{e.class.name}:#{e.message}").nil?
-        REDIS.set("sentry:#{e.class.name}:#{e.message}", 1)
-        REDIS.expire("sentry:#{e.class.name}:#{e.message}", 300) # 5 minutes
-        event
-      else
-        nil
-      end
-    rescue
-      event
-    end
-  end
-
-
-  config.enabled_environments = %w[production]
+  config.enabled_environments = %w[production staging]
 end
