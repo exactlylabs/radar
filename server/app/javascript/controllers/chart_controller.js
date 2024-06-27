@@ -55,6 +55,10 @@ export default class ChartController extends Controller {
     this.element.addEventListener('mouseleave', this.plotChart.bind(this));
     this.element.addEventListener('mousedown', this.handleMouseDown.bind(this));
     this.element.addEventListener('mouseup', this.handleMouseUp.bind(this));
+    this.element.addEventListener('touchstart', this.handleMouseDown.bind(this));
+    this.element.addEventListener('touchend', this.handleMouseUp.bind(this));
+    this.element.addEventListener('touchmove', this.handleMouseMove.bind(this));
+    this.element.addEventListener('touchcancel', this.handleTapCancelled.bind(this));
   }
   
   textWidth(text = '') {
@@ -97,6 +101,13 @@ export default class ChartController extends Controller {
     this.mouseReleasedX = null;
   }
   
+  handleTapCancelled(e) {
+    this.mouseClickedX = null;
+    this.isDragging = false;
+    this.dragInitialTime = null;
+    this.plotChart();
+  }
+  
   getMousePosition(e) {
     const rect = this.element.getBoundingClientRect();
     return {
@@ -134,15 +145,49 @@ export default class ChartController extends Controller {
   
   handleMouseDown(e) {
     if(this.chartId === 'compareTotalData') return;
-    const { mouseX} = this.getMousePosition(e);
-    this.mouseClickedX = mouseX;
+    let xPos;
+    if(e.type === 'touchstart') {
+      e.preventDefault();
+      const { touches } = e;
+      if(touches.length > 1) return;
+      const { clientX } = touches[0];
+      xPos = clientX;
+    } else {
+      const { mouseX} = this.getMousePosition(e);
+      xPos = mouseX;
+    }
+    this.mouseClickedX = xPos;
     this.isDragging = true;
     this.dragInitialTime = new Date().getTime();
   }
   
   handleMouseUp(e) {
-    const { mouseX} = this.getMousePosition(e);
-    this.mouseReleasedX = mouseX;
+    let xPos;
+    if(e.type === 'touchend') {
+      e.preventDefault();
+      const { changedTouches } = e;
+      if(changedTouches.length > 1) return;
+      const { clientX, clientY } = changedTouches[0];
+      const dragFinalTime = new Date().getTime();
+      console.log('dragFinalTime', dragFinalTime - this.dragInitialTime)
+      if(dragFinalTime - this.dragInitialTime < 100) {
+        console.log('nos vamos')
+        this.showTooltip(clientX, clientY);
+        this.mouseClickedX = null;
+        this.mouseReleasedX = null;
+        this.isDragging = false;
+        this.dragInitialTime = null;
+        return;
+      }
+      xPos = clientX;
+      
+      // establish a threshold for drag to kick in, otherwise it's a simple tap
+      
+    } else {
+      const {mouseX} = this.getMousePosition(e);
+      xPos = mouseX;
+    }
+    this.mouseReleasedX = xPos;
     this.isDragging = false;
     const dragFinalTime = new Date().getTime();
     if(this.mouseClickedX && this.mouseReleasedX && dragFinalTime - this.dragInitialTime > 100) {
@@ -177,13 +222,23 @@ export default class ChartController extends Controller {
   }
   
   showDragArea(e) {
-    const { mouseX} = this.getMousePosition(e);
+    let xPos;
+    if(e.type === 'touchmove') {
+      e.preventDefault();
+      const { touches } = e;
+      if(touches.length > 1) return;
+      const { clientX } = touches[0];
+      xPos = clientX;
+    } else {
+      const { mouseX} = this.getMousePosition(e);
+      xPos = mouseX;
+    }
     const dragAreaVerticalOffset = 5;
     
     // Draw base solid rectangle
     this.ctx.beginPath();
     this.ctx.fillStyle = 'rgba(160, 159, 183, 0.2)';
-    const blockWidth = mouseX - this.mouseClickedX;
+    const blockWidth = xPos - this.mouseClickedX;
     this.ctx.roundRect(this.mouseClickedX, dragAreaVerticalOffset, blockWidth, this.netHeight);
     this.ctx.fill();
     this.ctx.stroke();

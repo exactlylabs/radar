@@ -1,6 +1,6 @@
-<% current_filter_label = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first&[:label] : default_label %>
+<% current_filter_label = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first&.fetch(:label) : default_label %>
 <% current_filter_label ||= default_label %>
-<% current_filter_value = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first&[:value] : default_value %>
+<% current_filter_value = params[key].present? ? options.select {|opt| opt[:value] == params[key]}.first&.fetch(:value) : default_value %>
 <% current_filter_value ||= default_value %>
 <% is_dark = local_assigns[:dark].present? && local_assigns[:dark] == true %>
 <% is_paginated = local_assigns[:pagination].nil? || (local_assigns[:pagination].present? && local_assigns[:pagination] == false) %>
