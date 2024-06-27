@@ -1,4 +1,4 @@
-import ChartController, { QUERY_INTERVALS, TOOLTIP_TITLE_PADDING } from "./chart_controller";
+import ChartController, { TOOLTIP_TITLE_PADDING } from "./chart_controller";
 
 export default class LineChartController extends ChartController {
   connect() {
@@ -30,6 +30,11 @@ export default class LineChartController extends ChartController {
     const minDif = Math.min(...xDifs);
     const minDifIndex = xDifs.indexOf(minDif);
     if(minDifIndex < 0) return;
+    
+    const TOOLTIP_TITLE_BOTTOM_PADDING = 30;
+    const TOOLTIP_TITLE_TOP_PADDING = 20;
+    const TOOLTIP_DATA_TOP_PADDING = 53
+    const RADII = 6;
     
     const { ys } = this.adjustedData[minDifIndex];
     
@@ -99,7 +104,8 @@ export default class LineChartController extends ChartController {
       yCoordinate += offset;
     }
     
-    this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight, 6);
+    
+    this.ctx.roundRect(xCoordinate, yCoordinate, tooltipWidth, tooltipHeight, RADII);
     this.ctx.fill();
     this.ctx.stroke();
     
@@ -107,13 +113,13 @@ export default class LineChartController extends ChartController {
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
     
-    this.ctx.fillText(tooltipTitle, xCoordinate + 8, yCoordinate + 8 + 13);
+    this.ctx.fillText(tooltipTitle, xCoordinate + offset, yCoordinate + TOOLTIP_TITLE_TOP_PADDING);
     
     this.ctx.beginPath();
     this.ctx.fillStyle = '#e3e3e8';
     this.ctx.lineWidth = 1;
-    this.ctx.moveTo(xCoordinate, yCoordinate + 30);
-    this.ctx.lineTo(xCoordinate + tooltipWidth, yCoordinate + 30);
+    this.ctx.moveTo(xCoordinate, yCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
+    this.ctx.lineTo(xCoordinate + tooltipWidth, yCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
     this.ctx.stroke();
     
     this.ctx.font = '13px Mulish';
@@ -121,7 +127,7 @@ export default class LineChartController extends ChartController {
     this.ctx.font = '13px MulishSemiBold';
     
     this.ctx.fillStyle = 'black';
-    this.ctx.fillText(`${yValue} pods`, xCoordinate + 8, yCoordinate + 40 + 13);
+    this.ctx.fillText(`${yValue} pods`, xCoordinate + offset, yCoordinate + TOOLTIP_DATA_TOP_PADDING);
   
     this.ctx.font = '16px Mulish';
   }

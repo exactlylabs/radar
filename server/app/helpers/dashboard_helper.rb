@@ -1,6 +1,6 @@
 module DashboardHelper
 
-  DOT_LIMIT = 100
+  DOT_LIMIT = 500
 
   def get_time_duration(duration)
     duration_parts = ActiveSupport::Duration.build(duration.to_i).parts
@@ -564,7 +564,7 @@ module DashboardHelper
         GROUP BY 2,3
       )
 
-      SELECT client_unix_user as entity_identifier, value as "y"
+      #{self.inner_select_fields(compare_by)} value as "y"
       FROM filtered_measurements
       #{self.where_fields(compare_by)}
       GROUP BY 1, 2
@@ -572,7 +572,7 @@ module DashboardHelper
       }
   end
 
-  # I want to avoid having more than 100 dots
+  # I want to avoid having more than 500 dots
   def self.get_interval_step(from, to, interval_type = 'day')
     time_diff = to - from
     unit = case interval_type

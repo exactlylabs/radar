@@ -3,6 +3,7 @@ class DashboardController < ApplicationController
   include Onboarding
   include DashboardConcern
   before_action :authenticate_user!
+  before_action :set_params_and_interval_type, only: [:online_pods, :download_speeds, :upload_speeds, :latency, :data_usage, :total_data]
 
   # GET /dashboard or /dashboard.json
   def index
@@ -88,46 +89,35 @@ class DashboardController < ApplicationController
   end
 
   def online_pods
-    params = online_pods_params(current_account)
-    sql = DashboardHelper.get_online_pods_sql(params[:interval_type], params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
-    set_query_interval_type(params)
+    sql = DashboardHelper.get_online_pods_sql(@params[:interval_type], @params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @online_pods = ActiveRecord::Base.connection.execute(sql)
   end
 
   def download_speeds
-    params = download_speeds_params(current_account)
-    sql = DashboardHelper.get_download_speed_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
-    set_query_interval_type(params)
+    sql = DashboardHelper.get_download_speed_sql(@params[:account_ids], @params[:from], @params[:to], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @download_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
   def upload_speeds
-    params = upload_speeds_params(current_account)
-    sql = DashboardHelper.get_upload_speed_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
-    set_query_interval_type(params)
+    sql = DashboardHelper.get_upload_speed_sql(@params[:account_ids], @params[:from], @params[:to], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @upload_speeds = ActiveRecord::Base.connection.execute(sql)
   end
 
   def latency
-    params = latency_params(current_account)
-    sql = DashboardHelper.get_latency_sql(params[:account_ids], params[:from], params[:to], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
-    set_query_interval_type(params)
+    sql = DashboardHelper.get_latency_sql(@params[:account_ids], @params[:from], @params[:to], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @latencies = ActiveRecord::Base.connection.execute(sql)
   end
 
   def data_usage
-    params = data_usage_params(current_account)
-    sql = DashboardHelper.get_usage_sql(params[:interval_type], params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
-    set_query_interval_type(params)
+    sql = DashboardHelper.get_usage_sql(@params[:interval_type], @params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     @usage = ActiveRecord::Base.connection.execute(sql)
   end
 
   def total_data
-    params = total_data_params(current_account)
     if current_account.is_all_accounts?
-      sql = DashboardHelper.get_all_accounts_data_sql(params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+      sql = DashboardHelper.get_all_accounts_data_sql(@params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     else
-      sql = DashboardHelper.get_total_data_sql(params[:from], params[:to], params[:account_ids], as_org_ids: params[:as_org_ids], location_ids: params[:location_ids])
+      sql = DashboardHelper.get_total_data_sql(@params[:from], @params[:to], @params[:account_ids], as_org_ids: @params[:as_org_ids], location_ids: @params[:location_ids])
     end
     @total_data = ActiveRecord::Base.connection.execute(sql)
   end
@@ -163,6 +153,25 @@ class DashboardController < ApplicationController
   end
 
   private
+
+  def set_params_and_interval_type
+    case request.path
+    when online_pods_path
+      params_fn = method(:online_pods_params)
+    when download_speeds_path
+      params_fn = method(:download_speeds_params)
+    when upload_speeds_path
+      params_fn = method(:upload_speeds_params)
+    when latency_path
+      params_fn = method(:latency_params)
+    when data_usage_path
+      params_fn = method(:data_usage_params)
+    when total_data_path
+      params_fn = method(:total_data_params)
+    end
+    @params = params_fn.call(current_account)
+    set_query_interval_type(@params)
+  end
 
   def get_filtered_locations(locations, filter)
     case filter

@@ -3,10 +3,6 @@ import { Controller } from "@hotwired/stimulus";
 export const PADDING = 0;
 export const X_AXIS_OFFSET = 12;
 export const Y_AXIS_OFFSET = 10;
-export const STANDARD_LABEL_WIDTH = 20;
-export const STANDARD_CHAR_WIDTH = 6;
-export const X_CONTEXT_OFFSET = (labelSuffix) => labelSuffix ? STANDARD_LABEL_WIDTH + STANDARD_CHAR_WIDTH * labelSuffix.length : STANDARD_LABEL_WIDTH;
-export const RIGHT_X_CONTEXT_OFFSET = 40;
 export const GRID_LINE_Y_OFFSET = 5;
 export const BOTTOM_LABELS_HEIGHT = 32;
 export const DEFAULT_BLUE = '#4b7be5';
@@ -469,14 +465,14 @@ export default class ChartController extends Controller {
         const firstDate = new Date(this.getFirstDate());
         const lastDate = new Date(this.getLastDate());
         const dateDiff = lastDate.getTime() - firstDate.getTime();
-        const THREE_YEARS_IN_MS = 94608000000;
-        const ONE_YEAR_IN_MS = 31536000000;
+        const THREE_YEARS_IN_MS = 94_608_000_000;
+        const ONE_YEAR_IN_MS = 31_536_000_000;
         // if difference is 3 years or more, just show year
         // if difference is between 1 and 3 years, show month and year
         // if difference is between 1 week and 1 year, show month and day
-        if(dateDiff >= 94608000000 && isInAxis) {
+        if(dateDiff >= THREE_YEARS_IN_MS && isInAxis) {
           return date.getFullYear();
-        } else if(dateDiff >= 31536000000 && isInAxis) {
+        } else if(dateDiff >= ONE_YEAR_IN_MS && isInAxis) {
           return `${monthWord} ${date.getFullYear()}`;
         } else {
           return `${monthWord} ${date.getDate()}`;
