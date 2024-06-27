@@ -4,7 +4,7 @@ import "@hotwired/turbo-rails";
 const application = Application.start();
 
 // Configure Stimulus development experience
-application.debug = process.env.NODE_ENV === 'development' || false;
+application.debug = false;
 window.Stimulus = application;
 
 // handle abort errors

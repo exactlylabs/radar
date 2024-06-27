@@ -395,7 +395,7 @@ export default class extends Controller {
   }
 
   closeMenuIfClickOutside(e) {
-    if(this.isSmallScreen) return;
+    if(this.locked || this.isSmallScreen) return;
     const clickTarget = e.target;
     const menuElement = document.getElementById('sidebar--open-search-panel');
     if(menuElement && !menuElement.classList.contains('invisible') && !menuElement.contains(clickTarget)) {
@@ -416,8 +416,9 @@ export default class extends Controller {
   }
 
   openSearch() {
-    if(this.isSearchOpen) return;
+    if(this.locked || this.isSearchOpen) return;
     if(this.isMidScreen) document.getElementById('search-tooltip').classList.add('invisible');
+    this.locked = true;
     document.addEventListener('click', this.closeMenuIfClickOutside.bind(this), { capture: true });
     if (this.hasAccountsMenuTarget) this.closeAccountsMenu();
     if (this.hasAccountsFilterTarget) this.closeAccountsFilter();
@@ -439,6 +440,7 @@ export default class extends Controller {
       if(this.isBigScreen) this.narrowSidebarTarget.classList.remove('invisible');
     }, 250);
     setTimeout(() => {
+      this.locked = false;
       this.searchPanelTarget.classList.remove('opening');
     }, 500);
   }
@@ -488,9 +490,11 @@ export default class extends Controller {
   }
 
   closeSearchIfOpen() {
+    if(this.locked) return;
     if(!this.isSearchOpen) return;
     this.resetPanel();    
     this.searchPanelTarget.classList.add('closing');
+    this.locked = true;
     if(!this.isMidScreen) {
       setTimeout(() => {
         this.defaultSidebarTarget.classList.add('default-opening');
@@ -503,6 +507,7 @@ export default class extends Controller {
     setTimeout(() => {
       this.searchPanelTarget.classList.remove('closing');
       this.searchPanelTarget.classList.add('invisible');
+      this.locked = false;
       if(!this.isMidScreen) this.searchSidebarTarget.classList.add('invisible');
     }, 300);
   }
