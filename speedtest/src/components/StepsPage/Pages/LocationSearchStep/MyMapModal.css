@@ -1,0 +1,6 @@
+.speedtest--modal-map-container {
+  width: 100%;
+  height: -webkit-fill-available;
+  height: -moz-fill-available;
+  height: fill-available;
+}

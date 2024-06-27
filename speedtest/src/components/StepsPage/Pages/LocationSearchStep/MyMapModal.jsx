@@ -7,7 +7,6 @@ import {Box, CircularProgress, Modal} from '@mui/material';
 import {MyModalTitle} from "../../../common/MyModalTitle";
 import {MyBackButton} from "../../../common/MyBackButton";
 import {MyForwardButton} from "../../../common/MyForwardButton";
-import {ArrowForward} from "@mui/icons-material";
 import {MapContainer, Marker, TileLayer} from "react-leaflet";
 import {MyMap} from "../../../common/MyMap";
 import {
@@ -26,6 +25,7 @@ import ConnectionContext from "../../../../context/ConnectionContext";
 import {ADDRESS_PROVIDER} from "../../../../utils/userMetadata";
 import UserDataContext from "../../../../context/UserData";
 import rightArrowWhite from "../../../../assets/right-arrow-white.png";
+import './MyMapModal.css';
 
 const commonModalStyle = {
   boxShadow: DEFAULT_MODAL_BOX_SHADOW,
@@ -55,6 +55,10 @@ const boxStyle = {
   backgroundColor: DEFAULT_MAP_MODAL_BACKGROUND_COLOR,
   borderRadius: '16px',
   textAlign: 'center',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'center'
 }
 
 const widgetBoxStyle = {
@@ -73,7 +77,7 @@ const mapContainerStyle = {
 }
 
 const mobileMapContainerStyle = {
-  height: '45%',
+  height: '--webkit-fill-available',
   width: '100%'
 }
 
@@ -115,6 +119,7 @@ const mobileFooterStyle = {
   justifyContent: 'center',
   alignItems: 'center',
   margin: '15px auto',
+  gap: '1rem'
 }
 
 const subtitleStyle = {
@@ -248,7 +253,6 @@ const MyMapModal = ({
 
   const handleContinue = () => {
     if(goToNextPage) {
-      goToNextPage(true);
       if(positionedManually) {
         confirmCoordinates()
           .catch(err => {
@@ -281,7 +285,7 @@ const MyMapModal = ({
           <MyModalTitle text={isGeneric ? 'Tell us your location' : 'Confirm your location'}/>
           <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{isGeneric ? 'Zoom the map and drag the marker to tell us your current location.' : 'Please confirm your location by moving the marker to the correct place. You can zoom the map and drag the marker.'}</div>
         </div>
-        <div style={getMapWrapperStyle()}>
+        <div className={'speedtest--modal-map-container'}>
           {
             !loading && addressCoordinates.length > 0 &&
             <MapContainer
