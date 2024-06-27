@@ -140,6 +140,13 @@ export default class MultiLineChartController extends ChartController {
     const minDif = Math.min(...xDifs);
     let minDifIndex = xDifs.indexOf(minDif);
     if(minDifIndex < 0) return;
+    
+    const VERTICAL_DYNAMIC_OFFSET = 12;
+    const TOPMOST_Y_COORDINATE = 5;
+    const TOOLTIP_TITLE_BOTTOM_PADDING = 30;
+    const TOOLTIP_TITLE_TOP_PADDING = 20;
+    const RADII = 6;
+    
     let yValues = [];
     const minDifIndexEntry = firstEntry.value[1][minDifIndex];
     let xCoordinate = this.getXCoordinateFromXValue(firstEntry.value[1], minDifIndex);
@@ -220,40 +227,44 @@ export default class MultiLineChartController extends ChartController {
     if(tooltipTopYCoordinate + tooltipHeight > this.canvasHeight) {
       const tooltipEndY = tooltipTopYCoordinate + tooltipHeight;
       const diff = tooltipEndY - this.canvasHeight;
-      tooltipTopYCoordinate -= diff + 12;
+      tooltipTopYCoordinate -= diff + VERTICAL_DYNAMIC_OFFSET;
     } else if (tooltipTopYCoordinate < 0) {
-      tooltipTopYCoordinate = 5;
+      tooltipTopYCoordinate = TOPMOST_Y_COORDINATE;
     }
     
 
-    this.ctx.roundRect(xCoordinate, tooltipTopYCoordinate, tooltipWidth, tooltipHeight, 6);
+    this.ctx.roundRect(xCoordinate, tooltipTopYCoordinate, tooltipWidth, tooltipHeight, RADII);
     this.ctx.fill();
     this.ctx.stroke();
 
     this.ctx.shadowColor = 'transparent';
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
-    
-    this.ctx.fillText(tooltipTitle, xCoordinate + 8, tooltipTopYCoordinate + 20);
+    this.ctx.fillText(tooltipTitle, xCoordinate + offset, tooltipTopYCoordinate + TOOLTIP_TITLE_TOP_PADDING);
 
     this.ctx.beginPath();
     this.ctx.fillStyle = '#e3e3e8';
     this.ctx.lineWidth = 1;
-    this.ctx.moveTo(xCoordinate, tooltipTopYCoordinate + 30);
-    this.ctx.lineTo(xCoordinate + tooltipWidth, tooltipTopYCoordinate +  30);
+    
+    this.ctx.moveTo(xCoordinate, tooltipTopYCoordinate + TOOLTIP_TITLE_BOTTOM_PADDING);
+    this.ctx.lineTo(xCoordinate + tooltipWidth, tooltipTopYCoordinate +  TOOLTIP_TITLE_BOTTOM_PADDING);
     this.ctx.stroke();
     
     i = 0;
     for(let [hex, _] of this.adjustedData.entries()) {
       if(i >= MAX_TOOLTIP_LINES) break;
       let xPixel = xCoordinate + X_SIDE_PADDING;
-      const DOT_Y_COORDINATE = tooltipTopYCoordinate + 40 + 8 + i * 25;
-      const TEXT_Y_COORDINATE = tooltipTopYCoordinate + 40 + 13 + i * 25;
+      const TOP_PADDING = 40;
+      const DOT_TOP_PADDING = 8;
+      const TEXT_TOP_PADDING = 13;
+      const NEW_LINE_SPACING = 25;
+      const DOT_Y_COORDINATE = tooltipTopYCoordinate + TOP_PADDING + DOT_TOP_PADDING + i * NEW_LINE_SPACING;
+      const TEXT_Y_COORDINATE = tooltipTopYCoordinate + TOP_PADDING + TEXT_TOP_PADDING + i * NEW_LINE_SPACING;
       this.drawDotOnLine(xPixel, DOT_Y_COORDINATE, hex);
       this.ctx.font = '13px Mulish';
       this.ctx.fillStyle = '#6d6a94';
       xPixel += DOT_SIZE + DOT_TEXT_SPACING;
-      this.ctx.fillText(tooltipTitle, xPixel, tooltipTopYCoordinate + 40 + 13 + i * 25);
+      this.ctx.fillText(tooltipTitle, xPixel, TEXT_Y_COORDINATE);
       
       this.ctx.font = '13px MulishSemiBold';
       this.ctx.fillStyle = 'black';
@@ -268,12 +279,13 @@ export default class MultiLineChartController extends ChartController {
   }
   
   getDynamicTooltipHeight(yValuesLength = 0) {
-    const tooltipHeaderHeight = 32;
-    const verticalPadding = 8 * 2;
-    const maxVisibleRows = 7;
+    const TOOLTIP_HEADER_HEIGHT = 32;
+    const VERTICAL_PADDING = 16;
+    const MAX_VISIBLE_ROWS = 7;
+    const ROW_SPACING = 25;
     const rowCountUsed = this.selectedHexes.length > 0 ? this.selectedHexes.length : yValuesLength;
-    if(rowCountUsed > maxVisibleRows) return tooltipHeaderHeight + verticalPadding + 25 * maxVisibleRows;
-    return tooltipHeaderHeight + verticalPadding + 25 * rowCountUsed;
+    if(rowCountUsed > MAX_VISIBLE_ROWS) return TOOLTIP_HEADER_HEIGHT + VERTICAL_PADDING + ROW_SPACING * MAX_VISIBLE_ROWS;
+    return TOOLTIP_HEADER_HEIGHT + VERTICAL_PADDING + ROW_SPACING * rowCountUsed;
   }
   
   getXValueAtIndex(index) {
