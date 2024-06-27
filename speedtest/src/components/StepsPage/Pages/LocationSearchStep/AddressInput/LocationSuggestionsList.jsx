@@ -82,7 +82,7 @@ const LocationSuggestionsList = ({
   }, []);
 
   useEffect(() => {
-    if(suggestions && suggestions.length > 0) setOpen(true);
+    setOpen(true);
     setSelectedIndex(0);
   }, [suggestions]);
 

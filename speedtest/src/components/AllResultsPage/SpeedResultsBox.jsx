@@ -26,7 +26,7 @@ const mobileFiltersWrapper = {
   left: 0,
   width: '100%',
   zIndex: 1001,
-  height: '100%'
+  height: 0
 }
 
 const mobileFilterListStyle = {
