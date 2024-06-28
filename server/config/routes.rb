@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: 'users/registrations' }
 
@@ -364,6 +366,11 @@ Rails.application.routes.draw do
     collection do
       get 'detail_modal', to: 'outages#detail_modal'
     end
+  end
+
+  # Sidekiq web UI, only accessible by admins
+  authenticate :user, ->(u) { u.super_user? } do
+    mount Sidekiq::Web => '/sidekiq'
   end
 
   root to: redirect('/users/sign_in')
