@@ -50,8 +50,8 @@ include Recents
   has_one :location_metadata_projections
 
   before_validation :check_if_only_coordinates
-  after_validation :custom_geocode, if: :lat_long_changed?
-  after_commit :link_to_geospaces
+  after_validation :custom_geocode, if: Proc.new { new_record? || address_changed? || latitude_changed? || longitude_changed? }
+  after_save_commit :link_to_geospaces
   after_commit :send_notifications
   after_save :recalculate_averages!, if: :saved_change_to_account_id?
 
@@ -313,7 +313,9 @@ include Recents
   end
 
   def link_to_geospaces
-    ReprocessNetworkGeospaceJob.perform_later(self) if saved_change_to_lonlat? && self.lonlat.present?
+    if lonlat.present? && (previous_changes.blank? || saved_change_to_lonlat? )
+      ReprocessNetworkGeospaceJob.perform_later(self)
+    end
   end
 
   def send_notifications
