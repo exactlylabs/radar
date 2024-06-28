@@ -264,6 +264,8 @@ const MyMapModal = ({
             if(isNoConnectionError(err)) setNoInternet(true);
             notifyError(err);
           });
+      } else {
+        goToNextPage(true, false);
       }
     }
   }
