@@ -24,9 +24,7 @@ export default class LineChartController extends ChartController {
   }
   
   showTooltip(mouseX, mouseY) {
-    console.log('showTooltip', mouseX, mouseY)
     const shouldContinue = this.setupTooltipContext(mouseX, mouseY);
-    console.log('shouldContinue', shouldContinue)
     if(!shouldContinue) return;
     const xDifs = this.adjustedData.map(({x, _}, index) => Math.abs(this.getXCoordinateFromXValue(this.adjustedData, index) - mouseX));
     const minDif = Math.min(...xDifs);

@@ -12,6 +12,11 @@ export const DOT_SIZE = 4;
 
 export const TOOLTIP_TITLE_PADDING = 40;
 
+export const TouchEvents = {
+  TOUCH_START: 'touchstart',
+  TOUCH_END: 'touchend',
+}
+
 export const CHART_TITLES = {
   'downloadSpeeds': 'Download Speeds',
   'uploadSpeeds': 'Upload Speeds',
@@ -108,6 +113,28 @@ export default class ChartController extends Controller {
     this.plotChart();
   }
   
+  /**
+   * This method is a helper method to access position of tap event in mobile devices.
+   * @param e Actual triggered TouchEvent
+   *        If the event type is of type "TouchStart", then the touches array will be used and holds the information about the tap position
+   *        If the event type is of type "TouchEnd", then the changedTouches array will be used and holds the information about the tap position
+   * @returns {{mouseX: number, mouseY: number}|{mouseX: null, mouseY: null}}
+   */
+  getTapPosition(e) {
+    const rect = this.element.getBoundingClientRect();
+    const { touches, changedTouches, type } = e;
+    if((type === TouchEvents.TOUCH_START && touches.length > 1) || (type === TouchEvents.TOUCH_END && changedTouches.length > 1)) return {mouseX: null, mouseY: null };
+    let clientX, clientY;
+    if(type === TouchEvents.TOUCH_START) {
+      clientX = touches[0].clientX;
+      clientY = touches[0].clientY;
+    } else {
+      clientX = changedTouches[0].clientX;
+      clientY = changedTouches[0].clientY;
+    }
+    return { mouseX: clientX - rect.left, mouseY: clientY - rect.top};
+  }
+  
   getMousePosition(e) {
     const rect = this.element.getBoundingClientRect();
     return {
@@ -146,12 +173,11 @@ export default class ChartController extends Controller {
   handleMouseDown(e) {
     if(this.chartId === 'compareTotalData') return;
     let xPos;
-    if(e.type === 'touchstart') {
+    if(e.type === TouchEvents.TOUCH_START) {
       e.preventDefault();
-      const { touches } = e;
-      if(touches.length > 1) return;
-      const { clientX } = touches[0];
-      xPos = clientX;
+      const {mouseX} = this.getTapPosition(e);
+      if(mouseX === null) return;
+      xPos = mouseX;
     } else {
       const { mouseX} = this.getMousePosition(e);
       xPos = mouseX;
@@ -163,23 +189,20 @@ export default class ChartController extends Controller {
   
   handleMouseUp(e) {
     let xPos;
-    if(e.type === 'touchend') {
+    if(e.type === TouchEvents.TOUCH_END) {
       e.preventDefault();
-      const { changedTouches } = e;
-      if(changedTouches.length > 1) return;
-      const { clientX, clientY } = changedTouches[0];
+      const { mouseX, mouseY } = this.getTapPosition(e);
+      if(mouseX === null || mouseY === null) return;
       const dragFinalTime = new Date().getTime();
-      console.log('dragFinalTime', dragFinalTime - this.dragInitialTime)
       if(dragFinalTime - this.dragInitialTime < 100) {
-        console.log('nos vamos')
-        this.showTooltip(clientX, clientY);
+        this.showTooltip(mouseX, mouseY);
         this.mouseClickedX = null;
         this.mouseReleasedX = null;
         this.isDragging = false;
         this.dragInitialTime = null;
         return;
       }
-      xPos = clientX;
+      xPos = mouseX;
       
       // establish a threshold for drag to kick in, otherwise it's a simple tap
       
@@ -225,10 +248,9 @@ export default class ChartController extends Controller {
     let xPos;
     if(e.type === 'touchmove') {
       e.preventDefault();
-      const { touches } = e;
-      if(touches.length > 1) return;
-      const { clientX } = touches[0];
-      xPos = clientX;
+      const { mouseX } = this.getTapPosition(e);
+      if(mouseX === null) return;
+      xPos = mouseX;
     } else {
       const { mouseX} = this.getMousePosition(e);
       xPos = mouseX;
