@@ -10,7 +10,7 @@ import {MyForwardButton} from "../../../common/MyForwardButton";
 import {MapContainer, Marker, TileLayer} from "react-leaflet";
 import {MyMap} from "../../../common/MyMap";
 import {
-  customMarker,
+  customMarker, DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE,
   mapTileAttribution,
   mapTileUrl
 } from "../../../../utils/map";
@@ -176,7 +176,8 @@ const MyMapModal = ({
       setError(null);
       try {
         const coords = await getUserApproximateCoordinates(config.clientId);
-        setAddressCoordinates(coords);
+        if(coords.length === 0) setAddressCoordinates([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
+        else setAddressCoordinates(coords);
       } catch (e) {
         if(isNoConnectionError(e)) setNoInternet(true);
         notifyError(e);
