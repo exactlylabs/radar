@@ -3,4 +3,8 @@
   height: -webkit-fill-available;
   height: -moz-fill-available;
   height: fill-available;
+
+  &[data-is-widget="true"] {
+    height: calc(100% - 165px - 45px);
+  }
 }
