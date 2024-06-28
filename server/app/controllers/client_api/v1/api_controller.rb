@@ -15,9 +15,6 @@ module ClientApi
 
       def check_allowed_origin
         @allowed = true
-        if Rails.env.production? && request.origin && !@widget_client.client_urls.include?(request.origin) # Just check for origin if present, else, skip
-          @allowed = false
-        end
       end
 
       protected
@@ -39,7 +36,8 @@ module ClientApi
       end
 
       def set_client
-        @widget_client = WidgetClient.find_by_client_name('ExactlyLabs') # Default ExactlyLabs client
+        @widget_client = WidgetClient.where(id: params[:client_id]).first
+        @widget_client ||= WidgetClient.find_by_client_name('ExactlyLabs') # Default ExactlyLabs client
       end
 
       def set_cors_headers

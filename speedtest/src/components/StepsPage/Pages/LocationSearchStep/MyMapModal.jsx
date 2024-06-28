@@ -216,7 +216,11 @@ const MyMapModal = ({
   )
 
   const getStyle = () => {
-    if(config.widgetMode) return widgetModalFraming({maxHeight: '475px'});
+    if(config.widgetMode) {
+      let customCss = {maxHeight: '475px'};
+      if(!isSmallSizeScreen && !isMediumSizeScreen) customCss['maxWidth'] = '600px';
+      return widgetModalFraming(customCss);
+    }
     return isMediumSizeScreen || isSmallSizeScreen ? mobileModalStyle : modalStyle
   }
 
@@ -260,6 +264,8 @@ const MyMapModal = ({
             if(isNoConnectionError(err)) setNoInternet(true);
             notifyError(err);
           });
+      } else {
+        goToNextPage(true, false);
       }
     }
   }
@@ -286,7 +292,7 @@ const MyMapModal = ({
           <MyModalTitle text={isGeneric ? 'Tell us your location' : 'Confirm your location'}/>
           <div style={isExtraSmallSizeScreen || isSmallSizeScreen ? xsSubtitleStyle : subtitleStyle}>{isGeneric ? 'Zoom the map and drag the marker to tell us your current location.' : 'Please confirm your location by moving the marker to the correct place. You can zoom the map and drag the marker.'}</div>
         </div>
-        <div className={'speedtest--modal-map-container'}>
+        <div className={'speedtest--modal-map-container'} data-is-widget={config.widgetMode}>
           {
             !loading && addressCoordinates.length > 0 &&
             <MapContainer
