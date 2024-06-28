@@ -29,7 +29,7 @@ var importOrder = []namespaces.Namespace{namespaces.US_STATE, namespaces.US_COUN
 var shapeUrls = map[namespaces.Namespace]string{
 	namespaces.US_STATE:  "https://www2.census.gov/geo/tiger/TIGER2021/STATE/tl_2021_us_state.zip",
 	namespaces.US_COUNTY: "https://www2.census.gov/geo/tiger/TIGER2021/COUNTY/tl_2021_us_county.zip",
-	namespaces.US_TTRACT: "https://www.sciencebase.gov/catalog/file/get/4f4e4a2ee4b07f02db61576c?facet=Indian_Reservations",
+	namespaces.US_TTRACT: "https://mapping-shapes.s3.us-east-2.amazonaws.com/tribal_tracts.zip",
 }
 var envName = flag.String("env-file", ".env", "Name of the environment variables file")
 var outputDir = flag.String("output-dir", "geos", "Directory where all files will be stored")

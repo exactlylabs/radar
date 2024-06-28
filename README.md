@@ -54,3 +54,23 @@ Each directory consists of a tool of our toolkit
 ## Run
 
 To run all projects, just call `make run` inside the root directory or, in case you want to run them separatedly, call make run inside each project's directory
+
+
+## Deployment Configuration
+
+Our current infrastructure consists of a Swarm cluster, and so all of our applications must be Dockerized and pushed to a Registry.
+
+We use a private registry to store our Docker images, and this private registry is accessible only through the VPN. In addition to be in the VPN, you have to make sure you have the following configuration in your `/etc/docker/daemon.json` file:
+
+```js
+{
+  "insecure-registries": [
+    "registry.staging.radartoolkit.com",
+    "registry.radartoolkit.com"
+  ]
+}
+```
+
+This makes so docker when pushing to our registry ignores the missing certificate. We don't need to set it up as we are already in a secure connection.
+
+
