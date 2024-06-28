@@ -2,8 +2,8 @@ if Rails.env.production? || Rails.env.staging?
   Geocoder.configure(
     # Geocoding options
     # timeout: 3,                 # geocoding service timeout (secs)
-    lookup: :geoapify,         # name of geocoding service (symbol)
-    # ip_lookup: :ipinfo_io,      # name of IP address geocoding service (symbol)
+    lookup: :geoapify,            # name of geocoding service (symbol)
+    ip_lookup: :ipinfo_io,        # name of IP address geocoding service (symbol)
     # language: :en,              # ISO-639 language code
     # use_https: false,           # use HTTPS for lookup requests? (if supported)
     # http_proxy: nil,            # HTTP proxy server (user:pass@host:port)
