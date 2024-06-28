@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  speedtest-client:
+    image: registry.radartoolkit.com/toolkit-website:latest
+    networks:
+      - traefik_public
+    environment:
+      - DISCORD_CONTACT_WEBHOOK_URL=https://discord.com/api/webhooks/1072571326897848360/dZpgyH9cmI3JMQrBMKZtrivDyg8tbGtdVK8PMyH2LamGKFpZV7IUk9HjmrCxg_6kKo-d
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_ENV=production
+      - REACT_APP_ENV=production
+
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.toolkit-website.rule=Host(`radartoolkit.com`, `www.radartoolkit.com`)"
+        - "traefik.http.services.toolkit-website.loadbalancer.server.port=3000"
+        - "traefik.http.routers.toolkit-website.entrypoints=web,websecure"
+        - "traefik.http.routers.toolkit-website.tls.certresolver=myresolver"
+
+networks:
+  traefik_public:
+    external: true
+
+

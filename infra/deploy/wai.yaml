@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  # As a Docker Label
+  wai:
+    #  A container that exposes an API to show its IP address
+    image: traefik/whoami
+    command:
+      - --verbose=true
+      - --port=3000
+    networks:
+      - traefik_public
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik_public"
+        - "traefik.http.routers.wai-app.rule=Host(`wai.radartoolkit.com`)"
+        - "traefik.http.services.wai-app.loadbalancer.server.port=3000"
+        - "traefik.http.routers.wai-app.entrypoints=web,websecure"
+        - "traefik.http.routers.wai-app.tls.certresolver=myresolver"
+
+networks:
+  traefik_public:
+    external: true

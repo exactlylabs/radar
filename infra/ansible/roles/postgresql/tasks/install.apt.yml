@@ -30,3 +30,4 @@
   apt:
     name:
       - "postgresql-{{postgresql_version}}"
+      - "postgis"

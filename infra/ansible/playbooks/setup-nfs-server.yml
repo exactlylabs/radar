@@ -16,3 +16,9 @@
         /mnt/nfs/swarmpit/couch-data:
           - host: "{{ vpc_subnet_cidr }}"
             options: rw,sync,subtree_check,no_root_squash
+        /mnt/nfs/mapping-api/geos:
+          - host: "{{ vpc_subnet_cidr }}"
+            options: rw,sync,subtree_check,no_root_squash
+        /mnt/nfs/tailscale-state:
+          - host: "{{ vpc_subnet_cidr }}"
+            options: rw,sync,subtree_check,no_root_squash
