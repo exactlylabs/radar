@@ -15,9 +15,6 @@ module ClientApi
 
       def check_allowed_origin
         @allowed = true
-        if Rails.env.production? && request.origin && !@widget_client.client_urls.include?(request.origin) # Just check for origin if present, else, skip
-          @allowed = false
-        end
       end
 
       protected
