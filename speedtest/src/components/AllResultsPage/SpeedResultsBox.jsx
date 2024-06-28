@@ -117,6 +117,16 @@ const SpeedResultsBox = ({
     </div>
   );
 
+  const getWidgetVersion = (baseStyle, mainFrameElement) => {
+    const { y, height } = mainFrameElement.getBoundingClientRect();
+    const WIDGET_FOOTER_HEIGHT = 56;
+    const SPEED_FILTER_BOTTOM_PADDING = 16;
+    const SPEED_PICKER_HEIGHT = 145;
+    const WIDGET_NAVBAR_HEIGHT = 54;
+    const WIDGET_TABS_HEIGHT = 40;
+    return {...baseStyle, top: `calc(${height}px - ${WIDGET_FOOTER_HEIGHT}px - ${SPEED_FILTER_BOTTOM_PADDING}px - ${SPEED_PICKER_HEIGHT}px - ${WIDGET_NAVBAR_HEIGHT}px - ${WIDGET_TABS_HEIGHT}px)` };
+  }
+
   const getExtraSmallVersion = () => {
     let style = xsFilterListStyle;
     const element = document.getElementById('speedtest--main-frame');
@@ -124,7 +134,7 @@ const SpeedResultsBox = ({
     if (config.webviewMode) {
       style = {...style, top: 'calc(100vh - 125px - 45px)'}
     } else if(config.widgetMode) {
-      style = {...style, top: `unset`, bottom: '16px' }
+      style = getWidgetVersion(style, element);
     } else {
       style = {...style, top: (y + height - 300)}
     }
@@ -145,7 +155,7 @@ const SpeedResultsBox = ({
     if (config.webviewMode) {
       style = {...style, top: 'calc(100vh - 125px - 45px)'}
     } else if(config.widgetMode) {
-      style = {...style, top: `unset`, bottom: '16px' }
+      style = getWidgetVersion(style, element);
     } else {
       style = {...style, top: (y + height - 300)}
     }
