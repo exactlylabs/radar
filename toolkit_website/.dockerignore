@@ -1,0 +1,11 @@
+Makefile
+docker/
+.dockerignore
+.git/
+.cache/
+.tmp/
+build/
+.env
+node_modules/
+.next
+dist/

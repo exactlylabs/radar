@@ -52,6 +52,8 @@ github.com/exactlylabs/go-monitor v0.0.5 h1:bHwGW3QBegBP1fO5X6RM8XMc5GmCHOEhBTfk
 github.com/exactlylabs/go-monitor v0.0.5/go.mod h1:5OD/11amMP3+8JfBupmx4G4CUOhbyOnuaAdLaFpf5ZQ=
 github.com/exactlylabs/go-rest v0.0.5 h1:KZ3Em0feFZ/0nVr5aF7JE/5ek3rXuzsqmeGsFUTp7qg=
 github.com/exactlylabs/go-rest v0.0.5/go.mod h1:xmLo8I75JpowwKfUiRmFbSMYwha2tTTGh/0/Hn/9Cag=
+github.com/exactlylabs/go-rest v0.0.6 h1:tsITkQzR6pXb9jp2glDXPb4RTymot1knkHCu3uGX/nQ=
+github.com/exactlylabs/go-rest v0.0.6/go.mod h1:Xd6XgO0oL2n+peTFYi0XFEEZQAhPFxOy+7N6NTUVDlk=
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/felixge/httpsnoop v1.0.3 h1:s/nj+GCswXYzN5v2DpNMuMQYe+0DDwt5WVCU6CWBdXk=
 github.com/felixge/httpsnoop v1.0.3/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=

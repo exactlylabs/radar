@@ -1,0 +1,41 @@
+# syntax=docker/dockerfile:1.2
+
+FROM golang:1.18.2-alpine3.15 as builder
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
+
+
+RUN apk add git gcc g++ make curl bash sqlite-dev zlib-dev
+
+RUN curl -o tippecanoe.tar.gz -L https://github.com/mapbox/tippecanoe/archive/refs/tags/1.36.0.tar.gz
+RUN tar -xzf tippecanoe.tar.gz && cd tippecanoe-1.36.0 && make -j && make install PREFIX=/tippecanoe-dist
+
+WORKDIR /go/src/github.com/exactlylabs/mlab-mapping/backend
+
+COPY go.mod go.sum ./
+
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN go get ./...
+
+COPY .  ./
+
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o setup_shapes ./cmd/setup_shapes/main.go
+
+#---------------------------------------------------------#
+FROM --platform=${TARGETPLATFORM} alpine:3.14.0
+
+WORKDIR /app
+RUN apk add --no-cache tzdata gdal-tools
+# Copy the binary
+COPY --from=builder /go/src/github.com/exactlylabs/mlab-mapping/backend/setup_shapes ./
+COPY --from=builder /tippecanoe-dist/bin/* /usr/local/bin/
+COPY --from=builder /go/src/github.com/exactlylabs/mlab-mapping/backend/scripts/docker-entrypoint ./
+
+RUN chmod +x docker-entrypoint
+RUN chmod +x setup_shapes
+
+ENTRYPOINT ["./docker-entrypoint"]
+CMD ["./setup_shapes"]

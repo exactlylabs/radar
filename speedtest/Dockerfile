@@ -1,14 +1,15 @@
 FROM node:18-alpine
 
-ARG NODE_ENV=staging
+ARG ENVIRONMENT
+ENV ENVIRONMENT=${ENVIRONMENT}
 
 WORKDIR /app
 
 COPY . .
 
-RUN NODE_ENV=${NODE_ENV} npm install
+RUN NODE_ENV=${ENVIRONMENT} npm install
 
-RUN NODE_ENV=${NODE_ENV} npm run build
+RUN NODE_ENV=${ENVIRONMENT} npm run build
 
 EXPOSE 9999
 

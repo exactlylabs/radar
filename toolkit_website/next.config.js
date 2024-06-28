@@ -28,5 +28,6 @@ module.exports = {
         permanent: false,
       }
     ]
-  }
+  },
+  output: "standalone",
 }
