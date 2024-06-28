@@ -1,0 +1,32 @@
+services:
+  tailscale-vpn:
+    image: registry.staging.radartoolkit.com/tailscale:latest
+    hostname: radar-swarm-staging
+    environment:
+      - TS_EXTRA_ARGS=--advertise-tags=tag:container --accept-routes
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_AUTHKEY=/var/run/secrets/TS_AUTHKEY
+
+    secrets:
+      - TS_AUTHKEY
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+
+
+secrets:
+  TS_AUTHKEY:
+    external: true
+
+
+volumes:
+  tailscale-state:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=nfs.staging.radartoolkit.com,rw
+      device: ":/mnt/nfs/tailscale-state"

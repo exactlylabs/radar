@@ -8,31 +8,75 @@ services:
       placement:
         constraints:
           - node.role == manager
-
     command:
       - "--api.insecure=true"
       - "--ping"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.swarmmode=true"
-      - "--providers.docker.network=traefik_public"
+      - "--accesslog=true"
+      - "--accesslog.format=json"
+      - "--accesslog.bufferingsize=100"
+      - "--accesslog.fields.headers.names.Authorization=drop"
+      - "--accesslog.fields.headers.names.Content-Type=keep"
+      - "--accesslog.fields.headers.names.User-Agent=keep"
+      - "--metrics=true"
+      - "--metrics.otlp=true"
+      # - "--metrics.otlp.addRoutersLabels=true"
+      - "--metrics.otlp.addServicesLabels=true"
+      - "--metrics.otlp.pushInterval=10s"
+      - "--metrics.otlp.grpc=true"
+      - "--metrics.otlp.grpc.insecure=true"
+      - "--metrics.otlp.grpc.endpoint=otel-collector:4317"
+      - "--tracing=true"
+      - "--tracing.otlp=true"
+      - "--tracing.otlp.grpc=true"
+      - "--tracing.otlp.grpc.insecure=true"
+      - "--tracing.otlp.grpc.endpoint=otel-collector:4317"
+      - "--providers.swarm=true"
+      - "--providers.swarm.exposedbydefault=false"
+      - "--providers.swarm.network=traefik_public"
       - "--entrypoints.web.address=:80"
+      - "--entryPoints.web.transport.respondingTimeouts.readTimeout=600"
+      - "--entrypoints.web.forwardedheaders.trustedips=10.5.0.0/16"
       - "--entrypoints.websecure.address=:443"
+      - "--entryPoints.websecure.transport.respondingTimeouts.readTimeout=600"
+      - "--entrypoints.websecure.forwardedheaders.trustedips=10.5.0.0/16"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.myresolver.acme.email=devops@exactlylabs.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+
     ports:
-      - "80:80"
-      - "443:443"
+      - target: 80
+        published: 80
+        protocol: tcp
+        # IMPORTANT: Because of how Swarm network mesh, Traefik can't know the real client IP. It'll always think it's a swarm internal IP.
+        #  Given it doesn't support the Proxy Protocol, the only way out is to expose Traefik in host mode, meaning it's only accessible through the machine it's hosted in.
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
       - "8080:8080"
     volumes:
-      - "/opt/janus-core/letsencrypt:/letsencrypt"
+      - "letsencrypt-data:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - public
+      - vector_public
+      - otel-collector_public
 
 networks:
   public:
     driver: overlay
     attachable: true
+  vector_public:
+    external: true
+  otel-collector_public:
+    external: true
+
+volumes:
+  letsencrypt-data:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=nfs.radartoolkit.com,rw
+      device: ":/mnt/nfs/traefik/letsencrypt"

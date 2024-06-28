@@ -2,20 +2,15 @@ version: "3.8"
 
 services:
   speedtest-client:
-    image: 339712956451.dkr.ecr.us-east-2.amazonaws.com/speedtest-client:latest
+    image: registry.staging.radartoolkit.com/speedtest-client:latest
     networks:
       - traefik_public
     environment:
       - NODE_ENV=staging
     deploy:
-      placement:
-        constraints:
-          - node.role == worker
-
       replicas: 1
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=traefik_public"
         - "traefik.http.routers.speedtest-client-app.rule=Host(`speed.staging.radartoolkit.com`)"
         - "traefik.http.services.speedtest-client-app.loadbalancer.server.port=9999"
         - "traefik.http.routers.speedtest-client-app.entrypoints=web,websecure"

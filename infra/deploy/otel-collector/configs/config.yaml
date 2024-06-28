@@ -1,0 +1,37 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+  docker_stats:
+    container_labels_to_metric_labels:
+      "com.docker.stack.namespace": "swarm_namespace"
+      "com.docker.swarm.service.name": swarm_service
+      com.docker.swarm.task.id: "swarm_container_id"
+
+processors:
+  batch:
+    timeout: 60s
+
+  filter/ottl:
+    traces:
+      span:
+        - 'attributes["net.peer.name"] == "/var/run/docker.sock"'
+
+exporters:
+  awsemf:
+  awsxray:
+    region: us-east-2
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [awsemf]
+
+    traces:
+      receivers: [otlp]
+      processors: [filter/ottl, batch]
+      exporters: [awsxray]

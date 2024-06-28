@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  mapping-server:
+    image: registry.staging.radartoolkit.com/mapping-api:latest
+    networks:
+      - traefik_public
+    volumes:
+      - shapefiles:/app/geos
+    environment:
+      - ENVIRONMENT=staging
+      - CORS_ALLOWED_ORIGINS=*
+      - DB_HOST=db.mapping.exactlylabs.com
+      - DB_PORT=9000
+      - DB_USER=mapping
+      - DB_NAME=mlab-mapping
+      - STORAGE_TYPE=clickhouse
+      - TRACING_EXPORTER=aws
+      - TZ=UTC
+    secrets:
+      - source: MAPPING_DB_PASSWORD
+        target: DB_PASSWORD
+
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.mapping-api-app.rule=Host(`api.mapping.staging.radartoolkit.com`)"
+        - "traefik.http.services.mapping-api-app.loadbalancer.server.port=5000"
+        - "traefik.http.routers.mapping-api-app.entrypoints=web,websecure"
+        - "traefik.http.routers.mapping-api-app.tls.certresolver=myresolver"
+
+  setup-shapes:
+    # Run a one-time job to load shapefiles into the volume
+    image: registry.staging.radartoolkit.com/mapping-setup-shapes:latest
+    volumes:
+      - shapefiles:/app/geos
+    environment:
+      - ENVIRONMENT=staging
+      - CORS_ALLOWED_ORIGINS=*
+      - DB_HOST=db.mapping.exactlylabs.com
+      - DB_PORT=9000
+      - DB_USER=mapping
+      - DB_NAME=mlab-mapping
+      - STORAGE_TYPE=clickhouse
+      - TRACING_EXPORTER=aws
+      - TZ=UTC
+    secrets:
+      - source: MAPPING_DB_PASSWORD
+        target: DB_PASSWORD
+    deploy:
+      mode: replicated-job
+      replicas: 1
+      placement:
+        max_replicas_per_node: 1
+
+networks:
+  traefik_public:
+    external: true
+
+volumes:
+  shapefiles:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: nfsvers=4,addr=nfs.staging.radartoolkit.com,rw
+      device: ":/mnt/nfs/mapping-api/geos"
+
+secrets:
+  MAPPING_DB_PASSWORD:
+    external: true

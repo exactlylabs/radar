@@ -14,7 +14,7 @@ setup-swarm:
 
 setup-postgres:
 	@echo "Setting up Postgres"
-	ansible-playbook -i inventory/${ENVIRONMENT}.yml playbooks/setup-postgresql.yml
+	ansible-playbook -i inventory/${ENVIRONMENT}.yml playbooks/setup-postgresql.yml -e @staging_vars
 
 setup-redis:
 	@echo "Setting up Redis"

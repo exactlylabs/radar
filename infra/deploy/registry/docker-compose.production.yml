@@ -1,0 +1,26 @@
+services:
+  server:
+    image: registry:2
+    networks:
+      - traefik_public
+    volumes:
+      - /opt/registry/config.yml:/etc/docker/registry/config.yml # Manually set in the host machine
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.registry == true
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.services.docker-registry.loadbalancer.server.port=5000"
+        - "traefik.http.routers.docker-registry.rule=Host(`registry.radartoolkit.com`)"
+        - "traefik.http.routers.docker-registry.entrypoints=web,websecure"
+        - "traefik.http.routers.docker-registry.tls.certresolver=myresolver"
+
+
+networks:
+  traefik_public:
+    external: true
+
+
+

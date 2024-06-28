@@ -10,4 +10,7 @@
     postgresql_data_directory: '/mnt/postgresql-data/16/main'
     postgresql_configuration_template: 'postgres.conf.j2'
     postgresql_pg_hba_template: 'pg_hba.conf.j2'
-
+    postgresql_users:
+      - name: "{{ postgresql_radar_user }}"
+        permissions: "CREATEDB,LOGIN,SUPERUSER"
+        password: "{{ postgresql_radar_password }}"

@@ -1,0 +1,23 @@
+dist:
+  module: github.com/open-telemetry/opentelemetry-collector
+  name: otel-collector
+  output_path: ./bin
+
+receivers:
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.103.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.103.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/otlpjsonfilereceiver v0.103.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/dockerstatsreceiver v0.103.0
+
+processors:
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.103.0
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.103.0
+
+exporters:
+  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.103.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/awscloudwatchlogsexporter v0.103.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/awsemfexporter v0.103.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/awsxrayexporter v0.103.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/awss3exporter v0.103.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusexporter v0.103.0
+

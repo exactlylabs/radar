@@ -12,5 +12,5 @@ export DOCKER_HOST
 deploy:
 	echo "Deploying $(STACK) to $(ENVIRONMENT) environment in $(DOCKER_HOST)"
 
-	docker stack deploy --with-registry-auth --resolve-image always -c ./$(STACK)/docker-compose.$(ENVIRONMENT).yml $(STACK)
+	docker stack deploy --resolve-image always -c ./$(STACK)/docker-compose.$(ENVIRONMENT).yml $(STACK)
 

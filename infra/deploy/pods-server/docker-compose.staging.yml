@@ -1,0 +1,49 @@
+services:
+  app:
+    image: registry.staging.radartoolkit.com/pods-server:latest
+    networks:
+      - traefik_public
+
+    environment:
+      - RAILS_ENV=staging
+      - RAILS_SERVE_STATIC_FILES=true
+      - DB_MAX_POOL_SIZE=20
+      - BUCKET_NAME=radar-pods-staging
+      - BUCKET_ACCESS_KEY=004049506844ea70000000001
+      - HEALTHCHECK_URL=https://pods-swarm.staging.radartoolkit.com/health
+      - WEB_CONCURRENCY=4
+      - REDIS_URL=redis://redis-01.staging@radartoolkit.com:6379
+
+    secrets:
+      - source: PODS_GEOAPIFY_KEY
+        target: GEO_APIFY_KEY
+      - source: PODS_BUCKET_SECRET_KEY
+        target: BUCKET_SECRET_KEY
+      - source: PODS_SECRET_KEY
+        target: SECRET_KEY
+      - source: PODS_SMTP_PASSWORD
+        target: SMTP_PASSWORD
+
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.mapping-api-app.rule=Host(`pods-swarm.staging.radartoolkit.com`)"
+        - "traefik.http.services.mapping-api-app.loadbalancer.server.port=5000"
+        - "traefik.http.routers.mapping-api-app.entrypoints=web,websecure"
+        - "traefik.http.routers.mapping-api-app.tls.certresolver=myresolver"
+
+networks:
+  traefik_public:
+    external: true
+
+secrets:
+  PODS_GEOAPIFY_KEY:
+    external: true
+  PODS_BUCKET_SECRET_KEY:
+    external: true
+  PODS_SECRET_KEY:
+    external: true
+  PODS_SMTP_PASSWORD:
+    external: true
+

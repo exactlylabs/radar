@@ -55,3 +55,22 @@
     state: present
   notify:
     - restart postgresql service
+
+- name: Install ACL and Psycopg2 for Python
+  become: yes
+  apt:
+    name:
+      - python3-psycopg2
+      - acl
+    state: latest
+    update_cache: yes
+
+- name: Setup PostgreSQL User
+  become: true
+  become_user: postgres
+  postgresql_user:
+    db: postgres
+    name: "{{item.name}}"
+    password: "{{item.password}}"
+    role_attr_flags: "{{item.permissions}}"
+  loop: "{{postgresql_users}}"

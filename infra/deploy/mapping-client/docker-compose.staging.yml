@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  mapping-client:
+    image: registry.staging.radartoolkit.com/mapping-client:latest
+    networks:
+      - traefik_public
+    environment:
+      - NODE_ENV=staging
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.mapping-client-app.rule=Host(`mapping.staging.radartoolkit.com`)"
+        - "traefik.http.services.mapping-client-app.loadbalancer.server.port=80"
+        - "traefik.http.routers.mapping-client-app.entrypoints=web,websecure"
+        - "traefik.http.routers.mapping-client-app.tls.certresolver=myresolver"
+
+networks:
+  traefik_public:
+    external: true
+
+
