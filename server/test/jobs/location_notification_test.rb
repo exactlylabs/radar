@@ -13,7 +13,7 @@ class LocationNotificationTest < ActiveJob::TestCase
     l3 = locations(:offline1)
     l3.geospaces << [geospaces(:state1), geospaces(:county2)]
     l3.save!
-
+    set_up_geocoder
   end
 
   def location_info(location)
