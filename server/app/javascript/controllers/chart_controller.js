@@ -15,6 +15,7 @@ export const TOOLTIP_TITLE_PADDING = 40;
 export const TouchEvents = {
   TOUCH_START: 'touchstart',
   TOUCH_END: 'touchend',
+  TOUCH_MOVE: 'touchmove'
 }
 
 export const CHART_TITLES = {
@@ -246,7 +247,7 @@ export default class ChartController extends Controller {
   
   showDragArea(e) {
     let xPos;
-    if(e.type === 'touchmove') {
+    if(e.type === TouchEvents.TOUCH_MOVE) {
       e.preventDefault();
       const { mouseX } = this.getTapPosition(e);
       if(mouseX === null) return;
