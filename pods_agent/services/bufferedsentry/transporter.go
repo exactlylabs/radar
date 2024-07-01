@@ -2,7 +2,6 @@ package bufferedsentry
 
 import (
 	"net/http"
-	"time"
 
 	sentry "github.com/exactlylabs/go-monitor/pkg/sentry"
 	_sentry "github.com/getsentry/sentry-go"
@@ -14,10 +13,10 @@ type customTransport struct {
 	roundTripper http.RoundTripper
 }
 
-func newCustomSentryTranport(bufferDir, dsn string) _sentry.Transport {
+func newCustomSentryTranport(queue Queue, dsn string) _sentry.Transport {
 	return &customTransport{
 		HTTPTransport: _sentry.NewHTTPTransport(),
-		roundTripper:  newBufferedTransport(bufferDir, dsn),
+		roundTripper:  newBufferedTransport(queue, dsn),
 	}
 }
 
@@ -25,12 +24,4 @@ func (t *customTransport) Configure(opts sentry.ClientOptions) {
 	// Replace the default round tripper that is private to our own
 	opts.HTTPTransport = t.roundTripper
 	t.HTTPTransport.Configure(opts)
-}
-
-func (t *customTransport) Flush(d time.Duration) bool {
-	ret := t.HTTPTransport.Flush(d)
-	if bt, ok := t.roundTripper.(*bufferedTransport); ok {
-		bt.Flush()
-	}
-	return ret
 }
