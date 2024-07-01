@@ -55,6 +55,7 @@ class PublicController < PublicApplicationController
 
   def get_started_modal_step_2_submit
     @submission = PublicPageContactSubmission.find(params[:submission][:id])
+    @submission.step_2_completed = true
     @submission.isp = params[:submission][:isp]
     @submission.connection_type = params[:submission][:connection_type].to_i
     @submission.download_speed = params[:submission][:download_speed]
