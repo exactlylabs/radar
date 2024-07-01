@@ -59,7 +59,7 @@ export default class extends Controller {
           let baseButton = document.getElementById(selectedFilterTarget.dataset.baseButtonId);
           label = baseButton.dataset.defaultLabel;
         } else if(currentLength === 1) {
-          label = this.allItems.get(key).get(currentValues[0]);
+          label = this.allItems.get(key).get(this.searchParams.getAll(key)[0]);
         } else {
           label = `${(currentLength)} ${selectedFilterTarget.dataset.multiLabel}`;
         }
