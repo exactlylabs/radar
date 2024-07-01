@@ -19,3 +19,5 @@ client_app
 agent.iml
 *.conf
 collection/
+*.cursor
+*.log
