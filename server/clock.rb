@@ -2,6 +2,15 @@ require 'rufus-scheduler'
 
 scheduler = Rufus::Scheduler.new
 
+scheduler.every '3s', overlap: false do
+  begin
+    Rails.application.heartbeat!
+  rescue => e
+    Sentry.capture_exception(e)
+    raise e
+  end
+end
+
 scheduler.every '5s', overlap: false do
   begin
     if Rails.application.healthy? && !Rails.application.transient?
@@ -16,10 +25,6 @@ scheduler.every '5s', overlap: false do
   end
 end
 
-scheduler.every '3s', overlap: false do
-  Rails.application.heartbeat!
-end
-
 scheduler.every '15s', overlap: false do
   begin
     Client.request_scheduled_tests!
@@ -30,29 +35,11 @@ scheduler.every '15s', overlap: false do
   end
 end
 
-scheduler.every '1h', overlap: false do
-  begin
-    Client.refresh_outdated_data_usage!
-  rescue => e
-    Sentry.capture_exception(e)
-    raise e
-  end
-end
-
-
-scheduler.every '5m', overlap: false do
-  begin
-    FillClientCountProjection.perform_later
-  rescue => e
-    Sentry.capture_exception(e)
-    raise e
-  end
-end
-
-
 scheduler.every '5m', overlap: false do
   begin
     ProcessOutages.perform_later
+    FillClientCountProjection.perform_later
+    DeliverPartialPublicPageSubmissionsJob.perform_later
   rescue => e
     Sentry.capture_exception(e)
     raise e
@@ -62,9 +49,9 @@ end
 
 scheduler.every '1h', overlap: false do
   begin
+    Client.refresh_outdated_data_usage!
     MetricsProjectionJob.perform_later
-    ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW aggregated_measurements_by_hours")
-    ActiveRecord::Base.connection.execute("REFRESH MATERIALIZED VIEW aggregated_measurements_by_days")
+    RefreshMaterializedViewsJob.perform_later
   rescue => e
     Sentry.capture_exception(e)
     raise e
