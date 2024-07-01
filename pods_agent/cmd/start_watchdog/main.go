@@ -13,11 +13,17 @@ import (
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/exactlylabs/radar/pods_agent/services/bufferedsentry"
+	"github.com/exactlylabs/radar/pods_agent/services/filequeue"
 	"github.com/exactlylabs/radar/pods_agent/services/radar"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
 	"github.com/exactlylabs/radar/pods_agent/watchdog"
 	"github.com/joho/godotenv"
+)
+
+const (
+	defaultCursorFile = "errors.cursor"
+	defaultErrorsFile = "errors.log"
 )
 
 var radarPath = flag.String("radar-path", "/opt/radar/radar_agent", "Path to radar binary")
@@ -43,7 +49,14 @@ func main() {
 	c := config.LoadConfig()
 
 	log.Println("Starting Radar POD Watchdog")
-	bufferedsentry.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version, c.Environment, "Pods Watchdog", os.TempDir())
+
+	queue, err := filequeue.NewFileQueue(config.Join(defaultErrorsFile), config.Join(defaultCursorFile))
+	if err != nil {
+		panic(err)
+	}
+	defer queue.Close()
+
+	bufferedsentry.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version, c.Environment, "Pods Watchdog", queue)
 	defer sentry.NotifyIfPanic()
 
 	sysManager := sysinfo.NewSystemManager()
