@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_06_12_184100) do
+ActiveRecord::Schema.define(version: 2024_07_01_190953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -491,6 +491,7 @@ ActiveRecord::Schema.define(version: 2024_06_12_184100) do
     t.index ["autonomous_system_id"], name: "index_measurements_on_autonomous_system_id"
     t.index ["client_id"], name: "index_measurements_on_client_id"
     t.index ["location_id", "created_at"], name: "index_measurements_on_location_id_and_created_at", order: { created_at: :desc }
+    t.index ["location_id", "created_at"], name: "measurements_on_location_values_not_null", order: { created_at: :desc }, where: "((download IS NOT NULL) AND (upload IS NOT NULL))"
     t.index ["location_id"], name: "index_measurements_on_location_id"
     t.index ["lonlat"], name: "index_measurements_on_lonlat"
     t.index ["measured_by_id"], name: "index_measurements_on_measured_by_id"
@@ -673,6 +674,8 @@ ActiveRecord::Schema.define(version: 2024_06_12_184100) do
     t.integer "service_satisfaction"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "delivered_at"
+    t.boolean "step_2_completed", default: false
   end
 
   create_table "recent_searches", force: :cascade do |t|
