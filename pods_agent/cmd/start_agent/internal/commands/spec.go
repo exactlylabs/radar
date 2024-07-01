@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/alexflint/go-arg"
 	"github.com/exactlylabs/go-monitor/pkg/sentry"
 	"github.com/exactlylabs/radar/pods_agent/config"
 	"github.com/exactlylabs/radar/pods_agent/internal/info"
 	"github.com/exactlylabs/radar/pods_agent/services/bufferedsentry"
+	"github.com/exactlylabs/radar/pods_agent/services/filequeue"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo"
 )
 
@@ -35,6 +35,11 @@ var args struct {
 	subCommands
 }
 
+const (
+	defaultCursorFile = "errors.cursor"
+	defaultErrorsFile = "errors.log"
+)
+
 var defaultCommand = &RunAgentCommand{}
 
 func Run(ctx context.Context) {
@@ -45,7 +50,13 @@ func Run(ctx context.Context) {
 		config.SetConfigFilePath(args.ConfigFile)
 	}
 	c := config.LoadConfig()
-	bufferedsentry.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version, c.Environment, "Pods Agent", os.TempDir())
+	queue, err := filequeue.NewFileQueue(config.Join(defaultErrorsFile), config.Join(defaultCursorFile))
+	if err != nil {
+		panic(err)
+	}
+	defer queue.Close()
+
+	bufferedsentry.Setup(c.SentryDsn, c.ClientId, info.BuildInfo().Version, c.Environment, "Pods Agent", queue)
 	defer sentry.NotifyIfPanic()
 
 	if args.ForcedVersion != "" {
