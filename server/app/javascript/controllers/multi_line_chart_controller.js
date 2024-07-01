@@ -80,7 +80,7 @@ export default class MultiLineChartController extends ChartController {
         hexIndex = lastHexUsed;
         lastHexUsed++;
       }
-      const hex = this.COMPARISON_HEX[hexIndex];
+      const hex = this.COMPARISON_HEX[hexIndex % this.COMPARISON_HEX.length];
       const x = line['x'];
       const y = line['y'];
       if(data.has(hex)) {
