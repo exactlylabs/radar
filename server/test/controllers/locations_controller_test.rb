@@ -5,6 +5,7 @@ class LocationsControllerTest < ActionDispatch::IntegrationTest
   setup do
     UsersAccount.create!(user_id: users(:superuser1).id, account_id: accounts(:root).id, joined_at: Time.now, invited_at: Time.now)
     sign_in_as users(:superuser1)
+    set_up_geocoder
   end
 
   test "When_location_is_updated_with_category_Expect_categories_to_be_assigned" do
