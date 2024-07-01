@@ -23,7 +23,7 @@
       <%= render partial: "dashboard/components/widgets/multi_line_line_toggler",
                  locals: {
                    chart_id: "compareLatency",
-                   options: entity_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i] }}
+                   options: entity_array.each_with_index.map { |entity_name, i| { label: entity_name, hex: ChartsHelper::COLORS[i % ChartsHelper::COLORS.length] }}
                  }
       %>
     </div>
