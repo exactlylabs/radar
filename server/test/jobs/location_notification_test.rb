@@ -85,7 +85,7 @@ class LocationNotificationTest < ActiveJob::TestCase
     locations = []
     (1..Location::LOCATIONS_PER_COUNTY_GOAL).each do |i|
       l = Location.create!(
-        name: "Loc #{i}", address: "Loc #{i}", account: accounts(:root), created_by_id: 1, lonlat: "POINT(#{i} #{i})",
+        name: "Loc #{i}", address: "New Address", account: accounts(:root), created_by_id: 1, lonlat: "POINT(#{i} #{i})",
         online: true
       )
       l.geospaces << [geospaces(:study_state), geospaces(:study_county), geospaces(:study_place)]
@@ -110,7 +110,7 @@ class LocationNotificationTest < ActiveJob::TestCase
     study_aggregates(:study_place).update(locations_goal: 1)
     (1..4).each do |i|
       l = Location.create!(
-        name: "Loc #{i}", address: "Loc #{i}", account: accounts(:root), created_by_id: 1, lonlat: "POINT(#{i} #{i})",
+        name: "Loc #{i}", address: "New Address", account: accounts(:root), created_by_id: 1, lonlat: "POINT(#{i} #{i})",
         online: true
       )
       l.geospaces << [geospaces(:study_state), geospaces(:study_county), geospaces(:study_place)]
@@ -135,7 +135,7 @@ class LocationNotificationTest < ActiveJob::TestCase
     study_aggregates(:study_place).update(locations_goal: 1)
     (1..2).each do |i|
       l = Location.create!(
-        name: "Loc #{i}", address: "Loc #{i}", account: accounts(:root), created_by_id: 1, lonlat: "POINT(#{i} #{i})",
+        name: "Loc #{i}", address: "New Address", account: accounts(:root), created_by_id: 1, lonlat: "POINT(#{i} #{i})",
         online: true
       )
       l.geospaces << [geospaces(:study_state), geospaces(:study_county), geospaces(:study_place)]
