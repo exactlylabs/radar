@@ -194,7 +194,7 @@ export default class ChartController extends Controller {
       const { mouseX, mouseY } = this.getTapPosition(e);
       if(mouseX === null || mouseY === null) return;
       const dragFinalTime = new Date().getTime();
-      if(dragFinalTime - this.dragInitialTime < 100) {
+      if(dragFinalTime - this.dragInitialTime < 200) {
         this.showTooltip(mouseX, mouseY);
         this.mouseClickedX = null;
         this.mouseReleasedX = null;
