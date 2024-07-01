@@ -146,7 +146,7 @@ module ChartsHelper
   end
 
   def policy_filter_ids(model, ids)
-    policy_scope(model).where(id: ids).pluck(:id).join(',')
+    policy_scope(model).where(id: ids).pluck(:id)
   end
 
   def get_interval_type(from, to)
