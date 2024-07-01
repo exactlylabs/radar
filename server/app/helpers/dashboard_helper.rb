@@ -56,7 +56,7 @@ module DashboardHelper
             SELECT
               online_client_count_projections.id,
               SUM(incr) OVER (ORDER BY "timestamp") as total_online,
-              date_trunc(:interval_type, "timestamp") as "time"
+              "timestamp" as "time"
 
             FROM online_client_count_projections
             LEFT JOIN autonomous_systems ON autonomous_systems.id = autonomous_system_id
