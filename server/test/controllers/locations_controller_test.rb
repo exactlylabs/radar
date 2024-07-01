@@ -10,7 +10,7 @@ class LocationsControllerTest < ActionDispatch::IntegrationTest
   test "When_location_is_updated_with_category_Expect_categories_to_be_assigned" do
     params = {
       location: {
-        name: "Test Location", address: "Nome", manual_lat_long: 0, automatic_location: false,
+        name: "Test Location", address: "New Address", manual_lat_long: 0, automatic_location: false,
         latitude: "", longitude: "", expected_mbps_up: 400.0, expected_mbps_down: 400.0
         },
         categories: ",#{categories(:category1).id}",
