@@ -1,4 +1,9 @@
-<h1>New public page form submission!</h1>
+<% if @submission.partial? %>
+  <h1>New Partial public page form submission!</h1>
+<% else %>
+  <h1>New public page form submission!</h1>
+<% end %>
+
 <p>First name: <%= @submission.first_name %></p>
 <p>Last name: <%= @submission.last_name %></p>
 <p>Email: <%= @submission.email %></p>
