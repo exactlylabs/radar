@@ -154,8 +154,15 @@ class DiscordNotifier < EventsNotifier::Notifier
   def notify_public_page_submission(submission)
     @client.execute do |builder|
       builder.add_embed do |embed|
-        embed.title = ":new: == New Public Page Submission == :new:"
-        embed.description = "A new user has just submitted a form in the public page"
+
+
+        if submission.partial?
+          embed.title = ":new: == New Partial Public Page Submission == :new:"
+          embed.description = "A new user has **partially** submitted a form in the public page"
+        else
+          embed.title = ":new: == New Public Page Submission == :new:"
+          embed.description = "A new user has just submitted a form in the public page"
+        end
         embed.timestamp = Time.now
         embed.color = 0x23C552
         add_fieldset embed, "Contact Information" do |fieldset|
@@ -177,7 +184,7 @@ class DiscordNotifier < EventsNotifier::Notifier
           fieldset.add_field(name: "Upload Speed", value: submission.upload_speed)
           fieldset.add_field(name: "Connection Placement", value: submission.connection_placement)
           fieldset.add_field(name: "Service Satisfaction", value: submission.service_satisfaction)
-        end
+        end if submission.step_2_completed?
       end
     end
   end
