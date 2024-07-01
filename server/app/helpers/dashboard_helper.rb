@@ -69,7 +69,7 @@ module DashboardHelper
     sql += %{
       ),
         time_filtered AS (
-          SELECT last_value(total_online) over (partition by time) as total_online, time
+          SELECT total_online, time
           FROM filtered_dimensions
           WHERE "time" BETWEEN :from AND :to
           ORDER BY "time" ASC
