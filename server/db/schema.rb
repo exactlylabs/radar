@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_01_190953) do
+ActiveRecord::Schema.define(version: 2024_07_01_215516) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,13 @@ ActiveRecord::Schema.define(version: 2024_07_01_190953) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "asn_ip_lookups", id: false, force: :cascade do |t|
+    t.bigint "autonomous_system_id", null: false
+    t.inet "ip", null: false
+    t.index ["autonomous_system_id"], name: "index_asn_ip_lookups_on_autonomous_system_id"
+    t.index ["ip"], name: "index_asn_ip_lookups_on_ip", opclass: :inet_ops, using: :gist
   end
 
   create_table "autonomous_system_orgs", force: :cascade do |t|
@@ -816,6 +823,7 @@ ActiveRecord::Schema.define(version: 2024_07_01_190953) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "asn_ip_lookups", "autonomous_systems"
   add_foreign_key "autonomous_systems", "autonomous_system_orgs"
   add_foreign_key "client_count_logs", "client_count_aggregates"
   add_foreign_key "client_event_logs", "clients"
