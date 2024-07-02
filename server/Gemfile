@@ -98,3 +98,5 @@ gem "scenic"
 gem 'oauth2'
 
 gem "google-protobuf", "~> 3.21"
+
+gem "sentry-sidekiq", "~> 5.4"
