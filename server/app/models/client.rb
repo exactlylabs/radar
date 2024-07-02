@@ -69,7 +69,7 @@ class Client < ApplicationRecord
   after_create :create_pod_connectivity_config
 
   after_save :send_event
-  after_save :check_ip_changed
+  after_save :check_ip_changed, if: :saved_change_to_ip?
   after_save :update_versions, if: :saved_change_to_update_group_id?
   after_save :update_location_status, if: :saved_change_to_location_id? || :saved_change_to_online?
 
@@ -133,10 +133,15 @@ class Client < ApplicationRecord
   end
 
   def check_ip_changed
-    return unless saved_change_to_ip
+    self.autonomous_system = AutonomousSystem.find_by_ip(ip)
 
-    # Call a job to search for the new ASN
-    FindAsnByIp.perform_later self
+    # Add this AS to all geospaces that this client is in
+    if self.location.present? && self.autonomous_system.present?
+      self.location.geospaces.each do |gs|
+        as_org = self.autonomous_system.autonomous_system_org
+        gs.autonomous_system_orgs << as_org unless gs.autonomous_system_orgs.include? as_org
+      end
+    end
   end
 
   def compute_ping!

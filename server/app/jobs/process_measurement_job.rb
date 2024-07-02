@@ -2,7 +2,8 @@ class ProcessMeasurementJob < ApplicationJob
   queue_as :default
 
   def perform(measurement)
-    FindAsnByIp.perform_now measurement
+    measurement.autonomous_system = AutonomousSystem.find_by_ip(measurement.ip) unless measurement.ip.nil?
+
     case measurement.style
     when "NDT7"
       data = measurement.result.download.split("\n")
