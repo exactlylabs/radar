@@ -1,0 +1,15 @@
+<div class="flex custom-button custom-button--primary">
+  <%= link_to measurements_path(format: 'csv'), class: 'dashboard--download-data-container' do %>
+    <%= image_tag image_url('download-archive-white.svg'), width: 16, height: 16, class: 'me-2' %>
+    <p class='dashboard--download-data-text'>Download data</p>
+  <% end %>
+  <div
+    class="dashboard--download-data-more-options-container"
+    data-controller="more-options-button"
+    data-action="click->more-options-button#toggleMenu"
+    aria-expanded="false"
+    id="options-button-export"
+  >
+    <%= image_tag image_url('arrow-down-filled.png'), width: 14, height: 14, class:"fill-white color-white bg-white"%>
+  </div>
+</div>
