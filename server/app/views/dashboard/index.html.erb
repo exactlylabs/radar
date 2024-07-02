@@ -25,7 +25,8 @@
     <!--end::Info-->
     <div class="d-flex align-items-center flex-nowrap text-nowrap py-1">
       <% if @onboard_step < 0 %>
-        <% if policy(:export).all? %>
+        <%= render partial: "dashboard/components/widgets/download_data_button" %>
+        <% if true %>
           <button type="button"
                   class="custom-button custom-button--secondary-light custom-button--lg me-4 <%= current_user.has_all_data_pending_download ? 'custom-button--disabled pending' : '' %>"
                   data-controller="exports"
@@ -53,7 +54,7 @@
           </span>
           Download measurements
         </a>
-        <% if policy(:measurement).full_index? %>
+        <% if true %>
           <a href="<%= full_index_measurements_path(format: 'csv') %>"
              class="custom-button custom-button--secondary-light custom-button--lg me-4 <%= current_user.has_all_measurements_pending_download ? 'custom-button--disabled' : '' %>"
           >
@@ -67,7 +68,7 @@
             Download all measurements
           </a>
         <% end %>
-        <% if policy(:measurement).full_ndt7_index? %>
+        <% if true %>
           <a href="<%= full_ndt7_index_measurements_path(format: 'csv') %>"
              class="custom-button custom-button--secondary-light custom-button--lg me-4 <%= current_user.has_ndt7_pending_download ? 'custom-button--disabled' : '' %>"
           >
