@@ -1,7 +1,11 @@
 package wifi
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -20,6 +24,14 @@ type Client struct {
 }
 
 func newClient(wlanInterface string) (WirelessClient, error) {
+	if err := wpaIsRunning(wlanInterface); errors.Is(err, os.ErrPermission) {
+		return nil, errors.SentinelWithStack(ErrNoPrivileges)
+	} else if errors.Is(err, os.ErrNotExist) {
+		return nil, errors.SentinelWithStack(ErrNotSupported)
+	} else if err != nil {
+		return nil, errors.W(err)
+	}
+
 	cli, err := wireless.NewClient(wlanInterface)
 	if err != nil {
 		return nil, errors.W(err)
@@ -53,7 +65,7 @@ func (c *Client) notifyConnected() <-chan error {
 		case ev := <-sub.Next():
 			switch ev.Name {
 			case wireless.EventConnected:
-				err = c.cli.SaveConfig()
+				err = nil
 			case wireless.EventNetworkNotFound:
 				err = errors.SentinelWithStack(ErrSSIDNotRegistered)
 			case wireless.EventAuthReject:
@@ -74,70 +86,102 @@ func (c *Client) notifyConnected() <-chan error {
 	return ch
 }
 
-func (c *Client) networks() (wireless.Networks, error) {
-	networks, err := c.cli.Networks()
+func (c *Client) networks() (networks, error) {
+	data, err := c.cli.Conn().SendCommand(wireless.CmdListNetworks)
 	if err != nil {
 		return nil, errors.W(err)
 	}
-	for i := range networks {
-		if networks[i].IDStr == "FAIL" || networks[i].IDStr == "" {
-			networks[i].IDStr = networks[i].SSID
-		}
+	networks, err := parseNetwork([]byte(data))
+	if err != nil {
+		return nil, errors.W(err)
+	}
+
+	for _, network := range networks {
+		network.fillAttributes(func(id, key string) string {
+			idInt, _ := strconv.Atoi(id)
+			val, err := c.cli.GetNetworkAttr(idInt, key)
+			if err != nil {
+				return ""
+			}
+			return val
+		})
 	}
 	return networks, nil
 }
 
-func (c *Client) addOrUpdateNetwork(net wireless.Network) (wireless.Network, error) {
-	if net.IDStr == "" {
-		net.IDStr = net.SSID
-	}
-
-	nets, err := c.networks() // use our own .networks().
-	if err != nil {
-		return net, err
-	}
-
-	for _, n := range nets {
-		if n.IDStr == net.IDStr {
-			return c.cli.UpdateNetwork(net)
+func (c *Client) addOrUpdateNetwork(net network) (network, error) {
+	if net.ID == "" {
+		netId, err := c.cli.Conn().SendCommandInt(wireless.CmdAddNetwork)
+		if err != nil {
+			return net, errors.W(err)
 		}
+		net.ID = fmt.Sprintf("%d", netId)
 	}
 
-	net, err = c.cli.AddNetwork(net)
-	if err != nil {
+	if err := c.setNetworkAttributes(net); err != nil {
 		return net, errors.W(err)
 	}
+
 	return net, nil
 }
 
+func (c *Client) setNetworkAttributes(net network) error {
+	commands := make([]string, 0)
+	for _, attr := range net.attributes() {
+		cmd := []string{wireless.CmdSetNetwork, net.ID, attr}
+		commands = append(commands, strings.Join(cmd, ""))
+	}
+	err := c.cli.Conn().SendCommandBool(commands...)
+	if err != nil {
+		return errors.W(err)
+	}
+	return nil
+}
+
 // connect replaces the existing Connect from the library, given a few errors found when using it
-func (c *Client) connect(net wireless.Network) (wireless.Network, error) {
-	net, err := c.addOrUpdateNetwork(net)
+func (c *Client) connect(net network) (network, error) {
+	// Try to find the given network in the registered networks list
+	nets, err := c.networks()
+	if err != nil {
+		return net, err
+	}
+	if existing := nets.findBySSID(net.SSID); existing != nil {
+		net = existing.merge(net)
+	}
+
+	net, err = c.addOrUpdateNetwork(net)
 	if err != nil {
 		return net, errors.W(err)
 	}
 
-	if !net.IsCurrent() {
+	if !net.isCurrent() {
 		networks, err := c.networks()
 		if err != nil {
 			return net, errors.W(err)
 		}
-		current, found := networks.FindCurrent()
-		if found {
-			err := c.cli.DisableNetwork(current.ID)
+		current := networks.findCurrent()
+		if current != nil {
+			id, _ := strconv.Atoi(current.ID)
+			err := c.cli.DisableNetwork(id)
 			if err != nil {
 				return net, errors.W(err)
 			}
 		}
 	}
+
 	connectedCh := c.notifyConnected()
-	if err := c.cli.EnableNetwork(net.ID); err != nil {
+	id, _ := strconv.Atoi(net.ID)
+	if err := c.cli.EnableNetwork(id); err != nil {
 		return net, errors.W(err)
 	}
-	if err := c.cli.Conn().SendCommandBool(wireless.CmdSelectNetwork, strconv.Itoa(net.ID)); err != nil {
+	if err := c.cli.Conn().SendCommandBool(wireless.CmdSelectNetwork, net.ID); err != nil {
 		return net, errors.W(err)
 	}
 	if err := <-connectedCh; err != nil {
+		return net, errors.W(err)
+	}
+	err = c.cli.SaveConfig()
+	if err != nil {
 		return net, errors.W(err)
 	}
 	return net, err
@@ -168,7 +212,7 @@ func (c *Client) StartSubscriptions() (<-chan Event, error) {
 				networks, _ := c.networks()
 				for _, net := range networks {
 					if id, found := evt.Arguments["[id"]; found {
-						if strconv.Itoa(net.ID) == id {
+						if net.ID == id {
 							ssid = net.SSID
 						}
 					}
@@ -202,11 +246,8 @@ func (c *Client) ScanAccessPoints() ([]APDetails, error) {
 	if err != nil {
 		return nil, errors.W(err)
 	}
-	var currentNetwork *wireless.Network
-	if network, found := networks.FindCurrent(); found {
-		currentNetwork = &network
-	}
 
+	currentNetwork := networks.findCurrent()
 	aps := make([]APDetails, len(wAps))
 	for i, wAp := range wAps {
 		bssRes, err := c.cli.Conn().SendCommand(wireless.CmdBss, wAp.BSSID)
@@ -217,7 +258,8 @@ func (c *Client) ScanAccessPoints() ([]APDetails, error) {
 		if err != nil {
 			return nil, errors.W(err)
 		}
-		_, registered := networks.FindBySSID(wAp.SSID)
+
+		registered := networks.findBySSID(wAp.SSID) != nil
 		chann := freqStr2Chan[strconv.Itoa(bss.Freq)]
 		aps[i] = APDetails{
 			AP: AP{
@@ -267,7 +309,7 @@ func (c *Client) Select(ssid string) error {
 	// Iterates through all registered networks and see if it is registered
 	for _, network := range networks {
 		if network.SSID == ssid {
-			if network.IsCurrent() {
+			if network.isCurrent() {
 				if c.ch != nil {
 					c.ch <- Event{Connected, ssid}
 				}
@@ -278,7 +320,7 @@ func (c *Client) Select(ssid string) error {
 			connectedCh := c.notifyConnected()
 			c.pauseSubscription = true
 			defer func() { c.pauseSubscription = false }()
-			_, err = c.cli.Conn().SendCommand(wireless.CmdSelectNetwork, strconv.Itoa(network.ID))
+			_, err = c.cli.Conn().SendCommand(wireless.CmdSelectNetwork, network.ID)
 			if err != nil {
 				return errors.W(err)
 			}
@@ -296,17 +338,18 @@ func (c *Client) Select(ssid string) error {
 	return errors.SentinelWithStack(ErrSSIDNotRegistered)
 }
 
-func (c *Client) Connect(ssid, psk string) error {
-	toConnectNetwork := wireless.NewNetwork(ssid, psk)
+func (c *Client) Connect(data NetworkConnectionData) error {
 	c.pauseSubscription = true
 	defer func() { c.pauseSubscription = false }()
-	_, err := c.connect(toConnectNetwork)
+
+	_, err := c.connect(data.toNetwork())
 	if err != nil {
 		return errors.W(err)
 	}
+
 	// If there's a subscription, manually notify it has connected
 	if c.ch != nil {
-		c.ch <- Event{Connected, ssid}
+		c.ch <- Event{Connected, data.SSID}
 	}
 	return nil
 }
@@ -334,4 +377,12 @@ func (c *Client) Close() error {
 
 	c.cli.Close()
 	return nil
+}
+
+func wpaIsRunning(ifaceName string) error {
+	_, err := os.Stat(filepath.Join("/var/run/wpa_supplicant/", ifaceName))
+	if err != nil {
+		return err
+	}
+	return err
 }

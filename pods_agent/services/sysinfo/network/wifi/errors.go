@@ -2,6 +2,7 @@ package wifi
 
 import "github.com/exactlylabs/go-errors/pkg/errors"
 
+var ErrNoPrivileges = errors.NewSentinel("NoPrivilegesError", "this functionality requires higher privileges")
 var ErrNotSupported = errors.NewSentinel("NotSupportedError", "this functionality is not supported in this system")
 var ErrNotWlanInterface = errors.NewSentinel("NotWLANInterfaceError", "this interface is not a Wlan interface")
 var ErrNotConnected = errors.NewSentinel("NotConnectedError", "not connected to an access point")
