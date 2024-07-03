@@ -7,8 +7,7 @@ import (
 	"github.com/exactlylabs/go-errors/pkg/errors"
 )
 
-func WifiStatusFromSignalPollResponse(res string) (WifiStatus, error) {
-	status := WifiStatus{}
+func wifiStatusFromSignalPollResponse(res string, status *WifiStatus) error {
 	rows := strings.Split(res, "\n")
 	for _, row := range rows {
 		data := strings.Split(row, "=")
@@ -19,31 +18,31 @@ func WifiStatusFromSignalPollResponse(res string) (WifiStatus, error) {
 		case "RSSI":
 			value, err := strconv.Atoi(data[1])
 			if err != nil {
-				return status, errors.W(err)
+				return errors.W(err)
 			}
 			status.Signal = value
 		case "LINKSPEED":
 			value, err := strconv.Atoi(data[1])
 			if err != nil {
-				return status, errors.W(err)
+				return errors.W(err)
 			}
 			status.TxSpeed = value
 		case "FREQUENCY":
 			value, err := strconv.Atoi(data[1])
 			if err != nil {
-				return status, errors.W(err)
+				return errors.W(err)
 			}
 			status.Frequency = value
 			status.Channel = freqStr2Chan[data[1]]
 		case "NOISE":
 			value, err := strconv.Atoi(data[1])
 			if err != nil {
-				return status, errors.W(err)
+				return errors.W(err)
 			}
 			status.Noise = value
 		case "WIDTH":
 			status.Width = data[1]
 		}
 	}
-	return status, nil
+	return nil
 }

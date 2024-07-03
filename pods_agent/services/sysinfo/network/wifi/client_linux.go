@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -126,15 +127,20 @@ func (c *Client) addOrUpdateNetwork(net network) (network, error) {
 }
 
 func (c *Client) setNetworkAttributes(net network) error {
-	commands := make([]string, 0)
 	for _, attr := range net.attributes() {
 		cmd := []string{wireless.CmdSetNetwork, net.ID, attr}
-		commands = append(commands, strings.Join(cmd, ""))
+		command := strings.Join(cmd, " ")
+		err := c.cli.Conn().SendCommandBool(command)
+		if err != nil {
+			if strings.Contains(attr, "psk") || strings.Contains(attr, "password") || strings.Contains(attr, "key") {
+				attr = regexp.MustCompile("\".*\"").ReplaceAllString(attr, "[REDACTED]")
+			}
+			return errors.W(err).WithMetadata(errors.Metadata{
+				"command": wireless.CmdSetNetwork, "ID": net.ID, "payload": attr,
+			})
+		}
 	}
-	err := c.cli.Conn().SendCommandBool(commands...)
-	if err != nil {
-		return errors.W(err)
-	}
+
 	return nil
 }
 
@@ -277,12 +283,12 @@ func (c *Client) ScanAccessPoints() ([]APDetails, error) {
 }
 
 func (c *Client) ConnectionStatus() (status WifiStatus, err error) {
-	status.Status = "INACTIVE"
-	wState, err := c.cli.Status()
+	data, err := c.cli.Conn().SendCommand(wireless.CmdStatus)
 	if err != nil {
 		return status, errors.W(err)
 	}
-	if wState.WpaState == "INACTIVE" {
+	status = parseStatus(data)
+	if status.Status == "INACTIVE" {
 		return status, ErrNotConnected
 	}
 
@@ -290,14 +296,10 @@ func (c *Client) ConnectionStatus() (status WifiStatus, err error) {
 	if err != nil {
 		return status, errors.W(err)
 	}
-	status, err = WifiStatusFromSignalPollResponse(pollRes)
+	err = wifiStatusFromSignalPollResponse(pollRes, &status)
 	if err != nil {
 		return status, errors.W(err)
 	}
-	status.BSSID = wState.BSSID
-	status.Status = wState.WpaState
-	status.SSID = wState.SSID
-	status.KeyManagement = wState.KeyManagement
 	return status, nil
 }
 
