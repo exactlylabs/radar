@@ -9,7 +9,7 @@
             data-line-chart-data="<%= @latencies.to_json %>"
             data-parent-id="latency-widget<%= responsive ? '-responsive' : ''%>"
             data-y-step-size="1"
-            data-label-suffix=" s"
+            data-label-suffix=" ms"
             data-action="toggleLine@window->multi-line-chart#toggleLine"
             data-chart-id="latency"
             data-query-time-interval="<%= @query_time_interval %>"
