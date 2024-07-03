@@ -27,7 +27,7 @@ type WirelessClient interface {
 	ScanAccessPoints() ([]APDetails, error)
 
 	// Connect to a given SSID. If it is already registered, psk can be empty, but if it fails to connect, the code must try to connect using the given password
-	Connect(ssid, psk string) error
+	Connect(network NetworkConnectionData) error
 
 	// Select an SSID that is already registered in the device.
 	Select(ssid string) error
