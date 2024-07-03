@@ -88,15 +88,15 @@ func (n network) merge(other network) network {
 
 func (n *network) attributes() []string {
 	attrs := make([]string, 0)
-	appendIfNotEmpty(attrs, "ssid", n.SSID)
-	appendIfNotEmpty(attrs, "key_mgmt", n.KeyMgmt)
-	appendIfNotEmpty(attrs, "proto", n.Protocol)
-	appendIfNotEmpty(attrs, "identity", n.Identity)
-	appendIfNotEmpty(attrs, "psk", n.PSK)
-	appendIfNotEmpty(attrs, "password", n.Password)
-	appendIfNotEmpty(attrs, "wep_key0", n.WEPPassword)
-	appendIfNotEmpty(attrs, "wep_tx_keyidx", n.WEPKeyIdx)
-	appendIfNotEmpty(attrs, "scan_ssid", n.ScanSSID)
+	attrs = appendIfNotEmpty(attrs, "ssid", n.SSID, true)
+	attrs = appendIfNotEmpty(attrs, "key_mgmt", n.KeyMgmt, false)
+	attrs = appendIfNotEmpty(attrs, "proto", n.Protocol, false)
+	attrs = appendIfNotEmpty(attrs, "identity", n.Identity, true)
+	attrs = appendIfNotEmpty(attrs, "psk", n.PSK, true)
+	attrs = appendIfNotEmpty(attrs, "password", n.Password, true)
+	attrs = appendIfNotEmpty(attrs, "wep_key0", n.WEPPassword, true)
+	attrs = appendIfNotEmpty(attrs, "wep_tx_keyidx", n.WEPKeyIdx, false)
+	attrs = appendIfNotEmpty(attrs, "scan_ssid", n.ScanSSID, false)
 	return attrs
 }
 
@@ -128,8 +128,11 @@ func (net network) isCurrent() bool {
 	return false
 }
 
-func appendIfNotEmpty(attrs []string, key, value string) []string {
+func appendIfNotEmpty(attrs []string, key, value string, quote bool) []string {
 	if value != "" {
+		if quote {
+			value = `"` + value + `"`
+		}
 		return append(attrs, fmt.Sprintf("%s %s", key, value))
 	}
 	return attrs

@@ -49,3 +49,32 @@ func parseFlags(s string) []string {
 
 	return flags
 }
+
+func parseStatus(data string) (s WifiStatus) {
+	s.Status = "INACTIVE"
+	for _, l := range strings.Split(data, "\n") {
+		bits := strings.Split(strings.TrimSpace(l), "=")
+		if len(bits) < 2 {
+			continue
+		}
+
+		switch bits[0] {
+		case "bssid":
+			s.BSSID = bits[1]
+		case "ssid":
+			s.SSID = bits[1]
+		case "wpa_state":
+			s.Status = bits[1]
+		case "ip_address":
+			s.IP = bits[1]
+		}
+	}
+	return
+}
+
+func quote(s string) string {
+	if s == "" {
+		return s
+	}
+	return `"` + s + `"`
+}
