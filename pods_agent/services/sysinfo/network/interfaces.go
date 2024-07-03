@@ -3,25 +3,19 @@ package network
 import (
 	"fmt"
 	"net"
-	"slices"
 
 	"github.com/exactlylabs/go-errors/pkg/errors"
 	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/netroute"
-	"github.com/exactlylabs/radar/pods_agent/services/sysinfo/network/wifi"
 )
 
 func Interfaces() (NetInterfaces, error) {
-	defaultRoute, err := netroute.DefaultRoute()
-	if err != nil {
-		return nil, errors.W(err)
-	}
+	defaultRoute, _ := netroute.DefaultRoute()
+	// if err != nil {
+	// 	return nil, errors.W(err)
+	// }
 
 	ifaces, err := net.Interfaces()
 	if err != nil {
-		return nil, errors.W(err)
-	}
-	wlanInterfaces, err := wifi.WlanInterfaceNames()
-	if err != nil && !errors.Is(err, wifi.ErrNotSupported) {
 		return nil, errors.W(err)
 	}
 
@@ -36,13 +30,28 @@ func Interfaces() (NetInterfaces, error) {
 			return nil, errors.W(err).WithMetadata(errors.Metadata{"iface": fmt.Sprintf("%v", iface)})
 		}
 
+		// Filter out virtual and loopback interfaces
+
 		if iface.Flags&net.FlagLoopback == 0 {
+			netType, err := networkType(iface)
+			if err != nil {
+				return nil, errors.W(err)
+			}
+
+			status, err := networkInternetStatus(iface)
+			if err != nil {
+				return nil, errors.W(err)
+			}
+
 			interfaces = append(interfaces, NetInterface{
 				Name:         iface.Name,
 				MAC:          iface.HardwareAddr.String(),
 				DefaultRoute: gatewayRoute,
 				IPs:          addrs,
-				IsWlan:       slices.Contains(wlanInterfaces, iface.Name),
+				Type:         netType,
+				IsWlan:       netType == Wlan,
+				Status:       status,
+				Enabled:      iface.Flags&net.FlagUp != 0,
 			})
 		}
 	}
