@@ -151,8 +151,11 @@ func (c *RadarWatchdogClient) handleMessage(msg cable.ServerMessage) {
 			c.returnCh <- watchdog.ServerMessage{
 				Type: watchdog.ConnectToSSIDMessageType,
 				Data: watchdog.ConnectToSSIDMessage{
-					SSID: payload.SSID,
-					PSK:  payload.PSK,
+					SSID:     payload.SSID,
+					Password: payload.Password,
+					Security: payload.Security,
+					Identity: payload.Identity,
+					Hidden:   payload.Hidden,
 				},
 			}
 		}
