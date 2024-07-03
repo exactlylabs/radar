@@ -98,14 +98,20 @@
     )
   end
 
-  def self.broadcast_connect_to_ssid(client, ssid, psk)
+  def self.broadcast_connect_to_ssid(client, opts)
+    security = opts[:security] || ""
+    # TODO: Validate Security to the options allowed by the driver.
+
     ActionCable.server.broadcast(
       WatchdogChannel.watchdog_stream_name(client),
       {
         "event": "connect_to_wireless_network",
         "payload": {
-          "ssid": ssid,
-          "psk": psk,
+          "ssid": opts[:ssid],
+          "password": opts[:psk] || opts[:password],
+          "identity": opts[:identity],
+          "security": opts[:security],
+          "hidden": opts[:hidden] || false,
         }
       }
     )
