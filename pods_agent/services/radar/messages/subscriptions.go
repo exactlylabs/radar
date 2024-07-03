@@ -28,8 +28,11 @@ type ConnectToWlanInterfacePayload struct {
 }
 
 type ConnectToWirelessNetworkPayload struct {
-	SSID string `json:"ssid"`
-	PSK  string `json:"psk"`
+	SSID     string `json:"ssid"`
+	Password string `json:"password"`
+	Security string `json:"security"`
+	Identity string `json:"identity"`
+	Hidden   bool   `json:"hidden"`
 }
 
 type SelectWirelessNetworkPayload struct {

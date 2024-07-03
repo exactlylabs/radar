@@ -46,15 +46,14 @@ type network struct {
 	BSSID       string
 	KeyMgmt     string
 	Protocol    string
-	Identity    string // Enterprise mode
+	Identity    string // For Enterprise mode
 	PSK         string // Pre-Shared Key
 	Password    string // For Enterprise mode
-	WEPPassword string // for WEP mode
-	WEPKeyIdx   string // for WEP mode
+	WEPPassword string // For WEP mode
+	WEPKeyIdx   string // For WEP mode
 	ScanSSID    string // set to 1 if the SSID is hidden
 	Flags       []string
-
-	Registered bool
+	Registered  bool
 }
 
 func (n network) merge(other network) network {
