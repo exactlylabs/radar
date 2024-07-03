@@ -321,7 +321,13 @@ func (w *Watchdog) handleWifiEvents(ctx context.Context, data wifi.Event) error 
 
 func (w *Watchdog) handleConnectToSSID(ctx context.Context, data ConnectToSSIDMessage) error {
 	log.Println("Requested to connect to SSID:", data.SSID)
-	err := w.wlanCli.Connect(data.SSID, data.PSK)
+	connData := wifi.NetworkConnectionData{
+		SSID:     data.SSID,
+		Password: data.Password,
+		Identity: data.Identity,
+		Security: wifi.SecType(data.Security),
+	}
+	err := w.wlanCli.Connect(connData)
 	if err != nil {
 		return errors.W(err)
 	}
