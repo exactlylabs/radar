@@ -8,38 +8,51 @@ import (
 type SecType string
 
 const (
-	None             SecType = "none"
-	WEP              SecType = "wep"
-	WPA              SecType = "wpa"
-	WPA2             SecType = "wpa2"
-	WPA2_3           SecType = "wpa2/3"
-	WPAEnterprise    SecType = "wpa-enterprise"
-	WPA2Enterprise   SecType = "wpa2-enterprise"
-	WPA2_3Enterprise SecType = "wpa2/3-enterprise"
+	None           SecType = "none"
+	WEP            SecType = "wep"
+	WPA            SecType = "wpa"
+	WPA2           SecType = "wpa2"
+	WPAEnterprise  SecType = "wpa-enterprise"
+	WPA2Enterprise SecType = "wpa2-enterprise"
 )
 
 func (s SecType) toKeyMgmt() string {
 	switch s {
-	case None:
+	case None, WEP:
 		return "NONE"
-	case WEP, WPA, WPA2, WPA2_3:
+	case WPA, WPA2:
 		return "WPA-PSK"
-	case WPAEnterprise, WPA2Enterprise, WPA2_3Enterprise:
+	case WPAEnterprise, WPA2Enterprise:
 		return "WPA-EAP"
 	}
+	return "" // unknown, try to let the driver figure it out
+}
+
+func (s SecType) toProtocol() string {
+	switch s {
+	case WPA, WPAEnterprise:
+		return "WPA"
+	case WPA2, WPA2Enterprise:
+		return "WPA2"
+	}
 	return ""
+
 }
 
 // network holds all information on configured networks
 type network struct {
-	ID       string
-	SSID     string
-	BSSID    string
-	KeyMgmt  string
-	Identity string // Enterprise mode
-	PSK      string // Pre-Shared Key
-	Password string // For Enterprise mode
-	Flags    []string
+	ID          string
+	SSID        string
+	BSSID       string
+	KeyMgmt     string
+	Protocol    string
+	Identity    string // Enterprise mode
+	PSK         string // Pre-Shared Key
+	Password    string // For Enterprise mode
+	WEPPassword string // for WEP mode
+	WEPKeyIdx   string // for WEP mode
+	ScanSSID    string // set to 1 if the SSID is hidden
+	Flags       []string
 
 	Registered bool
 }
@@ -50,6 +63,9 @@ func (n network) merge(other network) network {
 	if other.KeyMgmt != "" {
 		merged.KeyMgmt = other.KeyMgmt
 	}
+	if other.Protocol != "" {
+		merged.Protocol = other.Protocol
+	}
 	if other.Identity != "" {
 		merged.Identity = other.Identity
 	}
@@ -59,6 +75,15 @@ func (n network) merge(other network) network {
 	if other.Password != "" {
 		merged.Password = other.Password
 	}
+	if other.WEPPassword != "" {
+		merged.WEPPassword = other.WEPPassword
+	}
+	if other.WEPKeyIdx != "" {
+		merged.WEPKeyIdx = other.WEPKeyIdx
+	}
+	if other.ScanSSID != "" {
+		merged.ScanSSID = other.ScanSSID
+	}
 	return merged
 }
 
@@ -66,16 +91,22 @@ func (n *network) attributes() []string {
 	attrs := make([]string, 0)
 	appendIfNotEmpty(attrs, "ssid", n.SSID)
 	appendIfNotEmpty(attrs, "key_mgmt", n.KeyMgmt)
+	appendIfNotEmpty(attrs, "proto", n.Protocol)
 	appendIfNotEmpty(attrs, "identity", n.Identity)
 	appendIfNotEmpty(attrs, "psk", n.PSK)
 	appendIfNotEmpty(attrs, "password", n.Password)
+	appendIfNotEmpty(attrs, "wep_key0", n.WEPPassword)
+	appendIfNotEmpty(attrs, "wep_tx_keyidx", n.WEPKeyIdx)
+	appendIfNotEmpty(attrs, "scan_ssid", n.ScanSSID)
 	return attrs
 }
 
 func (n *network) fillAttributes(attrGetter func(id, key string) string) {
 	n.SSID = attrGetter(n.ID, "ssid")
 	n.KeyMgmt = attrGetter(n.ID, "key_mgmt")
+	n.Protocol = attrGetter(n.ID, "proto")
 	n.Identity = attrGetter(n.Identity, "identity")
+	n.WEPKeyIdx = attrGetter(n.ID, "wep_tx_keyidx")
 }
 
 // IsDisabled will return true if the network is disabled
@@ -141,19 +172,32 @@ type NetworkConnectionData struct {
 	Security SecType `json:"security"`
 	Identity string  `json:"identity"` // For Enterprise types
 	Password string  `json:"password"`
+	Hidden   bool    `json:"hidden"`
 }
 
 func (data NetworkConnectionData) toNetwork() network {
 	net := network{
-		SSID:    data.SSID,
-		KeyMgmt: data.Security.toKeyMgmt(),
+		SSID:     data.SSID,
+		KeyMgmt:  data.Security.toKeyMgmt(),
+		Protocol: data.Security.toProtocol(),
+		ScanSSID: "0",
 	}
 
-	if slices.Contains([]SecType{WEP, WPA, WPA2, WPA2_3}, data.Security) {
+	if data.Hidden {
+		net.ScanSSID = "1"
+	}
+
+	if data.Security == WEP {
+		net.WEPPassword = data.Password
+		net.WEPKeyIdx = "0"
+
+	} else if slices.Contains([]SecType{WPA, WPA2}, data.Security) {
 		net.PSK = data.Password
+
 	} else { // Business type
 		net.Identity = data.Identity
 		net.Password = data.Password
 	}
+
 	return net
 }
