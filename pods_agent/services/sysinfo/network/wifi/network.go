@@ -8,23 +8,21 @@ import (
 type SecType string
 
 const (
-	None             SecType = "none"
-	WEP              SecType = "wep"
-	WPA              SecType = "wpa"
-	WPA2             SecType = "wpa2"
-	WPA2_3           SecType = "wpa2/3"
-	WPAEnterprise    SecType = "wpa-enterprise"
-	WPA2Enterprise   SecType = "wpa2-enterprise"
-	WPA2_3Enterprise SecType = "wpa2/3-enterprise"
+	None           SecType = "none"
+	WEP            SecType = "wep"
+	WPA            SecType = "wpa"
+	WPA2           SecType = "wpa2"
+	WPAEnterprise  SecType = "wpa-enterprise"
+	WPA2Enterprise SecType = "wpa2-enterprise"
 )
 
 func (s SecType) toKeyMgmt() string {
 	switch s {
 	case None, WEP:
 		return "NONE"
-	case WEP, WPA, WPA2, WPA2_3:
+	case WPA, WPA2:
 		return "WPA-PSK"
-	case WPAEnterprise, WPA2Enterprise, WPA2_3Enterprise:
+	case WPAEnterprise, WPA2Enterprise:
 		return "WPA-EAP"
 	}
 	return "" // unknown, try to let the driver figure it out
@@ -38,6 +36,7 @@ func (s SecType) toProtocol() string {
 		return "WPA2"
 	}
 	return ""
+
 }
 
 // network holds all information on configured networks
@@ -201,5 +200,6 @@ func (data NetworkConnectionData) toNetwork() network {
 		net.Identity = data.Identity
 		net.Password = data.Password
 	}
+
 	return net
 }
