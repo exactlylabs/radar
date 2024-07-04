@@ -44,7 +44,7 @@ const textContainerStyle = {
   width: 'calc(100% - 42px)',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'flex-start',
+  justifyContent: 'center',
   alignItems: 'flex-start',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
@@ -57,6 +57,25 @@ const SuggestionModalRow = ({
   selected
 }) => {
 
+  const getAddressParts = () => {
+
+    let firstLineContent = '';
+    if(suggestion.house_number && suggestion.street) firstLineContent += `${suggestion.house_number} ${suggestion.street}`;
+    else if(suggestion.street) firstLineContent = `${suggestion.street}`;
+
+    let secondLineContent = '';
+    if(suggestion.city) secondLineContent += `${suggestion.city},`;
+    if(suggestion.state) secondLineContent += ` ${suggestion.state}`;
+    if(suggestion.postal_code) secondLineContent += ` ${suggestion.postal_code}`;
+
+    return (
+      <>
+        <p className={'speedtest--p speedtest--bold'} style={titleStyle}>{firstLineContent === '' ? secondLineContent : firstLineContent}</p>
+        { firstLineContent !== '' && <p style={subtitleStyle}>{secondLineContent}</p> }
+      </>
+    );
+  }
+
   return (
     <div style={rowStyle}
          className={`speedtest--suggestion-modal-row ${selected ? 'speedtest--suggestion-modal-row--selected' : ''}`}
@@ -67,8 +86,7 @@ const SuggestionModalRow = ({
            style={IconStyle}
       />
       <div style={textContainerStyle}>
-        <p className={'speedtest--p speedtest--bold'} style={titleStyle}>{`${suggestion.house_number} ${suggestion.street}`}</p>
-        <p style={subtitleStyle}>{`${suggestion.city}, ${suggestion.state} ${suggestion.postal_code}`}</p>
+        {getAddressParts()}
       </div>
     </div>
   )

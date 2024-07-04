@@ -250,6 +250,7 @@ const MyMapModal = ({
         addressProvider: ADDRESS_PROVIDER.MANUAL
       });
       closeModal();
+      goToNextPage(true, false);
     } catch (e) {
       if(isNoConnectionError(e)) setNoInternet(true);
       notifyError(e);
