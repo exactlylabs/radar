@@ -8,7 +8,7 @@ module GeoTools
     attr_reader :asns
 
     def initialize
-      if ENV['RAILS_ENV'].present? && ENV['RAILS_ENV'] != 't'
+      if ENV['RAILS_ENV'].present? && ENV['RAILS_ENV'] != 't' && ENV['RAILS_ENV'] != 'development'
         @org2info_filepath = ENV["ASN_ORG2INFO_FILEPATH"] || "./lib/geotools/files/as-org2info.jsonl"
         @asnipv4_filepath = ENV["ASN_IPV4_FILEPATH"] || "./lib/geotools/files/GeoLite2-ASN-Blocks-IPv4.csv"
         @asnipv6_filepath = ENV["ASN_IPV6_FILEPATH"] || "./lib/geotools/files/GeoLite2-ASN-Blocks-IPv6.csv"
@@ -73,6 +73,7 @@ module GeoTools
     end
 
     def find(ip)
+      return [] if Rails.env.development?
       ipaddr = IPAddr.new ip
       iptype = ipaddr.ipv4? ? "ipv4" : "ipv6"
       matches = []
@@ -100,6 +101,7 @@ module GeoTools
   end
 
   def self.asn_from_ip(ip)
+    return nil if Rails.env.development?
     if @@asn_finder.nil?
       @@asn_finder = GeoTools::ASNFinder.new
     end

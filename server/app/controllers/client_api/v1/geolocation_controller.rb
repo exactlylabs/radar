@@ -2,7 +2,7 @@ module ClientApi
   module V1
     class GeolocationController < ApiController
       def code
-        results = Geocoder.search(params[:address])
+        results = CustomGeocoder.search(params[:address])
         if results.first
           render json: results.first.coordinates
         else
@@ -15,12 +15,11 @@ module ClientApi
       def suggestions
         results = []
         Google::Cloud::Trace.in_span "Searching in Geocoder: #{params[:address]}" do
-          results = Geocoder.search(params[:address])
+          results = CustomGeocoder.search(params[:address])
         end
 
         if results.present?
-          render json: results.filter {|match| match.city && match.street && match.state && match.postal_code && match.house_number}
-                              .map {|match| Suggestion.new(match.city, match.street, match.state, match.postal_code, match.house_number, match.coordinates) }
+          render json: results.map {|match| Suggestion.new(match.city, match.street, match.state, match.postal_code, match.house_number, match.coordinates) }
                               .first(3)
                               .to_set
                               .to_json
@@ -30,9 +29,9 @@ module ClientApi
       end
 
       def coordinates
-        results = Geocoder.search(params[:coordinates])
+        normalized_param = params[:coordinates].is_a?(Array) ? params[:coordinates] : params[:coordinates].split(",")
+        results = CustomGeocoder.search(normalized_param)
         if results.first
-          coordinates_array = params[:coordinates].split(",")
           match = results.first
           render json: Suggestion.new(
             match.city,
@@ -40,7 +39,7 @@ module ClientApi
             match.state,
             match.postal_code,
             match.house_number,
-            coordinates_array
+            normalized_param
           )
         else
           render json: {coordinates: []}, status: :ok
@@ -54,7 +53,7 @@ module ClientApi
 
         # Coordinates for middle of USA for development
         return render json: [39.50, -98.35] if ENV['RAILS_ENV'] == 'development'
-        results = Geocoder.search(request.remote_ip)
+        results = CustomGeocoder.search_ip(request.remote_ip)
         if results.first
           return render json: results.first.coordinates
         end
