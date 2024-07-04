@@ -137,7 +137,7 @@ class OutagesProjector
     isp_outage.update_columns(status: :cancelled, cancelled_at: cancelled_at)
     network_outages.each do |n_outage|
       n_outage.accounted_in_isp_window = false
-      n_outage.outage_event = OutageEvent.new(
+      n_outage.outage_event = OutageEvent.create!(
         outage_type: :unknown_reason,
         started_at: n_outage.started_at,
         autonomous_system_id: n_outage.autonomous_system_id
@@ -157,6 +157,12 @@ class OutagesProjector
   #
   # Resolve a network outage, and create/update an OutageEvent depending on the rules:
   #
+  #  - If the network outage is linked to an unknown_reason outage event, and it has the has_service_started_event flag set,
+  #    we update it to power_outage type.
+  #
+  #  - If the network outage is linked to an unknown_reason outage event, and no has_service_started_event flag set,
+  #    we update the unknown_reason outage event to network_failure, and to resolved status.
+  #
   #  - If the network outage is linked to a network_failure outage event, but it has the has_service_started_event flag set,
   #    we update it to power_outage type.
   #
@@ -173,7 +179,13 @@ class OutagesProjector
     network_outage.status = :resolved
     network_outage.resolved_at = resolved_at
 
-    if network_outage.outage_event.network_failure? && network_outage.has_service_started_event?
+    if network_outage.outage_event.unknown_reason? && network_outage.has_service_started_event?
+      network_outage.outage_event.update_columns(outage_type: :power_outage, status: :resolved, resolved_at: resolved_at)
+
+    elsif network_outage.outage_event.unknown_reason?
+      network_outage.outage_event.update_columns(outage_type: :network_failure, status: :resolved, resolved_at: resolved_at)
+
+    elsif network_outage.outage_event.network_failure? && network_outage.has_service_started_event?
       network_outage.outage_event.update_columns(outage_type: :power_outage)
 
     elsif network_outage.outage_event.isp_outage? && network_outage.has_service_started_event?
