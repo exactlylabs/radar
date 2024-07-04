@@ -23,6 +23,7 @@ import MySpinner from "../common/MySpinner";
 import {DEFAULT_GRAY_BUTTON_TEXT_COLOR} from "../../utils/colors";
 import {addMetadataToResults} from "../../utils/metadata";
 import ConnectionContext from "../../context/ConnectionContext";
+import {isArray} from "leaflet/src/core/Util";
 
 const mapWrapperStyle = {
   width: '100%',
@@ -95,18 +96,16 @@ const AllResultsPage = ({ givenLocation, maxHeight, givenZoom }) => {
   useEffect(() => {
     const fetchSpeedTests = async () => {
       setFetchingResults(true);
-      if(!map && requestArea) {
-        const [lat, lng] = requestArea;
+      if(!map && !!requestArea && Array.isArray(requestArea)) {
+        let [lat, lng] = requestArea;
 
         if (isNaN(lat) || isNaN(lng)) {
-          notifyError("Error fetching based on request area: ", requestArea);
-          fetchTestsWithBounds([DEFAULT_FALLBACK_LATITUDE, DEFAULT_FALLBACK_LONGITUDE]);
-        } else {
-          // Create bounding box
-          const _southWest = {lat: lat - 2, lng: lng - 2};
-          const _northEast = {lat: lat + 2, lng: lng + 2};
-          fetchTestsWithBounds({_southWest, _northEast});
+          lat = DEFAULT_FALLBACK_LATITUDE;
+          lng = DEFAULT_FALLBACK_LONGITUDE;
         }
+        const _southWest = {lat: lat - 2, lng: lng - 2};
+        const _northEast = {lat: lat + 2, lng: lng + 2};
+        fetchTestsWithBounds({_southWest, _northEast});
       } else {
         // Way more precise way of getting current bounding box
         fetchTestsWithBounds(map.getBounds());
