@@ -15,10 +15,10 @@ module DashboardHelper
 
   def outage_type_to_human(outage_type)
     case outage_type
-    when 'pod_failure'
-      'Pod failure'
-    when 'network_outage'
-      'Network outage'
+    when 'isp_outage'
+      'ISP outage'
+    when 'network_failure'
+      'Network failure'
     when 'power_outage'
       'Power outage'
     when 'unknown_reason'
