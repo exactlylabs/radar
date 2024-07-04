@@ -12,7 +12,7 @@
     </div>
   </div>
   <div class="dashboard--outages-collapsible-row-content">
-    <% outage.client_outages.each do |co| %>
+    <% outage.network_outages.each do |co| %>
       <% affected_network = co.location %>
       <div class="dashboard--outages-affected-network-row">
         <div class="dashboard--outages-affected-network-icon">

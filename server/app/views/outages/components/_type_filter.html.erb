@@ -32,11 +32,11 @@
       Power outage
       <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
     </button>
-    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type] == 'isp_outage' ? 'active' : nil %> outages"
+    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type] == 'network_outage' ? 'active' : nil %> outages"
             data-action="click->outages-modal#filterType click->filters#closeFiltersMenu"
             data-outages-modal-target="filter"
-            data-type="isp_outage"
-            data-label="ISP outage"
+            data-type="network_outage"
+            data-label="Network outage"
     >
       ISP outage
       <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>

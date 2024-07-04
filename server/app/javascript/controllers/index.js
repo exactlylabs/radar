@@ -225,3 +225,6 @@ application.register("dashboard-modal-realtime-filters", DashboardModalRealtimeF
 
 import ClaimPodsController from "./claim_pods_controller";
 application.register("claim-pods", ClaimPodsController);
+
+import InfiniteScrollController from "./infinite_scroll_controller";
+application.register("infinite-scroll", InfiniteScrollController);
