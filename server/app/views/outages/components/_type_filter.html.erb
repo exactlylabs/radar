@@ -32,22 +32,22 @@
       Power outage
       <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
     </button>
-    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type] == 'network_outage' ? 'active' : nil %> outages"
+    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type] == 'isp_outage' ? 'active' : nil %> outages"
             data-action="click->outages-modal#filterType click->filters#closeFiltersMenu"
             data-outages-modal-target="filter"
-            data-type="network_outage"
-            data-label="Network outage"
+            data-type="isp_outage"
+            data-label="ISP outage"
     >
       ISP outage
       <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
     </button>
-    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type] == 'pod_failure' ? 'active' : nil %> outages"
+    <button class="tables--filters-menu-item table-filter-option <%= params[:outage_type] == 'network_failure' ? 'active' : nil %> outages"
             data-action="click->outages-modal#filterType click->filters#closeFiltersMenu"
             data-outages-modal-target="filter"
-            data-type="pod_failure"
-            data-label="Pod failure"
+            data-type="network_failure"
+            data-label="Network failure"
     >
-      Pod failure
+      Network failure
       <%= image_tag image_url('checkmark-blue-icon.png'), width: 16, height: 16 %>
     </button>
   </div>

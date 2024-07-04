@@ -17,8 +17,8 @@
      target="_top"
   >Power outages</a>
   <a class="dashboard--outages-filter"
-     data-selected="<%= outage_type === 'pod_failure' %>"
-     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'pod_failure' })) %>"
+     data-selected="<%= outage_type === 'network_failure' %>"
+     href="<%= dashboard_path(request.query_parameters.merge({ outage_type: 'network_failure' })) %>"
      target="_top"
-  >Pod failure</a>
+  >Network failure</a>
 </div>
