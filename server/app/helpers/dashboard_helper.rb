@@ -17,10 +17,12 @@ module DashboardHelper
     case outage_type
     when 'pod_failure'
       'Pod failure'
-    when 'isp_outage'
-      'ISP outage'
+    when 'network_outage'
+      'Network outage'
     when 'power_outage'
       'Power outage'
+    when 'unknown_reason'
+      'Ongoing outage'
     end
   end
 
@@ -347,24 +349,29 @@ module DashboardHelper
     sql = %{
     SELECT
       outage_events.id,
-      client_outages.autonomous_system_id,
+      network_outages.autonomous_system_id,
       CASE
-        WHEN outage_events.outage_type = 1 THEN 'pod_failure'
+        WHEN outage_events.outage_type = 0 THEN 'unknown_reason'
+        WHEN outage_events.outage_type = 1 THEN 'network_failure'
         WHEN outage_events.outage_type = 2 THEN 'isp_outage'
         ELSE 'power_outage' END as outage_type,
       outage_events.started_at,
-      outage_events.resolved_at,
-      EXTRACT(EPOCH FROM outage_events.resolved_at - outage_events.started_at) * 1000 as duration,
+      CASE
+        WHEN outage_events.status = 0 THEN NOW()
+        ELSE outage_events.resolved_at END as resolved_at,
+      CASE
+        WHEN outage_events.status = 0 THEN EXTRACT(EPOCH FROM NOW() - outage_events.resolved_at) * 1000
+        ELSE EXTRACT(EPOCH FROM outage_events.resolved_at - outage_events.started_at) * 1000 END as duration,
       COUNT(*) as count
     FROM outage_events
-    JOIN client_outages ON client_outages.outage_event_id = outage_events.id
-    JOIN locations ON locations.id = client_outages.location_id
+    JOIN network_outages ON network_outages.outage_event_id = outage_events.id
+    JOIN locations ON locations.id = network_outages.location_id
     JOIN autonomous_systems ON autonomous_systems.id = outage_events.autonomous_system_id
-    WHERE outage_events.status = 2 AND locations.account_id IN (:account_ids)
+    WHERE (outage_events.status = 2 OR outage_events.status = 0) AND locations.account_id IN (:account_ids)
     }
 
     if location_ids.present?
-      sql += " AND client_outages.location_id = :location_ids "
+      sql += " AND network_outages.location_id = :location_ids "
       sql_args[:location_ids] = location_ids
     end
 
@@ -380,7 +387,7 @@ module DashboardHelper
 
     sql += %{
       AND outage_events.started_at < :to::timestamp
-      AND outage_events.resolved_at > :from::timestamp
+      AND (outage_events.resolved_at > :from::timestamp OR outage_events.resolved_at IS NULL)
       GROUP BY 1, 2, 3, 4, 5, 6
       ORDER BY outage_events.started_at ASC;
     }
@@ -393,14 +400,14 @@ module DashboardHelper
     SELECT
       outage_events.id
     FROM outage_events
-    JOIN client_outages ON client_outages.outage_event_id = outage_events.id
-    JOIN locations ON locations.id = client_outages.location_id
+    JOIN network_outages ON network_outages.outage_event_id = outage_events.id
+    JOIN locations ON locations.id = network_outages.location_id
     JOIN autonomous_systems ON autonomous_systems.id = outage_events.autonomous_system_id
-    WHERE outage_events.status = 2 AND locations.account_id IN (:account_ids)
+    WHERE (outage_events.status = 2 OR outage_events.status = 0) AND locations.account_id IN (:account_ids)
     }
 
     if location_id.present?
-      sql += " AND client_outages.location_id = :location_id "
+      sql += " AND network_outages.location_id = :location_id "
       sql_args[:location_id] = location_id
     end
 
@@ -416,7 +423,7 @@ module DashboardHelper
 
     sql += %{
       AND outage_events.started_at < :to::timestamp
-      AND outage_events.resolved_at > :from::timestamp
+      AND (outage_events.resolved_at > :from::timestamp OR outage_events.resolved_at IS NULL)
       ORDER BY outage_events.started_at DESC
       LIMIT :page_size OFFSET :page;
     }
