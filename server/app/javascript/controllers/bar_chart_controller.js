@@ -115,7 +115,6 @@ export default class BarChartController extends ChartController {
     let yCoordinate = barY - SPACING_BETWEEN_TOOLTIP_AND_BAR - TOOLTIP_HEIGHT;
     const tooltipText = Number(hoveredBarData.y).toFixed(2) + " " + this.labelSuffix;
     const tooltipWidth = this.textWidth(tooltipText) + PADDING * 2;
-    const midYPoint = yCoordinate + TOOLTIP_HEIGHT / 2 + PADDING;
     let xCoordinate = barX + barWidth / 2 - tooltipWidth / 2;
     
     if(yCoordinate < 0) {
@@ -134,6 +133,7 @@ export default class BarChartController extends ChartController {
     this.ctx.fillStyle = 'black';
     this.ctx.font = 'normal bold 13px MulishBold';
     const tooltipValueXCoordinate = xCoordinate + PADDING;
+    const midYPoint = yCoordinate + TOOLTIP_HEIGHT / 2 + PADDING;
     this.ctx.fillText(tooltipValue, tooltipValueXCoordinate, midYPoint);
     
     const tooltipUnitXCoordinate = tooltipValueXCoordinate + this.textWidth(tooltipValue + " ");
