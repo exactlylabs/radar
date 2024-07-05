@@ -608,6 +608,12 @@ export default class ChartController extends Controller {
     this.ctx.stroke();
   }
   
+  resetStrokeStyles() {
+    this.ctx.strokeStyle = 'transparent';
+    this.ctx.strokeWidth = 0;
+    this.ctx.setLineDash([]);
+  }
+  
   resetStyles() {
     this.ctx.shadowColor = 'rgba(0, 0, 0, 0)';
     this.ctx.shadowBlur = 0;
