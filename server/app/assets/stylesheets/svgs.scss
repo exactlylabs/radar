@@ -1,0 +1,17 @@
+@import "shared/colors";
+
+$base-svg-color: $gray;
+
+svg {
+  --base-color: #{$base-svg-color};
+  fill: var(--base-color);
+
+  path {
+    fill: var(--base-color);
+  }
+}
+
+.svg--fill-blue {
+  --base-color: #{$blue};
+}
+

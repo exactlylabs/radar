@@ -16,3 +16,9 @@ Rails.application.config.assets.paths << Rails.root.join('app/assets/fonts')
 
 # Adding precompile action for pdf_label as this is required for gem to work correctly
 Rails.application.config.assets.precompile += %w( pdf_label.scss )
+
+# Adding SVG precompilation to the asset pipeline
+Rails.application.config.assets.precompile += %w( '.svg' )
+
+# Adding SASS as the default CSS compressor to allow for inline SVGs to work
+Rails.application.config.assets.css_compressor = :sass
