@@ -99,6 +99,7 @@ module DashboardHelper
           FROM (
             SELECT *, COUNT(total_online) OVER (ORDER BY "time") as non_null_count
             FROM table_with_initial
+            WHERE total_online IS NOT NULL
           ) t
       )
 
