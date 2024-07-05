@@ -69,7 +69,7 @@ class Client < ApplicationRecord
   after_create :create_pod_connectivity_config
 
   after_save :send_event
-  after_save :check_ip_changed, if: :saved_change_to_ip?
+  after_validation :check_ip_changed, if: :ip_changed?
   after_save :update_versions, if: :saved_change_to_update_group_id?
   after_save :update_location_status, if: :saved_change_to_location_id? || :saved_change_to_online?
 

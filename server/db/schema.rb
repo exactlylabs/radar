@@ -58,6 +58,7 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
   create_table "asn_ip_lookups", id: false, force: :cascade do |t|
     t.bigint "autonomous_system_id", null: false
     t.inet "ip", null: false
+    t.datetime "source_file_timestamp"
     t.index ["autonomous_system_id"], name: "index_asn_ip_lookups_on_autonomous_system_id"
     t.index ["ip"], name: "index_asn_ip_lookups_on_ip", opclass: :inet_ops, using: :gist
   end
@@ -69,6 +70,7 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
     t.string "source"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "source_file_timestamp"
     t.index ["org_id"], name: "index_autonomous_system_orgs_on_org_id", unique: true
   end
 
@@ -85,6 +87,9 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
     t.bigint "autonomous_system_org_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "opaque_id"
+    t.string "source"
+    t.datetime "source_file_timestamp"
     t.index ["asn"], name: "index_autonomous_systems_on_asn", unique: true
     t.index ["autonomous_system_org_id"], name: "index_autonomous_systems_on_autonomous_system_org_id"
   end
@@ -681,8 +686,6 @@ ActiveRecord::Schema.define(version: 2024_07_01_215516) do
     t.integer "service_satisfaction"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "delivered_at"
-    t.boolean "step_2_completed", default: false
   end
 
   create_table "recent_searches", force: :cascade do |t|
