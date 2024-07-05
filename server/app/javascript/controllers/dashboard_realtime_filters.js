@@ -20,6 +20,7 @@ export default class extends RealtimeFiltersController {
   selectFilter(e, source = undefined) {
     super.selectFilter(e);
     if(!source) this.fetchAllWidgets();
+    if(e.target.dataset.key === 'days') emitCustomEvent('clearTimeFilter');
   }
   
   selectManualFilter(e) {
