@@ -1,7 +1,7 @@
 <%= turbo_frame_tag 'outages-widget' do %>
   <div class="dashboard--outages-card-wrapper">
-    <%= render partial: "dashboard/components/widgets/outages/filters" %>
     <%= render partial: "dashboard/components/widgets/outages/status_bar" %>
+    <%= render partial: "dashboard/components/widgets/outages/filters" %>
     <div class="category--horizontal-divider"></div>
     <%= render partial: "dashboard/components/widgets/outages/metrics" %>
     <% if @outages.count != 0 %>

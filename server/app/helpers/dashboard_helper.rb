@@ -18,7 +18,7 @@ module DashboardHelper
     when 'isp_outage'
       'ISP outage'
     when 'network_failure'
-      'Network failure'
+      'Network outage'
     when 'power_outage'
       'Power outage'
     when 'unknown_reason'
