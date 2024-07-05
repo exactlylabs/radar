@@ -35,7 +35,7 @@
                    key: 'days',
                    value: option[:value],
                    label: option[:label],
-                   active: params[:days] == option[:value] || (option[:value] == '30' && params[:days].nil?),
+                   active: params[:days] == option[:value] || (option[:value] == '30' && params[:days].nil? && params[:start].nil? && params[:end].nil?),
                    overridden_keys: "start, end"
                  }
       %>
