@@ -75,8 +75,8 @@ p {
 }
 
 .public--additional-text {
-    font-size: 14px;
-    line-height: 21px;
+    font-size: 0.875rem;
+    line-height: 1.3125rem;
     color: #6d5a94;
     text-align: center;
     margin: 0 auto;
@@ -94,14 +94,14 @@ p {
 
 @media (max-width: 768px) {
     .public--additional-text {
-        font-size: 13px;
-        line-height: 19px;
+        font-size: 0.8125rem;
+        line-height: 1.1875rem;
     }
 }
 
 .public--regular-link {
-    font-size: 14px;
-    line-height: 21px;
+    font-size: 0.875rem;
+    line-height: 1.3125rem;
     color: #4B7BE5;
     font-family: 'Mulish', sans-serif;
     font-variation-settings: 'wght' 700;
@@ -156,23 +156,23 @@ p {
     }
 
     .public--card-content-title {
-        font-size: 24px;
-        line-height: 36px;
+        font-size: 1.5rem;
+        line-height: 2.25rem;
         color: #110e4c;
         font-variation-settings: 'wght' 700;
     }
 
     .public--card-content-description {
-        font-size: 14px;
-        line-height: 22px;
+        font-size: 0.875rem;
+        line-height: 1.375rem;
         color: #3F3C70;
     }
 
     .public--additional-button {
         background-color: #4b7be5;
         color: white;
-        font-size: 15px;
-        line-height: 20px;
+        font-size: 0.9375rem;
+        line-height: 1.25rem;
         font-variation-settings: 'wght' 700;
         border: none;
         border-radius: 6px;
@@ -196,15 +196,15 @@ p {
 }
 
 .public--footer-rights {
-    font-size: 14px;
-    line-height: 19px;
+    font-size: 0.875rem;
+    line-height: 1.1875rem;
     letter-spacing: 0;
     color: #6d6a94;
 }
 
 .public--footer-link {
-    font-size: 14px;
-    line-height: 25px;
+    font-size: 0.875rem;
+    line-height: 1.5625rem;
     color: #6d6a94;
     font-weight: 450;
     text-decoration: none;
