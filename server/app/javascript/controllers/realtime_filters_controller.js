@@ -87,9 +87,14 @@ export default class extends Controller {
   updateBaseButton(selectedOption, text) {
     let baseButton = document.getElementById(selectedOption.dataset.baseButtonId);
     if(baseButton) {
-      const caret = Array.from(baseButton.childNodes).find(node => node.tagName === 'IMG');
+      const childNodes = Array.from(baseButton.childNodes);
+      const calendarIcon = childNodes.find(node => node.tagName === 'svg');
+      const caret = childNodes.find(node => node.tagName === 'IMG');
       baseButton.innerText = text ?? baseButton.dataset.defaultLabel;
-      baseButton.appendChild(caret);
+      if(calendarIcon) baseButton.prepend(calendarIcon);
+      if(caret) baseButton.appendChild(caret);
+      
+      
     }
   }
   
