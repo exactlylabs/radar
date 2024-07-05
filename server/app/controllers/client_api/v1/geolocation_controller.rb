@@ -2,7 +2,7 @@ module ClientApi
   module V1
     class GeolocationController < ApiController
       def code
-        results = CustomGeocoder.search(params[:address])
+        results = GeoTools::CustomGeocoder.search(params[:address])
         if results.first
           render json: results.first.coordinates
         else
@@ -15,7 +15,7 @@ module ClientApi
       def suggestions
         results = []
         Google::Cloud::Trace.in_span "Searching in Geocoder: #{params[:address]}" do
-          results = CustomGeocoder.search(params[:address])
+          results = GeoTools::CustomGeocoder.search(params[:address])
         end
 
         if results.present?
@@ -30,7 +30,7 @@ module ClientApi
 
       def coordinates
         normalized_param = params[:coordinates].is_a?(Array) ? params[:coordinates] : params[:coordinates].split(",")
-        results = CustomGeocoder.search(normalized_param)
+        results = GeoTools::CustomGeocoder.search(normalized_param)
         if results.first
           match = results.first
           render json: Suggestion.new(
@@ -53,7 +53,7 @@ module ClientApi
 
         # Coordinates for middle of USA for development
         return render json: [39.50, -98.35] if ENV['RAILS_ENV'] == 'development'
-        results = CustomGeocoder.search_ip(request.remote_ip)
+        results = GeoTools::CustomGeocoder.search_ip(request.remote_ip)
         if results.first
           return render json: results.first.coordinates
         end
