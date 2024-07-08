@@ -1,9 +1,12 @@
 <div class="dashboard--download-more-options-menu invisible" id="more-options-menu-download-data"
 >
-  <a href="<%= measurements_path(format: 'csv') %>" class="dashboard--download-option-button"
-  >
+  <a href="<%= measurements_path(format: 'csv') %>" class="dashboard--download-option-button">
     <%= image_tag image_url('download-file-icon.png'), width: 16, height: 16 %>
     Download measurements
+  </a>
+  <a href="<%= full_index_measurements_path(format: 'csv') %>" class="dashboard--download-option-button">
+    <%= image_tag image_url('download-file-icon.png'), width: 16, height: 16 %>
+    Download all measurements
   </a>
   <a href="<%= full_ndt7_index_measurements_path(format: 'csv') %>" class="dashboard--download-option-button">
     <%= image_tag image_url('download-file-icon.png'), width: 16, height: 16 %>

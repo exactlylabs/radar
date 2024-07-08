@@ -1,13 +1,13 @@
 <div class="dashboard--download-data-wrapper">
   <div class="dashboard--download-data-button custom-button--primary custom-button--lg">
-    <%= link_to measurements_path(format: 'csv'), class: 'dashboard--download-data-container' do %>
+    <div data-controller="exports" data-action="click->exports#exportAll" class="dashboard--download-data-container">
       <%= image_tag image_url('download-archive-white.svg'), width: 16, height: 16, class: 'me-2' %>
       <p class='dashboard--download-data-text'>Download data</p>
-    <% end %>
+    </div>
   </div>
   <div class="dashboard--download-more-options-button custom-button--primary ">
-    <div id="options-button-download-data" class='dashboard--download-data-more-options-container' data-controller="more-options-button" data-action="click->more-options-button#toggleMenu">
-      <%= image_tag image_url('arrow-down.svg'), width: 16, height: 16 %>
+    <div id="options-button-download-data" data-controller="more-options-button" data-action="click->more-options-button#toggleMenu">
+      <%= svg_tag('arrow-down.svg', { width: 16, height: 16, class: 'svg--fill-white' }) %>
     </div>
     <%= render partial: "dashboard/components/widgets/download_data_more_options_button" %>
   </div>
