@@ -1,13 +1,22 @@
-<a class="sidebar--recent-item cursor-pointer"
-  href="<%= url %>"
-  data-turbo-frame="_top"
-  data-action="click->sidebar#closeSearchIfOpen"
->
+<% if type == 'pods' %>
+  <% item_name = item.unix_user %>
+  <% icon_url = 'pod-online-icon.png' %>
+<% elsif type == 'locations' %>
+  <% item_name = item.name %>
+  <% icon_url = 'network-online-icon.png' %>
+<% else %>
+  <% item_name = item.name %>
+  <% icon_url = 'big-accounts-icon.png' %>
+  <% method = :post %>
+<% end %>
+<%= link_to url, data: { action: "click->sidebar#closeSearchIfOpen", turbo_frame: "_top", method: method }, class: "sidebar--recent-item cursor-pointer" do %>
   <div class="circle d-flex justify-content-center align-items-center sidebar--icon-container me-2">
-    <%= image_tag image_url("#{type}-icon-active.png"), width: 18, height: 18 %>
+    <%= image_tag image_url(icon_url), width: 18, height: 18 %>
   </div>
   <div class="sidebar--recent-text-container">
-    <p class="sidebar-item--text sidebar--recent-text m-0 ellipsis"><%= type == 'pods' ? item.unix_user : item.name %></p>
-    <p class="help-text m-0 sidebar--recent-account ellipsis"><%= item.account.name %></p>
+    <p class="sidebar-item--text sidebar--recent-text m-0 ellipsis"><%= item_name %></p>
+    <% unless type == 'accounts' %>
+      <p class="help-text m-0 sidebar--recent-account ellipsis"><%= item.account.name %></p>
+    <% end %>
   </div>
-</a>
+<% end %>
