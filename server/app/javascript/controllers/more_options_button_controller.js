@@ -12,6 +12,7 @@ export default class extends Controller {
     const buttonId = e.currentTarget.id;
     const rowIndex = buttonId.split(buttonPrefix)[1];
     const menuId = menuPrefix + rowIndex;
+    console.log(menuId)
     const menu = document.getElementById(menuId);
     if(menu.id === this.currentMenuOpen?.id) {
       this.closeMenu(menu);
